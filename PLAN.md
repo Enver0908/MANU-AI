@@ -427,6 +427,8 @@ Phase 15 safe observability and operational health completed on 2026-05-25: adde
 
 Phase 16 channel policy simulation hardening completed on 2026-05-25: mock WhatsApp/Telegram channel events now fail closed for missing provider event ids and empty bodies before AI processing. Matched-client opt-out commands (`STOP`, `DUR`, `IPTAL`, `IPTAL ET`, `CANCEL`) update channel permission to `opted_out` without entering the AI path, and minimized audit metadata excludes raw bodies and channel identifiers. App tests now include 70 passing tests.
 
+Phase 17 provider policy guard and prompt boundary completed on 2026-05-25: mock provider input is now built through an allowlist and guarded at runtime. Only `risk` and `client.dietPlan.summary` can enter the mock provider input; prompt/capsule/message/memory/channel/profile/clinical-note leakage fails closed, red-risk provider calls are rejected, and policy violations become safe no-send simulator decisions. App tests now include 75 passing tests.
+
 Tasks:
 
 1. Keep clinical taxonomy approval, provider review, and real-channel policy review as launch gates.

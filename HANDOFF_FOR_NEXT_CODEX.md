@@ -847,3 +847,39 @@ app: npm run build -> passed
 ### Next Correct Step For Codex
 
 Proceed to Provider Policy Guard and Prompt Boundary. Keep real provider calls and real channel integrations blocked until external launch gates are approved.
+
+## Phase 17 Handoff Notes - 2026-05-25
+
+Completed by: Codex
+
+### What Was Done
+
+- Created `docs/PHASE_17_PROVIDER_POLICY_GUARD_PROMPT_BOUNDARY_SPEC.md`.
+- Added `buildMockProviderInput()` in `app/src/lib/ai-provider.ts`.
+- Added `assertMockProviderInputPolicy()` runtime guard in `app/src/lib/ai-provider.ts`.
+- Mock provider input now allows only `risk` and `client.dietPlan.summary`.
+- Runtime guard rejects prompt/capsule-style payloads, extra client fields, extra diet-plan fields, invalid summary types, and red-risk provider calls.
+- Simulator provider calls now use the allowlisted input builder instead of passing the full client object.
+- Provider policy violations are normalized as `provider_policy_violation` and become safe no-send simulator decisions.
+- Added provider and simulator tests for allowlist construction, boundary rejection, red-risk defense, and controlled safe no-send behavior.
+
+### What Was NOT Done
+
+- No real Gemini or external LLM provider was connected.
+- No core architecture prompt rewrite was done.
+- No provider logging, analytics, monitoring, or prompt storage service was added.
+- No real WhatsApp, Telegram, secret manager, or real health data was connected.
+
+### Verification Commands
+
+```text
+app: npm test -- ai-provider -> 74/74 passed
+app: npm test -- simulator -> 75/75 passed
+app: npm run lint -> passed
+app: npm test -> 75/75 passed
+app: npm run build -> passed
+```
+
+### Next Correct Step For Codex
+
+Proceed to Notification SLA and Internal Escalation. Keep external email/push/WhatsApp/Telegram notifications blocked until notification payload policy and launch gates are approved.

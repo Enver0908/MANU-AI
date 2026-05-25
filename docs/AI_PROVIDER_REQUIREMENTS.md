@@ -13,6 +13,8 @@ MANU-AI uses only a deterministic local mock provider. No real Gemini or externa
 - Prompt version, model, provider id, and error metadata must be auditable.
 - Red-risk flows must never call the provider.
 - Provider failure must produce safe no-send or dietitian-review behavior.
+- Provider input must be allowlist-built and runtime-guarded before any provider call.
+- Raw prompts, full context capsules, channel identifiers, health profiles, clinical notes, message collections, memory objects, and secrets must not be passed as provider input.
 
 ## Launch Gate
 

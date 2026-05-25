@@ -113,6 +113,24 @@ describe("local inbound simulator", () => {
     expect(next.aiDecisions.at(-1)?.providerErrorCode).toBe("provider_timeout");
   });
 
+  it("records provider policy violations as safe no-send decisions", async () => {
+    const state = updateClientInState(createInitialState(), "client-mert", {
+      dietPlan: { summary: 42 as unknown as string },
+    });
+    const next = await runInboundSimulation(state, {
+      clientId: "client-mert",
+      body: "Bugun kahvaltida yumurta yerine ne yiyebilirim?",
+      idempotencyKey: "provider-policy-1",
+      now: "2026-05-22T10:17:00.000Z",
+    });
+
+    expect(next.lastSimulation?.action).toBe("no_ai");
+    expect(next.lastSimulation?.blockedReason).toBe("provider_policy_violation");
+    expect(countGeneratedMessages(next)).toBe(countGeneratedMessages(state));
+    expect(next.aiDecisions.at(-1)?.providerStatus).toBe("failed");
+    expect(next.aiDecisions.at(-1)?.providerErrorCode).toBe("provider_policy_violation");
+  });
+
   it("does not duplicate messages or AI decisions for the same idempotency key", async () => {
     const first = await runInboundSimulation(createInitialState(), {
       clientId: "client-mert",

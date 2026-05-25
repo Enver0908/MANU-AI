@@ -6,6 +6,7 @@ import {
 import {
   MOCK_PROVIDER_ID,
   PROMPT_VERSION,
+  buildMockProviderInput,
   generateMockProviderReply,
   getProviderErrorCode,
 } from "./ai-provider";
@@ -137,7 +138,7 @@ export async function runInboundSimulation(
       generateReply: async (payload: Record<string, unknown>) => {
         const riskDecision = payload.riskDecision as { level: string };
         return generateMockProviderReply(
-          { client, risk: riskDecision.level as AiDecisionRecord["risk"] },
+          buildMockProviderInput(client, riskDecision.level as AiDecisionRecord["risk"]),
           { failureMode: request.mockProviderFailure },
         );
       },

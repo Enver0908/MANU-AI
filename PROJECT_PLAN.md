@@ -1150,6 +1150,16 @@ Phase 16 channel policy simulation hardening completed on 2026-05-25:
 - App tests now include 70 passing tests.
 - No real WhatsApp, Telegram, Gemini, monitoring, email, push, secret manager, or real health data were connected.
 
+Phase 17 provider policy guard and prompt boundary completed on 2026-05-25:
+
+- Added a provider policy guard and prompt boundary spec.
+- Mock provider input is built through an allowlist containing only `risk` and `client.dietPlan.summary`.
+- Runtime provider guard rejects raw prompt, capsule, message, memory, channel identity, health profile, clinical note, and pinned-note leakage.
+- Red-risk provider calls fail closed at the provider boundary as defense in depth.
+- Provider policy violations become controlled safe no-send simulator decisions.
+- App tests now include 75 passing tests.
+- No real Gemini, external LLM, monitoring, analytics, real channel, secret manager, or real health data was connected.
+
 ### Sprint Tasks
 
 1. Create `MANU-AI/docs/RISK_REGISTER.md`.

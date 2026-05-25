@@ -470,6 +470,33 @@ Status:
 - Added exact opt-out command handling for `STOP`, `DUR`, `IPTAL`, `IPTAL ET`, and `CANCEL`.
 - Added channel adapter tests. App tests now include 70 tests.
 
+## Phase 17: Provider Policy Guard And Prompt Boundary - Completed 2026-05-25
+
+Goal: add a local provider payload boundary before any real LLM provider is connected.
+
+Work:
+
+- Add a runtime mock-provider input guard.
+- Allow only `risk` and `client.dietPlan.summary` into mock provider input.
+- Reject prompt/capsule/message/memory style payloads at the provider boundary.
+- Reject red-risk provider calls as defense in depth.
+- Convert provider policy violations into safe no-send simulator decisions.
+
+Done criteria:
+
+- Valid green and yellow mock provider calls still work.
+- Raw prompt, capsule, message collection, memory, channel identity, health profile, clinical notes, and pinned notes cannot be passed into the mock provider input.
+- Red-risk provider calls fail closed at the provider boundary.
+- Simulator records provider policy violations as controlled failed-provider no-send decisions.
+- Real Gemini, external LLMs, monitoring, analytics, secret manager, real channels, and real health data remain disconnected.
+
+Status:
+
+- Added `docs/PHASE_17_PROVIDER_POLICY_GUARD_PROMPT_BOUNDARY_SPEC.md`.
+- Added `buildMockProviderInput()` and `assertMockProviderInputPolicy()`.
+- Updated simulator provider calls to use the allowlisted provider input builder.
+- Added provider and simulator tests. App tests now include 75 tests.
+
 ## Always-On Gates
 
 - No real health data before legal/privacy review.

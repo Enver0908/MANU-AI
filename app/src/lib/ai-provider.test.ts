@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import {
   MOCK_PROVIDER_ID,
   PROMPT_VERSION,
+  assertMockProviderInputPolicy,
+  buildMockProviderInput,
   buildSafeProviderMetadata,
   generateMockProviderReply,
   getProviderErrorCode,
@@ -13,6 +15,29 @@ describe("mock AI provider", () => {
 
     await expect(generateMockProviderReply({ client, risk: "green" })).resolves.toContain("Three meals");
     await expect(generateMockProviderReply({ client, risk: "yellow" })).resolves.toContain("onayiyla");
+  });
+
+  it("builds provider input from the allowlisted client fields only", () => {
+    const input = buildMockProviderInput(
+      {
+        dietPlan: {
+          summary: "Three meals and one snack.",
+          breakfast: "eggs",
+          lunch: "private",
+          dinner: "private",
+        },
+      },
+      "green",
+    );
+
+    expect(input).toEqual({
+      client: {
+        dietPlan: {
+          summary: "Three meals and one snack.",
+        },
+      },
+      risk: "green",
+    });
   });
 
   it("normalizes timeout and provider errors", async () => {
@@ -48,5 +73,47 @@ describe("mock AI provider", () => {
       status: "ok",
       errorCode: null,
     });
+  });
+
+  it("rejects raw prompt or capsule payloads at the provider boundary", () => {
+    expect(() =>
+      assertMockProviderInputPolicy({
+        client: { dietPlan: { summary: "Three meals and one snack." } },
+        risk: "green",
+        prompt: "raw prompt text",
+      } as never),
+    ).toThrowError(/Provider boundary rejected top_level keys/);
+
+    expect(() =>
+      assertMockProviderInputPolicy({
+        client: { dietPlan: { summary: "Three meals and one snack." } },
+        risk: "green",
+        capsule: { client: { fullName: "Mert Kaya" } },
+      } as never),
+    ).toThrowError(/Provider boundary rejected top_level keys/);
+  });
+
+  it("rejects client fields outside the provider allowlist", () => {
+    expect(() =>
+      assertMockProviderInputPolicy({
+        client: {
+          dietPlan: { summary: "Three meals and one snack." },
+          healthProfile: { goal: "fat_loss" },
+          channelUserId: "+905551110001",
+          clinicalRiskNotes: ["private"],
+          pinnedNotes: ["private"],
+        },
+        risk: "green",
+      } as never),
+    ).toThrowError(/Provider boundary rejected client keys/);
+  });
+
+  it("rejects red-risk provider calls as defense in depth", async () => {
+    await expect(
+      generateMockProviderReply({
+        client: { dietPlan: { summary: "Three meals and one snack." } },
+        risk: "red",
+      }),
+    ).rejects.toMatchObject({ code: "provider_policy_violation" });
   });
 });
