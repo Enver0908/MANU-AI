@@ -423,6 +423,8 @@ Phase 13 client assignment and scoped access completed on 2026-05-25: added `cli
 
 Phase 14 DSAR, retention, and legal ops ledger completed on 2026-05-25: added `data_requests` migration and app-state ledger records for completed export/anonymization operations. Export bundles now include target-client data request history, while final retention durations and deletion automation remain legal-review-gated. App tests now include 63 passing tests.
 
+Phase 15 safe observability and operational health completed on 2026-05-25: added a safe internal operational health snapshot with aggregate counts and launch-gate status, plus an error monitoring policy draft. No raw messages, prompts, channel identifiers, health profiles, secrets, or external monitoring vendor were connected. App tests now include 66 passing tests.
+
 Tasks:
 
 1. Keep clinical taxonomy approval, provider review, and real-channel policy review as launch gates.

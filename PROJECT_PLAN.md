@@ -1133,6 +1133,14 @@ Phase 14 DSAR, retention, and legal ops ledger completed on 2026-05-25:
 - App tests now include 63 passing tests.
 - No automatic deletion scheduler, final retention durations, real providers, real channels, push/email adapters, or real health data were connected.
 
+Phase 15 safe observability and operational health completed on 2026-05-25:
+
+- Added safe operational health snapshot generation.
+- Snapshot reports aggregate counts for handoffs, provider failures, unread notifications, pending/stale drafts, passive clients, and launch-gate blockage.
+- Added monitoring policy draft defining allowed and prohibited payloads.
+- App tests now include 66 passing tests.
+- No external monitoring, analytics, logging, email, push, real providers, real channels, secret manager, or real health data were connected.
+
 ### Sprint Tasks
 
 1. Create `MANU-AI/docs/RISK_REGISTER.md`.

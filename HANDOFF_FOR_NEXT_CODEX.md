@@ -783,3 +783,33 @@ app: npm run build -> passed
 ### Next Correct Step For Codex
 
 Proceed to Safe Observability and Operational Health. Keep deletion automation and final retention durations blocked until legal review.
+
+## Phase 15 Handoff Notes - 2026-05-25
+
+Completed by: Codex
+
+### What Was Done
+
+- Created `docs/PHASE_15_SAFE_OBSERVABILITY_OPERATIONAL_HEALTH_SPEC.md`.
+- Created `docs/ERROR_MONITORING_POLICY.md`.
+- Added `app/src/lib/operational-health.ts`.
+- Added `app/src/lib/operational-health.test.ts`.
+- Operational health snapshots now report aggregate counts for open/urgent handoffs, failed provider decisions, unread notifications, pending/stale drafts, passive clients, and launch-gate blocked state.
+- Snapshot tests prove raw message, prompt, channel identifier, diet plan fragment, and secret-like values are not emitted.
+
+### What Was NOT Done
+
+- No dashboard UI was changed.
+- No external monitoring, analytics, logging, email, push, WhatsApp, Telegram, Gemini, secret manager, or real health data was connected.
+
+### Verification Commands
+
+```text
+app: npm test -> 66/66 passed
+app: npm run lint -> passed
+app: npm run build -> passed
+```
+
+### Next Correct Step For Codex
+
+Proceed to Channel Policy Simulation Hardening. Keep real WhatsApp/Telegram production webhooks blocked until policy review is approved.

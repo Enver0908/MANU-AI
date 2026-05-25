@@ -418,6 +418,30 @@ Status:
 - Supabase and fallback export/anonymization paths now record legal ops ledger entries.
 - App tests now include 63 tests.
 
+## Phase 15: Safe Observability And Operational Health - Completed 2026-05-25
+
+Goal: add safe internal operational health signals without connecting a monitoring vendor or exposing raw health data.
+
+Work:
+
+- Add an operational health snapshot helper.
+- Count safe aggregate operational signals.
+- Include production-pilot launch gate blocked status.
+- Document future monitoring payload rules.
+
+Done criteria:
+
+- Snapshot includes only aggregate counts and launch gate ids.
+- Snapshot excludes message bodies, prompts, channel identifiers, health profiles, audit metadata, provider credentials, and secrets.
+- No external monitoring, analytics, logging, email, push, WhatsApp, Telegram, Gemini, or secret-manager integration is connected.
+
+Status:
+
+- Added `docs/PHASE_15_SAFE_OBSERVABILITY_OPERATIONAL_HEALTH_SPEC.md`.
+- Added `docs/ERROR_MONITORING_POLICY.md`.
+- Added `app/src/lib/operational-health.ts`.
+- Added safe snapshot tests. App tests now include 66 tests.
+
 ## Always-On Gates
 
 - No real health data before legal/privacy review.
