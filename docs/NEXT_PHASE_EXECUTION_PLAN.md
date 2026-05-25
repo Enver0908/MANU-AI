@@ -442,6 +442,34 @@ Status:
 - Added `app/src/lib/operational-health.ts`.
 - Added safe snapshot tests. App tests now include 66 tests.
 
+## Phase 16: Channel Policy Simulation Hardening - Completed 2026-05-25
+
+Goal: harden local channel-policy behavior before real WhatsApp or Telegram webhooks.
+
+Work:
+
+- Add mock channel policy preflight checks.
+- Block missing provider event ids before client lookup or AI processing.
+- Block empty channel message bodies before client lookup or AI processing.
+- Handle explicit opt-out commands without entering the AI path.
+- Keep audit metadata minimized.
+
+Done criteria:
+
+- Missing provider event id creates no messages, AI decisions, or risk assessments.
+- Empty channel body creates no messages, AI decisions, or risk assessments.
+- Matched-client opt-out commands set `channelPermission = opted_out`.
+- Duplicate opt-out or empty-body provider events are ignored by idempotency.
+- Channel policy audit metadata excludes raw message bodies and channel identifiers.
+- Real WhatsApp, Telegram, Gemini, monitoring, email, push, secret manager, and real health data remain disconnected.
+
+Status:
+
+- Added `docs/PHASE_16_CHANNEL_POLICY_SIMULATION_HARDENING_SPEC.md`.
+- Hardened `processMockChannelInbound()` with channel policy preflight checks.
+- Added exact opt-out command handling for `STOP`, `DUR`, `IPTAL`, `IPTAL ET`, and `CANCEL`.
+- Added channel adapter tests. App tests now include 70 tests.
+
 ## Always-On Gates
 
 - No real health data before legal/privacy review.

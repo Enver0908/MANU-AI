@@ -425,6 +425,8 @@ Phase 14 DSAR, retention, and legal ops ledger completed on 2026-05-25: added `d
 
 Phase 15 safe observability and operational health completed on 2026-05-25: added a safe internal operational health snapshot with aggregate counts and launch-gate status, plus an error monitoring policy draft. No raw messages, prompts, channel identifiers, health profiles, secrets, or external monitoring vendor were connected. App tests now include 66 passing tests.
 
+Phase 16 channel policy simulation hardening completed on 2026-05-25: mock WhatsApp/Telegram channel events now fail closed for missing provider event ids and empty bodies before AI processing. Matched-client opt-out commands (`STOP`, `DUR`, `IPTAL`, `IPTAL ET`, `CANCEL`) update channel permission to `opted_out` without entering the AI path, and minimized audit metadata excludes raw bodies and channel identifiers. App tests now include 70 passing tests.
+
 Tasks:
 
 1. Keep clinical taxonomy approval, provider review, and real-channel policy review as launch gates.

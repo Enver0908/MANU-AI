@@ -1,4 +1,4 @@
-import { runInboundSimulation } from "./simulator";
+import { runInboundSimulation, updateClientInState } from "./simulator";
 import type { AuditEventRecord, Channel, ManuAppState } from "./types";
 
 export type NormalizedInboundChannelEvent = {
@@ -24,15 +24,22 @@ const SENSITIVE_METADATA_KEYS = new Set([
   "pinnedNotes",
   "memory",
 ]);
+const OPT_OUT_COMMANDS = new Set(["STOP", "DUR", "IPTAL", "IPTAL ET", "CANCEL"]);
 
 export async function processMockChannelInbound(
   state: ManuAppState,
   event: NormalizedInboundChannelEvent,
 ): Promise<ManuAppState> {
   const providerEventId = event.providerEventId.trim();
-  const idempotencyKey = providerEventId || `${event.channel}:missing-provider-event-id`;
+  const trimmedBody = event.body.trim();
 
-  if (state.processedSimulationKeys.includes(idempotencyKey)) {
+  if (!providerEventId) {
+    return blockChannelPolicyEvent(state, event, "missing-provider-event-id", "channel_policy_missing_provider_event_id", [
+      "provider_event_id_required",
+    ]);
+  }
+
+  if (state.processedSimulationKeys.includes(providerEventId)) {
     return {
       ...state,
       lastSimulation: {
@@ -47,16 +54,32 @@ export async function processMockChannelInbound(
     };
   }
 
+  if (!trimmedBody) {
+    return blockChannelPolicyEvent(state, event, providerEventId, "channel_policy_empty_body", ["body_required"], true);
+  }
+
   const matches = findClientsByChannelIdentity(state, event.channel, event.channelUserId);
 
   if (matches.length !== 1) {
-    return quarantineChannelEvent(state, event, idempotencyKey, matches.length > 1 ? "ambiguous" : "unknown");
+    return quarantineChannelEvent(state, event, providerEventId, matches.length > 1 ? "ambiguous" : "unknown");
+  }
+
+  if (isOptOutCommand(trimmedBody)) {
+    const optedOutState = updateClientInState(state, matches[0].id, { channelPermission: "opted_out" });
+    return blockChannelPolicyEvent(
+      optedOutState,
+      event,
+      providerEventId,
+      "channel_policy_opt_out_received",
+      ["explicit_channel_opt_out_command"],
+      true,
+    );
   }
 
   return runInboundSimulation(state, {
     clientId: matches[0].id,
-    body: event.body,
-    idempotencyKey,
+    body: trimmedBody,
+    idempotencyKey: providerEventId,
     now: event.receivedAt,
   });
 }
@@ -115,6 +138,42 @@ function quarantineChannelEvent(
   };
 }
 
+function blockChannelPolicyEvent(
+  state: ManuAppState,
+  event: NormalizedInboundChannelEvent,
+  entityId: string,
+  blockedReason: string,
+  reasons: string[],
+  markProcessed = false,
+): ManuAppState {
+  return {
+    ...state,
+    processedSimulationKeys: markProcessed ? [...state.processedSimulationKeys, entityId] : state.processedSimulationKeys,
+    auditEvents: [
+      ...state.auditEvents,
+      buildAuditEvent(state, {
+        eventType: "channel_policy_blocked",
+        entityId,
+        metadata: {
+          channel: event.channel,
+          providerEventIdPresent: Boolean(event.providerEventId.trim()),
+          bodyPresent: Boolean(event.body.trim()),
+          reason: blockedReason,
+        },
+      }),
+    ],
+    lastSimulation: {
+      action: "no_ai",
+      risk: null,
+      model: null,
+      blockedReason,
+      reasons,
+      draft: null,
+      decisionId: null,
+    },
+  };
+}
+
 function buildAuditEvent(
   state: ManuAppState,
   input: { eventType: string; entityId: string; metadata: Record<string, unknown> },
@@ -134,4 +193,8 @@ function isSafeMetadataValue(value: unknown) {
   if (value === null) return true;
   if (["string", "number", "boolean"].includes(typeof value)) return true;
   return false;
+}
+
+function isOptOutCommand(body: string) {
+  return OPT_OUT_COMMANDS.has(body.trim().toUpperCase());
 }

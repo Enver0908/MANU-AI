@@ -1141,6 +1141,15 @@ Phase 15 safe observability and operational health completed on 2026-05-25:
 - App tests now include 66 passing tests.
 - No external monitoring, analytics, logging, email, push, real providers, real channels, secret manager, or real health data were connected.
 
+Phase 16 channel policy simulation hardening completed on 2026-05-25:
+
+- Added a channel policy hardening spec.
+- Mock channel events now fail closed for missing provider event ids and empty message bodies before client lookup or AI processing.
+- Matched-client opt-out commands update channel permission to `opted_out` without entering the AI path.
+- Channel policy audit metadata stays minimized and excludes raw bodies and channel identifiers.
+- App tests now include 70 passing tests.
+- No real WhatsApp, Telegram, Gemini, monitoring, email, push, secret manager, or real health data were connected.
+
 ### Sprint Tasks
 
 1. Create `MANU-AI/docs/RISK_REGISTER.md`.

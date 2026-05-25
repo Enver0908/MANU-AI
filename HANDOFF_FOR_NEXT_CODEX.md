@@ -813,3 +813,37 @@ app: npm run build -> passed
 ### Next Correct Step For Codex
 
 Proceed to Channel Policy Simulation Hardening. Keep real WhatsApp/Telegram production webhooks blocked until policy review is approved.
+
+## Phase 16 Handoff Notes - 2026-05-25
+
+Completed by: Codex
+
+### What Was Done
+
+- Created `docs/PHASE_16_CHANNEL_POLICY_SIMULATION_HARDENING_SPEC.md`.
+- Hardened `processMockChannelInbound()` in `app/src/lib/channel-adapters.ts`.
+- Missing provider event ids now fail closed before client lookup, message creation, risk assessment, or AI decision creation.
+- Empty channel bodies now fail closed and are marked idempotently processed by provider event id.
+- Exact opt-out commands (`STOP`, `DUR`, `IPTAL`, `IPTAL ET`, `CANCEL`) update matched clients to `channelPermission = opted_out` without entering the AI path.
+- Channel policy audit metadata records only safe booleans/reasons and excludes raw body text and raw channel identifiers.
+- Added channel adapter tests for missing provider ids, empty bodies, opt-out handling, duplicate blocked events, and minimized audit metadata.
+
+### What Was NOT Done
+
+- No real WhatsApp or Telegram webhook was connected.
+- No webhook signature verification was added.
+- No outbound template registry or 24-hour service-window enforcement was added.
+- No external monitoring, analytics, logging, email, push, Gemini, secret manager, or real health data was connected.
+
+### Verification Commands
+
+```text
+app: npm test -- channel-adapters -> 70/70 passed
+app: npm run lint -> passed
+app: npm test -> 70/70 passed
+app: npm run build -> passed
+```
+
+### Next Correct Step For Codex
+
+Proceed to Provider Policy Guard and Prompt Boundary. Keep real provider calls and real channel integrations blocked until external launch gates are approved.

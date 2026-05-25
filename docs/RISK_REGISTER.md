@@ -31,8 +31,8 @@
 | ID | Risk | Severity | Mitigation | Status |
 | --- | --- | --- | --- | --- |
 | R-201 | WhatsApp healthcare messaging violates platform policy. | critical | WhatsApp healthcare-use feasibility memo before pilot. | open |
-| R-202 | Missing WhatsApp opt-in or opt-out handling. | high | Channel permission state, opt-out state, audit trail, and mock channel opt-out tests exist; real STOP webhook handling remains pending. | partially mitigated in local prototype |
-| R-203 | Duplicate webhook causes duplicate AI reply. | high | Idempotency table and outbound state machine. Local simulator and mock channel idempotency are covered, including duplicate provider events. | partially mitigated in local prototype |
+| R-202 | Missing WhatsApp opt-in or opt-out handling. | high | Channel permission state, opt-out state, audit trail, and mock channel opt-out tests exist; Phase 16 handles exact local opt-out commands before AI processing. Real STOP webhook handling remains pending. | partially mitigated in local prototype |
+| R-203 | Duplicate webhook causes duplicate AI reply. | high | Idempotency table and outbound state machine. Local simulator and mock channel idempotency are covered, including duplicate provider events and duplicate policy-blocked events. | partially mitigated in local prototype |
 | R-204 | Phone number reuse maps message to wrong client. | high | Phase 7 mock adapter tests quarantine ambiguous channel identities before orchestrator execution; Phase 13 limits production app-state visibility by owner/dietitian/assistant assignment. Real reconfirmation UX remains pending. | partially mitigated in local prototype |
 | R-205 | Human takeover races with queued AI job. | high | Handoff/takeover lock and stale-context check before send. Local simulator blocks takeover-locked clients and audits release; Phase 12 limits takeover release to owner/admin/dietitian roles in Supabase-backed routes. | partially mitigated in local prototype |
 

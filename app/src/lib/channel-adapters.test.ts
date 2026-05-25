@@ -90,6 +90,76 @@ describe("mock channel adapters", () => {
     expect(second.aiDecisions).toHaveLength(first.aiDecisions.length);
   });
 
+  it("blocks missing provider event ids before client lookup or AI processing", async () => {
+    const state = createInitialState();
+    const next = await processMockChannelInbound(state, {
+      channel: "whatsapp",
+      providerEventId: "   ",
+      channelUserId: "+905551110001",
+      body: "Bugun kahvaltida ne yiyebilirim?",
+    });
+
+    expect(next.lastSimulation?.action).toBe("no_ai");
+    expect(next.lastSimulation?.blockedReason).toBe("channel_policy_missing_provider_event_id");
+    expect(next.messages).toHaveLength(state.messages.length);
+    expect(next.aiDecisions).toHaveLength(state.aiDecisions.length);
+    expect(next.riskAssessments).toHaveLength(state.riskAssessments.length);
+  });
+
+  it("blocks empty channel bodies before AI processing and marks the provider event processed", async () => {
+    const state = createInitialState();
+    const next = await processMockChannelInbound(state, {
+      channel: "telegram",
+      providerEventId: "tg-empty-1",
+      channelUserId: "elif_telegram",
+      body: "   ",
+    });
+    const duplicate = await processMockChannelInbound(next, {
+      channel: "telegram",
+      providerEventId: "tg-empty-1",
+      channelUserId: "elif_telegram",
+      body: "   ",
+    });
+
+    expect(next.lastSimulation?.blockedReason).toBe("channel_policy_empty_body");
+    expect(next.messages).toHaveLength(state.messages.length);
+    expect(next.aiDecisions).toHaveLength(state.aiDecisions.length);
+    expect(next.riskAssessments).toHaveLength(state.riskAssessments.length);
+    expect(duplicate.lastSimulation?.action).toBe("duplicate_ignored");
+  });
+
+  it("handles matched-client opt-out commands without entering the AI path", async () => {
+    const state = createInitialState();
+    const next = await processMockChannelInbound(state, {
+      channel: "whatsapp",
+      providerEventId: "wa-stop-1",
+      channelUserId: "+905551110001",
+      body: "STOP",
+    });
+
+    expect(next.clients.find((client) => client.id === "client-mert")?.channelPermission).toBe("opted_out");
+    expect(next.lastSimulation?.action).toBe("no_ai");
+    expect(next.lastSimulation?.blockedReason).toBe("channel_policy_opt_out_received");
+    expect(next.messages).toHaveLength(state.messages.length);
+    expect(next.aiDecisions).toHaveLength(state.aiDecisions.length);
+    expect(next.riskAssessments).toHaveLength(state.riskAssessments.length);
+    expect(next.auditEvents.some((event) => event.eventType === "channel_permission_opted_out")).toBe(true);
+  });
+
+  it("keeps channel policy audit metadata minimized", async () => {
+    const next = await processMockChannelInbound(createInitialState(), {
+      channel: "whatsapp",
+      providerEventId: "wa-stop-private-1",
+      channelUserId: "+905551110001",
+      body: "STOP",
+    });
+    const policyEvent = next.auditEvents.find((event) => event.eventType === "channel_policy_blocked");
+
+    expect(JSON.stringify(policyEvent?.metadata)).not.toContain("STOP");
+    expect(JSON.stringify(policyEvent?.metadata)).not.toContain("+905551110001");
+    expect(JSON.stringify(policyEvent?.metadata)).not.toContain("Bugun kahvaltida");
+  });
+
   it("keeps permission-blocked clients on the existing safety gate", async () => {
     const state = updateClientInState(createInitialState(), "client-mert", {
       channelPermission: "blocked",
