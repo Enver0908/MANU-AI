@@ -1099,6 +1099,14 @@ Phase 10 production readiness gates completed on 2026-05-25:
 - App tests now include 54 passing tests.
 - No real providers, real channels, push/email adapters, or real health data were connected.
 
+Phase 11 operational evidence readiness completed on 2026-05-25:
+
+- Added required evidence labels to every production-pilot launch gate.
+- Added draft incident response, backup/restore, and secret rotation runbooks.
+- Added `docs/PHASE_11_OPERATIONAL_EVIDENCE_READINESS_SPEC.md`.
+- App tests now include 55 passing tests.
+- No real providers, real channels, monitoring vendor, secret manager, push/email adapters, or real health data were connected.
+
 ### Sprint Tasks
 
 1. Create `MANU-AI/docs/RISK_REGISTER.md`.

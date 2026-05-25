@@ -312,6 +312,32 @@ Status:
 - Added `app/src/lib/launch-gates.ts` with the production-pilot gate set and evaluator.
 - Added launch gate unit tests. App tests now include 54 tests.
 
+## Phase 11: Operational Evidence Readiness - Completed 2026-05-25
+
+Goal: connect production-pilot launch gates to concrete evidence expectations and draft runbooks without approving the gates.
+
+Work:
+
+- Add required evidence labels to every production-pilot gate.
+- Draft incident response, backup/restore, and secret rotation runbooks.
+- Keep launch blocked by default and approval external.
+
+Done criteria:
+
+- Every launch gate has at least one required evidence item.
+- Every launch gate remains externally approved only.
+- Runbooks contain no production secrets, real client identifiers, or raw health data.
+- No real WhatsApp, Telegram, Gemini, push/email provider, monitoring vendor, or secret manager is connected.
+
+Status:
+
+- Added `docs/PHASE_11_OPERATIONAL_EVIDENCE_READINESS_SPEC.md`.
+- Added `docs/INCIDENT_RESPONSE_RUNBOOK.md`.
+- Added `docs/BACKUP_RESTORE_RUNBOOK.md`.
+- Added `docs/SECRET_ROTATION_RUNBOOK.md`.
+- Extended `app/src/lib/launch-gates.ts` with `requiredEvidence`.
+- Added launch gate evidence coverage. App tests now include 55 tests.
+
 ## Always-On Gates
 
 - No real health data before legal/privacy review.

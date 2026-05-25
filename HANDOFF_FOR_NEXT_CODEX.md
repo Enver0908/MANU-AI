@@ -650,3 +650,33 @@ app: npm run lint -> passed
 ### Next Correct Step For Codex
 
 Continue with the next remaining production-readiness step while keeping the production-pilot gate evaluator blocked by default.
+
+## Phase 11 Handoff Notes - 2026-05-25
+
+Completed by: Codex
+
+### What Was Done
+
+- Created `docs/PHASE_11_OPERATIONAL_EVIDENCE_READINESS_SPEC.md`.
+- Created `docs/INCIDENT_RESPONSE_RUNBOOK.md`.
+- Created `docs/BACKUP_RESTORE_RUNBOOK.md`.
+- Created `docs/SECRET_ROTATION_RUNBOOK.md`.
+- Extended `app/src/lib/launch-gates.ts` so every production-pilot gate lists required external evidence.
+- Added a unit test proving every gate remains externally approved and has evidence requirements.
+
+### What Was NOT Done
+
+- No launch gate was approved.
+- No real WhatsApp, Telegram, Gemini, push/email provider, monitoring vendor, secret manager, or real health data was connected.
+- No production secrets, real client identifiers, or raw health data were added to runbooks.
+
+### Verification Commands
+
+```text
+app: npm test -- launch-gates -> 55/55 passed
+app: npm run lint -> passed
+```
+
+### Next Correct Step For Codex
+
+Move to the next production-readiness layer only after preserving this checkpoint. Keep launch blocked until external gate evidence is reviewed and approved.

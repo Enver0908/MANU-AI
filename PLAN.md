@@ -415,6 +415,8 @@ Phase 9 pilot readiness closure completed on 2026-05-25: added a local Git check
 
 Phase 10 production readiness gates completed on 2026-05-25: added `docs/PHASE_10_PRODUCTION_READINESS_GATES_SPEC.md` and a machine-readable launch gate evaluator. Production pilot remains blocked by default until legal/privacy, clinical taxonomy, provider/vendor, channel policy, incident response, backup/restore, secret rotation, and dependency audit gates are externally approved. App tests now include 54 passing tests.
 
+Phase 11 operational evidence readiness completed on 2026-05-25: launch gates now list required external evidence, and draft incident response, backup/restore, and secret rotation runbooks were added without approving any gate or connecting real providers/channels. App tests now include 55 passing tests.
+
 Tasks:
 
 1. Keep clinical taxonomy approval, provider review, and real-channel policy review as launch gates.

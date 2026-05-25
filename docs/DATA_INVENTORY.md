@@ -75,6 +75,8 @@ Before pilot data is processed, MANU-AI needs production policy approval for:
 - Backup expiry and restore-test policy.
 - Production deletion job ownership and approval workflow.
 
+Phase 11 draft runbooks were added for incident response, backup/restore, and secret rotation. They are operating evidence drafts only and do not approve real pilot data processing.
+
 Phase 5 technical skeleton completed on 2026-05-25:
 
 - Retention-policy placeholders exist in `app/src/lib/data-governance.ts`; all final durations remain `legal_review_required`.

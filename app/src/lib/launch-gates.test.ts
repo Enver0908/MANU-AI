@@ -29,4 +29,9 @@ describe("production pilot launch gates", () => {
       ignoredApprovalIds: [],
     });
   });
+
+  it("documents required external evidence for every gate", () => {
+    expect(PRODUCTION_PILOT_LAUNCH_GATES.every((gate) => gate.sourceOfApproval === "external_review")).toBe(true);
+    expect(PRODUCTION_PILOT_LAUNCH_GATES.every((gate) => gate.requiredEvidence.length > 0)).toBe(true);
+  });
 });
