@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createClientInState, getFallbackState, saveFallbackState } from "@/lib/app-state-store";
-import { authErrorResponse, resolveAppTenantContext } from "@/lib/auth-context";
+import { authErrorResponse, requireCapability, resolveAppTenantContext } from "@/lib/auth-context";
 import { createSupabaseClientRecord, isSupabaseStoreConfigured } from "@/lib/supabase-store";
 import type { Channel } from "@/lib/types";
 
@@ -17,6 +17,8 @@ export async function POST(request: NextRequest) {
 
   if (isSupabaseStoreConfigured()) {
     try {
+      const tenantContext = await resolveAppTenantContext();
+      requireCapability(tenantContext, "create_client");
       return NextResponse.json(
         await createSupabaseClientRecord(
           {
@@ -24,7 +26,7 @@ export async function POST(request: NextRequest) {
             channel: body.channel === "telegram" ? "telegram" : "whatsapp",
             channelUserId: body.channelUserId || "",
           },
-          await resolveAppTenantContext(),
+          tenantContext,
         ),
       );
     } catch (error) {

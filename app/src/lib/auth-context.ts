@@ -1,11 +1,27 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { createSupabaseServerClient, isSupabaseConfigured } from "./supabase";
+import type { TenantRole } from "./types";
+
+export type AppCapability =
+  | "read_app_state"
+  | "reset_app_state"
+  | "create_client"
+  | "update_client"
+  | "simulate_inbound"
+  | "manual_reply"
+  | "draft_review"
+  | "handoff_update"
+  | "notification_update"
+  | "export_client"
+  | "anonymize_client"
+  | "release_takeover";
 
 export type AppTenantContext = {
   tenantId: string;
   dietitianId: string;
   userId: string;
+  role: TenantRole;
 };
 
 export class AppAuthError extends Error {
@@ -48,7 +64,7 @@ export async function resolveAppTenantContext(): Promise<AppTenantContext> {
 
   const membership = await supabase
     .from("tenant_memberships")
-    .select("tenant_id")
+    .select("tenant_id, role")
     .eq("user_id", user.id)
     .order("created_at", { ascending: true })
     .limit(1)
@@ -81,7 +97,26 @@ export async function resolveAppTenantContext(): Promise<AppTenantContext> {
     tenantId: membership.data.tenant_id,
     dietitianId: dietitian.data.id,
     userId: user.id,
+    role: membership.data.role as TenantRole,
   };
+}
+
+export function requireCapability(context: AppTenantContext, capability: AppCapability) {
+  if (!hasCapability(context.role, capability)) {
+    throw new AppAuthError(403, `rbac_forbidden_${capability}`);
+  }
+}
+
+export function hasCapability(role: TenantRole, capability: AppCapability) {
+  if (role === "owner" || role === "admin" || role === "dietitian") {
+    return true;
+  }
+
+  if (role === "assistant" || role === "auditor") {
+    return capability === "read_app_state";
+  }
+
+  return false;
 }
 
 export function authErrorResponse(error: unknown) {

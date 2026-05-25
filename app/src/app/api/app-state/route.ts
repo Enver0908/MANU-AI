@@ -1,12 +1,14 @@
 import { NextResponse } from "next/server";
 import { getFallbackState, resetFallbackState } from "@/lib/app-state-store";
-import { authErrorResponse, resolveAppTenantContext } from "@/lib/auth-context";
+import { authErrorResponse, requireCapability, resolveAppTenantContext } from "@/lib/auth-context";
 import { isSupabaseStoreConfigured, loadSupabaseState, resetSupabaseState } from "@/lib/supabase-store";
 
 export async function GET() {
   if (isSupabaseStoreConfigured()) {
     try {
-      return NextResponse.json(await loadSupabaseState(await resolveAppTenantContext()));
+      const tenantContext = await resolveAppTenantContext();
+      requireCapability(tenantContext, "read_app_state");
+      return NextResponse.json(await loadSupabaseState(tenantContext));
     } catch (error) {
       return authErrorResponse(error);
     }
@@ -18,7 +20,9 @@ export async function GET() {
 export async function POST() {
   if (isSupabaseStoreConfigured()) {
     try {
-      return NextResponse.json(await resetSupabaseState(await resolveAppTenantContext()));
+      const tenantContext = await resolveAppTenantContext();
+      requireCapability(tenantContext, "reset_app_state");
+      return NextResponse.json(await resetSupabaseState(tenantContext));
     } catch (error) {
       return authErrorResponse(error);
     }

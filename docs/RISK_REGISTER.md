@@ -24,7 +24,7 @@
 | R-103 | External AI provider retains health data unexpectedly. | critical | Phase 8 uses only a local mock provider and documents no-storage/no-retention requirements; real provider use remains blocked until vendor/legal review. | partially mitigated in local prototype |
 | R-104 | Logs contain raw messages, prompts, or health fields. | high | Provider/channel metadata helpers redact raw message, prompt, health profile, diet plan, allergy, memory, and clinical-note fields; production logging policy remains pending. | partially mitigated in local prototype |
 | R-105 | Deletion request leaves stale client memory. | high | Phase 5 local/Supabase anonymization skeleton clears promptable client context and rolling memory; production deletion jobs and legal approval remain pending. | partially mitigated in local prototype |
-| R-106 | Data export or deletion scope crosses tenant/client boundaries. | critical | Phase 5 tenant/client-scoped export and anonymization helpers are covered by tests; production DSAR workflow remains pending. | partially mitigated in local prototype |
+| R-106 | Data export or deletion scope crosses tenant/client boundaries. | critical | Phase 5 tenant/client-scoped export and anonymization helpers are covered by tests; Phase 12 adds fail-closed role checks before export/anonymization in Supabase-backed routes. Production DSAR workflow remains pending. | partially mitigated in local prototype |
 
 ## Messaging Platform Risks
 
@@ -34,7 +34,7 @@
 | R-202 | Missing WhatsApp opt-in or opt-out handling. | high | Channel permission state, opt-out state, audit trail, and mock channel opt-out tests exist; real STOP webhook handling remains pending. | partially mitigated in local prototype |
 | R-203 | Duplicate webhook causes duplicate AI reply. | high | Idempotency table and outbound state machine. Local simulator and mock channel idempotency are covered, including duplicate provider events. | partially mitigated in local prototype |
 | R-204 | Phone number reuse maps message to wrong client. | high | Phase 7 mock adapter tests quarantine ambiguous channel identities before orchestrator execution; real reconfirmation UX remains pending. | partially mitigated in local prototype |
-| R-205 | Human takeover races with queued AI job. | high | Handoff/takeover lock and stale-context check before send. Local simulator blocks takeover-locked clients and audits release. | partially mitigated in local prototype |
+| R-205 | Human takeover races with queued AI job. | high | Handoff/takeover lock and stale-context check before send. Local simulator blocks takeover-locked clients and audits release; Phase 12 limits takeover release to owner/admin/dietitian roles in Supabase-backed routes. | partially mitigated in local prototype |
 
 ## Clinical Safety Risks
 

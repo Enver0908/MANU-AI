@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { AppAuthError, authErrorResponse } from "./auth-context";
+import { AppAuthError, authErrorResponse, hasCapability, requireCapability, type AppTenantContext } from "./auth-context";
 
 describe("auth context error handling", () => {
   it("AppAuthError captures 401 status and error code", () => {
@@ -48,5 +48,31 @@ describe("auth context error handling", () => {
     const error = new Error("unexpected");
 
     expect(() => authErrorResponse(error)).toThrow("unexpected");
+  });
+
+  it("allows owner, admin, and dietitian roles to use existing production capabilities", () => {
+    expect(hasCapability("owner", "anonymize_client")).toBe(true);
+    expect(hasCapability("admin", "reset_app_state")).toBe(true);
+    expect(hasCapability("dietitian", "draft_review")).toBe(true);
+  });
+
+  it("keeps assistant and auditor roles fail-closed beyond read-only app state", () => {
+    expect(hasCapability("assistant", "read_app_state")).toBe(true);
+    expect(hasCapability("assistant", "manual_reply")).toBe(false);
+    expect(hasCapability("auditor", "read_app_state")).toBe(true);
+    expect(hasCapability("auditor", "export_client")).toBe(false);
+  });
+
+  it("requireCapability returns a controlled 403 for forbidden role actions", () => {
+    const context: AppTenantContext = {
+      tenantId: "tenant-demo",
+      dietitianId: "dietitian-demo",
+      userId: "user-demo",
+      role: "assistant",
+    };
+
+    expect(() => requireCapability(context, "create_client")).toThrow(
+      new AppAuthError(403, "rbac_forbidden_create_client"),
+    );
   });
 });

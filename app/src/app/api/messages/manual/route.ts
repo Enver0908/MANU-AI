@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { addManualReplyInState, getFallbackState, saveFallbackState } from "@/lib/app-state-store";
 import { domainErrorResponse } from "@/lib/app-errors";
-import { authErrorResponse, resolveAppTenantContext } from "@/lib/auth-context";
+import { authErrorResponse, requireCapability, resolveAppTenantContext } from "@/lib/auth-context";
 import { addSupabaseManualReply, isSupabaseStoreConfigured } from "@/lib/supabase-store";
 
 export async function POST(request: NextRequest) {
@@ -13,9 +13,9 @@ export async function POST(request: NextRequest) {
 
   if (isSupabaseStoreConfigured()) {
     try {
-      return NextResponse.json(
-        await addSupabaseManualReply(body.clientId, body.body, await resolveAppTenantContext()),
-      );
+      const tenantContext = await resolveAppTenantContext();
+      requireCapability(tenantContext, "manual_reply");
+      return NextResponse.json(await addSupabaseManualReply(body.clientId, body.body, tenantContext));
     } catch (error) {
       try {
         return authErrorResponse(error);

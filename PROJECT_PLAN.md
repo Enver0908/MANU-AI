@@ -1107,6 +1107,14 @@ Phase 11 operational evidence readiness completed on 2026-05-25:
 - App tests now include 55 passing tests.
 - No real providers, real channels, monitoring vendor, secret manager, push/email adapters, or real health data were connected.
 
+Phase 12 RBAC authorization completed on 2026-05-25:
+
+- Added typed tenant roles and app capabilities.
+- Supabase-backed API routes now enforce capability checks before current production actions.
+- Owner/admin/dietitian retain existing access; assistant/auditor are fail-closed beyond read-only app-state until scoped assignment and auditor views are added.
+- App tests now include 58 passing tests.
+- No real providers, real channels, monitoring vendor, secret manager, push/email adapters, or real health data were connected.
+
 ### Sprint Tasks
 
 1. Create `MANU-AI/docs/RISK_REGISTER.md`.

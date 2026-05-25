@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { anonymizeClientDataInState, getFallbackState, saveFallbackState } from "@/lib/app-state-store";
 import { domainErrorResponse } from "@/lib/app-errors";
-import { authErrorResponse, resolveAppTenantContext } from "@/lib/auth-context";
+import { authErrorResponse, requireCapability, resolveAppTenantContext } from "@/lib/auth-context";
 import { anonymizeSupabaseClientData, isSupabaseStoreConfigured } from "@/lib/supabase-store";
 
 export async function POST(_request: Request, context: { params: Promise<{ id: string }> }) {
@@ -9,7 +9,9 @@ export async function POST(_request: Request, context: { params: Promise<{ id: s
 
   if (isSupabaseStoreConfigured()) {
     try {
-      return NextResponse.json(await anonymizeSupabaseClientData(id, await resolveAppTenantContext()));
+      const tenantContext = await resolveAppTenantContext();
+      requireCapability(tenantContext, "anonymize_client");
+      return NextResponse.json(await anonymizeSupabaseClientData(id, tenantContext));
     } catch (error) {
       try {
         return authErrorResponse(error);

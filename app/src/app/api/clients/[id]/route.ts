@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getFallbackState, patchClientInState, saveFallbackState } from "@/lib/app-state-store";
-import { authErrorResponse, resolveAppTenantContext } from "@/lib/auth-context";
+import { authErrorResponse, requireCapability, resolveAppTenantContext } from "@/lib/auth-context";
 import { isSupabaseStoreConfigured, patchSupabaseClientRecord } from "@/lib/supabase-store";
 import type { ClientRecord } from "@/lib/types";
 
@@ -13,7 +13,9 @@ export async function PATCH(
 
   if (isSupabaseStoreConfigured()) {
     try {
-      return NextResponse.json(await patchSupabaseClientRecord(id, patch, await resolveAppTenantContext()));
+      const tenantContext = await resolveAppTenantContext();
+      requireCapability(tenantContext, "update_client");
+      return NextResponse.json(await patchSupabaseClientRecord(id, patch, tenantContext));
     } catch (error) {
       return authErrorResponse(error);
     }

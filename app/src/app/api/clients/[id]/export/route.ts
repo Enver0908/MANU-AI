@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { exportClientInState, getFallbackState } from "@/lib/app-state-store";
 import { domainErrorResponse } from "@/lib/app-errors";
-import { authErrorResponse, resolveAppTenantContext } from "@/lib/auth-context";
+import { authErrorResponse, requireCapability, resolveAppTenantContext } from "@/lib/auth-context";
 import { exportSupabaseClientData, isSupabaseStoreConfigured } from "@/lib/supabase-store";
 
 export async function GET(_request: Request, context: { params: Promise<{ id: string }> }) {
@@ -9,7 +9,9 @@ export async function GET(_request: Request, context: { params: Promise<{ id: st
 
   if (isSupabaseStoreConfigured()) {
     try {
-      return NextResponse.json(await exportSupabaseClientData(id, await resolveAppTenantContext()));
+      const tenantContext = await resolveAppTenantContext();
+      requireCapability(tenantContext, "export_client");
+      return NextResponse.json(await exportSupabaseClientData(id, tenantContext));
     } catch (error) {
       try {
         return authErrorResponse(error);

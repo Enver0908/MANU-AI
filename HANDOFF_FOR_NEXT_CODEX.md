@@ -680,3 +680,34 @@ app: npm run lint -> passed
 ### Next Correct Step For Codex
 
 Move to the next production-readiness layer only after preserving this checkpoint. Keep launch blocked until external gate evidence is reviewed and approved.
+
+## Phase 12 Handoff Notes - 2026-05-25
+
+Completed by: Codex
+
+### What Was Done
+
+- Created `docs/PHASE_12_RBAC_AUTHORIZATION_SPEC.md`.
+- Added `TenantRole` to app types.
+- Extended `resolveAppTenantContext()` so authenticated Supabase requests carry membership role.
+- Added `AppCapability`, `hasCapability()`, and `requireCapability()` in `auth-context.ts`.
+- Added capability checks to Supabase-backed API routes before existing production actions.
+- Owner/admin/dietitian keep current workflow access.
+- Assistant/auditor are limited to `read_app_state` until client assignments and minimized auditor views are implemented.
+
+### What Was NOT Done
+
+- No client assignment model was added.
+- No auditor minimized dashboard was added.
+- No real WhatsApp, Telegram, Gemini, push/email provider, monitoring vendor, secret manager, or real health data was connected.
+
+### Verification Commands
+
+```text
+app: npm test -- auth-context -> 58/58 passed
+app: npm run lint -> passed
+```
+
+### Next Correct Step For Codex
+
+Proceed to client assignment and scoped access. Keep assistant/auditor mutation access blocked until that model exists.

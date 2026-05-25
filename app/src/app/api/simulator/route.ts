@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getFallbackState, saveFallbackState, simulateInState } from "@/lib/app-state-store";
 import { domainErrorResponse } from "@/lib/app-errors";
-import { authErrorResponse, resolveAppTenantContext } from "@/lib/auth-context";
+import { authErrorResponse, requireCapability, resolveAppTenantContext } from "@/lib/auth-context";
 import { isSupabaseStoreConfigured, runSupabaseSimulation } from "@/lib/supabase-store";
 import type { SimulationRequest } from "@/lib/types";
 
@@ -14,13 +14,15 @@ export async function POST(request: NextRequest) {
 
   if (isSupabaseStoreConfigured()) {
     try {
+      const tenantContext = await resolveAppTenantContext();
+      requireCapability(tenantContext, "simulate_inbound");
       return NextResponse.json(
         await runSupabaseSimulation(
           {
             ...body,
             idempotencyKey: body.idempotencyKey || `sim-${Date.now()}`,
           },
-          await resolveAppTenantContext(),
+          tenantContext,
         ),
       );
     } catch (error) {

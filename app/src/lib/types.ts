@@ -1,6 +1,7 @@
 export type AiStatus = "active" | "passive";
 export type AiMode = "autopilot" | "copilot" | "manual" | "paused";
 export type Channel = "whatsapp" | "telegram";
+export type TenantRole = "owner" | "admin" | "dietitian" | "assistant" | "auditor";
 export type MessageOrigin =
   | "client_inbound"
   | "ai_generated"

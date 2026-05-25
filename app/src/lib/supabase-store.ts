@@ -1142,6 +1142,7 @@ function demoTenantContext(): AppTenantContext {
     tenantId: DEMO_TENANT_UUID,
     dietitianId: DEMO_DIETITIAN_UUID,
     userId: DEMO_USER_UUID,
+    role: "owner",
   };
 }
 

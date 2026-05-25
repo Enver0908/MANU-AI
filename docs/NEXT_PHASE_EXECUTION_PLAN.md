@@ -338,6 +338,31 @@ Status:
 - Extended `app/src/lib/launch-gates.ts` with `requiredEvidence`.
 - Added launch gate evidence coverage. App tests now include 55 tests.
 
+## Phase 12: RBAC Authorization - Completed 2026-05-25
+
+Goal: make production Supabase API paths fail closed by role before assistant/auditor access is expanded.
+
+Work:
+
+- Add typed tenant roles to app auth context.
+- Add a capability helper for Supabase-backed API routes.
+- Preserve owner/admin/dietitian access to current workflows.
+- Restrict assistant/auditor to read-only app-state access until client assignments and minimized auditor views exist.
+
+Done criteria:
+
+- Unknown or unsupported roles cannot perform production actions.
+- Assistant/auditor mutation, export, anonymization, simulator, draft, handoff, takeover, and notification actions return controlled 403 errors.
+- Fallback local demo mode remains unchanged.
+- No real WhatsApp, Telegram, Gemini, push/email provider, monitoring vendor, secret manager, or real health data is connected.
+
+Status:
+
+- Added `docs/PHASE_12_RBAC_AUTHORIZATION_SPEC.md`.
+- Added `TenantRole`, `AppCapability`, `hasCapability()`, and `requireCapability()`.
+- Supabase-backed API routes now check capability before existing production actions.
+- App tests now include 58 tests.
+
 ## Always-On Gates
 
 - No real health data before legal/privacy review.

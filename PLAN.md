@@ -417,6 +417,8 @@ Phase 10 production readiness gates completed on 2026-05-25: added `docs/PHASE_1
 
 Phase 11 operational evidence readiness completed on 2026-05-25: launch gates now list required external evidence, and draft incident response, backup/restore, and secret rotation runbooks were added without approving any gate or connecting real providers/channels. App tests now include 55 passing tests.
 
+Phase 12 RBAC authorization completed on 2026-05-25: production Supabase API paths now resolve membership role and enforce fail-closed capabilities. Owner/admin/dietitian keep existing workflow access, while assistant/auditor are limited to read-only app-state access until assignment and minimized auditor views exist. App tests now include 58 passing tests.
+
 Tasks:
 
 1. Keep clinical taxonomy approval, provider review, and real-channel policy review as launch gates.
