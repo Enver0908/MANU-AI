@@ -1180,6 +1180,15 @@ Phase 19 release verification, CI script, and dependency gate completed on 2026-
 - `npm audit fix --force` remains blocked.
 - `npm run release:verify` passes with 35 core tests and 78 app tests while reporting R-405 as an open production launch blocker.
 
+Phase 20 pilot readiness evidence pack completed on 2026-05-25:
+
+- Added a pilot readiness evidence pack spec.
+- Added `docs/PILOT_READINESS_EVIDENCE_PACK.md`.
+- Mapped all eight production-pilot launch gates to internal evidence and remaining blockers.
+- Recorded the latest release verification result.
+- Confirmed production pilot remains blocked until external approvals and R-405 resolution or formal acceptance.
+- No real provider, real channel, external notification, monitoring, secret manager, or real health data was connected.
+
 ### Sprint Tasks
 
 1. Create `MANU-AI/docs/RISK_REGISTER.md`.

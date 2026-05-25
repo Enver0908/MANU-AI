@@ -553,6 +553,31 @@ Status:
 - Added app `release:verify` npm script.
 - Verified `npm run release:verify` passes with 35 core tests, 78 app tests, and the known R-405 production audit warning.
 
+## Phase 20: Pilot Readiness Evidence Pack - Completed 2026-05-25
+
+Goal: collect pilot-foundation evidence without approving production launch gates.
+
+Work:
+
+- Create a pilot readiness evidence pack.
+- Map all production-pilot launch gates to current internal evidence and remaining blockers.
+- Record the latest release verification result.
+- Keep external approval status explicit.
+
+Done criteria:
+
+- All eight launch gates are listed.
+- Internal evidence and external approval are clearly separated.
+- Production pilot remains blocked.
+- R-405 remains open.
+- No real provider, real channel, external notification, monitoring, secret manager, or real health data is connected.
+
+Status:
+
+- Added `docs/PHASE_20_PILOT_READINESS_EVIDENCE_PACK_SPEC.md`.
+- Added `docs/PILOT_READINESS_EVIDENCE_PACK.md`.
+- Evidence pack records the latest `npm run release:verify` result: 35 core tests, 78 app tests, lint, build, and known R-405 audit warning.
+
 ## Always-On Gates
 
 - No real health data before legal/privacy review.

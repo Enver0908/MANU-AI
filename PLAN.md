@@ -433,6 +433,8 @@ Phase 18 notification SLA and internal escalation completed on 2026-05-25: added
 
 Phase 19 release verification, CI script, and dependency gate completed on 2026-05-25: added `npm run release:verify`, which runs core package tests, lint, app tests, production build, and a conservative production dependency audit gate. The gate allows only the documented R-405 Next.js/PostCSS production audit finding, fails on unknown/high/critical findings, and keeps `npm audit fix --force` blocked. `npm run release:verify` passes with 35 core tests and 78 app tests while reporting R-405 as an open production launch blocker.
 
+Phase 20 pilot readiness evidence pack completed on 2026-05-25: added a pilot-foundation evidence pack mapping all eight production-pilot launch gates to internal evidence, remaining external blockers, and open status. The pack records the latest `npm run release:verify` result and explicitly states that production pilot, real health data, real WhatsApp/Telegram messaging, real Gemini/provider calls, external notifications, monitoring, and R-405 clearance remain blocked.
+
 Tasks:
 
 1. Keep clinical taxonomy approval, provider review, and real-channel policy review as launch gates.

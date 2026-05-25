@@ -959,3 +959,38 @@ app: npm audit --omit=dev --json -> known R-405 findings only
 ### Next Correct Step For Codex
 
 Proceed to Pilot Readiness Evidence Pack. Keep R-405 open and production launch blocked until a safe stable Next.js/PostCSS patch path exists.
+
+## Phase 20 Handoff Notes - 2026-05-25
+
+Completed by: Codex
+
+### What Was Done
+
+- Created `docs/PHASE_20_PILOT_READINESS_EVIDENCE_PACK_SPEC.md`.
+- Created `docs/PILOT_READINESS_EVIDENCE_PACK.md`.
+- Mapped all eight production-pilot launch gates to internal evidence, remaining blockers, and open status.
+- Recorded the latest release verification result:
+  - Core package tests: 35/35 passed.
+  - App tests: 78/78 passed.
+  - App lint: passed.
+  - Production build: passed.
+  - Production dependency audit gate: known R-405 findings only.
+- Evidence pack explicitly separates internal readiness evidence from external legal, clinical, provider, platform, security, and dependency approval.
+
+### What Was NOT Done
+
+- No launch gate was approved.
+- No production pilot was declared ready.
+- No real client health data was connected.
+- No real WhatsApp, Telegram, Gemini, external LLM, email, push, monitoring, analytics, or secret manager was connected.
+- R-405 was not resolved or accepted.
+
+### Verification Commands
+
+```text
+app: npm run release:verify -> already passed in Phase 19 and recorded in the evidence pack
+```
+
+### Next Correct Step For Codex
+
+Move from local pilot-foundation engineering to external approval work: legal/privacy, qualified dietitian taxonomy sign-off, provider/vendor review, WhatsApp/Telegram policy review, operational ownership, and R-405 resolution or formal acceptance.
