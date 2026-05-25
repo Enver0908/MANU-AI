@@ -621,3 +621,32 @@ app: npm audit --omit=dev -> R-405 still open; stable Next.js 16.2.6 pins nested
 ### Next Correct Step For Codex
 
 Continue with the next remaining production-readiness step. Keep production provider/channel work blocked until external launch gates are approved.
+
+## Phase 10 Handoff Notes - 2026-05-25
+
+Completed by: Codex
+
+### What Was Done
+
+- Created `docs/PHASE_10_PRODUCTION_READINESS_GATES_SPEC.md`.
+- Added `app/src/lib/launch-gates.ts` with the production-pilot launch gate definitions and evaluator.
+- Added `app/src/lib/launch-gates.test.ts`.
+- Production pilot launch is blocked by default until every known gate is externally approved.
+- Unknown approval keys are ignored and reported.
+
+### What Was NOT Done
+
+- No real WhatsApp, Telegram, Gemini, push/email provider, or real health data was connected.
+- No legal, clinical, provider, channel, incident, backup, secret, or dependency approval was claimed.
+- No admin UI or persistence table for approvals was added.
+
+### Verification Commands
+
+```text
+app: npm test -- launch-gates -> 54/54 passed
+app: npm run lint -> passed
+```
+
+### Next Correct Step For Codex
+
+Continue with the next remaining production-readiness step while keeping the production-pilot gate evaluator blocked by default.

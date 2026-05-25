@@ -288,6 +288,30 @@ Status:
 - Local Supabase migrations were applied with `npx supabase db push --local`; RLS integration tests passed 5/5 against local Supabase with fallback disabled.
 - R-405 remains open by explicit decision: stable Next.js 16.2.6 still pins nested PostCSS 8.4.31, canary Next.js is not a safe pilot baseline, npm override invalidates the dependency tree, and `npm audit fix --force` proposes a breaking downgrade.
 
+## Phase 10: Production Readiness Gates - Completed 2026-05-25
+
+Goal: make external production-pilot approvals explicit and testable before real providers, channels, or health data are connected.
+
+Work:
+
+- Define the required production-pilot launch gate set.
+- Keep all gates externally approved only; the app must not claim legal, clinical, provider, or channel approval by itself.
+- Add a machine-readable evaluator that reports approved, open, and ignored gate ids.
+- Keep the default state blocked.
+
+Done criteria:
+
+- Missing approval input blocks launch.
+- Unknown approval keys are ignored.
+- Launch is allowed only when every known gate is approved.
+- No real WhatsApp, Telegram, Gemini, push/email provider, or real health data is connected.
+
+Status:
+
+- Added `docs/PHASE_10_PRODUCTION_READINESS_GATES_SPEC.md`.
+- Added `app/src/lib/launch-gates.ts` with the production-pilot gate set and evaluator.
+- Added launch gate unit tests. App tests now include 54 tests.
+
 ## Always-On Gates
 
 - No real health data before legal/privacy review.

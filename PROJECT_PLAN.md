@@ -1091,6 +1091,14 @@ Phase 9 pilot readiness closure completed on 2026-05-25:
 - Dependency audit risk R-405 remains open by explicit decision: no safe stable Next.js/PostCSS path exists yet, and breaking/canary/invalid-tree options were rejected.
 - Real providers, real channels, push/email adapters, and real health data remain disconnected.
 
+Phase 10 production readiness gates completed on 2026-05-25:
+
+- Added `docs/PHASE_10_PRODUCTION_READINESS_GATES_SPEC.md`.
+- Added a production-pilot launch gate evaluator covering legal/privacy, clinical taxonomy, provider/vendor, channel policy, incident response, backup/restore, secret rotation, and dependency audit clearance.
+- Default launch state is blocked; unknown approval keys are ignored.
+- App tests now include 54 passing tests.
+- No real providers, real channels, push/email adapters, or real health data were connected.
+
 ### Sprint Tasks
 
 1. Create `MANU-AI/docs/RISK_REGISTER.md`.

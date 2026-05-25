@@ -413,6 +413,8 @@ Phase 8 AI provider readiness completed on 2026-05-25: added deterministic local
 
 Phase 9 pilot readiness closure completed on 2026-05-25: added a local Git checkpoint foundation with root ignore rules, aligned app classifier metadata with `dietetic-risk-v0.2.0`, added Supabase notification persistence migration, wired Supabase notification read/acknowledge endpoints, and added controlled fallback notification errors. Local Supabase migrations were applied and RLS integration tests passed 5/5 against local Supabase with fallback disabled. App tests now include 51 passing tests.
 
+Phase 10 production readiness gates completed on 2026-05-25: added `docs/PHASE_10_PRODUCTION_READINESS_GATES_SPEC.md` and a machine-readable launch gate evaluator. Production pilot remains blocked by default until legal/privacy, clinical taxonomy, provider/vendor, channel policy, incident response, backup/restore, secret rotation, and dependency audit gates are externally approved. App tests now include 54 passing tests.
+
 Tasks:
 
 1. Keep clinical taxonomy approval, provider review, and real-channel policy review as launch gates.
