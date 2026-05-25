@@ -411,13 +411,13 @@ Phase 7 channel adapter readiness completed on 2026-05-25: added normalized mock
 
 Phase 8 AI provider readiness completed on 2026-05-25: added deterministic local mock provider abstraction, prompt version metadata, provider id/status/error metadata on AI decisions, Supabase decision metadata migration, timeout/error taxonomy, and safe no-send behavior for provider failures. Real Gemini and external LLM providers remain disconnected. App tests now include 49 passing tests.
 
-Phase 9 pilot readiness closure started on 2026-05-25: added a local Git checkpoint foundation with root ignore rules, aligned app classifier metadata with `dietetic-risk-v0.2.0`, added Supabase notification persistence migration, wired Supabase notification read/acknowledge endpoints, and added controlled fallback notification errors. App tests now include 51 passing tests.
+Phase 9 pilot readiness closure completed on 2026-05-25: added a local Git checkpoint foundation with root ignore rules, aligned app classifier metadata with `dietetic-risk-v0.2.0`, added Supabase notification persistence migration, wired Supabase notification read/acknowledge endpoints, and added controlled fallback notification errors. Local Supabase migrations were applied and RLS integration tests passed 5/5 against local Supabase with fallback disabled. App tests now include 51 passing tests.
 
 Tasks:
 
 1. Keep clinical taxonomy approval, provider review, and real-channel policy review as launch gates.
 2. Keep real WhatsApp, Telegram, Gemini, and real client health data disconnected.
-3. Complete Phase 9 verification and create a baseline checkpoint commit before larger production integration work.
+3. Start the remaining production-readiness work only after preserving the Phase 9 verified checkpoint and keeping launch gates explicit.
 
 Definition of done:
 

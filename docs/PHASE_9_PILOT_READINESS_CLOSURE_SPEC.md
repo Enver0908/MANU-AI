@@ -44,7 +44,9 @@ Close the next pilot-readiness gaps without connecting real WhatsApp, Telegram, 
 - `dietitian-ai-assistant`: `npm test` passed with 35/35 tests.
 - `app`: `npm run lint` passed.
 - `app`: `npm test` passed with 51/51 tests.
-- `app`: `npm run test:rls` skipped 5 tests as expected without local Supabase.
+- `app`: `npm run test:rls` skips safely when the default `.env.local` points at remote Supabase without `MANU_ALLOW_REMOTE_RLS_TESTS=true`.
+- `app`: local Supabase migrations were applied through `npx supabase db push --local`; `npm run test:rls` then passed 5/5 tests against local Supabase with temporary local env vars and fallback disabled.
 - `app`: `npm run build` passed.
 - `app`: `npm run test:visual` passed across desktop, tablet, and mobile.
-- `app`: `npm audit --omit=dev` still reports R-405; `npm audit fix --force` remains blocked because it proposes a breaking Next.js downgrade.
+- `app`: `npm audit --omit=dev` still reports R-405 from Next.js 16.2.6's nested PostCSS 8.4.31.
+- `app`: safe dependency options checked: Next.js 16.2.6 still pins vulnerable PostCSS, Next.js 16.3.0-canary.28 uses PostCSS 8.5.10 but is a canary, and a package override leaves the npm tree invalid. `npm audit fix --force` remains blocked because it proposes a breaking Next.js downgrade.

@@ -611,12 +611,13 @@ Completed by: Codex
 dietitian-ai-assistant: npm test -> 35/35 passed
 app: npm run lint -> passed
 app: npm test -> 51/51 passed
-app: npm run test:rls -> 5 skipped (expected without local Supabase)
+app: npm run test:rls -> 5 skipped when default .env.local points at remote Supabase without MANU_ALLOW_REMOTE_RLS_TESTS=true
+app: npm run test:rls -> 5/5 passed against local Supabase after npx supabase db push --local, with fallback disabled through temporary local env vars
 app: npm run build -> passed
 app: npm run test:visual -> 3/3 passed
-app: npm audit --omit=dev -> R-405 still open; only breaking npm audit fix --force offered
+app: npm audit --omit=dev -> R-405 still open; stable Next.js 16.2.6 pins nested PostCSS 8.4.31, canary Next.js is not a safe pilot baseline, npm override invalidates the tree, and only breaking npm audit fix --force is offered
 ```
 
 ### Next Correct Step For Codex
 
-Run the full verification suite, then create a verified local baseline commit if all checks pass. Keep production provider/channel work blocked until external launch gates are approved.
+Continue with the next remaining production-readiness step. Keep production provider/channel work blocked until external launch gates are approved.

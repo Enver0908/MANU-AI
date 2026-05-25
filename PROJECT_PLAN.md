@@ -1081,12 +1081,14 @@ Additional Phase 2-8 execution completed on 2026-05-25:
 - Phase 7 added normalized mock channel adapter contracts, known/unknown/ambiguous identity handling, duplicate event idempotency, permission/opt-out channel tests, and provider metadata redaction rules without connecting real channels.
 - Phase 8 added a deterministic mock AI provider, prompt/provider metadata on AI decisions, timeout/error taxonomy, safe provider-failure no-send behavior, and provider requirements docs without connecting real Gemini or external LLMs.
 
-Phase 9 pilot readiness closure started on 2026-05-25:
+Phase 9 pilot readiness closure completed on 2026-05-25:
 
 - Local Git checkpoint foundation and root ignore rules were added.
 - Classifier metadata was aligned with `dietetic-risk-v0.2.0`.
 - Supabase notification persistence was added for safe-text in-app notification records.
 - Notification read and acknowledge endpoints now persist in Supabase and remain tenant-scoped.
+- Local Supabase migrations were applied and RLS integration tests passed 5/5 against local Supabase with fallback disabled.
+- Dependency audit risk R-405 remains open by explicit decision: no safe stable Next.js/PostCSS path exists yet, and breaking/canary/invalid-tree options were rejected.
 - Real providers, real channels, push/email adapters, and real health data remain disconnected.
 
 ### Sprint Tasks

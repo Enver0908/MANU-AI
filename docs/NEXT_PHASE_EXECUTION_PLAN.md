@@ -257,7 +257,7 @@ Status:
 - App tests now include 49 tests.
 - No real Gemini or external LLM provider was connected.
 
-## Phase 9: Pilot Readiness Closure - In Progress 2026-05-25
+## Phase 9: Pilot Readiness Closure - Completed 2026-05-25
 
 Goal: close the next operational gaps before any production channel or provider integration.
 
@@ -285,6 +285,8 @@ Status:
 - Supabase notification read and acknowledge APIs now update persisted notification records.
 - Fallback notification APIs now return controlled `notification_not_found` errors for unknown IDs.
 - App tests now include 51 tests.
+- Local Supabase migrations were applied with `npx supabase db push --local`; RLS integration tests passed 5/5 against local Supabase with fallback disabled.
+- R-405 remains open by explicit decision: stable Next.js 16.2.6 still pins nested PostCSS 8.4.31, canary Next.js is not a safe pilot baseline, npm override invalidates the dependency tree, and `npm audit fix --force` proposes a breaking downgrade.
 
 ## Always-On Gates
 
