@@ -1160,6 +1160,16 @@ Phase 17 provider policy guard and prompt boundary completed on 2026-05-25:
 - App tests now include 75 passing tests.
 - No real Gemini, external LLM, monitoring, analytics, real channel, secret manager, or real health data was connected.
 
+Phase 18 notification SLA and internal escalation completed on 2026-05-25:
+
+- Added a notification SLA and internal escalation spec.
+- Added aggregate SLA detection for unacknowledged open handoff notifications.
+- Urgent handoff notifications breach after 15 minutes and count as internal escalation due.
+- Standard handoff notifications breach after 4 hours.
+- Operational health now includes safe aggregate SLA breach and urgent escalation counts.
+- App tests now include 78 passing tests.
+- No real email, push, WhatsApp, Telegram, monitoring, analytics, secret manager, or real health data was connected.
+
 ### Sprint Tasks
 
 1. Create `MANU-AI/docs/RISK_REGISTER.md`.

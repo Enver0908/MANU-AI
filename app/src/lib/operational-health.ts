@@ -1,4 +1,5 @@
 import { evaluateProductionPilotLaunchGates, type LaunchGateId } from "./launch-gates";
+import { buildNotificationSlaSnapshot } from "./notification-sla";
 import type { ManuAppState } from "./types";
 
 export type OperationalHealthSnapshot = {
@@ -7,6 +8,8 @@ export type OperationalHealthSnapshot = {
   urgentOpenHandoffCount: number;
   failedProviderDecisionCount: number;
   unreadNotificationCount: number;
+  breachedNotificationSlaCount: number;
+  urgentEscalationDueCount: number;
   pendingDraftCount: number;
   staleDraftCount: number;
   passiveClientCount: number;
@@ -24,6 +27,10 @@ export function buildOperationalHealthSnapshot(
   const now = options.now ? new Date(options.now) : new Date();
   const staleDraftMs = (options.staleDraftHours ?? DEFAULT_STALE_DRAFT_HOURS) * 60 * 60 * 1000;
   const launchGateEvaluation = evaluateProductionPilotLaunchGates(options.approvedLaunchGateIds);
+  const notificationSla = buildNotificationSlaSnapshot(
+    { notifications: state.notifications, handoffCases: state.handoffCases },
+    { now: now.toISOString() },
+  );
   const openHandoffs = state.handoffCases.filter((handoff) => handoff.status === "open");
   const pendingDrafts = state.messages.filter((message) => message.status === "draft");
 
@@ -33,6 +40,8 @@ export function buildOperationalHealthSnapshot(
     urgentOpenHandoffCount: openHandoffs.filter((handoff) => handoff.urgency === "urgent").length,
     failedProviderDecisionCount: state.aiDecisions.filter((decision) => decision.providerStatus === "failed").length,
     unreadNotificationCount: state.notifications.filter((notification) => !notification.read).length,
+    breachedNotificationSlaCount: notificationSla.breachedNotificationCount,
+    urgentEscalationDueCount: notificationSla.urgentEscalationDueCount,
     pendingDraftCount: pendingDrafts.length,
     staleDraftCount: pendingDrafts.filter((message) => now.getTime() - new Date(message.createdAt).getTime() > staleDraftMs)
       .length,

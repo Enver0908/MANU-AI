@@ -497,6 +497,35 @@ Status:
 - Updated simulator provider calls to use the allowlisted provider input builder.
 - Added provider and simulator tests. App tests now include 75 tests.
 
+## Phase 18: Notification SLA And Internal Escalation - Completed 2026-05-25
+
+Goal: add safe internal SLA signals for handoff notifications without external notification providers.
+
+Work:
+
+- Define local acknowledgement SLA thresholds for urgent and standard handoff notifications.
+- Count unacknowledged open handoff notifications that breach SLA.
+- Count urgent handoff notifications due for internal escalation.
+- Add SLA counts to the safe operational health snapshot.
+- Keep all output aggregate-only.
+
+Done criteria:
+
+- Acknowledged notifications are not counted as breaches.
+- Notifications tied to resolved or missing handoff cases are ignored.
+- Urgent notifications older than 15 minutes are counted as escalation due.
+- Standard notifications older than 4 hours are counted as SLA breaches.
+- Operational health exposes only aggregate SLA counts.
+- Real email, push, WhatsApp, Telegram, monitoring, analytics, secret manager, and real health data remain disconnected.
+
+Status:
+
+- Added `docs/PHASE_18_NOTIFICATION_SLA_INTERNAL_ESCALATION_SPEC.md`.
+- Added `app/src/lib/notification-sla.ts`.
+- Added notification SLA tests.
+- Extended operational health snapshot with SLA breach and urgent escalation counts.
+- App tests now include 78 tests.
+
 ## Always-On Gates
 
 - No real health data before legal/privacy review.

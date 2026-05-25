@@ -50,7 +50,7 @@
 
 | ID | Risk | Severity | Mitigation | Status |
 | --- | --- | --- | --- | --- |
-| R-401 | Urgent handoff notification is missed. | critical | SLA, fallback notification, persistent open urgent case. Local handoffs now queue safe-text in-app notifications, and Phase 9 added Supabase notification persistence plus tenant-scoped read/acknowledge behavior. Push/email adapters are still pending. | partially mitigated in local prototype |
+| R-401 | Urgent handoff notification is missed. | critical | SLA, fallback notification, persistent open urgent case. Local handoffs now queue safe-text in-app notifications, Phase 9 added Supabase notification persistence plus tenant-scoped read/acknowledge behavior, and Phase 18 adds aggregate SLA breach/internal escalation signals. Push/email adapters are still pending. | partially mitigated in local prototype |
 | R-402 | Provider outage blocks messaging. | high | Visible provider failure state, retry, manual fallback. Phase 10 launch gates require incident response evidence before production pilot approval; Phase 11 added a draft incident response runbook; Phase 15 counts failed provider decisions in a safe health snapshot. | open |
 | R-403 | Prompt/classifier change regresses safety. | high | Phase 6 JSONL golden tests assert risk/action/model/provider-call behavior and persona invariants; Phase 9 added a local Git checkpoint. Production release rollback procedure remains pending. | partially mitigated in core prototype |
 | R-404 | One tenant exhausts shared AI budget. | medium | Tenant spend caps and quotas. | open |

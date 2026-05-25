@@ -883,3 +883,40 @@ app: npm run build -> passed
 ### Next Correct Step For Codex
 
 Proceed to Notification SLA and Internal Escalation. Keep external email/push/WhatsApp/Telegram notifications blocked until notification payload policy and launch gates are approved.
+
+## Phase 18 Handoff Notes - 2026-05-25
+
+Completed by: Codex
+
+### What Was Done
+
+- Created `docs/PHASE_18_NOTIFICATION_SLA_INTERNAL_ESCALATION_SPEC.md`.
+- Added `app/src/lib/notification-sla.ts`.
+- Added `app/src/lib/notification-sla.test.ts`.
+- Defined local in-app acknowledgement SLA thresholds: 15 minutes for urgent handoff notifications and 4 hours for standard handoff notifications.
+- SLA helper counts only unacknowledged notifications tied to open handoff cases.
+- Notifications tied to resolved/missing handoffs are ignored.
+- Urgent breached notifications are counted as internal escalation due.
+- Operational health snapshots now include `breachedNotificationSlaCount` and `urgentEscalationDueCount`.
+- Tests prove SLA output stays aggregate-only and does not expose raw message, channel, prompt, or secret-like content.
+
+### What Was NOT Done
+
+- No external email, push, WhatsApp, Telegram, SMS, APNs, FCM, monitoring, or analytics provider was connected.
+- No on-call schedule, rota, or real escalation workflow was added.
+- No dashboard UI was changed.
+- No real health data was connected.
+
+### Verification Commands
+
+```text
+app: npm test -- notification-sla -> 78/78 passed
+app: npm test -- operational-health -> 78/78 passed
+app: npm run lint -> passed
+app: npm test -> 78/78 passed
+app: npm run build -> passed
+```
+
+### Next Correct Step For Codex
+
+Proceed to Release Verification, CI Script, and Dependency Gate. Keep dependency remediation conservative and do not run breaking `npm audit fix --force`.

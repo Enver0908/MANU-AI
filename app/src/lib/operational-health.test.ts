@@ -13,6 +13,8 @@ describe("operational health snapshot", () => {
       urgentOpenHandoffCount: 1,
       failedProviderDecisionCount: 1,
       unreadNotificationCount: 1,
+      breachedNotificationSlaCount: 1,
+      urgentEscalationDueCount: 1,
       pendingDraftCount: 2,
       staleDraftCount: 1,
       passiveClientCount: 1,

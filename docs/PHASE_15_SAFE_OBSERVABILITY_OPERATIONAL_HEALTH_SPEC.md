@@ -17,7 +17,7 @@ Create a safe internal operational health snapshot without connecting a monitori
 - No external monitoring, analytics, logging, email, push, WhatsApp, Telegram, Gemini, or secret-manager integration.
 - No dashboard UI change.
 - No raw event log export.
-- No SLA automation.
+- No external SLA automation.
 
 ## Snapshot Signals
 
@@ -25,6 +25,8 @@ Create a safe internal operational health snapshot without connecting a monitori
 - Urgent open handoff count.
 - Failed provider decision count.
 - Unread notification count.
+- Breached notification SLA count.
+- Urgent internal escalation due count.
 - Pending draft count.
 - Stale draft count using a 24-hour default threshold.
 - Passive client count.

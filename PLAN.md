@@ -429,6 +429,8 @@ Phase 16 channel policy simulation hardening completed on 2026-05-25: mock Whats
 
 Phase 17 provider policy guard and prompt boundary completed on 2026-05-25: mock provider input is now built through an allowlist and guarded at runtime. Only `risk` and `client.dietPlan.summary` can enter the mock provider input; prompt/capsule/message/memory/channel/profile/clinical-note leakage fails closed, red-risk provider calls are rejected, and policy violations become safe no-send simulator decisions. App tests now include 75 passing tests.
 
+Phase 18 notification SLA and internal escalation completed on 2026-05-25: added aggregate in-app SLA signals for handoff notifications. Urgent unacknowledged open handoff notifications breach after 15 minutes and count as internal escalation due; standard handoff notifications breach after 4 hours. Operational health now includes only aggregate SLA breach/escalation counts. No external email, push, WhatsApp, Telegram, monitoring, analytics, or real health data was connected. App tests now include 78 passing tests.
+
 Tasks:
 
 1. Keep clinical taxonomy approval, provider review, and real-channel policy review as launch gates.
