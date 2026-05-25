@@ -920,3 +920,42 @@ app: npm run build -> passed
 ### Next Correct Step For Codex
 
 Proceed to Release Verification, CI Script, and Dependency Gate. Keep dependency remediation conservative and do not run breaking `npm audit fix --force`.
+
+## Phase 19 Handoff Notes - 2026-05-25
+
+Completed by: Codex
+
+### What Was Done
+
+- Created `docs/PHASE_19_RELEASE_VERIFICATION_DEPENDENCY_GATE_SPEC.md`.
+- Added `app/scripts/release-verify.mjs`.
+- Added `npm run release:verify` to `app/package.json`.
+- Release verification runs core package tests, app lint, app unit/API tests, production build, and `npm audit --omit=dev --json`.
+- Dependency gate allows only the documented R-405 production findings:
+  - `next:postcss`
+  - `postcss:GHSA-qx2v-qp2m-jg93`
+- Unknown production audit findings fail closed.
+- High or critical production audit findings fail closed.
+- RLS and visual tests remain separate explicit commands because they depend on local Supabase/browser setup.
+- Updated app README checks.
+
+### What Was NOT Done
+
+- No GitHub Actions or remote CI service was added.
+- No dependency upgrade was applied.
+- No `npm audit fix --force` was run.
+- No canary Next.js version or npm override was added.
+- No real providers, real channels, monitoring, analytics, or real health data was connected.
+
+### Verification Commands
+
+```text
+app: npm run release:verify -> passed
+core: npm test -> 35/35 passed inside release verification
+app: npm test -> 78/78 passed inside release verification
+app: npm audit --omit=dev --json -> known R-405 findings only
+```
+
+### Next Correct Step For Codex
+
+Proceed to Pilot Readiness Evidence Pack. Keep R-405 open and production launch blocked until a safe stable Next.js/PostCSS patch path exists.

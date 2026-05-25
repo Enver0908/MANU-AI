@@ -9,7 +9,8 @@
     "lint": "eslint",
     "test": "vitest run src --exclude src/lib/supabase-rls.integration.test.ts",
     "test:rls": "vitest run src/lib/supabase-rls.integration.test.ts",
-    "test:visual": "npm run build && playwright test"
+    "test:visual": "npm run build && playwright test",
+    "release:verify": "node scripts/release-verify.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.10.3",

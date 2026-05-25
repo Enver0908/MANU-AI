@@ -526,6 +526,33 @@ Status:
 - Extended operational health snapshot with SLA breach and urgent escalation counts.
 - App tests now include 78 tests.
 
+## Phase 19: Release Verification, CI Script, And Dependency Gate - Completed 2026-05-25
+
+Goal: add a repeatable local release verification command and conservative dependency audit gate.
+
+Work:
+
+- Add a local release verification script.
+- Run core package tests, lint, unit/API tests, production build, and production dependency audit from one command.
+- Keep R-405 visible without applying breaking `npm audit fix --force`.
+- Fail on unknown production audit findings.
+- Keep RLS and visual tests as separate explicit checks.
+
+Done criteria:
+
+- `npm run release:verify` exists.
+- The command passes when the only production audit findings are the documented R-405 Next.js/PostCSS findings.
+- The command fails closed for malformed audit output, unknown production findings, or high/critical production findings.
+- Dependency gate output states that R-405 remains a production launch blocker.
+- No dependency upgrade, provider, real channel, monitoring, analytics, or real health data is connected.
+
+Status:
+
+- Added `docs/PHASE_19_RELEASE_VERIFICATION_DEPENDENCY_GATE_SPEC.md`.
+- Added `app/scripts/release-verify.mjs`.
+- Added app `release:verify` npm script.
+- Verified `npm run release:verify` passes with 35 core tests, 78 app tests, and the known R-405 production audit warning.
+
 ## Always-On Gates
 
 - No real health data before legal/privacy review.

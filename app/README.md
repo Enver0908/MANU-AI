@@ -33,9 +33,12 @@ npm run lint
 npm test
 npm run test:rls
 npm run build
+npm run release:verify
 ```
 
 The scripts use `--webpack` because Turbopack did not resolve the local symlinked core package reliably.
+
+`npm run release:verify` runs the core package tests, lint, unit/API tests, production build, and the production dependency audit gate. It allows only the documented R-405 Next.js/PostCSS finding and does not run `npm audit fix --force`.
 
 ## Supabase CLI
 

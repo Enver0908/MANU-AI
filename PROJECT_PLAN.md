@@ -1170,6 +1170,16 @@ Phase 18 notification SLA and internal escalation completed on 2026-05-25:
 - App tests now include 78 passing tests.
 - No real email, push, WhatsApp, Telegram, monitoring, analytics, secret manager, or real health data was connected.
 
+Phase 19 release verification, CI script, and dependency gate completed on 2026-05-25:
+
+- Added a release verification and dependency gate spec.
+- Added `npm run release:verify`.
+- Release verification runs core package tests, lint, app tests, production build, and production dependency audit.
+- The dependency gate allows only the documented R-405 Next.js/PostCSS production audit finding.
+- Unknown production audit findings and high/critical production vulnerabilities fail closed.
+- `npm audit fix --force` remains blocked.
+- `npm run release:verify` passes with 35 core tests and 78 app tests while reporting R-405 as an open production launch blocker.
+
 ### Sprint Tasks
 
 1. Create `MANU-AI/docs/RISK_REGISTER.md`.
