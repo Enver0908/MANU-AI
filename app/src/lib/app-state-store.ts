@@ -1,6 +1,6 @@
 import { createBlankClient, createInitialState } from "./seed-data";
 import { AppDomainError } from "./app-errors";
-import { anonymizeClientInState, buildClientScopedExport } from "./data-governance";
+import { anonymizeClientInState, buildClientScopedExport, recordClientExportInState } from "./data-governance";
 import {
   approveDraftMessageInState,
   addClientToState,
@@ -51,6 +51,10 @@ export function patchClientInState(state: ManuAppState, clientId: string, patch:
 
 export function exportClientInState(state: ManuAppState, clientId: string) {
   return buildClientScopedExport(state, clientId);
+}
+
+export function recordClientExportRequestInState(state: ManuAppState, clientId: string) {
+  return recordClientExportInState(state, clientId);
 }
 
 export function anonymizeClientDataInState(state: ManuAppState, clientId: string) {

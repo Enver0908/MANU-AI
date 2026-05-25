@@ -36,6 +36,7 @@ describe("Supabase scoped access", () => {
 
     expect(scoped.clients.map((client) => client.id)).toEqual([assignedClientId]);
     expect(scoped.handoffCases.every((handoff) => handoff.clientId === assignedClientId)).toBe(true);
+    expect(scoped.dataRequests.every((request) => request.clientId === assignedClientId)).toBe(true);
   });
 
   it("keeps auditor app state free of raw client and message records", () => {
@@ -49,6 +50,7 @@ describe("Supabase scoped access", () => {
     expect(scoped.aiDecisions).toEqual([]);
     expect(scoped.handoffCases).toEqual([]);
     expect(scoped.notifications).toEqual([]);
+    expect(scoped.dataRequests).toEqual([]);
   });
 });
 
@@ -63,6 +65,28 @@ function scopedFixture() {
       index === 0 ? conversation : { ...conversation, dietitianId: OTHER_DIETITIAN_ID },
     ),
     handoffCases: state.handoffCases.map((handoff) => ({ ...handoff, clientId: state.clients[1].id })),
+    dataRequests: [
+      {
+        id: "data-request-assigned",
+        tenantId: state.tenant.id,
+        clientId: state.clients[1].id,
+        requestType: "export",
+        status: "completed",
+        requestedByDietitianId: state.dietitian.id,
+        completedAt: "2026-05-25T00:00:00.000Z",
+        createdAt: "2026-05-25T00:00:00.000Z",
+      },
+      {
+        id: "data-request-hidden",
+        tenantId: state.tenant.id,
+        clientId: state.clients[2].id,
+        requestType: "export",
+        status: "completed",
+        requestedByDietitianId: OTHER_DIETITIAN_ID,
+        completedAt: "2026-05-25T00:00:00.000Z",
+        createdAt: "2026-05-25T00:00:00.000Z",
+      },
+    ],
   };
 }
 

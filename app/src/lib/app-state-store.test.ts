@@ -6,6 +6,7 @@ import {
   dismissDraftInState,
   anonymizeClientDataInState,
   exportClientInState,
+  recordClientExportRequestInState,
   releaseHumanTakeoverInState,
   simulateInState,
   updateHandoffStatusInState,
@@ -139,6 +140,26 @@ describe("app state store operations", () => {
     expect(bundle.aiDecisions.every((decision) => decision.clientId === "client-elif")).toBe(true);
   });
 
+  it("records client export requests in the legal operations ledger", async () => {
+    const state = await simulateInState(createInitialState(), {
+      clientId: "client-elif",
+      body: "D vitamini takviyesi kullanayim mi?",
+      idempotencyKey: "export-ledger",
+    });
+    const next = recordClientExportRequestInState(state, "client-elif");
+    const bundle = exportClientInState(next, "client-elif");
+
+    expect(next.dataRequests).toHaveLength(1);
+    expect(next.dataRequests[0]).toMatchObject({
+      clientId: "client-elif",
+      requestType: "export",
+      status: "completed",
+      requestedByDietitianId: next.dietitian.id,
+    });
+    expect(bundle.dataRequests).toEqual(next.dataRequests);
+    expect(next.auditEvents.some((event) => event.eventType === "client_data_exported")).toBe(true);
+  });
+
   it("anonymizes client data and invalidates promptable memory", async () => {
     const state = await simulateInState(createInitialState(), {
       clientId: "client-mert",
@@ -158,6 +179,12 @@ describe("app state store operations", () => {
     expect(conversation?.rollingSummary).toBe("");
     expect(promptableMessages.every((message) => message.body === "[client data anonymized]")).toBe(true);
     expect(next.auditEvents.some((event) => event.eventType === "client_data_anonymized")).toBe(true);
+    expect(next.dataRequests).toHaveLength(1);
+    expect(next.dataRequests[0]).toMatchObject({
+      clientId: "client-mert",
+      requestType: "anonymization",
+      status: "completed",
+    });
   });
 
   it("keeps retention durations behind legal review placeholders", () => {

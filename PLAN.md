@@ -421,6 +421,8 @@ Phase 12 RBAC authorization completed on 2026-05-25: production Supabase API pat
 
 Phase 13 client assignment and scoped access completed on 2026-05-25: added `client_assignments` migration, service-layer Supabase app-state scoping, and RLS assertions. Owner/admin remain tenant-wide, dietitians see owned plus assigned clients, assistants see assigned clients only, and auditors receive no raw client/message state until a minimized auditor view exists. App tests now include 62 passing tests.
 
+Phase 14 DSAR, retention, and legal ops ledger completed on 2026-05-25: added `data_requests` migration and app-state ledger records for completed export/anonymization operations. Export bundles now include target-client data request history, while final retention durations and deletion automation remain legal-review-gated. App tests now include 63 passing tests.
+
 Tasks:
 
 1. Keep clinical taxonomy approval, provider review, and real-channel policy review as launch gates.

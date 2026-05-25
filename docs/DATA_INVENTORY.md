@@ -77,11 +77,13 @@ Before pilot data is processed, MANU-AI needs production policy approval for:
 
 Phase 11 draft runbooks were added for incident response, backup/restore, and secret rotation. They are operating evidence drafts only and do not approve real pilot data processing.
 
+Phase 14 added `data_requests` as a legal operations ledger for completed client export and anonymization actions. This ledger is tenant/client-scoped and does not set final retention durations or enable automatic deletion.
+
 Phase 5 technical skeleton completed on 2026-05-25:
 
 - Retention-policy placeholders exist in `app/src/lib/data-governance.ts`; all final durations remain `legal_review_required`.
 - `/api/clients/[id]/export` returns a tenant/client-scoped export bundle.
 - `/api/clients/[id]/anonymize` clears promptable client profile, channel identifier, rolling memory, message bodies, and AI decision references.
-- Tests verify export scoping, memory invalidation, and legal-review retention placeholders.
+- Tests verify export scoping, memory invalidation, legal ops ledger records, and legal-review retention placeholders.
 
 These workflows must continue to preserve tenant isolation and must not export provider secrets, raw audit internals, or unrelated tenant data.

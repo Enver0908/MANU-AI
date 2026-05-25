@@ -5,6 +5,7 @@ import type {
   AuditEventRecord,
   ClientRecord,
   ConversationRecord,
+  DataRequestRecord,
   HandoffCaseRecord,
   ManuAppState,
   MessageRecord,
@@ -31,6 +32,7 @@ export type ClientScopedExport = {
   riskAssessments: RiskAssessmentRecord[];
   handoffCases: HandoffCaseRecord[];
   notifications: NotificationRecord[];
+  dataRequests: DataRequestRecord[];
   auditEvents: AuditEventRecord[];
 };
 
@@ -104,6 +106,7 @@ export function buildClientScopedExport(state: ManuAppState, clientId: string): 
     notifications: state.notifications.filter(
       (notification) => notification.entityType === "handoff_case" && handoffIds.has(notification.entityId),
     ),
+    dataRequests: state.dataRequests.filter((request) => request.clientId === client.id),
     auditEvents: state.auditEvents.filter(
       (event) =>
         event.entityId === client.id ||
@@ -127,6 +130,7 @@ export function anonymizeClientInState(state: ManuAppState, clientId: string): M
     state.aiDecisions.filter((decision) => decision.clientId === client.id).map((decision) => decision.id),
   );
   const now = new Date().toISOString();
+  const dataRequest = buildDataRequest(state, client.id, "anonymization", "completed", now);
 
   return {
     ...state,
@@ -195,6 +199,49 @@ export function anonymizeClientInState(state: ManuAppState, clientId: string): M
         createdAt: now,
       },
     ],
+    dataRequests: [...state.dataRequests, dataRequest],
+  };
+}
+
+export function recordClientExportInState(state: ManuAppState, clientId: string): ManuAppState {
+  const client = findClient(state, clientId);
+  const now = new Date().toISOString();
+  const dataRequest = buildDataRequest(state, client.id, "export", "completed", now);
+
+  return {
+    ...state,
+    dataRequests: [...state.dataRequests, dataRequest],
+    auditEvents: [
+      ...state.auditEvents,
+      {
+        id: crypto.randomUUID(),
+        tenantId: state.tenant.id,
+        eventType: "client_data_exported",
+        entityType: "client",
+        entityId: client.id,
+        metadata: { source: "data_governance", dataRequestId: dataRequest.id, minimized: true },
+        createdAt: now,
+      },
+    ],
+  };
+}
+
+function buildDataRequest(
+  state: ManuAppState,
+  clientId: string,
+  requestType: DataRequestRecord["requestType"],
+  status: DataRequestRecord["status"],
+  now: string,
+): DataRequestRecord {
+  return {
+    id: crypto.randomUUID(),
+    tenantId: state.tenant.id,
+    clientId,
+    requestType,
+    status,
+    requestedByDietitianId: state.dietitian.id,
+    completedAt: status === "completed" ? now : null,
+    createdAt: now,
   };
 }
 

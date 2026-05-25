@@ -169,6 +169,17 @@ export type NotificationRecord = {
   createdAt: string;
 };
 
+export type DataRequestRecord = {
+  id: string;
+  tenantId: string;
+  clientId: string;
+  requestType: "export" | "anonymization" | "deletion";
+  status: "requested" | "review_required" | "completed" | "rejected";
+  requestedByDietitianId: string | null;
+  completedAt: string | null;
+  createdAt: string;
+};
+
 export type ManuAppState = {
   tenant: TenantRecord;
   dietitian: DietitianRecord;
@@ -180,6 +191,7 @@ export type ManuAppState = {
   handoffCases: HandoffCaseRecord[];
   auditEvents: AuditEventRecord[];
   notifications: NotificationRecord[];
+  dataRequests: DataRequestRecord[];
   processedSimulationKeys: string[];
   lastSimulation: SimulationResult | null;
 };

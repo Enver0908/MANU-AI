@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
-import { exportClientInState, getFallbackState } from "@/lib/app-state-store";
+import {
+  exportClientInState,
+  getFallbackState,
+  recordClientExportRequestInState,
+  saveFallbackState,
+} from "@/lib/app-state-store";
 import { domainErrorResponse } from "@/lib/app-errors";
 import { authErrorResponse, requireCapability, resolveAppTenantContext } from "@/lib/auth-context";
 import { exportSupabaseClientData, isSupabaseStoreConfigured } from "@/lib/supabase-store";
@@ -22,7 +27,8 @@ export async function GET(_request: Request, context: { params: Promise<{ id: st
   }
 
   try {
-    return NextResponse.json(exportClientInState(getFallbackState(), id));
+    const nextState = saveFallbackState(recordClientExportRequestInState(getFallbackState(), id));
+    return NextResponse.json(exportClientInState(nextState, id));
   } catch (error) {
     return domainErrorResponse(error);
   }

@@ -391,6 +391,33 @@ Status:
 - Added RLS integration assertions for `client_assignments`.
 - App tests now include 62 tests.
 
+## Phase 14: DSAR, Retention, And Legal Ops Ledger - Completed 2026-05-25
+
+Goal: record client data export and anonymization operations in a tenant/client-scoped legal operations ledger.
+
+Work:
+
+- Add `data_requests` records to local app state and Supabase.
+- Record completed export and anonymization operations.
+- Include client-scoped data request history in export bundles.
+- Keep final retention durations and deletion automation behind legal review.
+
+Done criteria:
+
+- Export creates a completed `export` data request.
+- Anonymization creates a completed `anonymization` data request.
+- Export bundles include only the target client's data request history.
+- RLS integration covers `data_requests` tenant isolation.
+- No automatic destructive deletion job is added.
+
+Status:
+
+- Added `docs/PHASE_14_DSAR_RETENTION_LEGAL_OPS_SPEC.md`.
+- Added migration `20260525050000_data_requests.sql`.
+- Added `DataRequestRecord` and `dataRequests` state.
+- Supabase and fallback export/anonymization paths now record legal ops ledger entries.
+- App tests now include 63 tests.
+
 ## Always-On Gates
 
 - No real health data before legal/privacy review.

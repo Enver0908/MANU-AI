@@ -747,3 +747,39 @@ app: npm run build -> passed
 ### Next Correct Step For Codex
 
 Proceed to DSAR, retention, and legal operations ledger. Keep assignment UI and minimized auditor dashboard as future work unless explicitly requested.
+
+## Phase 14 Handoff Notes - 2026-05-25
+
+Completed by: Codex
+
+### What Was Done
+
+- Created `docs/PHASE_14_DSAR_RETENTION_LEGAL_OPS_SPEC.md`.
+- Added migration `app/supabase/migrations/20260525050000_data_requests.sql`.
+- Added `DataRequestRecord` and `dataRequests` to `ManuAppState`.
+- Fallback export now records a completed `export` data request and minimized `client_data_exported` audit event.
+- Fallback anonymization now records a completed `anonymization` data request.
+- Supabase export/anonymization paths persist `data_requests`.
+- Client export bundles include target-client data request history.
+- RLS integration covers `data_requests` tenant isolation.
+
+### What Was NOT Done
+
+- No automatic deletion scheduler was added.
+- No final retention durations were set.
+- No client-facing DSAR portal was added.
+- No real WhatsApp, Telegram, Gemini, push/email provider, monitoring vendor, secret manager, or real health data was connected.
+
+### Verification Commands
+
+```text
+app: npm test -> 63/63 passed
+app: npm run lint -> passed
+app: npx supabase db push --local -> applied 20260525050000_data_requests.sql
+app: npm run test:rls -> 5/5 passed against local Supabase
+app: npm run build -> passed
+```
+
+### Next Correct Step For Codex
+
+Proceed to Safe Observability and Operational Health. Keep deletion automation and final retention durations blocked until legal review.

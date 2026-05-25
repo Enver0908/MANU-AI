@@ -204,6 +204,7 @@ export function createInitialState(): ManuAppState {
     handoffCases: [],
     auditEvents: [],
     notifications: [],
+    dataRequests: [],
     processedSimulationKeys: ["seed-green"],
     lastSimulation: null,
   };

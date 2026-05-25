@@ -2,7 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { getSupabaseAdminClient } from "./supabase";
 import { createInitialState } from "./seed-data";
 import { isSafetyChecklistComplete, normalizeSafetyChecklist } from "./safety-checklist";
-import { anonymizeClientInState, buildClientScopedExport } from "./data-governance";
+import { anonymizeClientInState, buildClientScopedExport, recordClientExportInState } from "./data-governance";
 import {
   addManualReplyInState,
   approveDraftInState,
@@ -20,6 +20,7 @@ import type {
   AuditEventRecord,
   ClientRecord,
   ConversationRecord,
+  DataRequestRecord,
   HandoffCaseRecord,
   ManuAppState,
   MessageRecord,
@@ -161,6 +162,16 @@ type DbNotification = {
   acknowledged_at: string | null;
   created_at: string;
 };
+type DbDataRequest = {
+  id: string;
+  tenant_id: string;
+  client_id: string;
+  request_type: DataRequestRecord["requestType"];
+  status: DataRequestRecord["status"];
+  requested_by_dietitian_id: string | null;
+  completed_at: string | null;
+  created_at: string;
+};
 
 export function isSupabaseStoreConfigured() {
   if (process.env.MANU_DEV_FALLBACK_STORE === "true") {
@@ -187,6 +198,7 @@ export async function loadSupabaseState(context = demoTenantContext()) {
     riskAssessmentsResult,
     handoffsResult,
     notificationsResult,
+    dataRequestsResult,
     auditEventsResult,
     processedEventsResult,
   ] = await Promise.all([
@@ -202,6 +214,7 @@ export async function loadSupabaseState(context = demoTenantContext()) {
     supabase.from("risk_assessments").select("*").eq("tenant_id", context.tenantId).order("created_at"),
     supabase.from("handoff_cases").select("*").eq("tenant_id", context.tenantId).order("created_at"),
     supabase.from("notifications").select("*").eq("tenant_id", context.tenantId).order("created_at"),
+    supabase.from("data_requests").select("*").eq("tenant_id", context.tenantId).order("created_at"),
     supabase.from("audit_events").select("*").eq("tenant_id", context.tenantId).order("created_at"),
     supabase.from("processed_inbound_events").select("*").eq("tenant_id", context.tenantId),
   ]);
@@ -218,6 +231,7 @@ export async function loadSupabaseState(context = demoTenantContext()) {
   throwIfError(riskAssessmentsResult.error);
   throwIfError(handoffsResult.error);
   throwIfError(notificationsResult.error);
+  throwIfError(dataRequestsResult.error);
   throwIfError(auditEventsResult.error);
   throwIfError(processedEventsResult.error);
 
@@ -244,6 +258,7 @@ export async function loadSupabaseState(context = demoTenantContext()) {
       riskAssessments: (riskAssessmentsResult.data || []).map(mapRiskAssessment),
       handoffCases: (handoffsResult.data || []).map(mapHandoff),
       notifications: (notificationsResult.data || []).map(mapNotification),
+      dataRequests: (dataRequestsResult.data || []).map(mapDataRequest),
       auditEvents: (auditEventsResult.data || []).map(mapAuditEvent),
       processedSimulationKeys: (processedEventsResult.data || []).map((event) => event.provider_event_id),
       lastSimulation: null,
@@ -287,6 +302,7 @@ export function scopeSupabaseState(
     notifications: state.notifications.filter(
       (notification) => notification.entityType === "handoff_case" && visibleHandoffIds.has(notification.entityId),
     ),
+    dataRequests: state.dataRequests.filter((request) => visibleClientIds.has(request.clientId)),
     auditEvents: state.auditEvents.filter(
       (event) =>
         visibleClientIds.has(event.entityId) ||
@@ -389,7 +405,20 @@ export async function patchSupabaseClientRecord(
 }
 
 export async function exportSupabaseClientData(clientId: string, context = demoTenantContext()) {
-  return buildClientScopedExport(await loadSupabaseState(context), clientId);
+  const before = await loadSupabaseState(context);
+  const after = recordClientExportInState(before, clientId);
+  const beforeRequests = new Set(before.dataRequests.map((item) => item.id));
+  const beforeAudits = new Set(before.auditEvents.map((item) => item.id));
+  const supabase = requireSupabase();
+
+  for (const request of after.dataRequests.filter((item) => !beforeRequests.has(item.id))) {
+    await insertDataRequest(supabase, request);
+  }
+  for (const audit of after.auditEvents.filter((item) => !beforeAudits.has(item.id))) {
+    await insertAudit(supabase, audit);
+  }
+
+  return buildClientScopedExport(after, clientId);
 }
 
 export async function anonymizeSupabaseClientData(clientId: string, context = demoTenantContext()) {
@@ -406,6 +435,7 @@ export async function anonymizeSupabaseClientData(clientId: string, context = de
     .filter((conversation) => conversation.clientId === client.id)
     .map((conversation) => conversation.id);
   const beforeAudits = new Set(before.auditEvents.map((item) => item.id));
+  const beforeRequests = new Set(before.dataRequests.map((item) => item.id));
 
   await upsertClient(supabase, client);
   await checked(
@@ -483,6 +513,9 @@ export async function anonymizeSupabaseClientData(clientId: string, context = de
 
   for (const audit of after.auditEvents.filter((item) => !beforeAudits.has(item.id))) {
     await insertAudit(supabase, audit);
+  }
+  for (const request of after.dataRequests.filter((item) => !beforeRequests.has(item.id))) {
+    await insertDataRequest(supabase, request);
   }
 
   return loadSupabaseState(context);
@@ -681,6 +714,7 @@ async function ensureDemoMembership(supabase: SupabaseClient, userId: string) {
 async function deleteDemoData(supabase: SupabaseClient, tenantId = DEMO_TENANT_UUID) {
   const tables = [
     "processed_inbound_events",
+    "data_requests",
     "notifications",
     "audit_events",
     "handoff_cases",
@@ -987,6 +1021,21 @@ async function insertAudit(supabase: SupabaseClient, audit: AuditEventRecord) {
   );
 }
 
+async function insertDataRequest(supabase: SupabaseClient, request: DataRequestRecord) {
+  await checked(
+    supabase.from("data_requests").insert({
+      id: request.id,
+      tenant_id: request.tenantId,
+      client_id: request.clientId,
+      request_type: request.requestType,
+      status: request.status,
+      requested_by_dietitian_id: request.requestedByDietitianId,
+      completed_at: request.completedAt,
+      created_at: request.createdAt,
+    }),
+  );
+}
+
 async function insertNotification(supabase: SupabaseClient, notification: NotificationRecord) {
   await checked(
     supabase.from("notifications").insert({
@@ -1199,6 +1248,19 @@ function mapNotification(notification: DbNotification): NotificationRecord {
     read: notification.read,
     acknowledgedAt: notification.acknowledged_at,
     createdAt: notification.created_at,
+  };
+}
+
+function mapDataRequest(request: DbDataRequest): DataRequestRecord {
+  return {
+    id: request.id,
+    tenantId: request.tenant_id,
+    clientId: request.client_id,
+    requestType: request.request_type,
+    status: request.status,
+    requestedByDietitianId: request.requested_by_dietitian_id,
+    completedAt: request.completed_at,
+    createdAt: request.created_at,
   };
 }
 

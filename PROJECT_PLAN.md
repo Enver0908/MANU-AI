@@ -1124,6 +1124,15 @@ Phase 13 client assignment and scoped access completed on 2026-05-25:
 - App tests now include 62 passing tests.
 - No assignment UI, minimized auditor dashboard, real providers, real channels, push/email adapters, or real health data were connected.
 
+Phase 14 DSAR, retention, and legal ops ledger completed on 2026-05-25:
+
+- Added `data_requests` migration and `DataRequestRecord` app-state entries.
+- Fallback and Supabase export/anonymization paths now record completed legal ops requests.
+- Client export bundles include only the target client's data request history.
+- RLS integration covers `data_requests` tenant isolation.
+- App tests now include 63 passing tests.
+- No automatic deletion scheduler, final retention durations, real providers, real channels, push/email adapters, or real health data were connected.
+
 ### Sprint Tasks
 
 1. Create `MANU-AI/docs/RISK_REGISTER.md`.
