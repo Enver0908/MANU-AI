@@ -1,0 +1,112 @@
+import { beforeEach, describe, expect, it } from "vitest";
+import { POST as postAnonymizeClient } from "./clients/[id]/anonymize/route";
+import { GET as getClientExport } from "./clients/[id]/export/route";
+import { POST as postDraftAction } from "./messages/drafts/[id]/route";
+import { POST as postAcknowledgeNotification } from "./notifications/[id]/acknowledge/route";
+import { POST as postReadNotification } from "./notifications/[id]/read/route";
+import { POST as postSimulator } from "./simulator/route";
+import { resetFallbackState } from "@/lib/app-state-store";
+
+describe("API controlled domain errors", () => {
+  beforeEach(() => {
+    process.env.MANU_DEV_FALLBACK_STORE = "true";
+    resetFallbackState();
+  });
+
+  it("returns a controlled error for unknown simulator clients", async () => {
+    const response = await postSimulator(
+      new Request("http://localhost/api/simulator", {
+        method: "POST",
+        body: JSON.stringify({
+          clientId: "missing-client",
+          body: "Bugun kahvaltida ne yiyebilirim?",
+          idempotencyKey: "missing-client",
+        }),
+      }) as never,
+    );
+    const payload = await response.json();
+
+    expect(response.status).toBe(404);
+    expect(payload.error).toBe("client_not_found");
+  });
+
+  it("returns a controlled error for non-draft draft actions", async () => {
+    const response = await postDraftAction(
+      new Request("http://localhost/api/messages/drafts/message-seed-1", {
+        method: "POST",
+        body: JSON.stringify({ action: "approve" }),
+      }) as never,
+      { params: Promise.resolve({ id: "message-seed-1" }) },
+    );
+    const payload = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(payload.error).toBe("message_not_ai_draft");
+  });
+
+  it("returns a client-scoped export in fallback mode", async () => {
+    const response = await getClientExport(new Request("http://localhost/api/clients/client-mert/export") as never, {
+      params: Promise.resolve({ id: "client-mert" }),
+    });
+    const payload = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(payload.clientId).toBe("client-mert");
+    expect(payload.messages.every((message: { conversationId: string }) => message.conversationId === "conversation-client-mert")).toBe(true);
+  });
+
+  it("anonymizes client data in fallback mode", async () => {
+    const response = await postAnonymizeClient(
+      new Request("http://localhost/api/clients/client-mert/anonymize", { method: "POST" }) as never,
+      { params: Promise.resolve({ id: "client-mert" }) },
+    );
+    const payload = await response.json();
+    const client = payload.clients.find((item: { id: string }) => item.id === "client-mert");
+
+    expect(response.status).toBe(200);
+    expect(client.fullName).toBe("Anonymized Client");
+    expect(client.channelPermission).toBe("blocked");
+  });
+
+  it("marks and acknowledges notifications in fallback mode", async () => {
+    const simulationResponse = await postSimulator(
+      new Request("http://localhost/api/simulator", {
+        method: "POST",
+        body: JSON.stringify({
+          clientId: "client-mert",
+          body: "Alerjiden nefes alamiyorum, bogazim sisti.",
+          idempotencyKey: "notification-api-red",
+        }),
+      }) as never,
+    );
+    const simulationPayload = await simulationResponse.json();
+    const notificationId = simulationPayload.notifications[0].id;
+
+    const readResponse = await postReadNotification(new Request("http://localhost/api/notifications/read") as never, {
+      params: Promise.resolve({ id: notificationId }),
+    });
+    const readPayload = await readResponse.json();
+    expect(readResponse.status).toBe(200);
+    expect(readPayload.notifications[0].read).toBe(true);
+
+    const acknowledgeResponse = await postAcknowledgeNotification(
+      new Request("http://localhost/api/notifications/acknowledge") as never,
+      {
+        params: Promise.resolve({ id: notificationId }),
+      },
+    );
+    const acknowledgePayload = await acknowledgeResponse.json();
+    expect(acknowledgeResponse.status).toBe(200);
+    expect(acknowledgePayload.notifications[0].acknowledgedAt).not.toBeNull();
+  });
+
+  it("returns a controlled error for unknown notification actions", async () => {
+    const response = await postReadNotification(new Request("http://localhost/api/notifications/missing/read") as never, {
+      params: Promise.resolve({ id: "missing-notification" }),
+    });
+    const payload = await response.json();
+
+    expect(response.status).toBe(404);
+    expect(payload.error).toBe("notification_not_found");
+  });
+});

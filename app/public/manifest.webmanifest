@@ -1,0 +1,19 @@
+{
+  "name": "MANU-AI",
+  "short_name": "MANU-AI",
+  "description": "Dietitian operations console for the MANU-AI local prototype.",
+  "start_url": "/dashboard",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f7f5ef",
+  "theme_color": "#064e3b",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

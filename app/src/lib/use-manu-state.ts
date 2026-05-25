@@ -1,0 +1,118 @@
+"use client";
+
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { createInitialState } from "./seed-data";
+import type { Channel, ClientRecord, ManuAppState, SimulationRequest } from "./types";
+
+export function useManuState() {
+  const [state, setState] = useState<ManuAppState>(() => createInitialState());
+  const [hydrated, setHydrated] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
+
+  const replaceFromApi = useCallback(async (url: string, init?: RequestInit) => {
+    const response = await fetch(url, {
+      ...init,
+      headers: {
+        "content-type": "application/json",
+        ...init?.headers,
+      },
+    });
+
+    if (!response.ok) {
+      if (response.status === 401 || response.status === 403) {
+        try {
+          const body = await response.json();
+          setAuthError(body.error || `auth_error_${response.status}`);
+        } catch {
+          setAuthError(`auth_error_${response.status}`);
+        }
+      }
+      throw new Error(`Request failed: ${response.status}`);
+    }
+
+    setAuthError(null);
+    const nextState = (await response.json()) as ManuAppState;
+    setState(nextState);
+    return nextState;
+  }, []);
+
+  useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      replaceFromApi("/api/app-state")
+        .catch(() => setState(createInitialState()))
+        .finally(() => {
+          setHydrated(true);
+        });
+    }, 0);
+
+    return () => window.clearTimeout(timeout);
+  }, [replaceFromApi]);
+
+  return useMemo(
+    () => ({
+      state,
+      hydrated,
+      authError,
+      createClient: (input: { fullName: string; channel: Channel; channelUserId: string }) =>
+        replaceFromApi("/api/clients", {
+          method: "POST",
+          body: JSON.stringify(input),
+        }),
+      updateClient: (clientId: string, patch: Partial<ClientRecord>) =>
+        replaceFromApi(`/api/clients/${clientId}`, {
+          method: "PATCH",
+          body: JSON.stringify(patch),
+        }),
+      releaseHumanTakeover: (clientId: string) =>
+        replaceFromApi(`/api/clients/${clientId}/release-takeover`, {
+          method: "POST",
+        }),
+      runSimulation: (input: SimulationRequest) =>
+        replaceFromApi("/api/simulator", {
+          method: "POST",
+          body: JSON.stringify(input),
+        }),
+      sendManualReply: (input: { clientId: string; body: string }) =>
+        replaceFromApi("/api/messages/manual", {
+          method: "POST",
+          body: JSON.stringify(input),
+        }),
+      approveDraft: (messageId: string) =>
+        replaceFromApi(`/api/messages/drafts/${messageId}`, {
+          method: "POST",
+          body: JSON.stringify({ action: "approve" }),
+        }),
+      editAndSendDraft: (messageId: string, body: string) =>
+        replaceFromApi(`/api/messages/drafts/${messageId}`, {
+          method: "POST",
+          body: JSON.stringify({ action: "edit_send", body }),
+        }),
+      dismissDraft: (messageId: string) =>
+        replaceFromApi(`/api/messages/drafts/${messageId}`, {
+          method: "POST",
+          body: JSON.stringify({ action: "dismiss" }),
+        }),
+      resolveHandoff: (handoffId: string) =>
+        replaceFromApi(`/api/handoffs/${handoffId}/resolve`, {
+          method: "POST",
+        }),
+      dismissHandoff: (handoffId: string) =>
+        replaceFromApi(`/api/handoffs/${handoffId}/dismiss`, {
+          method: "POST",
+        }),
+      markNotificationRead: (notificationId: string) =>
+        replaceFromApi(`/api/notifications/${notificationId}/read`, {
+          method: "POST",
+        }),
+      acknowledgeNotification: (notificationId: string) =>
+        replaceFromApi(`/api/notifications/${notificationId}/acknowledge`, {
+          method: "POST",
+        }),
+      resetState: () =>
+        replaceFromApi("/api/app-state", {
+          method: "POST",
+        }),
+    }),
+    [authError, hydrated, replaceFromApi, state],
+  );
+}

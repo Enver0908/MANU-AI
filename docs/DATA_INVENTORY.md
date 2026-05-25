@@ -1,0 +1,85 @@
+# MANU-AI Data Inventory
+
+## Purpose
+
+This inventory defines which data MANU-AI expects to process, why it is needed, whether it may enter an LLM prompt, and which controls are required.
+
+This is a planning artifact and must be reviewed before real client health data is processed.
+
+## Data Categories
+
+| Category | Examples | Purpose | LLM Allowed | Controls |
+| --- | --- | --- | --- | --- |
+| Tenant data | Clinic name, tenant ID, plan limits | Workspace isolation and billing | No | Tenant-scoped rows, RBAC |
+| Dietitian profile | Name, timezone, role, credential status | Attribution, handoff routing, voice setup | Limited name only | RBAC, audit access |
+| Dietitian voice samples | Approved sample replies | Voice profile generation | Yes, after approval | Use only submitted samples, no client secrets |
+| Client identity | Full name, client ID | Dashboard and conversation routing | First name/full name only when needed | Encryption where appropriate, RBAC |
+| Channel identity | WhatsApp phone, Telegram ID | Message routing | No | Separate mapping table, confirmation, opt-out state |
+| Health profile | Goal, diet type, conditions flags, pregnancy flag | Personalization and safety gating | Only allowlisted summary fields | Special-category controls, minimization |
+| Diet plan | Approved meal plan summary, swaps, restrictions | Grounded routine replies | Yes | Dietitian approval, versioning |
+| Allergies/restricted foods | Peanut allergy, lactose restriction | Avoid unsafe suggestions | Yes | High-safety prompt priority |
+| Medication/supplement flag | Uses medication, asks about supplement | Escalation | Flag only | No dose advice, handoff |
+| Clinical risk notes | Eating disorder risk, diabetes concern | Safety routing | Usually no; use high-risk flag | Dietitian-only by default |
+| AI activation state | Active/passive, active window, changed by dietitian | Decide whether AI may respond | No | Per-client control, audit history |
+| Conversation messages | Client/dietitian/assistant messages with origin labels | Inbox, memory, audit, dataset views | Recent bounded window only | Retention, redaction, tenant isolation |
+| Conversation memory | Rolling summary, durable facts | Context efficiency | Yes after safety filtering | Client-scoped, editable, deletable |
+| Handoff cases | Risk reason, urgency, status | Human review | No direct prompt use | Audit and notification controls |
+| AI decisions | Mode, risk, action, model, prompt version | Auditability | No | Immutable audit metadata |
+| Provider metadata | Message IDs, delivery state, errors | Reliability and support | No | Idempotency and operational logs |
+| Audit events | Actor, action, entity, timestamp | Traceability | No | Append-only, minimized metadata |
+
+## Prompt Allowlist v1
+
+The LLM may receive only:
+
+- Client name when needed for natural reply.
+- Selected persona behavior.
+- Dietitian voice profile.
+- Approved diet plan summary.
+- Allergies and restricted foods.
+- Pinned notes approved for AI use.
+- Rolling memory summary after safety filtering.
+- Recent bounded conversation window.
+- Current inbound message.
+- Same-dietitian approved style examples, only after de-identification and filtering.
+
+The LLM must not receive by default:
+
+- Full channel identifiers.
+- Raw phone numbers.
+- Legal identity documents.
+- Full medical history.
+- Medication dose details.
+- Dietitian-only risk notes.
+- Unbounded chat history.
+- Other clients' data.
+- Raw audit logs.
+- Imported messages with unknown author.
+- AI-generated replies unless approved or edited by a dietitian.
+
+## Retention Defaults
+
+Final retention periods require legal review. Until then:
+
+- Production pilot should keep data no longer than necessary for service delivery and auditability.
+- Deleted clients must be removed from active promptable context.
+- Audit logs should retain minimized metadata, not raw health message content unless legally required.
+- Backups must have a defined expiry and restore test.
+
+## Next Governance Work
+
+Before pilot data is processed, MANU-AI needs production policy approval for:
+
+- Final retention durations.
+- Legal basis matrix and DSAR operating procedure.
+- Backup expiry and restore-test policy.
+- Production deletion job ownership and approval workflow.
+
+Phase 5 technical skeleton completed on 2026-05-25:
+
+- Retention-policy placeholders exist in `app/src/lib/data-governance.ts`; all final durations remain `legal_review_required`.
+- `/api/clients/[id]/export` returns a tenant/client-scoped export bundle.
+- `/api/clients/[id]/anonymize` clears promptable client profile, channel identifier, rolling memory, message bodies, and AI decision references.
+- Tests verify export scoping, memory invalidation, and legal-review retention placeholders.
+
+These workflows must continue to preserve tenant isolation and must not export provider secrets, raw audit internals, or unrelated tenant data.
