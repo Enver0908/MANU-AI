@@ -363,6 +363,34 @@ Status:
 - Supabase-backed API routes now check capability before existing production actions.
 - App tests now include 58 tests.
 
+## Phase 13: Client Assignment And Scoped Access - Completed 2026-05-25
+
+Goal: add client assignment foundations and role-scoped Supabase app-state loading before assistant/auditor access is expanded.
+
+Work:
+
+- Add a `client_assignments` table and RLS policy.
+- Filter Supabase-loaded app state by role and assignment.
+- Keep owner/admin tenant-wide.
+- Keep dietitian scoped to owned plus assigned clients.
+- Keep assistant scoped to assigned clients only.
+- Keep auditor free of raw client/message state until a minimized auditor view exists.
+
+Done criteria:
+
+- Unassigned assistant receives no raw client records.
+- Auditor receives no raw clients, messages, AI decisions, handoffs, notifications, or risk assessments.
+- Assignment tenant isolation is covered by RLS integration.
+- Fallback local demo mode remains unchanged.
+
+Status:
+
+- Added `docs/PHASE_13_CLIENT_ASSIGNMENT_SCOPED_ACCESS_SPEC.md`.
+- Added migration `20260525040000_client_assignments.sql`.
+- Added `scopeSupabaseState()` and scoped access unit tests.
+- Added RLS integration assertions for `client_assignments`.
+- App tests now include 62 tests.
+
 ## Always-On Gates
 
 - No real health data before legal/privacy review.

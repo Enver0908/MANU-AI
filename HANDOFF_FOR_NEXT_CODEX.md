@@ -711,3 +711,39 @@ app: npm run lint -> passed
 ### Next Correct Step For Codex
 
 Proceed to client assignment and scoped access. Keep assistant/auditor mutation access blocked until that model exists.
+
+## Phase 13 Handoff Notes - 2026-05-25
+
+Completed by: Codex
+
+### What Was Done
+
+- Created `docs/PHASE_13_CLIENT_ASSIGNMENT_SCOPED_ACCESS_SPEC.md`.
+- Added migration `app/supabase/migrations/20260525040000_client_assignments.sql`.
+- Added `client_assignments` RLS coverage to `supabase-rls.integration.test.ts`.
+- Added `scopeSupabaseState()` in `supabase-store.ts`.
+- Added `supabase-store.test.ts` coverage for owner/admin, dietitian, assistant, and auditor scoping.
+- Owner/admin see all tenant app-state records.
+- Dietitians see owned plus assigned clients.
+- Assistants see assigned clients only.
+- Auditors receive no raw client/message/decision/handoff/notification records in app-state.
+
+### What Was NOT Done
+
+- No team-management or assignment UI was added.
+- No minimized auditor dashboard was added.
+- No real WhatsApp, Telegram, Gemini, push/email provider, monitoring vendor, secret manager, or real health data was connected.
+
+### Verification Commands
+
+```text
+app: npm test -> 62/62 passed
+app: npm run lint -> passed
+app: npx supabase db push --local -> applied 20260525040000_client_assignments.sql
+app: npm run test:rls -> 5/5 passed against local Supabase
+app: npm run build -> passed
+```
+
+### Next Correct Step For Codex
+
+Proceed to DSAR, retention, and legal operations ledger. Keep assignment UI and minimized auditor dashboard as future work unless explicitly requested.

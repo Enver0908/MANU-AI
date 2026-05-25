@@ -30,6 +30,8 @@ const TEST_MESSAGE_ID = "00000000-0000-4000-8000-000000000908";
 const OTHER_MESSAGE_ID = "00000000-0000-4000-8000-000000000909";
 const TEST_NOTIFICATION_ID = "00000000-0000-4000-8000-000000000910";
 const OTHER_NOTIFICATION_ID = "00000000-0000-4000-8000-000000000911";
+const TEST_ASSIGNMENT_ID = "00000000-0000-4000-8000-000000000912";
+const OTHER_ASSIGNMENT_ID = "00000000-0000-4000-8000-000000000913";
 const PASSWORD = "manu-rls-test-password";
 
 const maybeDescribe = shouldRun ? describe : describe.skip;
@@ -88,6 +90,10 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     const notifications = await member.from("notifications").select("id");
     expect(notifications.error).toBeNull();
     expect(notifications.data).toEqual([{ id: TEST_NOTIFICATION_ID }]);
+
+    const assignments = await member.from("client_assignments").select("id");
+    expect(assignments.error).toBeNull();
+    expect(assignments.data).toEqual([{ id: TEST_ASSIGNMENT_ID }]);
   });
 
   it("blocks a user without membership from tenant data", async () => {
@@ -112,6 +118,10 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     const notifications = await outsider.from("notifications").select("id");
     expect(notifications.error).toBeNull();
     expect(notifications.data).toHaveLength(0);
+
+    const assignments = await outsider.from("client_assignments").select("id");
+    expect(assignments.error).toBeNull();
+    expect(assignments.data).toHaveLength(0);
   });
 
   it("rejects cross-tenant writes through the anon client", async () => {
@@ -150,6 +160,14 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
 
     expect(notificationUpdate.error).toBeNull();
     expect(notificationUpdate.count ?? 0).toBe(0);
+
+    const assignmentInsert = await member.from("client_assignments").insert({
+      tenant_id: OTHER_TENANT_ID,
+      client_id: OTHER_CLIENT_ID,
+      dietitian_id: TEST_DIETITIAN_ID,
+    });
+
+    expect(assignmentInsert.error?.message).toMatch(/row-level security|violates foreign key/i);
   });
 
   it("stores simulator idempotency events with the simulated client channel", async () => {
@@ -395,6 +413,22 @@ async function seedTenants(admin: SupabaseClient, memberUserId: string) {
     ]),
   );
   await checked(
+    admin.from("client_assignments").insert([
+      {
+        id: TEST_ASSIGNMENT_ID,
+        tenant_id: TEST_TENANT_ID,
+        client_id: TEST_CLIENT_ID,
+        dietitian_id: TEST_DIETITIAN_ID,
+      },
+      {
+        id: OTHER_ASSIGNMENT_ID,
+        tenant_id: OTHER_TENANT_ID,
+        client_id: OTHER_CLIENT_ID,
+        dietitian_id: TEST_DIETITIAN_ID,
+      },
+    ]),
+  );
+  await checked(
     admin.from("notifications").insert([
       {
         id: TEST_NOTIFICATION_ID,
@@ -421,6 +455,7 @@ async function seedTenants(admin: SupabaseClient, memberUserId: string) {
 async function cleanup(admin: SupabaseClient) {
   await admin.from("notifications").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("client_ai_status_events").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("client_assignments").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("risk_assessments").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("conversation_memories").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("messages").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);

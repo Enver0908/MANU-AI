@@ -65,6 +65,10 @@ type DbChannel = {
   channel_user_id: string;
   display_handle: string | null;
 };
+export type DbClientAssignment = {
+  client_id: string;
+  dietitian_id: string;
+};
 type DbConversation = {
   id: string;
   tenant_id: string;
@@ -174,6 +178,7 @@ export async function loadSupabaseState(context = demoTenantContext()) {
     tenantResult,
     dietitianResult,
     clientsResult,
+    assignmentsResult,
     channelsResult,
     conversationsResult,
     memoriesResult,
@@ -188,6 +193,7 @@ export async function loadSupabaseState(context = demoTenantContext()) {
     supabase.from("tenants").select("*").eq("id", context.tenantId).single(),
     supabase.from("dietitians").select("*").eq("id", context.dietitianId).eq("tenant_id", context.tenantId).single(),
     supabase.from("clients").select("*").eq("tenant_id", context.tenantId).order("created_at"),
+    supabase.from("client_assignments").select("client_id, dietitian_id").eq("tenant_id", context.tenantId),
     supabase.from("client_channels").select("*").eq("tenant_id", context.tenantId),
     supabase.from("conversations").select("*").eq("tenant_id", context.tenantId).order("created_at"),
     supabase.from("conversation_memories").select("*").eq("tenant_id", context.tenantId),
@@ -203,6 +209,7 @@ export async function loadSupabaseState(context = demoTenantContext()) {
   throwIfError(tenantResult.error);
   throwIfError(dietitianResult.error);
   throwIfError(clientsResult.error);
+  throwIfError(assignmentsResult.error);
   throwIfError(channelsResult.error);
   throwIfError(conversationsResult.error);
   throwIfError(memoriesResult.error);
@@ -216,31 +223,113 @@ export async function loadSupabaseState(context = demoTenantContext()) {
 
   const channels = channelsResult.data || [];
   const memories = memoriesResult.data || [];
+  const scopedState = scopeSupabaseState(
+    {
+      tenant: {
+        id: tenantResult.data.id,
+        name: tenantResult.data.name,
+      },
+      dietitian: {
+        id: dietitianResult.data.id,
+        tenantId: dietitianResult.data.tenant_id,
+        displayName: dietitianResult.data.display_name,
+        timezone: dietitianResult.data.timezone,
+      },
+      clients: (clientsResult.data || []).map((client) => mapClient(client, channels)),
+      conversations: (conversationsResult.data || []).map((conversation) =>
+        mapConversation(conversation, memories),
+      ),
+      messages: (messagesResult.data || []).map(mapMessage),
+      aiDecisions: (decisionsResult.data || []).map(mapDecision),
+      riskAssessments: (riskAssessmentsResult.data || []).map(mapRiskAssessment),
+      handoffCases: (handoffsResult.data || []).map(mapHandoff),
+      notifications: (notificationsResult.data || []).map(mapNotification),
+      auditEvents: (auditEventsResult.data || []).map(mapAuditEvent),
+      processedSimulationKeys: (processedEventsResult.data || []).map((event) => event.provider_event_id),
+      lastSimulation: null,
+    },
+    context,
+    assignmentsResult.data || [],
+  );
+
+  return scopedState satisfies ManuAppState;
+}
+
+export function scopeSupabaseState(
+  state: ManuAppState,
+  context: AppTenantContext,
+  assignments: DbClientAssignment[],
+): ManuAppState {
+  const visibleClientIds = getVisibleClientIds(state.clients, context, assignments);
+  const visibleConversationIds = new Set(
+    state.conversations
+      .filter((conversation) => visibleClientIds.has(conversation.clientId))
+      .map((conversation) => conversation.id),
+  );
+  const visibleMessages = state.messages.filter((message) => visibleConversationIds.has(message.conversationId));
+  const visibleMessageIds = new Set(visibleMessages.map((message) => message.id));
+  const visibleDecisions = state.aiDecisions.filter((decision) => visibleClientIds.has(decision.clientId));
+  const visibleDecisionIds = new Set(visibleDecisions.map((decision) => decision.id));
+  const visibleHandoffs = state.handoffCases.filter((handoff) => visibleClientIds.has(handoff.clientId));
+  const visibleHandoffIds = new Set(visibleHandoffs.map((handoff) => handoff.id));
 
   return {
-    tenant: {
-      id: tenantResult.data.id,
-      name: tenantResult.data.name,
-    },
-    dietitian: {
-      id: dietitianResult.data.id,
-      tenantId: dietitianResult.data.tenant_id,
-      displayName: dietitianResult.data.display_name,
-      timezone: dietitianResult.data.timezone,
-    },
-    clients: (clientsResult.data || []).map((client) => mapClient(client, channels)),
-    conversations: (conversationsResult.data || []).map((conversation) =>
-      mapConversation(conversation, memories),
+    ...state,
+    clients: state.clients.filter((client) => visibleClientIds.has(client.id)),
+    conversations: state.conversations.filter((conversation) => visibleConversationIds.has(conversation.id)),
+    messages: visibleMessages,
+    aiDecisions: visibleDecisions,
+    riskAssessments: state.riskAssessments.filter(
+      (assessment) =>
+        visibleConversationIds.has(assessment.conversationId) || visibleMessageIds.has(assessment.messageId),
     ),
-    messages: (messagesResult.data || []).map(mapMessage),
-    aiDecisions: (decisionsResult.data || []).map(mapDecision),
-    riskAssessments: (riskAssessmentsResult.data || []).map(mapRiskAssessment),
-    handoffCases: (handoffsResult.data || []).map(mapHandoff),
-    notifications: (notificationsResult.data || []).map(mapNotification),
-    auditEvents: (auditEventsResult.data || []).map(mapAuditEvent),
-    processedSimulationKeys: (processedEventsResult.data || []).map((event) => event.provider_event_id),
-    lastSimulation: null,
-  } satisfies ManuAppState;
+    handoffCases: visibleHandoffs,
+    notifications: state.notifications.filter(
+      (notification) => notification.entityType === "handoff_case" && visibleHandoffIds.has(notification.entityId),
+    ),
+    auditEvents: state.auditEvents.filter(
+      (event) =>
+        visibleClientIds.has(event.entityId) ||
+        visibleConversationIds.has(event.entityId) ||
+        visibleMessageIds.has(event.entityId) ||
+        visibleDecisionIds.has(event.entityId) ||
+        visibleHandoffIds.has(event.entityId),
+    ),
+  };
+}
+
+function getVisibleClientIds(
+  clients: ClientRecord[],
+  context: AppTenantContext,
+  assignments: DbClientAssignment[],
+) {
+  if (context.role === "owner" || context.role === "admin") {
+    return new Set(clients.map((client) => client.id));
+  }
+
+  if (context.role === "auditor") {
+    return new Set<string>();
+  }
+
+  const assignedClientIds = new Set(
+    assignments
+      .filter((assignment) => assignment.dietitian_id === context.dietitianId)
+      .map((assignment) => assignment.client_id),
+  );
+
+  if (context.role === "assistant") {
+    return assignedClientIds;
+  }
+
+  if (context.role === "dietitian") {
+    return new Set(
+      clients
+        .filter((client) => client.dietitianId === context.dietitianId || assignedClientIds.has(client.id))
+        .map((client) => client.id),
+    );
+  }
+
+  return new Set<string>();
 }
 
 export async function resetSupabaseState(context = demoTenantContext()) {
@@ -602,6 +691,7 @@ async function deleteDemoData(supabase: SupabaseClient, tenantId = DEMO_TENANT_U
     "conversations",
     "client_channels",
     "client_ai_status_events",
+    "client_assignments",
     "clients",
     "dietitian_voice_profiles",
     "dietitians",

@@ -1115,6 +1115,15 @@ Phase 12 RBAC authorization completed on 2026-05-25:
 - App tests now include 58 passing tests.
 - No real providers, real channels, monitoring vendor, secret manager, push/email adapters, or real health data were connected.
 
+Phase 13 client assignment and scoped access completed on 2026-05-25:
+
+- Added `client_assignments` migration and tenant-scoped RLS policy.
+- Added role/assignment-based Supabase app-state filtering.
+- Owner/admin remain tenant-wide; dietitians see owned plus assigned clients; assistants see assigned clients only; auditors receive no raw client/message state.
+- RLS integration covers assignment tenant isolation.
+- App tests now include 62 passing tests.
+- No assignment UI, minimized auditor dashboard, real providers, real channels, push/email adapters, or real health data were connected.
+
 ### Sprint Tasks
 
 1. Create `MANU-AI/docs/RISK_REGISTER.md`.
