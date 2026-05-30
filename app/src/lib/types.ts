@@ -12,7 +12,22 @@ export type SenderType = "client" | "assistant" | "dietitian" | "system";
 export type RiskLevel = "green" | "yellow" | "red";
 export type DecisionAction = "sent" | "draft_for_approval" | "handoff" | "no_ai" | "duplicate_ignored";
 export type ProviderStatus = "not_called" | "ok" | "failed";
+export type SendStatus =
+  | "not_called"
+  | "send_eligible"
+  | "sent"
+  | "send_blocked"
+  | "draft_created"
+  | "draft_invalidated"
+  | "legacy_sent_unverified"
+  | "legacy_draft_unverified"
+  | "not_applicable";
 export type PermissionState = "ready" | "pending" | "blocked" | "opted_out";
+export type VoiceSampleStatus = "draft" | "approved" | "rejected";
+export type VoiceProfileStatus = "default" | "generated" | "needs_samples";
+export type FormSchemaStatus = "draft" | "published" | "archived";
+export type FormFieldType = "text" | "textarea" | "number" | "boolean" | "select" | "multiselect" | "date";
+export type FormFieldLlmVisibility = "never" | "prompt_allowed";
 export type SafetyChecklist = {
   goalReviewed: boolean;
   dietPlanReviewed: boolean;
@@ -33,6 +48,66 @@ export type DietitianRecord = {
   tenantId: string;
   displayName: string;
   timezone: string;
+};
+
+export type DietitianVoiceSampleRecord = {
+  id: string;
+  tenantId: string;
+  dietitianId: string;
+  body: string;
+  bodyHash: string;
+  status: VoiceSampleStatus;
+  createdAt: string;
+};
+
+export type DietitianVoiceProfileRecord = {
+  id: string;
+  tenantId: string;
+  dietitianId: string;
+  status: VoiceProfileStatus;
+  profileVersion: number;
+  averageMessageChars: number;
+  formality: string;
+  emojiPolicy: string;
+  commonGreetings: string[];
+  commonClosings: string[];
+  styleNotes: string;
+  sampleCount: number;
+  sourceSampleIds: string[];
+  generatedAt: string | null;
+  updatedAt: string;
+};
+
+export type ClientFormFieldDefinition = {
+  id: string;
+  label: string;
+  type: FormFieldType;
+  required: boolean;
+  options?: string[];
+  llmVisibility: FormFieldLlmVisibility;
+};
+
+export type ClientFormSchemaRecord = {
+  id: string;
+  tenantId: string;
+  title: string;
+  version: number;
+  status: FormSchemaStatus;
+  fields: ClientFormFieldDefinition[];
+  createdAt: string;
+  publishedAt: string | null;
+};
+
+export type ClientFormResponseRecord = {
+  id: string;
+  tenantId: string;
+  clientId: string;
+  schemaId: string;
+  schemaVersion: number;
+  schemaSnapshot: ClientFormSchemaRecord;
+  answers: Record<string, unknown>;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type ClientRecord = {
@@ -70,6 +145,7 @@ export type ClientRecord = {
   mandatorySafetyComplete: boolean;
   safetyChecklist: SafetyChecklist;
   humanTakeoverLocked: boolean;
+  contextRevision: number;
   createdAt: string;
 };
 
@@ -112,6 +188,10 @@ export type AiDecisionRecord = {
   providerId: string | null;
   providerStatus: ProviderStatus;
   providerErrorCode: string | null;
+  sendStatus: SendStatus;
+  contextManifest?: Record<string, unknown> | null;
+  providerOutputSafety?: Record<string, unknown> | null;
+  tokenBudget?: Record<string, unknown> | null;
   action: DecisionAction;
   blockedReason: string | null;
   qualityIssues: string[];
@@ -180,9 +260,52 @@ export type DataRequestRecord = {
   createdAt: string;
 };
 
+export type InternalCopilotSourceRef = {
+  entityType: "client" | "message" | "ai_decision" | "handoff_case" | "client_form_response";
+  entityId: string;
+  clientId: string | null;
+  label: string;
+  createdAt: string | null;
+};
+
+export type InternalCopilotMessageRecord = {
+  id: string;
+  tenantId: string;
+  dietitianId: string;
+  role: "user" | "assistant";
+  body: string;
+  sourceRefs: InternalCopilotSourceRef[];
+  toolCallIds: string[];
+  safetyStatus: "ok" | "needs_clarification" | "not_found" | "unsupported" | "no_sources";
+  createdAt: string;
+};
+
+export type InternalCopilotToolCallRecord = {
+  id: string;
+  tenantId: string;
+  dietitianId: string;
+  toolName:
+    | "resolveVisibleClientByName"
+    | "getClientSnapshot"
+    | "getClientDietPlan"
+    | "getClientRecentMessages"
+    | "getClientFormResponses"
+    | "getClientHandoffs"
+    | "getClientAiDecisionHistory";
+  arguments: Record<string, unknown>;
+  status: "ok" | "ambiguous" | "not_found" | "unsupported";
+  sourceRefs: InternalCopilotSourceRef[];
+  resultSummary: string;
+  createdAt: string;
+};
+
 export type ManuAppState = {
   tenant: TenantRecord;
   dietitian: DietitianRecord;
+  voiceSamples: DietitianVoiceSampleRecord[];
+  voiceProfiles: DietitianVoiceProfileRecord[];
+  clientFormSchemas: ClientFormSchemaRecord[];
+  clientFormResponses: ClientFormResponseRecord[];
   clients: ClientRecord[];
   conversations: ConversationRecord[];
   messages: MessageRecord[];
@@ -192,6 +315,8 @@ export type ManuAppState = {
   auditEvents: AuditEventRecord[];
   notifications: NotificationRecord[];
   dataRequests: DataRequestRecord[];
+  internalCopilotMessages: InternalCopilotMessageRecord[];
+  internalCopilotToolCalls: InternalCopilotToolCallRecord[];
   processedSimulationKeys: string[];
   lastSimulation: SimulationResult | null;
 };
@@ -201,7 +326,8 @@ export type SimulationRequest = {
   body: string;
   idempotencyKey: string;
   now?: string;
-  mockProviderFailure?: "provider_timeout" | "provider_error";
+  mockProviderFailure?: "provider_timeout" | "provider_error" | "provider_policy_violation";
+  mockProviderOutput?: "missing_historical_context";
 };
 
 export type SimulationResult = {

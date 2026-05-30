@@ -44,6 +44,7 @@ export function createInitialState(): ManuAppState {
       mandatorySafetyComplete: true,
       safetyChecklist: completeSafetyChecklist(),
       humanTakeoverLocked: false,
+      contextRevision: 1,
       createdAt,
     },
     {
@@ -79,6 +80,7 @@ export function createInitialState(): ManuAppState {
       mandatorySafetyComplete: true,
       safetyChecklist: completeSafetyChecklist(),
       humanTakeoverLocked: false,
+      contextRevision: 1,
       createdAt,
     },
     {
@@ -113,6 +115,7 @@ export function createInitialState(): ManuAppState {
       mandatorySafetyComplete: false,
       safetyChecklist: emptySafetyChecklist(),
       humanTakeoverLocked: false,
+      contextRevision: 1,
       createdAt,
     },
   ];
@@ -164,6 +167,36 @@ export function createInitialState(): ManuAppState {
       displayName: "Dyt. Ayse",
       timezone: "Europe/Istanbul",
     },
+    voiceSamples: [],
+    voiceProfiles: [],
+    clientFormSchemas: [
+      {
+        id: "form-schema-pilot-intake-v1",
+        tenantId: DEMO_TENANT_ID,
+        title: "Pilot intake",
+        version: 1,
+        status: "published",
+        fields: [
+          {
+            id: "daily_routine",
+            label: "Daily routine",
+            type: "textarea",
+            required: false,
+            llmVisibility: "prompt_allowed",
+          },
+          {
+            id: "private_note",
+            label: "Private note",
+            type: "textarea",
+            required: false,
+            llmVisibility: "never",
+          },
+        ],
+        createdAt,
+        publishedAt: createdAt,
+      },
+    ],
+    clientFormResponses: [],
     clients,
     conversations,
     messages,
@@ -182,6 +215,10 @@ export function createInitialState(): ManuAppState {
         providerId: "mock-local-provider-v0",
         providerStatus: "ok",
         providerErrorCode: null,
+        sendStatus: "legacy_sent_unverified",
+        contextManifest: null,
+        providerOutputSafety: null,
+        tokenBudget: null,
         action: "sent",
         blockedReason: null,
         qualityIssues: [],
@@ -205,6 +242,8 @@ export function createInitialState(): ManuAppState {
     auditEvents: [],
     notifications: [],
     dataRequests: [],
+    internalCopilotMessages: [],
+    internalCopilotToolCalls: [],
     processedSimulationKeys: ["seed-green"],
     lastSimulation: null,
   };
@@ -244,6 +283,7 @@ export function createBlankClient(overrides: Partial<ClientRecord> = {}): Client
     mandatorySafetyComplete: false,
     safetyChecklist: emptySafetyChecklist(),
     humanTakeoverLocked: false,
+    contextRevision: 1,
     createdAt: new Date().toISOString(),
     ...overrides,
   };

@@ -6,11 +6,18 @@ import { anonymizeClientInState, buildClientScopedExport, recordClientExportInSt
 import {
   addManualReplyInState,
   approveDraftInState,
+  addVoiceSamplesInState,
+  createFormSchemaInState,
   createClientInState,
   dismissDraftInState,
+  generateVoiceProfile,
+  publishFormSchemaInState,
   patchClientInState,
   releaseHumanTakeoverInState,
+  runInternalCopilotMessageInState,
+  saveFormResponseInState,
   simulateInState,
+  updateVoiceSampleStatus,
   updateHandoffStatusInState,
 } from "./app-state-store";
 import type { AppTenantContext } from "./auth-context";
@@ -18,15 +25,24 @@ import { AppDomainError } from "./app-errors";
 import type {
   AiDecisionRecord,
   AuditEventRecord,
+  ClientFormResponseRecord,
+  ClientFormSchemaRecord,
+  ClientFormFieldDefinition,
   ClientRecord,
   ConversationRecord,
   DataRequestRecord,
+  DietitianVoiceProfileRecord,
+  DietitianVoiceSampleRecord,
   HandoffCaseRecord,
+  InternalCopilotMessageRecord,
+  InternalCopilotSourceRef,
+  InternalCopilotToolCallRecord,
   ManuAppState,
   MessageRecord,
   NotificationRecord,
   RiskAssessmentRecord,
   SimulationRequest,
+  VoiceSampleStatus,
 } from "./types";
 
 export const DEMO_TENANT_UUID = "00000000-0000-4000-8000-000000000001";
@@ -58,6 +74,7 @@ type DbClient = {
   mandatory_safety_complete: boolean;
   safety_checklist: Partial<ClientRecord["safetyChecklist"]> | null;
   human_takeover_locked: boolean;
+  context_revision: number;
   created_at: string;
 };
 type DbChannel = {
@@ -110,6 +127,10 @@ type DbDecision = {
   provider_id: string | null;
   provider_status: AiDecisionRecord["providerStatus"];
   provider_error_code: string | null;
+  send_status: AiDecisionRecord["sendStatus"];
+  context_manifest: Record<string, unknown> | null;
+  provider_output_safety: Record<string, unknown> | null;
+  token_budget: Record<string, unknown> | null;
   action: AiDecisionRecord["action"];
   blocked_reason: string | null;
   quality_issues: string[];
@@ -172,6 +193,75 @@ type DbDataRequest = {
   completed_at: string | null;
   created_at: string;
 };
+type DbInternalCopilotMessage = {
+  id: string;
+  tenant_id: string;
+  dietitian_id: string;
+  role: InternalCopilotMessageRecord["role"];
+  body: string;
+  source_refs: InternalCopilotSourceRef[];
+  tool_call_ids: string[];
+  safety_status: InternalCopilotMessageRecord["safetyStatus"];
+  created_at: string;
+};
+type DbInternalCopilotToolCall = {
+  id: string;
+  tenant_id: string;
+  dietitian_id: string;
+  tool_name: InternalCopilotToolCallRecord["toolName"];
+  arguments: Record<string, unknown>;
+  status: InternalCopilotToolCallRecord["status"];
+  source_refs: InternalCopilotSourceRef[];
+  result_summary: string;
+  created_at: string;
+};
+type DbVoiceSample = {
+  id: string;
+  tenant_id: string;
+  dietitian_id: string;
+  body: string;
+  body_hash: string;
+  status: VoiceSampleStatus;
+  created_at: string;
+};
+type DbVoiceProfile = {
+  id: string;
+  tenant_id: string;
+  dietitian_id: string;
+  status: DietitianVoiceProfileRecord["status"];
+  profile_version: number;
+  average_message_chars: number;
+  formality: string;
+  emoji_policy: string;
+  common_greetings: string[];
+  common_closings: string[];
+  style_notes: string;
+  sample_count: number;
+  source_sample_ids: string[];
+  generated_at: string | null;
+  updated_at: string;
+};
+type DbFormSchema = {
+  id: string;
+  tenant_id: string;
+  title: string;
+  version: number;
+  status: ClientFormSchemaRecord["status"];
+  fields: ClientFormFieldDefinition[];
+  created_at: string;
+  published_at: string | null;
+};
+type DbFormResponse = {
+  id: string;
+  tenant_id: string;
+  client_id: string;
+  schema_id: string;
+  schema_version: number;
+  schema_snapshot: ClientFormSchemaRecord;
+  answers: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+};
 
 export function isSupabaseStoreConfigured() {
   if (process.env.MANU_DEV_FALLBACK_STORE === "true") {
@@ -199,6 +289,12 @@ export async function loadSupabaseState(context = demoTenantContext()) {
     handoffsResult,
     notificationsResult,
     dataRequestsResult,
+    internalCopilotMessagesResult,
+    internalCopilotToolCallsResult,
+    voiceSamplesResult,
+    voiceProfilesResult,
+    formSchemasResult,
+    formResponsesResult,
     auditEventsResult,
     processedEventsResult,
   ] = await Promise.all([
@@ -215,6 +311,12 @@ export async function loadSupabaseState(context = demoTenantContext()) {
     supabase.from("handoff_cases").select("*").eq("tenant_id", context.tenantId).order("created_at"),
     supabase.from("notifications").select("*").eq("tenant_id", context.tenantId).order("created_at"),
     supabase.from("data_requests").select("*").eq("tenant_id", context.tenantId).order("created_at"),
+    supabase.from("internal_copilot_messages").select("*").eq("tenant_id", context.tenantId).order("created_at"),
+    supabase.from("internal_copilot_tool_calls").select("*").eq("tenant_id", context.tenantId).order("created_at"),
+    supabase.from("dietitian_voice_samples").select("*").eq("tenant_id", context.tenantId).order("created_at"),
+    supabase.from("dietitian_voice_profiles").select("*").eq("tenant_id", context.tenantId).order("updated_at"),
+    supabase.from("client_form_schemas").select("*").eq("tenant_id", context.tenantId).order("version"),
+    supabase.from("client_form_responses").select("*").eq("tenant_id", context.tenantId).order("updated_at"),
     supabase.from("audit_events").select("*").eq("tenant_id", context.tenantId).order("created_at"),
     supabase.from("processed_inbound_events").select("*").eq("tenant_id", context.tenantId),
   ]);
@@ -232,6 +334,12 @@ export async function loadSupabaseState(context = demoTenantContext()) {
   throwIfError(handoffsResult.error);
   throwIfError(notificationsResult.error);
   throwIfError(dataRequestsResult.error);
+  throwIfError(internalCopilotMessagesResult.error);
+  throwIfError(internalCopilotToolCallsResult.error);
+  throwIfError(voiceSamplesResult.error);
+  throwIfError(voiceProfilesResult.error);
+  throwIfError(formSchemasResult.error);
+  throwIfError(formResponsesResult.error);
   throwIfError(auditEventsResult.error);
   throwIfError(processedEventsResult.error);
 
@@ -249,6 +357,10 @@ export async function loadSupabaseState(context = demoTenantContext()) {
         displayName: dietitianResult.data.display_name,
         timezone: dietitianResult.data.timezone,
       },
+      voiceSamples: (voiceSamplesResult.data || []).map(mapVoiceSample),
+      voiceProfiles: (voiceProfilesResult.data || []).map(mapVoiceProfile),
+      clientFormSchemas: (formSchemasResult.data || []).map(mapFormSchema),
+      clientFormResponses: (formResponsesResult.data || []).map(mapFormResponse),
       clients: (clientsResult.data || []).map((client) => mapClient(client, channels)),
       conversations: (conversationsResult.data || []).map((conversation) =>
         mapConversation(conversation, memories),
@@ -259,6 +371,8 @@ export async function loadSupabaseState(context = demoTenantContext()) {
       handoffCases: (handoffsResult.data || []).map(mapHandoff),
       notifications: (notificationsResult.data || []).map(mapNotification),
       dataRequests: (dataRequestsResult.data || []).map(mapDataRequest),
+      internalCopilotMessages: (internalCopilotMessagesResult.data || []).map(mapInternalCopilotMessage),
+      internalCopilotToolCalls: (internalCopilotToolCallsResult.data || []).map(mapInternalCopilotToolCall),
       auditEvents: (auditEventsResult.data || []).map(mapAuditEvent),
       processedSimulationKeys: (processedEventsResult.data || []).map((event) => event.provider_event_id),
       lastSimulation: null,
@@ -287,9 +401,22 @@ export function scopeSupabaseState(
   const visibleDecisionIds = new Set(visibleDecisions.map((decision) => decision.id));
   const visibleHandoffs = state.handoffCases.filter((handoff) => visibleClientIds.has(handoff.clientId));
   const visibleHandoffIds = new Set(visibleHandoffs.map((handoff) => handoff.id));
+  const visibleInternalCopilotMessages =
+    context.role === "owner" || context.role === "admin" || context.role === "dietitian"
+      ? state.internalCopilotMessages.filter((message) => message.dietitianId === context.dietitianId)
+      : [];
+  const visibleInternalCopilotToolCalls =
+    context.role === "owner" || context.role === "admin" || context.role === "dietitian"
+      ? state.internalCopilotToolCalls.filter((call) => call.dietitianId === context.dietitianId)
+      : [];
+  const visibleInternalCopilotMessageIds = new Set(visibleInternalCopilotMessages.map((message) => message.id));
+  const visibleInternalCopilotToolCallIds = new Set(visibleInternalCopilotToolCalls.map((call) => call.id));
 
   return {
     ...state,
+    voiceSamples: state.voiceSamples.filter((sample) => sample.dietitianId === context.dietitianId),
+    voiceProfiles: state.voiceProfiles.filter((profile) => profile.dietitianId === context.dietitianId),
+    clientFormResponses: state.clientFormResponses.filter((response) => visibleClientIds.has(response.clientId)),
     clients: state.clients.filter((client) => visibleClientIds.has(client.id)),
     conversations: state.conversations.filter((conversation) => visibleConversationIds.has(conversation.id)),
     messages: visibleMessages,
@@ -303,13 +430,17 @@ export function scopeSupabaseState(
       (notification) => notification.entityType === "handoff_case" && visibleHandoffIds.has(notification.entityId),
     ),
     dataRequests: state.dataRequests.filter((request) => visibleClientIds.has(request.clientId)),
+    internalCopilotMessages: visibleInternalCopilotMessages,
+    internalCopilotToolCalls: visibleInternalCopilotToolCalls,
     auditEvents: state.auditEvents.filter(
       (event) =>
         visibleClientIds.has(event.entityId) ||
         visibleConversationIds.has(event.entityId) ||
         visibleMessageIds.has(event.entityId) ||
         visibleDecisionIds.has(event.entityId) ||
-        visibleHandoffIds.has(event.entityId),
+        visibleHandoffIds.has(event.entityId) ||
+        visibleInternalCopilotMessageIds.has(event.entityId) ||
+        visibleInternalCopilotToolCallIds.has(event.entityId),
     ),
   };
 }
@@ -626,6 +757,121 @@ export async function acknowledgeSupabaseNotification(notificationId: string, co
   return loadSupabaseState(context);
 }
 
+export async function updateSupabaseVoiceSamples(
+  input: { rawInput?: string; sampleId?: string; status?: VoiceSampleStatus },
+  context = demoTenantContext(),
+) {
+  const before = await loadSupabaseState(context);
+  const next =
+    input.rawInput !== undefined
+      ? addVoiceSamplesInState(before, input.rawInput)
+      : updateVoiceSampleStatus(before, input.sampleId || "", input.status || "draft");
+  const supabase = requireSupabase();
+
+  for (const sample of next.voiceSamples.filter(
+    (sample) => !before.voiceSamples.some((beforeSample) => beforeSample.id === sample.id),
+  )) {
+    await upsertVoiceSample(supabase, { ...sample, tenantId: context.tenantId, dietitianId: context.dietitianId });
+  }
+
+  for (const sample of next.voiceSamples.filter((sample) => {
+    const beforeSample = before.voiceSamples.find((item) => item.id === sample.id);
+    return beforeSample && beforeSample.status !== sample.status;
+  })) {
+    await upsertVoiceSample(supabase, sample);
+  }
+
+  await persistNewAudits(supabase, before, next);
+  return loadSupabaseState(context);
+}
+
+export async function generateSupabaseVoiceProfile(context = demoTenantContext()) {
+  const before = await loadSupabaseState(context);
+  const next = generateVoiceProfile(before);
+  const profile = next.voiceProfiles.find(
+    (item) => !before.voiceProfiles.some((beforeProfile) => beforeProfile.id === item.id),
+  );
+  const supabase = requireSupabase();
+  if (profile) {
+    await upsertVoiceProfile(supabase, { ...profile, tenantId: context.tenantId, dietitianId: context.dietitianId });
+  }
+  await persistNewAudits(supabase, before, next);
+  return loadSupabaseState(context);
+}
+
+export async function createSupabaseFormSchema(
+  input: { title: string; fields: ClientFormFieldDefinition[] },
+  context = demoTenantContext(),
+) {
+  const before = await loadSupabaseState(context);
+  const next = createFormSchemaInState(before, input);
+  const schema = next.clientFormSchemas.find(
+    (item) => !before.clientFormSchemas.some((beforeSchema) => beforeSchema.id === item.id),
+  );
+  const supabase = requireSupabase();
+  if (schema) await upsertFormSchema(supabase, { ...schema, tenantId: context.tenantId });
+  await persistNewAudits(supabase, before, next);
+  return loadSupabaseState(context);
+}
+
+export async function publishSupabaseFormSchema(schemaId: string, context = demoTenantContext()) {
+  const before = await loadSupabaseState(context);
+  const next = publishFormSchemaInState(before, schemaId);
+  const schema = next.clientFormSchemas.find((item) => item.id === schemaId);
+  const supabase = requireSupabase();
+  if (schema) await upsertFormSchema(supabase, schema);
+  await persistNewAudits(supabase, before, next);
+  return loadSupabaseState(context);
+}
+
+export async function saveSupabaseFormResponse(
+  input: { clientId: string; schemaId: string; answers: Record<string, unknown> },
+  context = demoTenantContext(),
+) {
+  const before = await loadSupabaseState(context);
+  const next = saveFormResponseInState(before, input);
+  const response = next.clientFormResponses.find(
+    (item) =>
+      item.clientId === input.clientId &&
+      item.schemaId === input.schemaId &&
+      (!before.clientFormResponses.some((beforeResponse) => beforeResponse.id === item.id) ||
+        before.clientFormResponses.find((beforeResponse) => beforeResponse.id === item.id)?.updatedAt !== item.updatedAt),
+  );
+  const client = next.clients.find((item) => item.id === input.clientId);
+  const supabase = requireSupabase();
+  if (response) await upsertFormResponse(supabase, { ...response, tenantId: context.tenantId });
+  if (client) await upsertClient(supabase, { ...client, tenantId: context.tenantId, dietitianId: context.dietitianId });
+  await persistNewAudits(supabase, before, next);
+  return loadSupabaseState(context);
+}
+
+export async function runSupabaseInternalCopilotMessage(body: string, context = demoTenantContext()) {
+  const before = await loadSupabaseState(context);
+  const next = runInternalCopilotMessageInState(before, body);
+  const beforeMessages = new Set(before.internalCopilotMessages.map((message) => message.id));
+  const beforeToolCalls = new Set(before.internalCopilotToolCalls.map((call) => call.id));
+  const supabase = requireSupabase();
+
+  for (const call of next.internalCopilotToolCalls.filter((item) => !beforeToolCalls.has(item.id))) {
+    await insertInternalCopilotToolCall(supabase, {
+      ...call,
+      tenantId: context.tenantId,
+      dietitianId: context.dietitianId,
+    });
+  }
+
+  for (const message of next.internalCopilotMessages.filter((item) => !beforeMessages.has(item.id))) {
+    await insertInternalCopilotMessage(supabase, {
+      ...message,
+      tenantId: context.tenantId,
+      dietitianId: context.dietitianId,
+    });
+  }
+
+  await persistNewAudits(supabase, before, next);
+  return loadSupabaseState(context);
+}
+
 export async function ensureSupabaseDemoDataForUser(userId: string) {
   await ensureDemoData(requireSupabase(), userId);
 }
@@ -669,6 +915,10 @@ async function ensureDemoData(supabase: SupabaseClient, userId = DEMO_USER_UUID)
       auth_user_id: userId,
     }),
   );
+
+  for (const schema of seed.clientFormSchemas) {
+    await upsertFormSchema(supabase, { ...schema, tenantId: seed.tenant.id });
+  }
 
   for (const client of seed.clients) {
     await insertClientBundle(
@@ -714,6 +964,11 @@ async function ensureDemoMembership(supabase: SupabaseClient, userId: string) {
 async function deleteDemoData(supabase: SupabaseClient, tenantId = DEMO_TENANT_UUID) {
   const tables = [
     "processed_inbound_events",
+    "client_form_responses",
+    "client_form_schemas",
+    "dietitian_voice_samples",
+    "internal_copilot_messages",
+    "internal_copilot_tool_calls",
     "data_requests",
     "notifications",
     "audit_events",
@@ -788,6 +1043,7 @@ async function upsertClient(supabase: SupabaseClient, client: ClientRecord) {
       channel_permission: client.channelPermission,
       mandatory_safety_complete: mandatorySafetyComplete,
       human_takeover_locked: client.humanTakeoverLocked,
+      context_revision: client.contextRevision,
       safety_checklist: safetyChecklist,
       health_profile: client.healthProfile,
       diet_plan: client.dietPlan,
@@ -959,6 +1215,10 @@ async function insertDecision(supabase: SupabaseClient, decision: AiDecisionReco
       provider_id: decision.providerId,
       provider_status: decision.providerStatus,
       provider_error_code: decision.providerErrorCode,
+      send_status: decision.sendStatus,
+      context_manifest: decision.contextManifest,
+      provider_output_safety: decision.providerOutputSafety,
+      token_budget: decision.tokenBudget,
       action: decision.action,
       blocked_reason: decision.blockedReason,
       quality_issues: decision.qualityIssues,
@@ -1021,6 +1281,83 @@ async function insertAudit(supabase: SupabaseClient, audit: AuditEventRecord) {
   );
 }
 
+async function persistNewAudits(supabase: SupabaseClient, before: ManuAppState, after: ManuAppState) {
+  const beforeAudits = new Set(before.auditEvents.map((audit) => audit.id));
+  for (const audit of after.auditEvents.filter((item) => !beforeAudits.has(item.id))) {
+    await insertAudit(supabase, audit);
+  }
+}
+
+async function upsertVoiceSample(supabase: SupabaseClient, sample: DietitianVoiceSampleRecord) {
+  await checked(
+    supabase.from("dietitian_voice_samples").upsert({
+      id: sample.id,
+      tenant_id: sample.tenantId,
+      dietitian_id: sample.dietitianId,
+      body: sample.body,
+      body_hash: sample.bodyHash,
+      status: sample.status,
+      created_at: sample.createdAt,
+    }),
+  );
+}
+
+async function upsertVoiceProfile(supabase: SupabaseClient, profile: DietitianVoiceProfileRecord) {
+  await checked(
+    supabase.from("dietitian_voice_profiles").upsert(
+      {
+        id: profile.id,
+        tenant_id: profile.tenantId,
+        dietitian_id: profile.dietitianId,
+        status: profile.status,
+        profile_version: profile.profileVersion,
+        average_message_chars: profile.averageMessageChars,
+        formality: profile.formality,
+        emoji_policy: profile.emojiPolicy,
+        common_greetings: profile.commonGreetings,
+        common_closings: profile.commonClosings,
+        style_notes: profile.styleNotes,
+        sample_count: profile.sampleCount,
+        source_sample_ids: profile.sourceSampleIds,
+        generated_at: profile.generatedAt,
+        updated_at: profile.updatedAt,
+      },
+      { onConflict: "tenant_id,dietitian_id" },
+    ),
+  );
+}
+
+async function upsertFormSchema(supabase: SupabaseClient, schema: ClientFormSchemaRecord) {
+  await checked(
+    supabase.from("client_form_schemas").upsert({
+      id: schema.id,
+      tenant_id: schema.tenantId,
+      title: schema.title,
+      version: schema.version,
+      status: schema.status,
+      fields: schema.fields,
+      created_at: schema.createdAt,
+      published_at: schema.publishedAt,
+    }),
+  );
+}
+
+async function upsertFormResponse(supabase: SupabaseClient, response: ClientFormResponseRecord) {
+  await checked(
+    supabase.from("client_form_responses").upsert({
+      id: response.id,
+      tenant_id: response.tenantId,
+      client_id: response.clientId,
+      schema_id: response.schemaId,
+      schema_version: response.schemaVersion,
+      schema_snapshot: response.schemaSnapshot,
+      answers: response.answers,
+      created_at: response.createdAt,
+      updated_at: response.updatedAt,
+    }),
+  );
+}
+
 async function insertDataRequest(supabase: SupabaseClient, request: DataRequestRecord) {
   await checked(
     supabase.from("data_requests").insert({
@@ -1053,6 +1390,38 @@ async function insertNotification(supabase: SupabaseClient, notification: Notifi
   );
 }
 
+async function insertInternalCopilotMessage(supabase: SupabaseClient, message: InternalCopilotMessageRecord) {
+  await checked(
+    supabase.from("internal_copilot_messages").insert({
+      id: message.id,
+      tenant_id: message.tenantId,
+      dietitian_id: message.dietitianId,
+      role: message.role,
+      body: message.body,
+      source_refs: message.sourceRefs,
+      tool_call_ids: message.toolCallIds,
+      safety_status: message.safetyStatus,
+      created_at: message.createdAt,
+    }),
+  );
+}
+
+async function insertInternalCopilotToolCall(supabase: SupabaseClient, call: InternalCopilotToolCallRecord) {
+  await checked(
+    supabase.from("internal_copilot_tool_calls").insert({
+      id: call.id,
+      tenant_id: call.tenantId,
+      dietitian_id: call.dietitianId,
+      tool_name: call.toolName,
+      arguments: call.arguments,
+      status: call.status,
+      source_refs: call.sourceRefs,
+      result_summary: call.resultSummary,
+      created_at: call.createdAt,
+    }),
+  );
+}
+
 function remapSeedIds(state: ManuAppState): ManuAppState {
   const clientMap = new Map(state.clients.map((client, index) => [client.id, DEMO_CLIENT_IDS[index]]));
   const conversationMap = new Map(
@@ -1072,6 +1441,23 @@ function remapSeedIds(state: ManuAppState): ManuAppState {
     ...state,
     tenant: { ...state.tenant, id: DEMO_TENANT_UUID },
     dietitian: { ...state.dietitian, id: DEMO_DIETITIAN_UUID, tenantId: DEMO_TENANT_UUID },
+    voiceSamples: state.voiceSamples.map((sample) => ({
+      ...sample,
+      tenantId: DEMO_TENANT_UUID,
+      dietitianId: DEMO_DIETITIAN_UUID,
+    })),
+    voiceProfiles: state.voiceProfiles.map((profile) => ({
+      ...profile,
+      tenantId: DEMO_TENANT_UUID,
+      dietitianId: DEMO_DIETITIAN_UUID,
+    })),
+    clientFormSchemas: state.clientFormSchemas.map((schema) => ({ ...schema, tenantId: DEMO_TENANT_UUID })),
+    clientFormResponses: state.clientFormResponses.map((response) => ({
+      ...response,
+      tenantId: DEMO_TENANT_UUID,
+      clientId: clientMap.get(response.clientId) || response.clientId,
+      schemaSnapshot: { ...response.schemaSnapshot, tenantId: DEMO_TENANT_UUID },
+    })),
     clients: state.clients.map((client) => ({
       ...client,
       id: clientMap.get(client.id) || client.id,
@@ -1112,6 +1498,65 @@ function remapSeedIds(state: ManuAppState): ManuAppState {
   };
 }
 
+function mapVoiceSample(sample: DbVoiceSample): DietitianVoiceSampleRecord {
+  return {
+    id: sample.id,
+    tenantId: sample.tenant_id,
+    dietitianId: sample.dietitian_id,
+    body: sample.body,
+    bodyHash: sample.body_hash,
+    status: sample.status,
+    createdAt: sample.created_at,
+  };
+}
+
+function mapVoiceProfile(profile: DbVoiceProfile): DietitianVoiceProfileRecord {
+  return {
+    id: profile.id,
+    tenantId: profile.tenant_id,
+    dietitianId: profile.dietitian_id,
+    status: profile.status || "generated",
+    profileVersion: profile.profile_version || 1,
+    averageMessageChars: profile.average_message_chars,
+    formality: profile.formality,
+    emojiPolicy: profile.emoji_policy,
+    commonGreetings: profile.common_greetings || [],
+    commonClosings: profile.common_closings || [],
+    styleNotes: profile.style_notes || "",
+    sampleCount: profile.sample_count || 0,
+    sourceSampleIds: profile.source_sample_ids || [],
+    generatedAt: profile.generated_at,
+    updatedAt: profile.updated_at,
+  };
+}
+
+function mapFormSchema(schema: DbFormSchema): ClientFormSchemaRecord {
+  return {
+    id: schema.id,
+    tenantId: schema.tenant_id,
+    title: schema.title,
+    version: schema.version,
+    status: schema.status,
+    fields: schema.fields || [],
+    createdAt: schema.created_at,
+    publishedAt: schema.published_at,
+  };
+}
+
+function mapFormResponse(response: DbFormResponse): ClientFormResponseRecord {
+  return {
+    id: response.id,
+    tenantId: response.tenant_id,
+    clientId: response.client_id,
+    schemaId: response.schema_id,
+    schemaVersion: response.schema_version,
+    schemaSnapshot: response.schema_snapshot,
+    answers: response.answers || {},
+    createdAt: response.created_at,
+    updatedAt: response.updated_at,
+  };
+}
+
 function mapClient(client: DbClient, channels: DbChannel[]): ClientRecord {
   const channel = channels.find((item) => item.client_id === client.id);
   return {
@@ -1136,6 +1581,7 @@ function mapClient(client: DbClient, channels: DbChannel[]): ClientRecord {
     mandatorySafetyComplete: client.mandatory_safety_complete,
     safetyChecklist: normalizeSafetyChecklist(client.safety_checklist),
     humanTakeoverLocked: client.human_takeover_locked,
+    contextRevision: client.context_revision || 1,
     createdAt: client.created_at,
   };
 }
@@ -1185,6 +1631,10 @@ function mapDecision(decision: DbDecision): AiDecisionRecord {
     providerId: decision.provider_id || null,
     providerStatus: decision.provider_status || "not_called",
     providerErrorCode: decision.provider_error_code || null,
+    sendStatus: decision.send_status || "not_called",
+    contextManifest: decision.context_manifest || null,
+    providerOutputSafety: decision.provider_output_safety || null,
+    tokenBudget: decision.token_budget || null,
     action: decision.action,
     blockedReason: decision.blocked_reason,
     qualityIssues: decision.quality_issues || [],
@@ -1261,6 +1711,34 @@ function mapDataRequest(request: DbDataRequest): DataRequestRecord {
     requestedByDietitianId: request.requested_by_dietitian_id,
     completedAt: request.completed_at,
     createdAt: request.created_at,
+  };
+}
+
+function mapInternalCopilotMessage(message: DbInternalCopilotMessage): InternalCopilotMessageRecord {
+  return {
+    id: message.id,
+    tenantId: message.tenant_id,
+    dietitianId: message.dietitian_id,
+    role: message.role,
+    body: message.body,
+    sourceRefs: message.source_refs || [],
+    toolCallIds: message.tool_call_ids || [],
+    safetyStatus: message.safety_status,
+    createdAt: message.created_at,
+  };
+}
+
+function mapInternalCopilotToolCall(call: DbInternalCopilotToolCall): InternalCopilotToolCallRecord {
+  return {
+    id: call.id,
+    tenantId: call.tenant_id,
+    dietitianId: call.dietitian_id,
+    toolName: call.tool_name,
+    arguments: call.arguments || {},
+    status: call.status,
+    sourceRefs: call.source_refs || [],
+    resultSummary: call.result_summary || "",
+    createdAt: call.created_at,
   };
 }
 

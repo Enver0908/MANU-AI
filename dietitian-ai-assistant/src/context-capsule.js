@@ -25,10 +25,12 @@ export function buildClientContextCapsule({
       restrictedFoods: client.restrictedFoods || [],
       clinicalRiskNotes: client.clinicalRiskNotes || [],
       pinnedNotes: client.pinnedNotes || [],
+      clientFormSummary: client.clientFormSummary || "",
       aiMode: client.aiMode,
       aiStatus: client.aiStatus || "passive",
       aiActiveFrom: client.aiActiveFrom || null,
       aiActiveUntil: client.aiActiveUntil || null,
+      contextRevision: client.contextRevision || 1,
     },
     conversation: {
       id: conversation.id,

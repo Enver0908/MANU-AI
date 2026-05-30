@@ -76,6 +76,8 @@ Runtime use:
 - Do not treat AI-generated replies as ground truth.
 - Do not send full message histories to a model to "learn style".
 - Do not use messages from `imported_unknown` in evaluation datasets until reviewed.
+- Do not treat Phase 26 internal copilot messages or tool-call summaries as clinical ground truth, training data, or style examples by default.
+- Do not fine-tune or evaluate on internal copilot records until legal/privacy, tenant-scoping, retention, and source-quality rules are explicitly approved.
 
 ## Recommended MVP Use
 
@@ -153,4 +155,3 @@ Use:
 - Red/yellow false negative review rate
 - Persona mismatch reports
 - Manual takeover frequency after AI reply
-

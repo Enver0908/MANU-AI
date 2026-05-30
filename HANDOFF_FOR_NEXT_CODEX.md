@@ -153,7 +153,7 @@ npm test
 Current expected result:
 
 ```text
-35/35 tests passing
+39/39 tests passing
 ```
 
 Covered:
@@ -177,14 +177,16 @@ npm run lint
 npm test
 npm run test:rls
 npm run build
+npm run release:verify
 ```
 
 Current expected app result:
 
 - ESLint passes.
-- 49/49 app tests pass.
+- 96/96 app tests pass.
 - RLS integration tests pass against local Supabase; when pointed at non-local Supabase they skip unless `MANU_ALLOW_REMOTE_RLS_TESTS=true`.
 - `next build --webpack` passes.
+- `npm run release:verify` passes with core tests 39/39, app tests 96/96, lint, production build, and only known R-405 production audit findings.
 - `npm run test:visual` passes across desktop, tablet, and mobile Chromium viewports.
 
 Note: app scripts intentionally use `--webpack` because Turbopack did not resolve the local symlinked `dietitian-ai-assistant-architecture` package. The core package now has `"exports": "./src/index.js"`.
@@ -238,14 +240,36 @@ Verified on 2026-05-23:
 - Phase 2-5 later added production-style auth states, consent/permission governance, backed in-app notifications, data-governance export/anonymization helpers, and the `opted_out` Supabase enum migration.
 - Added `docs/NEXT_PHASE_EXECUTION_PLAN.md` as the canonical next phased execution plan.
 - Updated risk/data/mobile/Supabase foundation docs to track VCS/checkpoint, dependency audit, consent, notification, data governance, and provider/channel launch gates.
-- Current workspace does not appear to contain a `.git` directory; treat rollback/checkpoint strategy as an open operational risk until the user chooses one.
+- Local Git repository and root ignore rules now exist. Latest verified baseline before Phase 21 is commit `66a8b94 Add pilot readiness evidence pack`; R-005 is mitigated in the local prototype.
+- Phase 23 AI context/send safety was completed on 2026-05-30:
+  - Added `docs/PHASE_23_AI_CONTEXT_MEMORY_ARCHITECTURE_SPEC.md`.
+  - Added bounded `PromptContext` compilation in `dietitian-ai-assistant/src/context-compiler.js`.
+  - Core prompt context includes the missing historical context invariant and only allowlisted segments.
+  - `ContextManifest` records source/type/token metadata without raw message text.
+  - Provider output containing `[ERROR: missing_historical_context]` is blocked with `severity="block"`.
+  - Missing historical context routes to handoff/human takeover with `send_status="send_blocked"` and no AI message to the client.
+  - Pending AI drafts are invalidated when new inbound/manual/profile context changes the prompt basis.
+  - Legacy and invalidated drafts fail approval with controlled 409 errors.
+  - Added Supabase migration `20260530000000_phase_23_context_send_safety.sql`.
+  - Phase 23 verification on 2026-05-30: core tests 39/39, app tests 82/82, app lint passed, production build passed.
+- Phase 24-25 voice sample and dynamic form infrastructure was completed on 2026-05-30:
+  - Added `docs/PHASE_24_DIETITIAN_VOICE_SAMPLE_INFRASTRUCTURE_SPEC.md`.
+  - Added `docs/PHASE_25_DYNAMIC_CLIENT_FORM_INFRASTRUCTURE_SPEC.md`.
+  - Added dietitian voice sample records, generated voice profile records, and dashboard Voice panel.
+  - Added versioned client form schemas, response snapshots, and dashboard Forms panel.
+  - Added APIs for voice samples/profile generation, form schema creation/publishing, and client form response saves.
+  - Added migration `app/supabase/migrations/20260530010000_phase_24_25_voice_forms.sql`.
+  - PromptContext includes only `prompt_allowed` form answers via `client_form_summary`.
+  - Form response saves increment client context revision and invalidate pending AI drafts.
+  - Phase 24-25 app tests reached 86 passing tests before the later Phase 26 additions.
 
 ## Next Recommended Work
 
 Continue from the local SaaS prototype:
 
-1. Complete Phase 9 verification and preserve the local Git checkpoint baseline.
-2. Keep real WhatsApp, Telegram, Gemini, and real client health data disconnected.
+1. Preserve the Phase 23 context/send-safety baseline in any future provider or channel work.
+2. Continue external approval evidence collection and R-405 remediation only through the documented procedures.
+3. Keep real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, and real client health data disconnected until the user explicitly approves the relevant integration.
 
 Local dev server:
 
@@ -496,7 +520,7 @@ app: npm run build -> passed
 
 ### Next Correct Step For Codex
 
-Do not connect production providers or channels yet. The next work should address launch gates: VCS/checkpoint strategy, qualified dietitian clinical approval, provider/legal review, and real WhatsApp/Telegram policy review.
+Do not connect production providers or channels yet. The next work should address launch gates: qualified dietitian clinical approval, provider/legal review, real WhatsApp/Telegram policy review, operational ownership, and R-405 clearance.
 
 ## Phase 4 Handoff Notes — 2026-05-25
 
@@ -994,3 +1018,114 @@ app: npm run release:verify -> already passed in Phase 19 and recorded in the ev
 ### Next Correct Step For Codex
 
 Move from local pilot-foundation engineering to external approval work: legal/privacy, qualified dietitian taxonomy sign-off, provider/vendor review, WhatsApp/Telegram policy review, operational ownership, and R-405 resolution or formal acceptance.
+
+## Phase 21 Handoff Notes - 2026-05-28
+
+Completed by: Codex
+
+### What Was Done
+
+- Created `docs/PHASE_21_EXTERNAL_APPROVAL_DOSSIER_SPEC.md`.
+- Created `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md`.
+- Re-verified the local release baseline with `npm run release:verify`.
+- Updated the pilot readiness evidence pack with the 2026-05-28 verification result.
+- Updated planning and handoff docs so the next step is external approval evidence collection.
+- Corrected the stale no-Git warning: the local Git repository exists and latest baseline is `66a8b94`.
+
+### What Was NOT Done
+
+- No launch gate was approved.
+- No production pilot was declared ready.
+- No real client health data was connected.
+- No real WhatsApp, Telegram, Gemini, external LLM, email, push, monitoring, analytics, secret manager, or production secret was connected.
+- No dependency upgrade, canary Next.js move, invalid npm override, or `npm audit fix --force` was applied.
+- R-405 was not resolved or accepted.
+
+### Verification Commands
+
+```text
+app: npm run release:verify -> passed
+core: npm test -> 35/35 passed inside release verification
+app: npm test -> 78/78 passed inside release verification
+app: lint -> passed inside release verification
+app: production build -> passed inside release verification
+app: production dependency audit -> known R-405 findings only
+```
+
+### Next Correct Step For Codex
+
+Collect external approval artifacts against `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md`. Keep all gates open until the user supplies approval evidence, and keep real providers/channels/monitoring/secret manager/health data disconnected.
+
+## Phase 22 Handoff Notes - 2026-05-28
+
+Completed by: Codex
+
+### What Was Done
+
+- Created `docs/PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`.
+- Re-checked current production audit output: only `next:postcss` and `postcss:GHSA-qx2v-qp2m-jg93` remain.
+- Re-checked npm metadata:
+  - `next@latest` is `16.2.6` and still depends on `postcss@8.4.31`.
+  - `next@canary` is `16.3.0-canary.32` and depends on `postcss@8.5.10`, but canary remains rejected as pilot baseline.
+- Documented the accepted stable patch procedure for updating `next` and `eslint-config-next` together once stable Next bundles `postcss >= 8.5.10`.
+- Updated the risk register, evidence pack, production gate dossier, and planning docs to point to the Phase 22 procedure.
+
+### What Was NOT Done
+
+- No dependency files were changed because no safe stable patch path exists yet.
+- No `npm audit fix --force` was run.
+- No canary Next.js version, invalid npm override, or major downgrade was applied.
+- R-405 was not resolved or accepted.
+- No real provider, channel, monitoring, secret manager, email, push, or real health data was connected.
+
+### Verification Commands
+
+```text
+app: npm audit --omit=dev --json -> known R-405 findings only
+app: npm view next@latest version dependencies --json -> 16.2.6 with postcss 8.4.31
+app: npm view next@canary version dependencies --json -> 16.3.0-canary.32 with postcss 8.5.10
+```
+
+### Next Correct Step For Codex
+
+Do not edit dependency files until `next@latest` is a stable release that bundles `postcss >= 8.5.10`, or until the user supplies formal R-405 risk acceptance. When a stable patch exists, follow `docs/PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md` exactly and run `npm run release:verify`.
+
+## Phase 26 Handoff Notes - 2026-05-30
+
+Completed by: Codex
+
+### What Was Done
+
+- Read and implemented the user-supplied `new plan 2.pdf` as Phase 26.
+- Created `docs/PHASE_26_INTERNAL_COPILOT_SPEC.md`.
+- Added read-only internal copilot app-state records: `internalCopilotMessages`, `internalCopilotToolCalls`, and source refs.
+- Added migration `app/supabase/migrations/20260530020000_phase_26_internal_copilot.sql` for `internal_copilot_messages` and `internal_copilot_tool_calls` with tenant-scoped RLS.
+- Added deterministic local/mock internal copilot tools over scoped `ManuAppState`.
+- Added `/api/internal-copilot/messages` and `internal_copilot_chat` capability.
+- Owner/admin/dietitian can use the internal copilot; assistant/auditor are blocked in v1.
+- Added Dashboard `Copilot` tab with quick prompts, source chips, and no send-to-client action.
+- Added tests for intent mapping, ambiguous/hidden clients, grounded source refs, prompt-injection-as-data behavior, fallback API persistence, RBAC, and Supabase app-state scoping.
+- Updated `PLAN.md`, `PROJECT_PLAN.md`, `app/README.md`, `docs/NEXT_PHASE_EXECUTION_PLAN.md`, `docs/PILOT_READINESS_EVIDENCE_PACK.md`, `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md`, `docs/DATA_INVENTORY.md`, `docs/AI_PROVIDER_REQUIREMENTS.md`, `docs/DATASET_STRATEGY.md`, and `docs/RISK_REGISTER.md`.
+
+### What Was NOT Done
+
+- No real Gemini/external LLM provider was connected.
+- No real WhatsApp, Telegram, email, push, monitoring, analytics, secret manager, or real health data was connected.
+- No raw SQL or mutation tools were added.
+- No production launch gate was approved.
+- No dependency remediation or `npm audit fix --force` was attempted.
+
+### Verification Commands
+
+```text
+core: npm test -> 39/39 passed
+app: npm test -> 96/96 passed during implementation
+app: npm run lint -> passed
+app: npm run build -> passed
+app: npm run release:verify -> passed
+release verification: core tests 39/39, app tests 96/96, lint passed, production build passed, production dependency audit known R-405 findings only
+```
+
+### Next Correct Step For Codex
+
+Collect external approval artifacts against `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md`. Keep Phase 26 local/mock and read-only until a separate provider-egress, legal/vendor, security, and data-minimization review exists.

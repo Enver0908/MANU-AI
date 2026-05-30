@@ -2,6 +2,17 @@ import { createBlankClient, createInitialState } from "./seed-data";
 import { AppDomainError } from "./app-errors";
 import { anonymizeClientInState, buildClientScopedExport, recordClientExportInState } from "./data-governance";
 import {
+  createClientFormSchemaInState,
+  publishClientFormSchemaInState,
+  saveClientFormResponseInState,
+} from "./client-forms";
+import { runInternalCopilotInState } from "./internal-copilot";
+import {
+  addVoiceSamplesToState,
+  generateVoiceProfileInState,
+  updateVoiceSampleStatusInState,
+} from "./voice-profile-workflow";
+import {
   approveDraftMessageInState,
   addClientToState,
   appendDietitianManualReply,
@@ -13,6 +24,7 @@ import {
   acknowledgeNotificationInState,
 } from "./simulator";
 import type { ClientRecord, ManuAppState, SimulationRequest } from "./types";
+import type { ClientFormFieldDefinition, VoiceSampleStatus } from "./types";
 
 const globalStore = globalThis as typeof globalThis & {
   manuAiFallbackState?: ManuAppState;
@@ -114,6 +126,40 @@ export function markNotificationRead(state: ManuAppState, notificationId: string
 export function acknowledgeNotification(state: ManuAppState, notificationId: string) {
   assertNotificationExistsInState(state, notificationId);
   return acknowledgeNotificationInState(state, notificationId);
+}
+
+export function addVoiceSamplesInState(state: ManuAppState, rawInput: string) {
+  return addVoiceSamplesToState(state, rawInput);
+}
+
+export function updateVoiceSampleStatus(state: ManuAppState, sampleId: string, status: VoiceSampleStatus) {
+  return updateVoiceSampleStatusInState(state, sampleId, status);
+}
+
+export function generateVoiceProfile(state: ManuAppState) {
+  return generateVoiceProfileInState(state);
+}
+
+export function createFormSchemaInState(
+  state: ManuAppState,
+  input: { title: string; fields: ClientFormFieldDefinition[] },
+) {
+  return createClientFormSchemaInState(state, input);
+}
+
+export function publishFormSchemaInState(state: ManuAppState, schemaId: string) {
+  return publishClientFormSchemaInState(state, schemaId);
+}
+
+export function saveFormResponseInState(
+  state: ManuAppState,
+  input: { clientId: string; schemaId: string; answers: Record<string, unknown> },
+) {
+  return saveClientFormResponseInState(state, input.clientId, input.schemaId, input.answers);
+}
+
+export function runInternalCopilotMessageInState(state: ManuAppState, body: string) {
+  return runInternalCopilotInState(state, body);
 }
 
 export function assertNotificationExistsInState(state: ManuAppState, notificationId: string) {

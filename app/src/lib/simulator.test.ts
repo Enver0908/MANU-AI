@@ -2,10 +2,12 @@ import { describe, expect, it } from "vitest";
 import { createInitialState } from "./seed-data";
 import {
   acknowledgeNotificationInState,
+  approveDraftMessageInState,
   markNotificationReadInState,
   runInboundSimulation,
   updateClientInState,
 } from "./simulator";
+import { AppDomainError } from "./app-errors";
 
 describe("local inbound simulator", () => {
   it("auto-sends green autopilot messages with model routing", async () => {
@@ -114,13 +116,12 @@ describe("local inbound simulator", () => {
   });
 
   it("records provider policy violations as safe no-send decisions", async () => {
-    const state = updateClientInState(createInitialState(), "client-mert", {
-      dietPlan: { summary: 42 as unknown as string },
-    });
+    const state = createInitialState();
     const next = await runInboundSimulation(state, {
       clientId: "client-mert",
       body: "Bugun kahvaltida yumurta yerine ne yiyebilirim?",
       idempotencyKey: "provider-policy-1",
+      mockProviderFailure: "provider_policy_violation",
       now: "2026-05-22T10:17:00.000Z",
     });
 
@@ -129,6 +130,27 @@ describe("local inbound simulator", () => {
     expect(countGeneratedMessages(next)).toBe(countGeneratedMessages(state));
     expect(next.aiDecisions.at(-1)?.providerStatus).toBe("failed");
     expect(next.aiDecisions.at(-1)?.providerErrorCode).toBe("provider_policy_violation");
+  });
+
+  it("blocks missing historical context output and moves the client to human takeover", async () => {
+    const state = createInitialState();
+    const next = await runInboundSimulation(state, {
+      clientId: "client-mert",
+      body: "Gecen hafta konustugumuz o yemegi tekrar yapayim mi?",
+      idempotencyKey: "missing-history-1",
+      mockProviderOutput: "missing_historical_context",
+      now: "2026-05-22T10:18:00.000Z",
+    });
+
+    expect(next.lastSimulation?.action).toBe("handoff");
+    expect(next.lastSimulation?.blockedReason).toBe("missing_historical_context");
+    expect(countGeneratedMessages(next)).toBe(countGeneratedMessages(state));
+    expect(next.clients.find((client) => client.id === "client-mert")?.humanTakeoverLocked).toBe(true);
+    expect(next.aiDecisions.at(-1)?.sendStatus).toBe("send_blocked");
+    expect(next.aiDecisions.at(-1)?.providerOutputSafety?.issues).toEqual(
+      expect.arrayContaining([expect.objectContaining({ code: "missing_historical_context", severity: "block" })]),
+    );
+    expect(next.handoffCases).toHaveLength(1);
   });
 
   it("does not duplicate messages or AI decisions for the same idempotency key", async () => {
@@ -149,6 +171,58 @@ describe("local inbound simulator", () => {
     expect(second.messages).toHaveLength(first.messages.length);
     expect(second.aiDecisions).toHaveLength(first.aiDecisions.length);
     expect(second.riskAssessments).toHaveLength(first.riskAssessments.length);
+  });
+
+  it("invalidates pending drafts when new inbound context arrives", async () => {
+    const withDraft = await runInboundSimulation(createInitialState(), {
+      clientId: "client-elif",
+      body: "D vitamini takviyesi kullanayim mi?",
+      idempotencyKey: "draft-invalidate-1",
+      now: "2026-05-22T10:22:00.000Z",
+    });
+    const draft = withDraft.messages.find((message) => message.status === "draft");
+
+    const next = await runInboundSimulation(withDraft, {
+      clientId: "client-elif",
+      body: "Bir de magnezyum soracaktim.",
+      idempotencyKey: "draft-invalidate-2",
+      now: "2026-05-22T10:23:00.000Z",
+    });
+
+    const invalidatedDraft = next.messages.find((message) => message.id === draft?.id);
+    const invalidatedDecision = next.aiDecisions.find((decision) => decision.id === draft?.generatedByAiDecisionId);
+    expect(invalidatedDraft?.status).toBe("blocked");
+    expect(invalidatedDecision?.sendStatus).toBe("draft_invalidated");
+    expect(next.auditEvents.some((event) => event.eventType === "draft_context_invalidated")).toBe(true);
+  });
+
+  it("blocks legacy and invalidated draft approval with controlled 409 errors", async () => {
+    const withDraft = await runInboundSimulation(createInitialState(), {
+      clientId: "client-elif",
+      body: "D vitamini takviyesi kullanayim mi?",
+      idempotencyKey: "legacy-draft-1",
+      now: "2026-05-22T10:24:00.000Z",
+    });
+    const draft = withDraft.messages.find((message) => message.status === "draft");
+    const legacyState = {
+      ...withDraft,
+      aiDecisions: withDraft.aiDecisions.map((decision) =>
+        decision.id === draft?.generatedByAiDecisionId
+          ? { ...decision, sendStatus: "legacy_draft_unverified" as const }
+          : decision,
+      ),
+    };
+
+    expect(() => approveDraftMessageInState(legacyState, draft?.id || "")).toThrow(
+      new AppDomainError(409, "draft_recompile_required"),
+    );
+
+    const invalidatedState = updateClientInState(withDraft, "client-elif", {
+      pinnedNotes: ["Changed context."],
+    });
+    expect(() => approveDraftMessageInState(invalidatedState, draft?.id || "")).toThrow(
+      new AppDomainError(409, "draft_context_invalidated"),
+    );
   });
 
   it("blocks auto-send when the dietitian takeover lock is active", async () => {

@@ -13,6 +13,7 @@ import {
   CirclePause,
   ClipboardList,
   Clock3,
+  Database,
   LogOut,
   MessageSquareText,
   Plus,
@@ -33,10 +34,19 @@ import {
   safetyChecklistLabels,
 } from "@/lib/safety-checklist";
 import { getSupabaseStatus } from "@/lib/supabase";
-import type { AiMode, AiStatus, Channel, ClientRecord, ManuAppState, MessageRecord, SafetyChecklist } from "@/lib/types";
+import type {
+  AiMode,
+  AiStatus,
+  Channel,
+  ClientFormFieldDefinition,
+  ClientRecord,
+  ManuAppState,
+  MessageRecord,
+  SafetyChecklist,
+} from "@/lib/types";
 import { useManuState } from "@/lib/use-manu-state";
 
-type ViewKey = "overview" | "clients" | "conversation" | "simulator" | "handoffs";
+type ViewKey = "overview" | "clients" | "conversation" | "simulator" | "handoffs" | "copilot" | "voice" | "forms";
 
 const viewItems: Array<{ key: ViewKey; label: string; icon: typeof Activity }> = [
   { key: "overview", label: "Overview", icon: Activity },
@@ -44,6 +54,9 @@ const viewItems: Array<{ key: ViewKey; label: string; icon: typeof Activity }> =
   { key: "conversation", label: "Conversation", icon: MessageSquareText },
   { key: "simulator", label: "Simulator", icon: Bot },
   { key: "handoffs", label: "Handoffs", icon: BellRing },
+  { key: "copilot", label: "Copilot", icon: Database },
+  { key: "voice", label: "Voice", icon: ClipboardList },
+  { key: "forms", label: "Forms", icon: SlidersHorizontal },
 ];
 
 const scenarioMessages = [
@@ -83,6 +96,13 @@ export function DashboardApp({ authInfo }: { authInfo?: { displayName: string; r
     markNotificationRead,
     acknowledgeNotification,
     resetState,
+    addVoiceSamples,
+    updateVoiceSampleStatus,
+    generateVoiceProfile,
+    createFormSchema,
+    publishFormSchema,
+    saveFormResponse,
+    sendInternalCopilotMessage,
   } = useManuState();
   const [view, setView] = useState<ViewKey>("overview");
   const [selectedClientId, setSelectedClientId] = useState("client-mert");
@@ -95,6 +115,12 @@ export function DashboardApp({ authInfo }: { authInfo?: { displayName: string; r
   const [newClientChannel, setNewClientChannel] = useState<Channel>("whatsapp");
   const [newClientHandle, setNewClientHandle] = useState("");
   const [showNotifications, setShowNotifications] = useState(false);
+  const [voiceRawInput, setVoiceRawInput] = useState("");
+  const [schemaTitle, setSchemaTitle] = useState("Client intake");
+  const [schemaFieldsRaw, setSchemaFieldsRaw] = useState("daily_routine | Daily routine | textarea | prompt_allowed");
+  const [formAnswersRaw, setFormAnswersRaw] = useState("");
+  const [copilotInput, setCopilotInput] = useState("");
+  const [isCopilotSending, setIsCopilotSending] = useState(false);
 
   const selectedClient = useMemo(
     () => state.clients.find((client) => client.id === selectedClientId) || state.clients[0],
@@ -202,6 +228,45 @@ export function DashboardApp({ authInfo }: { authInfo?: { displayName: string; r
     if (!selectedClient || !manualReply.trim()) return;
     await sendManualReplyRequest({ clientId: selectedClient.id, body: manualReply });
     setManualReply("");
+  };
+
+  const addVoiceSamplesFromInput = async () => {
+    if (!voiceRawInput.trim()) return;
+    await addVoiceSamples(voiceRawInput);
+    setVoiceRawInput("");
+  };
+
+  const createSchemaFromInput = async () => {
+    const fields = parseSchemaFields(schemaFieldsRaw);
+    if (!schemaTitle.trim() || fields.length === 0) return;
+    await createFormSchema({ title: schemaTitle, fields });
+  };
+
+  const saveSelectedFormResponse = async () => {
+    if (!selectedClient) return;
+    const activeSchema = [...state.clientFormSchemas]
+      .filter((schema) => schema.status === "published")
+      .sort((a, b) => b.version - a.version)[0];
+    if (!activeSchema) return;
+    await saveFormResponse({
+      clientId: selectedClient.id,
+      schemaId: activeSchema.id,
+      answers: parseAnswerLines(formAnswersRaw),
+    });
+    setFormAnswersRaw("");
+  };
+
+  const askInternalCopilot = async (body = copilotInput) => {
+    const trimmed = body.trim();
+    if (!trimmed || isCopilotSending) return;
+    setIsCopilotSending(true);
+    try {
+      await sendInternalCopilotMessage(trimmed);
+      setCopilotInput("");
+      setView("copilot");
+    } finally {
+      setIsCopilotSending(false);
+    }
   };
 
   return (
@@ -439,6 +504,44 @@ export function DashboardApp({ authInfo }: { authInfo?: { displayName: string; r
                 onSelectClient={setSelectedClientId}
                 onResolveHandoff={resolveHandoff}
                 onDismissHandoff={dismissHandoff}
+              />
+            )}
+
+            {view === "copilot" && selectedClient && (
+              <CopilotPanel
+                state={state}
+                selectedClient={selectedClient}
+                input={copilotInput}
+                isSending={isCopilotSending}
+                onInput={setCopilotInput}
+                onAsk={askInternalCopilot}
+              />
+            )}
+
+            {view === "voice" && (
+              <VoicePanel
+                state={state}
+                rawInput={voiceRawInput}
+                onRawInput={setVoiceRawInput}
+                onAddSamples={addVoiceSamplesFromInput}
+                onUpdateSampleStatus={updateVoiceSampleStatus}
+                onGenerateProfile={generateVoiceProfile}
+              />
+            )}
+
+            {view === "forms" && selectedClient && (
+              <FormsPanel
+                state={state}
+                selectedClient={selectedClient}
+                schemaTitle={schemaTitle}
+                schemaFieldsRaw={schemaFieldsRaw}
+                formAnswersRaw={formAnswersRaw}
+                onSchemaTitle={setSchemaTitle}
+                onSchemaFieldsRaw={setSchemaFieldsRaw}
+                onFormAnswersRaw={setFormAnswersRaw}
+                onCreateSchema={createSchemaFromInput}
+                onPublishSchema={publishFormSchema}
+                onSaveResponse={saveSelectedFormResponse}
               />
             )}
           </div>
@@ -992,6 +1095,313 @@ function SimulatorPanel({
   );
 }
 
+function VoicePanel({
+  state,
+  rawInput,
+  onRawInput,
+  onAddSamples,
+  onUpdateSampleStatus,
+  onGenerateProfile,
+}: {
+  state: ManuAppState;
+  rawInput: string;
+  onRawInput: (value: string) => void;
+  onAddSamples: () => void;
+  onUpdateSampleStatus: (sampleId: string, status: "draft" | "approved" | "rejected") => Promise<ManuAppState>;
+  onGenerateProfile: () => Promise<ManuAppState>;
+}) {
+  const profile = state.voiceProfiles.find((item) => item.status === "generated");
+  const approvedCount = state.voiceSamples.filter((sample) => sample.status === "approved").length;
+
+  return (
+    <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
+      <section className="rounded-lg border border-stone-200 bg-white p-4 shadow-sm">
+        <h3 className="text-xl font-semibold">Dietitian voice samples</h3>
+        <TextareaInput
+          label="Paste samples"
+          value={rawInput}
+          onChange={onRawInput}
+          rows={8}
+        />
+        <div className="mt-3 flex flex-wrap gap-2">
+          <button
+            onClick={onAddSamples}
+            className="inline-flex items-center gap-2 rounded-lg bg-stone-950 px-3 py-2 text-sm font-semibold text-white"
+            type="button"
+          >
+            <Plus size={16} />
+            Add samples
+          </button>
+          <button
+            onClick={onGenerateProfile}
+            className="inline-flex items-center gap-2 rounded-lg border border-stone-200 px-3 py-2 text-sm font-semibold text-stone-700"
+            type="button"
+          >
+            <SlidersHorizontal size={16} />
+            Generate profile
+          </button>
+        </div>
+        <div className="mt-4 space-y-2">
+          {state.voiceSamples.map((sample) => (
+            <div key={sample.id} className="rounded-lg border border-stone-200 p-3">
+              <div className="flex items-start justify-between gap-3">
+                <p className="text-sm text-stone-700">{sample.body}</p>
+                <Badge label={sample.status} tone={sample.status === "approved" ? "emerald" : "stone"} />
+              </div>
+              <div className="mt-2 flex gap-2">
+                {(["approved", "rejected"] as const).map((status) => (
+                  <button
+                    key={status}
+                    onClick={() => onUpdateSampleStatus(sample.id, status)}
+                    className="rounded-lg border border-stone-200 px-2 py-1 text-xs font-semibold text-stone-700"
+                    type="button"
+                  >
+                    {status}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+      <aside className="rounded-lg border border-stone-200 bg-white p-4 shadow-sm">
+        <h4 className="text-sm font-semibold">Voice profile</h4>
+        <p className="mt-2 text-sm text-stone-600">Approved samples: {approvedCount}/10 minimum</p>
+        {profile ? (
+          <div className="mt-3 space-y-2 text-sm text-stone-700">
+            <p>Version: {profile.profileVersion}</p>
+            <p>Formality: {profile.formality}</p>
+            <p>Emoji: {profile.emojiPolicy}</p>
+            <p>{profile.styleNotes}</p>
+          </div>
+        ) : (
+          <p className="mt-3 text-sm text-stone-500">No generated voice profile yet.</p>
+        )}
+      </aside>
+    </div>
+  );
+}
+
+function FormsPanel({
+  state,
+  selectedClient,
+  schemaTitle,
+  schemaFieldsRaw,
+  formAnswersRaw,
+  onSchemaTitle,
+  onSchemaFieldsRaw,
+  onFormAnswersRaw,
+  onCreateSchema,
+  onPublishSchema,
+  onSaveResponse,
+}: {
+  state: ManuAppState;
+  selectedClient: ClientRecord;
+  schemaTitle: string;
+  schemaFieldsRaw: string;
+  formAnswersRaw: string;
+  onSchemaTitle: (value: string) => void;
+  onSchemaFieldsRaw: (value: string) => void;
+  onFormAnswersRaw: (value: string) => void;
+  onCreateSchema: () => void;
+  onPublishSchema: (schemaId: string) => Promise<ManuAppState>;
+  onSaveResponse: () => void;
+}) {
+  const activeSchema = [...state.clientFormSchemas]
+    .filter((schema) => schema.status === "published")
+    .sort((a, b) => b.version - a.version)[0];
+  const response = activeSchema
+    ? state.clientFormResponses.find((item) => item.clientId === selectedClient.id && item.schemaId === activeSchema.id)
+    : null;
+
+  return (
+    <div className="grid gap-4 xl:grid-cols-[420px_minmax(0,1fr)]">
+      <section className="rounded-lg border border-stone-200 bg-white p-4 shadow-sm">
+        <h3 className="text-xl font-semibold">Dynamic form schemas</h3>
+        <div className="mt-3 space-y-3">
+          <TextInput label="Schema title" value={schemaTitle} onChange={onSchemaTitle} />
+          <TextareaInput label="Fields" value={schemaFieldsRaw} onChange={onSchemaFieldsRaw} rows={6} />
+          <button
+            onClick={onCreateSchema}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-stone-950 px-3 py-2 text-sm font-semibold text-white"
+            type="button"
+          >
+            <Plus size={16} />
+            Create schema
+          </button>
+        </div>
+        <div className="mt-4 space-y-2">
+          {state.clientFormSchemas.map((schema) => (
+            <div key={schema.id} className="rounded-lg border border-stone-200 p-3">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-sm font-semibold">{schema.title}</p>
+                  <p className="text-xs text-stone-500">v{schema.version} · {schema.fields.length} fields</p>
+                </div>
+                <Badge label={schema.status} tone={schema.status === "published" ? "emerald" : "stone"} />
+              </div>
+              {schema.status === "draft" && (
+                <button
+                  onClick={() => onPublishSchema(schema.id)}
+                  className="mt-2 rounded-lg border border-stone-200 px-2 py-1 text-xs font-semibold text-stone-700"
+                  type="button"
+                >
+                  Publish
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+      <section className="rounded-lg border border-stone-200 bg-white p-4 shadow-sm">
+        <h3 className="text-xl font-semibold">{selectedClient.fullName} form response</h3>
+        {activeSchema ? (
+          <>
+            <p className="mt-1 text-sm text-stone-600">{activeSchema.title} v{activeSchema.version}</p>
+            <TextareaInput label="Answers" value={formAnswersRaw} onChange={onFormAnswersRaw} rows={8} />
+            <button
+              onClick={onSaveResponse}
+              className="mt-3 inline-flex items-center gap-2 rounded-lg bg-emerald-950 px-3 py-2 text-sm font-semibold text-white"
+              type="button"
+            >
+              <Check size={16} />
+              Save response
+            </button>
+            {response && (
+              <pre className="mt-4 overflow-auto rounded-lg bg-stone-100 p-3 text-xs text-stone-700">
+                {JSON.stringify(response.answers, null, 2)}
+              </pre>
+            )}
+          </>
+        ) : (
+          <p className="mt-3 text-sm text-stone-500">Publish a form schema before saving responses.</p>
+        )}
+      </section>
+    </div>
+  );
+}
+
+function CopilotPanel({
+  state,
+  selectedClient,
+  input,
+  isSending,
+  onInput,
+  onAsk,
+}: {
+  state: ManuAppState;
+  selectedClient: ClientRecord;
+  input: string;
+  isSending: boolean;
+  onInput: (value: string) => void;
+  onAsk: (body?: string) => void;
+}) {
+  const messages = state.internalCopilotMessages.slice(-40);
+  const quickPrompts = [
+    `${selectedClient.fullName} son durumu`,
+    `${selectedClient.fullName} diyet plan ozeti`,
+    `${selectedClient.fullName} son mesajlari`,
+    `${selectedClient.fullName} acik handoff var mi?`,
+  ];
+
+  return (
+    <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_340px]">
+      <section className="rounded-lg border border-stone-200 bg-white p-4 shadow-sm">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <h3 className="text-xl font-semibold">Internal read-only copilot</h3>
+            <p className="mt-1 text-sm text-stone-600">
+              Tenant-scoped database tools only. No client message sending or record mutation.
+            </p>
+          </div>
+          <Badge label="mock/local" tone="amber" />
+        </div>
+
+        <div className="mt-4 flex flex-wrap gap-2">
+          {quickPrompts.map((prompt) => (
+            <button
+              key={prompt}
+              onClick={() => onAsk(prompt)}
+              className="rounded-lg border border-stone-200 px-3 py-2 text-sm font-semibold text-stone-700 transition hover:bg-stone-50"
+              type="button"
+            >
+              {prompt}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-4 min-h-[360px] space-y-3 rounded-lg border border-stone-100 bg-stone-50 p-3">
+          {messages.length === 0 ? (
+            <p className="p-4 text-sm text-stone-500">
+              Ask about visible client status, diet plan, recent messages, form responses, handoffs, or AI decisions.
+            </p>
+          ) : (
+            messages.map((message) => (
+              <div
+                key={message.id}
+                className={`max-w-3xl rounded-lg border p-3 ${
+                  message.role === "user"
+                    ? "ml-auto border-emerald-200 bg-emerald-50"
+                    : "border-stone-200 bg-white"
+                }`}
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-xs font-semibold uppercase text-stone-500">{message.role}</p>
+                  <Badge
+                    label={message.safetyStatus}
+                    tone={message.safetyStatus === "ok" ? "emerald" : message.safetyStatus === "unsupported" ? "stone" : "amber"}
+                  />
+                </div>
+                <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-stone-800">{message.body}</p>
+                {message.sourceRefs.length > 0 && (
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {message.sourceRefs.map((ref) => (
+                      <span
+                        key={`${ref.entityType}-${ref.entityId}`}
+                        className="rounded-lg border border-stone-200 bg-stone-50 px-2 py-1 text-xs font-medium text-stone-600"
+                      >
+                        {ref.label}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))
+          )}
+        </div>
+
+        <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+          <input
+            value={input}
+            onChange={(event) => onInput(event.target.value)}
+            className="min-h-11 flex-1 rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-emerald-700"
+            placeholder={`${selectedClient.fullName} son durumu`}
+          />
+          <button
+            onClick={() => onAsk()}
+            disabled={isSending}
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-900 disabled:cursor-not-allowed disabled:opacity-60"
+            type="button"
+          >
+            <Send size={16} />
+            Ask
+          </button>
+        </div>
+      </section>
+
+      <aside className="rounded-lg border border-stone-200 bg-white p-4 shadow-sm">
+        <h4 className="text-sm font-semibold">Read-only guarantees</h4>
+        <div className="mt-3 space-y-3 text-sm text-stone-600">
+          <p>Tools read only from visible scoped app state.</p>
+          <p>Assistant and auditor roles are blocked from copilot chat in v1.</p>
+          <p>Client messages and form answers are treated as untrusted data, not instructions.</p>
+          <p>Every assistant answer is stored with tool calls and source references.</p>
+        </div>
+      </aside>
+    </div>
+  );
+}
+
 function HandoffsPanel({
   state,
   onSelectClient,
@@ -1369,6 +1779,41 @@ function splitLines(value: string) {
     .split(/\n|,/)
     .map((item) => item.trim())
     .filter(Boolean);
+}
+
+function parseSchemaFields(raw: string): ClientFormFieldDefinition[] {
+  return raw
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => {
+      const [id, label, type = "text", visibility = "never", required = "false", options = ""] = line
+        .split("|")
+        .map((part) => part.trim());
+      return {
+        id,
+        label: label || id,
+        type: type as ClientFormFieldDefinition["type"],
+        required: required === "true",
+        llmVisibility: visibility === "prompt_allowed" ? ("prompt_allowed" as const) : ("never" as const),
+        options: options ? splitLines(options) : undefined,
+      };
+    })
+    .filter((field) => field.id && field.label);
+}
+
+function parseAnswerLines(raw: string) {
+  return Object.fromEntries(
+    raw
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .map((line) => {
+        const [key, ...valueParts] = line.split(":");
+        return [key.trim(), valueParts.join(":").trim()];
+      })
+      .filter(([key]) => key),
+  );
 }
 
 function toDateTimeLocal(value: string | null) {

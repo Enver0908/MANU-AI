@@ -294,7 +294,7 @@ npm test
 Last verified result:
 
 ```text
-35/35 tests passing
+39/39 tests passing
 ```
 
 ## Current Local App Prototype
@@ -431,15 +431,27 @@ Phase 17 provider policy guard and prompt boundary completed on 2026-05-25: mock
 
 Phase 18 notification SLA and internal escalation completed on 2026-05-25: added aggregate in-app SLA signals for handoff notifications. Urgent unacknowledged open handoff notifications breach after 15 minutes and count as internal escalation due; standard handoff notifications breach after 4 hours. Operational health now includes only aggregate SLA breach/escalation counts. No external email, push, WhatsApp, Telegram, monitoring, analytics, or real health data was connected. App tests now include 78 passing tests.
 
-Phase 19 release verification, CI script, and dependency gate completed on 2026-05-25: added `npm run release:verify`, which runs core package tests, lint, app tests, production build, and a conservative production dependency audit gate. The gate allows only the documented R-405 Next.js/PostCSS production audit finding, fails on unknown/high/critical findings, and keeps `npm audit fix --force` blocked. `npm run release:verify` passes with 35 core tests and 78 app tests while reporting R-405 as an open production launch blocker.
+Phase 19 release verification, CI script, and dependency gate completed on 2026-05-25: added `npm run release:verify`, which runs core package tests, lint, app tests, production build, and a conservative production dependency audit gate. The gate allows only the documented R-405 Next.js/PostCSS production audit finding, fails on unknown/high/critical findings, and keeps `npm audit fix --force` blocked. Phase 19 verification passed with 35 core tests and 78 app tests while reporting R-405 as an open production launch blocker.
 
-Phase 20 pilot readiness evidence pack completed on 2026-05-25: added a pilot-foundation evidence pack mapping all eight production-pilot launch gates to internal evidence, remaining external blockers, and open status. The pack records the latest `npm run release:verify` result and explicitly states that production pilot, real health data, real WhatsApp/Telegram messaging, real Gemini/provider calls, external notifications, monitoring, and R-405 clearance remain blocked.
+Phase 20 pilot readiness evidence pack completed on 2026-05-25: added a pilot-foundation evidence pack mapping all eight production-pilot launch gates to internal evidence, remaining external blockers, and open status. The pack records release verification results and explicitly states that production pilot, real health data, real WhatsApp/Telegram messaging, real Gemini/provider calls, external notifications, monitoring, and R-405 clearance remain blocked.
+
+Phase 21 external approval dossier started on 2026-05-28: added a PRD/tech spec and production-pilot gate closure dossier. The Phase 21 `npm run release:verify` baseline was re-run successfully with 35 core tests, 78 app tests, lint, build, and only the known R-405 production audit finding. All launch gates remain open until external approval evidence is supplied.
+
+Phase 22 R-405 dependency remediation planning completed on 2026-05-28: added a remediation spec that rejects `npm audit fix --force`, canary Next.js, invalid overrides, and major downgrade paths. Current stable `next@latest` still bundles vulnerable `postcss@8.4.31`; dependency files must not change until a stable Next.js release bundles `postcss >= 8.5.10` or external formal risk acceptance is provided.
+
+Phase 23 AI context and memory architecture completed on 2026-05-30: added a bounded `PromptContext` compiler, raw-text-free `ContextManifest`, the missing historical context invariant, provider-output guard blocking for `[ERROR: missing_historical_context]`, send-status tracking, draft invalidation on prompt-affecting context changes, human-takeover routing for missing history, and Supabase schema fields for context/send safety. Core tests now include 39 passing tests; app tests now include 82 passing tests. Real providers, channels, monitoring, secret manager, and real health data remain disconnected.
+
+Phase 24-25 voice sample and dynamic form infrastructure completed on 2026-05-30: added dietitian voice sample intake with approval/rejection and generated voice profiles, plus versioned dynamic client form schemas and response snapshots. PromptContext now includes only `prompt_allowed` form response summaries, and form response saves invalidate stale AI drafts. Real providers/channels/health data remain disconnected.
+
+Phase 26 internal copilot completed on 2026-05-30: added a read-only internal dietitian copilot backed by curated tenant-scoped database tools over already-visible app state. Owner/admin/dietitian roles can ask local/mock questions about visible client status, diet plans, recent messages, form responses, handoffs, and AI decision history. Assistant/auditor are blocked from copilot chat in v1. Copilot questions, tool calls, assistant answers, and source refs are persisted in fallback and Supabase-backed state. No raw SQL, mutation tools, real LLM provider, real channel, external notification, monitoring, secret manager, or real health data was connected. Latest `npm run release:verify` on 2026-05-30 passed with core tests 39/39, app tests 96/96, lint, production build, and only the known R-405 audit findings.
 
 Tasks:
 
-1. Keep clinical taxonomy approval, provider review, and real-channel policy review as launch gates.
-2. Keep real WhatsApp, Telegram, Gemini, and real client health data disconnected.
-3. Start the remaining production-readiness work only after preserving the Phase 9 verified checkpoint and keeping launch gates explicit.
+1. Use `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md` to collect external approval evidence for all eight production-pilot gates.
+2. Re-check R-405 only through the `docs/PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md` procedure before any dependency edit.
+3. Keep Phase 23-26 prompt-context, voice-profile, dynamic-form, and internal-copilot controls covered by tests before any real provider integration.
+4. Keep clinical taxonomy approval, provider review, real-channel policy review, operational ownership, and R-405 clearance as launch gates.
+5. Keep real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, and real client health data disconnected.
 
 Definition of done:
 

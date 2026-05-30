@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { createInitialState } from "./seed-data";
 import type { Channel, ClientRecord, ManuAppState, SimulationRequest } from "./types";
+import type { ClientFormFieldDefinition, VoiceSampleStatus } from "./types";
 
 export function useManuState() {
   const [state, setState] = useState<ManuAppState>(() => createInitialState());
@@ -111,6 +112,40 @@ export function useManuState() {
       resetState: () =>
         replaceFromApi("/api/app-state", {
           method: "POST",
+        }),
+      addVoiceSamples: (rawInput: string) =>
+        replaceFromApi("/api/dietitian/voice/samples", {
+          method: "POST",
+          body: JSON.stringify({ rawInput }),
+        }),
+      updateVoiceSampleStatus: (sampleId: string, status: VoiceSampleStatus) =>
+        replaceFromApi("/api/dietitian/voice/samples", {
+          method: "PATCH",
+          body: JSON.stringify({ sampleId, status }),
+        }),
+      generateVoiceProfile: () =>
+        replaceFromApi("/api/dietitian/voice/generate", {
+          method: "POST",
+        }),
+      createFormSchema: (input: { title: string; fields: ClientFormFieldDefinition[] }) =>
+        replaceFromApi("/api/client-form-schemas", {
+          method: "POST",
+          body: JSON.stringify(input),
+        }),
+      publishFormSchema: (schemaId: string) =>
+        replaceFromApi("/api/client-form-schemas/publish", {
+          method: "POST",
+          body: JSON.stringify({ schemaId }),
+        }),
+      saveFormResponse: (input: { clientId: string; schemaId: string; answers: Record<string, unknown> }) =>
+        replaceFromApi("/api/clients/forms", {
+          method: "POST",
+          body: JSON.stringify(input),
+        }),
+      sendInternalCopilotMessage: (body: string) =>
+        replaceFromApi("/api/internal-copilot/messages", {
+          method: "POST",
+          body: JSON.stringify({ body }),
         }),
     }),
     [authError, hydrated, replaceFromApi, state],

@@ -2,8 +2,9 @@ import { getPersona } from "./personas.js";
 import { classifyDieteticRisk } from "./safety-classifier.js";
 import { buildMemoryContext } from "./conversation-memory.js";
 import { buildClientContextCapsule } from "./context-capsule.js";
+import { compilePromptContext, renderPromptContext } from "./context-compiler.js";
 import { createHandoffCase } from "./handoff-engine.js";
-import { guardAssistantReply } from "./response-quality-guard.js";
+import { guardProviderOutput } from "./response-quality-guard.js";
 import { defaultVoiceProfile } from "./voice-profile.js";
 import { selectModelForRisk } from "./model-routing.js";
 import { resolveAiActivation } from "./ai-activation.js";
@@ -76,18 +77,48 @@ export async function handleInboundMessage(input, adapters) {
     });
   }
 
-  const prompt = buildReplyPrompt({ capsule, inboundMessage: input.message.body });
-  const draft = await adapters.generateReply({ prompt, capsule, riskDecision, model: selectedModel });
-  const quality = guardAssistantReply({ draft, capsule, riskDecision });
+  const compiledContext = compilePromptContext({
+    capsule,
+    currentMessage: input.message.body,
+    recentMessages: input.recentMessages || [],
+    riskLevel: riskDecision.level,
+    promptVersion: input.promptVersion || null,
+  });
+
+  if (compiledContext.blockedReason) {
+    return buildResult({
+      capsule,
+      riskDecision,
+      action: "no_ai",
+      blockedReason: compiledContext.blockedReason,
+      model: selectedModel,
+      activation,
+      contextManifest: compiledContext.contextManifest,
+    });
+  }
+
+  const prompt = renderPromptContext(compiledContext.promptContext);
+  const draft = await adapters.generateReply({
+    prompt,
+    promptContext: compiledContext.promptContext,
+    contextManifest: compiledContext.contextManifest,
+    riskDecision,
+    model: selectedModel,
+  });
+  const quality = guardProviderOutput({ output: draft, capsule, riskDecision });
 
   if (!quality.allowed) {
+    const qualityIssueCodes = quality.issues.map((issue) => issue.code || issue);
+    const blockedReason = qualityIssueCodes.includes("missing_historical_context")
+      ? "missing_historical_context"
+      : "quality_guard_failed";
     const handoffCase = createHandoffCase({
       capsule,
       inboundMessage: input.message.body,
       riskDecision: {
         ...riskDecision,
         level: "yellow",
-        reasons: [...riskDecision.reasons, ...quality.issues],
+        reasons: [...riskDecision.reasons, ...qualityIssueCodes],
         shouldHandoff: true,
         pauseAutopilot: false,
       },
@@ -99,20 +130,37 @@ export async function handleInboundMessage(input, adapters) {
       action: "handoff",
       draft,
       handoffCase,
-      qualityIssues: quality.issues,
-      blockedReason: "quality_guard_failed",
+      qualityIssues: qualityIssueCodes,
+      blockedReason,
       model: selectedModel,
       activation,
+      contextManifest: compiledContext.contextManifest,
     });
   }
 
   if (modeDecision.action === "draft_for_approval") {
     await adapters?.onDraftForApproval?.({ capsule, draft, riskDecision });
-    return buildResult({ capsule, riskDecision, action: "draft_for_approval", draft, model: selectedModel, activation });
+    return buildResult({
+      capsule,
+      riskDecision,
+      action: "draft_for_approval",
+      draft,
+      model: selectedModel,
+      activation,
+      contextManifest: compiledContext.contextManifest,
+    });
   }
 
   await adapters?.sendMessage?.({ capsule, body: draft });
-  return buildResult({ capsule, riskDecision, action: "sent", draft, model: selectedModel, activation });
+  return buildResult({
+    capsule,
+    riskDecision,
+    action: "sent",
+    draft,
+    model: selectedModel,
+    activation,
+    contextManifest: compiledContext.contextManifest,
+  });
 }
 
 export function decideModeAction(mode, riskDecision) {
@@ -157,6 +205,7 @@ function buildResult({
   qualityIssues = [],
   model = null,
   activation = null,
+  contextManifest = null,
 }) {
   return {
     tenantId: capsule.tenantId,
@@ -175,5 +224,6 @@ function buildResult({
     handoffCase,
     blockedReason,
     qualityIssues,
+    contextManifest,
   };
 }

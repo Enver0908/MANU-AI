@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { POST as postAnonymizeClient } from "./clients/[id]/anonymize/route";
 import { GET as getClientExport } from "./clients/[id]/export/route";
+import { POST as postInternalCopilotMessage } from "./internal-copilot/messages/route";
 import { POST as postDraftAction } from "./messages/drafts/[id]/route";
 import { POST as postAcknowledgeNotification } from "./notifications/[id]/acknowledge/route";
 import { POST as postReadNotification } from "./notifications/[id]/read/route";
@@ -108,5 +109,34 @@ describe("API controlled domain errors", () => {
 
     expect(response.status).toBe(404);
     expect(payload.error).toBe("notification_not_found");
+  });
+
+  it("persists internal copilot messages and tool calls in fallback mode", async () => {
+    const response = await postInternalCopilotMessage(
+      new Request("http://localhost/api/internal-copilot/messages", {
+        method: "POST",
+        body: JSON.stringify({ body: "Mert diyet plan ozeti" }),
+      }) as never,
+    );
+    const payload = await response.json();
+    const assistant = payload.internalCopilotMessages.at(-1);
+
+    expect(response.status).toBe(200);
+    expect(payload.internalCopilotMessages).toHaveLength(2);
+    expect(payload.internalCopilotToolCalls.some((call: { toolName: string }) => call.toolName === "getClientDietPlan")).toBe(true);
+    expect(assistant.sourceRefs.some((ref: { entityType: string }) => ref.entityType === "client")).toBe(true);
+  });
+
+  it("requires a body for internal copilot messages", async () => {
+    const response = await postInternalCopilotMessage(
+      new Request("http://localhost/api/internal-copilot/messages", {
+        method: "POST",
+        body: JSON.stringify({ body: "" }),
+      }) as never,
+    );
+    const payload = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(payload.error).toBe("internal_copilot_body_required");
   });
 });

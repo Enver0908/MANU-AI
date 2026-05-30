@@ -34,6 +34,10 @@ const TEST_ASSIGNMENT_ID = "00000000-0000-4000-8000-000000000912";
 const OTHER_ASSIGNMENT_ID = "00000000-0000-4000-8000-000000000913";
 const TEST_DATA_REQUEST_ID = "00000000-0000-4000-8000-000000000914";
 const OTHER_DATA_REQUEST_ID = "00000000-0000-4000-8000-000000000915";
+const TEST_INTERNAL_COPILOT_MESSAGE_ID = "00000000-0000-4000-8000-000000000916";
+const OTHER_INTERNAL_COPILOT_MESSAGE_ID = "00000000-0000-4000-8000-000000000917";
+const TEST_INTERNAL_COPILOT_TOOL_CALL_ID = "00000000-0000-4000-8000-000000000918";
+const OTHER_INTERNAL_COPILOT_TOOL_CALL_ID = "00000000-0000-4000-8000-000000000919";
 const PASSWORD = "manu-rls-test-password";
 
 const maybeDescribe = shouldRun ? describe : describe.skip;
@@ -100,6 +104,14 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     const dataRequests = await member.from("data_requests").select("id");
     expect(dataRequests.error).toBeNull();
     expect(dataRequests.data).toEqual([{ id: TEST_DATA_REQUEST_ID }]);
+
+    const copilotMessages = await member.from("internal_copilot_messages").select("id");
+    expect(copilotMessages.error).toBeNull();
+    expect(copilotMessages.data).toEqual([{ id: TEST_INTERNAL_COPILOT_MESSAGE_ID }]);
+
+    const copilotToolCalls = await member.from("internal_copilot_tool_calls").select("id");
+    expect(copilotToolCalls.error).toBeNull();
+    expect(copilotToolCalls.data).toEqual([{ id: TEST_INTERNAL_COPILOT_TOOL_CALL_ID }]);
   });
 
   it("blocks a user without membership from tenant data", async () => {
@@ -132,6 +144,14 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     const dataRequests = await outsider.from("data_requests").select("id");
     expect(dataRequests.error).toBeNull();
     expect(dataRequests.data).toHaveLength(0);
+
+    const copilotMessages = await outsider.from("internal_copilot_messages").select("id");
+    expect(copilotMessages.error).toBeNull();
+    expect(copilotMessages.data).toHaveLength(0);
+
+    const copilotToolCalls = await outsider.from("internal_copilot_tool_calls").select("id");
+    expect(copilotToolCalls.error).toBeNull();
+    expect(copilotToolCalls.data).toHaveLength(0);
   });
 
   it("rejects cross-tenant writes through the anon client", async () => {
@@ -188,6 +208,26 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     });
 
     expect(dataRequestInsert.error?.message).toMatch(/row-level security|violates foreign key/i);
+
+    const copilotMessageInsert = await member.from("internal_copilot_messages").insert({
+      tenant_id: OTHER_TENANT_ID,
+      dietitian_id: TEST_DIETITIAN_ID,
+      role: "assistant",
+      body: "Blocked cross tenant copilot answer",
+      safety_status: "ok",
+    });
+
+    expect(copilotMessageInsert.error?.message).toMatch(/row-level security|violates foreign key/i);
+
+    const copilotToolInsert = await member.from("internal_copilot_tool_calls").insert({
+      tenant_id: OTHER_TENANT_ID,
+      dietitian_id: TEST_DIETITIAN_ID,
+      tool_name: "getClientDietPlan",
+      status: "ok",
+      result_summary: "Blocked cross tenant result",
+    });
+
+    expect(copilotToolInsert.error?.message).toMatch(/row-level security|violates foreign key/i);
   });
 
   it("stores simulator idempotency events with the simulated client channel", async () => {
@@ -492,9 +532,53 @@ async function seedTenants(admin: SupabaseClient, memberUserId: string) {
       },
     ]),
   );
+  await checked(
+    admin.from("internal_copilot_tool_calls").insert([
+      {
+        id: TEST_INTERNAL_COPILOT_TOOL_CALL_ID,
+        tenant_id: TEST_TENANT_ID,
+        dietitian_id: TEST_DIETITIAN_ID,
+        tool_name: "getClientDietPlan",
+        status: "ok",
+        result_summary: "Visible copilot tool result",
+      },
+      {
+        id: OTHER_INTERNAL_COPILOT_TOOL_CALL_ID,
+        tenant_id: OTHER_TENANT_ID,
+        dietitian_id: TEST_DIETITIAN_ID,
+        tool_name: "getClientDietPlan",
+        status: "ok",
+        result_summary: "Hidden copilot tool result",
+      },
+    ]),
+  );
+  await checked(
+    admin.from("internal_copilot_messages").insert([
+      {
+        id: TEST_INTERNAL_COPILOT_MESSAGE_ID,
+        tenant_id: TEST_TENANT_ID,
+        dietitian_id: TEST_DIETITIAN_ID,
+        role: "assistant",
+        body: "Visible copilot answer",
+        tool_call_ids: [TEST_INTERNAL_COPILOT_TOOL_CALL_ID],
+        safety_status: "ok",
+      },
+      {
+        id: OTHER_INTERNAL_COPILOT_MESSAGE_ID,
+        tenant_id: OTHER_TENANT_ID,
+        dietitian_id: TEST_DIETITIAN_ID,
+        role: "assistant",
+        body: "Hidden copilot answer",
+        tool_call_ids: [OTHER_INTERNAL_COPILOT_TOOL_CALL_ID],
+        safety_status: "ok",
+      },
+    ]),
+  );
 }
 
 async function cleanup(admin: SupabaseClient) {
+  await admin.from("internal_copilot_messages").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("internal_copilot_tool_calls").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("notifications").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("data_requests").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("client_ai_status_events").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);

@@ -2,9 +2,9 @@
 
 ## Current Position
 
-MANU-AI is in pilot-foundation mode. The local SaaS/PWA prototype, Supabase-backed state, fallback store, simulator, risk assessment persistence, core safety tests, RLS guard, controlled API errors, and expanded dashboard visual smoke checks exist.
+MANU-AI is in pilot-foundation mode. The local SaaS/PWA prototype, Supabase-backed state, fallback store, simulator, risk assessment persistence, core safety tests, RLS guard, controlled API errors, expanded dashboard visual smoke checks, voice-profile workflow, dynamic client forms, and read-only internal dietitian copilot exist.
 
-Real WhatsApp, Telegram, Gemini, and real client health data remain disconnected.
+Real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, and real client health data remain disconnected.
 
 ## Phase 0: Baseline, Documentation, And Workspace Safety
 
@@ -551,7 +551,7 @@ Status:
 - Added `docs/PHASE_19_RELEASE_VERIFICATION_DEPENDENCY_GATE_SPEC.md`.
 - Added `app/scripts/release-verify.mjs`.
 - Added app `release:verify` npm script.
-- Verified `npm run release:verify` passes with 35 core tests, 78 app tests, and the known R-405 production audit warning.
+- Phase 19 verification passed with 35 core tests, 78 app tests, and the known R-405 production audit warning.
 
 ## Phase 20: Pilot Readiness Evidence Pack - Completed 2026-05-25
 
@@ -576,13 +576,139 @@ Status:
 
 - Added `docs/PHASE_20_PILOT_READINESS_EVIDENCE_PACK_SPEC.md`.
 - Added `docs/PILOT_READINESS_EVIDENCE_PACK.md`.
-- Evidence pack records the latest `npm run release:verify` result: 35 core tests, 78 app tests, lint, build, and known R-405 audit warning.
+- Evidence pack initially recorded the Phase 20 `npm run release:verify` result: 35 core tests, 78 app tests, lint, build, and known R-405 audit warning. The current evidence pack is updated later with the Phase 26 verification baseline.
+
+## Phase 21: External Approval Dossier - In Progress
+
+Goal: prepare external approval materials without approving launch gates or connecting real production systems.
+
+Work:
+
+- Create a Phase 21 PRD/tech spec before changing product behavior.
+- Create a production-pilot gate closure dossier for all 8 launch gates.
+- Record the latest 2026-05-28 `npm run release:verify` baseline.
+- Keep R-405 open until a safe stable patch path exists or formal risk acceptance is provided.
+- Keep real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, and real health data disconnected.
+
+Done criteria:
+
+- `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md` lists each gate, required evidence, internal evidence, missing external decision, acceptable approval artifact, and status.
+- Planning and handoff docs point to external approval work as the next step.
+- All gates remain open unless the user supplies external approval evidence.
+- `npm run release:verify` passes with only the known R-405 production audit finding.
+
+Status:
+
+- Added `docs/PHASE_21_EXTERNAL_APPROVAL_DOSSIER_SPEC.md`.
+- Added `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md`.
+- Phase 21 verification on 2026-05-28 passed: 35 core tests, 78 app tests, lint, build, and known R-405 only.
+
+## Phase 22: R-405 Dependency Remediation - Blocked Pending Stable Patch
+
+Goal: resolve R-405 through a safe stable Next.js/PostCSS path, or keep the production launch gate blocked if no safe path exists.
+
+Work:
+
+- Document the R-405 remediation decision tree.
+- Re-check npm metadata for `next@latest`, `next@canary`, and production audit output.
+- Keep rejected fixes explicit: no `npm audit fix --force`, no canary baseline, no invalid override, and no major downgrade.
+- Define the exact stable patch procedure for updating `next` and `eslint-config-next` together once a stable patched release exists.
+
+Done criteria:
+
+- If stable `next@latest` depends on `postcss >= 8.5.10`, update dependencies and require `npm run release:verify` plus clean production audit.
+- If stable `next@latest` still depends on vulnerable PostCSS, do not change dependency files and keep R-405 open.
+- R-405 cannot be marked resolved unless `npm audit --omit=dev --json` no longer reports the known findings.
+
+Status:
+
+- Added `docs/PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`.
+- 2026-05-28 check: `next@latest` is `16.2.6` with `postcss@8.4.31`; `next@canary` has `postcss@8.5.10` but remains rejected for pilot baseline.
+- No dependency files were changed; R-405 remains an open production launch blocker.
+
+## Phase 23: AI Context And Memory Architecture - Completed 2026-05-30
+
+Goal: make the AI prompt context bounded, auditable, and fail-closed when the client references missing historical context.
+
+Work:
+
+- Add a PRD/tech spec before code changes.
+- Compile a deterministic `PromptContext` with only allowlisted segments.
+- Limit recent conversation context to the last 8 promptable messages plus rolling summary.
+- Store/audit a `ContextManifest` without raw message text.
+- Add the missing historical context invariant to system instructions.
+- Guard provider output for `[ERROR: missing_historical_context]`.
+- Block send/draft when the missing-history token appears and route to human takeover.
+- Invalidate pending AI drafts when prompt-affecting context changes.
+- Add Supabase schema fields for context revisions, memory revisions, provider output safety, token budget, and send status.
+
+Done criteria:
+
+- Manifest segments never contain raw client message text.
+- Provider boundary receives only stripped context segments and risk.
+- Missing historical context output is classified with `severity="block"`.
+- Missing historical context creates `send_status="send_blocked"` and human takeover, with no client-facing AI message.
+- Legacy or invalidated AI drafts cannot be approved without recompile/review.
+- Real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, and real health data remain disconnected.
+
+Status:
+
+- Added `docs/PHASE_23_AI_CONTEXT_MEMORY_ARCHITECTURE_SPEC.md`.
+- Added core `context-compiler.js`, prompt context rendering, context manifest metadata, and context compiler tests.
+- Added provider output guard support for missing historical context block severity.
+- Wired the simulator to use the bounded prompt context and safe provider boundary.
+- Added draft invalidation and controlled 409 approval errors for stale/legacy drafts.
+- Added Supabase migration `20260530000000_phase_23_context_send_safety.sql`.
+- Phase 23 verification on 2026-05-30 passed: core tests 39/39, app tests 82/82, app lint, and production build.
+
+## Phase 24: Dietitian Voice Sample Infrastructure - Completed 2026-05-30
+
+Goal: collect approved dietitian message examples after onboarding and generate a reusable voice profile.
+
+Status:
+
+- Added `docs/PHASE_24_DIETITIAN_VOICE_SAMPLE_INFRASTRUCTURE_SPEC.md`.
+- Added paste/TXT-style voice sample parsing, duplicate filtering, approval/rejection states, and 10-approved-sample generation threshold.
+- Added voice sample/profile app state, fallback APIs, Supabase migration support, and dashboard `Voice` panel.
+- Simulator now passes the generated dietitian voice profile to the core orchestrator when available.
+- Added unit tests for parsing, duplicate handling, minimum threshold, and profile generation.
+
+## Phase 25: Dynamic Client Form Infrastructure - Completed 2026-05-30
+
+Goal: let the user define and later change client forms without losing old answers or leaking non-prompt fields to the LLM.
+
+Status:
+
+- Added `docs/PHASE_25_DYNAMIC_CLIENT_FORM_INFRASTRUCTURE_SPEC.md`.
+- Added versioned form schemas, published-schema snapshots, client form responses, fallback APIs, Supabase migration support, and dashboard `Forms` panel.
+- PromptContext now supports `client_form_summary`, built only from fields marked `prompt_allowed`.
+- Saving a form response increments client context revision and invalidates pending AI drafts.
+- Added tests for versioned responses, prompt allowlist behavior, and draft invalidation.
+
+## Phase 26: Internal Dietitian Copilot - Completed 2026-05-30
+
+Goal: add a read-only internal AI chat for dietitian teams using curated tenant-scoped database tools.
+
+Status:
+
+- Added `docs/PHASE_26_INTERNAL_COPILOT_SPEC.md`.
+- Added app-state records for internal copilot messages, tool calls, and source refs.
+- Added Supabase migration `20260530020000_phase_26_internal_copilot.sql` with tenant-scoped RLS policies.
+- Added deterministic local/mock internal copilot tools for visible-client resolution, client snapshots, diet plans, recent messages, form responses, handoffs, and AI decision history.
+- Added `/api/internal-copilot/messages` with `internal_copilot_chat` capability.
+- Owner/admin/dietitian can use the internal copilot; assistant/auditor are blocked in v1.
+- Added dashboard `Copilot` tab with source chips and no send-to-client action.
+- Added tests for intent routing, ambiguous/hidden clients, source refs, prompt-injection-as-data behavior, fallback API persistence, RBAC, and Supabase state scoping.
+- Re-verified on 2026-05-30 with `npm run release:verify`: core tests 39/39, app tests 96/96, lint passed, production build passed, and production dependency audit reported only the known R-405 findings.
+- Updated the data inventory, provider requirements, dataset strategy, evidence pack, and production pilot dossier so Phase 26 records and provider-egress boundaries are explicit.
+- No raw SQL, mutation tools, real provider, real channel, external notification, monitoring, secret manager, or real health data was connected.
 
 ## Always-On Gates
 
 - No real health data before legal/privacy review.
 - No production messaging before WhatsApp/Telegram policy review.
 - No real LLM provider call with health data before vendor-risk and retention review.
+- No real-provider internal copilot egress before a separate provider, legal/privacy, security, and data-minimization review.
 - No fine-tuning on raw client messages.
 - No tenant mixing in datasets or prompt retrieval.
 - No raw health messages in external notification payloads.

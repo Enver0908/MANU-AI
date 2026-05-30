@@ -1,7 +1,7 @@
 export class AppDomainError extends Error {
-  status: 400 | 404;
+  status: 400 | 404 | 409;
 
-  constructor(status: 400 | 404, message: string) {
+  constructor(status: 400 | 404 | 409, message: string) {
     super(message);
     this.name = "AppDomainError";
     this.status = status;

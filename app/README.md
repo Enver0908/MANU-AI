@@ -40,6 +40,8 @@ The scripts use `--webpack` because Turbopack did not resolve the local symlinke
 
 `npm run release:verify` runs the core package tests, lint, unit/API tests, production build, and the production dependency audit gate. It allows only the documented R-405 Next.js/PostCSS finding and does not run `npm audit fix --force`.
 
+Latest local release verification on 2026-05-30 passed with core tests 39/39, app tests 96/96, lint, production build, and only the documented R-405 production audit finding.
+
 ## Supabase CLI
 
 The Supabase CLI is installed locally as a dev dependency because global `npm install -g supabase` is not supported by Supabase. Use it from this folder with telemetry disabled:
@@ -68,6 +70,7 @@ $env:SUPABASE_TELEMETRY_DISABLED='1'; npx supabase migration repair --local --st
 - Permission change auditing with previous/new values and distinct opt-out event type
 - Mock WhatsApp/Telegram adapter contracts with identity quarantine and duplicate event idempotency (Phase 7)
 - Deterministic mock AI provider with prompt/provider metadata and safe failure handling (Phase 8)
+- Bounded PromptContext compilation, raw-text-free context manifests, missing-history fail-closed behavior, and stale draft invalidation (Phase 23)
 - In-app notification center with `NotificationRecord` API backed by safe-text rules and Supabase persistence (Phase 9)
 - Data governance skeleton with retention placeholders, client-scoped export, and client anonymization APIs (Phase 5)
 - Client list and client detail controls
@@ -79,6 +82,9 @@ $env:SUPABASE_TELEMETRY_DISABLED='1'; npx supabase migration repair --local --st
 - Conversation timeline with message origin labels
 - Draft approval, edit-send, and dismiss controls for AI-generated drafts
 - Explicit human takeover release control with audit persistence
+- Dietitian voice sample intake, approval/rejection, generated voice profile state, and `Voice` dashboard panel (Phase 24)
+- Versioned dynamic client form schemas, response snapshots, prompt allowlist fields, and `Forms` dashboard panel (Phase 25)
+- Read-only internal dietitian `Copilot` tab and `/api/internal-copilot/messages` API using curated tenant-scoped local/mock tools with source refs (Phase 26)
 - Inbound simulator wired to `handleInboundMessage`
 - Handoff queue
 - PWA manifest and service worker
@@ -90,7 +96,7 @@ $env:SUPABASE_TELEMETRY_DISABLED='1'; npx supabase migration repair --local --st
 - Supabase Auth-backed demo session when local Supabase credentials are configured
 - Playwright dashboard visual smoke checks for core flows and responsive overflow
 
-No real WhatsApp, Telegram, cloud Supabase project, Gemini, or external model provider is connected yet.
+No real WhatsApp, Telegram, cloud Supabase project, Gemini, external model provider, email, push, monitoring, analytics, secret manager, or real client health data is connected yet.
 
 ## Local Supabase Foundation
 

@@ -10,6 +10,8 @@ import {
   generateMockProviderReply,
   getProviderErrorCode,
 } from "./ai-provider";
+import { buildClientFormSummary } from "./client-forms";
+import { getActiveVoiceProfile } from "./voice-profile-workflow";
 import { getMissingSafetyChecklistItems, isSafetyChecklistComplete } from "./safety-checklist";
 import { AppDomainError } from "./app-errors";
 import type {
@@ -35,6 +37,10 @@ type CoreResult = {
   providerId?: string | null;
   providerStatus?: AiDecisionRecord["providerStatus"];
   providerErrorCode?: string | null;
+  sendStatus?: AiDecisionRecord["sendStatus"];
+  contextManifest?: Record<string, unknown> | null;
+  providerOutputSafety?: Record<string, unknown> | null;
+  tokenBudget?: Record<string, unknown> | null;
   reasons: string[];
   action: AiDecisionRecord["action"];
   draft: string | null;
@@ -76,6 +82,7 @@ export async function runInboundSimulation(
   }
 
   const client = findClient(state, request.clientId);
+  const promptClient = { ...client, clientFormSummary: buildClientFormSummary(state, client.id) };
   const conversation = findConversation(state, client.id);
   const now = request.now || new Date().toISOString();
   const inboundMessage = buildMessage({
@@ -105,11 +112,16 @@ export async function runInboundSimulation(
     ...stateWithInbound,
     riskAssessments: [...stateWithInbound.riskAssessments, riskAssessment],
   };
+  const stateAfterInboundInvalidation = invalidatePendingDrafts(
+    stateWithInboundAndRisk,
+    now,
+    "new_inbound_message",
+  );
 
   const preflightBlock = getPreflightBlock(client);
   if (preflightBlock) {
     return appendBlockedSimulationResult({
-      state: stateWithInboundAndRisk,
+      state: stateAfterInboundInvalidation,
       client,
       conversation,
       inboundMessage,
@@ -124,7 +136,7 @@ export async function runInboundSimulation(
     {
       tenantId: state.tenant.id,
       dietitian: state.dietitian,
-      client,
+      client: promptClient,
       conversation,
       message: { body: trimmedBody },
       recentMessages: state.messages.filter((message) => message.conversationId === conversation.id),
@@ -132,14 +144,19 @@ export async function runInboundSimulation(
         rollingSummary: conversation.rollingSummary,
         durableFacts: {},
       },
+      voiceProfile: getActiveVoiceProfile(state) || undefined,
       now,
     },
     {
       generateReply: async (payload: Record<string, unknown>) => {
         const riskDecision = payload.riskDecision as { level: string };
+        const promptContext = payload.promptContext as { segments: Array<{ type: string; text: string }> };
         return generateMockProviderReply(
-          buildMockProviderInput(client, riskDecision.level as AiDecisionRecord["risk"]),
-          { failureMode: request.mockProviderFailure },
+          buildMockProviderInput(promptContext, riskDecision.level as AiDecisionRecord["risk"]),
+          {
+            failureMode: request.mockProviderFailure,
+            forceMissingHistoricalContext: request.mockProviderOutput === "missing_historical_context",
+          },
         );
       },
     },
@@ -155,6 +172,13 @@ export async function runInboundSimulation(
       providerId: MOCK_PROVIDER_ID,
       providerStatus: "failed",
       providerErrorCode: errorCode,
+      sendStatus: "send_blocked",
+      contextManifest: null,
+      providerOutputSafety: {
+        allowed: false,
+        issues: [{ code: errorCode, severity: "block", category: "policy", evidence: "provider_error" }],
+      },
+      tokenBudget: null,
       reasons: [errorCode],
       action: "no_ai",
       draft: null,
@@ -164,7 +188,7 @@ export async function runInboundSimulation(
   })) as CoreResult;
 
   return appendCoreSimulationResult({
-    state: stateWithInboundAndRisk,
+    state: stateAfterInboundInvalidation,
     client,
     conversation,
     inboundMessage,
@@ -197,6 +221,8 @@ export function updateClientInState(
 ): ManuAppState {
   const existingClient = state.clients.find((c) => c.id === clientId);
   const auditEvents = [...state.auditEvents];
+  const promptAffecting = isPromptAffectingClientPatch(patch);
+  const now = new Date().toISOString();
 
   if (existingClient && patch.channelPermission && patch.channelPermission !== existingClient.channelPermission) {
     auditEvents.push({
@@ -214,11 +240,21 @@ export function updateClientInState(
     });
   }
 
-  return {
+  const nextState = {
     ...state,
-    clients: state.clients.map((client) => (client.id === clientId ? { ...client, ...patch } : client)),
+    clients: state.clients.map((client) =>
+      client.id === clientId
+        ? {
+            ...client,
+            ...patch,
+            contextRevision: promptAffecting ? client.contextRevision + 1 : client.contextRevision,
+          }
+        : client,
+    ),
     auditEvents,
   };
+
+  return promptAffecting ? invalidatePendingDrafts(nextState, now, "client_context_changed") : nextState;
 }
 
 export function appendDietitianManualReply(
@@ -227,6 +263,7 @@ export function appendDietitianManualReply(
   body: string,
 ): ManuAppState {
   const conversation = findConversation(state, clientId);
+  const now = new Date().toISOString();
   const message = buildMessage({
     state,
     conversation,
@@ -237,10 +274,12 @@ export function appendDietitianManualReply(
     authorDietitianId: state.dietitian.id,
   });
 
-  return {
+  const nextState = {
     ...state,
     messages: body.trim() ? [...state.messages, message] : state.messages,
   };
+
+  return body.trim() ? invalidatePendingDrafts(nextState, now, "dietitian_manual_reply") : nextState;
 }
 
 export function approveDraftMessageInState(
@@ -248,7 +287,21 @@ export function approveDraftMessageInState(
   messageId: string,
   body?: string,
 ): ManuAppState {
-  const draft = findDraftMessage(state, messageId);
+  const draft = findAiDraftCandidate(state, messageId);
+  const decision = state.aiDecisions.find((item) => item.id === draft.generatedByAiDecisionId);
+
+  if (decision?.sendStatus === "legacy_draft_unverified") {
+    throw new AppDomainError(409, "draft_recompile_required");
+  }
+
+  if (decision?.sendStatus === "draft_invalidated") {
+    throw new AppDomainError(409, "draft_context_invalidated");
+  }
+
+  if (draft.status !== "draft") {
+    throw new AppDomainError(400, "message_not_ai_draft");
+  }
+
   const finalBody = body?.trim() || draft.body;
 
   return {
@@ -310,6 +363,7 @@ export function releaseHumanTakeoverLockInState(state: ManuAppState, clientId: s
         ? {
             ...item,
             humanTakeoverLocked: false,
+            contextRevision: item.contextRevision + 1,
           }
         : item,
     ),
@@ -318,6 +372,62 @@ export function releaseHumanTakeoverLockInState(state: ManuAppState, clientId: s
       buildAuditEvent(state, "human_takeover_released", "client", clientId, new Date().toISOString()),
     ],
   };
+}
+
+export function invalidatePendingDrafts(state: ManuAppState, createdAt: string, reason: string): ManuAppState {
+  const pendingDraftIds = new Set(
+    state.messages
+      .filter((message) => message.status === "draft" && message.origin === "ai_generated")
+      .map((message) => message.id),
+  );
+
+  if (pendingDraftIds.size === 0) return state;
+
+  const changedDecisionIds = new Set<string>();
+  const messages = state.messages.map((message) => {
+    if (!pendingDraftIds.has(message.id)) return message;
+    if (message.generatedByAiDecisionId) changedDecisionIds.add(message.generatedByAiDecisionId);
+    return { ...message, status: "blocked" as const };
+  });
+  const aiDecisions = state.aiDecisions.map((decision) =>
+    changedDecisionIds.has(decision.id) && decision.sendStatus !== "draft_invalidated"
+      ? { ...decision, sendStatus: "draft_invalidated" as const, blockedReason: reason }
+      : decision,
+  );
+
+  if (changedDecisionIds.size === 0) {
+    return { ...state, messages, aiDecisions };
+  }
+
+  return {
+    ...state,
+    messages,
+    aiDecisions,
+    auditEvents: [
+      ...state.auditEvents,
+      buildAuditEvent(state, "draft_context_invalidated", "ai_decision", [...changedDecisionIds].join(","), createdAt),
+    ],
+  };
+}
+
+function isPromptAffectingClientPatch(patch: Partial<ClientRecord>) {
+  return [
+    "selectedPersonaId",
+    "aiStatus",
+    "aiMode",
+    "aiActiveFrom",
+    "aiActiveUntil",
+    "healthProfile",
+    "dietPlan",
+    "allergies",
+    "restrictedFoods",
+    "clinicalRiskNotes",
+    "pinnedNotes",
+    "channelPermission",
+    "mandatorySafetyComplete",
+    "safetyChecklist",
+    "humanTakeoverLocked",
+  ].some((key) => Object.prototype.hasOwnProperty.call(patch, key));
 }
 
 export function markNotificationReadInState(state: ManuAppState, notificationId: string): ManuAppState {
@@ -355,6 +465,7 @@ function appendCoreSimulationResult({
   const nextMessages = [...state.messages];
   const handoffCases = [...state.handoffCases];
   const auditEvents = [...state.auditEvents];
+  let nextClients = state.clients;
 
   if (coreResult.action === "sent" && coreResult.draft) {
     nextMessages.push(
@@ -391,6 +502,12 @@ function appendCoreSimulationResult({
   }
 
   if (coreResult.action === "handoff" && coreResult.handoffCase) {
+    if (coreResult.blockedReason === "missing_historical_context") {
+      nextClients = state.clients.map((item) =>
+        item.id === client.id ? { ...item, humanTakeoverLocked: true, contextRevision: item.contextRevision + 1 } : item,
+      );
+    }
+
     const handoffCase: HandoffCaseRecord = {
       id: crypto.randomUUID(),
       tenantId: state.tenant.id,
@@ -437,6 +554,7 @@ function appendCoreSimulationResult({
     );
     return {
       ...state,
+      clients: nextClients,
       messages: nextMessages,
       aiDecisions: [...state.aiDecisions, decision],
       handoffCases,
@@ -472,6 +590,7 @@ function appendCoreSimulationResult({
 
   return {
     ...state,
+    clients: nextClients,
     messages: nextMessages,
     aiDecisions: [...state.aiDecisions, decision],
     handoffCases,
@@ -650,12 +769,38 @@ function buildDecision({
     providerId: result.providerId ?? (result.model ? MOCK_PROVIDER_ID : null),
     providerStatus: result.providerStatus ?? (result.model ? "ok" : "not_called"),
     providerErrorCode: result.providerErrorCode ?? null,
+    sendStatus: result.sendStatus ?? defaultSendStatus(result),
+    contextManifest: result.contextManifest ?? null,
+    providerOutputSafety:
+      result.providerOutputSafety ??
+      (result.qualityIssues.length > 0
+        ? {
+            allowed: false,
+            issues: result.qualityIssues.map((issue) => ({
+              code: issue,
+              severity: "block",
+              category: issue === "missing_historical_context" ? "context" : "clinical",
+              evidence: issue === "missing_historical_context" ? "context_mismatch" : "pattern",
+            })),
+          }
+        : null),
+    tokenBudget:
+      result.tokenBudget ??
+      ((result.contextManifest?.tokenBudget as Record<string, unknown> | undefined) || null),
     action: result.action,
     blockedReason: result.blockedReason,
     qualityIssues: result.qualityIssues,
     reasons: result.reasons,
     createdAt,
   };
+}
+
+function defaultSendStatus(result: CoreResult): AiDecisionRecord["sendStatus"] {
+  if (result.action === "sent") return "sent";
+  if (result.action === "draft_for_approval") return "draft_created";
+  if (result.action === "handoff") return result.blockedReason ? "send_blocked" : "not_applicable";
+  if (result.action === "no_ai") return result.blockedReason ? "send_blocked" : "not_called";
+  return "not_called";
 }
 
 function buildAuditEvent(
@@ -734,11 +879,19 @@ function findConversation(state: ManuAppState, clientId: string): ConversationRe
 }
 
 function findDraftMessage(state: ManuAppState, messageId: string): MessageRecord {
+  const message = findAiDraftCandidate(state, messageId);
+  if (message.status !== "draft") {
+    throw new AppDomainError(400, "message_not_ai_draft");
+  }
+  return message;
+}
+
+function findAiDraftCandidate(state: ManuAppState, messageId: string): MessageRecord {
   const message = state.messages.find((item) => item.id === messageId);
   if (!message) {
     throw new AppDomainError(404, "message_not_found");
   }
-  if (message.status !== "draft" || message.origin !== "ai_generated") {
+  if (message.origin !== "ai_generated") {
     throw new AppDomainError(400, "message_not_ai_draft");
   }
   return message;

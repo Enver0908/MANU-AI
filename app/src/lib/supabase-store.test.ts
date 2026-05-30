@@ -51,6 +51,17 @@ describe("Supabase scoped access", () => {
     expect(scoped.handoffCases).toEqual([]);
     expect(scoped.notifications).toEqual([]);
     expect(scoped.dataRequests).toEqual([]);
+    expect(scoped.internalCopilotMessages).toEqual([]);
+    expect(scoped.internalCopilotToolCalls).toEqual([]);
+  });
+
+  it("scopes internal copilot history to owner/admin/dietitian only", () => {
+    const state = scopedFixture();
+
+    expect(scopeSupabaseState(state, context("owner"), []).internalCopilotMessages).toHaveLength(1);
+    expect(scopeSupabaseState(state, context("dietitian"), []).internalCopilotToolCalls).toHaveLength(1);
+    expect(scopeSupabaseState(state, context("assistant"), []).internalCopilotMessages).toEqual([]);
+    expect(scopeSupabaseState(state, context("auditor"), []).internalCopilotToolCalls).toEqual([]);
   });
 });
 
@@ -85,6 +96,43 @@ function scopedFixture() {
         requestedByDietitianId: OTHER_DIETITIAN_ID,
         completedAt: "2026-05-25T00:00:00.000Z",
         createdAt: "2026-05-25T00:00:00.000Z",
+      },
+    ],
+    internalCopilotMessages: [
+      {
+        id: "internal-message-1",
+        tenantId: state.tenant.id,
+        dietitianId: state.dietitian.id,
+        role: "assistant",
+        body: "Grounded answer",
+        sourceRefs: [],
+        toolCallIds: ["internal-tool-1"],
+        safetyStatus: "ok",
+        createdAt: "2026-05-30T10:00:00.000Z",
+      },
+      {
+        id: "internal-message-hidden",
+        tenantId: state.tenant.id,
+        dietitianId: OTHER_DIETITIAN_ID,
+        role: "assistant",
+        body: "Hidden answer",
+        sourceRefs: [],
+        toolCallIds: [],
+        safetyStatus: "ok",
+        createdAt: "2026-05-30T10:00:00.000Z",
+      },
+    ],
+    internalCopilotToolCalls: [
+      {
+        id: "internal-tool-1",
+        tenantId: state.tenant.id,
+        dietitianId: state.dietitian.id,
+        toolName: "getClientDietPlan",
+        arguments: { clientId: state.clients[0].id },
+        status: "ok",
+        sourceRefs: [],
+        resultSummary: "Visible result",
+        createdAt: "2026-05-30T10:00:00.000Z",
       },
     ],
   };

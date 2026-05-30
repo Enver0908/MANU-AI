@@ -25,6 +25,8 @@ This is a planning artifact and must be reviewed before real client health data 
 | Conversation memory | Rolling summary, durable facts | Context efficiency | Yes after safety filtering | Client-scoped, editable, deletable |
 | Handoff cases | Risk reason, urgency, status | Human review | No direct prompt use | Audit and notification controls |
 | AI decisions | Mode, risk, action, model, prompt version | Auditability | No | Immutable audit metadata |
+| Internal copilot messages | Dietitian question, local/mock assistant answer, source refs | Internal decision support and auditability | No external LLM in current build | Tenant/dietitian scoped, RBAC, source-required answers, no client-facing send action |
+| Internal copilot tool calls | Curated tool name, arguments, result summary, source refs | Explainability and misuse review for internal copilot answers | No external LLM in current build | Read-only tools only, no raw SQL, no mutation tools, minimized summaries |
 | Provider metadata | Message IDs, delivery state, errors | Reliability and support | No | Idempotency and operational logs |
 | Audit events | Actor, action, entity, timestamp | Traceability | No | Append-only, minimized metadata |
 
@@ -42,6 +44,7 @@ The LLM may receive only:
 - Recent bounded conversation window.
 - Current inbound message.
 - Same-dietitian approved style examples, only after de-identification and filtering.
+- Internal copilot source summaries only in the local/mock copilot path; future external provider use requires a separate allowlist and review.
 
 The LLM must not receive by default:
 
@@ -56,6 +59,7 @@ The LLM must not receive by default:
 - Raw audit logs.
 - Imported messages with unknown author.
 - AI-generated replies unless approved or edited by a dietitian.
+- Internal copilot raw tool payloads, audit logs, or unrestricted database records.
 
 ## Retention Defaults
 

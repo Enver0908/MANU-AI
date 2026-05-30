@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  MISSING_HISTORICAL_CONTEXT_TOKEN,
   MOCK_PROVIDER_ID,
   PROMPT_VERSION,
   assertMockProviderInputPolicy,
@@ -9,33 +10,23 @@ import {
   getProviderErrorCode,
 } from "./ai-provider";
 
+const promptContext = {
+  segments: [{ type: "diet_plan_summary", text: "Three meals and one snack." }],
+};
+
 describe("mock AI provider", () => {
   it("generates deterministic green and yellow replies", async () => {
-    const client = { dietPlan: { summary: "Three meals and one snack." } };
-
-    await expect(generateMockProviderReply({ client, risk: "green" })).resolves.toContain("Three meals");
-    await expect(generateMockProviderReply({ client, risk: "yellow" })).resolves.toContain("onayiyla");
+    await expect(generateMockProviderReply({ context: promptContext, risk: "green" })).resolves.toContain(
+      "Three meals",
+    );
+    await expect(generateMockProviderReply({ context: promptContext, risk: "yellow" })).resolves.toContain("onayiyla");
   });
 
-  it("builds provider input from the allowlisted client fields only", () => {
-    const input = buildMockProviderInput(
-      {
-        dietPlan: {
-          summary: "Three meals and one snack.",
-          breakfast: "eggs",
-          lunch: "private",
-          dinner: "private",
-        },
-      },
-      "green",
-    );
+  it("builds provider input from prompt context only", () => {
+    const input = buildMockProviderInput(promptContext, "green");
 
     expect(input).toEqual({
-      client: {
-        dietPlan: {
-          summary: "Three meals and one snack.",
-        },
-      },
+      context: promptContext,
       risk: "green",
     });
   });
@@ -43,14 +34,14 @@ describe("mock AI provider", () => {
   it("normalizes timeout and provider errors", async () => {
     await expect(
       generateMockProviderReply(
-        { client: { dietPlan: { summary: "" } }, risk: "green" },
+        { context: { segments: [] }, risk: "green" },
         { failureMode: "provider_timeout", maxRetries: 1 },
       ),
     ).rejects.toMatchObject({ code: "provider_timeout" });
 
     try {
       await generateMockProviderReply(
-        { client: { dietPlan: { summary: "" } }, risk: "green" },
+        { context: { segments: [] }, risk: "green" },
         { failureMode: "provider_error" },
       );
     } catch (error) {
@@ -78,7 +69,7 @@ describe("mock AI provider", () => {
   it("rejects raw prompt or capsule payloads at the provider boundary", () => {
     expect(() =>
       assertMockProviderInputPolicy({
-        client: { dietPlan: { summary: "Three meals and one snack." } },
+        context: promptContext,
         risk: "green",
         prompt: "raw prompt text",
       } as never),
@@ -86,34 +77,34 @@ describe("mock AI provider", () => {
 
     expect(() =>
       assertMockProviderInputPolicy({
-        client: { dietPlan: { summary: "Three meals and one snack." } },
+        context: promptContext,
         risk: "green",
         capsule: { client: { fullName: "Mert Kaya" } },
       } as never),
     ).toThrowError(/Provider boundary rejected top_level keys/);
   });
 
-  it("rejects client fields outside the provider allowlist", () => {
+  it("rejects context segment fields outside the provider allowlist", () => {
     expect(() =>
       assertMockProviderInputPolicy({
-        client: {
-          dietPlan: { summary: "Three meals and one snack." },
-          healthProfile: { goal: "fat_loss" },
-          channelUserId: "+905551110001",
-          clinicalRiskNotes: ["private"],
-          pinnedNotes: ["private"],
-        },
+        context: { segments: [{ type: "diet_plan_summary", text: "Three meals", raw: "private" }] },
         risk: "green",
       } as never),
-    ).toThrowError(/Provider boundary rejected client keys/);
+    ).toThrowError(/Provider boundary rejected context_segment keys/);
   });
 
   it("rejects red-risk provider calls as defense in depth", async () => {
     await expect(
       generateMockProviderReply({
-        client: { dietPlan: { summary: "Three meals and one snack." } },
+        context: promptContext,
         risk: "red",
       }),
     ).rejects.toMatchObject({ code: "provider_policy_violation" });
+  });
+
+  it("returns the missing historical context token when the prompt context requires it", async () => {
+    await expect(
+      generateMockProviderReply({ context: promptContext, risk: "green" }, { forceMissingHistoricalContext: true }),
+    ).resolves.toBe(MISSING_HISTORICAL_CONTEXT_TOKEN);
   });
 });

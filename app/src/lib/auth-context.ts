@@ -15,7 +15,8 @@ export type AppCapability =
   | "notification_update"
   | "export_client"
   | "anonymize_client"
-  | "release_takeover";
+  | "release_takeover"
+  | "internal_copilot_chat";
 
 export type AppTenantContext = {
   tenantId: string;
@@ -103,6 +104,9 @@ export async function resolveAppTenantContext(): Promise<AppTenantContext> {
 
 export function requireCapability(context: AppTenantContext, capability: AppCapability) {
   if (!hasCapability(context.role, capability)) {
+    if (capability === "internal_copilot_chat") {
+      throw new AppAuthError(403, "internal_copilot_forbidden");
+    }
     throw new AppAuthError(403, `rbac_forbidden_${capability}`);
   }
 }

@@ -25,6 +25,34 @@ export function guardAssistantReply({ draft, capsule, riskDecision }) {
   };
 }
 
+export function guardProviderOutput({ output, capsule, riskDecision }) {
+  const assistant = guardAssistantReply({ draft: output, capsule, riskDecision });
+  const issues = assistant.issues.map((issue) => ({
+    code: issue,
+    severity: "block",
+    category: "clinical",
+    evidence: "pattern",
+  }));
+
+  if (hasMissingHistoricalContextToken(output)) {
+    issues.push({
+      code: "missing_historical_context",
+      severity: "block",
+      category: "context",
+      evidence: "context_mismatch",
+    });
+  }
+
+  return {
+    allowed: issues.length === 0,
+    issues,
+  };
+}
+
+export function hasMissingHistoricalContextToken(output) {
+  return /\[ERROR:\s*missing_historical_context\]|missing_historical_context/i.test(String(output || ""));
+}
+
 function maxLengthFor(capsule) {
   const preferred = Number(capsule.voiceProfile.averageMessageChars) || 140;
   return Math.min(Math.max(preferred * 2, 120), 360);

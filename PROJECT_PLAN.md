@@ -1068,7 +1068,7 @@ Additional Phase 1 hardening completed on 2026-05-25:
 
 Next focus:
 
-- Keep launch gates open for clinical taxonomy approval, provider/legal review, real-channel policy review, and VCS/checkpoint strategy.
+- Keep launch gates open for clinical taxonomy approval, provider/legal review, real-channel policy review, operational ownership, and R-405 clearance.
 - Follow `docs/NEXT_PHASE_EXECUTION_PLAN.md` as the canonical phased execution plan.
 
 Additional Phase 2-8 execution completed on 2026-05-25:
@@ -1178,7 +1178,7 @@ Phase 19 release verification, CI script, and dependency gate completed on 2026-
 - The dependency gate allows only the documented R-405 Next.js/PostCSS production audit finding.
 - Unknown production audit findings and high/critical production vulnerabilities fail closed.
 - `npm audit fix --force` remains blocked.
-- `npm run release:verify` passes with 35 core tests and 78 app tests while reporting R-405 as an open production launch blocker.
+- Phase 19 verification passed with 35 core tests and 78 app tests while reporting R-405 as an open production launch blocker.
 
 Phase 20 pilot readiness evidence pack completed on 2026-05-25:
 
@@ -1242,7 +1242,17 @@ These defaults remove planning ambiguity. They can change only through an explic
 
 ## 14. Recommended Next Action
 
-Start with Phase 0 and the immediate sprint together. Build the local SaaS prototype and simulator before touching real WhatsApp or Telegram credentials, but create the data inventory and risk register first. This gives us a safe place to validate tenant isolation, persona behavior, safety routing, webhook idempotency, human takeover, and dietitian workflows before external messages or real client health data are involved.
+Continue external approval work from the Phase 26 local/mock baseline. Use `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md` to collect legal/privacy, qualified dietitian, provider/vendor, WhatsApp/Telegram policy, incident/DSAR, backup/restore, secret rotation, internal copilot provider-egress, and dependency audit evidence.
+
+Phase 23 adds a stricter AI context foundation: provider calls must use a bounded `PromptContext`, context manifests must exclude raw text, missing historical context must fail closed with `[ERROR: missing_historical_context]`, and `send_status="send_blocked"` must route the conversation to dietitian takeover instead of sending or drafting to the client.
+
+Phase 26 adds a read-only internal dietitian copilot using curated tenant-scoped database tools over already-visible app state. It is local/mock only, source-referenced, blocks assistant/auditor access in v1, and adds no raw SQL, mutation tools, real provider, real channel, external notification, monitoring, secret manager, or real health data path.
+
+Latest local release verification on 2026-05-30 passed with core tests 39/39, app tests 96/96, lint, production build, and only the known R-405 production audit findings.
+
+Do not connect real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, or real client health data until the relevant launch gates are externally approved. R-405 remains a production launch blocker until a safe stable Next.js/PostCSS patch path exists or formal risk acceptance is provided.
+
+For R-405 specifically, follow `docs/PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`: update `next` and `eslint-config-next` only when a stable Next.js release bundles `postcss >= 8.5.10`, then require a clean production audit and `npm run release:verify`. Do not use canary Next.js, `npm audit fix --force`, invalid npm overrides, or major downgrades.
 
 ## 15. Gap Audit Result
 
