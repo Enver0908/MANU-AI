@@ -6,7 +6,7 @@ MANU-AI is in pilot-foundation mode. The local SaaS/PWA prototype, Supabase-back
 
 Real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, and real client health data remain disconnected.
 
-The most recent execution layer is Phase 31 / Completion Roadmap Phase 2: local Supabase RLS evidence attempt. The RLS suite could not produce passing evidence because Docker Desktop's Linux engine was unavailable, so local Supabase could not start and `npm run test:rls` skipped 10 guarded tests. The next active work is to unblock Docker/local Supabase and rerun Completion Roadmap Phase 2 evidence before treating R-406 as mitigated.
+The most recent execution layer is Phase 32 / Completion Roadmap Phase 3: R-405 stable patch recheck. Stable `next@latest` remains `16.2.6` with nested `postcss@8.4.31`, so no dependency files were changed and R-405 remains an open production launch blocker. R-406 also remains blocked because Phase 31 could not produce local Supabase RLS evidence without Docker Desktop's Linux engine.
 
 ## Phase 0: Baseline, Documentation, And Workspace Safety
 
@@ -790,6 +790,32 @@ Done criteria still unmet:
 - Migrations are available in the local database.
 - `npm run test:rls` runs the expanded 10-test suite instead of skipping.
 - R-406 and evidence docs are updated only after a passing local RLS run.
+
+## Phase 32: Completion Roadmap Phase 3 - R-405 Stable Patch Recheck - Completed 2026-05-31
+
+Goal: re-check R-405 through the Phase 22 stable dependency remediation procedure.
+
+Status:
+
+- Added `docs/PHASE_32_COMPLETION_PHASE_3_R405_RECHECK_SPEC.md`.
+- Re-read `docs/PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`.
+- Ran `npm view next@latest version dependencies --json`.
+- Ran `npm view eslint-config-next@latest version --json`.
+- Ran `npm audit --omit=dev --json`.
+- Confirmed `next@latest` is still `16.2.6`.
+- Confirmed stable Next still depends on `postcss@8.4.31`, below the accepted `postcss >= 8.5.10` remediation threshold.
+- Confirmed `eslint-config-next@latest` is still `16.2.6`.
+- Confirmed production audit still reports only the known R-405 moderate `next`/`postcss` findings.
+- No dependency files were changed.
+- No `npm audit fix --force`, canary, override, major downgrade, provider, channel, launch-gate, or real-data change was made.
+- R-405 remains open.
+- Re-verified documentation-only changes with `npm run release:verify`: core tests 49/49, app tests 103/103, lint, production build, and only documented R-405 findings.
+
+Done criteria:
+
+- Latest npm metadata is recorded.
+- Dependency files remain untouched because the accepted stable patch path is unavailable.
+- R-405 remains a production launch blocker until a stable Next.js release bundles `postcss >= 8.5.10` or external formal risk acceptance is supplied.
 
 ## Always-On Gates
 

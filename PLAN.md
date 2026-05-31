@@ -455,12 +455,14 @@ Completion roadmap Phase 1 completed on 2026-05-31: added `docs/PHASE_30_COMPLET
 
 Completion roadmap Phase 2 attempted on 2026-05-31: added `docs/PHASE_31_COMPLETION_PHASE_2_RLS_EVIDENCE_SPEC.md`, confirmed the RLS guard is still safe for non-local Supabase URLs, attempted to start local Supabase, and ran `npm run test:rls`. Local Supabase could not start because Docker Desktop's Linux engine pipe was unavailable, and `npm run test:rls` skipped 10 guarded tests. No passing RLS evidence was produced, so R-406 remains blocked pending local Docker/Supabase availability. `npm run release:verify` passed after the Phase 2 documentation update with core tests 49/49, app tests 103/103, lint, production build, and only documented R-405 findings.
 
+Completion roadmap Phase 3 completed on 2026-05-31: added `docs/PHASE_32_COMPLETION_PHASE_3_R405_RECHECK_SPEC.md` and rechecked R-405 through the Phase 22 procedure. `next@latest` remains `16.2.6` with `postcss@8.4.31`, `eslint-config-next@latest` remains `16.2.6`, and production audit still reports only the known moderate `next`/`postcss` findings. No dependency files were changed, no `npm audit fix --force` was run, and R-405 remains an open production launch blocker. `npm run release:verify` passed after the Phase 3 documentation update with core tests 49/49, app tests 103/103, lint, production build, and only documented R-405 findings.
+
 Tasks:
 
 1. Unblock completion roadmap Phase 2 by starting Docker Desktop/local Supabase, rerunning `npm run test:rls`, and updating R-406/evidence docs only if the expanded RLS suite passes.
 2. Use `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md` to collect external approval evidence for all eight production-pilot gates.
-3. Re-check R-405 only through the `docs/PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md` procedure before any dependency edit.
-4. Keep Phase 23-31 prompt-context, voice-profile, dynamic-form, internal-copilot, dietitian context update, provider-boundary, send-revalidation, evidence, and RLS controls covered by tests before any real provider integration.
+3. Re-check R-405 again only through the `docs/PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md` procedure before any future dependency edit.
+4. Keep Phase 23-32 prompt-context, voice-profile, dynamic-form, internal-copilot, dietitian context update, provider-boundary, send-revalidation, evidence, dependency, and RLS controls covered by tests before any real provider integration.
 5. Keep clinical taxonomy approval, provider review, real-channel policy review, operational ownership, R-405 clearance, and R-406 passing local RLS evidence as launch gates.
 6. Keep real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, and real client health data disconnected.
 

@@ -18,7 +18,7 @@ Run from `app`:
 npm run release:verify
 ```
 
-Latest result, re-verified on 2026-05-31 after Phase 31 RLS evidence documentation:
+Latest result, re-verified on 2026-05-31 after Phase 32 R-405 recheck documentation:
 
 - Core package tests: 49/49 passed.
 - App tests: 103/103 passed.
@@ -41,7 +41,7 @@ Additional Phase 28 remediation on 2026-05-31:
 - Provider input is guarded by a segment allowlist and fail-closed checks for red risk, unknown/overlong segments, extra keys, raw prompts, capsules, and raw message/profile objects.
 - Supabase RLS policies now use role/scope helper functions and RLS tests cover assistant/viewer/care-team/auditor/internal-copilot behavior when local Supabase is configured.
 
-Current npm metadata checked on 2026-05-31 still shows `next@latest` as `16.2.6` with `postcss@8.4.31`, and `eslint-config-next@latest` as `16.2.6`, so there is no safe stable Next.js/PostCSS upgrade path available in this workspace.
+Current npm metadata checked during Completion Roadmap Phase 3 on 2026-05-31 still shows `next@latest` as `16.2.6` with `postcss@8.4.31`, and `eslint-config-next@latest` as `16.2.6`, so there is no safe stable Next.js/PostCSS upgrade path available in this workspace.
 
 R-405 remediation planning is captured in `PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`. The only accepted technical path is a stable Next.js release that bundles `postcss >= 8.5.10`, followed by a clean production audit and `npm run release:verify`.
 
@@ -67,6 +67,16 @@ Completion Roadmap Phase 2 / Phase 31 RLS evidence attempt on 2026-05-31:
 - Attempted to start local Supabase; Docker Desktop's Linux engine pipe was unavailable.
 - Ran `npm run test:rls`; the suite skipped 1 file and 10 tests.
 - No passing RLS evidence was produced, and R-406 remains blocked pending local Docker/Supabase availability.
+- Re-ran `npm run release:verify`: core tests 49/49, app tests 103/103, lint, production build, and dependency audit gate passed with only documented R-405 findings.
+
+Completion Roadmap Phase 3 / Phase 32 R-405 stable patch recheck on 2026-05-31:
+
+- Added `PHASE_32_COMPLETION_PHASE_3_R405_RECHECK_SPEC.md`.
+- Rechecked `next@latest`: `16.2.6` with nested `postcss@8.4.31`.
+- Rechecked `eslint-config-next@latest`: `16.2.6`.
+- Rechecked production audit: only known moderate R-405 `next`/`postcss` findings remain.
+- No dependency files were changed because stable Next still does not bundle `postcss >= 8.5.10`.
+- R-405 remains an open production launch blocker.
 - Re-ran `npm run release:verify`: core tests 49/49, app tests 103/103, lint, production build, and dependency audit gate passed with only documented R-405 findings.
 
 ## Launch Gate Matrix

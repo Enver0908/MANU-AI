@@ -1314,3 +1314,45 @@ app: npm run release:verify -> passed; core tests 49/49, app tests 103/103, lint
 ### Next Correct Step For Codex
 
 Unblock Completion Roadmap Phase 2 only: start Docker Desktop with the Linux engine available, start local Supabase, point RLS test env to local Supabase without printing secrets, and rerun `npm run test:rls`. Update R-406 only after the expanded 10-test RLS suite passes locally.
+
+## Completion Roadmap Phase 3 / Phase 32 Handoff Notes - 2026-05-31
+
+Completed by: Codex
+
+### What Was Done
+
+- Followed `codex.md`: re-read the governing spec before dependency work, kept the change surgical, and avoided speculative fixes.
+- Created `docs/PHASE_32_COMPLETION_PHASE_3_R405_RECHECK_SPEC.md`.
+- Re-read `docs/PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`.
+- Ran `npm view next@latest version dependencies --json`.
+- Ran `npm view eslint-config-next@latest version --json`.
+- Ran `npm audit --omit=dev --json`.
+- Confirmed `next@latest` is still `16.2.6`.
+- Confirmed stable Next still depends on nested `postcss@8.4.31`.
+- Confirmed `eslint-config-next@latest` is still `16.2.6`.
+- Confirmed production audit still reports only the known R-405 moderate `next`/`postcss` findings and a rejected semver-major downgrade to `next@9.3.3`.
+- Updated `PLAN.md`, `PROJECT_PLAN.md`, `app/README.md`, `docs/NEXT_PHASE_EXECUTION_PLAN.md`, `docs/PILOT_READINESS_EVIDENCE_PACK.md`, `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md`, `docs/RISK_REGISTER.md`, `docs/PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`, and this handoff.
+
+### What Was NOT Done
+
+- No dependency files were changed.
+- No `npm audit fix --force` was run.
+- No canary, beta, release-candidate, major downgrade, or npm override was applied.
+- R-405 was not remediated or accepted.
+- R-406 was not remediated.
+- No runtime behavior, schema, provider, channel, launch-gate, or real-data changes were made.
+- No real Gemini/external LLM provider was connected.
+- No real WhatsApp, Telegram, email, push, monitoring, analytics, secret manager, or real health data was connected.
+
+### Verification Commands
+
+```text
+app: npm view next@latest version dependencies --json -> 16.2.6 with postcss 8.4.31
+app: npm view eslint-config-next@latest version --json -> 16.2.6
+app: npm audit --omit=dev --json -> known R-405 findings only
+app: npm run release:verify -> passed; core tests 49/49, app tests 103/103, lint, production build, known R-405 only
+```
+
+### Next Correct Step For Codex
+
+Do not edit dependency files until stable `next@latest` bundles `postcss >= 8.5.10`, or until the user supplies formal R-405 risk acceptance. Keep R-406 blocked until local Docker/Supabase is available and `npm run test:rls` passes locally.

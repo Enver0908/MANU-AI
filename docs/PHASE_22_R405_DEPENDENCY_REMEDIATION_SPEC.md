@@ -11,8 +11,8 @@ Resolve or keep safely gated the R-405 production dependency audit finding cause
   - `postcss:GHSA-qx2v-qp2m-jg93`
 - The affected installed path is `node_modules/next/node_modules/postcss`.
 - The advisory range is `postcss <8.5.10`.
-- Current `next@latest`, rechecked on 2026-05-31, is `16.2.6` and still depends on `postcss@8.4.31`.
-- Current `eslint-config-next@latest`, rechecked on 2026-05-31, is `16.2.6`.
+- Current `next@latest`, rechecked on 2026-05-31 during Completion Roadmap Phase 3, is `16.2.6` and still depends on `postcss@8.4.31`.
+- Current `eslint-config-next@latest`, rechecked on 2026-05-31 during Completion Roadmap Phase 3, is `16.2.6`.
 - The canary path has previously exposed patched PostCSS, but canary is not accepted as a pilot baseline.
 
 References:
