@@ -1651,3 +1651,37 @@ app: npm run release:verify -> passed; core tests 49/49, app tests 103/103, lint
 ### Next Correct Step For Codex
 
 Run `npm run release:verify` after any follow-up edits. Use `docs/PRODUCTION_PILOT_DEPENDENCY_AUDIT_CLEARANCE_PACKET.md` when the user supplies engineering/security dependency clearance, safe stable upgrade evidence, or formal R-405 risk acceptance. Do not mark `dependency_audit_clearance` approved unless all required dependency evidence items are covered by an acceptable artifact.
+
+## Completion Roadmap Phase 13 / Phase 42 Handoff Notes - 2026-05-31
+
+Completed by: Codex
+
+### What Was Done
+
+- Followed `codex.md`: wrote the spec before the change and kept the work to final evidence consolidation.
+- Created `docs/PHASE_42_COMPLETION_PHASE_13_FINAL_READINESS_CLOSURE_SPEC.md`.
+- Created `docs/PRODUCTION_PILOT_FINAL_READINESS_CLOSURE_SUMMARY.md`.
+- Recorded the current production-pilot decision as `NO-GO`.
+- Confirmed all eight launch gates remain open.
+- Confirmed R-405 remains open.
+- Confirmed R-406 remains blocked.
+- Confirmed no external approval artifacts were supplied during the completion roadmap.
+- Updated `PLAN.md`, `app/README.md`, `docs/NEXT_PHASE_EXECUTION_PLAN.md`, `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md`, `docs/PILOT_READINESS_EVIDENCE_PACK.md`, and this handoff.
+
+### What Was NOT Done
+
+- No launch gate was approved.
+- No external approval artifact was supplied or accepted.
+- No dependency files were changed.
+- No local Supabase RLS passing evidence was produced.
+- No runtime behavior, schema, dependency, provider, channel, monitoring, secret manager, backup provider, R-405 acceptance, R-406 mitigation, or real-data change was made.
+
+### Verification Commands
+
+```text
+app: npm run release:verify -> passed after clearing a transient .next EPERM build artifact; core tests 49/49, app tests 103/103, lint, production build, known R-405 only
+```
+
+### Next Correct Step For Codex
+
+Use `docs/PRODUCTION_PILOT_FINAL_READINESS_CLOSURE_SUMMARY.md` as the current go/no-go source. Do not move toward production pilot until R-406 has passing local Supabase evidence, R-405 is resolved or formally accepted, and all eight launch gates have acceptable external approval artifacts.
