@@ -153,6 +153,17 @@ Completion Roadmap Phase 10 / Phase 39 backup restore review packet on 2026-05-3
 - No backup provider, storage, secret manager, infrastructure, restore drill, backup approval, or real-data change was made.
 - Re-ran `npm run release:verify`: core tests 49/49, app tests 103/103, lint, production build, and dependency audit gate passed with only documented R-405 findings.
 
+Completion Roadmap Phase 11 / Phase 40 secret rotation review packet on 2026-05-31:
+
+- Added `PHASE_40_COMPLETION_PHASE_11_SECRET_ROTATION_REVIEW_PACKET_SPEC.md`.
+- Added `PRODUCTION_PILOT_SECRET_ROTATION_REVIEW_PACKET.md`.
+- Mapped draft secret rotation evidence to required secret manager, inventory, owner, cadence, emergency revocation, break-glass, access-review, health-check, smoke-test, and evidence decisions.
+- No secret-rotation approval artifact, production secret manager, or rotation evidence was supplied.
+- The `secret_rotation_plan` launch gate remains open.
+- R-405 remains open and R-406 remains blocked.
+- No secret manager, credential, provider, channel, infrastructure, secret-rotation approval, or real-data change was made.
+- Re-ran `npm run release:verify`: core tests 49/49, app tests 103/103, lint, production build, and dependency audit gate passed with only documented R-405 findings.
+
 ## Launch Gate Matrix
 
 | Launch gate | Internal evidence available | Remaining blocker | Gate status |
@@ -163,7 +174,7 @@ Completion Roadmap Phase 10 / Phase 39 backup restore review packet on 2026-05-3
 | WhatsApp and Telegram policy review | `PRODUCTION_PILOT_CHANNEL_POLICY_REVIEW_PACKET.md`, `PHASE_7_CHANNEL_ADAPTER_READINESS_SPEC.md`, `PHASE_16_CHANNEL_POLICY_SIMULATION_HARDENING_SPEC.md`, mock adapter idempotency, identity quarantine, opt-out simulation | WhatsApp healthcare feasibility, Telegram bot/privacy policy, real opt-in/out/template/service-window procedure | Open |
 | Incident response and deletion workflow runbook | `PRODUCTION_PILOT_INCIDENT_DSAR_REVIEW_PACKET.md`, `INCIDENT_RESPONSE_RUNBOOK.md`, `PHASE_14_DSAR_RETENTION_LEGAL_OPS_SPEC.md`, legal ops ledger, safe operational health snapshot | Breach escalation owner list, approved DSAR/deletion operating procedure | Open |
 | Backup expiry and restore test | `PRODUCTION_PILOT_BACKUP_RESTORE_REVIEW_PACKET.md`, `BACKUP_RESTORE_RUNBOOK.md` | Backup expiry policy, restore drill result, owner and cadence | Open |
-| Production secret rotation plan | `SECRET_ROTATION_RUNBOOK.md` | Production secret inventory, rotation owner/cadence, secret manager decision | Open |
+| Production secret rotation plan | `PRODUCTION_PILOT_SECRET_ROTATION_REVIEW_PACKET.md`, `SECRET_ROTATION_RUNBOOK.md` | Production secret inventory, rotation owner/cadence, secret manager decision | Open |
 | Production dependency audit clearance | `PHASE_19_RELEASE_VERIFICATION_DEPENDENCY_GATE_SPEC.md`, `npm run release:verify`, R-405 tracked in `RISK_REGISTER.md` | R-405 safe stable Next.js/PostCSS patch path or formal risk acceptance | Open |
 
 ## Technical Evidence Summary
@@ -241,6 +252,6 @@ Release verification:
 4. Obtain qualified dietitian approval using `PRODUCTION_PILOT_CLINICAL_TAXONOMY_REVIEW_PACKET.md` for the current clinical taxonomy and golden test set.
 5. Complete provider/vendor retention and prompt logging review using `PRODUCTION_PILOT_PROVIDER_VENDOR_REVIEW_PACKET.md`.
 6. Complete WhatsApp/Telegram policy, opt-in/out, template, and service-window review using `PRODUCTION_PILOT_CHANNEL_POLICY_REVIEW_PACKET.md`.
-7. Finalize incident response and DSAR/deletion using `PRODUCTION_PILOT_INCIDENT_DSAR_REVIEW_PACKET.md`, finalize backup/restore using `PRODUCTION_PILOT_BACKUP_RESTORE_REVIEW_PACKET.md`, then finalize secret rotation ownership.
+7. Finalize incident response and DSAR/deletion using `PRODUCTION_PILOT_INCIDENT_DSAR_REVIEW_PACKET.md`, finalize backup/restore using `PRODUCTION_PILOT_BACKUP_RESTORE_REVIEW_PACKET.md`, then finalize secret rotation using `PRODUCTION_PILOT_SECRET_ROTATION_REVIEW_PACKET.md`.
 8. Resolve or formally accept R-405 before production pilot.
 9. Re-run `npm run release:verify` after any approval-related code, dependency, prompt, or taxonomy change.

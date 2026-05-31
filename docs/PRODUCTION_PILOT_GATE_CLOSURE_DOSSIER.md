@@ -15,7 +15,7 @@ Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized reference
 ## Current Baseline
 
 - Git baseline: Phase 27-29 checkpoint exists at `c75564e Add Phase 27-29 pilot readiness checkpoint` on branch `codex/phase-29-baseline-checkpoint`; Completion Roadmap Phase 1 records this as the current implementation baseline.
-- Latest local release verification: `npm run release:verify` passed on 2026-05-31 after Phase 39 backup restore review packet documentation.
+- Latest local release verification: `npm run release:verify` passed on 2026-05-31 after Phase 40 secret rotation review packet documentation.
 - Verification result: core tests 49/49, app tests 103/103, lint passed, production build passed.
 - Dependency audit result: only known R-405 findings, `next:postcss` and `postcss:GHSA-qx2v-qp2m-jg93`.
 - R-405 status: open production launch blocker; Completion Roadmap Phase 3 rechecked metadata on 2026-05-31 and stable `next@latest` is still 16.2.6 with `postcss@8.4.31`, so no safe stable Next.js/PostCSS patch path is available.
@@ -28,6 +28,7 @@ Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized reference
 - Channel policy review packet: `PRODUCTION_PILOT_CHANNEL_POLICY_REVIEW_PACKET.md` was added during Completion Roadmap Phase 8. It is a review packet, not an approval artifact.
 - Incident/DSAR review packet: `PRODUCTION_PILOT_INCIDENT_DSAR_REVIEW_PACKET.md` was added during Completion Roadmap Phase 9. It is a review packet, not an approval artifact.
 - Backup/restore review packet: `PRODUCTION_PILOT_BACKUP_RESTORE_REVIEW_PACKET.md` was added during Completion Roadmap Phase 10. It is a review packet, not an approval artifact.
+- Secret rotation review packet: `PRODUCTION_PILOT_SECRET_ROTATION_REVIEW_PACKET.md` was added during Completion Roadmap Phase 11. It is a review packet, not an approval artifact.
 
 ## Gate Closure Matrix
 
@@ -39,7 +40,7 @@ Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized reference
 | WhatsApp and Telegram policy review | WhatsApp healthcare feasibility review, Telegram privacy and bot policy review, opt-in/out/template/service-window procedure | `PRODUCTION_PILOT_CHANNEL_POLICY_REVIEW_PACKET.md`, `PHASE_7_CHANNEL_ADAPTER_READINESS_SPEC.md`, `PHASE_16_CHANNEL_POLICY_SIMULATION_HARDENING_SPEC.md`, mock idempotency, identity quarantine, opt-out simulation | Platform/policy review must approve channel use, healthcare boundaries, templates, service window, and opt-in/out process | Dated channel policy memo and approved operating procedure | Open |
 | Incident response and deletion workflow runbook | Incident response runbook, breach escalation owner list, client deletion and export operating procedure | `PRODUCTION_PILOT_INCIDENT_DSAR_REVIEW_PACKET.md`, `INCIDENT_RESPONSE_RUNBOOK.md`, legal ops ledger, export/anonymization helpers, safe operational health snapshot | Operational owners must be named and DSAR/deletion procedure must be approved | Signed incident and DSAR operating procedure with owner list | Open |
 | Backup expiry and restore test | Backup expiry policy, restore drill result, restore owner and cadence | `PRODUCTION_PILOT_BACKUP_RESTORE_REVIEW_PACKET.md`, `BACKUP_RESTORE_RUNBOOK.md` | Backup provider, region, retention, encryption ownership, and restore drill must be approved and tested | Restore drill evidence with owner, timestamp, environment, and test results | Open |
-| Production secret rotation plan | Secret inventory, rotation cadence, emergency revocation procedure | `SECRET_ROTATION_RUNBOOK.md` | Production secret manager, owner, cadence, and emergency revocation flow must be approved | Secret inventory and rotation plan signed by operational owner | Open |
+| Production secret rotation plan | Secret inventory, rotation cadence, emergency revocation procedure | `PRODUCTION_PILOT_SECRET_ROTATION_REVIEW_PACKET.md`, `SECRET_ROTATION_RUNBOOK.md` | Production secret manager, owner, cadence, and emergency revocation flow must be approved | Secret inventory and rotation plan signed by operational owner | Open |
 | Production dependency audit clearance | Production dependency audit report, R-405 resolution or formal acceptance | `PHASE_19_RELEASE_VERIFICATION_DEPENDENCY_GATE_SPEC.md`, `PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`, `PHASE_29_PILOT_GATE_CLOSURE_EVIDENCE_HARDENING_SPEC.md`, `PHASE_32_COMPLETION_PHASE_3_R405_RECHECK_SPEC.md`, `npm run release:verify`, `RISK_REGISTER.md` | R-405 must be resolved through a safe stable patch path or formally accepted before pilot | Clean production audit report, safe stable upgrade evidence, or formal risk acceptance | Open |
 
 ## Review Packet Checklist
@@ -49,7 +50,7 @@ Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized reference
 - Provider packet: `PRODUCTION_PILOT_PROVIDER_VENDOR_REVIEW_PACKET.md`, provider requirements, no-storage/no-training requirements, prompt/completion logging decision checklist, provider-attempt audit semantics, provider input allowlist, internal copilot egress review, dietitian context update egress review.
 - Internal copilot packet: Phase 26 spec, `DATA_INVENTORY.md` copilot rows, RBAC/source-ref evidence, no-raw-SQL/no-mutation statement, provider-egress blocked statement.
 - Channel packet: `PRODUCTION_PILOT_CHANNEL_POLICY_REVIEW_PACKET.md`, WhatsApp feasibility checklist, Telegram bot/privacy checklist, opt-in/out and service-window procedure, identity quarantine and idempotency evidence.
-- Operations packet: `PRODUCTION_PILOT_INCIDENT_DSAR_REVIEW_PACKET.md`, `PRODUCTION_PILOT_BACKUP_RESTORE_REVIEW_PACKET.md`, incident owner placeholder, DSAR/deletion procedure placeholder, backup/restore drill placeholder, secret inventory and rotation owner placeholder.
+- Operations packet: `PRODUCTION_PILOT_INCIDENT_DSAR_REVIEW_PACKET.md`, `PRODUCTION_PILOT_BACKUP_RESTORE_REVIEW_PACKET.md`, `PRODUCTION_PILOT_SECRET_ROTATION_REVIEW_PACKET.md`, incident owner placeholder, DSAR/deletion procedure placeholder, backup/restore drill placeholder, secret inventory and rotation owner placeholder.
 - Dependency packet: latest `npm run release:verify` output, R-405 risk record, stable Next.js/PostCSS tracking note.
 - RLS evidence packet: latest `npm run test:rls` output from local Supabase or the Phase 31 blocker note that Docker/local Supabase was unavailable and R-406 remains blocked.
 - Approval intake packet: sanitized external approval artifact references tracked in `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md`.

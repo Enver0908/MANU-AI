@@ -1584,3 +1584,34 @@ app: npm run release:verify -> passed; core tests 49/49, app tests 103/103, lint
 ### Next Correct Step For Codex
 
 Run `npm run release:verify` after any follow-up edits. Use `docs/PRODUCTION_PILOT_BACKUP_RESTORE_REVIEW_PACKET.md` when the user supplies operations/security/legal feedback, backup policy approval, or restore-drill evidence. Do not mark `backup_restore_test` approved unless all required backup/restore evidence items are covered by an acceptable artifact.
+
+## Completion Roadmap Phase 11 / Phase 40 Handoff Notes - 2026-05-31
+
+Completed by: Codex
+
+### What Was Done
+
+- Followed `codex.md`: wrote the spec before the change and kept the work to documentation/review readiness.
+- Created `docs/PHASE_40_COMPLETION_PHASE_11_SECRET_ROTATION_REVIEW_PACKET_SPEC.md`.
+- Created `docs/PRODUCTION_PILOT_SECRET_ROTATION_REVIEW_PACKET.md`.
+- Mapped the draft secret rotation runbook to required secret manager, inventory, owner, cadence, emergency revocation, break-glass, access-review, health-check, smoke-test, and evidence decisions.
+- Updated `PLAN.md`, `PROJECT_PLAN.md`, `app/README.md`, `docs/NEXT_PHASE_EXECUTION_PLAN.md`, `docs/PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md`, `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md`, `docs/PILOT_READINESS_EVIDENCE_PACK.md`, `docs/RISK_REGISTER.md`, and this handoff.
+
+### What Was NOT Done
+
+- No secret-rotation approval artifact, production secret manager, or rotation evidence was supplied or accepted.
+- No real secret was created, printed, rotated, revoked, or stored.
+- No CI/CD, provider, channel, Supabase, email, push, monitoring, backup/storage, deployment, or infrastructure credential was changed.
+- No runtime behavior, schema, dependency, provider, channel, launch-gate approval, or real-data change was made.
+- R-405 remains open.
+- R-406 remains blocked.
+
+### Verification Commands
+
+```text
+app: npm run release:verify -> passed; core tests 49/49, app tests 103/103, lint, production build, known R-405 only
+```
+
+### Next Correct Step For Codex
+
+Run `npm run release:verify` after any follow-up edits. Use `docs/PRODUCTION_PILOT_SECRET_ROTATION_REVIEW_PACKET.md` when the user supplies security/operations feedback, secret manager approval, secret inventory, or rotation evidence. Do not mark `secret_rotation_plan` approved unless all required secret-rotation evidence items are covered by an acceptable artifact.

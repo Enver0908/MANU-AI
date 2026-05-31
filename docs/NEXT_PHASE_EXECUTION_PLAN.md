@@ -6,7 +6,7 @@ MANU-AI is in pilot-foundation mode. The local SaaS/PWA prototype, Supabase-back
 
 Real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, and real client health data remain disconnected.
 
-The most recent execution layer is Phase 39 / Completion Roadmap Phase 10: backup restore review packet. It prepares the `backup_restore_test` launch gate for external operations, security, and legal review without approving the gate or providing restore-drill evidence. R-405 remains open, and R-406 remains blocked because Phase 31 could not produce local Supabase RLS evidence without Docker Desktop's Linux engine.
+The most recent execution layer is Phase 40 / Completion Roadmap Phase 11: secret rotation review packet. It prepares the `secret_rotation_plan` launch gate for external security and operations review without approving the gate or providing secret-rotation evidence. R-405 remains open, and R-406 remains blocked because Phase 31 could not produce local Supabase RLS evidence without Docker Desktop's Linux engine.
 
 ## Phase 0: Baseline, Documentation, And Workspace Safety
 
@@ -972,6 +972,28 @@ Done criteria:
 - Operations/security/legal reviewers have a packet that separates internal draft backup/restore evidence from external restore-drill approval.
 - The packet warns against storing backup credentials, real client identifiers, raw client health data, production snapshot contents, restore credentials, or sensitive legal-hold artifacts in repo docs.
 - The production-pilot backup/restore gate remains open until acceptable external approval evidence is supplied.
+
+## Phase 40: Completion Roadmap Phase 11 - Secret Rotation Review Packet - Completed 2026-05-31
+
+Goal: prepare the `secret_rotation_plan` launch gate for external security and operations review.
+
+Status:
+
+- Added `docs/PHASE_40_COMPLETION_PHASE_11_SECRET_ROTATION_REVIEW_PACKET_SPEC.md`.
+- Added `docs/PRODUCTION_PILOT_SECRET_ROTATION_REVIEW_PACKET.md`.
+- Mapped the draft secret rotation runbook to required secret manager, inventory, owner, cadence, emergency revocation, break-glass, access-review, health-check, smoke-test, and evidence decisions.
+- Confirmed no secret-rotation approval artifact, production secret manager, or rotation evidence was supplied in this phase.
+- Kept `secret_rotation_plan` open.
+- Kept R-405 open.
+- Kept R-406 blocked.
+- No runtime behavior, schema, dependency, provider, channel, backup provider, storage, secret manager, infrastructure, credential, launch-gate approval, or real-data change was made.
+- Re-verified documentation-only changes with `npm run release:verify`: core tests 49/49, app tests 103/103, lint, production build, and only documented R-405 findings.
+
+Done criteria:
+
+- Security/operations reviewers have a packet that separates internal draft secret-rotation evidence from external signed secret-rotation approval.
+- The packet warns against storing secret values, token prefixes, connection strings, provider credentials, webhook secrets, database passwords, private deployment URLs, or secret-bearing logs in repo docs.
+- The production-pilot secret rotation gate remains open until acceptable external approval evidence is supplied.
 
 ## Always-On Gates
 
