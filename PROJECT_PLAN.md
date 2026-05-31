@@ -1242,15 +1242,19 @@ These defaults remove planning ambiguity. They can change only through an explic
 
 ## 14. Recommended Next Action
 
-Continue external approval work from the Phase 26 local/mock baseline. Use `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md` to collect legal/privacy, qualified dietitian, provider/vendor, WhatsApp/Telegram policy, incident/DSAR, backup/restore, secret rotation, internal copilot provider-egress, and dependency audit evidence.
+Continue external approval work from the Phase 29 evidence-hardened local/mock baseline. Use `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md` to collect legal/privacy, qualified dietitian, provider/vendor, WhatsApp/Telegram policy, incident/DSAR, backup/restore, secret rotation, internal copilot provider-egress, dietitian context update provider-egress, RLS local execution, and dependency audit evidence.
 
 Phase 23 adds a stricter AI context foundation: provider calls must use a bounded `PromptContext`, context manifests must exclude raw text, missing historical context must fail closed with `[ERROR: missing_historical_context]`, and `send_status="send_blocked"` must route the conversation to dietitian takeover instead of sending or drafting to the client.
 
 Phase 26 adds a read-only internal dietitian copilot using curated tenant-scoped database tools over already-visible app state. It is local/mock only, source-referenced, blocks assistant/auditor access in v1, and adds no raw SQL, mutation tools, real provider, real channel, external notification, monitoring, secret manager, or real health data path.
 
-Latest local release verification on 2026-05-30 passed with core tests 39/39, app tests 96/96, lint, production build, and only the known R-405 production audit findings.
+Phase 27 adds dietitian-entered Critical Context records for phone, Zoom, in-person, or other non-chat conversations. These records are local/mock app context, increment client context revision, invalidate pending drafts, and enter bounded PromptContext as `dietitian_context_update` segments without rewriting old WhatsApp messages or automatically changing diet plans. Phase 28 marks the newest dietitian-authored source across manual messages and Critical Context updates as authoritative through source metadata.
 
-Do not connect real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, or real client health data until the relevant launch gates are externally approved. R-405 remains a production launch blocker until a safe stable Next.js/PostCSS patch path exists or formal risk acceptance is provided.
+Phase 28 adds provider-attempt audit semantics, send-time draft revalidation, provider segment allowlist fail-closed checks, tenant-aware channel/idempotency uniqueness, scoped RLS/RBAC helpers, strict core TypeScript declarations, and expanded clinical golden cases. Latest local release verification on 2026-05-31 passed with core tests 49/49, app tests 103/103, lint, production build, and only the known R-405 production audit findings.
+
+Phase 29 adds pilot gate closure and evidence hardening without runtime behavior changes. It records that stable `next@latest` is still 16.2.6 with `postcss@8.4.31`, that `eslint-config-next@latest` is still 16.2.6, and that the expanded RLS suite remains environment evidence to rerun against local Supabase when available. `npm run release:verify` passed after Phase 29 with core tests 49/49, app tests 103/103, lint, production build, and only documented R-405 findings. All eight production-pilot launch gates remain open.
+
+Do not connect real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, dietitian context updates to a real provider, or real client health data until the relevant launch gates are externally approved. Keep Phase 28 provider-attempt, PromptContext, send-revalidation, and RLS/RBAC invariants intact before any provider/channel work. Keep Phase 29 evidence packet status current before external review. R-405 remains a production launch blocker until a safe stable Next.js/PostCSS patch path exists or formal risk acceptance is provided.
 
 For R-405 specifically, follow `docs/PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`: update `next` and `eslint-config-next` only when a stable Next.js release bundles `postcss >= 8.5.10`, then require a clean production audit and `npm run release:verify`. Do not use canary Next.js, `npm audit fix --force`, invalid npm overrides, or major downgrades.
 

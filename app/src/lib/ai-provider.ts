@@ -8,6 +8,22 @@ export const MOCK_PROVIDER_ID = "mock-local-provider-v0";
 
 export type ProviderStatus = "not_called" | "ok" | "failed";
 export type ProviderErrorCode = "provider_timeout" | "provider_error" | "provider_policy_violation";
+export const ALLOWED_PROVIDER_SEGMENT_TYPES = new Set([
+  "system_instruction",
+  "current_message",
+  "diet_plan_summary",
+  "allergies",
+  "restricted_foods",
+  "pinned_note",
+  "dietitian_context_update",
+  "client_form_summary",
+  "rolling_summary",
+  "recent_message",
+  "persona",
+  "voice_profile",
+]);
+const MAX_PROVIDER_SEGMENTS = 32;
+const MAX_PROVIDER_SEGMENT_CHARS = 3000;
 
 export class MockProviderError extends Error {
   constructor(
@@ -21,7 +37,14 @@ export class MockProviderError extends Error {
 
 export type MockProviderInput = {
   context: {
-    segments: Array<{ type: string; text: string }>;
+    segments: Array<{
+      type: string;
+      text: string;
+      sourceId?: string | null;
+      origin?: string | null;
+      createdAt?: string | null;
+      authority?: string | null;
+    }>;
   };
   risk: RiskLevel;
 };
@@ -41,6 +64,10 @@ export function buildMockProviderInput(
       segments: context.segments.map((segment) => ({
         type: segment.type,
         text: segment.text,
+        ...(segment.sourceId !== undefined ? { sourceId: segment.sourceId } : {}),
+        ...(segment.origin !== undefined ? { origin: segment.origin } : {}),
+        ...(segment.createdAt !== undefined ? { createdAt: segment.createdAt } : {}),
+        ...(segment.authority !== undefined ? { authority: segment.authority } : {}),
       })),
     },
     risk,
@@ -85,10 +112,20 @@ export function assertMockProviderInputPolicy(input: MockProviderInput) {
     throw new MockProviderError("provider_policy_violation", "Provider boundary requires context.segments array");
   }
 
+  if (input.context.segments.length > MAX_PROVIDER_SEGMENTS) {
+    throw new MockProviderError("provider_policy_violation", "Provider boundary rejected too many context segments");
+  }
+
   for (const segment of input.context.segments) {
-    assertAllowedKeys(segment, ["type", "text"], "context_segment");
+    assertAllowedKeys(segment, ["type", "text", "sourceId", "origin", "createdAt", "authority"], "context_segment");
     if (typeof segment.type !== "string" || typeof segment.text !== "string") {
       throw new MockProviderError("provider_policy_violation", "Provider boundary requires string context segments");
+    }
+    if (!ALLOWED_PROVIDER_SEGMENT_TYPES.has(segment.type)) {
+      throw new MockProviderError("provider_policy_violation", `Provider boundary rejected segment type: ${segment.type}`);
+    }
+    if (segment.text.length > MAX_PROVIDER_SEGMENT_CHARS) {
+      throw new MockProviderError("provider_policy_violation", `Provider boundary rejected overlong segment: ${segment.type}`);
     }
   }
 }

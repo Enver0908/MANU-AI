@@ -58,6 +58,7 @@ test("green autopilot sends guarded reply", async () => {
   assert.equal(result.action, "sent");
   assert.equal(result.risk, "green");
   assert.equal(result.model, "gemini-1.5-flash");
+  assert.equal(result.providerAttempted, true);
   assert.deepEqual(models, ["gemini-1.5-flash"]);
   assert.equal(sent.length, 1);
 });
@@ -83,6 +84,7 @@ test("red risk creates handoff and does not generate", async () => {
   assert.equal(result.action, "handoff");
   assert.equal(result.risk, "red");
   assert.equal(result.model, null);
+  assert.equal(result.providerAttempted, false);
   assert.equal(generated, false);
   assert.equal(handoffs.length, 1);
   assert.equal(handoffs[0].urgency, "urgent");
@@ -107,6 +109,7 @@ test("passive client does not call AI even for green message", async () => {
   assert.equal(result.blockedReason, "client_ai_passive");
   assert.equal(result.aiStatus, "passive");
   assert.equal(result.model, null);
+  assert.equal(result.providerAttempted, false);
   assert.equal(generated, false);
 });
 
@@ -133,6 +136,62 @@ test("scheduled activation waits until active window starts", async () => {
   assert.equal(result.action, "no_ai");
   assert.equal(result.blockedReason, "client_ai_not_started");
   assert.equal(result.activation.status, "scheduled");
+  assert.equal(result.model, null);
+  assert.equal(result.providerAttempted, false);
+  assert.equal(generated, false);
+});
+
+test("manual, paused, and context-budget blocks do not report provider attempts", async () => {
+  let generated = false;
+
+  const manual = await handleInboundMessage(
+    {
+      ...baseInput,
+      client: { ...baseInput.client, aiMode: "manual" },
+    },
+    {
+      generateReply: async () => {
+        generated = true;
+        return "ok";
+      },
+    },
+  );
+  assert.equal(manual.action, "no_ai");
+  assert.equal(manual.model, null);
+  assert.equal(manual.providerAttempted, false);
+
+  const paused = await handleInboundMessage(
+    {
+      ...baseInput,
+      client: { ...baseInput.client, aiMode: "paused" },
+    },
+    {
+      generateReply: async () => {
+        generated = true;
+        return "ok";
+      },
+    },
+  );
+  assert.equal(paused.action, "handoff");
+  assert.equal(paused.model, null);
+  assert.equal(paused.providerAttempted, false);
+
+  const overBudget = await handleInboundMessage(
+    {
+      ...baseInput,
+      message: { id: "message-over-budget", body: "a".repeat(1600) },
+    },
+    {
+      generateReply: async () => {
+        generated = true;
+        return "ok";
+      },
+    },
+  );
+  assert.equal(overBudget.action, "no_ai");
+  assert.equal(overBudget.blockedReason, "current_message_token_budget_exceeded");
+  assert.equal(overBudget.model, null);
+  assert.equal(overBudget.providerAttempted, false);
   assert.equal(generated, false);
 });
 
@@ -155,6 +214,7 @@ test("copilot mode drafts green messages for approval with flash model", async (
 
   assert.equal(result.action, "draft_for_approval");
   assert.equal(result.model, "gemini-1.5-flash");
+  assert.equal(result.providerAttempted, true);
   assert.deepEqual(models, ["gemini-1.5-flash"]);
   assert.equal(drafts.length, 1);
 });
@@ -180,6 +240,7 @@ test("yellow risk uses gemini 3 for approval draft", async () => {
   assert.equal(result.risk, "yellow");
   assert.equal(result.action, "draft_for_approval");
   assert.equal(result.model, "gemini-3");
+  assert.equal(result.providerAttempted, true);
   assert.deepEqual(models, ["gemini-3"]);
   assert.equal(drafts.length, 1);
 });
@@ -193,6 +254,7 @@ test("quality guard blocks unsafe draft", async () => {
 
   assert.equal(result.action, "handoff");
   assert.equal(result.blockedReason, "quality_guard_failed");
+  assert.equal(result.providerAttempted, true);
   assert.match(result.qualityIssues.join(","), /unsupported_plan_change/);
   assert.equal(handoffs.length, 1);
 });

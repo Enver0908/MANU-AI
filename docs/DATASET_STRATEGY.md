@@ -78,6 +78,7 @@ Runtime use:
 - Do not use messages from `imported_unknown` in evaluation datasets until reviewed.
 - Do not treat Phase 26 internal copilot messages or tool-call summaries as clinical ground truth, training data, or style examples by default.
 - Do not fine-tune or evaluate on internal copilot records until legal/privacy, tenant-scoping, retention, and source-quality rules are explicitly approved.
+- Do not fine-tune on Phase 27 dietitian context updates by default; use them first as runtime grounding and audit context only.
 
 ## Recommended MVP Use
 
@@ -145,6 +146,7 @@ Use:
 - Do not include dietitian-only risk notes in examples.
 - Keep a deletion path so removed clients disappear from future promptable datasets.
 - Keep audit metadata even when promptable examples are deleted, if legally required.
+- Dietitian context updates must stay scoped to the same client and disappear from promptable context after anonymization or supersede.
 
 ## Quality Metrics
 

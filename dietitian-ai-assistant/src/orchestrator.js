@@ -12,9 +12,13 @@ import { resolveAiActivation } from "./ai-activation.js";
 export async function handleInboundMessage(input, adapters) {
   const persona = getPersona(input.client.selectedPersonaId);
   const voiceProfile = input.voiceProfile || defaultVoiceProfile();
+  const providerId = input.providerId || null;
   const memory = buildMemoryContext({
     rollingSummary: input.memory?.rollingSummary,
     durableFacts: input.memory?.durableFacts,
+    memoryVersion: input.memory?.memoryVersion,
+    memoryRevision: input.memory?.memoryRevision,
+    memoryStale: input.memory?.memoryStale,
     recentMessages: input.recentMessages || [],
   });
 
@@ -33,7 +37,6 @@ export async function handleInboundMessage(input, adapters) {
   });
 
   const activation = resolveAiActivation(capsule.client, input.now ? new Date(input.now) : new Date());
-  const selectedModel = activation.active ? selectModelForRisk(riskDecision.level) : null;
 
   if (!activation.active) {
     return buildResult({
@@ -41,7 +44,7 @@ export async function handleInboundMessage(input, adapters) {
       riskDecision,
       action: "no_ai",
       blockedReason: activation.reason,
-      model: selectedModel,
+      model: null,
       activation,
     });
   }
@@ -61,7 +64,7 @@ export async function handleInboundMessage(input, adapters) {
       action: "handoff",
       handoffCase,
       blockedReason: modeDecision.reason,
-      model: selectedModel,
+      model: null,
       activation,
     });
   }
@@ -72,14 +75,14 @@ export async function handleInboundMessage(input, adapters) {
       riskDecision,
       action: "no_ai",
       blockedReason: modeDecision.reason,
-      model: selectedModel,
+      model: null,
       activation,
     });
   }
 
   const compiledContext = compilePromptContext({
     capsule,
-    currentMessage: input.message.body,
+    currentMessage: input.message,
     recentMessages: input.recentMessages || [],
     riskLevel: riskDecision.level,
     promptVersion: input.promptVersion || null,
@@ -91,12 +94,13 @@ export async function handleInboundMessage(input, adapters) {
       riskDecision,
       action: "no_ai",
       blockedReason: compiledContext.blockedReason,
-      model: selectedModel,
+      model: null,
       activation,
       contextManifest: compiledContext.contextManifest,
     });
   }
 
+  const selectedModel = selectModelForRisk(riskDecision.level);
   const prompt = renderPromptContext(compiledContext.promptContext);
   const draft = await adapters.generateReply({
     prompt,
@@ -133,6 +137,8 @@ export async function handleInboundMessage(input, adapters) {
       qualityIssues: qualityIssueCodes,
       blockedReason,
       model: selectedModel,
+      providerAttempted: true,
+      providerId,
       activation,
       contextManifest: compiledContext.contextManifest,
     });
@@ -146,6 +152,8 @@ export async function handleInboundMessage(input, adapters) {
       action: "draft_for_approval",
       draft,
       model: selectedModel,
+      providerAttempted: true,
+      providerId,
       activation,
       contextManifest: compiledContext.contextManifest,
     });
@@ -158,6 +166,8 @@ export async function handleInboundMessage(input, adapters) {
     action: "sent",
     draft,
     model: selectedModel,
+    providerAttempted: true,
+    providerId,
     activation,
     contextManifest: compiledContext.contextManifest,
   });
@@ -204,6 +214,8 @@ function buildResult({
   blockedReason = null,
   qualityIssues = [],
   model = null,
+  providerAttempted = false,
+  providerId = null,
   activation = null,
   contextManifest = null,
 }) {
@@ -218,6 +230,11 @@ function buildResult({
     personaId: capsule.persona.id,
     risk: riskDecision.level,
     model,
+    providerAttempted,
+    promptVersion: providerAttempted ? contextManifest?.promptVersion || null : null,
+    providerId: providerAttempted ? providerId : null,
+    providerStatus: providerAttempted ? "ok" : "not_called",
+    providerErrorCode: null,
     reasons: riskDecision.reasons,
     action,
     draft,

@@ -3,6 +3,9 @@ export const MISSING_HISTORICAL_CONTEXT_TOKEN = "[ERROR: missing_historical_cont
 export const MISSING_HISTORICAL_CONTEXT_INSTRUCTION =
   "Eğer danışan, senin elindeki PromptContext (son 8 mesaj ve özet) içinde yer almayan geçmiş bir konuşmaya, yemeğe veya detaya atıf yapıyorsa; danışana hitaben herhangi bir cevap üretme. Bunun yerine sadece [ERROR: missing_historical_context] çıktısını üret.";
 
+export const LATEST_DIETITIAN_CONTEXT_INSTRUCTION =
+  "If dietitian-authored sources conflict, use the source marked authority: newest_dietitian_authored as authoritative. Dietitian manual WhatsApp/Telegram messages and dietitian context updates are both dietitian-authored sources. Do not use older conflicting information.";
+
 export const CONTEXT_POLICY_V1 = {
   version: "context-policy-v1",
   totalPrompt: 3500,
@@ -30,7 +33,7 @@ export function compilePromptContext({
   promptVersion = null,
   policy = CONTEXT_POLICY_V1,
 }) {
-  const currentText = String(currentMessage || "").trim();
+  const currentText = textFromCurrentMessage(currentMessage);
   const currentTokens = policy.estimateTokens(currentText);
 
   if (currentTokens > policy.currentMessage) {
@@ -47,21 +50,52 @@ export function compilePromptContext({
 
   const selectedRecent = selectPromptableRecentMessages(recentMessages, policy);
   const segments = [
-    textSegment("system_instruction", "system_instruction_missing_history", MISSING_HISTORICAL_CONTEXT_INSTRUCTION),
-    textSegment("current_message", "current_message", currentText),
-    textSegment("diet_plan_summary", "diet_plan_summary", capsule.client.dietPlan?.summary || ""),
-    textSegment("allergies", "allergies", capsule.client.allergies?.join(", ") || ""),
-    textSegment("restricted_foods", "restricted_foods", capsule.client.restrictedFoods?.join(", ") || ""),
+    textSegment("system_instruction", "system_instruction_missing_history", MISSING_HISTORICAL_CONTEXT_INSTRUCTION, {
+      authority: "system",
+    }),
+    textSegment("system_instruction", "system_instruction_latest_dietitian_context", LATEST_DIETITIAN_CONTEXT_INSTRUCTION, {
+      authority: "system",
+    }),
+    textSegment("current_message", currentMessageId(currentMessage) || "current_message", currentText, {
+      origin: "client_inbound",
+      createdAt: currentMessageCreatedAt(currentMessage),
+      authority: "client_current_message",
+    }),
+    textSegment("diet_plan_summary", "diet_plan_summary", capsule.client.dietPlan?.summary || "", {
+      authority: "dietitian_approved_context",
+    }),
+    textSegment("allergies", "allergies", capsule.client.allergies?.join(", ") || "", {
+      authority: "dietitian_approved_context",
+    }),
+    textSegment("restricted_foods", "restricted_foods", capsule.client.restrictedFoods?.join(", ") || "", {
+      authority: "dietitian_approved_context",
+    }),
     ...buildPinnedSegments(capsule.client.pinnedNotes || []),
-    textSegment("client_form_summary", "client_form_summary", capsule.client.clientFormSummary || ""),
-    textSegment("rolling_summary", "rolling_summary", capsule.memory?.rollingSummary || ""),
-    ...selectedRecent.map((message) => textSegment("recent_message", message.id || null, message.body || "")),
-    textSegment("persona", capsule.persona?.id || "persona", JSON.stringify(capsule.persona?.behavior || {})),
-    textSegment("voice_profile", "voice_profile", JSON.stringify(capsule.voiceProfile || {})),
+    ...buildDietitianContextUpdateSegments(capsule.client.contextUpdates || []),
+    textSegment("client_form_summary", "client_form_summary", capsule.client.clientFormSummary || "", {
+      authority: "prompt_allowed_form_context",
+    }),
+    textSegment("rolling_summary", "rolling_summary", capsule.memory?.rollingSummary || "", {
+      authority: "compiled_memory",
+    }),
+    ...selectedRecent.map((message) =>
+      textSegment("recent_message", message.id || null, message.body || "", {
+        origin: message.origin || null,
+        createdAt: message.createdAt || null,
+        authority: authorityForRecentMessage(message),
+      }),
+    ),
+    textSegment("persona", capsule.persona?.id || "persona", JSON.stringify(capsule.persona?.behavior || {}), {
+      authority: "system",
+    }),
+    textSegment("voice_profile", "voice_profile", JSON.stringify(capsule.voiceProfile || {}), {
+      authority: "dietitian_style_profile",
+    }),
   ].filter((segment) => segment.text.trim());
 
   const shrunk = shrinkSegments(segments, policy);
-  const totalTokens = tokenTotal(shrunk.segments, policy);
+  const prioritizedSegments = markNewestDietitianAuthoredSource(shrunk.segments);
+  const totalTokens = tokenTotal(prioritizedSegments, policy);
   const usablePromptBudget = policy.totalPrompt - policy.reserve;
   const validation = {
     ok: totalTokens <= usablePromptBudget,
@@ -72,7 +106,14 @@ export function compilePromptContext({
     promptContext: {
       schemaVersion: "prompt-context-v1",
       policyVersion: policy.version,
-      segments: shrunk.segments.map((segment) => ({ type: segment.type, text: segment.text })),
+      segments: prioritizedSegments.map((segment) => ({
+        type: segment.type,
+        sourceId: segment.sourceId,
+        origin: segment.origin,
+        createdAt: segment.createdAt,
+        authority: segment.authority,
+        text: segment.text,
+      })),
     },
     contextManifest: buildManifest({
       capsule,
@@ -80,10 +121,11 @@ export function compilePromptContext({
       riskLevel,
       promptVersion,
       policy,
-      segments: shrunk.segments,
+      segments: prioritizedSegments,
       excludedCounts: {
         nonPromptableMessages: recentMessages.length - selectedRecent.length,
         droppedRecentMessages: shrunk.droppedRecentMessages,
+        droppedContextUpdates: shrunk.droppedContextUpdates,
       },
       validation,
       totalTokens,
@@ -104,7 +146,17 @@ export function selectPromptableRecentMessages(messages, policy = CONTEXT_POLICY
 
 export function renderPromptContext(promptContext) {
   return (promptContext?.segments || [])
-    .map((segment) => `[${segment.type}]\n${segment.text}`)
+    .map((segment) => {
+      const metadata = [
+        segment.sourceId ? `sourceId: ${segment.sourceId}` : null,
+        segment.origin ? `origin: ${segment.origin}` : null,
+        segment.createdAt ? `createdAt: ${segment.createdAt}` : null,
+        segment.authority ? `authority: ${segment.authority}` : null,
+      ]
+        .filter(Boolean)
+        .join("\n");
+      return `[${segment.type}]\n${metadata ? `${metadata}\n` : ""}${segment.text}`;
+    })
     .join("\n\n");
 }
 
@@ -131,23 +183,32 @@ function blockedContext({ capsule, currentMessage, riskLevel, promptVersion, pol
   };
 }
 
-function textSegment(type, sourceId, text) {
+function textSegment(type, sourceId, text, metadata = {}) {
   return {
     id: `${type}-${String(sourceId || "none")}`,
     type,
     sourceId,
+    origin: metadata.origin || null,
+    createdAt: metadata.createdAt || null,
+    authority: metadata.authority || null,
+    importance: metadata.importance || null,
     text: String(text || ""),
     truncated: false,
   };
 }
 
 function buildPinnedSegments(notes) {
-  return notes.map((note, index) => textSegment("pinned_note", `pinned-${index + 1}`, note));
+  return notes.map((note, index) =>
+    textSegment("pinned_note", `pinned-${index + 1}`, note, {
+      authority: "dietitian_approved_context",
+    }),
+  );
 }
 
 function shrinkSegments(segments, policy) {
   let nextSegments = [...segments];
   let droppedRecentMessages = 0;
+  let droppedContextUpdates = 0;
   const usablePromptBudget = policy.totalPrompt - policy.reserve;
 
   while (tokenTotal(nextSegments, policy) > usablePromptBudget && hasRecentMessage(nextSegments)) {
@@ -163,12 +224,32 @@ function shrinkSegments(segments, policy) {
   );
 
   nextSegments = nextSegments.map((segment) =>
+    segment.type === "dietitian_context_update" && tokenTotal(nextSegments, policy) > usablePromptBudget
+      ? truncateSegment(segment, Math.floor(policy.profileDietAllergyPinned / 3), policy)
+      : segment,
+  );
+
+  while (tokenTotal(nextSegments, policy) > usablePromptBudget && hasRoutineContextUpdate(nextSegments)) {
+    const lastRoutineContextUpdate = nextSegments.findLastIndex(
+      (segment) => segment.type === "dietitian_context_update" && segment.importance === "routine",
+    );
+    nextSegments.splice(lastRoutineContextUpdate, 1);
+    droppedContextUpdates += 1;
+  }
+
+  nextSegments = nextSegments.map((segment) =>
+    segment.type === "client_form_summary" && tokenTotal(nextSegments, policy) > usablePromptBudget
+      ? truncateSegment(segment, Math.floor(policy.profileDietAllergyPinned / 3), policy)
+      : segment,
+  );
+
+  nextSegments = nextSegments.map((segment) =>
     segment.type === "pinned_note" && tokenTotal(nextSegments, policy) > usablePromptBudget
       ? truncateSegment(segment, Math.floor(policy.profileDietAllergyPinned / 4), policy)
       : segment,
   );
 
-  return { segments: nextSegments, droppedRecentMessages };
+  return { segments: nextSegments, droppedRecentMessages, droppedContextUpdates };
 }
 
 function truncateSegment(segment, maxTokens, policy) {
@@ -183,6 +264,27 @@ function truncateSegment(segment, maxTokens, policy) {
 
 function hasRecentMessage(segments) {
   return segments.some((segment) => segment.type === "recent_message");
+}
+
+function hasRoutineContextUpdate(segments) {
+  return segments.some((segment) => segment.type === "dietitian_context_update" && segment.importance === "routine");
+}
+
+function markNewestDietitianAuthoredSource(segments) {
+  const newestIndex = segments.reduce((candidateIndex, segment, index) => {
+    if (segment.authority !== "dietitian_authored" || !segment.createdAt) return candidateIndex;
+    if (candidateIndex === -1) return index;
+
+    const candidateTime = new Date(segments[candidateIndex].createdAt || 0).getTime();
+    const segmentTime = new Date(segment.createdAt).getTime();
+    return segmentTime > candidateTime ? index : candidateIndex;
+  }, -1);
+
+  if (newestIndex === -1) return segments;
+
+  return segments.map((segment, index) =>
+    index === newestIndex ? { ...segment, authority: "newest_dietitian_authored" } : segment,
+  );
 }
 
 function tokenTotal(segments, policy) {
@@ -213,6 +315,7 @@ function buildManifest({
     memoryIncluded: Boolean(capsule.memory?.rollingSummary),
     memoryVersion: capsule.memory?.memoryVersion || "memory-v1",
     memoryRevision: capsule.memory?.memoryRevision || 1,
+    memoryStale: Boolean(capsule.memory?.memoryStale),
     lastPromptableMessageId: lastPromptableMessageId(segments),
     riskLevel,
     personaId: capsule.persona?.id || null,
@@ -221,6 +324,9 @@ function buildManifest({
       segmentId: segment.id,
       type: segment.type,
       sourceId: segment.sourceId,
+      origin: segment.origin,
+      createdAt: segment.createdAt,
+      authority: segment.authority,
       included: true,
       truncated: segment.truncated,
       tokenEstimate: policy.estimateTokens(segment.text),
@@ -235,6 +341,61 @@ function buildManifest({
     },
     validation,
   };
+}
+
+function currentMessageId(currentMessage) {
+  return currentMessage && typeof currentMessage === "object" && "id" in currentMessage
+    ? currentMessage.id || null
+    : null;
+}
+
+function currentMessageCreatedAt(currentMessage) {
+  return currentMessage && typeof currentMessage === "object" && "createdAt" in currentMessage
+    ? currentMessage.createdAt || null
+    : null;
+}
+
+function authorityForRecentMessage(message) {
+  if (message.origin === "dietitian_manual") return "dietitian_authored";
+  if (message.origin === "ai_generated") return "approved_ai_generated";
+  return "client_authored";
+}
+
+function textFromCurrentMessage(currentMessage) {
+  if (currentMessage && typeof currentMessage === "object" && "body" in currentMessage) {
+    return String(currentMessage.body || "").trim();
+  }
+
+  return String(currentMessage || "").trim();
+}
+
+function buildDietitianContextUpdateSegments(updates) {
+  return [...updates]
+    .filter((update) => update && update.status !== "superseded")
+    .sort((a, b) => new Date(b.occurredAt || b.createdAt || 0).getTime() - new Date(a.occurredAt || a.createdAt || 0).getTime())
+    .slice(0, 5)
+    .map((update) =>
+      textSegment(
+        "dietitian_context_update",
+        update.id || null,
+        [
+          `Source: ${update.source || "other"}`,
+          `Occurred at: ${update.occurredAt || update.createdAt || "unknown"}`,
+          `Importance: ${update.importance || "important"}`,
+          update.title ? `Title: ${update.title}` : null,
+          update.summary ? `Summary: ${update.summary}` : null,
+          update.details ? `Details: ${update.details}` : null,
+        ]
+          .filter(Boolean)
+          .join("\n"),
+        {
+          origin: "dietitian_context_update",
+          createdAt: update.occurredAt || update.createdAt || null,
+          authority: "dietitian_authored",
+          importance: update.importance || "important",
+        },
+      ),
+    );
 }
 
 function lastPromptableMessageId(segments) {

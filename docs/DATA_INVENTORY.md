@@ -23,8 +23,9 @@ This is a planning artifact and must be reviewed before real client health data 
 | AI activation state | Active/passive, active window, changed by dietitian | Decide whether AI may respond | No | Per-client control, audit history |
 | Conversation messages | Client/dietitian/assistant messages with origin labels | Inbox, memory, audit, dataset views | Recent bounded window only | Retention, redaction, tenant isolation |
 | Conversation memory | Rolling summary, durable facts | Context efficiency | Yes after safety filtering | Client-scoped, editable, deletable |
+| Dietitian context updates | Phone/Zoom/in-person summaries, critical client changes | Keep AI current on non-chat dietitian-confirmed context | Yes, bounded active records only | Tenant/client scoped, audit, draft invalidation, anonymization |
 | Handoff cases | Risk reason, urgency, status | Human review | No direct prompt use | Audit and notification controls |
-| AI decisions | Mode, risk, action, model, prompt version | Auditability | No | Immutable audit metadata |
+| AI decisions | Mode, risk, action, provider-attempt state, model, provider id/status, prompt version, send status, ContextManifest metadata | Auditability | No | Immutable audit metadata; no-call paths keep provider fields null/not-called |
 | Internal copilot messages | Dietitian question, local/mock assistant answer, source refs | Internal decision support and auditability | No external LLM in current build | Tenant/dietitian scoped, RBAC, source-required answers, no client-facing send action |
 | Internal copilot tool calls | Curated tool name, arguments, result summary, source refs | Explainability and misuse review for internal copilot answers | No external LLM in current build | Read-only tools only, no raw SQL, no mutation tools, minimized summaries |
 | Provider metadata | Message IDs, delivery state, errors | Reliability and support | No | Idempotency and operational logs |
@@ -41,7 +42,10 @@ The LLM may receive only:
 - Allergies and restricted foods.
 - Pinned notes approved for AI use.
 - Rolling memory summary after safety filtering.
+- Active dietitian-entered context updates from non-chat conversations.
 - Recent bounded conversation window.
+- Source metadata (`sourceId`, `origin`, `createdAt`, `authority`) for prompt segments.
+- The newest dietitian-authored source across manual messages and dietitian context updates is authoritative when sources conflict.
 - Current inbound message.
 - Same-dietitian approved style examples, only after de-identification and filtering.
 - Internal copilot source summaries only in the local/mock copilot path; future external provider use requires a separate allowlist and review.

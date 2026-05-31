@@ -93,6 +93,22 @@ describe("mock AI provider", () => {
     ).toThrowError(/Provider boundary rejected context_segment keys/);
   });
 
+  it("rejects unknown and overlong provider context segments", () => {
+    expect(() =>
+      assertMockProviderInputPolicy({
+        context: { segments: [{ type: "raw_audit_log", text: "private" }] },
+        risk: "green",
+      } as never),
+    ).toThrowError(/rejected segment type/);
+
+    expect(() =>
+      assertMockProviderInputPolicy({
+        context: { segments: [{ type: "current_message", text: "a".repeat(3001) }] },
+        risk: "green",
+      }),
+    ).toThrowError(/overlong segment/);
+  });
+
   it("rejects red-risk provider calls as defense in depth", async () => {
     await expect(
       generateMockProviderReply({

@@ -5,6 +5,7 @@ import { isSafetyChecklistComplete, normalizeSafetyChecklist } from "./safety-ch
 import { anonymizeClientInState, buildClientScopedExport, recordClientExportInState } from "./data-governance";
 import {
   addManualReplyInState,
+  addClientContextUpdateInState,
   approveDraftInState,
   addVoiceSamplesInState,
   createFormSchemaInState,
@@ -21,6 +22,7 @@ import {
   updateHandoffStatusInState,
 } from "./app-state-store";
 import type { AppTenantContext } from "./auth-context";
+import type { CreateClientContextUpdateInput } from "./client-context-updates";
 import { AppDomainError } from "./app-errors";
 import type {
   AiDecisionRecord,
@@ -28,6 +30,7 @@ import type {
   ClientFormResponseRecord,
   ClientFormSchemaRecord,
   ClientFormFieldDefinition,
+  ClientContextUpdateRecord,
   ClientRecord,
   ConversationRecord,
   DataRequestRecord,
@@ -97,6 +100,9 @@ type DbConversation = {
 type DbMemory = {
   conversation_id: string;
   rolling_summary: string;
+  memory_version: string;
+  memory_revision: number;
+  stale: boolean;
 };
 type DbMessage = {
   id: string;
@@ -124,6 +130,7 @@ type DbDecision = {
   risk: AiDecisionRecord["risk"];
   model: string | null;
   prompt_version: string | null;
+  provider_attempted: boolean;
   provider_id: string | null;
   provider_status: AiDecisionRecord["providerStatus"];
   provider_error_code: string | null;
@@ -262,6 +269,21 @@ type DbFormResponse = {
   created_at: string;
   updated_at: string;
 };
+type DbClientContextUpdate = {
+  id: string;
+  tenant_id: string;
+  client_id: string;
+  dietitian_id: string;
+  source: ClientContextUpdateRecord["source"];
+  occurred_at: string;
+  title: string;
+  summary: string;
+  details: string;
+  importance: ClientContextUpdateRecord["importance"];
+  status: ClientContextUpdateRecord["status"];
+  supersedes_update_id: string | null;
+  created_at: string;
+};
 
 export function isSupabaseStoreConfigured() {
   if (process.env.MANU_DEV_FALLBACK_STORE === "true") {
@@ -295,6 +317,7 @@ export async function loadSupabaseState(context = demoTenantContext()) {
     voiceProfilesResult,
     formSchemasResult,
     formResponsesResult,
+    clientContextUpdatesResult,
     auditEventsResult,
     processedEventsResult,
   ] = await Promise.all([
@@ -317,6 +340,7 @@ export async function loadSupabaseState(context = demoTenantContext()) {
     supabase.from("dietitian_voice_profiles").select("*").eq("tenant_id", context.tenantId).order("updated_at"),
     supabase.from("client_form_schemas").select("*").eq("tenant_id", context.tenantId).order("version"),
     supabase.from("client_form_responses").select("*").eq("tenant_id", context.tenantId).order("updated_at"),
+    supabase.from("client_context_updates").select("*").eq("tenant_id", context.tenantId).order("created_at"),
     supabase.from("audit_events").select("*").eq("tenant_id", context.tenantId).order("created_at"),
     supabase.from("processed_inbound_events").select("*").eq("tenant_id", context.tenantId),
   ]);
@@ -340,6 +364,7 @@ export async function loadSupabaseState(context = demoTenantContext()) {
   throwIfError(voiceProfilesResult.error);
   throwIfError(formSchemasResult.error);
   throwIfError(formResponsesResult.error);
+  throwIfError(clientContextUpdatesResult.error);
   throwIfError(auditEventsResult.error);
   throwIfError(processedEventsResult.error);
 
@@ -361,6 +386,7 @@ export async function loadSupabaseState(context = demoTenantContext()) {
       voiceProfiles: (voiceProfilesResult.data || []).map(mapVoiceProfile),
       clientFormSchemas: (formSchemasResult.data || []).map(mapFormSchema),
       clientFormResponses: (formResponsesResult.data || []).map(mapFormResponse),
+      clientContextUpdates: (clientContextUpdatesResult.data || []).map(mapClientContextUpdate),
       clients: (clientsResult.data || []).map((client) => mapClient(client, channels)),
       conversations: (conversationsResult.data || []).map((conversation) =>
         mapConversation(conversation, memories),
@@ -411,12 +437,15 @@ export function scopeSupabaseState(
       : [];
   const visibleInternalCopilotMessageIds = new Set(visibleInternalCopilotMessages.map((message) => message.id));
   const visibleInternalCopilotToolCallIds = new Set(visibleInternalCopilotToolCalls.map((call) => call.id));
+  const visibleClientContextUpdates = state.clientContextUpdates.filter((update) => visibleClientIds.has(update.clientId));
+  const visibleClientContextUpdateIds = new Set(visibleClientContextUpdates.map((update) => update.id));
 
   return {
     ...state,
     voiceSamples: state.voiceSamples.filter((sample) => sample.dietitianId === context.dietitianId),
     voiceProfiles: state.voiceProfiles.filter((profile) => profile.dietitianId === context.dietitianId),
     clientFormResponses: state.clientFormResponses.filter((response) => visibleClientIds.has(response.clientId)),
+    clientContextUpdates: visibleClientContextUpdates,
     clients: state.clients.filter((client) => visibleClientIds.has(client.id)),
     conversations: state.conversations.filter((conversation) => visibleConversationIds.has(conversation.id)),
     messages: visibleMessages,
@@ -439,6 +468,7 @@ export function scopeSupabaseState(
         visibleMessageIds.has(event.entityId) ||
         visibleDecisionIds.has(event.entityId) ||
         visibleHandoffIds.has(event.entityId) ||
+        visibleClientContextUpdateIds.has(event.entityId) ||
         visibleInternalCopilotMessageIds.has(event.entityId) ||
         visibleInternalCopilotToolCallIds.has(event.entityId),
     ),
@@ -637,6 +667,18 @@ export async function anonymizeSupabaseClientData(clientId: string, context = de
         reasons: ["client_data_anonymized"],
         safe_acknowledgement: "[client data anonymized]",
         recommended_action: "[client data anonymized]",
+      })
+      .eq("tenant_id", context.tenantId)
+      .eq("client_id", client.id),
+  );
+  await checked(
+    supabase
+      .from("client_context_updates")
+      .update({
+        title: "[client data anonymized]",
+        summary: "[client data anonymized]",
+        details: "",
+        status: "superseded",
       })
       .eq("tenant_id", context.tenantId)
       .eq("client_id", client.id),
@@ -845,6 +887,26 @@ export async function saveSupabaseFormResponse(
   return loadSupabaseState(context);
 }
 
+export async function addSupabaseClientContextUpdate(
+  clientId: string,
+  input: CreateClientContextUpdateInput,
+  context = demoTenantContext(),
+) {
+  const before = await loadSupabaseState(context);
+  const next = addClientContextUpdateInState(before, clientId, input);
+  const update = next.clientContextUpdates.find(
+    (item) => !before.clientContextUpdates.some((beforeUpdate) => beforeUpdate.id === item.id),
+  );
+  const client = next.clients.find((item) => item.id === clientId);
+  const supabase = requireSupabase();
+
+  if (update) await insertClientContextUpdate(supabase, { ...update, tenantId: context.tenantId });
+  if (client) await upsertClient(supabase, { ...client, tenantId: context.tenantId, dietitianId: context.dietitianId });
+  await persistStateDiff(supabase, before, next);
+  await persistChangedDraftInvalidations(supabase, before, next, context);
+  return loadSupabaseState(context);
+}
+
 export async function runSupabaseInternalCopilotMessage(body: string, context = demoTenantContext()) {
   const before = await loadSupabaseState(context);
   const next = runInternalCopilotMessageInState(before, body);
@@ -964,6 +1026,7 @@ async function ensureDemoMembership(supabase: SupabaseClient, userId: string) {
 async function deleteDemoData(supabase: SupabaseClient, tenantId = DEMO_TENANT_UUID) {
   const tables = [
     "processed_inbound_events",
+    "client_context_updates",
     "client_form_responses",
     "client_form_schemas",
     "dietitian_voice_samples",
@@ -1019,6 +1082,9 @@ async function insertClientBundle(
         conversation_id: conversation.id,
         client_id: conversation.clientId,
         rolling_summary: conversation.rollingSummary,
+        memory_version: conversation.memoryVersion,
+        memory_revision: conversation.memoryRevision,
+        stale: conversation.memoryStale,
         durable_facts: {},
       }),
     );
@@ -1174,8 +1240,70 @@ async function persistDraftUpdate(
   throwIfError(error);
 
   const beforeAudits = new Set(before.auditEvents.map((item) => item.id));
+  const beforeDecision = beforeMessage.generatedByAiDecisionId
+    ? before.aiDecisions.find((decision) => decision.id === beforeMessage.generatedByAiDecisionId)
+    : null;
+  const afterDecision = afterMessage.generatedByAiDecisionId
+    ? after.aiDecisions.find((decision) => decision.id === afterMessage.generatedByAiDecisionId)
+    : null;
+
+  if (
+    beforeDecision &&
+    afterDecision &&
+    (beforeDecision.sendStatus !== afterDecision.sendStatus ||
+      beforeDecision.blockedReason !== afterDecision.blockedReason)
+  ) {
+    await checked(
+      supabase
+        .from("ai_decisions")
+        .update({
+          send_status: afterDecision.sendStatus,
+          blocked_reason: afterDecision.blockedReason,
+          reasons: afterDecision.reasons,
+        })
+        .eq("id", afterDecision.id)
+        .eq("tenant_id", context.tenantId),
+    );
+  }
+
   for (const audit of after.auditEvents.filter((item) => !beforeAudits.has(item.id))) {
     await insertAudit(supabase, audit);
+  }
+}
+
+async function persistChangedDraftInvalidations(
+  supabase: SupabaseClient,
+  before: ManuAppState,
+  after: ManuAppState,
+  context: AppTenantContext,
+) {
+  const beforeMessagesById = new Map(before.messages.map((message) => [message.id, message]));
+  const beforeDecisionsById = new Map(before.aiDecisions.map((decision) => [decision.id, decision]));
+
+  for (const message of after.messages) {
+    const beforeMessage = beforeMessagesById.get(message.id);
+    if (beforeMessage?.status === "draft" && message.status === "blocked") {
+      await checked(
+        supabase
+          .from("messages")
+          .update({ status: "blocked" })
+          .eq("id", message.id)
+          .eq("tenant_id", context.tenantId),
+      );
+    }
+  }
+
+  for (const decision of after.aiDecisions) {
+    const beforeDecision = beforeDecisionsById.get(decision.id);
+    if (beforeDecision?.sendStatus !== decision.sendStatus && decision.sendStatus === "draft_invalidated") {
+      await checked(
+        supabase
+          .from("ai_decisions")
+          .update({ send_status: decision.sendStatus, blocked_reason: decision.blockedReason })
+          .eq("id", decision.id)
+          .eq("tenant_id", context.tenantId),
+      );
+    }
   }
 }
 
@@ -1212,6 +1340,7 @@ async function insertDecision(supabase: SupabaseClient, decision: AiDecisionReco
       risk: decision.risk,
       model: decision.model,
       prompt_version: decision.promptVersion,
+      provider_attempted: decision.providerAttempted,
       provider_id: decision.providerId,
       provider_status: decision.providerStatus,
       provider_error_code: decision.providerErrorCode,
@@ -1373,6 +1502,26 @@ async function insertDataRequest(supabase: SupabaseClient, request: DataRequestR
   );
 }
 
+async function insertClientContextUpdate(supabase: SupabaseClient, update: ClientContextUpdateRecord) {
+  await checked(
+    supabase.from("client_context_updates").insert({
+      id: update.id,
+      tenant_id: update.tenantId,
+      client_id: update.clientId,
+      dietitian_id: update.dietitianId,
+      source: update.source,
+      occurred_at: update.occurredAt,
+      title: update.title,
+      summary: update.summary,
+      details: update.details,
+      importance: update.importance,
+      status: update.status,
+      supersedes_update_id: update.supersedesUpdateId,
+      created_at: update.createdAt,
+    }),
+  );
+}
+
 async function insertNotification(supabase: SupabaseClient, notification: NotificationRecord) {
   await checked(
     supabase.from("notifications").insert({
@@ -1457,6 +1606,12 @@ function remapSeedIds(state: ManuAppState): ManuAppState {
       tenantId: DEMO_TENANT_UUID,
       clientId: clientMap.get(response.clientId) || response.clientId,
       schemaSnapshot: { ...response.schemaSnapshot, tenantId: DEMO_TENANT_UUID },
+    })),
+    clientContextUpdates: state.clientContextUpdates.map((update) => ({
+      ...update,
+      tenantId: DEMO_TENANT_UUID,
+      dietitianId: DEMO_DIETITIAN_UUID,
+      clientId: clientMap.get(update.clientId) || update.clientId,
     })),
     clients: state.clients.map((client) => ({
       ...client,
@@ -1557,6 +1712,24 @@ function mapFormResponse(response: DbFormResponse): ClientFormResponseRecord {
   };
 }
 
+function mapClientContextUpdate(update: DbClientContextUpdate): ClientContextUpdateRecord {
+  return {
+    id: update.id,
+    tenantId: update.tenant_id,
+    clientId: update.client_id,
+    dietitianId: update.dietitian_id,
+    source: update.source,
+    occurredAt: update.occurred_at,
+    title: update.title,
+    summary: update.summary,
+    details: update.details || "",
+    importance: update.importance,
+    status: update.status,
+    supersedesUpdateId: update.supersedes_update_id,
+    createdAt: update.created_at,
+  };
+}
+
 function mapClient(client: DbClient, channels: DbChannel[]): ClientRecord {
   const channel = channels.find((item) => item.client_id === client.id);
   return {
@@ -1595,6 +1768,9 @@ function mapConversation(conversation: DbConversation, memories: DbMemory[]): Co
     clientId: conversation.client_id,
     channel: conversation.channel,
     rollingSummary: memory?.rolling_summary || "",
+    memoryVersion: memory?.memory_version || "memory-v1",
+    memoryRevision: memory?.memory_revision || 1,
+    memoryStale: memory?.stale || false,
   };
 }
 
@@ -1628,6 +1804,7 @@ function mapDecision(decision: DbDecision): AiDecisionRecord {
     risk: decision.risk,
     model: decision.model,
     promptVersion: decision.prompt_version || null,
+    providerAttempted: decision.provider_attempted || false,
     providerId: decision.provider_id || null,
     providerStatus: decision.provider_status || "not_called",
     providerErrorCode: decision.provider_error_code || null,

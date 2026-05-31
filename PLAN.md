@@ -294,7 +294,7 @@ npm test
 Last verified result:
 
 ```text
-39/39 tests passing
+49/49 tests passing
 ```
 
 ## Current Local App Prototype
@@ -443,13 +443,19 @@ Phase 23 AI context and memory architecture completed on 2026-05-30: added a bou
 
 Phase 24-25 voice sample and dynamic form infrastructure completed on 2026-05-30: added dietitian voice sample intake with approval/rejection and generated voice profiles, plus versioned dynamic client form schemas and response snapshots. PromptContext now includes only `prompt_allowed` form response summaries, and form response saves invalidate stale AI drafts. Real providers/channels/health data remain disconnected.
 
-Phase 26 internal copilot completed on 2026-05-30: added a read-only internal dietitian copilot backed by curated tenant-scoped database tools over already-visible app state. Owner/admin/dietitian roles can ask local/mock questions about visible client status, diet plans, recent messages, form responses, handoffs, and AI decision history. Assistant/auditor are blocked from copilot chat in v1. Copilot questions, tool calls, assistant answers, and source refs are persisted in fallback and Supabase-backed state. No raw SQL, mutation tools, real LLM provider, real channel, external notification, monitoring, secret manager, or real health data was connected. Latest `npm run release:verify` on 2026-05-30 passed with core tests 39/39, app tests 96/96, lint, production build, and only the known R-405 audit findings.
+Phase 26 internal copilot completed on 2026-05-30: added a read-only internal dietitian copilot backed by curated tenant-scoped database tools over already-visible app state. Owner/admin/dietitian roles can ask local/mock questions about visible client status, diet plans, recent messages, form responses, handoffs, and AI decision history. Assistant/auditor are blocked from copilot chat in v1. Copilot questions, tool calls, assistant answers, and source refs are persisted in fallback and Supabase-backed state. No raw SQL, mutation tools, real LLM provider, real channel, external notification, monitoring, secret manager, or real health data was connected.
+
+Phase 27 dietitian context updates completed on 2026-05-30: added a Critical Context workflow so dietitians can record confirmed client information from phone, Zoom, in-person, or other non-chat conversations. These records are stored as active client context updates, increment client context revision, invalidate pending drafts, enter bounded PromptContext as `dietitian_context_update` segments, and are included in export/anonymization governance. Old WhatsApp messages are not rewritten; newer dietitian context supersedes older prompt context, and newer `dietitian_manual` WhatsApp/Telegram/manual messages supersede older Critical Context records. Real providers, real channels, monitoring, secret manager, and real health data remain disconnected.
+
+Phase 28 AI security remediation completed on 2026-05-31: added `providerAttempted`/`provider_attempted` audit semantics, no-call provider metadata cleanup, narrow `MockProviderError` provider-failure handling, PromptContext source metadata, newest dietitian-authored source marking, send-time draft revalidation, provider segment allowlist fail-closed checks, tenant-aware channel/idempotency uniqueness, scoped RLS/RBAC helper policies, stricter core TypeScript declarations, and expanded clinical golden cases. Latest verification: core tests 49/49, app tests 103/103, lint/build pass, and release audit reports only documented R-405. Real providers, real channels, monitoring, secret manager, and real health data remain disconnected.
+
+Phase 29 pilot gate closure and evidence hardening completed on 2026-05-31: added `docs/PHASE_29_PILOT_GATE_CLOSURE_EVIDENCE_HARDENING_SPEC.md`, updated the production pilot dossier and evidence pack to use the Phase 27-28 baseline, recorded the RLS evidence gap when local Supabase is unavailable, and rechecked R-405 metadata. Stable `next@latest` remains 16.2.6 with `postcss@8.4.31`, and `eslint-config-next@latest` remains 16.2.6, so dependency files must not change. `npm run release:verify` passed after Phase 29 with core tests 49/49, app tests 103/103, lint, production build, and only documented R-405 findings. All production-pilot gates remain open.
 
 Tasks:
 
 1. Use `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md` to collect external approval evidence for all eight production-pilot gates.
 2. Re-check R-405 only through the `docs/PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md` procedure before any dependency edit.
-3. Keep Phase 23-26 prompt-context, voice-profile, dynamic-form, and internal-copilot controls covered by tests before any real provider integration.
+3. Keep Phase 23-29 prompt-context, voice-profile, dynamic-form, internal-copilot, dietitian context update, provider-boundary, send-revalidation, evidence, and RLS controls covered by tests before any real provider integration.
 4. Keep clinical taxonomy approval, provider review, real-channel policy review, operational ownership, and R-405 clearance as launch gates.
 5. Keep real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, and real client health data disconnected.
 

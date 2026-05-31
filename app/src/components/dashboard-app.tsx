@@ -17,6 +17,7 @@ import {
   LogOut,
   MessageSquareText,
   Plus,
+  PhoneCall,
   RefreshCcw,
   Search,
   Send,
@@ -38,6 +39,9 @@ import type {
   AiMode,
   AiStatus,
   Channel,
+  ClientContextUpdateImportance,
+  ClientContextUpdateRecord,
+  ClientContextUpdateSource,
   ClientFormFieldDefinition,
   ClientRecord,
   ManuAppState,
@@ -102,6 +106,7 @@ export function DashboardApp({ authInfo }: { authInfo?: { displayName: string; r
     createFormSchema,
     publishFormSchema,
     saveFormResponse,
+    addClientContextUpdate,
     sendInternalCopilotMessage,
   } = useManuState();
   const [view, setView] = useState<ViewKey>("overview");
@@ -121,6 +126,13 @@ export function DashboardApp({ authInfo }: { authInfo?: { displayName: string; r
   const [formAnswersRaw, setFormAnswersRaw] = useState("");
   const [copilotInput, setCopilotInput] = useState("");
   const [isCopilotSending, setIsCopilotSending] = useState(false);
+  const [contextUpdateSource, setContextUpdateSource] = useState<ClientContextUpdateSource>("phone");
+  const [contextUpdateImportance, setContextUpdateImportance] =
+    useState<ClientContextUpdateImportance>("important");
+  const [contextUpdateOccurredAt, setContextUpdateOccurredAt] = useState("");
+  const [contextUpdateTitle, setContextUpdateTitle] = useState("");
+  const [contextUpdateSummary, setContextUpdateSummary] = useState("");
+  const [contextUpdateDetails, setContextUpdateDetails] = useState("");
 
   const selectedClient = useMemo(
     () => state.clients.find((client) => client.id === selectedClientId) || state.clients[0],
@@ -149,6 +161,13 @@ export function DashboardApp({ authInfo }: { authInfo?: { displayName: string; r
         .includes(needle),
     );
   }, [search, state.clients]);
+
+  const selectedContextUpdates = useMemo(() => {
+    if (!selectedClient) return [];
+    return state.clientContextUpdates
+      .filter((update) => update.clientId === selectedClient.id)
+      .sort((a, b) => new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime());
+  }, [selectedClient, state.clientContextUpdates]);
 
   const metrics = useMemo(() => {
     const pendingDrafts = state.messages.filter((message) => message.status === "draft").length;
@@ -267,6 +286,21 @@ export function DashboardApp({ authInfo }: { authInfo?: { displayName: string; r
     } finally {
       setIsCopilotSending(false);
     }
+  };
+
+  const addSelectedContextUpdate = async () => {
+    if (!selectedClient) return;
+    await addClientContextUpdate(selectedClient.id, {
+      source: contextUpdateSource,
+      occurredAt: contextUpdateOccurredAt ? fromDateTimeLocal(contextUpdateOccurredAt) : null,
+      title: contextUpdateTitle,
+      summary: contextUpdateSummary,
+      details: contextUpdateDetails,
+      importance: contextUpdateImportance,
+    });
+    setContextUpdateTitle("");
+    setContextUpdateSummary("");
+    setContextUpdateDetails("");
   };
 
   return (
@@ -464,6 +498,20 @@ export function DashboardApp({ authInfo }: { authInfo?: { displayName: string; r
                 onNewClientChannel={setNewClientChannel}
                 onNewClientHandle={setNewClientHandle}
                 onUpdateClient={updateSelectedClient}
+                contextUpdates={selectedContextUpdates}
+                contextUpdateSource={contextUpdateSource}
+                contextUpdateImportance={contextUpdateImportance}
+                contextUpdateOccurredAt={contextUpdateOccurredAt}
+                contextUpdateTitle={contextUpdateTitle}
+                contextUpdateSummary={contextUpdateSummary}
+                contextUpdateDetails={contextUpdateDetails}
+                onContextUpdateSource={setContextUpdateSource}
+                onContextUpdateImportance={setContextUpdateImportance}
+                onContextUpdateOccurredAt={setContextUpdateOccurredAt}
+                onContextUpdateTitle={setContextUpdateTitle}
+                onContextUpdateSummary={setContextUpdateSummary}
+                onContextUpdateDetails={setContextUpdateDetails}
+                onAddContextUpdate={addSelectedContextUpdate}
               />
             )}
 
@@ -631,6 +679,20 @@ function ClientsPanel({
   onNewClientChannel,
   onNewClientHandle,
   onUpdateClient,
+  contextUpdates,
+  contextUpdateSource,
+  contextUpdateImportance,
+  contextUpdateOccurredAt,
+  contextUpdateTitle,
+  contextUpdateSummary,
+  contextUpdateDetails,
+  onContextUpdateSource,
+  onContextUpdateImportance,
+  onContextUpdateOccurredAt,
+  onContextUpdateTitle,
+  onContextUpdateSummary,
+  onContextUpdateDetails,
+  onAddContextUpdate,
 }: {
   clients: ClientRecord[];
   selectedClient: ClientRecord;
@@ -645,6 +707,20 @@ function ClientsPanel({
   onNewClientChannel: (value: Channel) => void;
   onNewClientHandle: (value: string) => void;
   onUpdateClient: (patch: Partial<ClientRecord>) => void;
+  contextUpdates: ClientContextUpdateRecord[];
+  contextUpdateSource: ClientContextUpdateSource;
+  contextUpdateImportance: ClientContextUpdateImportance;
+  contextUpdateOccurredAt: string;
+  contextUpdateTitle: string;
+  contextUpdateSummary: string;
+  contextUpdateDetails: string;
+  onContextUpdateSource: (value: ClientContextUpdateSource) => void;
+  onContextUpdateImportance: (value: ClientContextUpdateImportance) => void;
+  onContextUpdateOccurredAt: (value: string) => void;
+  onContextUpdateTitle: (value: string) => void;
+  onContextUpdateSummary: (value: string) => void;
+  onContextUpdateDetails: (value: string) => void;
+  onAddContextUpdate: () => void;
 }) {
   return (
     <div className="grid gap-4 xl:grid-cols-[360px_minmax(0,1fr)]">
@@ -704,7 +780,24 @@ function ClientsPanel({
         </div>
       </section>
 
-      <ClientDetailForm client={selectedClient} onUpdateClient={onUpdateClient} />
+      <ClientDetailForm
+        client={selectedClient}
+        onUpdateClient={onUpdateClient}
+        contextUpdates={contextUpdates}
+        contextUpdateSource={contextUpdateSource}
+        contextUpdateImportance={contextUpdateImportance}
+        contextUpdateOccurredAt={contextUpdateOccurredAt}
+        contextUpdateTitle={contextUpdateTitle}
+        contextUpdateSummary={contextUpdateSummary}
+        contextUpdateDetails={contextUpdateDetails}
+        onContextUpdateSource={onContextUpdateSource}
+        onContextUpdateImportance={onContextUpdateImportance}
+        onContextUpdateOccurredAt={onContextUpdateOccurredAt}
+        onContextUpdateTitle={onContextUpdateTitle}
+        onContextUpdateSummary={onContextUpdateSummary}
+        onContextUpdateDetails={onContextUpdateDetails}
+        onAddContextUpdate={onAddContextUpdate}
+      />
     </div>
   );
 }
@@ -712,9 +805,37 @@ function ClientsPanel({
 function ClientDetailForm({
   client,
   onUpdateClient,
+  contextUpdates,
+  contextUpdateSource,
+  contextUpdateImportance,
+  contextUpdateOccurredAt,
+  contextUpdateTitle,
+  contextUpdateSummary,
+  contextUpdateDetails,
+  onContextUpdateSource,
+  onContextUpdateImportance,
+  onContextUpdateOccurredAt,
+  onContextUpdateTitle,
+  onContextUpdateSummary,
+  onContextUpdateDetails,
+  onAddContextUpdate,
 }: {
   client: ClientRecord;
   onUpdateClient: (patch: Partial<ClientRecord>) => void;
+  contextUpdates: ClientContextUpdateRecord[];
+  contextUpdateSource: ClientContextUpdateSource;
+  contextUpdateImportance: ClientContextUpdateImportance;
+  contextUpdateOccurredAt: string;
+  contextUpdateTitle: string;
+  contextUpdateSummary: string;
+  contextUpdateDetails: string;
+  onContextUpdateSource: (value: ClientContextUpdateSource) => void;
+  onContextUpdateImportance: (value: ClientContextUpdateImportance) => void;
+  onContextUpdateOccurredAt: (value: string) => void;
+  onContextUpdateTitle: (value: string) => void;
+  onContextUpdateSummary: (value: string) => void;
+  onContextUpdateDetails: (value: string) => void;
+  onAddContextUpdate: () => void;
 }) {
   const updateHealth = (patch: Partial<ClientRecord["healthProfile"]>) => {
     onUpdateClient({ healthProfile: { ...client.healthProfile, ...patch } });
@@ -861,6 +982,138 @@ function ClientDetailForm({
           value={client.pinnedNotes}
           onChange={(value) => onUpdateClient({ pinnedNotes: splitLines(value) })}
         />
+      </div>
+
+      <ClientContextUpdatePanel
+        updates={contextUpdates}
+        source={contextUpdateSource}
+        importance={contextUpdateImportance}
+        occurredAt={contextUpdateOccurredAt}
+        title={contextUpdateTitle}
+        summary={contextUpdateSummary}
+        details={contextUpdateDetails}
+        onSource={onContextUpdateSource}
+        onImportance={onContextUpdateImportance}
+        onOccurredAt={onContextUpdateOccurredAt}
+        onTitle={onContextUpdateTitle}
+        onSummary={onContextUpdateSummary}
+        onDetails={onContextUpdateDetails}
+        onAdd={onAddContextUpdate}
+      />
+    </section>
+  );
+}
+
+function ClientContextUpdatePanel({
+  updates,
+  source,
+  importance,
+  occurredAt,
+  title,
+  summary,
+  details,
+  onSource,
+  onImportance,
+  onOccurredAt,
+  onTitle,
+  onSummary,
+  onDetails,
+  onAdd,
+}: {
+  updates: ClientContextUpdateRecord[];
+  source: ClientContextUpdateSource;
+  importance: ClientContextUpdateImportance;
+  occurredAt: string;
+  title: string;
+  summary: string;
+  details: string;
+  onSource: (value: ClientContextUpdateSource) => void;
+  onImportance: (value: ClientContextUpdateImportance) => void;
+  onOccurredAt: (value: string) => void;
+  onTitle: (value: string) => void;
+  onSummary: (value: string) => void;
+  onDetails: (value: string) => void;
+  onAdd: () => void;
+}) {
+  return (
+    <section className="mt-4 rounded-lg border border-stone-200 bg-stone-50 p-4">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <div>
+          <div className="flex items-center gap-2">
+            <PhoneCall size={18} className="text-emerald-800" />
+            <h4 className="text-sm font-semibold">Critical context</h4>
+          </div>
+          <p className="mt-1 text-sm leading-6 text-stone-600">
+            Add dietitian-confirmed information from phone, Zoom, or face-to-face conversations.
+          </p>
+        </div>
+        <Badge label={`${updates.filter((update) => update.status === "active").length} active`} tone="emerald" />
+      </div>
+
+      <div className="mt-4 grid gap-3 xl:grid-cols-3">
+        <SelectInput
+          label="Source"
+          value={source}
+          onChange={(value) => onSource(value as ClientContextUpdateSource)}
+          options={[
+            ["phone", "Phone"],
+            ["zoom", "Zoom"],
+            ["in_person", "In person"],
+            ["other", "Other"],
+          ]}
+        />
+        <SelectInput
+          label="Importance"
+          value={importance}
+          onChange={(value) => onImportance(value as ClientContextUpdateImportance)}
+          options={[
+            ["routine", "Routine"],
+            ["important", "Important"],
+            ["critical", "Critical"],
+          ]}
+        />
+        <DateTimeInput label="Occurred at" value={occurredAt} onChange={onOccurredAt} />
+      </div>
+      <div className="mt-3 grid gap-3 xl:grid-cols-2">
+        <TextInput label="Title" value={title} onChange={onTitle} />
+        <TextareaInput label="Summary" value={summary} onChange={onSummary} rows={3} />
+      </div>
+      <div className="mt-3">
+        <TextareaInput label="Details" value={details} onChange={onDetails} rows={4} />
+      </div>
+      <button
+        onClick={onAdd}
+        disabled={!title.trim() || !summary.trim()}
+        className="mt-3 inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-900 disabled:cursor-not-allowed disabled:bg-stone-300"
+        type="button"
+      >
+        <Plus size={16} />
+        Add context
+      </button>
+
+      <div className="mt-4 grid gap-3">
+        {updates.length === 0 ? (
+          <p className="rounded-lg border border-dashed border-stone-300 bg-white p-4 text-sm text-stone-600">
+            No dietitian context updates yet.
+          </p>
+        ) : (
+          updates.slice(0, 5).map((update) => (
+            <article key={update.id} className="rounded-lg border border-stone-200 bg-white p-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge label={sourceLabel(update.source)} tone="stone" />
+                <Badge label={update.importance} tone={update.importance === "critical" ? "red" : "amber"} />
+                <span className="text-xs font-medium text-stone-500">{formatTime(update.occurredAt)}</span>
+              </div>
+              <h5 className="mt-2 text-sm font-semibold text-stone-900">{update.title}</h5>
+              <p className="mt-1 whitespace-pre-wrap break-words text-sm leading-6 text-stone-700">{update.summary}</p>
+              {update.details && (
+                <p className="mt-2 whitespace-pre-wrap break-words border-t border-stone-100 pt-2 text-sm leading-6 text-stone-500">
+                  {update.details}
+                </p>
+              )}
+            </article>
+          ))
+        )}
       </div>
     </section>
   );
@@ -1858,6 +2111,16 @@ function originTone(origin: MessageRecord["origin"]) {
   if (origin === "dietitian_manual") return "amber";
   if (origin === "system_event") return "stone";
   return "stone";
+}
+
+function sourceLabel(source: ClientContextUpdateSource) {
+  const labels: Record<ClientContextUpdateSource, string> = {
+    phone: "Phone",
+    zoom: "Zoom",
+    in_person: "In person",
+    other: "Other",
+  };
+  return labels[source];
 }
 
 function toneClass(tone: "emerald" | "amber" | "red" | "stone", mode: "soft" | "icon") {

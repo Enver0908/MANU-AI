@@ -2,9 +2,11 @@
 
 ## Current Position
 
-MANU-AI is in pilot-foundation mode. The local SaaS/PWA prototype, Supabase-backed state, fallback store, simulator, risk assessment persistence, core safety tests, RLS guard, controlled API errors, expanded dashboard visual smoke checks, voice-profile workflow, dynamic client forms, and read-only internal dietitian copilot exist.
+MANU-AI is in pilot-foundation mode. The local SaaS/PWA prototype, Supabase-backed state, fallback store, simulator, risk assessment persistence, core safety tests, RLS guard, controlled API errors, expanded dashboard visual smoke checks, voice-profile workflow, dynamic client forms, read-only internal dietitian copilot, and dietitian-entered critical context updates exist.
 
 Real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, and real client health data remain disconnected.
+
+The most recent completed execution layer is Phase 29: pilot gate closure and evidence hardening. The next active work is external approval evidence collection, local Supabase RLS evidence rerun when available, and R-405 tracking through the Phase 22 procedure.
 
 ## Phase 0: Baseline, Documentation, And Workspace Safety
 
@@ -623,7 +625,7 @@ Done criteria:
 Status:
 
 - Added `docs/PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`.
-- 2026-05-28 check: `next@latest` is `16.2.6` with `postcss@8.4.31`; `next@canary` has `postcss@8.5.10` but remains rejected for pilot baseline.
+- 2026-05-31 check: `next@latest` is `16.2.6` with `postcss@8.4.31`; `eslint-config-next@latest` is `16.2.6`; `next@canary` remains rejected for pilot baseline.
 - No dependency files were changed; R-405 remains an open production launch blocker.
 
 ## Phase 23: AI Context And Memory Architecture - Completed 2026-05-30
@@ -703,12 +705,63 @@ Status:
 - Updated the data inventory, provider requirements, dataset strategy, evidence pack, and production pilot dossier so Phase 26 records and provider-egress boundaries are explicit.
 - No raw SQL, mutation tools, real provider, real channel, external notification, monitoring, secret manager, or real health data was connected.
 
+## Phase 27: Dietitian Critical Context Updates - Completed 2026-05-30
+
+Goal: let dietitians add confirmed client context from phone, Zoom, face-to-face, or other non-chat conversations so AI is not limited to WhatsApp/Telegram message history.
+
+Status:
+
+- Added `docs/PHASE_27_DIETITIAN_CONTEXT_UPDATE_SPEC.md`.
+- Added `client_context_updates` app-state records and Supabase migration.
+- Added `POST /api/clients/[id]/context-updates`.
+- Added dashboard Critical Context panel on the selected client surface.
+- Active context updates increment client context revision, invalidate pending drafts, and enter PromptContext as bounded `dietitian_context_update` segments.
+- Newer `dietitian_manual` WhatsApp/Telegram/manual messages remain authoritative over older Critical Context records through the latest dietitian-authored source rule.
+- ContextManifest remains raw-text-free and now preserves current inbound message id.
+- Client export includes context updates; anonymization redacts them and marks them superseded.
+- No old WhatsApp messages are rewritten; newer dietitian context supersedes older prompt context.
+- No real provider, channel, external notification, monitoring, secret manager, or real health data was connected.
+- Re-verified on 2026-05-31 with `npm run release:verify`: core tests 41/41, app tests 99/99, lint passed, production build passed, and production dependency audit reported only the known R-405 findings.
+
+## Phase 28: AI Security Remediation - Completed 2026-05-31
+
+Goal: close repo-level AI architecture/security audit findings before any real provider or channel integration.
+
+Status:
+
+- Added `docs/PHASE_28_AI_SECURITY_REMEDIATION_SPEC.md`.
+- Added Supabase migration `20260530040000_ai_security_remediation.sql` for `provider_attempted`, provider-status invariants, tenant-aware channel/idempotency uniqueness, helper functions, and scoped RLS/RBAC policies.
+- Provider no-call paths now record `providerAttempted=false`, `model=null`, `providerId=null`, and `providerStatus=not_called`.
+- Actual mock-provider attempts record provider metadata, and only `MockProviderError` is normalized as provider failure.
+- PromptContext segments now include source id, origin, timestamp, and authority metadata; the newest dietitian-authored source is explicitly marked authoritative across manual messages and Critical Context updates.
+- Draft approve/edit-send now revalidates context revision, channel permission, takeover lock, AI mode/status, latest promptable message id, and memory version/revision/staleness before client-facing send.
+- Provider input is guarded by an allowlisted segment boundary and fails closed for red risk, unknown/overlong segments, extra keys, raw prompts, capsules, and raw message/profile objects.
+- Core declaration types now expose concrete CoreResult, PromptContext, ContextManifest, provider-attempt, activation, and mode decision contracts.
+- Clinical golden coverage now includes typo/diacritic handling, English emergencies, medication dose requests, minor/body-image language, eating-disorder euphemisms, and pregnancy complications.
+- Re-verified on 2026-05-31 with `npm run release:verify`: core tests 49/49, app tests 103/103, lint passed, production build passed, and production dependency audit reported only the known R-405 findings.
+
+## Phase 29: Pilot Gate Closure And Evidence Hardening - Completed 2026-05-31
+
+Goal: make the Phase 28-secured local prototype clearer for external review without adding features, connecting real providers/channels, approving launch gates, or resolving R-405.
+
+Status:
+
+- Added `docs/PHASE_29_PILOT_GATE_CLOSURE_EVIDENCE_HARDENING_SPEC.md`.
+- Updated the production pilot dossier and evidence pack to use the Phase 27-28 baseline.
+- Recorded the 2026-05-31 npm metadata check: stable `next@latest` remains 16.2.6 with `postcss@8.4.31`; `eslint-config-next@latest` remains 16.2.6.
+- Confirmed no dependency files should change because no safe stable Next.js/PostCSS path exists.
+- Recorded that the latest RLS run skipped because local Supabase was not configured; expanded RLS coverage remains an environment evidence item to rerun against local Supabase.
+- Kept all eight production-pilot launch gates open.
+- Re-verified on 2026-05-31 with `npm run release:verify`: core tests 49/49, app tests 103/103, lint passed, production build passed, and production dependency audit reported only the known R-405 findings.
+- No real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, or real client health data was connected.
+
 ## Always-On Gates
 
 - No real health data before legal/privacy review.
 - No production messaging before WhatsApp/Telegram policy review.
 - No real LLM provider call with health data before vendor-risk and retention review.
 - No real-provider internal copilot egress before a separate provider, legal/privacy, security, and data-minimization review.
+- No real-provider use of dietitian context updates before provider, legal/privacy, clinical, and data-minimization review.
 - No fine-tuning on raw client messages.
 - No tenant mixing in datasets or prompt retrieval.
 - No raw health messages in external notification payloads.

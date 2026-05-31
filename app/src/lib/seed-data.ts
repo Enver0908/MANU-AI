@@ -127,6 +127,9 @@ export function createInitialState(): ManuAppState {
     clientId: client.id,
     channel: client.channel,
     rollingSummary: "Local simulator conversation. No real channel is connected.",
+    memoryVersion: "memory-v1",
+    memoryRevision: 1,
+    memoryStale: false,
   }));
 
   const messages: MessageRecord[] = [
@@ -197,6 +200,7 @@ export function createInitialState(): ManuAppState {
       },
     ],
     clientFormResponses: [],
+    clientContextUpdates: [],
     clients,
     conversations,
     messages,
@@ -212,6 +216,7 @@ export function createInitialState(): ManuAppState {
         risk: "green",
         model: "gemini-1.5-flash",
         promptVersion: "manu-prompt-v0.1.0",
+        providerAttempted: true,
         providerId: "mock-local-provider-v0",
         providerStatus: "ok",
         providerErrorCode: null,

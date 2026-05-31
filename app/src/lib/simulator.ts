@@ -4,12 +4,14 @@ import {
   handleInboundMessage,
 } from "dietitian-ai-assistant-architecture";
 import {
+  MockProviderError,
   MOCK_PROVIDER_ID,
   PROMPT_VERSION,
   buildMockProviderInput,
   generateMockProviderReply,
   getProviderErrorCode,
 } from "./ai-provider";
+import { buildClientContextUpdateSummary } from "./client-context-updates";
 import { buildClientFormSummary } from "./client-forms";
 import { getActiveVoiceProfile } from "./voice-profile-workflow";
 import { getMissingSafetyChecklistItems, isSafetyChecklistComplete } from "./safety-checklist";
@@ -33,6 +35,7 @@ type CoreResult = {
   personaId: string;
   risk: AiDecisionRecord["risk"];
   model: string | null;
+  providerAttempted?: boolean;
   promptVersion?: string | null;
   providerId?: string | null;
   providerStatus?: AiDecisionRecord["providerStatus"];
@@ -82,7 +85,11 @@ export async function runInboundSimulation(
   }
 
   const client = findClient(state, request.clientId);
-  const promptClient = { ...client, clientFormSummary: buildClientFormSummary(state, client.id) };
+  const promptClient = {
+    ...client,
+    clientFormSummary: buildClientFormSummary(state, client.id),
+    contextUpdates: buildClientContextUpdateSummary(state, client.id),
+  };
   const conversation = findConversation(state, client.id);
   const now = request.now || new Date().toISOString();
   const inboundMessage = buildMessage({
@@ -138,13 +145,17 @@ export async function runInboundSimulation(
       dietitian: state.dietitian,
       client: promptClient,
       conversation,
-      message: { body: trimmedBody },
+      message: { id: inboundMessage.id, body: trimmedBody },
       recentMessages: state.messages.filter((message) => message.conversationId === conversation.id),
       memory: {
         rollingSummary: conversation.rollingSummary,
+        memoryVersion: conversation.memoryVersion,
+        memoryRevision: conversation.memoryRevision,
         durableFacts: {},
       },
       voiceProfile: getActiveVoiceProfile(state) || undefined,
+      promptVersion: PROMPT_VERSION,
+      providerId: MOCK_PROVIDER_ID,
       now,
     },
     {
@@ -161,13 +172,17 @@ export async function runInboundSimulation(
       },
     },
   ).catch((error: unknown) => {
+    if (!(error instanceof MockProviderError)) {
+      throw error;
+    }
     const errorCode = getProviderErrorCode(error);
     return {
       mode: client.aiMode,
       aiStatus: client.aiStatus,
       personaId: client.selectedPersonaId,
       risk: riskDecision.level,
-      model: null,
+      model: modelForRisk(riskDecision.level),
+      providerAttempted: true,
       promptVersion: PROMPT_VERSION,
       providerId: MOCK_PROVIDER_ID,
       providerStatus: "failed",
@@ -205,6 +220,9 @@ export function addClientToState(state: ManuAppState, client: ClientRecord): Man
     clientId: client.id,
     channel: client.channel,
     rollingSummary: "Local simulator conversation. No real channel is connected.",
+    memoryVersion: "memory-v1",
+    memoryRevision: 1,
+    memoryStale: false,
   };
 
   return {
@@ -302,6 +320,11 @@ export function approveDraftMessageInState(
     throw new AppDomainError(400, "message_not_ai_draft");
   }
 
+  const revalidationFailure = revalidateDraftBeforeSend(state, draft, decision);
+  if (revalidationFailure) {
+    return blockDraftForRevalidationFailure(state, draft, decision, revalidationFailure);
+  }
+
   const finalBody = body?.trim() || draft.body;
 
   return {
@@ -325,6 +348,96 @@ export function approveDraftMessageInState(
         messageId,
         new Date().toISOString(),
       ),
+    ],
+  };
+}
+
+function revalidateDraftBeforeSend(
+  state: ManuAppState,
+  draft: MessageRecord,
+  decision: AiDecisionRecord | undefined,
+) {
+  if (!decision) return "revalidation_query_failed";
+
+  const conversation = state.conversations.find((item) => item.id === draft.conversationId);
+  const client = conversation ? state.clients.find((item) => item.id === conversation.clientId) : undefined;
+  const manifest = decision.contextManifest || null;
+
+  if (!conversation || !client || !manifest) return "revalidation_query_failed";
+  if (Number(manifest.clientContextRevision) !== client.contextRevision) return "context_changed_before_send";
+  if (client.channelPermission !== "ready") return "context_changed_before_send";
+  if (client.humanTakeoverLocked) return "context_changed_before_send";
+  if (client.aiStatus !== "active" || client.aiMode === "manual" || client.aiMode === "paused") {
+    return "context_changed_before_send";
+  }
+
+  const latestPromptableId = latestPromptableMessageIdForConversation(state, conversation.id, draft.id);
+  const expectedLatestId =
+    typeof manifest.currentMessageId === "string" && manifest.currentMessageId
+      ? manifest.currentMessageId
+      : typeof manifest.lastPromptableMessageId === "string"
+        ? manifest.lastPromptableMessageId
+        : null;
+  if ((latestPromptableId || null) !== (expectedLatestId || null)) {
+    return "context_changed_before_send";
+  }
+
+  if (manifest.memoryIncluded === true) {
+    if (conversation.memoryStale) return "context_changed_before_send";
+    if (typeof manifest.memoryVersion === "string" && manifest.memoryVersion !== conversation.memoryVersion) {
+      return "context_changed_before_send";
+    }
+    if (Number(manifest.memoryRevision || 1) !== conversation.memoryRevision) {
+      return "context_changed_before_send";
+    }
+  }
+
+  return null;
+}
+
+function latestPromptableMessageIdForConversation(
+  state: ManuAppState,
+  conversationId: string,
+  draftMessageId: string,
+) {
+  return state.messages
+    .filter((message) => message.conversationId === conversationId)
+    .filter((message) => message.id !== draftMessageId)
+    .filter(isPromptableForRevalidation)
+    .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+    .at(-1)?.id || null;
+}
+
+function isPromptableForRevalidation(message: MessageRecord) {
+  if (message.origin === "client_inbound" || message.origin === "dietitian_manual") return true;
+  return message.origin === "ai_generated" && message.status === "sent";
+}
+
+function blockDraftForRevalidationFailure(
+  state: ManuAppState,
+  draft: MessageRecord,
+  decision: AiDecisionRecord | undefined,
+  reason: string,
+): ManuAppState {
+  const now = new Date().toISOString();
+  return {
+    ...state,
+    messages: state.messages.map((message) =>
+      message.id === draft.id ? { ...message, status: "blocked" as const } : message,
+    ),
+    aiDecisions: state.aiDecisions.map((item) =>
+      decision && item.id === decision.id
+        ? {
+            ...item,
+            sendStatus: "send_blocked" as const,
+            blockedReason: reason,
+            reasons: Array.from(new Set([...item.reasons, reason])),
+          }
+        : item,
+    ),
+    auditEvents: [
+      ...state.auditEvents,
+      buildAuditEvent(state, "draft_send_revalidation_blocked", "message", draft.id, now),
     ],
   };
 }
@@ -632,8 +745,9 @@ function appendBlockedSimulationResult({
     personaId: client.selectedPersonaId,
     risk: riskLevel,
     model: null,
-    promptVersion: PROMPT_VERSION,
-    providerId: MOCK_PROVIDER_ID,
+    providerAttempted: false,
+    promptVersion: null,
+    providerId: null,
     providerStatus: "not_called",
     providerErrorCode: null,
     reasons,
@@ -676,6 +790,12 @@ function classifySimulationRisk(client: ClientRecord, body: string) {
   return classifyDieteticRisk(body, {
     highRisk: client.clinicalRiskNotes.length > 0,
   });
+}
+
+function modelForRisk(risk: AiDecisionRecord["risk"]) {
+  if (risk === "green") return "gemini-1.5-flash";
+  if (risk === "yellow") return "gemini-3";
+  return null;
 }
 
 function buildRiskAssessment({
@@ -765,9 +885,10 @@ function buildDecision({
     personaId: result.personaId,
     risk: result.risk,
     model: result.model,
-    promptVersion: result.promptVersion ?? (result.model ? PROMPT_VERSION : null),
-    providerId: result.providerId ?? (result.model ? MOCK_PROVIDER_ID : null),
-    providerStatus: result.providerStatus ?? (result.model ? "ok" : "not_called"),
+    promptVersion: result.promptVersion ?? (result.providerAttempted ? PROMPT_VERSION : null),
+    providerAttempted: result.providerAttempted ?? false,
+    providerId: result.providerId ?? (result.providerAttempted ? MOCK_PROVIDER_ID : null),
+    providerStatus: result.providerStatus ?? (result.providerAttempted ? "ok" : "not_called"),
     providerErrorCode: result.providerErrorCode ?? null,
     sendStatus: result.sendStatus ?? defaultSendStatus(result),
     contextManifest: result.contextManifest ?? null,

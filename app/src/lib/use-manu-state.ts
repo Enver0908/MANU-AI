@@ -3,7 +3,12 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { createInitialState } from "./seed-data";
 import type { Channel, ClientRecord, ManuAppState, SimulationRequest } from "./types";
-import type { ClientFormFieldDefinition, VoiceSampleStatus } from "./types";
+import type {
+  ClientContextUpdateImportance,
+  ClientContextUpdateSource,
+  ClientFormFieldDefinition,
+  VoiceSampleStatus,
+} from "./types";
 
 export function useManuState() {
   const [state, setState] = useState<ManuAppState>(() => createInitialState());
@@ -139,6 +144,21 @@ export function useManuState() {
         }),
       saveFormResponse: (input: { clientId: string; schemaId: string; answers: Record<string, unknown> }) =>
         replaceFromApi("/api/clients/forms", {
+          method: "POST",
+          body: JSON.stringify(input),
+        }),
+      addClientContextUpdate: (
+        clientId: string,
+        input: {
+          source: ClientContextUpdateSource;
+          occurredAt?: string | null;
+          title: string;
+          summary: string;
+          details?: string;
+          importance: ClientContextUpdateImportance;
+        },
+      ) =>
+        replaceFromApi(`/api/clients/${clientId}/context-updates`, {
           method: "POST",
           body: JSON.stringify(input),
         }),

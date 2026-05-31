@@ -38,6 +38,19 @@ const TEST_INTERNAL_COPILOT_MESSAGE_ID = "00000000-0000-4000-8000-000000000916";
 const OTHER_INTERNAL_COPILOT_MESSAGE_ID = "00000000-0000-4000-8000-000000000917";
 const TEST_INTERNAL_COPILOT_TOOL_CALL_ID = "00000000-0000-4000-8000-000000000918";
 const OTHER_INTERNAL_COPILOT_TOOL_CALL_ID = "00000000-0000-4000-8000-000000000919";
+const ASSISTANT_DIETITIAN_ID = "00000000-0000-4000-8000-000000000920";
+const VIEWER_DIETITIAN_ID = "00000000-0000-4000-8000-000000000921";
+const CARE_TEAM_DIETITIAN_ID = "00000000-0000-4000-8000-000000000922";
+const UNASSIGNED_CLIENT_ID = "00000000-0000-4000-8000-000000000923";
+const UNASSIGNED_CONVERSATION_ID = "00000000-0000-4000-8000-000000000924";
+const OWNED_DIETITIAN_CLIENT_ID = "00000000-0000-4000-8000-000000000925";
+const OWNED_DIETITIAN_CONVERSATION_ID = "00000000-0000-4000-8000-000000000926";
+const TEST_AI_DECISION_ID = "00000000-0000-4000-8000-000000000927";
+const OTHER_AI_DECISION_ID = "00000000-0000-4000-8000-000000000928";
+const ASSISTANT_ASSIGNMENT_ID = "00000000-0000-4000-8000-000000000929";
+const VIEWER_ASSIGNMENT_ID = "00000000-0000-4000-8000-000000000930";
+const CARE_TEAM_ASSIGNMENT_ID = "00000000-0000-4000-8000-000000000931";
+const TEST_HANDOFF_CASE_ID = "00000000-0000-4000-8000-000000000932";
 const PASSWORD = "manu-rls-test-password";
 
 const maybeDescribe = shouldRun ? describe : describe.skip;
@@ -46,6 +59,10 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
   let admin: SupabaseClient;
   let memberUserId = "";
   let outsiderUserId = "";
+  let assistantUserId = "";
+  let viewerUserId = "";
+  let careTeamUserId = "";
+  let auditorUserId = "";
 
   beforeAll(async () => {
     admin = createClient(supabaseUrl!, serviceRoleKey!, {
@@ -58,7 +75,17 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     await cleanup(admin);
     memberUserId = await ensureUser(admin, "rls-member@manu.local");
     outsiderUserId = await ensureUser(admin, "rls-outsider@manu.local");
-    await seedTenants(admin, memberUserId);
+    assistantUserId = await ensureUser(admin, "rls-assistant@manu.local");
+    viewerUserId = await ensureUser(admin, "rls-viewer@manu.local");
+    careTeamUserId = await ensureUser(admin, "rls-care-team@manu.local");
+    auditorUserId = await ensureUser(admin, "rls-auditor@manu.local");
+    await seedTenants(admin, {
+      memberUserId,
+      assistantUserId,
+      viewerUserId,
+      careTeamUserId,
+      auditorUserId,
+    });
   });
 
   afterAll(async () => {
@@ -66,13 +93,17 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
       await cleanup(admin);
       if (memberUserId) await admin.auth.admin.deleteUser(memberUserId);
       if (outsiderUserId) await admin.auth.admin.deleteUser(outsiderUserId);
+      if (assistantUserId) await admin.auth.admin.deleteUser(assistantUserId);
+      if (viewerUserId) await admin.auth.admin.deleteUser(viewerUserId);
+      if (careTeamUserId) await admin.auth.admin.deleteUser(careTeamUserId);
+      if (auditorUserId) await admin.auth.admin.deleteUser(auditorUserId);
     }
   });
 
   it("allows a tenant member to read only their tenant rows", async () => {
     const member = await signIn("rls-member@manu.local");
 
-    const ownClients = await member.from("clients").select("id, tenant_id").eq("tenant_id", TEST_TENANT_ID);
+    const ownClients = await member.from("clients").select("id, tenant_id").eq("id", TEST_CLIENT_ID);
     expect(ownClients.error).toBeNull();
     expect(ownClients.data).toHaveLength(1);
     expect(ownClients.data?.[0].id).toBe(TEST_CLIENT_ID);
@@ -97,7 +128,7 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     expect(notifications.error).toBeNull();
     expect(notifications.data).toEqual([{ id: TEST_NOTIFICATION_ID }]);
 
-    const assignments = await member.from("client_assignments").select("id");
+    const assignments = await member.from("client_assignments").select("id").eq("id", TEST_ASSIGNMENT_ID);
     expect(assignments.error).toBeNull();
     expect(assignments.data).toEqual([{ id: TEST_ASSIGNMENT_ID }]);
 
@@ -230,6 +261,161 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     expect(copilotToolInsert.error?.message).toMatch(/row-level security|violates foreign key/i);
   });
 
+  it("enforces assigned assistant read-only access", async () => {
+    const assistant = await signIn("rls-assistant@manu.local");
+
+    const assignedClients = await assistant.from("clients").select("id").eq("id", TEST_CLIENT_ID);
+    expect(assignedClients.error).toBeNull();
+    expect(assignedClients.data).toEqual([{ id: TEST_CLIENT_ID }]);
+
+    const unassignedClients = await assistant.from("clients").select("id").eq("id", UNASSIGNED_CLIENT_ID);
+    expect(unassignedClients.error).toBeNull();
+    expect(unassignedClients.data).toHaveLength(0);
+
+    const messages = await assistant.from("messages").select("id").eq("id", TEST_MESSAGE_ID);
+    expect(messages.error).toBeNull();
+    expect(messages.data).toEqual([{ id: TEST_MESSAGE_ID }]);
+
+    const update = await assistant
+      .from("clients")
+      .update({ full_name: "Assistant Blocked" })
+      .eq("id", TEST_CLIENT_ID)
+      .select("id");
+    expect(update.error).toBeNull();
+    expect(update.data).toHaveLength(0);
+
+    const insert = await assistant.from("messages").insert({
+      tenant_id: TEST_TENANT_ID,
+      conversation_id: TEST_CONVERSATION_ID,
+      sender: "dietitian",
+      origin: "dietitian_manual",
+      body: "Assistant must not write raw messages",
+    });
+    expect(insert.error?.message).toMatch(/row-level security/i);
+  });
+
+  it("enforces viewer read-only and care-team write assignment levels", async () => {
+    const viewer = await signIn("rls-viewer@manu.local");
+    const careTeam = await signIn("rls-care-team@manu.local");
+
+    const viewerRead = await viewer.from("clients").select("id").eq("id", TEST_CLIENT_ID);
+    expect(viewerRead.error).toBeNull();
+    expect(viewerRead.data).toEqual([{ id: TEST_CLIENT_ID }]);
+
+    const viewerUpdate = await viewer
+      .from("clients")
+      .update({ full_name: "Viewer Blocked" })
+      .eq("id", TEST_CLIENT_ID)
+      .select("id");
+    expect(viewerUpdate.error).toBeNull();
+    expect(viewerUpdate.data).toHaveLength(0);
+
+    const careTeamUpdate = await careTeam
+      .from("clients")
+      .update({ full_name: "Visible RLS Client Updated" })
+      .eq("id", TEST_CLIENT_ID)
+      .select("id");
+    expect(careTeamUpdate.error).toBeNull();
+    expect(careTeamUpdate.data).toEqual([{ id: TEST_CLIENT_ID }]);
+
+    const ownedUpdate = await careTeam
+      .from("clients")
+      .update({ full_name: "Owned Dietitian Client Updated" })
+      .eq("id", OWNED_DIETITIAN_CLIENT_ID)
+      .select("id");
+    expect(ownedUpdate.error).toBeNull();
+    expect(ownedUpdate.data).toEqual([{ id: OWNED_DIETITIAN_CLIENT_ID }]);
+
+    const unassignedUpdate = await careTeam
+      .from("clients")
+      .update({ full_name: "Unassigned Blocked" })
+      .eq("id", UNASSIGNED_CLIENT_ID)
+      .select("id");
+    expect(unassignedUpdate.error).toBeNull();
+    expect(unassignedUpdate.data).toHaveLength(0);
+  });
+
+  it("blocks auditor access to raw client, message, AI, handoff, risk, and copilot tables", async () => {
+    const auditor = await signIn("rls-auditor@manu.local");
+
+    for (const [table, column] of [
+      ["clients", "id"],
+      ["messages", "id"],
+      ["ai_decisions", "id"],
+      ["handoff_cases", "id"],
+      ["risk_assessments", "id"],
+      ["internal_copilot_messages", "id"],
+      ["internal_copilot_tool_calls", "id"],
+    ] as const) {
+      const response = await auditor.from(table).select(column);
+      expect(response.error).toBeNull();
+      expect(response.data).toHaveLength(0);
+    }
+  });
+
+  it("scopes internal copilot records to owner/admin or the current dietitian", async () => {
+    const owner = await signIn("rls-member@manu.local");
+    const careTeam = await signIn("rls-care-team@manu.local");
+
+    const ownerCopilot = await owner.from("internal_copilot_messages").select("id");
+    expect(ownerCopilot.error).toBeNull();
+    expect(ownerCopilot.data).toEqual([{ id: TEST_INTERNAL_COPILOT_MESSAGE_ID }]);
+
+    const careTeamCopilot = await careTeam.from("internal_copilot_messages").select("id");
+    expect(careTeamCopilot.error).toBeNull();
+    expect(careTeamCopilot.data).toHaveLength(0);
+  });
+
+  it("allows tenant-scoped channel and idempotency duplicates while blocking same-tenant duplicates", async () => {
+    const sharedChannelUserId = `shared-channel-${Date.now()}`;
+    const sharedProviderEventId = `shared-event-${Date.now()}`;
+
+    const crossTenantChannels = await admin.from("client_channels").insert([
+      {
+        tenant_id: TEST_TENANT_ID,
+        client_id: TEST_CLIENT_ID,
+        channel: "whatsapp",
+        channel_user_id: sharedChannelUserId,
+      },
+      {
+        tenant_id: OTHER_TENANT_ID,
+        client_id: OTHER_CLIENT_ID,
+        channel: "whatsapp",
+        channel_user_id: sharedChannelUserId,
+      },
+    ]);
+    expect(crossTenantChannels.error).toBeNull();
+
+    const sameTenantChannel = await admin.from("client_channels").insert({
+      tenant_id: TEST_TENANT_ID,
+      client_id: UNASSIGNED_CLIENT_ID,
+      channel: "whatsapp",
+      channel_user_id: sharedChannelUserId,
+    });
+    expect(sameTenantChannel.error?.message).toMatch(/duplicate key|unique/i);
+
+    const crossTenantEvents = await admin.from("processed_inbound_events").insert([
+      {
+        tenant_id: TEST_TENANT_ID,
+        channel: "whatsapp",
+        provider_event_id: sharedProviderEventId,
+      },
+      {
+        tenant_id: OTHER_TENANT_ID,
+        channel: "whatsapp",
+        provider_event_id: sharedProviderEventId,
+      },
+    ]);
+    expect(crossTenantEvents.error).toBeNull();
+
+    const sameTenantEvent = await admin.from("processed_inbound_events").insert({
+      tenant_id: TEST_TENANT_ID,
+      channel: "whatsapp",
+      provider_event_id: sharedProviderEventId,
+    });
+    expect(sameTenantEvent.error?.message).toMatch(/duplicate key|unique/i);
+  });
+
   it("stores simulator idempotency events with the simulated client channel", async () => {
     await resetSupabaseState();
     const state = await loadSupabaseState();
@@ -262,7 +448,7 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
 
     expect(riskAssessment.error).toBeNull();
     expect(riskAssessment.data?.level).toBe("yellow");
-    expect(riskAssessment.data?.classifier_version).toBe("dietetic-risk-v0.2.0");
+    expect(riskAssessment.data?.classifier_version).toBe("dietetic-risk-v0.3.0");
     await resetSupabaseState();
   }, 30000);
 
@@ -348,41 +534,106 @@ async function signIn(email: string) {
   return client;
 }
 
-async function seedTenants(admin: SupabaseClient, memberUserId: string) {
+async function seedTenants(
+  admin: SupabaseClient,
+  users: {
+    memberUserId: string;
+    assistantUserId: string;
+    viewerUserId: string;
+    careTeamUserId: string;
+    auditorUserId: string;
+  },
+) {
   await checked(admin.from("tenants").insert({ id: TEST_TENANT_ID, name: "RLS Test Tenant" }));
   await checked(admin.from("tenants").insert({ id: OTHER_TENANT_ID, name: "Other RLS Tenant" }));
   await checked(
-    admin.from("tenant_memberships").insert({
-      tenant_id: TEST_TENANT_ID,
-      user_id: memberUserId,
-      role: "owner",
-    }),
+    admin.from("tenant_memberships").insert([
+      {
+        tenant_id: TEST_TENANT_ID,
+        user_id: users.memberUserId,
+        role: "owner",
+      },
+      {
+        tenant_id: TEST_TENANT_ID,
+        user_id: users.assistantUserId,
+        role: "assistant",
+      },
+      {
+        tenant_id: TEST_TENANT_ID,
+        user_id: users.viewerUserId,
+        role: "dietitian",
+      },
+      {
+        tenant_id: TEST_TENANT_ID,
+        user_id: users.careTeamUserId,
+        role: "dietitian",
+      },
+      {
+        tenant_id: TEST_TENANT_ID,
+        user_id: users.auditorUserId,
+        role: "auditor",
+      },
+    ]),
   );
   await checked(
-    admin.from("dietitians").insert({
-      id: TEST_DIETITIAN_ID,
-      tenant_id: TEST_TENANT_ID,
-      display_name: "RLS Test Dietitian",
-      auth_user_id: memberUserId,
-    }),
+    admin.from("dietitians").insert([
+      {
+        id: TEST_DIETITIAN_ID,
+        tenant_id: TEST_TENANT_ID,
+        display_name: "RLS Test Dietitian",
+        auth_user_id: users.memberUserId,
+      },
+      {
+        id: ASSISTANT_DIETITIAN_ID,
+        tenant_id: TEST_TENANT_ID,
+        display_name: "RLS Assistant Staff",
+        auth_user_id: users.assistantUserId,
+      },
+      {
+        id: VIEWER_DIETITIAN_ID,
+        tenant_id: TEST_TENANT_ID,
+        display_name: "RLS Viewer Dietitian",
+        auth_user_id: users.viewerUserId,
+      },
+      {
+        id: CARE_TEAM_DIETITIAN_ID,
+        tenant_id: TEST_TENANT_ID,
+        display_name: "RLS Care Team Dietitian",
+        auth_user_id: users.careTeamUserId,
+      },
+    ]),
   );
   await checked(
-    admin.from("clients").insert({
-      id: TEST_CLIENT_ID,
-      tenant_id: TEST_TENANT_ID,
-      dietitian_id: TEST_DIETITIAN_ID,
-      full_name: "Visible RLS Client",
-      selected_persona_id: "balanced_coach",
-    }),
-  );
-  await checked(
-    admin.from("clients").insert({
-      id: OTHER_CLIENT_ID,
-      tenant_id: OTHER_TENANT_ID,
-      dietitian_id: TEST_DIETITIAN_ID,
-      full_name: "Hidden RLS Client",
-      selected_persona_id: "balanced_coach",
-    }),
+    admin.from("clients").insert([
+      {
+        id: TEST_CLIENT_ID,
+        tenant_id: TEST_TENANT_ID,
+        dietitian_id: TEST_DIETITIAN_ID,
+        full_name: "Visible RLS Client",
+        selected_persona_id: "balanced_coach",
+      },
+      {
+        id: UNASSIGNED_CLIENT_ID,
+        tenant_id: TEST_TENANT_ID,
+        dietitian_id: TEST_DIETITIAN_ID,
+        full_name: "Unassigned RLS Client",
+        selected_persona_id: "balanced_coach",
+      },
+      {
+        id: OWNED_DIETITIAN_CLIENT_ID,
+        tenant_id: TEST_TENANT_ID,
+        dietitian_id: CARE_TEAM_DIETITIAN_ID,
+        full_name: "Owned Dietitian Client",
+        selected_persona_id: "balanced_coach",
+      },
+      {
+        id: OTHER_CLIENT_ID,
+        tenant_id: OTHER_TENANT_ID,
+        dietitian_id: TEST_DIETITIAN_ID,
+        full_name: "Hidden RLS Client",
+        selected_persona_id: "balanced_coach",
+      },
+    ]),
   );
   await checked(
     admin.from("conversations").insert([
@@ -398,6 +649,20 @@ async function seedTenants(admin: SupabaseClient, memberUserId: string) {
         tenant_id: OTHER_TENANT_ID,
         dietitian_id: TEST_DIETITIAN_ID,
         client_id: OTHER_CLIENT_ID,
+        channel: "whatsapp",
+      },
+      {
+        id: UNASSIGNED_CONVERSATION_ID,
+        tenant_id: TEST_TENANT_ID,
+        dietitian_id: TEST_DIETITIAN_ID,
+        client_id: UNASSIGNED_CLIENT_ID,
+        channel: "whatsapp",
+      },
+      {
+        id: OWNED_DIETITIAN_CONVERSATION_ID,
+        tenant_id: TEST_TENANT_ID,
+        dietitian_id: CARE_TEAM_DIETITIAN_ID,
+        client_id: OWNED_DIETITIAN_CLIENT_ID,
         channel: "whatsapp",
       },
     ]),
@@ -421,6 +686,57 @@ async function seedTenants(admin: SupabaseClient, memberUserId: string) {
         body: "Hidden risk message",
       },
     ]),
+  );
+  await checked(
+    admin.from("ai_decisions").insert([
+      {
+        id: TEST_AI_DECISION_ID,
+        tenant_id: TEST_TENANT_ID,
+        conversation_id: TEST_CONVERSATION_ID,
+        client_id: TEST_CLIENT_ID,
+        mode: "copilot",
+        ai_status: "active",
+        persona_id: "balanced_coach",
+        risk: "green",
+        action: "sent",
+        model: "gemini-1.5-flash",
+        prompt_version: "prompt-v1",
+        provider_attempted: true,
+        provider_id: "mock-provider-v1",
+        provider_status: "ok",
+        send_status: "sent",
+      },
+      {
+        id: OTHER_AI_DECISION_ID,
+        tenant_id: OTHER_TENANT_ID,
+        conversation_id: OTHER_CONVERSATION_ID,
+        client_id: OTHER_CLIENT_ID,
+        mode: "copilot",
+        ai_status: "active",
+        persona_id: "balanced_coach",
+        risk: "green",
+        action: "sent",
+        model: "gemini-1.5-flash",
+        prompt_version: "prompt-v1",
+        provider_attempted: true,
+        provider_id: "mock-provider-v1",
+        provider_status: "ok",
+        send_status: "sent",
+      },
+    ]),
+  );
+  await checked(
+    admin.from("handoff_cases").insert({
+      id: TEST_HANDOFF_CASE_ID,
+      tenant_id: TEST_TENANT_ID,
+      dietitian_id: TEST_DIETITIAN_ID,
+      client_id: TEST_CLIENT_ID,
+      conversation_id: TEST_CONVERSATION_ID,
+      triggering_message_id: TEST_MESSAGE_ID,
+      risk: "red",
+      safe_acknowledgement: "Visible handoff acknowledgement",
+      recommended_action: "Dietitian review required.",
+    }),
   );
   await checked(
     admin.from("conversation_memories").insert([
@@ -479,12 +795,35 @@ async function seedTenants(admin: SupabaseClient, memberUserId: string) {
         tenant_id: TEST_TENANT_ID,
         client_id: TEST_CLIENT_ID,
         dietitian_id: TEST_DIETITIAN_ID,
+        access_level: "care_team",
+      },
+      {
+        id: ASSISTANT_ASSIGNMENT_ID,
+        tenant_id: TEST_TENANT_ID,
+        client_id: TEST_CLIENT_ID,
+        dietitian_id: ASSISTANT_DIETITIAN_ID,
+        access_level: "care_team",
+      },
+      {
+        id: VIEWER_ASSIGNMENT_ID,
+        tenant_id: TEST_TENANT_ID,
+        client_id: TEST_CLIENT_ID,
+        dietitian_id: VIEWER_DIETITIAN_ID,
+        access_level: "viewer",
+      },
+      {
+        id: CARE_TEAM_ASSIGNMENT_ID,
+        tenant_id: TEST_TENANT_ID,
+        client_id: TEST_CLIENT_ID,
+        dietitian_id: CARE_TEAM_DIETITIAN_ID,
+        access_level: "care_team",
       },
       {
         id: OTHER_ASSIGNMENT_ID,
         tenant_id: OTHER_TENANT_ID,
         client_id: OTHER_CLIENT_ID,
         dietitian_id: TEST_DIETITIAN_ID,
+        access_level: "care_team",
       },
     ]),
   );
@@ -577,15 +916,19 @@ async function seedTenants(admin: SupabaseClient, memberUserId: string) {
 }
 
 async function cleanup(admin: SupabaseClient) {
+  await admin.from("processed_inbound_events").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("internal_copilot_messages").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("internal_copilot_tool_calls").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("notifications").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("data_requests").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("client_ai_status_events").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("client_assignments").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("handoff_cases").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("ai_decisions").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("risk_assessments").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("conversation_memories").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("messages").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("client_channels").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("conversations").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("clients").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("dietitians").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);

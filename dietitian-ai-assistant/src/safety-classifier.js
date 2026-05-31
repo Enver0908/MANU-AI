@@ -1,4 +1,4 @@
-export const SAFETY_CLASSIFIER_VERSION = "dietetic-risk-v0.2.0";
+export const SAFETY_CLASSIFIER_VERSION = "dietetic-risk-v0.3.0";
 
 const redRules = [
   {
@@ -7,8 +7,13 @@ const redRules = [
       /gogus agr/i,
       /gogsum agr/i,
       /nefes alam/i,
+      /cant breathe/i,
+      /can.?t breathe/i,
+      /shortness of breath/i,
+      /chest pain/i,
       /bayil/i,
       /siddetli karin agr/i,
+      /severe abdominal pain/i,
       /kan kus/i,
     ],
   },
@@ -18,7 +23,17 @@ const redRules = [
   },
   {
     reason: "possible_eating_disorder_crisis",
-    patterns: [/kendimi kustur/i, /kusmak istiyorum/i, /hic yemek yemeyecegim/i, /laksatif/i, /mushil/i],
+    patterns: [
+      /kendimi kustur/i,
+      /kusmak istiyorum/i,
+      /yediklerimi cikar/i,
+      /telafi.*kus/i,
+      /hic yemek yemeyecegim/i,
+      /laksatif/i,
+      /mushil/i,
+      /purge/i,
+      /throw up/i,
+    ],
   },
   {
     reason: "self_harm_or_suicidal_language",
@@ -26,15 +41,23 @@ const redRules = [
   },
   {
     reason: "medication_or_insulin_dosing",
-    patterns: [/insulin.*kac/i, /ilac.*doz/i, /dozu.*artir/i, /dozu.*azalt/i],
+    patterns: [
+      /insulin.*kac/i,
+      /insulin.*how much/i,
+      /ilac.*doz/i,
+      /medication.*dose/i,
+      /dozu.*artir/i,
+      /dozu.*azalt/i,
+      /metformin.*(mg|doz|dose|artir|azalt|increase|decrease)/i,
+    ],
   },
   {
     reason: "critical_glucose_issue",
-    patterns: [/sekerim.*(40|50|60|300|400)/i, /hipoglisemi/i, /hiperglisemi/i],
+    patterns: [/sekerim.*(40|50|60|300|400)/i, /blood sugar.*(40|50|60|300|400)/i, /hipoglisemi/i, /hiperglisemi/i],
   },
   {
     reason: "pregnancy_complication",
-    patterns: [/hamileyim.*kanama/i, /gebeyim.*kanama/i, /hamileyim.*siddetli/i],
+    patterns: [/hamileyim.*kanama/i, /gebeyim.*kanama/i, /hamileyim.*siddetli/i, /pregnant.*bleed/i],
   },
 ];
 
@@ -65,7 +88,15 @@ const yellowRules = [
   },
   {
     reason: "minor_or_body_image_weight_loss",
-    patterns: [/15 yas/i, /16 yas/i, /17 yas/i, /ergen/i, /cok hizli kilo/i, /asiri kilo vermek/i],
+    patterns: [
+      /1[4-7]\s*yas/i,
+      /teen/i,
+      /ergen/i,
+      /cok hizli kilo/i,
+      /hizli kilo ver/i,
+      /asiri kilo vermek/i,
+      /body check/i,
+    ],
   },
 ];
 

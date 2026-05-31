@@ -153,7 +153,7 @@ npm test
 Current expected result:
 
 ```text
-39/39 tests passing
+49/49 tests passing
 ```
 
 Covered:
@@ -168,6 +168,9 @@ Covered:
 - tenant isolation rejects mismatched context
 - voice profile extraction
 - message provenance for AI vs dietitian messages
+- providerAttempted/no-call audit metadata
+- PromptContext source metadata and newest dietitian-authored source precedence
+- expanded clinical golden cases for English emergencies, medication dose requests, minor/body-image, eating-disorder euphemisms, pregnancy complications, and typo/diacritic handling
 
 Run app checks:
 
@@ -183,10 +186,10 @@ npm run release:verify
 Current expected app result:
 
 - ESLint passes.
-- 96/96 app tests pass.
+- 103/103 app tests pass.
 - RLS integration tests pass against local Supabase; when pointed at non-local Supabase they skip unless `MANU_ALLOW_REMOTE_RLS_TESTS=true`.
 - `next build --webpack` passes.
-- `npm run release:verify` passes with core tests 39/39, app tests 96/96, lint, production build, and only known R-405 production audit findings.
+- `npm run release:verify` passes with core tests 49/49, app tests 103/103, lint, production build, and only known R-405 production audit findings.
 - `npm run test:visual` passes across desktop, tablet, and mobile Chromium viewports.
 
 Note: app scripts intentionally use `--webpack` because Turbopack did not resolve the local symlinked `dietitian-ai-assistant-architecture` package. The core package now has `"exports": "./src/index.js"`.
@@ -214,7 +217,7 @@ Verified on 2026-05-23:
 - Unauthenticated `/api/app-state` returns HTTP 401 when Supabase is configured.
 - Unauthenticated `/dashboard` redirects to `/` when Supabase is configured.
 - Demo sign-in creates a Supabase Auth session and `/api/app-state` then returns seeded demo data.
-- `npm run test:rls` verifies tenant-member reads, membership-less reads, cross-tenant write blocking, auxiliary table RLS, Telegram idempotency channel persistence, and Supabase-backed AI control audit events.
+- `npm run test:rls` verifies tenant-member reads, membership-less reads, cross-tenant write blocking, scoped assistant/viewer/care-team/auditor behavior, internal copilot scope, tenant-aware channel/idempotency uniqueness, auxiliary table RLS, Telegram idempotency channel persistence, and Supabase-backed AI control audit events.
 - Draft approve, edit-send, and dismiss were verified against local Supabase; demo state was reset afterward.
 - Human takeover release was verified against local Supabase; demo state was reset afterward.
 - Safety checklist blocking and completion were verified against local Supabase; demo state was reset afterward.
@@ -445,6 +448,8 @@ Completed by: Codex
 app: npm test -> 37/37 passed
 app: npm run lint -> passed
 app: npm run build -> passed
+app: npm run release:verify -> passed
+release verification: core tests 41/41, app tests 99/99, lint passed, production build passed, production dependency audit known R-405 findings only
 ```
 
 ### What Was NOT Done
@@ -1129,3 +1134,115 @@ release verification: core tests 39/39, app tests 96/96, lint passed, production
 ### Next Correct Step For Codex
 
 Collect external approval artifacts against `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md`. Keep Phase 26 local/mock and read-only until a separate provider-egress, legal/vendor, security, and data-minimization review exists.
+
+## Phase 27 Handoff Notes - 2026-05-30
+
+Completed by: Codex
+
+### What Was Done
+
+- Created `docs/PHASE_27_DIETITIAN_CONTEXT_UPDATE_SPEC.md`.
+- Added dietitian-entered client context update records for phone, Zoom, in-person, or other non-chat conversations.
+- Added migration `app/supabase/migrations/20260530030000_phase_27_client_context_updates.sql`.
+- Added `/api/clients/[id]/context-updates` using existing `update_client` capability.
+- Added Dashboard Critical Context panel on the selected client detail surface.
+- Active context updates increment `client.contextRevision`, invalidate pending AI drafts, and enter PromptContext as bounded `dietitian_context_update` segments.
+- Newer `dietitian_manual` WhatsApp/Telegram/manual messages are authoritative over older Critical Context records through the latest dietitian-authored source rule.
+- `ContextManifest` remains raw-text-free and current inbound message id is now preserved.
+- Client export includes context updates; anonymization redacts them and marks affected records superseded.
+- Updated `PLAN.md`, `app/README.md`, `docs/NEXT_PHASE_EXECUTION_PLAN.md`, `docs/DATA_INVENTORY.md`, `docs/DATASET_STRATEGY.md`, and `docs/RISK_REGISTER.md`.
+
+### What Was NOT Done
+
+- Old WhatsApp messages were not rewritten.
+- No automatic diet plan or health-profile mutation was added.
+- No real Gemini/external LLM provider was connected.
+- No real WhatsApp, Telegram, email, push, monitoring, analytics, secret manager, or real health data was connected.
+- No production launch gate was approved.
+
+### Verification Commands
+
+```text
+core: npm test -> 41/41 passed
+app: npm test -> 99/99 passed during implementation
+app: npm run lint -> passed
+app: npm run build -> passed
+```
+
+### Next Correct Step For Codex
+
+Run full `npm run release:verify` after any follow-up edits. Preserve Phase 23-27 context/send-safety, dynamic form, internal copilot, and dietitian context update boundaries before any real provider or channel integration.
+
+## Phase 28 Handoff Notes - 2026-05-31
+
+Completed by: Codex
+
+### What Was Done
+
+- Implemented the AI security remediation plan.
+- Added `docs/PHASE_28_AI_SECURITY_REMEDIATION_SPEC.md`.
+- Added migration `app/supabase/migrations/20260530040000_ai_security_remediation.sql` with `ai_decisions.provider_attempted`, provider-status invariants, tenant-aware `client_channels` and `processed_inbound_events` uniqueness, RLS helper functions, and scoped RLS/RBAC policies.
+- Core and app no-provider paths now use `providerAttempted=false`, `model=null`, `providerId=null`, and `providerStatus=not_called`.
+- Actual mock-provider attempts now carry provider id/status/prompt metadata; only `MockProviderError` is normalized as provider failure.
+- PromptContext now carries source id, origin, timestamp, and authority metadata, and marks the newest dietitian-authored source across manual messages and Critical Context updates as authoritative.
+- Draft approve/edit-send now revalidates draft/decision state, context revision, channel permission, takeover lock, AI mode/status, latest promptable message id, and memory version/revision/staleness before sending.
+- Provider input now uses a segment allowlist and rejects red risk, unknown/overlong segments, extra keys, raw prompt/capsule/message/profile payloads, and unsafe boundary shapes.
+- Clinical golden cases now include typo/diacritic handling, English emergencies, medication dose requests, minor/body-image language, eating-disorder euphemisms, and pregnancy complications.
+- App/core TypeScript declarations now expose concrete CoreResult, PromptContext, ContextManifest, provider-attempt, activation, and mode-decision types.
+- Updated `PLAN.md`, `PROJECT_PLAN.md`, `app/README.md`, `docs/NEXT_PHASE_EXECUTION_PLAN.md`, `docs/PILOT_READINESS_EVIDENCE_PACK.md`, `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md`, `docs/DATA_INVENTORY.md`, `docs/AI_PROVIDER_REQUIREMENTS.md`, `docs/RISK_REGISTER.md`, and this handoff.
+
+### What Was NOT Done
+
+- No real Gemini/external LLM provider was connected.
+- No real WhatsApp, Telegram, email, push, monitoring, analytics, secret manager, or real health data was connected.
+- No production launch gate was approved.
+- R-405 was not remediated; it remains the documented dependency launch blocker.
+
+### Verification Commands
+
+```text
+core: npm test -> 49/49 passed
+app: npm test -> 103/103 passed
+app: npm run lint -> passed
+app: npm run build -> passed
+app: npm run release:verify -> passed
+app: npm run test:rls -> skipped unless local Supabase env is configured, or runs the expanded RLS suite when local Supabase is available
+```
+
+### Next Correct Step For Codex
+
+Collect external approval artifacts against `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md`. Preserve Phase 23-28 context/send-safety, provider boundary, draft revalidation, RLS/RBAC, dynamic form, internal copilot, and dietitian context update boundaries before any real provider or channel integration.
+
+## Phase 29 Handoff Notes - 2026-05-31
+
+Completed by: Codex
+
+### What Was Done
+
+- Created `docs/PHASE_29_PILOT_GATE_CLOSURE_EVIDENCE_HARDENING_SPEC.md`.
+- Updated the production pilot gate closure dossier to use the Phase 27-29 baseline instead of stale Phase 21-26 wording.
+- Updated the pilot readiness evidence pack with Phase 29 evidence hardening notes.
+- Updated `docs/NEXT_PHASE_EXECUTION_PLAN.md`, `PLAN.md`, `PROJECT_PLAN.md`, `app/README.md`, and `docs/RISK_REGISTER.md`.
+- Rechecked R-405 metadata: `next@latest` is still `16.2.6` with `postcss@8.4.31`; `eslint-config-next@latest` is still `16.2.6`.
+- Recorded that the expanded RLS suite exists but the latest local evidence remains pending/skipped when local Supabase is unavailable.
+
+### What Was NOT Done
+
+- No runtime behavior was changed.
+- No dependency files were changed.
+- No R-405 remediation or acceptance was performed.
+- No production launch gate was approved.
+- No real Gemini/external LLM provider was connected.
+- No real WhatsApp, Telegram, email, push, monitoring, analytics, secret manager, or real health data was connected.
+
+### Verification Commands
+
+```text
+app: npm run release:verify -> passed after clearing a stale .next build artifact lock
+release verification: core tests 49/49, app tests 103/103, lint passed, production build passed, production dependency audit known R-405 findings only
+app: npm run test:rls -> pending local Supabase availability; skip is environment evidence, not approval
+```
+
+### Next Correct Step For Codex
+
+Run `npm run release:verify` after any follow-up edits, then collect external approval artifacts against `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md`. Rerun `npm run test:rls` against local Supabase when available. Preserve Phase 23-29 context/send-safety, provider boundary, draft revalidation, evidence, RLS/RBAC, dynamic form, internal copilot, and dietitian context update boundaries before any real provider or channel integration.

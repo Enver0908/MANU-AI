@@ -6,6 +6,7 @@ import {
   publishClientFormSchemaInState,
   saveClientFormResponseInState,
 } from "./client-forms";
+import { createClientContextUpdateInState } from "./client-context-updates";
 import { runInternalCopilotInState } from "./internal-copilot";
 import {
   addVoiceSamplesToState,
@@ -24,6 +25,7 @@ import {
   acknowledgeNotificationInState,
 } from "./simulator";
 import type { ClientRecord, ManuAppState, SimulationRequest } from "./types";
+import type { CreateClientContextUpdateInput } from "./client-context-updates";
 import type { ClientFormFieldDefinition, VoiceSampleStatus } from "./types";
 
 const globalStore = globalThis as typeof globalThis & {
@@ -156,6 +158,14 @@ export function saveFormResponseInState(
   input: { clientId: string; schemaId: string; answers: Record<string, unknown> },
 ) {
   return saveClientFormResponseInState(state, input.clientId, input.schemaId, input.answers);
+}
+
+export function addClientContextUpdateInState(
+  state: ManuAppState,
+  clientId: string,
+  input: CreateClientContextUpdateInput,
+) {
+  return createClientContextUpdateInState(state, clientId, input);
 }
 
 export function runInternalCopilotMessageInState(state: ManuAppState, body: string) {

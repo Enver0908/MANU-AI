@@ -5,6 +5,7 @@ export { classifyDieteticRisk, SAFETY_CLASSIFIER_VERSION } from "./safety-classi
 export { buildClientContextCapsule, assertTenantIsolation } from "./context-capsule.js";
 export {
   CONTEXT_POLICY_V1,
+  LATEST_DIETITIAN_CONTEXT_INSTRUCTION,
   MISSING_HISTORICAL_CONTEXT_INSTRUCTION,
   MISSING_HISTORICAL_CONTEXT_TOKEN,
   compilePromptContext,

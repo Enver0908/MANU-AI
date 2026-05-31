@@ -28,6 +28,9 @@ export type VoiceProfileStatus = "default" | "generated" | "needs_samples";
 export type FormSchemaStatus = "draft" | "published" | "archived";
 export type FormFieldType = "text" | "textarea" | "number" | "boolean" | "select" | "multiselect" | "date";
 export type FormFieldLlmVisibility = "never" | "prompt_allowed";
+export type ClientContextUpdateSource = "phone" | "zoom" | "in_person" | "other";
+export type ClientContextUpdateImportance = "routine" | "important" | "critical";
+export type ClientContextUpdateStatus = "active" | "superseded";
 export type SafetyChecklist = {
   goalReviewed: boolean;
   dietPlanReviewed: boolean;
@@ -110,6 +113,22 @@ export type ClientFormResponseRecord = {
   updatedAt: string;
 };
 
+export type ClientContextUpdateRecord = {
+  id: string;
+  tenantId: string;
+  clientId: string;
+  dietitianId: string;
+  source: ClientContextUpdateSource;
+  occurredAt: string;
+  title: string;
+  summary: string;
+  details: string;
+  importance: ClientContextUpdateImportance;
+  status: ClientContextUpdateStatus;
+  supersedesUpdateId: string | null;
+  createdAt: string;
+};
+
 export type ClientRecord = {
   id: string;
   tenantId: string;
@@ -156,6 +175,9 @@ export type ConversationRecord = {
   clientId: string;
   channel: Channel;
   rollingSummary: string;
+  memoryVersion: string;
+  memoryRevision: number;
+  memoryStale: boolean;
 };
 
 export type MessageRecord = {
@@ -185,6 +207,7 @@ export type AiDecisionRecord = {
   risk: RiskLevel;
   model: string | null;
   promptVersion: string | null;
+  providerAttempted: boolean;
   providerId: string | null;
   providerStatus: ProviderStatus;
   providerErrorCode: string | null;
@@ -306,6 +329,7 @@ export type ManuAppState = {
   voiceProfiles: DietitianVoiceProfileRecord[];
   clientFormSchemas: ClientFormSchemaRecord[];
   clientFormResponses: ClientFormResponseRecord[];
+  clientContextUpdates: ClientContextUpdateRecord[];
   clients: ClientRecord[];
   conversations: ConversationRecord[];
   messages: MessageRecord[];

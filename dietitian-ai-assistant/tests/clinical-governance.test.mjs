@@ -69,6 +69,7 @@ for (const goldenCase of goldenCases) {
     assert.equal(result.risk, goldenCase.expectedRisk);
     assert.equal(result.action, goldenCase.expectedAction);
     assert.equal(result.model, goldenCase.expectedModel);
+    assert.equal(result.providerAttempted, goldenCase.providerCallExpected);
     assert.equal(providerCalls > 0, goldenCase.providerCallExpected);
   });
 }

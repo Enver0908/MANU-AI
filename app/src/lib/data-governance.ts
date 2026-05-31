@@ -1,8 +1,10 @@
 import { emptySafetyChecklist } from "./safety-checklist";
+import { redactClientContextUpdatesForAnonymization } from "./client-context-updates";
 import { AppDomainError } from "./app-errors";
 import type {
   AiDecisionRecord,
   AuditEventRecord,
+  ClientContextUpdateRecord,
   ClientRecord,
   ConversationRecord,
   DataRequestRecord,
@@ -28,6 +30,7 @@ export type ClientScopedExport = {
   client: ClientRecord;
   conversations: ConversationRecord[];
   messages: MessageRecord[];
+  clientContextUpdates: ClientContextUpdateRecord[];
   aiDecisions: AiDecisionRecord[];
   riskAssessments: RiskAssessmentRecord[];
   handoffCases: HandoffCaseRecord[];
@@ -98,6 +101,7 @@ export function buildClientScopedExport(state: ManuAppState, clientId: string): 
     client,
     conversations,
     messages,
+    clientContextUpdates: state.clientContextUpdates.filter((update) => update.clientId === client.id),
     aiDecisions: decisions,
     riskAssessments: state.riskAssessments.filter(
       (assessment) => conversationIds.has(assessment.conversationId) || messageIds.has(assessment.messageId),
@@ -132,7 +136,7 @@ export function anonymizeClientInState(state: ManuAppState, clientId: string): M
   const now = new Date().toISOString();
   const dataRequest = buildDataRequest(state, client.id, "anonymization", "completed", now);
 
-  return {
+  const anonymizedBase: ManuAppState = {
     ...state,
     clients: state.clients.map((item) => (item.id === client.id ? anonymizeClient(item) : item)),
     conversations: state.conversations.map((conversation) =>
@@ -155,7 +159,8 @@ export function anonymizeClientInState(state: ManuAppState, clientId: string): M
         ? {
             ...decision,
             model: null,
-            providerStatus: "not_called",
+            providerAttempted: false,
+            providerStatus: "not_called" as const,
             providerErrorCode: null,
             blockedReason: "client_data_anonymized",
             qualityIssues: [],
@@ -201,6 +206,8 @@ export function anonymizeClientInState(state: ManuAppState, clientId: string): M
     ],
     dataRequests: [...state.dataRequests, dataRequest],
   };
+
+  return redactClientContextUpdatesForAnonymization(anonymizedBase, client.id);
 }
 
 export function recordClientExportInState(state: ManuAppState, clientId: string): ManuAppState {

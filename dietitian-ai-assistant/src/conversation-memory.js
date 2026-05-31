@@ -10,10 +10,20 @@ export function selectRecentMessages(messages, limit = 8) {
     }));
 }
 
-export function buildMemoryContext({ rollingSummary = "", durableFacts = {}, recentMessages = [] }) {
+export function buildMemoryContext({
+  rollingSummary = "",
+  durableFacts = {},
+  recentMessages = [],
+  memoryVersion = "memory-v1",
+  memoryRevision = 1,
+  memoryStale = false,
+}) {
   return {
     rollingSummary,
     durableFacts,
+    memoryVersion,
+    memoryRevision,
+    memoryStale,
     recentMessages: selectRecentMessages(recentMessages),
   };
 }
@@ -27,4 +37,3 @@ export function appendDurableFact(memory, key, value) {
     },
   };
 }
-

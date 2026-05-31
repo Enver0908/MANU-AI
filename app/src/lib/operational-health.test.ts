@@ -98,6 +98,7 @@ function operationalFixture(): ManuAppState {
         risk: "green",
         model: "mock",
         promptVersion: "raw prompt",
+        providerAttempted: true,
         providerId: "mock-local-provider-v0",
         providerStatus: "failed",
         providerErrorCode: "provider_timeout",

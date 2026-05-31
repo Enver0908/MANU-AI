@@ -40,7 +40,9 @@ The scripts use `--webpack` because Turbopack did not resolve the local symlinke
 
 `npm run release:verify` runs the core package tests, lint, unit/API tests, production build, and the production dependency audit gate. It allows only the documented R-405 Next.js/PostCSS finding and does not run `npm audit fix --force`.
 
-Latest local release verification on 2026-05-30 passed with core tests 39/39, app tests 96/96, lint, production build, and only the documented R-405 production audit finding.
+Latest local release verification on 2026-05-31 passed after Phase 29 with core tests 49/49, app tests 103/103, lint, production build, and only the documented R-405 production audit finding.
+
+Phase 29 is documentation/evidence hardening only. It keeps production pilot blocked, records that stable `next@latest` 16.2.6 still bundles `postcss@8.4.31`, and requires local Supabase before RLS evidence can be counted as passed.
 
 ## Supabase CLI
 
@@ -85,6 +87,8 @@ $env:SUPABASE_TELEMETRY_DISABLED='1'; npx supabase migration repair --local --st
 - Dietitian voice sample intake, approval/rejection, generated voice profile state, and `Voice` dashboard panel (Phase 24)
 - Versioned dynamic client form schemas, response snapshots, prompt allowlist fields, and `Forms` dashboard panel (Phase 25)
 - Read-only internal dietitian `Copilot` tab and `/api/internal-copilot/messages` API using curated tenant-scoped local/mock tools with source refs (Phase 26)
+- Dietitian-entered Critical Context panel and `/api/clients/[id]/context-updates` for phone, Zoom, in-person, or other non-chat client updates (Phase 27)
+- AI security remediation with provider-attempt audit semantics, PromptContext source metadata, send-time draft revalidation, provider segment allowlist, tenant-aware channel/idempotency uniqueness, and scoped RLS/RBAC helper policies (Phase 28)
 - Inbound simulator wired to `handleInboundMessage`
 - Handoff queue
 - PWA manifest and service worker
@@ -132,7 +136,7 @@ When Supabase is configured:
 - The demo user is linked to the seeded demo tenant through `tenant_memberships`.
 - `/dashboard` requires an authenticated Supabase session.
 - Supabase-backed API routes return `401` without a session and `403` without tenant membership.
-- `npm run test:rls` verifies tenant-member reads, membership-less reads, and cross-tenant write blocking against local Supabase when env vars are configured.
+- `npm run test:rls` verifies tenant-member reads, membership-less reads, cross-tenant write blocking, scoped assistant/viewer/care-team/auditor behavior, internal copilot scoping, and tenant-aware channel/idempotency uniqueness against local Supabase when env vars are configured.
 - `npm run test:rls` also verifies auxiliary RLS policies, Telegram simulator idempotency channel persistence, and Supabase-backed AI control audit events.
 - `npm run test:rls` runs only against local Supabase unless `MANU_ALLOW_REMOTE_RLS_TESTS=true` is set.
 - AI draft approve/edit-send/dismiss actions persist through `/api/messages/drafts/[id]`.

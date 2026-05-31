@@ -26,6 +26,7 @@ export function buildClientContextCapsule({
       clinicalRiskNotes: client.clinicalRiskNotes || [],
       pinnedNotes: client.pinnedNotes || [],
       clientFormSummary: client.clientFormSummary || "",
+      contextUpdates: client.contextUpdates || [],
       aiMode: client.aiMode,
       aiStatus: client.aiStatus || "passive",
       aiActiveFrom: client.aiActiveFrom || null,

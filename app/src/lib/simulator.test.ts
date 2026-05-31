@@ -25,6 +25,7 @@ describe("local inbound simulator", () => {
     expect(next.riskAssessments).toHaveLength(2);
     expect(next.riskAssessments.at(-1)?.level).toBe("green");
     expect(next.aiDecisions.at(-1)?.promptVersion).toBe("manu-prompt-v0.1.0");
+    expect(next.aiDecisions.at(-1)?.providerAttempted).toBe(true);
     expect(next.aiDecisions.at(-1)?.providerId).toBe("mock-local-provider-v0");
     expect(next.aiDecisions.at(-1)?.providerStatus).toBe("ok");
     expect(next.aiDecisions.at(-1)?.providerErrorCode).toBeNull();
@@ -48,6 +49,10 @@ describe("local inbound simulator", () => {
     expect(countGeneratedMessages(next)).toBe(countGeneratedMessages(state));
     expect(next.riskAssessments).toHaveLength(state.riskAssessments.length + 1);
     expect(next.riskAssessments.at(-1)?.level).toBe("green");
+    expect(next.aiDecisions.at(-1)?.model).toBeNull();
+    expect(next.aiDecisions.at(-1)?.providerAttempted).toBe(false);
+    expect(next.aiDecisions.at(-1)?.providerId).toBeNull();
+    expect(next.aiDecisions.at(-1)?.providerStatus).toBe("not_called");
   });
 
   it("blocks generation before a scheduled activation window starts", async () => {
@@ -64,6 +69,46 @@ describe("local inbound simulator", () => {
 
     expect(next.lastSimulation?.action).toBe("no_ai");
     expect(next.lastSimulation?.blockedReason).toBe("client_ai_not_started");
+  });
+
+  it("keeps provider metadata not-called for manual, paused, and context-budget blocks", async () => {
+    const manualState = updateClientInState(createInitialState(), "client-mert", {
+      aiMode: "manual",
+    });
+    const manual = await runInboundSimulation(manualState, {
+      clientId: "client-mert",
+      body: "Ara ogunde ne yiyebilirim?",
+      idempotencyKey: "manual-no-provider-1",
+      now: "2026-05-22T10:06:00.000Z",
+    });
+    expect(manual.aiDecisions.at(-1)?.model).toBeNull();
+    expect(manual.aiDecisions.at(-1)?.providerAttempted).toBe(false);
+    expect(manual.aiDecisions.at(-1)?.providerId).toBeNull();
+    expect(manual.aiDecisions.at(-1)?.providerStatus).toBe("not_called");
+
+    const pausedState = updateClientInState(createInitialState(), "client-mert", {
+      aiMode: "paused",
+    });
+    const paused = await runInboundSimulation(pausedState, {
+      clientId: "client-mert",
+      body: "Ara ogunde ne yiyebilirim?",
+      idempotencyKey: "paused-no-provider-1",
+      now: "2026-05-22T10:07:00.000Z",
+    });
+    expect(paused.aiDecisions.at(-1)?.model).toBeNull();
+    expect(paused.aiDecisions.at(-1)?.providerAttempted).toBe(false);
+    expect(paused.aiDecisions.at(-1)?.providerStatus).toBe("not_called");
+
+    const overBudget = await runInboundSimulation(createInitialState(), {
+      clientId: "client-mert",
+      body: "a".repeat(1600),
+      idempotencyKey: "context-budget-no-provider-1",
+      now: "2026-05-22T10:08:00.000Z",
+    });
+    expect(overBudget.lastSimulation?.blockedReason).toBe("current_message_token_budget_exceeded");
+    expect(overBudget.aiDecisions.at(-1)?.model).toBeNull();
+    expect(overBudget.aiDecisions.at(-1)?.providerAttempted).toBe(false);
+    expect(overBudget.aiDecisions.at(-1)?.providerStatus).toBe("not_called");
   });
 
   it("routes yellow messages to approval drafts on gemini-3", async () => {
@@ -96,6 +141,7 @@ describe("local inbound simulator", () => {
     expect(next.auditEvents.some((event) => event.eventType === "handoff_notification_queued")).toBe(true);
     expect(countGeneratedMessages(next)).toBe(countGeneratedMessages(state));
     expect(next.aiDecisions.at(-1)?.providerStatus).toBe("not_called");
+    expect(next.aiDecisions.at(-1)?.providerAttempted).toBe(false);
   });
 
   it("records provider failures as safe no-send decisions", async () => {
@@ -111,6 +157,8 @@ describe("local inbound simulator", () => {
     expect(next.lastSimulation?.action).toBe("no_ai");
     expect(next.lastSimulation?.blockedReason).toBe("provider_timeout");
     expect(countGeneratedMessages(next)).toBe(countGeneratedMessages(state));
+    expect(next.aiDecisions.at(-1)?.model).toBe("gemini-1.5-flash");
+    expect(next.aiDecisions.at(-1)?.providerAttempted).toBe(true);
     expect(next.aiDecisions.at(-1)?.providerStatus).toBe("failed");
     expect(next.aiDecisions.at(-1)?.providerErrorCode).toBe("provider_timeout");
   });
@@ -128,6 +176,7 @@ describe("local inbound simulator", () => {
     expect(next.lastSimulation?.action).toBe("no_ai");
     expect(next.lastSimulation?.blockedReason).toBe("provider_policy_violation");
     expect(countGeneratedMessages(next)).toBe(countGeneratedMessages(state));
+    expect(next.aiDecisions.at(-1)?.providerAttempted).toBe(true);
     expect(next.aiDecisions.at(-1)?.providerStatus).toBe("failed");
     expect(next.aiDecisions.at(-1)?.providerErrorCode).toBe("provider_policy_violation");
   });
@@ -223,6 +272,45 @@ describe("local inbound simulator", () => {
     expect(() => approveDraftMessageInState(invalidatedState, draft?.id || "")).toThrow(
       new AppDomainError(409, "draft_context_invalidated"),
     );
+  });
+
+  it("blocks draft approval when send-time revalidation detects changed context", async () => {
+    const withDraft = await runInboundSimulation(createInitialState(), {
+      clientId: "client-elif",
+      body: "D vitamini takviyesi kullanayim mi?",
+      idempotencyKey: "revalidate-draft-1",
+      now: "2026-05-22T10:24:30.000Z",
+    });
+    const draft = withDraft.messages.find((message) => message.status === "draft");
+    const staleState = {
+      ...withDraft,
+      clients: withDraft.clients.map((client) =>
+        client.id === "client-elif" ? { ...client, contextRevision: client.contextRevision + 1 } : client,
+      ),
+    };
+
+    const next = approveDraftMessageInState(staleState, draft?.id || "");
+    const blockedDraft = next.messages.find((message) => message.id === draft?.id);
+    const blockedDecision = next.aiDecisions.find((decision) => decision.id === draft?.generatedByAiDecisionId);
+    expect(blockedDraft?.status).toBe("blocked");
+    expect(blockedDecision?.sendStatus).toBe("send_blocked");
+    expect(blockedDecision?.blockedReason).toBe("context_changed_before_send");
+    expect(next.auditEvents.some((event) => event.eventType === "draft_send_revalidation_blocked")).toBe(true);
+  });
+
+  it("allows draft approval when send-time revalidation passes", async () => {
+    const withDraft = await runInboundSimulation(createInitialState(), {
+      clientId: "client-elif",
+      body: "D vitamini takviyesi kullanayim mi?",
+      idempotencyKey: "revalidate-draft-2",
+      now: "2026-05-22T10:24:40.000Z",
+    });
+    const draft = withDraft.messages.find((message) => message.status === "draft");
+
+    const next = approveDraftMessageInState(withDraft, draft?.id || "");
+    const sentDraft = next.messages.find((message) => message.id === draft?.id);
+    expect(sentDraft?.status).toBe("sent");
+    expect(sentDraft?.approvedByDietitianId).toBe(withDraft.dietitian.id);
   });
 
   it("blocks auto-send when the dietitian takeover lock is active", async () => {
