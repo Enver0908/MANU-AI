@@ -13,12 +13,12 @@ All production-pilot launch gates remain open until the user supplies external a
 ## Current Baseline
 
 - Git baseline: Phase 27-29 checkpoint exists at `c75564e Add Phase 27-29 pilot readiness checkpoint` on branch `codex/phase-29-baseline-checkpoint`; Completion Roadmap Phase 1 records this as the current implementation baseline.
-- Latest local verification: `npm run release:verify` passed on 2026-05-31 after Phase 29 evidence hardening.
+- Latest local release verification: `npm run release:verify` passed on 2026-05-31 after Phase 31 RLS evidence documentation.
 - Verification result: core tests 49/49, app tests 103/103, lint passed, production build passed.
 - Dependency audit result: only known R-405 findings, `next:postcss` and `postcss:GHSA-qx2v-qp2m-jg93`.
 - R-405 status: open production launch blocker; 2026-05-31 metadata check still shows stable `next@latest` 16.2.6 with `postcss@8.4.31`, so no safe stable Next.js/PostCSS patch path is available.
 - R-405 remediation spec: `PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`.
-- RLS evidence status: expanded `npm run test:rls` coverage exists, but the latest recorded run skipped because local Supabase was not configured for the session.
+- RLS evidence status: expanded `npm run test:rls` coverage exists, but the 2026-05-31 Completion Roadmap Phase 2 attempt did not produce passing evidence. Local Supabase could not start because Docker Desktop's Linux engine pipe was unavailable, and `npm run test:rls` skipped 10 guarded tests. R-406 remains blocked pending local Docker/Supabase availability.
 
 ## Gate Closure Matrix
 
@@ -42,7 +42,7 @@ All production-pilot launch gates remain open until the user supplies external a
 - Channel packet: WhatsApp feasibility checklist, Telegram bot/privacy checklist, opt-in/out and service-window procedure, identity quarantine and idempotency evidence.
 - Operations packet: incident owner placeholder, DSAR/deletion procedure placeholder, backup/restore drill placeholder, secret inventory and rotation owner placeholder.
 - Dependency packet: latest `npm run release:verify` output, R-405 risk record, stable Next.js/PostCSS tracking note.
-- RLS evidence packet: latest `npm run test:rls` output from local Supabase or an explicit note that local Supabase evidence remains pending.
+- RLS evidence packet: latest `npm run test:rls` output from local Supabase or the Phase 31 blocker note that Docker/local Supabase was unavailable and R-406 remains blocked.
 
 ## Non-Approvals
 

@@ -1277,3 +1277,40 @@ release verification: core tests 49/49, app tests 103/103, lint passed, producti
 ### Next Correct Step For Codex
 
 Run Completion Roadmap Phase 2 only: local Supabase RLS evidence completion. Do not start R-405 remediation, external gate collection, provider integration, channel integration, or production infrastructure work in the same command.
+
+## Completion Roadmap Phase 2 / Phase 31 Handoff Notes - 2026-05-31
+
+Completed by: Codex
+
+### What Was Done
+
+- Followed `codex.md`: spec first, surgical evidence/docs-only change, no runtime behavior changes.
+- Created `docs/PHASE_31_COMPLETION_PHASE_2_RLS_EVIDENCE_SPEC.md`.
+- Confirmed the RLS integration guard skips non-local Supabase URLs unless `MANU_ALLOW_REMOTE_RLS_TESTS=true` is explicitly set.
+- Confirmed `app/.env.local` is currently pointed at a cloud Supabase URL and must not be used as default RLS evidence input.
+- Checked Supabase CLI availability: version `2.101.0`.
+- Attempted to start local Supabase while redirecting output to avoid printing secrets.
+- Ran `npm run test:rls`.
+- Updated `PLAN.md`, `PROJECT_PLAN.md`, `docs/NEXT_PHASE_EXECUTION_PLAN.md`, `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md`, `docs/PILOT_READINESS_EVIDENCE_PACK.md`, `docs/RISK_REGISTER.md`, `app/README.md`, and this handoff.
+
+### What Was NOT Done
+
+- No passing RLS evidence was produced.
+- R-406 was not mitigated.
+- No remote Supabase RLS tests were run.
+- No runtime behavior, schema, dependency, provider, channel, launch-gate, or real-data changes were made.
+- No real Gemini/external LLM provider was connected.
+- No real WhatsApp, Telegram, email, push, monitoring, analytics, secret manager, or real health data was connected.
+- R-405 was not remediated or accepted.
+
+### Verification Commands
+
+```text
+app: npx supabase start -> failed because Docker Desktop Linux engine pipe was unavailable
+app: npm run test:rls -> skipped 1 file and 10 tests
+app: npm run release:verify -> passed; core tests 49/49, app tests 103/103, lint, production build, known R-405 only
+```
+
+### Next Correct Step For Codex
+
+Unblock Completion Roadmap Phase 2 only: start Docker Desktop with the Linux engine available, start local Supabase, point RLS test env to local Supabase without printing secrets, and rerun `npm run test:rls`. Update R-406 only after the expanded 10-test RLS suite passes locally.

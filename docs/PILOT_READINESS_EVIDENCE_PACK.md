@@ -18,7 +18,7 @@ Run from `app`:
 npm run release:verify
 ```
 
-Latest result, re-verified on 2026-05-31 after Phase 29 evidence hardening:
+Latest result, re-verified on 2026-05-31 after Phase 31 RLS evidence documentation:
 
 - Core package tests: 49/49 passed.
 - App tests: 103/103 passed.
@@ -50,7 +50,7 @@ Separate optional evidence commands:
 - `npm run test:rls` when local Supabase is available.
 - `npm run test:visual` when browser visual smoke evidence is needed.
 
-Latest `npm run test:rls` in this workspace skipped 10 tests because local Supabase was not configured for the session. The expanded RLS suite is present, but local-database execution remains unresolved environment evidence until rerun against local Supabase.
+Latest `npm run test:rls` in this workspace skipped 10 tests during Completion Roadmap Phase 2 on 2026-05-31. Local Supabase could not start because Docker Desktop's Linux engine pipe was unavailable, so the expanded RLS suite is present but local-database execution remains blocked environment evidence until rerun against local Supabase.
 
 Phase 29 evidence hardening on 2026-05-31:
 
@@ -58,6 +58,15 @@ Phase 29 evidence hardening on 2026-05-31:
 - Updated gate closure materials to treat Phase 27-28 as the current baseline.
 - Recorded that RLS skip status is an evidence gap, not a production approval.
 - Rechecked R-405 metadata and confirmed stable Next.js still has no patched PostCSS path.
+- Re-ran `npm run release:verify`: core tests 49/49, app tests 103/103, lint, production build, and dependency audit gate passed with only documented R-405 findings.
+
+Completion Roadmap Phase 2 / Phase 31 RLS evidence attempt on 2026-05-31:
+
+- Added `PHASE_31_COMPLETION_PHASE_2_RLS_EVIDENCE_SPEC.md`.
+- Confirmed the RLS guard remains fail-closed for non-local Supabase URLs unless explicitly overridden.
+- Attempted to start local Supabase; Docker Desktop's Linux engine pipe was unavailable.
+- Ran `npm run test:rls`; the suite skipped 1 file and 10 tests.
+- No passing RLS evidence was produced, and R-406 remains blocked pending local Docker/Supabase availability.
 - Re-ran `npm run release:verify`: core tests 49/49, app tests 103/103, lint, production build, and dependency audit gate passed with only documented R-405 findings.
 
 ## Launch Gate Matrix

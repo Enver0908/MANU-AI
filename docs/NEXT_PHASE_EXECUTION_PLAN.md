@@ -6,7 +6,7 @@ MANU-AI is in pilot-foundation mode. The local SaaS/PWA prototype, Supabase-back
 
 Real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, and real client health data remain disconnected.
 
-The most recent completed execution layer is Phase 30 / Completion Roadmap Phase 1: checkpoint and baseline stabilization. The next active work is Completion Roadmap Phase 2: local Supabase RLS evidence completion, followed by R-405 tracking through the Phase 22 procedure and external approval evidence collection.
+The most recent execution layer is Phase 31 / Completion Roadmap Phase 2: local Supabase RLS evidence attempt. The RLS suite could not produce passing evidence because Docker Desktop's Linux engine was unavailable, so local Supabase could not start and `npm run test:rls` skipped 10 guarded tests. The next active work is to unblock Docker/local Supabase and rerun Completion Roadmap Phase 2 evidence before treating R-406 as mitigated.
 
 ## Phase 0: Baseline, Documentation, And Workspace Safety
 
@@ -767,6 +767,29 @@ Status:
 - Confirmed no runtime behavior, schema, dependency, provider, channel, launch-gate, or real-data changes are part of this phase.
 - Re-verified with `npm run release:verify` after the documentation update.
 - R-405 remains open and R-406 remains pending local Supabase RLS execution.
+
+## Phase 31: Completion Roadmap Phase 2 - Local Supabase RLS Evidence - Blocked 2026-05-31
+
+Goal: run the expanded local Supabase RLS suite and update R-406 with current evidence.
+
+Status:
+
+- Added `docs/PHASE_31_COMPLETION_PHASE_2_RLS_EVIDENCE_SPEC.md`.
+- Confirmed the RLS test guard still skips non-local Supabase URLs unless `MANU_ALLOW_REMOTE_RLS_TESTS=true` is explicitly set.
+- Confirmed `app/.env.local` is currently configured for a cloud Supabase URL, so it is not acceptable RLS evidence input by default.
+- Attempted to start local Supabase with Supabase CLI `2.101.0`.
+- Local Supabase start failed because Docker Desktop's Linux engine pipe was unavailable: `open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified`.
+- Ran `npm run test:rls`; it exited by skipping the guarded suite with 1 skipped file and 10 skipped tests.
+- No passing RLS evidence was produced.
+- R-406 remains blocked pending local Docker/Supabase availability.
+- Re-verified documentation-only changes with `npm run release:verify`: core tests 49/49, app tests 103/103, lint, production build, and only documented R-405 findings.
+
+Done criteria still unmet:
+
+- Local Supabase starts successfully.
+- Migrations are available in the local database.
+- `npm run test:rls` runs the expanded 10-test suite instead of skipping.
+- R-406 and evidence docs are updated only after a passing local RLS run.
 
 ## Always-On Gates
 
