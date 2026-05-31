@@ -1522,3 +1522,34 @@ app: npm run release:verify -> passed; core tests 49/49, app tests 103/103, lint
 ### Next Correct Step For Codex
 
 Run `npm run release:verify` after any follow-up edits. Use `docs/PRODUCTION_PILOT_CHANNEL_POLICY_REVIEW_PACKET.md` when the user supplies WhatsApp/Telegram platform-policy feedback or approval artifacts. Do not mark `channel_policy_review` approved unless all required channel-policy evidence items are covered by an acceptable artifact.
+
+## Completion Roadmap Phase 9 / Phase 38 Handoff Notes - 2026-05-31
+
+Completed by: Codex
+
+### What Was Done
+
+- Followed `codex.md`: wrote the spec before the change and kept the work to documentation/review readiness.
+- Created `docs/PHASE_38_COMPLETION_PHASE_9_INCIDENT_DSAR_REVIEW_PACKET_SPEC.md`.
+- Created `docs/PRODUCTION_PILOT_INCIDENT_DSAR_REVIEW_PACKET.md`.
+- Mapped the draft incident response runbook, DSAR/export/anonymization skeleton, legal ops ledger, and safe operational health evidence to required owner, escalation, notification, breach, DSAR/deletion, and re-enable decisions.
+- Updated `PLAN.md`, `PROJECT_PLAN.md`, `app/README.md`, `docs/NEXT_PHASE_EXECUTION_PLAN.md`, `docs/PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md`, `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md`, `docs/PILOT_READINESS_EVIDENCE_PACK.md`, `docs/RISK_REGISTER.md`, and this handoff.
+
+### What Was NOT Done
+
+- No incident/DSAR approval artifact was supplied or accepted.
+- No named production owner or backup owner was assigned.
+- No monitoring, notification, ticketing, paging, email, push, WhatsApp, Telegram, analytics, or secret manager integration was added.
+- No runtime behavior, schema, dependency, provider, channel, launch-gate approval, or real-data change was made.
+- R-405 remains open.
+- R-406 remains blocked.
+
+### Verification Commands
+
+```text
+app: npm run release:verify -> passed; core tests 49/49, app tests 103/103, lint, production build, known R-405 only
+```
+
+### Next Correct Step For Codex
+
+Run `npm run release:verify` after any follow-up edits. Use `docs/PRODUCTION_PILOT_INCIDENT_DSAR_REVIEW_PACKET.md` when the user supplies operations/legal/privacy/clinical feedback or approval artifacts. Do not mark `incident_response_runbook` approved unless all required incident and DSAR evidence items are covered by an acceptable artifact.

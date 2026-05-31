@@ -6,7 +6,7 @@ MANU-AI is in pilot-foundation mode. The local SaaS/PWA prototype, Supabase-back
 
 Real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, and real client health data remain disconnected.
 
-The most recent execution layer is Phase 37 / Completion Roadmap Phase 8: channel policy review packet. It prepares the `channel_policy_review` launch gate for external WhatsApp and Telegram platform-policy review without approving the gate. R-405 remains open, and R-406 remains blocked because Phase 31 could not produce local Supabase RLS evidence without Docker Desktop's Linux engine.
+The most recent execution layer is Phase 38 / Completion Roadmap Phase 9: incident and DSAR review packet. It prepares the `incident_response_runbook` launch gate for external operations, legal, privacy, and clinical review without approving the gate. R-405 remains open, and R-406 remains blocked because Phase 31 could not produce local Supabase RLS evidence without Docker Desktop's Linux engine.
 
 ## Phase 0: Baseline, Documentation, And Workspace Safety
 
@@ -928,6 +928,28 @@ Done criteria:
 - Platform/policy reviewers have a packet that separates internal mock-channel evidence from external WhatsApp/Telegram approval.
 - The packet warns against storing channel secrets, real phone numbers, Telegram user ids, raw client health messages, production webhook payloads, or non-repository platform review text in repo docs.
 - The production-pilot channel policy gate remains open until acceptable external approval evidence is supplied.
+
+## Phase 38: Completion Roadmap Phase 9 - Incident And DSAR Review Packet - Completed 2026-05-31
+
+Goal: prepare the `incident_response_runbook` launch gate for external operations, legal, privacy, and clinical review.
+
+Status:
+
+- Added `docs/PHASE_38_COMPLETION_PHASE_9_INCIDENT_DSAR_REVIEW_PACKET_SPEC.md`.
+- Added `docs/PRODUCTION_PILOT_INCIDENT_DSAR_REVIEW_PACKET.md`.
+- Mapped the draft incident runbook, DSAR/export/anonymization skeleton, legal ops ledger, and safe operational health evidence to required owner, escalation, notification, DSAR/deletion, breach, and re-enable decisions.
+- Confirmed no incident/DSAR approval artifact was supplied in this phase.
+- Kept `incident_response_runbook` open.
+- Kept R-405 open.
+- Kept R-406 blocked.
+- No runtime behavior, schema, dependency, provider, channel, monitoring, notification, ticketing, launch-gate approval, owner assignment, or real-data change was made.
+- Re-verified documentation-only changes with `npm run release:verify`: core tests 49/49, app tests 103/103, lint, production build, and only documented R-405 findings.
+
+Done criteria:
+
+- Operations/legal/privacy/clinical reviewers have a packet that separates internal draft runbook evidence from external operating procedure approval.
+- The packet warns against storing real client identifiers, raw client health messages, production incident payloads, credentials, private security contacts, or sensitive legal communications in repo docs.
+- The production-pilot incident/DSAR gate remains open until acceptable external approval evidence is supplied.
 
 ## Always-On Gates
 
