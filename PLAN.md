@@ -451,13 +451,16 @@ Phase 28 AI security remediation completed on 2026-05-31: added `providerAttempt
 
 Phase 29 pilot gate closure and evidence hardening completed on 2026-05-31: added `docs/PHASE_29_PILOT_GATE_CLOSURE_EVIDENCE_HARDENING_SPEC.md`, updated the production pilot dossier and evidence pack to use the Phase 27-28 baseline, recorded the RLS evidence gap when local Supabase is unavailable, and rechecked R-405 metadata. Stable `next@latest` remains 16.2.6 with `postcss@8.4.31`, and `eslint-config-next@latest` remains 16.2.6, so dependency files must not change. `npm run release:verify` passed after Phase 29 with core tests 49/49, app tests 103/103, lint, production build, and only documented R-405 findings. All production-pilot gates remain open.
 
+Completion roadmap Phase 1 completed on 2026-05-31: added `docs/PHASE_30_COMPLETION_PHASE_1_CHECKPOINT_BASELINE_SPEC.md`, confirmed branch `codex/phase-29-baseline-checkpoint`, confirmed starting checkpoint `c75564e Add Phase 27-29 pilot readiness checkpoint`, and re-verified the baseline with `npm run release:verify`. No runtime behavior, schema, dependency, provider, channel, launch-gate, or real-data changes were made.
+
 Tasks:
 
-1. Use `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md` to collect external approval evidence for all eight production-pilot gates.
-2. Re-check R-405 only through the `docs/PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md` procedure before any dependency edit.
-3. Keep Phase 23-29 prompt-context, voice-profile, dynamic-form, internal-copilot, dietitian context update, provider-boundary, send-revalidation, evidence, and RLS controls covered by tests before any real provider integration.
-4. Keep clinical taxonomy approval, provider review, real-channel policy review, operational ownership, and R-405 clearance as launch gates.
-5. Keep real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, and real client health data disconnected.
+1. Run completion roadmap Phase 2: local Supabase RLS evidence completion, then update R-406 and evidence docs based on the result.
+2. Use `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md` to collect external approval evidence for all eight production-pilot gates.
+3. Re-check R-405 only through the `docs/PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md` procedure before any dependency edit.
+4. Keep Phase 23-30 prompt-context, voice-profile, dynamic-form, internal-copilot, dietitian context update, provider-boundary, send-revalidation, evidence, and RLS controls covered by tests before any real provider integration.
+5. Keep clinical taxonomy approval, provider review, real-channel policy review, operational ownership, and R-405 clearance as launch gates.
+6. Keep real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, and real client health data disconnected.
 
 Definition of done:
 

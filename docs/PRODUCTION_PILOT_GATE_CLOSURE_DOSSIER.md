@@ -12,7 +12,7 @@ All production-pilot launch gates remain open until the user supplies external a
 
 ## Current Baseline
 
-- Git baseline: local working tree contains Phase 27-29 changes awaiting the user's checkpoint/commit decision.
+- Git baseline: Phase 27-29 checkpoint exists at `c75564e Add Phase 27-29 pilot readiness checkpoint` on branch `codex/phase-29-baseline-checkpoint`; Completion Roadmap Phase 1 records this as the current implementation baseline.
 - Latest local verification: `npm run release:verify` passed on 2026-05-31 after Phase 29 evidence hardening.
 - Verification result: core tests 49/49, app tests 103/103, lint passed, production build passed.
 - Dependency audit result: only known R-405 findings, `next:postcss` and `postcss:GHSA-qx2v-qp2m-jg93`.

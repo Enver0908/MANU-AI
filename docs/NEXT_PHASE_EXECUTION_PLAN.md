@@ -6,7 +6,7 @@ MANU-AI is in pilot-foundation mode. The local SaaS/PWA prototype, Supabase-back
 
 Real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, and real client health data remain disconnected.
 
-The most recent completed execution layer is Phase 29: pilot gate closure and evidence hardening. The next active work is external approval evidence collection, local Supabase RLS evidence rerun when available, and R-405 tracking through the Phase 22 procedure.
+The most recent completed execution layer is Phase 30 / Completion Roadmap Phase 1: checkpoint and baseline stabilization. The next active work is Completion Roadmap Phase 2: local Supabase RLS evidence completion, followed by R-405 tracking through the Phase 22 procedure and external approval evidence collection.
 
 ## Phase 0: Baseline, Documentation, And Workspace Safety
 
@@ -754,6 +754,19 @@ Status:
 - Kept all eight production-pilot launch gates open.
 - Re-verified on 2026-05-31 with `npm run release:verify`: core tests 49/49, app tests 103/103, lint passed, production build passed, and production dependency audit reported only the known R-405 findings.
 - No real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, or real client health data was connected.
+
+## Phase 30: Completion Roadmap Phase 1 - Checkpoint And Baseline - Completed 2026-05-31
+
+Goal: implement Phase 1 of the 13-phase completion roadmap by making the Phase 27-29 checkpoint explicit and verifiable before continuing.
+
+Status:
+
+- Added `docs/PHASE_30_COMPLETION_PHASE_1_CHECKPOINT_BASELINE_SPEC.md`.
+- Confirmed the working branch is `codex/phase-29-baseline-checkpoint`.
+- Confirmed the starting checkpoint is `c75564e Add Phase 27-29 pilot readiness checkpoint`.
+- Confirmed no runtime behavior, schema, dependency, provider, channel, launch-gate, or real-data changes are part of this phase.
+- Re-verified with `npm run release:verify` after the documentation update.
+- R-405 remains open and R-406 remains pending local Supabase RLS execution.
 
 ## Always-On Gates
 

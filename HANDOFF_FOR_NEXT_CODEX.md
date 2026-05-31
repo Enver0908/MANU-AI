@@ -1246,3 +1246,34 @@ app: npm run test:rls -> pending local Supabase availability; skip is environmen
 ### Next Correct Step For Codex
 
 Run `npm run release:verify` after any follow-up edits, then collect external approval artifacts against `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md`. Rerun `npm run test:rls` against local Supabase when available. Preserve Phase 23-29 context/send-safety, provider boundary, draft revalidation, evidence, RLS/RBAC, dynamic form, internal copilot, and dietitian context update boundaries before any real provider or channel integration.
+
+## Completion Roadmap Phase 1 / Phase 30 Handoff Notes - 2026-05-31
+
+Completed by: Codex
+
+### What Was Done
+
+- Followed `codex.md`: surgical documentation-only change, spec before implementation, no speculative feature work.
+- Created `docs/PHASE_30_COMPLETION_PHASE_1_CHECKPOINT_BASELINE_SPEC.md`.
+- Confirmed the active branch is `codex/phase-29-baseline-checkpoint`.
+- Confirmed the starting checkpoint is `c75564e Add Phase 27-29 pilot readiness checkpoint`.
+- Updated `docs/NEXT_PHASE_EXECUTION_PLAN.md` and `PLAN.md` so the next active work is Completion Roadmap Phase 2: local Supabase RLS evidence completion.
+
+### What Was NOT Done
+
+- No runtime behavior was changed.
+- No schema, dependency, provider, channel, launch-gate, or real-data changes were made.
+- No real Gemini/external LLM provider was connected.
+- No real WhatsApp, Telegram, email, push, monitoring, analytics, secret manager, or real health data was connected.
+- R-405 and R-406 remain open.
+
+### Verification Commands
+
+```text
+app: npm run release:verify -> passed
+release verification: core tests 49/49, app tests 103/103, lint passed, production build passed, production dependency audit known R-405 findings only
+```
+
+### Next Correct Step For Codex
+
+Run Completion Roadmap Phase 2 only: local Supabase RLS evidence completion. Do not start R-405 remediation, external gate collection, provider integration, channel integration, or production infrastructure work in the same command.
