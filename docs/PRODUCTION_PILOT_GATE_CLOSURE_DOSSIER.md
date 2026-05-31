@@ -10,15 +10,18 @@ No real WhatsApp, Telegram, Gemini, external LLM provider, email, push, monitori
 
 All production-pilot launch gates remain open until the user supplies external approval evidence.
 
+Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized references to approval artifacts. Do not paste secrets, raw client health data, or real client identifiers into repository documentation.
+
 ## Current Baseline
 
 - Git baseline: Phase 27-29 checkpoint exists at `c75564e Add Phase 27-29 pilot readiness checkpoint` on branch `codex/phase-29-baseline-checkpoint`; Completion Roadmap Phase 1 records this as the current implementation baseline.
-- Latest local release verification: `npm run release:verify` passed on 2026-05-31 after Phase 32 R-405 recheck documentation.
+- Latest local release verification: `npm run release:verify` passed on 2026-05-31 after Phase 33 external approval intake documentation.
 - Verification result: core tests 49/49, app tests 103/103, lint passed, production build passed.
 - Dependency audit result: only known R-405 findings, `next:postcss` and `postcss:GHSA-qx2v-qp2m-jg93`.
 - R-405 status: open production launch blocker; Completion Roadmap Phase 3 rechecked metadata on 2026-05-31 and stable `next@latest` is still 16.2.6 with `postcss@8.4.31`, so no safe stable Next.js/PostCSS patch path is available.
 - R-405 remediation spec: `PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`.
 - RLS evidence status: expanded `npm run test:rls` coverage exists, but the 2026-05-31 Completion Roadmap Phase 2 attempt did not produce passing evidence. Local Supabase could not start because Docker Desktop's Linux engine pipe was unavailable, and `npm run test:rls` skipped 10 guarded tests. R-406 remains blocked pending local Docker/Supabase availability.
+- External approval intake: `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` was added during Completion Roadmap Phase 4. No external approval artifacts have been supplied yet.
 
 ## Gate Closure Matrix
 
@@ -43,6 +46,7 @@ All production-pilot launch gates remain open until the user supplies external a
 - Operations packet: incident owner placeholder, DSAR/deletion procedure placeholder, backup/restore drill placeholder, secret inventory and rotation owner placeholder.
 - Dependency packet: latest `npm run release:verify` output, R-405 risk record, stable Next.js/PostCSS tracking note.
 - RLS evidence packet: latest `npm run test:rls` output from local Supabase or the Phase 31 blocker note that Docker/local Supabase was unavailable and R-406 remains blocked.
+- Approval intake packet: sanitized external approval artifact references tracked in `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md`.
 
 ## Non-Approvals
 

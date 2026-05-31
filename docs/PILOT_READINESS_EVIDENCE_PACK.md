@@ -79,6 +79,16 @@ Completion Roadmap Phase 3 / Phase 32 R-405 stable patch recheck on 2026-05-31:
 - R-405 remains an open production launch blocker.
 - Re-ran `npm run release:verify`: core tests 49/49, app tests 103/103, lint, production build, and dependency audit gate passed with only documented R-405 findings.
 
+Completion Roadmap Phase 4 / Phase 33 external approval intake on 2026-05-31:
+
+- Added `PHASE_33_COMPLETION_PHASE_4_EXTERNAL_APPROVAL_INTAKE_SPEC.md`.
+- Added `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md`.
+- Created an intake matrix for all eight canonical production-pilot launch gate ids.
+- No external approval artifacts were supplied.
+- All production-pilot launch gates remain open.
+- R-405 remains open and R-406 remains blocked.
+- Re-ran `npm run release:verify`: core tests 49/49, app tests 103/103, lint, production build, and dependency audit gate passed with only documented R-405 findings.
+
 ## Launch Gate Matrix
 
 | Launch gate | Internal evidence available | Remaining blocker | Gate status |
@@ -161,11 +171,12 @@ Release verification:
 
 ## Next Approval Path
 
-1. Use `PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md` as the external review checklist.
-2. Complete legal/privacy review and client-facing permission documents.
-3. Obtain qualified dietitian approval for the current clinical taxonomy and golden test set.
-4. Complete provider/vendor retention and prompt logging review.
-5. Complete WhatsApp/Telegram policy, opt-in/out, template, and service-window review.
-6. Finalize incident response, DSAR/deletion, backup/restore, and secret rotation ownership.
-7. Resolve or formally accept R-405 before production pilot.
-8. Re-run `npm run release:verify` after any approval-related code, dependency, prompt, or taxonomy change.
+1. Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized external approval artifact references.
+2. Use `PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md` as the external review checklist.
+3. Complete legal/privacy review and client-facing permission documents.
+4. Obtain qualified dietitian approval for the current clinical taxonomy and golden test set.
+5. Complete provider/vendor retention and prompt logging review.
+6. Complete WhatsApp/Telegram policy, opt-in/out, template, and service-window review.
+7. Finalize incident response, DSAR/deletion, backup/restore, and secret rotation ownership.
+8. Resolve or formally accept R-405 before production pilot.
+9. Re-run `npm run release:verify` after any approval-related code, dependency, prompt, or taxonomy change.

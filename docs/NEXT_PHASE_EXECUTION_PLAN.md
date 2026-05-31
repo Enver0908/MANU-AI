@@ -6,7 +6,7 @@ MANU-AI is in pilot-foundation mode. The local SaaS/PWA prototype, Supabase-back
 
 Real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, and real client health data remain disconnected.
 
-The most recent execution layer is Phase 32 / Completion Roadmap Phase 3: R-405 stable patch recheck. Stable `next@latest` remains `16.2.6` with nested `postcss@8.4.31`, so no dependency files were changed and R-405 remains an open production launch blocker. R-406 also remains blocked because Phase 31 could not produce local Supabase RLS evidence without Docker Desktop's Linux engine.
+The most recent execution layer is Phase 33 / Completion Roadmap Phase 4: external approval evidence intake. It created a structured intake packet for all eight production-pilot launch gates without approving any gate. R-405 remains open, and R-406 remains blocked because Phase 31 could not produce local Supabase RLS evidence without Docker Desktop's Linux engine.
 
 ## Phase 0: Baseline, Documentation, And Workspace Safety
 
@@ -816,6 +816,28 @@ Done criteria:
 - Latest npm metadata is recorded.
 - Dependency files remain untouched because the accepted stable patch path is unavailable.
 - R-405 remains a production launch blocker until a stable Next.js release bundles `postcss >= 8.5.10` or external formal risk acceptance is supplied.
+
+## Phase 33: Completion Roadmap Phase 4 - External Approval Evidence Intake - Completed 2026-05-31
+
+Goal: make external approval evidence collection actionable without approving production launch.
+
+Status:
+
+- Added `docs/PHASE_33_COMPLETION_PHASE_4_EXTERNAL_APPROVAL_INTAKE_SPEC.md`.
+- Added `docs/PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md`.
+- Mapped all eight canonical launch gate ids to required evidence, approval owner, acceptable artifact, current status, and notes.
+- Confirmed no external approval artifacts were supplied in this phase.
+- Kept all production-pilot launch gates open.
+- Kept R-405 open.
+- Kept R-406 blocked.
+- No runtime behavior, schema, dependency, provider, channel, launch-gate approval, or real-data change was made.
+- Re-verified documentation-only changes with `npm run release:verify`: core tests 49/49, app tests 103/103, lint, production build, and only documented R-405 findings.
+
+Done criteria:
+
+- External review has a single intake packet for artifact tracking.
+- The intake packet warns against repo storage of secrets, raw client health data, and real client identifiers.
+- Internal evidence remains separated from external approval.
 
 ## Always-On Gates
 

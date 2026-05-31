@@ -9,10 +9,10 @@
 
 | ID | Risk | Severity | Mitigation | Status |
 | --- | --- | --- | --- | --- |
-| R-001 | Product is perceived as replacing a dietitian. | critical | Conservative product claims, supervised assistant positioning, human review. Phase 10 launch gates keep production pilot blocked until external approval gates are complete. | open |
-| R-002 | System is classified as medical device or clinical decision support. | critical | Legal classification memo before production pilot. Phase 10 launch gates include legal/privacy review before pilot launch can be considered unblocked. | open |
+| R-001 | Product is perceived as replacing a dietitian. | critical | Conservative product claims, supervised assistant positioning, human review. Phase 10 launch gates keep production pilot blocked until external approval gates are complete; Phase 33 adds an external approval intake packet without approving any gate. | open |
+| R-002 | System is classified as medical device or clinical decision support. | critical | Legal classification memo before production pilot. Phase 10 launch gates include legal/privacy review before pilot launch can be considered unblocked, and Phase 33 records the required approval artifact in the external intake packet. | open |
 | R-003 | Tailored medical/nutrition advice is generated without appropriate licensed-professional involvement. | critical | Copilot default, red/yellow handoff, professional involvement policy, audit trail. | open |
-| R-004 | Client-facing legal/permission documentation is incomplete. | high | Documentation prepared separately; app must enforce permission state. Phase 10 launch gates keep legal/privacy review externally approved only. | open |
+| R-004 | Client-facing legal/permission documentation is incomplete. | high | Documentation prepared separately; app must enforce permission state. Phase 10 launch gates keep legal/privacy review externally approved only; Phase 33 external approval intake tracks the missing privacy notice and client permission artifacts. | open |
 | R-005 | Workspace has no Git repository or explicit checkpoint strategy. | high | Local Git repository, root ignore rules, and a verified baseline checkpoint commit were added in Phase 9. | mitigated in local prototype |
 
 ## Privacy and Data Risks
