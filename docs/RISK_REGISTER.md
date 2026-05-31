@@ -47,8 +47,8 @@
 | --- | --- | --- | --- | --- |
 | R-301 | AI answers emergency or severe symptom message. | critical | Red classifier, no generation for red, handoff notification. | mitigated in core prototype |
 | R-302 | AI changes diet plan independently. | critical | Quality guard, plan-change escalation, prompt constraints. | mitigated in core prototype |
-| R-303 | AI mishandles eating disorder or self-harm language. | critical | Phase 28 expands JSONL golden cases and classifier coverage for eating-disorder euphemisms plus self-harm red routing; qualified dietitian approval remains pending. | partially mitigated in core prototype |
-| R-304 | AI promotes unhealthy dieting/body shaming for minors. | critical | Phase 28 expands minor/body-image rapid weight-loss coverage including typo/body-check language as review-required; guardian/legal policy remains pending. | partially mitigated in core prototype |
+| R-303 | AI mishandles eating disorder or self-harm language. | critical | Phase 28 expands JSONL golden cases and classifier coverage for eating-disorder euphemisms plus self-harm red routing; Phase 35 prepares the qualified dietitian review packet, but approval remains pending. | partially mitigated in core prototype |
+| R-304 | AI promotes unhealthy dieting/body shaming for minors. | critical | Phase 28 expands minor/body-image rapid weight-loss coverage including typo/body-check language as review-required; Phase 35 prepares the qualified dietitian review packet, while guardian/legal policy and qualified dietitian approval remain pending. | partially mitigated in core prototype |
 | R-305 | Persona weakens clinical boundaries. | high | Persona affects style only; safety rules are invariant. | mitigated in core prototype |
 
 ## Operational Risks

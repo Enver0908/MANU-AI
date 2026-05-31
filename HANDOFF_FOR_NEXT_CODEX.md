@@ -1424,3 +1424,38 @@ app: npm run release:verify -> first build attempt hit transient Windows/OneDriv
 ### Next Correct Step For Codex
 
 Use `docs/PRODUCTION_PILOT_LEGAL_PRIVACY_REVIEW_PACKET.md` when the user supplies counsel feedback or legal/privacy approval artifacts. Do not mark `legal_privacy_review` approved unless all required legal/privacy evidence items are covered by an acceptable artifact.
+
+## Completion Roadmap Phase 6 / Phase 35 Handoff Notes - 2026-05-31
+
+Completed by: Codex
+
+### What Was Done
+
+- Followed `codex.md`: wrote the spec before the change and kept the work to documentation/review readiness.
+- Created `docs/PHASE_35_COMPLETION_PHASE_6_CLINICAL_TAXONOMY_PACKET_SPEC.md`.
+- Created `docs/PRODUCTION_PILOT_CLINICAL_TAXONOMY_REVIEW_PACKET.md`.
+- Summarized the current 16 JSONL clinical golden cases and their expected green/yellow/red behavior.
+- Mapped internal evidence from `PHASE_6_CLINICAL_GOVERNANCE_EVALUATION_SPEC.md`, `CLINICAL_TAXONOMY_REVIEW_WORKFLOW.md`, clinical golden cases, governance tests, safety classifier, and Phase 28 remediation.
+- Listed missing qualified dietitian decisions for taxonomy scope, red escalation, yellow review, green routine behavior, minor/body-image handling, eating-disorder handling, medication/supplement/lab boundaries, pregnancy/glucose/allergy/emergency handling, coverage gaps, and approved taxonomy version.
+- Updated `PLAN.md`, `PROJECT_PLAN.md`, `docs/NEXT_PHASE_EXECUTION_PLAN.md`, `docs/PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md`, `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md`, `docs/PILOT_READINESS_EVIDENCE_PACK.md`, `docs/RISK_REGISTER.md`, `docs/CLINICAL_TAXONOMY_REVIEW_WORKFLOW.md`, and this handoff.
+
+### What Was NOT Done
+
+- No qualified dietitian approval artifact was supplied or accepted.
+- No classifier behavior was changed.
+- No clinical golden case was added or edited.
+- No runtime behavior, schema, dependency, provider, channel, launch-gate approval, or real-data change was made.
+- No real Gemini/external LLM provider was connected.
+- No real WhatsApp, Telegram, email, push, monitoring, analytics, secret manager, or real health data was connected.
+- R-405 remains open.
+- R-406 remains blocked.
+
+### Verification Commands
+
+```text
+app: npm run release:verify -> passed; core tests 49/49, app tests 103/103, lint, production build, known R-405 only
+```
+
+### Next Correct Step For Codex
+
+Use `docs/PRODUCTION_PILOT_CLINICAL_TAXONOMY_REVIEW_PACKET.md` when the user supplies qualified dietitian feedback or clinical approval artifacts. Do not mark `clinical_taxonomy_approval` approved unless all required clinical evidence items are covered by an acceptable artifact.
