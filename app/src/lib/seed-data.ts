@@ -1,6 +1,7 @@
 import { SAFETY_CLASSIFIER_VERSION } from "dietitian-ai-assistant-architecture";
 import type { ClientRecord, ConversationRecord, ManuAppState, MessageRecord } from "./types";
 import { completeSafetyChecklist, emptySafetyChecklist } from "./safety-checklist";
+import { DEFAULT_LANGUAGE } from "./languages";
 
 export const DEMO_TENANT_ID = "tenant-manu-demo";
 export const DEMO_DIETITIAN_ID = "dietitian-ayse";
@@ -14,6 +15,8 @@ export function createInitialState(): ManuAppState {
       tenantId: DEMO_TENANT_ID,
       dietitianId: DEMO_DIETITIAN_ID,
       fullName: "Mert Kaya",
+      primaryPhoneE164: "+905551110001",
+      communicationLanguage: DEFAULT_LANGUAGE,
       selectedPersonaId: "balanced_coach",
       aiStatus: "active",
       aiMode: "autopilot",
@@ -52,6 +55,8 @@ export function createInitialState(): ManuAppState {
       tenantId: DEMO_TENANT_ID,
       dietitianId: DEMO_DIETITIAN_ID,
       fullName: "Elif Demir",
+      primaryPhoneE164: "+905551110002",
+      communicationLanguage: DEFAULT_LANGUAGE,
       selectedPersonaId: "warm_supporter",
       aiStatus: "active",
       aiMode: "copilot",
@@ -88,6 +93,8 @@ export function createInitialState(): ManuAppState {
       tenantId: DEMO_TENANT_ID,
       dietitianId: DEMO_DIETITIAN_ID,
       fullName: "Deniz Arslan",
+      primaryPhoneE164: "+905551110003",
+      communicationLanguage: DEFAULT_LANGUAGE,
       selectedPersonaId: "clinical_formal",
       aiStatus: "passive",
       aiMode: "manual",
@@ -169,6 +176,7 @@ export function createInitialState(): ManuAppState {
       tenantId: DEMO_TENANT_ID,
       displayName: "Dyt. Ayse",
       timezone: "Europe/Istanbul",
+      uiLanguage: DEFAULT_LANGUAGE,
     },
     voiceSamples: [],
     voiceProfiles: [],
@@ -177,6 +185,7 @@ export function createInitialState(): ManuAppState {
         id: "form-schema-pilot-intake-v1",
         tenantId: DEMO_TENANT_ID,
         title: "Pilot intake",
+        languageCode: DEFAULT_LANGUAGE,
         version: 1,
         status: "published",
         fields: [
@@ -261,6 +270,8 @@ export function createBlankClient(overrides: Partial<ClientRecord> = {}): Client
     tenantId: DEMO_TENANT_ID,
     dietitianId: DEMO_DIETITIAN_ID,
     fullName: "New Client",
+    primaryPhoneE164: null,
+    communicationLanguage: DEFAULT_LANGUAGE,
     selectedPersonaId: "balanced_coach",
     aiStatus: "passive",
     aiMode: "copilot",

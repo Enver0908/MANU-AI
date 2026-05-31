@@ -20,6 +20,7 @@ const capsule = {
     allergies: ["peanut"],
     restrictedFoods: ["fried foods"],
     pinnedNotes: ["No peanut suggestions."],
+    communicationLanguage: "de",
     clientFormSummary: "Daily routine: walks after dinner",
     contextUpdates: [
       {
@@ -61,6 +62,9 @@ test("compiler creates prompt context and manifest without raw text in manifest 
   assert.equal(compiled.contextManifest.memoryIncluded, true);
   assert.equal(compiled.contextManifest.memoryRevision, 3);
   assert.ok(compiled.promptContext.segments.some((segment) => segment.type === "client_form_summary"));
+  assert.ok(compiled.promptContext.segments.some((segment) => segment.type === "conversation_language"));
+  assert.equal(compiled.contextManifest.communicationLanguage, "de");
+  assert.ok(renderPromptContext(compiled.promptContext).includes("Reply to this client in de."));
   assert.ok(compiled.promptContext.segments.some((segment) => segment.type === "dietitian_context_update"));
   assert.ok(
     compiled.promptContext.segments.some(

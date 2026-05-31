@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { createInitialState } from "./seed-data";
-import type { Channel, ClientRecord, ManuAppState, SimulationRequest } from "./types";
+import type { Channel, ClientRecord, ManuAppState, SimulationRequest, SupportedLanguageCode } from "./types";
 import type {
   ClientContextUpdateImportance,
   ClientContextUpdateSource,
@@ -59,9 +59,20 @@ export function useManuState() {
       state,
       hydrated,
       authError,
-      createClient: (input: { fullName: string; channel: Channel; channelUserId: string }) =>
+      createClient: (input: {
+        fullName: string;
+        channel: Channel;
+        channelUserId: string;
+        primaryPhoneE164: string;
+        communicationLanguage: SupportedLanguageCode;
+      }) =>
         replaceFromApi("/api/clients", {
           method: "POST",
+          body: JSON.stringify(input),
+        }),
+      updateDietitianPreferences: (input: { uiLanguage: SupportedLanguageCode }) =>
+        replaceFromApi("/api/dietitian/preferences", {
+          method: "PATCH",
           body: JSON.stringify(input),
         }),
       updateClient: (clientId: string, patch: Partial<ClientRecord>) =>
@@ -132,7 +143,7 @@ export function useManuState() {
         replaceFromApi("/api/dietitian/voice/generate", {
           method: "POST",
         }),
-      createFormSchema: (input: { title: string; fields: ClientFormFieldDefinition[] }) =>
+      createFormSchema: (input: { title: string; fields: ClientFormFieldDefinition[]; languageCode: SupportedLanguageCode }) =>
         replaceFromApi("/api/client-form-schemas", {
           method: "POST",
           body: JSON.stringify(input),
@@ -142,7 +153,12 @@ export function useManuState() {
           method: "POST",
           body: JSON.stringify({ schemaId }),
         }),
-      saveFormResponse: (input: { clientId: string; schemaId: string; answers: Record<string, unknown> }) =>
+      saveFormResponse: (input: {
+        clientId: string;
+        schemaId: string;
+        answers: Record<string, unknown>;
+        submittedPhoneE164?: string;
+      }) =>
         replaceFromApi("/api/clients/forms", {
           method: "POST",
           body: JSON.stringify(input),

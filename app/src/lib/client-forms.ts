@@ -5,10 +5,11 @@ import type {
   ClientFormSchemaRecord,
   ManuAppState,
 } from "./types";
+import { normalizeE164Phone, normalizeLanguageCode } from "./languages";
 
 export function createClientFormSchemaInState(
   state: ManuAppState,
-  input: { title: string; fields: ClientFormFieldDefinition[] },
+  input: { title: string; fields: ClientFormFieldDefinition[]; languageCode?: unknown },
   createdAt = new Date().toISOString(),
 ) {
   const title = input.title.trim();
@@ -18,6 +19,7 @@ export function createClientFormSchemaInState(
     id: crypto.randomUUID(),
     tenantId: state.tenant.id,
     title,
+    languageCode: normalizeLanguageCode(input.languageCode),
     version: nextSchemaVersion(state),
     status: "draft",
     fields: input.fields.map(normalizeField),
@@ -62,12 +64,21 @@ export function saveClientFormResponseInState(
   schemaId: string,
   answers: Record<string, unknown>,
   createdAt = new Date().toISOString(),
+  options: { submittedPhoneE164?: unknown } = {},
 ) {
   const client = state.clients.find((item) => item.id === clientId);
   if (!client) throw new AppDomainError(404, "client_not_found");
 
   const schema = state.clientFormSchemas.find((item) => item.id === schemaId && item.status === "published");
   if (!schema) throw new AppDomainError(404, "published_form_schema_not_found");
+
+  const submittedPhoneE164 = normalizeE164Phone(options.submittedPhoneE164);
+  if (options.submittedPhoneE164 && !submittedPhoneE164) {
+    throw new AppDomainError(400, "submitted_phone_e164_invalid");
+  }
+  if (submittedPhoneE164 && client.primaryPhoneE164 && submittedPhoneE164 !== client.primaryPhoneE164) {
+    throw new AppDomainError(409, "form_phone_client_mismatch");
+  }
 
   validateAnswers(schema, answers);
 
@@ -81,6 +92,8 @@ export function saveClientFormResponseInState(
     schemaId,
     schemaVersion: schema.version,
     schemaSnapshot: schema,
+    languageCode: schema.languageCode,
+    submittedPhoneE164: submittedPhoneE164 || client.primaryPhoneE164,
     answers,
     createdAt: existing?.createdAt || createdAt,
     updatedAt: createdAt,
@@ -89,7 +102,14 @@ export function saveClientFormResponseInState(
   const nextState = {
     ...state,
     clients: state.clients.map((item) =>
-      item.id === clientId ? { ...item, contextRevision: item.contextRevision + 1 } : item,
+      item.id === clientId
+        ? {
+            ...item,
+            communicationLanguage: schema.languageCode,
+            healthProfile: { ...item.healthProfile, preferredLanguage: schema.languageCode },
+            contextRevision: item.contextRevision + 1,
+          }
+        : item,
     ),
     clientFormResponses: [
       ...state.clientFormResponses.filter((item) => item.id !== response.id),

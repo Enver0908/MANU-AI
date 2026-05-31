@@ -56,6 +56,14 @@ export function compilePromptContext({
     textSegment("system_instruction", "system_instruction_latest_dietitian_context", LATEST_DIETITIAN_CONTEXT_INSTRUCTION, {
       authority: "system",
     }),
+    textSegment(
+      "conversation_language",
+      "conversation_language",
+      `Reply to this client in ${capsule.client.communicationLanguage || "tr"}. Keep clinical safety rules unchanged.`,
+      {
+        authority: "system",
+      },
+    ),
     textSegment("current_message", currentMessageId(currentMessage) || "current_message", currentText, {
       origin: "client_inbound",
       createdAt: currentMessageCreatedAt(currentMessage),
@@ -320,6 +328,8 @@ function buildManifest({
     riskLevel,
     personaId: capsule.persona?.id || null,
     promptVersion,
+    communicationLanguage: capsule.client.communicationLanguage || "tr",
+    languageSource: "client_form_response_or_profile",
     segments: segments.map((segment) => ({
       segmentId: segment.id,
       type: segment.type,

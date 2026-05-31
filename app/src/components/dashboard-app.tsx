@@ -49,18 +49,20 @@ import type {
   SafetyChecklist,
 } from "@/lib/types";
 import { useManuState } from "@/lib/use-manu-state";
+import { SUPPORTED_LANGUAGES, type SupportedLanguageCode } from "@/lib/languages";
+import { t, type DashboardMessageKey } from "@/lib/i18n";
 
 type ViewKey = "overview" | "clients" | "conversation" | "simulator" | "handoffs" | "copilot" | "voice" | "forms";
 
-const viewItems: Array<{ key: ViewKey; label: string; icon: typeof Activity }> = [
-  { key: "overview", label: "Overview", icon: Activity },
-  { key: "clients", label: "Clients", icon: UsersRound },
-  { key: "conversation", label: "Conversation", icon: MessageSquareText },
-  { key: "simulator", label: "Simulator", icon: Bot },
-  { key: "handoffs", label: "Handoffs", icon: BellRing },
-  { key: "copilot", label: "Copilot", icon: Database },
-  { key: "voice", label: "Voice", icon: ClipboardList },
-  { key: "forms", label: "Forms", icon: SlidersHorizontal },
+const viewItems: Array<{ key: ViewKey; labelKey: DashboardMessageKey; icon: typeof Activity }> = [
+  { key: "overview", labelKey: "overview", icon: Activity },
+  { key: "clients", labelKey: "clients", icon: UsersRound },
+  { key: "conversation", labelKey: "conversation", icon: MessageSquareText },
+  { key: "simulator", labelKey: "simulator", icon: Bot },
+  { key: "handoffs", labelKey: "handoffs", icon: BellRing },
+  { key: "copilot", labelKey: "copilot", icon: Database },
+  { key: "voice", labelKey: "voice", icon: ClipboardList },
+  { key: "forms", labelKey: "forms", icon: SlidersHorizontal },
 ];
 
 const scenarioMessages = [
@@ -81,6 +83,8 @@ const scenarioMessages = [
     body: "Diyetimi degistirip ogunumu tamamen atlayabilir miyim?",
   },
 ];
+
+const languageOptions: Array<[string, string]> = SUPPORTED_LANGUAGES.map((language) => [language.code, language.label]);
 
 export function DashboardApp({ authInfo }: { authInfo?: { displayName: string; role: string } }) {
   const {
@@ -106,6 +110,7 @@ export function DashboardApp({ authInfo }: { authInfo?: { displayName: string; r
     createFormSchema,
     publishFormSchema,
     saveFormResponse,
+    updateDietitianPreferences,
     addClientContextUpdate,
     sendInternalCopilotMessage,
   } = useManuState();
@@ -119,9 +124,12 @@ export function DashboardApp({ authInfo }: { authInfo?: { displayName: string; r
   const [newClientName, setNewClientName] = useState("");
   const [newClientChannel, setNewClientChannel] = useState<Channel>("whatsapp");
   const [newClientHandle, setNewClientHandle] = useState("");
+  const [newClientPhone, setNewClientPhone] = useState("");
+  const [newClientLanguage, setNewClientLanguage] = useState<SupportedLanguageCode>("tr");
   const [showNotifications, setShowNotifications] = useState(false);
   const [voiceRawInput, setVoiceRawInput] = useState("");
   const [schemaTitle, setSchemaTitle] = useState("Client intake");
+  const [schemaLanguage, setSchemaLanguage] = useState<SupportedLanguageCode>("tr");
   const [schemaFieldsRaw, setSchemaFieldsRaw] = useState("daily_routine | Daily routine | textarea | prompt_allowed");
   const [formAnswersRaw, setFormAnswersRaw] = useState("");
   const [copilotInput, setCopilotInput] = useState("");
@@ -220,11 +228,14 @@ export function DashboardApp({ authInfo }: { authInfo?: { displayName: string; r
       fullName,
       channel: newClientChannel,
       channelUserId: newClientHandle.trim(),
+      primaryPhoneE164: newClientPhone.trim(),
+      communicationLanguage: newClientLanguage,
     });
     const createdClient = nextState.clients[nextState.clients.length - 1];
     setSelectedClientId(createdClient.id);
     setNewClientName("");
     setNewClientHandle("");
+    setNewClientPhone("");
     setView("clients");
   };
 
@@ -258,7 +269,7 @@ export function DashboardApp({ authInfo }: { authInfo?: { displayName: string; r
   const createSchemaFromInput = async () => {
     const fields = parseSchemaFields(schemaFieldsRaw);
     if (!schemaTitle.trim() || fields.length === 0) return;
-    await createFormSchema({ title: schemaTitle, fields });
+    await createFormSchema({ title: schemaTitle, fields, languageCode: schemaLanguage });
   };
 
   const saveSelectedFormResponse = async () => {
@@ -271,6 +282,7 @@ export function DashboardApp({ authInfo }: { authInfo?: { displayName: string; r
       clientId: selectedClient.id,
       schemaId: activeSchema.id,
       answers: parseAnswerLines(formAnswersRaw),
+      submittedPhoneE164: selectedClient.primaryPhoneE164 || undefined,
     });
     setFormAnswersRaw("");
   };
@@ -302,6 +314,8 @@ export function DashboardApp({ authInfo }: { authInfo?: { displayName: string; r
     setContextUpdateSummary("");
     setContextUpdateDetails("");
   };
+
+  const uiLanguage = state.dietitian.uiLanguage || "tr";
 
   return (
     <div className="min-h-screen bg-[#f7f5ef] text-stone-950">
@@ -339,7 +353,7 @@ export function DashboardApp({ authInfo }: { authInfo?: { displayName: string; r
                   type="button"
                 >
                   <Icon size={18} />
-                  {item.label}
+                  {t(uiLanguage, item.labelKey)}
                 </button>
               );
             })}
@@ -366,6 +380,14 @@ export function DashboardApp({ authInfo }: { authInfo?: { displayName: string; r
                 <h2 className="text-2xl font-semibold">Operations dashboard</h2>
               </div>
               <div className="flex flex-wrap gap-2">
+                <div className="w-44">
+                  <SelectInput
+                    label={t(uiLanguage, "dashboardLanguage")}
+                    value={uiLanguage}
+                    onChange={(value) => updateDietitianPreferences({ uiLanguage: value as SupportedLanguageCode })}
+                    options={languageOptions}
+                  />
+                </div>
                 {authInfo && (
                   <span className="inline-flex items-center gap-2 rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm font-medium text-stone-700">
                     <UserRound size={16} className="text-emerald-800" />
@@ -491,12 +513,17 @@ export function DashboardApp({ authInfo }: { authInfo?: { displayName: string; r
                 newClientName={newClientName}
                 newClientChannel={newClientChannel}
                 newClientHandle={newClientHandle}
+                newClientPhone={newClientPhone}
+                newClientLanguage={newClientLanguage}
+                uiLanguage={uiLanguage}
                 onSearch={setSearch}
                 onSelect={setSelectedClientId}
                 onAddClient={addClient}
                 onNewClientName={setNewClientName}
                 onNewClientChannel={setNewClientChannel}
                 onNewClientHandle={setNewClientHandle}
+                onNewClientPhone={setNewClientPhone}
+                onNewClientLanguage={setNewClientLanguage}
                 onUpdateClient={updateSelectedClient}
                 contextUpdates={selectedContextUpdates}
                 contextUpdateSource={contextUpdateSource}
@@ -582,9 +609,12 @@ export function DashboardApp({ authInfo }: { authInfo?: { displayName: string; r
                 state={state}
                 selectedClient={selectedClient}
                 schemaTitle={schemaTitle}
+                schemaLanguage={schemaLanguage}
                 schemaFieldsRaw={schemaFieldsRaw}
                 formAnswersRaw={formAnswersRaw}
+                uiLanguage={uiLanguage}
                 onSchemaTitle={setSchemaTitle}
+                onSchemaLanguage={setSchemaLanguage}
                 onSchemaFieldsRaw={setSchemaFieldsRaw}
                 onFormAnswersRaw={setFormAnswersRaw}
                 onCreateSchema={createSchemaFromInput}
@@ -672,12 +702,17 @@ function ClientsPanel({
   newClientName,
   newClientChannel,
   newClientHandle,
+  newClientPhone,
+  newClientLanguage,
+  uiLanguage,
   onSearch,
   onSelect,
   onAddClient,
   onNewClientName,
   onNewClientChannel,
   onNewClientHandle,
+  onNewClientPhone,
+  onNewClientLanguage,
   onUpdateClient,
   contextUpdates,
   contextUpdateSource,
@@ -700,12 +735,17 @@ function ClientsPanel({
   newClientName: string;
   newClientChannel: Channel;
   newClientHandle: string;
+  newClientPhone: string;
+  newClientLanguage: SupportedLanguageCode;
+  uiLanguage: SupportedLanguageCode;
   onSearch: (value: string) => void;
   onSelect: (clientId: string) => void;
   onAddClient: () => void;
   onNewClientName: (value: string) => void;
   onNewClientChannel: (value: Channel) => void;
   onNewClientHandle: (value: string) => void;
+  onNewClientPhone: (value: string) => void;
+  onNewClientLanguage: (value: SupportedLanguageCode) => void;
   onUpdateClient: (patch: Partial<ClientRecord>) => void;
   contextUpdates: ClientContextUpdateRecord[];
   contextUpdateSource: ClientContextUpdateSource;
@@ -732,7 +772,7 @@ function ClientsPanel({
               value={search}
               onChange={(event) => onSearch(event.target.value)}
               className="min-w-0 flex-1 bg-transparent text-stone-900 outline-none placeholder:text-stone-400"
-              placeholder="Search clients"
+              placeholder={t(uiLanguage, "searchClients")}
             />
           </label>
         </div>
@@ -757,9 +797,16 @@ function ClientsPanel({
         <div className="rounded-lg border border-stone-200 bg-white p-3 shadow-sm">
           <h3 className="text-sm font-semibold">Create client</h3>
           <div className="mt-3 space-y-2">
-            <TextInput label="Full name" value={newClientName} onChange={onNewClientName} />
+            <TextInput label={t(uiLanguage, "fullName")} value={newClientName} onChange={onNewClientName} />
+            <TextInput label={t(uiLanguage, "primaryPhone")} value={newClientPhone} onChange={onNewClientPhone} />
             <SelectInput
-              label="Channel"
+              label={t(uiLanguage, "clientLanguage")}
+              value={newClientLanguage}
+              onChange={(value) => onNewClientLanguage(value as SupportedLanguageCode)}
+              options={languageOptions}
+            />
+            <SelectInput
+              label={t(uiLanguage, "channel")}
               value={newClientChannel}
               onChange={(value) => onNewClientChannel(value as Channel)}
               options={[
@@ -767,14 +814,14 @@ function ClientsPanel({
                 ["telegram", "Telegram"],
               ]}
             />
-            <TextInput label="Channel ID" value={newClientHandle} onChange={onNewClientHandle} />
+            <TextInput label={t(uiLanguage, "channelId")} value={newClientHandle} onChange={onNewClientHandle} />
             <button
               onClick={onAddClient}
               className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-stone-950 px-3 py-2 text-sm font-semibold text-white transition hover:bg-stone-800"
               type="button"
             >
               <Plus size={16} />
-              Add client
+              {t(uiLanguage, "addClient")}
             </button>
           </div>
         </div>
@@ -782,6 +829,7 @@ function ClientsPanel({
 
       <ClientDetailForm
         client={selectedClient}
+        uiLanguage={uiLanguage}
         onUpdateClient={onUpdateClient}
         contextUpdates={contextUpdates}
         contextUpdateSource={contextUpdateSource}
@@ -804,6 +852,7 @@ function ClientsPanel({
 
 function ClientDetailForm({
   client,
+  uiLanguage,
   onUpdateClient,
   contextUpdates,
   contextUpdateSource,
@@ -821,6 +870,7 @@ function ClientDetailForm({
   onAddContextUpdate,
 }: {
   client: ClientRecord;
+  uiLanguage: SupportedLanguageCode;
   onUpdateClient: (patch: Partial<ClientRecord>) => void;
   contextUpdates: ClientContextUpdateRecord[];
   contextUpdateSource: ClientContextUpdateSource;
@@ -861,7 +911,7 @@ function ClientDetailForm({
         <div>
           <h3 className="text-xl font-semibold">{client.fullName}</h3>
           <p className="mt-1 text-sm text-stone-600">
-            {client.channel} · {client.channelUserId || "No channel ID"}
+            {client.channel} · {client.channelUserId || "No channel ID"} · {client.communicationLanguage}
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -943,7 +993,18 @@ function ClientDetailForm({
         <fieldset className="rounded-lg border border-stone-200 p-4">
           <legend className="px-1 text-sm font-semibold">Profile and channel</legend>
           <div className="mt-3 grid gap-3">
-            <TextInput label="Full name" value={client.fullName} onChange={(value) => onUpdateClient({ fullName: value })} />
+            <TextInput label={t(uiLanguage, "fullName")} value={client.fullName} onChange={(value) => onUpdateClient({ fullName: value })} />
+            <TextInput
+              label={t(uiLanguage, "primaryPhone")}
+              value={client.primaryPhoneE164 || ""}
+              onChange={(value) => onUpdateClient({ primaryPhoneE164: value })}
+            />
+            <SelectInput
+              label={t(uiLanguage, "clientLanguage")}
+              value={client.communicationLanguage}
+              onChange={(value) => onUpdateClient({ communicationLanguage: value as SupportedLanguageCode })}
+              options={languageOptions}
+            />
             <SelectInput
               label="Channel permission"
               value={client.channelPermission}
@@ -1439,9 +1500,12 @@ function FormsPanel({
   state,
   selectedClient,
   schemaTitle,
+  schemaLanguage,
   schemaFieldsRaw,
   formAnswersRaw,
+  uiLanguage,
   onSchemaTitle,
+  onSchemaLanguage,
   onSchemaFieldsRaw,
   onFormAnswersRaw,
   onCreateSchema,
@@ -1451,9 +1515,12 @@ function FormsPanel({
   state: ManuAppState;
   selectedClient: ClientRecord;
   schemaTitle: string;
+  schemaLanguage: SupportedLanguageCode;
   schemaFieldsRaw: string;
   formAnswersRaw: string;
+  uiLanguage: SupportedLanguageCode;
   onSchemaTitle: (value: string) => void;
+  onSchemaLanguage: (value: SupportedLanguageCode) => void;
   onSchemaFieldsRaw: (value: string) => void;
   onFormAnswersRaw: (value: string) => void;
   onCreateSchema: () => void;
@@ -1473,14 +1540,20 @@ function FormsPanel({
         <h3 className="text-xl font-semibold">Dynamic form schemas</h3>
         <div className="mt-3 space-y-3">
           <TextInput label="Schema title" value={schemaTitle} onChange={onSchemaTitle} />
+          <SelectInput
+            label={t(uiLanguage, "formLanguage")}
+            value={schemaLanguage}
+            onChange={(value) => onSchemaLanguage(value as SupportedLanguageCode)}
+            options={languageOptions}
+          />
           <TextareaInput label="Fields" value={schemaFieldsRaw} onChange={onSchemaFieldsRaw} rows={6} />
           <button
             onClick={onCreateSchema}
             className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-stone-950 px-3 py-2 text-sm font-semibold text-white"
-            type="button"
-          >
-            <Plus size={16} />
-            Create schema
+              type="button"
+            >
+              <Plus size={16} />
+            {t(uiLanguage, "createSchema")}
           </button>
         </div>
         <div className="mt-4 space-y-2">
@@ -1489,7 +1562,9 @@ function FormsPanel({
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <p className="text-sm font-semibold">{schema.title}</p>
-                  <p className="text-xs text-stone-500">v{schema.version} · {schema.fields.length} fields</p>
+                  <p className="text-xs text-stone-500">
+                    v{schema.version} · {schema.fields.length} fields · {schema.languageCode}
+                  </p>
                 </div>
                 <Badge label={schema.status} tone={schema.status === "published" ? "emerald" : "stone"} />
               </div>
@@ -1510,7 +1585,9 @@ function FormsPanel({
         <h3 className="text-xl font-semibold">{selectedClient.fullName} form response</h3>
         {activeSchema ? (
           <>
-            <p className="mt-1 text-sm text-stone-600">{activeSchema.title} v{activeSchema.version}</p>
+            <p className="mt-1 text-sm text-stone-600">
+              {activeSchema.title} v{activeSchema.version} · {activeSchema.languageCode}
+            </p>
             <TextareaInput label="Answers" value={formAnswersRaw} onChange={onFormAnswersRaw} rows={8} />
             <button
               onClick={onSaveResponse}
@@ -1518,7 +1595,7 @@ function FormsPanel({
               type="button"
             >
               <Check size={16} />
-              Save response
+              {t(uiLanguage, "saveResponse")}
             </button>
             {response && (
               <pre className="mt-4 overflow-auto rounded-lg bg-stone-100 p-3 text-xs text-stone-700">

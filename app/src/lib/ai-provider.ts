@@ -10,6 +10,7 @@ export type ProviderStatus = "not_called" | "ok" | "failed";
 export type ProviderErrorCode = "provider_timeout" | "provider_error" | "provider_policy_violation";
 export const ALLOWED_PROVIDER_SEGMENT_TYPES = new Set([
   "system_instruction",
+  "conversation_language",
   "current_message",
   "diet_plan_summary",
   "allergies",
@@ -160,13 +161,63 @@ async function attemptMockGeneration(input: MockProviderInput, failureMode?: Pro
   }
 
   const dietPlanSummary = input.context.segments.find((segment) => segment.type === "diet_plan_summary")?.text || "";
+  const language = resolveLanguage(input);
 
   if (input.risk === "yellow") {
-    return "Bunu diyetisyeninizin onayiyla netlestirelim; taslak olarak not aldim.";
+    return localizedReply(language, "yellow", dietPlanSummary);
   }
 
-  return `Planina uygun olarak kucuk bir degisim yapabilirsin. ${dietPlanSummary || "Ana plana sadik kalalim."}`;
+  return localizedReply(language, "green", dietPlanSummary);
 }
+
+function resolveLanguage(input: MockProviderInput) {
+  const languageSegment = input.context.segments.find((segment) => segment.type === "conversation_language")?.text || "";
+  const match = languageSegment.match(/\b(tr|en|de|fr|es|pt|cs)\b/);
+  return match?.[1] || "tr";
+}
+
+function localizedReply(language: string, risk: "green" | "yellow", dietPlanSummary: string) {
+  const templates = LOCALIZED_REPLIES[language] || LOCALIZED_REPLIES.tr;
+  return risk === "yellow" ? templates.yellow : templates.green(dietPlanSummary);
+}
+
+const LOCALIZED_REPLIES: Record<string, { yellow: string; green: (dietPlanSummary: string) => string }> = {
+  tr: {
+    yellow: "Bunu diyetisyeninizin onayiyla netlestirelim; taslak olarak not aldim.",
+    green: (dietPlanSummary) =>
+      `Planina uygun olarak kucuk bir degisim yapabilirsin. ${dietPlanSummary || "Ana plana sadik kalalim."}`,
+  },
+  en: {
+    yellow: "Let's clarify this with your dietitian's approval; I saved it as a draft.",
+    green: (dietPlanSummary) =>
+      `You can make a small change that still fits your plan. ${dietPlanSummary || "Let's stay close to the main plan."}`,
+  },
+  de: {
+    yellow: "Das sollten wir mit Zustimmung Ihrer Ernahrungsfachkraft klaren; ich habe es als Entwurf notiert.",
+    green: (dietPlanSummary) =>
+      `Sie konnen eine kleine Anderung machen, die zu Ihrem Plan passt. ${dietPlanSummary || "Bleiben wir beim Hauptplan."}`,
+  },
+  fr: {
+    yellow: "Clarifions cela avec l'accord de votre dieteticien; je l'ai enregistre comme brouillon.",
+    green: (dietPlanSummary) =>
+      `Vous pouvez faire un petit ajustement compatible avec votre plan. ${dietPlanSummary || "Restons proches du plan principal."}`,
+  },
+  es: {
+    yellow: "Aclaremos esto con la aprobacion de su dietista; lo guarde como borrador.",
+    green: (dietPlanSummary) =>
+      `Puede hacer un pequeno cambio que siga ajustado a su plan. ${dietPlanSummary || "Mantengamos el plan principal."}`,
+  },
+  pt: {
+    yellow: "Vamos esclarecer isto com a aprovacao do seu nutricionista; guardei como rascunho.",
+    green: (dietPlanSummary) =>
+      `Pode fazer uma pequena mudanca que continue alinhada ao seu plano. ${dietPlanSummary || "Vamos manter o plano principal."}`,
+  },
+  cs: {
+    yellow: "Tohle upresnime se schvalenim vaseho nutricniho specialisty; ulozil jsem to jako navrh.",
+    green: (dietPlanSummary) =>
+      `Muzete udelat malou zmenu, ktera zustane v souladu s vasim planem. ${dietPlanSummary || "Drzme se hlavniho planu."}`,
+  },
+};
 
 function assertAllowedKeys(value: unknown, allowedKeys: string[], label: string) {
   if (!value || typeof value !== "object" || Array.isArray(value)) {

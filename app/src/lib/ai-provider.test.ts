@@ -22,6 +22,20 @@ describe("mock AI provider", () => {
     await expect(generateMockProviderReply({ context: promptContext, risk: "yellow" })).resolves.toContain("onayiyla");
   });
 
+  it("uses the conversation language segment for deterministic localized replies", async () => {
+    await expect(
+      generateMockProviderReply({
+        context: {
+          segments: [
+            { type: "conversation_language", text: "Reply to this client in de." },
+            { type: "diet_plan_summary", text: "Drei Mahlzeiten." },
+          ],
+        },
+        risk: "green",
+      }),
+    ).resolves.toContain("Sie");
+  });
+
   it("builds provider input from prompt context only", () => {
     const input = buildMockProviderInput(promptContext, "green");
 

@@ -19,6 +19,7 @@ export function buildClientContextCapsule({
     client: {
       id: client.id,
       fullName: client.fullName,
+      communicationLanguage: client.communicationLanguage || client.healthProfile?.preferredLanguage || "tr",
       healthProfile: client.healthProfile || {},
       dietPlan: client.dietPlan || {},
       allergies: client.allergies || [],

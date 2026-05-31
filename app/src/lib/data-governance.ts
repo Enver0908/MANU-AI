@@ -256,6 +256,8 @@ function anonymizeClient(client: ClientRecord): ClientRecord {
   return {
     ...client,
     fullName: "Anonymized Client",
+    primaryPhoneE164: null,
+    communicationLanguage: "tr",
     selectedPersonaId: "balanced_coach",
     aiStatus: "passive",
     aiMode: "manual",

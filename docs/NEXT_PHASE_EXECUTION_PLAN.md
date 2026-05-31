@@ -1045,6 +1045,34 @@ Done criteria:
 - The summary lists the remaining blockers and next required actions.
 - Production pilot remains blocked until acceptable external approval evidence, R-405 clearance or acceptance, and R-406 passing local RLS evidence are supplied.
 
+## Phase 43: Multilingual Language Support - Completed 2026-05-31
+
+Goal: add deterministic support for Turkish, English, German, French, Spanish, Portuguese, and Czech across dashboard preferences, client identity, dynamic forms, prompt context, local/mock provider behavior, and safety tests.
+
+Status:
+
+- Added `docs/PHASE_43_MULTILINGUAL_LANGUAGE_SUPPORT_SPEC.md`.
+- Added canonical supported-language and strict E.164 phone helpers.
+- Added per-dietitian dashboard UI language preference.
+- Added per-client `primaryPhoneE164` and `communicationLanguage`.
+- Added form schema/response `languageCode` and response `submittedPhoneE164`.
+- Added a Supabase migration for the new language/phone fields and tenant-scoped non-null phone uniqueness.
+- Updated fallback and Supabase stores, API routes, and dashboard controls for client phone/language, form language, and dietitian dashboard language.
+- Updated PromptContext with a bounded `conversation_language` segment and ContextManifest language metadata.
+- Updated local/mock provider replies and handoff safe acknowledgements to use the stored client language.
+- Expanded multilingual safety patterns and clinical golden cases without approving the clinical taxonomy launch gate.
+- Re-verified with `npm run release:verify`: core tests 52/52, app tests 107/107, lint, production build, and only documented R-405 findings.
+- No automatic translation, public form link, real provider, real channel, external translation service, monitoring, secret manager, backup provider, or real client health data was connected.
+- Production pilot remains `NO-GO`; all eight launch gates remain open; R-405 remains open; R-406 remains blocked.
+
+Done criteria:
+
+- Supported-language validation exists at app/core boundaries.
+- Form responses update client conversation language and invalidate stale drafts.
+- Provider allowlist accepts only the bounded `conversation_language` segment rather than raw client/profile objects.
+- Dashboard language controls are available for dietitian UI, client communication language, and form language.
+- Multilingual behavior is covered by app tests and core clinical golden tests.
+
 ## Always-On Gates
 
 - No real health data before legal/privacy review.

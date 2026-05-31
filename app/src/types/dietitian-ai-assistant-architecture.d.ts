@@ -15,6 +15,7 @@ declare module "dietitian-ai-assistant-architecture" {
     | "legacy_draft_unverified"
     | "not_applicable";
   export type ProviderAttempted = boolean;
+  export type SupportedLanguageCode = "tr" | "en" | "de" | "fr" | "es" | "pt" | "cs";
 
   export type CorePersona = {
     id: string;
@@ -48,6 +49,7 @@ declare module "dietitian-ai-assistant-architecture" {
     clinicalRiskNotes?: string[];
     pinnedNotes?: string[];
     knownOtherClientNames?: string[];
+    communicationLanguage?: SupportedLanguageCode;
   };
 
   export type CoreConversation = {
@@ -110,7 +112,8 @@ declare module "dietitian-ai-assistant-architecture" {
     | "rolling_summary"
     | "recent_message"
     | "persona"
-    | "voice_profile";
+    | "voice_profile"
+    | "conversation_language";
 
   export type PromptSegmentOrigin =
     | "system"
@@ -174,6 +177,8 @@ declare module "dietitian-ai-assistant-architecture" {
     memoryVersion?: string;
     memoryRevision?: number;
     memoryStale?: boolean;
+    communicationLanguage?: SupportedLanguageCode;
+    languageSource?: string;
     totalEstimatedTokens: number;
     maxTokens: number;
     truncatedSegments: string[];
@@ -277,6 +282,10 @@ declare module "dietitian-ai-assistant-architecture" {
   export const LATEST_DIETITIAN_CONTEXT_INSTRUCTION: string;
 
   export function buildDietitianVoiceProfile(samples: string[]): CoreVoiceProfile;
+  export function normalizeLanguageCode(value: unknown): SupportedLanguageCode;
+  export function isSupportedLanguageCode(value: unknown): value is SupportedLanguageCode;
+  export function languageLabel(value: unknown): string;
+  export function normalizeE164Phone(value: unknown): string;
 
   export function classifyDieteticRisk(message: string, clientProfile?: Record<string, unknown>): RiskDecision;
 

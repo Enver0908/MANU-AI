@@ -6,14 +6,17 @@ import { createSupabaseFormSchema, isSupabaseStoreConfigured } from "@/lib/supab
 import type { ClientFormFieldDefinition } from "@/lib/types";
 
 export async function POST(request: NextRequest) {
-  const body = (await request.json()) as { title?: string; fields?: ClientFormFieldDefinition[] };
+  const body = (await request.json()) as { title?: string; fields?: ClientFormFieldDefinition[]; languageCode?: unknown };
 
   if (isSupabaseStoreConfigured()) {
     try {
       const tenantContext = await resolveAppTenantContext();
       requireCapability(tenantContext, "update_client");
       return NextResponse.json(
-        await createSupabaseFormSchema({ title: body.title || "", fields: body.fields || [] }, tenantContext),
+        await createSupabaseFormSchema(
+          { title: body.title || "", fields: body.fields || [], languageCode: body.languageCode },
+          tenantContext,
+        ),
       );
     } catch (error) {
       try {
@@ -26,7 +29,13 @@ export async function POST(request: NextRequest) {
 
   try {
     return NextResponse.json(
-      saveFallbackState(createFormSchemaInState(getFallbackState(), { title: body.title || "", fields: body.fields || [] })),
+      saveFallbackState(
+        createFormSchemaInState(getFallbackState(), {
+          title: body.title || "",
+          fields: body.fields || [],
+          languageCode: body.languageCode,
+        }),
+      ),
     );
   } catch (error) {
     return domainErrorResponse(error);

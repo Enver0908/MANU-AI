@@ -20,11 +20,29 @@ describe("app state store operations", () => {
       fullName: "Ada Soylu",
       channel: "telegram",
       channelUserId: "ada_tg",
+      primaryPhoneE164: "+905551110099",
+      communicationLanguage: "en",
     });
 
     const client = next.clients.find((item) => item.fullName === "Ada Soylu");
     expect(client?.channel).toBe("telegram");
+    expect(client?.primaryPhoneE164).toBe("+905551110099");
+    expect(client?.communicationLanguage).toBe("en");
     expect(next.conversations.some((conversation) => conversation.clientId === client?.id)).toBe(true);
+  });
+
+  it("rejects duplicate client phone identities", () => {
+    const state = createInitialState();
+
+    expect(() =>
+      createClientInState(state, {
+        fullName: "Duplicate Phone",
+        channel: "whatsapp",
+        channelUserId: "duplicate",
+        primaryPhoneE164: "+905551110001",
+        communicationLanguage: "tr",
+      }),
+    ).toThrowError(/primary_phone_e164_duplicate/);
   });
 
   it("adds manual replies with dietitian provenance", () => {

@@ -1,5 +1,6 @@
 import { createBlankClient, createInitialState } from "./seed-data";
 import { AppDomainError } from "./app-errors";
+import { normalizeE164Phone, normalizeLanguageCode } from "./languages";
 import { anonymizeClientInState, buildClientScopedExport, recordClientExportInState } from "./data-governance";
 import {
   createClientFormSchemaInState,
@@ -49,18 +50,61 @@ export function saveFallbackState(state: ManuAppState) {
 
 export function createClientInState(
   state: ManuAppState,
-  input: Pick<ClientRecord, "fullName" | "channel" | "channelUserId">,
+  input: Pick<ClientRecord, "fullName" | "channel" | "channelUserId"> &
+    Partial<Pick<ClientRecord, "primaryPhoneE164" | "communicationLanguage">>,
 ) {
+  const primaryPhoneE164 = normalizeE164Phone(input.primaryPhoneE164);
+  if (!primaryPhoneE164) throw new AppDomainError(400, "primary_phone_e164_required");
+  if (state.clients.some((client) => client.primaryPhoneE164 === primaryPhoneE164)) {
+    throw new AppDomainError(409, "primary_phone_e164_duplicate");
+  }
   const client = createBlankClient({
     fullName: input.fullName.trim(),
     channel: input.channel,
     channelUserId: input.channelUserId.trim(),
+    primaryPhoneE164,
+    communicationLanguage: normalizeLanguageCode(input.communicationLanguage),
   });
   return addClientToState(state, client);
 }
 
 export function patchClientInState(state: ManuAppState, clientId: string, patch: Partial<ClientRecord>) {
-  return updateClientInState(state, clientId, patch);
+  const existingClient = state.clients.find((client) => client.id === clientId);
+  if (!existingClient) throw new AppDomainError(404, "client_not_found");
+  const normalizedPatch: Partial<ClientRecord> = { ...patch };
+
+  if (Object.prototype.hasOwnProperty.call(patch, "communicationLanguage")) {
+    normalizedPatch.communicationLanguage = normalizeLanguageCode(patch.communicationLanguage);
+    normalizedPatch.healthProfile = {
+      ...existingClient.healthProfile,
+      ...(patch.healthProfile || {}),
+      preferredLanguage: normalizedPatch.communicationLanguage,
+    };
+  }
+
+  if (Object.prototype.hasOwnProperty.call(patch, "primaryPhoneE164")) {
+    const normalizedPhone = normalizeE164Phone(patch.primaryPhoneE164);
+    if (!normalizedPhone) throw new AppDomainError(400, "primary_phone_e164_invalid");
+    if (state.clients.some((client) => client.id !== clientId && client.primaryPhoneE164 === normalizedPhone)) {
+      throw new AppDomainError(409, "primary_phone_e164_duplicate");
+    }
+    normalizedPatch.primaryPhoneE164 = normalizedPhone;
+  }
+
+  return updateClientInState(state, clientId, normalizedPatch);
+}
+
+export function updateDietitianPreferencesInState(
+  state: ManuAppState,
+  input: { uiLanguage?: unknown },
+): ManuAppState {
+  return {
+    ...state,
+    dietitian: {
+      ...state.dietitian,
+      uiLanguage: normalizeLanguageCode(input.uiLanguage),
+    },
+  };
 }
 
 export function exportClientInState(state: ManuAppState, clientId: string) {
@@ -144,7 +188,7 @@ export function generateVoiceProfile(state: ManuAppState) {
 
 export function createFormSchemaInState(
   state: ManuAppState,
-  input: { title: string; fields: ClientFormFieldDefinition[] },
+  input: { title: string; fields: ClientFormFieldDefinition[]; languageCode?: unknown },
 ) {
   return createClientFormSchemaInState(state, input);
 }
@@ -155,9 +199,11 @@ export function publishFormSchemaInState(state: ManuAppState, schemaId: string) 
 
 export function saveFormResponseInState(
   state: ManuAppState,
-  input: { clientId: string; schemaId: string; answers: Record<string, unknown> },
+  input: { clientId: string; schemaId: string; answers: Record<string, unknown>; submittedPhoneE164?: unknown },
 ) {
-  return saveClientFormResponseInState(state, input.clientId, input.schemaId, input.answers);
+  return saveClientFormResponseInState(state, input.clientId, input.schemaId, input.answers, undefined, {
+    submittedPhoneE164: input.submittedPhoneE164,
+  });
 }
 
 export function addClientContextUpdateInState(

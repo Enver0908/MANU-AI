@@ -18,10 +18,10 @@ Run from `app`:
 npm run release:verify
 ```
 
-Latest result, re-verified on 2026-05-31 after Phase 32 R-405 recheck documentation:
+Latest result, re-verified on 2026-05-31 after Phase 43 multilingual language support:
 
-- Core package tests: 49/49 passed.
-- App tests: 103/103 passed.
+- Core package tests: 52/52 passed.
+- App tests: 107/107 passed.
 - App lint: passed.
 - Production build: passed.
 - Production dependency audit gate: passed with only documented R-405 findings.
@@ -188,12 +188,22 @@ Completion Roadmap Phase 13 / Phase 42 final readiness closure on 2026-05-31:
 - No runtime, schema, dependency, provider, channel, monitoring, secret manager, backup provider, launch-gate approval, R-405 acceptance, R-406 mitigation, or real-data change was made.
 - Re-ran `npm run release:verify`: core tests 49/49, app tests 103/103, lint, production build, and dependency audit gate passed with only documented R-405 findings.
 
+Phase 43 multilingual language support on 2026-05-31:
+
+- Added `PHASE_43_MULTILINGUAL_LANGUAGE_SUPPORT_SPEC.md`.
+- Added deterministic support for Turkish, English, German, French, Spanish, Portuguese, and Czech.
+- Stored dietitian dashboard language, client communication language, canonical client phone identity, form schema language, form response language, and submitted phone metadata.
+- Added bounded `conversation_language` PromptContext support and localized local/mock provider plus safe handoff acknowledgement behavior.
+- Expanded multilingual clinical golden cases and dashboard i18n coverage.
+- No automatic translation, public client forms, real provider, real channel, external translation service, launch-gate approval, R-405 acceptance, R-406 mitigation, or real health-data processing was added.
+- Re-ran `npm run release:verify`: core tests 52/52, app tests 107/107, lint, production build, and dependency audit gate passed with only documented R-405 findings.
+
 ## Launch Gate Matrix
 
 | Launch gate | Internal evidence available | Remaining blocker | Gate status |
 | --- | --- | --- | --- |
 | Legal and privacy review | `PRODUCTION_PILOT_LEGAL_PRIVACY_REVIEW_PACKET.md`, `DATA_INVENTORY.md`, `PHASE_5_DATA_GOVERNANCE_SPEC.md`, `PHASE_14_DSAR_RETENTION_LEGAL_OPS_SPEC.md`, tenant/client-scoped export/anonymization tests, Phase 26 internal copilot data boundaries, Phase 27 dietitian context update records | Legal basis matrix, privacy notice, permission documents, medical-device/CDS classification memo, internal copilot and dietitian context update retention require external review | Open |
-| Qualified dietitian clinical taxonomy approval | `PRODUCTION_PILOT_CLINICAL_TAXONOMY_REVIEW_PACKET.md`, `CLINICAL_TAXONOMY_REVIEW_WORKFLOW.md`, clinical JSONL golden cases, 49 core tests, persona-invariant safety tests | Qualified dietitian sign-off and taxonomy change approval | Open |
+| Qualified dietitian clinical taxonomy approval | `PRODUCTION_PILOT_CLINICAL_TAXONOMY_REVIEW_PACKET.md`, `CLINICAL_TAXONOMY_REVIEW_WORKFLOW.md`, clinical JSONL golden cases including multilingual Phase 43 cases, 52 core tests, persona-invariant safety tests | Qualified dietitian sign-off and taxonomy change approval | Open |
 | Provider vendor and retention review | `PRODUCTION_PILOT_PROVIDER_VENDOR_REVIEW_PACKET.md`, `AI_PROVIDER_REQUIREMENTS.md`, local mock provider, provider-attempt audit semantics, provider failure no-send behavior, provider segment allowlist guard, Phase 26 local/mock-only copilot boundary, Phase 27 context update egress boundary | Gemini/provider terms, health-data retention configuration, prompt/completion logging decision, any future copilot or dietitian context update provider egress decision | Open |
 | WhatsApp and Telegram policy review | `PRODUCTION_PILOT_CHANNEL_POLICY_REVIEW_PACKET.md`, `PHASE_7_CHANNEL_ADAPTER_READINESS_SPEC.md`, `PHASE_16_CHANNEL_POLICY_SIMULATION_HARDENING_SPEC.md`, mock adapter idempotency, identity quarantine, opt-out simulation | WhatsApp healthcare feasibility, Telegram bot/privacy policy, real opt-in/out/template/service-window procedure | Open |
 | Incident response and deletion workflow runbook | `PRODUCTION_PILOT_INCIDENT_DSAR_REVIEW_PACKET.md`, `INCIDENT_RESPONSE_RUNBOOK.md`, `PHASE_14_DSAR_RETENTION_LEGAL_OPS_SPEC.md`, legal ops ledger, safe operational health snapshot | Breach escalation owner list, approved DSAR/deletion operating procedure | Open |

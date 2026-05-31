@@ -1685,3 +1685,42 @@ app: npm run release:verify -> passed after clearing a transient .next EPERM bui
 ### Next Correct Step For Codex
 
 Use `docs/PRODUCTION_PILOT_FINAL_READINESS_CLOSURE_SUMMARY.md` as the current go/no-go source. Do not move toward production pilot until R-406 has passing local Supabase evidence, R-405 is resolved or formally accepted, and all eight launch gates have acceptable external approval artifacts.
+
+## Phase 43 Multilingual Language Support Handoff Notes - 2026-05-31
+
+Completed by: Codex
+
+### What Was Done
+
+- Followed `codex.md`: wrote `docs/PHASE_43_MULTILINGUAL_LANGUAGE_SUPPORT_SPEC.md` before implementation.
+- Added supported language codes `tr`, `en`, `de`, `fr`, `es`, `pt`, and `cs`.
+- Added strict canonical E.164 phone identity handling for clients.
+- Stored dietitian dashboard language, client communication language, form schema language, form response language, and submitted phone metadata in local state and Supabase schema.
+- Updated fallback and Supabase stores plus API routes for client create/update, dietitian preferences, form schema create, and form response save.
+- Added dashboard controls for dietitian UI language, client phone/language, and form language.
+- Added a bounded `conversation_language` PromptContext segment and ContextManifest language metadata.
+- Localized local/mock provider replies and safe handoff acknowledgements for all seven supported languages.
+- Expanded multilingual safety patterns and clinical golden cases.
+
+### What Was NOT Done
+
+- No automatic translation was added.
+- No public client-facing form link was added.
+- No real WhatsApp, Telegram, Gemini/external LLM, translation API, email, push, monitoring, secret manager, backup provider, or real client health data was connected.
+- No production-pilot launch gate was approved.
+- R-405 remains open.
+- R-406 remains blocked pending passing local Supabase RLS evidence.
+
+### Verification Commands
+
+```text
+app: npm run lint -> passed
+app: npm run test -> passed; 16 files, 107 tests
+dietitian-ai-assistant: npm test -> passed; 52 tests
+app: npm run release:verify -> passed; core tests 52/52, app tests 107/107, lint, production build, known R-405 only
+app: npm run test:rls -> skipped; 1 file and 10 guarded tests because local Supabase evidence is still unavailable
+```
+
+### Next Correct Step For Codex
+
+Run `npm run release:verify` after any follow-up edits. Keep the Phase 43 language model deterministic and internal until legal/privacy, clinical, provider/vendor, and channel policy gates are externally approved. Do not connect real translation/provider/channel services or mark production pilot approved from this work.

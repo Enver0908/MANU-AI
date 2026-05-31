@@ -1,6 +1,7 @@
 export type AiStatus = "active" | "passive";
 export type AiMode = "autopilot" | "copilot" | "manual" | "paused";
 export type Channel = "whatsapp" | "telegram";
+export type SupportedLanguageCode = "tr" | "en" | "de" | "fr" | "es" | "pt" | "cs";
 export type TenantRole = "owner" | "admin" | "dietitian" | "assistant" | "auditor";
 export type MessageOrigin =
   | "client_inbound"
@@ -51,6 +52,7 @@ export type DietitianRecord = {
   tenantId: string;
   displayName: string;
   timezone: string;
+  uiLanguage: SupportedLanguageCode;
 };
 
 export type DietitianVoiceSampleRecord = {
@@ -94,6 +96,7 @@ export type ClientFormSchemaRecord = {
   id: string;
   tenantId: string;
   title: string;
+  languageCode: SupportedLanguageCode;
   version: number;
   status: FormSchemaStatus;
   fields: ClientFormFieldDefinition[];
@@ -108,6 +111,8 @@ export type ClientFormResponseRecord = {
   schemaId: string;
   schemaVersion: number;
   schemaSnapshot: ClientFormSchemaRecord;
+  languageCode: SupportedLanguageCode;
+  submittedPhoneE164: string | null;
   answers: Record<string, unknown>;
   createdAt: string;
   updatedAt: string;
@@ -134,6 +139,8 @@ export type ClientRecord = {
   tenantId: string;
   dietitianId: string;
   fullName: string;
+  primaryPhoneE164: string | null;
+  communicationLanguage: SupportedLanguageCode;
   selectedPersonaId: string;
   aiStatus: AiStatus;
   aiMode: AiMode;

@@ -45,8 +45,10 @@ import type {
   NotificationRecord,
   RiskAssessmentRecord,
   SimulationRequest,
+  SupportedLanguageCode,
   VoiceSampleStatus,
 } from "./types";
+import { normalizeLanguageCode } from "./languages";
 
 export const DEMO_TENANT_UUID = "00000000-0000-4000-8000-000000000001";
 export const DEMO_DIETITIAN_UUID = "00000000-0000-4000-8000-000000000002";
@@ -62,6 +64,8 @@ type DbClient = {
   tenant_id: string;
   dietitian_id: string;
   full_name: string;
+  primary_phone_e164: string | null;
+  communication_language: SupportedLanguageCode | null;
   selected_persona_id: string;
   ai_status: ClientRecord["aiStatus"];
   ai_mode: ClientRecord["aiMode"];
@@ -252,6 +256,7 @@ type DbFormSchema = {
   id: string;
   tenant_id: string;
   title: string;
+  language_code: SupportedLanguageCode | null;
   version: number;
   status: ClientFormSchemaRecord["status"];
   fields: ClientFormFieldDefinition[];
@@ -265,6 +270,8 @@ type DbFormResponse = {
   schema_id: string;
   schema_version: number;
   schema_snapshot: ClientFormSchemaRecord;
+  language_code: SupportedLanguageCode | null;
+  submitted_phone_e164: string | null;
   answers: Record<string, unknown>;
   created_at: string;
   updated_at: string;
@@ -381,6 +388,7 @@ export async function loadSupabaseState(context = demoTenantContext()) {
         tenantId: dietitianResult.data.tenant_id,
         displayName: dietitianResult.data.display_name,
         timezone: dietitianResult.data.timezone,
+        uiLanguage: normalizeLanguageCode(dietitianResult.data.ui_language),
       },
       voiceSamples: (voiceSamplesResult.data || []).map(mapVoiceSample),
       voiceProfiles: (voiceProfilesResult.data || []).map(mapVoiceProfile),
@@ -517,7 +525,8 @@ export async function resetSupabaseState(context = demoTenantContext()) {
 }
 
 export async function createSupabaseClientRecord(
-  input: Pick<ClientRecord, "fullName" | "channel" | "channelUserId">,
+  input: Pick<ClientRecord, "fullName" | "channel" | "channelUserId"> &
+    Partial<Pick<ClientRecord, "primaryPhoneE164" | "communicationLanguage">>,
   context = demoTenantContext(),
 ) {
   const state = await loadSupabaseState(context);
@@ -842,7 +851,7 @@ export async function generateSupabaseVoiceProfile(context = demoTenantContext()
 }
 
 export async function createSupabaseFormSchema(
-  input: { title: string; fields: ClientFormFieldDefinition[] },
+  input: { title: string; fields: ClientFormFieldDefinition[]; languageCode?: unknown },
   context = demoTenantContext(),
 ) {
   const before = await loadSupabaseState(context);
@@ -867,7 +876,7 @@ export async function publishSupabaseFormSchema(schemaId: string, context = demo
 }
 
 export async function saveSupabaseFormResponse(
-  input: { clientId: string; schemaId: string; answers: Record<string, unknown> },
+  input: { clientId: string; schemaId: string; answers: Record<string, unknown>; submittedPhoneE164?: unknown },
   context = demoTenantContext(),
 ) {
   const before = await loadSupabaseState(context);
@@ -884,6 +893,20 @@ export async function saveSupabaseFormResponse(
   if (response) await upsertFormResponse(supabase, { ...response, tenantId: context.tenantId });
   if (client) await upsertClient(supabase, { ...client, tenantId: context.tenantId, dietitianId: context.dietitianId });
   await persistNewAudits(supabase, before, next);
+  return loadSupabaseState(context);
+}
+
+export async function updateSupabaseDietitianPreferences(
+  input: { uiLanguage?: unknown },
+  context = demoTenantContext(),
+) {
+  await checked(
+    requireSupabase()
+      .from("dietitians")
+      .update({ ui_language: normalizeLanguageCode(input.uiLanguage) })
+      .eq("tenant_id", context.tenantId)
+      .eq("id", context.dietitianId),
+  );
   return loadSupabaseState(context);
 }
 
@@ -974,6 +997,7 @@ async function ensureDemoData(supabase: SupabaseClient, userId = DEMO_USER_UUID)
       tenant_id: seed.tenant.id,
       display_name: seed.dietitian.displayName,
       timezone: seed.dietitian.timezone,
+      ui_language: seed.dietitian.uiLanguage,
       auth_user_id: userId,
     }),
   );
@@ -1101,6 +1125,8 @@ async function upsertClient(supabase: SupabaseClient, client: ClientRecord) {
       tenant_id: client.tenantId,
       dietitian_id: client.dietitianId,
       full_name: client.fullName,
+      primary_phone_e164: client.primaryPhoneE164,
+      communication_language: client.communicationLanguage,
       selected_persona_id: client.selectedPersonaId,
       ai_status: client.aiStatus,
       ai_mode: client.aiMode,
@@ -1462,6 +1488,7 @@ async function upsertFormSchema(supabase: SupabaseClient, schema: ClientFormSche
       id: schema.id,
       tenant_id: schema.tenantId,
       title: schema.title,
+      language_code: schema.languageCode,
       version: schema.version,
       status: schema.status,
       fields: schema.fields,
@@ -1480,6 +1507,8 @@ async function upsertFormResponse(supabase: SupabaseClient, response: ClientForm
       schema_id: response.schemaId,
       schema_version: response.schemaVersion,
       schema_snapshot: response.schemaSnapshot,
+      language_code: response.languageCode,
+      submitted_phone_e164: response.submittedPhoneE164,
       answers: response.answers,
       created_at: response.createdAt,
       updated_at: response.updatedAt,
@@ -1690,6 +1719,7 @@ function mapFormSchema(schema: DbFormSchema): ClientFormSchemaRecord {
     id: schema.id,
     tenantId: schema.tenant_id,
     title: schema.title,
+    languageCode: normalizeLanguageCode(schema.language_code),
     version: schema.version,
     status: schema.status,
     fields: schema.fields || [],
@@ -1706,6 +1736,8 @@ function mapFormResponse(response: DbFormResponse): ClientFormResponseRecord {
     schemaId: response.schema_id,
     schemaVersion: response.schema_version,
     schemaSnapshot: response.schema_snapshot,
+    languageCode: normalizeLanguageCode(response.language_code),
+    submittedPhoneE164: response.submitted_phone_e164 || null,
     answers: response.answers || {},
     createdAt: response.created_at,
     updatedAt: response.updated_at,
@@ -1737,6 +1769,8 @@ function mapClient(client: DbClient, channels: DbChannel[]): ClientRecord {
     tenantId: client.tenant_id,
     dietitianId: client.dietitian_id,
     fullName: client.full_name,
+    primaryPhoneE164: client.primary_phone_e164 || null,
+    communicationLanguage: normalizeLanguageCode(client.communication_language || client.health_profile?.preferredLanguage),
     selectedPersonaId: client.selected_persona_id,
     aiStatus: client.ai_status,
     aiMode: client.ai_mode,

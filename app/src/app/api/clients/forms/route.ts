@@ -9,6 +9,7 @@ export async function POST(request: NextRequest) {
     clientId?: string;
     schemaId?: string;
     answers?: Record<string, unknown>;
+    submittedPhoneE164?: unknown;
   };
 
   if (!body.clientId || !body.schemaId || !body.answers) {
@@ -21,7 +22,7 @@ export async function POST(request: NextRequest) {
       requireCapability(tenantContext, "update_client");
       return NextResponse.json(
         await saveSupabaseFormResponse(
-          { clientId: body.clientId, schemaId: body.schemaId, answers: body.answers },
+          { clientId: body.clientId, schemaId: body.schemaId, answers: body.answers, submittedPhoneE164: body.submittedPhoneE164 },
           tenantContext,
         ),
       );
@@ -41,6 +42,7 @@ export async function POST(request: NextRequest) {
           clientId: body.clientId,
           schemaId: body.schemaId,
           answers: body.answers,
+          submittedPhoneE164: body.submittedPhoneE164,
         }),
       ),
     );
