@@ -1389,3 +1389,38 @@ app: npm run release:verify -> passed; core tests 49/49, app tests 103/103, lint
 ### Next Correct Step For Codex
 
 Use `docs/PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` and `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md` when the user supplies external approval artifacts. Do not mark a gate approved unless every required evidence item for that gate is covered by an acceptable artifact.
+
+## Completion Roadmap Phase 5 / Phase 34 Handoff Notes - 2026-05-31
+
+Completed by: Codex
+
+### What Was Done
+
+- Followed `codex.md`: wrote the spec before the change and kept the work to documentation/review readiness.
+- Created `docs/PHASE_34_COMPLETION_PHASE_5_LEGAL_PRIVACY_PACKET_SPEC.md`.
+- Created `docs/PRODUCTION_PILOT_LEGAL_PRIVACY_REVIEW_PACKET.md`.
+- Mapped legal/privacy review questions to current internal evidence in data inventory, data governance, legal ops ledger, internal copilot, dietitian context updates, and AI security remediation.
+- Listed missing counsel decisions for lawful basis, privacy notice, permission flow, medical-device/CDS classification, retention, DSAR/deletion, internal copilot records, dietitian context updates, provider dependency, and channel dependency.
+- Updated `PLAN.md`, `PROJECT_PLAN.md`, `docs/NEXT_PHASE_EXECUTION_PLAN.md`, `docs/PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md`, `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md`, `docs/PILOT_READINESS_EVIDENCE_PACK.md`, `docs/RISK_REGISTER.md`, `docs/DATA_INVENTORY.md`, and this handoff.
+
+### What Was NOT Done
+
+- No legal/privacy approval artifact was supplied or accepted.
+- No medical-device/CDS classification approval was supplied.
+- No final client-facing legal copy was created.
+- No final retention durations or DSAR/deletion SLA were approved.
+- No runtime behavior, schema, dependency, provider, channel, launch-gate approval, or real-data change was made.
+- No real Gemini/external LLM provider was connected.
+- No real WhatsApp, Telegram, email, push, monitoring, analytics, secret manager, or real health data was connected.
+- R-405 remains open.
+- R-406 remains blocked.
+
+### Verification Commands
+
+```text
+app: npm run release:verify -> first build attempt hit transient Windows/OneDrive .next EPERM; after deleting app/.next, passed with core tests 49/49, app tests 103/103, lint, production build, known R-405 only
+```
+
+### Next Correct Step For Codex
+
+Use `docs/PRODUCTION_PILOT_LEGAL_PRIVACY_REVIEW_PACKET.md` when the user supplies counsel feedback or legal/privacy approval artifacts. Do not mark `legal_privacy_review` approved unless all required legal/privacy evidence items are covered by an acceptable artifact.

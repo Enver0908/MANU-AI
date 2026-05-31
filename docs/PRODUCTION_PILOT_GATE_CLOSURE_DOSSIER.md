@@ -15,19 +15,20 @@ Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized reference
 ## Current Baseline
 
 - Git baseline: Phase 27-29 checkpoint exists at `c75564e Add Phase 27-29 pilot readiness checkpoint` on branch `codex/phase-29-baseline-checkpoint`; Completion Roadmap Phase 1 records this as the current implementation baseline.
-- Latest local release verification: `npm run release:verify` passed on 2026-05-31 after Phase 33 external approval intake documentation.
+- Latest local release verification: `npm run release:verify` passed on 2026-05-31 after Phase 34 legal/privacy review packet documentation.
 - Verification result: core tests 49/49, app tests 103/103, lint passed, production build passed.
 - Dependency audit result: only known R-405 findings, `next:postcss` and `postcss:GHSA-qx2v-qp2m-jg93`.
 - R-405 status: open production launch blocker; Completion Roadmap Phase 3 rechecked metadata on 2026-05-31 and stable `next@latest` is still 16.2.6 with `postcss@8.4.31`, so no safe stable Next.js/PostCSS patch path is available.
 - R-405 remediation spec: `PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`.
 - RLS evidence status: expanded `npm run test:rls` coverage exists, but the 2026-05-31 Completion Roadmap Phase 2 attempt did not produce passing evidence. Local Supabase could not start because Docker Desktop's Linux engine pipe was unavailable, and `npm run test:rls` skipped 10 guarded tests. R-406 remains blocked pending local Docker/Supabase availability.
 - External approval intake: `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` was added during Completion Roadmap Phase 4. No external approval artifacts have been supplied yet.
+- Legal/privacy review packet: `PRODUCTION_PILOT_LEGAL_PRIVACY_REVIEW_PACKET.md` was added during Completion Roadmap Phase 5. It is a review packet, not an approval artifact.
 
 ## Gate Closure Matrix
 
 | Launch gate | Required evidence | Internal evidence available | Missing external decision | Acceptable approval artifact | Status |
 | --- | --- | --- | --- | --- | --- |
-| Legal and privacy review | Legal basis matrix, privacy notice and client permission documents, medical-device or clinical-decision-support classification memo | `DATA_INVENTORY.md`, `PHASE_5_DATA_GOVERNANCE_SPEC.md`, `PHASE_14_DSAR_RETENTION_LEGAL_OPS_SPEC.md`, `PHASE_26_INTERNAL_COPILOT_SPEC.md`, `PHASE_27_DIETITIAN_CONTEXT_UPDATE_SPEC.md`, tenant/client-scoped export and anonymization tests | Legal/privacy counsel must approve lawful basis, privacy notice, permission flow, data retention, internal copilot records, dietitian context update records, and classification | Signed legal/privacy memo or dated counsel approval record | Open |
+| Legal and privacy review | Legal basis matrix, privacy notice and client permission documents, medical-device or clinical-decision-support classification memo | `PRODUCTION_PILOT_LEGAL_PRIVACY_REVIEW_PACKET.md`, `DATA_INVENTORY.md`, `PHASE_5_DATA_GOVERNANCE_SPEC.md`, `PHASE_14_DSAR_RETENTION_LEGAL_OPS_SPEC.md`, `PHASE_26_INTERNAL_COPILOT_SPEC.md`, `PHASE_27_DIETITIAN_CONTEXT_UPDATE_SPEC.md`, tenant/client-scoped export and anonymization tests | Legal/privacy counsel must approve lawful basis, privacy notice, permission flow, data retention, internal copilot records, dietitian context update records, and classification | Signed legal/privacy memo or dated counsel approval record | Open |
 | Qualified dietitian clinical taxonomy approval | Qualified dietitian sign-off, current clinical golden test report, taxonomy change log | `CLINICAL_TAXONOMY_REVIEW_WORKFLOW.md`, clinical JSONL golden cases, 49 core tests, persona-invariant tests | Qualified dietitian must approve `dietetic-risk-v0.3.0`, red/yellow/green routing, and escalation behavior | Signed taxonomy review record naming taxonomy version and test result | Open |
 | Provider vendor and retention review | Provider terms review, health-data retention configuration, prompt and completion logging decision | `AI_PROVIDER_REQUIREMENTS.md`, local mock provider, provider-attempt audit semantics, provider segment allowlist guard, provider failure no-send behavior, Phase 26 local/mock-only copilot boundary, Phase 27 context update egress boundary, Phase 28 remediation spec | Vendor/legal review must approve any Gemini or external LLM use with health data, including any future internal copilot or dietitian context update provider egress | Vendor-risk approval record covering retention, training use, logging, region, and access controls | Open |
 | WhatsApp and Telegram policy review | WhatsApp healthcare feasibility review, Telegram privacy and bot policy review, opt-in/out/template/service-window procedure | `PHASE_7_CHANNEL_ADAPTER_READINESS_SPEC.md`, `PHASE_16_CHANNEL_POLICY_SIMULATION_HARDENING_SPEC.md`, mock idempotency, identity quarantine, opt-out simulation | Platform/policy review must approve channel use, healthcare boundaries, templates, service window, and opt-in/out process | Dated channel policy memo and approved operating procedure | Open |
@@ -38,7 +39,7 @@ Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized reference
 
 ## Review Packet Checklist
 
-- Legal/privacy packet: data inventory, permission integration points, DSAR/export/anonymization evidence, retention placeholder list, dietitian context update records.
+- Legal/privacy packet: `PRODUCTION_PILOT_LEGAL_PRIVACY_REVIEW_PACKET.md`, data inventory, permission integration points, DSAR/export/anonymization evidence, retention placeholder list, dietitian context update records.
 - Clinical packet: taxonomy version, golden JSONL cases, latest core test output, persona invariant statement, qualified dietitian sign-off template.
 - Provider packet: provider requirements, no-storage/no-training requirements, prompt/completion logging decision checklist, provider-attempt audit semantics, provider input allowlist, dietitian context update egress review.
 - Internal copilot packet: Phase 26 spec, `DATA_INVENTORY.md` copilot rows, RBAC/source-ref evidence, no-raw-SQL/no-mutation statement, provider-egress blocked statement.

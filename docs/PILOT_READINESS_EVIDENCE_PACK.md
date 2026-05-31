@@ -89,11 +89,21 @@ Completion Roadmap Phase 4 / Phase 33 external approval intake on 2026-05-31:
 - R-405 remains open and R-406 remains blocked.
 - Re-ran `npm run release:verify`: core tests 49/49, app tests 103/103, lint, production build, and dependency audit gate passed with only documented R-405 findings.
 
+Completion Roadmap Phase 5 / Phase 34 legal and privacy review packet on 2026-05-31:
+
+- Added `PHASE_34_COMPLETION_PHASE_5_LEGAL_PRIVACY_PACKET_SPEC.md`.
+- Added `PRODUCTION_PILOT_LEGAL_PRIVACY_REVIEW_PACKET.md`.
+- Mapped legal/privacy review questions to internal evidence across data inventory, data governance, legal ops, internal copilot, dietitian context updates, and AI security remediation.
+- No legal/privacy approval artifact was supplied.
+- The `legal_privacy_review` launch gate remains open.
+- R-405 remains open and R-406 remains blocked.
+- Re-ran `npm run release:verify` after clearing a transient Windows/OneDrive `.next` EPERM build artifact: core tests 49/49, app tests 103/103, lint, production build, and dependency audit gate passed with only documented R-405 findings.
+
 ## Launch Gate Matrix
 
 | Launch gate | Internal evidence available | Remaining blocker | Gate status |
 | --- | --- | --- | --- |
-| Legal and privacy review | `DATA_INVENTORY.md`, `PHASE_5_DATA_GOVERNANCE_SPEC.md`, `PHASE_14_DSAR_RETENTION_LEGAL_OPS_SPEC.md`, tenant/client-scoped export/anonymization tests, Phase 26 internal copilot data boundaries, Phase 27 dietitian context update records | Legal basis matrix, privacy notice, permission documents, medical-device/CDS classification memo, internal copilot and dietitian context update retention require external review | Open |
+| Legal and privacy review | `PRODUCTION_PILOT_LEGAL_PRIVACY_REVIEW_PACKET.md`, `DATA_INVENTORY.md`, `PHASE_5_DATA_GOVERNANCE_SPEC.md`, `PHASE_14_DSAR_RETENTION_LEGAL_OPS_SPEC.md`, tenant/client-scoped export/anonymization tests, Phase 26 internal copilot data boundaries, Phase 27 dietitian context update records | Legal basis matrix, privacy notice, permission documents, medical-device/CDS classification memo, internal copilot and dietitian context update retention require external review | Open |
 | Qualified dietitian clinical taxonomy approval | `CLINICAL_TAXONOMY_REVIEW_WORKFLOW.md`, clinical JSONL golden cases, 49 core tests, persona-invariant safety tests | Qualified dietitian sign-off and taxonomy change approval | Open |
 | Provider vendor and retention review | `AI_PROVIDER_REQUIREMENTS.md`, local mock provider, provider-attempt audit semantics, provider failure no-send behavior, provider segment allowlist guard, Phase 26 local/mock-only copilot boundary, Phase 27 context update egress boundary | Gemini/provider terms, health-data retention configuration, prompt/completion logging decision, any future copilot or dietitian context update provider egress decision | Open |
 | WhatsApp and Telegram policy review | `PHASE_7_CHANNEL_ADAPTER_READINESS_SPEC.md`, `PHASE_16_CHANNEL_POLICY_SIMULATION_HARDENING_SPEC.md`, mock adapter idempotency, identity quarantine, opt-out simulation | WhatsApp healthcare feasibility, Telegram bot/privacy policy, real opt-in/out/template/service-window procedure | Open |
@@ -173,7 +183,7 @@ Release verification:
 
 1. Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized external approval artifact references.
 2. Use `PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md` as the external review checklist.
-3. Complete legal/privacy review and client-facing permission documents.
+3. Complete legal/privacy review using `PRODUCTION_PILOT_LEGAL_PRIVACY_REVIEW_PACKET.md` and supply acceptable approval evidence.
 4. Obtain qualified dietitian approval for the current clinical taxonomy and golden test set.
 5. Complete provider/vendor retention and prompt logging review.
 6. Complete WhatsApp/Telegram policy, opt-in/out, template, and service-window review.

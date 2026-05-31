@@ -83,6 +83,8 @@ Before pilot data is processed, MANU-AI needs production policy approval for:
 - Backup expiry and restore-test policy.
 - Production deletion job ownership and approval workflow.
 
+Completion Roadmap Phase 5 added `PRODUCTION_PILOT_LEGAL_PRIVACY_REVIEW_PACKET.md` to package this inventory and related data-governance evidence for external counsel review. That packet does not approve lawful basis, retention, DSAR operations, or real health-data processing.
+
 Phase 11 draft runbooks were added for incident response, backup/restore, and secret rotation. They are operating evidence drafts only and do not approve real pilot data processing.
 
 Phase 14 added `data_requests` as a legal operations ledger for completed client export and anonymization actions. This ledger is tenant/client-scoped and does not set final retention durations or enable automatic deletion.

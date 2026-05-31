@@ -459,12 +459,14 @@ Completion roadmap Phase 3 completed on 2026-05-31: added `docs/PHASE_32_COMPLET
 
 Completion roadmap Phase 4 completed on 2026-05-31: added `docs/PHASE_33_COMPLETION_PHASE_4_EXTERNAL_APPROVAL_INTAKE_SPEC.md` and `docs/PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to make the eight production-pilot launch gates actionable for external evidence collection. No external approval artifacts were supplied, so all launch gates remain open; R-405 remains open and R-406 remains blocked. No runtime behavior, schema, dependency, provider, channel, launch-gate approval, or real-data changes were made. `npm run release:verify` passed after the Phase 4 documentation update with core tests 49/49, app tests 103/103, lint, production build, and only documented R-405 findings.
 
+Completion roadmap Phase 5 completed on 2026-05-31: added `docs/PHASE_34_COMPLETION_PHASE_5_LEGAL_PRIVACY_PACKET_SPEC.md` and `docs/PRODUCTION_PILOT_LEGAL_PRIVACY_REVIEW_PACKET.md` to prepare the `legal_privacy_review` launch gate for external counsel review. No legal/privacy approval artifact was supplied, so the gate remains open. R-405 remains open and R-406 remains blocked. No runtime behavior, schema, dependency, provider, channel, launch-gate approval, or real-data changes were made. `npm run release:verify` passed after clearing a transient Windows/OneDrive `.next` EPERM build artifact, with core tests 49/49, app tests 103/103, lint, production build, and only documented R-405 findings.
+
 Tasks:
 
 1. Unblock completion roadmap Phase 2 by starting Docker Desktop/local Supabase, rerunning `npm run test:rls`, and updating R-406/evidence docs only if the expanded RLS suite passes.
-2. Use `docs/PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` and `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md` to collect external approval evidence for all eight production-pilot gates.
+2. Use `docs/PRODUCTION_PILOT_LEGAL_PRIVACY_REVIEW_PACKET.md`, `docs/PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md`, and `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md` to collect external legal/privacy approval evidence without storing secrets or raw client data in repo docs.
 3. Re-check R-405 again only through the `docs/PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md` procedure before any future dependency edit.
-4. Keep Phase 23-33 prompt-context, voice-profile, dynamic-form, internal-copilot, dietitian context update, provider-boundary, send-revalidation, evidence, dependency, external-approval, and RLS controls covered by tests before any real provider integration.
+4. Keep Phase 23-34 prompt-context, voice-profile, dynamic-form, internal-copilot, dietitian context update, provider-boundary, send-revalidation, evidence, dependency, external-approval, legal/privacy, and RLS controls covered by tests before any real provider integration.
 5. Keep clinical taxonomy approval, provider review, real-channel policy review, operational ownership, R-405 clearance, and R-406 passing local RLS evidence as launch gates.
 6. Keep real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, and real client health data disconnected.
 

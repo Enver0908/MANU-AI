@@ -6,7 +6,7 @@ MANU-AI is in pilot-foundation mode. The local SaaS/PWA prototype, Supabase-back
 
 Real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, and real client health data remain disconnected.
 
-The most recent execution layer is Phase 33 / Completion Roadmap Phase 4: external approval evidence intake. It created a structured intake packet for all eight production-pilot launch gates without approving any gate. R-405 remains open, and R-406 remains blocked because Phase 31 could not produce local Supabase RLS evidence without Docker Desktop's Linux engine.
+The most recent execution layer is Phase 34 / Completion Roadmap Phase 5: legal and privacy review packet. It prepares the `legal_privacy_review` launch gate for external counsel review without approving the gate. R-405 remains open, and R-406 remains blocked because Phase 31 could not produce local Supabase RLS evidence without Docker Desktop's Linux engine.
 
 ## Phase 0: Baseline, Documentation, And Workspace Safety
 
@@ -831,6 +831,7 @@ Status:
 - Kept R-405 open.
 - Kept R-406 blocked.
 - No runtime behavior, schema, dependency, provider, channel, launch-gate approval, or real-data change was made.
+- Re-verified documentation-only changes with `npm run release:verify` after clearing a transient Windows/OneDrive `.next` EPERM build artifact: core tests 49/49, app tests 103/103, lint, production build, and only documented R-405 findings.
 - Re-verified documentation-only changes with `npm run release:verify`: core tests 49/49, app tests 103/103, lint, production build, and only documented R-405 findings.
 
 Done criteria:
@@ -838,6 +839,28 @@ Done criteria:
 - External review has a single intake packet for artifact tracking.
 - The intake packet warns against repo storage of secrets, raw client health data, and real client identifiers.
 - Internal evidence remains separated from external approval.
+
+## Phase 34: Completion Roadmap Phase 5 - Legal And Privacy Review Packet - Completed 2026-05-31
+
+Goal: prepare the `legal_privacy_review` launch gate for external legal/privacy review.
+
+Status:
+
+- Added `docs/PHASE_34_COMPLETION_PHASE_5_LEGAL_PRIVACY_PACKET_SPEC.md`.
+- Added `docs/PRODUCTION_PILOT_LEGAL_PRIVACY_REVIEW_PACKET.md`.
+- Mapped legal/privacy review questions to current internal artifacts, including data inventory, data governance, legal ops ledger, internal copilot, dietitian context updates, and AI security remediation.
+- Listed required counsel decisions for lawful basis, privacy notice, permission flow, medical-device/CDS classification, retention, DSAR/deletion, internal copilot records, dietitian context updates, provider dependency, and channel dependency.
+- Confirmed no legal/privacy approval artifact was supplied in this phase.
+- Kept `legal_privacy_review` open.
+- Kept R-405 open.
+- Kept R-406 blocked.
+- No runtime behavior, schema, dependency, provider, channel, launch-gate approval, or real-data change was made.
+
+Done criteria:
+
+- Legal/privacy counsel has a review packet that separates internal implementation evidence from external approval.
+- The packet warns against storing secrets, raw client health data, and real client identifiers in repo docs.
+- The production-pilot legal/privacy gate remains open until acceptable external approval evidence is supplied.
 
 ## Always-On Gates
 
