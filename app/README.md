@@ -40,7 +40,7 @@ The scripts use `--webpack` because Turbopack did not resolve the local symlinke
 
 `npm run release:verify` runs the core package tests, lint, unit/API tests, production build, and the production dependency audit gate. It allows only the documented R-405 Next.js/PostCSS finding and does not run `npm audit fix --force`.
 
-Latest local release verification on 2026-05-31 passed after Phase 38 with core tests 49/49, app tests 103/103, lint, production build, and only the documented R-405 production audit finding.
+Latest local release verification on 2026-05-31 passed after Phase 39 with core tests 49/49, app tests 103/103, lint, production build, and only the documented R-405 production audit finding.
 
 Phase 29 is documentation/evidence hardening only. It keeps production pilot blocked, records that stable `next@latest` 16.2.6 still bundles `postcss@8.4.31`, and requires local Supabase before RLS evidence can be counted as passed.
 
@@ -53,6 +53,8 @@ Completion Roadmap Phase 7 prepared the provider/vendor review packet on 2026-05
 Completion Roadmap Phase 8 prepared the channel policy review packet on 2026-05-31. `docs/PRODUCTION_PILOT_CHANNEL_POLICY_REVIEW_PACKET.md` is review evidence only; it does not approve real WhatsApp/Telegram use, production webhooks, channel credentials, template registries, or outbound messaging.
 
 Completion Roadmap Phase 9 prepared the incident and DSAR review packet on 2026-05-31. `docs/PRODUCTION_PILOT_INCIDENT_DSAR_REVIEW_PACKET.md` is review evidence only; it does not approve production incident response, named production owners, monitoring/ticketing integrations, production DSAR/deletion operations, or real client health-data processing.
+
+Completion Roadmap Phase 10 prepared the backup/restore review packet on 2026-05-31. `docs/PRODUCTION_PILOT_BACKUP_RESTORE_REVIEW_PACKET.md` is review evidence only; it does not approve production backup/restore operations, backup provider setup, storage, secret manager changes, restore-drill success, or real client health-data processing.
 
 ## Supabase CLI
 

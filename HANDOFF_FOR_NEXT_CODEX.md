@@ -1553,3 +1553,34 @@ app: npm run release:verify -> passed; core tests 49/49, app tests 103/103, lint
 ### Next Correct Step For Codex
 
 Run `npm run release:verify` after any follow-up edits. Use `docs/PRODUCTION_PILOT_INCIDENT_DSAR_REVIEW_PACKET.md` when the user supplies operations/legal/privacy/clinical feedback or approval artifacts. Do not mark `incident_response_runbook` approved unless all required incident and DSAR evidence items are covered by an acceptable artifact.
+
+## Completion Roadmap Phase 10 / Phase 39 Handoff Notes - 2026-05-31
+
+Completed by: Codex
+
+### What Was Done
+
+- Followed `codex.md`: wrote the spec before the change and kept the work to documentation/review readiness.
+- Created `docs/PHASE_39_COMPLETION_PHASE_10_BACKUP_RESTORE_REVIEW_PACKET_SPEC.md`.
+- Created `docs/PRODUCTION_PILOT_BACKUP_RESTORE_REVIEW_PACKET.md`.
+- Mapped the draft backup/restore runbook to required provider, region, retention, restore-drill, encryption, legal-hold, tenant-isolation, RLS, data-governance, and drill evidence decisions.
+- Updated `PLAN.md`, `PROJECT_PLAN.md`, `app/README.md`, `docs/NEXT_PHASE_EXECUTION_PLAN.md`, `docs/PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md`, `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md`, `docs/PILOT_READINESS_EVIDENCE_PACK.md`, `docs/RISK_REGISTER.md`, and this handoff.
+
+### What Was NOT Done
+
+- No backup/restore approval artifact or restore-drill evidence was supplied or accepted.
+- No production backup provider, storage, secret manager, infrastructure, or restore environment was configured.
+- No backup snapshot was created, restored, exported, imported, or destroyed.
+- No runtime behavior, schema, dependency, provider, channel, launch-gate approval, or real-data change was made.
+- R-405 remains open.
+- R-406 remains blocked.
+
+### Verification Commands
+
+```text
+app: npm run release:verify -> passed; core tests 49/49, app tests 103/103, lint, production build, known R-405 only
+```
+
+### Next Correct Step For Codex
+
+Run `npm run release:verify` after any follow-up edits. Use `docs/PRODUCTION_PILOT_BACKUP_RESTORE_REVIEW_PACKET.md` when the user supplies operations/security/legal feedback, backup policy approval, or restore-drill evidence. Do not mark `backup_restore_test` approved unless all required backup/restore evidence items are covered by an acceptable artifact.

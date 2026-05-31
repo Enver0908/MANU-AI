@@ -66,5 +66,5 @@
 
 | ID | Risk | Severity | Mitigation | Status |
 | --- | --- | --- | --- | --- |
-| R-501 | Backups cannot be restored or retain data longer than approved. | high | Phase 11 added a draft backup/restore runbook with restore drill evidence requirements; final provider, retention, and legal-hold decisions remain external gates. | open |
+| R-501 | Backups cannot be restored or retain data longer than approved. | high | Phase 11 added a draft backup/restore runbook with restore drill evidence requirements; Phase 39 prepares the backup/restore review packet for provider, region, retention, encryption, legal-hold, restore-drill, tenant-isolation, RLS, and data-governance validation decisions. Final provider, retention, restore drill, and legal-hold approvals remain external gates. | open |
 | R-502 | Production secrets are exposed or cannot be rotated quickly. | high | Phase 11 added a draft secret rotation runbook with emergency revocation steps; production secret manager and rotation ownership remain external gates. | open |

@@ -6,7 +6,7 @@ MANU-AI is in pilot-foundation mode. The local SaaS/PWA prototype, Supabase-back
 
 Real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, and real client health data remain disconnected.
 
-The most recent execution layer is Phase 38 / Completion Roadmap Phase 9: incident and DSAR review packet. It prepares the `incident_response_runbook` launch gate for external operations, legal, privacy, and clinical review without approving the gate. R-405 remains open, and R-406 remains blocked because Phase 31 could not produce local Supabase RLS evidence without Docker Desktop's Linux engine.
+The most recent execution layer is Phase 39 / Completion Roadmap Phase 10: backup restore review packet. It prepares the `backup_restore_test` launch gate for external operations, security, and legal review without approving the gate or providing restore-drill evidence. R-405 remains open, and R-406 remains blocked because Phase 31 could not produce local Supabase RLS evidence without Docker Desktop's Linux engine.
 
 ## Phase 0: Baseline, Documentation, And Workspace Safety
 
@@ -950,6 +950,28 @@ Done criteria:
 - Operations/legal/privacy/clinical reviewers have a packet that separates internal draft runbook evidence from external operating procedure approval.
 - The packet warns against storing real client identifiers, raw client health messages, production incident payloads, credentials, private security contacts, or sensitive legal communications in repo docs.
 - The production-pilot incident/DSAR gate remains open until acceptable external approval evidence is supplied.
+
+## Phase 39: Completion Roadmap Phase 10 - Backup Restore Review Packet - Completed 2026-05-31
+
+Goal: prepare the `backup_restore_test` launch gate for external operations, security, and legal review.
+
+Status:
+
+- Added `docs/PHASE_39_COMPLETION_PHASE_10_BACKUP_RESTORE_REVIEW_PACKET_SPEC.md`.
+- Added `docs/PRODUCTION_PILOT_BACKUP_RESTORE_REVIEW_PACKET.md`.
+- Mapped the draft backup/restore runbook to required provider, region, retention, restore-drill, encryption, legal-hold, tenant-isolation, RLS, data-governance, and drill evidence decisions.
+- Confirmed no backup/restore approval artifact or restore-drill evidence was supplied in this phase.
+- Kept `backup_restore_test` open.
+- Kept R-405 open.
+- Kept R-406 blocked.
+- No runtime behavior, schema, dependency, provider, channel, backup provider, storage, secret manager, infrastructure, launch-gate approval, restore drill, or real-data change was made.
+- Re-verified documentation-only changes with `npm run release:verify`: core tests 49/49, app tests 103/103, lint, production build, and only documented R-405 findings.
+
+Done criteria:
+
+- Operations/security/legal reviewers have a packet that separates internal draft backup/restore evidence from external restore-drill approval.
+- The packet warns against storing backup credentials, real client identifiers, raw client health data, production snapshot contents, restore credentials, or sensitive legal-hold artifacts in repo docs.
+- The production-pilot backup/restore gate remains open until acceptable external approval evidence is supplied.
 
 ## Always-On Gates
 
