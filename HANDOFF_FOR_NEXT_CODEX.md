@@ -1491,3 +1491,34 @@ app: npm run release:verify -> passed; core tests 49/49, app tests 103/103, lint
 ### Next Correct Step For Codex
 
 Run `npm run release:verify` after any follow-up edits. Use `docs/PRODUCTION_PILOT_PROVIDER_VENDOR_REVIEW_PACKET.md` when the user supplies vendor/legal/security feedback or provider approval artifacts. Do not mark `provider_vendor_review` approved unless all required provider/vendor evidence items are covered by an acceptable artifact.
+
+## Completion Roadmap Phase 8 / Phase 37 Handoff Notes - 2026-05-31
+
+Completed by: Codex
+
+### What Was Done
+
+- Followed `codex.md`: wrote the spec before the change and kept the work to documentation/review readiness.
+- Created `docs/PHASE_37_COMPLETION_PHASE_8_CHANNEL_POLICY_REVIEW_PACKET_SPEC.md`.
+- Created `docs/PRODUCTION_PILOT_CHANNEL_POLICY_REVIEW_PACKET.md`.
+- Mapped current mock WhatsApp/Telegram controls to required WhatsApp healthcare-use, Telegram bot/privacy, opt-in/out, template, service-window, webhook, delivery-status, account-quality, and fallback decisions.
+- Updated `PLAN.md`, `PROJECT_PLAN.md`, `app/README.md`, `docs/NEXT_PHASE_EXECUTION_PLAN.md`, `docs/PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md`, `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md`, `docs/PILOT_READINESS_EVIDENCE_PACK.md`, `docs/RISK_REGISTER.md`, and this handoff.
+
+### What Was NOT Done
+
+- No channel policy approval artifact was supplied or accepted.
+- No real WhatsApp Business Cloud API or Telegram Bot API integration was added.
+- No webhook, channel credential, template registry, outbound send adapter, delivery-status adapter, or secret manager was added.
+- No runtime behavior, schema, dependency, provider, channel integration, launch-gate approval, or real-data change was made.
+- R-405 remains open.
+- R-406 remains blocked.
+
+### Verification Commands
+
+```text
+app: npm run release:verify -> passed; core tests 49/49, app tests 103/103, lint, production build, known R-405 only
+```
+
+### Next Correct Step For Codex
+
+Run `npm run release:verify` after any follow-up edits. Use `docs/PRODUCTION_PILOT_CHANNEL_POLICY_REVIEW_PACKET.md` when the user supplies WhatsApp/Telegram platform-policy feedback or approval artifacts. Do not mark `channel_policy_review` approved unless all required channel-policy evidence items are covered by an acceptable artifact.

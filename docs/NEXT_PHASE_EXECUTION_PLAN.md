@@ -6,7 +6,7 @@ MANU-AI is in pilot-foundation mode. The local SaaS/PWA prototype, Supabase-back
 
 Real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, and real client health data remain disconnected.
 
-The most recent execution layer is Phase 36 / Completion Roadmap Phase 7: provider vendor review packet. It prepares the `provider_vendor_review` launch gate for external vendor, legal, and security review without approving the gate. R-405 remains open, and R-406 remains blocked because Phase 31 could not produce local Supabase RLS evidence without Docker Desktop's Linux engine.
+The most recent execution layer is Phase 37 / Completion Roadmap Phase 8: channel policy review packet. It prepares the `channel_policy_review` launch gate for external WhatsApp and Telegram platform-policy review without approving the gate. R-405 remains open, and R-406 remains blocked because Phase 31 could not produce local Supabase RLS evidence without Docker Desktop's Linux engine.
 
 ## Phase 0: Baseline, Documentation, And Workspace Safety
 
@@ -906,6 +906,28 @@ Done criteria:
 - Vendor/legal/security reviewers have a packet that separates internal provider-boundary evidence from external vendor approval.
 - The packet warns against storing provider secrets, real client identifiers, raw client health messages, real provider prompts/completions, or non-repository contract text in repo docs.
 - The production-pilot provider/vendor gate remains open until acceptable external approval evidence is supplied.
+
+## Phase 37: Completion Roadmap Phase 8 - Channel Policy Review Packet - Completed 2026-05-31
+
+Goal: prepare the `channel_policy_review` launch gate for external WhatsApp and Telegram platform-policy review.
+
+Status:
+
+- Added `docs/PHASE_37_COMPLETION_PHASE_8_CHANNEL_POLICY_REVIEW_PACKET_SPEC.md`.
+- Added `docs/PRODUCTION_PILOT_CHANNEL_POLICY_REVIEW_PACKET.md`.
+- Mapped current mock WhatsApp/Telegram channel controls to required healthcare-use, opt-in/out, template, service-window, webhook, delivery-status, account-quality, and fallback decisions.
+- Confirmed no channel policy approval artifact was supplied in this phase.
+- Kept `channel_policy_review` open.
+- Kept R-405 open.
+- Kept R-406 blocked.
+- No runtime behavior, schema, dependency, provider, channel integration, webhook, credential, template registry, launch-gate approval, or real-data change was made.
+- Re-verified documentation-only changes with `npm run release:verify`: core tests 49/49, app tests 103/103, lint, production build, and only documented R-405 findings.
+
+Done criteria:
+
+- Platform/policy reviewers have a packet that separates internal mock-channel evidence from external WhatsApp/Telegram approval.
+- The packet warns against storing channel secrets, real phone numbers, Telegram user ids, raw client health messages, production webhook payloads, or non-repository platform review text in repo docs.
+- The production-pilot channel policy gate remains open until acceptable external approval evidence is supplied.
 
 ## Always-On Gates
 
