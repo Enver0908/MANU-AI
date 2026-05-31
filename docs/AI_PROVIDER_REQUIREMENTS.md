@@ -10,6 +10,8 @@ Phase 27 dietitian context updates are local/mock prompt context only. They can 
 
 Phase 28 adds provider-attempt audit semantics and a stricter provider boundary: no-call safety/control paths must record `providerAttempted=false`, `providerStatus=not_called`, `providerId=null`, and `model=null`; actual provider attempts must be traceable with provider id/status/model metadata. Provider input is limited to allowlisted PromptContext segments and source metadata.
 
+Phase 36 adds `PRODUCTION_PILOT_PROVIDER_VENDOR_REVIEW_PACKET.md` for external vendor, legal, and security review. The packet is not an approval artifact, and real provider egress remains blocked.
+
 ## Requirements Before Real Health-Data Use
 
 - Vendor terms must permit the intended healthcare/nutrition support use case.
@@ -28,4 +30,4 @@ Phase 28 adds provider-attempt audit semantics and a stricter provider boundary:
 
 ## Launch Gate
 
-Real Gemini or other LLM provider use with health data is blocked until vendor-risk, legal/privacy, and clinical safety reviews are complete. This includes any future attempt to connect the Phase 26 internal copilot to a real provider.
+Real Gemini or other LLM provider use with health data is blocked until vendor-risk, legal/privacy, and clinical safety reviews are complete. This includes any future attempt to connect the Phase 26 internal copilot or Phase 27 dietitian context updates to a real provider.

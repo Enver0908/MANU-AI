@@ -6,7 +6,7 @@ MANU-AI is in pilot-foundation mode. The local SaaS/PWA prototype, Supabase-back
 
 Real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, and real client health data remain disconnected.
 
-The most recent execution layer is Phase 35 / Completion Roadmap Phase 6: clinical taxonomy review packet. It prepares the `clinical_taxonomy_approval` launch gate for qualified dietitian review without approving the gate. R-405 remains open, and R-406 remains blocked because Phase 31 could not produce local Supabase RLS evidence without Docker Desktop's Linux engine.
+The most recent execution layer is Phase 36 / Completion Roadmap Phase 7: provider vendor review packet. It prepares the `provider_vendor_review` launch gate for external vendor, legal, and security review without approving the gate. R-405 remains open, and R-406 remains blocked because Phase 31 could not produce local Supabase RLS evidence without Docker Desktop's Linux engine.
 
 ## Phase 0: Baseline, Documentation, And Workspace Safety
 
@@ -884,6 +884,28 @@ Done criteria:
 - Qualified dietitian reviewer has a packet that separates internal test evidence from external clinical approval.
 - The packet warns against storing real client messages, identifiers, medical records, provider payloads, or secrets in repo docs.
 - The production-pilot clinical taxonomy gate remains open until acceptable qualified dietitian approval evidence is supplied.
+
+## Phase 36: Completion Roadmap Phase 7 - Provider Vendor Review Packet - Completed 2026-05-31
+
+Goal: prepare the `provider_vendor_review` launch gate for external vendor, legal, and security review.
+
+Status:
+
+- Added `docs/PHASE_36_COMPLETION_PHASE_7_PROVIDER_VENDOR_REVIEW_PACKET_SPEC.md`.
+- Added `docs/PRODUCTION_PILOT_PROVIDER_VENDOR_REVIEW_PACKET.md`.
+- Mapped current local/mock provider controls to required vendor, retention, logging, training-use, region, access-control, and incident-obligation decisions.
+- Confirmed no provider/vendor approval artifact was supplied in this phase.
+- Kept `provider_vendor_review` open.
+- Kept R-405 open.
+- Kept R-406 blocked.
+- No runtime behavior, schema, dependency, provider, channel, credential, launch-gate approval, logging-vendor, or real-data change was made.
+- Re-verified documentation-only changes with `npm run release:verify`: core tests 49/49, app tests 103/103, lint, production build, and only documented R-405 findings.
+
+Done criteria:
+
+- Vendor/legal/security reviewers have a packet that separates internal provider-boundary evidence from external vendor approval.
+- The packet warns against storing provider secrets, real client identifiers, raw client health messages, real provider prompts/completions, or non-repository contract text in repo docs.
+- The production-pilot provider/vendor gate remains open until acceptable external approval evidence is supplied.
 
 ## Always-On Gates
 

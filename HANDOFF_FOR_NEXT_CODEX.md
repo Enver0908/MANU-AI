@@ -1459,3 +1459,35 @@ app: npm run release:verify -> passed; core tests 49/49, app tests 103/103, lint
 ### Next Correct Step For Codex
 
 Use `docs/PRODUCTION_PILOT_CLINICAL_TAXONOMY_REVIEW_PACKET.md` when the user supplies qualified dietitian feedback or clinical approval artifacts. Do not mark `clinical_taxonomy_approval` approved unless all required clinical evidence items are covered by an acceptable artifact.
+
+## Completion Roadmap Phase 7 / Phase 36 Handoff Notes - 2026-05-31
+
+Completed by: Codex
+
+### What Was Done
+
+- Followed `codex.md`: wrote the spec before the change and kept the work to documentation/review readiness.
+- Created `docs/PHASE_36_COMPLETION_PHASE_7_PROVIDER_VENDOR_REVIEW_PACKET_SPEC.md`.
+- Created `docs/PRODUCTION_PILOT_PROVIDER_VENDOR_REVIEW_PACKET.md`.
+- Mapped current local/mock provider controls to required vendor, retention, logging, training-use, region, access-control, incident-obligation, internal copilot egress, and dietitian context update egress decisions.
+- Updated `PLAN.md`, `PROJECT_PLAN.md`, `app/README.md`, `docs/NEXT_PHASE_EXECUTION_PLAN.md`, `docs/PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md`, `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md`, `docs/PILOT_READINESS_EVIDENCE_PACK.md`, `docs/AI_PROVIDER_REQUIREMENTS.md`, `docs/RISK_REGISTER.md`, and this handoff.
+
+### What Was NOT Done
+
+- No provider/vendor approval artifact was supplied or accepted.
+- No real Gemini/external LLM provider was connected.
+- No provider SDK, credential, environment variable, prompt/completion logging vendor, or secret manager was added.
+- No internal copilot or dietitian context update provider egress was enabled.
+- No runtime behavior, schema, dependency, provider, channel, launch-gate approval, or real-data change was made.
+- R-405 remains open.
+- R-406 remains blocked.
+
+### Verification Commands
+
+```text
+app: npm run release:verify -> passed; core tests 49/49, app tests 103/103, lint, production build, known R-405 only
+```
+
+### Next Correct Step For Codex
+
+Run `npm run release:verify` after any follow-up edits. Use `docs/PRODUCTION_PILOT_PROVIDER_VENDOR_REVIEW_PACKET.md` when the user supplies vendor/legal/security feedback or provider approval artifacts. Do not mark `provider_vendor_review` approved unless all required provider/vendor evidence items are covered by an acceptable artifact.
