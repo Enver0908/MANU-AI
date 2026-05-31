@@ -164,6 +164,19 @@ Completion Roadmap Phase 11 / Phase 40 secret rotation review packet on 2026-05-
 - No secret manager, credential, provider, channel, infrastructure, secret-rotation approval, or real-data change was made.
 - Re-ran `npm run release:verify`: core tests 49/49, app tests 103/103, lint, production build, and dependency audit gate passed with only documented R-405 findings.
 
+Completion Roadmap Phase 12 / Phase 41 dependency audit clearance packet on 2026-05-31:
+
+- Added `PHASE_41_COMPLETION_PHASE_12_DEPENDENCY_AUDIT_CLEARANCE_PACKET_SPEC.md`.
+- Added `PRODUCTION_PILOT_DEPENDENCY_AUDIT_CLEARANCE_PACKET.md`.
+- Rechecked `next@latest`: `16.2.6` with nested `postcss@8.4.31`.
+- Rechecked `eslint-config-next@latest`: `16.2.6`.
+- Rechecked production audit: only known moderate R-405 `next`/`postcss` findings remain.
+- No dependency files were changed because stable Next still does not bundle `postcss >= 8.5.10`.
+- No formal R-405 risk acceptance was supplied.
+- The `dependency_audit_clearance` launch gate remains open.
+- R-405 remains open and R-406 remains blocked.
+- Re-ran `npm run release:verify`: core tests 49/49, app tests 103/103, lint, production build, and dependency audit gate passed with only documented R-405 findings.
+
 ## Launch Gate Matrix
 
 | Launch gate | Internal evidence available | Remaining blocker | Gate status |
@@ -175,7 +188,7 @@ Completion Roadmap Phase 11 / Phase 40 secret rotation review packet on 2026-05-
 | Incident response and deletion workflow runbook | `PRODUCTION_PILOT_INCIDENT_DSAR_REVIEW_PACKET.md`, `INCIDENT_RESPONSE_RUNBOOK.md`, `PHASE_14_DSAR_RETENTION_LEGAL_OPS_SPEC.md`, legal ops ledger, safe operational health snapshot | Breach escalation owner list, approved DSAR/deletion operating procedure | Open |
 | Backup expiry and restore test | `PRODUCTION_PILOT_BACKUP_RESTORE_REVIEW_PACKET.md`, `BACKUP_RESTORE_RUNBOOK.md` | Backup expiry policy, restore drill result, owner and cadence | Open |
 | Production secret rotation plan | `PRODUCTION_PILOT_SECRET_ROTATION_REVIEW_PACKET.md`, `SECRET_ROTATION_RUNBOOK.md` | Production secret inventory, rotation owner/cadence, secret manager decision | Open |
-| Production dependency audit clearance | `PHASE_19_RELEASE_VERIFICATION_DEPENDENCY_GATE_SPEC.md`, `npm run release:verify`, R-405 tracked in `RISK_REGISTER.md` | R-405 safe stable Next.js/PostCSS patch path or formal risk acceptance | Open |
+| Production dependency audit clearance | `PRODUCTION_PILOT_DEPENDENCY_AUDIT_CLEARANCE_PACKET.md`, `PHASE_19_RELEASE_VERIFICATION_DEPENDENCY_GATE_SPEC.md`, `npm run release:verify`, R-405 tracked in `RISK_REGISTER.md` | R-405 safe stable Next.js/PostCSS patch path or formal risk acceptance | Open |
 
 ## Technical Evidence Summary
 
@@ -253,5 +266,5 @@ Release verification:
 5. Complete provider/vendor retention and prompt logging review using `PRODUCTION_PILOT_PROVIDER_VENDOR_REVIEW_PACKET.md`.
 6. Complete WhatsApp/Telegram policy, opt-in/out, template, and service-window review using `PRODUCTION_PILOT_CHANNEL_POLICY_REVIEW_PACKET.md`.
 7. Finalize incident response and DSAR/deletion using `PRODUCTION_PILOT_INCIDENT_DSAR_REVIEW_PACKET.md`, finalize backup/restore using `PRODUCTION_PILOT_BACKUP_RESTORE_REVIEW_PACKET.md`, then finalize secret rotation using `PRODUCTION_PILOT_SECRET_ROTATION_REVIEW_PACKET.md`.
-8. Resolve or formally accept R-405 before production pilot.
+8. Resolve or formally accept R-405 using `PRODUCTION_PILOT_DEPENDENCY_AUDIT_CLEARANCE_PACKET.md` before production pilot.
 9. Re-run `npm run release:verify` after any approval-related code, dependency, prompt, or taxonomy change.

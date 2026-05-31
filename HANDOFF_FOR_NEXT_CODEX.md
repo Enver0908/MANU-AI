@@ -1615,3 +1615,39 @@ app: npm run release:verify -> passed; core tests 49/49, app tests 103/103, lint
 ### Next Correct Step For Codex
 
 Run `npm run release:verify` after any follow-up edits. Use `docs/PRODUCTION_PILOT_SECRET_ROTATION_REVIEW_PACKET.md` when the user supplies security/operations feedback, secret manager approval, secret inventory, or rotation evidence. Do not mark `secret_rotation_plan` approved unless all required secret-rotation evidence items are covered by an acceptable artifact.
+
+## Completion Roadmap Phase 12 / Phase 41 Handoff Notes - 2026-05-31
+
+Completed by: Codex
+
+### What Was Done
+
+- Followed `codex.md`: re-read the Phase 22 dependency remediation spec, wrote the Phase 41 spec before documentation updates, and avoided speculative dependency changes.
+- Created `docs/PHASE_41_COMPLETION_PHASE_12_DEPENDENCY_AUDIT_CLEARANCE_PACKET_SPEC.md`.
+- Created `docs/PRODUCTION_PILOT_DEPENDENCY_AUDIT_CLEARANCE_PACKET.md`.
+- Ran `npm view next@latest version dependencies --json`: `next@latest` is `16.2.6` with nested `postcss@8.4.31`.
+- Ran `npm view eslint-config-next@latest version --json`: `eslint-config-next@latest` is `16.2.6`.
+- Ran `npm audit --omit=dev --json`: only known moderate R-405 `next`/`postcss` findings remain.
+- Updated `PLAN.md`, `PROJECT_PLAN.md`, `app/README.md`, `docs/NEXT_PHASE_EXECUTION_PLAN.md`, `docs/PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md`, `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md`, `docs/PILOT_READINESS_EVIDENCE_PACK.md`, `docs/RISK_REGISTER.md`, and this handoff.
+
+### What Was NOT Done
+
+- No dependency files were changed.
+- No `npm audit fix --force`, canary, beta, release-candidate, semver-major downgrade, or npm override was applied.
+- No formal R-405 risk acceptance or dependency audit clearance artifact was supplied or accepted.
+- No runtime behavior, schema, dependency, provider, channel, launch-gate approval, or real-data change was made.
+- R-405 remains open.
+- R-406 remains blocked.
+
+### Verification Commands
+
+```text
+app: npm view next@latest version dependencies --json -> 16.2.6 with postcss 8.4.31
+app: npm view eslint-config-next@latest version --json -> 16.2.6
+app: npm audit --omit=dev --json -> known R-405 findings only
+app: npm run release:verify -> passed; core tests 49/49, app tests 103/103, lint, production build, known R-405 only
+```
+
+### Next Correct Step For Codex
+
+Run `npm run release:verify` after any follow-up edits. Use `docs/PRODUCTION_PILOT_DEPENDENCY_AUDIT_CLEARANCE_PACKET.md` when the user supplies engineering/security dependency clearance, safe stable upgrade evidence, or formal R-405 risk acceptance. Do not mark `dependency_audit_clearance` approved unless all required dependency evidence items are covered by an acceptable artifact.

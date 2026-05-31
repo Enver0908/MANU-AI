@@ -6,7 +6,7 @@ MANU-AI is in pilot-foundation mode. The local SaaS/PWA prototype, Supabase-back
 
 Real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, and real client health data remain disconnected.
 
-The most recent execution layer is Phase 40 / Completion Roadmap Phase 11: secret rotation review packet. It prepares the `secret_rotation_plan` launch gate for external security and operations review without approving the gate or providing secret-rotation evidence. R-405 remains open, and R-406 remains blocked because Phase 31 could not produce local Supabase RLS evidence without Docker Desktop's Linux engine.
+The most recent execution layer is Phase 41 / Completion Roadmap Phase 12: dependency audit clearance packet. It prepares the `dependency_audit_clearance` launch gate for engineering/security review without resolving or accepting R-405. R-405 remains open, and R-406 remains blocked because Phase 31 could not produce local Supabase RLS evidence without Docker Desktop's Linux engine.
 
 ## Phase 0: Baseline, Documentation, And Workspace Safety
 
@@ -994,6 +994,34 @@ Done criteria:
 - Security/operations reviewers have a packet that separates internal draft secret-rotation evidence from external signed secret-rotation approval.
 - The packet warns against storing secret values, token prefixes, connection strings, provider credentials, webhook secrets, database passwords, private deployment URLs, or secret-bearing logs in repo docs.
 - The production-pilot secret rotation gate remains open until acceptable external approval evidence is supplied.
+
+## Phase 41: Completion Roadmap Phase 12 - Dependency Audit Clearance Packet - Completed 2026-05-31
+
+Goal: prepare the `dependency_audit_clearance` launch gate for engineering/security review and re-check R-405 through the accepted stable Next.js/PostCSS procedure.
+
+Status:
+
+- Added `docs/PHASE_41_COMPLETION_PHASE_12_DEPENDENCY_AUDIT_CLEARANCE_PACKET_SPEC.md`.
+- Added `docs/PRODUCTION_PILOT_DEPENDENCY_AUDIT_CLEARANCE_PACKET.md`.
+- Re-read `docs/PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`.
+- Ran `npm view next@latest version dependencies --json`.
+- Ran `npm view eslint-config-next@latest version --json`.
+- Ran `npm audit --omit=dev --json`.
+- Confirmed stable `next@latest` remains `16.2.6` with nested `postcss@8.4.31`.
+- Confirmed `eslint-config-next@latest` remains `16.2.6`.
+- Confirmed production audit still reports only the known moderate R-405 `next`/`postcss` findings.
+- No dependency files were changed.
+- No dependency clearance or formal R-405 risk acceptance was supplied.
+- Kept `dependency_audit_clearance` open.
+- Kept R-405 open.
+- Kept R-406 blocked.
+- Re-verified documentation-only changes with `npm run release:verify`: core tests 49/49, app tests 103/103, lint, production build, and only documented R-405 findings.
+
+Done criteria:
+
+- Engineering/security reviewers have a packet that separates current dependency audit evidence from external remediation or formal risk acceptance.
+- The packet warns against rejected paths: `npm audit fix --force`, `next@9.3.3`, canary/beta/rc baseline, invalid overrides, and self-approval of R-405.
+- The production-pilot dependency audit gate remains open until acceptable technical remediation or external formal risk acceptance is supplied.
 
 ## Always-On Gates
 
