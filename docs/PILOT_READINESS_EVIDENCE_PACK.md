@@ -18,10 +18,10 @@ Run from `app`:
 npm run release:verify
 ```
 
-Latest result, re-verified on 2026-06-01 after Phase 45 client removal data lifecycle:
+Latest result, re-verified on 2026-06-01 after Phase 46 WhatsApp group quarantine:
 
 - Core package tests: 52/52 passed.
-- App tests: 114/114 passed.
+- App tests: 117/117 passed.
 - App lint: passed.
 - Production build: passed.
 - Production dependency audit gate: passed with only documented R-405 findings.
@@ -46,6 +46,16 @@ Additional Phase 45 local verification on 2026-06-01:
 - `npm run test` passed from `app`: 16 files, 114 tests.
 - `npm run release:verify` passed from `app`: core tests 52/52, app tests 114/114, lint, production build, known R-405 only.
 
+Additional Phase 46 local verification on 2026-06-01:
+
+- Added unsupported inbound quarantine for WhatsApp group messages.
+- Group messages are blocked before client lookup, risk classification, context assembly, provider calls, message storage, AI decisions, risk assessments, or handoffs.
+- Quarantine records store minimized provenance metadata only and do not store raw group text.
+- Duplicate group events remain idempotent.
+- `npm run lint` passed from `app`.
+- `npm run test` passed from `app`: 16 files, 117 tests.
+- `npm run release:verify` passed from `app`: core tests 52/52, app tests 117/117, lint, production build, known R-405 only.
+
 Additional Phase 24-26 local implementation on 2026-05-30:
 
 - Dietitian voice sample intake/profile generation infrastructure was added.
@@ -69,7 +79,7 @@ Separate optional evidence commands:
 - `npm run test:rls` when local Supabase is available.
 - `npm run test:visual` when browser visual smoke evidence is needed.
 
-Latest `npm run test:rls` in this workspace skipped 10 tests on 2026-06-01 after Phase 45. Local Supabase evidence remains unavailable in this environment, so the expanded RLS suite is present but local-database execution remains blocked environment evidence until rerun against local Supabase.
+Latest `npm run test:rls` in this workspace skipped 10 tests on 2026-06-01 after Phase 46. Local Supabase evidence remains unavailable in this environment, so the expanded RLS suite is present but local-database execution remains blocked environment evidence until rerun against local Supabase.
 
 Phase 29 evidence hardening on 2026-05-31:
 

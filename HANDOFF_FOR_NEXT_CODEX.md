@@ -1799,3 +1799,39 @@ app: npm run test:rls -> skipped; 1 file and 10 guarded tests because local Supa
 ### Next Correct Step For Codex
 
 Run `npm run release:verify` after any follow-up edits. Continue with the user's remaining three-problem plan in order: Phase 46 should address WhatsApp group-message quarantine. Keep production pilot at `NO-GO` until all launch gates, R-405, and R-406 are closed with acceptable evidence.
+
+## Phase 46 WhatsApp Group Quarantine Handoff Notes - 2026-06-01
+
+Completed by: Codex
+
+### What Was Done
+
+- Followed `codex.md`: wrote `docs/PHASE_46_WHATSAPP_GROUP_QUARANTINE_SPEC.md` before completing the implementation.
+- Added `InboundQuarantineRecord` and fallback state support for inbound quarantines.
+- Added Supabase migration `20260601020000_phase_46_inbound_quarantine.sql`.
+- Added simulator/API support for `sourceConversationType="group"` without requiring a client id.
+- Group messages are quarantined before client lookup, risk classification, context assembly, provider calls, message storage, AI decisions, risk assessments, or handoffs.
+- Quarantine records persist minimized metadata only and do not store raw group message text.
+- Added `inbound_group_message_quarantined` audit events and scoped Supabase visibility for quarantine audit records.
+- Duplicate group events remain idempotent through `processedSimulationKeys` / `processed_inbound_events`.
+
+### What Was NOT Done
+
+- No real WhatsApp group webhook, WhatsApp Business Cloud API, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, backup provider, or real client health data was connected.
+- No production-pilot launch gate was approved.
+- No WhatsApp/Telegram policy approval artifact was supplied.
+- R-405 remains open.
+- R-406 remains blocked pending passing local Supabase RLS evidence.
+
+### Verification Commands
+
+```text
+app: npm run lint -> passed
+app: npm run test -> passed; 16 files, 117 tests
+app: npm run release:verify -> passed; core tests 52/52, app tests 117/117, lint, production build, known R-405 only
+app: npm run test:rls -> skipped; 1 file and 10 guarded tests because local Supabase evidence is still unavailable
+```
+
+### Next Correct Step For Codex
+
+Run `npm run release:verify` after any follow-up edits. Keep production pilot at `NO-GO` until all launch gates, R-405, and R-406 are closed with acceptable evidence. Do not connect real WhatsApp/Telegram/provider traffic until the relevant external approvals are supplied.

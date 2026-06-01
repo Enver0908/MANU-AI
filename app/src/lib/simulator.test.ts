@@ -144,6 +144,60 @@ describe("local inbound simulator", () => {
     expect(next.aiDecisions.at(-1)?.providerAttempted).toBe(false);
   });
 
+  it("quarantines WhatsApp group messages without client context or AI processing", async () => {
+    const state = createInitialState();
+    const next = await runInboundSimulation(state, {
+      body: "Group message that may mention multiple people.",
+      idempotencyKey: "group-1",
+      channel: "whatsapp",
+      sourceConversationType: "group",
+      sourceConversationId: "wa-group-123",
+      sourceMessageId: "wa-message-123",
+      senderChannelUserId: "+905551119999",
+      now: "2026-05-22T10:15:30.000Z",
+    });
+
+    expect(next.lastSimulation).toMatchObject({
+      action: "no_ai",
+      risk: null,
+      model: null,
+      blockedReason: "whatsapp_group_unsupported",
+    });
+    expect(next.inboundQuarantines).toHaveLength(1);
+    expect(next.inboundQuarantines[0]).toMatchObject({
+      channel: "whatsapp",
+      sourceConversationType: "group",
+      sourceConversationId: "wa-group-123",
+      reason: "whatsapp_group_unsupported",
+    });
+    expect(JSON.stringify(next.inboundQuarantines[0])).not.toContain("multiple people");
+    expect(next.messages).toHaveLength(state.messages.length);
+    expect(next.riskAssessments).toHaveLength(state.riskAssessments.length);
+    expect(next.aiDecisions).toHaveLength(state.aiDecisions.length);
+    expect(next.handoffCases).toHaveLength(state.handoffCases.length);
+    expect(next.auditEvents.some((event) => event.eventType === "inbound_group_message_quarantined")).toBe(true);
+  });
+
+  it("keeps duplicate WhatsApp group quarantine events idempotent", async () => {
+    const first = await runInboundSimulation(createInitialState(), {
+      body: "Group message",
+      idempotencyKey: "group-duplicate",
+      channel: "whatsapp",
+      sourceConversationType: "group",
+      sourceConversationId: "wa-group-duplicate",
+    });
+    const second = await runInboundSimulation(first, {
+      body: "Group message",
+      idempotencyKey: "group-duplicate",
+      channel: "whatsapp",
+      sourceConversationType: "group",
+      sourceConversationId: "wa-group-duplicate",
+    });
+
+    expect(second.lastSimulation?.action).toBe("duplicate_ignored");
+    expect(second.inboundQuarantines).toHaveLength(1);
+  });
+
   it("records provider failures as safe no-send decisions", async () => {
     const state = createInitialState();
     const next = await runInboundSimulation(state, {

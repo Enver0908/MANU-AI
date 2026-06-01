@@ -43,6 +43,7 @@ import type {
   DietitianVoiceProfileRecord,
   DietitianVoiceSampleRecord,
   HandoffCaseRecord,
+  InboundQuarantineRecord,
   InternalCopilotMessageRecord,
   InternalCopilotSourceRef,
   InternalCopilotToolCallRecord,
@@ -300,6 +301,17 @@ type DbClientContextUpdate = {
   supersedes_update_id: string | null;
   created_at: string;
 };
+type DbInboundQuarantine = {
+  id: string;
+  tenant_id: string;
+  channel: InboundQuarantineRecord["channel"];
+  source_conversation_type: InboundQuarantineRecord["sourceConversationType"];
+  source_conversation_id: string | null;
+  source_message_id: string | null;
+  sender_channel_user_id: string | null;
+  reason: InboundQuarantineRecord["reason"];
+  created_at: string;
+};
 
 export function isSupabaseStoreConfigured() {
   if (process.env.MANU_DEV_FALLBACK_STORE === "true") {
@@ -334,6 +346,7 @@ export async function loadSupabaseState(context = demoTenantContext()) {
     formSchemasResult,
     formResponsesResult,
     clientContextUpdatesResult,
+    inboundQuarantinesResult,
     auditEventsResult,
     processedEventsResult,
   ] = await Promise.all([
@@ -357,6 +370,7 @@ export async function loadSupabaseState(context = demoTenantContext()) {
     supabase.from("client_form_schemas").select("*").eq("tenant_id", context.tenantId).order("version"),
     supabase.from("client_form_responses").select("*").eq("tenant_id", context.tenantId).order("updated_at"),
     supabase.from("client_context_updates").select("*").eq("tenant_id", context.tenantId).order("created_at"),
+    supabase.from("inbound_quarantines").select("*").eq("tenant_id", context.tenantId).order("created_at"),
     supabase.from("audit_events").select("*").eq("tenant_id", context.tenantId).order("created_at"),
     supabase.from("processed_inbound_events").select("*").eq("tenant_id", context.tenantId),
   ]);
@@ -381,6 +395,7 @@ export async function loadSupabaseState(context = demoTenantContext()) {
   throwIfError(formSchemasResult.error);
   throwIfError(formResponsesResult.error);
   throwIfError(clientContextUpdatesResult.error);
+  throwIfError(inboundQuarantinesResult.error);
   throwIfError(auditEventsResult.error);
   throwIfError(processedEventsResult.error);
 
@@ -413,6 +428,7 @@ export async function loadSupabaseState(context = demoTenantContext()) {
       riskAssessments: (riskAssessmentsResult.data || []).map(mapRiskAssessment),
       handoffCases: (handoffsResult.data || []).map(mapHandoff),
       notifications: (notificationsResult.data || []).map(mapNotification),
+      inboundQuarantines: (inboundQuarantinesResult.data || []).map(mapInboundQuarantine),
       dataRequests: (dataRequestsResult.data || []).map(mapDataRequest),
       internalCopilotMessages: (internalCopilotMessagesResult.data || []).map(mapInternalCopilotMessage),
       internalCopilotToolCalls: (internalCopilotToolCallsResult.data || []).map(mapInternalCopilotToolCall),
@@ -456,6 +472,11 @@ export function scopeSupabaseState(
   const visibleInternalCopilotToolCallIds = new Set(visibleInternalCopilotToolCalls.map((call) => call.id));
   const visibleClientContextUpdates = state.clientContextUpdates.filter((update) => visibleClientIds.has(update.clientId));
   const visibleClientContextUpdateIds = new Set(visibleClientContextUpdates.map((update) => update.id));
+  const visibleInboundQuarantines =
+    context.role === "owner" || context.role === "admin" || context.role === "dietitian"
+      ? state.inboundQuarantines
+      : [];
+  const visibleInboundQuarantineIds = new Set(visibleInboundQuarantines.map((quarantine) => quarantine.id));
 
   return {
     ...state,
@@ -475,6 +496,7 @@ export function scopeSupabaseState(
     notifications: state.notifications.filter(
       (notification) => notification.entityType === "handoff_case" && visibleHandoffIds.has(notification.entityId),
     ),
+    inboundQuarantines: visibleInboundQuarantines,
     dataRequests: state.dataRequests.filter((request) => visibleClientIds.has(request.clientId)),
     internalCopilotMessages: visibleInternalCopilotMessages,
     internalCopilotToolCalls: visibleInternalCopilotToolCalls,
@@ -487,7 +509,8 @@ export function scopeSupabaseState(
         visibleHandoffIds.has(event.entityId) ||
         visibleClientContextUpdateIds.has(event.entityId) ||
         visibleInternalCopilotMessageIds.has(event.entityId) ||
-        visibleInternalCopilotToolCallIds.has(event.entityId),
+        visibleInternalCopilotToolCallIds.has(event.entityId) ||
+        visibleInboundQuarantineIds.has(event.entityId),
     ),
   };
 }
@@ -820,7 +843,7 @@ export async function runSupabaseSimulation(request: SimulationRequest, context 
   const state = await loadSupabaseState(context);
   const simulationClient = state.clients.find((client) => client.id === request.clientId);
   const next = await simulateInState(state, request);
-  await persistStateDiff(requireSupabase(), state, next, simulationClient?.channel);
+  await persistStateDiff(requireSupabase(), state, next, request.channel || simulationClient?.channel);
   return loadSupabaseStateWithLastSimulation(next, context);
 }
 
@@ -1153,6 +1176,7 @@ async function deleteDemoData(supabase: SupabaseClient, tenantId = DEMO_TENANT_U
     "internal_copilot_tool_calls",
     "data_requests",
     "notifications",
+    "inbound_quarantines",
     "audit_events",
     "handoff_cases",
     "messages",
@@ -1305,6 +1329,7 @@ async function persistStateDiff(
   const beforeRiskAssessments = new Set(before.riskAssessments.map((item) => item.id));
   const beforeHandoffs = new Set(before.handoffCases.map((item) => item.id));
   const beforeNotifications = new Set(before.notifications.map((item) => item.id));
+  const beforeQuarantines = new Set(before.inboundQuarantines.map((item) => item.id));
   const beforeAudits = new Set(before.auditEvents.map((item) => item.id));
   const beforeProcessed = new Set(before.processedSimulationKeys);
 
@@ -1337,6 +1362,9 @@ async function persistStateDiff(
   }
   for (const notification of after.notifications.filter((item) => !beforeNotifications.has(item.id))) {
     await insertNotification(supabase, notification);
+  }
+  for (const quarantine of after.inboundQuarantines.filter((item) => !beforeQuarantines.has(item.id))) {
+    await insertInboundQuarantine(supabase, quarantine);
   }
   for (const audit of after.auditEvents.filter((item) => !beforeAudits.has(item.id))) {
     await insertAudit(supabase, audit);
@@ -1678,6 +1706,22 @@ async function insertNotification(supabase: SupabaseClient, notification: Notifi
       read: notification.read,
       acknowledged_at: notification.acknowledgedAt,
       created_at: notification.createdAt,
+    }),
+  );
+}
+
+async function insertInboundQuarantine(supabase: SupabaseClient, quarantine: InboundQuarantineRecord) {
+  await checked(
+    supabase.from("inbound_quarantines").insert({
+      id: quarantine.id,
+      tenant_id: quarantine.tenantId,
+      channel: quarantine.channel,
+      source_conversation_type: quarantine.sourceConversationType,
+      source_conversation_id: quarantine.sourceConversationId,
+      source_message_id: quarantine.sourceMessageId,
+      sender_channel_user_id: quarantine.senderChannelUserId,
+      reason: quarantine.reason,
+      created_at: quarantine.createdAt,
     }),
   );
 }
@@ -2077,6 +2121,20 @@ function mapNotification(notification: DbNotification): NotificationRecord {
     read: notification.read,
     acknowledgedAt: notification.acknowledged_at,
     createdAt: notification.created_at,
+  };
+}
+
+function mapInboundQuarantine(quarantine: DbInboundQuarantine): InboundQuarantineRecord {
+  return {
+    id: quarantine.id,
+    tenantId: quarantine.tenant_id,
+    channel: quarantine.channel,
+    sourceConversationType: quarantine.source_conversation_type,
+    sourceConversationId: quarantine.source_conversation_id,
+    sourceMessageId: quarantine.source_message_id,
+    senderChannelUserId: quarantine.sender_channel_user_id,
+    reason: quarantine.reason,
+    createdAt: quarantine.created_at,
   };
 }
 

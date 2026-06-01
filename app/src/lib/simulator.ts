@@ -84,6 +84,14 @@ export async function runInboundSimulation(
     };
   }
 
+  if (request.sourceConversationType === "group") {
+    return quarantineGroupInbound(state, request, idempotencyKey);
+  }
+
+  if (!request.clientId) {
+    throw new AppDomainError(400, "client_id_required");
+  }
+
   const client = findClient(state, request.clientId);
   if (client.lifecycleStatus === "removed_anonymized") {
     throw new AppDomainError(409, "client_removed_anonymized");
@@ -213,6 +221,60 @@ export async function runInboundSimulation(
     coreResult,
     now,
   });
+}
+
+function quarantineGroupInbound(
+  state: ManuAppState,
+  request: SimulationRequest,
+  idempotencyKey: string,
+): ManuAppState {
+  const now = request.now || new Date().toISOString();
+  const channel = request.channel || "whatsapp";
+  const quarantine = {
+    id: crypto.randomUUID(),
+    tenantId: state.tenant.id,
+    channel,
+    sourceConversationType: "group" as const,
+    sourceConversationId: request.sourceConversationId || null,
+    sourceMessageId: request.sourceMessageId || null,
+    senderChannelUserId: request.senderChannelUserId || null,
+    reason: "whatsapp_group_unsupported" as const,
+    createdAt: now,
+  };
+
+  return {
+    ...state,
+    inboundQuarantines: [...state.inboundQuarantines, quarantine],
+    processedSimulationKeys: [...state.processedSimulationKeys, idempotencyKey],
+    auditEvents: [
+      ...state.auditEvents,
+      {
+        id: crypto.randomUUID(),
+        tenantId: state.tenant.id,
+        eventType: "inbound_group_message_quarantined",
+        entityType: "inbound_quarantine",
+        entityId: quarantine.id,
+        metadata: {
+          channel,
+          sourceConversationType: quarantine.sourceConversationType,
+          sourceConversationIdPresent: Boolean(quarantine.sourceConversationId),
+          sourceMessageIdPresent: Boolean(quarantine.sourceMessageId),
+          senderChannelUserIdPresent: Boolean(quarantine.senderChannelUserId),
+          rawBodyStored: false,
+        },
+        createdAt: now,
+      },
+    ],
+    lastSimulation: {
+      action: "no_ai",
+      risk: null,
+      model: null,
+      blockedReason: "whatsapp_group_unsupported",
+      reasons: ["group_conversation_unsupported", "no_client_identity", "privacy_quarantine"],
+      draft: null,
+      decisionId: null,
+    },
+  };
 }
 
 export function addClientToState(state: ManuAppState, client: ClientRecord): ManuAppState {

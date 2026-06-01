@@ -6,7 +6,36 @@ MANU-AI is in pilot-foundation mode. The local SaaS/PWA prototype, Supabase-back
 
 Real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, and real client health data remain disconnected.
 
-The most recent execution layers after the 13-phase completion roadmap are Phase 43 multilingual language support, Phase 44 red-risk reactivation lock, and Phase 45 client removal data lifecycle. The production-pilot decision remains `NO-GO`: all eight launch gates remain open, R-405 remains open, and R-406 remains blocked because Phase 31 could not produce local Supabase RLS evidence without Docker Desktop's Linux engine.
+The most recent execution layers after the 13-phase completion roadmap are Phase 43 multilingual language support, Phase 44 red-risk reactivation lock, Phase 45 client removal data lifecycle, and Phase 46 WhatsApp group quarantine. The production-pilot decision remains `NO-GO`: all eight launch gates remain open, R-405 remains open, and R-406 remains blocked because Phase 31 could not produce local Supabase RLS evidence without Docker Desktop's Linux engine.
+
+## Phase 46: WhatsApp Group Quarantine - Completed 2026-06-01
+
+Goal: ensure WhatsApp group messages are treated as unsupported high-risk inbound context and never reach client-specific AI processing.
+
+Work:
+
+- Added `InboundQuarantineRecord`.
+- Added Supabase `inbound_quarantines` table.
+- Added simulator support for `sourceConversationType="group"`.
+- Group messages are quarantined before client lookup, risk classification, context assembly, provider call, message storage, AI decision, risk assessment, or handoff creation.
+- Group quarantine records store only minimized provenance metadata and never raw group message text.
+- Added `inbound_group_message_quarantined` audit event.
+- Duplicate group events remain idempotent.
+
+Done criteria:
+
+- Group messages cannot be promptable.
+- Group messages cannot cause automatic replies or drafts.
+- Group messages cannot be accidentally attached to one client identity.
+- No real provider, channel, launch-gate approval, or real health-data connection is introduced.
+
+Status:
+
+- Completed locally on 2026-06-01.
+- `npm run lint` passed from `app`.
+- `npm run test` passed from `app`: 16 files, 117 tests.
+- `npm run release:verify` passed from `app`: core tests 52/52, app tests 117/117, lint, production build, known R-405 only.
+- R-405 remains open and R-406 remains blocked.
 
 ## Phase 45: Client Removal Data Lifecycle - Completed 2026-06-01
 

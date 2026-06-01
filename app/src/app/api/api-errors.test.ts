@@ -32,6 +32,27 @@ describe("API controlled domain errors", () => {
     expect(payload.error).toBe("client_not_found");
   });
 
+  it("quarantines group simulator messages without a client id in fallback mode", async () => {
+    const response = await postSimulator(
+      new Request("http://localhost/api/simulator", {
+        method: "POST",
+        body: JSON.stringify({
+          body: "Group message",
+          idempotencyKey: "api-group-quarantine",
+          channel: "whatsapp",
+          sourceConversationType: "group",
+          sourceConversationId: "wa-group-api",
+        }),
+      }) as never,
+    );
+    const payload = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(payload.lastSimulation.blockedReason).toBe("whatsapp_group_unsupported");
+    expect(payload.inboundQuarantines).toHaveLength(1);
+    expect(payload.messages.every((message: { body: string }) => message.body !== "Group message")).toBe(true);
+  });
+
   it("returns a controlled error for non-draft draft actions", async () => {
     const response = await postDraftAction(
       new Request("http://localhost/api/messages/drafts/message-seed-1", {

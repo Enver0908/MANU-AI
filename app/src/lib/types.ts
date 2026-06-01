@@ -305,6 +305,18 @@ export type NotificationRecord = {
   createdAt: string;
 };
 
+export type InboundQuarantineRecord = {
+  id: string;
+  tenantId: string;
+  channel: Channel;
+  sourceConversationType: "group";
+  sourceConversationId: string | null;
+  sourceMessageId: string | null;
+  senderChannelUserId: string | null;
+  reason: "whatsapp_group_unsupported";
+  createdAt: string;
+};
+
 export type DataRequestRecord = {
   id: string;
   tenantId: string;
@@ -371,6 +383,7 @@ export type ManuAppState = {
   handoffCases: HandoffCaseRecord[];
   auditEvents: AuditEventRecord[];
   notifications: NotificationRecord[];
+  inboundQuarantines: InboundQuarantineRecord[];
   dataRequests: DataRequestRecord[];
   internalCopilotMessages: InternalCopilotMessageRecord[];
   internalCopilotToolCalls: InternalCopilotToolCallRecord[];
@@ -379,9 +392,14 @@ export type ManuAppState = {
 };
 
 export type SimulationRequest = {
-  clientId: string;
+  clientId?: string;
   body: string;
   idempotencyKey: string;
+  channel?: Channel;
+  sourceConversationType?: "direct" | "group";
+  sourceConversationId?: string;
+  sourceMessageId?: string;
+  senderChannelUserId?: string;
   now?: string;
   mockProviderFailure?: "provider_timeout" | "provider_error" | "provider_policy_violation";
   mockProviderOutput?: "missing_historical_context";

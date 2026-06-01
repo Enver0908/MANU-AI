@@ -8,7 +8,7 @@ import type { SimulationRequest } from "@/lib/types";
 export async function POST(request: NextRequest) {
   const body = (await request.json()) as SimulationRequest;
 
-  if (!body.clientId || !body.body?.trim()) {
+  if (!body.body?.trim() || (body.sourceConversationType !== "group" && !body.clientId)) {
     return NextResponse.json({ error: "clientId_and_body_required" }, { status: 400 });
   }
 
