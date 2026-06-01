@@ -30,6 +30,8 @@ const TEST_MESSAGE_ID = "00000000-0000-4000-8000-000000000908";
 const OTHER_MESSAGE_ID = "00000000-0000-4000-8000-000000000909";
 const TEST_NOTIFICATION_ID = "00000000-0000-4000-8000-000000000910";
 const OTHER_NOTIFICATION_ID = "00000000-0000-4000-8000-000000000911";
+const TEST_INBOUND_QUARANTINE_ID = "00000000-0000-4000-8000-000000000933";
+const OTHER_INBOUND_QUARANTINE_ID = "00000000-0000-4000-8000-000000000934";
 const TEST_ASSIGNMENT_ID = "00000000-0000-4000-8000-000000000912";
 const OTHER_ASSIGNMENT_ID = "00000000-0000-4000-8000-000000000913";
 const TEST_DATA_REQUEST_ID = "00000000-0000-4000-8000-000000000914";
@@ -128,6 +130,10 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     expect(notifications.error).toBeNull();
     expect(notifications.data).toEqual([{ id: TEST_NOTIFICATION_ID }]);
 
+    const inboundQuarantines = await member.from("inbound_quarantines").select("id");
+    expect(inboundQuarantines.error).toBeNull();
+    expect(inboundQuarantines.data).toEqual([{ id: TEST_INBOUND_QUARANTINE_ID }]);
+
     const assignments = await member.from("client_assignments").select("id").eq("id", TEST_ASSIGNMENT_ID);
     expect(assignments.error).toBeNull();
     expect(assignments.data).toEqual([{ id: TEST_ASSIGNMENT_ID }]);
@@ -167,6 +173,10 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     const notifications = await outsider.from("notifications").select("id");
     expect(notifications.error).toBeNull();
     expect(notifications.data).toHaveLength(0);
+
+    const inboundQuarantines = await outsider.from("inbound_quarantines").select("id");
+    expect(inboundQuarantines.error).toBeNull();
+    expect(inboundQuarantines.data).toHaveLength(0);
 
     const assignments = await outsider.from("client_assignments").select("id");
     expect(assignments.error).toBeNull();
@@ -222,6 +232,15 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     expect(notificationUpdate.error).toBeNull();
     expect(notificationUpdate.count ?? 0).toBe(0);
 
+    const quarantineInsert = await member.from("inbound_quarantines").insert({
+      tenant_id: OTHER_TENANT_ID,
+      channel: "whatsapp",
+      source_conversation_type: "group",
+      reason: "whatsapp_group_unsupported",
+    });
+
+    expect(quarantineInsert.error?.message).toMatch(/row-level security|violates foreign key/i);
+
     const assignmentInsert = await member.from("client_assignments").insert({
       tenant_id: OTHER_TENANT_ID,
       client_id: OTHER_CLIENT_ID,
@@ -275,6 +294,10 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     const messages = await assistant.from("messages").select("id").eq("id", TEST_MESSAGE_ID);
     expect(messages.error).toBeNull();
     expect(messages.data).toEqual([{ id: TEST_MESSAGE_ID }]);
+
+    const inboundQuarantines = await assistant.from("inbound_quarantines").select("id");
+    expect(inboundQuarantines.error).toBeNull();
+    expect(inboundQuarantines.data).toHaveLength(0);
 
     const update = await assistant
       .from("clients")
@@ -344,6 +367,7 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
       ["ai_decisions", "id"],
       ["handoff_cases", "id"],
       ["risk_assessments", "id"],
+      ["inbound_quarantines", "id"],
       ["internal_copilot_messages", "id"],
       ["internal_copilot_tool_calls", "id"],
     ] as const) {
@@ -449,6 +473,58 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     expect(riskAssessment.error).toBeNull();
     expect(riskAssessment.data?.level).toBe("yellow");
     expect(riskAssessment.data?.classifier_version).toBe("dietetic-risk-v0.3.0");
+    await resetSupabaseState();
+  }, 30000);
+
+  it("stores Supabase-backed group quarantines without client records or AI artifacts", async () => {
+    await resetSupabaseState();
+    const state = await loadSupabaseState();
+    const idempotencyKey = `group-${Date.now()}`;
+    const beforeMessages = state.messages.length;
+    const beforeRiskAssessments = state.riskAssessments.length;
+    const beforeDecisions = state.aiDecisions.length;
+    const beforeHandoffs = state.handoffCases.length;
+
+    const next = await runSupabaseSimulation({
+      body: "Group message must not be stored",
+      idempotencyKey,
+      channel: "whatsapp",
+      sourceConversationType: "group",
+      sourceConversationId: "rls-group",
+      sourceMessageId: "rls-group-message",
+      senderChannelUserId: "+905551119999",
+    });
+
+    expect(next.lastSimulation?.blockedReason).toBe("whatsapp_group_unsupported");
+    expect(next.inboundQuarantines).toHaveLength(1);
+    expect(JSON.stringify(next.inboundQuarantines[0])).not.toContain("Group message must not be stored");
+    expect(next.messages).toHaveLength(beforeMessages);
+    expect(next.riskAssessments).toHaveLength(beforeRiskAssessments);
+    expect(next.aiDecisions).toHaveLength(beforeDecisions);
+    expect(next.handoffCases).toHaveLength(beforeHandoffs);
+
+    const quarantine = await admin
+      .from("inbound_quarantines")
+      .select("channel, source_conversation_type, reason")
+      .eq("tenant_id", state.tenant.id)
+      .eq("source_conversation_id", "rls-group")
+      .single();
+
+    expect(quarantine.error).toBeNull();
+    expect(quarantine.data).toEqual({
+      channel: "whatsapp",
+      source_conversation_type: "group",
+      reason: "whatsapp_group_unsupported",
+    });
+
+    const event = await admin
+      .from("processed_inbound_events")
+      .select("channel")
+      .eq("provider_event_id", idempotencyKey)
+      .single();
+
+    expect(event.error).toBeNull();
+    expect(event.data?.channel).toBe("whatsapp");
     await resetSupabaseState();
   }, 30000);
 
@@ -872,6 +948,30 @@ async function seedTenants(
     ]),
   );
   await checked(
+    admin.from("inbound_quarantines").insert([
+      {
+        id: TEST_INBOUND_QUARANTINE_ID,
+        tenant_id: TEST_TENANT_ID,
+        channel: "whatsapp",
+        source_conversation_type: "group",
+        source_conversation_id: "visible-rls-group",
+        source_message_id: "visible-rls-message",
+        sender_channel_user_id: "visible-rls-sender",
+        reason: "whatsapp_group_unsupported",
+      },
+      {
+        id: OTHER_INBOUND_QUARANTINE_ID,
+        tenant_id: OTHER_TENANT_ID,
+        channel: "whatsapp",
+        source_conversation_type: "group",
+        source_conversation_id: "hidden-rls-group",
+        source_message_id: "hidden-rls-message",
+        sender_channel_user_id: "hidden-rls-sender",
+        reason: "whatsapp_group_unsupported",
+      },
+    ]),
+  );
+  await checked(
     admin.from("internal_copilot_tool_calls").insert([
       {
         id: TEST_INTERNAL_COPILOT_TOOL_CALL_ID,
@@ -919,6 +1019,7 @@ async function cleanup(admin: SupabaseClient) {
   await admin.from("processed_inbound_events").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("internal_copilot_messages").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("internal_copilot_tool_calls").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("inbound_quarantines").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("notifications").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("data_requests").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("client_ai_status_events").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);

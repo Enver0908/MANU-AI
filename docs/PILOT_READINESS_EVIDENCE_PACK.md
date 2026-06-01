@@ -18,14 +18,37 @@ Run from `app`:
 npm run release:verify
 ```
 
-Latest result, re-verified on 2026-06-01 after Phase 46 WhatsApp group quarantine:
+Latest result, re-verified on 2026-06-01 after Phase 47/48 documentation and RLS coverage updates:
 
 - Core package tests: 52/52 passed.
 - App tests: 117/117 passed.
 - App lint: passed.
 - Production build: passed.
 - Production dependency audit gate: passed with only documented R-405 findings.
-- R-405 remains open: Next.js 16.2.6 nested PostCSS advisory, no safe stable patch path applied.
+- R-405 remains open: Next.js 16.2.7 still bundles nested PostCSS 8.4.31, so no safe stable patch path is available.
+
+Additional Phase 47/48 release verification on 2026-06-01:
+
+- `npm run release:verify` passed from `app`: core tests 52/52, app tests 117/117, lint, production build, known R-405 only.
+- Installed app dependency remains `next@16.2.6`; `next@latest` recheck is metadata evidence only and did not change dependency files.
+
+Additional Phase 48 R-405 recheck on 2026-06-01:
+
+- `next@latest` is now `16.2.7`.
+- Stable Next.js still bundles nested `postcss@8.4.31`.
+- `eslint-config-next@latest` is `16.2.7`.
+- `npm audit --omit=dev --json` still reports only the known moderate `next` / `postcss` findings.
+- No dependency files were changed.
+- R-405 remains open.
+
+Additional Phase 47 RLS quarantine evidence coverage on 2026-06-01:
+
+- Added explicit `inbound_quarantines` coverage to the expanded Supabase RLS integration suite.
+- Added role visibility, cross-tenant write blocking, and Supabase-backed group quarantine persistence checks.
+- `npm run lint` passed from `app`.
+- `npm run test` passed from `app`: 16 files, 117 tests.
+- `npm run test:rls` skipped 1 file and 11 guarded tests because Docker Desktop's Linux engine is unavailable.
+- No passing local RLS evidence was produced; R-406 remains blocked.
 
 Additional Phase 44 local verification on 2026-06-01:
 
@@ -79,7 +102,7 @@ Separate optional evidence commands:
 - `npm run test:rls` when local Supabase is available.
 - `npm run test:visual` when browser visual smoke evidence is needed.
 
-Latest `npm run test:rls` in this workspace skipped 10 tests on 2026-06-01 after Phase 46. Local Supabase evidence remains unavailable in this environment, so the expanded RLS suite is present but local-database execution remains blocked environment evidence until rerun against local Supabase.
+Latest `npm run test:rls` in this workspace skipped 11 tests on 2026-06-01 after Phase 47. Local Supabase evidence remains unavailable in this environment, so the expanded RLS suite is present but local-database execution remains blocked environment evidence until rerun against local Supabase.
 
 Phase 29 evidence hardening on 2026-05-31:
 

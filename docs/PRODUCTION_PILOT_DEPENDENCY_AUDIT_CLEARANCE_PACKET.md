@@ -27,6 +27,7 @@ The default answer remains blocked.
 | `PHASE_19_RELEASE_VERIFICATION_DEPENDENCY_GATE_SPEC.md` | Documents repeatable release verification and production dependency audit gate behavior. |
 | `PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md` | Defines accepted and rejected R-405 remediation paths. |
 | `PHASE_32_COMPLETION_PHASE_3_R405_RECHECK_SPEC.md` | Records the previous stable metadata recheck. |
+| `PHASE_48_R405_STABLE_PATCH_RECHECK_SPEC.md` | Records the latest stable metadata recheck after Phase 46/47. |
 | `RISK_REGISTER.md` | Tracks R-405 as an open production launch blocker. |
 | `npm run release:verify` | Current local release gate; passes while reporting only known R-405 findings. |
 
@@ -34,7 +35,7 @@ Internal evidence supports review, but it is not dependency audit clearance.
 
 ## Current R-405 Evidence
 
-Commands run from `app` on 2026-05-31:
+Commands run from `app` on 2026-06-01:
 
 ```powershell
 npm view next@latest version dependencies --json
@@ -44,9 +45,9 @@ npm audit --omit=dev --json
 
 Results:
 
-- `next@latest` is `16.2.6`.
+- `next@latest` is `16.2.7`.
 - Stable Next.js still depends on nested `postcss@8.4.31`.
-- `eslint-config-next@latest` is `16.2.6`.
+- `eslint-config-next@latest` is `16.2.7`.
 - `npm audit --omit=dev --json` reports two known moderate production findings:
   - `next`
   - `postcss:GHSA-qx2v-qp2m-jg93`
@@ -91,4 +92,3 @@ Record only sanitized artifact references in `PRODUCTION_PILOT_EXTERNAL_APPROVAL
 ## Non-Approval Statement
 
 This packet does not approve production pilot launch, R-405 risk acceptance, dependency audit clearance, real health-data processing, real provider calls, real channel messaging, external monitoring, backup provider setup, or secret manager use.
-

@@ -4,7 +4,7 @@ Date: 2026-05-31
 
 ## Status
 
-This is the final summary for the 13-phase completion roadmap, updated after Phase 43 multilingual language support, Phase 44 red-risk reactivation lock, Phase 45 client removal data lifecycle, and Phase 46 WhatsApp group quarantine.
+This is the final summary for the 13-phase completion roadmap, updated after Phase 43 multilingual language support, Phase 44 red-risk reactivation lock, Phase 45 client removal data lifecycle, Phase 46 WhatsApp group quarantine, Phase 47 RLS quarantine evidence coverage, and Phase 48 R-405 stable patch recheck.
 
 Production pilot is not approved.
 
@@ -24,6 +24,8 @@ Reason:
 - Phase 44 added local red-risk reactivation locking but did not approve any launch gate.
 - Phase 45 added local soft-delete/anonymization client removal but did not approve any launch gate.
 - Phase 46 added local WhatsApp group-message quarantine but did not approve any launch gate.
+- Phase 47 added RLS coverage for inbound quarantines but did not produce passing local Supabase evidence.
+- Phase 48 rechecked R-405 and found no safe stable Next.js/PostCSS patch path.
 
 ## Completion Roadmap Result
 
@@ -60,7 +62,7 @@ Reason:
 
 R-405:
 
-- Stable `next@latest` remains `16.2.6`.
+- Stable `next@latest` is `16.2.7`.
 - Stable Next.js still bundles nested `postcss@8.4.31`.
 - Production audit still reports the known moderate `next` / `postcss` findings.
 - No dependency files should change until stable Next bundles `postcss >= 8.5.10`, or formal external risk acceptance is supplied.
@@ -68,7 +70,7 @@ R-405:
 R-406:
 
 - Expanded RLS tests exist.
-- Latest local RLS attempt on 2026-06-01 after Phase 46 skipped 10 guarded tests because local Supabase evidence was unavailable in this environment.
+- Latest local RLS attempt on 2026-06-01 after Phase 47 skipped 11 guarded tests because local Supabase evidence was unavailable in this environment.
 - Passing local Supabase RLS evidence is still required before production pilot evidence can be considered complete.
 
 External approvals:
@@ -84,9 +86,9 @@ External approvals:
 
 ## Verification
 
-Latest local release verification after Phase 46:
+Latest local release verification after Phase 47/48 documentation and RLS coverage updates:
 
-- `npm run release:verify` passed after Phase 46.
+- `npm run release:verify` passed after Phase 47/48.
 - Core tests: 52/52 passed.
 - App tests: 117/117 passed.
 - App lint: passed.
@@ -112,9 +114,22 @@ Phase 46 verification on 2026-06-01:
 - `npm run release:verify` passed from `app`: core tests 52/52, app tests 117/117, lint, production build, known R-405 only.
 - `npm run test:rls` skipped 1 file and 10 guarded tests because local Supabase evidence is still unavailable.
 
+Phase 47 verification on 2026-06-01:
+
+- `npm run lint` passed from `app`.
+- `npm run test` passed from `app`: 16 files, 117 tests.
+- `npm run test:rls` skipped 1 file and 11 guarded tests because Docker Desktop's Linux engine is unavailable.
+
+Phase 48 verification on 2026-06-01:
+
+- `next@latest` is `16.2.7` with nested `postcss@8.4.31`.
+- `eslint-config-next@latest` is `16.2.7`.
+- `npm audit --omit=dev --json` still reports only known R-405 findings.
+- No dependency files were changed.
+
 ## Next Required Actions
 
-1. Start Docker Desktop with Linux engine available, start local Supabase, and rerun `npm run test:rls`.
+1. Start Docker Desktop with Linux engine available, start local Supabase, and rerun the expanded 11-test `npm run test:rls` suite.
 2. Resolve R-405 through a safe stable Next.js/PostCSS upgrade or obtain formal external risk acceptance.
 3. Collect sanitized external approval references in `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md`.
 4. Re-run `npm run release:verify` after any approval-related change.

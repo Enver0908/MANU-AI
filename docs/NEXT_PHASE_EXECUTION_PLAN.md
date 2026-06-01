@@ -6,7 +6,39 @@ MANU-AI is in pilot-foundation mode. The local SaaS/PWA prototype, Supabase-back
 
 Real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, and real client health data remain disconnected.
 
-The most recent execution layers after the 13-phase completion roadmap are Phase 43 multilingual language support, Phase 44 red-risk reactivation lock, Phase 45 client removal data lifecycle, and Phase 46 WhatsApp group quarantine. The production-pilot decision remains `NO-GO`: all eight launch gates remain open, R-405 remains open, and R-406 remains blocked because Phase 31 could not produce local Supabase RLS evidence without Docker Desktop's Linux engine.
+The most recent execution layers after the 13-phase completion roadmap are Phase 43 multilingual language support, Phase 44 red-risk reactivation lock, Phase 45 client removal data lifecycle, Phase 46 WhatsApp group quarantine, Phase 47 RLS quarantine evidence coverage, and Phase 48 R-405 stable patch recheck. The production-pilot decision remains `NO-GO`: all eight launch gates remain open, R-405 remains open, and R-406 remains blocked because local Supabase RLS evidence still cannot run without Docker Desktop's Linux engine.
+
+## Phase 48: R-405 Stable Patch Recheck - Completed 2026-06-01
+
+Goal: re-check whether a safe stable Next.js/PostCSS remediation path exists before any dependency edit.
+
+Status:
+
+- Added `docs/PHASE_48_R405_STABLE_PATCH_RECHECK_SPEC.md`.
+- Ran `npm view next@latest version dependencies --json`.
+- Ran `npm view eslint-config-next@latest version --json`.
+- Ran `npm audit --omit=dev --json`.
+- Confirmed `next@latest` is `16.2.7`.
+- Confirmed stable Next still bundles nested `postcss@8.4.31`.
+- Confirmed `eslint-config-next@latest` is `16.2.7`.
+- Confirmed production audit still reports only the known moderate R-405 `next`/`postcss` findings.
+- No dependency files were changed.
+- R-405 remains open.
+
+## Phase 47: RLS Quarantine Evidence Coverage - Completed 2026-06-01; R-406 Still Blocked
+
+Goal: include the Phase 46 `inbound_quarantines` table in the expanded RLS evidence suite.
+
+Status:
+
+- Added `docs/PHASE_47_RLS_QUARANTINE_EVIDENCE_SPEC.md`.
+- Added `inbound_quarantines` fixtures to the Supabase RLS integration test.
+- Added tenant-member, outsider, assistant, auditor, and cross-tenant write checks for quarantine rows.
+- Added Supabase-backed group quarantine persistence coverage.
+- `npm run lint` passed from `app`.
+- `npm run test` passed from `app`: 16 files, 117 tests.
+- `npm run test:rls` skipped 1 file and 11 guarded tests because Docker Desktop's Linux engine is unavailable.
+- R-406 remains blocked until the expanded 11-test suite passes against local Supabase.
 
 ## Phase 46: WhatsApp Group Quarantine - Completed 2026-06-01
 

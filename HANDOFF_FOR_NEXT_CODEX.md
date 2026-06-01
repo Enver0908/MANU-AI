@@ -1835,3 +1835,57 @@ app: npm run test:rls -> skipped; 1 file and 10 guarded tests because local Supa
 ### Next Correct Step For Codex
 
 Run `npm run release:verify` after any follow-up edits. Keep production pilot at `NO-GO` until all launch gates, R-405, and R-406 are closed with acceptable evidence. Do not connect real WhatsApp/Telegram/provider traffic until the relevant external approvals are supplied.
+
+## Phase 47 RLS Quarantine Evidence Coverage Handoff Notes - 2026-06-01
+
+Completed by: Codex
+
+### What Was Done
+
+- Followed `codex.md`: wrote `docs/PHASE_47_RLS_QUARANTINE_EVIDENCE_SPEC.md` before implementation.
+- Added explicit `inbound_quarantines` coverage to `app/src/lib/supabase-rls.integration.test.ts`.
+- Added RLS fixtures for same-tenant and other-tenant quarantine rows.
+- Added owner/member read, outsider block, assistant block, auditor block, and cross-tenant write assertions for quarantine rows.
+- Added Supabase-backed group quarantine persistence coverage: group simulation writes quarantine + processed idempotency event and does not create messages, risk assessments, AI decisions, or handoffs.
+
+### What Was NOT Done
+
+- R-406 was not mitigated because the suite skipped without local Supabase.
+- No real WhatsApp, Telegram, provider, monitoring, secret manager, backup provider, or real client health data was connected.
+
+### Verification Commands
+
+```text
+app: npm run lint -> passed
+app: npm run test -> passed; 16 files, 117 tests
+app: npm run test:rls -> skipped; 1 file and 11 guarded tests because Docker Desktop's Linux engine is unavailable
+```
+
+## Phase 48 R-405 Stable Patch Recheck Handoff Notes - 2026-06-01
+
+Completed by: Codex
+
+### What Was Done
+
+- Followed `docs/PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`.
+- Added `docs/PHASE_48_R405_STABLE_PATCH_RECHECK_SPEC.md`.
+- Rechecked `next@latest`: `16.2.7` with nested `postcss@8.4.31`.
+- Rechecked `eslint-config-next@latest`: `16.2.7`.
+- Rechecked production audit: only known moderate `next`/`postcss` findings remain.
+- Did not edit dependency files because stable Next still does not bundle `postcss >= 8.5.10`.
+
+### What Was NOT Done
+
+- R-405 was not resolved or accepted.
+- No dependency files were changed.
+- No `npm audit fix --force`, canary/beta/rc, invalid override, major downgrade, provider, channel, or real-data change was made.
+
+### Next Correct Step For Codex
+
+Run `npm run release:verify` after any follow-up edits. Keep R-406 blocked until Docker/local Supabase is available and the expanded 11-test RLS suite passes locally. Keep R-405 open until a safe stable Next.js/PostCSS patch path exists or formal external risk acceptance is supplied.
+
+### Final Verification After Phase 47/48 Updates
+
+```text
+app: npm run release:verify -> passed; core tests 52/52, app tests 117/117, lint, production build, known R-405 only
+```

@@ -15,12 +15,12 @@ Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized reference
 ## Current Baseline
 
 - Git baseline: Phase 27-29 checkpoint exists at `c75564e Add Phase 27-29 pilot readiness checkpoint` on branch `codex/phase-29-baseline-checkpoint`; Completion Roadmap Phase 1 records this as the current implementation baseline.
-- Latest local release verification: `npm run release:verify` passed on 2026-06-01 after Phase 46 WhatsApp group quarantine.
+- Latest local release verification: `npm run release:verify` passed on 2026-06-01 after Phase 47/48 documentation and RLS coverage updates.
 - Verification result: core tests 52/52, app tests 117/117, lint passed, production build passed.
 - Dependency audit result: only known R-405 findings, `next:postcss` and `postcss:GHSA-qx2v-qp2m-jg93`.
-- R-405 status: open production launch blocker; Completion Roadmap Phase 3 rechecked metadata on 2026-05-31 and stable `next@latest` is still 16.2.6 with `postcss@8.4.31`, so no safe stable Next.js/PostCSS patch path is available.
+- R-405 status: open production launch blocker; Phase 48 rechecked metadata on 2026-06-01 and stable `next@latest` is 16.2.7 but still bundles `postcss@8.4.31`, so no safe stable Next.js/PostCSS patch path is available.
 - R-405 remediation spec: `PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`.
-- RLS evidence status: expanded `npm run test:rls` coverage exists, but the latest 2026-06-01 post-Phase 46 attempt did not produce passing evidence. `npm run test:rls` skipped 10 guarded tests because local Supabase evidence was unavailable in this environment. R-406 remains blocked pending local Docker/Supabase availability.
+- RLS evidence status: expanded `npm run test:rls` coverage exists, including Phase 47 `inbound_quarantines` checks, but the latest 2026-06-01 post-Phase 47 attempt did not produce passing evidence. `npm run test:rls` skipped 11 guarded tests because local Supabase evidence was unavailable in this environment. R-406 remains blocked pending local Docker/Supabase availability.
 - External approval intake: `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` was added during Completion Roadmap Phase 4. No external approval artifacts have been supplied yet.
 - Legal/privacy review packet: `PRODUCTION_PILOT_LEGAL_PRIVACY_REVIEW_PACKET.md` was added during Completion Roadmap Phase 5. It is a review packet, not an approval artifact.
 - Clinical taxonomy review packet: `PRODUCTION_PILOT_CLINICAL_TAXONOMY_REVIEW_PACKET.md` was added during Completion Roadmap Phase 6. It is a review packet, not an approval artifact.
@@ -35,6 +35,8 @@ Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized reference
 - Red-risk reactivation lock spec: `PHASE_44_RED_RISK_REACTIVATION_LOCK_SPEC.md` was added after Phase 43. It is an implementation spec, not an external approval artifact. It does not approve production pilot launch.
 - Client removal data lifecycle spec: `PHASE_45_CLIENT_REMOVAL_DATA_LIFECYCLE_SPEC.md` was added after Phase 44. It is an implementation spec, not an external approval artifact. Hard-delete timing and final retention still require legal/privacy approval.
 - WhatsApp group quarantine spec: `PHASE_46_WHATSAPP_GROUP_QUARANTINE_SPEC.md` was added after Phase 45. It is an implementation spec, not an external approval artifact. It does not approve real WhatsApp/Telegram messaging or production pilot launch.
+- RLS quarantine evidence spec: `PHASE_47_RLS_QUARANTINE_EVIDENCE_SPEC.md` was added after Phase 46. It expands RLS coverage but does not mitigate R-406 without a passing local Supabase run.
+- R-405 stable patch recheck spec: `PHASE_48_R405_STABLE_PATCH_RECHECK_SPEC.md` was added after Phase 47. It records that no safe stable dependency patch path is available.
 
 ## Gate Closure Matrix
 
@@ -47,7 +49,7 @@ Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized reference
 | Incident response and deletion workflow runbook | Incident response runbook, breach escalation owner list, client deletion and export operating procedure | `PRODUCTION_PILOT_INCIDENT_DSAR_REVIEW_PACKET.md`, `INCIDENT_RESPONSE_RUNBOOK.md`, legal ops ledger, export/anonymization helpers, Phase 45 soft-delete/anonymization lifecycle, safe operational health snapshot | Operational owners must be named and DSAR/deletion procedure, hard-delete timing, and legal hold behavior must be approved | Signed incident and DSAR operating procedure with owner list | Open |
 | Backup expiry and restore test | Backup expiry policy, restore drill result, restore owner and cadence | `PRODUCTION_PILOT_BACKUP_RESTORE_REVIEW_PACKET.md`, `BACKUP_RESTORE_RUNBOOK.md` | Backup provider, region, retention, encryption ownership, and restore drill must be approved and tested | Restore drill evidence with owner, timestamp, environment, and test results | Open |
 | Production secret rotation plan | Secret inventory, rotation cadence, emergency revocation procedure | `PRODUCTION_PILOT_SECRET_ROTATION_REVIEW_PACKET.md`, `SECRET_ROTATION_RUNBOOK.md` | Production secret manager, owner, cadence, and emergency revocation flow must be approved | Secret inventory and rotation plan signed by operational owner | Open |
-| Production dependency audit clearance | Production dependency audit report, R-405 resolution or formal acceptance | `PRODUCTION_PILOT_DEPENDENCY_AUDIT_CLEARANCE_PACKET.md`, `PHASE_19_RELEASE_VERIFICATION_DEPENDENCY_GATE_SPEC.md`, `PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`, `PHASE_29_PILOT_GATE_CLOSURE_EVIDENCE_HARDENING_SPEC.md`, `PHASE_32_COMPLETION_PHASE_3_R405_RECHECK_SPEC.md`, `npm run release:verify`, `RISK_REGISTER.md` | R-405 must be resolved through a safe stable patch path or formally accepted before pilot | Clean production audit report, safe stable upgrade evidence, or formal risk acceptance | Open |
+| Production dependency audit clearance | Production dependency audit report, R-405 resolution or formal acceptance | `PRODUCTION_PILOT_DEPENDENCY_AUDIT_CLEARANCE_PACKET.md`, `PHASE_19_RELEASE_VERIFICATION_DEPENDENCY_GATE_SPEC.md`, `PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`, `PHASE_29_PILOT_GATE_CLOSURE_EVIDENCE_HARDENING_SPEC.md`, `PHASE_32_COMPLETION_PHASE_3_R405_RECHECK_SPEC.md`, `PHASE_48_R405_STABLE_PATCH_RECHECK_SPEC.md`, `npm run release:verify`, `RISK_REGISTER.md` | R-405 must be resolved through a safe stable patch path or formally accepted before pilot | Clean production audit report, safe stable upgrade evidence, or formal risk acceptance | Open |
 
 ## Review Packet Checklist
 
