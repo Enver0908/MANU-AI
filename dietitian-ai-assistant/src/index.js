@@ -1,8 +1,9 @@
-export { handleInboundMessage, decideModeAction, buildReplyPrompt } from "./orchestrator.js";
+export { handleInboundMessage, decideModeAction } from "./orchestrator.js";
 export { personas, getPersona } from "./personas.js";
 export { DEFAULT_LANGUAGE, SUPPORTED_LANGUAGES, languageLabel, normalizeLanguageCode } from "./languages.js";
 export { buildDietitianVoiceProfile, defaultVoiceProfile } from "./voice-profile.js";
-export { classifyDieteticRisk, SAFETY_CLASSIFIER_VERSION } from "./safety-classifier.js";
+export { classifyConversationRisk, classifyDieteticRisk, SAFETY_CLASSIFIER_VERSION } from "./safety-classifier.js";
+export { evaluateInboundPreflight } from "./inbound-preflight.js";
 export { buildClientContextCapsule, assertTenantIsolation } from "./context-capsule.js";
 export {
   CONTEXT_POLICY_V1,

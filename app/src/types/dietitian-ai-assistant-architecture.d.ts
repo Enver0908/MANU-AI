@@ -35,12 +35,18 @@ declare module "dietitian-ai-assistant-architecture" {
     tenantId: string;
     dietitianId: string;
     fullName: string;
+    lifecycleStatus?: "active" | "removed_anonymized";
     selectedPersonaId: string;
     aiStatus: ClientAiStatus;
     aiMode: ClientAiMode;
+    channelUserId?: string;
     channelPermission?: "ready" | "pending" | "blocked" | "opted_out";
     mandatorySafetyComplete?: boolean;
     humanTakeoverLocked?: boolean;
+    redRiskLock?:
+      | { status: "none" }
+      | { status: "locked"; handoffId: string }
+      | { status: "reactivated"; handoffId: string };
     contextRevision?: number;
     healthProfile?: Record<string, unknown>;
     dietPlan?: Record<string, unknown>;
@@ -211,6 +217,11 @@ declare module "dietitian-ai-assistant-architecture" {
     pauseAutopilot: boolean;
   };
 
+  export type PreflightBlock = {
+    blockedReason: string;
+    reasons: string[];
+  };
+
   export type ActivationResult = {
     active: boolean;
     status: "active" | "passive" | "scheduled" | "expired";
@@ -288,6 +299,17 @@ declare module "dietitian-ai-assistant-architecture" {
   export function normalizeE164Phone(value: unknown): string;
 
   export function classifyDieteticRisk(message: string, clientProfile?: Record<string, unknown>): RiskDecision;
+
+  export function classifyConversationRisk(input: {
+    message: string;
+    recentMessages?: CoreMessage[];
+    clientProfile?: Record<string, unknown>;
+  }): RiskDecision;
+
+  export function evaluateInboundPreflight(
+    client: CoreClient,
+    options?: { safetyChecklistComplete?: boolean; missingSafetyChecklistItems?: string[] },
+  ): PreflightBlock | null;
 
   export function compilePromptContext(
     capsule: Record<string, unknown>,

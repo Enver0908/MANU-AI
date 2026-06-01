@@ -163,11 +163,29 @@ export function classifyDieteticRisk(message, clientProfile = {}) {
 
   const yellowReasons = collectReasons(text, yellowRules);
   const clientRiskReasons = clientProfile.highRisk === true ? ["client_marked_high_risk"] : [];
-  if (yellowReasons.length > 0 || clientRiskReasons.length > 0) {
-    return decision("yellow", [...yellowReasons, ...clientRiskReasons], clientProfile);
+  const profileFlagReasons = collectProfileFlagReasons(text, clientProfile);
+  if (yellowReasons.length > 0 || clientRiskReasons.length > 0 || profileFlagReasons.length > 0) {
+    return decision("yellow", [...yellowReasons, ...clientRiskReasons, ...profileFlagReasons], clientProfile);
   }
 
   return decision("green", [], clientProfile);
+}
+
+export function classifyConversationRisk({ message, recentMessages = [], clientProfile = {} }) {
+  const currentDecision = classifyDieteticRisk(message, clientProfile);
+  if (currentDecision.level !== "green") return currentDecision;
+
+  const windowText = [...recentMessages, { body: message }]
+    .map((item) => normalizeText(typeof item === "string" ? item : item?.body || ""))
+    .filter(Boolean)
+    .slice(-8);
+  const cumulativeReasons = collectCumulativeReasons(windowText);
+
+  if (cumulativeReasons.length > 0) {
+    return decision("yellow", cumulativeReasons, clientProfile);
+  }
+
+  return currentDecision;
 }
 
 function normalizeText(message) {
@@ -188,6 +206,83 @@ function collectReasons(text, rules) {
   return rules
     .filter((rule) => rule.patterns.some((pattern) => pattern.test(text)))
     .map((rule) => rule.reason);
+}
+
+function collectCumulativeReasons(messages) {
+  const reasons = [];
+  const mealRestrictionCount = countMatches(messages, [
+    /hic yemek yemedim/i,
+    /\byemedim\b/i,
+    /yemeye gerek yok/i,
+    /ogun.*atla/i,
+    /skip.*meal/i,
+    /not eating/i,
+    /did not eat/i,
+  ]);
+  const bodyImageCount = countMatches(messages, [
+    /hizli kilo ver/i,
+    /cok hizli kilo/i,
+    /body check/i,
+    /asiri kilo/i,
+    /zayiflamam lazim/i,
+    /lose weight fast/i,
+  ]);
+  const symptomCount = countMatches(messages, [
+    /basim don/i,
+    /midem bulan/i,
+    /carpinti/i,
+    /ishal/i,
+    /kabiz/i,
+    /dizzy/i,
+    /nausea/i,
+    /palpitation/i,
+  ]);
+
+  if (mealRestrictionCount >= 2) reasons.push("cumulative_meal_restriction_pattern");
+  if (bodyImageCount >= 2) reasons.push("cumulative_body_image_weight_loss_pattern");
+  if (symptomCount >= 2) reasons.push("cumulative_repeated_symptom_pattern");
+
+  return reasons;
+}
+
+function collectProfileFlagReasons(text, clientProfile) {
+  const reasons = [];
+  const healthProfile = clientProfile.healthProfile || clientProfile;
+
+  if (healthProfile.diagnosedConditionFlag === true && matchesDietOrSymptomContext(text)) {
+    reasons.push("profile_diagnosed_condition_context");
+  }
+  if (healthProfile.medicationOrSupplementFlag === true && matchesMedicationSupplementOrSymptomContext(text)) {
+    reasons.push("profile_medication_or_supplement_context");
+  }
+  if (healthProfile.pregnancyOrBreastfeedingFlag === true && matchesPregnancySensitiveContext(text)) {
+    reasons.push("profile_pregnancy_or_breastfeeding_context");
+  }
+  if (healthProfile.eatingDisorderRiskFlag === true && matchesEatingDisorderSensitiveContext(text)) {
+    reasons.push("profile_eating_disorder_risk_context");
+  }
+
+  return reasons;
+}
+
+function matchesDietOrSymptomContext(text) {
+  return /kahvalti|ogle|aksam|ogun|ara ogun|yemek|diyet|plan|kalori|kilo|seker|basim don|midem|ishal|kabiz|meal|diet|plan|calorie|weight|blood sugar|dizzy|nausea/i.test(text);
+}
+
+function matchesMedicationSupplementOrSymptomContext(text) {
+  return /takviye|vitamin|ilac|damla|protein|kreatin|supplement|medication|medicine|dose|symptom|basim don|midem|carpinti|dizzy|nausea|palpitation/i.test(text);
+}
+
+function matchesPregnancySensitiveContext(text) {
+  return /kahvalti|ogle|aksam|ogun|yemek|diyet|plan|takviye|vitamin|kilo|kalori|meal|diet|plan|supplement|vitamin|weight|calorie/i.test(text);
+}
+
+function matchesEatingDisorderSensitiveContext(text) {
+  return /kilo|kalori|zayif|yemedim|yemeye gerek yok|ogun.*atla|tarti|body check|weight|calorie|not eating|skip.*meal|fast/i.test(text);
+}
+
+function countMatches(messages, patterns) {
+  return messages.filter((message) => patterns.some((pattern) => pattern.test(message))).length;
 }
 
 function decision(level, reasons, clientProfile) {

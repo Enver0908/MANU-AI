@@ -54,6 +54,36 @@ The product must be both:
 - Personas affect communication style only, never clinical safety.
 - The system must know which WhatsApp/Telegram messages were written by AI and which were written manually by the dietitian.
 
+## Current Next Phase
+
+Phase 50 is the current implementation wave after Phase 49: production Supabase hardening, distributed rate-limit foundation, transactional commit RPC groundwork, narrowed Supabase reads, and launch-gate evidence/docs.
+
+Start from `docs/NEXT_PHASE_EXECUTION_PLAN.md`, especially the `Phase 50: Production Supabase Hardening` section. Phase 49 context remains in `docs/PHASE_49_SAFETY_ORCHESTRATION_CONCURRENCY_HARDENING_SPEC.md`.
+
+Phase 49 priorities:
+
+1. Expand multilingual quality guard coverage for all supported response languages. Completed locally on 2026-06-02.
+2. Add persona output-contract checks for emoji and short-response constraints. Completed locally on 2026-06-02.
+3. Connect health-profile risk flags to classifier yellow escalation. Completed locally on 2026-06-02.
+4. Add cumulative risk analysis over recent promptable messages plus the current inbound message. Completed locally on 2026-06-02.
+5. Move shared preflight evaluation into the core package and reuse it from app paths. Completed locally on 2026-06-02.
+6. Add optimistic concurrency controls for Supabase-backed write paths. Completed for local prototype client-row mutations on 2026-06-02; broader multi-table transaction/revision hardening remains before production.
+7. Add tenant/client scoped rate limiting for inbound, simulator, manual reply, draft review, and internal copilot paths. Completed as app-instance scoped local limiter on 2026-06-02; distributed production limiter remains before production.
+8. Add expired activation lazy cleanup/audit or safe notification behavior. Completed locally on 2026-06-02.
+9. Later split `simulator.ts` into domain modules and clean up legacy `buildReplyPrompt`. Initial cleanup completed locally on 2026-06-02: simulator risk/model routing was extracted and the unused legacy prompt export was removed.
+
+Do not connect real WhatsApp, Telegram, Gemini/external LLM, push/email, monitoring, secret manager, or real client health data as part of Phase 49 or Phase 50.
+
+Phase 50 status as of 2026-06-02:
+
+- Phase 1 foundation added `app/supabase/migrations/20260602030000_phase_50_production_hardening_foundation.sql` with `rate_limit_buckets`, `consume_rate_limit`, and transactional commit RPC wrappers. It still needs local Supabase application and RLS/integration evidence.
+- Phase 2 app integration is partial: async scoped rate-limit calls are wired, Supabase-backed limiter RPC support exists, and manual reply plus client-scoped inbound simulation use commit RPCs. Do not switch remaining mutation paths fully to RPC until existing message/AI-decision update support is represented transactionally.
+- Phase 3 narrowed reads is partial but locally verified: manual reply, client-scoped inbound simulation, draft approval/dismissal, human takeover release, handoff status update, red-risk reactivation, form response save, and client context update use scoped operation loaders before mutation.
+- Phase 3 validation passed: app tests 126/126, app lint, and core tests 57/57.
+- Phase 4 launch-gate evidence/docs completed locally: added `docs/PHASE_50_PRODUCTION_SUPABASE_HARDENING_EVIDENCE_SPEC.md`, updated pilot evidence/gate/final readiness docs, and re-ran evidence commands.
+- Phase 4 validation passed: `npm run release:verify` from `app` completed with core tests 57/57, app tests 126/126, lint, production build, and only known R-405 findings. `npm run test:rls` skipped 1 file and 11 guarded tests, so R-406 remains blocked.
+- Remaining Phase 50 work: apply/verify the migration locally, rerun `npm run test:rls`, add RPC coverage for existing message/decision updates, then decide which remaining paths can safely move to commit RPCs.
+
 ## Current Implementation
 
 The current code now has two layers:

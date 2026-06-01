@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getFallbackState, saveFallbackState, simulateInState } from "@/lib/app-state-store";
 import { domainErrorResponse } from "@/lib/app-errors";
 import { authErrorResponse, requireCapability, resolveAppTenantContext } from "@/lib/auth-context";
+import { assertRateLimit, RATE_LIMITS } from "@/lib/rate-limit";
 import { isSupabaseStoreConfigured, runSupabaseSimulation } from "@/lib/supabase-store";
 import type { SimulationRequest } from "@/lib/types";
 
@@ -16,6 +17,11 @@ export async function POST(request: NextRequest) {
     try {
       const tenantContext = await resolveAppTenantContext();
       requireCapability(tenantContext, "simulate_inbound");
+      await assertRateLimit({
+        key: `${tenantContext.tenantId}:simulator:${body.sourceConversationType === "group" ? "group" : body.clientId}`,
+        tenantId: tenantContext.tenantId,
+        ...RATE_LIMITS.simulator,
+      });
       return NextResponse.json(
         await runSupabaseSimulation(
           {
@@ -35,6 +41,10 @@ export async function POST(request: NextRequest) {
   }
 
   try {
+    await assertRateLimit({
+      key: `fallback:simulator:${body.sourceConversationType === "group" ? "group" : body.clientId}`,
+      ...RATE_LIMITS.simulator,
+    });
     const nextState = await simulateInState(getFallbackState(), {
       ...body,
       idempotencyKey: body.idempotencyKey || `sim-${Date.now()}`,

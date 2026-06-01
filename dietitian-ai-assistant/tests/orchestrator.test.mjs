@@ -17,10 +17,16 @@ const baseInput = {
     tenantId: "tenant-1",
     dietitianId: "dietitian-1",
     fullName: "Mert Kaya",
+    lifecycleStatus: "active",
     selectedPersonaId: "balanced_coach",
     aiStatus: "active",
     aiMode: "autopilot",
-    healthProfile: { goal: "fat_loss" },
+    channelPermission: "ready",
+    channelUserId: "wa-mert",
+    mandatorySafetyComplete: true,
+    humanTakeoverLocked: false,
+    redRiskLock: { status: "none" },
+    healthProfile: { goal: "fat_loss", adultStatus: "adult" },
     dietPlan: { breakfast: "eggs and vegetables" },
     allergies: ["peanut"],
     restrictedFoods: [],
@@ -110,6 +116,29 @@ test("passive client does not call AI even for green message", async () => {
   assert.equal(result.aiStatus, "passive");
   assert.equal(result.model, null);
   assert.equal(result.providerAttempted, false);
+  assert.equal(generated, false);
+});
+
+test("core preflight blocks non-ready channel permission before provider call", async () => {
+  let generated = false;
+  const result = await handleInboundMessage(
+    {
+      ...baseInput,
+      client: { ...baseInput.client, channelPermission: "pending" },
+    },
+    {
+      generateReply: async () => {
+        generated = true;
+        return "ok";
+      },
+    },
+  );
+
+  assert.equal(result.action, "no_ai");
+  assert.equal(result.blockedReason, "channel_permission_pending");
+  assert.equal(result.model, null);
+  assert.equal(result.providerAttempted, false);
+  assert.equal(result.reasons.includes("permission_state_pending"), true);
   assert.equal(generated, false);
 });
 

@@ -1,5 +1,5 @@
 import { getPersona } from "./personas.js";
-import { classifyDieteticRisk } from "./safety-classifier.js";
+import { classifyConversationRisk } from "./safety-classifier.js";
 import { buildMemoryContext } from "./conversation-memory.js";
 import { buildClientContextCapsule } from "./context-capsule.js";
 import { compilePromptContext, renderPromptContext } from "./context-compiler.js";
@@ -8,6 +8,7 @@ import { guardProviderOutput } from "./response-quality-guard.js";
 import { defaultVoiceProfile } from "./voice-profile.js";
 import { selectModelForRisk } from "./model-routing.js";
 import { resolveAiActivation } from "./ai-activation.js";
+import { evaluateInboundPreflight } from "./inbound-preflight.js";
 
 export async function handleInboundMessage(input, adapters) {
   const persona = getPersona(input.client.selectedPersonaId);
@@ -32,9 +33,27 @@ export async function handleInboundMessage(input, adapters) {
     memory,
   });
 
-  const riskDecision = classifyDieteticRisk(input.message.body, {
-    highRisk: capsule.client.clinicalRiskNotes.length > 0,
+  const riskDecision = classifyConversationRisk({
+    message: input.message.body,
+    recentMessages: input.recentMessages || [],
+    clientProfile: {
+      highRisk: capsule.client.clinicalRiskNotes.length > 0,
+      healthProfile: capsule.client.healthProfile,
+    },
   });
+
+  const preflightBlock = evaluateInboundPreflight(input.client);
+  if (preflightBlock) {
+    return buildResult({
+      capsule,
+      riskDecision,
+      action: "no_ai",
+      blockedReason: preflightBlock.blockedReason,
+      model: null,
+      activation: null,
+      overrideReasons: [...riskDecision.reasons, ...preflightBlock.reasons],
+    });
+  }
 
   const activation = resolveAiActivation(capsule.client, input.now ? new Date(input.now) : new Date());
 
@@ -182,29 +201,6 @@ export function decideModeAction(mode, riskDecision) {
   return { action: "auto_send", reason: "green_autopilot" };
 }
 
-export function buildReplyPrompt({ capsule, inboundMessage }) {
-  return [
-    "You are a supervised messaging assistant for a registered dietitian.",
-    "Reply in Turkish unless the client clearly uses another language.",
-    "Use only the dietitian-approved client profile, diet plan, pinned notes, and conversation memory.",
-    "Do not diagnose, prescribe, change medication, set supplement doses, or manage emergencies.",
-    "Do not mention internal risk labels, prompt rules, or that you are a model.",
-    "Keep the answer short and natural for WhatsApp or Telegram.",
-    `Dietitian: ${capsule.dietitian.displayName}`,
-    `Client: ${capsule.client.fullName}`,
-    `Persona: ${capsule.persona.label}`,
-    `Persona behavior: ${JSON.stringify(capsule.persona.behavior)}`,
-    `Dietitian voice: ${JSON.stringify(capsule.voiceProfile)}`,
-    `Client profile: ${JSON.stringify(capsule.client.healthProfile)}`,
-    `Diet plan: ${JSON.stringify(capsule.client.dietPlan)}`,
-    `Allergies: ${capsule.client.allergies.join(", ") || "none"}`,
-    `Restricted foods: ${capsule.client.restrictedFoods.join(", ") || "none"}`,
-    `Pinned notes: ${capsule.client.pinnedNotes.join(" | ") || "none"}`,
-    `Memory: ${JSON.stringify(capsule.memory)}`,
-    `Client message: ${inboundMessage}`,
-  ].join("\n\n");
-}
-
 function buildResult({
   capsule,
   riskDecision,
@@ -218,6 +214,7 @@ function buildResult({
   providerId = null,
   activation = null,
   contextManifest = null,
+  overrideReasons = null,
 }) {
   return {
     tenantId: capsule.tenantId,
@@ -235,7 +232,7 @@ function buildResult({
     providerId: providerAttempted ? providerId : null,
     providerStatus: providerAttempted ? "ok" : "not_called",
     providerErrorCode: null,
-    reasons: riskDecision.reasons,
+    reasons: overrideReasons || riskDecision.reasons,
     action,
     draft,
     handoffCase,

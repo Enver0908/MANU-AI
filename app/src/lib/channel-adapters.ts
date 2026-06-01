@@ -1,4 +1,5 @@
 import { runInboundSimulation, updateClientInState } from "./simulator";
+import { assertRateLimit, RATE_LIMITS } from "./rate-limit";
 import type { AuditEventRecord, Channel, ManuAppState } from "./types";
 
 export type NormalizedInboundChannelEvent = {
@@ -57,6 +58,12 @@ export async function processMockChannelInbound(
   if (!trimmedBody) {
     return blockChannelPolicyEvent(state, event, providerEventId, "channel_policy_empty_body", ["body_required"], true);
   }
+
+  await assertRateLimit({
+    key: `channel:${event.channel}:${event.channelUserId.trim() || "unknown"}`,
+    tenantId: state.tenant.id,
+    ...RATE_LIMITS.channelInbound,
+  });
 
   const matches = findClientsByChannelIdentity(state, event.channel, event.channelUserId);
 

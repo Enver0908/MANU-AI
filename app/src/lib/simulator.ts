@@ -1,6 +1,5 @@
 import {
-  SAFETY_CLASSIFIER_VERSION,
-  classifyDieteticRisk,
+  evaluateInboundPreflight,
   handleInboundMessage,
 } from "dietitian-ai-assistant-architecture";
 import {
@@ -16,6 +15,7 @@ import { buildClientFormSummary } from "./client-forms";
 import { getActiveVoiceProfile } from "./voice-profile-workflow";
 import { getMissingSafetyChecklistItems, isSafetyChecklistComplete } from "./safety-checklist";
 import { AppDomainError } from "./app-errors";
+import { SAFETY_CLASSIFIER_VERSION, classifySimulationRisk, modelForRisk } from "./simulator-risk";
 import type {
   AiDecisionRecord,
   AuditEventRecord,
@@ -118,7 +118,8 @@ export async function runInboundSimulation(
     processedSimulationKeys: [...state.processedSimulationKeys, idempotencyKey],
     messages: [...state.messages, inboundMessage],
   };
-  const riskDecision = classifySimulationRisk(client, trimmedBody);
+  const priorConversationMessages = state.messages.filter((message) => message.conversationId === conversation.id);
+  const riskDecision = classifySimulationRisk(client, trimmedBody, priorConversationMessages);
   const riskAssessment = buildRiskAssessment({
     state,
     conversation,
@@ -157,7 +158,7 @@ export async function runInboundSimulation(
       client: promptClient,
       conversation,
       message: { id: inboundMessage.id, body: trimmedBody },
-      recentMessages: state.messages.filter((message) => message.conversationId === conversation.id),
+      recentMessages: priorConversationMessages,
       memory: {
         rollingSummary: conversation.rollingSummary,
         memoryVersion: conversation.memoryVersion,
@@ -746,7 +747,36 @@ function appendCoreSimulationResult({
   const nextMessages = [...state.messages];
   const handoffCases = [...state.handoffCases];
   const auditEvents = [...state.auditEvents];
+  const notifications = [...state.notifications];
   let nextClients = state.clients;
+
+  if (coreResult.blockedReason === "client_ai_window_expired") {
+    nextClients = state.clients.map((item) =>
+      item.id === client.id
+        ? {
+            ...item,
+            aiStatus: "passive" as const,
+            aiActiveUntil: null,
+            contextRevision: item.contextRevision + 1,
+          }
+        : item,
+    );
+    auditEvents.push(
+      buildAuditEvent(state, "client_ai_window_expired", "client", client.id, now),
+    );
+    notifications.push({
+      id: crypto.randomUUID(),
+      tenantId: state.tenant.id,
+      type: "system",
+      entityType: "client",
+      entityId: client.id,
+      title: `AI window expired: ${client.fullName}`,
+      body: `AI was passivated for ${client.fullName} because the activation window ended.`,
+      read: false,
+      acknowledgedAt: null,
+      createdAt: now,
+    });
+  }
 
   if (coreResult.action === "sent" && coreResult.draft) {
     nextMessages.push(
@@ -859,6 +889,7 @@ function appendCoreSimulationResult({
       acknowledgedAt: null,
       createdAt: now,
     };
+    notifications.push(notification);
 
     nextMessages.push(
       buildMessage({
@@ -879,7 +910,7 @@ function appendCoreSimulationResult({
       messages: nextMessages,
       aiDecisions: [...state.aiDecisions, decision],
       handoffCases,
-      notifications: [...state.notifications, notification],
+      notifications,
       auditEvents: [...auditEvents, buildAuditEvent(state, "simulation_processed", "ai_decision", decision.id, now)],
       lastSimulation: {
         action: coreResult.action,
@@ -915,6 +946,7 @@ function appendCoreSimulationResult({
     messages: nextMessages,
     aiDecisions: [...state.aiDecisions, decision],
     handoffCases,
+    notifications,
     auditEvents: [...auditEvents, buildAuditEvent(state, "simulation_processed", "ai_decision", decision.id, now)],
     lastSimulation: {
       action: coreResult.action,
@@ -994,18 +1026,6 @@ function appendBlockedSimulationResult({
   };
 }
 
-function classifySimulationRisk(client: ClientRecord, body: string) {
-  return classifyDieteticRisk(body, {
-    highRisk: client.clinicalRiskNotes.length > 0,
-  });
-}
-
-function modelForRisk(risk: AiDecisionRecord["risk"]) {
-  if (risk === "green") return "gemini-1.5-flash";
-  if (risk === "yellow") return "gemini-3";
-  return null;
-}
-
 function buildRiskAssessment({
   state,
   conversation,
@@ -1032,56 +1052,10 @@ function buildRiskAssessment({
 }
 
 function getPreflightBlock(client: ClientRecord): { blockedReason: string; reasons: string[] } | null {
-  if (client.lifecycleStatus === "removed_anonymized") {
-    return {
-      blockedReason: "client_removed_anonymized",
-      reasons: ["client_removed_anonymized"],
-    };
-  }
-
-  if (client.redRiskLock.status === "locked") {
-    return {
-      blockedReason: "red_risk_reactivation_required",
-      reasons: ["red_risk_lock_active", `handoff_${client.redRiskLock.handoffId}`],
-    };
-  }
-
-  if (client.channelPermission !== "ready") {
-    return {
-      blockedReason: `channel_permission_${client.channelPermission}`,
-      reasons: [`permission_state_${client.channelPermission}`],
-    };
-  }
-
-  if (!client.channelUserId || !client.channelUserId.trim()) {
-    return {
-      blockedReason: "identity_quarantine_no_channel_id",
-      reasons: ["channel_user_id_missing_or_empty"],
-    };
-  }
-
-  if (client.healthProfile.adultStatus === "unknown") {
-    return {
-      blockedReason: "identity_quarantine_adult_status_unknown",
-      reasons: ["adult_status_not_confirmed"],
-    };
-  }
-
-  if (client.humanTakeoverLocked) {
-    return {
-      blockedReason: "human_takeover_lock",
-      reasons: ["dietitian_manual_takeover_active"],
-    };
-  }
-
-  if (client.aiMode === "autopilot" && (!client.mandatorySafetyComplete || !isSafetyChecklistComplete(client))) {
-    return {
-      blockedReason: "mandatory_safety_fields_missing",
-      reasons: ["autopilot_requires_completed_safety_profile", ...getMissingSafetyChecklistItems(client)],
-    };
-  }
-
-  return null;
+  return evaluateInboundPreflight(client, {
+    safetyChecklistComplete: client.mandatorySafetyComplete && isSafetyChecklistComplete(client),
+    missingSafetyChecklistItems: getMissingSafetyChecklistItems(client),
+  });
 }
 
 function buildDecision({

@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { addManualReplyInState, getFallbackState, saveFallbackState } from "@/lib/app-state-store";
 import { domainErrorResponse } from "@/lib/app-errors";
 import { authErrorResponse, requireCapability, resolveAppTenantContext } from "@/lib/auth-context";
+import { assertRateLimit, RATE_LIMITS } from "@/lib/rate-limit";
 import { addSupabaseManualReply, isSupabaseStoreConfigured } from "@/lib/supabase-store";
 
 export async function POST(request: NextRequest) {
@@ -15,6 +16,11 @@ export async function POST(request: NextRequest) {
     try {
       const tenantContext = await resolveAppTenantContext();
       requireCapability(tenantContext, "manual_reply");
+      await assertRateLimit({
+        key: `${tenantContext.tenantId}:manual:${body.clientId}`,
+        tenantId: tenantContext.tenantId,
+        ...RATE_LIMITS.manualReply,
+      });
       return NextResponse.json(await addSupabaseManualReply(body.clientId, body.body, tenantContext));
     } catch (error) {
       try {
@@ -26,6 +32,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
+    await assertRateLimit({ key: `fallback:manual:${body.clientId}`, ...RATE_LIMITS.manualReply });
     return NextResponse.json(saveFallbackState(addManualReplyInState(getFallbackState(), body.clientId, body.body)));
   } catch (error) {
     return domainErrorResponse(error);

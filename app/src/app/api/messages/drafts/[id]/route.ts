@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { approveDraftInState, dismissDraftInState, getFallbackState, saveFallbackState } from "@/lib/app-state-store";
 import { domainErrorResponse } from "@/lib/app-errors";
 import { authErrorResponse, requireCapability, resolveAppTenantContext } from "@/lib/auth-context";
+import { assertRateLimit, RATE_LIMITS } from "@/lib/rate-limit";
 import { approveSupabaseDraftMessage, dismissSupabaseDraftMessage, isSupabaseStoreConfigured } from "@/lib/supabase-store";
 
 type DraftActionRequest = {
@@ -25,6 +26,11 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
     try {
       const tenantContext = await resolveAppTenantContext();
       requireCapability(tenantContext, "draft_review");
+      await assertRateLimit({
+        key: `${tenantContext.tenantId}:draft:${id}`,
+        tenantId: tenantContext.tenantId,
+        ...RATE_LIMITS.draftReview,
+      });
       if (body.action === "dismiss") {
         return NextResponse.json(await dismissSupabaseDraftMessage(id, tenantContext));
       }
@@ -42,6 +48,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
   }
 
   try {
+    await assertRateLimit({ key: `fallback:draft:${id}`, ...RATE_LIMITS.draftReview });
     const state = getFallbackState();
     const nextState =
       body.action === "dismiss"

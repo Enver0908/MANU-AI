@@ -1,6 +1,6 @@
 # MANU-AI Production Pilot Gate Closure Dossier
 
-Date: 2026-05-31
+Date: 2026-06-02
 
 ## Status
 
@@ -15,12 +15,12 @@ Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized reference
 ## Current Baseline
 
 - Git baseline: Phase 27-29 checkpoint exists at `c75564e Add Phase 27-29 pilot readiness checkpoint` on branch `codex/phase-29-baseline-checkpoint`; Completion Roadmap Phase 1 records this as the current implementation baseline.
-- Latest local release verification: `npm run release:verify` passed on 2026-06-01 after Phase 47/48 documentation and RLS coverage updates.
-- Verification result: core tests 52/52, app tests 117/117, lint passed, production build passed.
+- Latest local release verification: `npm run release:verify` passed on 2026-06-02 after Phase 50 production Supabase hardening changes.
+- Verification result: core tests 57/57, app tests 126/126, lint passed, production build passed.
 - Dependency audit result: only known R-405 findings, `next:postcss` and `postcss:GHSA-qx2v-qp2m-jg93`.
 - R-405 status: open production launch blocker; Phase 48 rechecked metadata on 2026-06-01 and stable `next@latest` is 16.2.7 but still bundles `postcss@8.4.31`, so no safe stable Next.js/PostCSS patch path is available.
 - R-405 remediation spec: `PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`.
-- RLS evidence status: expanded `npm run test:rls` coverage exists, including Phase 47 `inbound_quarantines` checks, but the latest 2026-06-01 post-Phase 47 attempt did not produce passing evidence. `npm run test:rls` skipped 11 guarded tests because local Supabase evidence was unavailable in this environment. R-406 remains blocked pending local Docker/Supabase availability.
+- RLS evidence status: expanded `npm run test:rls` coverage exists, including Phase 47 `inbound_quarantines` checks, but the latest 2026-06-02 post-Phase 50 attempt did not produce passing evidence. `npm run test:rls` skipped 1 file and 11 guarded tests because local Supabase evidence was unavailable in this environment. R-406 remains blocked pending local Docker/Supabase availability.
 - External approval intake: `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` was added during Completion Roadmap Phase 4. No external approval artifacts have been supplied yet.
 - Legal/privacy review packet: `PRODUCTION_PILOT_LEGAL_PRIVACY_REVIEW_PACKET.md` was added during Completion Roadmap Phase 5. It is a review packet, not an approval artifact.
 - Clinical taxonomy review packet: `PRODUCTION_PILOT_CLINICAL_TAXONOMY_REVIEW_PACKET.md` was added during Completion Roadmap Phase 6. It is a review packet, not an approval artifact.
@@ -37,6 +37,7 @@ Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized reference
 - WhatsApp group quarantine spec: `PHASE_46_WHATSAPP_GROUP_QUARANTINE_SPEC.md` was added after Phase 45. It is an implementation spec, not an external approval artifact. It does not approve real WhatsApp/Telegram messaging or production pilot launch.
 - RLS quarantine evidence spec: `PHASE_47_RLS_QUARANTINE_EVIDENCE_SPEC.md` was added after Phase 46. It expands RLS coverage but does not mitigate R-406 without a passing local Supabase run.
 - R-405 stable patch recheck spec: `PHASE_48_R405_STABLE_PATCH_RECHECK_SPEC.md` was added after Phase 47. It records that no safe stable dependency patch path is available.
+- Phase 50 production Supabase hardening evidence spec: `PHASE_50_PRODUCTION_SUPABASE_HARDENING_EVIDENCE_SPEC.md` records distributed rate-limit/RPC groundwork, narrowed Supabase reads, passing local release verification, and the remaining DB/RLS evidence gap. It does not approve production pilot launch.
 
 ## Gate Closure Matrix
 
@@ -60,7 +61,7 @@ Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized reference
 - Channel packet: `PRODUCTION_PILOT_CHANNEL_POLICY_REVIEW_PACKET.md`, WhatsApp feasibility checklist, Telegram bot/privacy checklist, opt-in/out and service-window procedure, identity quarantine and idempotency evidence.
 - Operations packet: `PRODUCTION_PILOT_INCIDENT_DSAR_REVIEW_PACKET.md`, `PRODUCTION_PILOT_BACKUP_RESTORE_REVIEW_PACKET.md`, `PRODUCTION_PILOT_SECRET_ROTATION_REVIEW_PACKET.md`, incident owner placeholder, DSAR/deletion procedure placeholder, backup/restore drill placeholder, secret inventory and rotation owner placeholder.
 - Dependency packet: `PRODUCTION_PILOT_DEPENDENCY_AUDIT_CLEARANCE_PACKET.md`, latest `npm run release:verify` output, R-405 risk record, stable Next.js/PostCSS tracking note.
-- RLS evidence packet: latest `npm run test:rls` output from local Supabase or the Phase 31 blocker note that Docker/local Supabase was unavailable and R-406 remains blocked.
+- RLS evidence packet: latest `npm run test:rls` output from local Supabase or the Phase 50 blocker note that local Supabase evidence was unavailable and R-406 remains blocked.
 - Approval intake packet: sanitized external approval artifact references tracked in `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md`.
 
 ## Non-Approvals
@@ -74,3 +75,4 @@ Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized reference
 - This dossier does not approve sending dietitian context updates to a real Gemini or external LLM provider.
 - This dossier does not approve external email, push, monitoring, analytics, or secret manager vendors.
 - This dossier does not resolve or accept R-405.
+- This dossier does not mitigate R-406 or prove Phase 50 SQL/RPC execution against local Supabase.

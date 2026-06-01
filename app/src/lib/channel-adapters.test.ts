@@ -1,9 +1,14 @@
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { createInitialState } from "./seed-data";
 import { buildProviderMetadata, processMockChannelInbound } from "./channel-adapters";
+import { resetRateLimits } from "./rate-limit";
 import { updateClientInState } from "./simulator";
 
 describe("mock channel adapters", () => {
+  beforeEach(() => {
+    resetRateLimits();
+  });
+
   it("routes known WhatsApp events through the simulator path", async () => {
     const next = await processMockChannelInbound(createInitialState(), {
       channel: "whatsapp",
@@ -188,6 +193,28 @@ describe("mock channel adapters", () => {
 
     expect(next.lastSimulation?.action).toBe("no_ai");
     expect(next.lastSimulation?.blockedReason).toBe("channel_permission_opted_out");
+  });
+
+  it("rate-limits repeated inbound channel events for the same channel identity", async () => {
+    let state = createInitialState();
+
+    for (let index = 0; index < 30; index += 1) {
+      state = await processMockChannelInbound(state, {
+        channel: "whatsapp",
+        providerEventId: `wa-rate-limit-${index}`,
+        channelUserId: "+905551110001",
+        body: "Bugun ara ogun icin ne yiyebilirim?",
+      });
+    }
+
+    await expect(
+      processMockChannelInbound(state, {
+        channel: "whatsapp",
+        providerEventId: "wa-rate-limit-over",
+        channelUserId: "+905551110001",
+        body: "Bugun ara ogun icin ne yiyebilirim?",
+      }),
+    ).rejects.toMatchObject({ status: 429, message: "rate_limit_exceeded" });
   });
 
   it("redacts sensitive provider metadata fields", () => {

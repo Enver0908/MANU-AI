@@ -6,7 +6,63 @@ MANU-AI is in pilot-foundation mode. The local SaaS/PWA prototype, Supabase-back
 
 Real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, and real client health data remain disconnected.
 
-The most recent execution layers after the 13-phase completion roadmap are Phase 43 multilingual language support, Phase 44 red-risk reactivation lock, Phase 45 client removal data lifecycle, Phase 46 WhatsApp group quarantine, Phase 47 RLS quarantine evidence coverage, and Phase 48 R-405 stable patch recheck. The production-pilot decision remains `NO-GO`: all eight launch gates remain open, R-405 remains open, and R-406 remains blocked because local Supabase RLS evidence still cannot run without Docker Desktop's Linux engine.
+The most recent execution layers after the 13-phase completion roadmap are Phase 43 multilingual language support, Phase 44 red-risk reactivation lock, Phase 45 client removal data lifecycle, Phase 46 WhatsApp group quarantine, Phase 47 RLS quarantine evidence coverage, Phase 48 R-405 stable patch recheck, Phase 49 safety/orchestration hardening, and Phase 50 production Supabase hardening. The production-pilot decision remains `NO-GO`: all eight launch gates remain open, R-405 remains open, R-406 remains blocked because local Supabase RLS evidence still cannot run without Docker Desktop's Linux engine, and the Phase 50 migration/RPC work still needs local Supabase application and RLS/integration evidence.
+
+## Phase 49: Safety, Orchestration, And Concurrency Hardening - In Progress
+
+Goal: close the verified architecture-analysis gaps that should be handled before any real provider/channel connection or production pilot.
+
+Planned work:
+
+- Add `docs/PHASE_49_SAFETY_ORCHESTRATION_CONCURRENCY_HARDENING_SPEC.md`.
+- Expand multilingual quality-guard output blocking across all supported response languages.
+- Add persona output-contract checks for emoji and short-response constraints.
+- Connect health-profile flags to classifier yellow escalation.
+- Add cumulative risk analysis over recent promptable messages plus the current inbound message.
+- Move reusable inbound preflight evaluation into the core package and reuse it from app paths.
+- Add optimistic concurrency controls for Supabase-backed write paths.
+- Add tenant/client scoped rate limiting for inbound, simulator, manual reply, draft review, and internal copilot paths.
+- Add expired activation lazy cleanup/audit or safe notification behavior.
+- Later split `simulator.ts` into domain modules and clean up legacy `buildReplyPrompt`.
+
+Done criteria:
+
+- All Phase 49 risks in `docs/RISK_REGISTER.md` are either mitigated in local prototype or explicitly accepted.
+- Core/app tests cover the new safety, preflight, concurrency, rate-limit, and activation behavior.
+- Red-risk and preflight-blocked flows still never call a provider.
+- No real WhatsApp, Telegram, Gemini/external LLM, push/email, monitoring, secret manager, or real client health data is connected.
+
+Status:
+
+- Planned on 2026-06-02.
+- Documentation/risk lock completed as the first Phase 49 step.
+- Clinical output safety completed locally: multilingual quality guard and persona output-contract checks are implemented and covered by core tests.
+- Core preflight extraction and cumulative yellow-risk escalation completed locally and are covered by core/app tests.
+- Concurrency and abuse protection completed for the local prototype: Supabase client-row writes use expected `context_revision` checks with controlled `409 concurrent_state_update`, and simulator/mock-channel/manual/draft/internal-copilot entrypoints use scoped app-instance rate limits with controlled `429 rate_limit_exceeded`.
+- Final local cleanup completed: health-profile flags now drive context-sensitive yellow escalation, expired activation windows lazily passivate clients with safe audit/notification signals, simulator risk/model routing lives in a dedicated module, and the unused legacy `buildReplyPrompt` export was removed.
+- Remaining production hardening work: distributed production rate limiting, broader multi-table transaction/revision hardening, narrowed Supabase reads for scale, and external launch-gate approvals.
+
+## Phase 50: Production Supabase Hardening - In Progress
+
+Goal: move the local hardening from Phase 49 toward production-shaped Supabase behavior without connecting real provider/channel infrastructure.
+
+Status:
+
+- Phase 50 plan created on 2026-06-02 with four phases: Supabase RPC/foundation, app integration, narrowed Supabase reads, and launch-gate evidence/docs.
+- Phase 1 foundation added migration `app/supabase/migrations/20260602030000_phase_50_production_hardening_foundation.sql` for database-backed rate-limit buckets and transactional commit RPC wrappers. This migration has not yet been applied to a local Supabase instance in this workspace because `psql`/local DB execution evidence was unavailable in the current run.
+- Phase 2 app integration is partially complete: app entrypoints call the async scoped rate limiter, Supabase-backed limiter RPC is wired with hashed keys, and manual reply plus client-scoped inbound simulation use commit RPCs. Remaining mutation paths should not be moved to RPC until existing draft/message and decision update cases are fully represented transactionally.
+- Phase 3 narrowed Supabase reads is partially complete: manual reply, client-scoped inbound simulation, draft approval/dismissal, human takeover release, handoff status update, red-risk reactivation, client form response save, and client context update now use client/handoff/draft scoped operation loaders instead of full tenant state reads before mutation. The scoped loaders explicitly include required target messages, decisions, handoffs, form schemas, draft messages, and draft decision rows needed for existing validation/invalidation behavior.
+- Form response saves now persist changed draft invalidations after form-change state updates.
+- Validation completed locally after Phase 3 changes: `app npm test` passed 126/126, `app npm run lint` passed, and `dietitian-ai-assistant npm test` passed 57/57.
+- Phase 4 launch-gate evidence/docs completed locally on 2026-06-02: added `docs/PHASE_50_PRODUCTION_SUPABASE_HARDENING_EVIDENCE_SPEC.md`, updated the pilot evidence pack, gate closure dossier, final readiness summary, risk register, and handoff notes.
+- Phase 4 verification: `npm run release:verify` passed from `app` with core tests 57/57, app tests 126/126, lint, production build, and only documented R-405 findings. `npm run test:rls` skipped 1 file and 11 guarded tests, so R-406 remains blocked.
+
+Remaining:
+
+- Apply and validate the Phase 50 migration against local Supabase, then rerun `npm run test:rls`.
+- Add transactional support for existing message/AI-decision updates before switching draft review, context update, form response, red-risk reactivation, and removal lifecycle paths fully to RPC commits.
+- Keep broad full-state reads for global dashboard load, reset/export/anonymization/removal lifecycle, voice/profile/schema administration, internal copilot, and other genuinely tenant-wide workflows unless a narrower operation contract is designed.
+- Keep all eight production-pilot launch gates open until external approval artifacts are supplied.
 
 ## Phase 48: R-405 Stable Patch Recheck - Completed 2026-06-01
 

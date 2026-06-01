@@ -71,6 +71,38 @@ describe("local inbound simulator", () => {
     expect(next.lastSimulation?.blockedReason).toBe("client_ai_not_started");
   });
 
+  it("passivates expired activation windows once and records a safe signal", async () => {
+    const state = updateClientInState(createInitialState(), "client-mert", {
+      aiActiveUntil: "2026-05-22T09:00:00.000Z",
+    });
+
+    const next = await runInboundSimulation(state, {
+      clientId: "client-mert",
+      body: "Bugun kahvalti degisimi yapabilir miyim?",
+      idempotencyKey: "expired-window-1",
+      now: "2026-05-22T10:00:00.000Z",
+    });
+    const client = next.clients.find((item) => item.id === "client-mert");
+
+    expect(next.lastSimulation?.action).toBe("no_ai");
+    expect(next.lastSimulation?.blockedReason).toBe("client_ai_window_expired");
+    expect(client?.aiStatus).toBe("passive");
+    expect(client?.aiActiveUntil).toBeNull();
+    expect(client?.contextRevision).toBe(state.clients.find((item) => item.id === "client-mert")!.contextRevision + 1);
+    expect(next.auditEvents.some((event) => event.eventType === "client_ai_window_expired")).toBe(true);
+    expect(next.notifications.some((notification) => notification.type === "system" && notification.entityId === "client-mert")).toBe(true);
+
+    const again = await runInboundSimulation(next, {
+      clientId: "client-mert",
+      body: "Bir daha soruyorum.",
+      idempotencyKey: "expired-window-2",
+      now: "2026-05-22T10:01:00.000Z",
+    });
+
+    expect(again.lastSimulation?.blockedReason).toBe("client_ai_passive");
+    expect(again.auditEvents.filter((event) => event.eventType === "client_ai_window_expired")).toHaveLength(1);
+  });
+
   it("keeps provider metadata not-called for manual, paused, and context-budget blocks", async () => {
     const manualState = updateClientInState(createInitialState(), "client-mert", {
       aiMode: "manual",
@@ -123,6 +155,53 @@ describe("local inbound simulator", () => {
     expect(next.lastSimulation?.risk).toBe("yellow");
     expect(next.lastSimulation?.model).toBe("gemini-3");
     expect(next.messages.some((message) => message.origin === "ai_generated" && message.status === "draft")).toBe(true);
+  });
+
+  it("uses health-profile flags to escalate context-sensitive messages", async () => {
+    const state = updateClientInState(createInitialState(), "client-mert", {
+      healthProfile: {
+        ...createInitialState().clients[0].healthProfile,
+        diagnosedConditionFlag: true,
+      },
+    });
+
+    const next = await runInboundSimulation(state, {
+      clientId: "client-mert",
+      body: "Bugun kahvaltida ne yiyebilirim?",
+      idempotencyKey: "health-flag-yellow-1",
+      now: "2026-05-22T10:10:30.000Z",
+    });
+
+    expect(next.lastSimulation?.action).toBe("draft_for_approval");
+    expect(next.lastSimulation?.risk).toBe("yellow");
+    expect(next.riskAssessments.at(-1)?.reasons).toContain("profile_diagnosed_condition_context");
+  });
+
+  it("escalates cumulative meal restriction patterns to yellow", async () => {
+    const first = await runInboundSimulation(createInitialState(), {
+      clientId: "client-mert",
+      body: "Bugun hic yemek yemedim.",
+      idempotencyKey: "cumulative-meal-1",
+      now: "2026-05-22T10:11:00.000Z",
+    });
+    const second = await runInboundSimulation(first, {
+      clientId: "client-mert",
+      body: "Yine yemedim, cok iyi hissediyorum.",
+      idempotencyKey: "cumulative-meal-2",
+      now: "2026-05-22T10:12:00.000Z",
+    });
+    const third = await runInboundSimulation(second, {
+      clientId: "client-mert",
+      body: "Zaten yemeye gerek yok.",
+      idempotencyKey: "cumulative-meal-3",
+      now: "2026-05-22T10:13:00.000Z",
+    });
+
+    expect(third.lastSimulation?.action).toBe("draft_for_approval");
+    expect(third.lastSimulation?.risk).toBe("yellow");
+    expect(third.lastSimulation?.model).toBe("gemini-3");
+    expect(third.riskAssessments.at(-1)?.level).toBe("yellow");
+    expect(third.riskAssessments.at(-1)?.reasons).toContain("cumulative_meal_restriction_pattern");
   });
 
   it("opens handoff for red messages and does not create an AI message", async () => {

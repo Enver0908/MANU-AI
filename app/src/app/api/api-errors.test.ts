@@ -8,11 +8,13 @@ import { POST as postAcknowledgeNotification } from "./notifications/[id]/acknow
 import { POST as postReadNotification } from "./notifications/[id]/read/route";
 import { POST as postSimulator } from "./simulator/route";
 import { resetFallbackState } from "@/lib/app-state-store";
+import { resetRateLimits } from "@/lib/rate-limit";
 
 describe("API controlled domain errors", () => {
   beforeEach(() => {
     process.env.MANU_DEV_FALLBACK_STORE = "true";
     resetFallbackState();
+    resetRateLimits();
   });
 
   it("returns a controlled error for unknown simulator clients", async () => {

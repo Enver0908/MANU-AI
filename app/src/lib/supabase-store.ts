@@ -443,6 +443,311 @@ export async function loadSupabaseState(context = demoTenantContext()) {
   return scopedState satisfies ManuAppState;
 }
 
+async function loadSupabaseClientOperationState(
+  clientId: string,
+  context: AppTenantContext,
+  options: {
+    processedEventId?: string | null;
+    requiredMessageId?: string | null;
+    requiredDecisionId?: string | null;
+    requiredFormSchemaId?: string | null;
+    requiredHandoffId?: string | null;
+  } = {},
+) {
+  const supabase = requireSupabase();
+  await ensureDemoData(supabase, context.userId);
+
+  const [tenantResult, dietitianResult, clientResult, assignmentsResult, channelsResult, voiceProfilesResult] =
+    await Promise.all([
+      supabase.from("tenants").select("*").eq("id", context.tenantId).single(),
+      supabase.from("dietitians").select("*").eq("id", context.dietitianId).eq("tenant_id", context.tenantId).single(),
+      supabase.from("clients").select("*").eq("tenant_id", context.tenantId).eq("id", clientId).maybeSingle(),
+      supabase.from("client_assignments").select("client_id, dietitian_id").eq("tenant_id", context.tenantId),
+      supabase.from("client_channels").select("*").eq("tenant_id", context.tenantId).eq("client_id", clientId),
+      supabase
+        .from("dietitian_voice_profiles")
+        .select("*")
+        .eq("tenant_id", context.tenantId)
+        .eq("dietitian_id", context.dietitianId)
+        .order("updated_at"),
+    ]);
+
+  throwIfError(tenantResult.error);
+  throwIfError(dietitianResult.error);
+  throwIfError(clientResult.error);
+  throwIfError(assignmentsResult.error);
+  throwIfError(channelsResult.error);
+  throwIfError(voiceProfilesResult.error);
+
+  if (!clientResult.data) {
+    throw new AppDomainError(404, "client_not_found");
+  }
+
+  const conversationsResult = await supabase
+    .from("conversations")
+    .select("*")
+    .eq("tenant_id", context.tenantId)
+    .eq("client_id", clientId)
+    .order("created_at");
+  throwIfError(conversationsResult.error);
+
+  const conversationIds = (conversationsResult.data || []).map((conversation) => conversation.id);
+  const [
+    memoriesResult,
+    recentMessagesResult,
+    draftMessagesResult,
+    decisionsResult,
+    requiredMessageResult,
+    requiredDecisionResult,
+    requiredFormSchemaResult,
+    requiredHandoffResult,
+    riskAssessmentsResult,
+    handoffsResult,
+    formResponsesResult,
+    clientContextUpdatesResult,
+    processedEventsResult,
+  ] = await Promise.all([
+    conversationIds.length > 0
+      ? supabase.from("conversation_memories").select("*").eq("tenant_id", context.tenantId).in("conversation_id", conversationIds)
+      : emptySupabaseResult<DbMemory>(),
+    conversationIds.length > 0
+      ? supabase
+          .from("messages")
+          .select("*")
+          .eq("tenant_id", context.tenantId)
+          .in("conversation_id", conversationIds)
+          .order("created_at", { ascending: false })
+          .limit(50)
+      : emptySupabaseResult<DbMessage>(),
+    conversationIds.length > 0
+      ? supabase
+          .from("messages")
+          .select("*")
+          .eq("tenant_id", context.tenantId)
+          .in("conversation_id", conversationIds)
+          .eq("status", "draft")
+          .order("created_at", { ascending: false })
+      : emptySupabaseResult<DbMessage>(),
+    supabase
+      .from("ai_decisions")
+      .select("*")
+      .eq("tenant_id", context.tenantId)
+      .eq("client_id", clientId)
+      .order("created_at", { ascending: false })
+      .limit(100),
+    options.requiredMessageId
+      ? supabase.from("messages").select("*").eq("tenant_id", context.tenantId).eq("id", options.requiredMessageId)
+      : emptySupabaseResult<DbMessage>(),
+    options.requiredDecisionId
+      ? supabase.from("ai_decisions").select("*").eq("tenant_id", context.tenantId).eq("id", options.requiredDecisionId)
+      : emptySupabaseResult<DbDecision>(),
+    options.requiredFormSchemaId
+      ? supabase.from("client_form_schemas").select("*").eq("tenant_id", context.tenantId).eq("id", options.requiredFormSchemaId)
+      : emptySupabaseResult<DbFormSchema>(),
+    options.requiredHandoffId
+      ? supabase.from("handoff_cases").select("*").eq("tenant_id", context.tenantId).eq("id", options.requiredHandoffId)
+      : emptySupabaseResult<DbHandoff>(),
+    conversationIds.length > 0
+      ? supabase
+          .from("risk_assessments")
+          .select("*")
+          .eq("tenant_id", context.tenantId)
+          .in("conversation_id", conversationIds)
+          .order("created_at", { ascending: false })
+          .limit(50)
+      : emptySupabaseResult<DbRiskAssessment>(),
+    supabase
+      .from("handoff_cases")
+      .select("*")
+      .eq("tenant_id", context.tenantId)
+      .eq("client_id", clientId)
+      .in("status", ["open", "assigned"])
+      .order("created_at"),
+    supabase.from("client_form_responses").select("*").eq("tenant_id", context.tenantId).eq("client_id", clientId),
+    supabase
+      .from("client_context_updates")
+      .select("*")
+      .eq("tenant_id", context.tenantId)
+      .eq("client_id", clientId)
+      .order("created_at"),
+    options.processedEventId
+      ? supabase
+          .from("processed_inbound_events")
+          .select("*")
+          .eq("tenant_id", context.tenantId)
+          .eq("provider_event_id", options.processedEventId)
+      : emptySupabaseResult<{ provider_event_id: string }>(),
+  ]);
+
+  throwIfError(memoriesResult.error);
+  throwIfError(recentMessagesResult.error);
+  throwIfError(draftMessagesResult.error);
+  throwIfError(decisionsResult.error);
+  throwIfError(requiredMessageResult.error);
+  throwIfError(requiredDecisionResult.error);
+  throwIfError(requiredFormSchemaResult.error);
+  throwIfError(requiredHandoffResult.error);
+  throwIfError(riskAssessmentsResult.error);
+  throwIfError(handoffsResult.error);
+  throwIfError(formResponsesResult.error);
+  throwIfError(clientContextUpdatesResult.error);
+  throwIfError(processedEventsResult.error);
+
+  const channels = channelsResult.data || [];
+  const memories = memoriesResult.data || [];
+  const rawMessages = mergeById([
+    ...(recentMessagesResult.data || []),
+    ...(draftMessagesResult.data || []),
+    ...(requiredMessageResult.data || []),
+  ]);
+  const knownDecisionIds = new Set([
+    ...(decisionsResult.data || []).map((decision) => decision.id),
+    ...(requiredDecisionResult.data || []).map((decision) => decision.id),
+  ]);
+  const missingDraftDecisionIds = rawMessages
+    .map((message) => message.generated_by_ai_decision_id)
+    .filter((id): id is string => Boolean(id) && !knownDecisionIds.has(id));
+  const draftDecisionsResult =
+    missingDraftDecisionIds.length > 0
+      ? await supabase
+          .from("ai_decisions")
+          .select("*")
+          .eq("tenant_id", context.tenantId)
+          .in("id", Array.from(new Set(missingDraftDecisionIds)))
+      : await emptySupabaseResult<DbDecision>();
+  throwIfError(draftDecisionsResult.error);
+
+  const messages = rawMessages
+    .map(mapMessage)
+    .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+  const scopedState = scopeSupabaseState(
+    {
+      tenant: { id: tenantResult.data.id, name: tenantResult.data.name },
+      dietitian: {
+        id: dietitianResult.data.id,
+        tenantId: dietitianResult.data.tenant_id,
+        displayName: dietitianResult.data.display_name,
+        timezone: dietitianResult.data.timezone,
+        uiLanguage: normalizeLanguageCode(dietitianResult.data.ui_language),
+      },
+      voiceSamples: [],
+      voiceProfiles: (voiceProfilesResult.data || []).map(mapVoiceProfile),
+      clientFormSchemas: (requiredFormSchemaResult.data || []).map(mapFormSchema),
+      clientFormResponses: (formResponsesResult.data || []).map(mapFormResponse),
+      clientContextUpdates: (clientContextUpdatesResult.data || []).map(mapClientContextUpdate),
+      clients: [mapClient(clientResult.data, channels)],
+      conversations: (conversationsResult.data || []).map((conversation) => mapConversation(conversation, memories)),
+      messages,
+      aiDecisions: mergeById([
+        ...(decisionsResult.data || []),
+        ...(requiredDecisionResult.data || []),
+        ...(draftDecisionsResult.data || []),
+      ]).map(mapDecision),
+      riskAssessments: (riskAssessmentsResult.data || [])
+        .map(mapRiskAssessment)
+        .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()),
+      handoffCases: mergeById([...(handoffsResult.data || []), ...(requiredHandoffResult.data || [])]).map(mapHandoff),
+      notifications: [],
+      inboundQuarantines: [],
+      dataRequests: [],
+      internalCopilotMessages: [],
+      internalCopilotToolCalls: [],
+      auditEvents: [],
+      processedSimulationKeys: (processedEventsResult.data || []).map((event) => event.provider_event_id),
+      lastSimulation: null,
+    },
+    context,
+    assignmentsResult.data || [],
+  );
+
+  if (!scopedState.clients.some((client) => client.id === clientId)) {
+    throw new AppDomainError(404, "client_not_found");
+  }
+
+  return scopedState satisfies ManuAppState;
+}
+
+async function loadSupabaseHandoffOperationState(handoffId: string, context: AppTenantContext) {
+  const supabase = requireSupabase();
+  await ensureDemoData(supabase, context.userId);
+
+  const handoffResult = await supabase
+    .from("handoff_cases")
+    .select("id, client_id")
+    .eq("tenant_id", context.tenantId)
+    .eq("id", handoffId)
+    .maybeSingle();
+  throwIfError(handoffResult.error);
+
+  if (!handoffResult.data) {
+    throw new AppDomainError(404, "handoff_not_found");
+  }
+
+  try {
+    const state = await loadSupabaseClientOperationState(handoffResult.data.client_id, context, {
+      requiredHandoffId: handoffId,
+    });
+
+    if (!state.handoffCases.some((handoff) => handoff.id === handoffId)) {
+      throw new AppDomainError(404, "handoff_not_found");
+    }
+
+    return state;
+  } catch (error) {
+    if (error instanceof AppDomainError && error.message === "client_not_found") {
+      throw new AppDomainError(404, "handoff_not_found");
+    }
+    throw error;
+  }
+}
+
+async function loadSupabaseDraftOperationState(messageId: string, context: AppTenantContext) {
+  const supabase = requireSupabase();
+  await ensureDemoData(supabase, context.userId);
+
+  const messageResult = await supabase
+    .from("messages")
+    .select("id, conversation_id, generated_by_ai_decision_id")
+    .eq("tenant_id", context.tenantId)
+    .eq("id", messageId)
+    .maybeSingle();
+  throwIfError(messageResult.error);
+
+  if (!messageResult.data) {
+    throw new AppDomainError(404, "message_not_found");
+  }
+
+  const conversationResult = await supabase
+    .from("conversations")
+    .select("id, client_id")
+    .eq("tenant_id", context.tenantId)
+    .eq("id", messageResult.data.conversation_id)
+    .maybeSingle();
+  throwIfError(conversationResult.error);
+
+  if (!conversationResult.data) {
+    throw new AppDomainError(404, "message_not_found");
+  }
+
+  try {
+    const state = await loadSupabaseClientOperationState(conversationResult.data.client_id, context, {
+      requiredMessageId: messageId,
+      requiredDecisionId: messageResult.data.generated_by_ai_decision_id,
+    });
+
+    if (!state.messages.some((message) => message.id === messageId)) {
+      throw new AppDomainError(404, "message_not_found");
+    }
+
+    return state;
+  } catch (error) {
+    if (error instanceof AppDomainError && error.message === "client_not_found") {
+      throw new AppDomainError(404, "message_not_found");
+    }
+    throw error;
+  }
+}
+
 export function scopeSupabaseState(
   state: ManuAppState,
   context: AppTenantContext,
@@ -589,10 +894,11 @@ export async function patchSupabaseClientRecord(
   }
 
   const supabase = requireSupabase();
-  await upsertClient(supabase, client);
+  const beforeClient = state.clients.find((item) => item.id === clientId);
+  await upsertClient(supabase, client, beforeClient);
   await upsertChannel(supabase, client);
-  if (hasAiControlChange(state.clients.find((item) => item.id === clientId), client)) {
-    await insertClientAiStatusEvent(supabase, state.clients.find((item) => item.id === clientId), client, context);
+  if (hasAiControlChange(beforeClient, client)) {
+    await insertClientAiStatusEvent(supabase, beforeClient, client, context);
     await insertAudit(supabase, {
       id: crypto.randomUUID(),
       tenantId: context.tenantId,
@@ -654,7 +960,7 @@ async function persistSupabaseClientRemovalLifecycle(
   const beforeAudits = new Set(before.auditEvents.map((item) => item.id));
   const beforeRequests = new Set(before.dataRequests.map((item) => item.id));
 
-  await upsertClient(supabase, client);
+  await upsertClient(supabase, client, before.clients.find((item) => item.id === client.id));
   await checked(
     supabase
       .from("client_channels")
@@ -790,9 +1096,9 @@ async function persistSupabaseClientRemovalLifecycle(
 }
 
 export async function addSupabaseManualReply(clientId: string, body: string, context = demoTenantContext()) {
-  const state = await loadSupabaseState(context);
+  const state = await loadSupabaseClientOperationState(clientId, context);
   const next = addManualReplyInState(state, clientId, body);
-  await persistStateDiff(requireSupabase(), state, next);
+  await commitStateDeltaRpc(requireSupabase(), "commit_manual_reply", state, next);
   return loadSupabaseState(context);
 }
 
@@ -801,21 +1107,21 @@ export async function approveSupabaseDraftMessage(
   body: string | undefined,
   context = demoTenantContext(),
 ) {
-  const state = await loadSupabaseState(context);
+  const state = await loadSupabaseDraftOperationState(messageId, context);
   const next = approveDraftInState(state, messageId, body);
   await persistDraftUpdate(requireSupabase(), state, next, messageId, context);
   return loadSupabaseState(context);
 }
 
 export async function dismissSupabaseDraftMessage(messageId: string, context = demoTenantContext()) {
-  const state = await loadSupabaseState(context);
+  const state = await loadSupabaseDraftOperationState(messageId, context);
   const next = dismissDraftInState(state, messageId);
   await persistDraftUpdate(requireSupabase(), state, next, messageId, context);
   return loadSupabaseState(context);
 }
 
 export async function releaseSupabaseHumanTakeover(clientId: string, context = demoTenantContext()) {
-  const state = await loadSupabaseState(context);
+  const state = await loadSupabaseClientOperationState(clientId, context);
   const next = releaseHumanTakeoverInState(state, clientId);
   const client = next.clients.find((item) => item.id === clientId);
 
@@ -824,12 +1130,7 @@ export async function releaseSupabaseHumanTakeover(clientId: string, context = d
   }
 
   const supabase = requireSupabase();
-  const { error } = await supabase
-    .from("clients")
-    .update({ human_takeover_locked: client.humanTakeoverLocked })
-    .eq("id", clientId)
-    .eq("tenant_id", context.tenantId);
-  throwIfError(error);
+  await upsertClient(supabase, client, state.clients.find((item) => item.id === clientId));
 
   const beforeAudits = new Set(state.auditEvents.map((item) => item.id));
   for (const audit of next.auditEvents.filter((item) => !beforeAudits.has(item.id))) {
@@ -840,10 +1141,21 @@ export async function releaseSupabaseHumanTakeover(clientId: string, context = d
 }
 
 export async function runSupabaseSimulation(request: SimulationRequest, context = demoTenantContext()) {
-  const state = await loadSupabaseState(context);
+  const state =
+    request.sourceConversationType === "group" || !request.clientId
+      ? await loadSupabaseState(context)
+      : await loadSupabaseClientOperationState(request.clientId, context, {
+          processedEventId: request.idempotencyKey,
+        });
   const simulationClient = state.clients.find((client) => client.id === request.clientId);
   const next = await simulateInState(state, request);
-  await persistStateDiff(requireSupabase(), state, next, request.channel || simulationClient?.channel);
+  await commitStateDeltaRpc(
+    requireSupabase(),
+    "commit_inbound_simulation",
+    state,
+    next,
+    request.channel || simulationClient?.channel,
+  );
   return loadSupabaseStateWithLastSimulation(next, context);
 }
 
@@ -852,7 +1164,7 @@ export async function updateSupabaseHandoffStatus(
   status: "resolved" | "dismissed",
   context = demoTenantContext(),
 ) {
-  const state = await loadSupabaseState(context);
+  const state = await loadSupabaseHandoffOperationState(handoffId, context);
   const next = updateHandoffStatusInState(state, handoffId, status);
   const handoff = next.handoffCases.find((item) => item.id === handoffId);
 
@@ -877,7 +1189,7 @@ export async function resolveAndReactivateSupabaseRedRisk(
   input: { reactivationReason?: string; aiMode?: "copilot" | "autopilot" },
   context = demoTenantContext(),
 ) {
-  const before = await loadSupabaseState(context);
+  const before = await loadSupabaseHandoffOperationState(handoffId, context);
   const after = resolveAndReactivateRedRiskInState(before, handoffId, input);
   const client = after.clients.find(
     (item) => item.redRiskLock.status === "reactivated" && item.redRiskLock.handoffId === handoffId,
@@ -890,7 +1202,7 @@ export async function resolveAndReactivateSupabaseRedRisk(
   }
 
   const supabase = requireSupabase();
-  await upsertClient(supabase, client);
+  await upsertClient(supabase, client, beforeClient);
   await checked(
     supabase
       .from("handoff_cases")
@@ -997,7 +1309,9 @@ export async function saveSupabaseFormResponse(
   input: { clientId: string; schemaId: string; answers: Record<string, unknown>; submittedPhoneE164?: unknown },
   context = demoTenantContext(),
 ) {
-  const before = await loadSupabaseState(context);
+  const before = await loadSupabaseClientOperationState(input.clientId, context, {
+    requiredFormSchemaId: input.schemaId,
+  });
   const next = saveFormResponseInState(before, input);
   const response = next.clientFormResponses.find(
     (item) =>
@@ -1009,8 +1323,15 @@ export async function saveSupabaseFormResponse(
   const client = next.clients.find((item) => item.id === input.clientId);
   const supabase = requireSupabase();
   if (response) await upsertFormResponse(supabase, { ...response, tenantId: context.tenantId });
-  if (client) await upsertClient(supabase, { ...client, tenantId: context.tenantId, dietitianId: context.dietitianId });
+  if (client) {
+    await upsertClient(
+      supabase,
+      { ...client, tenantId: context.tenantId, dietitianId: context.dietitianId },
+      before.clients.find((item) => item.id === client.id),
+    );
+  }
   await persistNewAudits(supabase, before, next);
+  await persistChangedDraftInvalidations(supabase, before, next, context);
   return loadSupabaseState(context);
 }
 
@@ -1033,16 +1354,14 @@ export async function addSupabaseClientContextUpdate(
   input: CreateClientContextUpdateInput,
   context = demoTenantContext(),
 ) {
-  const before = await loadSupabaseState(context);
+  const before = await loadSupabaseClientOperationState(clientId, context);
   const next = addClientContextUpdateInState(before, clientId, input);
   const update = next.clientContextUpdates.find(
     (item) => !before.clientContextUpdates.some((beforeUpdate) => beforeUpdate.id === item.id),
   );
-  const client = next.clients.find((item) => item.id === clientId);
   const supabase = requireSupabase();
 
   if (update) await insertClientContextUpdate(supabase, { ...update, tenantId: context.tenantId });
-  if (client) await upsertClient(supabase, { ...client, tenantId: context.tenantId, dietitianId: context.dietitianId });
   await persistStateDiff(supabase, before, next);
   await persistChangedDraftInvalidations(supabase, before, next, context);
   return loadSupabaseState(context);
@@ -1234,38 +1553,56 @@ async function insertClientBundle(
   }
 }
 
-async function upsertClient(supabase: SupabaseClient, client: ClientRecord) {
+async function upsertClient(supabase: SupabaseClient, client: ClientRecord, beforeClient?: ClientRecord) {
   const safetyChecklist = normalizeSafetyChecklist(client.safetyChecklist);
   const mandatorySafetyComplete = isSafetyChecklistComplete({ ...client, safetyChecklist });
+  const payload = {
+    id: client.id,
+    tenant_id: client.tenantId,
+    dietitian_id: client.dietitianId,
+    lifecycle_status: client.lifecycleStatus,
+    removed_at: client.removedAt,
+    full_name: client.fullName,
+    primary_phone_e164: client.primaryPhoneE164,
+    communication_language: client.communicationLanguage,
+    selected_persona_id: client.selectedPersonaId,
+    ai_status: client.aiStatus,
+    ai_mode: client.aiMode,
+    ai_active_from: client.aiActiveFrom,
+    ai_active_until: client.aiActiveUntil,
+    channel_permission: client.channelPermission,
+    mandatory_safety_complete: mandatorySafetyComplete,
+    human_takeover_locked: client.humanTakeoverLocked,
+    red_risk_lock: client.redRiskLock,
+    context_revision: client.contextRevision,
+    safety_checklist: safetyChecklist,
+    health_profile: client.healthProfile,
+    diet_plan: client.dietPlan,
+    allergies: client.allergies,
+    restricted_foods: client.restrictedFoods,
+    clinical_risk_notes: client.clinicalRiskNotes,
+    pinned_notes: client.pinnedNotes,
+  };
+
+  if (beforeClient) {
+    const result = await supabase
+      .from("clients")
+      .update(payload)
+      .eq("id", client.id)
+      .eq("tenant_id", client.tenantId)
+      .eq("context_revision", beforeClient.contextRevision)
+      .select("id")
+      .maybeSingle();
+    throwIfError(result.error);
+
+    if (!result.data) {
+      throw new AppDomainError(409, "concurrent_state_update");
+    }
+    return;
+  }
 
   await checked(
-    supabase.from("clients").upsert({
-      id: client.id,
-      tenant_id: client.tenantId,
-      dietitian_id: client.dietitianId,
-      lifecycle_status: client.lifecycleStatus,
-      removed_at: client.removedAt,
-      full_name: client.fullName,
-      primary_phone_e164: client.primaryPhoneE164,
-      communication_language: client.communicationLanguage,
-      selected_persona_id: client.selectedPersonaId,
-      ai_status: client.aiStatus,
-      ai_mode: client.aiMode,
-      ai_active_from: client.aiActiveFrom,
-      ai_active_until: client.aiActiveUntil,
-      channel_permission: client.channelPermission,
-      mandatory_safety_complete: mandatorySafetyComplete,
-      human_takeover_locked: client.humanTakeoverLocked,
-      red_risk_lock: client.redRiskLock,
-      context_revision: client.contextRevision,
-      safety_checklist: safetyChecklist,
-      health_profile: client.healthProfile,
-      diet_plan: client.dietPlan,
-      allergies: client.allergies,
-      restricted_foods: client.restrictedFoods,
-      clinical_risk_notes: client.clinicalRiskNotes,
-      pinned_notes: client.pinnedNotes,
-    }),
+    supabase.from("clients").upsert(payload),
   );
 }
 
@@ -1336,7 +1673,7 @@ async function persistStateDiff(
   for (const client of after.clients) {
     const beforeClient = beforeClientsById.get(client.id);
     if (beforeClient && JSON.stringify(beforeClient) !== JSON.stringify(client)) {
-      await upsertClient(supabase, client);
+      await upsertClient(supabase, client, beforeClient);
       if (hasAiControlChange(beforeClient, client)) {
         await insertClientAiStatusEvent(supabase, beforeClient, client, {
           tenantId: client.tenantId,
@@ -1379,6 +1716,245 @@ async function persistStateDiff(
       }),
     );
   }
+}
+
+async function commitStateDeltaRpc(
+  supabase: SupabaseClient,
+  rpcName: string,
+  before: ManuAppState,
+  after: ManuAppState,
+  processedEventChannel?: ClientRecord["channel"],
+) {
+  const payload = buildStateDeltaPayload(before, after, processedEventChannel);
+  const { error } = await supabase.rpc(rpcName, {
+    p_tenant_id: after.tenant.id,
+    p_payload: payload,
+  });
+
+  if (error) {
+    throwControlledRpcError(error);
+  }
+}
+
+function buildStateDeltaPayload(
+  before: ManuAppState,
+  after: ManuAppState,
+  processedEventChannel?: ClientRecord["channel"],
+) {
+  const beforeClientsById = new Map(before.clients.map((client) => [client.id, client]));
+  const beforeMessages = new Set(before.messages.map((item) => item.id));
+  const beforeDecisions = new Set(before.aiDecisions.map((item) => item.id));
+  const beforeRiskAssessments = new Set(before.riskAssessments.map((item) => item.id));
+  const beforeHandoffs = new Set(before.handoffCases.map((item) => item.id));
+  const beforeNotifications = new Set(before.notifications.map((item) => item.id));
+  const beforeQuarantines = new Set(before.inboundQuarantines.map((item) => item.id));
+  const beforeAudits = new Set(before.auditEvents.map((item) => item.id));
+  const beforeProcessed = new Set(before.processedSimulationKeys);
+  const changedClients = after.clients.filter((client) => {
+    const beforeClient = beforeClientsById.get(client.id);
+    return beforeClient && JSON.stringify(beforeClient) !== JSON.stringify(client);
+  });
+
+  return {
+    expectedClientRevisions: Object.fromEntries(
+      changedClients.map((client) => [client.id, beforeClientsById.get(client.id)?.contextRevision || 1]),
+    ),
+    clients: changedClients.map(serializeClientForRpc),
+    messages: after.messages.filter((item) => !beforeMessages.has(item.id)).map(serializeMessageForRpc),
+    aiDecisions: after.aiDecisions.filter((item) => !beforeDecisions.has(item.id)).map(serializeDecisionForRpc),
+    riskAssessments: after.riskAssessments
+      .filter((item) => !beforeRiskAssessments.has(item.id))
+      .map(serializeRiskAssessmentForRpc),
+    handoffCases: after.handoffCases.filter((item) => !beforeHandoffs.has(item.id)).map(serializeHandoffForRpc),
+    clientAiStatusEvents: changedClients
+      .filter((client) => hasAiControlChange(beforeClientsById.get(client.id), client))
+      .map((client) => serializeClientAiStatusEventForRpc(beforeClientsById.get(client.id), client)),
+    notifications: after.notifications.filter((item) => !beforeNotifications.has(item.id)).map(serializeNotificationForRpc),
+    inboundQuarantines: after.inboundQuarantines
+      .filter((item) => !beforeQuarantines.has(item.id))
+      .map(serializeInboundQuarantineForRpc),
+    auditEvents: after.auditEvents.filter((item) => !beforeAudits.has(item.id)).map(serializeAuditForRpc),
+    processedEvents: after.processedSimulationKeys
+      .filter((item) => !beforeProcessed.has(item))
+      .map((providerEventId) => ({
+        channel: processedEventChannel || after.clients[0]?.channel || "whatsapp",
+        providerEventId,
+      })),
+  };
+}
+
+function serializeClientForRpc(client: ClientRecord) {
+  return {
+    id: client.id,
+    dietitianId: client.dietitianId,
+    lifecycleStatus: client.lifecycleStatus,
+    removedAt: client.removedAt,
+    fullName: client.fullName,
+    primaryPhoneE164: client.primaryPhoneE164,
+    communicationLanguage: client.communicationLanguage,
+    selectedPersonaId: client.selectedPersonaId,
+    aiStatus: client.aiStatus,
+    aiMode: client.aiMode,
+    aiActiveFrom: client.aiActiveFrom,
+    aiActiveUntil: client.aiActiveUntil,
+    channelPermission: client.channelPermission,
+    mandatorySafetyComplete: client.mandatorySafetyComplete,
+    humanTakeoverLocked: client.humanTakeoverLocked,
+    redRiskLock: client.redRiskLock,
+    contextRevision: client.contextRevision,
+    safetyChecklist: normalizeSafetyChecklist(client.safetyChecklist),
+    healthProfile: client.healthProfile,
+    dietPlan: client.dietPlan,
+    allergies: client.allergies,
+    restrictedFoods: client.restrictedFoods,
+    clinicalRiskNotes: client.clinicalRiskNotes,
+    pinnedNotes: client.pinnedNotes,
+  };
+}
+
+function serializeMessageForRpc(message: MessageRecord) {
+  return {
+    id: message.id,
+    conversationId: message.conversationId,
+    sender: message.sender,
+    body: message.body,
+    origin: message.origin,
+    authorDietitianId: message.authorDietitianId,
+    generatedByAiDecisionId: message.generatedByAiDecisionId,
+    approvedByDietitianId: message.approvedByDietitianId,
+    sourceMessageId: message.sourceMessageId,
+    risk: message.risk,
+    status: message.status || "stored",
+    createdAt: message.createdAt,
+  };
+}
+
+function serializeDecisionForRpc(decision: AiDecisionRecord) {
+  return {
+    id: decision.id,
+    conversationId: decision.conversationId,
+    clientId: decision.clientId,
+    mode: decision.mode,
+    aiStatus: decision.aiStatus,
+    personaId: decision.personaId,
+    risk: decision.risk,
+    model: decision.model,
+    promptVersion: decision.promptVersion,
+    providerAttempted: decision.providerAttempted,
+    providerId: decision.providerId,
+    providerStatus: decision.providerStatus,
+    providerErrorCode: decision.providerErrorCode,
+    sendStatus: decision.sendStatus,
+    contextManifest: decision.contextManifest,
+    providerOutputSafety: decision.providerOutputSafety,
+    tokenBudget: decision.tokenBudget,
+    action: decision.action,
+    blockedReason: decision.blockedReason,
+    qualityIssues: decision.qualityIssues,
+    reasons: decision.reasons,
+    createdAt: decision.createdAt,
+  };
+}
+
+function serializeRiskAssessmentForRpc(riskAssessment: RiskAssessmentRecord) {
+  return {
+    id: riskAssessment.id,
+    conversationId: riskAssessment.conversationId,
+    messageId: riskAssessment.messageId,
+    level: riskAssessment.level,
+    reasons: riskAssessment.reasons,
+    classifierVersion: riskAssessment.classifierVersion,
+    createdAt: riskAssessment.createdAt,
+  };
+}
+
+function serializeHandoffForRpc(handoff: HandoffCaseRecord) {
+  return {
+    id: handoff.id,
+    dietitianId: handoff.dietitianId,
+    clientId: handoff.clientId,
+    conversationId: handoff.conversationId,
+    triggeringMessageId: handoff.triggeringMessageId,
+    risk: handoff.risk,
+    reasons: handoff.reasons,
+    status: handoff.status,
+    urgency: handoff.urgency,
+    safeAcknowledgement: handoff.safeAcknowledgement,
+    recommendedAction: handoff.recommendedAction,
+    createdAt: handoff.createdAt,
+  };
+}
+
+function serializeClientAiStatusEventForRpc(before: ClientRecord | undefined, after: ClientRecord) {
+  return {
+    id: crypto.randomUUID(),
+    clientId: after.id,
+    dietitianId: after.dietitianId,
+    previousStatus: before?.aiStatus || null,
+    newStatus: after.aiStatus,
+    aiMode: after.aiMode,
+    activeFrom: after.aiActiveFrom,
+    activeUntil: after.aiActiveUntil,
+    reason: "client_ai_control_updated",
+    createdAt: new Date().toISOString(),
+  };
+}
+
+function serializeNotificationForRpc(notification: NotificationRecord) {
+  return {
+    id: notification.id,
+    type: notification.type,
+    entityType: notification.entityType,
+    entityId: notification.entityId,
+    title: notification.title,
+    body: notification.body,
+    read: notification.read,
+    acknowledgedAt: notification.acknowledgedAt,
+    createdAt: notification.createdAt,
+  };
+}
+
+function serializeInboundQuarantineForRpc(quarantine: InboundQuarantineRecord) {
+  return {
+    id: quarantine.id,
+    channel: quarantine.channel,
+    sourceConversationType: quarantine.sourceConversationType,
+    sourceConversationId: quarantine.sourceConversationId,
+    sourceMessageId: quarantine.sourceMessageId,
+    senderChannelUserId: quarantine.senderChannelUserId,
+    reason: quarantine.reason,
+    createdAt: quarantine.createdAt,
+  };
+}
+
+function serializeAuditForRpc(audit: AuditEventRecord) {
+  return {
+    id: audit.id,
+    eventType: audit.eventType,
+    entityType: audit.entityType,
+    entityId: audit.entityId,
+    metadata: audit.metadata,
+    createdAt: audit.createdAt,
+  };
+}
+
+function throwControlledRpcError(error: { message?: string }) {
+  const message = error.message || "";
+  if (message.includes("concurrent_state_update")) {
+    throw new AppDomainError(409, "concurrent_state_update");
+  }
+  if (message.includes("client_not_found")) {
+    throw new AppDomainError(404, "client_not_found");
+  }
+  throw error;
+}
+
+function emptySupabaseResult<T>() {
+  return Promise.resolve({ data: [] as T[], error: null });
+}
+
+function mergeById<T extends { id: string }>(items: T[]) {
+  return [...new Map(items.map((item) => [item.id, item])).values()];
 }
 
 async function persistDraftUpdate(

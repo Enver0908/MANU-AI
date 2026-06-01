@@ -1,6 +1,6 @@
 # MANU-AI Pilot Readiness Evidence Pack
 
-Date: 2026-05-31
+Date: 2026-06-02
 
 ## Status
 
@@ -18,14 +18,25 @@ Run from `app`:
 npm run release:verify
 ```
 
-Latest result, re-verified on 2026-06-01 after Phase 47/48 documentation and RLS coverage updates:
+Latest result, re-verified on 2026-06-02 after Phase 50 production Supabase hardening:
 
-- Core package tests: 52/52 passed.
-- App tests: 117/117 passed.
+- Core package tests: 57/57 passed.
+- App tests: 126/126 passed.
 - App lint: passed.
 - Production build: passed.
 - Production dependency audit gate: passed with only documented R-405 findings.
 - R-405 remains open: Next.js 16.2.7 still bundles nested PostCSS 8.4.31, so no safe stable patch path is available.
+
+Additional Phase 50 production Supabase hardening evidence on 2026-06-02:
+
+- Added `PHASE_50_PRODUCTION_SUPABASE_HARDENING_EVIDENCE_SPEC.md`.
+- Added Supabase rate-limit/RPC foundation migration `app/supabase/migrations/20260602030000_phase_50_production_hardening_foundation.sql`.
+- Wired async scoped rate limiting with Supabase RPC support and local fallback behavior.
+- Wired manual reply and client-scoped inbound simulation to commit RPC calls.
+- Narrowed pre-mutation Supabase reads for manual reply, client-scoped inbound simulation, draft approval/dismissal, human takeover release, handoff status update, red-risk reactivation, form response save, and client context update.
+- `npm run release:verify` passed from `app`: core tests 57/57, app tests 126/126, lint, production build, known R-405 only.
+- `npm run test:rls` skipped 1 file and 11 guarded tests because local Supabase evidence remains unavailable.
+- The Phase 50 migration/RPC foundation was not applied to local Supabase in this run, so it is not production-grade DB execution evidence.
 
 Additional Phase 47/48 release verification on 2026-06-01:
 
@@ -102,7 +113,7 @@ Separate optional evidence commands:
 - `npm run test:rls` when local Supabase is available.
 - `npm run test:visual` when browser visual smoke evidence is needed.
 
-Latest `npm run test:rls` in this workspace skipped 11 tests on 2026-06-01 after Phase 47. Local Supabase evidence remains unavailable in this environment, so the expanded RLS suite is present but local-database execution remains blocked environment evidence until rerun against local Supabase.
+Latest `npm run test:rls` in this workspace skipped 1 file and 11 tests on 2026-06-02 after Phase 50. Local Supabase evidence remains unavailable in this environment, so the expanded RLS suite is present but local-database execution remains blocked environment evidence until rerun against local Supabase.
 
 Phase 29 evidence hardening on 2026-05-31:
 
@@ -330,6 +341,7 @@ Release verification:
 - This package does not approve routing the internal copilot to a real Gemini or external LLM provider.
 - This package does not approve external notification or monitoring vendors.
 - This package does not resolve R-405.
+- This package does not mitigate R-406 or prove Phase 50 SQL/RPC execution against local Supabase.
 
 ## Next Approval Path
 

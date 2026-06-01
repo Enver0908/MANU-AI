@@ -1,10 +1,10 @@
 # MANU-AI Production Pilot Final Readiness Closure Summary
 
-Date: 2026-05-31
+Date: 2026-06-02
 
 ## Status
 
-This is the final summary for the 13-phase completion roadmap, updated after Phase 43 multilingual language support, Phase 44 red-risk reactivation lock, Phase 45 client removal data lifecycle, Phase 46 WhatsApp group quarantine, Phase 47 RLS quarantine evidence coverage, and Phase 48 R-405 stable patch recheck.
+This is the final summary for the 13-phase completion roadmap, updated after Phase 43 multilingual language support, Phase 44 red-risk reactivation lock, Phase 45 client removal data lifecycle, Phase 46 WhatsApp group quarantine, Phase 47 RLS quarantine evidence coverage, Phase 48 R-405 stable patch recheck, Phase 49 safety/orchestration hardening, and Phase 50 production Supabase hardening.
 
 Production pilot is not approved.
 
@@ -26,6 +26,8 @@ Reason:
 - Phase 46 added local WhatsApp group-message quarantine but did not approve any launch gate.
 - Phase 47 added RLS coverage for inbound quarantines but did not produce passing local Supabase evidence.
 - Phase 48 rechecked R-405 and found no safe stable Next.js/PostCSS patch path.
+- Phase 49 added local safety/orchestration/concurrency/rate-limit hardening but did not approve any launch gate.
+- Phase 50 added Supabase rate-limit/RPC groundwork and narrowed several pre-mutation reads, but the migration/RPCs still need local Supabase application and RLS/integration evidence.
 
 ## Completion Roadmap Result
 
@@ -70,8 +72,14 @@ R-405:
 R-406:
 
 - Expanded RLS tests exist.
-- Latest local RLS attempt on 2026-06-01 after Phase 47 skipped 11 guarded tests because local Supabase evidence was unavailable in this environment.
+- Latest local RLS attempt on 2026-06-02 after Phase 50 skipped 1 file and 11 guarded tests because local Supabase evidence was unavailable in this environment.
 - Passing local Supabase RLS evidence is still required before production pilot evidence can be considered complete.
+
+Phase 50 database evidence:
+
+- The Phase 50 migration/RPC foundation exists in the repository.
+- The migration was not applied to a local Supabase instance in this run.
+- SQL/RPC runtime behavior is not yet proven by local database execution evidence.
 
 External approvals:
 
@@ -86,11 +94,11 @@ External approvals:
 
 ## Verification
 
-Latest local release verification after Phase 47/48 documentation and RLS coverage updates:
+Latest local release verification after Phase 50 production Supabase hardening:
 
-- `npm run release:verify` passed after Phase 47/48.
-- Core tests: 52/52 passed.
-- App tests: 117/117 passed.
+- `npm run release:verify` passed on 2026-06-02.
+- Core tests: 57/57 passed.
+- App tests: 126/126 passed.
 - App lint: passed.
 - Production build: passed.
 - Production dependency audit gate passed with only documented R-405 findings.
@@ -127,9 +135,15 @@ Phase 48 verification on 2026-06-01:
 - `npm audit --omit=dev --json` still reports only known R-405 findings.
 - No dependency files were changed.
 
+Phase 50 verification on 2026-06-02:
+
+- `npm run release:verify` passed from `app`: core tests 57/57, app tests 126/126, lint, production build, known R-405 only.
+- `npm run test:rls` skipped 1 file and 11 guarded tests because local Supabase evidence is still unavailable.
+- `PHASE_50_PRODUCTION_SUPABASE_HARDENING_EVIDENCE_SPEC.md` records the implemented scope and evidence limits.
+
 ## Next Required Actions
 
-1. Start Docker Desktop with Linux engine available, start local Supabase, and rerun the expanded 11-test `npm run test:rls` suite.
+1. Start Docker Desktop with Linux engine available, start local Supabase, apply the Phase 50 migration, and rerun the expanded 11-test `npm run test:rls` suite.
 2. Resolve R-405 through a safe stable Next.js/PostCSS upgrade or obtain formal external risk acceptance.
 3. Collect sanitized external approval references in `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md`.
 4. Re-run `npm run release:verify` after any approval-related change.
@@ -137,4 +151,4 @@ Phase 48 verification on 2026-06-01:
 
 ## Non-Approval Statement
 
-This summary does not approve production pilot launch, real health-data processing, real WhatsApp or Telegram messaging, real Gemini or external LLM calls, external monitoring, secret manager use, backup provider use, R-405 risk acceptance, or R-406 mitigation.
+This summary does not approve production pilot launch, real health-data processing, real WhatsApp or Telegram messaging, real Gemini or external LLM calls, external monitoring, secret manager use, backup provider use, R-405 risk acceptance, R-406 mitigation, or Phase 50 SQL/RPC production readiness.
