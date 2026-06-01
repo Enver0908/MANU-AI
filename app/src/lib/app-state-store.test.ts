@@ -16,7 +16,7 @@ import {
   updateHandoffStatusInState,
 } from "./app-state-store";
 import { RETENTION_POLICY_PLACEHOLDERS } from "./data-governance";
-import { createInitialState } from "./seed-data";
+import { createInitialState, DEMO_FORM_SCHEMA_ID } from "./seed-data";
 
 describe("app state store operations", () => {
   it("creates a client with a conversation", () => {
@@ -318,7 +318,7 @@ describe("app state store operations", () => {
   it("removes clients through a soft-delete anonymization lifecycle", async () => {
     const withFormResponse = saveFormResponseInState(createInitialState(), {
       clientId: "client-mert",
-      schemaId: "form-schema-pilot-intake-v1",
+      schemaId: DEMO_FORM_SCHEMA_ID,
       submittedPhoneE164: "+905551110001",
       answers: {
         daily_routine: "I eat breakfast at 8 with health details.",

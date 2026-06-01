@@ -5,6 +5,7 @@ import { DEFAULT_LANGUAGE } from "./languages";
 
 export const DEMO_TENANT_ID = "tenant-manu-demo";
 export const DEMO_DIETITIAN_ID = "dietitian-ayse";
+export const DEMO_FORM_SCHEMA_ID = "00000000-0000-4000-8000-000000000501";
 
 const createdAt = "2026-05-22T09:00:00.000Z";
 
@@ -191,7 +192,7 @@ export function createInitialState(): ManuAppState {
     voiceProfiles: [],
     clientFormSchemas: [
       {
-        id: "form-schema-pilot-intake-v1",
+        id: DEMO_FORM_SCHEMA_ID,
         tenantId: DEMO_TENANT_ID,
         title: "Pilot intake",
         languageCode: DEFAULT_LANGUAGE,

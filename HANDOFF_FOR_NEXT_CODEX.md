@@ -76,13 +76,14 @@ Do not connect real WhatsApp, Telegram, Gemini/external LLM, push/email, monitor
 
 Phase 50 status as of 2026-06-02:
 
-- Phase 1 foundation added `app/supabase/migrations/20260602030000_phase_50_production_hardening_foundation.sql` with `rate_limit_buckets`, `consume_rate_limit`, and transactional commit RPC wrappers. It still needs local Supabase application and RLS/integration evidence.
+- Phase 1 foundation added `app/supabase/migrations/20260602030000_phase_50_production_hardening_foundation.sql` with `rate_limit_buckets`, `consume_rate_limit`, and transactional commit RPC wrappers. On 2026-06-02, Docker Desktop/local Supabase was started and `npx supabase db reset --local` applied the migration locally.
 - Phase 2 app integration is partial: async scoped rate-limit calls are wired, Supabase-backed limiter RPC support exists, and manual reply plus client-scoped inbound simulation use commit RPCs. Do not switch remaining mutation paths fully to RPC until existing message/AI-decision update support is represented transactionally.
 - Phase 3 narrowed reads is partial but locally verified: manual reply, client-scoped inbound simulation, draft approval/dismissal, human takeover release, handoff status update, red-risk reactivation, form response save, and client context update use scoped operation loaders before mutation.
 - Phase 3 validation passed: app tests 126/126, app lint, and core tests 57/57.
 - Phase 4 launch-gate evidence/docs completed locally: added `docs/PHASE_50_PRODUCTION_SUPABASE_HARDENING_EVIDENCE_SPEC.md`, updated pilot evidence/gate/final readiness docs, and re-ran evidence commands.
-- Phase 4 validation passed: `npm run release:verify` from `app` completed with core tests 57/57, app tests 126/126, lint, production build, and only known R-405 findings. `npm run test:rls` skipped 1 file and 11 guarded tests, so R-406 remains blocked.
-- Remaining Phase 50 work: apply/verify the migration locally, rerun `npm run test:rls`, add RPC coverage for existing message/decision updates, then decide which remaining paths can safely move to commit RPCs.
+- Phase 4 validation passed: `npm run release:verify` from `app` completed with core tests 57/57, app tests 126/126, lint, production build, and only known R-405 findings.
+- Local Supabase/RLS validation passed on 2026-06-02: after applying migrations through Phase 50, `npm run test:rls` passed against local Supabase with 1 file and 11/11 tests. R-406 is mitigated in the local prototype.
+- Remaining Phase 50 work: add RPC coverage for existing message/decision updates, then decide which remaining paths can safely move to commit RPCs.
 
 ## Current Implementation
 

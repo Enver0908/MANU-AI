@@ -34,6 +34,7 @@ Commands run from `app` on 2026-06-02:
 ```text
 npm run release:verify
 npm run test:rls
+npx supabase db reset --local
 ```
 
 Results:
@@ -44,14 +45,16 @@ Results:
 - App lint: passed.
 - Production build: passed.
 - Production dependency audit gate passed with only documented R-405 findings.
-- `npm run test:rls` skipped 1 file and 11 guarded tests.
+- Local Supabase was started with Docker Desktop's Linux engine.
+- `npx supabase db reset --local` applied all migrations through `20260602030000_phase_50_production_hardening_foundation.sql`.
+- Direct DB checks confirmed `rate_limit_buckets`, `consume_rate_limit`, and `commit_inbound_simulation` exist locally.
+- Direct DB checks confirmed `messages_generated_by_ai_decision_fk` is deferrable and initially deferred for same-transaction message/AI-decision payloads.
+- `npm run test:rls` passed against local Supabase: 1 file, 11/11 tests passed.
 
 ## Evidence Limits
 
-- The Phase 50 migration was not applied to a local Supabase database in this run.
-- The new SQL/RPC functions have not been proven by local database execution evidence.
-- `npm run test:rls` did not produce passing RLS evidence; it skipped because the local Supabase evidence environment remains unavailable.
-- `psql` was unavailable in the current environment, so SQL parser/runtime validation was not performed through `psql`.
+- The Phase 50 migration was applied to local Supabase and the expanded RLS suite produced passing evidence.
+- The local DB reset exposed and fixed two migration/seed compatibility issues before the passing run: the demo form schema seed now uses a deterministic UUID, and the `messages_generated_by_ai_decision_fk` constraint is deferrable for commit RPC payloads that insert messages and AI decisions in one transaction.
 - Existing message and AI-decision update cases are not yet fully covered by the generic RPC commit payload. Do not switch draft review, context update, form response, red-risk reactivation, or removal lifecycle paths fully to RPC commits until that transactional surface is completed and tested.
 
 ## Launch Gate Impact
@@ -62,8 +65,7 @@ Phase 50 improves local production-readiness evidence for R-114, R-115, and R-20
 
 - R-114 remains only partially mitigated until all multi-table mutation side effects are transactionally covered and DB-tested.
 - R-115 remains partially mitigated because global dashboard/load/export/removal/admin workflows still need separate scale contracts.
-- R-208 remains partially mitigated until the distributed limiter migration/RPC is applied and verified against local Supabase.
-- R-406 remains blocked because passing local Supabase RLS evidence has not been produced.
+- R-208 is improved by local DB evidence for the distributed limiter foundation, but production deployment, monitoring, and abuse tuning remain future work.
+- R-406 is mitigated in the local prototype by the passing 11-test local Supabase RLS run.
 
 Production pilot remains `NO-GO`.
-

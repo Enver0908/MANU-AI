@@ -18,7 +18,7 @@ Reason:
 
 - All eight production-pilot launch gates remain open.
 - R-405 remains an open production launch blocker.
-- R-406 remains blocked because passing local Supabase RLS evidence has not been produced.
+- R-406 is now mitigated in the local prototype by a passing local Supabase RLS run, but production pilot still requires the external launch gates and R-405 clearance or acceptance.
 - No external approval artifacts were supplied during the completion roadmap.
 - Phase 43 added multilingual local/mock support but did not approve any launch gate.
 - Phase 44 added local red-risk reactivation locking but did not approve any launch gate.
@@ -27,7 +27,7 @@ Reason:
 - Phase 47 added RLS coverage for inbound quarantines but did not produce passing local Supabase evidence.
 - Phase 48 rechecked R-405 and found no safe stable Next.js/PostCSS patch path.
 - Phase 49 added local safety/orchestration/concurrency/rate-limit hardening but did not approve any launch gate.
-- Phase 50 added Supabase rate-limit/RPC groundwork and narrowed several pre-mutation reads, but the migration/RPCs still need local Supabase application and RLS/integration evidence.
+- Phase 50 added Supabase rate-limit/RPC groundwork, narrowed several pre-mutation reads, and produced local Supabase migration/RLS evidence. Remaining Phase 50 transactional RPC coverage is still not complete for every mutation path.
 
 ## Completion Roadmap Result
 
@@ -72,14 +72,15 @@ R-405:
 R-406:
 
 - Expanded RLS tests exist.
-- Latest local RLS attempt on 2026-06-02 after Phase 50 skipped 1 file and 11 guarded tests because local Supabase evidence was unavailable in this environment.
-- Passing local Supabase RLS evidence is still required before production pilot evidence can be considered complete.
+- Latest local RLS run on 2026-06-02 after applying the Phase 50 migration passed against local Supabase: 1 file, 11/11 tests.
+- R-406 is mitigated in the local prototype, but this does not approve production pilot launch.
 
 Phase 50 database evidence:
 
 - The Phase 50 migration/RPC foundation exists in the repository.
-- The migration was not applied to a local Supabase instance in this run.
-- SQL/RPC runtime behavior is not yet proven by local database execution evidence.
+- The migration was applied to local Supabase with `npx supabase db reset --local` on 2026-06-02.
+- Direct DB checks confirmed the local `rate_limit_buckets`, `consume_rate_limit`, and `commit_inbound_simulation` objects exist.
+- Direct DB checks confirmed `messages_generated_by_ai_decision_fk` is deferrable and initially deferred for same-transaction message/AI-decision payloads.
 
 External approvals:
 
@@ -138,12 +139,12 @@ Phase 48 verification on 2026-06-01:
 Phase 50 verification on 2026-06-02:
 
 - `npm run release:verify` passed from `app`: core tests 57/57, app tests 126/126, lint, production build, known R-405 only.
-- `npm run test:rls` skipped 1 file and 11 guarded tests because local Supabase evidence is still unavailable.
+- `npm run test:rls` passed against local Supabase: 1 file, 11/11 tests.
 - `PHASE_50_PRODUCTION_SUPABASE_HARDENING_EVIDENCE_SPEC.md` records the implemented scope and evidence limits.
 
 ## Next Required Actions
 
-1. Start Docker Desktop with Linux engine available, start local Supabase, apply the Phase 50 migration, and rerun the expanded 11-test `npm run test:rls` suite.
+1. Complete the remaining Phase 50 transactional RPC coverage for existing message/AI-decision update paths before moving draft review, context update, form response, red-risk reactivation, or removal lifecycle fully to RPC commits.
 2. Resolve R-405 through a safe stable Next.js/PostCSS upgrade or obtain formal external risk acceptance.
 3. Collect sanitized external approval references in `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md`.
 4. Re-run `npm run release:verify` after any approval-related change.
@@ -151,4 +152,4 @@ Phase 50 verification on 2026-06-02:
 
 ## Non-Approval Statement
 
-This summary does not approve production pilot launch, real health-data processing, real WhatsApp or Telegram messaging, real Gemini or external LLM calls, external monitoring, secret manager use, backup provider use, R-405 risk acceptance, R-406 mitigation, or Phase 50 SQL/RPC production readiness.
+This summary does not approve production pilot launch, real health-data processing, real WhatsApp or Telegram messaging, real Gemini or external LLM calls, external monitoring, secret manager use, backup provider use, R-405 risk acceptance, or complete Phase 50 SQL/RPC production readiness.

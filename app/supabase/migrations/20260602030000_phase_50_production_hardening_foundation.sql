@@ -23,6 +23,15 @@ create index if not exists rate_limit_buckets_reset_idx
 
 alter table rate_limit_buckets enable row level security;
 
+alter table messages
+  drop constraint if exists messages_generated_by_ai_decision_fk;
+
+alter table messages
+  add constraint messages_generated_by_ai_decision_fk
+  foreign key (generated_by_ai_decision_id)
+  references ai_decisions(id)
+  deferrable initially deferred;
+
 drop policy if exists "service role only rate limit buckets" on rate_limit_buckets;
 
 create or replace function consume_rate_limit(
