@@ -85,6 +85,9 @@ export async function runInboundSimulation(
   }
 
   const client = findClient(state, request.clientId);
+  if (client.lifecycleStatus === "removed_anonymized") {
+    throw new AppDomainError(409, "client_removed_anonymized");
+  }
   const promptClient = {
     ...client,
     clientFormSummary: buildClientFormSummary(state, client.id),
@@ -238,6 +241,9 @@ export function updateClientInState(
   patch: Partial<ClientRecord>,
 ): ManuAppState {
   const existingClient = state.clients.find((c) => c.id === clientId);
+  if (existingClient?.lifecycleStatus === "removed_anonymized") {
+    throw new AppDomainError(409, "client_removed_anonymized");
+  }
   assertPatchAllowedByRedRiskLock(existingClient, patch);
   const auditEvents = [...state.auditEvents];
   const promptAffecting = isPromptAffectingClientPatch(patch);
@@ -281,6 +287,10 @@ export function appendDietitianManualReply(
   clientId: string,
   body: string,
 ): ManuAppState {
+  const client = findClient(state, clientId);
+  if (client.lifecycleStatus === "removed_anonymized") {
+    throw new AppDomainError(409, "client_removed_anonymized");
+  }
   const conversation = findConversation(state, clientId);
   const now = new Date().toISOString();
   const message = buildMessage({
@@ -365,6 +375,7 @@ function revalidateDraftBeforeSend(
   const manifest = decision.contextManifest || null;
 
   if (!conversation || !client || !manifest) return "revalidation_query_failed";
+  if (client.lifecycleStatus === "removed_anonymized") return "client_removed_anonymized";
   if (Number(manifest.clientContextRevision) !== client.contextRevision) return "context_changed_before_send";
   if (client.channelPermission !== "ready") return "context_changed_before_send";
   if (client.humanTakeoverLocked) return "context_changed_before_send";
@@ -959,6 +970,13 @@ function buildRiskAssessment({
 }
 
 function getPreflightBlock(client: ClientRecord): { blockedReason: string; reasons: string[] } | null {
+  if (client.lifecycleStatus === "removed_anonymized") {
+    return {
+      blockedReason: "client_removed_anonymized",
+      reasons: ["client_removed_anonymized"],
+    };
+  }
+
   if (client.redRiskLock.status === "locked") {
     return {
       blockedReason: "red_risk_reactivation_required",

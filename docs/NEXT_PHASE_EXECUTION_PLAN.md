@@ -6,7 +6,37 @@ MANU-AI is in pilot-foundation mode. The local SaaS/PWA prototype, Supabase-back
 
 Real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, and real client health data remain disconnected.
 
-The most recent execution layers after the 13-phase completion roadmap are Phase 43 multilingual language support and Phase 44 red-risk reactivation lock. The production-pilot decision remains `NO-GO`: all eight launch gates remain open, R-405 remains open, and R-406 remains blocked because Phase 31 could not produce local Supabase RLS evidence without Docker Desktop's Linux engine.
+The most recent execution layers after the 13-phase completion roadmap are Phase 43 multilingual language support, Phase 44 red-risk reactivation lock, and Phase 45 client removal data lifecycle. The production-pilot decision remains `NO-GO`: all eight launch gates remain open, R-405 remains open, and R-406 remains blocked because Phase 31 could not produce local Supabase RLS evidence without Docker Desktop's Linux engine.
+
+## Phase 45: Client Removal Data Lifecycle - Completed 2026-06-01
+
+Goal: make "remove client" a soft-delete/anonymization operation that hides the client from normal operations and clears promptable health/channel/message/form/memory data while retaining minimized legal/audit metadata.
+
+Work:
+
+- Added `ClientRecord.lifecycleStatus` and `removedAt`.
+- Added Supabase `clients.lifecycle_status` and `removed_at`.
+- Added `/api/clients/[id]/remove` and dashboard remove action.
+- Removed clients are hidden from normal dashboard client lists and simulator selection.
+- Removed clients are blocked from inbound simulation, manual replies, profile edits, form response save, and internal copilot tools.
+- Removal redacts promptable profile, phone/channel identifiers, memory summaries, messages, form response answers/submitted phone, context updates, handoff text, notification text, AI decision details, risk assessment reasons, and active red-risk/takeover state.
+- Removal records a completed `deletion` data request and `client_removed_anonymized` audit event.
+
+Done criteria:
+
+- Removed clients cannot remain in promptable context.
+- Removed clients cannot be matched through normal dashboard/client-facing operations.
+- Export remains available as a minimized legal/audit bundle.
+- Hard delete remains legal-review gated.
+- No real provider, channel, launch-gate approval, or real health-data connection is introduced.
+
+Status:
+
+- Completed locally on 2026-06-01.
+- `npm run lint` passed from `app`.
+- `npm run test` passed from `app`: 16 files, 114 tests.
+- `npm run release:verify` passed from `app`: core tests 52/52, app tests 114/114, lint, production build, known R-405 only.
+- R-405 remains open and R-406 remains blocked.
 
 ## Phase 44: Red-Risk Reactivation Lock - Completed 2026-06-01
 

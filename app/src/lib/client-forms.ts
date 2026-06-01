@@ -68,6 +68,9 @@ export function saveClientFormResponseInState(
 ) {
   const client = state.clients.find((item) => item.id === clientId);
   if (!client) throw new AppDomainError(404, "client_not_found");
+  if (client.lifecycleStatus === "removed_anonymized") {
+    throw new AppDomainError(409, "client_removed_anonymized");
+  }
 
   const schema = state.clientFormSchemas.find((item) => item.id === schemaId && item.status === "published");
   if (!schema) throw new AppDomainError(404, "published_form_schema_not_found");
@@ -125,6 +128,8 @@ export function saveClientFormResponseInState(
 }
 
 export function buildClientFormSummary(state: ManuAppState, clientId: string) {
+  const client = state.clients.find((item) => item.id === clientId);
+  if (client?.lifecycleStatus === "removed_anonymized") return "";
   const responses = state.clientFormResponses.filter((response) => response.clientId === clientId);
   const parts: string[] = [];
 

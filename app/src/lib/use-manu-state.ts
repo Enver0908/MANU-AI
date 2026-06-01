@@ -80,6 +80,10 @@ export function useManuState() {
           method: "PATCH",
           body: JSON.stringify(patch),
         }),
+      removeClient: (clientId: string) =>
+        replaceFromApi(`/api/clients/${clientId}/remove`, {
+          method: "POST",
+        }),
       releaseHumanTakeover: (clientId: string) =>
         replaceFromApi(`/api/clients/${clientId}/release-takeover`, {
           method: "POST",

@@ -2,7 +2,12 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { getSupabaseAdminClient } from "./supabase";
 import { createInitialState } from "./seed-data";
 import { isSafetyChecklistComplete, normalizeSafetyChecklist } from "./safety-checklist";
-import { anonymizeClientInState, buildClientScopedExport, recordClientExportInState } from "./data-governance";
+import {
+  anonymizeClientInState,
+  buildClientScopedExport,
+  recordClientExportInState,
+  removeClientInState,
+} from "./data-governance";
 import {
   addManualReplyInState,
   addClientContextUpdateInState,
@@ -64,6 +69,8 @@ type DbClient = {
   id: string;
   tenant_id: string;
   dietitian_id: string;
+  lifecycle_status: ClientRecord["lifecycleStatus"] | null;
+  removed_at: string | null;
   full_name: string;
   primary_phone_e164: string | null;
   communication_language: SupportedLanguageCode | null;
@@ -596,6 +603,21 @@ export async function exportSupabaseClientData(clientId: string, context = demoT
 export async function anonymizeSupabaseClientData(clientId: string, context = demoTenantContext()) {
   const before = await loadSupabaseState(context);
   const after = anonymizeClientInState(before, clientId);
+  return persistSupabaseClientRemovalLifecycle(before, after, clientId, context);
+}
+
+export async function removeSupabaseClientData(clientId: string, context = demoTenantContext()) {
+  const before = await loadSupabaseState(context);
+  const after = removeClientInState(before, clientId);
+  return persistSupabaseClientRemovalLifecycle(before, after, clientId, context);
+}
+
+async function persistSupabaseClientRemovalLifecycle(
+  before: ManuAppState,
+  after: ManuAppState,
+  clientId: string,
+  context: AppTenantContext,
+) {
   const client = after.clients.find((item) => item.id === clientId);
 
   if (!client) {
@@ -614,7 +636,7 @@ export async function anonymizeSupabaseClientData(clientId: string, context = de
     supabase
       .from("client_channels")
       .update({
-        channel_user_id: `anonymized:${client.id}`,
+        channel_user_id: `removed:${crypto.randomUUID()}`,
         display_handle: null,
         is_active: false,
       })
@@ -682,6 +704,20 @@ export async function anonymizeSupabaseClientData(clientId: string, context = de
       .eq("tenant_id", context.tenantId)
       .eq("client_id", client.id),
   );
+  const handoffIds = after.handoffCases.filter((handoff) => handoff.clientId === client.id).map((handoff) => handoff.id);
+  if (handoffIds.length > 0) {
+    await checked(
+      supabase
+        .from("notifications")
+        .update({
+          title: "Handoff: anonymized client",
+          body: "Client data anonymized; review audit record.",
+        })
+        .eq("tenant_id", context.tenantId)
+        .eq("entity_type", "handoff_case")
+        .in("entity_id", handoffIds),
+    );
+  }
   await checked(
     supabase
       .from("client_context_updates")
@@ -693,6 +729,31 @@ export async function anonymizeSupabaseClientData(clientId: string, context = de
       })
       .eq("tenant_id", context.tenantId)
       .eq("client_id", client.id),
+  );
+  await checked(
+    supabase
+      .from("client_form_responses")
+      .update({
+        submitted_phone_e164: null,
+        answers: { redacted: "[client data anonymized]" },
+        updated_at: new Date().toISOString(),
+      })
+      .eq("tenant_id", context.tenantId)
+      .eq("client_id", client.id),
+  );
+  const minimizedEntityIds = [
+    client.id,
+    ...conversationIds,
+    ...after.messages.filter((message) => conversationIds.includes(message.conversationId)).map((message) => message.id),
+    ...after.aiDecisions.filter((decision) => decision.clientId === client.id).map((decision) => decision.id),
+    ...handoffIds,
+  ];
+  await checked(
+    supabase
+      .from("audit_events")
+      .update({ metadata: { minimized: true, reason: "client_data_anonymized" } })
+      .eq("tenant_id", context.tenantId)
+      .in("entity_id", minimizedEntityIds),
   );
 
   for (const audit of after.auditEvents.filter((item) => !beforeAudits.has(item.id))) {
@@ -1158,6 +1219,8 @@ async function upsertClient(supabase: SupabaseClient, client: ClientRecord) {
       id: client.id,
       tenant_id: client.tenantId,
       dietitian_id: client.dietitianId,
+      lifecycle_status: client.lifecycleStatus,
+      removed_at: client.removedAt,
       full_name: client.fullName,
       primary_phone_e164: client.primaryPhoneE164,
       communication_language: client.communicationLanguage,
@@ -1819,6 +1882,8 @@ function mapClient(client: DbClient, channels: DbChannel[]): ClientRecord {
     id: client.id,
     tenantId: client.tenant_id,
     dietitianId: client.dietitian_id,
+    lifecycleStatus: client.lifecycle_status === "removed_anonymized" ? "removed_anonymized" : "active",
+    removedAt: client.removed_at,
     fullName: client.full_name,
     primaryPhoneE164: client.primary_phone_e164 || null,
     communicationLanguage: normalizeLanguageCode(client.communication_language || client.health_profile?.preferredLanguage),

@@ -462,7 +462,7 @@ Acceptance Criteria:
 - Important client-specific facts persist.
 - Memory is scoped to exactly one client and one conversation.
 - Dietitian can correct pinned notes.
-- Deleted client data is removed from active memory and excluded from future prompts.
+- Removed client data is soft-deleted/anonymized, removed from active memory, hidden from normal operations, and excluded from future prompts while minimized legal/audit evidence remains.
 
 ### Milestone 11: Notifications
 

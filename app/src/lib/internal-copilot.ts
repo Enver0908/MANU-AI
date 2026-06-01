@@ -193,9 +193,10 @@ export function resolveVisibleClientByName(state: ManuAppState, query: string): 
   const normalizedQuery = normalizeSearch(query);
   if (!normalizedQuery) return { status: "not_found", sourceRefs: [] };
 
-  const exact = state.clients.filter((client) => normalizeSearch(client.fullName) === normalizedQuery);
-  const partial = state.clients.filter((client) => normalizeSearch(client.fullName).includes(normalizedQuery));
-  const token = state.clients.filter((client) =>
+  const visibleClients = state.clients.filter((client) => client.lifecycleStatus !== "removed_anonymized");
+  const exact = visibleClients.filter((client) => normalizeSearch(client.fullName) === normalizedQuery);
+  const partial = visibleClients.filter((client) => normalizeSearch(client.fullName).includes(normalizedQuery));
+  const token = visibleClients.filter((client) =>
     normalizeSearch(client.fullName)
       .split(" ")
       .some((part) => part === normalizedQuery || part.startsWith(normalizedQuery)),
@@ -446,6 +447,9 @@ function buildAudit(
 function findVisibleClient(state: ManuAppState, clientId: string) {
   const client = state.clients.find((item) => item.id === clientId);
   if (!client) throw new AppDomainError(404, "internal_copilot_client_not_found");
+  if (client.lifecycleStatus === "removed_anonymized") {
+    throw new AppDomainError(409, "client_removed_anonymized");
+  }
   return client;
 }
 

@@ -9,7 +9,9 @@ import {
   patchClientInState,
   recordClientExportRequestInState,
   releaseHumanTakeoverInState,
+  removeClientDataInState,
   resolveAndReactivateRedRiskInState,
+  saveFormResponseInState,
   simulateInState,
   updateHandoffStatusInState,
 } from "./app-state-store";
@@ -298,6 +300,7 @@ describe("app state store operations", () => {
     const promptableMessages = next.messages.filter((message) => message.conversationId === conversation?.id);
 
     expect(client?.fullName).toBe("Anonymized Client");
+    expect(client?.lifecycleStatus).toBe("active");
     expect(client?.channelUserId).toBe("");
     expect(client?.channelPermission).toBe("blocked");
     expect(client?.aiStatus).toBe("passive");
@@ -310,6 +313,61 @@ describe("app state store operations", () => {
       requestType: "anonymization",
       status: "completed",
     });
+  });
+
+  it("removes clients through a soft-delete anonymization lifecycle", async () => {
+    const withFormResponse = saveFormResponseInState(createInitialState(), {
+      clientId: "client-mert",
+      schemaId: "form-schema-pilot-intake-v1",
+      submittedPhoneE164: "+905551110001",
+      answers: {
+        daily_routine: "I eat breakfast at 8 with health details.",
+        private_note: "Sensitive private note.",
+      },
+    });
+    const withMessage = await simulateInState(withFormResponse, {
+      clientId: "client-mert",
+      body: "Ara ogun icin ne yiyebilirim?",
+      idempotencyKey: "remove-client",
+    });
+
+    const removed = removeClientDataInState(withMessage, "client-mert");
+    const client = removed.clients.find((item) => item.id === "client-mert");
+    const conversation = removed.conversations.find((item) => item.clientId === "client-mert");
+    const bundle = exportClientInState(removed, "client-mert");
+
+    expect(client).toMatchObject({
+      lifecycleStatus: "removed_anonymized",
+      fullName: "Anonymized Client",
+      primaryPhoneE164: null,
+      channelUserId: "",
+      channelPermission: "blocked",
+      aiStatus: "passive",
+      aiMode: "manual",
+    });
+    expect(client?.removedAt).toEqual(expect.any(String));
+    expect(conversation?.rollingSummary).toBe("");
+    expect(removed.messages.filter((message) => message.conversationId === conversation?.id)).toEqual(
+      expect.arrayContaining([expect.objectContaining({ body: "[client data anonymized]" })]),
+    );
+    expect(removed.clientFormResponses[0]).toMatchObject({
+      submittedPhoneE164: null,
+      answers: { redacted: "[client data anonymized]" },
+    });
+    expect(bundle.clientFormResponses[0].answers).toEqual({ redacted: "[client data anonymized]" });
+    expect(removed.dataRequests.at(-1)).toMatchObject({
+      clientId: "client-mert",
+      requestType: "deletion",
+      status: "completed",
+    });
+    expect(removed.auditEvents.some((event) => event.eventType === "client_removed_anonymized")).toBe(true);
+    await expect(
+      simulateInState(removed, {
+        clientId: "client-mert",
+        body: "Merhaba",
+        idempotencyKey: "removed-client-inbound",
+      }),
+    ).rejects.toThrowError(/client_removed_anonymized/);
   });
 
   it("keeps retention durations behind legal review placeholders", () => {

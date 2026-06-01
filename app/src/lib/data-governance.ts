@@ -5,6 +5,7 @@ import type {
   AiDecisionRecord,
   AuditEventRecord,
   ClientContextUpdateRecord,
+  ClientFormResponseRecord,
   ClientRecord,
   ConversationRecord,
   DataRequestRecord,
@@ -30,6 +31,7 @@ export type ClientScopedExport = {
   client: ClientRecord;
   conversations: ConversationRecord[];
   messages: MessageRecord[];
+  clientFormResponses: ClientFormResponseRecord[];
   clientContextUpdates: ClientContextUpdateRecord[];
   aiDecisions: AiDecisionRecord[];
   riskAssessments: RiskAssessmentRecord[];
@@ -101,6 +103,7 @@ export function buildClientScopedExport(state: ManuAppState, clientId: string): 
     client,
     conversations,
     messages,
+    clientFormResponses: state.clientFormResponses.filter((response) => response.clientId === client.id),
     clientContextUpdates: state.clientContextUpdates.filter((update) => update.clientId === client.id),
     aiDecisions: decisions,
     riskAssessments: state.riskAssessments.filter(
@@ -123,6 +126,19 @@ export function buildClientScopedExport(state: ManuAppState, clientId: string): 
 }
 
 export function anonymizeClientInState(state: ManuAppState, clientId: string): ManuAppState {
+  return redactClientDataInState(state, clientId, "anonymization", "client_data_anonymized");
+}
+
+export function removeClientInState(state: ManuAppState, clientId: string): ManuAppState {
+  return redactClientDataInState(state, clientId, "deletion", "client_removed_anonymized");
+}
+
+function redactClientDataInState(
+  state: ManuAppState,
+  clientId: string,
+  requestType: DataRequestRecord["requestType"],
+  eventType: "client_data_anonymized" | "client_removed_anonymized",
+): ManuAppState {
   const client = findClient(state, clientId);
   const conversationIds = new Set(
     state.conversations.filter((conversation) => conversation.clientId === client.id).map((conversation) => conversation.id),
@@ -134,11 +150,11 @@ export function anonymizeClientInState(state: ManuAppState, clientId: string): M
     state.aiDecisions.filter((decision) => decision.clientId === client.id).map((decision) => decision.id),
   );
   const now = new Date().toISOString();
-  const dataRequest = buildDataRequest(state, client.id, "anonymization", "completed", now);
+  const dataRequest = buildDataRequest(state, client.id, requestType, "completed", now);
 
   const anonymizedBase: ManuAppState = {
     ...state,
-    clients: state.clients.map((item) => (item.id === client.id ? anonymizeClient(item) : item)),
+    clients: state.clients.map((item) => (item.id === client.id ? anonymizeClient(item, eventType === "client_removed_anonymized", now) : item)),
     conversations: state.conversations.map((conversation) =>
       conversationIds.has(conversation.id) ? { ...conversation, rollingSummary: "" } : conversation,
     ),
@@ -153,6 +169,24 @@ export function anonymizeClientInState(state: ManuAppState, clientId: string): M
             authorDietitianId: null,
           }
         : message,
+    ),
+    clientFormResponses: state.clientFormResponses.map((response) =>
+      response.clientId === client.id
+        ? {
+            ...response,
+            submittedPhoneE164: null,
+            answers: { redacted: "[client data anonymized]" },
+            schemaSnapshot: {
+              ...response.schemaSnapshot,
+              fields: response.schemaSnapshot.fields.map((field) => ({
+                ...field,
+                label: "[client data anonymized]",
+                options: field.options ? [] : field.options,
+              })),
+            },
+            updatedAt: now,
+          }
+        : response,
     ),
     aiDecisions: state.aiDecisions.map((decision) =>
       decision.clientId === client.id
@@ -197,10 +231,10 @@ export function anonymizeClientInState(state: ManuAppState, clientId: string): M
       {
         id: crypto.randomUUID(),
         tenantId: state.tenant.id,
-        eventType: "client_data_anonymized",
+        eventType,
         entityType: "client",
         entityId: client.id,
-        metadata: { source: "data_governance", legalReviewRequired: true },
+        metadata: { source: "data_governance", dataRequestId: dataRequest.id, legalReviewRequired: true },
         createdAt: now,
       },
     ],
@@ -252,9 +286,11 @@ function buildDataRequest(
   };
 }
 
-function anonymizeClient(client: ClientRecord): ClientRecord {
+function anonymizeClient(client: ClientRecord, removed: boolean, now: string): ClientRecord {
   return {
     ...client,
+    lifecycleStatus: removed ? "removed_anonymized" : client.lifecycleStatus,
+    removedAt: removed ? now : client.removedAt,
     fullName: "Anonymized Client",
     primaryPhoneE164: null,
     communicationLanguage: "tr",

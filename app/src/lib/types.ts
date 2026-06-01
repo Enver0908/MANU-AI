@@ -138,6 +138,8 @@ export type ClientRecord = {
   id: string;
   tenantId: string;
   dietitianId: string;
+  lifecycleStatus: "active" | "removed_anonymized";
+  removedAt: string | null;
   fullName: string;
   primaryPhoneE164: string | null;
   communicationLanguage: SupportedLanguageCode;

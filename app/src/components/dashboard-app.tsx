@@ -25,6 +25,7 @@ import {
   SlidersHorizontal,
   Smartphone,
   UserRound,
+  UserX,
   UsersRound,
 } from "lucide-react";
 import { personas } from "dietitian-ai-assistant-architecture";
@@ -93,6 +94,7 @@ export function DashboardApp({ authInfo }: { authInfo?: { displayName: string; r
     authError,
     createClient,
     updateClient,
+    removeClient,
     releaseHumanTakeover,
     runSimulation: runSimulationRequest,
     sendManualReply: sendManualReplyRequest,
@@ -143,9 +145,14 @@ export function DashboardApp({ authInfo }: { authInfo?: { displayName: string; r
   const [contextUpdateSummary, setContextUpdateSummary] = useState("");
   const [contextUpdateDetails, setContextUpdateDetails] = useState("");
 
+  const activeClients = useMemo(
+    () => state.clients.filter((client) => client.lifecycleStatus !== "removed_anonymized"),
+    [state.clients],
+  );
+
   const selectedClient = useMemo(
-    () => state.clients.find((client) => client.id === selectedClientId) || state.clients[0],
-    [selectedClientId, state.clients],
+    () => activeClients.find((client) => client.id === selectedClientId) || activeClients[0],
+    [activeClients, selectedClientId],
   );
 
   const selectedConversation = useMemo(
@@ -162,14 +169,14 @@ export function DashboardApp({ authInfo }: { authInfo?: { displayName: string; r
 
   const filteredClients = useMemo(() => {
     const needle = search.trim().toLocaleLowerCase("tr-TR");
-    if (!needle) return state.clients;
-    return state.clients.filter((client) =>
+    if (!needle) return activeClients;
+    return activeClients.filter((client) =>
       [client.fullName, client.channelUserId, client.aiMode, client.aiStatus]
         .join(" ")
         .toLocaleLowerCase("tr-TR")
         .includes(needle),
     );
-  }, [search, state.clients]);
+  }, [activeClients, search]);
 
   const selectedContextUpdates = useMemo(() => {
     if (!selectedClient) return [];
@@ -182,10 +189,10 @@ export function DashboardApp({ authInfo }: { authInfo?: { displayName: string; r
     const pendingDrafts = state.messages.filter((message) => message.status === "draft").length;
     const urgentHandoffs = state.handoffCases.filter((handoff) => handoff.status === "open").length;
     const aiSent = state.messages.filter((message) => message.origin === "ai_generated" && message.status === "sent").length;
-    const passive = state.clients.filter((client) => client.aiStatus === "passive").length;
+    const passive = activeClients.filter((client) => client.aiStatus === "passive").length;
     const unreadNotifications = state.notifications.filter((n) => !n.read).length;
     return { pendingDrafts, urgentHandoffs, aiSent, passive, unreadNotifications };
-  }, [state]);
+  }, [activeClients, state]);
 
   if (!hydrated) {
     return (
@@ -220,6 +227,15 @@ export function DashboardApp({ authInfo }: { authInfo?: { displayName: string; r
   const updateSelectedClient = async (patch: Partial<ClientRecord>) => {
     if (!selectedClient) return;
     await updateClient(selectedClient.id, patch);
+  };
+
+  const removeSelectedClient = async () => {
+    if (!selectedClient) return;
+    const nextState = await removeClient(selectedClient.id);
+    const nextActiveClient = nextState.clients.find((client) => client.lifecycleStatus !== "removed_anonymized");
+    if (nextActiveClient) {
+      setSelectedClientId(nextActiveClient.id);
+    }
   };
 
   const addClient = async () => {
@@ -526,6 +542,7 @@ export function DashboardApp({ authInfo }: { authInfo?: { displayName: string; r
                 onNewClientPhone={setNewClientPhone}
                 onNewClientLanguage={setNewClientLanguage}
                 onUpdateClient={updateSelectedClient}
+                onRemoveClient={removeSelectedClient}
                 contextUpdates={selectedContextUpdates}
                 contextUpdateSource={contextUpdateSource}
                 contextUpdateImportance={contextUpdateImportance}
@@ -562,7 +579,7 @@ export function DashboardApp({ authInfo }: { authInfo?: { displayName: string; r
               <SimulatorPanel
                 state={state}
                 selectedClient={selectedClient}
-                clients={state.clients}
+                clients={activeClients}
                 simBody={simBody}
                 simKey={simKey}
                 isSimulating={isSimulating}
@@ -716,6 +733,7 @@ function ClientsPanel({
   onNewClientPhone,
   onNewClientLanguage,
   onUpdateClient,
+  onRemoveClient,
   contextUpdates,
   contextUpdateSource,
   contextUpdateImportance,
@@ -749,6 +767,7 @@ function ClientsPanel({
   onNewClientPhone: (value: string) => void;
   onNewClientLanguage: (value: SupportedLanguageCode) => void;
   onUpdateClient: (patch: Partial<ClientRecord>) => void;
+  onRemoveClient: () => void;
   contextUpdates: ClientContextUpdateRecord[];
   contextUpdateSource: ClientContextUpdateSource;
   contextUpdateImportance: ClientContextUpdateImportance;
@@ -833,6 +852,7 @@ function ClientsPanel({
         client={selectedClient}
         uiLanguage={uiLanguage}
         onUpdateClient={onUpdateClient}
+        onRemoveClient={onRemoveClient}
         contextUpdates={contextUpdates}
         contextUpdateSource={contextUpdateSource}
         contextUpdateImportance={contextUpdateImportance}
@@ -856,6 +876,7 @@ function ClientDetailForm({
   client,
   uiLanguage,
   onUpdateClient,
+  onRemoveClient,
   contextUpdates,
   contextUpdateSource,
   contextUpdateImportance,
@@ -874,6 +895,7 @@ function ClientDetailForm({
   client: ClientRecord;
   uiLanguage: SupportedLanguageCode;
   onUpdateClient: (patch: Partial<ClientRecord>) => void;
+  onRemoveClient: () => void;
   contextUpdates: ClientContextUpdateRecord[];
   contextUpdateSource: ClientContextUpdateSource;
   contextUpdateImportance: ClientContextUpdateImportance;
@@ -920,6 +942,14 @@ function ClientDetailForm({
           <Badge label={client.aiStatus} tone={client.aiStatus === "active" ? "emerald" : "stone"} />
           <Badge label={client.aiMode} tone={client.aiMode === "autopilot" ? "emerald" : "amber"} />
           <Badge label={client.channelPermission} tone={client.channelPermission === "ready" ? "emerald" : "amber"} />
+          <button
+            onClick={onRemoveClient}
+            className="inline-flex items-center justify-center gap-2 rounded-lg border border-red-200 bg-white px-3 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-50"
+            type="button"
+          >
+            <UserX size={16} />
+            Remove client
+          </button>
         </div>
       </div>
 

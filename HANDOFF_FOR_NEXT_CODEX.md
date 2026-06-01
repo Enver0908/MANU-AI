@@ -1760,3 +1760,42 @@ app: npm run test:rls -> skipped; 1 file and 10 guarded tests because local Supa
 ### Next Correct Step For Codex
 
 Run `npm run release:verify` after any follow-up edits. Continue with the user's remaining three-problem plan in order: Phase 45 should address client removal/anonymization lifecycle; Phase 46 should address WhatsApp group-message quarantine. Keep production pilot at `NO-GO` until all launch gates, R-405, and R-406 are closed with acceptable evidence.
+
+## Phase 45 Client Removal Data Lifecycle Handoff Notes - 2026-06-01
+
+Completed by: Codex
+
+### What Was Done
+
+- Followed `codex.md`: wrote `docs/PHASE_45_CLIENT_REMOVAL_DATA_LIFECYCLE_SPEC.md` before implementation.
+- Added `ClientRecord.lifecycleStatus` and `removedAt`.
+- Added Supabase migration `20260601010000_phase_45_client_removal_lifecycle.sql`.
+- Added `/api/clients/[id]/remove` and dashboard `Remove client` action.
+- Implemented removal as soft-delete/anonymization with `lifecycleStatus=removed_anonymized`.
+- Removed clients are hidden from normal dashboard client lists and simulator selection.
+- Removed clients are blocked from inbound simulation, manual replies, profile edits, form response save, and internal copilot tools.
+- Removal redacts promptable health/profile data, phone/channel identity, rolling memory, message bodies/provenance, form response answers/submitted phone metadata, context updates, handoff text, notification text, AI decision details, risk assessment reasons, red-risk locks, and takeover state.
+- Removal records a completed `deletion` data request and `client_removed_anonymized` audit event.
+- Export remains available as a minimized legal/audit bundle.
+
+### What Was NOT Done
+
+- No hard-delete automation was added.
+- No final retention duration was approved.
+- No real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, backup provider, or real client health data was connected.
+- No production-pilot launch gate was approved.
+- R-405 remains open.
+- R-406 remains blocked pending passing local Supabase RLS evidence.
+
+### Verification Commands
+
+```text
+app: npm run lint -> passed
+app: npm run test -> passed; 16 files, 114 tests
+app: npm run release:verify -> passed; core tests 52/52, app tests 114/114, lint, production build, known R-405 only
+app: npm run test:rls -> skipped; 1 file and 10 guarded tests because local Supabase evidence is still unavailable
+```
+
+### Next Correct Step For Codex
+
+Run `npm run release:verify` after any follow-up edits. Continue with the user's remaining three-problem plan in order: Phase 46 should address WhatsApp group-message quarantine. Keep production pilot at `NO-GO` until all launch gates, R-405, and R-406 are closed with acceptable evidence.

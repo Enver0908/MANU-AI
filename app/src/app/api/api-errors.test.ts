@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { POST as postAnonymizeClient } from "./clients/[id]/anonymize/route";
 import { GET as getClientExport } from "./clients/[id]/export/route";
+import { POST as postRemoveClient } from "./clients/[id]/remove/route";
 import { POST as postInternalCopilotMessage } from "./internal-copilot/messages/route";
 import { POST as postDraftAction } from "./messages/drafts/[id]/route";
 import { POST as postAcknowledgeNotification } from "./notifications/[id]/acknowledge/route";
@@ -67,6 +68,21 @@ describe("API controlled domain errors", () => {
     expect(response.status).toBe(200);
     expect(client.fullName).toBe("Anonymized Client");
     expect(client.channelPermission).toBe("blocked");
+  });
+
+  it("removes client data through fallback soft-delete anonymization", async () => {
+    const response = await postRemoveClient(
+      new Request("http://localhost/api/clients/client-mert/remove", { method: "POST" }) as never,
+      { params: Promise.resolve({ id: "client-mert" }) },
+    );
+    const payload = await response.json();
+    const client = payload.clients.find((item: { id: string }) => item.id === "client-mert");
+
+    expect(response.status).toBe(200);
+    expect(client.lifecycleStatus).toBe("removed_anonymized");
+    expect(client.primaryPhoneE164).toBeNull();
+    expect(client.channelUserId).toBe("");
+    expect(payload.dataRequests.at(-1).requestType).toBe("deletion");
   });
 
   it("marks and acknowledges notifications in fallback mode", async () => {

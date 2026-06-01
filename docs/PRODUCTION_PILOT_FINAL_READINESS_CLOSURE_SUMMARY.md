@@ -4,7 +4,7 @@ Date: 2026-05-31
 
 ## Status
 
-This is the final summary for the 13-phase completion roadmap, updated after Phase 43 multilingual language support and Phase 44 red-risk reactivation lock.
+This is the final summary for the 13-phase completion roadmap, updated after Phase 43 multilingual language support, Phase 44 red-risk reactivation lock, and Phase 45 client removal data lifecycle.
 
 Production pilot is not approved.
 
@@ -22,6 +22,7 @@ Reason:
 - No external approval artifacts were supplied during the completion roadmap.
 - Phase 43 added multilingual local/mock support but did not approve any launch gate.
 - Phase 44 added local red-risk reactivation locking but did not approve any launch gate.
+- Phase 45 added local soft-delete/anonymization client removal but did not approve any launch gate.
 
 ## Completion Roadmap Result
 
@@ -66,7 +67,7 @@ R-405:
 R-406:
 
 - Expanded RLS tests exist.
-- Latest local RLS attempt on 2026-06-01 skipped 10 guarded tests because local Supabase evidence was unavailable in this environment.
+- Latest local RLS attempt on 2026-06-01 after Phase 45 skipped 10 guarded tests because local Supabase evidence was unavailable in this environment.
 - Passing local Supabase RLS evidence is still required before production pilot evidence can be considered complete.
 
 External approvals:
@@ -82,11 +83,11 @@ External approvals:
 
 ## Verification
 
-Latest local release verification after Phase 44:
+Latest local release verification after Phase 45:
 
-- `npm run release:verify` passed after Phase 44.
+- `npm run release:verify` passed after Phase 45.
 - Core tests: 52/52 passed.
-- App tests: 112/112 passed.
+- App tests: 114/114 passed.
 - App lint: passed.
 - Production build: passed.
 - Production dependency audit gate passed with only documented R-405 findings.
@@ -96,6 +97,12 @@ Phase 44 verification on 2026-06-01:
 - `npm run lint` passed from `app`.
 - `npm run test` passed from `app`: 16 files, 112 tests.
 - `npm run release:verify` passed from `app`: core tests 52/52, app tests 112/112, lint, production build, known R-405 only.
+
+Phase 45 verification on 2026-06-01:
+
+- `npm run lint` passed from `app`.
+- `npm run test` passed from `app`: 16 files, 114 tests.
+- `npm run release:verify` passed from `app`: core tests 52/52, app tests 114/114, lint, production build, known R-405 only.
 
 ## Next Required Actions
 
