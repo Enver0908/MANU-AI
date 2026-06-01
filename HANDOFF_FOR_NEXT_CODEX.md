@@ -1724,3 +1724,39 @@ app: npm run test:rls -> skipped; 1 file and 10 guarded tests because local Supa
 ### Next Correct Step For Codex
 
 Run `npm run release:verify` after any follow-up edits. Keep the Phase 43 language model deterministic and internal until legal/privacy, clinical, provider/vendor, and channel policy gates are externally approved. Do not connect real translation/provider/channel services or mark production pilot approved from this work.
+
+## Phase 44 Red-Risk Reactivation Lock Handoff Notes - 2026-06-01
+
+Completed by: Codex
+
+### What Was Done
+
+- Followed `codex.md`: wrote `docs/PHASE_44_RED_RISK_REACTIVATION_LOCK_SPEC.md` before implementation.
+- Added `ClientRecord.redRiskLock` and a Supabase `clients.red_risk_lock` JSONB migration.
+- Red-risk handoffs now create a client-level lock, force `aiStatus=passive`, `aiMode=manual`, and `humanTakeoverLocked=true`, and audit `red_risk_lock_created`.
+- While locked, direct AI reactivation, takeover release, normal handoff resolution, and red-locked handoff dismissal are rejected.
+- Manual dietitian replies and notification read/acknowledge do not clear the red-risk lock.
+- Added explicit resolve-and-reactivate state transition and `/api/handoffs/[id]/resolve-and-reactivate`.
+- Added dashboard handoff controls for reactivation reason and target AI mode, defaulting to copilot.
+- Added tests covering lock creation, non-unlocking paths, blocked direct reactivation/release/dismissal, explicit reactivation, and autopilot safety gating.
+
+### What Was NOT Done
+
+- No real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, backup provider, or real client health data was connected.
+- No production-pilot launch gate was approved.
+- No legal/privacy, clinical, provider/vendor, channel policy, dependency, or RLS approval artifact was supplied.
+- R-405 remains open.
+- R-406 remains blocked pending passing local Supabase RLS evidence.
+
+### Verification Commands
+
+```text
+app: npm run lint -> passed
+app: npm run test -> passed; 16 files, 112 tests
+app: npm run release:verify -> passed; core tests 52/52, app tests 112/112, lint, production build, known R-405 only
+app: npm run test:rls -> skipped; 1 file and 10 guarded tests because local Supabase evidence is still unavailable
+```
+
+### Next Correct Step For Codex
+
+Run `npm run release:verify` after any follow-up edits. Continue with the user's remaining three-problem plan in order: Phase 45 should address client removal/anonymization lifecycle; Phase 46 should address WhatsApp group-message quarantine. Keep production pilot at `NO-GO` until all launch gates, R-405, and R-406 are closed with acceptable evidence.

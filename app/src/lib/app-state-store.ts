@@ -20,6 +20,7 @@ import {
   appendDietitianManualReply,
   dismissDraftMessageInState,
   releaseHumanTakeoverLockInState,
+  resolveAndReactivateRedRiskInState as resolveAndReactivateRedRiskInStateImpl,
   runInboundSimulation,
   updateClientInState,
   markNotificationReadInState,
@@ -144,12 +145,30 @@ export function updateHandoffStatusInState(
   handoffId: string,
   status: "resolved" | "dismissed",
 ) {
+  const handoff = state.handoffCases.find((item) => item.id === handoffId);
+  if (!handoff) throw new AppDomainError(404, "handoff_not_found");
+  const client = state.clients.find((item) => item.id === handoff.clientId);
+  if (client?.redRiskLock.status === "locked" && client.redRiskLock.handoffId === handoffId) {
+    if (status === "dismissed") {
+      throw new AppDomainError(409, "red_risk_handoff_cannot_be_dismissed");
+    }
+    throw new AppDomainError(409, "red_risk_reactivation_required");
+  }
+
   return {
     ...state,
     handoffCases: state.handoffCases.map((handoff) =>
       handoff.id === handoffId && handoff.status === "open" ? { ...handoff, status } : handoff,
     ),
   };
+}
+
+export function resolveAndReactivateRedRiskInState(
+  state: ManuAppState,
+  handoffId: string,
+  input: { reactivationReason?: string; aiMode?: "copilot" | "autopilot" },
+) {
+  return resolveAndReactivateRedRiskInStateImpl(state, handoffId, input);
 }
 
 export function assertClientExistsInState(state: ManuAppState, clientId: string) {

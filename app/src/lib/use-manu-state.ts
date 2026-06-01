@@ -113,6 +113,14 @@ export function useManuState() {
         replaceFromApi(`/api/handoffs/${handoffId}/resolve`, {
           method: "POST",
         }),
+      resolveAndReactivateHandoff: (
+        handoffId: string,
+        input: { reactivationReason: string; aiMode: "copilot" | "autopilot" },
+      ) =>
+        replaceFromApi(`/api/handoffs/${handoffId}/resolve-and-reactivate`, {
+          method: "POST",
+          body: JSON.stringify(input),
+        }),
       dismissHandoff: (handoffId: string) =>
         replaceFromApi(`/api/handoffs/${handoffId}/dismiss`, {
           method: "POST",

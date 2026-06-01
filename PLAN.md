@@ -86,6 +86,15 @@ Routing:
 - Red: no LLM call; handoff to dietitian.
 - Passive AI: no AI generation.
 
+Red-risk reactivation rule:
+
+- A red-risk handoff now creates an explicit client-level red risk lock.
+- The lock forces `aiStatus=passive`, `aiMode=manual`, and `humanTakeoverLocked=true`.
+- Notification read/acknowledge, dietitian manual replies, normal handoff resolution, takeover release, or direct AI-control edits do not reactivate AI.
+- AI can reactivate only through explicit dietitian resolve-and-reactivate action with a resolution reason.
+- Reactivation defaults to copilot; autopilot reactivation requires the mandatory safety checklist to be complete.
+- The lock creation and reactivation are audited.
+
 ### Model Routing
 
 The selected LLM routing is:
@@ -478,6 +487,8 @@ Completion roadmap Phase 12 completed on 2026-05-31: added `docs/PHASE_41_COMPLE
 Completion roadmap Phase 13 completed on 2026-05-31: added `docs/PHASE_42_COMPLETION_PHASE_13_FINAL_READINESS_CLOSURE_SPEC.md` and `docs/PRODUCTION_PILOT_FINAL_READINESS_CLOSURE_SUMMARY.md` to close the 13-phase completion roadmap with a final production-pilot readiness summary. Current decision is `NO-GO` for production pilot: all eight launch gates remain open, R-405 remains open, R-406 remains blocked, and no external approval artifacts were supplied. No runtime behavior, schema, dependency, provider, channel, monitoring, secret manager, backup provider, launch-gate approval, R-405 acceptance, R-406 mitigation, or real-data changes were made. `npm run release:verify` passed after the Phase 13 documentation update with core tests 49/49, app tests 103/103, lint, production build, and only documented R-405 findings.
 
 Phase 43 multilingual language support completed on 2026-05-31: added canonical supported-language support for Turkish, English, German, French, Spanish, Portuguese, and Czech. Dietitian dashboard language is stored per dietitian; client communication language and canonical E.164 phone identity are stored per client; dynamic form schemas/responses store language metadata; saved form responses update the client's conversation language by phone/client identity; PromptContext includes a bounded `conversation_language` segment; local/mock provider replies and handoff acknowledgements localize to the stored client language; and multilingual clinical golden cases were added. This phase did not connect real providers, channels, translation services, monitoring, secret manager, backup provider, or real client health data, and it did not approve any production-pilot launch gate. `npm run release:verify` passed with core tests 52/52, app tests 107/107, lint, production build, and only documented R-405 findings. R-405 remains open and R-406 remains blocked.
+
+Phase 44 red-risk reactivation lock completed on 2026-06-01: added a client-level `redRiskLock`, Supabase `clients.red_risk_lock`, explicit resolve-and-reactivate endpoint, and dashboard handoff controls. Red-risk handoffs now force AI passive/manual with human takeover locked; manual dietitian replies and notification acknowledgement do not reactivate AI; normal handoff resolution, direct AI-control edits, takeover release, and red-locked dismissal are rejected while locked. AI can resume only after explicit dietitian resolve-and-reactivate with an audit reason; copilot is the default and autopilot requires completed mandatory safety. This phase did not connect real providers, channels, monitoring, secret manager, backup provider, or real client health data, and it did not approve any production-pilot launch gate. `npm run release:verify` passed with core tests 52/52, app tests 112/112, lint, production build, and only documented R-405 findings. `npm run test:rls` still skipped 10 guarded tests because local Supabase evidence is unavailable. R-405 remains open and R-406 remains blocked.
 
 Tasks:
 

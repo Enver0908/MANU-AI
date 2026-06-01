@@ -238,6 +238,7 @@ export function updateClientInState(
   patch: Partial<ClientRecord>,
 ): ManuAppState {
   const existingClient = state.clients.find((c) => c.id === clientId);
+  assertPatchAllowedByRedRiskLock(existingClient, patch);
   const auditEvents = [...state.auditEvents];
   const promptAffecting = isPromptAffectingClientPatch(patch);
   const now = new Date().toISOString();
@@ -465,6 +466,10 @@ export function dismissDraftMessageInState(state: ManuAppState, messageId: strin
 export function releaseHumanTakeoverLockInState(state: ManuAppState, clientId: string): ManuAppState {
   const client = findClient(state, clientId);
 
+  if (client.redRiskLock.status === "locked") {
+    throw new AppDomainError(409, "red_risk_reactivation_required");
+  }
+
   if (!client.humanTakeoverLocked) {
     return state;
   }
@@ -483,6 +488,80 @@ export function releaseHumanTakeoverLockInState(state: ManuAppState, clientId: s
     auditEvents: [
       ...state.auditEvents,
       buildAuditEvent(state, "human_takeover_released", "client", clientId, new Date().toISOString()),
+    ],
+  };
+}
+
+export function resolveAndReactivateRedRiskInState(
+  state: ManuAppState,
+  handoffId: string,
+  input: { reactivationReason?: string; aiMode?: "copilot" | "autopilot" },
+): ManuAppState {
+  const handoff = state.handoffCases.find((item) => item.id === handoffId);
+  if (!handoff) throw new AppDomainError(404, "handoff_not_found");
+  if (handoff.status !== "open" && handoff.status !== "assigned") {
+    throw new AppDomainError(409, "handoff_not_open");
+  }
+
+  const client = findClient(state, handoff.clientId);
+  if (client.redRiskLock.status !== "locked" || client.redRiskLock.handoffId !== handoffId) {
+    throw new AppDomainError(409, "red_risk_lock_not_active_for_handoff");
+  }
+
+  const reactivationReason = input.reactivationReason?.trim() || "";
+  if (!reactivationReason) throw new AppDomainError(400, "reactivation_reason_required");
+
+  const aiMode = input.aiMode || "copilot";
+  if (aiMode !== "copilot" && aiMode !== "autopilot") {
+    throw new AppDomainError(400, "reactivation_ai_mode_invalid");
+  }
+  if (aiMode === "autopilot" && (!client.mandatorySafetyComplete || !isSafetyChecklistComplete(client))) {
+    throw new AppDomainError(409, "autopilot_reactivation_requires_completed_safety_profile");
+  }
+
+  const now = new Date().toISOString();
+  const reactivatedLock: ClientRecord["redRiskLock"] = {
+    ...client.redRiskLock,
+    status: "reactivated",
+    reactivatedAt: now,
+    reactivatedByDietitianId: state.dietitian.id,
+    reactivationReason,
+    reactivatedAiMode: aiMode,
+  };
+
+  return {
+    ...state,
+    clients: state.clients.map((item) =>
+      item.id === client.id
+        ? {
+            ...item,
+            aiStatus: "active",
+            aiMode,
+            humanTakeoverLocked: false,
+            redRiskLock: reactivatedLock,
+            contextRevision: item.contextRevision + 1,
+          }
+        : item,
+    ),
+    handoffCases: state.handoffCases.map((item) =>
+      item.id === handoffId ? { ...item, status: "resolved" as const } : item,
+    ),
+    auditEvents: [
+      ...state.auditEvents,
+      {
+        id: crypto.randomUUID(),
+        tenantId: state.tenant.id,
+        eventType: "red_risk_resolved_and_reactivated",
+        entityType: "handoff_case",
+        entityId: handoffId,
+        metadata: {
+          clientId: client.id,
+          reactivatedByDietitianId: state.dietitian.id,
+          aiMode,
+          reasonPresent: true,
+        },
+        createdAt: now,
+      },
     ],
   };
 }
@@ -540,7 +619,23 @@ function isPromptAffectingClientPatch(patch: Partial<ClientRecord>) {
     "mandatorySafetyComplete",
     "safetyChecklist",
     "humanTakeoverLocked",
+    "redRiskLock",
   ].some((key) => Object.prototype.hasOwnProperty.call(patch, key));
+}
+
+function assertPatchAllowedByRedRiskLock(existingClient: ClientRecord | undefined, patch: Partial<ClientRecord>) {
+  if (!existingClient || existingClient.redRiskLock.status !== "locked") return;
+
+  const triesToReactivate =
+    patch.aiStatus === "active" ||
+    (Object.prototype.hasOwnProperty.call(patch, "aiMode") &&
+      patch.aiMode !== "manual" &&
+      patch.aiMode !== "paused") ||
+    patch.humanTakeoverLocked === false;
+
+  if (triesToReactivate) {
+    throw new AppDomainError(409, "red_risk_reactivation_required");
+  }
 }
 
 export function markNotificationReadInState(state: ManuAppState, notificationId: string): ManuAppState {
@@ -615,14 +710,53 @@ function appendCoreSimulationResult({
   }
 
   if (coreResult.action === "handoff" && coreResult.handoffCase) {
-    if (coreResult.blockedReason === "missing_historical_context") {
+    let redRiskLockAudit: AuditEventRecord | null = null;
+    let redRiskHandoffId: string | null = null;
+
+    if (coreResult.risk === "red") {
+      const lockHandoffId = crypto.randomUUID();
+      redRiskHandoffId = lockHandoffId;
+      nextClients = state.clients.map((item) =>
+        item.id === client.id
+          ? {
+              ...item,
+              aiStatus: "passive",
+              aiMode: "manual",
+              humanTakeoverLocked: true,
+              redRiskLock: {
+                status: "locked",
+                handoffId: lockHandoffId,
+                lockedAt: now,
+                reasons: coreResult.handoffCase?.reasons || coreResult.reasons,
+                previousAiStatus: item.aiStatus,
+                previousAiMode: item.aiMode,
+              },
+              contextRevision: item.contextRevision + 1,
+            }
+          : item,
+      );
+      redRiskLockAudit = {
+        id: crypto.randomUUID(),
+        tenantId: state.tenant.id,
+        eventType: "red_risk_lock_created",
+        entityType: "client",
+        entityId: client.id,
+        metadata: {
+          handoffId: redRiskHandoffId,
+          previousAiStatus: client.aiStatus,
+          previousAiMode: client.aiMode,
+          reasons: coreResult.handoffCase.reasons,
+        },
+        createdAt: now,
+      };
+    } else if (coreResult.blockedReason === "missing_historical_context") {
       nextClients = state.clients.map((item) =>
         item.id === client.id ? { ...item, humanTakeoverLocked: true, contextRevision: item.contextRevision + 1 } : item,
       );
     }
 
     const handoffCase: HandoffCaseRecord = {
-      id: crypto.randomUUID(),
+      id: redRiskHandoffId || crypto.randomUUID(),
       tenantId: state.tenant.id,
       dietitianId: state.dietitian.id,
       clientId: client.id,
@@ -637,6 +771,7 @@ function appendCoreSimulationResult({
       createdAt: now,
     };
     handoffCases.push(handoffCase);
+    if (redRiskLockAudit) auditEvents.push(redRiskLockAudit);
     auditEvents.push(buildAuditEvent(state, "handoff_notification_queued", "handoff_case", handoffCase.id, now));
 
     const notification: NotificationRecord = {
@@ -824,6 +959,13 @@ function buildRiskAssessment({
 }
 
 function getPreflightBlock(client: ClientRecord): { blockedReason: string; reasons: string[] } | null {
+  if (client.redRiskLock.status === "locked") {
+    return {
+      blockedReason: "red_risk_reactivation_required",
+      reasons: ["red_risk_lock_active", `handoff_${client.redRiskLock.handoffId}`],
+    };
+  }
+
   if (client.channelPermission !== "ready") {
     return {
       blockedReason: `channel_permission_${client.channelPermission}`,

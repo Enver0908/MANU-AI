@@ -28,6 +28,7 @@ MANU-AI is not an autonomous dietitian and does not diagnose, prescribe, manage 
 - WhatsApp healthcare-use feasibility approved before WhatsApp pilot.
 - Client-facing legal and permission documentation completed before production messaging.
 - Red-risk messages never receive autonomous AI-generated advice.
+- Red-risk handoffs must keep AI locked off until the dietitian explicitly resolves and reactivates the handoff with an auditable reason.
 - Unknown or ambiguous channel identities never reach the LLM.
 - Every production AI decision is auditable.
 - Every external provider that may receive health data is approved through a vendor-risk process.

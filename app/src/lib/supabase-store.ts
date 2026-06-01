@@ -15,6 +15,7 @@ import {
   publishFormSchemaInState,
   patchClientInState,
   releaseHumanTakeoverInState,
+  resolveAndReactivateRedRiskInState,
   runInternalCopilotMessageInState,
   saveFormResponseInState,
   simulateInState,
@@ -81,6 +82,7 @@ type DbClient = {
   mandatory_safety_complete: boolean;
   safety_checklist: Partial<ClientRecord["safetyChecklist"]> | null;
   human_takeover_locked: boolean;
+  red_risk_lock: ClientRecord["redRiskLock"] | null;
   context_revision: number;
   created_at: string;
 };
@@ -786,6 +788,38 @@ export async function updateSupabaseHandoffStatus(
   return loadSupabaseState(context);
 }
 
+export async function resolveAndReactivateSupabaseRedRisk(
+  handoffId: string,
+  input: { reactivationReason?: string; aiMode?: "copilot" | "autopilot" },
+  context = demoTenantContext(),
+) {
+  const before = await loadSupabaseState(context);
+  const after = resolveAndReactivateRedRiskInState(before, handoffId, input);
+  const client = after.clients.find(
+    (item) => item.redRiskLock.status === "reactivated" && item.redRiskLock.handoffId === handoffId,
+  );
+  const beforeClient = client ? before.clients.find((item) => item.id === client.id) : undefined;
+  const handoff = after.handoffCases.find((item) => item.id === handoffId);
+
+  if (!client || !handoff) {
+    throw new AppDomainError(404, "handoff_not_found");
+  }
+
+  const supabase = requireSupabase();
+  await upsertClient(supabase, client);
+  await checked(
+    supabase
+      .from("handoff_cases")
+      .update({ status: handoff.status, resolved_at: new Date().toISOString() })
+      .eq("id", handoffId)
+      .eq("tenant_id", context.tenantId),
+  );
+  await insertClientAiStatusEvent(supabase, beforeClient, client, context);
+  await persistNewAudits(supabase, before, after);
+
+  return loadSupabaseState(context);
+}
+
 export async function markSupabaseNotificationRead(notificationId: string, context = demoTenantContext()) {
   const { error } = await requireSupabase()
     .from("notifications")
@@ -1135,6 +1169,7 @@ async function upsertClient(supabase: SupabaseClient, client: ClientRecord) {
       channel_permission: client.channelPermission,
       mandatory_safety_complete: mandatorySafetyComplete,
       human_takeover_locked: client.humanTakeoverLocked,
+      red_risk_lock: client.redRiskLock,
       context_revision: client.contextRevision,
       safety_checklist: safetyChecklist,
       health_profile: client.healthProfile,
@@ -1201,6 +1236,7 @@ async function persistStateDiff(
   after: ManuAppState,
   processedEventChannel?: ClientRecord["channel"],
 ) {
+  const beforeClientsById = new Map(before.clients.map((client) => [client.id, client]));
   const beforeMessages = new Set(before.messages.map((item) => item.id));
   const beforeDecisions = new Set(before.aiDecisions.map((item) => item.id));
   const beforeRiskAssessments = new Set(before.riskAssessments.map((item) => item.id));
@@ -1208,6 +1244,21 @@ async function persistStateDiff(
   const beforeNotifications = new Set(before.notifications.map((item) => item.id));
   const beforeAudits = new Set(before.auditEvents.map((item) => item.id));
   const beforeProcessed = new Set(before.processedSimulationKeys);
+
+  for (const client of after.clients) {
+    const beforeClient = beforeClientsById.get(client.id);
+    if (beforeClient && JSON.stringify(beforeClient) !== JSON.stringify(client)) {
+      await upsertClient(supabase, client);
+      if (hasAiControlChange(beforeClient, client)) {
+        await insertClientAiStatusEvent(supabase, beforeClient, client, {
+          tenantId: client.tenantId,
+          dietitianId: client.dietitianId,
+          userId: client.dietitianId,
+          role: "dietitian",
+        });
+      }
+    }
+  }
 
   for (const decision of after.aiDecisions.filter((item) => !beforeDecisions.has(item.id))) {
     await insertDecision(supabase, decision);
@@ -1788,8 +1839,60 @@ function mapClient(client: DbClient, channels: DbChannel[]): ClientRecord {
     mandatorySafetyComplete: client.mandatory_safety_complete,
     safetyChecklist: normalizeSafetyChecklist(client.safety_checklist),
     humanTakeoverLocked: client.human_takeover_locked,
+    redRiskLock: normalizeRedRiskLock(client.red_risk_lock),
     contextRevision: client.context_revision || 1,
     createdAt: client.created_at,
+  };
+}
+
+function normalizeRedRiskLock(value: unknown): ClientRecord["redRiskLock"] {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return { status: "none" };
+  }
+
+  const lock = value as Record<string, unknown>;
+  const status = lock.status;
+  if (status !== "locked" && status !== "reactivated") {
+    return { status: "none" };
+  }
+
+  const handoffId = typeof lock.handoffId === "string" ? lock.handoffId : "";
+  const lockedAt = typeof lock.lockedAt === "string" ? lock.lockedAt : "";
+  if (!handoffId || !lockedAt) {
+    return { status: "none" };
+  }
+
+  const previousAiStatus: ClientRecord["aiStatus"] =
+    lock.previousAiStatus === "active" || lock.previousAiStatus === "passive"
+      ? lock.previousAiStatus
+      : "passive";
+  const previousAiMode: ClientRecord["aiMode"] =
+    lock.previousAiMode === "autopilot" ||
+    lock.previousAiMode === "copilot" ||
+    lock.previousAiMode === "manual" ||
+    lock.previousAiMode === "paused"
+      ? lock.previousAiMode
+      : "manual";
+  const base = {
+    handoffId,
+    lockedAt,
+    reasons: Array.isArray(lock.reasons) ? lock.reasons.filter((item): item is string => typeof item === "string") : [],
+    previousAiStatus,
+    previousAiMode,
+  };
+
+  if (status === "locked") {
+    return { status, ...base };
+  }
+
+  return {
+    status,
+    ...base,
+    reactivatedAt: typeof lock.reactivatedAt === "string" ? lock.reactivatedAt : lockedAt,
+    reactivatedByDietitianId:
+      typeof lock.reactivatedByDietitianId === "string" ? lock.reactivatedByDietitianId : "",
+    reactivationReason: typeof lock.reactivationReason === "string" ? lock.reactivationReason : "",
+    reactivatedAiMode: lock.reactivatedAiMode === "autopilot" ? "autopilot" : "copilot",
   };
 }
 

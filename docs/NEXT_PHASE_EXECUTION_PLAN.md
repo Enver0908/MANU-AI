@@ -6,7 +6,35 @@ MANU-AI is in pilot-foundation mode. The local SaaS/PWA prototype, Supabase-back
 
 Real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, and real client health data remain disconnected.
 
-The most recent execution layer is Phase 42 / Completion Roadmap Phase 13: final readiness closure summary. It closes the 13-phase completion roadmap with a `NO-GO` production-pilot decision: all eight launch gates remain open, R-405 remains open, and R-406 remains blocked because Phase 31 could not produce local Supabase RLS evidence without Docker Desktop's Linux engine.
+The most recent execution layers after the 13-phase completion roadmap are Phase 43 multilingual language support and Phase 44 red-risk reactivation lock. The production-pilot decision remains `NO-GO`: all eight launch gates remain open, R-405 remains open, and R-406 remains blocked because Phase 31 could not produce local Supabase RLS evidence without Docker Desktop's Linux engine.
+
+## Phase 44: Red-Risk Reactivation Lock - Completed 2026-06-01
+
+Goal: prevent AI from re-entering a clinically sensitive red-risk conversation until the dietitian explicitly closes the handoff and reactivates AI.
+
+Work:
+
+- Added `ClientRecord.redRiskLock` and Supabase `clients.red_risk_lock`.
+- Red-risk handoff creation now forces `aiStatus=passive`, `aiMode=manual`, and `humanTakeoverLocked=true`.
+- Direct AI reactivation, takeover release, normal handoff resolution, and red-locked handoff dismissal are blocked while the lock is active.
+- Manual dietitian replies and notification acknowledgement do not clear the lock.
+- Added `POST /api/handoffs/[id]/resolve-and-reactivate` for explicit dietitian reactivation with a required resolution reason.
+- Dashboard handoff queue now shows a red-risk reactivation control; copilot is the default reactivation mode and autopilot requires completed mandatory safety.
+
+Done criteria:
+
+- Red-risk locks are created and audited.
+- No LLM path is reachable while a red-risk lock is active.
+- Reactivation is auditable and tied to the handoff, dietitian, timestamp, reason, and selected AI mode.
+- No real provider, channel, launch-gate approval, or real health-data connection is introduced.
+
+Status:
+
+- Completed locally on 2026-06-01.
+- `npm run lint` passed from `app`.
+- `npm run test` passed from `app`: 16 files, 112 tests.
+- `npm run release:verify` passed from `app`: core tests 52/52, app tests 112/112, lint, production build, known R-405 only.
+- R-405 remains open and R-406 remains blocked.
 
 ## Phase 0: Baseline, Documentation, And Workspace Safety
 

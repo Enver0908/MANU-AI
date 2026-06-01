@@ -18,14 +18,23 @@ Run from `app`:
 npm run release:verify
 ```
 
-Latest result, re-verified on 2026-05-31 after Phase 43 multilingual language support:
+Latest result, re-verified on 2026-06-01 after Phase 44 red-risk reactivation lock:
 
 - Core package tests: 52/52 passed.
-- App tests: 107/107 passed.
+- App tests: 112/112 passed.
 - App lint: passed.
 - Production build: passed.
 - Production dependency audit gate: passed with only documented R-405 findings.
 - R-405 remains open: Next.js 16.2.6 nested PostCSS advisory, no safe stable patch path applied.
+
+Additional Phase 44 local verification on 2026-06-01:
+
+- Added red-risk reactivation lock behavior for local fallback and Supabase-backed state.
+- Red-risk handoffs now force AI passive/manual and require explicit dietitian resolve-and-reactivate before AI can resume.
+- Manual replies and notification acknowledgement do not clear the lock; normal handoff resolution, direct AI control edits, takeover release, and red-locked dismissal are rejected while locked.
+- `npm run lint` passed from `app`.
+- `npm run test` passed from `app`: 16 files, 112 tests.
+- `npm run release:verify` passed from `app`: core tests 52/52, app tests 112/112, lint, production build, known R-405 only.
 
 Additional Phase 24-26 local implementation on 2026-05-30:
 
@@ -50,7 +59,7 @@ Separate optional evidence commands:
 - `npm run test:rls` when local Supabase is available.
 - `npm run test:visual` when browser visual smoke evidence is needed.
 
-Latest `npm run test:rls` in this workspace skipped 10 tests during Completion Roadmap Phase 2 on 2026-05-31. Local Supabase could not start because Docker Desktop's Linux engine pipe was unavailable, so the expanded RLS suite is present but local-database execution remains blocked environment evidence until rerun against local Supabase.
+Latest `npm run test:rls` in this workspace skipped 10 tests on 2026-06-01 after Phase 44. Local Supabase evidence remains unavailable in this environment, so the expanded RLS suite is present but local-database execution remains blocked environment evidence until rerun against local Supabase.
 
 Phase 29 evidence hardening on 2026-05-31:
 

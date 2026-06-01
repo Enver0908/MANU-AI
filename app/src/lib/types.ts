@@ -171,9 +171,33 @@ export type ClientRecord = {
   mandatorySafetyComplete: boolean;
   safetyChecklist: SafetyChecklist;
   humanTakeoverLocked: boolean;
+  redRiskLock: RedRiskLockRecord;
   contextRevision: number;
   createdAt: string;
 };
+
+export type RedRiskLockRecord =
+  | { status: "none" }
+  | {
+      status: "locked";
+      handoffId: string;
+      lockedAt: string;
+      reasons: string[];
+      previousAiStatus: AiStatus;
+      previousAiMode: AiMode;
+    }
+  | {
+      status: "reactivated";
+      handoffId: string;
+      lockedAt: string;
+      reasons: string[];
+      previousAiStatus: AiStatus;
+      previousAiMode: AiMode;
+      reactivatedAt: string;
+      reactivatedByDietitianId: string;
+      reactivationReason: string;
+      reactivatedAiMode: "copilot" | "autopilot";
+    };
 
 export type ConversationRecord = {
   id: string;

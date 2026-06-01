@@ -282,6 +282,7 @@ function anonymizeClient(client: ClientRecord): ClientRecord {
     mandatorySafetyComplete: false,
     safetyChecklist: emptySafetyChecklist(),
     humanTakeoverLocked: false,
+    redRiskLock: { status: "none" },
   };
 }
 

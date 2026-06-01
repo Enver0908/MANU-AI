@@ -6,8 +6,10 @@ import {
   dismissDraftInState,
   anonymizeClientDataInState,
   exportClientInState,
+  patchClientInState,
   recordClientExportRequestInState,
   releaseHumanTakeoverInState,
+  resolveAndReactivateRedRiskInState,
   simulateInState,
   updateHandoffStatusInState,
 } from "./app-state-store";
@@ -74,13 +76,118 @@ describe("app state store operations", () => {
   it("resolves only open handoffs", async () => {
     const withHandoff = await simulateInState(createInitialState(), {
       clientId: "client-mert",
-      body: "Alerjiden nefes alamiyorum, bogazim sisti.",
+      body: "Gecen hafta konustugumuz o yemegi tekrar yapayim mi?",
       idempotencyKey: "store-red",
+      mockProviderOutput: "missing_historical_context",
     });
     const handoffId = withHandoff.handoffCases[0].id;
     const resolved = updateHandoffStatusInState(withHandoff, handoffId, "resolved");
 
     expect(resolved.handoffCases[0].status).toBe("resolved");
+  });
+
+  it("creates an explicit red risk reactivation lock on red handoff", async () => {
+    const withHandoff = await simulateInState(createInitialState(), {
+      clientId: "client-mert",
+      body: "Alerjiden nefes alamiyorum, bogazim sisti.",
+      idempotencyKey: "store-red-lock",
+    });
+    const client = withHandoff.clients.find((item) => item.id === "client-mert");
+    const handoff = withHandoff.handoffCases[0];
+
+    expect(client?.aiStatus).toBe("passive");
+    expect(client?.aiMode).toBe("manual");
+    expect(client?.humanTakeoverLocked).toBe(true);
+    expect(client?.redRiskLock).toMatchObject({ status: "locked", handoffId: handoff.id });
+    expect(withHandoff.auditEvents.some((event) => event.eventType === "red_risk_lock_created")).toBe(true);
+  });
+
+  it("does not clear a red risk lock through manual replies or normal handoff resolution", async () => {
+    const withHandoff = await simulateInState(createInitialState(), {
+      clientId: "client-mert",
+      body: "Alerjiden nefes alamiyorum, bogazim sisti.",
+      idempotencyKey: "store-red-manual-does-not-unlock",
+    });
+    const handoffId = withHandoff.handoffCases[0].id;
+    const withManualReply = addManualReplyInState(withHandoff, "client-mert", "Ben devraldim, kontrol ediyorum.");
+    const client = withManualReply.clients.find((item) => item.id === "client-mert");
+
+    expect(client?.redRiskLock.status).toBe("locked");
+    expect(client?.aiStatus).toBe("passive");
+    expect(client?.humanTakeoverLocked).toBe(true);
+    expect(() => updateHandoffStatusInState(withManualReply, handoffId, "resolved")).toThrowError(
+      /red_risk_reactivation_required/,
+    );
+  });
+
+  it("blocks direct AI reactivation, takeover release, and dismissal while red risk lock is active", async () => {
+    const withHandoff = await simulateInState(createInitialState(), {
+      clientId: "client-mert",
+      body: "Alerjiden nefes alamiyorum, bogazim sisti.",
+      idempotencyKey: "store-red-blockers",
+    });
+    const handoffId = withHandoff.handoffCases[0].id;
+
+    expect(() => patchClientInState(withHandoff, "client-mert", { aiStatus: "active" })).toThrowError(
+      /red_risk_reactivation_required/,
+    );
+    expect(() => releaseHumanTakeoverInState(withHandoff, "client-mert")).toThrowError(
+      /red_risk_reactivation_required/,
+    );
+    expect(() => updateHandoffStatusInState(withHandoff, handoffId, "dismissed")).toThrowError(
+      /red_risk_handoff_cannot_be_dismissed/,
+    );
+  });
+
+  it("reactivates red risk locks only through explicit dietitian resolution", async () => {
+    const withHandoff = await simulateInState(createInitialState(), {
+      clientId: "client-mert",
+      body: "Alerjiden nefes alamiyorum, bogazim sisti.",
+      idempotencyKey: "store-red-reactivate",
+    });
+    const handoffId = withHandoff.handoffCases[0].id;
+    const reactivated = resolveAndReactivateRedRiskInState(withHandoff, handoffId, {
+      reactivationReason: "Dietitian reviewed the red handoff and confirmed safe follow-up.",
+      aiMode: "copilot",
+    });
+    const client = reactivated.clients.find((item) => item.id === "client-mert");
+
+    expect(reactivated.handoffCases[0].status).toBe("resolved");
+    expect(client?.aiStatus).toBe("active");
+    expect(client?.aiMode).toBe("copilot");
+    expect(client?.humanTakeoverLocked).toBe(false);
+    expect(client?.redRiskLock).toMatchObject({
+      status: "reactivated",
+      handoffId,
+      reactivatedAiMode: "copilot",
+    });
+    expect(
+      reactivated.auditEvents.some((event) => event.eventType === "red_risk_resolved_and_reactivated"),
+    ).toBe(true);
+  });
+
+  it("requires a complete safety profile before red risk autopilot reactivation", async () => {
+    const withHandoff = await simulateInState(createInitialState(), {
+      clientId: "client-mert",
+      body: "Alerjiden nefes alamiyorum, bogazim sisti.",
+      idempotencyKey: "store-red-autopilot-block",
+    });
+    const handoffId = withHandoff.handoffCases[0].id;
+    const incompleteSafety = {
+      ...withHandoff,
+      clients: withHandoff.clients.map((client) =>
+        client.id === "client-mert"
+          ? { ...client, mandatorySafetyComplete: false, safetyChecklist: { ...client.safetyChecklist, allergiesReviewed: false } }
+          : client,
+      ),
+    };
+
+    expect(() =>
+      resolveAndReactivateRedRiskInState(incompleteSafety, handoffId, {
+        reactivationReason: "Reviewed.",
+        aiMode: "autopilot",
+      }),
+    ).toThrowError(/autopilot_reactivation_requires_completed_safety_profile/);
   });
 
   it("approves AI drafts with dietitian approval provenance", async () => {

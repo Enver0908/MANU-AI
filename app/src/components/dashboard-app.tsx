@@ -100,6 +100,7 @@ export function DashboardApp({ authInfo }: { authInfo?: { displayName: string; r
     editAndSendDraft,
     dismissDraft,
     resolveHandoff,
+    resolveAndReactivateHandoff,
     dismissHandoff,
     markNotificationRead,
     acknowledgeNotification,
@@ -578,6 +579,7 @@ export function DashboardApp({ authInfo }: { authInfo?: { displayName: string; r
                 state={state}
                 onSelectClient={setSelectedClientId}
                 onResolveHandoff={resolveHandoff}
+                onResolveAndReactivateHandoff={resolveAndReactivateHandoff}
                 onDismissHandoff={dismissHandoff}
               />
             )}
@@ -1204,6 +1206,7 @@ function ConversationPanel({
   onOpenSimulator: () => void;
 }) {
   const [draftEdits, setDraftEdits] = useState<Record<string, string>>({});
+  const redRiskLocked = client.redRiskLock.status === "locked";
 
   return (
     <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
@@ -1274,8 +1277,14 @@ function ConversationPanel({
             <InfoLine label="Persona" value={client.selectedPersonaId} />
             <InfoLine label="Takeover" value={client.humanTakeoverLocked ? "locked" : "open"} />
             <InfoLine label="Permission" value={client.channelPermission} />
+            {redRiskLocked && <InfoLine label="Red risk" value="manual reactivation required" />}
           </div>
-          {client.humanTakeoverLocked && (
+          {redRiskLocked && (
+            <div className="mt-3 rounded-lg border border-red-200 bg-red-50 p-3 text-sm leading-6 text-red-900">
+              Resolve the red handoff from the handoff queue before AI can be reactivated.
+            </div>
+          )}
+          {client.humanTakeoverLocked && !redRiskLocked && (
             <button
               onClick={() => onReleaseHumanTakeover(client.id)}
               className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-950 px-3 py-2 text-sm font-semibold text-white transition hover:bg-emerald-900"
@@ -1736,14 +1745,21 @@ function HandoffsPanel({
   state,
   onSelectClient,
   onResolveHandoff,
+  onResolveAndReactivateHandoff,
   onDismissHandoff,
 }: {
   state: ManuAppState;
   onSelectClient: (clientId: string) => void;
   onResolveHandoff: (handoffId: string) => Promise<ManuAppState>;
+  onResolveAndReactivateHandoff: (
+    handoffId: string,
+    input: { reactivationReason: string; aiMode: "copilot" | "autopilot" },
+  ) => Promise<ManuAppState>;
   onDismissHandoff: (handoffId: string) => Promise<ManuAppState>;
 }) {
-  const handoffs = state.handoffCases.filter((handoff) => handoff.status === "open");
+  const [reactivationReasons, setReactivationReasons] = useState<Record<string, string>>({});
+  const [reactivationModes, setReactivationModes] = useState<Record<string, "copilot" | "autopilot">>({});
+  const handoffs = state.handoffCases.filter((handoff) => handoff.status === "open" || handoff.status === "assigned");
 
   return (
     <section className="rounded-lg border border-stone-200 bg-white p-4 shadow-sm">
@@ -1763,6 +1779,10 @@ function HandoffsPanel({
         ) : (
           handoffs.map((handoff) => {
             const client = state.clients.find((item) => item.id === handoff.clientId);
+            const isRedRiskLocked =
+              client?.redRiskLock.status === "locked" && client.redRiskLock.handoffId === handoff.id;
+            const reason = reactivationReasons[handoff.id] || "";
+            const aiMode = reactivationModes[handoff.id] || "copilot";
             return (
               <div
                 key={handoff.id}
@@ -1776,6 +1796,41 @@ function HandoffsPanel({
                     </div>
                     <p className="mt-2 text-sm text-stone-700">{handoff.reasons.join(", ") || handoff.risk}</p>
                     <p className="mt-2 text-sm text-stone-600">{handoff.recommendedAction}</p>
+                    {isRedRiskLocked && (
+                      <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3">
+                        <div className="flex items-center gap-2 text-sm font-semibold text-red-950">
+                          <AlertTriangle size={16} />
+                          Red risk reactivation lock
+                        </div>
+                        <p className="mt-2 text-sm leading-6 text-red-900">
+                          AI remains passive until this handoff is explicitly resolved and reactivated.
+                        </p>
+                        <div className="mt-3 grid gap-3 md:grid-cols-[minmax(0,1fr)_160px]">
+                          <TextareaInput
+                            label="Resolution reason"
+                            value={reason}
+                            onChange={(value) =>
+                              setReactivationReasons((current) => ({ ...current, [handoff.id]: value }))
+                            }
+                            rows={3}
+                          />
+                          <SelectInput
+                            label="AI mode"
+                            value={aiMode}
+                            onChange={(value) =>
+                              setReactivationModes((current) => ({
+                                ...current,
+                                [handoff.id]: value === "autopilot" ? "autopilot" : "copilot",
+                              }))
+                            }
+                            options={[
+                              ["copilot", "Copilot"],
+                              ["autopilot", "Autopilot"],
+                            ]}
+                          />
+                        </div>
+                      </div>
+                    )}
                     <div className="mt-3 flex flex-wrap gap-2">
                       <button
                         onClick={() => onSelectClient(handoff.clientId)}
@@ -1784,20 +1839,40 @@ function HandoffsPanel({
                       >
                         Open client
                       </button>
-                      <button
-                        onClick={() => onResolveHandoff(handoff.id)}
-                        className="rounded-lg bg-emerald-950 px-3 py-2 text-sm font-semibold text-white transition hover:bg-emerald-900"
-                        type="button"
-                      >
-                        Resolve
-                      </button>
-                      <button
-                        onClick={() => onDismissHandoff(handoff.id)}
-                        className="rounded-lg bg-stone-200 px-3 py-2 text-sm font-semibold text-stone-800 transition hover:bg-stone-300"
-                        type="button"
-                      >
-                        Dismiss
-                      </button>
+                      {isRedRiskLocked ? (
+                        <button
+                          onClick={async () => {
+                            await onResolveAndReactivateHandoff(handoff.id, {
+                              reactivationReason: reason,
+                              aiMode,
+                            });
+                            setReactivationReasons((current) => removeKey(current, handoff.id));
+                            setReactivationModes((current) => removeKey(current, handoff.id));
+                          }}
+                          disabled={!reason.trim()}
+                          className="rounded-lg bg-emerald-950 px-3 py-2 text-sm font-semibold text-white transition hover:bg-emerald-900 disabled:cursor-not-allowed disabled:bg-stone-400"
+                          type="button"
+                        >
+                          Resolve + reactivate
+                        </button>
+                      ) : (
+                        <>
+                          <button
+                            onClick={() => onResolveHandoff(handoff.id)}
+                            className="rounded-lg bg-emerald-950 px-3 py-2 text-sm font-semibold text-white transition hover:bg-emerald-900"
+                            type="button"
+                          >
+                            Resolve
+                          </button>
+                          <button
+                            onClick={() => onDismissHandoff(handoff.id)}
+                            className="rounded-lg bg-stone-200 px-3 py-2 text-sm font-semibold text-stone-800 transition hover:bg-stone-300"
+                            type="button"
+                          >
+                            Dismiss
+                          </button>
+                        </>
+                      )}
                     </div>
                   </div>
                   <Clock3 size={18} className="text-stone-400" />
