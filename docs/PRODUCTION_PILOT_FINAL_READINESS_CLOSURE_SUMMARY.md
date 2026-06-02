@@ -4,7 +4,7 @@ Date: 2026-06-02
 
 ## Status
 
-This is the final summary for the 13-phase completion roadmap, updated after Phase 43 multilingual language support, Phase 44 red-risk reactivation lock, Phase 45 client removal data lifecycle, Phase 46 WhatsApp group quarantine, Phase 47 RLS quarantine evidence coverage, Phase 48 R-405 stable patch recheck, Phase 49 safety/orchestration hardening, Phase 50 production Supabase hardening, and Phase 51 transactional RPC coverage.
+This is the final summary for the 13-phase completion roadmap, updated after Phase 43 multilingual language support, Phase 44 red-risk reactivation lock, Phase 45 client removal data lifecycle, Phase 46 WhatsApp group quarantine, Phase 47 RLS quarantine evidence coverage, Phase 48 R-405 stable patch recheck, Phase 49 safety/orchestration hardening, Phase 50 production Supabase hardening, Phase 51 transactional RPC coverage, and Phase 52 integration test coverage.
 
 Production pilot is not approved.
 
@@ -29,6 +29,7 @@ Reason:
 - Phase 49 added local safety/orchestration/concurrency/rate-limit hardening but did not approve any launch gate.
 - Phase 50 added Supabase rate-limit/RPC groundwork, narrowed several pre-mutation reads, and produced local Supabase migration/RLS evidence.
 - Phase 51 added transactional RPC coverage for draft review, form response save, client context update, handoff status update, and red-risk reactivation. Client removal/anonymization bulk redaction remains future hardening work.
+- Phase 52 added real local Supabase integration tests for rate-limit isolation, controlled denial, stale revision rejection, and manual/inbound RPC atomicity.
 
 ## Completion Roadmap Result
 
@@ -73,7 +74,7 @@ R-405:
 R-406:
 
 - Expanded RLS tests exist.
-- Latest local RLS run on 2026-06-02 after applying the Phase 50 migration and Phase 51 transactional RPC coverage passed against local Supabase: 1 file, 14/14 tests.
+- Latest local RLS run on 2026-06-02 after applying the Phase 50 migration and Phase 51/52 coverage passed against local Supabase: 1 file, 19/19 tests.
 - R-406 is mitigated in the local prototype, but this does not approve production pilot launch.
 
 Phase 50 database evidence:
@@ -83,6 +84,7 @@ Phase 50 database evidence:
 - Direct DB checks confirmed the local `rate_limit_buckets`, `consume_rate_limit`, and `commit_inbound_simulation` objects exist.
 - Direct DB checks confirmed `messages_generated_by_ai_decision_fk` is deferrable and initially deferred for same-transaction message/AI-decision payloads.
 - Phase 51 extends the RPC payload with message, AI-decision, handoff, form-response, and client-context update coverage for targeted local mutation paths.
+- Phase 52 verifies rate-limit isolation, controlled rate-limit denial, stale revision rejection, and RPC atomicity against local Supabase.
 
 External approvals:
 
@@ -97,7 +99,7 @@ External approvals:
 
 ## Verification
 
-Latest local release verification after Phase 51 transactional RPC coverage:
+Latest local release verification after Phase 52 integration test coverage:
 
 - `npm run release:verify` passed on 2026-06-02.
 - Core tests: 57/57 passed.
@@ -141,17 +143,19 @@ Phase 48 verification on 2026-06-01:
 Phase 50 verification on 2026-06-02:
 
 - `npm run release:verify` passed from `app`: core tests 57/57, app tests 126/126, lint, production build, known R-405 only.
-- `npm run test:rls` passed against local Supabase: 1 file, 14/14 tests.
+- `npm run test:rls` passed against local Supabase after Phase 52 coverage: 1 file, 19/19 tests.
 - `PHASE_50_PRODUCTION_SUPABASE_HARDENING_EVIDENCE_SPEC.md` records the implemented scope and evidence limits.
 - `PHASE_51_TRANSACTIONAL_RPC_COVERAGE_SPEC.md` records the transactional RPC coverage added after Phase 50.
+- `PHASE_52_INTEGRATION_TEST_COVERAGE_SPEC.md` records the integration coverage added after Phase 51.
 
 ## Next Required Actions
 
-1. Design the dedicated client removal/anonymization transactional redaction contract before moving that lifecycle fully to RPC commits.
-2. Resolve R-405 through a safe stable Next.js/PostCSS upgrade or obtain formal external risk acceptance.
-3. Collect sanitized external approval references in `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md`.
-4. Re-run `npm run release:verify` after any approval-related change.
-5. Keep all real providers, channels, monitoring, secret manager, backup provider, and real client health data disconnected until the relevant gates are approved.
+1. Execute Scale / Broad Read Contracts before production growth work.
+2. Design the dedicated client removal/anonymization transactional redaction contract before moving that lifecycle fully to RPC commits.
+3. Resolve R-405 through a safe stable Next.js/PostCSS upgrade or obtain formal external risk acceptance.
+4. Collect sanitized external approval references in `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md`.
+5. Re-run `npm run release:verify` after any approval-related change.
+6. Keep all real providers, channels, monitoring, secret manager, backup provider, and real client health data disconnected until the relevant gates are approved.
 
 ## Non-Approval Statement
 

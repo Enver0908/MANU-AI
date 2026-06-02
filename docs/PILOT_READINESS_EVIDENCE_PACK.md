@@ -18,7 +18,7 @@ Run from `app`:
 npm run release:verify
 ```
 
-Latest result, re-verified on 2026-06-02 after Phase 51 transactional RPC coverage:
+Latest result, re-verified on 2026-06-02 after Phase 52 integration test coverage:
 
 - Core package tests: 57/57 passed.
 - App tests: 126/126 passed.
@@ -39,7 +39,8 @@ Additional Phase 50 production Supabase hardening evidence on 2026-06-02:
 - Direct DB checks confirmed `rate_limit_buckets`, `consume_rate_limit`, and `commit_inbound_simulation` exist locally.
 - Direct DB checks confirmed `messages_generated_by_ai_decision_fk` is deferrable and initially deferred for same-transaction message/AI-decision payloads.
 - Phase 51 added `PHASE_51_TRANSACTIONAL_RPC_COVERAGE_SPEC.md`, extended transactional RPC payload coverage for draft review, form response save, client context update, handoff status update, and red-risk reactivation, and left client removal/anonymization bulk redaction for a dedicated future contract.
-- `npm run test:rls` passed against local Supabase after Phase 51 coverage: 1 file, 14/14 tests.
+- Phase 52 added `PHASE_52_INTEGRATION_TEST_COVERAGE_SPEC.md` and expanded real local Supabase coverage for rate-limit isolation, controlled `429 rate_limit_exceeded`, stale revision rejection, and manual/inbound RPC atomicity.
+- `npm run test:rls` passed against local Supabase after Phase 52 coverage: 1 file, 19/19 tests.
 - R-406 is mitigated in the local prototype.
 
 Additional Phase 47/48 release verification on 2026-06-01:
@@ -117,7 +118,7 @@ Separate optional evidence commands:
 - `npm run test:rls` when local Supabase is available.
 - `npm run test:visual` when browser visual smoke evidence is needed.
 
-Latest `npm run test:rls` in this workspace passed against local Supabase on 2026-06-02 after Phase 51 transactional RPC coverage. The expanded RLS suite ran 1 file and 14/14 tests, after Docker Desktop/local Supabase was started and migrations were reset through `20260602030000_phase_50_production_hardening_foundation.sql`.
+Latest `npm run test:rls` in this workspace passed against local Supabase on 2026-06-02 after Phase 52 integration test coverage. The expanded RLS suite ran 1 file and 19/19 tests, after Docker Desktop/local Supabase was started and migrations were reset through `20260602030000_phase_50_production_hardening_foundation.sql`.
 
 Phase 29 evidence hardening on 2026-05-31:
 

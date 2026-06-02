@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { assertRateLimit, resetRateLimits } from "./rate-limit";
 import {
   addSupabaseClientContextUpdate,
   approveSupabaseDraftMessage,
@@ -442,6 +443,192 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
       provider_event_id: sharedProviderEventId,
     });
     expect(sameTenantEvent.error?.message).toMatch(/duplicate key|unique/i);
+  });
+
+  it("isolates Supabase rate-limit buckets by tenant, scope, and key", async () => {
+    const keyHash = `aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-${Date.now()}`;
+    const otherKeyHash = `bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb-${Date.now()}`;
+    const now = new Date().toISOString();
+
+    const first = await admin.rpc("consume_rate_limit", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_scope: "manual_reply",
+      p_key_hash: keyHash,
+      p_limit: 2,
+      p_window_seconds: 60,
+      p_now: now,
+    });
+    const second = await admin.rpc("consume_rate_limit", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_scope: "manual_reply",
+      p_key_hash: keyHash,
+      p_limit: 2,
+      p_window_seconds: 60,
+      p_now: now,
+    });
+    const denied = await admin.rpc("consume_rate_limit", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_scope: "manual_reply",
+      p_key_hash: keyHash,
+      p_limit: 2,
+      p_window_seconds: 60,
+      p_now: now,
+    });
+    const differentScope = await admin.rpc("consume_rate_limit", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_scope: "draft_review",
+      p_key_hash: keyHash,
+      p_limit: 2,
+      p_window_seconds: 60,
+      p_now: now,
+    });
+    const differentTenant = await admin.rpc("consume_rate_limit", {
+      p_tenant_id: OTHER_TENANT_ID,
+      p_scope: "manual_reply",
+      p_key_hash: keyHash,
+      p_limit: 2,
+      p_window_seconds: 60,
+      p_now: now,
+    });
+    const differentKey = await admin.rpc("consume_rate_limit", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_scope: "manual_reply",
+      p_key_hash: otherKeyHash,
+      p_limit: 2,
+      p_window_seconds: 60,
+      p_now: now,
+    });
+
+    expect(first.error).toBeNull();
+    expect(second.error).toBeNull();
+    expect(denied.error).toBeNull();
+    expect(differentScope.error).toBeNull();
+    expect(differentTenant.error).toBeNull();
+    expect(differentKey.error).toBeNull();
+    expect(first.data).toMatchObject({ allowed: true, count: 1, scope: "manual_reply" });
+    expect(second.data).toMatchObject({ allowed: true, count: 2, scope: "manual_reply" });
+    expect(denied.data).toMatchObject({ allowed: false, count: 3, scope: "manual_reply" });
+    expect(differentScope.data).toMatchObject({ allowed: true, count: 1, scope: "draft_review" });
+    expect(differentTenant.data).toMatchObject({ allowed: true, count: 1, scope: "manual_reply" });
+    expect(differentKey.data).toMatchObject({ allowed: true, count: 1, scope: "manual_reply" });
+  });
+
+  it("maps Supabase rate-limit denials to controlled 429 errors", async () => {
+    resetRateLimits();
+    const key = `rls-rate-limit-${Date.now()}`;
+
+    await assertRateLimit({
+      tenantId: TEST_TENANT_ID,
+      key,
+      scope: "manual_reply",
+      limit: 1,
+      windowMs: 60_000,
+    });
+
+    await expect(
+      assertRateLimit({
+        tenantId: TEST_TENANT_ID,
+        key,
+        scope: "manual_reply",
+        limit: 1,
+        windowMs: 60_000,
+      }),
+    ).rejects.toMatchObject({ status: 429, message: "rate_limit_exceeded" });
+  });
+
+  it("rejects stale client revisions before transactional RPC writes", async () => {
+    const before = await admin.from("clients").select("full_name, context_revision").eq("id", TEST_CLIENT_ID).single();
+    expect(before.error).toBeNull();
+
+    const staleCommit = await admin.rpc("commit_client_context_update", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_payload: {
+        expectedClientRevisions: { [TEST_CLIENT_ID]: (before.data?.context_revision || 1) + 99 },
+        clients: [
+          {
+            id: TEST_CLIENT_ID,
+            fullName: "Stale Revision Should Not Persist",
+            contextRevision: (before.data?.context_revision || 1) + 1,
+          },
+        ],
+      },
+    });
+
+    expect(staleCommit.error?.message).toContain("concurrent_state_update");
+
+    const after = await admin.from("clients").select("full_name, context_revision").eq("id", TEST_CLIENT_ID).single();
+    expect(after.error).toBeNull();
+    expect(after.data).toEqual(before.data);
+  });
+
+  it("rolls back manual reply RPC inserts when a later update fails", async () => {
+    const messageId = "00000000-0000-4000-8000-000000001101";
+
+    const failed = await admin.rpc("commit_manual_reply", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_payload: {
+        expectedClientRevisions: {},
+        messages: [
+          {
+            id: messageId,
+            conversationId: TEST_CONVERSATION_ID,
+            sender: "dietitian",
+            body: "This manual reply must roll back.",
+            origin: "dietitian_manual",
+            authorDietitianId: TEST_DIETITIAN_ID,
+            status: "sent",
+            createdAt: new Date().toISOString(),
+          },
+        ],
+        messageUpdates: [{ id: "00000000-0000-4000-8000-000000001199", status: "blocked" }],
+      },
+    });
+
+    expect(failed.error?.message).toContain("message_not_found");
+
+    const inserted = await admin.from("messages").select("id").eq("id", messageId).maybeSingle();
+    expect(inserted.error).toBeNull();
+    expect(inserted.data).toBeNull();
+  });
+
+  it("rolls back inbound simulation RPC inserts when a later update fails", async () => {
+    const messageId = "00000000-0000-4000-8000-000000001102";
+    const providerEventId = `atomic-inbound-${Date.now()}`;
+
+    const failed = await admin.rpc("commit_inbound_simulation", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_payload: {
+        expectedClientRevisions: {},
+        messages: [
+          {
+            id: messageId,
+            conversationId: TEST_CONVERSATION_ID,
+            sender: "client",
+            body: "This inbound message must roll back.",
+            origin: "client_inbound",
+            status: "stored",
+            createdAt: new Date().toISOString(),
+          },
+        ],
+        processedEvents: [{ channel: "whatsapp", providerEventId }],
+        aiDecisionUpdates: [{ id: "00000000-0000-4000-8000-000000001198", sendStatus: "send_blocked" }],
+      },
+    });
+
+    expect(failed.error?.message).toContain("ai_decision_not_found");
+
+    const insertedMessage = await admin.from("messages").select("id").eq("id", messageId).maybeSingle();
+    const processedEvent = await admin
+      .from("processed_inbound_events")
+      .select("provider_event_id")
+      .eq("tenant_id", TEST_TENANT_ID)
+      .eq("provider_event_id", providerEventId)
+      .maybeSingle();
+
+    expect(insertedMessage.error).toBeNull();
+    expect(insertedMessage.data).toBeNull();
+    expect(processedEvent.error).toBeNull();
+    expect(processedEvent.data).toBeNull();
   });
 
   it("stores simulator idempotency events with the simulated client channel", async () => {

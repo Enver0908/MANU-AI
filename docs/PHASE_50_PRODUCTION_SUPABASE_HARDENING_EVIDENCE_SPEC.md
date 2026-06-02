@@ -50,7 +50,7 @@ Results:
 - `npx supabase db reset --local` applied all migrations through `20260602030000_phase_50_production_hardening_foundation.sql`.
 - Direct DB checks confirmed `rate_limit_buckets`, `consume_rate_limit`, and `commit_inbound_simulation` exist locally.
 - Direct DB checks confirmed `messages_generated_by_ai_decision_fk` is deferrable and initially deferred for same-transaction message/AI-decision payloads.
-- `npm run test:rls` passed against local Supabase after Phase 51 coverage: 1 file, 14/14 tests passed.
+- `npm run test:rls` passed against local Supabase after Phase 52 integration coverage: 1 file, 19/19 tests passed.
 
 ## Evidence Limits
 
@@ -67,6 +67,6 @@ Phase 50 improves local production-readiness evidence for R-114, R-115, and R-20
 - R-114 remains partially mitigated: the targeted local multi-table mutation paths are transactionally covered and DB-tested, while client removal/anonymization bulk redaction and broader production write contracts still need dedicated coverage.
 - R-115 remains partially mitigated because global dashboard/load/export/removal/admin workflows still need separate scale contracts.
 - R-208 is improved by local DB evidence for the distributed limiter foundation, but production deployment, monitoring, and abuse tuning remain future work.
-- R-406 is mitigated in the local prototype by the passing 14-test local Supabase RLS run.
+- R-406 is mitigated in the local prototype by the passing 19-test local Supabase RLS run.
 
 Production pilot remains `NO-GO`.
