@@ -15,8 +15,8 @@ Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized reference
 ## Current Baseline
 
 - Git baseline: Phase 27-29 checkpoint exists at `c75564e Add Phase 27-29 pilot readiness checkpoint` on branch `codex/phase-29-baseline-checkpoint`; Completion Roadmap Phase 1 records this as the current implementation baseline.
-- Latest local release verification: `npm run release:verify` passed on 2026-06-02 after Phase 52 integration test coverage changes.
-- Verification result: core tests 57/57, app tests 126/126, lint passed, production build passed.
+- Latest local release verification: `npm run release:verify` passed on 2026-06-02 after Phase 53 scale/broad read contract changes.
+- Verification result: core tests 57/57, app tests 130/130, lint passed, production build passed.
 - Dependency audit result: only known R-405 findings, `next:postcss` and `postcss:GHSA-qx2v-qp2m-jg93`.
 - R-405 status: open production launch blocker; Phase 48 rechecked metadata on 2026-06-01 and stable `next@latest` is 16.2.7 but still bundles `postcss@8.4.31`, so no safe stable Next.js/PostCSS patch path is available.
 - R-405 remediation spec: `PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`.
@@ -40,6 +40,7 @@ Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized reference
 - Phase 50 production Supabase hardening evidence spec: `PHASE_50_PRODUCTION_SUPABASE_HARDENING_EVIDENCE_SPEC.md` records distributed rate-limit/RPC groundwork, narrowed Supabase reads, passing local release verification, local Supabase migration application, and passing local RLS evidence. It does not approve production pilot launch.
 - Phase 51 transactional RPC coverage spec: `PHASE_51_TRANSACTIONAL_RPC_COVERAGE_SPEC.md` records transactional coverage for draft review, form response save, client context update, handoff status update, and red-risk reactivation. It does not approve production pilot launch or client removal/anonymization bulk redaction coverage.
 - Phase 52 integration test coverage spec: `PHASE_52_INTEGRATION_TEST_COVERAGE_SPEC.md` records real local Supabase coverage for rate-limit isolation, controlled denial, stale revision rejection, and manual/inbound RPC atomicity. It does not approve production pilot launch.
+- Phase 53 scale/broad read contracts spec: `PHASE_53_SCALE_BROAD_READ_CONTRACTS_SPEC.md` records intentional broad reads, future paginated reads, and already scoped mutation reads. It does not approve production pilot launch or implement pagination.
 
 ## Gate Closure Matrix
 

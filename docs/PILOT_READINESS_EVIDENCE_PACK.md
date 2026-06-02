@@ -18,10 +18,10 @@ Run from `app`:
 npm run release:verify
 ```
 
-Latest result, re-verified on 2026-06-02 after Phase 52 integration test coverage:
+Latest result, re-verified on 2026-06-02 after Phase 53 scale/broad read contracts:
 
 - Core package tests: 57/57 passed.
-- App tests: 126/126 passed.
+- App tests: 130/130 passed.
 - App lint: passed.
 - Production build: passed.
 - Production dependency audit gate: passed with only documented R-405 findings.
@@ -41,6 +41,7 @@ Additional Phase 50 production Supabase hardening evidence on 2026-06-02:
 - Phase 51 added `PHASE_51_TRANSACTIONAL_RPC_COVERAGE_SPEC.md`, extended transactional RPC payload coverage for draft review, form response save, client context update, handoff status update, and red-risk reactivation, and left client removal/anonymization bulk redaction for a dedicated future contract.
 - Phase 52 added `PHASE_52_INTEGRATION_TEST_COVERAGE_SPEC.md` and expanded real local Supabase coverage for rate-limit isolation, controlled `429 rate_limit_exceeded`, stale revision rejection, and manual/inbound RPC atomicity.
 - `npm run test:rls` passed against local Supabase after Phase 52 coverage: 1 file, 19/19 tests.
+- Phase 53 added `PHASE_53_SCALE_BROAD_READ_CONTRACTS_SPEC.md` and a test-covered Supabase read contract catalog for intentional broad reads, future paginated reads, and already scoped mutation reads.
 - R-406 is mitigated in the local prototype.
 
 Additional Phase 47/48 release verification on 2026-06-01:
