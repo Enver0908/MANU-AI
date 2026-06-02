@@ -7,6 +7,7 @@ export { evaluateInboundPreflight } from "./inbound-preflight.js";
 export { buildClientContextCapsule, assertTenantIsolation } from "./context-capsule.js";
 export {
   CONTEXT_POLICY_V1,
+  CLIENT_AUTHORED_DATA_INSTRUCTION,
   LATEST_DIETITIAN_CONTEXT_INSTRUCTION,
   MISSING_HISTORICAL_CONTEXT_INSTRUCTION,
   MISSING_HISTORICAL_CONTEXT_TOKEN,

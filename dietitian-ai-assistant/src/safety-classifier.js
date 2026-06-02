@@ -134,7 +134,44 @@ const yellowRules = [
   },
   {
     reason: "pregnancy_or_lactation_context",
-    patterns: [/hamileyim/i, /gebeyim/i, /emziriyorum/i],
+    patterns: [
+      /hamileyim/i,
+      /gebeyim/i,
+      /emziriyorum/i,
+      /pregnant/i,
+      /pregnancy/i,
+      /breastfeed/i,
+      /lactat/i,
+      /schwanger/i,
+      /stillen/i,
+      /enceinte/i,
+      /grossesse/i,
+      /allaite/i,
+      /embarazada/i,
+      /embarazo/i,
+      /lactancia/i,
+      /gravida/i,
+      /amament/i,
+      /tehotna/i,
+      /kojim/i,
+    ],
+  },
+  {
+    reason: "prompt_injection_attempt",
+    patterns: [
+      /ignore.*instructions/i,
+      /ignore.*previous/i,
+      /system prompt/i,
+      /developer message/i,
+      /act as/i,
+      /jailbreak/i,
+      /bypass.*rules/i,
+      /override.*instructions/i,
+      /talimatlari.*gorme/i,
+      /onceki.*talimat/i,
+      /kurallari.*yok say/i,
+      /sen artik/i,
+    ],
   },
   {
     reason: "symptom_question",
@@ -192,14 +229,14 @@ function normalizeText(message) {
   return String(message || "")
     .trim()
     .toLocaleLowerCase("tr-TR")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
     .replace(/ğ/g, "g")
     .replace(/ı/g, "i")
     .replace(/ö/g, "o")
     .replace(/ş/g, "s")
     .replace(/ü/g, "u")
-    .replace(/ç/g, "c");
+    .replace(/ç/g, "c")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
 }
 
 function collectReasons(text, rules) {

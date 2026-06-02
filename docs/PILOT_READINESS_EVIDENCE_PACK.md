@@ -1,6 +1,6 @@
 # MANU-AI Pilot Readiness Evidence Pack
 
-Date: 2026-06-02
+Date: 2026-06-03
 
 ## Status
 
@@ -18,10 +18,10 @@ Run from `app`:
 npm run release:verify
 ```
 
-Latest result, re-verified on 2026-06-02 after Phase 54 R-405/launch-gate recheck:
+Latest result, re-verified on 2026-06-03 after Phase 55 audit remediation safety-boundary hardening:
 
-- Core package tests: 57/57 passed.
-- App tests: 130/130 passed.
+- Core package tests: 72/72 passed.
+- App tests: 132/132 passed.
 - App lint: passed.
 - Production build: passed.
 - Production dependency audit gate: passed with only documented R-405 findings.
@@ -43,6 +43,7 @@ Additional Phase 50 production Supabase hardening evidence on 2026-06-02:
 - `npm run test:rls` passed against local Supabase after Phase 52 coverage: 1 file, 19/19 tests.
 - Phase 53 added `PHASE_53_SCALE_BROAD_READ_CONTRACTS_SPEC.md` and a test-covered Supabase read contract catalog for intentional broad reads, future paginated reads, and already scoped mutation reads.
 - Phase 54 added `PHASE_54_R405_AND_LAUNCH_GATES_RECHECK_SPEC.md`, rechecked R-405 through the Phase 22 procedure, confirmed no safe stable Next.js/PostCSS patch path exists, and confirmed no external launch-gate approval artifacts were supplied.
+- Phase 55 added `PHASE_55_AUDIT_REMEDIATION_SAFETY_BOUNDARY_SPEC.md`, hardened real Turkish Unicode classifier coverage, multilingual pregnancy/lactation yellow routing, prompt-injection yellow routing, client-authored PromptContext data boundaries, safety-critical pinned-note no-truncation, and red-risk preflight regression coverage.
 - R-406 is mitigated in the local prototype.
 
 Additional Phase 47/48 release verification on 2026-06-01:

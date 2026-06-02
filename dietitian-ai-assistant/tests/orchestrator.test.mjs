@@ -142,6 +142,43 @@ test("core preflight blocks non-ready channel permission before provider call", 
   assert.equal(generated, false);
 });
 
+test("core preflight blocks red-risk locked clients before mode handoff or provider call", async () => {
+  let generated = false;
+  const handoffs = [];
+  const result = await handleInboundMessage(
+    {
+      ...baseInput,
+      client: {
+        ...baseInput.client,
+        aiMode: "paused",
+        humanTakeoverLocked: true,
+        redRiskLock: {
+          status: "locked",
+          handoffId: "handoff-red-lock-1",
+          lockedAt: "2026-06-03T08:00:00.000Z",
+          reasons: ["self_harm_or_suicidal_language"],
+          previousAiStatus: "active",
+          previousAiMode: "autopilot",
+        },
+      },
+      message: { body: "Bugun kahvaltida yumurta yerine ne yiyebilirim?" },
+    },
+    {
+      generateReply: async () => {
+        generated = true;
+        return "ok";
+      },
+      onHandoff: async (handoff) => handoffs.push(handoff),
+    },
+  );
+
+  assert.equal(result.action, "no_ai");
+  assert.equal(result.blockedReason, "red_risk_reactivation_required");
+  assert.equal(result.providerAttempted, false);
+  assert.equal(generated, false);
+  assert.equal(handoffs.length, 0);
+});
+
 test("scheduled activation waits until active window starts", async () => {
   let generated = false;
   const result = await handleInboundMessage(
