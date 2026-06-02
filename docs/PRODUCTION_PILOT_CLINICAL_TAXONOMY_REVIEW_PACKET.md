@@ -1,6 +1,6 @@
 # MANU-AI Production Pilot Clinical Taxonomy Review Packet
 
-Date: 2026-05-31
+Date: 2026-06-03
 
 ## Status
 
@@ -12,7 +12,9 @@ No real WhatsApp, Telegram, Gemini, external LLM provider, email, push, monitori
 
 ## Review Objective
 
-A qualified dietitian must review whether the current dietetic risk taxonomy, escalation behavior, and golden test set are acceptable for a supervised production pilot.
+A qualified dietitian must review whether the current dietetic risk taxonomy, escalation behavior, golden test set, and production clinical safety evaluation approach are acceptable for a supervised production pilot.
+
+The deterministic/regex safety classifier is a local first barrier. It must not be accepted as the sole production clinical safety layer without an approved second-layer or equivalent fail-closed safety evaluation mechanism.
 
 The review must cover:
 
@@ -23,6 +25,7 @@ The review must cover:
 - Routine response behavior for green cases.
 - Persona safety invariants.
 - Coverage gaps requiring new golden cases before pilot.
+- Whether the production safety approach includes an approved second-layer or equivalent fail-closed evaluation beyond deterministic/regex matching.
 
 ## Internal Evidence Available
 
@@ -55,6 +58,7 @@ The review must cover:
 | Eating-disorder handling | Sign-off or requested changes for purging/euphemism escalation | Not supplied |
 | Medication/supplement/lab boundaries | Sign-off or requested changes for dose, lab, diagnosed-condition routing | Not supplied |
 | Pregnancy/glucose/allergy/emergency handling | Sign-off or requested changes for red emergency boundaries | Not supplied |
+| Production safety evaluation layer | Sign-off or requested changes for the second-layer or equivalent fail-closed safety evaluation approach beyond deterministic/regex matching | Not supplied |
 | Coverage gaps | List of missing clinical scenarios requiring new JSONL golden cases | Not supplied |
 | Taxonomy version | Approved taxonomy version and dated review record | Not supplied |
 
@@ -65,13 +69,15 @@ The review must cover:
 3. Confirm red cases never call a provider.
 4. Confirm yellow cases require dietitian review.
 5. Confirm persona changes do not alter safety routing.
-6. Identify missing scenarios that must be added before pilot.
-7. Record approved taxonomy version or requested changes.
+6. Confirm the production safety approach does not rely on deterministic/regex matching as the sole clinical safety layer.
+7. Identify missing scenarios that must be added before pilot.
+8. Record approved taxonomy version or requested changes.
 
 ## Current Technical Controls
 
 - Red-risk flows create handoff and do not call the provider.
 - Yellow-risk flows become review drafts.
+- The current deterministic/regex classifier is a local first barrier and requires a qualified-review-approved second-layer or equivalent fail-closed safety evaluation before production pilot launch.
 - Green-risk flows remain subject to AI activation, mode, permission, takeover, context, and quality guard checks.
 - Personas affect communication style only and do not change clinical routing in the golden tests.
 - Provider-attempt metadata distinguishes actual provider attempts from no-call safety/control paths.
@@ -82,6 +88,7 @@ The review must cover:
 - Signed qualified dietitian approval artifact.
 - Approved taxonomy version.
 - Approved or updated golden test set.
+- Approved second-layer or equivalent fail-closed clinical safety evaluation approach beyond deterministic/regex matching.
 - Explicit list of accepted clinical coverage gaps or required additions.
 - Confirmation that yellow/red escalation language is operationally acceptable.
 - R-405 resolution or formal acceptance.

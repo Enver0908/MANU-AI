@@ -21,7 +21,7 @@ This phase does not approve production pilot launch, resolve or accept R-405, cl
 ## Deferred Scope
 
 - No profile-flag matcher narrowing was implemented; reducing review sensitivity requires clinical taxonomy approval.
-- No real LLM second-stage safety classifier was implemented; real provider use remains blocked by provider/vendor/legal gates.
+- No real LLM second-stage safety classifier was implemented. The deterministic/regex classifier remains a local first barrier only; production pilot requires qualified dietitian approval plus a second-layer or equivalent fail-closed clinical safety evaluation approach before real provider use.
 - No provider circuit breaker was implemented; R-402 remains the production resilience backlog item for real provider outage handling.
 - No retention scheduler, hard delete workflow, false-negative feedback loop, or handoff `escalatedFrom` schema was implemented.
 - No RLS, migration, dependency, launch-gate, monitoring, secret-manager, backup, channel, or provider integration changed.
@@ -41,4 +41,4 @@ Local verification after the code and documentation changes:
 
 Production pilot remains `NO-GO`.
 
-All eight external launch gates remain open. R-405 remains open and must only be resolved through `docs/PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md` or formal external risk acceptance.
+All eight external launch gates remain open. The clinical taxonomy gate also requires explicit approval of a second-layer or equivalent fail-closed clinical safety evaluation approach; deterministic/regex matching must not be the sole production clinical safety layer. R-405 remains open and must only be resolved through `docs/PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md` or formal external risk acceptance.
