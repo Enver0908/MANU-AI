@@ -56,9 +56,9 @@ The product must be both:
 
 ## Current Next Phase
 
-Phase 50 is the current implementation wave after Phase 49: production Supabase hardening, distributed rate-limit foundation, transactional commit RPC groundwork, narrowed Supabase reads, and launch-gate evidence/docs.
+Phase 51 is the current implementation wave after Phase 50: transactional RPC coverage for targeted Supabase-backed mutation paths, while production pilot remains `NO-GO`.
 
-Start from `docs/NEXT_PHASE_EXECUTION_PLAN.md`, especially the `Phase 50: Production Supabase Hardening` section. Phase 49 context remains in `docs/PHASE_49_SAFETY_ORCHESTRATION_CONCURRENCY_HARDENING_SPEC.md`.
+Start from `docs/NEXT_PHASE_EXECUTION_PLAN.md`, especially the `Phase 50: Production Supabase Hardening` section and `docs/PHASE_51_TRANSACTIONAL_RPC_COVERAGE_SPEC.md`. Phase 49 context remains in `docs/PHASE_49_SAFETY_ORCHESTRATION_CONCURRENCY_HARDENING_SPEC.md`.
 
 Phase 49 priorities:
 
@@ -77,13 +77,13 @@ Do not connect real WhatsApp, Telegram, Gemini/external LLM, push/email, monitor
 Phase 50 status as of 2026-06-02:
 
 - Phase 1 foundation added `app/supabase/migrations/20260602030000_phase_50_production_hardening_foundation.sql` with `rate_limit_buckets`, `consume_rate_limit`, and transactional commit RPC wrappers. On 2026-06-02, Docker Desktop/local Supabase was started and `npx supabase db reset --local` applied the migration locally.
-- Phase 2 app integration is partial: async scoped rate-limit calls are wired, Supabase-backed limiter RPC support exists, and manual reply plus client-scoped inbound simulation use commit RPCs. Do not switch remaining mutation paths fully to RPC until existing message/AI-decision update support is represented transactionally.
+- Phase 2/51 app integration is complete for the targeted local mutation paths: async scoped rate-limit calls are wired, Supabase-backed limiter RPC support exists, and manual reply, client-scoped inbound simulation, draft review, form response save, client context update, handoff status update, and red-risk reactivation use commit RPCs.
 - Phase 3 narrowed reads is partial but locally verified: manual reply, client-scoped inbound simulation, draft approval/dismissal, human takeover release, handoff status update, red-risk reactivation, form response save, and client context update use scoped operation loaders before mutation.
 - Phase 3 validation passed: app tests 126/126, app lint, and core tests 57/57.
 - Phase 4 launch-gate evidence/docs completed locally: added `docs/PHASE_50_PRODUCTION_SUPABASE_HARDENING_EVIDENCE_SPEC.md`, updated pilot evidence/gate/final readiness docs, and re-ran evidence commands.
 - Phase 4 validation passed: `npm run release:verify` from `app` completed with core tests 57/57, app tests 126/126, lint, production build, and only known R-405 findings.
-- Local Supabase/RLS validation passed on 2026-06-02: after applying migrations through Phase 50, `npm run test:rls` passed against local Supabase with 1 file and 11/11 tests. R-406 is mitigated in the local prototype.
-- Remaining Phase 50 work: add RPC coverage for existing message/decision updates, then decide which remaining paths can safely move to commit RPCs.
+- Local Supabase/RLS validation passed on 2026-06-02: after applying migrations through Phase 50 and Phase 51 transactional RPC coverage, `npm run test:rls` passed against local Supabase with 1 file and 14/14 tests. R-406 is mitigated in the local prototype.
+- Remaining production hardening work: design a dedicated transactional payload for client removal/anonymization bulk redaction, define broad read/scale contracts, resolve R-405 only through the Phase 22 procedure, and keep external launch gates open until approval artifacts arrive.
 
 ## Current Implementation
 

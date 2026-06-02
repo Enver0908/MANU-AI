@@ -527,6 +527,78 @@ begin
       updated_at = excluded.updated_at;
   end loop;
 
+  for item in select * from jsonb_array_elements(coalesce(p_payload->'messageUpdates', '[]'::jsonb)) loop
+    update messages set
+      body = coalesce(item->>'body', body),
+      status = coalesce((item->>'status')::message_status, status),
+      approved_by_dietitian_id = case
+        when item ? 'approvedByDietitianId' then nullif(item->>'approvedByDietitianId', '')::uuid
+        else approved_by_dietitian_id
+      end,
+      generated_by_ai_decision_id = case
+        when item ? 'generatedByAiDecisionId' then nullif(item->>'generatedByAiDecisionId', '')::uuid
+        else generated_by_ai_decision_id
+      end,
+      source_message_id = case
+        when item ? 'sourceMessageId' then nullif(item->>'sourceMessageId', '')::uuid
+        else source_message_id
+      end
+    where tenant_id = p_tenant_id
+      and id = (item->>'id')::uuid;
+
+    get diagnostics affected_rows = row_count;
+    if affected_rows <> 1 then
+      raise exception 'message_not_found';
+    end if;
+  end loop;
+
+  for item in select * from jsonb_array_elements(coalesce(p_payload->'aiDecisionUpdates', '[]'::jsonb)) loop
+    update ai_decisions set
+      provider_attempted = coalesce((item->>'providerAttempted')::boolean, provider_attempted),
+      provider_status = coalesce(item->>'providerStatus', provider_status),
+      provider_error_code = case
+        when item ? 'providerErrorCode' then nullif(item->>'providerErrorCode', '')
+        else provider_error_code
+      end,
+      send_status = coalesce(item->>'sendStatus', send_status),
+      action = coalesce(item->>'action', action),
+      blocked_reason = case
+        when item ? 'blockedReason' then nullif(item->>'blockedReason', '')
+        else blocked_reason
+      end,
+      quality_issues = case
+        when item ? 'qualityIssues' then manu_text_array_from_jsonb(item->'qualityIssues')
+        else quality_issues
+      end,
+      reasons = case
+        when item ? 'reasons' then manu_text_array_from_jsonb(item->'reasons')
+        else reasons
+      end
+    where tenant_id = p_tenant_id
+      and id = (item->>'id')::uuid;
+
+    get diagnostics affected_rows = row_count;
+    if affected_rows <> 1 then
+      raise exception 'ai_decision_not_found';
+    end if;
+  end loop;
+
+  for item in select * from jsonb_array_elements(coalesce(p_payload->'handoffUpdates', '[]'::jsonb)) loop
+    update handoff_cases set
+      status = coalesce((item->>'status')::case_status, status),
+      resolved_at = case
+        when item ? 'resolvedAt' then nullif(item->>'resolvedAt', '')::timestamptz
+        else resolved_at
+      end
+    where tenant_id = p_tenant_id
+      and id = (item->>'id')::uuid;
+
+    get diagnostics affected_rows = row_count;
+    if affected_rows <> 1 then
+      raise exception 'handoff_not_found';
+    end if;
+  end loop;
+
   return jsonb_build_object('ok', true, 'operation', p_operation);
 end;
 $$;
@@ -542,6 +614,10 @@ as $$ select manu_commit_state_delta('manual_reply', p_tenant_id, p_payload) $$;
 create or replace function commit_draft_review(p_tenant_id uuid, p_payload jsonb)
 returns jsonb language sql security definer set search_path = public
 as $$ select manu_commit_state_delta('draft_review', p_tenant_id, p_payload) $$;
+
+create or replace function commit_handoff_status(p_tenant_id uuid, p_payload jsonb)
+returns jsonb language sql security definer set search_path = public
+as $$ select manu_commit_state_delta('handoff_status', p_tenant_id, p_payload) $$;
 
 create or replace function commit_client_context_update(p_tenant_id uuid, p_payload jsonb)
 returns jsonb language sql security definer set search_path = public
@@ -566,6 +642,7 @@ revoke all on function manu_commit_state_delta(text, uuid, jsonb) from public, a
 revoke all on function commit_inbound_simulation(uuid, jsonb) from public, anon, authenticated;
 revoke all on function commit_manual_reply(uuid, jsonb) from public, anon, authenticated;
 revoke all on function commit_draft_review(uuid, jsonb) from public, anon, authenticated;
+revoke all on function commit_handoff_status(uuid, jsonb) from public, anon, authenticated;
 revoke all on function commit_client_context_update(uuid, jsonb) from public, anon, authenticated;
 revoke all on function commit_form_response(uuid, jsonb) from public, anon, authenticated;
 revoke all on function commit_red_risk_reactivation(uuid, jsonb) from public, anon, authenticated;
@@ -576,6 +653,7 @@ grant execute on function manu_commit_state_delta(text, uuid, jsonb) to service_
 grant execute on function commit_inbound_simulation(uuid, jsonb) to service_role;
 grant execute on function commit_manual_reply(uuid, jsonb) to service_role;
 grant execute on function commit_draft_review(uuid, jsonb) to service_role;
+grant execute on function commit_handoff_status(uuid, jsonb) to service_role;
 grant execute on function commit_client_context_update(uuid, jsonb) to service_role;
 grant execute on function commit_form_response(uuid, jsonb) to service_role;
 grant execute on function commit_red_risk_reactivation(uuid, jsonb) to service_role;

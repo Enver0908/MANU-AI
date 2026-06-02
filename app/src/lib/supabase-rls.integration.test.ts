@@ -3,10 +3,14 @@ import { join } from "node:path";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import {
+  addSupabaseClientContextUpdate,
+  approveSupabaseDraftMessage,
+  dismissSupabaseDraftMessage,
   loadSupabaseState,
   patchSupabaseClientRecord,
   resetSupabaseState,
   runSupabaseSimulation,
+  saveSupabaseFormResponse,
 } from "./supabase-store";
 
 loadEnvLocal();
@@ -560,6 +564,151 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
 
     expect(auditEvent.error).toBeNull();
     expect(auditEvent.data?.entity_id).toBe(client.id);
+    await resetSupabaseState();
+  }, 30000);
+
+  it("persists draft approve and dismiss updates through transactional RPC", async () => {
+    await resetSupabaseState();
+    const state = await loadSupabaseState();
+    const copilotClient = state.clients.find((client) => client.aiMode === "copilot");
+
+    expect(copilotClient).toBeDefined();
+
+    const withDraft = await runSupabaseSimulation({
+      clientId: copilotClient!.id,
+      body: "Ara ogun icin ne yiyebilirim?",
+      idempotencyKey: `draft-approve-${Date.now()}`,
+    });
+    const draft = withDraft.messages.find((message) => message.status === "draft");
+    expect(draft).toBeDefined();
+
+    await approveSupabaseDraftMessage(draft!.id, "Edited safe reply");
+
+    const approved = await admin
+      .from("messages")
+      .select("body, status, approved_by_dietitian_id")
+      .eq("id", draft!.id)
+      .single();
+
+    expect(approved.error).toBeNull();
+    expect(approved.data).toMatchObject({
+      body: "Edited safe reply",
+      status: "sent",
+      approved_by_dietitian_id: state.dietitian.id,
+    });
+
+    const withSecondDraft = await runSupabaseSimulation({
+      clientId: copilotClient!.id,
+      body: "Aksam yemeginde ne yesem?",
+      idempotencyKey: `draft-dismiss-${Date.now()}`,
+    });
+    const secondDraft = withSecondDraft.messages.find(
+      (message) => message.status === "draft" && message.id !== draft!.id,
+    );
+    expect(secondDraft).toBeDefined();
+
+    await dismissSupabaseDraftMessage(secondDraft!.id);
+
+    const dismissed = await admin.from("messages").select("status").eq("id", secondDraft!.id).single();
+    expect(dismissed.error).toBeNull();
+    expect(dismissed.data?.status).toBe("blocked");
+    await resetSupabaseState();
+  }, 30000);
+
+  it("persists form-response draft invalidations through transactional RPC", async () => {
+    await resetSupabaseState();
+    const state = await loadSupabaseState();
+    const copilotClient = state.clients.find((client) => client.aiMode === "copilot");
+    const schema = state.clientFormSchemas.find((item) => item.status === "published");
+
+    expect(copilotClient).toBeDefined();
+    expect(schema).toBeDefined();
+
+    const withDraft = await runSupabaseSimulation({
+      clientId: copilotClient!.id,
+      body: "Ara ogun icin ne yiyebilirim?",
+      idempotencyKey: `form-invalidates-${Date.now()}`,
+    });
+    const draft = withDraft.messages.find((message) => message.status === "draft");
+    expect(draft).toBeDefined();
+
+    await saveSupabaseFormResponse({
+      clientId: copilotClient!.id,
+      schemaId: schema!.id,
+      submittedPhoneE164: copilotClient!.primaryPhoneE164,
+      answers: { daily_routine: "Updated routine for transactional RPC test." },
+    });
+
+    const blockedDraft = await admin.from("messages").select("status").eq("id", draft!.id).single();
+    const decision = await admin
+      .from("ai_decisions")
+      .select("send_status, blocked_reason")
+      .eq("id", draft!.generatedByAiDecisionId)
+      .single();
+    const formResponse = await admin
+      .from("client_form_responses")
+      .select("submitted_phone_e164, answers")
+      .eq("client_id", copilotClient!.id)
+      .eq("schema_id", schema!.id)
+      .single();
+
+    expect(blockedDraft.error).toBeNull();
+    expect(blockedDraft.data?.status).toBe("blocked");
+    expect(decision.error).toBeNull();
+    expect(decision.data).toMatchObject({
+      send_status: "draft_invalidated",
+      blocked_reason: "client_form_response_changed",
+    });
+    expect(formResponse.error).toBeNull();
+    expect(formResponse.data?.submitted_phone_e164).toBe(copilotClient!.primaryPhoneE164);
+    await resetSupabaseState();
+  }, 30000);
+
+  it("persists client context draft invalidations through transactional RPC", async () => {
+    await resetSupabaseState();
+    const state = await loadSupabaseState();
+    const copilotClient = state.clients.find((client) => client.aiMode === "copilot");
+
+    expect(copilotClient).toBeDefined();
+
+    const withDraft = await runSupabaseSimulation({
+      clientId: copilotClient!.id,
+      body: "Ara ogun icin ne yiyebilirim?",
+      idempotencyKey: `context-invalidates-${Date.now()}`,
+    });
+    const draft = withDraft.messages.find((message) => message.status === "draft");
+    expect(draft).toBeDefined();
+
+    await addSupabaseClientContextUpdate(copilotClient!.id, {
+      source: "phone",
+      occurredAt: "2026-06-02T10:00:00.000Z",
+      title: "Phone check-in",
+      summary: "Client reported schedule change.",
+      details: "No raw external health data.",
+      importance: "important",
+    });
+
+    const blockedDraft = await admin.from("messages").select("status").eq("id", draft!.id).single();
+    const decision = await admin
+      .from("ai_decisions")
+      .select("send_status, blocked_reason")
+      .eq("id", draft!.generatedByAiDecisionId)
+      .single();
+    const contextUpdate = await admin
+      .from("client_context_updates")
+      .select("title, source")
+      .eq("client_id", copilotClient!.id)
+      .single();
+
+    expect(blockedDraft.error).toBeNull();
+    expect(blockedDraft.data?.status).toBe("blocked");
+    expect(decision.error).toBeNull();
+    expect(decision.data).toMatchObject({
+      send_status: "draft_invalidated",
+      blocked_reason: "client_context_update_added",
+    });
+    expect(contextUpdate.error).toBeNull();
+    expect(contextUpdate.data).toMatchObject({ title: "Phone check-in", source: "phone" });
     await resetSupabaseState();
   }, 30000);
 });

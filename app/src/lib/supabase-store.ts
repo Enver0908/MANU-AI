@@ -1109,14 +1109,14 @@ export async function approveSupabaseDraftMessage(
 ) {
   const state = await loadSupabaseDraftOperationState(messageId, context);
   const next = approveDraftInState(state, messageId, body);
-  await persistDraftUpdate(requireSupabase(), state, next, messageId, context);
+  await commitStateDeltaRpc(requireSupabase(), "commit_draft_review", state, next);
   return loadSupabaseState(context);
 }
 
 export async function dismissSupabaseDraftMessage(messageId: string, context = demoTenantContext()) {
   const state = await loadSupabaseDraftOperationState(messageId, context);
   const next = dismissDraftInState(state, messageId);
-  await persistDraftUpdate(requireSupabase(), state, next, messageId, context);
+  await commitStateDeltaRpc(requireSupabase(), "commit_draft_review", state, next);
   return loadSupabaseState(context);
 }
 
@@ -1168,19 +1168,11 @@ export async function updateSupabaseHandoffStatus(
   const next = updateHandoffStatusInState(state, handoffId, status);
   const handoff = next.handoffCases.find((item) => item.id === handoffId);
 
-  if (handoff) {
-    const { error } = await requireSupabase()
-      .from("handoff_cases")
-      .update({ status: handoff.status, resolved_at: new Date().toISOString() })
-      .eq("id", handoffId)
-      .eq("tenant_id", context.tenantId);
-    throwIfError(error);
-  }
-
   if (!handoff) {
     throw new AppDomainError(404, "handoff_not_found");
   }
 
+  await commitStateDeltaRpc(requireSupabase(), "commit_handoff_status", state, next);
   return loadSupabaseState(context);
 }
 
@@ -1194,25 +1186,13 @@ export async function resolveAndReactivateSupabaseRedRisk(
   const client = after.clients.find(
     (item) => item.redRiskLock.status === "reactivated" && item.redRiskLock.handoffId === handoffId,
   );
-  const beforeClient = client ? before.clients.find((item) => item.id === client.id) : undefined;
   const handoff = after.handoffCases.find((item) => item.id === handoffId);
 
   if (!client || !handoff) {
     throw new AppDomainError(404, "handoff_not_found");
   }
 
-  const supabase = requireSupabase();
-  await upsertClient(supabase, client, beforeClient);
-  await checked(
-    supabase
-      .from("handoff_cases")
-      .update({ status: handoff.status, resolved_at: new Date().toISOString() })
-      .eq("id", handoffId)
-      .eq("tenant_id", context.tenantId),
-  );
-  await insertClientAiStatusEvent(supabase, beforeClient, client, context);
-  await persistNewAudits(supabase, before, after);
-
+  await commitStateDeltaRpc(requireSupabase(), "commit_red_risk_reactivation", before, after);
   return loadSupabaseState(context);
 }
 
@@ -1313,25 +1293,7 @@ export async function saveSupabaseFormResponse(
     requiredFormSchemaId: input.schemaId,
   });
   const next = saveFormResponseInState(before, input);
-  const response = next.clientFormResponses.find(
-    (item) =>
-      item.clientId === input.clientId &&
-      item.schemaId === input.schemaId &&
-      (!before.clientFormResponses.some((beforeResponse) => beforeResponse.id === item.id) ||
-        before.clientFormResponses.find((beforeResponse) => beforeResponse.id === item.id)?.updatedAt !== item.updatedAt),
-  );
-  const client = next.clients.find((item) => item.id === input.clientId);
-  const supabase = requireSupabase();
-  if (response) await upsertFormResponse(supabase, { ...response, tenantId: context.tenantId });
-  if (client) {
-    await upsertClient(
-      supabase,
-      { ...client, tenantId: context.tenantId, dietitianId: context.dietitianId },
-      before.clients.find((item) => item.id === client.id),
-    );
-  }
-  await persistNewAudits(supabase, before, next);
-  await persistChangedDraftInvalidations(supabase, before, next, context);
+  await commitStateDeltaRpc(requireSupabase(), "commit_form_response", before, next);
   return loadSupabaseState(context);
 }
 
@@ -1356,14 +1318,7 @@ export async function addSupabaseClientContextUpdate(
 ) {
   const before = await loadSupabaseClientOperationState(clientId, context);
   const next = addClientContextUpdateInState(before, clientId, input);
-  const update = next.clientContextUpdates.find(
-    (item) => !before.clientContextUpdates.some((beforeUpdate) => beforeUpdate.id === item.id),
-  );
-  const supabase = requireSupabase();
-
-  if (update) await insertClientContextUpdate(supabase, { ...update, tenantId: context.tenantId });
-  await persistStateDiff(supabase, before, next);
-  await persistChangedDraftInvalidations(supabase, before, next, context);
+  await commitStateDeltaRpc(requireSupabase(), "commit_client_context_update", before, next);
   return loadSupabaseState(context);
 }
 
@@ -1654,70 +1609,6 @@ async function insertClientAiStatusEvent(
   );
 }
 
-async function persistStateDiff(
-  supabase: SupabaseClient,
-  before: ManuAppState,
-  after: ManuAppState,
-  processedEventChannel?: ClientRecord["channel"],
-) {
-  const beforeClientsById = new Map(before.clients.map((client) => [client.id, client]));
-  const beforeMessages = new Set(before.messages.map((item) => item.id));
-  const beforeDecisions = new Set(before.aiDecisions.map((item) => item.id));
-  const beforeRiskAssessments = new Set(before.riskAssessments.map((item) => item.id));
-  const beforeHandoffs = new Set(before.handoffCases.map((item) => item.id));
-  const beforeNotifications = new Set(before.notifications.map((item) => item.id));
-  const beforeQuarantines = new Set(before.inboundQuarantines.map((item) => item.id));
-  const beforeAudits = new Set(before.auditEvents.map((item) => item.id));
-  const beforeProcessed = new Set(before.processedSimulationKeys);
-
-  for (const client of after.clients) {
-    const beforeClient = beforeClientsById.get(client.id);
-    if (beforeClient && JSON.stringify(beforeClient) !== JSON.stringify(client)) {
-      await upsertClient(supabase, client, beforeClient);
-      if (hasAiControlChange(beforeClient, client)) {
-        await insertClientAiStatusEvent(supabase, beforeClient, client, {
-          tenantId: client.tenantId,
-          dietitianId: client.dietitianId,
-          userId: client.dietitianId,
-          role: "dietitian",
-        });
-      }
-    }
-  }
-
-  for (const decision of after.aiDecisions.filter((item) => !beforeDecisions.has(item.id))) {
-    await insertDecision(supabase, decision);
-  }
-  for (const message of after.messages.filter((item) => !beforeMessages.has(item.id))) {
-    await insertMessage(supabase, message);
-  }
-  for (const riskAssessment of after.riskAssessments.filter((item) => !beforeRiskAssessments.has(item.id))) {
-    await insertRiskAssessment(supabase, riskAssessment);
-  }
-  for (const handoff of after.handoffCases.filter((item) => !beforeHandoffs.has(item.id))) {
-    await insertHandoff(supabase, handoff);
-  }
-  for (const notification of after.notifications.filter((item) => !beforeNotifications.has(item.id))) {
-    await insertNotification(supabase, notification);
-  }
-  for (const quarantine of after.inboundQuarantines.filter((item) => !beforeQuarantines.has(item.id))) {
-    await insertInboundQuarantine(supabase, quarantine);
-  }
-  for (const audit of after.auditEvents.filter((item) => !beforeAudits.has(item.id))) {
-    await insertAudit(supabase, audit);
-  }
-  for (const key of after.processedSimulationKeys.filter((item) => !beforeProcessed.has(item))) {
-    const channel = processedEventChannel || after.clients[0]?.channel || "whatsapp";
-    await checked(
-      supabase.from("processed_inbound_events").insert({
-        tenant_id: after.tenant.id,
-        channel,
-        provider_event_id: key,
-      }),
-    );
-  }
-}
-
 async function commitStateDeltaRpc(
   supabase: SupabaseClient,
   rpcName: string,
@@ -1742,17 +1633,31 @@ function buildStateDeltaPayload(
   processedEventChannel?: ClientRecord["channel"],
 ) {
   const beforeClientsById = new Map(before.clients.map((client) => [client.id, client]));
-  const beforeMessages = new Set(before.messages.map((item) => item.id));
-  const beforeDecisions = new Set(before.aiDecisions.map((item) => item.id));
+  const beforeMessagesById = new Map(before.messages.map((item) => [item.id, item]));
+  const beforeDecisionsById = new Map(before.aiDecisions.map((item) => [item.id, item]));
   const beforeRiskAssessments = new Set(before.riskAssessments.map((item) => item.id));
-  const beforeHandoffs = new Set(before.handoffCases.map((item) => item.id));
+  const beforeHandoffsById = new Map(before.handoffCases.map((item) => [item.id, item]));
   const beforeNotifications = new Set(before.notifications.map((item) => item.id));
   const beforeQuarantines = new Set(before.inboundQuarantines.map((item) => item.id));
   const beforeAudits = new Set(before.auditEvents.map((item) => item.id));
   const beforeProcessed = new Set(before.processedSimulationKeys);
+  const beforeFormResponsesById = new Map(before.clientFormResponses.map((item) => [item.id, item]));
+  const beforeContextUpdates = new Set(before.clientContextUpdates.map((item) => item.id));
   const changedClients = after.clients.filter((client) => {
     const beforeClient = beforeClientsById.get(client.id);
     return beforeClient && JSON.stringify(beforeClient) !== JSON.stringify(client);
+  });
+  const changedMessages = after.messages.filter((message) => {
+    const beforeMessage = beforeMessagesById.get(message.id);
+    return beforeMessage && JSON.stringify(beforeMessage) !== JSON.stringify(message);
+  });
+  const changedDecisions = after.aiDecisions.filter((decision) => {
+    const beforeDecision = beforeDecisionsById.get(decision.id);
+    return beforeDecision && JSON.stringify(beforeDecision) !== JSON.stringify(decision);
+  });
+  const changedHandoffs = after.handoffCases.filter((handoff) => {
+    const beforeHandoff = beforeHandoffsById.get(handoff.id);
+    return beforeHandoff && JSON.stringify(beforeHandoff) !== JSON.stringify(handoff);
   });
 
   return {
@@ -1760,12 +1665,15 @@ function buildStateDeltaPayload(
       changedClients.map((client) => [client.id, beforeClientsById.get(client.id)?.contextRevision || 1]),
     ),
     clients: changedClients.map(serializeClientForRpc),
-    messages: after.messages.filter((item) => !beforeMessages.has(item.id)).map(serializeMessageForRpc),
-    aiDecisions: after.aiDecisions.filter((item) => !beforeDecisions.has(item.id)).map(serializeDecisionForRpc),
+    messages: after.messages.filter((item) => !beforeMessagesById.has(item.id)).map(serializeMessageForRpc),
+    messageUpdates: changedMessages.map(serializeMessageUpdateForRpc),
+    aiDecisions: after.aiDecisions.filter((item) => !beforeDecisionsById.has(item.id)).map(serializeDecisionForRpc),
+    aiDecisionUpdates: changedDecisions.map(serializeDecisionUpdateForRpc),
     riskAssessments: after.riskAssessments
       .filter((item) => !beforeRiskAssessments.has(item.id))
       .map(serializeRiskAssessmentForRpc),
-    handoffCases: after.handoffCases.filter((item) => !beforeHandoffs.has(item.id)).map(serializeHandoffForRpc),
+    handoffCases: after.handoffCases.filter((item) => !beforeHandoffsById.has(item.id)).map(serializeHandoffForRpc),
+    handoffUpdates: changedHandoffs.map(serializeHandoffUpdateForRpc),
     clientAiStatusEvents: changedClients
       .filter((client) => hasAiControlChange(beforeClientsById.get(client.id), client))
       .map((client) => serializeClientAiStatusEventForRpc(beforeClientsById.get(client.id), client)),
@@ -1773,6 +1681,15 @@ function buildStateDeltaPayload(
     inboundQuarantines: after.inboundQuarantines
       .filter((item) => !beforeQuarantines.has(item.id))
       .map(serializeInboundQuarantineForRpc),
+    clientContextUpdates: after.clientContextUpdates
+      .filter((item) => !beforeContextUpdates.has(item.id))
+      .map(serializeClientContextUpdateForRpc),
+    formResponses: after.clientFormResponses
+      .filter((item) => {
+        const beforeResponse = beforeFormResponsesById.get(item.id);
+        return !beforeResponse || JSON.stringify(beforeResponse) !== JSON.stringify(item);
+      })
+      .map(serializeFormResponseForRpc),
     auditEvents: after.auditEvents.filter((item) => !beforeAudits.has(item.id)).map(serializeAuditForRpc),
     processedEvents: after.processedSimulationKeys
       .filter((item) => !beforeProcessed.has(item))
@@ -1829,6 +1746,17 @@ function serializeMessageForRpc(message: MessageRecord) {
   };
 }
 
+function serializeMessageUpdateForRpc(message: MessageRecord) {
+  return {
+    id: message.id,
+    body: message.body,
+    status: message.status,
+    approvedByDietitianId: message.approvedByDietitianId,
+    generatedByAiDecisionId: message.generatedByAiDecisionId,
+    sourceMessageId: message.sourceMessageId,
+  };
+}
+
 function serializeDecisionForRpc(decision: AiDecisionRecord) {
   return {
     id: decision.id,
@@ -1853,6 +1781,20 @@ function serializeDecisionForRpc(decision: AiDecisionRecord) {
     qualityIssues: decision.qualityIssues,
     reasons: decision.reasons,
     createdAt: decision.createdAt,
+  };
+}
+
+function serializeDecisionUpdateForRpc(decision: AiDecisionRecord) {
+  return {
+    id: decision.id,
+    providerAttempted: decision.providerAttempted,
+    providerStatus: decision.providerStatus,
+    providerErrorCode: decision.providerErrorCode,
+    sendStatus: decision.sendStatus,
+    action: decision.action,
+    blockedReason: decision.blockedReason,
+    qualityIssues: decision.qualityIssues,
+    reasons: decision.reasons,
   };
 }
 
@@ -1882,6 +1824,14 @@ function serializeHandoffForRpc(handoff: HandoffCaseRecord) {
     safeAcknowledgement: handoff.safeAcknowledgement,
     recommendedAction: handoff.recommendedAction,
     createdAt: handoff.createdAt,
+  };
+}
+
+function serializeHandoffUpdateForRpc(handoff: HandoffCaseRecord) {
+  return {
+    id: handoff.id,
+    status: handoff.status,
+    resolvedAt: handoff.status === "resolved" || handoff.status === "dismissed" ? new Date().toISOString() : null,
   };
 }
 
@@ -1927,6 +1877,38 @@ function serializeInboundQuarantineForRpc(quarantine: InboundQuarantineRecord) {
   };
 }
 
+function serializeClientContextUpdateForRpc(update: ClientContextUpdateRecord) {
+  return {
+    id: update.id,
+    clientId: update.clientId,
+    dietitianId: update.dietitianId,
+    source: update.source,
+    occurredAt: update.occurredAt,
+    title: update.title,
+    summary: update.summary,
+    details: update.details,
+    importance: update.importance,
+    status: update.status,
+    supersedesUpdateId: update.supersedesUpdateId,
+    createdAt: update.createdAt,
+  };
+}
+
+function serializeFormResponseForRpc(response: ClientFormResponseRecord) {
+  return {
+    id: response.id,
+    clientId: response.clientId,
+    schemaId: response.schemaId,
+    schemaVersion: response.schemaVersion,
+    schemaSnapshot: response.schemaSnapshot,
+    languageCode: response.languageCode,
+    submittedPhoneE164: response.submittedPhoneE164,
+    answers: response.answers,
+    createdAt: response.createdAt,
+    updatedAt: response.updatedAt,
+  };
+}
+
 function serializeAuditForRpc(audit: AuditEventRecord) {
   return {
     id: audit.id,
@@ -1955,100 +1937,6 @@ function emptySupabaseResult<T>() {
 
 function mergeById<T extends { id: string }>(items: T[]) {
   return [...new Map(items.map((item) => [item.id, item])).values()];
-}
-
-async function persistDraftUpdate(
-  supabase: SupabaseClient,
-  before: ManuAppState,
-  after: ManuAppState,
-  messageId: string,
-  context: AppTenantContext,
-) {
-  const beforeMessage = before.messages.find((message) => message.id === messageId);
-  const afterMessage = after.messages.find((message) => message.id === messageId);
-
-  if (!beforeMessage || !afterMessage || beforeMessage.status !== "draft") {
-    throw new AppDomainError(beforeMessage ? 400 : 404, beforeMessage ? "message_not_ai_draft" : "message_not_found");
-  }
-
-  const { error } = await supabase
-    .from("messages")
-    .update({
-      body: afterMessage.body,
-      status: afterMessage.status,
-      approved_by_dietitian_id: afterMessage.approvedByDietitianId,
-    })
-    .eq("id", messageId)
-    .eq("tenant_id", context.tenantId)
-    .eq("status", "draft");
-  throwIfError(error);
-
-  const beforeAudits = new Set(before.auditEvents.map((item) => item.id));
-  const beforeDecision = beforeMessage.generatedByAiDecisionId
-    ? before.aiDecisions.find((decision) => decision.id === beforeMessage.generatedByAiDecisionId)
-    : null;
-  const afterDecision = afterMessage.generatedByAiDecisionId
-    ? after.aiDecisions.find((decision) => decision.id === afterMessage.generatedByAiDecisionId)
-    : null;
-
-  if (
-    beforeDecision &&
-    afterDecision &&
-    (beforeDecision.sendStatus !== afterDecision.sendStatus ||
-      beforeDecision.blockedReason !== afterDecision.blockedReason)
-  ) {
-    await checked(
-      supabase
-        .from("ai_decisions")
-        .update({
-          send_status: afterDecision.sendStatus,
-          blocked_reason: afterDecision.blockedReason,
-          reasons: afterDecision.reasons,
-        })
-        .eq("id", afterDecision.id)
-        .eq("tenant_id", context.tenantId),
-    );
-  }
-
-  for (const audit of after.auditEvents.filter((item) => !beforeAudits.has(item.id))) {
-    await insertAudit(supabase, audit);
-  }
-}
-
-async function persistChangedDraftInvalidations(
-  supabase: SupabaseClient,
-  before: ManuAppState,
-  after: ManuAppState,
-  context: AppTenantContext,
-) {
-  const beforeMessagesById = new Map(before.messages.map((message) => [message.id, message]));
-  const beforeDecisionsById = new Map(before.aiDecisions.map((decision) => [decision.id, decision]));
-
-  for (const message of after.messages) {
-    const beforeMessage = beforeMessagesById.get(message.id);
-    if (beforeMessage?.status === "draft" && message.status === "blocked") {
-      await checked(
-        supabase
-          .from("messages")
-          .update({ status: "blocked" })
-          .eq("id", message.id)
-          .eq("tenant_id", context.tenantId),
-      );
-    }
-  }
-
-  for (const decision of after.aiDecisions) {
-    const beforeDecision = beforeDecisionsById.get(decision.id);
-    if (beforeDecision?.sendStatus !== decision.sendStatus && decision.sendStatus === "draft_invalidated") {
-      await checked(
-        supabase
-          .from("ai_decisions")
-          .update({ send_status: decision.sendStatus, blocked_reason: decision.blockedReason })
-          .eq("id", decision.id)
-          .eq("tenant_id", context.tenantId),
-      );
-    }
-  }
 }
 
 async function insertMessage(supabase: SupabaseClient, message: MessageRecord) {
@@ -2116,26 +2004,6 @@ async function insertRiskAssessment(supabase: SupabaseClient, riskAssessment: Ri
       },
       { onConflict: "message_id" },
     ),
-  );
-}
-
-async function insertHandoff(supabase: SupabaseClient, handoff: HandoffCaseRecord) {
-  await checked(
-    supabase.from("handoff_cases").insert({
-      id: handoff.id,
-      tenant_id: handoff.tenantId,
-      dietitian_id: handoff.dietitianId,
-      client_id: handoff.clientId,
-      conversation_id: handoff.conversationId,
-      triggering_message_id: handoff.triggeringMessageId,
-      risk: handoff.risk,
-      reasons: handoff.reasons,
-      status: handoff.status,
-      urgency: handoff.urgency,
-      safe_acknowledgement: handoff.safeAcknowledgement,
-      recommended_action: handoff.recommendedAction,
-      created_at: handoff.createdAt,
-    }),
   );
 }
 
@@ -2216,24 +2084,6 @@ async function upsertFormSchema(supabase: SupabaseClient, schema: ClientFormSche
   );
 }
 
-async function upsertFormResponse(supabase: SupabaseClient, response: ClientFormResponseRecord) {
-  await checked(
-    supabase.from("client_form_responses").upsert({
-      id: response.id,
-      tenant_id: response.tenantId,
-      client_id: response.clientId,
-      schema_id: response.schemaId,
-      schema_version: response.schemaVersion,
-      schema_snapshot: response.schemaSnapshot,
-      language_code: response.languageCode,
-      submitted_phone_e164: response.submittedPhoneE164,
-      answers: response.answers,
-      created_at: response.createdAt,
-      updated_at: response.updatedAt,
-    }),
-  );
-}
-
 async function insertDataRequest(supabase: SupabaseClient, request: DataRequestRecord) {
   await checked(
     supabase.from("data_requests").insert({
@@ -2245,59 +2095,6 @@ async function insertDataRequest(supabase: SupabaseClient, request: DataRequestR
       requested_by_dietitian_id: request.requestedByDietitianId,
       completed_at: request.completedAt,
       created_at: request.createdAt,
-    }),
-  );
-}
-
-async function insertClientContextUpdate(supabase: SupabaseClient, update: ClientContextUpdateRecord) {
-  await checked(
-    supabase.from("client_context_updates").insert({
-      id: update.id,
-      tenant_id: update.tenantId,
-      client_id: update.clientId,
-      dietitian_id: update.dietitianId,
-      source: update.source,
-      occurred_at: update.occurredAt,
-      title: update.title,
-      summary: update.summary,
-      details: update.details,
-      importance: update.importance,
-      status: update.status,
-      supersedes_update_id: update.supersedesUpdateId,
-      created_at: update.createdAt,
-    }),
-  );
-}
-
-async function insertNotification(supabase: SupabaseClient, notification: NotificationRecord) {
-  await checked(
-    supabase.from("notifications").insert({
-      id: notification.id,
-      tenant_id: notification.tenantId,
-      type: notification.type,
-      entity_type: notification.entityType,
-      entity_id: notification.entityId,
-      title: notification.title,
-      body: notification.body,
-      read: notification.read,
-      acknowledged_at: notification.acknowledgedAt,
-      created_at: notification.createdAt,
-    }),
-  );
-}
-
-async function insertInboundQuarantine(supabase: SupabaseClient, quarantine: InboundQuarantineRecord) {
-  await checked(
-    supabase.from("inbound_quarantines").insert({
-      id: quarantine.id,
-      tenant_id: quarantine.tenantId,
-      channel: quarantine.channel,
-      source_conversation_type: quarantine.sourceConversationType,
-      source_conversation_id: quarantine.sourceConversationId,
-      source_message_id: quarantine.sourceMessageId,
-      sender_channel_user_id: quarantine.senderChannelUserId,
-      reason: quarantine.reason,
-      created_at: quarantine.createdAt,
     }),
   );
 }
