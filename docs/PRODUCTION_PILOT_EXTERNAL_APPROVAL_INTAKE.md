@@ -32,7 +32,7 @@ All production-pilot launch gates remain open until the user supplies acceptable
 | `incident_response_runbook` | Incident response and deletion workflow runbook | Incident response runbook; breach escalation owner list; client deletion and export operating procedure | Operations/legal owner | Signed incident and DSAR operating procedure with owner list | Open | Review packet prepared in `PRODUCTION_PILOT_INCIDENT_DSAR_REVIEW_PACKET.md`; approval not supplied | Existing runbook is draft only and lacks named production owners. |
 | `backup_restore_test` | Backup expiry and restore test | Backup expiry policy; restore drill result; restore owner and cadence | Operations/security owner | Restore drill evidence with owner, timestamp, environment, and result | Open | Review packet prepared in `PRODUCTION_PILOT_BACKUP_RESTORE_REVIEW_PACKET.md`; approval not supplied | Must include tenant isolation and data-governance checks after restore. |
 | `secret_rotation_plan` | Production secret rotation plan | Secret inventory; rotation cadence; emergency revocation procedure | Security/operations owner | Secret inventory and rotation plan signed by operational owner | Open | Review packet prepared in `PRODUCTION_PILOT_SECRET_ROTATION_REVIEW_PACKET.md`; approval not supplied | Must identify production secret manager and emergency revocation ownership. |
-| `dependency_audit_clearance` | Production dependency audit clearance | Production dependency audit report; R-405 resolution or formal acceptance | Engineering/security owner plus external approver if accepting risk | Clean production audit, safe stable upgrade evidence, or formal risk acceptance | Open | Review packet prepared in `PRODUCTION_PILOT_DEPENDENCY_AUDIT_CLEARANCE_PACKET.md`; clearance not supplied | Phase 41 confirms no safe stable Next.js/PostCSS patch path yet. |
+| `dependency_audit_clearance` | Production dependency audit clearance | Production dependency audit report; R-405 resolution or formal acceptance | Engineering/security owner plus external approver if accepting risk | Clean production audit, safe stable upgrade evidence, or formal risk acceptance | Open | Review packet prepared in `PRODUCTION_PILOT_DEPENDENCY_AUDIT_CLEARANCE_PACKET.md`; clearance not supplied | Phase 54 confirms no safe stable Next.js/PostCSS patch path yet. |
 
 ## Submission Checklist
 
@@ -57,4 +57,4 @@ For each supplied artifact, record:
 - No real Gemini or external LLM use is approved.
 - No external monitoring, analytics, email, push, or secret manager vendor is approved.
 - R-405 is not resolved or accepted.
-- R-406 is not mitigated.
+- R-406 is mitigated in the local prototype by the latest local Supabase RLS evidence, but this does not approve production pilot launch.
