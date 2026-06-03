@@ -537,6 +537,8 @@ Phase 59 architecture review remediation completed locally on 2026-06-03: added 
 
 Phase 60 audit remediation completed locally on 2026-06-03: added `docs/PHASE_60_AUDIT_REMEDIATION_SPEC.md`, fixed glucose false-positive numeric extraction (`dietetic-risk-v0.3.1`), added core `providerOutputSafety` on provider failures, aligned `dietitian-ai-assistant-architecture.d.ts` with runtime, expanded symptom/voice/simulator tests, and synchronized handoff/plan/pilot documentation. Verification passed with core tests 104/104, app tests 138/138, app lint, and `npm run release:verify`. Production pilot remains `NO-GO`.
 
+Phase 61 scope guard (RAG + LLM) second layer mock-first completed locally on 2026-06-04: added `docs/PHASE_61_SCOPE_GUARD_RAG_SECOND_LAYER_SPEC.md`, core `scope-guard.js` (`scope-rag-v0.1.0`) with monotonic `mergeScopeDecision`, app mock lexical retrieval and deterministic evaluator, `scope-guard-runtime` wiring in simulator risk path, Supabase `scope_*` tables with tenant read / system write RLS, raw-text-free `scope_guard_evaluations` audit, operational-health corpus signals, placeholder draft corpus (no-op until approved), and fail-closed disconnected real embedding/LLM behind clinical taxonomy gate + `MANU_ALLOW_REAL_SCOPE_GUARD=true`. Combined classifier version: `dietetic-risk-v0.3.1+clinical-safety-second-layer-v0.1.0+scope-rag-v0.1.0`. Verification passed with core tests 112/112, app tests 150/150, app lint, and `npm run release:verify`. Production pilot remains `NO-GO`; R-310 partially mitigated in local prototype only.
+
 Tasks:
 
 1. Design the dedicated client removal/anonymization transactional redaction contract before moving that lifecycle fully to RPC commits.

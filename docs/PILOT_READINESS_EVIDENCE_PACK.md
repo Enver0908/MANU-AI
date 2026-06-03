@@ -18,15 +18,15 @@ Run from `app`:
 npm run release:verify
 ```
 
-Latest result, re-verified on 2026-06-03 after Phase 60 audit remediation:
+Latest result, re-verified on 2026-06-04 after Phase 61 scope guard second layer mock-first:
 
-- Core package tests: 104/104 passed.
-- App tests: 138/138 passed.
+- Core package tests: 112/112 passed.
+- App tests: 150/150 passed.
 - App lint: passed.
 - Production build: passed.
 - Production dependency audit gate: passed with only documented R-405 findings.
 - R-405 remains open: Next.js 16.2.7 still bundles nested PostCSS 8.4.31, so no safe stable patch path is available.
-- Phase 60 made no schema/RLS changes; no new RLS run was required for that phase.
+- Phase 61 added `scope_rules`, `scope_rule_chunks`, and `scope_guard_evaluations` migration; re-run `npm run test:rls` when local Supabase is available to record Phase 61 RLS evidence.
 
 Additional Phase 50 production Supabase hardening evidence on 2026-06-02:
 

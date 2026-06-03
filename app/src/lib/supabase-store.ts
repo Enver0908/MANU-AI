@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { getSupabaseAdminClient } from "./supabase";
+import { createPlaceholderScopeRules } from "./scope-corpus";
 import { createInitialState } from "./seed-data";
 import { isSafetyChecklistComplete, normalizeSafetyChecklist } from "./safety-checklist";
 import {
@@ -433,6 +434,9 @@ export async function loadSupabaseState(context = demoTenantContext()) {
       dataRequests: (dataRequestsResult.data || []).map(mapDataRequest),
       internalCopilotMessages: (internalCopilotMessagesResult.data || []).map(mapInternalCopilotMessage),
       internalCopilotToolCalls: (internalCopilotToolCallsResult.data || []).map(mapInternalCopilotToolCall),
+      scopeRules: createPlaceholderScopeRules(),
+      scopeRuleChunks: [],
+      scopeGuardEvaluations: [],
       auditEvents: (auditEventsResult.data || []).map(mapAuditEvent),
       processedSimulationKeys: (processedEventsResult.data || []).map((event) => event.provider_event_id),
       lastSimulation: null,
@@ -653,6 +657,9 @@ async function loadSupabaseClientOperationState(
       dataRequests: [],
       internalCopilotMessages: [],
       internalCopilotToolCalls: [],
+      scopeRules: createPlaceholderScopeRules(),
+      scopeRuleChunks: [],
+      scopeGuardEvaluations: [],
       auditEvents: [],
       processedSimulationKeys: (processedEventsResult.data || []).map((event) => event.provider_event_id),
       lastSimulation: null,

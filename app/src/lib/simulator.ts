@@ -13,7 +13,8 @@ import { buildClientFormSummary } from "./client-forms";
 import { getActiveVoiceProfile } from "./voice-profile-workflow";
 import { getMissingSafetyChecklistItems, isSafetyChecklistComplete } from "./safety-checklist";
 import { AppDomainError } from "./app-errors";
-import { SAFETY_CLASSIFIER_VERSION, classifySimulationRisk, modelForRisk } from "./simulator-risk";
+import { appendScopeGuardEvaluation } from "./scope-guard-runtime";
+import { SAFETY_CLASSIFIER_VERSION, classifySimulationRisk } from "./simulator-risk";
 import type {
   AiDecisionRecord,
   AuditEventRecord,
@@ -113,15 +114,18 @@ export async function runInboundSimulation(
   };
   const priorConversationMessages = state.messages.filter((message) => message.conversationId === conversation.id);
   const yellowHoldAtInbound = client.yellowRiskHold.status === "active" ? client.yellowRiskHold : null;
-  const baseRiskDecision = classifySimulationRisk(client, trimmedBody, priorConversationMessages);
-  const riskDecision =
-    yellowHoldAtInbound && baseRiskDecision.level !== "red"
-      ? {
-          ...baseRiskDecision,
-          level: "yellow" as const,
-          reasons: Array.from(new Set([...baseRiskDecision.reasons, "yellow_hold_pending_context"])),
-        }
-      : baseRiskDecision;
+  const classified = await classifySimulationRisk(state, client, trimmedBody, priorConversationMessages, {
+    conversationId: conversation.id,
+    messageId: inboundMessage.id,
+  });
+  let riskDecision = classified.riskDecision;
+  if (yellowHoldAtInbound && riskDecision.level !== "red") {
+    riskDecision = {
+      ...riskDecision,
+      level: "yellow" as const,
+      reasons: Array.from(new Set([...riskDecision.reasons, "yellow_hold_pending_context"])),
+    };
+  }
   const riskAssessment = buildRiskAssessment({
     state,
     conversation,
@@ -129,10 +133,13 @@ export async function runInboundSimulation(
     riskDecision,
     createdAt: now,
   });
-  const stateWithInboundAndRisk: ManuAppState = {
-    ...stateWithInbound,
-    riskAssessments: [...stateWithInbound.riskAssessments, riskAssessment],
-  };
+  const stateWithInboundAndRisk: ManuAppState = appendScopeGuardEvaluation(
+    {
+      ...stateWithInbound,
+      riskAssessments: [...stateWithInbound.riskAssessments, riskAssessment],
+    },
+    classified.scopeGuardEvaluation,
+  );
   const stateAfterInboundInvalidation = invalidatePendingDrafts(
     stateWithInboundAndRisk,
     now,
@@ -1206,7 +1213,7 @@ function buildRiskAssessment({
   state: ManuAppState;
   conversation: ConversationRecord;
   inboundMessage: MessageRecord;
-  riskDecision: ReturnType<typeof classifySimulationRisk>;
+  riskDecision: Awaited<ReturnType<typeof classifySimulationRisk>>["riskDecision"];
   createdAt: string;
 }): RiskAssessmentRecord {
   return {

@@ -6,9 +6,9 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 This repository is a local SaaS/PWA pilot prototype and architecture workspace. It is not a production-connected system yet.
 
-**Latest phase:** Phase 60 audit remediation (2026-06-03). **Production pilot:** `NO-GO` (all eight launch gates open; R-405 open).
+**Latest phase:** Phase 61 scope guard (RAG + LLM) second layer mock-first (2026-06-04). **Production pilot:** `NO-GO` (all eight launch gates open; R-405 open).
 
-**Latest verification:** core tests 104/104, app tests 138/138, `npm run release:verify` passed with only documented R-405 findings.
+**Latest verification:** core tests 112/112, app tests 150/150, `npm run release:verify` passed with only documented R-405 findings.
 
 The current implementation includes:
 
@@ -20,7 +20,7 @@ The current implementation includes:
 - Red-risk manual handoff and reactivation lock behavior
 - Dietitian-controlled client conversation language
 - Documentation and evidence plans in `docs/`
-- Phase 59 architecture review remediation and Phase 60 audit follow-up hardening
+- Phase 59 architecture review remediation, Phase 60 audit follow-up hardening, and Phase 61 mock-first scope guard (dietetic-regulation corpus retrieval + deterministic evaluator; real embedding/LLM disconnected)
 
 ## Safety Model
 

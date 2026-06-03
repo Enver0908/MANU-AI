@@ -44,6 +44,8 @@ export const PRODUCTION_PILOT_LAUNCH_GATES: LaunchGateDefinition[] = [
       "qualified dietitian sign-off",
       "current clinical golden test report",
       "taxonomy change log",
+      "approved scope rule corpus version",
+      "scope guard golden evaluation report",
     ],
   },
   {

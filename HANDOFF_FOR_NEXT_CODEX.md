@@ -56,9 +56,9 @@ The product must be both:
 
 ## Current Next Phase
 
-Phase 60 audit remediation is the latest completed implementation wave (2026-06-03): glucose classifier false-positive fixes, provider failure output-safety metadata in core, architecture type-contract alignment, expanded multilingual symptom/voice tests, and documentation continuity hardening. Production pilot remains `NO-GO`.
+Phase 61 scope guard (RAG + LLM) second layer mock-first is the latest completed implementation wave (2026-06-04): deterministic lexical retrieval + mock evaluator over an approved dietetic-regulation corpus, escalate-only merge with the existing classifier (`dietetic-risk-v0.3.1+clinical-safety-second-layer-v0.1.0+scope-rag-v0.1.0`), raw-text-free scope guard audit records, Supabase `scope_*` tables with RLS, operational-health corpus signals, and disconnected real embedding/LLM seams behind `clinical_taxonomy_approval` + `MANU_ALLOW_REAL_SCOPE_GUARD=true`. Default seed corpus is draft-only so scope guard no-ops until qualified approval. Production pilot remains `NO-GO`.
 
-Start from `docs/NEXT_PHASE_EXECUTION_PLAN.md`, especially `docs/PHASE_60_AUDIT_REMEDIATION_SPEC.md`, `docs/PHASE_59_ARCHITECTURE_REVIEW_REMEDIATION_SPEC.md`, and the Phase 56–58 specs listed there. Phase 49 context remains in `docs/PHASE_49_SAFETY_ORCHESTRATION_CONCURRENCY_HARDENING_SPEC.md`.
+Start from `docs/NEXT_PHASE_EXECUTION_PLAN.md`, especially `docs/PHASE_61_SCOPE_GUARD_RAG_SECOND_LAYER_SPEC.md`, `docs/PHASE_60_AUDIT_REMEDIATION_SPEC.md`, and the Phase 56–59 specs listed there. Phase 49 context remains in `docs/PHASE_49_SAFETY_ORCHESTRATION_CONCURRENCY_HARDENING_SPEC.md`.
 
 **R-406 canonical status:** mitigated in the local prototype for the Phase 50–52 baseline (`npm run test:rls` passed 19/19 on 2026-06-02). Phase 57 `yellow_risk_hold` migration RLS evidence remains a separate pending re-run when Docker Desktop/local Supabase is available.
 

@@ -385,4 +385,33 @@ declare module "dietitian-ai-assistant-architecture" {
       onHandoff?: (payload: Record<string, unknown>) => Promise<void>;
     },
   ): Promise<CoreResult>;
+
+  export type ScopeRuleEscalationLevel = "yellow" | "red";
+  export type ScopeGuardStatus = "noop" | "unavailable" | "no_match" | "matched";
+
+  export type ScopeGuardResult = {
+    active: boolean;
+    escalate: boolean;
+    level: RiskLevel;
+    reasons: string[];
+    matchedRuleIds: string[];
+    scores: Record<string, number>;
+    status: ScopeGuardStatus;
+    version: string;
+  };
+
+  export const SCOPE_GUARD_VERSION: string;
+  export const FULL_CLASSIFIER_VERSION_WITH_SCOPE: string;
+  export function applyScopeRules(
+    retrievedRules?: Array<{ ruleId: string; score: number; escalationLevel: ScopeRuleEscalationLevel }>,
+    options?: { matchThreshold?: number },
+  ): ScopeGuardResult;
+  export function buildScopeGuardNoopResult(): ScopeGuardResult;
+  export function buildScopeGuardUnavailableResult(): ScopeGuardResult;
+  export function mergeScopeDecision(
+    baseDecision: RiskDecision,
+    scopeResult: ScopeGuardResult | null | undefined,
+  ): RiskDecision;
+  export function maxRiskLevel(a: RiskLevel, b: RiskLevel): RiskLevel;
+  export function rankRiskLevel(level: RiskLevel): number;
 }

@@ -14,7 +14,7 @@ No real WhatsApp, Telegram, Gemini, external LLM provider, email, push, monitori
 
 A qualified dietitian must review whether the current dietetic risk taxonomy, escalation behavior, golden test set, and production clinical safety evaluation approach are acceptable for a supervised production pilot.
 
-Phase 59 added local-only hardening for numeric glucose thresholds in glucose-context messages and expanded multilingual single-message symptom patterns. Phase 60 narrowed glucose anchors to reduce false positives, deduplicated red reasons, and bumped the classifier to `dietetic-risk-v0.3.1`. This packet remains a review artifact, not an approval record.
+Phase 59 added local-only hardening for numeric glucose thresholds in glucose-context messages and expanded multilingual single-message symptom patterns. Phase 60 narrowed glucose anchors to reduce false positives, deduplicated red reasons, and bumped the classifier to `dietetic-risk-v0.3.1`. Phase 61 added mock-first scope guard (`scope-rag-v0.1.0`) with placeholder draft regulation corpus, escalate-only merge, and disconnected real embedding/LLM until this gate approves corpus + production evaluation approach. This packet remains a review artifact, not an approval record.
 
 The deterministic/regex safety classifier is a local first barrier. It must not be accepted as the sole production clinical safety layer without an approved second-layer or equivalent fail-closed safety evaluation mechanism.
 

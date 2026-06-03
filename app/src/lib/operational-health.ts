@@ -1,5 +1,6 @@
 import { evaluateProductionPilotLaunchGates, type LaunchGateId } from "./launch-gates";
 import { buildNotificationSlaSnapshot } from "./notification-sla";
+import { buildScopeGuardHealthSignal } from "./scope-guard-runtime";
 import type { ManuAppState } from "./types";
 
 export type OperationalHealthSnapshot = {
@@ -13,6 +14,9 @@ export type OperationalHealthSnapshot = {
   pendingDraftCount: number;
   staleDraftCount: number;
   passiveClientCount: number;
+  scopeGuardCorpusActive: boolean;
+  scopeGuardApprovedRuleCount: number;
+  scopeGuardDraftRuleCount: number;
   launchBlocked: boolean;
   openLaunchGateIds: LaunchGateId[];
   blockedLaunchGateCount: number;
@@ -33,6 +37,7 @@ export function buildOperationalHealthSnapshot(
   );
   const openHandoffs = state.handoffCases.filter((handoff) => handoff.status === "open");
   const pendingDrafts = state.messages.filter((message) => message.status === "draft");
+  const scopeGuard = buildScopeGuardHealthSignal(state);
 
   return {
     generatedAt: now.toISOString(),
@@ -46,6 +51,9 @@ export function buildOperationalHealthSnapshot(
     staleDraftCount: pendingDrafts.filter((message) => now.getTime() - new Date(message.createdAt).getTime() > staleDraftMs)
       .length,
     passiveClientCount: state.clients.filter((client) => client.aiStatus === "passive").length,
+    scopeGuardCorpusActive: scopeGuard.corpusActive,
+    scopeGuardApprovedRuleCount: scopeGuard.approvedRuleCount,
+    scopeGuardDraftRuleCount: scopeGuard.draftRuleCount,
     launchBlocked: launchGateEvaluation.blocked,
     openLaunchGateIds: launchGateEvaluation.openGateIds,
     blockedLaunchGateCount: launchGateEvaluation.openGateIds.length,

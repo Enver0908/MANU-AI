@@ -9,6 +9,16 @@ export {
   classifyClinicalSafetyRisk,
   evaluateClinicalSafetySecondLayer,
 } from "./clinical-safety-second-layer.js";
+export {
+  SCOPE_GUARD_VERSION,
+  FULL_CLASSIFIER_VERSION_WITH_SCOPE,
+  applyScopeRules,
+  buildScopeGuardNoopResult,
+  buildScopeGuardUnavailableResult,
+  mergeScopeDecision,
+  maxRiskLevel,
+  rankRiskLevel,
+} from "./scope-guard.js";
 export { evaluateInboundPreflight } from "./inbound-preflight.js";
 export { buildClientContextCapsule, assertTenantIsolation } from "./context-capsule.js";
 export {

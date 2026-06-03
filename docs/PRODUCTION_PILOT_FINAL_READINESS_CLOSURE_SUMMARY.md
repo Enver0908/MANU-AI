@@ -1,10 +1,10 @@
 # MANU-AI Production Pilot Final Readiness Closure Summary
 
-Date: 2026-06-03
+Date: 2026-06-04
 
 ## Status
 
-This is the final summary for the 13-phase completion roadmap, updated after Phase 43 multilingual language support, Phase 44 red-risk reactivation lock, Phase 45 client removal data lifecycle, Phase 46 WhatsApp group quarantine, Phase 47 RLS quarantine evidence coverage, Phase 48 R-405 stable patch recheck, Phase 49 safety/orchestration hardening, Phase 50 production Supabase hardening, Phase 51 transactional RPC coverage, Phase 52 integration test coverage, Phase 53 scale/broad read contracts, Phase 54 R-405/launch-gate recheck, Phase 55 audit remediation safety-boundary hardening, Phase 56 clinical safety second-layer local evidence, Phase 57 yellow-risk hold/draft refresh, Phase 58 dietitian client language control, Phase 59 architecture review remediation, and Phase 60 audit remediation.
+This is the final summary for the 13-phase completion roadmap, updated after Phase 43 multilingual language support, Phase 44 red-risk reactivation lock, Phase 45 client removal data lifecycle, Phase 46 WhatsApp group quarantine, Phase 47 RLS quarantine evidence coverage, Phase 48 R-405 stable patch recheck, Phase 49 safety/orchestration hardening, Phase 50 production Supabase hardening, Phase 51 transactional RPC coverage, Phase 52 integration test coverage, Phase 53 scale/broad read contracts, Phase 54 R-405/launch-gate recheck, Phase 55 audit remediation safety-boundary hardening, Phase 56 clinical safety second-layer local evidence, Phase 57 yellow-risk hold/draft refresh, Phase 58 dietitian client language control, Phase 59 architecture review remediation, Phase 60 audit remediation, and Phase 61 scope guard (RAG + LLM) second layer mock-first.
 
 Production pilot is not approved.
 
@@ -38,6 +38,7 @@ Reason:
 - Phase 58 added dietitian-controlled client language synchronization and prompt-affecting language changes with simulator evidence for localized AI replies.
 - Phase 59 added validated architecture-review remediation: fail-closed unknown AI modes, core provider error boundary, glucose-context numeric escalation, expanded multilingual symptom patterns, simulator maintainability refactor, multilingual voice-profile scoring, and documented provider-native token counting for future integration. It did not approve any launch gate or resolve R-405.
 - Phase 60 closed post-audit gaps: glucose false-positive fixes (`dietetic-risk-v0.3.1`), core provider output-safety metadata, architecture type-contract alignment, expanded tests, and documentation continuity. It did not approve any launch gate or resolve R-405.
+- Phase 61 added mock-first scope guard: deterministic lexical retrieval and evaluator over dietitian-approved regulation corpus, escalate-only merge with the base classifier (`+scope-rag-v0.1.0`), raw-text-free scope guard audit, and disconnected real embedding/LLM seams. Default seed corpus is draft-only (no-op). It did not approve any launch gate, approved regulation corpus, or resolve R-405.
 
 ## Completion Roadmap Result
 
@@ -108,15 +109,15 @@ External approvals:
 
 ## Verification
 
-Latest local release verification after Phase 60 audit remediation:
+Latest local release verification after Phase 61 scope guard second layer mock-first:
 
-- `npm run release:verify` passed on 2026-06-03.
-- Core tests: 104/104 passed.
-- App tests: 138/138 passed.
+- `npm run release:verify` passed on 2026-06-04.
+- Core tests: 112/112 passed.
+- App tests: 150/150 passed.
 - App lint: passed.
 - Production build: passed.
 - Production dependency audit gate passed with only documented R-405 findings.
-- Phase 59 made no schema/RLS changes; re-run `npm run test:rls` only after future migration work.
+- Phase 61 added `scope_*` tables; re-run `npm run test:rls` when local Supabase is available for Phase 61 RLS evidence.
 - Local Supabase/RLS evidence for the Phase 57 `yellow_risk_hold` migration may remain open when Docker Desktop/local Supabase is unavailable.
 
 Phase 44 verification on 2026-06-01:

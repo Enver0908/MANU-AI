@@ -1,4 +1,5 @@
 import { SAFETY_CLASSIFIER_VERSION } from "dietitian-ai-assistant-architecture";
+import { createPlaceholderScopeRules } from "./scope-corpus";
 import type { ClientRecord, ConversationRecord, ManuAppState, MessageRecord } from "./types";
 import { completeSafetyChecklist, emptySafetyChecklist } from "./safety-checklist";
 import { DEFAULT_LANGUAGE } from "./languages";
@@ -272,6 +273,9 @@ export function createInitialState(): ManuAppState {
     dataRequests: [],
     internalCopilotMessages: [],
     internalCopilotToolCalls: [],
+    scopeRules: createPlaceholderScopeRules(createdAt),
+    scopeRuleChunks: [],
+    scopeGuardEvaluations: [],
     processedSimulationKeys: ["seed-green"],
     lastSimulation: null,
   };

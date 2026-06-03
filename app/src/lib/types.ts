@@ -334,6 +334,44 @@ export type InboundQuarantineRecord = {
   createdAt: string;
 };
 
+export type ScopeRuleStatus = "draft" | "approved" | "archived";
+
+export type ScopeRuleRecord = {
+  id: string;
+  title: string;
+  body: string;
+  languageCode: SupportedLanguageCode;
+  escalationLevel: Extract<RiskLevel, "yellow" | "red">;
+  version: number;
+  status: ScopeRuleStatus;
+  approvedByDietitianId: string | null;
+  approvedAt: string | null;
+  createdAt: string;
+};
+
+export type ScopeRuleChunkRecord = {
+  id: string;
+  ruleId: string;
+  chunkIndex: number;
+  chunkText: string;
+  lexicalTokens: string[];
+  languageCode: SupportedLanguageCode;
+  escalationLevel: Extract<RiskLevel, "yellow" | "red">;
+};
+
+export type ScopeGuardEvaluationRecord = {
+  id: string;
+  tenantId: string;
+  conversationId: string | null;
+  messageId: string | null;
+  decisionLevel: RiskLevel;
+  matchedRuleIds: string[];
+  scores: Record<string, number>;
+  scopeGuardVersion: string;
+  status: "noop" | "matched" | "no_match" | "unavailable";
+  createdAt: string;
+};
+
 export type DataRequestRecord = {
   id: string;
   tenantId: string;
@@ -404,6 +442,9 @@ export type ManuAppState = {
   dataRequests: DataRequestRecord[];
   internalCopilotMessages: InternalCopilotMessageRecord[];
   internalCopilotToolCalls: InternalCopilotToolCallRecord[];
+  scopeRules: ScopeRuleRecord[];
+  scopeRuleChunks: ScopeRuleChunkRecord[];
+  scopeGuardEvaluations: ScopeGuardEvaluationRecord[];
   processedSimulationKeys: string[];
   lastSimulation: SimulationResult | null;
 };
