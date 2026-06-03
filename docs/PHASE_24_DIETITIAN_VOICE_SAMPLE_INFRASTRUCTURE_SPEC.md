@@ -36,3 +36,7 @@ Collect approved dietitian message examples after onboarding and generate a reus
 - The app can store, approve/reject, and generate from dietitian samples.
 - Generated profile is passed to the core orchestrator when available.
 - Tests cover parsing, duplicate handling, minimum threshold, and simulator profile usage.
+
+## Phase 59 Update (2026-06-03)
+
+Phase 59 extended `buildDietitianVoiceProfile(samples)` with minimal high-confidence formal/informal term lists for supported languages (`tr`, `en`, `de`, `fr`, `es`, `pt`, `cs`) so non-Turkish approved samples can score above `balanced` when obvious style cues exist. This is local heuristic scoring only; it does not change clinical safety, provider routing, or production launch gates. See `docs/PHASE_59_ARCHITECTURE_REVIEW_REMEDIATION_SPEC.md` and `dietitian-ai-assistant/tests/voice-profile.test.mjs`.

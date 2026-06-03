@@ -4,7 +4,7 @@ Date: 2026-06-03
 
 ## Status
 
-This is the final summary for the 13-phase completion roadmap, updated after Phase 43 multilingual language support, Phase 44 red-risk reactivation lock, Phase 45 client removal data lifecycle, Phase 46 WhatsApp group quarantine, Phase 47 RLS quarantine evidence coverage, Phase 48 R-405 stable patch recheck, Phase 49 safety/orchestration hardening, Phase 50 production Supabase hardening, Phase 51 transactional RPC coverage, Phase 52 integration test coverage, Phase 53 scale/broad read contracts, Phase 54 R-405/launch-gate recheck, Phase 55 audit remediation safety-boundary hardening, Phase 56 clinical safety second-layer local evidence, and Phase 57 yellow-risk hold/draft refresh.
+This is the final summary for the 13-phase completion roadmap, updated after Phase 43 multilingual language support, Phase 44 red-risk reactivation lock, Phase 45 client removal data lifecycle, Phase 46 WhatsApp group quarantine, Phase 47 RLS quarantine evidence coverage, Phase 48 R-405 stable patch recheck, Phase 49 safety/orchestration hardening, Phase 50 production Supabase hardening, Phase 51 transactional RPC coverage, Phase 52 integration test coverage, Phase 53 scale/broad read contracts, Phase 54 R-405/launch-gate recheck, Phase 55 audit remediation safety-boundary hardening, Phase 56 clinical safety second-layer local evidence, Phase 57 yellow-risk hold/draft refresh, Phase 58 dietitian client language control, and Phase 59 architecture review remediation.
 
 Production pilot is not approved.
 
@@ -35,6 +35,8 @@ Reason:
 - Phase 55 added local audit remediation safety-boundary hardening for real Turkish Unicode classifier inputs, multilingual pregnancy/lactation yellow routing, prompt-injection yellow review routing, PromptContext data boundaries, safety-critical pinned-note no-truncation, and red-risk preflight regression coverage.
 - Phase 56 added deterministic local second-layer clinical safety evidence above the regex classifier, escalating otherwise-green context-sensitive uncertainty to yellow review, but did not approve the clinical taxonomy gate or connect a real LLM safety evaluator.
 - Phase 57 added local yellow-risk hold behavior: yellow passivates AI, later green/yellow messages refresh the same pending draft, later red risk preserves the yellow draft while red lock wins, and yellow approval cannot reactivate AI under red lock.
+- Phase 58 added dietitian-controlled client language synchronization and prompt-affecting language changes with simulator evidence for localized AI replies.
+- Phase 59 added validated architecture-review remediation: fail-closed unknown AI modes, core provider error boundary, glucose-context numeric escalation, expanded multilingual symptom patterns, simulator maintainability refactor, multilingual voice-profile scoring, and documented provider-native token counting for future integration. It did not approve any launch gate or resolve R-405.
 
 ## Completion Roadmap Result
 
@@ -105,15 +107,16 @@ External approvals:
 
 ## Verification
 
-Latest local release verification after Phase 57 yellow-risk hold/draft refresh:
+Latest local release verification after Phase 59 architecture review remediation:
 
 - `npm run release:verify` passed on 2026-06-03.
-- Core tests: 75/75 passed.
-- App tests: 135/135 passed.
+- Core tests: 85/85 passed.
+- App tests: 137/137 passed.
 - App lint: passed.
 - Production build: passed.
 - Production dependency audit gate passed with only documented R-405 findings.
-- Local Supabase/RLS evidence for the Phase 57 `yellow_risk_hold` migration remains open because Docker Desktop Linux engine was unavailable; `npm run test:rls` skipped 20/20 tests.
+- Phase 59 made no schema/RLS changes; re-run `npm run test:rls` only after future migration work.
+- Local Supabase/RLS evidence for the Phase 57 `yellow_risk_hold` migration may remain open when Docker Desktop/local Supabase is unavailable.
 
 Phase 44 verification on 2026-06-01:
 
