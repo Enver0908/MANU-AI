@@ -8,6 +8,7 @@ import {
   updateClientInState,
 } from "./simulator";
 import { AppDomainError } from "./app-errors";
+import type { ClientRecord } from "./types";
 
 describe("local inbound simulator", () => {
   it("auto-sends green autopilot messages with model routing", async () => {
@@ -125,6 +126,23 @@ describe("local inbound simulator", () => {
 
     expect(again.lastSimulation?.blockedReason).toBe("client_ai_passive");
     expect(again.auditEvents.filter((event) => event.eventType === "client_ai_window_expired")).toHaveLength(1);
+  });
+
+  it("blocks unknown ai modes without provider attempts", async () => {
+    const state = updateClientInState(createInitialState(), "client-mert", {
+      aiMode: "future_mode" as ClientRecord["aiMode"],
+    });
+    const next = await runInboundSimulation(state, {
+      clientId: "client-mert",
+      body: "Bugun kahvaltida yumurta yerine ne yiyebilirim?",
+      idempotencyKey: "unknown-ai-mode-1",
+      now: "2026-05-22T10:05:30.000Z",
+    });
+
+    expect(next.lastSimulation?.action).toBe("no_ai");
+    expect(next.lastSimulation?.blockedReason).toBe("unknown_ai_mode_blocked");
+    expect(next.aiDecisions.at(-1)?.providerAttempted).toBe(false);
+    expect(next.aiDecisions.at(-1)?.providerStatus).toBe("not_called");
   });
 
   it("keeps provider metadata not-called for manual, paused, and context-budget blocks", async () => {
@@ -389,6 +407,10 @@ describe("local inbound simulator", () => {
     expect(next.aiDecisions.at(-1)?.providerAttempted).toBe(true);
     expect(next.aiDecisions.at(-1)?.providerStatus).toBe("failed");
     expect(next.aiDecisions.at(-1)?.providerErrorCode).toBe("provider_timeout");
+    expect(next.aiDecisions.at(-1)?.providerOutputSafety?.allowed).toBe(false);
+    expect(next.aiDecisions.at(-1)?.providerOutputSafety?.issues).toEqual(
+      expect.arrayContaining([expect.objectContaining({ code: "provider_timeout", severity: "block" })]),
+    );
   });
 
   it("records provider policy violations as safe no-send decisions", async () => {

@@ -1,4 +1,4 @@
-export const SAFETY_CLASSIFIER_VERSION = "dietetic-risk-v0.3.0";
+export const SAFETY_CLASSIFIER_VERSION = "dietetic-risk-v0.3.1";
 
 const redRules = [
   {
@@ -185,7 +185,7 @@ const yellowRules = [
       /\b(nausea|nauseous|vomiting)\b/i,
       /\b(palpitation|heart racing)\b/i,
       /\b(schwindel|schwindelig|ubelkeit|durchfall|verstopfung)\b/i,
-      /\b(vertige|nausee|vomissement|diarrhee)\b/i,
+      /\b(vertige|nausee|nausees|vomissement|diarrhee)\b/i,
       /\b(mareo|vomito|diarrea)\b/i,
       /\b(zavrat|nevolnost|prujem|zapara)\b/i,
     ],
@@ -204,17 +204,33 @@ const yellowRules = [
   },
 ];
 
-const GLUCOSE_CONTEXT_PATTERN =
-  /(?:sekerim|seker|blood sugar|blutzucker|glycemie|glucose|glukoz|glicose|glukoza)/i;
+const GLUCOSE_ANCHOR_PATTERNS = [
+  /\bsekerim\b/i,
+  /\bkan sekerim\b/i,
+  /\bblood sugar\b/i,
+  /\bmy blood sugar\b/i,
+  /\bglucose\b/i,
+  /\bglukozum\b/i,
+  /\bblutzucker\b/i,
+  /\bglycemie\b/i,
+  /\bglukoz\b/i,
+  /\bglicose\b/i,
+  /\bglukoza\b/i,
+];
+
+const GLUCOSE_NUMERIC_WINDOW_CHARS = 48;
 
 export function classifyDieteticRisk(message, clientProfile = {}) {
   const text = normalizeText(message);
-  const redReasons = [...collectReasons(text, redRules), ...collectGlucoseNumericReasons(text)];
+  const redReasons = dedupeReasons([
+    ...collectReasons(text, redRules),
+    ...collectGlucoseNumericReasons(text),
+  ]);
   if (redReasons.length > 0) {
     return decision("red", redReasons, clientProfile);
   }
 
-  const yellowReasons = collectReasons(text, yellowRules);
+  const yellowReasons = dedupeReasons(collectReasons(text, yellowRules));
   const clientRiskReasons = clientProfile.highRisk === true ? ["client_marked_high_risk"] : [];
   const profileFlagReasons = collectProfileFlagReasons(text, clientProfile);
   if (yellowReasons.length > 0 || clientRiskReasons.length > 0 || profileFlagReasons.length > 0) {
@@ -262,19 +278,35 @@ function collectReasons(text, rules) {
 }
 
 function collectGlucoseNumericReasons(text) {
-  if (!GLUCOSE_CONTEXT_PATTERN.test(text)) return [];
+  const anchorIndexes = [];
+  for (const pattern of GLUCOSE_ANCHOR_PATTERNS) {
+    for (const match of text.matchAll(new RegExp(pattern.source, `${pattern.flags}g`))) {
+      if (typeof match.index === "number") {
+        anchorIndexes.push(match.index);
+      }
+    }
+  }
+  if (anchorIndexes.length === 0) return [];
 
-  const values = [...text.matchAll(/\b(\d{2,3})\b/g)]
-    .map((match) => Number.parseInt(match[1], 10))
-    .filter((value) => Number.isFinite(value));
+  for (const anchorIndex of anchorIndexes) {
+    const windowStart = Math.max(0, anchorIndex - 12);
+    const windowEnd = Math.min(text.length, anchorIndex + GLUCOSE_NUMERIC_WINDOW_CHARS);
+    const window = text.slice(windowStart, windowEnd);
 
-  for (const value of values) {
-    if (value < 70 || value > 250) {
-      return ["critical_glucose_issue"];
+    for (const match of window.matchAll(/\b(\d{2,3})\b/g)) {
+      const value = Number.parseInt(match[1], 10);
+      if (!Number.isFinite(value)) continue;
+      if (value <= 70 || value >= 250) {
+        return ["critical_glucose_issue"];
+      }
     }
   }
 
   return [];
+}
+
+function dedupeReasons(reasons) {
+  return [...new Set(reasons)];
 }
 
 function collectCumulativeReasons(messages) {
@@ -305,6 +337,12 @@ function collectCumulativeReasons(messages) {
     /dizzy/i,
     /nausea/i,
     /palpitation/i,
+    /schwindel/i,
+    /ubelkeit/i,
+    /vertige/i,
+    /nausee/i,
+    /mareo/i,
+    /zavrat/i,
   ]);
 
   if (mealRestrictionCount >= 2) reasons.push("cumulative_meal_restriction_pattern");

@@ -3,12 +3,10 @@ import {
   handleInboundMessage,
 } from "dietitian-ai-assistant-architecture";
 import {
-  MockProviderError,
   MOCK_PROVIDER_ID,
   PROMPT_VERSION,
   buildMockProviderInput,
   generateMockProviderReply,
-  getProviderErrorCode,
 } from "./ai-provider";
 import { buildClientContextUpdateSummary } from "./client-context-updates";
 import { buildClientFormSummary } from "./client-forms";
@@ -200,36 +198,7 @@ export async function runInboundSimulation(
         );
       },
     },
-  ).catch((error: unknown) => {
-    if (!(error instanceof MockProviderError)) {
-      throw error;
-    }
-    const errorCode = getProviderErrorCode(error);
-    return {
-      mode: client.aiMode,
-      aiStatus: client.aiStatus,
-      personaId: client.selectedPersonaId,
-      risk: riskDecision.level,
-      model: modelForRisk(riskDecision.level),
-      providerAttempted: true,
-      promptVersion: PROMPT_VERSION,
-      providerId: MOCK_PROVIDER_ID,
-      providerStatus: "failed",
-      providerErrorCode: errorCode,
-      sendStatus: "send_blocked",
-      contextManifest: null,
-      providerOutputSafety: {
-        allowed: false,
-        issues: [{ code: errorCode, severity: "block", category: "policy", evidence: "provider_error" }],
-      },
-      tokenBudget: null,
-      reasons: [errorCode],
-      action: "no_ai",
-      draft: null,
-      blockedReason: errorCode,
-      qualityIssues: [],
-    } satisfies CoreResult;
-  })) as CoreResult;
+  )) as CoreResult;
 
   return appendCoreSimulationResult({
     state: stateAfterInboundInvalidation,

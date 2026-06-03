@@ -436,6 +436,25 @@ test("provider error with known code preserves error code", async () => {
   assert.equal(result.blockedReason, "provider_timeout");
   assert.equal(result.providerErrorCode, "provider_timeout");
   assert.equal(result.providerStatus, "failed");
+  assert.equal(result.providerOutputSafety?.allowed, false);
+  assert.equal(result.providerOutputSafety?.issues?.[0]?.code, "provider_timeout");
+});
+
+test("provider policy violation returns safe no_ai with output safety metadata", async () => {
+  const result = await handleInboundMessage(baseInput, {
+    generateReply: async () => {
+      const error = new Error("policy");
+      error.code = "provider_policy_violation";
+      throw error;
+    },
+  });
+
+  assert.equal(result.action, "no_ai");
+  assert.equal(result.blockedReason, "provider_policy_violation");
+  assert.equal(result.providerErrorCode, "provider_policy_violation");
+  assert.equal(result.providerStatus, "failed");
+  assert.equal(result.draft, null);
+  assert.equal(result.providerOutputSafety?.allowed, false);
 });
 
 test("voice profile captures style from samples", () => {

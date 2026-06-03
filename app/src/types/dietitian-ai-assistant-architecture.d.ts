@@ -275,6 +275,18 @@ declare module "dietitian-ai-assistant-architecture" {
     riskDecisionOverride?: RiskDecision;
   };
 
+  export type ProviderOutputSafetyIssue = {
+    code: string;
+    severity: string;
+    category: string;
+    evidence: string;
+  };
+
+  export type ProviderOutputSafety = {
+    allowed: boolean;
+    issues: ProviderOutputSafetyIssue[];
+  };
+
   export type CoreResult = {
     mode: ClientAiMode;
     aiStatus: ClientAiStatus;
@@ -286,16 +298,17 @@ declare module "dietitian-ai-assistant-architecture" {
     providerId: string | null;
     providerStatus: ProviderStatus;
     providerErrorCode: string | null;
-    sendStatus: SendStatus;
+    sendStatus?: SendStatus;
     blockedReason: string | null;
     promptVersion: string | null;
-    promptContext?: PromptContext;
-    contextManifest?: ContextManifest;
-    tokenBudget?: PromptCompilation["tokenBudget"];
-    draft?: string;
-    sentMessage?: string;
-    handoffCase?: Record<string, unknown>;
+    promptContext?: PromptContext | null;
+    contextManifest?: ContextManifest | null;
+    tokenBudget?: PromptCompilation["tokenBudget"] | null;
+    draft?: string | null;
+    sentMessage?: string | null;
+    handoffCase?: Record<string, unknown> | null;
     qualityIssues?: string[];
+    providerOutputSafety?: ProviderOutputSafety | null;
   };
 
   export const personas: CorePersona[];
@@ -339,11 +352,14 @@ declare module "dietitian-ai-assistant-architecture" {
     options?: { safetyChecklistComplete?: boolean; missingSafetyChecklistItems?: string[] },
   ): PreflightBlock | null;
 
-  export function compilePromptContext(
-    capsule: Record<string, unknown>,
-    riskDecision: { level: RiskLevel },
-    options?: { maxTokens?: number },
-  ): PromptCompilation;
+  export function compilePromptContext(input: {
+    capsule: Record<string, unknown>;
+    currentMessage: CoreMessage;
+    recentMessages?: CoreMessage[];
+    riskLevel: RiskLevel;
+    promptVersion?: string | null;
+    policy?: unknown;
+  }): PromptCompilation & { blockedReason?: string | null };
 
   export function renderPromptContext(promptContext: PromptContext): string;
 
@@ -351,7 +367,10 @@ declare module "dietitian-ai-assistant-architecture" {
 
   export function resolveAiActivation(client: CoreClient, now?: Date | string): ActivationResult;
 
-  export function decideModeAction(mode: ClientAiMode, riskDecision: RiskDecision): ModeActionResult;
+  export function decideModeAction(
+    mode: ClientAiMode | string,
+    riskDecision: RiskDecision,
+  ): ModeActionResult;
 
   export function handleInboundMessage(
     input: CoreInboundInput,

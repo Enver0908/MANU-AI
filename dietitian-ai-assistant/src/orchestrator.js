@@ -148,6 +148,7 @@ export async function handleInboundMessage(input, adapters) {
       contextManifest: compiledContext.contextManifest,
       providerStatus: "failed",
       providerErrorCode,
+      providerOutputSafety: buildProviderFailureOutputSafety(providerErrorCode),
       overrideReasons: [...riskDecision.reasons, providerErrorCode],
     });
   }
@@ -234,6 +235,20 @@ function resolveProviderErrorCode(error) {
   return "provider_error";
 }
 
+function buildProviderFailureOutputSafety(providerErrorCode) {
+  return {
+    allowed: false,
+    issues: [
+      {
+        code: providerErrorCode,
+        severity: "block",
+        category: "policy",
+        evidence: "provider_error",
+      },
+    ],
+  };
+}
+
 function buildResult({
   capsule,
   riskDecision,
@@ -247,6 +262,7 @@ function buildResult({
   providerId = null,
   providerStatus = null,
   providerErrorCode = null,
+  providerOutputSafety = null,
   activation = null,
   contextManifest = null,
   overrideReasons = null,
@@ -279,5 +295,6 @@ function buildResult({
     blockedReason,
     qualityIssues,
     contextManifest,
+    providerOutputSafety,
   };
 }

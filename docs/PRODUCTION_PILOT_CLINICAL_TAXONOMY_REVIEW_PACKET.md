@@ -14,7 +14,7 @@ No real WhatsApp, Telegram, Gemini, external LLM provider, email, push, monitori
 
 A qualified dietitian must review whether the current dietetic risk taxonomy, escalation behavior, golden test set, and production clinical safety evaluation approach are acceptable for a supervised production pilot.
 
-Phase 59 added local-only hardening for numeric glucose thresholds in glucose-context messages and expanded multilingual single-message symptom patterns. This packet remains a review artifact, not an approval record.
+Phase 59 added local-only hardening for numeric glucose thresholds in glucose-context messages and expanded multilingual single-message symptom patterns. Phase 60 narrowed glucose anchors to reduce false positives, deduplicated red reasons, and bumped the classifier to `dietetic-risk-v0.3.1`. This packet remains a review artifact, not an approval record.
 
 The deterministic/regex safety classifier is a local first barrier. It must not be accepted as the sole production clinical safety layer without an approved second-layer or equivalent fail-closed safety evaluation mechanism.
 
@@ -35,7 +35,7 @@ The review must cover:
 | --- | --- | --- | --- |
 | Clinical governance spec | `PHASE_6_CLINICAL_GOVERNANCE_EVALUATION_SPEC.md` | Taxonomy scope, non-goals, done criteria, edge cases | Qualified dietitian sign-off |
 | Review workflow | `CLINICAL_TAXONOMY_REVIEW_WORKFLOW.md` | Required review process and launch gate rule | Pilot approval |
-| Golden cases | `dietitian-ai-assistant/tests/clinical-golden-cases.jsonl` | 16 expected clinical routing examples | Completeness of real-world clinical coverage |
+| Golden cases | `dietitian-ai-assistant/tests/clinical-golden-cases.jsonl` | 30 expected clinical routing examples (`dietetic-risk-v0.3.1`) | Completeness of real-world clinical coverage |
 | Governance tests | `dietitian-ai-assistant/tests/clinical-governance.test.mjs` | Risk/action/model/providerAttempted assertions and persona invariants | Clinical correctness beyond tested cases |
 | Safety classifier | `dietitian-ai-assistant/src/safety-classifier.js` | Current risk classification implementation | Clinical approval |
 | Clinical safety second layer | `dietitian-ai-assistant/src/clinical-safety-second-layer.js`, `dietitian-ai-assistant/tests/clinical-second-layer-cases.jsonl` | Local deterministic context-sensitive yellow escalation evidence above the regex classifier | Qualified dietitian approval or production sufficiency |

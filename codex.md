@@ -68,7 +68,7 @@ These guidelines are working if: fewer unnecessary changes in diffs, fewer rewri
 -Write a PRD/tech spec before implementing any new feature or change.
 -Map edge cases in detail and add them either to this file or to separate spec files.
 -Prefer JSONL format for datasets (especially for fine-tuning).
--After every successful implementation phase, update all continuity documentation in the same change set. Minimum required files: `HANDOFF_FOR_NEXT_CODEX.md`, `PLAN.md`, `docs/NEXT_PHASE_EXECUTION_PLAN.md`, the phase spec, affected pilot evidence/gate docs, and `docs/RISK_REGISTER.md` when risks change. Do not leave handoff or execution-plan docs stale.
+-After every successful implementation phase, update all continuity documentation in the same change set before considering the work complete. Minimum required files: `HANDOFF_FOR_NEXT_CODEX.md`, `PLAN.md`, `docs/NEXT_PHASE_EXECUTION_PLAN.md`, `README.md`, `PROJECT_PLAN.md` when roadmap/next-action guidance changes, the phase spec, affected pilot evidence/gate docs (`docs/PILOT_READINESS_EVIDENCE_PACK.md`, `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md`, `docs/PRODUCTION_PILOT_FINAL_READINESS_CLOSURE_SUMMARY.md`, relevant review packets), and `docs/RISK_REGISTER.md` when risks change. Record latest verification counts and keep R-406 narrative consistent (Phase 52 baseline mitigated; Phase 57 migration RLS re-run pending when local Supabase is unavailable). Do not leave handoff or execution-plan docs stale.
 
 ##  6.
 

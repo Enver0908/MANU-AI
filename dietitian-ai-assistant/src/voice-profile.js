@@ -13,14 +13,15 @@ const informalTerms = [
   "super",
   "toll",
   "klasse",
-  "genial",
-  "super",
   "bravo",
   "parfait",
   "genial",
   "incrivel",
   "skvele",
   "skvely",
+  "otimo",
+  "valeu",
+  "tudo bem",
 ];
 
 const formalTerms = [
@@ -54,7 +55,7 @@ export function buildDietitianVoiceProfile(samples) {
   }
 
   const totalChars = cleanSamples.reduce((sum, sample) => sum + sample.length, 0);
-  const joined = cleanSamples.join(" ").toLowerCase();
+  const joined = normalizeVoiceSampleText(cleanSamples.join(" "));
   const emojiCount = (joined.match(emojiPattern) || []).length;
   const informalScore = scoreTerms(joined, informalTerms);
   const formalScore = scoreTerms(joined, formalTerms);
@@ -80,8 +81,22 @@ export function defaultVoiceProfile() {
   };
 }
 
+function normalizeVoiceSampleText(text) {
+  return String(text || "")
+    .trim()
+    .toLocaleLowerCase("tr-TR")
+    .replace(/ğ/g, "g")
+    .replace(/ı/g, "i")
+    .replace(/ö/g, "o")
+    .replace(/ş/g, "s")
+    .replace(/ü/g, "u")
+    .replace(/ç/g, "c")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
+
 function scoreTerms(text, terms) {
-  return terms.reduce((score, term) => score + (text.includes(term) ? 1 : 0), 0);
+  return terms.reduce((score, term) => score + (text.includes(normalizeVoiceSampleText(term)) ? 1 : 0), 0);
 }
 
 function extractStarts(samples) {

@@ -535,6 +535,8 @@ Phase 58 dietitian client language control completed locally on 2026-06-03: adde
 
 Phase 59 architecture review remediation completed locally on 2026-06-03: added `docs/PHASE_59_ARCHITECTURE_REVIEW_REMEDIATION_SPEC.md`, fail-closed unknown AI modes, core provider error boundary around `generateReply`, numeric glucose-context escalation and expanded multilingual symptom patterns with new golden cases, simulator `appendCoreSimulationResult` helper refactor without behavior change, multilingual voice-profile formal/informal scoring, and provider-native token counting documented as a future integration gate. Verification passed with core tests 85/85, app tests 137/137, app lint, and `npm run release:verify`. No schema/RLS, dependency, real provider, channel, launch-gate approval, or R-405 changes. Production pilot remains `NO-GO`; qualified dietitian clinical taxonomy approval remains required.
 
+Phase 60 audit remediation completed locally on 2026-06-03: added `docs/PHASE_60_AUDIT_REMEDIATION_SPEC.md`, fixed glucose false-positive numeric extraction (`dietetic-risk-v0.3.1`), added core `providerOutputSafety` on provider failures, aligned `dietitian-ai-assistant-architecture.d.ts` with runtime, expanded symptom/voice/simulator tests, and synchronized handoff/plan/pilot documentation. Verification passed with core tests 104/104, app tests 138/138, app lint, and `npm run release:verify`. Production pilot remains `NO-GO`.
+
 Tasks:
 
 1. Design the dedicated client removal/anonymization transactional redaction contract before moving that lifecycle fully to RPC commits.
