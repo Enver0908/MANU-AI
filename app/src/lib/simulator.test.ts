@@ -31,6 +31,30 @@ describe("local inbound simulator", () => {
     expect(next.aiDecisions.at(-1)?.providerErrorCode).toBeNull();
   });
 
+  it("uses the dietitian-selected client conversation language for AI replies", async () => {
+    const state = updateClientInState(createInitialState(), "client-mert", {
+      communicationLanguage: "de",
+      healthProfile: {
+        ...createInitialState().clients[0].healthProfile,
+        preferredLanguage: "de",
+      },
+    });
+
+    const next = await runInboundSimulation(state, {
+      clientId: "client-mert",
+      body: "Bugun kahvalti icin pratik bir degisim onerir misin?",
+      idempotencyKey: "language-change-reply-1",
+      now: "2026-05-22T10:00:10.000Z",
+    });
+    const sent = next.messages
+      .filter((message) => message.origin === "ai_generated" && message.status === "sent")
+      .at(-1);
+
+    expect(next.lastSimulation?.action).toBe("sent");
+    expect(sent?.body).toContain("Sie");
+    expect(next.aiDecisions.at(-1)?.contextManifest).toMatchObject({ communicationLanguage: "de" });
+  });
+
   it("keeps passive clients at no_ai without generated messages", async () => {
     const state = updateClientInState(createInitialState(), "client-mert", {
       aiStatus: "passive",

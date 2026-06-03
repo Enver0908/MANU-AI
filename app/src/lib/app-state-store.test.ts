@@ -32,7 +32,17 @@ describe("app state store operations", () => {
     expect(client?.channel).toBe("telegram");
     expect(client?.primaryPhoneE164).toBe("+905551110099");
     expect(client?.communicationLanguage).toBe("en");
+    expect(client?.healthProfile.preferredLanguage).toBe("en");
     expect(next.conversations.some((conversation) => conversation.clientId === client?.id)).toBe(true);
+  });
+
+  it("lets the dietitian change a client's conversation language", () => {
+    const next = patchClientInState(createInitialState(), "client-mert", { communicationLanguage: "de" });
+    const client = next.clients.find((item) => item.id === "client-mert");
+
+    expect(client?.communicationLanguage).toBe("de");
+    expect(client?.healthProfile.preferredLanguage).toBe("de");
+    expect(client?.contextRevision).toBe(2);
   });
 
   it("rejects duplicate client phone identities", () => {

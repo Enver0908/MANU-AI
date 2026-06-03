@@ -55,6 +55,7 @@ export function createClientInState(
     Partial<Pick<ClientRecord, "primaryPhoneE164" | "communicationLanguage">>,
 ) {
   const primaryPhoneE164 = normalizeE164Phone(input.primaryPhoneE164);
+  const communicationLanguage = normalizeLanguageCode(input.communicationLanguage);
   if (!primaryPhoneE164) throw new AppDomainError(400, "primary_phone_e164_required");
   if (state.clients.some((client) => client.primaryPhoneE164 === primaryPhoneE164)) {
     throw new AppDomainError(409, "primary_phone_e164_duplicate");
@@ -64,7 +65,16 @@ export function createClientInState(
     channel: input.channel,
     channelUserId: input.channelUserId.trim(),
     primaryPhoneE164,
-    communicationLanguage: normalizeLanguageCode(input.communicationLanguage),
+    communicationLanguage,
+    healthProfile: {
+      goal: "",
+      preferredLanguage: communicationLanguage,
+      adultStatus: "unknown",
+      diagnosedConditionFlag: false,
+      medicationOrSupplementFlag: false,
+      pregnancyOrBreastfeedingFlag: false,
+      eatingDisorderRiskFlag: false,
+    },
   });
   return addClientToState(state, client);
 }

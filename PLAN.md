@@ -112,6 +112,16 @@ The selected LLM routing is:
 
 Google Gemini/provider retention and health-data eligibility must be reviewed before real client health data is sent to a model provider.
 
+### Client Conversation Language
+
+Each client has a dietitian-controlled `communicationLanguage`.
+
+- The dietitian can change the client conversation language from the MANU-AI client profile.
+- The selected language is synchronized with `healthProfile.preferredLanguage`.
+- The prompt context includes the selected conversation language, so subsequent AI replies use that language.
+- Changing the language is prompt-affecting state and invalidates stale pending drafts through the existing context revision safety path.
+- Clinical safety routing is unchanged by language selection.
+
 ### Personas
 
 Personas are communication behavior contracts, not clinical-rule changes.

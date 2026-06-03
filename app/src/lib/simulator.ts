@@ -749,6 +749,7 @@ export function invalidatePendingDrafts(
 function isPromptAffectingClientPatch(patch: Partial<ClientRecord>) {
   return [
     "selectedPersonaId",
+    "communicationLanguage",
     "aiStatus",
     "aiMode",
     "aiActiveFrom",
