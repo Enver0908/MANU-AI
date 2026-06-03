@@ -17,13 +17,14 @@ Start by reading:
 1. `PLAN.md`
 2. `PROJECT_PLAN.md`
 3. `docs/NEXT_PHASE_EXECUTION_PLAN.md`
-4. `docs/RISK_REGISTER.md`
-5. `docs/DATA_INVENTORY.md`
-6. `docs/DATASET_STRATEGY.md`
-7. `docs/MOBILE_APP_STRATEGY.md`
-8. `dietitian-ai-assistant/README.md`
-9. `dietitian-ai-assistant/docs/architecture.md`
-10. `dietitian-ai-assistant/docs/data-model.sql`
+4. `docs/PHASE_61_SCOPE_GUARD_RAG_SECOND_LAYER_SPEC.md` (latest completed phase)
+5. `docs/RISK_REGISTER.md`
+6. `docs/DATA_INVENTORY.md`
+7. `docs/DATASET_STRATEGY.md`
+8. `docs/MOBILE_APP_STRATEGY.md`
+9. `dietitian-ai-assistant/README.md`
+10. `dietitian-ai-assistant/docs/architecture.md`
+11. `dietitian-ai-assistant/docs/data-model.sql`
 
 ## User's Product Goal
 
@@ -60,7 +61,7 @@ Phase 61 scope guard (RAG + LLM) second layer mock-first is the latest completed
 
 Start from `docs/NEXT_PHASE_EXECUTION_PLAN.md`, especially `docs/PHASE_61_SCOPE_GUARD_RAG_SECOND_LAYER_SPEC.md`, `docs/PHASE_60_AUDIT_REMEDIATION_SPEC.md`, and the Phase 56–59 specs listed there. Phase 49 context remains in `docs/PHASE_49_SAFETY_ORCHESTRATION_CONCURRENCY_HARDENING_SPEC.md`.
 
-**R-406 canonical status:** mitigated in the local prototype for the Phase 50–52 baseline (`npm run test:rls` passed 19/19 on 2026-06-02). Phase 57 `yellow_risk_hold` migration RLS evidence remains a separate pending re-run when Docker Desktop/local Supabase is available.
+**R-406 canonical status:** mitigated in the local prototype for the Phase 50–52 baseline (`npm run test:rls` passed 19/19 on 2026-06-02). Re-run `npm run test:rls` when Docker Desktop/local Supabase is available after Phase 57 `yellow_risk_hold` or Phase 61 `scope_rules` / `scope_rule_chunks` / `scope_guard_evaluations` migrations if new RLS evidence is needed.
 
 Remaining production hardening (not a new phase yet): client removal/anonymization transactional redaction contract, dashboard/internal-copilot pagination after Phase 53 contracts, external launch-gate approval artifacts, and R-405 resolution only through Phase 22.
 
@@ -96,15 +97,24 @@ Phase 50 status as of 2026-06-02:
 - Phase 58 dietitian client language control completed locally on 2026-06-03: client creation and profile patch now keep `communicationLanguage` and `healthProfile.preferredLanguage` synchronized, language changes are prompt-affecting context changes, and app simulator evidence proves subsequent AI replies use the dietitian-selected language. Targeted verification passed with 54/54 tests. See `docs/PHASE_58_DIETITIAN_CLIENT_LANGUAGE_CONTROL_SPEC.md`.
 - Phase 59 architecture review remediation completed locally on 2026-06-03: fail-closed `decideModeAction` for unknown modes, core `generateReply` try/catch with safe `no_ai` provider failure metadata, numeric glucose-context escalation and expanded multilingual `symptom_question` patterns with new golden cases, `appendCoreSimulationResult` helper refactor without behavior change, multilingual formal/informal voice-profile term lists, and provider-native token counting documented for future Gemini/external LLM integration. Verification passed: core tests 85/85, app tests 137/137, app lint, and `npm run release:verify`. No schema/RLS, dependency, real provider, channel, launch-gate, or R-405 changes. See `docs/PHASE_59_ARCHITECTURE_REVIEW_REMEDIATION_SPEC.md`.
 - Phase 60 audit remediation completed locally on 2026-06-03: narrowed glucose anchor patterns and deduplicated red reasons (`dietetic-risk-v0.3.1`), core `providerOutputSafety` on provider failures, architecture `.d.ts` alignment, expanded golden/unit/simulator tests, and documentation continuity updates. Verification passed: core tests 104/104, app tests 138/138, app lint, and `npm run release:verify`. See `docs/PHASE_60_AUDIT_REMEDIATION_SPEC.md`.
+- Phase 61 scope guard (RAG + LLM) second layer mock-first completed locally on 2026-06-04: core `scope-guard.js` (`scope-rag-v0.1.0`) with escalate-only `mergeScopeDecision`; app mock lexical retrieval (`scope-retrieval.ts`), deterministic evaluator (`scope-evaluator.ts`), runtime wiring (`scope-guard-runtime.ts`, `simulator-risk.ts`); system-level regulation corpus governance (`scope-corpus.ts`); Supabase migration `20260604000000_phase_61_scope_corpus.sql`; raw-text-free `scope_guard_evaluations` audit; operational-health corpus signals; launch-gate scope corpus evidence on `clinical_taxonomy_approval`; disconnected real embedding/LLM behind `MANU_ALLOW_REAL_SCOPE_GUARD=true`. Default seed corpus is draft-only (scope guard no-op until approved). Verification passed: core tests 112/112, app tests 150/150, app lint, and `npm run release:verify`. See `docs/PHASE_61_SCOPE_GUARD_RAG_SECOND_LAYER_SPEC.md`.
 
 ## Current Implementation
 
-The current code now has two layers:
+The repository has two code packages:
 
 ```text
-dietitian-ai-assistant
-app
+dietitian-ai-assistant   # pure core: orchestration + deterministic safety merge
+app                      # SaaS prototype: persistence, simulator, scope retrieval/evaluator I/O
 ```
+
+Inbound clinical safety uses three independent evaluation layers (escalate-only merge; never downgrade red/yellow to green):
+
+1. **Regex/deterministic classifier** (`safety-classifier.js`) — unchanged first axis.
+2. **Clinical safety second layer** (`clinical-safety-second-layer.js`) — context-sensitive yellow evidence (`clinical-safety-second-layer-v0.1.0`).
+3. **Scope guard** (`scope-guard.js` in core; retrieval/evaluator in app) — dietetic-regulation corpus match (`scope-rag-v0.1.0`); inactive when corpus is empty or unapproved.
+
+Combined classifier version when scope guard participates: `dietetic-risk-v0.3.1+clinical-safety-second-layer-v0.1.0+scope-rag-v0.1.0`.
 
 `dietitian-ai-assistant` is the testable core architecture package.
 
@@ -118,6 +128,7 @@ Core key files:
 - `src/message-provenance.js`
 - `src/safety-classifier.js`
 - `src/clinical-safety-second-layer.js`
+- `src/scope-guard.js`
 - `src/response-quality-guard.js`
 - `src/context-capsule.js`
 - `src/personas.js`
@@ -132,6 +143,12 @@ App key files:
 - `app/src/lib/supabase-store.ts`
 - `app/src/lib/auth-context.ts`
 - `app/src/lib/simulator.ts`
+- `app/src/lib/simulator-risk.ts`
+- `app/src/lib/scope-corpus.ts`
+- `app/src/lib/scope-retrieval.ts`
+- `app/src/lib/scope-evaluator.ts`
+- `app/src/lib/scope-guard-runtime.ts`
+- `app/src/lib/scope-guard-provider.ts`
 - `app/src/lib/simulator.test.ts`
 - `app/src/lib/auth-context.test.ts`
 - `app/src/lib/seed-data.ts`
@@ -143,6 +160,7 @@ App key files:
 - `app/public/sw.js`
 - `app/supabase/migrations/20260522000000_initial_manu_ai_schema.sql`
 - `app/supabase/migrations/20260523000000_app_state_schema_fixes.sql`
+- `app/supabase/migrations/20260604000000_phase_61_scope_corpus.sql`
 - `docs/NEXT_SUPABASE_FOUNDATION_SPEC.md`
 - `docs/PHASE_2_AUTH_ONBOARDING_SHELL_SPEC.md`
 
@@ -159,17 +177,19 @@ Local app state:
 - Supabase-backed API routes resolve tenant/dietitian context from the verified auth user and return `401` without a session or `403` without membership.
 - `/dashboard` requires a verified Supabase Auth user when Supabase is configured; fallback mode still uses the local demo cookie.
 
-Inbound flow:
+Inbound flow (simulator and core orchestrator):
 
 1. Build client context capsule.
-2. Classify risk as green/yellow/red.
-3. Check AI activation state.
-4. If passive, return `no_ai`.
-5. If active, decide mode action.
-6. Select model by risk.
-7. Generate only if allowed.
-8. Quality guard validates output.
-9. Return/send/draft/handoff/no_ai.
+2. Classify risk (regex classifier + clinical safety second layer in app/core).
+3. Apply scope guard when approved corpus is active (mock lexical retrieval + deterministic evaluator; escalate-only merge; else no-op).
+4. Pass merged `riskDecisionOverride` into core orchestration.
+5. Check AI activation state.
+6. If passive, return `no_ai` (red handoff still applies per product decision when AI is passive/manual).
+7. If active, decide mode action.
+8. Select model by risk.
+9. Generate only if allowed.
+10. Quality guard validates output.
+11. Return/send/draft/handoff/no_ai; append raw-text-free `scope_guard_evaluations` audit when scope guard ran.
 
 AI activation:
 
@@ -197,11 +217,12 @@ npm test
 Current expected result:
 
 ```text
-49/49 tests passing
+112/112 tests passing
 ```
 
 Covered:
 
+- scope guard escalate-only merge, no-downgrade invariants, and rule-threshold behavior (`tests/scope-guard.test.mjs`)
 - green autopilot uses `gemini-1.5-flash`
 - red handoff makes no model call
 - passive client blocks AI generation
@@ -230,10 +251,10 @@ npm run release:verify
 Current expected app result:
 
 - ESLint passes.
-- 103/103 app tests pass.
-- RLS integration tests pass against local Supabase; when pointed at non-local Supabase they skip unless `MANU_ALLOW_REMOTE_RLS_TESTS=true`.
+- 150/150 app tests pass (includes scope-corpus, scope-retrieval, scope-guard-runtime, scope-guard-provider tests).
+- RLS integration tests pass against local Supabase; when pointed at non-local Supabase they skip unless `MANU_ALLOW_REMOTE_RLS_TESTS=true`. Re-run after Phase 61 `scope_*` migration when recording new RLS evidence.
 - `next build --webpack` passes.
-- `npm run release:verify` passes with core tests 49/49, app tests 103/103, lint, production build, and only known R-405 production audit findings.
+- `npm run release:verify` passes with core tests 112/112, app tests 150/150, lint, production build, and only known R-405 production audit findings.
 - `npm run test:visual` passes across desktop, tablet, and mobile Chromium viewports.
 
 Note: app scripts intentionally use `--webpack` because Turbopack did not resolve the local symlinked `dietitian-ai-assistant-architecture` package. The core package now has `"exports": "./src/index.js"`.
@@ -1933,3 +1954,36 @@ Run `npm run release:verify` after any follow-up edits. Keep R-406 blocked until
 ```text
 app: npm run release:verify -> passed; core tests 52/52, app tests 117/117, lint, production build, known R-405 only
 ```
+
+## Phase 61 Scope Guard Second Layer Handoff Notes - 2026-06-04
+
+Completed by: Codex
+
+### What Was Done
+
+- Followed `codex.md`: wrote `docs/PHASE_61_SCOPE_GUARD_RAG_SECOND_LAYER_SPEC.md` before implementation.
+- Added core `dietitian-ai-assistant/src/scope-guard.js` with `SCOPE_GUARD_VERSION=scope-rag-v0.1.0`, escalate-only `mergeScopeDecision`, and deterministic `applyScopeRules`.
+- Added app modules: `scope-corpus.ts`, `scope-retrieval.ts`, `scope-evaluator.ts`, `scope-guard-runtime.ts`, `scope-guard-provider.ts`; wired `simulator-risk.ts` after clinical classification.
+- Added Supabase migration `20260604000000_phase_61_scope_corpus.sql` for `scope_rules`, `scope_rule_chunks`, `scope_guard_evaluations` with tenant read / system write RLS.
+- Added placeholder draft regulation rules (inactive until approved); operational-health corpus signals; launch-gate scope corpus evidence on `clinical_taxonomy_approval`.
+- Updated continuity docs: `HANDOFF_FOR_NEXT_CODEX.md`, `PLAN.md`, `docs/NEXT_PHASE_EXECUTION_PLAN.md`, `README.md`, `PROJECT_PLAN.md`, pilot evidence/gate docs, `docs/RISK_REGISTER.md` (R-310).
+
+### What Was NOT Done
+
+- Real Gemini/embedding or external LLM scope evaluator (disconnected; requires `clinical_taxonomy_approval` + `MANU_ALLOW_REAL_SCOPE_GUARD=true`).
+- Approved production regulation corpus load (placeholder draft only).
+- Phase 61 `scope_*` RLS re-run when local Supabase was unavailable.
+- No launch gate approval; R-405 unchanged; production pilot remains `NO-GO`.
+
+### Verification Commands
+
+```text
+dietitian-ai-assistant: npm test -> 112/112 passed
+app: npm test -> 150/150 passed
+app: npm run lint -> passed
+app: npm run release:verify -> passed; only known R-405 findings
+```
+
+### Next Correct Step For Codex
+
+Re-run `npm run test:rls` when Docker/local Supabase is available after applying Phase 61 migration. Load approved regulation corpus only after qualified dietitian clinical taxonomy sign-off. Keep real embedding/LLM disconnected until provider/vendor and clinical gates approve health-data egress.

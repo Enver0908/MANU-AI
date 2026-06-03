@@ -29,6 +29,7 @@ MANU-AI is built around supervised clinical safety boundaries:
 - Green messages may be handled automatically only when AI is active and the client is in autopilot mode.
 - Yellow messages create dietitian approval drafts and pause AI for that client until reviewed.
 - Red messages do not call an LLM and require human handoff.
+- Three escalate-only evaluation axes merge before orchestration: regex classifier (`dietetic-risk-v0.3.1`), clinical safety second layer (`clinical-safety-second-layer-v0.1.0`), and scope guard over an approved dietetic-regulation corpus (`scope-rag-v0.1.0`; mock-first, no-op until corpus is approved).
 - Personas affect communication style only, not clinical safety rules.
 - Production launch gates remain open until external approval artifacts are supplied.
 

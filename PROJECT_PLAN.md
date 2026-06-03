@@ -1246,7 +1246,9 @@ These defaults remove planning ambiguity. They can change only through an explic
 
 Continue from Phase 61 scope guard second layer mock-first (2026-06-04). Current local baseline: core tests 112/112, app tests 150/150, production pilot `NO-GO`, all eight launch gates open, R-405 open. R-406 is mitigated for the Phase 50–52 baseline (`npm run test:rls` passed 19/19 on 2026-06-02); re-run RLS after Docker/local Supabase is available if Phase 57 or Phase 61 `scope_*` migration evidence is needed.
 
-Next engineering work: client removal/anonymization transactional redaction contract, dashboard/internal-copilot pagination after Phase 53 contracts, and external launch-gate evidence collection via `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md`. Do not connect real providers/channels or resolve R-405 outside `docs/PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`.
+Phase 61 adds a third clinical safety axis: mock-first regulation-corpus scope guard (`scope-rag-v0.1.0`) with deterministic lexical retrieval, escalate-only merge with `dietetic-risk-v0.3.1+clinical-safety-second-layer-v0.1.0`, system-level `scope_*` tables, raw-text-free audit, and disconnected real embedding/LLM until clinical taxonomy gate + env flag. Default draft corpus keeps scope guard in no-op mode locally.
+
+Next engineering work: client removal/anonymization transactional redaction contract, dashboard/internal-copilot pagination after Phase 53 contracts, approved regulation corpus load after external clinical taxonomy sign-off, and external launch-gate evidence collection via `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md`. Do not connect real providers/channels or resolve R-405 outside `docs/PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`.
 
 Phase 23 adds a stricter AI context foundation: provider calls must use a bounded `PromptContext`, context manifests must exclude raw text, missing historical context must fail closed with `[ERROR: missing_historical_context]`, and `send_status="send_blocked"` must route the conversation to dietitian takeover instead of sending or drafting to the client.
 

@@ -30,6 +30,8 @@ This is a planning artifact and must be reviewed before real client health data 
 | Internal copilot tool calls | Curated tool name, arguments, result summary, source refs | Explainability and misuse review for internal copilot answers | No external LLM in current build | Read-only tools only, no raw SQL, no mutation tools, minimized summaries |
 | Provider metadata | Message IDs, delivery state, errors | Reliability and support | No | Idempotency and operational logs |
 | Audit events | Actor, action, entity, timestamp | Traceability | No | Append-only, minimized metadata |
+| Dietetic regulation corpus | Approved scope rules, chunked rule text, escalation level | Scope guard: detect dietitian-only/regulated tasks | Rule text may enter mock lexical retrieval locally; real embedding is provider egress and remains gated | System-level read for tenants; write by system/owner only; qualified dietitian approval required |
+| Scope guard evaluations | Matched rule ids, scores, decision level, scope guard version | Safety audit without storing client message bodies | No | Tenant-scoped read; no raw inbound message text; append-only audit |
 
 ## Prompt Allowlist v1
 
@@ -97,3 +99,5 @@ Phase 5 technical skeleton completed on 2026-05-25:
 - Tests verify export scoping, memory invalidation, legal ops ledger records, and legal-review retention placeholders.
 
 These workflows must continue to preserve tenant isolation and must not export provider secrets, raw audit internals, or unrelated tenant data.
+
+Phase 61 added system-level `scope_rules` / `scope_rule_chunks` and tenant-scoped `scope_guard_evaluations` audit records. Scope guard audit stores matched rule ids and scores only, not raw client message text. Real embedding of client messages for scope retrieval remains a provider/vendor-gated egress path and is disconnected in the local prototype.

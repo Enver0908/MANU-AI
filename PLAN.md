@@ -29,6 +29,7 @@ Important files:
 - `docs/DATASET_STRATEGY.md`: how to use dietitian/manual/AI message data.
 - `docs/MOBILE_APP_STRATEGY.md`: web + PWA + native mobile path.
 - `docs/RISK_REGISTER.md`: current risk register.
+- `docs/PHASE_61_SCOPE_GUARD_RAG_SECOND_LAYER_SPEC.md`: scope guard (RAG + LLM) second layer PRD/tech spec.
 - `docs/PLAN_GAP_AUDIT.md`: audit history of plan gaps.
 - `dietitian-ai-assistant/`: testable core architecture package.
 
@@ -85,6 +86,22 @@ Routing:
 - Yellow: AI becomes passive/paused and creates one dietitian approval draft.
 - Red: no LLM call; handoff to dietitian.
 - Passive AI: no AI generation.
+
+Clinical safety evaluation (three independent axes; escalate-only merge):
+
+1. **Regex/deterministic classifier** (`dietetic-risk-v0.3.1`) — primary green/yellow/red routing.
+2. **Clinical safety second layer** (`clinical-safety-second-layer-v0.1.0`) — deterministic context-sensitive yellow escalation above regex-only green.
+3. **Scope guard** (`scope-rag-v0.1.0`) — dietetic-regulation corpus retrieval + evaluation in app; monotonic merge in core `scope-guard.js`. Default seed corpus is draft-only, so scope guard is a **no-op** until qualified dietitian approval loads an approved corpus. Real embedding/LLM remain disconnected until `clinical_taxonomy_approval` and `MANU_ALLOW_REAL_SCOPE_GUARD=true`.
+
+Combined version string when all layers apply: `dietetic-risk-v0.3.1+clinical-safety-second-layer-v0.1.0+scope-rag-v0.1.0`.
+
+Scope guard rules:
+
+- Scope guard never downgrades risk (no red/yellow → green).
+- Escalation level (`yellow` or `red`) comes from each approved regulation rule, not a global default.
+- Evaluator/retrieval failure fail-safe escalates to yellow with reason `scope_guard_unavailable`.
+- Audit records store rule ids and scores only (no raw client message text).
+- Regulation corpus is system-level, tenant read-only; not client-owned data.
 
 Yellow-risk hold rule:
 
@@ -304,6 +321,8 @@ Key modules:
 - `src/model-routing.js`: green/yellow/red model routing.
 - `src/message-provenance.js`: message origin helpers.
 - `src/safety-classifier.js`: dietetic risk classifier.
+- `src/clinical-safety-second-layer.js`: deterministic context-sensitive yellow escalation.
+- `src/scope-guard.js`: escalate-only scope/regulation merge (`scope-rag-v0.1.0`).
 - `src/response-quality-guard.js`: post-generation safety guard.
 - `src/context-capsule.js`: tenant/client-scoped context.
 - `src/personas.js`: six personas.
@@ -317,10 +336,10 @@ cd "C:\Users\Dell\OneDrive\Masaüstü\MANU-AI\dietitian-ai-assistant"
 npm test
 ```
 
-Last verified result:
+Last verified result (Phase 61, 2026-06-04):
 
 ```text
-49/49 tests passing
+112/112 tests passing
 ```
 
 ## Current Local App Prototype
@@ -330,6 +349,14 @@ Path:
 ```text
 app
 ```
+
+Status as of 2026-06-04 (Phase 61):
+
+- Scope guard modules: `scope-corpus.ts`, `scope-retrieval.ts`, `scope-evaluator.ts`, `scope-guard-runtime.ts`, `scope-guard-provider.ts`; wired from `simulator-risk.ts` after clinical classification.
+- Supabase migration `20260604000000_phase_61_scope_corpus.sql` for system-level regulation corpus and raw-text-free scope guard audit.
+- Placeholder draft regulation corpus in seed (scope guard no-op until approved).
+- App tests 150/150; `npm run release:verify` passes with only documented R-405 findings.
+- Real embedding/LLM for scope guard remain disconnected.
 
 Status as of 2026-05-22:
 

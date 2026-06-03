@@ -7,6 +7,8 @@ The implementation intentionally excludes the client-facing legal and permission
 - Dietitian voice profile
 - Client context capsule
 - Safety classifier
+- Clinical safety second-layer evaluator
+- Scope guard merge logic (`scope-guard.js`; retrieval/evaluation live in app)
 - JSONL clinical golden-case evaluation
 - Human handoff engine
 - Conversation memory

@@ -50,6 +50,21 @@ Yellow examples include supplement use, lab results, diagnosed conditions, fasti
 
 The classifier is backed by JSONL clinical golden cases. Golden cases assert risk level, action, model routing, and whether provider generation is allowed. A taxonomy change is not releasable if these tests fail.
 
+## 3.1 Clinical Safety Second Layer
+
+Above the regex classifier, a deterministic second layer can escalate otherwise-green messages to yellow when context-sensitive clinical uncertainty is detected (allergies mentioned without history, ambiguous restrictions, missing-history references, and similar cases). This layer is versioned separately and merges escalate-only with the base classifier.
+
+## 3.2 Scope Guard (Regulation Corpus)
+
+A third independent axis evaluates inbound messages against a dietitian-approved dietetic-regulation corpus. Core owns the pure merge logic in `scope-guard.js` (`mergeScopeDecision`, `applyScopeRules`). The app owns retrieval and evaluation (mock-first lexical similarity today; real embedding/LLM disconnected until launch-gate approval).
+
+Scope guard behavior:
+
+- inactive when the corpus is empty or not approved (no safety regression)
+- escalate-only: never lowers red/yellow to green
+- rule-level escalation (`yellow` or `red`) comes from corpus metadata
+- evaluator/retrieval failure fail-safe escalates to yellow (`scope_guard_unavailable`)
+
 ## 4. Human Handoff Engine
 
 The handoff engine creates a structured review case:

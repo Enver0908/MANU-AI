@@ -72,7 +72,34 @@ Remaining:
 
 - Design a dedicated transactional payload for client removal/anonymization bulk redaction before moving that lifecycle fully to RPC commits.
 - Implement dashboard/internal-copilot pagination and client create/patch scoped reloads only after accepting the Phase 53 contracts; keep that work separate from mutation refactors.
+- Approve and load real dietetic-regulation corpus via `clinical_taxonomy_approval` before scope guard is active in production-shaped pilots.
+- Re-run `npm run test:rls` against local Supabase when available to record Phase 61 `scope_*` table RLS evidence.
 - Keep all eight production-pilot launch gates open until external approval artifacts are supplied.
+
+## Phase 61: Scope Guard (RAG + LLM) Second Layer Mock-First - Completed 2026-06-04
+
+Goal: add an independent second safety axis for dietetic-regulation (scope) tasks using mock-first RAG-shaped retrieval and a deterministic evaluator, merged escalate-only with the existing classifier, without connecting real Gemini/embedding.
+
+Planned work:
+
+- Add `docs/PHASE_61_SCOPE_GUARD_RAG_SECOND_LAYER_SPEC.md`.
+- Add core `dietitian-ai-assistant/src/scope-guard.js` (`mergeScopeDecision`, `applyScopeRules`, `SCOPE_GUARD_VERSION`).
+- Add app corpus governance, mock lexical `RetrievalProvider`, mock `ScopeEvaluator`, and `scope-guard-runtime` wiring after `classifySimulationRisk`.
+- Add Supabase `scope_rules`, `scope_rule_chunks`, `scope_guard_evaluations` with tenant read / system write RLS.
+- Add placeholder draft corpus (inactive by default), operational-health signals, and launch-gate scope corpus evidence on `clinical_taxonomy_approval`.
+- Keep real embedding/LLM disconnected behind env + gate (`MANU_ALLOW_REAL_SCOPE_GUARD=true`).
+
+Done criteria:
+
+- Core and app tests cover escalate-only merge, no-op on empty/unapproved corpus, fail-safe unavailable escalation, and prompt-injection-as-data boundaries.
+- `npm run release:verify` passes with only documented R-405 findings.
+- Production pilot remains `NO-GO`; no launch gate closed; R-405 untouched.
+
+Status:
+
+- Completed locally on 2026-06-04.
+- Verification: core tests 112/112, app tests 150/150, app lint, `npm run release:verify` passed.
+- R-310 partially mitigated in local prototype; qualified dietitian taxonomy and approved regulation corpus still required for production.
 
 ## Phase 48: R-405 Stable Patch Recheck - Completed 2026-06-01
 
