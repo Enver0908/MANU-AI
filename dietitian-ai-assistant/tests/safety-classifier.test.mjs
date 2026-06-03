@@ -1,7 +1,16 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { classifyConversationRisk, classifyDieteticRisk } from "../src/safety-classifier.js";
+import {
+  CLINICAL_SAFETY_CLASSIFIER_VERSION,
+  classifyClinicalSafetyRisk,
+} from "../src/clinical-safety-second-layer.js";
 import { guardAssistantReply } from "../src/response-quality-guard.js";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const classifierCases = [
   ["routine meal swap is green", "Bugun kahvaltida yumurta yerine ne yiyebilirim?", "green"],
@@ -87,6 +96,52 @@ test("conversation risk escalates cumulative meal restriction to yellow", () => 
 
   assert.equal(decision.level, "yellow");
   assert.ok(decision.reasons.includes("cumulative_meal_restriction_pattern"));
+});
+
+test("clinical safety second-layer fixture cases produce expected final risks", () => {
+  const cases = fs
+    .readFileSync(path.join(__dirname, "clinical-second-layer-cases.jsonl"), "utf8")
+    .trim()
+    .split("\n")
+    .map((line) => JSON.parse(line));
+
+  for (const goldenCase of cases) {
+    const baseDecision = classifyConversationRisk({
+      message: goldenCase.message,
+      recentMessages: goldenCase.recentMessages,
+      clientProfile: goldenCase.clientProfile,
+    });
+    const finalDecision = classifyClinicalSafetyRisk({
+      message: goldenCase.message,
+      recentMessages: goldenCase.recentMessages,
+      clientProfile: goldenCase.clientProfile,
+    });
+
+    assert.equal(baseDecision.level, goldenCase.expectedBaseRisk, `${goldenCase.id} base risk`);
+    assert.equal(finalDecision.level, goldenCase.expectedRisk, `${goldenCase.id} final risk`);
+    assert.equal(finalDecision.classifierVersion, CLINICAL_SAFETY_CLASSIFIER_VERSION);
+    for (const reason of goldenCase.expectedReasons) {
+      assert.ok(finalDecision.reasons.includes(reason), `${goldenCase.id} should include ${reason}`);
+    }
+  }
+});
+
+test("clinical safety second layer never downgrades base yellow or red decisions", () => {
+  const yellow = classifyClinicalSafetyRisk({
+    message: "D vitamini takviyesi kullanayim mi?",
+    recentMessages: [],
+    clientProfile: { healthProfile: { adultStatus: "adult" } },
+  });
+  const red = classifyClinicalSafetyRisk({
+    message: "Alerjiden nefes alamiyorum ve bogazim sisti.",
+    recentMessages: [],
+    clientProfile: { healthProfile: { adultStatus: "adult" } },
+  });
+
+  assert.equal(yellow.level, "yellow");
+  assert.ok(yellow.reasons.includes("supplement_or_medication_question"));
+  assert.equal(red.level, "red");
+  assert.ok(red.reasons.includes("possible_severe_allergic_reaction"));
 });
 
 test("persona wording does not change safety classification", () => {

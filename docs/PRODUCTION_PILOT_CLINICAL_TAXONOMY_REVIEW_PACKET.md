@@ -36,6 +36,7 @@ The review must cover:
 | Golden cases | `dietitian-ai-assistant/tests/clinical-golden-cases.jsonl` | 16 expected clinical routing examples | Completeness of real-world clinical coverage |
 | Governance tests | `dietitian-ai-assistant/tests/clinical-governance.test.mjs` | Risk/action/model/providerAttempted assertions and persona invariants | Clinical correctness beyond tested cases |
 | Safety classifier | `dietitian-ai-assistant/src/safety-classifier.js` | Current risk classification implementation | Clinical approval |
+| Clinical safety second layer | `dietitian-ai-assistant/src/clinical-safety-second-layer.js`, `dietitian-ai-assistant/tests/clinical-second-layer-cases.jsonl` | Local deterministic context-sensitive yellow escalation evidence above the regex classifier | Qualified dietitian approval or production sufficiency |
 | Phase 28 remediation | `PHASE_28_AI_SECURITY_REMEDIATION_SPEC.md` | Expanded clinical golden coverage, provider-attempt semantics, no-call audit behavior | Qualified dietitian approval |
 
 ## Current Golden Case Summary
@@ -78,6 +79,7 @@ The review must cover:
 - Red-risk flows create handoff and do not call the provider.
 - Yellow-risk flows become review drafts.
 - The current deterministic/regex classifier is a local first barrier and requires a qualified-review-approved second-layer or equivalent fail-closed safety evaluation before production pilot launch.
+- Phase 56 adds local deterministic second-layer evidence for otherwise-green allergy/restriction mentions, ambiguous clinical references, missing-history references, minor weight/restriction context, and eating-disorder-sensitive ambiguous restriction language.
 - Green-risk flows remain subject to AI activation, mode, permission, takeover, context, and quality guard checks.
 - Personas affect communication style only and do not change clinical routing in the golden tests.
 - Provider-attempt metadata distinguishes actual provider attempts from no-call safety/control paths.

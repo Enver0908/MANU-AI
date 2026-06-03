@@ -311,6 +311,37 @@ test("yellow risk uses gemini 3 for approval draft", async () => {
   assert.equal(drafts.length, 1);
 });
 
+test("clinical safety second layer escalates ambiguous green messages to approval draft", async () => {
+  const drafts = [];
+  const sent = [];
+  const models = [];
+
+  const result = await handleInboundMessage(
+    {
+      ...baseInput,
+      message: { body: "Bunu icsem olur mu?" },
+      recentMessages: [{ body: "D vitamini takviyesi aldim.", origin: "client_inbound" }],
+    },
+    {
+      generateReply: async ({ model }) => {
+        models.push(model);
+        return "Bunu diyetisyeninizin onayiyla netlestirelim; taslak olarak not aldim.";
+      },
+      onDraftForApproval: async (draft) => drafts.push(draft),
+      sendMessage: async (payload) => sent.push(payload),
+    },
+  );
+
+  assert.equal(result.risk, "yellow");
+  assert.equal(result.action, "draft_for_approval");
+  assert.equal(result.model, "gemini-3");
+  assert.equal(result.providerAttempted, true);
+  assert.ok(result.reasons.includes("second_layer_ambiguous_clinical_reference"));
+  assert.deepEqual(models, ["gemini-3"]);
+  assert.equal(drafts.length, 1);
+  assert.equal(sent.length, 0);
+});
+
 test("quality guard blocks unsafe draft", async () => {
   const handoffs = [];
   const result = await handleInboundMessage(baseInput, {

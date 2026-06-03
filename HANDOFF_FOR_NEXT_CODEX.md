@@ -56,9 +56,9 @@ The product must be both:
 
 ## Current Next Phase
 
-Phase 55 is the current implementation wave after Phase 54: audit remediation safety-boundary hardening, while production pilot remains `NO-GO`.
+Phase 56 is the current implementation wave after Phase 55: clinical safety second-layer local evidence, while production pilot remains `NO-GO`.
 
-Start from `docs/NEXT_PHASE_EXECUTION_PLAN.md`, especially the `Phase 50: Production Supabase Hardening` section, `docs/PHASE_51_TRANSACTIONAL_RPC_COVERAGE_SPEC.md`, `docs/PHASE_52_INTEGRATION_TEST_COVERAGE_SPEC.md`, `docs/PHASE_53_SCALE_BROAD_READ_CONTRACTS_SPEC.md`, `docs/PHASE_54_R405_AND_LAUNCH_GATES_RECHECK_SPEC.md`, and `docs/PHASE_55_AUDIT_REMEDIATION_SAFETY_BOUNDARY_SPEC.md`. Phase 49 context remains in `docs/PHASE_49_SAFETY_ORCHESTRATION_CONCURRENCY_HARDENING_SPEC.md`.
+Start from `docs/NEXT_PHASE_EXECUTION_PLAN.md`, especially the `Phase 50: Production Supabase Hardening` section, `docs/PHASE_51_TRANSACTIONAL_RPC_COVERAGE_SPEC.md`, `docs/PHASE_52_INTEGRATION_TEST_COVERAGE_SPEC.md`, `docs/PHASE_53_SCALE_BROAD_READ_CONTRACTS_SPEC.md`, `docs/PHASE_54_R405_AND_LAUNCH_GATES_RECHECK_SPEC.md`, `docs/PHASE_55_AUDIT_REMEDIATION_SAFETY_BOUNDARY_SPEC.md`, and `docs/PHASE_56_CLINICAL_SAFETY_SECOND_LAYER_LOCAL_EVIDENCE_SPEC.md`. Phase 49 context remains in `docs/PHASE_49_SAFETY_ORCHESTRATION_CONCURRENCY_HARDENING_SPEC.md`.
 
 Phase 49 priorities:
 
@@ -87,6 +87,7 @@ Phase 50 status as of 2026-06-02:
 - Remaining production hardening work: design a dedicated transactional payload for client removal/anonymization bulk redaction, implement pagination only after accepting the Phase 53 contracts, resolve R-405 only through the Phase 22 procedure, and keep external launch gates open until approval artifacts arrive.
 - Phase 54 R-405/launch-gate recheck completed locally on 2026-06-02: stable `next@latest` remains 16.2.7 with nested `postcss@8.4.31`, production audit still reports only known R-405 findings, no dependency files changed, no external approval artifacts were supplied, all eight launch gates remain open, and production pilot remains `NO-GO`. `npm run release:verify` passed with core tests 57/57, app tests 130/130, lint, production build, and only documented R-405 findings.
 - Phase 55 audit remediation safety boundary completed locally on 2026-06-03: real Turkish Unicode classifier normalization, multilingual pregnancy/lactation yellow routing, prompt-injection yellow review routing, client-authored PromptContext data boundaries, safety-critical pinned-note no-truncation, and red-risk preflight regression coverage were added. `npm run release:verify` passed with core tests 72/72, app tests 132/132, lint, production build, and only documented R-405 findings. No schema, RLS, dependency, provider, channel, monitoring, secret manager, backup provider, launch-gate, R-405, or real-data change was made.
+- Phase 56 clinical safety second-layer local evidence completed locally on 2026-06-03: deterministic second-layer evaluation now sits above the regex classifier and can escalate otherwise-green allergy/restriction mentions, ambiguous clinical references, missing-history references, minor weight/restriction context, and eating-disorder-sensitive ambiguous restriction language to yellow review. `npm run release:verify` passed with core tests 75/75, app tests 134/134, lint, production build, and only documented R-405 findings. No real LLM safety evaluator, provider, channel, schema/RLS/RPC, launch-gate approval, or real-data change was made. R-310 is partially mitigated in the local prototype only; qualified dietitian approval remains required before production.
 
 ## Current Implementation
 
@@ -108,6 +109,7 @@ Core key files:
 - `src/model-routing.js`
 - `src/message-provenance.js`
 - `src/safety-classifier.js`
+- `src/clinical-safety-second-layer.js`
 - `src/response-quality-guard.js`
 - `src/context-capsule.js`
 - `src/personas.js`

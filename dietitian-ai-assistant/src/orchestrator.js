@@ -1,5 +1,5 @@
 import { getPersona } from "./personas.js";
-import { classifyConversationRisk } from "./safety-classifier.js";
+import { classifyClinicalSafetyRisk } from "./clinical-safety-second-layer.js";
 import { buildMemoryContext } from "./conversation-memory.js";
 import { buildClientContextCapsule } from "./context-capsule.js";
 import { compilePromptContext, renderPromptContext } from "./context-compiler.js";
@@ -33,12 +33,14 @@ export async function handleInboundMessage(input, adapters) {
     memory,
   });
 
-  const riskDecision = classifyConversationRisk({
+  const riskDecision = classifyClinicalSafetyRisk({
     message: input.message.body,
     recentMessages: input.recentMessages || [],
     clientProfile: {
       highRisk: capsule.client.clinicalRiskNotes.length > 0,
       healthProfile: capsule.client.healthProfile,
+      allergies: capsule.client.allergies,
+      restrictedFoods: capsule.client.restrictedFoods,
     },
   });
 

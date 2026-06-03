@@ -194,6 +194,48 @@ describe("local inbound simulator", () => {
     expect(next.riskAssessments.at(-1)?.reasons).toContain("profile_diagnosed_condition_context");
   });
 
+  it("records clinical second-layer allergy escalation in risk and decision evidence", async () => {
+    const state = createInitialState();
+    const next = await runInboundSimulation(state, {
+      clientId: "client-mert",
+      body: "Peanut yerine ara ogunde ne yiyebilirim?",
+      idempotencyKey: "second-layer-allergy-1",
+      now: "2026-05-22T10:10:40.000Z",
+    });
+
+    expect(next.lastSimulation?.action).toBe("draft_for_approval");
+    expect(next.lastSimulation?.risk).toBe("yellow");
+    expect(next.lastSimulation?.model).toBe("gemini-3");
+    expect(next.riskAssessments.at(-1)?.level).toBe("yellow");
+    expect(next.riskAssessments.at(-1)?.classifierVersion).toContain("clinical-safety-second-layer-v0.1.0");
+    expect(next.riskAssessments.at(-1)?.reasons).toContain(
+      "second_layer_client_allergy_or_restriction_mentioned",
+    );
+    expect(next.aiDecisions.at(-1)?.reasons).toContain("second_layer_client_allergy_or_restriction_mentioned");
+    expect(next.messages.at(-1)).toMatchObject({ origin: "ai_generated", status: "draft" });
+  });
+
+  it("uses clinical second layer to block ambiguous clinical references from auto-send", async () => {
+    const state = await runInboundSimulation(createInitialState(), {
+      clientId: "client-mert",
+      body: "D vitamini takviyesi aldim.",
+      idempotencyKey: "second-layer-context-seed-1",
+      now: "2026-05-22T10:10:45.000Z",
+    });
+    const next = await runInboundSimulation(state, {
+      clientId: "client-mert",
+      body: "Bunu icsem olur mu?",
+      idempotencyKey: "second-layer-ambiguous-1",
+      now: "2026-05-22T10:10:50.000Z",
+    });
+
+    expect(next.lastSimulation?.action).toBe("draft_for_approval");
+    expect(next.lastSimulation?.risk).toBe("yellow");
+    expect(next.riskAssessments.at(-1)?.reasons).toContain("second_layer_ambiguous_clinical_reference");
+    expect(next.aiDecisions.at(-1)?.providerAttempted).toBe(true);
+    expect(next.messages.at(-1)).toMatchObject({ origin: "ai_generated", status: "draft" });
+  });
+
   it("escalates cumulative meal restriction patterns to yellow", async () => {
     const first = await runInboundSimulation(createInitialState(), {
       clientId: "client-mert",

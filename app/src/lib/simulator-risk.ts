@@ -1,18 +1,20 @@
 import {
-  SAFETY_CLASSIFIER_VERSION,
-  classifyConversationRisk,
+  CLINICAL_SAFETY_CLASSIFIER_VERSION,
+  classifyClinicalSafetyRisk,
 } from "dietitian-ai-assistant-architecture";
 import type { AiDecisionRecord, ClientRecord, MessageRecord } from "./types";
 
-export { SAFETY_CLASSIFIER_VERSION };
+export { CLINICAL_SAFETY_CLASSIFIER_VERSION as SAFETY_CLASSIFIER_VERSION };
 
 export function classifySimulationRisk(client: ClientRecord, body: string, recentMessages: MessageRecord[] = []) {
-  return classifyConversationRisk({
+  return classifyClinicalSafetyRisk({
     message: body,
     recentMessages,
     clientProfile: {
       highRisk: client.clinicalRiskNotes.length > 0,
       healthProfile: client.healthProfile,
+      allergies: client.allergies,
+      restrictedFoods: client.restrictedFoods,
     },
   });
 }

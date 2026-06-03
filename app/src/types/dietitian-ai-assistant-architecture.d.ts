@@ -215,6 +215,18 @@ declare module "dietitian-ai-assistant-architecture" {
     classifierVersion: string;
     shouldHandoff: boolean;
     pauseAutopilot: boolean;
+    layers?: {
+      baseClassifierVersion: string;
+      secondLayerVersion: string;
+      secondLayerReasons: string[];
+    };
+  };
+
+  export type ClinicalSafetySecondLayerDecision = {
+    version: string;
+    escalate: boolean;
+    level: "green" | "yellow";
+    reasons: string[];
   };
 
   export type PreflightBlock = {
@@ -287,6 +299,8 @@ declare module "dietitian-ai-assistant-architecture" {
 
   export const personas: CorePersona[];
   export const SAFETY_CLASSIFIER_VERSION: string;
+  export const CLINICAL_SAFETY_CLASSIFIER_VERSION: string;
+  export const CLINICAL_SAFETY_SECOND_LAYER_VERSION: string;
   export const CONTEXT_POLICY_V1: string;
   export const MISSING_HISTORICAL_CONTEXT_TOKEN: string;
   export const MISSING_HISTORICAL_CONTEXT_INSTRUCTION: string;
@@ -305,6 +319,19 @@ declare module "dietitian-ai-assistant-architecture" {
     recentMessages?: CoreMessage[];
     clientProfile?: Record<string, unknown>;
   }): RiskDecision;
+
+  export function classifyClinicalSafetyRisk(input: {
+    message: string;
+    recentMessages?: CoreMessage[];
+    clientProfile?: Record<string, unknown>;
+  }): RiskDecision;
+
+  export function evaluateClinicalSafetySecondLayer(input: {
+    message: string;
+    recentMessages?: CoreMessage[];
+    clientProfile?: Record<string, unknown>;
+    baseDecision?: RiskDecision;
+  }): ClinicalSafetySecondLayerDecision;
 
   export function evaluateInboundPreflight(
     client: CoreClient,

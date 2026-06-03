@@ -3,6 +3,12 @@ export { personas, getPersona } from "./personas.js";
 export { DEFAULT_LANGUAGE, SUPPORTED_LANGUAGES, languageLabel, normalizeLanguageCode } from "./languages.js";
 export { buildDietitianVoiceProfile, defaultVoiceProfile } from "./voice-profile.js";
 export { classifyConversationRisk, classifyDieteticRisk, SAFETY_CLASSIFIER_VERSION } from "./safety-classifier.js";
+export {
+  CLINICAL_SAFETY_CLASSIFIER_VERSION,
+  CLINICAL_SAFETY_SECOND_LAYER_VERSION,
+  classifyClinicalSafetyRisk,
+  evaluateClinicalSafetySecondLayer,
+} from "./clinical-safety-second-layer.js";
 export { evaluateInboundPreflight } from "./inbound-preflight.js";
 export { buildClientContextCapsule, assertTenantIsolation } from "./context-capsule.js";
 export {
