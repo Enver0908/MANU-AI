@@ -175,7 +175,20 @@ const yellowRules = [
   },
   {
     reason: "symptom_question",
-    patterns: [/basim don/i, /midem bulan/i, /ishal/i, /kabiz/i, /carpinti/i],
+    patterns: [
+      /basim don/i,
+      /midem bulan/i,
+      /ishal/i,
+      /kabiz/i,
+      /carpinti/i,
+      /\b(i feel dizzy|i am dizzy|feeling dizzy)\b/i,
+      /\b(nausea|nauseous|vomiting)\b/i,
+      /\b(palpitation|heart racing)\b/i,
+      /\b(schwindel|schwindelig|ubelkeit|durchfall|verstopfung)\b/i,
+      /\b(vertige|nausee|vomissement|diarrhee)\b/i,
+      /\b(mareo|vomito|diarrea)\b/i,
+      /\b(zavrat|nevolnost|prujem|zapara)\b/i,
+    ],
   },
   {
     reason: "minor_or_body_image_weight_loss",
@@ -191,9 +204,12 @@ const yellowRules = [
   },
 ];
 
+const GLUCOSE_CONTEXT_PATTERN =
+  /(?:sekerim|seker|blood sugar|blutzucker|glycemie|glucose|glukoz|glicose|glukoza)/i;
+
 export function classifyDieteticRisk(message, clientProfile = {}) {
   const text = normalizeText(message);
-  const redReasons = collectReasons(text, redRules);
+  const redReasons = [...collectReasons(text, redRules), ...collectGlucoseNumericReasons(text)];
   if (redReasons.length > 0) {
     return decision("red", redReasons, clientProfile);
   }
@@ -243,6 +259,22 @@ function collectReasons(text, rules) {
   return rules
     .filter((rule) => rule.patterns.some((pattern) => pattern.test(text)))
     .map((rule) => rule.reason);
+}
+
+function collectGlucoseNumericReasons(text) {
+  if (!GLUCOSE_CONTEXT_PATTERN.test(text)) return [];
+
+  const values = [...text.matchAll(/\b(\d{2,3})\b/g)]
+    .map((match) => Number.parseInt(match[1], 10))
+    .filter((value) => Number.isFinite(value));
+
+  for (const value of values) {
+    if (value < 70 || value > 250) {
+      return ["critical_glucose_issue"];
+    }
+  }
+
+  return [];
 }
 
 function collectCumulativeReasons(messages) {

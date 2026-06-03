@@ -12,6 +12,16 @@ Phase 28 adds provider-attempt audit semantics and a stricter provider boundary:
 
 Phase 36 adds `PRODUCTION_PILOT_PROVIDER_VENDOR_REVIEW_PACKET.md` for external vendor, legal, and security review. The packet is not an approval artifact, and real provider egress remains blocked.
 
+## Prompt Token Budget (Future Integration)
+
+Phase 59 documents that the local/mock `estimateTokens()` heuristic (`characters / 3`) in `context-compiler.js` is acceptable only for the current prototype.
+
+Before any real Gemini or external LLM integration:
+
+- Use provider-native token counting (for example Gemini `countTokens` or an approved provider-specific equivalent).
+- Reconcile prompt budget, reserve, and segment truncation against real tokenizer output for Turkish and other supported languages.
+- Do not treat local character-based estimates as production approval evidence.
+
 ## Requirements Before Real Health-Data Use
 
 - Vendor terms must permit the intended healthcare/nutrition support use case.

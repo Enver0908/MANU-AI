@@ -13,6 +13,10 @@ Prepare an AI provider abstraction without sending real health data to Gemini or
 - Make provider failure produce safe no-send behavior.
 - Document no-storage/no-retention provider requirements before any real health-data use.
 
+## Future Provider Token Counting
+
+Local/mock prompt budgeting may continue to use character-based estimates. Any real Gemini or external LLM integration must use provider-native token counting and revalidate Turkish/multilingual budget behavior before production.
+
 ## Non-Goals
 
 - No real Gemini call.

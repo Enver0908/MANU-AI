@@ -125,13 +125,32 @@ export async function handleInboundMessage(input, adapters) {
 
   const selectedModel = selectModelForRisk(riskDecision.level);
   const prompt = renderPromptContext(compiledContext.promptContext);
-  const draft = await adapters.generateReply({
-    prompt,
-    promptContext: compiledContext.promptContext,
-    contextManifest: compiledContext.contextManifest,
-    riskDecision,
-    model: selectedModel,
-  });
+  let draft;
+  try {
+    draft = await adapters.generateReply({
+      prompt,
+      promptContext: compiledContext.promptContext,
+      contextManifest: compiledContext.contextManifest,
+      riskDecision,
+      model: selectedModel,
+    });
+  } catch (error) {
+    const providerErrorCode = resolveProviderErrorCode(error);
+    return buildResult({
+      capsule,
+      riskDecision,
+      action: "no_ai",
+      blockedReason: providerErrorCode,
+      model: selectedModel,
+      providerAttempted: true,
+      providerId,
+      activation,
+      contextManifest: compiledContext.contextManifest,
+      providerStatus: "failed",
+      providerErrorCode,
+      overrideReasons: [...riskDecision.reasons, providerErrorCode],
+    });
+  }
   const quality = guardProviderOutput({ output: draft, capsule, riskDecision });
 
   if (!quality.allowed) {
@@ -202,7 +221,17 @@ export function decideModeAction(mode, riskDecision) {
   if (riskDecision.level === "red") return { action: "handoff", reason: "red_risk" };
   if (riskDecision.level === "yellow") return { action: "draft_for_approval", reason: "yellow_risk" };
   if (mode === "copilot") return { action: "draft_for_approval", reason: "client_copilot_mode" };
-  return { action: "auto_send", reason: "green_autopilot" };
+  if (mode === "autopilot") return { action: "auto_send", reason: "green_autopilot" };
+  return { action: "ignore", reason: "unknown_ai_mode_blocked" };
+}
+
+function resolveProviderErrorCode(error) {
+  if (!error || typeof error !== "object") return "provider_error";
+  const code = error.code;
+  if (code === "provider_timeout" || code === "provider_policy_violation" || code === "provider_error") {
+    return code;
+  }
+  return "provider_error";
 }
 
 function buildResult({
@@ -216,10 +245,17 @@ function buildResult({
   model = null,
   providerAttempted = false,
   providerId = null,
+  providerStatus = null,
+  providerErrorCode = null,
   activation = null,
   contextManifest = null,
   overrideReasons = null,
 }) {
+  const resolvedProviderStatus =
+    providerStatus ?? (providerAttempted ? "ok" : "not_called");
+  const resolvedProviderErrorCode =
+    providerErrorCode ?? (resolvedProviderStatus === "failed" ? "provider_error" : null);
+
   return {
     tenantId: capsule.tenantId,
     dietitianId: capsule.dietitian.id,
@@ -234,8 +270,8 @@ function buildResult({
     providerAttempted,
     promptVersion: providerAttempted ? contextManifest?.promptVersion || null : null,
     providerId: providerAttempted ? providerId : null,
-    providerStatus: providerAttempted ? "ok" : "not_called",
-    providerErrorCode: null,
+    providerStatus: resolvedProviderStatus,
+    providerErrorCode: resolvedProviderErrorCode,
     reasons: overrideReasons || riskDecision.reasons,
     action,
     draft,

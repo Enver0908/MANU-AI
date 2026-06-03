@@ -33,6 +33,10 @@ The default answer remains no real provider egress.
 
 Internal evidence supports review, but it is not a vendor approval artifact.
 
+## Future Provider Token Counting
+
+Phase 59 records that production provider integration must not rely on the local `characters / 3` token estimate. Reviewers should require provider-native token counting and budget evidence before approving real provider egress.
+
 ## Required External Decisions
 
 The approval artifact must explicitly cover:

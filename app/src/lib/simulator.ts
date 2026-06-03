@@ -800,6 +800,330 @@ export function acknowledgeNotificationInState(state: ManuAppState, notification
   };
 }
 
+type SimulationAppendContext = {
+  state: ManuAppState;
+  client: ClientRecord;
+  conversation: ConversationRecord;
+  inboundMessage: MessageRecord;
+  coreResult: CoreResult;
+  decision: AiDecisionRecord;
+  now: string;
+  nextMessages: MessageRecord[];
+  handoffCases: HandoffCaseRecord[];
+  auditEvents: AuditEventRecord[];
+  notifications: NotificationRecord[];
+  nextClients: ClientRecord[];
+  nextAiDecisions: AiDecisionRecord[];
+};
+
+function createSimulationAppendContext(input: {
+  state: ManuAppState;
+  client: ClientRecord;
+  conversation: ConversationRecord;
+  inboundMessage: MessageRecord;
+  coreResult: CoreResult;
+  decision: AiDecisionRecord;
+  now: string;
+}): SimulationAppendContext {
+  return {
+    ...input,
+    nextMessages: [...input.state.messages],
+    handoffCases: [...input.state.handoffCases],
+    auditEvents: [...input.state.auditEvents],
+    notifications: [...input.state.notifications],
+    nextClients: input.state.clients,
+    nextAiDecisions: input.state.aiDecisions,
+  };
+}
+
+function applyExpiredActivationSideEffects(ctx: SimulationAppendContext) {
+  if (ctx.coreResult.blockedReason !== "client_ai_window_expired") return;
+
+  ctx.nextClients = ctx.state.clients.map((item) =>
+    item.id === ctx.client.id
+      ? {
+          ...item,
+          aiStatus: "passive" as const,
+          aiActiveUntil: null,
+          contextRevision: item.contextRevision + 1,
+        }
+      : item,
+  );
+  ctx.auditEvents.push(
+    buildAuditEvent(ctx.state, "client_ai_window_expired", "client", ctx.client.id, ctx.now),
+  );
+  ctx.notifications.push({
+    id: crypto.randomUUID(),
+    tenantId: ctx.state.tenant.id,
+    type: "system",
+    entityType: "client",
+    entityId: ctx.client.id,
+    title: `AI window expired: ${ctx.client.fullName}`,
+    body: `AI was passivated for ${ctx.client.fullName} because the activation window ended.`,
+    read: false,
+    acknowledgedAt: null,
+    createdAt: ctx.now,
+  });
+}
+
+function appendSentSimulationResult(ctx: SimulationAppendContext) {
+  if (ctx.coreResult.action !== "sent" || !ctx.coreResult.draft) return;
+
+  ctx.nextMessages.push(
+    buildMessage({
+      state: ctx.state,
+      conversation: ctx.conversation,
+      sender: "assistant",
+      origin: "ai_generated",
+      body: ctx.coreResult.draft,
+      sourceMessageId: ctx.inboundMessage.id,
+      generatedByAiDecisionId: ctx.decision.id,
+      risk: ctx.coreResult.risk,
+      status: "sent",
+      createdAt: ctx.now,
+    }),
+  );
+}
+
+function appendDraftSimulationResult(ctx: SimulationAppendContext) {
+  const draftBody = ctx.coreResult.draft;
+  if (ctx.coreResult.action !== "draft_for_approval" || !draftBody) return;
+
+  const { state, client, conversation, inboundMessage, coreResult, decision, now } = ctx;
+  const activeHold =
+    client.yellowRiskHold.status === "active" && client.yellowRiskHold.activeDraftMessageId
+      ? client.yellowRiskHold
+      : null;
+  const existingDraftIndex = activeHold
+    ? ctx.nextMessages.findIndex(
+        (message) => message.id === activeHold.activeDraftMessageId && message.status === "draft",
+      )
+    : -1;
+  const draftMessage =
+    existingDraftIndex >= 0
+      ? {
+          ...ctx.nextMessages[existingDraftIndex],
+          body: draftBody,
+          sourceMessageId: inboundMessage.id,
+          generatedByAiDecisionId: decision.id,
+          risk: coreResult.risk,
+          status: "draft" as const,
+          createdAt: now,
+        }
+      : buildMessage({
+          state,
+          conversation,
+          sender: "assistant",
+          origin: "ai_generated",
+          body: draftBody,
+          sourceMessageId: inboundMessage.id,
+          generatedByAiDecisionId: decision.id,
+          risk: coreResult.risk,
+          status: "draft",
+          createdAt: now,
+        });
+
+  if (existingDraftIndex >= 0) {
+    ctx.nextMessages[existingDraftIndex] = draftMessage;
+  } else {
+    ctx.nextMessages.push(draftMessage);
+  }
+
+  ctx.nextClients = ctx.nextClients.map((item) => {
+    if (item.id !== client.id) return item;
+    const previousHold = item.yellowRiskHold.status === "active" ? item.yellowRiskHold : null;
+    return {
+      ...item,
+      aiStatus: "passive",
+      aiMode: "paused",
+      yellowRiskHold: {
+        status: "active",
+        startedAt: previousHold?.startedAt || now,
+        firstMessageId: previousHold?.firstMessageId || inboundMessage.id,
+        latestMessageId: inboundMessage.id,
+        activeDraftMessageId: draftMessage.id,
+        activeDecisionId: decision.id,
+        messageIds: Array.from(new Set([...(previousHold?.messageIds || []), inboundMessage.id])),
+        reasons: Array.from(new Set([...(previousHold?.reasons || []), ...coreResult.reasons])),
+        previousAiStatus: previousHold?.previousAiStatus || item.aiStatus,
+        previousAiMode: previousHold?.previousAiMode || item.aiMode,
+        blockedByRedHandoffId: previousHold?.blockedByRedHandoffId || null,
+      },
+    };
+  });
+
+  if (activeHold?.activeDecisionId) {
+    const previousDecisionIndex = ctx.nextAiDecisions.findIndex((item) => item.id === activeHold.activeDecisionId);
+    if (
+      previousDecisionIndex >= 0 &&
+      ctx.nextAiDecisions[previousDecisionIndex].sendStatus !== "draft_invalidated"
+    ) {
+      ctx.nextAiDecisions = ctx.nextAiDecisions.map((item) =>
+        item.id === activeHold.activeDecisionId
+          ? {
+              ...item,
+              sendStatus: "draft_invalidated",
+              blockedReason: "yellow_hold_draft_superseded",
+              reasons: Array.from(new Set([...item.reasons, "yellow_hold_draft_superseded"])),
+            }
+          : item,
+      );
+      ctx.auditEvents.push(
+        buildAuditEvent(state, "yellow_risk_hold_draft_refreshed", "message", draftMessage.id, now),
+      );
+    }
+  } else {
+    ctx.auditEvents.push(buildAuditEvent(state, "yellow_risk_hold_created", "client", client.id, now));
+  }
+}
+
+function appendHandoffSimulationResult(ctx: SimulationAppendContext): ManuAppState | null {
+  const handoffPayload = ctx.coreResult.handoffCase;
+  if (ctx.coreResult.action !== "handoff" || !handoffPayload) return null;
+
+  const { state, client, conversation, inboundMessage, coreResult, now } = ctx;
+  let redRiskLockAudit: AuditEventRecord | null = null;
+  let redRiskHandoffId: string | null = null;
+
+  if (coreResult.risk === "red") {
+    const lockHandoffId = crypto.randomUUID();
+    redRiskHandoffId = lockHandoffId;
+    ctx.nextClients = state.clients.map((item) =>
+      item.id === client.id
+        ? {
+            ...item,
+            aiStatus: "passive",
+            aiMode: "manual",
+            humanTakeoverLocked: true,
+            redRiskLock: {
+              status: "locked",
+              handoffId: lockHandoffId,
+              lockedAt: now,
+              reasons: handoffPayload.reasons || coreResult.reasons,
+              previousAiStatus:
+                item.yellowRiskHold.status === "active" ? item.yellowRiskHold.previousAiStatus : item.aiStatus,
+              previousAiMode:
+                item.yellowRiskHold.status === "active" ? item.yellowRiskHold.previousAiMode : item.aiMode,
+            },
+            yellowRiskHold:
+              item.yellowRiskHold.status === "active"
+                ? { ...item.yellowRiskHold, blockedByRedHandoffId: lockHandoffId }
+                : item.yellowRiskHold,
+            contextRevision: item.contextRevision + 1,
+          }
+        : item,
+    );
+    redRiskLockAudit = {
+      id: crypto.randomUUID(),
+      tenantId: state.tenant.id,
+      eventType: "red_risk_lock_created",
+      entityType: "client",
+      entityId: client.id,
+      metadata: {
+        handoffId: redRiskHandoffId,
+        previousAiStatus: client.aiStatus,
+        previousAiMode: client.aiMode,
+        reasons: handoffPayload.reasons,
+      },
+      createdAt: now,
+    };
+  } else if (coreResult.blockedReason === "missing_historical_context") {
+    ctx.nextClients = state.clients.map((item) =>
+      item.id === client.id ? { ...item, humanTakeoverLocked: true, contextRevision: item.contextRevision + 1 } : item,
+    );
+  }
+
+  const handoffCase: HandoffCaseRecord = {
+    id: redRiskHandoffId || crypto.randomUUID(),
+    tenantId: state.tenant.id,
+    dietitianId: state.dietitian.id,
+    clientId: client.id,
+    conversationId: conversation.id,
+    triggeringMessageId: inboundMessage.id,
+    risk: handoffPayload.risk,
+    reasons: handoffPayload.reasons,
+    status: "open",
+    urgency: handoffPayload.urgency,
+    safeAcknowledgement: handoffPayload.safeAcknowledgement,
+    recommendedAction: handoffPayload.recommendedAction,
+    createdAt: now,
+  };
+  ctx.handoffCases.push(handoffCase);
+  if (redRiskLockAudit) ctx.auditEvents.push(redRiskLockAudit);
+  ctx.auditEvents.push(buildAuditEvent(state, "handoff_notification_queued", "handoff_case", handoffCase.id, now));
+
+  ctx.notifications.push({
+    id: crypto.randomUUID(),
+    tenantId: state.tenant.id,
+    type: handoffCase.urgency === "urgent" ? "handoff_urgent" : "handoff_standard",
+    entityType: "handoff_case",
+    entityId: handoffCase.id,
+    title: `Handoff: ${client.fullName}`,
+    body: `Urgent handoff for ${client.fullName} — review required.`,
+    read: false,
+    acknowledgedAt: null,
+    createdAt: now,
+  });
+
+  ctx.nextMessages.push(
+    buildMessage({
+      state,
+      conversation,
+      sender: "system",
+      origin: "system_event",
+      body: `Handoff opened: ${handoffCase.reasons.join(", ") || handoffCase.risk}`,
+      sourceMessageId: inboundMessage.id,
+      risk: coreResult.risk,
+      status: "handoff",
+      createdAt: now,
+    }),
+  );
+
+  return finalizeSimulationAppendContext(ctx);
+}
+
+function appendNoAiSimulationResult(ctx: SimulationAppendContext) {
+  if (ctx.coreResult.action !== "no_ai") return;
+
+  ctx.nextMessages.push(
+    buildMessage({
+      state: ctx.state,
+      conversation: ctx.conversation,
+      sender: "system",
+      origin: "system_event",
+      body: `No AI response: ${ctx.coreResult.blockedReason || "mode_or_activation_gate"}`,
+      sourceMessageId: ctx.inboundMessage.id,
+      risk: ctx.coreResult.risk,
+      status: "blocked",
+      createdAt: ctx.now,
+    }),
+  );
+}
+
+function finalizeSimulationAppendContext(ctx: SimulationAppendContext): ManuAppState {
+  return {
+    ...ctx.state,
+    clients: ctx.nextClients,
+    messages: ctx.nextMessages,
+    aiDecisions: [...ctx.nextAiDecisions, ctx.decision],
+    handoffCases: ctx.handoffCases,
+    notifications: ctx.notifications,
+    auditEvents: [
+      ...ctx.auditEvents,
+      buildAuditEvent(ctx.state, "simulation_processed", "ai_decision", ctx.decision.id, ctx.now),
+    ],
+    lastSimulation: {
+      action: ctx.coreResult.action,
+      risk: ctx.coreResult.risk,
+      model: ctx.coreResult.model,
+      blockedReason: ctx.coreResult.blockedReason,
+      reasons: ctx.coreResult.reasons,
+      draft: ctx.coreResult.draft,
+      decisionId: ctx.decision.id,
+    },
+  };
+}
+
 function appendCoreSimulationResult({
   state,
   client,
@@ -816,295 +1140,25 @@ function appendCoreSimulationResult({
   now: string;
 }): ManuAppState {
   const decision = buildDecision({ state, client, conversation, result: coreResult, createdAt: now });
-  const nextMessages = [...state.messages];
-  const handoffCases = [...state.handoffCases];
-  const auditEvents = [...state.auditEvents];
-  const notifications = [...state.notifications];
-  let nextClients = state.clients;
-  let nextAiDecisions = state.aiDecisions;
+  const ctx = createSimulationAppendContext({
+    state,
+    client,
+    conversation,
+    inboundMessage,
+    coreResult,
+    decision,
+    now,
+  });
 
-  if (coreResult.blockedReason === "client_ai_window_expired") {
-    nextClients = state.clients.map((item) =>
-      item.id === client.id
-        ? {
-            ...item,
-            aiStatus: "passive" as const,
-            aiActiveUntil: null,
-            contextRevision: item.contextRevision + 1,
-          }
-        : item,
-    );
-    auditEvents.push(
-      buildAuditEvent(state, "client_ai_window_expired", "client", client.id, now),
-    );
-    notifications.push({
-      id: crypto.randomUUID(),
-      tenantId: state.tenant.id,
-      type: "system",
-      entityType: "client",
-      entityId: client.id,
-      title: `AI window expired: ${client.fullName}`,
-      body: `AI was passivated for ${client.fullName} because the activation window ended.`,
-      read: false,
-      acknowledgedAt: null,
-      createdAt: now,
-    });
-  }
+  applyExpiredActivationSideEffects(ctx);
+  appendSentSimulationResult(ctx);
+  appendDraftSimulationResult(ctx);
 
-  if (coreResult.action === "sent" && coreResult.draft) {
-    nextMessages.push(
-      buildMessage({
-        state,
-        conversation,
-        sender: "assistant",
-        origin: "ai_generated",
-        body: coreResult.draft,
-        sourceMessageId: inboundMessage.id,
-        generatedByAiDecisionId: decision.id,
-        risk: coreResult.risk,
-        status: "sent",
-        createdAt: now,
-      }),
-    );
-  }
+  const handoffState = appendHandoffSimulationResult(ctx);
+  if (handoffState) return handoffState;
 
-  if (coreResult.action === "draft_for_approval" && coreResult.draft) {
-    const activeHold =
-      client.yellowRiskHold.status === "active" && client.yellowRiskHold.activeDraftMessageId
-        ? client.yellowRiskHold
-        : null;
-    const existingDraftIndex = activeHold
-      ? nextMessages.findIndex(
-          (message) => message.id === activeHold.activeDraftMessageId && message.status === "draft",
-        )
-      : -1;
-    const draftMessage =
-      existingDraftIndex >= 0
-        ? {
-            ...nextMessages[existingDraftIndex],
-            body: coreResult.draft,
-            sourceMessageId: inboundMessage.id,
-            generatedByAiDecisionId: decision.id,
-            risk: coreResult.risk,
-            status: "draft" as const,
-            createdAt: now,
-          }
-        : buildMessage({
-        state,
-        conversation,
-        sender: "assistant",
-        origin: "ai_generated",
-        body: coreResult.draft,
-        sourceMessageId: inboundMessage.id,
-        generatedByAiDecisionId: decision.id,
-        risk: coreResult.risk,
-        status: "draft",
-        createdAt: now,
-      });
-
-    if (existingDraftIndex >= 0) {
-      nextMessages[existingDraftIndex] = draftMessage;
-    } else {
-      nextMessages.push(draftMessage);
-    }
-
-    nextClients = nextClients.map((item) => {
-      if (item.id !== client.id) return item;
-      const previousHold = item.yellowRiskHold.status === "active" ? item.yellowRiskHold : null;
-      return {
-        ...item,
-        aiStatus: "passive",
-        aiMode: "paused",
-        yellowRiskHold: {
-          status: "active",
-          startedAt: previousHold?.startedAt || now,
-          firstMessageId: previousHold?.firstMessageId || inboundMessage.id,
-          latestMessageId: inboundMessage.id,
-          activeDraftMessageId: draftMessage.id,
-          activeDecisionId: decision.id,
-          messageIds: Array.from(new Set([...(previousHold?.messageIds || []), inboundMessage.id])),
-          reasons: Array.from(new Set([...(previousHold?.reasons || []), ...coreResult.reasons])),
-          previousAiStatus: previousHold?.previousAiStatus || item.aiStatus,
-          previousAiMode: previousHold?.previousAiMode || item.aiMode,
-          blockedByRedHandoffId: previousHold?.blockedByRedHandoffId || null,
-        },
-      };
-    });
-
-    if (activeHold?.activeDecisionId) {
-      const previousDecisionIndex = nextAiDecisions.findIndex((item) => item.id === activeHold.activeDecisionId);
-      if (previousDecisionIndex >= 0 && nextAiDecisions[previousDecisionIndex].sendStatus !== "draft_invalidated") {
-        nextAiDecisions = nextAiDecisions.map((item) =>
-          item.id === activeHold.activeDecisionId
-            ? {
-                ...item,
-                sendStatus: "draft_invalidated",
-                blockedReason: "yellow_hold_draft_superseded",
-                reasons: Array.from(new Set([...item.reasons, "yellow_hold_draft_superseded"])),
-              }
-            : item,
-        );
-        auditEvents.push(
-          buildAuditEvent(state, "yellow_risk_hold_draft_refreshed", "message", draftMessage.id, now),
-        );
-      }
-    } else {
-      auditEvents.push(buildAuditEvent(state, "yellow_risk_hold_created", "client", client.id, now));
-    }
-  }
-
-  if (coreResult.action === "handoff" && coreResult.handoffCase) {
-    let redRiskLockAudit: AuditEventRecord | null = null;
-    let redRiskHandoffId: string | null = null;
-
-    if (coreResult.risk === "red") {
-      const lockHandoffId = crypto.randomUUID();
-      redRiskHandoffId = lockHandoffId;
-      nextClients = state.clients.map((item) =>
-        item.id === client.id
-          ? {
-              ...item,
-              aiStatus: "passive",
-              aiMode: "manual",
-              humanTakeoverLocked: true,
-              redRiskLock: {
-                status: "locked",
-                handoffId: lockHandoffId,
-                lockedAt: now,
-                reasons: coreResult.handoffCase?.reasons || coreResult.reasons,
-                previousAiStatus:
-                  item.yellowRiskHold.status === "active" ? item.yellowRiskHold.previousAiStatus : item.aiStatus,
-                previousAiMode:
-                  item.yellowRiskHold.status === "active" ? item.yellowRiskHold.previousAiMode : item.aiMode,
-              },
-              yellowRiskHold:
-                item.yellowRiskHold.status === "active"
-                  ? { ...item.yellowRiskHold, blockedByRedHandoffId: lockHandoffId }
-                  : item.yellowRiskHold,
-              contextRevision: item.contextRevision + 1,
-            }
-          : item,
-      );
-      redRiskLockAudit = {
-        id: crypto.randomUUID(),
-        tenantId: state.tenant.id,
-        eventType: "red_risk_lock_created",
-        entityType: "client",
-        entityId: client.id,
-        metadata: {
-          handoffId: redRiskHandoffId,
-          previousAiStatus: client.aiStatus,
-          previousAiMode: client.aiMode,
-          reasons: coreResult.handoffCase.reasons,
-        },
-        createdAt: now,
-      };
-    } else if (coreResult.blockedReason === "missing_historical_context") {
-      nextClients = state.clients.map((item) =>
-        item.id === client.id ? { ...item, humanTakeoverLocked: true, contextRevision: item.contextRevision + 1 } : item,
-      );
-    }
-
-    const handoffCase: HandoffCaseRecord = {
-      id: redRiskHandoffId || crypto.randomUUID(),
-      tenantId: state.tenant.id,
-      dietitianId: state.dietitian.id,
-      clientId: client.id,
-      conversationId: conversation.id,
-      triggeringMessageId: inboundMessage.id,
-      risk: coreResult.handoffCase.risk,
-      reasons: coreResult.handoffCase.reasons,
-      status: "open",
-      urgency: coreResult.handoffCase.urgency,
-      safeAcknowledgement: coreResult.handoffCase.safeAcknowledgement,
-      recommendedAction: coreResult.handoffCase.recommendedAction,
-      createdAt: now,
-    };
-    handoffCases.push(handoffCase);
-    if (redRiskLockAudit) auditEvents.push(redRiskLockAudit);
-    auditEvents.push(buildAuditEvent(state, "handoff_notification_queued", "handoff_case", handoffCase.id, now));
-
-    const notification: NotificationRecord = {
-      id: crypto.randomUUID(),
-      tenantId: state.tenant.id,
-      type: handoffCase.urgency === "urgent" ? "handoff_urgent" : "handoff_standard",
-      entityType: "handoff_case",
-      entityId: handoffCase.id,
-      title: `Handoff: ${client.fullName}`,
-      body: `Urgent handoff for ${client.fullName} — review required.`,
-      read: false,
-      acknowledgedAt: null,
-      createdAt: now,
-    };
-    notifications.push(notification);
-
-    nextMessages.push(
-      buildMessage({
-        state,
-        conversation,
-        sender: "system",
-        origin: "system_event",
-        body: `Handoff opened: ${handoffCase.reasons.join(", ") || handoffCase.risk}`,
-        sourceMessageId: inboundMessage.id,
-        risk: coreResult.risk,
-        status: "handoff",
-        createdAt: now,
-      }),
-    );
-    return {
-      ...state,
-      clients: nextClients,
-      messages: nextMessages,
-      aiDecisions: [...nextAiDecisions, decision],
-      handoffCases,
-      notifications,
-      auditEvents: [...auditEvents, buildAuditEvent(state, "simulation_processed", "ai_decision", decision.id, now)],
-      lastSimulation: {
-        action: coreResult.action,
-        risk: coreResult.risk,
-        model: coreResult.model,
-        blockedReason: coreResult.blockedReason,
-        reasons: coreResult.reasons,
-        draft: coreResult.draft,
-        decisionId: decision.id,
-      },
-    };
-  }
-
-  if (coreResult.action === "no_ai") {
-    nextMessages.push(
-      buildMessage({
-        state,
-        conversation,
-        sender: "system",
-        origin: "system_event",
-        body: `No AI response: ${coreResult.blockedReason || "mode_or_activation_gate"}`,
-        sourceMessageId: inboundMessage.id,
-        risk: coreResult.risk,
-        status: "blocked",
-        createdAt: now,
-      }),
-    );
-  }
-
-  return {
-    ...state,
-    clients: nextClients,
-    messages: nextMessages,
-    aiDecisions: [...nextAiDecisions, decision],
-    handoffCases,
-    notifications,
-    auditEvents: [...auditEvents, buildAuditEvent(state, "simulation_processed", "ai_decision", decision.id, now)],
-    lastSimulation: {
-      action: coreResult.action,
-      risk: coreResult.risk,
-      model: coreResult.model,
-      blockedReason: coreResult.blockedReason,
-      reasons: coreResult.reasons,
-      draft: coreResult.draft,
-      decisionId: decision.id,
-    },
-  };
+  appendNoAiSimulationResult(ctx);
+  return finalizeSimulationAppendContext(ctx);
 }
 
 function appendBlockedSimulationResult({

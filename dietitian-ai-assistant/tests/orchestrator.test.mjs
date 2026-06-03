@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { handleInboundMessage } from "../src/orchestrator.js";
+import { decideModeAction, handleInboundMessage } from "../src/orchestrator.js";
 import { buildDietitianVoiceProfile } from "../src/voice-profile.js";
 import { MESSAGE_ORIGINS, buildMessageProvenance } from "../src/message-provenance.js";
 
@@ -370,6 +370,72 @@ test("tenant isolation prevents cross-client context", async () => {
       ),
     /Conversation does not match/,
   );
+});
+
+test("unknown ai mode fails closed without auto send", () => {
+  const decision = decideModeAction("future_mode", { level: "green", reasons: [] });
+  assert.equal(decision.action, "ignore");
+  assert.equal(decision.reason, "unknown_ai_mode_blocked");
+});
+
+test("unknown ai mode never calls provider or sends", async () => {
+  let generated = false;
+  const sent = [];
+  const result = await handleInboundMessage(
+    {
+      ...baseInput,
+      client: { ...baseInput.client, aiMode: "future_mode" },
+    },
+    {
+      generateReply: async () => {
+        generated = true;
+        return "should not send";
+      },
+      sendMessage: async (payload) => sent.push(payload),
+    },
+  );
+
+  assert.equal(result.action, "no_ai");
+  assert.equal(result.blockedReason, "unknown_ai_mode_blocked");
+  assert.equal(result.providerAttempted, false);
+  assert.equal(generated, false);
+  assert.equal(sent.length, 0);
+});
+
+test("unexpected provider error returns safe no_ai with failed provider metadata", async () => {
+  let sent = [];
+  const result = await handleInboundMessage(baseInput, {
+    generateReply: async () => {
+      throw new Error("upstream service unavailable");
+    },
+    sendMessage: async (payload) => {
+      sent.push(payload);
+    },
+  });
+
+  assert.equal(result.action, "no_ai");
+  assert.equal(result.blockedReason, "provider_error");
+  assert.equal(result.providerAttempted, true);
+  assert.equal(result.providerStatus, "failed");
+  assert.equal(result.providerErrorCode, "provider_error");
+  assert.equal(result.model, "gemini-1.5-flash");
+  assert.equal(result.draft, null);
+  assert.equal(sent.length, 0);
+});
+
+test("provider error with known code preserves error code", async () => {
+  const result = await handleInboundMessage(baseInput, {
+    generateReply: async () => {
+      const error = new Error("timeout");
+      error.code = "provider_timeout";
+      throw error;
+    },
+  });
+
+  assert.equal(result.action, "no_ai");
+  assert.equal(result.blockedReason, "provider_timeout");
+  assert.equal(result.providerErrorCode, "provider_timeout");
+  assert.equal(result.providerStatus, "failed");
 });
 
 test("voice profile captures style from samples", () => {

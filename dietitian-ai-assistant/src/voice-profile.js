@@ -7,9 +7,45 @@ const informalTerms = [
   "süper",
   "devam",
   "güzel gidiyorsun",
+  "great job",
+  "awesome",
+  "love it",
+  "super",
+  "toll",
+  "klasse",
+  "genial",
+  "super",
+  "bravo",
+  "parfait",
+  "genial",
+  "incrivel",
+  "skvele",
+  "skvely",
 ];
 
-const formalTerms = ["sayın", "rica ederim", "uygundur", "öneririm", "kontrol edelim"];
+const formalTerms = [
+  "sayın",
+  "rica ederim",
+  "uygundur",
+  "öneririm",
+  "kontrol edelim",
+  "dear sir",
+  "dear madam",
+  "kind regards",
+  "please note",
+  "sehr geehrte",
+  "mit freundlichen",
+  "bitte beachten",
+  "madame",
+  "monsieur",
+  "cordialement",
+  "veuillez",
+  "estimado",
+  "atentamente",
+  "prezado",
+  "vazeny",
+  "prosim",
+];
 
 export function buildDietitianVoiceProfile(samples) {
   const cleanSamples = samples.map((sample) => sample.trim()).filter(Boolean);
@@ -80,4 +116,3 @@ function buildStyleNotes({ informalScore, formalScore, emojiCount, sampleCount }
   if (emojiCount / sampleCount > 0.5) notes.push("A small number of supportive emojis is acceptable.");
   return notes.join(" ");
 }
-
