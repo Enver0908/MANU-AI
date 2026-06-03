@@ -15,7 +15,7 @@ Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized reference
 ## Current Baseline
 
 - Git baseline: Phase 27-29 checkpoint exists at `c75564e Add Phase 27-29 pilot readiness checkpoint` on branch `codex/phase-29-baseline-checkpoint`; Completion Roadmap Phase 1 records this as the current implementation baseline.
-- Latest local release verification: `npm run release:verify` passed on 2026-06-03 after Phase 56 clinical safety second-layer local evidence changes.
+- Latest local release verification: `npm run release:verify` passed on 2026-06-03 after Phase 57 yellow-risk hold/draft refresh changes.
 - Verification result: core tests 75/75, app tests 134/134, lint passed, production build passed.
 - Dependency audit result: only known R-405 findings, `next:postcss` and `postcss:GHSA-qx2v-qp2m-jg93`.
 - R-405 status: open production launch blocker; Phase 54 rechecked metadata on 2026-06-02 and stable `next@latest` is 16.2.7 but still bundles `postcss@8.4.31`, so no safe stable Next.js/PostCSS patch path is available.
@@ -44,6 +44,7 @@ Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized reference
 - Phase 54 R-405 and launch gates recheck spec: `PHASE_54_R405_AND_LAUNCH_GATES_RECHECK_SPEC.md` records the latest stable dependency metadata, production audit result, and open launch-gate status. It does not approve production pilot launch or resolve R-405.
 - Phase 55 audit remediation safety boundary spec: `PHASE_55_AUDIT_REMEDIATION_SAFETY_BOUNDARY_SPEC.md` records local clinical normalization, prompt-injection routing, PromptContext data-boundary, safety-critical context, and red-risk preflight regression hardening. It does not approve production pilot launch or resolve R-405.
 - Phase 56 clinical safety second-layer local evidence spec: `PHASE_56_CLINICAL_SAFETY_SECOND_LAYER_LOCAL_EVIDENCE_SPEC.md` records local deterministic second-layer yellow escalation evidence above the regex classifier. It does not approve production pilot launch, clinical taxonomy approval, real provider use, or R-405.
+- Phase 57 yellow-risk hold/draft refresh spec: `PHASE_57_YELLOW_RISK_HOLD_DRAFT_REFRESH_SPEC.md` records local yellow hold passivation, one-draft refresh behavior, and red-lock precedence. It does not approve production pilot launch, clinical taxonomy approval, real provider use, or R-405. Local Supabase/RLS evidence for the new migration remains open until Docker Desktop/local Supabase is available.
 
 ## Gate Closure Matrix
 

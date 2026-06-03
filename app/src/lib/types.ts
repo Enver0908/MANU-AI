@@ -174,9 +174,26 @@ export type ClientRecord = {
   safetyChecklist: SafetyChecklist;
   humanTakeoverLocked: boolean;
   redRiskLock: RedRiskLockRecord;
+  yellowRiskHold: YellowRiskHoldRecord;
   contextRevision: number;
   createdAt: string;
 };
+
+export type YellowRiskHoldRecord =
+  | { status: "none" }
+  | {
+      status: "active";
+      startedAt: string;
+      firstMessageId: string;
+      latestMessageId: string;
+      activeDraftMessageId: string | null;
+      activeDecisionId: string | null;
+      messageIds: string[];
+      reasons: string[];
+      previousAiStatus: AiStatus;
+      previousAiMode: AiMode;
+      blockedByRedHandoffId: string | null;
+    };
 
 export type RedRiskLockRecord =
   | { status: "none" }

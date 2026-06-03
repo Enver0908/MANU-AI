@@ -155,6 +155,11 @@ describe("local inbound simulator", () => {
     expect(next.lastSimulation?.risk).toBe("yellow");
     expect(next.lastSimulation?.model).toBe("gemini-3");
     expect(next.messages.some((message) => message.origin === "ai_generated" && message.status === "draft")).toBe(true);
+    expect(next.clients.find((client) => client.id === "client-elif")).toMatchObject({
+      aiStatus: "passive",
+      aiMode: "paused",
+      yellowRiskHold: { status: "active" },
+    });
   });
 
   it("routes prompt injection attempts to approval drafts instead of auto-send", async () => {
@@ -232,8 +237,15 @@ describe("local inbound simulator", () => {
     expect(next.lastSimulation?.action).toBe("draft_for_approval");
     expect(next.lastSimulation?.risk).toBe("yellow");
     expect(next.riskAssessments.at(-1)?.reasons).toContain("second_layer_ambiguous_clinical_reference");
+    const activeDraft = next.messages.find(
+      (message) => message.origin === "ai_generated" && message.status === "draft",
+    );
     expect(next.aiDecisions.at(-1)?.providerAttempted).toBe(true);
-    expect(next.messages.at(-1)).toMatchObject({ origin: "ai_generated", status: "draft" });
+    expect(activeDraft).toMatchObject({ origin: "ai_generated", status: "draft" });
+    expect(next.clients.find((client) => client.id === "client-mert")?.yellowRiskHold).toMatchObject({
+      status: "active",
+      latestMessageId: next.messages.find((message) => message.body === "Bunu icsem olur mu?")?.id,
+    });
   });
 
   it("escalates cumulative meal restriction patterns to yellow", async () => {
@@ -414,27 +426,41 @@ describe("local inbound simulator", () => {
     expect(second.riskAssessments).toHaveLength(first.riskAssessments.length);
   });
 
-  it("invalidates pending drafts when new inbound context arrives", async () => {
+  it("refreshes a yellow hold draft when new green or yellow inbound context arrives", async () => {
     const withDraft = await runInboundSimulation(createInitialState(), {
       clientId: "client-elif",
       body: "D vitamini takviyesi kullanayim mi?",
-      idempotencyKey: "draft-invalidate-1",
+      idempotencyKey: "yellow-refresh-1",
       now: "2026-05-22T10:22:00.000Z",
     });
     const draft = withDraft.messages.find((message) => message.status === "draft");
 
-    const next = await runInboundSimulation(withDraft, {
+    const withGreenRefresh = await runInboundSimulation(withDraft, {
       clientId: "client-elif",
-      body: "Bir de magnezyum soracaktim.",
-      idempotencyKey: "draft-invalidate-2",
+      body: "Bugun kahvaltida yulaf olur mu?",
+      idempotencyKey: "yellow-refresh-2",
       now: "2026-05-22T10:23:00.000Z",
     });
+    const next = await runInboundSimulation(withGreenRefresh, {
+      clientId: "client-elif",
+      body: "Bir de magnezyum soracaktim.",
+      idempotencyKey: "yellow-refresh-3",
+      now: "2026-05-22T10:24:00.000Z",
+    });
 
-    const invalidatedDraft = next.messages.find((message) => message.id === draft?.id);
-    const invalidatedDecision = next.aiDecisions.find((decision) => decision.id === draft?.generatedByAiDecisionId);
-    expect(invalidatedDraft?.status).toBe("blocked");
-    expect(invalidatedDecision?.sendStatus).toBe("draft_invalidated");
-    expect(next.auditEvents.some((event) => event.eventType === "draft_context_invalidated")).toBe(true);
+    const refreshedDraft = next.messages.find((message) => message.id === draft?.id);
+    const supersededDecision = next.aiDecisions.find((decision) => decision.id === draft?.generatedByAiDecisionId);
+    const activeHold = next.clients.find((client) => client.id === "client-elif")?.yellowRiskHold;
+    expect(refreshedDraft?.status).toBe("draft");
+    expect(refreshedDraft?.sourceMessageId).toBe(
+      next.messages.find((message) => message.body === "Bir de magnezyum soracaktim.")?.id,
+    );
+    expect(supersededDecision?.sendStatus).toBe("draft_invalidated");
+    expect(supersededDecision?.blockedReason).toBe("yellow_hold_draft_superseded");
+    expect(activeHold).toMatchObject({ status: "active", activeDraftMessageId: draft?.id });
+    expect(activeHold?.status === "active" ? activeHold.messageIds : []).toHaveLength(3);
+    expect(next.riskAssessments.at(-2)?.reasons).toContain("yellow_hold_pending_context");
+    expect(next.auditEvents.some((event) => event.eventType === "yellow_risk_hold_draft_refreshed")).toBe(true);
   });
 
   it("blocks legacy and invalidated draft approval with controlled 409 errors", async () => {
@@ -503,6 +529,50 @@ describe("local inbound simulator", () => {
     const sentDraft = next.messages.find((message) => message.id === draft?.id);
     expect(sentDraft?.status).toBe("sent");
     expect(sentDraft?.approvedByDietitianId).toBe(withDraft.dietitian.id);
+    expect(next.clients.find((client) => client.id === "client-elif")).toMatchObject({
+      aiStatus: "active",
+      aiMode: "copilot",
+      yellowRiskHold: { status: "none" },
+    });
+  });
+
+  it("keeps yellow hold drafts pending when a later red message creates a manual lock", async () => {
+    const withDraft = await runInboundSimulation(createInitialState(), {
+      clientId: "client-mert",
+      body: "D vitamini takviyesi kullanayim mi?",
+      idempotencyKey: "yellow-red-1",
+      now: "2026-05-22T10:24:50.000Z",
+    });
+    const draft = withDraft.messages.find((message) => message.status === "draft");
+
+    const withRedLock = await runInboundSimulation(withDraft, {
+      clientId: "client-mert",
+      body: "Alerjiden nefes alamiyorum, bogazim sisti.",
+      idempotencyKey: "yellow-red-2",
+      now: "2026-05-22T10:24:55.000Z",
+    });
+    const heldDraft = withRedLock.messages.find((message) => message.id === draft?.id);
+    const lockedClient = withRedLock.clients.find((client) => client.id === "client-mert");
+
+    expect(withRedLock.lastSimulation?.action).toBe("handoff");
+    expect(withRedLock.lastSimulation?.risk).toBe("red");
+    expect(heldDraft?.status).toBe("draft");
+    expect(lockedClient?.redRiskLock.status).toBe("locked");
+    expect(lockedClient?.yellowRiskHold).toMatchObject({
+      status: "active",
+      activeDraftMessageId: draft?.id,
+      blockedByRedHandoffId:
+        lockedClient?.redRiskLock.status === "locked" ? lockedClient.redRiskLock.handoffId : null,
+    });
+
+    const afterApproval = approveDraftMessageInState(withRedLock, draft?.id || "");
+    expect(afterApproval.messages.find((message) => message.id === draft?.id)?.status).toBe("sent");
+    expect(afterApproval.clients.find((client) => client.id === "client-mert")).toMatchObject({
+      aiStatus: "passive",
+      aiMode: "manual",
+      humanTakeoverLocked: true,
+      yellowRiskHold: { status: "none" },
+    });
   });
 
   it("blocks auto-send when the dietitian takeover lock is active", async () => {

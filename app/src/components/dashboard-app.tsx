@@ -1237,6 +1237,7 @@ function ConversationPanel({
 }) {
   const [draftEdits, setDraftEdits] = useState<Record<string, string>>({});
   const redRiskLocked = client.redRiskLock.status === "locked";
+  const yellowRiskHeld = client.yellowRiskHold.status === "active";
 
   return (
     <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
@@ -1308,6 +1309,7 @@ function ConversationPanel({
             <InfoLine label="Takeover" value={client.humanTakeoverLocked ? "locked" : "open"} />
             <InfoLine label="Permission" value={client.channelPermission} />
             {redRiskLocked && <InfoLine label="Red risk" value="manual reactivation required" />}
+            {yellowRiskHeld && !redRiskLocked && <InfoLine label="Yellow risk" value="review pending" />}
           </div>
           {redRiskLocked && (
             <div className="mt-3 rounded-lg border border-red-200 bg-red-50 p-3 text-sm leading-6 text-red-900">

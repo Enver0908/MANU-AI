@@ -272,6 +272,7 @@ declare module "dietitian-ai-assistant-architecture" {
     promptVersion?: string | null;
     providerId?: string | null;
     now?: string;
+    riskDecisionOverride?: RiskDecision;
   };
 
   export type CoreResult = {

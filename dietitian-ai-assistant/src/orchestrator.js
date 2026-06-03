@@ -33,16 +33,18 @@ export async function handleInboundMessage(input, adapters) {
     memory,
   });
 
-  const riskDecision = classifyClinicalSafetyRisk({
-    message: input.message.body,
-    recentMessages: input.recentMessages || [],
-    clientProfile: {
-      highRisk: capsule.client.clinicalRiskNotes.length > 0,
-      healthProfile: capsule.client.healthProfile,
-      allergies: capsule.client.allergies,
-      restrictedFoods: capsule.client.restrictedFoods,
-    },
-  });
+  const riskDecision =
+    input.riskDecisionOverride ||
+    classifyClinicalSafetyRisk({
+      message: input.message.body,
+      recentMessages: input.recentMessages || [],
+      clientProfile: {
+        highRisk: capsule.client.clinicalRiskNotes.length > 0,
+        healthProfile: capsule.client.healthProfile,
+        allergies: capsule.client.allergies,
+        restrictedFoods: capsule.client.restrictedFoods,
+      },
+    });
 
   const preflightBlock = evaluateInboundPreflight(input.client);
   if (preflightBlock) {

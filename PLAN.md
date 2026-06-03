@@ -82,9 +82,16 @@ Routing:
 
 - Green + active autopilot: can auto-send after quality guard.
 - Green + copilot: draft for approval.
-- Yellow: draft for approval only.
+- Yellow: AI becomes passive/paused and creates one dietitian approval draft.
 - Red: no LLM call; handoff to dietitian.
 - Passive AI: no AI generation.
+
+Yellow-risk hold rule:
+
+- A yellow-risk message creates a `yellowRiskHold`, passivates AI, and waits for dietitian approval.
+- While `yellowRiskHold` is active, later green/yellow inbound messages do not receive client-facing AI replies; they refresh the same pending draft so the dietitian reviews the conversation from the first yellow message through the latest message.
+- Dietitian approve or edit-and-send resolves the yellow hold and restores the previous AI status/mode if no red lock is active.
+- If a red-risk message arrives during a yellow hold, the yellow draft is preserved, red lock/manual handoff wins, and approving the yellow draft does not reactivate AI.
 
 Red-risk reactivation rule:
 

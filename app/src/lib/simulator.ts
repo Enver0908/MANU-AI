@@ -96,11 +96,6 @@ export async function runInboundSimulation(
   if (client.lifecycleStatus === "removed_anonymized") {
     throw new AppDomainError(409, "client_removed_anonymized");
   }
-  const promptClient = {
-    ...client,
-    clientFormSummary: buildClientFormSummary(state, client.id),
-    contextUpdates: buildClientContextUpdateSummary(state, client.id),
-  };
   const conversation = findConversation(state, client.id);
   const now = request.now || new Date().toISOString();
   const inboundMessage = buildMessage({
@@ -119,7 +114,16 @@ export async function runInboundSimulation(
     messages: [...state.messages, inboundMessage],
   };
   const priorConversationMessages = state.messages.filter((message) => message.conversationId === conversation.id);
-  const riskDecision = classifySimulationRisk(client, trimmedBody, priorConversationMessages);
+  const yellowHoldAtInbound = client.yellowRiskHold.status === "active" ? client.yellowRiskHold : null;
+  const baseRiskDecision = classifySimulationRisk(client, trimmedBody, priorConversationMessages);
+  const riskDecision =
+    yellowHoldAtInbound && baseRiskDecision.level !== "red"
+      ? {
+          ...baseRiskDecision,
+          level: "yellow" as const,
+          reasons: Array.from(new Set([...baseRiskDecision.reasons, "yellow_hold_pending_context"])),
+        }
+      : baseRiskDecision;
   const riskAssessment = buildRiskAssessment({
     state,
     conversation,
@@ -135,6 +139,7 @@ export async function runInboundSimulation(
     stateWithInboundAndRisk,
     now,
     "new_inbound_message",
+    yellowHoldAtInbound?.activeDraftMessageId ? [yellowHoldAtInbound.activeDraftMessageId] : [],
   );
 
   const preflightBlock = getPreflightBlock(client);
@@ -150,6 +155,17 @@ export async function runInboundSimulation(
       riskLevel: riskDecision.level,
     });
   }
+
+  const promptClient = withPromptContext(
+    yellowHoldAtInbound
+      ? {
+          ...client,
+          aiStatus: yellowHoldAtInbound.previousAiStatus,
+          aiMode: yellowHoldAtInbound.previousAiMode,
+        }
+      : client,
+    state,
+  );
 
   const coreResult = (await handleInboundMessage(
     {
@@ -169,6 +185,7 @@ export async function runInboundSimulation(
       promptVersion: PROMPT_VERSION,
       providerId: MOCK_PROVIDER_ID,
       now,
+      riskDecisionOverride: riskDecision,
     },
     {
       generateReply: async (payload: Record<string, unknown>) => {
@@ -298,6 +315,14 @@ export function addClientToState(state: ManuAppState, client: ClientRecord): Man
   };
 }
 
+function withPromptContext(client: ClientRecord, state: ManuAppState) {
+  return {
+    ...client,
+    clientFormSummary: buildClientFormSummary(state, client.id),
+    contextUpdates: buildClientContextUpdateSummary(state, client.id),
+  };
+}
+
 export function updateClientInState(
   state: ManuAppState,
   clientId: string,
@@ -400,9 +425,26 @@ export function approveDraftMessageInState(
   }
 
   const finalBody = body?.trim() || draft.body;
+  const conversation = state.conversations.find((item) => item.id === draft.conversationId);
+  const client = conversation ? state.clients.find((item) => item.id === conversation.clientId) : undefined;
+  const resolvesYellowHold =
+    client?.yellowRiskHold.status === "active" && client.yellowRiskHold.activeDraftMessageId === draft.id;
+  const now = new Date().toISOString();
 
   return {
     ...state,
+    clients: resolvesYellowHold
+      ? state.clients.map((item) =>
+          item.id === client.id && item.yellowRiskHold.status === "active"
+            ? {
+                ...item,
+                aiStatus: item.redRiskLock.status === "locked" ? item.aiStatus : item.yellowRiskHold.previousAiStatus,
+                aiMode: item.redRiskLock.status === "locked" ? item.aiMode : item.yellowRiskHold.previousAiMode,
+                yellowRiskHold: { status: "none" as const },
+              }
+            : item,
+        )
+      : state.clients,
     messages: state.messages.map((message) =>
       message.id === messageId
         ? {
@@ -420,8 +462,11 @@ export function approveDraftMessageInState(
         body?.trim() && body.trim() !== draft.body ? "draft_edited_and_sent" : "draft_approved",
         "message",
         messageId,
-        new Date().toISOString(),
+        now,
       ),
+      ...(resolvesYellowHold
+        ? [buildAuditEvent(state, "yellow_risk_hold_resolved", "client", client.id, now)]
+        : []),
     ],
   };
 }
@@ -439,11 +484,25 @@ function revalidateDraftBeforeSend(
 
   if (!conversation || !client || !manifest) return "revalidation_query_failed";
   if (client.lifecycleStatus === "removed_anonymized") return "client_removed_anonymized";
-  if (Number(manifest.clientContextRevision) !== client.contextRevision) return "context_changed_before_send";
-  if (client.channelPermission !== "ready") return "context_changed_before_send";
-  if (client.humanTakeoverLocked) return "context_changed_before_send";
-  if (client.aiStatus !== "active" || client.aiMode === "manual" || client.aiMode === "paused") {
+  const activeYellowHoldDraft =
+    client.yellowRiskHold.status === "active" &&
+    client.yellowRiskHold.activeDraftMessageId === draft.id &&
+    client.yellowRiskHold.activeDecisionId === decision.id;
+  const redLockSupersedesYellowHold =
+    activeYellowHoldDraft &&
+    client.redRiskLock.status === "locked" &&
+    client.yellowRiskHold.status === "active" &&
+    client.yellowRiskHold.blockedByRedHandoffId === client.redRiskLock.handoffId;
+  if (Number(manifest.clientContextRevision) !== client.contextRevision && !redLockSupersedesYellowHold) {
     return "context_changed_before_send";
+  }
+  if (client.channelPermission !== "ready") return "context_changed_before_send";
+  if (client.humanTakeoverLocked && !activeYellowHoldDraft) return "context_changed_before_send";
+  if (client.aiStatus !== "active" || client.aiMode === "manual" || client.aiMode === "paused") {
+    if (!activeYellowHoldDraft) return "context_changed_before_send";
+    if (client.redRiskLock.status !== "locked" && (client.aiStatus !== "passive" || client.aiMode !== "paused")) {
+      return "context_changed_before_send";
+    }
   }
 
   const latestPromptableId = latestPromptableMessageIdForConversation(state, conversation.id, draft.id);
@@ -453,7 +512,7 @@ function revalidateDraftBeforeSend(
       : typeof manifest.lastPromptableMessageId === "string"
         ? manifest.lastPromptableMessageId
         : null;
-  if ((latestPromptableId || null) !== (expectedLatestId || null)) {
+  if (!redLockSupersedesYellowHold && (latestPromptableId || null) !== (expectedLatestId || null)) {
     return "context_changed_before_send";
   }
 
@@ -640,10 +699,21 @@ export function resolveAndReactivateRedRiskInState(
   };
 }
 
-export function invalidatePendingDrafts(state: ManuAppState, createdAt: string, reason: string): ManuAppState {
+export function invalidatePendingDrafts(
+  state: ManuAppState,
+  createdAt: string,
+  reason: string,
+  preserveDraftIds: string[] = [],
+): ManuAppState {
+  const preserved = new Set(preserveDraftIds);
   const pendingDraftIds = new Set(
     state.messages
-      .filter((message) => message.status === "draft" && message.origin === "ai_generated")
+      .filter(
+        (message) =>
+          message.status === "draft" &&
+          message.origin === "ai_generated" &&
+          !preserved.has(message.id),
+      )
       .map((message) => message.id),
   );
 
@@ -694,6 +764,7 @@ function isPromptAffectingClientPatch(patch: Partial<ClientRecord>) {
     "safetyChecklist",
     "humanTakeoverLocked",
     "redRiskLock",
+    "yellowRiskHold",
   ].some((key) => Object.prototype.hasOwnProperty.call(patch, key));
 }
 
@@ -749,6 +820,7 @@ function appendCoreSimulationResult({
   const auditEvents = [...state.auditEvents];
   const notifications = [...state.notifications];
   let nextClients = state.clients;
+  let nextAiDecisions = state.aiDecisions;
 
   if (coreResult.blockedReason === "client_ai_window_expired") {
     nextClients = state.clients.map((item) =>
@@ -796,8 +868,27 @@ function appendCoreSimulationResult({
   }
 
   if (coreResult.action === "draft_for_approval" && coreResult.draft) {
-    nextMessages.push(
-      buildMessage({
+    const activeHold =
+      client.yellowRiskHold.status === "active" && client.yellowRiskHold.activeDraftMessageId
+        ? client.yellowRiskHold
+        : null;
+    const existingDraftIndex = activeHold
+      ? nextMessages.findIndex(
+          (message) => message.id === activeHold.activeDraftMessageId && message.status === "draft",
+        )
+      : -1;
+    const draftMessage =
+      existingDraftIndex >= 0
+        ? {
+            ...nextMessages[existingDraftIndex],
+            body: coreResult.draft,
+            sourceMessageId: inboundMessage.id,
+            generatedByAiDecisionId: decision.id,
+            risk: coreResult.risk,
+            status: "draft" as const,
+            createdAt: now,
+          }
+        : buildMessage({
         state,
         conversation,
         sender: "assistant",
@@ -808,8 +899,57 @@ function appendCoreSimulationResult({
         risk: coreResult.risk,
         status: "draft",
         createdAt: now,
-      }),
-    );
+      });
+
+    if (existingDraftIndex >= 0) {
+      nextMessages[existingDraftIndex] = draftMessage;
+    } else {
+      nextMessages.push(draftMessage);
+    }
+
+    nextClients = nextClients.map((item) => {
+      if (item.id !== client.id) return item;
+      const previousHold = item.yellowRiskHold.status === "active" ? item.yellowRiskHold : null;
+      return {
+        ...item,
+        aiStatus: "passive",
+        aiMode: "paused",
+        yellowRiskHold: {
+          status: "active",
+          startedAt: previousHold?.startedAt || now,
+          firstMessageId: previousHold?.firstMessageId || inboundMessage.id,
+          latestMessageId: inboundMessage.id,
+          activeDraftMessageId: draftMessage.id,
+          activeDecisionId: decision.id,
+          messageIds: Array.from(new Set([...(previousHold?.messageIds || []), inboundMessage.id])),
+          reasons: Array.from(new Set([...(previousHold?.reasons || []), ...coreResult.reasons])),
+          previousAiStatus: previousHold?.previousAiStatus || item.aiStatus,
+          previousAiMode: previousHold?.previousAiMode || item.aiMode,
+          blockedByRedHandoffId: previousHold?.blockedByRedHandoffId || null,
+        },
+      };
+    });
+
+    if (activeHold?.activeDecisionId) {
+      const previousDecisionIndex = nextAiDecisions.findIndex((item) => item.id === activeHold.activeDecisionId);
+      if (previousDecisionIndex >= 0 && nextAiDecisions[previousDecisionIndex].sendStatus !== "draft_invalidated") {
+        nextAiDecisions = nextAiDecisions.map((item) =>
+          item.id === activeHold.activeDecisionId
+            ? {
+                ...item,
+                sendStatus: "draft_invalidated",
+                blockedReason: "yellow_hold_draft_superseded",
+                reasons: Array.from(new Set([...item.reasons, "yellow_hold_draft_superseded"])),
+              }
+            : item,
+        );
+        auditEvents.push(
+          buildAuditEvent(state, "yellow_risk_hold_draft_refreshed", "message", draftMessage.id, now),
+        );
+      }
+    } else {
+      auditEvents.push(buildAuditEvent(state, "yellow_risk_hold_created", "client", client.id, now));
+    }
   }
 
   if (coreResult.action === "handoff" && coreResult.handoffCase) {
@@ -831,9 +971,15 @@ function appendCoreSimulationResult({
                 handoffId: lockHandoffId,
                 lockedAt: now,
                 reasons: coreResult.handoffCase?.reasons || coreResult.reasons,
-                previousAiStatus: item.aiStatus,
-                previousAiMode: item.aiMode,
+                previousAiStatus:
+                  item.yellowRiskHold.status === "active" ? item.yellowRiskHold.previousAiStatus : item.aiStatus,
+                previousAiMode:
+                  item.yellowRiskHold.status === "active" ? item.yellowRiskHold.previousAiMode : item.aiMode,
               },
+              yellowRiskHold:
+                item.yellowRiskHold.status === "active"
+                  ? { ...item.yellowRiskHold, blockedByRedHandoffId: lockHandoffId }
+                  : item.yellowRiskHold,
               contextRevision: item.contextRevision + 1,
             }
           : item,
@@ -908,7 +1054,7 @@ function appendCoreSimulationResult({
       ...state,
       clients: nextClients,
       messages: nextMessages,
-      aiDecisions: [...state.aiDecisions, decision],
+      aiDecisions: [...nextAiDecisions, decision],
       handoffCases,
       notifications,
       auditEvents: [...auditEvents, buildAuditEvent(state, "simulation_processed", "ai_decision", decision.id, now)],
@@ -944,7 +1090,7 @@ function appendCoreSimulationResult({
     ...state,
     clients: nextClients,
     messages: nextMessages,
-    aiDecisions: [...state.aiDecisions, decision],
+    aiDecisions: [...nextAiDecisions, decision],
     handoffCases,
     notifications,
     auditEvents: [...auditEvents, buildAuditEvent(state, "simulation_processed", "ai_decision", decision.id, now)],

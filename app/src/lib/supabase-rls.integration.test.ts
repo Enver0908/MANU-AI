@@ -663,7 +663,59 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
 
     expect(riskAssessment.error).toBeNull();
     expect(riskAssessment.data?.level).toBe("yellow");
-    expect(riskAssessment.data?.classifier_version).toBe("dietetic-risk-v0.3.0");
+    expect(riskAssessment.data?.classifier_version).toContain("clinical-safety-second-layer-v0.1.0");
+    await resetSupabaseState();
+  }, 30000);
+
+  it("stores yellow risk hold state and refreshes the active draft through transactional RPC", async () => {
+    await resetSupabaseState();
+    const state = await loadSupabaseState();
+    const client = state.clients.find((item) => item.id.endsWith("12"));
+
+    expect(client).toBeDefined();
+
+    const withYellow = await runSupabaseSimulation({
+      clientId: client!.id,
+      body: "D vitamini takviyesi kullanayim mi?",
+      idempotencyKey: `yellow-hold-${Date.now()}`,
+    });
+    const draft = withYellow.messages.find(
+      (message) => message.origin === "ai_generated" && message.status === "draft",
+    );
+
+    expect(draft).toBeDefined();
+    expect(withYellow.clients.find((item) => item.id === client!.id)?.yellowRiskHold).toMatchObject({
+      status: "active",
+      activeDraftMessageId: draft?.id,
+    });
+
+    const withRefresh = await runSupabaseSimulation({
+      clientId: client!.id,
+      body: "Bugun kahvaltida yulaf olur mu?",
+      idempotencyKey: `yellow-hold-refresh-${Date.now()}`,
+    });
+    const refreshedDraft = withRefresh.messages.find((message) => message.id === draft?.id);
+    const supersededDecision = withRefresh.aiDecisions.find(
+      (decision) => decision.id === draft?.generatedByAiDecisionId,
+    );
+
+    expect(refreshedDraft?.status).toBe("draft");
+    expect(supersededDecision?.sendStatus).toBe("draft_invalidated");
+    expect(supersededDecision?.blockedReason).toBe("yellow_hold_draft_superseded");
+
+    const storedClient = await admin
+      .from("clients")
+      .select("ai_status, ai_mode, yellow_risk_hold")
+      .eq("tenant_id", state.tenant.id)
+      .eq("id", client!.id)
+      .single();
+
+    expect(storedClient.error).toBeNull();
+    expect(storedClient.data).toMatchObject({
+      ai_status: "passive",
+      ai_mode: "paused",
+      yellow_risk_hold: { status: "active", activeDraftMessageId: draft?.id },
+    });
     await resetSupabaseState();
   }, 30000);
 

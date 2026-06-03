@@ -91,6 +91,7 @@ type DbClient = {
   safety_checklist: Partial<ClientRecord["safetyChecklist"]> | null;
   human_takeover_locked: boolean;
   red_risk_lock: ClientRecord["redRiskLock"] | null;
+  yellow_risk_hold: ClientRecord["yellowRiskHold"] | null;
   context_revision: number;
   created_at: string;
 };
@@ -1529,6 +1530,7 @@ async function upsertClient(supabase: SupabaseClient, client: ClientRecord, befo
     mandatory_safety_complete: mandatorySafetyComplete,
     human_takeover_locked: client.humanTakeoverLocked,
     red_risk_lock: client.redRiskLock,
+    yellow_risk_hold: client.yellowRiskHold,
     context_revision: client.contextRevision,
     safety_checklist: safetyChecklist,
     health_profile: client.healthProfile,
@@ -1718,6 +1720,7 @@ function serializeClientForRpc(client: ClientRecord) {
     mandatorySafetyComplete: client.mandatorySafetyComplete,
     humanTakeoverLocked: client.humanTakeoverLocked,
     redRiskLock: client.redRiskLock,
+    yellowRiskHold: client.yellowRiskHold,
     contextRevision: client.contextRevision,
     safetyChecklist: normalizeSafetyChecklist(client.safetyChecklist),
     healthProfile: client.healthProfile,
@@ -2322,6 +2325,7 @@ function mapClient(client: DbClient, channels: DbChannel[]): ClientRecord {
     safetyChecklist: normalizeSafetyChecklist(client.safety_checklist),
     humanTakeoverLocked: client.human_takeover_locked,
     redRiskLock: normalizeRedRiskLock(client.red_risk_lock),
+    yellowRiskHold: normalizeYellowRiskHold(client.yellow_risk_hold),
     contextRevision: client.context_revision || 1,
     createdAt: client.created_at,
   };
@@ -2375,6 +2379,56 @@ function normalizeRedRiskLock(value: unknown): ClientRecord["redRiskLock"] {
       typeof lock.reactivatedByDietitianId === "string" ? lock.reactivatedByDietitianId : "",
     reactivationReason: typeof lock.reactivationReason === "string" ? lock.reactivationReason : "",
     reactivatedAiMode: lock.reactivatedAiMode === "autopilot" ? "autopilot" : "copilot",
+  };
+}
+
+function normalizeYellowRiskHold(value: unknown): ClientRecord["yellowRiskHold"] {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return { status: "none" };
+  }
+
+  const hold = value as Record<string, unknown>;
+  if (hold.status !== "active") {
+    return { status: "none" };
+  }
+
+  const firstMessageId = typeof hold.firstMessageId === "string" ? hold.firstMessageId : "";
+  const latestMessageId = typeof hold.latestMessageId === "string" ? hold.latestMessageId : "";
+  const startedAt = typeof hold.startedAt === "string" ? hold.startedAt : "";
+  if (!firstMessageId || !latestMessageId || !startedAt) {
+    return { status: "none" };
+  }
+
+  const previousAiStatus: ClientRecord["aiStatus"] =
+    hold.previousAiStatus === "active" || hold.previousAiStatus === "passive"
+      ? hold.previousAiStatus
+      : "active";
+  const previousAiMode: ClientRecord["aiMode"] =
+    hold.previousAiMode === "autopilot" ||
+    hold.previousAiMode === "copilot" ||
+    hold.previousAiMode === "manual" ||
+    hold.previousAiMode === "paused"
+      ? hold.previousAiMode
+      : "autopilot";
+
+  return {
+    status: "active",
+    startedAt,
+    firstMessageId,
+    latestMessageId,
+    activeDraftMessageId:
+      typeof hold.activeDraftMessageId === "string" ? hold.activeDraftMessageId : null,
+    activeDecisionId: typeof hold.activeDecisionId === "string" ? hold.activeDecisionId : null,
+    messageIds: Array.isArray(hold.messageIds)
+      ? hold.messageIds.filter((item): item is string => typeof item === "string")
+      : [firstMessageId],
+    reasons: Array.isArray(hold.reasons)
+      ? hold.reasons.filter((item): item is string => typeof item === "string")
+      : [],
+    previousAiStatus,
+    previousAiMode,
+    blockedByRedHandoffId:
+      typeof hold.blockedByRedHandoffId === "string" ? hold.blockedByRedHandoffId : null,
   };
 }
 
