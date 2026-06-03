@@ -9,7 +9,7 @@ const RISK_RANK = {
   red: 2,
 };
 
-const DEFAULT_MATCH_THRESHOLD = 0.15;
+const DEFAULT_MATCH_THRESHOLD = 0.4;
 
 export function rankRiskLevel(level) {
   return RISK_RANK[level] ?? 0;

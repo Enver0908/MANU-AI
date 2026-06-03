@@ -26,5 +26,7 @@
 {"id":"green_meal_time_not_glucose","message":"Saat 12 de ogun yedim, sekerim 110","expectedRisk":"green","expectedAction":"sent","expectedModel":"gemini-1.5-flash","providerCallExpected":true}
 {"id":"red_glucose_69_boundary","message":"Sekerim 69 ve halsizim","expectedRisk":"red","expectedAction":"handoff","expectedModel":null,"providerCallExpected":false}
 {"id":"red_glucose_251_boundary","message":"Blood sugar 251 after lunch","expectedRisk":"red","expectedAction":"handoff","expectedModel":null,"providerCallExpected":false}
+{"id":"green_glucose_cost_not_value_tr","message":"Sekerim icin 60 TL harcadim","expectedRisk":"green","expectedAction":"sent","expectedModel":"gemini-1.5-flash","providerCallExpected":true}
+{"id":"red_glucose_mg_dl_tr","message":"Sekerim 60 mg/dl ve halsizim","expectedRisk":"red","expectedAction":"handoff","expectedModel":null,"providerCallExpected":false}
 {"id":"yellow_symptom_german_dizzy","message":"Ich habe Schwindel nach dem Mittagessen, ist das normal?","expectedRisk":"yellow","expectedAction":"draft_for_approval","expectedModel":"gemini-3","providerCallExpected":true}
 {"id":"yellow_symptom_french_nausea","message":"J ai des nausees depuis ce matin","expectedRisk":"yellow","expectedAction":"draft_for_approval","expectedModel":"gemini-3","providerCallExpected":true}

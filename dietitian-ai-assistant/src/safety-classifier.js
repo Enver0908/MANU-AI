@@ -1,3 +1,5 @@
+import { normalizeSafetyText } from "./normalize-safety-text.js";
+
 export const SAFETY_CLASSIFIER_VERSION = "dietetic-risk-v0.3.1";
 
 const redRules = [
@@ -97,7 +99,12 @@ const redRules = [
   },
   {
     reason: "critical_glucose_issue",
-    patterns: [/sekerim.*(40|50|60|300|400)/i, /blood sugar.*(40|50|60|300|400)/i, /hipoglisemi/i, /hiperglisemi/i],
+    patterns: [
+      /sekerim.*(40|50|300|400)(?!\s*(tl|lira|₺))/i,
+      /blood sugar.*(40|50|300|400)(?!\s*(tl|lira|₺))/i,
+      /hipoglisemi/i,
+      /hiperglisemi/i,
+    ],
   },
   {
     reason: "pregnancy_complication",
@@ -219,9 +226,9 @@ const GLUCOSE_ANCHOR_PATTERNS = [
 ];
 
 const GLUCOSE_NUMERIC_WINDOW_CHARS = 48;
-
+const NON_GLUCOSE_UNIT_AFTER_NUMBER = /^\s*(tl|lira|₺|yas|yaş|gun|gün|hafta|dk|dakika|kg|cm|yil|yıl|ay|saat)\b/i;
 export function classifyDieteticRisk(message, clientProfile = {}) {
-  const text = normalizeText(message);
+  const text = normalizeSafetyText(message);
   const redReasons = dedupeReasons([
     ...collectReasons(text, redRules),
     ...collectGlucoseNumericReasons(text),
@@ -245,7 +252,7 @@ export function classifyConversationRisk({ message, recentMessages = [], clientP
   if (currentDecision.level !== "green") return currentDecision;
 
   const windowText = [...recentMessages, { body: message }]
-    .map((item) => normalizeText(typeof item === "string" ? item : item?.body || ""))
+    .map((item) => normalizeSafetyText(typeof item === "string" ? item : item?.body || ""))
     .filter(Boolean)
     .slice(-8);
   const cumulativeReasons = collectCumulativeReasons(windowText);
@@ -255,20 +262,6 @@ export function classifyConversationRisk({ message, recentMessages = [], clientP
   }
 
   return currentDecision;
-}
-
-function normalizeText(message) {
-  return String(message || "")
-    .trim()
-    .toLocaleLowerCase("tr-TR")
-    .replace(/ğ/g, "g")
-    .replace(/ı/g, "i")
-    .replace(/ö/g, "o")
-    .replace(/ş/g, "s")
-    .replace(/ü/g, "u")
-    .replace(/ç/g, "c")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
 }
 
 function collectReasons(text, rules) {
@@ -296,6 +289,10 @@ function collectGlucoseNumericReasons(text) {
     for (const match of window.matchAll(/\b(\d{2,3})\b/g)) {
       const value = Number.parseInt(match[1], 10);
       if (!Number.isFinite(value)) continue;
+
+      const suffix = window.slice(match.index + match[0].length);
+      if (NON_GLUCOSE_UNIT_AFTER_NUMBER.test(suffix)) continue;
+
       if (value <= 70 || value >= 250) {
         return ["critical_glucose_issue"];
       }

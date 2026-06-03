@@ -390,7 +390,7 @@ describe("local inbound simulator", () => {
     expect(second.inboundQuarantines).toHaveLength(1);
   });
 
-  it("records provider failures as safe no-send decisions", async () => {
+  it("records provider failures as handoff without client-facing AI reply", async () => {
     const state = createInitialState();
     const next = await runInboundSimulation(state, {
       clientId: "client-mert",
@@ -400,9 +400,11 @@ describe("local inbound simulator", () => {
       now: "2026-05-22T10:16:00.000Z",
     });
 
-    expect(next.lastSimulation?.action).toBe("no_ai");
+    expect(next.lastSimulation?.action).toBe("handoff");
     expect(next.lastSimulation?.blockedReason).toBe("provider_timeout");
     expect(countGeneratedMessages(next)).toBe(countGeneratedMessages(state));
+    expect(next.handoffCases.length).toBeGreaterThan(state.handoffCases.length);
+    expect(next.notifications.some((item) => item.type.startsWith("handoff_"))).toBe(true);
     expect(next.aiDecisions.at(-1)?.model).toBe("gemini-1.5-flash");
     expect(next.aiDecisions.at(-1)?.providerAttempted).toBe(true);
     expect(next.aiDecisions.at(-1)?.providerStatus).toBe("failed");
@@ -413,7 +415,7 @@ describe("local inbound simulator", () => {
     );
   });
 
-  it("records provider policy violations as safe no-send decisions", async () => {
+  it("records provider policy violations as handoff without client-facing AI reply", async () => {
     const state = createInitialState();
     const next = await runInboundSimulation(state, {
       clientId: "client-mert",
@@ -423,9 +425,10 @@ describe("local inbound simulator", () => {
       now: "2026-05-22T10:17:00.000Z",
     });
 
-    expect(next.lastSimulation?.action).toBe("no_ai");
+    expect(next.lastSimulation?.action).toBe("handoff");
     expect(next.lastSimulation?.blockedReason).toBe("provider_policy_violation");
     expect(countGeneratedMessages(next)).toBe(countGeneratedMessages(state));
+    expect(next.handoffCases.length).toBeGreaterThan(state.handoffCases.length);
     expect(next.aiDecisions.at(-1)?.providerAttempted).toBe(true);
     expect(next.aiDecisions.at(-1)?.providerStatus).toBe("failed");
     expect(next.aiDecisions.at(-1)?.providerErrorCode).toBe("provider_policy_violation");

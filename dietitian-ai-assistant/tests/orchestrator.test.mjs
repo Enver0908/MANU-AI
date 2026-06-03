@@ -402,8 +402,9 @@ test("unknown ai mode never calls provider or sends", async () => {
   assert.equal(sent.length, 0);
 });
 
-test("unexpected provider error returns safe no_ai with failed provider metadata", async () => {
+test("unexpected provider error returns handoff without client send", async () => {
   let sent = [];
+  let handoffs = [];
   const result = await handleInboundMessage(baseInput, {
     generateReply: async () => {
       throw new Error("upstream service unavailable");
@@ -411,9 +412,10 @@ test("unexpected provider error returns safe no_ai with failed provider metadata
     sendMessage: async (payload) => {
       sent.push(payload);
     },
+    onHandoff: async (handoff) => handoffs.push(handoff),
   });
 
-  assert.equal(result.action, "no_ai");
+  assert.equal(result.action, "handoff");
   assert.equal(result.blockedReason, "provider_error");
   assert.equal(result.providerAttempted, true);
   assert.equal(result.providerStatus, "failed");
@@ -421,40 +423,47 @@ test("unexpected provider error returns safe no_ai with failed provider metadata
   assert.equal(result.model, "gemini-1.5-flash");
   assert.equal(result.draft, null);
   assert.equal(sent.length, 0);
+  assert.equal(handoffs.length, 1);
 });
 
-test("provider error with known code preserves error code", async () => {
+test("provider error with known code preserves error code and handoff", async () => {
+  let handoffs = [];
   const result = await handleInboundMessage(baseInput, {
     generateReply: async () => {
       const error = new Error("timeout");
       error.code = "provider_timeout";
       throw error;
     },
+    onHandoff: async (handoff) => handoffs.push(handoff),
   });
 
-  assert.equal(result.action, "no_ai");
+  assert.equal(result.action, "handoff");
   assert.equal(result.blockedReason, "provider_timeout");
   assert.equal(result.providerErrorCode, "provider_timeout");
   assert.equal(result.providerStatus, "failed");
   assert.equal(result.providerOutputSafety?.allowed, false);
   assert.equal(result.providerOutputSafety?.issues?.[0]?.code, "provider_timeout");
+  assert.equal(handoffs.length, 1);
 });
 
-test("provider policy violation returns safe no_ai with output safety metadata", async () => {
+test("provider policy violation returns handoff with output safety metadata", async () => {
+  let handoffs = [];
   const result = await handleInboundMessage(baseInput, {
     generateReply: async () => {
       const error = new Error("policy");
       error.code = "provider_policy_violation";
       throw error;
     },
+    onHandoff: async (handoff) => handoffs.push(handoff),
   });
 
-  assert.equal(result.action, "no_ai");
+  assert.equal(result.action, "handoff");
   assert.equal(result.blockedReason, "provider_policy_violation");
   assert.equal(result.providerErrorCode, "provider_policy_violation");
   assert.equal(result.providerStatus, "failed");
   assert.equal(result.draft, null);
   assert.equal(result.providerOutputSafety?.allowed, false);
+  assert.equal(handoffs.length, 1);
 });
 
 test("voice profile captures style from samples", () => {

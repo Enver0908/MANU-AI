@@ -97,6 +97,7 @@ function personaContractIssues(text, capsule) {
   return issues;
 }
 
+// Intentionally separate from normalizeSafetyText: includes mojibake repair for provider output bytes.
 function normalizeForSafetyPatterns(text) {
   return String(text || "")
     .toLocaleLowerCase("tr-TR")

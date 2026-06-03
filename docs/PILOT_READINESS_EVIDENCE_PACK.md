@@ -18,9 +18,9 @@ Run from `app`:
 npm run release:verify
 ```
 
-Latest result, re-verified on 2026-06-04 after Phase 61 scope guard second layer mock-first:
+Latest result, re-verified on 2026-06-04 after Phase 62 architecture review remediation wave 2:
 
-- Core package tests: 112/112 passed.
+- Core package tests: 114/114 passed.
 - App tests: 150/150 passed.
 - App lint: passed.
 - Production build: passed.

@@ -15,8 +15,8 @@ Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized reference
 ## Current Baseline
 
 - Git baseline: Phase 27-29 checkpoint exists at `c75564e Add Phase 27-29 pilot readiness checkpoint` on branch `codex/phase-29-baseline-checkpoint`; Completion Roadmap Phase 1 records this as the current implementation baseline.
-- Latest local release verification: `npm run release:verify` passed on 2026-06-04 after Phase 61 scope guard second layer mock-first.
-- Verification result: core tests 112/112, app tests 150/150, lint passed, production build passed.
+- Latest local release verification: `npm run release:verify` passed on 2026-06-04 after Phase 62 architecture review remediation wave 2.
+- Verification result: core tests 114/114, app tests 150/150, lint passed, production build passed.
 - Dependency audit result: only known R-405 findings, `next:postcss` and `postcss:GHSA-qx2v-qp2m-jg93`.
 - R-405 status: open production launch blocker; Phase 54 rechecked metadata on 2026-06-02 and stable `next@latest` is 16.2.7 but still bundles `postcss@8.4.31`, so no safe stable Next.js/PostCSS patch path is available.
 - R-405 remediation spec: `PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`.
@@ -49,6 +49,7 @@ Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized reference
 - Phase 59 architecture review remediation spec: `PHASE_59_ARCHITECTURE_REVIEW_REMEDIATION_SPEC.md` records fail-closed unknown AI modes, core provider error boundary, clinical taxonomy hardening, simulator maintainability refactor, multilingual voice-profile scoring, and provider-native token counting as a future gate. It does not approve production pilot launch, clinical taxonomy approval, real provider use, or R-405.
 - Phase 60 audit remediation spec: `PHASE_60_AUDIT_REMEDIATION_SPEC.md` records glucose false-positive fixes, provider output-safety metadata, type-contract alignment, and expanded tests. It does not approve production pilot launch or clinical taxonomy approval.
 - Phase 61 scope guard second layer spec: `PHASE_61_SCOPE_GUARD_RAG_SECOND_LAYER_SPEC.md` records mock-first regulation-corpus retrieval, escalate-only merge (`scope-rag-v0.1.0`), raw-text-free scope guard audit, and disconnected real embedding/LLM seams. It does not approve production pilot launch, approved regulation corpus, or real provider use.
+- Phase 62 architecture review remediation spec: `PHASE_62_ARCHITECTURE_REVIEW_REMEDIATION_WAVE2_SPEC.md` records provider-failure dietitian handoff without client send, shared safety normalization, overlap retrieval, and glucose cost-unit tuning. It does not approve production pilot launch or resolve R-405.
 
 ## Gate Closure Matrix
 

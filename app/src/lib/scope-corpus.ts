@@ -1,3 +1,4 @@
+import { normalizeSafetyText } from "dietitian-ai-assistant-architecture";
 import type { ManuAppState, ScopeRuleChunkRecord, ScopeRuleRecord, SupportedLanguageCode } from "./types";
 
 export const SCOPE_CORPUS_VERSION = "scope-corpus-v0.1.0";
@@ -5,17 +6,7 @@ export const PLACEHOLDER_SCOPE_CORPUS_NOTE =
   "Placeholder rules remain draft until qualified dietitian clinical taxonomy approval.";
 
 export function normalizeScopeText(text: string) {
-  return String(text || "")
-    .trim()
-    .toLocaleLowerCase("tr-TR")
-    .replace(/ğ/g, "g")
-    .replace(/ı/g, "i")
-    .replace(/ö/g, "o")
-    .replace(/ş/g, "s")
-    .replace(/ü/g, "u")
-    .replace(/ç/g, "c")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
+  return normalizeSafetyText(text);
 }
 
 export function tokenizeScopeText(text: string) {

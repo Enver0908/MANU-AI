@@ -33,6 +33,8 @@ export async function handleInboundMessage(input, adapters) {
     memory,
   });
 
+  // App/simulator paths pass riskDecisionOverride as the single classification source.
+  // The fallback below exists for standalone core tests and direct handleInboundMessage callers only.
   const riskDecision =
     input.riskDecisionOverride ||
     classifyClinicalSafetyRisk({
@@ -136,10 +138,23 @@ export async function handleInboundMessage(input, adapters) {
     });
   } catch (error) {
     const providerErrorCode = resolveProviderErrorCode(error);
+    const handoffCase = createHandoffCase({
+      capsule,
+      inboundMessage: input.message.body,
+      riskDecision: {
+        ...riskDecision,
+        level: riskDecision.level === "red" ? "red" : "yellow",
+        reasons: [...riskDecision.reasons, providerErrorCode],
+        shouldHandoff: true,
+        pauseAutopilot: riskDecision.pauseAutopilot === true,
+      },
+    });
+    await adapters?.onHandoff?.(handoffCase);
     return buildResult({
       capsule,
       riskDecision,
-      action: "no_ai",
+      action: "handoff",
+      handoffCase,
       blockedReason: providerErrorCode,
       model: selectedModel,
       providerAttempted: true,

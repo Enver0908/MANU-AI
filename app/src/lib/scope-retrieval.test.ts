@@ -31,6 +31,6 @@ describe("scope retrieval", () => {
     const retrieved = retrieveScopeRulesLexical("Can you change my diet plan calories?", chunks, 3);
     expect(retrieved.length).toBeGreaterThan(0);
     expect(retrieved[0].ruleId).toBe("scope-rule-plan-change");
-    expect(retrieved[0].score).toBeGreaterThan(0.1);
+    expect(retrieved[0].score).toBeGreaterThanOrEqual(0.4);
   });
 });

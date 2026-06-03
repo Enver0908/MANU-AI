@@ -386,6 +386,8 @@ declare module "dietitian-ai-assistant-architecture" {
     },
   ): Promise<CoreResult>;
 
+  export function normalizeSafetyText(message: string): string;
+
   export type ScopeRuleEscalationLevel = "yellow" | "red";
   export type ScopeGuardStatus = "noop" | "unavailable" | "no_match" | "matched";
 

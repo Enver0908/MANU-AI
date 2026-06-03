@@ -39,6 +39,7 @@ Reason:
 - Phase 59 added validated architecture-review remediation: fail-closed unknown AI modes, core provider error boundary, glucose-context numeric escalation, expanded multilingual symptom patterns, simulator maintainability refactor, multilingual voice-profile scoring, and documented provider-native token counting for future integration. It did not approve any launch gate or resolve R-405.
 - Phase 60 closed post-audit gaps: glucose false-positive fixes (`dietetic-risk-v0.3.1`), core provider output-safety metadata, architecture type-contract alignment, expanded tests, and documentation continuity. It did not approve any launch gate or resolve R-405.
 - Phase 61 added mock-first scope guard: deterministic lexical retrieval and evaluator over dietitian-approved regulation corpus, escalate-only merge with the base classifier (`+scope-rag-v0.1.0`), raw-text-free scope guard audit, and disconnected real embedding/LLM seams. Default seed corpus is draft-only (no-op). It did not approve any launch gate, approved regulation corpus, or resolve R-405.
+- Phase 62 remediated post-review findings: provider-failure dietitian handoff without client send, shared safety text normalization, overlap scope retrieval, glucose cost-unit filter. Bulgu 3/9/10 documented as constraint-accepted. It did not approve any launch gate or resolve R-405.
 
 ## Completion Roadmap Result
 
@@ -109,10 +110,10 @@ External approvals:
 
 ## Verification
 
-Latest local release verification after Phase 61 scope guard second layer mock-first:
+Latest local release verification after Phase 62 architecture review remediation wave 2:
 
 - `npm run release:verify` passed on 2026-06-04.
-- Core tests: 112/112 passed.
+- Core tests: 114/114 passed.
 - App tests: 150/150 passed.
 - App lint: passed.
 - Production build: passed.

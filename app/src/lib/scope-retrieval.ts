@@ -28,8 +28,8 @@ export function scoreLexicalSimilarity(messageTokens: string[], chunkTokens: str
     if (chunkSet.has(token)) intersection += 1;
   }
 
-  const union = new Set([...messageSet, ...chunkSet]).size;
-  return union === 0 ? 0 : intersection / union;
+  const denominator = Math.min(messageSet.size, chunkSet.size);
+  return denominator === 0 ? 0 : intersection / denominator;
 }
 
 export function retrieveScopeRulesLexical(

@@ -1,3 +1,4 @@
+import { normalizeSafetyText } from "./normalize-safety-text.js";
 import { SAFETY_CLASSIFIER_VERSION, classifyConversationRisk } from "./safety-classifier.js";
 
 export const CLINICAL_SAFETY_SECOND_LAYER_VERSION = "clinical-safety-second-layer-v0.1.0";
@@ -43,9 +44,9 @@ export function evaluateClinicalSafetySecondLayer({ message, recentMessages = []
     return decision(false, []);
   }
 
-  const text = normalizeText(message);
+  const text = normalizeSafetyText(message);
   const recentTexts = recentMessages
-    .map((item) => normalizeText(typeof item === "string" ? item : item?.body || ""))
+    .map((item) => normalizeSafetyText(typeof item === "string" ? item : item?.body || ""))
     .filter(Boolean)
     .slice(-8);
   const healthProfile = clientProfile.healthProfile || clientProfile;
@@ -94,7 +95,7 @@ function withSecondLayerMetadata(riskDecision, secondLayer) {
 
 function mentionsClientAllergyOrRestriction(text, clientProfile) {
   const allergyTerms = [...(clientProfile.allergies || []), ...(clientProfile.restrictedFoods || [])]
-    .map(normalizeText)
+    .map(normalizeSafetyText)
     .filter((term) => term.length >= 3);
 
   return allergyTerms.some((term) => text.includes(term));
@@ -108,16 +109,3 @@ function uniqueReasons(reasons) {
   return Array.from(new Set(reasons.filter(Boolean)));
 }
 
-function normalizeText(message) {
-  return String(message || "")
-    .trim()
-    .toLocaleLowerCase("tr-TR")
-    .replace(/ğ/g, "g")
-    .replace(/ı/g, "i")
-    .replace(/ö/g, "o")
-    .replace(/ş/g, "s")
-    .replace(/ü/g, "u")
-    .replace(/ç/g, "c")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
-}

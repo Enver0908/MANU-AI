@@ -30,6 +30,7 @@ Important files:
 - `docs/MOBILE_APP_STRATEGY.md`: web + PWA + native mobile path.
 - `docs/RISK_REGISTER.md`: current risk register.
 - `docs/PHASE_61_SCOPE_GUARD_RAG_SECOND_LAYER_SPEC.md`: scope guard (RAG + LLM) second layer PRD/tech spec.
+- `docs/PHASE_62_ARCHITECTURE_REVIEW_REMEDIATION_WAVE2_SPEC.md`: post-review remediation (provider handoff, normalization, overlap retrieval, glucose tuning).
 - `docs/PLAN_GAP_AUDIT.md`: audit history of plan gaps.
 - `dietitian-ai-assistant/`: testable core architecture package.
 
@@ -336,10 +337,10 @@ cd "C:\Users\Dell\OneDrive\Masaüstü\MANU-AI\dietitian-ai-assistant"
 npm test
 ```
 
-Last verified result (Phase 61, 2026-06-04):
+Last verified result (Phase 62, 2026-06-04):
 
 ```text
-112/112 tests passing
+114/114 tests passing
 ```
 
 ## Current Local App Prototype
@@ -349,6 +350,14 @@ Path:
 ```text
 app
 ```
+
+Status as of 2026-06-04 (Phase 62):
+
+- Provider failures on active clients: core orchestrator opens dietitian handoff without client-facing AI reply; simulator persists handoff + notification.
+- Shared `normalize-safety-text.js` used by classifier, second layer, and scope corpus tokenization.
+- Scope retrieval uses overlap coefficient; match threshold `0.4`.
+- Glucose numeric window skips TL/lira and similar non-glucose units after numbers.
+- Core tests 114/114; app tests 150/150.
 
 Status as of 2026-06-04 (Phase 61):
 
@@ -563,6 +572,8 @@ Phase 58 dietitian client language control completed locally on 2026-06-03: adde
 Phase 59 architecture review remediation completed locally on 2026-06-03: added `docs/PHASE_59_ARCHITECTURE_REVIEW_REMEDIATION_SPEC.md`, fail-closed unknown AI modes, core provider error boundary around `generateReply`, numeric glucose-context escalation and expanded multilingual symptom patterns with new golden cases, simulator `appendCoreSimulationResult` helper refactor without behavior change, multilingual voice-profile formal/informal scoring, and provider-native token counting documented as a future integration gate. Verification passed with core tests 85/85, app tests 137/137, app lint, and `npm run release:verify`. No schema/RLS, dependency, real provider, channel, launch-gate approval, or R-405 changes. Production pilot remains `NO-GO`; qualified dietitian clinical taxonomy approval remains required.
 
 Phase 60 audit remediation completed locally on 2026-06-03: added `docs/PHASE_60_AUDIT_REMEDIATION_SPEC.md`, fixed glucose false-positive numeric extraction (`dietetic-risk-v0.3.1`), added core `providerOutputSafety` on provider failures, aligned `dietitian-ai-assistant-architecture.d.ts` with runtime, expanded symptom/voice/simulator tests, and synchronized handoff/plan/pilot documentation. Verification passed with core tests 104/104, app tests 138/138, app lint, and `npm run release:verify`. Production pilot remains `NO-GO`.
+
+Phase 62 architecture review remediation wave 2 completed locally on 2026-06-04: added `docs/PHASE_62_ARCHITECTURE_REVIEW_REMEDIATION_WAVE2_SPEC.md`, provider-failure handoff without client send, `normalize-safety-text.js`, overlap scope retrieval, glucose cost-unit filtering, dead code removal, and constraint-accepted documentation for Bulgu 3/9/10. Verification passed with core tests 114/114, app tests 150/150, app lint, and `npm run release:verify`. Production pilot remains `NO-GO`; R-402 partially mitigated in local prototype.
 
 Phase 61 scope guard (RAG + LLM) second layer mock-first completed locally on 2026-06-04: added `docs/PHASE_61_SCOPE_GUARD_RAG_SECOND_LAYER_SPEC.md`, core `scope-guard.js` (`scope-rag-v0.1.0`) with monotonic `mergeScopeDecision`, app mock lexical retrieval and deterministic evaluator, `scope-guard-runtime` wiring in simulator risk path, Supabase `scope_*` tables with tenant read / system write RLS, raw-text-free `scope_guard_evaluations` audit, operational-health corpus signals, placeholder draft corpus (no-op until approved), and fail-closed disconnected real embedding/LLM behind clinical taxonomy gate + `MANU_ALLOW_REAL_SCOPE_GUARD=true`. Combined classifier version: `dietetic-risk-v0.3.1+clinical-safety-second-layer-v0.1.0+scope-rag-v0.1.0`. Verification passed with core tests 112/112, app tests 150/150, app lint, and `npm run release:verify`. Production pilot remains `NO-GO`; R-310 partially mitigated in local prototype only.
 
