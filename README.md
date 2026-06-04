@@ -6,9 +6,9 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 This repository is a local SaaS/PWA pilot prototype and architecture workspace. It is not a production-connected system yet.
 
-**Latest phase:** Phase 62 architecture review remediation wave 2 (2026-06-04). **Production pilot:** `NO-GO` (all eight launch gates open; R-405 open).
+**Latest phase:** Phase 63 production pilot GO rebaseline (2026-06-04). **Production pilot:** `NO-GO` (all eight launch gates open; R-405 open).
 
-**Latest verification:** core tests 114/114, app tests 150/150, `npm run release:verify` passed with only documented R-405 findings.
+**Latest verification:** Phase 63 docs-only rebaseline verified on 2026-06-04: core tests 114/114, app tests 150/150, `npm run release:verify` passed with only documented R-405 findings.
 
 The current implementation includes:
 
@@ -21,6 +21,7 @@ The current implementation includes:
 - Dietitian-controlled client conversation language
 - Documentation and evidence plans in `docs/`
 - Phase 59–61 safety layers plus Phase 62 remediation (provider-failure dietitian handoff, shared safety text normalization, overlap scope retrieval, glucose cost-unit filter)
+- Phase 63 production-pilot rebaseline for WhatsApp-first, Gemini-only scale planning up to 100 dietitians and 5,000+ clients, with user-supplied forms and official regulation-PDF corpus ingestion as future gated phases
 
 ## Safety Model
 
@@ -69,3 +70,5 @@ Local Supabase/RLS evidence requires Docker Desktop and local Supabase.
 By default, work in this repository uses local/mock flows. Real WhatsApp, Telegram, Gemini/external LLM, monitoring, secret manager, and real health-data integrations should only be started as explicit integration phases with scope, rollback, test, and approval plans.
 
 R-405 dependency remediation must follow the documented Phase 22 procedure.
+
+Official health-regulation PDFs, legal/privacy artifacts, clinical approvals, and final dietitian/client form definitions must be supplied by the user and recorded only through sanitized references when they are sensitive.

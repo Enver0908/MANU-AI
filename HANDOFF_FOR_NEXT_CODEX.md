@@ -17,15 +17,16 @@ Start by reading:
 1. `PLAN.md`
 2. `PROJECT_PLAN.md`
 3. `docs/NEXT_PHASE_EXECUTION_PLAN.md`
-4. `docs/PHASE_62_ARCHITECTURE_REVIEW_REMEDIATION_WAVE2_SPEC.md` (latest completed phase)
-5. `docs/PHASE_61_SCOPE_GUARD_RAG_SECOND_LAYER_SPEC.md`
-6. `docs/RISK_REGISTER.md`
-7. `docs/DATA_INVENTORY.md`
-8. `docs/DATASET_STRATEGY.md`
-9. `docs/MOBILE_APP_STRATEGY.md`
-10. `dietitian-ai-assistant/README.md`
-11. `dietitian-ai-assistant/docs/architecture.md`
-12. `dietitian-ai-assistant/docs/data-model.sql`
+4. `docs/PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md` (latest completed phase)
+5. `docs/PHASE_62_ARCHITECTURE_REVIEW_REMEDIATION_WAVE2_SPEC.md`
+6. `docs/PHASE_61_SCOPE_GUARD_RAG_SECOND_LAYER_SPEC.md`
+7. `docs/RISK_REGISTER.md`
+8. `docs/DATA_INVENTORY.md`
+9. `docs/DATASET_STRATEGY.md`
+10. `docs/MOBILE_APP_STRATEGY.md`
+11. `dietitian-ai-assistant/README.md`
+12. `dietitian-ai-assistant/docs/architecture.md`
+13. `dietitian-ai-assistant/docs/data-model.sql`
 
 ## User's Product Goal
 
@@ -57,6 +58,12 @@ The product must be both:
 - The system must know which WhatsApp/Telegram messages were written by AI and which were written manually by the dietitian.
 
 ## Current Next Phase
+
+Phase 63 production pilot GO rebaseline is the latest completed planning wave (2026-06-04): production-pilot planning is now WhatsApp-first, Gemini-only, up to 100 dietitians, and 50+ clients per dietitian. Dietitian/client forms are user-supplied and must pass schema, privacy, prompt-allowlist, clinical, versioning, and migration review before production use. Official health-regulation PDFs are user-supplied and must become a traceable approved corpus with extraction QA, page/section references, approved derived rules, corpus golden tests, and clinical/legal approval before active green/yellow/red routing. This did not approve production pilot launch, close any gate, connect real services, process real data, or resolve R-405.
+
+Before selecting the next engineering phase, read `docs/PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md`; it is the current planning source for production-pilot exit work.
+
+Phase 63 remaining production hardening: structured launch-gate evidence engine, official regulation PDF ingestion/corpus QA, user-supplied form schema hardening, dashboard/internal-copilot pagination and scoped reload evidence for 5,000+ clients, load/backpressure/idempotency evidence, client removal/anonymization transactional redaction contract, external launch-gate approval artifacts, and R-405 resolution only through Phase 22.
 
 Phase 62 architecture review remediation wave 2 is the latest completed implementation wave (2026-06-04): provider failures on active clients now open dietitian handoff without client-facing AI send; shared `normalizeSafetyText`; overlap-based scope retrieval (`DEFAULT_MATCH_THRESHOLD` 0.4); glucose numeric cost-unit filtering; dead `modelForRisk` removed. Bulgu 1 unchanged (accepted). Bulgu 3/9/10 documented as constraint-accepted. Production pilot remains `NO-GO`.
 
@@ -1992,3 +1999,30 @@ app: npm run release:verify -> passed; only known R-405 findings
 ### Next Correct Step For Codex
 
 Re-run `npm run test:rls` when Docker/local Supabase is available after applying Phase 61 migration. Load approved regulation corpus only after qualified dietitian clinical taxonomy sign-off. Keep real embedding/LLM disconnected until provider/vendor and clinical gates approve health-data egress.
+
+## Phase 63 Production Pilot GO Rebaseline Handoff Notes - 2026-06-04
+
+Completed by: Codex
+
+### What Was Done
+
+- Added `docs/PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md`.
+- Rebaselined production-pilot planning to WhatsApp-first, Gemini-only, up to 100 dietitians, and 50+ clients per dietitian.
+- Recorded user-supplied dietitian/client forms as gated inputs requiring schema, privacy, prompt-allowlist, clinical, versioning, and migration review.
+- Recorded user-supplied official health-regulation PDFs as gated inputs requiring source metadata, checksums, extraction QA, page/section references, approved derived rules, corpus versioning, and corpus golden-case tests before active routing.
+- Updated continuity, pilot readiness, gate, final readiness, and risk documentation to keep production pilot `NO-GO` until the new evidence is supplied and accepted.
+
+### What Was NOT Done
+
+- No runtime code, schema, migration, dependency, provider, channel, monitoring, secret manager, approval, R-405 acceptance, or real-data change was made.
+- No official PDF corpus, user form schema, legal/privacy artifact, clinical artifact, or launch-gate approval artifact was supplied.
+
+### Verification Commands
+
+```text
+app: npm run release:verify -> passed; core tests 114/114, app tests 150/150, lint, production build, known R-405 only
+```
+
+### Next Correct Step For Codex
+
+Build the structured launch-gate evidence engine first, then implement the official PDF ingestion/corpus QA path and user-supplied form hardening after the user provides the required artifacts. Keep real WhatsApp/Gemini/client data disconnected until gates are approved.

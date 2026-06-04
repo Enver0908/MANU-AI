@@ -20,6 +20,8 @@ The review must cover:
 - Privacy notice and client permission flow.
 - Medical-device or clinical-decision-support classification.
 - Data minimization and prompt/provider boundaries.
+- User-supplied dietitian/client form definitions, including field-level privacy classification and prompt allowlist.
+- Official health-regulation PDF corpus handling, including source retention, derived rule traceability, and approval record storage.
 - Retention and deletion/anonymization expectations.
 - DSAR/export workflow ownership.
 - Internal copilot records.
@@ -39,6 +41,7 @@ The review must cover:
 | AI security remediation | `PHASE_28_AI_SECURITY_REMEDIATION_SPEC.md` | Provider-attempt semantics, provider input allowlist, send-time revalidation, RLS/RBAC hardening | Provider/vendor legal approval |
 | Gate dossier | `PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md` | Required evidence and open gate status | External approval |
 | External approval intake | `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` | Sanitized approval artifact tracking | Gate closure without supplied artifacts |
+| Phase 63 rebaseline | `PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md` | User-supplied forms and official PDF corpus are gated production inputs | Legal/privacy approval of unsupplied artifacts |
 
 ## Required Counsel Decisions
 
@@ -52,6 +55,8 @@ The review must cover:
 | DSAR/export/deletion | Approved operating procedure, owner, response timeline, and evidence trail | Not supplied |
 | Internal copilot records | Decision on retention, access, and provider-egress restrictions for internal copilot data | Not supplied |
 | Dietitian context updates | Decision on collection purpose, retention, prompt use, and deletion/anonymization handling | Not supplied |
+| User-supplied forms | Decision on dietitian/client form field collection, privacy classification, prompt allowlist, retention, export, deletion/anonymization, and version migration | Not supplied |
+| Official regulation PDF corpus | Decision on storage/reference handling, derived rule traceability, approval record retention, and whether PDF-derived rules may drive production routing after clinical approval | Not supplied |
 | Provider dependency | Confirmation that real LLM provider use remains blocked until vendor review closes | Not supplied |
 | Channel dependency | Confirmation that real WhatsApp/Telegram use remains blocked until platform policy review closes | Not supplied |
 
@@ -69,6 +74,8 @@ The review must cover:
 - Anonymization removes promptable context and rolling memory.
 - Internal copilot is local/mock only, read-only, source-referenced, and not client-facing.
 - Dietitian context updates invalidate pending drafts and are included in export/anonymization governance.
+- User-supplied forms remain unapproved for production until legal/privacy and clinical review define allowed fields, prompt eligibility, retention, export, deletion/anonymization, and version migration behavior.
+- User-supplied official regulation PDFs remain unapproved for production routing until legal/privacy handling and clinical approval of derived corpus rules are recorded.
 
 ## Missing Before Gate Closure
 
@@ -77,6 +84,8 @@ The review must cover:
 - Medical-device/CDS classification memo.
 - Final retention schedule.
 - Production DSAR/deletion procedure and owner list.
+- User-supplied dietitian/client form package and field-level privacy/prompt approval.
+- Official regulation PDF corpus handling decision and sanitized approval references.
 - Backup retention and restore policy alignment.
 - Provider/vendor review linkage for any real LLM use.
 - Channel policy review linkage for real WhatsApp/Telegram use.

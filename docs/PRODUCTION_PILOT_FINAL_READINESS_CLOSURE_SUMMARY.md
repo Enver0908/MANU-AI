@@ -4,7 +4,7 @@ Date: 2026-06-04
 
 ## Status
 
-This is the final summary for the 13-phase completion roadmap, updated after Phase 43 multilingual language support, Phase 44 red-risk reactivation lock, Phase 45 client removal data lifecycle, Phase 46 WhatsApp group quarantine, Phase 47 RLS quarantine evidence coverage, Phase 48 R-405 stable patch recheck, Phase 49 safety/orchestration hardening, Phase 50 production Supabase hardening, Phase 51 transactional RPC coverage, Phase 52 integration test coverage, Phase 53 scale/broad read contracts, Phase 54 R-405/launch-gate recheck, Phase 55 audit remediation safety-boundary hardening, Phase 56 clinical safety second-layer local evidence, Phase 57 yellow-risk hold/draft refresh, Phase 58 dietitian client language control, Phase 59 architecture review remediation, Phase 60 audit remediation, and Phase 61 scope guard (RAG + LLM) second layer mock-first.
+This is the final summary for the 13-phase completion roadmap, updated after Phase 43 multilingual language support, Phase 44 red-risk reactivation lock, Phase 45 client removal data lifecycle, Phase 46 WhatsApp group quarantine, Phase 47 RLS quarantine evidence coverage, Phase 48 R-405 stable patch recheck, Phase 49 safety/orchestration hardening, Phase 50 production Supabase hardening, Phase 51 transactional RPC coverage, Phase 52 integration test coverage, Phase 53 scale/broad read contracts, Phase 54 R-405/launch-gate recheck, Phase 55 audit remediation safety-boundary hardening, Phase 56 clinical safety second-layer local evidence, Phase 57 yellow-risk hold/draft refresh, Phase 58 dietitian client language control, Phase 59 architecture review remediation, Phase 60 audit remediation, Phase 61 scope guard (RAG + LLM) second layer mock-first, Phase 62 architecture review remediation wave 2, and Phase 63 production pilot GO rebaseline.
 
 Production pilot is not approved.
 
@@ -40,6 +40,7 @@ Reason:
 - Phase 60 closed post-audit gaps: glucose false-positive fixes (`dietetic-risk-v0.3.1`), core provider output-safety metadata, architecture type-contract alignment, expanded tests, and documentation continuity. It did not approve any launch gate or resolve R-405.
 - Phase 61 added mock-first scope guard: deterministic lexical retrieval and evaluator over dietitian-approved regulation corpus, escalate-only merge with the base classifier (`+scope-rag-v0.1.0`), raw-text-free scope guard audit, and disconnected real embedding/LLM seams. Default seed corpus is draft-only (no-op). It did not approve any launch gate, approved regulation corpus, or resolve R-405.
 - Phase 62 remediated post-review findings: provider-failure dietitian handoff without client send, shared safety text normalization, overlap scope retrieval, glucose cost-unit filter. Bulgu 3/9/10 documented as constraint-accepted. It did not approve any launch gate or resolve R-405.
+- Phase 63 rebaselined the production-pilot target to WhatsApp-first, Gemini-only, up to 100 dietitians with 50+ clients each (5,000+ clients), user-supplied dietitian/client forms, and official health-regulation PDFs that must become a reviewed/versioned corpus before active routing. It did not approve any launch gate, connect a provider or channel, process real data, or resolve R-405.
 
 ## Completion Roadmap Result
 
@@ -107,10 +108,11 @@ External approvals:
 - No backup/restore drill approval artifact supplied.
 - No secret rotation approval artifact supplied.
 - No dependency audit clearance or formal R-405 risk acceptance supplied.
+- No official health-regulation PDF corpus, form definition package, or related clinical approval artifact supplied for the Phase 63 target.
 
 ## Verification
 
-Latest local release verification after Phase 62 architecture review remediation wave 2:
+Latest local release verification after Phase 63 production pilot GO rebaseline:
 
 - `npm run release:verify` passed on 2026-06-04.
 - Core tests: 114/114 passed.
@@ -175,11 +177,14 @@ Phase 50 verification on 2026-06-02:
 ## Next Required Actions
 
 1. Design the dedicated client removal/anonymization transactional redaction contract before moving that lifecycle fully to RPC commits.
-2. Implement dashboard/internal-copilot pagination only after the Phase 53 contracts are accepted.
-3. Resolve R-405 through a safe stable Next.js/PostCSS upgrade or obtain formal external risk acceptance.
-4. Collect sanitized external approval references in `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md`.
-5. Re-run `npm run release:verify` after any approval-related change.
-6. Keep all real providers, channels, monitoring, secret manager, backup provider, and real client health data disconnected until the relevant gates are approved.
+2. Implement the structured launch-gate evidence engine for artifact coverage and expiry before any gate is treated as closed.
+3. Implement official health-regulation PDF ingestion, extraction QA, reviewed corpus approval, and corpus golden tests before active scope-guard use.
+4. Convert the user-supplied dietitian and client form definitions into versioned schemas with explicit prompt visibility.
+5. Implement dashboard/internal-copilot pagination and scoped reloads for the 100-dietitian / 5,000-client target.
+6. Resolve R-405 through a safe stable Next.js/PostCSS upgrade or obtain formal external risk acceptance.
+7. Collect sanitized external approval references in `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md`.
+8. Re-run `npm run release:verify` after any approval-related change.
+9. Keep all real providers, channels, monitoring, secret manager, backup provider, and real client health data disconnected until the relevant gates are approved.
 
 ## Non-Approval Statement
 

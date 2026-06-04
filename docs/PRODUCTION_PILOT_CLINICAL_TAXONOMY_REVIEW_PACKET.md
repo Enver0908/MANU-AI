@@ -14,7 +14,7 @@ No real WhatsApp, Telegram, Gemini, external LLM provider, email, push, monitori
 
 A qualified dietitian must review whether the current dietetic risk taxonomy, escalation behavior, golden test set, and production clinical safety evaluation approach are acceptable for a supervised production pilot.
 
-Phase 59 added local-only hardening for numeric glucose thresholds in glucose-context messages and expanded multilingual single-message symptom patterns. Phase 60 narrowed glucose anchors to reduce false positives, deduplicated red reasons, and bumped the classifier to `dietetic-risk-v0.3.1`. Phase 61 added mock-first scope guard (`scope-rag-v0.1.0`) with placeholder draft regulation corpus, escalate-only merge, and disconnected real embedding/LLM until this gate approves corpus + production evaluation approach. This packet remains a review artifact, not an approval record.
+Phase 59 added local-only hardening for numeric glucose thresholds in glucose-context messages and expanded multilingual single-message symptom patterns. Phase 60 narrowed glucose anchors to reduce false positives, deduplicated red reasons, and bumped the classifier to `dietetic-risk-v0.3.1`. Phase 61 added mock-first scope guard (`scope-rag-v0.1.0`) with placeholder draft regulation corpus, escalate-only merge, and disconnected real embedding/LLM until this gate approves corpus + production evaluation approach. Phase 63 requires the user-supplied official health-regulation PDFs to become a traceable, extracted, page/section-referenced, reviewed, approved, versioned, and golden-tested corpus before any active production routing. This packet remains a review artifact, not an approval record.
 
 The deterministic/regex safety classifier is a local first barrier. It must not be accepted as the sole production clinical safety layer without an approved second-layer or equivalent fail-closed safety evaluation mechanism.
 
@@ -28,6 +28,7 @@ The review must cover:
 - Persona safety invariants.
 - Coverage gaps requiring new golden cases before pilot.
 - Whether the production safety approach includes an approved second-layer or equivalent fail-closed evaluation beyond deterministic/regex matching.
+- Whether the official regulation PDF corpus and derived green/yellow/red routing rules are clinically acceptable.
 
 ## Internal Evidence Available
 
@@ -40,6 +41,7 @@ The review must cover:
 | Safety classifier | `dietitian-ai-assistant/src/safety-classifier.js` | Current risk classification implementation | Clinical approval |
 | Clinical safety second layer | `dietitian-ai-assistant/src/clinical-safety-second-layer.js`, `dietitian-ai-assistant/tests/clinical-second-layer-cases.jsonl` | Local deterministic context-sensitive yellow escalation evidence above the regex classifier | Qualified dietitian approval or production sufficiency |
 | Phase 28 remediation | `PHASE_28_AI_SECURITY_REMEDIATION_SPEC.md` | Expanded clinical golden coverage, provider-attempt semantics, no-call audit behavior | Qualified dietitian approval |
+| Phase 63 rebaseline | `PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md` | Required official PDF corpus ingestion, traceability, approval, and corpus golden-case evidence before active production routing | Approval of any unsupplied PDF, derived rule, or routing behavior |
 
 ## Current Golden Case Summary
 
@@ -62,6 +64,8 @@ The review must cover:
 | Medication/supplement/lab boundaries | Sign-off or requested changes for dose, lab, diagnosed-condition routing | Not supplied |
 | Pregnancy/glucose/allergy/emergency handling | Sign-off or requested changes for red emergency boundaries | Not supplied |
 | Production safety evaluation layer | Sign-off or requested changes for the second-layer or equivalent fail-closed safety evaluation approach beyond deterministic/regex matching | Not supplied |
+| Official regulation PDF corpus | Sign-off on official PDF source list, extraction QA, page/section references, derived routing rules, corpus version, and corpus golden-case report | Not supplied |
+| User-supplied form clinical implications | Sign-off or requested changes for any clinical routing or prompt context implications created by user-supplied dietitian/client forms | Not supplied |
 | Coverage gaps | List of missing clinical scenarios requiring new JSONL golden cases | Not supplied |
 | Taxonomy version | Approved taxonomy version and dated review record | Not supplied |
 
@@ -73,8 +77,10 @@ The review must cover:
 4. Confirm yellow cases require dietitian review.
 5. Confirm persona changes do not alter safety routing.
 6. Confirm the production safety approach does not rely on deterministic/regex matching as the sole clinical safety layer.
-7. Identify missing scenarios that must be added before pilot.
-8. Record approved taxonomy version or requested changes.
+7. Review official regulation PDF source metadata, extraction QA, page/section references, derived routing rules, corpus version, and corpus golden-case report once supplied.
+8. Review clinical implications of user-supplied dietitian/client form fields once supplied.
+9. Identify missing scenarios that must be added before pilot.
+10. Record approved taxonomy version or requested changes.
 
 ## Current Technical Controls
 
@@ -92,6 +98,8 @@ The review must cover:
 - Signed qualified dietitian approval artifact.
 - Approved taxonomy version.
 - Approved or updated golden test set.
+- Approved official regulation PDF corpus version, derived routing rules, page/section reference map, and corpus golden-case report.
+- Clinical review of user-supplied dietitian/client form fields and any prompt/routing implications.
 - Approved second-layer or equivalent fail-closed clinical safety evaluation approach beyond deterministic/regex matching.
 - Explicit list of accepted clinical coverage gaps or required additions.
 - Confirmation that yellow/red escalation language is operationally acceptable.

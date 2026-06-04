@@ -6,7 +6,7 @@ Date: 2026-06-03
 
 MANU-AI has a local pilot-foundation prototype with safety, privacy, operational, and verification controls in place.
 
-Production pilot is still blocked. This evidence pack does not approve legal/privacy, clinical, provider/vendor, WhatsApp/Telegram policy, backup/restore, secret rotation, or dependency audit gates.
+Production pilot is still blocked. This evidence pack does not approve legal/privacy, clinical, provider/vendor, WhatsApp/Telegram policy, backup/restore, secret rotation, scale/load, official regulation-corpus, user-supplied form, or dependency audit gates.
 
 No real WhatsApp, Telegram, Gemini, external LLM provider, email, push, monitoring, analytics, secret manager, or real client health data is connected.
 
@@ -18,7 +18,7 @@ Run from `app`:
 npm run release:verify
 ```
 
-Latest result, re-verified on 2026-06-04 after Phase 62 architecture review remediation wave 2:
+Latest result, re-verified on 2026-06-04 after Phase 63 production pilot GO rebaseline:
 
 - Core package tests: 114/114 passed.
 - App tests: 150/150 passed.
@@ -27,6 +27,7 @@ Latest result, re-verified on 2026-06-04 after Phase 62 architecture review reme
 - Production dependency audit gate: passed with only documented R-405 findings.
 - R-405 remains open: Next.js 16.2.7 still bundles nested PostCSS 8.4.31, so no safe stable patch path is available.
 - Phase 61 added `scope_rules`, `scope_rule_chunks`, and `scope_guard_evaluations` migration; re-run `npm run test:rls` when local Supabase is available to record Phase 61 RLS evidence.
+- Phase 63 was docs-only and did not change runtime behavior, schema, dependencies, provider/channel wiring, or real-data handling.
 
 Additional Phase 50 production Supabase hardening evidence on 2026-06-02:
 
@@ -260,6 +261,15 @@ Completion Roadmap Phase 13 / Phase 42 final readiness closure on 2026-05-31:
 - No runtime, schema, dependency, provider, channel, monitoring, secret manager, backup provider, launch-gate approval, R-405 acceptance, R-406 mitigation, or real-data change was made.
 - Re-ran `npm run release:verify`: core tests 49/49, app tests 103/103, lint, production build, and dependency audit gate passed with only documented R-405 findings.
 
+Phase 63 production pilot GO rebaseline on 2026-06-04:
+
+- Added `PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md`.
+- Rebaselined production-pilot planning to WhatsApp-first and Gemini-only for up to 100 dietitians with 50+ clients each.
+- Recorded that dietitian and client form definitions are user-supplied inputs and must be schema-reviewed, privacy-reviewed, prompt-allowlist-reviewed, and approved before production use.
+- Recorded that official health-regulation PDFs are user-supplied inputs and must be ingested through traceable extraction, page/section mapping, clinical/legal review, approved derived rules, corpus versioning, and corpus golden-case tests before active green/yellow/red routing.
+- Added scale gate evidence requirements for pagination, scoped reloads, load/backpressure, idempotency/retry, and no cross-tenant leakage at the 5,000+ client target.
+- No runtime, schema, provider, channel, migration, approval, R-405 acceptance, or real-data change was made.
+
 Phase 43 multilingual language support on 2026-05-31:
 
 - Added `PHASE_43_MULTILINGUAL_LANGUAGE_SUPPORT_SPEC.md`.
@@ -282,6 +292,12 @@ Phase 43 multilingual language support on 2026-05-31:
 | Backup expiry and restore test | `PRODUCTION_PILOT_BACKUP_RESTORE_REVIEW_PACKET.md`, `BACKUP_RESTORE_RUNBOOK.md` | Backup expiry policy, restore drill result, owner and cadence | Open |
 | Production secret rotation plan | `PRODUCTION_PILOT_SECRET_ROTATION_REVIEW_PACKET.md`, `SECRET_ROTATION_RUNBOOK.md` | Production secret inventory, rotation owner/cadence, secret manager decision | Open |
 | Production dependency audit clearance | `PRODUCTION_PILOT_DEPENDENCY_AUDIT_CLEARANCE_PACKET.md`, `PHASE_19_RELEASE_VERIFICATION_DEPENDENCY_GATE_SPEC.md`, `npm run release:verify`, R-405 tracked in `RISK_REGISTER.md` | R-405 safe stable Next.js/PostCSS patch path or formal risk acceptance | Open |
+
+Phase 63 gate addendum:
+
+- The legal/privacy gate now also blocks production use of user-supplied dietitian/client forms until field-level privacy classification, prompt allowlist, retention/export/deletion handling, and version migration are approved.
+- The clinical taxonomy gate now also blocks active green/yellow/red routing from official health-regulation PDFs until the PDF sources, extraction QA, page/section references, derived rules, corpus version, and corpus golden-case report are approved.
+- The scale/load readiness path now blocks the 100 dietitian / 5,000+ client pilot until pagination, scoped reload, load, backpressure, idempotency/retry, monitoring, and rollback evidence is recorded.
 
 ## Technical Evidence Summary
 
@@ -349,6 +365,9 @@ Release verification:
 - This package does not approve real WhatsApp or Telegram messaging.
 - This package does not approve real Gemini or external LLM calls with health data.
 - This package does not approve routing the internal copilot to a real Gemini or external LLM provider.
+- This package does not approve active routing from user-supplied health-regulation PDFs until the extracted corpus, derived rules, and golden tests are approved.
+- This package does not approve user-supplied dietitian/client forms until schema, privacy, prompt-allowlist, and clinical implications are reviewed.
+- This package does not approve a 100 dietitian / 5,000+ client production pilot until pagination, scoped reload, load, backpressure, idempotency, and monitoring evidence is recorded.
 - This package does not approve external notification or monitoring vendors.
 - This package does not resolve R-405.
 - This package records R-406 mitigation in the local prototype and Phase 50 SQL/RPC local Supabase execution evidence, but it does not approve production pilot launch.
@@ -356,12 +375,15 @@ Release verification:
 ## Next Approval Path
 
 1. Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized external approval artifact references.
-2. Use `PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md` as the external review checklist.
-3. Complete legal/privacy review using `PRODUCTION_PILOT_LEGAL_PRIVACY_REVIEW_PACKET.md` and supply acceptable approval evidence.
-4. Obtain qualified dietitian approval using `PRODUCTION_PILOT_CLINICAL_TAXONOMY_REVIEW_PACKET.md` for the current clinical taxonomy, golden test set, and second-layer or equivalent fail-closed safety evaluation approach.
-5. Complete provider/vendor retention and prompt logging review using `PRODUCTION_PILOT_PROVIDER_VENDOR_REVIEW_PACKET.md`.
-6. Complete WhatsApp/Telegram policy, opt-in/out, template, and service-window review using `PRODUCTION_PILOT_CHANNEL_POLICY_REVIEW_PACKET.md`.
-7. Finalize incident response and DSAR/deletion using `PRODUCTION_PILOT_INCIDENT_DSAR_REVIEW_PACKET.md`, finalize backup/restore using `PRODUCTION_PILOT_BACKUP_RESTORE_REVIEW_PACKET.md`, then finalize secret rotation using `PRODUCTION_PILOT_SECRET_ROTATION_REVIEW_PACKET.md`.
-8. Resolve or formally accept R-405 using `PRODUCTION_PILOT_DEPENDENCY_AUDIT_CLEARANCE_PACKET.md` before production pilot.
-9. Design the dedicated client removal/anonymization transactional redaction contract before moving that lifecycle fully to RPC commits.
-10. Re-run `npm run release:verify` after any approval-related code, dependency, prompt, or taxonomy change.
+2. Collect the user-supplied legal/privacy, clinical, dietitian form, client form, and official health-regulation PDF package.
+3. Use `PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md` as the external review checklist.
+4. Complete legal/privacy review using `PRODUCTION_PILOT_LEGAL_PRIVACY_REVIEW_PACKET.md` and supply acceptable approval evidence, including the user-supplied form definitions.
+5. Build and approve the official regulation PDF corpus before active scope/routing use.
+6. Obtain qualified dietitian approval using `PRODUCTION_PILOT_CLINICAL_TAXONOMY_REVIEW_PACKET.md` for the current clinical taxonomy, official corpus version, golden test set, and second-layer or equivalent fail-closed safety evaluation approach.
+7. Implement structured launch-gate evidence and scale/load evidence for up to 100 dietitians and 5,000+ clients.
+8. Complete provider/vendor retention and prompt logging review using `PRODUCTION_PILOT_PROVIDER_VENDOR_REVIEW_PACKET.md`.
+9. Complete WhatsApp/Telegram policy, opt-in/out, template, and service-window review using `PRODUCTION_PILOT_CHANNEL_POLICY_REVIEW_PACKET.md`.
+10. Finalize incident response and DSAR/deletion using `PRODUCTION_PILOT_INCIDENT_DSAR_REVIEW_PACKET.md`, finalize backup/restore using `PRODUCTION_PILOT_BACKUP_RESTORE_REVIEW_PACKET.md`, then finalize secret rotation using `PRODUCTION_PILOT_SECRET_ROTATION_REVIEW_PACKET.md`.
+11. Resolve or formally accept R-405 using `PRODUCTION_PILOT_DEPENDENCY_AUDIT_CLEARANCE_PACKET.md` before production pilot.
+12. Design the dedicated client removal/anonymization transactional redaction contract before moving that lifecycle fully to RPC commits.
+13. Re-run `npm run release:verify` after any approval-related code, dependency, prompt, corpus, form, or taxonomy change.
