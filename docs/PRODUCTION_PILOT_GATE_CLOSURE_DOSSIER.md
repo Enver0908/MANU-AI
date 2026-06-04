@@ -15,8 +15,8 @@ Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized reference
 ## Current Baseline
 
 - Git baseline: Phase 27-29 checkpoint exists at `c75564e Add Phase 27-29 pilot readiness checkpoint` on branch `codex/phase-29-baseline-checkpoint`; Completion Roadmap Phase 1 records this as the current implementation baseline.
-- Latest local release verification: `npm run release:verify` passed on 2026-06-04 after Phase 64 structured launch-gate evidence engine.
-- Verification result: core tests 114/114, app tests 158/158, lint passed, production build passed.
+- Latest local release verification: `npm run release:verify` passed on 2026-06-04 after Phase 65 official regulation PDF corpus QA foundation.
+- Verification result: core tests 114/114, app tests 166/166, lint passed, production build passed.
 - Dependency audit result: only known R-405 findings, `next:postcss` and `postcss:GHSA-qx2v-qp2m-jg93`.
 - R-405 status: open production launch blocker; Phase 54 rechecked metadata on 2026-06-02 and stable `next@latest` is 16.2.7 but still bundles `postcss@8.4.31`, so no safe stable Next.js/PostCSS patch path is available.
 - R-405 remediation spec: `PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`.
@@ -52,6 +52,7 @@ Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized reference
 - Phase 62 architecture review remediation spec: `PHASE_62_ARCHITECTURE_REVIEW_REMEDIATION_WAVE2_SPEC.md` records provider-failure dietitian handoff without client send, shared safety normalization, overlap retrieval, and glucose cost-unit tuning. It does not approve production pilot launch or resolve R-405.
 - Phase 63 production pilot GO rebaseline spec: `PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md` records the updated WhatsApp-first, Gemini-only target of up to 100 dietitians with 50+ clients each, user-supplied dietitian/client forms, and official health-regulation PDFs that must be extracted, reviewed, approved, versioned, and tested before active production routing. It does not approve production pilot launch, close any gate, connect real services, process real data, or resolve R-405.
 - Phase 64 structured launch-gate evidence engine spec: `PHASE_64_STRUCTURED_LAUNCH_GATE_EVIDENCE_ENGINE_SPEC.md` records typed sanitized evidence records, full required-evidence coverage, owner, approval date, review cadence, expiry checks, and explicit approval status before a gate can be treated as closed. It does not supply any external approval artifact, close any gate, connect real services, process real data, or resolve R-405.
+- Phase 65 official regulation PDF corpus QA spec: `PHASE_65_OFFICIAL_REGULATION_PDF_CORPUS_QA_SPEC.md` records source metadata, checksum, page extraction evidence, page/section map, derived rule draft, corpus version, and golden-case QA requirements before PDF-derived scope rules can become draft corpus rules. It does not approve any corpus, close any gate, parse real PDFs, connect real services, process real data, or resolve R-405.
 
 ## Gate Closure Matrix
 
@@ -70,11 +71,13 @@ Phase 63 gate interpretation: the clinical taxonomy gate now also requires offic
 
 Phase 64 gate interpretation: an approval artifact can close a gate only when represented as structured sanitized evidence that covers every required evidence item and has an owner, explicit `approved` status, approval date, review cadence, and non-expired timing. Conditional, rejected, draft, stale, unsanitized, malformed, partial, or unknown-gate evidence keeps the relevant gate open.
 
+Phase 65 gate interpretation: official PDF-derived evidence cannot satisfy the clinical taxonomy gate until the corpus package passes QA and an external qualified reviewer supplies structured approval evidence. QA-passing derived rules are draft-only and do not activate routing.
+
 ## Review Packet Checklist
 
 - Legal/privacy packet: `PRODUCTION_PILOT_LEGAL_PRIVACY_REVIEW_PACKET.md`, data inventory, permission integration points, DSAR/export/anonymization evidence, retention placeholder list, dietitian context update records, and user-supplied dietitian/client form definitions when provided.
 - Clinical packet: `PRODUCTION_PILOT_CLINICAL_TAXONOMY_REVIEW_PACKET.md`, taxonomy version, golden JSONL cases, latest core test output, persona invariant statement, qualified dietitian sign-off template, and production second-layer or equivalent fail-closed safety evaluation evidence.
-- Regulation PDF packet: official PDF source metadata, checksum, extraction report, page/section map, draft derived rules, approved derived rules, corpus version, and corpus golden-case report.
+- Regulation PDF packet: official PDF source metadata, checksum, extraction report, page/section map, draft derived rules, corpus version, corpus golden-case report, and external approval artifact. Phase 65 can validate the QA foundation but cannot self-approve the corpus.
 - Provider packet: `PRODUCTION_PILOT_PROVIDER_VENDOR_REVIEW_PACKET.md`, provider requirements, no-storage/no-training requirements, prompt/completion logging decision checklist, provider-attempt audit semantics, provider input allowlist, internal copilot egress review, dietitian context update egress review.
 - Internal copilot packet: Phase 26 spec, `DATA_INVENTORY.md` copilot rows, RBAC/source-ref evidence, no-raw-SQL/no-mutation statement, provider-egress blocked statement.
 - Channel packet: `PRODUCTION_PILOT_CHANNEL_POLICY_REVIEW_PACKET.md`, WhatsApp feasibility checklist, Telegram bot/privacy checklist, opt-in/out and service-window procedure, identity quarantine and idempotency evidence.

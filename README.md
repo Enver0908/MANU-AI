@@ -6,9 +6,9 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 This repository is a local SaaS/PWA pilot prototype and architecture workspace. It is not a production-connected system yet.
 
-**Latest phase:** Phase 64 structured launch-gate evidence engine (2026-06-04). **Production pilot:** `NO-GO` (all eight launch gates open; R-405 open).
+**Latest phase:** Phase 65 official regulation PDF corpus QA foundation (2026-06-04). **Production pilot:** `NO-GO` (all eight launch gates open; R-405 open).
 
-**Latest verification:** Phase 64 verified on 2026-06-04: core tests 114/114, app tests 158/158, `npm run release:verify` passed with only documented R-405 findings.
+**Latest verification:** Phase 65 verified on 2026-06-04: core tests 114/114, app tests 166/166, `npm run release:verify` passed with only documented R-405 findings.
 
 The current implementation includes:
 
@@ -24,6 +24,7 @@ The current implementation includes:
 - Phase 63 production-pilot rebaseline for WhatsApp-first, Gemini-only scale planning up to 100 dietitians and 5,000+ clients, with user-supplied forms and official regulation-PDF corpus ingestion as future gated phases
 
 - Phase 64 structured launch-gate evidence evaluation requiring sanitized artifact references, owner, approval date, review cadence, explicit approval status, and complete required-evidence coverage before a gate can be treated as closed
+- Phase 65 official regulation PDF corpus QA foundation requiring source metadata, checksum, page extraction evidence, page/section references, derived-rule drafts, and corpus golden cases before any PDF-derived scope rules can become draft corpus rules
 
 ## Safety Model
 

@@ -17,17 +17,18 @@ Start by reading:
 1. `PLAN.md`
 2. `PROJECT_PLAN.md`
 3. `docs/NEXT_PHASE_EXECUTION_PLAN.md`
-4. `docs/PHASE_64_STRUCTURED_LAUNCH_GATE_EVIDENCE_ENGINE_SPEC.md` (latest completed phase)
-5. `docs/PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md`
-6. `docs/PHASE_62_ARCHITECTURE_REVIEW_REMEDIATION_WAVE2_SPEC.md`
-7. `docs/PHASE_61_SCOPE_GUARD_RAG_SECOND_LAYER_SPEC.md`
-8. `docs/RISK_REGISTER.md`
-9. `docs/DATA_INVENTORY.md`
-10. `docs/DATASET_STRATEGY.md`
-11. `docs/MOBILE_APP_STRATEGY.md`
-12. `dietitian-ai-assistant/README.md`
-13. `dietitian-ai-assistant/docs/architecture.md`
-14. `dietitian-ai-assistant/docs/data-model.sql`
+4. `docs/PHASE_65_OFFICIAL_REGULATION_PDF_CORPUS_QA_SPEC.md` (latest completed phase)
+5. `docs/PHASE_64_STRUCTURED_LAUNCH_GATE_EVIDENCE_ENGINE_SPEC.md`
+6. `docs/PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md`
+7. `docs/PHASE_62_ARCHITECTURE_REVIEW_REMEDIATION_WAVE2_SPEC.md`
+8. `docs/PHASE_61_SCOPE_GUARD_RAG_SECOND_LAYER_SPEC.md`
+9. `docs/RISK_REGISTER.md`
+10. `docs/DATA_INVENTORY.md`
+11. `docs/DATASET_STRATEGY.md`
+12. `docs/MOBILE_APP_STRATEGY.md`
+13. `dietitian-ai-assistant/README.md`
+14. `dietitian-ai-assistant/docs/architecture.md`
+15. `dietitian-ai-assistant/docs/data-model.sql`
 
 ## User's Product Goal
 
@@ -60,13 +61,15 @@ The product must be both:
 
 ## Current Next Phase
 
-Phase 64 structured launch-gate evidence engine is the latest completed implementation wave (2026-06-04): `LaunchGateEvidenceRecord` and `evaluateProductionPilotLaunchGateEvidence` now require sanitized artifact references, owner, explicit approval, approval date, review cadence, non-expired timing, and full required-evidence coverage before a gate can be treated as closed. Legal/privacy and clinical gate definitions include Phase 63 form/PDF corpus evidence. Operational health can consume structured evidence. Real scope-guard egress cannot be enabled by legacy approved id arrays alone; it requires structured clinical taxonomy and provider/vendor evidence plus `MANU_ALLOW_REAL_SCOPE_GUARD=true`. Production pilot remains `NO-GO`.
+Phase 65 official regulation PDF corpus QA foundation is the latest completed implementation wave (2026-06-04): `app/src/lib/official-regulation-corpus.ts` now requires user-supplied official PDF corpus packages to include source metadata, SHA-256 checksums, page extraction evidence, page/section references, derived rule drafts, corpus version, and synthetic golden cases before PDF-derived scope rules can become draft `ScopeRuleRecord` entries with source references. QA failure blocks draft rule construction and keeps launch-gate evidence draft. QA success does not approve the corpus or activate production routing. Production pilot remains `NO-GO`.
+
+Phase 64 structured launch-gate evidence engine completed on 2026-06-04: `LaunchGateEvidenceRecord` and `evaluateProductionPilotLaunchGateEvidence` now require sanitized artifact references, owner, explicit approval, approval date, review cadence, non-expired timing, and full required-evidence coverage before a gate can be treated as closed. Legal/privacy and clinical gate definitions include Phase 63 form/PDF corpus evidence. Operational health can consume structured evidence. Real scope-guard egress cannot be enabled by legacy approved id arrays alone; it requires structured clinical taxonomy and provider/vendor evidence plus `MANU_ALLOW_REAL_SCOPE_GUARD=true`. Production pilot remains `NO-GO`.
 
 Phase 63 production pilot GO rebaseline is the latest completed planning wave (2026-06-04): production-pilot planning is now WhatsApp-first, Gemini-only, up to 100 dietitians, and 50+ clients per dietitian. Dietitian/client forms are user-supplied and must pass schema, privacy, prompt-allowlist, clinical, versioning, and migration review before production use. Official health-regulation PDFs are user-supplied and must become a traceable approved corpus with extraction QA, page/section references, approved derived rules, corpus golden tests, and clinical/legal approval before active green/yellow/red routing. This did not approve production pilot launch, close any gate, connect real services, process real data, or resolve R-405.
 
 Before selecting the next engineering phase, read `docs/PHASE_64_STRUCTURED_LAUNCH_GATE_EVIDENCE_ENGINE_SPEC.md` and `docs/PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md`; together they are the current planning source for production-pilot exit work.
 
-Phase 64 remaining production hardening: official regulation PDF ingestion/corpus QA, user-supplied form schema hardening, dashboard/internal-copilot pagination and scoped reload evidence for 5,000+ clients, load/backpressure/idempotency evidence, client removal/anonymization transactional redaction contract, external launch-gate approval artifacts mapped through structured evidence, and R-405 resolution only through Phase 22.
+Phase 65 remaining production hardening: user-supplied form schema hardening, dashboard/internal-copilot pagination and scoped reload evidence for 5,000+ clients, load/backpressure/idempotency evidence, client removal/anonymization transactional redaction contract, external launch-gate approval artifacts mapped through structured evidence, official PDF/legal/clinical artifact intake through the Phase 65 QA foundation, and R-405 resolution only through Phase 22.
 
 Phase 62 architecture review remediation wave 2 is the latest completed implementation wave (2026-06-04): provider failures on active clients now open dietitian handoff without client-facing AI send; shared `normalizeSafetyText`; overlap-based scope retrieval (`DEFAULT_MATCH_THRESHOLD` 0.4); glucose numeric cost-unit filtering; dead `modelForRisk` removed. Bulgu 1 unchanged (accepted). Bulgu 3/9/10 documented as constraint-accepted. Production pilot remains `NO-GO`.
 
@@ -266,10 +269,10 @@ npm run release:verify
 Current expected app result:
 
 - ESLint passes.
-- 158/158 app tests pass (includes structured launch-gate evidence, operational-health, scope-corpus, scope-retrieval, scope-guard-runtime, scope-guard-provider tests).
+- 166/166 app tests pass (includes structured launch-gate evidence, operational-health, official regulation corpus QA, scope-corpus, scope-retrieval, scope-guard-runtime, scope-guard-provider tests).
 - RLS integration tests pass against local Supabase; when pointed at non-local Supabase they skip unless `MANU_ALLOW_REMOTE_RLS_TESTS=true`. Re-run after Phase 61 `scope_*` migration when recording new RLS evidence.
 - `next build --webpack` passes.
-- `npm run release:verify` passes with core tests 114/114, app tests 158/158, lint, production build, and only known R-405 production audit findings.
+- `npm run release:verify` passes with core tests 114/114, app tests 166/166, lint, production build, and only known R-405 production audit findings.
 - `npm run test:visual` passes across desktop, tablet, and mobile Chromium viewports.
 
 Note: app scripts intentionally use `--webpack` because Turbopack did not resolve the local symlinked `dietitian-ai-assistant-architecture` package. The core package now has `"exports": "./src/index.js"`.
@@ -2059,4 +2062,38 @@ app: npm run release:verify -> passed; core tests 114/114, app tests 158/158, li
 
 ### Next Correct Step For Codex
 
-Implement the official regulation PDF ingestion/corpus QA foundation next. Keep corpus activation blocked until the user supplies official PDFs and structured legal/clinical approval evidence.
+Phase 65 completed the official regulation PDF corpus QA foundation. Keep corpus activation blocked until the user supplies official PDFs and structured legal/clinical approval evidence.
+
+## Phase 65 Official Regulation PDF Corpus QA Foundation Handoff Notes - 2026-06-04
+
+Completed by: Codex
+
+### What Was Done
+
+- Added `docs/PHASE_65_OFFICIAL_REGULATION_PDF_CORPUS_QA_SPEC.md`.
+- Added `app/src/lib/official-regulation-corpus.ts`.
+- Added typed official PDF source metadata, page extraction, page/section reference, derived rule draft, and corpus golden-case contracts.
+- Added fail-closed QA evaluation for missing metadata, invalid checksums, missing/failed page extraction, invalid section refs, unmapped derived-rule refs, and golden cases that reference unknown rules.
+- Added draft scope-rule conversion only after QA passes; PDF-derived rules remain `draft` and inactive.
+- Added clinical launch-gate evidence candidate construction that stays `draft` if QA fails.
+- Extended `ScopeRuleRecord` with optional source refs for PDF-derived draft rules.
+
+### What Was NOT Done
+
+- No real PDF parser or OCR pipeline was connected.
+- No raw PDF text or real official PDF file was stored in the repo.
+- No Supabase persistence table or admin UI was added for corpus intake.
+- No PDF corpus was approved.
+- No launch gate was closed.
+- No real provider, channel, monitoring, secret manager, approval, R-405 acceptance, or real-data path was connected.
+
+### Verification Commands
+
+```text
+app: npm test -- official-regulation-corpus scope-corpus launch-gates -> passed; app tests 166/166
+app: npm run release:verify -> passed; core tests 114/114, app tests 166/166, lint, production build, known R-405 only
+```
+
+### Next Correct Step For Codex
+
+Implement user-supplied dietitian/client form schema hardening after the user supplies the exact forms, or proceed with pagination/scoped reload evidence if forms are not yet supplied. Use the Phase 65 QA contract when official PDFs arrive; do not activate scope routing until structured legal/clinical launch-gate evidence approves the corpus.

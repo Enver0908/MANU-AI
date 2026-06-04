@@ -43,6 +43,7 @@ The review must cover:
 | Phase 28 remediation | `PHASE_28_AI_SECURITY_REMEDIATION_SPEC.md` | Expanded clinical golden coverage, provider-attempt semantics, no-call audit behavior | Qualified dietitian approval |
 | Phase 63 rebaseline | `PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md` | Required official PDF corpus ingestion, traceability, approval, and corpus golden-case evidence before active production routing | Approval of any unsupplied PDF, derived rule, or routing behavior |
 | Phase 64 evidence engine | `PHASE_64_STRUCTURED_LAUNCH_GATE_EVIDENCE_ENGINE_SPEC.md`, `app/src/lib/launch-gates.ts` | Structured evidence coverage, review cadence, expiry, and sanitized reference checks before this gate can be treated as closed | Qualified dietitian approval or supplied clinical artifact |
+| Phase 65 official PDF corpus QA | `PHASE_65_OFFICIAL_REGULATION_PDF_CORPUS_QA_SPEC.md`, `app/src/lib/official-regulation-corpus.ts` | Source metadata, checksum, page extraction evidence, page/section references, derived rule drafts, corpus version, and corpus golden-case QA before PDF-derived rules can become draft corpus rules | Qualified dietitian approval, legal/privacy handling decision, or active corpus approval |
 
 ## Current Golden Case Summary
 
@@ -65,7 +66,7 @@ The review must cover:
 | Medication/supplement/lab boundaries | Sign-off or requested changes for dose, lab, diagnosed-condition routing | Not supplied |
 | Pregnancy/glucose/allergy/emergency handling | Sign-off or requested changes for red emergency boundaries | Not supplied |
 | Production safety evaluation layer | Sign-off or requested changes for the second-layer or equivalent fail-closed safety evaluation approach beyond deterministic/regex matching | Not supplied |
-| Official regulation PDF corpus | Sign-off on official PDF source list, extraction QA, page/section references, derived routing rules, corpus version, and corpus golden-case report | Not supplied |
+| Official regulation PDF corpus | Sign-off on official PDF source list, extraction QA, page/section references, derived routing rules, corpus version, and corpus golden-case report after Phase 65 QA passes | Not supplied |
 | User-supplied form clinical implications | Sign-off or requested changes for any clinical routing or prompt context implications created by user-supplied dietitian/client forms | Not supplied |
 | Coverage gaps | List of missing clinical scenarios requiring new JSONL golden cases | Not supplied |
 | Taxonomy version | Approved taxonomy version and dated review record | Not supplied |

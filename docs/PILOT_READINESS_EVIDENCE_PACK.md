@@ -18,16 +18,17 @@ Run from `app`:
 npm run release:verify
 ```
 
-Latest result, re-verified on 2026-06-04 after Phase 64 structured launch-gate evidence engine:
+Latest result, re-verified on 2026-06-04 after Phase 65 official regulation PDF corpus QA foundation:
 
 - Core package tests: 114/114 passed.
-- App tests: 158/158 passed.
+- App tests: 166/166 passed.
 - App lint: passed.
 - Production build: passed.
 - Production dependency audit gate: passed with only documented R-405 findings.
 - R-405 remains open: Next.js 16.2.7 still bundles nested PostCSS 8.4.31, so no safe stable patch path is available.
 - Phase 61 added `scope_rules`, `scope_rule_chunks`, and `scope_guard_evaluations` migration; re-run `npm run test:rls` when local Supabase is available to record Phase 61 RLS evidence.
 - Phase 64 adds structured launch-gate evidence evaluation and real scope-guard provider gating, but no approval artifact was supplied, no gate was closed, and no real provider/channel/data path was connected.
+- Phase 65 adds official regulation PDF corpus QA contracts for source metadata, checksums, page extraction evidence, page/section references, derived rule drafts, corpus version, and synthetic golden cases, but no real PDF was supplied, no corpus was approved, no gate was closed, and no active routing changed.
 
 Additional Phase 50 production Supabase hardening evidence on 2026-06-02:
 
@@ -276,6 +277,13 @@ Phase 64 structured launch-gate evidence engine on 2026-06-04:
 - Added typed structured launch-gate evidence records and evaluator.
 - Required every gate closure to have sanitized artifact reference, owner, explicit approved status, approval date, review cadence, non-expired evidence, and complete required-evidence coverage.
 - Expanded legal/privacy and clinical gate definitions with Phase 63 user-supplied form and official PDF corpus evidence requirements.
+
+Phase 65 official regulation PDF corpus QA foundation on 2026-06-04:
+
+- Added `docs/PHASE_65_OFFICIAL_REGULATION_PDF_CORPUS_QA_SPEC.md`.
+- Added `app/src/lib/official-regulation-corpus.ts` and tests.
+- Required official PDF source metadata, SHA-256 checksums, page extraction evidence, page/section mapping, derived rule drafts, corpus version, and corpus golden cases before PDF-derived scope rules can become draft rules.
+- QA-passing derived rules remain draft and inactive until qualified clinical/legal approval artifacts are supplied and accepted.
 - Wired operational health to consume structured launch-gate evidence.
 - Hardened real scope-guard provider gating so legacy approved id arrays alone cannot enable real scope guard egress.
 - Added app tests for default blocked state, partial evidence, unknown gate ids, stale/conditional/unsanitized evidence, complete structured evidence, operational health structured evidence, and scope-guard provider gating.
@@ -307,7 +315,7 @@ Phase 43 multilingual language support on 2026-05-31:
 Phase 63 gate addendum:
 
 - The legal/privacy gate now also blocks production use of user-supplied dietitian/client forms until field-level privacy classification, prompt allowlist, retention/export/deletion handling, and version migration are approved.
-- The clinical taxonomy gate now also blocks active green/yellow/red routing from official health-regulation PDFs until the PDF sources, extraction QA, page/section references, derived rules, corpus version, and corpus golden-case report are approved.
+- The clinical taxonomy gate now also blocks active green/yellow/red routing from official health-regulation PDFs until the PDF sources, extraction QA, page/section references, derived rules, corpus version, and corpus golden-case report pass Phase 65 QA and are externally approved.
 - The scale/load readiness path now blocks the 100 dietitian / 5,000+ client pilot until pagination, scoped reload, load, backpressure, idempotency/retry, monitoring, and rollback evidence is recorded.
 - Phase 64 structured evidence addendum: a launch gate remains open unless the structured evidence engine sees sanitized approved evidence records covering every required evidence item with owner, approval date, review cadence, and non-expired status.
 
@@ -390,7 +398,7 @@ Release verification:
 2. Collect the user-supplied legal/privacy, clinical, dietitian form, client form, and official health-regulation PDF package.
 3. Use `PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md` as the external review checklist.
 4. Complete legal/privacy review using `PRODUCTION_PILOT_LEGAL_PRIVACY_REVIEW_PACKET.md` and supply acceptable approval evidence, including the user-supplied form definitions.
-5. Build and approve the official regulation PDF corpus before active scope/routing use.
+5. Apply the Phase 65 QA foundation to the official regulation PDF package after the user supplies it, then collect external clinical/legal approval before active scope/routing use.
 6. Obtain qualified dietitian approval using `PRODUCTION_PILOT_CLINICAL_TAXONOMY_REVIEW_PACKET.md` for the current clinical taxonomy, official corpus version, golden test set, and second-layer or equivalent fail-closed safety evaluation approach.
 7. Implement scale/load evidence for up to 100 dietitians and 5,000+ clients.
 8. Complete provider/vendor retention and prompt logging review using `PRODUCTION_PILOT_PROVIDER_VENDOR_REVIEW_PACKET.md`.

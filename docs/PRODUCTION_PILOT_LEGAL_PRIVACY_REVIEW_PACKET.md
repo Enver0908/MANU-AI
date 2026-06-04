@@ -43,6 +43,7 @@ The review must cover:
 | External approval intake | `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` | Sanitized approval artifact tracking | Gate closure without supplied artifacts |
 | Phase 63 rebaseline | `PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md` | User-supplied forms and official PDF corpus are gated production inputs | Legal/privacy approval of unsupplied artifacts |
 | Phase 64 evidence engine | `PHASE_64_STRUCTURED_LAUNCH_GATE_EVIDENCE_ENGINE_SPEC.md`, `app/src/lib/launch-gates.ts` | Structured evidence coverage, review cadence, expiry, and sanitized reference checks before this gate can be treated as closed | Legal/privacy approval or supplied counsel artifact |
+| Phase 65 official PDF corpus QA | `PHASE_65_OFFICIAL_REGULATION_PDF_CORPUS_QA_SPEC.md`, `app/src/lib/official-regulation-corpus.ts` | Official PDF corpus QA records checksums, page extraction evidence, page/section references, derived rules, and golden-case reports without storing raw PDF text in repo fixtures | Legal/privacy handling decision for official PDF storage, extraction, retention, and approval workflow |
 
 ## Required Counsel Decisions
 
@@ -76,7 +77,7 @@ The review must cover:
 - Internal copilot is local/mock only, read-only, source-referenced, and not client-facing.
 - Dietitian context updates invalidate pending drafts and are included in export/anonymization governance.
 - User-supplied forms remain unapproved for production until legal/privacy and clinical review define allowed fields, prompt eligibility, retention, export, deletion/anonymization, and version migration behavior.
-- User-supplied official regulation PDFs remain unapproved for production routing until legal/privacy handling and clinical approval of derived corpus rules are recorded.
+- User-supplied official regulation PDFs remain unapproved for production routing until Phase 65 QA passes and legal/privacy handling plus clinical approval of derived corpus rules are recorded.
 
 ## Missing Before Gate Closure
 

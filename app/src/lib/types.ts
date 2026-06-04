@@ -347,6 +347,12 @@ export type ScopeRuleRecord = {
   approvedByDietitianId: string | null;
   approvedAt: string | null;
   createdAt: string;
+  sourceRefs?: {
+    sourceId: string;
+    sectionId: string;
+    pageStart: number;
+    pageEnd: number;
+  }[];
 };
 
 export type ScopeRuleChunkRecord = {

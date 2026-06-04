@@ -337,7 +337,7 @@ cd "C:\Users\Dell\OneDrive\Masaüstü\MANU-AI\dietitian-ai-assistant"
 npm test
 ```
 
-Last verified result (Phase 64, 2026-06-04):
+Last verified result (Phase 65, 2026-06-04):
 
 ```text
 114/114 tests passing
@@ -366,6 +366,14 @@ Status as of 2026-06-04 (Phase 64):
 - Operational health can consume structured launch-gate evidence without exposing raw content.
 - Real scope guard egress cannot be enabled by legacy approved id lists alone; it requires structured clinical taxonomy and provider/vendor evidence plus `MANU_ALLOW_REAL_SCOPE_GUARD=true`.
 - App tests 158/158; production pilot remains `NO-GO`.
+
+Status as of 2026-06-04 (Phase 65):
+
+- Official regulation PDF corpus QA foundation exists in `app/src/lib/official-regulation-corpus.ts`.
+- PDF-derived corpus intake now requires sanitized source metadata, SHA-256 checksum, page-level extraction evidence, page/section references, derived rule drafts, and synthetic corpus golden cases.
+- QA-passing derived rules can become draft scope rules with source references, but they are not approved or active.
+- Clinical launch-gate evidence for the official PDF corpus can be built only from QA-passing corpus evidence plus external approval metadata; QA failure keeps the evidence draft.
+- App tests 166/166; production pilot remains `NO-GO`.
 
 Status as of 2026-06-04 (Phase 63):
 
@@ -595,12 +603,14 @@ Phase 63 production pilot GO rebaseline completed locally on 2026-06-04: added `
 
 Phase 64 structured launch-gate evidence engine completed locally on 2026-06-04: added `docs/PHASE_64_STRUCTURED_LAUNCH_GATE_EVIDENCE_ENGINE_SPEC.md`, implemented typed structured evidence records and evaluator, expanded Phase 63 legal/clinical required evidence, wired operational health to structured evidence, and hardened real scope-guard provider allowance so legacy gate ids alone cannot enable real egress. Verification passed with core tests 114/114, app tests 158/158, app lint, production build, and `npm run release:verify`. No approval artifact was supplied, no gate was closed, no real provider/channel/data path was connected, and production pilot remains `NO-GO`.
 
+Phase 65 official regulation PDF corpus QA foundation completed locally on 2026-06-04: added `docs/PHASE_65_OFFICIAL_REGULATION_PDF_CORPUS_QA_SPEC.md` and `app/src/lib/official-regulation-corpus.ts`. The local foundation evaluates user-supplied official PDF corpus packages for source metadata, checksum, page extraction evidence, page/section references, derived rule drafts, and corpus golden cases. QA-passing derived rules can be converted only into draft scope rules with source references; external clinical/legal approval remains required before active production routing or launch-gate closure. Verification passed with core tests 114/114, app tests 166/166, app lint, production build, and `npm run release:verify`. No real PDF was supplied or parsed, no corpus was approved, no launch gate was closed, no provider/channel/data path was connected, and production pilot remains `NO-GO`.
+
 Phase 61 scope guard (RAG + LLM) second layer mock-first completed locally on 2026-06-04: added `docs/PHASE_61_SCOPE_GUARD_RAG_SECOND_LAYER_SPEC.md`, core `scope-guard.js` (`scope-rag-v0.1.0`) with monotonic `mergeScopeDecision`, app mock lexical retrieval and deterministic evaluator, `scope-guard-runtime` wiring in simulator risk path, Supabase `scope_*` tables with tenant read / system write RLS, raw-text-free `scope_guard_evaluations` audit, operational-health corpus signals, placeholder draft corpus (no-op until approved), and fail-closed disconnected real embedding/LLM behind clinical taxonomy gate + `MANU_ALLOW_REAL_SCOPE_GUARD=true`. Combined classifier version: `dietetic-risk-v0.3.1+clinical-safety-second-layer-v0.1.0+scope-rag-v0.1.0`. Verification passed with core tests 112/112, app tests 150/150, app lint, and `npm run release:verify`. Production pilot remains `NO-GO`; R-310 partially mitigated in local prototype only.
 
 Tasks:
 
-1. Prepare the official health-regulation PDF ingestion pipeline: source metadata, checksum, extraction QA, page/section map, derived rule draft, clinical/legal approval workflow, corpus version, and corpus golden-case report.
-2. Wait for the user-supplied legal/privacy, clinical, official PDF, dietitian form, and client form packages before approving real routing, real forms, or active production pilot behavior.
+1. Wait for the user-supplied legal/privacy, clinical, official PDF, dietitian form, and client form packages before approving real routing, real forms, or active production pilot behavior.
+2. Use the Phase 65 official regulation PDF corpus QA foundation when the official PDFs arrive; do not approve active scope routing until source metadata, checksums, extraction QA, page/section mapping, derived rules, corpus version, golden-case report, and clinical/legal approval artifacts pass.
 3. Implement user-supplied dietitian/client form schema hardening after the forms are provided: field registry, prompt allowlist, privacy classification, clinical implication mapping, version migration, and regression fixtures.
 4. Implement dashboard/internal-copilot pagination, scoped reloads, and load evidence for up to 100 dietitians and 5,000+ clients; keep this separate from mutation refactors.
 5. Design the dedicated client removal/anonymization transactional redaction contract before moving that lifecycle fully to RPC commits.

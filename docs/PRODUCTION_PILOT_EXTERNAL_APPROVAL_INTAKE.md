@@ -23,6 +23,7 @@ All production-pilot launch gates remain open until the user supplies acceptable
 - User-supplied dietitian/client forms must be reviewed as legal/privacy and clinical inputs before production use.
 - User-supplied official health-regulation PDFs must be recorded as sanitized references and transformed into an approved, versioned, page/section-referenced corpus before active production routing.
 - Phase 64 structured evidence evaluation requires each gate artifact reference to include owner, artifact title, sanitized reference, explicit approval status, approval date, review due date, optional expiry, and exact required evidence items covered.
+- Phase 65 official PDF corpus QA requires official PDF source metadata, SHA-256 checksums, page extraction evidence, page/section references, derived rule drafts, corpus version, and synthetic corpus golden cases before PDF-derived clinical evidence can be submitted for approval.
 
 ## Evidence Intake Matrix
 
@@ -50,7 +51,7 @@ For each supplied artifact, record:
 - Sanitized storage reference.
 - Evidence items covered.
 - Evidence items not covered.
-- For official PDF artifacts: source title, source owner, received date, checksum, storage reference, extraction status, approved corpus version, page/section reference map, and reviewer decision.
+- For official PDF artifacts: source title, source owner, received date, checksum, storage reference, page-level extraction status, page/section reference map, derived rule draft list, corpus version, corpus golden-case report, and reviewer decision.
 - For form artifacts: form owner, version, field-level privacy classification, prompt-allowlist decision, clinical implication review, migration decision, and reviewer decision.
 - Explicit approval, rejection, or conditional approval language.
 - Follow-up actions required before gate closure.
