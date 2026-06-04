@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { createInitialState } from "./seed-data";
 import { buildOperationalHealthSnapshot } from "./operational-health";
+import { PRODUCTION_PILOT_LAUNCH_GATES, type LaunchGateDefinition } from "./launch-gates";
 import type { ManuAppState } from "./types";
 
 describe("operational health snapshot", () => {
@@ -39,6 +40,17 @@ describe("operational health snapshot", () => {
 
     expect(snapshot.launchBlocked).toBe(false);
     expect(snapshot.openLaunchGateIds).toEqual([]);
+  });
+
+  it("uses structured launch gate evidence when supplied", () => {
+    const snapshot = buildOperationalHealthSnapshot(createInitialState(), {
+      now: "2026-06-04T12:00:00.000Z",
+      launchGateEvidence: PRODUCTION_PILOT_LAUNCH_GATES.map((gate) => buildEvidenceRecord(gate)),
+    });
+
+    expect(snapshot.launchBlocked).toBe(false);
+    expect(snapshot.openLaunchGateIds).toEqual([]);
+    expect(snapshot.blockedLaunchGateCount).toBe(0);
   });
 
   it("does not include raw health, message, channel, prompt, or secret content", () => {
@@ -155,5 +167,19 @@ function operationalFixture(): ManuAppState {
         createdAt: "2026-05-25T10:00:00.000Z",
       },
     ],
+  };
+}
+
+function buildEvidenceRecord(gate: LaunchGateDefinition) {
+  return {
+    gateId: gate.id,
+    artifactTitle: `${gate.label} approval`,
+    artifactRef: `external-review://${gate.id}`,
+    owner: "External reviewer",
+    approvalStatus: "approved" as const,
+    approvedAt: "2026-06-01T09:00:00.000Z",
+    reviewDueAt: "2026-12-01T09:00:00.000Z",
+    coveredEvidence: gate.requiredEvidence,
+    sanitizedReference: true,
   };
 }

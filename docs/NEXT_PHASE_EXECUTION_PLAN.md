@@ -6,7 +6,28 @@ MANU-AI is in pilot-foundation mode. The local SaaS/PWA prototype, Supabase-back
 
 Real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, and real client health data remain disconnected.
 
-The most recent execution layers after the 13-phase completion roadmap are Phase 43 multilingual language support, Phase 44 red-risk reactivation lock, Phase 45 client removal data lifecycle, Phase 46 WhatsApp group quarantine, Phase 47 RLS quarantine evidence coverage, Phase 48 R-405 stable patch recheck, Phase 49 safety/orchestration hardening, Phase 50 production Supabase hardening, Phase 51 transactional RPC coverage, Phase 52 integration test coverage, Phase 53 scale/broad read contracts, Phase 54 R-405/launch-gate recheck, Phase 55 audit remediation safety boundary, Phase 56 clinical safety second-layer local evidence, Phase 57 yellow-risk hold/draft refresh, Phase 58 dietitian client language control, Phase 59 architecture review remediation, Phase 60 audit remediation, Phase 61 scope guard (RAG + LLM) second layer mock-first, Phase 62 architecture review remediation wave 2, and Phase 63 production pilot GO rebaseline. Phase 63 changes the target production-pilot planning basis to WhatsApp-first, Gemini-only, up to 100 dietitians with 50+ clients each (5,000+ clients), user-supplied dietitian/client forms, and official health-regulation PDFs that must become a reviewed/versioned corpus before active routing. The production-pilot decision remains `NO-GO`: all eight launch gates remain open and R-405 remains open. R-406 is now mitigated in the local prototype after Docker Desktop/local Supabase was started, the Phase 50 migration was applied, and `npm run test:rls` passed with 19/19 tests on 2026-06-02. Draft review, form response, client context update, handoff status, and red-risk reactivation now use transactional RPC commits locally; remaining broad reads are classified in a test-covered contract, while client removal/anonymization bulk redaction, pagination implementation, official PDF corpus ingestion, and user-supplied form hardening remain future production hardening work. R-310 is partially mitigated locally by deterministic second-layer evidence, Phase 57 yellow supervision, Phase 59 glucose/symptom hardening, and Phase 61 escalate-only scope guard (default no-op until approved corpus), but qualified dietitian approval, official approved regulation corpus, and the clinical taxonomy launch gate remain open.
+The most recent execution layers after the 13-phase completion roadmap are Phase 43 multilingual language support, Phase 44 red-risk reactivation lock, Phase 45 client removal data lifecycle, Phase 46 WhatsApp group quarantine, Phase 47 RLS quarantine evidence coverage, Phase 48 R-405 stable patch recheck, Phase 49 safety/orchestration hardening, Phase 50 production Supabase hardening, Phase 51 transactional RPC coverage, Phase 52 integration test coverage, Phase 53 scale/broad read contracts, Phase 54 R-405/launch-gate recheck, Phase 55 audit remediation safety boundary, Phase 56 clinical safety second-layer local evidence, Phase 57 yellow-risk hold/draft refresh, Phase 58 dietitian client language control, Phase 59 architecture review remediation, Phase 60 audit remediation, Phase 61 scope guard (RAG + LLM) second layer mock-first, Phase 62 architecture review remediation wave 2, Phase 63 production pilot GO rebaseline, and Phase 64 structured launch-gate evidence engine. Phase 64 adds structured evidence evaluation so a launch gate closes only when sanitized external references cover every required evidence item with owner, approval date, review cadence, explicit approval status, and non-expired evidence. The production-pilot decision remains `NO-GO`: all eight launch gates remain open and R-405 remains open. R-406 is now mitigated in the local prototype after Docker Desktop/local Supabase was started, the Phase 50 migration was applied, and `npm run test:rls` passed with 19/19 tests on 2026-06-02. Draft review, form response, client context update, handoff status, and red-risk reactivation now use transactional RPC commits locally; remaining broad reads are classified in a test-covered contract, while client removal/anonymization bulk redaction, pagination implementation, official PDF corpus ingestion, and user-supplied form hardening remain future production hardening work. R-310 is partially mitigated locally by deterministic second-layer evidence, Phase 57 yellow supervision, Phase 59 glucose/symptom hardening, and Phase 61 escalate-only scope guard (default no-op until approved corpus), but qualified dietitian approval, official approved regulation corpus, and the clinical taxonomy launch gate remain open.
+
+## Phase 64: Structured Launch Gate Evidence Engine - Completed 2026-06-04
+
+Goal: make launch-gate closure depend on structured, complete, non-expired external evidence rather than bare gate ids.
+
+Status:
+
+- Added `docs/PHASE_64_STRUCTURED_LAUNCH_GATE_EVIDENCE_ENGINE_SPEC.md`.
+- Added `LaunchGateEvidenceRecord` and `evaluateProductionPilotLaunchGateEvidence` in `app/src/lib/launch-gates.ts`.
+- Expanded legal/privacy and clinical required-evidence lists with Phase 63 user-supplied form and official PDF corpus requirements.
+- Operational health can consume structured launch-gate evidence while keeping aggregate-safe output.
+- Real scope-guard provider allowance now requires structured clinical taxonomy and provider/vendor evidence plus `MANU_ALLOW_REAL_SCOPE_GUARD=true`; legacy approved id arrays alone cannot enable real scope guard egress.
+- Added tests for default blocked state, partial evidence, unknown gate ids, conditional/stale/unsanitized evidence, complete structured evidence, operational health structured evidence, and scope-guard provider gating.
+- Verification passed from `app` with app tests 158/158 in the targeted run; full release verification is recorded in the evidence pack.
+- No launch gate approval artifact was supplied, no gate was closed, and no real provider/channel/data path was connected.
+- Production pilot remains `NO-GO`.
+
+Next:
+
+- Phase 65 should implement the official regulation PDF ingestion/corpus QA foundation, still without activating production routing until the user supplies and approves the PDFs.
+- Then implement user-supplied form schema hardening, pagination/scoped reads, transactional redaction RPC, Gemini integration, and WhatsApp adapter as separate gated phases.
 
 ## Phase 63: Production Pilot GO Rebaseline - Completed 2026-06-04
 
@@ -24,8 +45,8 @@ Status:
 
 Next:
 
-- Phase 64 should implement the structured launch-gate evidence engine before any gate is treated as closed.
-- Then plan and implement official regulation PDF ingestion/corpus QA, user-supplied form schema hardening, pagination/scoped reads, transactional redaction RPC, Gemini integration, and WhatsApp adapter as separate gated phases.
+- Phase 64 completed the structured launch-gate evidence engine.
+- Phase 65 should plan and implement official regulation PDF ingestion/corpus QA before user-supplied form schema hardening, pagination/scoped reads, transactional redaction RPC, Gemini integration, and WhatsApp adapter phases.
 
 ## Phase 49: Safety, Orchestration, And Concurrency Hardening - Completed (archive)
 

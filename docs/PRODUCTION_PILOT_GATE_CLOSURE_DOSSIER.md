@@ -15,8 +15,8 @@ Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized reference
 ## Current Baseline
 
 - Git baseline: Phase 27-29 checkpoint exists at `c75564e Add Phase 27-29 pilot readiness checkpoint` on branch `codex/phase-29-baseline-checkpoint`; Completion Roadmap Phase 1 records this as the current implementation baseline.
-- Latest local release verification: `npm run release:verify` passed on 2026-06-04 after Phase 63 production pilot GO rebaseline.
-- Verification result: core tests 114/114, app tests 150/150, lint passed, production build passed.
+- Latest local release verification: `npm run release:verify` passed on 2026-06-04 after Phase 64 structured launch-gate evidence engine.
+- Verification result: core tests 114/114, app tests 158/158, lint passed, production build passed.
 - Dependency audit result: only known R-405 findings, `next:postcss` and `postcss:GHSA-qx2v-qp2m-jg93`.
 - R-405 status: open production launch blocker; Phase 54 rechecked metadata on 2026-06-02 and stable `next@latest` is 16.2.7 but still bundles `postcss@8.4.31`, so no safe stable Next.js/PostCSS patch path is available.
 - R-405 remediation spec: `PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`.
@@ -51,6 +51,7 @@ Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized reference
 - Phase 61 scope guard second layer spec: `PHASE_61_SCOPE_GUARD_RAG_SECOND_LAYER_SPEC.md` records mock-first regulation-corpus retrieval, escalate-only merge (`scope-rag-v0.1.0`), raw-text-free scope guard audit, and disconnected real embedding/LLM seams. It does not approve production pilot launch, approved regulation corpus, or real provider use.
 - Phase 62 architecture review remediation spec: `PHASE_62_ARCHITECTURE_REVIEW_REMEDIATION_WAVE2_SPEC.md` records provider-failure dietitian handoff without client send, shared safety normalization, overlap retrieval, and glucose cost-unit tuning. It does not approve production pilot launch or resolve R-405.
 - Phase 63 production pilot GO rebaseline spec: `PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md` records the updated WhatsApp-first, Gemini-only target of up to 100 dietitians with 50+ clients each, user-supplied dietitian/client forms, and official health-regulation PDFs that must be extracted, reviewed, approved, versioned, and tested before active production routing. It does not approve production pilot launch, close any gate, connect real services, process real data, or resolve R-405.
+- Phase 64 structured launch-gate evidence engine spec: `PHASE_64_STRUCTURED_LAUNCH_GATE_EVIDENCE_ENGINE_SPEC.md` records typed sanitized evidence records, full required-evidence coverage, owner, approval date, review cadence, expiry checks, and explicit approval status before a gate can be treated as closed. It does not supply any external approval artifact, close any gate, connect real services, process real data, or resolve R-405.
 
 ## Gate Closure Matrix
 
@@ -67,6 +68,8 @@ Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized reference
 
 Phase 63 gate interpretation: the clinical taxonomy gate now also requires official PDF source metadata, checksum, extraction QA, page/section references, approved derived routing rules, corpus version, and corpus golden-case report. The legal/privacy gate must review user-supplied dietitian and client form definitions before those schemas are production approved. The 100 dietitian / 5,000+ client target makes pagination, scoped reload, and load evidence production prerequisites for the readiness packet.
 
+Phase 64 gate interpretation: an approval artifact can close a gate only when represented as structured sanitized evidence that covers every required evidence item and has an owner, explicit `approved` status, approval date, review cadence, and non-expired timing. Conditional, rejected, draft, stale, unsanitized, malformed, partial, or unknown-gate evidence keeps the relevant gate open.
+
 ## Review Packet Checklist
 
 - Legal/privacy packet: `PRODUCTION_PILOT_LEGAL_PRIVACY_REVIEW_PACKET.md`, data inventory, permission integration points, DSAR/export/anonymization evidence, retention placeholder list, dietitian context update records, and user-supplied dietitian/client form definitions when provided.
@@ -78,7 +81,7 @@ Phase 63 gate interpretation: the clinical taxonomy gate now also requires offic
 - Operations packet: `PRODUCTION_PILOT_INCIDENT_DSAR_REVIEW_PACKET.md`, `PRODUCTION_PILOT_BACKUP_RESTORE_REVIEW_PACKET.md`, `PRODUCTION_PILOT_SECRET_ROTATION_REVIEW_PACKET.md`, incident owner placeholder, DSAR/deletion procedure placeholder, backup/restore drill placeholder, secret inventory and rotation owner placeholder.
 - Dependency packet: `PRODUCTION_PILOT_DEPENDENCY_AUDIT_CLEARANCE_PACKET.md`, latest `npm run release:verify` output, R-405 risk record, stable Next.js/PostCSS tracking note.
 - RLS evidence packet: latest `npm run test:rls` output from local Supabase showing 1 file and 19/19 tests passed after applying the Phase 50 migration and Phase 51/52 coverage.
-- Approval intake packet: sanitized external approval artifact references tracked in `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md`.
+- Approval intake packet: sanitized external approval artifact references tracked in `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md`, then evaluated through the Phase 64 structured evidence engine.
 
 ## Non-Approvals
 

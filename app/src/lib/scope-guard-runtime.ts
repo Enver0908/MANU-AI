@@ -9,6 +9,7 @@ import { getApprovedScopeChunks, isScopeGuardCorpusActive } from "./scope-corpus
 import { evaluateScopeWithFailSafe, resolveScopeEvaluator } from "./scope-evaluator";
 import { isRealScopeGuardProviderAllowed } from "./scope-guard-provider";
 import { resolveRetrievalProvider } from "./scope-retrieval";
+import type { LaunchGateEvidenceRecord } from "./launch-gates";
 import type {
   ManuAppState,
   RiskLevel,
@@ -30,6 +31,7 @@ export type ScopeGuardRuntimeInput = {
   conversationId?: string | null;
   messageId?: string | null;
   approvedLaunchGateIds?: string[];
+  launchGateEvidence?: LaunchGateEvidenceRecord[];
   matchThreshold?: number;
   topK?: number;
 };
@@ -67,7 +69,9 @@ export async function applyScopeGuardToRiskDecision(
     };
   }
 
-  const allowReal = isRealScopeGuardProviderAllowed(input.approvedLaunchGateIds);
+  const allowReal = isRealScopeGuardProviderAllowed({
+    launchGateEvidence: input.launchGateEvidence,
+  });
   const retrievalProvider = resolveRetrievalProvider({ allowReal });
   const evaluator = resolveScopeEvaluator({ allowReal });
   const chunks = getApprovedScopeChunks(input.state);

@@ -22,6 +22,7 @@ All production-pilot launch gates remain open until the user supplies acceptable
 - R-406 requires a passing local Supabase RLS run before RLS evidence is complete.
 - User-supplied dietitian/client forms must be reviewed as legal/privacy and clinical inputs before production use.
 - User-supplied official health-regulation PDFs must be recorded as sanitized references and transformed into an approved, versioned, page/section-referenced corpus before active production routing.
+- Phase 64 structured evidence evaluation requires each gate artifact reference to include owner, artifact title, sanitized reference, explicit approval status, approval date, review due date, optional expiry, and exact required evidence items covered.
 
 ## Evidence Intake Matrix
 
@@ -44,6 +45,8 @@ For each supplied artifact, record:
 - Artifact title.
 - Artifact owner or approving reviewer.
 - Approval date.
+- Review due date or review cadence.
+- Optional expiry date.
 - Sanitized storage reference.
 - Evidence items covered.
 - Evidence items not covered.

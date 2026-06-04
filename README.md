@@ -6,9 +6,9 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 This repository is a local SaaS/PWA pilot prototype and architecture workspace. It is not a production-connected system yet.
 
-**Latest phase:** Phase 63 production pilot GO rebaseline (2026-06-04). **Production pilot:** `NO-GO` (all eight launch gates open; R-405 open).
+**Latest phase:** Phase 64 structured launch-gate evidence engine (2026-06-04). **Production pilot:** `NO-GO` (all eight launch gates open; R-405 open).
 
-**Latest verification:** Phase 63 docs-only rebaseline verified on 2026-06-04: core tests 114/114, app tests 150/150, `npm run release:verify` passed with only documented R-405 findings.
+**Latest verification:** Phase 64 verified on 2026-06-04: core tests 114/114, app tests 158/158, `npm run release:verify` passed with only documented R-405 findings.
 
 The current implementation includes:
 
@@ -23,6 +23,8 @@ The current implementation includes:
 - Phase 59–61 safety layers plus Phase 62 remediation (provider-failure dietitian handoff, shared safety text normalization, overlap scope retrieval, glucose cost-unit filter)
 - Phase 63 production-pilot rebaseline for WhatsApp-first, Gemini-only scale planning up to 100 dietitians and 5,000+ clients, with user-supplied forms and official regulation-PDF corpus ingestion as future gated phases
 
+- Phase 64 structured launch-gate evidence evaluation requiring sanitized artifact references, owner, approval date, review cadence, explicit approval status, and complete required-evidence coverage before a gate can be treated as closed
+
 ## Safety Model
 
 MANU-AI is built around supervised clinical safety boundaries:
@@ -32,7 +34,7 @@ MANU-AI is built around supervised clinical safety boundaries:
 - Red messages do not call an LLM and require human handoff.
 - Three escalate-only evaluation axes merge before orchestration: regex classifier (`dietetic-risk-v0.3.1`), clinical safety second layer (`clinical-safety-second-layer-v0.1.0`), and scope guard over an approved dietetic-regulation corpus (`scope-rag-v0.1.0`; mock-first, no-op until corpus is approved).
 - Personas affect communication style only, not clinical safety rules.
-- Production launch gates remain open until external approval artifacts are supplied.
+- Production launch gates remain open until external approval artifacts are supplied and accepted by the structured evidence engine.
 
 ## Repository Structure
 

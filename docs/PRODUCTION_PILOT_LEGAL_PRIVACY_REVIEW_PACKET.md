@@ -42,6 +42,7 @@ The review must cover:
 | Gate dossier | `PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md` | Required evidence and open gate status | External approval |
 | External approval intake | `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` | Sanitized approval artifact tracking | Gate closure without supplied artifacts |
 | Phase 63 rebaseline | `PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md` | User-supplied forms and official PDF corpus are gated production inputs | Legal/privacy approval of unsupplied artifacts |
+| Phase 64 evidence engine | `PHASE_64_STRUCTURED_LAUNCH_GATE_EVIDENCE_ENGINE_SPEC.md`, `app/src/lib/launch-gates.ts` | Structured evidence coverage, review cadence, expiry, and sanitized reference checks before this gate can be treated as closed | Legal/privacy approval or supplied counsel artifact |
 
 ## Required Counsel Decisions
 

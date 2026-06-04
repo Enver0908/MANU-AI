@@ -1,4 +1,9 @@
-import { evaluateProductionPilotLaunchGates, type LaunchGateId } from "./launch-gates";
+import {
+  evaluateProductionPilotLaunchGateEvidence,
+  evaluateProductionPilotLaunchGates,
+  type LaunchGateEvidenceRecord,
+  type LaunchGateId,
+} from "./launch-gates";
 import { buildNotificationSlaSnapshot } from "./notification-sla";
 import { buildScopeGuardHealthSignal } from "./scope-guard-runtime";
 import type { ManuAppState } from "./types";
@@ -26,11 +31,18 @@ const DEFAULT_STALE_DRAFT_HOURS = 24;
 
 export function buildOperationalHealthSnapshot(
   state: ManuAppState,
-  options: { now?: string; approvedLaunchGateIds?: string[]; staleDraftHours?: number } = {},
+  options: {
+    now?: string;
+    approvedLaunchGateIds?: string[];
+    launchGateEvidence?: LaunchGateEvidenceRecord[];
+    staleDraftHours?: number;
+  } = {},
 ): OperationalHealthSnapshot {
   const now = options.now ? new Date(options.now) : new Date();
   const staleDraftMs = (options.staleDraftHours ?? DEFAULT_STALE_DRAFT_HOURS) * 60 * 60 * 1000;
-  const launchGateEvaluation = evaluateProductionPilotLaunchGates(options.approvedLaunchGateIds);
+  const launchGateEvaluation = options.launchGateEvidence
+    ? evaluateProductionPilotLaunchGateEvidence(options.launchGateEvidence, { now: now.toISOString() })
+    : evaluateProductionPilotLaunchGates(options.approvedLaunchGateIds);
   const notificationSla = buildNotificationSlaSnapshot(
     { notifications: state.notifications, handoffCases: state.handoffCases },
     { now: now.toISOString() },

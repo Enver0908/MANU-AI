@@ -3,6 +3,7 @@ import {
   classifyClinicalSafetyRisk,
 } from "dietitian-ai-assistant-architecture";
 import { applyScopeGuardToRiskDecision } from "./scope-guard-runtime";
+import type { LaunchGateEvidenceRecord } from "./launch-gates";
 import type { ClientRecord, ManuAppState, MessageRecord } from "./types";
 
 export { CLINICAL_SAFETY_CLASSIFIER_VERSION as SAFETY_CLASSIFIER_VERSION };
@@ -16,6 +17,7 @@ export async function classifySimulationRisk(
     conversationId?: string | null;
     messageId?: string | null;
     approvedLaunchGateIds?: string[];
+    launchGateEvidence?: LaunchGateEvidenceRecord[];
   } = {},
 ) {
   const baseDecision = classifyClinicalSafetyRisk({
@@ -36,6 +38,7 @@ export async function classifySimulationRisk(
     conversationId: options.conversationId ?? null,
     messageId: options.messageId ?? null,
     approvedLaunchGateIds: options.approvedLaunchGateIds,
+    launchGateEvidence: options.launchGateEvidence,
   });
 
   return {

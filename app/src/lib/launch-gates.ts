@@ -16,11 +16,43 @@ export type LaunchGateDefinition = {
   requiredEvidence: string[];
 };
 
+export type LaunchGateEvidenceStatus = "approved" | "conditional" | "rejected" | "draft";
+
+export type LaunchGateEvidenceRecord = {
+  gateId: string;
+  artifactTitle?: string;
+  artifactRef?: string;
+  owner?: string;
+  approvalStatus?: LaunchGateEvidenceStatus;
+  approvedAt?: string | null;
+  reviewDueAt?: string | null;
+  expiresAt?: string | null;
+  coveredEvidence?: string[];
+  sanitizedReference?: boolean;
+};
+
 export type LaunchGateEvaluation = {
   blocked: boolean;
   approvedGateIds: LaunchGateId[];
   openGateIds: LaunchGateId[];
   ignoredApprovalIds: string[];
+};
+
+export type LaunchGateEvidenceGateResult = {
+  gateId: LaunchGateId;
+  status: "approved" | "open";
+  coveredEvidence: string[];
+  missingEvidence: string[];
+  blockingReasons: string[];
+  evidenceRefs: string[];
+};
+
+export type LaunchGateEvidenceEvaluation = {
+  blocked: boolean;
+  approvedGateIds: LaunchGateId[];
+  openGateIds: LaunchGateId[];
+  ignoredEvidenceGateIds: string[];
+  gateResults: LaunchGateEvidenceGateResult[];
 };
 
 export const PRODUCTION_PILOT_LAUNCH_GATES: LaunchGateDefinition[] = [
@@ -33,6 +65,8 @@ export const PRODUCTION_PILOT_LAUNCH_GATES: LaunchGateDefinition[] = [
       "legal basis matrix",
       "privacy notice and client permission documents",
       "medical-device or clinical-decision-support classification memo",
+      "user-supplied dietitian/client form privacy and prompt-allowlist approval",
+      "official PDF corpus handling decision",
     ],
   },
   {
@@ -46,6 +80,9 @@ export const PRODUCTION_PILOT_LAUNCH_GATES: LaunchGateDefinition[] = [
       "taxonomy change log",
       "approved scope rule corpus version",
       "scope guard golden evaluation report",
+      "approved official regulation PDF corpus version",
+      "corpus golden-case report",
+      "user-supplied form clinical implication review",
     ],
   },
   {
@@ -119,4 +156,134 @@ export function evaluateProductionPilotLaunchGates(approvedGateIds: string[] = [
     openGateIds,
     ignoredApprovalIds: approvedGateIds.filter((gateId) => !knownGateIds.has(gateId as LaunchGateId)),
   };
+}
+
+export function evaluateProductionPilotLaunchGateEvidence(
+  evidenceRecords: LaunchGateEvidenceRecord[] = [],
+  options: { now?: string } = {},
+): LaunchGateEvidenceEvaluation {
+  const now = options.now ? new Date(options.now) : new Date();
+  const knownGateIds = new Set(PRODUCTION_PILOT_LAUNCH_GATES.map((gate) => gate.id));
+  const ignoredEvidenceGateIds = unique(
+    evidenceRecords
+      .map((record) => record.gateId)
+      .filter((gateId) => !knownGateIds.has(gateId as LaunchGateId)),
+  );
+
+  const gateResults = PRODUCTION_PILOT_LAUNCH_GATES.map((gate): LaunchGateEvidenceGateResult => {
+    const requiredEvidence = new Set(gate.requiredEvidence);
+    const recordsForGate = evidenceRecords.filter((record) => record.gateId === gate.id);
+    const coveredEvidence = new Set<string>();
+    const evidenceRefs = new Set<string>();
+    const blockingReasons = new Set<string>();
+
+    if (recordsForGate.length === 0) {
+      blockingReasons.add("no evidence records supplied");
+    }
+
+    for (const record of recordsForGate) {
+      const validation = validateEvidenceRecord(record, now);
+      if (!validation.valid) {
+        for (const reason of validation.reasons) blockingReasons.add(reason);
+        continue;
+      }
+
+      for (const evidenceItem of record.coveredEvidence ?? []) {
+        if (requiredEvidence.has(evidenceItem)) {
+          coveredEvidence.add(evidenceItem);
+        } else {
+          blockingReasons.add(`unknown evidence item ignored: ${evidenceItem}`);
+        }
+      }
+
+      if (record.artifactRef) evidenceRefs.add(record.artifactRef);
+    }
+
+    const missingEvidence = gate.requiredEvidence.filter((evidenceItem) => !coveredEvidence.has(evidenceItem));
+    if (missingEvidence.length > 0) {
+      blockingReasons.add(`missing required evidence: ${missingEvidence.join("; ")}`);
+    }
+
+    const gateApproved = missingEvidence.length === 0;
+
+    return {
+      gateId: gate.id,
+      status: gateApproved ? "approved" : "open",
+      coveredEvidence: gate.requiredEvidence.filter((evidenceItem) => coveredEvidence.has(evidenceItem)),
+      missingEvidence,
+      blockingReasons: gateApproved ? [] : [...blockingReasons],
+      evidenceRefs: [...evidenceRefs],
+    };
+  });
+
+  const approvedGateIds = gateResults
+    .filter((result) => result.status === "approved")
+    .map((result) => result.gateId);
+  const openGateIds = gateResults
+    .filter((result) => result.status === "open")
+    .map((result) => result.gateId);
+
+  return {
+    blocked: openGateIds.length > 0,
+    approvedGateIds,
+    openGateIds,
+    ignoredEvidenceGateIds,
+    gateResults,
+  };
+}
+
+function validateEvidenceRecord(record: LaunchGateEvidenceRecord, now: Date) {
+  const reasons: string[] = [];
+
+  if (record.approvalStatus !== "approved") {
+    reasons.push(`evidence is not approved: ${record.approvalStatus ?? "missing"}`);
+  }
+  if (!record.artifactTitle?.trim()) reasons.push("missing artifact title");
+  if (!record.artifactRef?.trim()) reasons.push("missing sanitized artifact reference");
+  if (!record.owner?.trim()) reasons.push("missing approval owner");
+  if (record.sanitizedReference !== true) reasons.push("artifact reference is not marked sanitized");
+  if (!record.coveredEvidence || record.coveredEvidence.length === 0) reasons.push("missing covered evidence list");
+
+  const approvedAt = parseRequiredDate(record.approvedAt, "approval date", reasons);
+  if (approvedAt && approvedAt.getTime() > now.getTime()) {
+    reasons.push("approval date is in the future");
+  }
+
+  const reviewDueAt = parseRequiredDate(record.reviewDueAt, "review due date", reasons);
+  if (reviewDueAt && reviewDueAt.getTime() < now.getTime()) {
+    reasons.push("review due date is expired");
+  }
+
+  if (record.expiresAt) {
+    const expiresAt = parseOptionalDate(record.expiresAt, "expiry date", reasons);
+    if (expiresAt && expiresAt.getTime() < now.getTime()) {
+      reasons.push("approval artifact is expired");
+    }
+  }
+
+  return {
+    valid: reasons.length === 0,
+    reasons,
+  };
+}
+
+function parseRequiredDate(value: string | null | undefined, label: string, reasons: string[]) {
+  if (!value) {
+    reasons.push(`missing ${label}`);
+    return null;
+  }
+  return parseOptionalDate(value, label, reasons);
+}
+
+function parseOptionalDate(value: string, label: string, reasons: string[]) {
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) {
+    reasons.push(`invalid ${label}`);
+    return null;
+  }
+  return parsed;
+}
+
+function unique(values: string[]) {
+  return [...new Set(values)];
 }

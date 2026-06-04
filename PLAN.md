@@ -337,7 +337,7 @@ cd "C:\Users\Dell\OneDrive\Masaüstü\MANU-AI\dietitian-ai-assistant"
 npm test
 ```
 
-Last verified result (Phase 62 runtime baseline, carried into Phase 63 documentation rebaseline on 2026-06-04):
+Last verified result (Phase 64, 2026-06-04):
 
 ```text
 114/114 tests passing
@@ -358,6 +358,14 @@ Status as of 2026-06-04 (Phase 62):
 - Scope retrieval uses overlap coefficient; match threshold `0.4`.
 - Glucose numeric window skips TL/lira and similar non-glucose units after numbers.
 - Core tests 114/114; app tests 150/150.
+
+Status as of 2026-06-04 (Phase 64):
+
+- Structured `LaunchGateEvidenceRecord` evaluation requires sanitized artifact references, owner, explicit approval status, approval date, review cadence, non-expired evidence, and complete required-evidence coverage before a launch gate is treated as closed.
+- Legal/privacy and clinical gate definitions now include Phase 63 user-supplied form and official PDF corpus evidence requirements.
+- Operational health can consume structured launch-gate evidence without exposing raw content.
+- Real scope guard egress cannot be enabled by legacy approved id lists alone; it requires structured clinical taxonomy and provider/vendor evidence plus `MANU_ALLOW_REAL_SCOPE_GUARD=true`.
+- App tests 158/158; production pilot remains `NO-GO`.
 
 Status as of 2026-06-04 (Phase 63):
 
@@ -585,21 +593,22 @@ Phase 62 architecture review remediation wave 2 completed locally on 2026-06-04:
 
 Phase 63 production pilot GO rebaseline completed locally on 2026-06-04: added `docs/PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md`, restructured the path out of production-pilot `NO-GO` around a WhatsApp-first/Gemini-only pilot for up to 100 dietitians with 50+ clients each, and recorded user-supplied dietitian/client forms plus official health-regulation PDFs as mandatory gated inputs. The plan now requires traceable PDF extraction, page/section mapping, approved corpus rules, corpus golden tests, form schema/privacy/prompt-allowlist review, structured launch-gate evidence, scale/load evidence, and rollback/monitoring gates before production pilot. Verification passed with core tests 114/114, app tests 150/150, app lint, and `npm run release:verify`. No runtime, schema, provider, channel, dependency, approval, R-405, or real-data change was made.
 
+Phase 64 structured launch-gate evidence engine completed locally on 2026-06-04: added `docs/PHASE_64_STRUCTURED_LAUNCH_GATE_EVIDENCE_ENGINE_SPEC.md`, implemented typed structured evidence records and evaluator, expanded Phase 63 legal/clinical required evidence, wired operational health to structured evidence, and hardened real scope-guard provider allowance so legacy gate ids alone cannot enable real egress. Verification passed with core tests 114/114, app tests 158/158, app lint, production build, and `npm run release:verify`. No approval artifact was supplied, no gate was closed, no real provider/channel/data path was connected, and production pilot remains `NO-GO`.
+
 Phase 61 scope guard (RAG + LLM) second layer mock-first completed locally on 2026-06-04: added `docs/PHASE_61_SCOPE_GUARD_RAG_SECOND_LAYER_SPEC.md`, core `scope-guard.js` (`scope-rag-v0.1.0`) with monotonic `mergeScopeDecision`, app mock lexical retrieval and deterministic evaluator, `scope-guard-runtime` wiring in simulator risk path, Supabase `scope_*` tables with tenant read / system write RLS, raw-text-free `scope_guard_evaluations` audit, operational-health corpus signals, placeholder draft corpus (no-op until approved), and fail-closed disconnected real embedding/LLM behind clinical taxonomy gate + `MANU_ALLOW_REAL_SCOPE_GUARD=true`. Combined classifier version: `dietetic-risk-v0.3.1+clinical-safety-second-layer-v0.1.0+scope-rag-v0.1.0`. Verification passed with core tests 112/112, app tests 150/150, app lint, and `npm run release:verify`. Production pilot remains `NO-GO`; R-310 partially mitigated in local prototype only.
 
 Tasks:
 
-1. Build the structured launch-gate evidence engine so each production-pilot gate can record status, owner, sanitized artifact references, approval date, expiry/review cadence, and blocking reason.
-2. Prepare the official health-regulation PDF ingestion pipeline: source metadata, checksum, extraction QA, page/section map, derived rule draft, clinical/legal approval workflow, corpus version, and corpus golden-case report.
-3. Wait for the user-supplied legal/privacy, clinical, official PDF, dietitian form, and client form packages before approving real routing, real forms, or active production pilot behavior.
-4. Implement user-supplied dietitian/client form schema hardening after the forms are provided: field registry, prompt allowlist, privacy classification, clinical implication mapping, version migration, and regression fixtures.
-5. Implement dashboard/internal-copilot pagination, scoped reloads, and load evidence for up to 100 dietitians and 5,000+ clients; keep this separate from mutation refactors.
-6. Design the dedicated client removal/anonymization transactional redaction contract before moving that lifecycle fully to RPC commits.
-7. Add production-pilot operational controls for green autopilot: selected-client qualification, sample-review rate, monitoring signals, rollback switch, red/yellow fail-closed escalation, and audit export.
-8. Use `docs/PRODUCTION_PILOT_LEGAL_PRIVACY_REVIEW_PACKET.md`, `docs/PRODUCTION_PILOT_CLINICAL_TAXONOMY_REVIEW_PACKET.md`, `docs/PRODUCTION_PILOT_PROVIDER_VENDOR_REVIEW_PACKET.md`, `docs/PRODUCTION_PILOT_CHANNEL_POLICY_REVIEW_PACKET.md`, `docs/PRODUCTION_PILOT_INCIDENT_DSAR_REVIEW_PACKET.md`, `docs/PRODUCTION_PILOT_BACKUP_RESTORE_REVIEW_PACKET.md`, `docs/PRODUCTION_PILOT_SECRET_ROTATION_REVIEW_PACKET.md`, `docs/PRODUCTION_PILOT_DEPENDENCY_AUDIT_CLEARANCE_PACKET.md`, `docs/PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md`, and `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md` to collect external approval evidence without storing secrets or raw client data in repo docs.
-9. Re-check R-405 again only through the `docs/PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md` procedure before any future dependency edit.
-10. Use `docs/PRODUCTION_PILOT_FINAL_READINESS_CLOSURE_SUMMARY.md` as the current go/no-go summary until external approvals, scale evidence, official corpus approval, form approval, and R-405 status change.
-11. Keep real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, and real client health data disconnected.
+1. Prepare the official health-regulation PDF ingestion pipeline: source metadata, checksum, extraction QA, page/section map, derived rule draft, clinical/legal approval workflow, corpus version, and corpus golden-case report.
+2. Wait for the user-supplied legal/privacy, clinical, official PDF, dietitian form, and client form packages before approving real routing, real forms, or active production pilot behavior.
+3. Implement user-supplied dietitian/client form schema hardening after the forms are provided: field registry, prompt allowlist, privacy classification, clinical implication mapping, version migration, and regression fixtures.
+4. Implement dashboard/internal-copilot pagination, scoped reloads, and load evidence for up to 100 dietitians and 5,000+ clients; keep this separate from mutation refactors.
+5. Design the dedicated client removal/anonymization transactional redaction contract before moving that lifecycle fully to RPC commits.
+6. Add production-pilot operational controls for green autopilot: selected-client qualification, sample-review rate, monitoring signals, rollback switch, red/yellow fail-closed escalation, and audit export.
+7. Use `docs/PRODUCTION_PILOT_LEGAL_PRIVACY_REVIEW_PACKET.md`, `docs/PRODUCTION_PILOT_CLINICAL_TAXONOMY_REVIEW_PACKET.md`, `docs/PRODUCTION_PILOT_PROVIDER_VENDOR_REVIEW_PACKET.md`, `docs/PRODUCTION_PILOT_CHANNEL_POLICY_REVIEW_PACKET.md`, `docs/PRODUCTION_PILOT_INCIDENT_DSAR_REVIEW_PACKET.md`, `docs/PRODUCTION_PILOT_BACKUP_RESTORE_REVIEW_PACKET.md`, `docs/PRODUCTION_PILOT_SECRET_ROTATION_REVIEW_PACKET.md`, `docs/PRODUCTION_PILOT_DEPENDENCY_AUDIT_CLEARANCE_PACKET.md`, `docs/PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md`, and `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md` to collect external approval evidence without storing secrets or raw client data in repo docs.
+8. Re-check R-405 again only through the `docs/PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md` procedure before any future dependency edit.
+9. Use `docs/PRODUCTION_PILOT_FINAL_READINESS_CLOSURE_SUMMARY.md` as the current go/no-go summary until external approvals, scale evidence, official corpus approval, form approval, and R-405 status change.
+10. Keep real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, and real client health data disconnected.
 
 Definition of done:
 

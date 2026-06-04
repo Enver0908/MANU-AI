@@ -1,12 +1,30 @@
-import { evaluateProductionPilotLaunchGates } from "./launch-gates";
+import {
+  evaluateProductionPilotLaunchGateEvidence,
+  type LaunchGateEvidenceRecord,
+} from "./launch-gates";
 
-export function isRealScopeGuardProviderAllowed(approvedLaunchGateIds: string[] = []) {
-  const evaluation = evaluateProductionPilotLaunchGates(approvedLaunchGateIds);
-  if (evaluation.openGateIds.includes("clinical_taxonomy_approval")) {
-    return false;
-  }
+export type ScopeGuardProviderGateInput =
+  | string[]
+  | {
+      launchGateEvidence?: LaunchGateEvidenceRecord[];
+      now?: string;
+    };
+
+export function isRealScopeGuardProviderAllowed(input: ScopeGuardProviderGateInput = []) {
   if (process.env.MANU_ALLOW_REAL_SCOPE_GUARD !== "true") {
     return false;
   }
-  return true;
+
+  if (Array.isArray(input)) {
+    return false;
+  }
+
+  const evaluation = evaluateProductionPilotLaunchGateEvidence(input.launchGateEvidence ?? [], {
+    now: input.now,
+  });
+
+  return (
+    !evaluation.openGateIds.includes("clinical_taxonomy_approval") &&
+    !evaluation.openGateIds.includes("provider_vendor_review")
+  );
 }

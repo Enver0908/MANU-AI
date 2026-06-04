@@ -42,6 +42,7 @@ The review must cover:
 | Clinical safety second layer | `dietitian-ai-assistant/src/clinical-safety-second-layer.js`, `dietitian-ai-assistant/tests/clinical-second-layer-cases.jsonl` | Local deterministic context-sensitive yellow escalation evidence above the regex classifier | Qualified dietitian approval or production sufficiency |
 | Phase 28 remediation | `PHASE_28_AI_SECURITY_REMEDIATION_SPEC.md` | Expanded clinical golden coverage, provider-attempt semantics, no-call audit behavior | Qualified dietitian approval |
 | Phase 63 rebaseline | `PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md` | Required official PDF corpus ingestion, traceability, approval, and corpus golden-case evidence before active production routing | Approval of any unsupplied PDF, derived rule, or routing behavior |
+| Phase 64 evidence engine | `PHASE_64_STRUCTURED_LAUNCH_GATE_EVIDENCE_ENGINE_SPEC.md`, `app/src/lib/launch-gates.ts` | Structured evidence coverage, review cadence, expiry, and sanitized reference checks before this gate can be treated as closed | Qualified dietitian approval or supplied clinical artifact |
 
 ## Current Golden Case Summary
 

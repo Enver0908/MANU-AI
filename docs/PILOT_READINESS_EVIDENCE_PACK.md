@@ -18,16 +18,16 @@ Run from `app`:
 npm run release:verify
 ```
 
-Latest result, re-verified on 2026-06-04 after Phase 63 production pilot GO rebaseline:
+Latest result, re-verified on 2026-06-04 after Phase 64 structured launch-gate evidence engine:
 
 - Core package tests: 114/114 passed.
-- App tests: 150/150 passed.
+- App tests: 158/158 passed.
 - App lint: passed.
 - Production build: passed.
 - Production dependency audit gate: passed with only documented R-405 findings.
 - R-405 remains open: Next.js 16.2.7 still bundles nested PostCSS 8.4.31, so no safe stable patch path is available.
 - Phase 61 added `scope_rules`, `scope_rule_chunks`, and `scope_guard_evaluations` migration; re-run `npm run test:rls` when local Supabase is available to record Phase 61 RLS evidence.
-- Phase 63 was docs-only and did not change runtime behavior, schema, dependencies, provider/channel wiring, or real-data handling.
+- Phase 64 adds structured launch-gate evidence evaluation and real scope-guard provider gating, but no approval artifact was supplied, no gate was closed, and no real provider/channel/data path was connected.
 
 Additional Phase 50 production Supabase hardening evidence on 2026-06-02:
 
@@ -270,6 +270,17 @@ Phase 63 production pilot GO rebaseline on 2026-06-04:
 - Added scale gate evidence requirements for pagination, scoped reloads, load/backpressure, idempotency/retry, and no cross-tenant leakage at the 5,000+ client target.
 - No runtime, schema, provider, channel, migration, approval, R-405 acceptance, or real-data change was made.
 
+Phase 64 structured launch-gate evidence engine on 2026-06-04:
+
+- Added `PHASE_64_STRUCTURED_LAUNCH_GATE_EVIDENCE_ENGINE_SPEC.md`.
+- Added typed structured launch-gate evidence records and evaluator.
+- Required every gate closure to have sanitized artifact reference, owner, explicit approved status, approval date, review cadence, non-expired evidence, and complete required-evidence coverage.
+- Expanded legal/privacy and clinical gate definitions with Phase 63 user-supplied form and official PDF corpus evidence requirements.
+- Wired operational health to consume structured launch-gate evidence.
+- Hardened real scope-guard provider gating so legacy approved id arrays alone cannot enable real scope guard egress.
+- Added app tests for default blocked state, partial evidence, unknown gate ids, stale/conditional/unsanitized evidence, complete structured evidence, operational health structured evidence, and scope-guard provider gating.
+- No external approval artifact was supplied, no gate was closed, no real provider/channel/data path was connected, and production pilot remains `NO-GO`.
+
 Phase 43 multilingual language support on 2026-05-31:
 
 - Added `PHASE_43_MULTILINGUAL_LANGUAGE_SUPPORT_SPEC.md`.
@@ -298,6 +309,7 @@ Phase 63 gate addendum:
 - The legal/privacy gate now also blocks production use of user-supplied dietitian/client forms until field-level privacy classification, prompt allowlist, retention/export/deletion handling, and version migration are approved.
 - The clinical taxonomy gate now also blocks active green/yellow/red routing from official health-regulation PDFs until the PDF sources, extraction QA, page/section references, derived rules, corpus version, and corpus golden-case report are approved.
 - The scale/load readiness path now blocks the 100 dietitian / 5,000+ client pilot until pagination, scoped reload, load, backpressure, idempotency/retry, monitoring, and rollback evidence is recorded.
+- Phase 64 structured evidence addendum: a launch gate remains open unless the structured evidence engine sees sanitized approved evidence records covering every required evidence item with owner, approval date, review cadence, and non-expired status.
 
 ## Technical Evidence Summary
 
@@ -380,7 +392,7 @@ Release verification:
 4. Complete legal/privacy review using `PRODUCTION_PILOT_LEGAL_PRIVACY_REVIEW_PACKET.md` and supply acceptable approval evidence, including the user-supplied form definitions.
 5. Build and approve the official regulation PDF corpus before active scope/routing use.
 6. Obtain qualified dietitian approval using `PRODUCTION_PILOT_CLINICAL_TAXONOMY_REVIEW_PACKET.md` for the current clinical taxonomy, official corpus version, golden test set, and second-layer or equivalent fail-closed safety evaluation approach.
-7. Implement structured launch-gate evidence and scale/load evidence for up to 100 dietitians and 5,000+ clients.
+7. Implement scale/load evidence for up to 100 dietitians and 5,000+ clients.
 8. Complete provider/vendor retention and prompt logging review using `PRODUCTION_PILOT_PROVIDER_VENDOR_REVIEW_PACKET.md`.
 9. Complete WhatsApp/Telegram policy, opt-in/out, template, and service-window review using `PRODUCTION_PILOT_CHANNEL_POLICY_REVIEW_PACKET.md`.
 10. Finalize incident response and DSAR/deletion using `PRODUCTION_PILOT_INCIDENT_DSAR_REVIEW_PACKET.md`, finalize backup/restore using `PRODUCTION_PILOT_BACKUP_RESTORE_REVIEW_PACKET.md`, then finalize secret rotation using `PRODUCTION_PILOT_SECRET_ROTATION_REVIEW_PACKET.md`.
