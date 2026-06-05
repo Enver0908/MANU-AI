@@ -67,6 +67,151 @@ test("green autopilot sends guarded reply", async () => {
   assert.equal(result.providerAttempted, true);
   assert.deepEqual(models, ["gemini-1.5-flash"]);
   assert.equal(sent.length, 1);
+  assert.equal(result.contextManifest?.answerability?.decision, "source_backed_green");
+  assert.ok(result.contextManifest?.answerability?.sourceCategories.includes("active_diet_plan"));
+});
+
+test("green autopilot blocks before provider when approved sources are missing", async () => {
+  let generated = false;
+  const handoffs = [];
+
+  const result = await handleInboundMessage(
+    {
+      ...baseInput,
+      client: {
+        ...baseInput.client,
+        dietPlan: {},
+        allergies: [],
+        restrictedFoods: [],
+        pinnedNotes: [],
+        clientFormSummary: "",
+        contextUpdates: [],
+      },
+      recentMessages: [],
+    },
+    {
+      generateReply: async () => {
+        generated = true;
+        return "ok";
+      },
+      onHandoff: async (handoff) => handoffs.push(handoff),
+    },
+  );
+
+  assert.equal(result.action, "handoff");
+  assert.equal(result.blockedReason, "approved_source_answerability_missing");
+  assert.equal(result.providerAttempted, false);
+  assert.equal(result.model, null);
+  assert.equal(generated, false);
+  assert.equal(handoffs.length, 1);
+  assert.equal(result.contextManifest?.answerability?.decision, "handoff_required");
+  assert.ok(result.reasons.includes("approved_source_missing"));
+});
+
+test("ai-generated messages do not satisfy approved source answerability", async () => {
+  let generated = false;
+  const result = await handleInboundMessage(
+    {
+      ...baseInput,
+      client: {
+        ...baseInput.client,
+        dietPlan: {},
+        allergies: [],
+        restrictedFoods: [],
+        pinnedNotes: [],
+      },
+      recentMessages: [
+        {
+          id: "message-ai-only",
+          origin: "ai_generated",
+          status: "sent",
+          body: "Yumurta yerine lor peyniri olabilir.",
+          createdAt: "2026-05-22T09:00:00.000Z",
+        },
+      ],
+    },
+    {
+      generateReply: async () => {
+        generated = true;
+        return "ok";
+      },
+    },
+  );
+
+  assert.equal(result.action, "handoff");
+  assert.equal(result.blockedReason, "approved_source_answerability_missing");
+  assert.equal(result.providerAttempted, false);
+  assert.equal(generated, false);
+  assert.deepEqual(result.contextManifest?.answerability?.sourceCategories, []);
+});
+
+test("dietitian manual messages can satisfy approved source answerability", async () => {
+  let generated = false;
+  const result = await handleInboundMessage(
+    {
+      ...baseInput,
+      client: {
+        ...baseInput.client,
+        dietPlan: {},
+        allergies: [],
+        restrictedFoods: [],
+        pinnedNotes: [],
+      },
+      recentMessages: [
+        {
+          id: "message-dietitian-source",
+          origin: "dietitian_manual",
+          status: "sent",
+          body: "Kahvaltida yumurta yerine lor peyniri kullanabilir.",
+          createdAt: "2026-05-22T09:00:00.000Z",
+        },
+      ],
+    },
+    {
+      generateReply: async () => {
+        generated = true;
+        return "Lor peyniri uygun bir alternatif olur.";
+      },
+      sendMessage: async () => {},
+    },
+  );
+
+  assert.equal(result.action, "sent");
+  assert.equal(result.providerAttempted, true);
+  assert.equal(generated, true);
+  assert.ok(result.contextManifest?.answerability?.sourceCategories.includes("dietitian_manual_message"));
+});
+
+test("answerability blocks sensitive mixed markers even when base risk is green", async () => {
+  let generated = false;
+  const result = await handleInboundMessage(
+    {
+      ...baseInput,
+      message: {
+        body: "Kahvaltida yumurta yerine ne yiyebilirim ve ilac saatimi degistirebilir miyim?",
+      },
+      riskDecisionOverride: {
+        level: "green",
+        reasons: ["test_green_override"],
+        shouldHandoff: false,
+        pauseAutopilot: false,
+        classifierVersion: "test",
+      },
+    },
+    {
+      generateReply: async () => {
+        generated = true;
+        return "ok";
+      },
+    },
+  );
+
+  assert.equal(result.action, "handoff");
+  assert.equal(result.blockedReason, "approved_source_answerability_missing");
+  assert.equal(result.providerAttempted, false);
+  assert.equal(generated, false);
+  assert.equal(result.contextManifest?.answerability?.decision, "handoff_required");
+  assert.ok(result.reasons.includes("mixed_or_sensitive_answerability_marker"));
 });
 
 test("red risk creates handoff and does not generate", async () => {

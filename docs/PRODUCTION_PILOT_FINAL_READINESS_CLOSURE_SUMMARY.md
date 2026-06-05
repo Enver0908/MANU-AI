@@ -4,13 +4,13 @@ Date: 2026-06-04
 
 ## Status
 
-This is the final summary for the 13-phase completion roadmap, updated after Phase 43 multilingual language support, Phase 44 red-risk reactivation lock, Phase 45 client removal data lifecycle, Phase 46 WhatsApp group quarantine, Phase 47 RLS quarantine evidence coverage, Phase 48 R-405 stable patch recheck, Phase 49 safety/orchestration hardening, Phase 50 production Supabase hardening, Phase 51 transactional RPC coverage, Phase 52 integration test coverage, Phase 53 scale/broad read contracts, Phase 54 R-405/launch-gate recheck, Phase 55 audit remediation safety-boundary hardening, Phase 56 clinical safety second-layer local evidence, Phase 57 yellow-risk hold/draft refresh, Phase 58 dietitian client language control, Phase 59 architecture review remediation, Phase 60 audit remediation, Phase 61 scope guard (RAG + LLM) second layer mock-first, Phase 62 architecture review remediation wave 2, Phase 63 production pilot GO rebaseline, Phase 64 structured launch-gate evidence engine, Phase 65 official regulation PDF corpus QA foundation, and Phase 66 product communication covenant lock.
+This is the final summary for the 13-phase completion roadmap, updated after Phase 43 multilingual language support, Phase 44 red-risk reactivation lock, Phase 45 client removal data lifecycle, Phase 46 WhatsApp group quarantine, Phase 47 RLS quarantine evidence coverage, Phase 48 R-405 stable patch recheck, Phase 49 safety/orchestration hardening, Phase 50 production Supabase hardening, Phase 51 transactional RPC coverage, Phase 52 integration test coverage, Phase 53 scale/broad read contracts, Phase 54 R-405/launch-gate recheck, Phase 55 audit remediation safety-boundary hardening, Phase 56 clinical safety second-layer local evidence, Phase 57 yellow-risk hold/draft refresh, Phase 58 dietitian client language control, Phase 59 architecture review remediation, Phase 60 audit remediation, Phase 61 scope guard (RAG + LLM) second layer mock-first, Phase 62 architecture review remediation wave 2, Phase 63 production pilot GO rebaseline, Phase 64 structured launch-gate evidence engine, Phase 65 official regulation PDF corpus QA foundation, Phase 66 product communication covenant lock, and Phase 67 approved source answerability engine.
 
 Production pilot is not approved.
 
 No real WhatsApp, Telegram, Gemini, external LLM provider, email, push, monitoring, analytics, secret manager, backup provider, or real client health data is connected.
 
-Post-Phase 66 strategic roadmap: `DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` now defines the direct production pilot path as 100 dietitians x 50 clients, with no small production ring. Product communication covenant enforcement is locally implemented; approved-source answerability, direct 5,000-client scale foundation, and full 100x50 synthetic rehearsal remain required before production GO.
+Post-Phase 67 strategic roadmap: `DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` now defines the direct production pilot path as 100 dietitians x 50 clients, with no small production ring. Product communication covenant enforcement and approved-source answerability are locally implemented; green-max intent taxonomy, direct 5,000-client scale foundation, and full 100x50 synthetic rehearsal remain required before production GO.
 
 ## Go / No-Go Decision
 
@@ -47,6 +47,7 @@ Reason:
 - Phase 65 added official regulation PDF corpus QA contracts so user-supplied official PDFs must have source metadata, SHA-256 checksums, page extraction evidence, page/section references, derived rule drafts, corpus version, and synthetic golden cases before PDF-derived rules can become draft scope rules. It did not approve any corpus, close any launch gate, connect a provider or channel, process real data, or resolve R-405.
 - The post-Phase 65 direct completion plan added on 2026-06-05 did not approve any launch gate. It changed next-action order: product communication covenant, approved-source answerability, green maximization taxonomy, and direct 5,000-client scale evidence must precede form/PDF/provider/channel production activation work.
 - Phase 66 added local product communication covenant enforcement across prompt instruction, provider-output safety, mock-provider checks, internal-only handoff acknowledgement text, and send-time draft blocking for non-green/covenant-violating AI drafts. It did not approve any launch gate, connect a provider or channel, process real data, or resolve R-405.
+- Phase 67 added local approved-source answerability gating before green provider calls/sends and excludes AI-generated messages from source authority. It did not approve any launch gate, connect a provider or channel, process real data, or resolve R-405.
 
 ## Completion Roadmap Result
 
@@ -118,11 +119,11 @@ External approvals:
 
 ## Verification
 
-Latest local release verification after Phase 66 product communication covenant lock:
+Latest local release verification after Phase 67 approved source answerability engine:
 
 - `npm run release:verify` passed on 2026-06-05.
-- Core tests: 116/116 passed.
-- App tests: 170/170 passed.
+- Core tests: 120/120 passed.
+- App tests: 171/171 passed.
 - App lint: passed.
 - Production build: passed.
 - Production dependency audit gate passed with only documented R-405 findings.
@@ -182,7 +183,7 @@ Phase 50 verification on 2026-06-02:
 
 ## Next Required Actions
 
-1. Implement Phase 67 Approved Source Answerability Engine, Phase 68 Green Maximization Intent Taxonomy, and Phase 69 Direct 5,000 Client Scale Foundation before user-supplied form/PDF/provider/channel production hardening.
+1. Implement Phase 68 Green Maximization Intent Taxonomy and Phase 69 Direct 5,000 Client Scale Foundation before user-supplied form/PDF/provider/channel production hardening.
 2. Design the dedicated client removal/anonymization transactional redaction contract before moving that lifecycle fully to RPC commits.
 3. Apply Phase 65 official health-regulation PDF corpus QA to the user-supplied PDFs, then collect reviewed corpus approval before active scope-guard use.
 4. Convert the user-supplied dietitian and client form definitions into versioned schemas with explicit prompt visibility.

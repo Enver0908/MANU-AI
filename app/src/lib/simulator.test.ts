@@ -30,6 +30,41 @@ describe("local inbound simulator", () => {
     expect(next.aiDecisions.at(-1)?.providerId).toBe("mock-local-provider-v0");
     expect(next.aiDecisions.at(-1)?.providerStatus).toBe("ok");
     expect(next.aiDecisions.at(-1)?.providerErrorCode).toBeNull();
+    expect(next.aiDecisions.at(-1)?.contextManifest).toMatchObject({
+      answerability: {
+        decision: "source_backed_green",
+      },
+    });
+  });
+
+  it("blocks green autopilot messages when approved sources are missing", async () => {
+    const state = updateClientInState(createInitialState(), "client-mert", {
+      dietPlan: { summary: "" },
+      allergies: [],
+      restrictedFoods: [],
+      pinnedNotes: [],
+      clientFormSummary: "",
+      contextUpdates: [],
+    });
+
+    const next = await runInboundSimulation(state, {
+      clientId: "client-mert",
+      body: "Bugun kahvaltida yumurta yerine ne yiyebilirim?",
+      idempotencyKey: "green-source-missing-1",
+      now: "2026-05-22T10:00:05.000Z",
+    });
+
+    expect(next.lastSimulation?.action).toBe("handoff");
+    expect(next.lastSimulation?.blockedReason).toBe("approved_source_answerability_missing");
+    expect(countGeneratedMessages(next)).toBe(countGeneratedMessages(state));
+    expect(next.aiDecisions.at(-1)?.providerAttempted).toBe(false);
+    expect(next.aiDecisions.at(-1)?.model).toBeNull();
+    expect(next.aiDecisions.at(-1)?.contextManifest).toMatchObject({
+      answerability: {
+        decision: "handoff_required",
+        sourceCategories: [],
+      },
+    });
   });
 
   it("uses the dietitian-selected client conversation language for AI replies", async () => {

@@ -86,7 +86,7 @@ export function compilePromptContext({
       createdAt: currentMessageCreatedAt(currentMessage),
       authority: "client_current_message",
     }),
-    textSegment("diet_plan_summary", "diet_plan_summary", capsule.client.dietPlan?.summary || "", {
+    textSegment("diet_plan_summary", "diet_plan_summary", dietPlanSummary(capsule.client.dietPlan), {
       authority: "dietitian_approved_context",
     }),
     textSegment("allergies", "allergies", capsule.client.allergies?.join(", ") || "", {
@@ -396,6 +396,16 @@ function textFromCurrentMessage(currentMessage) {
   }
 
   return String(currentMessage || "").trim();
+}
+
+function dietPlanSummary(dietPlan) {
+  if (!dietPlan || typeof dietPlan !== "object") return "";
+  if (dietPlan.summary) return String(dietPlan.summary);
+
+  return Object.entries(dietPlan)
+    .filter(([key, value]) => key !== "summary" && value)
+    .map(([key, value]) => `${key}: ${value}`)
+    .join("\n");
 }
 
 function buildDietitianContextUpdateSegments(updates) {

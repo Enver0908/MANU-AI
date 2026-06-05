@@ -36,6 +36,10 @@ export {
 export { buildMemoryContext, selectRecentMessages, appendDurableFact } from "./conversation-memory.js";
 export { createHandoffCase } from "./handoff-engine.js";
 export {
+  APPROVED_SOURCE_ANSWERABILITY_VERSION,
+  evaluateApprovedSourceAnswerability,
+} from "./approved-source-answerability.js";
+export {
   PRODUCT_COMMUNICATION_COVENANT_VERSION,
   detectProductCommunicationCovenantIssues,
   guardAssistantReply,

@@ -18,10 +18,10 @@ Run from `app`:
 npm run release:verify
 ```
 
-Latest result, re-verified on 2026-06-05 after Phase 66 product communication covenant lock:
+Latest result, re-verified on 2026-06-05 after Phase 67 approved source answerability engine:
 
-- Core package tests: 116/116 passed.
-- App tests: 170/170 passed.
+- Core package tests: 120/120 passed.
+- App tests: 171/171 passed.
 - App lint: passed.
 - Production build: passed.
 - Production dependency audit gate: passed with only documented R-405 findings.
@@ -30,6 +30,7 @@ Latest result, re-verified on 2026-06-05 after Phase 66 product communication co
 - Phase 64 adds structured launch-gate evidence evaluation and real scope-guard provider gating, but no approval artifact was supplied, no gate was closed, and no real provider/channel/data path was connected.
 - Phase 65 adds official regulation PDF corpus QA contracts for source metadata, checksums, page extraction evidence, page/section references, derived rule drafts, corpus version, and synthetic golden cases, but no real PDF was supplied, no corpus was approved, no gate was closed, and no active routing changed.
 - Phase 66 adds local product communication covenant enforcement across core detection, prompt instruction, provider-output safety, mock-provider checks, internal-only handoff acknowledgement text, and send-time draft blocking. No real provider/channel/data path was connected and no gate was closed.
+- Phase 67 adds local approved source answerability gating before green provider calls/sends. No real provider/channel/data path was connected and no gate was closed.
 - Post-Phase 65 strategic plan `DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` locks the production target to direct 100 dietitians x 50 clients, requires approved-source answerability before form/PDF/provider/channel phases, and keeps production pilot `NO-GO`.
 
 Additional Phase 50 production Supabase hardening evidence on 2026-06-02:
@@ -299,6 +300,15 @@ Phase 66 product communication covenant lock on 2026-06-05:
 - Added regression coverage proving covenant-violating green output is blocked and yellow/red paths do not create client-facing AI sends.
 - No real Gemini, WhatsApp, Telegram, monitoring, secret manager, launch-gate approval, R-405 acceptance, or real-data path was connected.
 
+Phase 67 approved source answerability engine on 2026-06-05:
+
+- Added `docs/PHASE_67_APPROVED_SOURCE_ANSWERABILITY_ENGINE_SPEC.md`.
+- Added deterministic core answerability evaluation before provider generation.
+- Required green provider calls/sends to have approved source support from active diet plan, prompt-allowed form summaries, dietitian context updates, dietitian manual messages, pinned notes, allergies, or restricted foods.
+- Excluded AI-generated messages from source authority.
+- Recorded answerability decisions in `contextManifest.answerability`.
+- No real Gemini, WhatsApp, Telegram, monitoring, secret manager, launch-gate approval, R-405 acceptance, or real-data path was connected.
+
 Phase 43 multilingual language support on 2026-05-31:
 
 - Added `PHASE_43_MULTILINGUAL_LANGUAGE_SUPPORT_SPEC.md`.
@@ -314,7 +324,7 @@ Phase 43 multilingual language support on 2026-05-31:
 | Launch gate | Internal evidence available | Remaining blocker | Gate status |
 | --- | --- | --- | --- |
 | Legal and privacy review | `PRODUCTION_PILOT_LEGAL_PRIVACY_REVIEW_PACKET.md`, `DATA_INVENTORY.md`, `PHASE_5_DATA_GOVERNANCE_SPEC.md`, `PHASE_14_DSAR_RETENTION_LEGAL_OPS_SPEC.md`, tenant/client-scoped export/anonymization tests, Phase 26 internal copilot data boundaries, Phase 27 dietitian context update records | Legal basis matrix, privacy notice, permission documents, medical-device/CDS classification memo, internal copilot and dietitian context update retention require external review | Open |
-| Qualified dietitian clinical taxonomy approval | `PRODUCTION_PILOT_CLINICAL_TAXONOMY_REVIEW_PACKET.md`, `CLINICAL_TAXONOMY_REVIEW_WORKFLOW.md`, clinical JSONL golden cases (30 cases, `dietetic-risk-v0.3.1`), Phase 56 second-layer local evidence, Phase 59–60 glucose/symptom hardening, Phase 65 official PDF corpus QA foundation, Phase 66 product communication covenant lock, 116 core tests, persona-invariant safety tests | Qualified dietitian sign-off, taxonomy change approval, approved-source answerability evidence, official corpus approval, and approval of the production second-layer or equivalent fail-closed safety evaluation approach | Open |
+| Qualified dietitian clinical taxonomy approval | `PRODUCTION_PILOT_CLINICAL_TAXONOMY_REVIEW_PACKET.md`, `CLINICAL_TAXONOMY_REVIEW_WORKFLOW.md`, clinical JSONL golden cases (30 cases, `dietetic-risk-v0.3.1`), Phase 56 second-layer local evidence, Phase 59–60 glucose/symptom hardening, Phase 65 official PDF corpus QA foundation, Phase 66 product communication covenant lock, Phase 67 approved source answerability engine, 119 core tests, persona-invariant safety tests | Qualified dietitian sign-off, taxonomy change approval, official corpus approval, Phase 68 green intent taxonomy evidence, and approval of the production second-layer or equivalent fail-closed safety evaluation approach | Open |
 | Provider vendor and retention review | `PRODUCTION_PILOT_PROVIDER_VENDOR_REVIEW_PACKET.md`, `AI_PROVIDER_REQUIREMENTS.md`, local mock provider, provider-attempt audit semantics, provider failure no-send behavior, provider segment allowlist guard, Phase 26 local/mock-only copilot boundary, Phase 27 context update egress boundary | Gemini/provider terms, health-data retention configuration, prompt/completion logging decision, any future copilot or dietitian context update provider egress decision | Open |
 | WhatsApp and Telegram policy review | `PRODUCTION_PILOT_CHANNEL_POLICY_REVIEW_PACKET.md`, `PHASE_7_CHANNEL_ADAPTER_READINESS_SPEC.md`, `PHASE_16_CHANNEL_POLICY_SIMULATION_HARDENING_SPEC.md`, mock adapter idempotency, identity quarantine, opt-out simulation | WhatsApp healthcare feasibility, Telegram bot/privacy policy, real opt-in/out/template/service-window procedure | Open |
 | Incident response and deletion workflow runbook | `PRODUCTION_PILOT_INCIDENT_DSAR_REVIEW_PACKET.md`, `INCIDENT_RESPONSE_RUNBOOK.md`, `PHASE_14_DSAR_RETENTION_LEGAL_OPS_SPEC.md`, legal ops ledger, safe operational health snapshot | Breach escalation owner list, approved DSAR/deletion operating procedure | Open |
@@ -340,6 +350,7 @@ Safety and clinical control:
 - Persona changes do not alter safety decisions.
 - Provider policy guard rejects red-risk provider calls as defense in depth.
 - Phase 66 covenant guard blocks client-facing AI self-disclosure, AI limitation disclaimers, doctor/dietitian/professional referral language, yellow/red AI sends, and covenant-violating green draft edits before client-facing send.
+- Phase 67 answerability guard blocks green provider calls/sends unless approved source support exists; AI-generated messages are not source authority.
 - Expanded clinical golden cases cover typo/diacritic handling, English emergencies, medication dose requests, minor/body-image language, eating-disorder euphemisms, and pregnancy complications.
 
 Privacy and data minimization:
@@ -405,7 +416,7 @@ Release verification:
 
 ## Next Approval Path
 
-1. Implement Phase 67 Approved Source Answerability Engine, then Phase 68 Green Maximization Intent Taxonomy and Phase 69 Direct 5,000 Client Scale Foundation.
+1. Implement Phase 68 Green Maximization Intent Taxonomy, then Phase 69 Direct 5,000 Client Scale Foundation.
 2. Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized external approval artifact references.
 3. Collect the user-supplied legal/privacy, clinical, dietitian form, client form, and official health-regulation PDF package.
 4. Use `PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md` as the external review checklist.

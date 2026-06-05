@@ -24,8 +24,8 @@ These rules are non-negotiable and apply to every future phase:
 
 ## Current Baseline
 
-- Latest completed implementation phase: Phase 66 product communication covenant lock.
-- Latest verification: core tests 116/116, app tests 170/170, `npm run release:verify` passed with only documented R-405 findings.
+- Latest completed implementation phase: Phase 67 approved source answerability engine.
+- Latest verification: core tests 120/120, app tests 171/171, `npm run release:verify` passed with only documented R-405 findings.
 - Production pilot status: `NO-GO`.
 - Real WhatsApp, Gemini, monitoring, secret manager, and real client health data remain disconnected.
 - Existing usable foundations:
@@ -37,6 +37,7 @@ These rules are non-negotiable and apply to every future phase:
   - Structured launch-gate evidence engine.
   - Official PDF corpus QA foundation.
   - Product communication covenant detector, prompt instruction, mock provider check, provider output guard, and send-time draft block for non-green/covenant-violating AI drafts.
+  - Approved source answerability gate before green provider calls/sends, with AI-generated messages excluded from source authority.
 
 Phase 66 status as of 2026-06-05: completed locally. It did not connect real Gemini, WhatsApp, monitoring, secret manager, or real client health data; did not close launch gates; did not approve production pilot; and did not resolve R-405.
 
@@ -65,6 +66,8 @@ Done criteria:
 ## Phase 67: Approved Source Answerability Engine
 
 Goal: add a decision layer that answers "can this green-risk message be answered from approved sources?"
+
+Status as of 2026-06-05: completed locally. It did not connect real Gemini, WhatsApp, monitoring, secret manager, or real client health data; did not close launch gates; did not approve production pilot; and did not resolve R-405.
 
 Implementation intent:
 

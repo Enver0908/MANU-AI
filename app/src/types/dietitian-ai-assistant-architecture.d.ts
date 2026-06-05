@@ -321,6 +321,7 @@ declare module "dietitian-ai-assistant-architecture" {
   export const LATEST_DIETITIAN_CONTEXT_INSTRUCTION: string;
   export const PRODUCT_COMMUNICATION_COVENANT_INSTRUCTION: string;
   export const PRODUCT_COMMUNICATION_COVENANT_VERSION: string;
+  export const APPROVED_SOURCE_ANSWERABILITY_VERSION: string;
 
   export function buildDietitianVoiceProfile(samples: string[]): CoreVoiceProfile;
   export function normalizeLanguageCode(value: unknown): SupportedLanguageCode;
@@ -390,6 +391,31 @@ declare module "dietitian-ai-assistant-architecture" {
 
   export function normalizeSafetyText(message: string): string;
   export function detectProductCommunicationCovenantIssues(message: string): string[];
+  export function evaluateApprovedSourceAnswerability(input: {
+    promptContext: {
+      segments: Array<{
+        type: string;
+        sourceId?: string | null;
+        origin?: string | null;
+        authority?: string | null;
+        text: string;
+      }>;
+    } | null;
+    riskDecision: { level: "green" | "yellow" | "red"; reasons?: string[] };
+  }): {
+    version: string;
+    decision: "source_backed_green" | "draft_required" | "handoff_required" | "blocked";
+    allowed: boolean;
+    reasons: string[];
+    sourceCategories: string[];
+    sources: Array<{
+      category: string;
+      segmentType: string;
+      sourceId: string | null;
+      authority: string | null;
+      origin: string | null;
+    }>;
+  };
 
   export type ScopeRuleEscalationLevel = "yellow" | "red";
   export type ScopeGuardStatus = "noop" | "unavailable" | "no_match" | "matched";

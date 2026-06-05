@@ -5,6 +5,7 @@ import { buildClientContextCapsule } from "./context-capsule.js";
 import { compilePromptContext, renderPromptContext } from "./context-compiler.js";
 import { createHandoffCase } from "./handoff-engine.js";
 import { guardProviderOutput } from "./response-quality-guard.js";
+import { evaluateApprovedSourceAnswerability } from "./approved-source-answerability.js";
 import { defaultVoiceProfile } from "./voice-profile.js";
 import { selectModelForRisk } from "./model-routing.js";
 import { resolveAiActivation } from "./ai-activation.js";
@@ -125,6 +126,39 @@ export async function handleInboundMessage(input, adapters) {
     });
   }
 
+  const answerability = evaluateApprovedSourceAnswerability({
+    promptContext: compiledContext.promptContext,
+    riskDecision,
+  });
+  const contextManifest = {
+    ...compiledContext.contextManifest,
+    answerability,
+  };
+
+  if (!answerability.allowed) {
+    const handoffCase = createHandoffCase({
+      capsule,
+      inboundMessage: input.message.body,
+      riskDecision: {
+        ...riskDecision,
+        reasons: [...riskDecision.reasons, ...answerability.reasons],
+        shouldHandoff: true,
+      },
+    });
+    await adapters?.onHandoff?.(handoffCase);
+    return buildResult({
+      capsule,
+      riskDecision,
+      action: "handoff",
+      handoffCase,
+      blockedReason: "approved_source_answerability_missing",
+      model: null,
+      activation,
+      contextManifest,
+      overrideReasons: [...riskDecision.reasons, ...answerability.reasons],
+    });
+  }
+
   const selectedModel = selectModelForRisk(riskDecision.level);
   const prompt = renderPromptContext(compiledContext.promptContext);
   let draft;
@@ -160,7 +194,7 @@ export async function handleInboundMessage(input, adapters) {
       providerAttempted: true,
       providerId,
       activation,
-      contextManifest: compiledContext.contextManifest,
+      contextManifest,
       providerStatus: "failed",
       providerErrorCode,
       providerOutputSafety: buildProviderFailureOutputSafety(providerErrorCode),
@@ -198,7 +232,7 @@ export async function handleInboundMessage(input, adapters) {
       providerAttempted: true,
       providerId,
       activation,
-      contextManifest: compiledContext.contextManifest,
+      contextManifest,
       providerOutputSafety: quality,
     });
   }
@@ -214,7 +248,7 @@ export async function handleInboundMessage(input, adapters) {
       providerAttempted: true,
       providerId,
       activation,
-      contextManifest: compiledContext.contextManifest,
+      contextManifest,
     });
   }
 
@@ -228,7 +262,7 @@ export async function handleInboundMessage(input, adapters) {
     providerAttempted: true,
     providerId,
     activation,
-    contextManifest: compiledContext.contextManifest,
+    contextManifest,
   });
 }
 
