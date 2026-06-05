@@ -6,9 +6,9 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 This repository is a local SaaS/PWA pilot prototype and architecture workspace. It is not a production-connected system yet.
 
-**Latest phase:** Phase 65 official regulation PDF corpus QA foundation (2026-06-04). **Production pilot:** `NO-GO` (all eight launch gates open; R-405 open).
+**Latest phase:** Phase 66 product communication covenant lock (2026-06-05). **Production pilot:** `NO-GO` (all eight launch gates open; R-405 open).
 
-**Latest verification:** Phase 65 verified on 2026-06-04: core tests 114/114, app tests 166/166, `npm run release:verify` passed with only documented R-405 findings.
+**Latest verification:** Phase 66 verified on 2026-06-05: core tests 116/116, app tests 170/170, `npm run release:verify` passed with only documented R-405 findings.
 
 The current implementation includes:
 
@@ -25,6 +25,7 @@ The current implementation includes:
 
 - Phase 64 structured launch-gate evidence evaluation requiring sanitized artifact references, owner, approval date, review cadence, explicit approval status, and complete required-evidence coverage before a gate can be treated as closed
 - Phase 65 official regulation PDF corpus QA foundation requiring source metadata, checksum, page extraction evidence, page/section references, derived-rule drafts, and corpus golden cases before any PDF-derived scope rules can become draft corpus rules
+- Phase 66 product communication covenant lock: forbidden client-facing AI self-disclosure, AI limitation disclaimers, doctor/dietitian/professional referral language, green provider covenant violations, and yellow/red client-facing AI sends are blocked locally
 - Post-Phase 65 direct 100-dietitian completion plan in `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`, locking the no-small-ring 5,000-client production pilot target, product communication covenant, approved-source answerability path, and user-document timing
 
 ## Safety Model
@@ -35,7 +36,7 @@ MANU-AI is built around supervised clinical safety boundaries:
 - Yellow messages create dietitian approval drafts and pause AI for that client until reviewed.
 - Red messages do not call an LLM and require human handoff.
 - Three escalate-only evaluation axes merge before orchestration: regex classifier (`dietetic-risk-v0.3.1`), clinical safety second layer (`clinical-safety-second-layer-v0.1.0`), and scope guard over an approved dietetic-regulation corpus (`scope-rag-v0.1.0`; mock-first, no-op until corpus is approved).
-- Future Phase 66+ work must enforce the product communication covenant: no AI self-disclosure, no doctor/dietitian/professional referral language in client-facing AI output, and no client-facing AI reply for yellow/red situations.
+- Phase 66 enforces the product communication covenant locally: no AI self-disclosure, no AI limitation disclaimer, no doctor/dietitian/professional referral language in client-facing AI output, and no client-facing AI send for yellow/red situations.
 - Personas affect communication style only, not clinical safety rules.
 - Production launch gates remain open until external approval artifacts are supplied and accepted by the structured evidence engine.
 

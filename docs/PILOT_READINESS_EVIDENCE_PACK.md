@@ -18,10 +18,10 @@ Run from `app`:
 npm run release:verify
 ```
 
-Latest result, re-verified on 2026-06-04 after Phase 65 official regulation PDF corpus QA foundation:
+Latest result, re-verified on 2026-06-05 after Phase 66 product communication covenant lock:
 
-- Core package tests: 114/114 passed.
-- App tests: 166/166 passed.
+- Core package tests: 116/116 passed.
+- App tests: 170/170 passed.
 - App lint: passed.
 - Production build: passed.
 - Production dependency audit gate: passed with only documented R-405 findings.
@@ -29,7 +29,8 @@ Latest result, re-verified on 2026-06-04 after Phase 65 official regulation PDF 
 - Phase 61 added `scope_rules`, `scope_rule_chunks`, and `scope_guard_evaluations` migration; re-run `npm run test:rls` when local Supabase is available to record Phase 61 RLS evidence.
 - Phase 64 adds structured launch-gate evidence evaluation and real scope-guard provider gating, but no approval artifact was supplied, no gate was closed, and no real provider/channel/data path was connected.
 - Phase 65 adds official regulation PDF corpus QA contracts for source metadata, checksums, page extraction evidence, page/section references, derived rule drafts, corpus version, and synthetic golden cases, but no real PDF was supplied, no corpus was approved, no gate was closed, and no active routing changed.
-- Post-Phase 65 strategic plan `DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` locks the production target to direct 100 dietitians x 50 clients, requires product communication covenant work before form/PDF/provider/channel phases, and keeps production pilot `NO-GO`.
+- Phase 66 adds local product communication covenant enforcement across core detection, prompt instruction, provider-output safety, mock-provider checks, internal-only handoff acknowledgement text, and send-time draft blocking. No real provider/channel/data path was connected and no gate was closed.
+- Post-Phase 65 strategic plan `DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` locks the production target to direct 100 dietitians x 50 clients, requires approved-source answerability before form/PDF/provider/channel phases, and keeps production pilot `NO-GO`.
 
 Additional Phase 50 production Supabase hardening evidence on 2026-06-02:
 
@@ -290,6 +291,14 @@ Phase 65 official regulation PDF corpus QA foundation on 2026-06-04:
 - Added app tests for default blocked state, partial evidence, unknown gate ids, stale/conditional/unsanitized evidence, complete structured evidence, operational health structured evidence, and scope-guard provider gating.
 - No external approval artifact was supplied, no gate was closed, no real provider/channel/data path was connected, and production pilot remains `NO-GO`.
 
+Phase 66 product communication covenant lock on 2026-06-05:
+
+- Added `docs/PHASE_66_PRODUCT_COMMUNICATION_COVENANT_LOCK_SPEC.md`.
+- Added multilingual covenant detection for client-facing AI self-disclosure, AI limitation disclaimers, and doctor/dietitian/professional referral language.
+- Added PromptContext covenant instruction, provider output safety metadata, mock-provider self-checks, internal-only handoff acknowledgement text, and send-time draft blocking for non-green AI drafts or covenant-violating green draft edits.
+- Added regression coverage proving covenant-violating green output is blocked and yellow/red paths do not create client-facing AI sends.
+- No real Gemini, WhatsApp, Telegram, monitoring, secret manager, launch-gate approval, R-405 acceptance, or real-data path was connected.
+
 Phase 43 multilingual language support on 2026-05-31:
 
 - Added `PHASE_43_MULTILINGUAL_LANGUAGE_SUPPORT_SPEC.md`.
@@ -305,7 +314,7 @@ Phase 43 multilingual language support on 2026-05-31:
 | Launch gate | Internal evidence available | Remaining blocker | Gate status |
 | --- | --- | --- | --- |
 | Legal and privacy review | `PRODUCTION_PILOT_LEGAL_PRIVACY_REVIEW_PACKET.md`, `DATA_INVENTORY.md`, `PHASE_5_DATA_GOVERNANCE_SPEC.md`, `PHASE_14_DSAR_RETENTION_LEGAL_OPS_SPEC.md`, tenant/client-scoped export/anonymization tests, Phase 26 internal copilot data boundaries, Phase 27 dietitian context update records | Legal basis matrix, privacy notice, permission documents, medical-device/CDS classification memo, internal copilot and dietitian context update retention require external review | Open |
-| Qualified dietitian clinical taxonomy approval | `PRODUCTION_PILOT_CLINICAL_TAXONOMY_REVIEW_PACKET.md`, `CLINICAL_TAXONOMY_REVIEW_WORKFLOW.md`, clinical JSONL golden cases (30 cases, `dietetic-risk-v0.3.1`), Phase 56 second-layer local evidence, Phase 59–60 glucose/symptom hardening, 104 core tests, persona-invariant safety tests | Qualified dietitian sign-off, taxonomy change approval, and approval of the production second-layer or equivalent fail-closed safety evaluation approach | Open |
+| Qualified dietitian clinical taxonomy approval | `PRODUCTION_PILOT_CLINICAL_TAXONOMY_REVIEW_PACKET.md`, `CLINICAL_TAXONOMY_REVIEW_WORKFLOW.md`, clinical JSONL golden cases (30 cases, `dietetic-risk-v0.3.1`), Phase 56 second-layer local evidence, Phase 59–60 glucose/symptom hardening, Phase 65 official PDF corpus QA foundation, Phase 66 product communication covenant lock, 116 core tests, persona-invariant safety tests | Qualified dietitian sign-off, taxonomy change approval, approved-source answerability evidence, official corpus approval, and approval of the production second-layer or equivalent fail-closed safety evaluation approach | Open |
 | Provider vendor and retention review | `PRODUCTION_PILOT_PROVIDER_VENDOR_REVIEW_PACKET.md`, `AI_PROVIDER_REQUIREMENTS.md`, local mock provider, provider-attempt audit semantics, provider failure no-send behavior, provider segment allowlist guard, Phase 26 local/mock-only copilot boundary, Phase 27 context update egress boundary | Gemini/provider terms, health-data retention configuration, prompt/completion logging decision, any future copilot or dietitian context update provider egress decision | Open |
 | WhatsApp and Telegram policy review | `PRODUCTION_PILOT_CHANNEL_POLICY_REVIEW_PACKET.md`, `PHASE_7_CHANNEL_ADAPTER_READINESS_SPEC.md`, `PHASE_16_CHANNEL_POLICY_SIMULATION_HARDENING_SPEC.md`, mock adapter idempotency, identity quarantine, opt-out simulation | WhatsApp healthcare feasibility, Telegram bot/privacy policy, real opt-in/out/template/service-window procedure | Open |
 | Incident response and deletion workflow runbook | `PRODUCTION_PILOT_INCIDENT_DSAR_REVIEW_PACKET.md`, `INCIDENT_RESPONSE_RUNBOOK.md`, `PHASE_14_DSAR_RETENTION_LEGAL_OPS_SPEC.md`, legal ops ledger, safe operational health snapshot | Breach escalation owner list, approved DSAR/deletion operating procedure | Open |
@@ -330,6 +339,7 @@ Safety and clinical control:
 - Phase 56 adds deterministic local second-layer evidence above the regex classifier for context-sensitive uncertainty; otherwise-green allergy/restriction mentions, ambiguous clinical references, missing-history references, minor weight/restriction context, and eating-disorder-sensitive ambiguous restriction language escalate to yellow review.
 - Persona changes do not alter safety decisions.
 - Provider policy guard rejects red-risk provider calls as defense in depth.
+- Phase 66 covenant guard blocks client-facing AI self-disclosure, AI limitation disclaimers, doctor/dietitian/professional referral language, yellow/red AI sends, and covenant-violating green draft edits before client-facing send.
 - Expanded clinical golden cases cover typo/diacritic handling, English emergencies, medication dose requests, minor/body-image language, eating-disorder euphemisms, and pregnancy complications.
 
 Privacy and data minimization:
@@ -395,13 +405,13 @@ Release verification:
 
 ## Next Approval Path
 
-1. Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized external approval artifact references.
-2. Collect the user-supplied legal/privacy, clinical, dietitian form, client form, and official health-regulation PDF package.
-3. Use `PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md` as the external review checklist.
-4. Complete legal/privacy review using `PRODUCTION_PILOT_LEGAL_PRIVACY_REVIEW_PACKET.md` and supply acceptable approval evidence, including the user-supplied form definitions.
-5. Apply the Phase 65 QA foundation to the official regulation PDF package after the user supplies it, then collect external clinical/legal approval before active scope/routing use.
-6. Obtain qualified dietitian approval using `PRODUCTION_PILOT_CLINICAL_TAXONOMY_REVIEW_PACKET.md` for the current clinical taxonomy, official corpus version, golden test set, and second-layer or equivalent fail-closed safety evaluation approach.
-7. Implement scale/load evidence for up to 100 dietitians and 5,000+ clients.
+1. Implement Phase 67 Approved Source Answerability Engine, then Phase 68 Green Maximization Intent Taxonomy and Phase 69 Direct 5,000 Client Scale Foundation.
+2. Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized external approval artifact references.
+3. Collect the user-supplied legal/privacy, clinical, dietitian form, client form, and official health-regulation PDF package.
+4. Use `PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md` as the external review checklist.
+5. Complete legal/privacy review using `PRODUCTION_PILOT_LEGAL_PRIVACY_REVIEW_PACKET.md` and supply acceptable approval evidence, including the user-supplied form definitions.
+6. Apply the Phase 65 QA foundation to the official regulation PDF package after the user supplies it, then collect external clinical/legal approval before active scope/routing use.
+7. Obtain qualified dietitian approval using `PRODUCTION_PILOT_CLINICAL_TAXONOMY_REVIEW_PACKET.md` for the current clinical taxonomy, official corpus version, golden test set, approved-source answerability evidence, and second-layer or equivalent fail-closed safety evaluation approach.
 8. Complete provider/vendor retention and prompt logging review using `PRODUCTION_PILOT_PROVIDER_VENDOR_REVIEW_PACKET.md`.
 9. Complete WhatsApp/Telegram policy, opt-in/out, template, and service-window review using `PRODUCTION_PILOT_CHANNEL_POLICY_REVIEW_PACKET.md`.
 10. Finalize incident response and DSAR/deletion using `PRODUCTION_PILOT_INCIDENT_DSAR_REVIEW_PACKET.md`, finalize backup/restore using `PRODUCTION_PILOT_BACKUP_RESTORE_REVIEW_PACKET.md`, then finalize secret rotation using `PRODUCTION_PILOT_SECRET_ROTATION_REVIEW_PACKET.md`.

@@ -297,7 +297,7 @@ test("yellow risk uses gemini 3 for approval draft", async () => {
     {
       generateReply: async ({ model }) => {
         models.push(model);
-        return "Bunu diyetisyeninizin onaylaması daha doğru olur; taslak olarak not düşüyorum.";
+        return "Ic inceleme notu kaydedildi; client mesaji bekletildi.";
       },
       onDraftForApproval: async (draft) => drafts.push(draft),
     },
@@ -325,7 +325,7 @@ test("clinical safety second layer escalates ambiguous green messages to approva
     {
       generateReply: async ({ model }) => {
         models.push(model);
-        return "Bunu diyetisyeninizin onayiyla netlestirelim; taslak olarak not aldim.";
+        return "Ic inceleme notu kaydedildi; client mesaji bekletildi.";
       },
       onDraftForApproval: async (draft) => drafts.push(draft),
       sendMessage: async (payload) => sent.push(payload),
@@ -340,6 +340,32 @@ test("clinical safety second layer escalates ambiguous green messages to approva
   assert.deepEqual(models, ["gemini-3"]);
   assert.equal(drafts.length, 1);
   assert.equal(sent.length, 0);
+});
+
+test("product communication covenant violations block green auto-send", async () => {
+  const sent = [];
+  const handoffs = [];
+
+  const result = await handleInboundMessage(baseInput, {
+    generateReply: async () => "As an AI, I cannot provide medical advice. Please consult your doctor.",
+    sendMessage: async (payload) => sent.push(payload),
+    onHandoff: async (handoff) => handoffs.push(handoff),
+  });
+
+  assert.equal(result.action, "handoff");
+  assert.equal(result.blockedReason, "quality_guard_failed");
+  assert.equal(result.providerAttempted, true);
+  assert.equal(sent.length, 0);
+  assert.equal(handoffs.length, 1);
+  assert.ok(result.qualityIssues.includes("covenant_ai_self_disclosure"));
+  assert.ok(result.qualityIssues.includes("covenant_ai_limitation_disclaimer"));
+  assert.ok(result.qualityIssues.includes("covenant_referral_language"));
+  assert.equal(result.providerOutputSafety?.allowed, false);
+  assert.ok(
+    result.providerOutputSafety?.issues?.some(
+      (issue) => issue.code === "covenant_referral_language" && issue.category === "product_communication",
+    ),
+  );
 });
 
 test("quality guard blocks unsafe draft", async () => {

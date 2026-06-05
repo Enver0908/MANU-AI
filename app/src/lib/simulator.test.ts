@@ -186,7 +186,8 @@ describe("local inbound simulator", () => {
   });
 
   it("routes yellow messages to approval drafts on gemini-3", async () => {
-    const next = await runInboundSimulation(createInitialState(), {
+    const state = createInitialState();
+    const next = await runInboundSimulation(state, {
       clientId: "client-elif",
       body: "D vitamini takviyesi kullanayim mi?",
       idempotencyKey: "yellow-1",
@@ -197,6 +198,7 @@ describe("local inbound simulator", () => {
     expect(next.lastSimulation?.risk).toBe("yellow");
     expect(next.lastSimulation?.model).toBe("gemini-3");
     expect(next.messages.some((message) => message.origin === "ai_generated" && message.status === "draft")).toBe(true);
+    expect(sentGeneratedCount(next)).toBe(sentGeneratedCount(state));
     expect(next.clients.find((client) => client.id === "client-elif")).toMatchObject({
       aiStatus: "passive",
       aiMode: "paused",
@@ -455,6 +457,30 @@ describe("local inbound simulator", () => {
     expect(next.handoffCases).toHaveLength(1);
   });
 
+  it("blocks green provider output that violates the product communication covenant", async () => {
+    const state = createInitialState();
+    const next = await runInboundSimulation(state, {
+      clientId: "client-mert",
+      body: "Bugun kahvaltida yumurta yerine ne yiyebilirim?",
+      idempotencyKey: "covenant-violation-1",
+      mockProviderOutput: "covenant_violation",
+      now: "2026-05-22T10:18:30.000Z",
+    });
+
+    expect(next.lastSimulation?.action).toBe("handoff");
+    expect(next.lastSimulation?.blockedReason).toBe("quality_guard_failed");
+    expect(countGeneratedMessages(next)).toBe(countGeneratedMessages(state));
+    expect(next.aiDecisions.at(-1)?.sendStatus).toBe("send_blocked");
+    expect(next.aiDecisions.at(-1)?.providerOutputSafety?.issues).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ code: "covenant_ai_self_disclosure", category: "product_communication" }),
+        expect.objectContaining({ code: "covenant_ai_limitation_disclaimer", category: "product_communication" }),
+        expect.objectContaining({ code: "covenant_referral_language", category: "product_communication" }),
+      ]),
+    );
+    expect(sentGeneratedCount(next)).toBe(sentGeneratedCount(state));
+  });
+
   it("does not duplicate messages or AI decisions for the same idempotency key", async () => {
     const first = await runInboundSimulation(createInitialState(), {
       clientId: "client-mert",
@@ -566,9 +592,12 @@ describe("local inbound simulator", () => {
   });
 
   it("allows draft approval when send-time revalidation passes", async () => {
-    const withDraft = await runInboundSimulation(createInitialState(), {
-      clientId: "client-elif",
-      body: "D vitamini takviyesi kullanayim mi?",
+    const copilotState = updateClientInState(createInitialState(), "client-mert", {
+      aiMode: "copilot",
+    });
+    const withDraft = await runInboundSimulation(copilotState, {
+      clientId: "client-mert",
+      body: "Ara ogun icin ne yiyebilirim?",
       idempotencyKey: "revalidate-draft-2",
       now: "2026-05-22T10:24:40.000Z",
     });
@@ -578,11 +607,61 @@ describe("local inbound simulator", () => {
     const sentDraft = next.messages.find((message) => message.id === draft?.id);
     expect(sentDraft?.status).toBe("sent");
     expect(sentDraft?.approvedByDietitianId).toBe(withDraft.dietitian.id);
-    expect(next.clients.find((client) => client.id === "client-elif")).toMatchObject({
+    expect(next.clients.find((client) => client.id === "client-mert")).toMatchObject({
       aiStatus: "active",
       aiMode: "copilot",
       yellowRiskHold: { status: "none" },
     });
+  });
+
+  it("blocks yellow AI drafts from becoming client-facing AI sends", async () => {
+    const withDraft = await runInboundSimulation(createInitialState(), {
+      clientId: "client-elif",
+      body: "D vitamini takviyesi kullanayim mi?",
+      idempotencyKey: "yellow-send-block-1",
+      now: "2026-05-22T10:24:45.000Z",
+    });
+    const draft = withDraft.messages.find((message) => message.status === "draft");
+
+    const next = approveDraftMessageInState(withDraft, draft?.id || "");
+    const blockedDraft = next.messages.find((message) => message.id === draft?.id);
+    const blockedDecision = next.aiDecisions.find((decision) => decision.id === draft?.generatedByAiDecisionId);
+    expect(blockedDraft?.status).toBe("blocked");
+    expect(blockedDecision?.sendStatus).toBe("send_blocked");
+    expect(blockedDecision?.blockedReason).toBe("non_green_ai_draft_client_send_blocked");
+    expect(next.clients.find((client) => client.id === "client-elif")?.yellowRiskHold).toMatchObject({
+      status: "active",
+    });
+  });
+
+  it("blocks green AI draft edits that violate the product communication covenant", async () => {
+    const copilotState = updateClientInState(createInitialState(), "client-mert", {
+      aiMode: "copilot",
+    });
+    const withDraft = await runInboundSimulation(copilotState, {
+      clientId: "client-mert",
+      body: "Ara ogun icin ne yiyebilirim?",
+      idempotencyKey: "green-covenant-edit-block-1",
+      now: "2026-05-22T10:24:46.000Z",
+    });
+    const draft = withDraft.messages.find((message) => message.status === "draft");
+
+    const next = approveDraftMessageInState(
+      withDraft,
+      draft?.id || "",
+      "As an AI, I cannot provide medical advice. Please consult your doctor.",
+    );
+    const blockedDraft = next.messages.find((message) => message.id === draft?.id);
+    const blockedDecision = next.aiDecisions.find((decision) => decision.id === draft?.generatedByAiDecisionId);
+    expect(blockedDraft?.status).toBe("blocked");
+    expect(blockedDecision?.sendStatus).toBe("send_blocked");
+    expect(blockedDecision?.blockedReason).toBe("product_communication_covenant_violation");
+    expect(blockedDecision?.providerOutputSafety?.issues).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ code: "covenant_ai_self_disclosure", category: "product_communication" }),
+        expect.objectContaining({ code: "covenant_referral_language", category: "product_communication" }),
+      ]),
+    );
   });
 
   it("keeps yellow hold drafts pending when a later red message creates a manual lock", async () => {
@@ -615,12 +694,17 @@ describe("local inbound simulator", () => {
     });
 
     const afterApproval = approveDraftMessageInState(withRedLock, draft?.id || "");
-    expect(afterApproval.messages.find((message) => message.id === draft?.id)?.status).toBe("sent");
+    const blockedDecision = afterApproval.aiDecisions.find(
+      (decision) => decision.id === draft?.generatedByAiDecisionId,
+    );
+    expect(afterApproval.messages.find((message) => message.id === draft?.id)?.status).toBe("blocked");
+    expect(blockedDecision?.sendStatus).toBe("send_blocked");
+    expect(blockedDecision?.blockedReason).toBe("non_green_ai_draft_client_send_blocked");
     expect(afterApproval.clients.find((client) => client.id === "client-mert")).toMatchObject({
       aiStatus: "passive",
       aiMode: "manual",
       humanTakeoverLocked: true,
-      yellowRiskHold: { status: "none" },
+      yellowRiskHold: { status: "active" },
     });
   });
 
@@ -854,4 +938,8 @@ describe("local inbound simulator", () => {
 
 function countGeneratedMessages(state: ReturnType<typeof createInitialState>) {
   return state.messages.filter((message) => message.origin === "ai_generated").length;
+}
+
+function sentGeneratedCount(state: ReturnType<typeof createInitialState>) {
+  return state.messages.filter((message) => message.origin === "ai_generated" && message.status === "sent").length;
 }

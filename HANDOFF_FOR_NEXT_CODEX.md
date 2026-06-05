@@ -18,18 +18,19 @@ Start by reading:
 2. `PROJECT_PLAN.md`
 3. `docs/NEXT_PHASE_EXECUTION_PLAN.md`
 4. `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` (current strategic roadmap)
-5. `docs/PHASE_65_OFFICIAL_REGULATION_PDF_CORPUS_QA_SPEC.md` (latest completed implementation phase)
-6. `docs/PHASE_64_STRUCTURED_LAUNCH_GATE_EVIDENCE_ENGINE_SPEC.md`
-7. `docs/PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md`
-8. `docs/PHASE_62_ARCHITECTURE_REVIEW_REMEDIATION_WAVE2_SPEC.md`
-9. `docs/PHASE_61_SCOPE_GUARD_RAG_SECOND_LAYER_SPEC.md`
-10. `docs/RISK_REGISTER.md`
-11. `docs/DATA_INVENTORY.md`
-12. `docs/DATASET_STRATEGY.md`
-13. `docs/MOBILE_APP_STRATEGY.md`
-14. `dietitian-ai-assistant/README.md`
-15. `dietitian-ai-assistant/docs/architecture.md`
-16. `dietitian-ai-assistant/docs/data-model.sql`
+5. `docs/PHASE_66_PRODUCT_COMMUNICATION_COVENANT_LOCK_SPEC.md` (latest completed implementation phase)
+6. `docs/PHASE_65_OFFICIAL_REGULATION_PDF_CORPUS_QA_SPEC.md`
+7. `docs/PHASE_64_STRUCTURED_LAUNCH_GATE_EVIDENCE_ENGINE_SPEC.md`
+8. `docs/PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md`
+9. `docs/PHASE_62_ARCHITECTURE_REVIEW_REMEDIATION_WAVE2_SPEC.md`
+10. `docs/PHASE_61_SCOPE_GUARD_RAG_SECOND_LAYER_SPEC.md`
+11. `docs/RISK_REGISTER.md`
+12. `docs/DATA_INVENTORY.md`
+13. `docs/DATASET_STRATEGY.md`
+14. `docs/MOBILE_APP_STRATEGY.md`
+15. `dietitian-ai-assistant/README.md`
+16. `dietitian-ai-assistant/docs/architecture.md`
+17. `dietitian-ai-assistant/docs/data-model.sql`
 
 ## User's Product Goal
 
@@ -62,11 +63,13 @@ The product must be both:
 
 ## Current Next Phase
 
-Post-Phase 65 strategic completion plan was added on 2026-06-05 in `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`. It locks the production pilot target to direct 100 dietitians x 50 clients (minimum 5,000 clients), with no small production ring. It also locks the product communication covenant: client-facing output must never disclose AI identity or tell the client to ask a doctor/dietitian/professional, yellow/red paths send no client-facing AI boundary reply, and green maximization must come from approved source-backed answerability rather than answering risky messages.
+Post-Phase 66 baseline: the direct 100-dietitian strategic completion plan in `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` remains canonical. It locks the production pilot target to direct 100 dietitians x 50 clients (minimum 5,000 clients), with no small production ring. It also locks the product communication covenant: client-facing output must never disclose AI identity or tell the client to ask a doctor/dietitian/professional, yellow/red paths send no client-facing AI boundary reply, and green maximization must come from approved source-backed answerability rather than answering risky messages.
 
-Next implementation phase is Phase 66 Product Communication Covenant Lock. Do not jump to form hardening until the covenant, approved-source answerability, green-max intent taxonomy, and direct 5,000-client scale foundation phases are complete unless the user explicitly reprioritizes.
+Next implementation phase is Phase 67 Approved Source Answerability Engine. Do not jump to form hardening until approved-source answerability, green-max intent taxonomy, and direct 5,000-client scale foundation phases are complete unless the user explicitly reprioritizes.
 
-Phase 65 official regulation PDF corpus QA foundation is the latest completed implementation wave (2026-06-04): `app/src/lib/official-regulation-corpus.ts` now requires user-supplied official PDF corpus packages to include source metadata, SHA-256 checksums, page extraction evidence, page/section references, derived rule drafts, corpus version, and synthetic golden cases before PDF-derived scope rules can become draft `ScopeRuleRecord` entries with source references. QA failure blocks draft rule construction and keeps launch-gate evidence draft. QA success does not approve the corpus or activate production routing. Production pilot remains `NO-GO`.
+Phase 66 product communication covenant lock is the latest completed implementation wave (2026-06-05): core/provider output safety now blocks client-facing AI self-disclosure, AI limitation disclaimers, doctor/dietitian/professional referral language, and covenant-violating green provider output; PromptContext carries the covenant instruction; mock-provider output self-checks the covenant; handoff acknowledgements are internal-only; and send-time draft approval blocks non-green AI drafts plus covenant-violating green draft edits. Production pilot remains `NO-GO`.
+
+Phase 65 official regulation PDF corpus QA foundation completed on 2026-06-04: `app/src/lib/official-regulation-corpus.ts` requires user-supplied official PDF corpus packages to include source metadata, SHA-256 checksums, page extraction evidence, page/section references, derived rule drafts, corpus version, and synthetic golden cases before PDF-derived scope rules can become draft `ScopeRuleRecord` entries with source references. QA failure blocks draft rule construction and keeps launch-gate evidence draft. QA success does not approve the corpus or activate production routing. Production pilot remains `NO-GO`.
 
 Phase 64 structured launch-gate evidence engine completed on 2026-06-04: `LaunchGateEvidenceRecord` and `evaluateProductionPilotLaunchGateEvidence` now require sanitized artifact references, owner, explicit approval, approval date, review cadence, non-expired timing, and full required-evidence coverage before a gate can be treated as closed. Legal/privacy and clinical gate definitions include Phase 63 form/PDF corpus evidence. Operational health can consume structured evidence. Real scope-guard egress cannot be enabled by legacy approved id arrays alone; it requires structured clinical taxonomy and provider/vendor evidence plus `MANU_ALLOW_REAL_SCOPE_GUARD=true`. Production pilot remains `NO-GO`.
 
@@ -74,7 +77,7 @@ Phase 63 production pilot GO rebaseline is the latest completed planning wave (2
 
 Before selecting the next engineering phase, read `docs/PHASE_64_STRUCTURED_LAUNCH_GATE_EVIDENCE_ENGINE_SPEC.md` and `docs/PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md`; together they are the current planning source for production-pilot exit work.
 
-Phase 65 remaining production hardening is now ordered by `DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`: product communication covenant lock, approved-source answerability, green-max intent taxonomy, direct 5,000-client scale foundation, user-supplied form hardening, official PDF ingestion, regulation permission graph, green/yellow/red calibration, client removal/anonymization transactional redaction contract, Gemini provider gate, WhatsApp production adapter, production operations, R-405 closure, full 100x50 rehearsal, external launch-gate closure, and direct production pilot GO.
+Post-Phase 66 remaining production hardening is ordered by `DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`: approved-source answerability, green-max intent taxonomy, direct 5,000-client scale foundation, user-supplied form hardening, official PDF ingestion, regulation permission graph, green/yellow/red calibration, client removal/anonymization transactional redaction contract, Gemini provider gate, WhatsApp production adapter, production operations, R-405 closure, full 100x50 rehearsal, external launch-gate closure, and direct production pilot GO.
 
 Phase 62 architecture review remediation wave 2 is the latest completed implementation wave (2026-06-04): provider failures on active clients now open dietitian handoff without client-facing AI send; shared `normalizeSafetyText`; overlap-based scope retrieval (`DEFAULT_MATCH_THRESHOLD` 0.4); glucose numeric cost-unit filtering; dead `modelForRisk` removed. Bulgu 1 unchanged (accepted). Bulgu 3/9/10 documented as constraint-accepted. Production pilot remains `NO-GO`.
 
@@ -240,7 +243,7 @@ npm test
 Current expected result:
 
 ```text
-114/114 tests passing
+116/116 tests passing
 ```
 
 Covered:
@@ -274,10 +277,10 @@ npm run release:verify
 Current expected app result:
 
 - ESLint passes.
-- 166/166 app tests pass (includes structured launch-gate evidence, operational-health, official regulation corpus QA, scope-corpus, scope-retrieval, scope-guard-runtime, scope-guard-provider tests).
+- 170/170 app tests pass (includes product communication covenant lock, structured launch-gate evidence, operational-health, official regulation corpus QA, scope-corpus, scope-retrieval, scope-guard-runtime, scope-guard-provider tests).
 - RLS integration tests pass against local Supabase; when pointed at non-local Supabase they skip unless `MANU_ALLOW_REMOTE_RLS_TESTS=true`. Re-run after Phase 61 `scope_*` migration when recording new RLS evidence.
 - `next build --webpack` passes.
-- `npm run release:verify` passes with core tests 114/114, app tests 166/166, lint, production build, and only known R-405 production audit findings.
+- `npm run release:verify` passes with core tests 116/116, app tests 170/170, lint, production build, and only known R-405 production audit findings.
 - `npm run test:visual` passes across desktop, tablet, and mobile Chromium viewports.
 
 Note: app scripts intentionally use `--webpack` because Turbopack did not resolve the local symlinked `dietitian-ai-assistant-architecture` package. The core package now has `"exports": "./src/index.js"`.
@@ -2101,4 +2104,35 @@ app: npm run release:verify -> passed; core tests 114/114, app tests 166/166, li
 
 ### Next Correct Step For Codex
 
-Implement user-supplied dietitian/client form schema hardening after the user supplies the exact forms, or proceed with pagination/scoped reload evidence if forms are not yet supplied. Use the Phase 65 QA contract when official PDFs arrive; do not activate scope routing until structured legal/clinical launch-gate evidence approves the corpus.
+Phase 66 completed the product communication covenant lock. Next correct step is Phase 67 Approved Source Answerability Engine. Keep official corpus activation blocked until the user supplies official PDFs and structured legal/clinical launch-gate evidence approves the corpus.
+
+## Phase 66 Product Communication Covenant Lock Handoff Notes - 2026-06-05
+
+Completed by: Codex
+
+### What Was Done
+
+- Added `docs/PHASE_66_PRODUCT_COMMUNICATION_COVENANT_LOCK_SPEC.md`.
+- Added core `PRODUCT_COMMUNICATION_COVENANT_VERSION` and multilingual `detectProductCommunicationCovenantIssues`.
+- Added a PromptContext covenant system instruction.
+- Guarded provider output, mock provider output, and send-time draft approval against client-facing AI self-disclosure, AI limitation disclaimers, and doctor/dietitian/professional referral language.
+- Changed yellow/red acknowledgement text to internal-only handling and blocked yellow/red AI drafts from becoming client-facing AI sends.
+- Added tests proving covenant-violating green output is blocked and yellow/red paths do not create client-facing AI replies.
+
+### What Was NOT Done
+
+- No real Gemini, WhatsApp, Telegram, monitoring, secret manager, launch-gate approval, R-405 acceptance, or real-data path was connected.
+- No production pilot GO decision was made; production pilot remains `NO-GO`.
+- No approved-source answerability, green-max taxonomy, 5,000-client scale rehearsal, user-supplied form hardening, official PDF ingestion, or external gate closure was implemented.
+
+### Verification Commands
+
+```text
+core: npm test -> passed; core tests 116/116
+app: npm test -- ai-provider simulator app-state-store -> passed; app tests 170/170
+app: npm run release:verify -> passed; core tests 116/116, app tests 170/170, lint, production build, known R-405 only
+```
+
+### Next Correct Step For Codex
+
+Implement Phase 67 Approved Source Answerability Engine from `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`. It should decide whether a green message can be answered from approved sources before provider output is allowed to become a draft or send. Keep all real providers/channels, monitoring, secret manager, and real client health data disconnected.

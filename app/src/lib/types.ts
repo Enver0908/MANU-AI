@@ -466,7 +466,7 @@ export type SimulationRequest = {
   senderChannelUserId?: string;
   now?: string;
   mockProviderFailure?: "provider_timeout" | "provider_error" | "provider_policy_violation";
-  mockProviderOutput?: "missing_historical_context";
+  mockProviderOutput?: "missing_historical_context" | "covenant_violation";
 };
 
 export type SimulationResult = {

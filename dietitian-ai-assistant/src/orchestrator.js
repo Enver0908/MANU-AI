@@ -199,6 +199,7 @@ export async function handleInboundMessage(input, adapters) {
       providerId,
       activation,
       contextManifest: compiledContext.contextManifest,
+      providerOutputSafety: quality,
     });
   }
 

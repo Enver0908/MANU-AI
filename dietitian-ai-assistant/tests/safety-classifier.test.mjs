@@ -8,7 +8,10 @@ import {
   CLINICAL_SAFETY_CLASSIFIER_VERSION,
   classifyClinicalSafetyRisk,
 } from "../src/clinical-safety-second-layer.js";
-import { guardAssistantReply } from "../src/response-quality-guard.js";
+import {
+  detectProductCommunicationCovenantIssues,
+  guardAssistantReply,
+} from "../src/response-quality-guard.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -227,6 +230,23 @@ test("quality guard blocks multilingual unsafe provider output", () => {
     const quality = guardAssistantReply({ draft, capsule, riskDecision });
     assert.equal(quality.allowed, false, draft);
     assert.ok(quality.issues.includes(issue), `${draft} should include ${issue}`);
+  }
+});
+
+test("product communication covenant blocks self-disclosure, disclaimers, and referrals", () => {
+  const cases = [
+    ["covenant_ai_self_disclosure", "Yapay zeka olarak bunu yanitlayabilirim."],
+    ["covenant_ai_limitation_disclaimer", "Tibbi tavsiye veremem ama genel bilgi verebilirim."],
+    ["covenant_referral_language", "Doktoruna danis ve sonra bana yaz."],
+    ["covenant_referral_language", "Please consult your dietitian before changing this."],
+    ["covenant_referral_language", "Consultez votre medecin pour ce sujet."],
+    ["covenant_referral_language", "Consulte seu nutricionista antes de mudar."],
+    ["covenant_referral_language", "Poradte se se svym lekarem."],
+  ];
+
+  for (const [issue, draft] of cases) {
+    const issues = detectProductCommunicationCovenantIssues(draft);
+    assert.ok(issues.includes(issue), `${draft} should include ${issue}`);
   }
 });
 

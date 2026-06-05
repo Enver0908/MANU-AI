@@ -1,4 +1,5 @@
 import {
+  detectProductCommunicationCovenantIssues,
   evaluateInboundPreflight,
   handleInboundMessage,
 } from "dietitian-ai-assistant-architecture";
@@ -196,6 +197,9 @@ export async function runInboundSimulation(
       generateReply: async (payload: Record<string, unknown>) => {
         const riskDecision = payload.riskDecision as { level: string };
         const promptContext = payload.promptContext as { segments: Array<{ type: string; text: string }> };
+        if (request.mockProviderOutput === "covenant_violation") {
+          return "As an AI, I cannot provide medical advice. Please consult your doctor.";
+        }
         return generateMockProviderReply(
           buildMockProviderInput(promptContext, riskDecision.level as AiDecisionRecord["risk"]),
           {
@@ -395,12 +399,36 @@ export function approveDraftMessageInState(
     throw new AppDomainError(400, "message_not_ai_draft");
   }
 
+  if (!decision) {
+    return blockDraftForRevalidationFailure(state, draft, decision, "revalidation_query_failed");
+  }
+
   const revalidationFailure = revalidateDraftBeforeSend(state, draft, decision);
   if (revalidationFailure) {
     return blockDraftForRevalidationFailure(state, draft, decision, revalidationFailure);
   }
 
   const finalBody = body?.trim() || draft.body;
+  if (decision.risk !== "green") {
+    return blockDraftForRevalidationFailure(
+      state,
+      draft,
+      decision,
+      "non_green_ai_draft_client_send_blocked",
+    );
+  }
+
+  const covenantIssues = detectProductCommunicationCovenantIssues(finalBody);
+  if (covenantIssues.length > 0) {
+    return blockDraftForRevalidationFailure(
+      state,
+      draft,
+      decision,
+      "product_communication_covenant_violation",
+      covenantIssues,
+    );
+  }
+
   const conversation = state.conversations.find((item) => item.id === draft.conversationId);
   const client = conversation ? state.clients.find((item) => item.id === conversation.clientId) : undefined;
   const resolvesYellowHold =
@@ -528,8 +556,10 @@ function blockDraftForRevalidationFailure(
   draft: MessageRecord,
   decision: AiDecisionRecord | undefined,
   reason: string,
+  additionalReasons: string[] = [],
 ): ManuAppState {
   const now = new Date().toISOString();
+  const productCommunicationIssues = additionalReasons.filter((item) => item.startsWith("covenant_"));
   return {
     ...state,
     messages: state.messages.map((message) =>
@@ -541,7 +571,19 @@ function blockDraftForRevalidationFailure(
             ...item,
             sendStatus: "send_blocked" as const,
             blockedReason: reason,
-            reasons: Array.from(new Set([...item.reasons, reason])),
+            reasons: Array.from(new Set([...item.reasons, reason, ...additionalReasons])),
+            providerOutputSafety:
+              productCommunicationIssues.length > 0
+                ? {
+                    allowed: false,
+                    issues: productCommunicationIssues.map((issue) => ({
+                      code: issue,
+                      severity: "block",
+                      category: "product_communication",
+                      evidence: "send_time_draft_check",
+                    })),
+                  }
+                : item.providerOutputSafety,
           }
         : item,
     ),

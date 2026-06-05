@@ -203,9 +203,10 @@ describe("app state store operations", () => {
   });
 
   it("approves AI drafts with dietitian approval provenance", async () => {
-    const withDraft = await simulateInState(createInitialState(), {
-      clientId: "client-elif",
-      body: "D vitamini takviyesi kullanayim mi?",
+    const copilotState = patchClientInState(createInitialState(), "client-mert", { aiMode: "copilot" });
+    const withDraft = await simulateInState(copilotState, {
+      clientId: "client-mert",
+      body: "Ara ogun icin ne yiyebilirim?",
       idempotencyKey: "store-draft-approve",
     });
     const draft = withDraft.messages.find((message) => message.status === "draft");
@@ -218,9 +219,10 @@ describe("app state store operations", () => {
   });
 
   it("edits and dismisses AI drafts without losing AI provenance", async () => {
-    const withDraft = await simulateInState(createInitialState(), {
-      clientId: "client-elif",
-      body: "D vitamini takviyesi kullanayim mi?",
+    const copilotState = patchClientInState(createInitialState(), "client-mert", { aiMode: "copilot" });
+    const withDraft = await simulateInState(copilotState, {
+      clientId: "client-mert",
+      body: "Ara ogun icin ne yiyebilirim?",
       idempotencyKey: "store-draft-edit",
     });
     const draft = withDraft.messages.find((message) => message.status === "draft");

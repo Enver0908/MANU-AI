@@ -19,7 +19,9 @@ describe("mock AI provider", () => {
     await expect(generateMockProviderReply({ context: promptContext, risk: "green" })).resolves.toContain(
       "Three meals",
     );
-    await expect(generateMockProviderReply({ context: promptContext, risk: "yellow" })).resolves.toContain("onayiyla");
+    await expect(generateMockProviderReply({ context: promptContext, risk: "yellow" })).resolves.toContain(
+      "Ic inceleme",
+    );
   });
 
   it("uses the conversation language segment for deterministic localized replies", async () => {
@@ -136,5 +138,16 @@ describe("mock AI provider", () => {
     await expect(
       generateMockProviderReply({ context: promptContext, risk: "green" }, { forceMissingHistoricalContext: true }),
     ).resolves.toBe(MISSING_HISTORICAL_CONTEXT_TOKEN);
+  });
+
+  it("rejects generated mock output that violates the product communication covenant", async () => {
+    await expect(
+      generateMockProviderReply({
+        context: {
+          segments: [{ type: "diet_plan_summary", text: "Please consult your doctor before changing this." }],
+        },
+        risk: "green",
+      }),
+    ).rejects.toMatchObject({ code: "provider_policy_violation" });
   });
 });

@@ -1,3 +1,5 @@
+export const PRODUCT_COMMUNICATION_COVENANT_VERSION = "product-communication-covenant-v0.1.0";
+
 const forbiddenPatterns = [
   {
     issue: "diagnosis_language",
@@ -26,6 +28,29 @@ const forbiddenPatterns = [
   },
 ];
 
+const covenantPatterns = [
+  {
+    issue: "covenant_ai_self_disclosure",
+    pattern:
+      /\b(as an ai|as a chatbot|i am an ai|i'm an ai|i am a chatbot|artificial intelligence)\b|(?:yapay zeka|chatbot|sohbet robotu|ai)\s*(?:olarak|modeli|sistemiyim)|\b(bir yapay zeka|ben yapay zeka|ben bir ai)\b|\b(als ki|als chatbot|kunstliche intelligenz)\b|\b(en tant qu ia|en tant que chatbot|je suis une ia|intelligence artificielle)\b|\b(como ia|como una ia|como um chatbot|como uma ia|inteligencia artificial)\b|\b(jako ai|jsem ai|umela inteligence|chatbot)\b/i,
+  },
+  {
+    issue: "covenant_ai_limitation_disclaimer",
+    pattern:
+      /(?:tibbi|medikal|saglik)\s+tavsiye\s+veremem|(?:tibbi|medikal)\s+oneride\s+bulunamam|(?:cannot|can't|can not)\s+provide\s+(?:medical|health)\s+advice|no\s+puedo\s+(?:dar|proporcionar)\s+(?:consejo|asesoramiento)\s+medic|nao\s+posso\s+(?:dar|fornecer)\s+aconselhamento\s+medic|je\s+ne\s+peux\s+pas\s+(?:donner|fournir)\s+(?:de\s+)?conseil\s+medical|ich\s+kann\s+keine\s+(?:medizinische|arztliche)\s+beratung\s+geben|nemohu\s+poskytovat\s+(?:lekarske|zdravotni)\s+rady/i,
+  },
+  {
+    issue: "covenant_referral_language",
+    pattern:
+      /\b(?:diyetisyen|diyetisyenin|diyetisyeninize|diyetisyenine|doktor|doktorun|doktoruna|doktorunuza|hekim|hekiminize|uzman|uzmana|profesyonel)\b|(?:danis|basvur|iletisime gec|sor|kontrol ettir|onay).*?(?:doktor|diyetisyen|hekim|uzman|profesyonel)|(?:consult|ask|contact|check with|defer to|talk to|speak to).*?(?:doctor|dietitian|professional|expert|specialist|healthcare provider|physician)|\b(?:your doctor|your dietitian|a professional|a specialist|an expert|healthcare professional)\b|(?:konsultieren|fragen|wenden sie sich).*?(?:arzt|ernahrungsfachkraft|ernahrungsberater|facharzt|spezialist)|\b(?:arzt|ernahrungsfachkraft|ernahrungsberater|spezialist)\b|(?:consultez|demandez|contactez).*?(?:medecin|dieteticien|professionnel|specialiste)|\b(?:medecin|dieteticien|professionnel de sante|specialiste)\b|(?:consulta|consulte|pregunta|contacta).*?(?:medico|dietista|profesional|especialista)|\b(?:medico|dietista|profesional de salud|especialista)\b|(?:consulte|pergunte|contacte).*?(?:medico|nutricionista|profissional|especialista)|\b(?:medico|nutricionista|profissional de saude|especialista)\b|(?:poradte|kontaktujte|zeptejte).*?(?:lekarem|lekar|nutricnim specialistou|odbornikem|specialistou)|\b(?:lekar|nutricni specialista|odbornik|specialista)\b/i,
+  },
+  {
+    issue: "covenant_referral_language",
+    pattern:
+      /\b(?:diyetisyen\w*|doktor\w*|hekim\w*|uzman\w*|profesyonel\w*|doctor\w*|dietitian\w*|professional\w*|expert\w*|specialist\w*|physician\w*|arzt\w*|ernahrungsfachkraft\w*|ernahrungsberater\w*|facharzt\w*|spezialist\w*|medecin\w*|dieteticien\w*|professionnel\w*|specialiste\w*|medico\w*|dietista\w*|profesional\w*|nutricionista\w*|lekar\w*|odbornik\w*)\b/i,
+  },
+];
+
 const emojiPattern = /[\u{1F300}-\u{1FAFF}]/u;
 
 export function guardAssistantReply({ draft, capsule, riskDecision }) {
@@ -42,10 +67,11 @@ export function guardAssistantReply({ draft, capsule, riskDecision }) {
   for (const rule of forbiddenPatterns) {
     if (rule.pattern.test(normalizedText)) issues.push(rule.issue);
   }
+  issues.push(...detectProductCommunicationCovenantIssues(text));
 
   return {
     allowed: issues.length === 0,
-    issues,
+    issues: Array.from(new Set(issues)),
   };
 }
 
@@ -54,7 +80,7 @@ export function guardProviderOutput({ output, capsule, riskDecision }) {
   const issues = assistant.issues.map((issue) => ({
     code: issue,
     severity: "block",
-    category: "clinical",
+    category: issue.startsWith("covenant_") ? "product_communication" : "clinical",
     evidence: "pattern",
   }));
 
@@ -75,6 +101,23 @@ export function guardProviderOutput({ output, capsule, riskDecision }) {
 
 export function hasMissingHistoricalContextToken(output) {
   return /\[ERROR:\s*missing_historical_context\]|missing_historical_context/i.test(String(output || ""));
+}
+
+export function detectProductCommunicationCovenantIssues(text) {
+  const normalizedText = normalizeForSafetyPatterns(text)
+    .replace(/\u0131/g, "i")
+    .replace(/\u011f/g, "g")
+    .replace(/\u015f/g, "s")
+    .replace(/\u00f6/g, "o")
+    .replace(/\u00fc/g, "u")
+    .replace(/\u00e7/g, "c");
+  const issues = [];
+
+  for (const rule of covenantPatterns) {
+    if (rule.pattern.test(normalizedText)) issues.push(rule.issue);
+  }
+
+  return Array.from(new Set(issues));
 }
 
 function maxLengthFor(capsule) {

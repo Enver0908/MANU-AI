@@ -319,6 +319,8 @@ declare module "dietitian-ai-assistant-architecture" {
   export const MISSING_HISTORICAL_CONTEXT_TOKEN: string;
   export const MISSING_HISTORICAL_CONTEXT_INSTRUCTION: string;
   export const LATEST_DIETITIAN_CONTEXT_INSTRUCTION: string;
+  export const PRODUCT_COMMUNICATION_COVENANT_INSTRUCTION: string;
+  export const PRODUCT_COMMUNICATION_COVENANT_VERSION: string;
 
   export function buildDietitianVoiceProfile(samples: string[]): CoreVoiceProfile;
   export function normalizeLanguageCode(value: unknown): SupportedLanguageCode;
@@ -387,6 +389,7 @@ declare module "dietitian-ai-assistant-architecture" {
   ): Promise<CoreResult>;
 
   export function normalizeSafetyText(message: string): string;
+  export function detectProductCommunicationCovenantIssues(message: string): string[];
 
   export type ScopeRuleEscalationLevel = "yellow" | "red";
   export type ScopeGuardStatus = "noop" | "unavailable" | "no_match" | "matched";

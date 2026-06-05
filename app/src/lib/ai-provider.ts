@@ -1,4 +1,7 @@
-import { MISSING_HISTORICAL_CONTEXT_TOKEN } from "dietitian-ai-assistant-architecture";
+import {
+  MISSING_HISTORICAL_CONTEXT_TOKEN,
+  detectProductCommunicationCovenantIssues,
+} from "dietitian-ai-assistant-architecture";
 import type { RiskLevel } from "./types";
 
 export { MISSING_HISTORICAL_CONTEXT_TOKEN };
@@ -89,7 +92,9 @@ export async function generateMockProviderReply(
 
   for (let attempt = 0; attempt <= maxRetries; attempt += 1) {
     try {
-      return await attemptMockGeneration(input, options.failureMode);
+      const output = await attemptMockGeneration(input, options.failureMode);
+      assertCovenantCleanOutput(output);
+      return output;
     } catch (error) {
       if (attempt >= maxRetries) {
         throw error;
@@ -183,41 +188,51 @@ function localizedReply(language: string, risk: "green" | "yellow", dietPlanSumm
 
 const LOCALIZED_REPLIES: Record<string, { yellow: string; green: (dietPlanSummary: string) => string }> = {
   tr: {
-    yellow: "Bunu diyetisyeninizin onayiyla netlestirelim; taslak olarak not aldim.",
+    yellow: "Ic inceleme notu kaydedildi; client mesaji bekletildi.",
     green: (dietPlanSummary) =>
       `Planina uygun olarak kucuk bir degisim yapabilirsin. ${dietPlanSummary || "Ana plana sadik kalalim."}`,
   },
   en: {
-    yellow: "Let's clarify this with your dietitian's approval; I saved it as a draft.",
+    yellow: "Internal review note saved; the client message is held.",
     green: (dietPlanSummary) =>
       `You can make a small change that still fits your plan. ${dietPlanSummary || "Let's stay close to the main plan."}`,
   },
   de: {
-    yellow: "Das sollten wir mit Zustimmung Ihrer Ernahrungsfachkraft klaren; ich habe es als Entwurf notiert.",
+    yellow: "Interne Prufnotiz gespeichert; die Client-Nachricht bleibt gehalten.",
     green: (dietPlanSummary) =>
       `Sie konnen eine kleine Anderung machen, die zu Ihrem Plan passt. ${dietPlanSummary || "Bleiben wir beim Hauptplan."}`,
   },
   fr: {
-    yellow: "Clarifions cela avec l'accord de votre dieteticien; je l'ai enregistre comme brouillon.",
+    yellow: "Note de revue interne enregistree; le message client reste en attente.",
     green: (dietPlanSummary) =>
       `Vous pouvez faire un petit ajustement compatible avec votre plan. ${dietPlanSummary || "Restons proches du plan principal."}`,
   },
   es: {
-    yellow: "Aclaremos esto con la aprobacion de su dietista; lo guarde como borrador.",
+    yellow: "Nota de revision interna guardada; el mensaje del cliente queda retenido.",
     green: (dietPlanSummary) =>
       `Puede hacer un pequeno cambio que siga ajustado a su plan. ${dietPlanSummary || "Mantengamos el plan principal."}`,
   },
   pt: {
-    yellow: "Vamos esclarecer isto com a aprovacao do seu nutricionista; guardei como rascunho.",
+    yellow: "Nota de revisao interna guardada; a mensagem do cliente fica retida.",
     green: (dietPlanSummary) =>
       `Pode fazer uma pequena mudanca que continue alinhada ao seu plano. ${dietPlanSummary || "Vamos manter o plano principal."}`,
   },
   cs: {
-    yellow: "Tohle upresnime se schvalenim vaseho nutricniho specialisty; ulozil jsem to jako navrh.",
+    yellow: "Interni kontrolni poznamka ulozena; zprava klienta zustava pozastavena.",
     green: (dietPlanSummary) =>
       `Muzete udelat malou zmenu, ktera zustane v souladu s vasim planem. ${dietPlanSummary || "Drzme se hlavniho planu."}`,
   },
 };
+
+function assertCovenantCleanOutput(output: string) {
+  const issues = detectProductCommunicationCovenantIssues(output);
+  if (issues.length > 0) {
+    throw new MockProviderError(
+      "provider_policy_violation",
+      `Provider boundary rejected product communication covenant issues: ${issues.join(",")}`,
+    );
+  }
+}
 
 function assertAllowedKeys(value: unknown, allowedKeys: string[], label: string) {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
