@@ -1,7 +1,8 @@
 export type SupabaseReadContractStatus =
   | "intentional_broad_read"
   | "scoped_mutation_read"
-  | "future_paginated_read";
+  | "future_paginated_read"
+  | "phase69_paginated_contract";
 
 export type SupabaseReadContract = {
   id: string;
@@ -19,12 +20,12 @@ export const SUPABASE_READ_CONTRACTS: SupabaseReadContract[] = [
     id: "dashboard_state_snapshot",
     ownerPath: "app/src/app/api/app-state/route.ts",
     currentLoader: "loadSupabaseState",
-    status: "future_paginated_read",
+    status: "phase69_paginated_contract",
     currentScope: "tenant-wide dashboard snapshot across visible clients and related records",
     productionContract:
-      "Replace with dashboard list filters, client detail panes, and bounded timeline windows before production growth.",
+      "Use cursor-paginated client lists, bounded timeline windows, handoff/notification/audit list windows, and client-detail scoped reloads before production growth.",
     reason: "The local PWA dashboard needs a complete snapshot today, but this is the main production scale risk.",
-    nextAction: "Design cursor pagination for clients, conversations, messages, handoffs, notifications, and audits.",
+    nextAction: "Implement runtime paginated route payloads after Phase 69 synthetic 100x50 rehearsal evidence is accepted.",
   },
   {
     id: "demo_reset_snapshot",
@@ -113,32 +114,32 @@ export const SUPABASE_READ_CONTRACTS: SupabaseReadContract[] = [
     id: "internal_copilot_tools",
     ownerPath: "app/src/app/api/internal-copilot/messages/route.ts",
     currentLoader: "runSupabaseInternalCopilotMessage",
-    status: "future_paginated_read",
+    status: "phase69_paginated_contract",
     currentScope: "visible tenant state for local/mock curated copilot tools",
     productionContract:
-      "Replace broad snapshot tools with tool-specific bounded queries and source refs before any real provider egress.",
+      "Use tool-specific bounded queries with per-tool limits, cursor windows, and source refs before any real provider egress.",
     reason: "The internal copilot is read-only today, but production scale and provider review require bounded tool reads.",
-    nextAction: "Define per-tool limits for client search, recent messages, form responses, handoffs, and decision history.",
+    nextAction: "Implement bounded tool loaders only after provider/vendor review allows any real egress.",
   },
   {
     id: "client_create_scaffold",
     ownerPath: "app/src/app/api/clients/route.ts",
     currentLoader: "createSupabaseClientRecord",
-    status: "future_paginated_read",
+    status: "phase69_paginated_contract",
     currentScope: "tenant snapshot used to append a local client/conversation scaffold",
     productionContract: "Use direct insert plus a scoped client detail reload.",
     reason: "Client creation currently reuses local state helpers; production should avoid reloading tenant history.",
-    nextAction: "Design create-client RPC or insert bundle with scoped return payload.",
+    nextAction: "Implement create-client RPC or insert bundle with scoped return payload before production onboarding.",
   },
   {
     id: "client_ai_control_patch",
     ownerPath: "app/src/app/api/clients/[id]/route.ts",
     currentLoader: "patchSupabaseClientRecord",
-    status: "future_paginated_read",
+    status: "phase69_paginated_contract",
     currentScope: "tenant snapshot for AI-control/client profile patch",
     productionContract: "Use client-id scoped load plus existing optimistic context revision checks.",
     reason: "This path still uses the broad loader even though most mutation paths now use scoped operation loaders.",
-    nextAction: "Move profile/AI-control patch to a client-scoped operation loader after broad read contracts are approved.",
+    nextAction: "Move profile/AI-control patch to a client-scoped operation loader before production pilot.",
   },
   {
     id: "manual_reply_mutation",

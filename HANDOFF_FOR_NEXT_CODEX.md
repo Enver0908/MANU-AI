@@ -18,21 +18,22 @@ Start by reading:
 2. `PROJECT_PLAN.md`
 3. `docs/NEXT_PHASE_EXECUTION_PLAN.md`
 4. `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` (current strategic roadmap)
-5. `docs/PHASE_68_GREEN_MAXIMIZATION_INTENT_TAXONOMY_SPEC.md` (latest completed implementation phase)
-6. `docs/PHASE_67_APPROVED_SOURCE_ANSWERABILITY_ENGINE_SPEC.md`
-7. `docs/PHASE_66_PRODUCT_COMMUNICATION_COVENANT_LOCK_SPEC.md`
-8. `docs/PHASE_65_OFFICIAL_REGULATION_PDF_CORPUS_QA_SPEC.md`
-9. `docs/PHASE_64_STRUCTURED_LAUNCH_GATE_EVIDENCE_ENGINE_SPEC.md`
-10. `docs/PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md`
-11. `docs/PHASE_62_ARCHITECTURE_REVIEW_REMEDIATION_WAVE2_SPEC.md`
-12. `docs/PHASE_61_SCOPE_GUARD_RAG_SECOND_LAYER_SPEC.md`
-13. `docs/RISK_REGISTER.md`
-14. `docs/DATA_INVENTORY.md`
-15. `docs/DATASET_STRATEGY.md`
-16. `docs/MOBILE_APP_STRATEGY.md`
-17. `dietitian-ai-assistant/README.md`
-18. `dietitian-ai-assistant/docs/architecture.md`
-19. `dietitian-ai-assistant/docs/data-model.sql`
+5. `docs/PHASE_69_DIRECT_5000_CLIENT_SCALE_FOUNDATION_SPEC.md` (latest completed implementation phase)
+6. `docs/PHASE_68_GREEN_MAXIMIZATION_INTENT_TAXONOMY_SPEC.md`
+7. `docs/PHASE_67_APPROVED_SOURCE_ANSWERABILITY_ENGINE_SPEC.md`
+8. `docs/PHASE_66_PRODUCT_COMMUNICATION_COVENANT_LOCK_SPEC.md`
+9. `docs/PHASE_65_OFFICIAL_REGULATION_PDF_CORPUS_QA_SPEC.md`
+10. `docs/PHASE_64_STRUCTURED_LAUNCH_GATE_EVIDENCE_ENGINE_SPEC.md`
+11. `docs/PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md`
+12. `docs/PHASE_62_ARCHITECTURE_REVIEW_REMEDIATION_WAVE2_SPEC.md`
+13. `docs/PHASE_61_SCOPE_GUARD_RAG_SECOND_LAYER_SPEC.md`
+14. `docs/RISK_REGISTER.md`
+15. `docs/DATA_INVENTORY.md`
+16. `docs/DATASET_STRATEGY.md`
+17. `docs/MOBILE_APP_STRATEGY.md`
+18. `dietitian-ai-assistant/README.md`
+19. `dietitian-ai-assistant/docs/architecture.md`
+20. `dietitian-ai-assistant/docs/data-model.sql`
 
 ## User's Product Goal
 
@@ -65,9 +66,11 @@ The product must be both:
 
 ## Current Next Phase
 
-Post-Phase 68 baseline: the direct 100-dietitian strategic completion plan in `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` remains canonical. It locks the production pilot target to direct 100 dietitians x 50 clients (minimum 5,000 clients), with no small production ring. It also locks the product communication covenant: client-facing output must never disclose AI identity or tell the client to ask a doctor/dietitian/professional, yellow/red paths send no client-facing AI boundary reply, and green maximization must come from approved source-backed answerability plus deterministic green intent taxonomy rather than answering risky messages.
+Post-Phase 69 baseline: the direct 100-dietitian strategic completion plan in `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` remains canonical. It locks the production pilot target to direct 100 dietitians x 50 clients (minimum 5,000 clients), with no small production ring. It also locks the product communication covenant: client-facing output must never disclose AI identity or tell the client to ask a doctor/dietitian/professional, yellow/red paths send no client-facing AI boundary reply, and green maximization must come from approved source-backed answerability plus deterministic green intent taxonomy rather than answering risky messages.
 
-Next implementation phase is Phase 69 Direct 5,000 Client Scale Foundation. Do not jump to form hardening until direct 5,000-client scale foundation is complete unless the user explicitly reprioritizes.
+Next implementation phase is Phase 70 User-Supplied Form Hardening, but only after the user supplies the final dietitian/client form package. Do not invent final production form schemas without the user's documents.
+
+Phase 69 direct 5,000 client scale foundation is the latest completed implementation wave (2026-06-05): app `direct-pilot-scale-readiness.ts` now provides a synthetic 100 dietitian x 50 client fixture, cursor pagination helper, readiness evaluator, and scale target constants. Scale-critical read contracts are marked with `phase69_paginated_contract`, and operational health carries aggregate direct-pilot scale readiness fields. Production pilot remains `NO-GO`.
 
 Phase 68 green maximization intent taxonomy is the latest completed implementation wave (2026-06-05): core `evaluateGreenIntentTaxonomy` now records green intent family metadata after approved-source answerability and before provider generation. Green-looking sensitive intents such as calorie/macro/portion target changes, medication/supplement decisions, lab/symptom interpretation, active-plan conflict, and emergency/sensitive contexts block with internal handoff/no-send and `providerAttempted=false`. Yellow/red decisions receive `not_applicable_non_green` taxonomy metadata and are not downgraded. Production pilot remains `NO-GO`.
 
@@ -83,7 +86,7 @@ Phase 63 production pilot GO rebaseline is the latest completed planning wave (2
 
 Before selecting the next engineering phase, read `docs/PHASE_64_STRUCTURED_LAUNCH_GATE_EVIDENCE_ENGINE_SPEC.md` and `docs/PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md`; together they are the current planning source for production-pilot exit work.
 
-Post-Phase 68 remaining production hardening is ordered by `DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`: direct 5,000-client scale foundation, user-supplied form hardening, official PDF ingestion, regulation permission graph, green/yellow/red calibration, client removal/anonymization transactional redaction contract, Gemini provider gate, WhatsApp production adapter, production operations, R-405 closure, full 100x50 rehearsal, external launch-gate closure, and direct production pilot GO.
+Post-Phase 69 remaining production hardening is ordered by `DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`: user-supplied form hardening, official PDF ingestion, regulation permission graph, green/yellow/red calibration, client removal/anonymization transactional redaction contract, Gemini provider gate, WhatsApp production adapter, production operations, R-405 closure, full 100x50 rehearsal, external launch-gate closure, and direct production pilot GO.
 
 Phase 62 architecture review remediation wave 2 is the latest completed implementation wave (2026-06-04): provider failures on active clients now open dietitian handoff without client-facing AI send; shared `normalizeSafetyText`; overlap-based scope retrieval (`DEFAULT_MATCH_THRESHOLD` 0.4); glucose numeric cost-unit filtering; dead `modelForRisk` removed. Bulgu 1 unchanged (accepted). Bulgu 3/9/10 documented as constraint-accepted. Production pilot remains `NO-GO`.
 
@@ -283,10 +286,10 @@ npm run release:verify
 Current expected app result:
 
 - ESLint passes.
-- 171/171 app tests pass (includes approved source answerability, product communication covenant lock, structured launch-gate evidence, operational-health, official regulation corpus QA, scope-corpus, scope-retrieval, scope-guard-runtime, scope-guard-provider tests).
+- 176/176 app tests pass (includes direct pilot scale readiness, approved source answerability, product communication covenant lock, structured launch-gate evidence, operational-health, official regulation corpus QA, scope-corpus, scope-retrieval, scope-guard-runtime, scope-guard-provider tests).
 - RLS integration tests pass against local Supabase; when pointed at non-local Supabase they skip unless `MANU_ALLOW_REMOTE_RLS_TESTS=true`. Re-run after Phase 61 `scope_*` migration when recording new RLS evidence.
 - `next build --webpack` passes.
-- `npm run release:verify` passes with core tests 120/120, app tests 171/171, lint, production build, and only known R-405 production audit findings.
+- `npm run release:verify` passes with core tests 122/122, app tests 176/176, lint, production build, and only known R-405 production audit findings.
 - `npm run test:visual` passes across desktop, tablet, and mobile Chromium viewports.
 
 Note: app scripts intentionally use `--webpack` because Turbopack did not resolve the local symlinked `dietitian-ai-assistant-architecture` package. The core package now has `"exports": "./src/index.js"`.
@@ -2161,7 +2164,6 @@ Completed by: Codex
 ### What Was NOT Done
 
 - No Phase 69 direct 5,000-client scale rehearsal was implemented.
-- No Phase 69 direct 5,000-client scale rehearsal was implemented.
 - No real Gemini, WhatsApp, Telegram, monitoring, secret manager, launch-gate approval, R-405 acceptance, or real-data path was connected.
 - No production pilot GO decision was made; production pilot remains `NO-GO`.
 
@@ -2207,4 +2209,38 @@ app: npm run release:verify -> passed; core tests 122/122, app tests 171/171, li
 
 ### Next Correct Step For Codex
 
-Implement Phase 69 Direct 5,000 Client Scale Foundation from `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`. Preserve Phase 66 covenant, Phase 67 approved-source answerability, and Phase 68 green intent taxonomy as hard gates. Keep all real providers/channels, monitoring, secret manager, and real client health data disconnected.
+Phase 69 was implemented after this handoff note. Next correct step is Phase 70 User-Supplied Form Hardening after the user supplies final dietitian/client forms. Preserve Phase 66 covenant, Phase 67 approved-source answerability, Phase 68 green intent taxonomy, and Phase 69 scale readiness evidence as hard gates. Keep all real providers/channels, monitoring, secret manager, and real client health data disconnected.
+
+## Phase 69 Direct 5,000 Client Scale Foundation Handoff Notes - 2026-06-05
+
+Completed by: Codex
+
+### What Was Done
+
+- Added `docs/PHASE_69_DIRECT_5000_CLIENT_SCALE_FOUNDATION_SPEC.md`.
+- Added `app/src/lib/direct-pilot-scale-readiness.ts`.
+- Added synthetic direct-pilot fixture generation for 100 dietitians x 50 clients (5,000 clients).
+- Added cursor pagination helper with limit caps and invalid cursor checks.
+- Added direct-pilot scale readiness evaluation for fixture count, Phase 69 read contracts, and load/backpressure/idempotency evidence.
+- Marked dashboard state, internal copilot tools, client create scaffold, and client AI/profile patch read contracts as `phase69_paginated_contract`.
+- Added aggregate direct-pilot scale readiness fields to operational health without raw client/message/channel/provider content.
+- Added app tests for fixture counts, active-client percentage, pagination windows, invalid inputs, read-contract status, readiness pass/fail, and aggregate-only operational health.
+
+### What Was NOT Done
+
+- No production UI pagination rewrite was implemented.
+- No production Supabase migration was added.
+- No real load-testing service, webhook replay, Gemini, WhatsApp, Telegram, monitoring, secret manager, launch-gate approval, R-405 acceptance, or real-data path was connected.
+- No production pilot GO decision was made; production pilot remains `NO-GO`.
+
+### Verification Commands
+
+```text
+core: npm test -> passed; core tests 122/122
+app: npm test -> passed; app tests 176/176
+app: npm run release:verify -> passed; core tests 122/122, app tests 176/176, lint, production build, known R-405 only
+```
+
+### Next Correct Step For Codex
+
+Implement Phase 70 User-Supplied Form Hardening only after the user supplies final dietitian/client forms. If forms are not supplied, stop and ask for them instead of inventing production form schemas. Keep all real providers/channels, monitoring, secret manager, and real client health data disconnected.

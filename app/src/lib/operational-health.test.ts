@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { createInitialState } from "./seed-data";
 import { buildOperationalHealthSnapshot } from "./operational-health";
+import { createDirectPilotScaleFixture } from "./direct-pilot-scale-readiness";
 import { PRODUCTION_PILOT_LAUNCH_GATES, type LaunchGateDefinition } from "./launch-gates";
 import type { ManuAppState } from "./types";
 
@@ -21,6 +22,8 @@ describe("operational health snapshot", () => {
       passiveClientCount: 1,
       launchBlocked: true,
       blockedLaunchGateCount: 8,
+      directPilotScaleReady: false,
+      directPilotScaleFailures: ["direct_pilot_scale_fixture_missing"],
     });
   });
 
@@ -67,6 +70,21 @@ describe("operational health snapshot", () => {
     expect(json).not.toContain("Three meals");
     expect(json).not.toContain("raw prompt");
     expect(json).not.toContain("supabase-service-role-secret");
+  });
+
+  it("records direct pilot scale readiness as aggregate-only evidence", () => {
+    const snapshot = buildOperationalHealthSnapshot(createInitialState(), {
+      directPilotScaleFixture: createDirectPilotScaleFixture(),
+      loadBackpressureIdempotencyEvidence: true,
+    });
+    const json = JSON.stringify(snapshot);
+
+    expect(snapshot.directPilotScaleReady).toBe(true);
+    expect(snapshot.directPilotDietitianCount).toBe(100);
+    expect(snapshot.directPilotClientCount).toBe(5000);
+    expect(snapshot.directPilotScaleFailures).toEqual([]);
+    expect(json).not.toContain("synthetic-client-");
+    expect(json).not.toContain("synthetic-dietitian-");
   });
 });
 

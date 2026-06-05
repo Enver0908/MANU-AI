@@ -24,8 +24,8 @@ These rules are non-negotiable and apply to every future phase:
 
 ## Current Baseline
 
-- Latest completed implementation phase: Phase 68 green maximization intent taxonomy.
-- Latest verification: core tests 122/122, app tests 171/171, `npm run release:verify` passed with only documented R-405 findings.
+- Latest completed implementation phase: Phase 69 direct 5,000 client scale foundation.
+- Latest verification: core tests 122/122, app tests 176/176, `npm run release:verify` passed with only documented R-405 findings.
 - Production pilot status: `NO-GO`.
 - Real WhatsApp, Gemini, monitoring, secret manager, and real client health data remain disconnected.
 - Existing usable foundations:
@@ -39,6 +39,7 @@ These rules are non-negotiable and apply to every future phase:
   - Product communication covenant detector, prompt instruction, mock provider check, provider output guard, and send-time draft block for non-green/covenant-violating AI drafts.
   - Approved source answerability gate before green provider calls/sends, with AI-generated messages excluded from source authority.
   - Green intent taxonomy audit/block layer after approved-source answerability and before provider generation.
+  - Direct 100 dietitian x 50 client synthetic scale fixture, cursor pagination helper, Phase 69 read contracts, and aggregate scale readiness health evidence.
 
 Phase 66 status as of 2026-06-05: completed locally. It did not connect real Gemini, WhatsApp, monitoring, secret manager, or real client health data; did not close launch gates; did not approve production pilot; and did not resolve R-405.
 
@@ -147,6 +148,8 @@ Done criteria:
 ## Phase 69: Direct 5,000 Client Scale Foundation
 
 Goal: make 100 dietitians and 5,000 clients a production prerequisite, not an afterthought.
+
+Status as of 2026-06-05: completed locally. It did not connect real Gemini, WhatsApp, monitoring, secret manager, production Supabase, or real client health data; did not close launch gates; did not approve production pilot; and did not resolve R-405.
 
 Implementation intent:
 

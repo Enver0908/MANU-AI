@@ -4,13 +4,13 @@ Date: 2026-06-04
 
 ## Status
 
-This is the final summary for the 13-phase completion roadmap, updated after Phase 43 multilingual language support, Phase 44 red-risk reactivation lock, Phase 45 client removal data lifecycle, Phase 46 WhatsApp group quarantine, Phase 47 RLS quarantine evidence coverage, Phase 48 R-405 stable patch recheck, Phase 49 safety/orchestration hardening, Phase 50 production Supabase hardening, Phase 51 transactional RPC coverage, Phase 52 integration test coverage, Phase 53 scale/broad read contracts, Phase 54 R-405/launch-gate recheck, Phase 55 audit remediation safety-boundary hardening, Phase 56 clinical safety second-layer local evidence, Phase 57 yellow-risk hold/draft refresh, Phase 58 dietitian client language control, Phase 59 architecture review remediation, Phase 60 audit remediation, Phase 61 scope guard (RAG + LLM) second layer mock-first, Phase 62 architecture review remediation wave 2, Phase 63 production pilot GO rebaseline, Phase 64 structured launch-gate evidence engine, Phase 65 official regulation PDF corpus QA foundation, Phase 66 product communication covenant lock, Phase 67 approved source answerability engine, and Phase 68 green maximization intent taxonomy.
+This is the final summary for the 13-phase completion roadmap, updated after Phase 43 multilingual language support, Phase 44 red-risk reactivation lock, Phase 45 client removal data lifecycle, Phase 46 WhatsApp group quarantine, Phase 47 RLS quarantine evidence coverage, Phase 48 R-405 stable patch recheck, Phase 49 safety/orchestration hardening, Phase 50 production Supabase hardening, Phase 51 transactional RPC coverage, Phase 52 integration test coverage, Phase 53 scale/broad read contracts, Phase 54 R-405/launch-gate recheck, Phase 55 audit remediation safety-boundary hardening, Phase 56 clinical safety second-layer local evidence, Phase 57 yellow-risk hold/draft refresh, Phase 58 dietitian client language control, Phase 59 architecture review remediation, Phase 60 audit remediation, Phase 61 scope guard (RAG + LLM) second layer mock-first, Phase 62 architecture review remediation wave 2, Phase 63 production pilot GO rebaseline, Phase 64 structured launch-gate evidence engine, Phase 65 official regulation PDF corpus QA foundation, Phase 66 product communication covenant lock, Phase 67 approved source answerability engine, Phase 68 green maximization intent taxonomy, and Phase 69 direct 5,000 client scale foundation.
 
 Production pilot is not approved.
 
 No real WhatsApp, Telegram, Gemini, external LLM provider, email, push, monitoring, analytics, secret manager, backup provider, or real client health data is connected.
 
-Post-Phase 68 strategic roadmap: `DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` now defines the direct production pilot path as 100 dietitians x 50 clients, with no small production ring. Product communication covenant enforcement, approved-source answerability, and green intent taxonomy are locally implemented; direct 5,000-client scale foundation and full 100x50 synthetic rehearsal remain required before production GO.
+Post-Phase 69 strategic roadmap: `DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` now defines the direct production pilot path as 100 dietitians x 50 clients, with no small production ring. Product communication covenant enforcement, approved-source answerability, green intent taxonomy, and local direct 5,000-client scale foundation are implemented; final form/PDF approvals, full production rehearsal acceptance, external gates, and R-405 closure/acceptance remain required before production GO.
 
 ## Go / No-Go Decision
 
@@ -49,6 +49,7 @@ Reason:
 - Phase 66 added local product communication covenant enforcement across prompt instruction, provider-output safety, mock-provider checks, internal-only handoff acknowledgement text, and send-time draft blocking for non-green/covenant-violating AI drafts. It did not approve any launch gate, connect a provider or channel, process real data, or resolve R-405.
 - Phase 67 added local approved-source answerability gating before green provider calls/sends and excludes AI-generated messages from source authority. It did not approve any launch gate, connect a provider or channel, process real data, or resolve R-405.
 - Phase 68 added local green intent taxonomy after approved-source answerability and before provider generation, recording allowed green intent families and blocking sensitive green-looking intents with internal handoff/no-send. It did not approve any launch gate, connect a provider or channel, process real data, or resolve R-405.
+- Phase 69 added local direct 5,000-client scale foundation: synthetic 100x50 fixture evidence, cursor pagination helpers, Phase 69 read contracts, and aggregate operational-health scale signals. It did not approve any launch gate, connect a provider or channel, process real data, or resolve R-405.
 
 ## Completion Roadmap Result
 
@@ -120,11 +121,11 @@ External approvals:
 
 ## Verification
 
-Latest local release verification after Phase 68 green maximization intent taxonomy:
+Latest local release verification after Phase 69 direct 5,000 client scale foundation:
 
 - `npm run release:verify` passed on 2026-06-05.
 - Core tests: 122/122 passed.
-- App tests: 171/171 passed.
+- App tests: 176/176 passed.
 - App lint: passed.
 - Production build: passed.
 - Production dependency audit gate passed with only documented R-405 findings.
@@ -184,7 +185,7 @@ Phase 50 verification on 2026-06-02:
 
 ## Next Required Actions
 
-1. Implement Phase 69 Direct 5,000 Client Scale Foundation before user-supplied form/PDF/provider/channel production hardening.
+1. Supply final dietitian/client forms, then implement Phase 70 User-Supplied Form Hardening before form/PDF/provider/channel production hardening.
 2. Design the dedicated client removal/anonymization transactional redaction contract before moving that lifecycle fully to RPC commits.
 3. Apply Phase 65 official health-regulation PDF corpus QA to the user-supplied PDFs, then collect reviewed corpus approval before active scope-guard use.
 4. Convert the user-supplied dietitian and client form definitions into versioned schemas with explicit prompt visibility.

@@ -34,13 +34,18 @@ describe("Supabase broad read contracts", () => {
     );
   });
 
-  it("marks dashboard and internal copilot as future paginated read contracts", () => {
-    const futurePaginatedIds = getSupabaseReadContractsByStatus("future_paginated_read").map(
+  it("marks Phase 69 scale-critical reads as paginated or scoped contracts", () => {
+    const phase69Ids = getSupabaseReadContractsByStatus("phase69_paginated_contract").map(
       (contract) => contract.id,
     );
 
-    expect(futurePaginatedIds).toEqual(
-      expect.arrayContaining(["dashboard_state_snapshot", "internal_copilot_tools"]),
+    expect(phase69Ids).toEqual(
+      expect.arrayContaining([
+        "dashboard_state_snapshot",
+        "internal_copilot_tools",
+        "client_create_scaffold",
+        "client_ai_control_patch",
+      ]),
     );
   });
 

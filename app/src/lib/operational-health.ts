@@ -1,4 +1,8 @@
 import {
+  evaluateDirectPilotScaleReadiness,
+  type DirectPilotScaleFixture,
+} from "./direct-pilot-scale-readiness";
+import {
   evaluateProductionPilotLaunchGateEvidence,
   evaluateProductionPilotLaunchGates,
   type LaunchGateEvidenceRecord,
@@ -25,6 +29,10 @@ export type OperationalHealthSnapshot = {
   launchBlocked: boolean;
   openLaunchGateIds: LaunchGateId[];
   blockedLaunchGateCount: number;
+  directPilotScaleReady: boolean;
+  directPilotDietitianCount: number;
+  directPilotClientCount: number;
+  directPilotScaleFailures: string[];
 };
 
 const DEFAULT_STALE_DRAFT_HOURS = 24;
@@ -36,6 +44,8 @@ export function buildOperationalHealthSnapshot(
     approvedLaunchGateIds?: string[];
     launchGateEvidence?: LaunchGateEvidenceRecord[];
     staleDraftHours?: number;
+    directPilotScaleFixture?: DirectPilotScaleFixture;
+    loadBackpressureIdempotencyEvidence?: boolean;
   } = {},
 ): OperationalHealthSnapshot {
   const now = options.now ? new Date(options.now) : new Date();
@@ -50,6 +60,11 @@ export function buildOperationalHealthSnapshot(
   const openHandoffs = state.handoffCases.filter((handoff) => handoff.status === "open");
   const pendingDrafts = state.messages.filter((message) => message.status === "draft");
   const scopeGuard = buildScopeGuardHealthSignal(state);
+  const scaleReadiness = options.directPilotScaleFixture
+    ? evaluateDirectPilotScaleReadiness(options.directPilotScaleFixture, {
+        loadBackpressureIdempotencyEvidence: options.loadBackpressureIdempotencyEvidence,
+      })
+    : null;
 
   return {
     generatedAt: now.toISOString(),
@@ -69,5 +84,9 @@ export function buildOperationalHealthSnapshot(
     launchBlocked: launchGateEvaluation.blocked,
     openLaunchGateIds: launchGateEvaluation.openGateIds,
     blockedLaunchGateCount: launchGateEvaluation.openGateIds.length,
+    directPilotScaleReady: scaleReadiness?.ready ?? false,
+    directPilotDietitianCount: scaleReadiness?.dietitianCount ?? 0,
+    directPilotClientCount: scaleReadiness?.totalClientCount ?? 0,
+    directPilotScaleFailures: scaleReadiness?.failures ?? ["direct_pilot_scale_fixture_missing"],
   };
 }

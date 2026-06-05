@@ -15,8 +15,8 @@ Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized reference
 ## Current Baseline
 
 - Git baseline: Phase 27-29 checkpoint exists at `c75564e Add Phase 27-29 pilot readiness checkpoint` on branch `codex/phase-29-baseline-checkpoint`; Completion Roadmap Phase 1 records this as the current implementation baseline.
-- Latest local release verification: `npm run release:verify` passed on 2026-06-05 after Phase 68 green maximization intent taxonomy.
-- Verification result: core tests 122/122, app tests 171/171, lint passed, production build passed.
+- Latest local release verification: `npm run release:verify` passed on 2026-06-05 after Phase 69 direct 5,000 client scale foundation.
+- Verification result: core tests 122/122, app tests 176/176, lint passed, production build passed.
 - Dependency audit result: only known R-405 findings, `next:postcss` and `postcss:GHSA-qx2v-qp2m-jg93`.
 - R-405 status: open production launch blocker; Phase 54 rechecked metadata on 2026-06-02 and stable `next@latest` is 16.2.7 but still bundles `postcss@8.4.31`, so no safe stable Next.js/PostCSS patch path is available.
 - R-405 remediation spec: `PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`.
@@ -57,6 +57,7 @@ Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized reference
 - Phase 66 product communication covenant lock spec: `PHASE_66_PRODUCT_COMMUNICATION_COVENANT_LOCK_SPEC.md` records local covenant enforcement for core detection, PromptContext instruction, provider-output safety, mock-provider checks, internal-only handoff acknowledgements, and send-time draft blocking for non-green or covenant-violating AI drafts. It does not close any external launch gate, connect real providers/channels, process real data, approve production pilot launch, or resolve R-405.
 - Phase 67 approved source answerability spec: `PHASE_67_APPROVED_SOURCE_ANSWERABILITY_ENGINE_SPEC.md` records local green answerability gating before provider calls/sends, approved source categories, AI-generated source exclusion, and answerability audit evidence. It does not close any external launch gate, connect real providers/channels, process real data, approve production pilot launch, or resolve R-405.
 - Phase 68 green maximization intent taxonomy spec: `PHASE_68_GREEN_MAXIMIZATION_INTENT_TAXONOMY_SPEC.md` records local green intent family audit evidence and sensitive green-looking intent blocking before provider calls. It does not close any external launch gate, connect real providers/channels, process real data, approve production pilot launch, or resolve R-405.
+- Phase 69 direct 5,000 client scale foundation spec: `PHASE_69_DIRECT_5000_CLIENT_SCALE_FOUNDATION_SPEC.md` records local synthetic 100x50 fixture, pagination helper, Phase 69 read contracts, and aggregate operational-health scale evidence. It does not close any external launch gate, connect real providers/channels, process real data, approve production pilot launch, or resolve R-405.
 
 ## Gate Closure Matrix
 
@@ -77,12 +78,13 @@ Phase 64 gate interpretation: an approval artifact can close a gate only when re
 
 Phase 65 gate interpretation: official PDF-derived evidence cannot satisfy the clinical taxonomy gate until the corpus package passes QA and an external qualified reviewer supplies structured approval evidence. QA-passing derived rules are draft-only and do not activate routing.
 
-Direct 100 dietitian gate interpretation: Phase 66 supplies local product communication covenant evidence, Phase 67 supplies local approved-source answerability evidence, and Phase 68 supplies local green intent taxonomy evidence, but gate closure must still include direct 5,000-client scale rehearsal and accepted external review artifacts before production GO.
+Direct 100 dietitian gate interpretation: Phase 66 supplies local product communication covenant evidence, Phase 67 supplies local approved-source answerability evidence, Phase 68 supplies local green intent taxonomy evidence, and Phase 69 supplies local 100x50 synthetic scale evidence. Gate closure still requires accepted external review artifacts, final form/PDF approvals, full production rehearsal acceptance, and R-405 closure or acceptance before production GO.
 
 ## Review Packet Checklist
 
 - Legal/privacy packet: `PRODUCTION_PILOT_LEGAL_PRIVACY_REVIEW_PACKET.md`, data inventory, permission integration points, DSAR/export/anonymization evidence, retention placeholder list, dietitian context update records, and user-supplied dietitian/client form definitions when provided.
 - Clinical packet: `PRODUCTION_PILOT_CLINICAL_TAXONOMY_REVIEW_PACKET.md`, taxonomy version, golden JSONL cases, latest core test output, persona invariant statement, qualified dietitian sign-off template, and production second-layer or equivalent fail-closed safety evaluation evidence.
+- Scale packet: `PHASE_69_DIRECT_5000_CLIENT_SCALE_FOUNDATION_SPEC.md`, synthetic 100x50 fixture evidence, read-contract status, operational-health scale snapshot, and later full 100x50 rehearsal evidence before GO.
 - Product communication covenant packet: `PHASE_66_PRODUCT_COMMUNICATION_COVENANT_LOCK_SPEC.md`, latest core/app/release verification, covenant detector/provider-output/send-time blocking tests, and external reviewer acceptance before any real provider/channel send.
 - Regulation PDF packet: official PDF source metadata, checksum, extraction report, page/section map, draft derived rules, corpus version, corpus golden-case report, and external approval artifact. Phase 65 can validate the QA foundation but cannot self-approve the corpus.
 - Provider packet: `PRODUCTION_PILOT_PROVIDER_VENDOR_REVIEW_PACKET.md`, provider requirements, no-storage/no-training requirements, prompt/completion logging decision checklist, provider-attempt audit semantics, provider input allowlist, internal copilot egress review, dietitian context update egress review.

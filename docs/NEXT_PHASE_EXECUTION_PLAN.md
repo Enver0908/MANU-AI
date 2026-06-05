@@ -6,7 +6,7 @@ MANU-AI is in pilot-foundation mode. The local SaaS/PWA prototype, Supabase-back
 
 Real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, and real client health data remain disconnected.
 
-The most recent execution layers after the 13-phase completion roadmap are Phase 43 multilingual language support, Phase 44 red-risk reactivation lock, Phase 45 client removal data lifecycle, Phase 46 WhatsApp group quarantine, Phase 47 RLS quarantine evidence coverage, Phase 48 R-405 stable patch recheck, Phase 49 safety/orchestration hardening, Phase 50 production Supabase hardening, Phase 51 transactional RPC coverage, Phase 52 integration test coverage, Phase 53 scale/broad read contracts, Phase 54 R-405/launch-gate recheck, Phase 55 audit remediation safety boundary, Phase 56 clinical safety second-layer local evidence, Phase 57 yellow-risk hold/draft refresh, Phase 58 dietitian client language control, Phase 59 architecture review remediation, Phase 60 audit remediation, Phase 61 scope guard (RAG + LLM) second layer mock-first, Phase 62 architecture review remediation wave 2, Phase 63 production pilot GO rebaseline, Phase 64 structured launch-gate evidence engine, Phase 65 official regulation PDF corpus QA foundation, Phase 66 product communication covenant lock, Phase 67 approved source answerability engine, and Phase 68 green maximization intent taxonomy. Phase 65 adds a typed QA foundation so user-supplied official PDFs must have source metadata, checksums, page extraction evidence, page/section references, derived rule drafts, corpus version, and synthetic golden cases before PDF-derived scope rules can become draft rules. Phase 66 locks client-facing AI communication locally: AI self-disclosure, AI limitation disclaimers, doctor/dietitian/professional referral language, yellow/red AI sends, and non-green draft approval are blocked before client-facing send. Phase 67 gates green provider calls/sends on approved source support and excludes AI-generated messages from source authority. Phase 68 records green intent taxonomy evidence after answerability and blocks green-looking sensitive intent before provider generation without downgrading yellow/red decisions. The post-Phase 65 strategic completion plan is now `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`: production pilot is direct 100 dietitians x 50 clients (minimum 5,000 clients), no small production ring, green maximization is source-backed, and client-facing output must never disclose AI identity or refer the client to a doctor/dietitian/professional. The production-pilot decision remains `NO-GO`: all eight launch gates remain open and R-405 remains open. R-406 is now mitigated in the local prototype after Docker Desktop/local Supabase was started, the Phase 50 migration was applied, and `npm run test:rls` passed with 19/19 tests on 2026-06-02. Draft review, form response, client context update, handoff status, and red-risk reactivation now use transactional RPC commits locally; remaining broad reads are classified in a test-covered contract, while direct 5,000-client scale evidence, client removal/anonymization bulk redaction, user-supplied form hardening, and external approval intake remain future production hardening work. R-310 is partially mitigated locally by deterministic second-layer evidence, Phase 57 yellow supervision, Phase 59 glucose/symptom hardening, Phase 61 escalate-only scope guard (default no-op until approved corpus), Phase 65 corpus QA foundation, Phase 66 covenant send blocking, Phase 67 source answerability, and Phase 68 green intent taxonomy, but qualified dietitian approval, official PDF corpus approval, and the clinical taxonomy launch gate remain open.
+The most recent execution layers after the 13-phase completion roadmap are Phase 43 multilingual language support, Phase 44 red-risk reactivation lock, Phase 45 client removal data lifecycle, Phase 46 WhatsApp group quarantine, Phase 47 RLS quarantine evidence coverage, Phase 48 R-405 stable patch recheck, Phase 49 safety/orchestration hardening, Phase 50 production Supabase hardening, Phase 51 transactional RPC coverage, Phase 52 integration test coverage, Phase 53 scale/broad read contracts, Phase 54 R-405/launch-gate recheck, Phase 55 audit remediation safety boundary, Phase 56 clinical safety second-layer local evidence, Phase 57 yellow-risk hold/draft refresh, Phase 58 dietitian client language control, Phase 59 architecture review remediation, Phase 60 audit remediation, Phase 61 scope guard (RAG + LLM) second layer mock-first, Phase 62 architecture review remediation wave 2, Phase 63 production pilot GO rebaseline, Phase 64 structured launch-gate evidence engine, Phase 65 official regulation PDF corpus QA foundation, Phase 66 product communication covenant lock, Phase 67 approved source answerability engine, Phase 68 green maximization intent taxonomy, and Phase 69 direct 5,000 client scale foundation. Phase 65 adds a typed QA foundation so user-supplied official PDFs must have source metadata, checksums, page extraction evidence, page/section references, derived rule drafts, corpus version, and synthetic golden cases before PDF-derived scope rules can become draft rules. Phase 66 locks client-facing AI communication locally: AI self-disclosure, AI limitation disclaimers, doctor/dietitian/professional referral language, yellow/red AI sends, and non-green draft approval are blocked before client-facing send. Phase 67 gates green provider calls/sends on approved source support and excludes AI-generated messages from source authority. Phase 68 records green intent taxonomy evidence after answerability and blocks green-looking sensitive intent before provider generation without downgrading yellow/red decisions. Phase 69 adds synthetic 100 dietitian x 50 client scale evidence, cursor pagination helpers, Phase 69 read contracts, and aggregate operational-health scale signals. The post-Phase 65 strategic completion plan is now `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`: production pilot is direct 100 dietitians x 50 clients (minimum 5,000 clients), no small production ring, green maximization is source-backed, and client-facing output must never disclose AI identity or refer the client to a doctor/dietitian/professional. The production-pilot decision remains `NO-GO`: all eight launch gates remain open and R-405 remains open. R-406 is now mitigated in the local prototype after Docker Desktop/local Supabase was started, the Phase 50 migration was applied, and `npm run test:rls` passed with 19/19 tests on 2026-06-02. Draft review, form response, client context update, handoff status, and red-risk reactivation now use transactional RPC commits locally; remaining broad reads are classified in a test-covered contract, while client removal/anonymization bulk redaction, user-supplied form hardening, and external approval intake remain future production hardening work. R-310 is partially mitigated locally by deterministic second-layer evidence, Phase 57 yellow supervision, Phase 59 glucose/symptom hardening, Phase 61 escalate-only scope guard (default no-op until approved corpus), Phase 65 corpus QA foundation, Phase 66 covenant send blocking, Phase 67 source answerability, and Phase 68 green intent taxonomy, but qualified dietitian approval, official PDF corpus approval, and the clinical taxonomy launch gate remain open.
 
 ## Post-Phase 65 Strategic Completion Plan - Added 2026-06-05
 
@@ -24,10 +24,28 @@ Locked decisions:
 
 Next implementation order:
 
-1. Phase 69 Direct 5,000 Client Scale Foundation.
-2. Phase 70 User-Supplied Form Hardening after the user supplies forms.
-3. Phase 71 Official Regulation PDF Ingestion after the user supplies PDFs.
-4. Phase 72 Regulation Permission Graph after legal/privacy and clinical interpretation are supplied.
+1. Phase 70 User-Supplied Form Hardening after the user supplies forms.
+2. Phase 71 Official Regulation PDF Ingestion after the user supplies PDFs.
+3. Phase 72 Regulation Permission Graph after legal/privacy and clinical interpretation are supplied.
+
+## Phase 69: Direct 5,000 Client Scale Foundation - Completed 2026-06-05
+
+Goal: make the direct 100 dietitian x 50 client target a local, test-covered prerequisite before form/PDF/provider/channel production hardening.
+
+Status:
+
+- Added `docs/PHASE_69_DIRECT_5000_CLIENT_SCALE_FOUNDATION_SPEC.md`.
+- Added `app/src/lib/direct-pilot-scale-readiness.ts` with the 100x50 synthetic fixture, cursor pagination helper, readiness evaluator, and direct-pilot scale target constants.
+- Upgraded scale-critical Supabase read contracts to `phase69_paginated_contract` for dashboard state, internal copilot tools, client create scaffold, and client AI/profile patch.
+- Added aggregate direct pilot scale fields to operational health without raw client/message/channel/provider content.
+- Tests cover 5,000-client fixture counts, active-client percentage, pagination cursors, limit caps, invalid inputs, read contract status, readiness failures, and aggregate-only operational-health output.
+- Verification passed with core tests 122/122, app tests 176/176, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain.
+- No real Gemini, WhatsApp, Telegram, monitoring, secret manager, production Supabase migration, launch-gate approval, R-405 acceptance, or real-data path was connected.
+- Production pilot remains `NO-GO`.
+
+Next:
+
+- Implement Phase 70 User-Supplied Form Hardening only after the user supplies the final dietitian/client form package.
 
 ## Phase 68: Green Maximization Intent Taxonomy - Completed 2026-06-05
 
@@ -47,7 +65,8 @@ Status:
 
 Next:
 
-- Implement Phase 69 Direct 5,000 Client Scale Foundation before user-supplied form/PDF production hardening.
+- Phase 69 completed Direct 5,000 Client Scale Foundation.
+- Then implement Phase 70 User-Supplied Form Hardening after the user supplies final forms.
 
 ## Phase 67: Approved Source Answerability Engine - Completed 2026-06-05
 
@@ -69,7 +88,8 @@ Status:
 Next:
 
 - Phase 68 completed Green Maximization Intent Taxonomy.
-- Then implement Phase 69 Direct 5,000 Client Scale Foundation before user-supplied form/PDF production hardening.
+- Phase 69 completed Direct 5,000 Client Scale Foundation.
+- Then implement Phase 70 User-Supplied Form Hardening after the user supplies final forms.
 
 ## Phase 66: Product Communication Covenant Lock - Completed 2026-06-05
 
@@ -93,7 +113,8 @@ Next:
 
 - Phase 67 completed Approved Source Answerability Engine.
 - Phase 68 completed Green Maximization Intent Taxonomy.
-- Then implement Phase 69 Direct 5,000 Client Scale Foundation before user-supplied form/PDF production hardening.
+- Phase 69 completed Direct 5,000 Client Scale Foundation.
+- Then implement Phase 70 User-Supplied Form Hardening after the user supplies final forms.
 
 ## Phase 65: Official Regulation PDF Corpus QA Foundation - Completed 2026-06-04
 
