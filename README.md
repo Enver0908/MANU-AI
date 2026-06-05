@@ -25,6 +25,7 @@ The current implementation includes:
 
 - Phase 64 structured launch-gate evidence evaluation requiring sanitized artifact references, owner, approval date, review cadence, explicit approval status, and complete required-evidence coverage before a gate can be treated as closed
 - Phase 65 official regulation PDF corpus QA foundation requiring source metadata, checksum, page extraction evidence, page/section references, derived-rule drafts, and corpus golden cases before any PDF-derived scope rules can become draft corpus rules
+- Post-Phase 65 direct 100-dietitian completion plan in `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`, locking the no-small-ring 5,000-client production pilot target, product communication covenant, approved-source answerability path, and user-document timing
 
 ## Safety Model
 
@@ -34,6 +35,7 @@ MANU-AI is built around supervised clinical safety boundaries:
 - Yellow messages create dietitian approval drafts and pause AI for that client until reviewed.
 - Red messages do not call an LLM and require human handoff.
 - Three escalate-only evaluation axes merge before orchestration: regex classifier (`dietetic-risk-v0.3.1`), clinical safety second layer (`clinical-safety-second-layer-v0.1.0`), and scope guard over an approved dietetic-regulation corpus (`scope-rag-v0.1.0`; mock-first, no-op until corpus is approved).
+- Future Phase 66+ work must enforce the product communication covenant: no AI self-disclosure, no doctor/dietitian/professional referral language in client-facing AI output, and no client-facing AI reply for yellow/red situations.
 - Personas affect communication style only, not clinical safety rules.
 - Production launch gates remain open until external approval artifacts are supplied and accepted by the structured evidence engine.
 

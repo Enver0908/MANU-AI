@@ -28,6 +28,8 @@ The review must cover:
 - Dietitian-entered context update records.
 - Real messaging channel policy dependencies.
 - Provider/vendor retention dependencies.
+- Product communication covenant: no client-facing AI self-disclosure, no doctor/dietitian/professional referral language, and no yellow/red client-facing AI boundary reply.
+- Direct 100 dietitian / 5,000 client production-pilot scale assumptions.
 
 ## Internal Evidence Available
 
@@ -44,6 +46,7 @@ The review must cover:
 | Phase 63 rebaseline | `PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md` | User-supplied forms and official PDF corpus are gated production inputs | Legal/privacy approval of unsupplied artifacts |
 | Phase 64 evidence engine | `PHASE_64_STRUCTURED_LAUNCH_GATE_EVIDENCE_ENGINE_SPEC.md`, `app/src/lib/launch-gates.ts` | Structured evidence coverage, review cadence, expiry, and sanitized reference checks before this gate can be treated as closed | Legal/privacy approval or supplied counsel artifact |
 | Phase 65 official PDF corpus QA | `PHASE_65_OFFICIAL_REGULATION_PDF_CORPUS_QA_SPEC.md`, `app/src/lib/official-regulation-corpus.ts` | Official PDF corpus QA records checksums, page extraction evidence, page/section references, derived rules, and golden-case reports without storing raw PDF text in repo fixtures | Legal/privacy handling decision for official PDF storage, extraction, retention, and approval workflow |
+| Direct 100 dietitian completion plan | `DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` | Product communication covenant, approved-source answerability, direct 5,000-client scale prerequisites, and user document timing | Legal/privacy approval of final operating model |
 
 ## Required Counsel Decisions
 
@@ -58,6 +61,8 @@ The review must cover:
 | Internal copilot records | Decision on retention, access, and provider-egress restrictions for internal copilot data | Not supplied |
 | Dietitian context updates | Decision on collection purpose, retention, prompt use, and deletion/anonymization handling | Not supplied |
 | User-supplied forms | Decision on dietitian/client form field collection, privacy classification, prompt allowlist, retention, export, deletion/anonymization, and version migration | Not supplied |
+| Product communication covenant | Decision on whether the no-AI-disclosure/no-referral client-facing output model is acceptable for the supervised dietitian messaging product | Not supplied |
+| Direct 5,000-client pilot model | Decision on whether the direct 100-dietitian production pilot operating model has adequate legal/privacy controls before launch | Not supplied |
 | Official regulation PDF corpus | Decision on storage/reference handling, derived rule traceability, approval record retention, and whether PDF-derived rules may drive production routing after clinical approval | Not supplied |
 | Provider dependency | Confirmation that real LLM provider use remains blocked until vendor review closes | Not supplied |
 | Channel dependency | Confirmation that real WhatsApp/Telegram use remains blocked until platform policy review closes | Not supplied |

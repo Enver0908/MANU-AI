@@ -29,6 +29,7 @@ Latest result, re-verified on 2026-06-04 after Phase 65 official regulation PDF 
 - Phase 61 added `scope_rules`, `scope_rule_chunks`, and `scope_guard_evaluations` migration; re-run `npm run test:rls` when local Supabase is available to record Phase 61 RLS evidence.
 - Phase 64 adds structured launch-gate evidence evaluation and real scope-guard provider gating, but no approval artifact was supplied, no gate was closed, and no real provider/channel/data path was connected.
 - Phase 65 adds official regulation PDF corpus QA contracts for source metadata, checksums, page extraction evidence, page/section references, derived rule drafts, corpus version, and synthetic golden cases, but no real PDF was supplied, no corpus was approved, no gate was closed, and no active routing changed.
+- Post-Phase 65 strategic plan `DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` locks the production target to direct 100 dietitians x 50 clients, requires product communication covenant work before form/PDF/provider/channel phases, and keeps production pilot `NO-GO`.
 
 Additional Phase 50 production Supabase hardening evidence on 2026-06-02:
 

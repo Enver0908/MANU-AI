@@ -17,18 +17,19 @@ Start by reading:
 1. `PLAN.md`
 2. `PROJECT_PLAN.md`
 3. `docs/NEXT_PHASE_EXECUTION_PLAN.md`
-4. `docs/PHASE_65_OFFICIAL_REGULATION_PDF_CORPUS_QA_SPEC.md` (latest completed phase)
-5. `docs/PHASE_64_STRUCTURED_LAUNCH_GATE_EVIDENCE_ENGINE_SPEC.md`
-6. `docs/PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md`
-7. `docs/PHASE_62_ARCHITECTURE_REVIEW_REMEDIATION_WAVE2_SPEC.md`
-8. `docs/PHASE_61_SCOPE_GUARD_RAG_SECOND_LAYER_SPEC.md`
-9. `docs/RISK_REGISTER.md`
-10. `docs/DATA_INVENTORY.md`
-11. `docs/DATASET_STRATEGY.md`
-12. `docs/MOBILE_APP_STRATEGY.md`
-13. `dietitian-ai-assistant/README.md`
-14. `dietitian-ai-assistant/docs/architecture.md`
-15. `dietitian-ai-assistant/docs/data-model.sql`
+4. `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` (current strategic roadmap)
+5. `docs/PHASE_65_OFFICIAL_REGULATION_PDF_CORPUS_QA_SPEC.md` (latest completed implementation phase)
+6. `docs/PHASE_64_STRUCTURED_LAUNCH_GATE_EVIDENCE_ENGINE_SPEC.md`
+7. `docs/PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md`
+8. `docs/PHASE_62_ARCHITECTURE_REVIEW_REMEDIATION_WAVE2_SPEC.md`
+9. `docs/PHASE_61_SCOPE_GUARD_RAG_SECOND_LAYER_SPEC.md`
+10. `docs/RISK_REGISTER.md`
+11. `docs/DATA_INVENTORY.md`
+12. `docs/DATASET_STRATEGY.md`
+13. `docs/MOBILE_APP_STRATEGY.md`
+14. `dietitian-ai-assistant/README.md`
+15. `dietitian-ai-assistant/docs/architecture.md`
+16. `dietitian-ai-assistant/docs/data-model.sql`
 
 ## User's Product Goal
 
@@ -61,6 +62,10 @@ The product must be both:
 
 ## Current Next Phase
 
+Post-Phase 65 strategic completion plan was added on 2026-06-05 in `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`. It locks the production pilot target to direct 100 dietitians x 50 clients (minimum 5,000 clients), with no small production ring. It also locks the product communication covenant: client-facing output must never disclose AI identity or tell the client to ask a doctor/dietitian/professional, yellow/red paths send no client-facing AI boundary reply, and green maximization must come from approved source-backed answerability rather than answering risky messages.
+
+Next implementation phase is Phase 66 Product Communication Covenant Lock. Do not jump to form hardening until the covenant, approved-source answerability, green-max intent taxonomy, and direct 5,000-client scale foundation phases are complete unless the user explicitly reprioritizes.
+
 Phase 65 official regulation PDF corpus QA foundation is the latest completed implementation wave (2026-06-04): `app/src/lib/official-regulation-corpus.ts` now requires user-supplied official PDF corpus packages to include source metadata, SHA-256 checksums, page extraction evidence, page/section references, derived rule drafts, corpus version, and synthetic golden cases before PDF-derived scope rules can become draft `ScopeRuleRecord` entries with source references. QA failure blocks draft rule construction and keeps launch-gate evidence draft. QA success does not approve the corpus or activate production routing. Production pilot remains `NO-GO`.
 
 Phase 64 structured launch-gate evidence engine completed on 2026-06-04: `LaunchGateEvidenceRecord` and `evaluateProductionPilotLaunchGateEvidence` now require sanitized artifact references, owner, explicit approval, approval date, review cadence, non-expired timing, and full required-evidence coverage before a gate can be treated as closed. Legal/privacy and clinical gate definitions include Phase 63 form/PDF corpus evidence. Operational health can consume structured evidence. Real scope-guard egress cannot be enabled by legacy approved id arrays alone; it requires structured clinical taxonomy and provider/vendor evidence plus `MANU_ALLOW_REAL_SCOPE_GUARD=true`. Production pilot remains `NO-GO`.
@@ -69,7 +74,7 @@ Phase 63 production pilot GO rebaseline is the latest completed planning wave (2
 
 Before selecting the next engineering phase, read `docs/PHASE_64_STRUCTURED_LAUNCH_GATE_EVIDENCE_ENGINE_SPEC.md` and `docs/PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md`; together they are the current planning source for production-pilot exit work.
 
-Phase 65 remaining production hardening: user-supplied form schema hardening, dashboard/internal-copilot pagination and scoped reload evidence for 5,000+ clients, load/backpressure/idempotency evidence, client removal/anonymization transactional redaction contract, external launch-gate approval artifacts mapped through structured evidence, official PDF/legal/clinical artifact intake through the Phase 65 QA foundation, and R-405 resolution only through Phase 22.
+Phase 65 remaining production hardening is now ordered by `DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`: product communication covenant lock, approved-source answerability, green-max intent taxonomy, direct 5,000-client scale foundation, user-supplied form hardening, official PDF ingestion, regulation permission graph, green/yellow/red calibration, client removal/anonymization transactional redaction contract, Gemini provider gate, WhatsApp production adapter, production operations, R-405 closure, full 100x50 rehearsal, external launch-gate closure, and direct production pilot GO.
 
 Phase 62 architecture review remediation wave 2 is the latest completed implementation wave (2026-06-04): provider failures on active clients now open dietitian handoff without client-facing AI send; shared `normalizeSafetyText`; overlap-based scope retrieval (`DEFAULT_MATCH_THRESHOLD` 0.4); glucose numeric cost-unit filtering; dead `modelForRisk` removed. Bulgu 1 unchanged (accepted). Bulgu 3/9/10 documented as constraint-accepted. Production pilot remains `NO-GO`.
 

@@ -53,6 +53,7 @@ Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized reference
 - Phase 63 production pilot GO rebaseline spec: `PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md` records the updated WhatsApp-first, Gemini-only target of up to 100 dietitians with 50+ clients each, user-supplied dietitian/client forms, and official health-regulation PDFs that must be extracted, reviewed, approved, versioned, and tested before active production routing. It does not approve production pilot launch, close any gate, connect real services, process real data, or resolve R-405.
 - Phase 64 structured launch-gate evidence engine spec: `PHASE_64_STRUCTURED_LAUNCH_GATE_EVIDENCE_ENGINE_SPEC.md` records typed sanitized evidence records, full required-evidence coverage, owner, approval date, review cadence, expiry checks, and explicit approval status before a gate can be treated as closed. It does not supply any external approval artifact, close any gate, connect real services, process real data, or resolve R-405.
 - Phase 65 official regulation PDF corpus QA spec: `PHASE_65_OFFICIAL_REGULATION_PDF_CORPUS_QA_SPEC.md` records source metadata, checksum, page extraction evidence, page/section map, derived rule draft, corpus version, and golden-case QA requirements before PDF-derived scope rules can become draft corpus rules. It does not approve any corpus, close any gate, parse real PDFs, connect real services, process real data, or resolve R-405.
+- Direct 100 dietitian completion plan: `DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` locks the post-Phase 65 roadmap to direct 100 dietitians x 50 clients, no small production ring, product communication covenant, approved-source answerability, direct 5,000-client scale evidence, and staged user document intake. It does not approve production pilot launch, close any gate, connect real services, process real data, or resolve R-405.
 
 ## Gate Closure Matrix
 
@@ -73,10 +74,13 @@ Phase 64 gate interpretation: an approval artifact can close a gate only when re
 
 Phase 65 gate interpretation: official PDF-derived evidence cannot satisfy the clinical taxonomy gate until the corpus package passes QA and an external qualified reviewer supplies structured approval evidence. QA-passing derived rules are draft-only and do not activate routing.
 
+Direct 100 dietitian gate interpretation: gate closure must include evidence that the product communication covenant is implemented before client-facing AI output, that direct 5,000-client scale rehearsal passes before production GO, and that green maximization is source-backed rather than based on risky-message boundary replies.
+
 ## Review Packet Checklist
 
 - Legal/privacy packet: `PRODUCTION_PILOT_LEGAL_PRIVACY_REVIEW_PACKET.md`, data inventory, permission integration points, DSAR/export/anonymization evidence, retention placeholder list, dietitian context update records, and user-supplied dietitian/client form definitions when provided.
 - Clinical packet: `PRODUCTION_PILOT_CLINICAL_TAXONOMY_REVIEW_PACKET.md`, taxonomy version, golden JSONL cases, latest core test output, persona invariant statement, qualified dietitian sign-off template, and production second-layer or equivalent fail-closed safety evaluation evidence.
+- Product communication covenant packet: Phase 66 evidence proving no client-facing AI self-disclosure, no doctor/dietitian/professional referral language, and no yellow/red client-facing AI boundary replies.
 - Regulation PDF packet: official PDF source metadata, checksum, extraction report, page/section map, draft derived rules, corpus version, corpus golden-case report, and external approval artifact. Phase 65 can validate the QA foundation but cannot self-approve the corpus.
 - Provider packet: `PRODUCTION_PILOT_PROVIDER_VENDOR_REVIEW_PACKET.md`, provider requirements, no-storage/no-training requirements, prompt/completion logging decision checklist, provider-attempt audit semantics, provider input allowlist, internal copilot egress review, dietitian context update egress review.
 - Internal copilot packet: Phase 26 spec, `DATA_INVENTORY.md` copilot rows, RBAC/source-ref evidence, no-raw-SQL/no-mutation statement, provider-egress blocked statement.

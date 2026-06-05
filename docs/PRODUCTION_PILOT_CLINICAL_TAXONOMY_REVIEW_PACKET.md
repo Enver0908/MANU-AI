@@ -29,6 +29,8 @@ The review must cover:
 - Coverage gaps requiring new golden cases before pilot.
 - Whether the production safety approach includes an approved second-layer or equivalent fail-closed evaluation beyond deterministic/regex matching.
 - Whether the official regulation PDF corpus and derived green/yellow/red routing rules are clinically acceptable.
+- Whether the product communication covenant is clinically acceptable: no client-facing AI self-disclosure/referral wording and no yellow/red client-facing AI boundary replies.
+- Whether approved-source answerability is sufficient to maximize green coverage without unsafe green decisions.
 
 ## Internal Evidence Available
 
@@ -44,6 +46,7 @@ The review must cover:
 | Phase 63 rebaseline | `PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md` | Required official PDF corpus ingestion, traceability, approval, and corpus golden-case evidence before active production routing | Approval of any unsupplied PDF, derived rule, or routing behavior |
 | Phase 64 evidence engine | `PHASE_64_STRUCTURED_LAUNCH_GATE_EVIDENCE_ENGINE_SPEC.md`, `app/src/lib/launch-gates.ts` | Structured evidence coverage, review cadence, expiry, and sanitized reference checks before this gate can be treated as closed | Qualified dietitian approval or supplied clinical artifact |
 | Phase 65 official PDF corpus QA | `PHASE_65_OFFICIAL_REGULATION_PDF_CORPUS_QA_SPEC.md`, `app/src/lib/official-regulation-corpus.ts` | Source metadata, checksum, page extraction evidence, page/section references, derived rule drafts, corpus version, and corpus golden-case QA before PDF-derived rules can become draft corpus rules | Qualified dietitian approval, legal/privacy handling decision, or active corpus approval |
+| Direct 100 dietitian completion plan | `DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` | Product communication covenant, source-backed green maximization, direct 5,000-client scale prerequisite, and future calibration phases | Qualified clinical approval of final routing/calibration behavior |
 
 ## Current Golden Case Summary
 
@@ -58,6 +61,8 @@ The review must cover:
 | Decision | Required output | Current status |
 | --- | --- | --- |
 | Taxonomy scope | Sign-off that current red/yellow/green categories are acceptable for supervised pilot use | Not supplied |
+| Product communication covenant | Sign-off that yellow/red should create internal procedures without client-facing AI boundary replies, and that forbidden referral/self-disclosure language must be blocked | Not supplied |
+| Approved-source green maximization | Sign-off that source-backed plan lookup, plan reminders, approved substitutions, logistics, behavior support, progress logging, and low-risk clarification can be green under tested conditions | Not supplied |
 | Red escalation behavior | Sign-off that red cases correctly block provider calls and route to human handoff | Not supplied |
 | Yellow review behavior | Sign-off that yellow cases are appropriate for draft-only review and never auto-send | Not supplied |
 | Green routine behavior | Sign-off that current green examples are sufficiently routine for guarded autopilot behavior | Not supplied |

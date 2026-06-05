@@ -10,6 +10,8 @@ Production pilot is not approved.
 
 No real WhatsApp, Telegram, Gemini, external LLM provider, email, push, monitoring, analytics, secret manager, backup provider, or real client health data is connected.
 
+Post-Phase 65 strategic roadmap: `DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` now defines the direct production pilot path as 100 dietitians x 50 clients, with no small production ring. It also requires product communication covenant enforcement, approved-source answerability, direct 5,000-client scale foundation, and full 100x50 synthetic rehearsal before production GO.
+
 ## Go / No-Go Decision
 
 Current decision: `NO-GO` for production pilot.
@@ -43,6 +45,7 @@ Reason:
 - Phase 63 rebaselined the production-pilot target to WhatsApp-first, Gemini-only, up to 100 dietitians with 50+ clients each (5,000+ clients), user-supplied dietitian/client forms, and official health-regulation PDFs that must become a reviewed/versioned corpus before active routing. It did not approve any launch gate, connect a provider or channel, process real data, or resolve R-405.
 - Phase 64 added structured launch-gate evidence evaluation so a gate can close only with sanitized approved evidence records covering every required evidence item, including owner, approval date, review cadence, and non-expired timing. It did not supply any approval artifact, close any launch gate, connect a provider or channel, process real data, or resolve R-405.
 - Phase 65 added official regulation PDF corpus QA contracts so user-supplied official PDFs must have source metadata, SHA-256 checksums, page extraction evidence, page/section references, derived rule drafts, corpus version, and synthetic golden cases before PDF-derived rules can become draft scope rules. It did not approve any corpus, close any launch gate, connect a provider or channel, process real data, or resolve R-405.
+- The post-Phase 65 direct completion plan added on 2026-06-05 did not approve any launch gate. It changed next-action order: product communication covenant, approved-source answerability, green maximization taxonomy, and direct 5,000-client scale evidence must precede form/PDF/provider/channel production activation work.
 
 ## Completion Roadmap Result
 

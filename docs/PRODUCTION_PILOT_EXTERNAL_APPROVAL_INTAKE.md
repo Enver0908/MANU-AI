@@ -24,6 +24,7 @@ All production-pilot launch gates remain open until the user supplies acceptable
 - User-supplied official health-regulation PDFs must be recorded as sanitized references and transformed into an approved, versioned, page/section-referenced corpus before active production routing.
 - Phase 64 structured evidence evaluation requires each gate artifact reference to include owner, artifact title, sanitized reference, explicit approval status, approval date, review due date, optional expiry, and exact required evidence items covered.
 - Phase 65 official PDF corpus QA requires official PDF source metadata, SHA-256 checksums, page extraction evidence, page/section references, derived rule drafts, corpus version, and synthetic corpus golden cases before PDF-derived clinical evidence can be submitted for approval.
+- Direct 100 dietitian completion plan requires product communication covenant evidence and direct 5,000-client rehearsal evidence before production GO; these are internal readiness prerequisites and may support legal/privacy, clinical, channel, and incident/operations reviews.
 
 ## Evidence Intake Matrix
 

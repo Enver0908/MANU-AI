@@ -6,7 +6,31 @@ MANU-AI is in pilot-foundation mode. The local SaaS/PWA prototype, Supabase-back
 
 Real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, and real client health data remain disconnected.
 
-The most recent execution layers after the 13-phase completion roadmap are Phase 43 multilingual language support, Phase 44 red-risk reactivation lock, Phase 45 client removal data lifecycle, Phase 46 WhatsApp group quarantine, Phase 47 RLS quarantine evidence coverage, Phase 48 R-405 stable patch recheck, Phase 49 safety/orchestration hardening, Phase 50 production Supabase hardening, Phase 51 transactional RPC coverage, Phase 52 integration test coverage, Phase 53 scale/broad read contracts, Phase 54 R-405/launch-gate recheck, Phase 55 audit remediation safety boundary, Phase 56 clinical safety second-layer local evidence, Phase 57 yellow-risk hold/draft refresh, Phase 58 dietitian client language control, Phase 59 architecture review remediation, Phase 60 audit remediation, Phase 61 scope guard (RAG + LLM) second layer mock-first, Phase 62 architecture review remediation wave 2, Phase 63 production pilot GO rebaseline, Phase 64 structured launch-gate evidence engine, and Phase 65 official regulation PDF corpus QA foundation. Phase 65 adds a typed QA foundation so user-supplied official PDFs must have source metadata, checksums, page extraction evidence, page/section references, derived rule drafts, corpus version, and synthetic golden cases before PDF-derived scope rules can become draft rules. The production-pilot decision remains `NO-GO`: all eight launch gates remain open and R-405 remains open. R-406 is now mitigated in the local prototype after Docker Desktop/local Supabase was started, the Phase 50 migration was applied, and `npm run test:rls` passed with 19/19 tests on 2026-06-02. Draft review, form response, client context update, handoff status, and red-risk reactivation now use transactional RPC commits locally; remaining broad reads are classified in a test-covered contract, while client removal/anonymization bulk redaction, pagination implementation, user-supplied form hardening, and external approval intake remain future production hardening work. R-310 is partially mitigated locally by deterministic second-layer evidence, Phase 57 yellow supervision, Phase 59 glucose/symptom hardening, Phase 61 escalate-only scope guard (default no-op until approved corpus), and Phase 65 corpus QA foundation, but qualified dietitian approval, official PDF corpus approval, and the clinical taxonomy launch gate remain open.
+The most recent execution layers after the 13-phase completion roadmap are Phase 43 multilingual language support, Phase 44 red-risk reactivation lock, Phase 45 client removal data lifecycle, Phase 46 WhatsApp group quarantine, Phase 47 RLS quarantine evidence coverage, Phase 48 R-405 stable patch recheck, Phase 49 safety/orchestration hardening, Phase 50 production Supabase hardening, Phase 51 transactional RPC coverage, Phase 52 integration test coverage, Phase 53 scale/broad read contracts, Phase 54 R-405/launch-gate recheck, Phase 55 audit remediation safety boundary, Phase 56 clinical safety second-layer local evidence, Phase 57 yellow-risk hold/draft refresh, Phase 58 dietitian client language control, Phase 59 architecture review remediation, Phase 60 audit remediation, Phase 61 scope guard (RAG + LLM) second layer mock-first, Phase 62 architecture review remediation wave 2, Phase 63 production pilot GO rebaseline, Phase 64 structured launch-gate evidence engine, and Phase 65 official regulation PDF corpus QA foundation. Phase 65 adds a typed QA foundation so user-supplied official PDFs must have source metadata, checksums, page extraction evidence, page/section references, derived rule drafts, corpus version, and synthetic golden cases before PDF-derived scope rules can become draft rules. The post-Phase 65 strategic completion plan is now `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`: production pilot is direct 100 dietitians x 50 clients (minimum 5,000 clients), no small production ring, green maximization is source-backed, and client-facing output must never disclose AI identity or refer the client to a doctor/dietitian/professional. The production-pilot decision remains `NO-GO`: all eight launch gates remain open and R-405 remains open. R-406 is now mitigated in the local prototype after Docker Desktop/local Supabase was started, the Phase 50 migration was applied, and `npm run test:rls` passed with 19/19 tests on 2026-06-02. Draft review, form response, client context update, handoff status, and red-risk reactivation now use transactional RPC commits locally; remaining broad reads are classified in a test-covered contract, while product communication covenant locking, approved-source answerability, direct 5,000-client scale evidence, client removal/anonymization bulk redaction, user-supplied form hardening, and external approval intake remain future production hardening work. R-310 is partially mitigated locally by deterministic second-layer evidence, Phase 57 yellow supervision, Phase 59 glucose/symptom hardening, Phase 61 escalate-only scope guard (default no-op until approved corpus), and Phase 65 corpus QA foundation, but qualified dietitian approval, official PDF corpus approval, and the clinical taxonomy launch gate remain open.
+
+## Post-Phase 65 Strategic Completion Plan - Added 2026-06-05
+
+Canonical plan: `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`.
+
+Locked decisions:
+
+- Production pilot target is direct 100 dietitians with 50 clients each; no small production ring.
+- Pre-production synthetic rehearsal is allowed and required, but it is not production pilot.
+- Client-facing AI output must never say it is AI or refer the client to a doctor, dietitian, professional, or "medical advice" disclaimer.
+- Yellow/red paths must not send client-facing AI boundary replies.
+- Green maximization must come from approved sources: active forms, active diet plan, prompt-allowed fields, pinned notes, dietitian context updates, and dietitian manual messages.
+- AI-generated messages are not clinical ground truth.
+- Mixed-intent messages fail closed; no partial green reply is sent when any segment is yellow/red.
+
+Next implementation order:
+
+1. Phase 66 Product Communication Covenant Lock.
+2. Phase 67 Approved Source Answerability Engine.
+3. Phase 68 Green Maximization Intent Taxonomy.
+4. Phase 69 Direct 5,000 Client Scale Foundation.
+5. Phase 70 User-Supplied Form Hardening after the user supplies forms.
+6. Phase 71 Official Regulation PDF Ingestion after the user supplies PDFs.
+7. Phase 72 Regulation Permission Graph after legal/privacy and clinical interpretation are supplied.
 
 ## Phase 65: Official Regulation PDF Corpus QA Foundation - Completed 2026-06-04
 
@@ -24,7 +48,8 @@ Status:
 
 Next:
 
-- Phase 66 should implement user-supplied dietitian/client form schema hardening once the user provides the exact forms, or proceed with dashboard/internal-copilot pagination and scoped reload evidence if forms are not yet supplied.
+- Phase 66 should implement Product Communication Covenant Lock from `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`.
+- Then implement Approved Source Answerability Engine, Green Maximization Intent Taxonomy, and Direct 5,000 Client Scale Foundation before user-supplied form hardening.
 - Keep official corpus activation blocked until the user supplies official PDFs and structured legal/clinical approval evidence.
 
 ## Phase 64: Structured Launch Gate Evidence Engine - Completed 2026-06-04
