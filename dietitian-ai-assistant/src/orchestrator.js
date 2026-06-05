@@ -6,6 +6,7 @@ import { compilePromptContext, renderPromptContext } from "./context-compiler.js
 import { createHandoffCase } from "./handoff-engine.js";
 import { guardProviderOutput } from "./response-quality-guard.js";
 import { evaluateApprovedSourceAnswerability } from "./approved-source-answerability.js";
+import { evaluateGreenIntentTaxonomy } from "./green-intent-taxonomy.js";
 import { defaultVoiceProfile } from "./voice-profile.js";
 import { selectModelForRisk } from "./model-routing.js";
 import { resolveAiActivation } from "./ai-activation.js";
@@ -159,6 +160,37 @@ export async function handleInboundMessage(input, adapters) {
     });
   }
 
+  const greenIntent = evaluateGreenIntentTaxonomy({
+    promptContext: compiledContext.promptContext,
+    riskDecision,
+    answerability,
+  });
+  contextManifest.greenIntent = greenIntent;
+
+  if (!greenIntent.allowed) {
+    const handoffCase = createHandoffCase({
+      capsule,
+      inboundMessage: input.message.body,
+      riskDecision: {
+        ...riskDecision,
+        reasons: [...riskDecision.reasons, ...greenIntent.reasons],
+        shouldHandoff: true,
+      },
+    });
+    await adapters?.onHandoff?.(handoffCase);
+    return buildResult({
+      capsule,
+      riskDecision,
+      action: "handoff",
+      handoffCase,
+      blockedReason: "green_intent_taxonomy_blocked",
+      model: null,
+      activation,
+      contextManifest,
+      overrideReasons: [...riskDecision.reasons, ...greenIntent.reasons],
+    });
+  }
+
   const selectedModel = selectModelForRisk(riskDecision.level);
   const prompt = renderPromptContext(compiledContext.promptContext);
   let draft;
@@ -166,7 +198,7 @@ export async function handleInboundMessage(input, adapters) {
     draft = await adapters.generateReply({
       prompt,
       promptContext: compiledContext.promptContext,
-      contextManifest: compiledContext.contextManifest,
+      contextManifest,
       riskDecision,
       model: selectedModel,
     });

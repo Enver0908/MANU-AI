@@ -6,9 +6,9 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 This repository is a local SaaS/PWA pilot prototype and architecture workspace. It is not a production-connected system yet.
 
-**Latest phase:** Phase 67 approved source answerability engine (2026-06-05). **Production pilot:** `NO-GO` (all eight launch gates open; R-405 open).
+**Latest phase:** Phase 68 green maximization intent taxonomy (2026-06-05). **Production pilot:** `NO-GO` (all eight launch gates open; R-405 open).
 
-**Latest verification:** Phase 67 verified on 2026-06-05: core tests 120/120, app tests 171/171, `npm run release:verify` passed with only documented R-405 findings.
+**Latest verification:** Phase 68 verified on 2026-06-05: core tests 122/122, app tests 171/171, `npm run release:verify` passed with only documented R-405 findings.
 
 The current implementation includes:
 
@@ -27,6 +27,7 @@ The current implementation includes:
 - Phase 65 official regulation PDF corpus QA foundation requiring source metadata, checksum, page extraction evidence, page/section references, derived-rule drafts, and corpus golden cases before any PDF-derived scope rules can become draft corpus rules
 - Phase 66 product communication covenant lock: forbidden client-facing AI self-disclosure, AI limitation disclaimers, doctor/dietitian/professional referral language, green provider covenant violations, and yellow/red client-facing AI sends are blocked locally
 - Phase 67 approved source answerability engine: green provider calls/sends require approved source support from active diet plan, prompt-allowed forms, dietitian context updates, dietitian manual messages, pinned notes, allergies, or restricted foods; AI-generated messages are not source authority
+- Phase 68 green maximization intent taxonomy: green source-backed intents are audited by family, while green-looking sensitive intents block before provider generation without downgrading yellow/red decisions
 - Post-Phase 65 direct 100-dietitian completion plan in `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`, locking the no-small-ring 5,000-client production pilot target, product communication covenant, approved-source answerability path, and user-document timing
 
 ## Safety Model
@@ -39,6 +40,7 @@ MANU-AI is built around supervised clinical safety boundaries:
 - Three escalate-only evaluation axes merge before orchestration: regex classifier (`dietetic-risk-v0.3.1`), clinical safety second layer (`clinical-safety-second-layer-v0.1.0`), and scope guard over an approved dietetic-regulation corpus (`scope-rag-v0.1.0`; mock-first, no-op until corpus is approved).
 - Phase 66 enforces the product communication covenant locally: no AI self-disclosure, no AI limitation disclaimer, no doctor/dietitian/professional referral language in client-facing AI output, and no client-facing AI send for yellow/red situations.
 - Phase 67 enforces approved source answerability locally before green provider calls or sends.
+- Phase 68 records green intent taxonomy evidence after answerability and blocks sensitive green-looking requests before provider calls.
 - Personas affect communication style only, not clinical safety rules.
 - Production launch gates remain open until external approval artifacts are supplied and accepted by the structured evidence engine.
 

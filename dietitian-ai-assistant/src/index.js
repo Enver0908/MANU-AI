@@ -40,6 +40,10 @@ export {
   evaluateApprovedSourceAnswerability,
 } from "./approved-source-answerability.js";
 export {
+  GREEN_INTENT_TAXONOMY_VERSION,
+  evaluateGreenIntentTaxonomy,
+} from "./green-intent-taxonomy.js";
+export {
   PRODUCT_COMMUNICATION_COVENANT_VERSION,
   detectProductCommunicationCovenantIssues,
   guardAssistantReply,

@@ -34,6 +34,10 @@ describe("local inbound simulator", () => {
       answerability: {
         decision: "source_backed_green",
       },
+      greenIntent: {
+        decision: "green_intent_allowed",
+        intentFamily: "green_allowed_substitution",
+      },
     });
   });
 

@@ -69,6 +69,8 @@ test("green autopilot sends guarded reply", async () => {
   assert.equal(sent.length, 1);
   assert.equal(result.contextManifest?.answerability?.decision, "source_backed_green");
   assert.ok(result.contextManifest?.answerability?.sourceCategories.includes("active_diet_plan"));
+  assert.equal(result.contextManifest?.greenIntent?.decision, "green_intent_allowed");
+  assert.equal(result.contextManifest?.greenIntent?.intentFamily, "green_allowed_substitution");
 });
 
 test("green autopilot blocks before provider when approved sources are missing", async () => {
@@ -212,6 +214,64 @@ test("answerability blocks sensitive mixed markers even when base risk is green"
   assert.equal(generated, false);
   assert.equal(result.contextManifest?.answerability?.decision, "handoff_required");
   assert.ok(result.reasons.includes("mixed_or_sensitive_answerability_marker"));
+});
+
+test("green intent taxonomy records low-risk logistics intent", async () => {
+  const result = await handleInboundMessage(
+    {
+      ...baseInput,
+      message: {
+        body: "Randevu saatini hatirlatir misin?",
+      },
+    },
+    {
+      generateReply: async () => "Randevu saatinizi notlarindaki bilgiye gore hatirlatirim.",
+      sendMessage: async () => {},
+    },
+  );
+
+  assert.equal(result.action, "sent");
+  assert.equal(result.providerAttempted, true);
+  assert.equal(result.contextManifest?.greenIntent?.decision, "green_intent_allowed");
+  assert.equal(result.contextManifest?.greenIntent?.intentFamily, "green_logistics");
+  assert.ok(result.contextManifest?.greenIntent?.sourceCategories.includes("active_diet_plan"));
+});
+
+test("green intent taxonomy blocks sensitive green-looking calorie requests before provider", async () => {
+  let generated = false;
+  const handoffs = [];
+  const result = await handleInboundMessage(
+    {
+      ...baseInput,
+      message: {
+        body: "Bugun kahvaltida ne yiyebilirim ve kalorimi kac yapayim?",
+      },
+      riskDecisionOverride: {
+        level: "green",
+        reasons: ["test_green_override"],
+        shouldHandoff: false,
+        pauseAutopilot: false,
+        classifierVersion: "test",
+      },
+    },
+    {
+      generateReply: async () => {
+        generated = true;
+        return "ok";
+      },
+      onHandoff: async (handoff) => handoffs.push(handoff),
+    },
+  );
+
+  assert.equal(result.action, "handoff");
+  assert.equal(result.blockedReason, "green_intent_taxonomy_blocked");
+  assert.equal(result.providerAttempted, false);
+  assert.equal(result.model, null);
+  assert.equal(generated, false);
+  assert.equal(handoffs.length, 1);
+  assert.equal(result.contextManifest?.greenIntent?.decision, "blocked_sensitive_intent");
+  assert.equal(result.contextManifest?.greenIntent?.blockedFamily, "yellow_calorie_macro_portion_request");
+  assert.ok(result.reasons.includes("green_intent_taxonomy_sensitive_family"));
 });
 
 test("red risk creates handoff and does not generate", async () => {
@@ -454,6 +514,8 @@ test("yellow risk uses gemini 3 for approval draft", async () => {
   assert.equal(result.providerAttempted, true);
   assert.deepEqual(models, ["gemini-3"]);
   assert.equal(drafts.length, 1);
+  assert.equal(result.contextManifest?.greenIntent?.decision, "not_applicable_non_green");
+  assert.equal(result.contextManifest?.greenIntent?.allowed, true);
 });
 
 test("clinical safety second layer escalates ambiguous green messages to approval draft", async () => {

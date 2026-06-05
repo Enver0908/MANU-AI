@@ -18,20 +18,21 @@ Start by reading:
 2. `PROJECT_PLAN.md`
 3. `docs/NEXT_PHASE_EXECUTION_PLAN.md`
 4. `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` (current strategic roadmap)
-5. `docs/PHASE_67_APPROVED_SOURCE_ANSWERABILITY_ENGINE_SPEC.md` (latest completed implementation phase)
-6. `docs/PHASE_66_PRODUCT_COMMUNICATION_COVENANT_LOCK_SPEC.md`
-7. `docs/PHASE_65_OFFICIAL_REGULATION_PDF_CORPUS_QA_SPEC.md`
-8. `docs/PHASE_64_STRUCTURED_LAUNCH_GATE_EVIDENCE_ENGINE_SPEC.md`
-9. `docs/PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md`
-10. `docs/PHASE_62_ARCHITECTURE_REVIEW_REMEDIATION_WAVE2_SPEC.md`
-11. `docs/PHASE_61_SCOPE_GUARD_RAG_SECOND_LAYER_SPEC.md`
-12. `docs/RISK_REGISTER.md`
-13. `docs/DATA_INVENTORY.md`
-14. `docs/DATASET_STRATEGY.md`
-15. `docs/MOBILE_APP_STRATEGY.md`
-16. `dietitian-ai-assistant/README.md`
-17. `dietitian-ai-assistant/docs/architecture.md`
-18. `dietitian-ai-assistant/docs/data-model.sql`
+5. `docs/PHASE_68_GREEN_MAXIMIZATION_INTENT_TAXONOMY_SPEC.md` (latest completed implementation phase)
+6. `docs/PHASE_67_APPROVED_SOURCE_ANSWERABILITY_ENGINE_SPEC.md`
+7. `docs/PHASE_66_PRODUCT_COMMUNICATION_COVENANT_LOCK_SPEC.md`
+8. `docs/PHASE_65_OFFICIAL_REGULATION_PDF_CORPUS_QA_SPEC.md`
+9. `docs/PHASE_64_STRUCTURED_LAUNCH_GATE_EVIDENCE_ENGINE_SPEC.md`
+10. `docs/PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md`
+11. `docs/PHASE_62_ARCHITECTURE_REVIEW_REMEDIATION_WAVE2_SPEC.md`
+12. `docs/PHASE_61_SCOPE_GUARD_RAG_SECOND_LAYER_SPEC.md`
+13. `docs/RISK_REGISTER.md`
+14. `docs/DATA_INVENTORY.md`
+15. `docs/DATASET_STRATEGY.md`
+16. `docs/MOBILE_APP_STRATEGY.md`
+17. `dietitian-ai-assistant/README.md`
+18. `dietitian-ai-assistant/docs/architecture.md`
+19. `dietitian-ai-assistant/docs/data-model.sql`
 
 ## User's Product Goal
 
@@ -64,11 +65,13 @@ The product must be both:
 
 ## Current Next Phase
 
-Post-Phase 67 baseline: the direct 100-dietitian strategic completion plan in `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` remains canonical. It locks the production pilot target to direct 100 dietitians x 50 clients (minimum 5,000 clients), with no small production ring. It also locks the product communication covenant: client-facing output must never disclose AI identity or tell the client to ask a doctor/dietitian/professional, yellow/red paths send no client-facing AI boundary reply, and green maximization must come from approved source-backed answerability rather than answering risky messages.
+Post-Phase 68 baseline: the direct 100-dietitian strategic completion plan in `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` remains canonical. It locks the production pilot target to direct 100 dietitians x 50 clients (minimum 5,000 clients), with no small production ring. It also locks the product communication covenant: client-facing output must never disclose AI identity or tell the client to ask a doctor/dietitian/professional, yellow/red paths send no client-facing AI boundary reply, and green maximization must come from approved source-backed answerability plus deterministic green intent taxonomy rather than answering risky messages.
 
-Next implementation phase is Phase 68 Green Maximization Intent Taxonomy. Do not jump to form hardening until green-max intent taxonomy and direct 5,000-client scale foundation phases are complete unless the user explicitly reprioritizes.
+Next implementation phase is Phase 69 Direct 5,000 Client Scale Foundation. Do not jump to form hardening until direct 5,000-client scale foundation is complete unless the user explicitly reprioritizes.
 
-Phase 67 approved source answerability engine is the latest completed implementation wave (2026-06-05): core `evaluateApprovedSourceAnswerability` now gates green provider calls/sends on approved source support after PromptContext compilation and before provider generation. Active diet plan, prompt-allowed form summaries, dietitian context updates, dietitian manual messages, pinned notes, allergies, and restricted foods can support answerability. AI-generated messages are excluded from source authority. Missing approved source support creates internal handoff/no-send with `providerAttempted=false`. Production pilot remains `NO-GO`.
+Phase 68 green maximization intent taxonomy is the latest completed implementation wave (2026-06-05): core `evaluateGreenIntentTaxonomy` now records green intent family metadata after approved-source answerability and before provider generation. Green-looking sensitive intents such as calorie/macro/portion target changes, medication/supplement decisions, lab/symptom interpretation, active-plan conflict, and emergency/sensitive contexts block with internal handoff/no-send and `providerAttempted=false`. Yellow/red decisions receive `not_applicable_non_green` taxonomy metadata and are not downgraded. Production pilot remains `NO-GO`.
+
+Phase 67 approved source answerability engine is the previous completed implementation wave (2026-06-05): core `evaluateApprovedSourceAnswerability` now gates green provider calls/sends on approved source support after PromptContext compilation and before provider generation. Active diet plan, prompt-allowed form summaries, dietitian context updates, dietitian manual messages, pinned notes, allergies, and restricted foods can support answerability. AI-generated messages are excluded from source authority. Missing approved source support creates internal handoff/no-send with `providerAttempted=false`. Production pilot remains `NO-GO`.
 
 Phase 66 product communication covenant lock completed on 2026-06-05: core/provider output safety blocks client-facing AI self-disclosure, AI limitation disclaimers, doctor/dietitian/professional referral language, and covenant-violating green provider output; PromptContext carries the covenant instruction; mock-provider output self-checks the covenant; handoff acknowledgements are internal-only; and send-time draft approval blocks non-green AI drafts plus covenant-violating green draft edits. Production pilot remains `NO-GO`.
 
@@ -80,7 +83,7 @@ Phase 63 production pilot GO rebaseline is the latest completed planning wave (2
 
 Before selecting the next engineering phase, read `docs/PHASE_64_STRUCTURED_LAUNCH_GATE_EVIDENCE_ENGINE_SPEC.md` and `docs/PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md`; together they are the current planning source for production-pilot exit work.
 
-Post-Phase 67 remaining production hardening is ordered by `DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`: green-max intent taxonomy, direct 5,000-client scale foundation, user-supplied form hardening, official PDF ingestion, regulation permission graph, green/yellow/red calibration, client removal/anonymization transactional redaction contract, Gemini provider gate, WhatsApp production adapter, production operations, R-405 closure, full 100x50 rehearsal, external launch-gate closure, and direct production pilot GO.
+Post-Phase 68 remaining production hardening is ordered by `DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`: direct 5,000-client scale foundation, user-supplied form hardening, official PDF ingestion, regulation permission graph, green/yellow/red calibration, client removal/anonymization transactional redaction contract, Gemini provider gate, WhatsApp production adapter, production operations, R-405 closure, full 100x50 rehearsal, external launch-gate closure, and direct production pilot GO.
 
 Phase 62 architecture review remediation wave 2 is the latest completed implementation wave (2026-06-04): provider failures on active clients now open dietitian handoff without client-facing AI send; shared `normalizeSafetyText`; overlap-based scope retrieval (`DEFAULT_MATCH_THRESHOLD` 0.4); glucose numeric cost-unit filtering; dead `modelForRisk` removed. Bulgu 1 unchanged (accepted). Bulgu 3/9/10 documented as constraint-accepted. Production pilot remains `NO-GO`.
 
@@ -2107,7 +2110,7 @@ app: npm run release:verify -> passed; core tests 114/114, app tests 166/166, li
 
 ### Next Correct Step For Codex
 
-Phase 66 completed the product communication covenant lock, and Phase 67 later completed approved source answerability. Next correct step is Phase 68 Green Maximization Intent Taxonomy. Keep official corpus activation blocked until the user supplies official PDFs and structured legal/clinical launch-gate evidence approves the corpus.
+Phase 66 completed the product communication covenant lock, Phase 67 completed approved source answerability, and Phase 68 completed green intent taxonomy. Next correct step is Phase 69 Direct 5,000 Client Scale Foundation. Keep official corpus activation blocked until the user supplies official PDFs and structured legal/clinical launch-gate evidence approves the corpus.
 
 ## Phase 66 Product Communication Covenant Lock Handoff Notes - 2026-06-05
 
@@ -2138,7 +2141,7 @@ app: npm run release:verify -> passed; core tests 116/116, app tests 170/170, li
 
 ### Next Correct Step For Codex
 
-Phase 67 completed the approved source answerability engine. Next correct step is Phase 68 Green Maximization Intent Taxonomy. Keep all real providers/channels, monitoring, secret manager, and real client health data disconnected.
+Phase 67 completed the approved source answerability engine, and Phase 68 completed green intent taxonomy. Next correct step is Phase 69 Direct 5,000 Client Scale Foundation. Keep all real providers/channels, monitoring, secret manager, and real client health data disconnected.
 
 ## Phase 67 Approved Source Answerability Engine Handoff Notes - 2026-06-05
 
@@ -2157,7 +2160,7 @@ Completed by: Codex
 
 ### What Was NOT Done
 
-- No Phase 68 green-max intent taxonomy was implemented.
+- No Phase 69 direct 5,000-client scale rehearsal was implemented.
 - No Phase 69 direct 5,000-client scale rehearsal was implemented.
 - No real Gemini, WhatsApp, Telegram, monitoring, secret manager, launch-gate approval, R-405 acceptance, or real-data path was connected.
 - No production pilot GO decision was made; production pilot remains `NO-GO`.
@@ -2172,4 +2175,36 @@ app: npm run release:verify -> passed; core tests 120/120, app tests 171/171, li
 
 ### Next Correct Step For Codex
 
-Implement Phase 68 Green Maximization Intent Taxonomy from `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`. Preserve Phase 66 covenant and Phase 67 approved-source answerability as hard gates. Keep all real providers/channels, monitoring, secret manager, and real client health data disconnected.
+Phase 68 was implemented after this handoff note. Next correct step is Phase 69 Direct 5,000 Client Scale Foundation from `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`. Preserve Phase 66 covenant, Phase 67 approved-source answerability, and Phase 68 green intent taxonomy as hard gates. Keep all real providers/channels, monitoring, secret manager, and real client health data disconnected.
+
+## Phase 68 Green Maximization Intent Taxonomy Handoff Notes - 2026-06-05
+
+Completed by: Codex
+
+### What Was Done
+
+- Added `docs/PHASE_68_GREEN_MAXIMIZATION_INTENT_TAXONOMY_SPEC.md`.
+- Added core `GREEN_INTENT_TAXONOMY_VERSION` and `evaluateGreenIntentTaxonomy`.
+- Added pre-provider green intent taxonomy evaluation after approved-source answerability in `handleInboundMessage`.
+- Recorded green intent evidence in `contextManifest.greenIntent`.
+- Classified allowed green families such as plan lookup, allowed substitution, logistics, reminders, behavior support, progress logging, general education, context recap, and low-risk clarification.
+- Blocked green-looking sensitive families such as calorie/macro/portion target changes, medication/supplement decisions, lab/symptom interpretation, active-plan conflicts, and emergency/sensitive contexts.
+- Preserved monotonic safety: yellow/red decisions receive `not_applicable_non_green` metadata and are not downgraded.
+
+### What Was NOT Done
+
+- No Phase 69 direct 5,000-client scale rehearsal was implemented.
+- No user-supplied form hardening, official PDF ingestion, Gemini, WhatsApp, monitoring, secret manager, launch-gate approval, R-405 acceptance, or real-data path was connected.
+- No production pilot GO decision was made; production pilot remains `NO-GO`.
+
+### Verification Commands
+
+```text
+core: npm test -> passed; core tests 122/122
+app: npm test -- simulator -> passed; app tests 171/171
+app: npm run release:verify -> passed; core tests 122/122, app tests 171/171, lint, production build, known R-405 only
+```
+
+### Next Correct Step For Codex
+
+Implement Phase 69 Direct 5,000 Client Scale Foundation from `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`. Preserve Phase 66 covenant, Phase 67 approved-source answerability, and Phase 68 green intent taxonomy as hard gates. Keep all real providers/channels, monitoring, secret manager, and real client health data disconnected.

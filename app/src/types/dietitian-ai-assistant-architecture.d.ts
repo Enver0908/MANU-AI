@@ -193,6 +193,8 @@ declare module "dietitian-ai-assistant-architecture" {
     droppedContextUpdateIds?: string[];
     hasMissingHistoricalContext: boolean;
     segments: ContextManifestSegment[];
+    answerability?: ApprovedSourceAnswerabilityDecision;
+    greenIntent?: GreenIntentTaxonomyDecision;
   };
 
   export type PromptCompilation = {
@@ -287,6 +289,52 @@ declare module "dietitian-ai-assistant-architecture" {
     issues: ProviderOutputSafetyIssue[];
   };
 
+  export type GreenIntentFamily =
+    | "green_plan_lookup"
+    | "green_meal_reminder"
+    | "green_allowed_substitution"
+    | "green_logistics"
+    | "green_behavior_support"
+    | "green_progress_logging"
+    | "green_low_risk_clarification"
+    | "green_general_education"
+    | "green_context_recap";
+
+  export type SensitiveIntentFamily =
+    | "yellow_plan_change_request"
+    | "yellow_calorie_macro_portion_request"
+    | "yellow_medication_supplement_request"
+    | "yellow_lab_interpretation_request"
+    | "yellow_symptom_interpretation_request"
+    | "red_sensitive_context_or_emergency"
+    | "yellow_active_plan_conflict"
+    | "prompt_context_missing";
+
+  export type GreenIntentTaxonomyDecision = {
+    version: string;
+    decision: "green_intent_allowed" | "blocked_sensitive_intent" | "not_applicable_non_green";
+    allowed: boolean;
+    intentFamily: GreenIntentFamily | null;
+    blockedFamily: SensitiveIntentFamily | null;
+    reasons: string[];
+    sourceCategories: string[];
+  };
+
+  export type ApprovedSourceAnswerabilityDecision = {
+    version: string;
+    decision: "source_backed_green" | "draft_required" | "handoff_required" | "blocked";
+    allowed: boolean;
+    reasons: string[];
+    sourceCategories: string[];
+    sources: Array<{
+      category: string;
+      segmentType: string;
+      sourceId: string | null;
+      authority: string | null;
+      origin: string | null;
+    }>;
+  };
+
   export type CoreResult = {
     mode: ClientAiMode;
     aiStatus: ClientAiStatus;
@@ -322,6 +370,7 @@ declare module "dietitian-ai-assistant-architecture" {
   export const PRODUCT_COMMUNICATION_COVENANT_INSTRUCTION: string;
   export const PRODUCT_COMMUNICATION_COVENANT_VERSION: string;
   export const APPROVED_SOURCE_ANSWERABILITY_VERSION: string;
+  export const GREEN_INTENT_TAXONOMY_VERSION: string;
 
   export function buildDietitianVoiceProfile(samples: string[]): CoreVoiceProfile;
   export function normalizeLanguageCode(value: unknown): SupportedLanguageCode;
@@ -402,20 +451,13 @@ declare module "dietitian-ai-assistant-architecture" {
       }>;
     } | null;
     riskDecision: { level: "green" | "yellow" | "red"; reasons?: string[] };
-  }): {
-    version: string;
-    decision: "source_backed_green" | "draft_required" | "handoff_required" | "blocked";
-    allowed: boolean;
-    reasons: string[];
-    sourceCategories: string[];
-    sources: Array<{
-      category: string;
-      segmentType: string;
-      sourceId: string | null;
-      authority: string | null;
-      origin: string | null;
-    }>;
-  };
+  }): ApprovedSourceAnswerabilityDecision;
+
+  export function evaluateGreenIntentTaxonomy(input: {
+    promptContext: PromptContext | null;
+    riskDecision: { level: "green" | "yellow" | "red"; reasons?: string[] };
+    answerability?: ApprovedSourceAnswerabilityDecision | null;
+  }): GreenIntentTaxonomyDecision;
 
   export type ScopeRuleEscalationLevel = "yellow" | "red";
   export type ScopeGuardStatus = "noop" | "unavailable" | "no_match" | "matched";
