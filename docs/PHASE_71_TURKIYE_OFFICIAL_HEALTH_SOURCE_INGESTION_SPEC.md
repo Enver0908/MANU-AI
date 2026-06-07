@@ -26,7 +26,7 @@ External package: `faz_71_istenilenler` (project-external working file, 2026-06-
   - derived rule drafts
   - corpus golden cases
 - Keep the existing Phase 65 corpus QA contract as the authority for pass/fail.
-- Ensure official source-derived rules remain draft-only until Phase 72 permission graph and external legal/clinical approval.
+- Ensure official source-derived rules remain draft-only until external legal/clinical approval, even after Phase 72 draft permission graph artifacts exist locally.
 
 ## Non-Goals
 

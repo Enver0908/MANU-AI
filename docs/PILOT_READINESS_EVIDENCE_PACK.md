@@ -18,10 +18,10 @@ Run from `app`:
 npm run release:verify
 ```
 
-Latest result, re-verified on 2026-06-07 after Phase 71 Turkiye official health source ingestion:
+Latest result, re-verified on 2026-06-07 after Phase 75 Gemini provider gate:
 
 - Core package tests: 122/122 passed.
-- App tests: 190/190 passed.
+- App tests: 216/216 passed.
 - App lint: passed.
 - Production build: passed.
 - Production dependency audit gate: passed with only documented R-405 findings.
@@ -35,6 +35,10 @@ Latest result, re-verified on 2026-06-07 after Phase 71 Turkiye official health 
 - Phase 69 adds local synthetic 100 dietitian x 50 client scale evidence, pagination/read-contract evidence, and aggregate operational-health scale signals. No real provider/channel/data path was connected and no gate was closed.
 - Phase 70 adds local user-supplied form hardening with registry-backed schemas, prompt visibility metadata, answerability roles, and autopilot qualification gates. No real provider/channel/data path was connected and no gate was closed.
 - Phase 71 adds the user-supplied 14-source Turkiye official health source manifest and fail-closed artifact intake into the Phase 65 QA contract. No real PDF was downloaded or parsed, no corpus was approved, no active routing changed, and no gate was closed.
+- Phase 72 adds the user-supplied legal/privacy, clinical interpretation, and permission graph pack as draft routing artifacts with fail-closed mixed-intent evaluation. No active production routing was enabled and no gate was closed.
+- Phase 73 adds the user-supplied health regulation decision matrix, golden-case labeling suite, and local calibration acceptance metrics. No active production calibration was enabled and no gate was closed.
+- Phase 74 adds retention/export/DSAR policy artifacts, transactional redaction contract tests, and export manifest/checksum evidence. No production Supabase transactional RPC migration, production lifecycle enablement, or gate closure occurred.
+- Phase 75 adds Gemini provider gate artifacts: forbidden/unpaid consumer surfaces, paid Vertex/Gemini Enterprise target surface, green/yellow model routing, training/logging/retention policy, health-data eligibility checklist, PromptContext allowlist enforcement, and `MANU_ALLOW_REAL_GEMINI` egress gate tests. No real Gemini API, Vertex AI connection, or gate closure occurred.
 - Post-Phase 65 strategic plan `DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` locks the production target to direct 100 dietitians x 50 clients, requires approved-source answerability before form/PDF/provider/channel phases, and keeps production pilot `NO-GO`.
 
 Additional Phase 50 production Supabase hardening evidence on 2026-06-02:

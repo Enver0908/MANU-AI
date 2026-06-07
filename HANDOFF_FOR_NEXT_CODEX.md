@@ -18,24 +18,28 @@ Start by reading:
 2. `PROJECT_PLAN.md`
 3. `docs/NEXT_PHASE_EXECUTION_PLAN.md`
 4. `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` (current strategic roadmap)
-5. `docs/PHASE_71_TURKIYE_OFFICIAL_HEALTH_SOURCE_INGESTION_SPEC.md` (latest completed implementation phase)
-6. `docs/PHASE_70_USER_SUPPLIED_FORM_HARDENING_SPEC.md`
-7. `docs/PHASE_69_DIRECT_5000_CLIENT_SCALE_FOUNDATION_SPEC.md`
-8. `docs/PHASE_68_GREEN_MAXIMIZATION_INTENT_TAXONOMY_SPEC.md`
-9. `docs/PHASE_67_APPROVED_SOURCE_ANSWERABILITY_ENGINE_SPEC.md`
-10. `docs/PHASE_66_PRODUCT_COMMUNICATION_COVENANT_LOCK_SPEC.md`
-11. `docs/PHASE_65_OFFICIAL_REGULATION_PDF_CORPUS_QA_SPEC.md`
-12. `docs/PHASE_64_STRUCTURED_LAUNCH_GATE_EVIDENCE_ENGINE_SPEC.md`
-13. `docs/PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md`
-14. `docs/PHASE_62_ARCHITECTURE_REVIEW_REMEDIATION_WAVE2_SPEC.md`
-15. `docs/PHASE_61_SCOPE_GUARD_RAG_SECOND_LAYER_SPEC.md`
-16. `docs/RISK_REGISTER.md`
-17. `docs/DATA_INVENTORY.md`
-18. `docs/DATASET_STRATEGY.md`
-19. `docs/MOBILE_APP_STRATEGY.md`
-20. `dietitian-ai-assistant/README.md`
-21. `dietitian-ai-assistant/docs/architecture.md`
-22. `dietitian-ai-assistant/docs/data-model.sql`
+5. `docs/PHASE_75_GEMINI_PROVIDER_GATE_SPEC.md` (latest completed implementation phase)
+6. `docs/PHASE_74_DATA_LIFECYCLE_DSAR_SPEC.md`
+7. `docs/PHASE_73_HEALTH_REGULATION_CALIBRATION_SPEC.md`
+8. `docs/PHASE_72_REGULATION_PERMISSION_GRAPH_SPEC.md`
+9. `docs/PHASE_71_TURKIYE_OFFICIAL_HEALTH_SOURCE_INGESTION_SPEC.md`
+10. `docs/PHASE_70_USER_SUPPLIED_FORM_HARDENING_SPEC.md`
+11. `docs/PHASE_69_DIRECT_5000_CLIENT_SCALE_FOUNDATION_SPEC.md`
+12. `docs/PHASE_68_GREEN_MAXIMIZATION_INTENT_TAXONOMY_SPEC.md`
+13. `docs/PHASE_67_APPROVED_SOURCE_ANSWERABILITY_ENGINE_SPEC.md`
+14. `docs/PHASE_66_PRODUCT_COMMUNICATION_COVENANT_LOCK_SPEC.md`
+15. `docs/PHASE_65_OFFICIAL_REGULATION_PDF_CORPUS_QA_SPEC.md`
+16. `docs/PHASE_64_STRUCTURED_LAUNCH_GATE_EVIDENCE_ENGINE_SPEC.md`
+17. `docs/PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md`
+18. `docs/PHASE_62_ARCHITECTURE_REVIEW_REMEDIATION_WAVE2_SPEC.md`
+19. `docs/PHASE_61_SCOPE_GUARD_RAG_SECOND_LAYER_SPEC.md`
+20. `docs/RISK_REGISTER.md`
+21. `docs/DATA_INVENTORY.md`
+22. `docs/DATASET_STRATEGY.md`
+23. `docs/MOBILE_APP_STRATEGY.md`
+24. `dietitian-ai-assistant/README.md`
+25. `dietitian-ai-assistant/docs/architecture.md`
+26. `dietitian-ai-assistant/docs/data-model.sql`
 
 ## User's Product Goal
 
@@ -70,9 +74,17 @@ The product must be both:
 
 Post-Phase 69 baseline: the direct 100-dietitian strategic completion plan in `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` remains canonical. It locks the production pilot target to direct 100 dietitians x 50 clients (minimum 5,000 clients), with no small production ring. It also locks the product communication covenant: client-facing output must never disclose AI identity or tell the client to ask a doctor/dietitian/professional, yellow/red paths send no client-facing AI boundary reply, and green maximization must come from approved source-backed answerability plus deterministic green intent taxonomy rather than answering risky messages.
 
-Next implementation phase is Phase 72 Regulation Permission Graph, but only after legal/privacy and clinical interpretation inputs are supplied. Do not activate official source-derived routing or approve any corpus without Phase 72 permission graph plus external legal/clinical approval.
+Next implementation phase is remaining production hardening gates (WhatsApp, ops, R-405 closure, full 100x50 rehearsal, external launch-gate closure). Real Gemini egress must not be enabled without Phase 75 approved provider artifacts plus `MANU_ALLOW_REAL_GEMINI=true` and closed legal/privacy plus provider/vendor gates. Production data lifecycle must not be enabled without Phase 74 transactional redaction plus external legal/privacy approval.
 
-Phase 71 Turkiye official health source ingestion is the latest completed implementation wave (2026-06-07): app `phase-71-turkiye-official-sources.ts` now holds the user-supplied 14-source Turkiye official source manifest with P0/P1/P2 priorities, critical sections, and green/yellow/red impact notes. It adds fail-closed artifact intake into the Phase 65 QA contract; metadata-only sources do not pass QA, unknown artifacts fail, and QA-passing derived rules remain draft-only. Verification passed with core tests 122/122, app tests 190/190, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain. Production pilot remains `NO-GO`.
+Phase 75 Gemini provider gate is the latest completed implementation wave (2026-06-07): app `phase-75-gemini-provider-gate.ts` now holds forbidden/unpaid consumer surfaces, paid Vertex/Gemini Enterprise target surface, green/yellow model routing, training/logging/retention policy artifacts, health-data eligibility checklist, PromptContext allowlist enforcement, required gate evidence, `evaluatePhase75GeminiProviderRouting`, and `isPhase75RealGeminiEgressAllowed` behind `MANU_ALLOW_REAL_GEMINI`. Provider artifacts remain draft; real Gemini egress stays blocked without approved legal/privacy and provider/vendor gate evidence. Verification passed with core tests 122/122, app tests 216/216, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain. Production pilot remains `NO-GO`.
+
+Phase 74 data lifecycle, export, anonymization and DSAR policy completed (2026-06-07): app `phase-74-data-lifecycle-policy.ts` now holds retention policy, export manifest/checksum contract, DSAR SLA records, transactional redaction field contract, `applyPhase74TransactionalRedactionInState`, and redaction invariant evaluation. Redaction marker standardized to `REDACTED_BY_PHASE74_POLICY`; removed clients are excluded from simulator/provider paths. Policy artifacts remain draft; `MANU_ALLOW_PHASE_74_PRODUCTION_LIFECYCLE` stays off by default. Verification passed with core tests 122/122, app tests 209/209, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain. Production pilot remains `NO-GO`.
+
+Phase 73 health regulation calibration completed on 2026-06-07: app `phase-73-health-regulation-calibration.ts` now holds the user-supplied 14-source health regulation decision matrix, decision priority order, 15 golden calibration cases, copilot vs autopilot evaluation, and acceptance metrics. Calibration artifacts remain draft; active production calibration stays blocked without approved clinical taxonomy evidence. Verification passed with core tests 122/122, app tests 204/204, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain. Production pilot remains `NO-GO`.
+
+Phase 72 regulation permission graph completed on 2026-06-07: app `phase-72-permission-graph.ts` now holds the user-supplied legal/privacy, clinical interpretation, and permission graph pack as draft artifacts (`forbiddenActionMap`, `draftOnlyActionMap`, plan/general answerability maps, never-prompt and prompt-allowed field maps, covenant phrase map, legal privacy routing map, clinical escalation routing map, and mixed-intent fail-closed policy). `evaluatePhase72PermissionRouting` enforces fail-closed mixed intent and privacy-gate precedence; `isPhase72ActiveProductionRoutingAllowed` remains false without approved launch-gate evidence plus `MANU_ALLOW_PHASE_72_ACTIVE_ROUTING=true`. Verification passed with core tests 122/122, app tests 197/197, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain. Production pilot remains `NO-GO`.
+
+Phase 71 Turkiye official health source ingestion completed on 2026-06-07: app `phase-71-turkiye-official-sources.ts` holds the user-supplied 14-source Turkiye official source manifest with P0/P1/P2 priorities, critical sections, and green/yellow/red impact notes. It adds fail-closed artifact intake into the Phase 65 QA contract; metadata-only sources do not pass QA, unknown artifacts fail, and QA-passing derived rules remain draft-only until external approval. Production pilot remains `NO-GO`.
 
 Phase 70 user-supplied form hardening completed on 2026-06-07: app `phase-70-form-registry.ts` now holds the user-supplied dietitian/client field registry with prompt-access, answerability-role, and privacy metadata; published local client/dietitian schemas and seed responses back demo autopilot qualification; `phase-70-form-hardening.ts` enforces minimum autopilot client field completeness and sanitized prompt summaries; simulator preflight blocks incomplete/not-qualified autopilot clients before provider calls. Production pilot remains `NO-GO`.
 

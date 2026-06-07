@@ -6,7 +6,7 @@ MANU-AI is in pilot-foundation mode. The local SaaS/PWA prototype, Supabase-back
 
 Real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, and real client health data remain disconnected.
 
-The most recent execution layers after the 13-phase completion roadmap are Phase 71 Turkiye official health source ingestion, Phase 70 user-supplied form hardening, Phase 43 multilingual language support, Phase 44 red-risk reactivation lock, Phase 45 client removal data lifecycle, Phase 46 WhatsApp group quarantine, Phase 47 RLS quarantine evidence coverage, Phase 48 R-405 stable patch recheck, Phase 49 safety/orchestration hardening, Phase 50 production Supabase hardening, Phase 51 transactional RPC coverage, Phase 52 integration test coverage, Phase 53 scale/broad read contracts, Phase 54 R-405/launch-gate recheck, Phase 55 audit remediation safety boundary, Phase 56 clinical safety second-layer local evidence, Phase 57 yellow-risk hold/draft refresh, Phase 58 dietitian client language control, Phase 59 architecture review remediation, Phase 60 audit remediation, Phase 61 scope guard (RAG + LLM) second layer mock-first, Phase 62 architecture review remediation wave 2, Phase 63 production pilot GO rebaseline, Phase 64 structured launch-gate evidence engine, Phase 65 official regulation PDF corpus QA foundation, Phase 66 product communication covenant lock, Phase 67 approved source answerability engine, Phase 68 green maximization intent taxonomy, and Phase 69 direct 5,000 client scale foundation. Phase 65 adds a typed QA foundation so user-supplied official PDFs must have source metadata, checksums, page extraction evidence, page/section references, derived rule drafts, corpus version, and synthetic golden cases before PDF-derived scope rules can become draft rules. Phase 71 adds the user-supplied 14-source Turkiye official source manifest and fail-closed artifact intake into that QA contract without approving any corpus. Phase 66 locks client-facing AI communication locally: AI self-disclosure, AI limitation disclaimers, doctor/dietitian/professional referral language, yellow/red AI sends, and non-green draft approval are blocked before client-facing send. Phase 67 gates green provider calls/sends on approved source support and excludes AI-generated messages from source authority. Phase 68 records green intent taxonomy evidence after answerability and blocks green-looking sensitive intent before provider generation without downgrading yellow/red decisions. Phase 69 adds synthetic 100 dietitian x 50 client scale evidence, cursor pagination helpers, Phase 69 read contracts, and aggregate operational-health scale signals. The post-Phase 65 strategic completion plan is now `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`: production pilot is direct 100 dietitians x 50 clients (minimum 5,000 clients), no small production ring, green maximization is source-backed, and client-facing output must never disclose AI identity or refer the client to a doctor/dietitian/professional. The production-pilot decision remains `NO-GO`: all eight launch gates remain open and R-405 remains open. R-406 is now mitigated in the local prototype after Docker Desktop/local Supabase was started, the Phase 50 migration was applied, and `npm run test:rls` passed with 19/19 tests on 2026-06-02. Draft review, form response, client context update, handoff status, and red-risk reactivation now use transactional RPC commits locally; remaining broad reads are classified in a test-covered contract, while client removal/anonymization bulk redaction and external approval intake remain future production hardening work. R-310 is partially mitigated locally by deterministic second-layer evidence, Phase 57 yellow supervision, Phase 59 glucose/symptom hardening, Phase 61 escalate-only scope guard (default no-op until approved corpus), Phase 65 corpus QA foundation, Phase 66 covenant send blocking, Phase 67 source answerability, and Phase 68 green intent taxonomy, but qualified dietitian approval, official PDF corpus approval, and the clinical taxonomy launch gate remain open.
+The most recent execution layers after the 13-phase completion roadmap are Phase 75 Gemini provider gate, Phase 74 data lifecycle DSAR policy, Phase 73 health regulation calibration, Phase 72 regulation permission graph, Phase 71 Turkiye official health source ingestion, Phase 70 user-supplied form hardening, Phase 43 multilingual language support, Phase 44 red-risk reactivation lock, Phase 45 client removal data lifecycle, Phase 46 WhatsApp group quarantine, Phase 47 RLS quarantine evidence coverage, Phase 48 R-405 stable patch recheck, Phase 49 safety/orchestration hardening, Phase 50 production Supabase hardening, Phase 51 transactional RPC coverage, Phase 52 integration test coverage, Phase 53 scale/broad read contracts, Phase 54 R-405/launch-gate recheck, Phase 55 audit remediation safety boundary, Phase 56 clinical safety second-layer local evidence, Phase 57 yellow-risk hold/draft refresh, Phase 58 dietitian client language control, Phase 59 architecture review remediation, Phase 60 audit remediation, Phase 61 scope guard (RAG + LLM) second layer mock-first, Phase 62 architecture review remediation wave 2, Phase 63 production pilot GO rebaseline, Phase 64 structured launch-gate evidence engine, Phase 65 official regulation PDF corpus QA foundation, Phase 66 product communication covenant lock, Phase 67 approved source answerability engine, Phase 68 green maximization intent taxonomy, and Phase 69 direct 5,000 client scale foundation. Phase 65 adds a typed QA foundation so user-supplied official PDFs must have source metadata, checksums, page extraction evidence, page/section references, derived rule drafts, corpus version, and synthetic golden cases before PDF-derived scope rules can become draft rules. Phase 71 adds the user-supplied 14-source Turkiye official source manifest and fail-closed artifact intake into that QA contract without approving any corpus. Phase 66 locks client-facing AI communication locally: AI self-disclosure, AI limitation disclaimers, doctor/dietitian/professional referral language, yellow/red AI sends, and non-green draft approval are blocked before client-facing send. Phase 67 gates green provider calls/sends on approved source support and excludes AI-generated messages from source authority. Phase 68 records green intent taxonomy evidence after answerability and blocks green-looking sensitive intent before provider generation without downgrading yellow/red decisions. Phase 69 adds synthetic 100 dietitian x 50 client scale evidence, cursor pagination helpers, Phase 69 read contracts, and aggregate operational-health scale signals. The post-Phase 65 strategic completion plan is now `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`: production pilot is direct 100 dietitians x 50 clients (minimum 5,000 clients), no small production ring, green maximization is source-backed, and client-facing output must never disclose AI identity or refer the client to a doctor/dietitian/professional. The production-pilot decision remains `NO-GO`: all eight launch gates remain open and R-405 remains open. R-406 is now mitigated in the local prototype after Docker Desktop/local Supabase was started, the Phase 50 migration was applied, and `npm run test:rls` passed with 19/19 tests on 2026-06-02. Draft review, form response, client context update, handoff status, and red-risk reactivation now use transactional RPC commits locally; remaining broad reads are classified in a test-covered contract, while client removal/anonymization bulk redaction and external approval intake remain future production hardening work. R-310 is partially mitigated locally by deterministic second-layer evidence, Phase 57 yellow supervision, Phase 59 glucose/symptom hardening, Phase 61 escalate-only scope guard (default no-op until approved corpus), Phase 65 corpus QA foundation, Phase 66 covenant send blocking, Phase 67 source answerability, and Phase 68 green intent taxonomy, but qualified dietitian approval, official PDF corpus approval, and the clinical taxonomy launch gate remain open.
 
 ## Post-Phase 65 Strategic Completion Plan - Added 2026-06-05
 
@@ -24,9 +24,77 @@ Locked decisions:
 
 Next implementation order:
 
-1. Phase 72 Regulation Permission Graph after legal/privacy and clinical interpretation are supplied.
-2. Phase 73 calibration and remaining production hardening gates.
-3. Transactional redaction/DSAR, Gemini, WhatsApp, ops, R-405 closure/acceptance, and full 100x50 rehearsal.
+1. WhatsApp production adapter.
+2. Production ops, R-405 closure/acceptance, full 100x50 rehearsal, and external launch-gate closure.
+
+## Phase 75: Gemini Provider Gate - Completed 2026-06-07
+
+Goal: convert the user-supplied Gemini/provider decision pack into local draft artifacts for provider surface selection, model routing, retention/logging/training policy, health-data eligibility, PromptContext allowlist enforcement, and launch-gate evidence requirements.
+
+Status:
+
+- Added `docs/PHASE_75_GEMINI_PROVIDER_GATE_SPEC.md`.
+- Added `app/src/lib/phase-75-gemini-provider-gate.ts` with forbidden surfaces, paid Vertex/Gemini Enterprise target surface, green/yellow model routing, training/logging/retention policy, health eligibility checklist, prompt allowlist/forbidden maps, required gate evidence, routing evaluator, and `isPhase75RealGeminiEgressAllowed`.
+- Added tests proving pack readiness, red no-provider, yellow internal-only routing, green source-backed routing, forbidden prompt fields, and blocked real egress without env plus approved gates.
+- Verification passed with core tests 122/122, app tests 216/216, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain.
+- No real Gemini API, Vertex AI connection, unpaid consumer Gemini surface, grounding/search/maps, tuning, file/image/audio input, launch-gate approval, R-405 acceptance, or real health-data egress was connected.
+- Production pilot remains `NO-GO`.
+
+Next:
+
+- Proceed to WhatsApp production adapter and remaining production hardening gates.
+
+## Phase 74: Data Lifecycle, Export, Anonymization and DSAR Policy - Completed 2026-06-07
+
+Goal: convert the user-supplied retention, export, anonymization, hard delete, and DSAR preference pack into local policy artifacts and a transactional redaction contract.
+
+Status:
+
+- Added `docs/PHASE_74_DATA_LIFECYCLE_DSAR_SPEC.md`.
+- Added `app/src/lib/phase-74-data-lifecycle-policy.ts` with retention policy, export manifest/checksums, DSAR SLA, transactional redaction, and invariant evaluation.
+- Standardized redaction marker to `REDACTED_BY_PHASE74_POLICY` in `data-governance.ts`.
+- Added tests proving policy readiness, export contract, transactional redaction invariants, and simulator exclusion for removed clients.
+- Verification passed with core tests 122/122, app tests 209/209, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain.
+- No production Supabase transactional RPC migration, Gemini, WhatsApp, Telegram, monitoring, secret manager, launch-gate approval, R-405 acceptance, or real-data path was connected.
+- Production pilot remains `NO-GO`.
+
+Next:
+
+- Proceed to Gemini provider gate and remaining production hardening gates.
+
+## Phase 73: Health Regulation Calibration - Completed 2026-06-07
+
+Goal: convert the user-supplied health regulation decision matrix and golden-case labeling standard into a local calibration layer.
+
+Status:
+
+- Added `docs/PHASE_73_HEALTH_REGULATION_CALIBRATION_SPEC.md`.
+- Added `app/src/lib/phase-73-health-regulation-calibration.ts` with 14 official sources, 27 decision areas, priority order, 15 golden cases, copilot/autopilot evaluation, and acceptance metrics.
+- Added tests proving draft matrix completeness, copilot never auto-sends, red clinical escalation, quarantine paths, and zero unsafe-green acceptance violations on the bundled suite.
+- Verification passed with core tests 122/122, app tests 204/204, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain.
+- No active calibration activation, Gemini, WhatsApp, Telegram, monitoring, secret manager, production Supabase migration, launch-gate approval, R-405 acceptance, or real-data path was connected.
+- Production pilot remains `NO-GO`.
+
+Next:
+
+- Phase 74 is complete; proceed to Gemini provider gate.
+
+## Phase 72: Regulation Permission Graph - Completed 2026-06-07
+
+Goal: convert the user-supplied legal/privacy, clinical interpretation, and permission graph pack into canonical draft routing artifacts and fail-closed evaluation.
+
+Status:
+
+- Added `docs/PHASE_72_REGULATION_PERMISSION_GRAPH_SPEC.md`.
+- Added `app/src/lib/phase-72-permission-graph.ts` with forbidden, draft-only, plan answerability, general education, never-prompt, prompt-allowed, covenant phrase, legal privacy routing, clinical escalation routing, and mixed-intent fail-closed artifacts.
+- Added tests proving draft artifact completeness, sensitive field blocking, green plan lookup under satisfied gates, mixed-intent fail-closed routing, acute clinical escalation, quarantine on unknown identity, and blocked active production routing.
+- Verification passed with core tests 122/122, app tests 197/197, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain.
+- No active routing activation, Gemini, WhatsApp, Telegram, monitoring, secret manager, production Supabase migration, launch-gate approval, R-405 acceptance, or real-data path was connected.
+- Production pilot remains `NO-GO`.
+
+Next:
+
+- Phase 73 is complete; proceed to transactional redaction/DSAR hardening.
 
 ## Phase 71: Turkiye Official Health Source Ingestion - Completed 2026-06-07
 
@@ -43,7 +111,7 @@ Status:
 
 Next:
 
-- Implement Phase 72 Regulation Permission Graph only after legal/privacy and clinical interpretation inputs are supplied.
+- Phase 72 is complete; proceed to Phase 73 calibration only after reviewer inputs are supplied.
 
 ## Phase 70: User-Supplied Form Hardening - Completed 2026-06-07
 
