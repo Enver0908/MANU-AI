@@ -15,8 +15,8 @@ Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized reference
 ## Current Baseline
 
 - Git baseline: Phase 27-29 checkpoint exists at `c75564e Add Phase 27-29 pilot readiness checkpoint` on branch `codex/phase-29-baseline-checkpoint`; Completion Roadmap Phase 1 records this as the current implementation baseline.
-- Latest local release verification: `npm run release:verify` passed on 2026-06-05 after Phase 69 direct 5,000 client scale foundation.
-- Verification result: core tests 122/122, app tests 176/176, lint passed, production build passed.
+- Latest local release verification: `npm run release:verify` passed on 2026-06-07 after Phase 71 Turkiye official health source ingestion.
+- Verification result: core tests 122/122, app tests 190/190, lint passed, production build passed.
 - Dependency audit result: only known R-405 findings, `next:postcss` and `postcss:GHSA-qx2v-qp2m-jg93`.
 - R-405 status: open production launch blocker; Phase 54 rechecked metadata on 2026-06-02 and stable `next@latest` is 16.2.7 but still bundles `postcss@8.4.31`, so no safe stable Next.js/PostCSS patch path is available.
 - R-405 remediation spec: `PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`.
@@ -58,6 +58,8 @@ Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized reference
 - Phase 67 approved source answerability spec: `PHASE_67_APPROVED_SOURCE_ANSWERABILITY_ENGINE_SPEC.md` records local green answerability gating before provider calls/sends, approved source categories, AI-generated source exclusion, and answerability audit evidence. It does not close any external launch gate, connect real providers/channels, process real data, approve production pilot launch, or resolve R-405.
 - Phase 68 green maximization intent taxonomy spec: `PHASE_68_GREEN_MAXIMIZATION_INTENT_TAXONOMY_SPEC.md` records local green intent family audit evidence and sensitive green-looking intent blocking before provider calls. It does not close any external launch gate, connect real providers/channels, process real data, approve production pilot launch, or resolve R-405.
 - Phase 69 direct 5,000 client scale foundation spec: `PHASE_69_DIRECT_5000_CLIENT_SCALE_FOUNDATION_SPEC.md` records local synthetic 100x50 fixture, pagination helper, Phase 69 read contracts, and aggregate operational-health scale evidence. It does not close any external launch gate, connect real providers/channels, process real data, approve production pilot launch, or resolve R-405.
+- Phase 70 user-supplied form hardening spec: `PHASE_70_USER_SUPPLIED_FORM_HARDENING_SPEC.md` records registry-backed dietitian/client schemas, prompt visibility and answerability metadata, autopilot qualification gates, and sanitized prompt summaries. It does not close any external launch gate, connect real providers/channels, process real data, approve production pilot launch, or resolve R-405.
+- Phase 71 Turkiye official health source ingestion spec: `PHASE_71_TURKIYE_OFFICIAL_HEALTH_SOURCE_INGESTION_SPEC.md` records the user-supplied 14-source Turkiye official source manifest and fail-closed PDF artifact intake. It does not download or parse real PDFs, approve the corpus, activate routing, close any external launch gate, connect real providers/channels, process real data, approve production pilot launch, or resolve R-405.
 
 ## Gate Closure Matrix
 
@@ -78,7 +80,7 @@ Phase 64 gate interpretation: an approval artifact can close a gate only when re
 
 Phase 65 gate interpretation: official PDF-derived evidence cannot satisfy the clinical taxonomy gate until the corpus package passes QA and an external qualified reviewer supplies structured approval evidence. QA-passing derived rules are draft-only and do not activate routing.
 
-Direct 100 dietitian gate interpretation: Phase 66 supplies local product communication covenant evidence, Phase 67 supplies local approved-source answerability evidence, Phase 68 supplies local green intent taxonomy evidence, and Phase 69 supplies local 100x50 synthetic scale evidence. Gate closure still requires accepted external review artifacts, final form/PDF approvals, full production rehearsal acceptance, and R-405 closure or acceptance before production GO.
+Direct 100 dietitian gate interpretation: Phase 66 supplies local product communication covenant evidence, Phase 67 supplies local approved-source answerability evidence, Phase 68 supplies local green intent taxonomy evidence, Phase 69 supplies local 100x50 synthetic scale evidence, Phase 70 supplies local form hardening evidence, and Phase 71 supplies local Turkiye official source manifest/intake evidence. Gate closure still requires accepted external review artifacts, final form/PDF approvals, Phase 72 permission graph approval, full production rehearsal acceptance, and R-405 closure or acceptance before production GO.
 
 ## Review Packet Checklist
 

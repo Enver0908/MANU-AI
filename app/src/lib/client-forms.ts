@@ -139,7 +139,7 @@ export function buildClientFormSummary(state: ManuAppState, clientId: string) {
     for (const field of fields) {
       const value = response.answers[field.id];
       if (value === undefined || value === null || value === "") continue;
-      const summary = sanitizePromptSummaryValue(value, field);
+      const summary = sanitizePromptSummaryValue(value);
       if (!summary) continue;
       parts.push(`${field.label}: ${summary}`);
     }

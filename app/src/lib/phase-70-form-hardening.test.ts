@@ -32,9 +32,8 @@ describe("phase 70 form hardening", () => {
   });
 
   it("sanitizes long prompt summary values", () => {
-    const field = PHASE_70_CLIENT_FIELDS.find((item) => item.id === "primary_goal")!;
     const longText = "a".repeat(300);
-    const sanitized = sanitizePromptSummaryValue(longText, field);
+    const sanitized = sanitizePromptSummaryValue(longText);
 
     expect(sanitized.length).toBeLessThanOrEqual(240);
     expect(sanitized.endsWith("...")).toBe(true);

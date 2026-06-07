@@ -18,23 +18,24 @@ Start by reading:
 2. `PROJECT_PLAN.md`
 3. `docs/NEXT_PHASE_EXECUTION_PLAN.md`
 4. `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` (current strategic roadmap)
-5. `docs/PHASE_70_USER_SUPPLIED_FORM_HARDENING_SPEC.md` (latest completed implementation phase)
-6. `docs/PHASE_69_DIRECT_5000_CLIENT_SCALE_FOUNDATION_SPEC.md`
-7. `docs/PHASE_68_GREEN_MAXIMIZATION_INTENT_TAXONOMY_SPEC.md`
-8. `docs/PHASE_67_APPROVED_SOURCE_ANSWERABILITY_ENGINE_SPEC.md`
-9. `docs/PHASE_66_PRODUCT_COMMUNICATION_COVENANT_LOCK_SPEC.md`
-10. `docs/PHASE_65_OFFICIAL_REGULATION_PDF_CORPUS_QA_SPEC.md`
-11. `docs/PHASE_64_STRUCTURED_LAUNCH_GATE_EVIDENCE_ENGINE_SPEC.md`
-12. `docs/PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md`
-13. `docs/PHASE_62_ARCHITECTURE_REVIEW_REMEDIATION_WAVE2_SPEC.md`
-14. `docs/PHASE_61_SCOPE_GUARD_RAG_SECOND_LAYER_SPEC.md`
-15. `docs/RISK_REGISTER.md`
-16. `docs/DATA_INVENTORY.md`
-17. `docs/DATASET_STRATEGY.md`
-18. `docs/MOBILE_APP_STRATEGY.md`
-19. `dietitian-ai-assistant/README.md`
-20. `dietitian-ai-assistant/docs/architecture.md`
-21. `dietitian-ai-assistant/docs/data-model.sql`
+5. `docs/PHASE_71_TURKIYE_OFFICIAL_HEALTH_SOURCE_INGESTION_SPEC.md` (latest completed implementation phase)
+6. `docs/PHASE_70_USER_SUPPLIED_FORM_HARDENING_SPEC.md`
+7. `docs/PHASE_69_DIRECT_5000_CLIENT_SCALE_FOUNDATION_SPEC.md`
+8. `docs/PHASE_68_GREEN_MAXIMIZATION_INTENT_TAXONOMY_SPEC.md`
+9. `docs/PHASE_67_APPROVED_SOURCE_ANSWERABILITY_ENGINE_SPEC.md`
+10. `docs/PHASE_66_PRODUCT_COMMUNICATION_COVENANT_LOCK_SPEC.md`
+11. `docs/PHASE_65_OFFICIAL_REGULATION_PDF_CORPUS_QA_SPEC.md`
+12. `docs/PHASE_64_STRUCTURED_LAUNCH_GATE_EVIDENCE_ENGINE_SPEC.md`
+13. `docs/PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md`
+14. `docs/PHASE_62_ARCHITECTURE_REVIEW_REMEDIATION_WAVE2_SPEC.md`
+15. `docs/PHASE_61_SCOPE_GUARD_RAG_SECOND_LAYER_SPEC.md`
+16. `docs/RISK_REGISTER.md`
+17. `docs/DATA_INVENTORY.md`
+18. `docs/DATASET_STRATEGY.md`
+19. `docs/MOBILE_APP_STRATEGY.md`
+20. `dietitian-ai-assistant/README.md`
+21. `dietitian-ai-assistant/docs/architecture.md`
+22. `dietitian-ai-assistant/docs/data-model.sql`
 
 ## User's Product Goal
 
@@ -69,9 +70,11 @@ The product must be both:
 
 Post-Phase 69 baseline: the direct 100-dietitian strategic completion plan in `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` remains canonical. It locks the production pilot target to direct 100 dietitians x 50 clients (minimum 5,000 clients), with no small production ring. It also locks the product communication covenant: client-facing output must never disclose AI identity or tell the client to ask a doctor/dietitian/professional, yellow/red paths send no client-facing AI boundary reply, and green maximization must come from approved source-backed answerability plus deterministic green intent taxonomy rather than answering risky messages.
 
-Next implementation phase is Phase 71 Official Regulation PDF Ingestion, but only after the user supplies official regulation PDFs. Do not ingest or approve real PDF corpus without the user's documents.
+Next implementation phase is Phase 72 Regulation Permission Graph, but only after legal/privacy and clinical interpretation inputs are supplied. Do not activate official source-derived routing or approve any corpus without Phase 72 permission graph plus external legal/clinical approval.
 
-Phase 70 user-supplied form hardening is the latest completed implementation wave (2026-06-07): app `phase-70-form-registry.ts` now holds the user-supplied dietitian/client field registry with prompt-access, answerability-role, and privacy metadata; published local client/dietitian schemas and seed responses back demo autopilot qualification; `phase-70-form-hardening.ts` enforces minimum autopilot client field completeness and sanitized prompt summaries; simulator preflight blocks incomplete/not-qualified autopilot clients before provider calls. Production pilot remains `NO-GO`.
+Phase 71 Turkiye official health source ingestion is the latest completed implementation wave (2026-06-07): app `phase-71-turkiye-official-sources.ts` now holds the user-supplied 14-source Turkiye official source manifest with P0/P1/P2 priorities, critical sections, and green/yellow/red impact notes. It adds fail-closed artifact intake into the Phase 65 QA contract; metadata-only sources do not pass QA, unknown artifacts fail, and QA-passing derived rules remain draft-only. Verification passed with core tests 122/122, app tests 190/190, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain. Production pilot remains `NO-GO`.
+
+Phase 70 user-supplied form hardening completed on 2026-06-07: app `phase-70-form-registry.ts` now holds the user-supplied dietitian/client field registry with prompt-access, answerability-role, and privacy metadata; published local client/dietitian schemas and seed responses back demo autopilot qualification; `phase-70-form-hardening.ts` enforces minimum autopilot client field completeness and sanitized prompt summaries; simulator preflight blocks incomplete/not-qualified autopilot clients before provider calls. Production pilot remains `NO-GO`.
 
 Phase 69 direct 5,000 client scale foundation completed on 2026-06-05: app `direct-pilot-scale-readiness.ts` now provides a synthetic 100 dietitian x 50 client fixture, cursor pagination helper, readiness evaluator, and scale target constants. Scale-critical read contracts are marked with `phase69_paginated_contract`, and operational health carries aggregate direct-pilot scale readiness fields. Production pilot remains `NO-GO`.
 

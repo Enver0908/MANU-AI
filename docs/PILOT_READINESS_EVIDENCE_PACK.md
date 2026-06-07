@@ -18,10 +18,10 @@ Run from `app`:
 npm run release:verify
 ```
 
-Latest result, re-verified on 2026-06-05 after Phase 69 direct 5,000 client scale foundation:
+Latest result, re-verified on 2026-06-07 after Phase 71 Turkiye official health source ingestion:
 
 - Core package tests: 122/122 passed.
-- App tests: 176/176 passed.
+- App tests: 190/190 passed.
 - App lint: passed.
 - Production build: passed.
 - Production dependency audit gate: passed with only documented R-405 findings.
@@ -33,6 +33,8 @@ Latest result, re-verified on 2026-06-05 after Phase 69 direct 5,000 client scal
 - Phase 67 adds local approved source answerability gating before green provider calls/sends. No real provider/channel/data path was connected and no gate was closed.
 - Phase 68 adds local green intent taxonomy evidence and sensitive green-looking intent blocking before provider calls. No real provider/channel/data path was connected and no gate was closed.
 - Phase 69 adds local synthetic 100 dietitian x 50 client scale evidence, pagination/read-contract evidence, and aggregate operational-health scale signals. No real provider/channel/data path was connected and no gate was closed.
+- Phase 70 adds local user-supplied form hardening with registry-backed schemas, prompt visibility metadata, answerability roles, and autopilot qualification gates. No real provider/channel/data path was connected and no gate was closed.
+- Phase 71 adds the user-supplied 14-source Turkiye official health source manifest and fail-closed artifact intake into the Phase 65 QA contract. No real PDF was downloaded or parsed, no corpus was approved, no active routing changed, and no gate was closed.
 - Post-Phase 65 strategic plan `DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` locks the production target to direct 100 dietitians x 50 clients, requires approved-source answerability before form/PDF/provider/channel phases, and keeps production pilot `NO-GO`.
 
 Additional Phase 50 production Supabase hardening evidence on 2026-06-02:

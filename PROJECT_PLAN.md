@@ -1244,7 +1244,7 @@ These defaults remove planning ambiguity. They can change only through an explic
 
 ## 14. Recommended Next Action
 
-Current baseline override (2026-06-05): Continue from Phase 69 direct 5,000 client scale foundation. Local baseline is core tests 122/122, app tests 176/176, `npm run release:verify` passed with only documented R-405 findings, production pilot `NO-GO`, all eight launch gates open, and R-405 open. The next engineering phase is Phase 70 User-Supplied Form Hardening after final forms are supplied.
+Current baseline override (2026-06-07): Continue from Phase 71 Turkiye official health source ingestion. Local baseline is core tests 122/122, app tests 190/190, `npm run release:verify` passed with only documented R-405 findings, production pilot `NO-GO`, all eight launch gates open, and R-405 open. The next engineering phase is Phase 72 Regulation Permission Graph after legal/privacy and clinical interpretation inputs are supplied.
 
 Historical Phase 65 baseline: official regulation PDF corpus QA foundation completed on 2026-06-04 with core tests 114/114 and app tests 166/166. It remains draft-only for official PDF-derived rules until user-supplied PDFs and structured legal/clinical approval evidence arrive. R-406 is mitigated for the Phase 50-52 baseline (`npm run test:rls` passed 19/19 on 2026-06-02); re-run RLS after Docker/local Supabase is available if Phase 57 or Phase 61 `scope_*` migration evidence is needed.
 
@@ -1266,9 +1266,13 @@ Phase 68 implements green maximization intent taxonomy: green source-backed requ
 
 Phase 69 implements direct 5,000 client scale foundation: synthetic 100 dietitian x 50 client fixture evidence, cursor pagination helpers, Phase 69 read contracts for dashboard/internal-copilot/client create/client patch paths, and aggregate operational-health scale readiness. This does not approve production launch, implement production UI pagination, add production Supabase migrations, or connect real providers/channels.
 
+Phase 70 implements user-supplied form hardening: registry-backed dietitian/client schemas, prompt visibility and answerability metadata, autopilot qualification gates, and sanitized prompt summaries. This does not approve production launch, add production Supabase dietitian-form migrations, or connect real providers/channels.
+
+Phase 71 implements Turkiye official health source ingestion: the user-supplied 14-source Turkiye official source pack is represented as a canonical local manifest with P0/P1/P2 priorities, critical sections, official URLs, and green/yellow/red impact notes. Artifact intake remains fail-closed through the Phase 65 QA contract; no real PDFs are downloaded or parsed, metadata-only packs do not pass QA, and QA-passing derived rules remain draft-only until Phase 72 permission graph plus external legal/clinical approval.
+
 Post-Phase 65 strategic plan: `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` locks direct production pilot to 100 dietitians x 50 clients (minimum 5,000 clients), no small production ring, no client-facing AI self-disclosure, no doctor/dietitian/professional referral language, no yellow/red client-facing AI boundary reply, and green maximization through approved source-backed answerability plus deterministic intent taxonomy.
 
-Next engineering work: Phase 70 user-supplied form schema hardening after final forms are supplied, official PDF ingestion after PDFs are supplied, regulation permission graph, calibration, transactional redaction/DSAR, Gemini, WhatsApp, production ops, R-405 closure, full 100x50 rehearsal, and structured launch-gate evidence collection via `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md`. Do not connect real providers/channels or resolve R-405 outside `docs/PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`.
+Next engineering work: Phase 72 regulation permission graph after legal/privacy and clinical interpretation inputs are supplied, calibration, transactional redaction/DSAR, Gemini, WhatsApp, production ops, R-405 closure, full 100x50 rehearsal, and structured launch-gate evidence collection via `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md`. Do not connect real providers/channels or resolve R-405 outside `docs/PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`.
 
 Phase 23 adds a stricter AI context foundation: provider calls must use a bounded `PromptContext`, context manifests must exclude raw text, missing historical context must fail closed with `[ERROR: missing_historical_context]`, and `send_status="send_blocked"` must route the conversation to dietitian takeover instead of sending or drafting to the client.
 

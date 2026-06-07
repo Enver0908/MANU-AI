@@ -22,7 +22,7 @@ export function isPromptVisibleField(field: ClientFormFieldDefinition) {
   return promptAccess === "prompt_allowed";
 }
 
-export function sanitizePromptSummaryValue(value: unknown, _field: ClientFormFieldDefinition) {
+export function sanitizePromptSummaryValue(value: unknown) {
   const text = Array.isArray(value) ? value.join(", ") : String(value ?? "").trim();
   if (!text) return "";
   const sanitized = text.replace(/\s+/g, " ");
