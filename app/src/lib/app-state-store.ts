@@ -1,7 +1,8 @@
 import { createBlankClient, createInitialState } from "./seed-data";
 import { AppDomainError } from "./app-errors";
 import { normalizeE164Phone, normalizeLanguageCode } from "./languages";
-import { anonymizeClientInState, buildClientScopedExport, recordClientExportInState, removeClientInState } from "./data-governance";
+import { buildClientScopedExport, recordClientExportInState } from "./data-governance";
+import { applyPhase74TransactionalRedactionInState } from "./phase-74-data-lifecycle-policy";
 import {
   createClientFormSchemaInState,
   publishClientFormSchemaInState,
@@ -127,11 +128,11 @@ export function recordClientExportRequestInState(state: ManuAppState, clientId: 
 }
 
 export function anonymizeClientDataInState(state: ManuAppState, clientId: string) {
-  return anonymizeClientInState(state, clientId);
+  return applyPhase74TransactionalRedactionInState(state, clientId, "anonymization").state;
 }
 
 export function removeClientDataInState(state: ManuAppState, clientId: string) {
-  return removeClientInState(state, clientId);
+  return applyPhase74TransactionalRedactionInState(state, clientId, "deletion").state;
 }
 
 export async function simulateInState(state: ManuAppState, request: SimulationRequest) {

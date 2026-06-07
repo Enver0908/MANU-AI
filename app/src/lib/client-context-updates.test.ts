@@ -62,7 +62,7 @@ describe("client context updates", () => {
 
     const anonymized = anonymizeClientInState(state, "client-mert");
     const update = anonymized.clientContextUpdates[0];
-    expect(update.title).toBe("[client data anonymized]");
+    expect(update.title).toBe("REDACTED_BY_PHASE74_POLICY");
     expect(update.details).toBe("");
     expect(update.status).toBe("superseded");
   });

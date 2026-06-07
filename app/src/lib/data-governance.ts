@@ -1,6 +1,8 @@
 import { emptySafetyChecklist } from "./safety-checklist";
 import { redactClientContextUpdatesForAnonymization } from "./client-context-updates";
 import { AppDomainError } from "./app-errors";
+
+export const PHASE_74_REDACTION_MARKER = "REDACTED_BY_PHASE74_POLICY";
 import type {
   AiDecisionRecord,
   AuditEventRecord,
@@ -162,7 +164,7 @@ function redactClientDataInState(
       conversationIds.has(message.conversationId)
         ? {
             ...message,
-            body: "[client data anonymized]",
+            body: PHASE_74_REDACTION_MARKER,
             sourceMessageId: null,
             generatedByAiDecisionId: null,
             approvedByDietitianId: null,
@@ -175,12 +177,12 @@ function redactClientDataInState(
         ? {
             ...response,
             submittedPhoneE164: null,
-            answers: { redacted: "[client data anonymized]" },
+            answers: { redacted: PHASE_74_REDACTION_MARKER },
             schemaSnapshot: {
               ...response.schemaSnapshot,
               fields: response.schemaSnapshot.fields.map((field) => ({
                 ...field,
-                label: "[client data anonymized]",
+                label: PHASE_74_REDACTION_MARKER,
                 options: field.options ? [] : field.options,
               })),
             },
@@ -212,8 +214,8 @@ function redactClientDataInState(
         ? {
             ...handoff,
             reasons: ["client_data_anonymized"],
-            safeAcknowledgement: "[client data anonymized]",
-            recommendedAction: "[client data anonymized]",
+            safeAcknowledgement: PHASE_74_REDACTION_MARKER,
+            recommendedAction: PHASE_74_REDACTION_MARKER,
           }
         : handoff,
     ),
@@ -317,7 +319,7 @@ function anonymizeClient(client: ClientRecord, removed: boolean, now: string): C
     channelPermission: "blocked",
     mandatorySafetyComplete: false,
     safetyChecklist: emptySafetyChecklist(),
-    humanTakeoverLocked: false,
+    humanTakeoverLocked: true,
     redRiskLock: { status: "none" },
   };
 }

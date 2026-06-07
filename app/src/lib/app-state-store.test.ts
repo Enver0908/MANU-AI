@@ -318,7 +318,7 @@ describe("app state store operations", () => {
     expect(client?.channelPermission).toBe("blocked");
     expect(client?.aiStatus).toBe("passive");
     expect(conversation?.rollingSummary).toBe("");
-    expect(promptableMessages.every((message) => message.body === "[client data anonymized]")).toBe(true);
+    expect(promptableMessages.every((message) => message.body === "REDACTED_BY_PHASE74_POLICY")).toBe(true);
     expect(next.auditEvents.some((event) => event.eventType === "client_data_anonymized")).toBe(true);
     expect(next.dataRequests).toHaveLength(1);
     expect(next.dataRequests[0]).toMatchObject({
@@ -362,13 +362,13 @@ describe("app state store operations", () => {
     expect(client?.removedAt).toEqual(expect.any(String));
     expect(conversation?.rollingSummary).toBe("");
     expect(removed.messages.filter((message) => message.conversationId === conversation?.id)).toEqual(
-      expect.arrayContaining([expect.objectContaining({ body: "[client data anonymized]" })]),
+      expect.arrayContaining([expect.objectContaining({ body: "REDACTED_BY_PHASE74_POLICY" })]),
     );
     expect(removed.clientFormResponses[0]).toMatchObject({
       submittedPhoneE164: null,
-      answers: { redacted: "[client data anonymized]" },
+      answers: { redacted: "REDACTED_BY_PHASE74_POLICY" },
     });
-    expect(bundle.clientFormResponses[0].answers).toEqual({ redacted: "[client data anonymized]" });
+    expect(bundle.clientFormResponses[0].answers).toEqual({ redacted: "REDACTED_BY_PHASE74_POLICY" });
     expect(removed.dataRequests.at(-1)).toMatchObject({
       clientId: "client-mert",
       requestType: "deletion",

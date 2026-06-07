@@ -1,4 +1,5 @@
 import { AppDomainError } from "./app-errors";
+import { PHASE_74_REDACTION_MARKER } from "./data-governance";
 import type {
   ClientContextUpdateImportance,
   ClientContextUpdateRecord,
@@ -101,8 +102,8 @@ export function redactClientContextUpdatesForAnonymization(state: ManuAppState, 
       update.clientId === clientId
         ? {
             ...update,
-            title: "[client data anonymized]",
-            summary: "[client data anonymized]",
+            title: PHASE_74_REDACTION_MARKER,
+            summary: PHASE_74_REDACTION_MARKER,
             details: "",
             status: "superseded" as const,
           }
