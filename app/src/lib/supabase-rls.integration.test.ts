@@ -875,7 +875,10 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
       clientId: copilotClient!.id,
       schemaId: schema!.id,
       submittedPhoneE164: copilotClient!.primaryPhoneE164,
-      answers: { daily_routine: "Updated routine for transactional RPC test." },
+      answers: {
+        ...(await import("./phase-70-seed-answers")).buildPhase70QualifiedClientAnswers(),
+        work_school_schedule: "Updated routine for transactional RPC test.",
+      },
     });
 
     const blockedDraft = await admin.from("messages").select("status").eq("id", draft!.id).single();

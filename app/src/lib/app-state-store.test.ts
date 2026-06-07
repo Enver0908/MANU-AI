@@ -17,6 +17,7 @@ import {
 } from "./app-state-store";
 import { RETENTION_POLICY_PLACEHOLDERS } from "./data-governance";
 import { createInitialState, DEMO_FORM_SCHEMA_ID } from "./seed-data";
+import { buildPhase70QualifiedClientAnswers } from "./phase-70-seed-answers";
 
 describe("app state store operations", () => {
   it("creates a client with a conversation", () => {
@@ -333,8 +334,9 @@ describe("app state store operations", () => {
       schemaId: DEMO_FORM_SCHEMA_ID,
       submittedPhoneE164: "+905551110001",
       answers: {
-        daily_routine: "I eat breakfast at 8 with health details.",
-        private_note: "Sensitive private note.",
+        ...buildPhase70QualifiedClientAnswers(),
+        primary_goal: "I eat breakfast at 8 with health details.",
+        dietitian_only_notes: "Sensitive private note.",
       },
     });
     const withMessage = await simulateInState(withFormResponse, {

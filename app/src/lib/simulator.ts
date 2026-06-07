@@ -11,6 +11,7 @@ import {
 } from "./ai-provider";
 import { buildClientContextUpdateSummary } from "./client-context-updates";
 import { buildClientFormSummary } from "./client-forms";
+import { evaluateClientAutopilotQualification } from "./phase-70-form-hardening";
 import { getActiveVoiceProfile } from "./voice-profile-workflow";
 import { getMissingSafetyChecklistItems, isSafetyChecklistComplete } from "./safety-checklist";
 import { AppDomainError } from "./app-errors";
@@ -148,7 +149,7 @@ export async function runInboundSimulation(
     yellowHoldAtInbound?.activeDraftMessageId ? [yellowHoldAtInbound.activeDraftMessageId] : [],
   );
 
-  const preflightBlock = getPreflightBlock(client);
+  const preflightBlock = getPreflightBlock(stateAfterInboundInvalidation, client);
   if (preflightBlock) {
     return appendBlockedSimulationResult({
       state: stateAfterInboundInvalidation,
@@ -1270,11 +1271,28 @@ function buildRiskAssessment({
   };
 }
 
-function getPreflightBlock(client: ClientRecord): { blockedReason: string; reasons: string[] } | null {
-  return evaluateInboundPreflight(client, {
+function getPreflightBlock(
+  state: ManuAppState,
+  client: ClientRecord,
+): { blockedReason: string; reasons: string[] } | null {
+  const baseBlock = evaluateInboundPreflight(client, {
     safetyChecklistComplete: client.mandatorySafetyComplete && isSafetyChecklistComplete(client),
     missingSafetyChecklistItems: getMissingSafetyChecklistItems(client),
   });
+  if (baseBlock) return baseBlock;
+
+  if (client.aiMode !== "autopilot" || client.aiStatus !== "active") return null;
+
+  const qualification = evaluateClientAutopilotQualification(state, client.id);
+  if (qualification.status === "qualified") return null;
+
+  return {
+    blockedReason:
+      qualification.status === "not_qualified"
+        ? "autopilot_not_qualified"
+        : "autopilot_qualification_incomplete",
+    reasons: qualification.missing,
+  };
 }
 
 function buildDecision({

@@ -420,6 +420,8 @@ export async function loadSupabaseState(context = demoTenantContext()) {
       voiceProfiles: (voiceProfilesResult.data || []).map(mapVoiceProfile),
       clientFormSchemas: (formSchemasResult.data || []).map(mapFormSchema),
       clientFormResponses: (formResponsesResult.data || []).map(mapFormResponse),
+      dietitianFormSchemas: [],
+      dietitianFormResponses: [],
       clientContextUpdates: (clientContextUpdatesResult.data || []).map(mapClientContextUpdate),
       clients: (clientsResult.data || []).map((client) => mapClient(client, channels)),
       conversations: (conversationsResult.data || []).map((conversation) =>
@@ -639,6 +641,8 @@ async function loadSupabaseClientOperationState(
       voiceProfiles: (voiceProfilesResult.data || []).map(mapVoiceProfile),
       clientFormSchemas: (requiredFormSchemaResult.data || []).map(mapFormSchema),
       clientFormResponses: (formResponsesResult.data || []).map(mapFormResponse),
+      dietitianFormSchemas: [],
+      dietitianFormResponses: [],
       clientContextUpdates: (clientContextUpdatesResult.data || []).map(mapClientContextUpdate),
       clients: [mapClient(clientResult.data, channels)],
       conversations: (conversationsResult.data || []).map((conversation) => mapConversation(conversation, memories)),
@@ -2175,6 +2179,13 @@ function remapSeedIds(state: ManuAppState): ManuAppState {
       ...response,
       tenantId: DEMO_TENANT_UUID,
       clientId: clientMap.get(response.clientId) || response.clientId,
+      schemaSnapshot: { ...response.schemaSnapshot, tenantId: DEMO_TENANT_UUID },
+    })),
+    dietitianFormSchemas: state.dietitianFormSchemas.map((schema) => ({ ...schema, tenantId: DEMO_TENANT_UUID })),
+    dietitianFormResponses: state.dietitianFormResponses.map((response) => ({
+      ...response,
+      tenantId: DEMO_TENANT_UUID,
+      dietitianId: DEMO_DIETITIAN_UUID,
       schemaSnapshot: { ...response.schemaSnapshot, tenantId: DEMO_TENANT_UUID },
     })),
     clientContextUpdates: state.clientContextUpdates.map((update) => ({

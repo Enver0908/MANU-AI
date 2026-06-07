@@ -3,10 +3,15 @@ import { createPlaceholderScopeRules } from "./scope-corpus";
 import type { ClientRecord, ConversationRecord, ManuAppState, MessageRecord } from "./types";
 import { completeSafetyChecklist, emptySafetyChecklist } from "./safety-checklist";
 import { DEFAULT_LANGUAGE } from "./languages";
+import {
+  DEMO_DIETITIAN_FORM_SCHEMA_ID,
+  buildPhase70SeedFormBundle,
+} from "./phase-70-seed-answers";
 
 export const DEMO_TENANT_ID = "tenant-manu-demo";
 export const DEMO_DIETITIAN_ID = "dietitian-ayse";
 export const DEMO_FORM_SCHEMA_ID = "00000000-0000-4000-8000-000000000501";
+export { DEMO_DIETITIAN_FORM_SCHEMA_ID };
 
 const createdAt = "2026-05-22T09:00:00.000Z";
 
@@ -153,6 +158,15 @@ export function createInitialState(): ManuAppState {
     memoryStale: false,
   }));
 
+  const phase70Forms = buildPhase70SeedFormBundle({
+    tenantId: DEMO_TENANT_ID,
+    clientSchemaId: DEMO_FORM_SCHEMA_ID,
+    dietitianSchemaId: DEMO_DIETITIAN_FORM_SCHEMA_ID,
+    clientId: "client-mert",
+    dietitianId: DEMO_DIETITIAN_ID,
+    createdAt,
+  });
+
   const messages: MessageRecord[] = [
     {
       id: "message-seed-1",
@@ -194,35 +208,10 @@ export function createInitialState(): ManuAppState {
     },
     voiceSamples: [],
     voiceProfiles: [],
-    clientFormSchemas: [
-      {
-        id: DEMO_FORM_SCHEMA_ID,
-        tenantId: DEMO_TENANT_ID,
-        title: "Pilot intake",
-        languageCode: DEFAULT_LANGUAGE,
-        version: 1,
-        status: "published",
-        fields: [
-          {
-            id: "daily_routine",
-            label: "Daily routine",
-            type: "textarea",
-            required: false,
-            llmVisibility: "prompt_allowed",
-          },
-          {
-            id: "private_note",
-            label: "Private note",
-            type: "textarea",
-            required: false,
-            llmVisibility: "never",
-          },
-        ],
-        createdAt,
-        publishedAt: createdAt,
-      },
-    ],
-    clientFormResponses: [],
+    clientFormSchemas: [phase70Forms.clientSchema],
+    clientFormResponses: [phase70Forms.clientResponse],
+    dietitianFormSchemas: [phase70Forms.dietitianSchema],
+    dietitianFormResponses: [phase70Forms.dietitianResponse],
     clientContextUpdates: [],
     clients,
     conversations,

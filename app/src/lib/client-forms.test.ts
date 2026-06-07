@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createInitialState } from "./seed-data";
+import { buildPhase70QualifiedClientAnswers } from "./phase-70-seed-answers";
 import {
   buildClientFormSummary,
   createClientFormSchemaInState,
@@ -42,7 +43,9 @@ describe("dynamic client forms", () => {
     const schema = state.clientFormSchemas.find((item) => item.status === "published");
 
     state = saveClientFormResponseInState(state, "client-elif", schema?.id || "", {
-      daily_routine: "Works late.",
+      ...buildPhase70QualifiedClientAnswers(),
+      ai_mode: "copilot",
+      work_school_schedule: "Works late.",
     });
 
     expect(state.messages.find((message) => message.id === draft?.id)?.status).toBe("blocked");
@@ -60,7 +63,7 @@ describe("dynamic client forms", () => {
         state,
         "client-mert",
         schema?.id || "",
-        { daily_routine: "Works late." },
+        { ...buildPhase70QualifiedClientAnswers(), primary_goal: "Updated goal summary." },
         new Date().toISOString(),
         { submittedPhoneE164: "+905551110099" },
       ),

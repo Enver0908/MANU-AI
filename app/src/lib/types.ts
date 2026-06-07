@@ -29,6 +29,20 @@ export type VoiceProfileStatus = "default" | "generated" | "needs_samples";
 export type FormSchemaStatus = "draft" | "published" | "archived";
 export type FormFieldType = "text" | "textarea" | "number" | "boolean" | "select" | "multiselect" | "date";
 export type FormFieldLlmVisibility = "never" | "prompt_allowed";
+export type FormFieldPromptAccess =
+  | "prompt_allowed"
+  | "dietitian_only"
+  | "sensitive_never_prompt"
+  | "system_rule";
+export type FormFieldAnswerabilityRole =
+  | "none"
+  | "answerability_source"
+  | "risk_modifier"
+  | "logistics_only"
+  | "policy_source";
+export type FormFieldPrivacySensitivity = "low" | "medium" | "high" | "critical";
+export type FormFieldClinicalSensitivity = "none" | "risk_modifier" | "critical";
+export type AutopilotQualificationStatus = "qualified" | "incomplete" | "not_qualified";
 export type ClientContextUpdateSource = "phone" | "zoom" | "in_person" | "other";
 export type ClientContextUpdateImportance = "routine" | "important" | "critical";
 export type ClientContextUpdateStatus = "active" | "superseded";
@@ -90,6 +104,11 @@ export type ClientFormFieldDefinition = {
   required: boolean;
   options?: string[];
   llmVisibility: FormFieldLlmVisibility;
+  promptAccess?: FormFieldPromptAccess;
+  answerabilityRole?: FormFieldAnswerabilityRole;
+  privacySensitivity?: FormFieldPrivacySensitivity;
+  clinicalSensitivity?: FormFieldClinicalSensitivity;
+  section?: string;
 };
 
 export type ClientFormSchemaRecord = {
@@ -102,6 +121,22 @@ export type ClientFormSchemaRecord = {
   fields: ClientFormFieldDefinition[];
   createdAt: string;
   publishedAt: string | null;
+  registryVersion?: string | null;
+};
+
+export type DietitianFormSchemaRecord = ClientFormSchemaRecord;
+
+export type DietitianFormResponseRecord = {
+  id: string;
+  tenantId: string;
+  dietitianId: string;
+  schemaId: string;
+  schemaVersion: number;
+  schemaSnapshot: DietitianFormSchemaRecord;
+  languageCode: SupportedLanguageCode;
+  answers: Record<string, unknown>;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type ClientFormResponseRecord = {
@@ -435,6 +470,8 @@ export type ManuAppState = {
   voiceProfiles: DietitianVoiceProfileRecord[];
   clientFormSchemas: ClientFormSchemaRecord[];
   clientFormResponses: ClientFormResponseRecord[];
+  dietitianFormSchemas: DietitianFormSchemaRecord[];
+  dietitianFormResponses: DietitianFormResponseRecord[];
   clientContextUpdates: ClientContextUpdateRecord[];
   clients: ClientRecord[];
   conversations: ConversationRecord[];

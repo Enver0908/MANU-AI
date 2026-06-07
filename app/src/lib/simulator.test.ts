@@ -42,14 +42,21 @@ describe("local inbound simulator", () => {
   });
 
   it("blocks green autopilot messages when approved sources are missing", async () => {
-    const state = updateClientInState(createInitialState(), "client-mert", {
-      dietPlan: { summary: "" },
-      allergies: [],
-      restrictedFoods: [],
-      pinnedNotes: [],
-      clientFormSummary: "",
-      contextUpdates: [],
-    });
+    const state = updateClientInState(
+      {
+        ...createInitialState(),
+        clientFormResponses: [],
+      },
+      "client-mert",
+      {
+        dietPlan: { summary: "" },
+        allergies: [],
+        restrictedFoods: [],
+        pinnedNotes: [],
+        clientFormSummary: "",
+        contextUpdates: [],
+      },
+    );
 
     const next = await runInboundSimulation(state, {
       clientId: "client-mert",
@@ -58,17 +65,12 @@ describe("local inbound simulator", () => {
       now: "2026-05-22T10:00:05.000Z",
     });
 
-    expect(next.lastSimulation?.action).toBe("handoff");
-    expect(next.lastSimulation?.blockedReason).toBe("approved_source_answerability_missing");
+    expect(next.lastSimulation?.action).toBe("no_ai");
+    expect(next.lastSimulation?.blockedReason).toBe("autopilot_qualification_incomplete");
+    expect(next.lastSimulation?.reasons).toContain("published_client_form_response_missing");
     expect(countGeneratedMessages(next)).toBe(countGeneratedMessages(state));
     expect(next.aiDecisions.at(-1)?.providerAttempted).toBe(false);
     expect(next.aiDecisions.at(-1)?.model).toBeNull();
-    expect(next.aiDecisions.at(-1)?.contextManifest).toMatchObject({
-      answerability: {
-        decision: "handoff_required",
-        sourceCategories: [],
-      },
-    });
   });
 
   it("uses the dietitian-selected client conversation language for AI replies", async () => {

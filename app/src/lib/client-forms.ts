@@ -1,4 +1,5 @@
 import { AppDomainError } from "./app-errors";
+import { isPromptVisibleField, sanitizePromptSummaryValue } from "./phase-70-form-hardening";
 import type {
   ClientFormFieldDefinition,
   ClientFormResponseRecord,
@@ -134,11 +135,13 @@ export function buildClientFormSummary(state: ManuAppState, clientId: string) {
   const parts: string[] = [];
 
   for (const response of responses) {
-    const fields = response.schemaSnapshot.fields.filter((field) => field.llmVisibility === "prompt_allowed");
+    const fields = response.schemaSnapshot.fields.filter((field) => isPromptVisibleField(field));
     for (const field of fields) {
       const value = response.answers[field.id];
       if (value === undefined || value === null || value === "") continue;
-      parts.push(`${field.label}: ${formatAnswer(value)}`);
+      const summary = sanitizePromptSummaryValue(value, field);
+      if (!summary) continue;
+      parts.push(`${field.label}: ${summary}`);
     }
   }
 
@@ -176,15 +179,16 @@ function normalizeField(field: ClientFormFieldDefinition): ClientFormFieldDefini
     required: Boolean(field.required),
     options: field.options?.map((option) => option.trim()).filter(Boolean),
     llmVisibility: field.llmVisibility === "prompt_allowed" ? "prompt_allowed" : "never",
+    promptAccess: field.promptAccess,
+    answerabilityRole: field.answerabilityRole,
+    privacySensitivity: field.privacySensitivity,
+    clinicalSensitivity: field.clinicalSensitivity,
+    section: field.section?.trim(),
   };
 }
 
 function nextSchemaVersion(state: ManuAppState) {
   return Math.max(0, ...state.clientFormSchemas.map((schema) => schema.version)) + 1;
-}
-
-function formatAnswer(value: unknown) {
-  return Array.isArray(value) ? value.join(", ") : String(value);
 }
 
 function buildAudit(

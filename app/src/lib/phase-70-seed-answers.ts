@@ -1,0 +1,162 @@
+import type { ClientFormFieldDefinition, ClientFormResponseRecord, DietitianFormResponseRecord } from "./types";
+import {
+  buildPhase70ClientFormSchema,
+  buildPhase70DietitianFormSchema,
+  PHASE_70_CLIENT_FIELDS,
+  PHASE_70_MINIMUM_AUTOPILOT_CLIENT_FIELD_IDS,
+} from "./phase-70-form-registry";
+
+export const DEMO_DIETITIAN_FORM_SCHEMA_ID = "00000000-0000-4000-8000-000000000502";
+
+function defaultAnswerForField(field: ClientFormFieldDefinition) {
+  if (field.options?.length) {
+    if (field.type === "multiselect") return [field.options[0]];
+    return field.options[0];
+  }
+  if (field.type === "number") return 1;
+  if (field.type === "date") return "2026-05-22";
+  if (field.type === "boolean") return true;
+  return `demo-${field.id}`;
+}
+
+export function buildPhase70DemoClientAnswers(overrides: Record<string, unknown> = {}) {
+  const answers: Record<string, unknown> = {};
+  for (const field of PHASE_70_CLIENT_FIELDS) {
+    if (!field.required) continue;
+    answers[field.id] = defaultAnswerForField(field);
+  }
+
+  return {
+    ...answers,
+    adult_status: "Adult",
+    communication_language: "TR",
+    timezone: "Europe/Istanbul",
+    channel_permission_state: "ready",
+    sensitive_data_consent_status: "approved",
+    form_prompt_visibility_ack: "Evet",
+    primary_goal: "Fat loss with steady meal adherence",
+    active_diet_plan_summary: "Three meals, one planned snack, no peanut suggestions.",
+    meal_plan_slots: "Breakfast: eggs and greens. Lunch: grilled chicken salad. Dinner: vegetable soup.",
+    allowed_substitutions: "Egg swaps to lor cheese when needed.",
+    allergies: "peanut",
+    restricted_foods_medical: "None beyond allergy list.",
+    diagnosed_condition_flag: "Hayir",
+    diabetes_or_glucose_flag: "Hayir",
+    medication_or_insulin_flag: "Hayir",
+    supplement_flag: "Hayir",
+    pregnancy_or_breastfeeding_flag: "Hayir",
+    eating_disorder_risk_flag: "Hayir",
+    recent_symptom_flag: "Hayir",
+    ai_status: "active",
+    ai_mode: "autopilot",
+    safety_checklist_complete: "Evet",
+    client_display_name: "Mert Kaya",
+    date_of_birth_or_age_band: "25-34",
+    opt_in_timestamp: "2026-05-22",
+    opt_out_preference: "Aktif",
+    emergency_contact_policy_ack: "Evet",
+    current_plan_start_date: "2026-05-22",
+    plan_version_id: "plan-v1",
+    manual_message_source_allowed: "Evet",
+    activity_level: "Orta",
+    lab_result_available: "Hayir",
+    autopilot_qualification: "Uygun",
+    human_takeover_locked: "Hayir",
+    red_risk_lock_status: "Yok",
+    yellow_risk_hold_status: "Yok",
+    ...overrides,
+  };
+}
+
+export function buildPhase70QualifiedClientAnswers() {
+  return buildPhase70DemoClientAnswers() satisfies Record<
+    (typeof PHASE_70_MINIMUM_AUTOPILOT_CLIENT_FIELD_IDS)[number],
+    string
+  >;
+}
+
+export function buildPhase70DietitianDemoAnswers() {
+  return {
+    dietitian_full_name: "Dyt. Ayse",
+    professional_title: "Diyetisyen",
+    credential_id: "demo-credential-001",
+    credential_jurisdiction: "Turkiye",
+    clinic_name: "MANU-AI Demo Clinic",
+    supported_client_languages: ["TR"],
+    default_communication_language: "TR",
+    default_persona: "Dengeli Koc",
+    emoji_policy: "Az",
+    preferred_reply_length: "Kisa",
+    formality_level: "Dengeli",
+    working_hours: "09:00-18:00 weekdays",
+    urgent_handoff_owner: "demo-handoff-owner",
+    yellow_review_sla: "2s",
+    red_response_sla: "30dk",
+    client_capacity_limit: 50,
+    autopilot_allowed_by_default: "Evet",
+    allowed_green_topics: ["Plan hatirlatma", "Lojistik", "Izinli alternatif"],
+    draft_only_topics: ["Plan degisikligi", "Supplement"],
+    never_green_topics: ["Ilac/insulin", "Acil belirti"],
+    substitution_policy: "Onayli esdeger listeden",
+    portion_change_policy: "Sadece taslak",
+    supplement_policy: "Her zaman handoff",
+    medication_policy: "Her zaman yellow/red handoff",
+    lab_result_policy: "Her zaman handoff",
+    minor_policy: "Kabul edilmez",
+    pregnancy_policy: "Manual-only",
+    eating_disorder_policy: "Handoff",
+    official_sources_acknowledged: "Evet",
+    form_prompt_approval_ack: "Evet",
+    product_covenant_ack: "Evet",
+    manual_takeover_policy_ack: "Evet",
+  };
+}
+
+export function buildPhase70SeedFormBundle(input: {
+  tenantId: string;
+  clientSchemaId: string;
+  dietitianSchemaId: string;
+  clientId: string;
+  dietitianId: string;
+  createdAt: string;
+}) {
+  const clientSchema = buildPhase70ClientFormSchema({
+    tenantId: input.tenantId,
+    schemaId: input.clientSchemaId,
+    languageCode: "tr",
+    createdAt: input.createdAt,
+  });
+  const dietitianSchema = buildPhase70DietitianFormSchema({
+    tenantId: input.tenantId,
+    schemaId: input.dietitianSchemaId,
+    languageCode: "tr",
+    createdAt: input.createdAt,
+  });
+  const clientResponse: ClientFormResponseRecord = {
+    id: "client-form-response-mert",
+    tenantId: input.tenantId,
+    clientId: input.clientId,
+    schemaId: clientSchema.id,
+    schemaVersion: clientSchema.version,
+    schemaSnapshot: clientSchema,
+    languageCode: clientSchema.languageCode,
+    submittedPhoneE164: "+905551110001",
+    answers: buildPhase70QualifiedClientAnswers(),
+    createdAt: input.createdAt,
+    updatedAt: input.createdAt,
+  };
+  const dietitianResponse: DietitianFormResponseRecord = {
+    id: "dietitian-form-response-ayse",
+    tenantId: input.tenantId,
+    dietitianId: input.dietitianId,
+    schemaId: dietitianSchema.id,
+    schemaVersion: dietitianSchema.version,
+    schemaSnapshot: dietitianSchema,
+    languageCode: dietitianSchema.languageCode,
+    answers: buildPhase70DietitianDemoAnswers(),
+    createdAt: input.createdAt,
+    updatedAt: input.createdAt,
+  };
+
+  return { clientSchema, dietitianSchema, clientResponse, dietitianResponse };
+}
