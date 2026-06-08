@@ -2,7 +2,14 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { createInitialState } from "./seed-data";
-import type { Channel, ClientRecord, ManuAppState, SimulationRequest, SupportedLanguageCode } from "./types";
+import type {
+  Channel,
+  ClientRecord,
+  ClientUpdateProposalPatch,
+  ManuAppState,
+  SimulationRequest,
+  SupportedLanguageCode,
+} from "./types";
 import type {
   ClientContextUpdateImportance,
   ClientContextUpdateSource,
@@ -200,9 +207,10 @@ export function useManuState() {
           method: "POST",
           body: JSON.stringify({ sourceText }),
         }),
-      applyClientUpdateProposal: (clientId: string, proposalId: string) =>
+      applyClientUpdateProposal: (clientId: string, proposalId: string, proposedPatches?: ClientUpdateProposalPatch[]) =>
         replaceFromApi(`/api/clients/${clientId}/update-proposals/${proposalId}/apply`, {
           method: "POST",
+          body: JSON.stringify(proposedPatches ? { proposedPatches } : {}),
         }),
       rejectClientUpdateProposal: (clientId: string, proposalId: string) =>
         replaceFromApi(`/api/clients/${clientId}/update-proposals/${proposalId}/reject`, {

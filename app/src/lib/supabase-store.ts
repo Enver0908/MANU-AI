@@ -33,7 +33,7 @@ import {
 } from "./app-state-store";
 import type { AppTenantContext } from "./auth-context";
 import type { CreateClientContextUpdateInput } from "./client-context-updates";
-import type { CreateClientUpdateProposalInput } from "./client-update-proposals";
+import type { ApplyClientUpdateProposalInput, CreateClientUpdateProposalInput } from "./client-update-proposals";
 import { AppDomainError } from "./app-errors";
 import type {
   AiDecisionRecord,
@@ -1391,10 +1391,11 @@ export async function createSupabaseClientUpdateProposal(
 export async function applySupabaseClientUpdateProposal(
   clientId: string,
   proposalId: string,
+  input: ApplyClientUpdateProposalInput = {},
   context = demoTenantContext(),
 ) {
   const before = await loadSupabaseClientOperationState(clientId, context);
-  const next = applyUpdateProposalInState(before, clientId, proposalId);
+  const next = applyUpdateProposalInState(before, clientId, proposalId, input);
   await commitStateDeltaRpc(requireSupabase(), "commit_client_context_update", before, next);
   const proposal = next.clientUpdateProposals.find((item) => item.id === proposalId);
   if (proposal) await upsertClientUpdateProposal(requireSupabase(), proposal);

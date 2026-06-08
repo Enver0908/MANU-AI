@@ -34,7 +34,7 @@ import {
 } from "./simulator";
 import type { ClientRecord, ManuAppState, SimulationRequest } from "./types";
 import type { CreateClientContextUpdateInput } from "./client-context-updates";
-import type { CreateClientUpdateProposalInput } from "./client-update-proposals";
+import type { ApplyClientUpdateProposalInput, CreateClientUpdateProposalInput } from "./client-update-proposals";
 import type { ClientFormFieldDefinition, VoiceSampleStatus } from "./types";
 
 const globalStore = globalThis as typeof globalThis & {
@@ -266,8 +266,13 @@ export function createUpdateProposalInState(
   return createClientUpdateProposalInState(state, clientId, input);
 }
 
-export function applyUpdateProposalInState(state: ManuAppState, clientId: string, proposalId: string) {
-  return applyClientUpdateProposalInState(state, clientId, proposalId);
+export function applyUpdateProposalInState(
+  state: ManuAppState,
+  clientId: string,
+  proposalId: string,
+  input?: ApplyClientUpdateProposalInput,
+) {
+  return applyClientUpdateProposalInState(state, clientId, proposalId, new Date().toISOString(), input);
 }
 
 export function rejectUpdateProposalInState(state: ManuAppState, clientId: string, proposalId: string) {

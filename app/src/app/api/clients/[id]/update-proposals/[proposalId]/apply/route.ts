@@ -11,14 +11,15 @@ import {
   isSupabaseStoreConfigured,
 } from "@/lib/supabase-store";
 
-export async function POST(_request: NextRequest, context: { params: Promise<{ id: string; proposalId: string }> }) {
+export async function POST(request: NextRequest, context: { params: Promise<{ id: string; proposalId: string }> }) {
   const { id, proposalId } = await context.params;
+  const body = await request.json().catch(() => ({}));
 
   if (isSupabaseStoreConfigured()) {
     try {
       const tenantContext = await resolveAppTenantContext();
       requireCapability(tenantContext, "update_client");
-      return NextResponse.json(await applySupabaseClientUpdateProposal(id, proposalId, tenantContext));
+      return NextResponse.json(await applySupabaseClientUpdateProposal(id, proposalId, body, tenantContext));
     } catch (error) {
       try {
         return authErrorResponse(error);
@@ -29,7 +30,7 @@ export async function POST(_request: NextRequest, context: { params: Promise<{ i
   }
 
   try {
-    return NextResponse.json(saveFallbackState(applyUpdateProposalInState(getFallbackState(), id, proposalId)));
+    return NextResponse.json(saveFallbackState(applyUpdateProposalInState(getFallbackState(), id, proposalId, body)));
   } catch (error) {
     return domainErrorResponse(error);
   }

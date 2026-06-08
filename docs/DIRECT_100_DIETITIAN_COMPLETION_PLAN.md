@@ -17,8 +17,8 @@ These rules are non-negotiable and apply to every future phase:
 - Autopilot is not globally enabled for all 5,000 clients by default. It is enabled only for selected qualified clients after all gates, monitoring, and rollback controls are ready.
 
 ## Current Baseline
-- Latest completed implementation phase: Phase 76A dietitian chat form update proposals.
-- Latest verification: core tests 122/122, app tests 222/222, `npm run release:verify` passed with only documented R-405 findings.
+- Latest completed implementation phase: Phase 76B expanded chat form safety updates.
+- Latest verification: core tests 122/122, app tests 226/226, `npm run release:verify` passed with only documented R-405 findings.
 - Production pilot status: `NO-GO`.
 - Real WhatsApp, Gemini, monitoring, secret manager, and real client health data remain disconnected.
 - Existing usable foundations:
@@ -329,6 +329,26 @@ Done criteria:
 - Internal copilot remains read-only.
 - Production pilot remains `NO-GO`.
 
+## Phase 76B: Expanded Chat Form Safety Updates
+Goal: keep the same simple chat proposal UX while allowing dietitians to approve safety-profile form updates.
+
+User documents required at the start of this phase:
+- None. This phase uses existing Phase 70 form fields and dashboard/handoff manual controls.
+
+Implementation intent:
+- Allow proposal patches for pregnancy/breastfeeding, adult/minor status, diagnosed condition, medication/insulin, lab-result availability, recent symptom, and eating-disorder risk.
+- Mirror supported safety form values into `ClientRecord.healthProfile`.
+- Store sensitive details in form responses without making them direct prompt/answerability sources.
+- Show manual-only warnings for AI active/passive, AI mode, channel permission, opt-out, red lock, yellow hold, and autopilot/reactivation requests.
+- Allow dietitians to edit or remove proposal rows before apply without changing target field identities.
+- Keep real Gemini extraction disconnected while preserving a Gemini-ready proposal JSON contract.
+
+Done criteria:
+- Clinical/safety form flags can be approved from one proposal card.
+- Operational AI/channel/lock controls cannot be changed from chat.
+- Edited patch values cannot change patch targets.
+- Production pilot remains `NO-GO`.
+
 ## Phase 76: WhatsApp Production Adapter
 Goal: prepare WhatsApp-first production channel for 5,000 clients.
 
@@ -478,6 +498,7 @@ Done criteria:
 - Phase 74: retention, export, anonymization, hard-delete, and DSAR requirements.
 - Phase 75: Gemini/provider approval package.
 - Phase 76A: no new user document package; uses existing form/context approval flow.
+- Phase 76B: no new user document package; expands the same approval flow to existing safety form fields.
 - Phase 76: WhatsApp Business, opt-in/out, template, and channel approval package.
 - Phase 77: incident, monitoring, backup, restore, and secret rotation decisions.
 - Phase 78: R-405 resolution or formal risk acceptance.

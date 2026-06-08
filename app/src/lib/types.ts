@@ -48,7 +48,8 @@ export type ClientContextUpdateImportance = "routine" | "important" | "critical"
 export type ClientContextUpdateStatus = "active" | "superseded";
 export type ClientUpdateProposalStatus = "pending" | "applied" | "rejected" | "needs_clarification" | "unsupported";
 export type ClientUpdateProposalPatchTarget = "client_form_answer" | "client_record";
-export type ClientUpdateProposalPatchOperation = "append_unique" | "append_note";
+export type ClientUpdateProposalPatchOperation = "append_unique" | "append_note" | "set_value";
+export type ClientUpdateProposalPatchCategory = "nutrition" | "clinical_safety" | "sensitive_detail";
 export type SafetyChecklist = {
   goalReviewed: boolean;
   dietPlanReviewed: boolean;
@@ -178,6 +179,9 @@ export type ClientUpdateProposalPatch = {
   label: string;
   operation: ClientUpdateProposalPatchOperation;
   value: string;
+  category?: ClientUpdateProposalPatchCategory;
+  editable?: boolean;
+  impactLabel?: string;
 };
 
 export type ClientUpdateProposalRecord = {

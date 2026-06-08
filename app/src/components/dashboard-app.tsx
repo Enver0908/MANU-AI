@@ -45,6 +45,7 @@ import type {
   ClientContextUpdateSource,
   ClientFormFieldDefinition,
   ClientRecord,
+  ClientUpdateProposalPatch,
   ClientUpdateProposalRecord,
   ManuAppState,
   MessageRecord,
@@ -343,11 +344,11 @@ export function DashboardApp({ authInfo }: { authInfo?: { displayName: string; r
     }
   };
 
-  const applySelectedProposal = async (proposalId: string) => {
+  const applySelectedProposal = async (proposalId: string, proposedPatches?: ClientUpdateProposalPatch[]) => {
     if (!selectedClient || isProposalUpdating) return;
     setIsProposalUpdating(true);
     try {
-      await applyClientUpdateProposal(selectedClient.id, proposalId);
+      await applyClientUpdateProposal(selectedClient.id, proposalId, proposedPatches);
     } finally {
       setIsProposalUpdating(false);
     }
@@ -1725,7 +1726,7 @@ function CopilotPanel({
   onInput: (value: string) => void;
   onAsk: (body?: string) => void;
   onProposeUpdate: () => void;
-  onApplyProposal: (proposalId: string) => void;
+  onApplyProposal: (proposalId: string, proposedPatches?: ClientUpdateProposalPatch[]) => void;
   onRejectProposal: (proposalId: string) => void;
 }) {
   const messages = state.internalCopilotMessages.slice(-40);
@@ -1846,49 +1847,13 @@ function CopilotPanel({
               <p className="text-sm text-stone-500">No chat-generated update proposals for this client.</p>
             ) : (
               updateProposals.slice(0, 5).map((proposal) => (
-                <article key={proposal.id} className="rounded-lg border border-stone-200 bg-stone-50 p-3">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <Badge
-                      label={proposal.status}
-                      tone={proposal.status === "pending" ? "amber" : proposal.status === "applied" ? "emerald" : "stone"}
-                    />
-                    <span className="text-xs font-medium text-stone-500">{formatTime(proposal.createdAt)}</span>
-                  </div>
-                  <p className="mt-2 whitespace-pre-wrap break-words text-sm text-stone-700">{proposal.sourceText}</p>
-                  {proposal.proposedPatches.length > 0 && (
-                    <ul className="mt-2 space-y-1 text-sm text-stone-600">
-                      {proposal.proposedPatches.map((patch) => (
-                        <li key={`${patch.target}-${patch.fieldId}-${patch.value}`}>
-                          {patch.label}: {patch.value}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                  {proposal.safetyFlags.length > 0 && (
-                    <p className="mt-2 text-sm font-medium text-red-700">{proposal.safetyFlags.join(", ")}</p>
-                  )}
-                  {proposal.status === "pending" && (
-                    <div className="mt-3 flex gap-2">
-                      <button
-                        onClick={() => onApplyProposal(proposal.id)}
-                        disabled={isProposalUpdating}
-                        className="inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-950 px-3 py-2 text-sm font-semibold text-white transition hover:bg-emerald-900 disabled:cursor-not-allowed disabled:opacity-60"
-                        type="button"
-                      >
-                        <Check size={16} />
-                        Apply
-                      </button>
-                      <button
-                        onClick={() => onRejectProposal(proposal.id)}
-                        disabled={isProposalUpdating}
-                        className="inline-flex items-center justify-center gap-2 rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm font-semibold text-stone-700 transition hover:bg-stone-50 disabled:cursor-not-allowed disabled:opacity-60"
-                        type="button"
-                      >
-                        Reject
-                      </button>
-                    </div>
-                  )}
-                </article>
+                <UpdateProposalCard
+                  key={proposal.id}
+                  proposal={proposal}
+                  isProposalUpdating={isProposalUpdating}
+                  onApplyProposal={onApplyProposal}
+                  onRejectProposal={onRejectProposal}
+                />
               ))
             )}
           </div>
@@ -1896,6 +1861,131 @@ function CopilotPanel({
       </aside>
     </div>
   );
+}
+
+function UpdateProposalCard({
+  proposal,
+  isProposalUpdating,
+  onApplyProposal,
+  onRejectProposal,
+}: {
+  proposal: ClientUpdateProposalRecord;
+  isProposalUpdating: boolean;
+  onApplyProposal: (proposalId: string, proposedPatches?: ClientUpdateProposalPatch[]) => void;
+  onRejectProposal: (proposalId: string) => void;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [draftPatches, setDraftPatches] = useState<ClientUpdateProposalPatch[]>(proposal.proposedPatches);
+  const groupedPatches = groupProposalPatches(draftPatches);
+
+  return (
+    <article className="rounded-lg border border-stone-200 bg-stone-50 p-3">
+      <div className="flex flex-wrap items-center gap-2">
+        <Badge
+          label={proposal.status}
+          tone={proposal.status === "pending" ? "amber" : proposal.status === "applied" ? "emerald" : "stone"}
+        />
+        <span className="text-xs font-medium text-stone-500">{formatTime(proposal.createdAt)}</span>
+      </div>
+      <p className="mt-2 whitespace-pre-wrap break-words text-sm text-stone-700">{proposal.sourceText}</p>
+
+      {groupedPatches.map(([group, patches]) => (
+        <div key={group} className="mt-3 space-y-2">
+          <p className="text-xs font-semibold uppercase text-stone-500">{group}</p>
+          {patches.map((patch) => {
+            const patchIndex = draftPatches.indexOf(patch);
+            return (
+              <div key={`${patch.target}-${patch.fieldId}-${patch.value}-${patchIndex}`} className="rounded-lg border border-stone-200 bg-white p-2">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-semibold text-stone-800">{patch.label}</p>
+                    {editing ? (
+                      <input
+                        value={patch.value}
+                        onChange={(event) =>
+                          setDraftPatches((current) =>
+                            current.map((item, index) => (index === patchIndex ? { ...item, value: event.target.value } : item)),
+                          )
+                        }
+                        className="mt-2 w-full rounded-lg border border-stone-200 px-2 py-1 text-sm outline-none focus:border-emerald-700"
+                      />
+                    ) : (
+                      <p className="mt-1 break-words text-sm text-stone-600">{patch.value}</p>
+                    )}
+                    {patch.impactLabel && <p className="mt-1 text-xs text-stone-500">{patch.impactLabel}</p>}
+                  </div>
+                  {editing && (
+                    <button
+                      onClick={() => setDraftPatches((current) => current.filter((_, index) => index !== patchIndex))}
+                      className="rounded-lg border border-stone-200 px-2 py-1 text-xs font-semibold text-stone-600 hover:bg-stone-50"
+                      type="button"
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ))}
+
+      {proposal.safetyFlags.length > 0 && (
+        <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-2">
+          <p className="text-xs font-semibold uppercase text-amber-900">Manual remaining</p>
+          <p className="mt-1 text-sm text-amber-900">{proposal.safetyFlags.map(formatSafetyFlag).join(", ")}</p>
+        </div>
+      )}
+
+      {proposal.status === "pending" && (
+        <div className="mt-3 flex flex-wrap gap-2">
+          <button
+            onClick={() => onApplyProposal(proposal.id, editing ? draftPatches : undefined)}
+            disabled={isProposalUpdating || draftPatches.length === 0}
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-950 px-3 py-2 text-sm font-semibold text-white transition hover:bg-emerald-900 disabled:cursor-not-allowed disabled:opacity-60"
+            type="button"
+          >
+            <Check size={16} />
+            Apply
+          </button>
+          <button
+            onClick={() => setEditing((current) => !current)}
+            disabled={isProposalUpdating}
+            className="inline-flex items-center justify-center gap-2 rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm font-semibold text-stone-700 transition hover:bg-stone-50 disabled:cursor-not-allowed disabled:opacity-60"
+            type="button"
+          >
+            {editing ? "Done" : "Edit"}
+          </button>
+          <button
+            onClick={() => onRejectProposal(proposal.id)}
+            disabled={isProposalUpdating}
+            className="inline-flex items-center justify-center gap-2 rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm font-semibold text-stone-700 transition hover:bg-stone-50 disabled:cursor-not-allowed disabled:opacity-60"
+            type="button"
+          >
+            Reject
+          </button>
+        </div>
+      )}
+    </article>
+  );
+}
+
+function groupProposalPatches(patches: ClientUpdateProposalPatch[]) {
+  const labels = {
+    nutrition: "Nutrition",
+    clinical_safety: "Clinical safety",
+    sensitive_detail: "Sensitive form detail",
+  };
+  const groups = new Map<string, ClientUpdateProposalPatch[]>();
+  for (const patch of patches) {
+    const label = labels[patch.category || "nutrition"];
+    groups.set(label, [...(groups.get(label) || []), patch]);
+  }
+  return [...groups.entries()];
+}
+
+function formatSafetyFlag(flag: string) {
+  return flag.replace(/^manual_control_required_/, "").replace(/_/g, " ");
 }
 
 function HandoffsPanel({

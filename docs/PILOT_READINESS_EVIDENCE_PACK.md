@@ -18,10 +18,10 @@ Run from `app`:
 npm run release:verify
 ```
 
-Latest result, re-verified on 2026-06-08 after Phase 76A dietitian chat form update proposals:
+Latest result, re-verified on 2026-06-08 after Phase 76B expanded chat form safety updates:
 
 - Core package tests: 122/122 passed.
-- App tests: 222/222 passed.
+- App tests: 226/226 passed.
 - App lint: passed.
 - Production build: passed.
 - Production dependency audit gate: passed with only documented R-405 findings.
@@ -40,6 +40,7 @@ Latest result, re-verified on 2026-06-08 after Phase 76A dietitian chat form upd
 - Phase 74 adds retention/export/DSAR policy artifacts, transactional redaction contract tests, and export manifest/checksum evidence. No production Supabase transactional RPC migration, production lifecycle enablement, or gate closure occurred.
 - Phase 75 adds Gemini provider gate artifacts: forbidden/unpaid consumer surfaces, paid Vertex/Gemini Enterprise target surface, green/yellow model routing, training/logging/retention policy, health-data eligibility checklist, PromptContext allowlist enforcement, and `MANU_ALLOW_REAL_GEMINI` egress gate tests. No real Gemini API, Vertex AI connection, or gate closure occurred.
 - Phase 76A adds dietitian chat form update proposals: internal copilot remains read-only, chat text can create pending client-bound proposals, only deterministic allowlisted additive patches can be applied, sensitive/system requests are blocked, stale context revisions fail closed, and applied proposals create form/context/audit evidence. No green-capacity routing change, real provider, real channel, or gate closure occurred.
+- Phase 76B expands the proposal path to Phase 70 clinical/safety form flags and supported health-profile mirrors, adds editable proposal rows, and keeps AI active/passive, AI mode, channel permission, red lock, and yellow hold controls manual. No real Gemini extraction, real provider, real channel, or gate closure occurred.
 - Post-Phase 65 strategic plan `DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` locks the production target to direct 100 dietitians x 50 clients, requires approved-source answerability before form/PDF/provider/channel phases, and keeps production pilot `NO-GO`.
 
 Additional Phase 50 production Supabase hardening evidence on 2026-06-02:
