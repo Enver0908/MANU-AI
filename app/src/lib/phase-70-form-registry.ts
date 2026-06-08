@@ -8,10 +8,11 @@ import type {
   FormFieldType,
   SupportedLanguageCode,
 } from "./types";
+import { PHASE_76D_CLIENT_FOOD_RULE_FIELDS } from "./phase-76d-food-rule-fields";
 
 export const PHASE_70_SCHEMA_TITLE_CLIENT = "Phase 70 client intake";
 export const PHASE_70_SCHEMA_TITLE_DIETITIAN = "Phase 70 dietitian profile";
-export const PHASE_70_REGISTRY_VERSION = "phase-70-form-registry-v1";
+export const PHASE_70_REGISTRY_VERSION = "phase-76d-food-rule-registry-v1";
 
 export type Phase70RegistryField = ClientFormFieldDefinition & {
   form: "client" | "dietitian";
@@ -141,6 +142,7 @@ export const PHASE_70_CLIENT_FIELDS: Phase70RegistryField[] = [
   defineField({ id: "restricted_foods_preference", label: "Tercih kisitlari", form: "client", section: "2.3", filledBy: "Client", type: "textarea", promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "medium" }),
   defineField({ id: "cultural_religious_food_rules", label: "Kulturel/dini kurallar", form: "client", section: "2.3", filledBy: "Client", type: "textarea", promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "high" }),
   defineField({ id: "food_access_constraints", label: "Erisim kisitlari", form: "client", section: "2.3", filledBy: "Client", type: "textarea", promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "medium" }),
+  ...PHASE_76D_CLIENT_FOOD_RULE_FIELDS,
   defineField({ id: "diagnosed_condition_flag", label: "Tanili hastalik", form: "client", section: "2.4", filledBy: "Client / diyetisyen", required: true, options: yesNoUnknown, promptAccess: "system_rule", answerabilityRole: "risk_modifier", clinicalSensitivity: "risk_modifier", privacySensitivity: "critical" }),
   defineField({ id: "diagnosed_condition_details", label: "Tani detaylari", form: "client", section: "2.4", filledBy: "Client / diyetisyen", type: "textarea", promptAccess: "sensitive_never_prompt", privacySensitivity: "critical", clinicalSensitivity: "critical" }),
   defineField({ id: "diabetes_or_glucose_flag", label: "Diyabet/glukoz", form: "client", section: "2.4", filledBy: "Client / diyetisyen", required: true, options: yesNoUnknown, promptAccess: "system_rule", answerabilityRole: "risk_modifier", clinicalSensitivity: "risk_modifier", privacySensitivity: "critical" }),

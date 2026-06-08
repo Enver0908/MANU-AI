@@ -17,7 +17,7 @@ These rules are non-negotiable and apply to every future phase:
 - Autopilot is not globally enabled for all 5,000 clients by default. It is enabled only for selected qualified clients after all gates, monitoring, and rollback controls are ready.
 
 ## Current Baseline
-- Latest completed phase: Phase 76C structured food rule green capacity spec.
+- Latest completed phase: Phase 76D structured food rule data model and form upgrade.
 - Latest completed implementation phase before 76C: Phase 76B expanded chat form safety updates.
 - Latest verification: core tests 122/122, app tests 226/226, `npm run release:verify` passed with only documented R-405 findings.
 - Production pilot status: `NO-GO`.
@@ -365,19 +365,14 @@ Done criteria:
 - No runtime behavior, schema, provider, channel, launch-gate approval, R-405 status, or real-data handling changes occur.
 - `npm run release:verify` passes with production pilot still `NO-GO`.
 
-## Phase 76D: Structured Food Rule Data Model And Form Upgrade
+## Phase 76D: Structured Food Rule Data Model And Form Upgrade — Completed 2026-06-08
 Goal: convert Phase 70 food-related fields from coarse free text into structured, answerability-ready food rules.
 
-User documents required at the start of this phase:
-- Final structured field definitions if dietitian workflow differs from the Phase 76C model.
-
-Implementation intent:
-- Add structured forbidden/allowed food items and groups, diet-type rules, equivalent exchange groups, mandatory/optional foods, skip tolerance, portion boundaries, ingredient keywords, and uncertainty policy fields.
-- Bump Phase 70 registry version, seed data, autopilot completeness checks, and form/client sync.
-
-Done criteria:
-- Structured food rules are registry-backed and test-covered.
-- Autopilot qualification fails closed when required food-rule fields are incomplete.
+Completed:
+- Added `docs/PHASE_76D_STRUCTURED_FOOD_RULE_DATA_MODEL_SPEC.md`, `phase-76d-food-rule-fields.ts`, and `phase-76d-food-rule-model.ts`.
+- Registry-backed structured forbidden/allowed food items and groups, diet-type rules, equivalent exchange groups, mandatory/optional foods, skip tolerance, portion boundaries, ingredient keywords, product-label review policy, and uncertainty policy fields.
+- Registry version bumped to `phase-76d-food-rule-registry-v1`; seed data, autopilot completeness checks, and form/client sync updated.
+- Verification: core tests 122/122, app tests 234/234, `npm run release:verify` passed with only documented R-405 findings.
 - Production pilot remains `NO-GO`.
 
 ## Phase 76: WhatsApp Production Adapter

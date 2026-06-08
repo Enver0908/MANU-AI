@@ -9,6 +9,7 @@ import {
   sanitizePromptSummaryValue,
 } from "./phase-70-form-hardening";
 import { PHASE_70_CLIENT_FIELDS, PHASE_70_MINIMUM_AUTOPILOT_CLIENT_FIELD_IDS } from "./phase-70-form-registry";
+import { PHASE_76D_CLIENT_FOOD_RULE_FIELDS } from "./phase-76d-food-rule-fields";
 import { runInboundSimulation } from "./simulator";
 
 describe("phase 70 form hardening", () => {
@@ -86,6 +87,15 @@ describe("phase 70 form hardening", () => {
 
   it("requires all minimum autopilot field ids in qualification checks", () => {
     expect(PHASE_70_MINIMUM_AUTOPILOT_CLIENT_FIELD_IDS).toHaveLength(22);
+  });
+
+  it("registers structured food rule fields with answerability metadata", () => {
+    const forbiddenItems = PHASE_76D_CLIENT_FOOD_RULE_FIELDS.find((field) => field.id === "forbidden_food_items");
+    const registryField = PHASE_70_CLIENT_FIELDS.find((field) => field.id === "forbidden_food_items");
+
+    expect(forbiddenItems?.answerabilityRole).toBe("answerability_source");
+    expect(registryField?.section).toBe("2.3.1");
+    expect(PHASE_76D_CLIENT_FOOD_RULE_FIELDS).toHaveLength(13);
   });
 
   it("invalidates drafts when prompt-visible form answers change", async () => {

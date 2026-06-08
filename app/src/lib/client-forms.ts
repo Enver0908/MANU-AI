@@ -1,5 +1,6 @@
 import { AppDomainError } from "./app-errors";
 import { isPromptVisibleField, sanitizePromptSummaryValue } from "./phase-70-form-hardening";
+import { syncClientRecordFromFoodRuleAnswers } from "./phase-76d-food-rule-model";
 import type {
   ClientFormFieldDefinition,
   ClientFormResponseRecord,
@@ -105,16 +106,16 @@ export function saveClientFormResponseInState(
 
   const nextState = {
     ...state,
-    clients: state.clients.map((item) =>
-      item.id === clientId
-        ? {
-            ...item,
-            communicationLanguage: schema.languageCode,
-            healthProfile: { ...item.healthProfile, preferredLanguage: schema.languageCode },
-            contextRevision: item.contextRevision + 1,
-          }
-        : item,
-    ),
+    clients: state.clients.map((item) => {
+      if (item.id !== clientId) return item;
+      const synced = syncClientRecordFromFoodRuleAnswers(item, answers);
+      return {
+        ...synced,
+        communicationLanguage: schema.languageCode,
+        healthProfile: { ...synced.healthProfile, preferredLanguage: schema.languageCode },
+        contextRevision: synced.contextRevision + 1,
+      };
+    }),
     clientFormResponses: [
       ...state.clientFormResponses.filter((item) => item.id !== response.id),
       response,

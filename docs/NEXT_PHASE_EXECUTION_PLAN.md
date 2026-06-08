@@ -24,10 +24,29 @@ Locked decisions:
 
 Next implementation order:
 
-1. Phase 76D structured food rule data model and form upgrade.
-2. Phase 76E-76O food-rule green capacity implementation track per `docs/PHASE_76C_STRUCTURED_FOOD_RULE_GREEN_CAPACITY_SPEC.md`.
+1. Phase 76E food rule engine.
+2. Phase 76F-76O food-rule green capacity implementation track per `docs/PHASE_76C_STRUCTURED_FOOD_RULE_GREEN_CAPACITY_SPEC.md`.
 3. WhatsApp production adapter.
 4. Production ops, R-405 closure/acceptance, full 100x50 rehearsal, and external launch-gate closure.
+
+## Phase 76D: Structured Food Rule Data Model And Form Upgrade - Completed 2026-06-08
+
+Goal: convert Phase 70 food-related fields from coarse free text into structured, answerability-ready food rules.
+
+Status:
+
+- Added `docs/PHASE_76D_STRUCTURED_FOOD_RULE_DATA_MODEL_SPEC.md`.
+- Added `app/src/lib/phase-76d-food-rule-fields.ts` and `app/src/lib/phase-76d-food-rule-model.ts`.
+- Extended Phase 70 client form registry with 13 structured food-rule fields and bumped registry version to `phase-76d-food-rule-registry-v1`.
+- Extended autopilot qualification with structured food-rule completeness checks and synced allergies/restricted foods on form save.
+- Seeded demo structured food rules and added tests.
+- Verification passed with core tests 122/122, app tests 234/234, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain.
+- No orchestrator food-rule engine, intent-specific answerability, product-ingredient verification, provider, channel, launch-gate approval, R-405 acceptance, or real-data path was connected.
+- Production pilot remains `NO-GO`.
+
+Next:
+
+- Proceed to Phase 76E food rule engine.
 
 ## Phase 76C: Structured Food Rule Green Capacity Spec - Completed 2026-06-08
 

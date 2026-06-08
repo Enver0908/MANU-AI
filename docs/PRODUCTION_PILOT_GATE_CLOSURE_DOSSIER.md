@@ -15,8 +15,8 @@ Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized reference
 ## Current Baseline
 
 - Git baseline: Phase 27-29 checkpoint exists at `c75564e Add Phase 27-29 pilot readiness checkpoint` on branch `codex/phase-29-baseline-checkpoint`; Completion Roadmap Phase 1 records this as the current implementation baseline.
-- Latest local release verification: `npm run release:verify` passed on 2026-06-08 after Phase 76C structured food rule green capacity spec.
-- Verification result: core tests 122/122, app tests 226/226, lint passed, production build passed.
+- Latest local release verification: `npm run release:verify` passed on 2026-06-08 after Phase 76D structured food rule data model and form upgrade.
+- Verification result: core tests 122/122, app tests 234/234, lint passed, production build passed.
 - Dependency audit result: only known R-405 findings, `next:postcss` and `postcss:GHSA-qx2v-qp2m-jg93`.
 - R-405 status: open production launch blocker; Phase 54 rechecked metadata on 2026-06-02 and stable `next@latest` is 16.2.7 but still bundles `postcss@8.4.31`, so no safe stable Next.js/PostCSS patch path is available.
 - R-405 remediation spec: `PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`.
@@ -67,6 +67,7 @@ Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized reference
 - Phase 76A dietitian chat form update proposals spec: `PHASE_76A_DIETITIAN_CHAT_FORM_UPDATE_PROPOSALS_SPEC.md` records the proposal-only path for dietitian chat text to become explicit form/context updates with deterministic allowlisted additive patches, apply/reject, stale-revision checks, audit evidence, draft invalidation, and DSAR coverage. It does not change green/yellow/red routing, make internal copilot a mutation agent, close any gate, connect real providers/channels, process real data, approve production pilot launch, or resolve R-405.
 - Phase 76B expanded chat form safety update spec: `PHASE_76B_EXPANDED_CHAT_FORM_SAFETY_UPDATE_SPEC.md` records safety-profile form patch expansion, editable proposal rows, supported health-profile mirrors, and manual-only operational AI/channel/lock warnings. It does not connect Gemini extraction, change AI active/passive or lock controls from chat, close any gate, process real data, approve production pilot launch, or resolve R-405.
 - Phase 76C structured food rule green capacity spec: `PHASE_76C_STRUCTURED_FOOD_RULE_GREEN_CAPACITY_SPEC.md` records the canonical PRD/tech spec for source-backed food-rule green expansion, intent-specific answerability, food-rule engine contract, product-ingredient verification contract, and downstream phase map 76D-76Q before WhatsApp production adapter work. It does not implement runtime behavior, close any gate, connect real providers/channels, process real data, approve production pilot launch, or resolve R-405.
+- Phase 76D structured food rule data model and form upgrade: `PHASE_76D_STRUCTURED_FOOD_RULE_DATA_MODEL_SPEC.md` and app `phase-76d-food-rule-*` modules add registry-backed structured food-rule fields, parsing/validation helpers, autopilot food-rule completeness gates, and client allergy/restriction sync on form save. It does not implement the orchestrator food-rule engine, intent-specific answerability, product-ingredient verification, close any gate, connect real providers/channels, process real data, approve production pilot launch, or resolve R-405.
 
 ## Gate Closure Matrix
 

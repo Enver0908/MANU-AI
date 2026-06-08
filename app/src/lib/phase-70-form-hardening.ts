@@ -3,6 +3,7 @@ import {
   PHASE_70_MINIMUM_AUTOPILOT_CLIENT_FIELD_IDS,
   getPhase70RegistryField,
 } from "./phase-70-form-registry";
+import { evaluateStructuredFoodRuleCompleteness } from "./phase-76d-food-rule-model";
 import type {
   AutopilotQualificationStatus,
   ClientFormFieldDefinition,
@@ -117,6 +118,11 @@ export function evaluateClientAutopilotQualification(
   const adultForm = String(response.answers.adult_status || "");
   if (adultForm !== "Adult") {
     missing.push("form_adult_status_not_adult");
+  }
+
+  const foodRuleCompleteness = evaluateStructuredFoodRuleCompleteness(response.answers);
+  if (!foodRuleCompleteness.complete) {
+    missing.push(...foodRuleCompleteness.missing);
   }
 
   const answerabilityFieldIds = buildAnswerabilityFieldManifest(state, clientId).map((entry) => entry.fieldId);

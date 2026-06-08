@@ -370,7 +370,12 @@ function cleanTerm(value: string) {
 
 function findEditablePhase70Response(state: ManuAppState, clientId: string) {
   const activeSchema = [...state.clientFormSchemas]
-    .filter((schema) => schema.status === "published" && schema.registryVersion === "phase-70-form-registry-v1")
+    .filter(
+      (schema) =>
+        schema.status === "published" &&
+        (schema.registryVersion === "phase-70-form-registry-v1" ||
+          schema.registryVersion === "phase-76d-food-rule-registry-v1"),
+    )
     .sort((a, b) => b.version - a.version)[0];
   if (!activeSchema) return null;
   return (
