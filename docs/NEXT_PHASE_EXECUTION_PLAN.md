@@ -24,10 +24,86 @@ Locked decisions:
 
 Next implementation order:
 
-1. Phase 76I PromptContext and provider output guard hardening.
-2. Phase 76J-76O food-rule green capacity implementation track per `docs/PHASE_76C_STRUCTURED_FOOD_RULE_GREEN_CAPACITY_SPEC.md`.
-3. WhatsApp production adapter.
-4. Production ops, R-405 closure/acceptance, full 100x50 rehearsal, and external launch-gate closure.
+1. Phase 76O rehearsal and remaining food-rule green capacity track per `docs/PHASE_76C_STRUCTURED_FOOD_RULE_GREEN_CAPACITY_SPEC.md`.
+2. WhatsApp production adapter.
+3. Production ops, R-405 closure/acceptance, full 100x50 rehearsal evidence, and external launch-gate closure.
+
+## Phase 76N: Supabase, RLS, Export, Redaction, and Transactional Coverage - Completed 2026-06-08
+
+Goal: extend Phase 74 lifecycle coverage to structured food rules, proposals, and Supabase transactional paths.
+
+Status:
+
+- Added `docs/PHASE_76N_SUPABASE_RLS_EXPORT_REDACTION_TRANSACTIONAL_COVERAGE_SPEC.md`.
+- Added `phase-76n-food-rule-lifecycle.ts`, export bump to `phase74-export-v1.1`, per-field food-rule redaction, removed-client structured-rules null guard, Supabase migration `20260608120000_phase_76n_food_rule_lifecycle_rpc.sql`, `commit_client_update_proposal` RPC wiring, and `commit_client_removal_lifecycle` bulk redaction coverage.
+- RLS re-run for the Phase 76N migration remains pending when local Supabase is unavailable.
+- Verification passed with core tests 165/165, app tests 276/276, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain.
+- Production pilot remains `NO-GO`.
+
+Next:
+
+- Proceed to Phase 76O 100x50 synthetic food-mix rehearsal.
+
+## Phase 76M: Phase 73 Calibration and Metrics Expansion - Completed 2026-06-08
+
+Goal: make expanded green capacity measurable with Phase 73 matrix/golden expansion and aggregate metrics.
+
+Status:
+
+- Added `docs/PHASE_76M_CALIBRATION_METRICS_EXPANSION_SPEC.md`.
+- Extended `phase-73-health-regulation-calibration.ts` to `v1.1.0` with food-rule decision areas, twelve golden categories, `evaluatePhase73GreenCapacityMetrics`, and `phase-76m-calibration-metrics.ts` operational-health bridge.
+- Added core `food-rule-calibration-golden-cases.jsonl` and expanded `clinical-golden-cases.jsonl`.
+- Verification passed with core tests 165/165, app tests 272/272, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain.
+- Production pilot remains `NO-GO`.
+
+## Phase 76L: Phase 72 Permission Graph Runtime Bridge - Completed 2026-06-08
+
+Goal: wire draft Phase 72 permission graph into simulator risk path as audit-first evidence with gated enforcement.
+
+Status:
+
+- Added `docs/PHASE_76L_PERMISSION_GRAPH_RUNTIME_BRIDGE_SPEC.md`.
+- Extended `phase-72-permission-graph.ts` food-rule maps (`v1.1.0`), added `phase-76l-permission-graph-runtime.ts`, simulator bridge, and `permissionGraphEvaluations` audit records.
+- Verification passed with core tests 153/153, app tests 266/266, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain.
+- Production pilot remains `NO-GO`.
+
+## Phase 76K: Chat-to-Food-Rule Proposal Expansion - Completed 2026-06-08
+
+Goal: expand dietitian chat update proposals with deterministic structured food-rule patches.
+
+Status:
+
+- Added `docs/PHASE_76K_CHAT_FOOD_RULE_PROPOSAL_SPEC.md`.
+- Added `phase-76k-food-rule-proposal-patches.ts`, `food_rule` proposal category, multiselect/exchange apply support, allergy/restriction sync on apply, and dashboard grouping.
+- Verification passed with core tests 153/153, app tests 262/262, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain.
+- No real Gemini extraction, new API endpoints, channel, launch-gate approval, R-405 acceptance, or real-data path was connected.
+- Production pilot remains `NO-GO`.
+
+## Phase 76J: Dashboard Food Rule Management UX - Completed 2026-06-08
+
+Goal: let dietitians manage structured food rules from the dashboard with prompt-affecting draft invalidation.
+
+Status:
+
+- Added `docs/PHASE_76J_DASHBOARD_FOOD_RULE_MANAGEMENT_SPEC.md`.
+- Added `phase-76j-food-rule-dashboard.ts`, `FoodRulesPanel`, and Forms view wiring in `dashboard-app.tsx`.
+- Food-rule saves merge into the active published client form response via existing `/api/clients/forms`; context revision increments, allergies/restricted foods sync, pending drafts invalidate, and `client_food_rules_updated` audit metadata is recorded.
+- Verification passed with core tests 153/153, app tests 254/254, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain.
+- No chat proposals, new API endpoints, real Gemini egress, channel, launch-gate approval, R-405 acceptance, or real-data path was connected.
+- Production pilot remains `NO-GO`.
+
+## Phase 76I: PromptContext and Provider Output Guard Hardening - Completed 2026-06-08
+
+Goal: give the provider bounded food-rule PromptContext segments and block output that contradicts engine decisions.
+
+Status:
+
+- Added `docs/PHASE_76I_PROMPTCONTEXT_PROVIDER_OUTPUT_GUARD_SPEC.md`.
+- Added core `food-rule-prompt-segments.js`, bounded segments in `context-compiler.js`, and `food-rule-output-guard-v0.1.0` in `response-quality-guard.js`.
+- Orchestrator passes structured food rules into context compile and output guard; Phase 75 and mock provider allowlists include food-rule segment types.
+- Verification passed with core tests 153/153, app tests 250/250, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain.
+- No dashboard UX, chat proposals, real Gemini egress, channel, launch-gate approval, R-405 acceptance, or real-data path was connected.
+- Production pilot remains `NO-GO`.
 
 ## Phase 76H: Product Ingredient Verification - Completed 2026-06-08
 
@@ -41,10 +117,6 @@ Status:
 - Verification passed with core tests 146/146, app tests 247/247, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain.
 - No open web browsing, barcode/catalog providers, PromptContext segments, provider routing changes, channel, launch-gate approval, R-405 acceptance, or real-data path was connected.
 - Production pilot remains `NO-GO`.
-
-Next:
-
-- Proceed to Phase 76I PromptContext and provider output guard hardening.
 
 ## Phase 76G: Clinical Second-Layer False-Yellow Calibration - Completed 2026-06-08
 

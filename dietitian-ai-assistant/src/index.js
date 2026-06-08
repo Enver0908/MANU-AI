@@ -65,7 +65,16 @@ export {
   evaluateProductIngredientVerification,
 } from "./product-ingredient-verification.js";
 export {
+  FOOD_RULE_PROMPT_SEGMENTS_VERSION,
+  FOOD_RULE_PROMPT_SEGMENT_TYPES,
+  FOOD_RULE_PROVIDER_INSTRUCTION,
+  BOUNDED_FOOD_RULE_SEGMENT_MAX_CHARS,
+  buildFoodRulePromptSegments,
+} from "./food-rule-prompt-segments.js";
+export {
   PRODUCT_COMMUNICATION_COVENANT_VERSION,
+  FOOD_RULE_OUTPUT_GUARD_VERSION,
+  detectFoodRuleOutputViolations,
   detectProductCommunicationCovenantIssues,
   guardAssistantReply,
   guardProviderOutput,

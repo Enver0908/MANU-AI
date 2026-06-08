@@ -9,6 +9,11 @@ const SEGMENT_SOURCE_RULES = {
   pinned_note: "pinned_note",
   allergies: "allergies_restricted_foods",
   restricted_foods: "allergies_restricted_foods",
+  allowed_food_rules: "structured_allowed_food",
+  forbidden_food_rules: "structured_forbidden_food",
+  equivalent_exchange_rules: "structured_equivalent_exchange_groups",
+  diet_type_rules: "structured_diet_type_rules",
+  ingredient_verification: "trusted_product_evidence",
 };
 
 const sensitiveAnswerabilityPattern =

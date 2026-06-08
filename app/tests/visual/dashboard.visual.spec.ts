@@ -61,4 +61,11 @@ test("dashboard core views render in fallback mode", async ({ page }) => {
   await page.getByRole("button", { name: "Handoffs" }).click();
   await expect(page.getByRole("heading", { name: "Handoff queue" })).toBeVisible();
   await expect(page.getByText("possible_severe_allergic_reaction")).toBeVisible();
+
+  await page.getByRole("button", { name: "Forms" }).click();
+  await expect(page.getByTestId("food-rules-panel")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Structured food rules" })).toBeVisible();
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth))
+    .toBe(true);
 });

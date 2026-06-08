@@ -9,6 +9,7 @@ import {
   evaluatePhase73CalibrationDecision,
   evaluatePhase73CalibrationReadiness,
   evaluatePhase73GoldenCase,
+  evaluatePhase73GreenCapacityMetrics,
   isPhase73ActiveProductionCalibrationAllowed,
 } from "./phase-73-health-regulation-calibration";
 
@@ -18,7 +19,7 @@ describe("phase 73 health regulation calibration", () => {
 
     expect(readiness.status).toBe("pass");
     expect(PHASE_73_OFFICIAL_SOURCES).toHaveLength(14);
-    expect(PHASE_73_HEALTH_REGULATION_DECISION_MATRIX.length).toBeGreaterThanOrEqual(25);
+    expect(PHASE_73_HEALTH_REGULATION_DECISION_MATRIX.length).toBeGreaterThanOrEqual(37);
     expect(PHASE_73_DECISION_PRIORITY_ORDER[0]).toBe("forbidden_action");
     expect(PHASE_73_HEALTH_REGULATION_DECISION_MATRIX.every((entry) => entry.approvalStatus === "draft")).toBe(true);
   });
@@ -99,6 +100,15 @@ describe("phase 73 health regulation calibration", () => {
     expect(metrics.mixedIntentPartialReplyCount).toBe(0);
     expect(metrics.goldenCaseFailCount).toBe(0);
     expect(PHASE_73_GOLDEN_CASES.every((record) => evaluatePhase73GoldenCase(record).passed)).toBe(true);
+  });
+
+  it("reports expanded green-capacity metrics with measured false-yellow on source-backed rows only", () => {
+    const metrics = evaluatePhase73GreenCapacityMetrics();
+
+    expect(metrics.status).toBe("pass");
+    expect(metrics.goldenCaseFailCount).toBe(0);
+    expect(metrics.falseYellowRate).toBeGreaterThanOrEqual(0);
+    expect(metrics.falseYellowRate).toBeLessThanOrEqual(1);
   });
 
   it("records draft clinical launch-gate evidence", () => {

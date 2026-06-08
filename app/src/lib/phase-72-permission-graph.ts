@@ -1,7 +1,7 @@
 import type { LaunchGateEvidenceRecord } from "./launch-gates";
 import { PHASE_71_TURKIYE_SOURCE_PACK_VERSION } from "./phase-71-turkiye-official-sources";
 
-export const PHASE_72_PERMISSION_GRAPH_VERSION = "phase-72-permission-graph-v1";
+export const PHASE_72_PERMISSION_GRAPH_VERSION = "phase-72-permission-graph-v1.1.0";
 
 export type Phase72ApprovalStatus = "draft";
 
@@ -41,6 +41,24 @@ export type Phase72IntentId =
   | "opt_out"
   | "unknown_identity"
   | "group_message";
+
+export type Phase72FoodRuleIntentId =
+  | "forbidden_food_reminder"
+  | "allowed_food_confirmation"
+  | "equivalent_substitution_allowed"
+  | "diet_type_compatible"
+  | "optional_skip_allowed"
+  | "mandatory_skip_block"
+  | "food_rule_uncertain_review"
+  | "diet_type_conflict"
+  | "product_ingredient_unknown"
+  | "food_rule_mixed_intent";
+
+export type Phase72FoodRuleDecisionLike = {
+  decision: string;
+  reasons?: string[];
+  queryType?: string | null;
+} | null;
 
 export type Phase72PrivacyGateId =
   | "channel_permission_not_ready"
@@ -103,6 +121,7 @@ export type Phase72PermissionGraphBundle = {
     rule: string;
     sourceRefs: Phase72SourceRef[];
   };
+  foodRuleRoutingMap: Phase72ArtifactEntry[];
 };
 
 const DRAFT: Phase72ApprovalStatus = "draft";
@@ -172,6 +191,8 @@ export const PHASE_72_FORBIDDEN_ACTION_MAP: Phase72ArtifactEntry[] = [
   entry("raw_identity_in_prompt", "Raw phone/channel identity prompt'a alma", "handoff_no_send", [SOURCE_KVKK], "Privacy/identity leakage."),
   entry("success_guarantee", "Basari vaadi veya garanti", "handoff_no_send", [SOURCE_PROMOTION], "Tanitim/reklam riski."),
   entry("miracle_claim", "Once/sonra, mucize, kesin sonuc iddiasi", "handoff_no_send", [SOURCE_PROMOTION], "Yaniltici tanitim riski."),
+  entry("approve_forbidden_food", "Yasak besini client-facing onaylama", "handoff_no_send", [SOURCE_JOB_DEFINITIONS], "Structured food-rule engine forbid."),
+  entry("unapproved_food_substitution", "Onaysiz besin degisimi", "draft_only", [SOURCE_JOB_DEFINITIONS], "Exchange group veya dietitian onayi gerekir."),
 ];
 
 export const PHASE_72_DRAFT_ONLY_ACTION_MAP: Phase72ArtifactEntry[] = [
@@ -203,6 +224,26 @@ export const PHASE_72_ALLOWED_PLAN_ANSWERABILITY_MAP: Phase72ArtifactEntry[] = [
   entry("pinned_notes", "Diyetisyen onayli not", "green", [SOURCE_JOB_DEFINITIONS], "Prompt-safe ozet."),
   entry("client_context_updates", "Diyetisyen onayli context update", "green", [SOURCE_JOB_DEFINITIONS], "Kisa onayli context."),
   entry("dietitian_manual_message", "Diyetisyen-authored manual message", "green", [SOURCE_JOB_DEFINITIONS], "Answerability kaynagi olabilir."),
+  entry("forbidden_food_items", "Yasak besin listesi", "green", [SOURCE_JOB_DEFINITIONS], "Structured food-rule source."),
+  entry("forbidden_food_groups", "Yasak besin gruplari", "green", [SOURCE_JOB_DEFINITIONS], "Structured food-rule source."),
+  entry("allowed_food_items", "Izinli besin listesi", "green", [SOURCE_JOB_DEFINITIONS], "Structured food-rule source."),
+  entry("allowed_food_groups", "Izinli besin gruplari", "green", [SOURCE_JOB_DEFINITIONS], "Structured food-rule source."),
+  entry("equivalent_exchange_groups", "Esdeger degisim gruplari", "green", [SOURCE_JOB_DEFINITIONS], "Structured substitution source."),
+  entry("ingredient_allergen_keywords", "Alerjen anahtar kelimeleri", "green", [SOURCE_JOB_DEFINITIONS], "Product label verification source."),
+  entry("skip_tolerance_rules", "Atlama tolerans kurallari", "green", [SOURCE_JOB_DEFINITIONS], "Optional skip source."),
+];
+
+export const PHASE_72_FOOD_RULE_ROUTING_MAP: Phase72ArtifactEntry[] = [
+  entry("forbidden_food_reminder", "Yasak besin hatirlatma", "green", [SOURCE_JOB_DEFINITIONS], "Source-backed structured rule."),
+  entry("allowed_food_confirmation", "Izinli besin onayi", "green", [SOURCE_JOB_DEFINITIONS], "Source-backed structured rule."),
+  entry("equivalent_substitution_allowed", "Onayli esdeger degisim", "green", [SOURCE_JOB_DEFINITIONS], "Exchange group match."),
+  entry("diet_type_compatible", "Diyet tipi uyumu", "green", [SOURCE_JOB_DEFINITIONS], "Diet-type rule match."),
+  entry("optional_skip_allowed", "Opsiyonel skip toleransi", "green", [SOURCE_JOB_DEFINITIONS], "Skip tolerance source."),
+  entry("mandatory_skip_block", "Zorunlu ogun atlama", "draft_only", [SOURCE_JOB_DEFINITIONS], "Mandatory meal protection."),
+  entry("food_rule_uncertain_review", "Belirsiz besin karari", "draft_only", [SOURCE_JOB_DEFINITIONS], "Fail-closed review."),
+  entry("diet_type_conflict", "Diyet tipi celiskisi", "draft_only", [SOURCE_JOB_DEFINITIONS], "Diet-type conflict."),
+  entry("product_ingredient_unknown", "Urun icerigi belirsiz", "draft_only", [SOURCE_JOB_DEFINITIONS], "Trusted verification required."),
+  entry("food_rule_mixed_intent", "Karisik besin+klinik intent", "handoff_no_send", [SOURCE_JOB_DEFINITIONS], "Mixed intent fail-closed."),
 ];
 
 export const PHASE_72_ALLOWED_GENERAL_EDUCATION_MAP: Phase72ArtifactEntry[] = [
@@ -251,6 +292,19 @@ export const PHASE_72_PROMPT_ALLOWED_FIELD_MAP: Phase72ArtifactEntry[] = [
   entry("primary_goal", "Birincil hedef", "green", [SOURCE_JOB_DEFINITIONS], "Hatirlatma only."),
   entry("client_context_updates", "Context update", "green", [SOURCE_JOB_DEFINITIONS], "Diyetisyen onayli kisa context."),
   entry("manual_dietitian_message_origin", "Manual dietitian message", "green", [SOURCE_JOB_DEFINITIONS], "AI-generated olmayanlar answerability kaynagi olabilir."),
+  entry("forbidden_food_items", "Yasak besin listesi", "green", [SOURCE_JOB_DEFINITIONS], "Structured food-rule prompt field."),
+  entry("forbidden_food_groups", "Yasak besin gruplari", "green", [SOURCE_JOB_DEFINITIONS], "Structured food-rule prompt field."),
+  entry("allowed_food_items", "Izinli besin listesi", "green", [SOURCE_JOB_DEFINITIONS], "Structured food-rule prompt field."),
+  entry("allowed_food_groups", "Izinli besin gruplari", "green", [SOURCE_JOB_DEFINITIONS], "Structured food-rule prompt field."),
+  entry("equivalent_exchange_groups", "Esdeger degisim gruplari", "green", [SOURCE_JOB_DEFINITIONS], "Structured food-rule prompt field."),
+  entry("mandatory_foods_or_meals", "Zorunlu besin/ogunler", "green", [SOURCE_JOB_DEFINITIONS], "Structured food-rule prompt field."),
+  entry("optional_foods_or_meals", "Opsiyonel besin/ogunler", "green", [SOURCE_JOB_DEFINITIONS], "Structured food-rule prompt field."),
+  entry("diet_type_rules", "Diyet tipi kurallari", "green", [SOURCE_JOB_DEFINITIONS], "Structured food-rule prompt field."),
+  entry("ingredient_allergen_keywords", "Alerjen anahtar kelimeleri", "green", [SOURCE_JOB_DEFINITIONS], "Structured food-rule prompt field."),
+  entry("skip_tolerance_rules", "Atlama toleransi", "green", [SOURCE_JOB_DEFINITIONS], "Structured food-rule prompt field."),
+  entry("portion_boundaries", "Porsiyon sinirlari", "green", [SOURCE_JOB_DEFINITIONS], "Structured food-rule prompt field."),
+  entry("product_label_review_policy", "Urun etiketi politikasi", "green", [SOURCE_JOB_DEFINITIONS], "Structured food-rule prompt field."),
+  entry("uncertainty_policy", "Belirsizlik politikasi", "green", [SOURCE_JOB_DEFINITIONS], "Structured food-rule prompt field."),
 ];
 
 export const PHASE_72_PRODUCT_COVENANT_FORBIDDEN_PHRASE_MAP: Phase72ArtifactEntry[] = [
@@ -319,6 +373,10 @@ const INTENT_ROUTING_LOOKUP = new Map<Phase72IntentId, Phase72RoutingBand>(
 const NEVER_PROMPT_FIELD_IDS = new Set(PHASE_72_SENSITIVE_NEVER_PROMPT_FIELD_MAP.map((artifact) => artifact.id));
 const PROMPT_ALLOWED_FIELD_IDS = new Set(PHASE_72_PROMPT_ALLOWED_FIELD_MAP.map((artifact) => artifact.id));
 
+const FOOD_RULE_ROUTING_LOOKUP = new Map<Phase72FoodRuleIntentId, Phase72RoutingBand>(
+  PHASE_72_FOOD_RULE_ROUTING_MAP.map((artifact) => [artifact.id as Phase72FoodRuleIntentId, artifact.routingBand]),
+);
+
 export function buildPhase72PermissionGraphBundle(): Phase72PermissionGraphBundle {
   return {
     graphVersion: PHASE_72_PERMISSION_GRAPH_VERSION,
@@ -334,7 +392,77 @@ export function buildPhase72PermissionGraphBundle(): Phase72PermissionGraphBundl
     legalPrivacyRoutingMap: PHASE_72_LEGAL_PRIVACY_ROUTING_MAP,
     clinicalEscalationRoutingMap: PHASE_72_CLINICAL_ESCALATION_ROUTING_MAP,
     mixedIntentFailClosedPolicy: PHASE_72_MIXED_INTENT_FAIL_CLOSED_POLICY,
+    foodRuleRoutingMap: PHASE_72_FOOD_RULE_ROUTING_MAP,
   };
+}
+
+export function inferPhase72IntentIdsFromMessage(message: string): Phase72IntentId[] {
+  const normalized = normalizePhase72Text(message);
+  const intents = new Set<Phase72IntentId>();
+
+  if (/(ilac|insulin|doz|medikasyon)/.test(normalized)) intents.add("medication_insulin");
+  if (/(semptom|belirti|bas don|mide bulant|halsiz)/.test(normalized)) intents.add("symptom");
+  if (/(lab|tahlil|kan sonuc)/.test(normalized)) intents.add("lab_result");
+  if (/(glukoz|seker|diyabet|hipoglisemi)/.test(normalized)) intents.add("diabetes_glucose");
+  if (/(hamile|gebe|emzir)/.test(normalized)) intents.add("pregnancy_breastfeeding");
+  if (/(cocuk|minor|resit degil)/.test(normalized)) intents.add("minor_body_image");
+  if (/(yeme bozuk|kusma|purge)/.test(normalized)) intents.add("eating_disorder");
+  if (/(kalori|makro|porsiyon|kilo hedef)/.test(normalized)) intents.add("calorie_macro");
+  if (/(plan degis|diyet degis)/.test(normalized)) intents.add("plan_change");
+  if (/(planla celis|plan disi)/.test(normalized)) intents.add("plan_conflict");
+  if (/(yiyebilir|yasak|serbest|alternatif|degisim|besin|ogun)/.test(normalized)) intents.add("allowed_substitution");
+  if (/(kahvalti|ogle|aksam|ogun|plan)/.test(normalized)) intents.add("plan_lookup");
+
+  return [...intents];
+}
+
+export function mapFoodRuleDecisionToPermissionIntents(
+  foodRuleDecision: Phase72FoodRuleDecisionLike,
+): Phase72FoodRuleIntentId[] {
+  if (!foodRuleDecision) return [];
+
+  switch (foodRuleDecision.decision) {
+    case "forbidden_food_rejection":
+      return ["forbidden_food_reminder"];
+    case "allowed_food_confirmation":
+      return ["allowed_food_confirmation"];
+    case "equivalent_substitution_allowed":
+      return ["equivalent_substitution_allowed"];
+    case "diet_type_compatible":
+      return ["diet_type_compatible"];
+    case "optional_skip_allowed":
+      return ["optional_skip_allowed"];
+    case "mandatory_skip_blocked":
+      return ["mandatory_skip_block"];
+    case "unknown_food_requires_review":
+      return foodRuleDecision.reasons?.some((reason) => reason.includes("product"))
+        ? ["product_ingredient_unknown"]
+        : ["food_rule_uncertain_review"];
+    case "diet_type_conflict":
+      return ["diet_type_conflict"];
+    case "mixed_intent_blocked":
+      return ["food_rule_mixed_intent"];
+    default:
+      return [];
+  }
+}
+
+export function resolveFoodRulePermissionBands(foodRuleDecision: Phase72FoodRuleDecisionLike): Phase72RoutingBand[] {
+  const intents = mapFoodRuleDecisionToPermissionIntents(foodRuleDecision);
+  return intents.map((intentId) => FOOD_RULE_ROUTING_LOOKUP.get(intentId) ?? "handoff_no_send");
+}
+
+export function resolveForbiddenActionBandsFromFoodRule(
+  foodRuleDecision: Phase72FoodRuleDecisionLike,
+): Phase72RoutingBand[] {
+  if (!foodRuleDecision) return [];
+  if (foodRuleDecision.decision === "allowed_food_confirmation" && foodRuleDecision.reasons?.some((reason) => reason.includes("forbidden"))) {
+    return ["handoff_no_send"];
+  }
+  if (foodRuleDecision.reasons?.some((reason) => reason.includes("unapproved_substitution"))) {
+    return ["draft_only"];
+  }
+  return [];
 }
 
 export function evaluatePhase72PermissionGraphReadiness(
@@ -356,6 +484,7 @@ export function evaluatePhase72PermissionGraphReadiness(
     bundle.productCovenantForbiddenPhraseMap,
     bundle.legalPrivacyRoutingMap,
     bundle.clinicalEscalationRoutingMap,
+    bundle.foodRuleRoutingMap,
   ];
 
   for (const group of artifactGroups) {
@@ -494,13 +623,22 @@ export function evaluatePhase72PermissionRouting(input: {
   approvedOfficialCorpus?: boolean;
   activePlanAvailable?: boolean;
   launchGateEvidence?: LaunchGateEvidenceRecord[];
+  foodRuleDecision?: Phase72FoodRuleDecisionLike;
+  foodRuleRoutingBands?: Phase72RoutingBand[];
 }): Phase72RoutingEvaluation {
   const privacyGate: Phase72PrivacyGateState = { ...DEFAULT_PRIVACY_GATE, ...input.privacyGate };
   const clinicalContext: Phase72ClinicalContext = { ...DEFAULT_CLINICAL_CONTEXT, ...input.clinicalContext };
-  const intentIds = [...new Set(input.intentIds)];
+  const messageIntentIds = [...new Set(input.intentIds)];
+  const foodRuleIntentIds = mapFoodRuleDecisionToPermissionIntents(input.foodRuleDecision ?? null);
+  const intentIds = messageIntentIds;
   const blockingReasons: string[] = [];
   const triggeredPrivacyGates = collectTriggeredPrivacyGates(privacyGate);
   const privacyBands = triggeredPrivacyGates.map(privacyGateRoutingBand);
+  const foodRuleBands = [
+    ...resolveFoodRulePermissionBands(input.foodRuleDecision ?? null),
+    ...resolveForbiddenActionBandsFromFoodRule(input.foodRuleDecision ?? null),
+    ...(input.foodRuleRoutingBands ?? []),
+  ];
 
   const matchedIntentBands = intentIds.map((intentId) => {
     let routingBand = resolveIntentBand(intentId, clinicalContext);
@@ -525,20 +663,23 @@ export function evaluatePhase72PermissionRouting(input: {
   });
 
   const intentBands = matchedIntentBands.map((band) => band.routingBand);
-  const hasGreen = intentBands.includes("green");
-  const hasNonGreen = intentBands.some((band) => band !== "green");
-  const mixedIntentFailClosed = intentBands.length > 1 && hasGreen && hasNonGreen;
+  const combinedIntentBands = [...intentBands, ...foodRuleBands];
+  const hasGreen = combinedIntentBands.includes("green");
+  const hasNonGreen = combinedIntentBands.some((band) => band !== "green");
+  const mixedIntentFailClosed =
+    (intentBands.length > 1 && intentBands.includes("green") && intentBands.some((band) => band !== "green")) ||
+    (combinedIntentBands.length > 1 && hasGreen && hasNonGreen && foodRuleIntentIds.length > 0 && messageIntentIds.length > 0);
 
   if (mixedIntentFailClosed) {
     blockingReasons.push(PHASE_72_MIXED_INTENT_FAIL_CLOSED_POLICY.rule);
   }
 
-  const candidateBands = [...privacyBands, ...intentBands];
+  const candidateBands = [...privacyBands, ...combinedIntentBands];
   let finalRoutingBand = worstRoutingBand(candidateBands.length > 0 ? candidateBands : ["handoff_no_send"]);
 
   if (mixedIntentFailClosed) {
     const mixedBands = [
-      ...intentBands.filter((band): band is Exclude<Phase72RoutingBand, "green"> => band !== "green"),
+      ...combinedIntentBands.filter((band): band is Exclude<Phase72RoutingBand, "green"> => band !== "green"),
       ...(privacyBands.length > 0 ? privacyBands : (["handoff_no_send"] as const)),
     ] satisfies Phase72RoutingBand[];
     finalRoutingBand = worstRoutingBand(mixedBands);
@@ -549,9 +690,13 @@ export function evaluatePhase72PermissionRouting(input: {
     if (ROUTING_BAND_SEVERITY[privacyWorst] >= ROUTING_BAND_SEVERITY[finalRoutingBand]) {
       finalRoutingBand = privacyWorst;
     }
-    if (intentBands.includes("green")) {
+    if (combinedIntentBands.includes("green")) {
       blockingReasons.push("privacy gate blocks green routing");
     }
+  }
+
+  if (foodRuleIntentIds.length > 0) {
+    blockingReasons.push(`food_rule_intents:${foodRuleIntentIds.join(",")}`);
   }
 
   return {
@@ -613,4 +758,19 @@ export function buildPhase72PermissionGraphLaunchGateEvidence(): LaunchGateEvide
       sanitizedReference: true,
     },
   ];
+}
+
+function normalizePhase72Text(value: string) {
+  return String(value || "")
+    .toLocaleLowerCase("tr-TR")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/ı/g, "i")
+    .replace(/ğ/g, "g")
+    .replace(/ö/g, "o")
+    .replace(/ş/g, "s")
+    .replace(/ü/g, "u")
+    .replace(/ç/g, "c")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
 }

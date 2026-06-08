@@ -1,4 +1,36 @@
 export const PRODUCT_COMMUNICATION_COVENANT_VERSION = "product-communication-covenant-v0.1.0";
+export const FOOD_RULE_OUTPUT_GUARD_VERSION = "food-rule-output-guard-v0.1.0";
+
+const FOOD_RULE_REJECTION_DECISIONS = new Set([
+  "forbidden_food_rejection",
+  "diet_type_conflict",
+  "product_ingredient_conflict",
+  "mandatory_skip_blocked",
+]);
+
+const foodRuleStrongEatApprovalPatterns = [
+  /\b(?:yiyebilirsin|yiyebilir|tuketebilirsin|tuketebilir|icebilirsin|icebilir)\b/i,
+  /\b(?:you can (?:eat|have|consume)|that is fine to eat|go ahead and eat)\b/i,
+];
+
+
+const foodRuleSkipRelaxationPatterns = [
+  /\bbugunluk\s+(?:sorun\s+)?olmaz\b/i,
+  /\b(?:atla|atlayabilirsin|skip(?:\s+it)?|es gec)\b/i,
+  /\b(?:you can skip|skipping (?:is|should be) fine)\b/i,
+];
+
+const foodRulePortionMacroPatterns = [
+  /\b(?:porsiyon|portion)\w*.{0,32}(?:artir|buyut|increase|raise)\w*/i,
+  /\b(?:kalori|calorie|makro|macro)\w*.{0,32}(?:artir|increase|yuksek|raise)\w*/i,
+  /\b(?:set|hedef).{0,16}(?:kalori|calorie|makro|macro)\b/i,
+];
+
+const foodRuleUnauthorizedSubstitutionPatterns = [
+  /\b(?:deneyebilir|try)\b.{0,24}\b(?:yerine|instead)\b/i,
+  /\b(?:bunun yerine|instead of that)\b/i,
+  /\b(?:alternatif olarak|as an alternative)\b/i,
+];
 
 const forbiddenPatterns = [
   {
@@ -75,7 +107,7 @@ export function guardAssistantReply({ draft, capsule, riskDecision }) {
   };
 }
 
-export function guardProviderOutput({ output, capsule, riskDecision }) {
+export function guardProviderOutput({ output, capsule, riskDecision, foodRule = null, structuredFoodRules = null }) {
   const assistant = guardAssistantReply({ draft: output, capsule, riskDecision });
   const issues = assistant.issues.map((issue) => ({
     code: issue,
@@ -83,6 +115,15 @@ export function guardProviderOutput({ output, capsule, riskDecision }) {
     category: issue.startsWith("covenant_") ? "product_communication" : "clinical",
     evidence: "pattern",
   }));
+
+  issues.push(
+    ...detectFoodRuleOutputViolations(output, { foodRule, structuredFoodRules }).map((code) => ({
+      code,
+      severity: "block",
+      category: "food_rule",
+      evidence: "food_rule_decision",
+    })),
+  );
 
   if (hasMissingHistoricalContextToken(output)) {
     issues.push({
@@ -97,6 +138,50 @@ export function guardProviderOutput({ output, capsule, riskDecision }) {
     allowed: issues.length === 0,
     issues,
   };
+}
+
+export function detectFoodRuleOutputViolations(output, { foodRule = null, structuredFoodRules = null } = {}) {
+  if (!foodRule?.decision || foodRule.decision === "not_applicable") return [];
+
+  const normalizedText = normalizeForSafetyPatterns(output);
+  const issues = [];
+
+  if (FOOD_RULE_REJECTION_DECISIONS.has(foodRule.decision)) {
+    if (hasForbiddenFoodApprovalLanguage(normalizedText)) {
+      issues.push("food_rule_forbidden_food_approved");
+    }
+  }
+
+  if (foodRule.decision !== "optional_skip_allowed" && !hasSkipToleranceSource(structuredFoodRules)) {
+    if (foodRuleSkipRelaxationPatterns.some((pattern) => pattern.test(normalizedText))) {
+      issues.push("food_rule_unauthorized_skip_relaxation");
+    }
+  }
+
+  if (foodRulePortionMacroPatterns.some((pattern) => pattern.test(normalizedText))) {
+    issues.push("food_rule_portion_or_macro_change");
+  }
+
+  if (
+    foodRule.decision !== "equivalent_substitution_allowed" &&
+    foodRuleUnauthorizedSubstitutionPatterns.some((pattern) => pattern.test(normalizedText))
+  ) {
+    issues.push("food_rule_unauthorized_substitution");
+  }
+
+  return Array.from(new Set(issues));
+}
+
+function hasForbiddenFoodApprovalLanguage(normalizedText) {
+  return foodRuleStrongEatApprovalPatterns.some((pattern) => pattern.test(normalizedText));
+}
+
+function hasSkipToleranceSource(structuredFoodRules) {
+  if (!structuredFoodRules || typeof structuredFoodRules !== "object") return false;
+  const optional = Array.isArray(structuredFoodRules.optionalFoodsOrMeals)
+    ? structuredFoodRules.optionalFoodsOrMeals
+    : [];
+  return optional.length > 0 || Boolean(String(structuredFoodRules.skipToleranceRules || "").trim());
 }
 
 export function hasMissingHistoricalContextToken(output) {

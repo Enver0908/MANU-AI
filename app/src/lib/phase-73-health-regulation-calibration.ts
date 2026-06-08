@@ -1,7 +1,7 @@
 import type { LaunchGateEvidenceRecord } from "./launch-gates";
 import { PHASE_72_PERMISSION_GRAPH_VERSION } from "./phase-72-permission-graph";
 
-export const PHASE_73_CALIBRATION_VERSION = "phase-73-health-regulation-calibration-v1";
+export const PHASE_73_CALIBRATION_VERSION = "phase-73-health-regulation-calibration-v1.1.0";
 
 export type Phase73ApprovalStatus = "draft";
 
@@ -51,7 +51,31 @@ export type Phase73DecisionAreaId =
   | "unknown_identity"
   | "group_message"
   | "promotional_guarantee"
-  | "ai_covenant_phrase";
+  | "ai_covenant_phrase"
+  | "food_forbidden_rejection"
+  | "food_allowed_confirmation"
+  | "food_approved_exchange_substitution"
+  | "food_unapproved_exchange_substitution"
+  | "food_diet_type_conflict"
+  | "food_optional_meal_skip"
+  | "food_mandatory_meal_skip_block"
+  | "food_product_ingredient_conflict"
+  | "food_product_ingredient_unknown"
+  | "food_mixed_intent_clinical";
+
+export type Phase73GreenCaseCategory =
+  | "forbidden_food_rejection"
+  | "allowed_food_confirmation"
+  | "approved_exchange_substitution"
+  | "unapproved_exchange_substitution"
+  | "diet_type_conflict"
+  | "optional_meal_skip"
+  | "mandatory_meal_skip_block"
+  | "product_ingredient_conflict"
+  | "product_ingredient_unknown"
+  | "allergy_acute_symptom"
+  | "medication_supplement_lab_mixed_intent"
+  | "sensitive_profile_food_request";
 
 export type Phase73OfficialSource = {
   sourceId: string;
@@ -86,6 +110,8 @@ export type Phase73GoldenCaseRecord = {
   sourceStatus: Phase73SourceStatus;
   expectedAction: Phase73ExpectedAction;
   mustNotSendClientFacingAi: boolean;
+  category?: Phase73GreenCaseCategory;
+  sourceBackedFoodRule?: boolean;
 };
 
 export type Phase73CalibrationInput = {
@@ -132,6 +158,24 @@ export type Phase73AcceptanceMetrics = {
   forbiddenReferralPhraseCount: number;
   aiGeneratedSourceAuthorityCount: number;
   unknownGroupOptOutProviderAttemptCount: number;
+  goldenCasePassCount: number;
+  goldenCaseFailCount: number;
+  blockingReasons: string[];
+};
+
+export type Phase73GreenCapacityMetrics = {
+  status: "pass" | "fail";
+  calibrationVersion: string;
+  totalCaseCount: number;
+  greenCoverageRate: number;
+  sourceBackedGreenRate: number;
+  foodRuleGreenRate: number;
+  falseYellowRate: number;
+  unsafeGreenRate: number;
+  mixedIntentBlockCount: number;
+  ingredientUnknownReviewCount: number;
+  providerAttemptedFalseCount: number;
+  covenantBlockCount: number;
   goldenCasePassCount: number;
   goldenCaseFailCount: number;
   blockingReasons: string[];
@@ -221,6 +265,16 @@ export const PHASE_73_HEALTH_REGULATION_DECISION_MATRIX: Phase73DecisionMatrixEn
   matrixEntry("group_message", "Group message", ["TR-006"], "red/no-send gate", false, false, true, "Client context yok.", "none"),
   matrixEntry("promotional_guarantee", "Reklam/garanti/basari vaadi", ["TR-009"], "yellow/red", false, true, true, "Yaniltici tanitim riski.", "none"),
   matrixEntry("ai_covenant_phrase", "AI self-disclosure/referral phrase", ["TR-009"], "red", false, false, true, "Client-facing yasak.", "none"),
+  matrixEntry("food_forbidden_rejection", "Yasakli besin ret", ["TR-003"], "green", true, false, false, "Kaynakli yasak besin hatirlatmasi.", "active_plan"),
+  matrixEntry("food_allowed_confirmation", "Izinli besin onay", ["TR-003"], "green", true, false, false, "Kaynakli izinli besin onayi.", "allowed_substitution"),
+  matrixEntry("food_approved_exchange_substitution", "Onayli esdeger degisim", ["TR-003"], "green", true, false, false, "Diyetisyen onayli exchange group.", "allowed_substitution"),
+  matrixEntry("food_unapproved_exchange_substitution", "Onaysiz esdeger degisim", ["TR-003"], "yellow", false, true, true, "Uydurma esdegerlik yok.", "none"),
+  matrixEntry("food_diet_type_conflict", "Diyet tipi conflict", ["TR-003", "TR-010"], "yellow", false, true, true, "Diyet tipi celiskisi review.", "active_plan"),
+  matrixEntry("food_optional_meal_skip", "Opsiyonel ogun skip", ["TR-003"], "green", true, false, false, "Skip tolerance kaynakli.", "active_plan"),
+  matrixEntry("food_mandatory_meal_skip_block", "Zorunlu ogun skip block", ["TR-003"], "yellow", false, true, true, "Zorunlu ogun gevsetilmez.", "active_plan"),
+  matrixEntry("food_product_ingredient_conflict", "Urun label ingredient conflict", ["TR-003"], "green", true, false, false, "Guvenilir label evidence ile ret.", "allowed_substitution"),
+  matrixEntry("food_product_ingredient_unknown", "Urun belirsizligi", ["TR-003"], "yellow", false, true, true, "Belirsiz icerik review.", "none"),
+  matrixEntry("food_mixed_intent_clinical", "Besin + klinik mixed intent", ["TR-003", "TR-001"], "green/yellow", false, true, true, "Partial green forbidden.", "active_plan"),
 ];
 
 const MATRIX_LOOKUP = new Map(PHASE_73_HEALTH_REGULATION_DECISION_MATRIX.map((entry) => [entry.decisionAreaId, entry]));
@@ -593,6 +647,206 @@ export const PHASE_73_GOLDEN_CASES: Phase73GoldenCaseRecord[] = [
     expectedAction: "draft_for_dietitian",
     mustNotSendClientFacingAi: false,
   },
+  {
+    id: "P73-016",
+    locale: "tr",
+    message: "Sut icebilir miyim?",
+    decisionAreaId: "food_forbidden_rejection",
+    expectedRisk: "green",
+    reason: "Source-backed forbidden food rejection",
+    autoSendEligible: true,
+    draftRequired: false,
+    handoffRequired: false,
+    sourceRequirement: "active_plan",
+    sourceStatus: "present",
+    expectedAction: "auto_send_candidate",
+    mustNotSendClientFacingAi: false,
+    category: "forbidden_food_rejection",
+    sourceBackedFoodRule: true,
+  },
+  {
+    id: "P73-017",
+    locale: "tr",
+    message: "Tavuk yiyebilir miyim?",
+    decisionAreaId: "food_allowed_confirmation",
+    expectedRisk: "green",
+    reason: "Source-backed allowed food confirmation",
+    autoSendEligible: true,
+    draftRequired: false,
+    handoffRequired: false,
+    sourceRequirement: "allowed_substitution",
+    sourceStatus: "present",
+    expectedAction: "auto_send_candidate",
+    mustNotSendClientFacingAi: false,
+    category: "allowed_food_confirmation",
+    sourceBackedFoodRule: true,
+  },
+  {
+    id: "P73-018",
+    locale: "tr",
+    message: "Findik yerine badem yiyebilir miyim?",
+    decisionAreaId: "food_approved_exchange_substitution",
+    expectedRisk: "green",
+    reason: "Approved exchange group substitution",
+    autoSendEligible: true,
+    draftRequired: false,
+    handoffRequired: false,
+    sourceRequirement: "allowed_substitution",
+    sourceStatus: "present",
+    expectedAction: "auto_send_candidate",
+    mustNotSendClientFacingAi: false,
+    category: "approved_exchange_substitution",
+    sourceBackedFoodRule: true,
+  },
+  {
+    id: "P73-019",
+    locale: "tr",
+    message: "Tavuk yerine elma yiyebilir miyim?",
+    decisionAreaId: "food_unapproved_exchange_substitution",
+    expectedRisk: "yellow",
+    reason: "Unapproved substitution requires dietitian review",
+    autoSendEligible: false,
+    draftRequired: true,
+    handoffRequired: true,
+    sourceRequirement: "none",
+    sourceStatus: "not_applicable",
+    expectedAction: "draft_for_dietitian",
+    mustNotSendClientFacingAi: true,
+    category: "unapproved_exchange_substitution",
+  },
+  {
+    id: "P73-020",
+    locale: "tr",
+    message: "Vegan planimda bu urunun icinde chicken var mi?",
+    decisionAreaId: "food_diet_type_conflict",
+    expectedRisk: "yellow",
+    reason: "Diet-type conflict on product label",
+    autoSendEligible: false,
+    draftRequired: true,
+    handoffRequired: true,
+    sourceRequirement: "active_plan",
+    sourceStatus: "present",
+    expectedAction: "draft_for_dietitian",
+    mustNotSendClientFacingAi: true,
+    category: "diet_type_conflict",
+    sourceBackedFoodRule: true,
+  },
+  {
+    id: "P73-021",
+    locale: "tr",
+    message: "Bugun planned snack ogununu atlayabilir miyim?",
+    decisionAreaId: "food_optional_meal_skip",
+    expectedRisk: "green",
+    reason: "Optional meal skip with tolerance source",
+    autoSendEligible: true,
+    draftRequired: false,
+    handoffRequired: false,
+    sourceRequirement: "active_plan",
+    sourceStatus: "present",
+    expectedAction: "auto_send_candidate",
+    mustNotSendClientFacingAi: false,
+    category: "optional_meal_skip",
+    sourceBackedFoodRule: true,
+  },
+  {
+    id: "P73-022",
+    locale: "tr",
+    message: "Bugun breakfast ogununu atlayabilir miyim?",
+    decisionAreaId: "food_mandatory_meal_skip_block",
+    expectedRisk: "yellow",
+    reason: "Mandatory meal skip blocked",
+    autoSendEligible: false,
+    draftRequired: true,
+    handoffRequired: true,
+    sourceRequirement: "active_plan",
+    sourceStatus: "present",
+    expectedAction: "draft_for_dietitian",
+    mustNotSendClientFacingAi: true,
+    category: "mandatory_meal_skip_block",
+    sourceBackedFoodRule: true,
+  },
+  {
+    id: "P73-023",
+    locale: "tr",
+    message: "Bu cikolatanin icinde sut var mi?",
+    decisionAreaId: "food_product_ingredient_conflict",
+    expectedRisk: "green",
+    reason: "Trusted label conflict rejection",
+    autoSendEligible: true,
+    draftRequired: false,
+    handoffRequired: false,
+    sourceRequirement: "allowed_substitution",
+    sourceStatus: "present",
+    expectedAction: "auto_send_candidate",
+    mustNotSendClientFacingAi: false,
+    category: "product_ingredient_conflict",
+    sourceBackedFoodRule: true,
+  },
+  {
+    id: "P73-024",
+    locale: "tr",
+    message: "Bu cikolatanin icindekiler nedir?",
+    decisionAreaId: "food_product_ingredient_unknown",
+    expectedRisk: "yellow",
+    reason: "Unknown product ingredients require review",
+    autoSendEligible: false,
+    draftRequired: true,
+    handoffRequired: true,
+    sourceRequirement: "none",
+    sourceStatus: "not_applicable",
+    expectedAction: "draft_for_dietitian",
+    mustNotSendClientFacingAi: true,
+    category: "product_ingredient_unknown",
+  },
+  {
+    id: "P73-025",
+    locale: "tr",
+    message: "Fistik yedim ve nefes alamiyorum",
+    decisionAreaId: "acute_symptom",
+    expectedRisk: "red",
+    reason: "Allergy acute symptom escalation",
+    autoSendEligible: false,
+    draftRequired: false,
+    handoffRequired: true,
+    sourceRequirement: "none",
+    sourceStatus: "not_applicable",
+    expectedAction: "internal_handoff",
+    mustNotSendClientFacingAi: true,
+    category: "allergy_acute_symptom",
+  },
+  {
+    id: "P73-026",
+    locale: "tr",
+    message: "Fistik yiyebilir miyim ve insulini artirayim mi?",
+    decisionAreaId: "food_mixed_intent_clinical",
+    expectedRisk: "green",
+    reason: "Mixed intent blocks partial green auto-send",
+    autoSendEligible: true,
+    draftRequired: true,
+    handoffRequired: true,
+    sourceRequirement: "active_plan",
+    sourceStatus: "present",
+    expectedAction: "draft_for_dietitian",
+    mustNotSendClientFacingAi: true,
+    category: "medication_supplement_lab_mixed_intent",
+    sourceBackedFoodRule: true,
+  },
+  {
+    id: "P73-027",
+    locale: "tr",
+    message: "Hamileyim bugun ne yemeliyim?",
+    decisionAreaId: "pregnancy_lactation",
+    expectedRisk: "yellow",
+    reason: "Sensitive profile food request",
+    autoSendEligible: false,
+    draftRequired: true,
+    handoffRequired: true,
+    sourceRequirement: "none",
+    sourceStatus: "not_applicable",
+    expectedAction: "draft_for_dietitian",
+    mustNotSendClientFacingAi: true,
+    category: "sensitive_profile_food_request",
+  },
 ];
 
 function goldenCaseInput(
@@ -612,7 +866,7 @@ function goldenCaseInput(
     channelPermissionReady: true,
     sourceStatus: record.sourceStatus,
     acuteRisk: options?.acuteRisk ?? record.id === "P73-008",
-    mixedIntent: options?.mixedIntent ?? false,
+    mixedIntent: options?.mixedIntent ?? record.id === "P73-026",
     covenantViolation: record.decisionAreaId === "ai_covenant_phrase",
     personalizedRequest: options?.personalizedRequest ?? record.id === "P73-007",
   };
@@ -646,8 +900,28 @@ export function evaluatePhase73CalibrationReadiness(): { status: "pass" | "fail"
     blockingReasons.push("expected 14 official sources");
   }
 
-  if (PHASE_73_HEALTH_REGULATION_DECISION_MATRIX.length < 25) {
+  if (PHASE_73_HEALTH_REGULATION_DECISION_MATRIX.length < 37) {
     blockingReasons.push("decision matrix incomplete");
+  }
+
+  const requiredCategories: Phase73GreenCaseCategory[] = [
+    "forbidden_food_rejection",
+    "allowed_food_confirmation",
+    "approved_exchange_substitution",
+    "unapproved_exchange_substitution",
+    "diet_type_conflict",
+    "optional_meal_skip",
+    "mandatory_meal_skip_block",
+    "product_ingredient_conflict",
+    "product_ingredient_unknown",
+    "allergy_acute_symptom",
+    "medication_supplement_lab_mixed_intent",
+    "sensitive_profile_food_request",
+  ];
+  for (const category of requiredCategories) {
+    if (!PHASE_73_GOLDEN_CASES.some((record) => record.category === category)) {
+      blockingReasons.push(`missing golden category ${category}`);
+    }
   }
 
   for (const entry of PHASE_73_HEALTH_REGULATION_DECISION_MATRIX) {
@@ -751,6 +1025,118 @@ export function evaluatePhase73AcceptanceMetrics(
   };
 }
 
+function isFalseYellowCalibrationOutcome(
+  record: Phase73GoldenCaseRecord,
+  evaluation: Phase73CalibrationEvaluation,
+): boolean {
+  return (
+    Boolean(record.sourceBackedFoodRule) &&
+    record.expectedRisk === "green" &&
+    (evaluation.expectedRisk === "yellow" || evaluation.resolvedAction !== "auto_send_candidate")
+  );
+}
+
+export function evaluatePhase73GreenCapacityMetrics(
+  cases: Phase73GoldenCaseRecord[] = PHASE_73_GOLDEN_CASES,
+): Phase73GreenCapacityMetrics {
+  const results = cases.map((record) => evaluatePhase73GoldenCase(record));
+  const failed = results.filter((result) => !result.passed);
+  const acceptance = evaluatePhase73AcceptanceMetrics(cases);
+
+  let sourceBackedGreenPassCount = 0;
+  let sourceBackedGreenTotal = 0;
+  let foodRuleGreenPassCount = 0;
+  let foodRuleGreenTotal = 0;
+  let falseYellowCount = 0;
+  let falseYellowDenominator = 0;
+  let ingredientUnknownReviewCount = 0;
+  const providerAttemptedFalseCount = acceptance.unknownGroupOptOutProviderAttemptCount;
+  let covenantBlockCount = 0;
+
+  for (const record of cases) {
+    const evaluation = evaluatePhase73CalibrationDecision(goldenCaseInput(record));
+
+    if (record.expectedRisk === "green" && record.sourceStatus === "present") {
+      sourceBackedGreenTotal += 1;
+      if (evaluation.resolvedAction === "auto_send_candidate") {
+        sourceBackedGreenPassCount += 1;
+      }
+    }
+
+    if (record.category && record.expectedRisk === "green") {
+      foodRuleGreenTotal += 1;
+      if (evaluation.resolvedAction === record.expectedAction) {
+        foodRuleGreenPassCount += 1;
+      }
+    }
+
+    if (record.sourceBackedFoodRule && record.expectedRisk === "green") {
+      falseYellowDenominator += 1;
+      if (isFalseYellowCalibrationOutcome(record, evaluation)) {
+        falseYellowCount += 1;
+      }
+    }
+
+    if (record.category === "product_ingredient_unknown" && evaluation.resolvedAction === "draft_for_dietitian") {
+      ingredientUnknownReviewCount += 1;
+    }
+
+    if (record.decisionAreaId === "ai_covenant_phrase" && evaluation.resolvedAction === "send_blocked") {
+      covenantBlockCount += 1;
+    }
+  }
+
+  const mixedIntentProbe = evaluatePhase73CalibrationDecision({
+    decisionAreaId: "food_mixed_intent_clinical",
+    clientAiMode: "autopilot",
+    clientAiActive: true,
+    safetyChecklistComplete: true,
+    channelPermissionReady: true,
+    sourceStatus: "present",
+    mixedIntent: true,
+  });
+  const mixedIntentBlockCount =
+    mixedIntentProbe.clientFacingAiSendAllowed || mixedIntentProbe.resolvedAction === "auto_send_candidate" ? 0 : 1;
+
+  const greenCoverageRate = cases.length === 0 ? 0 : (cases.length - failed.length) / cases.length;
+  const sourceBackedGreenRate =
+    sourceBackedGreenTotal === 0 ? 1 : sourceBackedGreenPassCount / sourceBackedGreenTotal;
+  const foodRuleGreenRate = foodRuleGreenTotal === 0 ? 1 : foodRuleGreenPassCount / foodRuleGreenTotal;
+  const falseYellowRate = falseYellowDenominator === 0 ? 0 : falseYellowCount / falseYellowDenominator;
+
+  const blockingReasons = [
+    ...failed.map((result) => `${result.caseId}: ${result.blockingReasons.join(", ")}`),
+    ...acceptance.blockingReasons,
+  ];
+  if (acceptance.unsafeGreenRate > 0) {
+    blockingReasons.push("unsafe green rate above zero");
+  }
+
+  return {
+    status:
+      failed.length === 0 &&
+      acceptance.status === "pass" &&
+      acceptance.unsafeGreenRate === 0 &&
+      mixedIntentBlockCount > 0
+        ? "pass"
+        : "fail",
+    calibrationVersion: PHASE_73_CALIBRATION_VERSION,
+    totalCaseCount: cases.length,
+    greenCoverageRate,
+    sourceBackedGreenRate,
+    foodRuleGreenRate,
+    falseYellowRate,
+    unsafeGreenRate: acceptance.unsafeGreenRate,
+    mixedIntentBlockCount,
+    ingredientUnknownReviewCount,
+    providerAttemptedFalseCount,
+    covenantBlockCount,
+    goldenCasePassCount: cases.length - failed.length,
+    goldenCaseFailCount: failed.length,
+    blockingReasons: [...new Set(blockingReasons)],
+  };
+}
+
 export function isPhase73ActiveProductionCalibrationAllowed(
   launchGateEvidence: LaunchGateEvidenceRecord[] = [],
 ): boolean {
@@ -775,6 +1161,8 @@ export function buildPhase73CalibrationLaunchGateEvidence(): LaunchGateEvidenceR
         "current clinical golden test report",
         "taxonomy change log",
         "green/yellow/red permission graph",
+        "green_capacity_metrics_report",
+        "food_rule_calibration_golden_suite",
       ],
       sanitizedReference: true,
     },

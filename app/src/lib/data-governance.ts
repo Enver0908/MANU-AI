@@ -1,5 +1,6 @@
 import { emptySafetyChecklist } from "./safety-checklist";
 import { redactClientContextUpdatesForAnonymization } from "./client-context-updates";
+import { redactStructuredFoodRuleAnswers } from "./phase-76n-food-rule-lifecycle";
 import { AppDomainError } from "./app-errors";
 
 export const PHASE_74_REDACTION_MARKER = "REDACTED_BY_PHASE74_POLICY";
@@ -183,7 +184,9 @@ function redactClientDataInState(
         ? {
             ...response,
             submittedPhoneE164: null,
-            answers: { redacted: PHASE_74_REDACTION_MARKER },
+            answers: redactStructuredFoodRuleAnswers(
+              Object.fromEntries(Object.keys(response.answers).map((key) => [key, PHASE_74_REDACTION_MARKER])),
+            ),
             schemaSnapshot: {
               ...response.schemaSnapshot,
               fields: response.schemaSnapshot.fields.map((field) => ({

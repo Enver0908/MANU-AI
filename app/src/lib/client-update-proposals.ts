@@ -1,4 +1,15 @@
 import { AppDomainError } from "./app-errors";
+import {
+  parseEquivalentExchangeGroups,
+  syncClientRecordFromFoodRuleAnswers,
+} from "./phase-76d-food-rule-model";
+import { serializeEquivalentExchangeGroups } from "./phase-76j-food-rule-dashboard";
+import {
+  extractFoodRuleProposalPatches,
+  foodRuleProposalSafetyFlags,
+  hasFoodRuleProposalPatch,
+  PHASE_76K_FOOD_RULE_MULTISELECT_FIELD_IDS,
+} from "./phase-76k-food-rule-proposal-patches";
 import type {
   ClientFormResponseRecord,
   ClientUpdateProposalPatch,
@@ -49,8 +60,11 @@ export function createClientUpdateProposalInState(
   const sourceText = input.sourceText.trim().slice(0, MAX_SOURCE_TEXT_CHARS);
   if (!sourceText) throw new AppDomainError(400, "client_update_proposal_source_required");
 
-  const safetyFlags = detectSafetyFlags(sourceText);
   const proposedPatches = buildPatches(sourceText);
+  const safetyFlags = dedupeFlags([
+    ...detectSafetyFlags(sourceText),
+    ...foodRuleProposalSafetyFlags(proposedPatches),
+  ]);
   const status =
     proposedPatches.length > 0 ? "pending" : safetyFlags.length > 0 ? "unsupported" : "needs_clarification";
   const proposal: ClientUpdateProposalRecord = {
@@ -115,7 +129,10 @@ export function applyClientUpdateProposalInState(
   const proposedPatches = resolveApplicablePatches(proposal, input);
   const appliedProposal: ClientUpdateProposalRecord = { ...proposal, proposedPatches };
   const nextResponse = applyPatchesToFormResponse(response, proposedPatches, createdAt);
-  const nextClient = applyPatchesToClient(client, proposedPatches, createdAt);
+  let nextClient = applyPatchesToClient(client, proposedPatches, createdAt);
+  if (hasFoodRuleProposalPatch(proposedPatches)) {
+    nextClient = syncClientRecordFromFoodRuleAnswers(nextClient, nextResponse.answers);
+  }
   const contextUpdate = {
     id: crypto.randomUUID(),
     tenantId: state.tenant.id,
@@ -159,6 +176,7 @@ export function applyClientUpdateProposalInState(
           clientId,
           patchCount: proposedPatches.length,
           hasClinicalSafetyPatch: hasClinicalSafetyPatch(proposedPatches),
+          hasFoodRulePatch: hasFoodRuleProposalPatch(proposedPatches),
           minimized: true,
         },
         createdAt,
@@ -238,6 +256,8 @@ function detectSafetyFlags(sourceText: string) {
 function buildPatches(sourceText: string): ClientUpdateProposalPatch[] {
   const patches: ClientUpdateProposalPatch[] = [];
   for (const clause of splitClauses(sourceText)) {
+    patches.push(...extractFoodRuleProposalPatches(clause));
+
     const forbidden = extractTerm(clause, /(yemesin|yememeli|yasak|olmasin|olmasin|listeden cikar|listeden cikar)/i);
     if (forbidden) {
       patches.push(formPatch("forbidden_substitutions", "Yasak alternatifler", forbidden, "append_unique", "nutrition"));
@@ -338,12 +358,13 @@ function clientPatch(
 function impactFor(category: ClientUpdateProposalPatch["category"]) {
   if (category === "clinical_safety") return "Updates safety routing context after dietitian approval.";
   if (category === "sensitive_detail") return "Stored in form only; not a direct prompt source.";
+  if (category === "food_rule") return "Updates structured food-rule fields after dietitian approval.";
   return "Updates dietitian-approved nutrition context.";
 }
 
 function splitClauses(sourceText: string) {
   return sourceText
-    .split(/[.,;\n]+|\s+ve\s+/i)
+    .split(/[.,;\n]+/)
     .map((item) => item.trim())
     .filter(Boolean);
 }
@@ -390,12 +411,23 @@ function applyPatchesToFormResponse(
 ): ClientFormResponseRecord {
   const answers = { ...response.answers };
   for (const patch of patches.filter((item) => item.target === "client_form_answer")) {
-    answers[patch.fieldId] =
-      patch.operation === "set_value"
-        ? patch.value
-        : patch.operation === "append_note"
-          ? appendNote(answers[patch.fieldId], patch.value, createdAt)
-          : appendUniqueLine(answers[patch.fieldId], patch.value);
+    if (patch.operation === "set_value") {
+      answers[patch.fieldId] = patch.value;
+      continue;
+    }
+    if (patch.operation === "append_note") {
+      answers[patch.fieldId] = appendNote(answers[patch.fieldId], patch.value, createdAt);
+      continue;
+    }
+    if (patch.operation === "merge_exchange_group") {
+      answers[patch.fieldId] = mergeExchangeGroupValue(answers[patch.fieldId], patch.value);
+      continue;
+    }
+    if (PHASE_76K_FOOD_RULE_MULTISELECT_FIELD_IDS.has(patch.fieldId)) {
+      answers[patch.fieldId] = appendUniqueMultiselect(answers[patch.fieldId], patch.value);
+      continue;
+    }
+    answers[patch.fieldId] = appendUniqueLine(answers[patch.fieldId], patch.value);
   }
   return { ...response, answers, updatedAt: createdAt };
 }
@@ -467,6 +499,39 @@ function appendNote(current: unknown, value: string, createdAt: string) {
 
 function appendUniqueArray(current: string[], value: string) {
   return current.some((item) => normalizeText(item) === normalizeText(value)) ? current : [...current, value];
+}
+
+function appendUniqueMultiselect(current: unknown, value: string) {
+  const existing = Array.isArray(current)
+    ? current.map((item) => String(item).trim()).filter(Boolean)
+    : String(current || "")
+        .split(/[,;\n]/)
+        .map((item) => item.trim())
+        .filter(Boolean);
+  return appendUniqueArray(existing, value);
+}
+
+function mergeExchangeGroupValue(current: unknown, value: string) {
+  const [rawGroupId, rawItems] = value.split(":");
+  const groupId = rawGroupId.trim();
+  const items = String(rawItems || "")
+    .split("|")
+    .map((item) => item.trim())
+    .filter(Boolean);
+  if (!groupId || items.length === 0) return current;
+
+  const groups = parseEquivalentExchangeGroups(current);
+  const existing = groups.find((group) => group.groupId === groupId);
+  if (existing) {
+    existing.items = [...new Set([...existing.items, ...items])];
+  } else {
+    groups.push({ groupId, items });
+  }
+  return serializeEquivalentExchangeGroups(groups);
+}
+
+function dedupeFlags(flags: string[]) {
+  return [...new Set(flags)];
 }
 
 function summarizeProposal(proposal: ClientUpdateProposalRecord) {

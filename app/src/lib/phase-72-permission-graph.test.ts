@@ -107,6 +107,29 @@ describe("phase 72 regulation permission graph", () => {
     ).toBe(false);
   });
 
+  it("includes structured food-rule routing artifacts", () => {
+    const bundle = buildPhase72PermissionGraphBundle();
+    const routing = evaluatePhase72PermissionRouting({
+      intentIds: ["allowed_substitution"],
+      activePlanAvailable: true,
+      privacyGate: {
+        channelPermissionReady: true,
+        legalPrivacyApproval: true,
+        providerVendorApproval: true,
+        whatsappPolicyApproval: true,
+      },
+      foodRuleDecision: {
+        decision: "forbidden_food_rejection",
+        reasons: ["food_rule_forbidden_match"],
+        queryType: "permission",
+      },
+    });
+
+    expect(bundle.foodRuleRoutingMap.length).toBeGreaterThanOrEqual(8);
+    expect(routing.blockingReasons.some((reason) => reason.startsWith("food_rule_intents:"))).toBe(true);
+    expect(routing.finalRoutingBand).toBe("green");
+  });
+
   it("records draft launch-gate evidence for legal and clinical review", () => {
     const evidence = buildPhase72PermissionGraphLaunchGateEvidence();
 

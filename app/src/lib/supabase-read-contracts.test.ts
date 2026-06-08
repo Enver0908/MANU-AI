@@ -30,6 +30,7 @@ describe("Supabase broad read contracts", () => {
         "handoff_status_mutation",
         "context_update_mutation",
         "form_response_mutation",
+        "client_update_proposal_mutation",
       ]),
     );
   });

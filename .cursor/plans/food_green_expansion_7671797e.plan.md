@@ -22,22 +22,22 @@ todos:
     status: completed
   - id: phase-76i-context-guard
     content: Add bounded food-rule PromptContext segments and food-rule provider output guards.
-    status: pending
+    status: completed
   - id: phase-76j-dashboard
     content: Add dashboard UX for structured food rules and prompt-affecting draft invalidation.
-    status: pending
+    status: completed
   - id: phase-76k-proposals
     content: Expand chat update proposals to deterministic food-rule patches.
-    status: pending
+    status: completed
   - id: phase-76l-permission-graph
     content: Wire Phase 72 permission graph as gated audit-first runtime evidence.
-    status: pending
+    status: completed
   - id: phase-76m-metrics
     content: Expand Phase 73 golden cases and green-capacity safety metrics.
-    status: pending
+    status: completed
   - id: phase-76n-lifecycle
     content: Extend Phase 74 export, redaction, RLS, and transactional coverage for food-rule data.
-    status: pending
+    status: completed
   - id: phase-76o-rehearsal
     content: Run 100x50 synthetic food-mix rehearsal and record operational evidence.
     status: pending

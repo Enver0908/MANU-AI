@@ -48,8 +48,12 @@ export type ClientContextUpdateImportance = "routine" | "important" | "critical"
 export type ClientContextUpdateStatus = "active" | "superseded";
 export type ClientUpdateProposalStatus = "pending" | "applied" | "rejected" | "needs_clarification" | "unsupported";
 export type ClientUpdateProposalPatchTarget = "client_form_answer" | "client_record";
-export type ClientUpdateProposalPatchOperation = "append_unique" | "append_note" | "set_value";
-export type ClientUpdateProposalPatchCategory = "nutrition" | "clinical_safety" | "sensitive_detail";
+export type ClientUpdateProposalPatchOperation =
+  | "append_unique"
+  | "append_note"
+  | "set_value"
+  | "merge_exchange_group";
+export type ClientUpdateProposalPatchCategory = "nutrition" | "clinical_safety" | "sensitive_detail" | "food_rule";
 export type SafetyChecklist = {
   goalReviewed: boolean;
   dietPlanReviewed: boolean;
@@ -442,6 +446,25 @@ export type ScopeGuardEvaluationRecord = {
   createdAt: string;
 };
 
+export type PermissionGraphEvaluationRecord = {
+  id: string;
+  tenantId: string;
+  conversationId: string | null;
+  messageId: string | null;
+  decisionLevel: RiskLevel;
+  graphVersion: string;
+  bridgeVersion: string;
+  mode: "shadow" | "enforce";
+  finalRoutingBand: string;
+  mixedIntentFailClosed: boolean;
+  foodRuleIntentIds: string[];
+  messageIntentIds: string[];
+  triggeredPrivacyGates: string[];
+  blockingReasons: string[];
+  status: "evaluated" | "enforced";
+  createdAt: string;
+};
+
 export type DataRequestRecord = {
   id: string;
   tenantId: string;
@@ -518,6 +541,7 @@ export type ManuAppState = {
   scopeRules: ScopeRuleRecord[];
   scopeRuleChunks: ScopeRuleChunkRecord[];
   scopeGuardEvaluations: ScopeGuardEvaluationRecord[];
+  permissionGraphEvaluations: PermissionGraphEvaluationRecord[];
   processedSimulationKeys: string[];
   lastSimulation: SimulationResult | null;
 };

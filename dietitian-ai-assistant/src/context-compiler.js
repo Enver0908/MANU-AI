@@ -1,3 +1,8 @@
+import {
+  FOOD_RULE_PROVIDER_INSTRUCTION,
+  buildFoodRulePromptSegments,
+} from "./food-rule-prompt-segments.js";
+
 export const MISSING_HISTORICAL_CONTEXT_TOKEN = "[ERROR: missing_historical_context]";
 
 export const MISSING_HISTORICAL_CONTEXT_INSTRUCTION =
@@ -38,6 +43,9 @@ export function compilePromptContext({
   riskLevel,
   promptVersion = null,
   policy = CONTEXT_POLICY_V1,
+  structuredFoodRules = null,
+  foodRuleDecision = null,
+  productIngredientEvidence = null,
 }) {
   const currentText = textFromCurrentMessage(currentMessage);
   const currentTokens = policy.estimateTokens(currentText);
@@ -94,6 +102,21 @@ export function compilePromptContext({
     }),
     textSegment("restricted_foods", "restricted_foods", capsule.client.restrictedFoods?.join(", ") || "", {
       authority: "dietitian_approved_context",
+    }),
+    ...(hasActiveFoodRuleContext(structuredFoodRules, foodRuleDecision)
+      ? [
+          textSegment(
+            "system_instruction",
+            "system_instruction_food_rule_provider",
+            FOOD_RULE_PROVIDER_INSTRUCTION,
+            { authority: "system" },
+          ),
+        ]
+      : []),
+    ...buildFoodRulePromptSegments({
+      structuredFoodRules,
+      foodRuleDecision,
+      productIngredientEvidence,
     }),
     ...buildPinnedSegments(capsule.client.pinnedNotes || []),
     ...buildDietitianContextUpdateSegments(capsule.client.contextUpdates || []),
@@ -440,4 +463,9 @@ function buildDietitianContextUpdateSegments(updates) {
 function lastPromptableMessageId(segments) {
   const recent = segments.filter((segment) => segment.type === "recent_message");
   return recent.at(-1)?.sourceId || null;
+}
+
+function hasActiveFoodRuleContext(structuredFoodRules, foodRuleDecision) {
+  if (structuredFoodRules && typeof structuredFoodRules === "object") return true;
+  return Boolean(foodRuleDecision?.decision && foodRuleDecision.decision !== "not_applicable");
 }

@@ -17,6 +17,7 @@ import { evaluateClientAutopilotQualification } from "./phase-70-form-hardening"
 import { getActiveVoiceProfile } from "./voice-profile-workflow";
 import { getMissingSafetyChecklistItems, isSafetyChecklistComplete } from "./safety-checklist";
 import { AppDomainError } from "./app-errors";
+import { appendPermissionGraphEvaluation } from "./phase-76l-permission-graph-runtime";
 import { appendScopeGuardEvaluation } from "./scope-guard-runtime";
 import { SAFETY_CLASSIFIER_VERSION, classifySimulationRisk } from "./simulator-risk";
 import type {
@@ -137,12 +138,15 @@ export async function runInboundSimulation(
     riskDecision,
     createdAt: now,
   });
-  const stateWithInboundAndRisk: ManuAppState = appendScopeGuardEvaluation(
-    {
-      ...stateWithInbound,
-      riskAssessments: [...stateWithInbound.riskAssessments, riskAssessment],
-    },
-    classified.scopeGuardEvaluation,
+  const stateWithInboundAndRisk: ManuAppState = appendPermissionGraphEvaluation(
+    appendScopeGuardEvaluation(
+      {
+        ...stateWithInbound,
+        riskAssessments: [...stateWithInbound.riskAssessments, riskAssessment],
+      },
+      classified.scopeGuardEvaluation,
+    ),
+    classified.permissionGraphEvaluation,
   );
   const stateAfterInboundInvalidation = invalidatePendingDrafts(
     stateWithInboundAndRisk,
@@ -222,6 +226,7 @@ export async function runInboundSimulation(
     conversation,
     inboundMessage,
     coreResult,
+    permissionGraph: classified.permissionGraph,
     now,
   });
 }
@@ -1153,6 +1158,7 @@ function appendCoreSimulationResult({
   conversation,
   inboundMessage,
   coreResult,
+  permissionGraph,
   now,
 }: {
   state: ManuAppState;
@@ -1160,9 +1166,17 @@ function appendCoreSimulationResult({
   conversation: ConversationRecord;
   inboundMessage: MessageRecord;
   coreResult: CoreResult;
+  permissionGraph?: Record<string, unknown>;
   now: string;
 }): ManuAppState {
-  const decision = buildDecision({ state, client, conversation, result: coreResult, createdAt: now });
+  const decision = buildDecision({
+    state,
+    client,
+    conversation,
+    result: coreResult,
+    permissionGraph,
+    createdAt: now,
+  });
   const ctx = createSimulationAppendContext({
     state,
     client,
@@ -1304,12 +1318,14 @@ function buildDecision({
   client,
   conversation,
   result,
+  permissionGraph,
   createdAt,
 }: {
   state: ManuAppState;
   client: ClientRecord;
   conversation: ConversationRecord;
   result: CoreResult;
+  permissionGraph?: Record<string, unknown>;
   createdAt: string;
 }): AiDecisionRecord {
   return {
@@ -1328,7 +1344,10 @@ function buildDecision({
     providerStatus: result.providerStatus ?? (result.providerAttempted ? "ok" : "not_called"),
     providerErrorCode: result.providerErrorCode ?? null,
     sendStatus: result.sendStatus ?? defaultSendStatus(result),
-    contextManifest: result.contextManifest ?? null,
+    contextManifest: {
+      ...(result.contextManifest ?? {}),
+      ...(permissionGraph ? { permissionGraph } : {}),
+    },
     providerOutputSafety:
       result.providerOutputSafety ??
       (result.qualityIssues.length > 0

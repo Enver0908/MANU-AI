@@ -2,7 +2,9 @@ import {
   CLINICAL_SAFETY_CLASSIFIER_VERSION,
   classifyClinicalSafetyRisk,
   evaluateFoodRuleDecision,
+  type RiskDecision,
 } from "dietitian-ai-assistant-architecture";
+import { applyPermissionGraphToRiskDecision } from "./phase-76l-permission-graph-runtime";
 import { applyScopeGuardToRiskDecision } from "./scope-guard-runtime";
 import { buildStructuredFoodRulesFromClientState } from "./food-rule-runtime";
 import { resolveProductIngredientEvidence } from "./product-ingredient-verification";
@@ -56,9 +58,42 @@ export async function classifySimulationRisk(
     launchGateEvidence: options.launchGateEvidence,
   });
 
+  const permissionGraphResult = applyPermissionGraphToRiskDecision({
+    state,
+    client,
+    message: body,
+    baseDecision: {
+      ...scopeResult.decision,
+      foodRuleDecision: foodRuleDecision
+        ? {
+            decision: foodRuleDecision.decision,
+            reasons: foodRuleDecision.reasons,
+            queryType: foodRuleDecision.queryType,
+          }
+        : null,
+    },
+    conversationId: options.conversationId ?? null,
+    messageId: options.messageId ?? null,
+    launchGateEvidence: options.launchGateEvidence,
+    activePlanAvailable: Boolean(client.dietPlan.summary?.trim()),
+  });
+
+  const scopedDecision = scopeResult.decision as RiskDecision;
+  const routedDecision = permissionGraphResult.decision;
+  const riskDecision: RiskDecision = {
+    level: routedDecision.level,
+    reasons: routedDecision.reasons,
+    classifierVersion: routedDecision.classifierVersion,
+    shouldHandoff: routedDecision.shouldHandoff ?? scopedDecision.shouldHandoff,
+    pauseAutopilot: routedDecision.pauseAutopilot ?? scopedDecision.pauseAutopilot,
+    ...(scopedDecision.layers ? { layers: scopedDecision.layers } : {}),
+  };
+
   return {
-    riskDecision: scopeResult.decision,
+    riskDecision,
+    permissionGraph: permissionGraphResult.decision.permissionGraph,
     scopeGuardEvaluation: scopeResult.evaluationRecord,
+    permissionGraphEvaluation: permissionGraphResult.evaluationRecord,
     corpusActive: scopeResult.corpusActive,
   };
 }

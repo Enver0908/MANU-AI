@@ -36,18 +36,19 @@ export async function handleInboundMessage(input, adapters) {
     memory,
   });
 
-  // App/simulator paths pass riskDecisionOverride as the single classification source.
-  // The fallback below exists for standalone core tests and direct handleInboundMessage callers only.
-  const foodRuleDecisionForRisk =
-    input.foodRuleDecisionForRisk ||
-    (input.structuredFoodRules
+  const foodRule =
+    input.structuredFoodRules
       ? evaluateFoodRuleDecision({
           message: input.message.body,
           structuredFoodRules: input.structuredFoodRules,
           mixedIntentBlocked: false,
           productIngredientEvidence: input.productIngredientEvidence || null,
         })
-      : null);
+      : null;
+
+  // App/simulator paths pass riskDecisionOverride as the single classification source.
+  // The fallback below exists for standalone core tests and direct handleInboundMessage callers only.
+  const foodRuleDecisionForRisk = input.foodRuleDecisionForRisk || foodRule;
 
   const riskDecision =
     input.riskDecisionOverride ||
@@ -126,6 +127,9 @@ export async function handleInboundMessage(input, adapters) {
     recentMessages: input.recentMessages || [],
     riskLevel: riskDecision.level,
     promptVersion: input.promptVersion || null,
+    structuredFoodRules: input.structuredFoodRules || null,
+    foodRuleDecision: foodRuleDecisionForRisk,
+    productIngredientEvidence: input.productIngredientEvidence || null,
   });
 
   if (compiledContext.blockedReason) {
@@ -175,14 +179,6 @@ export async function handleInboundMessage(input, adapters) {
     });
   }
 
-  const foodRule = input.structuredFoodRules
-    ? evaluateFoodRuleDecision({
-        message: input.message.body,
-        structuredFoodRules: input.structuredFoodRules,
-        mixedIntentBlocked: false,
-        productIngredientEvidence: input.productIngredientEvidence || null,
-      })
-    : null;
   if (foodRule) {
     contextManifest.foodRule = foodRule;
   }
@@ -263,7 +259,13 @@ export async function handleInboundMessage(input, adapters) {
       overrideReasons: [...riskDecision.reasons, providerErrorCode],
     });
   }
-  const quality = guardProviderOutput({ output: draft, capsule, riskDecision });
+  const quality = guardProviderOutput({
+    output: draft,
+    capsule,
+    riskDecision,
+    foodRule,
+    structuredFoodRules: input.structuredFoodRules || null,
+  });
 
   if (!quality.allowed) {
     const qualityIssueCodes = quality.issues.map((issue) => issue.code || issue);

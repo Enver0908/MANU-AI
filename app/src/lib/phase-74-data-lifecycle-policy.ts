@@ -6,11 +6,21 @@ import {
   removeClientInState,
   type ClientScopedExport,
 } from "./data-governance";
+import {
+  answersContainUnredactedFoodRuleData,
+  buildFoodRuleExportSection,
+  buildProposalExportSection,
+  clientContainsUnredactedFoodRuleProfile,
+  PHASE_76N_EXPORT_FOOD_RULE_CATEGORIES,
+  PHASE_76N_LIFECYCLE_VERSION,
+  PHASE_76N_TRANSACTIONAL_REDACTION_FIELDS,
+  proposalContainsUnredactedFoodRuleData,
+} from "./phase-76n-food-rule-lifecycle";
 import type { LaunchGateEvidenceRecord } from "./launch-gates";
 import type { ClientRecord, ManuAppState, MessageRecord } from "./types";
 
 export const PHASE_74_POLICY_VERSION = "phase-74-data-lifecycle-policy-v1";
-export const PHASE_74_EXPORT_VERSION = "phase74-export-v1";
+export const PHASE_74_EXPORT_VERSION = "phase74-export-v1.1";
 export { PHASE_74_REDACTION_MARKER } from "./data-governance";
 
 export type Phase74ApprovalStatus = "draft";
@@ -113,6 +123,9 @@ export const PHASE_74_RETENTION_POLICY: Phase74RetentionEntry[] = [
   entry("handoffs", "Hizmet devam ettigi surece", "24 ay", "Content redact", "Status/timestamps minimized."),
   entry("notifications", "Hizmet devam ettigi surece", "12 ay", "Client content redact", "Sensitive preview yok."),
   entry("form_responses", "Hizmet devam ettigi surece", "24 ay", "Promptable values redact", "Schema snapshot kalabilir."),
+  entry("structured_food_rules", "Hizmet devam ettigi surece", "24 ay", "Food-rule fields redact", "Phase 76D structured fields and exchange groups."),
+  entry("client_update_proposals", "Hizmet devam ettigi surece", "24 ay", "Source text and patches redact", "Includes food_rule proposal patches."),
+  entry("product_label_evidence", "Hizmet devam ettigi surece", "24 ay", "Raw label text redact", "Trusted-source metadata only in audit."),
   entry("dietitian_context_updates", "Hizmet devam ettigi surece", "24 ay", "Content redact", "Source authority olmaktan cikar."),
   entry("pinned_notes", "Hizmet devam ettigi surece", "24 ay", "Redact", "Prompt/source path'ten cikar."),
   entry("conversation_memories", "Hizmet devam ettigi surece", "12 ay", "Delete/redact", "Removed client memory prompt'a giremez."),
@@ -144,6 +157,8 @@ export const PHASE_74_EXPORT_INCLUDED_FILES = [
   "ai_decisions.jsonl",
   "handoffs.jsonl",
   "form_responses.json",
+  "structured_food_rules.json",
+  "client_update_proposals.json",
   "diet_plan_snapshots.json",
   "audit_events_minimized.jsonl",
   "checksums.sha256",
@@ -176,6 +191,7 @@ export const PHASE_74_TRANSACTIONAL_REDACTION_FIELDS = [
   "internal_copilot_source_refs",
   "promptable_summaries",
   "search_index_cache_entries",
+  ...PHASE_76N_TRANSACTIONAL_REDACTION_FIELDS,
 ] as const;
 
 function entry(
@@ -275,6 +291,7 @@ function countAffectedRecords(state: ManuAppState, clientId: string): Record<str
     form_responses: state.clientFormResponses.filter((response) => response.clientId === clientId).length,
     context_updates: state.clientContextUpdates.filter((update) => update.clientId === clientId).length,
     client_update_proposals: state.clientUpdateProposals.filter((proposal) => proposal.clientId === clientId).length,
+    structured_food_rule_fields: state.clientFormResponses.filter((response) => response.clientId === clientId).length,
     ai_decisions: state.aiDecisions.filter((decision) => decision.clientId === clientId).length,
     handoffs: state.handoffCases.filter((handoff) => handoff.clientId === clientId).length,
   };
@@ -299,6 +316,9 @@ export function evaluatePhase74RedactionInvariants(
   if (client.primaryPhoneE164) blockingReasons.push("primary phone must be cleared");
   if (client.pinnedNotes.length > 0) blockingReasons.push("pinned notes must be cleared");
   if (client.dietPlan.summary) blockingReasons.push("diet plan summary must be cleared");
+  if (clientContainsUnredactedFoodRuleProfile(client)) {
+    blockingReasons.push("client food-rule profile fields must be cleared");
+  }
 
   const conversationIds = new Set(
     state.conversations.filter((conversation) => conversation.clientId === clientId).map((conversation) => conversation.id),
@@ -321,14 +341,18 @@ export function evaluatePhase74RedactionInvariants(
 
   for (const response of state.clientFormResponses.filter((item) => item.clientId === clientId)) {
     if (response.submittedPhoneE164) blockingReasons.push("form response phone must be cleared");
+    if (answersContainUnredactedFoodRuleData(response.answers)) {
+      blockingReasons.push("structured food rule form fields must be redacted");
+    }
     if (JSON.stringify(response.answers).includes("health details")) {
       blockingReasons.push("form response answers must be redacted");
     }
   }
 
   for (const proposal of state.clientUpdateProposals.filter((item) => item.clientId === clientId)) {
-    if (proposal.sourceText !== PHASE_74_REDACTION_MARKER) blockingReasons.push("proposal source text must be redacted");
-    if (proposal.proposedPatches.length > 0) blockingReasons.push("proposal patches must be redacted");
+    if (proposalContainsUnredactedFoodRuleData(proposal)) {
+      blockingReasons.push("proposal source text and patches must be redacted");
+    }
   }
 
   return {
@@ -410,6 +434,16 @@ export function buildPhase74ExportPackage(
     "ai_decisions.jsonl": exportData.aiDecisions.map((decision) => JSON.stringify(decision)).join("\n"),
     "handoffs.jsonl": exportData.handoffCases.map((handoff) => JSON.stringify(handoff)).join("\n"),
     "form_responses.json": JSON.stringify(exportData.clientFormResponses, null, 2),
+    "structured_food_rules.json": JSON.stringify(
+      {
+        lifecycleVersion: PHASE_76N_LIFECYCLE_VERSION,
+        categories: [...PHASE_76N_EXPORT_FOOD_RULE_CATEGORIES],
+        ...buildFoodRuleExportSection(exportData.clientFormResponses),
+      },
+      null,
+      2,
+    ),
+    "client_update_proposals.json": JSON.stringify(buildProposalExportSection(exportData.clientUpdateProposals), null, 2),
     "diet_plan_snapshots.json": JSON.stringify({ summary: exportData.client.dietPlan }, null, 2),
     "audit_events_minimized.jsonl": exportData.auditEvents.map((event) => JSON.stringify(event)).join("\n"),
   };

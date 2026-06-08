@@ -23,7 +23,7 @@ Bind product ingredient questions such as â€œdoes this chocolate contain milk?â€
 - Open web browsing or grounding/search
 - Photo OCR production path
 - Real barcode/catalog provider connections
-- PromptContext food-rule segments (Phase 76I)
+- PromptContext food-rule segments (implemented in Phase 76I)
 - Provider, channel, launch-gate, R-405, or real-data changes
 
 ## Verification contract

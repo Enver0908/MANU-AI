@@ -22,9 +22,11 @@ describe("client update proposals", () => {
     const proposal = next.clientUpdateProposals.at(-1);
     expect(proposal?.status).toBe("pending");
     expect(proposal?.proposedPatches.map((patch) => `${patch.target}:${patch.fieldId}:${patch.value}`)).toEqual([
+      "client_form_answer:forbidden_food_items:badem",
       "client_form_answer:forbidden_substitutions:badem",
       "client_form_answer:restricted_foods_medical:badem",
       "client_record:restrictedFoods:badem",
+      "client_form_answer:allowed_food_items:findik",
       "client_form_answer:allowed_substitutions:findik",
     ]);
     expect(next.clientFormResponses.find((response) => response.id === beforeResponse?.id)?.answers).toEqual(beforeResponse?.answers);
@@ -140,7 +142,10 @@ describe("client update proposals", () => {
     });
     const proposal = proposed.clientUpdateProposals.at(-1)!;
     const editedPatches = proposal.proposedPatches.map((patch) =>
-      patch.fieldId === "restrictedFoods" || patch.fieldId === "forbidden_substitutions" || patch.fieldId === "restricted_foods_medical"
+      patch.fieldId === "restrictedFoods" ||
+      patch.fieldId === "forbidden_food_items" ||
+      patch.fieldId === "forbidden_substitutions" ||
+      patch.fieldId === "restricted_foods_medical"
         ? { ...patch, value: "ceviz" }
         : patch,
     );
@@ -180,6 +185,40 @@ describe("client update proposals", () => {
     expect(() => applyClientUpdateProposalInState(changed, "client-mert", proposal.id)).toThrow(
       "proposal_stale_recreate_required",
     );
+  });
+
+  it("creates structured food-rule patches from Turkish chat examples", () => {
+    const next = createClientUpdateProposalInState(createInitialState(), "client-mert", {
+      sourceText:
+        "Mert artik sut urunleri tuketmemeli. Badem yerine findik ayni degisim grubunda kabul. Aksam ara ogun opsiyonel olabilir.",
+    });
+    const proposal = next.clientUpdateProposals.at(-1)!;
+    const patchKeys = proposal.proposedPatches.map((patch) => `${patch.fieldId}:${patch.value}`);
+
+    expect(proposal.status).toBe("pending");
+    expect(patchKeys).toContain("forbidden_food_groups:Sut urunleri");
+    expect(patchKeys).toContain("equivalent_exchange_groups:yemis: badem|findik");
+    expect(patchKeys).toContain("optional_foods_or_meals:Aksam Ara Ogun");
+    expect(proposal.safetyFlags).toContain("food_rule_clinical_review_recommended");
+  });
+
+  it("applies food-rule patches to structured form fields and mirrors restricted foods", () => {
+    const proposed = createClientUpdateProposalInState(createInitialState(), "client-mert", {
+      sourceText: "Gluten iceren urunleri yasakla. Laktoz, whey ve casein iceren urunleri sut urunu kabul et.",
+    });
+    const proposal = proposed.clientUpdateProposals.at(-1)!;
+    const applied = applyClientUpdateProposalInState(proposed, "client-mert", proposal.id, "2026-06-08T12:00:00.000Z");
+    const response = applied.clientFormResponses.find((item) => item.clientId === "client-mert")!;
+    const client = applied.clients.find((item) => item.id === "client-mert")!;
+
+    expect(applied.clientUpdateProposals.find((item) => item.id === proposal.id)?.status).toBe("applied");
+    expect(response.answers.forbidden_food_groups).toContain("Gluten");
+    expect(response.answers.ingredient_allergen_keywords).toEqual(
+      expect.arrayContaining(["laktoz", "whey", "casein"]),
+    );
+    expect(response.answers.allowed_food_groups).toContain("Sut urunleri");
+    expect(client.restrictedFoods).toContain("Gluten");
+    expect(applied.auditEvents.some((event) => event.eventType === "client_update_proposal_applied")).toBe(true);
   });
 
   it("rejects pending proposals without applying changes", () => {

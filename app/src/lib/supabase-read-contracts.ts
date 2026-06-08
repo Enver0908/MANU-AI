@@ -68,7 +68,7 @@ export const SUPABASE_READ_CONTRACTS: SupabaseReadContract[] = [
     productionContract:
       "Move to a dedicated transactional redaction RPC after retention, hard-delete, and legal-hold decisions are approved.",
     reason: "Removal must preserve minimized export/audit evidence while hiding the client from normal workflows.",
-    nextAction: "Keep separate from Phase 51 generic mutation RPC until the bulk redaction contract is designed.",
+    nextAction: "Phase 76N routes in-RPC-covered removal deltas through commit_client_removal_lifecycle; channel/memory redaction remains direct until a dedicated contract exists.",
   },
   {
     id: "voice_sample_workflow",
@@ -200,6 +200,16 @@ export const SUPABASE_READ_CONTRACTS: SupabaseReadContract[] = [
     productionContract: "Keep scoped and preserve schema snapshot inclusion.",
     reason: "This path was already narrowed and covered by transactional RPC/integration tests.",
     nextAction: "No broad-read action needed in this phase.",
+  },
+  {
+    id: "client_update_proposal_mutation",
+    ownerPath: "app/src/app/api/clients/[id]/update-proposals/route.ts",
+    currentLoader: "loadSupabaseClientOperationState",
+    status: "scoped_mutation_read",
+    currentScope: "client-scoped proposal create/apply with form response and context update deltas",
+    productionContract: "Use commit_client_update_proposal transactional RPC for create/apply paths.",
+    reason: "Phase 76N moved proposal mutations onto the shared state-delta RPC with food-rule redaction coverage.",
+    nextAction: "Add integration coverage for food-rule proposal apply when local Supabase is available.",
   },
 ];
 

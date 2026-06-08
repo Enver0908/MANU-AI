@@ -266,6 +266,7 @@ export function createInitialState(): ManuAppState {
     scopeRules: createPlaceholderScopeRules(createdAt),
     scopeRuleChunks: [],
     scopeGuardEvaluations: [],
+    permissionGraphEvaluations: [],
     processedSimulationKeys: ["seed-green"],
     lastSimulation: null,
   };

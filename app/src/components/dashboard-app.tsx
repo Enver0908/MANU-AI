@@ -51,6 +51,13 @@ import type {
   MessageRecord,
   SafetyChecklist,
 } from "@/lib/types";
+import { FoodRulesPanel } from "@/components/food-rules-panel";
+import {
+  getClientFoodRuleDashboardState,
+  mergeFoodRuleDashboardIntoAnswers,
+  type FoodRuleDashboardState,
+} from "@/lib/phase-76j-food-rule-dashboard";
+import { getActiveFormSchema } from "@/lib/client-forms";
 import { useManuState } from "@/lib/use-manu-state";
 import { SUPPORTED_LANGUAGES, type SupportedLanguageCode } from "@/lib/languages";
 import { t, type DashboardMessageKey } from "@/lib/i18n";
@@ -304,9 +311,7 @@ export function DashboardApp({ authInfo }: { authInfo?: { displayName: string; r
 
   const saveSelectedFormResponse = async () => {
     if (!selectedClient) return;
-    const activeSchema = [...state.clientFormSchemas]
-      .filter((schema) => schema.status === "published")
-      .sort((a, b) => b.version - a.version)[0];
+    const activeSchema = getActiveFormSchema(state);
     if (!activeSchema) return;
     await saveFormResponse({
       clientId: selectedClient.id,
@@ -315,6 +320,21 @@ export function DashboardApp({ authInfo }: { authInfo?: { displayName: string; r
       submittedPhoneE164: selectedClient.primaryPhoneE164 || undefined,
     });
     setFormAnswersRaw("");
+  };
+
+  const saveSelectedFoodRules = async (foodRuleState: FoodRuleDashboardState) => {
+    if (!selectedClient) return;
+    const activeSchema = getActiveFormSchema(state);
+    if (!activeSchema) return;
+    const existing = state.clientFormResponses.find(
+      (item) => item.clientId === selectedClient.id && item.schemaId === activeSchema.id,
+    );
+    await saveFormResponse({
+      clientId: selectedClient.id,
+      schemaId: activeSchema.id,
+      answers: mergeFoodRuleDashboardIntoAnswers(existing?.answers, foodRuleState),
+      submittedPhoneE164: selectedClient.primaryPhoneE164 || undefined,
+    });
   };
 
   const askInternalCopilot = async (body = copilotInput) => {
@@ -683,6 +703,7 @@ export function DashboardApp({ authInfo }: { authInfo?: { displayName: string; r
                 schemaLanguage={schemaLanguage}
                 schemaFieldsRaw={schemaFieldsRaw}
                 formAnswersRaw={formAnswersRaw}
+                foodRuleState={getClientFoodRuleDashboardState(state, selectedClient.id)}
                 uiLanguage={uiLanguage}
                 onSchemaTitle={setSchemaTitle}
                 onSchemaLanguage={setSchemaLanguage}
@@ -691,6 +712,7 @@ export function DashboardApp({ authInfo }: { authInfo?: { displayName: string; r
                 onCreateSchema={createSchemaFromInput}
                 onPublishSchema={publishFormSchema}
                 onSaveResponse={saveSelectedFormResponse}
+                onSaveFoodRules={saveSelectedFoodRules}
               />
             )}
           </div>
@@ -1596,6 +1618,7 @@ function FormsPanel({
   schemaLanguage,
   schemaFieldsRaw,
   formAnswersRaw,
+  foodRuleState,
   uiLanguage,
   onSchemaTitle,
   onSchemaLanguage,
@@ -1604,6 +1627,7 @@ function FormsPanel({
   onCreateSchema,
   onPublishSchema,
   onSaveResponse,
+  onSaveFoodRules,
 }: {
   state: ManuAppState;
   selectedClient: ClientRecord;
@@ -1611,6 +1635,7 @@ function FormsPanel({
   schemaLanguage: SupportedLanguageCode;
   schemaFieldsRaw: string;
   formAnswersRaw: string;
+  foodRuleState: FoodRuleDashboardState;
   uiLanguage: SupportedLanguageCode;
   onSchemaTitle: (value: string) => void;
   onSchemaLanguage: (value: SupportedLanguageCode) => void;
@@ -1619,6 +1644,7 @@ function FormsPanel({
   onCreateSchema: () => void;
   onPublishSchema: (schemaId: string) => Promise<ManuAppState>;
   onSaveResponse: () => void;
+  onSaveFoodRules: (foodRuleState: FoodRuleDashboardState) => Promise<void>;
 }) {
   const activeSchema = [...state.clientFormSchemas]
     .filter((schema) => schema.status === "published")
@@ -1674,14 +1700,27 @@ function FormsPanel({
           ))}
         </div>
       </section>
-      <section className="rounded-lg border border-stone-200 bg-white p-4 shadow-sm">
+      <section className="space-y-4 rounded-lg border border-stone-200 bg-white p-4 shadow-sm">
         <h3 className="text-xl font-semibold">{selectedClient.fullName} form response</h3>
         {activeSchema ? (
           <>
             <p className="mt-1 text-sm text-stone-600">
               {activeSchema.title} v{activeSchema.version} · {activeSchema.languageCode}
             </p>
-            <TextareaInput label="Answers" value={formAnswersRaw} onChange={onFormAnswersRaw} rows={8} />
+            <FoodRulesPanel
+              key={`${selectedClient.id}-${selectedClient.contextRevision}`}
+              clientName={selectedClient.fullName}
+              contextRevision={selectedClient.contextRevision}
+              initialState={foodRuleState}
+              disabled={selectedClient.lifecycleStatus === "removed_anonymized"}
+              onSave={onSaveFoodRules}
+            />
+            <TextareaInput
+              label="Other form answers (key: value)"
+              value={formAnswersRaw}
+              onChange={onFormAnswersRaw}
+              rows={6}
+            />
             <button
               onClick={onSaveResponse}
               className="mt-3 inline-flex items-center gap-2 rounded-lg bg-emerald-950 px-3 py-2 text-sm font-semibold text-white"
@@ -1975,6 +2014,7 @@ function groupProposalPatches(patches: ClientUpdateProposalPatch[]) {
     nutrition: "Nutrition",
     clinical_safety: "Clinical safety",
     sensitive_detail: "Sensitive form detail",
+    food_rule: "Food rules",
   };
   const groups = new Map<string, ClientUpdateProposalPatch[]>();
   for (const patch of patches) {

@@ -18,6 +18,7 @@ import {
 import { RETENTION_POLICY_PLACEHOLDERS } from "./data-governance";
 import { createInitialState, DEMO_FORM_SCHEMA_ID } from "./seed-data";
 import { buildPhase70QualifiedClientAnswers } from "./phase-70-seed-answers";
+import { answersContainUnredactedFoodRuleData } from "./phase-76n-food-rule-lifecycle";
 
 describe("app state store operations", () => {
   it("creates a client with a conversation", () => {
@@ -366,9 +367,12 @@ describe("app state store operations", () => {
     );
     expect(removed.clientFormResponses[0]).toMatchObject({
       submittedPhoneE164: null,
-      answers: { redacted: "REDACTED_BY_PHASE74_POLICY" },
+      answers: expect.objectContaining({
+        forbidden_food_items: "REDACTED_BY_PHASE74_POLICY",
+        allowed_food_items: "REDACTED_BY_PHASE74_POLICY",
+      }),
     });
-    expect(bundle.clientFormResponses[0].answers).toEqual({ redacted: "REDACTED_BY_PHASE74_POLICY" });
+    expect(answersContainUnredactedFoodRuleData(bundle.clientFormResponses[0].answers)).toBe(false);
     expect(removed.dataRequests.at(-1)).toMatchObject({
       clientId: "client-mert",
       requestType: "deletion",

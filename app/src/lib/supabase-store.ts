@@ -461,6 +461,7 @@ export async function loadSupabaseState(context = demoTenantContext()) {
       scopeRules: createPlaceholderScopeRules(),
       scopeRuleChunks: [],
       scopeGuardEvaluations: [],
+      permissionGraphEvaluations: [],
       auditEvents: (auditEventsResult.data || []).map(mapAuditEvent),
       processedSimulationKeys: (processedEventsResult.data || []).map((event) => event.provider_event_id),
       lastSimulation: null,
@@ -698,6 +699,7 @@ async function loadSupabaseClientOperationState(
       scopeRules: createPlaceholderScopeRules(),
       scopeRuleChunks: [],
       scopeGuardEvaluations: [],
+      permissionGraphEvaluations: [],
       auditEvents: [],
       processedSimulationKeys: (processedEventsResult.data || []).map((event) => event.provider_event_id),
       lastSimulation: null,
@@ -1010,7 +1012,7 @@ async function persistSupabaseClientRemovalLifecycle(
   const beforeAudits = new Set(before.auditEvents.map((item) => item.id));
   const beforeRequests = new Set(before.dataRequests.map((item) => item.id));
 
-  await upsertClient(supabase, client, before.clients.find((item) => item.id === client.id));
+  await commitStateDeltaRpc(supabase, "commit_client_removal_lifecycle", before, after);
   await checked(
     supabase
       .from("client_channels")
@@ -1035,97 +1037,14 @@ async function persistSupabaseClientRemovalLifecycle(
       .eq("client_id", client.id),
   );
 
-  if (conversationIds.length > 0) {
-    await checked(
-      supabase
-        .from("messages")
-        .update({
-          body: "[client data anonymized]",
-          source_message_id: null,
-          generated_by_ai_decision_id: null,
-          approved_by_dietitian_id: null,
-          author_dietitian_id: null,
-        })
-        .eq("tenant_id", context.tenantId)
-        .in("conversation_id", conversationIds),
-    );
-    await checked(
-      supabase
-        .from("risk_assessments")
-        .update({ reasons: ["client_data_anonymized"] })
-        .eq("tenant_id", context.tenantId)
-        .in("conversation_id", conversationIds),
-    );
-  }
-
-  await checked(
-    supabase
-      .from("ai_decisions")
-      .update({
-        model: null,
-        provider_status: "not_called",
-        provider_error_code: null,
-        blocked_reason: "client_data_anonymized",
-        quality_issues: [],
-        reasons: ["client_data_anonymized"],
-      })
-      .eq("tenant_id", context.tenantId)
-      .eq("client_id", client.id),
-  );
-  await checked(
-    supabase
-      .from("handoff_cases")
-      .update({
-        reasons: ["client_data_anonymized"],
-        safe_acknowledgement: "[client data anonymized]",
-        recommended_action: "[client data anonymized]",
-      })
-      .eq("tenant_id", context.tenantId)
-      .eq("client_id", client.id),
-  );
   const handoffIds = after.handoffCases.filter((handoff) => handoff.clientId === client.id).map((handoff) => handoff.id);
-  if (handoffIds.length > 0) {
-    await checked(
-      supabase
-        .from("notifications")
-        .update({
-          title: "Handoff: anonymized client",
-          body: "Client data anonymized; review audit record.",
-        })
-        .eq("tenant_id", context.tenantId)
-        .eq("entity_type", "handoff_case")
-        .in("entity_id", handoffIds),
-    );
-  }
-  await checked(
-    supabase
-      .from("client_context_updates")
-      .update({
-        title: "[client data anonymized]",
-        summary: "[client data anonymized]",
-        details: "",
-        status: "superseded",
-      })
-      .eq("tenant_id", context.tenantId)
-      .eq("client_id", client.id),
-  );
-  await checked(
-    supabase
-      .from("client_form_responses")
-      .update({
-        submitted_phone_e164: null,
-        answers: { redacted: "[client data anonymized]" },
-        updated_at: new Date().toISOString(),
-      })
-      .eq("tenant_id", context.tenantId)
-      .eq("client_id", client.id),
-  );
   const minimizedEntityIds = [
     client.id,
     ...conversationIds,
     ...after.messages.filter((message) => conversationIds.includes(message.conversationId)).map((message) => message.id),
     ...after.aiDecisions.filter((decision) => decision.clientId === client.id).map((decision) => decision.id),
     ...handoffIds,
+    ...after.clientUpdateProposals.filter((proposal) => proposal.clientId === client.id).map((proposal) => proposal.id),
   ];
   await checked(
     supabase
@@ -1379,12 +1298,7 @@ export async function createSupabaseClientUpdateProposal(
 ) {
   const before = await loadSupabaseClientOperationState(clientId, context);
   const next = createUpdateProposalInState(before, clientId, input);
-  const proposal = next.clientUpdateProposals.find(
-    (item) => !before.clientUpdateProposals.some((beforeProposal) => beforeProposal.id === item.id),
-  );
-  const supabase = requireSupabase();
-  if (proposal) await upsertClientUpdateProposal(supabase, { ...proposal, tenantId: context.tenantId, dietitianId: context.dietitianId });
-  await persistNewAudits(supabase, before, next);
+  await commitStateDeltaRpc(requireSupabase(), "commit_client_update_proposal", before, next);
   return loadSupabaseState(context);
 }
 
@@ -1396,9 +1310,7 @@ export async function applySupabaseClientUpdateProposal(
 ) {
   const before = await loadSupabaseClientOperationState(clientId, context);
   const next = applyUpdateProposalInState(before, clientId, proposalId, input);
-  await commitStateDeltaRpc(requireSupabase(), "commit_client_context_update", before, next);
-  const proposal = next.clientUpdateProposals.find((item) => item.id === proposalId);
-  if (proposal) await upsertClientUpdateProposal(requireSupabase(), proposal);
+  await commitStateDeltaRpc(requireSupabase(), "commit_client_update_proposal", before, next);
   return loadSupabaseState(context);
 }
 
@@ -1737,7 +1649,9 @@ function buildStateDeltaPayload(
   const beforeAudits = new Set(before.auditEvents.map((item) => item.id));
   const beforeProcessed = new Set(before.processedSimulationKeys);
   const beforeFormResponsesById = new Map(before.clientFormResponses.map((item) => [item.id, item]));
-  const beforeContextUpdates = new Set(before.clientContextUpdates.map((item) => item.id));
+  const beforeContextUpdatesById = new Map(before.clientContextUpdates.map((item) => [item.id, item]));
+  const beforeProposalsById = new Map(before.clientUpdateProposals.map((item) => [item.id, item]));
+  const beforeNotificationsById = new Map(before.notifications.map((item) => [item.id, item]));
   const changedClients = after.clients.filter((client) => {
     const beforeClient = beforeClientsById.get(client.id);
     return beforeClient && JSON.stringify(beforeClient) !== JSON.stringify(client);
@@ -1753,6 +1667,18 @@ function buildStateDeltaPayload(
   const changedHandoffs = after.handoffCases.filter((handoff) => {
     const beforeHandoff = beforeHandoffsById.get(handoff.id);
     return beforeHandoff && JSON.stringify(beforeHandoff) !== JSON.stringify(handoff);
+  });
+  const changedContextUpdates = after.clientContextUpdates.filter((update) => {
+    const beforeUpdate = beforeContextUpdatesById.get(update.id);
+    return beforeUpdate && JSON.stringify(beforeUpdate) !== JSON.stringify(update);
+  });
+  const changedProposals = after.clientUpdateProposals.filter((proposal) => {
+    const beforeProposal = beforeProposalsById.get(proposal.id);
+    return !beforeProposal || JSON.stringify(beforeProposal) !== JSON.stringify(proposal);
+  });
+  const changedNotifications = after.notifications.filter((notification) => {
+    const beforeNotification = beforeNotificationsById.get(notification.id);
+    return beforeNotification && JSON.stringify(beforeNotification) !== JSON.stringify(notification);
   });
 
   return {
@@ -1777,8 +1703,11 @@ function buildStateDeltaPayload(
       .filter((item) => !beforeQuarantines.has(item.id))
       .map(serializeInboundQuarantineForRpc),
     clientContextUpdates: after.clientContextUpdates
-      .filter((item) => !beforeContextUpdates.has(item.id))
+      .filter((item) => !beforeContextUpdatesById.has(item.id))
       .map(serializeClientContextUpdateForRpc),
+    clientContextUpdateUpdates: changedContextUpdates.map(serializeClientContextUpdateUpdateForRpc),
+    clientUpdateProposals: changedProposals.map(serializeClientUpdateProposalForRpc),
+    notificationUpdates: changedNotifications.map(serializeNotificationUpdateForRpc),
     formResponses: after.clientFormResponses
       .filter((item) => {
         const beforeResponse = beforeFormResponsesById.get(item.id);
@@ -1883,6 +1812,7 @@ function serializeDecisionForRpc(decision: AiDecisionRecord) {
 function serializeDecisionUpdateForRpc(decision: AiDecisionRecord) {
   return {
     id: decision.id,
+    model: decision.model,
     providerAttempted: decision.providerAttempted,
     providerStatus: decision.providerStatus,
     providerErrorCode: decision.providerErrorCode,
@@ -1927,7 +1857,9 @@ function serializeHandoffUpdateForRpc(handoff: HandoffCaseRecord) {
   return {
     id: handoff.id,
     status: handoff.status,
-    resolvedAt: handoff.status === "resolved" || handoff.status === "dismissed" ? new Date().toISOString() : null,
+    reasons: handoff.reasons,
+    safeAcknowledgement: handoff.safeAcknowledgement,
+    recommendedAction: handoff.recommendedAction,
   };
 }
 
@@ -1987,6 +1919,41 @@ function serializeClientContextUpdateForRpc(update: ClientContextUpdateRecord) {
     status: update.status,
     supersedesUpdateId: update.supersedesUpdateId,
     createdAt: update.createdAt,
+  };
+}
+
+function serializeClientContextUpdateUpdateForRpc(update: ClientContextUpdateRecord) {
+  return {
+    id: update.id,
+    title: update.title,
+    summary: update.summary,
+    details: update.details,
+    status: update.status,
+  };
+}
+
+function serializeClientUpdateProposalForRpc(proposal: ClientUpdateProposalRecord) {
+  return {
+    id: proposal.id,
+    clientId: proposal.clientId,
+    dietitianId: proposal.dietitianId,
+    sourceText: proposal.sourceText,
+    proposedPatches: proposal.proposedPatches,
+    safetyFlags: proposal.safetyFlags,
+    status: proposal.status,
+    expectedContextRevision: proposal.expectedContextRevision,
+    createdAt: proposal.createdAt,
+    resolvedAt: proposal.resolvedAt,
+  };
+}
+
+function serializeNotificationUpdateForRpc(notification: NotificationRecord) {
+  return {
+    id: notification.id,
+    title: notification.title,
+    body: notification.body,
+    read: notification.read,
+    acknowledgedAt: notification.acknowledgedAt,
   };
 }
 

@@ -18,6 +18,9 @@ export function getLatestClientFormAnswers(state: ManuAppState, clientId: string
 }
 
 export function buildStructuredFoodRulesFromClientState(state: ManuAppState, clientId: string) {
+  const client = state.clients.find((item) => item.id === clientId);
+  if (!client || client.lifecycleStatus === "removed_anonymized") return null;
+
   const answers = getLatestClientFormAnswers(state, clientId);
   if (!answers) return null;
   const manifest = buildStructuredFoodRuleManifest(answers);

@@ -17,9 +17,9 @@ These rules are non-negotiable and apply to every future phase:
 - Autopilot is not globally enabled for all 5,000 clients by default. It is enabled only for selected qualified clients after all gates, monitoring, and rollback controls are ready.
 
 ## Current Baseline
-- Latest completed phase: Phase 76H product ingredient verification.
+- Latest completed phase: Phase 76N Supabase, RLS, export, redaction, and transactional coverage.
 - Latest completed implementation phase before 76C: Phase 76B expanded chat form safety updates.
-- Latest verification: core tests 146/146, app tests 247/247, `npm run release:verify` passed with only documented R-405 findings.
+- Latest verification: core tests 165/165, app tests 276/276, `npm run release:verify` passed with only documented R-405 findings.
 - Production pilot status: `NO-GO`.
 - Real WhatsApp, Gemini, monitoring, secret manager, and real client health data remain disconnected.
 - Existing usable foundations:
@@ -407,6 +407,62 @@ Completed:
 - Added `docs/PHASE_76H_PRODUCT_INGREDIENT_VERIFICATION_SPEC.md`, core `product-ingredient-verification.js`, app `product-ingredient-verification.ts`, food-rule engine verification consumption, and simulator/runtime auto-evidence wiring.
 - Verification: core tests 146/146, app tests 247/247, `npm run release:verify` passed with only documented R-405 findings.
 - No open web browsing, barcode/catalog providers, or production catalog connections were added.
+- Production pilot remains `NO-GO`.
+
+## Phase 76I: PromptContext and Provider Output Guard Hardening — Completed 2026-06-08
+Goal: give the provider bounded food-rule context and block output that contradicts engine decisions.
+
+Completed:
+- Added `docs/PHASE_76I_PROMPTCONTEXT_PROVIDER_OUTPUT_GUARD_SPEC.md`, core `food-rule-prompt-segments.js`, bounded PromptContext segments, `food-rule-output-guard-v0.1.0`, orchestrator wiring, and Phase 75/mock provider allowlist updates.
+- Verification: core tests 153/153, app tests 250/250, `npm run release:verify` passed with only documented R-405 findings.
+- No dashboard UX, chat proposals, or real Gemini egress were added.
+- Production pilot remains `NO-GO`.
+
+## Phase 76J: Dashboard Food Rule Management UX — Completed 2026-06-08
+Goal: let dietitians manage structured food rules from the dashboard with prompt-affecting draft invalidation.
+
+Completed:
+- Added `docs/PHASE_76J_DASHBOARD_FOOD_RULE_MANAGEMENT_SPEC.md`, `phase-76j-food-rule-dashboard.ts`, `FoodRulesPanel`, and Forms view wiring.
+- Food-rule saves use the existing client form response path with context revision increment, allergy/restriction sync, draft invalidation, and `client_food_rules_updated` audit metadata.
+- Verification: core tests 153/153, app tests 254/254, `npm run release:verify` passed with only documented R-405 findings.
+- No chat proposals, new API endpoints, or real Gemini egress were added.
+- Production pilot remains `NO-GO`.
+
+## Phase 76K: Chat-to-Food-Rule Proposal Expansion — Completed 2026-06-08
+Goal: expand dietitian chat update proposals with deterministic structured food-rule patches.
+
+Completed:
+- Added `docs/PHASE_76K_CHAT_FOOD_RULE_PROPOSAL_SPEC.md`, `phase-76k-food-rule-proposal-patches.ts`, `food_rule` proposal category, apply-path multiselect/exchange support, and allergy/restriction sync on apply.
+- Verification: core tests 153/153, app tests 262/262, `npm run release:verify` passed with only documented R-405 findings.
+- No real Gemini extraction, new API endpoints, or channel connections were added.
+- Production pilot remains `NO-GO`.
+
+## Phase 76N: Supabase, RLS, Export, Redaction, and Transactional Coverage — Completed 2026-06-08
+Goal: extend Phase 74 lifecycle coverage to structured food rules, proposals, and Supabase transactional paths.
+
+Completed:
+- Added `docs/PHASE_76N_SUPABASE_RLS_EXPORT_REDACTION_TRANSACTIONAL_COVERAGE_SPEC.md`, `phase-76n-food-rule-lifecycle.ts`, export bump to `phase74-export-v1.1`, per-field food-rule redaction, removed-client structured-rules null guard, migration `20260608120000_phase_76n_food_rule_lifecycle_rpc.sql`, `commit_client_update_proposal` RPC wiring, and `commit_client_removal_lifecycle` bulk redaction coverage.
+- Verification: core tests 165/165, app tests 276/276, `npm run release:verify` passed with only documented R-405 findings.
+- RLS re-run for the Phase 76N migration remains pending when local Supabase is unavailable.
+- No production lifecycle enablement, channel connections, or launch-gate closure were added.
+- Production pilot remains `NO-GO`.
+
+## Phase 76M: Phase 73 Calibration and Metrics Expansion — Completed 2026-06-08
+Goal: make expanded green capacity measurable with Phase 73 matrix/golden expansion and aggregate metrics.
+
+Completed:
+- Added `docs/PHASE_76M_CALIBRATION_METRICS_EXPANSION_SPEC.md`, extended `phase-73-health-regulation-calibration.ts` to `v1.1.0`, `phase-76m-calibration-metrics.ts`, operational-health aggregates, and core food-rule calibration JSONL cases.
+- Verification: core tests 165/165, app tests 272/272, `npm run release:verify` passed with only documented R-405 findings.
+- No production calibration activation, channel connections, or launch-gate closure were added.
+- Production pilot remains `NO-GO`.
+
+## Phase 76L: Phase 72 Permission Graph Runtime Bridge — Completed 2026-06-08
+Goal: wire draft permission graph into simulator risk path as audit-first evidence with gated enforcement.
+
+Completed:
+- Added `docs/PHASE_76L_PERMISSION_GRAPH_RUNTIME_BRIDGE_SPEC.md`, food-rule routing map extensions in `phase-72-permission-graph.ts` (`v1.1.0`), and `phase-76l-permission-graph-runtime.ts` simulator bridge.
+- Verification: core tests 153/153, app tests 266/266, `npm run release:verify` passed with only documented R-405 findings.
+- No production routing activation, core orchestrator hot-path wiring, or channel connections were added.
 - Production pilot remains `NO-GO`.
 
 ## Phase 76: WhatsApp Production Adapter

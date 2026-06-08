@@ -9,6 +9,7 @@ import {
   type LaunchGateId,
 } from "./launch-gates";
 import { buildNotificationSlaSnapshot } from "./notification-sla";
+import { buildPhase76mGreenCapacityHealthSignal } from "./phase-76m-calibration-metrics";
 import { buildScopeGuardHealthSignal } from "./scope-guard-runtime";
 import type { ManuAppState } from "./types";
 
@@ -33,6 +34,17 @@ export type OperationalHealthSnapshot = {
   directPilotDietitianCount: number;
   directPilotClientCount: number;
   directPilotScaleFailures: string[];
+  greenCapacityCalibrationVersion: string;
+  greenCapacityMetricsStatus: "pass" | "fail";
+  greenCoverageRate: number;
+  sourceBackedGreenRate: number;
+  foodRuleGreenRate: number;
+  falseYellowRate: number;
+  unsafeGreenRate: number;
+  mixedIntentBlockCount: number;
+  ingredientUnknownReviewCount: number;
+  providerAttemptedFalseCount: number;
+  covenantBlockCount: number;
 };
 
 const DEFAULT_STALE_DRAFT_HOURS = 24;
@@ -65,6 +77,7 @@ export function buildOperationalHealthSnapshot(
         loadBackpressureIdempotencyEvidence: options.loadBackpressureIdempotencyEvidence,
       })
     : null;
+  const greenCapacity = buildPhase76mGreenCapacityHealthSignal();
 
   return {
     generatedAt: now.toISOString(),
@@ -88,5 +101,16 @@ export function buildOperationalHealthSnapshot(
     directPilotDietitianCount: scaleReadiness?.dietitianCount ?? 0,
     directPilotClientCount: scaleReadiness?.totalClientCount ?? 0,
     directPilotScaleFailures: scaleReadiness?.failures ?? ["direct_pilot_scale_fixture_missing"],
+    greenCapacityCalibrationVersion: greenCapacity.calibrationVersion,
+    greenCapacityMetricsStatus: greenCapacity.status,
+    greenCoverageRate: greenCapacity.greenCoverageRate,
+    sourceBackedGreenRate: greenCapacity.sourceBackedGreenRate,
+    foodRuleGreenRate: greenCapacity.foodRuleGreenRate,
+    falseYellowRate: greenCapacity.falseYellowRate,
+    unsafeGreenRate: greenCapacity.unsafeGreenRate,
+    mixedIntentBlockCount: greenCapacity.mixedIntentBlockCount,
+    ingredientUnknownReviewCount: greenCapacity.ingredientUnknownReviewCount,
+    providerAttemptedFalseCount: greenCapacity.providerAttemptedFalseCount,
+    covenantBlockCount: greenCapacity.covenantBlockCount,
   };
 }

@@ -428,7 +428,30 @@ declare module "dietitian-ai-assistant-architecture" {
     riskLevel: RiskLevel;
     promptVersion?: string | null;
     policy?: unknown;
+    structuredFoodRules?: StructuredFoodRulesInput | null;
+    foodRuleDecision?: FoodRuleDecisionResult | null;
+    productIngredientEvidence?: ProductIngredientEvidenceInput | null;
   }): PromptCompilation & { blockedReason?: string | null };
+
+  export function buildFoodRulePromptSegments(input: {
+    structuredFoodRules?: StructuredFoodRulesInput | null;
+    foodRuleDecision?: FoodRuleDecisionResult | null;
+    productIngredientEvidence?: ProductIngredientEvidenceInput | null;
+  }): Array<{
+    id: string;
+    type: string;
+    sourceId: string | null;
+    text: string;
+    authority?: string | null;
+  }>;
+
+  export function detectFoodRuleOutputViolations(
+    output: string,
+    input?: {
+      foodRule?: FoodRuleDecisionResult | null;
+      structuredFoodRules?: StructuredFoodRulesInput | null;
+    },
+  ): string[];
 
   export function renderPromptContext(promptContext: PromptContext): string;
 
