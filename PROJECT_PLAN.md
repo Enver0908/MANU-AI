@@ -1244,7 +1244,7 @@ These defaults remove planning ambiguity. They can change only through an explic
 
 ## 14. Recommended Next Action
 
-Current baseline override (2026-06-08): Continue from Phase 76P continuity, evidence, and gate updates. Local baseline is core tests 165/165, app tests 284/284, `npm run release:verify` passed with only documented R-405 findings, production pilot `NO-GO`, all eight launch gates open, and R-405 open. The structured food-rule green capacity track (Phases 76C–76P) is complete locally. The next engineering phase is WhatsApp production adapter per `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` Phase 76.
+Current baseline override (2026-06-08): Continue from Phase 76Q verification and commit protocol. Local baseline is core tests 165/165, app tests 284/284, `npm run release:verify` passed with only documented R-405 findings, production pilot `NO-GO`, all eight launch gates open, and R-405 open. The structured food-rule green capacity track (Phases 76C–76Q) is complete locally. Phase 76N RLS re-run remains pending when local Supabase is unavailable. The next engineering phase is WhatsApp production adapter per `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` Phase 76.
 
 Historical Phase 65 baseline: official regulation PDF corpus QA foundation completed on 2026-06-04 with core tests 114/114 and app tests 166/166. It remains draft-only for official PDF-derived rules until user-supplied PDFs and structured legal/clinical approval evidence arrive. R-406 is mitigated for the Phase 50-52 baseline (`npm run test:rls` passed 19/19 on 2026-06-02); re-run RLS after Docker/local Supabase is available if Phase 57 or Phase 61 `scope_*` migration evidence is needed.
 

@@ -17,7 +17,7 @@ These rules are non-negotiable and apply to every future phase:
 - Autopilot is not globally enabled for all 5,000 clients by default. It is enabled only for selected qualified clients after all gates, monitoring, and rollback controls are ready.
 
 ## Current Baseline
-- Latest completed phase: Phase 76P continuity, evidence, and gate updates.
+- Latest completed phase: Phase 76Q verification and commit protocol.
 - Latest completed implementation phase before 76C: Phase 76B expanded chat form safety updates.
 - Latest verification: core tests 165/165, app tests 284/284, `npm run release:verify` passed with only documented R-405 findings.
 - Production pilot status: `NO-GO`.
@@ -445,6 +445,15 @@ Completed:
 - Verification: core tests 165/165, app tests 284/284, `npm run release:verify` passed with only documented R-405 findings; `unsafe_green_count = 0` on bundled rehearsal.
 - No production channel connections or launch-gate closure were added.
 - Production pilot remains `NO-GO`.
+
+## Phase 76Q: Verification and Commit Protocol — Completed 2026-06-08
+Goal: formally close the structured food-rule green capacity track (76C–76P) with Codex-compliant verification and commit evidence.
+
+Completed:
+- Added `docs/PHASE_76Q_VERIFICATION_AND_COMMIT_PROTOCOL_SPEC.md` with track closure verification counts and commit references (`19e26e3` 76O, `8e8bb47` 76P).
+- Re-ran core tests 165/165, app tests 284/284, lint, production build, and `npm run release:verify`; only documented R-405 findings remain.
+- `npm run test:rls` skipped (20/20 guarded) because local Supabase was unavailable; Phase 76N RLS re-run remains pending.
+- Production pilot remains `NO-GO`; all eight launch gates remain open.
 
 ## Phase 76P: Continuity, Evidence, and Gate Update — Completed 2026-06-08
 Goal: consolidate the completed food-rule green capacity track (76C–76O) into continuity, pilot, gate, and risk documentation.

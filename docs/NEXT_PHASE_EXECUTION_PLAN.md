@@ -27,6 +27,21 @@ Next implementation order:
 1. WhatsApp production adapter per `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` Phase 76.
 2. Production ops, R-405 closure/acceptance, and external launch-gate closure.
 
+## Phase 76Q: Verification and Commit Protocol - Completed 2026-06-08
+
+Goal: formally close the structured food-rule green capacity track (76C–76P) with Codex-compliant verification and commit evidence.
+
+Status:
+
+- Added `docs/PHASE_76Q_VERIFICATION_AND_COMMIT_PROTOCOL_SPEC.md` with track closure verification counts and commit references.
+- Re-ran core tests 165/165, app tests 284/284, lint, production build, and `npm run release:verify`; only documented R-405 findings remain.
+- `npm run test:rls` skipped (20/20 guarded) because local Supabase was unavailable; Phase 76N RLS re-run remains pending.
+- Production pilot remains `NO-GO`.
+
+Next:
+
+- Proceed to WhatsApp production adapter.
+
 ## Phase 76P: Continuity, Evidence, and Gate Update - Completed 2026-06-08
 
 Goal: consolidate Phases 76C–76O food-rule track evidence into continuity, pilot, gate, and risk documentation.

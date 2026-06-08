@@ -6,9 +6,9 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 This repository is a local SaaS/PWA pilot prototype and architecture workspace. It is not a production-connected system yet.
 
-**Latest phase:** Phase 76P continuity, evidence, and gate updates (2026-06-08). **Production pilot:** `NO-GO` (all eight launch gates open; R-405 open).
+**Latest phase:** Phase 76Q verification and commit protocol (2026-06-08). **Production pilot:** `NO-GO` (all eight launch gates open; R-405 open).
 
-**Latest verification:** Phase 76P re-verified on 2026-06-08: core tests 165/165, app tests 284/284, `npm run release:verify` passed with only documented R-405 findings. Structured food-rule green capacity track (Phases 76C–76P) is complete locally; next engineering work is WhatsApp production adapter.
+**Latest verification:** Phase 76Q re-verified on 2026-06-08: core tests 165/165, app tests 284/284, lint, production build, `npm run release:verify` passed with only documented R-405 findings; RLS skipped (local Supabase unavailable). Structured food-rule green capacity track (Phases 76C–76Q) is complete locally; next engineering work is WhatsApp production adapter.
 
 The current implementation includes:
 
@@ -51,6 +51,7 @@ The current implementation includes:
 - Phase 76N Supabase lifecycle coverage: structured food-rule export/redaction, client update proposal RPC, and removal-lifecycle transactional coverage
 - Phase 76O 100x50 synthetic food-mix rehearsal: twelve-scenario scale rehearsal with `unsafe_green_count = 0` on bundled rehearsal and operational-health food-mix aggregate fields
 - Phase 76P continuity, evidence, and gate updates: consolidated Phases 76C–76O food-rule track evidence in pilot/gate/risk docs; all launch gates remain open
+- Phase 76Q verification and commit protocol: formal 76C–76P track closure with verify+commit evidence; RLS re-run pending when local Supabase unavailable
 - Post-Phase 65 direct 100-dietitian completion plan in `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`, locking the no-small-ring 5,000-client production pilot target, product communication covenant, approved-source answerability path, and user-document timing
 
 ## Safety Model
