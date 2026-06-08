@@ -17,7 +17,7 @@ These rules are non-negotiable and apply to every future phase:
 - Autopilot is not globally enabled for all 5,000 clients by default. It is enabled only for selected qualified clients after all gates, monitoring, and rollback controls are ready.
 
 ## Current Baseline
-- Latest completed phase: Phase 76O 100x50 synthetic food-mix rehearsal.
+- Latest completed phase: Phase 76P continuity, evidence, and gate updates.
 - Latest completed implementation phase before 76C: Phase 76B expanded chat form safety updates.
 - Latest verification: core tests 165/165, app tests 284/284, `npm run release:verify` passed with only documented R-405 findings.
 - Production pilot status: `NO-GO`.
@@ -444,6 +444,17 @@ Completed:
 - Added `docs/PHASE_76O_100X50_SYNTHETIC_FOOD_MIX_REHEARSAL_SPEC.md`, `food-mix-rehearsal-scenarios.jsonl`, and `phase-76o-food-mix-rehearsal.ts` with scale rehearsal, integration checks, and operational-health aggregate fields.
 - Verification: core tests 165/165, app tests 284/284, `npm run release:verify` passed with only documented R-405 findings; `unsafe_green_count = 0` on bundled rehearsal.
 - No production channel connections or launch-gate closure were added.
+- Production pilot remains `NO-GO`.
+
+## Phase 76P: Continuity, Evidence, and Gate Update — Completed 2026-06-08
+Goal: consolidate the completed food-rule green capacity track (76C–76O) into continuity, pilot, gate, and risk documentation.
+
+Completed:
+- Added `docs/PHASE_76P_CONTINUITY_EVIDENCE_GATE_UPDATE_SPEC.md` with consolidated 76C–76O evidence inventory, gate interpretation, and risk-register narrative updates.
+- Updated continuity docs, pilot readiness evidence pack, gate closure dossier, final readiness summary, clinical taxonomy review packet, and risk register (R-109, R-117, R-310, R-403, R-409, R-412, R-413, R-414).
+- Preserved local prototype mitigated vs production approved distinction; all eight launch gates remain open; R-405 remains open.
+- Verification: core tests 165/165, app tests 284/284, `npm run release:verify` passed with only documented R-405 findings.
+- No runtime behavior, schema, provider, channel, or gate closure changes.
 - Production pilot remains `NO-GO`.
 
 ## Phase 76N: Supabase, RLS, Export, Redaction, and Transactional Coverage — Completed 2026-06-08

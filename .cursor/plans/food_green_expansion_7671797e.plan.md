@@ -43,7 +43,7 @@ todos:
     status: completed
   - id: phase-76p-docs
     content: Update continuity, evidence, gate, final readiness, and risk documentation.
-    status: pending
+    status: completed
   - id: phase-76q-verify
     content: Run full verification, release verify, RLS when needed, then stage and commit successful phase work.
     status: completed

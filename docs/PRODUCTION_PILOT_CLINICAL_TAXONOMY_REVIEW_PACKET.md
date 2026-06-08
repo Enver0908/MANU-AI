@@ -47,6 +47,22 @@ The review must cover:
 | Phase 64 evidence engine | `PHASE_64_STRUCTURED_LAUNCH_GATE_EVIDENCE_ENGINE_SPEC.md`, `app/src/lib/launch-gates.ts` | Structured evidence coverage, review cadence, expiry, and sanitized reference checks before this gate can be treated as closed | Qualified dietitian approval or supplied clinical artifact |
 | Phase 65 official PDF corpus QA | `PHASE_65_OFFICIAL_REGULATION_PDF_CORPUS_QA_SPEC.md`, `app/src/lib/official-regulation-corpus.ts` | Source metadata, checksum, page extraction evidence, page/section references, derived rule drafts, corpus version, and corpus golden-case QA before PDF-derived rules can become draft corpus rules | Qualified dietitian approval, legal/privacy handling decision, or active corpus approval |
 | Direct 100 dietitian completion plan | `DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` | Product communication covenant, source-backed green maximization, direct 5,000-client scale prerequisite, and future calibration phases | Qualified clinical approval of final routing/calibration behavior |
+| Structured food-rule green capacity track | `PHASE_76C_STRUCTURED_FOOD_RULE_GREEN_CAPACITY_SPEC.md` through `PHASE_76P_CONTINUITY_EVIDENCE_GATE_UPDATE_SPEC.md` | Local prototype evidence for structured food rules (76D), food-rule engine (76E), intent-specific answerability (76F), second-layer false-yellow calibration (76G), product ingredient verification (76H), PromptContext/output guards (76I), dashboard UX (76J), chat proposals (76K), permission graph bridge (76L), calibration metrics (76M), lifecycle coverage (76N), and 100x50 food-mix rehearsal (76O) consolidated in Phase 76P | Qualified dietitian approval of second-layer carve-outs, production calibration activation, official PDF corpus, and production safety evaluation approach |
+
+## Food-Rule Track Evidence Inventory (Phases 76C–76P)
+
+| Phase | Key local artifact | Review focus for qualified dietitian |
+| --- | --- | --- |
+| 76C | Canonical PRD/tech spec | Scope of source-backed food-rule green expansion |
+| 76D | Structured food-rule registry fields | Whether structured rules are clinically sufficient as answerability sources |
+| 76E | `food-rule-engine.js` | Deterministic forbidden/allowed/substitution/skip/product decisions |
+| 76F | `intent-specific-answerability.js` | Intent-family source matching without yellow/red downgrade |
+| 76G | `clinical-safety-second-layer-v0.2.0` carve-outs | Whether prospective food-rule carve-outs are clinically acceptable |
+| 76H | `product-ingredient-verification.js` | Fail-closed behavior for unknown product labels |
+| 76I | Bounded PromptContext segments + output guard | Whether provider context boundaries are clinically acceptable |
+| 76M | Phase 73 `v1.1.0` green-capacity metrics | `unsafe_green_rate = 0` on bundled suite; production calibration still gated |
+| 76O | 100x50 food-mix rehearsal | `unsafe_green_count = 0` on bundled rehearsal; not production acceptance |
+| 76P | Consolidated continuity/gate docs | Documentation only; does not approve any gate |
 
 ## Current Golden Case Summary
 

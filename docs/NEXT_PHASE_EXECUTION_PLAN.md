@@ -24,9 +24,25 @@ Locked decisions:
 
 Next implementation order:
 
-1. Phase 76P documentation, evidence, and gate updates per `docs/PHASE_76C_STRUCTURED_FOOD_RULE_GREEN_CAPACITY_SPEC.md`.
-2. WhatsApp production adapter.
-3. Production ops, R-405 closure/acceptance, and external launch-gate closure.
+1. WhatsApp production adapter per `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` Phase 76.
+2. Production ops, R-405 closure/acceptance, and external launch-gate closure.
+
+## Phase 76P: Continuity, Evidence, and Gate Update - Completed 2026-06-08
+
+Goal: consolidate Phases 76C–76O food-rule track evidence into continuity, pilot, gate, and risk documentation.
+
+Status:
+
+- Added `docs/PHASE_76P_CONTINUITY_EVIDENCE_GATE_UPDATE_SPEC.md` with consolidated evidence inventory and gate interpretation.
+- Updated continuity docs, pilot readiness evidence pack, gate closure dossier, final readiness summary, clinical taxonomy review packet, and risk register narratives.
+- Preserved local prototype mitigated vs production approved distinction; all eight launch gates remain open; R-405 remains open.
+- Verification passed with core tests 165/165, app tests 284/284, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain.
+- No runtime behavior, schema, provider, channel, or gate closure changes.
+- Production pilot remains `NO-GO`.
+
+Next:
+
+- Proceed to WhatsApp production adapter.
 
 ## Phase 76O: 100x50 Synthetic Food-Mix Rehearsal - Completed 2026-06-08
 
@@ -42,7 +58,7 @@ Status:
 
 Next:
 
-- Proceed to Phase 76P documentation, evidence, and gate updates.
+- Proceed to Phase 76P documentation, evidence, and gate updates (completed 2026-06-08).
 
 ## Phase 76N: Supabase, RLS, Export, Redaction, and Transactional Coverage - Completed 2026-06-08
 

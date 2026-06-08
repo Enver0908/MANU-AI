@@ -649,8 +649,8 @@ Phase 61 scope guard (RAG + LLM) second layer mock-first completed locally on 20
 
 Tasks:
 
-1. Complete Phase 76P documentation, evidence, and gate updates for the food-rule green capacity track per `docs/PHASE_76C_STRUCTURED_FOOD_RULE_GREEN_CAPACITY_SPEC.md`.
-2. Complete remaining production gates (WhatsApp, ops, R-405 closure, full 100x50 rehearsal, external launch-gate closure).
+1. Complete WhatsApp production adapter per `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` Phase 76.
+2. Complete remaining production gates (ops, R-405 closure, full 100x50 rehearsal, external launch-gate closure).
 3. Keep real Gemini/WhatsApp/monitoring/secret/real data disconnected until their gated phases.
 4. Accept official regulation PDFs in Phase 71 and use the Phase 65 QA foundation; do not activate official corpus production routing until external legal/clinical launch gates close even though Phase 72 draft permission graph artifacts exist.
 5. Complete WhatsApp adapter, production ops, R-405 closure, full 100x50 rehearsal, and external launch-gate closure before direct production GO.

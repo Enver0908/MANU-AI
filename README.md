@@ -6,9 +6,9 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 This repository is a local SaaS/PWA pilot prototype and architecture workspace. It is not a production-connected system yet.
 
-**Latest phase:** Phase 76L Phase 72 permission graph runtime bridge (2026-06-08). **Production pilot:** `NO-GO` (all eight launch gates open; R-405 open).
+**Latest phase:** Phase 76P continuity, evidence, and gate updates (2026-06-08). **Production pilot:** `NO-GO` (all eight launch gates open; R-405 open).
 
-**Latest verification:** Phase 76O re-verified on 2026-06-08: core tests 165/165, app tests 284/284, `npm run release:verify` passed with only documented R-405 findings.
+**Latest verification:** Phase 76P re-verified on 2026-06-08: core tests 165/165, app tests 284/284, `npm run release:verify` passed with only documented R-405 findings. Structured food-rule green capacity track (Phases 76C–76P) is complete locally; next engineering work is WhatsApp production adapter.
 
 The current implementation includes:
 
@@ -47,6 +47,10 @@ The current implementation includes:
 - Phase 76J dashboard food-rule management UX: structured `FoodRulesPanel` controls, load/merge/save helpers on the existing client form path, context revision increment, draft invalidation, and clinical/production warnings
 - Phase 76I PromptContext and provider output guard hardening: bounded food-rule PromptContext segments, food-rule provider instruction, and output guard blocks for forbidden-food approval, unauthorized substitution, skip relaxation, and portion/macro changes
 - Phase 76H product ingredient verification: trusted-source verification contract with user-label extraction, confidence/source gating, normalized forbidden keyword ids, and diet-type conflict detection on product labels
+- Phase 76M calibration and metrics expansion: Phase 73 `v1.1.0` food-rule golden categories, green-capacity metrics with `unsafe_green_rate = 0` on bundled suite, and operational-health aggregates
+- Phase 76N Supabase lifecycle coverage: structured food-rule export/redaction, client update proposal RPC, and removal-lifecycle transactional coverage
+- Phase 76O 100x50 synthetic food-mix rehearsal: twelve-scenario scale rehearsal with `unsafe_green_count = 0` on bundled rehearsal and operational-health food-mix aggregate fields
+- Phase 76P continuity, evidence, and gate updates: consolidated Phases 76C–76O food-rule track evidence in pilot/gate/risk docs; all launch gates remain open
 - Post-Phase 65 direct 100-dietitian completion plan in `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`, locking the no-small-ring 5,000-client production pilot target, product communication covenant, approved-source answerability path, and user-document timing
 
 ## Safety Model
