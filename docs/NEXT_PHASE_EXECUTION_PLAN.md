@@ -24,9 +24,25 @@ Locked decisions:
 
 Next implementation order:
 
-1. Phase 76O rehearsal and remaining food-rule green capacity track per `docs/PHASE_76C_STRUCTURED_FOOD_RULE_GREEN_CAPACITY_SPEC.md`.
+1. Phase 76P documentation, evidence, and gate updates per `docs/PHASE_76C_STRUCTURED_FOOD_RULE_GREEN_CAPACITY_SPEC.md`.
 2. WhatsApp production adapter.
-3. Production ops, R-405 closure/acceptance, full 100x50 rehearsal evidence, and external launch-gate closure.
+3. Production ops, R-405 closure/acceptance, and external launch-gate closure.
+
+## Phase 76O: 100x50 Synthetic Food-Mix Rehearsal - Completed 2026-06-08
+
+Goal: simulate expanded food-rule green capacity across 100 dietitians x 50 clients with aggregate rehearsal evidence.
+
+Status:
+
+- Added `docs/PHASE_76O_100X50_SYNTHETIC_FOOD_MIX_REHEARSAL_SPEC.md`, `food-mix-rehearsal-scenarios.jsonl`, and `phase-76o-food-mix-rehearsal.ts`.
+- Ran scale rehearsal across 5,000 synthetic client assignments with twelve food-mix scenarios and integration checks for duplicate inbound, provider failure, stale draft invalidation, and proposal apply.
+- Extended `direct-pilot-scale-readiness` and `operational-health` with food-mix aggregate evidence fields.
+- Verification passed with core tests 165/165, app tests 284/284, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain.
+- Production pilot remains `NO-GO`.
+
+Next:
+
+- Proceed to Phase 76P documentation, evidence, and gate updates.
 
 ## Phase 76N: Supabase, RLS, Export, Redaction, and Transactional Coverage - Completed 2026-06-08
 
@@ -39,10 +55,6 @@ Status:
 - RLS re-run for the Phase 76N migration remains pending when local Supabase is unavailable.
 - Verification passed with core tests 165/165, app tests 276/276, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain.
 - Production pilot remains `NO-GO`.
-
-Next:
-
-- Proceed to Phase 76O 100x50 synthetic food-mix rehearsal.
 
 ## Phase 76M: Phase 73 Calibration and Metrics Expansion - Completed 2026-06-08
 

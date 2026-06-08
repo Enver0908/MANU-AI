@@ -18,28 +18,29 @@ Start by reading:
 2. `PROJECT_PLAN.md`
 3. `docs/NEXT_PHASE_EXECUTION_PLAN.md`
 4. `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` (current strategic roadmap)
-5. `docs/PHASE_76N_SUPABASE_RLS_EXPORT_REDACTION_TRANSACTIONAL_COVERAGE_SPEC.md` (latest completed phase)
-6. `docs/PHASE_76M_CALIBRATION_METRICS_EXPANSION_SPEC.md`
-7. `docs/PHASE_76L_PERMISSION_GRAPH_RUNTIME_BRIDGE_SPEC.md`
-8. `docs/PHASE_76K_CHAT_FOOD_RULE_PROPOSAL_SPEC.md`
-9. `docs/PHASE_76J_DASHBOARD_FOOD_RULE_MANAGEMENT_SPEC.md`
-10. `docs/PHASE_76I_PROMPTCONTEXT_PROVIDER_OUTPUT_GUARD_SPEC.md`
-11. `docs/PHASE_76H_PRODUCT_INGREDIENT_VERIFICATION_SPEC.md`
-12. `docs/PHASE_76G_CLINICAL_SECOND_LAYER_FALSE_YELLOW_CALIBRATION_SPEC.md`
-13. `docs/PHASE_76F_INTENT_SPECIFIC_ANSWERABILITY_SPEC.md`
-14. `docs/PHASE_76E_FOOD_RULE_ENGINE_SPEC.md`
-15. `docs/PHASE_76D_STRUCTURED_FOOD_RULE_DATA_MODEL_SPEC.md`
-16. `docs/PHASE_76C_STRUCTURED_FOOD_RULE_GREEN_CAPACITY_SPEC.md`
-17. `docs/PHASE_76B_EXPANDED_CHAT_FORM_SAFETY_UPDATE_SPEC.md`
-18. `docs/PHASE_76A_DIETITIAN_CHAT_FORM_UPDATE_PROPOSALS_SPEC.md`
-19. `docs/PHASE_75_GEMINI_PROVIDER_GATE_SPEC.md`
-20. `docs/PHASE_74_DATA_LIFECYCLE_DSAR_SPEC.md`
-21. `docs/PHASE_73_HEALTH_REGULATION_CALIBRATION_SPEC.md`
-22. `docs/PHASE_72_REGULATION_PERMISSION_GRAPH_SPEC.md`
-23. `docs/PHASE_71_TURKIYE_OFFICIAL_HEALTH_SOURCE_INGESTION_SPEC.md`
-24. `docs/PHASE_70_USER_SUPPLIED_FORM_HARDENING_SPEC.md`
-25. `docs/PHASE_69_DIRECT_5000_CLIENT_SCALE_FOUNDATION_SPEC.md`
-26. `docs/PHASE_68_GREEN_MAXIMIZATION_INTENT_TAXONOMY_SPEC.md`
+5. `docs/PHASE_76O_100X50_SYNTHETIC_FOOD_MIX_REHEARSAL_SPEC.md` (latest completed phase)
+6. `docs/PHASE_76N_SUPABASE_RLS_EXPORT_REDACTION_TRANSACTIONAL_COVERAGE_SPEC.md`
+7. `docs/PHASE_76M_CALIBRATION_METRICS_EXPANSION_SPEC.md`
+8. `docs/PHASE_76L_PERMISSION_GRAPH_RUNTIME_BRIDGE_SPEC.md`
+9. `docs/PHASE_76K_CHAT_FOOD_RULE_PROPOSAL_SPEC.md`
+10. `docs/PHASE_76J_DASHBOARD_FOOD_RULE_MANAGEMENT_SPEC.md`
+11. `docs/PHASE_76I_PROMPTCONTEXT_PROVIDER_OUTPUT_GUARD_SPEC.md`
+12. `docs/PHASE_76H_PRODUCT_INGREDIENT_VERIFICATION_SPEC.md`
+13. `docs/PHASE_76G_CLINICAL_SECOND_LAYER_FALSE_YELLOW_CALIBRATION_SPEC.md`
+14. `docs/PHASE_76F_INTENT_SPECIFIC_ANSWERABILITY_SPEC.md`
+15. `docs/PHASE_76E_FOOD_RULE_ENGINE_SPEC.md`
+16. `docs/PHASE_76D_STRUCTURED_FOOD_RULE_DATA_MODEL_SPEC.md`
+17. `docs/PHASE_76C_STRUCTURED_FOOD_RULE_GREEN_CAPACITY_SPEC.md`
+18. `docs/PHASE_76B_EXPANDED_CHAT_FORM_SAFETY_UPDATE_SPEC.md`
+19. `docs/PHASE_76A_DIETITIAN_CHAT_FORM_UPDATE_PROPOSALS_SPEC.md`
+20. `docs/PHASE_75_GEMINI_PROVIDER_GATE_SPEC.md`
+21. `docs/PHASE_74_DATA_LIFECYCLE_DSAR_SPEC.md`
+22. `docs/PHASE_73_HEALTH_REGULATION_CALIBRATION_SPEC.md`
+23. `docs/PHASE_72_REGULATION_PERMISSION_GRAPH_SPEC.md`
+24. `docs/PHASE_71_TURKIYE_OFFICIAL_HEALTH_SOURCE_INGESTION_SPEC.md`
+25. `docs/PHASE_70_USER_SUPPLIED_FORM_HARDENING_SPEC.md`
+26. `docs/PHASE_69_DIRECT_5000_CLIENT_SCALE_FOUNDATION_SPEC.md`
+27. `docs/PHASE_68_GREEN_MAXIMIZATION_INTENT_TAXONOMY_SPEC.md`
 27. `docs/PHASE_67_APPROVED_SOURCE_ANSWERABILITY_ENGINE_SPEC.md`
 28. `docs/PHASE_66_PRODUCT_COMMUNICATION_COVENANT_LOCK_SPEC.md`
 29. `docs/PHASE_65_OFFICIAL_REGULATION_PDF_CORPUS_QA_SPEC.md`
@@ -88,7 +89,9 @@ The product must be both:
 
 Post-Phase 69 baseline: the direct 100-dietitian strategic completion plan in `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` remains canonical. It locks the production pilot target to direct 100 dietitians x 50 clients (minimum 5,000 clients), with no small production ring. It also locks the product communication covenant: client-facing output must never disclose AI identity or tell the client to ask a doctor/dietitian/professional, yellow/red paths send no client-facing AI boundary reply, and green maximization must come from approved source-backed answerability plus deterministic green intent taxonomy rather than answering risky messages.
 
-Next implementation phase is Phase 76O 100x50 synthetic food-mix rehearsal and remaining food-rule green capacity documentation, followed by WhatsApp production adapter work. Real Gemini egress must not be enabled without Phase 75 approved provider artifacts plus `MANU_ALLOW_REAL_GEMINI=true` and closed legal/privacy plus provider/vendor gates. Production data lifecycle must not be enabled without Phase 74 transactional redaction plus external legal/privacy approval.
+Next implementation phase is Phase 76P documentation, evidence, and gate updates for the completed food-rule green capacity track, followed by WhatsApp production adapter work. Real Gemini egress must not be enabled without Phase 75 approved provider artifacts plus `MANU_ALLOW_REAL_GEMINI=true` and closed legal/privacy plus provider/vendor gates. Production data lifecycle must not be enabled without Phase 74 transactional redaction plus external legal/privacy approval.
+
+Phase 76O 100x50 synthetic food-mix rehearsal completed on 2026-06-08: added `docs/PHASE_76O_100X50_SYNTHETIC_FOOD_MIX_REHEARSAL_SPEC.md`, `food-mix-rehearsal-scenarios.jsonl`, `phase-76o-food-mix-rehearsal.ts` scale rehearsal across 100 dietitians x 50 clients with twelve food-mix scenarios, integration checks for duplicate inbound, provider failure, stale draft invalidation, and proposal apply during active conversation, `direct-pilot-scale-readiness` food-mix evidence fields, and operational-health aggregate food-mix metrics without raw message leakage. Rehearsal metrics record `unsafe_green_count = 0`, food-rule green/handoff counts, and removed-client blocks across 5,000 synthetic assignments. No production channel, launch-gate approval, R-405 status, or real-data handling changed. Verification passed with core tests 165/165, app tests 284/284, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain. Production pilot remains `NO-GO`.
 
 Phase 76N Supabase, RLS, export, redaction, and transactional coverage completed on 2026-06-08: added `docs/PHASE_76N_SUPABASE_RLS_EXPORT_REDACTION_TRANSACTIONAL_COVERAGE_SPEC.md`, `phase-76n-food-rule-lifecycle.ts` export/redaction helpers, Phase 74 export bump to `phase74-export-v1.1` with `structured_food_rules.json` and `client_update_proposals.json`, per-field food-rule form answer redaction, removed-client `buildStructuredFoodRulesFromClientState` null guard, Supabase `manu_commit_state_delta` migration for proposal upserts and redaction-related updates, `commit_client_update_proposal` RPC for create/apply flows, `commit_client_removal_lifecycle` for bulk removal redaction deltas, and `client_update_proposal_mutation` read contract. RLS re-run for the Phase 76N migration remains pending when local Supabase is unavailable. No production lifecycle enablement, channel, launch-gate approval, R-405 status, or real-data handling changed. Verification passed with core tests 165/165, app tests 276/276, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain. Production pilot remains `NO-GO`.
 

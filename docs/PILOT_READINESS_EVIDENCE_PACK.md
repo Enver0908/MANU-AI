@@ -18,10 +18,10 @@ Run from `app`:
 npm run release:verify
 ```
 
-Latest result, re-verified on 2026-06-08 after Phase 76N Supabase, RLS, export, redaction, and transactional coverage:
+Latest result, re-verified on 2026-06-08 after Phase 76O 100x50 synthetic food-mix rehearsal:
 
 - Core package tests: 165/165 passed.
-- App tests: 276/276 passed.
+- App tests: 284/284 passed.
 - App lint: passed.
 - Production build: passed.
 - Production dependency audit gate: passed with only documented R-405 findings.
@@ -47,6 +47,7 @@ Latest result, re-verified on 2026-06-08 after Phase 76N Supabase, RLS, export, 
 - Phase 76F adds intent-specific answerability gating with intent-family source matching, food-rule alignment, structured food-rule source categories, substitution legacy plan/manual fallback, and yellow/red bypass before provider calls. No clinical second-layer carve-outs, product catalog adapters, provider routing changes, channel, or gate closure occurred.
 - Phase 76G adds source-backed food-rule carve-outs to clinical second-layer risk classification (`clinical-safety-second-layer-v0.2.0`) for prospective permission/substitution/skip questions while preserving ingestion reactions, acute clinical markers, and severe allergy profile review. External qualified dietitian approval is still required before production activation. No product catalog adapters, PromptContext segments, provider routing changes, channel, or gate closure occurred.
 - Phase 76H adds trusted product ingredient verification with user-label extraction, confidence/source gating, normalized forbidden keyword ids, diet-type conflict detection on product labels, and food-rule engine consumption. No open web browsing, barcode/catalog providers, PromptContext segments, provider routing changes, channel, or gate closure occurred.
+- Phase 76O adds `phase-76o-food-mix-rehearsal.ts`, twelve-scenario `food-mix-rehearsal-scenarios.jsonl`, 100x50 scale rehearsal with `unsafe_green_count = 0`, integration checks for duplicate inbound/provider failure/stale draft/proposal apply, and operational-health food-mix aggregate fields without raw message leakage. No production channel or gate closure occurred.
 - Phase 76N extends Phase 74 export/redaction to structured food rules and client update proposals, adds `phase-76n-food-rule-lifecycle.ts`, Supabase `commit_client_update_proposal` and removal-lifecycle RPC coverage, and migration `20260608120000_phase_76n_food_rule_lifecycle_rpc.sql`. RLS re-run for the Phase 76N migration remains pending when local Supabase is unavailable. No production lifecycle enablement, channel, or gate closure occurred.
 - Phase 76M extends Phase 73 calibration to `v1.1.0` with twelve food-rule golden categories, green-capacity metrics (`unsafe_green_rate = 0` on bundled suite), operational-health aggregates, and core food-rule calibration JSONL orchestrator tests. No production calibration activation, channel, or gate closure occurred.
 - Phase 76L adds audit-first Phase 72 permission graph food-rule routing on the simulator risk path with gated enforcement behind `MANU_ALLOW_PHASE_72_ACTIVE_ROUTING` plus launch-gate evidence. No production routing activation, core orchestrator hot-path wiring, channel, or gate closure occurred.

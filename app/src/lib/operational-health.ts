@@ -10,6 +10,7 @@ import {
 } from "./launch-gates";
 import { buildNotificationSlaSnapshot } from "./notification-sla";
 import { buildPhase76mGreenCapacityHealthSignal } from "./phase-76m-calibration-metrics";
+import { buildPhase76oFoodMixHealthSignal, evaluatePhase76oFoodMixSampleEvidence } from "./phase-76o-food-mix-rehearsal";
 import { buildScopeGuardHealthSignal } from "./scope-guard-runtime";
 import type { ManuAppState } from "./types";
 
@@ -45,6 +46,12 @@ export type OperationalHealthSnapshot = {
   ingredientUnknownReviewCount: number;
   providerAttemptedFalseCount: number;
   covenantBlockCount: number;
+  foodMixRehearsalVersion: string;
+  foodMixRehearsalStatus: "pass" | "fail";
+  foodMixRehearsalUnsafeGreenCount: number;
+  foodMixRehearsalFoodRuleGreenCount: number;
+  foodMixRehearsalNoSourceHandoffCount: number;
+  foodMixRehearsalRemovedClientBlockedCount: number;
 };
 
 const DEFAULT_STALE_DRAFT_HOURS = 24;
@@ -58,6 +65,7 @@ export function buildOperationalHealthSnapshot(
     staleDraftHours?: number;
     directPilotScaleFixture?: DirectPilotScaleFixture;
     loadBackpressureIdempotencyEvidence?: boolean;
+    foodMixRehearsalPass?: boolean;
   } = {},
 ): OperationalHealthSnapshot {
   const now = options.now ? new Date(options.now) : new Date();
@@ -75,9 +83,21 @@ export function buildOperationalHealthSnapshot(
   const scaleReadiness = options.directPilotScaleFixture
     ? evaluateDirectPilotScaleReadiness(options.directPilotScaleFixture, {
         loadBackpressureIdempotencyEvidence: options.loadBackpressureIdempotencyEvidence,
+        foodMixRehearsalPass: options.foodMixRehearsalPass,
       })
     : null;
   const greenCapacity = buildPhase76mGreenCapacityHealthSignal();
+  const foodMixSample = evaluatePhase76oFoodMixSampleEvidence();
+  const foodMix = buildPhase76oFoodMixHealthSignal({
+    ...foodMixSample,
+    scenarioAssignmentCount: foodMixSample.clientCount,
+    duplicateIgnoredCount: 0,
+    yellowClientSendCount: 0,
+    redClientSendCount: 0,
+    providerFailureHandoffCount: 0,
+    staleDraftInvalidatedCount: 0,
+    proposalApplyCount: 0,
+  });
 
   return {
     generatedAt: now.toISOString(),
@@ -112,5 +132,11 @@ export function buildOperationalHealthSnapshot(
     ingredientUnknownReviewCount: greenCapacity.ingredientUnknownReviewCount,
     providerAttemptedFalseCount: greenCapacity.providerAttemptedFalseCount,
     covenantBlockCount: greenCapacity.covenantBlockCount,
+    foodMixRehearsalVersion: foodMix.rehearsalVersion,
+    foodMixRehearsalStatus: foodMix.status,
+    foodMixRehearsalUnsafeGreenCount: foodMix.unsafeGreenCount,
+    foodMixRehearsalFoodRuleGreenCount: foodMix.foodRuleGreenCount,
+    foodMixRehearsalNoSourceHandoffCount: foodMix.foodRuleNoSourceHandoffCount,
+    foodMixRehearsalRemovedClientBlockedCount: foodMix.removedClientBlockedCount,
   };
 }

@@ -40,7 +40,7 @@ todos:
     status: completed
   - id: phase-76o-rehearsal
     content: Run 100x50 synthetic food-mix rehearsal and record operational evidence.
-    status: pending
+    status: completed
   - id: phase-76p-docs
     content: Update continuity, evidence, gate, final readiness, and risk documentation.
     status: pending

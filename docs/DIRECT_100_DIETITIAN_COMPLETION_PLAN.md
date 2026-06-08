@@ -17,9 +17,9 @@ These rules are non-negotiable and apply to every future phase:
 - Autopilot is not globally enabled for all 5,000 clients by default. It is enabled only for selected qualified clients after all gates, monitoring, and rollback controls are ready.
 
 ## Current Baseline
-- Latest completed phase: Phase 76N Supabase, RLS, export, redaction, and transactional coverage.
+- Latest completed phase: Phase 76O 100x50 synthetic food-mix rehearsal.
 - Latest completed implementation phase before 76C: Phase 76B expanded chat form safety updates.
-- Latest verification: core tests 165/165, app tests 276/276, `npm run release:verify` passed with only documented R-405 findings.
+- Latest verification: core tests 165/165, app tests 284/284, `npm run release:verify` passed with only documented R-405 findings.
 - Production pilot status: `NO-GO`.
 - Real WhatsApp, Gemini, monitoring, secret manager, and real client health data remain disconnected.
 - Existing usable foundations:
@@ -435,6 +435,15 @@ Completed:
 - Added `docs/PHASE_76K_CHAT_FOOD_RULE_PROPOSAL_SPEC.md`, `phase-76k-food-rule-proposal-patches.ts`, `food_rule` proposal category, apply-path multiselect/exchange support, and allergy/restriction sync on apply.
 - Verification: core tests 153/153, app tests 262/262, `npm run release:verify` passed with only documented R-405 findings.
 - No real Gemini extraction, new API endpoints, or channel connections were added.
+- Production pilot remains `NO-GO`.
+
+## Phase 76O: 100x50 Synthetic Food-Mix Rehearsal — Completed 2026-06-08
+Goal: simulate expanded food-rule green capacity across 100 dietitians x 50 clients with aggregate rehearsal evidence.
+
+Completed:
+- Added `docs/PHASE_76O_100X50_SYNTHETIC_FOOD_MIX_REHEARSAL_SPEC.md`, `food-mix-rehearsal-scenarios.jsonl`, and `phase-76o-food-mix-rehearsal.ts` with scale rehearsal, integration checks, and operational-health aggregate fields.
+- Verification: core tests 165/165, app tests 284/284, `npm run release:verify` passed with only documented R-405 findings; `unsafe_green_count = 0` on bundled rehearsal.
+- No production channel connections or launch-gate closure were added.
 - Production pilot remains `NO-GO`.
 
 ## Phase 76N: Supabase, RLS, Export, Redaction, and Transactional Coverage — Completed 2026-06-08

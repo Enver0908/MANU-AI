@@ -57,6 +57,7 @@ export type DirectPilotScaleReadiness = {
     paginationContracts: boolean;
     scopedReloadContracts: boolean;
     loadBackpressureIdempotency: boolean;
+    foodMixRehearsalPass: boolean;
   };
 };
 
@@ -138,6 +139,8 @@ export function evaluateDirectPilotScaleReadiness(
   options: {
     readContracts?: SupabaseReadContract[];
     loadBackpressureIdempotencyEvidence?: boolean;
+    foodMixRehearsalPass?: boolean;
+    requireFoodMixRehearsalEvidence?: boolean;
   } = {},
 ): DirectPilotScaleReadiness {
   const readContracts = options.readContracts ?? SUPABASE_READ_CONTRACTS;
@@ -163,6 +166,9 @@ export function evaluateDirectPilotScaleReadiness(
   if (options.loadBackpressureIdempotencyEvidence !== true) {
     failures.push("load_backpressure_idempotency_evidence_missing");
   }
+  if (options.requireFoodMixRehearsalEvidence === true && options.foodMixRehearsalPass !== true) {
+    failures.push("food_mix_rehearsal_evidence_missing");
+  }
 
   return {
     ready: failures.length === 0,
@@ -179,6 +185,7 @@ export function evaluateDirectPilotScaleReadiness(
       paginationContracts: phase69ContractCount === REQUIRED_PHASE_69_CONTRACT_IDS.length,
       scopedReloadContracts: phase69ContractCount === REQUIRED_PHASE_69_CONTRACT_IDS.length,
       loadBackpressureIdempotency: options.loadBackpressureIdempotencyEvidence === true,
+      foodMixRehearsalPass: options.foodMixRehearsalPass === true,
     },
   };
 }
