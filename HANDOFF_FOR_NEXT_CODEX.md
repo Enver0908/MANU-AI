@@ -18,35 +18,36 @@ Start by reading:
 2. `PROJECT_PLAN.md`
 3. `docs/NEXT_PHASE_EXECUTION_PLAN.md`
 4. `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` (current strategic roadmap)
-5. `docs/PHASE_76G_CLINICAL_SECOND_LAYER_FALSE_YELLOW_CALIBRATION_SPEC.md` (latest completed phase)
-6. `docs/PHASE_76F_INTENT_SPECIFIC_ANSWERABILITY_SPEC.md`
-7. `docs/PHASE_76E_FOOD_RULE_ENGINE_SPEC.md`
-8. `docs/PHASE_76D_STRUCTURED_FOOD_RULE_DATA_MODEL_SPEC.md`
-9. `docs/PHASE_76C_STRUCTURED_FOOD_RULE_GREEN_CAPACITY_SPEC.md`
-10. `docs/PHASE_76B_EXPANDED_CHAT_FORM_SAFETY_UPDATE_SPEC.md`
-11. `docs/PHASE_76A_DIETITIAN_CHAT_FORM_UPDATE_PROPOSALS_SPEC.md`
-12. `docs/PHASE_75_GEMINI_PROVIDER_GATE_SPEC.md`
-13. `docs/PHASE_74_DATA_LIFECYCLE_DSAR_SPEC.md`
-14. `docs/PHASE_73_HEALTH_REGULATION_CALIBRATION_SPEC.md`
-15. `docs/PHASE_72_REGULATION_PERMISSION_GRAPH_SPEC.md`
-16. `docs/PHASE_71_TURKIYE_OFFICIAL_HEALTH_SOURCE_INGESTION_SPEC.md`
-17. `docs/PHASE_70_USER_SUPPLIED_FORM_HARDENING_SPEC.md`
-18. `docs/PHASE_69_DIRECT_5000_CLIENT_SCALE_FOUNDATION_SPEC.md`
-19. `docs/PHASE_68_GREEN_MAXIMIZATION_INTENT_TAXONOMY_SPEC.md`
-20. `docs/PHASE_67_APPROVED_SOURCE_ANSWERABILITY_ENGINE_SPEC.md`
-21. `docs/PHASE_66_PRODUCT_COMMUNICATION_COVENANT_LOCK_SPEC.md`
-22. `docs/PHASE_65_OFFICIAL_REGULATION_PDF_CORPUS_QA_SPEC.md`
-23. `docs/PHASE_64_STRUCTURED_LAUNCH_GATE_EVIDENCE_ENGINE_SPEC.md`
-24. `docs/PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md`
-25. `docs/PHASE_62_ARCHITECTURE_REVIEW_REMEDIATION_WAVE2_SPEC.md`
-26. `docs/PHASE_61_SCOPE_GUARD_RAG_SECOND_LAYER_SPEC.md`
-27. `docs/RISK_REGISTER.md`
-28. `docs/DATA_INVENTORY.md`
-29. `docs/DATASET_STRATEGY.md`
-30. `docs/MOBILE_APP_STRATEGY.md`
-31. `dietitian-ai-assistant/README.md`
-32. `dietitian-ai-assistant/docs/architecture.md`
-33. `dietitian-ai-assistant/docs/data-model.sql`
+5. `docs/PHASE_76H_PRODUCT_INGREDIENT_VERIFICATION_SPEC.md` (latest completed phase)
+6. `docs/PHASE_76G_CLINICAL_SECOND_LAYER_FALSE_YELLOW_CALIBRATION_SPEC.md`
+7. `docs/PHASE_76F_INTENT_SPECIFIC_ANSWERABILITY_SPEC.md`
+8. `docs/PHASE_76E_FOOD_RULE_ENGINE_SPEC.md`
+9. `docs/PHASE_76D_STRUCTURED_FOOD_RULE_DATA_MODEL_SPEC.md`
+10. `docs/PHASE_76C_STRUCTURED_FOOD_RULE_GREEN_CAPACITY_SPEC.md`
+11. `docs/PHASE_76B_EXPANDED_CHAT_FORM_SAFETY_UPDATE_SPEC.md`
+12. `docs/PHASE_76A_DIETITIAN_CHAT_FORM_UPDATE_PROPOSALS_SPEC.md`
+13. `docs/PHASE_75_GEMINI_PROVIDER_GATE_SPEC.md`
+14. `docs/PHASE_74_DATA_LIFECYCLE_DSAR_SPEC.md`
+15. `docs/PHASE_73_HEALTH_REGULATION_CALIBRATION_SPEC.md`
+16. `docs/PHASE_72_REGULATION_PERMISSION_GRAPH_SPEC.md`
+17. `docs/PHASE_71_TURKIYE_OFFICIAL_HEALTH_SOURCE_INGESTION_SPEC.md`
+18. `docs/PHASE_70_USER_SUPPLIED_FORM_HARDENING_SPEC.md`
+19. `docs/PHASE_69_DIRECT_5000_CLIENT_SCALE_FOUNDATION_SPEC.md`
+20. `docs/PHASE_68_GREEN_MAXIMIZATION_INTENT_TAXONOMY_SPEC.md`
+21. `docs/PHASE_67_APPROVED_SOURCE_ANSWERABILITY_ENGINE_SPEC.md`
+22. `docs/PHASE_66_PRODUCT_COMMUNICATION_COVENANT_LOCK_SPEC.md`
+23. `docs/PHASE_65_OFFICIAL_REGULATION_PDF_CORPUS_QA_SPEC.md`
+24. `docs/PHASE_64_STRUCTURED_LAUNCH_GATE_EVIDENCE_ENGINE_SPEC.md`
+25. `docs/PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md`
+26. `docs/PHASE_62_ARCHITECTURE_REVIEW_REMEDIATION_WAVE2_SPEC.md`
+27. `docs/PHASE_61_SCOPE_GUARD_RAG_SECOND_LAYER_SPEC.md`
+28. `docs/RISK_REGISTER.md`
+29. `docs/DATA_INVENTORY.md`
+30. `docs/DATASET_STRATEGY.md`
+31. `docs/MOBILE_APP_STRATEGY.md`
+32. `dietitian-ai-assistant/README.md`
+33. `dietitian-ai-assistant/docs/architecture.md`
+34. `dietitian-ai-assistant/docs/data-model.sql`
 
 ## User's Product Goal
 
@@ -81,7 +82,9 @@ The product must be both:
 
 Post-Phase 69 baseline: the direct 100-dietitian strategic completion plan in `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` remains canonical. It locks the production pilot target to direct 100 dietitians x 50 clients (minimum 5,000 clients), with no small production ring. It also locks the product communication covenant: client-facing output must never disclose AI identity or tell the client to ask a doctor/dietitian/professional, yellow/red paths send no client-facing AI boundary reply, and green maximization must come from approved source-backed answerability plus deterministic green intent taxonomy rather than answering risky messages.
 
-Next implementation phase is Phase 76H product ingredient verification contract, followed by the remaining 76I-76O food-rule green capacity track before WhatsApp production adapter work. Real Gemini egress must not be enabled without Phase 75 approved provider artifacts plus `MANU_ALLOW_REAL_GEMINI=true` and closed legal/privacy plus provider/vendor gates. Production data lifecycle must not be enabled without Phase 74 transactional redaction plus external legal/privacy approval.
+Next implementation phase is Phase 76I PromptContext and provider output guard hardening, followed by the remaining 76J-76O food-rule green capacity track before WhatsApp production adapter work. Real Gemini egress must not be enabled without Phase 75 approved provider artifacts plus `MANU_ALLOW_REAL_GEMINI=true` and closed legal/privacy plus provider/vendor gates. Production data lifecycle must not be enabled without Phase 74 transactional redaction plus external legal/privacy approval.
+
+Phase 76H product ingredient verification completed on 2026-06-08: added `docs/PHASE_76H_PRODUCT_INGREDIENT_VERIFICATION_SPEC.md`, core `product-ingredient-verification.js`, app `product-ingredient-verification.ts` with user-label extraction, food-rule engine verification consumption, simulator/runtime auto-evidence wiring, and tests for forbidden keyword block, uncertain label review, unknown source review, and diet-type conflict on product labels. No open web browsing, barcode/catalog providers, PromptContext segments, provider routing changes, channel, launch-gate approval, R-405 status, or real-data handling changed. Verification passed with core tests 146/146, app tests 247/247, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain. Production pilot remains `NO-GO`.
 
 Phase 76G clinical second-layer false-yellow calibration completed on 2026-06-08: added `docs/PHASE_76G_CLINICAL_SECOND_LAYER_FALSE_YELLOW_CALIBRATION_SPEC.md`, bumped second-layer version to `clinical-safety-second-layer-v0.2.0`, source-backed food-rule carve-out contract in `clinical-safety-second-layer.js`, food-rule-aware simulator risk classification, orchestrator fallback risk path wiring, expanded `clinical-second-layer-cases.jsonl`, and app runtime tests. Carve-outs suppress only `second_layer_client_allergy_or_restriction_mentioned` when food-rule decisions are explicit and prospective; ingestion reactions, acute clinical markers, and severe allergy profiles remain yellow. External qualified dietitian approval is still required before production activation. No product catalog adapters, PromptContext segments, provider routing changes, channel, launch-gate approval, R-405 status, or real-data handling changed. Verification passed with core tests 140/140, app tests 242/242, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain. Production pilot remains `NO-GO`.
 

@@ -1,3 +1,5 @@
+import { evaluateProductIngredientVerification } from "./product-ingredient-verification.js";
+
 export const FOOD_RULE_ENGINE_VERSION = "food-rule-engine-v0.1.0";
 
 export const FOOD_RULE_DECISIONS = [
@@ -219,51 +221,47 @@ function evaluateSkipDecision(message, rules) {
 }
 
 function evaluateProductIngredientDecision(message, rules, productEvidence) {
-  if (!productEvidence || !String(productEvidence.ingredientText || "").trim()) {
-    return buildResult("product_ingredient_unknown", ["food_rule_product_evidence_missing"], {
-      queryType: "product_ingredient",
+  const verification = evaluateProductIngredientVerification({
+    ingredientText: productEvidence?.ingredientText,
+    ingredientSourceType: productEvidence?.ingredientSourceType || "unknown",
+    ingredientConfidence: productEvidence?.ingredientConfidence || "unknown",
+    ingredientAllergenKeywords: rules.ingredientAllergenKeywords,
+    forbiddenFoodItems: rules.forbiddenFoodItems,
+    forbiddenFoodGroups: rules.forbiddenFoodGroups,
+    dietTypeRules: rules.dietTypeRules,
+  });
+
+  const metadata = {
+    queryType: "product_ingredient",
+    verification,
+    ingredientSourceType: verification.ingredientSourceType,
+    ingredientConfidence: verification.ingredientConfidence,
+    matchedForbiddenKeywordIds: verification.matchedForbiddenKeywordIds,
+  };
+
+  if (verification.decision === "requires_review") {
+    return buildResult("product_ingredient_unknown", verification.reasons, metadata);
+  }
+
+  if (verification.decision === "product_blocked") {
+    if (verification.dietTypeConflict) {
+      return buildResult("diet_type_conflict", verification.reasons, {
+        ...metadata,
+        dietType: rules.dietTypeRules,
+        dietTypeConflictGroup: verification.dietTypeConflictGroup,
+      });
+    }
+
+    return buildResult("product_ingredient_conflict", verification.reasons, {
+      ...metadata,
+      matchedKeywords: verification.matchedForbiddenKeywordIds.map((id) => id.replace(/^keyword:/, "")),
     });
   }
 
-  const confidence = String(productEvidence.ingredientConfidence || "unknown").toLowerCase();
-  if (confidence !== "exact" && confidence !== "high") {
-    return buildResult("product_ingredient_unknown", ["food_rule_product_confidence_insufficient", confidence], {
-      queryType: "product_ingredient",
-      ingredientConfidence: confidence,
-    });
-  }
-
-  const ingredientText = normalize(productEvidence.ingredientText);
-  const matchedKeywords = rules.ingredientAllergenKeywords.filter((keyword) =>
-    ingredientText.includes(normalize(keyword)),
-  );
-
-  if (matchedKeywords.length === 0) {
-    return buildResult("allowed_food_confirmation", ["food_rule_product_no_forbidden_keyword_match"], {
-      queryType: "product_ingredient",
-      matchedKeywords: [],
-    });
-  }
-
-  const forbiddenKeyword = matchedKeywords.find((keyword) => isForbiddenKeyword(keyword, rules));
-  if (forbiddenKeyword) {
-    return buildResult("product_ingredient_conflict", ["food_rule_product_forbidden_keyword_match", forbiddenKeyword], {
-      queryType: "product_ingredient",
-      matchedKeywords,
-      ingredientConfidence: confidence,
-      ingredientSourceType: productEvidence.ingredientSourceType || "unknown",
-    });
-  }
-
-  return failClosedUnknown(rules, "product_ingredient");
-}
-
-function isForbiddenKeyword(keyword, rules) {
-  const normalizedKeyword = normalize(keyword);
-  return (
-    rules.forbiddenFoodItems.some((item) => tokensMatch(normalizedKeyword, item)) ||
-    rules.ingredientAllergenKeywords.some((item) => tokensMatch(normalizedKeyword, item))
-  );
+  return buildResult("allowed_food_confirmation", verification.reasons, {
+    ...metadata,
+    matchedKeywords: [],
+  });
 }
 
 function matchForbiddenFood(food, rules) {

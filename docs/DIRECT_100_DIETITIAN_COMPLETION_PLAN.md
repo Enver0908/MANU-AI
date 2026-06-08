@@ -17,9 +17,9 @@ These rules are non-negotiable and apply to every future phase:
 - Autopilot is not globally enabled for all 5,000 clients by default. It is enabled only for selected qualified clients after all gates, monitoring, and rollback controls are ready.
 
 ## Current Baseline
-- Latest completed phase: Phase 76G clinical second-layer false-yellow calibration.
+- Latest completed phase: Phase 76H product ingredient verification.
 - Latest completed implementation phase before 76C: Phase 76B expanded chat form safety updates.
-- Latest verification: core tests 140/140, app tests 242/242, `npm run release:verify` passed with only documented R-405 findings.
+- Latest verification: core tests 146/146, app tests 247/247, `npm run release:verify` passed with only documented R-405 findings.
 - Production pilot status: `NO-GO`.
 - Real WhatsApp, Gemini, monitoring, secret manager, and real client health data remain disconnected.
 - Existing usable foundations:
@@ -398,6 +398,15 @@ Completed:
 - Added `docs/PHASE_76G_CLINICAL_SECOND_LAYER_FALSE_YELLOW_CALIBRATION_SPEC.md`, bumped second-layer version to `clinical-safety-second-layer-v0.2.0`, source-backed food-rule carve-out contract, simulator/orchestrator wiring, expanded second-layer JSONL fixtures, and app runtime tests.
 - Verification: core tests 140/140, app tests 242/242, `npm run release:verify` passed with only documented R-405 findings.
 - External qualified dietitian approval is still required before production activation of carve-outs.
+- Production pilot remains `NO-GO`.
+
+## Phase 76H: Product Ingredient Verification — Completed 2026-06-08
+Goal: bind product ingredient questions to trusted-source verification before food-rule engine decisions.
+
+Completed:
+- Added `docs/PHASE_76H_PRODUCT_INGREDIENT_VERIFICATION_SPEC.md`, core `product-ingredient-verification.js`, app `product-ingredient-verification.ts`, food-rule engine verification consumption, and simulator/runtime auto-evidence wiring.
+- Verification: core tests 146/146, app tests 247/247, `npm run release:verify` passed with only documented R-405 findings.
+- No open web browsing, barcode/catalog providers, or production catalog connections were added.
 - Production pilot remains `NO-GO`.
 
 ## Phase 76: WhatsApp Production Adapter

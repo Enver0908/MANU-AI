@@ -24,10 +24,27 @@ Locked decisions:
 
 Next implementation order:
 
-1. Phase 76H product ingredient verification contract.
-2. Phase 76I-76O food-rule green capacity implementation track per `docs/PHASE_76C_STRUCTURED_FOOD_RULE_GREEN_CAPACITY_SPEC.md`.
+1. Phase 76I PromptContext and provider output guard hardening.
+2. Phase 76J-76O food-rule green capacity implementation track per `docs/PHASE_76C_STRUCTURED_FOOD_RULE_GREEN_CAPACITY_SPEC.md`.
 3. WhatsApp production adapter.
 4. Production ops, R-405 closure/acceptance, full 100x50 rehearsal, and external launch-gate closure.
+
+## Phase 76H: Product Ingredient Verification - Completed 2026-06-08
+
+Goal: bind product ingredient questions to trusted-source verification before food-rule decisions.
+
+Status:
+
+- Added `docs/PHASE_76H_PRODUCT_INGREDIENT_VERIFICATION_SPEC.md`.
+- Added core `product-ingredient-verification.js` and app `product-ingredient-verification.ts` with user-label extraction.
+- Food rule engine consumes verification decisions; simulator/runtime auto-build evidence from embedded label text.
+- Verification passed with core tests 146/146, app tests 247/247, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain.
+- No open web browsing, barcode/catalog providers, PromptContext segments, provider routing changes, channel, launch-gate approval, R-405 acceptance, or real-data path was connected.
+- Production pilot remains `NO-GO`.
+
+Next:
+
+- Proceed to Phase 76I PromptContext and provider output guard hardening.
 
 ## Phase 76G: Clinical Second-Layer False-Yellow Calibration - Completed 2026-06-08
 

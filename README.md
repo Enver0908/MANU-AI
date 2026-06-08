@@ -6,9 +6,9 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 This repository is a local SaaS/PWA pilot prototype and architecture workspace. It is not a production-connected system yet.
 
-**Latest phase:** Phase 76G clinical second-layer false-yellow calibration (2026-06-08). **Production pilot:** `NO-GO` (all eight launch gates open; R-405 open).
+**Latest phase:** Phase 76H product ingredient verification (2026-06-08). **Production pilot:** `NO-GO` (all eight launch gates open; R-405 open).
 
-**Latest verification:** Phase 76G re-verified on 2026-06-08: core tests 140/140, app tests 242/242, `npm run release:verify` passed with only documented R-405 findings.
+**Latest verification:** Phase 76H re-verified on 2026-06-08: core tests 146/146, app tests 247/247, `npm run release:verify` passed with only documented R-405 findings.
 
 The current implementation includes:
 
@@ -42,6 +42,7 @@ The current implementation includes:
 - Phase 76E food rule engine: deterministic forbidden/allowed/substitution/skip/product food decisions from structured rules with audit-only orchestrator manifest attachment
 - Phase 76F intent-specific answerability: intent-family source matching, food-rule alignment, structured food-rule source categories, and yellow/red answerability bypass on the orchestrator hot path
 - Phase 76G clinical second-layer false-yellow calibration: source-backed food-rule carve-outs for prospective permission/substitution/skip questions while preserving ingestion reactions, acute clinical markers, and severe allergy profile review
+- Phase 76H product ingredient verification: trusted-source verification contract with user-label extraction, confidence/source gating, normalized forbidden keyword ids, and diet-type conflict detection on product labels
 - Post-Phase 65 direct 100-dietitian completion plan in `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`, locking the no-small-ring 5,000-client production pilot target, product communication covenant, approved-source answerability path, and user-document timing
 
 ## Safety Model

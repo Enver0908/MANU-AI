@@ -5,6 +5,7 @@ import {
 } from "dietitian-ai-assistant-architecture";
 import { applyScopeGuardToRiskDecision } from "./scope-guard-runtime";
 import { buildStructuredFoodRulesFromClientState } from "./food-rule-runtime";
+import { resolveProductIngredientEvidence } from "./product-ingredient-verification";
 import type { LaunchGateEvidenceRecord } from "./launch-gates";
 import type { ClientRecord, ManuAppState, MessageRecord } from "./types";
 
@@ -23,11 +24,13 @@ export async function classifySimulationRisk(
   } = {},
 ) {
   const structuredFoodRules = buildStructuredFoodRulesFromClientState(state, client.id);
+  const productIngredientEvidence = resolveProductIngredientEvidence(body);
   const foodRuleDecision = structuredFoodRules
     ? evaluateFoodRuleDecision({
         message: body,
         structuredFoodRules,
         mixedIntentBlocked: false,
+        productIngredientEvidence,
       })
     : null;
 

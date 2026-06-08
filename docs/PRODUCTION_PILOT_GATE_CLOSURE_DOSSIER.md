@@ -15,8 +15,8 @@ Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized reference
 ## Current Baseline
 
 - Git baseline: Phase 27-29 checkpoint exists at `c75564e Add Phase 27-29 pilot readiness checkpoint` on branch `codex/phase-29-baseline-checkpoint`; Completion Roadmap Phase 1 records this as the current implementation baseline.
-- Latest local release verification: `npm run release:verify` passed on 2026-06-08 after Phase 76G clinical second-layer false-yellow calibration.
-- Verification result: core tests 140/140, app tests 242/242, lint passed, production build passed.
+- Latest local release verification: `npm run release:verify` passed on 2026-06-08 after Phase 76H product ingredient verification.
+- Verification result: core tests 146/146, app tests 247/247, lint passed, production build passed.
 - Dependency audit result: only known R-405 findings, `next:postcss` and `postcss:GHSA-qx2v-qp2m-jg93`.
 - R-405 status: open production launch blocker; Phase 54 rechecked metadata on 2026-06-02 and stable `next@latest` is 16.2.7 but still bundles `postcss@8.4.31`, so no safe stable Next.js/PostCSS patch path is available.
 - R-405 remediation spec: `PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`.
@@ -71,6 +71,7 @@ Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized reference
 - Phase 76E food rule engine: `PHASE_76E_FOOD_RULE_ENGINE_SPEC.md` and core `food-rule-engine.js` add deterministic forbidden/allowed/substitution/skip/product food decisions with audit-only `contextManifest.foodRule` attachment. It does not implement intent-specific answerability gating, clinical second-layer carve-outs, product catalog adapters, close any gate, connect real providers/channels, process real data, approve production pilot launch, or resolve R-405.
 - Phase 76F intent-specific answerability: `PHASE_76F_INTENT_SPECIFIC_ANSWERABILITY_SPEC.md` and core `intent-specific-answerability.js` add intent-family source matching, food-rule alignment, structured food-rule source categories, substitution legacy plan/manual fallback, and yellow/red bypass on the orchestrator hot path. It does not implement clinical second-layer carve-outs, product catalog adapters, close any gate, connect real providers/channels, process real data, approve production pilot launch, or resolve R-405.
 - Phase 76G clinical second-layer false-yellow calibration: `PHASE_76G_CLINICAL_SECOND_LAYER_FALSE_YELLOW_CALIBRATION_SPEC.md` and core `clinical-safety-second-layer.js` (`clinical-safety-second-layer-v0.2.0`) add source-backed food-rule carve-outs for prospective food questions on simulator and orchestrator fallback paths. It does not supply external qualified dietitian approval, implement product catalog adapters, close any gate, connect real providers/channels, process real data, approve production pilot launch, or resolve R-405.
+- Phase 76H product ingredient verification: `PHASE_76H_PRODUCT_INGREDIENT_VERIFICATION_SPEC.md`, core `product-ingredient-verification.js`, and app `product-ingredient-verification.ts` add trusted-source verification with user-label extraction and food-rule engine consumption. It does not connect open web browsing, barcode/catalog providers, close any gate, connect real providers/channels, process real data, approve production pilot launch, or resolve R-405.
 
 ## Gate Closure Matrix
 

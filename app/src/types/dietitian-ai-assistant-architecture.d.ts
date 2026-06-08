@@ -549,6 +549,36 @@ declare module "dietitian-ai-assistant-architecture" {
     ingredientConfidence?: "exact" | "high" | "low" | "unknown" | string;
   };
 
+  export type ProductIngredientVerificationDecisionValue =
+    | "product_allowed"
+    | "product_blocked"
+    | "requires_review";
+
+  export type ProductIngredientVerificationResult = {
+    version: string;
+    decision: ProductIngredientVerificationDecisionValue;
+    reasons: string[];
+    ingredientSourceType: string;
+    ingredientConfidence: string;
+    matchedForbiddenKeywordIds: string[];
+    dietTypeConflict: boolean;
+    dietTypeConflictGroup?: string | null;
+  };
+
+  export const PRODUCT_INGREDIENT_VERIFICATION_VERSION: string;
+  export const INGREDIENT_SOURCE_TYPES: string[];
+  export const INGREDIENT_CONFIDENCE_LEVELS: string[];
+  export const PRODUCT_INGREDIENT_VERIFICATION_DECISIONS: ProductIngredientVerificationDecisionValue[];
+  export function evaluateProductIngredientVerification(input: {
+    ingredientText?: string | null;
+    ingredientSourceType?: string | null;
+    ingredientConfidence?: string | null;
+    ingredientAllergenKeywords?: string[];
+    forbiddenFoodItems?: string[];
+    forbiddenFoodGroups?: string[];
+    dietTypeRules?: string | null;
+  }): ProductIngredientVerificationResult;
+
   export type FoodRuleDecision = {
     version: string;
     decision: FoodRuleDecisionValue;
@@ -563,8 +593,11 @@ declare module "dietitian-ai-assistant-architecture" {
     skipTarget?: string | null;
     dietType?: string | null;
     matchedKeywords?: string[];
+    matchedForbiddenKeywordIds?: string[];
     ingredientConfidence?: string;
     ingredientSourceType?: string;
+    verification?: ProductIngredientVerificationResult;
+    dietTypeConflictGroup?: string | null;
   };
 
   export const FOOD_RULE_ENGINE_VERSION: string;

@@ -58,6 +58,13 @@ export {
   evaluateFoodRuleDecision,
 } from "./food-rule-engine.js";
 export {
+  PRODUCT_INGREDIENT_VERIFICATION_VERSION,
+  INGREDIENT_SOURCE_TYPES,
+  INGREDIENT_CONFIDENCE_LEVELS,
+  PRODUCT_INGREDIENT_VERIFICATION_DECISIONS,
+  evaluateProductIngredientVerification,
+} from "./product-ingredient-verification.js";
+export {
   PRODUCT_COMMUNICATION_COVENANT_VERSION,
   detectProductCommunicationCovenantIssues,
   guardAssistantReply,

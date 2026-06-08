@@ -280,11 +280,16 @@ export function resolveFoodIntentFamily(foodRule) {
     return "green_optional_meal_skip";
   }
 
-  if (
-    foodRule.queryType === "product_ingredient" &&
-    (foodRule.decision === "product_ingredient_conflict" || foodRule.decision === "allowed_food_confirmation")
-  ) {
-    return "green_product_ingredient_check";
+  if (foodRule.queryType === "product_ingredient") {
+    if (
+      foodRule.decision === "product_ingredient_conflict" ||
+      foodRule.decision === "allowed_food_confirmation"
+    ) {
+      return "green_product_ingredient_check";
+    }
+    if (foodRule.decision === "diet_type_conflict") {
+      return "green_forbidden_food_reminder";
+    }
   }
 
   return null;

@@ -82,13 +82,29 @@ test("food rule engine detects product ingredient conflict with trusted evidence
     structuredFoodRules: demoRules,
     productIngredientEvidence: {
       ingredientSourceType: "user_label_text",
-      ingredientText: "sut, seker, kakao",
+      ingredientText: "sut, seker, kakao, whey, casein",
       ingredientConfidence: "exact",
     },
   });
 
   assert.equal(result.decision, "product_ingredient_conflict");
-  assert.ok(result.matchedKeywords.includes("sut"));
+  assert.equal(result.verification?.decision, "product_blocked");
+  assert.ok(result.matchedForbiddenKeywordIds?.includes("keyword:sut"));
+});
+
+test("food rule engine routes uncertain product evidence to review", () => {
+  const result = evaluateFoodRuleDecision({
+    message: "Bu cikolatanin icindekiler: sut, seker, kakao",
+    structuredFoodRules: demoRules,
+    productIngredientEvidence: {
+      ingredientSourceType: "user_label_text",
+      ingredientText: "sut, seker, kakao",
+      ingredientConfidence: "low",
+    },
+  });
+
+  assert.equal(result.decision, "product_ingredient_unknown");
+  assert.equal(result.verification?.decision, "requires_review");
 });
 
 test("food rule engine routes unknown product evidence to review", () => {
@@ -98,6 +114,25 @@ test("food rule engine routes unknown product evidence to review", () => {
   });
 
   assert.equal(result.decision, "product_ingredient_unknown");
+});
+
+test("food rule engine maps vegan diet conflict on product label to diet_type_conflict", () => {
+  const result = evaluateFoodRuleDecision({
+    message: "Bu urunun icindekiler: chicken, salt",
+    structuredFoodRules: {
+      ...demoRules,
+      dietTypeRules: "Vegan",
+      ingredientAllergenKeywords: ["fistik"],
+    },
+    productIngredientEvidence: {
+      ingredientSourceType: "user_label_text",
+      ingredientText: "chicken, salt",
+      ingredientConfidence: "exact",
+    },
+  });
+
+  assert.equal(result.decision, "diet_type_conflict");
+  assert.equal(result.verification?.dietTypeConflict, true);
 });
 
 test("food rule engine blocks mixed clinical intent", () => {

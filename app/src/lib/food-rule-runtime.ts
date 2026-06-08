@@ -1,5 +1,6 @@
 import { evaluateFoodRuleDecision } from "dietitian-ai-assistant-architecture";
 import { buildStructuredFoodRuleManifest } from "./phase-76d-food-rule-model";
+import { resolveProductIngredientEvidence } from "./product-ingredient-verification";
 import type { ManuAppState } from "./types";
 
 export type ProductIngredientEvidenceInput = {
@@ -36,12 +37,17 @@ export function evaluateClientFoodRuleDecision(
   } = {},
 ) {
   const structuredFoodRules = buildStructuredFoodRulesFromClientState(state, clientId);
+  const productIngredientEvidence = resolveProductIngredientEvidence(
+    message,
+    options.productIngredientEvidence || null,
+  );
+
   if (!structuredFoodRules) {
     return evaluateFoodRuleDecision({
       message,
       structuredFoodRules: null,
       mixedIntentBlocked: options.mixedIntentBlocked,
-      productIngredientEvidence: options.productIngredientEvidence || null,
+      productIngredientEvidence,
     });
   }
 
@@ -49,6 +55,6 @@ export function evaluateClientFoodRuleDecision(
     message,
     structuredFoodRules,
     mixedIntentBlocked: options.mixedIntentBlocked,
-    productIngredientEvidence: options.productIngredientEvidence || null,
+    productIngredientEvidence,
   });
 }

@@ -19,7 +19,7 @@ todos:
     status: completed
   - id: phase-76h-product-ingredients
     content: Add trusted product ingredient verification contract with uncertainty routed to review.
-    status: pending
+    status: completed
   - id: phase-76i-context-guard
     content: Add bounded food-rule PromptContext segments and food-rule provider output guards.
     status: pending

@@ -12,6 +12,7 @@ import {
 import { buildClientContextUpdateSummary } from "./client-context-updates";
 import { buildClientFormSummary } from "./client-forms";
 import { buildStructuredFoodRulesFromClientState } from "./food-rule-runtime";
+import { resolveProductIngredientEvidence } from "./product-ingredient-verification";
 import { evaluateClientAutopilotQualification } from "./phase-70-form-hardening";
 import { getActiveVoiceProfile } from "./voice-profile-workflow";
 import { getMissingSafetyChecklistItems, isSafetyChecklistComplete } from "./safety-checklist";
@@ -195,6 +196,7 @@ export async function runInboundSimulation(
       now,
       riskDecisionOverride: riskDecision,
       structuredFoodRules: buildStructuredFoodRulesFromClientState(state, client.id) || undefined,
+      productIngredientEvidence: resolveProductIngredientEvidence(trimmedBody) || undefined,
     },
     {
       generateReply: async (payload: Record<string, unknown>) => {
