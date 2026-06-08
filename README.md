@@ -6,9 +6,9 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 This repository is a local SaaS/PWA pilot prototype and architecture workspace. It is not a production-connected system yet.
 
-**Latest phase:** Phase 75 Gemini provider gate (2026-06-07). **Production pilot:** `NO-GO` (all eight launch gates open; R-405 open).
+**Latest phase:** Phase 76A dietitian chat form update proposals (2026-06-08). **Production pilot:** `NO-GO` (all eight launch gates open; R-405 open).
 
-**Latest verification:** Phase 75 verified on 2026-06-07: core tests 122/122, app tests 216/216, `npm run release:verify` passed with only documented R-405 findings.
+**Latest verification:** Phase 76A verified on 2026-06-08: core tests 122/122, app tests 222/222, `npm run release:verify` passed with only documented R-405 findings.
 
 The current implementation includes:
 
@@ -35,6 +35,7 @@ The current implementation includes:
 - Phase 73 health regulation calibration: 14-source decision matrix, golden-case labeling suite, copilot/autopilot calibration evaluation, and acceptance metrics with zero unsafe-green violations on bundled cases
 - Phase 75 Gemini provider gate: forbidden/unpaid consumer surfaces, paid Vertex/Gemini Enterprise target surface, green/yellow model routing, training/logging/retention policy, health-data eligibility checklist, PromptContext allowlist enforcement, and `MANU_ALLOW_REAL_GEMINI` egress gate
 - Phase 74 data lifecycle policy: retention/export/DSAR SLA artifacts, transactional redaction contract with invariant checks, ZIP-style export manifest with checksums, and operational exclusion for removed clients
+- Phase 76A dietitian chat form update proposals: internal copilot proposal-only mutation path, deterministic allowlisted extraction, explicit dietitian apply/reject, stale revision checks, audit/context revision evidence, draft invalidation, Supabase table/API support, and DSAR redaction coverage
 - Post-Phase 65 direct 100-dietitian completion plan in `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`, locking the no-small-ring 5,000-client production pilot target, product communication covenant, approved-source answerability path, and user-document timing
 
 ## Safety Model

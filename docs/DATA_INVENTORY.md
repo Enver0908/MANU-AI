@@ -24,6 +24,7 @@ This is a planning artifact and must be reviewed before real client health data 
 | Conversation messages | Client/dietitian/assistant messages with origin labels | Inbox, memory, audit, dataset views | Recent bounded window only | Retention, redaction, tenant isolation |
 | Conversation memory | Rolling summary, durable facts | Context efficiency | Yes after safety filtering | Client-scoped, editable, deletable |
 | Dietitian context updates | Phone/Zoom/in-person summaries, critical client changes | Keep AI current on non-chat dietitian-confirmed context | Yes, bounded active records only | Tenant/client scoped, audit, draft invalidation, anonymization |
+| Client update proposals | Dietitian chat text, proposed form/context patches, safety flags, approval status | Let dietitians turn chat-entered client changes into reviewed form/context updates | No direct prompt use; only applied proposals create form/context sources | Tenant/client scoped, additive allowlist, explicit dietitian approval, stale-revision rejection, audit, anonymization |
 | Handoff cases | Risk reason, urgency, status | Human review | No direct prompt use | Audit and notification controls |
 | AI decisions | Mode, risk, action, provider-attempt state, model, provider id/status, prompt version, send status, ContextManifest metadata | Auditability | No | Immutable audit metadata; no-call paths keep provider fields null/not-called |
 | Internal copilot messages | Dietitian question, local/mock assistant answer, source refs | Internal decision support and auditability | No external LLM in current build | Tenant/dietitian scoped, RBAC, source-required answers, no client-facing send action |
@@ -66,6 +67,7 @@ The LLM must not receive by default:
 - Imported messages with unknown author.
 - AI-generated replies unless approved or edited by a dietitian.
 - Internal copilot raw tool payloads, audit logs, or unrestricted database records.
+- Pending or rejected client update proposal source text.
 
 ## Retention Defaults
 
@@ -101,3 +103,5 @@ Phase 5 technical skeleton completed on 2026-05-25:
 These workflows must continue to preserve tenant isolation and must not export provider secrets, raw audit internals, or unrelated tenant data.
 
 Phase 61 added system-level `scope_rules` / `scope_rule_chunks` and tenant-scoped `scope_guard_evaluations` audit records. Scope guard audit stores matched rule ids and scores only, not raw client message text. Real embedding of client messages for scope retrieval remains a provider/vendor-gated egress path and is disconnected in the local prototype.
+
+Phase 76A added tenant/client-scoped `client_update_proposals` records. Proposal source text is never a direct prompt source; only an explicitly applied, allowlisted proposal can create a client form answer update and Critical Context record. Phase 74 anonymization redacts proposal text, clears proposed patches, and closes pending proposal records.

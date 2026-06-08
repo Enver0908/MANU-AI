@@ -46,6 +46,9 @@ export type AutopilotQualificationStatus = "qualified" | "incomplete" | "not_qua
 export type ClientContextUpdateSource = "phone" | "zoom" | "in_person" | "other";
 export type ClientContextUpdateImportance = "routine" | "important" | "critical";
 export type ClientContextUpdateStatus = "active" | "superseded";
+export type ClientUpdateProposalStatus = "pending" | "applied" | "rejected" | "needs_clarification" | "unsupported";
+export type ClientUpdateProposalPatchTarget = "client_form_answer" | "client_record";
+export type ClientUpdateProposalPatchOperation = "append_unique" | "append_note";
 export type SafetyChecklist = {
   goalReviewed: boolean;
   dietPlanReviewed: boolean;
@@ -167,6 +170,28 @@ export type ClientContextUpdateRecord = {
   status: ClientContextUpdateStatus;
   supersedesUpdateId: string | null;
   createdAt: string;
+};
+
+export type ClientUpdateProposalPatch = {
+  target: ClientUpdateProposalPatchTarget;
+  fieldId: string;
+  label: string;
+  operation: ClientUpdateProposalPatchOperation;
+  value: string;
+};
+
+export type ClientUpdateProposalRecord = {
+  id: string;
+  tenantId: string;
+  clientId: string;
+  dietitianId: string;
+  sourceText: string;
+  proposedPatches: ClientUpdateProposalPatch[];
+  safetyFlags: string[];
+  status: ClientUpdateProposalStatus;
+  expectedContextRevision: number;
+  createdAt: string;
+  resolvedAt: string | null;
 };
 
 export type ClientRecord = {
@@ -473,6 +498,7 @@ export type ManuAppState = {
   dietitianFormSchemas: DietitianFormSchemaRecord[];
   dietitianFormResponses: DietitianFormResponseRecord[];
   clientContextUpdates: ClientContextUpdateRecord[];
+  clientUpdateProposals: ClientUpdateProposalRecord[];
   clients: ClientRecord[];
   conversations: ConversationRecord[];
   messages: MessageRecord[];

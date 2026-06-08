@@ -45,6 +45,7 @@ import type {
   ClientContextUpdateSource,
   ClientFormFieldDefinition,
   ClientRecord,
+  ClientUpdateProposalRecord,
   ManuAppState,
   MessageRecord,
   SafetyChecklist,
@@ -116,6 +117,9 @@ export function DashboardApp({ authInfo }: { authInfo?: { displayName: string; r
     updateDietitianPreferences,
     addClientContextUpdate,
     sendInternalCopilotMessage,
+    createClientUpdateProposal,
+    applyClientUpdateProposal,
+    rejectClientUpdateProposal,
   } = useManuState();
   const [view, setView] = useState<ViewKey>("overview");
   const [selectedClientId, setSelectedClientId] = useState("client-mert");
@@ -137,6 +141,7 @@ export function DashboardApp({ authInfo }: { authInfo?: { displayName: string; r
   const [formAnswersRaw, setFormAnswersRaw] = useState("");
   const [copilotInput, setCopilotInput] = useState("");
   const [isCopilotSending, setIsCopilotSending] = useState(false);
+  const [isProposalUpdating, setIsProposalUpdating] = useState(false);
   const [contextUpdateSource, setContextUpdateSource] = useState<ClientContextUpdateSource>("phone");
   const [contextUpdateImportance, setContextUpdateImportance] =
     useState<ClientContextUpdateImportance>("important");
@@ -184,6 +189,13 @@ export function DashboardApp({ authInfo }: { authInfo?: { displayName: string; r
       .filter((update) => update.clientId === selectedClient.id)
       .sort((a, b) => new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime());
   }, [selectedClient, state.clientContextUpdates]);
+
+  const selectedUpdateProposals = useMemo(() => {
+    if (!selectedClient) return [];
+    return state.clientUpdateProposals
+      .filter((proposal) => proposal.clientId === selectedClient.id)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }, [selectedClient, state.clientUpdateProposals]);
 
   const metrics = useMemo(() => {
     const pendingDrafts = state.messages.filter((message) => message.status === "draft").length;
@@ -314,6 +326,40 @@ export function DashboardApp({ authInfo }: { authInfo?: { displayName: string; r
       setView("copilot");
     } finally {
       setIsCopilotSending(false);
+    }
+  };
+
+  const proposeClientUpdate = async () => {
+    if (!selectedClient) return;
+    const trimmed = copilotInput.trim();
+    if (!trimmed || isProposalUpdating) return;
+    setIsProposalUpdating(true);
+    try {
+      await createClientUpdateProposal(selectedClient.id, trimmed);
+      setCopilotInput("");
+      setView("copilot");
+    } finally {
+      setIsProposalUpdating(false);
+    }
+  };
+
+  const applySelectedProposal = async (proposalId: string) => {
+    if (!selectedClient || isProposalUpdating) return;
+    setIsProposalUpdating(true);
+    try {
+      await applyClientUpdateProposal(selectedClient.id, proposalId);
+    } finally {
+      setIsProposalUpdating(false);
+    }
+  };
+
+  const rejectSelectedProposal = async (proposalId: string) => {
+    if (!selectedClient || isProposalUpdating) return;
+    setIsProposalUpdating(true);
+    try {
+      await rejectClientUpdateProposal(selectedClient.id, proposalId);
+    } finally {
+      setIsProposalUpdating(false);
     }
   };
 
@@ -607,8 +653,13 @@ export function DashboardApp({ authInfo }: { authInfo?: { displayName: string; r
                 selectedClient={selectedClient}
                 input={copilotInput}
                 isSending={isCopilotSending}
+                isProposalUpdating={isProposalUpdating}
+                updateProposals={selectedUpdateProposals}
                 onInput={setCopilotInput}
                 onAsk={askInternalCopilot}
+                onProposeUpdate={proposeClientUpdate}
+                onApplyProposal={applySelectedProposal}
+                onRejectProposal={rejectSelectedProposal}
               />
             )}
 
@@ -1657,15 +1708,25 @@ function CopilotPanel({
   selectedClient,
   input,
   isSending,
+  isProposalUpdating,
+  updateProposals,
   onInput,
   onAsk,
+  onProposeUpdate,
+  onApplyProposal,
+  onRejectProposal,
 }: {
   state: ManuAppState;
   selectedClient: ClientRecord;
   input: string;
   isSending: boolean;
+  isProposalUpdating: boolean;
+  updateProposals: ClientUpdateProposalRecord[];
   onInput: (value: string) => void;
   onAsk: (body?: string) => void;
+  onProposeUpdate: () => void;
+  onApplyProposal: (proposalId: string) => void;
+  onRejectProposal: (proposalId: string) => void;
 }) {
   const messages = state.internalCopilotMessages.slice(-40);
   const quickPrompts = [
@@ -1682,7 +1743,7 @@ function CopilotPanel({
           <div>
             <h3 className="text-xl font-semibold">Internal read-only copilot</h3>
             <p className="mt-1 text-sm text-stone-600">
-              Tenant-scoped database tools only. No client message sending or record mutation.
+              Tenant-scoped tools only. Form/context changes require a separate proposal and dietitian approval.
             </p>
           </div>
           <Badge label="mock/local" tone="amber" />
@@ -1757,6 +1818,15 @@ function CopilotPanel({
             <Send size={16} />
             Ask
           </button>
+          <button
+            onClick={onProposeUpdate}
+            disabled={isProposalUpdating || !input.trim()}
+            className="inline-flex items-center justify-center gap-2 rounded-lg border border-emerald-900 bg-white px-4 py-2 text-sm font-semibold text-emerald-900 transition hover:bg-emerald-50 disabled:cursor-not-allowed disabled:opacity-60"
+            type="button"
+          >
+            <CheckCheck size={16} />
+            Propose update
+          </button>
         </div>
       </section>
 
@@ -1767,6 +1837,61 @@ function CopilotPanel({
           <p>Assistant and auditor roles are blocked from copilot chat in v1.</p>
           <p>Client messages and form answers are treated as untrusted data, not instructions.</p>
           <p>Every assistant answer is stored with tool calls and source references.</p>
+        </div>
+
+        <div className="mt-5 border-t border-stone-100 pt-4">
+          <h4 className="text-sm font-semibold">Pending update proposals</h4>
+          <div className="mt-3 space-y-3">
+            {updateProposals.length === 0 ? (
+              <p className="text-sm text-stone-500">No chat-generated update proposals for this client.</p>
+            ) : (
+              updateProposals.slice(0, 5).map((proposal) => (
+                <article key={proposal.id} className="rounded-lg border border-stone-200 bg-stone-50 p-3">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Badge
+                      label={proposal.status}
+                      tone={proposal.status === "pending" ? "amber" : proposal.status === "applied" ? "emerald" : "stone"}
+                    />
+                    <span className="text-xs font-medium text-stone-500">{formatTime(proposal.createdAt)}</span>
+                  </div>
+                  <p className="mt-2 whitespace-pre-wrap break-words text-sm text-stone-700">{proposal.sourceText}</p>
+                  {proposal.proposedPatches.length > 0 && (
+                    <ul className="mt-2 space-y-1 text-sm text-stone-600">
+                      {proposal.proposedPatches.map((patch) => (
+                        <li key={`${patch.target}-${patch.fieldId}-${patch.value}`}>
+                          {patch.label}: {patch.value}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  {proposal.safetyFlags.length > 0 && (
+                    <p className="mt-2 text-sm font-medium text-red-700">{proposal.safetyFlags.join(", ")}</p>
+                  )}
+                  {proposal.status === "pending" && (
+                    <div className="mt-3 flex gap-2">
+                      <button
+                        onClick={() => onApplyProposal(proposal.id)}
+                        disabled={isProposalUpdating}
+                        className="inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-950 px-3 py-2 text-sm font-semibold text-white transition hover:bg-emerald-900 disabled:cursor-not-allowed disabled:opacity-60"
+                        type="button"
+                      >
+                        <Check size={16} />
+                        Apply
+                      </button>
+                      <button
+                        onClick={() => onRejectProposal(proposal.id)}
+                        disabled={isProposalUpdating}
+                        className="inline-flex items-center justify-center gap-2 rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm font-semibold text-stone-700 transition hover:bg-stone-50 disabled:cursor-not-allowed disabled:opacity-60"
+                        type="button"
+                      >
+                        Reject
+                      </button>
+                    </div>
+                  )}
+                </article>
+              ))
+            )}
+          </div>
         </div>
       </aside>
     </div>

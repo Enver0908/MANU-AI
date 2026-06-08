@@ -18,28 +18,29 @@ Start by reading:
 2. `PROJECT_PLAN.md`
 3. `docs/NEXT_PHASE_EXECUTION_PLAN.md`
 4. `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` (current strategic roadmap)
-5. `docs/PHASE_75_GEMINI_PROVIDER_GATE_SPEC.md` (latest completed implementation phase)
-6. `docs/PHASE_74_DATA_LIFECYCLE_DSAR_SPEC.md`
-7. `docs/PHASE_73_HEALTH_REGULATION_CALIBRATION_SPEC.md`
-8. `docs/PHASE_72_REGULATION_PERMISSION_GRAPH_SPEC.md`
-9. `docs/PHASE_71_TURKIYE_OFFICIAL_HEALTH_SOURCE_INGESTION_SPEC.md`
-10. `docs/PHASE_70_USER_SUPPLIED_FORM_HARDENING_SPEC.md`
-11. `docs/PHASE_69_DIRECT_5000_CLIENT_SCALE_FOUNDATION_SPEC.md`
-12. `docs/PHASE_68_GREEN_MAXIMIZATION_INTENT_TAXONOMY_SPEC.md`
-13. `docs/PHASE_67_APPROVED_SOURCE_ANSWERABILITY_ENGINE_SPEC.md`
-14. `docs/PHASE_66_PRODUCT_COMMUNICATION_COVENANT_LOCK_SPEC.md`
-15. `docs/PHASE_65_OFFICIAL_REGULATION_PDF_CORPUS_QA_SPEC.md`
-16. `docs/PHASE_64_STRUCTURED_LAUNCH_GATE_EVIDENCE_ENGINE_SPEC.md`
-17. `docs/PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md`
-18. `docs/PHASE_62_ARCHITECTURE_REVIEW_REMEDIATION_WAVE2_SPEC.md`
-19. `docs/PHASE_61_SCOPE_GUARD_RAG_SECOND_LAYER_SPEC.md`
-20. `docs/RISK_REGISTER.md`
-21. `docs/DATA_INVENTORY.md`
-22. `docs/DATASET_STRATEGY.md`
-23. `docs/MOBILE_APP_STRATEGY.md`
-24. `dietitian-ai-assistant/README.md`
-25. `dietitian-ai-assistant/docs/architecture.md`
-26. `dietitian-ai-assistant/docs/data-model.sql`
+5. `docs/PHASE_76A_DIETITIAN_CHAT_FORM_UPDATE_PROPOSALS_SPEC.md` (latest completed implementation phase)
+6. `docs/PHASE_75_GEMINI_PROVIDER_GATE_SPEC.md`
+7. `docs/PHASE_74_DATA_LIFECYCLE_DSAR_SPEC.md`
+8. `docs/PHASE_73_HEALTH_REGULATION_CALIBRATION_SPEC.md`
+9. `docs/PHASE_72_REGULATION_PERMISSION_GRAPH_SPEC.md`
+10. `docs/PHASE_71_TURKIYE_OFFICIAL_HEALTH_SOURCE_INGESTION_SPEC.md`
+11. `docs/PHASE_70_USER_SUPPLIED_FORM_HARDENING_SPEC.md`
+12. `docs/PHASE_69_DIRECT_5000_CLIENT_SCALE_FOUNDATION_SPEC.md`
+13. `docs/PHASE_68_GREEN_MAXIMIZATION_INTENT_TAXONOMY_SPEC.md`
+14. `docs/PHASE_67_APPROVED_SOURCE_ANSWERABILITY_ENGINE_SPEC.md`
+15. `docs/PHASE_66_PRODUCT_COMMUNICATION_COVENANT_LOCK_SPEC.md`
+16. `docs/PHASE_65_OFFICIAL_REGULATION_PDF_CORPUS_QA_SPEC.md`
+17. `docs/PHASE_64_STRUCTURED_LAUNCH_GATE_EVIDENCE_ENGINE_SPEC.md`
+18. `docs/PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md`
+19. `docs/PHASE_62_ARCHITECTURE_REVIEW_REMEDIATION_WAVE2_SPEC.md`
+20. `docs/PHASE_61_SCOPE_GUARD_RAG_SECOND_LAYER_SPEC.md`
+21. `docs/RISK_REGISTER.md`
+22. `docs/DATA_INVENTORY.md`
+23. `docs/DATASET_STRATEGY.md`
+24. `docs/MOBILE_APP_STRATEGY.md`
+25. `dietitian-ai-assistant/README.md`
+26. `dietitian-ai-assistant/docs/architecture.md`
+27. `dietitian-ai-assistant/docs/data-model.sql`
 
 ## User's Product Goal
 
@@ -76,7 +77,9 @@ Post-Phase 69 baseline: the direct 100-dietitian strategic completion plan in `d
 
 Next implementation phase is remaining production hardening gates (WhatsApp, ops, R-405 closure, full 100x50 rehearsal, external launch-gate closure). Real Gemini egress must not be enabled without Phase 75 approved provider artifacts plus `MANU_ALLOW_REAL_GEMINI=true` and closed legal/privacy plus provider/vendor gates. Production data lifecycle must not be enabled without Phase 74 transactional redaction plus external legal/privacy approval.
 
-Phase 75 Gemini provider gate is the latest completed implementation wave (2026-06-07): app `phase-75-gemini-provider-gate.ts` now holds forbidden/unpaid consumer surfaces, paid Vertex/Gemini Enterprise target surface, green/yellow model routing, training/logging/retention policy artifacts, health-data eligibility checklist, PromptContext allowlist enforcement, required gate evidence, `evaluatePhase75GeminiProviderRouting`, and `isPhase75RealGeminiEgressAllowed` behind `MANU_ALLOW_REAL_GEMINI`. Provider artifacts remain draft; real Gemini egress stays blocked without approved legal/privacy and provider/vendor gate evidence. Verification passed with core tests 122/122, app tests 216/216, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain. Production pilot remains `NO-GO`.
+Phase 76A dietitian chat form update proposals is the latest completed implementation wave (2026-06-08): internal copilot remains read-only, but a dietitian can create a separate client-bound update proposal from chat text, review deterministic allowlisted additive patches, and explicitly apply or reject the proposal. Applying a proposal updates the active Phase 70 client form response, mirrors allowed client fields, creates a Critical Context record and audit events, increments context revision once, and invalidates pending drafts. Sensitive/system-field requests are unsupported, stale proposals fail closed, and Phase 74 export/anonymization covers proposal records. Verification passed with core tests 122/122, app tests 222/222, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain. Production pilot remains `NO-GO`.
+
+Phase 75 Gemini provider gate completed on 2026-06-07: app `phase-75-gemini-provider-gate.ts` now holds forbidden/unpaid consumer surfaces, paid Vertex/Gemini Enterprise target surface, green/yellow model routing, training/logging/retention policy artifacts, health-data eligibility checklist, PromptContext allowlist enforcement, required gate evidence, `evaluatePhase75GeminiProviderRouting`, and `isPhase75RealGeminiEgressAllowed` behind `MANU_ALLOW_REAL_GEMINI`. Provider artifacts remain draft; real Gemini egress stays blocked without approved legal/privacy and provider/vendor gate evidence. Verification passed with core tests 122/122, app tests 216/216, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain. Production pilot remains `NO-GO`.
 
 Phase 74 data lifecycle, export, anonymization and DSAR policy completed (2026-06-07): app `phase-74-data-lifecycle-policy.ts` now holds retention policy, export manifest/checksum contract, DSAR SLA records, transactional redaction field contract, `applyPhase74TransactionalRedactionInState`, and redaction invariant evaluation. Redaction marker standardized to `REDACTED_BY_PHASE74_POLICY`; removed clients are excluded from simulator/provider paths. Policy artifacts remain draft; `MANU_ALLOW_PHASE_74_PRODUCTION_LIFECYCLE` stays off by default. Verification passed with core tests 122/122, app tests 209/209, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain. Production pilot remains `NO-GO`.
 
@@ -104,7 +107,7 @@ Phase 63 production pilot GO rebaseline is the latest completed planning wave (2
 
 Before selecting the next engineering phase, read `docs/PHASE_64_STRUCTURED_LAUNCH_GATE_EVIDENCE_ENGINE_SPEC.md` and `docs/PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md`; together they are the current planning source for production-pilot exit work.
 
-Post-Phase 69 remaining production hardening is ordered by `DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`: user-supplied form hardening, official PDF ingestion, regulation permission graph, green/yellow/red calibration, client removal/anonymization transactional redaction contract, Gemini provider gate, WhatsApp production adapter, production operations, R-405 closure, full 100x50 rehearsal, external launch-gate closure, and direct production pilot GO.
+Post-Phase 69 remaining production hardening is ordered by `DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`: user-supplied form hardening, official PDF ingestion, regulation permission graph, green/yellow/red calibration, client removal/anonymization transactional redaction contract, Gemini provider gate, dietitian chat form update proposals, WhatsApp production adapter, production operations, R-405 closure, full 100x50 rehearsal, external launch-gate closure, and direct production pilot GO.
 
 Phase 62 architecture review remediation wave 2 is the latest completed implementation wave (2026-06-04): provider failures on active clients now open dietitian handoff without client-facing AI send; shared `normalizeSafetyText`; overlap-based scope retrieval (`DEFAULT_MATCH_THRESHOLD` 0.4); glucose numeric cost-unit filtering; dead `modelForRisk` removed. Bulgu 1 unchanged (accepted). Bulgu 3/9/10 documented as constraint-accepted. Production pilot remains `NO-GO`.
 

@@ -12,14 +12,17 @@ import {
 import {
   addManualReplyInState,
   addClientContextUpdateInState,
+  applyUpdateProposalInState,
   approveDraftInState,
   addVoiceSamplesInState,
   createFormSchemaInState,
   createClientInState,
+  createUpdateProposalInState,
   dismissDraftInState,
   generateVoiceProfile,
   publishFormSchemaInState,
   patchClientInState,
+  rejectUpdateProposalInState,
   releaseHumanTakeoverInState,
   resolveAndReactivateRedRiskInState,
   runInternalCopilotMessageInState,
@@ -30,6 +33,7 @@ import {
 } from "./app-state-store";
 import type { AppTenantContext } from "./auth-context";
 import type { CreateClientContextUpdateInput } from "./client-context-updates";
+import type { CreateClientUpdateProposalInput } from "./client-update-proposals";
 import { AppDomainError } from "./app-errors";
 import type {
   AiDecisionRecord,
@@ -39,6 +43,7 @@ import type {
   ClientFormFieldDefinition,
   ClientContextUpdateRecord,
   ClientRecord,
+  ClientUpdateProposalRecord,
   ConversationRecord,
   DataRequestRecord,
   DietitianVoiceProfileRecord,
@@ -303,6 +308,19 @@ type DbClientContextUpdate = {
   supersedes_update_id: string | null;
   created_at: string;
 };
+type DbClientUpdateProposal = {
+  id: string;
+  tenant_id: string;
+  client_id: string;
+  dietitian_id: string;
+  source_text: string;
+  proposed_patches: ClientUpdateProposalRecord["proposedPatches"];
+  safety_flags: string[];
+  status: ClientUpdateProposalRecord["status"];
+  expected_context_revision: number;
+  created_at: string;
+  resolved_at: string | null;
+};
 type DbInboundQuarantine = {
   id: string;
   tenant_id: string;
@@ -348,6 +366,7 @@ export async function loadSupabaseState(context = demoTenantContext()) {
     formSchemasResult,
     formResponsesResult,
     clientContextUpdatesResult,
+    clientUpdateProposalsResult,
     inboundQuarantinesResult,
     auditEventsResult,
     processedEventsResult,
@@ -372,6 +391,7 @@ export async function loadSupabaseState(context = demoTenantContext()) {
     supabase.from("client_form_schemas").select("*").eq("tenant_id", context.tenantId).order("version"),
     supabase.from("client_form_responses").select("*").eq("tenant_id", context.tenantId).order("updated_at"),
     supabase.from("client_context_updates").select("*").eq("tenant_id", context.tenantId).order("created_at"),
+    supabase.from("client_update_proposals").select("*").eq("tenant_id", context.tenantId).order("created_at"),
     supabase.from("inbound_quarantines").select("*").eq("tenant_id", context.tenantId).order("created_at"),
     supabase.from("audit_events").select("*").eq("tenant_id", context.tenantId).order("created_at"),
     supabase.from("processed_inbound_events").select("*").eq("tenant_id", context.tenantId),
@@ -397,6 +417,7 @@ export async function loadSupabaseState(context = demoTenantContext()) {
   throwIfError(formSchemasResult.error);
   throwIfError(formResponsesResult.error);
   throwIfError(clientContextUpdatesResult.error);
+  throwIfError(clientUpdateProposalsResult.error);
   throwIfError(inboundQuarantinesResult.error);
   throwIfError(auditEventsResult.error);
   throwIfError(processedEventsResult.error);
@@ -423,6 +444,7 @@ export async function loadSupabaseState(context = demoTenantContext()) {
       dietitianFormSchemas: [],
       dietitianFormResponses: [],
       clientContextUpdates: (clientContextUpdatesResult.data || []).map(mapClientContextUpdate),
+      clientUpdateProposals: (clientUpdateProposalsResult.data || []).map(mapClientUpdateProposal),
       clients: (clientsResult.data || []).map((client) => mapClient(client, channels)),
       conversations: (conversationsResult.data || []).map((conversation) =>
         mapConversation(conversation, memories),
@@ -510,8 +532,10 @@ async function loadSupabaseClientOperationState(
     requiredHandoffResult,
     riskAssessmentsResult,
     handoffsResult,
+    activeFormSchemasResult,
     formResponsesResult,
     clientContextUpdatesResult,
+    clientUpdateProposalsResult,
     processedEventsResult,
   ] = await Promise.all([
     conversationIds.length > 0
@@ -570,9 +594,16 @@ async function loadSupabaseClientOperationState(
       .eq("client_id", clientId)
       .in("status", ["open", "assigned"])
       .order("created_at"),
+    supabase.from("client_form_schemas").select("*").eq("tenant_id", context.tenantId).eq("status", "published"),
     supabase.from("client_form_responses").select("*").eq("tenant_id", context.tenantId).eq("client_id", clientId),
     supabase
       .from("client_context_updates")
+      .select("*")
+      .eq("tenant_id", context.tenantId)
+      .eq("client_id", clientId)
+      .order("created_at"),
+    supabase
+      .from("client_update_proposals")
       .select("*")
       .eq("tenant_id", context.tenantId)
       .eq("client_id", clientId)
@@ -596,8 +627,10 @@ async function loadSupabaseClientOperationState(
   throwIfError(requiredHandoffResult.error);
   throwIfError(riskAssessmentsResult.error);
   throwIfError(handoffsResult.error);
+  throwIfError(activeFormSchemasResult.error);
   throwIfError(formResponsesResult.error);
   throwIfError(clientContextUpdatesResult.error);
+  throwIfError(clientUpdateProposalsResult.error);
   throwIfError(processedEventsResult.error);
 
   const channels = channelsResult.data || [];
@@ -639,11 +672,12 @@ async function loadSupabaseClientOperationState(
       },
       voiceSamples: [],
       voiceProfiles: (voiceProfilesResult.data || []).map(mapVoiceProfile),
-      clientFormSchemas: (requiredFormSchemaResult.data || []).map(mapFormSchema),
+      clientFormSchemas: mergeById([...(activeFormSchemasResult.data || []), ...(requiredFormSchemaResult.data || [])]).map(mapFormSchema),
       clientFormResponses: (formResponsesResult.data || []).map(mapFormResponse),
       dietitianFormSchemas: [],
       dietitianFormResponses: [],
       clientContextUpdates: (clientContextUpdatesResult.data || []).map(mapClientContextUpdate),
+      clientUpdateProposals: (clientUpdateProposalsResult.data || []).map(mapClientUpdateProposal),
       clients: [mapClient(clientResult.data, channels)],
       conversations: (conversationsResult.data || []).map((conversation) => mapConversation(conversation, memories)),
       messages,
@@ -789,6 +823,8 @@ export function scopeSupabaseState(
   const visibleInternalCopilotToolCallIds = new Set(visibleInternalCopilotToolCalls.map((call) => call.id));
   const visibleClientContextUpdates = state.clientContextUpdates.filter((update) => visibleClientIds.has(update.clientId));
   const visibleClientContextUpdateIds = new Set(visibleClientContextUpdates.map((update) => update.id));
+  const visibleClientUpdateProposals = state.clientUpdateProposals.filter((proposal) => visibleClientIds.has(proposal.clientId));
+  const visibleClientUpdateProposalIds = new Set(visibleClientUpdateProposals.map((proposal) => proposal.id));
   const visibleInboundQuarantines =
     context.role === "owner" || context.role === "admin" || context.role === "dietitian"
       ? state.inboundQuarantines
@@ -801,6 +837,7 @@ export function scopeSupabaseState(
     voiceProfiles: state.voiceProfiles.filter((profile) => profile.dietitianId === context.dietitianId),
     clientFormResponses: state.clientFormResponses.filter((response) => visibleClientIds.has(response.clientId)),
     clientContextUpdates: visibleClientContextUpdates,
+    clientUpdateProposals: visibleClientUpdateProposals,
     clients: state.clients.filter((client) => visibleClientIds.has(client.id)),
     conversations: state.conversations.filter((conversation) => visibleConversationIds.has(conversation.id)),
     messages: visibleMessages,
@@ -825,6 +862,7 @@ export function scopeSupabaseState(
         visibleDecisionIds.has(event.entityId) ||
         visibleHandoffIds.has(event.entityId) ||
         visibleClientContextUpdateIds.has(event.entityId) ||
+        visibleClientUpdateProposalIds.has(event.entityId) ||
         visibleInternalCopilotMessageIds.has(event.entityId) ||
         visibleInternalCopilotToolCallIds.has(event.entityId) ||
         visibleInboundQuarantineIds.has(event.entityId),
@@ -1331,6 +1369,49 @@ export async function addSupabaseClientContextUpdate(
   const before = await loadSupabaseClientOperationState(clientId, context);
   const next = addClientContextUpdateInState(before, clientId, input);
   await commitStateDeltaRpc(requireSupabase(), "commit_client_context_update", before, next);
+  return loadSupabaseState(context);
+}
+
+export async function createSupabaseClientUpdateProposal(
+  clientId: string,
+  input: CreateClientUpdateProposalInput,
+  context = demoTenantContext(),
+) {
+  const before = await loadSupabaseClientOperationState(clientId, context);
+  const next = createUpdateProposalInState(before, clientId, input);
+  const proposal = next.clientUpdateProposals.find(
+    (item) => !before.clientUpdateProposals.some((beforeProposal) => beforeProposal.id === item.id),
+  );
+  const supabase = requireSupabase();
+  if (proposal) await upsertClientUpdateProposal(supabase, { ...proposal, tenantId: context.tenantId, dietitianId: context.dietitianId });
+  await persistNewAudits(supabase, before, next);
+  return loadSupabaseState(context);
+}
+
+export async function applySupabaseClientUpdateProposal(
+  clientId: string,
+  proposalId: string,
+  context = demoTenantContext(),
+) {
+  const before = await loadSupabaseClientOperationState(clientId, context);
+  const next = applyUpdateProposalInState(before, clientId, proposalId);
+  await commitStateDeltaRpc(requireSupabase(), "commit_client_context_update", before, next);
+  const proposal = next.clientUpdateProposals.find((item) => item.id === proposalId);
+  if (proposal) await upsertClientUpdateProposal(requireSupabase(), proposal);
+  return loadSupabaseState(context);
+}
+
+export async function rejectSupabaseClientUpdateProposal(
+  clientId: string,
+  proposalId: string,
+  context = demoTenantContext(),
+) {
+  const before = await loadSupabaseClientOperationState(clientId, context);
+  const next = rejectUpdateProposalInState(before, clientId, proposalId);
+  const proposal = next.clientUpdateProposals.find((item) => item.id === proposalId);
+  const supabase = requireSupabase();
+  if (proposal) await upsertClientUpdateProposal(supabase, proposal);
+  await persistNewAudits(supabase, before, next);
   return loadSupabaseState(context);
 }
 
@@ -2145,6 +2226,24 @@ async function insertInternalCopilotToolCall(supabase: SupabaseClient, call: Int
   );
 }
 
+async function upsertClientUpdateProposal(supabase: SupabaseClient, proposal: ClientUpdateProposalRecord) {
+  await checked(
+    supabase.from("client_update_proposals").upsert({
+      id: proposal.id,
+      tenant_id: proposal.tenantId,
+      client_id: proposal.clientId,
+      dietitian_id: proposal.dietitianId,
+      source_text: proposal.sourceText,
+      proposed_patches: proposal.proposedPatches,
+      safety_flags: proposal.safetyFlags,
+      status: proposal.status,
+      expected_context_revision: proposal.expectedContextRevision,
+      created_at: proposal.createdAt,
+      resolved_at: proposal.resolvedAt,
+    }),
+  );
+}
+
 function remapSeedIds(state: ManuAppState): ManuAppState {
   const clientMap = new Map(state.clients.map((client, index) => [client.id, DEMO_CLIENT_IDS[index]]));
   const conversationMap = new Map(
@@ -2311,6 +2410,22 @@ function mapClientContextUpdate(update: DbClientContextUpdate): ClientContextUpd
     status: update.status,
     supersedesUpdateId: update.supersedes_update_id,
     createdAt: update.created_at,
+  };
+}
+
+function mapClientUpdateProposal(proposal: DbClientUpdateProposal): ClientUpdateProposalRecord {
+  return {
+    id: proposal.id,
+    tenantId: proposal.tenant_id,
+    clientId: proposal.client_id,
+    dietitianId: proposal.dietitian_id,
+    sourceText: proposal.source_text,
+    proposedPatches: proposal.proposed_patches || [],
+    safetyFlags: proposal.safety_flags || [],
+    status: proposal.status,
+    expectedContextRevision: proposal.expected_context_revision,
+    createdAt: proposal.created_at,
+    resolvedAt: proposal.resolved_at,
   };
 }
 

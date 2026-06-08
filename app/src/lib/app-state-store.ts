@@ -9,6 +9,11 @@ import {
   saveClientFormResponseInState,
 } from "./client-forms";
 import { createClientContextUpdateInState } from "./client-context-updates";
+import {
+  applyClientUpdateProposalInState,
+  createClientUpdateProposalInState,
+  rejectClientUpdateProposalInState,
+} from "./client-update-proposals";
 import { runInternalCopilotInState } from "./internal-copilot";
 import {
   addVoiceSamplesToState,
@@ -29,6 +34,7 @@ import {
 } from "./simulator";
 import type { ClientRecord, ManuAppState, SimulationRequest } from "./types";
 import type { CreateClientContextUpdateInput } from "./client-context-updates";
+import type { CreateClientUpdateProposalInput } from "./client-update-proposals";
 import type { ClientFormFieldDefinition, VoiceSampleStatus } from "./types";
 
 const globalStore = globalThis as typeof globalThis & {
@@ -250,6 +256,22 @@ export function addClientContextUpdateInState(
 
 export function runInternalCopilotMessageInState(state: ManuAppState, body: string) {
   return runInternalCopilotInState(state, body);
+}
+
+export function createUpdateProposalInState(
+  state: ManuAppState,
+  clientId: string,
+  input: CreateClientUpdateProposalInput,
+) {
+  return createClientUpdateProposalInState(state, clientId, input);
+}
+
+export function applyUpdateProposalInState(state: ManuAppState, clientId: string, proposalId: string) {
+  return applyClientUpdateProposalInState(state, clientId, proposalId);
+}
+
+export function rejectUpdateProposalInState(state: ManuAppState, clientId: string, proposalId: string) {
+  return rejectClientUpdateProposalInState(state, clientId, proposalId);
 }
 
 export function assertNotificationExistsInState(state: ManuAppState, notificationId: string) {

@@ -195,6 +195,19 @@ export function useManuState() {
           method: "POST",
           body: JSON.stringify({ body }),
         }),
+      createClientUpdateProposal: (clientId: string, sourceText: string) =>
+        replaceFromApi(`/api/clients/${clientId}/update-proposals`, {
+          method: "POST",
+          body: JSON.stringify({ sourceText }),
+        }),
+      applyClientUpdateProposal: (clientId: string, proposalId: string) =>
+        replaceFromApi(`/api/clients/${clientId}/update-proposals/${proposalId}/apply`, {
+          method: "POST",
+        }),
+      rejectClientUpdateProposal: (clientId: string, proposalId: string) =>
+        replaceFromApi(`/api/clients/${clientId}/update-proposals/${proposalId}/reject`, {
+          method: "POST",
+        }),
     }),
     [authError, hydrated, replaceFromApi, state],
   );

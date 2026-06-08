@@ -274,6 +274,7 @@ function countAffectedRecords(state: ManuAppState, clientId: string): Record<str
     messages: state.messages.filter((message) => conversationIds.has(message.conversationId)).length,
     form_responses: state.clientFormResponses.filter((response) => response.clientId === clientId).length,
     context_updates: state.clientContextUpdates.filter((update) => update.clientId === clientId).length,
+    client_update_proposals: state.clientUpdateProposals.filter((proposal) => proposal.clientId === clientId).length,
     ai_decisions: state.aiDecisions.filter((decision) => decision.clientId === clientId).length,
     handoffs: state.handoffCases.filter((handoff) => handoff.clientId === clientId).length,
   };
@@ -323,6 +324,11 @@ export function evaluatePhase74RedactionInvariants(
     if (JSON.stringify(response.answers).includes("health details")) {
       blockingReasons.push("form response answers must be redacted");
     }
+  }
+
+  for (const proposal of state.clientUpdateProposals.filter((item) => item.clientId === clientId)) {
+    if (proposal.sourceText !== PHASE_74_REDACTION_MARKER) blockingReasons.push("proposal source text must be redacted");
+    if (proposal.proposedPatches.length > 0) blockingReasons.push("proposal patches must be redacted");
   }
 
   return {

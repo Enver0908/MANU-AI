@@ -4,13 +4,13 @@ Date: 2026-06-04
 
 ## Status
 
-This is the final summary for the 13-phase completion roadmap, updated after Phase 43 multilingual language support, Phase 44 red-risk reactivation lock, Phase 45 client removal data lifecycle, Phase 46 WhatsApp group quarantine, Phase 47 RLS quarantine evidence coverage, Phase 48 R-405 stable patch recheck, Phase 49 safety/orchestration hardening, Phase 50 production Supabase hardening, Phase 51 transactional RPC coverage, Phase 52 integration test coverage, Phase 53 scale/broad read contracts, Phase 54 R-405/launch-gate recheck, Phase 55 audit remediation safety-boundary hardening, Phase 56 clinical safety second-layer local evidence, Phase 57 yellow-risk hold/draft refresh, Phase 58 dietitian client language control, Phase 59 architecture review remediation, Phase 60 audit remediation, Phase 61 scope guard (RAG + LLM) second layer mock-first, Phase 62 architecture review remediation wave 2, Phase 63 production pilot GO rebaseline, Phase 64 structured launch-gate evidence engine, Phase 65 official regulation PDF corpus QA foundation, Phase 66 product communication covenant lock, Phase 67 approved source answerability engine, Phase 68 green maximization intent taxonomy, Phase 69 direct 5,000 client scale foundation, Phase 70 user-supplied form hardening, Phase 71 Turkiye official health source ingestion, Phase 72 regulation permission graph, Phase 73 health regulation calibration, and Phase 74 data lifecycle DSAR policy, and Phase 75 Gemini provider gate.
+This is the final summary for the 13-phase completion roadmap, updated after Phase 43 multilingual language support, Phase 44 red-risk reactivation lock, Phase 45 client removal data lifecycle, Phase 46 WhatsApp group quarantine, Phase 47 RLS quarantine evidence coverage, Phase 48 R-405 stable patch recheck, Phase 49 safety/orchestration hardening, Phase 50 production Supabase hardening, Phase 51 transactional RPC coverage, Phase 52 integration test coverage, Phase 53 scale/broad read contracts, Phase 54 R-405/launch-gate recheck, Phase 55 audit remediation safety-boundary hardening, Phase 56 clinical safety second-layer local evidence, Phase 57 yellow-risk hold/draft refresh, Phase 58 dietitian client language control, Phase 59 architecture review remediation, Phase 60 audit remediation, Phase 61 scope guard (RAG + LLM) second layer mock-first, Phase 62 architecture review remediation wave 2, Phase 63 production pilot GO rebaseline, Phase 64 structured launch-gate evidence engine, Phase 65 official regulation PDF corpus QA foundation, Phase 66 product communication covenant lock, Phase 67 approved source answerability engine, Phase 68 green maximization intent taxonomy, Phase 69 direct 5,000 client scale foundation, Phase 70 user-supplied form hardening, Phase 71 Turkiye official health source ingestion, Phase 72 regulation permission graph, Phase 73 health regulation calibration, Phase 74 data lifecycle DSAR policy, Phase 75 Gemini provider gate, and Phase 76A dietitian chat form update proposals.
 
 Production pilot is not approved.
 
 No real WhatsApp, Telegram, Gemini, external LLM provider, email, push, monitoring, analytics, secret manager, backup provider, or real client health data is connected.
 
-Post-Phase 75 strategic roadmap: `DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` now defines the direct production pilot path as 100 dietitians x 50 clients, with no small production ring. Product communication covenant enforcement, approved-source answerability, green intent taxonomy, local direct 5,000-client scale foundation, user-supplied form hardening, Turkiye official source manifest/intake, draft permission graph artifacts, draft health regulation calibration matrix, and draft retention/export/DSAR transactional redaction contract, and draft Gemini provider gate artifacts with blocked real egress are implemented locally; external legal/privacy approval of lifecycle and provider policy, external clinical approval of routing/calibration artifacts, final form/PDF approvals, production Supabase transactional RPC migration, full production rehearsal acceptance, external gates, and R-405 closure/acceptance remain required before production GO.
+Post-Phase 76A strategic roadmap: `DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` now defines the direct production pilot path as 100 dietitians x 50 clients, with no small production ring. Product communication covenant enforcement, approved-source answerability, green intent taxonomy, local direct 5,000-client scale foundation, user-supplied form hardening, Turkiye official source manifest/intake, draft permission graph artifacts, draft health regulation calibration matrix, draft retention/export/DSAR transactional redaction contract, draft Gemini provider gate artifacts with blocked real egress, and dietitian-approved chat-to-form update proposals are implemented locally; external legal/privacy approval of lifecycle and provider policy, external clinical approval of routing/calibration artifacts, final form/PDF approvals, production Supabase transactional RPC migration, full production rehearsal acceptance, external gates, and R-405 closure/acceptance remain required before production GO.
 
 ## Go / No-Go Decision
 
@@ -52,6 +52,7 @@ Reason:
 - Phase 69 added local direct 5,000-client scale foundation: synthetic 100x50 fixture evidence, cursor pagination helpers, Phase 69 read contracts, and aggregate operational-health scale signals. It did not approve any launch gate, connect a provider or channel, process real data, or resolve R-405.
 - Phase 70 added local user-supplied form hardening: registry-backed dietitian/client schemas, prompt visibility and answerability metadata, autopilot qualification gates, and sanitized prompt summaries. It did not approve any launch gate, connect a provider or channel, process real data, or resolve R-405.
 - Phase 71 added local Turkiye official health source ingestion: a canonical 14-source official source manifest and fail-closed artifact intake through the Phase 65 QA contract. It did not download or parse real PDFs, approve the corpus, activate routing, close any launch gate, connect a provider or channel, process real data, or resolve R-405.
+- Phase 76A added local dietitian chat form update proposals: a separate proposal/apply/reject workflow for deterministic allowlisted additive form/context patches with stale-revision checks, audit evidence, draft invalidation, and DSAR redaction coverage. It did not make the internal copilot a mutation agent, change green/yellow/red routing, close any launch gate, connect a provider or channel, process real data, or resolve R-405.
 
 ## Completion Roadmap Result
 
@@ -123,11 +124,11 @@ External approvals:
 
 ## Verification
 
-Latest local release verification after Phase 69 direct 5,000 client scale foundation:
+Latest local release verification after Phase 76A dietitian chat form update proposals:
 
-- `npm run release:verify` passed on 2026-06-05.
+- `npm run release:verify` passed on 2026-06-08.
 - Core tests: 122/122 passed.
-- App tests: 176/176 passed.
+- App tests: 222/222 passed.
 - App lint: passed.
 - Production build: passed.
 - Production dependency audit gate passed with only documented R-405 findings.

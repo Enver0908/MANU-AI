@@ -9,6 +9,7 @@ import type {
   ClientContextUpdateRecord,
   ClientFormResponseRecord,
   ClientRecord,
+  ClientUpdateProposalRecord,
   ConversationRecord,
   DataRequestRecord,
   HandoffCaseRecord,
@@ -35,6 +36,7 @@ export type ClientScopedExport = {
   messages: MessageRecord[];
   clientFormResponses: ClientFormResponseRecord[];
   clientContextUpdates: ClientContextUpdateRecord[];
+  clientUpdateProposals: ClientUpdateProposalRecord[];
   aiDecisions: AiDecisionRecord[];
   riskAssessments: RiskAssessmentRecord[];
   handoffCases: HandoffCaseRecord[];
@@ -107,6 +109,7 @@ export function buildClientScopedExport(state: ManuAppState, clientId: string): 
     messages,
     clientFormResponses: state.clientFormResponses.filter((response) => response.clientId === client.id),
     clientContextUpdates: state.clientContextUpdates.filter((update) => update.clientId === client.id),
+    clientUpdateProposals: state.clientUpdateProposals.filter((proposal) => proposal.clientId === client.id),
     aiDecisions: decisions,
     riskAssessments: state.riskAssessments.filter(
       (assessment) => conversationIds.has(assessment.conversationId) || messageIds.has(assessment.messageId),
@@ -151,6 +154,9 @@ function redactClientDataInState(
   const decisionIds = new Set(
     state.aiDecisions.filter((decision) => decision.clientId === client.id).map((decision) => decision.id),
   );
+  const proposalIds = new Set(
+    state.clientUpdateProposals.filter((proposal) => proposal.clientId === client.id).map((proposal) => proposal.id),
+  );
   const now = new Date().toISOString();
   const dataRequest = buildDataRequest(state, client.id, requestType, "completed", now);
 
@@ -190,6 +196,18 @@ function redactClientDataInState(
           }
         : response,
     ),
+    clientUpdateProposals: state.clientUpdateProposals.map((proposal) =>
+      proposal.clientId === client.id
+        ? {
+            ...proposal,
+            sourceText: PHASE_74_REDACTION_MARKER,
+            proposedPatches: [],
+            safetyFlags: ["client_data_anonymized"],
+            status: proposal.status === "pending" ? ("rejected" as const) : proposal.status,
+            resolvedAt: proposal.resolvedAt || now,
+          }
+        : proposal,
+    ),
     aiDecisions: state.aiDecisions.map((decision) =>
       decision.clientId === client.id
         ? {
@@ -226,7 +244,11 @@ function redactClientDataInState(
     ),
     auditEvents: [
       ...state.auditEvents.map((event) =>
-        event.entityId === client.id || conversationIds.has(event.entityId) || messageIds.has(event.entityId) || decisionIds.has(event.entityId)
+        event.entityId === client.id ||
+        conversationIds.has(event.entityId) ||
+        messageIds.has(event.entityId) ||
+        decisionIds.has(event.entityId) ||
+        proposalIds.has(event.entityId)
           ? { ...event, metadata: { minimized: true, reason: "client_data_anonymized" } }
           : event,
       ),
