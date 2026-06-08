@@ -1,8 +1,10 @@
 import {
   CLINICAL_SAFETY_CLASSIFIER_VERSION,
   classifyClinicalSafetyRisk,
+  evaluateFoodRuleDecision,
 } from "dietitian-ai-assistant-architecture";
 import { applyScopeGuardToRiskDecision } from "./scope-guard-runtime";
+import { buildStructuredFoodRulesFromClientState } from "./food-rule-runtime";
 import type { LaunchGateEvidenceRecord } from "./launch-gates";
 import type { ClientRecord, ManuAppState, MessageRecord } from "./types";
 
@@ -20,6 +22,15 @@ export async function classifySimulationRisk(
     launchGateEvidence?: LaunchGateEvidenceRecord[];
   } = {},
 ) {
+  const structuredFoodRules = buildStructuredFoodRulesFromClientState(state, client.id);
+  const foodRuleDecision = structuredFoodRules
+    ? evaluateFoodRuleDecision({
+        message: body,
+        structuredFoodRules,
+        mixedIntentBlocked: false,
+      })
+    : null;
+
   const baseDecision = classifyClinicalSafetyRisk({
     message: body,
     recentMessages,
@@ -29,6 +40,7 @@ export async function classifySimulationRisk(
       allergies: client.allergies,
       restrictedFoods: client.restrictedFoods,
     },
+    foodRuleDecision,
   });
 
   const scopeResult = await applyScopeGuardToRiskDecision({

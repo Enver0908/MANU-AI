@@ -297,7 +297,7 @@ describe("local inbound simulator", () => {
     expect(next.lastSimulation?.risk).toBe("yellow");
     expect(next.lastSimulation?.model).toBe("gemini-3");
     expect(next.riskAssessments.at(-1)?.level).toBe("yellow");
-    expect(next.riskAssessments.at(-1)?.classifierVersion).toContain("clinical-safety-second-layer-v0.1.0");
+    expect(next.riskAssessments.at(-1)?.classifierVersion).toContain("clinical-safety-second-layer-v0.2.0");
     expect(next.riskAssessments.at(-1)?.reasons).toContain(
       "second_layer_client_allergy_or_restriction_mentioned",
     );

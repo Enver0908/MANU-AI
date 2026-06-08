@@ -38,6 +38,17 @@ export async function handleInboundMessage(input, adapters) {
 
   // App/simulator paths pass riskDecisionOverride as the single classification source.
   // The fallback below exists for standalone core tests and direct handleInboundMessage callers only.
+  const foodRuleDecisionForRisk =
+    input.foodRuleDecisionForRisk ||
+    (input.structuredFoodRules
+      ? evaluateFoodRuleDecision({
+          message: input.message.body,
+          structuredFoodRules: input.structuredFoodRules,
+          mixedIntentBlocked: false,
+          productIngredientEvidence: input.productIngredientEvidence || null,
+        })
+      : null);
+
   const riskDecision =
     input.riskDecisionOverride ||
     classifyClinicalSafetyRisk({
@@ -49,6 +60,7 @@ export async function handleInboundMessage(input, adapters) {
         allergies: capsule.client.allergies,
         restrictedFoods: capsule.client.restrictedFoods,
       },
+      foodRuleDecision: foodRuleDecisionForRisk,
     });
 
   const preflightBlock = evaluateInboundPreflight(input.client);

@@ -24,10 +24,28 @@ Locked decisions:
 
 Next implementation order:
 
-1. Phase 76G clinical second-layer false-yellow calibration.
-2. Phase 76H-76O food-rule green capacity implementation track per `docs/PHASE_76C_STRUCTURED_FOOD_RULE_GREEN_CAPACITY_SPEC.md`.
+1. Phase 76H product ingredient verification contract.
+2. Phase 76I-76O food-rule green capacity implementation track per `docs/PHASE_76C_STRUCTURED_FOOD_RULE_GREEN_CAPACITY_SPEC.md`.
 3. WhatsApp production adapter.
 4. Production ops, R-405 closure/acceptance, full 100x50 rehearsal, and external launch-gate closure.
+
+## Phase 76G: Clinical Second-Layer False-Yellow Calibration - Completed 2026-06-08
+
+Goal: reduce false-yellow second-layer escalations for source-backed food permission, substitution, and skip questions without weakening acute allergy or reaction paths.
+
+Status:
+
+- Added `docs/PHASE_76G_CLINICAL_SECOND_LAYER_FALSE_YELLOW_CALIBRATION_SPEC.md`.
+- Bumped second-layer version to `clinical-safety-second-layer-v0.2.0` with source-backed food-rule carve-out contract.
+- Wired food-rule decisions into simulator risk classification and orchestrator fallback risk path.
+- Expanded `clinical-second-layer-cases.jsonl` and added `phase-76g-second-layer-runtime.test.ts`.
+- Verification passed with core tests 140/140, app tests 242/242, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain.
+- No product catalog adapters, PromptContext segments, provider routing changes, channel, launch-gate approval, R-405 acceptance, external clinical taxonomy approval, or real-data path was connected.
+- Production pilot remains `NO-GO`.
+
+Next:
+
+- Proceed to Phase 76H product ingredient verification contract.
 
 ## Phase 76F: Intent-Specific Answerability - Completed 2026-06-08
 
@@ -46,7 +64,7 @@ Status:
 
 Next:
 
-- Proceed to Phase 76G clinical second-layer false-yellow calibration.
+- Phase 76G is complete; proceed to Phase 76H product ingredient verification.
 
 ## Phase 76E: Food Rule Engine - Completed 2026-06-08
 

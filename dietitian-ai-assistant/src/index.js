@@ -9,6 +9,7 @@ export {
   CLINICAL_SAFETY_SECOND_LAYER_VERSION,
   classifyClinicalSafetyRisk,
   evaluateClinicalSafetySecondLayer,
+  shouldApplySourceBackedFoodRuleCarveOut,
 } from "./clinical-safety-second-layer.js";
 export {
   SCOPE_GUARD_VERSION,

@@ -663,7 +663,7 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
 
     expect(riskAssessment.error).toBeNull();
     expect(riskAssessment.data?.level).toBe("yellow");
-    expect(riskAssessment.data?.classifier_version).toContain("clinical-safety-second-layer-v0.1.0");
+    expect(riskAssessment.data?.classifier_version).toContain("clinical-safety-second-layer-v0.2.0");
     await resetSupabaseState();
   }, 30000);
 

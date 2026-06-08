@@ -6,9 +6,9 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 This repository is a local SaaS/PWA pilot prototype and architecture workspace. It is not a production-connected system yet.
 
-**Latest phase:** Phase 76F intent-specific answerability (2026-06-08). **Production pilot:** `NO-GO` (all eight launch gates open; R-405 open).
+**Latest phase:** Phase 76G clinical second-layer false-yellow calibration (2026-06-08). **Production pilot:** `NO-GO` (all eight launch gates open; R-405 open).
 
-**Latest verification:** Phase 76F re-verified on 2026-06-08: core tests 139/139, app tests 240/240, `npm run release:verify` passed with only documented R-405 findings.
+**Latest verification:** Phase 76G re-verified on 2026-06-08: core tests 140/140, app tests 242/242, `npm run release:verify` passed with only documented R-405 findings.
 
 The current implementation includes:
 
@@ -40,6 +40,8 @@ The current implementation includes:
 - Phase 76C structured food rule green capacity spec: canonical PRD/tech spec for source-backed forbidden-food reminders, allowed-food confirmations, approved equivalent substitutions, diet-type compatibility, optional skip tolerance, and trusted product-ingredient verification before WhatsApp production adapter work
 - Phase 76D structured food rule data model: registry-backed structured food-rule fields, parsing/validation helpers, autopilot food-rule completeness gates, client allergy/restriction sync on form save, and demo seed coverage
 - Phase 76E food rule engine: deterministic forbidden/allowed/substitution/skip/product food decisions from structured rules with audit-only orchestrator manifest attachment
+- Phase 76F intent-specific answerability: intent-family source matching, food-rule alignment, structured food-rule source categories, and yellow/red answerability bypass on the orchestrator hot path
+- Phase 76G clinical second-layer false-yellow calibration: source-backed food-rule carve-outs for prospective permission/substitution/skip questions while preserving ingestion reactions, acute clinical markers, and severe allergy profile review
 - Post-Phase 65 direct 100-dietitian completion plan in `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`, locking the no-small-ring 5,000-client production pilot target, product communication covenant, approved-source answerability path, and user-document timing
 
 ## Safety Model
@@ -49,7 +51,7 @@ MANU-AI is built around supervised clinical safety boundaries:
 - Green messages may be handled automatically only when AI is active and the client is in autopilot mode.
 - Yellow messages create dietitian approval drafts and pause AI for that client until reviewed.
 - Red messages do not call an LLM and require human handoff.
-- Three escalate-only evaluation axes merge before orchestration: regex classifier (`dietetic-risk-v0.3.1`), clinical safety second layer (`clinical-safety-second-layer-v0.1.0`), and scope guard over an approved dietetic-regulation corpus (`scope-rag-v0.1.0`; mock-first, no-op until corpus is approved).
+- Three escalate-only evaluation axes merge before orchestration: regex classifier (`dietetic-risk-v0.3.1`), clinical safety second layer (`clinical-safety-second-layer-v0.2.0`), and scope guard over an approved dietetic-regulation corpus (`scope-rag-v0.1.0`; mock-first, no-op until corpus is approved).
 - Phase 66 enforces the product communication covenant locally: no AI self-disclosure, no AI limitation disclaimer, no doctor/dietitian/professional referral language in client-facing AI output, and no client-facing AI send for yellow/red situations.
 - Phase 67 enforces approved source answerability locally before green provider calls or sends.
 - Phase 68 records green intent taxonomy evidence after answerability and blocks sensitive green-looking requests before provider calls.

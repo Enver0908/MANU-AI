@@ -7,6 +7,7 @@ import { classifyConversationRisk, classifyDieteticRisk } from "../src/safety-cl
 import {
   CLINICAL_SAFETY_CLASSIFIER_VERSION,
   classifyClinicalSafetyRisk,
+  shouldApplySourceBackedFoodRuleCarveOut,
 } from "../src/clinical-safety-second-layer.js";
 import {
   detectProductCommunicationCovenantIssues,
@@ -134,6 +135,7 @@ test("clinical safety second-layer fixture cases produce expected final risks", 
       message: goldenCase.message,
       recentMessages: goldenCase.recentMessages,
       clientProfile: goldenCase.clientProfile,
+      foodRuleDecision: goldenCase.foodRuleDecision || null,
     });
 
     assert.equal(baseDecision.level, goldenCase.expectedBaseRisk, `${goldenCase.id} base risk`);
@@ -142,7 +144,27 @@ test("clinical safety second-layer fixture cases produce expected final risks", 
     for (const reason of goldenCase.expectedReasons) {
       assert.ok(finalDecision.reasons.includes(reason), `${goldenCase.id} should include ${reason}`);
     }
+    if (goldenCase.expectedCarveOut) {
+      assert.equal(finalDecision.layers?.secondLayerCarveOut?.applied, true, `${goldenCase.id} carve-out`);
+      assert.equal(
+        finalDecision.layers?.secondLayerCarveOut?.reason,
+        "second_layer_source_backed_food_rule_carveout",
+        `${goldenCase.id} carve-out reason`,
+      );
+    }
   }
+});
+
+test("source-backed food rule carve-out helper rejects ingestion reaction messages", () => {
+  assert.equal(
+    shouldApplySourceBackedFoodRuleCarveOut({
+      message: "Fistik yedim ve kasiniyorum",
+      clientProfile: { allergies: ["fistik"] },
+      foodRuleDecision: { decision: "forbidden_food_rejection" },
+      reasons: ["second_layer_client_allergy_or_restriction_mentioned"],
+    }),
+    false,
+  );
 });
 
 test("clinical safety second layer never downgrades base yellow or red decisions", () => {

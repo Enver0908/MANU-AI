@@ -40,7 +40,7 @@ The scripts use `--webpack` because Turbopack did not resolve the local symlinke
 
 `npm run release:verify` runs the core package tests, lint, unit/API tests, production build, and the production dependency audit gate. It allows only the documented R-405 Next.js/PostCSS finding and does not run `npm audit fix --force`.
 
-Latest local release verification on 2026-06-08 passed after Phase 76F with core tests 139/139, app tests 240/240, lint, production build, and only the documented R-405 production audit finding. Phase 76F adds intent-specific answerability gating with intent-family source matching and food-rule alignment on the orchestrator hot path; clinical second-layer carve-outs and provider/channel changes remain future phases.
+Latest local release verification on 2026-06-08 passed after Phase 76G with core tests 140/140, app tests 242/242, lint, production build, and only the documented R-405 production audit finding. Phase 76G adds source-backed food-rule carve-outs to clinical second-layer risk classification (`clinical-safety-second-layer-v0.2.0`) on the simulator and orchestrator fallback paths; product ingredient verification and provider/channel changes remain future phases.
 
 Phase 29 is documentation/evidence hardening only. It keeps production pilot blocked, records that stable `next@latest` 16.2.6 still bundles `postcss@8.4.31`, and requires local Supabase before RLS evidence can be counted as passed.
 

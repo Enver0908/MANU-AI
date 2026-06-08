@@ -17,9 +17,9 @@ These rules are non-negotiable and apply to every future phase:
 - Autopilot is not globally enabled for all 5,000 clients by default. It is enabled only for selected qualified clients after all gates, monitoring, and rollback controls are ready.
 
 ## Current Baseline
-- Latest completed phase: Phase 76F intent-specific answerability.
+- Latest completed phase: Phase 76G clinical second-layer false-yellow calibration.
 - Latest completed implementation phase before 76C: Phase 76B expanded chat form safety updates.
-- Latest verification: core tests 139/139, app tests 240/240, `npm run release:verify` passed with only documented R-405 findings.
+- Latest verification: core tests 140/140, app tests 242/242, `npm run release:verify` passed with only documented R-405 findings.
 - Production pilot status: `NO-GO`.
 - Real WhatsApp, Gemini, monitoring, secret manager, and real client health data remain disconnected.
 - Existing usable foundations:
@@ -389,6 +389,15 @@ Goal: intent-family approved-source matching and food-rule alignment before gree
 Completed:
 - Added `docs/PHASE_76F_INTENT_SPECIFIC_ANSWERABILITY_SPEC.md`, core `intent-specific-answerability.js`, orchestrator hot-path wiring, structured food-rule source categories, and substitution legacy plan/manual fallback.
 - Verification: core tests 139/139, app tests 240/240, `npm run release:verify` passed with only documented R-405 findings.
+- Production pilot remains `NO-GO`.
+
+## Phase 76G: Clinical Second-Layer False-Yellow Calibration — Completed 2026-06-08
+Goal: reduce false-yellow second-layer escalations for source-backed food reminders while preserving acute allergy and clinical escalation paths.
+
+Completed:
+- Added `docs/PHASE_76G_CLINICAL_SECOND_LAYER_FALSE_YELLOW_CALIBRATION_SPEC.md`, bumped second-layer version to `clinical-safety-second-layer-v0.2.0`, source-backed food-rule carve-out contract, simulator/orchestrator wiring, expanded second-layer JSONL fixtures, and app runtime tests.
+- Verification: core tests 140/140, app tests 242/242, `npm run release:verify` passed with only documented R-405 findings.
+- External qualified dietitian approval is still required before production activation of carve-outs.
 - Production pilot remains `NO-GO`.
 
 ## Phase 76: WhatsApp Production Adapter

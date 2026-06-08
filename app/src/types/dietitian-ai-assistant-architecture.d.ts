@@ -222,6 +222,11 @@ declare module "dietitian-ai-assistant-architecture" {
       baseClassifierVersion: string;
       secondLayerVersion: string;
       secondLayerReasons: string[];
+      secondLayerCarveOut?: {
+        applied: boolean;
+        reason: string;
+        foodRuleDecision: string;
+      } | null;
     };
   };
 
@@ -393,6 +398,7 @@ declare module "dietitian-ai-assistant-architecture" {
     message: string;
     recentMessages?: CoreMessage[];
     clientProfile?: Record<string, unknown>;
+    foodRuleDecision?: FoodRuleDecisionResult | null;
   }): RiskDecision;
 
   export function evaluateClinicalSafetySecondLayer(input: {
@@ -400,7 +406,15 @@ declare module "dietitian-ai-assistant-architecture" {
     recentMessages?: CoreMessage[];
     clientProfile?: Record<string, unknown>;
     baseDecision?: RiskDecision;
+    foodRuleDecision?: FoodRuleDecisionResult | null;
   }): ClinicalSafetySecondLayerDecision;
+
+  export function shouldApplySourceBackedFoodRuleCarveOut(input: {
+    message: string;
+    clientProfile?: Record<string, unknown>;
+    foodRuleDecision?: FoodRuleDecisionResult | null;
+    reasons?: string[];
+  }): boolean;
 
   export function evaluateInboundPreflight(
     client: CoreClient,

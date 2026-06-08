@@ -91,10 +91,10 @@ Routing:
 Clinical safety evaluation (three independent axes; escalate-only merge):
 
 1. **Regex/deterministic classifier** (`dietetic-risk-v0.3.1`) — primary green/yellow/red routing.
-2. **Clinical safety second layer** (`clinical-safety-second-layer-v0.1.0`) — deterministic context-sensitive yellow escalation above regex-only green.
+2. **Clinical safety second layer** (`clinical-safety-second-layer-v0.2.0`) — deterministic context-sensitive yellow escalation above regex-only green, with Phase 76G source-backed food-rule carve-outs for prospective permission/substitution/skip questions.
 3. **Scope guard** (`scope-rag-v0.1.0`) — dietetic-regulation corpus retrieval + evaluation in app; monotonic merge in core `scope-guard.js`. Default seed corpus is draft-only, so scope guard is a **no-op** until qualified dietitian approval loads an approved corpus. Real embedding/LLM remain disconnected until `clinical_taxonomy_approval` and `MANU_ALLOW_REAL_SCOPE_GUARD=true`.
 
-Combined version string when all layers apply: `dietetic-risk-v0.3.1+clinical-safety-second-layer-v0.1.0+scope-rag-v0.1.0`.
+Combined version string when all layers apply: `dietetic-risk-v0.3.1+clinical-safety-second-layer-v0.2.0+scope-rag-v0.1.0`.
 
 Scope guard rules:
 
@@ -621,6 +621,8 @@ Phase 75 Gemini provider gate completed locally on 2026-06-07: added `docs/PHASE
 
 Phase 76A dietitian chat form update proposals completed locally on 2026-06-08: added `docs/PHASE_76A_DIETITIAN_CHAT_FORM_UPDATE_PROPOSALS_SPEC.md`, tenant/client-scoped proposal records, Supabase migration/API routes, dashboard proposal review controls, deterministic allowlisted additive patch extraction, explicit apply/reject, stale context revision rejection, form/context/audit updates, draft invalidation, and Phase 74 export/anonymization coverage. Verification passed with core tests 122/122, app tests 222/222, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain. No green/yellow/red routing change, real Gemini, real WhatsApp/Telegram, monitoring, secret manager, launch-gate approval, R-405 acceptance, or real health-data path was connected. Production pilot remains `NO-GO`.
 
+Phase 76G clinical second-layer false-yellow calibration completed locally on 2026-06-08: added `docs/PHASE_76G_CLINICAL_SECOND_LAYER_FALSE_YELLOW_CALIBRATION_SPEC.md`, bumped second-layer version to `clinical-safety-second-layer-v0.2.0`, source-backed food-rule carve-out contract, food-rule-aware simulator risk classification, orchestrator fallback wiring, expanded second-layer JSONL fixtures, and app runtime tests. Carve-outs apply only to prospective food questions with explicit food-rule decisions; ingestion reactions, acute clinical markers, and severe allergy profiles remain yellow. External qualified dietitian approval is still required before production activation. No product catalog adapters, PromptContext segments, provider, channel, launch-gate approval, R-405 status, or real-data handling changed. Verification re-ran with core tests 140/140, app tests 242/242, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain. Production pilot remains `NO-GO`.
+
 Phase 76F intent-specific answerability completed locally on 2026-06-08: added `docs/PHASE_76F_INTENT_SPECIFIC_ANSWERABILITY_SPEC.md`, core `intent-specific-answerability.js`, orchestrator intent-family source matching with food-rule alignment, structured food-rule source categories, substitution legacy plan/manual fallback, and yellow/red answerability bypass. No clinical second-layer carve-outs, product catalog adapters, provider, channel, launch-gate approval, R-405 status, or real-data handling changed. Verification re-ran with core tests 139/139, app tests 240/240, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain. Production pilot remains `NO-GO`.
 
 Phase 76E food rule engine completed locally on 2026-06-08: added `docs/PHASE_76E_FOOD_RULE_ENGINE_SPEC.md`, core `food-rule-engine.js`, app `food-rule-runtime.ts`, orchestrator audit-only `contextManifest.foodRule`, and simulator structured-food-rule wiring. No intent-specific answerability gating, clinical second-layer carve-outs, provider, channel, launch-gate approval, R-405 status, or real-data handling changed. Verification re-ran with core tests 132/132, app tests 238/238, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain. Production pilot remains `NO-GO`.
@@ -643,7 +645,7 @@ Phase 61 scope guard (RAG + LLM) second layer mock-first completed locally on 20
 
 Tasks:
 
-1. Complete Phase 76G-76O food-rule green capacity track per `docs/PHASE_76C_STRUCTURED_FOOD_RULE_GREEN_CAPACITY_SPEC.md`.
+1. Complete Phase 76H-76O food-rule green capacity track per `docs/PHASE_76C_STRUCTURED_FOOD_RULE_GREEN_CAPACITY_SPEC.md`.
 2. Complete remaining production gates (WhatsApp, ops, R-405 closure, full 100x50 rehearsal, external launch-gate closure).
 3. Keep real Gemini/WhatsApp/monitoring/secret/real data disconnected until their gated phases.
 4. Accept official regulation PDFs in Phase 71 and use the Phase 65 QA foundation; do not activate official corpus production routing until external legal/clinical launch gates close even though Phase 72 draft permission graph artifacts exist.
