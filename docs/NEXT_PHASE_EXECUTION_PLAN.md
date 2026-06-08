@@ -24,8 +24,27 @@ Locked decisions:
 
 Next implementation order:
 
-1. WhatsApp production adapter.
-2. Production ops, R-405 closure/acceptance, full 100x50 rehearsal, and external launch-gate closure.
+1. Phase 76D structured food rule data model and form upgrade.
+2. Phase 76E-76O food-rule green capacity implementation track per `docs/PHASE_76C_STRUCTURED_FOOD_RULE_GREEN_CAPACITY_SPEC.md`.
+3. WhatsApp production adapter.
+4. Production ops, R-405 closure/acceptance, full 100x50 rehearsal, and external launch-gate closure.
+
+## Phase 76C: Structured Food Rule Green Capacity Spec - Completed 2026-06-08
+
+Goal: lock the PRD and technical specification for expanding source-backed green food decisions before WhatsApp production adapter work.
+
+Status:
+
+- Added `docs/PHASE_76C_STRUCTURED_FOOD_RULE_GREEN_CAPACITY_SPEC.md`.
+- Defined structured food-rule data model, food-rule engine contract, intent-specific answerability matrix, clinical second-layer calibration rules, product-ingredient verification contract, PromptContext/output guard requirements, dashboard/proposal requirements, permission-graph and calibration wiring plan, lifecycle coverage, edge cases, and downstream phase map 76D-76Q.
+- Updated continuity and evidence docs to position the food-rule track before WhatsApp production adapter.
+- Verification re-ran with core tests 122/122, app tests 226/226, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain.
+- No runtime behavior, schema, provider, channel, launch-gate approval, R-405 acceptance, or real-data path was connected.
+- Production pilot remains `NO-GO`.
+
+Next:
+
+- Proceed to Phase 76D structured food rule data model and form upgrade.
 
 ## Phase 75: Gemini Provider Gate - Completed 2026-06-07
 

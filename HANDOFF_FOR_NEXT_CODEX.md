@@ -18,30 +18,31 @@ Start by reading:
 2. `PROJECT_PLAN.md`
 3. `docs/NEXT_PHASE_EXECUTION_PLAN.md`
 4. `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` (current strategic roadmap)
-5. `docs/PHASE_76B_EXPANDED_CHAT_FORM_SAFETY_UPDATE_SPEC.md` (latest completed implementation phase)
-6. `docs/PHASE_76A_DIETITIAN_CHAT_FORM_UPDATE_PROPOSALS_SPEC.md`
-7. `docs/PHASE_75_GEMINI_PROVIDER_GATE_SPEC.md`
-8. `docs/PHASE_74_DATA_LIFECYCLE_DSAR_SPEC.md`
-9. `docs/PHASE_73_HEALTH_REGULATION_CALIBRATION_SPEC.md`
-10. `docs/PHASE_72_REGULATION_PERMISSION_GRAPH_SPEC.md`
-11. `docs/PHASE_71_TURKIYE_OFFICIAL_HEALTH_SOURCE_INGESTION_SPEC.md`
-12. `docs/PHASE_70_USER_SUPPLIED_FORM_HARDENING_SPEC.md`
-13. `docs/PHASE_69_DIRECT_5000_CLIENT_SCALE_FOUNDATION_SPEC.md`
-14. `docs/PHASE_68_GREEN_MAXIMIZATION_INTENT_TAXONOMY_SPEC.md`
-15. `docs/PHASE_67_APPROVED_SOURCE_ANSWERABILITY_ENGINE_SPEC.md`
-16. `docs/PHASE_66_PRODUCT_COMMUNICATION_COVENANT_LOCK_SPEC.md`
-17. `docs/PHASE_65_OFFICIAL_REGULATION_PDF_CORPUS_QA_SPEC.md`
-18. `docs/PHASE_64_STRUCTURED_LAUNCH_GATE_EVIDENCE_ENGINE_SPEC.md`
-19. `docs/PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md`
-20. `docs/PHASE_62_ARCHITECTURE_REVIEW_REMEDIATION_WAVE2_SPEC.md`
-21. `docs/PHASE_61_SCOPE_GUARD_RAG_SECOND_LAYER_SPEC.md`
-22. `docs/RISK_REGISTER.md`
-23. `docs/DATA_INVENTORY.md`
-24. `docs/DATASET_STRATEGY.md`
-25. `docs/MOBILE_APP_STRATEGY.md`
-26. `dietitian-ai-assistant/README.md`
-27. `dietitian-ai-assistant/docs/architecture.md`
-28. `dietitian-ai-assistant/docs/data-model.sql`
+5. `docs/PHASE_76C_STRUCTURED_FOOD_RULE_GREEN_CAPACITY_SPEC.md` (latest completed phase)
+6. `docs/PHASE_76B_EXPANDED_CHAT_FORM_SAFETY_UPDATE_SPEC.md`
+7. `docs/PHASE_76A_DIETITIAN_CHAT_FORM_UPDATE_PROPOSALS_SPEC.md`
+8. `docs/PHASE_75_GEMINI_PROVIDER_GATE_SPEC.md`
+9. `docs/PHASE_74_DATA_LIFECYCLE_DSAR_SPEC.md`
+10. `docs/PHASE_73_HEALTH_REGULATION_CALIBRATION_SPEC.md`
+11. `docs/PHASE_72_REGULATION_PERMISSION_GRAPH_SPEC.md`
+12. `docs/PHASE_71_TURKIYE_OFFICIAL_HEALTH_SOURCE_INGESTION_SPEC.md`
+13. `docs/PHASE_70_USER_SUPPLIED_FORM_HARDENING_SPEC.md`
+14. `docs/PHASE_69_DIRECT_5000_CLIENT_SCALE_FOUNDATION_SPEC.md`
+15. `docs/PHASE_68_GREEN_MAXIMIZATION_INTENT_TAXONOMY_SPEC.md`
+16. `docs/PHASE_67_APPROVED_SOURCE_ANSWERABILITY_ENGINE_SPEC.md`
+17. `docs/PHASE_66_PRODUCT_COMMUNICATION_COVENANT_LOCK_SPEC.md`
+18. `docs/PHASE_65_OFFICIAL_REGULATION_PDF_CORPUS_QA_SPEC.md`
+19. `docs/PHASE_64_STRUCTURED_LAUNCH_GATE_EVIDENCE_ENGINE_SPEC.md`
+20. `docs/PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md`
+21. `docs/PHASE_62_ARCHITECTURE_REVIEW_REMEDIATION_WAVE2_SPEC.md`
+22. `docs/PHASE_61_SCOPE_GUARD_RAG_SECOND_LAYER_SPEC.md`
+23. `docs/RISK_REGISTER.md`
+24. `docs/DATA_INVENTORY.md`
+25. `docs/DATASET_STRATEGY.md`
+26. `docs/MOBILE_APP_STRATEGY.md`
+27. `dietitian-ai-assistant/README.md`
+28. `dietitian-ai-assistant/docs/architecture.md`
+29. `dietitian-ai-assistant/docs/data-model.sql`
 
 ## User's Product Goal
 
@@ -76,9 +77,11 @@ The product must be both:
 
 Post-Phase 69 baseline: the direct 100-dietitian strategic completion plan in `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` remains canonical. It locks the production pilot target to direct 100 dietitians x 50 clients (minimum 5,000 clients), with no small production ring. It also locks the product communication covenant: client-facing output must never disclose AI identity or tell the client to ask a doctor/dietitian/professional, yellow/red paths send no client-facing AI boundary reply, and green maximization must come from approved source-backed answerability plus deterministic green intent taxonomy rather than answering risky messages.
 
-Next implementation phase is remaining production hardening gates (WhatsApp, ops, R-405 closure, full 100x50 rehearsal, external launch-gate closure). Real Gemini egress must not be enabled without Phase 75 approved provider artifacts plus `MANU_ALLOW_REAL_GEMINI=true` and closed legal/privacy plus provider/vendor gates. Production data lifecycle must not be enabled without Phase 74 transactional redaction plus external legal/privacy approval.
+Next implementation phase is Phase 76D structured food rule data model and form upgrade, followed by the remaining 76E-76O food-rule green capacity track before WhatsApp production adapter work. Real Gemini egress must not be enabled without Phase 75 approved provider artifacts plus `MANU_ALLOW_REAL_GEMINI=true` and closed legal/privacy plus provider/vendor gates. Production data lifecycle must not be enabled without Phase 74 transactional redaction plus external legal/privacy approval.
 
-Phase 76B expanded chat form safety updates is the latest completed implementation wave (2026-06-08): Phase 76A proposal cards now cover nutrition patches plus Phase 70 clinical/safety form fields such as pregnancy/breastfeeding, adult/minor, diagnosed condition, medication/insulin, lab-result availability, recent symptom, and eating-disorder risk. Supported fields mirror into `ClientRecord.healthProfile` where available, sensitive-detail form values remain non-prompt direct sources, and proposal rows can be edited before apply. AI active/passive, AI mode, channel permission, opt-out, red lock resolution, yellow hold resolution, and autopilot/reactivation stay manual dashboard/handoff flows. Verification passed with core tests 122/122, app tests 226/226, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain. Production pilot remains `NO-GO`.
+Phase 76C structured food rule green capacity spec completed on 2026-06-08: added `docs/PHASE_76C_STRUCTURED_FOOD_RULE_GREEN_CAPACITY_SPEC.md` as the canonical PRD/tech spec for expanding source-backed green food decisions through structured food rules, intent-specific answerability, a deterministic food-rule engine, clinical second-layer false-yellow calibration, trusted product-ingredient verification, PromptContext/output guard hardening, dashboard/proposal UX, gated Phase 72/73 runtime wiring, lifecycle coverage, and 100x50 food-mix rehearsal evidence. This phase changed documentation only; no runtime behavior, schema, provider, channel, launch-gate approval, R-405 status, or real-data handling changed. Verification re-ran with core tests 122/122, app tests 226/226, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain. Production pilot remains `NO-GO`.
+
+Phase 76B expanded chat form safety updates is the previous completed implementation wave (2026-06-08): Phase 76A proposal cards now cover nutrition patches plus Phase 70 clinical/safety form fields such as pregnancy/breastfeeding, adult/minor, diagnosed condition, medication/insulin, lab-result availability, recent symptom, and eating-disorder risk. Supported fields mirror into `ClientRecord.healthProfile` where available, sensitive-detail form values remain non-prompt direct sources, and proposal rows can be edited before apply. AI active/passive, AI mode, channel permission, opt-out, red lock resolution, yellow hold resolution, and autopilot/reactivation stay manual dashboard/handoff flows. Verification passed with core tests 122/122, app tests 226/226, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain. Production pilot remains `NO-GO`.
 
 Phase 76A dietitian chat form update proposals completed on 2026-06-08: internal copilot remains read-only, but a dietitian can create a separate client-bound update proposal from chat text, review deterministic allowlisted additive patches, and explicitly apply or reject the proposal. Applying a proposal updates the active Phase 70 client form response, mirrors allowed client fields, creates a Critical Context record and audit events, increments context revision once, and invalidates pending drafts. Verification passed with core tests 122/122, app tests 222/222, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain. Production pilot remains `NO-GO`.
 

@@ -17,7 +17,8 @@ These rules are non-negotiable and apply to every future phase:
 - Autopilot is not globally enabled for all 5,000 clients by default. It is enabled only for selected qualified clients after all gates, monitoring, and rollback controls are ready.
 
 ## Current Baseline
-- Latest completed implementation phase: Phase 76B expanded chat form safety updates.
+- Latest completed phase: Phase 76C structured food rule green capacity spec.
+- Latest completed implementation phase before 76C: Phase 76B expanded chat form safety updates.
 - Latest verification: core tests 122/122, app tests 226/226, `npm run release:verify` passed with only documented R-405 findings.
 - Production pilot status: `NO-GO`.
 - Real WhatsApp, Gemini, monitoring, secret manager, and real client health data remain disconnected.
@@ -347,6 +348,36 @@ Done criteria:
 - Clinical/safety form flags can be approved from one proposal card.
 - Operational AI/channel/lock controls cannot be changed from chat.
 - Edited patch values cannot change patch targets.
+- Production pilot remains `NO-GO`.
+
+## Phase 76C: Structured Food Rule Green Capacity Spec
+Goal: lock the PRD and technical specification for expanding source-backed green food decisions before any WhatsApp production adapter work.
+
+User documents required at the start of this phase:
+- None. This phase documents the downstream track only.
+
+Implementation intent:
+- Define structured food-rule fields, deterministic food-rule engine contract, intent-specific answerability matrix, clinical second-layer false-yellow calibration rules, trusted product-ingredient verification contract, PromptContext/output guard requirements, dashboard/proposal requirements, permission-graph and calibration wiring plan, lifecycle coverage, edge cases, and downstream phase map 76D-76Q.
+- Position the food-rule green capacity track before WhatsApp production adapter in the canonical roadmap.
+
+Done criteria:
+- `docs/PHASE_76C_STRUCTURED_FOOD_RULE_GREEN_CAPACITY_SPEC.md` exists and continuity docs are updated.
+- No runtime behavior, schema, provider, channel, launch-gate approval, R-405 status, or real-data handling changes occur.
+- `npm run release:verify` passes with production pilot still `NO-GO`.
+
+## Phase 76D: Structured Food Rule Data Model And Form Upgrade
+Goal: convert Phase 70 food-related fields from coarse free text into structured, answerability-ready food rules.
+
+User documents required at the start of this phase:
+- Final structured field definitions if dietitian workflow differs from the Phase 76C model.
+
+Implementation intent:
+- Add structured forbidden/allowed food items and groups, diet-type rules, equivalent exchange groups, mandatory/optional foods, skip tolerance, portion boundaries, ingredient keywords, and uncertainty policy fields.
+- Bump Phase 70 registry version, seed data, autopilot completeness checks, and form/client sync.
+
+Done criteria:
+- Structured food rules are registry-backed and test-covered.
+- Autopilot qualification fails closed when required food-rule fields are incomplete.
 - Production pilot remains `NO-GO`.
 
 ## Phase 76: WhatsApp Production Adapter
