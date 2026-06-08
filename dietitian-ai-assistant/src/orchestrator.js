@@ -5,9 +5,9 @@ import { buildClientContextCapsule } from "./context-capsule.js";
 import { compilePromptContext, renderPromptContext } from "./context-compiler.js";
 import { createHandoffCase } from "./handoff-engine.js";
 import { guardProviderOutput } from "./response-quality-guard.js";
-import { evaluateApprovedSourceAnswerability } from "./approved-source-answerability.js";
 import { evaluateGreenIntentTaxonomy } from "./green-intent-taxonomy.js";
 import { evaluateFoodRuleDecision } from "./food-rule-engine.js";
+import { evaluateIntentSpecificAnswerability } from "./intent-specific-answerability.js";
 import { defaultVoiceProfile } from "./voice-profile.js";
 import { selectModelForRisk } from "./model-routing.js";
 import { resolveAiActivation } from "./ai-activation.js";
@@ -128,54 +128,16 @@ export async function handleInboundMessage(input, adapters) {
     });
   }
 
-  const answerability = evaluateApprovedSourceAnswerability({
-    promptContext: compiledContext.promptContext,
-    riskDecision,
-  });
   const contextManifest = {
     ...compiledContext.contextManifest,
-    answerability,
   };
-
-  if (!answerability.allowed) {
-    const handoffCase = createHandoffCase({
-      capsule,
-      inboundMessage: input.message.body,
-      riskDecision: {
-        ...riskDecision,
-        reasons: [...riskDecision.reasons, ...answerability.reasons],
-        shouldHandoff: true,
-      },
-    });
-    await adapters?.onHandoff?.(handoffCase);
-    return buildResult({
-      capsule,
-      riskDecision,
-      action: "handoff",
-      handoffCase,
-      blockedReason: "approved_source_answerability_missing",
-      model: null,
-      activation,
-      contextManifest,
-      overrideReasons: [...riskDecision.reasons, ...answerability.reasons],
-    });
-  }
 
   const greenIntent = evaluateGreenIntentTaxonomy({
     promptContext: compiledContext.promptContext,
     riskDecision,
-    answerability,
+    answerability: null,
   });
   contextManifest.greenIntent = greenIntent;
-
-  if (input.structuredFoodRules) {
-    contextManifest.foodRule = evaluateFoodRuleDecision({
-      message: input.message.body,
-      structuredFoodRules: input.structuredFoodRules,
-      mixedIntentBlocked: greenIntent.decision === "blocked_sensitive_intent",
-      productIngredientEvidence: input.productIngredientEvidence || null,
-    });
-  }
 
   if (!greenIntent.allowed) {
     const handoffCase = createHandoffCase({
@@ -198,6 +160,52 @@ export async function handleInboundMessage(input, adapters) {
       activation,
       contextManifest,
       overrideReasons: [...riskDecision.reasons, ...greenIntent.reasons],
+    });
+  }
+
+  const foodRule = input.structuredFoodRules
+    ? evaluateFoodRuleDecision({
+        message: input.message.body,
+        structuredFoodRules: input.structuredFoodRules,
+        mixedIntentBlocked: false,
+        productIngredientEvidence: input.productIngredientEvidence || null,
+      })
+    : null;
+  if (foodRule) {
+    contextManifest.foodRule = foodRule;
+  }
+
+  const answerability = evaluateIntentSpecificAnswerability({
+    promptContext: compiledContext.promptContext,
+    riskDecision,
+    greenIntent,
+    foodRule,
+    structuredFoodRules: input.structuredFoodRules || null,
+    productIngredientEvidence: input.productIngredientEvidence || null,
+  });
+  contextManifest.answerability = answerability;
+
+  if (!answerability.allowed) {
+    const handoffCase = createHandoffCase({
+      capsule,
+      inboundMessage: input.message.body,
+      riskDecision: {
+        ...riskDecision,
+        reasons: [...riskDecision.reasons, ...answerability.reasons],
+        shouldHandoff: true,
+      },
+    });
+    await adapters?.onHandoff?.(handoffCase);
+    return buildResult({
+      capsule,
+      riskDecision,
+      action: "handoff",
+      handoffCase,
+      blockedReason: "approved_source_answerability_missing",
+      model: null,
+      activation,
+      contextManifest,
+      overrideReasons: [...riskDecision.reasons, ...answerability.reasons],
     });
   }
 

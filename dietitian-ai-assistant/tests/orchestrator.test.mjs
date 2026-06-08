@@ -32,6 +32,7 @@ const baseInput = {
     restrictedFoods: [],
     clinicalRiskNotes: [],
     pinnedNotes: ["No peanut suggestions."],
+    clientFormSummary: "Primary goal: fat loss with steady meal adherence.",
   },
   conversation: {
     id: "conversation-1",
@@ -121,6 +122,7 @@ test("ai-generated messages do not satisfy approved source answerability", async
         allergies: [],
         restrictedFoods: [],
         pinnedNotes: [],
+        clientFormSummary: "",
       },
       recentMessages: [
         {
@@ -209,11 +211,11 @@ test("answerability blocks sensitive mixed markers even when base risk is green"
   );
 
   assert.equal(result.action, "handoff");
-  assert.equal(result.blockedReason, "approved_source_answerability_missing");
+  assert.equal(result.blockedReason, "green_intent_taxonomy_blocked");
   assert.equal(result.providerAttempted, false);
   assert.equal(generated, false);
-  assert.equal(result.contextManifest?.answerability?.decision, "handoff_required");
-  assert.ok(result.reasons.includes("mixed_or_sensitive_answerability_marker"));
+  assert.equal(result.contextManifest?.greenIntent?.decision, "blocked_sensitive_intent");
+  assert.ok(result.reasons.includes("green_intent_taxonomy_sensitive_family"));
 });
 
 test("green intent taxonomy records low-risk logistics intent", async () => {
@@ -234,7 +236,7 @@ test("green intent taxonomy records low-risk logistics intent", async () => {
   assert.equal(result.providerAttempted, true);
   assert.equal(result.contextManifest?.greenIntent?.decision, "green_intent_allowed");
   assert.equal(result.contextManifest?.greenIntent?.intentFamily, "green_logistics");
-  assert.ok(result.contextManifest?.greenIntent?.sourceCategories.includes("active_diet_plan"));
+  assert.ok(result.contextManifest?.answerability?.sourceCategories.includes("prompt_allowed_form_response"));
 });
 
 test("green intent taxonomy blocks sensitive green-looking calorie requests before provider", async () => {

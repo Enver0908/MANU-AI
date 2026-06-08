@@ -24,10 +24,29 @@ Locked decisions:
 
 Next implementation order:
 
-1. Phase 76F intent-specific answerability.
-2. Phase 76G-76O food-rule green capacity implementation track per `docs/PHASE_76C_STRUCTURED_FOOD_RULE_GREEN_CAPACITY_SPEC.md`.
+1. Phase 76G clinical second-layer false-yellow calibration.
+2. Phase 76H-76O food-rule green capacity implementation track per `docs/PHASE_76C_STRUCTURED_FOOD_RULE_GREEN_CAPACITY_SPEC.md`.
 3. WhatsApp production adapter.
 4. Production ops, R-405 closure/acceptance, full 100x50 rehearsal, and external launch-gate closure.
+
+## Phase 76F: Intent-Specific Answerability - Completed 2026-06-08
+
+Goal: replace Phase 67 coarse approved-source gating with intent-family source matching and food-rule engine alignment before provider calls.
+
+Status:
+
+- Added `docs/PHASE_76F_INTENT_SPECIFIC_ANSWERABILITY_SPEC.md`.
+- Added core `dietitian-ai-assistant/src/intent-specific-answerability.js` and tests.
+- Orchestrator reorder: green intent taxonomy → food rule engine → intent-specific answerability.
+- Structured food-rule source categories derived from Phase 76D manifest; substitution legacy plan/manual fallback when engine returns `unknown_food_requires_review`; yellow/red decisions bypass intent-specific gating.
+- App runtime tests in `intent-specific-answerability-runtime.test.ts`.
+- Verification passed with core tests 139/139, app tests 240/240, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain.
+- No clinical second-layer carve-outs, product catalog adapters, provider routing changes, channel, launch-gate approval, R-405 acceptance, or real-data path was connected.
+- Production pilot remains `NO-GO`.
+
+Next:
+
+- Proceed to Phase 76G clinical second-layer false-yellow calibration.
 
 ## Phase 76E: Food Rule Engine - Completed 2026-06-08
 

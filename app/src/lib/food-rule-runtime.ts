@@ -19,7 +19,11 @@ export function getLatestClientFormAnswers(state: ManuAppState, clientId: string
 export function buildStructuredFoodRulesFromClientState(state: ManuAppState, clientId: string) {
   const answers = getLatestClientFormAnswers(state, clientId);
   if (!answers) return null;
-  return buildStructuredFoodRuleManifest(answers);
+  const manifest = buildStructuredFoodRuleManifest(answers);
+  return {
+    ...manifest,
+    allowedSubstitutionsSummary: String(answers.allowed_substitutions || "").trim(),
+  };
 }
 
 export function evaluateClientFoodRuleDecision(

@@ -1,4 +1,4 @@
-export const APPROVED_SOURCE_ANSWERABILITY_VERSION = "approved-source-answerability-v0.1.0";
+export const APPROVED_SOURCE_ANSWERABILITY_VERSION = "approved-source-answerability-v0.2.0";
 
 const APPROVED_SOURCE_RULES = {
   diet_plan_summary: "active_diet_plan",

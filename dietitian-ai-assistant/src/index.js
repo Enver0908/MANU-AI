@@ -40,6 +40,14 @@ export {
   evaluateApprovedSourceAnswerability,
 } from "./approved-source-answerability.js";
 export {
+  INTENT_SPECIFIC_ANSWERABILITY_VERSION,
+  evaluateAnswerabilityPrelude,
+  evaluateIntentSpecificAnswerability,
+  resolveEffectiveIntentFamily,
+  resolveFoodIntentFamily,
+  buildStructuredSourceCategories,
+} from "./intent-specific-answerability.js";
+export {
   GREEN_INTENT_TAXONOMY_VERSION,
   evaluateGreenIntentTaxonomy,
 } from "./green-intent-taxonomy.js";

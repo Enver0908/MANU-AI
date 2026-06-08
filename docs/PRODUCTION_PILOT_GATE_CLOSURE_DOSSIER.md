@@ -15,7 +15,7 @@ Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized reference
 ## Current Baseline
 
 - Git baseline: Phase 27-29 checkpoint exists at `c75564e Add Phase 27-29 pilot readiness checkpoint` on branch `codex/phase-29-baseline-checkpoint`; Completion Roadmap Phase 1 records this as the current implementation baseline.
-- Latest local release verification: `npm run release:verify` passed on 2026-06-08 after Phase 76E food rule engine.
+- Latest local release verification: `npm run release:verify` passed on 2026-06-08 after Phase 76F intent-specific answerability.
 - Verification result: core tests 132/132, app tests 238/238, lint passed, production build passed.
 - Dependency audit result: only known R-405 findings, `next:postcss` and `postcss:GHSA-qx2v-qp2m-jg93`.
 - R-405 status: open production launch blocker; Phase 54 rechecked metadata on 2026-06-02 and stable `next@latest` is 16.2.7 but still bundles `postcss@8.4.31`, so no safe stable Next.js/PostCSS patch path is available.
@@ -69,6 +69,7 @@ Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized reference
 - Phase 76C structured food rule green capacity spec: `PHASE_76C_STRUCTURED_FOOD_RULE_GREEN_CAPACITY_SPEC.md` records the canonical PRD/tech spec for source-backed food-rule green expansion, intent-specific answerability, food-rule engine contract, product-ingredient verification contract, and downstream phase map 76D-76Q before WhatsApp production adapter work. It does not implement runtime behavior, close any gate, connect real providers/channels, process real data, approve production pilot launch, or resolve R-405.
 - Phase 76D structured food rule data model and form upgrade: `PHASE_76D_STRUCTURED_FOOD_RULE_DATA_MODEL_SPEC.md` and app `phase-76d-food-rule-*` modules add registry-backed structured food-rule fields, parsing/validation helpers, autopilot food-rule completeness gates, and client allergy/restriction sync on form save. It does not implement the orchestrator food-rule engine, intent-specific answerability, product-ingredient verification, close any gate, connect real providers/channels, process real data, approve production pilot launch, or resolve R-405.
 - Phase 76E food rule engine: `PHASE_76E_FOOD_RULE_ENGINE_SPEC.md` and core `food-rule-engine.js` add deterministic forbidden/allowed/substitution/skip/product food decisions with audit-only `contextManifest.foodRule` attachment. It does not implement intent-specific answerability gating, clinical second-layer carve-outs, product catalog adapters, close any gate, connect real providers/channels, process real data, approve production pilot launch, or resolve R-405.
+- Phase 76F intent-specific answerability: `PHASE_76F_INTENT_SPECIFIC_ANSWERABILITY_SPEC.md` and core `intent-specific-answerability.js` add intent-family source matching, food-rule alignment, structured food-rule source categories, substitution legacy plan/manual fallback, and yellow/red bypass on the orchestrator hot path. It does not implement clinical second-layer carve-outs, product catalog adapters, close any gate, connect real providers/channels, process real data, approve production pilot launch, or resolve R-405.
 
 ## Gate Closure Matrix
 

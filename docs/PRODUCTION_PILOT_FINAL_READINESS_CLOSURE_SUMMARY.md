@@ -10,7 +10,7 @@ Production pilot is not approved.
 
 No real WhatsApp, Telegram, Gemini, external LLM provider, email, push, monitoring, analytics, secret manager, backup provider, or real client health data is connected.
 
-Post-Phase 76E strategic roadmap: `DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` now defines the direct production pilot path as 100 dietitians x 50 clients, with no small production ring. Product communication covenant enforcement, approved-source answerability, green intent taxonomy, local direct 5,000-client scale foundation, user-supplied form hardening, Turkiye official source manifest/intake, draft permission graph artifacts, draft health regulation calibration matrix, draft retention/export/DSAR transactional redaction contract, draft Gemini provider gate artifacts with blocked real egress, dietitian-approved chat-to-form update proposals, expanded safety-profile proposal updates, the Phase 76C structured food-rule green capacity PRD/tech spec, Phase 76D structured food-rule registry/model fields, and Phase 76E deterministic food-rule engine evidence are present locally; downstream 76F-76O implementation, external legal/privacy approval of lifecycle and provider policy, external clinical approval of routing/calibration artifacts and food-rule second-layer carve-outs, final form/PDF approvals, production Supabase transactional RPC migration, full production rehearsal acceptance, external gates, and R-405 closure/acceptance remain required before production GO.
+Post-Phase 76F strategic roadmap: `DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` now defines the direct production pilot path as 100 dietitians x 50 clients, with no small production ring. Product communication covenant enforcement, approved-source answerability, green intent taxonomy, local direct 5,000-client scale foundation, user-supplied form hardening, Turkiye official source manifest/intake, draft permission graph artifacts, draft health regulation calibration matrix, draft retention/export/DSAR transactional redaction contract, draft Gemini provider gate artifacts with blocked real egress, dietitian-approved chat-to-form update proposals, expanded safety-profile proposal updates, the Phase 76C structured food-rule green capacity PRD/tech spec, Phase 76D structured food-rule registry/model fields, Phase 76E deterministic food-rule engine evidence, and Phase 76F intent-specific answerability evidence are present locally; downstream 76G-76O implementation, external legal/privacy approval of lifecycle and provider policy, external clinical approval of routing/calibration artifacts and food-rule second-layer carve-outs, final form/PDF approvals, production Supabase transactional RPC migration, full production rehearsal acceptance, external gates, and R-405 closure/acceptance remain required before production GO.
 
 ## Go / No-Go Decision
 
@@ -125,11 +125,11 @@ External approvals:
 
 ## Verification
 
-Latest local release verification after Phase 76E food rule engine:
+Latest local release verification after Phase 76F intent-specific answerability:
 
 - `npm run release:verify` passed on 2026-06-08.
-- Core tests: 132/132 passed.
-- App tests: 238/238 passed.
+- Core tests: 139/139 passed.
+- App tests: 240/240 passed.
 - App lint: passed.
 - Production build: passed.
 - Production dependency audit gate passed with only documented R-405 findings.

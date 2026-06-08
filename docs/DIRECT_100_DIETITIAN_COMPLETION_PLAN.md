@@ -17,9 +17,9 @@ These rules are non-negotiable and apply to every future phase:
 - Autopilot is not globally enabled for all 5,000 clients by default. It is enabled only for selected qualified clients after all gates, monitoring, and rollback controls are ready.
 
 ## Current Baseline
-- Latest completed phase: Phase 76E food rule engine.
+- Latest completed phase: Phase 76F intent-specific answerability.
 - Latest completed implementation phase before 76C: Phase 76B expanded chat form safety updates.
-- Latest verification: core tests 122/122, app tests 226/226, `npm run release:verify` passed with only documented R-405 findings.
+- Latest verification: core tests 139/139, app tests 240/240, `npm run release:verify` passed with only documented R-405 findings.
 - Production pilot status: `NO-GO`.
 - Real WhatsApp, Gemini, monitoring, secret manager, and real client health data remain disconnected.
 - Existing usable foundations:
@@ -381,6 +381,14 @@ Goal: deterministic evaluator for allowed, forbidden, equivalent substitution, d
 Completed:
 - Added `docs/PHASE_76E_FOOD_RULE_ENGINE_SPEC.md`, core `food-rule-engine.js`, app `food-rule-runtime.ts`, orchestrator audit-only `contextManifest.foodRule`, and simulator structured-food-rule wiring.
 - Verification: core tests 132/132, app tests 238/238, `npm run release:verify` passed with only documented R-405 findings.
+- Production pilot remains `NO-GO`.
+
+## Phase 76F: Intent-Specific Answerability — Completed 2026-06-08
+Goal: intent-family approved-source matching and food-rule alignment before green provider calls.
+
+Completed:
+- Added `docs/PHASE_76F_INTENT_SPECIFIC_ANSWERABILITY_SPEC.md`, core `intent-specific-answerability.js`, orchestrator hot-path wiring, structured food-rule source categories, and substitution legacy plan/manual fallback.
+- Verification: core tests 139/139, app tests 240/240, `npm run release:verify` passed with only documented R-405 findings.
 - Production pilot remains `NO-GO`.
 
 ## Phase 76: WhatsApp Production Adapter

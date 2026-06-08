@@ -456,6 +456,42 @@ declare module "dietitian-ai-assistant-architecture" {
     riskDecision: { level: "green" | "yellow" | "red"; reasons?: string[] };
   }): ApprovedSourceAnswerabilityDecision;
 
+  export const INTENT_SPECIFIC_ANSWERABILITY_VERSION: string;
+  export function evaluateAnswerabilityPrelude(input: {
+    promptContext: PromptContext | null;
+    riskDecision: { level: "green" | "yellow" | "red"; reasons?: string[] };
+  }): ApprovedSourceAnswerabilityDecision;
+  export function evaluateIntentSpecificAnswerability(input: {
+    promptContext: PromptContext | null;
+    riskDecision: { level: "green" | "yellow" | "red"; reasons?: string[] };
+    greenIntent: GreenIntentTaxonomyDecision | null;
+    foodRule?: FoodRuleDecision | null;
+    structuredFoodRules?: StructuredFoodRulesInput | null;
+    productIngredientEvidence?: ProductIngredientEvidenceInput | null;
+  }): ApprovedSourceAnswerabilityDecision & {
+    intentFamily?: string | null;
+    foodRuleDecision?: string | null;
+    matchedSourceCategories?: string[];
+    requiredSourceCategories?: string[];
+    requiredFoodDecisions?: string[];
+    baseVersion?: string;
+  };
+  export function resolveEffectiveIntentFamily(
+    greenIntent: GreenIntentTaxonomyDecision | null,
+    foodRule: FoodRuleDecision | null | undefined,
+  ): string;
+  export function resolveFoodIntentFamily(foodRule: FoodRuleDecision | null | undefined): string | null;
+  export function buildStructuredSourceCategories(
+    structuredFoodRules: StructuredFoodRulesInput | null | undefined,
+    productIngredientEvidence?: ProductIngredientEvidenceInput | null,
+  ): Array<{
+    category: string;
+    segmentType: string;
+    sourceId: string | null;
+    authority: string | null;
+    origin: string | null;
+  }>;
+
   export function evaluateGreenIntentTaxonomy(input: {
     promptContext: PromptContext | null;
     riskDecision: { level: "green" | "yellow" | "red"; reasons?: string[] };
@@ -490,6 +526,7 @@ declare module "dietitian-ai-assistant-architecture" {
     ingredientAllergenKeywords?: string[];
     productLabelReviewPolicy?: string | null;
     uncertaintyPolicy?: string | null;
+    allowedSubstitutionsSummary?: string;
   };
 
   export type ProductIngredientEvidenceInput = {
