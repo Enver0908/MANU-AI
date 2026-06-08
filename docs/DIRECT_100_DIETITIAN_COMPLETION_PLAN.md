@@ -17,7 +17,7 @@ These rules are non-negotiable and apply to every future phase:
 - Autopilot is not globally enabled for all 5,000 clients by default. It is enabled only for selected qualified clients after all gates, monitoring, and rollback controls are ready.
 
 ## Current Baseline
-- Latest completed phase: Phase 76D structured food rule data model and form upgrade.
+- Latest completed phase: Phase 76E food rule engine.
 - Latest completed implementation phase before 76C: Phase 76B expanded chat form safety updates.
 - Latest verification: core tests 122/122, app tests 226/226, `npm run release:verify` passed with only documented R-405 findings.
 - Production pilot status: `NO-GO`.
@@ -373,6 +373,14 @@ Completed:
 - Registry-backed structured forbidden/allowed food items and groups, diet-type rules, equivalent exchange groups, mandatory/optional foods, skip tolerance, portion boundaries, ingredient keywords, product-label review policy, and uncertainty policy fields.
 - Registry version bumped to `phase-76d-food-rule-registry-v1`; seed data, autopilot completeness checks, and form/client sync updated.
 - Verification: core tests 122/122, app tests 234/234, `npm run release:verify` passed with only documented R-405 findings.
+- Production pilot remains `NO-GO`.
+
+## Phase 76E: Food Rule Engine — Completed 2026-06-08
+Goal: deterministic evaluator for allowed, forbidden, equivalent substitution, diet-type, skip, and product-ingredient food decisions.
+
+Completed:
+- Added `docs/PHASE_76E_FOOD_RULE_ENGINE_SPEC.md`, core `food-rule-engine.js`, app `food-rule-runtime.ts`, orchestrator audit-only `contextManifest.foodRule`, and simulator structured-food-rule wiring.
+- Verification: core tests 132/132, app tests 238/238, `npm run release:verify` passed with only documented R-405 findings.
 - Production pilot remains `NO-GO`.
 
 ## Phase 76: WhatsApp Production Adapter

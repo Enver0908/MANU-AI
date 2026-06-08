@@ -18,32 +18,33 @@ Start by reading:
 2. `PROJECT_PLAN.md`
 3. `docs/NEXT_PHASE_EXECUTION_PLAN.md`
 4. `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` (current strategic roadmap)
-5. `docs/PHASE_76D_STRUCTURED_FOOD_RULE_DATA_MODEL_SPEC.md` (latest completed phase)
-6. `docs/PHASE_76C_STRUCTURED_FOOD_RULE_GREEN_CAPACITY_SPEC.md`
-7. `docs/PHASE_76B_EXPANDED_CHAT_FORM_SAFETY_UPDATE_SPEC.md`
-8. `docs/PHASE_76A_DIETITIAN_CHAT_FORM_UPDATE_PROPOSALS_SPEC.md`
-9. `docs/PHASE_75_GEMINI_PROVIDER_GATE_SPEC.md`
-10. `docs/PHASE_74_DATA_LIFECYCLE_DSAR_SPEC.md`
-11. `docs/PHASE_73_HEALTH_REGULATION_CALIBRATION_SPEC.md`
-12. `docs/PHASE_72_REGULATION_PERMISSION_GRAPH_SPEC.md`
-13. `docs/PHASE_71_TURKIYE_OFFICIAL_HEALTH_SOURCE_INGESTION_SPEC.md`
-14. `docs/PHASE_70_USER_SUPPLIED_FORM_HARDENING_SPEC.md`
-15. `docs/PHASE_69_DIRECT_5000_CLIENT_SCALE_FOUNDATION_SPEC.md`
-16. `docs/PHASE_68_GREEN_MAXIMIZATION_INTENT_TAXONOMY_SPEC.md`
-17. `docs/PHASE_67_APPROVED_SOURCE_ANSWERABILITY_ENGINE_SPEC.md`
-18. `docs/PHASE_66_PRODUCT_COMMUNICATION_COVENANT_LOCK_SPEC.md`
-19. `docs/PHASE_65_OFFICIAL_REGULATION_PDF_CORPUS_QA_SPEC.md`
-20. `docs/PHASE_64_STRUCTURED_LAUNCH_GATE_EVIDENCE_ENGINE_SPEC.md`
-21. `docs/PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md`
-22. `docs/PHASE_62_ARCHITECTURE_REVIEW_REMEDIATION_WAVE2_SPEC.md`
-23. `docs/PHASE_61_SCOPE_GUARD_RAG_SECOND_LAYER_SPEC.md`
-24. `docs/RISK_REGISTER.md`
-25. `docs/DATA_INVENTORY.md`
-26. `docs/DATASET_STRATEGY.md`
-27. `docs/MOBILE_APP_STRATEGY.md`
-28. `dietitian-ai-assistant/README.md`
-29. `dietitian-ai-assistant/docs/architecture.md`
-30. `dietitian-ai-assistant/docs/data-model.sql`
+5. `docs/PHASE_76E_FOOD_RULE_ENGINE_SPEC.md` (latest completed phase)
+6. `docs/PHASE_76D_STRUCTURED_FOOD_RULE_DATA_MODEL_SPEC.md`
+7. `docs/PHASE_76C_STRUCTURED_FOOD_RULE_GREEN_CAPACITY_SPEC.md`
+8. `docs/PHASE_76B_EXPANDED_CHAT_FORM_SAFETY_UPDATE_SPEC.md`
+9. `docs/PHASE_76A_DIETITIAN_CHAT_FORM_UPDATE_PROPOSALS_SPEC.md`
+10. `docs/PHASE_75_GEMINI_PROVIDER_GATE_SPEC.md`
+11. `docs/PHASE_74_DATA_LIFECYCLE_DSAR_SPEC.md`
+12. `docs/PHASE_73_HEALTH_REGULATION_CALIBRATION_SPEC.md`
+13. `docs/PHASE_72_REGULATION_PERMISSION_GRAPH_SPEC.md`
+14. `docs/PHASE_71_TURKIYE_OFFICIAL_HEALTH_SOURCE_INGESTION_SPEC.md`
+15. `docs/PHASE_70_USER_SUPPLIED_FORM_HARDENING_SPEC.md`
+16. `docs/PHASE_69_DIRECT_5000_CLIENT_SCALE_FOUNDATION_SPEC.md`
+17. `docs/PHASE_68_GREEN_MAXIMIZATION_INTENT_TAXONOMY_SPEC.md`
+18. `docs/PHASE_67_APPROVED_SOURCE_ANSWERABILITY_ENGINE_SPEC.md`
+19. `docs/PHASE_66_PRODUCT_COMMUNICATION_COVENANT_LOCK_SPEC.md`
+20. `docs/PHASE_65_OFFICIAL_REGULATION_PDF_CORPUS_QA_SPEC.md`
+21. `docs/PHASE_64_STRUCTURED_LAUNCH_GATE_EVIDENCE_ENGINE_SPEC.md`
+22. `docs/PHASE_63_PRODUCTION_PILOT_GO_REBASELINE_SPEC.md`
+23. `docs/PHASE_62_ARCHITECTURE_REVIEW_REMEDIATION_WAVE2_SPEC.md`
+24. `docs/PHASE_61_SCOPE_GUARD_RAG_SECOND_LAYER_SPEC.md`
+25. `docs/RISK_REGISTER.md`
+26. `docs/DATA_INVENTORY.md`
+27. `docs/DATASET_STRATEGY.md`
+28. `docs/MOBILE_APP_STRATEGY.md`
+29. `dietitian-ai-assistant/README.md`
+30. `dietitian-ai-assistant/docs/architecture.md`
+31. `dietitian-ai-assistant/docs/data-model.sql`
 
 ## User's Product Goal
 
@@ -78,7 +79,9 @@ The product must be both:
 
 Post-Phase 69 baseline: the direct 100-dietitian strategic completion plan in `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` remains canonical. It locks the production pilot target to direct 100 dietitians x 50 clients (minimum 5,000 clients), with no small production ring. It also locks the product communication covenant: client-facing output must never disclose AI identity or tell the client to ask a doctor/dietitian/professional, yellow/red paths send no client-facing AI boundary reply, and green maximization must come from approved source-backed answerability plus deterministic green intent taxonomy rather than answering risky messages.
 
-Next implementation phase is Phase 76E food rule engine, followed by the remaining 76F-76O food-rule green capacity track before WhatsApp production adapter work. Real Gemini egress must not be enabled without Phase 75 approved provider artifacts plus `MANU_ALLOW_REAL_GEMINI=true` and closed legal/privacy plus provider/vendor gates. Production data lifecycle must not be enabled without Phase 74 transactional redaction plus external legal/privacy approval.
+Next implementation phase is Phase 76F intent-specific answerability, followed by the remaining 76G-76O food-rule green capacity track before WhatsApp production adapter work. Real Gemini egress must not be enabled without Phase 75 approved provider artifacts plus `MANU_ALLOW_REAL_GEMINI=true` and closed legal/privacy plus provider/vendor gates. Production data lifecycle must not be enabled without Phase 74 transactional redaction plus external legal/privacy approval.
+
+Phase 76E food rule engine completed on 2026-06-08: added `docs/PHASE_76E_FOOD_RULE_ENGINE_SPEC.md`, core `dietitian-ai-assistant/src/food-rule-engine.js`, app `food-rule-runtime.ts`, orchestrator audit-only `contextManifest.foodRule` attachment, and simulator structured-food-rule input wiring. The engine deterministically evaluates forbidden/allowed food, equivalent substitution, diet-type compatibility, optional/mandatory skip, product-ingredient conflict, mixed-intent block, and uncertainty fail-closed decisions from Phase 76D structured rules. No intent-specific answerability gating, clinical second-layer carve-outs, product catalog adapters, provider routing changes, channel, launch-gate approval, R-405 status, or real-data handling changed. Verification passed with core tests 132/132, app tests 238/238, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain. Production pilot remains `NO-GO`.
 
 Phase 76D structured food rule data model and form upgrade completed on 2026-06-08: added `docs/PHASE_76D_STRUCTURED_FOOD_RULE_DATA_MODEL_SPEC.md`, `app/src/lib/phase-76d-food-rule-fields.ts`, and `app/src/lib/phase-76d-food-rule-model.ts`; extended the Phase 70 client form registry with 13 structured food-rule fields (forbidden/allowed items and groups, diet-type rules, equivalent exchange groups, mandatory/optional foods, skip tolerance, portion boundaries, ingredient keywords, product-label review policy, and uncertainty policy); bumped registry version to `phase-76d-food-rule-registry-v1`; extended autopilot qualification with structured food-rule completeness checks; synced allergies/restricted foods on form save; and seeded demo structured food rules. No orchestrator food-rule engine, intent-specific answerability, product-ingredient verification, provider, channel, launch-gate approval, R-405 status, or real-data handling changed. Verification passed with core tests 122/122, app tests 234/234, app lint, production build, and `npm run release:verify`; only documented R-405 findings remain. Production pilot remains `NO-GO`.
 

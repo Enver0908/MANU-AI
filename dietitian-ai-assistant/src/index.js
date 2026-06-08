@@ -44,6 +44,11 @@ export {
   evaluateGreenIntentTaxonomy,
 } from "./green-intent-taxonomy.js";
 export {
+  FOOD_RULE_ENGINE_VERSION,
+  FOOD_RULE_DECISIONS,
+  evaluateFoodRuleDecision,
+} from "./food-rule-engine.js";
+export {
   PRODUCT_COMMUNICATION_COVENANT_VERSION,
   detectProductCommunicationCovenantIssues,
   guardAssistantReply,

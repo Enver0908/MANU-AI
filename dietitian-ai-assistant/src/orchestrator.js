@@ -7,6 +7,7 @@ import { createHandoffCase } from "./handoff-engine.js";
 import { guardProviderOutput } from "./response-quality-guard.js";
 import { evaluateApprovedSourceAnswerability } from "./approved-source-answerability.js";
 import { evaluateGreenIntentTaxonomy } from "./green-intent-taxonomy.js";
+import { evaluateFoodRuleDecision } from "./food-rule-engine.js";
 import { defaultVoiceProfile } from "./voice-profile.js";
 import { selectModelForRisk } from "./model-routing.js";
 import { resolveAiActivation } from "./ai-activation.js";
@@ -166,6 +167,15 @@ export async function handleInboundMessage(input, adapters) {
     answerability,
   });
   contextManifest.greenIntent = greenIntent;
+
+  if (input.structuredFoodRules) {
+    contextManifest.foodRule = evaluateFoodRuleDecision({
+      message: input.message.body,
+      structuredFoodRules: input.structuredFoodRules,
+      mixedIntentBlocked: greenIntent.decision === "blocked_sensitive_intent",
+      productIngredientEvidence: input.productIngredientEvidence || null,
+    });
+  }
 
   if (!greenIntent.allowed) {
     const handoffCase = createHandoffCase({

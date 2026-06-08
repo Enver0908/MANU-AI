@@ -11,6 +11,7 @@ import {
 } from "./ai-provider";
 import { buildClientContextUpdateSummary } from "./client-context-updates";
 import { buildClientFormSummary } from "./client-forms";
+import { buildStructuredFoodRulesFromClientState } from "./food-rule-runtime";
 import { evaluateClientAutopilotQualification } from "./phase-70-form-hardening";
 import { getActiveVoiceProfile } from "./voice-profile-workflow";
 import { getMissingSafetyChecklistItems, isSafetyChecklistComplete } from "./safety-checklist";
@@ -193,6 +194,7 @@ export async function runInboundSimulation(
       providerId: MOCK_PROVIDER_ID,
       now,
       riskDecisionOverride: riskDecision,
+      structuredFoodRules: buildStructuredFoodRulesFromClientState(state, client.id) || undefined,
     },
     {
       generateReply: async (payload: Record<string, unknown>) => {

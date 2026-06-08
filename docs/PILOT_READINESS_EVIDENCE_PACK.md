@@ -18,10 +18,10 @@ Run from `app`:
 npm run release:verify
 ```
 
-Latest result, re-verified on 2026-06-08 after Phase 76D structured food rule data model and form upgrade:
+Latest result, re-verified on 2026-06-08 after Phase 76E food rule engine:
 
-- Core package tests: 122/122 passed.
-- App tests: 234/234 passed.
+- Core package tests: 132/132 passed.
+- App tests: 238/238 passed.
 - App lint: passed.
 - Production build: passed.
 - Production dependency audit gate: passed with only documented R-405 findings.
@@ -43,6 +43,7 @@ Latest result, re-verified on 2026-06-08 after Phase 76D structured food rule da
 - Phase 76B expands the proposal path to Phase 70 clinical/safety form flags and supported health-profile mirrors, adds editable proposal rows, and keeps AI active/passive, AI mode, channel permission, red lock, and yellow hold controls manual. No real Gemini extraction, real provider, real channel, or gate closure occurred.
 - Phase 76C adds the canonical structured food-rule green capacity PRD/tech spec for source-backed forbidden-food reminders, allowed-food confirmations, approved equivalent substitutions, diet-type compatibility, optional skip tolerance, and trusted product-ingredient verification. This phase changed documentation only; no runtime behavior, provider, channel, or gate closure occurred.
 - Phase 76D adds registry-backed structured food-rule fields, parsing/validation helpers, autopilot food-rule completeness gates, client allergy/restriction sync on form save, and demo seed coverage. No orchestrator food-rule engine, provider, channel, or gate closure occurred.
+- Phase 76E adds the deterministic food-rule engine, app runtime bridge, and audit-only `contextManifest.foodRule` attachment. No intent-specific answerability gating, provider routing changes, channel, or gate closure occurred.
 - Post-Phase 65 strategic plan `DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` locks the production target to direct 100 dietitians x 50 clients, requires approved-source answerability before form/PDF/provider/channel phases, and keeps production pilot `NO-GO`.
 
 Additional Phase 50 production Supabase hardening evidence on 2026-06-02:

@@ -195,6 +195,7 @@ declare module "dietitian-ai-assistant-architecture" {
     segments: ContextManifestSegment[];
     answerability?: ApprovedSourceAnswerabilityDecision;
     greenIntent?: GreenIntentTaxonomyDecision;
+    foodRule?: FoodRuleDecision;
   };
 
   export type PromptCompilation = {
@@ -275,6 +276,8 @@ declare module "dietitian-ai-assistant-architecture" {
     providerId?: string | null;
     now?: string;
     riskDecisionOverride?: RiskDecision;
+    structuredFoodRules?: StructuredFoodRulesInput | null;
+    productIngredientEvidence?: ProductIngredientEvidenceInput | null;
   };
 
   export type ProviderOutputSafetyIssue = {
@@ -458,6 +461,69 @@ declare module "dietitian-ai-assistant-architecture" {
     riskDecision: { level: "green" | "yellow" | "red"; reasons?: string[] };
     answerability?: ApprovedSourceAnswerabilityDecision | null;
   }): GreenIntentTaxonomyDecision;
+
+  export type FoodRuleDecisionValue =
+    | "allowed_food_confirmation"
+    | "forbidden_food_rejection"
+    | "equivalent_substitution_allowed"
+    | "diet_type_compatible"
+    | "diet_type_conflict"
+    | "optional_skip_allowed"
+    | "mandatory_skip_blocked"
+    | "unknown_food_requires_review"
+    | "product_ingredient_conflict"
+    | "product_ingredient_unknown"
+    | "mixed_intent_blocked"
+    | "not_applicable";
+
+  export type StructuredFoodRulesInput = {
+    forbiddenFoodItems?: string[];
+    forbiddenFoodGroups?: string[];
+    allowedFoodItems?: string[];
+    allowedFoodGroups?: string[];
+    dietTypeRules?: string | null;
+    equivalentExchangeGroups?: Array<{ groupId: string; items: string[] }>;
+    mandatoryFoodsOrMeals?: string[];
+    optionalFoodsOrMeals?: string[];
+    skipToleranceRules?: string | null;
+    portionBoundaries?: string | null;
+    ingredientAllergenKeywords?: string[];
+    productLabelReviewPolicy?: string | null;
+    uncertaintyPolicy?: string | null;
+  };
+
+  export type ProductIngredientEvidenceInput = {
+    ingredientSourceType?: string;
+    ingredientText?: string;
+    ingredientConfidence?: "exact" | "high" | "low" | "unknown" | string;
+  };
+
+  export type FoodRuleDecision = {
+    version: string;
+    decision: FoodRuleDecisionValue;
+    allowed: boolean;
+    reasons: string[];
+    queryType?: string | null;
+    matchedFood?: string;
+    matchedSource?: string;
+    exchangeGroupId?: string;
+    sourceFood?: string;
+    targetFood?: string;
+    skipTarget?: string | null;
+    dietType?: string | null;
+    matchedKeywords?: string[];
+    ingredientConfidence?: string;
+    ingredientSourceType?: string;
+  };
+
+  export const FOOD_RULE_ENGINE_VERSION: string;
+  export const FOOD_RULE_DECISIONS: FoodRuleDecisionValue[];
+  export function evaluateFoodRuleDecision(input: {
+    message?: string;
+    structuredFoodRules?: StructuredFoodRulesInput | null;
+    mixedIntentBlocked?: boolean;
+    productIngredientEvidence?: ProductIngredientEvidenceInput | null;
+  }): FoodRuleDecision;
 
   export type ScopeRuleEscalationLevel = "yellow" | "red";
   export type ScopeGuardStatus = "noop" | "unavailable" | "no_match" | "matched";
