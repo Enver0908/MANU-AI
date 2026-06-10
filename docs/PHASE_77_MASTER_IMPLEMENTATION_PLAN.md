@@ -275,43 +275,47 @@ Done criteria:
 
 ## Phase 77D: Master Food Catalog V1
 
+Status: Implemented locally on 2026-06-10 through `docs/PHASE_77D_MASTER_FOOD_CATALOG_SPEC.md`. Phase 77B still remains open because the user explicitly asked to load the form and food list first.
+
 Goal:
 
-Ingest and QA the user-supplied comprehensive food list as a global versioned master catalog.
+Ingest and QA the user-supplied comprehensive food list as a global versioned master catalog, then expose main-category, subcategory, and food-level forbidden checkbox controls for dietitian use.
 
 Input dependency:
 
-- User supplies the food list.
+- Completed: user supplied `C:\Users\Dell\Downloads\manual.xlsx`.
+- Completed: only the `Besin Veritabani` sheet is in scope for Phase 77D.
 
 PRD requirements:
 
-- Catalog should be searchable and understandable by dietitians.
-- Catalog must distinguish food group from exchange group.
-- Catalog must support aliases and ingredient keywords.
+- Catalog should be understandable by dietitians as a three-level hierarchy: main category, subcategory, food.
+- Dietitian can mark an entire main category forbidden.
+- Dietitian can mark an entire subcategory forbidden.
+- Dietitian can mark a single food forbidden.
+- Parent selections expand to all child foods for existing Phase 76 food-rule runtime compatibility.
+- Raw selected catalog ids are preserved as source provenance.
 - Catalog must be versioned and QA checked before it becomes active.
 
 Technical scope:
 
-- Define catalog file format and ingestion rules.
-- Add catalog QA script.
-- Add checksum/version metadata.
-- Normalize names, aliases, Turkish characters, and common spelling variants.
+- Define catalog file format and ingestion rules for the supplied workbook shape.
+- Add catalog QA validation and checksum/version metadata.
+- Normalize names and Turkish characters for stable ids and exact lookup.
 - Model:
-  - food item id;
-  - display name;
-  - aliases;
-  - food group;
-  - exchange group if applicable;
-  - ingredient keywords;
-  - allergen/diet-type tags;
-  - default clinical caution flags if any;
+  - main category id and display name;
+  - subcategory id and display name;
+  - food id and display name;
   - source/version metadata.
-- Add deterministic lookup helpers:
-  - exact normalized match;
-  - alias match;
-  - keyword match;
-  - food group match;
-  - ingredient keyword conflict.
+- Add deterministic helper coverage:
+  - hierarchy validation;
+  - exact normalized name lookup;
+  - forbidden selection normalization;
+  - main category expansion;
+  - subcategory expansion;
+  - single-food expansion;
+  - overlap dedupe;
+  - stale expanded-name removal from manual token fields.
+- Add dashboard controls under the existing food-rule panel.
 - Keep global catalog read-only for dietitian users in v1.
 
 Persistence:
@@ -323,15 +327,16 @@ Tests:
 
 - Catalog QA.
 - Duplicate detection.
-- Alias collision detection.
-- Deterministic lookup.
+- Exact lookup.
 - Turkish normalization.
 - No cross-tenant client state in global catalog.
+- Main-category, subcategory, and food-level expansion.
+- Runtime compatibility path through existing forbidden food answers.
 
 Done criteria:
 
 - Catalog can be ingested and QA accepted.
-- Food matching foundation exists.
+- Food hierarchy selection foundation exists.
 - Release verification passes.
 - Commit is created.
 
@@ -792,24 +797,26 @@ The following risk families must be tracked through Phase 77:
 
 Before implementation can complete:
 
-1. Final personal form fields and section design.
-2. User-supplied comprehensive food list.
-3. Food list metadata expectations:
+1. Client food-rule profile v2 details beyond forbidden hierarchy, including allowed semantics and food-group flexibility UX.
+2. Menu template details and export layout preferences.
+3. Any brand/style requirements for DOCX/PDF output.
+4. Any future catalog metadata beyond the supplied workbook hierarchy:
    - groups;
    - aliases;
    - ingredient keywords;
    - exchange groups if available;
    - allergen/diet-type tags if available.
-4. Preferred menu template details and export layout preferences.
-5. Any brand/style requirements for DOCX/PDF output.
 
-## Current Final State After Phase 77C
+## Current Final State After Phase 77D
 
 - Detailed master plan exists in this document.
 - Phase 77A short roadmap/spec exists separately.
 - Phase 77C client personal form v2 is loaded locally in the dynamic form registry.
-- Runtime behavior changed only for the active client form schema and related demo/test form data.
+- Phase 77D master food catalog hierarchy is loaded locally from the user-supplied `Besin Veritabani` sheet.
+- Dashboard food-rule controls can mark forbidden main categories, subcategories, and foods, then expand those selections into existing forbidden food/group answers for Phase 76 compatibility.
+- Runtime behavior changed for the active client form schema, related demo/test form data, and manual food-rule dashboard serialization/loading.
 - Schema is unchanged.
+- Food Decision Engine V2, alias/ingredient matching, menu forms, export, and production catalog approval remain open.
 - Providers/channels remain disconnected.
 - Production pilot remains NO-GO.
 - Next implementation phase is Phase 77B.

@@ -8,10 +8,12 @@ import {
   FOOD_RULE_DASHBOARD_DIET_TYPE_OPTIONS,
   FOOD_RULE_DASHBOARD_GROUP_OPTIONS,
   FOOD_RULE_DASHBOARD_INGREDIENT_KEYWORD_OPTIONS,
+  FOOD_RULE_DASHBOARD_MASTER_CATALOG,
   FOOD_RULE_DASHBOARD_PRODUCT_LABEL_REVIEW_OPTIONS,
   FOOD_RULE_DASHBOARD_SKIP_TOLERANCE_OPTIONS,
   FOOD_RULE_DASHBOARD_UNCERTAINTY_POLICY_OPTIONS,
 } from "@/lib/phase-76j-food-rule-dashboard";
+import type { Phase77DMasterFoodCatalogData } from "@/lib/phase-77d-master-food-catalog";
 
 type FoodRulesPanelProps = {
   clientName: string;
@@ -67,6 +69,16 @@ export function FoodRulesPanel({
     });
   };
 
+  const toggleCatalogSelection = (
+    field: "forbiddenCatalogMainCategoryIds" | "forbiddenCatalogSubCategoryIds" | "forbiddenCatalogFoodIds",
+    id: string,
+  ) => {
+    const current = foodRules[field];
+    update({
+      [field]: current.includes(id) ? current.filter((item) => item !== id) : [...current, id],
+    });
+  };
+
   const save = async () => {
     if (disabled || isSaving) return;
     setIsSaving(true);
@@ -107,6 +119,16 @@ export function FoodRulesPanel({
           {FOOD_RULE_DASHBOARD_WARNINGS.productionActivation}
         </p>
       </div>
+
+      <CatalogForbiddenSection
+        catalog={FOOD_RULE_DASHBOARD_MASTER_CATALOG}
+        selectedMainCategoryIds={foodRules.forbiddenCatalogMainCategoryIds}
+        selectedSubCategoryIds={foodRules.forbiddenCatalogSubCategoryIds}
+        selectedFoodIds={foodRules.forbiddenCatalogFoodIds}
+        onToggleMainCategory={(id) => toggleCatalogSelection("forbiddenCatalogMainCategoryIds", id)}
+        onToggleSubCategory={(id) => toggleCatalogSelection("forbiddenCatalogSubCategoryIds", id)}
+        onToggleFood={(id) => toggleCatalogSelection("forbiddenCatalogFoodIds", id)}
+      />
 
       <div className="mt-4 grid gap-4 xl:grid-cols-2">
         <TokenListSection
@@ -214,6 +236,109 @@ export function FoodRulesPanel({
         className="mt-4"
       />
     </section>
+  );
+}
+
+function CatalogForbiddenSection({
+  catalog,
+  selectedMainCategoryIds,
+  selectedSubCategoryIds,
+  selectedFoodIds,
+  onToggleMainCategory,
+  onToggleSubCategory,
+  onToggleFood,
+}: {
+  catalog: Phase77DMasterFoodCatalogData;
+  selectedMainCategoryIds: string[];
+  selectedSubCategoryIds: string[];
+  selectedFoodIds: string[];
+  onToggleMainCategory: (id: string) => void;
+  onToggleSubCategory: (id: string) => void;
+  onToggleFood: (id: string) => void;
+}) {
+  const selectedCount = selectedMainCategoryIds.length + selectedSubCategoryIds.length + selectedFoodIds.length;
+
+  return (
+    <div className="mt-4 rounded-lg border border-stone-200 bg-white p-3">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="text-sm font-semibold text-stone-900">Forbidden food catalog</p>
+        <p className="text-xs font-medium text-stone-500">
+          {selectedCount} selected / {catalog.metadata.counts.foods} foods
+        </p>
+      </div>
+      <div className="mt-3 max-h-[560px] space-y-3 overflow-auto pr-1">
+        {catalog.categories.map((category) => {
+          const categoryFoodCount = category.subcategories.reduce((sum, subcategory) => sum + subcategory.foods.length, 0);
+          const categoryChecked = selectedMainCategoryIds.includes(category.id);
+          const categoryHasSelectedChild = category.subcategories.some(
+            (subcategory) =>
+              selectedSubCategoryIds.includes(subcategory.id) ||
+              subcategory.foods.some((food) => selectedFoodIds.includes(food.id)),
+          );
+
+          return (
+            <details
+              key={category.id}
+              className="rounded-lg border border-stone-100 bg-stone-50"
+              open={categoryChecked || categoryHasSelectedChild}
+            >
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-3 py-2 text-sm font-semibold text-stone-900">
+                <label className="flex min-w-0 items-center gap-2" onClick={(event) => event.stopPropagation()}>
+                  <input
+                    type="checkbox"
+                    checked={categoryChecked}
+                    onChange={() => onToggleMainCategory(category.id)}
+                    className="h-4 w-4 rounded border-stone-300 text-emerald-900"
+                  />
+                  <span className="truncate">{category.name}</span>
+                </label>
+                <span className="shrink-0 text-xs font-medium text-stone-500">{categoryFoodCount}</span>
+              </summary>
+              <div className="space-y-2 px-3 pb-3">
+                {category.subcategories.map((subcategory) => {
+                  const subcategoryChecked = selectedSubCategoryIds.includes(subcategory.id);
+                  const subcategoryHasSelectedFood = subcategory.foods.some((food) => selectedFoodIds.includes(food.id));
+
+                  return (
+                    <details
+                      key={subcategory.id}
+                      className="rounded-lg border border-stone-200 bg-white"
+                      open={subcategoryChecked || subcategoryHasSelectedFood}
+                    >
+                      <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-3 py-2 text-sm text-stone-800">
+                        <label className="flex min-w-0 items-center gap-2" onClick={(event) => event.stopPropagation()}>
+                          <input
+                            type="checkbox"
+                            checked={subcategoryChecked}
+                            onChange={() => onToggleSubCategory(subcategory.id)}
+                            className="h-4 w-4 rounded border-stone-300 text-emerald-900"
+                          />
+                          <span className="truncate">{subcategory.name}</span>
+                        </label>
+                        <span className="shrink-0 text-xs font-medium text-stone-500">{subcategory.foods.length}</span>
+                      </summary>
+                      <div className="grid gap-2 border-t border-stone-100 p-3 sm:grid-cols-2 lg:grid-cols-3">
+                        {subcategory.foods.map((food) => (
+                          <label key={food.id} className="flex min-w-0 items-center gap-2 text-sm text-stone-700">
+                            <input
+                              type="checkbox"
+                              checked={selectedFoodIds.includes(food.id)}
+                              onChange={() => onToggleFood(food.id)}
+                              className="h-4 w-4 rounded border-stone-300 text-emerald-900"
+                            />
+                            <span className="min-w-0 break-words">{food.name}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </details>
+                  );
+                })}
+              </div>
+            </details>
+          );
+        })}
+      </div>
+    </div>
   );
 }
 

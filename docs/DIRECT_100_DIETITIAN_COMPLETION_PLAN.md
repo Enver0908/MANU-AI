@@ -17,11 +17,11 @@ These rules are non-negotiable and apply to every future phase:
 - Autopilot is not globally enabled for all 5,000 clients by default. It is enabled only for selected qualified clients after all gates, monitoring, and rollback controls are ready.
 
 ## Current Baseline
-- Latest completed implementation phase: Phase 77C client personal form v2 (2026-06-10).
+- Latest completed implementation phase: Phase 77D master food catalog hierarchy (2026-06-10).
 - Latest roadmap rebaseline: Phase 77A manual source authority rebaseline spec (2026-06-10).
 - Detailed Phase 77 implementation plan: `docs/PHASE_77_MASTER_IMPLEMENTATION_PLAN.md`.
 - Latest completed implementation phase before 76C: Phase 76B expanded chat form safety updates.
-- Latest verification: Phase 77C `npm run release:verify` passed on 2026-06-10 with core tests 165/165, app tests 284/284, lint with two pre-existing warnings, production build, and only documented R-405 findings.
+- Latest verification: Phase 77D `npm run release:verify` passed on 2026-06-10 with core tests 165/165, app tests 293/293, lint with two pre-existing warnings, production build, and only documented R-405 findings.
 - Production pilot status: `NO-GO`.
 - Real WhatsApp, Gemini, monitoring, secret manager, and real client health data remain disconnected.
 - Existing usable foundations:
@@ -60,6 +60,20 @@ Completed:
 - Kept food-group flexibility out of this form for Client Food Rule Profile V2 and meal flexibility out of this form for Menu Plan V1.
 - Removed Phase 76D structured food-rule fields from the active personal form schema while preserving demo legacy answers for temporary Phase 76 runtime compatibility.
 - No provider, channel, launch-gate approval, real-data handling, menu/export/catalog implementation, or R-405 status changed.
+- Production pilot remains `NO-GO`; Phase 77B chat mutation removal/manual source boundary remains open.
+
+## Phase 77D: Master Food Catalog Hierarchy - Completed 2026-06-10
+Goal: load the user-supplied `Besin Veritabani` food list as a global hierarchical catalog and bridge forbidden checkbox selections into the existing food-rule save path.
+
+Completed:
+- Added `docs/PHASE_77D_MASTER_FOOD_CATALOG_SPEC.md`.
+- Extracted `C:\Users\Dell\Downloads\manual.xlsx` / `Besin Veritabani` into `phase-77d-master-food-catalog-data.json`.
+- Added typed catalog metadata, checksum, stats, validation, exact lookup, and hierarchy expansion helpers.
+- Loaded 12 main categories, 113 subcategories, and 518 foods with stable ASCII ids while preserving Turkish display names.
+- Extended the food-rule dashboard state with forbidden main-category, subcategory, and food selection ids.
+- Added hierarchical checkbox controls so selecting a main category forbids all child subcategories/foods, selecting a subcategory forbids all foods under it, and selecting one food forbids only that food.
+- Saved expanded catalog selections into existing `forbidden_food_items` and `forbidden_food_groups` answers for Phase 76 runtime compatibility.
+- Food Decision Engine V2, alias confidence, catalog-aware out-of-catalog matching, menu conflict handling, provider/channel activation, launch-gate approval, real-data handling, and R-405 status remain unchanged.
 - Production pilot remains `NO-GO`; Phase 77B chat mutation removal/manual source boundary remains open.
 
 ## Phase 66: Product Communication Covenant Lock
@@ -677,8 +691,8 @@ Done criteria:
 - Phase 76B: no new user document package; expands the same approval flow to existing safety form fields.
 - Phase 77A: no user document package; roadmap/spec rebaseline only.
 - Phase 77B: no user document package; removes chat mutation and preserves panel-only manual context.
-- Phase 77C: final personal client form fields from the user supplied and loaded locally; future user document work moves to food catalog/menu/export.
-- Phase 77D: master food list from the user.
+- Phase 77C: final personal client form fields from the user supplied and loaded locally; future user document work moves to client food-rule profile/menu/export.
+- Phase 77D: master food list from the user supplied and loaded locally as the hierarchical catalog; future user document work moves to client food-rule profile, menu templates, and export wording.
 - Phase 77E: no new user document package; maps catalog items to client-level allowed/forbidden and flexibility settings.
 - Phase 77F: menu template defaults and any dietitian-facing menu wording preferences.
 - Phase 77G-77K: no new production approval package; implementation, calibration, lifecycle, export, and evidence closure.

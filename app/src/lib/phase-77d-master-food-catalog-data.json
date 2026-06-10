@@ -1,0 +1,3875 @@
+{
+  "metadata": {
+    "version": "phase-77d-master-food-catalog-v1",
+    "sourceWorkbook": "manual.xlsx",
+    "sourceSheet": "Besin Veritabani",
+    "sourceWorkbookSha256": "db3af129bc9e814dbb5247e5a2fbcd49a0184fb0b6bc046b75de99f78a266c21",
+    "recordSetSha256": "6b9e53577dfcba8f9af2839f0bb3017163f756b5880582ac2e18f6d274042e9f",
+    "extractedAt": "2026-06-10",
+    "counts": {
+      "mainCategories": 12,
+      "subcategories": 113,
+      "foods": 518
+    }
+  },
+  "categories": [
+    {
+      "id": "tahil",
+      "name": "Tahıl",
+      "subcategories": [
+        {
+          "id": "tahil__tane-bugday",
+          "name": "Tane Buğday",
+          "foods": [
+            {
+              "id": "tahil__tane-bugday__asurelik-bugday",
+              "name": "Aşurelik buğday",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 2
+            },
+            {
+              "id": "tahil__tane-bugday__dovme",
+              "name": "Dövme",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 3
+            },
+            {
+              "id": "tahil__tane-bugday__yarma",
+              "name": "Yarma",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 4
+            },
+            {
+              "id": "tahil__tane-bugday__firik",
+              "name": "Firik",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 5
+            },
+            {
+              "id": "tahil__tane-bugday__bugday-ruseymi",
+              "name": "Buğday ruşeymi",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 6
+            },
+            {
+              "id": "tahil__tane-bugday__bugday-kepegi",
+              "name": "Buğday kepeği",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 7
+            }
+          ]
+        },
+        {
+          "id": "tahil__bulgur",
+          "name": "Bulgur",
+          "foods": [
+            {
+              "id": "tahil__bulgur__pilavlik-bulgur",
+              "name": "Pilavlık bulgur",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 8
+            },
+            {
+              "id": "tahil__bulgur__ince-bulgur",
+              "name": "İnce bulgur",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 9
+            },
+            {
+              "id": "tahil__bulgur__koftelik-bulgur",
+              "name": "Köftelik bulgur",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 10
+            },
+            {
+              "id": "tahil__bulgur__esmer-bulgur",
+              "name": "Esmer bulgur",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 11
+            }
+          ]
+        },
+        {
+          "id": "tahil__pirinc",
+          "name": "Pirinç",
+          "foods": [
+            {
+              "id": "tahil__pirinc__baldo-pirinc",
+              "name": "Baldo pirinç",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 12
+            },
+            {
+              "id": "tahil__pirinc__osmancik-pirinc",
+              "name": "Osmancık pirinç",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 13
+            },
+            {
+              "id": "tahil__pirinc__basmati-pirinc",
+              "name": "Basmati pirinç",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 14
+            },
+            {
+              "id": "tahil__pirinc__jasmin-pirinc",
+              "name": "Jasmin pirinç",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 15
+            },
+            {
+              "id": "tahil__pirinc__arborio-pirinc",
+              "name": "Arborio pirinç",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 16
+            },
+            {
+              "id": "tahil__pirinc__esmer-pirinc",
+              "name": "Esmer pirinç",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 17
+            },
+            {
+              "id": "tahil__pirinc__siyah-pirinc",
+              "name": "Siyah pirinç",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 18
+            },
+            {
+              "id": "tahil__pirinc__kirmizi-pirinc",
+              "name": "Kırmızı pirinç",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 19
+            }
+          ]
+        },
+        {
+          "id": "tahil__yulaf",
+          "name": "Yulaf",
+          "foods": [
+            {
+              "id": "tahil__yulaf__yulaf-ezmesi",
+              "name": "Yulaf ezmesi",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 20
+            },
+            {
+              "id": "tahil__yulaf__glutensiz-yulaf",
+              "name": "Glutensiz Yulaf",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 21
+            },
+            {
+              "id": "tahil__yulaf__celik-kesim-yulaf",
+              "name": "Çelik kesim yulaf",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 22
+            },
+            {
+              "id": "tahil__yulaf__yulaf-kepegi",
+              "name": "Yulaf kepeği",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 23
+            },
+            {
+              "id": "tahil__yulaf__ince-yulaf",
+              "name": "İnce yulaf",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 24
+            }
+          ]
+        },
+        {
+          "id": "tahil__cavdar",
+          "name": "Çavdar",
+          "foods": [
+            {
+              "id": "tahil__cavdar__cavdar-tanesi",
+              "name": "Çavdar tanesi",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 25
+            },
+            {
+              "id": "tahil__cavdar__cavdar-unu",
+              "name": "Çavdar unu",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 26
+            }
+          ]
+        },
+        {
+          "id": "tahil__arpa",
+          "name": "Arpa",
+          "foods": [
+            {
+              "id": "tahil__arpa__arpa-tanesi",
+              "name": "Arpa tanesi",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 27
+            },
+            {
+              "id": "tahil__arpa__arpa-unu",
+              "name": "Arpa unu",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 28
+            },
+            {
+              "id": "tahil__arpa__arpa-sehriye",
+              "name": "Arpa şehriye",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 29
+            }
+          ]
+        },
+        {
+          "id": "tahil__misir",
+          "name": "Mısır",
+          "foods": [
+            {
+              "id": "tahil__misir__tatli-misir",
+              "name": "Tatlı mısır",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 30
+            },
+            {
+              "id": "tahil__misir__patlamalik-misir",
+              "name": "Patlamalık mısır",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 31
+            },
+            {
+              "id": "tahil__misir__misir-unu",
+              "name": "Mısır unu",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 32
+            },
+            {
+              "id": "tahil__misir__misir-irmigi",
+              "name": "Mısır irmiği",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 33
+            }
+          ]
+        },
+        {
+          "id": "tahil__karabugday",
+          "name": "Karabuğday",
+          "foods": [
+            {
+              "id": "tahil__karabugday__karabugday-tanesi",
+              "name": "Karabuğday tanesi",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 34
+            },
+            {
+              "id": "tahil__karabugday__karabugday-unu",
+              "name": "Karabuğday unu",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 35
+            }
+          ]
+        },
+        {
+          "id": "tahil__kinoa",
+          "name": "Kinoa",
+          "foods": [
+            {
+              "id": "tahil__kinoa__beyaz-kinoa",
+              "name": "Beyaz kinoa",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 36
+            },
+            {
+              "id": "tahil__kinoa__kirmizi-kinoa",
+              "name": "Kırmızı kinoa",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 37
+            },
+            {
+              "id": "tahil__kinoa__siyah-kinoa",
+              "name": "Siyah kinoa",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 38
+            }
+          ]
+        },
+        {
+          "id": "tahil__dari",
+          "name": "Darı",
+          "foods": [
+            {
+              "id": "tahil__dari__sari-dari",
+              "name": "Sarı darı",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 39
+            },
+            {
+              "id": "tahil__dari__beyaz-dari",
+              "name": "Beyaz darı",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 40
+            },
+            {
+              "id": "tahil__dari__inci-dari",
+              "name": "İnci darı",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 41
+            }
+          ]
+        },
+        {
+          "id": "tahil__amarant",
+          "name": "Amarant",
+          "foods": [
+            {
+              "id": "tahil__amarant__amarant-tanesi",
+              "name": "Amarant tanesi",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 42
+            }
+          ]
+        },
+        {
+          "id": "tahil__un",
+          "name": "Un",
+          "foods": [
+            {
+              "id": "tahil__un__beyaz-un",
+              "name": "Beyaz un",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 43
+            },
+            {
+              "id": "tahil__un__tam-bugday-unu",
+              "name": "Tam buğday unu",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 44
+            },
+            {
+              "id": "tahil__un__siyez-unu",
+              "name": "Siyez unu",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 45
+            },
+            {
+              "id": "tahil__un__cavdar-unu",
+              "name": "Çavdar unu",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 46
+            },
+            {
+              "id": "tahil__un__yulaf-unu",
+              "name": "Yulaf unu",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 47
+            },
+            {
+              "id": "tahil__un__pirinc-unu",
+              "name": "Pirinç unu",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 48
+            },
+            {
+              "id": "tahil__un__karabugday-unu",
+              "name": "Karabuğday unu",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 49
+            },
+            {
+              "id": "tahil__un__misir-unu",
+              "name": "Mısır unu",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 50
+            }
+          ]
+        },
+        {
+          "id": "tahil__ekmek",
+          "name": "Ekmek",
+          "foods": [
+            {
+              "id": "tahil__ekmek__beyaz-ekmek",
+              "name": "Beyaz ekmek",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 51
+            },
+            {
+              "id": "tahil__ekmek__tam-bugday-ekmegi",
+              "name": "Tam buğday ekmeği",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 52
+            },
+            {
+              "id": "tahil__ekmek__cavdar-ekmegi",
+              "name": "Çavdar ekmeği",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 53
+            },
+            {
+              "id": "tahil__ekmek__tam-cavdar-ekmegi",
+              "name": "Tam çavdar ekmeği",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 54
+            },
+            {
+              "id": "tahil__ekmek__siyez-ekmegi",
+              "name": "Siyez ekmeği",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 55
+            },
+            {
+              "id": "tahil__ekmek__kepek-ekmegi",
+              "name": "Kepek ekmeği",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 56
+            },
+            {
+              "id": "tahil__ekmek__lavas",
+              "name": "Lavaş",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 57
+            },
+            {
+              "id": "tahil__ekmek__bazlama",
+              "name": "Bazlama",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 58
+            },
+            {
+              "id": "tahil__ekmek__pide",
+              "name": "Pide",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 59
+            },
+            {
+              "id": "tahil__ekmek__hamburger-ekmegi",
+              "name": "Hamburger ekmeği",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 60
+            },
+            {
+              "id": "tahil__ekmek__tost-ekmegi",
+              "name": "Tost ekmeği",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 61
+            },
+            {
+              "id": "tahil__ekmek__bagel",
+              "name": "Bagel",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 62
+            }
+          ]
+        },
+        {
+          "id": "tahil__makarna",
+          "name": "Makarna",
+          "foods": [
+            {
+              "id": "tahil__makarna__makarna",
+              "name": "Makarna",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 63
+            },
+            {
+              "id": "tahil__makarna__eriste",
+              "name": "Erişte",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 64
+            },
+            {
+              "id": "tahil__makarna__tam-bugday-makarna",
+              "name": "Tam buğday makarna",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 65
+            },
+            {
+              "id": "tahil__makarna__pirinc-makarnasi",
+              "name": "Pirinç makarnası",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 66
+            },
+            {
+              "id": "tahil__makarna__misir-makarnasi",
+              "name": "Mısır makarnası",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 67
+            },
+            {
+              "id": "tahil__makarna__karabugday-makarnasi",
+              "name": "Karabuğday makarnası",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 68
+            }
+          ]
+        },
+        {
+          "id": "tahil__kahvaltilik-tahil",
+          "name": "Kahvaltılık Tahıl",
+          "foods": [
+            {
+              "id": "tahil__kahvaltilik-tahil__musli",
+              "name": "Müsli",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 69
+            },
+            {
+              "id": "tahil__kahvaltilik-tahil__granola",
+              "name": "Granola",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 70
+            },
+            {
+              "id": "tahil__kahvaltilik-tahil__corn-flakes",
+              "name": "Corn flakes",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 71
+            },
+            {
+              "id": "tahil__kahvaltilik-tahil__bugday-gevregi",
+              "name": "Buğday gevreği",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 72
+            },
+            {
+              "id": "tahil__kahvaltilik-tahil__pirinc-gevregi",
+              "name": "Pirinç gevreği",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 73
+            }
+          ]
+        },
+        {
+          "id": "tahil__kraker-ve-gevrek",
+          "name": "Kraker ve Gevrek",
+          "foods": [
+            {
+              "id": "tahil__kraker-ve-gevrek__etimek",
+              "name": "Etimek",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 74
+            },
+            {
+              "id": "tahil__kraker-ve-gevrek__galeta",
+              "name": "Galeta",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 75
+            },
+            {
+              "id": "tahil__kraker-ve-gevrek__tuzlu-kraker",
+              "name": "Tuzlu kraker",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 76
+            },
+            {
+              "id": "tahil__kraker-ve-gevrek__tam-tahilli-kraker",
+              "name": "Tam tahıllı kraker",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 77
+            },
+            {
+              "id": "tahil__kraker-ve-gevrek__pirinc-patlagi",
+              "name": "Pirinç patlağı",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 78
+            },
+            {
+              "id": "tahil__kraker-ve-gevrek__misir-patlagi",
+              "name": "Mısır patlağı",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 79
+            },
+            {
+              "id": "tahil__kraker-ve-gevrek__grissini",
+              "name": "Grissini",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 80
+            }
+          ]
+        },
+        {
+          "id": "tahil__hamur-urunleri",
+          "name": "Hamur Ürünleri",
+          "foods": [
+            {
+              "id": "tahil__hamur-urunleri__yufka",
+              "name": "Yufka",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 81
+            },
+            {
+              "id": "tahil__hamur-urunleri__baklavalik-yufka",
+              "name": "Baklavalık yufka",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 82
+            },
+            {
+              "id": "tahil__hamur-urunleri__milfoy-hamuru",
+              "name": "Milföy hamuru",
+              "sourceBlockIndex": 0,
+              "sourceRowNumber": 83
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "baklagil",
+      "name": "Baklagil",
+      "subcategories": [
+        {
+          "id": "baklagil__nohut",
+          "name": "Nohut",
+          "foods": [
+            {
+              "id": "baklagil__nohut__nohut",
+              "name": "Nohut",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 2
+            },
+            {
+              "id": "baklagil__nohut__siyah-nohut",
+              "name": "Siyah nohut",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 3
+            }
+          ]
+        },
+        {
+          "id": "baklagil__nohut-urunleri",
+          "name": "Nohut Ürünleri",
+          "foods": [
+            {
+              "id": "baklagil__nohut-urunleri__nohut-unu",
+              "name": "Nohut unu",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 4
+            },
+            {
+              "id": "baklagil__nohut-urunleri__humus",
+              "name": "Humus",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 5
+            },
+            {
+              "id": "baklagil__nohut-urunleri__kavrulmus-nohut",
+              "name": "Kavrulmuş nohut",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 6
+            }
+          ]
+        },
+        {
+          "id": "baklagil__mercimek",
+          "name": "Mercimek",
+          "foods": [
+            {
+              "id": "baklagil__mercimek__kirmizi-mercimek",
+              "name": "Kırmızı mercimek",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 7
+            },
+            {
+              "id": "baklagil__mercimek__yesil-mercimek",
+              "name": "Yeşil mercimek",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 8
+            },
+            {
+              "id": "baklagil__mercimek__sari-mercimek",
+              "name": "Sarı mercimek",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 9
+            },
+            {
+              "id": "baklagil__mercimek__kahverengi-mercimek",
+              "name": "Kahverengi mercimek",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 10
+            },
+            {
+              "id": "baklagil__mercimek__siyah-mercimek-beluga",
+              "name": "Siyah mercimek (Beluga)",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 11
+            }
+          ]
+        },
+        {
+          "id": "baklagil__mercimek-urunleri",
+          "name": "Mercimek Ürünleri",
+          "foods": [
+            {
+              "id": "baklagil__mercimek-urunleri__mercimek-unu",
+              "name": "Mercimek unu",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 12
+            }
+          ]
+        },
+        {
+          "id": "baklagil__kuru-fasulye",
+          "name": "Kuru Fasulye",
+          "foods": [
+            {
+              "id": "baklagil__kuru-fasulye__beyaz-fasulye",
+              "name": "Beyaz fasulye",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 13
+            },
+            {
+              "id": "baklagil__kuru-fasulye__kirmizi-fasulye-kidney-bean",
+              "name": "Kırmızı fasulye (kidney bean)",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 14
+            },
+            {
+              "id": "baklagil__kuru-fasulye__siyah-fasulye",
+              "name": "Siyah fasulye",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 15
+            },
+            {
+              "id": "baklagil__kuru-fasulye__pinto-fasulyesi",
+              "name": "Pinto fasulyesi",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 16
+            },
+            {
+              "id": "baklagil__kuru-fasulye__cannellini-fasulyesi",
+              "name": "Cannellini fasulyesi",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 17
+            }
+          ]
+        },
+        {
+          "id": "baklagil__barbunya",
+          "name": "Barbunya",
+          "foods": [
+            {
+              "id": "baklagil__barbunya__barbunya",
+              "name": "Barbunya",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 18
+            },
+            {
+              "id": "baklagil__barbunya__taze-barbunya",
+              "name": "Taze barbunya",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 19
+            }
+          ]
+        },
+        {
+          "id": "baklagil__borulce",
+          "name": "Börülce",
+          "foods": [
+            {
+              "id": "baklagil__borulce__kuru-borulce",
+              "name": "Kuru börülce",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 20
+            },
+            {
+              "id": "baklagil__borulce__taze-borulce",
+              "name": "Taze börülce",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 21
+            }
+          ]
+        },
+        {
+          "id": "baklagil__bezelye",
+          "name": "Bezelye",
+          "foods": [
+            {
+              "id": "baklagil__bezelye__kuru-bezelye",
+              "name": "Kuru bezelye",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 22
+            },
+            {
+              "id": "baklagil__bezelye__yesil-bezelye",
+              "name": "Yeşil bezelye",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 23
+            },
+            {
+              "id": "baklagil__bezelye__sari-bezelye",
+              "name": "Sarı bezelye",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 24
+            }
+          ]
+        },
+        {
+          "id": "baklagil__bezelye-urunleri",
+          "name": "Bezelye Ürünleri",
+          "foods": [
+            {
+              "id": "baklagil__bezelye-urunleri__bezelye-proteini",
+              "name": "Bezelye proteini",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 25
+            }
+          ]
+        },
+        {
+          "id": "baklagil__bakla",
+          "name": "Bakla",
+          "foods": [
+            {
+              "id": "baklagil__bakla__kuru-bakla",
+              "name": "Kuru bakla",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 26
+            },
+            {
+              "id": "baklagil__bakla__taze-bakla",
+              "name": "Taze bakla",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 27
+            }
+          ]
+        },
+        {
+          "id": "baklagil__soya",
+          "name": "Soya",
+          "foods": [
+            {
+              "id": "baklagil__soya__soya-fasulyesi",
+              "name": "Soya fasulyesi",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 28
+            },
+            {
+              "id": "baklagil__soya__siyah-soya-fasulyesi",
+              "name": "Siyah soya fasulyesi",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 29
+            }
+          ]
+        },
+        {
+          "id": "baklagil__soya-urunleri",
+          "name": "Soya Ürünleri",
+          "foods": [
+            {
+              "id": "baklagil__soya-urunleri__edamame",
+              "name": "Edamame",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 30
+            },
+            {
+              "id": "baklagil__soya-urunleri__tofu",
+              "name": "Tofu",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 31
+            },
+            {
+              "id": "baklagil__soya-urunleri__tempeh",
+              "name": "Tempeh",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 32
+            },
+            {
+              "id": "baklagil__soya-urunleri__soya-kiymasi",
+              "name": "Soya kıyması",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 33
+            },
+            {
+              "id": "baklagil__soya-urunleri__soya-unu",
+              "name": "Soya unu",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 34
+            },
+            {
+              "id": "baklagil__soya-urunleri__natto",
+              "name": "Natto",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 35
+            }
+          ]
+        },
+        {
+          "id": "baklagil__mas-fasulyesi",
+          "name": "Maş Fasulyesi",
+          "foods": [
+            {
+              "id": "baklagil__mas-fasulyesi__mas-fasulyesi",
+              "name": "Maş fasulyesi",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 36
+            },
+            {
+              "id": "baklagil__mas-fasulyesi__filizlendirilmis-mas-fasulyesi",
+              "name": "Filizlendirilmiş maş fasulyesi",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 37
+            }
+          ]
+        },
+        {
+          "id": "baklagil__azuki-fasulyesi",
+          "name": "Azuki Fasulyesi",
+          "foods": [
+            {
+              "id": "baklagil__azuki-fasulyesi__azuki-fasulyesi",
+              "name": "Azuki fasulyesi",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 38
+            }
+          ]
+        },
+        {
+          "id": "baklagil__lupin",
+          "name": "Lupin",
+          "foods": [
+            {
+              "id": "baklagil__lupin__lupin-fasulyesi",
+              "name": "Lupin fasulyesi",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 39
+            }
+          ]
+        },
+        {
+          "id": "baklagil__keciboynuzu",
+          "name": "Keçiboynuzu",
+          "foods": [
+            {
+              "id": "baklagil__keciboynuzu__keciboynuzu",
+              "name": "Keçiboynuzu",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 40
+            }
+          ]
+        },
+        {
+          "id": "baklagil__keciboynuzu-urunleri",
+          "name": "Keçiboynuzu Ürünleri",
+          "foods": [
+            {
+              "id": "baklagil__keciboynuzu-urunleri__keciboynuzu-unu",
+              "name": "Keçiboynuzu unu",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 41
+            }
+          ]
+        },
+        {
+          "id": "baklagil__filizlendirilmis-baklagiller",
+          "name": "Filizlendirilmiş Baklagiller",
+          "foods": [
+            {
+              "id": "baklagil__filizlendirilmis-baklagiller__filizlendirilmis-nohut",
+              "name": "Filizlendirilmiş nohut",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 42
+            },
+            {
+              "id": "baklagil__filizlendirilmis-baklagiller__filizlendirilmis-mercimek",
+              "name": "Filizlendirilmiş mercimek",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 43
+            },
+            {
+              "id": "baklagil__filizlendirilmis-baklagiller__filizlendirilmis-fasulye",
+              "name": "Filizlendirilmiş fasulye",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 44
+            }
+          ]
+        },
+        {
+          "id": "baklagil__baklagil-makarnalari",
+          "name": "Baklagil Makarnaları",
+          "foods": [
+            {
+              "id": "baklagil__baklagil-makarnalari__kirmizi-mercimek-makarnasi",
+              "name": "Kırmızı mercimek makarnası",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 45
+            },
+            {
+              "id": "baklagil__baklagil-makarnalari__nohut-makarnasi",
+              "name": "Nohut makarnası",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 46
+            },
+            {
+              "id": "baklagil__baklagil-makarnalari__bezelye-makarnasi",
+              "name": "Bezelye makarnası",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 47
+            }
+          ]
+        },
+        {
+          "id": "baklagil__baklagil-unlari",
+          "name": "Baklagil Unları",
+          "foods": [
+            {
+              "id": "baklagil__baklagil-unlari__nohut-unu",
+              "name": "Nohut unu",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 48
+            },
+            {
+              "id": "baklagil__baklagil-unlari__mercimek-unu",
+              "name": "Mercimek unu",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 49
+            },
+            {
+              "id": "baklagil__baklagil-unlari__bezelye-unu",
+              "name": "Bezelye unu",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 50
+            },
+            {
+              "id": "baklagil__baklagil-unlari__soya-unu",
+              "name": "Soya unu",
+              "sourceBlockIndex": 1,
+              "sourceRowNumber": 51
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sebze",
+      "name": "Sebze",
+      "subcategories": [
+        {
+          "id": "sebze__yaprakli-sebzeler",
+          "name": "Yapraklı Sebzeler",
+          "foods": [
+            {
+              "id": "sebze__yaprakli-sebzeler__marul",
+              "name": "Marul",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 2
+            },
+            {
+              "id": "sebze__yaprakli-sebzeler__gobek-marul",
+              "name": "Göbek marul",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 3
+            },
+            {
+              "id": "sebze__yaprakli-sebzeler__kivircik",
+              "name": "Kıvırcık",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 4
+            },
+            {
+              "id": "sebze__yaprakli-sebzeler__roka",
+              "name": "Roka",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 5
+            },
+            {
+              "id": "sebze__yaprakli-sebzeler__tere",
+              "name": "Tere",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 6
+            },
+            {
+              "id": "sebze__yaprakli-sebzeler__ispanak",
+              "name": "Ispanak",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 7
+            },
+            {
+              "id": "sebze__yaprakli-sebzeler__pazi",
+              "name": "Pazı",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 8
+            },
+            {
+              "id": "sebze__yaprakli-sebzeler__semizotu",
+              "name": "Semizotu",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 9
+            },
+            {
+              "id": "sebze__yaprakli-sebzeler__kara-lahana",
+              "name": "Kara lahana",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 10
+            },
+            {
+              "id": "sebze__yaprakli-sebzeler__hardal-otu",
+              "name": "Hardal otu",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 11
+            },
+            {
+              "id": "sebze__yaprakli-sebzeler__hindiba",
+              "name": "Hindiba",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 12
+            }
+          ]
+        },
+        {
+          "id": "sebze__turpgiller",
+          "name": "Turpgiller",
+          "foods": [
+            {
+              "id": "sebze__turpgiller__brokoli",
+              "name": "Brokoli",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 13
+            },
+            {
+              "id": "sebze__turpgiller__karnabahar",
+              "name": "Karnabahar",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 14
+            },
+            {
+              "id": "sebze__turpgiller__bruksel-lahanasi",
+              "name": "Brüksel lahanası",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 15
+            },
+            {
+              "id": "sebze__turpgiller__beyaz-lahana",
+              "name": "Beyaz lahana",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 16
+            },
+            {
+              "id": "sebze__turpgiller__kirmizi-lahana",
+              "name": "Kırmızı lahana",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 17
+            },
+            {
+              "id": "sebze__turpgiller__cin-lahanasi",
+              "name": "Çin lahanası",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 18
+            },
+            {
+              "id": "sebze__turpgiller__turp",
+              "name": "Turp",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 19
+            },
+            {
+              "id": "sebze__turpgiller__salgam",
+              "name": "Şalgam",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 20
+            }
+          ]
+        },
+        {
+          "id": "sebze__kok-sebzeler",
+          "name": "Kök Sebzeler",
+          "foods": [
+            {
+              "id": "sebze__kok-sebzeler__havuc",
+              "name": "Havuç",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 21
+            },
+            {
+              "id": "sebze__kok-sebzeler__pancar",
+              "name": "Pancar",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 22
+            },
+            {
+              "id": "sebze__kok-sebzeler__kereviz-koku",
+              "name": "Kereviz kökü",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 23
+            },
+            {
+              "id": "sebze__kok-sebzeler__yer-elmasi",
+              "name": "Yer elması",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 24
+            },
+            {
+              "id": "sebze__kok-sebzeler__yaban-havucu",
+              "name": "Yaban havucu",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 25
+            }
+          ]
+        },
+        {
+          "id": "sebze__yumru-sebzeler",
+          "name": "Yumru Sebzeler",
+          "foods": [
+            {
+              "id": "sebze__yumru-sebzeler__patates",
+              "name": "Patates",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 26
+            },
+            {
+              "id": "sebze__yumru-sebzeler__tatli-patates",
+              "name": "Tatlı patates",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 27
+            },
+            {
+              "id": "sebze__yumru-sebzeler__topinambur",
+              "name": "Topinambur",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 28
+            }
+          ]
+        },
+        {
+          "id": "sebze__soganli-sebzeler",
+          "name": "Soğanlı Sebzeler",
+          "foods": [
+            {
+              "id": "sebze__soganli-sebzeler__sogan",
+              "name": "Soğan",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 29
+            },
+            {
+              "id": "sebze__soganli-sebzeler__kirmizi-sogan",
+              "name": "Kırmızı soğan",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 30
+            },
+            {
+              "id": "sebze__soganli-sebzeler__beyaz-sogan",
+              "name": "Beyaz soğan",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 31
+            },
+            {
+              "id": "sebze__soganli-sebzeler__arpacik-sogan",
+              "name": "Arpacık soğan",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 32
+            },
+            {
+              "id": "sebze__soganli-sebzeler__sarimsak",
+              "name": "Sarımsak",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 33
+            },
+            {
+              "id": "sebze__soganli-sebzeler__pirasa",
+              "name": "Pırasa",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 34
+            }
+          ]
+        },
+        {
+          "id": "sebze__meyve-sebzeler",
+          "name": "Meyve Sebzeler",
+          "foods": [
+            {
+              "id": "sebze__meyve-sebzeler__domates",
+              "name": "Domates",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 35
+            },
+            {
+              "id": "sebze__meyve-sebzeler__cherry-domates",
+              "name": "Cherry domates",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 36
+            },
+            {
+              "id": "sebze__meyve-sebzeler__salatalik",
+              "name": "Salatalık",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 37
+            },
+            {
+              "id": "sebze__meyve-sebzeler__kornison",
+              "name": "Kornişon",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 38
+            },
+            {
+              "id": "sebze__meyve-sebzeler__patlican",
+              "name": "Patlıcan",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 39
+            },
+            {
+              "id": "sebze__meyve-sebzeler__kabak",
+              "name": "Kabak",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 40
+            },
+            {
+              "id": "sebze__meyve-sebzeler__bal-kabagi",
+              "name": "Bal kabağı",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 41
+            },
+            {
+              "id": "sebze__meyve-sebzeler__sakiz-kabagi",
+              "name": "Sakız kabağı",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 42
+            },
+            {
+              "id": "sebze__meyve-sebzeler__dolmalik-biber",
+              "name": "Dolmalık biber",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 43
+            },
+            {
+              "id": "sebze__meyve-sebzeler__kapya-biber",
+              "name": "Kapya biber",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 44
+            },
+            {
+              "id": "sebze__meyve-sebzeler__sivri-biber",
+              "name": "Sivri biber",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 45
+            },
+            {
+              "id": "sebze__meyve-sebzeler__jalapeno",
+              "name": "Jalapeno",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 46
+            },
+            {
+              "id": "sebze__meyve-sebzeler__aci-biber",
+              "name": "Acı biber",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 47
+            }
+          ]
+        },
+        {
+          "id": "sebze__baklagil-sebzeler",
+          "name": "Baklagil Sebzeler",
+          "foods": [
+            {
+              "id": "sebze__baklagil-sebzeler__taze-fasulye",
+              "name": "Taze fasulye",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 48
+            },
+            {
+              "id": "sebze__baklagil-sebzeler__taze-bezelye",
+              "name": "Taze bezelye",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 49
+            },
+            {
+              "id": "sebze__baklagil-sebzeler__taze-bakla",
+              "name": "Taze bakla",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 50
+            },
+            {
+              "id": "sebze__baklagil-sebzeler__taze-borulce",
+              "name": "Taze börülce",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 51
+            }
+          ]
+        },
+        {
+          "id": "sebze__sap-sebzeler",
+          "name": "Sap Sebzeler",
+          "foods": [
+            {
+              "id": "sebze__sap-sebzeler__kereviz-sapi",
+              "name": "Kereviz sapı",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 52
+            },
+            {
+              "id": "sebze__sap-sebzeler__kuskonmaz",
+              "name": "Kuşkonmaz",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 53
+            },
+            {
+              "id": "sebze__sap-sebzeler__rezene",
+              "name": "Rezene",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 54
+            },
+            {
+              "id": "sebze__sap-sebzeler__ravent",
+              "name": "Ravent",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 55
+            }
+          ]
+        },
+        {
+          "id": "sebze__cicek-sebzeler",
+          "name": "Çiçek Sebzeler",
+          "foods": [
+            {
+              "id": "sebze__cicek-sebzeler__enginar",
+              "name": "Enginar",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 56
+            },
+            {
+              "id": "sebze__cicek-sebzeler__brokoli",
+              "name": "Brokoli",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 57
+            },
+            {
+              "id": "sebze__cicek-sebzeler__karnabahar",
+              "name": "Karnabahar",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 58
+            }
+          ]
+        },
+        {
+          "id": "sebze__deniz-sebzeleri",
+          "name": "Deniz Sebzeleri",
+          "foods": [
+            {
+              "id": "sebze__deniz-sebzeleri__deniz-yosunu",
+              "name": "Deniz yosunu",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 59
+            },
+            {
+              "id": "sebze__deniz-sebzeleri__nori",
+              "name": "Nori",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 60
+            },
+            {
+              "id": "sebze__deniz-sebzeleri__wakame",
+              "name": "Wakame",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 61
+            },
+            {
+              "id": "sebze__deniz-sebzeleri__kombu",
+              "name": "Kombu",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 62
+            }
+          ]
+        },
+        {
+          "id": "sebze__mantarlar",
+          "name": "Mantarlar",
+          "foods": [
+            {
+              "id": "sebze__mantarlar__kultur-mantari",
+              "name": "Kültür mantarı",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 63
+            },
+            {
+              "id": "sebze__mantarlar__istiridye-mantari",
+              "name": "İstiridye mantarı",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 64
+            },
+            {
+              "id": "sebze__mantarlar__shiitake-mantari",
+              "name": "Shiitake mantarı",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 65
+            },
+            {
+              "id": "sebze__mantarlar__porcini-mantari",
+              "name": "Porçini mantarı",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 66
+            },
+            {
+              "id": "sebze__mantarlar__morel-mantari",
+              "name": "Morel mantarı",
+              "sourceBlockIndex": 2,
+              "sourceRowNumber": 67
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "meyve",
+      "name": "Meyve",
+      "subcategories": [
+        {
+          "id": "meyve__cekirdekli-meyveler",
+          "name": "Çekirdekli Meyveler",
+          "foods": [
+            {
+              "id": "meyve__cekirdekli-meyveler__elma",
+              "name": "Elma",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 2
+            },
+            {
+              "id": "meyve__cekirdekli-meyveler__armut",
+              "name": "Armut",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 3
+            },
+            {
+              "id": "meyve__cekirdekli-meyveler__ayva",
+              "name": "Ayva",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 4
+            },
+            {
+              "id": "meyve__cekirdekli-meyveler__yenidunya",
+              "name": "Yenidünya",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 5
+            }
+          ]
+        },
+        {
+          "id": "meyve__sert-cekirdekli-meyveler",
+          "name": "Sert Çekirdekli Meyveler",
+          "foods": [
+            {
+              "id": "meyve__sert-cekirdekli-meyveler__seftali",
+              "name": "Şeftali",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 6
+            },
+            {
+              "id": "meyve__sert-cekirdekli-meyveler__nektarin",
+              "name": "Nektarin",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 7
+            },
+            {
+              "id": "meyve__sert-cekirdekli-meyveler__kayisi",
+              "name": "Kayısı",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 8
+            },
+            {
+              "id": "meyve__sert-cekirdekli-meyveler__erik",
+              "name": "Erik",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 9
+            },
+            {
+              "id": "meyve__sert-cekirdekli-meyveler__kiraz",
+              "name": "Kiraz",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 10
+            },
+            {
+              "id": "meyve__sert-cekirdekli-meyveler__visne",
+              "name": "Vişne",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 11
+            }
+          ]
+        },
+        {
+          "id": "meyve__narenciye",
+          "name": "Narenciye",
+          "foods": [
+            {
+              "id": "meyve__narenciye__portakal",
+              "name": "Portakal",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 12
+            },
+            {
+              "id": "meyve__narenciye__mandalina",
+              "name": "Mandalina",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 13
+            },
+            {
+              "id": "meyve__narenciye__limon",
+              "name": "Limon",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 14
+            },
+            {
+              "id": "meyve__narenciye__greyfurt",
+              "name": "Greyfurt",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 15
+            },
+            {
+              "id": "meyve__narenciye__bergamot",
+              "name": "Bergamot",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 16
+            },
+            {
+              "id": "meyve__narenciye__pomelo",
+              "name": "Pomelo",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 17
+            }
+          ]
+        },
+        {
+          "id": "meyve__uzumsu-meyveler",
+          "name": "Üzümsü Meyveler",
+          "foods": [
+            {
+              "id": "meyve__uzumsu-meyveler__cilek",
+              "name": "Çilek",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 18
+            },
+            {
+              "id": "meyve__uzumsu-meyveler__ahududu",
+              "name": "Ahududu",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 19
+            },
+            {
+              "id": "meyve__uzumsu-meyveler__bogurtlen",
+              "name": "Böğürtlen",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 20
+            },
+            {
+              "id": "meyve__uzumsu-meyveler__yaban-mersini",
+              "name": "Yaban mersini",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 21
+            },
+            {
+              "id": "meyve__uzumsu-meyveler__frenk-uzumu",
+              "name": "Frenk üzümü",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 22
+            },
+            {
+              "id": "meyve__uzumsu-meyveler__dut",
+              "name": "Dut",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 23
+            },
+            {
+              "id": "meyve__uzumsu-meyveler__kizilcik",
+              "name": "Kızılcık",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 24
+            },
+            {
+              "id": "meyve__uzumsu-meyveler__goji-berry",
+              "name": "Goji berry",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 25
+            }
+          ]
+        },
+        {
+          "id": "meyve__uzum-grubu",
+          "name": "Üzüm Grubu",
+          "foods": [
+            {
+              "id": "meyve__uzum-grubu__yesil-uzum",
+              "name": "Yeşil üzüm",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 26
+            },
+            {
+              "id": "meyve__uzum-grubu__siyah-uzum",
+              "name": "Siyah üzüm",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 27
+            },
+            {
+              "id": "meyve__uzum-grubu__kirmizi-uzum",
+              "name": "Kırmızı üzüm",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 28
+            },
+            {
+              "id": "meyve__uzum-grubu__cekirdeksiz-uzum",
+              "name": "Çekirdeksiz üzüm",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 29
+            }
+          ]
+        },
+        {
+          "id": "meyve__tropikal-meyveler",
+          "name": "Tropikal Meyveler",
+          "foods": [
+            {
+              "id": "meyve__tropikal-meyveler__muz",
+              "name": "Muz",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 30
+            },
+            {
+              "id": "meyve__tropikal-meyveler__mango",
+              "name": "Mango",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 31
+            },
+            {
+              "id": "meyve__tropikal-meyveler__ananas",
+              "name": "Ananas",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 32
+            },
+            {
+              "id": "meyve__tropikal-meyveler__papaya",
+              "name": "Papaya",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 33
+            },
+            {
+              "id": "meyve__tropikal-meyveler__guava",
+              "name": "Guava",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 34
+            },
+            {
+              "id": "meyve__tropikal-meyveler__passion-fruit",
+              "name": "Passion fruit",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 35
+            },
+            {
+              "id": "meyve__tropikal-meyveler__lici",
+              "name": "Liçi",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 36
+            },
+            {
+              "id": "meyve__tropikal-meyveler__dragon-fruit",
+              "name": "Dragon fruit",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 37
+            },
+            {
+              "id": "meyve__tropikal-meyveler__rambutan",
+              "name": "Rambutan",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 38
+            },
+            {
+              "id": "meyve__tropikal-meyveler__durian",
+              "name": "Durian",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 39
+            },
+            {
+              "id": "meyve__tropikal-meyveler__jackfruit",
+              "name": "Jackfruit",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 40
+            },
+            {
+              "id": "meyve__tropikal-meyveler__mangostan",
+              "name": "Mangostan",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 41
+            }
+          ]
+        },
+        {
+          "id": "meyve__yagli-meyveler",
+          "name": "Yağlı Meyveler",
+          "foods": [
+            {
+              "id": "meyve__yagli-meyveler__avokado",
+              "name": "Avokado",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 42
+            },
+            {
+              "id": "meyve__yagli-meyveler__hindistan-cevizi",
+              "name": "Hindistan cevizi",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 43
+            }
+          ]
+        },
+        {
+          "id": "meyve__kavun-karpuz-grubu",
+          "name": "Kavun-Karpuz Grubu",
+          "foods": [
+            {
+              "id": "meyve__kavun-karpuz-grubu__karpuz",
+              "name": "Karpuz",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 44
+            },
+            {
+              "id": "meyve__kavun-karpuz-grubu__kavun",
+              "name": "Kavun",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 45
+            }
+          ]
+        },
+        {
+          "id": "meyve__nar-grubu",
+          "name": "Nar Grubu",
+          "foods": [
+            {
+              "id": "meyve__nar-grubu__nar",
+              "name": "Nar",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 46
+            }
+          ]
+        },
+        {
+          "id": "meyve__incir-grubu",
+          "name": "İncir Grubu",
+          "foods": [
+            {
+              "id": "meyve__incir-grubu__incir",
+              "name": "İncir",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 47
+            },
+            {
+              "id": "meyve__incir-grubu__frenk-inciri",
+              "name": "Frenk inciri",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 48
+            }
+          ]
+        },
+        {
+          "id": "meyve__hurma-grubu",
+          "name": "Hurma Grubu",
+          "foods": [
+            {
+              "id": "meyve__hurma-grubu__hurma",
+              "name": "Hurma",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 49
+            },
+            {
+              "id": "meyve__hurma-grubu__medjool-hurmasi",
+              "name": "Medjool hurması",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 50
+            },
+            {
+              "id": "meyve__hurma-grubu__acve-hurmasi",
+              "name": "Acve hurması",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 51
+            }
+          ]
+        },
+        {
+          "id": "meyve__egzotik-meyveler",
+          "name": "Egzotik Meyveler",
+          "foods": [
+            {
+              "id": "meyve__egzotik-meyveler__yildiz-meyvesi-karambola",
+              "name": "Yıldız meyvesi (karambola)",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 52
+            },
+            {
+              "id": "meyve__egzotik-meyveler__kiwano",
+              "name": "Kiwano",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 53
+            },
+            {
+              "id": "meyve__egzotik-meyveler__cherimoya",
+              "name": "Cherimoya",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 54
+            },
+            {
+              "id": "meyve__egzotik-meyveler__longan",
+              "name": "Longan",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 55
+            },
+            {
+              "id": "meyve__egzotik-meyveler__sapodilla",
+              "name": "Sapodilla",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 56
+            },
+            {
+              "id": "meyve__egzotik-meyveler__salak-meyvesi",
+              "name": "Salak meyvesi",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 57
+            }
+          ]
+        },
+        {
+          "id": "meyve__kurutulmus-meyveler",
+          "name": "Kurutulmuş Meyveler",
+          "foods": [
+            {
+              "id": "meyve__kurutulmus-meyveler__kuru-uzum",
+              "name": "Kuru üzüm",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 58
+            },
+            {
+              "id": "meyve__kurutulmus-meyveler__kuru-kayisi",
+              "name": "Kuru kayısı",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 59
+            },
+            {
+              "id": "meyve__kurutulmus-meyveler__kuru-incir",
+              "name": "Kuru incir",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 60
+            },
+            {
+              "id": "meyve__kurutulmus-meyveler__kuru-erik",
+              "name": "Kuru erik",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 61
+            },
+            {
+              "id": "meyve__kurutulmus-meyveler__kuru-dut",
+              "name": "Kuru dut",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 62
+            },
+            {
+              "id": "meyve__kurutulmus-meyveler__kuru-hurma",
+              "name": "Kuru hurma",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 63
+            },
+            {
+              "id": "meyve__kurutulmus-meyveler__kuru-elma",
+              "name": "Kuru elma",
+              "sourceBlockIndex": 3,
+              "sourceRowNumber": 64
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "kuruyemis",
+      "name": "Kuruyemiş",
+      "subcategories": [
+        {
+          "id": "kuruyemis__agac-yemisleri",
+          "name": "Ağaç Yemişleri",
+          "foods": [
+            {
+              "id": "kuruyemis__agac-yemisleri__badem",
+              "name": "Badem",
+              "sourceBlockIndex": 4,
+              "sourceRowNumber": 2
+            },
+            {
+              "id": "kuruyemis__agac-yemisleri__cig-badem",
+              "name": "Çiğ badem",
+              "sourceBlockIndex": 4,
+              "sourceRowNumber": 3
+            },
+            {
+              "id": "kuruyemis__agac-yemisleri__kavrulmus-badem",
+              "name": "Kavrulmuş badem",
+              "sourceBlockIndex": 4,
+              "sourceRowNumber": 4
+            },
+            {
+              "id": "kuruyemis__agac-yemisleri__findik",
+              "name": "Fındık",
+              "sourceBlockIndex": 4,
+              "sourceRowNumber": 5
+            },
+            {
+              "id": "kuruyemis__agac-yemisleri__ceviz",
+              "name": "Ceviz",
+              "sourceBlockIndex": 4,
+              "sourceRowNumber": 6
+            },
+            {
+              "id": "kuruyemis__agac-yemisleri__kaju",
+              "name": "Kaju",
+              "sourceBlockIndex": 4,
+              "sourceRowNumber": 7
+            },
+            {
+              "id": "kuruyemis__agac-yemisleri__antep-fistigi",
+              "name": "Antep fıstığı",
+              "sourceBlockIndex": 4,
+              "sourceRowNumber": 8
+            },
+            {
+              "id": "kuruyemis__agac-yemisleri__brezilya-cevizi",
+              "name": "Brezilya cevizi",
+              "sourceBlockIndex": 4,
+              "sourceRowNumber": 9
+            },
+            {
+              "id": "kuruyemis__agac-yemisleri__makademya",
+              "name": "Makademya",
+              "sourceBlockIndex": 4,
+              "sourceRowNumber": 10
+            },
+            {
+              "id": "kuruyemis__agac-yemisleri__pekan-cevizi",
+              "name": "Pekan cevizi",
+              "sourceBlockIndex": 4,
+              "sourceRowNumber": 11
+            },
+            {
+              "id": "kuruyemis__agac-yemisleri__cam-fistigi",
+              "name": "Çam fıstığı",
+              "sourceBlockIndex": 4,
+              "sourceRowNumber": 12
+            },
+            {
+              "id": "kuruyemis__agac-yemisleri__tigernut-yer-bademi",
+              "name": "Tigernut (yer bademi)",
+              "sourceBlockIndex": 4,
+              "sourceRowNumber": 13
+            }
+          ]
+        },
+        {
+          "id": "kuruyemis__yer-fistiklari",
+          "name": "Yer Fıstıkları",
+          "foods": [
+            {
+              "id": "kuruyemis__yer-fistiklari__yer-fistigi",
+              "name": "Yer fıstığı",
+              "sourceBlockIndex": 4,
+              "sourceRowNumber": 14
+            },
+            {
+              "id": "kuruyemis__yer-fistiklari__cig-yer-fistigi",
+              "name": "Çiğ yer fıstığı",
+              "sourceBlockIndex": 4,
+              "sourceRowNumber": 15
+            },
+            {
+              "id": "kuruyemis__yer-fistiklari__kavrulmus-yer-fistigi",
+              "name": "Kavrulmuş yer fıstığı",
+              "sourceBlockIndex": 4,
+              "sourceRowNumber": 16
+            },
+            {
+              "id": "kuruyemis__yer-fistiklari__tuzlu-yer-fistigi",
+              "name": "Tuzlu yer fıstığı",
+              "sourceBlockIndex": 4,
+              "sourceRowNumber": 17
+            }
+          ]
+        },
+        {
+          "id": "kuruyemis__tohumlar",
+          "name": "Tohumlar",
+          "foods": [
+            {
+              "id": "kuruyemis__tohumlar__chia-tohumu",
+              "name": "Chia tohumu",
+              "sourceBlockIndex": 4,
+              "sourceRowNumber": 18
+            },
+            {
+              "id": "kuruyemis__tohumlar__keten-tohumu",
+              "name": "Keten tohumu",
+              "sourceBlockIndex": 4,
+              "sourceRowNumber": 19
+            },
+            {
+              "id": "kuruyemis__tohumlar__susam",
+              "name": "Susam",
+              "sourceBlockIndex": 4,
+              "sourceRowNumber": 20
+            },
+            {
+              "id": "kuruyemis__tohumlar__siyah-susam",
+              "name": "Siyah susam",
+              "sourceBlockIndex": 4,
+              "sourceRowNumber": 21
+            },
+            {
+              "id": "kuruyemis__tohumlar__ay-cekirdegi",
+              "name": "Ay çekirdeği",
+              "sourceBlockIndex": 4,
+              "sourceRowNumber": 22
+            },
+            {
+              "id": "kuruyemis__tohumlar__kabak-cekirdegi",
+              "name": "Kabak çekirdeği",
+              "sourceBlockIndex": 4,
+              "sourceRowNumber": 23
+            },
+            {
+              "id": "kuruyemis__tohumlar__kenevir-tohumu",
+              "name": "Kenevir tohumu",
+              "sourceBlockIndex": 4,
+              "sourceRowNumber": 24
+            },
+            {
+              "id": "kuruyemis__tohumlar__hashas-tohumu",
+              "name": "Haşhaş tohumu",
+              "sourceBlockIndex": 4,
+              "sourceRowNumber": 25
+            },
+            {
+              "id": "kuruyemis__tohumlar__corek-otu",
+              "name": "Çörek otu",
+              "sourceBlockIndex": 4,
+              "sourceRowNumber": 26
+            },
+            {
+              "id": "kuruyemis__tohumlar__karpuz-cekirdegi",
+              "name": "Karpuz çekirdeği",
+              "sourceBlockIndex": 4,
+              "sourceRowNumber": 27
+            },
+            {
+              "id": "kuruyemis__tohumlar__kavun-cekirdegi",
+              "name": "Kavun çekirdeği",
+              "sourceBlockIndex": 4,
+              "sourceRowNumber": 28
+            },
+            {
+              "id": "kuruyemis__tohumlar__cam-fistigi",
+              "name": "Çam fıstığı",
+              "sourceBlockIndex": 4,
+              "sourceRowNumber": 29
+            }
+          ]
+        },
+        {
+          "id": "kuruyemis__ezmeler",
+          "name": "Ezmeler",
+          "foods": [
+            {
+              "id": "kuruyemis__ezmeler__fistik-ezmesi",
+              "name": "Fıstık ezmesi",
+              "sourceBlockIndex": 4,
+              "sourceRowNumber": 30
+            },
+            {
+              "id": "kuruyemis__ezmeler__badem-ezmesi",
+              "name": "Badem ezmesi",
+              "sourceBlockIndex": 4,
+              "sourceRowNumber": 31
+            },
+            {
+              "id": "kuruyemis__ezmeler__kaju-ezmesi",
+              "name": "Kaju ezmesi",
+              "sourceBlockIndex": 4,
+              "sourceRowNumber": 32
+            },
+            {
+              "id": "kuruyemis__ezmeler__findik-ezmesi",
+              "name": "Fındık ezmesi",
+              "sourceBlockIndex": 4,
+              "sourceRowNumber": 33
+            },
+            {
+              "id": "kuruyemis__ezmeler__tahin",
+              "name": "Tahin",
+              "sourceBlockIndex": 4,
+              "sourceRowNumber": 34
+            },
+            {
+              "id": "kuruyemis__ezmeler__karisik-kuruyemis-ezmesi",
+              "name": "Karışık kuruyemiş ezmesi",
+              "sourceBlockIndex": 4,
+              "sourceRowNumber": 35
+            }
+          ]
+        },
+        {
+          "id": "kuruyemis__kuruyemis-unlari",
+          "name": "Kuruyemiş Unları",
+          "foods": [
+            {
+              "id": "kuruyemis__kuruyemis-unlari__badem-unu",
+              "name": "Badem unu",
+              "sourceBlockIndex": 4,
+              "sourceRowNumber": 36
+            },
+            {
+              "id": "kuruyemis__kuruyemis-unlari__hindistan-cevizi-unu",
+              "name": "Hindistan cevizi unu",
+              "sourceBlockIndex": 4,
+              "sourceRowNumber": 37
+            },
+            {
+              "id": "kuruyemis__kuruyemis-unlari__keten-unu",
+              "name": "Keten unu",
+              "sourceBlockIndex": 4,
+              "sourceRowNumber": 38
+            },
+            {
+              "id": "kuruyemis__kuruyemis-unlari__susam-unu",
+              "name": "Susam unu",
+              "sourceBlockIndex": 4,
+              "sourceRowNumber": 39
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "et",
+      "name": "Et",
+      "subcategories": [
+        {
+          "id": "et__kirmizi-et",
+          "name": "Kırmızı Et",
+          "foods": [
+            {
+              "id": "et__kirmizi-et__dana-eti",
+              "name": "Dana eti",
+              "sourceBlockIndex": 5,
+              "sourceRowNumber": 2
+            },
+            {
+              "id": "et__kirmizi-et__yagsiz-dana-eti",
+              "name": "Yağsız dana eti",
+              "sourceBlockIndex": 5,
+              "sourceRowNumber": 3
+            },
+            {
+              "id": "et__kirmizi-et__dana-antrikot",
+              "name": "Dana antrikot",
+              "sourceBlockIndex": 5,
+              "sourceRowNumber": 4
+            },
+            {
+              "id": "et__kirmizi-et__dana-bonfile",
+              "name": "Dana bonfile",
+              "sourceBlockIndex": 5,
+              "sourceRowNumber": 5
+            },
+            {
+              "id": "et__kirmizi-et__dana-kontrfile",
+              "name": "Dana kontrfile",
+              "sourceBlockIndex": 5,
+              "sourceRowNumber": 6
+            },
+            {
+              "id": "et__kirmizi-et__dana-kiyma",
+              "name": "Dana kıyma",
+              "sourceBlockIndex": 5,
+              "sourceRowNumber": 7
+            },
+            {
+              "id": "et__kirmizi-et__kuzu-eti",
+              "name": "Kuzu eti",
+              "sourceBlockIndex": 5,
+              "sourceRowNumber": 8
+            },
+            {
+              "id": "et__kirmizi-et__kuzu-pirzola",
+              "name": "Kuzu pirzola",
+              "sourceBlockIndex": 5,
+              "sourceRowNumber": 9
+            },
+            {
+              "id": "et__kirmizi-et__kuzu-kiyma",
+              "name": "Kuzu kıyma",
+              "sourceBlockIndex": 5,
+              "sourceRowNumber": 10
+            },
+            {
+              "id": "et__kirmizi-et__koyun-eti",
+              "name": "Koyun eti",
+              "sourceBlockIndex": 5,
+              "sourceRowNumber": 11
+            },
+            {
+              "id": "et__kirmizi-et__keci-eti",
+              "name": "Keçi eti",
+              "sourceBlockIndex": 5,
+              "sourceRowNumber": 12
+            }
+          ]
+        },
+        {
+          "id": "et__beyaz-et",
+          "name": "Beyaz Et",
+          "foods": [
+            {
+              "id": "et__beyaz-et__tavuk-gogus",
+              "name": "Tavuk göğüs",
+              "sourceBlockIndex": 5,
+              "sourceRowNumber": 13
+            },
+            {
+              "id": "et__beyaz-et__tavuk-but",
+              "name": "Tavuk but",
+              "sourceBlockIndex": 5,
+              "sourceRowNumber": 14
+            },
+            {
+              "id": "et__beyaz-et__tavuk-kanat",
+              "name": "Tavuk kanat",
+              "sourceBlockIndex": 5,
+              "sourceRowNumber": 15
+            },
+            {
+              "id": "et__beyaz-et__hindi-gogus",
+              "name": "Hindi göğüs",
+              "sourceBlockIndex": 5,
+              "sourceRowNumber": 16
+            },
+            {
+              "id": "et__beyaz-et__hindi-but",
+              "name": "Hindi but",
+              "sourceBlockIndex": 5,
+              "sourceRowNumber": 17
+            },
+            {
+              "id": "et__beyaz-et__ordek",
+              "name": "Ördek",
+              "sourceBlockIndex": 5,
+              "sourceRowNumber": 18
+            },
+            {
+              "id": "et__beyaz-et__kaz",
+              "name": "Kaz",
+              "sourceBlockIndex": 5,
+              "sourceRowNumber": 19
+            }
+          ]
+        },
+        {
+          "id": "et__sakatatlar",
+          "name": "Sakatatlar",
+          "foods": [
+            {
+              "id": "et__sakatatlar__dana-ciger",
+              "name": "Dana ciğer",
+              "sourceBlockIndex": 5,
+              "sourceRowNumber": 20
+            },
+            {
+              "id": "et__sakatatlar__tavuk-cigeri",
+              "name": "Tavuk ciğeri",
+              "sourceBlockIndex": 5,
+              "sourceRowNumber": 21
+            },
+            {
+              "id": "et__sakatatlar__dana-bobrek",
+              "name": "Dana böbrek",
+              "sourceBlockIndex": 5,
+              "sourceRowNumber": 22
+            },
+            {
+              "id": "et__sakatatlar__dana-yurek",
+              "name": "Dana yürek",
+              "sourceBlockIndex": 5,
+              "sourceRowNumber": 23
+            },
+            {
+              "id": "et__sakatatlar__iskembe",
+              "name": "İşkembe",
+              "sourceBlockIndex": 5,
+              "sourceRowNumber": 24
+            },
+            {
+              "id": "et__sakatatlar__dil",
+              "name": "Dil",
+              "sourceBlockIndex": 5,
+              "sourceRowNumber": 25
+            },
+            {
+              "id": "et__sakatatlar__beyin",
+              "name": "Beyin",
+              "sourceBlockIndex": 5,
+              "sourceRowNumber": 26
+            }
+          ]
+        },
+        {
+          "id": "et__islenmis-etler",
+          "name": "İşlenmiş Etler",
+          "foods": [
+            {
+              "id": "et__islenmis-etler__sucuk",
+              "name": "Sucuk",
+              "sourceBlockIndex": 5,
+              "sourceRowNumber": 27
+            },
+            {
+              "id": "et__islenmis-etler__salam",
+              "name": "Salam",
+              "sourceBlockIndex": 5,
+              "sourceRowNumber": 28
+            },
+            {
+              "id": "et__islenmis-etler__sosis",
+              "name": "Sosis",
+              "sourceBlockIndex": 5,
+              "sourceRowNumber": 29
+            },
+            {
+              "id": "et__islenmis-etler__pastirma",
+              "name": "Pastırma",
+              "sourceBlockIndex": 5,
+              "sourceRowNumber": 30
+            },
+            {
+              "id": "et__islenmis-etler__fume-et",
+              "name": "Füme et",
+              "sourceBlockIndex": 5,
+              "sourceRowNumber": 31
+            },
+            {
+              "id": "et__islenmis-etler__jambon",
+              "name": "Jambon",
+              "sourceBlockIndex": 5,
+              "sourceRowNumber": 32
+            }
+          ]
+        },
+        {
+          "id": "et__av-etleri",
+          "name": "Av Etleri",
+          "foods": [
+            {
+              "id": "et__av-etleri__geyik-eti",
+              "name": "Geyik eti",
+              "sourceBlockIndex": 5,
+              "sourceRowNumber": 33
+            },
+            {
+              "id": "et__av-etleri__tavsan-eti",
+              "name": "Tavşan eti",
+              "sourceBlockIndex": 5,
+              "sourceRowNumber": 34
+            },
+            {
+              "id": "et__av-etleri__bildircin",
+              "name": "Bıldırcın",
+              "sourceBlockIndex": 5,
+              "sourceRowNumber": 35
+            },
+            {
+              "id": "et__av-etleri__keklik",
+              "name": "Keklik",
+              "sourceBlockIndex": 5,
+              "sourceRowNumber": 36
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "balik",
+      "name": "Balık",
+      "subcategories": [
+        {
+          "id": "balik__yagli-baliklar",
+          "name": "Yağlı Balıklar",
+          "foods": [
+            {
+              "id": "balik__yagli-baliklar__somon",
+              "name": "Somon",
+              "sourceBlockIndex": 6,
+              "sourceRowNumber": 2
+            },
+            {
+              "id": "balik__yagli-baliklar__sardalya",
+              "name": "Sardalya",
+              "sourceBlockIndex": 6,
+              "sourceRowNumber": 3
+            },
+            {
+              "id": "balik__yagli-baliklar__uskumru",
+              "name": "Uskumru",
+              "sourceBlockIndex": 6,
+              "sourceRowNumber": 4
+            },
+            {
+              "id": "balik__yagli-baliklar__hamsi",
+              "name": "Hamsi",
+              "sourceBlockIndex": 6,
+              "sourceRowNumber": 5
+            },
+            {
+              "id": "balik__yagli-baliklar__ton-baligi",
+              "name": "Ton balığı",
+              "sourceBlockIndex": 6,
+              "sourceRowNumber": 6
+            },
+            {
+              "id": "balik__yagli-baliklar__alabalik",
+              "name": "Alabalık",
+              "sourceBlockIndex": 6,
+              "sourceRowNumber": 7
+            }
+          ]
+        },
+        {
+          "id": "balik__yari-yagli-baliklar",
+          "name": "Yarı Yağlı Balıklar",
+          "foods": [
+            {
+              "id": "balik__yari-yagli-baliklar__levrek",
+              "name": "Levrek",
+              "sourceBlockIndex": 6,
+              "sourceRowNumber": 8
+            },
+            {
+              "id": "balik__yari-yagli-baliklar__cipura",
+              "name": "Çipura",
+              "sourceBlockIndex": 6,
+              "sourceRowNumber": 9
+            },
+            {
+              "id": "balik__yari-yagli-baliklar__kefal",
+              "name": "Kefal",
+              "sourceBlockIndex": 6,
+              "sourceRowNumber": 10
+            },
+            {
+              "id": "balik__yari-yagli-baliklar__alabalik-nehir",
+              "name": "Alabalık (nehir)",
+              "sourceBlockIndex": 6,
+              "sourceRowNumber": 11
+            }
+          ]
+        },
+        {
+          "id": "balik__yagsiz-baliklar",
+          "name": "Yağsız Balıklar",
+          "foods": [
+            {
+              "id": "balik__yagsiz-baliklar__mezgit",
+              "name": "Mezgit",
+              "sourceBlockIndex": 6,
+              "sourceRowNumber": 12
+            },
+            {
+              "id": "balik__yagsiz-baliklar__morina",
+              "name": "Morina",
+              "sourceBlockIndex": 6,
+              "sourceRowNumber": 13
+            },
+            {
+              "id": "balik__yagsiz-baliklar__dil-baligi",
+              "name": "Dil balığı",
+              "sourceBlockIndex": 6,
+              "sourceRowNumber": 14
+            },
+            {
+              "id": "balik__yagsiz-baliklar__berlam",
+              "name": "Berlam",
+              "sourceBlockIndex": 6,
+              "sourceRowNumber": 15
+            },
+            {
+              "id": "balik__yagsiz-baliklar__kopek-baligi-cok-nadir-tuketim",
+              "name": "Köpek balığı (çok nadir tüketim)",
+              "sourceBlockIndex": 6,
+              "sourceRowNumber": 16
+            }
+          ]
+        },
+        {
+          "id": "balik__tatli-su-baliklari",
+          "name": "Tatlı Su Balıkları",
+          "foods": [
+            {
+              "id": "balik__tatli-su-baliklari__sazan",
+              "name": "Sazan",
+              "sourceBlockIndex": 6,
+              "sourceRowNumber": 17
+            },
+            {
+              "id": "balik__tatli-su-baliklari__turna",
+              "name": "Turna",
+              "sourceBlockIndex": 6,
+              "sourceRowNumber": 18
+            },
+            {
+              "id": "balik__tatli-su-baliklari__yayin-baligi",
+              "name": "Yayın balığı",
+              "sourceBlockIndex": 6,
+              "sourceRowNumber": 19
+            },
+            {
+              "id": "balik__tatli-su-baliklari__sudak",
+              "name": "Sudak",
+              "sourceBlockIndex": 6,
+              "sourceRowNumber": 20
+            }
+          ]
+        },
+        {
+          "id": "balik__konserve-baliklar",
+          "name": "Konserve Balıklar",
+          "foods": [
+            {
+              "id": "balik__konserve-baliklar__konserve-ton-baligi",
+              "name": "Konserve ton balığı",
+              "sourceBlockIndex": 6,
+              "sourceRowNumber": 21
+            },
+            {
+              "id": "balik__konserve-baliklar__konserve-sardalya",
+              "name": "Konserve sardalya",
+              "sourceBlockIndex": 6,
+              "sourceRowNumber": 22
+            },
+            {
+              "id": "balik__konserve-baliklar__konserve-uskumru",
+              "name": "Konserve uskumru",
+              "sourceBlockIndex": 6,
+              "sourceRowNumber": 23
+            }
+          ]
+        },
+        {
+          "id": "balik__fume-islenmis-balik",
+          "name": "Füme / İşlenmiş Balık",
+          "foods": [
+            {
+              "id": "balik__fume-islenmis-balik__fume-somon",
+              "name": "Füme somon",
+              "sourceBlockIndex": 6,
+              "sourceRowNumber": 24
+            },
+            {
+              "id": "balik__fume-islenmis-balik__tuzlanmis-hamsi",
+              "name": "Tuzlanmış hamsi",
+              "sourceBlockIndex": 6,
+              "sourceRowNumber": 25
+            },
+            {
+              "id": "balik__fume-islenmis-balik__balik-pastirmasi",
+              "name": "Balık pastırması",
+              "sourceBlockIndex": 6,
+              "sourceRowNumber": 26
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "deniz-urunleri",
+      "name": "Deniz Ürünleri",
+      "subcategories": [
+        {
+          "id": "deniz-urunleri__kabuklular",
+          "name": "Kabuklular",
+          "foods": [
+            {
+              "id": "deniz-urunleri__kabuklular__karides",
+              "name": "Karides",
+              "sourceBlockIndex": 7,
+              "sourceRowNumber": 2
+            },
+            {
+              "id": "deniz-urunleri__kabuklular__jumbo-karides",
+              "name": "Jumbo karides",
+              "sourceBlockIndex": 7,
+              "sourceRowNumber": 3
+            },
+            {
+              "id": "deniz-urunleri__kabuklular__istakoz",
+              "name": "Istakoz",
+              "sourceBlockIndex": 7,
+              "sourceRowNumber": 4
+            },
+            {
+              "id": "deniz-urunleri__kabuklular__yengec",
+              "name": "Yengeç",
+              "sourceBlockIndex": 7,
+              "sourceRowNumber": 5
+            },
+            {
+              "id": "deniz-urunleri__kabuklular__langustine",
+              "name": "Langustine",
+              "sourceBlockIndex": 7,
+              "sourceRowNumber": 6
+            },
+            {
+              "id": "deniz-urunleri__kabuklular__karides-kokteyl",
+              "name": "Karides kokteyl",
+              "sourceBlockIndex": 7,
+              "sourceRowNumber": 7
+            }
+          ]
+        },
+        {
+          "id": "deniz-urunleri__cift-kabuklular",
+          "name": "Çift Kabuklular",
+          "foods": [
+            {
+              "id": "deniz-urunleri__cift-kabuklular__midye",
+              "name": "Midye",
+              "sourceBlockIndex": 7,
+              "sourceRowNumber": 8
+            },
+            {
+              "id": "deniz-urunleri__cift-kabuklular__istiridye",
+              "name": "İstiridye",
+              "sourceBlockIndex": 7,
+              "sourceRowNumber": 9
+            },
+            {
+              "id": "deniz-urunleri__cift-kabuklular__deniz-taragi-scallop",
+              "name": "Deniz tarağı (scallop)",
+              "sourceBlockIndex": 7,
+              "sourceRowNumber": 10
+            },
+            {
+              "id": "deniz-urunleri__cift-kabuklular__kokina",
+              "name": "Kokina",
+              "sourceBlockIndex": 7,
+              "sourceRowNumber": 11
+            },
+            {
+              "id": "deniz-urunleri__cift-kabuklular__berber-midyesi",
+              "name": "Berber midyesi",
+              "sourceBlockIndex": 7,
+              "sourceRowNumber": 12
+            }
+          ]
+        },
+        {
+          "id": "deniz-urunleri__yumusakcalar",
+          "name": "Yumuşakçalar",
+          "foods": [
+            {
+              "id": "deniz-urunleri__yumusakcalar__kalamar",
+              "name": "Kalamar",
+              "sourceBlockIndex": 7,
+              "sourceRowNumber": 13
+            },
+            {
+              "id": "deniz-urunleri__yumusakcalar__ahtapot",
+              "name": "Ahtapot",
+              "sourceBlockIndex": 7,
+              "sourceRowNumber": 14
+            },
+            {
+              "id": "deniz-urunleri__yumusakcalar__murekkep-baligi",
+              "name": "Mürekkep balığı",
+              "sourceBlockIndex": 7,
+              "sourceRowNumber": 15
+            },
+            {
+              "id": "deniz-urunleri__yumusakcalar__deniz-salyangozu",
+              "name": "Deniz salyangozu",
+              "sourceBlockIndex": 7,
+              "sourceRowNumber": 16
+            },
+            {
+              "id": "deniz-urunleri__yumusakcalar__sepia-murekkep-baligi-turu",
+              "name": "Sépia (mürekkep balığı türü)",
+              "sourceBlockIndex": 7,
+              "sourceRowNumber": 17
+            }
+          ]
+        },
+        {
+          "id": "deniz-urunleri__islenmis-deniz-urunleri",
+          "name": "İşlenmiş Deniz Ürünleri",
+          "foods": [
+            {
+              "id": "deniz-urunleri__islenmis-deniz-urunleri__surimi",
+              "name": "Surimi",
+              "sourceBlockIndex": 7,
+              "sourceRowNumber": 18
+            },
+            {
+              "id": "deniz-urunleri__islenmis-deniz-urunleri__imitasyon-yengec",
+              "name": "İmitasyon yengeç",
+              "sourceBlockIndex": 7,
+              "sourceRowNumber": 19
+            },
+            {
+              "id": "deniz-urunleri__islenmis-deniz-urunleri__balik-koftesi",
+              "name": "Balık köftesi",
+              "sourceBlockIndex": 7,
+              "sourceRowNumber": 20
+            },
+            {
+              "id": "deniz-urunleri__islenmis-deniz-urunleri__marine-kalamar",
+              "name": "Marine kalamar",
+              "sourceBlockIndex": 7,
+              "sourceRowNumber": 21
+            },
+            {
+              "id": "deniz-urunleri__islenmis-deniz-urunleri__pane-deniz-urunleri",
+              "name": "Pane deniz ürünleri",
+              "sourceBlockIndex": 7,
+              "sourceRowNumber": 22
+            }
+          ]
+        },
+        {
+          "id": "deniz-urunleri__konserve",
+          "name": "Konserve",
+          "foods": [
+            {
+              "id": "deniz-urunleri__konserve__konserve-midye",
+              "name": "Konserve midye",
+              "sourceBlockIndex": 7,
+              "sourceRowNumber": 23
+            },
+            {
+              "id": "deniz-urunleri__konserve__konserve-istiridye",
+              "name": "Konserve istiridye",
+              "sourceBlockIndex": 7,
+              "sourceRowNumber": 24
+            },
+            {
+              "id": "deniz-urunleri__konserve__konserve-ahtapot",
+              "name": "Konserve ahtapot",
+              "sourceBlockIndex": 7,
+              "sourceRowNumber": 25
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sut-urunleri",
+      "name": "Süt Ürünleri",
+      "subcategories": [
+        {
+          "id": "sut-urunleri__sut",
+          "name": "Süt",
+          "foods": [
+            {
+              "id": "sut-urunleri__sut__tam-yagli-sut",
+              "name": "Tam yağlı süt",
+              "sourceBlockIndex": 8,
+              "sourceRowNumber": 2
+            },
+            {
+              "id": "sut-urunleri__sut__yarim-yagli-sut",
+              "name": "Yarım yağlı süt",
+              "sourceBlockIndex": 8,
+              "sourceRowNumber": 3
+            },
+            {
+              "id": "sut-urunleri__sut__yagsiz-sut",
+              "name": "Yağsız süt",
+              "sourceBlockIndex": 8,
+              "sourceRowNumber": 4
+            },
+            {
+              "id": "sut-urunleri__sut__laktozsuz-sut",
+              "name": "Laktozsuz süt",
+              "sourceBlockIndex": 8,
+              "sourceRowNumber": 5
+            },
+            {
+              "id": "sut-urunleri__sut__keci-sutu",
+              "name": "Keçi sütü",
+              "sourceBlockIndex": 8,
+              "sourceRowNumber": 6
+            },
+            {
+              "id": "sut-urunleri__sut__koyun-sutu",
+              "name": "Koyun sütü",
+              "sourceBlockIndex": 8,
+              "sourceRowNumber": 7
+            },
+            {
+              "id": "sut-urunleri__sut__cig-sut",
+              "name": "Çiğ süt",
+              "sourceBlockIndex": 8,
+              "sourceRowNumber": 8
+            }
+          ]
+        },
+        {
+          "id": "sut-urunleri__fermente-urunler",
+          "name": "Fermente Ürünler",
+          "foods": [
+            {
+              "id": "sut-urunleri__fermente-urunler__yogurt",
+              "name": "Yoğurt",
+              "sourceBlockIndex": 8,
+              "sourceRowNumber": 9
+            },
+            {
+              "id": "sut-urunleri__fermente-urunler__suzme-yogurt",
+              "name": "Süzme yoğurt",
+              "sourceBlockIndex": 8,
+              "sourceRowNumber": 10
+            },
+            {
+              "id": "sut-urunleri__fermente-urunler__laktozsuz-yogurt",
+              "name": "Laktozsuz yoğurt",
+              "sourceBlockIndex": 8,
+              "sourceRowNumber": 11
+            },
+            {
+              "id": "sut-urunleri__fermente-urunler__kefir",
+              "name": "Kefir",
+              "sourceBlockIndex": 8,
+              "sourceRowNumber": 12
+            },
+            {
+              "id": "sut-urunleri__fermente-urunler__ayran",
+              "name": "Ayran",
+              "sourceBlockIndex": 8,
+              "sourceRowNumber": 13
+            }
+          ]
+        },
+        {
+          "id": "sut-urunleri__peynir",
+          "name": "Peynir",
+          "foods": [
+            {
+              "id": "sut-urunleri__peynir__beyaz-peynir",
+              "name": "Beyaz peynir",
+              "sourceBlockIndex": 8,
+              "sourceRowNumber": 14
+            },
+            {
+              "id": "sut-urunleri__peynir__kasar-peyniri",
+              "name": "Kaşar peyniri",
+              "sourceBlockIndex": 8,
+              "sourceRowNumber": 15
+            },
+            {
+              "id": "sut-urunleri__peynir__eski-kasar",
+              "name": "Eski kaşar",
+              "sourceBlockIndex": 8,
+              "sourceRowNumber": 16
+            },
+            {
+              "id": "sut-urunleri__peynir__lor-peyniri",
+              "name": "Lor peyniri",
+              "sourceBlockIndex": 8,
+              "sourceRowNumber": 17
+            },
+            {
+              "id": "sut-urunleri__peynir__cokelek",
+              "name": "Çökelek",
+              "sourceBlockIndex": 8,
+              "sourceRowNumber": 18
+            },
+            {
+              "id": "sut-urunleri__peynir__labne",
+              "name": "Labne",
+              "sourceBlockIndex": 8,
+              "sourceRowNumber": 19
+            },
+            {
+              "id": "sut-urunleri__peynir__mozzarella",
+              "name": "Mozzarella",
+              "sourceBlockIndex": 8,
+              "sourceRowNumber": 20
+            },
+            {
+              "id": "sut-urunleri__peynir__ricotta",
+              "name": "Ricotta",
+              "sourceBlockIndex": 8,
+              "sourceRowNumber": 21
+            },
+            {
+              "id": "sut-urunleri__peynir__parmesan",
+              "name": "Parmesan",
+              "sourceBlockIndex": 8,
+              "sourceRowNumber": 22
+            },
+            {
+              "id": "sut-urunleri__peynir__tulum-peyniri",
+              "name": "Tulum peyniri",
+              "sourceBlockIndex": 8,
+              "sourceRowNumber": 23
+            },
+            {
+              "id": "sut-urunleri__peynir__camembert",
+              "name": "Camembert",
+              "sourceBlockIndex": 8,
+              "sourceRowNumber": 24
+            },
+            {
+              "id": "sut-urunleri__peynir__roquefort",
+              "name": "Roquefort",
+              "sourceBlockIndex": 8,
+              "sourceRowNumber": 25
+            },
+            {
+              "id": "sut-urunleri__peynir__feta",
+              "name": "Feta",
+              "sourceBlockIndex": 8,
+              "sourceRowNumber": 26
+            },
+            {
+              "id": "sut-urunleri__peynir__krem-peynir",
+              "name": "Krem peynir",
+              "sourceBlockIndex": 8,
+              "sourceRowNumber": 27
+            },
+            {
+              "id": "sut-urunleri__peynir__keci-peyniri",
+              "name": "Keçi peyniri",
+              "sourceBlockIndex": 8,
+              "sourceRowNumber": 28
+            },
+            {
+              "id": "sut-urunleri__peynir__koyun-peyniri",
+              "name": "Koyun peyniri",
+              "sourceBlockIndex": 8,
+              "sourceRowNumber": 29
+            }
+          ]
+        },
+        {
+          "id": "sut-urunleri__krema",
+          "name": "Krema",
+          "foods": [
+            {
+              "id": "sut-urunleri__krema__sut-kremasi",
+              "name": "Süt kreması",
+              "sourceBlockIndex": 8,
+              "sourceRowNumber": 30
+            },
+            {
+              "id": "sut-urunleri__krema__krema",
+              "name": "Krema",
+              "sourceBlockIndex": 8,
+              "sourceRowNumber": 31
+            },
+            {
+              "id": "sut-urunleri__krema__cooking-cream",
+              "name": "Cooking cream",
+              "sourceBlockIndex": 8,
+              "sourceRowNumber": 32
+            }
+          ]
+        },
+        {
+          "id": "sut-urunleri__tereyagi-ve-yaglar",
+          "name": "Tereyağı ve Yağlar",
+          "foods": [
+            {
+              "id": "sut-urunleri__tereyagi-ve-yaglar__tereyagi",
+              "name": "Tereyağı",
+              "sourceBlockIndex": 8,
+              "sourceRowNumber": 33
+            },
+            {
+              "id": "sut-urunleri__tereyagi-ve-yaglar__ghee-sadeyag",
+              "name": "Ghee (sadeyağ)",
+              "sourceBlockIndex": 8,
+              "sourceRowNumber": 34
+            },
+            {
+              "id": "sut-urunleri__tereyagi-ve-yaglar__kaymak",
+              "name": "Kaymak",
+              "sourceBlockIndex": 8,
+              "sourceRowNumber": 35
+            }
+          ]
+        },
+        {
+          "id": "sut-urunleri__tatlilar",
+          "name": "Tatlılar",
+          "foods": [
+            {
+              "id": "sut-urunleri__tatlilar__sutlac",
+              "name": "Sütlaç",
+              "sourceBlockIndex": 8,
+              "sourceRowNumber": 36
+            },
+            {
+              "id": "sut-urunleri__tatlilar__muhallebi",
+              "name": "Muhallebi",
+              "sourceBlockIndex": 8,
+              "sourceRowNumber": 37
+            },
+            {
+              "id": "sut-urunleri__tatlilar__puding",
+              "name": "Puding",
+              "sourceBlockIndex": 8,
+              "sourceRowNumber": 38
+            },
+            {
+              "id": "sut-urunleri__tatlilar__dondurma",
+              "name": "Dondurma",
+              "sourceBlockIndex": 8,
+              "sourceRowNumber": 39
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "yumurta",
+      "name": "Yumurta",
+      "subcategories": [
+        {
+          "id": "yumurta__tavuk-yumurtasi",
+          "name": "Tavuk Yumurtası",
+          "foods": [
+            {
+              "id": "yumurta__tavuk-yumurtasi__tavuk-yumurtasi",
+              "name": "Tavuk yumurtası",
+              "sourceBlockIndex": 9,
+              "sourceRowNumber": 2
+            },
+            {
+              "id": "yumurta__tavuk-yumurtasi__organik-yumurta",
+              "name": "Organik yumurta",
+              "sourceBlockIndex": 9,
+              "sourceRowNumber": 3
+            },
+            {
+              "id": "yumurta__tavuk-yumurtasi__gezen-tavuk-yumurtasi",
+              "name": "Gezen tavuk yumurtası",
+              "sourceBlockIndex": 9,
+              "sourceRowNumber": 4
+            },
+            {
+              "id": "yumurta__tavuk-yumurtasi__koy-yumurtasi",
+              "name": "Köy yumurtası",
+              "sourceBlockIndex": 9,
+              "sourceRowNumber": 5
+            },
+            {
+              "id": "yumurta__tavuk-yumurtasi__omega-3-yumurta",
+              "name": "Omega-3 yumurta",
+              "sourceBlockIndex": 9,
+              "sourceRowNumber": 6
+            },
+            {
+              "id": "yumurta__tavuk-yumurtasi__jumbo-yumurta",
+              "name": "Jumbo yumurta",
+              "sourceBlockIndex": 9,
+              "sourceRowNumber": 7
+            },
+            {
+              "id": "yumurta__tavuk-yumurtasi__kucuk-boy-yumurta",
+              "name": "Küçük boy yumurta",
+              "sourceBlockIndex": 9,
+              "sourceRowNumber": 8
+            }
+          ]
+        },
+        {
+          "id": "yumurta__bildircin-yumurtasi",
+          "name": "Bıldırcın Yumurtası",
+          "foods": [
+            {
+              "id": "yumurta__bildircin-yumurtasi__bildircin-yumurtasi",
+              "name": "Bıldırcın yumurtası",
+              "sourceBlockIndex": 9,
+              "sourceRowNumber": 9
+            },
+            {
+              "id": "yumurta__bildircin-yumurtasi__bildircin-yumurtasi-organik",
+              "name": "Bıldırcın yumurtası (organik)",
+              "sourceBlockIndex": 9,
+              "sourceRowNumber": 10
+            }
+          ]
+        },
+        {
+          "id": "yumurta__ordek-yumurtasi",
+          "name": "Ördek Yumurtası",
+          "foods": [
+            {
+              "id": "yumurta__ordek-yumurtasi__ordek-yumurtasi",
+              "name": "Ördek yumurtası",
+              "sourceBlockIndex": 9,
+              "sourceRowNumber": 11
+            }
+          ]
+        },
+        {
+          "id": "yumurta__kaz-yumurtasi",
+          "name": "Kaz Yumurtası",
+          "foods": [
+            {
+              "id": "yumurta__kaz-yumurtasi__kaz-yumurtasi",
+              "name": "Kaz yumurtası",
+              "sourceBlockIndex": 9,
+              "sourceRowNumber": 12
+            }
+          ]
+        },
+        {
+          "id": "yumurta__hindi-yumurtasi",
+          "name": "Hindi Yumurtası",
+          "foods": [
+            {
+              "id": "yumurta__hindi-yumurtasi__hindi-yumurtasi",
+              "name": "Hindi yumurtası",
+              "sourceBlockIndex": 9,
+              "sourceRowNumber": 13
+            }
+          ]
+        },
+        {
+          "id": "yumurta__yumurta-parcalari",
+          "name": "Yumurta Parçaları",
+          "foods": [
+            {
+              "id": "yumurta__yumurta-parcalari__yumurta-aki",
+              "name": "Yumurta akı",
+              "sourceBlockIndex": 9,
+              "sourceRowNumber": 14
+            },
+            {
+              "id": "yumurta__yumurta-parcalari__yumurta-sarisi",
+              "name": "Yumurta sarısı",
+              "sourceBlockIndex": 9,
+              "sourceRowNumber": 15
+            },
+            {
+              "id": "yumurta__yumurta-parcalari__pastorize-yumurta",
+              "name": "Pastörize yumurta",
+              "sourceBlockIndex": 9,
+              "sourceRowNumber": 16
+            },
+            {
+              "id": "yumurta__yumurta-parcalari__sivi-yumurta",
+              "name": "Sıvı yumurta",
+              "sourceBlockIndex": 9,
+              "sourceRowNumber": 17
+            }
+          ]
+        },
+        {
+          "id": "yumurta__urunler",
+          "name": "Ürünler",
+          "foods": [
+            {
+              "id": "yumurta__urunler__omlet",
+              "name": "Omlet",
+              "sourceBlockIndex": 9,
+              "sourceRowNumber": 18
+            },
+            {
+              "id": "yumurta__urunler__menemen",
+              "name": "Menemen",
+              "sourceBlockIndex": 9,
+              "sourceRowNumber": 19
+            },
+            {
+              "id": "yumurta__urunler__haslanmis-yumurta",
+              "name": "Haşlanmış yumurta",
+              "sourceBlockIndex": 9,
+              "sourceRowNumber": 20
+            },
+            {
+              "id": "yumurta__urunler__pose-yumurta",
+              "name": "Poşe yumurta",
+              "sourceBlockIndex": 9,
+              "sourceRowNumber": 21
+            },
+            {
+              "id": "yumurta__urunler__cirpilmis-yumurta-scrambled",
+              "name": "Çırpılmış yumurta (scrambled)",
+              "sourceBlockIndex": 9,
+              "sourceRowNumber": 22
+            }
+          ]
+        },
+        {
+          "id": "yumurta__islenmis-urunler",
+          "name": "İşlenmiş Ürünler",
+          "foods": [
+            {
+              "id": "yumurta__islenmis-urunler__yumurta-tozu",
+              "name": "Yumurta tozu",
+              "sourceBlockIndex": 9,
+              "sourceRowNumber": 23
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "yag",
+      "name": "Yağ",
+      "subcategories": [
+        {
+          "id": "yag__bitkisel-yaglar",
+          "name": "Bitkisel Yağlar",
+          "foods": [
+            {
+              "id": "yag__bitkisel-yaglar__zeytinyagi",
+              "name": "Zeytinyağı",
+              "sourceBlockIndex": 10,
+              "sourceRowNumber": 2
+            },
+            {
+              "id": "yag__bitkisel-yaglar__sizma-zeytinyagi",
+              "name": "Sızma zeytinyağı",
+              "sourceBlockIndex": 10,
+              "sourceRowNumber": 3
+            },
+            {
+              "id": "yag__bitkisel-yaglar__riviera-zeytinyagi",
+              "name": "Riviera zeytinyağı",
+              "sourceBlockIndex": 10,
+              "sourceRowNumber": 4
+            },
+            {
+              "id": "yag__bitkisel-yaglar__aycicek-yagi",
+              "name": "Ayçiçek yağı",
+              "sourceBlockIndex": 10,
+              "sourceRowNumber": 5
+            },
+            {
+              "id": "yag__bitkisel-yaglar__kanola-yagi",
+              "name": "Kanola yağı",
+              "sourceBlockIndex": 10,
+              "sourceRowNumber": 6
+            },
+            {
+              "id": "yag__bitkisel-yaglar__misir-yagi",
+              "name": "Mısır yağı",
+              "sourceBlockIndex": 10,
+              "sourceRowNumber": 7
+            },
+            {
+              "id": "yag__bitkisel-yaglar__soya-yagi",
+              "name": "Soya yağı",
+              "sourceBlockIndex": 10,
+              "sourceRowNumber": 8
+            },
+            {
+              "id": "yag__bitkisel-yaglar__susam-yagi",
+              "name": "Susam yağı",
+              "sourceBlockIndex": 10,
+              "sourceRowNumber": 9
+            },
+            {
+              "id": "yag__bitkisel-yaglar__uzum-cekirdegi-yagi",
+              "name": "Üzüm çekirdeği yağı",
+              "sourceBlockIndex": 10,
+              "sourceRowNumber": 10
+            },
+            {
+              "id": "yag__bitkisel-yaglar__avokado-yagi",
+              "name": "Avokado yağı",
+              "sourceBlockIndex": 10,
+              "sourceRowNumber": 11
+            },
+            {
+              "id": "yag__bitkisel-yaglar__hindistan-cevizi-yagi",
+              "name": "Hindistan cevizi yağı",
+              "sourceBlockIndex": 10,
+              "sourceRowNumber": 12
+            },
+            {
+              "id": "yag__bitkisel-yaglar__keten-tohumu-yagi",
+              "name": "Keten tohumu yağı",
+              "sourceBlockIndex": 10,
+              "sourceRowNumber": 13
+            }
+          ]
+        },
+        {
+          "id": "yag__hayvansal-yaglar",
+          "name": "Hayvansal Yağlar",
+          "foods": [
+            {
+              "id": "yag__hayvansal-yaglar__tereyagi",
+              "name": "Tereyağı",
+              "sourceBlockIndex": 10,
+              "sourceRowNumber": 14
+            },
+            {
+              "id": "yag__hayvansal-yaglar__ghee-sadeyag",
+              "name": "Ghee (sadeyağ)",
+              "sourceBlockIndex": 10,
+              "sourceRowNumber": 15
+            },
+            {
+              "id": "yag__hayvansal-yaglar__kuyruk-yagi",
+              "name": "Kuyruk yağı",
+              "sourceBlockIndex": 10,
+              "sourceRowNumber": 16
+            },
+            {
+              "id": "yag__hayvansal-yaglar__ic-yag-don-yagi-lard",
+              "name": "İç yağ (don yağı / lard)",
+              "sourceBlockIndex": 10,
+              "sourceRowNumber": 17
+            }
+          ]
+        },
+        {
+          "id": "yag__sut-yaglari",
+          "name": "Süt Yağları",
+          "foods": [
+            {
+              "id": "yag__sut-yaglari__kaymak",
+              "name": "Kaymak",
+              "sourceBlockIndex": 10,
+              "sourceRowNumber": 18
+            },
+            {
+              "id": "yag__sut-yaglari__krema",
+              "name": "Krema",
+              "sourceBlockIndex": 10,
+              "sourceRowNumber": 19
+            },
+            {
+              "id": "yag__sut-yaglari__sut-kremasi",
+              "name": "Süt kreması",
+              "sourceBlockIndex": 10,
+              "sourceRowNumber": 20
+            }
+          ]
+        },
+        {
+          "id": "yag__kuruyemis-yaglari",
+          "name": "Kuruyemiş Yağları",
+          "foods": [
+            {
+              "id": "yag__kuruyemis-yaglari__findik-yagi",
+              "name": "Fındık yağı",
+              "sourceBlockIndex": 10,
+              "sourceRowNumber": 21
+            },
+            {
+              "id": "yag__kuruyemis-yaglari__badem-yagi",
+              "name": "Badem yağı",
+              "sourceBlockIndex": 10,
+              "sourceRowNumber": 22
+            },
+            {
+              "id": "yag__kuruyemis-yaglari__ceviz-yagi",
+              "name": "Ceviz yağı",
+              "sourceBlockIndex": 10,
+              "sourceRowNumber": 23
+            },
+            {
+              "id": "yag__kuruyemis-yaglari__fistik-yagi",
+              "name": "Fıstık yağı",
+              "sourceBlockIndex": 10,
+              "sourceRowNumber": 24
+            }
+          ]
+        },
+        {
+          "id": "yag__islenmis-yaglar",
+          "name": "İşlenmiş Yağlar",
+          "foods": [
+            {
+              "id": "yag__islenmis-yaglar__margarin",
+              "name": "Margarin",
+              "sourceBlockIndex": 10,
+              "sourceRowNumber": 25
+            },
+            {
+              "id": "yag__islenmis-yaglar__hidrojene-yag",
+              "name": "Hidrojene yağ",
+              "sourceBlockIndex": 10,
+              "sourceRowNumber": 26
+            },
+            {
+              "id": "yag__islenmis-yaglar__kizartma-yagi-deep-frying-oil",
+              "name": "Kızartma yağı (deep frying oil)",
+              "sourceBlockIndex": 10,
+              "sourceRowNumber": 27
+            }
+          ]
+        },
+        {
+          "id": "yag__ozel-yaglar",
+          "name": "Özel Yağlar",
+          "foods": [
+            {
+              "id": "yag__ozel-yaglar__mct-yagi",
+              "name": "MCT yağı",
+              "sourceBlockIndex": 10,
+              "sourceRowNumber": 28
+            },
+            {
+              "id": "yag__ozel-yaglar__omega-3-balik-yagi",
+              "name": "Omega-3 balık yağı",
+              "sourceBlockIndex": 10,
+              "sourceRowNumber": 29
+            },
+            {
+              "id": "yag__ozel-yaglar__krill-yagi",
+              "name": "Krill yağı",
+              "sourceBlockIndex": 10,
+              "sourceRowNumber": 30
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "icecek",
+      "name": "İçecek",
+      "subcategories": [
+        {
+          "id": "icecek__su",
+          "name": "Su",
+          "foods": [
+            {
+              "id": "icecek__su__icme-suyu",
+              "name": "İçme suyu",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 2
+            },
+            {
+              "id": "icecek__su__maden-suyu",
+              "name": "Maden suyu",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 3
+            },
+            {
+              "id": "icecek__su__soda",
+              "name": "Soda",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 4
+            },
+            {
+              "id": "icecek__su__aromali-su-sekersiz",
+              "name": "Aromalı su (şekersiz)",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 5
+            }
+          ]
+        },
+        {
+          "id": "icecek__sutlu-icecekler",
+          "name": "Sütlü İçecekler",
+          "foods": [
+            {
+              "id": "icecek__sutlu-icecekler__sut",
+              "name": "Süt",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 6
+            },
+            {
+              "id": "icecek__sutlu-icecekler__kakao",
+              "name": "Kakao",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 7
+            },
+            {
+              "id": "icecek__sutlu-icecekler__sutlu-kahve",
+              "name": "Sütlü kahve",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 8
+            },
+            {
+              "id": "icecek__sutlu-icecekler__milkshake",
+              "name": "Milkshake",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 9
+            }
+          ]
+        },
+        {
+          "id": "icecek__caylar",
+          "name": "Çaylar",
+          "foods": [
+            {
+              "id": "icecek__caylar__siyah-cay",
+              "name": "Siyah çay",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 10
+            },
+            {
+              "id": "icecek__caylar__yesil-cay",
+              "name": "Yeşil çay",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 11
+            },
+            {
+              "id": "icecek__caylar__beyaz-cay",
+              "name": "Beyaz çay",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 12
+            },
+            {
+              "id": "icecek__caylar__oolong-cayi",
+              "name": "Oolong çayı",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 13
+            },
+            {
+              "id": "icecek__caylar__bitki-cayi",
+              "name": "Bitki çayı",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 14
+            },
+            {
+              "id": "icecek__caylar__ihlamur",
+              "name": "Ihlamur",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 15
+            },
+            {
+              "id": "icecek__caylar__adacayi",
+              "name": "Adaçayı",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 16
+            },
+            {
+              "id": "icecek__caylar__papatya-cayi",
+              "name": "Papatya çayı",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 17
+            },
+            {
+              "id": "icecek__caylar__nane-limon",
+              "name": "Nane limon",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 18
+            }
+          ]
+        },
+        {
+          "id": "icecek__kahve",
+          "name": "Kahve",
+          "foods": [
+            {
+              "id": "icecek__kahve__turk-kahvesi",
+              "name": "Türk kahvesi",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 19
+            },
+            {
+              "id": "icecek__kahve__filtre-kahve",
+              "name": "Filtre kahve",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 20
+            },
+            {
+              "id": "icecek__kahve__espresso",
+              "name": "Espresso",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 21
+            },
+            {
+              "id": "icecek__kahve__americano",
+              "name": "Americano",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 22
+            },
+            {
+              "id": "icecek__kahve__latte",
+              "name": "Latte",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 23
+            },
+            {
+              "id": "icecek__kahve__cappuccino",
+              "name": "Cappuccino",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 24
+            },
+            {
+              "id": "icecek__kahve__soguk-kahve",
+              "name": "Soğuk kahve",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 25
+            }
+          ]
+        },
+        {
+          "id": "icecek__meyve-sulari",
+          "name": "Meyve Suları",
+          "foods": [
+            {
+              "id": "icecek__meyve-sulari__portakal-suyu",
+              "name": "Portakal suyu",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 26
+            },
+            {
+              "id": "icecek__meyve-sulari__elma-suyu",
+              "name": "Elma suyu",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 27
+            },
+            {
+              "id": "icecek__meyve-sulari__uzum-suyu",
+              "name": "Üzüm suyu",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 28
+            },
+            {
+              "id": "icecek__meyve-sulari__nar-suyu",
+              "name": "Nar suyu",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 29
+            },
+            {
+              "id": "icecek__meyve-sulari__karisik-meyve-suyu",
+              "name": "Karışık meyve suyu",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 30
+            }
+          ]
+        },
+        {
+          "id": "icecek__sebze-sulari",
+          "name": "Sebze Suları",
+          "foods": [
+            {
+              "id": "icecek__sebze-sulari__havuc-suyu",
+              "name": "Havuç suyu",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 31
+            },
+            {
+              "id": "icecek__sebze-sulari__domates-suyu",
+              "name": "Domates suyu",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 32
+            },
+            {
+              "id": "icecek__sebze-sulari__yesil-sebze-suyu",
+              "name": "Yeşil sebze suyu",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 33
+            }
+          ]
+        },
+        {
+          "id": "icecek__smoothie",
+          "name": "Smoothie",
+          "foods": [
+            {
+              "id": "icecek__smoothie__meyve-smoothie",
+              "name": "Meyve smoothie",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 34
+            },
+            {
+              "id": "icecek__smoothie__yesil-smoothie",
+              "name": "Yeşil smoothie",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 35
+            }
+          ]
+        },
+        {
+          "id": "icecek__fermente-icecekler",
+          "name": "Fermente İçecekler",
+          "foods": [
+            {
+              "id": "icecek__fermente-icecekler__kefir",
+              "name": "Kefir",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 36
+            },
+            {
+              "id": "icecek__fermente-icecekler__ayran",
+              "name": "Ayran",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 37
+            },
+            {
+              "id": "icecek__fermente-icecekler__kombucha",
+              "name": "Kombucha",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 38
+            }
+          ]
+        },
+        {
+          "id": "icecek__enerji-icecekleri",
+          "name": "Enerji İçecekleri",
+          "foods": [
+            {
+              "id": "icecek__enerji-icecekleri__enerji-icecegi",
+              "name": "Enerji içeceği",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 39
+            },
+            {
+              "id": "icecek__enerji-icecekleri__sporcu-icecegi",
+              "name": "Sporcu içeceği",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 40
+            }
+          ]
+        },
+        {
+          "id": "icecek__alkolsuz-gazli",
+          "name": "Alkolsüz Gazlı",
+          "foods": [
+            {
+              "id": "icecek__alkolsuz-gazli__kola",
+              "name": "Kola",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 41
+            },
+            {
+              "id": "icecek__alkolsuz-gazli__light-kola",
+              "name": "Light kola",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 42
+            },
+            {
+              "id": "icecek__alkolsuz-gazli__limonata",
+              "name": "Limonata",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 43
+            },
+            {
+              "id": "icecek__alkolsuz-gazli__gazoz",
+              "name": "Gazoz",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 44
+            }
+          ]
+        },
+        {
+          "id": "icecek__alkollu-genel-bilgi-amacli",
+          "name": "Alkollü (genel bilgi amaçlı)",
+          "foods": [
+            {
+              "id": "icecek__alkollu-genel-bilgi-amacli__sarap",
+              "name": "Şarap",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 45
+            },
+            {
+              "id": "icecek__alkollu-genel-bilgi-amacli__bira",
+              "name": "Bira",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 46
+            },
+            {
+              "id": "icecek__alkollu-genel-bilgi-amacli__kokteyl",
+              "name": "Kokteyl",
+              "sourceBlockIndex": 11,
+              "sourceRowNumber": 47
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

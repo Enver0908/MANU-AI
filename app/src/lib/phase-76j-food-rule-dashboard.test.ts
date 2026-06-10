@@ -37,6 +37,33 @@ describe("phase 76j food rule dashboard", () => {
     expect(merged.diet_type_rules).toBe("Vegan");
   });
 
+  it("serializes hierarchical catalog selections into expanded forbidden fields", () => {
+    const state = {
+      ...loadFoodRuleDashboardState(buildPhase70QualifiedClientAnswers()),
+      forbiddenFoodItems: ["manual-only"],
+      forbiddenFoodGroups: ["manual-group"],
+      forbiddenCatalogMainCategoryIds: ["sut-urunleri"],
+      forbiddenCatalogSubCategoryIds: ["yag__hayvansal-yaglar"],
+      forbiddenCatalogFoodIds: ["yumurta__tavuk-yumurtasi__tavuk-yumurtasi"],
+    };
+
+    const rebuilt = buildFoodRuleAnswersFromDashboardState(state);
+    expect(rebuilt.food_catalog_version).toBe("phase-77d-master-food-catalog-v1");
+    expect(rebuilt.food_catalog_forbidden_main_category_ids).toEqual(["sut-urunleri"]);
+    expect(rebuilt.food_catalog_forbidden_sub_category_ids).toEqual(["yag__hayvansal-yaglar"]);
+    expect(String(rebuilt.forbidden_food_items)).toContain("Tam yağlı süt");
+    expect(String(rebuilt.forbidden_food_items)).toContain("Tereyağı");
+    expect(String(rebuilt.forbidden_food_items)).toContain("Tavuk yumurtası");
+    expect(rebuilt.forbidden_food_groups).toEqual(
+      expect.arrayContaining(["manual-group", "Süt Ürünleri", "Süt", "Hayvansal Yağlar"]),
+    );
+
+    const loaded = loadFoodRuleDashboardState(rebuilt);
+    expect(loaded.forbiddenFoodItems).toEqual(["manual-only"]);
+    expect(loaded.forbiddenFoodGroups).toEqual(["manual-group"]);
+    expect(loaded.forbiddenCatalogMainCategoryIds).toEqual(["sut-urunleri"]);
+  });
+
   it("increments context revision, syncs restrictions, and audits food-rule saves", () => {
     const state = createInitialState();
     const beforeRevision = state.clients.find((client) => client.id === "client-mert")?.contextRevision || 0;

@@ -6,9 +6,9 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 This repository is a local SaaS/PWA pilot prototype and architecture workspace. It is not a production-connected system yet.
 
-**Latest phase:** Phase 77C client personal form v2 (2026-06-10). **Production pilot:** `NO-GO` (all eight launch gates open; R-405 open).
+**Latest phase:** Phase 77D master food catalog hierarchy (2026-06-10). **Production pilot:** `NO-GO` (all eight launch gates open; R-405 open).
 
-**Latest verification:** Phase 77C verified on 2026-06-10: `npm run release:verify` passed with core tests 165/165, app tests 284/284, lint with two pre-existing warnings, production build, and only documented R-405 findings. RLS remains pending when local Supabase is unavailable. Phase 77C loads the first client personal form v2; Phase 77B manual source authority boundary remains the next safety-boundary phase.
+**Latest verification:** Phase 77D verified on 2026-06-10: `npm run release:verify` passed with core tests 165/165, app tests 293/293, lint with two pre-existing warnings, production build, and only documented R-405 findings. RLS remains pending when local Supabase is unavailable. Phase 77D loads the user-supplied `Besin Veritabani` as a hierarchical master food catalog and bridges main/sub/food forbidden checkbox selections into existing food-rule answers; Phase 77B chat mutation removal remains open.
 
 The current implementation includes:
 
@@ -55,6 +55,7 @@ The current implementation includes:
 - Phase 77A manual source authority rebaseline: canonical PRD/tech spec for removing chat-based form/food-rule/menu mutation, introducing personal form v2, user-supplied master food catalog, client food-rule profile v2, four-template menu plan/export, Food Decision Engine V2, and adapting the Phase 76D-76O food-rule track before WhatsApp production adapter work
 - Phase 77 master implementation plan: detailed phase-by-phase execution plan in `docs/PHASE_77_MASTER_IMPLEMENTATION_PLAN.md`
 - Phase 77C client personal form v2: user-supplied first form loaded into the dynamic form registry with phone/WhatsApp identity fields, goal and target-weight fields, general and goal-based flexibility, nutrition-history/lifestyle/medical/digestive fields, and prompt privacy rules; food-group and meal flexibility remain deferred to food-rule and menu forms
+- Phase 77D master food catalog hierarchy: user-supplied `manual.xlsx` / `Besin Veritabani` extracted into a 12-category, 113-subcategory, 518-food catalog with stable ids, checksums, exact lookup, and dashboard checkbox expansion for forbidden main categories, subcategories, and foods
 - Post-Phase 65 direct 100-dietitian completion plan in `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`, locking the no-small-ring 5,000-client production pilot target, product communication covenant, approved-source answerability path, and user-document timing
 
 ## Safety Model

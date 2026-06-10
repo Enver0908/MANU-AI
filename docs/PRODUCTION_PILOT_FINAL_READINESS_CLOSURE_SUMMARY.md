@@ -4,15 +4,15 @@ Date: 2026-06-04
 
 ## Status
 
-This is the final summary for the 13-phase completion roadmap, updated through the Phase 43-77C local hardening track, including Phase 77A manual source authority rebaseline and Phase 77C client personal form v2.
+This is the final summary for the 13-phase completion roadmap, updated through the Phase 43-77D local hardening track, including Phase 77A manual source authority rebaseline, Phase 77C client personal form v2, and Phase 77D master food catalog hierarchy.
 
 Production pilot is not approved.
 
-Latest local roadmap state adds Phase 77A manual source authority rebaseline and Phase 77C client personal form v2; Phase 77B and Phase 77D-77K remain open before WhatsApp production adapter work.
+Latest local roadmap state adds Phase 77A manual source authority rebaseline, Phase 77C client personal form v2, and Phase 77D master food catalog hierarchy; Phase 77B and Phase 77E-77K remain open before WhatsApp production adapter work.
 
 No real WhatsApp, Telegram, Gemini, external LLM provider, email, push, monitoring, analytics, secret manager, backup provider, or real client health data is connected.
 
-Post-Phase 77C strategic roadmap: `DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` now defines the direct production pilot path as 100 dietitians x 50 clients, with no small production ring, and inserts the Phase 77A-77K manual source authority rebaseline before WhatsApp production adapter work. Product communication covenant enforcement, approved-source answerability, green intent taxonomy, local direct 5,000-client scale foundation, user-supplied form hardening, Turkiye official source manifest/intake, draft permission graph artifacts, draft health regulation calibration matrix, draft retention/export/DSAR transactional redaction contract extended to structured food rules and client update proposals, draft Gemini provider gate artifacts with blocked real egress, dietitian-approved chat-to-form update proposals, expanded safety-profile proposal updates, the Phase 76C structured food-rule green capacity PRD/tech spec, Phase 76D structured food-rule registry/model fields, Phase 76E deterministic food-rule engine evidence, Phase 76F intent-specific answerability evidence, Phase 76G local second-layer false-yellow calibration evidence, Phase 76H local product ingredient verification evidence, Phase 76I bounded food-rule PromptContext/output guard evidence, Phase 76J dashboard food-rule management UX evidence, Phase 76K chat-to-food-rule proposal evidence, Phase 76L permission graph runtime bridge evidence, Phase 76M calibration/metrics evidence, Phase 76N Supabase export/redaction/transactional RPC evidence, Phase 76O 100x50 food-mix rehearsal evidence, Phase 76P consolidated continuity/gate documentation, Phase 76Q verify+commit track closure, Phase 77A manual source authority PRD/tech spec, and Phase 77C client personal form v2 are present locally; downstream Phase 77B and Phase 77D-77K implementation, WhatsApp production adapter work, external legal/privacy approval of lifecycle and provider policy, external qualified dietitian approval of food-decision and second-layer behavior, final production form/PDF/catalog/menu approvals, Phase 76N RLS re-run when local Supabase is available, full production rehearsal acceptance, external gates, and R-405 closure/acceptance remain required before production GO.
+Post-Phase 77D strategic roadmap: `DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` now defines the direct production pilot path as 100 dietitians x 50 clients, with no small production ring, and inserts the Phase 77A-77K manual source authority rebaseline before WhatsApp production adapter work. Product communication covenant enforcement, approved-source answerability, green intent taxonomy, local direct 5,000-client scale foundation, user-supplied form hardening, Turkiye official source manifest/intake, draft permission graph artifacts, draft health regulation calibration matrix, draft retention/export/DSAR transactional redaction contract extended to structured food rules and client update proposals, draft Gemini provider gate artifacts with blocked real egress, dietitian-approved chat-to-form update proposals, expanded safety-profile proposal updates, the Phase 76C structured food-rule green capacity PRD/tech spec, Phase 76D structured food-rule registry/model fields, Phase 76E deterministic food-rule engine evidence, Phase 76F intent-specific answerability evidence, Phase 76G local second-layer false-yellow calibration evidence, Phase 76H local product ingredient verification evidence, Phase 76I bounded food-rule PromptContext/output guard evidence, Phase 76J dashboard food-rule management UX evidence, Phase 76K chat-to-food-rule proposal evidence, Phase 76L permission graph runtime bridge evidence, Phase 76M calibration/metrics evidence, Phase 76N Supabase export/redaction/transactional RPC evidence, Phase 76O 100x50 food-mix rehearsal evidence, Phase 76P consolidated continuity/gate documentation, Phase 76Q verify+commit track closure, Phase 77A manual source authority PRD/tech spec, Phase 77C client personal form v2, and Phase 77D master food catalog hierarchy are present locally; downstream Phase 77B and Phase 77E-77K implementation, WhatsApp production adapter work, external legal/privacy approval of lifecycle and provider policy, external qualified dietitian approval of food-decision and second-layer behavior, final production form/PDF/catalog/menu approvals, Phase 76N RLS re-run when local Supabase is available, full production rehearsal acceptance, external gates, and R-405 closure/acceptance remain required before production GO.
 
 ## Go / No-Go Decision
 
@@ -58,6 +58,7 @@ Reason:
 - Phase 76B expanded local chat proposals to safety-profile form fields with editable rows and manual-only operational warnings. It did not allow AI active/passive, AI mode, channel permission, red lock, yellow hold, or autopilot/reactivation mutation from chat; it did not close any launch gate, connect a provider or channel, process real data, or resolve R-405.
 - Phase 77A added the manual source authority rebaseline spec. It moves WhatsApp production adapter after Phase 77A-77K, locks deterministic-only v1 catalog/alias/keyword matching for out-of-catalog food questions, requires Phase 68 taxonomy recalibration for safe `discourage` replies, defines Food Decision V2 send semantics, establishes active menu as the primary plan source, and records Phase 76D-76O artifact disposition. `npm run release:verify` passed on 2026-06-10 with core tests 165/165, app tests 284/284, lint with two pre-existing warnings, production build, and only documented R-405 findings. It did not implement runtime behavior, add schema, close any launch gate, connect a provider or channel, process real data, or resolve R-405.
 - Phase 77C loaded the first client personal form v2 into the dynamic form registry with required phone and WhatsApp identity fields, general and goal flexibility, user-supplied personal/nutrition/medical/lifestyle fields, prompt-hidden sensitive fields, and compatibility seed data. It did not close any launch gate, connect a provider or channel, process real data, approve production identity reconciliation, implement the food list/menu forms, remove chat mutation, or resolve R-405.
+- Phase 77D loaded the user-supplied `manual.xlsx` / `Besin Veritabani` sheet as a versioned master food catalog hierarchy with 12 main categories, 113 subcategories, 518 foods, stable ids, source checksums, QA validation, exact lookup, dashboard forbidden checkbox controls, and expansion into existing food-rule answers. It did not close any launch gate, connect a provider or channel, process real data, approve production catalog semantics, implement Food Decision Engine V2, implement alias/ingredient matching, implement menus/export, remove chat mutation, or resolve R-405.
 
 ## Completion Roadmap Result
 
@@ -129,11 +130,11 @@ External approvals:
 
 ## Verification
 
-Latest local release verification after Phase 77C client personal form v2:
+Latest local release verification after Phase 77D master food catalog hierarchy:
 
 - `npm run release:verify` passed on 2026-06-10.
 - Core tests: 165/165 passed.
-- App tests: 284/284 passed.
+- App tests: 293/293 passed.
 - App lint: passed with two pre-existing warnings.
 - Production build: passed.
 - Production dependency audit gate passed with only documented R-405 findings.
@@ -193,8 +194,8 @@ Phase 50 verification on 2026-06-02:
 ## Next Required Actions
 
 1. Complete Phase 77B by removing chat-based form, food-rule, and menu mutation while preserving off-channel Critical Context updates.
-2. Ingest the user-supplied food list as a versioned catalog with QA, deterministic matching tests, aliases, forbidden/allowed semantics, and checksum evidence.
-3. Implement the client food-rule profile v2, menu-plan forms, Food Decision Engine V2, PromptContext/output guards, exports, lifecycle coverage, and 100x50 rehearsal across Phase 77D-77K.
+2. Implement the client food-rule profile v2, menu-plan forms, Food Decision Engine V2, PromptContext/output guards, exports, lifecycle coverage, and 100x50 rehearsal across Phase 77E-77K.
+3. Extend catalog-aware deterministic matching in Phase 77G with alias/ingredient confidence thresholds and false-positive golden cases before any production client-facing catalog decision.
 4. Apply Phase 65 official health-regulation PDF corpus QA to the user-supplied PDFs, then collect reviewed corpus approval before active scope-guard use.
 5. Resolve R-405 through a safe stable Next.js/PostCSS upgrade or obtain formal external risk acceptance.
 6. Collect sanitized external approval references in `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` and map them through the Phase 64 structured evidence engine.

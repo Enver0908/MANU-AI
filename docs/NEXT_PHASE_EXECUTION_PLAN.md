@@ -8,7 +8,7 @@ Real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret ma
 
 The most recent execution layers after the 13-phase completion roadmap are Phase 76B expanded chat form safety updates, Phase 76A dietitian chat form update proposals, Phase 75 Gemini provider gate, Phase 74 data lifecycle DSAR policy, Phase 73 health regulation calibration, Phase 72 regulation permission graph, Phase 71 Turkiye official health source ingestion, Phase 70 user-supplied form hardening, Phase 43 multilingual language support, Phase 44 red-risk reactivation lock, Phase 45 client removal data lifecycle, Phase 46 WhatsApp group quarantine, Phase 47 RLS quarantine evidence coverage, Phase 48 R-405 stable patch recheck, Phase 49 safety/orchestration hardening, Phase 50 production Supabase hardening, Phase 51 transactional RPC coverage, Phase 52 integration test coverage, Phase 53 scale/broad read contracts, Phase 54 R-405/launch-gate recheck, Phase 55 audit remediation safety boundary, Phase 56 clinical safety second-layer local evidence, Phase 57 yellow-risk hold/draft refresh, Phase 58 dietitian client language control, Phase 59 architecture review remediation, Phase 60 audit remediation, Phase 61 scope guard (RAG + LLM) second layer mock-first, Phase 62 architecture review remediation wave 2, Phase 63 production pilot GO rebaseline, Phase 64 structured launch-gate evidence engine, Phase 65 official regulation PDF corpus QA foundation, Phase 66 product communication covenant lock, Phase 67 approved source answerability engine, Phase 68 green maximization intent taxonomy, and Phase 69 direct 5,000 client scale foundation. Phase 76B expands the reviewed proposal path to Phase 70 clinical/safety form flags, editable proposal rows, supported health-profile mirrors, and manual-control warnings while keeping AI active/passive, mode, channel permission, red/yellow lock resolution, and autopilot/reactivation outside chat mutation. Phase 65 adds a typed QA foundation so user-supplied official PDFs must have source metadata, checksums, page extraction evidence, page/section references, derived rule drafts, corpus version, and synthetic golden cases before PDF-derived scope rules can become draft rules. Phase 71 adds the user-supplied 14-source Turkiye official source manifest and fail-closed artifact intake into that QA contract without approving any corpus. Phase 66 locks client-facing AI communication locally: AI self-disclosure, AI limitation disclaimers, doctor/dietitian/professional referral language, yellow/red AI sends, and non-green draft approval are blocked before client-facing send. Phase 67 gates green provider calls/sends on approved source support and excludes AI-generated messages from source authority. Phase 68 records green intent taxonomy evidence after answerability and blocks green-looking sensitive intent before provider generation without downgrading yellow/red decisions. Phase 69 adds synthetic 100 dietitian x 50 client scale evidence, cursor pagination helpers, Phase 69 read contracts, and aggregate operational-health scale signals. The post-Phase 65 strategic completion plan is now `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`: production pilot is direct 100 dietitians x 50 clients (minimum 5,000 clients), no small production ring, green maximization is source-backed, and client-facing output must never disclose AI identity or refer the client to a doctor/dietitian/professional. The production-pilot decision remains `NO-GO`: all eight launch gates remain open and R-405 remains open. R-406 is now mitigated in the local prototype after Docker Desktop/local Supabase was started, the Phase 50 migration was applied, and `npm run test:rls` passed with 19/19 tests on 2026-06-02. Draft review, form response, client context update, handoff status, and red-risk reactivation now use transactional RPC commits locally; remaining broad reads are classified in a test-covered contract, while client removal/anonymization bulk redaction and external approval intake remain future production hardening work. R-310 is partially mitigated locally by deterministic second-layer evidence, Phase 57 yellow supervision, Phase 59 glucose/symptom hardening, Phase 61 escalate-only scope guard (default no-op until approved corpus), Phase 65 corpus QA foundation, Phase 66 covenant send blocking, Phase 67 source answerability, and Phase 68 green intent taxonomy, but qualified dietitian approval, official PDF corpus approval, and the clinical taxonomy launch gate remain open.
 
-Current override after Phase 77C: the first client personal form v2 is loaded locally; Phase 77B manual source authority boundary is next, followed by Phase 77D-77K for the user-supplied food catalog, client food-rule profile v2, menu forms/export, Food Decision Engine V2, PromptContext/output guard adaptation, UX simplification, lifecycle/calibration/rehearsal closure, and only then WhatsApp production adapter work.
+Current override after Phase 77D: the first client personal form v2 is loaded locally and the user-supplied `Besin Veritabani` is loaded as a hierarchical master food catalog. Phase 77B manual source authority boundary remains open, followed by Phase 77E-77K for client food-rule profile v2, menu forms/export, Food Decision Engine V2, PromptContext/output guard adaptation, UX simplification, lifecycle/calibration/rehearsal closure, and only then WhatsApp production adapter work.
 
 ## Post-Phase 65 Strategic Completion Plan - Added 2026-06-05
 
@@ -29,7 +29,7 @@ Locked decisions:
 Next implementation order:
 
 1. Phase 77B manual source authority boundary: remove chat-based form/food-rule/menu mutation while preserving panel-only Critical Context and read-only internal copilot.
-2. Phase 77D-77K manual source authority rebaseline track: user-supplied master food catalog, client food-rule profile v2, menu plan/export, Food Decision Engine V2, PromptContext/answerability/output guard adaptation, simplified dietitian UX, lifecycle/calibration/rehearsal closure. Phase 77C personal form v2 is already loaded locally.
+2. Phase 77E-77K manual source authority rebaseline track: client food-rule profile v2, menu plan/export, Food Decision Engine V2, PromptContext/answerability/output guard adaptation, simplified dietitian UX, lifecycle/calibration/rehearsal closure. Phase 77C personal form v2 and Phase 77D master food catalog hierarchy are already loaded locally.
 3. WhatsApp production adapter after Phase 77A-77K is complete.
 4. Production ops, R-405 closure/acceptance, full rehearsal acceptance, and external launch-gate closure.
 
@@ -70,7 +70,26 @@ Status:
 
 Next:
 
-- Proceed to Phase 77B manual source authority boundary before implementing the food catalog/profile/menu phases.
+- Proceed to Phase 77B manual source authority boundary before implementing the client food-rule profile and menu phases.
+
+## Phase 77D: Master Food Catalog Hierarchy - Completed 2026-06-10
+
+Goal: load the user-supplied `Besin Veritabani` food list as a global hierarchy and make forbidden main-category, subcategory, and food selections available to the dietitian dashboard.
+
+Status:
+
+- Added `docs/PHASE_77D_MASTER_FOOD_CATALOG_SPEC.md`.
+- Extracted `manual.xlsx` / `Besin Veritabani` into a repo-versioned catalog data file with source workbook and record-set checksums.
+- Added typed catalog validation, stats, exact lookup, and forbidden selection expansion helpers.
+- Loaded 12 main categories, 113 subcategories, and 518 foods with stable ids.
+- Extended `FoodRulesPanel` with hierarchical checkbox controls for forbidden main categories, subcategories, and individual foods.
+- Saved selected ids and expanded forbidden food/group names into existing food-rule answers for Phase 76 runtime compatibility.
+- Food Decision Engine V2, alias/keyword confidence, menu conflict handling, real provider/channel activation, launch-gate approval, real-data handling, and R-405 status did not change.
+- Production pilot remains `NO-GO`.
+
+Next:
+
+- Proceed to Phase 77B manual source authority boundary, then Phase 77E client food-rule profile v2.
 
 ## Phase 76Q: Verification and Commit Protocol - Completed 2026-06-08
 
