@@ -40,7 +40,7 @@ The scripts use `--webpack` because Turbopack did not resolve the local symlinke
 
 `npm run release:verify` runs the core package tests, lint, unit/API tests, production build, and the production dependency audit gate. It allows only the documented R-405 Next.js/PostCSS finding and does not run `npm audit fix --force`.
 
-Latest local release verification on 2026-06-10 passed after Phase 77D with core tests 165/165, app tests 293/293, lint with two pre-existing warnings, production build, and only the documented R-405 production audit finding. Phase 77D loads the user-supplied master food catalog hierarchy and bridges forbidden catalog checkbox selections into existing food-rule answers. Phase 77B manual source authority boundary remains open; WhatsApp production adapter moves after Phase 77A-77K.
+Latest local release verification on 2026-06-10 passed after Phase 77B with core tests 165/165, app tests 289/289, lint with two pre-existing warnings, production build, and only the documented R-405 production audit finding. Phase 77B blocks chat proposal create/apply and keeps personal form/food-rule edits on dashboard panels only. Next open phase is Phase 77E; WhatsApp production adapter moves after Phase 77A-77K.
 
 Phase 29 is documentation/evidence hardening only. It keeps production pilot blocked, records that stable `next@latest` 16.2.6 still bundles `postcss@8.4.31`, and requires local Supabase before RLS evidence can be counted as passed.
 
@@ -107,7 +107,7 @@ $env:SUPABASE_TELEMETRY_DISABLED='1'; npx supabase migration repair --local --st
 - Multilingual language support for Turkish, English, German, French, Spanish, Portuguese, and Czech, including dietitian dashboard language, client communication language, client phone identity, form language metadata, localized mock replies, and localized safe handoff acknowledgements (Phase 43)
 - Read-only internal dietitian `Copilot` tab and `/api/internal-copilot/messages` API using curated tenant-scoped local/mock tools with source refs (Phase 26)
 - Dietitian-entered Critical Context panel and `/api/clients/[id]/context-updates` for phone, Zoom, in-person, or other non-chat client updates (Phase 27)
-- Dietitian chat-to-form update proposals with explicit apply/reject, allowlisted additive patches, context revision checks, audit evidence, and `/api/clients/[id]/update-proposals` routes (Phase 76A)
+- Historical dietitian chat-to-form update proposals remain readable for audit/export/redaction, but Phase 77B blocks create/apply and removes dashboard propose/apply controls; manual form and food-rule edits use dashboard panels (Phase 76A deprecated by 77B)
 - Expanded chat form/safety updates for pregnancy, adult/minor status, diagnosis, medication/insulin, lab, symptom, and eating-disorder form flags while keeping AI/channel/lock controls manual (Phase 76B)
 - AI security remediation with provider-attempt audit semantics, PromptContext source metadata, send-time draft revalidation, provider segment allowlist, tenant-aware channel/idempotency uniqueness, and scoped RLS/RBAC helper policies (Phase 28)
 - Inbound simulator wired to `handleInboundMessage`

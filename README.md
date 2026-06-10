@@ -6,9 +6,9 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 This repository is a local SaaS/PWA pilot prototype and architecture workspace. It is not a production-connected system yet.
 
-**Latest phase:** Phase 77D master food catalog hierarchy (2026-06-10). **Production pilot:** `NO-GO` (all eight launch gates open; R-405 open).
+**Latest phase:** Phase 77B manual source authority boundary (2026-06-10). **Production pilot:** `NO-GO` (all eight launch gates open; R-405 open).
 
-**Latest verification:** Phase 77D verified on 2026-06-10: `npm run release:verify` passed with core tests 165/165, app tests 293/293, lint with two pre-existing warnings, production build, and only documented R-405 findings. RLS remains pending when local Supabase is unavailable. Phase 77D loads the user-supplied `Besin Veritabani` as a hierarchical master food catalog and bridges main/sub/food forbidden checkbox selections into existing food-rule answers; Phase 77B chat mutation removal remains open.
+**Latest verification:** Phase 77B verified on 2026-06-10: `npm run release:verify` passed with core tests 165/165, app tests 289/289, lint with two pre-existing warnings, production build, and only documented R-405 findings. RLS remains pending when local Supabase is unavailable. Chat-based form/food-rule/menu mutation is blocked; personal form and food rules are manual dashboard paths only; internal copilot stays read-only.
 
 The current implementation includes:
 
@@ -35,7 +35,7 @@ The current implementation includes:
 - Phase 73 health regulation calibration: 14-source decision matrix, golden-case labeling suite, copilot/autopilot calibration evaluation, and acceptance metrics with zero unsafe-green violations on bundled cases
 - Phase 75 Gemini provider gate: forbidden/unpaid consumer surfaces, paid Vertex/Gemini Enterprise target surface, green/yellow model routing, training/logging/retention policy, health-data eligibility checklist, PromptContext allowlist enforcement, and `MANU_ALLOW_REAL_GEMINI` egress gate
 - Phase 74 data lifecycle policy: retention/export/DSAR SLA artifacts, transactional redaction contract with invariant checks, ZIP-style export manifest with checksums, and operational exclusion for removed clients
-- Phase 76A dietitian chat form update proposals: internal copilot proposal-only mutation path, deterministic allowlisted extraction, explicit dietitian apply/reject, stale revision checks, audit/context revision evidence, draft invalidation, Supabase table/API support, and DSAR redaction coverage
+- Phase 76A dietitian chat form update proposals (deprecated by Phase 77B): historical proposal records remain for audit/export/redaction; create/apply paths are blocked and dashboard controls are read-only
 - Phase 76B expanded chat form safety updates: the same proposal card can now update Phase 70 clinical/safety form flags and supported client health-profile mirrors, while AI active/passive, mode, channel permission, and red/yellow lock controls remain manual
 - Phase 76C structured food rule green capacity spec: canonical PRD/tech spec for source-backed forbidden-food reminders, allowed-food confirmations, approved equivalent substitutions, diet-type compatibility, optional skip tolerance, and trusted product-ingredient verification before WhatsApp production adapter work
 - Phase 76D structured food rule data model: registry-backed structured food-rule fields, parsing/validation helpers, autopilot food-rule completeness gates, client allergy/restriction sync on form save, and demo seed coverage
@@ -56,6 +56,7 @@ The current implementation includes:
 - Phase 77 master implementation plan: detailed phase-by-phase execution plan in `docs/PHASE_77_MASTER_IMPLEMENTATION_PLAN.md`
 - Phase 77C client personal form v2: user-supplied first form loaded into the dynamic form registry with phone/WhatsApp identity fields, goal and target-weight fields, general and goal-based flexibility, nutrition-history/lifestyle/medical/digestive fields, and prompt privacy rules; food-group and meal flexibility remain deferred to food-rule and menu forms
 - Phase 77D master food catalog hierarchy: user-supplied `manual.xlsx` / `Besin Veritabani` extracted into a 12-category, 113-subcategory, 518-food catalog with stable ids, checksums, exact lookup, and dashboard checkbox expansion for forbidden main categories, subcategories, and foods
+- Phase 77B manual source authority boundary: blocks chat proposal create/apply for form, food rules, and future menu authority; keeps internal copilot read-only and Critical Context panel-only; preserves deprecated historical proposal artifacts
 - Post-Phase 65 direct 100-dietitian completion plan in `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`, locking the no-small-ring 5,000-client production pilot target, product communication covenant, approved-source answerability path, and user-document timing
 
 ## Safety Model

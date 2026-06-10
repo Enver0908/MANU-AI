@@ -649,14 +649,15 @@ Phase 61 scope guard (RAG + LLM) second layer mock-first completed locally on 20
 
 Phase 77A manual source authority rebaseline completed locally on 2026-06-10: added `docs/PHASE_77A_MANUAL_SOURCE_AUTHORITY_REBASELINE_SPEC.md`, moved WhatsApp production adapter after the Phase 77A-77K manual source authority track, locked v1 out-of-catalog food inference to deterministic catalog/alias/keyword matching only, defined Food Decision V2 semantics, and preserved production pilot `NO-GO`.
 
-Phase 77C client personal form v2 completed locally on 2026-06-10: added `docs/PHASE_77C_CLIENT_PERSONAL_FORM_V2_SPEC.md` and loaded the user-supplied first client form into the dynamic form registry with phone/WhatsApp identity, general and goal flexibility, anthropometric/lifestyle/medical/nutrition-history/digestive fields, and prompt visibility metadata. Phase 77B chat mutation removal remains open.
+Phase 77B manual source authority boundary completed locally on 2026-06-10: added `docs/PHASE_77B_MANUAL_SOURCE_BOUNDARY_SPEC.md`, blocked chat proposal create/apply with `chat_source_mutation_disabled`, removed dashboard propose/apply controls, preserved read-only historical proposals, and kept internal copilot read-only plus Critical Context panel-only.
+
+Phase 77C client personal form v2 completed locally on 2026-06-10: added `docs/PHASE_77C_CLIENT_PERSONAL_FORM_V2_SPEC.md` and loaded the user-supplied first client form into the dynamic form registry with phone/WhatsApp identity, general and goal flexibility, anthropometric/lifestyle/medical/nutrition-history/digestive fields, and prompt visibility metadata.
 
 Phase 77D master food catalog hierarchy completed locally on 2026-06-10: added `docs/PHASE_77D_MASTER_FOOD_CATALOG_SPEC.md`, extracted the user-supplied `manual.xlsx` / `Besin Veritabani` sheet into a versioned catalog with 12 main categories, 113 subcategories, 518 foods, workbook/record-set checksums, stable ids, QA validation, exact lookup, and dashboard forbidden checkbox expansion for main category, subcategory, and food selections. Food Decision Engine V2, alias/ingredient matching, menu forms, production approval, provider/channel integration, and R-405 closure remain open.
 
 Tasks:
 
-1. Complete Phase 77B manual source authority boundary: remove chat-based form/food-rule/menu mutation while preserving panel-only Critical Context and read-only internal copilot.
-2. Continue Phase 77E-77K manual source authority track: client food-rule profile v2, four-template menu plan/export, Food Decision Engine V2, PromptContext/answerability/output guard adaptation, UX simplification, lifecycle/calibration/rehearsal closure. Phase 77C personal form v2 and Phase 77D master food catalog hierarchy are already loaded locally.
+1. Continue Phase 77E-77K manual source authority track: client food-rule profile v2, four-template menu plan/export, Food Decision Engine V2, PromptContext/answerability/output guard adaptation, UX simplification, lifecycle/calibration/rehearsal closure. Phase 77B boundary, Phase 77C personal form v2, and Phase 77D master food catalog hierarchy are already loaded locally.
 3. Complete WhatsApp production adapter only after Phase 77A-77K is closed.
 4. Complete remaining production gates (ops, R-405 closure, full 100x50 rehearsal acceptance, external launch-gate closure).
 5. Keep real Gemini/WhatsApp/monitoring/secret/real data disconnected until their gated phases.

@@ -162,6 +162,8 @@ Done:
 
 ## Phase 77B: Manual Source Boundary And Chat Mutation Removal
 
+Status: Implemented locally on 2026-06-10 through `docs/PHASE_77B_MANUAL_SOURCE_BOUNDARY_SPEC.md`.
+
 Goal:
 
 Remove chat-based mutation for form, food rules, and future menu while preserving a read-only AI copilot and panel-only Critical Context updates.
@@ -210,7 +212,7 @@ Done criteria:
 
 ## Phase 77C: Client Personal Form V2
 
-Status: Implemented locally on 2026-06-10 through `docs/PHASE_77C_CLIENT_PERSONAL_FORM_V2_SPEC.md`. Phase 77B still remains open because the user explicitly asked to load the first form before sending the food list.
+Status: Implemented locally on 2026-06-10 through `docs/PHASE_77C_CLIENT_PERSONAL_FORM_V2_SPEC.md`.
 
 Goal:
 
@@ -275,7 +277,7 @@ Done criteria:
 
 ## Phase 77D: Master Food Catalog V1
 
-Status: Implemented locally on 2026-06-10 through `docs/PHASE_77D_MASTER_FOOD_CATALOG_SPEC.md`. Phase 77B still remains open because the user explicitly asked to load the form and food list first.
+Status: Implemented locally on 2026-06-10 through `docs/PHASE_77D_MASTER_FOOD_CATALOG_SPEC.md`.
 
 Goal:
 
@@ -819,4 +821,4 @@ Before implementation can complete:
 - Food Decision Engine V2, alias/ingredient matching, menu forms, export, and production catalog approval remain open.
 - Providers/channels remain disconnected.
 - Production pilot remains NO-GO.
-- Next implementation phase is Phase 77B.
+- Next implementation phase is Phase 77E.

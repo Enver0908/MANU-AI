@@ -17,11 +17,11 @@ These rules are non-negotiable and apply to every future phase:
 - Autopilot is not globally enabled for all 5,000 clients by default. It is enabled only for selected qualified clients after all gates, monitoring, and rollback controls are ready.
 
 ## Current Baseline
-- Latest completed implementation phase: Phase 77D master food catalog hierarchy (2026-06-10).
+- Latest completed implementation phase: Phase 77B manual source authority boundary (2026-06-10).
 - Latest roadmap rebaseline: Phase 77A manual source authority rebaseline spec (2026-06-10).
 - Detailed Phase 77 implementation plan: `docs/PHASE_77_MASTER_IMPLEMENTATION_PLAN.md`.
 - Latest completed implementation phase before 76C: Phase 76B expanded chat form safety updates.
-- Latest verification: Phase 77D `npm run release:verify` passed on 2026-06-10 with core tests 165/165, app tests 293/293, lint with two pre-existing warnings, production build, and only documented R-405 findings.
+- Latest verification: Phase 77B `npm run release:verify` passed on 2026-06-10 with core tests 165/165, app tests 289/289, lint with two pre-existing warnings, production build, and only documented R-405 findings.
 - Production pilot status: `NO-GO`.
 - Real WhatsApp, Gemini, monitoring, secret manager, and real client health data remain disconnected.
 - Existing usable foundations:
@@ -60,7 +60,14 @@ Completed:
 - Kept food-group flexibility out of this form for Client Food Rule Profile V2 and meal flexibility out of this form for Menu Plan V1.
 - Removed Phase 76D structured food-rule fields from the active personal form schema while preserving demo legacy answers for temporary Phase 76 runtime compatibility.
 - No provider, channel, launch-gate approval, real-data handling, menu/export/catalog implementation, or R-405 status changed.
-- Production pilot remains `NO-GO`; Phase 77B chat mutation removal/manual source boundary remains open.
+- Production pilot remains `NO-GO`.
+
+## Phase 77B: Manual Source Authority Boundary - Completed 2026-06-10
+
+- Added `docs/PHASE_77B_MANUAL_SOURCE_BOUNDARY_SPEC.md`.
+- Blocked chat proposal create/apply; dashboard propose/apply controls removed; historical proposals remain read-only.
+- Internal copilot stays read-only; Critical Context stays panel-only.
+- Production pilot remains `NO-GO`; next open phase is Phase 77E client food-rule profile v2.
 
 ## Phase 77D: Master Food Catalog Hierarchy - Completed 2026-06-10
 Goal: load the user-supplied `Besin Veritabani` food list as a global hierarchical catalog and bridge forbidden checkbox selections into the existing food-rule save path.
@@ -74,7 +81,7 @@ Completed:
 - Added hierarchical checkbox controls so selecting a main category forbids all child subcategories/foods, selecting a subcategory forbids all foods under it, and selecting one food forbids only that food.
 - Saved expanded catalog selections into existing `forbidden_food_items` and `forbidden_food_groups` answers for Phase 76 runtime compatibility.
 - Food Decision Engine V2, alias confidence, catalog-aware out-of-catalog matching, menu conflict handling, provider/channel activation, launch-gate approval, real-data handling, and R-405 status remain unchanged.
-- Production pilot remains `NO-GO`; Phase 77B chat mutation removal/manual source boundary remains open.
+- Production pilot remains `NO-GO`.
 
 ## Phase 66: Product Communication Covenant Lock
 Goal: encode the fixed product laws into provider output safety, prompt contracts, tests, and continuity docs.

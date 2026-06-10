@@ -58,6 +58,10 @@ import {
   type FoodRuleDashboardState,
 } from "@/lib/phase-76j-food-rule-dashboard";
 import { getActiveFormSchema } from "@/lib/client-forms";
+import {
+  PHASE_77B_DEPRECATED_PROPOSAL_HEADLINE,
+  PHASE_77B_MANUAL_SOURCE_AUTHORITY_COPY,
+} from "@/lib/phase-77b-chat-mutation-boundary";
 import { useManuState } from "@/lib/use-manu-state";
 import { SUPPORTED_LANGUAGES, type SupportedLanguageCode } from "@/lib/languages";
 import { t, type DashboardMessageKey } from "@/lib/i18n";
@@ -125,8 +129,6 @@ export function DashboardApp({ authInfo }: { authInfo?: { displayName: string; r
     updateDietitianPreferences,
     addClientContextUpdate,
     sendInternalCopilotMessage,
-    createClientUpdateProposal,
-    applyClientUpdateProposal,
     rejectClientUpdateProposal,
   } = useManuState();
   const [view, setView] = useState<ViewKey>("overview");
@@ -347,30 +349,6 @@ export function DashboardApp({ authInfo }: { authInfo?: { displayName: string; r
       setView("copilot");
     } finally {
       setIsCopilotSending(false);
-    }
-  };
-
-  const proposeClientUpdate = async () => {
-    if (!selectedClient) return;
-    const trimmed = copilotInput.trim();
-    if (!trimmed || isProposalUpdating) return;
-    setIsProposalUpdating(true);
-    try {
-      await createClientUpdateProposal(selectedClient.id, trimmed);
-      setCopilotInput("");
-      setView("copilot");
-    } finally {
-      setIsProposalUpdating(false);
-    }
-  };
-
-  const applySelectedProposal = async (proposalId: string, proposedPatches?: ClientUpdateProposalPatch[]) => {
-    if (!selectedClient || isProposalUpdating) return;
-    setIsProposalUpdating(true);
-    try {
-      await applyClientUpdateProposal(selectedClient.id, proposalId, proposedPatches);
-    } finally {
-      setIsProposalUpdating(false);
     }
   };
 
@@ -678,8 +656,6 @@ export function DashboardApp({ authInfo }: { authInfo?: { displayName: string; r
                 updateProposals={selectedUpdateProposals}
                 onInput={setCopilotInput}
                 onAsk={askInternalCopilot}
-                onProposeUpdate={proposeClientUpdate}
-                onApplyProposal={applySelectedProposal}
                 onRejectProposal={rejectSelectedProposal}
               />
             )}
@@ -1752,8 +1728,6 @@ function CopilotPanel({
   updateProposals,
   onInput,
   onAsk,
-  onProposeUpdate,
-  onApplyProposal,
   onRejectProposal,
 }: {
   state: ManuAppState;
@@ -1764,8 +1738,6 @@ function CopilotPanel({
   updateProposals: ClientUpdateProposalRecord[];
   onInput: (value: string) => void;
   onAsk: (body?: string) => void;
-  onProposeUpdate: () => void;
-  onApplyProposal: (proposalId: string, proposedPatches?: ClientUpdateProposalPatch[]) => void;
   onRejectProposal: (proposalId: string) => void;
 }) {
   const messages = state.internalCopilotMessages.slice(-40);
@@ -1858,21 +1830,13 @@ function CopilotPanel({
             <Send size={16} />
             Ask
           </button>
-          <button
-            onClick={onProposeUpdate}
-            disabled={isProposalUpdating || !input.trim()}
-            className="inline-flex items-center justify-center gap-2 rounded-lg border border-emerald-900 bg-white px-4 py-2 text-sm font-semibold text-emerald-900 transition hover:bg-emerald-50 disabled:cursor-not-allowed disabled:opacity-60"
-            type="button"
-          >
-            <CheckCheck size={16} />
-            Propose update
-          </button>
         </div>
       </section>
 
       <aside className="rounded-lg border border-stone-200 bg-white p-4 shadow-sm">
         <h4 className="text-sm font-semibold">Read-only guarantees</h4>
         <div className="mt-3 space-y-3 text-sm text-stone-600">
+          <p>{PHASE_77B_MANUAL_SOURCE_AUTHORITY_COPY}</p>
           <p>Tools read only from visible scoped app state.</p>
           <p>Assistant and auditor roles are blocked from copilot chat in v1.</p>
           <p>Client messages and form answers are treated as untrusted data, not instructions.</p>
@@ -1880,17 +1844,17 @@ function CopilotPanel({
         </div>
 
         <div className="mt-5 border-t border-stone-100 pt-4">
-          <h4 className="text-sm font-semibold">Pending update proposals</h4>
+          <h4 className="text-sm font-semibold">Historical update proposals</h4>
+          <p className="mt-2 text-sm text-stone-500">{PHASE_77B_DEPRECATED_PROPOSAL_HEADLINE}</p>
           <div className="mt-3 space-y-3">
             {updateProposals.length === 0 ? (
-              <p className="text-sm text-stone-500">No chat-generated update proposals for this client.</p>
+              <p className="text-sm text-stone-500">No historical chat-generated proposals for this client.</p>
             ) : (
               updateProposals.slice(0, 5).map((proposal) => (
                 <UpdateProposalCard
                   key={proposal.id}
                   proposal={proposal}
                   isProposalUpdating={isProposalUpdating}
-                  onApplyProposal={onApplyProposal}
                   onRejectProposal={onRejectProposal}
                 />
               ))
@@ -1905,67 +1869,37 @@ function CopilotPanel({
 function UpdateProposalCard({
   proposal,
   isProposalUpdating,
-  onApplyProposal,
   onRejectProposal,
 }: {
   proposal: ClientUpdateProposalRecord;
   isProposalUpdating: boolean;
-  onApplyProposal: (proposalId: string, proposedPatches?: ClientUpdateProposalPatch[]) => void;
   onRejectProposal: (proposalId: string) => void;
 }) {
-  const [editing, setEditing] = useState(false);
-  const [draftPatches, setDraftPatches] = useState<ClientUpdateProposalPatch[]>(proposal.proposedPatches);
-  const groupedPatches = groupProposalPatches(draftPatches);
+  const groupedPatches = groupProposalPatches(proposal.proposedPatches);
 
   return (
     <article className="rounded-lg border border-stone-200 bg-stone-50 p-3">
       <div className="flex flex-wrap items-center gap-2">
+        <Badge label="deprecated" tone="stone" />
         <Badge
           label={proposal.status}
           tone={proposal.status === "pending" ? "amber" : proposal.status === "applied" ? "emerald" : "stone"}
         />
         <span className="text-xs font-medium text-stone-500">{formatTime(proposal.createdAt)}</span>
       </div>
+      <p className="mt-2 text-xs text-stone-500">{PHASE_77B_DEPRECATED_PROPOSAL_HEADLINE}</p>
       <p className="mt-2 whitespace-pre-wrap break-words text-sm text-stone-700">{proposal.sourceText}</p>
 
       {groupedPatches.map(([group, patches]) => (
         <div key={group} className="mt-3 space-y-2">
           <p className="text-xs font-semibold uppercase text-stone-500">{group}</p>
-          {patches.map((patch) => {
-            const patchIndex = draftPatches.indexOf(patch);
-            return (
-              <div key={`${patch.target}-${patch.fieldId}-${patch.value}-${patchIndex}`} className="rounded-lg border border-stone-200 bg-white p-2">
-                <div className="flex items-start justify-between gap-2">
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-semibold text-stone-800">{patch.label}</p>
-                    {editing ? (
-                      <input
-                        value={patch.value}
-                        onChange={(event) =>
-                          setDraftPatches((current) =>
-                            current.map((item, index) => (index === patchIndex ? { ...item, value: event.target.value } : item)),
-                          )
-                        }
-                        className="mt-2 w-full rounded-lg border border-stone-200 px-2 py-1 text-sm outline-none focus:border-emerald-700"
-                      />
-                    ) : (
-                      <p className="mt-1 break-words text-sm text-stone-600">{patch.value}</p>
-                    )}
-                    {patch.impactLabel && <p className="mt-1 text-xs text-stone-500">{patch.impactLabel}</p>}
-                  </div>
-                  {editing && (
-                    <button
-                      onClick={() => setDraftPatches((current) => current.filter((_, index) => index !== patchIndex))}
-                      className="rounded-lg border border-stone-200 px-2 py-1 text-xs font-semibold text-stone-600 hover:bg-stone-50"
-                      type="button"
-                    >
-                      Remove
-                    </button>
-                  )}
-                </div>
-              </div>
-            );
-          })}
+          {patches.map((patch, patchIndex) => (
+            <div key={`${patch.target}-${patch.fieldId}-${patch.value}-${patchIndex}`} className="rounded-lg border border-stone-200 bg-white p-2">
+              <p className="text-sm font-semibold text-stone-800">{patch.label}</p>
+              <p className="mt-1 break-words text-sm text-stone-600">{patch.value}</p>
+              {patch.impactLabel && <p className="mt-1 text-xs text-stone-500">{patch.impactLabel}</p>}
+            </div>
+          ))}
         </div>
       ))}
 
@@ -1979,29 +1913,12 @@ function UpdateProposalCard({
       {proposal.status === "pending" && (
         <div className="mt-3 flex flex-wrap gap-2">
           <button
-            onClick={() => onApplyProposal(proposal.id, editing ? draftPatches : undefined)}
-            disabled={isProposalUpdating || draftPatches.length === 0}
-            className="inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-950 px-3 py-2 text-sm font-semibold text-white transition hover:bg-emerald-900 disabled:cursor-not-allowed disabled:opacity-60"
-            type="button"
-          >
-            <Check size={16} />
-            Apply
-          </button>
-          <button
-            onClick={() => setEditing((current) => !current)}
-            disabled={isProposalUpdating}
-            className="inline-flex items-center justify-center gap-2 rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm font-semibold text-stone-700 transition hover:bg-stone-50 disabled:cursor-not-allowed disabled:opacity-60"
-            type="button"
-          >
-            {editing ? "Done" : "Edit"}
-          </button>
-          <button
             onClick={() => onRejectProposal(proposal.id)}
             disabled={isProposalUpdating}
             className="inline-flex items-center justify-center gap-2 rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm font-semibold text-stone-700 transition hover:bg-stone-50 disabled:cursor-not-allowed disabled:opacity-60"
             type="button"
           >
-            Reject
+            Dismiss
           </button>
         </div>
       )}

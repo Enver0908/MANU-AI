@@ -65,13 +65,13 @@ describe("phase 76o food-mix rehearsal", () => {
     120_000,
   );
 
-  it("covers integration checks for duplicate inbound, provider failure, stale draft, and proposal apply", async () => {
+  it("covers integration checks for duplicate inbound, provider failure, stale draft, and manual food-rule save", async () => {
     const integration = await runPhase76oFoodMixIntegrationChecks();
     expect(integration.failures).toEqual([]);
     expect(integration.duplicateIgnoredCount).toBe(1);
     expect(integration.providerFailureHandoffCount).toBe(1);
     expect(integration.staleDraftInvalidatedCount).toBe(1);
-    expect(integration.proposalApplyCount).toBe(1);
+    expect(integration.manualFoodRuleSaveCount).toBe(1);
     expect(integration.unsafeGreenCount).toBe(0);
   });
 

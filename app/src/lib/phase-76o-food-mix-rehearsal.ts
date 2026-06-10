@@ -1,8 +1,10 @@
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { applyClientUpdateProposalInState, createClientUpdateProposalInState } from "./client-update-proposals";
+import { createClientUpdateProposalInState } from "./client-update-proposals";
 import { saveFormResponseInState } from "./app-state-store";
+import { createDefaultFoodRuleDashboardState, saveClientFoodRulesInState } from "./phase-76j-food-rule-dashboard";
+import { PHASE_77B_CHAT_MUTATION_DISABLED_ERROR } from "./phase-77b-chat-mutation-boundary";
 import { evaluateClientFoodRuleDecision } from "./food-rule-runtime";
 import { buildPhase70QualifiedClientAnswers } from "./phase-70-seed-answers";
 import { classifySimulationRisk } from "./simulator-risk";
@@ -44,7 +46,7 @@ export type Phase76oFoodMixRehearsalMetrics = {
   redClientSendCount: number;
   providerFailureHandoffCount: number;
   staleDraftInvalidatedCount: number;
-  proposalApplyCount: number;
+  manualFoodRuleSaveCount: number;
   removedClientBlockedCount: number;
   scenarioCounts: Record<string, number>;
   failures: string[];
@@ -295,7 +297,7 @@ export async function runPhase76oFoodMixScaleRehearsal(
     redClientSendCount,
     providerFailureHandoffCount: 0,
     staleDraftInvalidatedCount: 0,
-    proposalApplyCount: 0,
+    manualFoodRuleSaveCount: 0,
     removedClientBlockedCount,
     scenarioCounts,
     failures,
@@ -308,7 +310,7 @@ export async function runPhase76oFoodMixIntegrationChecks(): Promise<
     | "duplicateIgnoredCount"
     | "providerFailureHandoffCount"
     | "staleDraftInvalidatedCount"
-    | "proposalApplyCount"
+    | "manualFoodRuleSaveCount"
     | "unsafeGreenCount"
     | "yellowClientSendCount"
     | "redClientSendCount"
@@ -319,7 +321,7 @@ export async function runPhase76oFoodMixIntegrationChecks(): Promise<
   let duplicateIgnoredCount = 0;
   let providerFailureHandoffCount = 0;
   let staleDraftInvalidatedCount = 0;
-  let proposalApplyCount = 0;
+  let manualFoodRuleSaveCount = 0;
   let unsafeGreenCount = 0;
   const yellowClientSendCount = 0;
   const redClientSendCount = 0;
@@ -404,28 +406,38 @@ export async function runPhase76oFoodMixIntegrationChecks(): Promise<
     submittedPhoneE164: "+905551110001",
     answers: buildPhase70QualifiedClientAnswers(),
   });
-  const proposed = createClientUpdateProposalInState(withForm, "client-mert", {
-    sourceText: "Artik sut urunleri yasak.",
-  });
-  const proposal = proposed.clientUpdateProposals.find(
-    (item) => item.clientId === "client-mert" && item.status === "pending",
-  );
-  if (!proposal) {
-    failures.push("proposal_create_failed");
-  } else {
-    const applied = applyClientUpdateProposalInState(proposed, "client-mert", proposal.id, "2026-06-08T10:05:00.000Z");
-    if (applied.clientUpdateProposals.some((item) => item.id === proposal.id && item.status === "applied")) {
-      proposalApplyCount += 1;
-    } else {
-      failures.push("proposal_apply_failed");
+  try {
+    createClientUpdateProposalInState(withForm, "client-mert", {
+      sourceText: "Artik sut urunleri yasak.",
+    });
+    failures.push("chat_mutation_not_blocked");
+  } catch (error) {
+    if (!(error instanceof Error) || error.message !== PHASE_77B_CHAT_MUTATION_DISABLED_ERROR) {
+      failures.push("chat_mutation_wrong_error");
     }
+  }
+
+  const saved = saveClientFoodRulesInState(
+    withForm,
+    "client-mert",
+    {
+      ...createDefaultFoodRuleDashboardState(),
+      forbiddenFoodGroups: ["Sut urunleri"],
+    },
+    "2026-06-08T10:05:00.000Z",
+  );
+  const response = saved.clientFormResponses.find((item) => item.clientId === "client-mert");
+  if (String(response?.answers.forbidden_food_groups || "").includes("Sut urunleri")) {
+    manualFoodRuleSaveCount += 1;
+  } else {
+    failures.push("manual_food_rule_save_failed");
   }
 
   return {
     duplicateIgnoredCount,
     providerFailureHandoffCount,
     staleDraftInvalidatedCount,
-    proposalApplyCount,
+    manualFoodRuleSaveCount,
     unsafeGreenCount,
     yellowClientSendCount,
     redClientSendCount,
@@ -446,7 +458,7 @@ export async function runPhase76oFoodMixRehearsal(
     duplicateIgnoredCount: integration.duplicateIgnoredCount,
     providerFailureHandoffCount: integration.providerFailureHandoffCount,
     staleDraftInvalidatedCount: integration.staleDraftInvalidatedCount,
-    proposalApplyCount: integration.proposalApplyCount,
+    manualFoodRuleSaveCount: integration.manualFoodRuleSaveCount,
     unsafeGreenCount: scale.unsafeGreenCount + integration.unsafeGreenCount,
     yellowClientSendCount: scale.yellowClientSendCount + integration.yellowClientSendCount,
     redClientSendCount: scale.redClientSendCount + integration.redClientSendCount,
@@ -470,7 +482,7 @@ export function buildPhase76oFoodMixEvidencePackMetrics(
     food_rule_no_source_handoff_count: metrics.foodRuleNoSourceHandoffCount,
     provider_failure_handoff_count: metrics.providerFailureHandoffCount,
     stale_draft_invalidated_count: metrics.staleDraftInvalidatedCount,
-    proposal_apply_count: metrics.proposalApplyCount,
+    manual_food_rule_save_count: metrics.manualFoodRuleSaveCount,
     removed_client_blocked_count: metrics.removedClientBlockedCount,
   };
 }
@@ -558,7 +570,7 @@ export function buildPhase76oFoodMixHealthSignal(
     redClientSendCount: 0,
     providerFailureHandoffCount: 0,
     staleDraftInvalidatedCount: 0,
-    proposalApplyCount: 0,
+    manualFoodRuleSaveCount: 0,
     removedClientBlockedCount: 0,
     scenarioCounts: {},
     failures: ["food_mix_rehearsal_not_run"],
@@ -574,7 +586,7 @@ export function buildPhase76oFoodMixHealthSignal(
     foodRuleGreenCount: metrics.foodRuleGreenCount,
     foodRuleNoSourceHandoffCount: metrics.foodRuleNoSourceHandoffCount,
     providerFailureHandoffCount: metrics.providerFailureHandoffCount,
-    proposalApplyCount: metrics.proposalApplyCount,
+    manualFoodRuleSaveCount: metrics.manualFoodRuleSaveCount,
     removedClientBlockedCount: metrics.removedClientBlockedCount,
   };
 }

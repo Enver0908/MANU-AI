@@ -1,4 +1,5 @@
 import { AppDomainError } from "./app-errors";
+import { assertChatSourceMutationAllowed } from "./phase-77b-chat-mutation-boundary";
 import {
   parseEquivalentExchangeGroups,
   syncClientRecordFromFoodRuleAnswers,
@@ -60,6 +61,8 @@ export function createClientUpdateProposalInState(
   const sourceText = input.sourceText.trim().slice(0, MAX_SOURCE_TEXT_CHARS);
   if (!sourceText) throw new AppDomainError(400, "client_update_proposal_source_required");
 
+  assertChatSourceMutationAllowed();
+
   const proposedPatches = buildPatches(sourceText);
   const safetyFlags = dedupeFlags([
     ...detectSafetyFlags(sourceText),
@@ -115,6 +118,8 @@ export function applyClientUpdateProposalInState(
   const client = state.clients.find((item) => item.id === clientId);
   if (!client) throw new AppDomainError(404, "client_not_found");
   if (client.lifecycleStatus === "removed_anonymized") throw new AppDomainError(409, "client_removed_anonymized");
+
+  assertChatSourceMutationAllowed();
 
   const proposal = state.clientUpdateProposals.find((item) => item.id === proposalId && item.clientId === clientId);
   if (!proposal) throw new AppDomainError(404, "client_update_proposal_not_found");

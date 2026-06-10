@@ -2,6 +2,8 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { POST as postAnonymizeClient } from "./clients/[id]/anonymize/route";
 import { GET as getClientExport } from "./clients/[id]/export/route";
 import { POST as postRemoveClient } from "./clients/[id]/remove/route";
+import { POST as postClientUpdateProposal } from "./clients/[id]/update-proposals/route";
+import { POST as postApplyClientUpdateProposal } from "./clients/[id]/update-proposals/[proposalId]/apply/route";
 import { POST as postInternalCopilotMessage } from "./internal-copilot/messages/route";
 import { POST as postDraftAction } from "./messages/drafts/[id]/route";
 import { POST as postAcknowledgeNotification } from "./notifications/[id]/acknowledge/route";
@@ -164,6 +166,34 @@ describe("API controlled domain errors", () => {
     expect(payload.internalCopilotMessages).toHaveLength(2);
     expect(payload.internalCopilotToolCalls.some((call: { toolName: string }) => call.toolName === "getClientDietPlan")).toBe(true);
     expect(assistant.sourceRefs.some((ref: { entityType: string }) => ref.entityType === "client")).toBe(true);
+  });
+
+  it("blocks chat update proposal creation in fallback mode", async () => {
+    const response = await postClientUpdateProposal(
+      new Request("http://localhost/api/clients/client-mert/update-proposals", {
+        method: "POST",
+        body: JSON.stringify({ sourceText: "Mert artik badem yemesin." }),
+      }) as never,
+      { params: Promise.resolve({ id: "client-mert" }) },
+    );
+    const payload = await response.json();
+
+    expect(response.status).toBe(409);
+    expect(payload.error).toBe("chat_source_mutation_disabled");
+  });
+
+  it("blocks chat update proposal apply in fallback mode", async () => {
+    const response = await postApplyClientUpdateProposal(
+      new Request("http://localhost/api/clients/client-mert/update-proposals/proposal-historical-1/apply", {
+        method: "POST",
+        body: JSON.stringify({}),
+      }) as never,
+      { params: Promise.resolve({ id: "client-mert", proposalId: "proposal-historical-1" }) },
+    );
+    const payload = await response.json();
+
+    expect(response.status).toBe(409);
+    expect(payload.error).toBe("chat_source_mutation_disabled");
   });
 
   it("requires a body for internal copilot messages", async () => {

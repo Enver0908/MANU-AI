@@ -4,11 +4,11 @@ Date: 2026-06-04
 
 ## Status
 
-This is the final summary for the 13-phase completion roadmap, updated through the Phase 43-77D local hardening track, including Phase 77A manual source authority rebaseline, Phase 77C client personal form v2, and Phase 77D master food catalog hierarchy.
+This is the final summary for the 13-phase completion roadmap, updated through the Phase 43-77B local hardening track, including Phase 77A manual source authority rebaseline, Phase 77B chat mutation removal, Phase 77C client personal form v2, and Phase 77D master food catalog hierarchy.
 
 Production pilot is not approved.
 
-Latest local roadmap state adds Phase 77A manual source authority rebaseline, Phase 77C client personal form v2, and Phase 77D master food catalog hierarchy; Phase 77B and Phase 77E-77K remain open before WhatsApp production adapter work.
+Latest local roadmap state adds Phase 77A manual source authority rebaseline, Phase 77B chat mutation removal, Phase 77C client personal form v2, and Phase 77D master food catalog hierarchy; Phase 77E-77K remain open before WhatsApp production adapter work.
 
 No real WhatsApp, Telegram, Gemini, external LLM provider, email, push, monitoring, analytics, secret manager, backup provider, or real client health data is connected.
 
@@ -130,11 +130,11 @@ External approvals:
 
 ## Verification
 
-Latest local release verification after Phase 77D master food catalog hierarchy:
+Latest local release verification after Phase 77B manual source authority boundary:
 
 - `npm run release:verify` passed on 2026-06-10.
 - Core tests: 165/165 passed.
-- App tests: 293/293 passed.
+- App tests: 289/289 passed.
 - App lint: passed with two pre-existing warnings.
 - Production build: passed.
 - Production dependency audit gate passed with only documented R-405 findings.
@@ -193,7 +193,7 @@ Phase 50 verification on 2026-06-02:
 
 ## Next Required Actions
 
-1. Complete Phase 77B by removing chat-based form, food-rule, and menu mutation while preserving off-channel Critical Context updates.
+1. Continue Phase 77E-77K by implementing client food-rule profile v2, menu forms/export, Food Decision Engine V2, and related manual source authority work.
 2. Implement the client food-rule profile v2, menu-plan forms, Food Decision Engine V2, PromptContext/output guards, exports, lifecycle coverage, and 100x50 rehearsal across Phase 77E-77K.
 3. Extend catalog-aware deterministic matching in Phase 77G with alias/ingredient confidence thresholds and false-positive golden cases before any production client-facing catalog decision.
 4. Apply Phase 65 official health-regulation PDF corpus QA to the user-supplied PDFs, then collect reviewed corpus approval before active scope-guard use.

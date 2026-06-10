@@ -4,8 +4,8 @@ import { PHASE_74_REDACTION_MARKER } from "./data-governance";
 import { applyPhase74TransactionalRedactionInState } from "./phase-74-data-lifecycle-policy";
 import { buildPhase74ExportPackage } from "./phase-74-data-lifecycle-policy";
 import { saveFormResponseInState, simulateInState } from "./app-state-store";
-import { createClientUpdateProposalInState } from "./client-update-proposals";
 import { createInitialState, DEMO_FORM_SCHEMA_ID } from "./seed-data";
+import type { ClientUpdateProposalRecord } from "./types";
 import { buildStructuredFoodRulesFromClientState, evaluateClientFoodRuleDecision } from "./food-rule-runtime";
 import {
   answersContainUnredactedFoodRuleData,
@@ -86,11 +86,35 @@ describe("phase 76n food rule lifecycle", () => {
       body: "Fistik yerine badem olur mu?",
       idempotencyKey: "phase76n-food-rule",
     });
-    const proposed = createClientUpdateProposalInState(withMessage, "client-mert", {
+    const historicalProposal: ClientUpdateProposalRecord = {
+      id: "proposal-phase76n",
+      tenantId: withMessage.tenant.id,
+      clientId: "client-mert",
+      dietitianId: withMessage.dietitian.id,
       sourceText: "Mert sut urunleri tuketmemeli.",
-    });
+      proposedPatches: [
+        {
+          target: "client_form_answer",
+          fieldId: "forbidden_food_groups",
+          label: "Yasak besin gruplari",
+          operation: "append_unique",
+          value: "Sut urunleri",
+          category: "food_rule",
+          editable: true,
+        },
+      ],
+      safetyFlags: [],
+      status: "pending",
+      expectedContextRevision: withMessage.clients.find((client) => client.id === "client-mert")!.contextRevision,
+      createdAt: "2026-06-08T10:00:00.000Z",
+      resolvedAt: null,
+    };
+    const withProposal = {
+      ...withMessage,
+      clientUpdateProposals: [...withMessage.clientUpdateProposals, historicalProposal],
+    };
 
-    const { state } = applyPhase74TransactionalRedactionInState(proposed, "client-mert", "deletion");
+    const { state } = applyPhase74TransactionalRedactionInState(withProposal, "client-mert", "deletion");
     const client = state.clients.find((item) => item.id === "client-mert");
 
     expect(client).toBeDefined();

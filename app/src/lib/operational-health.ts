@@ -96,7 +96,7 @@ export function buildOperationalHealthSnapshot(
     redClientSendCount: 0,
     providerFailureHandoffCount: 0,
     staleDraftInvalidatedCount: 0,
-    proposalApplyCount: 0,
+    manualFoodRuleSaveCount: 0,
   });
 
   return {
