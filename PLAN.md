@@ -649,11 +649,13 @@ Phase 61 scope guard (RAG + LLM) second layer mock-first completed locally on 20
 
 Tasks:
 
-1. Complete WhatsApp production adapter per `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` Phase 76.
-2. Complete remaining production gates (ops, R-405 closure, full 100x50 rehearsal, external launch-gate closure).
-3. Keep real Gemini/WhatsApp/monitoring/secret/real data disconnected until their gated phases.
-4. Accept official regulation PDFs in Phase 71 and use the Phase 65 QA foundation; do not activate official corpus production routing until external legal/clinical launch gates close even though Phase 72 draft permission graph artifacts exist.
-5. Complete WhatsApp adapter, production ops, R-405 closure, full 100x50 rehearsal, and external launch-gate closure before direct production GO.
+1. Complete Phase 77B manual source authority boundary: remove chat-based form/food-rule/menu mutation while preserving panel-only Critical Context and read-only internal copilot.
+2. Complete Phase 77C-77K manual source authority track: personal form v2, user-supplied master food catalog, client food-rule profile v2, four-template menu plan/export, Food Decision Engine V2, PromptContext/answerability/output guard adaptation, UX simplification, lifecycle/calibration/rehearsal closure.
+3. Complete WhatsApp production adapter only after Phase 77A-77K is closed.
+4. Complete remaining production gates (ops, R-405 closure, full 100x50 rehearsal acceptance, external launch-gate closure).
+5. Keep real Gemini/WhatsApp/monitoring/secret/real data disconnected until their gated phases.
+6. Accept official regulation PDFs in Phase 71 and use the Phase 65 QA foundation; do not activate official corpus production routing until external legal/clinical launch gates close even though Phase 72 draft permission graph artifacts exist.
+7. Complete WhatsApp adapter, production ops, R-405 closure, full 100x50 rehearsal acceptance, and external launch-gate closure before direct production GO.
 6. Use `docs/PRODUCTION_PILOT_LEGAL_PRIVACY_REVIEW_PACKET.md`, `docs/PRODUCTION_PILOT_CLINICAL_TAXONOMY_REVIEW_PACKET.md`, `docs/PRODUCTION_PILOT_PROVIDER_VENDOR_REVIEW_PACKET.md`, `docs/PRODUCTION_PILOT_CHANNEL_POLICY_REVIEW_PACKET.md`, `docs/PRODUCTION_PILOT_INCIDENT_DSAR_REVIEW_PACKET.md`, `docs/PRODUCTION_PILOT_BACKUP_RESTORE_REVIEW_PACKET.md`, `docs/PRODUCTION_PILOT_SECRET_ROTATION_REVIEW_PACKET.md`, `docs/PRODUCTION_PILOT_DEPENDENCY_AUDIT_CLEARANCE_PACKET.md`, `docs/PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md`, and `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md` to collect external approval evidence without storing secrets or raw client data in repo docs.
 7. Re-check R-405 again only through the `docs/PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md` procedure before any future dependency edit.
 8. Keep real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, and real client health data disconnected.

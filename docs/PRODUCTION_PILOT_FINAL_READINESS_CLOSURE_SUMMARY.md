@@ -10,7 +10,7 @@ Production pilot is not approved.
 
 No real WhatsApp, Telegram, Gemini, external LLM provider, email, push, monitoring, analytics, secret manager, backup provider, or real client health data is connected.
 
-Post-Phase 76Q strategic roadmap: `DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` now defines the direct production pilot path as 100 dietitians x 50 clients, with no small production ring. Product communication covenant enforcement, approved-source answerability, green intent taxonomy, local direct 5,000-client scale foundation, user-supplied form hardening, Turkiye official source manifest/intake, draft permission graph artifacts, draft health regulation calibration matrix, draft retention/export/DSAR transactional redaction contract extended to structured food rules and client update proposals, draft Gemini provider gate artifacts with blocked real egress, dietitian-approved chat-to-form update proposals, expanded safety-profile proposal updates, the Phase 76C structured food-rule green capacity PRD/tech spec, Phase 76D structured food-rule registry/model fields, Phase 76E deterministic food-rule engine evidence, Phase 76F intent-specific answerability evidence, Phase 76G local second-layer false-yellow calibration evidence, Phase 76H local product ingredient verification evidence, Phase 76I bounded food-rule PromptContext/output guard evidence, Phase 76J dashboard food-rule management UX evidence, Phase 76K chat-to-food-rule proposal evidence, Phase 76L permission graph runtime bridge evidence, Phase 76M calibration/metrics evidence, Phase 76N Supabase export/redaction/transactional RPC evidence, Phase 76O 100x50 food-mix rehearsal evidence, Phase 76P consolidated continuity/gate documentation, and Phase 76Q verify+commit track closure are present locally; downstream WhatsApp production adapter work, external legal/privacy approval of lifecycle and provider policy, external qualified dietitian approval of food-rule second-layer carve-outs, final form/PDF approvals, Phase 76N RLS re-run when local Supabase is available, full production rehearsal acceptance, external gates, and R-405 closure/acceptance remain required before production GO.
+Post-Phase 77A strategic roadmap: `DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` now defines the direct production pilot path as 100 dietitians x 50 clients, with no small production ring, and inserts the Phase 77A-77K manual source authority rebaseline before WhatsApp production adapter work. Product communication covenant enforcement, approved-source answerability, green intent taxonomy, local direct 5,000-client scale foundation, user-supplied form hardening, Turkiye official source manifest/intake, draft permission graph artifacts, draft health regulation calibration matrix, draft retention/export/DSAR transactional redaction contract extended to structured food rules and client update proposals, draft Gemini provider gate artifacts with blocked real egress, dietitian-approved chat-to-form update proposals, expanded safety-profile proposal updates, the Phase 76C structured food-rule green capacity PRD/tech spec, Phase 76D structured food-rule registry/model fields, Phase 76E deterministic food-rule engine evidence, Phase 76F intent-specific answerability evidence, Phase 76G local second-layer false-yellow calibration evidence, Phase 76H local product ingredient verification evidence, Phase 76I bounded food-rule PromptContext/output guard evidence, Phase 76J dashboard food-rule management UX evidence, Phase 76K chat-to-food-rule proposal evidence, Phase 76L permission graph runtime bridge evidence, Phase 76M calibration/metrics evidence, Phase 76N Supabase export/redaction/transactional RPC evidence, Phase 76O 100x50 food-mix rehearsal evidence, Phase 76P consolidated continuity/gate documentation, Phase 76Q verify+commit track closure, and Phase 77A manual source authority PRD/tech spec are present locally; downstream Phase 77B-77K implementation, WhatsApp production adapter work, external legal/privacy approval of lifecycle and provider policy, external qualified dietitian approval of food-decision and second-layer behavior, final form/PDF/catalog/menu approvals, Phase 76N RLS re-run when local Supabase is available, full production rehearsal acceptance, external gates, and R-405 closure/acceptance remain required before production GO.
 
 ## Go / No-Go Decision
 
@@ -54,6 +54,7 @@ Reason:
 - Phase 71 added local Turkiye official health source ingestion: a canonical 14-source official source manifest and fail-closed artifact intake through the Phase 65 QA contract. It did not download or parse real PDFs, approve the corpus, activate routing, close any launch gate, connect a provider or channel, process real data, or resolve R-405.
 - Phase 76A added local dietitian chat form update proposals: a separate proposal/apply/reject workflow for deterministic allowlisted additive form/context patches with stale-revision checks, audit evidence, draft invalidation, and DSAR redaction coverage. It did not make the internal copilot a mutation agent, change green/yellow/red routing, close any launch gate, connect a provider or channel, process real data, or resolve R-405.
 - Phase 76B expanded local chat proposals to safety-profile form fields with editable rows and manual-only operational warnings. It did not allow AI active/passive, AI mode, channel permission, red lock, yellow hold, or autopilot/reactivation mutation from chat; it did not close any launch gate, connect a provider or channel, process real data, or resolve R-405.
+- Phase 77A added the manual source authority rebaseline spec. It moves WhatsApp production adapter after Phase 77A-77K, locks deterministic-only v1 catalog/alias/keyword matching for out-of-catalog food questions, requires Phase 68 taxonomy recalibration for safe `discourage` replies, defines Food Decision V2 send semantics, establishes active menu as the primary plan source, and records Phase 76D-76O artifact disposition. `npm run release:verify` passed on 2026-06-10 with core tests 165/165, app tests 284/284, lint with two pre-existing warnings, production build, and only documented R-405 findings. It did not implement runtime behavior, add schema, close any launch gate, connect a provider or channel, process real data, or resolve R-405.
 
 ## Completion Roadmap Result
 
@@ -125,16 +126,15 @@ External approvals:
 
 ## Verification
 
-Latest local release verification after Phase 76F intent-specific answerability:
+Latest local release verification after Phase 77A documentation-only changes:
 
-- `npm run release:verify` passed on 2026-06-08.
-- Core tests: 139/139 passed.
-- App tests: 240/240 passed.
-- App lint: passed.
+- `npm run release:verify` passed on 2026-06-10.
+- Core tests: 165/165 passed.
+- App tests: 284/284 passed.
+- App lint: passed with two pre-existing warnings.
 - Production build: passed.
 - Production dependency audit gate passed with only documented R-405 findings.
-- Phase 61 added `scope_*` tables; re-run `npm run test:rls` when local Supabase is available for Phase 61 RLS evidence.
-- Local Supabase/RLS evidence for the Phase 57 `yellow_risk_hold` migration may remain open when Docker Desktop/local Supabase is unavailable.
+- RLS remains pending for Phase 76N when local Supabase is unavailable.
 
 Phase 44 verification on 2026-06-01:
 

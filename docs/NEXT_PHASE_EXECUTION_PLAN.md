@@ -24,8 +24,30 @@ Locked decisions:
 
 Next implementation order:
 
-1. WhatsApp production adapter per `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` Phase 76.
-2. Production ops, R-405 closure/acceptance, and external launch-gate closure.
+1. Phase 77B manual source authority boundary: remove chat-based form/food-rule/menu mutation while preserving panel-only Critical Context and read-only internal copilot.
+2. Phase 77C-77K manual source authority rebaseline track: personal form v2, user-supplied master food catalog, client food-rule profile v2, menu plan/export, Food Decision Engine V2, PromptContext/answerability/output guard adaptation, simplified dietitian UX, lifecycle/calibration/rehearsal closure.
+3. WhatsApp production adapter after Phase 77A-77K is complete.
+4. Production ops, R-405 closure/acceptance, full rehearsal acceptance, and external launch-gate closure.
+
+## Phase 77A: Manual Source Authority Rebaseline - Completed 2026-06-10
+
+Goal: document the product and technical rebaseline before any runtime changes so AI answer quality is governed by dietitian-managed manual source authorities instead of chat-based form/food-rule mutation.
+
+Status:
+
+- Added `docs/PHASE_77A_MANUAL_SOURCE_AUTHORITY_REBASELINE_SPEC.md`.
+- Repositioned the roadmap into Phase 77A-77K before WhatsApp production adapter work.
+- Locked v1 out-of-catalog inference to deterministic catalog/alias/keyword matching only; LLM-based food classification remains future gated work.
+- Required Phase 68 green intent taxonomy recalibration so safe off-menu food requests can reach a `discourage` decision instead of being blocked as active-plan conflicts.
+- Defined decision-to-send semantics for `allow`, `discourage`, `forbid`, `needs_label`, `needs_review`, and `not_applicable`.
+- Defined disposition for the completed Phase 76D-76O food-rule track artifacts.
+- Verification passed with `npm run release:verify`: core tests 165/165, app tests 284/284, lint with two pre-existing warnings, production build, and only documented R-405 findings.
+- No runtime behavior, schema, provider, channel, launch-gate approval, real-data handling, or R-405 status changed.
+- Production pilot remains `NO-GO`.
+
+Next:
+
+- Proceed to Phase 77B chat mutation removal and manual context boundary.
 
 ## Phase 76Q: Verification and Commit Protocol - Completed 2026-06-08
 
@@ -40,7 +62,7 @@ Status:
 
 Next:
 
-- Proceed to WhatsApp production adapter.
+- Proceed to Phase 77B manual source authority boundary; WhatsApp production adapter now follows Phase 77A-77K.
 
 ## Phase 76P: Continuity, Evidence, and Gate Update - Completed 2026-06-08
 
@@ -57,7 +79,7 @@ Status:
 
 Next:
 
-- Proceed to WhatsApp production adapter.
+- Proceed to Phase 77B manual source authority boundary; WhatsApp production adapter now follows Phase 77A-77K.
 
 ## Phase 76O: 100x50 Synthetic Food-Mix Rehearsal - Completed 2026-06-08
 
@@ -267,7 +289,7 @@ Status:
 
 Next:
 
-- Proceed to WhatsApp production adapter and remaining production hardening gates.
+- Proceed to Phase 77B manual source authority boundary, then Phase 77A-77K completion before WhatsApp production adapter and remaining production hardening gates.
 
 ## Phase 74: Data Lifecycle, Export, Anonymization and DSAR Policy - Completed 2026-06-07
 

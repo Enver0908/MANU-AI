@@ -18,8 +18,9 @@ These rules are non-negotiable and apply to every future phase:
 
 ## Current Baseline
 - Latest completed phase: Phase 76Q verification and commit protocol.
+- Latest roadmap rebaseline: Phase 77A manual source authority rebaseline spec (2026-06-10).
 - Latest completed implementation phase before 76C: Phase 76B expanded chat form safety updates.
-- Latest verification: core tests 165/165, app tests 284/284, `npm run release:verify` passed with only documented R-405 findings.
+- Latest verification: Phase 77A `npm run release:verify` passed on 2026-06-10 with core tests 165/165, app tests 284/284, lint with two pre-existing warnings, production build, and only documented R-405 findings.
 - Production pilot status: `NO-GO`.
 - Real WhatsApp, Gemini, monitoring, secret manager, and real client health data remain disconnected.
 - Existing usable foundations:
@@ -30,6 +31,20 @@ These rules are non-negotiable and apply to every future phase:
   - Yellow hold and red lock.
   - Structured launch-gate evidence engine.
   - Official PDF corpus QA foundation.
+
+## Phase 77A: Manual Source Authority Rebaseline - Completed 2026-06-10
+Goal: rebaseline the roadmap before WhatsApp production adapter work so AI answer quality is governed by dietitian-managed manual source authorities rather than chat-based form/food-rule mutation.
+
+Completed:
+- Added `docs/PHASE_77A_MANUAL_SOURCE_AUTHORITY_REBASELINE_SPEC.md`.
+- Locked the downstream Phase 77A-77K track: chat mutation removal, personal client form v2, user-supplied master food catalog, client food-rule profile v2, four-template menu plan, Food Decision Engine V2, PromptContext/answerability/output guard V2, simplified dietitian UX, DOCX/PDF menu export, lifecycle v1.2, calibration, and 100x50 rehearsal closure.
+- Recorded that v1 out-of-catalog inference must be deterministic only; real LLM classification remains gated behind future provider/legal/privacy approval.
+- Recorded Phase 68 taxonomy recalibration as mandatory before Food Decision V2 can support `discourage` replies for safe off-menu food requests.
+- Recorded that active menu becomes the primary plan authority and `client.dietPlan.summary` becomes a derived legacy summary.
+- Recorded artifact disposition for Phases 76D-76O.
+- Verification passed with `npm run release:verify`: core tests 165/165, app tests 284/284, lint with two pre-existing warnings, production build, and only documented R-405 findings.
+- No runtime behavior, schema, provider, channel, launch-gate approval, real-data handling, or R-405 status changed.
+- Production pilot remains `NO-GO`.
 
 ## Phase 66: Product Communication Covenant Lock
 Goal: encode the fixed product laws into provider output safety, prompt contracts, tests, and continuity docs.
@@ -494,8 +509,8 @@ Completed:
 - No production routing activation, core orchestrator hot-path wiring, or channel connections were added.
 - Production pilot remains `NO-GO`.
 
-## Phase 76: WhatsApp Production Adapter
-Goal: prepare WhatsApp-first production channel for 5,000 clients.
+## Deferred WhatsApp Production Adapter
+Goal: prepare WhatsApp-first production channel for 5,000 clients after the Phase 77A-77K manual source authority rebaseline track is complete.
 
 User documents required at the start of this phase:
 - WhatsApp Business Cloud API details.
@@ -644,11 +659,17 @@ Done criteria:
 - Phase 75: Gemini/provider approval package.
 - Phase 76A: no new user document package; uses existing form/context approval flow.
 - Phase 76B: no new user document package; expands the same approval flow to existing safety form fields.
-- Phase 76: WhatsApp Business, opt-in/out, template, and channel approval package.
-- Phase 77: incident, monitoring, backup, restore, and secret rotation decisions.
-- Phase 78: R-405 resolution or formal risk acceptance.
-- Phase 79: 100-dietitian / 5,000-client launch roster and rollback ownership.
-- Phase 80: final external launch-gate approval artifacts.
+- Phase 77A: no user document package; roadmap/spec rebaseline only.
+- Phase 77B: no user document package; removes chat mutation and preserves panel-only manual context.
+- Phase 77C: final personal client form fields from the user.
+- Phase 77D: master food list from the user.
+- Phase 77E: no new user document package; maps catalog items to client-level allowed/forbidden and flexibility settings.
+- Phase 77F: menu template defaults and any dietitian-facing menu wording preferences.
+- Phase 77G-77K: no new production approval package; implementation, calibration, lifecycle, export, and evidence closure.
+- Deferred WhatsApp adapter: WhatsApp Business, opt-in/out, template, and channel approval package.
+- Production ops: incident, monitoring, backup, restore, and secret rotation decisions.
+- Dependency closure: R-405 resolution or formal risk acceptance.
+- Final rehearsal/gates: 100-dietitian / 5,000-client launch roster, rollback ownership, and final external launch-gate approval artifacts.
 
 ## Metrics
 

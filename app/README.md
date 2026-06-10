@@ -40,7 +40,7 @@ The scripts use `--webpack` because Turbopack did not resolve the local symlinke
 
 `npm run release:verify` runs the core package tests, lint, unit/API tests, production build, and the production dependency audit gate. It allows only the documented R-405 Next.js/PostCSS finding and does not run `npm audit fix --force`.
 
-Latest local release verification on 2026-06-08 passed after Phase 76Q with core tests 165/165, app tests 284/284, lint, production build, and only the documented R-405 production audit finding. Phase 76Q formally closed the 76C–76P food-rule track with verify+commit protocol evidence; `npm run test:rls` skipped because local Supabase was unavailable. WhatsApp production adapter is next.
+Latest local release verification on 2026-06-10 passed after Phase 77A with core tests 165/165, app tests 284/284, lint with two pre-existing warnings, production build, and only the documented R-405 production audit finding. Phase 77A is documentation-only and rebaselines the roadmap before runtime changes. Phase 76Q formally closed the 76C-76P food-rule track with verify+commit protocol evidence; `npm run test:rls` remains pending when local Supabase is unavailable. Phase 77B manual source authority boundary is next; WhatsApp production adapter moves after Phase 77A-77K.
 
 Phase 29 is documentation/evidence hardening only. It keeps production pilot blocked, records that stable `next@latest` 16.2.6 still bundles `postcss@8.4.31`, and requires local Supabase before RLS evidence can be counted as passed.
 
