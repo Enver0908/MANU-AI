@@ -19,6 +19,7 @@ These rules are non-negotiable and apply to every future phase:
 ## Current Baseline
 - Latest completed phase: Phase 76Q verification and commit protocol.
 - Latest roadmap rebaseline: Phase 77A manual source authority rebaseline spec (2026-06-10).
+- Detailed Phase 77 implementation plan: `docs/PHASE_77_MASTER_IMPLEMENTATION_PLAN.md`.
 - Latest completed implementation phase before 76C: Phase 76B expanded chat form safety updates.
 - Latest verification: Phase 77A `npm run release:verify` passed on 2026-06-10 with core tests 165/165, app tests 284/284, lint with two pre-existing warnings, production build, and only documented R-405 findings.
 - Production pilot status: `NO-GO`.
@@ -37,6 +38,7 @@ Goal: rebaseline the roadmap before WhatsApp production adapter work so AI answe
 
 Completed:
 - Added `docs/PHASE_77A_MANUAL_SOURCE_AUTHORITY_REBASELINE_SPEC.md`.
+- Added the detailed canonical Phase 77 master implementation plan in `docs/PHASE_77_MASTER_IMPLEMENTATION_PLAN.md`.
 - Locked the downstream Phase 77A-77K track: chat mutation removal, personal client form v2, user-supplied master food catalog, client food-rule profile v2, four-template menu plan, Food Decision Engine V2, PromptContext/answerability/output guard V2, simplified dietitian UX, DOCX/PDF menu export, lifecycle v1.2, calibration, and 100x50 rehearsal closure.
 - Recorded that v1 out-of-catalog inference must be deterministic only; real LLM classification remains gated behind future provider/legal/privacy approval.
 - Recorded Phase 68 taxonomy recalibration as mandatory before Food Decision V2 can support `discourage` replies for safe off-menu food requests.

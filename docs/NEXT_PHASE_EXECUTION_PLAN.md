@@ -12,6 +12,8 @@ The most recent execution layers after the 13-phase completion roadmap are Phase
 
 Canonical plan: `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`.
 
+Detailed Phase 77 implementation plan: `docs/PHASE_77_MASTER_IMPLEMENTATION_PLAN.md`.
+
 Locked decisions:
 
 - Production pilot target is direct 100 dietitians with 50 clients each; no small production ring.
@@ -36,6 +38,7 @@ Goal: document the product and technical rebaseline before any runtime changes s
 Status:
 
 - Added `docs/PHASE_77A_MANUAL_SOURCE_AUTHORITY_REBASELINE_SPEC.md`.
+- Added `docs/PHASE_77_MASTER_IMPLEMENTATION_PLAN.md` as the full detailed Phase 77 implementation plan.
 - Repositioned the roadmap into Phase 77A-77K before WhatsApp production adapter work.
 - Locked v1 out-of-catalog inference to deterministic catalog/alias/keyword matching only; LLM-based food classification remains future gated work.
 - Required Phase 68 green intent taxonomy recalibration so safe off-menu food requests can reach a `discourage` decision instead of being blocked as active-plan conflicts.

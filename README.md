@@ -53,6 +53,7 @@ The current implementation includes:
 - Phase 76P continuity, evidence, and gate updates: consolidated Phases 76C–76O food-rule track evidence in pilot/gate/risk docs; all launch gates remain open
 - Phase 76Q verification and commit protocol: formal 76C–76P track closure with verify+commit evidence; RLS re-run pending when local Supabase unavailable
 - Phase 77A manual source authority rebaseline: canonical PRD/tech spec for removing chat-based form/food-rule/menu mutation, introducing personal form v2, user-supplied master food catalog, client food-rule profile v2, four-template menu plan/export, Food Decision Engine V2, and adapting the Phase 76D-76O food-rule track before WhatsApp production adapter work
+- Phase 77 master implementation plan: detailed phase-by-phase execution plan in `docs/PHASE_77_MASTER_IMPLEMENTATION_PLAN.md`
 - Post-Phase 65 direct 100-dietitian completion plan in `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`, locking the no-small-ring 5,000-client production pilot target, product communication covenant, approved-source answerability path, and user-document timing
 
 ## Safety Model

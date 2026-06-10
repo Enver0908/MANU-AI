@@ -13,6 +13,8 @@ Rebaseline the MANU-AI roadmap before WhatsApp production adapter work so AI cli
 
 This phase is documentation and continuity only. It does not implement runtime behavior, schema, provider, channel, launch-gate approval, real-data handling, or R-405 remediation.
 
+The detailed canonical implementation plan for the full Phase 77 track is `docs/PHASE_77_MASTER_IMPLEMENTATION_PLAN.md`. This Phase 77A spec is the short rebaseline/spec checkpoint; the master plan carries the complete phase-by-phase implementation detail.
+
 ## Product Decisions
 
 - Dietitians must not feel they are operating a rule engine. The app should expose simple client-planning surfaces: personal form, food rules, menu, and exports.
