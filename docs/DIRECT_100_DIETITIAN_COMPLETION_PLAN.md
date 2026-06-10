@@ -17,11 +17,11 @@ These rules are non-negotiable and apply to every future phase:
 - Autopilot is not globally enabled for all 5,000 clients by default. It is enabled only for selected qualified clients after all gates, monitoring, and rollback controls are ready.
 
 ## Current Baseline
-- Latest completed phase: Phase 76Q verification and commit protocol.
+- Latest completed implementation phase: Phase 77C client personal form v2 (2026-06-10).
 - Latest roadmap rebaseline: Phase 77A manual source authority rebaseline spec (2026-06-10).
 - Detailed Phase 77 implementation plan: `docs/PHASE_77_MASTER_IMPLEMENTATION_PLAN.md`.
 - Latest completed implementation phase before 76C: Phase 76B expanded chat form safety updates.
-- Latest verification: Phase 77A `npm run release:verify` passed on 2026-06-10 with core tests 165/165, app tests 284/284, lint with two pre-existing warnings, production build, and only documented R-405 findings.
+- Latest verification: Phase 77C `npm run release:verify` passed on 2026-06-10 with core tests 165/165, app tests 284/284, lint with two pre-existing warnings, production build, and only documented R-405 findings.
 - Production pilot status: `NO-GO`.
 - Real WhatsApp, Gemini, monitoring, secret manager, and real client health data remain disconnected.
 - Existing usable foundations:
@@ -47,6 +47,20 @@ Completed:
 - Verification passed with `npm run release:verify`: core tests 165/165, app tests 284/284, lint with two pre-existing warnings, production build, and only documented R-405 findings.
 - No runtime behavior, schema, provider, channel, launch-gate approval, real-data handling, or R-405 status changed.
 - Production pilot remains `NO-GO`.
+
+## Phase 77C: Client Personal Form V2 - Completed 2026-06-10
+Goal: load the first user-defined client personal form into the existing dynamic form system.
+
+Completed:
+- Added `docs/PHASE_77C_CLIENT_PERSONAL_FORM_V2_SPEC.md`.
+- Updated the active client form schema title to `Phase 77C client personal form v2` and registry version to `phase-77c-client-personal-form-v2`.
+- Added the user-requested identity/contact, body measurement, goal, lifestyle, medical, women's health, nutrition-history, allergy/intolerance, digestive, and notes fields.
+- Made phone and WhatsApp number required form fields.
+- Added general flexibility and goal-based flexibility to this form.
+- Kept food-group flexibility out of this form for Client Food Rule Profile V2 and meal flexibility out of this form for Menu Plan V1.
+- Removed Phase 76D structured food-rule fields from the active personal form schema while preserving demo legacy answers for temporary Phase 76 runtime compatibility.
+- No provider, channel, launch-gate approval, real-data handling, menu/export/catalog implementation, or R-405 status changed.
+- Production pilot remains `NO-GO`; Phase 77B chat mutation removal/manual source boundary remains open.
 
 ## Phase 66: Product Communication Covenant Lock
 Goal: encode the fixed product laws into provider output safety, prompt contracts, tests, and continuity docs.
@@ -663,7 +677,7 @@ Done criteria:
 - Phase 76B: no new user document package; expands the same approval flow to existing safety form fields.
 - Phase 77A: no user document package; roadmap/spec rebaseline only.
 - Phase 77B: no user document package; removes chat mutation and preserves panel-only manual context.
-- Phase 77C: final personal client form fields from the user.
+- Phase 77C: final personal client form fields from the user supplied and loaded locally; future user document work moves to food catalog/menu/export.
 - Phase 77D: master food list from the user.
 - Phase 77E: no new user document package; maps catalog items to client-level allowed/forbidden and flexibility settings.
 - Phase 77F: menu template defaults and any dietitian-facing menu wording preferences.

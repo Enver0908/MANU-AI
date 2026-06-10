@@ -45,7 +45,7 @@ describe("dynamic client forms", () => {
     state = saveClientFormResponseInState(state, "client-elif", schema?.id || "", {
       ...buildPhase70QualifiedClientAnswers(),
       ai_mode: "copilot",
-      work_school_schedule: "Works late.",
+      work_hours: "Works late.",
     });
 
     expect(state.messages.find((message) => message.id === draft?.id)?.status).toBe("blocked");

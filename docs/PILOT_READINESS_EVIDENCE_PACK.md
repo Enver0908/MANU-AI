@@ -6,7 +6,7 @@ Date: 2026-06-03
 
 MANU-AI has a local pilot-foundation prototype with safety, privacy, operational, and verification controls in place.
 
-Production pilot is still blocked. This evidence pack does not approve legal/privacy, clinical, provider/vendor, WhatsApp/Telegram policy, backup/restore, secret rotation, scale/load, official regulation-corpus, user-supplied form, or dependency audit gates.
+Production pilot is still blocked. This evidence pack does not approve legal/privacy, clinical, provider/vendor, WhatsApp/Telegram policy, backup/restore, secret rotation, scale/load, official regulation-corpus, production form/menu/catalog, or dependency audit gates.
 
 No real WhatsApp, Telegram, Gemini, external LLM provider, email, push, monitoring, analytics, secret manager, or real client health data is connected.
 
@@ -18,7 +18,7 @@ Run from `app`:
 npm run release:verify
 ```
 
-Latest result, re-verified on 2026-06-08 after Phase 76Q verification and commit protocol:
+Latest result, re-verified on 2026-06-10 after Phase 77C client personal form v2:
 
 - Core package tests: 165/165 passed.
 - App tests: 284/284 passed.
@@ -51,6 +51,7 @@ Latest result, re-verified on 2026-06-08 after Phase 76Q verification and commit
 - Phase 76P consolidates Phases 76C–76O structured food-rule green capacity track evidence into continuity, pilot readiness, gate dossier, final readiness summary, clinical taxonomy review packet, and risk-register narratives (R-109, R-117, R-310, R-403, R-409, R-412, R-413, R-414). Local prototype mitigated vs production approved distinction preserved; all eight launch gates remain open; R-405 remains open. This phase changed documentation only; no runtime behavior, provider, channel, or gate closure occurred.
 - Phase 76Q formally closed the 76C–76P food-rule track with verify+commit protocol evidence: core 165/165, app 284/284, lint, build, `release:verify` passed; track commits 76O `19e26e3`, 76P `8e8bb47`. `npm run test:rls` skipped (local Supabase unavailable); Phase 76N RLS re-run remains pending. Production pilot remains `NO-GO`.
 - Phase 77A adds `docs/PHASE_77A_MANUAL_SOURCE_AUTHORITY_REBASELINE_SPEC.md` as a documentation-only roadmap rebaseline before runtime changes. It moves WhatsApp production adapter after Phase 77A-77K, locks deterministic-only v1 out-of-catalog food matching, defines Food Decision V2 send semantics, requires Phase 68 active-plan conflict recalibration, establishes active menu as the primary plan source, and records Phase 76D-76O artifact disposition. `npm run release:verify` passed on 2026-06-10 with core tests 165/165, app tests 284/284, lint with two pre-existing warnings, production build, and only documented R-405 findings. No runtime behavior, schema, provider, channel, launch-gate approval, R-405 status, or real-data handling changed. Production pilot remains `NO-GO`.
+- Phase 77C loads the user-supplied first client personal form v2 into the dynamic form registry through `docs/PHASE_77C_CLIENT_PERSONAL_FORM_V2_SPEC.md`. It combines identity, phone, WhatsApp phone, anthropometric, goal, general/goal flexibility, lifestyle, medical, nutrition-history, digestive, consent, and note fields; phone and WhatsApp phone are required identity fields and remain `sensitive_never_prompt`. Food-group flexibility and meal flexibility remain deferred to the food-rule and menu forms. Demo seed data keeps temporary legacy food-rule answers only for compatibility until the Phase 77 food-rule replacement track. No real provider/channel/data path, external approval, launch gate, R-405 status, or production identity reconciliation changed. Production pilot remains `NO-GO`.
 - Phase 76N extends Phase 74 export/redaction to structured food rules and client update proposals, adds `phase-76n-food-rule-lifecycle.ts`, Supabase `commit_client_update_proposal` and removal-lifecycle RPC coverage, and migration `20260608120000_phase_76n_food_rule_lifecycle_rpc.sql`. RLS re-run for the Phase 76N migration remains pending when local Supabase is unavailable. No production lifecycle enablement, channel, or gate closure occurred.
 - Phase 76M extends Phase 73 calibration to `v1.1.0` with twelve food-rule golden categories, green-capacity metrics (`unsafe_green_rate = 0` on bundled suite), operational-health aggregates, and core food-rule calibration JSONL orchestrator tests. No production calibration activation, channel, or gate closure occurred.
 - Phase 76L adds audit-first Phase 72 permission graph food-rule routing on the simulator risk path with gated enforcement behind `MANU_ALLOW_PHASE_72_ACTIVE_ROUTING` plus launch-gate evidence. No production routing activation, core orchestrator hot-path wiring, channel, or gate closure occurred.

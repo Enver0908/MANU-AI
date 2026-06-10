@@ -17,14 +17,14 @@ describe("phase 70 form hardening", () => {
     const state = createInitialState();
     const summary = buildClientFormSummary(state, "client-mert");
 
-    expect(summary).toContain("Ana hedef");
+    expect(summary).toContain("Hedef");
     expect(summary).not.toContain("Hassas veri onayi");
     expect(summary).not.toContain("Yetiskin/minor");
     expect(summary).not.toContain("Diyetisyen ic notlari");
   });
 
   it("classifies registry fields with answerability and prompt access metadata", () => {
-    const answerabilityField = PHASE_70_CLIENT_FIELDS.find((field) => field.id === "active_diet_plan_summary");
+    const answerabilityField = PHASE_70_CLIENT_FIELDS.find((field) => field.id === "primary_goal");
     const sensitiveField = PHASE_70_CLIENT_FIELDS.find((field) => field.id === "dietitian_only_notes");
 
     expect(answerabilityField?.answerabilityRole).toBe("answerability_source");
@@ -81,20 +81,21 @@ describe("phase 70 form hardening", () => {
     const state = createInitialState();
     const manifest = buildAnswerabilityFieldManifest(state, "client-mert");
 
-    expect(manifest.some((entry) => entry.fieldId === "active_diet_plan_summary")).toBe(true);
+    expect(manifest.some((entry) => entry.fieldId === "primary_goal")).toBe(true);
+    expect(manifest.some((entry) => entry.fieldId === "nutrition_history")).toBe(true);
     expect(manifest.every((entry) => entry.hasValue)).toBe(true);
   });
 
   it("requires all minimum autopilot field ids in qualification checks", () => {
-    expect(PHASE_70_MINIMUM_AUTOPILOT_CLIENT_FIELD_IDS).toHaveLength(22);
+    expect(PHASE_70_MINIMUM_AUTOPILOT_CLIENT_FIELD_IDS).toHaveLength(27);
   });
 
-  it("registers structured food rule fields with answerability metadata", () => {
+  it("keeps structured food rule fields out of the Phase 77C personal form schema", () => {
     const forbiddenItems = PHASE_76D_CLIENT_FOOD_RULE_FIELDS.find((field) => field.id === "forbidden_food_items");
     const registryField = PHASE_70_CLIENT_FIELDS.find((field) => field.id === "forbidden_food_items");
 
     expect(forbiddenItems?.answerabilityRole).toBe("answerability_source");
-    expect(registryField?.section).toBe("2.3.1");
+    expect(registryField).toBeUndefined();
     expect(PHASE_76D_CLIENT_FOOD_RULE_FIELDS).toHaveLength(13);
   });
 
@@ -110,7 +111,7 @@ describe("phase 70 form hardening", () => {
     state = saveClientFormResponseInState(state, "client-elif", schema?.id || "", {
       ...buildPhase70QualifiedClientAnswers(),
       ai_mode: "copilot",
-      work_school_schedule: "Works late and skips breakfast.",
+      work_hours: "Works late and skips breakfast.",
     });
 
     expect(state.messages.find((message) => message.id === draft?.id)?.status).toBe("blocked");

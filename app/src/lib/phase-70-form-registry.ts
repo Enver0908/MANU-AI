@@ -8,11 +8,10 @@ import type {
   FormFieldType,
   SupportedLanguageCode,
 } from "./types";
-import { PHASE_76D_CLIENT_FOOD_RULE_FIELDS } from "./phase-76d-food-rule-fields";
 
-export const PHASE_70_SCHEMA_TITLE_CLIENT = "Phase 70 client intake";
+export const PHASE_70_SCHEMA_TITLE_CLIENT = "Phase 77C client personal form v2";
 export const PHASE_70_SCHEMA_TITLE_DIETITIAN = "Phase 70 dietitian profile";
-export const PHASE_70_REGISTRY_VERSION = "phase-76d-food-rule-registry-v1";
+export const PHASE_70_REGISTRY_VERSION = "phase-77c-client-personal-form-v2";
 
 export type Phase70RegistryField = ClientFormFieldDefinition & {
   form: "client" | "dietitian";
@@ -58,10 +57,44 @@ const yesNoUnknown = ["Evet", "Hayir", "Bilinmiyor", "Belirtmek istemiyorum"];
 const languages = ["TR", "EN", "DE", "FR", "ES", "PT", "CS"];
 const permissionStates = ["pending", "ready", "blocked", "opted_out"];
 const consentStates = ["pending", "approved", "revoked"];
-const aiStatus = ["active", "passive"];
-const aiModes = ["autopilot", "copilot", "manual", "paused"];
 const adultStatuses = ["Adult", "Minor", "Unknown"];
-const ageBands = ["18 alti", "18-24", "25-34", "35-44", "45-54", "55-64", "65+"];
+const genderOptions = ["Kadin", "Erkek", "Diger", "Belirtmek istemiyorum"];
+const maritalStatuses = ["Bekar", "Evli", "Bosandi", "Dul", "Belirtmek istemiyorum"];
+const targetGoals = ["Kilo verme", "Kilo alma", "Kilo koruma", "Performans", "Klinik destek", "Genel saglik", "Diger"];
+const flexibilityLevels = ["Kisitli", "Orta esnek", "Esnek"];
+const weightChangePeriods = ["Son 6 ay", "Son 12 ay"];
+const weightChangeDirections = ["Alma", "Verme", "Degisim yok", "Bilinmiyor"];
+const weightChangeIntentions = ["Istemli", "Istemsiz", "Bilinmiyor"];
+const movementLevels = ["Cok hareketsiz", "Hareketsiz", "Orta hareketli", "Hareketli", "Cok hareketli"];
+const mealCountOptions = ["1", "2", "3", "4", "5+"];
+const outsideEatingFrequency = ["Hic", "Nadiren", "Haftada 1-2", "Haftada 3-5", "Her gun"];
+const sugarUseOptions = ["Kullanmiyor", "Bazen", "Her icecekte", "Kac kup/kasik belirtilmeli"];
+const smokingStatuses = ["Icmiyor", "Icuyor", "Birakti", "Belirtmek istemiyor"];
+const alcoholStatuses = ["Almiyor", "Nadiren", "Haftalik", "Sik", "Belirtmek istemiyor"];
+const sportStatuses = ["Yok", "Haftada 1-2", "Haftada 3-4", "Haftada 5+", "Profesyonel/performans"];
+const bowelRegularityOptions = ["Duzenli", "Duzenli degil", "Kabizlik egilimi", "Ishal egilimi", "Belirtmek istemiyorum"];
+const bristolStoolTypes = ["Tip 1", "Tip 2", "Tip 3", "Tip 4", "Tip 5", "Tip 6", "Tip 7", "Bilinmiyor"];
+const pregnancyStatuses = ["Hayir", "Gebe", "Emziriyor", "Planliyor", "Belirtmek istemiyorum", "Uygun degil"];
+const menstrualRegularity = ["Duzenli", "Duzenli degil", "Menopoz", "Uygun degil", "Belirtmek istemiyorum"];
+const nutritionModels = [
+  "Kalori kisitlama",
+  "Akdeniz diyeti",
+  "Dusuk karbonhidrat diyeti",
+  "Ketojenik diyet",
+  "Paleo diyet",
+  "Aralikli oruc",
+  "Yuksek proteinli beslenme",
+  "Dusuk yagli beslenme",
+  "Dusuk FODMAP",
+  "Glutensiz beslenme",
+  "Sut urunsuz beslenme",
+  "Eliminasyon diyeti",
+  "Diyabet diyeti",
+  "DASH diyeti",
+  "Anti-inflamatuar beslenme",
+  "Sporcu beslenmesi",
+  "Diger",
+];
 
 export const PHASE_70_DIETITIAN_FIELDS: Phase70RegistryField[] = [
   defineField({ id: "dietitian_full_name", label: "Diyetisyen adi soyadi", form: "dietitian", section: "1.1", filledBy: "Diyetisyen / admin", required: true, promptAccess: "dietitian_only", privacySensitivity: "medium" }),
@@ -110,100 +143,104 @@ export const PHASE_70_DIETITIAN_FIELDS: Phase70RegistryField[] = [
 ];
 
 export const PHASE_70_CLIENT_FIELDS: Phase70RegistryField[] = [
-  defineField({ id: "client_display_name", label: "Client adi", form: "client", section: "2.1", filledBy: "Client / diyetisyen", required: true, promptAccess: "dietitian_only", privacySensitivity: "medium" }),
-  defineField({ id: "date_of_birth_or_age_band", label: "Yas araligi", form: "client", section: "2.1", filledBy: "Client / diyetisyen", required: true, options: ageBands, promptAccess: "sensitive_never_prompt", answerabilityRole: "risk_modifier", clinicalSensitivity: "risk_modifier", privacySensitivity: "high" }),
+  defineField({ id: "first_name", label: "Ad", form: "client", section: "2.1", filledBy: "Client / diyetisyen", required: true, promptAccess: "dietitian_only", privacySensitivity: "medium" }),
+  defineField({ id: "last_name", label: "Soyad", form: "client", section: "2.1", filledBy: "Client / diyetisyen", required: true, promptAccess: "dietitian_only", privacySensitivity: "medium" }),
+  defineField({ id: "date_of_birth", label: "Dogum tarihi", form: "client", section: "2.1", filledBy: "Client / diyetisyen", required: true, type: "date", promptAccess: "sensitive_never_prompt", answerabilityRole: "risk_modifier", clinicalSensitivity: "risk_modifier", privacySensitivity: "high" }),
   defineField({ id: "adult_status", label: "Yetiskin/minor", form: "client", section: "2.1", filledBy: "Client / diyetisyen", required: true, options: adultStatuses, promptAccess: "system_rule", answerabilityRole: "risk_modifier", clinicalSensitivity: "risk_modifier", privacySensitivity: "high" }),
-  defineField({ id: "guardian_permission_status", label: "Veli izin durumu", form: "client", section: "2.1", filledBy: "Veli / diyetisyen", options: ["Yok", "Bekliyor", "Onayli", "Reddedildi"], promptAccess: "sensitive_never_prompt", answerabilityRole: "risk_modifier", privacySensitivity: "critical" }),
+  defineField({ id: "email", label: "E-mail", form: "client", section: "2.1", filledBy: "Client / diyetisyen", required: true, promptAccess: "sensitive_never_prompt", privacySensitivity: "critical" }),
+  defineField({ id: "mobile_phone_e164", label: "Telefon", form: "client", section: "2.1", filledBy: "Client / diyetisyen", required: true, promptAccess: "sensitive_never_prompt", privacySensitivity: "critical" }),
+  defineField({ id: "whatsapp_phone_e164", label: "WhatsApp telefon", form: "client", section: "2.1", filledBy: "Client / diyetisyen", required: true, promptAccess: "sensitive_never_prompt", privacySensitivity: "critical" }),
+  defineField({ id: "gender", label: "Cinsiyet", form: "client", section: "2.1", filledBy: "Client / diyetisyen", required: true, options: genderOptions, promptAccess: "system_rule", answerabilityRole: "risk_modifier", clinicalSensitivity: "risk_modifier", privacySensitivity: "high" }),
+  defineField({ id: "profession", label: "Meslek", form: "client", section: "2.1", filledBy: "Client / diyetisyen", promptAccess: "prompt_allowed", privacySensitivity: "medium" }),
+  defineField({ id: "marital_status", label: "Medeni durum", form: "client", section: "2.1", filledBy: "Client / diyetisyen", options: maritalStatuses, promptAccess: "dietitian_only", privacySensitivity: "medium" }),
+  defineField({ id: "city", label: "Sehir", form: "client", section: "2.1", filledBy: "Client / diyetisyen", promptAccess: "dietitian_only", privacySensitivity: "medium" }),
   defineField({ id: "communication_language", label: "Konusma dili", form: "client", section: "2.1", filledBy: "Client / diyetisyen", required: true, options: languages, promptAccess: "prompt_allowed", privacySensitivity: "low" }),
   defineField({ id: "timezone", label: "Saat dilimi", form: "client", section: "2.1", filledBy: "Client / diyetisyen", required: true, promptAccess: "prompt_allowed", answerabilityRole: "logistics_only", privacySensitivity: "low" }),
   defineField({ id: "channel_permission_state", label: "Kanal izin durumu", form: "client", section: "2.1", filledBy: "Client / diyetisyen", required: true, options: permissionStates, promptAccess: "system_rule", privacySensitivity: "high" }),
-  defineField({ id: "whatsapp_phone_e164", label: "WhatsApp telefon", form: "client", section: "2.1", filledBy: "Client / diyetisyen", promptAccess: "sensitive_never_prompt", privacySensitivity: "critical" }),
-  defineField({ id: "telegram_user_id", label: "Telegram id", form: "client", section: "2.1", filledBy: "Client / diyetisyen", promptAccess: "sensitive_never_prompt", privacySensitivity: "critical" }),
-  defineField({ id: "opt_in_timestamp", label: "Opt-in zamani", form: "client", section: "2.1", filledBy: "Sistem / diyetisyen", required: true, type: "date", promptAccess: "dietitian_only", privacySensitivity: "high" }),
-  defineField({ id: "opt_out_preference", label: "Opt-out tercihi", form: "client", section: "2.1", filledBy: "Client", required: true, options: ["Aktif", "Cikis istedi", "Bilinmiyor"], promptAccess: "system_rule", privacySensitivity: "high" }),
   defineField({ id: "sensitive_data_consent_status", label: "Hassas veri onayi", form: "client", section: "2.1", filledBy: "Client / legal flow", required: true, options: consentStates, promptAccess: "system_rule", privacySensitivity: "critical" }),
   defineField({ id: "form_prompt_visibility_ack", label: "Prompt gorunurluk onayi", form: "client", section: "2.1", filledBy: "Client", required: true, options: yesNo, promptAccess: "dietitian_only", privacySensitivity: "high" }),
   defineField({ id: "emergency_contact_policy_ack", label: "Acil durum proseduru onayi", form: "client", section: "2.1", filledBy: "Client / legal flow", required: true, options: yesNo, promptAccess: "dietitian_only", privacySensitivity: "high" }),
-  defineField({ id: "primary_goal", label: "Ana hedef", form: "client", section: "2.2", filledBy: "Client / diyetisyen", required: true, type: "textarea", promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "high" }),
-  defineField({ id: "goal_notes", label: "Hedef notlari", form: "client", section: "2.2", filledBy: "Client / diyetisyen", type: "textarea", promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "high" }),
-  defineField({ id: "active_diet_plan_summary", label: "Aktif plan ozeti", form: "client", section: "2.2", filledBy: "Diyetisyen", required: true, type: "textarea", promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "high" }),
-  defineField({ id: "meal_plan_slots", label: "Ogun plani", form: "client", section: "2.2", filledBy: "Diyetisyen", required: true, type: "textarea", promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "high" }),
-  defineField({ id: "allowed_substitutions", label: "Izinli alternatifler", form: "client", section: "2.2", filledBy: "Diyetisyen", required: true, type: "textarea", promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "high" }),
-  defineField({ id: "forbidden_substitutions", label: "Yasak alternatifler", form: "client", section: "2.2", filledBy: "Diyetisyen", type: "textarea", promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "high" }),
-  defineField({ id: "current_plan_start_date", label: "Plan baslangic", form: "client", section: "2.2", filledBy: "Diyetisyen", required: true, type: "date", promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "medium" }),
-  defineField({ id: "plan_version_id", label: "Plan versiyonu", form: "client", section: "2.2", filledBy: "Sistem / diyetisyen", required: true, promptAccess: "system_rule", answerabilityRole: "answerability_source", privacySensitivity: "low" }),
-  defineField({ id: "plan_review_date", label: "Plan review tarihi", form: "client", section: "2.2", filledBy: "Diyetisyen", type: "date", promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "medium" }),
-  defineField({ id: "pinned_notes", label: "Pinned notlar", form: "client", section: "2.2", filledBy: "Diyetisyen", type: "textarea", promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "high" }),
-  defineField({ id: "client_context_updates", label: "Kritik context ozetleri", form: "client", section: "2.2", filledBy: "Diyetisyen", type: "textarea", promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "high" }),
-  defineField({ id: "manual_message_source_allowed", label: "Manual mesaj kaynagi", form: "client", section: "2.2", filledBy: "Diyetisyen / admin", required: true, options: yesNo, promptAccess: "system_rule", answerabilityRole: "answerability_source" }),
-  defineField({ id: "allergies", label: "Alerjiler", form: "client", section: "2.3", filledBy: "Client / diyetisyen", required: true, type: "textarea", promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", clinicalSensitivity: "critical", privacySensitivity: "critical" }),
-  defineField({ id: "allergy_severity", label: "Alerji siddeti", form: "client", section: "2.3", filledBy: "Client / diyetisyen", options: ["Hafif", "Orta", "Agir/anafilaksi", "Bilinmiyor"], promptAccess: "system_rule", answerabilityRole: "risk_modifier", clinicalSensitivity: "critical", privacySensitivity: "critical" }),
-  defineField({ id: "restricted_foods_medical", label: "Tibbi kisitli besinler", form: "client", section: "2.3", filledBy: "Client / diyetisyen", required: true, type: "textarea", promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "critical" }),
-  defineField({ id: "restricted_foods_preference", label: "Tercih kisitlari", form: "client", section: "2.3", filledBy: "Client", type: "textarea", promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "medium" }),
-  defineField({ id: "cultural_religious_food_rules", label: "Kulturel/dini kurallar", form: "client", section: "2.3", filledBy: "Client", type: "textarea", promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "high" }),
-  defineField({ id: "food_access_constraints", label: "Erisim kisitlari", form: "client", section: "2.3", filledBy: "Client", type: "textarea", promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "medium" }),
-  ...PHASE_76D_CLIENT_FOOD_RULE_FIELDS,
-  defineField({ id: "diagnosed_condition_flag", label: "Tanili hastalik", form: "client", section: "2.4", filledBy: "Client / diyetisyen", required: true, options: yesNoUnknown, promptAccess: "system_rule", answerabilityRole: "risk_modifier", clinicalSensitivity: "risk_modifier", privacySensitivity: "critical" }),
-  defineField({ id: "diagnosed_condition_details", label: "Tani detaylari", form: "client", section: "2.4", filledBy: "Client / diyetisyen", type: "textarea", promptAccess: "sensitive_never_prompt", privacySensitivity: "critical", clinicalSensitivity: "critical" }),
-  defineField({ id: "diabetes_or_glucose_flag", label: "Diyabet/glukoz", form: "client", section: "2.4", filledBy: "Client / diyetisyen", required: true, options: yesNoUnknown, promptAccess: "system_rule", answerabilityRole: "risk_modifier", clinicalSensitivity: "risk_modifier", privacySensitivity: "critical" }),
-  defineField({ id: "medication_or_insulin_flag", label: "Ilac/insulin", form: "client", section: "2.4", filledBy: "Client / diyetisyen", required: true, options: yesNoUnknown, promptAccess: "system_rule", answerabilityRole: "risk_modifier", clinicalSensitivity: "risk_modifier", privacySensitivity: "critical" }),
-  defineField({ id: "medication_details", label: "Ilac detaylari", form: "client", section: "2.4", filledBy: "Client / diyetisyen", type: "textarea", promptAccess: "sensitive_never_prompt", privacySensitivity: "critical", clinicalSensitivity: "critical" }),
-  defineField({ id: "supplement_flag", label: "Takviye", form: "client", section: "2.4", filledBy: "Client / diyetisyen", required: true, options: yesNoUnknown, promptAccess: "system_rule", answerabilityRole: "risk_modifier", clinicalSensitivity: "risk_modifier", privacySensitivity: "critical" }),
-  defineField({ id: "supplement_details", label: "Takviye detaylari", form: "client", section: "2.4", filledBy: "Client / diyetisyen", type: "textarea", promptAccess: "sensitive_never_prompt", privacySensitivity: "critical", clinicalSensitivity: "critical" }),
-  defineField({ id: "pregnancy_or_breastfeeding_flag", label: "Gebelik/emzirme", form: "client", section: "2.4", filledBy: "Client / diyetisyen", required: true, options: ["Hayir", "Gebe", "Emziriyor", "Belirtmek istemiyorum"], promptAccess: "system_rule", answerabilityRole: "risk_modifier", clinicalSensitivity: "risk_modifier", privacySensitivity: "critical" }),
-  defineField({ id: "eating_disorder_risk_flag", label: "Yeme bozuklugu riski", form: "client", section: "2.4", filledBy: "Client / diyetisyen", required: true, options: yesNoUnknown, promptAccess: "system_rule", answerabilityRole: "risk_modifier", clinicalSensitivity: "critical", privacySensitivity: "critical" }),
-  defineField({ id: "recent_symptom_flag", label: "Son donem belirti", form: "client", section: "2.4", filledBy: "Client", required: true, options: yesNoUnknown, promptAccess: "system_rule", answerabilityRole: "risk_modifier", clinicalSensitivity: "risk_modifier", privacySensitivity: "critical" }),
-  defineField({ id: "symptom_details", label: "Belirti detaylari", form: "client", section: "2.4", filledBy: "Client", type: "textarea", promptAccess: "sensitive_never_prompt", privacySensitivity: "critical", clinicalSensitivity: "critical" }),
-  defineField({ id: "lab_result_available", label: "Lab sonucu var mi", form: "client", section: "2.4", filledBy: "Client / diyetisyen", required: true, options: yesNo, promptAccess: "system_rule", answerabilityRole: "risk_modifier", privacySensitivity: "critical" }),
-  defineField({ id: "lab_result_details", label: "Lab detaylari", form: "client", section: "2.4", filledBy: "Client / diyetisyen", type: "textarea", promptAccess: "sensitive_never_prompt", privacySensitivity: "critical", clinicalSensitivity: "critical" }),
-  defineField({ id: "activity_level", label: "Aktivite seviyesi", form: "client", section: "2.5", filledBy: "Client / diyetisyen", required: true, options: ["Dusuk", "Orta", "Yuksek", "Sporcu"], promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "high" }),
-  defineField({ id: "meal_timing_preferences", label: "Ogun saati tercihleri", form: "client", section: "2.5", filledBy: "Client", type: "textarea", promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "medium" }),
-  defineField({ id: "work_school_schedule", label: "Gunluk rutin", form: "client", section: "2.5", filledBy: "Client", type: "textarea", promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "medium" }),
-  defineField({ id: "sleep_schedule_notes", label: "Uyku duzeni", form: "client", section: "2.5", filledBy: "Client", type: "textarea", promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "high" }),
-  defineField({ id: "cooking_facilities", label: "Mutfak imkani", form: "client", section: "2.5", filledBy: "Client", options: ["Evde mutfak", "Is yerinde", "Hazir yemek", "Kisitli imkan"], promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "medium" }),
-  defineField({ id: "shopping_constraints", label: "Alisveris kisitlari", form: "client", section: "2.5", filledBy: "Client", type: "textarea", promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "medium" }),
-  defineField({ id: "height_band", label: "Boy araligi", form: "client", section: "2.6", filledBy: "Client / diyetisyen", promptAccess: "dietitian_only", privacySensitivity: "high" }),
-  defineField({ id: "weight_band", label: "Kilo araligi", form: "client", section: "2.6", filledBy: "Client / diyetisyen", promptAccess: "dietitian_only", privacySensitivity: "high" }),
-  defineField({ id: "exact_height_weight", label: "Net boy/kilo", form: "client", section: "2.6", filledBy: "Client / diyetisyen", promptAccess: "sensitive_never_prompt", privacySensitivity: "critical", clinicalSensitivity: "critical" }),
-  defineField({ id: "body_measurement_notes", label: "Olcum notlari", form: "client", section: "2.6", filledBy: "Diyetisyen", type: "textarea", promptAccess: "sensitive_never_prompt", privacySensitivity: "critical", clinicalSensitivity: "critical" }),
-  defineField({ id: "progress_photo_status", label: "Fotograf takibi", form: "client", section: "2.6", filledBy: "Client / diyetisyen", options: ["Yok", "Var", "Onay bekliyor"], promptAccess: "sensitive_never_prompt", privacySensitivity: "critical" }),
-  defineField({ id: "ai_status", label: "AI status", form: "client", section: "2.7", filledBy: "Diyetisyen", required: true, options: aiStatus, promptAccess: "system_rule" }),
-  defineField({ id: "ai_mode", label: "AI mode", form: "client", section: "2.7", filledBy: "Diyetisyen", required: true, options: aiModes, promptAccess: "system_rule" }),
-  defineField({ id: "ai_active_from", label: "AI active from", form: "client", section: "2.7", filledBy: "Diyetisyen", type: "date", promptAccess: "system_rule" }),
-  defineField({ id: "ai_active_until", label: "AI active until", form: "client", section: "2.7", filledBy: "Diyetisyen", type: "date", promptAccess: "system_rule" }),
-  defineField({ id: "autopilot_qualification", label: "Autopilot uygunlugu", form: "client", section: "2.7", filledBy: "Sistem / diyetisyen", required: true, options: ["Uygun", "Eksik", "Uygun degil"], promptAccess: "system_rule" }),
-  defineField({ id: "safety_checklist_complete", label: "Safety checklist", form: "client", section: "2.7", filledBy: "Sistem", required: true, options: yesNo, promptAccess: "system_rule" }),
-  defineField({ id: "human_takeover_locked", label: "Takeover lock", form: "client", section: "2.7", filledBy: "Sistem / diyetisyen", required: true, options: yesNo, promptAccess: "system_rule" }),
-  defineField({ id: "red_risk_lock_status", label: "Red lock", form: "client", section: "2.7", filledBy: "Sistem / diyetisyen", required: true, options: ["Yok", "Aktif", "Cozuldu"], promptAccess: "system_rule" }),
-  defineField({ id: "yellow_risk_hold_status", label: "Yellow hold", form: "client", section: "2.7", filledBy: "Sistem / diyetisyen", required: true, options: ["Yok", "Aktif", "Cozuldu"], promptAccess: "system_rule" }),
-  defineField({ id: "free_text_client_notes", label: "Serbest client notu", form: "client", section: "2.8", filledBy: "Client", type: "textarea", promptAccess: "sensitive_never_prompt", privacySensitivity: "critical" }),
-  defineField({ id: "dietitian_only_notes", label: "Diyetisyen ic notlari", form: "client", section: "2.8", filledBy: "Diyetisyen", type: "textarea", promptAccess: "sensitive_never_prompt", privacySensitivity: "critical", clinicalSensitivity: "critical" }),
-  defineField({ id: "client_public_preference_summary", label: "Prompt uygun tercih ozeti", form: "client", section: "2.8", filledBy: "Diyetisyen", type: "textarea", promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "medium" }),
+  defineField({ id: "current_weight_kg", label: "Kilo (kg)", form: "client", section: "2.2", filledBy: "Client / diyetisyen", required: true, type: "number", promptAccess: "sensitive_never_prompt", privacySensitivity: "critical", clinicalSensitivity: "critical" }),
+  defineField({ id: "height_cm", label: "Boy (cm)", form: "client", section: "2.2", filledBy: "Client / diyetisyen", required: true, type: "number", promptAccess: "sensitive_never_prompt", privacySensitivity: "critical", clinicalSensitivity: "critical" }),
+  defineField({ id: "waist_circumference_cm", label: "Bel cevresi (cm)", form: "client", section: "2.2", filledBy: "Client / diyetisyen", type: "number", promptAccess: "sensitive_never_prompt", privacySensitivity: "critical", clinicalSensitivity: "critical" }),
+  defineField({ id: "hip_circumference_cm", label: "Kalca cevresi (cm)", form: "client", section: "2.2", filledBy: "Client / diyetisyen", type: "number", promptAccess: "sensitive_never_prompt", privacySensitivity: "critical", clinicalSensitivity: "critical" }),
+  defineField({ id: "weight_change_period", label: "Kilo degisimi donemi", form: "client", section: "2.2", filledBy: "Client / diyetisyen", options: weightChangePeriods, promptAccess: "dietitian_only", privacySensitivity: "high" }),
+  defineField({ id: "weight_change_direction", label: "Son 6-12 ay kilo degisimi", form: "client", section: "2.2", filledBy: "Client / diyetisyen", options: weightChangeDirections, promptAccess: "dietitian_only", privacySensitivity: "high" }),
+  defineField({ id: "weight_change_kg", label: "Kilo degisimi miktari (kg)", form: "client", section: "2.2", filledBy: "Client / diyetisyen", type: "number", promptAccess: "sensitive_never_prompt", privacySensitivity: "critical", clinicalSensitivity: "critical" }),
+  defineField({ id: "weight_change_intentionality", label: "Kilo degisimi istemli mi", form: "client", section: "2.2", filledBy: "Client / diyetisyen", options: weightChangeIntentions, promptAccess: "system_rule", answerabilityRole: "risk_modifier", clinicalSensitivity: "risk_modifier", privacySensitivity: "high" }),
+  defineField({ id: "primary_goal", label: "Hedef", form: "client", section: "2.3", filledBy: "Client / diyetisyen", required: true, type: "textarea", promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "high" }),
+  defineField({ id: "goal_type", label: "Hedef turu", form: "client", section: "2.3", filledBy: "Client / diyetisyen", options: targetGoals, promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "high" }),
+  defineField({ id: "target_weight_kg", label: "Hedef kilo (kg)", form: "client", section: "2.3", filledBy: "Client / diyetisyen", type: "number", promptAccess: "sensitive_never_prompt", privacySensitivity: "critical", clinicalSensitivity: "critical" }),
+  defineField({ id: "goal_timeline", label: "Hedef suresi", form: "client", section: "2.3", filledBy: "Client / diyetisyen", promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "medium" }),
+  defineField({ id: "goal_notes", label: "Hedef notlari", form: "client", section: "2.3", filledBy: "Client / diyetisyen", type: "textarea", promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "high" }),
+  defineField({ id: "general_flexibility_score", label: "Genel esneklik durumu", form: "client", section: "2.3", filledBy: "Diyetisyen", required: true, options: flexibilityLevels, promptAccess: "prompt_allowed", privacySensitivity: "medium" }),
+  defineField({ id: "goal_flexibility_score", label: "Hedef bazli esneklik durumu", form: "client", section: "2.3", filledBy: "Diyetisyen", required: true, options: flexibilityLevels, promptAccess: "prompt_allowed", privacySensitivity: "medium" }),
+  defineField({ id: "average_sleep_hours", label: "Ortalama uyku suresi (saat)", form: "client", section: "2.4", filledBy: "Client / diyetisyen", type: "number", promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "medium" }),
+  defineField({ id: "work_hours", label: "Calisma/is saatleri", form: "client", section: "2.4", filledBy: "Client / diyetisyen", type: "textarea", promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "medium" }),
+  defineField({ id: "work_movement_level", label: "Calisma hareket hali", form: "client", section: "2.4", filledBy: "Client / diyetisyen", options: movementLevels, promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "medium" }),
+  defineField({ id: "smoking_status", label: "Sigara icme durumu", form: "client", section: "2.4", filledBy: "Client / diyetisyen", options: smokingStatuses, promptAccess: "system_rule", answerabilityRole: "risk_modifier", privacySensitivity: "high" }),
+  defineField({ id: "alcohol_status", label: "Alkol alma durumu", form: "client", section: "2.4", filledBy: "Client / diyetisyen", options: alcoholStatuses, promptAccess: "system_rule", answerabilityRole: "risk_modifier", privacySensitivity: "high" }),
+  defineField({ id: "sport_status", label: "Spor yapma durumu", form: "client", section: "2.4", filledBy: "Client / diyetisyen", options: sportStatuses, promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "medium" }),
+  defineField({ id: "sport_details", label: "Spor detaylari", form: "client", section: "2.4", filledBy: "Client / diyetisyen", type: "textarea", promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "medium" }),
+  defineField({ id: "diagnosed_condition_flag", label: "Tanisi konmus hastalik var mi", form: "client", section: "2.5", filledBy: "Client / diyetisyen", required: true, options: yesNoUnknown, promptAccess: "system_rule", answerabilityRole: "risk_modifier", clinicalSensitivity: "risk_modifier", privacySensitivity: "critical" }),
+  defineField({ id: "diagnosed_condition_details", label: "Tanili hastalik detaylari", form: "client", section: "2.5", filledBy: "Client / diyetisyen", type: "textarea", promptAccess: "sensitive_never_prompt", privacySensitivity: "critical", clinicalSensitivity: "critical" }),
+  defineField({ id: "diabetes_or_glucose_flag", label: "Diyabet/glukoz oykusu", form: "client", section: "2.5", filledBy: "Client / diyetisyen", options: yesNoUnknown, promptAccess: "system_rule", answerabilityRole: "risk_modifier", clinicalSensitivity: "risk_modifier", privacySensitivity: "critical" }),
+  defineField({ id: "medication_or_insulin_flag", label: "Duzenli kullanilan ilac var mi", form: "client", section: "2.5", filledBy: "Client / diyetisyen", required: true, options: yesNoUnknown, promptAccess: "system_rule", answerabilityRole: "risk_modifier", clinicalSensitivity: "risk_modifier", privacySensitivity: "critical" }),
+  defineField({ id: "medication_details", label: "Duzenli ilac detaylari", form: "client", section: "2.5", filledBy: "Client / diyetisyen", type: "textarea", promptAccess: "sensitive_never_prompt", privacySensitivity: "critical", clinicalSensitivity: "critical" }),
+  defineField({ id: "supplement_flag", label: "Duzenli kullanilan gida takviyesi var mi", form: "client", section: "2.5", filledBy: "Client / diyetisyen", required: true, options: yesNoUnknown, promptAccess: "system_rule", answerabilityRole: "risk_modifier", clinicalSensitivity: "risk_modifier", privacySensitivity: "critical" }),
+  defineField({ id: "supplement_details", label: "Gida takviyesi detaylari", form: "client", section: "2.5", filledBy: "Client / diyetisyen", type: "textarea", promptAccess: "sensitive_never_prompt", privacySensitivity: "critical", clinicalSensitivity: "critical" }),
+  defineField({ id: "surgery_history", label: "Daha once gecirilmis ameliyat", form: "client", section: "2.5", filledBy: "Client / diyetisyen", type: "textarea", promptAccess: "sensitive_never_prompt", privacySensitivity: "critical", clinicalSensitivity: "critical" }),
+  defineField({ id: "pregnancy_or_breastfeeding_flag", label: "Gebelik/emzirme durumu", form: "client", section: "2.6", filledBy: "Client / diyetisyen", required: true, options: pregnancyStatuses, promptAccess: "system_rule", answerabilityRole: "risk_modifier", clinicalSensitivity: "risk_modifier", privacySensitivity: "critical" }),
+  defineField({ id: "children_count", label: "Cocuk sayisi", form: "client", section: "2.6", filledBy: "Client / diyetisyen", type: "number", promptAccess: "dietitian_only", privacySensitivity: "high" }),
+  defineField({ id: "menstrual_cycle_regular", label: "Adet duzeni", form: "client", section: "2.6", filledBy: "Client / diyetisyen", options: menstrualRegularity, promptAccess: "system_rule", answerabilityRole: "risk_modifier", clinicalSensitivity: "risk_modifier", privacySensitivity: "critical" }),
+  defineField({ id: "eating_disorder_risk_flag", label: "Yeme bozuklugu riski/gecmisi", form: "client", section: "2.6", filledBy: "Client / diyetisyen", required: true, options: yesNoUnknown, promptAccess: "system_rule", answerabilityRole: "risk_modifier", clinicalSensitivity: "critical", privacySensitivity: "critical" }),
+  defineField({ id: "nutrition_history", label: "Gunluk beslenme oykusu", form: "client", section: "2.7", filledBy: "Client / diyetisyen", required: true, type: "textarea", promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "high" }),
+  defineField({ id: "current_diet_type", label: "Diyet tipi / mevcut beslenme tarzi", form: "client", section: "2.7", filledBy: "Client / diyetisyen", type: "textarea", promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "high" }),
+  defineField({ id: "nutrition_model", label: "Beslenme modeli", form: "client", section: "2.7", filledBy: "Diyetisyen", type: "multiselect", options: nutritionModels, promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "high" }),
+  defineField({ id: "disliked_foods", label: "Sevmedigi besinler", form: "client", section: "2.7", filledBy: "Client / diyetisyen", type: "textarea", promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "medium" }),
+  defineField({ id: "breakfast_habit", label: "Kahvalti aliskanligi", form: "client", section: "2.7", filledBy: "Client / diyetisyen", type: "textarea", promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "medium" }),
+  defineField({ id: "daily_meal_count", label: "Gunluk ogun sayisi", form: "client", section: "2.7", filledBy: "Client / diyetisyen", required: true, options: mealCountOptions, promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "medium" }),
+  defineField({ id: "outside_eating_frequency", label: "Disaridan yeme sikligi", form: "client", section: "2.7", filledBy: "Client / diyetisyen", options: outsideEatingFrequency, promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "medium" }),
+  defineField({ id: "daily_caffeine_cups", label: "Gunluk kafein miktari (fincan/kupa)", form: "client", section: "2.7", filledBy: "Client / diyetisyen", type: "number", promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "medium" }),
+  defineField({ id: "daily_fluid_liters", label: "Gunluk sivi tuketimi (litre)", form: "client", section: "2.7", filledBy: "Client / diyetisyen", required: true, type: "number", promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "medium" }),
+  defineField({ id: "hot_drink_sugar_habit", label: "Sicak icecekte seker kullanimi", form: "client", section: "2.7", filledBy: "Client / diyetisyen", options: sugarUseOptions, promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "medium" }),
+  defineField({ id: "allergies", label: "Besin alerjisi", form: "client", section: "2.8", filledBy: "Client / diyetisyen", required: true, type: "textarea", promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", clinicalSensitivity: "critical", privacySensitivity: "critical" }),
+  defineField({ id: "food_intolerances", label: "Besin intoleransi", form: "client", section: "2.8", filledBy: "Client / diyetisyen", type: "textarea", promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "critical" }),
+  defineField({ id: "bowel_regular", label: "Duzenli tuvalete cikma durumu", form: "client", section: "2.9", filledBy: "Client / diyetisyen", options: bowelRegularityOptions, promptAccess: "system_rule", answerabilityRole: "risk_modifier", privacySensitivity: "high" }),
+  defineField({ id: "bristol_stool_scale", label: "Bristol diski olcegi", form: "client", section: "2.9", filledBy: "Client / diyetisyen", options: bristolStoolTypes, promptAccess: "system_rule", answerabilityRole: "risk_modifier", privacySensitivity: "high" }),
+  defineField({ id: "client_public_preference_summary", label: "Prompt uygun tercih ozeti", form: "client", section: "2.10", filledBy: "Diyetisyen", type: "textarea", promptAccess: "prompt_allowed", answerabilityRole: "answerability_source", privacySensitivity: "medium" }),
+  defineField({ id: "free_text_client_notes", label: "Serbest client notu", form: "client", section: "2.10", filledBy: "Client", type: "textarea", promptAccess: "sensitive_never_prompt", privacySensitivity: "critical" }),
+  defineField({ id: "dietitian_only_notes", label: "Diyetisyen ic notlari", form: "client", section: "2.10", filledBy: "Diyetisyen", type: "textarea", promptAccess: "sensitive_never_prompt", privacySensitivity: "critical", clinicalSensitivity: "critical" }),
 ];
 
 export const PHASE_70_MINIMUM_AUTOPILOT_CLIENT_FIELD_IDS = [
+  "first_name",
+  "last_name",
+  "date_of_birth",
   "adult_status",
+  "email",
+  "mobile_phone_e164",
+  "whatsapp_phone_e164",
+  "gender",
   "communication_language",
   "timezone",
   "channel_permission_state",
   "sensitive_data_consent_status",
   "form_prompt_visibility_ack",
   "primary_goal",
-  "active_diet_plan_summary",
-  "meal_plan_slots",
-  "allowed_substitutions",
+  "current_weight_kg",
+  "height_cm",
+  "general_flexibility_score",
+  "goal_flexibility_score",
   "allergies",
-  "restricted_foods_medical",
+  "nutrition_history",
+  "daily_meal_count",
+  "daily_fluid_liters",
   "diagnosed_condition_flag",
-  "diabetes_or_glucose_flag",
   "medication_or_insulin_flag",
   "supplement_flag",
   "pregnancy_or_breastfeeding_flag",
   "eating_disorder_risk_flag",
-  "recent_symptom_flag",
-  "ai_status",
-  "ai_mode",
-  "safety_checklist_complete",
 ] as const;
 
 const registryById = new Map(

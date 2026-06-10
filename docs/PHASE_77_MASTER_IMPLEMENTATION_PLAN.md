@@ -210,6 +210,8 @@ Done criteria:
 
 ## Phase 77C: Client Personal Form V2
 
+Status: Implemented locally on 2026-06-10 through `docs/PHASE_77C_CLIENT_PERSONAL_FORM_V2_SPEC.md`. Phase 77B still remains open because the user explicitly asked to load the first form before sending the food list.
+
 Goal:
 
 Implement the new client personal form model after the user supplies final form content.
@@ -801,11 +803,12 @@ Before implementation can complete:
 4. Preferred menu template details and export layout preferences.
 5. Any brand/style requirements for DOCX/PDF output.
 
-## Current Final State After Phase 77A
+## Current Final State After Phase 77C
 
 - Detailed master plan exists in this document.
 - Phase 77A short roadmap/spec exists separately.
-- Runtime behavior is unchanged.
+- Phase 77C client personal form v2 is loaded locally in the dynamic form registry.
+- Runtime behavior changed only for the active client form schema and related demo/test form data.
 - Schema is unchanged.
 - Providers/channels remain disconnected.
 - Production pilot remains NO-GO.

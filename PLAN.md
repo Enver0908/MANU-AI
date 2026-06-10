@@ -650,7 +650,7 @@ Phase 61 scope guard (RAG + LLM) second layer mock-first completed locally on 20
 Tasks:
 
 1. Complete Phase 77B manual source authority boundary: remove chat-based form/food-rule/menu mutation while preserving panel-only Critical Context and read-only internal copilot.
-2. Complete Phase 77C-77K manual source authority track: personal form v2, user-supplied master food catalog, client food-rule profile v2, four-template menu plan/export, Food Decision Engine V2, PromptContext/answerability/output guard adaptation, UX simplification, lifecycle/calibration/rehearsal closure.
+2. Continue Phase 77D-77K manual source authority track: user-supplied master food catalog, client food-rule profile v2, four-template menu plan/export, Food Decision Engine V2, PromptContext/answerability/output guard adaptation, UX simplification, lifecycle/calibration/rehearsal closure. Phase 77C personal form v2 is already loaded locally.
 3. Complete WhatsApp production adapter only after Phase 77A-77K is closed.
 4. Complete remaining production gates (ops, R-405 closure, full 100x50 rehearsal acceptance, external launch-gate closure).
 5. Keep real Gemini/WhatsApp/monitoring/secret/real data disconnected until their gated phases.

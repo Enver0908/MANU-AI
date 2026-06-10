@@ -395,7 +395,8 @@ function findEditablePhase70Response(state: ManuAppState, clientId: string) {
       (schema) =>
         schema.status === "published" &&
         (schema.registryVersion === "phase-70-form-registry-v1" ||
-          schema.registryVersion === "phase-76d-food-rule-registry-v1"),
+          schema.registryVersion === "phase-76d-food-rule-registry-v1" ||
+          schema.registryVersion === "phase-77c-client-personal-form-v2"),
     )
     .sort((a, b) => b.version - a.version)[0];
   if (!activeSchema) return null;
