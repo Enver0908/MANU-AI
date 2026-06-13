@@ -36,8 +36,9 @@ export async function handleInboundMessage(input, adapters) {
     memory,
   });
 
-  const foodRule =
-    input.structuredFoodRules
+  const foodRule = input.foodRuleDecisionOverride
+    ? input.foodRuleDecisionOverride
+    : input.structuredFoodRules
       ? evaluateFoodRuleDecision({
           message: input.message.body,
           structuredFoodRules: input.structuredFoodRules,
@@ -45,6 +46,8 @@ export async function handleInboundMessage(input, adapters) {
           productIngredientEvidence: input.productIngredientEvidence || null,
         })
       : null;
+
+  const foodDecisionV2 = input.foodDecisionV2 || null;
 
   // App/simulator paths pass riskDecisionOverride as the single classification source.
   // The fallback below exists for standalone core tests and direct handleInboundMessage callers only.
@@ -129,6 +132,7 @@ export async function handleInboundMessage(input, adapters) {
     promptVersion: input.promptVersion || null,
     structuredFoodRules: input.structuredFoodRules || null,
     foodRuleDecision: foodRuleDecisionForRisk,
+    foodDecisionV2,
     productIngredientEvidence: input.productIngredientEvidence || null,
   });
 
@@ -182,12 +186,43 @@ export async function handleInboundMessage(input, adapters) {
   if (foodRule) {
     contextManifest.foodRule = foodRule;
   }
+  if (foodDecisionV2) {
+    contextManifest.foodDecisionV2 = foodDecisionV2;
+  }
+
+  if (
+    foodDecisionV2?.decision === "needs_review" &&
+    riskDecision.level === "green"
+  ) {
+    const handoffCase = createHandoffCase({
+      capsule,
+      inboundMessage: input.message.body,
+      riskDecision: {
+        ...riskDecision,
+        reasons: [...riskDecision.reasons, ...foodDecisionV2.reasonCodes],
+        shouldHandoff: true,
+      },
+    });
+    await adapters?.onHandoff?.(handoffCase);
+    return buildResult({
+      capsule,
+      riskDecision,
+      action: "handoff",
+      handoffCase,
+      blockedReason: "food_decision_v2_needs_review",
+      model: null,
+      activation,
+      contextManifest,
+      overrideReasons: [...riskDecision.reasons, ...foodDecisionV2.reasonCodes],
+    });
+  }
 
   const answerability = evaluateIntentSpecificAnswerability({
     promptContext: compiledContext.promptContext,
     riskDecision,
     greenIntent,
     foodRule,
+    foodDecisionV2,
     structuredFoodRules: input.structuredFoodRules || null,
     productIngredientEvidence: input.productIngredientEvidence || null,
   });
@@ -264,6 +299,7 @@ export async function handleInboundMessage(input, adapters) {
     capsule,
     riskDecision,
     foodRule,
+    foodDecisionV2,
     structuredFoodRules: input.structuredFoodRules || null,
   });
 

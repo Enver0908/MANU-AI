@@ -1,4 +1,4 @@
-export const GREEN_INTENT_TAXONOMY_VERSION = "green-intent-taxonomy-v0.1.0";
+export const GREEN_INTENT_TAXONOMY_VERSION = "green-intent-taxonomy-v0.2.0";
 
 const GREEN_INTENT_RULES = [
   {
@@ -64,8 +64,8 @@ const SENSITIVE_INTENT_RULES = [
     pattern: /\b(?:hamile|gebe|emzir|cocuk|ergen|diyabet|diabetes|kus|purge|intihar|nefes|gogus|acil|emergency)\b/i,
   },
   {
-    family: "yellow_active_plan_conflict",
-    pattern: /\b(?:plana uymuyor|plan disi|yasak .*yemek|not in my plan)\b/i,
+    family: "yellow_active_plan_structural_change",
+    pattern: /\b(?:planimi tamamen|diyet planimi yeniden|ogun programini degistir|change my entire plan|restructure my plan)\b/i,
   },
 ];
 

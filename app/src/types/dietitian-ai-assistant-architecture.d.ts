@@ -196,6 +196,7 @@ declare module "dietitian-ai-assistant-architecture" {
     answerability?: ApprovedSourceAnswerabilityDecision;
     greenIntent?: GreenIntentTaxonomyDecision;
     foodRule?: FoodRuleDecision;
+    foodDecisionV2?: FoodDecisionV2Result;
   };
 
   export type PromptCompilation = {
@@ -282,6 +283,9 @@ declare module "dietitian-ai-assistant-architecture" {
     now?: string;
     riskDecisionOverride?: RiskDecision;
     structuredFoodRules?: StructuredFoodRulesInput | null;
+    foodRuleDecisionOverride?: FoodRuleDecision | null;
+    foodRuleDecisionForRisk?: FoodRuleDecision | null;
+    foodDecisionV2?: FoodDecisionV2Result | null;
     productIngredientEvidence?: ProductIngredientEvidenceInput | null;
   };
 
@@ -316,6 +320,7 @@ declare module "dietitian-ai-assistant-architecture" {
     | "yellow_symptom_interpretation_request"
     | "red_sensitive_context_or_emergency"
     | "yellow_active_plan_conflict"
+    | "yellow_active_plan_structural_change"
     | "prompt_context_missing";
 
   export type GreenIntentTaxonomyDecision = {
@@ -430,6 +435,7 @@ declare module "dietitian-ai-assistant-architecture" {
     policy?: unknown;
     structuredFoodRules?: StructuredFoodRulesInput | null;
     foodRuleDecision?: FoodRuleDecisionResult | null;
+    foodDecisionV2?: FoodDecisionV2Result | null;
     productIngredientEvidence?: ProductIngredientEvidenceInput | null;
   }): PromptCompilation & { blockedReason?: string | null };
 
@@ -503,11 +509,13 @@ declare module "dietitian-ai-assistant-architecture" {
     riskDecision: { level: "green" | "yellow" | "red"; reasons?: string[] };
     greenIntent: GreenIntentTaxonomyDecision | null;
     foodRule?: FoodRuleDecision | null;
+    foodDecisionV2?: FoodDecisionV2Result | null;
     structuredFoodRules?: StructuredFoodRulesInput | null;
     productIngredientEvidence?: ProductIngredientEvidenceInput | null;
   }): ApprovedSourceAnswerabilityDecision & {
     intentFamily?: string | null;
     foodRuleDecision?: string | null;
+    foodDecisionV2?: FoodDecisionV2Decision | null;
     matchedSourceCategories?: string[];
     requiredSourceCategories?: string[];
     requiredFoodDecisions?: string[];
@@ -516,8 +524,34 @@ declare module "dietitian-ai-assistant-architecture" {
   export function resolveEffectiveIntentFamily(
     greenIntent: GreenIntentTaxonomyDecision | null,
     foodRule: FoodRuleDecision | null | undefined,
+    foodDecisionV2?: FoodDecisionV2Result | null,
   ): string;
   export function resolveFoodIntentFamily(foodRule: FoodRuleDecision | null | undefined): string | null;
+  export function resolveFoodDecisionV2IntentFamily(
+    foodDecisionV2: FoodDecisionV2Result | null | undefined,
+  ): string | null;
+  export function buildFoodDecisionV2SourceCategories(
+    foodDecisionV2: FoodDecisionV2Result | null | undefined,
+  ): Array<{
+    category: string;
+    segmentType: string;
+    sourceId: string | null;
+    authority: string | null;
+    origin: string | null;
+  }>;
+  export function buildFoodDecisionV2PromptSegments(input?: {
+    foodDecisionV2?: FoodDecisionV2Result | null;
+  }): Array<{
+    id: string;
+    type: string;
+    sourceId: string | null;
+    text: string;
+    authority?: string | null;
+  }>;
+  export function detectFoodDecisionV2OutputViolations(
+    output: string,
+    input?: { foodDecisionV2?: FoodDecisionV2Result | null },
+  ): string[];
   export function buildStructuredSourceCategories(
     structuredFoodRules: StructuredFoodRulesInput | null | undefined,
     productIngredientEvidence?: ProductIngredientEvidenceInput | null,
@@ -601,6 +635,35 @@ declare module "dietitian-ai-assistant-architecture" {
     forbiddenFoodGroups?: string[];
     dietTypeRules?: string | null;
   }): ProductIngredientVerificationResult;
+
+  export type FoodDecisionV2Decision =
+    | "allow"
+    | "discourage"
+    | "forbid"
+    | "needs_label"
+    | "needs_review"
+    | "not_applicable";
+
+  export type FoodDecisionV2CatalogMatch = {
+    foodId: string;
+    foodName: string;
+    confidence: "exact" | "partial" | "keyword";
+    path: string;
+  };
+
+  export type FoodDecisionV2Result = {
+    version: string;
+    decision: FoodDecisionV2Decision;
+    reasonCodes: string[];
+    queryType: string | null;
+    catalogMatches: FoodDecisionV2CatalogMatch[];
+    menuOnPlan: boolean | null;
+    effectiveFlexibility: string | null;
+    evidenceManifest: Record<string, unknown>;
+    sourceReferences: string[];
+    providerEligible: boolean;
+    legacyFoodRuleDecision: string;
+  };
 
   export type FoodRuleDecision = {
     version: string;

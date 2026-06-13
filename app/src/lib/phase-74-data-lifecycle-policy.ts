@@ -9,18 +9,30 @@ import {
 import {
   answersContainUnredactedFoodRuleData,
   buildFoodRuleExportSection,
-  buildProposalExportSection,
   clientContainsUnredactedFoodRuleProfile,
   PHASE_76N_EXPORT_FOOD_RULE_CATEGORIES,
   PHASE_76N_LIFECYCLE_VERSION,
   PHASE_76N_TRANSACTIONAL_REDACTION_FIELDS,
   proposalContainsUnredactedFoodRuleData,
 } from "./phase-76n-food-rule-lifecycle";
+import {
+  buildClientFoodRuleProfileV2ExportSection,
+  profileContainsUnredactedFoodRuleData,
+} from "./phase-77e-client-food-rule-profile";
+import {
+  buildClientMenuPlanV1ExportSection,
+  menuPlanContainsUnredactedData,
+} from "./phase-77f-client-menu-plan";
+import {
+  buildCatalogVersionRefsExportSection,
+  buildDeprecatedProposalExportSection,
+  buildPersonalFormV2ExportSection,
+} from "./phase-77j-data-lifecycle";
 import type { LaunchGateEvidenceRecord } from "./launch-gates";
 import type { ClientRecord, ManuAppState, MessageRecord } from "./types";
 
 export const PHASE_74_POLICY_VERSION = "phase-74-data-lifecycle-policy-v1";
-export const PHASE_74_EXPORT_VERSION = "phase74-export-v1.1";
+export const PHASE_74_EXPORT_VERSION = "phase74-export-v1.2";
 export { PHASE_74_REDACTION_MARKER } from "./data-governance";
 
 export type Phase74ApprovalStatus = "draft";
@@ -157,7 +169,11 @@ export const PHASE_74_EXPORT_INCLUDED_FILES = [
   "ai_decisions.jsonl",
   "handoffs.jsonl",
   "form_responses.json",
+  "personal_form_v2.json",
   "structured_food_rules.json",
+  "food_rule_profile_v2.json",
+  "menu_plans_v1.json",
+  "catalog_version_refs.json",
   "client_update_proposals.json",
   "diet_plan_snapshots.json",
   "audit_events_minimized.jsonl",
@@ -292,6 +308,8 @@ function countAffectedRecords(state: ManuAppState, clientId: string): Record<str
     context_updates: state.clientContextUpdates.filter((update) => update.clientId === clientId).length,
     client_update_proposals: state.clientUpdateProposals.filter((proposal) => proposal.clientId === clientId).length,
     structured_food_rule_fields: state.clientFormResponses.filter((response) => response.clientId === clientId).length,
+    food_rule_profiles_v2: state.clientFoodRuleProfiles.filter((profile) => profile.clientId === clientId).length,
+    menu_plans_v1: state.clientMenuPlans.filter((plan) => plan.clientId === clientId).length,
     ai_decisions: state.aiDecisions.filter((decision) => decision.clientId === clientId).length,
     handoffs: state.handoffCases.filter((handoff) => handoff.clientId === clientId).length,
   };
@@ -352,6 +370,18 @@ export function evaluatePhase74RedactionInvariants(
   for (const proposal of state.clientUpdateProposals.filter((item) => item.clientId === clientId)) {
     if (proposalContainsUnredactedFoodRuleData(proposal)) {
       blockingReasons.push("proposal source text and patches must be redacted");
+    }
+  }
+
+  for (const profile of state.clientFoodRuleProfiles.filter((item) => item.clientId === clientId)) {
+    if (profileContainsUnredactedFoodRuleData(profile)) {
+      blockingReasons.push("food rule profile v2 must be redacted");
+    }
+  }
+
+  for (const plan of state.clientMenuPlans.filter((item) => item.clientId === clientId)) {
+    if (menuPlanContainsUnredactedData(plan)) {
+      blockingReasons.push("menu plan v1 must be redacted");
     }
   }
 
@@ -443,7 +473,27 @@ export function buildPhase74ExportPackage(
       null,
       2,
     ),
-    "client_update_proposals.json": JSON.stringify(buildProposalExportSection(exportData.clientUpdateProposals), null, 2),
+    "personal_form_v2.json": JSON.stringify(
+      buildPersonalFormV2ExportSection(exportData.clientFormResponses),
+      null,
+      2,
+    ),
+    "food_rule_profile_v2.json": JSON.stringify(
+      buildClientFoodRuleProfileV2ExportSection(exportData.clientFoodRuleProfiles),
+      null,
+      2,
+    ),
+    "menu_plans_v1.json": JSON.stringify(buildClientMenuPlanV1ExportSection(exportData.clientMenuPlans), null, 2),
+    "catalog_version_refs.json": JSON.stringify(
+      buildCatalogVersionRefsExportSection(exportData.clientFoodRuleProfiles, exportData.clientMenuPlans),
+      null,
+      2,
+    ),
+    "client_update_proposals.json": JSON.stringify(
+      buildDeprecatedProposalExportSection(exportData.clientUpdateProposals),
+      null,
+      2,
+    ),
     "diet_plan_snapshots.json": JSON.stringify({ summary: exportData.client.dietPlan }, null, 2),
     "audit_events_minimized.jsonl": exportData.auditEvents.map((event) => JSON.stringify(event)).join("\n"),
   };

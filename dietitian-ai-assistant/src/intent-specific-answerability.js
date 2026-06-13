@@ -1,6 +1,6 @@
 import { APPROVED_SOURCE_ANSWERABILITY_VERSION } from "./approved-source-answerability.js";
 
-export const INTENT_SPECIFIC_ANSWERABILITY_VERSION = "intent-specific-answerability-v0.1.0";
+export const INTENT_SPECIFIC_ANSWERABILITY_VERSION = "intent-specific-answerability-v0.2.0";
 
 const SEGMENT_SOURCE_RULES = {
   diet_plan_summary: "active_diet_plan",
@@ -14,6 +14,12 @@ const SEGMENT_SOURCE_RULES = {
   equivalent_exchange_rules: "structured_equivalent_exchange_groups",
   diet_type_rules: "structured_diet_type_rules",
   ingredient_verification: "trusted_product_evidence",
+  food_decision_v2: "food_decision_v2_authority",
+  food_profile_summary: "food_rule_profile_v2",
+  menu_authority: "active_menu_plan",
+  flexibility_modifier: "flexibility_modifier",
+  food_source_manifest: "food_decision_source_manifest",
+  ingredient_evidence_v2: "trusted_product_evidence",
 };
 
 const sensitiveAnswerabilityPattern =
@@ -25,12 +31,34 @@ const INTENT_SOURCE_REQUIREMENTS = {
       "structured_forbidden_food",
       "allergies_restricted_foods",
       "structured_diet_type_rules",
+      "food_rule_profile_v2",
+      "master_food_catalog",
+      "food_decision_v2_authority",
     ],
     foodDecisions: ["forbidden_food_rejection", "diet_type_conflict"],
+    foodDecisionV2Decisions: ["forbid"],
   },
   green_allowed_food_confirmation: {
-    sourceCategories: ["structured_allowed_food", "structured_diet_type_rules"],
+    sourceCategories: [
+      "structured_allowed_food",
+      "structured_diet_type_rules",
+      "food_rule_profile_v2",
+      "active_menu_plan",
+      "master_food_catalog",
+      "food_decision_v2_authority",
+    ],
     foodDecisions: ["allowed_food_confirmation", "diet_type_compatible"],
+    foodDecisionV2Decisions: ["allow"],
+  },
+  green_food_decision_discourage: {
+    sourceCategories: [
+      "food_rule_profile_v2",
+      "active_menu_plan",
+      "master_food_catalog",
+      "food_decision_v2_authority",
+      "flexibility_modifier",
+    ],
+    foodDecisionV2Decisions: ["discourage"],
   },
   green_allowed_substitution: {
     sourceCategories: [
@@ -55,8 +83,14 @@ const INTENT_SOURCE_REQUIREMENTS = {
     foodDecisions: ["optional_skip_allowed"],
   },
   green_product_ingredient_check: {
-    sourceCategories: ["structured_ingredient_keywords", "trusted_product_evidence"],
-    foodDecisions: ["product_ingredient_conflict", "allowed_food_confirmation"],
+    sourceCategories: [
+      "structured_ingredient_keywords",
+      "trusted_product_evidence",
+      "food_rule_profile_v2",
+      "food_decision_v2_authority",
+    ],
+    foodDecisions: ["product_ingredient_conflict", "allowed_food_confirmation", "product_ingredient_unknown"],
+    foodDecisionV2Decisions: ["forbid", "needs_label"],
   },
   green_general_education: {
     sourceCategories: ["approved_official_corpus", "dietitian_manual_message"],
@@ -122,23 +156,13 @@ export function evaluateIntentSpecificAnswerability({
   riskDecision,
   greenIntent,
   foodRule,
+  foodDecisionV2 = null,
   structuredFoodRules,
   productIngredientEvidence,
 }) {
-  const prelude = evaluateAnswerabilityPrelude({ promptContext, riskDecision });
-  if (!prelude.allowed) {
-    return {
-      ...prelude,
-      version: INTENT_SPECIFIC_ANSWERABILITY_VERSION,
-      baseVersion: APPROVED_SOURCE_ANSWERABILITY_VERSION,
-      intentFamily: greenIntent?.intentFamily || null,
-      foodRuleDecision: foodRule?.decision || null,
-    };
-  }
-
   if (riskDecision?.level !== "green") {
     return {
-      ...prelude,
+      ...buildDecision("source_backed_green", ["non_green_risk_not_answerability_gated"], []),
       version: INTENT_SPECIFIC_ANSWERABILITY_VERSION,
       baseVersion: APPROVED_SOURCE_ANSWERABILITY_VERSION,
       intentFamily: greenIntent?.intentFamily || null,
@@ -153,11 +177,39 @@ export function evaluateIntentSpecificAnswerability({
     });
   }
 
+  if (foodDecisionV2?.decision === "needs_review" || foodDecisionV2?.decision === "not_applicable") {
+    return buildDecision("handoff_required", ["food_decision_v2_not_provider_eligible", foodDecisionV2.decision], [], {
+      intentFamily: resolveEffectiveIntentFamily(greenIntent, foodRule, foodDecisionV2),
+      foodRuleDecision: foodRule?.decision || null,
+      foodDecisionV2: foodDecisionV2.decision,
+    });
+  }
+
+  if (foodDecisionV2 && foodDecisionV2.providerEligible === false) {
+    return buildDecision("handoff_required", ["food_decision_v2_provider_ineligible"], [], {
+      intentFamily: resolveEffectiveIntentFamily(greenIntent, foodRule, foodDecisionV2),
+      foodRuleDecision: foodRule?.decision || null,
+      foodDecisionV2: foodDecisionV2.decision,
+    });
+  }
+
+  const prelude = evaluateAnswerabilityPrelude({ promptContext, riskDecision });
+  if (!prelude.allowed) {
+    return {
+      ...prelude,
+      version: INTENT_SPECIFIC_ANSWERABILITY_VERSION,
+      baseVersion: APPROVED_SOURCE_ANSWERABILITY_VERSION,
+      intentFamily: greenIntent?.intentFamily || null,
+      foodRuleDecision: foodRule?.decision || null,
+    };
+  }
+
   const promptSources = approvedSourcesFromPrompt(promptContext);
   const structuredSources = buildStructuredSourceCategories(structuredFoodRules, productIngredientEvidence);
-  const sources = dedupeSources([...promptSources, ...structuredSources]);
+  const v2Sources = buildFoodDecisionV2SourceCategories(foodDecisionV2);
+  const sources = dedupeSources([...promptSources, ...structuredSources, ...v2Sources]);
   const sourceCategories = Array.from(new Set(sources.map((source) => source.category)));
-  const effectiveIntentFamily = resolveEffectiveIntentFamily(greenIntent, foodRule);
+  const effectiveIntentFamily = resolveEffectiveIntentFamily(greenIntent, foodRule, foodDecisionV2);
   const requirements = INTENT_SOURCE_REQUIREMENTS[effectiveIntentFamily];
 
   if (!requirements) {
@@ -201,7 +253,25 @@ export function evaluateIntentSpecificAnswerability({
     });
   }
 
-  if (requirements.foodDecisions?.length) {
+  let foodDecisionV2Satisfied = false;
+  if (requirements.foodDecisionV2Decisions?.length && foodDecisionV2?.decision) {
+    if (!requirements.foodDecisionV2Decisions.includes(foodDecisionV2.decision)) {
+      return buildDecision(
+        "handoff_required",
+        ["intent_specific_food_decision_v2_mismatch", effectiveIntentFamily, foodDecisionV2.decision],
+        sources,
+        {
+          intentFamily: effectiveIntentFamily,
+          foodRuleDecision: foodRule?.decision || null,
+          foodDecisionV2: foodDecisionV2.decision,
+          requiredFoodDecisionV2Decisions: requirements.foodDecisionV2Decisions,
+        },
+      );
+    }
+    foodDecisionV2Satisfied = true;
+  }
+
+  if (requirements.foodDecisions?.length && !foodDecisionV2Satisfied) {
     const foodDecision = foodRule?.decision || null;
     if (!foodDecision || foodDecision === "not_applicable") {
       if (
@@ -259,10 +329,54 @@ export function evaluateIntentSpecificAnswerability({
   );
 }
 
-export function resolveEffectiveIntentFamily(greenIntent, foodRule) {
+export function resolveEffectiveIntentFamily(greenIntent, foodRule, foodDecisionV2 = null) {
+  const foodDecisionV2Intent = resolveFoodDecisionV2IntentFamily(foodDecisionV2);
+  if (foodDecisionV2Intent) return foodDecisionV2Intent;
   const foodIntent = resolveFoodIntentFamily(foodRule);
   if (foodIntent) return foodIntent;
   return greenIntent?.intentFamily || "green_low_risk_clarification";
+}
+
+export function resolveFoodDecisionV2IntentFamily(foodDecisionV2) {
+  if (!foodDecisionV2 || foodDecisionV2.decision === "not_applicable") return null;
+
+  const { decision, queryType } = foodDecisionV2;
+  if (decision === "discourage") return "green_food_decision_discourage";
+  if (decision === "forbid") return "green_forbidden_food_reminder";
+  if (decision === "allow") return "green_allowed_food_confirmation";
+  if (decision === "needs_label" || (queryType === "product_ingredient" && decision === "forbid")) {
+    return "green_product_ingredient_check";
+  }
+  return null;
+}
+
+export function buildFoodDecisionV2SourceCategories(foodDecisionV2) {
+  if (!foodDecisionV2 || foodDecisionV2.decision === "not_applicable") return [];
+
+  const categories = [];
+  const push = (category, sourceId) => {
+    categories.push({
+      category,
+      segmentType: "food_decision_v2",
+      sourceId,
+      authority: "food_decision_engine_v2",
+      origin: "food_decision_v2",
+    });
+  };
+
+  for (const reference of foodDecisionV2.sourceReferences || []) {
+    if (reference === "food_profile_v2") push("food_rule_profile_v2", reference);
+    if (reference === "menu_plan_v1") push("active_menu_plan", reference);
+    if (reference === "master_food_catalog") push("master_food_catalog", reference);
+    if (reference === "product_ingredient_verification") push("trusted_product_evidence", reference);
+  }
+
+  push("food_decision_v2_authority", foodDecisionV2.decision);
+  if (foodDecisionV2.effectiveFlexibility) {
+    push("flexibility_modifier", foodDecisionV2.effectiveFlexibility);
+  }
+
+  return categories;
 }
 
 export function resolveFoodIntentFamily(foodRule) {

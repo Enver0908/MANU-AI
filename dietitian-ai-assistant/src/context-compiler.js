@@ -2,6 +2,10 @@ import {
   FOOD_RULE_PROVIDER_INSTRUCTION,
   buildFoodRulePromptSegments,
 } from "./food-rule-prompt-segments.js";
+import {
+  FOOD_DECISION_V2_PROVIDER_INSTRUCTION,
+  buildFoodDecisionV2PromptSegments,
+} from "./food-decision-v2-prompt-segments.js";
 
 export const MISSING_HISTORICAL_CONTEXT_TOKEN = "[ERROR: missing_historical_context]";
 
@@ -45,6 +49,7 @@ export function compilePromptContext({
   policy = CONTEXT_POLICY_V1,
   structuredFoodRules = null,
   foodRuleDecision = null,
+  foodDecisionV2 = null,
   productIngredientEvidence = null,
 }) {
   const currentText = textFromCurrentMessage(currentMessage);
@@ -103,19 +108,29 @@ export function compilePromptContext({
     textSegment("restricted_foods", "restricted_foods", capsule.client.restrictedFoods?.join(", ") || "", {
       authority: "dietitian_approved_context",
     }),
-    ...(hasActiveFoodRuleContext(structuredFoodRules, foodRuleDecision)
+    ...(hasActiveFoodDecisionV2Context(foodDecisionV2)
       ? [
           textSegment(
             "system_instruction",
-            "system_instruction_food_rule_provider",
-            FOOD_RULE_PROVIDER_INSTRUCTION,
+            "system_instruction_food_decision_v2_provider",
+            FOOD_DECISION_V2_PROVIDER_INSTRUCTION,
             { authority: "system" },
           ),
         ]
-      : []),
-    ...buildFoodRulePromptSegments({
+      : hasActiveFoodRuleContext(structuredFoodRules, foodRuleDecision)
+        ? [
+            textSegment(
+              "system_instruction",
+              "system_instruction_food_rule_provider",
+              FOOD_RULE_PROVIDER_INSTRUCTION,
+              { authority: "system" },
+            ),
+          ]
+        : []),
+    ...buildCompiledFoodPromptSegments({
       structuredFoodRules,
       foodRuleDecision,
+      foodDecisionV2,
       productIngredientEvidence,
     }),
     ...buildPinnedSegments(capsule.client.pinnedNotes || []),
@@ -468,4 +483,31 @@ function lastPromptableMessageId(segments) {
 function hasActiveFoodRuleContext(structuredFoodRules, foodRuleDecision) {
   if (structuredFoodRules && typeof structuredFoodRules === "object") return true;
   return Boolean(foodRuleDecision?.decision && foodRuleDecision.decision !== "not_applicable");
+}
+
+function hasActiveFoodDecisionV2Context(foodDecisionV2) {
+  return Boolean(foodDecisionV2?.decision && foodDecisionV2.decision !== "not_applicable");
+}
+
+function buildCompiledFoodPromptSegments({
+  structuredFoodRules,
+  foodRuleDecision,
+  foodDecisionV2,
+  productIngredientEvidence,
+}) {
+  const legacySegments = buildFoodRulePromptSegments({
+    structuredFoodRules,
+    foodRuleDecision,
+    productIngredientEvidence,
+  });
+  const v2Segments = buildFoodDecisionV2PromptSegments({ foodDecisionV2 });
+
+  if (v2Segments.length === 0) {
+    return legacySegments;
+  }
+
+  return [
+    ...v2Segments,
+    ...legacySegments.filter((segment) => segment.type !== "food_rule_decision" && segment.type !== "ingredient_verification"),
+  ];
 }

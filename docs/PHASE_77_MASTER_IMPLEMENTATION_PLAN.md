@@ -344,6 +344,8 @@ Done criteria:
 
 ## Phase 77E: Client Food Rule Profile V2
 
+Status: Implemented locally on 2026-06-10 through `docs/PHASE_77E_CLIENT_FOOD_RULE_PROFILE_V2_SPEC.md`.
+
 Goal:
 
 Allow dietitians to configure client-specific allowed/forbidden rules and flexibility against the master catalog.
@@ -809,16 +811,20 @@ Before implementation can complete:
    - exchange groups if available;
    - allergen/diet-type tags if available.
 
-## Current Final State After Phase 77D
+## Current Final State After Phase 77L
 
 - Detailed master plan exists in this document.
 - Phase 77A short roadmap/spec exists separately.
 - Phase 77C client personal form v2 is loaded locally in the dynamic form registry.
 - Phase 77D master food catalog hierarchy is loaded locally from the user-supplied `Besin Veritabani` sheet.
-- Dashboard food-rule controls can mark forbidden main categories, subcategories, and foods, then expand those selections into existing forbidden food/group answers for Phase 76 compatibility.
-- Runtime behavior changed for the active client form schema, related demo/test form data, and manual food-rule dashboard serialization/loading.
-- Schema is unchanged.
-- Food Decision Engine V2, alias/ingredient matching, menu forms, export, and production catalog approval remain open.
+- Phase 77E Client Food Rule Profile V2 is the manual source authority for food rules with API, Supabase persistence, export/redaction, and simplified dashboard UI.
+- Phase 77F Menu Plan V1 is the primary plan authority with four templates, active-menu selection, food-profile conflict detection, derived legacy `dietPlan.summary`, API/Supabase persistence, `MenuPlanPanel` dashboard UI, export/redaction, and direct summary patch lock.
+- Phase 77G Food Decision Engine V2 classifies green food/menu questions using profile V2, active menu, catalog matching, flexibility precedence, and Phase 76H product verification, with Phase 68 recalibration and legacy 76E fallback. Mixed/clinical early-exit paths now include `food_profile_v2` source references when a profile is present.
+- Phase 77H PromptContext/answerability/output guard V2 binds provider styling to Food Decision V2 through bounded prompt segments, source-backed answerability, contradiction output guard, and permission-graph routing metadata.
+- Phase 77I Simplified Dietitian UX restructures the client detail into seven tabs (Overview, Personal Form, Food Rules, Menu, Critical Context, AI Copilot, Export) with status summaries, conflict review, progressive disclosure, empty/error states, and i18n across all seven supported languages. FoodRulesPanel and MenuPlanPanel moved from Forms view to dedicated client detail tabs.
+- Phase 77J DOCX/PDF export generates client-facing menu documents (DOCX/PDF) from active export-visible menu plans, strips internal fields (`dietitianNotes`, catalog checksums, revision metadata), supports optional recipe inclusion, exposes `GET /api/clients/[id]/menu-plans/export`, and wires Export tab preview/download controls. Phase 74 export is bumped to `phase74-export-v1.2` with `personal_form_v2.json`, `catalog_version_refs.json`, and deprecated proposal export sections.
+- Phase 77K closes the manual source authority track with Food Decision V2 golden calibration (`food-decision-v2-golden-cases.jsonl`, 14 categories), deterministic 100x50 V2 rehearsal (`phase-77k-food-mix-rehearsal.ts`, `unsafe_green_count = 0`), Phase 76O integration checks, export coverage verification for `phase74-export-v1.2`, and operational-health closure signals (`manualSourceAuthorityTrackClosed`, `whatsappAdapterNext`).
+- Phase 77L reconciles continuity and evidence documentation to the Phase 77K baseline, preserves the historical Phase 76E spec, records the `agent.md` -> `codex.md` project-rule filename migration, stabilizes local verification without reducing coverage, and closes the dirty Phase 77E-77K worktree into a clean continuation point. `git diff --check`, app `npm test`, and `npm run release:verify` passed on 2026-06-13.
 - Providers/channels remain disconnected.
 - Production pilot remains NO-GO.
-- Next implementation phase is Phase 77E.
+- Next implementation phase is WhatsApp production adapter.

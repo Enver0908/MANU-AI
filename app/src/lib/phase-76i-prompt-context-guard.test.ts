@@ -42,7 +42,7 @@ describe("phase 76I prompt context and provider guard", () => {
 
     expect(manifest?.foodRule?.decision).toBe("forbidden_food_rejection");
     const segmentTypes = (manifest?.segments || []).map((segment) => segment.type);
-    expect(segmentTypes).toContain("food_rule_decision");
+    expect(segmentTypes).toContain("food_decision_v2");
     expect(segmentTypes).toContain("forbidden_food_rules");
   });
 });

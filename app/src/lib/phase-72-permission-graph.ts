@@ -416,6 +416,34 @@ export function inferPhase72IntentIdsFromMessage(message: string): Phase72Intent
   return [...intents];
 }
 
+export type Phase72FoodDecisionV2Like = {
+  decision?: string;
+  queryType?: string | null;
+  providerEligible?: boolean;
+  reasonCodes?: string[];
+};
+
+export function mapFoodDecisionV2ToPermissionIntents(
+  foodDecisionV2: Phase72FoodDecisionV2Like | null,
+): Phase72FoodRuleIntentId[] {
+  if (!foodDecisionV2?.decision || foodDecisionV2.decision === "not_applicable") return [];
+
+  switch (foodDecisionV2.decision) {
+    case "forbid":
+      return ["forbidden_food_reminder"];
+    case "allow":
+      return ["allowed_food_confirmation"];
+    case "discourage":
+      return ["equivalent_substitution_allowed"];
+    case "needs_label":
+      return ["product_ingredient_unknown"];
+    case "needs_review":
+      return ["food_rule_uncertain_review"];
+    default:
+      return [];
+  }
+}
+
 export function mapFoodRuleDecisionToPermissionIntents(
   foodRuleDecision: Phase72FoodRuleDecisionLike,
 ): Phase72FoodRuleIntentId[] {

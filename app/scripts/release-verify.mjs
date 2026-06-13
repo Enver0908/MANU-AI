@@ -1,4 +1,5 @@
 import { spawnSync } from "node:child_process";
+import { rmSync } from "node:fs";
 
 const knownAuditFindings = new Set(["next:postcss", "postcss:GHSA-qx2v-qp2m-jg93"]);
 
@@ -6,7 +7,7 @@ const checks = [
   { label: "core package tests", command: "npm", args: ["test"], cwd: "../dietitian-ai-assistant" },
   { label: "lint", command: "npm", args: ["run", "lint"] },
   { label: "unit tests", command: "npm", args: ["test"] },
-  { label: "production build", command: "npm", args: ["run", "build"] },
+  { label: "production build", command: "npm", args: ["run", "build"], before: cleanNextBuildOutput },
 ];
 
 for (const check of checks) {
@@ -17,8 +18,11 @@ runDependencyAuditGate();
 
 console.log("Release verification passed. R-405 remains a documented production launch blocker.");
 
-function run({ label, command, args, cwd }) {
+function run({ label, command, args, cwd, before }) {
   console.log(`\n[release:verify] ${label}`);
+  if (typeof before === "function") {
+    before();
+  }
   const result = spawnSync(command, args, {
     cwd,
     stdio: "inherit",
@@ -28,6 +32,10 @@ function run({ label, command, args, cwd }) {
   if (result.status !== 0) {
     process.exit(result.status ?? 1);
   }
+}
+
+function cleanNextBuildOutput() {
+  rmSync(".next", { force: true, recursive: true });
 }
 
 function runDependencyAuditGate() {

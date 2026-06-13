@@ -46,7 +46,9 @@ export {
   evaluateIntentSpecificAnswerability,
   resolveEffectiveIntentFamily,
   resolveFoodIntentFamily,
+  resolveFoodDecisionV2IntentFamily,
   buildStructuredSourceCategories,
+  buildFoodDecisionV2SourceCategories,
 } from "./intent-specific-answerability.js";
 export {
   GREEN_INTENT_TAXONOMY_VERSION,
@@ -72,9 +74,17 @@ export {
   buildFoodRulePromptSegments,
 } from "./food-rule-prompt-segments.js";
 export {
+  FOOD_DECISION_V2_PROMPT_SEGMENTS_VERSION,
+  FOOD_DECISION_V2_PROMPT_SEGMENT_TYPES,
+  FOOD_DECISION_V2_PROVIDER_INSTRUCTION,
+  buildFoodDecisionV2PromptSegments,
+} from "./food-decision-v2-prompt-segments.js";
+export {
   PRODUCT_COMMUNICATION_COVENANT_VERSION,
   FOOD_RULE_OUTPUT_GUARD_VERSION,
+  FOOD_DECISION_V2_OUTPUT_GUARD_VERSION,
   detectFoodRuleOutputViolations,
+  detectFoodDecisionV2OutputViolations,
   detectProductCommunicationCovenantIssues,
   guardAssistantReply,
   guardProviderOutput,

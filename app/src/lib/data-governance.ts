@@ -1,6 +1,8 @@
 import { emptySafetyChecklist } from "./safety-checklist";
 import { redactClientContextUpdatesForAnonymization } from "./client-context-updates";
 import { redactStructuredFoodRuleAnswers } from "./phase-76n-food-rule-lifecycle";
+import { redactClientFoodRuleProfileV2 } from "./phase-77e-client-food-rule-profile";
+import { redactClientMenuPlanV1 } from "./phase-77f-client-menu-plan";
 import { AppDomainError } from "./app-errors";
 
 export const PHASE_74_REDACTION_MARKER = "REDACTED_BY_PHASE74_POLICY";
@@ -8,6 +10,8 @@ import type {
   AiDecisionRecord,
   AuditEventRecord,
   ClientContextUpdateRecord,
+  ClientFoodRuleProfileV2Record,
+  ClientMenuPlanV1Record,
   ClientFormResponseRecord,
   ClientRecord,
   ClientUpdateProposalRecord,
@@ -36,6 +40,8 @@ export type ClientScopedExport = {
   conversations: ConversationRecord[];
   messages: MessageRecord[];
   clientFormResponses: ClientFormResponseRecord[];
+  clientFoodRuleProfiles: ClientFoodRuleProfileV2Record[];
+  clientMenuPlans: ClientMenuPlanV1Record[];
   clientContextUpdates: ClientContextUpdateRecord[];
   clientUpdateProposals: ClientUpdateProposalRecord[];
   aiDecisions: AiDecisionRecord[];
@@ -109,6 +115,8 @@ export function buildClientScopedExport(state: ManuAppState, clientId: string): 
     conversations,
     messages,
     clientFormResponses: state.clientFormResponses.filter((response) => response.clientId === client.id),
+    clientFoodRuleProfiles: state.clientFoodRuleProfiles.filter((profile) => profile.clientId === client.id),
+    clientMenuPlans: state.clientMenuPlans.filter((plan) => plan.clientId === client.id),
     clientContextUpdates: state.clientContextUpdates.filter((update) => update.clientId === client.id),
     clientUpdateProposals: state.clientUpdateProposals.filter((proposal) => proposal.clientId === client.id),
     aiDecisions: decisions,
@@ -198,6 +206,12 @@ function redactClientDataInState(
             updatedAt: now,
           }
         : response,
+    ),
+    clientFoodRuleProfiles: state.clientFoodRuleProfiles.map((profile) =>
+      profile.clientId === client.id ? redactClientFoodRuleProfileV2(profile) : profile,
+    ),
+    clientMenuPlans: state.clientMenuPlans.map((plan) =>
+      plan.clientId === client.id ? redactClientMenuPlanV1(plan) : plan,
     ),
     clientUpdateProposals: state.clientUpdateProposals.map((proposal) =>
       proposal.clientId === client.id

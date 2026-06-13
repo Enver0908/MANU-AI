@@ -4,15 +4,15 @@ Date: 2026-06-04
 
 ## Status
 
-This is the final summary for the 13-phase completion roadmap, updated through the Phase 43-77B local hardening track, including Phase 77A manual source authority rebaseline, Phase 77B chat mutation removal, Phase 77C client personal form v2, and Phase 77D master food catalog hierarchy.
+This is the final summary for the 13-phase completion roadmap, updated through the Phase 43-77L local hardening and continuity track, including the full Phase 77A-77K manual source authority rebaseline and Phase 77L worktree closure.
 
 Production pilot is not approved.
 
-Latest local roadmap state adds Phase 77A manual source authority rebaseline, Phase 77B chat mutation removal, Phase 77C client personal form v2, and Phase 77D master food catalog hierarchy; Phase 77E-77K remain open before WhatsApp production adapter work.
+Latest local roadmap state closes Phase 77A-77L: chat mutation is blocked, client personal form v2 is loaded, the master food catalog hierarchy is loaded, Client Food Rule Profile V2 and Menu Plan V1 are first-class manual source authorities, Food Decision Engine V2 is calibrated with 100x50 rehearsal evidence, PromptContext/answerability/output guard V2 is wired, simplified dietitian UX is in place, DOCX/PDF export plus Phase 74 export package `phase74-export-v1.2` are present, and continuity/evidence docs are reconciled to the verified commit boundary. WhatsApp production adapter is the next implementation track, but real channel traffic remains blocked.
 
 No real WhatsApp, Telegram, Gemini, external LLM provider, email, push, monitoring, analytics, secret manager, backup provider, or real client health data is connected.
 
-Post-Phase 77D strategic roadmap: `DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` now defines the direct production pilot path as 100 dietitians x 50 clients, with no small production ring, and inserts the Phase 77A-77K manual source authority rebaseline before WhatsApp production adapter work. Product communication covenant enforcement, approved-source answerability, green intent taxonomy, local direct 5,000-client scale foundation, user-supplied form hardening, Turkiye official source manifest/intake, draft permission graph artifacts, draft health regulation calibration matrix, draft retention/export/DSAR transactional redaction contract extended to structured food rules and client update proposals, draft Gemini provider gate artifacts with blocked real egress, dietitian-approved chat-to-form update proposals, expanded safety-profile proposal updates, the Phase 76C structured food-rule green capacity PRD/tech spec, Phase 76D structured food-rule registry/model fields, Phase 76E deterministic food-rule engine evidence, Phase 76F intent-specific answerability evidence, Phase 76G local second-layer false-yellow calibration evidence, Phase 76H local product ingredient verification evidence, Phase 76I bounded food-rule PromptContext/output guard evidence, Phase 76J dashboard food-rule management UX evidence, Phase 76K chat-to-food-rule proposal evidence, Phase 76L permission graph runtime bridge evidence, Phase 76M calibration/metrics evidence, Phase 76N Supabase export/redaction/transactional RPC evidence, Phase 76O 100x50 food-mix rehearsal evidence, Phase 76P consolidated continuity/gate documentation, Phase 76Q verify+commit track closure, Phase 77A manual source authority PRD/tech spec, Phase 77C client personal form v2, and Phase 77D master food catalog hierarchy are present locally; downstream Phase 77B and Phase 77E-77K implementation, WhatsApp production adapter work, external legal/privacy approval of lifecycle and provider policy, external qualified dietitian approval of food-decision and second-layer behavior, final production form/PDF/catalog/menu approvals, Phase 76N RLS re-run when local Supabase is available, full production rehearsal acceptance, external gates, and R-405 closure/acceptance remain required before production GO.
+Post-Phase 77L strategic roadmap: `DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` defines the direct production pilot path as 100 dietitians x 50 clients, with no small production ring. Product communication covenant enforcement, approved-source answerability, green intent taxonomy, local direct 5,000-client scale foundation, user-supplied form hardening, Turkiye official source manifest/intake, draft permission graph artifacts, draft health regulation calibration matrix, draft retention/export/DSAR transactional redaction contract extended through `phase74-export-v1.2`, draft Gemini provider gate artifacts with blocked real egress, deprecated dietitian-approved chat-to-form update proposal evidence, expanded safety-profile proposal update history, the full Phase 76C-76Q structured food-rule track, the full Phase 77A-77K manual source authority track, and Phase 77L continuity/worktree closure are present locally. WhatsApp production adapter work, external legal/privacy approval of lifecycle and provider policy, external qualified dietitian approval of food-decision and second-layer behavior, final production form/PDF/catalog/menu approvals, Phase 76N RLS re-run when local Supabase is available, production operations evidence, external gates, and R-405 closure/acceptance remain required before production GO.
 
 ## Go / No-Go Decision
 
@@ -59,6 +59,14 @@ Reason:
 - Phase 77A added the manual source authority rebaseline spec. It moves WhatsApp production adapter after Phase 77A-77K, locks deterministic-only v1 catalog/alias/keyword matching for out-of-catalog food questions, requires Phase 68 taxonomy recalibration for safe `discourage` replies, defines Food Decision V2 send semantics, establishes active menu as the primary plan source, and records Phase 76D-76O artifact disposition. `npm run release:verify` passed on 2026-06-10 with core tests 165/165, app tests 284/284, lint with two pre-existing warnings, production build, and only documented R-405 findings. It did not implement runtime behavior, add schema, close any launch gate, connect a provider or channel, process real data, or resolve R-405.
 - Phase 77C loaded the first client personal form v2 into the dynamic form registry with required phone and WhatsApp identity fields, general and goal flexibility, user-supplied personal/nutrition/medical/lifestyle fields, prompt-hidden sensitive fields, and compatibility seed data. It did not close any launch gate, connect a provider or channel, process real data, approve production identity reconciliation, implement the food list/menu forms, remove chat mutation, or resolve R-405.
 - Phase 77D loaded the user-supplied `manual.xlsx` / `Besin Veritabani` sheet as a versioned master food catalog hierarchy with 12 main categories, 113 subcategories, 518 foods, stable ids, source checksums, QA validation, exact lookup, dashboard forbidden checkbox controls, and expansion into existing food-rule answers. It did not close any launch gate, connect a provider or channel, process real data, approve production catalog semantics, implement Food Decision Engine V2, implement alias/ingredient matching, implement menus/export, remove chat mutation, or resolve R-405.
+- Phase 77E added Client Food Rule Profile V2 as the first-class manual source authority for client food rules, with API/Supabase persistence, catalog search, conflict warnings, export/redaction coverage, and legacy runtime bridge. It did not close any launch gate, connect a provider or channel, process real data, or resolve R-405.
+- Phase 77F added Menu Plan V1 with four templates, active-menu selection, derived legacy diet-plan summary, conflict detection, API/Supabase persistence, dashboard editing, and lifecycle coverage. It did not close any launch gate, connect a provider or channel, process real data, or resolve R-405.
+- Phase 77G added Food Decision Engine V2 and Phase 68 recalibration for safe food/menu flexibility questions, while preserving fail-closed clinical routing. It did not close any launch gate, connect a provider or channel, process real data, or resolve R-405.
+- Phase 77H added V2 PromptContext, answerability, permission-graph mapping, and output-guard contradiction blocking so provider styling cannot override structured Food Decision V2 decisions. It did not close any launch gate, connect a provider or channel, process real data, or resolve R-405.
+- Phase 77I simplified the dietitian UX into seven client-detail tabs with plain-language status summaries, conflict review, empty/error states, and i18n coverage. It did not close any launch gate, connect a provider or channel, process real data, or resolve R-405.
+- Phase 77J added client-facing DOCX/PDF menu export and Phase 74 export package `phase74-export-v1.2`, with internal fields stripped and Turkish rendering tests. It did not close any launch gate, connect a provider or channel, process real data, or resolve R-405.
+- Phase 77K closed the manual source authority track with a 14-category Food Decision V2 golden suite, deterministic 100x50 V2 rehearsal, `unsafe_green_count = 0`, Phase 76O integration checks, export coverage evidence, and operational-health closure signals. It did not close any launch gate, connect a provider or channel, process real data, or resolve R-405.
+- Phase 77L reconciled continuity/evidence docs, preserved the historical Phase 76E spec, stabilized local verification, and closed the dirty Phase 77E-77K worktree boundary. `git diff --check`, `app` `npm test`, and `npm run release:verify` passed on 2026-06-13. It did not close any launch gate, connect a provider or channel, process real data, or resolve R-405.
 
 ## Completion Roadmap Result
 
@@ -130,11 +138,11 @@ External approvals:
 
 ## Verification
 
-Latest local release verification after Phase 77B manual source authority boundary:
+Latest local release verification after Phase 77K calibration/rehearsal/evidence closure:
 
 - `npm run release:verify` passed on 2026-06-10.
-- Core tests: 165/165 passed.
-- App tests: 289/289 passed.
+- Core tests: 173/173 passed.
+- App tests: 337/337 passed.
 - App lint: passed with two pre-existing warnings.
 - Production build: passed.
 - Production dependency audit gate passed with only documented R-405 findings.
@@ -193,14 +201,13 @@ Phase 50 verification on 2026-06-02:
 
 ## Next Required Actions
 
-1. Continue Phase 77E-77K by implementing client food-rule profile v2, menu forms/export, Food Decision Engine V2, and related manual source authority work.
-2. Implement the client food-rule profile v2, menu-plan forms, Food Decision Engine V2, PromptContext/output guards, exports, lifecycle coverage, and 100x50 rehearsal across Phase 77E-77K.
-3. Extend catalog-aware deterministic matching in Phase 77G with alias/ingredient confidence thresholds and false-positive golden cases before any production client-facing catalog decision.
-4. Apply Phase 65 official health-regulation PDF corpus QA to the user-supplied PDFs, then collect reviewed corpus approval before active scope-guard use.
-5. Resolve R-405 through a safe stable Next.js/PostCSS upgrade or obtain formal external risk acceptance.
-6. Collect sanitized external approval references in `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` and map them through the Phase 64 structured evidence engine.
-7. Re-run `npm run release:verify` after any approval-related change.
-8. Keep all real providers, channels, monitoring, secret manager, backup provider, and real client health data disconnected until the relevant gates are approved.
+1. Start the WhatsApp production adapter as the next implementation track, but keep it gated/mock-first with no real WhatsApp traffic until channel/legal/privacy gates close.
+2. Apply Phase 65 official health-regulation PDF corpus QA to user-supplied PDFs, then collect reviewed corpus approval before active scope-guard use.
+3. Resolve R-405 through a safe stable Next.js/PostCSS upgrade or obtain formal external risk acceptance.
+4. Collect sanitized external approval references in `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` and map them through the Phase 64 structured evidence engine.
+5. Complete production operations evidence for incident response, DSAR/deletion, backup/restore, secret rotation, monitoring, rollback, and production rehearsal acceptance.
+6. Re-run `npm run release:verify` after any approval-related code, prompt, corpus, form, provider, channel, or dependency change.
+7. Keep all real providers, channels, monitoring, secret manager, backup provider, and real client health data disconnected until the relevant gates are approved.
 
 ## Non-Approval Statement
 

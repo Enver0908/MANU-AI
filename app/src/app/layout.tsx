@@ -25,6 +25,11 @@ export const metadata: Metadata = {
   manifest: "/manifest.webmanifest",
 };
 
+const devServiceWorkerCleanupScript =
+  process.env.NODE_ENV === "development"
+    ? `if("serviceWorker"in navigator){navigator.serviceWorker.getRegistrations().then(function(r){r.forEach(function(x){x.unregister()})});}if("caches"in window){caches.keys().then(function(k){k.forEach(function(n){caches.delete(n)})});}`
+    : null;
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -33,6 +38,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="min-h-full">
+        {devServiceWorkerCleanupScript ? (
+          <script dangerouslySetInnerHTML={{ __html: devServiceWorkerCleanupScript }} />
+        ) : null}
         <PwaRuntime />
         {children}
       </body>

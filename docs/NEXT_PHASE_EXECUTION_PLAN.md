@@ -8,7 +8,7 @@ Real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret ma
 
 The most recent execution layers after the 13-phase completion roadmap are Phase 76B expanded chat form safety updates, Phase 76A dietitian chat form update proposals, Phase 75 Gemini provider gate, Phase 74 data lifecycle DSAR policy, Phase 73 health regulation calibration, Phase 72 regulation permission graph, Phase 71 Turkiye official health source ingestion, Phase 70 user-supplied form hardening, Phase 43 multilingual language support, Phase 44 red-risk reactivation lock, Phase 45 client removal data lifecycle, Phase 46 WhatsApp group quarantine, Phase 47 RLS quarantine evidence coverage, Phase 48 R-405 stable patch recheck, Phase 49 safety/orchestration hardening, Phase 50 production Supabase hardening, Phase 51 transactional RPC coverage, Phase 52 integration test coverage, Phase 53 scale/broad read contracts, Phase 54 R-405/launch-gate recheck, Phase 55 audit remediation safety boundary, Phase 56 clinical safety second-layer local evidence, Phase 57 yellow-risk hold/draft refresh, Phase 58 dietitian client language control, Phase 59 architecture review remediation, Phase 60 audit remediation, Phase 61 scope guard (RAG + LLM) second layer mock-first, Phase 62 architecture review remediation wave 2, Phase 63 production pilot GO rebaseline, Phase 64 structured launch-gate evidence engine, Phase 65 official regulation PDF corpus QA foundation, Phase 66 product communication covenant lock, Phase 67 approved source answerability engine, Phase 68 green maximization intent taxonomy, and Phase 69 direct 5,000 client scale foundation. Phase 76B expands the reviewed proposal path to Phase 70 clinical/safety form flags, editable proposal rows, supported health-profile mirrors, and manual-control warnings while keeping AI active/passive, mode, channel permission, red/yellow lock resolution, and autopilot/reactivation outside chat mutation. Phase 65 adds a typed QA foundation so user-supplied official PDFs must have source metadata, checksums, page extraction evidence, page/section references, derived rule drafts, corpus version, and synthetic golden cases before PDF-derived scope rules can become draft rules. Phase 71 adds the user-supplied 14-source Turkiye official source manifest and fail-closed artifact intake into that QA contract without approving any corpus. Phase 66 locks client-facing AI communication locally: AI self-disclosure, AI limitation disclaimers, doctor/dietitian/professional referral language, yellow/red AI sends, and non-green draft approval are blocked before client-facing send. Phase 67 gates green provider calls/sends on approved source support and excludes AI-generated messages from source authority. Phase 68 records green intent taxonomy evidence after answerability and blocks green-looking sensitive intent before provider generation without downgrading yellow/red decisions. Phase 69 adds synthetic 100 dietitian x 50 client scale evidence, cursor pagination helpers, Phase 69 read contracts, and aggregate operational-health scale signals. The post-Phase 65 strategic completion plan is now `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`: production pilot is direct 100 dietitians x 50 clients (minimum 5,000 clients), no small production ring, green maximization is source-backed, and client-facing output must never disclose AI identity or refer the client to a doctor/dietitian/professional. The production-pilot decision remains `NO-GO`: all eight launch gates remain open and R-405 remains open. R-406 is now mitigated in the local prototype after Docker Desktop/local Supabase was started, the Phase 50 migration was applied, and `npm run test:rls` passed with 19/19 tests on 2026-06-02. Draft review, form response, client context update, handoff status, and red-risk reactivation now use transactional RPC commits locally; remaining broad reads are classified in a test-covered contract, while client removal/anonymization bulk redaction and external approval intake remain future production hardening work. R-310 is partially mitigated locally by deterministic second-layer evidence, Phase 57 yellow supervision, Phase 59 glucose/symptom hardening, Phase 61 escalate-only scope guard (default no-op until approved corpus), Phase 65 corpus QA foundation, Phase 66 covenant send blocking, Phase 67 source answerability, and Phase 68 green intent taxonomy, but qualified dietitian approval, official PDF corpus approval, and the clinical taxonomy launch gate remain open.
 
-Current override after Phase 77B: chat-based form/food-rule/menu mutation is blocked, the first client personal form v2 is loaded locally, and the user-supplied `Besin Veritabani` is loaded as a hierarchical master food catalog. Next open phase is Phase 77E client food-rule profile v2, followed by Phase 77F-77K for menu forms/export, Food Decision Engine V2, PromptContext/output guard adaptation, UX simplification, lifecycle/calibration/rehearsal closure, and only then WhatsApp production adapter work.
+Current override after Phase 77L: chat-based form/food-rule/menu mutation is blocked, manual source authorities are loaded locally, Food Decision Engine V2 classifies green food/menu questions with golden calibration and 100x50 V2 rehearsal evidence (`unsafe_green_count = 0`), PromptContext/answerability/output guard V2 bound provider styling to V2 decisions without raw label leakage, the simplified dietitian UX restructured the client detail into seven tabs, active export-visible menu plans can be downloaded as DOCX/PDF with internal fields stripped, and Phase 74 client export package is `phase74-export-v1.2`. Phase 77A-77K manual source authority track is closed locally, Phase 77L reconciled continuity/evidence docs and stabilized local verification, and `git diff --check`, app `npm test`, and `npm run release:verify` passed on 2026-06-13. Next open phase is WhatsApp production adapter.
 
 ## Post-Phase 65 Strategic Completion Plan - Added 2026-06-05
 
@@ -28,9 +28,9 @@ Locked decisions:
 
 Next implementation order:
 
-1. Phase 77E-77K manual source authority rebaseline track: client food-rule profile v2, menu plan/export, Food Decision Engine V2, PromptContext/answerability/output guard adaptation, simplified dietitian UX, lifecycle/calibration/rehearsal closure. Phase 77B boundary, Phase 77C personal form v2, and Phase 77D master food catalog hierarchy are already loaded locally.
-3. WhatsApp production adapter after Phase 77A-77K is complete.
-4. Production ops, R-405 closure/acceptance, full rehearsal acceptance, and external launch-gate closure.
+1. WhatsApp production adapter (Phase 77A-77K manual source authority rebaseline is complete locally).
+2. Production ops, R-405 closure/acceptance, full rehearsal acceptance, and external launch-gate closure.
+3. Direct production pilot GO only after all structured external launch gates close.
 
 ## Phase 77A: Manual Source Authority Rebaseline - Completed 2026-06-10
 
@@ -51,7 +51,49 @@ Status:
 
 Next:
 
-- Proceed to Phase 77E client food-rule profile v2.
+- Phase 77B-77K are complete locally; proceed to WhatsApp production adapter as the next implementation track.
+
+## Phase 77H: PromptContext, Answerability, Permission Graph, And Output Guard V2 - Completed 2026-06-10
+
+- Added `docs/PHASE_77H_PROMPTCONTEXT_ANSWERABILITY_OUTPUT_GUARD_V2_SPEC.md`, `food-decision-v2-prompt-segments.js`, V2 PromptContext segments, intent-specific answerability `v0.2.0`, output guard V2, orchestrator compile/answerability/guard wiring, permission-graph V2 mapping, and provider allowlist updates.
+- Verification passed with `npm run release:verify`: core tests 173/173, app tests 315/315, lint with two pre-existing warnings, production build, and only documented R-405 findings.
+- Production pilot remains `NO-GO`.
+
+Next:
+
+- Phase 77I-77K are complete locally; proceed to WhatsApp production adapter as the next implementation track.
+
+## Phase 77G: Food Decision Engine V2 And Phase 68 Recalibration - Completed 2026-06-10
+
+- Added `docs/PHASE_77G_FOOD_DECISION_ENGINE_V2_SPEC.md`, `phase-77g-food-decision-engine-v2.ts`, V2 decision contract (`allow`/`discourage`/`forbid`/`needs_label`/`needs_review`/`not_applicable`), catalog/profile/menu/flexibility precedence, Phase 76H product-ingredient verification reuse, legacy 76E fallback, `food-rule-runtime.ts` V2 preference, simulator/orchestrator `foodDecisionV2` manifest wiring, and Phase 68 `yellow_active_plan_structural_change` recalibration.
+- Verification passed with `npm run release:verify`: core tests 167/167, app tests 310/310, lint with two pre-existing warnings, production build, and only documented R-405 findings.
+- Production pilot remains `NO-GO`.
+
+Next:
+
+- Proceed to Phase 77H PromptContext/answerability/output guard V2 adaptation.
+
+## Phase 77F: Menu Plan V1 With Four Templates - Completed 2026-06-10
+
+- Added `docs/PHASE_77F_MENU_PLAN_V1_SPEC.md`, `phase-77f-client-menu-plan.ts`, `ClientMenuPlanV1Record`, four template types, lazy legacy diet-plan migration, active-menu selection with derived `dietPlan.summary`, food-profile conflict detection, menu-plan API routes, Supabase `client_menu_plans` with tenant RLS, `MenuPlanPanel` dashboard UI, Phase 74 `menu_plans_v1.json` export, and transactional redaction.
+- Direct `dietPlan.summary` patch is blocked when an active menu plan exists.
+- Verification passed with `npm run release:verify`: core tests 165/165, app tests 302/302, lint with two pre-existing warnings, production build, and only documented R-405 findings.
+- Production pilot remains `NO-GO`.
+
+Next:
+
+- Proceed to Phase 77G Food Decision Engine V2.
+
+## Phase 77E: Client Food Rule Profile V2 - Completed 2026-06-10
+
+- Added `docs/PHASE_77E_CLIENT_FOOD_RULE_PROFILE_V2_SPEC.md`, `phase-77e-client-food-rule-profile.ts`, `ClientFoodRuleProfileV2Record`, lazy migration from legacy form answers, `GET`/`PUT` `/api/clients/[id]/food-rule-profile`, Supabase `client_food_rule_profiles` with tenant RLS, simplified `FoodRulesPanel`, Phase 74 `food_rule_profile_v2.json` export, and transactional redaction.
+- Food-rule saves bridge into legacy form answers for Phase 76 runtime compatibility until Food Decision Engine V2.
+- Verification passed with `npm run release:verify`: core tests 165/165, app tests 296/296, lint with two pre-existing warnings, production build, and only documented R-405 findings.
+- Production pilot remains `NO-GO`.
+
+Next:
+
+- Proceed to Phase 77F menu plan v1.
 
 ## Phase 77B: Manual Source Authority Boundary - Completed 2026-06-10
 
@@ -70,7 +112,7 @@ Status:
 
 Next:
 
-- Proceed to Phase 77E client food-rule profile v2.
+- Phase 77E-77K are complete locally; proceed to WhatsApp production adapter as the next implementation track.
 
 ## Phase 77C: Client Personal Form V2 - Completed 2026-06-10
 
@@ -88,7 +130,7 @@ Status:
 
 Next:
 
-- Proceed to Phase 77E client food-rule profile v2.
+- Phase 77E-77K are complete locally; proceed to WhatsApp production adapter as the next implementation track.
 
 ## Phase 77D: Master Food Catalog Hierarchy - Completed 2026-06-10
 
@@ -107,7 +149,7 @@ Status:
 
 Next:
 
-- Proceed to Phase 77E client food-rule profile v2.
+- Phase 77E-77K are complete locally; proceed to WhatsApp production adapter as the next implementation track.
 
 ## Phase 76Q: Verification and Commit Protocol - Completed 2026-06-08
 

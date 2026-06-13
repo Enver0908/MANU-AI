@@ -161,6 +161,113 @@ export type ClientFormResponseRecord = {
   updatedAt: string;
 };
 
+export type Phase77EFlexibilityLevel = "restricted" | "moderate" | "flexible";
+export type ClientFoodRuleProfileV2Status = "draft" | "published";
+
+export type Phase77FMenuPlanTemplateType =
+  | "day_by_day_detailed"
+  | "weekly_meal_framework"
+  | "exchange_option_based"
+  | "simple_guidance";
+
+export type Phase77FMenuPlanStatus = "draft" | "active" | "archived";
+
+export type Phase77FMenuPlanCatalogMatchConfidence = "exact" | "partial" | "none";
+
+export type Phase77FMenuPlanCatalogMatch = {
+  query: string;
+  catalogFoodId: string | null;
+  catalogFoodName: string | null;
+  matchConfidence: Phase77FMenuPlanCatalogMatchConfidence;
+};
+
+export type Phase77FMenuPlanRecipe = {
+  title: string;
+  ingredients: string[];
+  instructions: string;
+};
+
+export type Phase77FMenuPlanMealItem = {
+  id: string;
+  label: string;
+  freeText: string;
+  catalogFoodIds: string[];
+  catalogMatch: Phase77FMenuPlanCatalogMatch | null;
+  portionNote: string;
+  recipe: Phase77FMenuPlanRecipe | null;
+};
+
+export type Phase77FMenuPlanMealSlot = {
+  id: string;
+  dayKey: string | null;
+  mealKey: string;
+  title: string;
+  items: Phase77FMenuPlanMealItem[];
+  alternatives: Phase77FMenuPlanMealItem[];
+  exchangeGuidance: string;
+  weeklyTargetNote: string;
+};
+
+export type ClientMenuPlanV1Record = {
+  id: string;
+  tenantId: string;
+  clientId: string;
+  dietitianId: string;
+  templateType: Phase77FMenuPlanTemplateType;
+  status: Phase77FMenuPlanStatus;
+  version: number;
+  revision: number;
+  title: string;
+  effectiveDate: string | null;
+  mealSlots: Phase77FMenuPlanMealSlot[];
+  preferredFoods: string[];
+  avoidFoods: string[];
+  dietitianNotes: string;
+  clientFacingNotes: string;
+  exportVisible: boolean;
+  migratedFromLegacyDietPlan: boolean;
+  catalogVersion: string;
+  catalogSourceSha256: string;
+  catalogRecordSetSha256: string;
+  createdAt: string;
+  updatedAt: string;
+  activatedAt: string | null;
+};
+
+export type ClientFoodRuleProfileV2Record = {
+  id: string;
+  tenantId: string;
+  clientId: string;
+  dietitianId: string;
+  version: number;
+  status: ClientFoodRuleProfileV2Status;
+  revision: number;
+  allowedCatalogMainCategoryIds: string[];
+  allowedCatalogSubCategoryIds: string[];
+  allowedCatalogFoodIds: string[];
+  forbiddenCatalogMainCategoryIds: string[];
+  forbiddenCatalogSubCategoryIds: string[];
+  forbiddenCatalogFoodIds: string[];
+  allowedFoodGroups: string[];
+  forbiddenFoodGroups: string[];
+  freeTextAllowedFoods: string[];
+  freeTextForbiddenFoods: string[];
+  forbiddenIngredientKeywords: string[];
+  dietTypeRestrictions: string[];
+  flexibilityGlobal: Phase77EFlexibilityLevel;
+  flexibilityByMeal: Record<string, Phase77EFlexibilityLevel>;
+  flexibilityByGoal: Record<string, Phase77EFlexibilityLevel>;
+  flexibilityByFoodGroup: Record<string, Phase77EFlexibilityLevel>;
+  notes: string;
+  migratedFromLegacy76d: boolean;
+  catalogVersion: string;
+  catalogSourceSha256: string;
+  catalogRecordSetSha256: string;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string | null;
+};
+
 export type ClientContextUpdateRecord = {
   id: string;
   tenantId: string;
@@ -525,6 +632,8 @@ export type ManuAppState = {
   dietitianFormSchemas: DietitianFormSchemaRecord[];
   dietitianFormResponses: DietitianFormResponseRecord[];
   clientContextUpdates: ClientContextUpdateRecord[];
+  clientFoodRuleProfiles: ClientFoodRuleProfileV2Record[];
+  clientMenuPlans: ClientMenuPlanV1Record[];
   clientUpdateProposals: ClientUpdateProposalRecord[];
   clients: ClientRecord[];
   conversations: ConversationRecord[];

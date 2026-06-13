@@ -1,12 +1,12 @@
 import {
   CLINICAL_SAFETY_CLASSIFIER_VERSION,
   classifyClinicalSafetyRisk,
-  evaluateFoodRuleDecision,
   type RiskDecision,
 } from "dietitian-ai-assistant-architecture";
 import { applyPermissionGraphToRiskDecision } from "./phase-76l-permission-graph-runtime";
 import { applyScopeGuardToRiskDecision } from "./scope-guard-runtime";
-import { buildStructuredFoodRulesFromClientState } from "./food-rule-runtime";
+import { evaluateClientFoodDecisionV2FromState, evaluateClientFoodRuleDecision } from "./food-rule-runtime";
+import { shouldUseFoodDecisionV2Result } from "./phase-77g-food-decision-engine-v2";
 import { resolveProductIngredientEvidence } from "./product-ingredient-verification";
 import type { LaunchGateEvidenceRecord } from "./launch-gates";
 import type { ClientRecord, ManuAppState, MessageRecord } from "./types";
@@ -25,15 +25,17 @@ export async function classifySimulationRisk(
     launchGateEvidence?: LaunchGateEvidenceRecord[];
   } = {},
 ) {
-  const structuredFoodRules = buildStructuredFoodRulesFromClientState(state, client.id);
   const productIngredientEvidence = resolveProductIngredientEvidence(body);
-  const foodRuleDecision = structuredFoodRules
-    ? evaluateFoodRuleDecision({
-        message: body,
-        structuredFoodRules,
-        mixedIntentBlocked: false,
-        productIngredientEvidence,
-      })
+  const foodRuleDecision = evaluateClientFoodRuleDecision(state, client.id, body, {
+    riskLevel: "green",
+    productIngredientEvidence,
+  });
+  const foodDecisionV2Candidate = evaluateClientFoodDecisionV2FromState(state, client.id, body, {
+    riskLevel: "green",
+    productIngredientEvidence,
+  });
+  const foodDecisionV2 = shouldUseFoodDecisionV2Result(foodDecisionV2Candidate)
+    ? foodDecisionV2Candidate
     : null;
 
   const baseDecision = classifyClinicalSafetyRisk({
@@ -71,6 +73,14 @@ export async function classifySimulationRisk(
             queryType: foodRuleDecision.queryType,
           }
         : null,
+      foodDecisionV2: foodDecisionV2
+        ? {
+            decision: foodDecisionV2.decision,
+            queryType: foodDecisionV2.queryType,
+            providerEligible: foodDecisionV2.providerEligible,
+            reasonCodes: foodDecisionV2.reasonCodes,
+          }
+        : undefined,
     },
     conversationId: options.conversationId ?? null,
     messageId: options.messageId ?? null,

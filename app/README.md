@@ -38,9 +38,11 @@ npm run release:verify
 
 The scripts use `--webpack` because Turbopack did not resolve the local symlinked core package reliably.
 
-`npm run release:verify` runs the core package tests, lint, unit/API tests, production build, and the production dependency audit gate. It allows only the documented R-405 Next.js/PostCSS finding and does not run `npm audit fix --force`.
+`npm run release:verify` runs the core package tests, lint, unit/API tests, production build, and the production dependency audit gate. It cleans generated `.next` output before the production build so repeated local Windows/OneDrive runs do not fail on stale build artifacts. It allows only the documented R-405 Next.js/PostCSS finding and does not run `npm audit fix --force`.
 
-Latest local release verification on 2026-06-10 passed after Phase 77B with core tests 165/165, app tests 289/289, lint with two pre-existing warnings, production build, and only the documented R-405 production audit finding. Phase 77B blocks chat proposal create/apply and keeps personal form/food-rule edits on dashboard panels only. Next open phase is Phase 77E; WhatsApp production adapter moves after Phase 77A-77K.
+Latest local release verification on 2026-06-13 passed after Phase 77L with core tests 173/173, app tests 337/337, lint with two pre-existing warnings, production build, and only the documented R-405 production audit finding. `npm test` is deterministic with Vitest file parallelism disabled while keeping the same 53-file/337-test scope. Phase 77A-77K manual source authority work is complete locally: chat mutation is blocked, personal form v2, food-rule profile v2, menu plan v1, Food Decision Engine V2, PromptContext/output guard V2, simplified UX, DOCX/PDF export, and 100x50 V2 rehearsal evidence are present. Next open implementation track is WhatsApp production adapter, still with real channel/provider traffic blocked until external gates close.
+
+Phase 77L reconciles continuity/evidence docs, preserves the historical Phase 76E spec, stabilizes local verification, and closes the dirty Phase 77E-77K worktree into a clean commit boundary. It does not add real WhatsApp, Telegram, Gemini, monitoring, secret-manager, or real client health-data connections.
 
 Phase 29 is documentation/evidence hardening only. It keeps production pilot blocked, records that stable `next@latest` 16.2.6 still bundles `postcss@8.4.31`, and requires local Supabase before RLS evidence can be counted as passed.
 

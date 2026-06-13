@@ -6,9 +6,9 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 This repository is a local SaaS/PWA pilot prototype and architecture workspace. It is not a production-connected system yet.
 
-**Latest phase:** Phase 77B manual source authority boundary (2026-06-10). **Production pilot:** `NO-GO` (all eight launch gates open; R-405 open).
+**Latest implementation phase:** Phase 77K Calibration, 100x50 Rehearsal, And Evidence Closure (2026-06-10). **Latest continuity/worktree closure:** Phase 77L Continuity Reconciliation And Worktree Closure (2026-06-13). **Production pilot:** `NO-GO` (all eight launch gates open; R-405 open).
 
-**Latest verification:** Phase 77B verified on 2026-06-10: `npm run release:verify` passed with core tests 165/165, app tests 289/289, lint with two pre-existing warnings, production build, and only documented R-405 findings. RLS remains pending when local Supabase is unavailable. Chat-based form/food-rule/menu mutation is blocked; personal form and food rules are manual dashboard paths only; internal copilot stays read-only.
+**Latest verification:** Phase 77L verified on 2026-06-13: `git diff --check` passed; `npm test` in `app` passed with 53 test files and 337 tests; `npm run release:verify` passed with core tests 173/173, app tests 337/337, lint with two pre-existing warnings, production build, and only documented R-405 findings. RLS remains pending when local Supabase is unavailable. Food Decision V2 golden suite (14 cases), 100x50 V2 rehearsal (`unsafe_green_count = 0`), and Phase 76O integration checks pass locally; manual source authority track is closed and WhatsApp production adapter is next.
 
 The current implementation includes:
 
@@ -57,6 +57,14 @@ The current implementation includes:
 - Phase 77C client personal form v2: user-supplied first form loaded into the dynamic form registry with phone/WhatsApp identity fields, goal and target-weight fields, general and goal-based flexibility, nutrition-history/lifestyle/medical/digestive fields, and prompt privacy rules; food-group and meal flexibility remain deferred to food-rule and menu forms
 - Phase 77D master food catalog hierarchy: user-supplied `manual.xlsx` / `Besin Veritabani` extracted into a 12-category, 113-subcategory, 518-food catalog with stable ids, checksums, exact lookup, and dashboard checkbox expansion for forbidden main categories, subcategories, and foods
 - Phase 77B manual source authority boundary: blocks chat proposal create/apply for form, food rules, and future menu authority; keeps internal copilot read-only and Critical Context panel-only; preserves deprecated historical proposal artifacts
+- Phase 77E client food-rule profile v2: first-class profile state with catalog search UI, allowed/forbidden foods and groups, flexibility maps, conflict detection, API/Supabase persistence, export/redaction, and legacy form-answer bridge for Phase 76 runtime compatibility
+- Phase 77F menu plan v1: four-template client menu plans with active-menu selection, food-profile conflict detection, derived legacy diet-plan summary, API/Supabase persistence, `MenuPlanPanel` dashboard UI, export/redaction, and direct summary patch lock when an active menu exists
+- Phase 77G Food Decision Engine V2: deterministic `allow`/`discourage`/`forbid`/`needs_label`/`needs_review` decisions from profile V2, active menu, catalog matching, and flexibility; Phase 68 recalibration for safe off-menu food requests; simulator/orchestrator manifest wiring with legacy 76E fallback
+- Phase 77H PromptContext/answerability/output guard V2: bounded V2 prompt segments, profile/menu/catalog answerability sources, contradiction output guard, permission-graph V2 intent mapping, and provider allowlist updates
+- Phase 77I simplified dietitian UX: client detail restructured into seven tabs (Overview, Personal Form, Food Rules, Menu, Critical Context, AI Copilot, Export) with status summaries, conflict review panels, progressive disclosure, empty/error states, and i18n for all supported languages
+- Phase 77J DOCX/PDF menu export: active export-visible menu plans download as DOCX/PDF with internal fields stripped; Phase 74 client export package bumped to `phase74-export-v1.2`
+- Phase 77K calibration and evidence closure: Food Decision V2 golden suite (14 categories), 100x50 V2 rehearsal with zero unsafe green, Phase 76O integration checks, and manual source authority track closure
+- Phase 77L continuity/worktree closure: stale continuity and evidence documents reconciled to the Phase 77K baseline, historical Phase 76E spec preserved, long-running rehearsal/release verification made deterministic, and the dirty Phase 77E-77K worktree closed into a coherent commit boundary
 - Post-Phase 65 direct 100-dietitian completion plan in `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`, locking the no-small-ring 5,000-client production pilot target, product communication covenant, approved-source answerability path, and user-document timing
 
 ## Safety Model

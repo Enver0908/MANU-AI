@@ -7,7 +7,7 @@
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint",
-    "test": "vitest run src --exclude src/lib/supabase-rls.integration.test.ts",
+    "test": "vitest run src --exclude src/lib/supabase-rls.integration.test.ts --no-file-parallelism --maxWorkers=1",
     "test:rls": "vitest run src/lib/supabase-rls.integration.test.ts",
     "test:visual": "npm run build && playwright test",
     "release:verify": "node scripts/release-verify.mjs"
@@ -16,8 +16,10 @@
     "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.106.1",
     "dietitian-ai-assistant-architecture": "file:../dietitian-ai-assistant",
+    "docx": "^9.7.1",
     "lucide-react": "^1.16.0",
     "next": "16.2.6",
+    "pdfmake": "^0.3.10",
     "react": "19.2.4",
     "react-dom": "19.2.4"
   },

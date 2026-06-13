@@ -1,5 +1,6 @@
 export const PRODUCT_COMMUNICATION_COVENANT_VERSION = "product-communication-covenant-v0.1.0";
-export const FOOD_RULE_OUTPUT_GUARD_VERSION = "food-rule-output-guard-v0.1.0";
+export const FOOD_RULE_OUTPUT_GUARD_VERSION = "food-rule-output-guard-v0.2.0";
+export const FOOD_DECISION_V2_OUTPUT_GUARD_VERSION = "food-decision-v2-output-guard-v0.1.0";
 
 const FOOD_RULE_REJECTION_DECISIONS = new Set([
   "forbidden_food_rejection",
@@ -107,7 +108,14 @@ export function guardAssistantReply({ draft, capsule, riskDecision }) {
   };
 }
 
-export function guardProviderOutput({ output, capsule, riskDecision, foodRule = null, structuredFoodRules = null }) {
+export function guardProviderOutput({
+  output,
+  capsule,
+  riskDecision,
+  foodRule = null,
+  foodDecisionV2 = null,
+  structuredFoodRules = null,
+}) {
   const assistant = guardAssistantReply({ draft: output, capsule, riskDecision });
   const issues = assistant.issues.map((issue) => ({
     code: issue,
@@ -124,6 +132,14 @@ export function guardProviderOutput({ output, capsule, riskDecision, foodRule = 
       evidence: "food_rule_decision",
     })),
   );
+  issues.push(
+    ...detectFoodDecisionV2OutputViolations(output, { foodDecisionV2 }).map((code) => ({
+      code,
+      severity: "block",
+      category: "food_decision_v2",
+      evidence: "food_decision_v2",
+    })),
+  );
 
   if (hasMissingHistoricalContextToken(output)) {
     issues.push({
@@ -138,6 +154,27 @@ export function guardProviderOutput({ output, capsule, riskDecision, foodRule = 
     allowed: issues.length === 0,
     issues,
   };
+}
+
+export function detectFoodDecisionV2OutputViolations(output, { foodDecisionV2 = null } = {}) {
+  if (!foodDecisionV2?.decision || foodDecisionV2.decision === "not_applicable") return [];
+
+  const normalizedText = normalizeForSafetyPatterns(output);
+  const issues = [];
+
+  if (foodDecisionV2.decision === "forbid" && hasForbiddenFoodApprovalLanguage(normalizedText)) {
+    issues.push("food_decision_v2_forbidden_food_approved");
+  }
+
+  if (foodDecisionV2.decision === "discourage" && hasForbiddenFoodApprovalLanguage(normalizedText)) {
+    issues.push("food_decision_v2_discourage_strong_approval");
+  }
+
+  if (foodDecisionV2.decision === "needs_label" && hasForbiddenFoodApprovalLanguage(normalizedText)) {
+    issues.push("food_decision_v2_needs_label_answered_as_allowed");
+  }
+
+  return Array.from(new Set(issues));
 }
 
 export function detectFoodRuleOutputViolations(output, { foodRule = null, structuredFoodRules = null } = {}) {

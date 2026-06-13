@@ -2,6 +2,7 @@ import {
   evaluatePhase72PermissionRouting,
   inferPhase72IntentIdsFromMessage,
   isPhase72ActiveProductionRoutingAllowed,
+  mapFoodDecisionV2ToPermissionIntents,
   mapFoodRuleDecisionToPermissionIntents,
   PHASE_72_PERMISSION_GRAPH_VERSION,
   type Phase72FoodRuleDecisionLike,
@@ -23,6 +24,7 @@ export type PermissionGraphRuntimeInput = {
     pauseAutopilot?: boolean;
     classifierVersion?: string;
     foodRuleDecision?: Phase72FoodRuleDecisionLike;
+    foodDecisionV2?: import("./phase-72-permission-graph").Phase72FoodDecisionV2Like;
     [key: string]: unknown;
   };
   conversationId?: string | null;
@@ -90,6 +92,7 @@ function buildClinicalContextFromClient(client: ClientRecord) {
 export function applyPermissionGraphToRiskDecision(input: PermissionGraphRuntimeInput): PermissionGraphRuntimeResult {
   const messageIntentIds = inferPhase72IntentIdsFromMessage(input.message);
   const foodRuleDecision = (input.baseDecision.foodRuleDecision as Phase72FoodRuleDecisionLike | undefined) ?? null;
+  const foodDecisionV2 = input.baseDecision.foodDecisionV2 ?? null;
   const routing = evaluatePhase72PermissionRouting({
     intentIds: messageIntentIds,
     privacyGate: buildPrivacyGateFromClient(input.client),
@@ -99,7 +102,11 @@ export function applyPermissionGraphToRiskDecision(input: PermissionGraphRuntime
     launchGateEvidence: input.launchGateEvidence,
   });
   const enforcementActive = isPhase72ActiveProductionRoutingAllowed(input.launchGateEvidence ?? []);
-  const foodRuleIntentIds = mapFoodRuleDecisionToPermissionIntents(foodRuleDecision).map(String);
+  const foodRuleIntentIds = (
+    foodDecisionV2?.decision && foodDecisionV2.decision !== "not_applicable"
+      ? mapFoodDecisionV2ToPermissionIntents(foodDecisionV2)
+      : mapFoodRuleDecisionToPermissionIntents(foodRuleDecision)
+  ).map(String);
   const permissionGraph: PermissionGraphManifest = {
     bridgeVersion: PHASE_76L_PERMISSION_GRAPH_BRIDGE_VERSION,
     graphVersion: routing.graphVersion,

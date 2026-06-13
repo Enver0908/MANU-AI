@@ -11,7 +11,12 @@ import {
 } from "./ai-provider";
 import { buildClientContextUpdateSummary } from "./client-context-updates";
 import { buildClientFormSummary } from "./client-forms";
-import { buildStructuredFoodRulesFromClientState } from "./food-rule-runtime";
+import {
+  buildStructuredFoodRulesFromClientState,
+  evaluateClientFoodDecisionV2FromState,
+  evaluateClientFoodRuleDecision,
+} from "./food-rule-runtime";
+import { shouldUseFoodDecisionV2Result } from "./phase-77g-food-decision-engine-v2";
 import { resolveProductIngredientEvidence } from "./product-ingredient-verification";
 import { evaluateClientAutopilotQualification } from "./phase-70-form-hardening";
 import { getActiveVoiceProfile } from "./voice-profile-workflow";
@@ -200,6 +205,18 @@ export async function runInboundSimulation(
       now,
       riskDecisionOverride: riskDecision,
       structuredFoodRules: buildStructuredFoodRulesFromClientState(state, client.id) || undefined,
+      foodRuleDecisionOverride:
+        evaluateClientFoodRuleDecision(state, client.id, trimmedBody, {
+          riskLevel: riskDecision.level,
+          productIngredientEvidence: resolveProductIngredientEvidence(trimmedBody) || undefined,
+        }) || undefined,
+      foodDecisionV2: (() => {
+        const decision = evaluateClientFoodDecisionV2FromState(state, client.id, trimmedBody, {
+          riskLevel: riskDecision.level,
+          productIngredientEvidence: resolveProductIngredientEvidence(trimmedBody) || undefined,
+        });
+        return shouldUseFoodDecisionV2Result(decision) ? decision : undefined;
+      })(),
       productIngredientEvidence: resolveProductIngredientEvidence(trimmedBody) || undefined,
     },
     {

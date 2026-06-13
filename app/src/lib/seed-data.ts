@@ -213,6 +213,8 @@ export function createInitialState(): ManuAppState {
     dietitianFormSchemas: [phase70Forms.dietitianSchema],
     dietitianFormResponses: [phase70Forms.dietitianResponse],
     clientContextUpdates: [],
+    clientFoodRuleProfiles: [],
+    clientMenuPlans: [],
     clientUpdateProposals: [],
     clients,
     conversations,

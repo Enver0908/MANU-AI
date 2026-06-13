@@ -10,6 +10,18 @@ import {
 } from "./client-forms";
 import { createClientContextUpdateInState } from "./client-context-updates";
 import {
+  saveClientFoodRuleProfileV2InState as saveClientFoodRuleProfileV2RecordInState,
+  type SaveClientFoodRuleProfileV2Input,
+} from "./phase-77e-client-food-rule-profile";
+import {
+  activateClientMenuPlanV1InState,
+  assertDietPlanSummaryPatchAllowed,
+  createClientMenuPlanV1InState,
+  saveClientMenuPlanV1InState,
+  type CreateClientMenuPlanV1Input,
+  type SaveClientMenuPlanV1Input,
+} from "./phase-77f-client-menu-plan";
+import {
   applyClientUpdateProposalInState,
   createClientUpdateProposalInState,
   rejectClientUpdateProposalInState,
@@ -109,7 +121,26 @@ export function patchClientInState(state: ManuAppState, clientId: string, patch:
     normalizedPatch.primaryPhoneE164 = normalizedPhone;
   }
 
+  assertDietPlanSummaryPatchAllowed(state, clientId, normalizedPatch);
+
   return updateClientInState(state, clientId, normalizedPatch);
+}
+
+export function createMenuPlanInState(state: ManuAppState, clientId: string, input: CreateClientMenuPlanV1Input) {
+  return createClientMenuPlanV1InState(state, clientId, input);
+}
+
+export function saveMenuPlanInState(
+  state: ManuAppState,
+  clientId: string,
+  planId: string,
+  input: SaveClientMenuPlanV1Input,
+) {
+  return saveClientMenuPlanV1InState(state, clientId, planId, input);
+}
+
+export function activateMenuPlanInState(state: ManuAppState, clientId: string, planId: string) {
+  return activateClientMenuPlanV1InState(state, clientId, planId);
 }
 
 export function updateDietitianPreferencesInState(
@@ -252,6 +283,14 @@ export function addClientContextUpdateInState(
   input: CreateClientContextUpdateInput,
 ) {
   return createClientContextUpdateInState(state, clientId, input);
+}
+
+export function saveClientFoodRuleProfileV2InState(
+  state: ManuAppState,
+  clientId: string,
+  input: SaveClientFoodRuleProfileV2Input,
+) {
+  return saveClientFoodRuleProfileV2RecordInState(state, clientId, input);
 }
 
 export function runInternalCopilotMessageInState(state: ManuAppState, body: string) {

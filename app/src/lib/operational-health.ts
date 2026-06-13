@@ -11,6 +11,8 @@ import {
 import { buildNotificationSlaSnapshot } from "./notification-sla";
 import { buildPhase76mGreenCapacityHealthSignal } from "./phase-76m-calibration-metrics";
 import { buildPhase76oFoodMixHealthSignal, evaluatePhase76oFoodMixSampleEvidence } from "./phase-76o-food-mix-rehearsal";
+import { buildPhase77kCalibrationHealthSignal } from "./phase-77k-calibration-evidence";
+import { buildPhase77kFoodMixHealthSignal, evaluatePhase77kFoodMixSampleEvidence } from "./phase-77k-food-mix-rehearsal";
 import { buildScopeGuardHealthSignal } from "./scope-guard-runtime";
 import type { ManuAppState } from "./types";
 
@@ -52,6 +54,14 @@ export type OperationalHealthSnapshot = {
   foodMixRehearsalFoodRuleGreenCount: number;
   foodMixRehearsalNoSourceHandoffCount: number;
   foodMixRehearsalRemovedClientBlockedCount: number;
+  foodDecisionV2CalibrationVersion: string;
+  foodDecisionV2CalibrationStatus: "pass" | "fail";
+  foodMixRehearsalV2Version: string;
+  foodMixRehearsalV2Status: "pass" | "fail";
+  foodMixRehearsalV2UnsafeGreenCount: number;
+  foodMixRehearsalV2InappropriateApprovalCount: number;
+  manualSourceAuthorityTrackClosed: boolean;
+  whatsappAdapterNext: boolean;
 };
 
 const DEFAULT_STALE_DRAFT_HOURS = 24;
@@ -98,6 +108,9 @@ export function buildOperationalHealthSnapshot(
     staleDraftInvalidatedCount: 0,
     manualFoodRuleSaveCount: 0,
   });
+  const calibrationV2 = buildPhase77kCalibrationHealthSignal();
+  const foodMixV2Sample = evaluatePhase77kFoodMixSampleEvidence();
+  const foodMixV2 = buildPhase77kFoodMixHealthSignal(foodMixV2Sample);
 
   return {
     generatedAt: now.toISOString(),
@@ -138,5 +151,13 @@ export function buildOperationalHealthSnapshot(
     foodMixRehearsalFoodRuleGreenCount: foodMix.foodRuleGreenCount,
     foodMixRehearsalNoSourceHandoffCount: foodMix.foodRuleNoSourceHandoffCount,
     foodMixRehearsalRemovedClientBlockedCount: foodMix.removedClientBlockedCount,
+    foodDecisionV2CalibrationVersion: calibrationV2.goldenVersion,
+    foodDecisionV2CalibrationStatus: calibrationV2.goldenStatus,
+    foodMixRehearsalV2Version: foodMixV2.rehearsalVersion,
+    foodMixRehearsalV2Status: foodMixV2.status,
+    foodMixRehearsalV2UnsafeGreenCount: foodMixV2.unsafeGreenCount,
+    foodMixRehearsalV2InappropriateApprovalCount: foodMixV2.inappropriateApprovalCount,
+    manualSourceAuthorityTrackClosed: calibrationV2.manualSourceAuthorityTrackClosed,
+    whatsappAdapterNext: calibrationV2.whatsappAdapterNext,
   };
 }

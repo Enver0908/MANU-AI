@@ -26,7 +26,11 @@ import {
   releaseHumanTakeoverInState,
   resolveAndReactivateRedRiskInState,
   runInternalCopilotMessageInState,
+  activateMenuPlanInState,
+  createMenuPlanInState,
+  saveClientFoodRuleProfileV2InState,
   saveFormResponseInState,
+  saveMenuPlanInState,
   simulateInState,
   updateVoiceSampleStatus,
   updateHandoffStatusInState,
@@ -34,14 +38,19 @@ import {
 import type { AppTenantContext } from "./auth-context";
 import type { CreateClientContextUpdateInput } from "./client-context-updates";
 import type { ApplyClientUpdateProposalInput, CreateClientUpdateProposalInput } from "./client-update-proposals";
+import type { SaveClientFoodRuleProfileV2Input } from "./phase-77e-client-food-rule-profile";
+import type { CreateClientMenuPlanV1Input, SaveClientMenuPlanV1Input } from "./phase-77f-client-menu-plan";
 import { AppDomainError } from "./app-errors";
 import type {
   AiDecisionRecord,
   AuditEventRecord,
+  ClientFoodRuleProfileV2Record,
+  ClientMenuPlanV1Record,
   ClientFormResponseRecord,
   ClientFormSchemaRecord,
   ClientFormFieldDefinition,
   ClientContextUpdateRecord,
+  Phase77EFlexibilityLevel,
   ClientRecord,
   ClientUpdateProposalRecord,
   ConversationRecord,
@@ -308,6 +317,45 @@ type DbClientContextUpdate = {
   supersedes_update_id: string | null;
   created_at: string;
 };
+type DbClientMenuPlan = {
+  id: string;
+  tenant_id: string;
+  client_id: string;
+  dietitian_id: string;
+  template_type: ClientMenuPlanV1Record["templateType"];
+  status: ClientMenuPlanV1Record["status"];
+  version: number;
+  revision: number;
+  title: string;
+  effective_date: string | null;
+  plan_data: Record<string, unknown>;
+  catalog_version: string;
+  catalog_source_sha256: string;
+  catalog_record_set_sha256: string;
+  migrated_from_legacy_diet_plan: boolean;
+  export_visible: boolean;
+  created_at: string;
+  updated_at: string;
+  activated_at: string | null;
+};
+type DbClientFoodRuleProfile = {
+  id: string;
+  tenant_id: string;
+  client_id: string;
+  dietitian_id: string;
+  version: number;
+  status: ClientFoodRuleProfileV2Record["status"];
+  revision: number;
+  profile_data: Record<string, unknown>;
+  catalog_version: string;
+  catalog_source_sha256: string;
+  catalog_record_set_sha256: string;
+  migrated_from_legacy_76d: boolean;
+  notes: string;
+  created_at: string;
+  updated_at: string;
+  published_at: string | null;
+};
 type DbClientUpdateProposal = {
   id: string;
   tenant_id: string;
@@ -367,6 +415,8 @@ export async function loadSupabaseState(context = demoTenantContext()) {
     formResponsesResult,
     clientContextUpdatesResult,
     clientUpdateProposalsResult,
+    clientFoodRuleProfilesResult,
+    clientMenuPlansResult,
     inboundQuarantinesResult,
     auditEventsResult,
     processedEventsResult,
@@ -392,6 +442,8 @@ export async function loadSupabaseState(context = demoTenantContext()) {
     supabase.from("client_form_responses").select("*").eq("tenant_id", context.tenantId).order("updated_at"),
     supabase.from("client_context_updates").select("*").eq("tenant_id", context.tenantId).order("created_at"),
     supabase.from("client_update_proposals").select("*").eq("tenant_id", context.tenantId).order("created_at"),
+    supabase.from("client_food_rule_profiles").select("*").eq("tenant_id", context.tenantId).order("updated_at"),
+    supabase.from("client_menu_plans").select("*").eq("tenant_id", context.tenantId).order("updated_at"),
     supabase.from("inbound_quarantines").select("*").eq("tenant_id", context.tenantId).order("created_at"),
     supabase.from("audit_events").select("*").eq("tenant_id", context.tenantId).order("created_at"),
     supabase.from("processed_inbound_events").select("*").eq("tenant_id", context.tenantId),
@@ -418,6 +470,8 @@ export async function loadSupabaseState(context = demoTenantContext()) {
   throwIfError(formResponsesResult.error);
   throwIfError(clientContextUpdatesResult.error);
   throwIfError(clientUpdateProposalsResult.error);
+  throwIfError(clientFoodRuleProfilesResult.error);
+  throwIfError(clientMenuPlansResult.error);
   throwIfError(inboundQuarantinesResult.error);
   throwIfError(auditEventsResult.error);
   throwIfError(processedEventsResult.error);
@@ -445,6 +499,8 @@ export async function loadSupabaseState(context = demoTenantContext()) {
       dietitianFormResponses: [],
       clientContextUpdates: (clientContextUpdatesResult.data || []).map(mapClientContextUpdate),
       clientUpdateProposals: (clientUpdateProposalsResult.data || []).map(mapClientUpdateProposal),
+      clientFoodRuleProfiles: (clientFoodRuleProfilesResult.data || []).map(mapClientFoodRuleProfile),
+      clientMenuPlans: (clientMenuPlansResult.data || []).map(mapClientMenuPlan),
       clients: (clientsResult.data || []).map((client) => mapClient(client, channels)),
       conversations: (conversationsResult.data || []).map((conversation) =>
         mapConversation(conversation, memories),
@@ -537,6 +593,8 @@ async function loadSupabaseClientOperationState(
     formResponsesResult,
     clientContextUpdatesResult,
     clientUpdateProposalsResult,
+    clientFoodRuleProfilesResult,
+    clientMenuPlansResult,
     processedEventsResult,
   ] = await Promise.all([
     conversationIds.length > 0
@@ -609,6 +667,12 @@ async function loadSupabaseClientOperationState(
       .eq("tenant_id", context.tenantId)
       .eq("client_id", clientId)
       .order("created_at"),
+    supabase
+      .from("client_food_rule_profiles")
+      .select("*")
+      .eq("tenant_id", context.tenantId)
+      .eq("client_id", clientId),
+    supabase.from("client_menu_plans").select("*").eq("tenant_id", context.tenantId).eq("client_id", clientId),
     options.processedEventId
       ? supabase
           .from("processed_inbound_events")
@@ -632,6 +696,8 @@ async function loadSupabaseClientOperationState(
   throwIfError(formResponsesResult.error);
   throwIfError(clientContextUpdatesResult.error);
   throwIfError(clientUpdateProposalsResult.error);
+  throwIfError(clientFoodRuleProfilesResult.error);
+  throwIfError(clientMenuPlansResult.error);
   throwIfError(processedEventsResult.error);
 
   const channels = channelsResult.data || [];
@@ -679,6 +745,8 @@ async function loadSupabaseClientOperationState(
       dietitianFormResponses: [],
       clientContextUpdates: (clientContextUpdatesResult.data || []).map(mapClientContextUpdate),
       clientUpdateProposals: (clientUpdateProposalsResult.data || []).map(mapClientUpdateProposal),
+      clientFoodRuleProfiles: (clientFoodRuleProfilesResult.data || []).map(mapClientFoodRuleProfile),
+      clientMenuPlans: (clientMenuPlansResult.data || []).map(mapClientMenuPlan),
       clients: [mapClient(clientResult.data, channels)],
       conversations: (conversationsResult.data || []).map((conversation) => mapConversation(conversation, memories)),
       messages,
@@ -840,6 +908,8 @@ export function scopeSupabaseState(
     clientFormResponses: state.clientFormResponses.filter((response) => visibleClientIds.has(response.clientId)),
     clientContextUpdates: visibleClientContextUpdates,
     clientUpdateProposals: visibleClientUpdateProposals,
+    clientFoodRuleProfiles: state.clientFoodRuleProfiles.filter((profile) => visibleClientIds.has(profile.clientId)),
+    clientMenuPlans: state.clientMenuPlans.filter((plan) => visibleClientIds.has(plan.clientId)),
     clients: state.clients.filter((client) => visibleClientIds.has(client.id)),
     conversations: state.conversations.filter((conversation) => visibleConversationIds.has(conversation.id)),
     messages: visibleMessages,
@@ -1266,6 +1336,86 @@ export async function saveSupabaseFormResponse(
   return loadSupabaseState(context);
 }
 
+export async function loadSupabaseClientFoodRuleProfile(clientId: string, context = demoTenantContext()) {
+  return loadSupabaseClientOperationState(clientId, context);
+}
+
+export async function saveSupabaseClientFoodRuleProfile(
+  clientId: string,
+  input: SaveClientFoodRuleProfileV2Input,
+  context = demoTenantContext(),
+) {
+  const before = await loadSupabaseClientOperationState(clientId, context);
+  const next = saveClientFoodRuleProfileV2InState(before, clientId, input);
+  const profile = next.clientFoodRuleProfiles.find((item) => item.clientId === clientId);
+  if (!profile) throw new AppDomainError(404, "client_food_rule_profile_not_found");
+  const supabase = requireSupabase();
+  await upsertClientFoodRuleProfile(supabase, profile);
+  await commitStateDeltaRpc(supabase, "commit_form_response", before, next);
+  return loadSupabaseState(context);
+}
+
+export async function listSupabaseClientMenuPlans(clientId: string, context = demoTenantContext()) {
+  return loadSupabaseClientOperationState(clientId, context);
+}
+
+async function persistClientMenuPlanDelta(supabase: SupabaseClient, before: ManuAppState, after: ManuAppState, clientId: string) {
+  const beforePlans = new Map(before.clientMenuPlans.map((plan) => [plan.id, plan]));
+  for (const plan of after.clientMenuPlans) {
+    const beforePlan = beforePlans.get(plan.id);
+    if (!beforePlan || JSON.stringify(beforePlan) !== JSON.stringify(plan)) {
+      await upsertClientMenuPlan(supabase, plan);
+    }
+  }
+  const client = after.clients.find((item) => item.id === clientId);
+  const beforeClient = before.clients.find((item) => item.id === clientId);
+  if (client && beforeClient && JSON.stringify(beforeClient) !== JSON.stringify(client)) {
+    await upsertClient(supabase, client, beforeClient);
+  }
+  await persistNewAudits(supabase, before, after);
+}
+
+export async function createSupabaseClientMenuPlan(
+  clientId: string,
+  input: CreateClientMenuPlanV1Input,
+  context = demoTenantContext(),
+) {
+  const before = await loadSupabaseClientOperationState(clientId, context);
+  const next = createMenuPlanInState(before, clientId, input);
+  const supabase = requireSupabase();
+  const created = next.clientMenuPlans.find(
+    (plan) => plan.clientId === clientId && !before.clientMenuPlans.some((item) => item.id === plan.id),
+  );
+  if (created) await upsertClientMenuPlan(supabase, created);
+  await persistNewAudits(supabase, before, next);
+  return loadSupabaseState(context);
+}
+
+export async function saveSupabaseClientMenuPlan(
+  clientId: string,
+  planId: string,
+  input: SaveClientMenuPlanV1Input,
+  context = demoTenantContext(),
+) {
+  const before = await loadSupabaseClientOperationState(clientId, context);
+  const next = saveMenuPlanInState(before, clientId, planId, input);
+  const supabase = requireSupabase();
+  await persistClientMenuPlanDelta(supabase, before, next, clientId);
+  return loadSupabaseState(context);
+}
+
+export async function activateSupabaseClientMenuPlan(
+  clientId: string,
+  planId: string,
+  context = demoTenantContext(),
+) {
+  const before = await loadSupabaseClientOperationState(clientId, context);
+  const next = activateMenuPlanInState(before, clientId, planId);
+  const supabase = requireSupabase();
+  await persistClientMenuPlanDelta(supabase, before, next, clientId);
+  return loadSupabaseState(context);
+}
+
 export async function updateSupabaseDietitianPreferences(
   input: { uiLanguage?: unknown },
   context = demoTenantContext(),
@@ -1448,6 +1598,8 @@ async function ensureDemoMembership(supabase: SupabaseClient, userId: string) {
 async function deleteDemoData(supabase: SupabaseClient, tenantId = DEMO_TENANT_UUID) {
   const tables = [
     "processed_inbound_events",
+    "client_food_rule_profiles",
+    "client_menu_plans",
     "client_context_updates",
     "client_form_responses",
     "client_form_schemas",
@@ -2194,6 +2346,175 @@ async function insertInternalCopilotToolCall(supabase: SupabaseClient, call: Int
   );
 }
 
+function readProfileDataArray(profile: DbClientFoodRuleProfile, key: string) {
+  const value = profile.profile_data?.[key];
+  return Array.isArray(value) ? value.map(String) : [];
+}
+
+function readProfileDataMap(profile: DbClientFoodRuleProfile, key: string) {
+  const value = profile.profile_data?.[key];
+  if (!value || typeof value !== "object" || Array.isArray(value)) return {};
+  return Object.fromEntries(
+    Object.entries(value as Record<string, unknown>).map(([entryKey, entryValue]) => [entryKey, String(entryValue)]),
+  ) as Record<string, Phase77EFlexibilityLevel>;
+}
+
+function serializeClientFoodRuleProfileData(profile: ClientFoodRuleProfileV2Record) {
+  return {
+    allowedCatalogMainCategoryIds: profile.allowedCatalogMainCategoryIds,
+    allowedCatalogSubCategoryIds: profile.allowedCatalogSubCategoryIds,
+    allowedCatalogFoodIds: profile.allowedCatalogFoodIds,
+    forbiddenCatalogMainCategoryIds: profile.forbiddenCatalogMainCategoryIds,
+    forbiddenCatalogSubCategoryIds: profile.forbiddenCatalogSubCategoryIds,
+    forbiddenCatalogFoodIds: profile.forbiddenCatalogFoodIds,
+    allowedFoodGroups: profile.allowedFoodGroups,
+    forbiddenFoodGroups: profile.forbiddenFoodGroups,
+    freeTextAllowedFoods: profile.freeTextAllowedFoods,
+    freeTextForbiddenFoods: profile.freeTextForbiddenFoods,
+    forbiddenIngredientKeywords: profile.forbiddenIngredientKeywords,
+    dietTypeRestrictions: profile.dietTypeRestrictions,
+    flexibilityGlobal: profile.flexibilityGlobal,
+    flexibilityByMeal: profile.flexibilityByMeal,
+    flexibilityByGoal: profile.flexibilityByGoal,
+    flexibilityByFoodGroup: profile.flexibilityByFoodGroup,
+  };
+}
+
+function mapClientFoodRuleProfile(profile: DbClientFoodRuleProfile): ClientFoodRuleProfileV2Record {
+  return {
+    id: profile.id,
+    tenantId: profile.tenant_id,
+    clientId: profile.client_id,
+    dietitianId: profile.dietitian_id,
+    version: profile.version,
+    status: profile.status,
+    revision: profile.revision,
+    allowedCatalogMainCategoryIds: readProfileDataArray(profile, "allowedCatalogMainCategoryIds"),
+    allowedCatalogSubCategoryIds: readProfileDataArray(profile, "allowedCatalogSubCategoryIds"),
+    allowedCatalogFoodIds: readProfileDataArray(profile, "allowedCatalogFoodIds"),
+    forbiddenCatalogMainCategoryIds: readProfileDataArray(profile, "forbiddenCatalogMainCategoryIds"),
+    forbiddenCatalogSubCategoryIds: readProfileDataArray(profile, "forbiddenCatalogSubCategoryIds"),
+    forbiddenCatalogFoodIds: readProfileDataArray(profile, "forbiddenCatalogFoodIds"),
+    allowedFoodGroups: readProfileDataArray(profile, "allowedFoodGroups"),
+    forbiddenFoodGroups: readProfileDataArray(profile, "forbiddenFoodGroups"),
+    freeTextAllowedFoods: readProfileDataArray(profile, "freeTextAllowedFoods"),
+    freeTextForbiddenFoods: readProfileDataArray(profile, "freeTextForbiddenFoods"),
+    forbiddenIngredientKeywords: readProfileDataArray(profile, "forbiddenIngredientKeywords"),
+    dietTypeRestrictions: readProfileDataArray(profile, "dietTypeRestrictions"),
+    flexibilityGlobal: (profile.profile_data?.flexibilityGlobal as Phase77EFlexibilityLevel) || "moderate",
+    flexibilityByMeal: readProfileDataMap(profile, "flexibilityByMeal"),
+    flexibilityByGoal: readProfileDataMap(profile, "flexibilityByGoal"),
+    flexibilityByFoodGroup: readProfileDataMap(profile, "flexibilityByFoodGroup"),
+    notes: profile.notes || "",
+    migratedFromLegacy76d: profile.migrated_from_legacy_76d,
+    catalogVersion: profile.catalog_version,
+    catalogSourceSha256: profile.catalog_source_sha256,
+    catalogRecordSetSha256: profile.catalog_record_set_sha256,
+    createdAt: profile.created_at,
+    updatedAt: profile.updated_at,
+    publishedAt: profile.published_at,
+  };
+}
+
+function readMenuPlanDataArray(plan: DbClientMenuPlan, key: string) {
+  const value = plan.plan_data?.[key];
+  return Array.isArray(value) ? value.map(String) : [];
+}
+
+function serializeClientMenuPlanData(plan: ClientMenuPlanV1Record) {
+  return {
+    mealSlots: plan.mealSlots,
+    preferredFoods: plan.preferredFoods,
+    avoidFoods: plan.avoidFoods,
+    dietitianNotes: plan.dietitianNotes,
+    clientFacingNotes: plan.clientFacingNotes,
+  };
+}
+
+function mapClientMenuPlan(plan: DbClientMenuPlan): ClientMenuPlanV1Record {
+  const mealSlots = Array.isArray(plan.plan_data?.mealSlots)
+    ? (plan.plan_data.mealSlots as ClientMenuPlanV1Record["mealSlots"])
+    : [];
+
+  return {
+    id: plan.id,
+    tenantId: plan.tenant_id,
+    clientId: plan.client_id,
+    dietitianId: plan.dietitian_id,
+    templateType: plan.template_type,
+    status: plan.status,
+    version: plan.version,
+    revision: plan.revision,
+    title: plan.title || "",
+    effectiveDate: plan.effective_date,
+    mealSlots,
+    preferredFoods: readMenuPlanDataArray(plan, "preferredFoods"),
+    avoidFoods: readMenuPlanDataArray(plan, "avoidFoods"),
+    dietitianNotes: String(plan.plan_data?.dietitianNotes || ""),
+    clientFacingNotes: String(plan.plan_data?.clientFacingNotes || ""),
+    exportVisible: plan.export_visible,
+    migratedFromLegacyDietPlan: plan.migrated_from_legacy_diet_plan,
+    catalogVersion: plan.catalog_version,
+    catalogSourceSha256: plan.catalog_source_sha256,
+    catalogRecordSetSha256: plan.catalog_record_set_sha256,
+    createdAt: plan.created_at,
+    updatedAt: plan.updated_at,
+    activatedAt: plan.activated_at,
+  };
+}
+
+async function upsertClientMenuPlan(supabase: SupabaseClient, plan: ClientMenuPlanV1Record) {
+  await checked(
+    supabase.from("client_menu_plans").upsert({
+      id: plan.id,
+      tenant_id: plan.tenantId,
+      client_id: plan.clientId,
+      dietitian_id: plan.dietitianId,
+      template_type: plan.templateType,
+      status: plan.status,
+      version: plan.version,
+      revision: plan.revision,
+      title: plan.title,
+      effective_date: plan.effectiveDate,
+      plan_data: serializeClientMenuPlanData(plan),
+      catalog_version: plan.catalogVersion,
+      catalog_source_sha256: plan.catalogSourceSha256,
+      catalog_record_set_sha256: plan.catalogRecordSetSha256,
+      migrated_from_legacy_diet_plan: plan.migratedFromLegacyDietPlan,
+      export_visible: plan.exportVisible,
+      created_at: plan.createdAt,
+      updated_at: plan.updatedAt,
+      activated_at: plan.activatedAt,
+    }),
+  );
+}
+
+async function upsertClientFoodRuleProfile(supabase: SupabaseClient, profile: ClientFoodRuleProfileV2Record) {
+  await checked(
+    supabase.from("client_food_rule_profiles").upsert(
+      {
+        id: profile.id,
+        tenant_id: profile.tenantId,
+        client_id: profile.clientId,
+        dietitian_id: profile.dietitianId,
+        version: profile.version,
+        status: profile.status,
+        revision: profile.revision,
+        profile_data: serializeClientFoodRuleProfileData(profile),
+        catalog_version: profile.catalogVersion,
+        catalog_source_sha256: profile.catalogSourceSha256,
+        catalog_record_set_sha256: profile.catalogRecordSetSha256,
+        migrated_from_legacy_76d: profile.migratedFromLegacy76d,
+        notes: profile.notes,
+        created_at: profile.createdAt,
+        updated_at: profile.updatedAt,
+        published_at: profile.publishedAt,
+      },
+      { onConflict: "tenant_id,client_id" },
+    ),
+  );
+}
+
 async function upsertClientUpdateProposal(supabase: SupabaseClient, proposal: ClientUpdateProposalRecord) {
   await checked(
     supabase.from("client_update_proposals").upsert({
@@ -2260,6 +2581,18 @@ function remapSeedIds(state: ManuAppState): ManuAppState {
       tenantId: DEMO_TENANT_UUID,
       dietitianId: DEMO_DIETITIAN_UUID,
       clientId: clientMap.get(update.clientId) || update.clientId,
+    })),
+    clientFoodRuleProfiles: state.clientFoodRuleProfiles.map((profile) => ({
+      ...profile,
+      tenantId: DEMO_TENANT_UUID,
+      dietitianId: DEMO_DIETITIAN_UUID,
+      clientId: clientMap.get(profile.clientId) || profile.clientId,
+    })),
+    clientMenuPlans: state.clientMenuPlans.map((plan) => ({
+      ...plan,
+      tenantId: DEMO_TENANT_UUID,
+      dietitianId: DEMO_DIETITIAN_UUID,
+      clientId: clientMap.get(plan.clientId) || plan.clientId,
     })),
     clients: state.clients.map((client) => ({
       ...client,

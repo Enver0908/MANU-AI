@@ -1,81 +1,113 @@
 "use client";
 
-import { AlertTriangle, Check, Plus, X } from "lucide-react";
-import { useState } from "react";
+import { AlertTriangle, Check, Plus, Search, X } from "lucide-react";
+import { useMemo, useState } from "react";
+import { FOOD_RULE_DASHBOARD_WARNINGS } from "@/lib/phase-76j-food-rule-dashboard";
 import {
-  FOOD_RULE_DASHBOARD_WARNINGS,
-  type FoodRuleDashboardState,
-  FOOD_RULE_DASHBOARD_DIET_TYPE_OPTIONS,
-  FOOD_RULE_DASHBOARD_GROUP_OPTIONS,
-  FOOD_RULE_DASHBOARD_INGREDIENT_KEYWORD_OPTIONS,
-  FOOD_RULE_DASHBOARD_MASTER_CATALOG,
-  FOOD_RULE_DASHBOARD_PRODUCT_LABEL_REVIEW_OPTIONS,
-  FOOD_RULE_DASHBOARD_SKIP_TOLERANCE_OPTIONS,
-  FOOD_RULE_DASHBOARD_UNCERTAINTY_POLICY_OPTIONS,
-} from "@/lib/phase-76j-food-rule-dashboard";
-import type { Phase77DMasterFoodCatalogData } from "@/lib/phase-77d-master-food-catalog";
+  getPhase77DFoodById,
+  PHASE_77D_MASTER_FOOD_CATALOG,
+} from "@/lib/phase-77d-master-food-catalog";
+import {
+  detectClientFoodRuleProfileConflicts,
+  PHASE_77E_DIET_TYPE_OPTIONS,
+  PHASE_77E_FLEXIBILITY_LEVELS,
+  PHASE_77E_FOOD_GROUP_OPTIONS,
+  PHASE_77E_GOAL_KEYS,
+  PHASE_77E_MEAL_KEYS,
+  searchPhase77DCatalogFoods,
+  type ClientFoodRuleProfileV2State,
+} from "@/lib/phase-77e-client-food-rule-profile";
+import type { Phase77EFlexibilityLevel } from "@/lib/types";
 
 type FoodRulesPanelProps = {
   clientName: string;
   contextRevision: number;
-  initialState: FoodRuleDashboardState;
+  initialProfile: ClientFoodRuleProfileV2State;
   disabled?: boolean;
-  onSave: (state: FoodRuleDashboardState) => Promise<void>;
+  onSave: (profile: Omit<ClientFoodRuleProfileV2State, "conflicts">) => Promise<void>;
+};
+
+const FLEXIBILITY_LABELS: Record<Phase77EFlexibilityLevel, string> = {
+  restricted: "Kisitli",
+  moderate: "Orta esnek",
+  flexible: "Esnek",
+};
+
+const MEAL_LABELS: Record<(typeof PHASE_77E_MEAL_KEYS)[number], string> = {
+  kahvalti: "Kahvalti",
+  ogle: "Ogle yemegi",
+  aksam: "Aksam yemegi",
+  ara_ogun: "Ara ogun",
+};
+
+const GOAL_LABELS: Record<(typeof PHASE_77E_GOAL_KEYS)[number], string> = {
+  kilo_verme: "Kilo verme",
+  kilo_alma: "Kilo alma",
+  koruma: "Koruma",
+  klinik: "Klinik",
+  performans: "Performans",
 };
 
 export function FoodRulesPanel({
   clientName,
   contextRevision,
-  initialState,
+  initialProfile,
   disabled = false,
   onSave,
 }: FoodRulesPanelProps) {
-  const [foodRules, setFoodRules] = useState<FoodRuleDashboardState>(initialState);
-  const [draftItem, setDraftItem] = useState({
-    forbidden: "",
-    allowed: "",
-    mandatory: "",
-    optional: "",
-  });
+  const [profile, setProfile] = useState(initialProfile);
+  const [catalogQuery, setCatalogQuery] = useState("");
+  const [draftItem, setDraftItem] = useState({ allowed: "", forbidden: "" });
   const [isSaving, setIsSaving] = useState(false);
 
-  const update = (patch: Partial<FoodRuleDashboardState>) => {
-    setFoodRules((current) => ({ ...current, ...patch }));
+  const catalogMatches = useMemo(() => searchPhase77DCatalogFoods(catalogQuery, 12), [catalogQuery]);
+  const conflicts = useMemo(() => detectClientFoodRuleProfileConflicts(profile), [profile]);
+
+  const update = (patch: Partial<ClientFoodRuleProfileV2State>) => {
+    setProfile((current) => ({ ...current, ...patch }));
   };
 
-  const addToken = (field: "forbiddenFoodItems" | "allowedFoodItems" | "mandatoryFoodsOrMeals" | "optionalFoodsOrMeals", draftKey: keyof typeof draftItem) => {
+  const addCatalogFood = (foodId: string, mode: "allowed" | "forbidden") => {
+    const field = mode === "allowed" ? "allowedCatalogFoodIds" : "forbiddenCatalogFoodIds";
+    const opposite = mode === "allowed" ? "forbiddenCatalogFoodIds" : "allowedCatalogFoodIds";
+    update({
+      [field]: [...new Set([...profile[field], foodId])],
+      [opposite]: profile[opposite].filter((item) => item !== foodId),
+    } as Partial<ClientFoodRuleProfileV2State>);
+  };
+
+  const removeCatalogFood = (foodId: string, mode: "allowed" | "forbidden") => {
+    const field = mode === "allowed" ? "allowedCatalogFoodIds" : "forbiddenCatalogFoodIds";
+    update({ [field]: profile[field].filter((item) => item !== foodId) });
+  };
+
+  const addToken = (field: "freeTextAllowedFoods" | "freeTextForbiddenFoods", draftKey: keyof typeof draftItem) => {
     const value = draftItem[draftKey].trim();
     if (!value) return;
     const tokens = value
       .split(/[,;]/)
       .map((item) => item.trim())
       .filter(Boolean);
-    update({
-      [field]: [...new Set([...foodRules[field], ...tokens])],
-    } as Partial<FoodRuleDashboardState>);
+    update({ [field]: [...new Set([...profile[field], ...tokens])] });
     setDraftItem((current) => ({ ...current, [draftKey]: "" }));
   };
 
-  const removeToken = (field: keyof FoodRuleDashboardState, token: string) => {
-    const current = foodRules[field];
-    if (!Array.isArray(current)) return;
-    update({ [field]: current.filter((item) => item !== token) } as Partial<FoodRuleDashboardState>);
+  const removeToken = (field: "freeTextAllowedFoods" | "freeTextForbiddenFoods", token: string) => {
+    update({ [field]: profile[field].filter((item) => item !== token) });
   };
 
-  const toggleOption = (field: "forbiddenFoodGroups" | "allowedFoodGroups" | "ingredientAllergenKeywords", option: string) => {
-    const current = foodRules[field];
+  const toggleGroup = (field: "allowedFoodGroups" | "forbiddenFoodGroups", option: string) => {
+    const current = profile[field];
     update({
       [field]: current.includes(option) ? current.filter((item) => item !== option) : [...current, option],
     });
   };
 
-  const toggleCatalogSelection = (
-    field: "forbiddenCatalogMainCategoryIds" | "forbiddenCatalogSubCategoryIds" | "forbiddenCatalogFoodIds",
-    id: string,
-  ) => {
-    const current = foodRules[field];
+  const toggleDietType = (option: string) => {
     update({
-      [field]: current.includes(id) ? current.filter((item) => item !== id) : [...current, id],
+      dietTypeRestrictions: profile.dietTypeRestrictions.includes(option)
+        ? profile.dietTypeRestrictions.filter((item) => item !== option)
+        : [...profile.dietTypeRestrictions, option],
     });
   };
 
@@ -83,7 +115,9 @@ export function FoodRulesPanel({
     if (disabled || isSaving) return;
     setIsSaving(true);
     try {
-      await onSave(foodRules);
+      const { conflicts, ...payload } = profile;
+      void conflicts;
+      await onSave(payload);
     } finally {
       setIsSaving(false);
     }
@@ -93,9 +127,9 @@ export function FoodRulesPanel({
     <section className="rounded-lg border border-emerald-200 bg-emerald-50/40 p-4" data-testid="food-rules-panel">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h4 className="text-lg font-semibold text-stone-950">Structured food rules</h4>
+          <h4 className="text-lg font-semibold text-stone-950">Food rule profile</h4>
           <p className="mt-1 text-sm text-stone-600">
-            {clientName} · context revision {contextRevision}
+            {clientName} · revision {profile.revision} · context {contextRevision}
           </p>
         </div>
         <button
@@ -114,229 +148,248 @@ export function FoodRulesPanel({
           <AlertTriangle size={16} className="mt-0.5 shrink-0" />
           {FOOD_RULE_DASHBOARD_WARNINGS.clinicalReview}
         </p>
-        <p className="inline-flex items-start gap-2">
-          <AlertTriangle size={16} className="mt-0.5 shrink-0" />
-          {FOOD_RULE_DASHBOARD_WARNINGS.productionActivation}
+        <p className="text-xs text-amber-900">
+          Phase 76J engine fields stay bridged in the background. Edit allowed/forbidden foods, groups, and flexibility here.
         </p>
       </div>
 
-      <CatalogForbiddenSection
-        catalog={FOOD_RULE_DASHBOARD_MASTER_CATALOG}
-        selectedMainCategoryIds={foodRules.forbiddenCatalogMainCategoryIds}
-        selectedSubCategoryIds={foodRules.forbiddenCatalogSubCategoryIds}
-        selectedFoodIds={foodRules.forbiddenCatalogFoodIds}
-        onToggleMainCategory={(id) => toggleCatalogSelection("forbiddenCatalogMainCategoryIds", id)}
-        onToggleSubCategory={(id) => toggleCatalogSelection("forbiddenCatalogSubCategoryIds", id)}
-        onToggleFood={(id) => toggleCatalogSelection("forbiddenCatalogFoodIds", id)}
-      />
+      {conflicts.length > 0 ? (
+        <div className="mt-4 space-y-2 rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-950">
+          {conflicts.map((conflict) => (
+            <p key={`${conflict.code}-${conflict.message}`} className="inline-flex items-start gap-2">
+              <AlertTriangle size={16} className="mt-0.5 shrink-0" />
+              {conflict.message}
+            </p>
+          ))}
+        </div>
+      ) : null}
+
+      <div className="mt-4 rounded-lg border border-stone-200 bg-white p-3">
+        <label className="block text-sm font-semibold text-stone-900">Catalog search</label>
+        <div className="mt-2 flex items-center gap-2 rounded-lg border border-stone-200 px-3 py-2">
+          <Search size={16} className="text-stone-400" />
+          <input
+            value={catalogQuery}
+            onChange={(event) => setCatalogQuery(event.target.value)}
+            placeholder="Search master catalog foods"
+            className="min-w-0 flex-1 bg-transparent text-sm outline-none"
+          />
+        </div>
+        {catalogMatches.length > 0 ? (
+          <div className="mt-3 space-y-2">
+            {catalogMatches.map((match) => (
+              <div key={match.id} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-stone-100 px-3 py-2">
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-stone-900">{match.name}</p>
+                  <p className="text-xs text-stone-500">{match.path}</p>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => addCatalogFood(match.id, "allowed")}
+                    className="rounded-lg border border-emerald-200 px-2 py-1 text-xs font-semibold text-emerald-900"
+                  >
+                    Allow
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => addCatalogFood(match.id, "forbidden")}
+                    className="rounded-lg border border-rose-200 px-2 py-1 text-xs font-semibold text-rose-900"
+                  >
+                    Forbid
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : catalogQuery.trim() ? (
+          <p className="mt-2 text-xs text-stone-500">No catalog matches.</p>
+        ) : null}
+      </div>
 
       <div className="mt-4 grid gap-4 xl:grid-cols-2">
-        <TokenListSection
-          title="Forbidden foods"
-          description="Add or remove explicitly forbidden items."
-          tokens={foodRules.forbiddenFoodItems}
-          draftValue={draftItem.forbidden}
-          onDraftChange={(value) => setDraftItem((current) => ({ ...current, forbidden: value }))}
-          onAdd={() => addToken("forbiddenFoodItems", "forbidden")}
-          onRemove={(token) => removeToken("forbiddenFoodItems", token)}
+        <CatalogSelectionList
+          title="Allowed catalog foods"
+          foodIds={profile.allowedCatalogFoodIds}
+          onRemove={(foodId) => removeCatalogFood(foodId, "allowed")}
         />
-        <CheckboxGroupSection
-          title="Forbidden food groups"
-          options={FOOD_RULE_DASHBOARD_GROUP_OPTIONS}
-          selected={foodRules.forbiddenFoodGroups}
-          onToggle={(option) => toggleOption("forbiddenFoodGroups", option)}
+        <CatalogSelectionList
+          title="Forbidden catalog foods"
+          foodIds={profile.forbiddenCatalogFoodIds}
+          onRemove={(foodId) => removeCatalogFood(foodId, "forbidden")}
         />
         <TokenListSection
-          title="Allowed foods"
-          description="Explicitly allowed single foods."
-          tokens={foodRules.allowedFoodItems}
+          title="Allowed free-text foods"
+          tokens={profile.freeTextAllowedFoods}
           draftValue={draftItem.allowed}
           onDraftChange={(value) => setDraftItem((current) => ({ ...current, allowed: value }))}
-          onAdd={() => addToken("allowedFoodItems", "allowed")}
-          onRemove={(token) => removeToken("allowedFoodItems", token)}
+          onAdd={() => addToken("freeTextAllowedFoods", "allowed")}
+          onRemove={(token) => removeToken("freeTextAllowedFoods", token)}
+        />
+        <TokenListSection
+          title="Forbidden free-text foods"
+          tokens={profile.freeTextForbiddenFoods}
+          draftValue={draftItem.forbidden}
+          onDraftChange={(value) => setDraftItem((current) => ({ ...current, forbidden: value }))}
+          onAdd={() => addToken("freeTextForbiddenFoods", "forbidden")}
+          onRemove={(token) => removeToken("freeTextForbiddenFoods", token)}
         />
         <CheckboxGroupSection
           title="Allowed food groups"
-          options={FOOD_RULE_DASHBOARD_GROUP_OPTIONS}
-          selected={foodRules.allowedFoodGroups}
-          onToggle={(option) => toggleOption("allowedFoodGroups", option)}
+          options={PHASE_77E_FOOD_GROUP_OPTIONS}
+          selected={profile.allowedFoodGroups}
+          onToggle={(option) => toggleGroup("allowedFoodGroups", option)}
+        />
+        <CheckboxGroupSection
+          title="Forbidden food groups"
+          options={PHASE_77E_FOOD_GROUP_OPTIONS}
+          selected={profile.forbiddenFoodGroups}
+          onToggle={(option) => toggleGroup("forbiddenFoodGroups", option)}
         />
       </div>
 
       <div className="mt-4 grid gap-4 md:grid-cols-2">
         <SelectField
-          label="Diet type rules"
-          value={foodRules.dietTypeRules}
-          options={FOOD_RULE_DASHBOARD_DIET_TYPE_OPTIONS}
-          onChange={(value) => update({ dietTypeRules: value })}
+          label="Global flexibility"
+          value={profile.flexibilityGlobal}
+          options={PHASE_77E_FLEXIBILITY_LEVELS}
+          optionLabels={FLEXIBILITY_LABELS}
+          onChange={(value) => update({ flexibilityGlobal: value })}
         />
-        <SelectField
-          label="Skip tolerance"
-          value={foodRules.skipToleranceRules}
-          options={FOOD_RULE_DASHBOARD_SKIP_TOLERANCE_OPTIONS}
-          onChange={(value) => update({ skipToleranceRules: value })}
-        />
-        <SelectField
-          label="Product label review policy"
-          value={foodRules.productLabelReviewPolicy}
-          options={FOOD_RULE_DASHBOARD_PRODUCT_LABEL_REVIEW_OPTIONS}
-          onChange={(value) => update({ productLabelReviewPolicy: value })}
-        />
-        <SelectField
-          label="Uncertainty policy"
-          value={foodRules.uncertaintyPolicy}
-          options={FOOD_RULE_DASHBOARD_UNCERTAINTY_POLICY_OPTIONS}
-          onChange={(value) => update({ uncertaintyPolicy: value })}
+        <CheckboxGroupSection
+          title="Diet type restrictions"
+          options={PHASE_77E_DIET_TYPE_OPTIONS}
+          selected={profile.dietTypeRestrictions}
+          onToggle={toggleDietType}
         />
       </div>
 
-      <div className="mt-4 grid gap-4 xl:grid-cols-2">
-        <TokenListSection
-          title="Mandatory foods or meals"
-          description="Items that should not be skipped without review."
-          tokens={foodRules.mandatoryFoodsOrMeals}
-          draftValue={draftItem.mandatory}
-          onDraftChange={(value) => setDraftItem((current) => ({ ...current, mandatory: value }))}
-          onAdd={() => addToken("mandatoryFoodsOrMeals", "mandatory")}
-          onRemove={(token) => removeToken("mandatoryFoodsOrMeals", token)}
-        />
-        <TokenListSection
-          title="Optional foods or meals"
-          description="Flexible items or meals with explicit skip tolerance."
-          tokens={foodRules.optionalFoodsOrMeals}
-          draftValue={draftItem.optional}
-          onDraftChange={(value) => setDraftItem((current) => ({ ...current, optional: value }))}
-          onAdd={() => addToken("optionalFoodsOrMeals", "optional")}
-          onRemove={(token) => removeToken("optionalFoodsOrMeals", token)}
-        />
-      </div>
+      <FlexibilityGrid
+        title="Flexibility by meal"
+        keys={PHASE_77E_MEAL_KEYS}
+        labels={MEAL_LABELS}
+        values={profile.flexibilityByMeal}
+        fallback={profile.flexibilityGlobal}
+        onChange={(key, value) =>
+          update({
+            flexibilityByMeal: { ...profile.flexibilityByMeal, [key]: value },
+          })
+        }
+      />
 
-      <div className="mt-4 grid gap-4">
-        <TextareaField
-          label="Equivalent exchange groups"
-          hint="Format: groupId: itemA|itemB; groupId2: itemC|itemD"
-          value={foodRules.equivalentExchangeGroups}
-          onChange={(value) => update({ equivalentExchangeGroups: value })}
-          rows={3}
-        />
-        <TextareaField
-          label="Portion boundaries"
-          hint="Reminder-only portion limits; no automatic increases."
-          value={foodRules.portionBoundaries}
-          onChange={(value) => update({ portionBoundaries: value })}
-          rows={2}
-        />
-      </div>
+      <FlexibilityGrid
+        title="Flexibility by goal"
+        keys={PHASE_77E_GOAL_KEYS}
+        labels={GOAL_LABELS}
+        values={profile.flexibilityByGoal}
+        fallback={profile.flexibilityGlobal}
+        onChange={(key, value) =>
+          update({
+            flexibilityByGoal: { ...profile.flexibilityByGoal, [key]: value },
+          })
+        }
+        className="mt-4"
+      />
 
-      <CheckboxGroupSection
-        title="Ingredient / allergen keywords"
-        options={FOOD_RULE_DASHBOARD_INGREDIENT_KEYWORD_OPTIONS}
-        selected={foodRules.ingredientAllergenKeywords}
-        onToggle={(option) => toggleOption("ingredientAllergenKeywords", option)}
+      <details className="mt-4 rounded-lg border border-stone-200 bg-white p-3">
+        <summary className="cursor-pointer text-sm font-semibold text-stone-900">Forbidden catalog categories</summary>
+        <div className="mt-3 max-h-80 space-y-2 overflow-auto">
+          {PHASE_77D_MASTER_FOOD_CATALOG.categories.map((category) => (
+            <label key={category.id} className="flex items-center gap-2 text-sm text-stone-700">
+              <input
+                type="checkbox"
+                checked={profile.forbiddenCatalogMainCategoryIds.includes(category.id)}
+                onChange={() => {
+                  const current = profile.forbiddenCatalogMainCategoryIds;
+                  update({
+                    forbiddenCatalogMainCategoryIds: current.includes(category.id)
+                      ? current.filter((item) => item !== category.id)
+                      : [...current, category.id],
+                  });
+                }}
+                className="h-4 w-4 rounded border-stone-300 text-emerald-900"
+              />
+              <span>{category.name}</span>
+            </label>
+          ))}
+        </div>
+      </details>
+
+      <TextareaField
+        label="Dietitian notes"
+        value={profile.notes}
+        onChange={(value) => update({ notes: value })}
+        rows={3}
         className="mt-4"
       />
     </section>
   );
 }
 
-function CatalogForbiddenSection({
-  catalog,
-  selectedMainCategoryIds,
-  selectedSubCategoryIds,
-  selectedFoodIds,
-  onToggleMainCategory,
-  onToggleSubCategory,
-  onToggleFood,
+function CatalogSelectionList({
+  title,
+  foodIds,
+  onRemove,
 }: {
-  catalog: Phase77DMasterFoodCatalogData;
-  selectedMainCategoryIds: string[];
-  selectedSubCategoryIds: string[];
-  selectedFoodIds: string[];
-  onToggleMainCategory: (id: string) => void;
-  onToggleSubCategory: (id: string) => void;
-  onToggleFood: (id: string) => void;
+  title: string;
+  foodIds: string[];
+  onRemove: (foodId: string) => void;
 }) {
-  const selectedCount = selectedMainCategoryIds.length + selectedSubCategoryIds.length + selectedFoodIds.length;
-
   return (
-    <div className="mt-4 rounded-lg border border-stone-200 bg-white p-3">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-sm font-semibold text-stone-900">Forbidden food catalog</p>
-        <p className="text-xs font-medium text-stone-500">
-          {selectedCount} selected / {catalog.metadata.counts.foods} foods
-        </p>
-      </div>
-      <div className="mt-3 max-h-[560px] space-y-3 overflow-auto pr-1">
-        {catalog.categories.map((category) => {
-          const categoryFoodCount = category.subcategories.reduce((sum, subcategory) => sum + subcategory.foods.length, 0);
-          const categoryChecked = selectedMainCategoryIds.includes(category.id);
-          const categoryHasSelectedChild = category.subcategories.some(
-            (subcategory) =>
-              selectedSubCategoryIds.includes(subcategory.id) ||
-              subcategory.foods.some((food) => selectedFoodIds.includes(food.id)),
-          );
-
+    <div className="rounded-lg border border-stone-200 bg-white p-3">
+      <p className="text-sm font-semibold text-stone-900">{title}</p>
+      <div className="mt-3 flex flex-wrap gap-2">
+        {foodIds.map((foodId) => {
+          const located = getPhase77DFoodById(foodId);
           return (
-            <details
-              key={category.id}
-              className="rounded-lg border border-stone-100 bg-stone-50"
-              open={categoryChecked || categoryHasSelectedChild}
+            <span
+              key={foodId}
+              className="inline-flex max-w-full items-center gap-1 rounded-full bg-stone-100 px-2 py-1 text-xs font-medium text-stone-800"
             >
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-3 py-2 text-sm font-semibold text-stone-900">
-                <label className="flex min-w-0 items-center gap-2" onClick={(event) => event.stopPropagation()}>
-                  <input
-                    type="checkbox"
-                    checked={categoryChecked}
-                    onChange={() => onToggleMainCategory(category.id)}
-                    className="h-4 w-4 rounded border-stone-300 text-emerald-900"
-                  />
-                  <span className="truncate">{category.name}</span>
-                </label>
-                <span className="shrink-0 text-xs font-medium text-stone-500">{categoryFoodCount}</span>
-              </summary>
-              <div className="space-y-2 px-3 pb-3">
-                {category.subcategories.map((subcategory) => {
-                  const subcategoryChecked = selectedSubCategoryIds.includes(subcategory.id);
-                  const subcategoryHasSelectedFood = subcategory.foods.some((food) => selectedFoodIds.includes(food.id));
-
-                  return (
-                    <details
-                      key={subcategory.id}
-                      className="rounded-lg border border-stone-200 bg-white"
-                      open={subcategoryChecked || subcategoryHasSelectedFood}
-                    >
-                      <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-3 py-2 text-sm text-stone-800">
-                        <label className="flex min-w-0 items-center gap-2" onClick={(event) => event.stopPropagation()}>
-                          <input
-                            type="checkbox"
-                            checked={subcategoryChecked}
-                            onChange={() => onToggleSubCategory(subcategory.id)}
-                            className="h-4 w-4 rounded border-stone-300 text-emerald-900"
-                          />
-                          <span className="truncate">{subcategory.name}</span>
-                        </label>
-                        <span className="shrink-0 text-xs font-medium text-stone-500">{subcategory.foods.length}</span>
-                      </summary>
-                      <div className="grid gap-2 border-t border-stone-100 p-3 sm:grid-cols-2 lg:grid-cols-3">
-                        {subcategory.foods.map((food) => (
-                          <label key={food.id} className="flex min-w-0 items-center gap-2 text-sm text-stone-700">
-                            <input
-                              type="checkbox"
-                              checked={selectedFoodIds.includes(food.id)}
-                              onChange={() => onToggleFood(food.id)}
-                              className="h-4 w-4 rounded border-stone-300 text-emerald-900"
-                            />
-                            <span className="min-w-0 break-words">{food.name}</span>
-                          </label>
-                        ))}
-                      </div>
-                    </details>
-                  );
-                })}
-              </div>
-            </details>
+              <span className="truncate">{located?.food.name || foodId}</span>
+              <button type="button" onClick={() => onRemove(foodId)} className="text-stone-500 hover:text-stone-900">
+                <X size={12} />
+              </button>
+            </span>
           );
         })}
+        {foodIds.length === 0 ? <p className="text-xs text-stone-500">No selections yet.</p> : null}
+      </div>
+    </div>
+  );
+}
+
+function FlexibilityGrid({
+  title,
+  keys,
+  labels,
+  values,
+  fallback,
+  onChange,
+  className = "",
+}: {
+  title: string;
+  keys: readonly string[];
+  labels: Record<string, string>;
+  values: Record<string, Phase77EFlexibilityLevel>;
+  fallback: Phase77EFlexibilityLevel;
+  onChange: (key: string, value: Phase77EFlexibilityLevel) => void;
+  className?: string;
+}) {
+  return (
+    <div className={`rounded-lg border border-stone-200 bg-white p-3 ${className}`}>
+      <p className="text-sm font-semibold text-stone-900">{title}</p>
+      <div className="mt-3 grid gap-3 md:grid-cols-2">
+        {keys.map((key) => (
+          <SelectField
+            key={key}
+            label={labels[key] || key}
+            value={values[key] || fallback}
+            options={PHASE_77E_FLEXIBILITY_LEVELS}
+            optionLabels={FLEXIBILITY_LABELS}
+            onChange={(value) => onChange(key, value)}
+          />
+        ))}
       </div>
     </div>
   );
@@ -344,7 +397,6 @@ function CatalogForbiddenSection({
 
 function TokenListSection({
   title,
-  description,
   tokens,
   draftValue,
   onDraftChange,
@@ -352,7 +404,6 @@ function TokenListSection({
   onRemove,
 }: {
   title: string;
-  description: string;
   tokens: string[];
   draftValue: string;
   onDraftChange: (value: string) => void;
@@ -362,7 +413,6 @@ function TokenListSection({
   return (
     <div className="rounded-lg border border-stone-200 bg-white p-3">
       <p className="text-sm font-semibold text-stone-900">{title}</p>
-      <p className="mt-1 text-xs text-stone-500">{description}</p>
       <div className="mt-3 flex flex-wrap gap-2">
         {tokens.map((token) => (
           <span
@@ -370,7 +420,7 @@ function TokenListSection({
             className="inline-flex max-w-full items-center gap-1 rounded-full bg-stone-100 px-2 py-1 text-xs font-medium text-stone-800"
           >
             <span className="truncate">{token}</span>
-            <button type="button" onClick={() => onRemove(token)} className="text-stone-500 hover:text-stone-900" aria-label={`Remove ${token}`}>
+            <button type="button" onClick={() => onRemove(token)} className="text-stone-500 hover:text-stone-900">
               <X size={12} />
             </button>
           </span>
@@ -433,24 +483,26 @@ function SelectField({
   label,
   value,
   options,
+  optionLabels,
   onChange,
 }: {
   label: string;
-  value: string;
-  options: readonly string[];
-  onChange: (value: string) => void;
+  value: Phase77EFlexibilityLevel;
+  options: readonly Phase77EFlexibilityLevel[];
+  optionLabels: Record<Phase77EFlexibilityLevel, string>;
+  onChange: (value: Phase77EFlexibilityLevel) => void;
 }) {
   return (
     <label className="block text-sm font-medium text-stone-700">
       <span>{label}</span>
       <select
         value={value}
-        onChange={(event) => onChange(event.target.value)}
+        onChange={(event) => onChange(event.target.value as Phase77EFlexibilityLevel)}
         className="mt-1 w-full rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm text-stone-950 outline-none focus:border-emerald-800 focus:ring-2 focus:ring-emerald-100"
       >
         {options.map((option) => (
           <option key={option} value={option}>
-            {option}
+            {optionLabels[option]}
           </option>
         ))}
       </select>
@@ -460,21 +512,20 @@ function SelectField({
 
 function TextareaField({
   label,
-  hint,
   value,
   onChange,
   rows = 3,
+  className = "",
 }: {
   label: string;
-  hint?: string;
   value: string;
   onChange: (value: string) => void;
   rows?: number;
+  className?: string;
 }) {
   return (
-    <label className="block text-sm font-medium text-stone-700">
+    <label className={`block text-sm font-medium text-stone-700 ${className}`}>
       <span>{label}</span>
-      {hint ? <span className="mt-1 block text-xs font-normal text-stone-500">{hint}</span> : null}
       <textarea
         value={value}
         onChange={(event) => onChange(event.target.value)}

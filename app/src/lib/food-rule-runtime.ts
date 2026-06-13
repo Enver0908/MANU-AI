@@ -1,7 +1,13 @@
 import { evaluateFoodRuleDecision } from "dietitian-ai-assistant-architecture";
 import { buildStructuredFoodRuleManifest } from "./phase-76d-food-rule-model";
+import {
+  evaluateClientFoodDecisionV2,
+  foodDecisionV2ToLegacyFoodRuleResult,
+  shouldUseFoodDecisionV2Result,
+} from "./phase-77g-food-decision-engine-v2";
 import { resolveProductIngredientEvidence } from "./product-ingredient-verification";
 import type { ManuAppState } from "./types";
+import type { RiskLevel } from "./types";
 
 export type ProductIngredientEvidenceInput = {
   ingredientSourceType: "user_label_text" | "barcode_database" | "approved_product_catalog" | "dietitian_product_note" | "unknown";
@@ -30,30 +36,50 @@ export function buildStructuredFoodRulesFromClientState(state: ManuAppState, cli
   };
 }
 
+export function evaluateClientFoodDecisionV2FromState(
+  state: ManuAppState,
+  clientId: string,
+  message: string,
+  options: {
+    riskLevel?: RiskLevel;
+    mixedIntentBlocked?: boolean;
+    productIngredientEvidence?: ProductIngredientEvidenceInput | null;
+  } = {},
+) {
+  const productIngredientEvidence = resolveProductIngredientEvidence(
+    message,
+    options.productIngredientEvidence || null,
+  );
+  return evaluateClientFoodDecisionV2(state, clientId, message, {
+    ...options,
+    productIngredientEvidence,
+  });
+}
+
 export function evaluateClientFoodRuleDecision(
   state: ManuAppState,
   clientId: string,
   message: string,
   options: {
+    riskLevel?: RiskLevel;
     mixedIntentBlocked?: boolean;
     productIngredientEvidence?: ProductIngredientEvidenceInput | null;
   } = {},
 ) {
-  const structuredFoodRules = buildStructuredFoodRulesFromClientState(state, clientId);
   const productIngredientEvidence = resolveProductIngredientEvidence(
     message,
     options.productIngredientEvidence || null,
   );
+  const foodDecisionV2 = evaluateClientFoodDecisionV2(state, clientId, message, {
+    ...options,
+    productIngredientEvidence,
+  });
 
-  if (!structuredFoodRules) {
-    return evaluateFoodRuleDecision({
-      message,
-      structuredFoodRules: null,
-      mixedIntentBlocked: options.mixedIntentBlocked,
-      productIngredientEvidence,
-    });
+  if (shouldUseFoodDecisionV2Result(foodDecisionV2)) {
+    return foodDecisionV2ToLegacyFoodRuleResult(foodDecisionV2);
   }
 
+  const structuredFoodRules = buildStructuredFoodRulesFromClientState(state, clientId);
   return evaluateFoodRuleDecision({
     message,
     structuredFoodRules,

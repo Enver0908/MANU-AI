@@ -182,6 +182,38 @@ export function useManuState() {
           method: "POST",
           body: JSON.stringify(input),
         }),
+      saveClientFoodRuleProfile: (
+        clientId: string,
+        input: {
+          revision: number;
+          profile: Record<string, unknown>;
+        },
+      ) =>
+        replaceFromApi(`/api/clients/${clientId}/food-rule-profile`, {
+          method: "PUT",
+          body: JSON.stringify(input),
+        }),
+      createMenuPlan: (clientId: string, input: { templateType: string; title?: string }) =>
+        replaceFromApi(`/api/clients/${clientId}/menu-plans`, {
+          method: "POST",
+          body: JSON.stringify(input),
+        }),
+      saveMenuPlan: (
+        clientId: string,
+        planId: string,
+        input: {
+          revision: number;
+          plan: Record<string, unknown>;
+        },
+      ) =>
+        replaceFromApi(`/api/clients/${clientId}/menu-plans/${planId}`, {
+          method: "PUT",
+          body: JSON.stringify(input),
+        }),
+      activateMenuPlan: (clientId: string, planId: string) =>
+        replaceFromApi(`/api/clients/${clientId}/menu-plans/${planId}/activate`, {
+          method: "POST",
+        }),
       addClientContextUpdate: (
         clientId: string,
         input: {

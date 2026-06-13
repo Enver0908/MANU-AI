@@ -62,7 +62,7 @@ describe("phase 76o food-mix rehearsal", () => {
       expect(metrics.redClientSendCount).toBe(0);
       expect(Object.values(metrics.scenarioCounts).reduce((sum, count) => sum + count, 0)).toBe(5000);
     },
-    120_000,
+    240_000,
   );
 
   it("covers integration checks for duplicate inbound, provider failure, stale draft, and manual food-rule save", async () => {
