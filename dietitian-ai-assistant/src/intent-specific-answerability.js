@@ -1,4 +1,8 @@
 import { APPROVED_SOURCE_ANSWERABILITY_VERSION } from "./approved-source-answerability.js";
+import {
+  resolveFoodDecisionV2IntentFamily,
+  resolveFoodIntentFamily,
+} from "./intent-family-mappings.js";
 
 export const INTENT_SPECIFIC_ANSWERABILITY_VERSION = "intent-specific-answerability-v0.2.0";
 
@@ -159,6 +163,7 @@ export function evaluateIntentSpecificAnswerability({
   foodDecisionV2 = null,
   structuredFoodRules,
   productIngredientEvidence,
+  canonicalIntent = null,
 }) {
   if (riskDecision?.level !== "green") {
     return {
@@ -172,8 +177,17 @@ export function evaluateIntentSpecificAnswerability({
 
   if (greenIntent && greenIntent.allowed === false) {
     return buildDecision("handoff_required", [...(greenIntent.reasons || []), "green_intent_blocked"], [], {
-      intentFamily: greenIntent.intentFamily,
+      intentFamily: greenIntent.intentFamily || canonicalIntent?.intentFamily || "unknown_intent",
       foodRuleDecision: foodRule?.decision || null,
+      workflowState: greenIntent.workflowState || canonicalIntent?.workflowState || "handoff",
+    });
+  }
+
+  if (canonicalIntent?.intentFamily === "unknown_intent" || canonicalIntent?.allowed === false) {
+    return buildDecision("handoff_required", [...(canonicalIntent?.reasons || []), "canonical_unknown_intent"], [], {
+      intentFamily: "unknown_intent",
+      foodRuleDecision: foodRule?.decision || null,
+      workflowState: canonicalIntent?.workflowState || "clarify",
     });
   }
 
@@ -209,7 +223,12 @@ export function evaluateIntentSpecificAnswerability({
   const v2Sources = buildFoodDecisionV2SourceCategories(foodDecisionV2);
   const sources = dedupeSources([...promptSources, ...structuredSources, ...v2Sources]);
   const sourceCategories = Array.from(new Set(sources.map((source) => source.category)));
-  const effectiveIntentFamily = resolveEffectiveIntentFamily(greenIntent, foodRule, foodDecisionV2);
+  const effectiveIntentFamily = resolveEffectiveIntentFamily(
+    greenIntent,
+    foodRule,
+    foodDecisionV2,
+    canonicalIntent || greenIntent?.canonicalIntent || null,
+  );
   const requirements = INTENT_SOURCE_REQUIREMENTS[effectiveIntentFamily];
 
   if (!requirements) {
@@ -329,26 +348,20 @@ export function evaluateIntentSpecificAnswerability({
   );
 }
 
-export function resolveEffectiveIntentFamily(greenIntent, foodRule, foodDecisionV2 = null) {
+export function resolveEffectiveIntentFamily(greenIntent, foodRule, foodDecisionV2 = null, canonicalIntent = null) {
+  if (canonicalIntent?.blockedFamily || greenIntent?.blockedFamily) return null;
+  if (canonicalIntent?.decision === "blocked_sensitive_intent") return null;
+  if (canonicalIntent?.intentFamily) return canonicalIntent.intentFamily;
+  if (greenIntent?.canonicalIntent?.intentFamily) return greenIntent.canonicalIntent.intentFamily;
   const foodDecisionV2Intent = resolveFoodDecisionV2IntentFamily(foodDecisionV2);
   if (foodDecisionV2Intent) return foodDecisionV2Intent;
   const foodIntent = resolveFoodIntentFamily(foodRule);
   if (foodIntent) return foodIntent;
-  return greenIntent?.intentFamily || "green_low_risk_clarification";
+  if (greenIntent?.intentFamily === "unknown_intent") return "unknown_intent";
+  return greenIntent?.intentFamily || "unknown_intent";
 }
 
-export function resolveFoodDecisionV2IntentFamily(foodDecisionV2) {
-  if (!foodDecisionV2 || foodDecisionV2.decision === "not_applicable") return null;
-
-  const { decision, queryType } = foodDecisionV2;
-  if (decision === "discourage") return "green_food_decision_discourage";
-  if (decision === "forbid") return "green_forbidden_food_reminder";
-  if (decision === "allow") return "green_allowed_food_confirmation";
-  if (decision === "needs_label" || (queryType === "product_ingredient" && decision === "forbid")) {
-    return "green_product_ingredient_check";
-  }
-  return null;
-}
+export { resolveFoodDecisionV2IntentFamily, resolveFoodIntentFamily } from "./intent-family-mappings.js";
 
 export function buildFoodDecisionV2SourceCategories(foodDecisionV2) {
   if (!foodDecisionV2 || foodDecisionV2.decision === "not_applicable") return [];
@@ -377,41 +390,6 @@ export function buildFoodDecisionV2SourceCategories(foodDecisionV2) {
   }
 
   return categories;
-}
-
-export function resolveFoodIntentFamily(foodRule) {
-  if (!foodRule || foodRule.decision === "not_applicable") return null;
-
-  if (foodRule.queryType === "food_permission") {
-    if (foodRule.decision === "forbidden_food_rejection" || foodRule.decision === "diet_type_conflict") {
-      return "green_forbidden_food_reminder";
-    }
-    if (foodRule.decision === "allowed_food_confirmation" || foodRule.decision === "diet_type_compatible") {
-      return "green_allowed_food_confirmation";
-    }
-  }
-
-  if (foodRule.queryType === "food_substitution" && foodRule.decision === "equivalent_substitution_allowed") {
-    return "green_allowed_substitution";
-  }
-
-  if (foodRule.queryType === "meal_skip" && foodRule.decision === "optional_skip_allowed") {
-    return "green_optional_meal_skip";
-  }
-
-  if (foodRule.queryType === "product_ingredient") {
-    if (
-      foodRule.decision === "product_ingredient_conflict" ||
-      foodRule.decision === "allowed_food_confirmation"
-    ) {
-      return "green_product_ingredient_check";
-    }
-    if (foodRule.decision === "diet_type_conflict") {
-      return "green_forbidden_food_reminder";
-    }
-  }
-
-  return null;
 }
 
 export function buildStructuredSourceCategories(structuredFoodRules, productIngredientEvidence) {

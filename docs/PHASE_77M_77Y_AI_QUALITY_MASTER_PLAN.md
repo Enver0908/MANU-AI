@@ -12,6 +12,7 @@ This plan does not approve production pilot launch, connect WhatsApp, connect Te
 
 - Client-visible risk classes remain only `green`, `yellow`, and `red`.
 - Internal workflow states such as `unknown_intent`, `needs_label`, `needs_review`, `clarify`, `handoff`, and `block` are not new client-visible warning classes.
+- Unknown intent must not be treated as safe green clarification; later phases must route it fail-closed to copilot, clarify, draft, or handoff rather than autopilot send.
 - The product goal remains safe green maximization: expand the number of genuinely green, source-backed questions MANU-AI can answer well, without forcing ambiguous, unsupported, label-missing, or clinically risky messages into green.
 - Personas and dietitian voice affect wording, tone, length, emoji policy, and response timing style only. They never change clinical safety, source authority, Food Decision V2, or green/yellow/red routing.
 - Production pilot status remains `NO-GO`.
@@ -30,6 +31,8 @@ The AI quality program is numbered Phase 77M-77Y because `docs/DIRECT_100_DIETIT
 
 Using Phase 77M-77Y avoids collision while keeping this track immediately after Phase 77L and before the deferred WhatsApp production adapter.
 
+Superseded planning note: an alternate Phase 78A-M AI-quality numbering is not used. Phase 78 through Phase 81 remain reserved for dependency/R-405 closure, full rehearsal, external launch-gate closure, and direct production GO.
+
 ## Canonical Architecture Decisions
 
 - `responsePlan` is produced in the core runtime after answerability and before provider/generation.
@@ -45,7 +48,11 @@ Using Phase 77M-77Y avoids collision while keeping this track immediately after 
 
 ## Phase 77M: Master Rebaseline And Spec
 
+Status: Completed 2026-06-13.
+
 Goal: create this master plan, update continuity documents, and lock the AI quality track before runtime work.
+
+Phase spec: `docs/PHASE_77M_MASTER_REBASELINE_AND_SPEC.md`.
 
 Implementation intent:
 
@@ -53,17 +60,23 @@ Implementation intent:
 - Record that green/yellow/red remain the only external risk classes.
 - Record core-owned `responsePlan`, deterministic templates, and manifest-first grounding.
 - Record that internal workflow states are operational states, not new warning categories.
+- Record fail-closed unknown-intent handling for later runtime phases.
+- Record `normalize-safety-text.js` as the single shared normalization source to extend.
 
 Done criteria:
 
-- This spec exists.
-- Continuity and roadmap docs reference Phase 77M-77Y before WhatsApp adapter.
+- This master plan and the Phase 77M spec exist.
+- Continuity and roadmap docs reference Phase 77N as next and defer WhatsApp adapter until Phase 77M-77Y is complete.
 - Production pilot remains `NO-GO`.
 - R-405 remains open.
 
 ## Phase 77N: Canonical Intent Understanding V2
 
+Status: Completed 2026-06-13.
+
 Goal: reduce fragmented intent handling and improve green question coverage safely.
+
+Phase spec: `docs/PHASE_77N_CANONICAL_INTENT_UNDERSTANDING_V2_SPEC.md`.
 
 Implementation intent:
 
@@ -80,7 +93,11 @@ Done criteria:
 
 ## Phase 77O: Response Plan Contract V1
 
+Status: Completed 2026-06-13.
+
 Goal: make every client-facing draft pass through a structured response plan.
+
+Phase spec: `docs/PHASE_77O_RESPONSE_PLAN_CONTRACT_V1_SPEC.md`.
 
 Implementation intent:
 

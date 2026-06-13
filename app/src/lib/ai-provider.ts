@@ -1,6 +1,8 @@
 import {
   MISSING_HISTORICAL_CONTEXT_TOKEN,
   detectProductCommunicationCovenantIssues,
+  isResponsePlanProviderEligible,
+  assertBoundedProviderSegment,
 } from "dietitian-ai-assistant-architecture";
 import type { RiskLevel } from "./types";
 
@@ -37,9 +39,13 @@ export const ALLOWED_PROVIDER_SEGMENT_TYPES = new Set([
   "recent_message",
   "persona",
   "voice_profile",
+  "response_plan",
+  "claim_manifest",
+  "style_dna",
 ]);
 const MAX_PROVIDER_SEGMENTS = 32;
 const MAX_PROVIDER_SEGMENT_CHARS = 3000;
+const BOUNDED_RESPONSE_PLAN_SEGMENT_TYPES = new Set(["response_plan", "claim_manifest", "style_dna"]);
 
 export class MockProviderError extends Error {
   constructor(
@@ -95,6 +101,7 @@ export async function generateMockProviderReply(
   options: MockProviderOptions = {},
 ) {
   assertMockProviderInputPolicy(input);
+  assertResponsePlanSegmentsPresent(input);
 
   if (options.forceMissingHistoricalContext) {
     return MISSING_HISTORICAL_CONTEXT_TOKEN;
@@ -144,6 +151,16 @@ export function assertMockProviderInputPolicy(input: MockProviderInput) {
     }
     if (segment.text.length > MAX_PROVIDER_SEGMENT_CHARS) {
       throw new MockProviderError("provider_policy_violation", `Provider boundary rejected overlong segment: ${segment.type}`);
+    }
+    if (BOUNDED_RESPONSE_PLAN_SEGMENT_TYPES.has(segment.type)) {
+      try {
+        assertBoundedProviderSegment(segment);
+      } catch {
+        throw new MockProviderError(
+          "provider_policy_violation",
+          `Provider boundary rejected unsafe response plan segment content: ${segment.type}`,
+        );
+      }
     }
   }
 }
@@ -243,6 +260,26 @@ function assertCovenantCleanOutput(output: string) {
       "provider_policy_violation",
       `Provider boundary rejected product communication covenant issues: ${issues.join(",")}`,
     );
+  }
+}
+
+function assertResponsePlanSegmentsPresent(input: MockProviderInput) {
+  const segmentTypes = new Set(input.context.segments.map((segment) => segment.type));
+  if (!segmentTypes.has("response_plan")) {
+    throw new MockProviderError("provider_policy_violation", "Provider boundary requires response_plan segment");
+  }
+  if (!segmentTypes.has("claim_manifest")) {
+    throw new MockProviderError("provider_policy_violation", "Provider boundary requires claim_manifest segment");
+  }
+  if (!segmentTypes.has("style_dna")) {
+    throw new MockProviderError("provider_policy_violation", "Provider boundary requires style_dna segment");
+  }
+
+  const responsePlanSegment = input.context.segments.find((segment) => segment.type === "response_plan")?.text || "";
+  const replyModeMatch = responsePlanSegment.match(/replyMode=([a-z_]+)/);
+  const replyMode = replyModeMatch?.[1] || null;
+  if (!replyMode || !isResponsePlanProviderEligible({ replyMode })) {
+    throw new MockProviderError("provider_policy_violation", "Provider boundary requires provider-eligible response_plan");
   }
 }
 

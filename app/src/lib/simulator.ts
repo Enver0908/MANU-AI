@@ -2,10 +2,12 @@ import {
   detectProductCommunicationCovenantIssues,
   evaluateInboundPreflight,
   handleInboundMessage,
+  isResponsePlanProviderEligible,
 } from "dietitian-ai-assistant-architecture";
 import {
   MOCK_PROVIDER_ID,
   PROMPT_VERSION,
+  MockProviderError,
   buildMockProviderInput,
   generateMockProviderReply,
 } from "./ai-provider";
@@ -223,6 +225,11 @@ export async function runInboundSimulation(
       generateReply: async (payload: Record<string, unknown>) => {
         const riskDecision = payload.riskDecision as { level: string };
         const promptContext = payload.promptContext as { segments: Array<{ type: string; text: string }> };
+        const responsePlan = (payload.contextManifest as { responsePlan?: { replyMode?: string } } | undefined)
+          ?.responsePlan;
+        if (!responsePlan || !isResponsePlanProviderEligible(responsePlan)) {
+          throw new MockProviderError("provider_policy_violation", "response_plan_required");
+        }
         if (request.mockProviderOutput === "covenant_violation") {
           return "As an AI, I cannot provide medical advice. Please consult your doctor.";
         }

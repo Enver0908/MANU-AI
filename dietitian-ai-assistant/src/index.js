@@ -53,7 +53,28 @@ export {
 export {
   GREEN_INTENT_TAXONOMY_VERSION,
   evaluateGreenIntentTaxonomy,
+  resolveCanonicalIntentV2,
+  mapCanonicalIntentToGreenTaxonomy,
 } from "./green-intent-taxonomy.js";
+export {
+  CANONICAL_INTENT_RESOLVER_V2_VERSION,
+  CANONICAL_INTENT_WORKFLOW_STATES,
+} from "./canonical-intent-resolver-v2.js";
+export {
+  RESPONSE_PLAN_V1_VERSION,
+  RESPONSE_PLAN_REPLY_MODES,
+  buildResponsePlanV1,
+  isResponsePlanProviderEligible,
+  resolveReplyMode,
+  resolveTemplateId,
+} from "./response-plan-v1.js";
+export {
+  RESPONSE_PLAN_PROMPT_SEGMENTS_VERSION,
+  BOUNDED_RESPONSE_PLAN_SEGMENT_MAX_CHARS,
+  buildResponsePlanPromptSegments,
+  appendResponsePlanPromptSegments,
+  assertBoundedProviderSegment,
+} from "./response-plan-prompt-segments.js";
 export {
   FOOD_RULE_ENGINE_VERSION,
   FOOD_RULE_DECISIONS,

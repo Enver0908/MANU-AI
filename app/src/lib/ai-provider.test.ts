@@ -10,9 +10,31 @@ import {
   getProviderErrorCode,
 } from "./ai-provider";
 
-const promptContext = {
-  segments: [{ type: "diet_plan_summary", text: "Three meals and one snack." }],
-};
+function providerContextWithResponsePlan(
+  extraSegments: Array<{ type: string; text: string }> = [],
+  replyMode: "send" | "draft" = "send",
+) {
+  return {
+    segments: [
+      { type: "diet_plan_summary", text: "Three meals and one snack." },
+      {
+        type: "response_plan",
+        text: `version=response-plan-v1-v0.1.0; intentFamily=green_plan_lookup; replyMode=${replyMode}; templateId=plan_lookup_v1; riskClass=green; sourceRefCount=1; foodDecision=none; messagePlanSummary=replyMode=${replyMode}`,
+      },
+      {
+        type: "claim_manifest",
+        text: "version=claim-manifest-v0.1.0-placeholder; templateId=plan_lookup_v1; claims=0; sourceIds=1",
+      },
+      {
+        type: "style_dna",
+        text: "version=style-dna-v0.1.0-placeholder; scope=tenant_dietitian_voice_placeholder; formality=unset; emojiPolicy=unset",
+      },
+      ...extraSegments,
+    ],
+  };
+}
+
+const promptContext = providerContextWithResponsePlan();
 
 describe("mock AI provider", () => {
   it("generates deterministic green and yellow replies", async () => {
@@ -27,12 +49,9 @@ describe("mock AI provider", () => {
   it("uses the conversation language segment for deterministic localized replies", async () => {
     await expect(
       generateMockProviderReply({
-        context: {
-          segments: [
-            { type: "conversation_language", text: "Reply to this client in de." },
-            { type: "diet_plan_summary", text: "Drei Mahlzeiten." },
-          ],
-        },
+        context: providerContextWithResponsePlan([
+          { type: "conversation_language", text: "Reply to this client in de." },
+        ]),
         risk: "green",
       }),
     ).resolves.toContain("Sie");
@@ -50,14 +69,14 @@ describe("mock AI provider", () => {
   it("normalizes timeout and provider errors", async () => {
     await expect(
       generateMockProviderReply(
-        { context: { segments: [] }, risk: "green" },
+        { context: providerContextWithResponsePlan(), risk: "green" },
         { failureMode: "provider_timeout", maxRetries: 1 },
       ),
     ).rejects.toMatchObject({ code: "provider_timeout" });
 
     try {
       await generateMockProviderReply(
-        { context: { segments: [] }, risk: "green" },
+        { context: providerContextWithResponsePlan(), risk: "green" },
         { failureMode: "provider_error" },
       );
     } catch (error) {
@@ -125,6 +144,48 @@ describe("mock AI provider", () => {
     ).toThrowError(/overlong segment/);
   });
 
+  it("rejects provider calls without response_plan segments", async () => {
+    await expect(
+      generateMockProviderReply({
+        context: { segments: [{ type: "diet_plan_summary", text: "Three meals" }] },
+        risk: "green",
+      }),
+    ).rejects.toMatchObject({ code: "provider_policy_violation" });
+  });
+
+  it("accepts bounded response_plan, claim_manifest, and style_dna segments", () => {
+    expect(() =>
+      assertMockProviderInputPolicy({
+        context: providerContextWithResponsePlan(),
+        risk: "green",
+      }),
+    ).not.toThrow();
+  });
+
+  it("allows long non-response-plan segments above the 480-char response-plan bound", () => {
+    expect(() =>
+      assertMockProviderInputPolicy({
+        context: providerContextWithResponsePlan([
+          { type: "client_form_summary", text: "Hedef: ".repeat(120) },
+        ]),
+        risk: "green",
+      }),
+    ).not.toThrow();
+  });
+
+  it("rejects raw internal metadata markers inside provider segments", async () => {
+    const context = providerContextWithResponsePlan();
+    context.segments = context.segments.map((segment) =>
+      segment.type === "response_plan"
+        ? { ...segment, text: "version=v1; replyMode=send; internal_reason=leak" }
+        : segment,
+    );
+
+    await expect(generateMockProviderReply({ context, risk: "green" })).rejects.toMatchObject({
+      code: "provider_policy_violation",
+    });
+  });
+
   it("rejects red-risk provider calls as defense in depth", async () => {
     await expect(
       generateMockProviderReply({
@@ -141,13 +202,15 @@ describe("mock AI provider", () => {
   });
 
   it("rejects generated mock output that violates the product communication covenant", async () => {
-    await expect(
-      generateMockProviderReply({
-        context: {
-          segments: [{ type: "diet_plan_summary", text: "Please consult your doctor before changing this." }],
-        },
-        risk: "green",
-      }),
-    ).rejects.toMatchObject({ code: "provider_policy_violation" });
+    const context = providerContextWithResponsePlan();
+    context.segments = context.segments.map((segment) =>
+      segment.type === "diet_plan_summary"
+        ? { ...segment, text: "Please consult your doctor before changing this." }
+        : segment,
+    );
+
+    await expect(generateMockProviderReply({ context, risk: "green" })).rejects.toMatchObject({
+      code: "provider_policy_violation",
+    });
   });
 });

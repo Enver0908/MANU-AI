@@ -55,6 +55,9 @@ describe("phase 75 gemini provider gate", () => {
       false,
     );
     expect(evaluatePhase75PromptContextFieldEligibility("allergies").providerInputAllowed).toBe(true);
+    expect(evaluatePhase75PromptContextFieldEligibility("response_plan").providerInputAllowed).toBe(true);
+    expect(evaluatePhase75PromptContextFieldEligibility("claim_manifest").providerInputAllowed).toBe(true);
+    expect(evaluatePhase75PromptContextFieldEligibility("style_dna").providerInputAllowed).toBe(true);
     expect(evaluatePhase75PromptContextFieldEligibility("unknown_field").providerInputAllowed).toBe(false);
   });
 

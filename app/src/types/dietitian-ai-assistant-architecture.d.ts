@@ -305,12 +305,18 @@ declare module "dietitian-ai-assistant-architecture" {
     | "green_plan_lookup"
     | "green_meal_reminder"
     | "green_allowed_substitution"
+    | "green_allowed_food_confirmation"
+    | "green_forbidden_food_reminder"
+    | "green_food_decision_discourage"
+    | "green_product_ingredient_check"
+    | "green_optional_meal_skip"
     | "green_logistics"
     | "green_behavior_support"
     | "green_progress_logging"
     | "green_low_risk_clarification"
     | "green_general_education"
-    | "green_context_recap";
+    | "green_context_recap"
+    | "unknown_intent";
 
   export type SensitiveIntentFamily =
     | "yellow_plan_change_request"
@@ -325,12 +331,33 @@ declare module "dietitian-ai-assistant-architecture" {
 
   export type GreenIntentTaxonomyDecision = {
     version: string;
-    decision: "green_intent_allowed" | "blocked_sensitive_intent" | "not_applicable_non_green";
+    decision:
+      | "green_intent_allowed"
+      | "blocked_sensitive_intent"
+      | "blocked_unknown_intent"
+      | "not_applicable_non_green";
     allowed: boolean;
     intentFamily: GreenIntentFamily | null;
     blockedFamily: SensitiveIntentFamily | null;
     reasons: string[];
     sourceCategories: string[];
+    canonicalIntent?: CanonicalIntentV2Decision | null;
+    canonicalIntentVersion?: string | null;
+    workflowState?: string | null;
+  };
+
+  export type CanonicalIntentV2Decision = {
+    version: string;
+    decision: string;
+    allowed: boolean;
+    intentFamily: string | null;
+    blockedFamily: string | null;
+    precedenceStage: string;
+    workflowState: string | null;
+    reasons: string[];
+    foodDecisionV2?: string | null;
+    foodRuleDecision?: string | null;
+    foodQueryType?: string | null;
   };
 
   export type ApprovedSourceAnswerabilityDecision = {
@@ -567,7 +594,100 @@ declare module "dietitian-ai-assistant-architecture" {
     promptContext: PromptContext | null;
     riskDecision: { level: "green" | "yellow" | "red"; reasons?: string[] };
     answerability?: ApprovedSourceAnswerabilityDecision | null;
+    canonicalIntent?: CanonicalIntentV2Decision | null;
+    foodDecisionV2?: FoodDecisionV2Result | null;
+    foodRule?: FoodRuleDecision | null;
   }): GreenIntentTaxonomyDecision;
+
+  export function resolveCanonicalIntentV2(input: {
+    message: string;
+    riskDecision: { level: "green" | "yellow" | "red"; reasons?: string[] };
+    foodDecisionV2?: FoodDecisionV2Result | null;
+    foodRule?: FoodRuleDecision | null;
+  }): CanonicalIntentV2Decision;
+
+  export const CANONICAL_INTENT_RESOLVER_V2_VERSION: string;
+
+  export type ResponsePlanReplyMode =
+    | "send"
+    | "draft"
+    | "clarify"
+    | "ask_label"
+    | "handoff"
+    | "block";
+
+  export type ResponsePlanV1 = {
+    version: string;
+    intentFamily: string | null;
+    replyMode: ResponsePlanReplyMode;
+    templateId: string | null;
+    sourceRefs: Array<{
+      id: string;
+      category: string;
+      segmentType: string | null;
+      authority: string | null;
+      origin: string | null;
+    }>;
+    foodDecision: {
+      engine: string;
+      decision: string;
+      queryType: string | null;
+      providerEligible: boolean | null;
+      reasonCodes: string[];
+    } | null;
+    riskClass: RiskLevel | null;
+    clientMessagePlan: {
+      replyMode: ResponsePlanReplyMode;
+      templateId: string | null;
+      intentFamily: string | null;
+      mustAsk: string[];
+      mustAvoid: string[];
+      summary: string;
+    };
+    internalReason: string;
+    claimManifest: {
+      version: string;
+      templateId: string | null;
+      intentFamily: string | null;
+      claims: unknown[];
+      sourceIds: string[];
+    };
+    styleDna: {
+      version: string;
+      scope: string;
+      formality: string | null;
+      warmth: string | null;
+      emojiPolicy: string | null;
+      responseTimingStyle: string | null;
+    };
+    providerEligible: boolean;
+  };
+
+  export const RESPONSE_PLAN_V1_VERSION: string;
+
+  export function buildResponsePlanV1(input: {
+    riskDecision: RiskDecision;
+    canonicalIntent?: CanonicalIntentV2Decision | null;
+    greenIntent?: GreenIntentTaxonomyDecision | null;
+    answerability?: Record<string, unknown> | null;
+    foodDecisionV2?: FoodDecisionV2Result | null;
+    foodRule?: FoodRuleDecision | null;
+    modeDecision?: { action: string; reason?: string } | null;
+  }): ResponsePlanV1;
+
+  export function isResponsePlanProviderEligible(
+    responsePlan: { replyMode?: ResponsePlanReplyMode | string | null } | null | undefined,
+  ): boolean;
+
+  export function appendResponsePlanPromptSegments(
+    promptContext: PromptContext,
+    responsePlan: ResponsePlanV1,
+  ): PromptContext;
+
+  export function assertBoundedProviderSegment(segment: {
+    type?: string;
+    text?: string;
+  }): void;
 
   export type FoodRuleDecisionValue =
     | "allowed_food_confirmation"

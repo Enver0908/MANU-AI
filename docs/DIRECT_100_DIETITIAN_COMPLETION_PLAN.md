@@ -19,7 +19,7 @@ These rules are non-negotiable and apply to every future phase:
 ## Current Baseline
 - Latest completed implementation phase: Phase 77K calibration, 100x50 rehearsal, and evidence closure (2026-06-10).
 - Latest continuity/worktree closure phase: Phase 77L continuity reconciliation and worktree closure (2026-06-13).
-- Next planned implementation track: Phase 77M-77Y AI Quality Program before the deferred WhatsApp production adapter.
+- Next implementation phase: Phase 77P Deterministic Template Library V1.
 - Latest roadmap rebaseline: Phase 77A manual source authority rebaseline spec (2026-06-10).
 - Detailed Phase 77 implementation plan: `docs/PHASE_77_MASTER_IMPLEMENTATION_PLAN.md`.
 - AI quality master plan: `docs/PHASE_77M_77Y_AI_QUALITY_MASTER_PLAN.md`.
@@ -174,7 +174,23 @@ Completed:
 - No real provider, channel, launch-gate approval, real-data handling, or R-405 status changed.
 - Production pilot remains `NO-GO`.
 
-## Phase 77M-77Y: AI Quality Program - Planned 2026-06-13
+## Phase 77M: Master Rebaseline And Spec - Completed 2026-06-13
+
+Goal: create the canonical AI Quality Program PRD/tech spec and lock architectural decisions before Phase 77N runtime work.
+
+Completed:
+- Added `docs/PHASE_77M_MASTER_REBASELINE_AND_SPEC.md`.
+- Canonical master plan: `docs/PHASE_77M_77Y_AI_QUALITY_MASTER_PLAN.md`.
+- Recorded superseded alternate Phase 78A-M numbering; Phase 78-81 remain reserved for production-readiness closure.
+- Locked core-owned `responsePlan`, deterministic templates, manifest-first grounding, fail-closed unknown-intent handling, and `normalize-safety-text.js` as the single normalization source to extend.
+- Verification passed with `git diff --check`, `app` `npm test` (337/337), and `npm run release:verify`: core tests 173/173, app tests 337/337, lint with two pre-existing warnings, production build, and only documented R-405 findings.
+- No real provider, channel, launch-gate approval, real-data handling, or R-405 status changed.
+- Production pilot remains `NO-GO`.
+
+Next:
+- Phase 77N Canonical Intent Understanding V2.
+
+## Phase 77M-77Y: AI Quality Program - In Progress 2026-06-13
 Goal: make MANU-AI a stronger dietitian assistant before WhatsApp adapter work, while preserving the green/yellow/red risk model and expanding genuinely safe green coverage.
 
 Canonical plan:
@@ -190,9 +206,11 @@ Locked decisions:
 - Dietitian voice/style affects wording only and never changes clinical safety, source authority, or Food Decision V2.
 
 Planned subphases:
-- 77M master rebaseline and spec.
-- 77N canonical intent understanding V2.
-- 77O response plan contract V1.
+
+- 77M master rebaseline and spec. **Completed 2026-06-13.**
+- 77N canonical intent understanding V2. **Completed 2026-06-13.**
+- 77O response plan contract V1. **Completed 2026-06-13.**
+- 77P deterministic template library V1. **Next.**
 - 77P deterministic template library V1.
 - 77Q claim manifest and output grounding V1.
 - 77R food understanding V3.

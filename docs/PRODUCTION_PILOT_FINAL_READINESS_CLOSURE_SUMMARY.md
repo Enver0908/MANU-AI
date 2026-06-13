@@ -8,7 +8,7 @@ This is the final summary for the 13-phase completion roadmap, updated through t
 
 Production pilot is not approved.
 
-Latest local roadmap state closes Phase 77A-77L: chat mutation is blocked, client personal form v2 is loaded, the master food catalog hierarchy is loaded, Client Food Rule Profile V2 and Menu Plan V1 are first-class manual source authorities, Food Decision Engine V2 is calibrated with 100x50 rehearsal evidence, PromptContext/answerability/output guard V2 is wired, simplified dietitian UX is in place, DOCX/PDF export plus Phase 74 export package `phase74-export-v1.2` are present, and continuity/evidence docs are reconciled to the verified commit boundary. Phase 77M-77Y AI Quality Program is now the next implementation track before the deferred WhatsApp production adapter, and real channel traffic remains blocked.
+Latest local roadmap state closes Phase 77A-77L and Phase 77M master rebaseline/spec: chat mutation is blocked, client personal form v2 is loaded, the master food catalog hierarchy is loaded, Client Food Rule Profile V2 and Menu Plan V1 are first-class manual source authorities, Food Decision Engine V2 is calibrated with 100x50 rehearsal evidence, PromptContext/answerability/output guard V2 is wired, simplified dietitian UX is in place, DOCX/PDF export plus Phase 74 export package `phase74-export-v1.2` are present, continuity/evidence docs are reconciled to the verified commit boundary, and the AI Quality Program master plan is locked. Phase 77N Canonical Intent Understanding V2 is the next implementation phase before the deferred WhatsApp production adapter, and real channel traffic remains blocked.
 
 No real WhatsApp, Telegram, Gemini, external LLM provider, email, push, monitoring, analytics, secret manager, backup provider, or real client health data is connected.
 
@@ -67,7 +67,7 @@ Reason:
 - Phase 77J added client-facing DOCX/PDF menu export and Phase 74 export package `phase74-export-v1.2`, with internal fields stripped and Turkish rendering tests. It did not close any launch gate, connect a provider or channel, process real data, or resolve R-405.
 - Phase 77K closed the manual source authority track with a 14-category Food Decision V2 golden suite, deterministic 100x50 V2 rehearsal, `unsafe_green_count = 0`, Phase 76O integration checks, export coverage evidence, and operational-health closure signals. It did not close any launch gate, connect a provider or channel, process real data, or resolve R-405.
 - Phase 77L reconciled continuity/evidence docs, preserved the historical Phase 76E spec, stabilized local verification, and closed the dirty Phase 77E-77K worktree boundary. `git diff --check`, `app` `npm test`, and `npm run release:verify` passed on 2026-06-13. It did not close any launch gate, connect a provider or channel, process real data, or resolve R-405.
-- Phase 77M-77Y AI Quality Program planning added `docs/PHASE_77M_77Y_AI_QUALITY_MASTER_PLAN.md` as the next pre-WhatsApp implementation track. It preserves green/yellow/red as the only client-visible risk classes, keeps internal workflow states internal-only, and plans core-owned response planning, deterministic templates, claim manifest grounding, canonical intent resolution, Food Understanding V3, Dietitian Voice Engine V2, AI quality rehearsal, RD review packet, copilot workflow, and narrow deterministic autopilot eligibility. It did not implement runtime behavior, close any launch gate, connect a provider or channel, process real data, or resolve R-405.
+- Phase 77M master rebaseline and spec closed through `docs/PHASE_77M_MASTER_REBASELINE_AND_SPEC.md` and `docs/PHASE_77M_77Y_AI_QUALITY_MASTER_PLAN.md`. It preserves green/yellow/red as the only client-visible risk classes, keeps internal workflow states internal-only, locks core-owned response planning, deterministic templates, claim manifest grounding, fail-closed unknown-intent handling, and `normalize-safety-text.js` as the single normalization source to extend. It did not implement runtime behavior, close any launch gate, connect a provider or channel, process real data, or resolve R-405. Next implementation phase is Phase 77N.
 
 ## Completion Roadmap Result
 
@@ -202,7 +202,7 @@ Phase 50 verification on 2026-06-02:
 
 ## Next Required Actions
 
-1. Start the WhatsApp production adapter as the next implementation track, but keep it gated/mock-first with no real WhatsApp traffic until channel/legal/privacy gates close.
+1. Start Phase 77N Canonical Intent Understanding V2 as the next implementation phase; keep WhatsApp production adapter deferred until Phase 77M-77Y is complete and gated/mock-first with no real WhatsApp traffic until channel/legal/privacy gates close.
 2. Apply Phase 65 official health-regulation PDF corpus QA to user-supplied PDFs, then collect reviewed corpus approval before active scope-guard use.
 3. Resolve R-405 through a safe stable Next.js/PostCSS upgrade or obtain formal external risk acceptance.
 4. Collect sanitized external approval references in `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` and map them through the Phase 64 structured evidence engine.

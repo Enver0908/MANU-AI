@@ -6,8 +6,11 @@ import { compilePromptContext, renderPromptContext } from "./context-compiler.js
 import { createHandoffCase } from "./handoff-engine.js";
 import { guardProviderOutput } from "./response-quality-guard.js";
 import { evaluateGreenIntentTaxonomy } from "./green-intent-taxonomy.js";
+import { resolveCanonicalIntentV2 } from "./canonical-intent-resolver-v2.js";
 import { evaluateFoodRuleDecision } from "./food-rule-engine.js";
 import { evaluateIntentSpecificAnswerability } from "./intent-specific-answerability.js";
+import { buildResponsePlanV1, isResponsePlanProviderEligible } from "./response-plan-v1.js";
+import { appendResponsePlanPromptSegments } from "./response-plan-prompt-segments.js";
 import { defaultVoiceProfile } from "./voice-profile.js";
 import { selectModelForRisk } from "./model-routing.js";
 import { resolveAiActivation } from "./ai-activation.js";
@@ -152,14 +155,36 @@ export async function handleInboundMessage(input, adapters) {
     ...compiledContext.contextManifest,
   };
 
+  if (foodRule) {
+    contextManifest.foodRule = foodRule;
+  }
+  if (foodDecisionV2) {
+    contextManifest.foodDecisionV2 = foodDecisionV2;
+  }
+
+  const canonicalIntent = resolveCanonicalIntentV2({
+    message: input.message.body,
+    riskDecision,
+    foodDecisionV2,
+    foodRule: foodRuleDecisionForRisk,
+  });
+  contextManifest.canonicalIntent = canonicalIntent;
+
   const greenIntent = evaluateGreenIntentTaxonomy({
     promptContext: compiledContext.promptContext,
     riskDecision,
     answerability: null,
+    canonicalIntent,
+    foodDecisionV2,
+    foodRule: foodRuleDecisionForRisk,
   });
   contextManifest.greenIntent = greenIntent;
 
   if (!greenIntent.allowed) {
+    const blockedReason =
+      greenIntent.decision === "blocked_unknown_intent"
+        ? "canonical_unknown_intent"
+        : "green_intent_taxonomy_blocked";
     const handoffCase = createHandoffCase({
       capsule,
       inboundMessage: input.message.body,
@@ -175,19 +200,12 @@ export async function handleInboundMessage(input, adapters) {
       riskDecision,
       action: "handoff",
       handoffCase,
-      blockedReason: "green_intent_taxonomy_blocked",
+      blockedReason,
       model: null,
       activation,
       contextManifest,
       overrideReasons: [...riskDecision.reasons, ...greenIntent.reasons],
     });
-  }
-
-  if (foodRule) {
-    contextManifest.foodRule = foodRule;
-  }
-  if (foodDecisionV2) {
-    contextManifest.foodDecisionV2 = foodDecisionV2;
   }
 
   if (
@@ -225,8 +243,22 @@ export async function handleInboundMessage(input, adapters) {
     foodDecisionV2,
     structuredFoodRules: input.structuredFoodRules || null,
     productIngredientEvidence: input.productIngredientEvidence || null,
+    canonicalIntent,
   });
   contextManifest.answerability = answerability;
+
+  const responsePlan = buildResponsePlanV1({
+    riskDecision,
+    canonicalIntent,
+    greenIntent,
+    answerability,
+    foodDecisionV2,
+    foodRule,
+    modeDecision,
+  });
+  contextManifest.responsePlan = responsePlan;
+  contextManifest.claimManifest = responsePlan.claimManifest;
+  contextManifest.styleDna = responsePlan.styleDna;
 
   if (!answerability.allowed) {
     const handoffCase = createHandoffCase({
@@ -252,16 +284,42 @@ export async function handleInboundMessage(input, adapters) {
     });
   }
 
+  if (!isResponsePlanProviderEligible(responsePlan)) {
+    const handoffCase = createHandoffCase({
+      capsule,
+      inboundMessage: input.message.body,
+      riskDecision: {
+        ...riskDecision,
+        reasons: [...riskDecision.reasons, "response_plan_not_provider_eligible", responsePlan.replyMode],
+        shouldHandoff: true,
+      },
+    });
+    await adapters?.onHandoff?.(handoffCase);
+    return buildResult({
+      capsule,
+      riskDecision,
+      action: "handoff",
+      handoffCase,
+      blockedReason: "response_plan_not_provider_eligible",
+      model: null,
+      activation,
+      contextManifest,
+      overrideReasons: [...riskDecision.reasons, "response_plan_not_provider_eligible", responsePlan.replyMode],
+    });
+  }
+
   const selectedModel = selectModelForRisk(riskDecision.level);
-  const prompt = renderPromptContext(compiledContext.promptContext);
+  const providerPromptContext = appendResponsePlanPromptSegments(compiledContext.promptContext, responsePlan);
+  const prompt = renderPromptContext(providerPromptContext);
   let draft;
   try {
     draft = await adapters.generateReply({
       prompt,
-      promptContext: compiledContext.promptContext,
+      promptContext: providerPromptContext,
       contextManifest,
       riskDecision,
       model: selectedModel,
+      responsePlan,
     });
   } catch (error) {
     const providerErrorCode = resolveProviderErrorCode(error);

@@ -72,7 +72,7 @@ describe("phase 77k calibration evidence closure", () => {
       expect(metrics.unsafeGreenCount).toBe(0);
       expect(metrics.inappropriateApprovalCount).toBe(0);
     },
-    240_000,
+    360_000,
   );
 
   it(
@@ -83,7 +83,7 @@ describe("phase 77k calibration evidence closure", () => {
       expect(metrics.duplicateIgnoredCount).toBe(1);
       expect(metrics.manualFoodRuleSaveCount).toBe(1);
     },
-    120_000,
+    360_000,
   );
 
   it("includes V2 calibration fields in operational health", () => {

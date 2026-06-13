@@ -72,6 +72,8 @@ test("green autopilot sends guarded reply", async () => {
   assert.ok(result.contextManifest?.answerability?.sourceCategories.includes("active_diet_plan"));
   assert.equal(result.contextManifest?.greenIntent?.decision, "green_intent_allowed");
   assert.equal(result.contextManifest?.greenIntent?.intentFamily, "green_allowed_substitution");
+  assert.equal(result.contextManifest?.responsePlan?.version, "response-plan-v1-v0.1.0");
+  assert.equal(result.contextManifest?.responsePlan?.replyMode, "send");
 });
 
 test("green autopilot blocks before provider when approved sources are missing", async () => {
@@ -215,7 +217,33 @@ test("answerability blocks sensitive mixed markers even when base risk is green"
   assert.equal(result.providerAttempted, false);
   assert.equal(generated, false);
   assert.equal(result.contextManifest?.greenIntent?.decision, "blocked_sensitive_intent");
-  assert.ok(result.reasons.includes("green_intent_taxonomy_sensitive_family"));
+  assert.ok(
+    result.reasons.includes("canonical_intent_sensitive_family") ||
+      result.reasons.includes("green_intent_taxonomy_sensitive_family"),
+  );
+});
+
+test("unknown intent blocks before provider and records canonical intent", async () => {
+  let generated = false;
+  const result = await handleInboundMessage(
+    {
+      ...baseInput,
+      message: { body: "Merhaba" },
+    },
+    {
+      generateReply: async () => {
+        generated = true;
+        return "ok";
+      },
+    },
+  );
+
+  assert.equal(result.action, "handoff");
+  assert.equal(result.blockedReason, "canonical_unknown_intent");
+  assert.equal(result.providerAttempted, false);
+  assert.equal(generated, false);
+  assert.equal(result.contextManifest?.canonicalIntent?.intentFamily, "unknown_intent");
+  assert.equal(result.contextManifest?.greenIntent?.decision, "blocked_unknown_intent");
 });
 
 test("green intent taxonomy records low-risk logistics intent", async () => {
@@ -273,7 +301,10 @@ test("green intent taxonomy blocks sensitive green-looking calorie requests befo
   assert.equal(handoffs.length, 1);
   assert.equal(result.contextManifest?.greenIntent?.decision, "blocked_sensitive_intent");
   assert.equal(result.contextManifest?.greenIntent?.blockedFamily, "yellow_calorie_macro_portion_request");
-  assert.ok(result.reasons.includes("green_intent_taxonomy_sensitive_family"));
+  assert.ok(
+    result.reasons.includes("canonical_intent_sensitive_family") ||
+      result.reasons.includes("green_intent_taxonomy_sensitive_family"),
+  );
 });
 
 test("red risk creates handoff and does not generate", async () => {

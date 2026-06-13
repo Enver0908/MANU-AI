@@ -169,6 +169,9 @@ export const PHASE_75_ALLOWED_PROMPT_CONTEXT_FIELDS = [
   "approved_official_corpus_snippets",
   "yellow_current_message_bounded",
   "minimized_health_profile_flags",
+  "response_plan",
+  "claim_manifest",
+  "style_dna",
 ] as const;
 
 export const PHASE_75_FORBIDDEN_PROMPT_CONTEXT_FIELDS = [
