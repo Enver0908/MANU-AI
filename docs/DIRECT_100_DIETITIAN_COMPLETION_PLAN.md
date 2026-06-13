@@ -19,8 +19,10 @@ These rules are non-negotiable and apply to every future phase:
 ## Current Baseline
 - Latest completed implementation phase: Phase 77K calibration, 100x50 rehearsal, and evidence closure (2026-06-10).
 - Latest continuity/worktree closure phase: Phase 77L continuity reconciliation and worktree closure (2026-06-13).
+- Next planned implementation track: Phase 77M-77Y AI Quality Program before the deferred WhatsApp production adapter.
 - Latest roadmap rebaseline: Phase 77A manual source authority rebaseline spec (2026-06-10).
 - Detailed Phase 77 implementation plan: `docs/PHASE_77_MASTER_IMPLEMENTATION_PLAN.md`.
+- AI quality master plan: `docs/PHASE_77M_77Y_AI_QUALITY_MASTER_PLAN.md`.
 - Latest verification: Phase 77L `git diff --check`, `app` `npm test` (53 files, 337 tests), and `npm run release:verify` passed on 2026-06-13 with core tests 173/173, app tests 337/337, lint with two pre-existing warnings, production build, and only documented R-405 findings.
 - Production pilot status: `NO-GO`.
 - Real WhatsApp, Gemini, monitoring, secret manager, and real client health data remain disconnected.
@@ -170,6 +172,43 @@ Completed:
 - Stabilized local verification by making app tests deterministic without reducing the 53-file/337-test scope and by cleaning generated `.next` output before production build in `release:verify`.
 - Verification passed with `git diff --check`, `app` `npm test` (337/337), and `npm run release:verify`: core tests 173/173, app tests 337/337, lint with two pre-existing warnings, production build, and only documented R-405 findings.
 - No real provider, channel, launch-gate approval, real-data handling, or R-405 status changed.
+- Production pilot remains `NO-GO`.
+
+## Phase 77M-77Y: AI Quality Program - Planned 2026-06-13
+Goal: make MANU-AI a stronger dietitian assistant before WhatsApp adapter work, while preserving the green/yellow/red risk model and expanding genuinely safe green coverage.
+
+Canonical plan:
+- `docs/PHASE_77M_77Y_AI_QUALITY_MASTER_PLAN.md`.
+
+Locked decisions:
+- Phase 77M-77Y is inserted before the deferred WhatsApp production adapter to avoid colliding with reserved Phase 78/79/80/81 production-readiness phases.
+- Client-visible risk classes remain only `green`, `yellow`, and `red`.
+- Internal states such as `unknown_intent`, `needs_label`, `needs_review`, `clarify`, and `handoff` are workflow states only.
+- Green maximization means recognizing more truly green, source-backed, low-risk questions; ambiguous, unsupported, label-missing, or clinically risky messages must not be forced into green.
+- `responsePlan` is core-owned and produced after answerability and before provider/generation.
+- `claimManifest` is generated from responsePlan, deterministic templates, sourceRefs, and manual source authority, not extracted from free LLM output.
+- Dietitian voice/style affects wording only and never changes clinical safety, source authority, or Food Decision V2.
+
+Planned subphases:
+- 77M master rebaseline and spec.
+- 77N canonical intent understanding V2.
+- 77O response plan contract V1.
+- 77P deterministic template library V1.
+- 77Q claim manifest and output grounding V1.
+- 77R food understanding V3.
+- 77S dietitian voice engine V2.
+- 77T AI quality evaluation harness V1.
+- 77U clinical red-team and RD review packet.
+- 77V copilot quality workflow V1.
+- 77W narrow autopilot eligibility V2.
+- 77X expanded 100x50 AI rehearsal and risk register.
+- 77Y continuity, evidence, and launch gate update.
+
+Done criteria:
+- Hard-zero gates cover unsafe client send, source-unsupported green, forbidden-food approval, yellow/red client send, and claim outside manifest.
+- Datasets use JSONL.
+- Release verification includes a deterministic AI quality subset; full AI rehearsal runs separately with mock provider only.
+- No real provider, channel, launch-gate approval, real-data handling, or R-405 status changes occur.
 - Production pilot remains `NO-GO`.
 
 ## Phase 66: Product Communication Covenant Lock
@@ -638,6 +677,8 @@ Completed:
 ## Deferred WhatsApp Production Adapter
 Goal: prepare WhatsApp-first production channel for 5,000 clients after the Phase 77A-77K manual source authority rebaseline track is complete.
 
+Current sequencing note: this remains deferred until Phase 77M-77Y AI Quality Program is complete.
+
 User documents required at the start of this phase:
 - WhatsApp Business Cloud API details.
 - Webhook verification configuration.
@@ -792,6 +833,7 @@ Done criteria:
 - Phase 77E: no new user document package; maps catalog items to client-level allowed/forbidden and flexibility settings.
 - Phase 77F: completed locally with default menu templates and export-ready menu model; future wording/layout refinements can be handled before production approval.
 - Phase 77G-77K: completed locally; no new production approval package was supplied or accepted.
+- Phase 77M-77Y: planned AI Quality Program before WhatsApp adapter; no new user document package required at 77M, with RD review packet evidence prepared during 77U.
 - Deferred WhatsApp adapter: WhatsApp Business, opt-in/out, template, and channel approval package.
 - Production ops: incident, monitoring, backup, restore, and secret rotation decisions.
 - Dependency closure: R-405 resolution or formal risk acceptance.

@@ -6,9 +6,9 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 This repository is a local SaaS/PWA pilot prototype and architecture workspace. It is not a production-connected system yet.
 
-**Latest implementation phase:** Phase 77K Calibration, 100x50 Rehearsal, And Evidence Closure (2026-06-10). **Latest continuity/worktree closure:** Phase 77L Continuity Reconciliation And Worktree Closure (2026-06-13). **Production pilot:** `NO-GO` (all eight launch gates open; R-405 open).
+**Latest implementation phase:** Phase 77K Calibration, 100x50 Rehearsal, And Evidence Closure (2026-06-10). **Latest continuity/worktree closure:** Phase 77L Continuity Reconciliation And Worktree Closure (2026-06-13). **Next planned track:** Phase 77M-77Y AI Quality Program before the deferred WhatsApp production adapter. **Production pilot:** `NO-GO` (all eight launch gates open; R-405 open).
 
-**Latest verification:** Phase 77L verified on 2026-06-13: `git diff --check` passed; `npm test` in `app` passed with 53 test files and 337 tests; `npm run release:verify` passed with core tests 173/173, app tests 337/337, lint with two pre-existing warnings, production build, and only documented R-405 findings. RLS remains pending when local Supabase is unavailable. Food Decision V2 golden suite (14 cases), 100x50 V2 rehearsal (`unsafe_green_count = 0`), and Phase 76O integration checks pass locally; manual source authority track is closed and WhatsApp production adapter is next.
+**Latest verification:** Phase 77L verified on 2026-06-13: `git diff --check` passed; `npm test` in `app` passed with 53 test files and 337 tests; `npm run release:verify` passed with core tests 173/173, app tests 337/337, lint with two pre-existing warnings, production build, and only documented R-405 findings. RLS remains pending when local Supabase is unavailable. Food Decision V2 golden suite (14 cases), 100x50 V2 rehearsal (`unsafe_green_count = 0`), and Phase 76O integration checks pass locally; manual source authority track is closed and `docs/PHASE_77M_77Y_AI_QUALITY_MASTER_PLAN.md` is the next track before WhatsApp adapter.
 
 The current implementation includes:
 
@@ -65,6 +65,7 @@ The current implementation includes:
 - Phase 77J DOCX/PDF menu export: active export-visible menu plans download as DOCX/PDF with internal fields stripped; Phase 74 client export package bumped to `phase74-export-v1.2`
 - Phase 77K calibration and evidence closure: Food Decision V2 golden suite (14 categories), 100x50 V2 rehearsal with zero unsafe green, Phase 76O integration checks, and manual source authority track closure
 - Phase 77L continuity/worktree closure: stale continuity and evidence documents reconciled to the Phase 77K baseline, historical Phase 76E spec preserved, long-running rehearsal/release verification made deterministic, and the dirty Phase 77E-77K worktree closed into a coherent commit boundary
+- Phase 77M-77Y AI Quality Program plan: canonical pre-WhatsApp track for core-owned response planning, deterministic templates, claim manifest grounding, canonical intent resolution, Food Understanding V3, Dietitian Voice Engine V2, AI quality rehearsal, RD review packet, copilot quality workflow, and narrow deterministic autopilot eligibility while preserving green/yellow/red as the only client-visible risk classes
 - Post-Phase 65 direct 100-dietitian completion plan in `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`, locking the no-small-ring 5,000-client production pilot target, product communication covenant, approved-source answerability path, and user-document timing
 
 ## Safety Model

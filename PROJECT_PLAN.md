@@ -50,6 +50,13 @@ The current architecture package already includes:
 - Per-client AI mode system
 - End-to-end orchestration tests
 
+Current next-track update, 2026-06-13:
+
+- Phase 77A-77K manual source authority track is complete locally and Phase 77L reconciled continuity/worktree state.
+- Before the deferred WhatsApp production adapter, the next canonical track is `docs/PHASE_77M_77Y_AI_QUALITY_MASTER_PLAN.md`.
+- Phase 77M-77Y keeps client-visible risk classes limited to green/yellow/red, treats states like `unknown_intent`, `needs_label`, `needs_review`, `clarify`, and `handoff` as internal workflow states only, and focuses on better AI answer quality through core-owned response planning, deterministic templates, claim grounding, canonical intent resolution, food understanding, dietitian voice, AI quality rehearsal, and narrow deterministic autopilot eligibility.
+- This update does not approve production pilot launch, connect real WhatsApp/Telegram/Gemini/provider traffic, process real client health data, close launch gates, accept R-405, or resolve R-405.
+
 The first client-facing legal and permission documentation layer is intentionally excluded because it will be prepared separately.
 
 ## 3. MVP Scope
