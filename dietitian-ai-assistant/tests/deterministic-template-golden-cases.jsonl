@@ -1,0 +1,6 @@
+{"id":"77p-ask-label-tr","category":"ingredient_label_request","templateId":"ingredient_label_request_v1","language":"tr","replyMode":"ask_label","expectContains":["icindekiler","etiket"],"expectNotContains":["kahvalti","ogle","aksam","Three meals"]}
+{"id":"77p-ask-label-en","category":"ingredient_label_request","templateId":"ingredient_label_request_v1","language":"en","replyMode":"ask_label","expectContains":["ingredient","label"],"expectNotContains":["breakfast plan","Three meals"]}
+{"id":"77p-clarify-unknown","category":"unknown_intent_clarify","templateId":"unknown_intent_clarify_v1","language":"tr","replyMode":"clarify","expectContains":["anlayamadim"],"expectNotContains":["ilac","tedavi","internal_reason","templateId="]}
+{"id":"77p-forbidden-food","category":"forbidden_food_response","templateId":"forbidden_food_response_v1","language":"tr","replyMode":"send","expectContains":["planinda yer almiyor"],"expectNotContains":["yiyebilirsin","serbest"]}
+{"id":"77p-provider-send-requires-template","category":"provider_template_required","templateId":"allowed_food_answer_v1","language":"tr","replyMode":"send","riskClass":"green","expectContains":["planina gore"]}
+{"id":"77p-yellow-handoff","category":"yellow_handoff","templateId":"yellow_red_handoff_v1","language":"tr","replyMode":"draft","riskClass":"yellow","expectContains":["inceleme icin kaydedildi"]}

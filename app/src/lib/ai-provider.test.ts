@@ -13,21 +13,23 @@ import {
 function providerContextWithResponsePlan(
   extraSegments: Array<{ type: string; text: string }> = [],
   replyMode: "send" | "draft" = "send",
+  templateId = "plan_lookup_v1",
+  riskClass: "green" | "yellow" = "green",
 ) {
   return {
     segments: [
       { type: "diet_plan_summary", text: "Three meals and one snack." },
       {
         type: "response_plan",
-        text: `version=response-plan-v1-v0.1.0; intentFamily=green_plan_lookup; replyMode=${replyMode}; templateId=plan_lookup_v1; riskClass=green; sourceRefCount=1; foodDecision=none; messagePlanSummary=replyMode=${replyMode}`,
+        text: `version=response-plan-v1-v0.1.0; intentFamily=green_plan_lookup; replyMode=${replyMode}; templateId=${templateId}; riskClass=${riskClass}; sourceRefCount=1; foodDecision=none; messagePlanSummary=replyMode=${replyMode}`,
       },
       {
         type: "claim_manifest",
-        text: "version=claim-manifest-v0.1.0-placeholder; templateId=plan_lookup_v1; claims=0; sourceIds=1",
+        text: "version=claim-manifest-v1-v0.1.0; templateId=plan_lookup_v1; claims=2; claimTypes=plan_alignment_guidance,generic_plan_guidance; sourceIds=1",
       },
       {
         type: "style_dna",
-        text: "version=style-dna-v0.1.0-placeholder; scope=tenant_dietitian_voice_placeholder; formality=unset; emojiPolicy=unset",
+        text: "version=style-dna-v2-v0.1.0; scope=tenant:tenant-manu-demo;dietitian:dietitian-demo; formality=balanced; emojiPolicy=limited; sentenceLength=medium; warmthTone=balanced; boundaryPhrasing=practical_neutral; responseTimingStyle=prompt; candidatePhraseCount=0",
       },
       ...extraSegments,
     ],
@@ -37,24 +39,27 @@ function providerContextWithResponsePlan(
 const promptContext = providerContextWithResponsePlan();
 
 describe("mock AI provider", () => {
-  it("generates deterministic green and yellow replies", async () => {
+  it("generates deterministic template-based green and yellow replies", async () => {
     await expect(generateMockProviderReply({ context: promptContext, risk: "green" })).resolves.toContain(
-      "Three meals",
+      "planindaki",
     );
-    await expect(generateMockProviderReply({ context: promptContext, risk: "yellow" })).resolves.toContain(
-      "Ic inceleme",
-    );
+    await expect(
+      generateMockProviderReply({
+        context: providerContextWithResponsePlan([], "draft", "provider_styled_draft_v1", "yellow"),
+        risk: "yellow",
+      }),
+    ).resolves.toContain("inceleme icin kaydedildi");
   });
 
   it("uses the conversation language segment for deterministic localized replies", async () => {
     await expect(
       generateMockProviderReply({
         context: providerContextWithResponsePlan([
-          { type: "conversation_language", text: "Reply to this client in de." },
+          { type: "conversation_language", text: "Reply to this client in en." },
         ]),
         risk: "green",
       }),
-    ).resolves.toContain("Sie");
+    ).resolves.toContain("planned meal");
   });
 
   it("builds provider input from prompt context only", () => {
@@ -144,6 +149,22 @@ describe("mock AI provider", () => {
     ).toThrowError(/overlong segment/);
   });
 
+  it("rejects provider calls without response_plan templateId", async () => {
+    const context = providerContextWithResponsePlan();
+    context.segments = context.segments.map((segment) =>
+      segment.type === "response_plan"
+        ? {
+            ...segment,
+            text: "version=response-plan-v1-v0.1.0; intentFamily=green_plan_lookup; replyMode=send; templateId=none; riskClass=green",
+          }
+        : segment,
+    );
+
+    await expect(generateMockProviderReply({ context, risk: "green" })).rejects.toMatchObject({
+      code: "provider_policy_violation",
+    });
+  });
+
   it("rejects provider calls without response_plan segments", async () => {
     await expect(
       generateMockProviderReply({
@@ -201,16 +222,9 @@ describe("mock AI provider", () => {
     ).resolves.toBe(MISSING_HISTORICAL_CONTEXT_TOKEN);
   });
 
-  it("rejects generated mock output that violates the product communication covenant", async () => {
-    const context = providerContextWithResponsePlan();
-    context.segments = context.segments.map((segment) =>
-      segment.type === "diet_plan_summary"
-        ? { ...segment, text: "Please consult your doctor before changing this." }
-        : segment,
-    );
-
-    await expect(generateMockProviderReply({ context, risk: "green" })).rejects.toMatchObject({
-      code: "provider_policy_violation",
-    });
+  it("keeps deterministic template output within the product communication covenant", async () => {
+    const reply = await generateMockProviderReply({ context: promptContext, risk: "green" });
+    expect(reply).not.toMatch(/consult your doctor/i);
+    expect(reply).not.toMatch(/as an ai/i);
   });
 });

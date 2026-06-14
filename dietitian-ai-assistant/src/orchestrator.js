@@ -9,12 +9,21 @@ import { evaluateGreenIntentTaxonomy } from "./green-intent-taxonomy.js";
 import { resolveCanonicalIntentV2 } from "./canonical-intent-resolver-v2.js";
 import { evaluateFoodRuleDecision } from "./food-rule-engine.js";
 import { evaluateIntentSpecificAnswerability } from "./intent-specific-answerability.js";
+import { isClaimManifestComplete } from "./claim-manifest-v1.js";
 import { buildResponsePlanV1, isResponsePlanProviderEligible } from "./response-plan-v1.js";
 import { appendResponsePlanPromptSegments } from "./response-plan-prompt-segments.js";
+import {
+  DETERMINISTIC_TEMPLATE_LIBRARY_V1_VERSION,
+  renderDeterministicTemplate,
+} from "./deterministic-template-library-v1.js";
 import { defaultVoiceProfile } from "./voice-profile.js";
 import { selectModelForRisk } from "./model-routing.js";
 import { resolveAiActivation } from "./ai-activation.js";
 import { evaluateInboundPreflight } from "./inbound-preflight.js";
+import {
+  applyNarrowAutopilotModeDowngrade,
+  evaluateNarrowAutopilotEligibilityV2,
+} from "./narrow-autopilot-eligibility-v2.js";
 
 export async function handleInboundMessage(input, adapters) {
   const persona = getPersona(input.client.selectedPersonaId);
@@ -255,12 +264,56 @@ export async function handleInboundMessage(input, adapters) {
     foodDecisionV2,
     foodRule,
     modeDecision,
+    tenantId: input.tenantId,
+    dietitianId: input.dietitian?.id,
+    voiceProfile,
+    styleEditHistorySignals: input.styleEditHistorySignals || null,
+    knownClientNames: capsule.client.knownOtherClientNames || [],
   });
-  contextManifest.responsePlan = responsePlan;
-  contextManifest.claimManifest = responsePlan.claimManifest;
-  contextManifest.styleDna = responsePlan.styleDna;
+  let effectiveModeDecision = modeDecision;
+  let effectiveResponsePlan = responsePlan;
+  const narrowAutopilotEligibility = evaluateNarrowAutopilotEligibilityV2({
+    clientAiMode: capsule.client.aiMode,
+    riskDecision,
+    modeDecision,
+    canonicalIntent,
+    greenIntent,
+    answerability,
+    foodDecisionV2,
+    foodRule,
+    responsePlan,
+  });
+  contextManifest.narrowAutopilotEligibility = narrowAutopilotEligibility;
+
+  if (narrowAutopilotEligibility.applies && !narrowAutopilotEligibility.eligible) {
+    effectiveModeDecision = applyNarrowAutopilotModeDowngrade(modeDecision, narrowAutopilotEligibility);
+    effectiveResponsePlan = buildResponsePlanV1({
+      riskDecision,
+      canonicalIntent,
+      greenIntent,
+      answerability,
+      foodDecisionV2,
+      foodRule,
+      modeDecision: effectiveModeDecision,
+      tenantId: input.tenantId,
+      dietitianId: input.dietitian?.id,
+      voiceProfile,
+      styleEditHistorySignals: input.styleEditHistorySignals || null,
+      knownClientNames: capsule.client.knownOtherClientNames || [],
+    });
+  }
+
+  contextManifest.responsePlan = effectiveResponsePlan;
+  contextManifest.claimManifest = effectiveResponsePlan.claimManifest;
+  contextManifest.styleDna = effectiveResponsePlan.styleDna;
 
   if (!answerability.allowed) {
+    if (responsePlan.templateId && !isResponsePlanProviderEligible(responsePlan)) {
+      contextManifest.deterministicClientMessage = buildDeterministicClientMessage({
+        responsePlan,
+        language: capsule.client.communicationLanguage,
+      });
+    }
     const handoffCase = createHandoffCase({
       capsule,
       inboundMessage: input.message.body,
@@ -284,13 +337,19 @@ export async function handleInboundMessage(input, adapters) {
     });
   }
 
-  if (!isResponsePlanProviderEligible(responsePlan)) {
+  if (!isResponsePlanProviderEligible(effectiveResponsePlan)) {
+    if (effectiveResponsePlan.templateId) {
+      contextManifest.deterministicClientMessage = buildDeterministicClientMessage({
+        responsePlan: effectiveResponsePlan,
+        language: capsule.client.communicationLanguage,
+      });
+    }
     const handoffCase = createHandoffCase({
       capsule,
       inboundMessage: input.message.body,
       riskDecision: {
         ...riskDecision,
-        reasons: [...riskDecision.reasons, "response_plan_not_provider_eligible", responsePlan.replyMode],
+        reasons: [...riskDecision.reasons, "response_plan_not_provider_eligible", effectiveResponsePlan.replyMode],
         shouldHandoff: true,
       },
     });
@@ -304,12 +363,36 @@ export async function handleInboundMessage(input, adapters) {
       model: null,
       activation,
       contextManifest,
-      overrideReasons: [...riskDecision.reasons, "response_plan_not_provider_eligible", responsePlan.replyMode],
+      overrideReasons: [...riskDecision.reasons, "response_plan_not_provider_eligible", effectiveResponsePlan.replyMode],
+    });
+  }
+
+  if (!isClaimManifestComplete(effectiveResponsePlan.claimManifest, { providerEligible: true })) {
+    const handoffCase = createHandoffCase({
+      capsule,
+      inboundMessage: input.message.body,
+      riskDecision: {
+        ...riskDecision,
+        reasons: [...riskDecision.reasons, "claim_manifest_incomplete"],
+        shouldHandoff: true,
+      },
+    });
+    await adapters?.onHandoff?.(handoffCase);
+    return buildResult({
+      capsule,
+      riskDecision,
+      action: "handoff",
+      handoffCase,
+      blockedReason: "claim_manifest_incomplete",
+      model: null,
+      activation,
+      contextManifest,
+      overrideReasons: [...riskDecision.reasons, "claim_manifest_incomplete"],
     });
   }
 
   const selectedModel = selectModelForRisk(riskDecision.level);
-  const providerPromptContext = appendResponsePlanPromptSegments(compiledContext.promptContext, responsePlan);
+  const providerPromptContext = appendResponsePlanPromptSegments(compiledContext.promptContext, effectiveResponsePlan);
   const prompt = renderPromptContext(providerPromptContext);
   let draft;
   try {
@@ -319,7 +402,7 @@ export async function handleInboundMessage(input, adapters) {
       contextManifest,
       riskDecision,
       model: selectedModel,
-      responsePlan,
+      responsePlan: effectiveResponsePlan,
     });
   } catch (error) {
     const providerErrorCode = resolveProviderErrorCode(error);
@@ -359,6 +442,8 @@ export async function handleInboundMessage(input, adapters) {
     foodRule,
     foodDecisionV2,
     structuredFoodRules: input.structuredFoodRules || null,
+    claimManifest: effectiveResponsePlan.claimManifest,
+    styleDna: effectiveResponsePlan.styleDna,
   });
 
   if (!quality.allowed) {
@@ -395,7 +480,25 @@ export async function handleInboundMessage(input, adapters) {
     });
   }
 
-  if (modeDecision.action === "draft_for_approval") {
+  const postNarrowAutopilotEligibility = evaluateNarrowAutopilotEligibilityV2({
+    clientAiMode: capsule.client.aiMode,
+    riskDecision,
+    modeDecision: effectiveModeDecision,
+    canonicalIntent,
+    greenIntent,
+    answerability,
+    foodDecisionV2,
+    foodRule,
+    responsePlan: effectiveResponsePlan,
+    providerOutputSafety: quality,
+    phase: "post_provider",
+  });
+  contextManifest.narrowAutopilotEligibility = {
+    ...narrowAutopilotEligibility,
+    postProvider: postNarrowAutopilotEligibility,
+  };
+
+  if (effectiveModeDecision.action === "draft_for_approval") {
     await adapters?.onDraftForApproval?.({ capsule, draft, riskDecision });
     return buildResult({
       capsule,
@@ -407,6 +510,26 @@ export async function handleInboundMessage(input, adapters) {
       providerId,
       activation,
       contextManifest,
+      blockedReason:
+        effectiveModeDecision.reason === "narrow_autopilot_ineligible"
+          ? "narrow_autopilot_ineligible"
+          : null,
+    });
+  }
+
+  if (postNarrowAutopilotEligibility.applies && !postNarrowAutopilotEligibility.eligible) {
+    await adapters?.onDraftForApproval?.({ capsule, draft, riskDecision });
+    return buildResult({
+      capsule,
+      riskDecision,
+      action: "draft_for_approval",
+      draft,
+      model: selectedModel,
+      providerAttempted: true,
+      providerId,
+      activation,
+      contextManifest,
+      blockedReason: "narrow_autopilot_post_provider_ineligible",
     });
   }
 
@@ -441,6 +564,20 @@ function resolveProviderErrorCode(error) {
     return code;
   }
   return "provider_error";
+}
+
+function buildDeterministicClientMessage({ responsePlan, language }) {
+  return {
+    version: DETERMINISTIC_TEMPLATE_LIBRARY_V1_VERSION,
+    templateId: responsePlan.templateId,
+    replyMode: responsePlan.replyMode,
+    text: renderDeterministicTemplate({
+      templateId: responsePlan.templateId,
+      language,
+      replyMode: responsePlan.replyMode,
+      riskClass: responsePlan.riskClass,
+    }),
+  };
 }
 
 function buildProviderFailureOutputSafety(providerErrorCode) {

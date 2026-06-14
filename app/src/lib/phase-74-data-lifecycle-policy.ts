@@ -28,6 +28,7 @@ import {
   buildDeprecatedProposalExportSection,
   buildPersonalFormV2ExportSection,
 } from "./phase-77j-data-lifecycle";
+import { sanitizeClientScopedExportForClientFacing } from "./phase-77v-copilot-quality-workflow";
 import type { LaunchGateEvidenceRecord } from "./launch-gates";
 import type { ClientRecord, ManuAppState, MessageRecord } from "./types";
 
@@ -158,6 +159,11 @@ export const PHASE_74_EXPORT_EXCLUDED_CATEGORIES = [
   "other_tenants_or_clients",
   "internal_system_prompts",
   "dietitian_only_notes_default",
+  "copilot_response_plan_raw",
+  "copilot_claim_manifest_raw",
+  "copilot_source_refs_internal",
+  "copilot_blocked_reason",
+  "style_dna_metadata",
 ] as const;
 
 export const PHASE_74_EXPORT_INCLUDED_FILES = [
@@ -452,7 +458,7 @@ export function buildPhase74ExportPackage(
   clientId: string,
   options: { requestId?: string; generatedBy?: string } = {},
 ): Phase74ExportPackage {
-  const exportData = buildClientScopedExport(state, clientId);
+  const exportData = sanitizeClientScopedExportForClientFacing(buildClientScopedExport(state, clientId));
   const generatedAt = exportData.generatedAt;
   const generatedBy = options.generatedBy ?? state.dietitian.id;
 

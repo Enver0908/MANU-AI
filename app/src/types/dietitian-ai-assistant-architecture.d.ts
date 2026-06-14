@@ -277,6 +277,13 @@ declare module "dietitian-ai-assistant-architecture" {
     memory?: CoreMemory;
     clientContextUpdates?: CoreContextUpdate[];
     voiceProfile?: Partial<CoreVoiceProfile>;
+    styleEditHistorySignals?: {
+      preferredGreeting?: string | null;
+      preferredClosing?: string | null;
+      warmthAdjustment?: string | null;
+      responseTimingStyle?: string | null;
+      sampleCount?: number;
+    } | null;
     contextBudget?: number;
     promptVersion?: string | null;
     providerId?: string | null;
@@ -649,16 +656,31 @@ declare module "dietitian-ai-assistant-architecture" {
       version: string;
       templateId: string | null;
       intentFamily: string | null;
-      claims: unknown[];
+      claims: Array<{
+        id: string;
+        type: string;
+        authority: string;
+        sourceIds: string[];
+      }>;
       sourceIds: string[];
+      complete?: boolean;
     };
     styleDna: {
       version: string;
       scope: string;
+      tenantId?: string | null;
+      dietitianId?: string | null;
+      sentenceLength?: string | null;
+      greetingStyle?: string | null;
       formality: string | null;
-      warmth: string | null;
       emojiPolicy: string | null;
+      warmthTone?: string | null;
+      boundaryPhrasing?: string | null;
       responseTimingStyle: string | null;
+      candidatePhrases?: string[];
+      hardGuards?: { maxChars?: number; emojiAllowed?: boolean };
+      softMismatchThreshold?: number;
+      clinicalIsolation?: boolean;
     };
     providerEligible: boolean;
   };
@@ -673,6 +695,11 @@ declare module "dietitian-ai-assistant-architecture" {
     foodDecisionV2?: FoodDecisionV2Result | null;
     foodRule?: FoodRuleDecision | null;
     modeDecision?: { action: string; reason?: string } | null;
+    tenantId?: string | null;
+    dietitianId?: string | null;
+    voiceProfile?: Record<string, unknown> | null;
+    styleEditHistorySignals?: Record<string, unknown> | null;
+    knownClientNames?: string[];
   }): ResponsePlanV1;
 
   export function isResponsePlanProviderEligible(
@@ -688,6 +715,200 @@ declare module "dietitian-ai-assistant-architecture" {
     type?: string;
     text?: string;
   }): void;
+
+  export const DETERMINISTIC_TEMPLATE_LIBRARY_V1_VERSION: string;
+
+  export const KNOWN_TEMPLATE_IDS: string[];
+
+  export function isKnownTemplateId(templateId: string | null | undefined): boolean;
+
+  export function assertClientFacingTemplateId(templateId: string | null | undefined): void;
+
+  export function renderDeterministicTemplate(input: {
+    templateId: string;
+    language?: string;
+    replyMode?: string | null;
+    riskClass?: string | null;
+  }): string;
+
+  export function assertTemplateTextSafeForClient(text: string): void;
+
+  export function parseTemplateIdFromResponsePlanSegment(segmentText?: string): string | null;
+
+  export function parseReplyModeFromResponsePlanSegment(segmentText?: string): string | null;
+
+  export function parseRiskClassFromResponsePlanSegment(segmentText?: string): string | null;
+
+  export function parseRiskClassFromResponsePlanSegment(segmentText?: string): string | null;
+
+  export const CLAIM_MANIFEST_V1_VERSION: string;
+
+  export const CLAIM_MANIFEST_CLAIM_TYPES: string[];
+
+  export function buildClaimManifestV1(input: {
+    responsePlan: {
+      templateId?: string | null;
+      intentFamily?: string | null;
+      sourceRefs?: Array<{ id?: string; category?: string }>;
+      foodDecision?: { engine?: string; decision?: string } | null;
+    };
+  }): ResponsePlanV1["claimManifest"];
+
+  export function isClaimManifestComplete(
+    claimManifest: ResponsePlanV1["claimManifest"] | null | undefined,
+    options?: { providerEligible?: boolean },
+  ): boolean;
+
+  export function detectClaimManifestOutputViolations(
+    output: string,
+    options?: { claimManifest?: ResponsePlanV1["claimManifest"] | null },
+  ): string[];
+
+  export function summarizeClaimManifestClaimTypes(
+    claimManifest: ResponsePlanV1["claimManifest"] | null | undefined,
+  ): string;
+
+  export const FOOD_UNDERSTANDING_V3_VERSION: string;
+
+  export function normalizeFoodPhrase(value?: string): string;
+
+  export function validateFoodAliasEntry(entry: unknown): boolean;
+
+  export function buildFoodAliasDictionaryManifest(input: {
+    version?: string;
+    checksum?: string | null;
+    entries?: unknown[];
+  }): {
+    version: string;
+    checksum: string | null;
+    entryCount: number;
+    entries: unknown[];
+  };
+
+  export function resolveFoodAliasMatches(
+    phrase: string,
+    options?: {
+      globalAliases?: Array<Record<string, unknown>>;
+      tenantApprovedAliases?: Array<Record<string, unknown>>;
+    },
+  ): Array<{
+    foodId: string;
+    foodName: string;
+    confidence: "exact" | "keyword";
+    path: string;
+    aliasId: string;
+    aliasScope: "global" | "tenant_approved";
+    autopilotEligible: boolean;
+  }>;
+
+  export function filterAutopilotEligibleCatalogMatches(
+    matches?: Array<{ confidence?: string; autopilotEligible?: boolean }>,
+  ): Array<{ confidence?: string; autopilotEligible?: boolean }>;
+
+  export function isBrandOrPackagedProductQuery(message?: string): boolean;
+
+  export function isMixedDishQuery(message?: string): boolean;
+
+  export function findMenuRecipeForPhrase(
+    menu: { mealSlots?: Array<{ items?: unknown[]; alternatives?: unknown[] }> } | null,
+    phrase: string,
+  ): { title: string; ingredients: string[]; menuItemId: string } | null;
+
+  export function evaluateMixedDishUnderstanding(input: {
+    message: string;
+    menu: { mealSlots?: Array<{ items?: unknown[]; alternatives?: unknown[] }> } | null;
+    foodPhrase?: string | null;
+  }): {
+    applicable: boolean;
+    decision: "needs_review" | null;
+    reasonCodes: string[];
+    evidenceManifest?: Record<string, unknown>;
+  };
+
+  export const STYLE_DNA_V2_VERSION: string;
+
+  export const STYLE_DNA_SOFT_MISMATCH_THRESHOLD: number;
+
+  export function buildStyleDnaScopeKey(tenantId: string, dietitianId: string): string;
+
+  export function buildStyleDnaV2(input?: {
+    tenantId?: string | null;
+    dietitianId?: string | null;
+    voiceProfile?: Record<string, unknown> | null;
+    editHistorySignals?: Record<string, unknown> | null;
+    knownClientNames?: string[];
+  }): ResponsePlanV1["styleDna"];
+
+  export function buildStyleEditHistoryRecord(input: {
+    tenantId: string;
+    dietitianId: string;
+    aiDraft: string;
+    dietitianFinal: string;
+    knownClientNames?: string[];
+  }): {
+    tenantId: string;
+    dietitianId: string;
+    aiDraftHash: string;
+    dietitianFinalHash: string;
+    diffMetadata: {
+      editDistance: number;
+      lengthDelta: number;
+      greetingChanged: boolean;
+      closingChanged: boolean;
+      wordOverlapRatio: number;
+    };
+  };
+
+  export function extractStyleSignalsFromEditHistory(
+    records?: Array<{ diffMetadata?: Record<string, unknown> }>,
+  ): {
+    preferredGreeting: string | null;
+    preferredClosing: string | null;
+    warmthAdjustment: string | null;
+    responseTimingStyle: string | null;
+    sampleCount: number;
+  };
+
+  export function stripClientIdentifyingText(text: string, knownNames?: string[]): string;
+
+  export function filterCandidateStylePhrases(
+    phrases?: string[],
+    options?: { knownClientNames?: string[] },
+  ): { accepted: string[]; rejected: Array<{ phrase: string; reason: string }> };
+
+  export function detectHardStyleGuardViolations(text: string, styleDna?: ResponsePlanV1["styleDna"] | null): string[];
+
+  export function measureSoftStyleMismatch(
+    text: string,
+    styleDna?: ResponsePlanV1["styleDna"] | null,
+  ): { score: number; exceedsThreshold: boolean; hardBlock: boolean; checks?: string[] };
+
+  export function extractClinicalDecisionSnapshot(
+    responsePlan?: ResponsePlanV1 | null,
+  ): {
+    replyMode: string | null;
+    templateId: string | null;
+    riskClass: string | null;
+    intentFamily: string | null;
+    foodDecision: string | null;
+    providerEligible: boolean;
+  } | null;
+
+  export function clinicalSnapshotsEqual(
+    left: ReturnType<typeof extractClinicalDecisionSnapshot>,
+    right: ReturnType<typeof extractClinicalDecisionSnapshot>,
+  ): boolean;
+
+  export function guardProviderOutput(input: {
+    output: string;
+    capsule: Record<string, unknown>;
+    riskDecision: { level: RiskLevel };
+    foodRule?: FoodRuleDecision | null;
+    foodDecisionV2?: FoodDecisionV2Result | null;
+    structuredFoodRules?: Record<string, unknown> | null;
+    claimManifest?: ResponsePlanV1["claimManifest"] | null;
+    styleDna?: ResponsePlanV1["styleDna"] | null;
+  }): { allowed: boolean; issues: Array<{ code: string; severity: string; category: string; evidence: string }> };
 
   export type FoodRuleDecisionValue =
     | "allowed_food_confirmation"
@@ -843,4 +1064,214 @@ declare module "dietitian-ai-assistant-architecture" {
   ): RiskDecision;
   export function maxRiskLevel(a: RiskLevel, b: RiskLevel): RiskLevel;
   export function rankRiskLevel(level: RiskLevel): number;
+
+  export const AI_QUALITY_EVAL_HARNESS_V1_VERSION: string;
+  export const RELEASE_SUBSET_TARGET_COUNT: number;
+  export const FULL_REHEARSAL_TARGET_COUNT: number;
+
+  export function loadHarnessCasesFromJsonl(raw: string): Array<Record<string, unknown>>;
+  export function expandHarnessCasesDeterministically(
+    seedCases: Array<Record<string, unknown>>,
+    targetCount: number,
+  ): Array<Record<string, unknown>>;
+  export function buildHarnessBaseInput(overrides?: Record<string, unknown>): Record<string, unknown>;
+  export function extractHarnessEvalSnapshot(result: Record<string, unknown>): Record<string, unknown>;
+  export function evaluateHarnessExpectations(
+    expect: Record<string, unknown>,
+    snapshot: Record<string, unknown>,
+  ): string[];
+  export function detectClientFacingMetadataLeaks(text: string): string[];
+  export function assertClientFacingTextSafe(text: string): void;
+  export function runHarnessCase(
+    caseDef: Record<string, unknown>,
+    options?: Record<string, unknown>,
+  ): Promise<{ id: string; category: string; snapshots: Record<string, unknown>[]; failures: string[]; pass: boolean }>;
+  export function runHarnessBatch(
+    cases: Array<Record<string, unknown>>,
+    options?: Record<string, unknown>,
+  ): Promise<{
+    results: Array<{ id: string; category: string; snapshots: Record<string, unknown>[]; failures: string[]; pass: boolean }>;
+    metrics: Record<string, unknown>;
+  }>;
+
+  export const AI_QUALITY_EXPANDED_REHEARSAL_V1_VERSION: string;
+  export const EXPANDED_REHEARSAL_CLIENT_COUNT: number;
+  export const EXPANDED_REHEARSAL_MESSAGES_PER_CLIENT: number;
+  export const EXPANDED_REHEARSAL_TARGET_COUNT: number;
+  export const EXPANDED_REHEARSAL_SAMPLE_CLIENT_COUNT: number;
+  export const EXPANDED_REHEARSAL_SAMPLE_MESSAGES_PER_CLIENT: number;
+  export const EXPANDED_REHEARSAL_SAMPLE_TARGET_COUNT: number;
+  export function expandHarnessCasesForClientScale(
+    seedCases: Array<Record<string, unknown>>,
+    clientCount?: number,
+    messagesPerClient?: number,
+  ): Array<Record<string, unknown>>;
+  export function extractExpandedRehearsalSnapshot(result: Record<string, unknown>): Record<string, unknown>;
+  export function evaluateExpandedRehearsalSafety(
+    snapshot: Record<string, unknown>,
+    caseDef: Record<string, unknown>,
+    turnExpect?: Record<string, unknown>,
+  ): string[];
+  export function evaluateExpandedRehearsalTurnQuality(
+    snapshot: Record<string, unknown>,
+    caseDef: Record<string, unknown>,
+    turnExpect?: Record<string, unknown>,
+  ): Record<string, unknown>;
+  export function buildExpandedRehearsalMetrics(
+    results: Array<Record<string, unknown>>,
+    options?: Record<string, unknown>,
+  ): Record<string, unknown>;
+  export function runExpandedRehearsalCase(
+    caseDef: Record<string, unknown>,
+    options?: Record<string, unknown>,
+  ): Promise<{
+    id: string;
+    category: string;
+    snapshots: Record<string, unknown>[];
+    failures: string[];
+    pass: boolean;
+  }>;
+  export function runExpandedRehearsalBatch(
+    cases: Array<Record<string, unknown>>,
+    options?: Record<string, unknown>,
+  ): Promise<{
+    results: Array<{ id: string; category: string; snapshots: Record<string, unknown>[]; failures: string[]; pass: boolean }>;
+    metrics: Record<string, unknown>;
+  }>;
+
+  export const CLINICAL_RED_TEAM_V1_VERSION: string;
+  export const RD_REVIEW_PACKET_VERSION: string;
+  export const RD_REVIEW_SECTIONS: string[];
+  export const CLINICAL_RED_TEAM_CATEGORIES: string[];
+
+  export function isClientSendAction(action?: string | null): boolean;
+  export function isYellowRedClientSend(snapshot?: { action?: string | null; risk?: string | null }): boolean;
+  export function evaluateClinicalRedTeamSafety(
+    snapshot: Record<string, unknown>,
+    caseDef: Record<string, unknown>,
+  ): string[];
+  export function runClinicalRedTeamCase(
+    caseDef: Record<string, unknown>,
+    options?: Record<string, unknown>,
+  ): Promise<{
+    id: string;
+    category: string;
+    rdSection: string | null;
+    redTeamCategory: string | null;
+    snapshots: Record<string, unknown>[];
+    safetyViolations: string[];
+    failures: string[];
+    pass: boolean;
+  }>;
+  export function runClinicalRedTeamBatch(
+    cases: Array<Record<string, unknown>>,
+    options?: Record<string, unknown>,
+  ): Promise<{
+    results: Array<Record<string, unknown>>;
+    metrics: {
+      status: "pass" | "fail";
+      caseCount: number;
+      passCount: number;
+      failureCount: number;
+      unsafeClientSendCount: number;
+      yellowRedClientSendCount: number;
+      failures: string[];
+      rdSectionCounts: Record<string, number>;
+      redTeamCategoryCounts: Record<string, number>;
+      elapsedMs: number;
+    };
+  }>;
+  export function buildClinicalRedTeamMetrics(
+    results: Array<Record<string, unknown>>,
+    failures?: string[],
+    startedAt?: number,
+  ): Record<string, unknown>;
+  export function buildRdReviewPacketEvidence(
+    metrics: Record<string, unknown>,
+    cases: Array<Record<string, unknown>>,
+  ): {
+    packet_version: string;
+    red_team_version: string;
+    status: string;
+    evidence_only: boolean;
+    production_gate_closed: boolean;
+    clinical_taxonomy_gate_closed: boolean;
+    case_count: number;
+    pass_count: number;
+    unsafe_client_send_count: number;
+    yellow_red_client_send_count: number;
+    rd_section_inventory: Array<{ section: string; caseCount: number; covered: boolean }>;
+    red_team_inventory: Array<{ category: string; caseCount: number; covered: boolean }>;
+    rd_section_counts: Record<string, number>;
+    red_team_category_counts: Record<string, number>;
+    generated_at: string;
+  };
+  export function serializeRdReviewPacketEvidence(
+    metrics: Record<string, unknown>,
+    cases: Array<Record<string, unknown>>,
+  ): ReturnType<typeof buildRdReviewPacketEvidence>;
+  export function summarizeClinicalRedTeamSnapshot(result: Record<string, unknown>): Record<string, unknown>;
+
+  export const COPILOT_QUALITY_WORKFLOW_V1_VERSION: string;
+  export const CLIENT_EXPORT_FORBIDDEN_FIELDS: string[];
+
+  export function buildCopilotQualityReviewContext(input?: {
+    decision?: Record<string, unknown> | null;
+    contextManifest?: Record<string, unknown> | null;
+    blockedReason?: string | null;
+    qualityIssues?: string[];
+    draftBody?: string | null;
+  }): {
+    version: string;
+    internalOnly: boolean;
+    decisionId: string | null;
+    responsePlanSummary: Record<string, unknown> | null;
+    sourceRefs: Array<{ id: string | null; category: string | null; segmentType: string | null }>;
+    claimManifestSummary: Record<string, unknown> | null;
+    blockOrHandoffReason: string | null;
+    suggestedEditFocus: string[];
+  };
+  export function sanitizeAiDecisionForClientExport(decision: Record<string, unknown>): Record<string, unknown>;
+  export function sanitizeClientScopedExportForClientFacing(exportData: Record<string, unknown>): Record<string, unknown>;
+  export function detectClientExportMetadataLeaks(exportPayload: unknown): string[];
+  export function assertClientExportMetadataSafe(exportPayload: unknown): void;
+  export function assertStyleEditDoesNotMutateClinicalDecision(
+    beforePlan: Record<string, unknown> | null | undefined,
+    afterPlan: Record<string, unknown> | null | undefined,
+  ): void;
+
+  export const NARROW_AUTOPILOT_ELIGIBILITY_V2_VERSION: string;
+  export const NARROW_AUTOPILOT_INELIGIBLE_REASON_CODES: string[];
+
+  export function evaluateNarrowAutopilotEligibilityV2(input?: {
+    clientAiMode?: string;
+    riskDecision?: { level?: string } | null;
+    modeDecision?: { action?: string; reason?: string } | null;
+    canonicalIntent?: Record<string, unknown> | null;
+    greenIntent?: Record<string, unknown> | null;
+    answerability?: Record<string, unknown> | null;
+    foodDecisionV2?: Record<string, unknown> | null;
+    foodRule?: Record<string, unknown> | null;
+    responsePlan?: Record<string, unknown> | null;
+    providerOutputSafety?: { allowed?: boolean } | null;
+    phase?: "pre_provider" | "post_provider";
+  }): {
+    version: string;
+    eligible: boolean;
+    applies: boolean;
+    phase: string;
+    reasonCodes: string[];
+    fallbackModeAction: string | null;
+    fallbackReason: string | null;
+    postProvider?: Record<string, unknown>;
+  };
+  export function applyNarrowAutopilotModeDowngrade(
+    modeDecision: { action?: string; reason?: string } | null | undefined,
+    narrowAutopilotEligibility: {
+      applies?: boolean;
+      eligible?: boolean;
+      fallbackModeAction?: string | null;
+      fallbackReason?: string | null;
+    } | null | undefined,
+  ): { action?: string; reason?: string };
 }

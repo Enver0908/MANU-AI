@@ -4,15 +4,15 @@ Date: 2026-06-04
 
 ## Status
 
-This is the final summary for the 13-phase completion roadmap, updated through the Phase 43-77L local hardening and continuity track, including the full Phase 77A-77K manual source authority rebaseline, Phase 77L worktree closure, and the planned Phase 77M-77Y AI Quality Program before WhatsApp adapter work.
+This is the final summary for the 13-phase completion roadmap, updated through Phase 77Y continuity/evidence closure, including the full Phase 77A-77K manual source authority rebaseline, Phase 77L worktree closure, and the completed Phase 77M-77Y AI Quality Program.
 
 Production pilot is not approved.
 
-Latest local roadmap state closes Phase 77A-77L and Phase 77M master rebaseline/spec: chat mutation is blocked, client personal form v2 is loaded, the master food catalog hierarchy is loaded, Client Food Rule Profile V2 and Menu Plan V1 are first-class manual source authorities, Food Decision Engine V2 is calibrated with 100x50 rehearsal evidence, PromptContext/answerability/output guard V2 is wired, simplified dietitian UX is in place, DOCX/PDF export plus Phase 74 export package `phase74-export-v1.2` are present, continuity/evidence docs are reconciled to the verified commit boundary, and the AI Quality Program master plan is locked. Phase 77N Canonical Intent Understanding V2 is the next implementation phase before the deferred WhatsApp production adapter, and real channel traffic remains blocked.
+Latest local roadmap state closes Phase 77A-77L, Phase 77M-77Y AI Quality Program (77N-77Y inclusive), and records hard-zero expanded rehearsal sample metrics plus clinical red-team closure. WhatsApp production adapter is the next implementation phase (mock/gated only); real channel traffic remains blocked.
 
 No real WhatsApp, Telegram, Gemini, external LLM provider, email, push, monitoring, analytics, secret manager, backup provider, or real client health data is connected.
 
-Post-Phase 77L strategic roadmap: `DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` defines the direct production pilot path as 100 dietitians x 50 clients, with no small production ring. Product communication covenant enforcement, approved-source answerability, green intent taxonomy, local direct 5,000-client scale foundation, user-supplied form hardening, Turkiye official source manifest/intake, draft permission graph artifacts, draft health regulation calibration matrix, draft retention/export/DSAR transactional redaction contract extended through `phase74-export-v1.2`, draft Gemini provider gate artifacts with blocked real egress, deprecated dietitian-approved chat-to-form update proposal evidence, expanded safety-profile proposal update history, the full Phase 76C-76Q structured food-rule track, the full Phase 77A-77K manual source authority track, Phase 77L continuity/worktree closure, and planned Phase 77M-77Y AI Quality Program are present locally. Phase 77M-77Y implementation, WhatsApp production adapter work, external legal/privacy approval of lifecycle and provider policy, external qualified dietitian approval of food-decision/second-layer/AI-quality behavior, final production form/PDF/catalog/menu approvals, Phase 76N RLS re-run when local Supabase is available, production operations evidence, external gates, and R-405 closure/acceptance remain required before production GO.
+Post-Phase 77Y strategic roadmap: `DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` defines the direct production pilot path as 100 dietitians x 50 clients, with no small production ring. The full Phase 77M-77Y AI Quality Program is complete locally with expanded rehearsal hard-zero evidence. WhatsApp production adapter is next (mock/gated only). External legal/privacy approval, external qualified dietitian approval, final production form/PDF/catalog/menu approvals, Phase 76N RLS re-run when local Supabase is available, production operations evidence, external gates, and R-405 closure/acceptance remain required before production GO.
 
 ## Go / No-Go Decision
 
@@ -202,7 +202,7 @@ Phase 50 verification on 2026-06-02:
 
 ## Next Required Actions
 
-1. Start Phase 77N Canonical Intent Understanding V2 as the next implementation phase; keep WhatsApp production adapter deferred until Phase 77M-77Y is complete and gated/mock-first with no real WhatsApp traffic until channel/legal/privacy gates close.
+1. Start WhatsApp production adapter as the next implementation phase (mock/gated only; no real WhatsApp traffic until channel/legal/privacy gates close).
 2. Apply Phase 65 official health-regulation PDF corpus QA to user-supplied PDFs, then collect reviewed corpus approval before active scope-guard use.
 3. Resolve R-405 through a safe stable Next.js/PostCSS upgrade or obtain formal external risk acceptance.
 4. Collect sanitized external approval references in `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` and map them through the Phase 64 structured evidence engine.

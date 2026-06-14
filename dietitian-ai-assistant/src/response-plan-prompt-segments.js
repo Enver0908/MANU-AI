@@ -1,3 +1,4 @@
+import { summarizeClaimManifestClaimTypes } from "./claim-manifest-v1.js";
 import { normalizeSafetyText } from "./normalize-safety-text.js";
 
 export const RESPONSE_PLAN_PROMPT_SEGMENTS_VERSION = "response-plan-prompt-segments-v0.1.0";
@@ -85,6 +86,7 @@ function formatClaimManifestSegment(claimManifest) {
     `version=${claimManifest.version}`,
     `templateId=${claimManifest.templateId || "none"}`,
     `claims=${claimManifest.claims?.length || 0}`,
+    `claimTypes=${summarizeClaimManifestClaimTypes(claimManifest)}`,
     `sourceIds=${claimManifest.sourceIds?.length || 0}`,
   ].join("; ");
 }
@@ -96,5 +98,10 @@ function formatStyleDnaSegment(styleDna) {
     `scope=${styleDna.scope || "none"}`,
     `formality=${styleDna.formality || "unset"}`,
     `emojiPolicy=${styleDna.emojiPolicy || "unset"}`,
+    `sentenceLength=${styleDna.sentenceLength || "unset"}`,
+    `warmthTone=${styleDna.warmthTone || "unset"}`,
+    `boundaryPhrasing=${styleDna.boundaryPhrasing || "unset"}`,
+    `responseTimingStyle=${styleDna.responseTimingStyle || "unset"}`,
+    `candidatePhraseCount=${styleDna.candidatePhrases?.length || 0}`,
   ].join("; ");
 }

@@ -40,6 +40,8 @@ test("response plan maps autopilot green to send and copilot to draft", () => {
   assert.equal(sendPlan.providerEligible, true);
   assert.ok(sendPlan.sourceRefs.length > 0);
   assert.ok(sendPlan.claimManifest);
+  assert.ok(sendPlan.claimManifest.claims.length > 0);
+  assert.equal(sendPlan.claimManifest.version, "claim-manifest-v1-v0.1.0");
   assert.ok(sendPlan.styleDna);
 
   const draftPlan = buildResponsePlanV1({
@@ -92,6 +94,19 @@ test("response plan prompt segments are bounded and append to prompt context", (
     responsePlan,
   );
   assert.equal(appended.segments.length, 4);
+});
+
+test("response plan maps needs_label before answerability handoff", () => {
+  const replyMode = resolveReplyMode({
+    riskDecision: { level: "green" },
+    canonicalIntent: { intentFamily: "green_product_ingredient_check", allowed: true },
+    greenIntent: { allowed: true, intentFamily: "green_product_ingredient_check" },
+    answerability: { allowed: false, reasons: ["trusted_product_evidence_missing"] },
+    foodDecisionV2: { decision: "needs_label", queryType: "product_ingredient" },
+    modeDecision: { action: "auto_send", reason: "green_autopilot" },
+  });
+
+  assert.equal(replyMode, "ask_label");
 });
 
 test("response plan prompt segments reject raw internal metadata markers", () => {

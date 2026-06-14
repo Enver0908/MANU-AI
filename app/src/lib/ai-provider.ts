@@ -3,6 +3,10 @@ import {
   detectProductCommunicationCovenantIssues,
   isResponsePlanProviderEligible,
   assertBoundedProviderSegment,
+  renderDeterministicTemplate,
+  parseTemplateIdFromResponsePlanSegment,
+  parseReplyModeFromResponsePlanSegment,
+  parseRiskClassFromResponsePlanSegment,
 } from "dietitian-ai-assistant-architecture";
 import type { RiskLevel } from "./types";
 
@@ -194,14 +198,22 @@ async function attemptMockGeneration(input: MockProviderInput, failureMode?: Pro
     throw new MockProviderError(failureMode, `Mock provider forced ${failureMode}`);
   }
 
-  const dietPlanSummary = input.context.segments.find((segment) => segment.type === "diet_plan_summary")?.text || "";
   const language = resolveLanguage(input);
+  const responsePlanSegment = input.context.segments.find((segment) => segment.type === "response_plan")?.text || "";
+  const templateId = parseTemplateIdFromResponsePlanSegment(responsePlanSegment);
+  const replyMode = parseReplyModeFromResponsePlanSegment(responsePlanSegment);
+  const riskClass = parseRiskClassFromResponsePlanSegment(responsePlanSegment) || input.risk;
 
-  if (input.risk === "yellow") {
-    return localizedReply(language, "yellow", dietPlanSummary);
+  if (!templateId) {
+    throw new MockProviderError("provider_policy_violation", "Provider boundary requires response_plan templateId");
   }
 
-  return localizedReply(language, "green", dietPlanSummary);
+  return renderDeterministicTemplate({
+    templateId,
+    language,
+    replyMode,
+    riskClass,
+  });
 }
 
 function resolveLanguage(input: MockProviderInput) {
@@ -209,49 +221,6 @@ function resolveLanguage(input: MockProviderInput) {
   const match = languageSegment.match(/\b(tr|en|de|fr|es|pt|cs)\b/);
   return match?.[1] || "tr";
 }
-
-function localizedReply(language: string, risk: "green" | "yellow", dietPlanSummary: string) {
-  const templates = LOCALIZED_REPLIES[language] || LOCALIZED_REPLIES.tr;
-  return risk === "yellow" ? templates.yellow : templates.green(dietPlanSummary);
-}
-
-const LOCALIZED_REPLIES: Record<string, { yellow: string; green: (dietPlanSummary: string) => string }> = {
-  tr: {
-    yellow: "Ic inceleme notu kaydedildi; client mesaji bekletildi.",
-    green: (dietPlanSummary) =>
-      `Planina uygun olarak kucuk bir degisim yapabilirsin. ${dietPlanSummary || "Ana plana sadik kalalim."}`,
-  },
-  en: {
-    yellow: "Internal review note saved; the client message is held.",
-    green: (dietPlanSummary) =>
-      `You can make a small change that still fits your plan. ${dietPlanSummary || "Let's stay close to the main plan."}`,
-  },
-  de: {
-    yellow: "Interne Prufnotiz gespeichert; die Client-Nachricht bleibt gehalten.",
-    green: (dietPlanSummary) =>
-      `Sie konnen eine kleine Anderung machen, die zu Ihrem Plan passt. ${dietPlanSummary || "Bleiben wir beim Hauptplan."}`,
-  },
-  fr: {
-    yellow: "Note de revue interne enregistree; le message client reste en attente.",
-    green: (dietPlanSummary) =>
-      `Vous pouvez faire un petit ajustement compatible avec votre plan. ${dietPlanSummary || "Restons proches du plan principal."}`,
-  },
-  es: {
-    yellow: "Nota de revision interna guardada; el mensaje del cliente queda retenido.",
-    green: (dietPlanSummary) =>
-      `Puede hacer un pequeno cambio que siga ajustado a su plan. ${dietPlanSummary || "Mantengamos el plan principal."}`,
-  },
-  pt: {
-    yellow: "Nota de revisao interna guardada; a mensagem do cliente fica retida.",
-    green: (dietPlanSummary) =>
-      `Pode fazer uma pequena mudanca que continue alinhada ao seu plano. ${dietPlanSummary || "Vamos manter o plano principal."}`,
-  },
-  cs: {
-    yellow: "Interni kontrolni poznamka ulozena; zprava klienta zustava pozastavena.",
-    green: (dietPlanSummary) =>
-      `Muzete udelat malou zmenu, ktera zustane v souladu s vasim planem. ${dietPlanSummary || "Drzme se hlavniho planu."}`,
-  },
-};
 
 function assertCovenantCleanOutput(output: string) {
   const issues = detectProductCommunicationCovenantIssues(output);
@@ -280,6 +249,11 @@ function assertResponsePlanSegmentsPresent(input: MockProviderInput) {
   const replyMode = replyModeMatch?.[1] || null;
   if (!replyMode || !isResponsePlanProviderEligible({ replyMode })) {
     throw new MockProviderError("provider_policy_violation", "Provider boundary requires provider-eligible response_plan");
+  }
+
+  const templateId = parseTemplateIdFromResponsePlanSegment(responsePlanSegment);
+  if (!templateId) {
+    throw new MockProviderError("provider_policy_violation", "Provider boundary requires response_plan templateId");
   }
 }
 

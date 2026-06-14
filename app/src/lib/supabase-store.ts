@@ -9,6 +9,7 @@ import {
   recordClientExportInState,
   removeClientInState,
 } from "./data-governance";
+import { sanitizeClientScopedExportForClientFacing } from "./phase-77v-copilot-quality-workflow";
 import {
   addManualReplyInState,
   addClientContextUpdateInState,
@@ -493,6 +494,7 @@ export async function loadSupabaseState(context = demoTenantContext()) {
       },
       voiceSamples: (voiceSamplesResult.data || []).map(mapVoiceSample),
       voiceProfiles: (voiceProfilesResult.data || []).map(mapVoiceProfile),
+      styleEditHistory: [],
       clientFormSchemas: (formSchemasResult.data || []).map(mapFormSchema),
       clientFormResponses: (formResponsesResult.data || []).map(mapFormResponse),
       dietitianFormSchemas: [],
@@ -739,6 +741,7 @@ async function loadSupabaseClientOperationState(
       },
       voiceSamples: [],
       voiceProfiles: (voiceProfilesResult.data || []).map(mapVoiceProfile),
+      styleEditHistory: [],
       clientFormSchemas: mergeById([...(activeFormSchemasResult.data || []), ...(requiredFormSchemaResult.data || [])]).map(mapFormSchema),
       clientFormResponses: (formResponsesResult.data || []).map(mapFormResponse),
       dietitianFormSchemas: [],
@@ -1048,7 +1051,7 @@ export async function exportSupabaseClientData(clientId: string, context = demoT
     await insertAudit(supabase, audit);
   }
 
-  return buildClientScopedExport(after, clientId);
+  return sanitizeClientScopedExportForClientFacing(buildClientScopedExport(after, clientId));
 }
 
 export async function anonymizeSupabaseClientData(clientId: string, context = demoTenantContext()) {

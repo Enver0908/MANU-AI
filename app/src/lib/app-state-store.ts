@@ -2,6 +2,7 @@ import { createBlankClient, createInitialState } from "./seed-data";
 import { AppDomainError } from "./app-errors";
 import { normalizeE164Phone, normalizeLanguageCode } from "./languages";
 import { buildClientScopedExport, recordClientExportInState } from "./data-governance";
+import { sanitizeClientScopedExportForClientFacing } from "./phase-77v-copilot-quality-workflow";
 import { applyPhase74TransactionalRedactionInState } from "./phase-74-data-lifecycle-policy";
 import {
   createClientFormSchemaInState,
@@ -157,7 +158,7 @@ export function updateDietitianPreferencesInState(
 }
 
 export function exportClientInState(state: ManuAppState, clientId: string) {
-  return buildClientScopedExport(state, clientId);
+  return sanitizeClientScopedExportForClientFacing(buildClientScopedExport(state, clientId));
 }
 
 export function recordClientExportRequestInState(state: ManuAppState, clientId: string) {

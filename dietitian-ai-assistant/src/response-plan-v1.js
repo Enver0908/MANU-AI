@@ -1,3 +1,6 @@
+import { buildClaimManifestV1 } from "./claim-manifest-v1.js";
+import { buildStyleDnaV2 } from "./style-dna-v2.js";
+
 export const RESPONSE_PLAN_V1_VERSION = "response-plan-v1-v0.1.0";
 
 export const RESPONSE_PLAN_REPLY_MODES = [
@@ -10,7 +13,9 @@ export const RESPONSE_PLAN_REPLY_MODES = [
 ];
 
 export const CLAIM_MANIFEST_PLACEHOLDER_VERSION = "claim-manifest-v0.1.0-placeholder";
+export { CLAIM_MANIFEST_V1_VERSION } from "./claim-manifest-v1.js";
 export const STYLE_DNA_PLACEHOLDER_VERSION = "style-dna-v0.1.0-placeholder";
+export { STYLE_DNA_V2_VERSION } from "./style-dna-v2.js";
 
 const INTENT_TEMPLATE_IDS = {
   green_allowed_substitution: "allowed_substitution_v1",
@@ -34,6 +39,11 @@ export function buildResponsePlanV1({
   foodDecisionV2 = null,
   foodRule = null,
   modeDecision = null,
+  tenantId = null,
+  dietitianId = null,
+  voiceProfile = null,
+  styleEditHistorySignals = null,
+  knownClientNames = [],
 }) {
   const intentFamily =
     answerability?.intentFamily || canonicalIntent?.intentFamily || greenIntent?.intentFamily || null;
@@ -48,8 +58,28 @@ export function buildResponsePlanV1({
   const templateId = resolveTemplateId(replyMode, intentFamily, foodDecisionV2);
   const sourceRefs = buildSourceRefs(answerability);
   const foodDecision = summarizeFoodDecision(foodDecisionV2, foodRule);
-  const claimManifest = buildClaimManifestPlaceholder({ templateId, sourceRefs, intentFamily });
-  const styleDna = buildStyleDnaPlaceholder();
+  const responsePlanDraft = {
+    version: RESPONSE_PLAN_V1_VERSION,
+    intentFamily,
+    replyMode,
+    templateId,
+    sourceRefs,
+    foodDecision,
+    riskClass: riskDecision?.level || null,
+    clientMessagePlan: null,
+    internalReason: null,
+    claimManifest: null,
+    styleDna: null,
+    providerEligible: isResponsePlanProviderEligible({ replyMode }),
+  };
+  const claimManifest = buildClaimManifestV1({ responsePlan: responsePlanDraft });
+  const styleDna = buildStyleDnaV2({
+    tenantId,
+    dietitianId,
+    voiceProfile,
+    editHistorySignals: styleEditHistorySignals,
+    knownClientNames,
+  });
   const clientMessagePlan = buildClientMessagePlan({ replyMode, intentFamily, templateId });
   const internalReason = buildInternalReason({
     canonicalIntent,
@@ -60,18 +90,11 @@ export function buildResponsePlanV1({
   });
 
   return {
-    version: RESPONSE_PLAN_V1_VERSION,
-    intentFamily,
-    replyMode,
-    templateId,
-    sourceRefs,
-    foodDecision,
-    riskClass: riskDecision?.level || null,
+    ...responsePlanDraft,
     clientMessagePlan,
     internalReason,
     claimManifest,
     styleDna,
-    providerEligible: isResponsePlanProviderEligible({ replyMode }),
   };
 }
 
@@ -98,13 +121,13 @@ export function resolveReplyMode({
     return "handoff";
   }
 
+  if (foodDecisionV2?.decision === "needs_label") return "ask_label";
+  if (canonicalIntent?.workflowState === "needs_label") return "ask_label";
+
   if (!answerability?.allowed) return "handoff";
 
   if (modeDecision?.action === "handoff") return "handoff";
   if (modeDecision?.action === "ignore" || modeDecision?.action === "no_ai") return "block";
-
-  if (foodDecisionV2?.decision === "needs_label") return "ask_label";
-  if (canonicalIntent?.workflowState === "needs_label") return "ask_label";
 
   if (riskDecision?.level === "yellow" || modeDecision?.action === "draft_for_approval") return "draft";
   if (modeDecision?.action === "auto_send") return "send";
@@ -185,25 +208,8 @@ function summarizeFoodDecision(foodDecisionV2, foodRule) {
   return null;
 }
 
-function buildClaimManifestPlaceholder({ templateId, sourceRefs, intentFamily }) {
-  return {
-    version: CLAIM_MANIFEST_PLACEHOLDER_VERSION,
-    templateId,
-    intentFamily,
-    claims: [],
-    sourceIds: sourceRefs.map((ref) => ref.id),
-  };
-}
-
 function buildStyleDnaPlaceholder() {
-  return {
-    version: STYLE_DNA_PLACEHOLDER_VERSION,
-    scope: "tenant_dietitian_voice_placeholder",
-    formality: null,
-    warmth: null,
-    emojiPolicy: null,
-    responseTimingStyle: null,
-  };
+  return buildStyleDnaV2();
 }
 
 function buildClientMessagePlan({ replyMode, intentFamily, templateId }) {

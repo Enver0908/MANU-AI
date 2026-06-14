@@ -231,7 +231,7 @@ Done criteria:
 
 ## Phase 77W: Narrow Autopilot Eligibility V2
 
-Goal: allow automatic sends only for deterministic, source-backed, low-risk green cases.
+Status: Implemented locally; production pilot remains NO-GO. Verified 2026-06-14.
 
 Implementation intent:
 
@@ -246,7 +246,7 @@ Done criteria:
 
 ## Phase 77X: Expanded 100x50 AI Rehearsal And Risk Register
 
-Goal: rehearse the new AI quality path at scale before channel work.
+Status: Implemented locally; production pilot remains NO-GO. Verified 2026-06-14.
 
 Implementation intent:
 
@@ -268,17 +268,11 @@ Measured threshold:
 
 ## Phase 77Y: Continuity, Evidence, And Launch Gate Update
 
-Goal: close the AI quality planning/implementation track with synchronized documentation and evidence.
-
-Implementation intent:
-
-- Update handoff, project plan, next-phase plan, README files, pilot readiness evidence, gate dossier, final readiness summary, and risk register.
-- Record that WhatsApp adapter resumes only after Phase 77M-77Y.
-- Keep all real provider/channel paths blocked.
+Status: Implemented locally; production pilot remains NO-GO. Verified 2026-06-14.
 
 Done criteria:
 
-- Continuity docs agree on next action order.
+- Continuity docs agree on next action order (WhatsApp production adapter next).
 - Production pilot remains `NO-GO`.
 - R-405 remains open.
 

@@ -13,6 +13,18 @@ import { buildPhase76mGreenCapacityHealthSignal } from "./phase-76m-calibration-
 import { buildPhase76oFoodMixHealthSignal, evaluatePhase76oFoodMixSampleEvidence } from "./phase-76o-food-mix-rehearsal";
 import { buildPhase77kCalibrationHealthSignal } from "./phase-77k-calibration-evidence";
 import { buildPhase77kFoodMixHealthSignal, evaluatePhase77kFoodMixSampleEvidence } from "./phase-77k-food-mix-rehearsal";
+import {
+  AI_QUALITY_EXPANDED_REHEARSAL_V1_VERSION,
+  CLAIM_MANIFEST_V1_VERSION,
+  NARROW_AUTOPILOT_ELIGIBILITY_V2_VERSION,
+  RESPONSE_PLAN_V1_VERSION,
+  STYLE_DNA_SOFT_MISMATCH_THRESHOLD,
+  STYLE_DNA_V2_VERSION,
+} from "dietitian-ai-assistant-architecture";
+import {
+  buildPhase77xAiQualityHealthSignal,
+  type Phase77xExpandedAiRehearsalMetrics,
+} from "./phase-77x-expanded-ai-rehearsal";
 import { buildScopeGuardHealthSignal } from "./scope-guard-runtime";
 import type { ManuAppState } from "./types";
 
@@ -62,6 +74,23 @@ export type OperationalHealthSnapshot = {
   foodMixRehearsalV2InappropriateApprovalCount: number;
   manualSourceAuthorityTrackClosed: boolean;
   whatsappAdapterNext: boolean;
+  aiQualityStatus: "pass" | "fail";
+  responsePlanVersion: string;
+  claimGroundingVersion: string;
+  styleDnaVersion: string;
+  narrowAutopilotReadinessStatus: "ready" | "not_ready";
+  unsafeSendCount: number;
+  responsePlanPassRate: number;
+  claimGroundingPassRate: number;
+  narrowAutopilotEligibleCount: number;
+  expandedAiRehearsalVersion: string;
+  expandedAiRehearsalCaseCount: number;
+  expandedAiRehearsalUnsafeClientSendCount: number;
+  expandedAiRehearsalSourceUnsupportedGreenCount: number;
+  expandedAiRehearsalForbiddenFoodApprovalCount: number;
+  expandedAiRehearsalYellowRedClientSendCount: number;
+  expandedAiRehearsalClaimOutsideManifestCount: number;
+  expandedAiRehearsalStyleSoftMismatchRate: number;
 };
 
 const DEFAULT_STALE_DRAFT_HOURS = 24;
@@ -76,6 +105,7 @@ export function buildOperationalHealthSnapshot(
     directPilotScaleFixture?: DirectPilotScaleFixture;
     loadBackpressureIdempotencyEvidence?: boolean;
     foodMixRehearsalPass?: boolean;
+    expandedAiRehearsalMetrics?: Phase77xExpandedAiRehearsalMetrics;
   } = {},
 ): OperationalHealthSnapshot {
   const now = options.now ? new Date(options.now) : new Date();
@@ -111,6 +141,9 @@ export function buildOperationalHealthSnapshot(
   const calibrationV2 = buildPhase77kCalibrationHealthSignal();
   const foodMixV2Sample = evaluatePhase77kFoodMixSampleEvidence();
   const foodMixV2 = buildPhase77kFoodMixHealthSignal(foodMixV2Sample);
+  const expandedAiQuality = buildPhase77xAiQualityHealthSignal(
+    options.expandedAiRehearsalMetrics ?? buildPhase77xAiQualityDefaultMetrics(),
+  );
 
   return {
     generatedAt: now.toISOString(),
@@ -159,5 +192,45 @@ export function buildOperationalHealthSnapshot(
     foodMixRehearsalV2InappropriateApprovalCount: foodMixV2.inappropriateApprovalCount,
     manualSourceAuthorityTrackClosed: calibrationV2.manualSourceAuthorityTrackClosed,
     whatsappAdapterNext: calibrationV2.whatsappAdapterNext,
+    ...expandedAiQuality,
+  };
+}
+
+function buildPhase77xAiQualityDefaultMetrics(): Phase77xExpandedAiRehearsalMetrics {
+  return {
+    rehearsalVersion: AI_QUALITY_EXPANDED_REHEARSAL_V1_VERSION,
+    status: "fail",
+    clientCount: 0,
+    messagesPerClient: 0,
+    caseCount: 0,
+    turnCount: 0,
+    passCount: 0,
+    failureCount: 0,
+    unsafeClientSendCount: 0,
+    sourceUnsupportedGreenCount: 0,
+    forbiddenFoodApprovalCount: 0,
+    yellowRedClientSendCount: 0,
+    claimOutsideManifestCount: 0,
+    narrowAutopilotEligibleCount: 0,
+    responsePlanVersion: RESPONSE_PLAN_V1_VERSION,
+    claimGroundingVersion: CLAIM_MANIFEST_V1_VERSION,
+    styleDnaVersion: STYLE_DNA_V2_VERSION,
+    narrowAutopilotReadinessVersion: NARROW_AUTOPILOT_ELIGIBILITY_V2_VERSION,
+    responsePlanPassRate: 0,
+    claimGroundingPassRate: 0,
+    styleSoftMismatchRate: 0,
+    styleSoftMismatchThreshold: STYLE_DNA_SOFT_MISMATCH_THRESHOLD,
+    styleMeasuredCount: 0,
+    styleSoftMismatchCount: 0,
+    responsePlanApplicableCount: 0,
+    responsePlanPassCount: 0,
+    claimGroundingApplicableCount: 0,
+    claimGroundingPassCount: 0,
+    hardZeroFailures: ["expanded_ai_rehearsal_sample_not_run"],
+    failures: ["expanded_ai_rehearsal_sample_not_run"],
+    elapsedMs: 0,
+    aiQualityStatus: "fail",
+    narrowAutopilotReadinessStatus: "not_ready",
+    unsafeSendCount: 0,
   };
 }

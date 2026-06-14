@@ -63,6 +63,7 @@ for (const goldenCase of goldenCases) {
       {
         ...baseInput,
         message: { body: goldenCase.message },
+        foodRuleDecisionOverride: goldenCase.foodRuleDecisionOverride || null,
       },
       {
         generateReply: async () => {

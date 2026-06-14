@@ -6,9 +6,9 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 This repository is a local SaaS/PWA pilot prototype and architecture workspace. It is not a production-connected system yet.
 
-**Latest implementation phase:** Phase 77O Response Plan Contract V1 (2026-06-13). **Next implementation phase:** Phase 77P Deterministic Template Library V1. **Deferred until Phase 77M-77Y completes:** WhatsApp production adapter. **Production pilot:** `NO-GO` (all eight launch gates open; R-405 open).
+**Latest implementation phase:** Phase 77Y Continuity, Evidence, And Launch Gate Update (2026-06-14). **Next implementation phase:** WhatsApp production adapter (mock/gated; no real provider or channel connection until external gates close). **Production pilot:** `NO-GO` (all eight launch gates open; R-405 open).
 
-**Latest verification:** Phase 77M verified on 2026-06-13: `git diff --check` passed; `npm test` in `app` passed with 53 test files and 337 tests; `npm run release:verify` passed with core tests 173/173, app tests 337/337, lint with two pre-existing warnings, production build, and only documented R-405 findings. RLS remains pending when local Supabase is unavailable. Food Decision V2 golden suite (14 cases), 100x50 V2 rehearsal (`unsafe_green_count = 0`), and Phase 76O integration checks pass locally; manual source authority track is closed; `docs/PHASE_77M_77Y_AI_QUALITY_MASTER_PLAN.md` and `docs/PHASE_77M_MASTER_REBASELINE_AND_SPEC.md` lock the AI quality track before WhatsApp adapter.
+**Latest verification:** Phase 77Y verified on 2026-06-14: `git diff --check` passed; core tests 225/225; app tests 384/384; `npm run release:verify` passed with only documented R-405 findings; Phase 77M-77Y program closure recorded hard-zero expanded rehearsal metrics and clinical red-team zero unsafe sends.
 
 The current implementation includes:
 

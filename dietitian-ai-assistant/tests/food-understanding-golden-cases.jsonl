@@ -1,0 +1,7 @@
+{"id":"alias-exact-beyaz-peynir","kind":"alias_match","phrase":"beyaz peynir","expectMatch":true,"expectedFoodId":"sut-urunleri__peynir__beyaz-peynir","expectedAutopilotEligible":true}
+{"id":"alias-false-positive-et-suyu","kind":"alias_match","phrase":"et suyu","expectMatch":false}
+{"id":"alias-pending-qa-et","kind":"alias_match","phrase":"et","expectMatch":true,"expectedFoodId":"et__kirmizi-et__dana-eti","expectedAutopilotEligible":false}
+{"id":"brand-ulker-gofret","kind":"brand_query","message":"Ulker gofret yiyebilir miyim?","expected":true}
+{"id":"brand-plain-yogurt","kind":"brand_query","message":"Ev yapimi yogurt yiyebilir miyim?","expected":false}
+{"id":"mixed-dish-no-recipe","kind":"mixed_dish","message":"Kisir yiyebilir miyim?","expectedDecision":"needs_review"}
+{"id":"mixed-dish-with-recipe","kind":"mixed_dish","message":"Kisir yiyebilir miyim?","foodPhrase":"kisir","menu":{"mealSlots":[{"items":[{"id":"item-kisir","label":"Kisir","freeText":"kisir","recipe":{"title":"Kisir","ingredients":["bulgur","maydanoz"],"instructions":"Karistir"}}],"alternatives":[]}]},"expectedDecision":null}

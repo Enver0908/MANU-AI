@@ -105,6 +105,23 @@ export type DietitianVoiceProfileRecord = {
   updatedAt: string;
 };
 
+export type DietitianStyleEditHistoryRecord = {
+  id: string;
+  tenantId: string;
+  dietitianId: string;
+  clientId: string | null;
+  aiDraftHash: string;
+  dietitianFinalHash: string;
+  diffMetadata: {
+    editDistance: number;
+    lengthDelta: number;
+    greetingChanged: boolean;
+    closingChanged: boolean;
+    wordOverlapRatio: number;
+  };
+  createdAt: string;
+};
+
 export type ClientFormFieldDefinition = {
   id: string;
   label: string;
@@ -627,6 +644,7 @@ export type ManuAppState = {
   dietitian: DietitianRecord;
   voiceSamples: DietitianVoiceSampleRecord[];
   voiceProfiles: DietitianVoiceProfileRecord[];
+  styleEditHistory: DietitianStyleEditHistoryRecord[];
   clientFormSchemas: ClientFormSchemaRecord[];
   clientFormResponses: ClientFormResponseRecord[];
   dietitianFormSchemas: DietitianFormSchemaRecord[];

@@ -54,6 +54,7 @@ import type {
   ClientUpdateProposalRecord,
   ManuAppState,
   MessageRecord,
+  AiDecisionRecord,
   SafetyChecklist,
 } from "@/lib/types";
 import { FoodRulesPanel } from "@/components/food-rules-panel";
@@ -82,6 +83,7 @@ import {
 import { useManuState } from "@/lib/use-manu-state";
 import { SUPPORTED_LANGUAGES, type SupportedLanguageCode } from "@/lib/languages";
 import { t, type DashboardMessageKey } from "@/lib/i18n";
+import { buildCopilotQualityReviewForPendingDraft } from "@/lib/phase-77v-copilot-quality-workflow";
 
 type ViewKey = "overview" | "clients" | "conversation" | "simulator" | "handoffs" | "copilot" | "voice" | "forms";
 type ClientDetailTab = "tab_overview" | "tab_personal_form" | "tab_food_rules" | "tab_menu" | "tab_critical_context" | "tab_copilot" | "tab_export";
@@ -663,6 +665,7 @@ export function DashboardApp({ authInfo }: { authInfo?: { displayName: string; r
               <ConversationPanel
                 client={selectedClient}
                 messages={selectedMessages}
+                aiDecisions={state.aiDecisions.filter((decision) => decision.clientId === selectedClient.id)}
                 manualReply={manualReply}
                 onManualReply={setManualReply}
                 onSendManualReply={sendManualReply}
@@ -1825,6 +1828,7 @@ function ClientContextUpdatePanel({
 function ConversationPanel({
   client,
   messages,
+  aiDecisions,
   manualReply,
   onManualReply,
   onSendManualReply,
@@ -1836,6 +1840,7 @@ function ConversationPanel({
 }: {
   client: ClientRecord;
   messages: MessageRecord[];
+  aiDecisions: AiDecisionRecord[];
   manualReply: string;
   onManualReply: (value: string) => void;
   onSendManualReply: () => void;
@@ -1848,6 +1853,7 @@ function ConversationPanel({
   const [draftEdits, setDraftEdits] = useState<Record<string, string>>({});
   const redRiskLocked = client.redRiskLock.status === "locked";
   const yellowRiskHeld = client.yellowRiskHold.status === "active";
+  const qualityReview = buildCopilotQualityReviewForPendingDraft(aiDecisions, messages, draftEdits);
 
   return (
     <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
@@ -1898,6 +1904,8 @@ function ConversationPanel({
       </section>
 
       <aside className="space-y-4">
+        <CopilotQualityReviewPanel review={qualityReview} />
+
         <section className="rounded-lg border border-stone-200 bg-white p-4 shadow-sm">
           <h3 className="text-sm font-semibold">Manual reply</h3>
           <TextareaInput label="Reply body" value={manualReply} onChange={onManualReply} rows={5} />
@@ -2690,6 +2698,77 @@ function ClientSummary({ client, compact = false }: { client: ClientRecord; comp
         {client.humanTakeoverLocked && <Badge label="takeover" tone="red" />}
       </div>
     </div>
+  );
+}
+
+function CopilotQualityReviewPanel({
+  review,
+}: {
+  review: ReturnType<typeof buildCopilotQualityReviewForPendingDraft>;
+}) {
+  return (
+    <section
+      className="rounded-lg border border-indigo-200 bg-indigo-50/60 p-4 shadow-sm"
+      data-testid="copilot-quality-review-panel"
+    >
+      <div className="flex items-center justify-between gap-2">
+        <h3 className="text-sm font-semibold text-indigo-950">Copilot quality review</h3>
+        <Badge label="internal only" tone="stone" />
+      </div>
+      {!review ? (
+        <p className="mt-3 text-sm leading-6 text-indigo-900/80">
+          Pending AI draft yoksa veya karar baglantisi bulunamadiysa ozet gosterilmez.
+        </p>
+      ) : (
+        <div className="mt-3 space-y-3 text-sm text-indigo-950">
+          {review.responsePlanSummary && (
+            <div>
+              <p className="font-semibold">Response plan</p>
+              <div className="mt-1 space-y-1 text-indigo-900/90">
+                <InfoLine label="Intent" value={String(review.responsePlanSummary.intentFamily ?? "n/a")} />
+                <InfoLine label="Reply mode" value={String(review.responsePlanSummary.replyMode ?? "n/a")} />
+                <InfoLine label="Template" value={String(review.responsePlanSummary.templateId ?? "n/a")} />
+                <InfoLine label="Risk" value={String(review.responsePlanSummary.riskClass ?? "n/a")} />
+              </div>
+            </div>
+          )}
+          {review.sourceRefs.length > 0 && (
+            <div>
+              <p className="font-semibold">Source refs</p>
+              <ul className="mt-1 list-disc space-y-1 pl-5 text-indigo-900/90">
+                {review.sourceRefs.map((ref) => (
+                  <li key={`${ref.id}-${ref.category}`}>
+                    {ref.category || "source"} {ref.segmentType ? `(${ref.segmentType})` : ""}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {review.claimManifestSummary && (
+            <div>
+              <p className="font-semibold">Claim manifest</p>
+              <InfoLine
+                label="Claims"
+                value={`${review.claimManifestSummary.claimTypeCount} / complete=${review.claimManifestSummary.complete ? "yes" : "no"}`}
+              />
+            </div>
+          )}
+          {review.blockOrHandoffReason && (
+            <InfoLine label="Block / handoff" value={review.blockOrHandoffReason} />
+          )}
+          {review.suggestedEditFocus.length > 0 && (
+            <div>
+              <p className="font-semibold">Suggested edit focus</p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {review.suggestedEditFocus.map((focus) => (
+                  <Badge key={focus} label={focus} tone="stone" />
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </section>
   );
 }
 

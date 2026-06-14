@@ -1,3 +1,6 @@
+import { detectClaimManifestOutputViolations } from "./claim-manifest-v1.js";
+import { detectHardStyleGuardViolations } from "./style-dna-v2.js";
+
 export const PRODUCT_COMMUNICATION_COVENANT_VERSION = "product-communication-covenant-v0.1.0";
 export const FOOD_RULE_OUTPUT_GUARD_VERSION = "food-rule-output-guard-v0.2.0";
 export const FOOD_DECISION_V2_OUTPUT_GUARD_VERSION = "food-decision-v2-output-guard-v0.1.0";
@@ -115,6 +118,8 @@ export function guardProviderOutput({
   foodRule = null,
   foodDecisionV2 = null,
   structuredFoodRules = null,
+  claimManifest = null,
+  styleDna = null,
 }) {
   const assistant = guardAssistantReply({ draft: output, capsule, riskDecision });
   const issues = assistant.issues.map((issue) => ({
@@ -138,6 +143,24 @@ export function guardProviderOutput({
       severity: "block",
       category: "food_decision_v2",
       evidence: "food_decision_v2",
+    })),
+  );
+
+  issues.push(
+    ...detectClaimManifestOutputViolations(output, { claimManifest }).map((code) => ({
+      code,
+      severity: "block",
+      category: "claim_manifest",
+      evidence: "claim_manifest_v1",
+    })),
+  );
+
+  issues.push(
+    ...detectHardStyleGuardViolations(output, styleDna).map((code) => ({
+      code,
+      severity: "block",
+      category: "style_dna",
+      evidence: "style_dna_v2",
     })),
   );
 

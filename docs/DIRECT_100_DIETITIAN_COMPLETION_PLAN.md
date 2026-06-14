@@ -19,7 +19,7 @@ These rules are non-negotiable and apply to every future phase:
 ## Current Baseline
 - Latest completed implementation phase: Phase 77K calibration, 100x50 rehearsal, and evidence closure (2026-06-10).
 - Latest continuity/worktree closure phase: Phase 77L continuity reconciliation and worktree closure (2026-06-13).
-- Next implementation phase: Phase 77P Deterministic Template Library V1.
+- Next implementation phase: WhatsApp production adapter (mock/gated; no real provider or channel connection until external gates close).
 - Latest roadmap rebaseline: Phase 77A manual source authority rebaseline spec (2026-06-10).
 - Detailed Phase 77 implementation plan: `docs/PHASE_77_MASTER_IMPLEMENTATION_PLAN.md`.
 - AI quality master plan: `docs/PHASE_77M_77Y_AI_QUALITY_MASTER_PLAN.md`.
@@ -190,7 +190,7 @@ Completed:
 Next:
 - Phase 77N Canonical Intent Understanding V2.
 
-## Phase 77M-77Y: AI Quality Program - In Progress 2026-06-13
+## Phase 77M-77Y: AI Quality Program - Completed 2026-06-14
 Goal: make MANU-AI a stronger dietitian assistant before WhatsApp adapter work, while preserving the green/yellow/red risk model and expanding genuinely safe green coverage.
 
 Canonical plan:
@@ -210,17 +210,20 @@ Planned subphases:
 - 77M master rebaseline and spec. **Completed 2026-06-13.**
 - 77N canonical intent understanding V2. **Completed 2026-06-13.**
 - 77O response plan contract V1. **Completed 2026-06-13.**
-- 77P deterministic template library V1. **Next.**
-- 77P deterministic template library V1.
-- 77Q claim manifest and output grounding V1.
-- 77R food understanding V3.
-- 77S dietitian voice engine V2.
-- 77T AI quality evaluation harness V1.
-- 77U clinical red-team and RD review packet.
-- 77V copilot quality workflow V1.
-- 77W narrow autopilot eligibility V2.
-- 77X expanded 100x50 AI rehearsal and risk register.
-- 77Y continuity, evidence, and launch gate update.
+- 77P deterministic template library V1. **Completed 2026-06-13.**
+- 77Q claim manifest and output grounding V1. **Completed 2026-06-13.**
+- 77R food understanding V3. **Completed 2026-06-13.**
+- 77S dietitian voice engine V2. **Completed 2026-06-13.**
+- 77T AI quality evaluation harness V1. **Completed 2026-06-13.**
+- 77U clinical red-team and RD review packet. **Completed 2026-06-13.**
+- 77V copilot quality workflow V1. **Completed 2026-06-13.**
+- 77W narrow autopilot eligibility V2. **Completed 2026-06-14.**
+- 77X expanded 100x50 AI rehearsal and risk register. **Completed 2026-06-14.**
+- 77Y continuity, evidence, and launch gate update. **Completed 2026-06-14.**
+
+Next:
+
+- WhatsApp production adapter (mock/gated only).
 
 Done criteria:
 - Hard-zero gates cover unsafe client send, source-unsupported green, forbidden-food approval, yellow/red client send, and claim outside manifest.

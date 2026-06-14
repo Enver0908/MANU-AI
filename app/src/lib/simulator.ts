@@ -22,6 +22,7 @@ import { shouldUseFoodDecisionV2Result } from "./phase-77g-food-decision-engine-
 import { resolveProductIngredientEvidence } from "./product-ingredient-verification";
 import { evaluateClientAutopilotQualification } from "./phase-70-form-hardening";
 import { getActiveVoiceProfile } from "./voice-profile-workflow";
+import { getStyleEditHistorySignals, recordStyleEditHistoryInState } from "./phase-77s-style-edit-history";
 import { getMissingSafetyChecklistItems, isSafetyChecklistComplete } from "./safety-checklist";
 import { AppDomainError } from "./app-errors";
 import { appendPermissionGraphEvaluation } from "./phase-76l-permission-graph-runtime";
@@ -202,6 +203,7 @@ export async function runInboundSimulation(
         durableFacts: {},
       },
       voiceProfile: getActiveVoiceProfile(state) || undefined,
+      styleEditHistorySignals: getStyleEditHistorySignals(state),
       promptVersion: PROMPT_VERSION,
       providerId: MOCK_PROVIDER_ID,
       now,
@@ -468,12 +470,13 @@ export function approveDraftMessageInState(
   const resolvesYellowHold =
     client?.yellowRiskHold.status === "active" && client.yellowRiskHold.activeDraftMessageId === draft.id;
   const now = new Date().toISOString();
+  const edited = Boolean(body?.trim() && body.trim() !== draft.body);
 
-  return {
+  let nextState: ManuAppState = {
     ...state,
     clients: resolvesYellowHold
       ? state.clients.map((item) =>
-          item.id === client.id && item.yellowRiskHold.status === "active"
+          item.id === client!.id && item.yellowRiskHold.status === "active"
             ? {
                 ...item,
                 aiStatus: item.redRiskLock.status === "locked" ? item.aiStatus : item.yellowRiskHold.previousAiStatus,
@@ -497,16 +500,27 @@ export function approveDraftMessageInState(
       ...state.auditEvents,
       buildAuditEvent(
         state,
-        body?.trim() && body.trim() !== draft.body ? "draft_edited_and_sent" : "draft_approved",
+        edited ? "draft_edited_and_sent" : "draft_approved",
         "message",
         messageId,
         now,
       ),
       ...(resolvesYellowHold
-        ? [buildAuditEvent(state, "yellow_risk_hold_resolved", "client", client.id, now)]
+        ? [buildAuditEvent(state, "yellow_risk_hold_resolved", "client", client!.id, now)]
         : []),
     ],
   };
+
+  if (edited) {
+    nextState = recordStyleEditHistoryInState(nextState, {
+      aiDraft: draft.body,
+      dietitianFinal: finalBody,
+      clientId: client?.id || null,
+      createdAt: now,
+    });
+  }
+
+  return nextState;
 }
 
 function revalidateDraftBeforeSend(

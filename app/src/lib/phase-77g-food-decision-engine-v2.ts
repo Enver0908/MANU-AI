@@ -1,6 +1,9 @@
 import {
   evaluateProductIngredientVerification,
   evaluateFoodRuleDecision,
+  evaluateMixedDishUnderstanding,
+  isBrandOrPackagedProductQuery,
+  resolveFoodAliasMatches,
   type FoodRuleDecision,
   type FoodRuleDecisionValue,
   type ProductIngredientVerificationResult,
@@ -19,6 +22,7 @@ import {
   searchPhase77DCatalogFoods,
 } from "./phase-77e-client-food-rule-profile";
 import { getActiveClientMenuPlanV1Record } from "./phase-77f-client-menu-plan";
+import { buildFoodUnderstandingV3Context, type FoodUnderstandingV3Context } from "./phase-77r-food-understanding-v3";
 import type {
   ClientFoodRuleProfileV2Record,
   ClientMenuPlanV1Record,
@@ -44,12 +48,17 @@ export type FoodDecisionV2CatalogMatch = {
   foodName: string;
   confidence: "exact" | "partial" | "keyword";
   path: string;
+  aliasId?: string;
+  aliasScope?: "global" | "tenant_approved";
+  autopilotEligible?: boolean;
 };
 
 export type FoodDecisionV2Input = {
   message: string;
   riskLevel: RiskLevel;
   mixedIntentBlocked?: boolean;
+  tenantId?: string | null;
+  foodAliasContext?: FoodUnderstandingV3Context | null;
   personalForm?: {
     goalType?: string;
     goalKey?: string | null;
@@ -158,7 +167,10 @@ export function shouldUseFoodDecisionV2Result(result: FoodDecisionV2Result) {
     return result.reasonCodes.some((code) => !LEGACY_FALLBACK_REASON_CODES.has(code));
   }
   if (result.decision === "allow" || result.decision === "discourage") {
-    return result.catalogMatches.some((match) => match.confidence === "exact") || result.menuOnPlan === true;
+    return (
+      result.catalogMatches.some((match) => match.confidence === "exact" && match.autopilotEligible !== false) ||
+      result.menuOnPlan === true
+    );
   }
   return true;
 }
@@ -195,7 +207,7 @@ function mapGoalTypeToKey(goalType?: string) {
 
 function detectQueryType(message: string) {
   const normalized = normalizeText(message);
-  if (PRODUCT_QUERY_PATTERN.test(normalized)) return "product_ingredient";
+  if (PRODUCT_QUERY_PATTERN.test(normalized) || isBrandOrPackagedProductQuery(message)) return "product_ingredient";
   if (
     /\b(?:atlayabilir|atlamak|skip|atla)\b/i.test(normalized) &&
     /\b(?:ogun\w*|meal|kahvalti|ogle|aksam|snack|ara|breakfast|lunch|dinner)\b/i.test(normalized)
@@ -209,9 +221,16 @@ function detectQueryType(message: string) {
 
 function cleanFoodPhrase(value: string) {
   return value
-    .replace(/\b(?:bir|one|tane|bugun|bugün|simdi|şimdi|kahvaltida|kahvaltıda|ogle|öğle|aksam|akşam)\b/gi, " ")
+    .replace(/\b(?:bir|one|tane|bugun|bugün|simdi|şimdi)\b/gi, " ")
+    .replace(/\b(?:kahvalti\w*|ogle\w*|öğle\w*|aksam\w*|akşam\w*|ara ogun\w*|breakfast|lunch|dinner|snack)\b/gi, " ")
+    .replace(/\b(?:yiyebilir miyim|yerim mi|yiyebilir mi|yiyebilir miyiz|can i eat|eat)\b/gi, " ")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+function isVagueSubstitutionTarget(phrase: string) {
+  const normalized = normalizeText(phrase);
+  return !normalized || /^(?:ne|neler|hangi|what|which)\b/.test(normalized);
 }
 
 function extractFoodTarget(message: string) {
@@ -242,9 +261,30 @@ function inferFoodGroups(phrase: string) {
     .map(([group]) => group);
 }
 
-export function matchCatalogFoodCandidates(phrase: string): FoodDecisionV2CatalogMatch[] {
+export function matchCatalogFoodCandidates(
+  phrase: string,
+  options: { foodAliasContext?: FoodUnderstandingV3Context | null } = {},
+): FoodDecisionV2CatalogMatch[] {
   const cleaned = cleanFoodPhrase(phrase);
   if (!cleaned) return [];
+
+  if (options.foodAliasContext) {
+    const aliasMatches = resolveFoodAliasMatches(cleaned, {
+      globalAliases: options.foodAliasContext.globalAliases,
+      tenantApprovedAliases: options.foodAliasContext.tenantApprovedAliases,
+    });
+    if (aliasMatches.length > 0) {
+      return aliasMatches.map((match) => ({
+        foodId: match.foodId,
+        foodName: match.foodName,
+        confidence: match.confidence,
+        path: match.path,
+        aliasId: match.aliasId,
+        aliasScope: match.aliasScope,
+        autopilotEligible: match.autopilotEligible,
+      }));
+    }
+  }
 
   const exactMatches = findPhase77DFoodsByName(cleaned);
   if (exactMatches.length > 0) {
@@ -253,6 +293,7 @@ export function matchCatalogFoodCandidates(phrase: string): FoodDecisionV2Catalo
       foodName: match.food.name,
       confidence: "exact" as const,
       path: `${match.main.name} / ${match.subcategory.name}`,
+      autopilotEligible: true,
     }));
   }
 
@@ -261,6 +302,7 @@ export function matchCatalogFoodCandidates(phrase: string): FoodDecisionV2Catalo
     foodName: match.name,
     confidence: "partial" as const,
     path: match.path,
+    autopilotEligible: false,
   }));
   if (partialMatches.length === 1) return partialMatches;
 
@@ -269,6 +311,7 @@ export function matchCatalogFoodCandidates(phrase: string): FoodDecisionV2Catalo
     foodName: match.name,
     confidence: "keyword" as const,
     path: match.path,
+    autopilotEligible: false,
   }));
   return partialMatches.length > 0 ? partialMatches : keywordMatches;
 }
@@ -546,9 +589,29 @@ export function evaluateFoodDecisionEngineV2(input: FoodDecisionV2Input): FoodDe
     }
   }
 
+  if (queryType === "food_substitution") {
+    const substitutionTarget = extractFoodTarget(message);
+    if (!substitutionTarget || isVagueSubstitutionTarget(substitutionTarget)) {
+      return buildResult("needs_review", ["food_decision_v2_food_target_missing"], { queryType });
+    }
+  }
+
   const foodPhrase = extractFoodTarget(message);
   if (!foodPhrase) {
     return buildResult("needs_review", ["food_decision_v2_food_target_missing"], { queryType });
+  }
+
+  const mixedDish = evaluateMixedDishUnderstanding({
+    message,
+    menu: input.activeMenu,
+    foodPhrase,
+  });
+  if (mixedDish.applicable && mixedDish.decision === "needs_review") {
+    return buildResult("needs_review", mixedDish.reasonCodes, {
+      queryType: "mixed_dish",
+      sourceReferences: ["menu_plan_v1", "food_understanding_v3"],
+      evidenceManifest: mixedDish.evidenceManifest,
+    });
   }
 
   const phraseGroups = inferFoodGroups(foodPhrase);
@@ -571,23 +634,46 @@ export function evaluateFoodDecisionEngineV2(input: FoodDecisionV2Input): FoodDe
     }
   }
 
-  const catalogMatches = matchCatalogFoodCandidates(foodPhrase);
+  const catalogMatches = matchCatalogFoodCandidates(foodPhrase, {
+    foodAliasContext: input.foodAliasContext ?? null,
+  });
   if (catalogMatches.length === 0) {
     return buildResult("needs_review", ["food_decision_v2_catalog_match_missing"], {
       queryType,
       catalogMatches,
-      sourceReferences: ["master_food_catalog"],
-    });
-  }
-  if (catalogMatches.filter((match) => match.confidence === "exact").length > 1) {
-    return buildResult("needs_review", ["food_decision_v2_catalog_match_ambiguous"], {
-      queryType,
-      catalogMatches,
-      sourceReferences: ["master_food_catalog"],
+      sourceReferences: ["master_food_catalog", "food_understanding_v3"],
     });
   }
 
-  const primary = catalogMatches.find((match) => match.confidence === "exact") || catalogMatches[0];
+  const pendingQaAlias = catalogMatches.find((match) => match.aliasId && match.autopilotEligible === false);
+  if (pendingQaAlias) {
+    return buildResult("needs_review", ["food_understanding_v3_alias_pending_qa"], {
+      queryType,
+      catalogMatches,
+      sourceReferences: ["food_understanding_v3", "master_food_catalog"],
+      evidenceManifest: { foodPhrase, aliasId: pendingQaAlias.aliasId },
+    });
+  }
+
+  const exactMatches = catalogMatches.filter((match) => match.confidence === "exact");
+  if (exactMatches.length > 1) {
+    return buildResult("needs_review", ["food_decision_v2_catalog_match_ambiguous"], {
+      queryType,
+      catalogMatches,
+      sourceReferences: ["master_food_catalog", "food_understanding_v3"],
+    });
+  }
+
+  const primary = exactMatches[0];
+  if (!primary) {
+    return buildResult("needs_review", ["food_understanding_v3_catalog_match_not_exact"], {
+      queryType,
+      catalogMatches,
+      sourceReferences: ["master_food_catalog", "food_understanding_v3"],
+      evidenceManifest: { foodPhrase },
+    });
+  }
+
   const foodGroups = inferFoodGroups(`${foodPhrase} ${primary.foodName}`);
   const forbidden = isForbiddenByProfile(profile, primary.foodId, primary.foodName, foodGroups);
   if (forbidden.forbidden) {
@@ -612,8 +698,13 @@ export function evaluateFoodDecisionEngineV2(input: FoodDecisionV2Input): FoodDe
       catalogMatches: [primary],
       menuOnPlan,
       effectiveFlexibility: flexibility,
-      sourceReferences,
-      evidenceManifest: { foodId: primary.foodId, mealKey, goalKey },
+      sourceReferences: [...sourceReferences, "food_understanding_v3"],
+      evidenceManifest: {
+        foodId: primary.foodId,
+        mealKey,
+        goalKey,
+        ...(mixedDish.evidenceManifest || {}),
+      },
     });
   }
 
@@ -667,6 +758,8 @@ export function buildFoodDecisionV2InputFromState(
       message,
       riskLevel: options.riskLevel || "green",
       mixedIntentBlocked: options.mixedIntentBlocked,
+      tenantId: null,
+      foodAliasContext: null,
       personalForm: undefined,
       foodProfile: null,
       activeMenu: null,
@@ -681,6 +774,8 @@ export function buildFoodDecisionV2InputFromState(
     message,
     riskLevel: options.riskLevel || "green",
     mixedIntentBlocked: options.mixedIntentBlocked,
+    tenantId: client.tenantId,
+    foodAliasContext: buildFoodUnderstandingV3Context(client.tenantId),
     personalForm: {
       goalType,
       goalKey: mapGoalTypeToKey(goalType),

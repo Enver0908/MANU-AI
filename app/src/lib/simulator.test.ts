@@ -14,7 +14,7 @@ describe("local inbound simulator", () => {
   it("auto-sends green autopilot messages with model routing", async () => {
     const next = await runInboundSimulation(createInitialState(), {
       clientId: "client-mert",
-      body: "Bugun kahvalti icin pratik bir degisim onerir misin?",
+      body: "Bugun kahvaltida yumurta yerine ne yiyebilirim?",
       idempotencyKey: "green-1",
       now: "2026-05-22T10:00:00.000Z",
     });
@@ -84,7 +84,7 @@ describe("local inbound simulator", () => {
 
     const next = await runInboundSimulation(state, {
       clientId: "client-mert",
-      body: "Bugun kahvalti icin pratik bir degisim onerir misin?",
+      body: "Bugun kahvaltida yumurta yerine ne yiyebilirim?",
       idempotencyKey: "language-change-reply-1",
       now: "2026-05-22T10:00:10.000Z",
     });

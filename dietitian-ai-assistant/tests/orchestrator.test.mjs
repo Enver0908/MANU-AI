@@ -51,16 +51,24 @@ const baseInput = {
   },
 };
 
+const substitutionFoodRuleOverride = {
+  decision: "unknown_food_requires_review",
+  queryType: "food_substitution",
+};
+
 test("green autopilot sends guarded reply", async () => {
   const sent = [];
   const models = [];
-  const result = await handleInboundMessage(baseInput, {
-    generateReply: async ({ model }) => {
-      models.push(model);
-      return "Yumurta yerine lor peyniri ve bol yeşillik iyi bir seçenek olur.";
+  const result = await handleInboundMessage(
+    { ...baseInput, foodRuleDecisionOverride: substitutionFoodRuleOverride },
+    {
+      generateReply: async ({ model }) => {
+        models.push(model);
+        return "Yumurta yerine lor peyniri ve bol yeşillik iyi bir seçenek olur.";
+      },
+      sendMessage: async (payload) => sent.push(payload),
     },
-    sendMessage: async (payload) => sent.push(payload),
-  });
+  );
 
   assert.equal(result.action, "sent");
   assert.equal(result.risk, "green");
@@ -172,6 +180,10 @@ test("dietitian manual messages can satisfy approved source answerability", asyn
           createdAt: "2026-05-22T09:00:00.000Z",
         },
       ],
+      foodRuleDecisionOverride: {
+        decision: "unknown_food_requires_review",
+        queryType: "food_substitution",
+      },
     },
     {
       generateReply: async () => {

@@ -10,7 +10,9 @@
     "test": "vitest run src --exclude src/lib/supabase-rls.integration.test.ts --no-file-parallelism --maxWorkers=1",
     "test:rls": "vitest run src/lib/supabase-rls.integration.test.ts",
     "test:visual": "npm run build && playwright test",
-    "release:verify": "node scripts/release-verify.mjs"
+    "release:verify": "node scripts/release-verify.mjs",
+    "rehearse:ai": "node ../dietitian-ai-assistant/scripts/rehearse-ai.mjs",
+    "rehearse:ai:expanded": "node ../dietitian-ai-assistant/scripts/rehearse-ai-expanded.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.10.3",

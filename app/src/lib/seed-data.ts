@@ -208,6 +208,7 @@ export function createInitialState(): ManuAppState {
     },
     voiceSamples: [],
     voiceProfiles: [],
+    styleEditHistory: [],
     clientFormSchemas: [phase70Forms.clientSchema],
     clientFormResponses: [phase70Forms.clientResponse],
     dietitianFormSchemas: [phase70Forms.dietitianSchema],

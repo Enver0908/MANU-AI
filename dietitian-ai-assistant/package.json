@@ -5,6 +5,8 @@
   "type": "module",
   "exports": "./src/index.js",
   "scripts": {
-    "test": "node --test"
+    "test": "node --test",
+    "rehearse:ai": "node scripts/rehearse-ai.mjs",
+    "rehearse:ai:expanded": "node scripts/rehearse-ai-expanded.mjs"
   }
 }

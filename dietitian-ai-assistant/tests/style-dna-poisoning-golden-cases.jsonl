@@ -1,0 +1,6 @@
+{"id":"poison-formal-vs-informal","kind":"clinical_isolation","formalityA":"formal","formalityB":"informal","emojiPolicyA":"none","emojiPolicyB":"regular"}
+{"id":"poison-warm-vs-steady","kind":"clinical_isolation","formalityA":"informal","formalityB":"formal","emojiPolicyA":"limited","emojiPolicyB":"none"}
+{"id":"covenant-reject-ai-draft","kind":"covenant_filter","phrase":"As an AI I recommend you ask your dietitian","expectAccepted":false}
+{"id":"covenant-accept-greeting","kind":"covenant_filter","phrase":"Merhaba, planina uygun ilerleyebilirsin","expectAccepted":true}
+{"id":"hard-emoji-none","kind":"hard_guard","emojiPolicy":"none","text":"Bugun planina uygun ilerleyebilirsin 🙂","expectViolation":"style_hard_emoji_forbidden"}
+{"id":"soft-formality-drift","kind":"soft_mismatch","formality":"formal","text":"Canim harika gidiyorsun","expectHardBlock":false,"expectExceedsThreshold":true}

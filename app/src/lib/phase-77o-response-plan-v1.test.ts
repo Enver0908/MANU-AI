@@ -29,7 +29,8 @@ describe("phase 77O response plan contract v1", () => {
     expect(manifest?.responsePlan?.templateId).toBeTruthy();
     expect(manifest?.responsePlan?.intentFamily).toBe("green_allowed_substitution");
     expect(manifest?.responsePlan?.sourceRefs?.length).toBeGreaterThan(0);
-    expect(manifest?.claimManifest?.version).toContain("claim-manifest");
+    expect(manifest?.claimManifest?.version).toBe("claim-manifest-v1-v0.1.0");
+    expect(manifest?.claimManifest?.claims?.length).toBeGreaterThan(0);
     expect(manifest?.styleDna?.version).toContain("style-dna");
   });
 

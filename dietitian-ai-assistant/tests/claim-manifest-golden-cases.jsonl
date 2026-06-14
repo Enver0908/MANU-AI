@@ -1,0 +1,7 @@
+{"id":"77q-substitution-manifest","category":"complete_manifest","templateId":"allowed_substitution_v1","intentFamily":"green_allowed_substitution","replyMode":"send","expectClaimTypes":["substitution_within_rules","plan_alignment_guidance"],"expectComplete":true}
+{"id":"77q-forbidden-manifest","category":"complete_manifest","templateId":"forbidden_food_response_v1","foodDecision":{"engine":"food_decision_v2","decision":"forbid"},"expectClaimTypes":["forbidden_food_reminder"],"expectComplete":true}
+{"id":"77q-label-manifest","category":"complete_manifest","templateId":"ingredient_label_request_v1","replyMode":"ask_label","foodDecision":{"engine":"food_decision_v2","decision":"needs_label"},"expectClaimTypes":["ingredient_label_request"],"expectComplete":true}
+{"id":"77q-allowed-output-pass","category":"output_grounding_pass","manifestTemplateId":"allowed_food_answer_v1","output":"Kayitli planina gore bu secenek uygun gorunuyor.","expectViolations":[]}
+{"id":"77q-forbidden-output-block","category":"output_grounding_block","manifestTemplateId":"forbidden_food_response_v1","output":"Rahatca yiyebilirsin, sorun olmaz.","expectViolations":["claim_outside_manifest"]}
+{"id":"77q-label-output-block","category":"output_grounding_block","manifestTemplateId":"ingredient_label_request_v1","output":"Evet cikolata yiyebilirsin.","expectViolations":["claim_outside_manifest"]}
+{"id":"77q-incomplete-manifest","category":"incomplete_manifest","templateId":null,"expectComplete":false}

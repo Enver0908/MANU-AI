@@ -24,7 +24,7 @@ Required fields:
 - `riskClass`
 - `clientMessagePlan`
 - `internalReason`
-- `claimManifest` placeholder (`claim-manifest-v0.1.0-placeholder`)
+- `claimManifest` placeholder (`claim-manifest-v0.1.0-placeholder`) — superseded by `claim-manifest-v1-v0.1.0` in Phase 77Q
 - `styleDna` placeholder (`style-dna-v0.1.0-placeholder`)
 
 Provider-eligible reply modes: `send`, `draft`.
@@ -55,7 +55,7 @@ npm run release:verify
 
 ## Out of scope
 
-- Deterministic template library runtime (Phase 77P)
+- Deterministic template library runtime (Phase 77P) is implemented locally through `deterministic-template-library-v1-v0.1.0`; claim manifest generation and output grounding enforcement remain Phase 77Q.
 - Claim manifest generation and output grounding enforcement (Phase 77Q)
 - Real provider/channel connections
 - R-405 remediation

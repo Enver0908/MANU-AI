@@ -8,7 +8,7 @@ Real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret ma
 
 The most recent execution layers after the 13-phase completion roadmap are Phase 76B expanded chat form safety updates, Phase 76A dietitian chat form update proposals, Phase 75 Gemini provider gate, Phase 74 data lifecycle DSAR policy, Phase 73 health regulation calibration, Phase 72 regulation permission graph, Phase 71 Turkiye official health source ingestion, Phase 70 user-supplied form hardening, Phase 43 multilingual language support, Phase 44 red-risk reactivation lock, Phase 45 client removal data lifecycle, Phase 46 WhatsApp group quarantine, Phase 47 RLS quarantine evidence coverage, Phase 48 R-405 stable patch recheck, Phase 49 safety/orchestration hardening, Phase 50 production Supabase hardening, Phase 51 transactional RPC coverage, Phase 52 integration test coverage, Phase 53 scale/broad read contracts, Phase 54 R-405/launch-gate recheck, Phase 55 audit remediation safety boundary, Phase 56 clinical safety second-layer local evidence, Phase 57 yellow-risk hold/draft refresh, Phase 58 dietitian client language control, Phase 59 architecture review remediation, Phase 60 audit remediation, Phase 61 scope guard (RAG + LLM) second layer mock-first, Phase 62 architecture review remediation wave 2, Phase 63 production pilot GO rebaseline, Phase 64 structured launch-gate evidence engine, Phase 65 official regulation PDF corpus QA foundation, Phase 66 product communication covenant lock, Phase 67 approved source answerability engine, Phase 68 green maximization intent taxonomy, and Phase 69 direct 5,000 client scale foundation. Phase 76B expands the reviewed proposal path to Phase 70 clinical/safety form flags, editable proposal rows, supported health-profile mirrors, and manual-control warnings while keeping AI active/passive, mode, channel permission, red/yellow lock resolution, and autopilot/reactivation outside chat mutation. Phase 65 adds a typed QA foundation so user-supplied official PDFs must have source metadata, checksums, page extraction evidence, page/section references, derived rule drafts, corpus version, and synthetic golden cases before PDF-derived scope rules can become draft rules. Phase 71 adds the user-supplied 14-source Turkiye official source manifest and fail-closed artifact intake into that QA contract without approving any corpus. Phase 66 locks client-facing AI communication locally: AI self-disclosure, AI limitation disclaimers, doctor/dietitian/professional referral language, yellow/red AI sends, and non-green draft approval are blocked before client-facing send. Phase 67 gates green provider calls/sends on approved source support and excludes AI-generated messages from source authority. Phase 68 records green intent taxonomy evidence after answerability and blocks green-looking sensitive intent before provider generation without downgrading yellow/red decisions. Phase 69 adds synthetic 100 dietitian x 50 client scale evidence, cursor pagination helpers, Phase 69 read contracts, and aggregate operational-health scale signals. The post-Phase 65 strategic completion plan is now `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`: production pilot is direct 100 dietitians x 50 clients (minimum 5,000 clients), no small production ring, green maximization is source-backed, and client-facing output must never disclose AI identity or refer the client to a doctor/dietitian/professional. The production-pilot decision remains `NO-GO`: all eight launch gates remain open and R-405 remains open. R-406 is now mitigated in the local prototype after Docker Desktop/local Supabase was started, the Phase 50 migration was applied, and `npm run test:rls` passed with 19/19 tests on 2026-06-02. Draft review, form response, client context update, handoff status, and red-risk reactivation now use transactional RPC commits locally; remaining broad reads are classified in a test-covered contract, while client removal/anonymization bulk redaction and external approval intake remain future production hardening work. R-310 is partially mitigated locally by deterministic second-layer evidence, Phase 57 yellow supervision, Phase 59 glucose/symptom hardening, Phase 61 escalate-only scope guard (default no-op until approved corpus), Phase 65 corpus QA foundation, Phase 66 covenant send blocking, Phase 67 source answerability, and Phase 68 green intent taxonomy, but qualified dietitian approval, official PDF corpus approval, and the clinical taxonomy launch gate remain open.
 
-Current override after Phase 77O: every provider-eligible client-facing draft passes through core-owned `responsePlan` (`response-plan-v1-v0.1.0`) with bounded `response_plan`, `claim_manifest`, and `style_dna` provider segments. Next open phase is Phase 77P Deterministic Template Library V1 before the deferred WhatsApp production adapter.
+Current override after Phase 77Y: Phase 77M-77Y AI Quality Program is complete locally. Continuity, pilot evidence, gate dossier, and risk-register docs are synchronized. Hard-zero expanded rehearsal sample metrics and clinical red-team closure are recorded. Next open phase is WhatsApp production adapter (mock/gated; no real provider or channel connection until external gates close).
 
 ## Post-Phase 65 Strategic Completion Plan - Added 2026-06-05
 
@@ -28,10 +28,10 @@ Locked decisions:
 
 Next implementation order:
 
-1. Phase 77M-77Y AI Quality Program before WhatsApp adapter.
-2. Deferred WhatsApp production adapter after AI quality closure.
-3. Production ops, R-405 closure/acceptance, full rehearsal acceptance, and external launch-gate closure.
-4. Direct production pilot GO only after all structured external launch gates close.
+1. WhatsApp production adapter (mock/gated).
+2. Production operations, R-405 closure or acceptance, production rehearsal/channel replay acceptance.
+3. External launch-gate closure.
+4. Direct production pilot GO only after the above.
 
 ## Phase 77M: Master Rebaseline And Spec - Completed 2026-06-13
 
@@ -71,6 +71,81 @@ Next:
 
 - Phase 77P Deterministic Template Library V1.
 
+## Phase 77Q: Claim Manifest and Output Grounding V1 - Completed 2026-06-13
+
+Goal: generate `claimManifest` from plan/template/source authority and block manifest-outside provider output.
+
+Status:
+
+- Added `docs/PHASE_77Q_CLAIM_MANIFEST_AND_OUTPUT_GROUNDING_V1_SPEC.md`.
+- Added `dietitian-ai-assistant/src/claim-manifest-v1.js` (`claim-manifest-v1-v0.1.0`).
+- Replaced Phase 77O placeholder manifests in `buildResponsePlanV1`.
+- Orchestrator fail-closed on incomplete provider manifests.
+- `guardProviderOutput` enforces `claim_outside_manifest` blocking.
+- Added JSONL golden cases and core/app tests.
+- Verification passed with `git diff --check`, core claim-manifest tests, app Phase 77Q tests, and `npm run release:verify` (core 193/193, app 354/354).
+- Production pilot remains `NO-GO`.
+
+Next:
+
+- Phase 77S Dietitian Voice Engine V2.
+
+## Phase 77S: Dietitian Voice Engine V2 - Completed 2026-06-13
+
+Goal: improve personalized style without allowing style to affect clinical decisions.
+
+Status:
+
+- Added `docs/PHASE_77S_DIETITIAN_VOICE_ENGINE_V2_SPEC.md`.
+- Added `dietitian-ai-assistant/src/style-dna-v2.js` (`style-dna-v2-v0.1.0`).
+- Replaced placeholder `styleDna` in `buildResponsePlanV1` with tenant/dietitian-scoped runtime.
+- Added edit-history learning lifecycle in fallback store (`styleEditHistory`).
+- `guardProviderOutput` enforces hard style guard violations; soft mismatch is measured only.
+- Added JSONL style-poisoning golden cases and core/app tests.
+- Verification passed with `git diff --check`, core style-dna tests, app Phase 77S tests, `app` `npm test` (366/366), and production build (core 200/200).
+- Production pilot remains `NO-GO`.
+
+Next:
+
+- Phase 77X Expanded 100x50 AI Rehearsal And Risk Register.
+
+## Phase 77R: Food Understanding V3 - Completed 2026-06-13
+
+Goal: expand safe deterministic food understanding with versioned alias dictionaries, brand fail-closed routing, and recipe-gated mixed-dish handling.
+
+Status:
+
+- Added `docs/PHASE_77R_FOOD_UNDERSTANDING_V3_SPEC.md`.
+- Added `dietitian-ai-assistant/src/food-understanding-v3.js` (`food-understanding-v3-v0.1.0`).
+- Added checksum-backed alias dictionary (`app/src/lib/food-alias-dictionary-v3.json` with JSONL mirror).
+- Wired alias resolution, brand `needs_label` routing, and mixed-dish guards into `phase-77g-food-decision-engine-v2.ts`.
+- Added JSONL golden cases and core/app tests.
+- Verification passed with `git diff --check`, core food-understanding tests, app Phase 77R tests, and `npm run release:verify` (core 196/196, app 361/361).
+- Production pilot remains `NO-GO`.
+
+Next:
+
+- Phase 77S Dietitian Voice Engine V2 (completed; see Phase 77S section above).
+
+## Phase 77P: Deterministic Template Library V1 - Completed 2026-06-13
+
+Goal: create safe, predictable client-message structures from `responsePlan.templateId` before claim grounding.
+
+Status:
+
+- Added `docs/PHASE_77P_DETERMINISTIC_TEMPLATE_LIBRARY_V1_SPEC.md`.
+- Added `dietitian-ai-assistant/src/deterministic-template-library-v1.js` (`deterministic-template-library-v1-v0.1.0`).
+- Mock provider renders deterministic drafts from `templateId`; rejects missing template ids.
+- Orchestrator attaches `contextManifest.deterministicClientMessage` for non-provider-eligible `ask_label` plans.
+- `needs_label` precedence now wins over answerability handoff in `resolveReplyMode`.
+- Added JSONL golden cases and core/app tests.
+- Verification passed with `git diff --check`, core deterministic-template tests, app Phase 77P tests, and `npm run release:verify` (core 189/189, app 350/350).
+- Production pilot remains `NO-GO`.
+
+Next:
+
+- Phase 77Q Claim Manifest and Output Grounding V1.
+
 ## Phase 77N: Canonical Intent Understanding V2 - Completed 2026-06-13
 
 Goal: unify intent resolution in core and fail closed on unknown intent before provider generation.
@@ -90,7 +165,7 @@ Next:
 
 - Phase 77O Response Plan Contract V1.
 
-## Phase 77M-77Y: AI Quality Program - In Progress 2026-06-13
+## Phase 77M-77Y: AI Quality Program - Completed 2026-06-14
 
 Goal: improve the AI dietitian assistant's client-reply quality before WhatsApp adapter work while preserving the existing green/yellow/red risk model.
 
@@ -112,18 +187,20 @@ Phase map:
 - 77M Master rebaseline and spec. **Completed 2026-06-13.**
 - 77N Canonical Intent Understanding V2. **Completed 2026-06-13.**
 - 77O Response Plan Contract V1. **Completed 2026-06-13.**
-- 77P Deterministic Template Library V1. **Next.**
-- 77O Response Plan Contract V1.
-- 77P Deterministic Template Library V1.
-- 77Q Claim Manifest And Output Grounding V1.
-- 77R Food Understanding V3.
-- 77S Dietitian Voice Engine V2.
-- 77T AI Quality Evaluation Harness V1.
-- 77U Clinical Red-Team And RD Review Packet.
-- 77V Copilot Quality Workflow V1.
-- 77W Narrow Autopilot Eligibility V2.
-- 77X Expanded 100x50 AI Rehearsal And Risk Register.
-- 77Y Continuity, Evidence, And Launch Gate Update.
+- 77P Deterministic Template Library V1. **Completed 2026-06-13.**
+- 77Q Claim Manifest And Output Grounding V1. **Completed 2026-06-13.**
+- 77R Food Understanding V3. **Completed 2026-06-13.**
+- 77S Dietitian Voice Engine V2. **Completed 2026-06-13.**
+- 77T AI Quality Evaluation Harness V1. **Completed 2026-06-13.**
+- 77U Clinical Red-Team And RD Review Packet. **Completed 2026-06-13.**
+- 77V Copilot Quality Workflow V1. **Completed 2026-06-13.**
+- 77W Narrow Autopilot Eligibility V2. **Completed 2026-06-14.**
+- 77X Expanded 100x50 AI Rehearsal And Risk Register. **Completed 2026-06-14.**
+- 77Y Continuity, Evidence, And Launch Gate Update. **Completed 2026-06-14.**
+
+Next open engineering phase:
+
+- WhatsApp production adapter (mock/gated only).
 
 Done criteria:
 

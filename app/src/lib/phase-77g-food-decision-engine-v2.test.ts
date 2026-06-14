@@ -14,7 +14,8 @@ import {
   mapFoodDecisionV2ToLegacyFoodRule,
   matchCatalogFoodCandidates,
 } from "./phase-77g-food-decision-engine-v2";
-import { createInitialState } from "./seed-data";
+import { buildFoodUnderstandingV3Context } from "./phase-77r-food-understanding-v3";
+import { createInitialState, DEMO_TENANT_ID } from "./seed-data";
 
 const PEYNIR_FOOD_ID = "sut-urunleri__peynir__beyaz-peynir";
 const EGG_FOOD_ID = "yumurta__tavuk-yumurtasi__tavuk-yumurtasi";
@@ -90,6 +91,8 @@ describe("phase 77g food decision engine v2", () => {
     const result = evaluateFoodDecisionEngineV2({
       message: "Tavuk yumurtası yiyebilir miyim?",
       riskLevel: "green",
+      tenantId: DEMO_TENANT_ID,
+      foodAliasContext: buildFoodUnderstandingV3Context(DEMO_TENANT_ID),
       foodProfile: profile,
       activeMenu,
       personalForm: { goalType: "Kilo verme", goalKey: "kilo_verme" },
