@@ -15,8 +15,8 @@ Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized reference
 ## Current Baseline
 
 - Git baseline: Phase 27-29 checkpoint exists at `c75564e Add Phase 27-29 pilot readiness checkpoint` on branch `codex/phase-29-baseline-checkpoint`; Completion Roadmap Phase 1 records this as the current implementation baseline.
-- Latest local release verification: `npm run release:verify` passed on 2026-06-13 after Phase 77L continuity/worktree closure, with core tests 173/173, app tests 337/337, lint with two pre-existing warnings, production build, and only documented R-405 findings.
-- Verification result: `git diff --check` passed; app `npm test` passed with 53 files and 337 tests; release verification passed with core tests 173/173, app tests 337/337, lint, production build, and dependency audit gate.
+- Latest local release verification: `npm run release:verify` passed on 2026-06-22 after Phase 77Z repository cleanup, with core tests 225/225, app tests 384/384, lint with two pre-existing warnings, production build, and only documented R-405 findings.
+- Verification result: `git diff --check` passed; app `npm test` passed with 65 files and 384 tests; release verification passed with core tests 225/225, app tests 384/384, lint, production build, and dependency audit gate.
 - Dependency audit result: only known R-405 findings, `next:postcss` and `postcss:GHSA-qx2v-qp2m-jg93`.
 - R-405 status: open production launch blocker; Phase 54 rechecked metadata on 2026-06-02 and stable `next@latest` is 16.2.7 but still bundles `postcss@8.4.31`, so no safe stable Next.js/PostCSS patch path is available.
 - R-405 remediation spec: `PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`.
@@ -31,6 +31,7 @@ Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized reference
 - Secret rotation review packet: `PRODUCTION_PILOT_SECRET_ROTATION_REVIEW_PACKET.md` was added during Completion Roadmap Phase 11. It is a review packet, not an approval artifact.
 - Dependency audit clearance packet: `PRODUCTION_PILOT_DEPENDENCY_AUDIT_CLEARANCE_PACKET.md` was added during Completion Roadmap Phase 12. It is a review packet, not a clearance or risk-acceptance artifact.
 - Final readiness closure summary: `PRODUCTION_PILOT_FINAL_READINESS_CLOSURE_SUMMARY.md` was added during Completion Roadmap Phase 13. It records the current production-pilot decision as `NO-GO`.
+- Phase 77Z repository cleanup spec: `PHASE_77Z_REPOSITORY_CLEANUP_AND_CURSOR_PLAN_MIGRATION_SPEC.md` removes the obsolete tracked `.cursor` food green expansion plan after preserving its content in canonical Phase 76C-76Q specs and continuity evidence. It is repository organization only and not a gate-closure artifact.
 - Multilingual language support spec: `PHASE_43_MULTILINGUAL_LANGUAGE_SUPPORT_SPEC.md` was added after the completion roadmap. It is an implementation spec, not an external approval artifact.
 - Red-risk reactivation lock spec: `PHASE_44_RED_RISK_REACTIVATION_LOCK_SPEC.md` was added after Phase 43. It is an implementation spec, not an external approval artifact. It does not approve production pilot launch.
 - Client removal data lifecycle spec: `PHASE_45_CLIENT_REMOVAL_DATA_LIFECYCLE_SPEC.md` was added after Phase 44. It is an implementation spec, not an external approval artifact. Hard-delete timing and final retention still require legal/privacy approval.

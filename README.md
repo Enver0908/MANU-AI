@@ -6,9 +6,9 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 This repository is a local SaaS/PWA pilot prototype and architecture workspace. It is not a production-connected system yet.
 
-**Latest implementation phase:** Phase 77Y Continuity, Evidence, And Launch Gate Update (2026-06-14). **Next implementation phase:** WhatsApp production adapter (mock/gated; no real provider or channel connection until external gates close). **Production pilot:** `NO-GO` (all eight launch gates open; R-405 open).
+**Latest implementation phase:** Phase 77Z Repository Cleanup And Cursor Plan Migration (2026-06-22). **Next implementation phase:** WhatsApp production adapter (mock/gated; no real provider or channel connection until external gates close). **Production pilot:** `NO-GO` (all eight launch gates open; R-405 open).
 
-**Latest verification:** Phase 77Y verified on 2026-06-14: `git diff --check` passed; core tests 225/225; app tests 384/384; `npm run release:verify` passed with only documented R-405 findings; Phase 77M-77Y program closure recorded hard-zero expanded rehearsal metrics and clinical red-team zero unsafe sends.
+**Latest verification:** Phase 77Z verified on 2026-06-22: `git diff --check` passed; app tests passed with 65 files and 384 tests; `npm run release:verify` passed with core tests 225/225, app tests 384/384, lint with two pre-existing warnings, production build, and only documented R-405 findings. Phase 77Z removed the obsolete tracked `.cursor` plan after migrating its content into canonical Phase 76C-76Q docs.
 
 The current implementation includes:
 
@@ -66,6 +66,7 @@ The current implementation includes:
 - Phase 77K calibration and evidence closure: Food Decision V2 golden suite (14 categories), 100x50 V2 rehearsal with zero unsafe green, Phase 76O integration checks, and manual source authority track closure
 - Phase 77L continuity/worktree closure: stale continuity and evidence documents reconciled to the Phase 77K baseline, historical Phase 76E spec preserved, long-running rehearsal/release verification made deterministic, and the dirty Phase 77E-77K worktree closed into a coherent commit boundary
 - Phase 77M-77Y AI Quality Program plan: canonical pre-WhatsApp track for core-owned response planning, deterministic templates, claim manifest grounding, canonical intent resolution, Food Understanding V3, Dietitian Voice Engine V2, AI quality rehearsal, RD review packet, copilot quality workflow, and narrow deterministic autopilot eligibility while preserving green/yellow/red as the only client-visible risk classes
+- Phase 77Z repository cleanup: removed the obsolete tracked `.cursor` food green expansion plan; the migrated content lives in canonical Phase 76C-76Q specs and continuity evidence
 - Post-Phase 65 direct 100-dietitian completion plan in `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`, locking the no-small-ring 5,000-client production pilot target, product communication covenant, approved-source answerability path, and user-document timing
 
 ## Safety Model

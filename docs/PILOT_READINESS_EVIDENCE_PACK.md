@@ -18,7 +18,7 @@ Run from `app`:
 npm run release:verify
 ```
 
-Latest result, re-verified on 2026-06-14 after Phase 77Y continuity/evidence closure:
+Latest result, re-verified on 2026-06-22 after Phase 77Z repository cleanup:
 
 - Core package tests: 225/225 passed.
 - App tests: 384/384 passed.
@@ -27,7 +27,8 @@ Latest result, re-verified on 2026-06-14 after Phase 77Y continuity/evidence clo
 - Production build: passed.
 - Production dependency audit gate: passed with only documented R-405 findings.
 - R-405 remains open: Next.js 16.2.7 still bundles nested PostCSS 8.4.31, so no safe stable patch path is available.
-- Phase 77Y closes the 77M-77Y AI Quality Program locally through `docs/PHASE_77Y_CONTINUITY_EVIDENCE_AND_LAUNCH_GATE_UPDATE_SPEC.md` and `phase-77y-ai-quality-program-closure.ts`. Hard-zero expanded rehearsal sample metrics: `unsafe_client_send_count=0`, `source_unsupported_green_count=0`, `forbidden_food_approval_count=0`, `yellow_red_client_send_count=0`, `claim_outside_manifest_count=0`; `style_soft_mismatch_rate` remains under `0.35`. Clinical red-team closure preserved `unsafe_client_send_count=0` and `yellow_red_client_send_count=0`. Production pilot remains `NO-GO`; WhatsApp production adapter is next (mock/gated only).
+- Phase 77Z adds repository cleanup evidence through `docs/PHASE_77Z_REPOSITORY_CLEANUP_AND_CURSOR_PLAN_MIGRATION_SPEC.md`: the obsolete tracked `.cursor/plans/food_green_expansion_7671797e.plan.md` was removed, and its content is preserved in canonical Phase 76C-76Q specs plus Phase 76P continuity evidence. This changed repository organization and docs only; no runtime behavior, provider/channel path, launch gate, real-data handling, or R-405 status changed. Production pilot remains `NO-GO`; WhatsApp production adapter is next (mock/gated only).
+- Phase 77Y closes the 77M-77Y AI Quality Program locally through `docs/PHASE_77Y_CONTINUITY_EVIDENCE_AND_LAUNCH_GATE_UPDATE_SPEC.md` and `phase-77y-ai-quality-program-closure.ts`. Hard-zero expanded rehearsal sample metrics: `unsafe_client_send_count=0`, `source_unsupported_green_count=0`, `forbidden_food_approval_count=0`, `yellow_red_client_send_count=0`, `claim_outside_manifest_count=0`; `style_soft_mismatch_rate` remains under `0.35`. Clinical red-team closure preserved `unsafe_client_send_count=0` and `yellow_red_client_send_count=0`.
 - Phase 77X adds expanded 100x50 AI rehearsal (`ai-quality-expanded-rehearsal-v1-v0.1.0`), operational-health AI quality fields, and `npm run rehearse:ai:expanded` for full 5000-case mock-provider rehearsal.
 - Phase 61 added `scope_rules`, `scope_rule_chunks`, and `scope_guard_evaluations` migration; re-run `npm run test:rls` when local Supabase is available to record Phase 61 RLS evidence.
 - Phase 64 adds structured launch-gate evidence evaluation and real scope-guard provider gating, but no approval artifact was supplied, no gate was closed, and no real provider/channel/data path was connected.

@@ -17,13 +17,13 @@ These rules are non-negotiable and apply to every future phase:
 - Autopilot is not globally enabled for all 5,000 clients by default. It is enabled only for selected qualified clients after all gates, monitoring, and rollback controls are ready.
 
 ## Current Baseline
-- Latest completed implementation phase: Phase 77K calibration, 100x50 rehearsal, and evidence closure (2026-06-10).
-- Latest continuity/worktree closure phase: Phase 77L continuity reconciliation and worktree closure (2026-06-13).
+- Latest completed implementation phase: Phase 77Z repository cleanup and Cursor plan migration (2026-06-22).
+- Latest continuity/worktree closure phase: Phase 77Z repository cleanup and Cursor plan migration (2026-06-22).
 - Next implementation phase: WhatsApp production adapter (mock/gated; no real provider or channel connection until external gates close).
 - Latest roadmap rebaseline: Phase 77A manual source authority rebaseline spec (2026-06-10).
 - Detailed Phase 77 implementation plan: `docs/PHASE_77_MASTER_IMPLEMENTATION_PLAN.md`.
 - AI quality master plan: `docs/PHASE_77M_77Y_AI_QUALITY_MASTER_PLAN.md`.
-- Latest verification: Phase 77L `git diff --check`, `app` `npm test` (53 files, 337 tests), and `npm run release:verify` passed on 2026-06-13 with core tests 173/173, app tests 337/337, lint with two pre-existing warnings, production build, and only documented R-405 findings.
+- Latest verification: Phase 77Z `git diff --check`, `app` `npm test` (65 files, 384 tests), and `npm run release:verify` passed on 2026-06-22 with core tests 225/225, app tests 384/384, lint with two pre-existing warnings, production build, and only documented R-405 findings.
 - Production pilot status: `NO-GO`.
 - Real WhatsApp, Gemini, monitoring, secret manager, and real client health data remain disconnected.
 - Existing usable foundations:
@@ -231,6 +231,20 @@ Done criteria:
 - Release verification includes a deterministic AI quality subset; full AI rehearsal runs separately with mock provider only.
 - No real provider, channel, launch-gate approval, real-data handling, or R-405 status changes occur.
 - Production pilot remains `NO-GO`.
+
+## Phase 77Z: Repository Cleanup And Cursor Plan Migration - Completed 2026-06-22
+Goal: remove obsolete editor-local planning artifacts while preserving canonical continuity.
+
+Completed:
+- Added `docs/PHASE_77Z_REPOSITORY_CLEANUP_AND_CURSOR_PLAN_MIGRATION_SPEC.md`.
+- Removed `.cursor/plans/food_green_expansion_7671797e.plan.md` from tracked files.
+- Recorded that the removed Cursor plan content is preserved in canonical Phase 76C-76Q specs and Phase 76P continuity evidence.
+- Confirmed the Food Understanding V3 alias JSON/JSONL files, historical phase specs, evidence docs, migrations, datasets, and tests are intentional repository contents.
+- No runtime behavior, provider, channel, launch-gate approval, real-data handling, or R-405 status changed.
+- Production pilot remains `NO-GO`.
+
+Next:
+- WhatsApp production adapter (mock/gated only).
 
 ## Phase 66: Product Communication Covenant Lock
 Goal: encode the fixed product laws into provider output safety, prompt contracts, tests, and continuity docs.

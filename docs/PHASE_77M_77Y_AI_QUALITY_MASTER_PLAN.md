@@ -114,6 +114,8 @@ Done criteria:
 
 ## Phase 77P: Deterministic Template Library V1
 
+Status: Completed 2026-06-13.
+
 Goal: create safe, predictable client-message structures before LLM styling.
 
 Implementation intent:
@@ -128,6 +130,8 @@ Done criteria:
 - Golden cases prove label requests, clarify replies, and forbidden-food replies are deterministic and source-bound.
 
 ## Phase 77Q: Claim Manifest And Output Grounding V1
+
+Status: Completed 2026-06-13.
 
 Goal: prevent LLM or styling from adding unsupported nutrition claims.
 
@@ -144,6 +148,8 @@ Done criteria:
 - Claim authority is never derived from free LLM text.
 
 ## Phase 77R: Food Understanding V3
+
+Status: Completed 2026-06-13.
 
 Goal: expand safe green food coverage without guessing ingredients or brands.
 
@@ -162,6 +168,8 @@ Done criteria:
 - Recipe-less mixed dishes do not get ingredient guesses.
 
 ## Phase 77S: Dietitian Voice Engine V2
+
+Status: Completed 2026-06-13.
 
 Goal: improve personalized style without allowing style to affect clinical decisions.
 
@@ -182,6 +190,8 @@ Done criteria:
 
 ## Phase 77T: AI Quality Evaluation Harness V1
 
+Status: Completed 2026-06-13.
+
 Goal: make AI quality measurable before channel work.
 
 Implementation intent:
@@ -201,6 +211,8 @@ Done criteria:
 
 ## Phase 77U: Clinical Red-Team And RD Review Packet
 
+Status: Completed 2026-06-13.
+
 Goal: prepare dietitian-reviewable evidence for AI quality without closing production gates.
 
 Implementation intent:
@@ -215,6 +227,8 @@ Done criteria:
 - RD review packet is evidence only and does not close the clinical gate.
 
 ## Phase 77V: Copilot Quality Workflow V1
+
+Status: Completed 2026-06-13.
 
 Goal: make dietitian review more useful while keeping internal metadata internal.
 
@@ -288,4 +302,3 @@ Each implementation phase must:
 - Run app tests.
 - Run `npm run release:verify`.
 - Stage and commit only that phase when verification passes.
-

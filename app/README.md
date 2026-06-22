@@ -40,9 +40,9 @@ The scripts use `--webpack` because Turbopack did not resolve the local symlinke
 
 `npm run release:verify` runs the core package tests, lint, unit/API tests, production build, and the production dependency audit gate. It cleans generated `.next` output before the production build so repeated local Windows/OneDrive runs do not fail on stale build artifacts. It allows only the documented R-405 Next.js/PostCSS finding and does not run `npm audit fix --force`.
 
-Latest local release verification on 2026-06-14 passed after Phase 77Y with core tests 225/225, app tests 384/384, lint with two pre-existing warnings, production build, and only the documented R-405 production audit finding. Phase 77M-77Y AI Quality Program is complete locally. Next open implementation phase is WhatsApp production adapter (mock/gated only) per `../docs/PHASE_77Y_CONTINUITY_EVIDENCE_AND_LAUNCH_GATE_UPDATE_SPEC.md`; real channel/provider traffic remains blocked until external gates close.
+Latest local release verification on 2026-06-22 passed after Phase 77Z with core tests 225/225, app tests 384/384, lint with two pre-existing warnings, production build, and only the documented R-405 production audit finding. Phase 77M-77Y AI Quality Program is complete locally, and Phase 77Z removed the obsolete tracked `.cursor` food green expansion plan after preserving its content in canonical Phase 76C-76Q docs. Next open implementation phase is WhatsApp production adapter (mock/gated only) per `../docs/PHASE_77Z_REPOSITORY_CLEANUP_AND_CURSOR_PLAN_MIGRATION_SPEC.md`; real channel/provider traffic remains blocked until external gates close.
 
-Phase 77Y closed continuity/pilot/gate docs and recorded hard-zero expanded rehearsal sample metrics plus clinical red-team closure. Phase 77A-77K manual source authority work remains complete locally.
+Phase 77Y closed continuity/pilot/gate docs and recorded hard-zero expanded rehearsal sample metrics plus clinical red-team closure. Phase 77Z is repository cleanup only. Phase 77A-77K manual source authority work remains complete locally.
 
 Phase 29 is documentation/evidence hardening only. It keeps production pilot blocked, records that stable `next@latest` 16.2.6 still bundles `postcss@8.4.31`, and requires local Supabase before RLS evidence can be counted as passed.
 

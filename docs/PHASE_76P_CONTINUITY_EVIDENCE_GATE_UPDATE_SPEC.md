@@ -11,7 +11,8 @@ This phase does not approve production pilot launch, close any launch gate, conn
 ## Scope
 
 - New phase spec (this document).
-- Continuity updates: `HANDOFF_FOR_NEXT_CODEX.md`, `PLAN.md`, `PROJECT_PLAN.md`, `README.md`, `app/README.md`, `docs/NEXT_PHASE_EXECUTION_PLAN.md`, `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`, `.cursor/plans/food_green_expansion_7671797e.plan.md`.
+- Continuity updates: `HANDOFF_FOR_NEXT_CODEX.md`, `PLAN.md`, `PROJECT_PLAN.md`, `README.md`, `app/README.md`, `docs/NEXT_PHASE_EXECUTION_PLAN.md`, `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`.
+- Phase 77Z later removed the obsolete tracked Cursor plan `.cursor/plans/food_green_expansion_7671797e.plan.md`; its content is preserved in the canonical Phase 76C-76Q specs and this Phase 76P continuity evidence file.
 - Pilot evidence updates: `docs/PILOT_READINESS_EVIDENCE_PACK.md`, `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md`, `docs/PRODUCTION_PILOT_FINAL_READINESS_CLOSURE_SUMMARY.md`.
 - Risk register updates for R-109, R-117, R-310, R-403, R-409, R-412, R-413, and R-414 (product ingredient source uncertainty).
 - Clinical taxonomy review packet food-rule track evidence table.

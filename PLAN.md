@@ -675,8 +675,10 @@ Phase 77L continuity reconciliation and worktree closure completed locally on 20
 
 Phase 77M-77Y AI Quality Program master rebaseline and spec completed on 2026-06-13: added `docs/PHASE_77M_MASTER_REBASELINE_AND_SPEC.md`, finalized `docs/PHASE_77M_77Y_AI_QUALITY_MASTER_PLAN.md`, recorded superseded alternate Phase 78A-M numbering, locked core-owned `responsePlan`, deterministic templates, manifest-first grounding, fail-closed unknown-intent handling, and `normalize-safety-text.js` as the single normalization source to extend. This planning closure adds no runtime behavior, provider/channel connection, launch-gate approval, production pilot GO, real-data handling, or R-405 change.
 
-1. Start Phase 77N Canonical Intent Understanding V2 as the next implementation phase.
-2. Resume deferred WhatsApp production adapter only after Phase 77M-77Y is complete.
+Phase 77Z repository cleanup and Cursor plan migration completed locally on 2026-06-22: added `docs/PHASE_77Z_REPOSITORY_CLEANUP_AND_CURSOR_PLAN_MIGRATION_SPEC.md`, removed the obsolete tracked `.cursor/plans/food_green_expansion_7671797e.plan.md`, documented that its content is preserved in canonical Phase 76C-76Q specs and Phase 76P continuity evidence, retained runtime/evidence datasets such as the Food Understanding V3 alias JSON/JSONL files, and aligned continuity docs to the post-77Y baseline. This phase changed documentation and repository organization only; no runtime behavior, provider/channel connection, launch-gate approval, production pilot GO, real-data handling, or R-405 status changed.
+
+1. Start the WhatsApp production adapter as the next implementation phase, mock/gated only.
+2. Keep real WhatsApp, Telegram, Gemini, monitoring, secrets, and real client health data disconnected until external gates close.
 3. Complete production operations evidence, R-405 closure/acceptance, production rehearsal/channel replay acceptance, and external launch-gate closure before direct production GO.
 4. Keep real Gemini/WhatsApp/monitoring/secret/real data disconnected until their gated phases.
 5. Accept official regulation PDFs in Phase 71 and use the Phase 65 QA foundation; do not activate official corpus production routing until external legal/clinical launch gates close even though Phase 72 draft permission graph artifacts exist.

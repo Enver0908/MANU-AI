@@ -4,15 +4,15 @@ Date: 2026-06-04
 
 ## Status
 
-This is the final summary for the 13-phase completion roadmap, updated through Phase 77Y continuity/evidence closure, including the full Phase 77A-77K manual source authority rebaseline, Phase 77L worktree closure, and the completed Phase 77M-77Y AI Quality Program.
+This is the final summary for the 13-phase completion roadmap, updated through Phase 77Z repository cleanup, including the full Phase 77A-77K manual source authority rebaseline, Phase 77L worktree closure, and the completed Phase 77M-77Y AI Quality Program.
 
 Production pilot is not approved.
 
-Latest local roadmap state closes Phase 77A-77L, Phase 77M-77Y AI Quality Program (77N-77Y inclusive), and records hard-zero expanded rehearsal sample metrics plus clinical red-team closure. WhatsApp production adapter is the next implementation phase (mock/gated only); real channel traffic remains blocked.
+Latest local roadmap state closes Phase 77A-77L, Phase 77M-77Y AI Quality Program (77N-77Y inclusive), and Phase 77Z repository cleanup, and records hard-zero expanded rehearsal sample metrics plus clinical red-team closure. WhatsApp production adapter is the next implementation phase (mock/gated only); real channel traffic remains blocked.
 
 No real WhatsApp, Telegram, Gemini, external LLM provider, email, push, monitoring, analytics, secret manager, backup provider, or real client health data is connected.
 
-Post-Phase 77Y strategic roadmap: `DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` defines the direct production pilot path as 100 dietitians x 50 clients, with no small production ring. The full Phase 77M-77Y AI Quality Program is complete locally with expanded rehearsal hard-zero evidence. WhatsApp production adapter is next (mock/gated only). External legal/privacy approval, external qualified dietitian approval, final production form/PDF/catalog/menu approvals, Phase 76N RLS re-run when local Supabase is available, production operations evidence, external gates, and R-405 closure/acceptance remain required before production GO.
+Post-Phase 77Z strategic roadmap: `DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` defines the direct production pilot path as 100 dietitians x 50 clients, with no small production ring. The full Phase 77M-77Y AI Quality Program is complete locally with expanded rehearsal hard-zero evidence, and the obsolete tracked `.cursor` plan has been removed after migration to canonical Phase 76C-76Q docs. WhatsApp production adapter is next (mock/gated only). External legal/privacy approval, external qualified dietitian approval, final production form/PDF/catalog/menu approvals, Phase 76N RLS re-run when local Supabase is available, production operations evidence, external gates, and R-405 closure/acceptance remain required before production GO.
 
 ## Go / No-Go Decision
 
@@ -23,6 +23,7 @@ Reason:
 - All eight production-pilot launch gates remain open.
 - R-405 remains an open production launch blocker.
 - R-406 is now mitigated in the local prototype by a passing local Supabase RLS run, but production pilot still requires the external launch gates and R-405 clearance or acceptance.
+- Phase 77Z cleaned repository planning artifacts only; it did not close gates, connect providers/channels, process real data, or resolve R-405.
 - No external approval artifacts were supplied during the completion roadmap.
 - Phase 43 added multilingual local/mock support but did not approve any launch gate.
 - Phase 44 added local red-risk reactivation locking but did not approve any launch gate.
@@ -139,11 +140,13 @@ External approvals:
 
 ## Verification
 
-Latest local release verification after Phase 77K calibration/rehearsal/evidence closure:
+Latest local release verification after Phase 77Z repository cleanup:
 
-- `npm run release:verify` passed on 2026-06-10.
-- Core tests: 173/173 passed.
-- App tests: 337/337 passed.
+- `git diff --check` passed on 2026-06-22.
+- `app` `npm test` passed on 2026-06-22 with 65 files and 384 tests.
+- `npm run release:verify` passed on 2026-06-22.
+- Core tests: 225/225 passed.
+- App tests: 384/384 passed.
 - App lint: passed with two pre-existing warnings.
 - Production build: passed.
 - Production dependency audit gate passed with only documented R-405 findings.
