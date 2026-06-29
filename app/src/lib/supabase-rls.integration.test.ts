@@ -37,6 +37,8 @@ const TEST_NOTIFICATION_ID = "00000000-0000-4000-8000-000000000910";
 const OTHER_NOTIFICATION_ID = "00000000-0000-4000-8000-000000000911";
 const TEST_INBOUND_QUARANTINE_ID = "00000000-0000-4000-8000-000000000933";
 const OTHER_INBOUND_QUARANTINE_ID = "00000000-0000-4000-8000-000000000934";
+const TEST_CHANNEL_DELIVERY_ID = "00000000-0000-4000-8000-000000000935";
+const OTHER_CHANNEL_DELIVERY_ID = "00000000-0000-4000-8000-000000000936";
 const TEST_ASSIGNMENT_ID = "00000000-0000-4000-8000-000000000912";
 const OTHER_ASSIGNMENT_ID = "00000000-0000-4000-8000-000000000913";
 const TEST_DATA_REQUEST_ID = "00000000-0000-4000-8000-000000000914";
@@ -139,6 +141,18 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     expect(inboundQuarantines.error).toBeNull();
     expect(inboundQuarantines.data).toEqual([{ id: TEST_INBOUND_QUARANTINE_ID }]);
 
+    const channelDeliveries = await member.from("channel_deliveries").select("id");
+    expect(channelDeliveries.error).toBeNull();
+    expect(channelDeliveries.data).toEqual([{ id: TEST_CHANNEL_DELIVERY_ID }]);
+
+    const rollbackControls = await member
+      .from("channel_adapter_rollback_controls")
+      .select("tenant_id, global_channel_automation_disabled");
+    expect(rollbackControls.error).toBeNull();
+    expect(rollbackControls.data).toEqual([
+      { tenant_id: TEST_TENANT_ID, global_channel_automation_disabled: true },
+    ]);
+
     const assignments = await member.from("client_assignments").select("id").eq("id", TEST_ASSIGNMENT_ID);
     expect(assignments.error).toBeNull();
     expect(assignments.data).toEqual([{ id: TEST_ASSIGNMENT_ID }]);
@@ -182,6 +196,14 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     const inboundQuarantines = await outsider.from("inbound_quarantines").select("id");
     expect(inboundQuarantines.error).toBeNull();
     expect(inboundQuarantines.data).toHaveLength(0);
+
+    const channelDeliveries = await outsider.from("channel_deliveries").select("id");
+    expect(channelDeliveries.error).toBeNull();
+    expect(channelDeliveries.data).toHaveLength(0);
+
+    const rollbackControls = await outsider.from("channel_adapter_rollback_controls").select("tenant_id");
+    expect(rollbackControls.error).toBeNull();
+    expect(rollbackControls.data).toHaveLength(0);
 
     const assignments = await outsider.from("client_assignments").select("id");
     expect(assignments.error).toBeNull();
@@ -373,6 +395,7 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
       ["handoff_cases", "id"],
       ["risk_assessments", "id"],
       ["inbound_quarantines", "id"],
+      ["channel_deliveries", "id"],
       ["internal_copilot_messages", "id"],
       ["internal_copilot_tool_calls", "id"],
     ] as const) {
@@ -1404,12 +1427,54 @@ async function seedTenants(
       },
     ]),
   );
+  await checked(
+    admin.from("channel_deliveries").insert([
+      {
+        id: TEST_CHANNEL_DELIVERY_ID,
+        tenant_id: TEST_TENANT_ID,
+        client_id: TEST_CLIENT_ID,
+        conversation_id: TEST_CONVERSATION_ID,
+        message_id: TEST_MESSAGE_ID,
+        channel: "whatsapp",
+        direction: "outbound",
+        mock_provider_message_id: "wamid.MOCK_VISIBLE_RLS",
+        delivery_status: "delivered",
+      },
+      {
+        id: OTHER_CHANNEL_DELIVERY_ID,
+        tenant_id: OTHER_TENANT_ID,
+        client_id: OTHER_CLIENT_ID,
+        conversation_id: OTHER_CONVERSATION_ID,
+        message_id: OTHER_MESSAGE_ID,
+        channel: "whatsapp",
+        direction: "outbound",
+        mock_provider_message_id: "wamid.MOCK_HIDDEN_RLS",
+        delivery_status: "delivered",
+      },
+    ]),
+  );
+  await checked(
+    admin.from("channel_adapter_rollback_controls").insert([
+      {
+        tenant_id: TEST_TENANT_ID,
+        global_channel_automation_disabled: true,
+        disabled_client_ids: [TEST_CLIENT_ID],
+      },
+      {
+        tenant_id: OTHER_TENANT_ID,
+        global_channel_automation_disabled: true,
+        disabled_client_ids: [OTHER_CLIENT_ID],
+      },
+    ]),
+  );
 }
 
 async function cleanup(admin: SupabaseClient) {
   await admin.from("processed_inbound_events").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("channel_adapter_rollback_controls").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("internal_copilot_messages").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("internal_copilot_tool_calls").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("channel_deliveries").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("inbound_quarantines").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("notifications").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("data_requests").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);

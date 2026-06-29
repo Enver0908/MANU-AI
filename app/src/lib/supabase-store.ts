@@ -35,6 +35,7 @@ import {
   simulateInState,
   updateVoiceSampleStatus,
   updateHandoffStatusInState,
+  setChannelAdapterRollbackInState,
 } from "./app-state-store";
 import type { AppTenantContext } from "./auth-context";
 import type { CreateClientContextUpdateInput } from "./client-context-updates";
@@ -60,6 +61,8 @@ import type {
   DietitianVoiceSampleRecord,
   HandoffCaseRecord,
   InboundQuarantineRecord,
+  ChannelDeliveryRecord,
+  ChannelAdapterRollbackControls,
   InternalCopilotMessageRecord,
   InternalCopilotSourceRef,
   InternalCopilotToolCallRecord,
@@ -72,6 +75,8 @@ import type {
   VoiceSampleStatus,
 } from "./types";
 import { normalizeLanguageCode } from "./languages";
+import { processWhatsAppMockWebhookInState } from "./whatsapp-mock-webhook";
+import { createDefaultChannelAdapterRollbackControls } from "./channel-adapter-rollback";
 
 export const DEMO_TENANT_UUID = "00000000-0000-4000-8000-000000000001";
 export const DEMO_DIETITIAN_UUID = "00000000-0000-4000-8000-000000000002";
@@ -381,6 +386,28 @@ type DbInboundQuarantine = {
   reason: InboundQuarantineRecord["reason"];
   created_at: string;
 };
+type DbChannelDelivery = {
+  id: string;
+  tenant_id: string;
+  client_id: string;
+  conversation_id: string;
+  message_id: string;
+  channel: ChannelDeliveryRecord["channel"];
+  direction: ChannelDeliveryRecord["direction"];
+  mock_provider_message_id: string;
+  delivery_status: ChannelDeliveryRecord["deliveryStatus"];
+  failure_code: string | null;
+  created_at: string;
+  updated_at: string;
+};
+type DbChannelAdapterRollbackControls = {
+  tenant_id: string;
+  global_channel_automation_disabled: boolean;
+  tenant_channel_automation_disabled: boolean;
+  disabled_dietitian_ids: string[];
+  disabled_client_ids: string[];
+  updated_at: string;
+};
 
 export function isSupabaseStoreConfigured() {
   if (process.env.MANU_DEV_FALLBACK_STORE === "true") {
@@ -419,6 +446,8 @@ export async function loadSupabaseState(context = demoTenantContext()) {
     clientFoodRuleProfilesResult,
     clientMenuPlansResult,
     inboundQuarantinesResult,
+    channelDeliveriesResult,
+    channelAdapterRollbackResult,
     auditEventsResult,
     processedEventsResult,
   ] = await Promise.all([
@@ -446,6 +475,8 @@ export async function loadSupabaseState(context = demoTenantContext()) {
     supabase.from("client_food_rule_profiles").select("*").eq("tenant_id", context.tenantId).order("updated_at"),
     supabase.from("client_menu_plans").select("*").eq("tenant_id", context.tenantId).order("updated_at"),
     supabase.from("inbound_quarantines").select("*").eq("tenant_id", context.tenantId).order("created_at"),
+    supabase.from("channel_deliveries").select("*").eq("tenant_id", context.tenantId).order("created_at"),
+    supabase.from("channel_adapter_rollback_controls").select("*").eq("tenant_id", context.tenantId).maybeSingle(),
     supabase.from("audit_events").select("*").eq("tenant_id", context.tenantId).order("created_at"),
     supabase.from("processed_inbound_events").select("*").eq("tenant_id", context.tenantId),
   ]);
@@ -474,6 +505,8 @@ export async function loadSupabaseState(context = demoTenantContext()) {
   throwIfError(clientFoodRuleProfilesResult.error);
   throwIfError(clientMenuPlansResult.error);
   throwIfError(inboundQuarantinesResult.error);
+  throwIfError(channelDeliveriesResult.error);
+  throwIfError(channelAdapterRollbackResult.error);
   throwIfError(auditEventsResult.error);
   throwIfError(processedEventsResult.error);
 
@@ -513,6 +546,8 @@ export async function loadSupabaseState(context = demoTenantContext()) {
       handoffCases: (handoffsResult.data || []).map(mapHandoff),
       notifications: (notificationsResult.data || []).map(mapNotification),
       inboundQuarantines: (inboundQuarantinesResult.data || []).map(mapInboundQuarantine),
+      channelDeliveries: (channelDeliveriesResult.data || []).map(mapChannelDelivery),
+      channelAdapterRollback: mapChannelAdapterRollbackControls(channelAdapterRollbackResult.data),
       dataRequests: (dataRequestsResult.data || []).map(mapDataRequest),
       internalCopilotMessages: (internalCopilotMessagesResult.data || []).map(mapInternalCopilotMessage),
       internalCopilotToolCalls: (internalCopilotToolCallsResult.data || []).map(mapInternalCopilotToolCall),
@@ -545,7 +580,15 @@ async function loadSupabaseClientOperationState(
   const supabase = requireSupabase();
   await ensureDemoData(supabase, context.userId);
 
-  const [tenantResult, dietitianResult, clientResult, assignmentsResult, channelsResult, voiceProfilesResult] =
+  const [
+    tenantResult,
+    dietitianResult,
+    clientResult,
+    assignmentsResult,
+    channelsResult,
+    voiceProfilesResult,
+    channelAdapterRollbackResult,
+  ] =
     await Promise.all([
       supabase.from("tenants").select("*").eq("id", context.tenantId).single(),
       supabase.from("dietitians").select("*").eq("id", context.dietitianId).eq("tenant_id", context.tenantId).single(),
@@ -558,6 +601,7 @@ async function loadSupabaseClientOperationState(
         .eq("tenant_id", context.tenantId)
         .eq("dietitian_id", context.dietitianId)
         .order("updated_at"),
+      supabase.from("channel_adapter_rollback_controls").select("*").eq("tenant_id", context.tenantId).maybeSingle(),
     ]);
 
   throwIfError(tenantResult.error);
@@ -566,6 +610,7 @@ async function loadSupabaseClientOperationState(
   throwIfError(assignmentsResult.error);
   throwIfError(channelsResult.error);
   throwIfError(voiceProfilesResult.error);
+  throwIfError(channelAdapterRollbackResult.error);
 
   if (!clientResult.data) {
     throw new AppDomainError(404, "client_not_found");
@@ -764,6 +809,8 @@ async function loadSupabaseClientOperationState(
       handoffCases: mergeById([...(handoffsResult.data || []), ...(requiredHandoffResult.data || [])]).map(mapHandoff),
       notifications: [],
       inboundQuarantines: [],
+      channelDeliveries: [],
+      channelAdapterRollback: mapChannelAdapterRollbackControls(channelAdapterRollbackResult.data),
       dataRequests: [],
       internalCopilotMessages: [],
       internalCopilotToolCalls: [],
@@ -903,6 +950,9 @@ export function scopeSupabaseState(
       ? state.inboundQuarantines
       : [];
   const visibleInboundQuarantineIds = new Set(visibleInboundQuarantines.map((quarantine) => quarantine.id));
+  const visibleChannelDeliveries = state.channelDeliveries.filter((delivery) => visibleClientIds.has(delivery.clientId));
+  const visibleChannelDeliveryIds = new Set(visibleChannelDeliveries.map((delivery) => delivery.id));
+  const canReadRollbackAudit = context.role === "owner" || context.role === "admin" || context.role === "dietitian";
 
   return {
     ...state,
@@ -926,6 +976,7 @@ export function scopeSupabaseState(
       (notification) => notification.entityType === "handoff_case" && visibleHandoffIds.has(notification.entityId),
     ),
     inboundQuarantines: visibleInboundQuarantines,
+    channelDeliveries: visibleChannelDeliveries,
     dataRequests: state.dataRequests.filter((request) => visibleClientIds.has(request.clientId)),
     internalCopilotMessages: visibleInternalCopilotMessages,
     internalCopilotToolCalls: visibleInternalCopilotToolCalls,
@@ -940,7 +991,9 @@ export function scopeSupabaseState(
         visibleClientUpdateProposalIds.has(event.entityId) ||
         visibleInternalCopilotMessageIds.has(event.entityId) ||
         visibleInternalCopilotToolCallIds.has(event.entityId) ||
-        visibleInboundQuarantineIds.has(event.entityId),
+        visibleInboundQuarantineIds.has(event.entityId) ||
+        visibleChannelDeliveryIds.has(event.entityId) ||
+        (canReadRollbackAudit && event.eventType === "channel_automation_rollback_updated"),
     ),
   };
 }
@@ -1066,6 +1119,16 @@ export async function removeSupabaseClientData(clientId: string, context = demoT
   return persistSupabaseClientRemovalLifecycle(before, after, clientId, context);
 }
 
+export async function setSupabaseChannelAdapterRollback(
+  input: Parameters<typeof setChannelAdapterRollbackInState>[1],
+  context = demoTenantContext(),
+) {
+  const before = await loadSupabaseState(context);
+  const after = setChannelAdapterRollbackInState(before, input);
+  await commitStateDeltaRpc(requireSupabase(), "commit_channel_adapter_rollback", before, after);
+  return loadSupabaseState(context);
+}
+
 async function persistSupabaseClientRemovalLifecycle(
   before: ManuAppState,
   after: ManuAppState,
@@ -1086,6 +1149,13 @@ async function persistSupabaseClientRemovalLifecycle(
   const beforeRequests = new Set(before.dataRequests.map((item) => item.id));
 
   await commitStateDeltaRpc(supabase, "commit_client_removal_lifecycle", before, after);
+  await checked(
+    supabase
+      .from("channel_deliveries")
+      .delete()
+      .eq("tenant_id", context.tenantId)
+      .eq("client_id", client.id),
+  );
   await checked(
     supabase
       .from("client_channels")
@@ -1199,6 +1269,17 @@ export async function runSupabaseSimulation(request: SimulationRequest, context 
     request.channel || simulationClient?.channel,
   );
   return loadSupabaseStateWithLastSimulation(next, context);
+}
+
+export async function runSupabaseWhatsAppMockWebhook(payload: unknown, context = demoTenantContext()) {
+  const state = await loadSupabaseState(context);
+  const { state: next, result } = await processWhatsAppMockWebhookInState(state, payload);
+
+  if (result.status !== "rejected") {
+    await commitStateDeltaRpc(requireSupabase(), "commit_inbound_simulation", state, next, "whatsapp");
+  }
+
+  return { webhookResult: result };
 }
 
 export async function updateSupabaseHandoffStatus(
@@ -1601,6 +1682,7 @@ async function ensureDemoMembership(supabase: SupabaseClient, userId: string) {
 async function deleteDemoData(supabase: SupabaseClient, tenantId = DEMO_TENANT_UUID) {
   const tables = [
     "processed_inbound_events",
+    "channel_adapter_rollback_controls",
     "client_food_rule_profiles",
     "client_menu_plans",
     "client_context_updates",
@@ -1611,6 +1693,7 @@ async function deleteDemoData(supabase: SupabaseClient, tenantId = DEMO_TENANT_U
     "internal_copilot_tool_calls",
     "data_requests",
     "notifications",
+    "channel_deliveries",
     "inbound_quarantines",
     "audit_events",
     "handoff_cases",
@@ -1801,6 +1884,7 @@ function buildStateDeltaPayload(
   const beforeHandoffsById = new Map(before.handoffCases.map((item) => [item.id, item]));
   const beforeNotifications = new Set(before.notifications.map((item) => item.id));
   const beforeQuarantines = new Set(before.inboundQuarantines.map((item) => item.id));
+  const beforeChannelDeliveries = new Set(before.channelDeliveries.map((item) => item.id));
   const beforeAudits = new Set(before.auditEvents.map((item) => item.id));
   const beforeProcessed = new Set(before.processedSimulationKeys);
   const beforeFormResponsesById = new Map(before.clientFormResponses.map((item) => [item.id, item]));
@@ -1857,6 +1941,13 @@ function buildStateDeltaPayload(
     inboundQuarantines: after.inboundQuarantines
       .filter((item) => !beforeQuarantines.has(item.id))
       .map(serializeInboundQuarantineForRpc),
+    channelDeliveries: after.channelDeliveries
+      .filter((item) => !beforeChannelDeliveries.has(item.id))
+      .map(serializeChannelDeliveryForRpc),
+    channelAdapterRollbackControls:
+      JSON.stringify(before.channelAdapterRollback) === JSON.stringify(after.channelAdapterRollback)
+        ? null
+        : serializeChannelAdapterRollbackControlsForRpc(after.channelAdapterRollback),
     clientContextUpdates: after.clientContextUpdates
       .filter((item) => !beforeContextUpdatesById.has(item.id))
       .map(serializeClientContextUpdateForRpc),
@@ -2057,6 +2148,31 @@ function serializeInboundQuarantineForRpc(quarantine: InboundQuarantineRecord) {
     senderChannelUserId: quarantine.senderChannelUserId,
     reason: quarantine.reason,
     createdAt: quarantine.createdAt,
+  };
+}
+
+function serializeChannelDeliveryForRpc(delivery: ChannelDeliveryRecord) {
+  return {
+    id: delivery.id,
+    clientId: delivery.clientId,
+    conversationId: delivery.conversationId,
+    messageId: delivery.messageId,
+    channel: delivery.channel,
+    direction: delivery.direction,
+    mockProviderMessageId: delivery.mockProviderMessageId,
+    deliveryStatus: delivery.deliveryStatus,
+    failureCode: delivery.failureCode,
+    createdAt: delivery.createdAt,
+    updatedAt: delivery.updatedAt,
+  };
+}
+
+function serializeChannelAdapterRollbackControlsForRpc(controls: ChannelAdapterRollbackControls) {
+  return {
+    globalChannelAutomationDisabled: controls.globalChannelAutomationDisabled,
+    tenantChannelAutomationDisabled: controls.tenantChannelAutomationDisabled,
+    disabledDietitianIds: controls.disabledDietitianIds,
+    disabledClientIds: controls.disabledClientIds,
   };
 }
 
@@ -2999,6 +3115,38 @@ function mapInboundQuarantine(quarantine: DbInboundQuarantine): InboundQuarantin
     senderChannelUserId: quarantine.sender_channel_user_id,
     reason: quarantine.reason,
     createdAt: quarantine.created_at,
+  };
+}
+
+function mapChannelDelivery(delivery: DbChannelDelivery): ChannelDeliveryRecord {
+  return {
+    id: delivery.id,
+    tenantId: delivery.tenant_id,
+    clientId: delivery.client_id,
+    conversationId: delivery.conversation_id,
+    messageId: delivery.message_id,
+    channel: delivery.channel,
+    direction: delivery.direction,
+    mockProviderMessageId: delivery.mock_provider_message_id,
+    deliveryStatus: delivery.delivery_status,
+    failureCode: delivery.failure_code,
+    createdAt: delivery.created_at,
+    updatedAt: delivery.updated_at,
+  };
+}
+
+function mapChannelAdapterRollbackControls(
+  controls: DbChannelAdapterRollbackControls | null,
+): ChannelAdapterRollbackControls {
+  if (!controls) {
+    return createDefaultChannelAdapterRollbackControls();
+  }
+
+  return {
+    globalChannelAutomationDisabled: controls.global_channel_automation_disabled,
+    tenantChannelAutomationDisabled: controls.tenant_channel_automation_disabled,
+    disabledDietitianIds: controls.disabled_dietitian_ids || [],
+    disabledClientIds: controls.disabled_client_ids || [],
   };
 }
 

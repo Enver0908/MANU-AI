@@ -30,7 +30,7 @@ describe("phase 74 data lifecycle policy", () => {
     const state = createInitialState();
     const exportPackage = buildPhase74ExportPackage(state, "client-mert");
 
-    expect(exportPackage.manifest.exportVersion).toBe("phase74-export-v1.2");
+    expect(exportPackage.manifest.exportVersion).toBe("phase74-export-v1.3");
     expect(exportPackage.files["personal_form_v2.json"]).toContain("phase-77j-data-lifecycle-v1.2");
     expect(exportPackage.files["catalog_version_refs.json"]).toContain("activeCatalog");
     expect(exportPackage.manifest.scope).toBe("client_full_export");

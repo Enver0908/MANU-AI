@@ -25,6 +25,13 @@ import { getActiveVoiceProfile } from "./voice-profile-workflow";
 import { getStyleEditHistorySignals, recordStyleEditHistoryInState } from "./phase-77s-style-edit-history";
 import { getMissingSafetyChecklistItems, isSafetyChecklistComplete } from "./safety-checklist";
 import { AppDomainError } from "./app-errors";
+import { evaluateMockWhatsAppOutboundPolicy } from "./whatsapp-channel-policy-mock";
+import { evaluateChannelAutomationRollback } from "./channel-adapter-rollback";
+import {
+  buildChannelDeliveryRecord,
+  isChannelDeliveryLedgerChannel,
+  resolveMockChannelDeliveryOutcome,
+} from "./channel-mock-delivery-ledger";
 import { appendPermissionGraphEvaluation } from "./phase-76l-permission-graph-runtime";
 import { appendScopeGuardEvaluation } from "./scope-guard-runtime";
 import { SAFETY_CLASSIFIER_VERSION, classifySimulationRisk } from "./simulator-risk";
@@ -39,6 +46,7 @@ import type {
   RiskAssessmentRecord,
   SimulationRequest,
   NotificationRecord,
+  ChannelDeliveryRecord,
 } from "./types";
 
 type CoreResult = {
@@ -77,27 +85,18 @@ export async function runInboundSimulation(
   const trimmedBody = request.body.trim();
   const idempotencyKey = request.idempotencyKey.trim() || `sim-${Date.now()}`;
 
-  if (!trimmedBody) {
-    return state;
-  }
-
   if (state.processedSimulationKeys.includes(idempotencyKey)) {
-    return {
-      ...state,
-      lastSimulation: {
-        action: "duplicate_ignored",
-        risk: null,
-        model: null,
-        blockedReason: "duplicate_simulation_event",
-        reasons: ["idempotency_key_already_processed"],
-        draft: null,
-        decisionId: null,
-      },
-    };
+    return appendChannelDuplicateIgnoredAudit(state, idempotencyKey, "duplicate_simulation_event", [
+      "idempotency_key_already_processed",
+    ]);
   }
 
   if (request.sourceConversationType === "group") {
     return quarantineGroupInbound(state, request, idempotencyKey);
+  }
+
+  if (!trimmedBody) {
+    return state;
   }
 
   if (!request.clientId) {
@@ -254,6 +253,7 @@ export async function runInboundSimulation(
     coreResult,
     permissionGraph: classified.permissionGraph,
     now,
+    channelPolicyMock: request.channelPolicyMock,
   });
 }
 
@@ -880,6 +880,7 @@ type SimulationAppendContext = {
   notifications: NotificationRecord[];
   nextClients: ClientRecord[];
   nextAiDecisions: AiDecisionRecord[];
+  nextChannelDeliveries: ChannelDeliveryRecord[];
 };
 
 function createSimulationAppendContext(input: {
@@ -899,6 +900,7 @@ function createSimulationAppendContext(input: {
     notifications: [...input.state.notifications],
     nextClients: input.state.clients,
     nextAiDecisions: input.state.aiDecisions,
+    nextChannelDeliveries: [...input.state.channelDeliveries],
   };
 }
 
@@ -932,6 +934,85 @@ function applyExpiredActivationSideEffects(ctx: SimulationAppendContext) {
   });
 }
 
+function applyWhatsAppOutboundPolicyGate(
+  ctx: SimulationAppendContext,
+  channelPolicyMock?: SimulationRequest["channelPolicyMock"],
+) {
+  if (ctx.coreResult.action !== "sent" || !ctx.coreResult.draft) return;
+
+  const rollback = evaluateChannelAutomationRollback(ctx.state, ctx.client);
+  if (rollback) {
+    ctx.auditEvents.push({
+      id: crypto.randomUUID(),
+      tenantId: ctx.state.tenant.id,
+      eventType: "channel_policy_outbound_blocked",
+      entityType: "channel_event",
+      entityId: ctx.inboundMessage.id,
+      metadata: {
+        channel: ctx.client.channel,
+        blockedReason: rollback.blockedReason,
+        rollbackScope: rollback.scope,
+        clientFacingAiSendBlocked: true,
+      },
+      createdAt: ctx.now,
+    });
+    ctx.coreResult = {
+      ...ctx.coreResult,
+      action: "no_ai",
+      blockedReason: rollback.blockedReason,
+      reasons: [rollback.blockedReason],
+      draft: null,
+    };
+    ctx.decision = {
+      ...ctx.decision,
+      action: "no_ai",
+      sendStatus: "send_blocked",
+      blockedReason: rollback.blockedReason,
+      reasons: Array.from(new Set([...ctx.decision.reasons, rollback.blockedReason])),
+    };
+    return;
+  }
+
+  const policy = evaluateMockWhatsAppOutboundPolicy({
+    channel: ctx.client.channel,
+    serviceWindowClosed: channelPolicyMock?.serviceWindowClosed,
+    mockTemplateId: channelPolicyMock?.mockTemplateId,
+    outboundTrigger: channelPolicyMock?.outboundTrigger ?? "inbound_reply",
+  });
+
+  if (policy.allowed) return;
+
+  ctx.auditEvents.push({
+    id: crypto.randomUUID(),
+    tenantId: ctx.state.tenant.id,
+    eventType: "channel_policy_outbound_blocked",
+    entityType: "channel_event",
+    entityId: ctx.inboundMessage.id,
+    metadata: {
+      channel: ctx.client.channel,
+      blockedReason: policy.blockedReason,
+      templateRequired: policy.templateRequired,
+      mockTemplateFailureCode: policy.mockTemplateFailureCode || null,
+      clientFacingAiSendBlocked: true,
+    },
+    createdAt: ctx.now,
+  });
+  ctx.coreResult = {
+    ...ctx.coreResult,
+    action: "no_ai",
+    blockedReason: policy.blockedReason,
+    reasons: policy.reasons,
+    draft: null,
+  };
+  ctx.decision = {
+    ...ctx.decision,
+    action: "no_ai",
+    sendStatus: "send_blocked",
+    blockedReason: policy.blockedReason,
+    reasons: Array.from(new Set([...ctx.decision.reasons, ...policy.reasons])),
+  };
+}
+
 function appendSentSimulationResult(ctx: SimulationAppendContext) {
   if (ctx.coreResult.action !== "sent" || !ctx.coreResult.draft) return;
 
@@ -949,6 +1030,56 @@ function appendSentSimulationResult(ctx: SimulationAppendContext) {
       createdAt: ctx.now,
     }),
   );
+}
+
+function appendMockChannelDeliveryRecord(
+  ctx: SimulationAppendContext,
+  channelPolicyMock?: SimulationRequest["channelPolicyMock"],
+) {
+  if (ctx.coreResult.action !== "sent" || !ctx.coreResult.draft) return;
+  if (!isChannelDeliveryLedgerChannel(ctx.client.channel)) return;
+
+  const outboundMessage = ctx.nextMessages.at(-1);
+  if (
+    !outboundMessage ||
+    outboundMessage.origin !== "ai_generated" ||
+    outboundMessage.status !== "sent" ||
+    outboundMessage.conversationId !== ctx.conversation.id
+  ) {
+    return;
+  }
+
+  const outcome = resolveMockChannelDeliveryOutcome({
+    channel: ctx.client.channel,
+    mockDeliveryStatus: channelPolicyMock?.mockDeliveryStatus,
+    mockDeliveryFailureCode: channelPolicyMock?.mockDeliveryFailureCode,
+  });
+  const record = buildChannelDeliveryRecord({
+    tenantId: ctx.state.tenant.id,
+    clientId: ctx.client.id,
+    conversationId: ctx.conversation.id,
+    messageId: outboundMessage.id,
+    channel: ctx.client.channel,
+    outcome,
+    now: ctx.now,
+  });
+
+  ctx.nextChannelDeliveries.push(record);
+  ctx.auditEvents.push({
+    id: crypto.randomUUID(),
+    tenantId: ctx.state.tenant.id,
+    eventType: "channel_delivery_mock_recorded",
+    entityType: "channel_delivery",
+    entityId: record.id,
+    metadata: {
+      channel: record.channel,
+      deliveryStatus: record.deliveryStatus,
+      failureCode: record.failureCode,
+      mockProviderMessageId: record.mockProviderMessageId,
+      messageId: record.messageId,
+    },
+    createdAt: ctx.now,
+  });
 }
 
 function appendDraftSimulationResult(ctx: SimulationAppendContext) {
@@ -1174,6 +1305,7 @@ function finalizeSimulationAppendContext(ctx: SimulationAppendContext): ManuAppS
     aiDecisions: [...ctx.nextAiDecisions, ctx.decision],
     handoffCases: ctx.handoffCases,
     notifications: ctx.notifications,
+    channelDeliveries: ctx.nextChannelDeliveries,
     auditEvents: [
       ...ctx.auditEvents,
       buildAuditEvent(ctx.state, "simulation_processed", "ai_decision", ctx.decision.id, ctx.now),
@@ -1198,6 +1330,7 @@ function appendCoreSimulationResult({
   coreResult,
   permissionGraph,
   now,
+  channelPolicyMock,
 }: {
   state: ManuAppState;
   client: ClientRecord;
@@ -1206,6 +1339,7 @@ function appendCoreSimulationResult({
   coreResult: CoreResult;
   permissionGraph?: Record<string, unknown>;
   now: string;
+  channelPolicyMock?: SimulationRequest["channelPolicyMock"];
 }): ManuAppState {
   const decision = buildDecision({
     state,
@@ -1226,7 +1360,9 @@ function appendCoreSimulationResult({
   });
 
   applyExpiredActivationSideEffects(ctx);
+  applyWhatsAppOutboundPolicyGate(ctx, channelPolicyMock);
   appendSentSimulationResult(ctx);
+  appendMockChannelDeliveryRecord(ctx, channelPolicyMock);
   appendDraftSimulationResult(ctx);
 
   const handoffState = appendHandoffSimulationResult(ctx);
@@ -1331,6 +1467,11 @@ function getPreflightBlock(
   state: ManuAppState,
   client: ClientRecord,
 ): { blockedReason: string; reasons: string[] } | null {
+  const rollback = evaluateChannelAutomationRollback(state, client);
+  if (rollback) {
+    return { blockedReason: rollback.blockedReason, reasons: [rollback.blockedReason] };
+  }
+
   const baseBlock = evaluateInboundPreflight(client, {
     safetyChecklistComplete: client.mandatorySafetyComplete && isSafetyChecklistComplete(client),
     missingSafetyChecklistItems: getMissingSafetyChecklistItems(client),
@@ -1510,4 +1651,36 @@ function findAiDraftCandidate(state: ManuAppState, messageId: string): MessageRe
     throw new AppDomainError(400, "message_not_ai_draft");
   }
   return message;
+}
+
+function appendChannelDuplicateIgnoredAudit(
+  state: ManuAppState,
+  entityId: string,
+  blockedReason: string,
+  reasons: string[],
+): ManuAppState {
+  return {
+    ...state,
+    auditEvents: [
+      ...state.auditEvents,
+      {
+        id: crypto.randomUUID(),
+        tenantId: state.tenant.id,
+        eventType: "channel_duplicate_ignored",
+        entityType: "channel_event",
+        entityId,
+        metadata: { blockedReason },
+        createdAt: new Date().toISOString(),
+      },
+    ],
+    lastSimulation: {
+      action: "duplicate_ignored",
+      risk: null,
+      model: null,
+      blockedReason,
+      reasons,
+      draft: null,
+      decisionId: null,
+    },
+  };
 }

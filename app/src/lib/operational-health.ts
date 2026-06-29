@@ -22,10 +22,22 @@ import {
   STYLE_DNA_V2_VERSION,
 } from "dietitian-ai-assistant-architecture";
 import {
+  buildPhase77aiProductionOpsDefaultPreparation,
+  buildPhase77aiProductionOpsHealthSignal,
+  type Phase77aiProductionOperationsPreparation,
+} from "./phase-77ai-production-operations-preparation";
+import {
+  buildPhase77agChannelReplayDefaultMetrics,
+  buildPhase77agChannelReplayHealthSignal,
+  type Phase77agChannelReplayRehearsalMetrics,
+} from "./phase-77ag-channel-replay-rehearsal";
+import {
   buildPhase77xAiQualityHealthSignal,
   type Phase77xExpandedAiRehearsalMetrics,
 } from "./phase-77x-expanded-ai-rehearsal";
 import { buildScopeGuardHealthSignal } from "./scope-guard-runtime";
+import { buildChannelAdapterHealthSignal } from "./channel-adapter-health";
+import { countActiveChannelAdapterRollbackScopes } from "./channel-adapter-rollback";
 import type { ManuAppState } from "./types";
 
 export type OperationalHealthSnapshot = {
@@ -91,6 +103,27 @@ export type OperationalHealthSnapshot = {
   expandedAiRehearsalYellowRedClientSendCount: number;
   expandedAiRehearsalClaimOutsideManifestCount: number;
   expandedAiRehearsalStyleSoftMismatchRate: number;
+  channelMockDeliveryFailureCount: number;
+  channelQuarantineCount: number;
+  channelDuplicateIgnoredCount: number;
+  channelOptOutCount: number;
+  channelGateBlockedCount: number;
+  channelAutomationRollbackActiveScopeCount: number;
+  channelReplayRehearsalVersion: string;
+  channelReplayRehearsalStatus: "pass" | "fail";
+  channelReplayRehearsalDuplicateClientSendCount: number;
+  channelReplayRehearsalUnknownIdentityProviderCallCount: number;
+  channelReplayRehearsalYellowRedClientSendCount: number;
+  channelReplayRehearsalUnsafeGreenCount: number;
+  channelReplayRehearsalGroupQuarantineCount: number;
+  channelReplayRehearsalDuplicateIgnoredCount: number;
+  productionOpsPreparationVersion: string;
+  productionOpsPreparationStatus: "pass" | "fail";
+  productionOpsOpenGateCount: number;
+  productionOpsMissingEvidenceCount: number;
+  productionOpsPlaceholderCandidateCount: number;
+  productionOpsInternalMockControlCount: number;
+  productionOpsLaunchGatesOpen: boolean;
 };
 
 const DEFAULT_STALE_DRAFT_HOURS = 24;
@@ -106,6 +139,8 @@ export function buildOperationalHealthSnapshot(
     loadBackpressureIdempotencyEvidence?: boolean;
     foodMixRehearsalPass?: boolean;
     expandedAiRehearsalMetrics?: Phase77xExpandedAiRehearsalMetrics;
+    channelReplayRehearsalMetrics?: Phase77agChannelReplayRehearsalMetrics;
+    productionOpsPreparation?: Phase77aiProductionOperationsPreparation;
   } = {},
 ): OperationalHealthSnapshot {
   const now = options.now ? new Date(options.now) : new Date();
@@ -143,6 +178,13 @@ export function buildOperationalHealthSnapshot(
   const foodMixV2 = buildPhase77kFoodMixHealthSignal(foodMixV2Sample);
   const expandedAiQuality = buildPhase77xAiQualityHealthSignal(
     options.expandedAiRehearsalMetrics ?? buildPhase77xAiQualityDefaultMetrics(),
+  );
+  const channelAdapterHealth = buildChannelAdapterHealthSignal(state);
+  const channelReplay = buildPhase77agChannelReplayHealthSignal(
+    options.channelReplayRehearsalMetrics ?? buildPhase77agChannelReplayDefaultMetrics(),
+  );
+  const productionOps = buildPhase77aiProductionOpsHealthSignal(
+    options.productionOpsPreparation ?? buildPhase77aiProductionOpsDefaultPreparation(),
   );
 
   return {
@@ -193,6 +235,10 @@ export function buildOperationalHealthSnapshot(
     manualSourceAuthorityTrackClosed: calibrationV2.manualSourceAuthorityTrackClosed,
     whatsappAdapterNext: calibrationV2.whatsappAdapterNext,
     ...expandedAiQuality,
+    ...channelAdapterHealth,
+    channelAutomationRollbackActiveScopeCount: countActiveChannelAdapterRollbackScopes(state.channelAdapterRollback),
+    ...channelReplay,
+    ...productionOps,
   };
 }
 

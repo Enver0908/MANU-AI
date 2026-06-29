@@ -526,6 +526,30 @@ export type InboundQuarantineRecord = {
   createdAt: string;
 };
 
+export type ChannelDeliveryStatus = "sent" | "delivered" | "failed";
+
+export type ChannelDeliveryRecord = {
+  id: string;
+  tenantId: string;
+  clientId: string;
+  conversationId: string;
+  messageId: string;
+  channel: Channel;
+  direction: "outbound";
+  mockProviderMessageId: string;
+  deliveryStatus: ChannelDeliveryStatus;
+  failureCode: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type ChannelAdapterRollbackControls = {
+  globalChannelAutomationDisabled: boolean;
+  tenantChannelAutomationDisabled: boolean;
+  disabledDietitianIds: string[];
+  disabledClientIds: string[];
+};
+
 export type ScopeRuleStatus = "draft" | "approved" | "archived";
 
 export type ScopeRuleRecord = {
@@ -662,6 +686,8 @@ export type ManuAppState = {
   auditEvents: AuditEventRecord[];
   notifications: NotificationRecord[];
   inboundQuarantines: InboundQuarantineRecord[];
+  channelDeliveries: ChannelDeliveryRecord[];
+  channelAdapterRollback: ChannelAdapterRollbackControls;
   dataRequests: DataRequestRecord[];
   internalCopilotMessages: InternalCopilotMessageRecord[];
   internalCopilotToolCalls: InternalCopilotToolCallRecord[];
@@ -685,6 +711,13 @@ export type SimulationRequest = {
   now?: string;
   mockProviderFailure?: "provider_timeout" | "provider_error" | "provider_policy_violation";
   mockProviderOutput?: "missing_historical_context" | "covenant_violation";
+  channelPolicyMock?: {
+    serviceWindowClosed?: boolean;
+    mockTemplateId?: string;
+    outboundTrigger?: "inbound_reply" | "proactive";
+    mockDeliveryStatus?: ChannelDeliveryStatus;
+    mockDeliveryFailureCode?: string;
+  };
 };
 
 export type SimulationResult = {

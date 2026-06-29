@@ -6,9 +6,11 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 This repository is a local SaaS/PWA pilot prototype and architecture workspace. It is not a production-connected system yet.
 
-**Latest implementation phase:** Phase 77Z Repository Cleanup And Cursor Plan Migration (2026-06-22). **Next implementation phase:** WhatsApp production adapter (mock/gated; no real provider or channel connection until external gates close). **Production pilot:** `NO-GO` (all eight launch gates open; R-405 open).
+**Latest implementation phase:** Phase 77AI Production Operations Preparation (2026-06-22). **Next implementation phase:** Phase 78 dependency and R-405 closure (`docs/PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md` procedure only). **Production pilot:** `NO-GO` (all eight launch gates open; ops gates `incident_response_runbook`, `backup_restore_test`, `secret_rotation_plan` open; R-405 open).
 
-**Latest verification:** Phase 77Z verified on 2026-06-22: `git diff --check` passed; app tests passed with 65 files and 384 tests; `npm run release:verify` passed with core tests 225/225, app tests 384/384, lint with two pre-existing warnings, production build, and only documented R-405 findings. Phase 77Z removed the obsolete tracked `.cursor` plan after migrating its content into canonical Phase 76C-76Q docs.
+**Latest verification:** Phase 77AI verified on 2026-06-22: `git diff --check` passed; app tests passed with 73 files and 429 tests; `npm run release:verify` passed with core tests 225/225, app tests 429/429, lint with two pre-existing warnings, production build, and only documented R-405 findings. Phase 77AI bound ops runbook placeholders to review packets and internal mock health controls; real monitoring/secret manager remain disconnected.
+
+**Phase 77AA-77AI remediation update, 2026-06-28:** closed the review findings for mock channel rollback persistence, WhatsApp timestamp fail-closed parsing, 77AE mock delivery typing, 77AG full replay isolation, and Supabase channel-delivery DSAR cleanup. Verification passed with `git diff --check`, targeted Phase 77 tests, `npm run lint` with two pre-existing warnings, `supabase-store` unit tests, and `npm run rehearse:channel:replay`; repo-wide `npm test` still exceeded the local 180s review timeout and `tsc --noEmit` remains blocked by pre-existing non-Phase-77 test type errors.
 
 The current implementation includes:
 

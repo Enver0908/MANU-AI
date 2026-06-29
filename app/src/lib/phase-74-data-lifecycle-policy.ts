@@ -23,6 +23,7 @@ import {
   buildClientMenuPlanV1ExportSection,
   menuPlanContainsUnredactedData,
 } from "./phase-77f-client-menu-plan";
+import { serializeChannelDeliveryForExport } from "./channel-mock-delivery-ledger";
 import {
   buildCatalogVersionRefsExportSection,
   buildDeprecatedProposalExportSection,
@@ -33,7 +34,7 @@ import type { LaunchGateEvidenceRecord } from "./launch-gates";
 import type { ClientRecord, ManuAppState, MessageRecord } from "./types";
 
 export const PHASE_74_POLICY_VERSION = "phase-74-data-lifecycle-policy-v1";
-export const PHASE_74_EXPORT_VERSION = "phase74-export-v1.2";
+export const PHASE_74_EXPORT_VERSION = "phase74-export-v1.3";
 export { PHASE_74_REDACTION_MARKER } from "./data-governance";
 
 export type Phase74ApprovalStatus = "draft";
@@ -144,6 +145,7 @@ export const PHASE_74_RETENTION_POLICY: Phase74RetentionEntry[] = [
   entry("conversation_memories", "Hizmet devam ettigi surece", "12 ay", "Delete/redact", "Removed client memory prompt'a giremez."),
   entry("channel_identity", "Hizmet devam ettigi surece", "6 ay deactivation sonrasi", "Hard delete veya irreversible hash", "Telefon/Telegram ID kritik privacy."),
   entry("processed_inbound_ids", "Idempotency icin", "90 gun", "Hash/minimized kalabilir", "Raw payload yok."),
+  entry("channel_deliveries", "Hizmet devam ettigi surece", "12 ay", "Delete on DSAR", "Minimized delivery metadata only; no message body."),
   entry("raw_webhook_payload", "Production'da kapali", "0-7 gun maksimum", "Delete", "Varsayilan kalici saklama yok."),
   entry("provider_metadata", "Provider active oldugunda", "12 ay", "Minimized audit only", "Raw prompt/completion yok."),
   entry("internal_copilot_tool_refs", "Hizmet devam ettigi surece", "12 ay", "Client refs redact", "Source refs minimized."),
@@ -183,6 +185,7 @@ export const PHASE_74_EXPORT_INCLUDED_FILES = [
   "client_update_proposals.json",
   "diet_plan_snapshots.json",
   "audit_events_minimized.jsonl",
+  "channel_deliveries.jsonl",
   "checksums.sha256",
 ] as const;
 
@@ -213,6 +216,7 @@ export const PHASE_74_TRANSACTIONAL_REDACTION_FIELDS = [
   "internal_copilot_source_refs",
   "promptable_summaries",
   "search_index_cache_entries",
+  "channel_delivery_records",
   ...PHASE_76N_TRANSACTIONAL_REDACTION_FIELDS,
 ] as const;
 
@@ -318,6 +322,7 @@ function countAffectedRecords(state: ManuAppState, clientId: string): Record<str
     menu_plans_v1: state.clientMenuPlans.filter((plan) => plan.clientId === clientId).length,
     ai_decisions: state.aiDecisions.filter((decision) => decision.clientId === clientId).length,
     handoffs: state.handoffCases.filter((handoff) => handoff.clientId === clientId).length,
+    channel_deliveries: state.channelDeliveries.filter((delivery) => delivery.clientId === clientId).length,
   };
 }
 
@@ -389,6 +394,10 @@ export function evaluatePhase74RedactionInvariants(
     if (menuPlanContainsUnredactedData(plan)) {
       blockingReasons.push("menu plan v1 must be redacted");
     }
+  }
+
+  if (state.channelDeliveries.some((delivery) => delivery.clientId === clientId)) {
+    blockingReasons.push("channel delivery records must be removed");
   }
 
   return {
@@ -502,6 +511,9 @@ export function buildPhase74ExportPackage(
     ),
     "diet_plan_snapshots.json": JSON.stringify({ summary: exportData.client.dietPlan }, null, 2),
     "audit_events_minimized.jsonl": exportData.auditEvents.map((event) => JSON.stringify(event)).join("\n"),
+    "channel_deliveries.jsonl": exportData.channelDeliveries
+      .map((delivery) => JSON.stringify(serializeChannelDeliveryForExport(delivery)))
+      .join("\n"),
   };
 
   const manifest: Phase74ExportManifest = {

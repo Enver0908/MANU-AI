@@ -57,6 +57,11 @@ Current next-track update, 2026-06-13:
 - Phase 77M-77Y keeps client-visible risk classes limited to green/yellow/red, treats states like `unknown_intent`, `needs_label`, `needs_review`, `clarify`, and `handoff` as internal workflow states only, and focuses on better AI answer quality through core-owned response planning, deterministic templates, claim grounding, canonical intent resolution, food understanding, dietitian voice, AI quality rehearsal, and narrow deterministic autopilot eligibility.
 - This update does not approve production pilot launch, connect real WhatsApp/Telegram/Gemini/provider traffic, process real client health data, close launch gates, accept R-405, or resolve R-405.
 
+Phase 77AA-77AI remediation update, 2026-06-28:
+
+- The mock/gated WhatsApp adapter track now persists Supabase rollback controls, guards invalid WhatsApp timestamps without parser throws, aligns mock delivery policy typing, isolates full 100x50 channel replay to `npm run rehearse:channel:replay`, and removes Supabase channel delivery records during client anonymization/removal.
+- Verification passed for targeted Phase 77 tests, `supabase-store` unit tests, lint, diff check, and full channel replay rehearsal. This does not approve production launch, real WhatsApp/Gemini egress, real client health data, R-405 closure, or launch-gate closure.
+
 The first client-facing legal and permission documentation layer is intentionally excluded because it will be prepared separately.
 
 ## 3. MVP Scope
@@ -1251,7 +1256,7 @@ These defaults remove planning ambiguity. They can change only through an explic
 
 ## 14. Recommended Next Action
 
-Current baseline override (2026-06-22): Phase 77M-77Y AI Quality Program is complete locally, and Phase 77Z repository cleanup removed the obsolete tracked `.cursor` food green expansion plan after preserving its content in canonical Phase 76C-76Q docs. Latest verification after Phase 77Z: `git diff --check` passed; `app` `npm test` passed with 65 test files and 384 tests; `npm run release:verify` passed with core tests 225/225, app tests 384/384, lint with two pre-existing warnings, production build, and only documented R-405 findings. Production pilot is `NO-GO`, all eight launch gates are open, and R-405 is open. The next engineering phase is WhatsApp production adapter (mock/gated only; no real provider or channel connection until external gates close).
+Current baseline override (2026-06-22): Phase 77AI bound production operations placeholders to structured evidence candidates with open ops launch gates and explicit missing-evidence lists. Latest verification after Phase 77AI: `git diff --check` passed; `app` `npm test` passed with 73 test files and 429 tests; `npm run release:verify` passed with core tests 225/225, app tests 429/429, lint with two pre-existing warnings, production build, and only documented R-405 findings. Production pilot is `NO-GO`, all eight launch gates are open, and R-405 is open. The next engineering phase is Phase 78 dependency and R-405 closure per `docs/PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md` only.
 
 Historical Phase 65 baseline: official regulation PDF corpus QA foundation completed on 2026-06-04 with core tests 114/114 and app tests 166/166. It remains draft-only for official PDF-derived rules until user-supplied PDFs and structured legal/clinical approval evidence arrive. R-406 is mitigated for the Phase 50-52 baseline (`npm run test:rls` passed 19/19 on 2026-06-02); re-run RLS after Docker/local Supabase is available if Phase 57 or Phase 61 `scope_*` migration evidence is needed.
 

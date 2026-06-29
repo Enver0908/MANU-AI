@@ -9,6 +9,7 @@ export const PHASE_74_REDACTION_MARKER = "REDACTED_BY_PHASE74_POLICY";
 import type {
   AiDecisionRecord,
   AuditEventRecord,
+  ChannelDeliveryRecord,
   ClientContextUpdateRecord,
   ClientFoodRuleProfileV2Record,
   ClientMenuPlanV1Record,
@@ -50,6 +51,7 @@ export type ClientScopedExport = {
   notifications: NotificationRecord[];
   dataRequests: DataRequestRecord[];
   auditEvents: AuditEventRecord[];
+  channelDeliveries: ChannelDeliveryRecord[];
 };
 
 export const RETENTION_POLICY_PLACEHOLDERS: RetentionPolicyPlaceholder[] = [
@@ -136,6 +138,7 @@ export function buildClientScopedExport(state: ManuAppState, clientId: string): 
         handoffIds.has(event.entityId) ||
         decisions.some((decision) => decision.id === event.entityId),
     ),
+    channelDeliveries: state.channelDeliveries.filter((delivery) => delivery.clientId === client.id),
   };
 }
 
@@ -280,6 +283,7 @@ function redactClientDataInState(
       },
     ],
     dataRequests: [...state.dataRequests, dataRequest],
+    channelDeliveries: state.channelDeliveries.filter((delivery) => delivery.clientId !== client.id),
   };
 
   return redactClientContextUpdatesForAnonymization(anonymizedBase, client.id);

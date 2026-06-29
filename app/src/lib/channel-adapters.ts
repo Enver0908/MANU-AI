@@ -1,6 +1,9 @@
 import { runInboundSimulation, updateClientInState } from "./simulator";
 import { assertRateLimit, RATE_LIMITS } from "./rate-limit";
-import type { AuditEventRecord, Channel, ManuAppState } from "./types";
+import { normalizeE164Phone } from "./languages";
+import { evaluateChannelAutomationRollback } from "./channel-adapter-rollback";
+import { isChannelOptOutCommand } from "./whatsapp-channel-policy-mock";
+import type { AuditEventRecord, Channel, ManuAppState, SimulationRequest } from "./types";
 
 export type NormalizedInboundChannelEvent = {
   channel: Channel;
@@ -8,6 +11,11 @@ export type NormalizedInboundChannelEvent = {
   channelUserId: string;
   body: string;
   receivedAt?: string;
+  sourceConversationType?: "direct" | "group";
+  sourceConversationId?: string;
+  sourceMessageId?: string;
+  messageType?: "text" | "unsupported_media" | "unknown";
+  channelPolicyMock?: SimulationRequest["channelPolicyMock"];
 };
 
 export type ProviderMetadataInput = Record<string, unknown>;
@@ -25,8 +33,6 @@ const SENSITIVE_METADATA_KEYS = new Set([
   "pinnedNotes",
   "memory",
 ]);
-const OPT_OUT_COMMANDS = new Set(["STOP", "DUR", "IPTAL", "IPTAL ET", "CANCEL"]);
-
 export async function processMockChannelInbound(
   state: ManuAppState,
   event: NormalizedInboundChannelEvent,
@@ -43,6 +49,14 @@ export async function processMockChannelInbound(
   if (state.processedSimulationKeys.includes(providerEventId)) {
     return {
       ...state,
+      auditEvents: [
+        ...state.auditEvents,
+        buildAuditEvent(state, {
+          eventType: "channel_duplicate_ignored",
+          entityId: providerEventId,
+          metadata: { blockedReason: "duplicate_channel_event", channel: event.channel },
+        }),
+      ],
       lastSimulation: {
         action: "duplicate_ignored",
         risk: null,
@@ -53,6 +67,16 @@ export async function processMockChannelInbound(
         decisionId: null,
       },
     };
+  }
+
+  if (event.sourceConversationType === "group") {
+    await assertRateLimit({
+      key: `channel:${event.channel}:${event.channelUserId.trim() || "unknown"}`,
+      tenantId: state.tenant.id,
+      ...RATE_LIMITS.channelInbound,
+    });
+
+    return runInboundSimulation(state, buildChannelSimulationRequest(event, trimmedBody));
   }
 
   if (!trimmedBody) {
@@ -71,7 +95,18 @@ export async function processMockChannelInbound(
     return quarantineChannelEvent(state, event, providerEventId, matches.length > 1 ? "ambiguous" : "unknown");
   }
 
-  if (isOptOutCommand(trimmedBody)) {
+  if (matches[0].channelPermission === "opted_out" && isChannelOptOutCommand(trimmedBody)) {
+    return blockChannelPolicyEvent(
+      state,
+      event,
+      providerEventId,
+      "channel_policy_opt_out_already_applied",
+      ["client_already_opted_out"],
+      true,
+    );
+  }
+
+  if (isChannelOptOutCommand(trimmedBody)) {
     const optedOutState = updateClientInState(state, matches[0].id, { channelPermission: "opted_out" });
     return blockChannelPolicyEvent(
       optedOutState,
@@ -83,12 +118,36 @@ export async function processMockChannelInbound(
     );
   }
 
+  const rollback = evaluateChannelAutomationRollback(state, matches[0]);
+  if (rollback) {
+    return blockChannelPolicyEvent(
+      state,
+      event,
+      providerEventId,
+      rollback.blockedReason,
+      [rollback.blockedReason],
+      true,
+    );
+  }
+
   return runInboundSimulation(state, {
     clientId: matches[0].id,
-    body: trimmedBody,
-    idempotencyKey: providerEventId,
-    now: event.receivedAt,
+    ...buildChannelSimulationRequest(event, trimmedBody),
   });
+}
+
+export function normalizeChannelIdentityForMatching(channel: Channel, channelUserId: string) {
+  const trimmed = channelUserId.trim();
+  if (!trimmed) {
+    return "";
+  }
+
+  if (channel === "whatsapp") {
+    const candidate = trimmed.startsWith("+") ? trimmed : `+${trimmed.replace(/\D/g, "")}`;
+    return normalizeE164Phone(candidate) || trimmed;
+  }
+
+  return trimmed;
 }
 
 export function buildProviderMetadata(input: ProviderMetadataInput) {
@@ -98,14 +157,30 @@ export function buildProviderMetadata(input: ProviderMetadataInput) {
 }
 
 function findClientsByChannelIdentity(state: ManuAppState, channel: Channel, channelUserId: string) {
-  const normalizedIdentity = channelUserId.trim();
+  const normalizedIdentity = normalizeChannelIdentityForMatching(channel, channelUserId);
   if (!normalizedIdentity) {
     return [];
   }
 
   return state.clients.filter(
-    (client) => client.channel === channel && client.channelUserId.trim() === normalizedIdentity,
+    (client) =>
+      client.channel === channel &&
+      normalizeChannelIdentityForMatching(channel, client.channelUserId) === normalizedIdentity,
   );
+}
+
+function buildChannelSimulationRequest(event: NormalizedInboundChannelEvent, body: string) {
+  return {
+    body,
+    idempotencyKey: event.providerEventId,
+    channel: event.channel,
+    sourceConversationType: event.sourceConversationType ?? ("direct" as const),
+    sourceConversationId: event.sourceConversationId,
+    sourceMessageId: event.sourceMessageId ?? event.providerEventId,
+    senderChannelUserId: event.channelUserId,
+    now: event.receivedAt,
+    channelPolicyMock: event.channelPolicyMock,
+  };
 }
 
 function quarantineChannelEvent(
@@ -200,8 +275,4 @@ function isSafeMetadataValue(value: unknown) {
   if (value === null) return true;
   if (["string", "number", "boolean"].includes(typeof value)) return true;
   return false;
-}
-
-function isOptOutCommand(body: string) {
-  return OPT_OUT_COMMANDS.has(body.trim().toUpperCase());
 }

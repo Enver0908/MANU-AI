@@ -16,10 +16,10 @@ import {
 import { createInitialState } from "./seed-data";
 
 describe("phase 77k calibration evidence closure", () => {
-  it("confirms phase74-export-v1.2 coverage", () => {
+  it("confirms phase74-export-v1.3 coverage", () => {
     const coverage = evaluatePhase77kExportCoverage();
     expect(coverage.exportCoveragePass).toBe(true);
-    expect(coverage.exportVersion).toBe("phase74-export-v1.2");
+    expect(coverage.exportVersion).toBe("phase74-export-v1.3");
   });
 
   it("passes calibration closure with golden, rehearsal sample, and export coverage", () => {

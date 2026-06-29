@@ -1,6 +1,7 @@
 import { SAFETY_CLASSIFIER_VERSION } from "dietitian-ai-assistant-architecture";
 import { createPlaceholderScopeRules } from "./scope-corpus";
 import type { ClientRecord, ConversationRecord, ManuAppState, MessageRecord } from "./types";
+import { createDefaultChannelAdapterRollbackControls } from "./channel-adapter-rollback";
 import { completeSafetyChecklist, emptySafetyChecklist } from "./safety-checklist";
 import { DEFAULT_LANGUAGE } from "./languages";
 import {
@@ -263,6 +264,8 @@ export function createInitialState(): ManuAppState {
     auditEvents: [],
     notifications: [],
     inboundQuarantines: [],
+    channelDeliveries: [],
+    channelAdapterRollback: createDefaultChannelAdapterRollbackControls(),
     dataRequests: [],
     internalCopilotMessages: [],
     internalCopilotToolCalls: [],

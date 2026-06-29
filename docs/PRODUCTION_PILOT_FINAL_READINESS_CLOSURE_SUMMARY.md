@@ -4,15 +4,17 @@ Date: 2026-06-04
 
 ## Status
 
-This is the final summary for the 13-phase completion roadmap, updated through Phase 77Z repository cleanup, including the full Phase 77A-77K manual source authority rebaseline, Phase 77L worktree closure, and the completed Phase 77M-77Y AI Quality Program.
+This is the final summary for the 13-phase completion roadmap, updated through Phase 77AD opt-out, service window, and template policy mock, including the full Phase 77A-77K manual source authority rebaseline, Phase 77L worktree closure, and the completed Phase 77M-77Y AI Quality Program.
 
 Production pilot is not approved.
 
-Latest local roadmap state closes Phase 77A-77L, Phase 77M-77Y AI Quality Program (77N-77Y inclusive), and Phase 77Z repository cleanup, and records hard-zero expanded rehearsal sample metrics plus clinical red-team closure. WhatsApp production adapter is the next implementation phase (mock/gated only); real channel traffic remains blocked.
+Latest local roadmap state closes Phase 77A-77L, Phase 77M-77Y AI Quality Program (77N-77Y inclusive), Phase 77Z repository cleanup, Phase 77AA adapter scope lock, Phase 77AB payload normalization, Phase 77AC mock webhook boundary, Phase 77AD channel policy mock, Phase 77AE outbound delivery ledger, Phase 77AF operational health and rollback controls, Phase 77AG channel replay rehearsal, Phase 77AH adapter evidence closure, and Phase 77AI production operations preparation, and records hard-zero expanded rehearsal sample metrics plus clinical red-team closure. Phase 78 is the next implementation phase.
+
+Phase 77AA-77AI remediation was applied on 2026-06-28: Supabase rollback controls persist and load into webhook/simulation state, invalid WhatsApp timestamps no longer throw, mock delivery policy fields are type-aligned, full 100x50 channel replay is isolated to `npm run rehearse:channel:replay`, and Supabase `channel_deliveries` are deleted during client anonymization/removal. This does not close any launch gate or approve production pilot.
 
 No real WhatsApp, Telegram, Gemini, external LLM provider, email, push, monitoring, analytics, secret manager, backup provider, or real client health data is connected.
 
-Post-Phase 77Z strategic roadmap: `DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` defines the direct production pilot path as 100 dietitians x 50 clients, with no small production ring. The full Phase 77M-77Y AI Quality Program is complete locally with expanded rehearsal hard-zero evidence, and the obsolete tracked `.cursor` plan has been removed after migration to canonical Phase 76C-76Q docs. WhatsApp production adapter is next (mock/gated only). External legal/privacy approval, external qualified dietitian approval, final production form/PDF/catalog/menu approvals, Phase 76N RLS re-run when local Supabase is available, production operations evidence, external gates, and R-405 closure/acceptance remain required before production GO.
+Post-Phase 77AI strategic roadmap: `DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` defines the direct production pilot path as 100 dietitians x 50 clients, with no small production ring. Phase 77AI bound ops placeholders to structured evidence candidates. Phase 78 is next (R-405 procedure only). External legal/privacy approval, external qualified dietitian approval, final production form/PDF/catalog/menu approvals, Phase 76N RLS re-run when local Supabase is available, production operations evidence, external gates, and R-405 closure/acceptance remain required before production GO.
 
 ## Go / No-Go Decision
 
@@ -24,6 +26,11 @@ Reason:
 - R-405 remains an open production launch blocker.
 - R-406 is now mitigated in the local prototype by a passing local Supabase RLS run, but production pilot still requires the external launch gates and R-405 clearance or acceptance.
 - Phase 77Z cleaned repository planning artifacts only; it did not close gates, connect providers/channels, process real data, or resolve R-405.
+- Phase 77AI added ops placeholder wiring only; it did not close gates, connect monitoring/secret manager, process real data, or resolve R-405.
+- Phase 77AA-77AI remediation closed local review findings only; it did not close gates, connect providers/channels, process real data, or resolve R-405.
+- Phase 77AH closed the 77AA–77AG adapter track only; it did not close gates, connect providers/channels, process real data, or resolve R-405.
+- Phase 77AG added mock channel replay harness only; it did not close gates, connect providers/channels, process real data, or resolve R-405.
+- Phase 77AF added channel adapter health and rollback controls only; it did not close gates, connect providers/channels, process real data, or resolve R-405.
 - No external approval artifacts were supplied during the completion roadmap.
 - Phase 43 added multilingual local/mock support but did not approve any launch gate.
 - Phase 44 added local red-risk reactivation locking but did not approve any launch gate.
@@ -151,6 +158,15 @@ Latest local release verification after Phase 77Z repository cleanup:
 - Production build: passed.
 - Production dependency audit gate passed with only documented R-405 findings.
 - RLS remains pending for Phase 76N when local Supabase is unavailable.
+
+Phase 77AA-77AI remediation verification on 2026-06-28:
+
+- `git diff --check` passed.
+- Targeted Phase 77 mock-channel tests passed.
+- `supabase-store` unit tests passed.
+- `npm run lint` passed with two pre-existing warnings.
+- `npm run rehearse:channel:replay` passed.
+- Repo-wide `npm test` exceeded the local 180s review timeout; `tsc --noEmit` remains blocked by pre-existing non-Phase-77 test type errors.
 
 Phase 44 verification on 2026-06-01:
 

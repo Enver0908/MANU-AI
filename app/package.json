@@ -12,7 +12,8 @@
     "test:visual": "npm run build && playwright test",
     "release:verify": "node scripts/release-verify.mjs",
     "rehearse:ai": "node ../dietitian-ai-assistant/scripts/rehearse-ai.mjs",
-    "rehearse:ai:expanded": "node ../dietitian-ai-assistant/scripts/rehearse-ai-expanded.mjs"
+    "rehearse:ai:expanded": "node ../dietitian-ai-assistant/scripts/rehearse-ai-expanded.mjs",
+    "rehearse:channel:replay": "node scripts/rehearse-channel-replay.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.10.3",

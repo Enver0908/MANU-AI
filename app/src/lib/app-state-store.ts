@@ -46,6 +46,7 @@ import {
   acknowledgeNotificationInState,
 } from "./simulator";
 import type { ClientRecord, ManuAppState, SimulationRequest } from "./types";
+import { setChannelAdapterRollbackInState as applyChannelAdapterRollbackInState } from "./channel-adapter-rollback";
 import type { CreateClientContextUpdateInput } from "./client-context-updates";
 import type { ApplyClientUpdateProposalInput, CreateClientUpdateProposalInput } from "./client-update-proposals";
 import type { ClientFormFieldDefinition, VoiceSampleStatus } from "./types";
@@ -323,4 +324,11 @@ export function assertNotificationExistsInState(state: ManuAppState, notificatio
   if (!state.notifications.some((notification) => notification.id === notificationId)) {
     throw new AppDomainError(404, "notification_not_found");
   }
+}
+
+export function setChannelAdapterRollbackInState(
+  state: ManuAppState,
+  input: Parameters<typeof applyChannelAdapterRollbackInState>[1],
+) {
+  return applyChannelAdapterRollbackInState(state, input);
 }

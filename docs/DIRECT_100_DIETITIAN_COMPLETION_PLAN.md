@@ -17,13 +17,13 @@ These rules are non-negotiable and apply to every future phase:
 - Autopilot is not globally enabled for all 5,000 clients by default. It is enabled only for selected qualified clients after all gates, monitoring, and rollback controls are ready.
 
 ## Current Baseline
-- Latest completed implementation phase: Phase 77Z repository cleanup and Cursor plan migration (2026-06-22).
+- Latest completed implementation phase: Phase 77AI production operations preparation (2026-06-22).
 - Latest continuity/worktree closure phase: Phase 77Z repository cleanup and Cursor plan migration (2026-06-22).
-- Next implementation phase: WhatsApp production adapter (mock/gated; no real provider or channel connection until external gates close).
+- Next implementation phase: Phase 78 dependency and R-405 closure (`docs/PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md` only).
 - Latest roadmap rebaseline: Phase 77A manual source authority rebaseline spec (2026-06-10).
 - Detailed Phase 77 implementation plan: `docs/PHASE_77_MASTER_IMPLEMENTATION_PLAN.md`.
 - AI quality master plan: `docs/PHASE_77M_77Y_AI_QUALITY_MASTER_PLAN.md`.
-- Latest verification: Phase 77Z `git diff --check`, `app` `npm test` (65 files, 384 tests), and `npm run release:verify` passed on 2026-06-22 with core tests 225/225, app tests 384/384, lint with two pre-existing warnings, production build, and only documented R-405 findings.
+- Latest verification: Phase 77AI `git diff --check`, `app` `npm test` (73 files, 429 tests), and `npm run release:verify` passed on 2026-06-22 with core tests 225/225, app tests 429/429, lint with two pre-existing warnings, production build, and only documented R-405 findings.
 - Production pilot status: `NO-GO`.
 - Real WhatsApp, Gemini, monitoring, secret manager, and real client health data remain disconnected.
 - Existing usable foundations:
@@ -244,7 +244,97 @@ Completed:
 - Production pilot remains `NO-GO`.
 
 Next:
-- WhatsApp production adapter (mock/gated only).
+- Phase 78 dependency and R-405 closure.
+
+## Phase 77AI: Production Operations Preparation - Completed 2026-06-22
+
+- Added `docs/PHASE_77AI_PRODUCTION_OPERATIONS_PREPARATION_SPEC.md`.
+- Added `phase-77ai-production-operations-preparation.ts` and Phase 77AI tests.
+- Bound incident/SLA/monitoring/rollback/DSAR/backup/secret placeholders to structured evidence candidates.
+- Ops launch gates remain open with explicit missing-evidence lists; real monitoring/secret manager not connected.
+
+## Phase 77AH: WhatsApp Adapter Evidence Closure - Completed 2026-06-22
+
+- Added `docs/PHASE_77AH_WHATSAPP_ADAPTER_EVIDENCE_CLOSURE_SPEC.md`.
+- Added `phase-77ah-whatsapp-adapter-evidence-closure.ts` and Phase 77AH tests.
+- Closed 77AA–77AG mock/gated adapter track with hard-zero channel replay sample evidence.
+- Synchronized continuity, pilot, gate, and risk docs; production pilot remains `NO-GO`; channel gate open; R-405 open.
+
+## Phase 77AG: 100x50 WhatsApp-Like Channel Replay Rehearsal - Completed 2026-06-22
+
+- Added `docs/PHASE_77AG_100X50_WHATSAPP_LIKE_CHANNEL_REPLAY_REHEARSAL_SPEC.md`.
+- Added `phase-77ag-channel-replay-rehearsal.ts`, `channel-replay-scenarios.jsonl`, and Phase 77AG tests.
+- Hard-zero gates: duplicate client send 0, unknown identity provider call 0, yellow/red client AI send 0, unsafe green 0.
+- Added operational-health aggregate fields and `npm run rehearse:channel:replay` for full mock-only scale runs.
+
+## Phase 77AF: Adapter Operational Health And Rollback Controls - Completed 2026-06-22
+
+- Added `docs/PHASE_77AF_ADAPTER_OPERATIONAL_HEALTH_AND_ROLLBACK_CONTROLS_SPEC.md`.
+- Added `channel-adapter-health.ts` aggregate counters and `channel-adapter-rollback.ts` manual controls.
+- Wired operational health, simulator preflight/outbound gates, and channel adapter ingress blocking.
+
+## Phase 77AE: Outbound Delivery Ledger And Mock Send Failures - Completed 2026-06-22
+
+- Added `docs/PHASE_77AE_OUTBOUND_DELIVERY_LEDGER_AND_MOCK_SEND_FAILURES_SPEC.md`.
+- Added `channel-mock-delivery-ledger.ts`, `ChannelDeliveryRecord`, and Supabase `channel_deliveries` migration/RLS.
+- Wired mock sent/delivered/failed delivery recording on allowed WhatsApp/Telegram AI sends.
+- Bumped Phase 74 export to `phase74-export-v1.3` with `channel_deliveries.jsonl` and DSAR redaction coverage.
+
+## Phase 77AD: Opt-Out, Service Window, And Template Policy Mock - Completed 2026-06-22
+Goal: model WhatsApp opt-out, service-window, and template-required outbound behavior as mock policy gates.
+
+Completed:
+- Added `docs/PHASE_77AD_OPT_OUT_SERVICE_WINDOW_TEMPLATE_POLICY_MOCK_SPEC.md`.
+- Added `whatsapp-channel-policy-mock.ts` with mock template registry (`mockApproved=false` always) and outbound policy evaluation.
+- Hardened opt-out idempotency for already opted-out clients; blocked WhatsApp client-facing AI `sent` results when mock service window is closed.
+- Added Phase 77AD tests for opt-out, opted-out no automation, service-window block, and template-required block.
+- No real template send, production template approval, launch-gate approval, real-data handling, or R-405 status changed.
+- Production pilot remains `NO-GO`.
+
+Next:
+- Phase 77AI production operations preparation.
+
+## Phase 77AC: Disabled Webhook Boundary And Identity Quarantine - Completed 2026-06-22
+Goal: add a disabled-by-default mock WhatsApp webhook boundary and wire normalized payloads through identity and group quarantine.
+
+Completed:
+- Added `docs/PHASE_77AC_DISABLED_WEBHOOK_BOUNDARY_AND_IDENTITY_QUARANTINE_SPEC.md`.
+- Added `POST /api/whatsapp/webhook` with default `403/disabled` unless `MANU_ALLOW_MOCK_WHATSAPP_WEBHOOK=true`.
+- Added `whatsapp-mock-webhook.ts`, Supabase demo-tenant commit helper, WhatsApp identity normalization, and Phase 77AC tests.
+- Reused `processedSimulationKeys`, `inbound_quarantines`, rate limits, and simulator/orchestrator invariants.
+- No real webhook verification, credentials, outbound send, launch-gate approval, real-data handling, or R-405 status changed.
+- Production pilot remains `NO-GO`.
+
+Next:
+- Phase 77AD Opt-out, service window, and template policy mock (mock/gated only).
+
+## Phase 77AB: WhatsApp Cloud Payload Normalization - Completed 2026-06-22
+Goal: convert synthetic WhatsApp Cloud API-shaped fixtures into normalized inbound channel events without live webhook connections.
+
+Completed:
+- Added `docs/PHASE_77AB_WHATSAPP_CLOUD_PAYLOAD_NORMALIZATION_SPEC.md`.
+- Added `app/src/lib/whatsapp-cloud-payload-normalizer.ts`, `whatsapp-cloud-payload-golden-cases.jsonl`, and Phase 77AB tests.
+- Extended `NormalizedInboundChannelEvent` with conversation/message metadata for group quarantine and future webhook wiring.
+- Parser supports direct text, missing event id, empty body, unsupported media, group context, and malformed payload fail-closed cases.
+- No API route, real webhook, provider/channel connection, launch-gate approval, real-data handling, or R-405 status changed.
+- Production pilot remains `NO-GO`.
+
+Next:
+- Phase 77AC Disabled webhook boundary and identity quarantine (mock/gated only).
+
+## Phase 77AA: WhatsApp Mock/Gated Adapter PRD And Scope Lock - Completed 2026-06-22
+Goal: lock the canonical PRD and technical scope for the post-77Z WhatsApp adapter track before runtime implementation.
+
+Completed:
+- Added `docs/PHASE_77AA_WHATSAPP_MOCK_GATED_ADAPTER_PRD_AND_SCOPE_LOCK_SPEC.md`.
+- Locked Phases 77AB–77AH as the mock/gated adapter implementation order.
+- Recorded no-live canonical decision, gate conditions, data minimization rules, and edge-case matrix.
+- Reused Phase 7 adapter contracts, `channel-adapters.ts`, and Phase 46 group quarantine as foundations.
+- No runtime behavior, provider/channel connection, launch-gate approval, real-data handling, or R-405 status changed.
+- Production pilot remains `NO-GO`.
+
+Next:
+- Phase 77AB WhatsApp Cloud payload normalization (mock/gated only).
 
 ## Phase 66: Product Communication Covenant Lock
 Goal: encode the fixed product laws into provider output safety, prompt contracts, tests, and continuity docs.

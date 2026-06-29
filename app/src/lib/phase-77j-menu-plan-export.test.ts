@@ -140,7 +140,7 @@ describe("phase 77j menu plan export", () => {
     const { state } = seedActiveExportableMenuPlan();
     const exportPackage = buildPhase74ExportPackage(state, "client-mert");
 
-    expect(exportPackage.manifest.exportVersion).toBe("phase74-export-v1.2");
+    expect(exportPackage.manifest.exportVersion).toBe("phase74-export-v1.3");
     expect(exportPackage.manifest.includedFiles).toEqual([...PHASE_74_EXPORT_INCLUDED_FILES]);
     expect(exportPackage.files["personal_form_v2.json"]).toContain("phase-77j-data-lifecycle-v1.2");
     expect(exportPackage.files["catalog_version_refs.json"]).toContain("clientBoundRefs");

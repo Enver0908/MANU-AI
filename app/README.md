@@ -1,5 +1,11 @@
 # MANU-AI Local App Prototype
 
+## Phase 77AA-77AI Remediation Update
+
+2026-06-28: mock channel adapter review findings were closed. Supabase rollback controls are persisted and loaded into webhook/simulation state, invalid WhatsApp timestamps no longer throw, mock delivery policy fields are type-aligned, full 100x50 replay runs only through `npm run rehearse:channel:replay`, and client anonymization/removal deletes Supabase channel delivery records.
+
+Verified with targeted Phase 77 Vitest suites, `supabase-store` unit tests, `npm run lint`, `git diff --check`, and `npm run rehearse:channel:replay`. Repo-wide `npm test` exceeded the local 180s review timeout; `tsc --noEmit` remains blocked by pre-existing test type errors outside this remediation.
+
 This is the first local SaaS/PWA prototype for MANU-AI.
 
 It uses:
@@ -40,7 +46,7 @@ The scripts use `--webpack` because Turbopack did not resolve the local symlinke
 
 `npm run release:verify` runs the core package tests, lint, unit/API tests, production build, and the production dependency audit gate. It cleans generated `.next` output before the production build so repeated local Windows/OneDrive runs do not fail on stale build artifacts. It allows only the documented R-405 Next.js/PostCSS finding and does not run `npm audit fix --force`.
 
-Latest local release verification on 2026-06-22 passed after Phase 77Z with core tests 225/225, app tests 384/384, lint with two pre-existing warnings, production build, and only the documented R-405 production audit finding. Phase 77M-77Y AI Quality Program is complete locally, and Phase 77Z removed the obsolete tracked `.cursor` food green expansion plan after preserving its content in canonical Phase 76C-76Q docs. Next open implementation phase is WhatsApp production adapter (mock/gated only) per `../docs/PHASE_77Z_REPOSITORY_CLEANUP_AND_CURSOR_PLAN_MIGRATION_SPEC.md`; real channel/provider traffic remains blocked until external gates close.
+Latest local release verification on 2026-06-22 passed after Phase 77AI with core tests 225/225, app tests 429/429, lint with two pre-existing warnings, production build, and only the documented R-405 production audit finding. Phase 77AI bound ops runbook placeholders to review packets and internal mock health controls. Next open implementation phase is Phase 78 per `../docs/PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`.
 
 Phase 77Y closed continuity/pilot/gate docs and recorded hard-zero expanded rehearsal sample metrics plus clinical red-team closure. Phase 77Z is repository cleanup only. Phase 77A-77K manual source authority work remains complete locally.
 
