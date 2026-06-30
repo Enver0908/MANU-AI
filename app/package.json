@@ -13,7 +13,8 @@
     "release:verify": "node scripts/release-verify.mjs",
     "rehearse:ai": "node ../dietitian-ai-assistant/scripts/rehearse-ai.mjs",
     "rehearse:ai:expanded": "node ../dietitian-ai-assistant/scripts/rehearse-ai-expanded.mjs",
-    "rehearse:channel:replay": "node scripts/rehearse-channel-replay.mjs"
+    "rehearse:channel:replay": "node scripts/rehearse-channel-replay.mjs",
+    "rehearse:production-scale:79g": "node scripts/rehearse-production-scale-79g.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.10.3",

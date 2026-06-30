@@ -15,13 +15,16 @@ Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized reference
 ## Current Baseline
 
 - Git baseline: Phase 27-29 checkpoint exists at `c75564e Add Phase 27-29 pilot readiness checkpoint` on branch `codex/phase-29-baseline-checkpoint`; Completion Roadmap Phase 1 records this as the current implementation baseline.
-- Latest local release verification: `npm run release:verify` passed on 2026-06-22 after Phase 77AI production operations preparation, with core tests 225/225, app tests 429/429, lint with two pre-existing warnings, production build, and only documented R-405 findings.
+- Latest local release verification: `npm run release:verify` passed on 2026-06-30 after Phase 80G, with core tests 225/225, app tests 518 passed and 4 skipped across 83 files, production build, and only documented R-405 findings. Phase 80G also passed targeted Phase 80 tests (4 files, 29 tests), lint with two pre-existing warnings, production build, and `npm run rehearse:production-scale:79g`.
+- Latest production-scale rehearsal evidence: `npm run rehearse:production-scale:79g` passed on 2026-06-29. Expanded AI quality passed 5,000 cases with hard-zero counters at 0; full mock channel replay passed; Phase 79 production-scale acceptance tests passed; release verification passed.
 - Latest Phase 77AA-77AI remediation verification on 2026-06-28: targeted mock-channel tests, `supabase-store` unit tests, lint, diff check, and `npm run rehearse:channel:replay` passed after rollback persistence, timestamp guard, type alignment, full replay isolation, and Supabase channel-delivery DSAR cleanup. This is implementation evidence only and does not close a launch gate.
-- Verification result: `git diff --check` passed; app `npm test` passed with 65 files and 384 tests; release verification passed with core tests 225/225, app tests 384/384, lint, production build, and dependency audit gate.
+- Latest Phase 78 dependency/R-405 recheck on 2026-06-29: stable `next@latest` is `16.2.9` but still bundles nested `postcss@8.4.31`; `eslint-config-next@latest` is `16.2.9`; production audit still reports only the known moderate R-405 findings and the rejected `next@9.3.3` downgrade. No dependency files changed, no risk acceptance was supplied, and `dependency_audit_clearance` remains open.
+- Latest Phase 80G R-405 closure-evidence hardening on 2026-06-30: technical R-405 closure now requires safe stable patch path, dependency update evidence, and clean production audit; unknown production audit findings block closure; formal R-405 acceptance requires complete external acceptance metadata. No dependency files changed, no formal acceptance artifact was supplied, and `dependency_audit_clearance` remains open.
+- Verification result: targeted Phase 80 tests passed with 4 files and 29 tests; `git diff --check` passed; `npm run lint` passed with two pre-existing warnings; `npm run test:rls` skipped 20/20 because local Supabase was unavailable; `npm run build` passed; `npm run release:verify` passed with core tests 225/225, app tests 518 passed and 4 skipped across 83 files, production build, and only documented R-405 findings; `npm run rehearse:production-scale:79g` passed.
 - Dependency audit result: only known R-405 findings, `next:postcss` and `postcss:GHSA-qx2v-qp2m-jg93`.
-- R-405 status: open production launch blocker; Phase 54 rechecked metadata on 2026-06-02 and stable `next@latest` is 16.2.7 but still bundles `postcss@8.4.31`, so no safe stable Next.js/PostCSS patch path is available.
+- R-405 status: open production launch blocker; Phase 78 rechecked metadata on 2026-06-29 and stable `next@latest` is 16.2.9 but still bundles `postcss@8.4.31`, so no safe stable Next.js/PostCSS patch path is available.
 - R-405 remediation spec: `PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`.
-- RLS evidence status: expanded `npm run test:rls` coverage exists, including Phase 47 `inbound_quarantines` checks, Phase 51 transactional RPC checks, and Phase 52 rate-limit/atomicity checks. On 2026-06-02, Docker Desktop/local Supabase was started, the Phase 50 migration was applied with `npx supabase db reset --local`, and `npm run test:rls` passed against local Supabase with 1 file and 19/19 tests. R-406 is mitigated in the local prototype.
+- RLS evidence status: expanded `npm run test:rls` coverage exists, including Phase 47 `inbound_quarantines`, Phase 51 transactional RPC checks, Phase 52 rate-limit/atomicity checks, Phase 76N lifecycle/RPC scope, Phase 77AA-77AI channel tables, Phase 79 current evidence manifest, and Phase 80E current re-run evidence. On 2026-06-02, Docker Desktop/local Supabase was started, the Phase 50 migration was applied with `npx supabase db reset --local`, and `npm run test:rls` passed against local Supabase with 1 file and 19/19 tests. R-406 Phase 50/52 baseline remains mitigated; current post-76N/77AA-77AI/79/80 re-run is pending when local Supabase is unavailable.
 - External approval intake: `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` was added during Completion Roadmap Phase 4. No external approval artifacts have been supplied yet.
 - Legal/privacy review packet: `PRODUCTION_PILOT_LEGAL_PRIVACY_REVIEW_PACKET.md` was added during Completion Roadmap Phase 5. It is a review packet, not an approval artifact.
 - Clinical taxonomy review packet: `PRODUCTION_PILOT_CLINICAL_TAXONOMY_REVIEW_PACKET.md` was added during Completion Roadmap Phase 6. It is a review packet, not an approval artifact.
@@ -34,6 +37,8 @@ Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized reference
 - Final readiness closure summary: `PRODUCTION_PILOT_FINAL_READINESS_CLOSURE_SUMMARY.md` was added during Completion Roadmap Phase 13. It records the current production-pilot decision as `NO-GO`.
 - Phase 77Z repository cleanup spec: `PHASE_77Z_REPOSITORY_CLEANUP_AND_CURSOR_PLAN_MIGRATION_SPEC.md` removes the obsolete tracked `.cursor` food green expansion plan after preserving its content in canonical Phase 76C-76Q specs and continuity evidence. It is repository organization only and not a gate-closure artifact.
 - Phase 77AI production operations preparation spec: `PHASE_77AI_PRODUCTION_OPERATIONS_PREPARATION_SPEC.md` binds ops runbook placeholders to structured evidence candidates and internal mock health controls while keeping ops launch gates open. It is implementation evidence only and not a gate-closure artifact.
+- Phase 78 dependency and R-405 closure spec: `PHASE_78_DEPENDENCY_R405_CLOSURE_SPEC.md` records the 2026-06-29 stable dependency recheck and no-patch closure. It is dependency evidence only and not a gate-closure artifact because R-405 remains open without technical remediation or formal external acceptance.
+- Phase 79 production-scale hardening and full 100x50 rehearsal spec: `PHASE_79_PRODUCTION_SCALE_HARDENING_AND_FULL_100X50_REHEARSAL_SPEC.md` records `/api/app-state?view=windowed`, fail-closed notification windows, scoped client create/patch responses without post-mutation broad reloads, bounded internal copilot, lifecycle redaction evidence, current RLS pending evidence, unified 100x50 rehearsal closure, and Phase 79I remediation. It is implementation evidence only and not a gate-closure artifact because external approvals and R-405 clearance remain open.
 - Phase 77AH WhatsApp adapter evidence closure spec: `PHASE_77AH_WHATSAPP_ADAPTER_EVIDENCE_CLOSURE_SPEC.md` closes the 77AA–77AG mock/gated adapter track with hard-zero channel replay sample evidence and synchronized continuity docs. It is implementation evidence only and not a gate-closure artifact.
 - Phase 77AG 100x50 WhatsApp-like channel replay rehearsal spec: `PHASE_77AG_100X50_WHATSAPP_LIKE_CHANNEL_REPLAY_REHEARSAL_SPEC.md` adds mock channel replay harness with hard-zero safety gates and aggregate operational-health reporting. It is implementation evidence only and not a gate-closure artifact.
 - Phase 77AF adapter operational health and rollback controls spec: `PHASE_77AF_ADAPTER_OPERATIONAL_HEALTH_AND_ROLLBACK_CONTROLS_SPEC.md` adds aggregate channel adapter health counters and manual rollback controls. It is implementation evidence only and not a gate-closure artifact.
@@ -103,6 +108,72 @@ Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized reference
 - Phase 76I PromptContext and provider output guard hardening: `PHASE_76I_PROMPTCONTEXT_PROVIDER_OUTPUT_GUARD_SPEC.md`, core `food-rule-prompt-segments.js`, bounded food-rule PromptContext segments, and `food-rule-output-guard-v0.1.0` block provider output that contradicts engine decisions. It does not add dashboard UX, chat proposals, close any gate, connect real providers/channels, process real data, approve production pilot launch, or resolve R-405.
 - Phase 76H product ingredient verification: `PHASE_76H_PRODUCT_INGREDIENT_VERIFICATION_SPEC.md`, core `product-ingredient-verification.js`, and app `product-ingredient-verification.ts` add trusted-source verification with user-label extraction and food-rule engine consumption. It does not connect open web browsing, barcode/catalog providers, close any gate, connect real providers/channels, process real data, approve production pilot launch, or resolve R-405.
 
+## Phase 80C Structured Gate Evaluation
+
+Recorded on 2026-06-30 from `app/src/lib/phase-80c-launch-gate-evidence-evaluation.ts`:
+
+| Item | Value |
+| --- | --- |
+| Intake status | `no_external_artifact_supplied` |
+| Evidence records evaluated | `0` |
+| Approved gates | none |
+| Open gates | all eight canonical production-pilot gates |
+| R-405 status in report | `open` |
+| R-406 current status in report | `pending` |
+| `productionPilotDecision` | `NO-GO` |
+
+Per-gate evaluator result with zero supplied evidence: every gate remains `open` with blocking reason `no evidence records supplied` and full required-evidence missing lists preserved from `evaluateProductionPilotLaunchGateEvidence`. This evaluation does not approve production pilot launch.
+
+## Phase 80D R-405 Closure Evaluation
+
+Recorded on 2026-06-30 from `app/src/lib/phase-80d-r405-closure-evaluation.ts`:
+
+| Item | Value |
+| --- | --- |
+| `next@latest` | `16.2.9` |
+| Nested `postcss` | `8.4.31` |
+| `eslint-config-next@latest` | `16.2.9` |
+| Patch path | `no_safe_stable_patch` |
+| Dependency files changed | `false` |
+| Formal acceptance artifact | not supplied |
+| `dependency_audit_clearance` | open |
+| R-405 status | `open` |
+
+Phase 22 recheck confirmed no safe stable Next.js/PostCSS patch path and no formal external risk acceptance artifact. R-405 and `dependency_audit_clearance` remain open.
+
+## Phase 80E Current RLS Evidence Re-run
+
+Recorded on 2026-06-30 from `app/src/lib/phase-80e-current-rls-evidence.ts`:
+
+| Item | Value |
+| --- | --- |
+| Command | `npm run test:rls` |
+| Integration file | `supabase-rls.integration.test.ts` |
+| Result | `20 skipped (20)` |
+| Local Supabase available | `false` |
+| Current re-run status | `pending` |
+| R-406 narrative | Phase 50/52 baseline mitigated; current re-run pending |
+| Launch gate impact | readiness evidence only; no gate closed |
+
+RLS evidence does not close any launch gate by itself.
+
+## Phase 80F Final Readiness Decision
+
+Recorded on 2026-06-30 from `app/src/lib/phase-80f-final-readiness-decision.ts`:
+
+| Item | Value |
+| --- | --- |
+| Phase 80 outcome | `NO_GO_MISSING_ARTIFACTS` |
+| `productionPilotDecision` | `NO-GO` |
+| `productionPilotGo` | `false` |
+| `phase81StartEligible` | `false` |
+| Approved gates | none |
+| Open gates | all eight canonical production-pilot gates |
+| R-405 status | `open` |
+| R-406 current status | `pending` |
+
+Phase 80 does not start production traffic. Phase 81 may begin only after external gates close, R-405 is technically resolved or formally accepted, and current RLS evidence passes.
+
 ## Gate Closure Matrix
 
 | Launch gate | Required evidence | Internal evidence available | Missing external decision | Acceptable approval artifact | Status |
@@ -114,7 +185,7 @@ Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized reference
 | Incident response and deletion workflow runbook | Incident response runbook, breach escalation owner list, client deletion and export operating procedure | `PRODUCTION_PILOT_INCIDENT_DSAR_REVIEW_PACKET.md`, `INCIDENT_RESPONSE_RUNBOOK.md`, legal ops ledger, export/anonymization helpers, Phase 45 soft-delete/anonymization lifecycle, safe operational health snapshot | Operational owners must be named and DSAR/deletion procedure, hard-delete timing, and legal hold behavior must be approved | Signed incident and DSAR operating procedure with owner list | Open |
 | Backup expiry and restore test | Backup expiry policy, restore drill result, restore owner and cadence | `PRODUCTION_PILOT_BACKUP_RESTORE_REVIEW_PACKET.md`, `BACKUP_RESTORE_RUNBOOK.md` | Backup provider, region, retention, encryption ownership, and restore drill must be approved and tested | Restore drill evidence with owner, timestamp, environment, and test results | Open |
 | Production secret rotation plan | Secret inventory, rotation cadence, emergency revocation procedure | `PRODUCTION_PILOT_SECRET_ROTATION_REVIEW_PACKET.md`, `SECRET_ROTATION_RUNBOOK.md` | Production secret manager, owner, cadence, and emergency revocation flow must be approved | Secret inventory and rotation plan signed by operational owner | Open |
-| Production dependency audit clearance | Production dependency audit report, R-405 resolution or formal acceptance | `PRODUCTION_PILOT_DEPENDENCY_AUDIT_CLEARANCE_PACKET.md`, `PHASE_19_RELEASE_VERIFICATION_DEPENDENCY_GATE_SPEC.md`, `PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`, `PHASE_29_PILOT_GATE_CLOSURE_EVIDENCE_HARDENING_SPEC.md`, `PHASE_32_COMPLETION_PHASE_3_R405_RECHECK_SPEC.md`, `PHASE_48_R405_STABLE_PATCH_RECHECK_SPEC.md`, `PHASE_54_R405_AND_LAUNCH_GATES_RECHECK_SPEC.md`, `npm run release:verify`, `RISK_REGISTER.md` | R-405 must be resolved through a safe stable patch path or formally accepted before pilot | Clean production audit report, safe stable upgrade evidence, or formal risk acceptance | Open |
+| Production dependency audit clearance | Production dependency audit report, R-405 resolution or formal acceptance | `PRODUCTION_PILOT_DEPENDENCY_AUDIT_CLEARANCE_PACKET.md`, `PHASE_19_RELEASE_VERIFICATION_DEPENDENCY_GATE_SPEC.md`, `PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`, `PHASE_29_PILOT_GATE_CLOSURE_EVIDENCE_HARDENING_SPEC.md`, `PHASE_32_COMPLETION_PHASE_3_R405_RECHECK_SPEC.md`, `PHASE_48_R405_STABLE_PATCH_RECHECK_SPEC.md`, `PHASE_54_R405_AND_LAUNCH_GATES_RECHECK_SPEC.md`, `PHASE_78_DEPENDENCY_R405_CLOSURE_SPEC.md`, `npm run release:verify`, `RISK_REGISTER.md` | R-405 must be resolved through a safe stable patch path or formally accepted before pilot | Clean production audit report, safe stable upgrade evidence, or formal risk acceptance | Open |
 
 Phase 63 gate interpretation: the clinical taxonomy gate now also requires official PDF source metadata, checksum, extraction QA, page/section references, approved derived routing rules, corpus version, and corpus golden-case report. The legal/privacy gate must review user-supplied dietitian and client form definitions before those schemas are production approved. The 100 dietitian / 5,000+ client target makes pagination, scoped reload, and load evidence production prerequisites for the readiness packet.
 
@@ -122,7 +193,7 @@ Phase 64 gate interpretation: an approval artifact can close a gate only when re
 
 Phase 65 gate interpretation: official PDF-derived evidence cannot satisfy the clinical taxonomy gate until the corpus package passes QA and an external qualified reviewer supplies structured approval evidence. QA-passing derived rules are draft-only and do not activate routing.
 
-Direct 100 dietitian gate interpretation: Phase 66 supplies local product communication covenant evidence, Phase 67 supplies local approved-source answerability evidence, Phase 68 supplies local green intent taxonomy evidence, Phase 69 supplies local 100x50 synthetic scale evidence, Phase 70 supplies local form hardening evidence, Phase 71 supplies local Turkiye official source manifest/intake evidence, Phase 72 supplies local draft permission graph artifacts with fail-closed routing evaluation, Phase 73 supplies local health regulation calibration matrix and golden-case acceptance evidence, Phase 74 supplies local retention/export/DSAR policy and transactional redaction contract evidence, Phase 75 supplies local Gemini provider gate artifacts with blocked real egress unless `MANU_ALLOW_REAL_GEMINI=true` plus approved legal/privacy and provider/vendor gates, Phase 76A supplies deprecated dietitian-approved chat-to-form update proposal evidence, Phase 76B supplies local safety-profile chat proposal expansion evidence, Phase 76C supplies the canonical structured food-rule green capacity PRD/tech spec, Phases 76D-76O supply the full structured food-rule implementation and rehearsal evidence chain, Phase 76P consolidates that track in continuity/pilot/gate/risk documentation, Phase 76Q closes that track with verification evidence, Phase 77A-77K complete the manual source authority adaptation, Phase 77L reconciles the worktree/continuity baseline, and Phase 77M-77Y is now the planned AI Quality Program before WhatsApp adapter work. Gate closure still requires accepted external review artifacts, final form/PDF/catalog/menu approvals where applicable, external legal/privacy approval of lifecycle and provider artifacts, external clinical approval of safety/food-decision/AI-quality behavior, production operations/rehearsal acceptance, and R-405 closure or acceptance before production GO.
+Direct 100 dietitian gate interpretation: Phase 66 supplies local product communication covenant evidence, Phase 67 supplies local approved-source answerability evidence, Phase 68 supplies local green intent taxonomy evidence, Phase 69 supplies local 100x50 synthetic scale evidence, Phase 70 supplies local form hardening evidence, Phase 71 supplies local Turkiye official source manifest/intake evidence, Phase 72 supplies local draft permission graph artifacts with fail-closed routing evaluation, Phase 73 supplies local health regulation calibration matrix and golden-case acceptance evidence, Phase 74 supplies local retention/export/DSAR policy and transactional redaction contract evidence, Phase 75 supplies local Gemini provider gate artifacts with blocked real egress unless `MANU_ALLOW_REAL_GEMINI=true` plus approved legal/privacy and provider/vendor gates, Phase 76A supplies deprecated dietitian-approved chat-to-form update proposal evidence, Phase 76B supplies local safety-profile chat proposal expansion evidence, Phase 76C supplies the canonical structured food-rule green capacity PRD/tech spec, Phases 76D-76O supply the full structured food-rule implementation and rehearsal evidence chain, Phase 76P consolidates that track in continuity/pilot/gate/risk documentation, Phase 76Q closes that track with verification evidence, Phase 77A-77K complete the manual source authority adaptation, Phase 77L reconciles the worktree/continuity baseline, Phase 77M-77Y completes the AI Quality Program, Phase 77AA-77AI completes the mock/gated adapter track and ops prep, Phase 78 rechecks R-405, and Phase 79 completes local production-scale runtime hardening plus unified 100x50 rehearsal evidence. Gate closure still requires accepted external review artifacts, final form/PDF/catalog/menu approvals where applicable, external legal/privacy approval of lifecycle and provider artifacts, external clinical approval of safety/food-decision/AI-quality behavior, production operations/rehearsal acceptance, current local Supabase RLS re-run when available, and R-405 closure or acceptance before production GO.
 
 Phase 77C gate interpretation: the first client personal form v2 is now loaded locally with phone/WhatsApp identity, general flexibility, and goal flexibility. This does not approve production use of that form, does not complete food-rule/menu/catalog approval, and does not close legal/privacy, clinical, channel, provider, or dependency gates.
 
@@ -134,7 +205,7 @@ Phase 77M-77Y gate interpretation: `PHASE_77M_MASTER_REBASELINE_AND_SPEC.md` and
 
 - Legal/privacy packet: `PRODUCTION_PILOT_LEGAL_PRIVACY_REVIEW_PACKET.md`, data inventory, permission integration points, DSAR/export/anonymization evidence, retention placeholder list, dietitian context update records, Phase 77C client personal form v2, Phase 77E food-rule profile v2, Phase 77F menu plan v1, Phase 77J export/lifecycle v1.2, Phase 77D master food catalog hierarchy, and user-supplied dietitian/client form definitions when updated.
 - Clinical packet: `PRODUCTION_PILOT_CLINICAL_TAXONOMY_REVIEW_PACKET.md`, taxonomy version, golden JSONL cases, latest core test output, persona invariant statement, qualified dietitian sign-off template, Food Decision V2 golden/rehearsal evidence, and production second-layer or equivalent fail-closed safety evaluation evidence.
-- Scale packet: `PHASE_69_DIRECT_5000_CLIENT_SCALE_FOUNDATION_SPEC.md`, synthetic 100x50 fixture evidence, read-contract status, operational-health scale snapshot, Phase 76O food-mix rehearsal, Phase 77K V2 100x50 rehearsal evidence, and later production channel replay evidence before GO.
+- Scale packet: `PHASE_69_DIRECT_5000_CLIENT_SCALE_FOUNDATION_SPEC.md`, `PHASE_79_PRODUCTION_SCALE_HARDENING_AND_FULL_100X50_REHEARSAL_SPEC.md`, synthetic 100x50 fixture evidence, Phase 79 windowed/scoped runtime contracts, operational-health scale snapshot, Phase 76O food-mix rehearsal, Phase 77K V2 100x50 rehearsal evidence, Phase 77X expanded AI 5,000-case evidence, Phase 77AG channel replay evidence, and Phase 79 unified full acceptance evidence.
 - Product communication covenant packet: `PHASE_66_PRODUCT_COMMUNICATION_COVENANT_LOCK_SPEC.md`, latest core/app/release verification, covenant detector/provider-output/send-time blocking tests, and external reviewer acceptance before any real provider/channel send.
 - Regulation PDF packet: official PDF source metadata, checksum, extraction report, page/section map, draft derived rules, corpus version, corpus golden-case report, and external approval artifact. Phase 65 can validate the QA foundation but cannot self-approve the corpus.
 - Provider packet: `PRODUCTION_PILOT_PROVIDER_VENDOR_REVIEW_PACKET.md`, provider requirements, no-storage/no-training requirements, prompt/completion logging decision checklist, provider-attempt audit semantics, provider input allowlist, internal copilot egress review, dietitian context update egress review.
@@ -142,7 +213,7 @@ Phase 77M-77Y gate interpretation: `PHASE_77M_MASTER_REBASELINE_AND_SPEC.md` and
 - Channel packet: `PRODUCTION_PILOT_CHANNEL_POLICY_REVIEW_PACKET.md`, WhatsApp feasibility checklist, Telegram bot/privacy checklist, opt-in/out and service-window procedure, identity quarantine and idempotency evidence.
 - Operations packet: `PRODUCTION_PILOT_INCIDENT_DSAR_REVIEW_PACKET.md`, `PRODUCTION_PILOT_BACKUP_RESTORE_REVIEW_PACKET.md`, `PRODUCTION_PILOT_SECRET_ROTATION_REVIEW_PACKET.md`, incident owner placeholder, DSAR/deletion procedure placeholder, backup/restore drill placeholder, secret inventory and rotation owner placeholder.
 - Dependency packet: `PRODUCTION_PILOT_DEPENDENCY_AUDIT_CLEARANCE_PACKET.md`, latest `npm run release:verify` output, R-405 risk record, stable Next.js/PostCSS tracking note.
-- RLS evidence packet: latest `npm run test:rls` output from local Supabase showing 1 file and 19/19 tests passed after applying the Phase 50 migration and Phase 51/52 coverage.
+- RLS evidence packet: latest Phase 50/52 baseline `npm run test:rls` output from local Supabase showing 1 file and 19/19 tests passed, plus Phase 79 current RLS evidence status and Phase 80E current re-run evidence. Current post-76N/77AA-77AI/79/80 re-run remains pending when local Supabase is unavailable.
 - Approval intake packet: sanitized external approval artifact references tracked in `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md`, then evaluated through the Phase 64 structured evidence engine.
 
 ## Non-Approvals
@@ -156,4 +227,4 @@ Phase 77M-77Y gate interpretation: `PHASE_77M_MASTER_REBASELINE_AND_SPEC.md` and
 - This dossier does not approve sending dietitian context updates to a real Gemini or external LLM provider.
 - This dossier does not approve external email, push, monitoring, analytics, or secret manager vendors.
 - This dossier does not resolve or accept R-405.
-- This dossier records R-406 mitigation in the local prototype, but it does not approve production pilot launch or complete client removal/anonymization bulk redaction RPC coverage.
+- This dossier records Phase 50/52 R-406 baseline mitigation and Phase 79 current re-run pending status, but it does not approve production pilot launch.

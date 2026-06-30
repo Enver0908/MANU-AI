@@ -18,17 +18,28 @@ Run from `app`:
 npm run release:verify
 ```
 
-Latest result, re-verified on 2026-06-22 after Phase 77AI production operations preparation:
+Latest result, re-verified on 2026-06-29 after Phase 79 production-scale hardening, full 100x50 rehearsal closure, and Phase 79I remediation:
 
 - Core package tests: 225/225 passed.
-- App tests: 429/429 passed.
+- App tests: 489 passed and 4 skipped across 79 files.
+- Phase 79I targeted remediation tests: 7 files passed; 65 tests passed; 2 skipped.
 - `git diff --check`: passed.
-- App lint: passed with two pre-existing warnings.
 - Production build: passed.
 - Production dependency audit gate: passed with only documented R-405 findings.
-- R-405 remains open: Next.js 16.2.7 still bundles nested PostCSS 8.4.31, so no safe stable patch path is available.
-- Phase 77AI adds production operations preparation evidence through `docs/PHASE_77AI_PRODUCTION_OPERATIONS_PREPARATION_SPEC.md` and `phase-77ai-production-operations-preparation.ts`: incident/SLA/monitoring/rollback/DSAR/backup/secret placeholders bound to draft runbooks, review packets, and internal mock health controls; ops launch gates (`incident_response_runbook`, `backup_restore_test`, `secret_rotation_plan`) remain open with nine explicit missing external evidence items. No real monitoring/secret manager, launch gate, real-data handling, or R-405 status changed. Phase 78 is next.
+- `npm run rehearse:production-scale:79g`: passed.
+- Expanded AI quality rehearsal: 5,000 cases passed with `unsafeClientSendCount=0`, `sourceUnsupportedGreenCount=0`, `forbiddenFoodApprovalCount=0`, `yellowRedClientSendCount=0`, and `claimOutsideManifestCount=0`.
+- Full mock channel replay rehearsal: passed with hard-zero channel replay counters.
+- Phase 79 production-scale acceptance tests: passed.
+- R-405 remains open: stable Next.js 16.2.9 still bundles nested PostCSS 8.4.31, so no safe stable patch path is available.
+- R-406 status: Phase 50/52 baseline local RLS mitigation remains valid; current post-76N/77AA-77AI/79/80 migration/RLS re-run is pending when local Supabase is unavailable.
+- Phase 80F final readiness decision on 2026-06-30: `phase-80f-final-readiness-decision.ts` aggregated Phase 80C/80D/80E evidence; final outcome `NO_GO_MISSING_ARTIFACTS`; targeted Phase 80F tests passed (5/5); `productionPilotDecision` is `NO-GO`; `phase81StartEligible` is `false`; Phase 80 complete.
+- Phase 80G R-405 closure-evidence hardening on 2026-06-30: technical R-405 closure now requires safe stable patch path, dependency update evidence, and clean production audit; unknown production audit findings block closure; formal R-405 acceptance requires complete external acceptance metadata. Targeted Phase 80 tests passed (4 files, 29 tests); `npm run release:verify` passed with core tests 225/225 and app tests 518 passed / 4 skipped across 83 files; `npm run rehearse:production-scale:79g` passed. No dependency files changed; R-405 remains open; production pilot remains `NO-GO`.
+- Phase 80E current RLS evidence re-run on 2026-06-30: `npm run test:rls` skipped 20/20 tests because local Supabase was unavailable; targeted Phase 80E tests passed (5/5); R-406 current re-run remains pending.
+- Phase 80C structured launch-gate evaluation on 2026-06-30: `phase-80c-launch-gate-evidence-evaluation.ts` evaluated zero Phase 80B evidence records; all eight launch gates remain open; targeted Phase 80C tests passed (9/9); `productionPilotDecision` is `NO-GO`.
+- Phase 79 production-scale closure on 2026-06-29 added `/api/app-state?view=windowed` dashboard runtime evidence, fail-closed notification windows, scoped client create/patch responses without post-mutation broad reloads, bounded internal copilot loaders, lifecycle redaction evidence, current RLS evidence status, unified production-scale metrics, corrected full rehearsal coverage, and continuity/risk/gate closure. Production pilot remains `NO-GO`.
+- Phase 77AI adds production operations preparation evidence through `docs/PHASE_77AI_PRODUCTION_OPERATIONS_PREPARATION_SPEC.md` and `phase-77ai-production-operations-preparation.ts`: incident/SLA/monitoring/rollback/DSAR/backup/secret placeholders bound to draft runbooks, review packets, and internal mock health controls; ops launch gates (`incident_response_runbook`, `backup_restore_test`, `secret_rotation_plan`) remain open with nine explicit missing external evidence items. No real monitoring/secret manager, launch gate, real-data handling, or R-405 status changed.
 - Phase 77AA-77AI remediation on 2026-06-28 closed review findings for the mock/gated adapter track: Supabase rollback controls persist and load into webhook/simulation state, invalid WhatsApp timestamps no longer throw, mock delivery policy fields are type-aligned, full 100x50 replay is isolated to `npm run rehearse:channel:replay`, and Supabase channel delivery records are deleted during client anonymization/removal. Targeted Phase 77 tests, `supabase-store` unit tests, lint, diff check, and full channel replay passed; production pilot remains `NO-GO`.
+- Phase 78 dependency/R-405 closure on 2026-06-29 re-ran the Phase 22 stable dependency procedure: stable `next@latest` is `16.2.9` but still bundles nested `postcss@8.4.31`, `eslint-config-next@latest` is `16.2.9`, and production audit still reports only the known moderate R-405 `next`/`postcss` findings with the rejected `next@9.3.3` downgrade. No dependency files were changed; R-405 and `dependency_audit_clearance` remain open; production pilot remains `NO-GO`.
 - Phase 77AH closes the 77AA–77AG WhatsApp mock/gated adapter track through `docs/PHASE_77AH_WHATSAPP_ADAPTER_EVIDENCE_CLOSURE_SPEC.md` and `phase-77ah-whatsapp-adapter-evidence-closure.ts`.
 - Phase 77AG adds mock channel replay evidence through `docs/PHASE_77AG_100X50_WHATSAPP_LIKE_CHANNEL_REPLAY_REHEARSAL_SPEC.md`: 100x50 `processMockChannelInbound` rehearsal with hard-zero gates, operational-health aggregate fields, and `npm run rehearse:channel:replay` for full mock-only scale runs. No real webhook, launch gate, real-data handling, or R-405 status changed.
 - Phase 77AF adds channel adapter health and rollback evidence through `docs/PHASE_77AF_ADAPTER_OPERATIONAL_HEALTH_AND_ROLLBACK_CONTROLS_SPEC.md`: aggregate delivery-failure/quarantine/duplicate/opt-out/gate-blocked counters and global/tenant/dietitian/client manual rollback controls block channel automation with internal audit only. No real monitoring, launch gate, real-data handling, or R-405 status changed.
@@ -483,7 +494,7 @@ Release verification:
 - This package does not approve user-supplied dietitian/client forms until schema, privacy, prompt-allowlist, and clinical implications are reviewed.
 - This package does not approve a 100 dietitian / 5,000+ client production pilot until pagination, scoped reload, load, backpressure, idempotency, and monitoring evidence is recorded.
 - This package does not approve external notification or monitoring vendors.
-- This package does not resolve R-405.
+- This package does not resolve R-405. Phase 78 confirms no safe stable Next.js/PostCSS patch path is available as of 2026-06-29.
 - This package records R-406 mitigation in the local prototype and Phase 50 SQL/RPC local Supabase execution evidence, but it does not approve production pilot launch.
 
 ## Next Approval Path
@@ -498,6 +509,6 @@ Release verification:
 8. Complete provider/vendor retention and prompt logging review using `PRODUCTION_PILOT_PROVIDER_VENDOR_REVIEW_PACKET.md`.
 9. Complete WhatsApp/Telegram policy, opt-in/out, template, and service-window review using `PRODUCTION_PILOT_CHANNEL_POLICY_REVIEW_PACKET.md`.
 10. Finalize incident response and DSAR/deletion using `PRODUCTION_PILOT_INCIDENT_DSAR_REVIEW_PACKET.md`, finalize backup/restore using `PRODUCTION_PILOT_BACKUP_RESTORE_REVIEW_PACKET.md`, then finalize secret rotation using `PRODUCTION_PILOT_SECRET_ROTATION_REVIEW_PACKET.md`.
-11. Resolve or formally accept R-405 using `PRODUCTION_PILOT_DEPENDENCY_AUDIT_CLEARANCE_PACKET.md` before production pilot.
+11. Resolve or formally accept R-405 using `PRODUCTION_PILOT_DEPENDENCY_AUDIT_CLEARANCE_PACKET.md` before production pilot; latest Phase 78 evidence still leaves R-405 open.
 12. Design the dedicated client removal/anonymization transactional redaction contract before moving that lifecycle fully to RPC commits.
 13. Re-run `npm run release:verify` after any approval-related code, dependency, prompt, corpus, form, or taxonomy change.

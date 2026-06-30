@@ -8,9 +8,17 @@ Real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret ma
 
 The most recent execution layers after the 13-phase completion roadmap are Phase 76B expanded chat form safety updates, Phase 76A dietitian chat form update proposals, Phase 75 Gemini provider gate, Phase 74 data lifecycle DSAR policy, Phase 73 health regulation calibration, Phase 72 regulation permission graph, Phase 71 Turkiye official health source ingestion, Phase 70 user-supplied form hardening, Phase 43 multilingual language support, Phase 44 red-risk reactivation lock, Phase 45 client removal data lifecycle, Phase 46 WhatsApp group quarantine, Phase 47 RLS quarantine evidence coverage, Phase 48 R-405 stable patch recheck, Phase 49 safety/orchestration hardening, Phase 50 production Supabase hardening, Phase 51 transactional RPC coverage, Phase 52 integration test coverage, Phase 53 scale/broad read contracts, Phase 54 R-405/launch-gate recheck, Phase 55 audit remediation safety boundary, Phase 56 clinical safety second-layer local evidence, Phase 57 yellow-risk hold/draft refresh, Phase 58 dietitian client language control, Phase 59 architecture review remediation, Phase 60 audit remediation, Phase 61 scope guard (RAG + LLM) second layer mock-first, Phase 62 architecture review remediation wave 2, Phase 63 production pilot GO rebaseline, Phase 64 structured launch-gate evidence engine, Phase 65 official regulation PDF corpus QA foundation, Phase 66 product communication covenant lock, Phase 67 approved source answerability engine, Phase 68 green maximization intent taxonomy, and Phase 69 direct 5,000 client scale foundation. Phase 76B expands the reviewed proposal path to Phase 70 clinical/safety form flags, editable proposal rows, supported health-profile mirrors, and manual-control warnings while keeping AI active/passive, mode, channel permission, red/yellow lock resolution, and autopilot/reactivation outside chat mutation. Phase 65 adds a typed QA foundation so user-supplied official PDFs must have source metadata, checksums, page extraction evidence, page/section references, derived rule drafts, corpus version, and synthetic golden cases before PDF-derived scope rules can become draft rules. Phase 71 adds the user-supplied 14-source Turkiye official source manifest and fail-closed artifact intake into that QA contract without approving any corpus. Phase 66 locks client-facing AI communication locally: AI self-disclosure, AI limitation disclaimers, doctor/dietitian/professional referral language, yellow/red AI sends, and non-green draft approval are blocked before client-facing send. Phase 67 gates green provider calls/sends on approved source support and excludes AI-generated messages from source authority. Phase 68 records green intent taxonomy evidence after answerability and blocks green-looking sensitive intent before provider generation without downgrading yellow/red decisions. Phase 69 adds synthetic 100 dietitian x 50 client scale evidence, cursor pagination helpers, Phase 69 read contracts, and aggregate operational-health scale signals. The post-Phase 65 strategic completion plan is now `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`: production pilot is direct 100 dietitians x 50 clients (minimum 5,000 clients), no small production ring, green maximization is source-backed, and client-facing output must never disclose AI identity or refer the client to a doctor/dietitian/professional. The production-pilot decision remains `NO-GO`: all eight launch gates remain open and R-405 remains open. R-406 is now mitigated in the local prototype after Docker Desktop/local Supabase was started, the Phase 50 migration was applied, and `npm run test:rls` passed with 19/19 tests on 2026-06-02. Draft review, form response, client context update, handoff status, and red-risk reactivation now use transactional RPC commits locally; remaining broad reads are classified in a test-covered contract, while client removal/anonymization bulk redaction and external approval intake remain future production hardening work. R-310 is partially mitigated locally by deterministic second-layer evidence, Phase 57 yellow supervision, Phase 59 glucose/symptom hardening, Phase 61 escalate-only scope guard (default no-op until approved corpus), Phase 65 corpus QA foundation, Phase 66 covenant send blocking, Phase 67 source answerability, and Phase 68 green intent taxonomy, but qualified dietitian approval, official PDF corpus approval, and the clinical taxonomy launch gate remain open.
 
-Current override after Phase 77AI: Phase 77AI bound ops runbook placeholders to structured evidence candidates and internal mock health controls. Next open phase is Phase 78 dependency and R-405 closure (`docs/PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md` only).
+Current override after Phase 80G: Phase 80 external launch-gate closure is complete on 2026-06-30, and Phase 80G hardened R-405 closure evidence. Technical R-405 closure now requires a safe stable patch path, dependency update evidence, and clean production audit; unknown production audit findings block closure; formal R-405 acceptance requires complete external acceptance details. Targeted Phase 80 tests passed (4 files, 29 tests); `npm run release:verify` passed with core tests 225/225 and app tests 518 passed / 4 skipped across 83 files; `npm run rehearse:production-scale:79g` passed. Final outcome remains `NO_GO_MISSING_ARTIFACTS`; `productionPilotDecision` is `NO-GO`; `phase81StartEligible` is `false`. All eight launch gates remain open; R-405 remains open; R-406 current re-run remains pending. Production pilot remains `NO-GO`. Next phase is Phase 81 direct production pilot GO evaluation only when eligible.
 
-Phase 77AA-77AI remediation note, 2026-06-28: review findings for the mock/gated WhatsApp adapter track were closed. Supabase rollback controls are now persisted and loaded, malformed numeric WhatsApp timestamps fail closed without throwing, mock delivery policy types are aligned, full 100x50 channel replay is isolated to `npm run rehearse:channel:replay`, and Supabase channel delivery records are removed during client anonymization/removal. This does not change the next phase: Phase 78 dependency and R-405 closure remains next.
+Phase 80D override: R-405 remains open with `no_safe_stable_patch` on 2026-06-30.
+
+Phase 79 override: Phase 79A-79I completed production-scale hardening, full 100x50 rehearsal closure, and post-review remediation.
+
+Phase 77AA-77AI remediation note, 2026-06-28: review findings for the mock/gated WhatsApp adapter track were closed. Supabase rollback controls are now persisted and loaded, malformed numeric WhatsApp timestamps fail closed without throwing, mock delivery policy types are aligned, full 100x50 channel replay is isolated to `npm run rehearse:channel:replay`, and Supabase channel delivery records are removed during client anonymization/removal.
+
+Phase 78 dependency/R-405 note, 2026-06-29: `docs/PHASE_78_DEPENDENCY_R405_CLOSURE_SPEC.md` records the latest no-patch closure. R-405 and `dependency_audit_clearance` remain open; production pilot remains `NO-GO`.
+
+Phase 79 production-scale closure note, 2026-06-29: `docs/PHASE_79_PRODUCTION_SCALE_HARDENING_AND_FULL_100X50_REHEARSAL_SPEC.md` records Phase 79A-79I completion. Runtime hardening covers `/api/app-state?view=windowed`, fail-closed notification windows, scoped client create/patch responses, bounded internal copilot, lifecycle redaction evidence, current RLS evidence status, unified rehearsal metrics, and continuity/risk/gate closure. It does not connect real WhatsApp/Gemini/provider paths, close gates, process real client health data, or resolve R-405.
 
 ## Post-Phase 65 Strategic Completion Plan - Added 2026-06-05
 
@@ -30,10 +38,165 @@ Locked decisions:
 
 Next implementation order:
 
-1. WhatsApp production adapter (mock/gated).
-2. Production operations, R-405 closure or acceptance, production rehearsal/channel replay acceptance.
-3. External launch-gate closure.
-4. Direct production pilot GO only after the above.
+1. Phase 81 direct production pilot GO evaluation only when all gates close and R-405 is resolved or formally accepted.
+2. Phase 82 pilot stabilization closure after controlled launch.
+
+## Phase 78: Dependency And R-405 Closure - Completed 2026-06-29
+
+Goal: re-run the accepted Phase 22 R-405 dependency procedure and either safely close the finding or record that no accepted stable patch path exists.
+
+Status:
+
+- Added `docs/PHASE_78_DEPENDENCY_R405_CLOSURE_SPEC.md`.
+- Rechecked stable `next@latest`: `16.2.9` with nested `postcss@8.4.31`.
+- Rechecked stable `eslint-config-next@latest`: `16.2.9`.
+- Rechecked production audit: only the known moderate R-405 `next`/`postcss` findings remain, with the rejected `next@9.3.3` downgrade.
+- No dependency files were changed.
+- R-405 and `dependency_audit_clearance` remain open.
+- Production pilot remains `NO-GO`.
+- Verification passed with `git diff --check`, core tests 225/225, app tests 428 passed and 2 skipped across 73 files, lint with two pre-existing warnings, production build, and only documented R-405 findings.
+
+Next:
+
+- Phase 81 direct production pilot GO evaluation only when all external gates close, R-405 resolves or is formally accepted, and current RLS evidence passes.
+
+## Phase 79: Production-Scale Hardening And Full 100x50 Rehearsal - Completed 2026-06-29
+
+Goal: close local production-scale hardening before external launch-gate closure without connecting real providers/channels or processing real client data.
+
+Status:
+
+- Added `docs/PHASE_79_PRODUCTION_SCALE_HARDENING_AND_FULL_100X50_REHEARSAL_SPEC.md`.
+- Completed Phase 79B-79D runtime hardening: windowed dashboard reads, scoped client create/patch loaders, and bounded internal copilot tool state.
+- Completed Phase 79E lifecycle redaction evidence for removal/anonymization domains.
+- Completed Phase 79F current RLS evidence status: Phase 50/52 baseline remains mitigated; current post-76N/77AA-77AI/79 re-run is pending when local Supabase is unavailable.
+- Completed Phase 79G unified rehearsal with `npm run rehearse:production-scale:79g`.
+- Completed Phase 79H continuity/risk/gate closure updates.
+- Verification passed: expanded AI quality 5,000 cases, full mock channel replay, Phase 79 full acceptance tests, and `npm run release:verify` with core tests 225/225 and app tests 489 passed / 4 skipped across 79 files.
+- Production pilot remains `NO-GO`; all launch gates remain open; R-405 remains open.
+
+Next:
+
+- Phase 81 direct production pilot GO evaluation only when all external gates close, R-405 resolves or is formally accepted, and current RLS evidence passes.
+
+## Phase 80G: R-405 Closure-Evidence Hardening - Completed 2026-06-30
+
+Goal: harden Phase 80D/80F R-405 closure evidence so R-405 cannot appear closed through a remediation flag alone, known-only audit parsing, or incomplete formal acceptance metadata.
+
+Status:
+
+- Hardened `phase-80d-r405-closure-evaluation.ts`.
+- Technical R-405 closure now requires a safe stable Next.js/PostCSS patch path, dependency update evidence, and clean production audit.
+- Unknown production audit findings block closure.
+- Formal R-405 acceptance requires complete external acceptance metadata beyond a dependency gate evidence record.
+- Targeted Phase 80 tests passed: 4 files, 29 tests.
+- `npm run release:verify` passed with core tests 225/225 and app tests 518 passed / 4 skipped across 83 files.
+- `npm run rehearse:production-scale:79g` passed.
+- No dependency files changed; no launch gate closed; no formal R-405 acceptance was supplied.
+- Production pilot remains `NO-GO`; R-405 remains open; `phase81StartEligible` remains `false`.
+
+Next:
+
+- Phase 81 direct production pilot GO evaluation only when all external gates close, R-405 resolves or is formally accepted, and current RLS evidence passes.
+
+## Phase 80F: Final Gate Dossier And Readiness Decision - Completed 2026-06-30
+
+Goal: aggregate Phase 80C/80D/80E evidence into the final closure report; update gate dossier, final readiness summary, and continuity docs; production pilot remains `NO-GO` unless all gates close, R-405 closes or is formally accepted, and current RLS evidence is acceptable.
+
+Status:
+
+- Added `phase-80f-final-readiness-decision.ts`; targeted Phase 80F tests passed (5/5).
+- Final outcome: `NO_GO_MISSING_ARTIFACTS`.
+- `productionPilotDecision`: `NO-GO`; `productionPilotGo`: `false`; `phase81StartEligible`: `false`.
+- Updated gate dossier, final readiness summary, pilot evidence pack, and continuity docs.
+- Production pilot remains `NO-GO`; Phase 81 cannot start.
+
+Next:
+
+- Phase 81 direct production pilot GO evaluation only when eligible.
+
+## Phase 80E: Current RLS Evidence Re-run - Completed 2026-06-30
+
+Goal: run `npm run test:rls` and record pass, skip, or pending without rewriting the Phase 50/52 baseline mitigation narrative.
+
+Status:
+
+- Ran `npm run test:rls` from `app`; result was `20 skipped (20)` because local Supabase was unavailable.
+- Added `phase-80e-current-rls-evidence.ts`; targeted Phase 80E tests passed (5/5).
+- R-406 remains Phase 50/52 baseline mitigated with current re-run pending.
+- No launch gate status changed; production pilot remains `NO-GO`.
+
+Next:
+
+- Phase 80F final gate dossier and readiness decision (completed; see Phase 80F section above).
+
+## Phase 80D: R-405 Technical Closure Or Formal Acceptance - Completed 2026-06-30
+
+Goal: re-run Phase 22 metadata/audit checks and either apply a safe stable patch or record no-patch closure with optional formal acceptance evaluation.
+
+Status:
+
+- Re-ran `npm view next@latest`, `npm view eslint-config-next@latest`, and `npm audit --omit=dev --json` from `app`.
+- Stable `next@latest` `16.2.9` still bundles nested `postcss@8.4.31`.
+- Production audit still reports only known R-405 findings; rejected `next@9.3.3` downgrade remains.
+- No dependency files changed.
+- Added `phase-80d-r405-closure-evaluation.ts`; targeted Phase 80D tests passed (7/7).
+- No formal external R-405 risk acceptance artifact supplied.
+- R-405 and `dependency_audit_clearance` remain open; production pilot remains `NO-GO`.
+
+Next:
+
+- Phase 80E current RLS evidence re-run.
+
+## Phase 80C: Gate-by-Gate Evidence Evaluation - Completed 2026-06-30
+
+Goal: evaluate sanitized evidence through the existing Phase 64 evaluator and document per-gate open/approved status and missing evidence.
+
+Status:
+
+- Added `app/src/lib/phase-80c-launch-gate-evidence-evaluation.ts` and targeted tests.
+- Evaluated Phase 80B empty intake (`no_external_artifact_supplied`) with zero evidence records.
+- All eight launch gates remain open; `productionPilotDecision` is `NO-GO`.
+- Updated gate dossier, intake, pilot evidence pack, and Phase 80 spec with structured evaluation results.
+- No real connections, dependency edits, provider/channel activation, or self-approved gate closure.
+- Verification passed with targeted Phase 80C tests (9/9).
+
+Next:
+
+- Phase 80D R-405 technical closure or formal acceptance.
+
+## Phase 80B: External Artifact Intake And Sanitization - Completed 2026-06-30
+
+Goal: update external approval intake for Phase 80 artifact format and record supplied artifacts or explicit no-artifact status without changing gate closure.
+
+Status:
+
+- Updated `docs/PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` with Phase 80 `LaunchGateEvidenceRecord` field contract, forbidden repo content, empty manifest template, and intake result table.
+- Intake status recorded as `no_external_artifact_supplied` with zero evidence records.
+- All eight launch gates remain open; production pilot remains `NO-GO`; R-405 remains open.
+- No runtime behavior, dependency, provider, channel, launch-gate approval, real-data handling, or R-405 status changed.
+- Verification passed with `git diff --check`.
+
+Next:
+
+- Phase 80C gate-by-gate evidence evaluation.
+
+## Phase 80A: External Launch-Gate Scope Lock - Completed 2026-06-30
+
+Goal: create the Phase 80 master spec, lock immutable rules, and record the Phase 79I entry baseline without runtime changes.
+
+Status:
+
+- Added `docs/PHASE_80_EXTERNAL_LAUNCH_GATE_CLOSURE_AND_R405_ACCEPTANCE_SPEC.md`.
+- Locked immutable rules: no real connections; gate closure only via `LaunchGateEvidenceRecord`; R-405 only via Phase 22 or formal external acceptance; maximum outcome `PHASE_81_ELIGIBLE`.
+- Recorded Phase 79I entry baseline and sub-phase map 80A-80F.
+- No runtime behavior, dependency, provider, channel, launch-gate approval, real-data handling, or R-405 status changed.
+- Production pilot remains `NO-GO`; all eight launch gates remain open; R-405 remains open.
+- Verification passed with `git diff --check`.
+
+Next:
+
+- Phase 80B external artifact intake and sanitization.
 
 ## Phase 77Z: Repository Cleanup And Cursor Plan Migration - Completed 2026-06-22
 

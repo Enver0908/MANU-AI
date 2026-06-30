@@ -1,5 +1,9 @@
 import { NextResponse, type NextRequest } from "next/server";
 import {
+  assembleBoundedInternalCopilotToolState,
+  mergeInternalCopilotMutationIntoAppState,
+} from "@/lib/phase-79d-bounded-internal-copilot-loaders";
+import {
   getFallbackState,
   runInternalCopilotMessageInState,
   saveFallbackState,
@@ -41,7 +45,10 @@ export async function POST(request: NextRequest) {
 
   try {
     await assertRateLimit({ key: "fallback:internal-copilot", ...RATE_LIMITS.internalCopilot });
-    return NextResponse.json(saveFallbackState(runInternalCopilotMessageInState(getFallbackState(), payload.body)));
+    const base = getFallbackState();
+    const toolState = assembleBoundedInternalCopilotToolState(base, payload.body);
+    const mutationResult = runInternalCopilotMessageInState(toolState, payload.body);
+    return NextResponse.json(saveFallbackState(mergeInternalCopilotMutationIntoAppState(base, mutationResult)));
   } catch (error) {
     return domainErrorResponse(error);
   }

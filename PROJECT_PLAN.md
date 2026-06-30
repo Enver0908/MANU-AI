@@ -62,6 +62,26 @@ Phase 77AA-77AI remediation update, 2026-06-28:
 - The mock/gated WhatsApp adapter track now persists Supabase rollback controls, guards invalid WhatsApp timestamps without parser throws, aligns mock delivery policy typing, isolates full 100x50 channel replay to `npm run rehearse:channel:replay`, and removes Supabase channel delivery records during client anonymization/removal.
 - Verification passed for targeted Phase 77 tests, `supabase-store` unit tests, lint, diff check, and full channel replay rehearsal. This does not approve production launch, real WhatsApp/Gemini egress, real client health data, R-405 closure, or launch-gate closure.
 
+Phase 78 dependency/R-405 update, 2026-06-29:
+
+- The Phase 22 stable dependency procedure was re-run. Stable `next@latest` is `16.2.9` but still depends on nested `postcss@8.4.31`; `eslint-config-next@latest` is `16.2.9`.
+- Production audit still reports only the known moderate R-405 `next`/`postcss` findings and the rejected semver-major `next@9.3.3` downgrade.
+- No dependency files were changed, no launch gate was closed, no formal R-405 risk acceptance was supplied, and production pilot remains `NO-GO`.
+- Verification passed with `git diff --check`, core tests 225/225, app tests 428 passed and 2 skipped across 73 files, lint with two pre-existing warnings, production build, and only documented R-405 findings.
+
+Phase 79 production-scale and remediation update, 2026-06-29:
+
+- Phase 79A-79I completed local production-scale hardening, full 100x50 mock rehearsal closure, and post-review remediation.
+- Phase 79I added a real `/api/app-state?view=windowed` dashboard runtime while preserving legacy `/api/app-state`, fail-closed notification windows, scoped client create/patch responses without post-mutation broad reloads, read-contract wording aligned to runtime behavior, and full Phase 79G rehearsal test coverage without a single-test title filter.
+- Verification passed with targeted Phase 79 tests (7 files, 65 passed, 2 skipped), full app tests (79 files, 489 passed, 4 skipped), lint with two pre-existing warnings, production build, and `npm run rehearse:production-scale:79g`; release verification inside the rehearsal passed with core tests 225/225 and app tests 489 passed / 4 skipped across 79 files.
+- No provider/channel connection, real data handling, launch-gate closure, dependency change, R-405 closure, or production pilot GO occurred.
+
+Phase 80 external gate closure and R-405 hardening update, 2026-06-30:
+
+- Phase 80A-80F evaluated external approval intake, launch gates, R-405, current RLS evidence, and final readiness. No external artifacts were supplied; all eight launch gates remained open; final outcome was `NO_GO_MISSING_ARTIFACTS`; `phase81StartEligible` stayed `false`.
+- Phase 80G hardened the R-405 evaluator so technical closure requires a safe stable Next.js/PostCSS patch path, dependency update evidence, and clean production audit; unknown production audit findings block closure; formal acceptance requires complete external acceptance metadata beyond the dependency gate record.
+- Targeted Phase 80 tests passed (4 files, 29 tests); `npm run release:verify` passed with core tests 225/225 and app tests 518 passed / 4 skipped across 83 files; `npm run rehearse:production-scale:79g` passed. No dependency files changed, no launch gate closed, no formal R-405 acceptance was supplied, and production pilot remains `NO-GO`.
+
 The first client-facing legal and permission documentation layer is intentionally excluded because it will be prepared separately.
 
 ## 3. MVP Scope
@@ -1256,7 +1276,11 @@ These defaults remove planning ambiguity. They can change only through an explic
 
 ## 14. Recommended Next Action
 
-Current baseline override (2026-06-22): Phase 77AI bound production operations placeholders to structured evidence candidates with open ops launch gates and explicit missing-evidence lists. Latest verification after Phase 77AI: `git diff --check` passed; `app` `npm test` passed with 73 test files and 429 tests; `npm run release:verify` passed with core tests 225/225, app tests 429/429, lint with two pre-existing warnings, production build, and only documented R-405 findings. Production pilot is `NO-GO`, all eight launch gates are open, and R-405 is open. The next engineering phase is Phase 78 dependency and R-405 closure per `docs/PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md` only.
+Current baseline override (2026-06-30): Phase 80 external launch-gate closure is complete across sub-phases 80A-80F, and Phase 80G R-405 closure-evidence hardening is complete. Final outcome: `NO_GO_MISSING_ARTIFACTS`; `productionPilotDecision` is `NO-GO`; `phase81StartEligible` is `false`. All eight launch gates remain open; R-405 remains open; R-406 current re-run remains pending after `npm run test:rls` skipped 20/20 because local Supabase was unavailable. Next engineering phase is Phase 81 direct production pilot GO evaluation only when eligible.
+
+Phase 80D baseline (2026-06-30): R-405 remains open with `no_safe_stable_patch`.
+
+Phase 79 baseline (2026-06-29): Phase 79A-79I completed production-scale hardening, full 100x50 rehearsal closure, and post-review remediation.
 
 Historical Phase 65 baseline: official regulation PDF corpus QA foundation completed on 2026-06-04 with core tests 114/114 and app tests 166/166. It remains draft-only for official PDF-derived rules until user-supplied PDFs and structured legal/clinical approval evidence arrive. R-406 is mitigated for the Phase 50-52 baseline (`npm run test:rls` passed 19/19 on 2026-06-02); re-run RLS after Docker/local Supabase is available if Phase 57 or Phase 61 `scope_*` migration evidence is needed.
 
@@ -1302,7 +1326,7 @@ Phase 76B expands the same proposal card to clinical/safety form fields: pregnan
 
 Post-Phase 65 strategic plan: `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` locks direct production pilot to 100 dietitians x 50 clients (minimum 5,000 clients), no small production ring, no client-facing AI self-disclosure, no doctor/dietitian/professional referral language, no yellow/red client-facing AI boundary reply, and green maximization through approved source-backed answerability plus deterministic intent taxonomy.
 
-Next engineering work: WhatsApp production adapter. Phase 77A-77K manual source authority rebaseline, Phase 77M-77Y AI Quality Program, and Phase 77Z repository cleanup are complete locally. Follow with production ops, R-405 closure, and structured launch-gate evidence collection via `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md`. Do not enable Phase 75 real Gemini egress, Phase 74 production lifecycle, or Phase 72/73 routing/calibration until external legal/privacy and clinical launch gates close. Do not activate Phase 76G production second-layer carve-outs without external qualified dietitian approval. Do not resolve R-405 outside `docs/PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`.
+Next engineering work: Phase 81 direct production pilot GO evaluation only when eligible. Phase 80 external launch-gate closure (80A-80F) is complete locally. Phase 77A-77K manual source authority rebaseline, Phase 77M-77Y AI Quality Program, Phase 77Z repository cleanup, Phase 77AA-77AI mock/gated WhatsApp adapter track, Phase 77AI ops preparation, Phase 78 R-405 recheck, and Phase 79 production-scale hardening/full 100x50 rehearsal closure are complete locally. Proceed to controlled production GO only after all launch gates close and R-405 is technically closed or formally externally accepted. Do not enable Phase 75 real Gemini egress, Phase 74/79 production lifecycle, or Phase 72/73 routing/calibration until external legal/privacy and clinical launch gates close. Do not activate Phase 76G production second-layer carve-outs without external qualified dietitian approval. Do not resolve R-405 outside `docs/PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`.
 
 Phase 23 adds a stricter AI context foundation: provider calls must use a bounded `PromptContext`, context manifests must exclude raw text, missing historical context must fail closed with `[ERROR: missing_historical_context]`, and `send_status="send_blocked"` must route the conversation to dietitian takeover instead of sending or drafting to the client.
 

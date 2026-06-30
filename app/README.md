@@ -6,6 +6,24 @@
 
 Verified with targeted Phase 77 Vitest suites, `supabase-store` unit tests, `npm run lint`, `git diff --check`, and `npm run rehearse:channel:replay`. Repo-wide `npm test` exceeded the local 180s review timeout; `tsc --noEmit` remains blocked by pre-existing test type errors outside this remediation.
 
+## Phase 78 Dependency/R-405 Update
+
+2026-06-29: the Phase 22 stable dependency procedure was re-run. Stable `next@latest` is `16.2.9` and `eslint-config-next@latest` is `16.2.9`, but stable Next still bundles nested `postcss@8.4.31`. `npm audit --omit=dev --json` still reports only the known moderate R-405 `next`/`postcss` findings and the rejected semver-major `next@9.3.3` downgrade.
+
+No dependency files were changed. R-405 and the `dependency_audit_clearance` launch gate remain open, and production pilot remains `NO-GO`.
+
+Verified with `git diff --check` and `npm run release:verify`: core tests 225/225, app tests 428 passed and 2 skipped across 73 files, lint with two pre-existing warnings, production build, and only documented R-405 findings.
+
+## Phase 79 Production-Scale Closure
+
+2026-06-29: Phase 79A-79I completed production-scale runtime hardening, full 100x50 rehearsal closure, and post-review remediation. It added a real `/api/app-state?view=windowed` dashboard runtime while preserving legacy `/api/app-state`, fail-closed notification windows, scoped client create/patch responses without post-mutation broad reloads, bounded internal copilot loaders, lifecycle redaction evidence, current RLS evidence status, unified production-scale metrics, and the full acceptance command `npm run rehearse:production-scale:79g`.
+
+Verified Phase 79I remediation with targeted Phase 79 tests (7 files, 65 passed, 2 skipped), full app tests (79 files, 489 passed, 4 skipped), `npm run lint` with two pre-existing warnings, `npm run build`, and `npm run rehearse:production-scale:79g`: expanded AI quality passed 5,000 cases with hard-zero counters at 0, full mock channel replay passed, Phase 79 full acceptance tests passed, and `npm run release:verify` passed with core tests 225/225, app tests 489 passed and 4 skipped across 79 files, production build, and only documented R-405 findings. Production pilot remains `NO-GO`; R-405 remains open; current RLS re-run is pending when local Supabase is unavailable.
+
+## Phase 80G R-405 Closure-Evidence Hardening
+
+2026-06-30: Phase 80G hardened R-405 evaluation after Phase 80A-80F. Technical closure now requires a safe stable patch path, dependency-file update evidence, and clean production audit; unknown production audit findings block closure; formal R-405 acceptance requires complete external acceptance metadata. Targeted Phase 80 tests passed (4 files, 29 tests). `npm run release:verify` passed with core tests 225/225, app tests 518 passed and 4 skipped across 83 files, production build, and only documented R-405 findings. `npm run rehearse:production-scale:79g` passed. No dependency files changed; R-405 and `dependency_audit_clearance` remain open; production pilot remains `NO-GO`.
+
 This is the first local SaaS/PWA prototype for MANU-AI.
 
 It uses:
@@ -40,13 +58,14 @@ npm test
 npm run test:rls
 npm run build
 npm run release:verify
+npm run rehearse:production-scale:79g
 ```
 
 The scripts use `--webpack` because Turbopack did not resolve the local symlinked core package reliably.
 
 `npm run release:verify` runs the core package tests, lint, unit/API tests, production build, and the production dependency audit gate. It cleans generated `.next` output before the production build so repeated local Windows/OneDrive runs do not fail on stale build artifacts. It allows only the documented R-405 Next.js/PostCSS finding and does not run `npm audit fix --force`.
 
-Latest local release verification on 2026-06-22 passed after Phase 77AI with core tests 225/225, app tests 429/429, lint with two pre-existing warnings, production build, and only the documented R-405 production audit finding. Phase 77AI bound ops runbook placeholders to review packets and internal mock health controls. Next open implementation phase is Phase 78 per `../docs/PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`.
+Latest local Phase 80G R-405 closure-evidence hardening on 2026-06-30: targeted Phase 80 tests passed (4 files, 29 tests), release verification passed with core tests 225/225 and app tests 518 passed / 4 skipped, and `npm run rehearse:production-scale:79g` passed. Outcome remains `NO_GO_MISSING_ARTIFACTS`; `productionPilotDecision` is `NO-GO`; `phase81StartEligible` is `false`; R-405 remains open. Phase 80 external launch-gate closure is complete. Next implementation phase is Phase 81 direct production pilot GO evaluation only when eligible.
 
 Phase 77Y closed continuity/pilot/gate docs and recorded hard-zero expanded rehearsal sample metrics plus clinical red-team closure. Phase 77Z is repository cleanup only. Phase 77A-77K manual source authority work remains complete locally.
 

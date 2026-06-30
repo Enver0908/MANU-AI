@@ -17,14 +17,17 @@ These rules are non-negotiable and apply to every future phase:
 - Autopilot is not globally enabled for all 5,000 clients by default. It is enabled only for selected qualified clients after all gates, monitoring, and rollback controls are ready.
 
 ## Current Baseline
-- Latest completed implementation phase: Phase 77AI production operations preparation (2026-06-22).
+- Latest completed implementation phase: Phase 80G R-405 closure-evidence hardening (2026-06-30).
 - Latest continuity/worktree closure phase: Phase 77Z repository cleanup and Cursor plan migration (2026-06-22).
-- Next implementation phase: Phase 78 dependency and R-405 closure (`docs/PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md` only).
+- Next implementation phase: Phase 81 direct production pilot GO evaluation only when eligible.
 - Latest roadmap rebaseline: Phase 77A manual source authority rebaseline spec (2026-06-10).
 - Detailed Phase 77 implementation plan: `docs/PHASE_77_MASTER_IMPLEMENTATION_PLAN.md`.
 - AI quality master plan: `docs/PHASE_77M_77Y_AI_QUALITY_MASTER_PLAN.md`.
-- Latest verification: Phase 77AI `git diff --check`, `app` `npm test` (73 files, 429 tests), and `npm run release:verify` passed on 2026-06-22 with core tests 225/225, app tests 429/429, lint with two pre-existing warnings, production build, and only documented R-405 findings.
+- Latest verification: Phase 80G passed targeted Phase 80 tests (4 files, 29 tests), `git diff --check`, lint with two pre-existing warnings, production build, `npm run release:verify` with core tests 225/225 and app tests 518 passed / 4 skipped across 83 files, and `npm run rehearse:production-scale:79g`; `npm run test:rls` skipped 20/20 because local Supabase was unavailable.
 - Production pilot status: `NO-GO`.
+- Phase 78 R-405 status: stable `next@latest` is `16.2.9` but still bundles nested `postcss@8.4.31`; no dependency files changed; R-405 and `dependency_audit_clearance` remain open.
+- Phase 80G R-405 hardening status: technical closure now requires safe stable patch path, dependency update evidence, and clean production audit; unknown production audit findings block closure; formal acceptance requires complete external acceptance metadata. No dependency files changed; R-405 and `dependency_audit_clearance` remain open.
+- Phase 80E/R-406 status: Phase 50/52 baseline local RLS mitigation remains valid; current post-76N/77AA-77AI/79/80 migration/RLS re-run is pending when local Supabase is unavailable.
 - Real WhatsApp, Gemini, monitoring, secret manager, and real client health data remain disconnected.
 - Existing usable foundations:
   - Client forms with prompt visibility.
@@ -38,6 +41,7 @@ These rules are non-negotiable and apply to every future phase:
   - Yellow hold and red lock.
   - Structured launch-gate evidence engine.
   - Official PDF corpus QA foundation.
+  - Phase 79 production-scale runtime hardening including `/api/app-state?view=windowed`, scoped client create/patch responses, lifecycle evidence, current RLS status, and unified 100x50 rehearsal command.
   - Production pilot remains blocked until external gates, R-405 closure/acceptance, channel/provider approvals, and production operations evidence are complete.
 
 ## Phase 77A: Manual Source Authority Rebaseline - Completed 2026-06-10
@@ -244,7 +248,7 @@ Completed:
 - Production pilot remains `NO-GO`.
 
 Next:
-- Phase 78 dependency and R-405 closure.
+- Phase 80 external launch-gate closure and Phase 80G R-405 closure-evidence hardening are complete locally; Phase 81 remains blocked until external gates close, R-405 resolves or is formally accepted, and current RLS evidence passes.
 
 ## Phase 77AI: Production Operations Preparation - Completed 2026-06-22
 
@@ -864,6 +868,8 @@ Done criteria:
 ## Phase 78: Dependency And R-405 Closure
 Goal: resolve or formally accept R-405 before production.
 
+Status: completed locally on 2026-06-29 as a no-patch closure.
+
 User documents required if no technical fix exists:
 - Formal security/engineering risk acceptance.
 
@@ -876,6 +882,14 @@ Implementation intent:
 Done criteria:
 - R-405 is technically resolved or externally accepted.
 - Dependency audit clearance gate can be represented as structured evidence.
+
+Phase 78 result:
+- Added `docs/PHASE_78_DEPENDENCY_R405_CLOSURE_SPEC.md`.
+- Re-ran the Phase 22 stable dependency procedure.
+- Stable `next@latest` is `16.2.9` but still bundles nested `postcss@8.4.31`; `eslint-config-next@latest` is `16.2.9`.
+- Production audit still reports only the known moderate R-405 `next`/`postcss` findings and the rejected `next@9.3.3` downgrade.
+- No dependency files were changed, no formal risk acceptance was supplied, R-405 remains open, and production pilot remains `NO-GO`.
+- Verification passed with `git diff --check`, core tests 225/225, app tests 428 passed and 2 skipped across 73 files, lint with two pre-existing warnings, production build, and only documented R-405 findings.
 
 ## Phase 79: Full 100x50 Synthetic Rehearsal
 Goal: rehearse full production scale without real production launch.

@@ -147,7 +147,7 @@ export function evaluateDirectPilotScaleReadiness(
   const clientsPerDietitian = fixture.dietitians.map((dietitian) => dietitian.clientIds.length);
   const phase69ContractCount = readContracts.filter((contract) =>
     REQUIRED_PHASE_69_CONTRACT_IDS.includes(contract.id as (typeof REQUIRED_PHASE_69_CONTRACT_IDS)[number]) &&
-    (contract.status === "phase69_paginated_contract" || contract.status === "scoped_mutation_read"),
+    (contract.status === "phase69_paginated_contract" || contract.status === "scoped_mutation_read" || contract.status === "phase79_windowed_runtime"),
   ).length;
   const failures: string[] = [];
 

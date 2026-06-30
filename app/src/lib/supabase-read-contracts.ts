@@ -2,7 +2,8 @@ export type SupabaseReadContractStatus =
   | "intentional_broad_read"
   | "scoped_mutation_read"
   | "future_paginated_read"
-  | "phase69_paginated_contract";
+  | "phase69_paginated_contract"
+  | "phase79_windowed_runtime";
 
 export type SupabaseReadContract = {
   id: string;
@@ -19,13 +20,13 @@ export const SUPABASE_READ_CONTRACTS: SupabaseReadContract[] = [
   {
     id: "dashboard_state_snapshot",
     ownerPath: "app/src/app/api/app-state/route.ts",
-    currentLoader: "loadSupabaseState",
-    status: "phase69_paginated_contract",
-    currentScope: "tenant-wide dashboard snapshot across visible clients and related records",
+    currentLoader: "loadSupabaseWindowedDashboardPayload",
+    status: "phase79_windowed_runtime",
+    currentScope: "legacy full snapshot remains default; production-scale runtime is /api/app-state?view=windowed with bounded client, timeline, handoff, notification, and audit windows",
     productionContract:
-      "Use cursor-paginated client lists, bounded timeline windows, handoff/notification/audit list windows, and client-detail scoped reloads before production growth.",
-    reason: "The local PWA dashboard needs a complete snapshot today, but this is the main production scale risk.",
-    nextAction: "Implement runtime paginated route payloads after Phase 69 synthetic 100x50 rehearsal evidence is accepted.",
+      "Use /api/app-state?view=windowed for production-scale dashboard hydration; keep the default full snapshot as a legacy compatibility path only.",
+    reason: "Phase 79I adds a real windowed dashboard runtime path while preserving the existing full snapshot route for backward compatibility.",
+    nextAction: "Keep production dashboard work on the windowed view and do not treat the legacy full snapshot as production-scale evidence.",
   },
   {
     id: "demo_reset_snapshot",
@@ -57,7 +58,7 @@ export const SUPABASE_READ_CONTRACTS: SupabaseReadContract[] = [
     productionContract:
       "Move to a dedicated transactional redaction RPC after legal/privacy approves the final deletion contract.",
     reason: "Bulk minimization touches messages, forms, context, handoffs, notifications, AI decisions, and audit metadata.",
-    nextAction: "Design the client removal/anonymization redaction payload before moving this lifecycle fully to RPC commits.",
+    nextAction: "Phase 79E verified redaction evidence contract covers profile, channel, memory, forms, food/menu, deliveries, and audit minimization; RPC migration remains post-legal approval.",
   },
   {
     id: "client_removal_lifecycle",
@@ -68,7 +69,7 @@ export const SUPABASE_READ_CONTRACTS: SupabaseReadContract[] = [
     productionContract:
       "Move to a dedicated transactional redaction RPC after retention, hard-delete, and legal-hold decisions are approved.",
     reason: "Removal must preserve minimized export/audit evidence while hiding the client from normal workflows.",
-    nextAction: "Phase 76N routes in-RPC-covered removal deltas through commit_client_removal_lifecycle; channel/memory redaction remains direct until a dedicated contract exists.",
+    nextAction: "Phase 79E lifecycle redaction evidence contract verified; Phase 76N RPC commit path and dedicated redaction RPC remain post-legal approval.",
   },
   {
     id: "voice_sample_workflow",
@@ -114,32 +115,32 @@ export const SUPABASE_READ_CONTRACTS: SupabaseReadContract[] = [
     id: "internal_copilot_tools",
     ownerPath: "app/src/app/api/internal-copilot/messages/route.ts",
     currentLoader: "runSupabaseInternalCopilotMessage",
-    status: "phase69_paginated_contract",
-    currentScope: "visible tenant state for local/mock curated copilot tools",
+    status: "phase79_windowed_runtime",
+    currentScope: "tool-specific bounded scoped state for internal copilot reads",
     productionContract:
       "Use tool-specific bounded queries with per-tool limits, cursor windows, and source refs before any real provider egress.",
-    reason: "The internal copilot is read-only today, but production scale and provider review require bounded tool reads.",
-    nextAction: "Implement bounded tool loaders only after provider/vendor review allows any real egress.",
+    reason: "Phase 79D replaced broad pre-mutation loadSupabaseState with bounded tool loaders and merge-safe fallback helpers.",
+    nextAction: "No broad-read action needed for internal copilot; monitor via Phase 79 unified rehearsal.",
   },
   {
     id: "client_create_scaffold",
     ownerPath: "app/src/app/api/clients/route.ts",
     currentLoader: "createSupabaseClientRecord",
-    status: "phase69_paginated_contract",
-    currentScope: "tenant snapshot used to append a local client/conversation scaffold",
-    productionContract: "Use direct insert plus a scoped client detail reload.",
-    reason: "Client creation currently reuses local state helpers; production should avoid reloading tenant history.",
-    nextAction: "Implement create-client RPC or insert bundle with scoped return payload before production onboarding.",
+    status: "phase79_windowed_runtime",
+    currentScope: "scoped client create validation plus direct insert bundle and scoped mutation response",
+    productionContract: "Use direct insert plus scoped client/conversation mutation response merged by the client hook.",
+    reason: "Phase 79I removes the post-mutation loadSupabaseState reload from create and keeps hook-level merge-safe behavior.",
+    nextAction: "No broad-read action needed for client create; monitor via Phase 79 unified rehearsal.",
   },
   {
     id: "client_ai_control_patch",
     ownerPath: "app/src/app/api/clients/[id]/route.ts",
     currentLoader: "patchSupabaseClientRecord",
-    status: "phase69_paginated_contract",
-    currentScope: "tenant snapshot for AI-control/client profile patch",
-    productionContract: "Use client-id scoped load plus existing optimistic context revision checks.",
-    reason: "This path still uses the broad loader even though most mutation paths now use scoped operation loaders.",
-    nextAction: "Move profile/AI-control patch to a client-scoped operation loader before production pilot.",
+    status: "phase79_windowed_runtime",
+    currentScope: "client-id scoped patch validation plus scoped patched-client mutation response",
+    productionContract: "Use client-id scoped load plus scoped patched-client/audit response merged by the client hook.",
+    reason: "Phase 79I removes the post-mutation loadSupabaseState reload from patch while preserving unrelated state via hook-level merge.",
+    nextAction: "No broad-read action needed for client patch; monitor via Phase 79 unified rehearsal.",
   },
   {
     id: "manual_reply_mutation",

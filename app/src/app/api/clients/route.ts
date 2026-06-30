@@ -1,4 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
+import {
+  buildClientCreateValidationState,
+  mergeScopedClientCreateIntoAppState,
+} from "@/lib/phase-79c-scoped-client-mutation";
 import { createClientInState, getFallbackState, saveFallbackState } from "@/lib/app-state-store";
 import { domainErrorResponse } from "@/lib/app-errors";
 import { authErrorResponse, requireCapability, resolveAppTenantContext } from "@/lib/auth-context";
@@ -44,15 +48,20 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const nextState = createClientInState(getFallbackState(), {
+    const base = getFallbackState();
+    const validationState = buildClientCreateValidationState(base);
+    const next = createClientInState(validationState, {
       fullName: body.fullName,
       channel: body.channel === "telegram" ? "telegram" : "whatsapp",
       channelUserId: body.channelUserId || "",
       primaryPhoneE164: body.primaryPhoneE164,
       communicationLanguage: body.communicationLanguage,
     });
+    const newClient = next.clients[next.clients.length - 1];
+    const newConversation = next.conversations.find((item) => item.clientId === newClient.id);
 
-    return NextResponse.json(saveFallbackState(nextState));
+    saveFallbackState(mergeScopedClientCreateIntoAppState(base, newClient, newConversation));
+    return NextResponse.json({ kind: "client_create", client: newClient, conversation: newConversation });
   } catch (error) {
     return domainErrorResponse(error);
   }

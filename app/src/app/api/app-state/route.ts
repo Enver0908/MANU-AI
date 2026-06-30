@@ -1,17 +1,53 @@
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { getFallbackState, resetFallbackState } from "@/lib/app-state-store";
 import { authErrorResponse, requireCapability, resolveAppTenantContext } from "@/lib/auth-context";
-import { isSupabaseStoreConfigured, loadSupabaseState, resetSupabaseState } from "@/lib/supabase-store";
+import { buildPhase79WindowedDashboardPayload } from "@/lib/phase-79b-windowed-read-contracts";
+import {
+  isSupabaseStoreConfigured,
+  loadSupabaseState,
+  loadSupabaseWindowedDashboardPayload,
+  resetSupabaseState,
+} from "@/lib/supabase-store";
 
-export async function GET() {
+function numberParam(value: string | null) {
+  if (!value) return undefined;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : undefined;
+}
+
+function windowedOptions(request: NextRequest) {
+  const params = request.nextUrl.searchParams;
+  return {
+    clientCursor: params.get("clientCursor"),
+    clientLimit: numberParam(params.get("clientLimit")),
+    handoffCursor: params.get("handoffCursor"),
+    handoffLimit: numberParam(params.get("handoffLimit")),
+    notificationCursor: params.get("notificationCursor"),
+    notificationLimit: numberParam(params.get("notificationLimit")),
+    detailClientId: params.get("detailClientId"),
+    timelineClientId: params.get("timelineClientId"),
+    timelineCursor: params.get("timelineCursor"),
+    timelineLimit: numberParam(params.get("timelineLimit")),
+  };
+}
+
+export async function GET(request: NextRequest) {
+  const view = request.nextUrl.searchParams.get("view");
   if (isSupabaseStoreConfigured()) {
     try {
       const tenantContext = await resolveAppTenantContext();
       requireCapability(tenantContext, "read_app_state");
+      if (view === "windowed") {
+        return NextResponse.json(await loadSupabaseWindowedDashboardPayload(tenantContext, windowedOptions(request)));
+      }
       return NextResponse.json(await loadSupabaseState(tenantContext));
     } catch (error) {
       return authErrorResponse(error);
     }
+  }
+
+  if (view === "windowed") {
+    return NextResponse.json(buildPhase79WindowedDashboardPayload(getFallbackState(), windowedOptions(request)));
   }
 
   return NextResponse.json(getFallbackState());

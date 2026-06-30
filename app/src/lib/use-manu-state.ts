@@ -1,6 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  mergeScopedClientMutationResponseIntoAppState,
+  type Phase79ScopedClientMutationResponse,
+} from "./phase-79c-scoped-client-mutation";
 import { createInitialState } from "./seed-data";
 import type {
   Channel,
@@ -22,7 +26,7 @@ export function useManuState() {
   const [hydrated, setHydrated] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
 
-  const replaceFromApi = useCallback(async (url: string, init?: RequestInit) => {
+  const requestJson = useCallback(async (url: string, init?: RequestInit) => {
     const response = await fetch(url, {
       ...init,
       headers: {
@@ -44,10 +48,27 @@ export function useManuState() {
     }
 
     setAuthError(null);
-    const nextState = (await response.json()) as ManuAppState;
+    return response.json();
+  }, []);
+
+  const replaceFromApi = useCallback(async (url: string, init?: RequestInit) => {
+    const nextState = (await requestJson(url, init)) as ManuAppState;
     setState(nextState);
     return nextState;
-  }, []);
+  }, [requestJson]);
+
+  const mergeScopedClientMutationFromApi = useCallback(
+    async (url: string, init?: RequestInit) => {
+      const payload = (await requestJson(url, init)) as Phase79ScopedClientMutationResponse;
+      let mergedState = createInitialState();
+      setState((current) => {
+        mergedState = mergeScopedClientMutationResponseIntoAppState(current, payload);
+        return mergedState;
+      });
+      return mergedState;
+    },
+    [requestJson],
+  );
 
   useEffect(() => {
     const timeout = window.setTimeout(() => {
@@ -73,7 +94,7 @@ export function useManuState() {
         primaryPhoneE164: string;
         communicationLanguage: SupportedLanguageCode;
       }) =>
-        replaceFromApi("/api/clients", {
+        mergeScopedClientMutationFromApi("/api/clients", {
           method: "POST",
           body: JSON.stringify(input),
         }),
@@ -83,7 +104,7 @@ export function useManuState() {
           body: JSON.stringify(input),
         }),
       updateClient: (clientId: string, patch: Partial<ClientRecord>) =>
-        replaceFromApi(`/api/clients/${clientId}`, {
+        mergeScopedClientMutationFromApi(`/api/clients/${clientId}`, {
           method: "PATCH",
           body: JSON.stringify(patch),
         }),
@@ -249,6 +270,6 @@ export function useManuState() {
           method: "POST",
         }),
     }),
-    [authError, hydrated, replaceFromApi, state],
+    [authError, hydrated, mergeScopedClientMutationFromApi, replaceFromApi, state],
   );
 }

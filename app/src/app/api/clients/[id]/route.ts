@@ -1,4 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
+import {
+  buildClientPatchValidationState,
+  mergeScopedClientPatchIntoAppState,
+} from "@/lib/phase-79c-scoped-client-mutation";
 import { getFallbackState, patchClientInState, saveFallbackState } from "@/lib/app-state-store";
 import { domainErrorResponse } from "@/lib/app-errors";
 import { authErrorResponse, requireCapability, resolveAppTenantContext } from "@/lib/auth-context";
@@ -26,14 +30,19 @@ export async function PATCH(
     }
   }
 
-  const state = getFallbackState();
-
-  if (!state.clients.some((client) => client.id === id)) {
-    return NextResponse.json({ error: "client_not_found" }, { status: 404 });
-  }
+  const base = getFallbackState();
 
   try {
-    return NextResponse.json(saveFallbackState(patchClientInState(state, id, patch)));
+    const validationState = buildClientPatchValidationState(base, id);
+    const patched = patchClientInState(validationState, id, patch);
+    const updatedClient = patched.clients.find((client) => client.id === id);
+
+    if (!updatedClient) {
+      return NextResponse.json({ error: "client_not_found" }, { status: 404 });
+    }
+
+    saveFallbackState(mergeScopedClientPatchIntoAppState(base, updatedClient));
+    return NextResponse.json({ kind: "client_patch", client: updatedClient, auditEvents: [] });
   } catch (error) {
     return domainErrorResponse(error);
   }

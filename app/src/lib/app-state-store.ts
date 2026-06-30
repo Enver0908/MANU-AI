@@ -3,7 +3,7 @@ import { AppDomainError } from "./app-errors";
 import { normalizeE164Phone, normalizeLanguageCode } from "./languages";
 import { buildClientScopedExport, recordClientExportInState } from "./data-governance";
 import { sanitizeClientScopedExportForClientFacing } from "./phase-77v-copilot-quality-workflow";
-import { applyPhase74TransactionalRedactionInState } from "./phase-74-data-lifecycle-policy";
+import { applyPhase79LifecycleRedactionContract } from "./phase-79e-lifecycle-redaction-evidence";
 import {
   createClientFormSchemaInState,
   publishClientFormSchemaInState,
@@ -167,11 +167,11 @@ export function recordClientExportRequestInState(state: ManuAppState, clientId: 
 }
 
 export function anonymizeClientDataInState(state: ManuAppState, clientId: string) {
-  return applyPhase74TransactionalRedactionInState(state, clientId, "anonymization").state;
+  return applyPhase79LifecycleRedactionContract(state, clientId, "anonymization").state;
 }
 
 export function removeClientDataInState(state: ManuAppState, clientId: string) {
-  return applyPhase74TransactionalRedactionInState(state, clientId, "deletion").state;
+  return applyPhase79LifecycleRedactionContract(state, clientId, "deletion").state;
 }
 
 export async function simulateInState(state: ManuAppState, request: SimulationRequest) {

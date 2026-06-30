@@ -11,6 +11,23 @@ import {
 } from "./data-governance";
 import { sanitizeClientScopedExportForClientFacing } from "./phase-77v-copilot-quality-workflow";
 import {
+  buildClientCreateValidationState,
+  buildClientPatchValidationState,
+  type Phase79ScopedClientCreateResponse,
+  type Phase79ScopedClientPatchResponse,
+} from "./phase-79c-scoped-client-mutation";
+import {
+  buildPhase79WindowedDashboardPayload,
+  WINDOWED_READ_DEFAULTS,
+  type Phase79WindowedDashboardPayload,
+} from "./phase-79b-windowed-read-contracts";
+import { assembleBoundedInternalCopilotToolState } from "./phase-79d-bounded-internal-copilot-loaders";
+import {
+  classifyInternalCopilotIntent,
+  extractClientQuery,
+  resolveVisibleClientByName,
+} from "./internal-copilot";
+import {
   addManualReplyInState,
   addClientContextUpdateInState,
   applyUpdateProposalInState,
@@ -566,6 +583,176 @@ export async function loadSupabaseState(context = demoTenantContext()) {
   return scopedState satisfies ManuAppState;
 }
 
+export async function loadSupabaseWindowedDashboardPayload(
+  context = demoTenantContext(),
+  options: Parameters<typeof buildPhase79WindowedDashboardPayload>[1] = {},
+): Promise<Phase79WindowedDashboardPayload> {
+  const supabase = requireSupabase();
+  await ensureDemoData(supabase, context.userId);
+
+  const clientQueryLimit = WINDOWED_READ_DEFAULTS.clientListMaxPageSize;
+  const handoffQueryLimit = WINDOWED_READ_DEFAULTS.handoffMaxPageSize;
+  const notificationQueryLimit = WINDOWED_READ_DEFAULTS.notificationMaxPageSize;
+  const timelineQueryLimit = WINDOWED_READ_DEFAULTS.timelineMaxWindowSize;
+
+  const [tenantResult, dietitianResult, assignmentsResult, clientsResult] = await Promise.all([
+    supabase.from("tenants").select("*").eq("id", context.tenantId).single(),
+    supabase.from("dietitians").select("*").eq("id", context.dietitianId).eq("tenant_id", context.tenantId).single(),
+    supabase.from("client_assignments").select("client_id, dietitian_id").eq("tenant_id", context.tenantId),
+    supabase
+      .from("clients")
+      .select("*")
+      .eq("tenant_id", context.tenantId)
+      .order("created_at")
+      .range(0, clientQueryLimit - 1),
+  ]);
+
+  throwIfError(tenantResult.error);
+  throwIfError(dietitianResult.error);
+  throwIfError(assignmentsResult.error);
+  throwIfError(clientsResult.error);
+
+  const clientIds = new Set((clientsResult.data || []).map((client) => client.id));
+  if (options.detailClientId) clientIds.add(options.detailClientId);
+  if (options.timelineClientId) clientIds.add(options.timelineClientId);
+  const clientIdList = Array.from(clientIds);
+  const selectedClientIds = Array.from(
+    new Set([options.detailClientId, options.timelineClientId].filter((id): id is string => Boolean(id))),
+  );
+
+  const [
+    selectedClientsResult,
+    channelsResult,
+    conversationsResult,
+    memoriesResult,
+    handoffsResult,
+    notificationsResult,
+    auditEventsResult,
+    messagesResult,
+    decisionsResult,
+  ] = await Promise.all([
+    selectedClientIds.length
+      ? supabase.from("clients").select("*").eq("tenant_id", context.tenantId).in("id", selectedClientIds)
+      : Promise.resolve({ data: [], error: null }),
+    clientIdList.length
+      ? supabase.from("client_channels").select("*").eq("tenant_id", context.tenantId).in("client_id", clientIdList)
+      : Promise.resolve({ data: [], error: null }),
+    clientIdList.length
+      ? supabase.from("conversations").select("*").eq("tenant_id", context.tenantId).in("client_id", clientIdList)
+      : Promise.resolve({ data: [], error: null }),
+    supabase.from("conversation_memories").select("*").eq("tenant_id", context.tenantId).range(0, timelineQueryLimit - 1),
+    clientIdList.length
+      ? supabase
+          .from("handoff_cases")
+          .select("*")
+          .eq("tenant_id", context.tenantId)
+          .in("client_id", clientIdList)
+          .order("created_at")
+          .range(0, handoffQueryLimit - 1)
+      : Promise.resolve({ data: [], error: null }),
+    supabase
+      .from("notifications")
+      .select("*")
+      .eq("tenant_id", context.tenantId)
+      .order("created_at")
+      .range(0, notificationQueryLimit - 1),
+    supabase
+      .from("audit_events")
+      .select("*")
+      .eq("tenant_id", context.tenantId)
+      .order("created_at")
+      .range(0, WINDOWED_READ_DEFAULTS.clientListMaxPageSize - 1),
+    Promise.resolve({ data: [], error: null }),
+    clientIdList.length
+      ? supabase
+          .from("ai_decisions")
+          .select("*")
+          .eq("tenant_id", context.tenantId)
+          .in("client_id", clientIdList)
+          .order("created_at")
+          .range(0, timelineQueryLimit - 1)
+      : Promise.resolve({ data: [], error: null }),
+  ]);
+
+  throwIfError(selectedClientsResult.error);
+  throwIfError(channelsResult.error);
+  throwIfError(conversationsResult.error);
+  throwIfError(memoriesResult.error);
+  throwIfError(handoffsResult.error);
+  throwIfError(notificationsResult.error);
+  throwIfError(auditEventsResult.error);
+  throwIfError(messagesResult.error);
+  throwIfError(decisionsResult.error);
+
+  const conversationIds = (conversationsResult.data || []).map((conversation) => conversation.id);
+  const boundedMessagesResult = conversationIds.length
+    ? await supabase
+        .from("messages")
+        .select("*")
+        .eq("tenant_id", context.tenantId)
+        .in("conversation_id", conversationIds)
+        .order("created_at")
+        .range(0, timelineQueryLimit - 1)
+    : { data: [], error: null };
+  throwIfError(boundedMessagesResult.error);
+
+  const clients = [...(clientsResult.data || [])];
+  for (const selectedClient of selectedClientsResult.data || []) {
+    if (!clients.some((client) => client.id === selectedClient.id)) {
+      clients.push(selectedClient);
+    }
+  }
+  const channels = channelsResult.data || [];
+  const memories = memoriesResult.data || [];
+  const shell = scopeSupabaseState(
+    {
+      tenant: { id: tenantResult.data.id, name: tenantResult.data.name },
+      dietitian: {
+        id: dietitianResult.data.id,
+        tenantId: dietitianResult.data.tenant_id,
+        displayName: dietitianResult.data.display_name,
+        timezone: dietitianResult.data.timezone,
+        uiLanguage: normalizeLanguageCode(dietitianResult.data.ui_language),
+      },
+      voiceSamples: [],
+      voiceProfiles: [],
+      styleEditHistory: [],
+      clientFormSchemas: [],
+      clientFormResponses: [],
+      dietitianFormSchemas: [],
+      dietitianFormResponses: [],
+      clientContextUpdates: [],
+      clientUpdateProposals: [],
+      clientFoodRuleProfiles: [],
+      clientMenuPlans: [],
+      clients: clients.map((client) => mapClient(client, channels)),
+      conversations: (conversationsResult.data || []).map((conversation) => mapConversation(conversation, memories)),
+      messages: (boundedMessagesResult.data || []).map(mapMessage),
+      aiDecisions: (decisionsResult.data || []).map(mapDecision),
+      riskAssessments: [],
+      handoffCases: (handoffsResult.data || []).map(mapHandoff),
+      notifications: (notificationsResult.data || []).map(mapNotification),
+      inboundQuarantines: [],
+      channelDeliveries: [],
+      channelAdapterRollback: createDefaultChannelAdapterRollbackControls(),
+      dataRequests: [],
+      internalCopilotMessages: [],
+      internalCopilotToolCalls: [],
+      scopeRules: createPlaceholderScopeRules(),
+      scopeRuleChunks: [],
+      scopeGuardEvaluations: [],
+      permissionGraphEvaluations: [],
+      auditEvents: (auditEventsResult.data || []).map(mapAuditEvent),
+      processedSimulationKeys: [],
+      lastSimulation: null,
+    },
+    context,
+    assignmentsResult.data || [],
+  );
+
+  return buildPhase79WindowedDashboardPayload(shell, options);
+}
+
 async function loadSupabaseClientOperationState(
   clientId: string,
   context: AppTenantContext,
@@ -1039,13 +1226,108 @@ export async function resetSupabaseState(context = demoTenantContext()) {
   return loadSupabaseState(context);
 }
 
+async function loadSupabaseClientCreateContext(context: AppTenantContext) {
+  const supabase = requireSupabase();
+  await ensureDemoData(supabase, context.userId);
+
+  const [tenantResult, dietitianResult, clientsResult, channelsResult, assignmentsResult] = await Promise.all([
+    supabase.from("tenants").select("*").eq("id", context.tenantId).single(),
+    supabase.from("dietitians").select("*").eq("id", context.dietitianId).eq("tenant_id", context.tenantId).single(),
+    supabase.from("clients").select("*").eq("tenant_id", context.tenantId).order("created_at"),
+    supabase.from("client_channels").select("*").eq("tenant_id", context.tenantId),
+    supabase.from("client_assignments").select("client_id, dietitian_id").eq("tenant_id", context.tenantId),
+  ]);
+
+  throwIfError(tenantResult.error);
+  throwIfError(dietitianResult.error);
+  throwIfError(clientsResult.error);
+  throwIfError(channelsResult.error);
+  throwIfError(assignmentsResult.error);
+
+  const channels = channelsResult.data || [];
+  const shellState = scopeSupabaseState(
+    {
+      tenant: { id: tenantResult.data.id, name: tenantResult.data.name },
+      dietitian: {
+        id: dietitianResult.data.id,
+        tenantId: dietitianResult.data.tenant_id,
+        displayName: dietitianResult.data.display_name,
+        timezone: dietitianResult.data.timezone,
+        uiLanguage: normalizeLanguageCode(dietitianResult.data.ui_language),
+      },
+      voiceSamples: [],
+      voiceProfiles: [],
+      styleEditHistory: [],
+      clientFormSchemas: [],
+      clientFormResponses: [],
+      dietitianFormSchemas: [],
+      dietitianFormResponses: [],
+      clientContextUpdates: [],
+      clientFoodRuleProfiles: [],
+      clientMenuPlans: [],
+      clientUpdateProposals: [],
+      clients: (clientsResult.data || []).map((client) => mapClient(client, channels)),
+      conversations: [],
+      messages: [],
+      aiDecisions: [],
+      riskAssessments: [],
+      handoffCases: [],
+      auditEvents: [],
+      notifications: [],
+      inboundQuarantines: [],
+      channelDeliveries: [],
+      channelAdapterRollback: createDefaultChannelAdapterRollbackControls(),
+      dataRequests: [],
+      internalCopilotMessages: [],
+      internalCopilotToolCalls: [],
+      scopeRules: createPlaceholderScopeRules(),
+      scopeRuleChunks: [],
+      scopeGuardEvaluations: [],
+      permissionGraphEvaluations: [],
+      processedSimulationKeys: [],
+      lastSimulation: null,
+    },
+    context,
+    assignmentsResult.data || [],
+  );
+
+  return buildClientCreateValidationState(shellState);
+}
+
+async function loadSupabaseClientPatchContext(clientId: string, context: AppTenantContext) {
+  const supabase = requireSupabase();
+  const createContext = await loadSupabaseClientCreateContext(context);
+  const beforeClient = createContext.clients.find((client) => client.id === clientId);
+
+  if (!beforeClient || beforeClient.lifecycleStatus === "removed_anonymized") {
+    throw new AppDomainError(404, "client_not_found");
+  }
+
+  const menuPlansResult = await supabase
+    .from("client_menu_plans")
+    .select("*")
+    .eq("tenant_id", context.tenantId)
+    .eq("client_id", clientId);
+  throwIfError(menuPlansResult.error);
+
+  const validationState = buildClientPatchValidationState(
+    {
+      ...createContext,
+      clientMenuPlans: (menuPlansResult.data || []).map(mapClientMenuPlan),
+    },
+    clientId,
+  );
+
+  return { validationState, beforeClient };
+}
+
 export async function createSupabaseClientRecord(
   input: Pick<ClientRecord, "fullName" | "channel" | "channelUserId"> &
     Partial<Pick<ClientRecord, "primaryPhoneE164" | "communicationLanguage">>,
   context = demoTenantContext(),
-) {
-  const state = await loadSupabaseState(context);
-  const next = createClientInState(state, input);
+): Promise<Phase79ScopedClientCreateResponse> {
+  const validationState = await loadSupabaseClientCreateContext(context);
+  const next = createClientInState(validationState, input);
   const rawClient = next.clients[next.clients.length - 1];
   const client = { ...rawClient, tenantId: context.tenantId, dietitianId: context.dietitianId };
   const rawConversation = next.conversations.find((item) => item.clientId === rawClient.id);
@@ -1055,16 +1337,16 @@ export async function createSupabaseClientRecord(
 
   const supabase = requireSupabase();
   await insertClientBundle(supabase, client, conversation);
-  return loadSupabaseState(context);
+  return { kind: "client_create", client, conversation };
 }
 
 export async function patchSupabaseClientRecord(
   clientId: string,
   patch: Partial<ClientRecord>,
   context = demoTenantContext(),
-) {
-  const state = await loadSupabaseState(context);
-  const next = patchClientInState(state, clientId, patch);
+): Promise<Phase79ScopedClientPatchResponse> {
+  const { validationState, beforeClient } = await loadSupabaseClientPatchContext(clientId, context);
+  const next = patchClientInState(validationState, clientId, patch);
   const client = next.clients.find((item) => item.id === clientId);
 
   if (!client) {
@@ -1072,12 +1354,12 @@ export async function patchSupabaseClientRecord(
   }
 
   const supabase = requireSupabase();
-  const beforeClient = state.clients.find((item) => item.id === clientId);
   await upsertClient(supabase, client, beforeClient);
   await upsertChannel(supabase, client);
+  const auditEvents: AuditEventRecord[] = [];
   if (hasAiControlChange(beforeClient, client)) {
     await insertClientAiStatusEvent(supabase, beforeClient, client, context);
-    await insertAudit(supabase, {
+    const auditEvent = {
       id: crypto.randomUUID(),
       tenantId: context.tenantId,
       eventType: "client_ai_control_updated",
@@ -1085,9 +1367,11 @@ export async function patchSupabaseClientRecord(
       entityId: client.id,
       metadata: { source: "supabase_store" },
       createdAt: new Date().toISOString(),
-    });
+    };
+    await insertAudit(supabase, auditEvent);
+    auditEvents.push(auditEvent);
   }
-  return loadSupabaseState(context);
+  return { kind: "client_patch", client, auditEvents };
 }
 
 export async function exportSupabaseClientData(clientId: string, context = demoTenantContext()) {
@@ -1562,8 +1846,110 @@ export async function rejectSupabaseClientUpdateProposal(
   return loadSupabaseState(context);
 }
 
+async function loadSupabaseInternalCopilotClientData(clientId: string, context: AppTenantContext) {
+  const supabase = requireSupabase();
+
+  const [conversationsResult, handoffsResult, decisionsResult, formResponsesResult, formSchemasResult] =
+    await Promise.all([
+      supabase
+        .from("conversations")
+        .select("*")
+        .eq("tenant_id", context.tenantId)
+        .eq("client_id", clientId)
+        .order("created_at"),
+      supabase
+        .from("handoff_cases")
+        .select("*")
+        .eq("tenant_id", context.tenantId)
+        .eq("client_id", clientId)
+        .order("created_at", { ascending: false })
+        .limit(10),
+      supabase
+        .from("ai_decisions")
+        .select("*")
+        .eq("tenant_id", context.tenantId)
+        .eq("client_id", clientId)
+        .order("created_at", { ascending: false })
+        .limit(10),
+      supabase
+        .from("client_form_responses")
+        .select("*")
+        .eq("tenant_id", context.tenantId)
+        .eq("client_id", clientId)
+        .order("updated_at", { ascending: false })
+        .limit(10),
+      supabase.from("client_form_schemas").select("*").eq("tenant_id", context.tenantId).eq("status", "published"),
+    ]);
+
+  throwIfError(conversationsResult.error);
+  throwIfError(handoffsResult.error);
+  throwIfError(decisionsResult.error);
+  throwIfError(formResponsesResult.error);
+  throwIfError(formSchemasResult.error);
+
+  const conversationIds = (conversationsResult.data || []).map((conversation) => conversation.id);
+  const memoriesResult =
+    conversationIds.length > 0
+      ? await supabase
+          .from("conversation_memories")
+          .select("*")
+          .eq("tenant_id", context.tenantId)
+          .in("conversation_id", conversationIds)
+      : await emptySupabaseResult<DbMemory>();
+  throwIfError(memoriesResult.error);
+
+  const messagesResult =
+    conversationIds.length > 0
+      ? await supabase
+          .from("messages")
+          .select("*")
+          .eq("tenant_id", context.tenantId)
+          .in("conversation_id", conversationIds)
+          .order("created_at", { ascending: false })
+          .limit(20)
+      : await emptySupabaseResult<DbMessage>();
+  throwIfError(messagesResult.error);
+
+  const memories = memoriesResult.data || [];
+
+  return {
+    conversations: (conversationsResult.data || []).map((conversation) => mapConversation(conversation, memories)),
+    messages: (messagesResult.data || [])
+      .map(mapMessage)
+      .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()),
+    handoffCases: (handoffsResult.data || []).map(mapHandoff),
+    aiDecisions: (decisionsResult.data || []).map(mapDecision),
+    clientFormResponses: (formResponsesResult.data || []).map(mapFormResponse),
+    clientFormSchemas: (formSchemasResult.data || []).map(mapFormSchema),
+  };
+}
+
+async function loadSupabaseInternalCopilotBoundedContext(body: string, context: AppTenantContext) {
+  const clientShell = await loadSupabaseClientCreateContext(context);
+  const intent = classifyInternalCopilotIntent(body);
+
+  if (intent === "unsupported") {
+    return assembleBoundedInternalCopilotToolState(
+      { ...clientShell, conversations: [], clientFormSchemas: [] },
+      body,
+    );
+  }
+
+  const query = extractClientQuery(body, clientShell.clients);
+  const resolved = resolveVisibleClientByName(clientShell, query);
+  if (resolved.status !== "ok") {
+    return assembleBoundedInternalCopilotToolState(
+      { ...clientShell, conversations: [], clientFormSchemas: [] },
+      body,
+    );
+  }
+
+  const clientData = await loadSupabaseInternalCopilotClientData(resolved.client.id, context);
+  return assembleBoundedInternalCopilotToolState({ ...clientShell, ...clientData }, body);
+}
+
 export async function runSupabaseInternalCopilotMessage(body: string, context = demoTenantContext()) {
-  const before = await loadSupabaseState(context);
+  const before = await loadSupabaseInternalCopilotBoundedContext(body, context);
   const next = runInternalCopilotMessageInState(before, body);
   const beforeMessages = new Set(before.internalCopilotMessages.map((message) => message.id));
   const beforeToolCalls = new Set(before.internalCopilotToolCalls.map((call) => call.id));

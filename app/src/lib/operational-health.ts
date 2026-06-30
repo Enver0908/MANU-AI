@@ -27,6 +27,36 @@ import {
   type Phase77aiProductionOperationsPreparation,
 } from "./phase-77ai-production-operations-preparation";
 import {
+  buildPhase79bWindowedReadHealthSignal,
+  evaluatePhase79bWindowedReadEvidence,
+  type Phase79WindowedReadEvidence,
+} from "./phase-79b-windowed-read-contracts";
+import {
+  buildPhase79cScopedClientMutationHealthSignal,
+  evaluatePhase79cScopedClientMutationEvidence,
+  type Phase79ScopedClientMutationEvidence,
+} from "./phase-79c-scoped-client-mutation";
+import {
+  buildPhase79dBoundedInternalCopilotHealthSignal,
+  evaluatePhase79dBoundedInternalCopilotEvidence,
+  type Phase79BoundedInternalCopilotEvidence,
+} from "./phase-79d-bounded-internal-copilot-loaders";
+import {
+  buildPhase79eLifecycleRedactionHealthSignal,
+  evaluatePhase79eLifecycleRedactionEvidenceForHealth,
+  type Phase79LifecycleRedactionEvidence,
+} from "./phase-79e-lifecycle-redaction-evidence";
+import {
+  buildPhase79fCurrentRlsHealthSignal,
+  evaluatePhase79fCurrentRlsEvidenceForHealth,
+  type Phase79CurrentRlsEvidence,
+} from "./phase-79f-current-rls-evidence";
+import {
+  buildPhase79gProductionScaleHealthSignal,
+  buildPhase79UnifiedRehearsalDefaultMetrics,
+  type Phase79UnifiedRehearsalMetrics,
+} from "./phase-79g-unified-production-scale-rehearsal";
+import {
   buildPhase77agChannelReplayDefaultMetrics,
   buildPhase77agChannelReplayHealthSignal,
   type Phase77agChannelReplayRehearsalMetrics,
@@ -124,6 +154,35 @@ export type OperationalHealthSnapshot = {
   productionOpsPlaceholderCandidateCount: number;
   productionOpsInternalMockControlCount: number;
   productionOpsLaunchGatesOpen: boolean;
+  phase79WindowedReadVersion: string;
+  phase79WindowedReadStatus: "pass" | "fail";
+  phase79WindowedReadReady: boolean;
+  phase79WindowedReadFailures: string[];
+  phase79ScopedClientMutationVersion: string;
+  phase79ScopedClientMutationStatus: "pass" | "fail";
+  phase79ScopedClientMutationReady: boolean;
+  phase79ScopedClientMutationFailures: string[];
+  phase79BoundedInternalCopilotVersion: string;
+  phase79BoundedInternalCopilotStatus: "pass" | "fail";
+  phase79BoundedInternalCopilotReady: boolean;
+  phase79BoundedInternalCopilotFailures: string[];
+  phase79LifecycleRedactionVersion: string;
+  phase79LifecycleRedactionStatus: "pass" | "fail";
+  phase79LifecycleReady: boolean;
+  phase79LifecycleRedactionFailures: string[];
+  phase79LifecycleDomainCoverageCount: number;
+  phase79CurrentRlsEvidenceVersion: string;
+  phase79CurrentRlsEvidenceStatus: "pass" | "fail" | "pending";
+  phase79CurrentRlsEvidenceReady: boolean;
+  phase79CurrentRlsScopeCoverageCount: number;
+  phase79CurrentRlsEvidenceFailures: string[];
+  phase79R406CurrentReRunStatus: "pass" | "fail" | "pending";
+  phase79ProductionScaleVersion: string;
+  phase79ProductionScaleStatus: "pass" | "fail";
+  phase79ProductionScaleReady: boolean;
+  phase79HardZeroFailureCount: number;
+  phase79HardZeroFailures: string[];
+  phase79OpsPlaceholderMissingEvidenceCount: number;
 };
 
 const DEFAULT_STALE_DRAFT_HOURS = 24;
@@ -141,6 +200,12 @@ export function buildOperationalHealthSnapshot(
     expandedAiRehearsalMetrics?: Phase77xExpandedAiRehearsalMetrics;
     channelReplayRehearsalMetrics?: Phase77agChannelReplayRehearsalMetrics;
     productionOpsPreparation?: Phase77aiProductionOperationsPreparation;
+    phase79bWindowedReadEvidence?: Phase79WindowedReadEvidence;
+    phase79cScopedClientMutationEvidence?: Phase79ScopedClientMutationEvidence;
+    phase79dBoundedInternalCopilotEvidence?: Phase79BoundedInternalCopilotEvidence;
+    phase79eLifecycleRedactionEvidence?: Phase79LifecycleRedactionEvidence;
+    phase79fCurrentRlsEvidence?: Phase79CurrentRlsEvidence;
+    phase79UnifiedRehearsalMetrics?: Phase79UnifiedRehearsalMetrics;
   } = {},
 ): OperationalHealthSnapshot {
   const now = options.now ? new Date(options.now) : new Date();
@@ -185,6 +250,26 @@ export function buildOperationalHealthSnapshot(
   );
   const productionOps = buildPhase77aiProductionOpsHealthSignal(
     options.productionOpsPreparation ?? buildPhase77aiProductionOpsDefaultPreparation(),
+  );
+  const windowedRead = buildPhase79bWindowedReadHealthSignal(
+    options.phase79bWindowedReadEvidence ?? evaluatePhase79bWindowedReadEvidence(state),
+  );
+  const scopedClientMutation = buildPhase79cScopedClientMutationHealthSignal(
+    options.phase79cScopedClientMutationEvidence ??
+      evaluatePhase79cScopedClientMutationEvidence(state, state.clients[0]?.id ?? "client-mert"),
+  );
+  const boundedInternalCopilot = buildPhase79dBoundedInternalCopilotHealthSignal(
+    options.phase79dBoundedInternalCopilotEvidence ??
+      evaluatePhase79dBoundedInternalCopilotEvidence(state, "Mert son durumu ne?"),
+  );
+  const lifecycleRedaction = buildPhase79eLifecycleRedactionHealthSignal(
+    options.phase79eLifecycleRedactionEvidence ?? evaluatePhase79eLifecycleRedactionEvidenceForHealth(state),
+  );
+  const currentRlsEvidence = buildPhase79fCurrentRlsHealthSignal(
+    options.phase79fCurrentRlsEvidence ?? evaluatePhase79fCurrentRlsEvidenceForHealth(),
+  );
+  const productionScale = buildPhase79gProductionScaleHealthSignal(
+    options.phase79UnifiedRehearsalMetrics ?? buildPhase79UnifiedRehearsalDefaultMetrics(),
   );
 
   return {
@@ -239,6 +324,12 @@ export function buildOperationalHealthSnapshot(
     channelAutomationRollbackActiveScopeCount: countActiveChannelAdapterRollbackScopes(state.channelAdapterRollback),
     ...channelReplay,
     ...productionOps,
+    ...windowedRead,
+    ...scopedClientMutation,
+    ...boundedInternalCopilot,
+    ...lifecycleRedaction,
+    ...currentRlsEvidence,
+    ...productionScale,
   };
 }
 

@@ -15,6 +15,17 @@ Resolve or keep safely gated the R-405 production dependency audit finding cause
 - Current `eslint-config-next@latest`, rechecked on 2026-05-31 during Completion Roadmap Phase 3, is `16.2.6`.
 - The canary path has previously exposed patched PostCSS, but canary is not accepted as a pilot baseline.
 
+Latest recheck:
+
+- Phase 80D rechecked on 2026-06-30: stable `next@latest` is `16.2.9` and still depends on `postcss@8.4.31`.
+- `eslint-config-next@latest` is `16.2.9`.
+- Production audit still reports only the known moderate R-405 `next`/`postcss` findings and the rejected `next@9.3.3` downgrade.
+- No dependency files were changed in Phase 80D.
+- Phase 78 rechecked on 2026-06-29: stable `next@latest` is `16.2.9` and still depends on `postcss@8.4.31`.
+- `eslint-config-next@latest` is `16.2.9`.
+- Production audit still reports only the known moderate R-405 `next`/`postcss` findings and the rejected `next@9.3.3` downgrade.
+- No dependency files were changed in Phase 78.
+
 References:
 
 - GitHub Advisory: `https://github.com/advisories/GHSA-qx2v-qp2m-jg93`

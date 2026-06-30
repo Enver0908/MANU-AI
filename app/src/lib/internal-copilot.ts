@@ -380,7 +380,7 @@ function answerForIntent(
   return "Bu soru desteklenmiyor.";
 }
 
-function extractClientQuery(question: string, clients: ClientRecord[]) {
+export function extractClientQuery(question: string, clients: ClientRecord[]) {
   const normalizedQuestion = normalizeSearch(question);
   const matched = clients
     .map((client) => ({

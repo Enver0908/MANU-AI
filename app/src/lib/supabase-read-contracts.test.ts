@@ -41,13 +41,37 @@ describe("Supabase broad read contracts", () => {
     );
 
     expect(phase69Ids).toEqual(
+      expect.arrayContaining([]),
+    );
+    expect(phase69Ids).not.toContain("internal_copilot_tools");
+  });
+
+  it("upgrades dashboard_state_snapshot to Phase 79 windowed runtime", () => {
+    const phase79Ids = getSupabaseReadContractsByStatus("phase79_windowed_runtime").map(
+      (contract) => contract.id,
+    );
+
+    expect(phase79Ids).toEqual(
       expect.arrayContaining([
         "dashboard_state_snapshot",
-        "internal_copilot_tools",
         "client_create_scaffold",
         "client_ai_control_patch",
+        "internal_copilot_tools",
       ]),
     );
+  });
+
+  it("records Phase 79I scoped mutation and windowed dashboard closure accurately", () => {
+    const dashboard = SUPABASE_READ_CONTRACTS.find((contract) => contract.id === "dashboard_state_snapshot");
+    const create = SUPABASE_READ_CONTRACTS.find((contract) => contract.id === "client_create_scaffold");
+    const patch = SUPABASE_READ_CONTRACTS.find((contract) => contract.id === "client_ai_control_patch");
+
+    expect(dashboard?.currentLoader).toBe("loadSupabaseWindowedDashboardPayload");
+    expect(dashboard?.currentScope).toContain("/api/app-state?view=windowed");
+    expect(create?.currentScope).not.toContain("post-mutation reload");
+    expect(patch?.currentScope).not.toContain("post-mutation reload");
+    expect(create?.nextAction).toContain("No broad-read action needed");
+    expect(patch?.nextAction).toContain("No broad-read action needed");
   });
 
   it("keeps legal/admin workflows intentionally broad until external contracts are approved", () => {
