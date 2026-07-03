@@ -52,7 +52,7 @@ alter table scope_guard_evaluations enable row level security;
 drop policy if exists "authenticated read scope rules" on scope_rules;
 create policy "authenticated read scope rules"
 on scope_rules for select
-using (exists (select 1 from tenant_memberships tm where tm.auth_user_id = auth.uid()));
+using (exists (select 1 from tenant_memberships tm where tm.user_id = auth.uid()));
 
 drop policy if exists "owner admin write scope rules" on scope_rules;
 create policy "owner admin write scope rules"
@@ -60,14 +60,14 @@ on scope_rules for all
 using (
   exists (
     select 1 from tenant_memberships tm
-    where tm.auth_user_id = auth.uid()
+    where tm.user_id = auth.uid()
       and tm.role in ('owner', 'admin')
   )
 )
 with check (
   exists (
     select 1 from tenant_memberships tm
-    where tm.auth_user_id = auth.uid()
+    where tm.user_id = auth.uid()
       and tm.role in ('owner', 'admin')
   )
 );
@@ -75,7 +75,7 @@ with check (
 drop policy if exists "authenticated read scope rule chunks" on scope_rule_chunks;
 create policy "authenticated read scope rule chunks"
 on scope_rule_chunks for select
-using (exists (select 1 from tenant_memberships tm where tm.auth_user_id = auth.uid()));
+using (exists (select 1 from tenant_memberships tm where tm.user_id = auth.uid()));
 
 drop policy if exists "owner admin write scope rule chunks" on scope_rule_chunks;
 create policy "owner admin write scope rule chunks"
@@ -83,14 +83,14 @@ on scope_rule_chunks for all
 using (
   exists (
     select 1 from tenant_memberships tm
-    where tm.auth_user_id = auth.uid()
+    where tm.user_id = auth.uid()
       and tm.role in ('owner', 'admin')
   )
 )
 with check (
   exists (
     select 1 from tenant_memberships tm
-    where tm.auth_user_id = auth.uid()
+    where tm.user_id = auth.uid()
       and tm.role in ('owner', 'admin')
   )
 );

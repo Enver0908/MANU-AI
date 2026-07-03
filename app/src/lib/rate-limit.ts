@@ -10,7 +10,23 @@ type RateLimitInput = {
   windowMs: number;
 };
 
-export type RateLimitScope = "simulator" | "channel_inbound" | "manual_reply" | "draft_review" | "internal_copilot";
+export type RateLimitScope =
+  | "simulator"
+  | "channel_inbound"
+  | "manual_reply"
+  | "draft_review"
+  | "internal_copilot"
+  | "commercial_invite_status"
+  | "commercial_checkout_create"
+  | "commercial_contact_leads"
+  | "auth_magic_link";
+
+const IN_MEMORY_ONLY_RATE_LIMIT_SCOPES = new Set<RateLimitScope>([
+  "commercial_invite_status",
+  "commercial_checkout_create",
+  "commercial_contact_leads",
+  "auth_magic_link",
+]);
 
 type RateLimitRpcResponse = {
   allowed?: boolean;
@@ -44,7 +60,9 @@ function buckets() {
 
 export async function assertRateLimit({ key, scope, tenantId, limit, windowMs }: RateLimitInput) {
   const supabase =
-    tenantId && process.env.MANU_DEV_FALLBACK_STORE !== "true"
+    tenantId &&
+    process.env.MANU_DEV_FALLBACK_STORE !== "true" &&
+    !IN_MEMORY_ONLY_RATE_LIMIT_SCOPES.has(scope)
       ? rateLimitRpcClientForTests || getSupabaseAdminClient()
       : null;
   if (supabase && tenantId) {
@@ -95,6 +113,8 @@ export const RATE_LIMITS = {
   manualReply: { scope: "manual_reply", limit: 30, windowMs: 60_000 },
   draftReview: { scope: "draft_review", limit: 40, windowMs: 60_000 },
   internalCopilot: { scope: "internal_copilot", limit: 20, windowMs: 60_000 },
+  commercialInviteStatus: { scope: "commercial_invite_status", limit: 12, windowMs: 60_000 },
+  commercialCheckoutCreate: { scope: "commercial_checkout_create", limit: 6, windowMs: 60_000 },
 } as const;
 
 function hashRateLimitKey(key: string) {

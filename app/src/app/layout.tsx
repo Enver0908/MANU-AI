@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { PwaRuntime } from "@/components/pwa-runtime";
 import "./globals.css";
@@ -14,15 +14,21 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "MANU-AI",
-  description: "Local MANU-AI dietitian operations prototype",
-  applicationName: "MANU-AI",
+  title: "SiriusAI",
+  description: "SiriusAI supervised dietitian messaging assistant",
+  applicationName: "SiriusAI",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "MANU-AI",
+    title: "SiriusAI",
   },
   manifest: "/manifest.webmanifest",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 const devServiceWorkerCleanupScript =
@@ -36,7 +42,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
+    <html lang="tr" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="min-h-full">
         {devServiceWorkerCleanupScript ? (
           <script dangerouslySetInnerHTML={{ __html: devServiceWorkerCleanupScript }} />

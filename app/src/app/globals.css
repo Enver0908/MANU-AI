@@ -12,6 +12,109 @@
   --font-mono: var(--font-geist-mono);
 }
 
+/*
+ * Phase 83E-1 design system tokens.
+ * Restrained clinical SaaS palette: white/near-white surfaces, charcoal ink,
+ * cool neutral borders. Emerald is the brand/primary. Clinical message-risk
+ * colors (green/yellow/red) are intentionally NOT defined here; they are owned
+ * by the clinical risk maps in `components/ui/tokens.ts` so risk semantics are
+ * never reused for generic UI state.
+ */
+@theme {
+  --color-surface: #ffffff;
+  --color-surface-muted: #f7f5ef;
+  --color-surface-sunken: #f1efe8;
+  --color-ink: #1c1917;
+  --color-ink-muted: #57534e;
+  --color-ink-subtle: #78716c;
+  --color-line: #e7e5e4;
+  --color-line-strong: #d6d3d1;
+  --radius-control: 6px;
+  --radius-card: 8px;
+}
+
+/* Phase 83E-6: keyboard-visible focus for interactive controls. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[role="tab"]:focus-visible {
+  outline: 2px solid #047857;
+  outline-offset: 2px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: 1rem;
+  z-index: 60;
+  border-radius: var(--radius-control);
+  background: #064e3b;
+  color: #ffffff;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transform: translateY(-200%);
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+/* Safe-area helpers for installed PWA on notched devices (mobile ergonomics). */
+.pt-safe {
+  padding-top: max(0.5rem, env(safe-area-inset-top));
+}
+.pb-safe {
+  padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+}
+.px-safe {
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
+}
+
+/* Phase 83E-5: mobile chrome spacing above the fixed bottom nav + sticky action bars. */
+.bottom-above-nav {
+  bottom: calc(3.5rem + env(safe-area-inset-bottom, 0px));
+}
+
+.pb-mobile-nav {
+  padding-bottom: calc(3.5rem + env(safe-area-inset-bottom, 0px));
+}
+
+.pb-mobile-nav-actions {
+  padding-bottom: calc(7rem + env(safe-area-inset-bottom, 0px));
+}
+
+@media (min-width: 1024px) {
+  .pb-mobile-nav,
+  .pb-mobile-nav-actions {
+    padding-bottom: 0;
+  }
+}
+
+/* Keep focused fields visible above the mobile bottom nav + sticky action bars. */
+@media (max-width: 1023px) {
+  input,
+  textarea,
+  select {
+    scroll-margin-bottom: calc(7rem + env(safe-area-inset-bottom, 0px));
+  }
+}
+
 body {
   background: var(--background);
   color: var(--foreground);

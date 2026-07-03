@@ -4,11 +4,23 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 ## Current Status
 
+**2026-07-03 Phase 84J custom SMTP verification:** Custom SMTP and real magic-link email verification are complete for the hosted sandbox. Resend sending domain was verified through Porkbun DNS, Supabase Auth custom SMTP was enabled, `/api/auth/magic-link` returned `sent: true`, and a real inbox magic-link click reached `https://siriusai.store/dashboard`. Added fragment-session bridging for Supabase implicit-flow email links. Production pilot remains `NO-GO`.
+
+**2026-07-03 Phase 84I live onboarding update:** Auth/admin/onboarding closure remediation is repo-local complete and VPS sandbox onboarding is verified through generated token-hash fallback. `/auth/callback` preserves Supabase session cookies on final redirects and supports token-hash OTP callbacks; admin magic links use the admin callback base URL contract; admin-host routing covers non-static paths; duplicate onboarding claims recover idempotently for the same tenant. The sandbox claim created the owner membership and dietitian profile, `/dashboard` returned 200, and repeat claim returned `alreadyClaimed: true`. Current RLS re-run remains pending. Production pilot remains `NO-GO`.
+
+**2026-07-02 Phase 84A update:** Phase 84A PRD, spec, and architecture freeze complete.
+
+**2026-07-02 commercial admin recovery update:** Phase 83F includes protected hosted Supabase recovery diagnostics via `/api/commercial/admin/health` and clearer `/commercial-admin` UI guidance. Commercial admin invite operations still require reachable hosted/local Supabase plus commercial migrations.
+
 This repository is a local SaaS/PWA pilot prototype and architecture workspace. It is not a production-connected system yet.
 
-**Latest implementation phase:** Phase 80G R-405 closure-evidence hardening complete (2026-06-30). **Next implementation phase:** Phase 81 direct production pilot GO evaluation only when eligible. **Production pilot:** `NO-GO` (outcome `NO_GO_MISSING_ARTIFACTS`; `phase81StartEligible` is `false`; R-406 current re-run pending; R-405 open; all eight launch gates open).
+**Latest implementation phase:** Phase 84J custom SMTP and real magic-link email verification is complete on top of Phase 84A-84I commercial SaaS relaunch/onboarding work. Phase 83 track remains closed locally. RLS current re-run remains pending until local Supabase executes without skips. **Next work:** external production prerequisites remain outside Phase 84. **Production pilot:** `NO-GO` (unchanged).
 
-**Latest verification:** Phase 80G verified on 2026-06-30 with targeted Phase 80 tests (4 files, 29 passed), `git diff --check`, `npm run lint` with two pre-existing warnings, `npm run test:rls` skipped 20/20 because local Supabase was unavailable, `npm run build`, `npm run release:verify` with core tests 225/225 and app tests 518 passed / 4 skipped across 83 files, and `npm run rehearse:production-scale:79g`. The rehearsal passed the expanded AI quality 5,000-case run with hard-zero counters, full mock channel replay, Phase 79 acceptance tests, release verification, production build, and only documented R-405 findings. Local `npm run test:rls` current re-run remains pending when local Supabase is unavailable; Phase 50/52 baseline RLS mitigation remains the baseline evidence.
+**Phase 82 verification:** targeted Phase 82 tests passed (5 files, 31/31); Phase 82G records `repoLocalClosureComplete: true` with verification `blocked` because `npm run test:rls` remains skipped/pending when local Supabase is unavailable.
+
+**Phase 81 verification:** targeted Phase 81 tests passed (6 files, 46/46) on 2026-06-30. Phase 81F records the current refresh as `blocked` because `npm run test:rls` remains skipped/pending when local Supabase is unavailable.
+
+**Latest verification:** Phase 84I token-hash remediation targeted auth/onboarding tests 16/16 and build passed; earlier Phase 84I targeted tests 41/41, visual tests 36/36, and `npm run release:verify` core 225/225 + app 709 passed / 4 skipped remain the local baseline. VPS sandbox generated token-hash onboarding reached dashboard 200 and created the paid tenant owner membership/profile. `npm run test:rls` skipped 21/21, so R-406 remains pending. Production pilot remains `NO-GO`.
 
 **Phase 77AA-77AI remediation update, 2026-06-28:** closed the review findings for mock channel rollback persistence, WhatsApp timestamp fail-closed parsing, 77AE mock delivery typing, 77AG full replay isolation, and Supabase channel-delivery DSAR cleanup. Verification passed with `git diff --check`, targeted Phase 77 tests, `npm run lint` with two pre-existing warnings, `supabase-store` unit tests, and `npm run rehearse:channel:replay`; repo-wide `npm test` still exceeded the local 180s review timeout and `tsc --noEmit` remains blocked by pre-existing non-Phase-77 test type errors.
 
@@ -130,3 +142,11 @@ By default, work in this repository uses local/mock flows. Real WhatsApp, Telegr
 R-405 dependency remediation must follow the documented Phase 22 procedure.
 
 Official health-regulation PDFs, legal/privacy artifacts, clinical approvals, and final dietitian/client form definitions must be supplied by the user and recorded only through sanitized references when they are sensitive.
+
+## Current Commercial VPS Baseline - 2026-07-02
+
+The commercial sandbox has been exercised on a Hetzner VPS for workflow validation only. `https://siriusai.store` is live behind Nginx, PM2, and Let's Encrypt HTTPS. Stripe remains test/sandbox only, and the test webhook endpoint `https://siriusai.store/api/commercial/webhook` has been verified without exposing secrets.
+
+Verified result: invite + Stripe test checkout can consume the invite, create a tenant, create an active entitlement, and write billing ledger events. Hosted onboarding/auth now includes magic-link login, membership/profile claim, Phase 84I callback remediation, and Phase 84J Resend custom-SMTP real email delivery. R-425 is mitigated in the hosted sandbox path.
+
+Next canonical plan: external production prerequisites outside Phase 84. Production pilot remains `NO-GO`; R-405 remains open; R-406 current post-83/84 local Supabase/RLS re-run remains pending when local Supabase is unavailable.

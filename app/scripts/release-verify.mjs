@@ -35,7 +35,8 @@ function run({ label, command, args, cwd, before }) {
 }
 
 function cleanNextBuildOutput() {
-  rmSync(".next", { force: true, recursive: true });
+  // Windows + OneDrive can throw ENOTEMPTY when another build still holds .next open.
+  rmSync(".next", { force: true, recursive: true, maxRetries: 10, retryDelay: 500 });
 }
 
 function runDependencyAuditGate() {

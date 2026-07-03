@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import { assertActiveCommercialEntitlement } from "./commercial-entitlement-access";
 import { createSupabaseServerClient, isSupabaseConfigured } from "./supabase";
 import type { TenantRole } from "./types";
 
@@ -94,12 +95,16 @@ export async function resolveAppTenantContext(): Promise<AppTenantContext> {
     throw new AppAuthError(403, "no_dietitian_profile");
   }
 
-  return {
+  const context = {
     tenantId: membership.data.tenant_id,
     dietitianId: dietitian.data.id,
     userId: user.id,
     role: membership.data.role as TenantRole,
   };
+
+  await assertActiveCommercialEntitlement(context.tenantId);
+
+  return context;
 }
 
 export function requireCapability(context: AppTenantContext, capability: AppCapability) {

@@ -62,13 +62,21 @@ Native app should be started only after:
 - Message provenance is reliable.
 - Pilot dietitians confirm mobile workflows are valuable.
 
-## Implementation Status - 2026-05-22
+## Implementation Status - 2026-07-01
+
+Phase 83A reaffirms and extends the PWA-first decision in `docs/PHASE_83_COMMERCIAL_PWA_AND_FRONTEND_RELAUNCH_SPEC.md`:
+
+- Mobile v1 is installable PWA only (no App Store / Play Store / APK in v1).
+- PWA install center is gated to active Stripe subscribers (Phase 83D complete on 2026-07-01).
+- Service worker must cache shell/static assets only; never cache PHI or tenant API payloads.
+- Full dashboard parity on mobile is required in the Phase 83E relaunch.
 
 The first PWA shell exists in `app`:
 
 - `public/manifest.webmanifest` defines install metadata.
-- `public/sw.js` registers a small app-shell cache.
-- `src/components/pwa-runtime.tsx` registers the service worker in the browser.
+- `public/sw.js` caches shell/static only; `/api/*` is network-only (no PHI caching).
+- `src/components/pwa-subscriber-shell.tsx` registers the service worker only for active subscribers.
+- `src/components/pwa-runtime.tsx` is a no-op placeholder; SW registration deferred to subscriber shell.
 - The dashboard layout is responsive and includes mobile-relevant workflows: urgent handoff queue, AI active/passive controls, simulator, manual reply, and conversation provenance labels.
 
 Next mobile work:

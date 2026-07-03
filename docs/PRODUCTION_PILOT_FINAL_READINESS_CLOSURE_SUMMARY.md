@@ -4,15 +4,67 @@ Date: 2026-06-30
 
 ## Status
 
-This is the final summary for the 13-phase completion roadmap, updated through Phase 80 external launch-gate closure and Phase 80G R-405 closure-evidence hardening on 2026-06-30.
+This is the final summary for the 13-phase completion roadmap, updated through Phase 82G verification refresh on 2026-06-30.
 
 Production pilot is not approved.
+
+Phase 84I auth/admin/onboarding remediation on 2026-07-03 addresses commercial onboarding closure gaps: callback cookies survive final auth redirects, token-hash OTP callbacks can create sessions, admin callbacks use a separate admin base URL, admin-host routing covers non-static paths, and duplicate same-tenant onboarding claims recover idempotently. Verification passed with token-hash auth/onboarding tests 16/16 and build; earlier Phase 84/remediation targeted tests 41/41, visual tests 36/36, and release verify core 225/225 + app 709 passed / 4 skipped remain the local baseline. VPS sandbox generated token-hash fallback verified onboarding claim, owner membership/profile creation, dashboard 200, and idempotent repeat claim. Phase 84J later superseded the email-delivery gap with verified Resend custom SMTP. Current RLS evidence, R-405 closure/acceptance, and external approvals remain open; production pilot remains `NO-GO`.
+
+Phase 84J custom SMTP completion on 2026-07-03 configured Resend SMTP through Porkbun DNS and verified real magic-link email delivery to dashboard after fragment-session bridge remediation. R-425 is mitigated in the hosted sandbox path, but production pilot is still not approved.
+
+Phase 84B public website on 2026-07-02 rebuilt the SiriusAI marketing homepage. The original R-425 gap is superseded by Phase 84D-84J hosted sandbox verification.
+
+Phase 84A architecture freeze on 2026-07-02 documented the SiriusAI commercial relaunch spec. Documentation-only; production pilot remains `NO-GO`.
+
+Phase 83F hosted Supabase recovery diagnostics on 2026-07-02 added protected `/api/commercial/admin/health` and clearer `/commercial-admin` setup guidance for unreachable Supabase project hosts, missing migrations, invalid service-role keys, incomplete admin env, and dev fallback mismatch. This does not add a fallback admin store, activate hosted credentials, close a launch gate, or approve production billing. Commercial admin invite operations still require reachable hosted/local Supabase plus commercial migrations. Production pilot remains `NO-GO`.
+
+Phase 83 final remediation on 2026-07-01 aligned continuity docs to Phase 83H/final remediation and clarified commercial admin revoke semantics to full subscriber entitlement revocation only. Production pilot remains `NO-GO`.
+
+Phase 83G entitlement hardening on 2026-07-01 added API-wide active entitlement enforcement on protected dashboard APIs when Supabase store mode is active. Production pilot remains `NO-GO`.
+
+Phase 83F commercial admin on 2026-07-01 added fail-closed admin operations. Production pilot remains `NO-GO`.
+
+Phase 83E remediation on 2026-07-01 restored commercial PWA/frontend visual acceptance (`npm run test:visual` 6/6) after the Phase 83E relaunch.
+
+Phase 83D gated PWA install center on 2026-07-01 added gated `/app-install`, subscriber-only SW registration, and no-PHI-cache service worker policy. Production pilot remains `NO-GO`.
+
+Phase 83C Stripe billing gate on 2026-07-01 added sandbox-only `/api/commercial/*` routes and webhook idempotency via `billing_event_ledger`. Live Stripe keys remain blocked. Production pilot remains `NO-GO`.
+
+Phase 83B commercial entitlement model on 2026-07-01 added Supabase commercial tables and `phase-83b-commercial-entitlement-model.ts`.
+
+Phase 82G verification refresh closed the Phase 82 track across 82A-82G on 2026-06-30 as a fail-closed repo-local project-completion layer, not a production launch. Baseline final outcome is `NO_GO_EXTERNAL_PREREQUISITES_OPEN`; Phase 82G records `repoLocalClosureComplete: true` with verification `blocked` because current local RLS evidence is skipped/pending; production pilot remains `NO-GO`; `productionPilotStarted` remains `false`. Verification passed with targeted Phase 82 tests (5 files, 31/31), targeted Phase 80 regression tests (4 files, 29/29), targeted Phase 81 regression tests (3 files, 19/19), `git diff --check`, lint with two pre-existing warnings, production build, `npm run test:rls` skipped 20/20, `npm run release:verify` core 225/225 and app 595 passed / 4 skipped across 94 files, and `npm run rehearse:production-scale:79g`.
+
+Phase 82G added `app/src/lib/phase-82g-verification-refresh.ts`. Phase 82 track is closed; final external readiness remains blocked.
+
+Phase 82E added `app/src/lib/phase-82e-launch-activation-firewall.ts`. Egress env flags alone cannot bypass open launch gates; no synthetic ready path sets `productionPilotStarted=true`.
+
+Phase 82D added `app/src/lib/phase-82d-final-completion-report.ts`. Baseline returns `NO_GO_EXTERNAL_PREREQUISITES_OPEN`.
+
+Phase 82C added `app/src/lib/phase-82c-blocker-reconciliation.ts`. R-405 remains open; R-406 current re-run remains pending.
+
+Phase 82B added `app/src/lib/phase-82b-external-evidence-gap-ledger.ts`. All eight launch gates remain open with no external artifacts supplied.
+
+Phase 82A added `docs/PHASE_82_FINAL_EXTERNAL_READINESS_CLOSURE_SPEC.md` with immutable Phase 82 rules and sub-phases 82A-82G.
+
+Phase 81F verification refresh and Phase 81G hardening completed the Phase 81 track as a fail-closed GO evaluation framework. Baseline final outcome remains `NO_GO_NOT_ELIGIBLE`; production pilot remains `NO-GO`; `productionPilotStarted` remains `false`. Verification passed with targeted Phase 81 tests (6 files, 46/46), `git diff --check`, lint with two pre-existing warnings, production build, `npm run test:rls` skipped 20/20, `npm run release:verify` core 225/225 and app 564 passed / 4 skipped across 89 files, and `npm run rehearse:production-scale:79g`. Phase 81F is implemented and blocked because current local RLS evidence is skipped/pending.
+
+Phase 81G added `app/src/lib/phase-81g-go-readiness-report.ts`. Baseline returns `NO_GO_NOT_ELIGIBLE`; Phase 81G consumes Phase 81F refresh evidence and derives eligibility from the Phase 80 final report.
+
+Phase 81E added `app/src/lib/phase-81e-roster-qualification.ts`. Baseline returns `blocked`.
+
+Phase 81D added `app/src/lib/phase-81d-environment-preflight.ts`. Baseline returns `blocked`.
+
+Phase 81C added `app/src/lib/phase-81c-launch-authorization-evidence.ts`. Baseline returns `no_authorization_supplied`.
+
+Phase 81B added `app/src/lib/phase-81b-phase-80-eligibility.ts`. Current baseline returns `NO_GO_NOT_ELIGIBLE`.
+
+Phase 81A added `docs/PHASE_81_DIRECT_PRODUCTION_PILOT_GO_EVALUATION_SPEC.md` with immutable Phase 81 rules, Phase 80G entry baseline, and sub-phases 81A-81H.
 
 Phase 80 external launch-gate closure completed on 2026-06-30 across sub-phases 80A-80F. Final aggregate outcome: `NO_GO_MISSING_ARTIFACTS`. `productionPilotDecision` is `NO-GO`; `productionPilotGo` remains `false`; `phase81StartEligible` is `false`. All eight launch gates remain open; R-405 remains open; R-406 current re-run remains pending because local Supabase was unavailable during `npm run test:rls` (20/20 skipped). Phase 80 does not start production traffic.
 
 Phase 80G R-405 closure-evidence hardening was applied on 2026-06-30: technical R-405 closure now requires a safe stable Next.js/PostCSS patch path, dependency update evidence, and clean production audit; unknown production audit findings block closure; formal R-405 acceptance requires complete external acceptance metadata beyond a dependency gate evidence record. Targeted Phase 80 tests passed (4 files, 29 tests); `npm run release:verify` passed with core tests 225/225 and app tests 518 passed / 4 skipped across 83 files; `npm run rehearse:production-scale:79g` passed. No dependency files were changed, no formal acceptance artifact was supplied, and R-405 remains open.
 
-Latest local roadmap state closes Phase 77A-77L, Phase 77M-77Y AI Quality Program (77N-77Y inclusive), Phase 77Z repository cleanup, Phase 77AA-77AI mock/gated adapter and operations track, Phase 78 dependency/R-405 recheck, Phase 79 production-scale hardening/full 100x50 rehearsal plus Phase 79I remediation closure, Phase 80 external launch-gate closure, and Phase 80G R-405 closure-evidence hardening. Phase 81 direct production pilot GO evaluation is next only when eligible.
+Latest local roadmap state closes Phase 77A-77L, Phase 77M-77Y AI Quality Program (77N-77Y inclusive), Phase 77Z repository cleanup, Phase 77AA-77AI mock/gated adapter and operations track, Phase 78 dependency/R-405 recheck, Phase 79 production-scale hardening/full 100x50 rehearsal plus Phase 79I remediation closure, Phase 80 external launch-gate closure, Phase 80G R-405 closure-evidence hardening, Phase 81 direct production pilot GO evaluation (81A-81H), and Phase 82 final external readiness closure (82A-82G). The baseline remains `NO-GO`.
 
 Phase 77AA-77AI remediation was applied on 2026-06-28: Supabase rollback controls persist and load into webhook/simulation state, invalid WhatsApp timestamps no longer throw, mock delivery policy fields are type-aligned, full 100x50 channel replay is isolated to `npm run rehearse:channel:replay`, and Supabase `channel_deliveries` are deleted during client anonymization/removal. This does not close any launch gate or approve production pilot.
 
@@ -20,7 +72,7 @@ Phase 78 dependency/R-405 closure was applied on 2026-06-29: stable `next@latest
 
 Phase 79 production-scale closure and Phase 79I remediation were applied on 2026-06-29: `/api/app-state?view=windowed`, fail-closed notification windows, scoped client create/patch responses without post-mutation broad reloads, bounded internal copilot loaders, lifecycle redaction evidence, current RLS evidence status, unified production-scale metrics, corrected full rehearsal coverage, and continuity/risk/gate docs are complete. Phase 79I targeted verification passed with 7 files, 65 tests passed, 2 skipped; full app tests passed with 79 files, 489 tests passed, 4 skipped; lint passed with two pre-existing warnings; production build passed. `npm run rehearse:production-scale:79g` passed: expanded AI quality passed 5,000 cases with hard-zero counters at 0; full mock channel replay passed; Phase 79 production-scale acceptance tests passed; `npm run release:verify` passed with core tests 225/225, app tests 489 passed and 4 skipped across 79 files, production build, and only documented R-405 findings.
 
-No real WhatsApp, Telegram, Gemini, external LLM provider, email, push, monitoring, analytics, secret manager, backup provider, or real client health data is connected.
+No real WhatsApp, Telegram, Gemini, external LLM provider, production client-messaging email, push, monitoring, analytics, secret manager, backup provider, or real client health data is connected. Hosted sandbox auth email is limited to Supabase magic links through the verified Phase 84J Resend custom-SMTP setup.
 
 Post-Phase 79 strategic roadmap: `DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` defines the direct production pilot path as 100 dietitians x 50 clients, with no small production ring. Phase 79 supplies local production-scale hardening, Phase 79I remediation, and full 100x50 mock acceptance evidence. External legal/privacy approval, external qualified dietitian approval, final production form/PDF/catalog/menu approvals, current RLS re-run when local Supabase is available, production operations approvals, external gates, and R-405 closure/acceptance remain required before production GO.
 
@@ -252,7 +304,7 @@ Phase 50 verification on 2026-06-02:
 
 ## Next Required Actions
 
-1. Start WhatsApp production adapter as the next implementation phase (mock/gated only; no real WhatsApp traffic until channel/legal/privacy gates close).
+1. Close external launch-gate evidence, R-405 technical resolution or formal acceptance, current RLS evidence, and production-operations prerequisites before any production pilot authorization.
 2. Apply Phase 65 official health-regulation PDF corpus QA to user-supplied PDFs, then collect reviewed corpus approval before active scope-guard use.
 3. Resolve R-405 through a safe stable Next.js/PostCSS upgrade or obtain formal external risk acceptance.
 4. Collect sanitized external approval references in `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` and map them through the Phase 64 structured evidence engine.
@@ -263,3 +315,11 @@ Phase 50 verification on 2026-06-02:
 ## Non-Approval Statement
 
 This summary does not approve production pilot launch, real health-data processing, real WhatsApp or Telegram messaging, real Gemini or external LLM calls, external monitoring, secret manager use, backup provider use, R-405 risk acceptance, or complete production SQL/RPC readiness.
+
+## Phase 84 Planning Status - 2026-07-02
+
+Commercial sandbox deployment reached HTTPS/domain/test-webhook validation on `https://siriusai.store`. Stripe test checkout provisioning works through invite consumption, tenant creation, entitlement activation, and ledger persistence.
+
+Phase 84A-84J later completed the hosted commercial sandbox relaunch/onboarding path: SiriusAI public site, contact lead capture, customer magic-link login, post-payment tenant claim, admin subdomain, Resend custom SMTP, fragment-session bridge, and real inbox magic-link dashboard verification.
+
+This does not alter final readiness: production pilot remains `NO-GO`. Next work is external production prerequisite closure: launch-gate evidence, R-405 technical resolution or formal acceptance, current RLS evidence, and production operations approvals. Canonical commercial spec: `docs/PHASE_84_COMMERCIAL_SAAS_RELAUNCH_AND_ONBOARDING_SPEC.md`.

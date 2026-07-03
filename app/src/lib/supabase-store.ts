@@ -1989,6 +1989,7 @@ async function ensureDemoData(supabase: SupabaseClient, userId = DEMO_USER_UUID)
   throwIfError(existing.error);
   if (existing.data) {
     await ensureDemoMembership(supabase, userId);
+    await ensureDemoCommercialEntitlement();
     return;
   }
 
@@ -2042,6 +2043,27 @@ async function ensureDemoData(supabase: SupabaseClient, userId = DEMO_USER_UUID)
       channel: "whatsapp",
       provider_event_id: "seed-green",
     }),
+  );
+  await ensureDemoCommercialEntitlement();
+}
+
+async function ensureDemoCommercialEntitlement() {
+  const admin = getSupabaseAdminClient();
+  if (!admin) {
+    return;
+  }
+
+  const now = new Date().toISOString();
+  await checked(
+    admin.from("tenant_entitlements").upsert(
+      {
+        tenant_id: DEMO_TENANT_UUID,
+        status: "active",
+        status_changed_at: now,
+        updated_at: now,
+      },
+      { onConflict: "tenant_id" },
+    ),
   );
 }
 

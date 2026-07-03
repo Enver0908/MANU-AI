@@ -4,11 +4,47 @@
 
 MANU-AI is in pilot-foundation mode. The local SaaS/PWA prototype, Supabase-backed state, fallback store, simulator, risk assessment persistence, core safety tests, RLS guard, controlled API errors, expanded dashboard visual smoke checks, voice-profile workflow, dynamic client forms, read-only internal dietitian copilot, and dietitian-entered critical context updates exist.
 
-Real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, and real client health data remain disconnected.
+Real WhatsApp, Telegram, Gemini/external LLM, production client-messaging email, push, monitoring, secret manager, and real client health data remain disconnected. Hosted sandbox auth email is limited to Supabase magic links through the verified Phase 84J Resend custom-SMTP setup.
 
 The most recent execution layers after the 13-phase completion roadmap are Phase 76B expanded chat form safety updates, Phase 76A dietitian chat form update proposals, Phase 75 Gemini provider gate, Phase 74 data lifecycle DSAR policy, Phase 73 health regulation calibration, Phase 72 regulation permission graph, Phase 71 Turkiye official health source ingestion, Phase 70 user-supplied form hardening, Phase 43 multilingual language support, Phase 44 red-risk reactivation lock, Phase 45 client removal data lifecycle, Phase 46 WhatsApp group quarantine, Phase 47 RLS quarantine evidence coverage, Phase 48 R-405 stable patch recheck, Phase 49 safety/orchestration hardening, Phase 50 production Supabase hardening, Phase 51 transactional RPC coverage, Phase 52 integration test coverage, Phase 53 scale/broad read contracts, Phase 54 R-405/launch-gate recheck, Phase 55 audit remediation safety boundary, Phase 56 clinical safety second-layer local evidence, Phase 57 yellow-risk hold/draft refresh, Phase 58 dietitian client language control, Phase 59 architecture review remediation, Phase 60 audit remediation, Phase 61 scope guard (RAG + LLM) second layer mock-first, Phase 62 architecture review remediation wave 2, Phase 63 production pilot GO rebaseline, Phase 64 structured launch-gate evidence engine, Phase 65 official regulation PDF corpus QA foundation, Phase 66 product communication covenant lock, Phase 67 approved source answerability engine, Phase 68 green maximization intent taxonomy, and Phase 69 direct 5,000 client scale foundation. Phase 76B expands the reviewed proposal path to Phase 70 clinical/safety form flags, editable proposal rows, supported health-profile mirrors, and manual-control warnings while keeping AI active/passive, mode, channel permission, red/yellow lock resolution, and autopilot/reactivation outside chat mutation. Phase 65 adds a typed QA foundation so user-supplied official PDFs must have source metadata, checksums, page extraction evidence, page/section references, derived rule drafts, corpus version, and synthetic golden cases before PDF-derived scope rules can become draft rules. Phase 71 adds the user-supplied 14-source Turkiye official source manifest and fail-closed artifact intake into that QA contract without approving any corpus. Phase 66 locks client-facing AI communication locally: AI self-disclosure, AI limitation disclaimers, doctor/dietitian/professional referral language, yellow/red AI sends, and non-green draft approval are blocked before client-facing send. Phase 67 gates green provider calls/sends on approved source support and excludes AI-generated messages from source authority. Phase 68 records green intent taxonomy evidence after answerability and blocks green-looking sensitive intent before provider generation without downgrading yellow/red decisions. Phase 69 adds synthetic 100 dietitian x 50 client scale evidence, cursor pagination helpers, Phase 69 read contracts, and aggregate operational-health scale signals. The post-Phase 65 strategic completion plan is now `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md`: production pilot is direct 100 dietitians x 50 clients (minimum 5,000 clients), no small production ring, green maximization is source-backed, and client-facing output must never disclose AI identity or refer the client to a doctor/dietitian/professional. The production-pilot decision remains `NO-GO`: all eight launch gates remain open and R-405 remains open. R-406 is now mitigated in the local prototype after Docker Desktop/local Supabase was started, the Phase 50 migration was applied, and `npm run test:rls` passed with 19/19 tests on 2026-06-02. Draft review, form response, client context update, handoff status, and red-risk reactivation now use transactional RPC commits locally; remaining broad reads are classified in a test-covered contract, while client removal/anonymization bulk redaction and external approval intake remain future production hardening work. R-310 is partially mitigated locally by deterministic second-layer evidence, Phase 57 yellow supervision, Phase 59 glucose/symptom hardening, Phase 61 escalate-only scope guard (default no-op until approved corpus), Phase 65 corpus QA foundation, Phase 66 covenant send blocking, Phase 67 source answerability, and Phase 68 green intent taxonomy, but qualified dietitian approval, official PDF corpus approval, and the clinical taxonomy launch gate remain open.
 
-Current override after Phase 80G: Phase 80 external launch-gate closure is complete on 2026-06-30, and Phase 80G hardened R-405 closure evidence. Technical R-405 closure now requires a safe stable patch path, dependency update evidence, and clean production audit; unknown production audit findings block closure; formal R-405 acceptance requires complete external acceptance details. Targeted Phase 80 tests passed (4 files, 29 tests); `npm run release:verify` passed with core tests 225/225 and app tests 518 passed / 4 skipped across 83 files; `npm run rehearse:production-scale:79g` passed. Final outcome remains `NO_GO_MISSING_ARTIFACTS`; `productionPilotDecision` is `NO-GO`; `phase81StartEligible` is `false`. All eight launch gates remain open; R-405 remains open; R-406 current re-run remains pending. Production pilot remains `NO-GO`. Next phase is Phase 81 direct production pilot GO evaluation only when eligible.
+Current override after Phase 84I live onboarding verification (2026-07-03): Phase 84I addresses the review gaps in auth callback cookie preservation, token-hash OTP callback support, admin callback URL separation, admin-host routing coverage, and duplicate onboarding claim recovery. Repo-local verification passed: token-hash auth/onboarding tests 16/16 and build; earlier Phase 84/remediation targeted tests 41/41, visual tests 36/36, and release verify core 225/225 + app 709 passed / 4 skipped remain the baseline. VPS sandbox onboarding/dashboard verification passed through generated token-hash fallback: authenticated status, successful claim, owner membership/profile creation, dashboard 200, and idempotent repeat claim. Phase 84J later completed real custom-SMTP email dashboard verification. `npm run test:rls` skipped 21/21, so current RLS re-run remains pending. Production pilot remains `NO-GO`.
+
+Current override after Phase 84J custom SMTP completion (2026-07-03): Phase 84J enabled Resend custom SMTP after Porkbun DNS verification, added `/api/auth/session-from-fragment` and a no-store `/auth/callback` fragment bridge for Supabase implicit-flow email links, and verified a real inbox magic-link click reaching `https://siriusai.store/dashboard`. Targeted auth/session tests 7/7 and production builds passed locally and on VPS. R-425 is mitigated in the hosted sandbox path. Production pilot remains `NO-GO`; external production prerequisites, R-405, and current RLS re-run remain open.
+
+Superseded Phase 84D override: Phase 84D customer auth foundation completed on 2026-07-02.
+
+Superseded override after Phase 84C lead and contact flow: Phase 84C added `commercial_leads`, public lead API, marketing contact form, and admin lead operations on the token console. Phase 84D-84J later completed customer auth, onboarding claim, hosted dashboard verification, and real custom-SMTP email verification. Production pilot remains `NO-GO`. `npm run test:rls` skipped 21/21 (R-406 pending) unless local Supabase is running with the new migration applied.
+
+Superseded Phase 84B override: Phase 84B professional public website completed on 2026-07-02.
+
+Superseded override after Phase 83F hosted Supabase recovery diagnostics: Phase 83 track closed locally, with a 2026-07-02 admin-ops recovery pass added after Phase 83H/final remediation. `/api/commercial/admin/health` and `/commercial-admin` provide sanitized diagnostics for unreachable Supabase project hosts, missing migrations, invalid service-role keys, incomplete admin env, and dev fallback mismatch. This did not add a fallback admin store or approve production billing. Phase 84A-84J later completed hosted commercial sandbox onboarding, admin, and real custom-SMTP email verification. Production pilot remains `NO-GO`; next work is external launch-gate/R-405/RLS prerequisites outside Phase 84.
+
+Superseded Phase 83F override: Phase 83F commercial admin completed on 2026-07-01.
+
+Superseded Phase 83E-6 override: Phase 83E-6 completed loading skeletons, enhanced empty/error/session-recovery states, keyboard focus rings, skip link, semantic dashboard structure, and PWA banner a11y on 2026-07-01 via `app/src/lib/phase-83e6-states-polish.ts` + `app/src/components/dashboard/state-primitives.tsx`. Next phase was 83E remediation.
+
+Superseded Phase 83E-5 override: Phase 83E-5 deepened mobile ergonomics on 2026-07-01. Next sub-phase was 83E-6.
+
+Superseded Phase 83E-4 override: Phase 83E-4 recomposed the ~3,189-line monolithic `app/src/components/dashboard-app.tsx` into domain panel modules under `app/src/components/dashboard/` on 2026-07-01. Next sub-phase was 83E-5.
+
+Superseded Phase 83E-3 override: Phase 83E-3 rebuilt the authenticated shell mobile-first on 2026-07-01 — mobile bottom navigation + desktop-only sidebar, a header with subscription status/install state/safe sign-out, and all six fail-closed gated-state screens driven by server-resolved entitlement via `app/src/lib/phase-83e3-app-shell.ts` (unit tested 4/4). Next sub-phase was 83E-4.
+
+Superseded Phase 83E-2 override: Phase 83E-2 rebuilt the public landing with a `Satın al` CTA and added a gated purchase flow (invite check → Stripe checkout), waitlist/contact for unapproved users, and success/cancel onboarding pages on 2026-07-01, backed by fail-closed `app/src/lib/phase-83e2-purchase-ux.ts` (unit tested 8/8). Next sub-phase was 83E-3.
+
+Superseded Phase 83E-1 override: Phase 83E-1 added clinical SaaS design tokens in `app/src/app/globals.css` and reusable primitives under `app/src/components/ui/` on 2026-07-01. Targeted design-system unit test passed (6/6). Next sub-phase was 83E-2.
+
+Superseded Phase 83D override: Phase 83D added gated `/app-install`, subscriber-only SW registration via `pwa-subscriber-shell.tsx`, no-PHI-cache `public/sw.js`, and `/api/commercial/mobile-install-audit` on 2026-07-01. Targeted Phase 83D unit tests passed (8/8); production build passed. Next sub-phase was 83E.
+
+Superseded Phase 83C override: Phase 83C added sandbox Stripe checkout/webhook/billing-portal routes and `phase-83c-stripe-billing-gate.ts` on 2026-07-01. `MANU_ALLOW_STRIPE_SANDBOX=true` with `sk_test_` keys required; live keys blocked. Targeted Phase 83C unit tests passed (9/9). Next sub-phase was 83D.
+
+Superseded Phase 83B override: Phase 83B added Supabase commercial tables and `phase-83b-commercial-entitlement-model.ts` on 2026-07-01.
+
+Superseded Phase 83A override: Phase 83A created `docs/PHASE_83_COMMERCIAL_PWA_AND_FRONTEND_RELAUNCH_SPEC.md` on 2026-07-01. Locked decisions: PWA-only mobile v1, invite + Stripe sandbox, public intro with gated purchase/dashboard/install, full dashboard parity on one shared surface. No runtime behavior changed. Next sub-phase was 83B.
+
+Superseded Phase 82G override: Phase 82 final external readiness closure is closed across 82A-82G as a fail-closed repo-local project-completion layer, not a production launch. Baseline final outcome is `NO_GO_EXTERNAL_PREREQUISITES_OPEN`; Phase 82G records `repoLocalClosureComplete: true` with verification `blocked` because current local RLS evidence is skipped/pending. Targeted Phase 82 tests passed (5 files, 31/31). All eight launch gates remain open; R-405 remains open; R-406 current re-run remains pending. Production pilot remains `NO-GO`. No further repo-local Phase 82 sub-phases remain.
+
+Superseded Phase 82F override: Phase 82 final external readiness closure was complete across 82A-82F before Phase 82G verification closure. The current Phase 82G override above is canonical.
 
 Phase 80D override: R-405 remains open with `no_safe_stable_patch` on 2026-06-30.
 
@@ -38,8 +74,9 @@ Locked decisions:
 
 Next implementation order:
 
-1. Phase 81 direct production pilot GO evaluation only when all gates close and R-405 is resolved or formally accepted.
-2. Phase 82 pilot stabilization closure after controlled launch.
+1. External launch-gate / R-405 / current RLS closure prerequisites (next). Phase 83A-83H and Phase 84A-84J are complete for the hosted commercial sandbox; neither track approves production pilot launch.
+2. External launch-gate closure, R-405 technical resolution or formal acceptance, and current RLS evidence pass before Phase 82 can reach `READY_FOR_EXTERNAL_CONTROLLED_LAUNCH_AUTHORIZATION` (unchanged clinical readiness track).
+3. No further repo-local Phase 82 sub-phases remain; Phase 82 track closed on 2026-06-30.
 
 ## Phase 78: Dependency And R-405 Closure - Completed 2026-06-29
 
@@ -113,7 +150,7 @@ Status:
 
 Next:
 
-- Phase 81 direct production pilot GO evaluation only when eligible.
+- External launch-gate/R-405/RLS closure prerequisites before any further production GO action.
 
 ## Phase 80E: Current RLS Evidence Re-run - Completed 2026-06-30
 
@@ -1854,7 +1891,7 @@ Done criteria:
 - Missing historical context output is classified with `severity="block"`.
 - Missing historical context creates `send_status="send_blocked"` and human takeover, with no client-facing AI message.
 - Legacy or invalidated AI drafts cannot be approved without recompile/review.
-- Real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, and real health data remain disconnected.
+- At Phase 23 completion time, real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, and real health data remained disconnected. Current exception: Phase 84J uses hosted-sandbox Resend SMTP only for Supabase auth magic links.
 
 Status:
 
@@ -2334,3 +2371,19 @@ Done criteria:
 - No fine-tuning on raw client messages.
 - No tenant mixing in datasets or prompt retrieval.
 - No raw health messages in external notification payloads.
+
+## Current Next Phase - Phase 84 Commercial SaaS Relaunch
+
+Superseded override after Phase 84H QA and evidence refresh (2026-07-03): Phase 84 repo-local track was complete pending VPS URL verification; Phase 84I later verified VPS generated token-hash onboarding/dashboard, and Phase 84J later verified real Resend custom-SMTP email dashboard access.
+
+Superseded Phase 84D override: Phase 84D customer auth completed on 2026-07-02.
+
+Superseded Phase 84C override: Phase 84C lead/contact flow completed on 2026-07-02.
+
+Superseded Phase 84A override (2026-07-02): Phase 84A architecture freeze complete.
+
+As of 2026-07-02, Phase 83 commercial sandbox infrastructure has been validated on `https://siriusai.store` with HTTPS, VPS deployment, and Stripe test webhook delivery. The test payment path successfully consumed a commercial invite, provisioned a tenant, created an active entitlement, and wrote billing ledger entries.
+
+The next correct implementation phase is `docs/PHASE_84_COMMERCIAL_SAAS_RELAUNCH_AND_ONBOARDING_SPEC.md`: professional SiriusAI public landing, Supabase magic-link login, post-payment customer onboarding/claim flow, contact lead capture, and admin operations on `admin.siriusai.store`.
+
+Do not treat the VPS deployment or Stripe test webhook as production GO. Keep live Stripe, real WhatsApp/Telegram/Gemini/provider, monitoring, secret manager, backup provider, production webhook, and real client health-data paths disconnected. R-405 remains open. R-406 current post-83 local Supabase/RLS re-run remains pending when local Supabase is unavailable.

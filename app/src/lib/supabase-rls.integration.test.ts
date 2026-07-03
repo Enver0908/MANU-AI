@@ -3,6 +3,7 @@ import { join } from "node:path";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { assertRateLimit, resetRateLimits } from "./rate-limit";
+import { hashCommercialInviteToken } from "./phase-83b-commercial-entitlement-model";
 import {
   addSupabaseClientContextUpdate,
   approveSupabaseDraftMessage,
@@ -60,6 +61,15 @@ const ASSISTANT_ASSIGNMENT_ID = "00000000-0000-4000-8000-000000000929";
 const VIEWER_ASSIGNMENT_ID = "00000000-0000-4000-8000-000000000930";
 const CARE_TEAM_ASSIGNMENT_ID = "00000000-0000-4000-8000-000000000931";
 const TEST_HANDOFF_CASE_ID = "00000000-0000-4000-8000-000000000932";
+const TEST_COMMERCIAL_INVITE_ID = "00000000-0000-4000-8000-000000000937";
+const OTHER_COMMERCIAL_INVITE_ID = "00000000-0000-4000-8000-000000000944";
+const TEST_TENANT_ENTITLEMENT_ID = "00000000-0000-4000-8000-000000000938";
+const OTHER_TENANT_ENTITLEMENT_ID = "00000000-0000-4000-8000-000000000945";
+const TEST_BILLING_CUSTOMER_ID = "00000000-0000-4000-8000-000000000939";
+const OTHER_BILLING_CUSTOMER_ID = "00000000-0000-4000-8000-000000000942";
+const TEST_BILLING_EVENT_ID = "00000000-0000-4000-8000-000000000940";
+const TEST_MOBILE_INSTALL_AUDIT_ID = "00000000-0000-4000-8000-000000000941";
+const OTHER_MOBILE_INSTALL_AUDIT_ID = "00000000-0000-4000-8000-000000000943";
 const PASSWORD = "manu-rls-test-password";
 
 const maybeDescribe = shouldRun ? describe : describe.skip;
@@ -148,6 +158,18 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     const rollbackControls = await member
       .from("channel_adapter_rollback_controls")
       .select("tenant_id, global_channel_automation_disabled");
+
+    const entitlements = await member.from("tenant_entitlements").select("tenant_id, status");
+    expect(entitlements.error).toBeNull();
+    expect(entitlements.data).toEqual([{ tenant_id: TEST_TENANT_ID, status: "active" }]);
+
+    const billingCustomers = await member.from("billing_customers").select("tenant_id");
+    expect(billingCustomers.error).toBeNull();
+    expect(billingCustomers.data).toEqual([{ tenant_id: TEST_TENANT_ID }]);
+
+    const mobileInstallAudit = await member.from("mobile_install_audit_events").select("id");
+    expect(mobileInstallAudit.error).toBeNull();
+    expect(mobileInstallAudit.data).toEqual([{ id: TEST_MOBILE_INSTALL_AUDIT_ID }]);
     expect(rollbackControls.error).toBeNull();
     expect(rollbackControls.data).toEqual([
       { tenant_id: TEST_TENANT_ID, global_channel_automation_disabled: true },
@@ -220,6 +242,26 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     const copilotToolCalls = await outsider.from("internal_copilot_tool_calls").select("id");
     expect(copilotToolCalls.error).toBeNull();
     expect(copilotToolCalls.data).toHaveLength(0);
+
+    const entitlements = await outsider.from("tenant_entitlements").select("tenant_id");
+    expect(entitlements.error).toBeNull();
+    expect(entitlements.data).toHaveLength(0);
+
+    const billingCustomers = await outsider.from("billing_customers").select("tenant_id");
+    expect(billingCustomers.error).toBeNull();
+    expect(billingCustomers.data).toHaveLength(0);
+
+    const commercialInvites = await outsider.from("commercial_invites").select("id");
+    expect(commercialInvites.error).toBeNull();
+    expect(commercialInvites.data).toHaveLength(0);
+
+    const billingEvents = await outsider.from("billing_event_ledger").select("id");
+    expect(billingEvents.error).toBeNull();
+    expect(billingEvents.data).toHaveLength(0);
+
+    const mobileInstallAudit = await outsider.from("mobile_install_audit_events").select("id");
+    expect(mobileInstallAudit.error).toBeNull();
+    expect(mobileInstallAudit.data).toHaveLength(0);
   });
 
   it("rejects cross-tenant writes through the anon client", async () => {
@@ -403,6 +445,88 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
       expect(response.error).toBeNull();
       expect(response.data).toHaveLength(0);
     }
+  });
+
+  it("enforces commercial entitlement isolation and blocks user writes to billing tables", async () => {
+    const member = await signIn("rls-member@manu.local");
+
+    const otherEntitlements = await member
+      .from("tenant_entitlements")
+      .select("tenant_id")
+      .eq("tenant_id", OTHER_TENANT_ID);
+    expect(otherEntitlements.error).toBeNull();
+    expect(otherEntitlements.data).toHaveLength(0);
+
+    const inviteRead = await member.from("commercial_invites").select("id");
+    expect(inviteRead.error).toBeNull();
+    expect(inviteRead.data).toHaveLength(0);
+
+    const billingEventRead = await member.from("billing_event_ledger").select("id");
+    expect(billingEventRead.error).toBeNull();
+    expect(billingEventRead.data).toHaveLength(0);
+
+    const entitlementInsert = await member.from("tenant_entitlements").insert({
+      tenant_id: TEST_TENANT_ID,
+      status: "active",
+    });
+    expect(entitlementInsert.error?.message).toMatch(/row-level security|permission denied/i);
+
+    const billingCustomerInsert = await member.from("billing_customers").insert({
+      tenant_id: TEST_TENANT_ID,
+      normalized_email: "blocked@manu.local",
+      stripe_customer_id: "cus_blocked",
+    });
+    expect(billingCustomerInsert.error?.message).toMatch(/row-level security|permission denied/i);
+
+    const ownAuditInsert = await member.from("mobile_install_audit_events").insert({
+      id: "00000000-0000-4000-8000-000000000999",
+      tenant_id: TEST_TENANT_ID,
+      dietitian_id: TEST_DIETITIAN_ID,
+      auth_user_id: memberUserId,
+      event_type: "install_prompt_shown",
+      user_agent_summary: "vitest",
+    });
+    expect(ownAuditInsert.error).toBeNull();
+
+    const crossTenantAuditInsert = await member.from("mobile_install_audit_events").insert({
+      tenant_id: OTHER_TENANT_ID,
+      dietitian_id: TEST_DIETITIAN_ID,
+      auth_user_id: memberUserId,
+      event_type: "install_prompt_shown",
+      user_agent_summary: "vitest",
+    });
+    expect(crossTenantAuditInsert.error?.message).toMatch(/row-level security|violates foreign key/i);
+
+    const adminAuditRead = await member.from("commercial_admin_audit_events").select("id");
+    expect(adminAuditRead.error).toBeNull();
+    expect(adminAuditRead.data).toHaveLength(0);
+
+    const adminAuditInsert = await member.from("commercial_admin_audit_events").insert({
+      event_type: "ledger_inspected",
+      actor_summary: "blocked-member",
+    });
+    expect(adminAuditInsert.error?.message).toMatch(/row-level security|permission denied/i);
+
+    const commercialLeadRead = await member.from("commercial_leads").select("id");
+    expect(commercialLeadRead.error).toBeNull();
+    expect(commercialLeadRead.data).toHaveLength(0);
+
+    const commercialLeadInsert = await member.from("commercial_leads").insert({
+      contact_name: "Blocked",
+      normalized_email: "blocked@manu.local",
+      message: "should fail",
+    });
+    expect(commercialLeadInsert.error?.message).toMatch(/row-level security|permission denied/i);
+
+    const onboardingEventRead = await member.from("commercial_onboarding_events").select("id");
+    expect(onboardingEventRead.error).toBeNull();
+    expect(onboardingEventRead.data).toHaveLength(0);
+
+    const onboardingEventInsert = await member.from("commercial_onboarding_events").insert({
+      event_type: "claim_blocked",
+      normalized_email: "blocked@manu.local",
+    });
+    expect(onboardingEventInsert.error?.message).toMatch(/row-level security|permission denied/i);
   });
 
   it("scopes internal copilot records to owner/admin or the current dietitian", async () => {
@@ -1467,10 +1591,101 @@ async function seedTenants(
       },
     ]),
   );
+  await checked(
+    admin.from("commercial_invites").insert([
+      {
+        id: TEST_COMMERCIAL_INVITE_ID,
+        normalized_email: "rls-member@manu.local",
+        invite_token_hash: hashCommercialInviteToken("rls-invite-token"),
+        status: "active",
+        tenant_id: TEST_TENANT_ID,
+        tenant_seed_metadata: { tenantName: "Visible RLS Tenant" },
+      },
+      {
+        id: OTHER_COMMERCIAL_INVITE_ID,
+        normalized_email: "hidden@manu.local",
+        invite_token_hash: hashCommercialInviteToken("other-invite-token"),
+        status: "active",
+        tenant_id: OTHER_TENANT_ID,
+        tenant_seed_metadata: { tenantName: "Hidden RLS Tenant" },
+      },
+    ]),
+  );
+  await checked(
+    admin.from("tenant_entitlements").insert([
+      {
+        id: TEST_TENANT_ENTITLEMENT_ID,
+        tenant_id: TEST_TENANT_ID,
+        commercial_invite_id: TEST_COMMERCIAL_INVITE_ID,
+        status: "active",
+      },
+      {
+        id: OTHER_TENANT_ENTITLEMENT_ID,
+        tenant_id: OTHER_TENANT_ID,
+        commercial_invite_id: OTHER_COMMERCIAL_INVITE_ID,
+        status: "active",
+      },
+    ]),
+  );
+  await checked(
+    admin.from("billing_customers").insert([
+      {
+        id: TEST_BILLING_CUSTOMER_ID,
+        tenant_id: TEST_TENANT_ID,
+        commercial_invite_id: TEST_COMMERCIAL_INVITE_ID,
+        normalized_email: "rls-member@manu.local",
+        stripe_customer_id: "cus_visible_rls",
+      },
+      {
+        id: OTHER_BILLING_CUSTOMER_ID,
+        tenant_id: OTHER_TENANT_ID,
+        commercial_invite_id: OTHER_COMMERCIAL_INVITE_ID,
+        normalized_email: "hidden@manu.local",
+        stripe_customer_id: "cus_hidden_rls",
+      },
+    ]),
+  );
+  await checked(
+    admin.from("billing_event_ledger").insert([
+      {
+        id: TEST_BILLING_EVENT_ID,
+        stripe_event_id: "evt_visible_rls",
+        event_type: "checkout.session.completed",
+        tenant_id: TEST_TENANT_ID,
+        idempotency_key: "idem_visible_rls",
+        payload_summary: { status: "complete" },
+      },
+    ]),
+  );
+  await checked(
+    admin.from("mobile_install_audit_events").insert([
+      {
+        id: TEST_MOBILE_INSTALL_AUDIT_ID,
+        tenant_id: TEST_TENANT_ID,
+        dietitian_id: TEST_DIETITIAN_ID,
+        auth_user_id: users.memberUserId,
+        event_type: "install_prompt_shown",
+        user_agent_summary: "vitest-visible",
+      },
+      {
+        id: OTHER_MOBILE_INSTALL_AUDIT_ID,
+        tenant_id: OTHER_TENANT_ID,
+        dietitian_id: TEST_DIETITIAN_ID,
+        auth_user_id: users.memberUserId,
+        event_type: "install_prompt_shown",
+        user_agent_summary: "vitest-hidden",
+      },
+    ]),
+  );
 }
 
 async function cleanup(admin: SupabaseClient) {
   await admin.from("processed_inbound_events").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("mobile_install_audit_events").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("billing_event_ledger").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("billing_customers").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("tenant_entitlements").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("commercial_invites").delete().in("id", [TEST_COMMERCIAL_INVITE_ID, OTHER_COMMERCIAL_INVITE_ID]);
   await admin.from("channel_adapter_rollback_controls").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("internal_copilot_messages").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("internal_copilot_tool_calls").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);

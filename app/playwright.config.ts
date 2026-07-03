@@ -18,6 +18,7 @@ export default defineConfig({
     timeout: 120_000,
     env: {
       MANU_DEV_FALLBACK_STORE: "true",
+      MANU_ALLOW_PUBLIC_DEMO_LOGIN: "true",
       NEXT_PUBLIC_SUPABASE_URL: "",
       NEXT_PUBLIC_SUPABASE_ANON_KEY: "",
       SUPABASE_SERVICE_ROLE_KEY: "",
@@ -33,8 +34,12 @@ export default defineConfig({
       use: { ...devices["Desktop Chrome"], browserName: "chromium", viewport: { width: 768, height: 1024 } },
     },
     {
-      name: "mobile",
+      name: "mobile-android",
       use: { ...devices["Pixel 5"], browserName: "chromium", viewport: { width: 390, height: 844 } },
+    },
+    {
+      name: "mobile-ios",
+      use: { ...devices["iPhone 13"], browserName: "chromium", viewport: { width: 390, height: 844 } },
     },
   ],
 });

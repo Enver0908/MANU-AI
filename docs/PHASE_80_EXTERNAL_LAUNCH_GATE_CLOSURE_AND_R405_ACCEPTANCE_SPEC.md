@@ -1,7 +1,7 @@
 # Phase 80: External Launch-Gate Closure And R-405 Acceptance
 
 Date: 2026-06-30
-Status: Phase 80 external launch-gate closure complete on 2026-06-30; Phase 80G R-405 closure-evidence hardening complete on 2026-06-30. Phase 81 direct production pilot GO evaluation is next when eligible.
+Status: Phase 80 external launch-gate closure complete on 2026-06-30; Phase 80G R-405 closure-evidence hardening complete on 2026-06-30; Phase 81 direct production pilot GO evaluation closed across 81A-81H on 2026-06-30 with baseline `NO_GO_NOT_ELIGIBLE`. Phase 81F verification refresh is implemented and blocked because current local RLS evidence is skipped/pending.
 Production pilot: NO-GO.
 Maximum outcome: PHASE_81_ELIGIBLE.
 R-405: Open unless technically remediated through the Phase 22 procedure or formally accepted by external engineering/security approval.

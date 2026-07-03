@@ -1,12 +1,16 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { createSupabaseServerClient, getSupabaseAdminClient } from "@/lib/supabase";
+import { isPublicDemoLoginEnabled } from "@/lib/phase-84b-public-website";
 import { ensureSupabaseDemoDataForUser, isSupabaseStoreConfigured } from "@/lib/supabase-store";
 
 const DEMO_EMAIL = "demo@manu.local";
 const DEMO_PASSWORD = process.env.MANU_DEMO_PASSWORD || "manu-local-demo-password";
 
 export async function POST() {
+  if (!isPublicDemoLoginEnabled()) {
+    return NextResponse.json({ error: "demo_login_disabled" }, { status: 403 });
+  }
   const response = new NextResponse(null, {
     status: 303,
     headers: {

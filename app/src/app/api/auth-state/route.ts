@@ -1,10 +1,19 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { loadCommercialEntitlementStatusForTenant } from "@/lib/commercial-entitlement-access";
+import type { CommercialEntitlementStatus } from "@/lib/phase-83b-commercial-entitlement-model";
 import { createSupabaseServerClient, isSupabaseConfigured } from "@/lib/supabase";
 import { isSupabaseStoreConfigured } from "@/lib/supabase-store";
 
 export type AuthState =
-  | { status: "authenticated"; tenantId: string; dietitianId: string; displayName: string; role: string }
+  | {
+      status: "authenticated";
+      tenantId: string;
+      dietitianId: string;
+      displayName: string;
+      role: string;
+      entitlementStatus: CommercialEntitlementStatus | null;
+    }
   | { status: "no_membership" }
   | { status: "no_dietitian_profile"; tenantId: string }
   | { status: "unauthenticated" }
@@ -74,5 +83,6 @@ export async function GET() {
     dietitianId: dietitian.id,
     displayName: dietitian.display_name || user.email || "Dietitian",
     role: membership.role || "member",
+    entitlementStatus: await loadCommercialEntitlementStatusForTenant(membership.tenant_id),
   } satisfies AuthState);
 }

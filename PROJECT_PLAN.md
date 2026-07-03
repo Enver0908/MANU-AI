@@ -6,6 +6,10 @@ This plan has been hardened after a gap audit against clinical safety, multi-ten
 
 No serious health-data SaaS plan can be guaranteed with literal 100 percent certainty before legal review, provider contract review, clinical validation, and a live pilot. The correct engineering target is: no known unaddressed product, safety, privacy, platform, or operational blocker remains before implementation starts.
 
+Current commercial/frontend status, 2026-07-03: Phase 84A-84J is complete for the hosted commercial sandbox path. Phase 84I verified VPS onboarding/dashboard through generated token-hash fallback; Phase 84J enabled Resend custom SMTP through Porkbun DNS, added fragment-session bridging for real Supabase email links, and verified a real inbox magic-link click reaching `https://siriusai.store/dashboard`. Verification passed with targeted auth/session tests 7/7, earlier auth/onboarding targeted tests 19/19, production build locally, production build on VPS, and PM2 online. R-425 is mitigated in the hosted sandbox path.
+
+`npm run test:rls` skipped 21/21. Production pilot remains `NO-GO`; R-405 remains open; R-406 current post-83/84 local Supabase/RLS re-run remains pending when local Supabase is unavailable.
+
 ## 1. Product Definition
 
 ### Goal
@@ -1276,7 +1280,15 @@ These defaults remove planning ambiguity. They can change only through an explic
 
 ## 14. Recommended Next Action
 
-Current baseline override (2026-06-30): Phase 80 external launch-gate closure is complete across sub-phases 80A-80F, and Phase 80G R-405 closure-evidence hardening is complete. Final outcome: `NO_GO_MISSING_ARTIFACTS`; `productionPilotDecision` is `NO-GO`; `phase81StartEligible` is `false`. All eight launch gates remain open; R-405 remains open; R-406 current re-run remains pending after `npm run test:rls` skipped 20/20 because local Supabase was unavailable. Next engineering phase is Phase 81 direct production pilot GO evaluation only when eligible.
+Current baseline override (2026-07-01): Phase 83H verification plus final remediation complete locally. Phase 83 track closed. Targeted Phase 83 tests 64/64; visual 16/16; release verify app 665 passed / 4 skipped; rehearse passed. Final remediation clarified the single subscriber entitlement admin revoke contract and aligned continuity docs. RLS skipped 21/21 (R-406 pending). Production pilot remains `NO-GO`.
+
+Phase 83E-1 baseline (2026-07-01): design system complete. Clinical SaaS tokens in `app/src/app/globals.css` and reusable primitives under `app/src/components/ui/`.
+
+Phase 83D baseline (2026-07-01): gated PWA mobile install center complete. Gated `/app-install`, subscriber-only SW registration, no-PHI-cache service worker.
+
+Phase 83C baseline (2026-07-01): Stripe checkout and billing gate complete. Sandbox routes under `/api/commercial/*`; live Stripe keys blocked.
+
+Phase 82 baseline (2026-06-30): Phase 82 final external readiness closure is closed across 82A-82G as a fail-closed repo-local project-completion layer. Baseline final outcome is `NO_GO_EXTERNAL_PREREQUISITES_OPEN`; Phase 82G records `repoLocalClosureComplete: true` with verification `blocked` because current local RLS evidence is skipped/pending; targeted Phase 82 tests passed (5 files, 31/31). All eight launch gates remain open; R-405 remains open; R-406 Phase 50/52 baseline mitigated with current re-run pending. Production pilot remains `NO-GO`.
 
 Phase 80D baseline (2026-06-30): R-405 remains open with `no_safe_stable_patch`.
 
@@ -1326,7 +1338,7 @@ Phase 76B expands the same proposal card to clinical/safety form fields: pregnan
 
 Post-Phase 65 strategic plan: `docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md` locks direct production pilot to 100 dietitians x 50 clients (minimum 5,000 clients), no small production ring, no client-facing AI self-disclosure, no doctor/dietitian/professional referral language, no yellow/red client-facing AI boundary reply, and green maximization through approved source-backed answerability plus deterministic intent taxonomy.
 
-Next engineering work: Phase 81 direct production pilot GO evaluation only when eligible. Phase 80 external launch-gate closure (80A-80F) is complete locally. Phase 77A-77K manual source authority rebaseline, Phase 77M-77Y AI Quality Program, Phase 77Z repository cleanup, Phase 77AA-77AI mock/gated WhatsApp adapter track, Phase 77AI ops preparation, Phase 78 R-405 recheck, and Phase 79 production-scale hardening/full 100x50 rehearsal closure are complete locally. Proceed to controlled production GO only after all launch gates close and R-405 is technically closed or formally externally accepted. Do not enable Phase 75 real Gemini egress, Phase 74/79 production lifecycle, or Phase 72/73 routing/calibration until external legal/privacy and clinical launch gates close. Do not activate Phase 76G production second-layer carve-outs without external qualified dietitian approval. Do not resolve R-405 outside `docs/PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`.
+Next engineering work: external launch-gate/R-405/RLS closure prerequisites. Phase 83G API-wide entitlement hardening, Phase 83H verification, and Phase 83 final remediation are complete locally. Phase 82G verification completed with current local RLS evidence skipped/pending, and Phase 83H re-ran RLS with 21/21 skipped, so final external readiness remains blocked and production pilot remains `NO-GO`. Phase 81 is complete locally as a fail-closed GO evaluation framework. Phase 77A-77K manual source authority rebaseline, Phase 77M-77Y AI Quality Program, Phase 77Z repository cleanup, Phase 77AA-77AI mock/gated WhatsApp adapter track, Phase 77AI ops preparation, Phase 78 R-405 recheck, and Phase 79 production-scale hardening/full 100x50 rehearsal closure are complete locally. Proceed to controlled production GO only after all launch gates close, R-405 is technically closed or formally externally accepted, current RLS evidence passes, and Phase 82 records `READY_FOR_EXTERNAL_CONTROLLED_LAUNCH_AUTHORIZATION`. Do not enable Phase 75 real Gemini egress, Phase 74/79 production lifecycle, or Phase 72/73 routing/calibration until external legal/privacy and clinical launch gates close. Do not activate Phase 76G production second-layer carve-outs without external qualified dietitian approval. Do not resolve R-405 outside `docs/PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`.
 
 Phase 23 adds a stricter AI context foundation: provider calls must use a bounded `PromptContext`, context manifests must exclude raw text, missing historical context must fail closed with `[ERROR: missing_historical_context]`, and `send_status="send_blocked"` must route the conversation to dietitian takeover instead of sending or drafting to the client.
 
@@ -1364,7 +1376,7 @@ Phase 42 records the Completion Roadmap Phase 13 final readiness closure. It add
 
 Phase 43 adds multilingual language support for Turkish, English, German, French, Spanish, Portuguese, and Czech. It stores the dietitian dashboard language per dietitian, stores canonical E.164 phone identity and communication language per client, stores dynamic form language metadata, updates client conversation language from saved form responses, adds a bounded `conversation_language` PromptContext segment, localizes local/mock provider replies and safe handoff acknowledgements, and expands multilingual clinical golden cases. It does not add automatic translation, public client forms, real providers, real channels, launch-gate approval, R-405 acceptance, R-406 mitigation, or real health-data processing.
 
-Do not connect real WhatsApp, Telegram, Gemini/external LLM, email, push, monitoring, secret manager, dietitian context updates to a real provider, or real client health data until the relevant launch gates are externally approved. Keep Phase 28 provider-attempt, PromptContext, send-revalidation, and RLS/RBAC invariants intact before any provider/channel work. Keep Phase 29 evidence packet status current before external review. R-405 remains a production launch blocker until a safe stable Next.js/PostCSS patch path exists or formal risk acceptance is provided.
+Do not connect real WhatsApp, Telegram, Gemini/external LLM, production client-messaging email, push, monitoring, secret manager, dietitian context updates to a real provider, or real client health data until the relevant launch gates are externally approved. The only current email exception is Phase 84J hosted-sandbox Supabase auth magic links through Resend SMTP. Keep Phase 28 provider-attempt, PromptContext, send-revalidation, and RLS/RBAC invariants intact before any provider/channel work. Keep Phase 29 evidence packet status current before external review. R-405 remains a production launch blocker until a safe stable Next.js/PostCSS patch path exists or formal risk acceptance is provided.
 
 For R-405 specifically, follow `docs/PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`: update `next` and `eslint-config-next` only when a stable Next.js release bundles `postcss >= 8.5.10`, then require a clean production audit and `npm run release:verify`. Do not use canary Next.js, `npm audit fix --force`, invalid npm overrides, or major downgrades.
 
@@ -1412,3 +1424,15 @@ The plan is implementation-ready only when these statements are true:
 - Google Gemini/provider retention settings and contracts are acceptable for health-data use.
 - A rollback path exists for prompt, model, and classifier changes.
 - Incident response and deletion workflows exist before pilot.
+
+## 17. Current Commercial SaaS Relaunch Track - 2026-07-02
+
+Phase 84A through 84J implementation is complete for the hosted commercial sandbox on 2026-07-03, including VPS generated-token onboarding/dashboard verification and real Resend custom-SMTP email dashboard verification. Canonical spec: `docs/PHASE_84_COMMERCIAL_SAAS_RELAUNCH_AND_ONBOARDING_SPEC.md`.
+
+Phase 83 commercial PWA and entitlement work has been validated on a sandbox VPS. The public domain `https://siriusai.store` is served by the Hetzner VPS through Nginx/PM2 with Let's Encrypt HTTPS. Stripe remains in test mode only. The Stripe test webhook endpoint is configured at `https://siriusai.store/api/commercial/webhook`.
+
+Evidence from the latest test checkout: the invite was consumed, the tenant `Olku Enver Test Kliniği` was provisioned, an active entitlement was created, and billing ledger entries were written for `checkout.session.completed` and `invoice.paid`.
+
+The Phase 84 commercial SaaS relaunch track (84A-84H) is repo-local complete as of 2026-07-03. VPS verification is the remaining operator step. Canonical spec: `docs/PHASE_84_COMMERCIAL_SAAS_RELAUNCH_AND_ONBOARDING_SPEC.md`.
+
+This track does not approve production pilot launch, close R-405, activate live Stripe, connect real providers/channels, or process real client health data. Production pilot remains `NO-GO`.
