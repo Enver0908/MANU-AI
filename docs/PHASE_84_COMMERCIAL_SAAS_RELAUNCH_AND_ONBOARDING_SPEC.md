@@ -414,6 +414,14 @@ Verification:
 - Verification passed: fragment/session targeted tests 7/7, auth/onboarding targeted tests 19/19 before the refresh-token guard adjustment, local production build passed, VPS production build passed, and PM2 `manu-ai` restarted online.
 - R-425 commercial onboarding/email-delivery path is verified in the hosted sandbox. Production pilot remains `NO-GO`; R-405, current RLS re-run, external approvals, and production launch gates remain open.
 
+### Phase 85 Stage 3 Hosted Sandbox Redesign Update - 2026-07-07
+
+- Public/commercial entry surfaces were redesigned in Phase 85 Stage 3 from `docs/PHASE_85_STAGE_3_PUBLIC_COMMERCIAL_ENTRY_ACTION_PLAN.md` and the user-provided `public-website-redesign.zip` visual direction.
+- The redesign was deployed to the existing Hetzner/Nginx/PM2 sandbox as release `phase85-stage3-redesign-20260707225306`.
+- Verification returned 200 for `https://siriusai.store`, `/login`, `/purchase`, `/purchase/success`, `/app-install`, and `https://admin.siriusai.store`.
+- Browser computed-color verification on the live domain confirmed the corrected user palette: paper `oklch(0.985 0.003 85)` and primary purple `oklch(0.41 0.14 310)`.
+- This update changes frontend/public/commercial entry presentation only. It does not change Phase 83/84 API contracts, auth, entitlement, onboarding, sandbox billing, admin, Stripe test-mode status, or production `NO-GO`.
+
 ## Public Interfaces And Data Changes
 
 Planned pages:

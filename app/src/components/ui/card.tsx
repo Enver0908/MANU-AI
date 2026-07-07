@@ -4,7 +4,9 @@ import type { IconType } from "./tokens";
 
 export function Card({ className, children }: { className?: string; children: ReactNode }) {
   return (
-    <div className={cn("rounded-card border border-line bg-surface shadow-sm", className)}>{children}</div>
+    <div className={cn("rounded-card border border-line bg-surface shadow-[0_1px_2px_rgba(23,20,18,0.05)]", className)}>
+      {children}
+    </div>
   );
 }
 
@@ -25,7 +27,7 @@ export function CardHeader({
     <div className={cn("flex items-start justify-between gap-3 border-b border-line px-4 py-3", className)}>
       <div className="flex items-start gap-3">
         {Icon ? (
-          <span className="rounded-control bg-emerald-100 p-2 text-emerald-900">
+          <span className="rounded-control bg-surface-muted p-2 text-primary">
             <Icon size={18} />
           </span>
         ) : null}

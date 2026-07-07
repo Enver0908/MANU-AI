@@ -1,7 +1,7 @@
 import type { ComponentType } from "react";
 
 /**
- * Phase 83E-1 design system: pure, testable style logic.
+ * Phase 85 design system: pure, testable style logic.
  *
  * Components in `components/ui/*` stay thin and delegate class resolution here
  * so the palette, variants, and clinical/UI color separation can be unit tested
@@ -19,18 +19,31 @@ export const RADIUS_PX = {
   card: 8,
 } as const;
 
+export const PHASE_85_COLORS = {
+  paper: "#FBFAF8",
+  surface: "#FFFFFF",
+  ink: "#111116",
+  mutedText: "#777174",
+  primaryPlum: "#612E82",
+  primaryHover: "#562175",
+  softPlum: "#EFEAF3",
+  softPlumAlt: "#E6DDEC",
+  sage: "#578F6B",
+  warm: "#D79800",
+} as const;
+
 // --- Buttons (command buttons) -------------------------------------------------
 
 export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
 export type ButtonSize = "sm" | "md" | "lg";
 
 const BUTTON_BASE =
-  "inline-flex items-center justify-center gap-2 rounded-card font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-1 focus-visible:ring-offset-surface disabled:cursor-not-allowed disabled:opacity-60";
+  "inline-flex items-center justify-center gap-2 rounded-control font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/25 focus-visible:ring-offset-1 focus-visible:ring-offset-surface disabled:cursor-not-allowed disabled:opacity-60";
 
 const BUTTON_VARIANT: Record<ButtonVariant, string> = {
-  primary: "bg-emerald-950 text-white hover:bg-emerald-900",
-  secondary: "border border-line bg-surface text-ink hover:bg-surface-muted",
-  ghost: "text-ink-muted hover:bg-surface-muted",
+  primary: "bg-primary text-white hover:bg-primary-hover",
+  secondary: "border border-line bg-surface text-ink hover:bg-surface-sunken",
+  ghost: "text-ink-muted hover:bg-surface-muted hover:text-ink",
   // Destructive affordance for operational actions (delete/remove). This is not
   // a clinical message-risk color; message risk uses MESSAGE_RISK below.
   danger: "border border-red-200 bg-surface text-red-700 hover:bg-red-50",
@@ -49,16 +62,19 @@ export function buttonClasses(variant: ButtonVariant = "primary", size: ButtonSi
 // --- Badges / status tones -----------------------------------------------------
 
 /**
- * Generic UI tones. `emerald | amber | red | stone` matches the tones already
- * used across the existing dashboard so primitives are a coherent superset.
+ * Generic UI tones. `emerald` remains as a backwards-compatible alias for the
+ * new sage accent while existing screens migrate toward `plum | sage | warm`.
  */
-export type Tone = "emerald" | "amber" | "red" | "stone";
+export type Tone = "plum" | "sage" | "warm" | "emerald" | "amber" | "red" | "stone";
 
 const BADGE_TONE: Record<Tone, string> = {
-  emerald: "bg-emerald-100 text-emerald-950 border-emerald-200",
-  amber: "bg-amber-100 text-amber-950 border-amber-200",
+  plum: "border-primary/20 bg-surface-muted text-primary",
+  sage: "border-sage/25 bg-sage/10 text-sage",
+  warm: "border-warm/25 bg-warm/10 text-warm",
+  emerald: "border-sage/25 bg-sage/10 text-sage",
+  amber: "border-warm/25 bg-warm/10 text-warm",
   red: "bg-red-100 text-red-950 border-red-200",
-  stone: "bg-stone-100 text-stone-700 border-stone-200",
+  stone: "border-line bg-surface-muted text-ink-muted",
 };
 
 export function badgeToneClasses(tone: Tone = "stone"): string {
@@ -67,10 +83,13 @@ export function badgeToneClasses(tone: Tone = "stone"): string {
 
 export function iconToneClass(tone: Tone = "stone"): string {
   const map: Record<Tone, string> = {
-    emerald: "text-emerald-700",
-    amber: "text-amber-700",
+    plum: "text-primary",
+    sage: "text-sage",
+    warm: "text-warm",
+    emerald: "text-sage",
+    amber: "text-warm",
     red: "text-red-700",
-    stone: "text-stone-500",
+    stone: "text-ink-subtle",
   };
   return map[tone];
 }
@@ -90,8 +109,8 @@ export type MessageOrigin =
 
 export const MESSAGE_ORIGIN: Record<MessageOrigin, { label: string; tone: Tone }> = {
   client_inbound: { label: "Client", tone: "stone" },
-  ai_generated: { label: "AI", tone: "emerald" },
-  dietitian_manual: { label: "Dietitian", tone: "amber" },
+  ai_generated: { label: "AI", tone: "sage" },
+  dietitian_manual: { label: "Dietitian", tone: "warm" },
   system_event: { label: "System", tone: "stone" },
   imported_unknown: { label: "Imported", tone: "stone" },
 };

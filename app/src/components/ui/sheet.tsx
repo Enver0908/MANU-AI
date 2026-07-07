@@ -50,12 +50,12 @@ export function Sheet({
       : "inset-y-0 right-0 h-full w-full max-w-md";
 
   return (
-    <div className="fixed inset-0 z-50 bg-stone-950/40" role="presentation" onClick={onClose}>
+    <div className="fixed inset-0 z-50 bg-ink/45" role="presentation" onClick={onClose}>
       <div
         role="dialog"
         aria-modal="true"
         className={cn(
-          "absolute flex flex-col border border-line bg-surface shadow-lg",
+          "absolute flex flex-col border border-line bg-surface shadow-xl",
           panelPosition,
           className,
         )}

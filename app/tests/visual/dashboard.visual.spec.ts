@@ -2,16 +2,19 @@ import { expect, test } from "@playwright/test";
 
 test("public landing and purchase intro render without app data", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: "Danışan mesajlarını güvenle yönetin, klinik kontrol sizde kalsın" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "SiriusAI", exact: true })).toBeVisible();
+  const mobileMenuButton = page.getByRole("button", { name: /Menüyü aç/i });
+  if (await mobileMenuButton.isVisible()) {
+    await mobileMenuButton.click();
+  }
   await expect(page.getByRole("link", { name: "Giriş yap" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Bizimle iletişime geçin" }).first()).toBeVisible();
-  await expect(page.getByTestId("siriusai-product-mock")).toBeVisible();
-  await expect(page.getByRole("link", { name: "Satın al" }).first()).toBeVisible();
+  await expect(page.getByRole("link", { name: "İletişime geç" }).first()).toBeVisible();
+  await expect(page.getByLabel("SiriusAI ürün önizlemesi")).toBeVisible();
+  await expect(page.getByRole("link", { name: "Davet koduyla başla" }).first()).toBeVisible();
 
-  await page.getByRole("link", { name: "Satın al" }).first().click();
-  await expect(page.getByRole("heading", { name: "Satın al", level: 1, exact: true })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Davetli erişim kontrolü" })).toBeVisible();
-  await expect(page.getByLabel("Onaylı e-posta")).toBeVisible();
+  await page.getByRole("link", { name: "Davet koduyla başla" }).first().click();
+  await expect(page.getByRole("heading", { name: "Davet koduyla başla", level: 1, exact: true })).toBeVisible();
+  await expect(page.getByLabel("Onaylı e-posta adresiniz")).toBeVisible();
   await expect(page.getByLabel("Davet kodu")).toBeVisible();
   await expect
     .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth))
@@ -98,7 +101,7 @@ test("dashboard core views render in fallback mode", async ({ page }) => {
 
 test("purchase success and cancel pages render without app data", async ({ page }) => {
   await page.goto("/purchase/success");
-  await expect(page.getByRole("heading", { name: "Ödeme alındı" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Ödeme doğrulandı" })).toBeVisible();
   await expect(page.getByLabel("Ödeme e-postası")).toBeVisible();
   await expect(page.getByRole("button", { name: /Hesabını oluştur/i })).toBeVisible();
   await expect(page.getByRole("link", { name: /onboarding ekranına geçin/i })).toBeVisible();

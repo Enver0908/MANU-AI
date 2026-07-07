@@ -34,10 +34,13 @@ function GatedStateScreen({
   actions?: ReactNode;
 }) {
   const iconToneClasses: Record<Tone, string> = {
-    emerald: "bg-emerald-100 text-emerald-900",
-    amber: "bg-amber-100 text-amber-900",
+    plum: "bg-surface-muted text-primary",
+    sage: "bg-sage/10 text-sage",
+    warm: "bg-warm/10 text-warm",
+    emerald: "bg-sage/10 text-sage",
+    amber: "bg-warm/10 text-warm",
     red: "bg-red-100 text-red-900",
-    stone: "bg-stone-100 text-stone-700",
+    stone: "bg-surface-muted text-ink-muted",
   };
 
   return (
@@ -75,7 +78,7 @@ function ContactLink() {
   return (
     <a
       href={`mailto:${PURCHASE_CONTACT_EMAIL}`}
-      className="inline-flex w-fit items-center gap-2 text-sm font-semibold text-emerald-800 underline"
+      className="inline-flex w-fit items-center gap-2 text-sm font-semibold text-primary underline"
     >
       <Mail size={15} />
       {PURCHASE_CONTACT_EMAIL}

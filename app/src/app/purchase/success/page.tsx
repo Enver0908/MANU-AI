@@ -1,52 +1,88 @@
 import Link from "next/link";
-import { CheckCircle2 } from "lucide-react";
-import { Card, CardBody, CardHeader } from "@/components/ui";
+import { ArrowRight, CheckCircle, MailCheck } from "lucide-react";
+import { CommercialShell } from "@/components/public/CommercialShell";
 import { PurchaseSuccessOnboarding } from "@/components/purchase-success-onboarding";
-import { PURCHASE_COPY } from "@/lib/phase-83e2-purchase-ux";
 
 export const metadata = {
-  title: "Ödeme alındı · SiriusAI",
+  title: "Ödeme doğrulandı · SiriusAI",
 };
 
 type PurchaseSuccessPageProps = {
   searchParams: Promise<{ session_id?: string }>;
 };
 
+const STEPS = [
+  {
+    icon: MailCheck,
+    title: "Magic-link e-postanızı açın",
+    desc: "Kayıtlı e-posta adresinize hesap bağlama bağlantısı gönderilecek.",
+  },
+  {
+    icon: CheckCircle,
+    title: "Çalışma alanını claim edin",
+    desc: "Bağlantıya tıklayarak onboarding adımını tamamlayın.",
+  },
+  {
+    icon: ArrowRight,
+    title: "Dashboard erişimi açılır",
+    desc: "Claim tamamlandıktan sonra klinik çalışma alanınız hazır olacak.",
+  },
+] as const;
+
 export default async function PurchaseSuccessPage({ searchParams }: PurchaseSuccessPageProps) {
   const params = await searchParams;
   const sessionId = params.session_id ?? null;
 
   return (
-    <main className="min-h-screen bg-surface-muted px-safe py-8 text-ink">
-      <div className="mx-auto w-full max-w-xl">
-        <div className="mb-6">
-          <span className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-800">
-            {PURCHASE_COPY.eyebrow}
-          </span>
-          <h1 className="mt-1 flex items-center gap-2 text-2xl font-semibold text-ink">
-            <CheckCircle2 size={22} className="text-emerald-700" />
-            {PURCHASE_COPY.successTitle}
-          </h1>
-          <p className="mt-2 text-sm text-ink-muted">{PURCHASE_COPY.successBody}</p>
-        </div>
+    <CommercialShell>
+      <div className="flex flex-1 items-start justify-center px-4 py-16 sm:py-24">
+        <div className="w-full max-w-md">
+          <div className="mb-8 text-center">
+            <div className="mb-4 flex justify-center">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-sage/15">
+                <CheckCircle size={32} className="text-sage" />
+              </div>
+            </div>
+            <p className="mb-2 text-xs font-semibold uppercase text-primary">Ödeme tamamlandı</p>
+            <h1 className="mb-2 font-display text-2xl font-bold text-off-black">Ödeme doğrulandı</h1>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              Ödemeniz başarıyla işlendi. Şimdi hesabınızı bağlamanız gerekiyor.
+            </p>
+          </div>
 
-        <Card>
-          <CardHeader title={PURCHASE_COPY.successAccountTitle} />
-          <CardBody className="space-y-4">
-            <PurchaseSuccessOnboarding sessionId={sessionId} />
-            <p className="text-xs text-ink-subtle">
+          <div className="mb-6 flex flex-col gap-5 rounded-lg border border-border bg-surface p-6">
+            <p className="text-sm font-semibold text-foreground">Sonraki adımlar</p>
+            <ol className="flex flex-col gap-4">
+              {STEPS.map(({ icon: Icon, title, desc }) => (
+                <li key={title} className="flex items-start gap-3">
+                  <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10">
+                    <Icon size={15} className="text-primary" />
+                  </div>
+                  <div>
+                    <p className="mb-0.5 text-sm font-semibold text-foreground">{title}</p>
+                    <p className="text-xs leading-relaxed text-muted-foreground">{desc}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+
+          <PurchaseSuccessOnboarding sessionId={sessionId} />
+
+          <div className="mt-6 rounded-md border border-border bg-muted/30 px-4 py-3">
+            <p className="text-xs leading-relaxed text-muted-foreground">
               Zaten giriş yaptıysanız{" "}
               <Link
                 href={sessionId ? `/onboarding?session_id=${encodeURIComponent(sessionId)}` : "/onboarding"}
-                className="font-medium text-emerald-900 underline-offset-2 hover:underline"
+                className="text-primary hover:underline"
               >
                 onboarding ekranına geçin
               </Link>
               .
             </p>
-          </CardBody>
-        </Card>
+          </div>
+        </div>
       </div>
-    </main>
+    </CommercialShell>
   );
 }

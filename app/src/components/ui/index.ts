@@ -23,6 +23,7 @@ export { Dialog } from "./dialog";
 export { Sheet, type SheetSide } from "./sheet";
 export { DataTable, type Column } from "./data-table";
 export { Timeline, type TimelineEntry } from "./timeline";
+export { Alert, EmptyState, LoadingBlock } from "./feedback";
 export {
   AppShell,
   AppSidebar,

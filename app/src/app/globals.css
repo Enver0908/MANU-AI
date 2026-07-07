@@ -1,34 +1,95 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f7f5ef;
-  --foreground: #1c1917;
+  --background: oklch(0.985 0.003 85);
+  --foreground: oklch(0.18 0.01 280);
+  --paper: oklch(0.985 0.003 85);
+  --surface: #ffffff;
+  --surface-muted: oklch(0.95 0.004 85);
+  --surface-sunken: oklch(0.92 0.005 85);
+  --ink: oklch(0.18 0.01 280);
+  --ink-alt: oklch(0.14 0.01 280);
+  --ink-muted: oklch(0.52 0.01 280);
+  --ink-subtle: oklch(0.62 0.01 280);
+  --primary: oklch(0.41 0.14 310);
+  --primary-hover: oklch(0.37 0.14 310);
+  --sage: oklch(0.60 0.08 155);
+  --warm: oklch(0.72 0.18 85);
+  --line: oklch(0.88 0.008 85);
+  --line-strong: oklch(0.80 0.01 85);
+  --focus: oklch(0.41 0.14 310);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.94 0.02 155);
+  --secondary-foreground: oklch(0.28 0.05 155);
+  --muted: oklch(0.95 0.004 85);
+  --muted-foreground: oklch(0.52 0.01 280);
+  --accent: oklch(0.93 0.018 75);
+  --accent-foreground: oklch(0.25 0.03 75);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.88 0.008 85);
+  --input: oklch(0.92 0.005 85);
+  --ring: oklch(0.41 0.14 310);
+  --card: #ffffff;
+  --card-foreground: oklch(0.18 0.01 280);
+  --popover: #ffffff;
+  --popover-foreground: oklch(0.18 0.01 280);
+  --off-black: oklch(0.18 0.01 280);
+  --risk-high: oklch(0.60 0.20 27);
+  --risk-medium: oklch(0.72 0.18 85);
+  --risk-low: oklch(0.58 0.12 155);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-paper: var(--paper);
   --font-sans: var(--font-geist-sans);
+  --font-display: var(--font-fraunces);
+  --font-serif: var(--font-fraunces);
   --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-off-black: var(--off-black);
+  --color-risk-high: var(--risk-high);
+  --color-risk-medium: var(--risk-medium);
+  --color-risk-low: var(--risk-low);
 }
 
 /*
- * Phase 83E-1 design system tokens.
- * Restrained clinical SaaS palette: white/near-white surfaces, charcoal ink,
- * cool neutral borders. Emerald is the brand/primary. Clinical message-risk
- * colors (green/yellow/red) are intentionally NOT defined here; they are owned
- * by the clinical risk maps in `components/ui/tokens.ts` so risk semantics are
- * never reused for generic UI state.
+ * Phase 85B design system foundation tokens.
+ * Warm clinical SaaS palette: paper backgrounds, editorial off-black ink,
+ * deep plum primary, sage support, and sparse warm accent. Clinical message-risk
+ * colors (green/yellow/red) stay outside generic brand tokens and remain owned
+ * by the clinical risk maps in `components/ui/tokens.ts`.
  */
 @theme {
-  --color-surface: #ffffff;
-  --color-surface-muted: #f7f5ef;
-  --color-surface-sunken: #f1efe8;
-  --color-ink: #1c1917;
-  --color-ink-muted: #57534e;
-  --color-ink-subtle: #78716c;
-  --color-line: #e7e5e4;
-  --color-line-strong: #d6d3d1;
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-surface-sunken: var(--surface-sunken);
+  --color-ink: var(--ink);
+  --color-ink-alt: var(--ink-alt);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-subtle: var(--ink-subtle);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-sage: var(--sage);
+  --color-warm: var(--warm);
+  --color-focus: var(--focus);
   --radius-control: 6px;
   --radius-card: 8px;
 }
@@ -40,7 +101,7 @@ input:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
 [role="tab"]:focus-visible {
-  outline: 2px solid #047857;
+  outline: 2px solid var(--focus);
   outline-offset: 2px;
 }
 
@@ -62,7 +123,7 @@ textarea:focus-visible,
   top: 1rem;
   z-index: 60;
   border-radius: var(--radius-control);
-  background: #064e3b;
+  background: var(--primary);
   color: #ffffff;
   padding: 0.5rem 0.75rem;
   font-size: 0.875rem;
@@ -122,6 +183,10 @@ body {
   overflow-x: hidden;
 }
 
+.font-display {
+  font-family: var(--font-fraunces), Georgia, "Times New Roman", serif;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -138,6 +203,6 @@ textarea {
 }
 
 ::selection {
-  background: #d1fae5;
-  color: #064e3b;
+  background: var(--surface-sunken);
+  color: var(--primary);
 }

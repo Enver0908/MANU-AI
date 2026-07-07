@@ -1,5 +1,21 @@
 # MANU-AI Local App Prototype
 
+## Phase 85A Frontend Redesign Scope Lock
+
+2026-07-07: Created `../docs/PHASE_85_FRONTEND_REDESIGN_AND_DESIGN_SYSTEM_SPEC.md` as the canonical SiriusAI redesign spec. Direction is warm clinical SaaS with the user-provided redesign palette: very light broken-white paper `#FBFAF8`, ink `#111116`, purple primary `#612E82`, sage `#578F6B`, warm accent `#D79800`, Fraunces display, Geist Sans UI, editorial public surfaces, compact dashboard/PWA, restrained borders, and no reuse of the previous visual style as a design reference. Phase 85 Stages 1-3 are now implemented for foundation, shared components, and public/commercial entry surfaces. Production pilot remains `NO-GO`.
+
+## Phase 85B Design Tokens And Font Foundation
+
+2026-07-07: Implemented the foundation layer. `src/app/layout.tsx` loads Fraunces display with Geist Sans/Mono; `src/app/globals.css` exposes the approved paper/surface/ink/plum/sage/warm/border/focus tokens and `.font-display`; `src/components/ui/tokens.ts` records the Phase 85 palette and uses semantic primary button tokens. Stage 3 later corrected the runtime palette to match the user-provided redesign exactly: paper `oklch(0.985 0.003 85)`, primary `oklch(0.41 0.14 310)`, and hover `oklch(0.37 0.14 310)`. Dashboard and PWA shell redesign remain pending. Production pilot remains `NO-GO`.
+
+## Phase 85 Stage 2 Shared Component System
+
+2026-07-07: Implemented the shared component foundation. `src/components/ui/tokens.ts` now exposes `plum`, `sage`, and `warm` UI tones while mapping legacy `emerald` to `sage` and `amber` to `warm`; form, card, tabs, segmented-control, table, dialog, sheet, and app-shell primitives now use the Phase 85 palette; shared `Alert`, `EmptyState`, and `LoadingBlock` primitives were added. Stage 3 public/commercial page redesign is complete; dashboard/PWA shell redesign, workflow redesign, and final visual QA remain pending. Production pilot remains `NO-GO`.
+
+## Phase 85 Stage 3 Public/Commercial Integration
+
+2026-07-07: Implemented `../docs/PHASE_85_STAGE_3_PUBLIC_COMMERCIAL_ENTRY_ACTION_PLAN.md` for invite-led public and commercial entry surfaces, adapting the user-provided `public-website-redesign.zip` frontend design without copying its mock API routes. Locked flow remains: contact request -> team/admin review -> admin invite code -> approved email + invite code -> sandbox checkout -> magic-link -> onboarding claim -> dashboard/PWA. Locked navbar: `SiriusAI | Nasil calisir | Guvenlik | Mobil | Iletisim | Giris yap | Davet koduyla basla`. Phase 83/84 API/auth/checkout/onboarding/admin/PWA behavior remains preserved. The corrected user palette is live in runtime tokens. Deployed to the hosted sandbox as `phase85-stage3-redesign-20260707225306`; `https://siriusai.store`, `/login`, `/purchase`, `/purchase/success`, `/app-install`, and `https://admin.siriusai.store` returned 200. Production pilot remains `NO-GO`.
+
 ## Phase 84J Custom SMTP And Real Email Verification
 
 2026-07-03: Completed custom SMTP and real magic-link email verification for the hosted sandbox. Resend sending domain was verified through Porkbun DNS, Supabase Auth custom SMTP was enabled, live `/api/auth/magic-link` returned `sent: true`, and a real inbox magic-link click reached `/dashboard`. Added `/api/auth/session-from-fragment` and a no-store `/auth/callback` fragment bridge for Supabase implicit-flow email links. Targeted auth/session tests 7/7 and production build passed locally and on VPS. Production pilot remains `NO-GO`.
@@ -376,7 +392,9 @@ The app has been deployed to a Hetzner VPS for sandbox validation:
 - Stripe: test/sandbox only
 - Stripe test webhook: `https://siriusai.store/api/commercial/webhook`
 - Commercial admin health: ready when Supabase/env/migrations are reachable
+- Latest frontend sandbox release: `phase85-stage3-redesign-20260707225306`
+- Latest frontend verification: `/`, `/login`, `/purchase`, `/purchase/success`, `/app-install`, and `https://admin.siriusai.store` returned 200; live computed styles confirmed paper `oklch(0.985 0.003 85)` and primary purple `oklch(0.41 0.14 310)`.
 
 Observed successful test payment path: invite was consumed, tenant was provisioned, active entitlement was created, and `checkout.session.completed` plus `invoice.paid` were written to the billing ledger.
 
-Known remaining app gap: the paid customer is not automatically turned into an authenticated dashboard user. Phase 84 must add magic-link login, post-payment tenant claim, `tenant_memberships` creation, `dietitians` profile creation, and professional admin subdomain support. See `../docs/PHASE_84_COMMERCIAL_SAAS_RELAUNCH_AND_ONBOARDING_SPEC.md`.
+Phase 84D-84J later closed the hosted sandbox onboarding/email path with magic-link login, post-payment tenant claim, `tenant_memberships` creation, `dietitians` profile creation, admin subdomain support, and custom SMTP verification. Production pilot remains `NO-GO`. See `../docs/PHASE_84_COMMERCIAL_SAAS_RELAUNCH_AND_ONBOARDING_SPEC.md`.

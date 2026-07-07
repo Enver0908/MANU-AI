@@ -42,14 +42,14 @@ export function Tabs({
             className={cn(
               "inline-flex min-h-11 shrink-0 items-center gap-2 border-b-2 px-3 text-sm font-medium transition",
               active
-                ? "border-emerald-700 text-emerald-900"
+                ? "border-primary text-primary"
                 : "border-transparent text-ink-muted hover:text-ink",
             )}
           >
             {Icon ? <Icon size={16} /> : null}
             {item.label}
             {item.badge ? (
-              <span className="rounded-full bg-stone-200 px-1.5 text-xs font-semibold text-stone-700">
+              <span className="rounded-full border border-line bg-surface-muted px-1.5 text-xs font-medium text-ink-muted">
                 {item.badge}
               </span>
             ) : null}

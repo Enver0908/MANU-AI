@@ -1,45 +1,57 @@
 import Link from "next/link";
-import { RotateCcw, XCircle } from "lucide-react";
-import { buttonClasses, Card, CardBody, CardHeader } from "@/components/ui";
-import { PURCHASE_COPY, PURCHASE_CONTACT_EMAIL } from "@/lib/phase-83e2-purchase-ux";
+import { XCircle } from "lucide-react";
+import { CommercialShell } from "@/components/public/CommercialShell";
 
 export const metadata = {
-  title: "Ödeme tamamlanmadı · MANU-AI",
+  title: "Ödeme tamamlanmadı · SiriusAI",
 };
 
 export default function PurchaseCancelPage() {
   return (
-    <main className="min-h-screen bg-surface-muted px-safe py-8 text-ink">
-      <div className="mx-auto w-full max-w-xl">
-        <div className="mb-6">
-          <span className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-800">
-            {PURCHASE_COPY.eyebrow}
-          </span>
-          <h1 className="mt-1 flex items-center gap-2 text-2xl font-semibold text-ink">
-            <XCircle size={22} className="text-ink-muted" />
-            {PURCHASE_COPY.cancelTitle}
-          </h1>
-        </div>
-
-        <Card>
-          <CardHeader title="Ödeme iptal edildi" />
-          <CardBody className="flex flex-col gap-4">
-            <p className="text-sm text-ink-muted">
-              Ödeme tamamlanmadı ve hesabınızdan tahsilat yapılmadı. Dilediğinizde tekrar
+    <CommercialShell>
+      <div className="flex flex-1 items-start justify-center px-4 py-16 sm:py-24">
+        <div className="w-full max-w-md">
+          <div className="mb-8 text-center">
+            <div className="mb-4 flex justify-center">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+                <XCircle size={32} className="text-muted-foreground" />
+              </div>
+            </div>
+            <p className="mb-2 text-xs font-semibold uppercase text-muted-foreground">İşlem tamamlanmadı</p>
+            <h1 className="mb-2 font-display text-2xl font-bold text-off-black">Ödeme tamamlanmadı</h1>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              Ödeme işlemi iptal edildi veya tamamlanamadı. Davet kodunuz hâlâ geçerliyse istediğiniz zaman tekrar
               deneyebilirsiniz.
             </p>
-            <div className="flex flex-wrap gap-3">
-              <Link href="/purchase" className={buttonClasses("primary", "lg")}>
-                <RotateCcw size={17} />
-                Tekrar dene
+          </div>
+
+          <div className="flex flex-col gap-4 rounded-lg border border-border bg-surface p-6">
+            <p className="text-sm font-semibold text-foreground">Ne yapmak istersiniz?</p>
+            <Link
+              href="/purchase"
+              className="inline-flex items-center justify-center rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              Tekrar dene
+            </Link>
+            <Link
+              href="/#iletisim"
+              className="inline-flex items-center justify-center rounded-md border border-border bg-muted/40 px-5 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              Destek al
+            </Link>
+          </div>
+
+          <div className="mt-6 rounded-md border border-border bg-muted/30 px-4 py-3">
+            <p className="text-xs leading-relaxed text-muted-foreground">
+              Ödemenizden ücret alındığını düşünüyorsanız hemen{" "}
+              <Link href="/#iletisim" className="text-primary hover:underline">
+                iletişime geçin
               </Link>
-              <a href={`mailto:${PURCHASE_CONTACT_EMAIL}`} className={buttonClasses("secondary", "lg")}>
-                Yardım al
-              </a>
-            </div>
-          </CardBody>
-        </Card>
+              . Sandbox modunda gerçek bir işlem gerçekleşmemiştir.
+            </p>
+          </div>
+        </div>
       </div>
-    </main>
+    </CommercialShell>
   );
 }

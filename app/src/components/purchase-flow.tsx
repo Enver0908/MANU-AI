@@ -1,13 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle2, CreditCard, Info, Mail, ShieldAlert } from "lucide-react";
-import { Button, Card, CardBody, CardHeader, Field, TextInput } from "@/components/ui";
+import Link from "next/link";
+import { AlertCircle, CheckCircle, ExternalLink, KeyRound, Loader2 } from "lucide-react";
 import {
-  PURCHASE_CONTACT_EMAIL,
-  PURCHASE_COPY,
-  derivePurchaseGateView,
   deriveCheckoutOutcome,
+  derivePurchaseGateView,
   describePurchaseBlockingReason,
   isLikelyEmail,
   type PurchaseGateView,
@@ -91,152 +89,161 @@ export function PurchaseFlow() {
     }
   }
 
+  if (gate?.kind === "eligible") {
+    return (
+      <div className="rounded-lg border border-border bg-surface p-6">
+        <div className="flex flex-col gap-5">
+          <div className="flex items-start gap-3">
+            <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-sage/15">
+              <CheckCircle size={18} className="text-sage" />
+            </div>
+            <div>
+              <p className="mb-0.5 text-sm font-semibold text-foreground">Erişim doğrulandı</p>
+              <p className="text-sm text-muted-foreground">
+                <strong>{gate.normalizedEmail || email}</strong> adresi için davet kodu geçerli.
+              </p>
+            </div>
+          </div>
+
+          <div className="rounded-md border border-border bg-muted/30 px-4 py-3 text-xs leading-relaxed text-muted-foreground">
+            Ödeme tamamlandıktan sonra magic-link ile hesabınızı bağlayacak ve çalışma alanınızı claim edeceksiniz.
+          </div>
+
+          {checkoutError ? (
+            <div className="flex items-start gap-2 rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2.5" role="alert">
+              <AlertCircle size={14} className="mt-0.5 shrink-0 text-destructive" />
+              <p className="text-xs leading-relaxed text-destructive">{checkoutError}</p>
+            </div>
+          ) : null}
+
+          <button
+            type="button"
+            onClick={onStartCheckout}
+            disabled={busy}
+            className="inline-flex items-center justify-center gap-2 rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary-hover disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            {phase === "starting_checkout" ? <Loader2 size={15} className="animate-spin" /> : <ExternalLink size={15} />}
+            {phase === "starting_checkout" ? "Ödemeye yönlendiriliyor..." : "Ödemeye geç"}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setGate(null)}
+            className="text-center text-xs text-muted-foreground transition-colors hover:text-foreground"
+          >
+            Farklı davet kodu kullan
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-4">
-      <Card>
-        <CardHeader
-          title={PURCHASE_COPY.purchaseFormTitle}
-          description={PURCHASE_COPY.purchaseSubtitle}
-          icon={CreditCard}
-        />
-        <CardBody>
-          <form className="flex flex-col gap-4" onSubmit={onCheckEligibility} noValidate>
-            <Field label="Onaylı e-posta" htmlFor="purchase-email" required>
-              <TextInput
-                id="purchase-email"
-                type="email"
-                inputMode="email"
-                autoComplete="email"
-                placeholder="diyetisyen@ornek.com"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                required
-              />
-            </Field>
-            <Field label="Davet kodu" htmlFor="purchase-token" required>
-              <TextInput
-                id="purchase-token"
-                autoComplete="one-time-code"
-                placeholder="Davet e-postanızdaki kod"
-                value={inviteToken}
-                onChange={(event) => setInviteToken(event.target.value)}
-                required
-              />
-            </Field>
+      <form className="flex flex-col gap-4 rounded-lg border border-border bg-surface p-6" onSubmit={onCheckEligibility} noValidate>
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="purchase-email" className="text-xs font-semibold text-foreground">
+            Onaylı e-posta adresiniz <span className="text-destructive">*</span>
+          </label>
+          <input
+            id="purchase-email"
+            type="email"
+            inputMode="email"
+            autoComplete="email"
+            className="rounded-md border border-input bg-background px-3 py-2.5 text-sm placeholder:text-muted-foreground transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            placeholder="kayitli@email.com"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            required
+          />
+        </div>
 
-            {formError ? (
-              <p className="text-xs font-medium text-red-700" role="alert">
-                {formError}
-              </p>
-            ) : null}
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="purchase-token" className="text-xs font-semibold text-foreground">
+            Davet kodu <span className="text-destructive">*</span>
+          </label>
+          <div className="relative">
+            <KeyRound size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" aria-hidden />
+            <input
+              id="purchase-token"
+              autoComplete="one-time-code"
+              className="w-full rounded-md border border-input bg-background py-2.5 pl-9 pr-3 font-mono text-sm placeholder:font-sans placeholder:text-muted-foreground transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              placeholder="XXXX-XXXX"
+              value={inviteToken}
+              onChange={(event) => setInviteToken(event.target.value)}
+              required
+            />
+          </div>
+        </div>
 
-            <Button type="submit" size="lg" disabled={busy}>
-              {phase === "checking" ? "Kontrol ediliyor…" : "Uygunluğu doğrula"}
-            </Button>
-          </form>
-        </CardBody>
-      </Card>
+        {formError ? (
+          <div className="flex items-start gap-2 rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2.5" role="alert">
+            <AlertCircle size={14} className="mt-0.5 shrink-0 text-destructive" />
+            <p className="text-xs leading-relaxed text-destructive">{formError}</p>
+          </div>
+        ) : null}
 
-      {gate ? <GateResult gate={gate} onStartCheckout={onStartCheckout} busy={busy} checkoutError={checkoutError} /> : null}
+        <button
+          type="submit"
+          disabled={busy || !email || !inviteToken}
+          className="inline-flex items-center justify-center gap-2 rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          {phase === "checking" ? <Loader2 size={15} className="animate-spin" /> : null}
+          {phase === "checking" ? "Doğrulanıyor..." : "Erişimi doğrula"}
+        </button>
+
+        <p className="text-center text-xs text-muted-foreground">
+          Davet kodunuz yok mu?{" "}
+          <Link href="/#iletisim" className="text-primary hover:underline">
+            Erişim talep edin
+          </Link>
+        </p>
+      </form>
+
+      {gate ? <GateResult gate={gate} /> : null}
     </div>
   );
 }
 
-function GateResult({
-  gate,
-  onStartCheckout,
-  busy,
-  checkoutError,
-}: {
-  gate: PurchaseGateView;
-  onStartCheckout: () => void;
-  busy: boolean;
-  checkoutError: string | null;
-}) {
-  if (gate.kind === "eligible") {
-    return (
-      <Card>
-        <CardHeader title="Uygunluk doğrulandı" icon={CheckCircle2} />
-        <CardBody className="flex flex-col gap-3">
-          <p className="text-sm text-ink-muted">
-            {gate.normalizedEmail ? (
-              <>
-                <span className="font-medium text-ink">{gate.normalizedEmail}</span> için erişim onaylı.
-              </>
-            ) : (
-              "Erişim onaylı."
-            )}{" "}
-            Güvenli ödemeye geçebilirsiniz.
-          </p>
-          <Button size="lg" icon={CreditCard} onClick={onStartCheckout} disabled={busy}>
-            {busy ? "Ödemeye yönlendiriliyor…" : "Güvenli ödemeye geç"}
-          </Button>
-          {checkoutError ? (
-            <p className="text-xs font-medium text-red-700" role="alert">
-              {checkoutError}
-            </p>
-          ) : null}
-          <p className="text-xs text-ink-subtle">
-            Ödeme Stripe üzerinde güvenli olarak alınır. Bu ortam sandbox modundadır.
-          </p>
-        </CardBody>
-      </Card>
-    );
-  }
-
+function GateResult({ gate }: { gate: Exclude<PurchaseGateView, { kind: "eligible"; normalizedEmail: string }> }) {
   if (gate.kind === "waitlist") {
+    const reasons = [...new Set(gate.reasons.map(mapPurchaseBlockingReason))];
     return (
-      <Card>
-        <CardHeader title={PURCHASE_COPY.waitlistTitle} icon={ShieldAlert} />
-        <CardBody className="flex flex-col gap-3">
-          <p className="text-sm text-ink-muted">{PURCHASE_COPY.waitlistBody}</p>
-          {gate.reasons.length > 0 ? (
-            <ul className="flex flex-col gap-1">
-              {[...new Set(gate.reasons.map(mapPurchaseBlockingReason))].map((reason) => (
-                <li key={reason} className="text-sm text-ink">
-                  • {reason}
-                </li>
-              ))}
-            </ul>
-          ) : null}
-          <a
-            href={`mailto:${PURCHASE_CONTACT_EMAIL}`}
-            className="inline-flex w-fit items-center gap-2 text-sm font-semibold text-emerald-800 underline"
-          >
-            <Mail size={15} />
-            {PURCHASE_CONTACT_EMAIL}
-          </a>
-        </CardBody>
-      </Card>
-    );
-  }
-
-  if (gate.kind === "not_configured") {
-    return (
-      <Card>
-        <CardHeader title="Ödeme ortamı hazır değil" icon={Info} />
-        <CardBody className="flex flex-col gap-3">
-          <p className="text-sm text-ink-muted">
-            Ticari erişim bu kurulumda yapılandırılmamış. Erişim talebi için ekiple iletişime geçin.
-          </p>
-          <a
-            href={`mailto:${PURCHASE_CONTACT_EMAIL}`}
-            className="inline-flex w-fit items-center gap-2 text-sm font-semibold text-emerald-800 underline"
-          >
-            <Mail size={15} />
-            {PURCHASE_CONTACT_EMAIL}
-          </a>
-        </CardBody>
-      </Card>
+      <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-4">
+        <div className="flex items-start gap-2">
+          <AlertCircle size={15} className="mt-0.5 shrink-0 text-destructive" />
+          <div className="flex flex-col gap-2">
+            <p className="text-sm font-semibold text-destructive">Erişim doğrulanamadı</p>
+            {reasons.length > 0 ? (
+              <ul className="flex flex-col gap-1">
+                {reasons.map((reason) => (
+                  <li key={reason} className="text-xs leading-relaxed text-muted-foreground">
+                    {reason}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-xs text-muted-foreground">Kaydınız satın almaya uygun değil.</p>
+            )}
+            <Link href="/#iletisim" className="text-xs text-primary hover:underline">
+              Erişim talep et
+            </Link>
+          </div>
+        </div>
+      </div>
     );
   }
 
   return (
-    <Card>
-      <CardHeader title="Bir sorun oluştu" icon={ShieldAlert} />
-      <CardBody>
-        <p className="text-sm text-ink-muted">{gate.message}</p>
-      </CardBody>
-    </Card>
+    <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-4">
+      <div className="flex items-start gap-2">
+        <AlertCircle size={15} className="mt-0.5 shrink-0 text-destructive" />
+        <p className="text-xs leading-relaxed text-muted-foreground">
+          {gate.kind === "not_configured"
+            ? "Ticari erişim bu kurulumda yapılandırılmamış. Erişim talebi için ekiple iletişime geçin."
+            : gate.message}
+        </p>
+      </div>
+    </div>
   );
 }

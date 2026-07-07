@@ -37,7 +37,7 @@ export function SegmentedControl({
             onClick={() => onValueChange(option.value)}
             className={cn(
               "min-h-9 rounded-control px-3 text-sm font-medium transition",
-              active ? "bg-surface text-ink shadow-sm" : "text-ink-muted hover:text-ink",
+              active ? "bg-surface text-primary shadow-[0_1px_2px_rgba(23,20,18,0.08)]" : "text-ink-muted hover:bg-surface-sunken hover:text-ink",
             )}
           >
             {option.label}

@@ -11,6 +11,24 @@ The product must be both:
 
 The current implementation is an architecture/core package, not yet the full SaaS app.
 
+## Latest Phase 85A Frontend Redesign Scope Lock
+
+On 2026-07-07, Phase 85A created the canonical SiriusAI frontend redesign and design-system spec in `docs/PHASE_85_FRONTEND_REDESIGN_AND_DESIGN_SYSTEM_SPEC.md`. The user-approved direction is warm clinical SaaS: keep `SiriusAI`, rebuild the design system first, then the public website/onboarding surfaces, then the dashboard/PWA. Locked design decisions: editorial off-black + plum + sage + warm accent palette, Fraunces display headings, Geist Sans UI text, editorial/spacious public surfaces, compact/scannable dashboard surfaces, 6-8px control radius, restrained borders/shadows, no nested card-heavy UI, no abstract AI/gradient-orb direction, and no reuse of the previous visual style as a reference. Documentation-only; no runtime frontend code changed. Production pilot remains `NO-GO`; R-405 remains open; R-406 current post-83/84 local Supabase/RLS re-run remains pending.
+
+## Latest Phase 85B Design Tokens And Font Foundation
+
+On 2026-07-07, Phase 85B implemented the approved foundation without full page redesign: Fraunces display is loaded beside Geist Sans/Mono, Phase 85 CSS/Tailwind tokens are exposed in `globals.css`, global focus/selection/skip-link foundation uses plum tokens, `.font-display` is available for future editorial headings, and UI token tests now assert the approved palette. Component foundation, public website redesign, and dashboard/PWA redesign remain pending for later user-approved sub-phases. Production pilot remains `NO-GO`; R-405 remains open; R-406 current post-83/84 local Supabase/RLS re-run remains pending.
+
+## Latest Phase 85 Stage 2 Shared Component System
+
+On 2026-07-07, Phase 85 Stage 2 implemented the shared UI component foundation: `plum`, `sage`, and `warm` tones are available; legacy `emerald`/`amber` primitive calls map to the new accents; form, card, tabs, segmented-control, table, dialog, sheet, app-shell, alert, empty-state, and loading primitives now follow the approved palette. Public/commercial page redesign, dashboard/PWA shell redesign, dashboard workflow redesign, and final visual QA remain pending for user-approved Stages 3-6. Production pilot remains `NO-GO`; R-405 remains open; R-406 current post-83/84 local Supabase/RLS re-run remains pending.
+
+## Latest Phase 85 Stage 3 Public/Commercial Integration
+
+On 2026-07-07, Phase 85 Stage 3 was implemented from `docs/PHASE_85_STAGE_3_PUBLIC_COMMERCIAL_ENTRY_ACTION_PLAN.md` and the user-provided `public-website-redesign.zip` visual direction. The runtime now follows the invite-led commercial model across the public and commercial entry surfaces: access request, team/admin review, admin invite code, approved email + invite code, sandbox checkout, magic-link login, onboarding claim, then dashboard/PWA. The locked navbar is `SiriusAI | Nasil calisir | Guvenlik | Mobil | Iletisim | Giris yap | Davet koduyla basla`. The integration did not copy mock API routes from the zip and did not change API, auth, entitlement, onboarding, billing, launch-gate, R-405, R-406, provider/channel, or real-data paths. The color system was corrected to match the user-provided design: very light broken-white paper `oklch(0.985 0.003 85)`, purple primary `oklch(0.41 0.14 310)`, and purple hover `oklch(0.37 0.14 310)`.
+
+Hosted sandbox deployment on 2026-07-07: release `phase85-stage3-redesign-20260707225306` was built on the Hetzner VPS and served through PM2/Nginx at `https://siriusai.store`. Verification returned 200 for `/`, `/login`, `/purchase`, `/purchase/success`, `/app-install`, and `https://admin.siriusai.store`; browser computed-color verification on the live domain confirmed the paper and purple primary tokens. This deployment is sandbox/frontend validation only. Stripe remains test mode; production pilot remains `NO-GO`.
+
 ## Latest Phase 84J Custom SMTP And Real Email Verification
 
 On 2026-07-03, Phase 84J completed custom SMTP and real email verification for the hosted sandbox. Resend sending domain was verified through Porkbun DNS, Supabase Auth custom SMTP was enabled with Resend, live `/api/auth/magic-link` returned `sent: true`, and the real inbox magic-link click reached `https://siriusai.store/dashboard`. Real email links used Supabase implicit-flow fragment tokens, so Phase 84J added `/api/auth/session-from-fragment` plus a no-store `/auth/callback` fragment bridge to convert fragment tokens into SSR cookies. Verification: targeted auth/session tests 7/7; auth/onboarding targeted tests 19/19 before the final refresh-token guard adjustment; local production build passed; VPS production build passed and PM2 restarted online. R-425 is mitigated in the hosted sandbox path. Production pilot remains `NO-GO`; R-405, current RLS re-run, external approvals, and production launch gates remain open.

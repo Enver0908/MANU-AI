@@ -29,7 +29,7 @@ export function AppShell({
   children: ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-surface-muted text-ink">
+    <div className="min-h-screen bg-paper text-ink">
       <div className="mx-auto flex min-h-screen w-full max-w-7xl">
         <AppSidebar brand={brand} navItems={navItems} activeId={activeId} />
         <div className="flex min-w-0 flex-1 flex-col">
@@ -66,13 +66,13 @@ export function AppSidebar({
               aria-current={active ? "page" : undefined}
               className={cn(
                 "inline-flex min-h-11 items-center gap-2 rounded-control px-3 text-sm font-medium transition",
-                active ? "bg-emerald-950 text-white" : "text-ink-muted hover:bg-surface-muted hover:text-ink",
+                active ? "bg-primary text-white" : "text-ink-muted hover:bg-surface-muted hover:text-ink",
               )}
             >
               <Icon size={18} />
               <span className="flex-1 text-left">{item.label}</span>
               {item.badge ? (
-                <span className="rounded-full bg-amber-100 px-1.5 text-xs font-semibold text-amber-800">
+                <span className="rounded-full bg-warm/15 px-1.5 text-xs font-medium text-warm">
                   {item.badge}
                 </span>
               ) : null}
@@ -107,13 +107,13 @@ export function AppBottomNav({ navItems, activeId }: { navItems: AppShellNavItem
             aria-current={active ? "page" : undefined}
             className={cn(
               "relative flex min-h-14 flex-1 flex-col items-center justify-center gap-0.5 text-[11px] font-medium transition",
-              active ? "text-emerald-900" : "text-ink-subtle",
+              active ? "text-primary" : "text-ink-subtle",
             )}
           >
             <Icon size={20} />
             <span className="truncate px-1">{item.label}</span>
             {item.badge ? (
-              <span className="absolute right-1/4 top-2 h-1.5 w-1.5 rounded-full bg-amber-500" aria-hidden />
+              <span className="absolute right-1/4 top-2 h-1.5 w-1.5 rounded-full bg-warm" aria-hidden />
             ) : null}
           </button>
         );

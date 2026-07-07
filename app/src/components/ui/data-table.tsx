@@ -34,7 +34,7 @@ export function DataTable<Row>({
               <th
                 key={column.key}
                 className={cn(
-                  "px-3 py-2 text-xs font-semibold uppercase tracking-wide text-ink-subtle",
+                  "px-3 py-2 text-xs font-semibold text-ink-subtle",
                   column.align === "right" && "text-right",
                 )}
               >
@@ -52,7 +52,7 @@ export function DataTable<Row>({
             </tr>
           ) : (
             rows.map((row) => (
-              <tr key={rowKey(row)} className="border-b border-line last:border-0 hover:bg-surface-muted">
+              <tr key={rowKey(row)} className="border-b border-line last:border-0 hover:bg-surface-muted/75">
                 {columns.map((column) => (
                   <td
                     key={column.key}

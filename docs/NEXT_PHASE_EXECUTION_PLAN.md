@@ -12,6 +12,16 @@ Current override after Phase 84I live onboarding verification (2026-07-03): Phas
 
 Current override after Phase 84J custom SMTP completion (2026-07-03): Phase 84J enabled Resend custom SMTP after Porkbun DNS verification, added `/api/auth/session-from-fragment` and a no-store `/auth/callback` fragment bridge for Supabase implicit-flow email links, and verified a real inbox magic-link click reaching `https://siriusai.store/dashboard`. Targeted auth/session tests 7/7 and production builds passed locally and on VPS. R-425 is mitigated in the hosted sandbox path. Production pilot remains `NO-GO`; external production prerequisites, R-405, and current RLS re-run remain open.
 
+Current override after Phase 85A frontend redesign scope lock (2026-07-07): `docs/PHASE_85_FRONTEND_REDESIGN_AND_DESIGN_SYSTEM_SPEC.md` is the canonical redesign plan. The user-approved order is design system -> public website/onboarding -> dashboard/PWA. Locked direction: SiriusAI warm clinical SaaS, editorial off-black/plum/sage/warm palette, Fraunces + Geist Sans, spacious public layout, compact dashboard layout, restrained surface language, and no reuse of the previous visual design as a reference. Phase 85A changed documentation only. Next step is Phase 85B design tokens/font foundation after explicit user approval. Production pilot remains `NO-GO`; R-405 and current RLS re-run remain open.
+
+Current override after Phase 85B design tokens/font foundation (2026-07-07): Fraunces display + Geist Sans/Mono are wired through `next/font/google`; Phase 85 CSS/Tailwind tokens are exposed for paper, surface, ink, primary plum, hover plum, soft plum, sage, warm accent, borders, and focus; UI token tests assert the approved palette. This is foundation-only. Component foundation, public website redesign, and dashboard/PWA redesign require separate user-approved plans. Production pilot remains `NO-GO`; R-405 and current RLS re-run remain open.
+
+Current Phase 85 staging update (2026-07-07): the redesign plan is compressed into six larger stages at user request. Stage 1 is complete. Remaining stages are Stage 2 full component system, Stage 3 public website and commercial entry surfaces, Stage 4 dashboard/mobile PWA shell, Stage 5 dashboard core workflows, and Stage 6 visual QA/polish/accessibility/closure.
+
+Current Phase 85 Stage 2 update (2026-07-07): shared UI component system foundation is complete. Approved `plum`, `sage`, and `warm` tones are available; legacy `emerald`/`amber` primitive calls map to the new accents; form, card, tab, segmented-control, table, dialog, sheet, app-shell, alert, empty-state, and loading primitives are aligned to the Phase 85 palette. Broad public/commercial pages and dashboard workflows remain pending. Production pilot remains `NO-GO`; R-405 and current RLS re-run remain open.
+
+Current Phase 85 Stage 3 implementation/deploy update (2026-07-07): `docs/PHASE_85_STAGE_3_PUBLIC_COMMERCIAL_ENTRY_ACTION_PLAN.md` is implemented for public website and commercial entry surfaces and deployed to the hosted sandbox as release `phase85-stage3-redesign-20260707225306` on `https://siriusai.store`. Stage 3 remains invite-led, not open self-serve signup: contact request -> admin review -> admin invite code -> approved email + invite code -> sandbox checkout -> magic-link -> onboarding claim -> dashboard/PWA. Locked navbar: `SiriusAI | Nasil calisir | Guvenlik | Mobil | Iletisim | Giris yap | Davet koduyla basla`. The user-provided `public-website-redesign.zip` visual direction was adapted without copying mock API routes, the runtime palette was corrected to the user's broken-white + purple system, and all Phase 83/84 API/auth/entitlement/onboarding/sandbox billing contracts remain preserved. Production pilot remains `NO-GO`; R-405 and current RLS re-run remain open.
+
 Superseded Phase 84D override: Phase 84D customer auth foundation completed on 2026-07-02.
 
 Superseded override after Phase 84C lead and contact flow: Phase 84C added `commercial_leads`, public lead API, marketing contact form, and admin lead operations on the token console. Phase 84D-84J later completed customer auth, onboarding claim, hosted dashboard verification, and real custom-SMTP email verification. Production pilot remains `NO-GO`. `npm run test:rls` skipped 21/21 (R-406 pending) unless local Supabase is running with the new migration applied.
@@ -74,8 +84,10 @@ Locked decisions:
 
 Next implementation order:
 
-1. External launch-gate / R-405 / current RLS closure prerequisites (next). Phase 83A-83H and Phase 84A-84J are complete for the hosted commercial sandbox; neither track approves production pilot launch.
-2. External launch-gate closure, R-405 technical resolution or formal acceptance, and current RLS evidence pass before Phase 82 can reach `READY_FOR_EXTERNAL_CONTROLLED_LAUNCH_AUTHORIZATION` (unchanged clinical readiness track).
+1. Plan Phase 85 Stage 4 dashboard/mobile PWA shell after explicit user approval. Phase 85 is frontend/design-only and does not approve production pilot launch.
+2. Continue Phase 85 through Stage 4 dashboard/PWA shell, Stage 5 dashboard workflows, and Stage 6 QA/closure only after each user-approved stage plan.
+3. External launch-gate / R-405 / current RLS closure prerequisites remain required for production readiness. Phase 83A-83H, Phase 84A-84J, and Phase 85 do not approve production pilot launch.
+4. External launch-gate closure, R-405 technical resolution or formal acceptance, and current RLS evidence pass before Phase 82 can reach `READY_FOR_EXTERNAL_CONTROLLED_LAUNCH_AUTHORIZATION` (unchanged clinical readiness track).
 3. No further repo-local Phase 82 sub-phases remain; Phase 82 track closed on 2026-06-30.
 
 ## Phase 78: Dependency And R-405 Closure - Completed 2026-06-29

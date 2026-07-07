@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
-import { buttonClasses, Card, CardBody, CardHeader } from "@/components/ui";
+import { CommercialShell } from "@/components/public/CommercialShell";
 import { CustomerLoginForm } from "@/components/customer-login-form";
 import { PUBLIC_MARKETING_COPY } from "@/lib/phase-84b-public-website";
 
@@ -31,20 +29,27 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
   const nextPath = params.next?.trim() || null;
 
   return (
-    <main className="min-h-screen bg-surface-muted px-safe py-10 text-ink">
-      <div className="mx-auto max-w-lg">
-        <Link href="/" className={`${buttonClasses("ghost", "sm")} mb-6 inline-flex`}>
-          <ArrowLeft size={16} />
-          Ana sayfa
-        </Link>
-        <Card>
-          <CardHeader title={PUBLIC_MARKETING_COPY.loginTitle} />
-          <CardBody className="space-y-4">
-            <p className="text-sm leading-6 text-ink-muted">{PUBLIC_MARKETING_COPY.loginBody}</p>
-            <CustomerLoginForm initialError={initialError} nextPath={nextPath} />
-          </CardBody>
-        </Card>
+    <CommercialShell>
+      <div className="flex flex-1 items-start justify-center px-4 py-16 sm:py-24">
+        <div className="w-full max-w-sm">
+          <div className="mb-8 text-center">
+            <p className="mb-2 text-xs font-semibold uppercase text-primary">Müşteri girişi</p>
+            <h1 className="mb-2 font-display text-2xl font-bold text-off-black">SiriusAI müşteri girişi</h1>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              Kayıtlı e-posta adresinize giriş bağlantısı göndereceğiz.
+            </p>
+          </div>
+
+          <CustomerLoginForm initialError={initialError} nextPath={nextPath} />
+
+          <div className="mt-6 rounded-md border border-border bg-muted/30 px-4 py-3">
+            <p className="text-xs leading-relaxed text-muted-foreground">
+              Bu giriş yalnızca kayıtlı ve onaylı SiriusAI müşterilerine yöneliktir. Erişiminiz yoksa iletişim formu
+              ile talep bırakın.
+            </p>
+          </div>
+        </div>
       </div>
-    </main>
+    </CommercialShell>
   );
 }

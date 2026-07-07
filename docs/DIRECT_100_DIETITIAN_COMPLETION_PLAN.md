@@ -8,6 +8,14 @@ Phase 84I note (2026-07-03): commercial SaaS onboarding remediation is no longer
 
 Phase 84J note (2026-07-03): custom SMTP execution is complete for the hosted sandbox with Resend SMTP and Porkbun DNS. A real inbox magic-link click reached the dashboard after fragment-session bridge remediation. This does not connect real WhatsApp, Gemini, production billing, production monitoring, backup, secret-manager, or real client health-data paths, and it does not change direct-pilot `NO-GO`.
 
+Phase 85A note (2026-07-07): `docs/PHASE_85_FRONTEND_REDESIGN_AND_DESIGN_SYSTEM_SPEC.md` opens the SiriusAI frontend redesign track. The track is design/frontend-only: warm clinical SaaS positioning, approved design system direction, public website/onboarding redesign, and dashboard/PWA redesign. It does not change direct-pilot `NO-GO`, external gate status, R-405, R-406, or any real provider/channel/production-data path.
+
+Phase 85B note (2026-07-07): design tokens and font foundation are implemented for the app. This does not change direct-pilot `NO-GO`, external gate status, R-405, R-406, or any real provider/channel/production-data path.
+
+Phase 85 Stage 2 note (2026-07-07): shared UI component primitives are aligned to the approved plum/sage/warm system, with alert, empty-state, and loading primitives added. This does not change direct-pilot `NO-GO`, external gate status, R-405, R-406, or any real provider/channel/production-data path.
+
+Phase 85 Stage 3 implementation/deploy note (2026-07-07): `docs/PHASE_85_STAGE_3_PUBLIC_COMMERCIAL_ENTRY_ACTION_PLAN.md` is implemented for the invite-led public/commercial redesign and deployed to the hosted sandbox as release `phase85-stage3-redesign-20260707225306`. This is frontend/commercial-entry sandbox work only and does not change direct-pilot `NO-GO`, external gate status, R-405, R-406, or any real provider/channel/production-data path.
+
 ## Fixed Product Laws
 These rules are non-negotiable and apply to every future phase:
 - The client must experience WhatsApp messages as coming from the dietitian, not from an AI system.
@@ -21,8 +29,8 @@ These rules are non-negotiable and apply to every future phase:
 - Autopilot is not globally enabled for all 5,000 clients by default. It is enabled only for selected qualified clients after all gates, monitoring, and rollback controls are ready.
 
 ## Current Baseline
-- Latest completed implementation phase: Phase 84J custom SMTP and real magic-link dashboard verification (hosted sandbox, 2026-07-03).
-- Next operator step: external production prerequisites outside Phase 84; no production GO.
+- Latest completed implementation phase: Phase 85 Stage 3 public/commercial entry integration (frontend/commercial surfaces, 2026-07-07).
+- Next operator step: plan Phase 85 Stage 4 dashboard/mobile PWA shell only after user approval; external production prerequisites remain open; no production GO.
 - Primary open product risk: R-425 is mitigated in the hosted commercial sandbox path, but production launch gates remain open.
 - Latest roadmap rebaseline: Phase 77A manual source authority rebaseline spec (2026-06-10).
 - Detailed Phase 77 implementation plan: `docs/PHASE_77_MASTER_IMPLEMENTATION_PLAN.md`.

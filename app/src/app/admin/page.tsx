@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import { AdminLoginForm } from "@/components/admin-login-form";
 import { CommercialAdminConsole } from "@/components/commercial-admin-console";
-import { buttonClasses, Card, CardBody, CardHeader } from "@/components/ui";
+import { CommercialShell } from "@/components/public/CommercialShell";
 import { resolveAdminSessionEmail } from "@/lib/commercial-admin-access";
 import { PUBLIC_MARKETING_COPY } from "@/lib/phase-84b-public-website";
 import { isSupabaseConfigured } from "@/lib/supabase";
@@ -37,37 +37,44 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
 
   if (sessionEmail) {
     return (
-      <main className="min-h-screen bg-stone-50 px-4 py-8 sm:px-6 lg:px-8">
-        <CommercialAdminConsole
-          variant="session"
-          sessionEmail={sessionEmail}
-          initiallyConfigured
-        />
+      <main className="min-h-screen bg-paper px-4 py-8 sm:px-6 lg:px-8">
+        <CommercialAdminConsole variant="session" sessionEmail={sessionEmail} initiallyConfigured />
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-surface-muted px-safe py-10 text-ink">
-      <div className="mx-auto max-w-lg">
-        <Link href="/" className={`${buttonClasses("ghost", "sm")} mb-6 inline-flex`}>
-          <ArrowLeft size={16} />
-          Ana sayfa
-        </Link>
-        <Card>
-          <CardHeader title="Yönetim paneli girişi" />
-          <CardBody>
-            <AdminLoginForm initialError={initialError} />
-          </CardBody>
-        </Card>
-        <p className="mt-4 text-center text-xs text-ink-subtle">
-          Acil durum token girişi yalnızca{" "}
-          <Link href="/commercial-admin/emergency" className="underline-offset-2 hover:underline">
-            /commercial-admin/emergency
-          </Link>{" "}
-          üzerinden kullanılmalıdır.
-        </p>
+    <CommercialShell>
+      <div className="flex flex-1 items-start justify-center px-4 py-16 sm:py-24">
+        <div className="w-full max-w-sm">
+          <div className="mb-8 text-center">
+            <p className="mb-2 text-xs font-semibold uppercase text-primary">Yönetim</p>
+            <h1 className="mb-2 font-display text-2xl font-bold text-off-black">SiriusAI yönetim girişi</h1>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              Bu yüzey yalnızca allowlist&apos;teki operasyon/admin e-postaları için açılır.
+            </p>
+          </div>
+
+          {initialError ? (
+            <div className="mb-4 flex items-start gap-2 rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2.5">
+              <AlertTriangle size={14} className="mt-0.5 shrink-0 text-destructive" />
+              <p className="text-xs leading-relaxed text-destructive">{initialError}</p>
+            </div>
+          ) : null}
+
+          <div className="rounded-lg border border-border bg-surface p-6">
+            <AdminLoginForm initialError={null} />
+          </div>
+
+          <p className="mt-6 text-center text-xs text-muted-foreground">
+            Acil durum token girişi yalnızca{" "}
+            <Link href="/commercial-admin/emergency" className="text-primary underline-offset-2 hover:underline">
+              /commercial-admin/emergency
+            </Link>{" "}
+            üzerinden kullanılmalıdır.
+          </p>
+        </div>
       </div>
-    </main>
+    </CommercialShell>
   );
 }

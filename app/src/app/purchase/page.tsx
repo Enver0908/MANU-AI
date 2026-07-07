@@ -1,31 +1,33 @@
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { CommercialShell } from "@/components/public/CommercialShell";
 import { PurchaseFlow } from "@/components/purchase-flow";
-import { PURCHASE_COPY } from "@/lib/phase-83e2-purchase-ux";
 
 export const metadata = {
-  title: "Satın al · MANU-AI",
+  title: "Davet koduyla başla · SiriusAI",
 };
 
 export default function PurchasePage() {
   return (
-    <main className="min-h-screen bg-surface-muted px-safe py-8 text-ink">
-      <div className="mx-auto w-full max-w-xl">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-ink-muted hover:text-ink"
-        >
-          <ArrowLeft size={16} />
-          Ana sayfa
-        </Link>
-        <div className="mt-4 mb-6">
-          <span className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-800">
-            {PURCHASE_COPY.eyebrow}
-          </span>
-          <h1 className="mt-1 text-2xl font-semibold text-ink">{PURCHASE_COPY.purchaseTitle}</h1>
+    <CommercialShell>
+      <div className="flex flex-1 items-start justify-center px-4 py-16 sm:py-24">
+        <div className="w-full max-w-md">
+          <div className="mb-8 text-center">
+            <p className="mb-2 text-xs font-semibold uppercase text-primary">Davetli erişim</p>
+            <h1 className="mb-2 font-display text-2xl font-bold text-off-black">Davet koduyla başla</h1>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              Ekibimizin size ilettiği davet kodu ve onaylı e-posta adresinizle erişiminizi doğrulayın.
+            </p>
+          </div>
+
+          <PurchaseFlow />
+
+          <div className="mt-6 rounded-md border border-border bg-muted/30 px-4 py-3">
+            <p className="text-xs leading-relaxed text-muted-foreground">
+              Bu sayfa self-serve satın alma değildir. Erişim yalnızca ekip değerlendirmesi ve davet kodu ile açılır.
+              Ödeme sandbox modundadır.
+            </p>
+          </div>
         </div>
-        <PurchaseFlow />
       </div>
-    </main>
+    </CommercialShell>
   );
 }

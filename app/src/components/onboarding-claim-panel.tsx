@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CheckCircle2, LayoutDashboard, LoaderCircle } from "lucide-react";
+import { AlertCircle, CheckCircle, LayoutDashboard, LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui";
 import { describeOnboardingBlockingReason } from "@/lib/phase-84g-subscription-operations";
 
 type OnboardingStatus = {
@@ -70,11 +69,7 @@ export function OnboardingClaimPanel(props: { sessionId?: string | null }) {
       };
 
       if (!response.ok || !payload.claimed) {
-        setError(
-          describeOnboardingBlockingReason(
-            payload.blockingReasons?.[0] ?? payload.error ?? "claim_failed",
-          ),
-        );
+        setError(describeOnboardingBlockingReason(payload.blockingReasons?.[0] ?? payload.error ?? "claim_failed"));
         return;
       }
 
@@ -88,52 +83,78 @@ export function OnboardingClaimPanel(props: { sessionId?: string | null }) {
   }
 
   if (!sessionId) {
-    return null;
+    return (
+      <div className="flex items-start gap-2 rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2.5">
+        <AlertCircle size={14} className="mt-0.5 shrink-0 text-destructive" />
+        <p className="text-xs leading-relaxed text-muted-foreground">
+          Bağlanacak ödeme oturumu bulunamadı. Destek için iletişime geçin.
+        </p>
+      </div>
+    );
   }
 
   if (!status && !error) {
     return (
-      <div className="flex items-center gap-2 text-sm text-ink-muted">
+      <div className="flex items-center gap-2 rounded-md border border-border bg-muted/30 px-4 py-3 text-sm text-muted-foreground">
         <LoaderCircle size={16} className="animate-spin" aria-hidden />
-        Onboarding durumu kontrol ediliyor…
+        Onboarding durumu kontrol ediliyor...
       </div>
     );
   }
 
   if (error) {
-    return <p className="text-sm text-rose-800">{describeOnboardingBlockingReason(error)}</p>;
+    return (
+      <div className="flex items-start gap-2 rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2.5">
+        <AlertCircle size={14} className="mt-0.5 shrink-0 text-destructive" />
+        <p className="text-xs leading-relaxed text-destructive">{describeOnboardingBlockingReason(error)}</p>
+      </div>
+    );
   }
 
   if (status?.alreadyClaimed) {
     return (
-      <div className="space-y-3" role="status">
-        <div className="flex items-start gap-3 rounded-control border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-950">
-          <CheckCircle2 size={18} className="mt-0.5 shrink-0" aria-hidden />
+      <div className="flex flex-col gap-3" role="status">
+        <div className="flex items-start gap-3 rounded-md border border-border bg-sage/10 px-4 py-3 text-sm text-foreground">
+          <CheckCircle size={18} className="mt-0.5 shrink-0 text-sage" aria-hidden />
           <p>Çalışma alanınız zaten bu hesaba bağlı.</p>
         </div>
-        <Button icon={LayoutDashboard} onClick={() => router.push("/dashboard")}>
+        <button
+          type="button"
+          onClick={() => router.push("/dashboard")}
+          className="inline-flex items-center justify-center gap-2 rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          <LayoutDashboard size={16} />
           Panele git
-        </Button>
+        </button>
       </div>
     );
   }
 
   if (status?.claimable) {
     return (
-      <div className="space-y-3">
-        <p className="text-sm text-ink-muted">
+      <div className="flex flex-col gap-3">
+        <p className="text-sm leading-relaxed text-muted-foreground">
           Ödemeniz doğrulandı. Çalışma alanınızı bu hesaba bağlamak için aşağıdaki adımı tamamlayın.
         </p>
-        <Button disabled={busy} icon={LayoutDashboard} onClick={() => void onClaim()}>
-          {busy ? "Bağlanıyor…" : "Çalışma alanını bağla"}
-        </Button>
+        <button
+          type="button"
+          disabled={busy}
+          onClick={() => void onClaim()}
+          className="inline-flex items-center justify-center gap-2 rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          {busy ? <LoaderCircle size={16} className="animate-spin" /> : <LayoutDashboard size={16} />}
+          {busy ? "Bağlanıyor..." : "Çalışma alanını bağla"}
+        </button>
       </div>
     );
   }
 
   return (
-    <p className="text-sm text-rose-800">
-      {describeOnboardingBlockingReason(status?.blockingReasons?.[0] ?? "onboarding_claim_blocked")}
-    </p>
+    <div className="flex items-start gap-2 rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2.5">
+      <AlertCircle size={14} className="mt-0.5 shrink-0 text-destructive" />
+      <p className="text-xs leading-relaxed text-destructive">
+        {describeOnboardingBlockingReason(status?.blockingReasons?.[0] ?? "onboarding_claim_blocked")}
+      </p>
+    </div>
   );
 }

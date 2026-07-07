@@ -12,6 +12,14 @@ Phase 84I auth/admin/onboarding remediation on 2026-07-03 addresses commercial o
 
 Phase 84J custom SMTP completion on 2026-07-03 configured Resend SMTP through Porkbun DNS and verified real magic-link email delivery to dashboard after fragment-session bridge remediation. R-425 is mitigated in the hosted sandbox path, but production pilot is still not approved.
 
+Phase 85A frontend redesign scope lock on 2026-07-07 created `docs/PHASE_85_FRONTEND_REDESIGN_AND_DESIGN_SYSTEM_SPEC.md` for the next SiriusAI frontend/design track. This documentation-only phase does not approve production pilot, close launch gates, resolve R-405/R-406, or connect real provider/channel/monitoring/backup/secret-manager/real health-data paths.
+
+Phase 85B design tokens/font foundation on 2026-07-07 implemented the approved app-level palette and Fraunces/Geist font foundation. This frontend foundation phase does not approve production pilot, close launch gates, resolve R-405/R-406, or connect real provider/channel/monitoring/backup/secret-manager/real health-data paths.
+
+Phase 85 Stage 2 shared component system on 2026-07-07 aligned shared UI primitives to the approved plum/sage/warm component language, preserved legacy primitive tone compatibility, and added alert/empty/loading primitives. This frontend component phase does not approve production pilot, close launch gates, resolve R-405/R-406, or connect real provider/channel/monitoring/backup/secret-manager/real health-data paths.
+
+Phase 85 Stage 3 public/commercial integration on 2026-07-07 implemented the invite-led public website and commercial entry redesign plan in `docs/PHASE_85_STAGE_3_PUBLIC_COMMERCIAL_ENTRY_ACTION_PLAN.md`, corrected the runtime palette to the user's broken-white + purple design system, and deployed release `phase85-stage3-redesign-20260707225306` to the hosted sandbox at `https://siriusai.store`. This frontend/commercial-entry sandbox phase does not approve production pilot, close launch gates, resolve R-405/R-406, or connect real provider/channel/monitoring/backup/secret-manager/real health-data paths.
+
 Phase 84B public website on 2026-07-02 rebuilt the SiriusAI marketing homepage. The original R-425 gap is superseded by Phase 84D-84J hosted sandbox verification.
 
 Phase 84A architecture freeze on 2026-07-02 documented the SiriusAI commercial relaunch spec. Documentation-only; production pilot remains `NO-GO`.
@@ -318,7 +326,7 @@ This summary does not approve production pilot launch, real health-data processi
 
 ## Phase 84 Planning Status - 2026-07-02
 
-Commercial sandbox deployment reached HTTPS/domain/test-webhook validation on `https://siriusai.store`. Stripe test checkout provisioning works through invite consumption, tenant creation, entitlement activation, and ledger persistence.
+Commercial sandbox deployment reached HTTPS/domain/test-webhook validation on `https://siriusai.store`. Stripe test checkout provisioning works through invite consumption, tenant creation, entitlement activation, and ledger persistence. Phase 85 Stage 3 redesign release `phase85-stage3-redesign-20260707225306` is also live on the hosted sandbox with public/customer/admin entry routes returning 200.
 
 Phase 84A-84J later completed the hosted commercial sandbox relaunch/onboarding path: SiriusAI public site, contact lead capture, customer magic-link login, post-payment tenant claim, admin subdomain, Resend custom SMTP, fragment-session bridge, and real inbox magic-link dashboard verification.
 

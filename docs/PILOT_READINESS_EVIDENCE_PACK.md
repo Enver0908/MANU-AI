@@ -14,6 +14,14 @@ Phase 84I update (2026-07-03): commercial onboarding remediation now covers auth
 
 Phase 84J completion (2026-07-03): custom SMTP is configured with Resend after Porkbun DNS verification, and a real inbox magic-link click reached `https://siriusai.store/dashboard` after fragment-session bridge remediation. This evidence pack still does not approve production pilot or connect real provider/channel/monitoring/backup/secret-manager/real health-data paths.
 
+Phase 85A frontend redesign scope lock (2026-07-07): `docs/PHASE_85_FRONTEND_REDESIGN_AND_DESIGN_SYSTEM_SPEC.md` records the user-approved warm clinical SaaS redesign direction for SiriusAI. This is documentation-only and does not approve production pilot, close launch gates, resolve R-405/R-406, or connect real provider/channel/monitoring/backup/secret-manager/real health-data paths.
+
+Phase 85B design tokens/font foundation (2026-07-07): approved Phase 85 palette and Fraunces/Geist font foundation are implemented in the app. This is frontend foundation only and does not approve production pilot, close launch gates, resolve R-405/R-406, or connect real provider/channel/monitoring/backup/secret-manager/real health-data paths.
+
+Phase 85 Stage 2 shared component system (2026-07-07): shared UI primitives now use the approved plum/sage/warm component language, with compatibility aliases for existing primitive tone calls and shared alert/empty/loading states. This is frontend component foundation only and does not approve production pilot, close launch gates, resolve R-405/R-406, or connect real provider/channel/monitoring/backup/secret-manager/real health-data paths.
+
+Phase 85 Stage 3 public/commercial integration and hosted sandbox deploy (2026-07-07): `docs/PHASE_85_STAGE_3_PUBLIC_COMMERCIAL_ENTRY_ACTION_PLAN.md` is implemented for the invite-led redesign of public website and commercial entry surfaces, and release `phase85-stage3-redesign-20260707225306` is deployed to `https://siriusai.store`. Verification returned 200 for `/`, `/login`, `/purchase`, `/purchase/success`, `/app-install`, and `https://admin.siriusai.store`; browser computed-color verification confirmed the corrected user palette on the live domain. This is frontend/commercial-entry sandbox work only and does not approve production pilot, close launch gates, resolve R-405/R-406, or connect real provider/channel/monitoring/backup/secret-manager/real health-data paths.
+
 ## Latest Verification
 
 Run from `app`:
@@ -24,6 +32,10 @@ npm run release:verify
 
 Latest result, re-verified on 2026-07-03 after Phase 84I live onboarding remediation:
 
+- Phase 85A on 2026-07-07: canonical frontend redesign/design-system spec created; no runtime code changed; production pilot remains `NO-GO`.
+- Phase 85B on 2026-07-07: design tokens/font foundation implemented with focused UI token test coverage; production pilot remains `NO-GO`.
+- Phase 85 Stage 2 on 2026-07-07: shared component system foundation implemented; focused UI token/component contract tests passed 8/8; production pilot remains `NO-GO`.
+- Phase 85 Stage 3 implementation/deploy on 2026-07-07: invite-led public/commercial entry surfaces implemented from the approved plan and user-provided zip design direction, color-corrected to the user's broken-white + purple palette, and deployed to the hosted sandbox; production pilot remains `NO-GO`.
 - Phase 84J real email verification on 2026-07-03: Resend custom SMTP was configured in Supabase Auth, `/api/auth/magic-link` returned `sent: true`, `/auth/callback` fragment-session bridge handled Supabase implicit-flow email links, and a real inbox magic-link click reached dashboard 200. Production pilot remains `NO-GO`.
 - Phase 84I live onboarding on 2026-07-03: `/auth/callback` supports Supabase token-hash OTP callbacks in addition to `code`; VPS sandbox generated token-hash fallback reached `/onboarding`, returned authenticated + claimable status, created the paid tenant owner membership and dietitian profile, returned dashboard 200, and handled repeat claim idempotently. Production pilot remains `NO-GO`.
 - Phase 84H on 2026-07-03: `phase-84h-verification-refresh.ts` locks eight commercial SaaS QA scenarios; `commercial-saas.visual.spec.ts` adds login/admin/purchase-success/contact/onboarding visual coverage; purchase-success visual expectations updated for 84E onboarding CTA. Targeted Phase 84 tests 36/36; 84H tests 5/5; visual tests 36/36; lint 0 errors (2 pre-existing warnings); production build passed. Superseded by Phase 84I live VPS onboarding verification; production pilot remains `NO-GO`.
