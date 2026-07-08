@@ -1,8 +1,28 @@
 # MANU-AI Local App Prototype
 
+## Phase 85 Roadmap Restructure
+
+2026-07-08: Phase 85 now proceeds as Stage 1 design system foundation, Stage 2 full component system, Stage 3 public/commercial entry surfaces, Stage 4A Danisan Kontrol Paneli Mimari ve Hizmet Akisi Plani, Stage 4B Uyari ve Bildirimler, Stage 4C Diyetisyen Icin AI Chat, Stage 4D Ayarlar / Hesap, Stage 5 Dashboard and Mobile PWA Shell, Stage 6 Dashboard Core Workflows, and Stage 7 Visual QA/Polish/Accessibility/Closure. Stages 1-3 and 4A are complete. Stage 4B is next and must be planned with the user before implementation. Production pilot remains `NO-GO`.
+
+## Phase 85 Stage 4A DCP-4 AI Assistant Control Panel
+
+2026-07-08: Moved AI controls into dedicated **AI Asistan Kontrolu** tab with persona, status/mode, activation window, safety checklist, autopilot readiness gate, lock status, and preflight blockers. Added `src/components/dashboard/ai-assistant-control-panel.tsx` and `src/lib/ai-assistant-control-panel-helpers.ts`; updated `src/components/dashboard/clients-panel.tsx`. Verification: lint 0 errors (3 pre-existing warnings), helper tests 4/4, full app suite 734 passed / 4 skipped, build passed, Playwright visual 36/36. Stage 4A (DCP-1..4) complete. Production pilot remains `NO-GO`.
+
+## Phase 85 Stage 4A DCP-3 Menu Workflow Panel
+
+2026-07-08: Upgraded the client menu tab into a first-class **Menu** workflow with four template picker cards, Turkish template labels/descriptions, plan status badges, conflict display, activation hard-block on severe conflicts, and integrated MANU-only DOCX/PDF export when eligible. Added `src/components/dashboard/menu-workflow-panel.tsx`, `src/components/dashboard/menu-workflow-export-section.tsx`, and `src/lib/menu-workflow-panel-helpers.ts`; upgraded `src/components/menu-plan-panel.tsx`. Verification: lint 0 errors (3 pre-existing warnings), helper tests 4/4, full app suite 730 passed / 4 skipped, build passed, Playwright visual 36/36. Next approved sub-phase is DCP-4 AI assistant control. Production pilot remains `NO-GO`.
+
+## Phase 85 Stage 4A DCP-2 Active Nutrition Plan Panel
+
+2026-07-08: Upgraded the client food-rules tab into **Aktif Beslenme Plani** with Phase 77D catalog tree browsing (main/sub/food Izinli/Yasak), quick search, conflict review, and existing `/api/clients/[id]/food-rule-profile` save path. Added `src/components/dashboard/catalog-tree-browser.tsx`, `src/components/dashboard/active-nutrition-plan-panel.tsx`, and `src/lib/active-nutrition-plan-helpers.ts`; upgraded `src/components/food-rules-panel.tsx`. Verification: lint 0 errors (3 pre-existing warnings), helper tests 5/5, full app suite 726 passed / 4 skipped, build passed, Playwright visual 36/36. Production pilot remains `NO-GO`.
+
+## Phase 85 Stage 4A DCP-1 Client Form Panel
+
+2026-07-08: Implemented the full Phase 77C active-schema response editor in the dashboard client control panel (`tab_personal_form`). Added `src/components/dashboard/client-form-panel.tsx` and `src/lib/client-form-panel-helpers.ts`; save uses existing `POST /api/clients/forms`. Verification: lint 0 errors (3 pre-existing warnings), helper tests 5/5, full app suite passed, build passed, Playwright visual 36/36. Next approved sub-phase is DCP-2 active nutrition plan/catalog rules. Production pilot remains `NO-GO`.
+
 ## Phase 85 Stage 4A Client Control Panel Architecture Plan
 
-2026-07-08: Added `../docs/PHASE_85_STAGE_4A_CLIENT_CONTROL_PANEL_ARCHITECTURE_PLAN.md` after inspecting the existing dashboard client panel, active form schema/response path, food-rule profile/catalog path, menu-plan/export path, and AI activation/preflight path. The next client dashboard work is split into four approved-before-implementation phases: full client form editor, active nutrition plan/catalog rules, menu workflow/export, and AI assistant control. No runtime app code changed in Stage 4A. Production pilot remains `NO-GO`.
+2026-07-08: Added `../docs/PHASE_85_STAGE_4A_CLIENT_CONTROL_PANEL_ARCHITECTURE_PLAN.md` after inspecting the existing dashboard client panel, active form schema/response path, food-rule profile/catalog path, menu-plan/export path, and AI activation/preflight path. The next client dashboard work is split into four approved-before-implementation phases: full client form editor, active nutrition plan/catalog rules, menu workflow/export, and AI assistant control. DCP-1 is now complete. Production pilot remains `NO-GO`.
 
 ## Phase 85A Frontend Redesign Scope Lock
 

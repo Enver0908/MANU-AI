@@ -18,6 +18,8 @@ Phase 85 Stage 3 implementation/deploy note (2026-07-07): `docs/PHASE_85_STAGE_3
 
 Phase 85 Stage 4A client control panel planning note (2026-07-08): `docs/PHASE_85_STAGE_4A_CLIENT_CONTROL_PANEL_ARCHITECTURE_PLAN.md` maps the next dashboard work to the code-backed client form, active nutrition plan, menu/export, and AI assistant control systems. This is planning/spec only and does not change direct-pilot `NO-GO`, external gate status, R-405, R-406, or any real provider/channel/production-data path.
 
+Phase 85 roadmap restructure note (2026-07-08): Phase 85 now proceeds as Stage 1, Stage 2, Stage 3, Stage 4A Danisan Kontrol Paneli Mimari ve Hizmet Akisi Plani, Stage 4B Uyari ve Bildirimler, Stage 4C Diyetisyen Icin AI Chat, Stage 4D Ayarlar / Hesap, Stage 5 Dashboard and Mobile PWA Shell, Stage 6 Dashboard Core Workflows, and Stage 7 Visual QA/Polish/Accessibility/Closure. Stage 4B is next and is not yet action-planned. This does not change direct-pilot `NO-GO`, external gate status, R-405, R-406, or any real provider/channel/production-data path.
+
 ## Fixed Product Laws
 These rules are non-negotiable and apply to every future phase:
 - The client must experience WhatsApp messages as coming from the dietitian, not from an AI system.
@@ -31,8 +33,8 @@ These rules are non-negotiable and apply to every future phase:
 - Autopilot is not globally enabled for all 5,000 clients by default. It is enabled only for selected qualified clients after all gates, monitoring, and rollback controls are ready.
 
 ## Current Baseline
-- Latest completed implementation phase: Phase 85 Stage 4A client control panel architecture plan (documentation/spec, 2026-07-08).
-- Next operator step: ask for explicit user approval before implementing DCP-1 full client form panel; external production prerequisites remain open; no production GO.
+- Latest completed implementation phase: Phase 85 Stage 4A client control panel complete (DCP-1..4, 2026-07-08).
+- Next operator step: Phase 85 Stage 4B Uyari ve Bildirimler planning; external production prerequisites remain open; no production GO.
 - Primary open product risk: R-425 is mitigated in the hosted commercial sandbox path, but production launch gates remain open.
 - Latest roadmap rebaseline: Phase 77A manual source authority rebaseline spec (2026-06-10).
 - Detailed Phase 77 implementation plan: `docs/PHASE_77_MASTER_IMPLEMENTATION_PLAN.md`.

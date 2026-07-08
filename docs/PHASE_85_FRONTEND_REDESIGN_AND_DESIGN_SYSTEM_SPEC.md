@@ -1,7 +1,7 @@
 # Phase 85: SiriusAI Frontend Redesign And Design System Spec
 
 Date: 2026-07-07
-Status: Stage 1 design foundation, Stage 2 shared component system, and Stage 3 public/commercial entry integration complete; Stage 3 is deployed to the hosted sandbox at `https://siriusai.store`. Stage 4A client control panel architecture planning is complete in `docs/PHASE_85_STAGE_4A_CLIENT_CONTROL_PANEL_ARCHITECTURE_PLAN.md`; implementation remains pending explicit user approval.
+Status: Stage 1 design foundation, Stage 2 shared component system, Stage 3 public/commercial entry integration, and Stage 4A client control panel complete; Stage 3 is deployed to the hosted sandbox at `https://siriusai.store`. Next work is Stage 4B alerts and notifications planning with explicit user approval.
 Production pilot: NO-GO.
 Clinical production GO: not in scope for Phase 85.
 R-405: Open unless technically remediated through the Phase 22 procedure or formally accepted by external engineering/security approval.
@@ -13,29 +13,51 @@ Rebuild the SiriusAI frontend into a professional warm clinical SaaS experience 
 
 Phase 85 exists because the current Phase 83/84 frontend is functionally complete but does not meet the desired premium product quality bar. The redesign must preserve all clinical safety, entitlement, auth, onboarding, PWA, sandbox billing, and fail-closed production readiness boundaries while replacing the visual system, information hierarchy, and UX polish.
 
-The user-approved implementation order is now compressed into six larger stages:
+The user-approved implementation order is now restructured into the following stage ladder:
 
 1. Design system foundation.
 2. Full component system.
 3. Public website and commercial entry surfaces.
-4. Dashboard and mobile PWA shell.
-5. Dashboard core workflows.
-6. Visual QA, polish, accessibility, and closure.
+4A. Danisan Kontrol Paneli Mimari ve Hizmet Akisi Plani.
+4B. Uyari ve Bildirimler.
+4C. Diyetisyen Icin AI Chat.
+4D. Ayarlar / Hesap.
+5. Dashboard and Mobile PWA Shell.
+6. Dashboard Core Workflows.
+7. Visual QA, Polish, Accessibility, and Closure.
 
 Phase 85 must proceed by explicit user approval at each major design decision and implementation sub-phase.
 
-## Stage 4A Client Control Panel Architecture Planning
+## Stage 4A - Danisan Kontrol Paneli Mimari ve Hizmet Akisi Plani
 
 Stage 4A was added on 2026-07-08 after code-level review of the existing client-control foundations. The user prioritized the per-client service surface before broad dashboard shell/workflow polish. The canonical Stage 4A plan is `docs/PHASE_85_STAGE_4A_CLIENT_CONTROL_PANEL_ARCHITECTURE_PLAN.md`.
 
-Stage 4A locks four implementation sub-phases, each requiring separate user approval before code changes:
+Stage 4A locks four implementation sub-phases; all are **implemented 2026-07-08**:
 
 1. DCP-1 full client form editor, using the active Phase 77C schema/response path.
-2. DCP-2 active nutrition plan, using Client Food Rule Profile V2 and the 12/113/518 master catalog.
+2. DCP-2 active nutrition plan/catalog tree workspace, using Client Food Rule Profile V2 and the 12/113/518 master catalog.
 3. DCP-3 menu workflow/export, using the four Menu Plan V1 template types and existing MANU-only export route.
 4. DCP-4 AI assistant control, using persona, active/passive, mode, schedule, safety checklist, takeover, preflight, and risk-lock semantics.
 
-Stage 4A is planning/spec only. It does not alter runtime behavior, APIs, auth, entitlement, PWA install, billing, provider/channel paths, launch gates, R-405, R-406, or production pilot status.
+Stage 4A changed dashboard client-control UI only. It does not alter backend APIs, auth, entitlement, PWA install, billing, provider/channel paths, launch gates, R-405, R-406, or production pilot status.
+
+## Stage 4B - Uyari ve Bildirimler
+
+Status: pending. This stage is the next Phase 85 planning target after Stage 4A.
+
+Stage 4B must be planned with the user before implementation. It should define the dashboard alert/notification service surface, including notification priority, acknowledgement/read flows, clinically relevant blockers, handoff visibility, mobile/PWA ergonomics, and existing notification API/state contracts. No Stage 4B runtime work is approved until its action plan is created and explicitly approved.
+
+## Stage 4C - Diyetisyen Icin AI Chat
+
+Status: pending. This stage will be planned only after Stage 4B is completed and closed.
+
+Stage 4C must define the dietitian-facing AI chat experience without weakening internal copilot safety, data isolation, prompt visibility, clinical boundaries, provider gates, or real-provider disablement. No Stage 4C runtime work is approved until its action plan is created and explicitly approved.
+
+## Stage 4D - Ayarlar / Hesap
+
+Status: pending. This stage will be planned only after Stage 4C is completed and closed.
+
+Stage 4D must define settings/account workflows while preserving auth, membership, entitlement, onboarding, admin, billing, PWA install, and sandbox-only constraints. No Stage 4D runtime work is approved until its action plan is created and explicitly approved.
 
 ## Scope Lock
 
@@ -284,7 +306,7 @@ Required implementation phases:
 
 Requires implementation after the user asks to proceed from this approved action plan.
 
-### Stage 4 - Dashboard And Mobile PWA Shell
+### Stage 5 - Dashboard And Mobile PWA Shell
 
 Goal: redesign the authenticated shell for professional daily use.
 
@@ -298,7 +320,7 @@ Expected scope:
 
 Requires user approval before implementation.
 
-### Stage 5 - Dashboard Core Workflows
+### Stage 6 - Dashboard Core Workflows
 
 Goal: redesign high-use dashboard panels without changing clinical logic.
 
@@ -310,7 +332,7 @@ Expected scope:
 
 Requires user approval before implementation.
 
-### Stage 6 - Visual QA, Polish, Accessibility, And Closure
+### Stage 7 - Visual QA, Polish, Accessibility, And Closure
 
 Goal: close the frontend redesign track with visual, accessibility, build, and continuity evidence.
 
@@ -339,4 +361,4 @@ Phase 85 can close only when:
 
 ## Current Next Step
 
-Proceed to Stage 4 dashboard/mobile PWA shell planning only after explicit user approval. Do not change dashboard internals until Stage 4/5 approval.
+Proceed to Stage 4B alerts and notifications planning only after explicit user approval. Stage 4C, Stage 4D, Stage 5, Stage 6, and Stage 7 remain unplanned until each prior stage is closed.

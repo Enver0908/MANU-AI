@@ -293,7 +293,16 @@ export function DashboardApp({
     await createFormSchema({ title: schemaTitle, fields, languageCode: schemaLanguage });
   };
 
-  const saveSelectedFormResponse = async () => {
+  const saveSelectedFormResponse = async (input?: {
+    clientId: string;
+    schemaId: string;
+    answers: Record<string, unknown>;
+    submittedPhoneE164?: string;
+  }) => {
+    if (input) {
+      await saveFormResponse(input);
+      return;
+    }
     if (!selectedClient) return;
     const activeSchema = getActiveFormSchema(state);
     if (!activeSchema) return;
@@ -657,6 +666,7 @@ export function DashboardApp({
                 isCopilotSending={isCopilotSending}
                 onCopilotInput={setCopilotInput}
                 onAskCopilot={askInternalCopilot}
+                onSaveFormResponse={saveSelectedFormResponse}
               />
             )}
 

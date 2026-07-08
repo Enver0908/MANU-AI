@@ -29,7 +29,9 @@ test("dashboard core views render in fallback mode", async ({ page }) => {
 
   await page.getByRole("button", { name: "Danışanlar" }).click();
   await expect(page.getByRole("heading", { name: "Mert Kaya" })).toBeVisible();
-  await expect(page.getByText("Güvenlik kontrol listesi")).toBeVisible();
+  await expect(page.getByText("AI Asistan ozeti")).toBeVisible();
+  await page.getByTestId("tab-tab_ai_assistant").click();
+  await expect(page.getByText("Guvenlik kontrol listesi")).toBeVisible();
 
   await page.getByRole("button", { name: "Görüşme" }).click();
   await expect(page.getByText("Kaynak etiketli görüşme zaman çizelgesi")).toBeVisible();
@@ -65,6 +67,7 @@ test("dashboard core views render in fallback mode", async ({ page }) => {
 
   await page.getByRole("button", { name: "Danışanlar" }).click();
   await page.getByRole("button", { name: /Mert Kaya/ }).click();
+  await page.getByTestId("tab-tab_ai_assistant").click();
   await page.getByLabel("Diet plan reviewed").click();
   await expect(page.getByLabel("Diet plan reviewed")).not.toBeChecked();
 
@@ -77,6 +80,7 @@ test("dashboard core views render in fallback mode", async ({ page }) => {
 
   await page.getByRole("button", { name: "Danışanlar" }).click();
   await page.getByRole("button", { name: /Mert Kaya/ }).click();
+  await page.getByTestId("tab-tab_ai_assistant").click();
   await page.getByLabel("Diet plan reviewed").click();
   await expect(page.getByLabel("Diet plan reviewed")).toBeChecked();
 

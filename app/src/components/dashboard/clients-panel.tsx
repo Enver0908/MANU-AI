@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import {
   Activity,
+  Bot,
   ClipboardList,
   Database,
   Download,
@@ -16,13 +17,11 @@ import {
 } from "lucide-react";
 import { personas } from "dietitian-ai-assistant-architecture";
 import {
-  isSafetyChecklistComplete,
-  normalizeSafetyChecklist,
-  safetyChecklistLabels,
-} from "@/lib/safety-checklist";
+  countAiControlBlockers,
+  summarizeAiAssistantControl,
+} from "@/lib/ai-assistant-control-panel-helpers";
+import { getActiveFormSchema } from "@/lib/client-forms";
 import type {
-  AiMode,
-  AiStatus,
   Channel,
   ClientContextUpdateImportance,
   ClientContextUpdateRecord,
@@ -30,7 +29,6 @@ import type {
   ClientRecord,
   ManuAppState,
   Phase77FMenuPlanTemplateType,
-  SafetyChecklist,
 } from "@/lib/types";
 import type { ClientFoodRuleProfileV2State } from "@/lib/phase-77e-client-food-rule-profile";
 import type { ClientMenuPlanV1State } from "@/lib/phase-77f-client-menu-plan";
@@ -38,29 +36,29 @@ import {
   buildMenuPlanExportPreviewText,
   deriveMenuPlanExportFromSummarySource,
 } from "@/lib/phase-77j-menu-plan-export";
-import { FoodRulesPanel } from "@/components/food-rules-panel";
-import { MenuPlanPanel } from "@/components/menu-plan-panel";
+import {
+  buildInitialClientFormAnswers,
+  summarizeAutopilotFieldStatus,
+} from "@/lib/client-form-panel-helpers";
+import { AiAssistantControlPanel } from "@/components/dashboard/ai-assistant-control-panel";
+import { ClientFormPanel } from "@/components/dashboard/client-form-panel";
+import { ActiveNutritionPlanPanel } from "@/components/dashboard/active-nutrition-plan-panel";
+import { MenuWorkflowPanel } from "@/components/dashboard/menu-workflow-panel";
 import { t, type DashboardMessageKey } from "@/lib/i18n";
 import type { SupportedLanguageCode } from "@/lib/languages";
 import {
-  ArrayInput,
   Badge,
   ClientSummary,
   ConfirmButton,
   ConflictSummaryBox,
   DateTimeInput,
   EmptyState,
-  SegmentedControl,
   SelectInput,
   TextInput,
   TextareaInput,
-  ToggleRow,
   formatTime,
-  fromDateTimeLocal,
   languageOptions,
   sourceLabel,
-  splitLines,
-  toDateTimeLocal,
   type ClientDetailTab,
 } from "./shared";
 
@@ -112,6 +110,7 @@ export function ClientsPanel({
   isCopilotSending,
   onCopilotInput,
   onAskCopilot,
+  onSaveFormResponse,
 }: {
   clients: ClientRecord[];
   selectedClient: ClientRecord;
@@ -160,6 +159,12 @@ export function ClientsPanel({
   isCopilotSending: boolean;
   onCopilotInput: (value: string) => void;
   onAskCopilot: (body?: string) => void;
+  onSaveFormResponse: (input: {
+    clientId: string;
+    schemaId: string;
+    answers: Record<string, unknown>;
+    submittedPhoneE164?: string;
+  }) => Promise<void>;
 }) {
   return (
     <div className="grid gap-4 xl:grid-cols-[360px_minmax(0,1fr)]">
@@ -269,6 +274,7 @@ export function ClientsPanel({
         isCopilotSending={isCopilotSending}
         onCopilotInput={onCopilotInput}
         onAskCopilot={onAskCopilot}
+        onSaveFormResponse={onSaveFormResponse}
       />
     </div>
   );
@@ -307,6 +313,7 @@ function ClientDetailForm({
   isCopilotSending,
   onCopilotInput,
   onAskCopilot,
+  onSaveFormResponse,
 }: {
   client: ClientRecord;
   uiLanguage: SupportedLanguageCode;
@@ -340,34 +347,47 @@ function ClientDetailForm({
   isCopilotSending: boolean;
   onCopilotInput: (value: string) => void;
   onAskCopilot: (body?: string) => void;
+  onSaveFormResponse: (input: {
+    clientId: string;
+    schemaId: string;
+    answers: Record<string, unknown>;
+    submittedPhoneE164?: string;
+  }) => Promise<void>;
 }) {
-  const updateHealth = (patch: Partial<ClientRecord["healthProfile"]>) => {
-    onUpdateClient({ healthProfile: { ...client.healthProfile, ...patch } });
-  };
-  const updateDietPlan = (patch: Partial<ClientRecord["dietPlan"]>) => {
-    onUpdateClient({ dietPlan: { ...client.dietPlan, ...patch } });
-  };
-  const updateSafetyChecklist = (key: keyof SafetyChecklist, checked: boolean) => {
-    const safetyChecklist = {
-      ...normalizeSafetyChecklist(client.safetyChecklist),
-      [key]: checked,
-    };
-    onUpdateClient({
-      safetyChecklist,
-      mandatorySafetyComplete: isSafetyChecklistComplete({ ...client, safetyChecklist }),
-    });
-  };
-  const safetyChecklist = normalizeSafetyChecklist(client.safetyChecklist);
-
   const foodRuleConflictCount = foodRuleProfile?.conflicts?.length || 0;
   const menuConflictCount = menuPlans.reduce((sum, plan) => sum + (plan.conflicts?.length || 0), 0);
   const activeContextCount = contextUpdates.filter((u) => u.status === "active").length;
+  const aiControlSummary = summarizeAiAssistantControl(state, client);
+  const aiBlockerCount = countAiControlBlockers(state, client);
+  const activeFormSchema = getActiveFormSchema(state);
+  const activeFormResponse = activeFormSchema
+    ? state.clientFormResponses.find(
+        (item) => item.clientId === client.id && item.schemaId === activeFormSchema.id,
+      ) || null
+    : null;
+  const formAutopilotMissingCount = activeFormSchema
+    ? summarizeAutopilotFieldStatus(
+        activeFormSchema.fields,
+        buildInitialClientFormAnswers(client, activeFormResponse),
+      ).missing.length
+    : 0;
 
   const tabItems: Array<{ key: ClientDetailTab; labelKey: DashboardMessageKey; icon: typeof Activity; badge?: string }> = [
     { key: "tab_overview", labelKey: "tabOverview", icon: Activity },
-    { key: "tab_personal_form", labelKey: "tabPersonalForm", icon: FileText },
+    {
+      key: "tab_personal_form",
+      labelKey: "tabPersonalForm",
+      icon: FileText,
+      badge: formAutopilotMissingCount > 0 ? String(formAutopilotMissingCount) : undefined,
+    },
     { key: "tab_food_rules", labelKey: "tabFoodRules", icon: UtensilsCrossed, badge: foodRuleConflictCount > 0 ? String(foodRuleConflictCount) : undefined },
     { key: "tab_menu", labelKey: "tabMenu", icon: ClipboardList, badge: activeMenuPlanId ? undefined : "!" },
+    {
+      key: "tab_ai_assistant",
+      labelKey: "tabAiAssistant",
+      icon: Bot,
+      badge: aiBlockerCount > 0 ? String(aiBlockerCount) : undefined,
+    },
     { key: "tab_critical_context", labelKey: "tabCriticalContext", icon: PhoneCall, badge: activeContextCount > 0 ? String(activeContextCount) : undefined },
     { key: "tab_copilot", labelKey: "tabAiCopilot", icon: Database },
     { key: "tab_export", labelKey: "tabExport", icon: Download },
@@ -430,141 +450,30 @@ function ClientDetailForm({
       <div className="p-4">
         {activeTab === "tab_overview" && (
           <div className="grid gap-4 xl:grid-cols-2">
-            <fieldset className="rounded-lg border border-stone-200 p-4">
-              <legend className="px-1 text-sm font-semibold">AI control</legend>
-              <div className="mt-3 space-y-4">
-                <SegmentedControl
-                  label="AI status"
-                  value={client.aiStatus}
-                  options={[
-                    ["active", "Active"],
-                    ["passive", "Passive"],
-                  ]}
-                  onChange={(value) => onUpdateClient({ aiStatus: value as AiStatus })}
-                />
-                <SegmentedControl
-                  label="AI mode"
-                  value={client.aiMode}
-                  options={[
-                    ["autopilot", "Autopilot"],
-                    ["copilot", "Copilot"],
-                    ["manual", "Manual"],
-                    ["paused", "Paused"],
-                  ]}
-                  onChange={(value) => onUpdateClient({ aiMode: value as AiMode })}
-                />
-                <SelectInput
-                  label="Persona"
-                  value={client.selectedPersonaId}
-                  onChange={(value) => onUpdateClient({ selectedPersonaId: value })}
-                  options={personas.map((persona) => [persona.id, persona.label])}
-                />
-                <ToggleRow
-                  label="Dietitian takeover lock"
-                  checked={client.humanTakeoverLocked}
-                  onChange={(checked) => onUpdateClient({ humanTakeoverLocked: checked })}
-                />
-                <div className="grid gap-3 md:grid-cols-2">
-                  <DateTimeInput
-                    label="Active from"
-                    value={toDateTimeLocal(client.aiActiveFrom)}
-                    onChange={(value) => onUpdateClient({ aiActiveFrom: fromDateTimeLocal(value) })}
-                  />
-                  <DateTimeInput
-                    label="Active until"
-                    value={toDateTimeLocal(client.aiActiveUntil)}
-                    onChange={(value) => onUpdateClient({ aiActiveUntil: fromDateTimeLocal(value) })}
-                  />
-                </div>
-              </div>
-            </fieldset>
-            <div className="space-y-4">
-              <div className="rounded-lg border border-stone-200 p-4">
-                <div className="flex items-center justify-between gap-3">
-                  <p className="text-sm font-semibold text-stone-800">Güvenlik kontrol listesi</p>
-                  <Badge
-                    label={client.mandatorySafetyComplete ? "complete" : "incomplete"}
-                    tone={client.mandatorySafetyComplete ? "emerald" : "amber"}
-                  />
-                </div>
-                <div className="mt-3 grid gap-2">
-                  {(Object.keys(safetyChecklistLabels) as Array<keyof SafetyChecklist>).map((key) => (
-                    <ToggleRow
-                      key={key}
-                      label={safetyChecklistLabels[key]}
-                      checked={safetyChecklist[key]}
-                      onChange={(checked) => updateSafetyChecklist(key, checked)}
-                    />
-                  ))}
-                </div>
-              </div>
-              <ClientDetailStatusSummary
-                uiLanguage={uiLanguage}
-                foodRuleConflicts={foodRuleConflictCount}
-                menuConflicts={menuConflictCount}
-                hasActiveMenu={!!activeMenuPlanId}
-                activeContextCount={activeContextCount}
-                onNavigate={onTabChange}
-              />
-            </div>
+            <AiAssistantOverviewCard
+              client={client}
+              summary={aiControlSummary}
+              onOpen={() => onTabChange("tab_ai_assistant")}
+            />
+            <ClientDetailStatusSummary
+              uiLanguage={uiLanguage}
+              foodRuleConflicts={foodRuleConflictCount}
+              menuConflicts={menuConflictCount}
+              hasActiveMenu={!!activeMenuPlanId}
+              activeContextCount={activeContextCount}
+              aiBlockerCount={aiBlockerCount}
+              onNavigate={onTabChange}
+            />
           </div>
         )}
 
         {activeTab === "tab_personal_form" && (
-          <div className="space-y-4">
-            <fieldset className="rounded-lg border border-stone-200 p-4">
-              <legend className="px-1 text-sm font-semibold">Profile and channel</legend>
-              <div className="mt-3 grid gap-3 xl:grid-cols-2">
-                <TextInput label={t(uiLanguage, "fullName")} value={client.fullName} onChange={(value) => onUpdateClient({ fullName: value })} />
-                <TextInput
-                  label={t(uiLanguage, "primaryPhone")}
-                  value={client.primaryPhoneE164 || ""}
-                  onChange={(value) => onUpdateClient({ primaryPhoneE164: value })}
-                />
-                <SelectInput
-                  label={t(uiLanguage, "clientLanguage")}
-                  value={client.communicationLanguage}
-                  onChange={(value) => onUpdateClient({ communicationLanguage: value as SupportedLanguageCode })}
-                  options={languageOptions}
-                />
-                <SelectInput
-                  label="Channel permission"
-                  value={client.channelPermission}
-                  onChange={(value) => onUpdateClient({ channelPermission: value as ClientRecord["channelPermission"] })}
-                  options={[
-                    ["ready", "Ready"],
-                    ["pending", "Pending"],
-                    ["blocked", "Blocked"],
-                    ["opted_out", "Opted out"],
-                  ]}
-                />
-                <TextInput label="Goal" value={client.healthProfile.goal} onChange={(value) => updateHealth({ goal: value })} />
-                <TextareaInput
-                  label="Diet plan summary"
-                  value={client.dietPlan.summary}
-                  onChange={(value) => updateDietPlan({ summary: value })}
-                  rows={3}
-                />
-              </div>
-            </fieldset>
-            <div className="grid gap-4 xl:grid-cols-3">
-              <ArrayInput
-                label="Allergies"
-                value={client.allergies}
-                onChange={(value) => onUpdateClient({ allergies: splitLines(value) })}
-              />
-              <ArrayInput
-                label="Restricted foods"
-                value={client.restrictedFoods}
-                onChange={(value) => onUpdateClient({ restrictedFoods: splitLines(value) })}
-              />
-              <ArrayInput
-                label="Pinned notes"
-                value={client.pinnedNotes}
-                onChange={(value) => onUpdateClient({ pinnedNotes: splitLines(value) })}
-              />
-            </div>
-          </div>
+          <ClientFormPanel
+            client={client}
+            state={state}
+            uiLanguage={uiLanguage}
+            onSave={onSaveFormResponse}
+          />
         )}
 
         {activeTab === "tab_food_rules" && (
@@ -574,7 +483,7 @@ function ClientDetailForm({
                 {foodRuleProfile.conflicts.length > 0 && (
                   <ConflictSummaryBox conflicts={foodRuleProfile.conflicts.map((c) => c.message)} />
                 )}
-                <FoodRulesPanel
+                <ActiveNutritionPlanPanel
                   key={`${client.id}-${foodRuleProfile.revision}`}
                   clientName={client.fullName}
                   contextRevision={client.contextRevision}
@@ -596,9 +505,11 @@ function ClientDetailForm({
                 conflicts={menuPlans.flatMap((p) => (p.conflicts || []).map((c) => c.message))}
               />
             )}
-            <MenuPlanPanel
+            <MenuWorkflowPanel
               key={`${client.id}-menu-${activeMenuPlanId || "none"}-${menuPlans[0]?.revision || 0}`}
+              clientId={client.id}
               clientName={client.fullName}
+              uiLanguage={uiLanguage}
               plans={menuPlans}
               activePlanId={activeMenuPlanId}
               disabled={client.lifecycleStatus === "removed_anonymized"}
@@ -607,6 +518,16 @@ function ClientDetailForm({
               onActivate={onActivateMenuPlan}
             />
           </div>
+        )}
+
+        {activeTab === "tab_ai_assistant" && (
+          <AiAssistantControlPanel
+            client={client}
+            state={state}
+            uiLanguage={uiLanguage}
+            disabled={client.lifecycleStatus === "removed_anonymized"}
+            onUpdateClient={onUpdateClient}
+          />
         )}
 
         {activeTab === "tab_critical_context" && (
@@ -654,12 +575,61 @@ function ClientDetailForm({
   );
 }
 
+function AiAssistantOverviewCard({
+  client,
+  summary,
+  onOpen,
+}: {
+  client: ClientRecord;
+  summary: ReturnType<typeof summarizeAiAssistantControl>;
+  onOpen: () => void;
+}) {
+  const personaLabel = personas.find((persona) => persona.id === client.selectedPersonaId)?.label || client.selectedPersonaId;
+
+  return (
+    <div className="rounded-lg border border-stone-200 p-4" data-testid="ai-assistant-overview-card">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <div className="flex items-center gap-2">
+            <Bot size={16} className="text-stone-700" />
+            <p className="text-sm font-semibold text-stone-800">AI Asistan ozeti</p>
+          </div>
+          <p className="mt-2 text-sm text-stone-600">
+            {personaLabel} · {client.aiStatus} · {client.aiMode}
+          </p>
+        </div>
+        <Badge label={summary.activationLabel} tone={summary.activationTone} />
+      </div>
+      <div className="mt-3 flex flex-wrap gap-2">
+        <Badge
+          label={summary.safetyComplete ? "Guvenlik tamam" : "Guvenlik eksik"}
+          tone={summary.safetyComplete ? "emerald" : "amber"}
+        />
+        <Badge
+          label={summary.readiness.ready ? "Autopilot hazir" : "Autopilot eksik"}
+          tone={summary.readiness.ready ? "emerald" : summary.readiness.blocked ? "red" : "amber"}
+        />
+        {summary.blockerCount > 0 && <Badge label={`${summary.blockerCount} engel`} tone="red" />}
+      </div>
+      <button
+        type="button"
+        onClick={onOpen}
+        className="mt-4 inline-flex min-h-11 items-center justify-center rounded-lg border border-stone-200 bg-white px-4 py-2 text-sm font-semibold text-stone-800 transition hover:bg-stone-50"
+        data-testid="open-ai-assistant-control"
+      >
+        AI Asistan Kontrolu ac
+      </button>
+    </div>
+  );
+}
+
 function ClientDetailStatusSummary({
   uiLanguage,
   foodRuleConflicts,
   menuConflicts,
   hasActiveMenu,
   activeContextCount,
+  aiBlockerCount,
   onNavigate,
 }: {
   uiLanguage: SupportedLanguageCode;
@@ -667,12 +637,21 @@ function ClientDetailStatusSummary({
   menuConflicts: number;
   hasActiveMenu: boolean;
   activeContextCount: number;
+  aiBlockerCount: number;
   onNavigate: (tab: ClientDetailTab) => void;
 }) {
   return (
     <div className="rounded-lg border border-stone-200 p-4" data-testid="status-summary">
       <p className="text-sm font-semibold text-stone-800">Status</p>
       <div className="mt-3 space-y-2">
+        <button type="button" onClick={() => onNavigate("tab_ai_assistant")} className="flex min-h-11 w-full items-center justify-between gap-3 rounded-lg bg-stone-50 px-3 py-2 text-left text-sm transition hover:bg-stone-100">
+          <span className="text-stone-600">{t(uiLanguage, "tabAiAssistant")}</span>
+          {aiBlockerCount > 0 ? (
+            <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs font-bold text-red-800">{aiBlockerCount} engel</span>
+          ) : (
+            <span className="text-xs font-medium text-emerald-700">OK</span>
+          )}
+        </button>
         <button type="button" onClick={() => onNavigate("tab_food_rules")} className="flex min-h-11 w-full items-center justify-between gap-3 rounded-lg bg-stone-50 px-3 py-2 text-left text-sm transition hover:bg-stone-100">
           <span className="text-stone-600">{t(uiLanguage, "tabFoodRules")}</span>
           {foodRuleConflicts > 0 ? (

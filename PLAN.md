@@ -11,9 +11,21 @@ The product must be both:
 
 The current implementation is an architecture/core package, not yet the full SaaS app.
 
-## Latest Phase 85 Stage 4A Client Control Panel Architecture Plan
+## Latest Phase 85 Roadmap Restructure
 
-On 2026-07-08, Phase 85 Stage 4A added `docs/PHASE_85_STAGE_4A_CLIENT_CONTROL_PANEL_ARCHITECTURE_PLAN.md` after code-level review of the dashboard client panel, Phase 77C client form, Phase 77D/77E catalog and food-rule profile, Phase 77F/77J menu/export flow, and AI activation/preflight contracts. The client control panel is now planned as four large user-approved implementation phases: DCP-1 full client form editor, DCP-2 active nutrition plan/catalog rules, DCP-3 four-format menu workflow/export, and DCP-4 AI assistant control. This is documentation/spec only; no runtime code, API, auth, entitlement, billing, provider/channel, PWA, or production path changed. Production pilot remains `NO-GO`; R-405 remains open; R-406 current local Supabase/RLS re-run remains pending.
+On 2026-07-08, Phase 85 was restructured into this explicit stage ladder: Stage 1 design system foundation, Stage 2 full component system, Stage 3 public/commercial entry surfaces, Stage 4A Danisan Kontrol Paneli Mimari ve Hizmet Akisi Plani, Stage 4B Uyari ve Bildirimler, Stage 4C Diyetisyen Icin AI Chat, Stage 4D Ayarlar / Hesap, Stage 5 Dashboard and Mobile PWA Shell, Stage 6 Dashboard Core Workflows, and Stage 7 Visual QA/Polish/Accessibility/Closure. Stages 1-3 and Stage 4A are complete. Stage 4B is the next planning target; Stage 4B and later stages must be planned and implemented one by one with explicit user approval. Production pilot remains `NO-GO`; R-405 remains open; R-406 current local Supabase/RLS re-run remains pending.
+
+## Latest Phase 85 Stage 4A Client Control Panel
+
+On 2026-07-08, Phase 85 Stage 4A DCP-4 implemented the **AI Asistan Kontrolu** panel with persona, status/mode, activation window, safety checklist, autopilot readiness gate, lock status, and preflight blockers. Added `ai-assistant-control-panel.tsx` and `ai-assistant-control-panel-helpers.ts`; updated `clients-panel.tsx`. Verification: lint 0 errors (3 pre-existing warnings), helper tests 4/4, full app suite 734 passed / 4 skipped, build passed, Playwright visual 36/36. Stage 4A client control panel (DCP-1..4) is complete. Production pilot remains `NO-GO`; R-405 remains open; R-406 current local Supabase/RLS re-run remains pending.
+
+On 2026-07-08, Phase 85 Stage 4A DCP-3 implemented the **Menu** workflow panel with four template picker cards, Turkish template labels/descriptions, plan status badges, conflict display, activation hard-block on severe conflicts, and integrated MANU-only DOCX/PDF export when eligible. Added `menu-workflow-panel.tsx`, `menu-workflow-export-section.tsx`, and `menu-workflow-panel-helpers.ts`; upgraded `menu-plan-panel.tsx`. Verification: lint 0 errors (3 pre-existing warnings), helper tests 4/4, full app suite 730 passed / 4 skipped, build passed, Playwright visual 36/36. Next approved sub-phase is DCP-4 AI assistant control. Production pilot remains `NO-GO`; R-405 remains open; R-406 current local Supabase/RLS re-run remains pending.
+
+On 2026-07-08, Phase 85 Stage 4A DCP-2 implemented the **Aktif Beslenme Plani** workspace with Phase 77D catalog tree browsing, quick search, conflict review, and existing food-rule profile save path. Added `catalog-tree-browser.tsx`, `active-nutrition-plan-panel.tsx`, and `active-nutrition-plan-helpers.ts`; upgraded `food-rules-panel.tsx`. Verification: lint 0 errors (3 pre-existing warnings), helper tests 5/5, full app suite 726 passed / 4 skipped, build passed, Playwright visual 36/36. Production pilot remains `NO-GO`; R-405 remains open; R-406 current local Supabase/RLS re-run remains pending.
+
+On 2026-07-08, Phase 85 Stage 4A DCP-1 implemented the full Phase 77C client form editor inside the client control panel.
+
+On 2026-07-08, Phase 85 Stage 4A added `docs/PHASE_85_STAGE_4A_CLIENT_CONTROL_PANEL_ARCHITECTURE_PLAN.md` after code-level review of the dashboard client panel, Phase 77C client form, Phase 77D/77E catalog and food-rule profile, Phase 77F/77J menu/export flow, and AI activation/preflight contracts. The client control panel is planned as four large user-approved implementation phases: DCP-1 full client form editor, DCP-2 active nutrition plan/catalog rules, DCP-3 four-format menu workflow/export, and DCP-4 AI assistant control.
 
 ## Latest Phase 85A Frontend Redesign Scope Lock
 
@@ -25,7 +37,7 @@ On 2026-07-07, Phase 85B implemented the approved foundation without full page r
 
 ## Latest Phase 85 Stage 2 Shared Component System
 
-On 2026-07-07, Phase 85 Stage 2 implemented the shared UI component foundation: `plum`, `sage`, and `warm` tones are available; legacy `emerald`/`amber` primitive calls map to the new accents; form, card, tabs, segmented-control, table, dialog, sheet, app-shell, alert, empty-state, and loading primitives now follow the approved palette. Public/commercial page redesign, dashboard/PWA shell redesign, dashboard workflow redesign, and final visual QA remain pending for user-approved Stages 3-6. Production pilot remains `NO-GO`; R-405 remains open; R-406 current post-83/84 local Supabase/RLS re-run remains pending.
+On 2026-07-07, Phase 85 Stage 2 implemented the shared UI component foundation: `plum`, `sage`, and `warm` tones are available; legacy `emerald`/`amber` primitive calls map to the new accents; form, card, tabs, segmented-control, table, dialog, sheet, app-shell, alert, empty-state, and loading primitives now follow the approved palette. Public/commercial page redesign was completed in Stage 3, Stage 4A is complete, and the remaining frontend roadmap now continues with Stage 4B, Stage 4C, Stage 4D, Stage 5, Stage 6, and Stage 7. Production pilot remains `NO-GO`; R-405 remains open; R-406 current post-83/84 local Supabase/RLS re-run remains pending.
 
 ## Latest Phase 85 Stage 3 Public/Commercial Integration
 

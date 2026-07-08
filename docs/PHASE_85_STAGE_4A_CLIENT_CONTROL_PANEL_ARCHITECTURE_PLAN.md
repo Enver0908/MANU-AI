@@ -1,7 +1,7 @@
 # Phase 85 Stage 4A: Client Control Panel Architecture Plan
 
 Date: 2026-07-08
-Status: Planning/spec complete; implementation pending explicit user approval.
+Status: DCP-1, DCP-2, DCP-3, and DCP-4 implemented (2026-07-08). Stage 4A client control panel complete.
 Production pilot: NO-GO.
 Clinical production GO: not in scope.
 Deployment: none.
@@ -17,7 +17,24 @@ The panel must make four client-scoped workflows first-class:
 3. Menu.
 4. AI assistant control.
 
-Each workflow is treated as a large implementation phase. No implementation starts until the user approves the relevant phase plan.
+Each workflow was treated as a large implementation phase inside Stage 4A. DCP-1 through DCP-4 are complete.
+
+## Phase 85 Roadmap Position
+
+Stage 4A is one part of the restructured Phase 85 dashboard roadmap:
+
+1. Stage 1 - Design system foundation: complete.
+2. Stage 2 - Full component system: complete.
+3. Stage 3 - Public/commercial entry surfaces: complete and deployed to the hosted sandbox.
+4. Stage 4A - Danisan Kontrol Paneli Mimari ve Hizmet Akisi Plani: complete.
+5. Stage 4B - Uyari ve Bildirimler: next planning target; not yet action-planned.
+6. Stage 4C - Diyetisyen Icin AI Chat: pending until Stage 4B closes.
+7. Stage 4D - Ayarlar / Hesap: pending until Stage 4C closes.
+8. Stage 5 - Dashboard and Mobile PWA Shell: pending until Stage 4D closes.
+9. Stage 6 - Dashboard Core Workflows: pending until Stage 5 closes.
+10. Stage 7 - Visual QA, Polish, Accessibility, and Closure: pending until Stage 6 closes.
+
+Stage 4B and later stages must be planned and implemented one by one with explicit user approval.
 
 ## Non-Negotiable Boundaries
 
@@ -164,7 +181,18 @@ Supporting information such as critical context, export, and scoped copilot can 
 
 ### DCP-1: Client Form Panel
 
+Status: **Implemented 2026-07-08.**
+
 Goal: replace the partial personal-form editor with a full active-schema response editor inside the client control panel.
+
+Delivered:
+
+- `app/src/components/dashboard/client-form-panel.tsx` renders the active Phase 77C schema section-by-section inside the client `tab_personal_form` workspace.
+- `app/src/lib/client-form-panel-helpers.ts` groups sections, maps prompt-access cues, tracks autopilot-required missing fields, and normalizes save payloads.
+- `app/src/components/dashboard/clients-panel.tsx` replaces the partial profile/channel editor with the full schema editor and shows autopilot missing counts on the tab badge.
+- Save uses the existing `POST /api/clients/forms` path via dashboard `saveFormResponse`, preserving client sync, food-rule bridge sync, context revision updates, and draft invalidation.
+
+Verification (2026-07-08): `npm run lint` 0 errors (3 pre-existing warnings), targeted helper tests 5/5, full app suite 117 files passed, `npm run build` passed, Playwright visual 36/36, `git diff --check` clean. No hosted deploy. Production pilot remains `NO-GO`; R-405 open; R-406 current local Supabase/RLS re-run pending.
 
 Expected files:
 
@@ -175,7 +203,19 @@ Expected files:
 
 ### DCP-2: Active Nutrition Plan Panel
 
+Status: **Implemented 2026-07-08.**
+
 Goal: upgrade food rules into a dense active nutrition plan workspace with main/subcategory/food checkbox selection.
+
+Delivered:
+
+- `app/src/components/food-rules-panel.tsx` rebranded and upgraded as **Aktif Beslenme Plani** with selection summary, conflict review, and save hard-block on `food_allowed_and_forbidden` / `group_allowed_and_forbidden`.
+- `app/src/components/dashboard/catalog-tree-browser.tsx` adds dense main/sub/food Izinli/Yasak toggles across the Phase 77D catalog.
+- `app/src/lib/active-nutrition-plan-helpers.ts` normalizes hierarchical catalog selection, inheritance resolution, tree filtering, and hard-conflict detection helpers.
+- `app/src/components/dashboard/active-nutrition-plan-panel.tsx` wires the upgraded panel into the client control panel tab.
+- Save continues through `/api/clients/[id]/food-rule-profile` with existing revision and capability rules; Food Decision Engine V2 unchanged.
+
+Verification (2026-07-08): `npm run lint` 0 errors (3 pre-existing warnings), targeted helper tests 5/5, full app suite 726 passed / 4 skipped, `npm run build` passed, Playwright visual 36/36, `git diff --check` clean. No hosted deploy. Production pilot remains `NO-GO`; R-405 open; R-406 current local Supabase/RLS re-run pending.
 
 Expected files:
 
@@ -186,7 +226,19 @@ Expected files:
 
 ### DCP-3: Menu Workflow Panel
 
+Status: **Implemented 2026-07-08.**
+
 Goal: polish menu creation/edit/activation/export around the four existing template types.
+
+Delivered:
+
+- `app/src/components/menu-plan-panel.tsx` rebranded as the **Menu** workflow panel with four template picker cards, Turkish template labels/descriptions, plan status badges (Taslak/Aktif/Arsiv), conflict display, and activation hard-block on `menu_item_forbidden_food` / `menu_item_forbidden_category` / `menu_item_forbidden_group`.
+- `app/src/lib/menu-workflow-panel-helpers.ts` adds template/status labels, export eligibility, hard-conflict detection, and workflow summary helpers.
+- `app/src/components/dashboard/menu-workflow-export-section.tsx` integrates MANU-only DOCX/PDF export via `/api/clients/[id]/menu-plans/export` when the active plan is eligible (`exportVisible` + active status).
+- `app/src/components/dashboard/menu-workflow-panel.tsx` wires the upgraded panel into the client control panel tab.
+- Create/save/activate continue through existing menu plan routes; legacy `client.dietPlan.summary` lock and food-rule conflict checks on activation are unchanged.
+
+Verification (2026-07-08): `npm run lint` 0 errors (3 pre-existing warnings), targeted helper tests 4/4, full app suite 730 passed / 4 skipped, `npm run build` passed, Playwright visual 36/36, `git diff --check` clean. No hosted deploy. Production pilot remains `NO-GO`; R-405 open; R-406 current local Supabase/RLS re-run pending.
 
 Expected files:
 
@@ -197,7 +249,18 @@ Expected files:
 
 ### DCP-4: AI Assistant Control Panel
 
+Status: **Implemented 2026-07-08.**
+
 Goal: create a dedicated safe activation console for per-client AI behavior.
+
+Delivered:
+
+- `app/src/components/dashboard/ai-assistant-control-panel.tsx` adds the **AI Asistan Kontrolu** workspace with persona, status/mode, activation window, safety checklist, autopilot readiness gate, lock status, and preflight blockers in one panel.
+- `app/src/lib/ai-assistant-control-panel-helpers.ts` summarizes activation window state, autopilot qualification, inbound preflight blockers, channel rollback blocks, and red/yellow lock visibility using existing core/simulator contracts.
+- `app/src/components/dashboard/clients-panel.tsx` adds `tab_ai_assistant`, moves AI controls out of overview into the dedicated tab, and keeps a compact AI summary card on overview with navigation into the control panel.
+- Patch/save continues through existing `PATCH /api/clients/[id]` / dashboard `onUpdateClient`; red-risk reactivation restrictions, draft invalidation, and preflight semantics unchanged.
+
+Verification (2026-07-08): `npm run lint` 0 errors (3 pre-existing warnings), targeted helper tests 4/4, full app suite 734 passed / 4 skipped, `npm run build` passed, Playwright visual 36/36, `git diff --check` clean. No hosted deploy. Production pilot remains `NO-GO`; R-405 open; R-406 current local Supabase/RLS re-run pending.
 
 Expected files:
 
@@ -229,6 +292,6 @@ If a hosted sandbox deploy happens:
 
 - The client control panel scope is documented from actual code, not only handoff docs.
 - The four required product modules are mapped to current domain models, APIs, and safety rules.
-- Implementation is split into user-approved sub-phases.
-- No runtime code changes are made in Stage 4A.
+- Implementation is split into user-approved sub-phases; DCP-1 through DCP-4 are complete; Stage 4A client control panel is closed.
+- DCP-1/DCP-2/DCP-3/DCP-4 changed dashboard client-form, active-nutrition, menu workflow, and AI assistant control UI only; backend form/food-rule/menu/AI patch contracts and clinical safety paths are unchanged.
 - Production pilot remains `NO-GO`; R-405 remains open; R-406 remains pending when local Supabase is unavailable.

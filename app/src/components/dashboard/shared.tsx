@@ -42,6 +42,7 @@ export type ClientDetailTab =
   | "tab_personal_form"
   | "tab_food_rules"
   | "tab_menu"
+  | "tab_ai_assistant"
   | "tab_critical_context"
   | "tab_copilot"
   | "tab_export";

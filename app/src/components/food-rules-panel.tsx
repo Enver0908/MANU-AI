@@ -2,10 +2,13 @@
 
 import { AlertTriangle, Check, Plus, Search, X } from "lucide-react";
 import { useMemo, useState } from "react";
+import {
+  hasHardFoodRuleConflicts,
+  summarizeCatalogSelections,
+} from "@/lib/active-nutrition-plan-helpers";
 import { FOOD_RULE_DASHBOARD_WARNINGS } from "@/lib/phase-76j-food-rule-dashboard";
 import {
   getPhase77DFoodById,
-  PHASE_77D_MASTER_FOOD_CATALOG,
 } from "@/lib/phase-77d-master-food-catalog";
 import {
   detectClientFoodRuleProfileConflicts,
@@ -18,6 +21,7 @@ import {
   type ClientFoodRuleProfileV2State,
 } from "@/lib/phase-77e-client-food-rule-profile";
 import type { Phase77EFlexibilityLevel } from "@/lib/types";
+import { CatalogTreeBrowser } from "@/components/dashboard/catalog-tree-browser";
 
 type FoodRulesPanelProps = {
   clientName: string;
@@ -62,6 +66,8 @@ export function FoodRulesPanel({
 
   const catalogMatches = useMemo(() => searchPhase77DCatalogFoods(catalogQuery, 12), [catalogQuery]);
   const conflicts = useMemo(() => detectClientFoodRuleProfileConflicts(profile), [profile]);
+  const catalogSummary = useMemo(() => summarizeCatalogSelections(profile), [profile]);
+  const saveBlocked = hasHardFoodRuleConflicts(conflicts);
 
   const update = (patch: Partial<ClientFoodRuleProfileV2State>) => {
     setProfile((current) => ({ ...current, ...patch }));
@@ -112,7 +118,7 @@ export function FoodRulesPanel({
   };
 
   const save = async () => {
-    if (disabled || isSaving) return;
+    if (disabled || isSaving || saveBlocked) return;
     setIsSaving(true);
     try {
       const { conflicts, ...payload } = profile;
@@ -124,61 +130,78 @@ export function FoodRulesPanel({
   };
 
   return (
-    <section className="rounded-lg border border-emerald-200 bg-emerald-50/40 p-4" data-testid="food-rules-panel">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h4 className="text-lg font-semibold text-stone-950">Food rule profile</h4>
-          <p className="mt-1 text-sm text-stone-600">
-            {clientName} · revision {profile.revision} · context {contextRevision}
-          </p>
+    <section className="space-y-4" data-testid="active-nutrition-plan-panel">
+      <div className="rounded-lg border border-stone-200 bg-stone-50 p-4">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h4 className="text-sm font-semibold text-stone-900">Aktif Beslenme Plani</h4>
+            <p className="mt-1 text-sm text-stone-600">
+              {clientName} · revizyon {profile.revision} · baglam {contextRevision}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={save}
+            disabled={disabled || isSaving || saveBlocked}
+            className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-emerald-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-900 disabled:cursor-not-allowed disabled:opacity-60"
+            data-testid="active-nutrition-plan-save"
+          >
+            <Check size={16} />
+            {isSaving ? "Kaydediliyor..." : "Plani kaydet"}
+          </button>
         </div>
-        <button
-          type="button"
-          onClick={save}
-          disabled={disabled || isSaving}
-          className="inline-flex items-center gap-2 rounded-lg bg-emerald-950 px-3 py-2 text-sm font-semibold text-white transition hover:bg-emerald-900 disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          <Check size={16} />
-          {isSaving ? "Saving..." : "Save food rules"}
-        </button>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <SummaryBadge label={`Izinli besin ${catalogSummary.allowedFoods}`} tone="allowed" />
+          <SummaryBadge label={`Yasak besin ${catalogSummary.forbiddenFoods}`} tone="forbidden" />
+          <SummaryBadge label={`Izinli alt kat. ${catalogSummary.allowedSubs}`} tone="allowed" />
+          <SummaryBadge label={`Yasak alt kat. ${catalogSummary.forbiddenSubs}`} tone="forbidden" />
+          <SummaryBadge label={`Katalog ${catalogSummary.totalFoods} besin`} tone="neutral" />
+        </div>
+        <p className="mt-3 text-sm leading-6 text-stone-600">
+          Ana kategori, alt kategori ve besin duzeyinde izinli/yasak secimleri yapin. Hizli erisim icin arama kullanin.
+        </p>
       </div>
 
-      <div className="mt-4 space-y-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-950">
+      <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-950">
         <p className="inline-flex items-start gap-2">
           <AlertTriangle size={16} className="mt-0.5 shrink-0" />
           {FOOD_RULE_DASHBOARD_WARNINGS.clinicalReview}
         </p>
-        <p className="text-xs text-amber-900">
-          Phase 76J engine fields stay bridged in the background. Edit allowed/forbidden foods, groups, and flexibility here.
-        </p>
       </div>
 
       {conflicts.length > 0 ? (
-        <div className="mt-4 space-y-2 rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-950">
+        <div className="space-y-2 rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-950">
           {conflicts.map((conflict) => (
             <p key={`${conflict.code}-${conflict.message}`} className="inline-flex items-start gap-2">
               <AlertTriangle size={16} className="mt-0.5 shrink-0" />
               {conflict.message}
             </p>
           ))}
+          {saveBlocked ? (
+            <p className="text-xs font-semibold uppercase tracking-wide text-rose-900">
+              Sert celiski cozulmeden kayit yapilamaz.
+            </p>
+          ) : null}
         </div>
       ) : null}
 
-      <div className="mt-4 rounded-lg border border-stone-200 bg-white p-3">
-        <label className="block text-sm font-semibold text-stone-900">Catalog search</label>
-        <div className="mt-2 flex items-center gap-2 rounded-lg border border-stone-200 px-3 py-2">
+      <div className="rounded-lg border border-stone-200 bg-white p-4">
+        <label className="block text-sm font-semibold text-stone-900">Katalog arama</label>
+        <div className="mt-2 flex min-h-11 items-center gap-2 rounded-lg border border-stone-200 px-3 py-2">
           <Search size={16} className="text-stone-400" />
           <input
             value={catalogQuery}
             onChange={(event) => setCatalogQuery(event.target.value)}
-            placeholder="Search master catalog foods"
+            placeholder="518 besin icinde ara"
             className="min-w-0 flex-1 bg-transparent text-sm outline-none"
+            data-testid="catalog-search-input"
           />
         </div>
-        {catalogMatches.length > 0 ? (
-          <div className="mt-3 space-y-2">
+        {catalogQuery.trim() && catalogMatches.length > 0 ? (
+          <div className="mt-3 space-y-2 rounded-lg border border-stone-100 bg-stone-50 p-3">
+            <p className="text-xs font-semibold uppercase tracking-wide text-stone-500">Hizli sonuclar</p>
             {catalogMatches.map((match) => (
-              <div key={match.id} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-stone-100 px-3 py-2">
+              <div key={match.id} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-stone-200 bg-white px-3 py-2">
                 <div className="min-w-0">
                   <p className="text-sm font-medium text-stone-900">{match.name}</p>
                   <p className="text-xs text-stone-500">{match.path}</p>
@@ -187,24 +210,30 @@ export function FoodRulesPanel({
                   <button
                     type="button"
                     onClick={() => addCatalogFood(match.id, "allowed")}
-                    className="rounded-lg border border-emerald-200 px-2 py-1 text-xs font-semibold text-emerald-900"
+                    className="min-h-11 rounded-lg border border-emerald-200 px-2 py-1 text-xs font-semibold text-emerald-900"
                   >
-                    Allow
+                    Izinli
                   </button>
                   <button
                     type="button"
                     onClick={() => addCatalogFood(match.id, "forbidden")}
-                    className="rounded-lg border border-rose-200 px-2 py-1 text-xs font-semibold text-rose-900"
+                    className="min-h-11 rounded-lg border border-rose-200 px-2 py-1 text-xs font-semibold text-rose-900"
                   >
-                    Forbid
+                    Yasak
                   </button>
                 </div>
               </div>
             ))}
           </div>
-        ) : catalogQuery.trim() ? (
-          <p className="mt-2 text-xs text-stone-500">No catalog matches.</p>
         ) : null}
+        <div className="mt-4 max-h-[560px] overflow-auto">
+          <CatalogTreeBrowser
+            profile={profile}
+            query={catalogQuery}
+            disabled={disabled}
+            onChange={(patch) => update(patch)}
+          />
+        </div>
       </div>
 
       <div className="mt-4 grid gap-4 xl:grid-cols-2">
@@ -278,7 +307,7 @@ export function FoodRulesPanel({
       />
 
       <FlexibilityGrid
-        title="Flexibility by goal"
+        title="Hedef bazli esneklik"
         keys={PHASE_77E_GOAL_KEYS}
         labels={GOAL_LABELS}
         values={profile.flexibilityByGoal}
@@ -288,42 +317,32 @@ export function FoodRulesPanel({
             flexibilityByGoal: { ...profile.flexibilityByGoal, [key]: value },
           })
         }
-        className="mt-4"
       />
 
-      <details className="mt-4 rounded-lg border border-stone-200 bg-white p-3">
-        <summary className="cursor-pointer text-sm font-semibold text-stone-900">Forbidden catalog categories</summary>
-        <div className="mt-3 max-h-80 space-y-2 overflow-auto">
-          {PHASE_77D_MASTER_FOOD_CATALOG.categories.map((category) => (
-            <label key={category.id} className="flex items-center gap-2 text-sm text-stone-700">
-              <input
-                type="checkbox"
-                checked={profile.forbiddenCatalogMainCategoryIds.includes(category.id)}
-                onChange={() => {
-                  const current = profile.forbiddenCatalogMainCategoryIds;
-                  update({
-                    forbiddenCatalogMainCategoryIds: current.includes(category.id)
-                      ? current.filter((item) => item !== category.id)
-                      : [...current, category.id],
-                  });
-                }}
-                className="h-4 w-4 rounded border-stone-300 text-emerald-900"
-              />
-              <span>{category.name}</span>
-            </label>
-          ))}
-        </div>
-      </details>
-
       <TextareaField
-        label="Dietitian notes"
+        label="Diyetisyen notlari"
         value={profile.notes}
         onChange={(value) => update({ notes: value })}
         rows={3}
-        className="mt-4"
       />
     </section>
   );
+}
+
+function SummaryBadge({
+  label,
+  tone,
+}: {
+  label: string;
+  tone: "allowed" | "forbidden" | "neutral";
+}) {
+  const classes =
+    tone === "allowed"
+      ? "border-emerald-200 bg-emerald-50 text-emerald-900"
+      : tone === "forbidden"
+        ? "border-red-200 bg-red-50 text-red-900"
+        : "border-stone-200 bg-white text-stone-700";
+  return <span className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold ${classes}`}>{label}</span>;
 }
 
 function CatalogSelectionList({
