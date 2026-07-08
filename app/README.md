@@ -1,5 +1,9 @@
 # MANU-AI Local App Prototype
 
+## Phase 85 Stage 4A Client Control Panel Architecture Plan
+
+2026-07-08: Added `../docs/PHASE_85_STAGE_4A_CLIENT_CONTROL_PANEL_ARCHITECTURE_PLAN.md` after inspecting the existing dashboard client panel, active form schema/response path, food-rule profile/catalog path, menu-plan/export path, and AI activation/preflight path. The next client dashboard work is split into four approved-before-implementation phases: full client form editor, active nutrition plan/catalog rules, menu workflow/export, and AI assistant control. No runtime app code changed in Stage 4A. Production pilot remains `NO-GO`.
+
 ## Phase 85A Frontend Redesign Scope Lock
 
 2026-07-07: Created `../docs/PHASE_85_FRONTEND_REDESIGN_AND_DESIGN_SYSTEM_SPEC.md` as the canonical SiriusAI redesign spec. Direction is warm clinical SaaS with the user-provided redesign palette: very light broken-white paper `#FBFAF8`, ink `#111116`, purple primary `#612E82`, sage `#578F6B`, warm accent `#D79800`, Fraunces display, Geist Sans UI, editorial public surfaces, compact dashboard/PWA, restrained borders, and no reuse of the previous visual style as a design reference. Phase 85 Stages 1-3 are now implemented for foundation, shared components, and public/commercial entry surfaces. Production pilot remains `NO-GO`.

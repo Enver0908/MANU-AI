@@ -11,6 +11,10 @@ The product must be both:
 
 The current implementation is an architecture/core package, not yet the full SaaS app.
 
+## Latest Phase 85 Stage 4A Client Control Panel Architecture Plan
+
+On 2026-07-08, Phase 85 Stage 4A added `docs/PHASE_85_STAGE_4A_CLIENT_CONTROL_PANEL_ARCHITECTURE_PLAN.md` after code-level review of the dashboard client panel, Phase 77C client form, Phase 77D/77E catalog and food-rule profile, Phase 77F/77J menu/export flow, and AI activation/preflight contracts. The client control panel is now planned as four large user-approved implementation phases: DCP-1 full client form editor, DCP-2 active nutrition plan/catalog rules, DCP-3 four-format menu workflow/export, and DCP-4 AI assistant control. This is documentation/spec only; no runtime code, API, auth, entitlement, billing, provider/channel, PWA, or production path changed. Production pilot remains `NO-GO`; R-405 remains open; R-406 current local Supabase/RLS re-run remains pending.
+
 ## Latest Phase 85A Frontend Redesign Scope Lock
 
 On 2026-07-07, Phase 85A created the canonical SiriusAI frontend redesign and design-system spec in `docs/PHASE_85_FRONTEND_REDESIGN_AND_DESIGN_SYSTEM_SPEC.md`. The user-approved direction is warm clinical SaaS: keep `SiriusAI`, rebuild the design system first, then the public website/onboarding surfaces, then the dashboard/PWA. Locked design decisions: editorial off-black + plum + sage + warm accent palette, Fraunces display headings, Geist Sans UI text, editorial/spacious public surfaces, compact/scannable dashboard surfaces, 6-8px control radius, restrained borders/shadows, no nested card-heavy UI, no abstract AI/gradient-orb direction, and no reuse of the previous visual style as a reference. Documentation-only; no runtime frontend code changed. Production pilot remains `NO-GO`; R-405 remains open; R-406 current post-83/84 local Supabase/RLS re-run remains pending.

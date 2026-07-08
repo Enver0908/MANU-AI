@@ -20,6 +20,8 @@ Phase 85 Stage 2 shared component system on 2026-07-07 aligned shared UI primiti
 
 Phase 85 Stage 3 public/commercial integration on 2026-07-07 implemented the invite-led public website and commercial entry redesign plan in `docs/PHASE_85_STAGE_3_PUBLIC_COMMERCIAL_ENTRY_ACTION_PLAN.md`, corrected the runtime palette to the user's broken-white + purple design system, and deployed release `phase85-stage3-redesign-20260707225306` to the hosted sandbox at `https://siriusai.store`. This frontend/commercial-entry sandbox phase does not approve production pilot, close launch gates, resolve R-405/R-406, or connect real provider/channel/monitoring/backup/secret-manager/real health-data paths.
 
+Phase 85 Stage 4A client control panel architecture planning on 2026-07-08 created `docs/PHASE_85_STAGE_4A_CLIENT_CONTROL_PANEL_ARCHITECTURE_PLAN.md` after code-level review of client form, active nutrition plan, menu/export, and AI assistant control contracts. This documentation/spec phase does not approve production pilot, close launch gates, resolve R-405/R-406, or connect real provider/channel/monitoring/backup/secret-manager/real health-data paths.
+
 Phase 84B public website on 2026-07-02 rebuilt the SiriusAI marketing homepage. The original R-425 gap is superseded by Phase 84D-84J hosted sandbox verification.
 
 Phase 84A architecture freeze on 2026-07-02 documented the SiriusAI commercial relaunch spec. Documentation-only; production pilot remains `NO-GO`.

@@ -1,7 +1,7 @@
 # Phase 85: SiriusAI Frontend Redesign And Design System Spec
 
 Date: 2026-07-07
-Status: Stage 1 design foundation, Stage 2 shared component system, and Stage 3 public/commercial entry integration complete; Stage 3 is deployed to the hosted sandbox at `https://siriusai.store`. Dashboard/PWA shell, workflow redesign, and final visual QA remain pending.
+Status: Stage 1 design foundation, Stage 2 shared component system, and Stage 3 public/commercial entry integration complete; Stage 3 is deployed to the hosted sandbox at `https://siriusai.store`. Stage 4A client control panel architecture planning is complete in `docs/PHASE_85_STAGE_4A_CLIENT_CONTROL_PANEL_ARCHITECTURE_PLAN.md`; implementation remains pending explicit user approval.
 Production pilot: NO-GO.
 Clinical production GO: not in scope for Phase 85.
 R-405: Open unless technically remediated through the Phase 22 procedure or formally accepted by external engineering/security approval.
@@ -23,6 +23,19 @@ The user-approved implementation order is now compressed into six larger stages:
 6. Visual QA, polish, accessibility, and closure.
 
 Phase 85 must proceed by explicit user approval at each major design decision and implementation sub-phase.
+
+## Stage 4A Client Control Panel Architecture Planning
+
+Stage 4A was added on 2026-07-08 after code-level review of the existing client-control foundations. The user prioritized the per-client service surface before broad dashboard shell/workflow polish. The canonical Stage 4A plan is `docs/PHASE_85_STAGE_4A_CLIENT_CONTROL_PANEL_ARCHITECTURE_PLAN.md`.
+
+Stage 4A locks four implementation sub-phases, each requiring separate user approval before code changes:
+
+1. DCP-1 full client form editor, using the active Phase 77C schema/response path.
+2. DCP-2 active nutrition plan, using Client Food Rule Profile V2 and the 12/113/518 master catalog.
+3. DCP-3 menu workflow/export, using the four Menu Plan V1 template types and existing MANU-only export route.
+4. DCP-4 AI assistant control, using persona, active/passive, mode, schedule, safety checklist, takeover, preflight, and risk-lock semantics.
+
+Stage 4A is planning/spec only. It does not alter runtime behavior, APIs, auth, entitlement, PWA install, billing, provider/channel paths, launch gates, R-405, R-406, or production pilot status.
 
 ## Scope Lock
 

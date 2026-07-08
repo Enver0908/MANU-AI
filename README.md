@@ -4,6 +4,8 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 ## Current Status
 
+**2026-07-08 Phase 85 Stage 4A client control panel architecture plan:** Added `docs/PHASE_85_STAGE_4A_CLIENT_CONTROL_PANEL_ARCHITECTURE_PLAN.md` after code-level review of the existing client form, food-rule profile, menu-plan/export, and AI activation/preflight contracts. The next dashboard work is now split into four user-approved client-control phases: full client form editor, active nutrition plan/catalog rules, four-format menu workflow/export, and AI assistant control. This is planning/spec work only; no runtime code, API, auth, billing, provider, PWA, or production path changed. Production pilot remains `NO-GO`.
+
 **2026-07-07 Phase 85 frontend redesign scope lock:** Created `docs/PHASE_85_FRONTEND_REDESIGN_AND_DESIGN_SYSTEM_SPEC.md` for a full SiriusAI design-system, public website, and dashboard/PWA redesign. User-approved direction: warm clinical SaaS, user-provided redesign palette, Fraunces + Geist Sans typography, editorial public website, compact professional dashboard/PWA, and no reliance on the previous visual style. Phase 85 Stages 1-3 are now implemented for foundation, shared components, and public/commercial entry surfaces. Production pilot remains `NO-GO`.
 
 **2026-07-07 Phase 85B design tokens and font foundation:** Added Fraunces display font, Phase 85 CSS/Tailwind color tokens, semantic primary foundation, and focused design-system token tests. Public/commercial pages were later completed in Stage 3; dashboard and PWA shell redesign remain pending. Production pilot remains `NO-GO`.
@@ -24,7 +26,7 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 This repository is a local SaaS/PWA pilot prototype and architecture workspace. It is not a production-connected system yet.
 
-**Latest implementation phase:** Phase 85 Stage 3 public/commercial entry integration is complete and deployed to the hosted sandbox on top of Phase 85 Stage 1-2 foundations and Phase 84J hosted sandbox onboarding/email verification. Phase 83 and Phase 84 remain closed locally for their commercial/frontend tracks. RLS current re-run remains pending until local Supabase executes without skips. **Next work:** proceed to Phase 85 Stage 4 dashboard/mobile PWA shell planning only after user approval, while external production prerequisites remain open. **Production pilot:** `NO-GO` (unchanged).
+**Latest implementation phase:** Phase 85 Stage 4A client control panel architecture planning is complete as a documentation/spec phase on top of Phase 85 Stage 1-3 foundations and Phase 84J hosted sandbox onboarding/email verification. Phase 83 and Phase 84 remain closed locally for their commercial/frontend tracks. RLS current re-run remains pending until local Supabase executes without skips. **Next work:** request user approval for the first implementation sub-phase, DCP-1 full client form panel. **Production pilot:** `NO-GO` (unchanged).
 
 **Phase 82 verification:** targeted Phase 82 tests passed (5 files, 31/31); Phase 82G records `repoLocalClosureComplete: true` with verification `blocked` because `npm run test:rls` remains skipped/pending when local Supabase is unavailable.
 

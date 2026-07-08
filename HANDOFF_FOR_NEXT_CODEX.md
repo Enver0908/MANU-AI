@@ -16,6 +16,8 @@ Latest Phase 85 Stage 2 status (2026-07-07): shared UI component system foundati
 
 Latest Phase 85 Stage 3 implementation/deploy status (2026-07-07): the public/commercial entry action plan is implemented from `docs/PHASE_85_STAGE_3_PUBLIC_COMMERCIAL_ENTRY_ACTION_PLAN.md` and the user-provided `public-website-redesign.zip` visual direction. The corrected user palette is live: very light broken-white paper `oklch(0.985 0.003 85)`, purple primary `oklch(0.41 0.14 310)`, and purple hover `oklch(0.37 0.14 310)`. The core model remains invite-led access, not open self-serve signup: contact request -> team/admin review -> admin invite code -> approved email + invite code -> sandbox checkout -> magic-link -> onboarding claim -> dashboard/PWA. Locked navbar: `SiriusAI | Nasil calisir | Guvenlik | Mobil | Iletisim | Giris yap | Davet koduyla basla`. Stage 3 redesigned `/`, `/login`, `/purchase`, `/purchase/success`, `/purchase/cancel`, `/onboarding`, `/app-install`, `/admin`, and `/commercial-admin/emergency` without changing backend API contracts, auth, entitlement, onboarding, sandbox billing, production pilot `NO-GO`, R-405, or current RLS status. Hosted sandbox deploy: release `phase85-stage3-redesign-20260707225306` is live through PM2/Nginx at `https://siriusai.store`; `/`, `/login`, `/purchase`, `/purchase/success`, `/app-install`, and `https://admin.siriusai.store` returned 200. Do not copy the zip's mock API routes.
 
+Latest Phase 85 Stage 4A planning status (2026-07-08): `docs/PHASE_85_STAGE_4A_CLIENT_CONTROL_PANEL_ARCHITECTURE_PLAN.md` is created. The user redirected dashboard priority to the per-client service surface before broad shell/workflow polish. Code review confirmed the four client-control modules and their existing contracts: Phase 77C client form responses, Phase 77D/77E catalog and food-rule profile, Phase 77F/77J menu plan/export, and AI persona/status/mode/preflight/safety controls. No runtime code changed. Next step is to ask for explicit approval before implementing DCP-1 full client form panel. Production pilot remains `NO-GO`; R-405 remains open; R-406 current local Supabase/RLS re-run remains pending.
+
 Workspace:
 
 ```text
@@ -42,8 +44,9 @@ Start by reading:
 6t. `docs/PHASE_82_FINAL_EXTERNAL_READINESS_CLOSURE_SPEC.md` (Phase 82A-82G complete as fail-closed final external readiness closure; baseline `NO_GO_EXTERNAL_PREREQUISITES_OPEN`; Phase 82G verification `blocked` with `repoLocalClosureComplete: true`)
 6u. `docs/PHASE_83_COMMERCIAL_PWA_AND_FRONTEND_RELAUNCH_SPEC.md` (Phase 83A-83H plus final remediation complete locally; **Phase 83 track closed**; production pilot remains `NO-GO`)
 6v. `docs/PHASE_84_COMMERCIAL_SAAS_RELAUNCH_AND_ONBOARDING_SPEC.md` (Phase 84A-84J complete for hosted commercial sandbox: SiriusAI public relaunch, contact leads, magic-link login, onboarding claim, admin subdomain, custom SMTP)
-6w. `docs/PHASE_85_FRONTEND_REDESIGN_AND_DESIGN_SYSTEM_SPEC.md` (Phase 85 Stages 1-3 complete; next work is Stage 4 dashboard/mobile PWA shell planning after user approval)
+6w. `docs/PHASE_85_FRONTEND_REDESIGN_AND_DESIGN_SYSTEM_SPEC.md` (Phase 85 Stages 1-3 complete; Stage 4A client control panel planning added)
 6x. `docs/PHASE_85_STAGE_3_PUBLIC_COMMERCIAL_ENTRY_ACTION_PLAN.md` (implemented Stage 3 invite-led public website and commercial entry surfaces)
+6y. `docs/PHASE_85_STAGE_4A_CLIENT_CONTROL_PANEL_ARCHITECTURE_PLAN.md` (new client control panel architecture plan; implementation pending user approval)
 6i. `docs/PHASE_77Y_CONTINUITY_EVIDENCE_AND_LAUNCH_GATE_UPDATE_SPEC.md`
 6j. `docs/PHASE_77J_DOCX_PDF_EXPORT_AND_DATA_LIFECYCLE_V1_2_SPEC.md`
 6a. `docs/PHASE_77I_SIMPLIFIED_DIETITIAN_UX_SPEC.md`
