@@ -56,7 +56,7 @@ Start by reading:
 6v. `docs/PHASE_84_COMMERCIAL_SAAS_RELAUNCH_AND_ONBOARDING_SPEC.md` (Phase 84A-84J complete for hosted commercial sandbox: SiriusAI public relaunch, contact leads, magic-link login, onboarding claim, admin subdomain, custom SMTP)
 6w. `docs/PHASE_85_FRONTEND_REDESIGN_AND_DESIGN_SYSTEM_SPEC.md` (Phase 85 Stages 1-3 and Stage 4A complete; next is Stage 4B Uyari ve Bildirimler planning)
 6x. `docs/PHASE_85_STAGE_3_PUBLIC_COMMERCIAL_ENTRY_ACTION_PLAN.md` (implemented Stage 3 invite-led public website and commercial entry surfaces)
-6y. `docs/PHASE_85_STAGE_4A_DANISAN_KONTROL_PANELI_MIMARI_VE_HIZMET_AKISI_PLANI.md` (new Danisan Kontrol Paneli Mimari ve Hizmet Akisi Plani; implementation pending user approval)
+6y. `docs/PHASE_85_STAGE_4A_DANISAN_KONTROL_PANELI_MIMARI_VE_HIZMET_AKISI_PLANI.md` (canonical Danisan Kontrol Paneli Mimari ve Hizmet Akisi Plani; Stage 4A.1-4A.4 implemented and Stage 4A closed)
 6i. `docs/PHASE_77Y_CONTINUITY_EVIDENCE_AND_LAUNCH_GATE_UPDATE_SPEC.md`
 6j. `docs/PHASE_77J_DOCX_PDF_EXPORT_AND_DATA_LIFECYCLE_V1_2_SPEC.md`
 6a. `docs/PHASE_77I_SIMPLIFIED_DIETITIAN_UX_SPEC.md`

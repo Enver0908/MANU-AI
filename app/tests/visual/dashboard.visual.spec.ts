@@ -30,6 +30,12 @@ test("dashboard core views render in fallback mode", async ({ page }) => {
   await page.getByRole("button", { name: "Danışanlar" }).click();
   await expect(page.getByRole("heading", { name: "Mert Kaya" })).toBeVisible();
   await expect(page.getByText("AI Asistan ozeti")).toBeVisible();
+  await page.getByTestId("tab-tab_personal_form").click();
+  await expect(page.getByTestId("client-form-panel")).toBeVisible();
+  await page.getByTestId("tab-tab_food_rules").click();
+  await expect(page.getByTestId("active-nutrition-plan-panel")).toBeVisible();
+  await page.getByTestId("tab-tab_menu").click();
+  await expect(page.getByTestId("menu-workflow-panel")).toBeVisible();
   await page.getByTestId("tab-tab_ai_assistant").click();
   await expect(page.getByText("Guvenlik kontrol listesi")).toBeVisible();
 
