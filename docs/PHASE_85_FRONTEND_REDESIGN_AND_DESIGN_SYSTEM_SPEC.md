@@ -1,7 +1,7 @@
 # Phase 85: SiriusAI Frontend Redesign And Design System Spec
 
 Date: 2026-07-07
-Status: Stage 1 design foundation, Stage 2 shared component system, Stage 3 public/commercial entry integration, and Stage 4A client control panel complete; Stage 3 is deployed to the hosted sandbox at `https://siriusai.store`. Next work is Stage 4B alerts and notifications planning with explicit user approval.
+Status: Stage 1 design foundation, Stage 2 shared component system, Stage 3 public/commercial entry integration, and Stage 4A Danisan Kontrol Paneli complete; Stage 3 is deployed to the hosted sandbox at `https://siriusai.store`. Next work is Stage 4B Uyari ve Bildirimler planning with explicit user approval.
 Production pilot: NO-GO.
 Clinical production GO: not in scope for Phase 85.
 R-405: Open unless technically remediated through the Phase 22 procedure or formally accepted by external engineering/security approval.
@@ -30,16 +30,16 @@ Phase 85 must proceed by explicit user approval at each major design decision an
 
 ## Stage 4A - Danisan Kontrol Paneli Mimari ve Hizmet Akisi Plani
 
-Stage 4A was added on 2026-07-08 after code-level review of the existing client-control foundations. The user prioritized the per-client service surface before broad dashboard shell/workflow polish. The canonical Stage 4A plan is `docs/PHASE_85_STAGE_4A_CLIENT_CONTROL_PANEL_ARCHITECTURE_PLAN.md`.
+Stage 4A was added on 2026-07-08 after code-level review of the existing danisan kontrol paneli foundations. The user prioritized the per-client service surface before broad dashboard shell/workflow polish. The canonical Stage 4A plan is `docs/PHASE_85_STAGE_4A_DANISAN_KONTROL_PANELI_MIMARI_VE_HIZMET_AKISI_PLANI.md`.
 
 Stage 4A locks four implementation sub-phases; all are **implemented 2026-07-08**:
 
-1. DCP-1 full client form editor, using the active Phase 77C schema/response path.
-2. DCP-2 active nutrition plan/catalog tree workspace, using Client Food Rule Profile V2 and the 12/113/518 master catalog.
-3. DCP-3 menu workflow/export, using the four Menu Plan V1 template types and existing MANU-only export route.
-4. DCP-4 AI assistant control, using persona, active/passive, mode, schedule, safety checklist, takeover, preflight, and risk-lock semantics.
+1. Stage 4A.1 Danisan Formu Paneli, using the active Phase 77C schema/response path.
+2. Stage 4A.2 Aktif Beslenme Plani, using Client Food Rule Profile V2 and the 12/113/518 master catalog.
+3. Stage 4A.3 Menu, using the four Menu Plan V1 template types and existing MANU-only export route.
+4. Stage 4A.4 AI Asistan Kontrolu, using persona, active/passive, mode, schedule, safety checklist, takeover, preflight, and risk-lock semantics.
 
-Stage 4A changed dashboard client-control UI only. It does not alter backend APIs, auth, entitlement, PWA install, billing, provider/channel paths, launch gates, R-405, R-406, or production pilot status.
+Stage 4A changed dashboard danisan kontrol paneli UI only. It does not alter backend APIs, auth, entitlement, PWA install, billing, provider/channel paths, launch gates, R-405, R-406, or production pilot status.
 
 ## Stage 4B - Uyari ve Bildirimler
 
@@ -361,4 +361,4 @@ Phase 85 can close only when:
 
 ## Current Next Step
 
-Proceed to Stage 4B alerts and notifications planning only after explicit user approval. Stage 4C, Stage 4D, Stage 5, Stage 6, and Stage 7 remain unplanned until each prior stage is closed.
+Proceed to Stage 4B Uyari ve Bildirimler planning only after explicit user approval. Stage 4C, Stage 4D, Stage 5, Stage 6, and Stage 7 remain unplanned until each prior stage is closed.

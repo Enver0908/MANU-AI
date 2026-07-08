@@ -18,15 +18,15 @@ Latest Phase 85 Stage 3 implementation/deploy status (2026-07-07): the public/co
 
 Latest Phase 85 roadmap restructure status (2026-07-08): Phase 85 is now Stage 1 design system foundation, Stage 2 full component system, Stage 3 public/commercial entry surfaces, Stage 4A Danisan Kontrol Paneli Mimari ve Hizmet Akisi Plani, Stage 4B Uyari ve Bildirimler, Stage 4C Diyetisyen Icin AI Chat, Stage 4D Ayarlar / Hesap, Stage 5 Dashboard and Mobile PWA Shell, Stage 6 Dashboard Core Workflows, and Stage 7 Visual QA/Polish/Accessibility/Closure. Stages 1-3 and 4A are complete. Stage 4B is next and has not been action-planned yet; plan it with the user before implementation.
 
-Latest Phase 85 Stage 4A DCP-4 status (2026-07-08): DCP-4 AI assistant control panel is implemented. AI controls moved out of overview into dedicated **AI Asistan Kontrolu** tab with persona, status/mode, activation window, safety checklist, autopilot readiness gate, lock status, and preflight blockers. Added `ai-assistant-control-panel.tsx` and `ai-assistant-control-panel-helpers.ts`; updated `clients-panel.tsx` and visual smoke for the new tab. Save still uses existing `PATCH /api/clients/[id]` path. Verification: lint 0 errors (3 pre-existing warnings), helper tests 4/4, full app suite 734 passed / 4 skipped, build passed, Playwright visual 36/36, `git diff --check` clean. Stage 4A client control panel (DCP-1..4) is complete. Production pilot remains `NO-GO`; R-405 remains open; R-406 current local Supabase/RLS re-run remains pending.
+Latest Phase 85 Stage 4A.4 status (2026-07-08): Stage 4A.4 AI Asistan Kontrolu panel is implemented. AI controls moved out of overview into dedicated **AI Asistan Kontrolu** tab with persona, status/mode, activation window, safety checklist, autopilot readiness gate, lock status, and preflight blockers. Added `ai-assistant-control-panel.tsx` and `ai-assistant-control-panel-helpers.ts`; updated `clients-panel.tsx` and visual smoke for the new tab. Save still uses existing `PATCH /api/clients/[id]` path. Verification: lint 0 errors (3 pre-existing warnings), helper tests 4/4, full app suite 734 passed / 4 skipped, build passed, Playwright visual 36/36, `git diff --check` clean. Stage 4A Danisan Kontrol Paneli (Stage 4A.1-4A.4) is complete. Production pilot remains `NO-GO`; R-405 remains open; R-406 current local Supabase/RLS re-run remains pending.
 
-Latest Phase 85 Stage 4A DCP-3 status (2026-07-08): DCP-3 menu workflow panel is implemented. The client menu tab is now a first-class **Menu** workflow with four template picker cards, Turkish template labels/descriptions, plan status badges (Taslak/Aktif/Arsiv), conflict display, activation hard-block on severe menu/food-rule conflicts, and integrated MANU-only DOCX/PDF export when the active plan is eligible (`exportVisible`). Added `menu-workflow-panel.tsx`, `menu-workflow-export-section.tsx`, and `menu-workflow-panel-helpers.ts`; upgraded `menu-plan-panel.tsx`. Create/save/activate still use existing menu plan routes; export uses `/api/clients/[id]/menu-plans/export`. Verification: lint 0 errors (3 pre-existing warnings), helper tests 4/4, full app suite 730 passed / 4 skipped, build passed, Playwright visual 36/36, `git diff --check` clean. Next step is to request explicit user approval before implementing DCP-4 AI assistant control panel. Production pilot remains `NO-GO`; R-405 remains open; R-406 current local Supabase/RLS re-run remains pending.
+Latest Phase 85 Stage 4A.3 status (2026-07-08): Stage 4A.3 Menu Paneli is implemented. The client menu tab is now a first-class **Menu** workflow with four template picker cards, Turkish template labels/descriptions, plan status badges (Taslak/Aktif/Arsiv), conflict display, activation hard-block on severe menu/food-rule conflicts, and integrated MANU-only DOCX/PDF export when the active plan is eligible (`exportVisible`). Added `menu-workflow-panel.tsx`, `menu-workflow-export-section.tsx`, and `menu-workflow-panel-helpers.ts`; upgraded `menu-plan-panel.tsx`. Create/save/activate still use existing menu plan routes; export uses `/api/clients/[id]/menu-plans/export`. Verification: lint 0 errors (3 pre-existing warnings), helper tests 4/4, full app suite 730 passed / 4 skipped, build passed, Playwright visual 36/36, `git diff --check` clean. Next step is to request explicit user approval before implementing Stage 4A.4 AI Asistan Kontrolu panel. Production pilot remains `NO-GO`; R-405 remains open; R-406 current local Supabase/RLS re-run remains pending.
 
-Latest Phase 85 Stage 4A DCP-2 status (2026-07-08): DCP-2 active nutrition plan panel is implemented. The client food-rules tab is now **Aktif Beslenme Plani** with a dense Phase 77D catalog tree (main/sub/food Izinli/Yasak toggles), quick search, selection summary, conflict review, and save hard-block on severe conflicts. Added `catalog-tree-browser.tsx`, `active-nutrition-plan-panel.tsx`, and `active-nutrition-plan-helpers.ts`; upgraded `food-rules-panel.tsx`. Save still uses `/api/clients/[id]/food-rule-profile`. Verification: lint 0 errors (3 pre-existing warnings), helper tests 5/5, full app suite 726 passed / 4 skipped, build passed, Playwright visual 36/36. Production pilot remains `NO-GO`; R-405 remains open; R-406 current local Supabase/RLS re-run remains pending.
+Latest Phase 85 Stage 4A.2 status (2026-07-08): Stage 4A.2 Aktif Beslenme Plani Paneli is implemented. The client food-rules tab is now **Aktif Beslenme Plani** with a dense Phase 77D catalog tree (main/sub/food Izinli/Yasak toggles), quick search, selection summary, conflict review, and save hard-block on severe conflicts. Added `catalog-tree-browser.tsx`, `active-nutrition-plan-panel.tsx`, and `active-nutrition-plan-helpers.ts`; upgraded `food-rules-panel.tsx`. Save still uses `/api/clients/[id]/food-rule-profile`. Verification: lint 0 errors (3 pre-existing warnings), helper tests 5/5, full app suite 726 passed / 4 skipped, build passed, Playwright visual 36/36. Production pilot remains `NO-GO`; R-405 remains open; R-406 current local Supabase/RLS re-run remains pending.
 
-Latest Phase 85 Stage 4A DCP-1 status (2026-07-08): DCP-1 full client form panel is implemented. The client `tab_personal_form` workspace now renders the active Phase 77C schema section-by-section with prompt-access cues, autopilot-required missing status, and save through the existing `POST /api/clients/forms` path. Added `app/src/components/dashboard/client-form-panel.tsx` and `app/src/lib/client-form-panel-helpers.ts`; updated `clients-panel.tsx` and `dashboard-app.tsx`. Verification: lint 0 errors (3 pre-existing warnings), targeted helper tests 5/5, full app suite passed, build passed, Playwright visual 36/36, `git diff --check` clean. Production pilot remains `NO-GO`; R-405 remains open; R-406 current local Supabase/RLS re-run remains pending.
+Latest Phase 85 Stage 4A.1 status (2026-07-08): Stage 4A.1 Danisan Formu Paneli is implemented. The client `tab_personal_form` workspace now renders the active Phase 77C schema section-by-section with prompt-access cues, autopilot-required missing status, and save through the existing `POST /api/clients/forms` path. Added `app/src/components/dashboard/client-form-panel.tsx` and `app/src/lib/client-form-panel-helpers.ts`; updated `clients-panel.tsx` and `dashboard-app.tsx`. Verification: lint 0 errors (3 pre-existing warnings), targeted helper tests 5/5, full app suite passed, build passed, Playwright visual 36/36, `git diff --check` clean. Production pilot remains `NO-GO`; R-405 remains open; R-406 current local Supabase/RLS re-run remains pending.
 
-Latest Phase 85 Stage 4A planning status (2026-07-08): `docs/PHASE_85_STAGE_4A_CLIENT_CONTROL_PANEL_ARCHITECTURE_PLAN.md` is created. The user redirected dashboard priority to the per-client service surface before broad shell/workflow polish. Code review confirmed the four client-control modules and their existing contracts: Phase 77C client form responses, Phase 77D/77E catalog and food-rule profile, Phase 77F/77J menu plan/export, and AI persona/status/mode/preflight/safety controls. DCP-1 implementation followed. Next step is DCP-2 after user approval. Production pilot remains `NO-GO`; R-405 remains open; R-406 current local Supabase/RLS re-run remains pending.
+Latest Phase 85 Stage 4A planning status (2026-07-08): `docs/PHASE_85_STAGE_4A_DANISAN_KONTROL_PANELI_MIMARI_VE_HIZMET_AKISI_PLANI.md` is created. The user redirected dashboard priority to the per-client service surface before broad dashboard shell/workflow polish. Code review confirmed the four Stage 4A modules and their existing contracts: Phase 77C client form responses, Phase 77D/77E catalog and food-rule profile, Phase 77F/77J menu plan/export, and AI persona/status/mode/preflight/safety controls. Stage 4A.1 through Stage 4A.4 are complete. Next step is Stage 4B Uyari ve Bildirimler planning. Production pilot remains `NO-GO`; R-405 remains open; R-406 current local Supabase/RLS re-run remains pending.
 
 Workspace:
 
@@ -54,9 +54,9 @@ Start by reading:
 6t. `docs/PHASE_82_FINAL_EXTERNAL_READINESS_CLOSURE_SPEC.md` (Phase 82A-82G complete as fail-closed final external readiness closure; baseline `NO_GO_EXTERNAL_PREREQUISITES_OPEN`; Phase 82G verification `blocked` with `repoLocalClosureComplete: true`)
 6u. `docs/PHASE_83_COMMERCIAL_PWA_AND_FRONTEND_RELAUNCH_SPEC.md` (Phase 83A-83H plus final remediation complete locally; **Phase 83 track closed**; production pilot remains `NO-GO`)
 6v. `docs/PHASE_84_COMMERCIAL_SAAS_RELAUNCH_AND_ONBOARDING_SPEC.md` (Phase 84A-84J complete for hosted commercial sandbox: SiriusAI public relaunch, contact leads, magic-link login, onboarding claim, admin subdomain, custom SMTP)
-6w. `docs/PHASE_85_FRONTEND_REDESIGN_AND_DESIGN_SYSTEM_SPEC.md` (Phase 85 Stages 1-3 and Stage 4A complete; next is Stage 4B alerts/notifications planning)
+6w. `docs/PHASE_85_FRONTEND_REDESIGN_AND_DESIGN_SYSTEM_SPEC.md` (Phase 85 Stages 1-3 and Stage 4A complete; next is Stage 4B Uyari ve Bildirimler planning)
 6x. `docs/PHASE_85_STAGE_3_PUBLIC_COMMERCIAL_ENTRY_ACTION_PLAN.md` (implemented Stage 3 invite-led public website and commercial entry surfaces)
-6y. `docs/PHASE_85_STAGE_4A_CLIENT_CONTROL_PANEL_ARCHITECTURE_PLAN.md` (new client control panel architecture plan; implementation pending user approval)
+6y. `docs/PHASE_85_STAGE_4A_DANISAN_KONTROL_PANELI_MIMARI_VE_HIZMET_AKISI_PLANI.md` (new Danisan Kontrol Paneli Mimari ve Hizmet Akisi Plani; implementation pending user approval)
 6i. `docs/PHASE_77Y_CONTINUITY_EVIDENCE_AND_LAUNCH_GATE_UPDATE_SPEC.md`
 6j. `docs/PHASE_77J_DOCX_PDF_EXPORT_AND_DATA_LIFECYCLE_V1_2_SPEC.md`
 6a. `docs/PHASE_77I_SIMPLIFIED_DIETITIAN_UX_SPEC.md`
@@ -701,9 +701,9 @@ app                      # SaaS prototype: persistence, simulator, scope retriev
 
 Inbound clinical safety uses three independent evaluation layers (escalate-only merge; never downgrade red/yellow to green):
 
-1. **Regex/deterministic classifier** (`safety-classifier.js`) — unchanged first axis.
-2. **Clinical safety second layer** (`clinical-safety-second-layer.js`) — context-sensitive yellow evidence with Phase 76G source-backed food-rule carve-outs (`clinical-safety-second-layer-v0.2.0`).
-3. **Scope guard** (`scope-guard.js` in core; retrieval/evaluator in app) — dietetic-regulation corpus match (`scope-rag-v0.1.0`); inactive when corpus is empty or unapproved.
+1. **Regex/deterministic classifier** (`safety-classifier.js`)  -  unchanged first axis.
+2. **Clinical safety second layer** (`clinical-safety-second-layer.js`)  -  context-sensitive yellow evidence with Phase 76G source-backed food-rule carve-outs (`clinical-safety-second-layer-v0.2.0`).
+3. **Scope guard** (`scope-guard.js` in core; retrieval/evaluator in app)  -  dietetic-regulation corpus match (`scope-rag-v0.1.0`); inactive when corpus is empty or unapproved.
 
 Combined classifier version when scope guard participates: `dietetic-risk-v0.3.1+clinical-safety-second-layer-v0.2.0+scope-rag-v0.1.0`.
 
@@ -972,20 +972,20 @@ When you make changes, update:
 
 The user's last request was to close the current chat and continue in a new chat without losing context. This handoff file exists for that purpose.
 
-## Phase 2 Handoff Notes — 2026-05-25
+## Phase 2 Handoff Notes  -  2026-05-25
 
 Completed by: Antigravity (temporary session while Codex was offline)
 
 ### What Was Done
 
 - **Confirmed** `proxy.ts` is native Next.js 16 middleware. `middleware.ts` is not needed and Next.js 16 errors if both exist. Build output confirms `ƒ Proxy (Middleware)`.
-- **Created** `/api/auth-state` endpoint (`app/src/app/api/auth-state/route.ts`) — returns JSON describing user auth/membership/profile state: `authenticated`, `no_membership`, `no_dietitian_profile`, `unauthenticated`, or `fallback_demo`.
-- **Created** `app/src/components/auth-states.tsx` — `NoMembershipState`, `NoDietitianProfileState`, and `MembershipBadge` UI components.
-- **Replaced** `app/src/app/dashboard/page.tsx` — now has server-side auth resolution. Renders controlled error states for missing membership or missing dietitian profile. Redirects to `/` if unauthenticated. Falls back to `DashboardApp` directly in fallback mode.
-- **Updated** `app/src/lib/use-manu-state.ts` — captures 401/403 auth errors from API calls into `authError` state. Exposes `authError` to consumers.
-- **Updated** `app/src/components/dashboard-app.tsx` — accepts `authInfo` prop, shows `MembershipBadge` in header, handles `authError` with session error UI and sign-in redirect link.
-- **Created** `app/src/lib/auth-context.test.ts` — 6 unit tests for AppAuthError and authErrorResponse.
-- **Created** `docs/PHASE_2_AUTH_ONBOARDING_SHELL_SPEC.md` — full spec for Phase 2.
+- **Created** `/api/auth-state` endpoint (`app/src/app/api/auth-state/route.ts`)  -  returns JSON describing user auth/membership/profile state: `authenticated`, `no_membership`, `no_dietitian_profile`, `unauthenticated`, or `fallback_demo`.
+- **Created** `app/src/components/auth-states.tsx`  -  `NoMembershipState`, `NoDietitianProfileState`, and `MembershipBadge` UI components.
+- **Replaced** `app/src/app/dashboard/page.tsx`  -  now has server-side auth resolution. Renders controlled error states for missing membership or missing dietitian profile. Redirects to `/` if unauthenticated. Falls back to `DashboardApp` directly in fallback mode.
+- **Updated** `app/src/lib/use-manu-state.ts`  -  captures 401/403 auth errors from API calls into `authError` state. Exposes `authError` to consumers.
+- **Updated** `app/src/components/dashboard-app.tsx`  -  accepts `authInfo` prop, shows `MembershipBadge` in header, handles `authError` with session error UI and sign-in redirect link.
+- **Created** `app/src/lib/auth-context.test.ts`  -  6 unit tests for AppAuthError and authErrorResponse.
+- **Created** `docs/PHASE_2_AUTH_ONBOARDING_SHELL_SPEC.md`  -  full spec for Phase 2.
 
 ### Files Changed
 
@@ -1003,7 +1003,7 @@ Completed by: Antigravity (temporary session while Codex was offline)
 | MODIFIED | `HANDOFF_FOR_NEXT_CODEX.md` |
 | MODIFIED | `app/README.md` |
 
-### Verification Commands — All Passed
+### Verification Commands  -  All Passed
 
 ```
 dietitian-ai-assistant: npm test → 23/23 ✓
@@ -1027,15 +1027,15 @@ app: npm run test:visual → 3/3 ✓ (desktop/tablet/mobile)
 
 - R-005 (no VCS) remains open.
 - R-405 (dependency audit) remains open.
-- No real OAuth/SSO — only demo auth exists.
+- No real OAuth/SSO  -  only demo auth exists.
 - No multi-tenant switching UI.
 - No production signup/registration flow.
 
 ### Next Correct Step For Codex
 
-Phase 4: Handoff Notification Architecture — see `docs/NEXT_PHASE_EXECUTION_PLAN.md`. Focus on making urgent handoffs operationally visible without sending external notifications yet.
+Phase 4: Handoff Notification Architecture  -  see `docs/NEXT_PHASE_EXECUTION_PLAN.md`. Focus on making urgent handoffs operationally visible without sending external notifications yet.
 
-## Phase 3 Handoff Notes — 2026-05-25
+## Phase 3 Handoff Notes  -  2026-05-25
 
 Completed by: Antigravity (temporary session while Codex was offline)
 
@@ -1063,7 +1063,7 @@ Completed by: Antigravity (temporary session while Codex was offline)
 | MODIFIED | `HANDOFF_FOR_NEXT_CODEX.md` |
 | MODIFIED | `app/README.md` |
 
-### Verification Commands — All Passed
+### Verification Commands  -  All Passed
 
 ```
 dietitian-ai-assistant: npm test → 23/23 ✓
@@ -1084,7 +1084,7 @@ app: npm run test:visual → 3/3 ✓
 
 ### Next Correct Step For Codex
 
-Phase 6: Clinical Governance And Evaluation — see `docs/NEXT_PHASE_EXECUTION_PLAN.md`.
+Phase 6: Clinical Governance And Evaluation  -  see `docs/NEXT_PHASE_EXECUTION_PLAN.md`.
 
 ## Phase 5 Handoff Notes - 2026-05-25
 
@@ -1184,7 +1184,7 @@ app: npm run build -> passed
 
 Do not connect production providers or channels yet. The next work should address launch gates: qualified dietitian clinical approval, provider/legal review, real WhatsApp/Telegram policy review, operational ownership, and R-405 clearance.
 
-## Phase 4 Handoff Notes — 2026-05-25
+## Phase 4 Handoff Notes  -  2026-05-25
 
 Completed by: Antigravity (temporary session while Codex was offline)
 
@@ -1218,7 +1218,7 @@ Completed by: Antigravity (temporary session while Codex was offline)
 | MODIFIED | `HANDOFF_FOR_NEXT_CODEX.md` |
 | MODIFIED | `app/README.md` |
 
-### Verification Commands — All Passed
+### Verification Commands  -  All Passed
 
 ```
 dietitian-ai-assistant: npm test → 23/23 ✓
@@ -1237,7 +1237,7 @@ app: npm run test:visual → 3/3 ✓
 
 ### Next Correct Step For Codex
 
-Phase 6: Clinical Governance And Evaluation — see `docs/NEXT_PHASE_EXECUTION_PLAN.md`.
+Phase 6: Clinical Governance And Evaluation  -  see `docs/NEXT_PHASE_EXECUTION_PLAN.md`.
  
 ## Phase 6 Handoff Notes - 2026-05-25
 

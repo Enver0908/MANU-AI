@@ -1,23 +1,23 @@
-# Phase 85 Stage 4A: Client Control Panel Architecture Plan
+# Phase 85 Stage 4A: Danisan Kontrol Paneli Mimari ve Hizmet Akisi Plani
 
 Date: 2026-07-08
-Status: DCP-1, DCP-2, DCP-3, and DCP-4 implemented (2026-07-08). Stage 4A client control panel complete.
+Status: Stage 4A.1, Stage 4A.2, Stage 4A.3, and Stage 4A.4 implemented (2026-07-08). Stage 4A Danisan Kontrol Paneli complete.
 Production pilot: NO-GO.
 Clinical production GO: not in scope.
 Deployment: none.
 
 ## Purpose
 
-Stage 4A defines the code-grounded architecture and execution plan for the dietitian-facing client control panel. The priority is not a cosmetic dashboard pass; it is the quality of the actual service given to the dietitian for each client.
+Stage 4A defines the code-grounded architecture and execution plan for the dietitian-facing danisan kontrol paneli. The priority is not a cosmetic dashboard pass; it is the quality of the actual service given to the dietitian for each client.
 
 The panel must make four client-scoped workflows first-class:
 
-1. Client form.
-2. Active nutrition plan.
+1. Danisan formu.
+2. Aktif beslenme plani.
 3. Menu.
-4. AI assistant control.
+4. AI asistan kontrolu.
 
-Each workflow was treated as a large implementation phase inside Stage 4A. DCP-1 through DCP-4 are complete.
+Each workflow was treated as a large implementation phase inside Stage 4A. Stage 4A.1 through Stage 4A.4 are complete.
 
 ## Phase 85 Roadmap Position
 
@@ -51,7 +51,7 @@ Stage 4B and later stages must be planned and implemented one by one with explic
 
 ## Code-Grounded Findings
 
-### 1. Client Form
+### 1. Danisan Formu
 
 Current system:
 
@@ -63,14 +63,14 @@ Current system:
 
 Required product direction:
 
-- Move the real Phase 77C client form into the client control panel.
+- Move the real Phase 77C client form into the danisan kontrol paneli.
 - Render the active published schema section-by-section.
 - Load the latest response for the selected client and let the dietitian edit it.
 - Preserve prompt-visible vs dietitian-only semantics.
 - Show autopilot-required fields and missing status.
 - Save through the existing form response route so client sync, food-rule bridge sync, context revision updates, and draft invalidation remain intact.
 
-### 2. Active Nutrition Plan
+### 2. Aktif Beslenme Plani
 
 Current system:
 
@@ -82,7 +82,7 @@ Current system:
 
 Required product direction:
 
-- Upgrade this into an "Aktif Beslenme Plani" workspace inside the client control panel.
+- Upgrade this into an "Aktif Beslenme Plani" workspace inside the danisan kontrol paneli.
 - Provide a dense catalog browser with main category, subcategory, and food-level checkbox selection.
 - Keep search for fast access to hundreds of foods.
 - Make allowed vs forbidden selections explicit and fast to scan.
@@ -114,7 +114,7 @@ Required product direction:
 - Preserve export eligibility: active plan plus `exportVisible`.
 - Preserve app-internal export only; no public/mock download path.
 
-### 4. AI Assistant Control
+### 4. AI Asistan Kontrolu
 
 Current system:
 
@@ -177,13 +177,13 @@ Primary modules:
 
 Supporting information such as critical context, export, and scoped copilot can remain available, but the four service-critical modules must become the main organizing structure.
 
-## Implementation Phases Pending Approval
+## Stage 4A Implementation Modules
 
-### DCP-1: Client Form Panel
+### Stage 4A.1: Danisan Formu Paneli
 
 Status: **Implemented 2026-07-08.**
 
-Goal: replace the partial personal-form editor with a full active-schema response editor inside the client control panel.
+Goal: replace the partial personal-form editor with a full active-schema response editor inside the danisan kontrol paneli.
 
 Delivered:
 
@@ -201,7 +201,7 @@ Expected files:
 - Possible small helpers in `app/src/lib/` only if needed
 - Targeted tests around save behavior and UI contracts
 
-### DCP-2: Active Nutrition Plan Panel
+### Stage 4A.2: Aktif Beslenme Plani
 
 Status: **Implemented 2026-07-08.**
 
@@ -212,7 +212,7 @@ Delivered:
 - `app/src/components/food-rules-panel.tsx` rebranded and upgraded as **Aktif Beslenme Plani** with selection summary, conflict review, and save hard-block on `food_allowed_and_forbidden` / `group_allowed_and_forbidden`.
 - `app/src/components/dashboard/catalog-tree-browser.tsx` adds dense main/sub/food Izinli/Yasak toggles across the Phase 77D catalog.
 - `app/src/lib/active-nutrition-plan-helpers.ts` normalizes hierarchical catalog selection, inheritance resolution, tree filtering, and hard-conflict detection helpers.
-- `app/src/components/dashboard/active-nutrition-plan-panel.tsx` wires the upgraded panel into the client control panel tab.
+- `app/src/components/dashboard/active-nutrition-plan-panel.tsx` wires the upgraded panel into the danisan kontrol paneli tab.
 - Save continues through `/api/clients/[id]/food-rule-profile` with existing revision and capability rules; Food Decision Engine V2 unchanged.
 
 Verification (2026-07-08): `npm run lint` 0 errors (3 pre-existing warnings), targeted helper tests 5/5, full app suite 726 passed / 4 skipped, `npm run build` passed, Playwright visual 36/36, `git diff --check` clean. No hosted deploy. Production pilot remains `NO-GO`; R-405 open; R-406 current local Supabase/RLS re-run pending.
@@ -224,7 +224,7 @@ Expected files:
 - Existing food-rule profile lib/routes preserved
 - Targeted tests for selection normalization/conflict UX helpers
 
-### DCP-3: Menu Workflow Panel
+### Stage 4A.3: Menu
 
 Status: **Implemented 2026-07-08.**
 
@@ -235,7 +235,7 @@ Delivered:
 - `app/src/components/menu-plan-panel.tsx` rebranded as the **Menu** workflow panel with four template picker cards, Turkish template labels/descriptions, plan status badges (Taslak/Aktif/Arsiv), conflict display, and activation hard-block on `menu_item_forbidden_food` / `menu_item_forbidden_category` / `menu_item_forbidden_group`.
 - `app/src/lib/menu-workflow-panel-helpers.ts` adds template/status labels, export eligibility, hard-conflict detection, and workflow summary helpers.
 - `app/src/components/dashboard/menu-workflow-export-section.tsx` integrates MANU-only DOCX/PDF export via `/api/clients/[id]/menu-plans/export` when the active plan is eligible (`exportVisible` + active status).
-- `app/src/components/dashboard/menu-workflow-panel.tsx` wires the upgraded panel into the client control panel tab.
+- `app/src/components/dashboard/menu-workflow-panel.tsx` wires the upgraded panel into the danisan kontrol paneli tab.
 - Create/save/activate continue through existing menu plan routes; legacy `client.dietPlan.summary` lock and food-rule conflict checks on activation are unchanged.
 
 Verification (2026-07-08): `npm run lint` 0 errors (3 pre-existing warnings), targeted helper tests 4/4, full app suite 730 passed / 4 skipped, `npm run build` passed, Playwright visual 36/36, `git diff --check` clean. No hosted deploy. Production pilot remains `NO-GO`; R-405 open; R-406 current local Supabase/RLS re-run pending.
@@ -247,7 +247,7 @@ Expected files:
 - Existing menu plan/export routes preserved
 - Targeted tests for UI helper behavior and export eligibility display
 
-### DCP-4: AI Assistant Control Panel
+### Stage 4A.4: AI Asistan Kontrolu
 
 Status: **Implemented 2026-07-08.**
 
@@ -290,8 +290,8 @@ If a hosted sandbox deploy happens:
 
 ## Acceptance Criteria For Stage 4A
 
-- The client control panel scope is documented from actual code, not only handoff docs.
+- The danisan kontrol paneli scope is documented from actual code, not only handoff docs.
 - The four required product modules are mapped to current domain models, APIs, and safety rules.
-- Implementation is split into user-approved sub-phases; DCP-1 through DCP-4 are complete; Stage 4A client control panel is closed.
-- DCP-1/DCP-2/DCP-3/DCP-4 changed dashboard client-form, active-nutrition, menu workflow, and AI assistant control UI only; backend form/food-rule/menu/AI patch contracts and clinical safety paths are unchanged.
+- Implementation is split into user-approved sub-phases; Stage 4A.1 through Stage 4A.4 are complete; Stage 4A Danisan Kontrol Paneli is closed.
+- Stage 4A.1/4A.2/4A.3/4A.4 changed dashboard client-form, active-nutrition, menu workflow, and AI assistant control UI only; backend form/food-rule/menu/AI patch contracts and clinical safety paths are unchanged.
 - Production pilot remains `NO-GO`; R-405 remains open; R-406 remains pending when local Supabase is unavailable.
