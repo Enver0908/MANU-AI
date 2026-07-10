@@ -73,7 +73,7 @@ flowchart TD
 | Track | Scope | Runtime status |
 | --- | --- | --- |
 | P85-IF-A | Canonical spec, provider contract, threat model, state machines | Complete |
-| P85-IF-B | Trust-root, provenance, identity, event, and session data model | Pending |
+| P85-IF-B | Trust-root, provenance, identity, event, and session data model | Complete |
 | P85-IF-C | Secure mock webhook, normalization, ledger, routing, quarantine | Pending |
 | P85-IF-D | Complete transcript, human-control coordination, edit/revoke/media | Pending |
 | P85-IF-E | Full-history retrieval, prompt authority, answerability relevance | Pending |
@@ -88,7 +88,7 @@ flowchart TD
 
 Create `docs/PHASE_85_INTERSTAGE_TRUSTED_CLINICAL_COMMUNICATION_MEMORY_SPEC.md` as the implementation contract. No runtime code changes occur in this track.
 
-Status: complete on 2026-07-10. The canonical spec now exists at `docs/PHASE_85_INTERSTAGE_TRUSTED_CLINICAL_COMMUNICATION_MEMORY_SPEC.md`; P85-IF-B is next.
+Status: complete on 2026-07-10. The canonical spec now exists at `docs/PHASE_85_INTERSTAGE_TRUSTED_CLINICAL_COMMUNICATION_MEMORY_SPEC.md`; P85-IF-B is also complete and P85-IF-C is next.
 
 ### Required specification content
 
@@ -147,6 +147,8 @@ Database constraints enforce:
 - Fallback and Supabase types/mappers/seeds are null-tolerant for legacy rows.
 - Migration, RPC, RLS, RBAC, uniqueness, conflict, and tenant-isolation tests pass.
 - No existing message behavior changes before P85-IF-C/D enable the new path.
+
+Status: complete on 2026-07-10. P85-IF-B added app-level nullable provenance/message contract fields, canonical trust-root/event/revision/session/risk/context-intake records, Supabase mappers, append-only migration `app/supabase/migrations/20260710120000_phase_85_if_b_trust_root_provenance.sql`, and focused provenance model tests. Real provider/channel behavior remains disconnected. P85-IF-C is next.
 
 ## 7. P85-IF-C - Secure Ingress, Ledger, Routing, And Quarantine
 

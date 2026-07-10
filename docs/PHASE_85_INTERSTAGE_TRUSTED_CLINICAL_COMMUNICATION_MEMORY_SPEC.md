@@ -2,8 +2,8 @@
 
 Date: 2026-07-10
 Canonical code: `P85-IF`
-Track: `P85-IF-A`
-Status: P85-IF-A complete; runtime implementation not started.
+Track: `P85-IF-A` and `P85-IF-B`
+Status: P85-IF-A complete; P85-IF-B trust-root/provenance data model complete; P85-IF-C next.
 Placement: Phase 85 Stage 4A complete -> P85-IF -> Phase 85 Stage 4B.
 Production pilot: `NO-GO`.
 Deployment: none.
@@ -14,7 +14,7 @@ This document is the canonical implementation contract for Phase 85 Interstage F
 
 P85-IF exists because Stage 4B Uyari ve Bildirimler cannot safely build alert and notification experiences until channel actor provenance, complete transcript semantics, historical retrieval, human/AI coordination, risk resolution, and off-channel context intake are explicit and testable.
 
-P85-IF-A is documentation-only. It does not change runtime code, schema, migrations, auth, entitlement, onboarding, billing, PWA, provider, channel, monitoring, backup, secret-manager, or real health-data behavior.
+P85-IF-A is documentation-only. P85-IF-B adds schema/model foundation only. Neither track enables real provider, real channel, monitoring, backup, secret-manager, live billing, or real health-data behavior.
 
 ## 2. Locked Boundaries
 
@@ -336,6 +336,8 @@ No Stage 4B runtime implementation is approved by this spec.
 - RLS/RBAC/tenant isolation tests cover every new record.
 - No runtime provider path behavior changes before P85-IF-C/D.
 
+Implementation status on 2026-07-10: complete. App domain types now include nullable message provenance fields plus `ChannelAccountBindingRecord`, `ChannelActorBindingRecord`, `ChannelEventRecord`, `ChannelMessageRevisionRecord`, `HumanControlSessionRecord`, `RiskActivityEventRecord`, and `ContextIntakeProposalRecord`. Supabase full-state mappers read the new tables and map legacy message rows with null/default provenance values. Migration `app/supabase/migrations/20260710120000_phase_85_if_b_trust_root_provenance.sql` adds the append-only schema, uniqueness checks, provenance constraints, and RLS/RBAC policies. P85-IF-C remains responsible for secure ingress, routing, quarantine, replay runtime, and any channel event processing behavior.
+
 ### P85-IF-C
 
 - Secure mock webhook gate includes feature flag, secret, and production/hosted-sandbox refusal.
@@ -404,7 +406,7 @@ For later runtime tracks, select the relevant subset and then run the full requi
 
 P85-IF-A is complete when this spec is committed with continuity documentation updates. It creates no runtime behavior and does not approve production pilot, Stage 4B runtime work, real providers/channels, live billing, monitoring, backup, secret manager, or real health-data processing.
 
-The next track is P85-IF-B: trust-root, provenance, identity, event, and session data model.
+At P85-IF-A closure, the next track was P85-IF-B: trust-root, provenance, identity, event, and session data model. P85-IF-B is now complete; P85-IF-C is next.
 
 Verification on 2026-07-10:
 
@@ -416,3 +418,22 @@ Verification on 2026-07-10:
 - New-spec secret/token scan: clean.
 - Forbidden future-phase naming scan: clean.
 - Visual, channel replay, production-scale, and RLS tests were not required for P85-IF-A because no runtime, UI, channel, schema, or RLS behavior changed.
+
+## 18. P85-IF-B Closure Statement
+
+P85-IF-B is complete when the trust-root/provenance data model is committed with app types, fallback state, Supabase mappers, append-only migration, focused tests, and continuity documentation updates. It does not approve production pilot, Stage 4B runtime work, real providers/channels, live billing, monitoring, backup, secret manager, or real health-data processing.
+
+The next track is P85-IF-C: secure ingress, ledger, routing, and quarantine.
+
+Verification on 2026-07-10:
+
+- Targeted app Vitest `src/lib/phase-85-if-b-provenance-model.test.ts` and `src/lib/phase-85-if-b-migration-contract.test.ts`: 6/6 passed.
+- App `npm test`: 740 passed / 4 skipped.
+- App `npm run lint`: 0 errors, 3 pre-existing warnings.
+- App `npm run build`: passed.
+- Core `npm test`: 225/225 passed.
+- App `npm run test:rls`: skipped 21/21 because local Supabase was unavailable, so R-406 current re-run remains pending.
+- `git diff --check`: clean.
+- Secret/token scan: clean.
+- Forbidden future-phase naming scan: clean.
+- Final `git status --short`: required after commit closure.

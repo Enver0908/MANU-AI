@@ -1,6 +1,7 @@
 export type AiStatus = "active" | "passive";
 export type AiMode = "autopilot" | "copilot" | "manual" | "paused";
 export type Channel = "whatsapp" | "telegram";
+export type ChannelProvider = "whatsapp_cloud" | "telegram_bot";
 export type SupportedLanguageCode = "tr" | "en" | "de" | "fr" | "es" | "pt" | "cs";
 export type TenantRole = "owner" | "admin" | "dietitian" | "assistant" | "auditor";
 export type MessageOrigin =
@@ -54,6 +55,79 @@ export type ClientUpdateProposalPatchOperation =
   | "set_value"
   | "merge_exchange_group";
 export type ClientUpdateProposalPatchCategory = "nutrition" | "clinical_safety" | "sensitive_detail" | "food_rule";
+export type ChannelAccountOperatingMode = "mock" | "disabled" | "future_real";
+export type ChannelAccountLifecycleStatus = "draft" | "active" | "revoked";
+export type ChannelAccountAttributionPolicy = "exclusive_dietitian" | "shared_authorized_team";
+export type ChannelActorType = "client" | "exact_dietitian" | "business_operator" | "ai" | "system" | "unknown";
+export type ChannelActorAttributionBasis =
+  | "authenticated_manu_action"
+  | "exclusive_verified_account"
+  | "shared_authorized_team"
+  | "provider_counterparty"
+  | "ai_decision"
+  | "system_operation"
+  | "imported_unknown";
+export type ChannelAuthorInterface =
+  | "manu_dashboard"
+  | "whatsapp_business_surface"
+  | "telegram_business_surface"
+  | "client_channel"
+  | "ai_provider"
+  | "system"
+  | "unknown";
+export type ChannelEventKind =
+  | "client_message_text"
+  | "client_message_media_unsupported"
+  | "business_human_echo_text"
+  | "business_human_echo_media_unsupported"
+  | "outbound_status"
+  | "history_client_message"
+  | "history_business_human_message"
+  | "message_edit"
+  | "message_revoke"
+  | "message_revision_unknown_target"
+  | "malformed_event"
+  | "duplicate_event"
+  | "duplicate_message"
+  | "unknown_account"
+  | "unknown_client"
+  | "ambiguous_client"
+  | "cross_tenant_collision"
+  | "unsupported_event";
+export type ChannelEventProcessingStatus =
+  | "received"
+  | "normalized"
+  | "quarantined"
+  | "committed"
+  | "duplicate"
+  | "replayed"
+  | "rejected"
+  | "expired";
+export type MessageContentStatus = "available" | "edited" | "revoked" | "content_unavailable" | "redacted";
+export type MessageRetrievalEligibility =
+  | "eligible"
+  | "excluded_imported_unknown"
+  | "excluded_revoked"
+  | "excluded_unavailable"
+  | "excluded_blocked"
+  | "excluded_draft"
+  | "excluded_unverified_actor";
+export type ChannelMessageRevisionAction = "edit" | "revoke" | "unknown_target";
+export type HumanControlSessionReason = "yellow_risk_hold" | "red_risk_lock" | "manual_takeover" | "channel_trust_gap";
+export type HumanControlSessionStatus = "active" | "resolved" | "reactivated";
+export type RiskActivityEventType =
+  | "human_response_observed"
+  | "ai_paused"
+  | "draft_invalidated"
+  | "risk_resolved"
+  | "ai_reactivated";
+export type ContextIntakeProposalStatus =
+  | "pending_confirmation"
+  | "confirmed"
+  | "applied"
+  | "rejected"
+  | "stale"
+  | "blocked_structured_impact";
 export type SafetyChecklist = {
   goalReviewed: boolean;
   dietPlanReviewed: boolean;
@@ -429,10 +503,23 @@ export type MessageRecord = {
   sender: SenderType;
   body: string;
   origin: MessageOrigin;
+  providerAccountBindingId?: string | null;
+  providerEventId?: string | null;
+  providerMessageId?: string | null;
+  actorType?: ChannelActorType | null;
+  actorBindingId?: string | null;
+  authorInterface?: ChannelAuthorInterface | null;
+  actorResolutionBasis?: ChannelActorAttributionBasis | null;
   sourceMessageId?: string | null;
   authorDietitianId?: string | null;
   generatedByAiDecisionId?: string | null;
   approvedByDietitianId?: string | null;
+  providerSentAt?: string | null;
+  observedAt?: string | null;
+  persistedAt?: string | null;
+  conversationSequence?: number | null;
+  contentStatus?: MessageContentStatus | null;
+  retrievalEligibility?: MessageRetrievalEligibility | null;
   risk?: RiskLevel | null;
   status?: "sent" | "draft" | "handoff" | "stored" | "blocked";
   createdAt: string;
@@ -524,6 +611,142 @@ export type InboundQuarantineRecord = {
   senderChannelUserId: string | null;
   reason: "whatsapp_group_unsupported";
   createdAt: string;
+};
+
+export type ChannelAccountBindingRecord = {
+  id: string;
+  tenantId: string;
+  provider: ChannelProvider;
+  providerAccountId: string;
+  wabaId: string | null;
+  businessPhoneNumberId: string | null;
+  normalizedDisplayNumber: string | null;
+  operatingMode: ChannelAccountOperatingMode;
+  lifecycleStatus: ChannelAccountLifecycleStatus;
+  attributionPolicy: ChannelAccountAttributionPolicy;
+  verifiedAt: string | null;
+  revokedAt: string | null;
+  createdByDietitianId: string | null;
+  revokedByDietitianId: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type ChannelActorBindingRecord = {
+  id: string;
+  tenantId: string;
+  accountBindingId: string;
+  dietitianId: string | null;
+  actorType: ChannelActorType;
+  attributionBasis: ChannelActorAttributionBasis;
+  validFrom: string;
+  validTo: string | null;
+  verifiedAt: string | null;
+  revokedAt: string | null;
+  createdByDietitianId: string | null;
+  revokedByDietitianId: string | null;
+  auditReasonCode: string | null;
+  createdAt: string;
+};
+
+export type ChannelEventRecord = {
+  id: string;
+  tenantId: string;
+  accountBindingId: string | null;
+  eventKind: ChannelEventKind;
+  processingStatus: ChannelEventProcessingStatus;
+  providerAccountId: string | null;
+  providerEventId: string | null;
+  providerMessageId: string | null;
+  fromIdentity: string | null;
+  toIdentity: string | null;
+  counterpartyIdentity: string | null;
+  payloadDigest: string;
+  payloadSchemaVersion: string;
+  providerTime: string | null;
+  observedAt: string;
+  committedAt: string | null;
+  quarantineId: string | null;
+  replayOfEventId: string | null;
+  retryCount: number;
+  internalSequence: number | null;
+};
+
+export type ChannelMessageRevisionRecord = {
+  id: string;
+  tenantId: string;
+  messageId: string | null;
+  channelEventId: string | null;
+  providerEventId: string | null;
+  revisionAction: ChannelMessageRevisionAction;
+  priorContentStatus: MessageContentStatus | null;
+  currentContentStatus: MessageContentStatus;
+  priorBodyDigest: string | null;
+  currentBodyDigest: string | null;
+  revisionSequence: number;
+  providerTime: string | null;
+  observedAt: string;
+};
+
+export type HumanControlSessionRecord = {
+  id: string;
+  tenantId: string;
+  clientId: string;
+  conversationId: string;
+  reason: HumanControlSessionReason;
+  status: HumanControlSessionStatus;
+  previousAiStatus: AiStatus;
+  previousAiMode: AiMode;
+  linkedHandoffId: string | null;
+  linkedYellowHoldMessageId: string | null;
+  openedByMessageId: string | null;
+  latestHumanMessageId: string | null;
+  humanResponseObservedCount: number;
+  openedAt: string;
+  resolvedAt: string | null;
+  reactivatedByDietitianId: string | null;
+  reactivationReasonCode: string | null;
+  restoredAiMode: AiMode | null;
+};
+
+export type RiskActivityEventRecord = {
+  id: string;
+  tenantId: string;
+  clientId: string;
+  conversationId: string;
+  humanControlSessionId: string | null;
+  eventType: RiskActivityEventType;
+  sourceMessageId: string | null;
+  handoffId: string | null;
+  aiDecisionId: string | null;
+  metadata: Record<string, unknown>;
+  createdAt: string;
+};
+
+export type ContextIntakeProposalRecord = {
+  id: string;
+  tenantId: string;
+  clientId: string;
+  dietitianId: string | null;
+  sourceChannel: Channel | "internal_copilot";
+  sourceTextDigest: string;
+  sourceText: string | null;
+  occurredAt: string;
+  title: string;
+  summary: string;
+  details: string;
+  importance: ClientContextUpdateImportance;
+  structuredImpactFlags: string[];
+  baselineContextRevision: number;
+  baselineFormRevision: number | null;
+  baselineFoodRuleRevision: number | null;
+  baselineMenuPlanRevision: number | null;
+  status: ContextIntakeProposalStatus;
+  confirmationCount: number;
+  appliedContextUpdateId: string | null;
+  createdAt: string;
+  updatedAt: string;
+  expiresAt: string | null;
 };
 
 export type ChannelDeliveryStatus = "sent" | "delivered" | "failed";
@@ -686,6 +909,13 @@ export type ManuAppState = {
   auditEvents: AuditEventRecord[];
   notifications: NotificationRecord[];
   inboundQuarantines: InboundQuarantineRecord[];
+  channelAccountBindings: ChannelAccountBindingRecord[];
+  channelActorBindings: ChannelActorBindingRecord[];
+  channelEvents: ChannelEventRecord[];
+  channelMessageRevisions: ChannelMessageRevisionRecord[];
+  humanControlSessions: HumanControlSessionRecord[];
+  riskActivityEvents: RiskActivityEventRecord[];
+  contextIntakeProposals: ContextIntakeProposalRecord[];
   channelDeliveries: ChannelDeliveryRecord[];
   channelAdapterRollback: ChannelAdapterRollbackControls;
   dataRequests: DataRequestRecord[];

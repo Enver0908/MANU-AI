@@ -78,6 +78,13 @@ import type {
   DietitianVoiceSampleRecord,
   HandoffCaseRecord,
   InboundQuarantineRecord,
+  ChannelAccountBindingRecord,
+  ChannelActorBindingRecord,
+  ChannelEventRecord,
+  ChannelMessageRevisionRecord,
+  HumanControlSessionRecord,
+  RiskActivityEventRecord,
+  ContextIntakeProposalRecord,
   ChannelDeliveryRecord,
   ChannelAdapterRollbackControls,
   InternalCopilotMessageRecord,
@@ -164,10 +171,23 @@ type DbMessage = {
   sender: MessageRecord["sender"];
   body: string;
   origin: MessageRecord["origin"];
+  provider_account_binding_id?: string | null;
+  provider_event_id?: string | null;
+  provider_message_id?: string | null;
+  actor_type?: MessageRecord["actorType"] | null;
+  actor_binding_id?: string | null;
+  author_interface?: MessageRecord["authorInterface"] | null;
+  actor_resolution_basis?: MessageRecord["actorResolutionBasis"] | null;
   source_message_id: string | null;
   author_dietitian_id: string | null;
   generated_by_ai_decision_id: string | null;
   approved_by_dietitian_id: string | null;
+  provider_sent_at?: string | null;
+  observed_at?: string | null;
+  persisted_at?: string | null;
+  conversation_sequence?: number | null;
+  content_status?: MessageRecord["contentStatus"] | null;
+  retrieval_eligibility?: MessageRecord["retrievalEligibility"] | null;
   risk: MessageRecord["risk"];
   status: MessageRecord["status"];
   created_at: string;
@@ -403,6 +423,135 @@ type DbInboundQuarantine = {
   reason: InboundQuarantineRecord["reason"];
   created_at: string;
 };
+type DbChannelAccountBinding = {
+  id: string;
+  tenant_id: string;
+  provider: ChannelAccountBindingRecord["provider"];
+  provider_account_id: string;
+  waba_id: string | null;
+  business_phone_number_id: string | null;
+  normalized_display_number: string | null;
+  operating_mode: ChannelAccountBindingRecord["operatingMode"];
+  lifecycle_status: ChannelAccountBindingRecord["lifecycleStatus"];
+  attribution_policy: ChannelAccountBindingRecord["attributionPolicy"];
+  verified_at: string | null;
+  revoked_at: string | null;
+  created_by_dietitian_id: string | null;
+  revoked_by_dietitian_id: string | null;
+  created_at: string;
+  updated_at: string;
+};
+type DbChannelActorBinding = {
+  id: string;
+  tenant_id: string;
+  account_binding_id: string;
+  dietitian_id: string | null;
+  actor_type: ChannelActorBindingRecord["actorType"];
+  attribution_basis: ChannelActorBindingRecord["attributionBasis"];
+  valid_from: string;
+  valid_to: string | null;
+  verified_at: string | null;
+  revoked_at: string | null;
+  created_by_dietitian_id: string | null;
+  revoked_by_dietitian_id: string | null;
+  audit_reason_code: string | null;
+  created_at: string;
+};
+type DbChannelEvent = {
+  id: string;
+  tenant_id: string;
+  account_binding_id: string | null;
+  event_kind: ChannelEventRecord["eventKind"];
+  processing_status: ChannelEventRecord["processingStatus"];
+  provider_account_id: string | null;
+  provider_event_id: string | null;
+  provider_message_id: string | null;
+  from_identity: string | null;
+  to_identity: string | null;
+  counterparty_identity: string | null;
+  payload_digest: string;
+  payload_schema_version: string;
+  provider_time: string | null;
+  observed_at: string;
+  committed_at: string | null;
+  quarantine_id: string | null;
+  replay_of_event_id: string | null;
+  retry_count: number;
+  internal_sequence: number | null;
+};
+type DbChannelMessageRevision = {
+  id: string;
+  tenant_id: string;
+  message_id: string | null;
+  channel_event_id: string | null;
+  provider_event_id: string | null;
+  revision_action: ChannelMessageRevisionRecord["revisionAction"];
+  prior_content_status: ChannelMessageRevisionRecord["priorContentStatus"];
+  current_content_status: ChannelMessageRevisionRecord["currentContentStatus"];
+  prior_body_digest: string | null;
+  current_body_digest: string | null;
+  revision_sequence: number;
+  provider_time: string | null;
+  observed_at: string;
+};
+type DbHumanControlSession = {
+  id: string;
+  tenant_id: string;
+  client_id: string;
+  conversation_id: string;
+  reason: HumanControlSessionRecord["reason"];
+  status: HumanControlSessionRecord["status"];
+  previous_ai_status: HumanControlSessionRecord["previousAiStatus"];
+  previous_ai_mode: HumanControlSessionRecord["previousAiMode"];
+  linked_handoff_id: string | null;
+  linked_yellow_hold_message_id: string | null;
+  opened_by_message_id: string | null;
+  latest_human_message_id: string | null;
+  human_response_observed_count: number;
+  opened_at: string;
+  resolved_at: string | null;
+  reactivated_by_dietitian_id: string | null;
+  reactivation_reason_code: string | null;
+  restored_ai_mode: HumanControlSessionRecord["restoredAiMode"];
+};
+type DbRiskActivityEvent = {
+  id: string;
+  tenant_id: string;
+  client_id: string;
+  conversation_id: string;
+  human_control_session_id: string | null;
+  event_type: RiskActivityEventRecord["eventType"];
+  source_message_id: string | null;
+  handoff_id: string | null;
+  ai_decision_id: string | null;
+  metadata: Record<string, unknown>;
+  created_at: string;
+};
+type DbContextIntakeProposal = {
+  id: string;
+  tenant_id: string;
+  client_id: string;
+  dietitian_id: string | null;
+  source_channel: ContextIntakeProposalRecord["sourceChannel"];
+  source_text_digest: string;
+  source_text: string | null;
+  occurred_at: string;
+  title: string;
+  summary: string;
+  details: string;
+  importance: ContextIntakeProposalRecord["importance"];
+  structured_impact_flags: string[];
+  baseline_context_revision: number;
+  baseline_form_revision: number | null;
+  baseline_food_rule_revision: number | null;
+  baseline_menu_plan_revision: number | null;
+  status: ContextIntakeProposalRecord["status"];
+  confirmation_count: number;
+  applied_context_update_id: string | null;
+  created_at: string;
+  updated_at: string;
+  expires_at: string | null;
+};
 type DbChannelDelivery = {
   id: string;
   tenant_id: string;
@@ -463,6 +612,13 @@ export async function loadSupabaseState(context = demoTenantContext()) {
     clientFoodRuleProfilesResult,
     clientMenuPlansResult,
     inboundQuarantinesResult,
+    channelAccountBindingsResult,
+    channelActorBindingsResult,
+    channelEventsResult,
+    channelMessageRevisionsResult,
+    humanControlSessionsResult,
+    riskActivityEventsResult,
+    contextIntakeProposalsResult,
     channelDeliveriesResult,
     channelAdapterRollbackResult,
     auditEventsResult,
@@ -492,6 +648,13 @@ export async function loadSupabaseState(context = demoTenantContext()) {
     supabase.from("client_food_rule_profiles").select("*").eq("tenant_id", context.tenantId).order("updated_at"),
     supabase.from("client_menu_plans").select("*").eq("tenant_id", context.tenantId).order("updated_at"),
     supabase.from("inbound_quarantines").select("*").eq("tenant_id", context.tenantId).order("created_at"),
+    supabase.from("channel_account_bindings").select("*").eq("tenant_id", context.tenantId).order("created_at"),
+    supabase.from("channel_actor_bindings").select("*").eq("tenant_id", context.tenantId).order("created_at"),
+    supabase.from("channel_events").select("*").eq("tenant_id", context.tenantId).order("observed_at"),
+    supabase.from("channel_message_revisions").select("*").eq("tenant_id", context.tenantId).order("observed_at"),
+    supabase.from("human_control_sessions").select("*").eq("tenant_id", context.tenantId).order("opened_at"),
+    supabase.from("risk_activity_events").select("*").eq("tenant_id", context.tenantId).order("created_at"),
+    supabase.from("context_intake_proposals").select("*").eq("tenant_id", context.tenantId).order("created_at"),
     supabase.from("channel_deliveries").select("*").eq("tenant_id", context.tenantId).order("created_at"),
     supabase.from("channel_adapter_rollback_controls").select("*").eq("tenant_id", context.tenantId).maybeSingle(),
     supabase.from("audit_events").select("*").eq("tenant_id", context.tenantId).order("created_at"),
@@ -522,6 +685,13 @@ export async function loadSupabaseState(context = demoTenantContext()) {
   throwIfError(clientFoodRuleProfilesResult.error);
   throwIfError(clientMenuPlansResult.error);
   throwIfError(inboundQuarantinesResult.error);
+  throwIfError(channelAccountBindingsResult.error);
+  throwIfError(channelActorBindingsResult.error);
+  throwIfError(channelEventsResult.error);
+  throwIfError(channelMessageRevisionsResult.error);
+  throwIfError(humanControlSessionsResult.error);
+  throwIfError(riskActivityEventsResult.error);
+  throwIfError(contextIntakeProposalsResult.error);
   throwIfError(channelDeliveriesResult.error);
   throwIfError(channelAdapterRollbackResult.error);
   throwIfError(auditEventsResult.error);
@@ -563,6 +733,13 @@ export async function loadSupabaseState(context = demoTenantContext()) {
       handoffCases: (handoffsResult.data || []).map(mapHandoff),
       notifications: (notificationsResult.data || []).map(mapNotification),
       inboundQuarantines: (inboundQuarantinesResult.data || []).map(mapInboundQuarantine),
+      channelAccountBindings: (channelAccountBindingsResult.data || []).map(mapChannelAccountBinding),
+      channelActorBindings: (channelActorBindingsResult.data || []).map(mapChannelActorBinding),
+      channelEvents: (channelEventsResult.data || []).map(mapChannelEvent),
+      channelMessageRevisions: (channelMessageRevisionsResult.data || []).map(mapChannelMessageRevision),
+      humanControlSessions: (humanControlSessionsResult.data || []).map(mapHumanControlSession),
+      riskActivityEvents: (riskActivityEventsResult.data || []).map(mapRiskActivityEvent),
+      contextIntakeProposals: (contextIntakeProposalsResult.data || []).map(mapContextIntakeProposal),
       channelDeliveries: (channelDeliveriesResult.data || []).map(mapChannelDelivery),
       channelAdapterRollback: mapChannelAdapterRollbackControls(channelAdapterRollbackResult.data),
       dataRequests: (dataRequestsResult.data || []).map(mapDataRequest),
@@ -733,6 +910,13 @@ export async function loadSupabaseWindowedDashboardPayload(
       handoffCases: (handoffsResult.data || []).map(mapHandoff),
       notifications: (notificationsResult.data || []).map(mapNotification),
       inboundQuarantines: [],
+      channelAccountBindings: [],
+      channelActorBindings: [],
+      channelEvents: [],
+      channelMessageRevisions: [],
+      humanControlSessions: [],
+      riskActivityEvents: [],
+      contextIntakeProposals: [],
       channelDeliveries: [],
       channelAdapterRollback: createDefaultChannelAdapterRollbackControls(),
       dataRequests: [],
@@ -996,6 +1180,13 @@ async function loadSupabaseClientOperationState(
       handoffCases: mergeById([...(handoffsResult.data || []), ...(requiredHandoffResult.data || [])]).map(mapHandoff),
       notifications: [],
       inboundQuarantines: [],
+      channelAccountBindings: [],
+      channelActorBindings: [],
+      channelEvents: [],
+      channelMessageRevisions: [],
+      humanControlSessions: [],
+      riskActivityEvents: [],
+      contextIntakeProposals: [],
       channelDeliveries: [],
       channelAdapterRollback: mapChannelAdapterRollbackControls(channelAdapterRollbackResult.data),
       dataRequests: [],
@@ -1137,6 +1328,29 @@ export function scopeSupabaseState(
       ? state.inboundQuarantines
       : [];
   const visibleInboundQuarantineIds = new Set(visibleInboundQuarantines.map((quarantine) => quarantine.id));
+  const canReadChannelTrustRoot = context.role === "owner" || context.role === "admin" || context.role === "dietitian";
+  const visibleChannelAccountBindings = canReadChannelTrustRoot ? state.channelAccountBindings : [];
+  const visibleChannelAccountBindingIds = new Set(visibleChannelAccountBindings.map((binding) => binding.id));
+  const visibleChannelActorBindings = canReadChannelTrustRoot ? state.channelActorBindings : [];
+  const visibleChannelActorBindingIds = new Set(visibleChannelActorBindings.map((binding) => binding.id));
+  const visibleChannelEvents = canReadChannelTrustRoot ? state.channelEvents : [];
+  const visibleChannelEventIds = new Set(visibleChannelEvents.map((event) => event.id));
+  const visibleChannelMessageRevisions = canReadChannelTrustRoot
+    ? state.channelMessageRevisions.filter(
+        (revision) =>
+          (revision.messageId !== null && visibleMessageIds.has(revision.messageId)) ||
+          (revision.channelEventId !== null && visibleChannelEventIds.has(revision.channelEventId)),
+      )
+    : [];
+  const visibleChannelMessageRevisionIds = new Set(visibleChannelMessageRevisions.map((revision) => revision.id));
+  const visibleHumanControlSessions = state.humanControlSessions.filter((session) => visibleClientIds.has(session.clientId));
+  const visibleHumanControlSessionIds = new Set(visibleHumanControlSessions.map((session) => session.id));
+  const visibleRiskActivityEvents = state.riskActivityEvents.filter((event) => visibleClientIds.has(event.clientId));
+  const visibleRiskActivityEventIds = new Set(visibleRiskActivityEvents.map((event) => event.id));
+  const visibleContextIntakeProposals = state.contextIntakeProposals.filter((proposal) =>
+    visibleClientIds.has(proposal.clientId),
+  );
+  const visibleContextIntakeProposalIds = new Set(visibleContextIntakeProposals.map((proposal) => proposal.id));
   const visibleChannelDeliveries = state.channelDeliveries.filter((delivery) => visibleClientIds.has(delivery.clientId));
   const visibleChannelDeliveryIds = new Set(visibleChannelDeliveries.map((delivery) => delivery.id));
   const canReadRollbackAudit = context.role === "owner" || context.role === "admin" || context.role === "dietitian";
@@ -1163,6 +1377,13 @@ export function scopeSupabaseState(
       (notification) => notification.entityType === "handoff_case" && visibleHandoffIds.has(notification.entityId),
     ),
     inboundQuarantines: visibleInboundQuarantines,
+    channelAccountBindings: visibleChannelAccountBindings,
+    channelActorBindings: visibleChannelActorBindings,
+    channelEvents: visibleChannelEvents,
+    channelMessageRevisions: visibleChannelMessageRevisions,
+    humanControlSessions: visibleHumanControlSessions,
+    riskActivityEvents: visibleRiskActivityEvents,
+    contextIntakeProposals: visibleContextIntakeProposals,
     channelDeliveries: visibleChannelDeliveries,
     dataRequests: state.dataRequests.filter((request) => visibleClientIds.has(request.clientId)),
     internalCopilotMessages: visibleInternalCopilotMessages,
@@ -1179,6 +1400,13 @@ export function scopeSupabaseState(
         visibleInternalCopilotMessageIds.has(event.entityId) ||
         visibleInternalCopilotToolCallIds.has(event.entityId) ||
         visibleInboundQuarantineIds.has(event.entityId) ||
+        visibleChannelAccountBindingIds.has(event.entityId) ||
+        visibleChannelActorBindingIds.has(event.entityId) ||
+        visibleChannelEventIds.has(event.entityId) ||
+        visibleChannelMessageRevisionIds.has(event.entityId) ||
+        visibleHumanControlSessionIds.has(event.entityId) ||
+        visibleRiskActivityEventIds.has(event.entityId) ||
+        visibleContextIntakeProposalIds.has(event.entityId) ||
         visibleChannelDeliveryIds.has(event.entityId) ||
         (canReadRollbackAudit && event.eventType === "channel_automation_rollback_updated"),
     ),
@@ -1275,6 +1503,13 @@ async function loadSupabaseClientCreateContext(context: AppTenantContext) {
       auditEvents: [],
       notifications: [],
       inboundQuarantines: [],
+      channelAccountBindings: [],
+      channelActorBindings: [],
+      channelEvents: [],
+      channelMessageRevisions: [],
+      humanControlSessions: [],
+      riskActivityEvents: [],
+      contextIntakeProposals: [],
       channelDeliveries: [],
       channelAdapterRollback: createDefaultChannelAdapterRollbackControls(),
       dataRequests: [],
@@ -2102,6 +2337,13 @@ async function deleteDemoData(supabase: SupabaseClient, tenantId = DEMO_TENANT_U
     "data_requests",
     "notifications",
     "channel_deliveries",
+    "context_intake_proposals",
+    "risk_activity_events",
+    "human_control_sessions",
+    "channel_message_revisions",
+    "channel_events",
+    "channel_actor_bindings",
+    "channel_account_bindings",
     "inbound_quarantines",
     "audit_events",
     "handoff_cases",
@@ -2690,10 +2932,23 @@ async function insertMessage(supabase: SupabaseClient, message: MessageRecord) {
       sender: message.sender,
       body: message.body,
       origin: message.origin,
+      provider_account_binding_id: message.providerAccountBindingId ?? null,
+      provider_event_id: message.providerEventId ?? null,
+      provider_message_id: message.providerMessageId ?? null,
+      actor_type: message.actorType ?? null,
+      actor_binding_id: message.actorBindingId ?? null,
+      author_interface: message.authorInterface ?? null,
+      actor_resolution_basis: message.actorResolutionBasis ?? null,
       author_dietitian_id: message.authorDietitianId,
       generated_by_ai_decision_id: message.generatedByAiDecisionId,
       approved_by_dietitian_id: message.approvedByDietitianId,
       source_message_id: message.sourceMessageId,
+      provider_sent_at: message.providerSentAt ?? null,
+      observed_at: message.observedAt ?? null,
+      persisted_at: message.persistedAt ?? message.createdAt,
+      conversation_sequence: message.conversationSequence ?? null,
+      content_status: message.contentStatus ?? "available",
+      retrieval_eligibility: message.retrievalEligibility ?? "eligible",
       risk: message.risk,
       status: message.status || "stored",
       created_at: message.createdAt,
@@ -3416,10 +3671,23 @@ function mapMessage(message: DbMessage): MessageRecord {
     sender: message.sender,
     body: message.body,
     origin: message.origin,
+    providerAccountBindingId: message.provider_account_binding_id ?? null,
+    providerEventId: message.provider_event_id ?? null,
+    providerMessageId: message.provider_message_id ?? null,
+    actorType: message.actor_type ?? null,
+    actorBindingId: message.actor_binding_id ?? null,
+    authorInterface: message.author_interface ?? null,
+    actorResolutionBasis: message.actor_resolution_basis ?? null,
     sourceMessageId: message.source_message_id,
     authorDietitianId: message.author_dietitian_id,
     generatedByAiDecisionId: message.generated_by_ai_decision_id,
     approvedByDietitianId: message.approved_by_dietitian_id,
+    providerSentAt: message.provider_sent_at ?? null,
+    observedAt: message.observed_at ?? null,
+    persistedAt: message.persisted_at ?? message.created_at,
+    conversationSequence: message.conversation_sequence ?? null,
+    contentStatus: message.content_status ?? "available",
+    retrievalEligibility: message.retrieval_eligibility ?? "eligible",
     risk: message.risk,
     status: message.status,
     createdAt: message.created_at,
@@ -3523,6 +3791,156 @@ function mapInboundQuarantine(quarantine: DbInboundQuarantine): InboundQuarantin
     senderChannelUserId: quarantine.sender_channel_user_id,
     reason: quarantine.reason,
     createdAt: quarantine.created_at,
+  };
+}
+
+function mapChannelAccountBinding(binding: DbChannelAccountBinding): ChannelAccountBindingRecord {
+  return {
+    id: binding.id,
+    tenantId: binding.tenant_id,
+    provider: binding.provider,
+    providerAccountId: binding.provider_account_id,
+    wabaId: binding.waba_id,
+    businessPhoneNumberId: binding.business_phone_number_id,
+    normalizedDisplayNumber: binding.normalized_display_number,
+    operatingMode: binding.operating_mode,
+    lifecycleStatus: binding.lifecycle_status,
+    attributionPolicy: binding.attribution_policy,
+    verifiedAt: binding.verified_at,
+    revokedAt: binding.revoked_at,
+    createdByDietitianId: binding.created_by_dietitian_id,
+    revokedByDietitianId: binding.revoked_by_dietitian_id,
+    createdAt: binding.created_at,
+    updatedAt: binding.updated_at,
+  };
+}
+
+function mapChannelActorBinding(binding: DbChannelActorBinding): ChannelActorBindingRecord {
+  return {
+    id: binding.id,
+    tenantId: binding.tenant_id,
+    accountBindingId: binding.account_binding_id,
+    dietitianId: binding.dietitian_id,
+    actorType: binding.actor_type,
+    attributionBasis: binding.attribution_basis,
+    validFrom: binding.valid_from,
+    validTo: binding.valid_to,
+    verifiedAt: binding.verified_at,
+    revokedAt: binding.revoked_at,
+    createdByDietitianId: binding.created_by_dietitian_id,
+    revokedByDietitianId: binding.revoked_by_dietitian_id,
+    auditReasonCode: binding.audit_reason_code,
+    createdAt: binding.created_at,
+  };
+}
+
+function mapChannelEvent(event: DbChannelEvent): ChannelEventRecord {
+  return {
+    id: event.id,
+    tenantId: event.tenant_id,
+    accountBindingId: event.account_binding_id,
+    eventKind: event.event_kind,
+    processingStatus: event.processing_status,
+    providerAccountId: event.provider_account_id,
+    providerEventId: event.provider_event_id,
+    providerMessageId: event.provider_message_id,
+    fromIdentity: event.from_identity,
+    toIdentity: event.to_identity,
+    counterpartyIdentity: event.counterparty_identity,
+    payloadDigest: event.payload_digest,
+    payloadSchemaVersion: event.payload_schema_version,
+    providerTime: event.provider_time,
+    observedAt: event.observed_at,
+    committedAt: event.committed_at,
+    quarantineId: event.quarantine_id,
+    replayOfEventId: event.replay_of_event_id,
+    retryCount: event.retry_count,
+    internalSequence: event.internal_sequence,
+  };
+}
+
+function mapChannelMessageRevision(revision: DbChannelMessageRevision): ChannelMessageRevisionRecord {
+  return {
+    id: revision.id,
+    tenantId: revision.tenant_id,
+    messageId: revision.message_id,
+    channelEventId: revision.channel_event_id,
+    providerEventId: revision.provider_event_id,
+    revisionAction: revision.revision_action,
+    priorContentStatus: revision.prior_content_status,
+    currentContentStatus: revision.current_content_status,
+    priorBodyDigest: revision.prior_body_digest,
+    currentBodyDigest: revision.current_body_digest,
+    revisionSequence: revision.revision_sequence,
+    providerTime: revision.provider_time,
+    observedAt: revision.observed_at,
+  };
+}
+
+function mapHumanControlSession(session: DbHumanControlSession): HumanControlSessionRecord {
+  return {
+    id: session.id,
+    tenantId: session.tenant_id,
+    clientId: session.client_id,
+    conversationId: session.conversation_id,
+    reason: session.reason,
+    status: session.status,
+    previousAiStatus: session.previous_ai_status,
+    previousAiMode: session.previous_ai_mode,
+    linkedHandoffId: session.linked_handoff_id,
+    linkedYellowHoldMessageId: session.linked_yellow_hold_message_id,
+    openedByMessageId: session.opened_by_message_id,
+    latestHumanMessageId: session.latest_human_message_id,
+    humanResponseObservedCount: session.human_response_observed_count,
+    openedAt: session.opened_at,
+    resolvedAt: session.resolved_at,
+    reactivatedByDietitianId: session.reactivated_by_dietitian_id,
+    reactivationReasonCode: session.reactivation_reason_code,
+    restoredAiMode: session.restored_ai_mode,
+  };
+}
+
+function mapRiskActivityEvent(event: DbRiskActivityEvent): RiskActivityEventRecord {
+  return {
+    id: event.id,
+    tenantId: event.tenant_id,
+    clientId: event.client_id,
+    conversationId: event.conversation_id,
+    humanControlSessionId: event.human_control_session_id,
+    eventType: event.event_type,
+    sourceMessageId: event.source_message_id,
+    handoffId: event.handoff_id,
+    aiDecisionId: event.ai_decision_id,
+    metadata: event.metadata || {},
+    createdAt: event.created_at,
+  };
+}
+
+function mapContextIntakeProposal(proposal: DbContextIntakeProposal): ContextIntakeProposalRecord {
+  return {
+    id: proposal.id,
+    tenantId: proposal.tenant_id,
+    clientId: proposal.client_id,
+    dietitianId: proposal.dietitian_id,
+    sourceChannel: proposal.source_channel,
+    sourceTextDigest: proposal.source_text_digest,
+    sourceText: proposal.source_text,
+    occurredAt: proposal.occurred_at,
+    title: proposal.title,
+    summary: proposal.summary,
+    details: proposal.details,
+    importance: proposal.importance,
+    structuredImpactFlags: proposal.structured_impact_flags || [],
+    baselineContextRevision: proposal.baseline_context_revision,
+    baselineFormRevision: proposal.baseline_form_revision,
+    baselineFoodRuleRevision: proposal.baseline_food_rule_revision,
+    baselineMenuPlanRevision: proposal.baseline_menu_plan_revision,
+    status: proposal.status,
+    confirmationCount: proposal.confirmation_count,
+    appliedContextUpdateId: proposal.applied_context_update_id,
+    createdAt: proposal.created_at,
+    updatedAt: proposal.updated_at,
+    expiresAt: proposal.expires_at,
   };
 }
 

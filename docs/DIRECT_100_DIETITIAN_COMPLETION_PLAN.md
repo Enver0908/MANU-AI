@@ -20,7 +20,9 @@ Phase 85 Stage 4A Danisan Kontrol Paneli Mimari ve Hizmet Akisi Plani note (2026
 
 Phase 85 roadmap restructure note (2026-07-08): Phase 85 proceeds as Stage 1, Stage 2, Stage 3, Stage 4A Danisan Kontrol Paneli, Stage 4B Uyari ve Bildirimler, Stage 4C Diyetisyen Icin AI Chat, Stage 4D Ayarlar / Hesap, Stage 5 Dashboard and Mobile PWA Shell, Stage 6 Dashboard Core Workflows, and Stage 7 closure.
 
-Phase 85 Interstage Foundation P85-IF-A note (2026-07-10): `docs/PHASE_85_INTERSTAGE_TRUSTED_CLINICAL_COMMUNICATION_MEMORY_PLAN.md` inserts P85-IF between completed Stage 4A and Stage 4B, and `docs/PHASE_85_INTERSTAGE_TRUSTED_CLINICAL_COMMUNICATION_MEMORY_SPEC.md` now locks the canonical provider contract, threat model, state machines, prompt authority, off-channel context-intake rules, and Stage 4B boundary. P85-IF-A is complete, runtime implementation has not started, and P85-IF-B is next. Stage 4B resumes after P85-IF-I. This does not change direct-pilot `NO-GO`, external gate status, R-405, R-406, or any real provider/channel/production-data path.
+Phase 85 Interstage Foundation P85-IF-A note (2026-07-10): `docs/PHASE_85_INTERSTAGE_TRUSTED_CLINICAL_COMMUNICATION_MEMORY_PLAN.md` inserts P85-IF between completed Stage 4A and Stage 4B, and `docs/PHASE_85_INTERSTAGE_TRUSTED_CLINICAL_COMMUNICATION_MEMORY_SPEC.md` now locks the canonical provider contract, threat model, state machines, prompt authority, off-channel context-intake rules, and Stage 4B boundary. P85-IF-A is complete and is now followed by completed P85-IF-B data model work. Stage 4B resumes after P85-IF-I. This does not change direct-pilot `NO-GO`, external gate status, R-405, R-406, or any real provider/channel/production-data path.
+
+Phase 85 Interstage Foundation P85-IF-B note (2026-07-10): the trust-root/provenance data model foundation is implemented with nullable message provenance fields, channel account/actor/event/revision/session/risk/context-intake records, Supabase mappers, an append-only migration, and focused contract tests. Runtime provider/channel behavior remains closed, and P85-IF-C is next. This does not change direct-pilot `NO-GO`, external gate status, R-405, R-406, or any real provider/channel/production-data path.
 
 ## Fixed Product Laws
 These rules are non-negotiable and apply to every future phase:
@@ -35,8 +37,8 @@ These rules are non-negotiable and apply to every future phase:
 - Autopilot is not globally enabled for all 5,000 clients by default. It is enabled only for selected qualified clients after all gates, monitoring, and rollback controls are ready.
 
 ## Current Baseline
-- Latest completed implementation phase: Phase 85 Stage 4A Danisan Kontrol Paneli complete (Stage 4A.1-4A.4, 2026-07-08).
-- Next operator step: P85-IF-A canonical contract and threat-model implementation; Stage 4B resumes only after P85-IF-I closure; external production prerequisites remain open; no production GO.
+- Latest completed implementation phase: P85-IF-B trust-root/provenance data model foundation complete (2026-07-10), after Phase 85 Stage 4A Danisan Kontrol Paneli completed.
+- Next operator step: P85-IF-C secure ingress, ledger, routing, and quarantine; Stage 4B resumes only after P85-IF-I closure; external production prerequisites remain open; no production GO.
 - Primary open product risk: R-425 is mitigated in the hosted commercial sandbox path, but production launch gates remain open.
 - Latest roadmap rebaseline: Phase 77A manual source authority rebaseline spec (2026-06-10).
 - Detailed Phase 77 implementation plan: `docs/PHASE_77_MASTER_IMPLEMENTATION_PLAN.md`.
