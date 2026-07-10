@@ -2,7 +2,7 @@
 
 Date: 2026-07-10
 Canonical code: `P85-IF`
-Status: Planning complete; implementation not started.
+Status: Planning complete; P85-IF-A complete; runtime implementation not started.
 Placement: Phase 85 Stage 4A complete -> P85-IF -> Phase 85 Stage 4B.
 Production pilot: `NO-GO`.
 Deployment: none.
@@ -72,7 +72,7 @@ flowchart TD
 
 | Track | Scope | Runtime status |
 | --- | --- | --- |
-| P85-IF-A | Canonical spec, provider contract, threat model, state machines | Pending |
+| P85-IF-A | Canonical spec, provider contract, threat model, state machines | Complete |
 | P85-IF-B | Trust-root, provenance, identity, event, and session data model | Pending |
 | P85-IF-C | Secure mock webhook, normalization, ledger, routing, quarantine | Pending |
 | P85-IF-D | Complete transcript, human-control coordination, edit/revoke/media | Pending |
@@ -87,6 +87,8 @@ flowchart TD
 ### Objective
 
 Create `docs/PHASE_85_INTERSTAGE_TRUSTED_CLINICAL_COMMUNICATION_MEMORY_SPEC.md` as the implementation contract. No runtime code changes occur in this track.
+
+Status: complete on 2026-07-10. The canonical spec now exists at `docs/PHASE_85_INTERSTAGE_TRUSTED_CLINICAL_COMMUNICATION_MEMORY_SPEC.md`; P85-IF-B is next.
 
 ### Required specification content
 

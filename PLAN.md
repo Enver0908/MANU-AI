@@ -17,7 +17,9 @@ On 2026-07-08, Phase 85 was restructured into this explicit stage ladder: Stage 
 
 ## Phase 85 Interstage Foundation - P85-IF
 
-The canonical planning baseline is `docs/PHASE_85_INTERSTAGE_TRUSTED_CLINICAL_COMMUNICATION_MEMORY_PLAN.md`. It addresses verified WhatsApp business-human actor provenance, complete transcript persistence, tenant/client/counterparty routing, historical retrieval beyond the last-eight-message window, human/AI coordination, authenticated yellow/red resolution through direct AI reactivation, and controlled off-channel AI Chat context intake. Planning is complete; implementation has not started. The next operator action is P85-IF-A. P85-IF provides stable alert/notification semantics and minimal verification UI only; the full alert/notification product experience remains Phase 85 Stage 4B scope.
+The canonical planning baseline is `docs/PHASE_85_INTERSTAGE_TRUSTED_CLINICAL_COMMUNICATION_MEMORY_PLAN.md`. P85-IF-A added `docs/PHASE_85_INTERSTAGE_TRUSTED_CLINICAL_COMMUNICATION_MEMORY_SPEC.md` as the implementation contract and threat model for verified WhatsApp business-human actor provenance, complete transcript persistence, tenant/client/counterparty routing, historical retrieval beyond the last-eight-message window, human/AI coordination, authenticated yellow/red resolution through direct AI reactivation, and controlled off-channel AI Chat context intake. P85-IF-A is complete; runtime implementation has not started. The next operator action is P85-IF-B. P85-IF provides stable alert/notification semantics and minimal verification UI only; the full alert/notification product experience remains Phase 85 Stage 4B scope.
+
+P85-IF-A verification on 2026-07-10: core `npm test` 225/225, app `npm test` 734 passed / 4 skipped, app lint 0 errors with 3 pre-existing warnings, app build passed, `git diff --check` clean, new-spec secret scan clean, and forbidden future-phase naming scan clean. Visual, channel replay, production-scale, and RLS tests were not required because no runtime, UI, channel, schema, or RLS behavior changed.
 
 ## Latest Phase 85 Stage 4A Danisan Kontrol Paneli
 

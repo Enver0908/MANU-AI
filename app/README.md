@@ -2,7 +2,7 @@
 
 ## Phase 85 Roadmap Restructure
 
-2026-07-10: Phase 85 Stages 1-3 and Stage 4A are complete. The mandatory cross-cutting Phase 85 Interstage Foundation (`P85-IF`) is now inserted before Stage 4B and is canonically planned in `../docs/PHASE_85_INTERSTAGE_TRUSTED_CLINICAL_COMMUNICATION_MEMORY_PLAN.md`. P85-IF implementation has not started; P85-IF-A is next. After P85-IF closes, execution returns to Stage 4B Uyari ve Bildirimler, then Stage 4C, Stage 4D, Stage 5, Stage 6, and Stage 7. Production pilot remains `NO-GO`; real provider/channel/health-data paths remain disconnected.
+2026-07-10: Phase 85 Stages 1-3 and Stage 4A are complete. The mandatory cross-cutting Phase 85 Interstage Foundation (`P85-IF`) is now inserted before Stage 4B and is canonically planned in `../docs/PHASE_85_INTERSTAGE_TRUSTED_CLINICAL_COMMUNICATION_MEMORY_PLAN.md`. P85-IF-A added `../docs/PHASE_85_INTERSTAGE_TRUSTED_CLINICAL_COMMUNICATION_MEMORY_SPEC.md` as the canonical contract/threat model; runtime implementation has not started and P85-IF-B is next. Verification: core tests 225/225, app tests 734 passed / 4 skipped, lint 0 errors (3 pre-existing warnings), build passed, diff/secret/future-phase naming scans clean. After P85-IF closes, execution returns to Stage 4B Uyari ve Bildirimler, then Stage 4C, Stage 4D, Stage 5, Stage 6, and Stage 7. Production pilot remains `NO-GO`; real provider/channel/health-data paths remain disconnected.
 
 ## Phase 85 Stage 4A.4 AI Asistan Kontrolu
 
