@@ -63,6 +63,21 @@ describe("Supabase scoped access", () => {
     expect(scopeSupabaseState(state, context("assistant"), []).internalCopilotMessages).toEqual([]);
     expect(scopeSupabaseState(state, context("auditor"), []).internalCopilotToolCalls).toEqual([]);
   });
+
+  it("removes operational trust and quarantine inspection details from common app state", () => {
+    const state = operationalFixture();
+    const scopedOwner = scopeSupabaseState(state, context("owner"), []);
+    const scopedDietitian = scopeSupabaseState(state, context("dietitian"), []);
+
+    for (const scoped of [scopedOwner, scopedDietitian]) {
+      expect(scoped.inboundQuarantines).toEqual([]);
+      expect(scoped.channelAccountBindings).toEqual([]);
+      expect(scoped.channelActorBindings).toEqual([]);
+      expect(scoped.channelEvents).toEqual([]);
+      expect(scoped.channelMessageRevisions).toHaveLength(1);
+      expect(scoped.channelMessageRevisions[0]?.channelEventId).toBeNull();
+    }
+  });
 });
 
 function scopedFixture() {
@@ -150,4 +165,119 @@ function context(role: AppTenantContext["role"]): AppTenantContext {
 
 function assignment(clientId: string, dietitianId: string): DbClientAssignment {
   return { client_id: clientId, dietitian_id: dietitianId };
+}
+
+function operationalFixture() {
+  const state = scopedFixture();
+  const message = state.messages[0]!;
+  return {
+    ...state,
+    inboundQuarantines: [
+      {
+        id: "quarantine-1",
+        tenantId: state.tenant.id,
+        channel: "whatsapp" as const,
+        sourceConversationType: "group" as const,
+        sourceConversationId: "group-1",
+        sourceMessageId: "provider-message-1",
+        senderChannelUserId: "+905551110001",
+        reason: "whatsapp_group_unsupported" as const,
+        createdAt: "2026-07-10T10:00:00.000Z",
+      },
+    ],
+    channelAccountBindings: [
+      {
+        id: "account-binding-1",
+        tenantId: state.tenant.id,
+        provider: "whatsapp_cloud" as const,
+        providerAccountId: "provider-account-1",
+        wabaId: "waba-1",
+        businessPhoneNumberId: "phone-number-1",
+        normalizedDisplayNumber: "+905550000000",
+        operatingMode: "mock" as const,
+        lifecycleStatus: "active" as const,
+        attributionPolicy: "shared_authorized_team" as const,
+        verifiedAt: "2026-07-10T10:00:00.000Z",
+        revokedAt: null,
+        createdByDietitianId: state.dietitian.id,
+        revokedByDietitianId: null,
+        createdAt: "2026-07-10T10:00:00.000Z",
+        updatedAt: "2026-07-10T10:00:00.000Z",
+      },
+    ],
+    channelActorBindings: [
+      {
+        id: "actor-binding-1",
+        tenantId: state.tenant.id,
+        accountBindingId: "account-binding-1",
+        dietitianId: null,
+        actorType: "business_operator" as const,
+        attributionBasis: "shared_authorized_team" as const,
+        validFrom: "2026-07-10T10:00:00.000Z",
+        validTo: null,
+        verifiedAt: "2026-07-10T10:00:00.000Z",
+        revokedAt: null,
+        createdByDietitianId: state.dietitian.id,
+        revokedByDietitianId: null,
+        auditReasonCode: "test",
+        createdAt: "2026-07-10T10:00:00.000Z",
+      },
+    ],
+    channelEvents: [
+      {
+        id: "channel-event-1",
+        tenantId: state.tenant.id,
+        accountBindingId: "account-binding-1",
+        eventKind: "malformed_event" as const,
+        processingStatus: "quarantined" as const,
+        providerAccountId: "provider-account-1",
+        providerEventId: "provider-event-1",
+        providerMessageId: null,
+        fromIdentity: null,
+        toIdentity: null,
+        counterpartyIdentity: null,
+        payloadDigest: "abcdef1234567890",
+        payloadSchemaVersion: "test",
+        providerTime: null,
+        observedAt: "2026-07-10T10:00:00.000Z",
+        committedAt: null,
+        quarantineId: "quarantine-1",
+        replayOfEventId: null,
+        retryCount: 0,
+        internalSequence: 1,
+      },
+    ],
+    channelMessageRevisions: [
+      {
+        id: "revision-visible-message",
+        tenantId: state.tenant.id,
+        messageId: message.id,
+        channelEventId: null,
+        providerEventId: "provider-event-visible",
+        revisionAction: "edit" as const,
+        priorContentStatus: "available" as const,
+        currentContentStatus: "edited" as const,
+        priorBodyDigest: "old",
+        currentBodyDigest: "new",
+        revisionSequence: 1,
+        providerTime: null,
+        observedAt: "2026-07-10T10:00:00.000Z",
+      },
+      {
+        id: "revision-channel-event-only",
+        tenantId: state.tenant.id,
+        messageId: null,
+        channelEventId: "channel-event-1",
+        providerEventId: "provider-event-hidden",
+        revisionAction: "unknown_target" as const,
+        priorContentStatus: null,
+        currentContentStatus: "content_unavailable" as const,
+        priorBodyDigest: null,
+        currentBodyDigest: null,
+        revisionSequence: 1,
+        providerTime: null,
+        observedAt: "2026-07-10T10:00:00.000Z",
+      },
+    ],
+  };
 }

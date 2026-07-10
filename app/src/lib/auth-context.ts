@@ -17,7 +17,8 @@ export type AppCapability =
   | "export_client"
   | "anonymize_client"
   | "release_takeover"
-  | "internal_copilot_chat";
+  | "internal_copilot_chat"
+  | "read_operational_foundation";
 
 export type AppTenantContext = {
   tenantId: string;
@@ -117,6 +118,10 @@ export function requireCapability(context: AppTenantContext, capability: AppCapa
 }
 
 export function hasCapability(role: TenantRole, capability: AppCapability) {
+  if (capability === "read_operational_foundation") {
+    return role === "owner" || role === "admin";
+  }
+
   if (role === "owner" || role === "admin" || role === "dietitian") {
     return true;
   }

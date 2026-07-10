@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Activity,
   AlertTriangle,
@@ -29,6 +29,7 @@ import type {
   ClientRecord,
   Phase77FMenuPlanTemplateType,
 } from "@/lib/types";
+import type { OperationalFoundationInspectionDto } from "@/lib/phase-85-if-h-operational-visibility";
 import {
   getClientFoodRuleProfileV2Record,
   getClientFoodRuleProfileV2State,
@@ -131,6 +132,8 @@ export function DashboardApp({
     applyContextIntakeProposal,
     rejectContextIntakeProposal,
   } = useManuState();
+  const [operationalFoundation, setOperationalFoundation] =
+    useState<OperationalFoundationInspectionDto | null>(null);
   const [view, setView] = useState<ViewKey>("overview");
   const [selectedClientId, setSelectedClientId] = useState("client-mert");
   const [clientDetailTab, setClientDetailTab] = useState<ClientDetailTab>("tab_overview");
@@ -230,6 +233,27 @@ export function DashboardApp({
 
   const mainContentRef = useRef<HTMLDivElement>(null);
   useMobileKeyboardScroll(mainContentRef);
+
+  const uiLanguage = state.dietitian.uiLanguage || "tr";
+  const showOperationalInspection = authInfo?.role === "owner" || authInfo?.role === "admin";
+
+  useEffect(() => {
+    if (!showOperationalInspection) return;
+
+    let cancelled = false;
+    fetch("/api/operational-foundation")
+      .then((response) => (response.ok ? response.json() : null))
+      .then((payload: OperationalFoundationInspectionDto | null) => {
+        if (!cancelled) setOperationalFoundation(payload);
+      })
+      .catch(() => {
+        if (!cancelled) setOperationalFoundation(null);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [showOperationalInspection, state.channelDeliveries.length, state.handoffCases.length]);
 
   if (!hydrated) {
     return <DashboardLoadingSkeleton />;
@@ -450,8 +474,6 @@ export function DashboardApp({
     setContextUpdateDetails("");
   };
 
-  const uiLanguage = state.dietitian.uiLanguage || "tr";
-  const showOperationalInspection = authInfo?.role === "owner" || authInfo?.role === "admin";
   const viewsWithMobileStickyActions: ViewKey[] = ["conversation", "simulator", "copilot"];
   const mainMobilePadding = viewsWithMobileStickyActions.includes(view)
     ? "lg:pb-5"
@@ -681,6 +703,7 @@ export function DashboardApp({
                 state={state}
                 uiLanguage={uiLanguage}
                 showInspectionDetails={showOperationalInspection}
+                operationalFoundation={showOperationalInspection ? operationalFoundation : null}
                 onOpenSimulator={() => setView("simulator")}
                 onOpenClients={() => setView("clients")}
               />

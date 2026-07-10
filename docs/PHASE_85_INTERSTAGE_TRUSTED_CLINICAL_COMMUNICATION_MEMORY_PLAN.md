@@ -2,7 +2,7 @@
 
 Date: 2026-07-10
 Canonical code: `P85-IF`
-Status: Planning complete; P85-IF-A through P85-IF-I complete; R4 context-intake Supabase remediation complete; approved remediation sequence continues before Stage 4B resumes.
+Status: Planning complete; P85-IF-A through P85-IF-I complete; R5 operational access remediation complete; approved remediation sequence continues before Stage 4B resumes.
 Placement: Phase 85 Stage 4A complete -> P85-IF -> Phase 85 Stage 4B.
 Production pilot: `NO-GO`.
 Deployment: none.
@@ -81,6 +81,8 @@ flowchart TD
 | P85-IF-G | Controlled off-channel AI Chat context intake | Complete |
 | P85-IF-H | Minimal operational visibility and Stage 4B contract handoff | Complete |
 | P85-IF-I | Lifecycle, RLS, export, evidence, verification, closure | Complete |
+
+R5 remediation note, 2026-07-10: P85-IF-H operational visibility now has a hard API/RLS boundary. Common app-state redacts trust-binding, actor-binding, channel-event, event-only revision, and inbound-quarantine inspection details. Owner/admin inspection is retrieved only through `GET /api/operational-foundation` with `read_operational_foundation`; direct unauthorized access returns 403. Migration `20260710220000_phase_85_if_remediation_operational_access_boundaries.sql` restricts select RLS for the operational trust/quarantine tables to owner/admin. Evidence: `docs/PHASE_85_IF_R5_OPERATIONAL_ACCESS_BOUNDARIES_EVIDENCE.md`.
 
 ## 5. P85-IF-A - Canonical Contract And Threat Model
 

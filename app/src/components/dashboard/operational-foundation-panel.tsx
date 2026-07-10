@@ -7,6 +7,7 @@ import {
   buildChannelTrustOperationalSnapshot,
   buildQuarantineInspectionRows,
   buildTrustBindingInspectionSummary,
+  type OperationalFoundationInspectionDto,
 } from "@/lib/phase-85-if-h-operational-visibility";
 import { Badge, InfoLine, MetricCard } from "./shared";
 
@@ -14,14 +15,16 @@ export function OperationalFoundationPanel({
   state,
   uiLanguage,
   showInspectionDetails,
+  inspection,
 }: {
   state: ManuAppState;
   uiLanguage: SupportedLanguageCode;
   showInspectionDetails: boolean;
+  inspection?: OperationalFoundationInspectionDto | null;
 }) {
-  const channelTrust = buildChannelTrustOperationalSnapshot(state);
-  const quarantineRows = buildQuarantineInspectionRows(state);
-  const trustBindings = buildTrustBindingInspectionSummary(state);
+  const channelTrust = inspection?.channelTrust ?? buildChannelTrustOperationalSnapshot(state);
+  const quarantineRows = inspection?.quarantineRows ?? buildQuarantineInspectionRows(state);
+  const trustBindings = inspection?.trustBindings ?? buildTrustBindingInspectionSummary(state);
   const statusTone =
     channelTrust.status === "healthy" ? "emerald" : channelTrust.status === "degraded" ? "amber" : "red";
 
@@ -72,7 +75,7 @@ export function OperationalFoundationPanel({
         <InfoLine label={t(uiLanguage, "channelTrustRollbackScopes")} value={String(channelTrust.rollbackScopeCount)} />
       </div>
 
-      {showInspectionDetails ? (
+      {showInspectionDetails && inspection ? (
         <div className="grid gap-4 xl:grid-cols-2">
           <section className="rounded-lg border border-stone-200 bg-white p-4 shadow-sm">
             <h4 className="text-sm font-semibold">{t(uiLanguage, "trustBindingInspectionTitle")}</h4>

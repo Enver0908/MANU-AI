@@ -82,6 +82,10 @@ const TEST_P85_CONTEXT_INTAKE_ID = "00000000-0000-4000-8000-000000000948";
 const OTHER_P85_CONTEXT_INTAKE_ID = "00000000-0000-4000-8000-000000000949";
 const TEST_P85_CHANNEL_ACCOUNT_BINDING_ID = "00000000-0000-4000-8000-000000000950";
 const OTHER_P85_CHANNEL_ACCOUNT_BINDING_ID = "00000000-0000-4000-8000-000000000951";
+const TEST_P85_CHANNEL_ACTOR_BINDING_ID = "00000000-0000-4000-8000-000000000954";
+const OTHER_P85_CHANNEL_ACTOR_BINDING_ID = "00000000-0000-4000-8000-000000000955";
+const TEST_P85_CHANNEL_EVENT_ID = "00000000-0000-4000-8000-000000000956";
+const OTHER_P85_CHANNEL_EVENT_ID = "00000000-0000-4000-8000-000000000957";
 const TEST_P85_RISK_ACTIVITY_ID = "00000000-0000-4000-8000-000000000952";
 const PASSWORD = "manu-rls-test-password";
 
@@ -448,7 +452,6 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
       "human_control_sessions",
       "risk_activity_events",
       "context_intake_proposals",
-      "channel_account_bindings",
     ] as const) {
       const own = await member.from(table).select("id").eq("tenant_id", TEST_TENANT_ID);
       expect(own.error).toBeNull();
@@ -457,6 +460,32 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
       const hidden = await outsider.from(table).select("id").eq("tenant_id", TEST_TENANT_ID);
       expect(hidden.error).toBeNull();
       expect(hidden.data).toHaveLength(0);
+    }
+  });
+
+  it("restricts operational trust and quarantine inspection tables to owner/admin", async () => {
+    const owner = await signIn("rls-member@manu.local");
+    const dietitian = await signIn("rls-viewer@manu.local");
+
+    for (const table of [
+      "channel_account_bindings",
+      "channel_actor_bindings",
+      "channel_events",
+      "inbound_quarantines",
+    ] as const) {
+      const ownerRows = await owner.from(table).select("id").eq("tenant_id", TEST_TENANT_ID);
+      expect(ownerRows.error).toBeNull();
+      expect((ownerRows.data ?? []).length).toBeGreaterThan(0);
+
+      const dietitianRows = await dietitian.from(table).select("id").eq("tenant_id", TEST_TENANT_ID);
+      expect(dietitianRows.error).toBeNull();
+      expect(dietitianRows.data).toHaveLength(0);
+    }
+
+    for (const table of ["human_control_sessions", "risk_activity_events", "context_intake_proposals"] as const) {
+      const workflowRows = await dietitian.from(table).select("id").eq("tenant_id", TEST_TENANT_ID);
+      expect(workflowRows.error).toBeNull();
+      expect((workflowRows.data ?? []).length).toBeGreaterThan(0);
     }
   });
 
@@ -944,8 +973,7 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     });
 
     expect(next.lastSimulation?.blockedReason).toBe("whatsapp_group_unsupported");
-    expect(next.inboundQuarantines).toHaveLength(1);
-    expect(JSON.stringify(next.inboundQuarantines[0])).not.toContain("Group message must not be stored");
+    expect(next.inboundQuarantines).toHaveLength(0);
     expect(next.messages).toHaveLength(beforeMessages);
     expect(next.riskAssessments).toHaveLength(beforeRiskAssessments);
     expect(next.aiDecisions).toHaveLength(beforeDecisions);
@@ -953,7 +981,7 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
 
     const quarantine = await admin
       .from("inbound_quarantines")
-      .select("channel, source_conversation_type, reason")
+      .select("channel, source_conversation_type, reason, source_message_id")
       .eq("tenant_id", state.tenant.id)
       .eq("source_conversation_id", "rls-group")
       .single();
@@ -963,7 +991,9 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
       channel: "whatsapp",
       source_conversation_type: "group",
       reason: "whatsapp_group_unsupported",
+      source_message_id: "rls-group-message",
     });
+    expect(JSON.stringify(quarantine.data)).not.toContain("Group message must not be stored");
 
     const event = await admin
       .from("processed_inbound_events")
@@ -1773,6 +1803,52 @@ async function seedTenants(
         operating_mode: "mock",
         lifecycle_status: "active",
         attribution_policy: "shared_authorized_team",
+      },
+    ]),
+  );
+  await checked(
+    admin.from("channel_actor_bindings").insert([
+      {
+        id: TEST_P85_CHANNEL_ACTOR_BINDING_ID,
+        tenant_id: TEST_TENANT_ID,
+        account_binding_id: TEST_P85_CHANNEL_ACCOUNT_BINDING_ID,
+        actor_type: "business_operator",
+        attribution_basis: "shared_authorized_team",
+      },
+      {
+        id: OTHER_P85_CHANNEL_ACTOR_BINDING_ID,
+        tenant_id: OTHER_TENANT_ID,
+        account_binding_id: OTHER_P85_CHANNEL_ACCOUNT_BINDING_ID,
+        actor_type: "business_operator",
+        attribution_basis: "shared_authorized_team",
+      },
+    ]),
+  );
+  await checked(
+    admin.from("channel_events").insert([
+      {
+        id: TEST_P85_CHANNEL_EVENT_ID,
+        tenant_id: TEST_TENANT_ID,
+        account_binding_id: TEST_P85_CHANNEL_ACCOUNT_BINDING_ID,
+        event_kind: "malformed_event",
+        processing_status: "quarantined",
+        provider_account_id: "rls-visible-account",
+        provider_event_id: "rls-visible-event",
+        payload_digest: "rls-visible-digest",
+        payload_schema_version: "rls-test",
+        quarantine_id: TEST_INBOUND_QUARANTINE_ID,
+      },
+      {
+        id: OTHER_P85_CHANNEL_EVENT_ID,
+        tenant_id: OTHER_TENANT_ID,
+        account_binding_id: OTHER_P85_CHANNEL_ACCOUNT_BINDING_ID,
+        event_kind: "malformed_event",
+        processing_status: "quarantined",
+        provider_account_id: "rls-hidden-account",
+        provider_event_id: "rls-hidden-event",
+        payload_digest: "rls-hidden-digest",
+        payload_schema_version: "rls-test",
+        quarantine_id: OTHER_INBOUND_QUARANTINE_ID,
       },
     ]),
   );

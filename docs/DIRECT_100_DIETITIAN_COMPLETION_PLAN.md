@@ -30,6 +30,8 @@ Phase 85 Interstage Foundation P85-IF-C note (2026-07-10): the secure ingress, l
 
 P85-IF-R4 remediation note (2026-07-10): context-intake Supabase confirm/recheck/apply/reject operations now use service-role-only atomic RPCs with stale proposal `409`, wrong-client/missing proposal `404`, structured revision evidence, and double-confirmation enforcement. Apply creates only a context update and invalidates drafts transactionally; it does not mutate form, menu, or food-rule records directly. Evidence: `docs/PHASE_85_IF_R4_CONTEXT_INTAKE_REMEDIATION_EVIDENCE.md`. Local RLS passed 25/25. This does not change direct-pilot `NO-GO`, external gate status, R-405, or any real provider/channel/production-data path.
 
+P85-IF-R5 remediation note (2026-07-10): operational trust/quarantine inspection details are removed from common app-state and restricted to owner/admin through `GET /api/operational-foundation`, `read_operational_foundation`, and owner/admin-only select RLS. Evidence: `docs/PHASE_85_IF_R5_OPERATIONAL_ACCESS_BOUNDARIES_EVIDENCE.md`. Local RLS passed 26/26. This does not change direct-pilot `NO-GO`, external gate status, R-405, or any real provider/channel/production-data path.
+
 ## Fixed Product Laws
 These rules are non-negotiable and apply to every future phase:
 - The client must experience WhatsApp messages as coming from the dietitian, not from an AI system.

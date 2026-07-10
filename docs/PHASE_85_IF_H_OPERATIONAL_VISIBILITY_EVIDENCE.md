@@ -5,6 +5,8 @@ Track: P85-IF-H
 Status: complete
 Next track: Stage 4B (P85-IF closed)
 
+Remediation update, 2026-07-10: P85-IF-R5 hardened this track's access boundaries. Owner/admin inspection details now come from `GET /api/operational-foundation` behind `read_operational_foundation`; common app-state redacts trust-binding, actor-binding, channel-event, event-only revision, and quarantine inspection details. Evidence: `docs/PHASE_85_IF_R5_OPERATIONAL_ACCESS_BOUNDARIES_EVIDENCE.md`.
+
 ## Scope delivered
 
 - Core operational visibility module `phase-85-if-h-operational-visibility.ts` with provenance presentation, human-control banner model, channel trust aggregate snapshot, quarantine/trust-binding inspection rows, and structured-update source-message links (intake proposals + retrieval notifications).
@@ -21,7 +23,7 @@ Next track: Stage 4B (P85-IF closed)
 - Aggregate health surfaces expose counts and status labels only; no raw provider health text or PHI payloads.
 - Full Stage 4B alert/notification center UX remains untouched.
 - General internal copilot stays read-only; activation uses existing controlled reactivation path from P85-IF-F.
-- Trust-binding and quarantine detail tables render only when dashboard `authInfo.role` is `owner` or `admin`.
+- Trust-binding and quarantine detail tables render only when dashboard `authInfo.role` is `owner` or `admin`, and the backing API/RLS boundary now enforces the same access contract.
 
 ## Verification
 

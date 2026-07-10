@@ -58,6 +58,10 @@ import {
 import type { AppTenantContext } from "./auth-context";
 import type { ControlledAiActivationInput } from "./phase-85-if-f-risk-reactivation";
 import { createContextIntakeProposalInState } from "./phase-85-if-g-context-intake";
+import {
+  buildOperationalFoundationInspectionDto,
+  type OperationalFoundationInspectionDto,
+} from "./phase-85-if-h-operational-visibility";
 import type { CreateClientContextUpdateInput } from "./client-context-updates";
 import type { ApplyClientUpdateProposalInput, CreateClientUpdateProposalInput } from "./client-update-proposals";
 import type { SaveClientFoodRuleProfileV2Input } from "./phase-77e-client-food-rule-profile";
@@ -777,6 +781,47 @@ export async function loadSupabaseState(context = demoTenantContext()) {
   return scopedState satisfies ManuAppState;
 }
 
+export async function loadSupabaseOperationalFoundationInspection(
+  context = demoTenantContext(),
+): Promise<OperationalFoundationInspectionDto> {
+  const supabase = requireSupabase();
+  const [
+    inboundQuarantinesResult,
+    channelAccountBindingsResult,
+    channelActorBindingsResult,
+    channelEventsResult,
+    channelDeliveriesResult,
+    channelAdapterRollbackResult,
+  ] = await Promise.all([
+    supabase.from("inbound_quarantines").select("*").eq("tenant_id", context.tenantId).order("created_at"),
+    supabase.from("channel_account_bindings").select("*").eq("tenant_id", context.tenantId).order("created_at"),
+    supabase.from("channel_actor_bindings").select("*").eq("tenant_id", context.tenantId).order("created_at"),
+    supabase.from("channel_events").select("*").eq("tenant_id", context.tenantId).order("observed_at"),
+    supabase.from("channel_deliveries").select("*").eq("tenant_id", context.tenantId).order("created_at"),
+    supabase.from("channel_adapter_rollback_controls").select("*").eq("tenant_id", context.tenantId).maybeSingle(),
+  ]);
+
+  throwIfError(inboundQuarantinesResult.error);
+  throwIfError(channelAccountBindingsResult.error);
+  throwIfError(channelActorBindingsResult.error);
+  throwIfError(channelEventsResult.error);
+  throwIfError(channelDeliveriesResult.error);
+  throwIfError(channelAdapterRollbackResult.error);
+
+  const state = {
+    ...createInitialState(),
+    tenant: { id: context.tenantId, name: "Operational inspection" },
+    inboundQuarantines: (inboundQuarantinesResult.data || []).map(mapInboundQuarantine),
+    channelAccountBindings: (channelAccountBindingsResult.data || []).map(mapChannelAccountBinding),
+    channelActorBindings: (channelActorBindingsResult.data || []).map(mapChannelActorBinding),
+    channelEvents: (channelEventsResult.data || []).map(mapChannelEvent),
+    channelDeliveries: (channelDeliveriesResult.data || []).map(mapChannelDelivery),
+    channelAdapterRollback: mapChannelAdapterRollbackControls(channelAdapterRollbackResult.data),
+  };
+
+  return buildOperationalFoundationInspectionDto(state);
+}
+
 export async function loadSupabaseWindowedDashboardPayload(
   context = demoTenantContext(),
   options: Parameters<typeof buildPhase79WindowedDashboardPayload>[1] = {},
@@ -1356,25 +1401,13 @@ export function scopeSupabaseState(
   const visibleClientContextUpdateIds = new Set(visibleClientContextUpdates.map((update) => update.id));
   const visibleClientUpdateProposals = state.clientUpdateProposals.filter((proposal) => visibleClientIds.has(proposal.clientId));
   const visibleClientUpdateProposalIds = new Set(visibleClientUpdateProposals.map((proposal) => proposal.id));
-  const visibleInboundQuarantines =
-    context.role === "owner" || context.role === "admin" || context.role === "dietitian"
-      ? state.inboundQuarantines
-      : [];
-  const visibleInboundQuarantineIds = new Set(visibleInboundQuarantines.map((quarantine) => quarantine.id));
-  const canReadChannelTrustRoot = context.role === "owner" || context.role === "admin" || context.role === "dietitian";
-  const visibleChannelAccountBindings = canReadChannelTrustRoot ? state.channelAccountBindings : [];
-  const visibleChannelAccountBindingIds = new Set(visibleChannelAccountBindings.map((binding) => binding.id));
-  const visibleChannelActorBindings = canReadChannelTrustRoot ? state.channelActorBindings : [];
-  const visibleChannelActorBindingIds = new Set(visibleChannelActorBindings.map((binding) => binding.id));
-  const visibleChannelEvents = canReadChannelTrustRoot ? state.channelEvents : [];
-  const visibleChannelEventIds = new Set(visibleChannelEvents.map((event) => event.id));
-  const visibleChannelMessageRevisions = canReadChannelTrustRoot
-    ? state.channelMessageRevisions.filter(
-        (revision) =>
-          (revision.messageId !== null && visibleMessageIds.has(revision.messageId)) ||
-          (revision.channelEventId !== null && visibleChannelEventIds.has(revision.channelEventId)),
-      )
-    : [];
+  const visibleInboundQuarantines: ManuAppState["inboundQuarantines"] = [];
+  const visibleChannelAccountBindings: ManuAppState["channelAccountBindings"] = [];
+  const visibleChannelActorBindings: ManuAppState["channelActorBindings"] = [];
+  const visibleChannelEvents: ManuAppState["channelEvents"] = [];
+  const visibleChannelMessageRevisions = state.channelMessageRevisions.filter(
+    (revision) => revision.messageId !== null && visibleMessageIds.has(revision.messageId),
+  );
   const visibleChannelMessageRevisionIds = new Set(visibleChannelMessageRevisions.map((revision) => revision.id));
   const visibleHumanControlSessions = state.humanControlSessions.filter((session) => visibleClientIds.has(session.clientId));
   const visibleHumanControlSessionIds = new Set(visibleHumanControlSessions.map((session) => session.id));
@@ -1432,10 +1465,6 @@ export function scopeSupabaseState(
         visibleClientUpdateProposalIds.has(event.entityId) ||
         visibleInternalCopilotMessageIds.has(event.entityId) ||
         visibleInternalCopilotToolCallIds.has(event.entityId) ||
-        visibleInboundQuarantineIds.has(event.entityId) ||
-        visibleChannelAccountBindingIds.has(event.entityId) ||
-        visibleChannelActorBindingIds.has(event.entityId) ||
-        visibleChannelEventIds.has(event.entityId) ||
         visibleChannelMessageRevisionIds.has(event.entityId) ||
         visibleHumanControlSessionIds.has(event.entityId) ||
         visibleRiskActivityEventIds.has(event.entityId) ||

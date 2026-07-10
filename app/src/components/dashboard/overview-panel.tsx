@@ -11,6 +11,7 @@ import {
   UserRound,
 } from "lucide-react";
 import type { ClientRecord, ManuAppState, SupportedLanguageCode } from "@/lib/types";
+import type { OperationalFoundationInspectionDto } from "@/lib/phase-85-if-h-operational-visibility";
 import { ClientSummary, EmptyState, MetricCard, WorkflowItem } from "./shared";
 import { OperationalFoundationPanel } from "./operational-foundation-panel";
 
@@ -20,6 +21,7 @@ export function OverviewPanel({
   state,
   uiLanguage,
   showInspectionDetails,
+  operationalFoundation,
   onOpenSimulator,
   onOpenClients,
 }: {
@@ -28,6 +30,7 @@ export function OverviewPanel({
   state: ManuAppState;
   uiLanguage: SupportedLanguageCode;
   showInspectionDetails: boolean;
+  operationalFoundation?: OperationalFoundationInspectionDto | null;
   onOpenSimulator: () => void;
   onOpenClients: () => void;
 }) {
@@ -88,6 +91,7 @@ export function OverviewPanel({
           state={state}
           uiLanguage={uiLanguage}
           showInspectionDetails={showInspectionDetails}
+          inspection={operationalFoundation}
         />
       </section>
     </div>

@@ -26,6 +26,8 @@ Phase 85 Interstage Foundation P85-IF-A through P85-IF-D on 2026-07-10 add the c
 
 P85-IF-R4 remediation on 2026-07-10 hardens the completed P85-IF-G context-intake workflow with service-role-only atomic Supabase proposal mutations, stale proposal `409`, wrong-client/missing proposal `404`, structured revision evidence, double-confirmation enforcement, and transactional draft invalidation. Evidence: `docs/PHASE_85_IF_R4_CONTEXT_INTAKE_REMEDIATION_EVIDENCE.md`. Local RLS passed 25/25. Production pilot remains `NO-GO`; R-405 remains open; real provider/channel/health-data paths remain disconnected.
 
+P85-IF-R5 remediation on 2026-07-10 hardens the completed P85-IF-H operational visibility surface. Common app-state redacts operational trust/quarantine inspection details; owner/admin inspection uses `GET /api/operational-foundation` and `read_operational_foundation`; unauthorized direct calls return 403; select RLS on operational trust/quarantine tables is owner/admin only. Evidence: `docs/PHASE_85_IF_R5_OPERATIONAL_ACCESS_BOUNDARIES_EVIDENCE.md`. Local RLS passed 26/26. Production pilot remains `NO-GO`; R-405 remains open; real provider/channel/health-data paths remain disconnected.
+
 Phase 85 Interstage Foundation P85-IF-D on 2026-07-10 implements complete transcript and human-control coordination. Evidence is recorded in `docs/PHASE_85_IF_D_TRANSCRIPT_HUMAN_CONTROL_EVIDENCE.md`; targeted 7/7, updated ledger 11/11, app 787 passed / 4 skipped, core 225/225, lint, production build, and full mock channel replay passed. The live webhook remains unchanged. Production pilot remains `NO-GO`.
 
 Phase 84B public website on 2026-07-02 rebuilt the SiriusAI marketing homepage. The original R-425 gap is superseded by Phase 84D-84J hosted sandbox verification.

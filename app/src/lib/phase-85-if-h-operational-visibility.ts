@@ -85,6 +85,23 @@ export type StructuredUpdateSourceLink = {
   status: ContextIntakeProposalRecord["status"];
 };
 
+export type OperationalFoundationInspectionDto = {
+  channelTrust: ChannelTrustOperationalSnapshot;
+  quarantineRows: QuarantineInspectionRow[];
+  trustBindings: ReturnType<typeof buildTrustBindingInspectionSummary>;
+};
+
+export function buildOperationalFoundationInspectionDto(
+  state: ManuAppState,
+  limit = 8,
+): OperationalFoundationInspectionDto {
+  return {
+    channelTrust: buildChannelTrustOperationalSnapshot(state),
+    quarantineRows: buildQuarantineInspectionRows(state, limit),
+    trustBindings: buildTrustBindingInspectionSummary(state),
+  };
+}
+
 export function resolveMessageProvenancePresentation(
   message: Pick<
     MessageRecord,
