@@ -5,6 +5,7 @@ import {
   type RawChannelEventCandidate,
 } from "./phase-85-if-c-channel-event-normalizer";
 import { routeChannelEvent } from "./phase-85-if-c-channel-event-routing";
+import { applyRoutedTranscriptSideEffects } from "./phase-85-if-d-transcript-human-control";
 import { processMockChannelInbound } from "./channel-adapters";
 
 // Phase 85 Interstage Foundation - P85-IF-C ledger, secure gate, quarantine, and replay.
@@ -16,12 +17,42 @@ import { processMockChannelInbound } from "./channel-adapters";
 // delegated to the existing, unmodified `processMockChannelInbound` orchestrator path so
 // current client-facing behavior does not change. All other event kinds (business-human
 // echoes, statuses, history, edit/revoke, media, quarantine cases) are ledger-recorded only.
-// Storing business-human echoes as verified `dietitian_manual` messages, auto-pausing AI, and
-// opening human-control sessions are P85-IF-D scope, not P85-IF-C.
+// P85-IF-D implements business-human transcript storage, human-control coordination, and
+// edit/revoke/media/history lifecycle side effects for routed non-client-text events.
 
 export const PHASE_85_IF_C_LEDGER_VERSION = "p85-if-c-channel-event-ledger-v1";
 export const CHANNEL_EVENT_PAYLOAD_SCHEMA_VERSION = "p85-if-c-v1";
 export const MOCK_QUARANTINE_REPLAY_EXPIRY_DAYS = 7;
+
+const TRANSCRIPT_SIDE_EFFECT_EVENT_KINDS: ReadonlySet<ChannelEventKind> = new Set([
+  "business_human_echo_text",
+  "business_human_echo_media_unsupported",
+  "history_client_message",
+  "history_business_human_message",
+  "client_message_media_unsupported",
+  "message_edit",
+  "message_revoke",
+  "outbound_status",
+]);
+
+async function applyRoutedTranscriptEffectsIfNeeded(
+  state: ManuAppState,
+  candidate: RawChannelEventCandidate,
+  routing: Extract<ReturnType<typeof routeChannelEvent>, { status: "routed" }>,
+  channelEventId: string,
+  observedAt: string,
+): Promise<ManuAppState> {
+  if (!TRANSCRIPT_SIDE_EFFECT_EVENT_KINDS.has(routing.finalEventKind)) {
+    return state;
+  }
+
+  return applyRoutedTranscriptSideEffects(state, {
+    candidate,
+    routing,
+    channelEventId,
+    observedAt,
+  });
+}
 
 const NEW_MESSAGE_EVENT_KINDS: ReadonlySet<ChannelEventKind> = new Set([
   "client_message_text",
@@ -182,6 +213,14 @@ async function ingestSingleCandidate(
 
   if (routing.finalEventKind === "client_message_text") {
     nextState = await applyRoutedClientInbound(nextState, candidate, routing, record.observedAt);
+  } else {
+    nextState = await applyRoutedTranscriptEffectsIfNeeded(
+      nextState,
+      candidate,
+      routing,
+      record.id,
+      record.observedAt,
+    );
   }
 
   nextState = appendAudit(nextState, "channel_event_committed", candidate, record.id, ["routing_complete"]);
@@ -384,6 +423,14 @@ export async function replayQuarantinedChannelEvent(
   let replayState = replaceChannelEvent(state, replayed);
   if (routing.finalEventKind === "client_message_text") {
     replayState = await applyRoutedClientInbound(replayState, candidate, routing, now);
+  } else {
+    replayState = await applyRoutedTranscriptEffectsIfNeeded(
+      replayState,
+      candidate,
+      routing,
+      replayed.id,
+      now,
+    );
   }
   replayState = appendReplayAudit(replayState, "channel_event_replayed", replayed, ["authorized_replay_committed"]);
   return { state: replayState, result: { ok: true, event: replayed } };

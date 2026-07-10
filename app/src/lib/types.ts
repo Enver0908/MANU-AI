@@ -113,7 +113,12 @@ export type MessageRetrievalEligibility =
   | "excluded_draft"
   | "excluded_unverified_actor";
 export type ChannelMessageRevisionAction = "edit" | "revoke" | "unknown_target";
-export type HumanControlSessionReason = "yellow_risk_hold" | "red_risk_lock" | "manual_takeover" | "channel_trust_gap";
+export type HumanControlSessionReason =
+  | "yellow_risk_hold"
+  | "red_risk_lock"
+  | "manual_takeover"
+  | "channel_trust_gap"
+  | "external_human_active";
 export type HumanControlSessionStatus = "active" | "resolved" | "reactivated";
 export type RiskActivityEventType =
   | "human_response_observed"

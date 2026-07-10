@@ -2,7 +2,7 @@
 
 Date: 2026-07-10
 Canonical code: `P85-IF`
-Status: Planning complete; P85-IF-A, P85-IF-B, and P85-IF-C complete; P85-IF-D next.
+Status: Planning complete; P85-IF-A, P85-IF-B, P85-IF-C, and P85-IF-D complete; P85-IF-E next.
 Placement: Phase 85 Stage 4A complete -> P85-IF -> Phase 85 Stage 4B.
 Production pilot: `NO-GO`.
 Deployment: none.
@@ -75,7 +75,7 @@ flowchart TD
 | P85-IF-A | Canonical spec, provider contract, threat model, state machines | Complete |
 | P85-IF-B | Trust-root, provenance, identity, event, and session data model | Complete |
 | P85-IF-C | Secure mock webhook, normalization, ledger, routing, quarantine | Complete |
-| P85-IF-D | Complete transcript, human-control coordination, edit/revoke/media | Pending |
+| P85-IF-D | Complete transcript, human-control coordination, edit/revoke/media | Complete |
 | P85-IF-E | Full-history retrieval, prompt authority, answerability relevance | Pending |
 | P85-IF-F | Yellow/red resolution, direct AI reactivation, concurrency safety | Pending |
 | P85-IF-G | Controlled off-channel AI Chat context intake | Pending |
@@ -180,7 +180,7 @@ Status: complete on 2026-07-10. P85-IF-B added app-level nullable provenance/mes
 - Two tenants with the same client phone remain isolated by provider account binding.
 - No event reaches the orchestrator until tenant, client, actor, and conversation resolution all succeed.
 
-Status: complete and post-commit audited on 2026-07-10. `docs/PHASE_85_IF_C_SECURE_INGRESS_ROUTING_REMEDIATION_EVIDENCE.md` records all closed findings, including duplicate-ID/digest conflicts. Verification passed: targeted 40/40, app 780 passed / 4 skipped, core 225/225, lint 0 errors with 3 unchanged warnings, production build, and full mock channel replay. The engine remains additive and disconnected from the live webhook; business-human transcript persistence and human-control behavior remain P85-IF-D. P85-IF-D is next.
+Status: complete and post-commit audited on 2026-07-10. `docs/PHASE_85_IF_C_SECURE_INGRESS_ROUTING_REMEDIATION_EVIDENCE.md` records all closed findings, including duplicate-ID/digest conflicts. Verification passed: targeted 40/40, app 780 passed / 4 skipped, core 225/225, lint 0 errors with 3 unchanged warnings, production build, and full mock channel replay. The engine remains additive and disconnected from the live webhook; business-human transcript persistence and human-control behavior were completed in P85-IF-D.
 
 ## 8. P85-IF-D - Complete Transcript And Human Control
 
@@ -210,6 +210,8 @@ Status: complete and post-commit audited on 2026-07-10. `docs/PHASE_85_IF_C_SECU
 - No client/dietitian actor inversion and no human-to-AI response loop.
 - Full transcript remains ordered and queryable through active/passive/risk/manual sessions.
 - Edit, revoke, media, history, draft invalidation, and auto-pause tests pass in fallback and Supabase paths.
+
+Status: complete on 2026-07-10. Evidence: `docs/PHASE_85_IF_D_TRANSCRIPT_HUMAN_CONTROL_EVIDENCE.md`. Verification passed: targeted P85-IF-D 7/7 plus updated P85-IF-C ledger 11/11, app 787 passed / 4 skipped, core 225/225, lint 0 errors with 3 unchanged warnings, production build, and full mock channel replay. P85-IF-E is next.
 
 ## 9. P85-IF-E - Full-History Retrieval And Prompt Authority V2
 

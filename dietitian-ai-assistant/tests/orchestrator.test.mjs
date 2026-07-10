@@ -768,8 +768,19 @@ test("message provenance distinguishes AI and dietitian messages", () => {
     sourceMessageId: "client-message-2",
   });
 
+  const businessHumanMessage = buildMessageProvenance({
+    origin: MESSAGE_ORIGINS.dietitianManual,
+    actorType: "business_operator",
+    actorBindingId: "actor-binding-1",
+    actorResolutionBasis: "shared_authorized_team",
+    sourceMessageId: "client-message-3",
+  });
+
   assert.equal(aiMessage.origin, "ai_generated");
   assert.equal(aiMessage.generatedByAiDecisionId, "decision-1");
   assert.equal(dietitianMessage.origin, "dietitian_manual");
   assert.equal(dietitianMessage.authorDietitianId, "dietitian-1");
+  assert.equal(businessHumanMessage.origin, "dietitian_manual");
+  assert.equal(businessHumanMessage.authorDietitianId, null);
+  assert.equal(businessHumanMessage.actorType, "business_operator");
 });

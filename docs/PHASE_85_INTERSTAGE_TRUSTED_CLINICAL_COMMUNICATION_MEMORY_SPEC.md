@@ -3,7 +3,7 @@
 Date: 2026-07-10
 Canonical code: `P85-IF`
 Track: `P85-IF-A`, `P85-IF-B`, and `P85-IF-C`
-Status: P85-IF-A complete; P85-IF-B trust-root/provenance data model complete; P85-IF-C secure ingress/ledger/routing/quarantine complete; P85-IF-D next.
+Status: P85-IF-A complete; P85-IF-B trust-root/provenance data model complete; P85-IF-C secure ingress/ledger/routing/quarantine complete; P85-IF-D complete transcript and human control complete; P85-IF-E next.
 Placement: Phase 85 Stage 4A complete -> P85-IF -> Phase 85 Stage 4B.
 Production pilot: `NO-GO`.
 Deployment: none.
@@ -354,6 +354,8 @@ Implementation status on 2026-07-10: complete. `phase-85-if-c-channel-event-norm
 - Business-human echo stores as verified `dietitian_manual` without AI loop.
 - Human-control session auto-pause, draft invalidation, edit/revoke/media/history behavior are test-locked.
 
+Implementation status on 2026-07-10: complete. `phase-85-if-d-transcript-human-control.ts` and `phase-85-if-d-supabase-mappers.ts` implement routed transcript persistence, human-control coordination, revision lifecycle, unsupported-media review notifications, and outbound-status correlation. Evidence: `docs/PHASE_85_IF_D_TRANSCRIPT_HUMAN_CONTROL_EVIDENCE.md`. P85-IF-E is next.
+
 ### P85-IF-E
 
 - Full-history deterministic retrieval exists in fallback and Supabase paths.
@@ -408,7 +410,7 @@ For later runtime tracks, select the relevant subset and then run the full requi
 
 P85-IF-A is complete when this spec is committed with continuity documentation updates. It creates no runtime behavior and does not approve production pilot, Stage 4B runtime work, real providers/channels, live billing, monitoring, backup, secret manager, or real health-data processing.
 
-At P85-IF-A closure, the next track was P85-IF-B. P85-IF-B and P85-IF-C are now complete; P85-IF-D is next.
+At P85-IF-A closure, the next track was P85-IF-B. P85-IF-B through P85-IF-D are now complete; P85-IF-E is next.
 
 Verification on 2026-07-10:
 
@@ -468,4 +470,12 @@ Verification on 2026-07-10:
 - Visual verification: not required because no UI changed.
 - Final `git status --short`: required after remediation commit closure.
 
-P85-IF-C is evidence-complete. P85-IF-D is the next track.
+P85-IF-C is evidence-complete. P85-IF-D is evidence-complete. P85-IF-E is the next track.
+
+## 20. P85-IF-D Closure Statement
+
+P85-IF-D is complete when routed transcript persistence, human-control coordination, revision lifecycle, unsupported-media review handling, outbound-status correlation, Supabase row mappers, append-only migration, focused tests, and continuity documentation are committed. It does not approve production pilot, Stage 4B runtime work, real providers/channels, live billing, monitoring, backup, secret manager, or real health-data processing, and it does not wire the ingress engine into the live `/api/whatsapp/webhook` route.
+
+Evidence: `docs/PHASE_85_IF_D_TRANSCRIPT_HUMAN_CONTROL_EVIDENCE.md`.
+
+The next track is P85-IF-E: full-history retrieval and prompt authority.

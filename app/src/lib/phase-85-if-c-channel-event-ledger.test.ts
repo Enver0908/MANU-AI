@@ -172,7 +172,7 @@ describe("phase 85 if-c channel event ledger", () => {
     });
   });
 
-  it("routes a normalized business echo to the client ledger without invoking the D-track transcript behavior", async () => {
+  it("stores a business-human echo in the transcript and coordinates human control without invoking the client inbound path", async () => {
     const state = {
       ...stateWithBinding(),
       channelActorBindings: [
@@ -209,8 +209,14 @@ describe("phase 85 if-c channel event ledger", () => {
       processingStatus: "committed",
       accountBindingId: "account-binding-1",
     });
-    expect(next.messages).toHaveLength(initialMessageCount);
+    expect(next.messages).toHaveLength(initialMessageCount + 1);
+    expect(next.messages.find((message) => message.providerMessageId === "wamid.ECHO_FLOW_1")).toMatchObject({
+      origin: "dietitian_manual",
+      sender: "dietitian",
+      actorType: "business_operator",
+    });
     expect(next.processedSimulationKeys).not.toContain("wamid.ECHO_FLOW_1");
+    expect(next.humanControlSessions.length).toBeGreaterThanOrEqual(1);
   });
 
   it("quarantines an event and records an audit trail when no client matches", async () => {

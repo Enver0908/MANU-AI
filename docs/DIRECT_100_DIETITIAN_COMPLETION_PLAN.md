@@ -24,6 +24,8 @@ Phase 85 Interstage Foundation P85-IF-A note (2026-07-10): `docs/PHASE_85_INTERS
 
 Phase 85 Interstage Foundation P85-IF-B note (2026-07-10): the trust-root/provenance data model foundation is implemented with nullable message provenance fields, channel account/actor/event/revision/session/risk/context-intake records, Supabase mappers, an append-only migration, and focused contract tests. P85-IF-C later completed secure ingress; P85-IF-D is next. This does not change direct-pilot `NO-GO`, external gate status, R-405, R-406, or any real provider/channel/production-data path.
 
+Phase 85 Interstage Foundation P85-IF-D note (2026-07-10): complete transcript and human-control coordination is implemented with business-human echo persistence, human-control sessions, revision lifecycle, unsupported-media review notifications, and Supabase row mappers. Evidence: `docs/PHASE_85_IF_D_TRANSCRIPT_HUMAN_CONTROL_EVIDENCE.md`. Verification passed with targeted 7/7, updated ledger 11/11, app 787 passed / 4 skipped, core 225/225, lint, build, and full mock channel replay. P85-IF-E is next. This does not change direct-pilot `NO-GO`, external gate status, R-405, R-406, or any real provider/channel/production-data path.
+
 Phase 85 Interstage Foundation P85-IF-C note (2026-07-10): the secure ingress, ledger, routing, and quarantine engine is implemented and post-commit audited. Verification passed with targeted 40/40, full app 780 passed / 4 skipped, core 225/225, lint, build, and full mock channel replay. Business-human transcript/human-control behavior remains P85-IF-D. This does not change direct-pilot `NO-GO`, external gate status, R-405, R-406, or any real provider/channel/production-data path.
 
 ## Fixed Product Laws
@@ -40,7 +42,7 @@ These rules are non-negotiable and apply to every future phase:
 
 ## Current Baseline
 - Latest completed implementation phase: P85-IF-C secure ingress, ledger, routing, and quarantine engine complete (2026-07-10), after P85-IF-B trust-root/provenance data model foundation.
-- Next operator step: P85-IF-D complete transcript and human control; Stage 4B resumes only after P85-IF-I closure; external production prerequisites remain open; no production GO.
+- Next operator step: P85-IF-E full-history retrieval and prompt authority; Stage 4B resumes only after P85-IF-I closure; external production prerequisites remain open; no production GO.
 - Primary open product risk: R-425 is mitigated in the hosted commercial sandbox path, but production launch gates remain open.
 - Latest roadmap rebaseline: Phase 77A manual source authority rebaseline spec (2026-06-10).
 - Detailed Phase 77 implementation plan: `docs/PHASE_77_MASTER_IMPLEMENTATION_PLAN.md`.
