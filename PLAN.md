@@ -13,7 +13,11 @@ The current implementation is an architecture/core package, not yet the full Saa
 
 ## Latest Phase 85 Roadmap Restructure
 
-On 2026-07-08, Phase 85 was restructured into this explicit stage ladder: Stage 1 design system foundation, Stage 2 full component system, Stage 3 public/commercial entry surfaces, Stage 4A Danisan Kontrol Paneli Mimari ve Hizmet Akisi Plani, Stage 4B Uyari ve Bildirimler, Stage 4C Diyetisyen Icin AI Chat, Stage 4D Ayarlar / Hesap, Stage 5 Dashboard and Mobile PWA Shell, Stage 6 Dashboard Core Workflows, and Stage 7 Visual QA/Polish/Accessibility/Closure. Stages 1-3 and Stage 4A are complete. Stage 4B is the next planning target; Stage 4B and later stages must be planned and implemented one by one with explicit user approval. Production pilot remains `NO-GO`; R-405 remains open; R-406 current local Supabase/RLS re-run remains pending.
+On 2026-07-08, Phase 85 was restructured into this explicit stage ladder: Stage 1 design system foundation, Stage 2 full component system, Stage 3 public/commercial entry surfaces, Stage 4A Danisan Kontrol Paneli Mimari ve Hizmet Akisi Plani, Stage 4B Uyari ve Bildirimler, Stage 4C Diyetisyen Icin AI Chat, Stage 4D Ayarlar / Hesap, Stage 5 Dashboard and Mobile PWA Shell, Stage 6 Dashboard Core Workflows, and Stage 7 Visual QA/Polish/Accessibility/Closure. Stages 1-3 and Stage 4A are complete. On 2026-07-10, `P85-IF` was inserted as a mandatory cross-cutting foundation program between Stage 4A and Stage 4B. P85-IF does not replace or complete Phase 85; after P85-IF-A through P85-IF-I close, execution returns to Stage 4B. Production pilot remains `NO-GO`; R-405 remains open; R-406 current local Supabase/RLS re-run remains pending.
+
+## Phase 85 Interstage Foundation - P85-IF
+
+The canonical planning baseline is `docs/PHASE_85_INTERSTAGE_TRUSTED_CLINICAL_COMMUNICATION_MEMORY_PLAN.md`. It addresses verified WhatsApp business-human actor provenance, complete transcript persistence, tenant/client/counterparty routing, historical retrieval beyond the last-eight-message window, human/AI coordination, authenticated yellow/red resolution through direct AI reactivation, and controlled off-channel AI Chat context intake. Planning is complete; implementation has not started. The next operator action is P85-IF-A. P85-IF provides stable alert/notification semantics and minimal verification UI only; the full alert/notification product experience remains Phase 85 Stage 4B scope.
 
 ## Latest Phase 85 Stage 4A Danisan Kontrol Paneli
 
@@ -37,7 +41,7 @@ On 2026-07-07, Phase 85B implemented the approved foundation without full page r
 
 ## Latest Phase 85 Stage 2 Shared Component System
 
-On 2026-07-07, Phase 85 Stage 2 implemented the shared UI component foundation: `plum`, `sage`, and `warm` tones are available; legacy `emerald`/`amber` primitive calls map to the new accents; form, card, tabs, segmented-control, table, dialog, sheet, app-shell, alert, empty-state, and loading primitives now follow the approved palette. Public/commercial page redesign was completed in Stage 3, Stage 4A is complete, and the remaining frontend roadmap now continues with Stage 4B, Stage 4C, Stage 4D, Stage 5, Stage 6, and Stage 7. Production pilot remains `NO-GO`; R-405 remains open; R-406 current post-83/84 local Supabase/RLS re-run remains pending.
+On 2026-07-07, Phase 85 Stage 2 implemented the shared UI component foundation: `plum`, `sage`, and `warm` tones are available; legacy `emerald`/`amber` primitive calls map to the new accents; form, card, tabs, segmented-control, table, dialog, sheet, app-shell, alert, empty-state, and loading primitives now follow the approved palette. Public/commercial page redesign was completed in Stage 3 and Stage 4A is complete. The current execution order is P85-IF, then Stage 4B, Stage 4C, Stage 4D, Stage 5, Stage 6, and Stage 7. Production pilot remains `NO-GO`; R-405 remains open; R-406 current post-83/84 local Supabase/RLS re-run remains pending.
 
 ## Latest Phase 85 Stage 3 Public/Commercial Integration
 

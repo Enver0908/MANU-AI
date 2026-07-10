@@ -1,7 +1,7 @@
 # Phase 85: SiriusAI Frontend Redesign And Design System Spec
 
 Date: 2026-07-07
-Status: Stage 1 design foundation, Stage 2 shared component system, Stage 3 public/commercial entry integration, and Stage 4A Danisan Kontrol Paneli complete; Stage 3 is deployed to the hosted sandbox at `https://siriusai.store`. Next work is Stage 4B Uyari ve Bildirimler planning with explicit user approval.
+Status: Stage 1 design foundation, Stage 2 shared component system, Stage 3 public/commercial entry integration, and Stage 4A Danisan Kontrol Paneli complete; Stage 3 is deployed to the hosted sandbox at `https://siriusai.store`. P85-IF is the mandatory cross-cutting foundation program between Stage 4A and Stage 4B. P85-IF-A is next; after P85-IF closure, work returns to Stage 4B Uyari ve Bildirimler.
 Production pilot: NO-GO.
 Clinical production GO: not in scope for Phase 85.
 R-405: Open unless technically remediated through the Phase 22 procedure or formally accepted by external engineering/security approval.
@@ -19,6 +19,7 @@ The user-approved implementation order is now restructured into the following st
 2. Full component system.
 3. Public website and commercial entry surfaces.
 4A. Danisan Kontrol Paneli Mimari ve Hizmet Akisi Plani.
+IF. Phase 85 Interstage Foundation - trusted clinical communication and memory.
 4B. Uyari ve Bildirimler.
 4C. Diyetisyen Icin AI Chat.
 4D. Ayarlar / Hesap.
@@ -43,9 +44,9 @@ Stage 4A changed dashboard danisan kontrol paneli UI only. It does not alter bac
 
 ## Stage 4B - Uyari ve Bildirimler
 
-Status: pending. This stage is the next Phase 85 planning target after Stage 4A.
+Status: pending and blocked on P85-IF closure. This stage resumes as the next Phase 85 planning target after P85-IF-I.
 
-Stage 4B must be planned with the user before implementation. It should define the dashboard alert/notification service surface, including notification priority, acknowledgement/read flows, clinically relevant blockers, handoff visibility, mobile/PWA ergonomics, and existing notification API/state contracts. No Stage 4B runtime work is approved until its action plan is created and explicitly approved.
+Stage 4B must be planned with the user after P85-IF closure and before implementation. P85-IF owns the underlying actor, transcript, retrieval, human-control, risk-resolution, and alert-versus-notification contracts plus minimal verification visibility. Stage 4B owns the complete dashboard alert/notification service surface, including notification priority, acknowledgement/read flows, clinically relevant blockers, handoff visibility, navigation, filters, grouping, mobile/PWA ergonomics, and final visual design. No Stage 4B runtime work is approved until P85-IF closes and the Stage 4B action plan is explicitly approved.
 
 ## Stage 4C - Diyetisyen Icin AI Chat
 

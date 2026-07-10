@@ -18,7 +18,9 @@ Phase 85 Stage 3 implementation/deploy note (2026-07-07): `docs/PHASE_85_STAGE_3
 
 Phase 85 Stage 4A Danisan Kontrol Paneli Mimari ve Hizmet Akisi Plani note (2026-07-08): `docs/PHASE_85_STAGE_4A_DANISAN_KONTROL_PANELI_MIMARI_VE_HIZMET_AKISI_PLANI.md` records the completed code-backed client form, active nutrition plan, menu/export, and AI assistant control dashboard work. This Stage 4A dashboard UI implementation does not change direct-pilot `NO-GO`, external gate status, R-405, R-406, or any real provider/channel/production-data path.
 
-Phase 85 roadmap restructure note (2026-07-08): Phase 85 now proceeds as Stage 1, Stage 2, Stage 3, Stage 4A Danisan Kontrol Paneli Mimari ve Hizmet Akisi Plani, Stage 4B Uyari ve Bildirimler, Stage 4C Diyetisyen Icin AI Chat, Stage 4D Ayarlar / Hesap, Stage 5 Dashboard and Mobile PWA Shell, Stage 6 Dashboard Core Workflows, and Stage 7 Visual QA/Polish/Accessibility/Closure. Stage 4B is next and is not yet action-planned. This does not change direct-pilot `NO-GO`, external gate status, R-405, R-406, or any real provider/channel/production-data path.
+Phase 85 roadmap restructure note (2026-07-08): Phase 85 proceeds as Stage 1, Stage 2, Stage 3, Stage 4A Danisan Kontrol Paneli, Stage 4B Uyari ve Bildirimler, Stage 4C Diyetisyen Icin AI Chat, Stage 4D Ayarlar / Hesap, Stage 5 Dashboard and Mobile PWA Shell, Stage 6 Dashboard Core Workflows, and Stage 7 closure.
+
+Phase 85 Interstage Foundation planning note (2026-07-10): `docs/PHASE_85_INTERSTAGE_TRUSTED_CLINICAL_COMMUNICATION_MEMORY_PLAN.md` inserts P85-IF between completed Stage 4A and Stage 4B. P85-IF addresses trusted channel actor provenance, complete transcript persistence, full-history retrieval, human/AI coordination, authenticated risk reactivation, and controlled off-channel context intake. Planning is complete and implementation has not started. P85-IF-A is next; Stage 4B resumes after P85-IF-I. This does not change direct-pilot `NO-GO`, external gate status, R-405, R-406, or any real provider/channel/production-data path.
 
 ## Fixed Product Laws
 These rules are non-negotiable and apply to every future phase:
@@ -34,7 +36,7 @@ These rules are non-negotiable and apply to every future phase:
 
 ## Current Baseline
 - Latest completed implementation phase: Phase 85 Stage 4A Danisan Kontrol Paneli complete (Stage 4A.1-4A.4, 2026-07-08).
-- Next operator step: Phase 85 Stage 4B Uyari ve Bildirimler planning; external production prerequisites remain open; no production GO.
+- Next operator step: P85-IF-A canonical contract and threat-model implementation; Stage 4B resumes only after P85-IF-I closure; external production prerequisites remain open; no production GO.
 - Primary open product risk: R-425 is mitigated in the hosted commercial sandbox path, but production launch gates remain open.
 - Latest roadmap rebaseline: Phase 77A manual source authority rebaseline spec (2026-06-10).
 - Detailed Phase 77 implementation plan: `docs/PHASE_77_MASTER_IMPLEMENTATION_PLAN.md`.
