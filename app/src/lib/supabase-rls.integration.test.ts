@@ -7,10 +7,14 @@ import { hashCommercialInviteToken } from "./phase-83b-commercial-entitlement-mo
 import {
   addSupabaseClientContextUpdate,
   activateSupabaseClientAi,
+  applySupabaseContextIntakeProposal,
   approveSupabaseDraftMessage,
+  confirmSupabaseContextIntakeProposal,
+  createSupabaseContextIntakeProposal,
   dismissSupabaseDraftMessage,
   loadSupabaseState,
   patchSupabaseClientRecord,
+  rejectSupabaseContextIntakeProposal,
   resetSupabaseState,
   runSupabaseSimulation,
   saveSupabaseFormResponse,
@@ -1040,6 +1044,64 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
         expectedClientContextRevision: inactiveClient.contextRevision,
       }),
     ).rejects.toMatchObject({ status: 409, message: "reactivation_conflict_client_context_revision" });
+
+    await resetSupabaseState();
+  }, 30000);
+
+  it("uses atomic context intake RPCs with client-safe proposal guards", async () => {
+    await resetSupabaseState();
+    const state = await loadSupabaseState();
+    const client = state.clients.find((item) => item.fullName === "Mert Kaya")!;
+    const otherClient = state.clients.find((item) => item.id !== client.id)!;
+
+    const withProposal = await createSupabaseContextIntakeProposal(
+      { clientId: client.id, confirmFullName: client.fullName, confirmPhoneE164: client.primaryPhoneE164 || "" },
+      {
+        sourceText: "Telefonda kahvalti saatini 09:00 yaptik.",
+        intakeSource: "phone",
+        title: "Kahvalti saati",
+        summary: "Kahvalti 09:00",
+      },
+    );
+    const proposal = withProposal.contextIntakeProposals.at(-1)!;
+
+    await expect(rejectSupabaseContextIntakeProposal(otherClient.id, proposal.id)).rejects.toMatchObject({
+      status: 404,
+      message: "context_intake_proposal_not_found",
+    });
+
+    const confirmed = await confirmSupabaseContextIntakeProposal(client.id, proposal.id);
+    expect(confirmed.contextIntakeProposals.find((item) => item.id === proposal.id)?.confirmationCount).toBe(1);
+
+    const applied = await applySupabaseContextIntakeProposal(client.id, proposal.id);
+    const appliedProposal = applied.contextIntakeProposals.find((item) => item.id === proposal.id)!;
+    expect(appliedProposal.status).toBe("applied");
+    expect(applied.clientContextUpdates.some((update) => update.id === appliedProposal.appliedContextUpdateId)).toBe(
+      true,
+    );
+
+    const staleSeed = await createSupabaseContextIntakeProposal(
+      { clientId: client.id, confirmFullName: client.fullName, confirmPhoneE164: client.primaryPhoneE164 || "" },
+      {
+        sourceText: "Telefonda su tuketimini takip edecegiz.",
+        intakeSource: "phone",
+        title: "Su takibi",
+        summary: "Su tuketimi takip edilecek",
+      },
+    );
+    const staleProposal = staleSeed.contextIntakeProposals.at(-1)!;
+    await confirmSupabaseContextIntakeProposal(client.id, staleProposal.id);
+    await addSupabaseClientContextUpdate(client.id, {
+      source: "phone",
+      title: "Ara revizyon",
+      summary: "Proposal baselinedan sonra manuel context eklendi.",
+      importance: "routine",
+    });
+
+    await expect(applySupabaseContextIntakeProposal(client.id, staleProposal.id)).rejects.toMatchObject({
+      status: 409,
+      message: "context_intake_proposal_stale",
+    });
 
     await resetSupabaseState();
   }, 30000);

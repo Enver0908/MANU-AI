@@ -1,11 +1,11 @@
 # Phase 85: SiriusAI Frontend Redesign And Design System Spec
 
 Date: 2026-07-07
-Status: Stage 1 design foundation, Stage 2 shared component system, Stage 3 public/commercial entry integration, and Stage 4A Danisan Kontrol Paneli complete; Stage 3 is deployed to the hosted sandbox at `https://siriusai.store`. P85-IF is the mandatory cross-cutting foundation program between Stage 4A and Stage 4B. P85-IF-A through P85-IF-D are complete; P85-IF-E is next. After P85-IF closure, work returns to Stage 4B Uyari ve Bildirimler.
+Status: Stage 1 design foundation, Stage 2 shared component system, Stage 3 public/commercial entry integration, and Stage 4A Danisan Kontrol Paneli complete; Stage 3 is deployed to the hosted sandbox at `https://siriusai.store`. P85-IF is the mandatory cross-cutting foundation program between Stage 4A and Stage 4B. P85-IF-A through P85-IF-I are complete, and R4 context-intake Supabase remediation is complete. After the approved remediation sequence closes, work returns to Stage 4B Uyari ve Bildirimler.
 Production pilot: NO-GO.
 Clinical production GO: not in scope for Phase 85.
 R-405: Open unless technically remediated through the Phase 22 procedure or formally accepted by external engineering/security approval.
-R-406: Phase 50/52 local baseline mitigated; current post-83/84 local Supabase/RLS re-run pending when local Supabase is unavailable.
+R-406: Phase 50/52 local baseline mitigated; current R4 local Supabase/RLS evidence passed 25/25 on 2026-07-10.
 
 ## Goal
 

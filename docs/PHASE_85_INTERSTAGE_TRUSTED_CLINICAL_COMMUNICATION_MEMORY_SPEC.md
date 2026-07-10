@@ -3,7 +3,7 @@
 Date: 2026-07-10
 Canonical code: `P85-IF`
 Track: `P85-IF-A`, `P85-IF-B`, and `P85-IF-C`
-Status: P85-IF-A complete; P85-IF-B trust-root/provenance data model complete; P85-IF-C secure ingress/ledger/routing/quarantine complete; P85-IF-D complete transcript and human control complete; P85-IF-E full-history retrieval and prompt authority V2 complete; P85-IF-F risk resolution, AI reactivation, and concurrency complete; P85-IF-G controlled off-channel AI chat intake complete; P85-IF-H minimal operational visibility complete; P85-IF-I lifecycle/RLS/closure complete. P85-IF is closed; Stage 4B is next.
+Status: P85-IF-A complete; P85-IF-B trust-root/provenance data model complete; P85-IF-C secure ingress/ledger/routing/quarantine complete; P85-IF-D complete transcript and human control complete; P85-IF-E full-history retrieval and prompt authority V2 complete; P85-IF-F risk resolution, AI reactivation, and concurrency complete with R3 remediation; P85-IF-G controlled off-channel AI chat intake complete with R4 remediation; P85-IF-H minimal operational visibility complete; P85-IF-I lifecycle/RLS/closure complete. P85-IF is closed; Stage 4B is next after the approved remediation sequence.
 Placement: Phase 85 Stage 4A complete -> P85-IF -> Phase 85 Stage 4B.
 Production pilot: `NO-GO`.
 Deployment: none.
@@ -34,7 +34,7 @@ The following boundaries are fixed for all P85-IF tracks:
 - Real WhatsApp, Telegram, Gemini/provider, live billing, monitoring, backup, secret manager, and real health-data paths remain disconnected.
 - Production pilot remains `NO-GO`.
 - R-405 remains open unless independently remediated or externally accepted through the existing R-405 procedure.
-- R-406 current local Supabase/RLS re-run remains pending unless a current passing local Supabase run is produced.
+- R-406 current local Supabase/RLS evidence was refreshed for R4 on 2026-07-10 with local `npm run test:rls` passing 25/25; production pilot remains blocked by other open gates.
 
 ## 3. Current Runtime Baseline
 
@@ -378,7 +378,7 @@ Implementation status on 2026-07-10: complete with R3 remediation. `phase-85-if-
 - Structured-impact proposals block until dashboard revision evidence and second confirmation.
 - RBAC, RLS, export, redaction, replay, stale proposal, and draft invalidation are covered.
 
-Implementation status on 2026-07-10: complete. `phase-85-if-g-context-intake.ts`, context-intake API routes, Copilot panel intake workflow, Supabase persistence, migration `20260710170000_phase_85_if_g_context_intake.sql`, export/redaction hooks, and targeted tests implement dedicated off-channel intake with client-safe resolution, structured blocking, double confirmation, and read-only copilot separation. Evidence: `docs/PHASE_85_IF_G_CONTEXT_INTAKE_EVIDENCE.md`. P85-IF-H is next.
+Implementation status on 2026-07-10: complete with R4 remediation. `phase-85-if-g-context-intake.ts`, context-intake API routes, Copilot panel intake workflow, Supabase persistence, migration `20260710170000_phase_85_if_g_context_intake.sql`, remediation migration `20260710210000_phase_85_if_remediation_client_safe_context_intake.sql`, export/redaction hooks, and targeted/RLS tests implement dedicated off-channel intake with client-safe resolution, structured blocking, double confirmation, service-role-only atomic Supabase proposal mutations, wrong-client `404`, stale proposal `409`, and read-only copilot separation. Evidence: `docs/PHASE_85_IF_G_CONTEXT_INTAKE_EVIDENCE.md` and `docs/PHASE_85_IF_R4_CONTEXT_INTAKE_REMEDIATION_EVIDENCE.md`. P85-IF-H is complete.
 
 ### P85-IF-H
 

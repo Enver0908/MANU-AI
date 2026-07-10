@@ -2,9 +2,11 @@
 
 ## Phase 85 Roadmap Restructure
 
-2026-07-10: Phase 85 Stages 1-3 and Stage 4A are complete. The mandatory cross-cutting Phase 85 Interstage Foundation (`P85-IF`) is now inserted before Stage 4B and is canonically planned in `../docs/PHASE_85_INTERSTAGE_TRUSTED_CLINICAL_COMMUNICATION_MEMORY_PLAN.md`. P85-IF-A added `../docs/PHASE_85_INTERSTAGE_TRUSTED_CLINICAL_COMMUNICATION_MEMORY_SPEC.md` as the canonical contract/threat model. P85-IF-B added the trust-root/provenance data model foundation in app types, Supabase mappers, migration `20260710120000_phase_85_if_b_trust_root_provenance.sql`, and focused provenance contract tests. P85-IF-C added secure ingress/ledger/routing/quarantine. P85-IF-D added complete transcript and human-control coordination in `src/lib/phase-85-if-d-transcript-human-control.ts`. P85-IF-E is next. After P85-IF closes, execution returns to Stage 4B Uyari ve Bildirimler, then Stage 4C, Stage 4D, Stage 5, Stage 6, and Stage 7. Production pilot remains `NO-GO`; real provider/channel/health-data paths remain disconnected.
+2026-07-10: Phase 85 Stages 1-3 and Stage 4A are complete. The mandatory cross-cutting Phase 85 Interstage Foundation (`P85-IF`) is canonically planned in `../docs/PHASE_85_INTERSTAGE_TRUSTED_CLINICAL_COMMUNICATION_MEMORY_PLAN.md`; P85-IF-A through P85-IF-I are complete and the approved remediation sequence is underway before Stage 4B resumes. Production pilot remains `NO-GO`; real provider/channel/health-data paths remain disconnected.
 
 2026-07-10 R3 remediation: P85-IF-F activation now uses required conversation/client-context expected revisions, rejects direct active PATCH, and adds service-role-only atomic activation in migration `20260710200000_phase_85_if_remediation_atomic_activation.sql`. Local Supabase reset passed and `npm run test:rls` passed 24/24.
+
+2026-07-10 R4 remediation: P85-IF-G context-intake Supabase confirm/recheck/apply/reject now uses service-role-only atomic RPC `p85_if_r4_mutate_context_intake_proposal` from migration `20260710210000_phase_85_if_remediation_client_safe_context_intake.sql`. Wrong-client or missing proposals return `404`; stale proposal states return `409`; structured-impact proposals still require panel revision evidence and two confirmations; apply creates only a context update and invalidates drafts transactionally. Local Supabase reset passed, targeted P85-IF-G passed 11/11, and local `npm run test:rls` passed 25/25.
 
 ## Phase 85 Interstage Foundation P85-IF-C Secure Ingress, Ledger, Routing, And Quarantine
 

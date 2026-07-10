@@ -57,13 +57,7 @@ import {
 } from "./app-state-store";
 import type { AppTenantContext } from "./auth-context";
 import type { ControlledAiActivationInput } from "./phase-85-if-f-risk-reactivation";
-import {
-  applyContextIntakeProposalInState,
-  confirmContextIntakeProposalInState,
-  createContextIntakeProposalInState,
-  recheckContextIntakeProposalInState,
-  rejectContextIntakeProposalInState,
-} from "./phase-85-if-g-context-intake";
+import { createContextIntakeProposalInState } from "./phase-85-if-g-context-intake";
 import type { CreateClientContextUpdateInput } from "./client-context-updates";
 import type { ApplyClientUpdateProposalInput, CreateClientUpdateProposalInput } from "./client-update-proposals";
 import type { SaveClientFoodRuleProfileV2Input } from "./phase-77e-client-food-rule-profile";
@@ -2211,54 +2205,6 @@ async function upsertContextIntakeProposal(supabase: SupabaseClient, proposal: C
   );
 }
 
-async function persistContextIntakeMutation(
-  supabase: SupabaseClient,
-  before: ManuAppState,
-  next: ManuAppState,
-  proposalIds: string[],
-) {
-  for (const proposalId of proposalIds) {
-    const proposal = next.contextIntakeProposals.find((item) => item.id === proposalId);
-    if (proposal) await upsertContextIntakeProposal(supabase, proposal);
-  }
-  const appliedUpdateIds = next.contextIntakeProposals
-    .filter((proposal) => proposalIds.includes(proposal.id) && proposal.appliedContextUpdateId)
-    .map((proposal) => proposal.appliedContextUpdateId as string);
-  for (const updateId of appliedUpdateIds) {
-    const update = next.clientContextUpdates.find((item) => item.id === updateId);
-    if (update) {
-      await checked(
-        supabase.from("client_context_updates").upsert({
-          id: update.id,
-          tenant_id: update.tenantId,
-          client_id: update.clientId,
-          dietitian_id: update.dietitianId,
-          source: update.source,
-          occurred_at: update.occurredAt,
-          title: update.title,
-          summary: update.summary,
-          details: update.details,
-          importance: update.importance,
-          status: update.status,
-          supersedes_update_id: update.supersedesUpdateId,
-          created_at: update.createdAt,
-        }),
-      );
-    }
-  }
-  const touchedClientIds = new Set(
-    proposalIds
-      .map((proposalId) => next.contextIntakeProposals.find((item) => item.id === proposalId)?.clientId)
-      .filter(Boolean) as string[],
-  );
-  for (const clientId of touchedClientIds) {
-    const client = next.clients.find((item) => item.id === clientId);
-    const beforeClient = before.clients.find((item) => item.id === clientId);
-    if (client) await upsertClient(supabase, client, beforeClient);
-  }
-  await persistNewAudits(supabase, before, next);
-}
-
 export async function createSupabaseContextIntakeProposal(
   resolution: import("./phase-85-if-g-context-intake").ResolveContextIntakeClientInput,
   input: import("./phase-85-if-g-context-intake").CreateContextIntakeProposalInput,
@@ -2278,10 +2224,7 @@ export async function confirmSupabaseContextIntakeProposal(
   proposalId: string,
   context = demoTenantContext(),
 ) {
-  const before = await loadSupabaseClientOperationState(clientId, context);
-  const next = confirmContextIntakeProposalInState(before, clientId, proposalId);
-  const supabase = requireSupabase();
-  await persistContextIntakeMutation(supabase, before, next, [proposalId]);
+  await mutateSupabaseContextIntakeProposal(clientId, proposalId, "confirm", context);
   return loadSupabaseState(context);
 }
 
@@ -2290,10 +2233,7 @@ export async function recheckSupabaseContextIntakeProposal(
   proposalId: string,
   context = demoTenantContext(),
 ) {
-  const before = await loadSupabaseClientOperationState(clientId, context);
-  const next = recheckContextIntakeProposalInState(before, clientId, proposalId);
-  const supabase = requireSupabase();
-  await persistContextIntakeMutation(supabase, before, next, [proposalId]);
+  await mutateSupabaseContextIntakeProposal(clientId, proposalId, "recheck", context);
   return loadSupabaseState(context);
 }
 
@@ -2302,10 +2242,7 @@ export async function applySupabaseContextIntakeProposal(
   proposalId: string,
   context = demoTenantContext(),
 ) {
-  const before = await loadSupabaseClientOperationState(clientId, context);
-  const next = applyContextIntakeProposalInState(before, clientId, proposalId);
-  const supabase = requireSupabase();
-  await persistContextIntakeMutation(supabase, before, next, [proposalId]);
+  await mutateSupabaseContextIntakeProposal(clientId, proposalId, "apply", context);
   return loadSupabaseState(context);
 }
 
@@ -2314,11 +2251,27 @@ export async function rejectSupabaseContextIntakeProposal(
   proposalId: string,
   context = demoTenantContext(),
 ) {
-  const before = await loadSupabaseClientOperationState(clientId, context);
-  const next = rejectContextIntakeProposalInState(before, clientId, proposalId);
-  const supabase = requireSupabase();
-  await persistContextIntakeMutation(supabase, before, next, [proposalId]);
+  await mutateSupabaseContextIntakeProposal(clientId, proposalId, "reject", context);
   return loadSupabaseState(context);
+}
+
+async function mutateSupabaseContextIntakeProposal(
+  clientId: string,
+  proposalId: string,
+  action: "confirm" | "recheck" | "apply" | "reject",
+  context: AppTenantContext,
+) {
+  const { error } = await requireSupabase().rpc("p85_if_r4_mutate_context_intake_proposal", {
+    p_tenant_id: context.tenantId,
+    p_client_id: clientId,
+    p_dietitian_id: context.dietitianId,
+    p_proposal_id: proposalId,
+    p_action: action,
+  });
+
+  if (error) {
+    throwControlledRpcError(error);
+  }
 }
 
 async function loadSupabaseInternalCopilotClientData(clientId: string, context: AppTenantContext) {
@@ -3325,6 +3278,48 @@ function throwControlledRpcError(error: { message?: string }) {
   }
   if (message.includes("red_risk_lock_not_active_for_handoff")) {
     throw new AppDomainError(409, "red_risk_lock_not_active_for_handoff");
+  }
+  if (message.includes("context_intake_proposal_not_found")) {
+    throw new AppDomainError(404, "context_intake_proposal_not_found");
+  }
+  if (message.includes("context_intake_client_not_found")) {
+    throw new AppDomainError(404, "context_intake_client_not_found");
+  }
+  if (message.includes("context_intake_proposal_expired")) {
+    throw new AppDomainError(409, "context_intake_proposal_expired");
+  }
+  if (message.includes("context_intake_proposal_stale")) {
+    throw new AppDomainError(409, "context_intake_proposal_stale");
+  }
+  if (message.includes("context_intake_proposal_not_mutable")) {
+    throw new AppDomainError(409, "context_intake_proposal_not_mutable");
+  }
+  if (message.includes("context_intake_proposal_not_confirmable")) {
+    throw new AppDomainError(409, "context_intake_proposal_not_confirmable");
+  }
+  if (message.includes("context_intake_proposal_not_blocked")) {
+    throw new AppDomainError(409, "context_intake_proposal_not_blocked");
+  }
+  if (message.includes("context_intake_structured_revision_pending")) {
+    throw new AppDomainError(409, "context_intake_structured_revision_pending");
+  }
+  if (message.includes("context_intake_proposal_not_ready_to_apply")) {
+    throw new AppDomainError(409, "context_intake_proposal_not_ready_to_apply");
+  }
+  if (message.includes("context_intake_second_confirmation_required")) {
+    throw new AppDomainError(409, "context_intake_second_confirmation_required");
+  }
+  if (message.includes("context_intake_confirmation_required")) {
+    throw new AppDomainError(409, "context_intake_confirmation_required");
+  }
+  if (message.includes("context_intake_proposal_not_rejectable")) {
+    throw new AppDomainError(409, "context_intake_proposal_not_rejectable");
+  }
+  if (message.includes("context_intake_action_invalid")) {
+    throw new AppDomainError(400, "context_intake_action_invalid");
+  }
+  if (message.includes("client_removed_anonymized")) {
+    throw new AppDomainError(409, "client_removed_anonymized");
   }
   throw error;
 }

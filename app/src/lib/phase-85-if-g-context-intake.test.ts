@@ -42,6 +42,33 @@ describe("P85-IF-G context intake workflow", () => {
     );
   });
 
+  it("fails closed for ambiguous and removed global identity matches", () => {
+    const state = createInitialState();
+    const ambiguous = {
+      ...state,
+      clients: [
+        ...state.clients,
+        {
+          ...state.clients[0]!,
+          id: "client-mert-duplicate",
+        },
+      ],
+    };
+    expect(resolveContextIntakeClient(ambiguous, { fullName: "Mert Kaya", phoneE164: "+905551110001" }).status).toBe(
+      "ambiguous",
+    );
+
+    const removedOnly = {
+      ...state,
+      clients: state.clients.map((client) =>
+        client.fullName === "Mert Kaya" ? { ...client, lifecycleStatus: "removed_anonymized" as const } : client,
+      ),
+    };
+    expect(resolveContextIntakeClient(removedOnly, { fullName: "Mert Kaya", phoneE164: "+905551110001" }).status).toBe(
+      "not_found",
+    );
+  });
+
   it("fails closed for client-scoped confirmation mismatch", () => {
     const state = createInitialState();
     expect(() =>

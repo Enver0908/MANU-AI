@@ -2,7 +2,7 @@
 
 Date: 2026-07-10
 Canonical code: `P85-IF`
-Status: Planning complete; P85-IF-A, P85-IF-B, P85-IF-C, and P85-IF-D complete; P85-IF-E next.
+Status: Planning complete; P85-IF-A through P85-IF-I complete; R4 context-intake Supabase remediation complete; approved remediation sequence continues before Stage 4B resumes.
 Placement: Phase 85 Stage 4A complete -> P85-IF -> Phase 85 Stage 4B.
 Production pilot: `NO-GO`.
 Deployment: none.
