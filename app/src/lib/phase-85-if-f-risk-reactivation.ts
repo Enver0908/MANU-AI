@@ -11,8 +11,8 @@ export const DIRECT_DIETITIAN_REACTIVATION_REASON_CODE = "direct_dietitian_react
 
 export type ControlledAiActivationInput = {
   requestedAiMode?: "copilot" | "autopilot";
-  expectedConversationRevision?: number;
-  expectedClientContextRevision?: number;
+  expectedConversationRevision: number;
+  expectedClientContextRevision: number;
   activationSource?: "client_patch" | "activate_ai_api" | "handoff_resolve_reactivate";
   reactivationReason?: string;
   useFixedReactivationReasonCode?: boolean;

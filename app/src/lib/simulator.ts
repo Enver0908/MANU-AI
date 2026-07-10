@@ -379,9 +379,13 @@ export function updateClientInState(
   }
 
   if (patch.aiStatus === "active" && existingClient && existingClient.aiStatus !== "active") {
+    const existingConversation = state.conversations.find((conversation) => conversation.clientId === clientId);
+    if (!existingConversation) throw new AppDomainError(404, "conversation_not_found");
     return activateClientAiWithControlledRiskResolutionInState(state, clientId, {
       requestedAiMode:
         patch.aiMode === "autopilot" || patch.aiMode === "copilot" ? patch.aiMode : undefined,
+      expectedConversationRevision: conversationRevisionOrDefault(existingConversation),
+      expectedClientContextRevision: existingClient.contextRevision,
       activationSource: "client_patch",
     });
   }
@@ -852,7 +856,7 @@ export function resolveAndReactivateRedRiskInState(
 export function activateClientAiWithControlledRiskResolutionInState(
   state: ManuAppState,
   clientId: string,
-  input: ControlledAiActivationInput = {},
+  input: ControlledAiActivationInput,
 ): ManuAppState {
   const client = findClient(state, clientId);
   const conversation = findConversation(state, clientId);

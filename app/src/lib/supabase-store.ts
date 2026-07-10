@@ -44,7 +44,6 @@ import {
   rejectUpdateProposalInState,
   releaseHumanTakeoverInState,
   resolveAndReactivateRedRiskInState,
-  activateClientAiInState,
   runInternalCopilotMessageInState,
   activateMenuPlanInState,
   createMenuPlanInState,
@@ -1620,6 +1619,9 @@ export async function patchSupabaseClientRecord(
   patch: Partial<ClientRecord>,
   context = demoTenantContext(),
 ): Promise<Phase79ScopedClientPatchResponse> {
+  if (patch.aiStatus === "active") {
+    throw new AppDomainError(409, "direct_ai_activation_requires_activate_ai_endpoint");
+  }
   const { validationState, beforeClient } = await loadSupabaseClientPatchContext(clientId, context);
   const next = patchClientInState(validationState, clientId, patch);
   const client = next.clients.find((item) => item.id === clientId);
@@ -1816,58 +1818,30 @@ export async function activateSupabaseClientAi(
   input: ControlledAiActivationInput,
   context = demoTenantContext(),
 ) {
-  const state = await loadSupabaseClientOperationState(clientId, context);
-  const next = activateClientAiInState(state, clientId, input);
-  const client = next.clients.find((item) => item.id === clientId);
-  const conversation = next.conversations.find((item) => item.clientId === clientId);
-
-  if (!client || !conversation) {
-    throw new AppDomainError(404, "client_not_found");
-  }
-
+  assertControlledActivationInput(input);
   const supabase = requireSupabase();
-  await upsertClient(supabase, client, state.clients.find((item) => item.id === clientId));
-  await checked(
-    supabase.from("conversations").upsert({
-      id: conversation.id,
-      tenant_id: conversation.tenantId,
-      dietitian_id: conversation.dietitianId,
-      client_id: conversation.clientId,
-      channel: conversation.channel,
-      status: "active",
-      revision: conversation.revision ?? 1,
-    }),
-  );
-
-  const beforeAudits = new Set(state.auditEvents.map((item) => item.id));
-  for (const audit of next.auditEvents.filter((item) => !beforeAudits.has(item.id))) {
-    await insertAudit(supabase, audit);
-  }
-
-  const beforeHandoffs = new Map(state.handoffCases.map((item) => [item.id, item.status]));
-  for (const handoff of next.handoffCases) {
-    if (beforeHandoffs.get(handoff.id) !== handoff.status) {
-      await checked(
-        supabase.from("handoff_cases").upsert({
-          id: handoff.id,
-          tenant_id: handoff.tenantId,
-          dietitian_id: handoff.dietitianId,
-          client_id: handoff.clientId,
-          conversation_id: handoff.conversationId,
-          triggering_message_id: handoff.triggeringMessageId,
-          risk: handoff.risk,
-          reasons: handoff.reasons,
-          status: handoff.status,
-          urgency: handoff.urgency,
-          safe_acknowledgement: handoff.safeAcknowledgement,
-          recommended_action: handoff.recommendedAction,
-          created_at: handoff.createdAt,
-        }),
-      );
-    }
+  const { error } = await supabase.rpc("p85_if_r3_activate_client_ai", {
+    p_tenant_id: context.tenantId,
+    p_client_id: clientId,
+    p_dietitian_id: context.dietitianId,
+    p_requested_ai_mode: input.requestedAiMode ?? null,
+    p_expected_conversation_revision: input.expectedConversationRevision,
+    p_expected_client_context_revision: input.expectedClientContextRevision,
+  });
+  if (error) {
+    throwControlledRpcError(error);
   }
 
   return loadSupabaseState(context);
+}
+
+function assertControlledActivationInput(input: ControlledAiActivationInput) {
+  if (!Number.isInteger(input.expectedConversationRevision)) {
+    throw new AppDomainError(400, "expected_conversation_revision_required");
+  }
+  if (!Number.isInteger(input.expectedClientContextRevision)) {
+    throw new AppDomainError(400, "expected_client_context_revision_required");
+  }
 }
 
 export async function runSupabaseSimulation(request: SimulationRequest, context = demoTenantContext()) {
@@ -2849,6 +2823,12 @@ function buildStateDeltaPayload(
     expectedClientRevisions: Object.fromEntries(
       changedClients.map((client) => [client.id, beforeClientsById.get(client.id)?.contextRevision || 1]),
     ),
+    expectedConversationRevisions: Object.fromEntries(
+      changedConversations.map((conversation) => [
+        conversation.id,
+        beforeConversationsById.get(conversation.id)?.revision || 1,
+      ]),
+    ),
     clients: changedClients.map(serializeClientForRpc),
     conversationUpdates: changedConversations.map(serializeConversationUpdateForRpc),
     messages: after.messages.filter((item) => !beforeMessagesById.has(item.id)).map(serializeMessageForRpc),
@@ -3327,6 +3307,24 @@ function throwControlledRpcError(error: { message?: string }) {
   }
   if (message.includes("client_not_found")) {
     throw new AppDomainError(404, "client_not_found");
+  }
+  if (message.includes("conversation_not_found")) {
+    throw new AppDomainError(404, "conversation_not_found");
+  }
+  if (message.includes("expected_conversation_revision_required")) {
+    throw new AppDomainError(400, "expected_conversation_revision_required");
+  }
+  if (message.includes("expected_client_context_revision_required")) {
+    throw new AppDomainError(400, "expected_client_context_revision_required");
+  }
+  if (message.includes("reactivation_conflict_conversation_revision")) {
+    throw new AppDomainError(409, "reactivation_conflict_conversation_revision");
+  }
+  if (message.includes("reactivation_conflict_client_context_revision")) {
+    throw new AppDomainError(409, "reactivation_conflict_client_context_revision");
+  }
+  if (message.includes("red_risk_lock_not_active_for_handoff")) {
+    throw new AppDomainError(409, "red_risk_lock_not_active_for_handoff");
   }
   throw error;
 }

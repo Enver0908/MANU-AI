@@ -6,6 +6,7 @@ import { assertRateLimit, resetRateLimits } from "./rate-limit";
 import { hashCommercialInviteToken } from "./phase-83b-commercial-entitlement-model";
 import {
   addSupabaseClientContextUpdate,
+  activateSupabaseClientAi,
   approveSupabaseDraftMessage,
   dismissSupabaseDraftMessage,
   loadSupabaseState,
@@ -1003,6 +1004,43 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
 
     expect(auditEvent.error).toBeNull();
     expect(auditEvent.data?.entity_id).toBe(client.id);
+    await resetSupabaseState();
+  }, 30000);
+
+  it("uses atomic activation RPC with conversation and client revision guards", async () => {
+    await resetSupabaseState();
+    const state = await loadSupabaseState();
+    const client = state.clients[0]!;
+    const conversation = state.conversations.find((item) => item.clientId === client.id)!;
+
+    await patchSupabaseClientRecord(client.id, {
+      aiStatus: "passive",
+      aiMode: "manual",
+    });
+    const beforeActivation = await loadSupabaseState();
+    const inactiveClient = beforeActivation.clients.find((item) => item.id === client.id)!;
+    const inactiveConversation = beforeActivation.conversations.find((item) => item.clientId === client.id)!;
+
+    const activated = await activateSupabaseClientAi(client.id, {
+      requestedAiMode: "copilot",
+      expectedConversationRevision: inactiveConversation.revision,
+      expectedClientContextRevision: inactiveClient.contextRevision,
+    });
+    const activatedClient = activated.clients.find((item) => item.id === client.id)!;
+    const activatedConversation = activated.conversations.find((item) => item.clientId === client.id)!;
+
+    expect(activatedClient.aiStatus).toBe("active");
+    expect(activatedClient.aiMode).toBe("copilot");
+    expect(activatedConversation.revision).toBe(conversation.revision + 1);
+
+    await expect(
+      activateSupabaseClientAi(client.id, {
+        requestedAiMode: "copilot",
+        expectedConversationRevision: inactiveConversation.revision,
+        expectedClientContextRevision: inactiveClient.contextRevision,
+      }),
+    ).rejects.toMatchObject({ status: 409, message: "reactivation_conflict_client_context_revision" });
+
     await resetSupabaseState();
   }, 30000);
 

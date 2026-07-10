@@ -5,7 +5,7 @@ import {
   getFallbackState,
   saveFallbackState,
 } from "@/lib/app-state-store";
-import { domainErrorResponse } from "@/lib/app-errors";
+import { AppDomainError, domainErrorResponse } from "@/lib/app-errors";
 import { authErrorResponse, requireCapability, resolveAppTenantContext } from "@/lib/auth-context";
 import { activateSupabaseClientAi, isSupabaseStoreConfigured } from "@/lib/supabase-store";
 
@@ -14,14 +14,15 @@ export async function POST(
   context: { params: Promise<{ id: string }> },
 ) {
   const { id } = await context.params;
-  const body = (await request.json()) as {
-    requestedAiMode?: "copilot" | "autopilot";
-    expectedConversationRevision?: number;
-    expectedClientContextRevision?: number;
-  };
 
   if (isSupabaseStoreConfigured()) {
     try {
+      const body = (await request.json()) as {
+        requestedAiMode?: "copilot" | "autopilot";
+        expectedConversationRevision: number;
+        expectedClientContextRevision: number;
+      };
+      assertExpectedRevisions(body);
       const tenantContext = await resolveAppTenantContext();
       requireCapability(tenantContext, "update_client");
       return NextResponse.json(await activateSupabaseClientAi(id, body, tenantContext));
@@ -35,6 +36,12 @@ export async function POST(
   }
 
   try {
+    const body = (await request.json()) as {
+      requestedAiMode?: "copilot" | "autopilot";
+      expectedConversationRevision: number;
+      expectedClientContextRevision: number;
+    };
+    assertExpectedRevisions(body);
     const state = getFallbackState();
     assertClientExistsInState(state, id);
     return NextResponse.json(
@@ -49,5 +56,17 @@ export async function POST(
     );
   } catch (error) {
     return domainErrorResponse(error);
+  }
+}
+
+function assertExpectedRevisions(input: {
+  expectedConversationRevision?: unknown;
+  expectedClientContextRevision?: unknown;
+}) {
+  if (!Number.isInteger(input.expectedConversationRevision)) {
+    throw new AppDomainError(400, "expected_conversation_revision_required");
+  }
+  if (!Number.isInteger(input.expectedClientContextRevision)) {
+    throw new AppDomainError(400, "expected_client_context_revision_required");
   }
 }

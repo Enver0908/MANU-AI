@@ -299,9 +299,17 @@ export function DashboardApp({
   };
 
   const activateSelectedClientAi = async (clientId: string) => {
+    const client = state.clients.find((item) => item.id === clientId);
+    const conversation = state.conversations.find((item) => item.clientId === clientId);
+    if (!client || !conversation) {
+      throw new Error("activation_context_not_found");
+    }
     setIsActivatingAi(true);
     try {
-      return await activateClientAi(clientId);
+      return await activateClientAi(clientId, {
+        expectedConversationRevision: conversation.revision,
+        expectedClientContextRevision: client.contextRevision,
+      });
     } finally {
       setIsActivatingAi(false);
     }

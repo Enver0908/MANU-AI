@@ -31,7 +31,7 @@ P85-IF-H verification on 2026-07-10: targeted `phase-85-if-h-operational-visibil
 
 P85-IF-G verification on 2026-07-10: targeted `phase-85-if-g-context-intake.test.ts` 9/9, app `npm test` 807 passed / 4 skipped, app lint 0 errors with 3 pre-existing warnings, app build passed. `npm run test:rls` was not re-run; R-406 current re-run remains pending. Production pilot remains `NO-GO`; R-405 remains open. P85-IF-H is complete.
 
-P85-IF-F verification on 2026-07-10: targeted `phase-85-if-f-risk-reactivation.test.ts` 6/6, app `npm test` 798 passed / 4 skipped, app lint 0 errors with 3 pre-existing warnings, app build passed, and full mock channel replay passed. `npm run test:rls` was not re-run; R-406 current re-run remains pending. Production pilot remains `NO-GO`; R-405 remains open. P85-IF-G is complete.
+P85-IF-F/R3 remediation verification on 2026-07-10: activation now requires `expectedConversationRevision` and `expectedClientContextRevision`, direct `PATCH /api/clients/[id]` active toggles are rejected, and append-only migration `20260710200000_phase_85_if_remediation_atomic_activation.sql` adds service-role-only atomic activation plus inbound/draft expected-conversation revision guards. Verification passed: local Supabase `db reset --local`, targeted R3/historical tests 12/12, `npm run test:rls` 24/24, app lint 0 errors with 2 unchanged warnings, app build passed, `git diff --check` clean apart from CRLF warnings, secret scan clean, and forbidden future-phase naming scan clean. Production pilot remains `NO-GO`; R-405 remains open.
 
 ## Latest Phase 85 Stage 4A Danisan Kontrol Paneli
 

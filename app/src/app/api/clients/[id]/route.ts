@@ -4,7 +4,7 @@ import {
   mergeScopedClientPatchIntoAppState,
 } from "@/lib/phase-79c-scoped-client-mutation";
 import { getFallbackState, patchClientInState, saveFallbackState } from "@/lib/app-state-store";
-import { domainErrorResponse } from "@/lib/app-errors";
+import { AppDomainError, domainErrorResponse } from "@/lib/app-errors";
 import { authErrorResponse, requireCapability, resolveAppTenantContext } from "@/lib/auth-context";
 import { isSupabaseStoreConfigured, patchSupabaseClientRecord } from "@/lib/supabase-store";
 import type { ClientRecord } from "@/lib/types";
@@ -14,7 +14,13 @@ export async function PATCH(
   context: { params: Promise<{ id: string }> },
 ) {
   const { id } = await context.params;
-  const patch = (await request.json()) as Partial<ClientRecord>;
+  let patch: Partial<ClientRecord>;
+  try {
+    patch = (await request.json()) as Partial<ClientRecord>;
+    rejectDirectAiActivationPatch(patch);
+  } catch (error) {
+    return domainErrorResponse(error);
+  }
 
   if (isSupabaseStoreConfigured()) {
     try {
@@ -45,5 +51,11 @@ export async function PATCH(
     return NextResponse.json({ kind: "client_patch", client: updatedClient, auditEvents: [] });
   } catch (error) {
     return domainErrorResponse(error);
+  }
+}
+
+function rejectDirectAiActivationPatch(patch: Partial<ClientRecord>) {
+  if (patch.aiStatus === "active") {
+    throw new AppDomainError(409, "direct_ai_activation_requires_activate_ai_endpoint");
   }
 }

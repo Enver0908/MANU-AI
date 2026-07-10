@@ -118,15 +118,15 @@ export function useManuState() {
         }),
       activateClientAi: (
         clientId: string,
-        input?: {
+        input: {
           requestedAiMode?: "copilot" | "autopilot";
-          expectedConversationRevision?: number;
-          expectedClientContextRevision?: number;
+          expectedConversationRevision: number;
+          expectedClientContextRevision: number;
         },
       ) =>
         replaceFromApi(`/api/clients/${clientId}/activate-ai`, {
           method: "POST",
-          body: JSON.stringify(input ?? {}),
+          body: JSON.stringify(input),
         }),
       runSimulation: (input: SimulationRequest) =>
         replaceFromApi("/api/simulator", {

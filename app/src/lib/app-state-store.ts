@@ -209,7 +209,7 @@ export function releaseHumanTakeoverInState(state: ManuAppState, clientId: strin
 export function activateClientAiInState(
   state: ManuAppState,
   clientId: string,
-  input: ControlledAiActivationInput = {},
+  input: ControlledAiActivationInput,
 ) {
   assertClientExistsInState(state, clientId);
   return activateClientAiWithControlledRiskResolutionInState(state, clientId, input);

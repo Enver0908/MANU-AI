@@ -370,7 +370,7 @@ Implementation status on 2026-07-10: complete. `historical-retrieval.js`, `CONTE
 - Send-time CAS/revalidation blocks stale outbound and concurrent human/AI races.
 - Unsafe autopilot restoration falls back to copilot.
 
-Implementation status on 2026-07-10: complete. `phase-85-if-f-risk-reactivation.ts`, `phase-85-if-f-conversation-revision.ts`, controlled activation in `simulator.ts`, `/api/clients/[id]/activate-ai`, and migration `20260710160000_phase_85_if_f_conversation_revision.sql` implement canonical risk resolution, conversation revision CAS, and human-control session closure. Evidence: `docs/PHASE_85_IF_F_RISK_REACTIVATION_EVIDENCE.md`. P85-IF-G is complete.
+Implementation status on 2026-07-10: complete with R3 remediation. `phase-85-if-f-risk-reactivation.ts`, `phase-85-if-f-conversation-revision.ts`, controlled activation in `simulator.ts`, `/api/clients/[id]/activate-ai`, migration `20260710160000_phase_85_if_f_conversation_revision.sql`, and remediation migration `20260710200000_phase_85_if_remediation_atomic_activation.sql` implement canonical risk resolution, required activation CAS, service-role-only atomic Supabase activation, inbound/draft expected-conversation revision guards, and human-control session closure. Evidence: `docs/PHASE_85_IF_F_RISK_REACTIVATION_EVIDENCE.md`. P85-IF-G is complete.
 
 ### P85-IF-G
 

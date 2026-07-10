@@ -24,6 +24,8 @@ describe("phase-85-if-f risk reactivation and concurrency", () => {
     const conversation = withDraft.conversations.find((item) => item.clientId === "client-elif")!;
     const activated = activateClientAiWithControlledRiskResolutionInState(withDraft, "client-elif", {
       requestedAiMode: "copilot",
+      expectedConversationRevision: conversationRevisionOrDefault(conversation),
+      expectedClientContextRevision: withDraft.clients.find((item) => item.id === "client-elif")!.contextRevision,
       activationSource: "activate_ai_api",
     });
 
@@ -49,6 +51,10 @@ describe("phase-85-if-f risk reactivation and concurrency", () => {
 
     const activated = activateClientAiWithControlledRiskResolutionInState(locked, "client-mert", {
       requestedAiMode: "copilot",
+      expectedConversationRevision: conversationRevisionOrDefault(
+        locked.conversations.find((item) => item.clientId === "client-mert")!,
+      ),
+      expectedClientContextRevision: locked.clients.find((item) => item.id === "client-mert")!.contextRevision,
     });
     const client = activated.clients.find((item) => item.id === "client-mert");
     expect(client?.humanTakeoverLocked).toBe(false);
@@ -67,6 +73,10 @@ describe("phase-85-if-f risk reactivation and concurrency", () => {
 
     const activated = activateClientAiWithControlledRiskResolutionInState(locked, "client-mert", {
       requestedAiMode: "autopilot",
+      expectedConversationRevision: conversationRevisionOrDefault(
+        locked.conversations.find((item) => item.clientId === "client-mert")!,
+      ),
+      expectedClientContextRevision: locked.clients.find((item) => item.id === "client-mert")!.contextRevision,
     });
     expect(activated.clients.find((item) => item.id === "client-mert")?.aiMode).toBe("copilot");
   });
@@ -100,8 +110,26 @@ describe("phase-85-if-f risk reactivation and concurrency", () => {
     expect(() =>
       activateClientAiWithControlledRiskResolutionInState(locked, "client-mert", {
         expectedConversationRevision: conversationRevisionOrDefault(conversation) + 99,
+        expectedClientContextRevision: locked.clients.find((item) => item.id === "client-mert")!.contextRevision,
       }),
     ).toThrowError(new AppDomainError(409, "reactivation_conflict_conversation_revision"));
+  });
+
+  it("blocks controlled activation when client context revision CAS fails", async () => {
+    const locked = updateClientInState(createInitialState(), "client-mert", {
+      humanTakeoverLocked: true,
+      aiStatus: "passive",
+      aiMode: "manual",
+    });
+    const conversation = locked.conversations.find((item) => item.clientId === "client-mert")!;
+    const client = locked.clients.find((item) => item.id === "client-mert")!;
+
+    expect(() =>
+      activateClientAiWithControlledRiskResolutionInState(locked, "client-mert", {
+        expectedConversationRevision: conversationRevisionOrDefault(conversation),
+        expectedClientContextRevision: client.contextRevision + 99,
+      }),
+    ).toThrowError(new AppDomainError(409, "reactivation_conflict_client_context_revision"));
   });
 
   it("blocks stale draft send when conversation revision changed after generation", async () => {
