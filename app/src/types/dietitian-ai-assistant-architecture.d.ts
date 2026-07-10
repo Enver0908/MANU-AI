@@ -117,6 +117,7 @@ declare module "dietitian-ai-assistant-architecture" {
     | "client_form_summary"
     | "rolling_summary"
     | "recent_message"
+    | "historical_message"
     | "persona"
     | "voice_profile"
     | "conversation_language";
@@ -152,6 +153,9 @@ declare module "dietitian-ai-assistant-architecture" {
     origin?: PromptSegmentOrigin | string;
     createdAt?: string | null;
     authority?: PromptSegmentAuthority | string;
+    retrievalEvidenced?: boolean | null;
+    relevanceScore?: number | null;
+    relevanceReason?: string | null;
     tokens?: number;
     truncated?: boolean;
     omitted?: boolean;
@@ -274,6 +278,7 @@ declare module "dietitian-ai-assistant-architecture" {
     conversation: CoreConversation;
     message: CoreMessage;
     recentMessages?: CoreMessage[];
+    conversationMessages?: CoreMessage[];
     memory?: CoreMemory;
     clientContextUpdates?: CoreContextUpdate[];
     voiceProfile?: Partial<CoreVoiceProfile>;

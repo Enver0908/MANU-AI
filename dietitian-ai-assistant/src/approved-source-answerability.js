@@ -57,12 +57,13 @@ function approvedSources(promptContext) {
 }
 
 function categoryForSegment(segment) {
-  if (segment.type === "recent_message") {
+  if (segment.type === "recent_message" || segment.type === "historical_message") {
     if (segment.origin !== "dietitian_manual") return null;
+    if (!segment.retrievalEvidenced) return null;
     if (segment.authority !== "dietitian_authored" && segment.authority !== "newest_dietitian_authored") {
       return null;
     }
-    return "dietitian_manual_message";
+    return "relevant_dietitian_manual_message";
   }
 
   return APPROVED_SOURCE_RULES[segment.type] || null;

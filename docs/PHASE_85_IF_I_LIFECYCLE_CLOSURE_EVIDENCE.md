@@ -1,0 +1,44 @@
+# P85-IF-I Lifecycle, RLS, Evidence, Verification, And Closure
+
+Date: 2026-07-10
+Track: P85-IF-I
+Status: complete
+Next Phase 85 target: Stage 4B Uyari ve Bildirimler
+
+## Scope delivered
+
+- `phase-85-if-i-lifecycle-closure.ts` closes export/redaction/tenant-binding lifecycle for P85-IF records:
+  - client export extensions: human-control sessions, risk activity, channel message revisions, context-intake proposals, retrieval source references;
+  - interstage export version `p85-if-i-export-v1` added to Phase 74 export manifest;
+  - client-scoped redaction for message provenance fields, revisions, human-control links, risk activity metadata, retrieval context manifests, and context-intake source text;
+  - tenant channel binding revoke helper for tenant lifecycle (bindings remain excluded from client export);
+  - program closure evidence evaluator.
+- `data-governance.ts` and `phase-74-data-lifecycle-policy.ts` wired to P85-IF-I export/redaction extensions.
+- `phase-79e-lifecycle-redaction-evidence.ts` merges P85-IF-I redaction domains into unified lifecycle evidence.
+- Supabase RLS integration coverage extended for `human_control_sessions`, `risk_activity_events`, `context_intake_proposals`, and `channel_account_bindings`.
+- Risk register updated for P85-IF closure narratives (R-118, R-209, R-210, R-426–R-432).
+- P85-IF program closes; Stage 4B resumes as next Phase 85 planning target.
+
+## Behavioral contracts
+
+- Client export includes interstage evidence where client-scoped; tenant account/actor bindings stay out of client export.
+- Anonymization/deletion redacts provider IDs, session links, revision digests, retrieval manifests, and proposal source text; audit retains minimized metadata only.
+- Local Supabase absence documents R-406 as pending and does not count as RLS closure.
+- Production pilot remains `NO-GO`; R-405 remains open; live providers/channels/health-data paths remain disconnected.
+
+## Verification
+
+- Targeted `phase-85-if-i-lifecycle-closure.test.ts` and updated `phase-79e-lifecycle-redaction-evidence.test.ts`: 12/12 passed.
+- Full app `npm test`: 818 passed / 4 skipped (131 files).
+- App `npm run lint`: 0 errors, 3 pre-existing warnings (unchanged from prior tracks).
+- App `npm run build`: passed.
+- `npm run test:visual`: not required for lifecycle-only track.
+- `npm run release:verify`: passed (core 225/225, app 818 passed / 4 skipped, production build, documented R-405 findings only).
+- `npm run rehearse:channel:replay`: passed (3/3 active replay tests).
+- `npm run rehearse:production-scale:79g`: passed.
+- `npm run test:rls`: skipped 22/22 (local Supabase unavailable); R-406 current re-run remains pending.
+- `git diff --check`: clean apart from repository-wide CRLF conversion warnings.
+
+## P85-IF program closure statement
+
+P85-IF-A through P85-IF-I are implemented. Stage 4B alert/notification product UX remains the next Phase 85 target. Production pilot remains `NO-GO`.

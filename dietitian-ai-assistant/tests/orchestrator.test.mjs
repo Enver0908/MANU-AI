@@ -197,7 +197,7 @@ test("dietitian manual messages can satisfy approved source answerability", asyn
   assert.equal(result.action, "sent");
   assert.equal(result.providerAttempted, true);
   assert.equal(generated, true);
-  assert.ok(result.contextManifest?.answerability?.sourceCategories.includes("dietitian_manual_message"));
+  assert.ok(result.contextManifest?.answerability?.sourceCategories.includes("relevant_dietitian_manual_message"));
 });
 
 test("answerability blocks sensitive mixed markers even when base risk is green", async () => {

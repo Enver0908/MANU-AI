@@ -132,7 +132,8 @@ export type ContextIntakeProposalStatus =
   | "applied"
   | "rejected"
   | "stale"
-  | "blocked_structured_impact";
+  | "blocked_structured_impact"
+  | "expired";
 export type SafetyChecklist = {
   goalReviewed: boolean;
   dietPlanReviewed: boolean;
@@ -499,6 +500,7 @@ export type ConversationRecord = {
   memoryVersion: string;
   memoryRevision: number;
   memoryStale: boolean;
+  revision: number;
 };
 
 export type MessageRecord = {
@@ -553,6 +555,7 @@ export type AiDecisionRecord = {
   blockedReason: string | null;
   qualityIssues: string[];
   reasons: string[];
+  conversationRevisionAtGeneration?: number | null;
   createdAt: string;
 };
 
@@ -603,6 +606,12 @@ export type NotificationRecord = {
   body: string;
   read: boolean;
   acknowledgedAt: string | null;
+  dedupeKey?: string | null;
+  sourceMessageId?: string | null;
+  targetPanel?: string | null;
+  baselineRevision?: number | null;
+  resolvedAt?: string | null;
+  resolvedByDietitianId?: string | null;
   createdAt: string;
 };
 
@@ -734,8 +743,10 @@ export type ContextIntakeProposalRecord = {
   clientId: string;
   dietitianId: string | null;
   sourceChannel: Channel | "internal_copilot";
+  intakeSource: ClientContextUpdateSource;
   sourceTextDigest: string;
   sourceText: string | null;
+  rawSourceReference: string | null;
   occurredAt: string;
   title: string;
   summary: string;

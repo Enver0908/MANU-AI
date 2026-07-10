@@ -30,6 +30,11 @@ import {
   buildPersonalFormV2ExportSection,
 } from "./phase-77j-data-lifecycle";
 import { sanitizeClientScopedExportForClientFacing } from "./phase-77v-copilot-quality-workflow";
+import {
+  PHASE_85_IF_I_EXPORT_EXTENSION_VERSION,
+  PHASE_85_IF_I_EXPORT_FILES,
+  serializeP85IfIExportFiles,
+} from "./phase-85-if-i-lifecycle-closure";
 import type { LaunchGateEvidenceRecord } from "./launch-gates";
 import type { ClientRecord, ManuAppState, MessageRecord } from "./types";
 
@@ -68,6 +73,7 @@ export type Phase74DsarSlaEntry = {
 
 export type Phase74ExportManifest = {
   exportVersion: string;
+  interstageExportVersion: string;
   generatedAt: string;
   tenantId: string;
   clientId: string;
@@ -186,6 +192,7 @@ export const PHASE_74_EXPORT_INCLUDED_FILES = [
   "diet_plan_snapshots.json",
   "audit_events_minimized.jsonl",
   "channel_deliveries.jsonl",
+  ...PHASE_85_IF_I_EXPORT_FILES,
   "checksums.sha256",
 ] as const;
 
@@ -275,7 +282,7 @@ export function isClientExcludedFromOperationalPaths(client: ClientRecord): bool
   );
 }
 
-export function buildPhase74ImmediateOperationalRemovalPatch(_client: ClientRecord): Partial<ClientRecord> {
+export function buildPhase74ImmediateOperationalRemovalPatch(): Partial<ClientRecord> {
   return {
     aiStatus: "passive",
     aiMode: "manual",
@@ -514,10 +521,12 @@ export function buildPhase74ExportPackage(
     "channel_deliveries.jsonl": exportData.channelDeliveries
       .map((delivery) => JSON.stringify(serializeChannelDeliveryForExport(delivery)))
       .join("\n"),
+    ...serializeP85IfIExportFiles(exportData),
   };
 
   const manifest: Phase74ExportManifest = {
     exportVersion: PHASE_74_EXPORT_VERSION,
+    interstageExportVersion: PHASE_85_IF_I_EXPORT_EXTENSION_VERSION,
     generatedAt,
     tenantId: exportData.tenantId,
     clientId: exportData.clientId,

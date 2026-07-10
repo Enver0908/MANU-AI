@@ -9,6 +9,7 @@ import {
   recordClientExportInState,
   removeClientInState,
 } from "./data-governance";
+import { resolveStructuredRecordUpdateNotificationInState } from "./phase-85-if-e-historical-retrieval";
 import { sanitizeClientScopedExportForClientFacing } from "./phase-77v-copilot-quality-workflow";
 import {
   buildClientCreateValidationState,
@@ -43,6 +44,7 @@ import {
   rejectUpdateProposalInState,
   releaseHumanTakeoverInState,
   resolveAndReactivateRedRiskInState,
+  activateClientAiInState,
   runInternalCopilotMessageInState,
   activateMenuPlanInState,
   createMenuPlanInState,
@@ -55,6 +57,14 @@ import {
   setChannelAdapterRollbackInState,
 } from "./app-state-store";
 import type { AppTenantContext } from "./auth-context";
+import type { ControlledAiActivationInput } from "./phase-85-if-f-risk-reactivation";
+import {
+  applyContextIntakeProposalInState,
+  confirmContextIntakeProposalInState,
+  createContextIntakeProposalInState,
+  recheckContextIntakeProposalInState,
+  rejectContextIntakeProposalInState,
+} from "./phase-85-if-g-context-intake";
 import type { CreateClientContextUpdateInput } from "./client-context-updates";
 import type { ApplyClientUpdateProposalInput, CreateClientUpdateProposalInput } from "./client-update-proposals";
 import type { SaveClientFoodRuleProfileV2Input } from "./phase-77e-client-food-rule-profile";
@@ -101,6 +111,11 @@ import type {
 import { normalizeLanguageCode } from "./languages";
 import { processWhatsAppMockWebhookInState } from "./whatsapp-mock-webhook";
 import { createDefaultChannelAdapterRollbackControls } from "./channel-adapter-rollback";
+import {
+  buildSearchConversationMessagesRpcParams,
+  mapSupabaseSearchRowToRetrievalCandidate,
+  type SupabaseConversationMessageSearchRow,
+} from "./phase-85-if-e-supabase-search";
 
 export const DEMO_TENANT_UUID = "00000000-0000-4000-8000-000000000001";
 export const DEMO_DIETITIAN_UUID = "00000000-0000-4000-8000-000000000002";
@@ -156,6 +171,7 @@ type DbConversation = {
   dietitian_id: string;
   client_id: string;
   channel: ConversationRecord["channel"];
+  revision?: number;
 };
 type DbMemory = {
   conversation_id: string;
@@ -261,6 +277,12 @@ type DbNotification = {
   body: string;
   read: boolean;
   acknowledged_at: string | null;
+  dedupe_key: string | null;
+  source_message_id: string | null;
+  target_panel: string | null;
+  baseline_revision: number | null;
+  resolved_at: string | null;
+  resolved_by_dietitian_id: string | null;
   created_at: string;
 };
 type DbDataRequest = {
@@ -533,8 +555,10 @@ type DbContextIntakeProposal = {
   client_id: string;
   dietitian_id: string | null;
   source_channel: ContextIntakeProposalRecord["sourceChannel"];
+  intake_source: ContextIntakeProposalRecord["intakeSource"] | null;
   source_text_digest: string;
   source_text: string | null;
+  raw_source_reference: string | null;
   occurred_at: string;
   title: string;
   summary: string;
@@ -946,6 +970,7 @@ async function loadSupabaseClientOperationState(
     requiredDecisionId?: string | null;
     requiredFormSchemaId?: string | null;
     requiredHandoffId?: string | null;
+    historicalQuery?: string | null;
   } = {},
 ) {
   const supabase = requireSupabase();
@@ -996,6 +1021,18 @@ async function loadSupabaseClientOperationState(
   throwIfError(conversationsResult.error);
 
   const conversationIds = (conversationsResult.data || []).map((conversation) => conversation.id);
+  const historicalSearchResult =
+    options.historicalQuery?.trim() && conversationIds.length === 1
+      ? await supabase.rpc(
+          "search_conversation_messages",
+          buildSearchConversationMessagesRpcParams({
+            tenantId: context.tenantId,
+            conversationId: conversationIds[0]!,
+            query: options.historicalQuery,
+          }),
+        )
+      : await emptySupabaseResult<SupabaseConversationMessageSearchRow>();
+  throwIfError(historicalSearchResult.error);
   const [
     memoriesResult,
     recentMessagesResult,
@@ -1142,7 +1179,10 @@ async function loadSupabaseClientOperationState(
       : await emptySupabaseResult<DbDecision>();
   throwIfError(draftDecisionsResult.error);
 
-  const messages = rawMessages
+  const historicalMessages = ((historicalSearchResult.data || []) as SupabaseConversationMessageSearchRow[]).map((row) =>
+    mapHistoricalSearchRowToMessage(row, context.tenantId, conversationIds[0]!),
+  );
+  const messages = mergeById([...rawMessages, ...historicalMessages])
     .map(mapMessage)
     .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
   const scopedState = scopeSupabaseState(
@@ -1771,12 +1811,72 @@ export async function releaseSupabaseHumanTakeover(clientId: string, context = d
   return loadSupabaseState(context);
 }
 
+export async function activateSupabaseClientAi(
+  clientId: string,
+  input: ControlledAiActivationInput,
+  context = demoTenantContext(),
+) {
+  const state = await loadSupabaseClientOperationState(clientId, context);
+  const next = activateClientAiInState(state, clientId, input);
+  const client = next.clients.find((item) => item.id === clientId);
+  const conversation = next.conversations.find((item) => item.clientId === clientId);
+
+  if (!client || !conversation) {
+    throw new AppDomainError(404, "client_not_found");
+  }
+
+  const supabase = requireSupabase();
+  await upsertClient(supabase, client, state.clients.find((item) => item.id === clientId));
+  await checked(
+    supabase.from("conversations").upsert({
+      id: conversation.id,
+      tenant_id: conversation.tenantId,
+      dietitian_id: conversation.dietitianId,
+      client_id: conversation.clientId,
+      channel: conversation.channel,
+      status: "active",
+      revision: conversation.revision ?? 1,
+    }),
+  );
+
+  const beforeAudits = new Set(state.auditEvents.map((item) => item.id));
+  for (const audit of next.auditEvents.filter((item) => !beforeAudits.has(item.id))) {
+    await insertAudit(supabase, audit);
+  }
+
+  const beforeHandoffs = new Map(state.handoffCases.map((item) => [item.id, item.status]));
+  for (const handoff of next.handoffCases) {
+    if (beforeHandoffs.get(handoff.id) !== handoff.status) {
+      await checked(
+        supabase.from("handoff_cases").upsert({
+          id: handoff.id,
+          tenant_id: handoff.tenantId,
+          dietitian_id: handoff.dietitianId,
+          client_id: handoff.clientId,
+          conversation_id: handoff.conversationId,
+          triggering_message_id: handoff.triggeringMessageId,
+          risk: handoff.risk,
+          reasons: handoff.reasons,
+          status: handoff.status,
+          urgency: handoff.urgency,
+          safe_acknowledgement: handoff.safeAcknowledgement,
+          recommended_action: handoff.recommendedAction,
+          created_at: handoff.createdAt,
+        }),
+      );
+    }
+  }
+
+  return loadSupabaseState(context);
+}
+
 export async function runSupabaseSimulation(request: SimulationRequest, context = demoTenantContext()) {
   const state =
     request.sourceConversationType === "group" || !request.clientId
       ? await loadSupabaseState(context)
       : await loadSupabaseClientOperationState(request.clientId, context, {
           processedEventId: request.idempotencyKey,
+          historicalQuery: request.body,
         });
   const simulationClient = state.clients.find((client) => client.id === request.clientId);
   const next = await simulateInState(state, request);
@@ -1855,6 +1955,30 @@ export async function acknowledgeSupabaseNotification(notificationId: string, co
     .update({ read: true, acknowledged_at: new Date().toISOString() })
     .eq("id", notificationId)
     .eq("tenant_id", context.tenantId);
+  throwIfError(error);
+  await assertSupabaseNotificationExists(notificationId, context);
+  return loadSupabaseState(context);
+}
+
+export async function resolveSupabaseStructuredRecordUpdateNotification(
+  notificationId: string,
+  context = demoTenantContext(),
+) {
+  const state = await loadSupabaseState(context);
+  const next = resolveStructuredRecordUpdateNotificationInState(state, notificationId, context.dietitianId);
+  const notification = next.notifications.find((item) => item.id === notificationId);
+  if (!notification) throw new AppDomainError(404, "notification_not_found");
+
+  const { error } = await requireSupabase()
+    .from("notifications")
+    .update({
+      acknowledged_at: notification.acknowledgedAt,
+      resolved_at: notification.resolvedAt,
+      resolved_by_dietitian_id: notification.resolvedByDietitianId,
+    })
+    .eq("id", notificationId)
+    .eq("tenant_id", context.tenantId)
+    .is("resolved_at", null);
   throwIfError(error);
   await assertSupabaseNotificationExists(notificationId, context);
   return loadSupabaseState(context);
@@ -2078,6 +2202,148 @@ export async function rejectSupabaseClientUpdateProposal(
   const supabase = requireSupabase();
   if (proposal) await upsertClientUpdateProposal(supabase, proposal);
   await persistNewAudits(supabase, before, next);
+  return loadSupabaseState(context);
+}
+
+async function upsertContextIntakeProposal(supabase: SupabaseClient, proposal: ContextIntakeProposalRecord) {
+  await checked(
+    supabase.from("context_intake_proposals").upsert({
+      id: proposal.id,
+      tenant_id: proposal.tenantId,
+      client_id: proposal.clientId,
+      dietitian_id: proposal.dietitianId,
+      source_channel: proposal.sourceChannel,
+      intake_source: proposal.intakeSource,
+      source_text_digest: proposal.sourceTextDigest,
+      source_text: proposal.sourceText,
+      raw_source_reference: proposal.rawSourceReference,
+      occurred_at: proposal.occurredAt,
+      title: proposal.title,
+      summary: proposal.summary,
+      details: proposal.details,
+      importance: proposal.importance,
+      structured_impact_flags: proposal.structuredImpactFlags,
+      baseline_context_revision: proposal.baselineContextRevision,
+      baseline_form_revision: proposal.baselineFormRevision,
+      baseline_food_rule_revision: proposal.baselineFoodRuleRevision,
+      baseline_menu_plan_revision: proposal.baselineMenuPlanRevision,
+      status: proposal.status,
+      confirmation_count: proposal.confirmationCount,
+      applied_context_update_id: proposal.appliedContextUpdateId,
+      created_at: proposal.createdAt,
+      updated_at: proposal.updatedAt,
+      expires_at: proposal.expiresAt,
+    }),
+  );
+}
+
+async function persistContextIntakeMutation(
+  supabase: SupabaseClient,
+  before: ManuAppState,
+  next: ManuAppState,
+  proposalIds: string[],
+) {
+  for (const proposalId of proposalIds) {
+    const proposal = next.contextIntakeProposals.find((item) => item.id === proposalId);
+    if (proposal) await upsertContextIntakeProposal(supabase, proposal);
+  }
+  const appliedUpdateIds = next.contextIntakeProposals
+    .filter((proposal) => proposalIds.includes(proposal.id) && proposal.appliedContextUpdateId)
+    .map((proposal) => proposal.appliedContextUpdateId as string);
+  for (const updateId of appliedUpdateIds) {
+    const update = next.clientContextUpdates.find((item) => item.id === updateId);
+    if (update) {
+      await checked(
+        supabase.from("client_context_updates").upsert({
+          id: update.id,
+          tenant_id: update.tenantId,
+          client_id: update.clientId,
+          dietitian_id: update.dietitianId,
+          source: update.source,
+          occurred_at: update.occurredAt,
+          title: update.title,
+          summary: update.summary,
+          details: update.details,
+          importance: update.importance,
+          status: update.status,
+          supersedes_update_id: update.supersedesUpdateId,
+          created_at: update.createdAt,
+        }),
+      );
+    }
+  }
+  const touchedClientIds = new Set(
+    proposalIds
+      .map((proposalId) => next.contextIntakeProposals.find((item) => item.id === proposalId)?.clientId)
+      .filter(Boolean) as string[],
+  );
+  for (const clientId of touchedClientIds) {
+    const client = next.clients.find((item) => item.id === clientId);
+    const beforeClient = before.clients.find((item) => item.id === clientId);
+    if (client) await upsertClient(supabase, client, beforeClient);
+  }
+  await persistNewAudits(supabase, before, next);
+}
+
+export async function createSupabaseContextIntakeProposal(
+  resolution: import("./phase-85-if-g-context-intake").ResolveContextIntakeClientInput,
+  input: import("./phase-85-if-g-context-intake").CreateContextIntakeProposalInput,
+  context = demoTenantContext(),
+) {
+  const before = await loadSupabaseState(context);
+  const next = createContextIntakeProposalInState(before, resolution, input);
+  const proposal = next.contextIntakeProposals.at(-1);
+  const supabase = requireSupabase();
+  if (proposal) await upsertContextIntakeProposal(supabase, proposal);
+  await persistNewAudits(supabase, before, next);
+  return loadSupabaseState(context);
+}
+
+export async function confirmSupabaseContextIntakeProposal(
+  clientId: string,
+  proposalId: string,
+  context = demoTenantContext(),
+) {
+  const before = await loadSupabaseClientOperationState(clientId, context);
+  const next = confirmContextIntakeProposalInState(before, clientId, proposalId);
+  const supabase = requireSupabase();
+  await persistContextIntakeMutation(supabase, before, next, [proposalId]);
+  return loadSupabaseState(context);
+}
+
+export async function recheckSupabaseContextIntakeProposal(
+  clientId: string,
+  proposalId: string,
+  context = demoTenantContext(),
+) {
+  const before = await loadSupabaseClientOperationState(clientId, context);
+  const next = recheckContextIntakeProposalInState(before, clientId, proposalId);
+  const supabase = requireSupabase();
+  await persistContextIntakeMutation(supabase, before, next, [proposalId]);
+  return loadSupabaseState(context);
+}
+
+export async function applySupabaseContextIntakeProposal(
+  clientId: string,
+  proposalId: string,
+  context = demoTenantContext(),
+) {
+  const before = await loadSupabaseClientOperationState(clientId, context);
+  const next = applyContextIntakeProposalInState(before, clientId, proposalId);
+  const supabase = requireSupabase();
+  await persistContextIntakeMutation(supabase, before, next, [proposalId]);
+  return loadSupabaseState(context);
+}
+
+export async function rejectSupabaseContextIntakeProposal(
+  clientId: string,
+  proposalId: string,
+  context = demoTenantContext(),
+) {
+  const before = await loadSupabaseClientOperationState(clientId, context);
+  const next = rejectContextIntakeProposalInState(before, clientId, proposalId);
+  const supabase = requireSupabase();
+  await persistContextIntakeMutation(supabase, before, next, [proposalId]);
   return loadSupabaseState(context);
 }
 
@@ -2528,6 +2794,7 @@ function buildStateDeltaPayload(
   processedEventChannel?: ClientRecord["channel"],
 ) {
   const beforeClientsById = new Map(before.clients.map((client) => [client.id, client]));
+  const beforeConversationsById = new Map(before.conversations.map((item) => [item.id, item]));
   const beforeMessagesById = new Map(before.messages.map((item) => [item.id, item]));
   const beforeDecisionsById = new Map(before.aiDecisions.map((item) => [item.id, item]));
   const beforeRiskAssessments = new Set(before.riskAssessments.map((item) => item.id));
@@ -2535,6 +2802,10 @@ function buildStateDeltaPayload(
   const beforeNotifications = new Set(before.notifications.map((item) => item.id));
   const beforeQuarantines = new Set(before.inboundQuarantines.map((item) => item.id));
   const beforeChannelDeliveries = new Set(before.channelDeliveries.map((item) => item.id));
+  const beforeChannelEventsById = new Map(before.channelEvents.map((item) => [item.id, item]));
+  const beforeChannelMessageRevisionsById = new Map(before.channelMessageRevisions.map((item) => [item.id, item]));
+  const beforeHumanControlSessionsById = new Map(before.humanControlSessions.map((item) => [item.id, item]));
+  const beforeRiskActivityEventsById = new Map(before.riskActivityEvents.map((item) => [item.id, item]));
   const beforeAudits = new Set(before.auditEvents.map((item) => item.id));
   const beforeProcessed = new Set(before.processedSimulationKeys);
   const beforeFormResponsesById = new Map(before.clientFormResponses.map((item) => [item.id, item]));
@@ -2544,6 +2815,10 @@ function buildStateDeltaPayload(
   const changedClients = after.clients.filter((client) => {
     const beforeClient = beforeClientsById.get(client.id);
     return beforeClient && JSON.stringify(beforeClient) !== JSON.stringify(client);
+  });
+  const changedConversations = after.conversations.filter((conversation) => {
+    const beforeConversation = beforeConversationsById.get(conversation.id);
+    return beforeConversation && beforeConversation.revision !== conversation.revision;
   });
   const changedMessages = after.messages.filter((message) => {
     const beforeMessage = beforeMessagesById.get(message.id);
@@ -2575,6 +2850,7 @@ function buildStateDeltaPayload(
       changedClients.map((client) => [client.id, beforeClientsById.get(client.id)?.contextRevision || 1]),
     ),
     clients: changedClients.map(serializeClientForRpc),
+    conversationUpdates: changedConversations.map(serializeConversationUpdateForRpc),
     messages: after.messages.filter((item) => !beforeMessagesById.has(item.id)).map(serializeMessageForRpc),
     messageUpdates: changedMessages.map(serializeMessageUpdateForRpc),
     aiDecisions: after.aiDecisions.filter((item) => !beforeDecisionsById.has(item.id)).map(serializeDecisionForRpc),
@@ -2594,6 +2870,30 @@ function buildStateDeltaPayload(
     channelDeliveries: after.channelDeliveries
       .filter((item) => !beforeChannelDeliveries.has(item.id))
       .map(serializeChannelDeliveryForRpc),
+    channelEvents: after.channelEvents
+      .filter((item) => {
+        const beforeEvent = beforeChannelEventsById.get(item.id);
+        return !beforeEvent || JSON.stringify(beforeEvent) !== JSON.stringify(item);
+      })
+      .map(serializeChannelEventForRpc),
+    channelMessageRevisions: after.channelMessageRevisions
+      .filter((item) => {
+        const beforeRevision = beforeChannelMessageRevisionsById.get(item.id);
+        return !beforeRevision || JSON.stringify(beforeRevision) !== JSON.stringify(item);
+      })
+      .map(serializeChannelMessageRevisionForRpc),
+    humanControlSessions: after.humanControlSessions
+      .filter((item) => {
+        const beforeSession = beforeHumanControlSessionsById.get(item.id);
+        return !beforeSession || JSON.stringify(beforeSession) !== JSON.stringify(item);
+      })
+      .map(serializeHumanControlSessionForRpc),
+    riskActivityEvents: after.riskActivityEvents
+      .filter((item) => {
+        const beforeEvent = beforeRiskActivityEventsById.get(item.id);
+        return !beforeEvent || JSON.stringify(beforeEvent) !== JSON.stringify(item);
+      })
+      .map(serializeRiskActivityEventForRpc),
     channelAdapterRollbackControls:
       JSON.stringify(before.channelAdapterRollback) === JSON.stringify(after.channelAdapterRollback)
         ? null
@@ -2663,7 +2963,27 @@ function serializeMessageForRpc(message: MessageRecord) {
     sourceMessageId: message.sourceMessageId,
     risk: message.risk,
     status: message.status || "stored",
+    providerAccountBindingId: message.providerAccountBindingId,
+    providerEventId: message.providerEventId,
+    providerMessageId: message.providerMessageId,
+    actorType: message.actorType,
+    actorBindingId: message.actorBindingId,
+    authorInterface: message.authorInterface,
+    actorResolutionBasis: message.actorResolutionBasis,
+    providerSentAt: message.providerSentAt,
+    observedAt: message.observedAt,
+    persistedAt: message.persistedAt,
+    conversationSequence: message.conversationSequence,
+    contentStatus: message.contentStatus,
+    retrievalEligibility: message.retrievalEligibility,
     createdAt: message.createdAt,
+  };
+}
+
+function serializeConversationUpdateForRpc(conversation: ConversationRecord) {
+  return {
+    id: conversation.id,
+    revision: conversation.revision,
   };
 }
 
@@ -2675,6 +2995,19 @@ function serializeMessageUpdateForRpc(message: MessageRecord) {
     approvedByDietitianId: message.approvedByDietitianId,
     generatedByAiDecisionId: message.generatedByAiDecisionId,
     sourceMessageId: message.sourceMessageId,
+    providerAccountBindingId: message.providerAccountBindingId,
+    providerEventId: message.providerEventId,
+    providerMessageId: message.providerMessageId,
+    actorType: message.actorType,
+    actorBindingId: message.actorBindingId,
+    authorInterface: message.authorInterface,
+    actorResolutionBasis: message.actorResolutionBasis,
+    providerSentAt: message.providerSentAt,
+    observedAt: message.observedAt,
+    persistedAt: message.persistedAt,
+    conversationSequence: message.conversationSequence,
+    contentStatus: message.contentStatus,
+    retrievalEligibility: message.retrievalEligibility,
   };
 }
 
@@ -2784,6 +3117,12 @@ function serializeNotificationForRpc(notification: NotificationRecord) {
     body: notification.body,
     read: notification.read,
     acknowledgedAt: notification.acknowledgedAt,
+    dedupeKey: notification.dedupeKey ?? null,
+    sourceMessageId: notification.sourceMessageId ?? null,
+    targetPanel: notification.targetPanel ?? null,
+    baselineRevision: notification.baselineRevision ?? null,
+    resolvedAt: notification.resolvedAt ?? null,
+    resolvedByDietitianId: notification.resolvedByDietitianId ?? null,
     createdAt: notification.createdAt,
   };
 }
@@ -2814,6 +3153,83 @@ function serializeChannelDeliveryForRpc(delivery: ChannelDeliveryRecord) {
     failureCode: delivery.failureCode,
     createdAt: delivery.createdAt,
     updatedAt: delivery.updatedAt,
+  };
+}
+
+function serializeChannelEventForRpc(event: ChannelEventRecord) {
+  return {
+    id: event.id,
+    accountBindingId: event.accountBindingId,
+    eventKind: event.eventKind,
+    processingStatus: event.processingStatus,
+    providerAccountId: event.providerAccountId,
+    providerEventId: event.providerEventId,
+    providerMessageId: event.providerMessageId,
+    fromIdentity: event.fromIdentity,
+    toIdentity: event.toIdentity,
+    counterpartyIdentity: event.counterpartyIdentity,
+    payloadDigest: event.payloadDigest,
+    payloadSchemaVersion: event.payloadSchemaVersion,
+    providerTime: event.providerTime,
+    observedAt: event.observedAt,
+    committedAt: event.committedAt,
+    quarantineId: event.quarantineId,
+    replayOfEventId: event.replayOfEventId,
+    retryCount: event.retryCount,
+  };
+}
+
+function serializeChannelMessageRevisionForRpc(revision: ChannelMessageRevisionRecord) {
+  return {
+    id: revision.id,
+    messageId: revision.messageId,
+    channelEventId: revision.channelEventId,
+    providerEventId: revision.providerEventId,
+    revisionAction: revision.revisionAction,
+    priorContentStatus: revision.priorContentStatus,
+    currentContentStatus: revision.currentContentStatus,
+    priorBodyDigest: revision.priorBodyDigest,
+    currentBodyDigest: revision.currentBodyDigest,
+    revisionSequence: revision.revisionSequence,
+    providerTime: revision.providerTime,
+    observedAt: revision.observedAt,
+  };
+}
+
+function serializeHumanControlSessionForRpc(session: HumanControlSessionRecord) {
+  return {
+    id: session.id,
+    clientId: session.clientId,
+    conversationId: session.conversationId,
+    reason: session.reason,
+    status: session.status,
+    previousAiStatus: session.previousAiStatus,
+    previousAiMode: session.previousAiMode,
+    linkedHandoffId: session.linkedHandoffId,
+    linkedYellowHoldMessageId: session.linkedYellowHoldMessageId,
+    openedByMessageId: session.openedByMessageId,
+    latestHumanMessageId: session.latestHumanMessageId,
+    humanResponseObservedCount: session.humanResponseObservedCount,
+    openedAt: session.openedAt,
+    resolvedAt: session.resolvedAt,
+    reactivatedByDietitianId: session.reactivatedByDietitianId,
+    reactivationReasonCode: session.reactivationReasonCode,
+    restoredAiMode: session.restoredAiMode,
+  };
+}
+
+function serializeRiskActivityEventForRpc(event: RiskActivityEventRecord) {
+  return {
+    id: event.id,
+    clientId: event.clientId,
+    conversationId: event.conversationId,
+    humanControlSessionId: event.humanControlSessionId,
+    eventType: event.eventType,
+    sourceMessageId: event.sourceMessageId,
+    handoffId: event.handoffId,
+    aiDecisionId: event.aiDecisionId,
+    metadata: event.metadata,
+    createdAt: event.createdAt,
   };
 }
 
@@ -2981,6 +3397,7 @@ async function insertDecision(supabase: SupabaseClient, decision: AiDecisionReco
       blocked_reason: decision.blockedReason,
       quality_issues: decision.qualityIssues,
       reasons: decision.reasons,
+      conversation_revision_at_generation: decision.conversationRevisionAtGeneration ?? null,
       created_at: decision.createdAt,
     }),
   );
@@ -3660,6 +4077,7 @@ function mapConversation(conversation: DbConversation, memories: DbMemory[]): Co
     memoryVersion: memory?.memory_version || "memory-v1",
     memoryRevision: memory?.memory_revision || 1,
     memoryStale: memory?.stale || false,
+    revision: Number((conversation as DbConversation & { revision?: number }).revision ?? 1),
   };
 }
 
@@ -3691,6 +4109,30 @@ function mapMessage(message: DbMessage): MessageRecord {
     risk: message.risk,
     status: message.status,
     createdAt: message.created_at,
+  };
+}
+
+function mapHistoricalSearchRowToMessage(
+  row: SupabaseConversationMessageSearchRow,
+  tenantId: string,
+  conversationId: string,
+): MessageRecord {
+  const candidate = mapSupabaseSearchRowToRetrievalCandidate(row, tenantId, conversationId);
+  return {
+    id: candidate.id,
+    tenantId,
+    conversationId,
+    sender: candidate.sender || "client",
+    body: candidate.body,
+    origin: candidate.origin,
+    actorType: candidate.actorType ?? null,
+    actorResolutionBasis: candidate.actorResolutionBasis ?? null,
+    providerSentAt: candidate.providerSentAt ?? null,
+    conversationSequence: candidate.conversationSequence ?? null,
+    contentStatus: candidate.contentStatus ?? "available",
+    retrievalEligibility: candidate.retrievalEligibility ?? "eligible",
+    status: candidate.status,
+    createdAt: candidate.createdAt,
   };
 }
 
@@ -3776,6 +4218,12 @@ function mapNotification(notification: DbNotification): NotificationRecord {
     body: notification.body,
     read: notification.read,
     acknowledgedAt: notification.acknowledged_at,
+    dedupeKey: notification.dedupe_key,
+    sourceMessageId: notification.source_message_id,
+    targetPanel: notification.target_panel,
+    baselineRevision: notification.baseline_revision,
+    resolvedAt: notification.resolved_at,
+    resolvedByDietitianId: notification.resolved_by_dietitian_id,
     createdAt: notification.created_at,
   };
 }
@@ -3923,8 +4371,10 @@ function mapContextIntakeProposal(proposal: DbContextIntakeProposal): ContextInt
     clientId: proposal.client_id,
     dietitianId: proposal.dietitian_id,
     sourceChannel: proposal.source_channel,
+    intakeSource: proposal.intake_source || "other",
     sourceTextDigest: proposal.source_text_digest,
     sourceText: proposal.source_text,
+    rawSourceReference: proposal.raw_source_reference,
     occurredAt: proposal.occurred_at,
     title: proposal.title,
     summary: proposal.summary,

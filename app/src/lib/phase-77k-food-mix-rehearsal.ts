@@ -94,6 +94,7 @@ function buildSyntheticState(client: ClientRecord, goldenCase: FoodDecisionV2Gol
     memoryVersion: "memory-v1",
     memoryRevision: 1,
     memoryStale: false,
+    revision: 1,
   };
   return {
     ...seeded,

@@ -34,6 +34,23 @@ import {
 } from "./channel-mock-delivery-ledger";
 import { appendPermissionGraphEvaluation } from "./phase-76l-permission-graph-runtime";
 import { appendScopeGuardEvaluation } from "./scope-guard-runtime";
+import {
+  appendP85IfEHistoricalRetrievalNotifications,
+  mapConversationMessagesForRetrieval,
+} from "./phase-85-if-e-historical-retrieval";
+import {
+  appendControlledActivationAudit,
+  closeHumanControlSessionsForReactivation,
+  ensureHumanControlSessionForRiskState,
+  findActiveHumanControlSession,
+  resolveTargetAiModeForReactivation,
+  type ControlledAiActivationInput,
+  DIRECT_DIETITIAN_REACTIVATION_REASON_CODE,
+} from "./phase-85-if-f-risk-reactivation";
+import {
+  conversationRevisionOrDefault,
+  incrementConversationRevision,
+} from "./phase-85-if-f-conversation-revision";
 import { SAFETY_CLASSIFIER_VERSION, classifySimulationRisk } from "./simulator-risk";
 import type {
   AiDecisionRecord,
@@ -119,11 +136,15 @@ export async function runInboundSimulation(
     createdAt: now,
   });
 
-  const stateWithInbound: ManuAppState = {
-    ...state,
-    processedSimulationKeys: [...state.processedSimulationKeys, idempotencyKey],
-    messages: [...state.messages, inboundMessage],
-  };
+  const stateWithInbound: ManuAppState = incrementConversationRevision(
+    {
+      ...state,
+      processedSimulationKeys: [...state.processedSimulationKeys, idempotencyKey],
+      messages: [...state.messages, inboundMessage],
+    },
+    conversation.id,
+    now,
+  );
   const priorConversationMessages = state.messages.filter((message) => message.conversationId === conversation.id);
   const yellowHoldAtInbound = client.yellowRiskHold.status === "active" ? client.yellowRiskHold : null;
   const classified = await classifySimulationRisk(state, client, trimmedBody, priorConversationMessages, {
@@ -187,6 +208,12 @@ export async function runInboundSimulation(
     state,
   );
 
+  const conversationCorpus = mapConversationMessagesForRetrieval(
+    stateWithInbound.messages,
+    state.tenant.id,
+    conversation.id,
+  );
+
   const coreResult = (await handleInboundMessage(
     {
       tenantId: state.tenant.id,
@@ -195,6 +222,7 @@ export async function runInboundSimulation(
       conversation,
       message: { id: inboundMessage.id, body: trimmedBody },
       recentMessages: priorConversationMessages,
+      conversationMessages: conversationCorpus,
       memory: {
         rollingSummary: conversation.rollingSummary,
         memoryVersion: conversation.memoryVersion,
@@ -322,6 +350,7 @@ export function addClientToState(state: ManuAppState, client: ClientRecord): Man
     memoryVersion: "memory-v1",
     memoryRevision: 1,
     memoryStale: false,
+    revision: 1,
   };
 
   return {
@@ -348,6 +377,15 @@ export function updateClientInState(
   if (existingClient?.lifecycleStatus === "removed_anonymized") {
     throw new AppDomainError(409, "client_removed_anonymized");
   }
+
+  if (patch.aiStatus === "active" && existingClient && existingClient.aiStatus !== "active") {
+    return activateClientAiWithControlledRiskResolutionInState(state, clientId, {
+      requestedAiMode:
+        patch.aiMode === "autopilot" || patch.aiMode === "copilot" ? patch.aiMode : undefined,
+      activationSource: "client_patch",
+    });
+  }
+
   assertPatchAllowedByRedRiskLock(existingClient, patch);
   const auditEvents = [...state.auditEvents];
   const promptAffecting = isPromptAffectingClientPatch(patch);
@@ -383,7 +421,29 @@ export function updateClientInState(
     auditEvents,
   };
 
-  return promptAffecting ? invalidatePendingDrafts(nextState, now, "client_context_changed") : nextState;
+  const withDraftInvalidation = promptAffecting
+    ? invalidatePendingDrafts(nextState, now, "client_context_changed")
+    : nextState;
+
+  let finalState = promptAffecting
+    ? incrementConversationRevisionForClient(withDraftInvalidation, clientId, now)
+    : withDraftInvalidation;
+
+  if (patch.humanTakeoverLocked === true && existingClient && !existingClient.humanTakeoverLocked) {
+    const conversation = finalState.conversations.find((item) => item.clientId === clientId);
+    if (conversation) {
+      finalState = ensureHumanControlSessionForRiskState(finalState, {
+        clientId,
+        conversationId: conversation.id,
+        reason: "manual_takeover",
+        previousAiStatus: existingClient.aiStatus,
+        previousAiMode: existingClient.aiMode,
+        openedAt: now,
+      });
+    }
+  }
+
+  return finalState;
 }
 
 export function appendDietitianManualReply(
@@ -407,10 +467,16 @@ export function appendDietitianManualReply(
     authorDietitianId: state.dietitian.id,
   });
 
-  const nextState = {
-    ...state,
-    messages: body.trim() ? [...state.messages, message] : state.messages,
-  };
+  const nextState = body.trim()
+    ? incrementConversationRevision(
+        {
+          ...state,
+          messages: [...state.messages, message],
+        },
+        conversation.id,
+        now,
+      )
+    : state;
 
   return body.trim() ? invalidatePendingDrafts(nextState, now, "dietitian_manual_reply") : nextState;
 }
@@ -546,6 +612,14 @@ function revalidateDraftBeforeSend(
     client.yellowRiskHold.status === "active" &&
     client.yellowRiskHold.blockedByRedHandoffId === client.redRiskLock.handoffId;
   if (Number(manifest.clientContextRevision) !== client.contextRevision && !redLockSupersedesYellowHold) {
+    return "context_changed_before_send";
+  }
+  const expectedConversationRevision = manifest.conversationRevision;
+  if (
+    typeof expectedConversationRevision === "number" &&
+    expectedConversationRevision !== conversationRevisionOrDefault(conversation) &&
+    !redLockSupersedesYellowHold
+  ) {
     return "context_changed_before_send";
   }
   if (client.channelPermission !== "ready") return "context_changed_before_send";
@@ -694,7 +768,11 @@ export function releaseHumanTakeoverLockInState(state: ManuAppState, clientId: s
 export function resolveAndReactivateRedRiskInState(
   state: ManuAppState,
   handoffId: string,
-  input: { reactivationReason?: string; aiMode?: "copilot" | "autopilot" },
+  input: {
+    reactivationReason?: string;
+    aiMode?: "copilot" | "autopilot";
+    useFixedReactivationReasonCode?: boolean;
+  },
 ): ManuAppState {
   const handoff = state.handoffCases.find((item) => item.id === handoffId);
   if (!handoff) throw new AppDomainError(404, "handoff_not_found");
@@ -707,8 +785,13 @@ export function resolveAndReactivateRedRiskInState(
     throw new AppDomainError(409, "red_risk_lock_not_active_for_handoff");
   }
 
-  const reactivationReason = input.reactivationReason?.trim() || "";
-  if (!reactivationReason) throw new AppDomainError(400, "reactivation_reason_required");
+  const useFixedReason = Boolean(input.useFixedReactivationReasonCode);
+  const reactivationReason = useFixedReason
+    ? DIRECT_DIETITIAN_REACTIVATION_REASON_CODE
+    : input.reactivationReason?.trim() || "";
+  if (!useFixedReason && !reactivationReason) {
+    throw new AppDomainError(400, "reactivation_reason_required");
+  }
 
   const aiMode = input.aiMode || "copilot";
   if (aiMode !== "copilot" && aiMode !== "autopilot") {
@@ -758,11 +841,134 @@ export function resolveAndReactivateRedRiskInState(
           reactivatedByDietitianId: state.dietitian.id,
           aiMode,
           reasonPresent: true,
+          reasonCode: useFixedReason ? DIRECT_DIETITIAN_REACTIVATION_REASON_CODE : null,
         },
         createdAt: now,
       },
     ],
   };
+}
+
+export function activateClientAiWithControlledRiskResolutionInState(
+  state: ManuAppState,
+  clientId: string,
+  input: ControlledAiActivationInput = {},
+): ManuAppState {
+  const client = findClient(state, clientId);
+  const conversation = findConversation(state, clientId);
+  const now = new Date().toISOString();
+  const conversationRevision = conversationRevisionOrDefault(conversation);
+
+  if (
+    input.expectedConversationRevision != null &&
+    input.expectedConversationRevision !== conversationRevision
+  ) {
+    throw new AppDomainError(409, "reactivation_conflict_conversation_revision");
+  }
+  if (
+    input.expectedClientContextRevision != null &&
+    input.expectedClientContextRevision !== client.contextRevision
+  ) {
+    throw new AppDomainError(409, "reactivation_conflict_client_context_revision");
+  }
+
+  const isAutopilotQualified = (target: ClientRecord) =>
+    evaluateClientAutopilotQualification(state, target.id).status === "qualified" &&
+    target.mandatorySafetyComplete &&
+    isSafetyChecklistComplete(target);
+
+  if (client.redRiskLock.status === "locked") {
+    const handoffId = client.redRiskLock.handoffId;
+    if (!handoffId) throw new AppDomainError(409, "red_risk_lock_not_active_for_handoff");
+
+    const aiMode = resolveTargetAiModeForReactivation(
+      state,
+      client,
+      isAutopilotQualified,
+      input.requestedAiMode,
+      client.redRiskLock.previousAiMode,
+    );
+    const useFixedReason =
+      input.useFixedReactivationReasonCode ??
+      input.activationSource !== "handoff_resolve_reactivate";
+
+    let next = resolveAndReactivateRedRiskInState(state, handoffId, {
+      aiMode,
+      reactivationReason: input.reactivationReason,
+      useFixedReactivationReasonCode: useFixedReason,
+    });
+    next = closeHumanControlSessionsForReactivation(next, clientId, state.dietitian.id, aiMode, true, now);
+    next = incrementConversationRevision(next, conversation.id, now);
+    return appendControlledActivationAudit(next, clientId, handoffId, aiMode, "red_lock_resolved", now);
+  }
+
+  const activeSession = findActiveHumanControlSession(state, clientId);
+  const restoringFromYellow = client.yellowRiskHold.status === "active";
+  const restoringFromManual =
+    client.humanTakeoverLocked ||
+    activeSession?.reason === "manual_takeover" ||
+    activeSession?.reason === "external_human_active";
+
+  const restoredMode = resolveTargetAiModeForReactivation(
+    state,
+    client,
+    isAutopilotQualified,
+    input.requestedAiMode,
+    restoringFromYellow && client.yellowRiskHold.status === "active"
+      ? client.yellowRiskHold.previousAiMode
+      : activeSession?.previousAiMode ?? client.aiMode,
+  );
+
+  let next = state;
+
+  if (restoringFromYellow) {
+    next = invalidatePendingDrafts(next, now, "handled_through_external_human_conversation");
+    const openHandoffs = next.handoffCases.filter(
+      (handoff) => handoff.clientId === clientId && (handoff.status === "open" || handoff.status === "assigned"),
+    );
+    next = {
+      ...next,
+      handoffCases: next.handoffCases.map((handoff) =>
+        openHandoffs.some((item) => item.id === handoff.id)
+          ? { ...handoff, status: "resolved" as const }
+          : handoff,
+      ),
+    };
+  }
+
+  next = {
+    ...next,
+    clients: next.clients.map((item) =>
+      item.id === clientId
+        ? {
+            ...item,
+            aiStatus: "active",
+            aiMode: restoredMode,
+            humanTakeoverLocked: false,
+            yellowRiskHold: { status: "none" as const },
+            contextRevision: item.contextRevision + 1,
+          }
+        : item,
+    ),
+  };
+
+  next = closeHumanControlSessionsForReactivation(
+    next,
+    clientId,
+    state.dietitian.id,
+    restoredMode,
+    restoringFromYellow,
+    now,
+  );
+  next = incrementConversationRevision(next, conversation.id, now);
+
+  const resolutionKind = restoringFromYellow
+    ? "yellow_hold_resolved"
+    : restoringFromManual
+      ? "manual_resume"
+      : "simple_activation";
+
+  return appendControlledActivationAudit(next, clientId, null, restoredMode, resolutionKind, now);
 }
 
 export function invalidatePendingDrafts(
@@ -812,6 +1018,16 @@ export function invalidatePendingDrafts(
   };
 }
 
+function incrementConversationRevisionForClient(
+  state: ManuAppState,
+  clientId: string,
+  createdAt: string,
+): ManuAppState {
+  const conversation = state.conversations.find((item) => item.clientId === clientId);
+  if (!conversation) return state;
+  return incrementConversationRevision(state, conversation.id, createdAt);
+}
+
 function isPromptAffectingClientPatch(patch: Partial<ClientRecord>) {
   return [
     "selectedPersonaId",
@@ -839,7 +1055,6 @@ function assertPatchAllowedByRedRiskLock(existingClient: ClientRecord | undefine
   if (!existingClient || existingClient.redRiskLock.status !== "locked") return;
 
   const triesToReactivate =
-    patch.aiStatus === "active" ||
     (Object.prototype.hasOwnProperty.call(patch, "aiMode") &&
       patch.aiMode !== "manual" &&
       patch.aiMode !== "paused") ||
@@ -1172,6 +1387,20 @@ function appendDraftSimulationResult(ctx: SimulationAppendContext) {
   } else {
     ctx.auditEvents.push(buildAuditEvent(state, "yellow_risk_hold_created", "client", client.id, now));
   }
+
+  const updatedClient = ctx.nextClients.find((item) => item.id === client.id);
+  if (updatedClient?.yellowRiskHold.status === "active") {
+    ctx.state = ensureHumanControlSessionForRiskState(ctx.state, {
+      clientId: client.id,
+      conversationId: conversation.id,
+      reason: "yellow_risk_hold",
+      previousAiStatus: updatedClient.yellowRiskHold.previousAiStatus,
+      previousAiMode: updatedClient.yellowRiskHold.previousAiMode,
+      linkedYellowHoldMessageId: updatedClient.yellowRiskHold.latestMessageId,
+      openedByMessageId: inboundMessage.id,
+      openedAt: now,
+    });
+  }
 }
 
 function appendHandoffSimulationResult(ctx: SimulationAppendContext): ManuAppState | null {
@@ -1224,6 +1453,19 @@ function appendHandoffSimulationResult(ctx: SimulationAppendContext): ManuAppSta
       },
       createdAt: now,
     };
+    const lockedClient = ctx.nextClients.find((item) => item.id === client.id);
+    if (lockedClient?.redRiskLock.status === "locked" && redRiskHandoffId) {
+      ctx.state = ensureHumanControlSessionForRiskState(ctx.state, {
+        clientId: client.id,
+        conversationId: conversation.id,
+        reason: "red_risk_lock",
+        previousAiStatus: lockedClient.redRiskLock.previousAiStatus,
+        previousAiMode: lockedClient.redRiskLock.previousAiMode,
+        linkedHandoffId: redRiskHandoffId,
+        openedByMessageId: inboundMessage.id,
+        openedAt: now,
+      });
+    }
   } else if (coreResult.blockedReason === "missing_historical_context") {
     ctx.nextClients = state.clients.map((item) =>
       item.id === client.id ? { ...item, humanTakeoverLocked: true, contextRevision: item.contextRevision + 1 } : item,
@@ -1297,7 +1539,19 @@ function appendNoAiSimulationResult(ctx: SimulationAppendContext) {
   );
 }
 
+function applyP85IfEHistoricalRetrievalSideEffects(ctx: SimulationAppendContext) {
+  ctx.notifications = appendP85IfEHistoricalRetrievalNotifications({
+    notifications: ctx.notifications,
+    tenantId: ctx.state.tenant.id,
+    clientId: ctx.client.id,
+    contextManifest: ctx.coreResult.contextManifest,
+    createdAt: ctx.now,
+    baselineRevision: ctx.client.contextRevision,
+  });
+}
+
 function finalizeSimulationAppendContext(ctx: SimulationAppendContext): ManuAppState {
+  applyP85IfEHistoricalRetrievalSideEffects(ctx);
   return {
     ...ctx.state,
     clients: ctx.nextClients,
@@ -1306,6 +1560,8 @@ function finalizeSimulationAppendContext(ctx: SimulationAppendContext): ManuAppS
     handoffCases: ctx.handoffCases,
     notifications: ctx.notifications,
     channelDeliveries: ctx.nextChannelDeliveries,
+    humanControlSessions: ctx.state.humanControlSessions,
+    riskActivityEvents: ctx.state.riskActivityEvents,
     auditEvents: [
       ...ctx.auditEvents,
       buildAuditEvent(ctx.state, "simulation_processed", "ai_decision", ctx.decision.id, ctx.now),
@@ -1507,11 +1763,14 @@ function buildDecision({
   permissionGraph?: Record<string, unknown>;
   createdAt: string;
 }): AiDecisionRecord {
+  const liveClient = state.clients.find((item) => item.id === client.id) ?? client;
+  const liveConversation = state.conversations.find((item) => item.id === conversation.id) ?? conversation;
+
   return {
     id: crypto.randomUUID(),
     tenantId: state.tenant.id,
-    conversationId: conversation.id,
-    clientId: client.id,
+    conversationId: liveConversation.id,
+    clientId: liveClient.id,
     mode: result.mode,
     aiStatus: result.aiStatus,
     personaId: result.personaId,
@@ -1526,6 +1785,8 @@ function buildDecision({
     contextManifest: {
       ...(result.contextManifest ?? {}),
       ...(permissionGraph ? { permissionGraph } : {}),
+      clientContextRevision: liveClient.contextRevision,
+      conversationRevision: conversationRevisionOrDefault(liveConversation),
     },
     providerOutputSafety:
       result.providerOutputSafety ??
@@ -1547,6 +1808,7 @@ function buildDecision({
     blockedReason: result.blockedReason,
     qualityIssues: result.qualityIssues,
     reasons: result.reasons,
+    conversationRevisionAtGeneration: conversationRevisionOrDefault(liveConversation),
     createdAt,
   };
 }

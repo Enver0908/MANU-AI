@@ -3,7 +3,7 @@
 Date: 2026-07-10
 Canonical code: `P85-IF`
 Track: `P85-IF-A`, `P85-IF-B`, and `P85-IF-C`
-Status: P85-IF-A complete; P85-IF-B trust-root/provenance data model complete; P85-IF-C secure ingress/ledger/routing/quarantine complete; P85-IF-D complete transcript and human control complete; P85-IF-E next.
+Status: P85-IF-A complete; P85-IF-B trust-root/provenance data model complete; P85-IF-C secure ingress/ledger/routing/quarantine complete; P85-IF-D complete transcript and human control complete; P85-IF-E full-history retrieval and prompt authority V2 complete; P85-IF-F risk resolution, AI reactivation, and concurrency complete; P85-IF-G controlled off-channel AI chat intake complete; P85-IF-H minimal operational visibility complete; P85-IF-I lifecycle/RLS/closure complete. P85-IF is closed; Stage 4B is next.
 Placement: Phase 85 Stage 4A complete -> P85-IF -> Phase 85 Stage 4B.
 Production pilot: `NO-GO`.
 Deployment: none.
@@ -362,11 +362,15 @@ Implementation status on 2026-07-10: complete. `phase-85-if-d-transcript-human-c
 - Dietitian manual answerability requires retrieval-evidenced relevance.
 - Temporal precedence, structured update notification, edit/revoke exclusion, and cross-tenant isolation are test-locked.
 
+Implementation status on 2026-07-10: complete. `historical-retrieval.js`, `CONTEXT_POLICY_V2`, retrieval-evidenced answerability, `phase-85-if-e-historical-retrieval.ts`, `phase-85-if-e-supabase-search.ts`, and migration `20260710150000_phase_85_if_e_conversation_message_search.sql` implement bounded historical retrieval, overflow fail-closed behavior, structured-record update notifications, and Supabase FTS RPC. Evidence: `docs/PHASE_85_IF_E_HISTORICAL_RETRIEVAL_EVIDENCE.md`. P85-IF-F is complete.
+
 ### P85-IF-F
 
 - Direct AI activation resolves manual, yellow, and red sessions through one controlled operation.
 - Send-time CAS/revalidation blocks stale outbound and concurrent human/AI races.
 - Unsafe autopilot restoration falls back to copilot.
+
+Implementation status on 2026-07-10: complete. `phase-85-if-f-risk-reactivation.ts`, `phase-85-if-f-conversation-revision.ts`, controlled activation in `simulator.ts`, `/api/clients/[id]/activate-ai`, and migration `20260710160000_phase_85_if_f_conversation_revision.sql` implement canonical risk resolution, conversation revision CAS, and human-control session closure. Evidence: `docs/PHASE_85_IF_F_RISK_REACTIVATION_EVIDENCE.md`. P85-IF-G is complete.
 
 ### P85-IF-G
 
@@ -374,17 +378,23 @@ Implementation status on 2026-07-10: complete. `phase-85-if-d-transcript-human-c
 - Structured-impact proposals block until dashboard revision evidence and second confirmation.
 - RBAC, RLS, export, redaction, replay, stale proposal, and draft invalidation are covered.
 
+Implementation status on 2026-07-10: complete. `phase-85-if-g-context-intake.ts`, context-intake API routes, Copilot panel intake workflow, Supabase persistence, migration `20260710170000_phase_85_if_g_context_intake.sql`, export/redaction hooks, and targeted tests implement dedicated off-channel intake with client-safe resolution, structured blocking, double confirmation, and read-only copilot separation. Evidence: `docs/PHASE_85_IF_G_CONTEXT_INTAKE_EVIDENCE.md`. P85-IF-H is next.
+
 ### P85-IF-H
 
 - Minimal evidence UI exposes provenance, human-control, trust-binding, quarantine, source-link, and channel health state.
 - Full Stage 4B alert/notification UX remains untouched.
 - Desktop/mobile smoke verifies no Stage 4A regression.
 
+Implementation status on 2026-07-10: complete. `phase-85-if-h-operational-visibility.ts`, conversation provenance badges, human-control banner with direct AI activation, overview channel-trust aggregates, owner/admin inspection tables, structured source-message links, seven-language strings, and targeted tests implement minimal operational visibility without building Stage 4B. Evidence: `docs/PHASE_85_IF_H_OPERATIONAL_VISIBILITY_EVIDENCE.md`. P85-IF-I is next.
+
 ### P85-IF-I
 
 - Export, anonymization, deletion, RLS, replay, operational evidence, risk register, and closure docs are complete.
 - Full verification is green except documented local Supabase skips.
 - P85-IF closes and Stage 4B becomes the next Phase 85 planning target.
+
+Implementation status on 2026-07-10: complete. `phase-85-if-i-lifecycle-closure.ts`, export/redaction extensions in `data-governance.ts` and `phase-74-data-lifecycle-policy.ts`, unified lifecycle evidence in `phase-79e-lifecycle-redaction-evidence.ts`, Supabase RLS coverage for interstage tables, risk-register closure narratives, and targeted tests implement P85-IF-I closure without enabling live providers or production pilot. Evidence: `docs/PHASE_85_IF_I_LIFECYCLE_CLOSURE_EVIDENCE.md`. P85-IF is closed; Stage 4B is next.
 
 ## 16. Verification Contract
 

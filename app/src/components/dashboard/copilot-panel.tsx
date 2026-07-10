@@ -1,11 +1,18 @@
 "use client";
 
 import { Send } from "lucide-react";
-import type { ClientRecord, ClientUpdateProposalRecord, ManuAppState } from "@/lib/types";
+import type {
+  ClientContextUpdateSource,
+  ClientRecord,
+  ClientUpdateProposalRecord,
+  ContextIntakeProposalRecord,
+  ManuAppState,
+} from "@/lib/types";
 import {
   PHASE_77B_DEPRECATED_PROPOSAL_HEADLINE,
   PHASE_77B_MANUAL_SOURCE_AUTHORITY_COPY,
 } from "@/lib/phase-77b-chat-mutation-boundary";
+import { CONTEXT_INTAKE_STRUCTURED_PANEL_LINKS } from "@/lib/phase-85-if-g-context-intake";
 import { Badge, EmptyState, formatSafetyFlag, formatTime, groupProposalPatches } from "./shared";
 import { MobileStickyActionBar } from "./mobile-ergonomics";
 import { MOBILE_CHROME_CLASS, MOBILE_FIELD_CLASS } from "@/lib/phase-83e5-mobile-ergonomics";
@@ -17,6 +24,16 @@ export function CopilotPanel({
   isSending,
   isProposalUpdating,
   updateProposals,
+  contextIntakeProposals,
+  intakeSource,
+  intakeSourceText,
+  onIntakeSource,
+  onIntakeSourceText,
+  onCreateContextIntakeProposal,
+  onConfirmContextIntakeProposal,
+  onRecheckContextIntakeProposal,
+  onApplyContextIntakeProposal,
+  onRejectContextIntakeProposal,
   onInput,
   onAsk,
   onRejectProposal,
@@ -27,6 +44,16 @@ export function CopilotPanel({
   isSending: boolean;
   isProposalUpdating: boolean;
   updateProposals: ClientUpdateProposalRecord[];
+  contextIntakeProposals: ContextIntakeProposalRecord[];
+  intakeSource: ClientContextUpdateSource;
+  intakeSourceText: string;
+  onIntakeSource: (value: ClientContextUpdateSource) => void;
+  onIntakeSourceText: (value: string) => void;
+  onCreateContextIntakeProposal: () => void;
+  onConfirmContextIntakeProposal: (proposalId: string) => void;
+  onRecheckContextIntakeProposal: (proposalId: string) => void;
+  onApplyContextIntakeProposal: (proposalId: string) => void;
+  onRejectContextIntakeProposal: (proposalId: string) => void;
   onInput: (value: string) => void;
   onAsk: (body?: string) => void;
   onRejectProposal: (proposalId: string) => void;
@@ -144,6 +171,68 @@ export function CopilotPanel({
         </div>
 
         <div className="mt-5 border-t border-stone-100 pt-4">
+          <h4 className="text-sm font-semibold">Off-channel context intake</h4>
+          <p className="mt-2 text-sm text-stone-500">
+            Dedicated workflow for phone, Zoom, in-person, or other off-channel notes. Structured panel changes stay blocked until dashboard revision evidence exists.
+          </p>
+          <div className="mt-3 rounded-lg border border-stone-200 bg-stone-50 p-3 text-sm text-stone-700">
+            <p className="font-semibold text-stone-900">Client confirmation</p>
+            <p className="mt-1">{selectedClient.fullName}</p>
+            <p>{selectedClient.primaryPhoneE164 || "No phone on file"}</p>
+          </div>
+          <div className="mt-3 space-y-2">
+            <label className="block text-xs font-semibold uppercase text-stone-500">
+              Source
+              <select
+                value={intakeSource}
+                onChange={(event) => onIntakeSource(event.target.value as ClientContextUpdateSource)}
+                className="mt-1 min-h-11 w-full rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm"
+              >
+                <option value="phone">Phone</option>
+                <option value="zoom">Zoom</option>
+                <option value="in_person">In person</option>
+                <option value="other">Other</option>
+              </select>
+            </label>
+            <label className="block text-xs font-semibold uppercase text-stone-500">
+              Off-channel note
+              <textarea
+                value={intakeSourceText}
+                onChange={(event) => onIntakeSourceText(event.target.value)}
+                rows={4}
+                className="mt-1 w-full rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm"
+                placeholder="Summarize what was discussed off-channel..."
+              />
+            </label>
+            <button
+              onClick={onCreateContextIntakeProposal}
+              disabled={isProposalUpdating}
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-lg bg-emerald-950 px-3 py-2 text-sm font-semibold text-white transition hover:bg-emerald-900 disabled:cursor-not-allowed disabled:opacity-60"
+              type="button"
+            >
+              Create intake preview
+            </button>
+          </div>
+          <div className="mt-4 space-y-3">
+            {contextIntakeProposals.length === 0 ? (
+              <p className="text-sm text-stone-500">No pending context-intake proposals for this client.</p>
+            ) : (
+              contextIntakeProposals.slice(0, 5).map((proposal) => (
+                <ContextIntakeProposalCard
+                  key={proposal.id}
+                  proposal={proposal}
+                  isProposalUpdating={isProposalUpdating}
+                  onConfirm={onConfirmContextIntakeProposal}
+                  onRecheck={onRecheckContextIntakeProposal}
+                  onApply={onApplyContextIntakeProposal}
+                  onReject={onRejectContextIntakeProposal}
+                />
+              ))
+            )}
+          </div>
+        </div>
+
+        <div className="mt-5 border-t border-stone-100 pt-4">
           <h4 className="text-sm font-semibold">Historical update proposals</h4>
           <p className="mt-2 text-sm text-stone-500">{PHASE_77B_DEPRECATED_PROPOSAL_HEADLINE}</p>
           <div className="mt-3 space-y-3">
@@ -189,6 +278,98 @@ export function CopilotPanel({
       </button>
     </MobileStickyActionBar>
     </>
+  );
+}
+
+function ContextIntakeProposalCard({
+  proposal,
+  isProposalUpdating,
+  onConfirm,
+  onRecheck,
+  onApply,
+  onReject,
+}: {
+  proposal: ContextIntakeProposalRecord;
+  isProposalUpdating: boolean;
+  onConfirm: (proposalId: string) => void;
+  onRecheck: (proposalId: string) => void;
+  onApply: (proposalId: string) => void;
+  onReject: (proposalId: string) => void;
+}) {
+  const structuredFlags = proposal.structuredImpactFlags;
+  const canApply =
+    proposal.status === "confirmed" &&
+    (structuredFlags.length === 0 ? proposal.confirmationCount >= 1 : proposal.confirmationCount >= 2);
+
+  return (
+    <article className="rounded-lg border border-stone-200 bg-stone-50 p-3">
+      <div className="flex flex-wrap items-center gap-2">
+        <Badge label={proposal.status} tone={proposal.status === "applied" ? "emerald" : "amber"} />
+        <Badge label={proposal.intakeSource} tone="stone" />
+        <span className="text-xs font-medium text-stone-500">{formatTime(proposal.createdAt)}</span>
+      </div>
+      <p className="mt-2 text-sm font-semibold text-stone-900">{proposal.title}</p>
+      <p className="mt-1 text-sm text-stone-700">{proposal.summary}</p>
+      {proposal.details && <p className="mt-2 whitespace-pre-wrap text-sm text-stone-600">{proposal.details}</p>}
+      {structuredFlags.length > 0 && (
+        <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-2 text-sm text-amber-900">
+          <p className="font-semibold">Structured update required</p>
+          <ul className="mt-1 list-disc pl-5">
+            {structuredFlags.map((flag) => (
+              <li key={flag}>
+                {flag} → {CONTEXT_INTAKE_STRUCTURED_PANEL_LINKS[flag as keyof typeof CONTEXT_INTAKE_STRUCTURED_PANEL_LINKS]}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      <div className="mt-3 flex flex-wrap gap-2">
+        {(proposal.status === "pending_confirmation" ||
+          proposal.status === "blocked_structured_impact" ||
+          (proposal.status === "confirmed" &&
+            structuredFlags.length > 0 &&
+            proposal.confirmationCount < 2)) && (
+          <button
+            onClick={() => onConfirm(proposal.id)}
+            disabled={isProposalUpdating}
+            className="inline-flex min-h-11 items-center rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm font-semibold text-stone-700"
+            type="button"
+          >
+            Confirm preview
+          </button>
+        )}
+        {proposal.status === "blocked_structured_impact" && (
+          <button
+            onClick={() => onRecheck(proposal.id)}
+            disabled={isProposalUpdating}
+            className="inline-flex min-h-11 items-center rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm font-semibold text-stone-700"
+            type="button"
+          >
+            Recheck revisions
+          </button>
+        )}
+        {canApply && (
+          <button
+            onClick={() => onApply(proposal.id)}
+            disabled={isProposalUpdating}
+            className="inline-flex min-h-11 items-center rounded-lg bg-emerald-950 px-3 py-2 text-sm font-semibold text-white"
+            type="button"
+          >
+            Apply context update
+          </button>
+        )}
+        {proposal.status !== "applied" && proposal.status !== "rejected" && (
+          <button
+            onClick={() => onReject(proposal.id)}
+            disabled={isProposalUpdating}
+            className="inline-flex min-h-11 items-center rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm font-semibold text-stone-700"
+            type="button"
+          >
+            Reject
+          </button>
+        )}
+      </div>
+    </article>
   );
 }
 

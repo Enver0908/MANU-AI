@@ -35,6 +35,7 @@ function stateWithHiddenClientMessages() {
         memoryVersion: 1,
         memoryRevision: 1,
         memoryStale: false,
+        revision: 1,
         createdAt: "2026-06-01T00:00:00.000Z",
       },
     ],

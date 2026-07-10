@@ -1,5 +1,10 @@
 import { emptySafetyChecklist } from "./safety-checklist";
 import { redactClientContextUpdatesForAnonymization } from "./client-context-updates";
+import { redactContextIntakeProposalsForAnonymization } from "./phase-85-if-g-context-intake";
+import {
+  appendP85IfIRecordsToClientExport,
+  redactP85IfIClientScopedRecordsInState,
+} from "./phase-85-if-i-lifecycle-closure";
 import { redactStructuredFoodRuleAnswers } from "./phase-76n-food-rule-lifecycle";
 import { redactClientFoodRuleProfileV2 } from "./phase-77e-client-food-rule-profile";
 import { redactClientMenuPlanV1 } from "./phase-77f-client-menu-plan";
@@ -16,6 +21,7 @@ import type {
   ClientFormResponseRecord,
   ClientRecord,
   ClientUpdateProposalRecord,
+  ContextIntakeProposalRecord,
   ConversationRecord,
   DataRequestRecord,
   HandoffCaseRecord,
@@ -45,6 +51,7 @@ export type ClientScopedExport = {
   clientMenuPlans: ClientMenuPlanV1Record[];
   clientContextUpdates: ClientContextUpdateRecord[];
   clientUpdateProposals: ClientUpdateProposalRecord[];
+  contextIntakeProposals: ContextIntakeProposalRecord[];
   aiDecisions: AiDecisionRecord[];
   riskAssessments: RiskAssessmentRecord[];
   handoffCases: HandoffCaseRecord[];
@@ -109,37 +116,41 @@ export function buildClientScopedExport(state: ManuAppState, clientId: string): 
   const handoffs = state.handoffCases.filter((handoff) => handoff.clientId === client.id);
   const handoffIds = new Set(handoffs.map((handoff) => handoff.id));
 
-  return {
-    tenantId: state.tenant.id,
-    clientId: client.id,
-    generatedAt: new Date().toISOString(),
-    client,
-    conversations,
-    messages,
-    clientFormResponses: state.clientFormResponses.filter((response) => response.clientId === client.id),
-    clientFoodRuleProfiles: state.clientFoodRuleProfiles.filter((profile) => profile.clientId === client.id),
-    clientMenuPlans: state.clientMenuPlans.filter((plan) => plan.clientId === client.id),
-    clientContextUpdates: state.clientContextUpdates.filter((update) => update.clientId === client.id),
-    clientUpdateProposals: state.clientUpdateProposals.filter((proposal) => proposal.clientId === client.id),
-    aiDecisions: decisions,
-    riskAssessments: state.riskAssessments.filter(
-      (assessment) => conversationIds.has(assessment.conversationId) || messageIds.has(assessment.messageId),
-    ),
-    handoffCases: handoffs,
-    notifications: state.notifications.filter(
-      (notification) => notification.entityType === "handoff_case" && handoffIds.has(notification.entityId),
-    ),
-    dataRequests: state.dataRequests.filter((request) => request.clientId === client.id),
-    auditEvents: state.auditEvents.filter(
-      (event) =>
-        event.entityId === client.id ||
-        conversationIds.has(event.entityId) ||
-        messageIds.has(event.entityId) ||
-        handoffIds.has(event.entityId) ||
-        decisions.some((decision) => decision.id === event.entityId),
-    ),
-    channelDeliveries: state.channelDeliveries.filter((delivery) => delivery.clientId === client.id),
-  };
+  return appendP85IfIRecordsToClientExport(
+    {
+      tenantId: state.tenant.id,
+      clientId: client.id,
+      generatedAt: new Date().toISOString(),
+      client,
+      conversations,
+      messages,
+      clientFormResponses: state.clientFormResponses.filter((response) => response.clientId === client.id),
+      clientFoodRuleProfiles: state.clientFoodRuleProfiles.filter((profile) => profile.clientId === client.id),
+      clientMenuPlans: state.clientMenuPlans.filter((plan) => plan.clientId === client.id),
+      clientContextUpdates: state.clientContextUpdates.filter((update) => update.clientId === client.id),
+      clientUpdateProposals: state.clientUpdateProposals.filter((proposal) => proposal.clientId === client.id),
+      contextIntakeProposals: state.contextIntakeProposals.filter((proposal) => proposal.clientId === client.id),
+      aiDecisions: decisions,
+      riskAssessments: state.riskAssessments.filter(
+        (assessment) => conversationIds.has(assessment.conversationId) || messageIds.has(assessment.messageId),
+      ),
+      handoffCases: handoffs,
+      notifications: state.notifications.filter(
+        (notification) => notification.entityType === "handoff_case" && handoffIds.has(notification.entityId),
+      ),
+      dataRequests: state.dataRequests.filter((request) => request.clientId === client.id),
+      auditEvents: state.auditEvents.filter(
+        (event) =>
+          event.entityId === client.id ||
+          conversationIds.has(event.entityId) ||
+          messageIds.has(event.entityId) ||
+          handoffIds.has(event.entityId) ||
+          decisions.some((decision) => decision.id === event.entityId),
+      ),
+      channelDeliveries: state.channelDeliveries.filter((delivery) => delivery.clientId === client.id),
+    },
+    state,
+  );
 }
 
 export function anonymizeClientInState(state: ManuAppState, clientId: string): ManuAppState {
@@ -168,6 +179,9 @@ function redactClientDataInState(
   );
   const proposalIds = new Set(
     state.clientUpdateProposals.filter((proposal) => proposal.clientId === client.id).map((proposal) => proposal.id),
+  );
+  const contextIntakeProposalIds = new Set(
+    state.contextIntakeProposals.filter((proposal) => proposal.clientId === client.id).map((proposal) => proposal.id),
   );
   const now = new Date().toISOString();
   const dataRequest = buildDataRequest(state, client.id, requestType, "completed", now);
@@ -268,7 +282,8 @@ function redactClientDataInState(
         conversationIds.has(event.entityId) ||
         messageIds.has(event.entityId) ||
         decisionIds.has(event.entityId) ||
-        proposalIds.has(event.entityId)
+        proposalIds.has(event.entityId) ||
+        contextIntakeProposalIds.has(event.entityId)
           ? { ...event, metadata: { minimized: true, reason: "client_data_anonymized" } }
           : event,
       ),
@@ -286,7 +301,13 @@ function redactClientDataInState(
     channelDeliveries: state.channelDeliveries.filter((delivery) => delivery.clientId !== client.id),
   };
 
-  return redactClientContextUpdatesForAnonymization(anonymizedBase, client.id);
+  return redactP85IfIClientScopedRecordsInState(
+    redactContextIntakeProposalsForAnonymization(
+      redactClientContextUpdatesForAnonymization(anonymizedBase, client.id),
+      client.id,
+    ),
+    client.id,
+  );
 }
 
 export function recordClientExportInState(state: ManuAppState, clientId: string): ManuAppState {

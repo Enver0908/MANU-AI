@@ -14,6 +14,7 @@ import {
   lifecycleRedactionEvidenceIsAggregateOnly,
   verifyRemovedClientOperationalPathsBlocked,
 } from "./phase-79e-lifecycle-redaction-evidence";
+import { PHASE_85_IF_I_LIFECYCLE_REDACTION_DOMAINS } from "./phase-85-if-i-lifecycle-closure";
 import { buildOperationalHealthSnapshot } from "./operational-health";
 import {
   getClientFoodRuleProfileV2State,
@@ -75,7 +76,10 @@ describe("phase 79e lifecycle redaction evidence", () => {
     const { state, evidence } = applyPhase79LifecycleRedactionContract(seeded, "client-mert", "deletion");
 
     expect(evidence.status).toBe("pass");
-    expect(evidence.domainsCovered).toEqual([...PHASE_79E_LIFECYCLE_REDACTION_DOMAINS]);
+    expect(evidence.domainsCovered).toEqual([
+      ...PHASE_79E_LIFECYCLE_REDACTION_DOMAINS,
+      ...PHASE_85_IF_I_LIFECYCLE_REDACTION_DOMAINS,
+    ]);
     expect(evidence.channelDeliveriesRemoved).toBe(true);
     expect(evidence.conversationMemoryCleared).toBe(true);
     expect(evidence.foodMenuProfileRedacted).toBe(true);

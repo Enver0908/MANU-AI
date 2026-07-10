@@ -10,17 +10,24 @@ import {
   SlidersHorizontal,
   UserRound,
 } from "lucide-react";
-import type { ClientRecord } from "@/lib/types";
+import type { ClientRecord, ManuAppState, SupportedLanguageCode } from "@/lib/types";
 import { ClientSummary, EmptyState, MetricCard, WorkflowItem } from "./shared";
+import { OperationalFoundationPanel } from "./operational-foundation-panel";
 
 export function OverviewPanel({
   metrics,
   selectedClient,
+  state,
+  uiLanguage,
+  showInspectionDetails,
   onOpenSimulator,
   onOpenClients,
 }: {
   metrics: { pendingDrafts: number; urgentHandoffs: number; aiSent: number; passive: number };
   selectedClient?: ClientRecord;
+  state: ManuAppState;
+  uiLanguage: SupportedLanguageCode;
+  showInspectionDetails: boolean;
   onOpenSimulator: () => void;
   onOpenClients: () => void;
 }) {
@@ -75,6 +82,14 @@ export function OverviewPanel({
           )}
         </section>
       </div>
+
+      <section className="rounded-lg border border-stone-200 bg-white p-4 shadow-sm">
+        <OperationalFoundationPanel
+          state={state}
+          uiLanguage={uiLanguage}
+          showInspectionDetails={showInspectionDetails}
+        />
+      </section>
     </div>
   );
 }

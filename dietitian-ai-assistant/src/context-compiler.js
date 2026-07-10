@@ -6,6 +6,12 @@ import {
   FOOD_DECISION_V2_PROVIDER_INSTRUCTION,
   buildFoodDecisionV2PromptSegments,
 } from "./food-decision-v2-prompt-segments.js";
+import {
+  detectAmbiguousCompetingDietitianSources,
+  detectStructuredRecordUpdateSignals,
+  isRetrievalEvidencedDietitianMessage,
+  retrieveHistoricalMessages,
+} from "./historical-retrieval.js";
 
 export const MISSING_HISTORICAL_CONTEXT_TOKEN = "[ERROR: missing_historical_context]";
 
@@ -38,15 +44,28 @@ export const CONTEXT_POLICY_V1 = {
   },
 };
 
+export const CONTEXT_POLICY_V2 = {
+  ...CONTEXT_POLICY_V1,
+  version: "context-policy-v2",
+  maxHistoricalSources: 6,
+  maxHistoricalTokens: 600,
+  maxHistoricalDietitianSources: 4,
+  maxHistoricalSupportingSources: 2,
+  minRelevanceScore: 0.2,
+};
+
 const PROMPTABLE_ORIGINS = new Set(["client_inbound", "dietitian_manual"]);
 
 export function compilePromptContext({
   capsule,
   currentMessage,
   recentMessages = [],
+  conversationMessages = [],
   riskLevel,
   promptVersion = null,
-  policy = CONTEXT_POLICY_V1,
+  policy = CONTEXT_POLICY_V2,
+  dietitianTimezone = "UTC",
+  retrievalNow = new Date().toISOString(),
   structuredFoodRules = null,
   foodRuleDecision = null,
   foodDecisionV2 = null,
@@ -68,6 +87,52 @@ export function compilePromptContext({
   }
 
   const selectedRecent = selectPromptableRecentMessages(recentMessages, policy);
+  const corpus = conversationMessages.length > 0 ? conversationMessages : recentMessages;
+  const recentMessageIds = selectedRecent.map((message) => message.id).filter(Boolean);
+  const historicalRetrieval =
+    policy.version === "context-policy-v2" && corpus.length > 0
+      ? retrieveHistoricalMessages({
+          query: currentText,
+          messages: corpus,
+          recentMessageIds,
+          timezone: dietitianTimezone,
+          now: retrievalNow,
+          policy: {
+            ...policy,
+            currentMessageId: currentMessageId(currentMessage),
+          },
+        })
+      : null;
+
+  if (historicalRetrieval?.overflowRequiredDietitian) {
+    return blockedContext({
+      capsule,
+      currentMessage,
+      riskLevel,
+      promptVersion,
+      policy,
+      reason: "historical_context_overflow",
+      currentTokens,
+      historicalRetrieval,
+    });
+  }
+
+  const ambiguousCompetingSources = detectAmbiguousCompetingDietitianSources(
+    historicalRetrieval?.selected || [],
+  );
+  const structuredRecordUpdates = detectStructuredRecordUpdateSignals({
+    retrievedSources: historicalRetrieval?.selected || [],
+    structuredBaseline: {
+      menuPlanRevision: capsule?.client?.menuPlanRevision ?? null,
+      menuPlanUpdatedAt: capsule?.client?.menuPlanUpdatedAt ?? null,
+      foodRuleRevision: capsule?.client?.foodRuleRevision ?? null,
+      foodRuleUpdatedAt: capsule?.client?.foodRuleUpdatedAt ?? null,
+      formRevision: capsule?.client?.formRevision ?? null,
+      formUpdatedAt: capsule?.client?.formUpdatedAt ?? null,
+      dietPlanUpdatedAt: capsule?.client?.dietPlanUpdatedAt ?? null,
+    },
+  });
+
   const segments = [
     textSegment("system_instruction", "system_instruction_missing_history", MISSING_HISTORICAL_CONTEXT_INSTRUCTION, {
       authority: "system",
@@ -141,13 +206,31 @@ export function compilePromptContext({
     textSegment("rolling_summary", "rolling_summary", capsule.memory?.rollingSummary || "", {
       authority: "compiled_memory",
     }),
-    ...selectedRecent.map((message) =>
-      textSegment("recent_message", message.id || null, message.body || "", {
+    ...(historicalRetrieval?.selected || []).map((source) =>
+      textSegment("historical_message", source.sourceId, source.body, {
+        origin: source.origin,
+        createdAt: source.createdAt,
+        providerSentAt: source.providerSentAt,
+        authority: authorityForHistoricalSource(source),
+        retrievalEvidenced: source.retrievalEvidenced,
+        relevanceScore: source.relevanceScore,
+        relevanceReason: source.relevanceReason,
+      }),
+    ),
+    ...selectedRecent.map((message) => {
+      const retrievalEvidenced =
+        message.origin === "dietitian_manual"
+          ? isRetrievalEvidencedDietitianMessage(currentText, message, policy.minRelevanceScore ?? 0.2)
+          : null;
+      return textSegment("recent_message", message.id || null, message.body || "", {
         origin: message.origin || null,
         createdAt: message.createdAt || null,
         authority: authorityForRecentMessage(message),
-      }),
-    ),
+        retrievalEvidenced,
+        relevanceScore:
+          message.origin === "dietitian_manual" && retrievalEvidenced ? policy.minRelevanceScore : null,
+      });
+    }),
     textSegment("persona", capsule.persona?.id || "persona", JSON.stringify(capsule.persona?.behavior || {}), {
       authority: "system",
     }),
@@ -176,6 +259,9 @@ export function compilePromptContext({
         createdAt: segment.createdAt,
         authority: segment.authority,
         text: segment.text,
+        retrievalEvidenced: segment.retrievalEvidenced ?? null,
+        relevanceScore: segment.relevanceScore ?? null,
+        relevanceReason: segment.relevanceReason ?? null,
       })),
     },
     contextManifest: buildManifest({
@@ -192,6 +278,9 @@ export function compilePromptContext({
       },
       validation,
       totalTokens,
+      historicalRetrieval,
+      structuredRecordUpdates,
+      ambiguousCompetingSources,
     }),
     blockedReason: validation.ok ? null : "context_token_budget_exceeded",
   };
@@ -223,7 +312,16 @@ export function renderPromptContext(promptContext) {
     .join("\n\n");
 }
 
-function blockedContext({ capsule, currentMessage, riskLevel, promptVersion, policy, reason, currentTokens }) {
+function blockedContext({
+  capsule,
+  currentMessage,
+  riskLevel,
+  promptVersion,
+  policy,
+  reason,
+  currentTokens,
+  historicalRetrieval = null,
+}) {
   const validation = { ok: false, reasons: [reason] };
   return {
     promptContext: {
@@ -238,9 +336,12 @@ function blockedContext({ capsule, currentMessage, riskLevel, promptVersion, pol
       promptVersion,
       policy,
       segments: [],
-      excludedCounts: { nonPromptableMessages: 0, droppedRecentMessages: 0 },
+      excludedCounts: { nonPromptableMessages: 0, droppedRecentMessages: 0, droppedContextUpdates: 0 },
       validation,
       totalTokens: currentTokens,
+      historicalRetrieval,
+      structuredRecordUpdates: [],
+      ambiguousCompetingSources: [],
     }),
     blockedReason: reason,
   };
@@ -255,6 +356,9 @@ function textSegment(type, sourceId, text, metadata = {}) {
     createdAt: metadata.createdAt || null,
     authority: metadata.authority || null,
     importance: metadata.importance || null,
+    retrievalEvidenced: metadata.retrievalEvidenced ?? null,
+    relevanceScore: metadata.relevanceScore ?? null,
+    relevanceReason: metadata.relevanceReason ?? null,
     text: String(text || ""),
     truncated: false,
   };
@@ -366,6 +470,9 @@ function buildManifest({
   excludedCounts,
   validation,
   totalTokens,
+  historicalRetrieval = null,
+  structuredRecordUpdates = [],
+  ambiguousCompetingSources = [],
 }) {
   return {
     schemaVersion: "context-manifest-v1",
@@ -387,6 +494,9 @@ function buildManifest({
     promptVersion,
     communicationLanguage: capsule.client.communicationLanguage || "tr",
     languageSource: "client_form_response_or_profile",
+    historicalRetrieval,
+    structuredRecordUpdates,
+    ambiguousCompetingSources,
     segments: segments.map((segment) => ({
       segmentId: segment.id,
       type: segment.type,
@@ -425,6 +535,12 @@ function currentMessageCreatedAt(currentMessage) {
 function authorityForRecentMessage(message) {
   if (message.origin === "dietitian_manual") return "dietitian_authored";
   if (message.origin === "ai_generated") return "approved_ai_generated";
+  return "client_authored";
+}
+
+function authorityForHistoricalSource(source) {
+  if (source.origin === "dietitian_manual") return "dietitian_authored";
+  if (source.origin === "ai_generated") return "approved_ai_generated";
   return "client_authored";
 }
 

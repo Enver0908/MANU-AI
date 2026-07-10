@@ -134,7 +134,24 @@ describe("app state store operations", () => {
     );
   });
 
-  it("blocks direct AI reactivation, takeover release, and dismissal while red risk lock is active", async () => {
+  it("routes direct aiStatus activation through controlled risk resolution on red lock", async () => {
+    const withHandoff = await simulateInState(createInitialState(), {
+      clientId: "client-mert",
+      body: "Alerjiden nefes alamiyorum, bogazim sisti.",
+      idempotencyKey: "store-red-controlled-activation",
+    });
+    const handoffId = withHandoff.handoffCases[0].id;
+
+    const activated = patchClientInState(withHandoff, "client-mert", { aiStatus: "active", aiMode: "copilot" });
+    const client = activated.clients.find((item) => item.id === "client-mert");
+
+    expect(activated.handoffCases.find((item) => item.id === handoffId)?.status).toBe("resolved");
+    expect(client?.aiStatus).toBe("active");
+    expect(client?.aiMode).toBe("copilot");
+    expect(client?.redRiskLock.status).toBe("reactivated");
+  });
+
+  it("blocks takeover release and dismissal while red risk lock is active", async () => {
     const withHandoff = await simulateInState(createInitialState(), {
       clientId: "client-mert",
       body: "Alerjiden nefes alamiyorum, bogazim sisti.",
@@ -142,9 +159,6 @@ describe("app state store operations", () => {
     });
     const handoffId = withHandoff.handoffCases[0].id;
 
-    expect(() => patchClientInState(withHandoff, "client-mert", { aiStatus: "active" })).toThrowError(
-      /red_risk_reactivation_required/,
-    );
     expect(() => releaseHumanTakeoverInState(withHandoff, "client-mert")).toThrowError(
       /red_risk_reactivation_required/,
     );

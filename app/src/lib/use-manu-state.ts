@@ -116,6 +116,18 @@ export function useManuState() {
         replaceFromApi(`/api/clients/${clientId}/release-takeover`, {
           method: "POST",
         }),
+      activateClientAi: (
+        clientId: string,
+        input?: {
+          requestedAiMode?: "copilot" | "autopilot";
+          expectedConversationRevision?: number;
+          expectedClientContextRevision?: number;
+        },
+      ) =>
+        replaceFromApi(`/api/clients/${clientId}/activate-ai`, {
+          method: "POST",
+          body: JSON.stringify(input ?? {}),
+        }),
       runSimulation: (input: SimulationRequest) =>
         replaceFromApi("/api/simulator", {
           method: "POST",
@@ -267,6 +279,41 @@ export function useManuState() {
         }),
       rejectClientUpdateProposal: (clientId: string, proposalId: string) =>
         replaceFromApi(`/api/clients/${clientId}/update-proposals/${proposalId}/reject`, {
+          method: "POST",
+        }),
+      createContextIntakeProposal: (
+        clientId: string,
+        input: {
+          sourceText: string;
+          intakeSource: ClientContextUpdateSource;
+          occurredAt?: string | null;
+          title?: string;
+          summary?: string;
+          details?: string;
+          importance?: ClientContextUpdateImportance;
+          rawSourceReference?: string | null;
+          confirmFullName?: string;
+          confirmPhoneE164?: string;
+        },
+      ) =>
+        replaceFromApi(`/api/clients/${clientId}/context-intake/proposals`, {
+          method: "POST",
+          body: JSON.stringify(input),
+        }),
+      confirmContextIntakeProposal: (clientId: string, proposalId: string) =>
+        replaceFromApi(`/api/clients/${clientId}/context-intake/proposals/${proposalId}/confirm`, {
+          method: "POST",
+        }),
+      recheckContextIntakeProposal: (clientId: string, proposalId: string) =>
+        replaceFromApi(`/api/clients/${clientId}/context-intake/proposals/${proposalId}/recheck`, {
+          method: "POST",
+        }),
+      applyContextIntakeProposal: (clientId: string, proposalId: string) =>
+        replaceFromApi(`/api/clients/${clientId}/context-intake/proposals/${proposalId}/apply`, {
+          method: "POST",
+        }),
+      rejectContextIntakeProposal: (clientId: string, proposalId: string) =>
+        replaceFromApi(`/api/clients/${clientId}/context-intake/proposals/${proposalId}/reject`, {
           method: "POST",
         }),
     }),

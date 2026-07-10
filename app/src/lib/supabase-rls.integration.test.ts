@@ -28,6 +28,7 @@ const shouldRun = Boolean(supabaseUrl && anonKey && serviceRoleKey && (isLocalSu
 const TEST_TENANT_ID = "00000000-0000-4000-8000-000000000901";
 const OTHER_TENANT_ID = "00000000-0000-4000-8000-000000000902";
 const TEST_DIETITIAN_ID = "00000000-0000-4000-8000-000000000903";
+const OTHER_DIETITIAN_ID = "00000000-0000-4000-8000-000000000953";
 const TEST_CLIENT_ID = "00000000-0000-4000-8000-000000000904";
 const OTHER_CLIENT_ID = "00000000-0000-4000-8000-000000000905";
 const TEST_CONVERSATION_ID = "00000000-0000-4000-8000-000000000906";
@@ -70,6 +71,13 @@ const OTHER_BILLING_CUSTOMER_ID = "00000000-0000-4000-8000-000000000942";
 const TEST_BILLING_EVENT_ID = "00000000-0000-4000-8000-000000000940";
 const TEST_MOBILE_INSTALL_AUDIT_ID = "00000000-0000-4000-8000-000000000941";
 const OTHER_MOBILE_INSTALL_AUDIT_ID = "00000000-0000-4000-8000-000000000943";
+const TEST_P85_HUMAN_CONTROL_SESSION_ID = "00000000-0000-4000-8000-000000000946";
+const OTHER_P85_HUMAN_CONTROL_SESSION_ID = "00000000-0000-4000-8000-000000000947";
+const TEST_P85_CONTEXT_INTAKE_ID = "00000000-0000-4000-8000-000000000948";
+const OTHER_P85_CONTEXT_INTAKE_ID = "00000000-0000-4000-8000-000000000949";
+const TEST_P85_CHANNEL_ACCOUNT_BINDING_ID = "00000000-0000-4000-8000-000000000950";
+const OTHER_P85_CHANNEL_ACCOUNT_BINDING_ID = "00000000-0000-4000-8000-000000000951";
+const TEST_P85_RISK_ACTIVITY_ID = "00000000-0000-4000-8000-000000000952";
 const PASSWORD = "manu-rls-test-password";
 
 const maybeDescribe = shouldRun ? describe : describe.skip;
@@ -427,6 +435,47 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     expect(unassignedUpdate.data).toHaveLength(0);
   });
 
+  it("isolates P85-IF interstage foundation tables by tenant", async () => {
+    const member = await signIn("rls-member@manu.local");
+    const outsider = await signIn("rls-outsider@manu.local");
+
+    for (const table of [
+      "human_control_sessions",
+      "risk_activity_events",
+      "context_intake_proposals",
+      "channel_account_bindings",
+    ] as const) {
+      const own = await member.from(table).select("id").eq("tenant_id", TEST_TENANT_ID);
+      expect(own.error).toBeNull();
+      expect((own.data ?? []).length).toBeGreaterThan(0);
+
+      const hidden = await outsider.from(table).select("id").eq("tenant_id", TEST_TENANT_ID);
+      expect(hidden.error).toBeNull();
+      expect(hidden.data).toHaveLength(0);
+    }
+  });
+
+  it("rejects cross-tenant P85-IF foreign references even for service-role writes", async () => {
+    const response = await admin.from("context_intake_proposals").insert({
+      id: "00000000-0000-4000-8000-000000001953",
+      tenant_id: TEST_TENANT_ID,
+      client_id: OTHER_CLIENT_ID,
+      dietitian_id: TEST_DIETITIAN_ID,
+      source_channel: "internal_copilot",
+      intake_source: "phone",
+      source_text_digest: "cross-tenant-reference",
+      occurred_at: "2026-07-10T10:00:00.000Z",
+      title: "Cross tenant reference",
+      summary: "Must be rejected by the composite tenant foreign key.",
+      details: "",
+      importance: "routine",
+      baseline_context_revision: 1,
+      status: "pending_confirmation",
+    });
+
+    expect(response.error?.message).toMatch(/foreign key/i);
+  });
+
   it("blocks auditor access to raw client, message, AI, handoff, risk, and copilot tables", async () => {
     const auditor = await signIn("rls-auditor@manu.local");
 
@@ -438,6 +487,10 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
       ["risk_assessments", "id"],
       ["inbound_quarantines", "id"],
       ["channel_deliveries", "id"],
+      ["human_control_sessions", "id"],
+      ["risk_activity_events", "id"],
+      ["context_intake_proposals", "id"],
+      ["channel_account_bindings", "id"],
       ["internal_copilot_messages", "id"],
       ["internal_copilot_tool_calls", "id"],
     ] as const) {
@@ -956,19 +1009,23 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
   it("persists draft approve and dismiss updates through transactional RPC", async () => {
     await resetSupabaseState();
     const state = await loadSupabaseState();
-    const copilotClient = state.clients.find((client) => client.aiMode === "copilot");
+    const planBackedClient = state.clients.find((client) => client.fullName === "Mert Kaya");
 
-    expect(copilotClient).toBeDefined();
+    expect(planBackedClient).toBeDefined();
+    await patchSupabaseClientRecord(planBackedClient!.id, {
+      aiMode: "copilot",
+    });
 
     const withDraft = await runSupabaseSimulation({
-      clientId: copilotClient!.id,
+      clientId: planBackedClient!.id,
       body: "Ara ogun icin ne yiyebilirim?",
       idempotencyKey: `draft-approve-${Date.now()}`,
     });
     const draft = withDraft.messages.find((message) => message.status === "draft");
     expect(draft).toBeDefined();
 
-    await approveSupabaseDraftMessage(draft!.id, "Edited safe reply");
+    const approvedBody = "Planina uygun olarak ara ogunde yogurt veya lor peyniri tercih edebilirsin.";
+    await approveSupabaseDraftMessage(draft!.id, approvedBody);
 
     const approved = await admin
       .from("messages")
@@ -978,13 +1035,13 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
 
     expect(approved.error).toBeNull();
     expect(approved.data).toMatchObject({
-      body: "Edited safe reply",
+      body: approvedBody,
       status: "sent",
       approved_by_dietitian_id: state.dietitian.id,
     });
 
     const withSecondDraft = await runSupabaseSimulation({
-      clientId: copilotClient!.id,
+      clientId: planBackedClient!.id,
       body: "Aksam yemeginde ne yesem?",
       idempotencyKey: `draft-dismiss-${Date.now()}`,
     });
@@ -1215,6 +1272,12 @@ async function seedTenants(
         display_name: "RLS Care Team Dietitian",
         auth_user_id: users.careTeamUserId,
       },
+      {
+        id: OTHER_DIETITIAN_ID,
+        tenant_id: OTHER_TENANT_ID,
+        display_name: "RLS Other Tenant Dietitian",
+        auth_user_id: users.outsiderUserId,
+      },
     ]),
   );
   await checked(
@@ -1243,7 +1306,7 @@ async function seedTenants(
       {
         id: OTHER_CLIENT_ID,
         tenant_id: OTHER_TENANT_ID,
-        dietitian_id: TEST_DIETITIAN_ID,
+        dietitian_id: OTHER_DIETITIAN_ID,
         full_name: "Hidden RLS Client",
         selected_persona_id: "balanced_coach",
       },
@@ -1261,7 +1324,7 @@ async function seedTenants(
       {
         id: OTHER_CONVERSATION_ID,
         tenant_id: OTHER_TENANT_ID,
-        dietitian_id: TEST_DIETITIAN_ID,
+        dietitian_id: OTHER_DIETITIAN_ID,
         client_id: OTHER_CLIENT_ID,
         channel: "whatsapp",
       },
@@ -1592,6 +1655,101 @@ async function seedTenants(
     ]),
   );
   await checked(
+    admin.from("channel_account_bindings").insert([
+      {
+        id: TEST_P85_CHANNEL_ACCOUNT_BINDING_ID,
+        tenant_id: TEST_TENANT_ID,
+        provider: "whatsapp_cloud",
+        provider_account_id: "rls-visible-account",
+        operating_mode: "mock",
+        lifecycle_status: "active",
+        attribution_policy: "shared_authorized_team",
+      },
+      {
+        id: OTHER_P85_CHANNEL_ACCOUNT_BINDING_ID,
+        tenant_id: OTHER_TENANT_ID,
+        provider: "whatsapp_cloud",
+        provider_account_id: "rls-hidden-account",
+        operating_mode: "mock",
+        lifecycle_status: "active",
+        attribution_policy: "shared_authorized_team",
+      },
+    ]),
+  );
+  await checked(
+    admin.from("human_control_sessions").insert([
+      {
+        id: TEST_P85_HUMAN_CONTROL_SESSION_ID,
+        tenant_id: TEST_TENANT_ID,
+        client_id: TEST_CLIENT_ID,
+        conversation_id: TEST_CONVERSATION_ID,
+        reason: "manual_takeover",
+        status: "active",
+        previous_ai_status: "active",
+        previous_ai_mode: "copilot",
+      },
+      {
+        id: OTHER_P85_HUMAN_CONTROL_SESSION_ID,
+        tenant_id: OTHER_TENANT_ID,
+        client_id: OTHER_CLIENT_ID,
+        conversation_id: OTHER_CONVERSATION_ID,
+        reason: "manual_takeover",
+        status: "active",
+        previous_ai_status: "active",
+        previous_ai_mode: "copilot",
+      },
+    ]),
+  );
+  await checked(
+    admin.from("risk_activity_events").insert([
+      {
+        id: TEST_P85_RISK_ACTIVITY_ID,
+        tenant_id: TEST_TENANT_ID,
+        client_id: TEST_CLIENT_ID,
+        conversation_id: TEST_CONVERSATION_ID,
+        human_control_session_id: TEST_P85_HUMAN_CONTROL_SESSION_ID,
+        event_type: "ai_paused",
+        metadata: { minimized: true },
+      },
+    ]),
+  );
+  await checked(
+    admin.from("context_intake_proposals").insert([
+      {
+        id: TEST_P85_CONTEXT_INTAKE_ID,
+        tenant_id: TEST_TENANT_ID,
+        client_id: TEST_CLIENT_ID,
+        dietitian_id: TEST_DIETITIAN_ID,
+        source_channel: "internal_copilot",
+        intake_source: "phone",
+        source_text_digest: "digest-visible",
+        occurred_at: "2026-07-10T10:00:00.000Z",
+        title: "Visible intake",
+        summary: "Visible summary",
+        details: "",
+        importance: "routine",
+        baseline_context_revision: 1,
+        status: "pending_confirmation",
+      },
+      {
+        id: OTHER_P85_CONTEXT_INTAKE_ID,
+        tenant_id: OTHER_TENANT_ID,
+        client_id: OTHER_CLIENT_ID,
+        dietitian_id: OTHER_DIETITIAN_ID,
+        source_channel: "internal_copilot",
+        intake_source: "phone",
+        source_text_digest: "digest-hidden",
+        occurred_at: "2026-07-10T10:00:00.000Z",
+        title: "Hidden intake",
+        summary: "Hidden summary",
+        details: "",
+        importance: "routine",
+        baseline_context_revision: 1,
+        status: "pending_confirmation",
+      },
+    ]),
+  );
+  await checked(
     admin.from("commercial_invites").insert([
       {
         id: TEST_COMMERCIAL_INVITE_ID,
@@ -1686,6 +1844,13 @@ async function cleanup(admin: SupabaseClient) {
   await admin.from("billing_customers").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("tenant_entitlements").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("commercial_invites").delete().in("id", [TEST_COMMERCIAL_INVITE_ID, OTHER_COMMERCIAL_INVITE_ID]);
+  await admin.from("risk_activity_events").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("human_control_sessions").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("context_intake_proposals").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("channel_message_revisions").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("channel_events").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("channel_actor_bindings").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("channel_account_bindings").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("channel_adapter_rollback_controls").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("internal_copilot_messages").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("internal_copilot_tool_calls").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);

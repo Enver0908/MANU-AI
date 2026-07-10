@@ -99,6 +99,7 @@ export function DashboardApp({
     updateClient,
     removeClient,
     releaseHumanTakeover,
+    activateClientAi,
     runSimulation: runSimulationRequest,
     sendManualReply: sendManualReplyRequest,
     approveDraft,
@@ -124,6 +125,11 @@ export function DashboardApp({
     addClientContextUpdate,
     sendInternalCopilotMessage,
     rejectClientUpdateProposal,
+    createContextIntakeProposal,
+    confirmContextIntakeProposal,
+    recheckContextIntakeProposal,
+    applyContextIntakeProposal,
+    rejectContextIntakeProposal,
   } = useManuState();
   const [view, setView] = useState<ViewKey>("overview");
   const [selectedClientId, setSelectedClientId] = useState("client-mert");
@@ -147,6 +153,7 @@ export function DashboardApp({
   const [copilotInput, setCopilotInput] = useState("");
   const [isCopilotSending, setIsCopilotSending] = useState(false);
   const [isProposalUpdating, setIsProposalUpdating] = useState(false);
+  const [isActivatingAi, setIsActivatingAi] = useState(false);
   const [contextUpdateSource, setContextUpdateSource] = useState<ClientContextUpdateSource>("phone");
   const [contextUpdateImportance, setContextUpdateImportance] =
     useState<ClientContextUpdateImportance>("important");
@@ -154,6 +161,8 @@ export function DashboardApp({
   const [contextUpdateTitle, setContextUpdateTitle] = useState("");
   const [contextUpdateSummary, setContextUpdateSummary] = useState("");
   const [contextUpdateDetails, setContextUpdateDetails] = useState("");
+  const [intakeSourceText, setIntakeSourceText] = useState("");
+  const [intakeSource, setIntakeSource] = useState<ClientContextUpdateSource>("phone");
 
   const activeClients = useMemo(
     () => state.clients.filter((client) => client.lifecycleStatus !== "removed_anonymized"),
@@ -201,6 +210,14 @@ export function DashboardApp({
       .filter((proposal) => proposal.clientId === selectedClient.id)
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   }, [selectedClient, state.clientUpdateProposals]);
+
+  const selectedContextIntakeProposals = useMemo(() => {
+    if (!selectedClient) return [];
+    return state.contextIntakeProposals
+      .filter((proposal) => proposal.clientId === selectedClient.id)
+      .filter((proposal) => !["applied", "rejected", "stale", "expired"].includes(proposal.status))
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }, [selectedClient, state.contextIntakeProposals]);
 
   const metrics = useMemo(() => {
     const pendingDrafts = state.messages.filter((message) => message.status === "draft").length;
@@ -279,6 +296,20 @@ export function DashboardApp({
     if (!selectedClient || !manualReply.trim()) return;
     await sendManualReplyRequest({ clientId: selectedClient.id, body: manualReply });
     setManualReply("");
+  };
+
+  const activateSelectedClientAi = async (clientId: string) => {
+    setIsActivatingAi(true);
+    try {
+      return await activateClientAi(clientId);
+    } finally {
+      setIsActivatingAi(false);
+    }
+  };
+
+  const openClientPanelFromConversation = (panelKey: string) => {
+    setView("clients");
+    setClientDetailTab(panelKey as ClientDetailTab);
   };
 
   const addVoiceSamplesFromInput = async () => {
@@ -370,6 +401,32 @@ export function DashboardApp({
     }
   };
 
+  const createSelectedContextIntakeProposal = async () => {
+    if (!selectedClient || isProposalUpdating || !intakeSourceText.trim()) return;
+    setIsProposalUpdating(true);
+    try {
+      await createContextIntakeProposal(selectedClient.id, {
+        sourceText: intakeSourceText,
+        intakeSource,
+        confirmFullName: selectedClient.fullName,
+        confirmPhoneE164: selectedClient.primaryPhoneE164 || undefined,
+      });
+      setIntakeSourceText("");
+    } finally {
+      setIsProposalUpdating(false);
+    }
+  };
+
+  const runContextIntakeAction = async (action: (clientId: string, proposalId: string) => Promise<unknown>, proposalId: string) => {
+    if (!selectedClient || isProposalUpdating) return;
+    setIsProposalUpdating(true);
+    try {
+      await action(selectedClient.id, proposalId);
+    } finally {
+      setIsProposalUpdating(false);
+    }
+  };
+
   const addSelectedContextUpdate = async () => {
     if (!selectedClient) return;
     await addClientContextUpdate(selectedClient.id, {
@@ -386,6 +443,7 @@ export function DashboardApp({
   };
 
   const uiLanguage = state.dietitian.uiLanguage || "tr";
+  const showOperationalInspection = authInfo?.role === "owner" || authInfo?.role === "admin";
   const viewsWithMobileStickyActions: ViewKey[] = ["conversation", "simulator", "copilot"];
   const mainMobilePadding = viewsWithMobileStickyActions.includes(view)
     ? "lg:pb-5"
@@ -612,6 +670,9 @@ export function DashboardApp({
               <OverviewPanel
                 metrics={metrics}
                 selectedClient={selectedClient}
+                state={state}
+                uiLanguage={uiLanguage}
+                showInspectionDetails={showOperationalInspection}
                 onOpenSimulator={() => setView("simulator")}
                 onOpenClients={() => setView("clients")}
               />
@@ -675,14 +736,19 @@ export function DashboardApp({
                 client={selectedClient}
                 messages={selectedMessages}
                 aiDecisions={state.aiDecisions.filter((decision) => decision.clientId === selectedClient.id)}
+                state={state}
+                uiLanguage={uiLanguage}
                 manualReply={manualReply}
                 onManualReply={setManualReply}
                 onSendManualReply={sendManualReply}
                 onReleaseHumanTakeover={releaseHumanTakeover}
+                onActivateAi={activateSelectedClientAi}
+                isActivatingAi={isActivatingAi}
                 onApproveDraft={approveDraft}
                 onEditAndSendDraft={editAndSendDraft}
                 onDismissDraft={dismissDraft}
                 onOpenSimulator={() => setView("simulator")}
+                onOpenClientPanel={openClientPanelFromConversation}
               />
             )}
 
@@ -720,6 +786,16 @@ export function DashboardApp({
                 isSending={isCopilotSending}
                 isProposalUpdating={isProposalUpdating}
                 updateProposals={selectedUpdateProposals}
+                contextIntakeProposals={selectedContextIntakeProposals}
+                intakeSource={intakeSource}
+                intakeSourceText={intakeSourceText}
+                onIntakeSource={setIntakeSource}
+                onIntakeSourceText={setIntakeSourceText}
+                onCreateContextIntakeProposal={createSelectedContextIntakeProposal}
+                onConfirmContextIntakeProposal={(proposalId) => runContextIntakeAction(confirmContextIntakeProposal, proposalId)}
+                onRecheckContextIntakeProposal={(proposalId) => runContextIntakeAction(recheckContextIntakeProposal, proposalId)}
+                onApplyContextIntakeProposal={(proposalId) => runContextIntakeAction(applyContextIntakeProposal, proposalId)}
+                onRejectContextIntakeProposal={(proposalId) => runContextIntakeAction(rejectContextIntakeProposal, proposalId)}
                 onInput={setCopilotInput}
                 onAsk={askInternalCopilot}
                 onRejectProposal={rejectSelectedProposal}

@@ -7,6 +7,11 @@ import {
   type Phase74RedactionEvidence,
 } from "./phase-74-data-lifecycle-policy";
 import { PHASE_74_REDACTION_MARKER } from "./data-governance";
+import {
+  evaluateP85IfILifecycleRedactionDomains,
+  PHASE_85_IF_I_LIFECYCLE_REDACTION_DOMAINS,
+  type P85IfILifecycleRedactionDomain,
+} from "./phase-85-if-i-lifecycle-closure";
 import { profileContainsUnredactedFoodRuleData } from "./phase-77e-client-food-rule-profile";
 import { menuPlanContainsUnredactedData } from "./phase-77f-client-menu-plan";
 import type { ManuAppState } from "./types";
@@ -31,13 +36,15 @@ export const PHASE_79E_LIFECYCLE_REDACTION_DOMAINS = [
 
 export type Phase79LifecycleRedactionDomain = (typeof PHASE_79E_LIFECYCLE_REDACTION_DOMAINS)[number];
 
+export type Phase79LifecycleRedactionDomainUnion = Phase79LifecycleRedactionDomain | P85IfILifecycleRedactionDomain;
+
 export type Phase79LifecycleRedactionEvidence = {
   version: string;
   status: "pass" | "fail";
   clientId: string;
   requestType: "deletion" | "anonymization";
-  domainsCovered: Phase79LifecycleRedactionDomain[];
-  domainFailures: Partial<Record<Phase79LifecycleRedactionDomain, string>>;
+  domainsCovered: Phase79LifecycleRedactionDomainUnion[];
+  domainFailures: Partial<Record<Phase79LifecycleRedactionDomainUnion, string>>;
   operationalPathsBlocked: boolean;
   channelDeliveriesRemoved: boolean;
   conversationMemoryCleared: boolean;
@@ -246,7 +253,10 @@ export function buildPhase79LifecycleRedactionEvidence(
   requestType: "deletion" | "anonymization",
   phase74Evidence: Phase74RedactionEvidence,
 ): Phase79LifecycleRedactionEvidence {
-  const domainFailures = evaluateLifecycleRedactionDomains(state, clientId);
+  const domainFailures = {
+    ...evaluateLifecycleRedactionDomains(state, clientId),
+    ...evaluateP85IfILifecycleRedactionDomains(state, clientId),
+  };
   const phase74Invariants = evaluatePhase74RedactionInvariants(state, clientId);
   const operationalCheck =
     requestType === "deletion"
@@ -254,9 +264,10 @@ export function buildPhase79LifecycleRedactionEvidence(
       : verifyAnonymizedClientOperationalRestrictions(state, clientId);
   const conversationIds = conversationIdsForClient(state, clientId);
 
-  const domainsCovered = PHASE_79E_LIFECYCLE_REDACTION_DOMAINS.filter(
-    (domain) => domainFailures[domain] === undefined,
-  );
+  const domainsCovered = [
+    ...PHASE_79E_LIFECYCLE_REDACTION_DOMAINS.filter((domain) => domainFailures[domain] === undefined),
+    ...PHASE_85_IF_I_LIFECYCLE_REDACTION_DOMAINS.filter((domain) => domainFailures[domain] === undefined),
+  ];
   const failures = [
     ...Object.values(domainFailures),
     ...(phase74Invariants.passed ? [] : phase74Invariants.blockingReasons),

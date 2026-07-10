@@ -145,6 +145,7 @@ export function buildChannelReplayRehearsalStateForClient(
     memoryVersion: "memory-v1",
     memoryRevision: 1,
     memoryStale: false,
+    revision: 1,
   };
 
   let state: ManuAppState = {

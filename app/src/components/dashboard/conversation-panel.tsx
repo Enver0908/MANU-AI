@@ -1,9 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Bot, MessageSquareText, Send, ShieldCheck } from "lucide-react";
-import type { AiDecisionRecord, ClientRecord, ManuAppState, MessageRecord } from "@/lib/types";
+import type { AiDecisionRecord, ClientRecord, ManuAppState, MessageRecord, SupportedLanguageCode } from "@/lib/types";
 import { buildCopilotQualityReviewForPendingDraft } from "@/lib/phase-77v-copilot-quality-workflow";
+import { t } from "@/lib/i18n";
+import {
+  buildClientHumanControlBanner,
+  buildStructuredUpdateSourceLinks,
+  resolveMessageProvenancePresentation,
+} from "@/lib/phase-85-if-h-operational-visibility";
 import {
   CopilotQualityReviewPanel,
   EmptyState,
@@ -12,6 +18,7 @@ import {
   TextareaInput,
   removeKey,
 } from "./shared";
+import { HumanControlSessionBanner, StructuredUpdateSourceLinksPanel } from "./operational-visibility";
 import { MobileStickyActionBar } from "./mobile-ergonomics";
 import { MOBILE_CHROME_CLASS } from "@/lib/phase-83e5-mobile-ergonomics";
 
@@ -19,31 +26,59 @@ export function ConversationPanel({
   client,
   messages,
   aiDecisions,
+  state,
+  uiLanguage,
   manualReply,
   onManualReply,
   onSendManualReply,
   onReleaseHumanTakeover,
+  onActivateAi,
+  isActivatingAi,
   onApproveDraft,
   onEditAndSendDraft,
   onDismissDraft,
   onOpenSimulator,
+  onOpenClientPanel,
 }: {
   client: ClientRecord;
   messages: MessageRecord[];
   aiDecisions: AiDecisionRecord[];
+  state: ManuAppState;
+  uiLanguage: SupportedLanguageCode;
   manualReply: string;
   onManualReply: (value: string) => void;
   onSendManualReply: () => void;
   onReleaseHumanTakeover: (clientId: string) => Promise<ManuAppState>;
+  onActivateAi: (clientId: string) => Promise<ManuAppState>;
+  isActivatingAi?: boolean;
   onApproveDraft: (messageId: string) => Promise<ManuAppState>;
   onEditAndSendDraft: (messageId: string, body: string) => Promise<ManuAppState>;
   onDismissDraft: (messageId: string) => Promise<ManuAppState>;
   onOpenSimulator: () => void;
+  onOpenClientPanel?: (panelKey: string) => void;
 }) {
+  const timelineRef = useRef<HTMLDivElement>(null);
   const [draftEdits, setDraftEdits] = useState<Record<string, string>>({});
   const redRiskLocked = client.redRiskLock.status === "locked";
   const yellowRiskHeld = client.yellowRiskHold.status === "active";
   const qualityReview = buildCopilotQualityReviewForPendingDraft(aiDecisions, messages, draftEdits);
+  const humanControlBanner = useMemo(
+    () => buildClientHumanControlBanner(state, client.id),
+    [state, client.id],
+  );
+  const structuredSourceLinks = useMemo(
+    () => buildStructuredUpdateSourceLinks(state, client.id),
+    [state, client.id],
+  );
+
+  const scrollToMessage = (messageId: string) => {
+    const target = timelineRef.current?.querySelector(`[data-message-id="${messageId}"]`);
+    if (target instanceof HTMLElement) {
+      target.scrollIntoView({ behavior: "smooth", block: "center" });
+      target.classList.add("ring-2", "ring-emerald-500");
+      window.setTimeout(() => target.classList.remove("ring-2", "ring-emerald-500"), 1600);
+    }
+  };
 
   return (
     <>
@@ -64,7 +99,20 @@ export function ConversationPanel({
           </button>
         </div>
 
-        <div className="mt-5 space-y-3">
+        {humanControlBanner ? (
+          <div className="mt-4">
+            <HumanControlSessionBanner
+              banner={humanControlBanner}
+              uiLanguage={uiLanguage}
+              isActivating={isActivatingAi}
+              onActivateAi={() => {
+                void onActivateAi(client.id);
+              }}
+            />
+          </div>
+        ) : null}
+
+        <div ref={timelineRef} className="mt-5 space-y-3">
           {messages.length === 0 ? (
             <EmptyState
               icon={MessageSquareText}
@@ -72,10 +120,14 @@ export function ConversationPanel({
               message="Simülatörü çalıştırın veya manuel yanıt gönderin."
             />
           ) : (
-            messages.map((message) => (
+            messages.map((message) => {
+              const provenance = resolveMessageProvenancePresentation(message);
+              return (
               <MessageBubble
                 key={message.id}
                 message={message}
+                provenanceLabel={t(uiLanguage, provenance.i18nKey)}
+                provenanceTone={provenance.tone}
                 draftEdit={draftEdits[message.id] ?? message.body}
                 onDraftEdit={(value) => setDraftEdits((current) => ({ ...current, [message.id]: value }))}
                 onApproveDraft={async () => {
@@ -91,12 +143,20 @@ export function ConversationPanel({
                   setDraftEdits((current) => removeKey(current, message.id));
                 }}
               />
-            ))
+            );
+            })
           )}
         </div>
       </section>
 
       <aside className="space-y-4">
+        <StructuredUpdateSourceLinksPanel
+          links={structuredSourceLinks}
+          uiLanguage={uiLanguage}
+          onScrollToMessage={scrollToMessage}
+          onOpenPanel={onOpenClientPanel}
+        />
+
         <CopilotQualityReviewPanel review={qualityReview} />
 
         <section className="rounded-lg border border-stone-200 bg-white p-4 shadow-sm">

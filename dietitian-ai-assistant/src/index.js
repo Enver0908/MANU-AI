@@ -25,6 +25,7 @@ export { evaluateInboundPreflight } from "./inbound-preflight.js";
 export { buildClientContextCapsule, assertTenantIsolation } from "./context-capsule.js";
 export {
   CONTEXT_POLICY_V1,
+  CONTEXT_POLICY_V2,
   CLIENT_AUTHORED_DATA_INSTRUCTION,
   LATEST_DIETITIAN_CONTEXT_INSTRUCTION,
   MISSING_HISTORICAL_CONTEXT_INSTRUCTION,
@@ -35,6 +36,18 @@ export {
   selectPromptableRecentMessages,
 } from "./context-compiler.js";
 export { buildMemoryContext, selectRecentMessages, appendDurableFact } from "./conversation-memory.js";
+export {
+  HISTORICAL_RETRIEVAL_VERSION,
+  detectAmbiguousCompetingDietitianSources,
+  detectStructuredRecordUpdateSignals,
+  isGenericGreeting,
+  isRetrievalEligibleMessage,
+  isRetrievalEvidencedDietitianMessage,
+  retrieveHistoricalMessages,
+  scoreLexicalRelevance,
+  tokenizeTranscriptText,
+  evaluateTemporalInstruction,
+} from "./historical-retrieval.js";
 export { createHandoffCase } from "./handoff-engine.js";
 export {
   APPROVED_SOURCE_ANSWERABILITY_VERSION,

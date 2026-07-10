@@ -37,6 +37,7 @@ import {
   approveDraftMessageInState,
   addClientToState,
   appendDietitianManualReply,
+  activateClientAiWithControlledRiskResolutionInState,
   dismissDraftMessageInState,
   releaseHumanTakeoverLockInState,
   resolveAndReactivateRedRiskInState as resolveAndReactivateRedRiskInStateImpl,
@@ -45,11 +46,22 @@ import {
   markNotificationReadInState,
   acknowledgeNotificationInState,
 } from "./simulator";
+import type { ControlledAiActivationInput } from "./phase-85-if-f-risk-reactivation";
+import { resolveStructuredRecordUpdateNotificationInState } from "./phase-85-if-e-historical-retrieval";
 import type { ClientRecord, ManuAppState, SimulationRequest } from "./types";
 import { setChannelAdapterRollbackInState as applyChannelAdapterRollbackInState } from "./channel-adapter-rollback";
-import type { CreateClientContextUpdateInput } from "./client-context-updates";
 import type { ApplyClientUpdateProposalInput, CreateClientUpdateProposalInput } from "./client-update-proposals";
+import type { CreateClientContextUpdateInput } from "./client-context-updates";
 import type { ClientFormFieldDefinition, VoiceSampleStatus } from "./types";
+import {
+  applyContextIntakeProposalInState,
+  confirmContextIntakeProposalInState,
+  createContextIntakeProposalInState,
+  recheckContextIntakeProposalInState,
+  rejectContextIntakeProposalInState,
+  type CreateContextIntakeProposalInput,
+  type ResolveContextIntakeClientInput,
+} from "./phase-85-if-g-context-intake";
 
 const globalStore = globalThis as typeof globalThis & {
   manuAiFallbackState?: ManuAppState;
@@ -194,6 +206,15 @@ export function releaseHumanTakeoverInState(state: ManuAppState, clientId: strin
   return releaseHumanTakeoverLockInState(state, clientId);
 }
 
+export function activateClientAiInState(
+  state: ManuAppState,
+  clientId: string,
+  input: ControlledAiActivationInput = {},
+) {
+  assertClientExistsInState(state, clientId);
+  return activateClientAiWithControlledRiskResolutionInState(state, clientId, input);
+}
+
 export function updateHandoffStatusInState(
   state: ManuAppState,
   handoffId: string,
@@ -245,6 +266,10 @@ export function markNotificationRead(state: ManuAppState, notificationId: string
 export function acknowledgeNotification(state: ManuAppState, notificationId: string) {
   assertNotificationExistsInState(state, notificationId);
   return acknowledgeNotificationInState(state, notificationId);
+}
+
+export function resolveStructuredRecordUpdateNotification(state: ManuAppState, notificationId: string) {
+  return resolveStructuredRecordUpdateNotificationInState(state, notificationId, state.dietitian.id);
 }
 
 export function addVoiceSamplesInState(state: ManuAppState, rawInput: string) {
@@ -318,6 +343,30 @@ export function applyUpdateProposalInState(
 
 export function rejectUpdateProposalInState(state: ManuAppState, clientId: string, proposalId: string) {
   return rejectClientUpdateProposalInState(state, clientId, proposalId);
+}
+
+export function createContextIntakeProposal(
+  state: ManuAppState,
+  resolution: ResolveContextIntakeClientInput,
+  input: CreateContextIntakeProposalInput,
+) {
+  return createContextIntakeProposalInState(state, resolution, input);
+}
+
+export function confirmContextIntakeProposal(state: ManuAppState, clientId: string, proposalId: string) {
+  return confirmContextIntakeProposalInState(state, clientId, proposalId);
+}
+
+export function recheckContextIntakeProposal(state: ManuAppState, clientId: string, proposalId: string) {
+  return recheckContextIntakeProposalInState(state, clientId, proposalId);
+}
+
+export function applyContextIntakeProposal(state: ManuAppState, clientId: string, proposalId: string) {
+  return applyContextIntakeProposalInState(state, clientId, proposalId);
+}
+
+export function rejectContextIntakeProposal(state: ManuAppState, clientId: string, proposalId: string) {
+  return rejectContextIntakeProposalInState(state, clientId, proposalId);
 }
 
 export function assertNotificationExistsInState(state: ManuAppState, notificationId: string) {

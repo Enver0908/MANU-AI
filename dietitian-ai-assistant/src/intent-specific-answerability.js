@@ -69,7 +69,7 @@ const INTENT_SOURCE_REQUIREMENTS = {
       "structured_equivalent_exchange_groups",
       "structured_allowed_substitutions",
       "active_diet_plan",
-      "dietitian_manual_message",
+      "relevant_dietitian_manual_message",
     ],
     foodDecisions: ["equivalent_substitution_allowed"],
     allowPlanFallbackWithoutEngine: true,
@@ -79,7 +79,7 @@ const INTENT_SOURCE_REQUIREMENTS = {
       "active_diet_plan",
       "pinned_note",
       "prompt_allowed_form_response",
-      "dietitian_manual_message",
+      "relevant_dietitian_manual_message",
     ],
   },
   green_optional_meal_skip: {
@@ -97,29 +97,29 @@ const INTENT_SOURCE_REQUIREMENTS = {
     foodDecisionV2Decisions: ["forbid", "needs_label"],
   },
   green_general_education: {
-    sourceCategories: ["approved_official_corpus", "dietitian_manual_message"],
+    sourceCategories: ["approved_official_corpus", "relevant_dietitian_manual_message"],
   },
   green_meal_reminder: {
-    sourceCategories: ["active_diet_plan", "pinned_note", "dietitian_manual_message", "prompt_allowed_form_response"],
+    sourceCategories: ["active_diet_plan", "pinned_note", "relevant_dietitian_manual_message", "prompt_allowed_form_response"],
   },
   green_logistics: {
-    sourceCategories: ["prompt_allowed_form_response", "dietitian_manual_message", "dietitian_context_update"],
+    sourceCategories: ["prompt_allowed_form_response", "relevant_dietitian_manual_message", "dietitian_context_update"],
   },
   green_behavior_support: {
-    sourceCategories: ["prompt_allowed_form_response", "pinned_note", "dietitian_manual_message"],
+    sourceCategories: ["prompt_allowed_form_response", "pinned_note", "relevant_dietitian_manual_message"],
   },
   green_progress_logging: {
-    sourceCategories: ["active_diet_plan", "prompt_allowed_form_response", "dietitian_manual_message"],
+    sourceCategories: ["active_diet_plan", "prompt_allowed_form_response", "relevant_dietitian_manual_message"],
   },
   green_context_recap: {
-    sourceCategories: ["prompt_allowed_form_response", "dietitian_context_update", "dietitian_manual_message"],
+    sourceCategories: ["prompt_allowed_form_response", "dietitian_context_update", "relevant_dietitian_manual_message"],
   },
   green_low_risk_clarification: {
     sourceCategories: [
       "active_diet_plan",
       "prompt_allowed_form_response",
       "pinned_note",
-      "dietitian_manual_message",
+      "relevant_dietitian_manual_message",
       "dietitian_context_update",
       "allergies_restricted_foods",
     ],
@@ -164,6 +164,7 @@ export function evaluateIntentSpecificAnswerability({
   structuredFoodRules,
   productIngredientEvidence,
   canonicalIntent = null,
+  ambiguousCompetingSources = [],
 }) {
   if (riskDecision?.level !== "green") {
     return {
@@ -238,6 +239,22 @@ export function evaluateIntentSpecificAnswerability({
     });
   }
 
+  if (
+    ambiguousCompetingSources.length > 0 &&
+    requirements.sourceCategories.includes("relevant_dietitian_manual_message")
+  ) {
+    return buildDecision(
+      "handoff_required",
+      ["ambiguous_competing_authoritative_source", effectiveIntentFamily],
+      sources,
+      {
+        intentFamily: effectiveIntentFamily,
+        foodRuleDecision: foodRule?.decision || null,
+        ambiguousCompetingSources,
+      },
+    );
+  }
+
   const matchedCategories = requirements.sourceCategories.filter((category) => sourceCategories.includes(category));
   if (matchedCategories.length === 0) {
     return buildDecision(
@@ -295,7 +312,8 @@ export function evaluateIntentSpecificAnswerability({
     if (!foodDecision || foodDecision === "not_applicable") {
       if (
         requirements.allowPlanFallbackWithoutEngine &&
-        (matchedCategories.includes("active_diet_plan") || matchedCategories.includes("dietitian_manual_message"))
+        (matchedCategories.includes("active_diet_plan") ||
+          matchedCategories.includes("relevant_dietitian_manual_message"))
       ) {
         return buildDecision(
           "source_backed_green",
@@ -453,7 +471,8 @@ function canUseSubstitutionLegacyFallback(effectiveIntentFamily, requirements, f
   }
 
   const hasLegacySource =
-    matchedCategories.includes("active_diet_plan") || matchedCategories.includes("dietitian_manual_message");
+    matchedCategories.includes("active_diet_plan") ||
+    matchedCategories.includes("relevant_dietitian_manual_message");
   if (!hasLegacySource) return false;
   if (!foodRule || foodRule.decision === "not_applicable") return true;
   return foodRule.queryType === "food_substitution" && foodRule.decision === "unknown_food_requires_review";
@@ -478,12 +497,13 @@ function approvedSourcesFromPrompt(promptContext) {
 }
 
 function categoryForSegment(segment) {
-  if (segment.type === "recent_message") {
+  if (segment.type === "recent_message" || segment.type === "historical_message") {
     if (segment.origin !== "dietitian_manual") return null;
+    if (!segment.retrievalEvidenced) return null;
     if (segment.authority !== "dietitian_authored" && segment.authority !== "newest_dietitian_authored") {
       return null;
     }
-    return "dietitian_manual_message";
+    return "relevant_dietitian_manual_message";
   }
   return SEGMENT_SOURCE_RULES[segment.type] || null;
 }

@@ -157,6 +157,7 @@ export function createInitialState(): ManuAppState {
     memoryVersion: "memory-v1",
     memoryRevision: 1,
     memoryStale: false,
+    revision: 1,
   }));
 
   const phase70Forms = buildPhase70SeedFormBundle({

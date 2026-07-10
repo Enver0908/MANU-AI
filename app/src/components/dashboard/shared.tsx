@@ -332,6 +332,8 @@ export function CopilotQualityReviewPanel({
 
 export function MessageBubble({
   message,
+  provenanceLabel,
+  provenanceTone,
   draftEdit,
   onDraftEdit,
   onApproveDraft,
@@ -339,6 +341,8 @@ export function MessageBubble({
   onDismissDraft,
 }: {
   message: MessageRecord;
+  provenanceLabel?: string;
+  provenanceTone?: Tone;
   draftEdit: string;
   onDraftEdit: (value: string) => void;
   onApproveDraft: () => void;
@@ -348,8 +352,10 @@ export function MessageBubble({
   const isClient = message.sender === "client";
   const isAssistant = message.sender === "assistant";
   const isDraft = message.origin === "ai_generated" && message.status === "draft";
+  const resolvedProvenanceLabel = provenanceLabel ?? originLabel(message.origin);
+  const resolvedProvenanceTone = provenanceTone ?? originTone(message.origin);
   return (
-    <div className={`flex ${isClient ? "justify-start" : "justify-end"}`}>
+    <div className={`flex ${isClient ? "justify-start" : "justify-end"}`} data-message-id={message.id}>
       <div
         className={`max-w-[min(720px,100%)] rounded-lg border p-3 shadow-sm ${
           isAssistant
@@ -360,7 +366,7 @@ export function MessageBubble({
         }`}
       >
         <div className="flex flex-wrap items-center gap-2">
-          <Badge label={originLabel(message.origin)} tone={originTone(message.origin)} />
+          <Badge label={resolvedProvenanceLabel} tone={resolvedProvenanceTone} />
           {message.risk && <Badge label={message.risk} tone={message.risk === "red" ? "red" : message.risk === "yellow" ? "amber" : "emerald"} />}
           {message.status && <Badge label={message.status} tone="stone" />}
         </div>

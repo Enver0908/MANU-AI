@@ -76,11 +76,11 @@ flowchart TD
 | P85-IF-B | Trust-root, provenance, identity, event, and session data model | Complete |
 | P85-IF-C | Secure mock webhook, normalization, ledger, routing, quarantine | Complete |
 | P85-IF-D | Complete transcript, human-control coordination, edit/revoke/media | Complete |
-| P85-IF-E | Full-history retrieval, prompt authority, answerability relevance | Pending |
-| P85-IF-F | Yellow/red resolution, direct AI reactivation, concurrency safety | Pending |
-| P85-IF-G | Controlled off-channel AI Chat context intake | Pending |
-| P85-IF-H | Minimal operational visibility and Stage 4B contract handoff | Pending |
-| P85-IF-I | Lifecycle, RLS, export, evidence, verification, closure | Pending |
+| P85-IF-E | Full-history retrieval, prompt authority, answerability relevance | Complete |
+| P85-IF-F | Yellow/red resolution, direct AI reactivation, concurrency safety | Complete |
+| P85-IF-G | Controlled off-channel AI Chat context intake | Complete |
+| P85-IF-H | Minimal operational visibility and Stage 4B contract handoff | Complete |
+| P85-IF-I | Lifecycle, RLS, export, evidence, verification, closure | Complete |
 
 ## 5. P85-IF-A - Canonical Contract And Threat Model
 
@@ -252,6 +252,8 @@ Status: complete on 2026-07-10. Evidence: `docs/PHASE_85_IF_D_TRANSCRIPT_HUMAN_C
 - A standalone `Merhaba` cannot satisfy a plan lookup.
 - Temporal expiry, supersession, structured override, edit/revoke, cross-tenant isolation, and low-confidence fail-closed behavior are test-locked.
 
+Status: complete on 2026-07-10. Evidence: `docs/PHASE_85_IF_E_HISTORICAL_RETRIEVAL_EVIDENCE.md`. Verification passed: targeted core historical retrieval 5/5 plus app P85-IF-E 4/4, app 791 passed / 4 skipped, core 230/230, lint 0 errors with 3 unchanged warnings, production build, and full mock channel replay. P85-IF-F is next.
+
 ## 10. P85-IF-F - Risk Resolution, AI Reactivation, And Concurrency
 
 ### Session and resolution semantics
@@ -288,6 +290,8 @@ Existing red resolve/reactivate APIs remain backward-compatible. A unified contr
 - Yellow/red direct activation, manual resume, previous-mode restoration, copilot fallback, stale draft, stale outbound, and concurrent red/echo races are covered.
 - No direct client patch can bypass the canonical risk-resolution operation.
 
+Status: complete on 2026-07-10. Evidence: `docs/PHASE_85_IF_F_RISK_REACTIVATION_EVIDENCE.md`. Verification passed: targeted P85-IF-F 6/6, app 798 passed / 4 skipped, lint 0 errors with 3 unchanged warnings, production build, and full mock channel replay. P85-IF-G is complete.
+
 ## 11. P85-IF-G - Controlled Off-Channel AI Chat Intake
 
 ### Client resolution
@@ -322,6 +326,8 @@ Statuses are `draft`, `awaiting_confirmation`, `blocked_pending_structured_updat
 - Wrong-client, ambiguous-client, pure-context, structured-block, revision recheck, double-confirmation, stale proposal, replay, RBAC, RLS, export, redaction, and draft invalidation tests pass.
 - General copilot tools remain read-only outside this dedicated workflow.
 
+Status: complete on 2026-07-10. Evidence: `docs/PHASE_85_IF_G_CONTEXT_INTAKE_EVIDENCE.md`. Verification passed: targeted P85-IF-G 9/9, app 807 passed / 4 skipped, lint 0 errors with 3 unchanged warnings, and production build. P85-IF-H is next.
+
 ## 12. P85-IF-H - Minimal Operational Visibility And Stage 4B Handoff
 
 P85-IF-H implements only the visibility needed to operate and verify the new foundation:
@@ -340,6 +346,8 @@ P85-IF-H explicitly does not build the complete Stage 4B product experience. Sta
 - Minimal controls expose no raw health text in aggregate health surfaces.
 - Desktop/mobile visual smoke verifies no overlap, overflow, or broken Stage 4A workflows.
 - Existing auth, onboarding, billing, entitlement, admin, and PWA contracts remain unchanged.
+
+Status: complete on 2026-07-10. Evidence: `docs/PHASE_85_IF_H_OPERATIONAL_VISIBILITY_EVIDENCE.md`. P85-IF-I closed the P85-IF program.
 
 ## 13. P85-IF-I - Lifecycle, RLS, Evidence, Verification, And Closure
 
@@ -375,6 +383,8 @@ P85-IF-H explicitly does not build the complete Stage 4B product experience. Sta
 Each P85-IF track updates the required continuity documents and receives its own commit. P85-IF-I updates the complete evidence/dossier set and records that Stage 4B is again the next Phase 85 planning target.
 
 No deploy occurs during P85-IF unless separately authorized. If a future sandbox deploy is explicitly approved, hosted evidence and Phase 84 hosted-sandbox notes must be updated separately.
+
+Status: complete on 2026-07-10. Evidence: `docs/PHASE_85_IF_I_LIFECYCLE_CLOSURE_EVIDENCE.md`. P85-IF is closed; Stage 4B is the next Phase 85 planning target.
 
 ## 14. Critical Acceptance Scenarios
 

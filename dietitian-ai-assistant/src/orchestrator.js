@@ -2,7 +2,7 @@ import { getPersona } from "./personas.js";
 import { classifyClinicalSafetyRisk } from "./clinical-safety-second-layer.js";
 import { buildMemoryContext } from "./conversation-memory.js";
 import { buildClientContextCapsule } from "./context-capsule.js";
-import { compilePromptContext, renderPromptContext } from "./context-compiler.js";
+import { compilePromptContext, renderPromptContext, CONTEXT_POLICY_V2 } from "./context-compiler.js";
 import { createHandoffCase } from "./handoff-engine.js";
 import { guardProviderOutput } from "./response-quality-guard.js";
 import { evaluateGreenIntentTaxonomy } from "./green-intent-taxonomy.js";
@@ -140,8 +140,12 @@ export async function handleInboundMessage(input, adapters) {
     capsule,
     currentMessage: input.message,
     recentMessages: input.recentMessages || [],
+    conversationMessages: input.conversationMessages || input.recentMessages || [],
     riskLevel: riskDecision.level,
     promptVersion: input.promptVersion || null,
+    policy: CONTEXT_POLICY_V2,
+    dietitianTimezone: input.dietitian?.timezone || "UTC",
+    retrievalNow: input.now || new Date().toISOString(),
     structuredFoodRules: input.structuredFoodRules || null,
     foodRuleDecision: foodRuleDecisionForRisk,
     foodDecisionV2,
@@ -253,6 +257,7 @@ export async function handleInboundMessage(input, adapters) {
     structuredFoodRules: input.structuredFoodRules || null,
     productIngredientEvidence: input.productIngredientEvidence || null,
     canonicalIntent,
+    ambiguousCompetingSources: compiledContext.contextManifest.ambiguousCompetingSources || [],
   });
   contextManifest.answerability = answerability;
 
