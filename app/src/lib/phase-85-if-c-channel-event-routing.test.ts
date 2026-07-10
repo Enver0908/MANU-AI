@@ -18,6 +18,7 @@ function baseCandidate(overrides: Partial<RawChannelEventCandidate>): RawChannel
     body: "test body",
     messageType: "text",
     providerTime: "2024-07-01T10:00:00.000Z",
+    providerTimeInvalid: false,
     payloadDigest: "test-digest",
     malformedReason: null,
     ...overrides,
@@ -81,6 +82,40 @@ describe("phase 85 if-c channel event routing", () => {
     }
   });
 
+  it.each([
+    ["draft binding", { lifecycleStatus: "draft" as const }],
+    ["revoked binding", { lifecycleStatus: "revoked" as const, revokedAt: "2024-06-02T00:00:00.000Z" }],
+    ["unverified binding", { verifiedAt: null }],
+    ["disabled binding", { operatingMode: "disabled" as const }],
+    ["future real binding", { operatingMode: "future_real" as const }],
+  ])("quarantines an ineligible %s", (_label, overrides) => {
+    const state = stateWithBinding(buildAccountBinding(overrides));
+    const outcome = routeChannelEvent(state, baseCandidate({}));
+    expect(outcome.status).toBe("quarantined");
+    if (outcome.status === "quarantined") {
+      expect(outcome.finalEventKind).toBe("unknown_account");
+    }
+  });
+
+  it("quarantines conflicting WABA and business-phone binding identifiers", () => {
+    const state = stateWithBinding(buildAccountBinding());
+    const outcome = routeChannelEvent(state, baseCandidate({ wabaId: "SYNTHETIC_WABA_CONFLICT" }));
+    expect(outcome.status).toBe("quarantined");
+    if (outcome.status === "quarantined") {
+      expect(outcome.quarantineReasons).toContain("conflicting_account_binding_identifiers");
+    }
+  });
+
+  it("quarantines when the resolved account binding belongs to another tenant", () => {
+    const state = stateWithBinding(buildAccountBinding({ tenantId: "tenant-other" }));
+    const outcome = routeChannelEvent(state, baseCandidate({}));
+    expect(outcome.status).toBe("quarantined");
+    if (outcome.status === "quarantined") {
+      expect(outcome.finalEventKind).toBe("cross_tenant_collision");
+      expect(outcome.quarantineReasons).toContain("account_binding_tenant_mismatch");
+    }
+  });
+
   it("quarantines unknown_client when counterparty does not match any client", () => {
     const state = stateWithBinding(buildAccountBinding());
     const outcome = routeChannelEvent(
@@ -136,7 +171,13 @@ describe("phase 85 if-c channel event routing", () => {
     const state = stateWithBinding(binding, [buildActorBinding({ actorType: "business_operator" })]);
     const outcome = routeChannelEvent(
       state,
-      baseCandidate({ eventKind: "business_human_echo_text", providerEventId: "wamid.ECHO_1" }),
+      baseCandidate({
+        eventKind: "business_human_echo_text",
+        providerEventId: "wamid.ECHO_1",
+        fromIdentity: "SYNTHETIC_PHONE_1",
+        toIdentity: "905551110001",
+        counterpartyIdentity: "905551110001",
+      }),
     );
     expect(outcome.status).toBe("routed");
     if (outcome.status === "routed") {
@@ -151,7 +192,13 @@ describe("phase 85 if-c channel event routing", () => {
     const state = stateWithBinding(binding, []);
     const outcome = routeChannelEvent(
       state,
-      baseCandidate({ eventKind: "business_human_echo_text", providerEventId: "wamid.ECHO_2" }),
+      baseCandidate({
+        eventKind: "business_human_echo_text",
+        providerEventId: "wamid.ECHO_2",
+        fromIdentity: "SYNTHETIC_PHONE_1",
+        toIdentity: "905551110001",
+        counterpartyIdentity: "905551110001",
+      }),
     );
     expect(outcome.status).toBe("quarantined");
     if (outcome.status === "quarantined") {
@@ -166,12 +213,67 @@ describe("phase 85 if-c channel event routing", () => {
     ]);
     const outcome = routeChannelEvent(
       state,
-      baseCandidate({ eventKind: "business_human_echo_text", providerEventId: "wamid.ECHO_3" }),
+      baseCandidate({
+        eventKind: "business_human_echo_text",
+        providerEventId: "wamid.ECHO_3",
+        fromIdentity: "SYNTHETIC_PHONE_1",
+        toIdentity: "905551110001",
+        counterpartyIdentity: "905551110001",
+      }),
     );
     expect(outcome.status).toBe("routed");
     if (outcome.status === "routed") {
       expect(outcome.actorType).toBe("exact_dietitian");
       expect(outcome.actorResolutionBasis).toBe("exclusive_verified_account");
+    }
+  });
+
+  it("quarantines an exclusive actor whose dietitian assignment conflicts with the client", () => {
+    const binding = buildAccountBinding({ attributionPolicy: "exclusive_dietitian" });
+    const state = stateWithBinding(binding, [
+      buildActorBinding({
+        actorType: "exact_dietitian",
+        dietitianId: "dietitian-other",
+        attributionBasis: "exclusive_verified_account",
+      }),
+    ]);
+    const outcome = routeChannelEvent(
+      state,
+      baseCandidate({
+        eventKind: "business_human_echo_text",
+        providerEventId: "wamid.ECHO_CONFLICT",
+        fromIdentity: "SYNTHETIC_PHONE_1",
+        toIdentity: "905551110001",
+        counterpartyIdentity: "905551110001",
+      }),
+    );
+    expect(outcome.status).toBe("quarantined");
+    if (outcome.status === "quarantined") {
+      expect(outcome.quarantineReasons).toContain("exact_dietitian_assignment_mismatch");
+    }
+  });
+
+  it("quarantines a client identity that overlaps the verified business display number", () => {
+    const state = stateWithBinding(buildAccountBinding({ normalizedDisplayNumber: "+905551110001" }));
+    const outcome = routeChannelEvent(state, baseCandidate({}));
+    expect(outcome.status).toBe("quarantined");
+    if (outcome.status === "quarantined") {
+      expect(outcome.quarantineReasons).toContain("actor_client_identity_overlap");
+    }
+  });
+
+  it("quarantines a conversation whose tenant or dietitian assignment does not match the client", () => {
+    const state = stateWithBinding(buildAccountBinding());
+    const mismatched: ManuAppState = {
+      ...state,
+      conversations: state.conversations.map((conversation) =>
+        conversation.clientId === "client-mert" ? { ...conversation, dietitianId: "dietitian-other" } : conversation,
+      ),
+    };
+    const outcome = routeChannelEvent(mismatched, baseCandidate({}));
+    expect(outcome.status).toBe("quarantined");
+    if (outcome.status === "quarantined") {
+      expect(outcome.quarantineReasons).toContain("no_tenant_assignment_matched_conversation");
     }
   });
 
@@ -269,4 +371,25 @@ describe("phase 85 if-c channel event routing", () => {
     });
 
     const outcomeA = routeChannelEvent(tenantAState, candidateForTenantA);
-    expect(outcomeA.status).toBe("routed
+    expect(outcomeA.status).toBe("routed");
+
+    const outcomeB = routeChannelEvent(tenantBState, candidateForTenantA);
+    expect(outcomeB.status).toBe("quarantined");
+    if (outcomeB.status === "quarantined") {
+      expect(outcomeB.finalEventKind).toBe("unknown_account");
+    }
+  });
+
+  it("selects only the account tenant client when a scoped state contains the same phone in another tenant", () => {
+    const state = stateWithBinding(buildAccountBinding());
+    const withForeignDuplicate: ManuAppState = {
+      ...state,
+      clients: [...state.clients, { ...state.clients[0], id: "foreign-client", tenantId: "tenant-other" }],
+    };
+    const outcome = routeChannelEvent(withForeignDuplicate, baseCandidate({}));
+    expect(outcome.status).toBe("routed");
+    if (outcome.status === "routed") {
+      expect(outcome.clientId).toBe("client-mert");
+    }
+  });
+});

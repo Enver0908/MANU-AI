@@ -118,17 +118,34 @@ async function ingestSingleCandidate(
   candidate: RawChannelEventCandidate,
 ): Promise<{ state: ManuAppState; outcome: ChannelEventIngressOutcome }> {
   if (candidate.providerEventId) {
-    const existingEvent = state.channelEvents.find((event) => event.providerEventId === candidate.providerEventId);
+    const existingEvent = state.channelEvents.find(
+      (event) => event.tenantId === state.tenant.id && event.providerEventId === candidate.providerEventId,
+    );
     if (existingEvent) {
+      const digestMatches = existingEvent.payloadDigest === candidate.payloadDigest;
       return {
-        state: appendAudit(state, "channel_event_duplicate", candidate, existingEvent.id, ["duplicate_event"]),
+        state: appendAudit(
+          state,
+          digestMatches ? "channel_event_duplicate" : "channel_event_duplicate_conflict",
+          candidate,
+          existingEvent.id,
+          [digestMatches ? "duplicate_event" : "provider_event_payload_digest_mismatch"],
+        ),
         outcome: { candidate, event: existingEvent },
       };
     }
   }
 
-  if (NEW_MESSAGE_EVENT_KINDS.has(candidate.eventKind) && candidate.providerEventId) {
-    const duplicateMessage = state.messages.find((message) => message.providerMessageId === candidate.providerEventId);
+  const routing = routeChannelEvent(state, candidate);
+
+  if (routing.status === "routed" && NEW_MESSAGE_EVENT_KINDS.has(candidate.eventKind) && candidate.providerEventId) {
+    const providerMessageId = candidate.providerMessageId ?? candidate.providerEventId;
+    const duplicateMessage = state.messages.find(
+      (message) =>
+        message.tenantId === state.tenant.id &&
+        message.providerAccountBindingId === routing.accountBindingId &&
+        message.providerMessageId === providerMessageId,
+    );
     if (duplicateMessage) {
       const record = buildLedgerRecord(state, candidate, {
         processingStatus: "duplicate",
@@ -143,13 +160,11 @@ async function ingestSingleCandidate(
     }
   }
 
-  const routing = routeChannelEvent(state, candidate);
-
   if (routing.status === "quarantined") {
     const record = buildLedgerRecord(state, candidate, {
       processingStatus: "quarantined",
       eventKindOverride: routing.finalEventKind,
-      accountBindingId: null,
+      accountBindingId: routing.accountBindingId,
     });
     const withEvent = pushChannelEvent(state, record);
     return {
@@ -165,20 +180,61 @@ async function ingestSingleCandidate(
   });
   let nextState = pushChannelEvent(state, record);
 
-  if (routing.finalEventKind === "client_message_text" && routing.clientId && candidate.providerEventId && candidate.counterpartyIdentity) {
-    nextState = await processMockChannelInbound(nextState, {
-      channel: "whatsapp",
-      providerEventId: candidate.providerEventId,
-      channelUserId: candidate.counterpartyIdentity,
-      body: candidate.body ?? "",
-      receivedAt: candidate.providerTime ?? undefined,
-      sourceConversationType: "direct",
-      sourceMessageId: candidate.providerEventId,
-      messageType: "text",
-    });
+  if (routing.finalEventKind === "client_message_text") {
+    nextState = await applyRoutedClientInbound(nextState, candidate, routing, record.observedAt);
   }
 
+  nextState = appendAudit(nextState, "channel_event_committed", candidate, record.id, ["routing_complete"]);
   return { state: nextState, outcome: { candidate, event: record } };
+}
+
+async function applyRoutedClientInbound(
+  state: ManuAppState,
+  candidate: RawChannelEventCandidate,
+  routing: Extract<ReturnType<typeof routeChannelEvent>, { status: "routed" }>,
+  observedAt: string,
+) {
+  if (!routing.clientId || !routing.conversationId || !candidate.providerEventId || !candidate.counterpartyIdentity) {
+    return state;
+  }
+
+  const existingMessageIds = new Set(state.messages.map((message) => message.id));
+  const processed = await processMockChannelInbound(state, {
+    channel: "whatsapp",
+    providerEventId: candidate.providerEventId,
+    channelUserId: candidate.counterpartyIdentity,
+    body: candidate.body ?? "",
+    receivedAt: candidate.providerTime ?? undefined,
+    sourceConversationType: "direct",
+    sourceMessageId: candidate.providerEventId,
+    messageType: "text",
+  });
+
+  return {
+    ...processed,
+    messages: processed.messages.map((message) =>
+      !existingMessageIds.has(message.id) &&
+      message.tenantId === state.tenant.id &&
+      message.conversationId === routing.conversationId &&
+      message.sender === "client"
+        ? {
+            ...message,
+            providerAccountBindingId: routing.accountBindingId,
+            providerEventId: candidate.providerEventId,
+            providerMessageId: candidate.providerMessageId ?? candidate.providerEventId,
+            actorType: routing.actorType,
+            actorBindingId: routing.actorBindingId,
+            authorInterface: routing.authorInterface,
+            actorResolutionBasis: routing.actorResolutionBasis,
+            providerSentAt: candidate.providerTime,
+            observedAt,
+            persistedAt: observedAt,
+            contentStatus: message.contentStatus ?? "available",
+            retrievalEligibility: message.retrievalEligibility ?? "eligible",
+          }
+        : message,
+    ),
+  };
 }
 
 function buildLedgerRecord(
@@ -245,6 +301,7 @@ function appendAudit(
       eventKind: candidate.eventKind,
       reasons,
       providerEventIdPresent: Boolean(candidate.providerEventId),
+      providerTimeInvalid: candidate.providerTimeInvalid,
     },
     createdAt: new Date().toISOString(),
   };
@@ -255,15 +312,18 @@ function appendAudit(
 export type ChannelEventReplayResult =
   | { ok: false; code: "event_not_found" }
   | { ok: false; code: "not_quarantined" }
+  | { ok: false; code: "replay_not_authorized" }
+  | { ok: false; code: "candidate_mismatch" }
+  | { ok: false; code: "cross_tenant_event" }
   | { ok: false; code: "replay_expired" }
   | { ok: true; event: ChannelEventRecord };
 
-export function replayQuarantinedChannelEvent(
+export async function replayQuarantinedChannelEvent(
   state: ManuAppState,
   channelEventId: string,
   candidate: RawChannelEventCandidate,
-  now: string = new Date().toISOString(),
-): { state: ManuAppState; result: ChannelEventReplayResult } {
+  options: { authorized: boolean; now?: string },
+): Promise<{ state: ManuAppState; result: ChannelEventReplayResult }> {
   const existing = state.channelEvents.find((event) => event.id === channelEventId);
   if (!existing) {
     return { state, result: { ok: false, code: "event_not_found" } };
@@ -271,11 +331,27 @@ export function replayQuarantinedChannelEvent(
   if (existing.processingStatus !== "quarantined") {
     return { state, result: { ok: false, code: "not_quarantined" } };
   }
+  if (!options.authorized) {
+    return { state, result: { ok: false, code: "replay_not_authorized" } };
+  }
+  if (existing.tenantId !== state.tenant.id) {
+    return { state, result: { ok: false, code: "cross_tenant_event" } };
+  }
+  if (
+    (existing.providerEventId && candidate.providerEventId !== existing.providerEventId) ||
+    existing.payloadDigest !== candidate.payloadDigest
+  ) {
+    return { state, result: { ok: false, code: "candidate_mismatch" } };
+  }
 
-  const ageMs = new Date(now).getTime() - new Date(existing.observedAt).getTime();
-  if (ageMs > MOCK_QUARANTINE_REPLAY_EXPIRY_DAYS * 24 * 60 * 60 * 1000) {
+  const now = options.now ?? new Date().toISOString();
+  const nowMs = new Date(now).getTime();
+  const observedAtMs = new Date(existing.observedAt).getTime();
+  const ageMs = nowMs - observedAtMs;
+  if (!Number.isFinite(nowMs) || !Number.isFinite(observedAtMs) || ageMs < 0 || ageMs > MOCK_QUARANTINE_REPLAY_EXPIRY_DAYS * 24 * 60 * 60 * 1000) {
     const expired: ChannelEventRecord = { ...existing, processingStatus: "expired" };
-    return { state: replaceChannelEvent(state, expired), result: { ok: false, code: "replay_expired" } };
+    const expiredState = appendReplayAudit(replaceChannelEvent(state, expired), "channel_event_replay_expired", expired, ["replay_window_expired_or_invalid"]);
+    return { state: expiredState, result: { ok: false, code: "replay_expired" } };
   }
 
   const routing = routeChannelEvent(state, candidate);
@@ -285,9 +361,16 @@ export function replayQuarantinedChannelEvent(
     const stillQuarantined: ChannelEventRecord = {
       ...existing,
       eventKind: routing.finalEventKind,
+      accountBindingId: routing.accountBindingId,
       retryCount,
     };
-    return { state: replaceChannelEvent(state, stillQuarantined), result: { ok: true, event: stillQuarantined } };
+    const replayState = appendReplayAudit(
+      replaceChannelEvent(state, stillQuarantined),
+      "channel_event_replay_quarantined",
+      stillQuarantined,
+      routing.quarantineReasons,
+    );
+    return { state: replayState, result: { ok: true, event: stillQuarantined } };
   }
 
   const replayed: ChannelEventRecord = {
@@ -298,18 +381,44 @@ export function replayQuarantinedChannelEvent(
     committedAt: now,
     retryCount,
   };
-  return { state: replaceChannelEvent(state, replayed), result: { ok: true, event: replayed } };
+  let replayState = replaceChannelEvent(state, replayed);
+  if (routing.finalEventKind === "client_message_text") {
+    replayState = await applyRoutedClientInbound(replayState, candidate, routing, now);
+  }
+  replayState = appendReplayAudit(replayState, "channel_event_replayed", replayed, ["authorized_replay_committed"]);
+  return { state: replayState, result: { ok: true, event: replayed } };
+}
+
+function appendReplayAudit(
+  state: ManuAppState,
+  eventType: string,
+  event: ChannelEventRecord,
+  reasons: string[],
+) {
+  const auditEvent: AuditEventRecord = {
+    id: crypto.randomUUID(),
+    tenantId: state.tenant.id,
+    eventType,
+    entityType: "channel_event",
+    entityId: event.id,
+    metadata: { eventKind: event.eventKind, reasons, retryCount: event.retryCount },
+    createdAt: new Date().toISOString(),
+  };
+  return { ...state, auditEvents: [...state.auditEvents, auditEvent] };
 }
 
 export function expireStaleQuarantinedChannelEvents(
   state: ManuAppState,
   now: string = new Date().toISOString(),
 ): ManuAppState {
-  const cutoffMs = new Date(now).getTime() - MOCK_QUARANTINE_REPLAY_EXPIRY_DAYS * 24 * 60 * 60 * 1000;
+  const nowMs = new Date(now).getTime();
+  if (!Number.isFinite(nowMs)) return state;
+  const cutoffMs = nowMs - MOCK_QUARANTINE_REPLAY_EXPIRY_DAYS * 24 * 60 * 60 * 1000;
   return {
     ...state,
     channelEvents: state.channelEvents.map((event) =>
-      event.processingStatus === "quarantined" && new Date(event.observedAt).getTime() < cutoffMs
+      event.processingStatus === "quarantined" &&
+      (!Number.isFinite(new Date(event.observedAt).getTime()) || new Date(event.observedAt).getTime() < cutoffMs)
         ? { ...event, processingStatus: "expired" }
         : event,
     ),

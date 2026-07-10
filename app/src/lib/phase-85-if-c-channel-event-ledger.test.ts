@@ -69,6 +69,36 @@ function directTextPayload(providerEventId: string, from = "905551110001", body 
   };
 }
 
+function businessEchoPayload(providerEventId: string, to = "905551110001") {
+  return {
+    object: "whatsapp_business_account",
+    entry: [
+      {
+        id: "SYNTHETIC_WABA_1",
+        changes: [
+          {
+            field: "messages",
+            value: {
+              messaging_product: "whatsapp",
+              metadata: { phone_number_id: "SYNTHETIC_PHONE_1" },
+              smb_message_echoes: [
+                {
+                  from: "SYNTHETIC_PHONE_1",
+                  to,
+                  id: providerEventId,
+                  timestamp: "1720000000",
+                  type: "text",
+                  text: { body: "Yarin gorusuruz" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    ],
+  };
+}
+
 describe("phase 85 if-c secure channel ingress gate", () => {
   it("requires feature gate, secret, and refuses production/hosted execution", () => {
     expect(resolveSecureChannelIngressGate(testEnv(), TEST_SECRET).enabled).toBe(true);
@@ -130,6 +160,57 @@ describe("phase 85 if-c channel event ledger", () => {
     expect(result.outcomes[0].event.eventKind).toBe("client_message_text");
     expect(next.lastSimulation?.action).toBe("sent");
     expect(next.processedSimulationKeys).toContain("wamid.COMMIT_1");
+    const inbound = next.messages.find((message) => message.providerEventId === "wamid.COMMIT_1");
+    expect(inbound).toMatchObject({
+      providerAccountBindingId: "account-binding-1",
+      providerMessageId: "wamid.COMMIT_1",
+      actorType: "client",
+      authorInterface: "client_channel",
+      actorResolutionBasis: "provider_counterparty",
+      contentStatus: "available",
+      retrievalEligibility: "eligible",
+    });
+  });
+
+  it("routes a normalized business echo to the client ledger without invoking the D-track transcript behavior", async () => {
+    const state = {
+      ...stateWithBinding(),
+      channelActorBindings: [
+        {
+          id: "actor-binding-1",
+          tenantId: DEMO_TENANT_ID,
+          accountBindingId: "account-binding-1",
+          dietitianId: null,
+          actorType: "business_operator" as const,
+          attributionBasis: "shared_authorized_team" as const,
+          validFrom: "2024-06-01T00:00:00.000Z",
+          validTo: null,
+          verifiedAt: "2024-06-01T00:00:00.000Z",
+          revokedAt: null,
+          createdByDietitianId: null,
+          revokedByDietitianId: null,
+          auditReasonCode: null,
+          createdAt: "2024-06-01T00:00:00.000Z",
+        },
+      ],
+    };
+    const initialMessageCount = state.messages.length;
+    const { state: next, result } = await processInboundWhatsAppChannelBatch(
+      state,
+      businessEchoPayload("wamid.ECHO_FLOW_1"),
+      { providedSecret: TEST_SECRET, env: testEnv() },
+    );
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.outcomes[0].candidate.counterpartyIdentity).toBe("905551110001");
+    expect(result.outcomes[0].event).toMatchObject({
+      eventKind: "business_human_echo_text",
+      processingStatus: "committed",
+      accountBindingId: "account-binding-1",
+    });
+    expect(next.messages).toHaveLength(initialMessageCount);
+    expect(next.processedSimulationKeys).not.toContain("wamid.ECHO_FLOW_1");
   });
 
   it("quarantines an event and records an audit trail when no client matches", async () => {
@@ -145,6 +226,7 @@ describe("phase 85 if-c channel event ledger", () => {
 
     expect(result.outcomes[0].event.processingStatus).toBe("quarantined");
     expect(result.outcomes[0].event.eventKind).toBe("unknown_client");
+    expect(result.outcomes[0].event.accountBindingId).toBe("account-binding-1");
     expect(next.auditEvents.some((event) => event.eventType === "channel_event_quarantined")).toBe(true);
   });
 
@@ -167,7 +249,26 @@ describe("phase 85 if-c channel event ledger", () => {
     expect(second.state.auditEvents.some((event) => event.eventType === "channel_event_duplicate")).toBe(true);
   });
 
-  it("replays a quarantined event successfully once the trust binding becomes available", () => {
+  it("audits a provider event id reused with a different payload digest as a conflict", async () => {
+    const state = stateWithBinding();
+    const first = await processInboundWhatsAppChannelBatch(state, directTextPayload("wamid.DUP_CONFLICT", "905551110001", "Ilk govde"), {
+      providedSecret: TEST_SECRET,
+      env: testEnv(),
+    });
+    expect(first.result.ok).toBe(true);
+
+    const second = await processInboundWhatsAppChannelBatch(
+      first.state,
+      directTextPayload("wamid.DUP_CONFLICT", "905551110001", "Degistirilmis govde"),
+      { providedSecret: TEST_SECRET, env: testEnv() },
+    );
+
+    expect(second.result.ok).toBe(true);
+    expect(second.state.channelEvents.filter((event) => event.providerEventId === "wamid.DUP_CONFLICT")).toHaveLength(1);
+    expect(second.state.auditEvents.some((event) => event.eventType === "channel_event_duplicate_conflict")).toBe(true);
+  });
+
+  it("requires explicit authorization and replays a client event through the existing inbound path", async () => {
     let state = stateWithBinding();
     state = { ...state, channelAccountBindings: [] };
 
@@ -184,6 +285,7 @@ describe("phase 85 if-c channel event ledger", () => {
       body: "replay body",
       messageType: "text",
       providerTime: "2024-07-01T10:00:00.000Z",
+      providerTimeInvalid: false,
       payloadDigest: "digest",
       malformedReason: null,
     };
@@ -203,7 +305,7 @@ describe("phase 85 if-c channel event ledger", () => {
       payloadDigest: candidate.payloadDigest,
       payloadSchemaVersion: "p85-if-c-v1",
       providerTime: candidate.providerTime,
-      observedAt: new Date().toISOString(),
+      observedAt: "2024-07-01T10:00:00.000Z",
       committedAt: null,
       quarantineId: null,
       replayOfEventId: null,
@@ -214,16 +316,32 @@ describe("phase 85 if-c channel event ledger", () => {
     state = { ...state, channelEvents: [quarantinedEvent] };
     const stateWithNowActiveBinding = { ...state, channelAccountBindings: [buildAccountBinding()] };
 
-    const { result } = replayQuarantinedChannelEvent(stateWithNowActiveBinding, quarantinedEvent.id, candidate);
+    const unauthorized = await replayQuarantinedChannelEvent(stateWithNowActiveBinding, quarantinedEvent.id, candidate, {
+      authorized: false,
+      now: "2024-07-02T10:00:00.000Z",
+    });
+    expect(unauthorized.result).toEqual({ ok: false, code: "replay_not_authorized" });
+    expect(unauthorized.state).toBe(stateWithNowActiveBinding);
+
+    const initialMessageCount = stateWithNowActiveBinding.messages.length;
+    const { state: replayedState, result } = await replayQuarantinedChannelEvent(
+      stateWithNowActiveBinding,
+      quarantinedEvent.id,
+      candidate,
+      { authorized: true, now: "2024-07-02T10:00:00.000Z" },
+    );
     expect(result.ok).toBe(true);
     if (result.ok) {
       expect(result.event.processingStatus).toBe("replayed");
       expect(result.event.eventKind).toBe("client_message_text");
       expect(result.event.retryCount).toBe(1);
     }
+    expect(replayedState.messages.length).toBeGreaterThan(initialMessageCount);
+    expect(replayedState.messages.some((message) => message.providerEventId === "wamid.REPLAY_1")).toBe(true);
+    expect(replayedState.auditEvents.some((event) => event.eventType === "channel_event_replayed")).toBe(true);
   });
 
-  it("keeps a still-unresolvable quarantined event quarantined on replay and increments retry count", () => {
+  it("keeps a still-unresolvable quarantined event quarantined on replay and increments retry count", async () => {
     const state = createInitialState();
     const candidate: RawChannelEventCandidate = {
       eventKind: "client_message_text",
@@ -238,6 +356,7 @@ describe("phase 85 if-c channel event ledger", () => {
       body: "replay body",
       messageType: "text",
       providerTime: "2024-07-01T10:00:00.000Z",
+      providerTimeInvalid: false,
       payloadDigest: "digest",
       malformedReason: null,
     };
@@ -256,7 +375,7 @@ describe("phase 85 if-c channel event ledger", () => {
       payloadDigest: candidate.payloadDigest,
       payloadSchemaVersion: "p85-if-c-v1",
       providerTime: candidate.providerTime,
-      observedAt: new Date().toISOString(),
+      observedAt: "2024-07-01T10:00:00.000Z",
       committedAt: null,
       quarantineId: null,
       replayOfEventId: null,
@@ -265,12 +384,16 @@ describe("phase 85 if-c channel event ledger", () => {
     };
 
     const withEvent = { ...state, channelEvents: [quarantinedEvent] };
-    const { result } = replayQuarantinedChannelEvent(withEvent, quarantinedEvent.id, candidate);
+    const { state: replayedState, result } = await replayQuarantinedChannelEvent(withEvent, quarantinedEvent.id, candidate, {
+      authorized: true,
+      now: "2024-07-02T10:00:00.000Z",
+    });
     expect(result.ok).toBe(true);
     if (result.ok) {
       expect(result.event.processingStatus).toBe("quarantined");
       expect(result.event.retryCount).toBe(1);
     }
+    expect(replayedState.auditEvents.some((event) => event.eventType === "channel_event_replay_quarantined")).toBe(true);
   });
 
   it("expires a quarantined event past the seven-day mock replay window instead of replaying it", () => {

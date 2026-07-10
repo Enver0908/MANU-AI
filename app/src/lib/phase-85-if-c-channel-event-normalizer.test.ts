@@ -10,6 +10,8 @@ type GoldenCandidateExpectation = {
   providerEventId?: string;
   providerMessageId?: string;
   fromIdentity?: string;
+  toIdentity?: string;
+  counterpartyIdentity?: string;
   body?: string;
 };
 
@@ -37,6 +39,8 @@ function matchesExpectation(candidate: RawChannelEventCandidate, expectation: Go
   if (expectation.providerEventId !== undefined && candidate.providerEventId !== expectation.providerEventId) return false;
   if (expectation.providerMessageId !== undefined && candidate.providerMessageId !== expectation.providerMessageId) return false;
   if (expectation.fromIdentity !== undefined && candidate.fromIdentity !== expectation.fromIdentity) return false;
+  if (expectation.toIdentity !== undefined && candidate.toIdentity !== expectation.toIdentity) return false;
+  if (expectation.counterpartyIdentity !== undefined && candidate.counterpartyIdentity !== expectation.counterpartyIdentity) return false;
   if (expectation.body !== undefined && candidate.body !== expectation.body) return false;
   return true;
 }
@@ -119,6 +123,43 @@ describe("phase 85 if-c channel event normalizer", () => {
     if (!result.ok) return;
     expect(result.candidates[0].eventKind).toBe("client_message_text");
     expect(result.candidates[0].body).toBe("delivered");
+  });
+
+  it("uses observed time and flags an invalid provider timestamp without changing event kind", () => {
+    const result = normalizeChannelEventBatch({
+      object: "whatsapp_business_account",
+      entry: [
+        {
+          id: "SYNTHETIC_WABA_1",
+          changes: [
+            {
+              field: "messages",
+              value: {
+                messaging_product: "whatsapp",
+                metadata: { phone_number_id: "SYNTHETIC_PHONE_1" },
+                messages: [
+                  {
+                    from: "905551110001",
+                    id: "wamid.IFC_INVALID_TIME",
+                    timestamp: "not-a-provider-time",
+                    type: "text",
+                    text: { body: "Merhaba" },
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      ],
+    });
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.candidates[0]).toMatchObject({
+      eventKind: "client_message_text",
+      providerTime: null,
+      providerTimeInvalid: true,
+    });
   });
 
   it("does not throw on unparseable circular-safe malformed items", () => {

@@ -3,6 +3,7 @@ import type {
   ChannelActorType,
   ChannelAuthorInterface,
   ChannelEventKind,
+  MessageRecord,
   ManuAppState,
 } from "./types";
 import type { RawChannelEventCandidate } from "./phase-85-if-c-channel-event-normalizer";
@@ -22,6 +23,7 @@ export type ChannelEventQuarantineOutcome = {
   status: "quarantined";
   finalEventKind: ChannelEventKind;
   quarantineReasons: string[];
+  accountBindingId: string | null;
 };
 
 export type ChannelEventRoutedOutcome = {
@@ -47,24 +49,36 @@ export function routeChannelEvent(state: ManuAppState, candidate: RawChannelEven
     return quarantine("unsupported_event", [candidate.malformedReason || "unsupported_event"]);
   }
 
-  const accountBinding = resolveAccountBinding(state, candidate);
-  if (!accountBinding) {
-    return quarantine("unknown_account", ["unknown_account_binding"]);
+  const accountResolution = resolveAccountBinding(state, candidate);
+  if (accountResolution.status === "unresolved") {
+    return quarantine("unknown_account", accountResolution.reasons);
+  }
+  const accountBinding = accountResolution.binding;
+
+  if (accountBinding.tenantId !== state.tenant.id) {
+    return quarantine("cross_tenant_collision", ["account_binding_tenant_mismatch"], accountBinding.id);
   }
 
   if (candidate.eventKind === "outbound_status") {
     const message = state.messages.find(
-      (item) => item.providerMessageId === candidate.providerMessageId && item.providerAccountBindingId === accountBinding.id,
+      (item) =>
+        item.tenantId === accountBinding.tenantId &&
+        item.providerMessageId === candidate.providerMessageId &&
+        item.providerAccountBindingId === accountBinding.id,
     );
     if (!message) {
-      return quarantine("message_revision_unknown_target", ["outbound_status_unknown_target_message"]);
+      return quarantine("message_revision_unknown_target", ["outbound_status_unknown_target_message"], accountBinding.id);
+    }
+    const messageContext = resolveMessageContext(state, message, accountBinding.tenantId);
+    if (!messageContext) {
+      return quarantine("cross_tenant_collision", ["outbound_status_target_context_mismatch"], accountBinding.id);
     }
 
     return routed({
       finalEventKind: "outbound_status",
       accountBindingId: accountBinding.id,
-      clientId: findClientIdForConversation(state, message.conversationId),
-      conversationId: message.conversationId,
+      clientId: messageContext.clientId,
+      conversationId: messageContext.conversationId,
       actorType: "system",
       actorBindingId: null,
       authorInterface: "system",
@@ -74,49 +88,75 @@ export function routeChannelEvent(state: ManuAppState, candidate: RawChannelEven
 
   if (candidate.eventKind === "message_edit" || candidate.eventKind === "message_revoke") {
     const targetMessage = state.messages.find(
-      (item) => item.providerMessageId === candidate.providerMessageId && item.providerAccountBindingId === accountBinding.id,
+      (item) =>
+        item.tenantId === accountBinding.tenantId &&
+        item.providerMessageId === candidate.providerMessageId &&
+        item.providerAccountBindingId === accountBinding.id,
     );
     if (!targetMessage) {
-      return quarantine("message_revision_unknown_target", ["revision_unknown_target_message"]);
+      return quarantine("message_revision_unknown_target", ["revision_unknown_target_message"], accountBinding.id);
     }
+    const messageContext = resolveMessageContext(state, targetMessage, accountBinding.tenantId);
+    if (!messageContext) {
+      return quarantine("cross_tenant_collision", ["revision_target_context_mismatch"], accountBinding.id);
+    }
+    const targetActor = resolveTargetMessageActor(targetMessage);
 
     return routed({
       finalEventKind: candidate.eventKind,
       accountBindingId: accountBinding.id,
-      clientId: findClientIdForConversation(state, targetMessage.conversationId),
-      conversationId: targetMessage.conversationId,
-      actorType: targetMessage.actorType ?? inferActorTypeFromSender(targetMessage.sender),
+      clientId: messageContext.clientId,
+      conversationId: messageContext.conversationId,
+      actorType: targetActor.actorType,
       actorBindingId: targetMessage.actorBindingId ?? null,
-      authorInterface: targetMessage.authorInterface ?? (targetMessage.sender === "client" ? "client_channel" : "whatsapp_business_surface"),
-      actorResolutionBasis: targetMessage.actorResolutionBasis ?? "provider_counterparty",
+      authorInterface: targetActor.authorInterface,
+      actorResolutionBasis: targetActor.actorResolutionBasis,
     });
   }
 
-  const clientMatches = resolveClientMatches(state, candidate);
+  const allClientMatches = resolveClientMatches(state, candidate);
+  const clientMatches = allClientMatches.filter((client) => client.tenantId === accountBinding.tenantId);
+  if (clientMatches.length === 0 && allClientMatches.length > 0) {
+    return quarantine("cross_tenant_collision", ["counterparty_matches_other_tenant_only"], accountBinding.id);
+  }
   if (clientMatches.length === 0) {
-    return quarantine("unknown_client", ["no_client_matches_counterparty"]);
+    return quarantine("unknown_client", ["no_client_matches_counterparty"], accountBinding.id);
   }
   if (clientMatches.length > 1) {
-    return quarantine("ambiguous_client", ["multiple_clients_match_counterparty"]);
+    return quarantine("ambiguous_client", ["multiple_tenant_clients_match_counterparty"], accountBinding.id);
   }
 
   const client = clientMatches[0];
 
   if (client.tenantId !== state.tenant.id) {
-    return quarantine("cross_tenant_collision", ["client_tenant_mismatch"]);
+    return quarantine("cross_tenant_collision", ["client_tenant_mismatch"], accountBinding.id);
   }
 
   if (client.lifecycleStatus === "removed_anonymized") {
-    return quarantine("unknown_client", ["client_removed_anonymized"]);
+    return quarantine("unknown_client", ["client_removed_anonymized"], accountBinding.id);
   }
 
   if (client.channel !== "whatsapp") {
-    return quarantine("unknown_client", ["client_channel_mismatch"]);
+    return quarantine("unknown_client", ["client_channel_mismatch"], accountBinding.id);
   }
 
-  const conversation = state.conversations.find((item) => item.clientId === client.id && item.channel === "whatsapp");
+  if (!new Set(["ready", "pending", "blocked", "opted_out"]).has(client.channelPermission)) {
+    return quarantine("unknown_client", ["client_channel_permission_invalid"], accountBinding.id);
+  }
+
+  const conversation = state.conversations.find(
+    (item) =>
+      item.tenantId === accountBinding.tenantId &&
+      item.clientId === client.id &&
+      item.dietitianId === client.dietitianId &&
+      item.channel === "whatsapp",
+  );
   if (!conversation) {
-    return quarantine("unknown_client", ["no_conversation_for_client"]);
+    return quarantine("unknown_client", ["no_tenant_assignment_matched_conversation"], accountBinding.id);
+  }
+
+  if (hasClientBusinessIdentityOverlap(client.channelUserId, candidate, accountBinding.normalizedDisplayNumber)) {
+    return quarantine("unknown_account", ["actor_client_identity_overlap"], accountBinding.id);
   }
 
   if (
@@ -143,7 +183,10 @@ export function routeChannelEvent(state: ManuAppState, candidate: RawChannelEven
   ) {
     const actor = resolveBusinessActor(state, accountBinding.id, accountBinding.attributionPolicy);
     if (!actor) {
-      return quarantine("unknown_account", ["business_actor_unresolved"]);
+      return quarantine("unknown_account", ["business_actor_unresolved"], accountBinding.id);
+    }
+    if (actor.actorType === "exact_dietitian" && actor.dietitianId !== client.dietitianId) {
+      return quarantine("unknown_account", ["exact_dietitian_assignment_mismatch"], accountBinding.id);
     }
 
     return routed({
@@ -162,16 +205,38 @@ export function routeChannelEvent(state: ManuAppState, candidate: RawChannelEven
 }
 
 function resolveAccountBinding(state: ManuAppState, candidate: RawChannelEventCandidate) {
-  return (
-    state.channelAccountBindings.find((binding) => {
-      if (binding.lifecycleStatus !== "active") return false;
-      if (binding.provider !== "whatsapp_cloud") return false;
-      if (candidate.businessPhoneNumberId && binding.businessPhoneNumberId === candidate.businessPhoneNumberId) return true;
-      if (candidate.wabaId && binding.wabaId === candidate.wabaId) return true;
-      if (candidate.providerAccountId && binding.providerAccountId === candidate.providerAccountId) return true;
-      return false;
-    }) ?? null
+  const eligibleBindings = state.channelAccountBindings.filter(
+    (binding) =>
+      binding.provider === "whatsapp_cloud" &&
+      binding.operatingMode === "mock" &&
+      binding.lifecycleStatus === "active" &&
+      Boolean(binding.verifiedAt) &&
+      !binding.revokedAt,
   );
+  const selectors = [
+    candidate.wabaId ? (binding: (typeof eligibleBindings)[number]) => binding.wabaId === candidate.wabaId : null,
+    candidate.businessPhoneNumberId
+      ? (binding: (typeof eligibleBindings)[number]) => binding.businessPhoneNumberId === candidate.businessPhoneNumberId
+      : null,
+    candidate.providerAccountId
+      ? (binding: (typeof eligibleBindings)[number]) => binding.providerAccountId === candidate.providerAccountId
+      : null,
+  ].filter((selector): selector is (binding: (typeof eligibleBindings)[number]) => boolean => Boolean(selector));
+
+  if (selectors.length === 0) {
+    return { status: "unresolved" as const, reasons: ["provider_account_identifiers_missing"] };
+  }
+
+  const matches = eligibleBindings.filter((binding) => selectors.every((selector) => selector(binding)));
+  if (matches.length === 1) {
+    return { status: "resolved" as const, binding: matches[0] };
+  }
+
+  const anySelectorMatch = eligibleBindings.some((binding) => selectors.some((selector) => selector(binding)));
+  return {
+    status: "unresolved" as const,
+    reasons: [matches.length > 1 ? "multiple_active_account_bindings" : anySelectorMatch ? "conflicting_account_binding_identifiers" : "unknown_account_binding"],
+  };
 }
 
 function resolveClientMatches(state: ManuAppState, candidate: RawChannelEventCandidate) {
@@ -197,47 +262,106 @@ function resolveBusinessActor(
   const now = Date.now();
   const activeBindings = state.channelActorBindings.filter(
     (binding) =>
+      binding.tenantId === state.tenant.id &&
       binding.accountBindingId === accountBindingId &&
+      Boolean(binding.verifiedAt) &&
       !binding.revokedAt &&
+      new Date(binding.validFrom).getTime() <= now &&
       (!binding.validTo || new Date(binding.validTo).getTime() > now),
   );
 
   if (attributionPolicy === "exclusive_dietitian") {
-    const exclusive = activeBindings.find((binding) => binding.actorType === "exact_dietitian" && binding.dietitianId);
-    if (!exclusive) {
+    const exclusive = activeBindings.filter(
+      (binding) =>
+        binding.actorType === "exact_dietitian" &&
+        binding.attributionBasis === "exclusive_verified_account" &&
+        Boolean(binding.dietitianId),
+    );
+    if (exclusive.length !== 1) {
       return null;
     }
     return {
       actorType: "exact_dietitian" as const,
-      actorBindingId: exclusive.id,
+      actorBindingId: exclusive[0].id,
       actorResolutionBasis: "exclusive_verified_account" as const,
+      dietitianId: exclusive[0].dietitianId,
     };
   }
 
-  const shared = activeBindings.find((binding) => binding.actorType === "business_operator");
-  if (!shared) {
+  const shared = activeBindings.filter(
+    (binding) => binding.actorType === "business_operator" && binding.attributionBasis === "shared_authorized_team",
+  );
+  if (shared.length !== 1) {
     return null;
   }
   return {
     actorType: "business_operator" as const,
-    actorBindingId: shared.id,
+    actorBindingId: shared[0].id,
     actorResolutionBasis: "shared_authorized_team" as const,
+    dietitianId: null,
   };
 }
 
-function findClientIdForConversation(state: ManuAppState, conversationId: string) {
-  return state.conversations.find((item) => item.id === conversationId)?.clientId ?? null;
+function resolveMessageContext(state: ManuAppState, message: MessageRecord, tenantId: string) {
+  const conversation = state.conversations.find(
+    (item) => item.id === message.conversationId && item.tenantId === tenantId,
+  );
+  if (!conversation) return null;
+  const client = state.clients.find(
+    (item) => item.id === conversation.clientId && item.tenantId === tenantId && item.dietitianId === conversation.dietitianId,
+  );
+  if (!client) return null;
+  return { clientId: client.id, conversationId: conversation.id };
 }
 
-function inferActorTypeFromSender(sender: string): ChannelActorType {
-  if (sender === "client") return "client";
-  if (sender === "dietitian") return "exact_dietitian";
-  if (sender === "assistant") return "ai";
-  return "system";
+function resolveTargetMessageActor(message: MessageRecord): {
+  actorType: ChannelActorType;
+  authorInterface: ChannelAuthorInterface;
+  actorResolutionBasis: ChannelActorAttributionBasis;
+} {
+  if (message.actorType && message.authorInterface && message.actorResolutionBasis) {
+    return {
+      actorType: message.actorType,
+      authorInterface: message.authorInterface,
+      actorResolutionBasis: message.actorResolutionBasis,
+    };
+  }
+  if (message.sender === "client") {
+    return { actorType: "client", authorInterface: "client_channel", actorResolutionBasis: "provider_counterparty" };
+  }
+  if (message.sender === "assistant") {
+    return { actorType: "ai", authorInterface: "ai_provider", actorResolutionBasis: "ai_decision" };
+  }
+  if (message.sender === "system") {
+    return { actorType: "system", authorInterface: "system", actorResolutionBasis: "system_operation" };
+  }
+  return { actorType: "unknown", authorInterface: "unknown", actorResolutionBasis: "imported_unknown" };
 }
 
-function quarantine(finalEventKind: ChannelEventKind, quarantineReasons: string[]): ChannelEventQuarantineOutcome {
-  return { status: "quarantined", finalEventKind, quarantineReasons };
+function hasClientBusinessIdentityOverlap(
+  clientIdentity: string,
+  candidate: RawChannelEventCandidate,
+  normalizedDisplayNumber: string | null,
+) {
+  const client = normalizeChannelIdentityForMatching("whatsapp", clientIdentity);
+  if (!client) return true;
+  const isBusinessAuthored =
+    candidate.eventKind === "business_human_echo_text" ||
+    candidate.eventKind === "business_human_echo_media_unsupported" ||
+    candidate.eventKind === "history_business_human_message";
+  const businessIdentities = [normalizedDisplayNumber, isBusinessAuthored ? candidate.fromIdentity : null]
+    .filter((value): value is string => Boolean(value))
+    .map((value) => normalizeChannelIdentityForMatching("whatsapp", value))
+    .filter(Boolean);
+  return businessIdentities.includes(client);
+}
+
+function quarantine(
+  finalEventKind: ChannelEventKind,
+  quarantineReasons: string[],
+  accountBindingId: string | null = null,
+): ChannelEventQuarantineOutcome {
+  return { status: "quarantined", finalEventKind, quarantineReasons, accountBindingId };
 }
 
 function routed(outcome: Omit<ChannelEventRoutedOutcome, "status">): ChannelEventRoutedOutcome {

@@ -38,6 +38,7 @@ export type RawChannelEventCandidate = {
   body: string | null;
   messageType: string | null;
   providerTime: string | null;
+  providerTimeInvalid: boolean;
   payloadDigest: string;
   malformedReason: string | null;
 };
@@ -144,7 +145,7 @@ function normalizeMessageItem(
   const to = readTrimmedString(item.to) || null;
   const type = readTrimmedString(item.type) || null;
   const editedMessageId = readTrimmedString(item.edited_message_id) || null;
-  const providerTime = toIsoTimestamp(item.timestamp);
+  const { providerTime, providerTimeInvalid } = parseProviderTimestamp(item.timestamp);
 
   if (!providerEventId) {
     return buildCandidate({
@@ -155,6 +156,7 @@ function normalizeMessageItem(
       malformedReason: "missing_provider_event_id",
       fromIdentity: from,
       providerTime,
+      providerTimeInvalid,
     });
   }
 
@@ -169,9 +171,10 @@ function normalizeMessageItem(
         providerMessageId: editedMessageId,
         fromIdentity: from,
         toIdentity: to,
-        counterpartyIdentity: from,
+        counterpartyIdentity: isEcho ? to : from,
         messageType: type,
         providerTime,
+        providerTimeInvalid,
       });
     }
 
@@ -185,10 +188,11 @@ function normalizeMessageItem(
         providerMessageId: editedMessageId,
         fromIdentity: from,
         toIdentity: to,
-        counterpartyIdentity: from,
+        counterpartyIdentity: isEcho ? to : from,
         body: readTrimmedString(item.text && isRecord(item.text) ? item.text.body : undefined) || null,
         messageType: type,
         providerTime,
+        providerTimeInvalid,
       });
     }
 
@@ -200,6 +204,7 @@ function normalizeMessageItem(
       providerEventId,
       malformedReason: `unsupported_revision_type:${type || "unknown"}`,
       providerTime,
+      providerTimeInvalid,
     });
   }
 
@@ -212,6 +217,7 @@ function normalizeMessageItem(
       providerEventId,
       malformedReason: "missing_sender_identity",
       providerTime,
+      providerTimeInvalid,
     });
   }
 
@@ -227,6 +233,7 @@ function normalizeMessageItem(
         fromIdentity: from,
         malformedReason: "empty_body",
         providerTime,
+        providerTimeInvalid,
       });
     }
 
@@ -238,10 +245,11 @@ function normalizeMessageItem(
       providerEventId,
       fromIdentity: from,
       toIdentity: to,
-      counterpartyIdentity: from,
+      counterpartyIdentity: isEcho ? to : from,
       body,
       messageType: "text",
       providerTime,
+      providerTimeInvalid,
     });
   }
 
@@ -254,9 +262,10 @@ function normalizeMessageItem(
       providerEventId,
       fromIdentity: from,
       toIdentity: to,
-      counterpartyIdentity: from,
+      counterpartyIdentity: isEcho ? to : from,
       messageType: type,
       providerTime,
+      providerTimeInvalid,
     });
   }
 
@@ -269,6 +278,7 @@ function normalizeMessageItem(
     fromIdentity: from,
     malformedReason: `unsupported_message_type:${type || "unknown"}`,
     providerTime,
+    providerTimeInvalid,
   });
 }
 
@@ -284,7 +294,7 @@ function normalizeStatusItem(
   const providerMessageId = readTrimmedString(item.id) || null;
   const status = readTrimmedString(item.status) || null;
   const recipient = readTrimmedString(item.recipient_id) || null;
-  const providerTime = toIsoTimestamp(item.timestamp);
+  const { providerTime, providerTimeInvalid } = parseProviderTimestamp(item.timestamp);
 
   if (!providerMessageId || !status) {
     return buildCandidate({
@@ -294,6 +304,7 @@ function normalizeStatusItem(
       raw: item,
       malformedReason: "missing_status_fields",
       providerTime,
+      providerTimeInvalid,
     });
   }
 
@@ -308,6 +319,7 @@ function normalizeStatusItem(
     counterpartyIdentity: recipient,
     messageType: status,
     providerTime,
+    providerTimeInvalid,
   });
 }
 
@@ -322,9 +334,10 @@ function normalizeHistoryItem(
 
   const providerEventId = readTrimmedString(item.id) || null;
   const from = readTrimmedString(item.from) || null;
+  const to = readTrimmedString(item.to) || null;
   const type = readTrimmedString(item.type) || null;
   const isBusinessHuman = item.is_business_human === true;
-  const providerTime = toIsoTimestamp(item.timestamp);
+  const { providerTime, providerTimeInvalid } = parseProviderTimestamp(item.timestamp);
 
   if (!providerEventId || !from) {
     return buildCandidate({
@@ -334,6 +347,7 @@ function normalizeHistoryItem(
       raw: item,
       malformedReason: "missing_history_identity",
       providerTime,
+      providerTimeInvalid,
     });
   }
 
@@ -346,10 +360,12 @@ function normalizeHistoryItem(
     raw: item,
     providerEventId,
     fromIdentity: from,
-    counterpartyIdentity: from,
+    toIdentity: to,
+    counterpartyIdentity: isBusinessHuman ? to : from,
     body,
     messageType: type,
     providerTime,
+    providerTimeInvalid,
   });
 }
 
@@ -366,6 +382,7 @@ type BuildCandidateInput = {
   body?: string | null;
   messageType?: string | null;
   providerTime?: string | null;
+  providerTimeInvalid?: boolean;
   malformedReason?: string | null;
 };
 
@@ -383,6 +400,7 @@ function buildCandidate(input: BuildCandidateInput): RawChannelEventCandidate {
     body: input.body ?? null,
     messageType: input.messageType ?? null,
     providerTime: input.providerTime ?? null,
+    providerTimeInvalid: input.providerTimeInvalid ?? false,
     payloadDigest: computeDigest(input.raw),
     malformedReason: input.malformedReason ?? null,
   };
@@ -396,23 +414,26 @@ function computeDigest(value: unknown): string {
   }
 }
 
-function toIsoTimestamp(timestamp: unknown) {
+function parseProviderTimestamp(timestamp: unknown) {
   const raw = readTrimmedString(timestamp);
-  if (!raw || !/^\d+$/.test(raw)) {
-    return null;
+  if (!raw) {
+    return { providerTime: null, providerTimeInvalid: false };
+  }
+  if (!/^\d+$/.test(raw)) {
+    return { providerTime: null, providerTimeInvalid: true };
   }
 
   const seconds = Number(raw);
   if (!Number.isFinite(seconds) || !Number.isSafeInteger(seconds)) {
-    return null;
+    return { providerTime: null, providerTimeInvalid: true };
   }
 
   const date = new Date(seconds * 1000);
   if (Number.isNaN(date.getTime())) {
-    return null;
+    return { providerTime: null, providerTimeInvalid: true };
   }
 
-  return date.toISOString();
+  return { providerTime: date.toISOString(), providerTimeInvalid: false };
 }
 
 function readTrimmedString(value: unknown) {

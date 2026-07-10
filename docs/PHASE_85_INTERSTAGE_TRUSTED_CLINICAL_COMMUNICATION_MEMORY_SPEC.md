@@ -408,7 +408,7 @@ For later runtime tracks, select the relevant subset and then run the full requi
 
 P85-IF-A is complete when this spec is committed with continuity documentation updates. It creates no runtime behavior and does not approve production pilot, Stage 4B runtime work, real providers/channels, live billing, monitoring, backup, secret manager, or real health-data processing.
 
-At P85-IF-A closure, the next track was P85-IF-B: trust-root, provenance, identity, event, and session data model. P85-IF-B is now complete; P85-IF-C is next.
+At P85-IF-A closure, the next track was P85-IF-B. P85-IF-B and P85-IF-C are now complete; P85-IF-D is next.
 
 Verification on 2026-07-10:
 
@@ -454,14 +454,18 @@ The next track is P85-IF-D: complete transcript and human control.
 
 Verification on 2026-07-10:
 
-- Targeted app Vitest `phase-85-if-c-channel-event-normalizer.test.ts`, `phase-85-if-c-channel-event-routing.test.ts`, and `phase-85-if-c-channel-event-ledger.test.ts`: 26/26 passed.
-- Adjacent regression spot-check (channel adapters, whatsapp mock webhook, internal copilot, client context updates/proposals, auth context): passed.
+- Post-commit remediation evidence: `docs/PHASE_85_IF_C_SECURE_INGRESS_ROUTING_REMEDIATION_EVIDENCE.md`.
+- Targeted app Vitest `phase-85-if-c-channel-event-normalizer.test.ts`, `phase-85-if-c-channel-event-routing.test.ts`, and `phase-85-if-c-channel-event-ledger.test.ts`: 40/40 passed.
+- Full app Vitest: 780 passed, 4 skipped, 0 failed across 125 files.
+- Core package tests: 225/225 passed.
 - App `npm run lint`: 0 errors, 3 pre-existing warnings (unchanged baseline).
-- `git diff --check`: clean.
+- App `npm run build`: passed, including TypeScript and static page generation.
+- Full mock channel replay rehearsal: passed.
+- `git diff --check`: clean apart from repository-wide CRLF conversion warnings.
 - Secret/token scan: clean.
 - Forbidden future-phase naming scan: clean.
-- App `npm test` (full suite) and `npm run build`: not completed to a final result in this verification sandbox. The full suite exceeded the local sandbox time budget (a pre-existing documented condition: repo-wide `npm test` has previously exceeded local review timeouts); `npm run build` failed only on an outbound network restriction to Google Fonts in this sandbox, unrelated to the code change. A partial full-suite run covering 100+ test files showed no failures. `tsc --noEmit` showed zero errors attributable to the new P85-IF-C files; all reported errors are pre-existing, unrelated test-fixture typing issues already documented as blocking `tsc --noEmit` repo-wide.
 - `npm run test:rls`: not re-run; R-406 current re-run remains pending.
-- Final `git status --short`: required after commit closure.
+- Visual verification: not required because no UI changed.
+- Final `git status --short`: required after remediation commit closure.
 
-**Outstanding before P85-IF-C is treated as fully evidence-complete:** re-run `npm test` and `npm run build` to a final green result in an environment with full network access and enough time budget for the complete suite, and attach that evidence to this closure statement.
+P85-IF-C is evidence-complete. P85-IF-D is the next track.

@@ -88,7 +88,7 @@ flowchart TD
 
 Create `docs/PHASE_85_INTERSTAGE_TRUSTED_CLINICAL_COMMUNICATION_MEMORY_SPEC.md` as the implementation contract. No runtime code changes occur in this track.
 
-Status: complete on 2026-07-10. The canonical spec now exists at `docs/PHASE_85_INTERSTAGE_TRUSTED_CLINICAL_COMMUNICATION_MEMORY_SPEC.md`; P85-IF-B is also complete and P85-IF-C is next.
+Status: complete on 2026-07-10. The canonical spec now exists; P85-IF-B and P85-IF-C later completed, and P85-IF-D is next.
 
 ### Required specification content
 
@@ -148,7 +148,7 @@ Database constraints enforce:
 - Migration, RPC, RLS, RBAC, uniqueness, conflict, and tenant-isolation tests pass.
 - No existing message behavior changes before P85-IF-C/D enable the new path.
 
-Status: complete on 2026-07-10. P85-IF-B added app-level nullable provenance/message contract fields, canonical trust-root/event/revision/session/risk/context-intake records, Supabase mappers, append-only migration `app/supabase/migrations/20260710120000_phase_85_if_b_trust_root_provenance.sql`, and focused provenance model tests. Real provider/channel behavior remains disconnected. P85-IF-C is next.
+Status: complete on 2026-07-10. P85-IF-B added app-level nullable provenance/message contract fields, canonical trust-root/event/revision/session/risk/context-intake records, Supabase mappers, append-only migration `app/supabase/migrations/20260710120000_phase_85_if_b_trust_root_provenance.sql`, and focused provenance model tests. P85-IF-C later completed secure ingress; P85-IF-D is next.
 
 ## 7. P85-IF-C - Secure Ingress, Ledger, Routing, And Quarantine
 
@@ -180,7 +180,7 @@ Status: complete on 2026-07-10. P85-IF-B added app-level nullable provenance/mes
 - Two tenants with the same client phone remain isolated by provider account binding.
 - No event reaches the orchestrator until tenant, client, actor, and conversation resolution all succeed.
 
-Status: complete on 2026-07-10. `phase-85-if-c-channel-event-normalizer.ts` decomposes a mock WhatsApp Cloud-style webhook payload into independent `RawChannelEventCandidate` entries per entry/change/message/status/echo/history item, deriving the exact `ChannelEventKind` from provider fields only. `phase-85-if-c-channel-event-routing.ts` implements the mandatory fail-closed account-binding -> tenant -> counterparty/client -> lifecycle/channel -> actor -> conversation order, with exclusive/shared business-actor resolution and unknown-account/unknown-client/ambiguous-client/cross-tenant-collision/revision-unknown-target quarantine. `phase-85-if-c-channel-event-ledger.ts` adds the secure mock-webhook gate (`MANU_ALLOW_MOCK_WHATSAPP_WEBHOOK` plus `MANU_MOCK_WHATSAPP_WEBHOOK_SECRET`, refusing production and `MANU_HOSTED_SANDBOX_ACTIVE`), duplicate event/message idempotency, quarantine plus seven-day mock replay/expiry, and audit trail. Golden fixtures at `phase-85-if-c-channel-event-golden-cases.jsonl` cover 12 categories. Only fully-resolved `client_message_text` events delegate to the existing, unmodified `processMockChannelInbound` orchestrator path; this is an intentional, additive scope decision so the new engine does not change current client-facing behavior or require live-route rewiring in this track (no `ChannelAccountBindingRecord` is seeded by default, so flipping the live route would fail-closed the existing demo/tests). Storing business-human echoes as verified `dietitian_manual`, auto-pausing AI, and human-control session integration remain P85-IF-D scope. Supabase-side ledger persistence was deferred (not required by this track's acceptance criteria). Verification: targeted P85-IF-C Vitest 26/26, adjacent regression spot-checks green, lint 0 errors (3 pre-existing warnings, unchanged), `git diff --check` clean, secret/token scan clean, Phase 86 naming scan clean; a full `npm test`/`npm run build` re-run is still owed because the verification sandbox could not complete either (suite duration and an outbound Google Fonts network restriction unrelated to the code). P85-IF-D is next.
+Status: complete and post-commit audited on 2026-07-10. `docs/PHASE_85_IF_C_SECURE_INGRESS_ROUTING_REMEDIATION_EVIDENCE.md` records all closed findings, including duplicate-ID/digest conflicts. Verification passed: targeted 40/40, app 780 passed / 4 skipped, core 225/225, lint 0 errors with 3 unchanged warnings, production build, and full mock channel replay. The engine remains additive and disconnected from the live webhook; business-human transcript persistence and human-control behavior remain P85-IF-D. P85-IF-D is next.
 
 ## 8. P85-IF-D - Complete Transcript And Human Control
 
