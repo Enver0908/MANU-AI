@@ -24,6 +24,8 @@ Phase 85 Interstage Foundation P85-IF-A note (2026-07-10): `docs/PHASE_85_INTERS
 
 Phase 85 Interstage Foundation P85-IF-B note (2026-07-10): the trust-root/provenance data model foundation is implemented with nullable message provenance fields, channel account/actor/event/revision/session/risk/context-intake records, Supabase mappers, an append-only migration, and focused contract tests. Runtime provider/channel behavior remains closed, and P85-IF-C is next. This does not change direct-pilot `NO-GO`, external gate status, R-405, R-406, or any real provider/channel/production-data path.
 
+Phase 85 Interstage Foundation P85-IF-C note (2026-07-10): the secure ingress, ledger, routing, and quarantine engine is implemented (batch-safe normalization deriving exact event kind from provider fields, fail-closed account/client/actor/conversation routing, secure mock-webhook secret gate, duplicate idempotency, quarantine plus seven-day mock replay/expiry). Only fully-resolved `client_message_text` events delegate to the existing orchestrator path; all other event kinds are ledger-recorded only, and the engine is not yet wired into the live `/api/whatsapp/webhook` route. Storing business-human echoes, auto-pausing AI, and human-control session integration remain P85-IF-D scope. This does not change direct-pilot `NO-GO`, external gate status, R-405, R-406, or any real provider/channel/production-data path.
+
 ## Fixed Product Laws
 These rules are non-negotiable and apply to every future phase:
 - The client must experience WhatsApp messages as coming from the dietitian, not from an AI system.
@@ -37,8 +39,8 @@ These rules are non-negotiable and apply to every future phase:
 - Autopilot is not globally enabled for all 5,000 clients by default. It is enabled only for selected qualified clients after all gates, monitoring, and rollback controls are ready.
 
 ## Current Baseline
-- Latest completed implementation phase: P85-IF-B trust-root/provenance data model foundation complete (2026-07-10), after Phase 85 Stage 4A Danisan Kontrol Paneli completed.
-- Next operator step: P85-IF-C secure ingress, ledger, routing, and quarantine; Stage 4B resumes only after P85-IF-I closure; external production prerequisites remain open; no production GO.
+- Latest completed implementation phase: P85-IF-C secure ingress, ledger, routing, and quarantine engine complete (2026-07-10), after P85-IF-B trust-root/provenance data model foundation.
+- Next operator step: P85-IF-D complete transcript and human control; Stage 4B resumes only after P85-IF-I closure; external production prerequisites remain open; no production GO.
 - Primary open product risk: R-425 is mitigated in the hosted commercial sandbox path, but production launch gates remain open.
 - Latest roadmap rebaseline: Phase 77A manual source authority rebaseline spec (2026-06-10).
 - Detailed Phase 77 implementation plan: `docs/PHASE_77_MASTER_IMPLEMENTATION_PLAN.md`.

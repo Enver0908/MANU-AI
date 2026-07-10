@@ -2,7 +2,7 @@
 
 Date: 2026-07-10
 Canonical code: `P85-IF`
-Status: Planning complete; P85-IF-A complete; runtime implementation not started.
+Status: Planning complete; P85-IF-A, P85-IF-B, and P85-IF-C complete; P85-IF-D next.
 Placement: Phase 85 Stage 4A complete -> P85-IF -> Phase 85 Stage 4B.
 Production pilot: `NO-GO`.
 Deployment: none.
@@ -74,7 +74,7 @@ flowchart TD
 | --- | --- | --- |
 | P85-IF-A | Canonical spec, provider contract, threat model, state machines | Complete |
 | P85-IF-B | Trust-root, provenance, identity, event, and session data model | Complete |
-| P85-IF-C | Secure mock webhook, normalization, ledger, routing, quarantine | Pending |
+| P85-IF-C | Secure mock webhook, normalization, ledger, routing, quarantine | Complete |
 | P85-IF-D | Complete transcript, human-control coordination, edit/revoke/media | Pending |
 | P85-IF-E | Full-history retrieval, prompt authority, answerability relevance | Pending |
 | P85-IF-F | Yellow/red resolution, direct AI reactivation, concurrency safety | Pending |
@@ -179,6 +179,8 @@ Status: complete on 2026-07-10. P85-IF-B added app-level nullable provenance/mes
 - Golden fixtures cover direct client message, business echo, status, history, edit, revoke, media, batch, malformed, unknown, ambiguous, conflict, duplicate, and replay.
 - Two tenants with the same client phone remain isolated by provider account binding.
 - No event reaches the orchestrator until tenant, client, actor, and conversation resolution all succeed.
+
+Status: complete on 2026-07-10. `phase-85-if-c-channel-event-normalizer.ts` decomposes a mock WhatsApp Cloud-style webhook payload into independent `RawChannelEventCandidate` entries per entry/change/message/status/echo/history item, deriving the exact `ChannelEventKind` from provider fields only. `phase-85-if-c-channel-event-routing.ts` implements the mandatory fail-closed account-binding -> tenant -> counterparty/client -> lifecycle/channel -> actor -> conversation order, with exclusive/shared business-actor resolution and unknown-account/unknown-client/ambiguous-client/cross-tenant-collision/revision-unknown-target quarantine. `phase-85-if-c-channel-event-ledger.ts` adds the secure mock-webhook gate (`MANU_ALLOW_MOCK_WHATSAPP_WEBHOOK` plus `MANU_MOCK_WHATSAPP_WEBHOOK_SECRET`, refusing production and `MANU_HOSTED_SANDBOX_ACTIVE`), duplicate event/message idempotency, quarantine plus seven-day mock replay/expiry, and audit trail. Golden fixtures at `phase-85-if-c-channel-event-golden-cases.jsonl` cover 12 categories. Only fully-resolved `client_message_text` events delegate to the existing, unmodified `processMockChannelInbound` orchestrator path; this is an intentional, additive scope decision so the new engine does not change current client-facing behavior or require live-route rewiring in this track (no `ChannelAccountBindingRecord` is seeded by default, so flipping the live route would fail-closed the existing demo/tests). Storing business-human echoes as verified `dietitian_manual`, auto-pausing AI, and human-control session integration remain P85-IF-D scope. Supabase-side ledger persistence was deferred (not required by this track's acceptance criteria). Verification: targeted P85-IF-C Vitest 26/26, adjacent regression spot-checks green, lint 0 errors (3 pre-existing warnings, unchanged), `git diff --check` clean, secret/token scan clean, Phase 86 naming scan clean; a full `npm test`/`npm run build` re-run is still owed because the verification sandbox could not complete either (suite duration and an outbound Google Fonts network restriction unrelated to the code). P85-IF-D is next.
 
 ## 8. P85-IF-D - Complete Transcript And Human Control
 

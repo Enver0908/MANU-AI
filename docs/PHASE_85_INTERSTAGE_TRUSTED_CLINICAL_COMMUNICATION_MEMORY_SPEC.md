@@ -2,8 +2,8 @@
 
 Date: 2026-07-10
 Canonical code: `P85-IF`
-Track: `P85-IF-A` and `P85-IF-B`
-Status: P85-IF-A complete; P85-IF-B trust-root/provenance data model complete; P85-IF-C next.
+Track: `P85-IF-A`, `P85-IF-B`, and `P85-IF-C`
+Status: P85-IF-A complete; P85-IF-B trust-root/provenance data model complete; P85-IF-C secure ingress/ledger/routing/quarantine complete; P85-IF-D next.
 Placement: Phase 85 Stage 4A complete -> P85-IF -> Phase 85 Stage 4B.
 Production pilot: `NO-GO`.
 Deployment: none.
@@ -346,6 +346,8 @@ Implementation status on 2026-07-10: complete. App domain types now include null
 - Recoverable quarantine and replay contracts are implemented.
 - Real Meta signature verification remains a future unimplemented production gate.
 
+Implementation status on 2026-07-10: complete. `phase-85-if-c-channel-event-normalizer.ts`, `phase-85-if-c-channel-event-routing.ts`, and `phase-85-if-c-channel-event-ledger.ts` implement the normalization, fail-closed routing, secure gate, ledger, quarantine, and seven-day mock replay/expiry described above. Only fully-resolved `client_message_text` events delegate to the existing, unmodified `processMockChannelInbound` path; this engine is additive and not yet wired into the live `/api/whatsapp/webhook` route (no account binding is seeded by default). P85-IF-D remains responsible for business-human echo transcript storage, human-control session auto-pause, and edit/revoke/media/history lifecycle behavior.
+
 ### P85-IF-D
 
 - Complete transcript persists across active, passive, risk, and manual sessions.
@@ -437,3 +439,29 @@ Verification on 2026-07-10:
 - Secret/token scan: clean.
 - Forbidden future-phase naming scan: clean.
 - Final `git status --short`: required after commit closure.
+
+## 19. P85-IF-C Closure Statement
+
+P85-IF-C is complete when the secure ingress, ledger, routing, and quarantine engine is committed with app-level normalization/routing/ledger modules, golden fixtures, focused tests, and continuity documentation updates. It does not approve production pilot, Stage 4B runtime work, real providers/channels, live billing, monitoring, backup, secret manager, or real health-data processing, and it does not wire the new engine into the live `/api/whatsapp/webhook` route.
+
+Scope decisions recorded at closure:
+
+- Only fully-resolved `client_message_text` events delegate to the existing, unmodified `processMockChannelInbound` orchestrator path, so current client-facing AI/risk behavior is unchanged. All other event kinds (business-human echoes, statuses, history, edit/revoke, media, quarantine cases) are ledger-recorded only.
+- The new engine is intentionally not wired into the live `/api/whatsapp/webhook` route in this track: no `ChannelAccountBindingRecord` is seeded in the fallback/demo state by default, and requiring one on the live route would fail-closed the existing demo/tests. Storing business-human echoes as verified `dietitian_manual`, auto-pausing AI, and human-control session integration remain P85-IF-D scope per section 8.
+- Supabase-side ledger persistence (insert/replay via RPC) was deferred; this track's acceptance criteria does not list a Supabase requirement, unlike P85-IF-D/E.
+
+The next track is P85-IF-D: complete transcript and human control.
+
+Verification on 2026-07-10:
+
+- Targeted app Vitest `phase-85-if-c-channel-event-normalizer.test.ts`, `phase-85-if-c-channel-event-routing.test.ts`, and `phase-85-if-c-channel-event-ledger.test.ts`: 26/26 passed.
+- Adjacent regression spot-check (channel adapters, whatsapp mock webhook, internal copilot, client context updates/proposals, auth context): passed.
+- App `npm run lint`: 0 errors, 3 pre-existing warnings (unchanged baseline).
+- `git diff --check`: clean.
+- Secret/token scan: clean.
+- Forbidden future-phase naming scan: clean.
+- App `npm test` (full suite) and `npm run build`: not completed to a final result in this verification sandbox. The full suite exceeded the local sandbox time budget (a pre-existing documented condition: repo-wide `npm test` has previously exceeded local review timeouts); `npm run build` failed only on an outbound network restriction to Google Fonts in this sandbox, unrelated to the code change. A partial full-suite run covering 100+ test files showed no failures. `tsc --noEmit` showed zero errors attributable to the new P85-IF-C files; all reported errors are pre-existing, unrelated test-fixture typing issues already documented as blocking `tsc --noEmit` repo-wide.
+- `npm run test:rls`: not re-run; R-406 current re-run remains pending.
+- Final `git status --short`: required after commit closure.
+
+**Outstanding before P85-IF-C is treated as fully evidence-complete:** re-run `npm test` and `npm run build` to a final green result in an environment with full network access and enough time budget for the complete suite, and attach that evidence to this closure statement.
