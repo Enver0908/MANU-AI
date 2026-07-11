@@ -108,7 +108,7 @@ Status: complete on 2026-07-10. The canonical spec now exists; P85-IF-B and P85-
 ### Acceptance
 
 - Spec, threat model, edge-case matrix, schema/API contract, subtrack acceptance criteria, and verification commands are complete.
-- Production `NO-GO`, R-405 open, and R-406 pending are preserved.
+- Production `NO-GO` and R-405 open are preserved; local P85 post-closure RLS evidence may be recorded without treating it as production authorization.
 - `git diff --check` and secret scan are clean.
 
 ## 6. P85-IF-B - Trust Root And Provenance Data Model
@@ -365,7 +365,7 @@ Status: complete on 2026-07-10. Evidence: `docs/PHASE_85_IF_H_OPERATIONAL_VISIBI
 ### RLS and operational evidence
 
 - RLS covers every new table, provider-account tenant routing, assignment scope, shared/exclusive actor policy, quarantine operations, retrieval RPC, and context-intake proposal.
-- Local Supabase absence produces a documented skip and leaves R-406 pending; it never counts as closure.
+- Local Supabase absence produces a documented skip and cannot count as closure; a later passing local run may update current local RLS evidence without approving production traffic.
 - Risk register records actor-proof, silent webhook loss, stale structured records, retrieval false positives/negatives, quarantine retention, shared-device attribution, and concurrent human/AI sends.
 
 ### Verification chain
@@ -436,6 +436,20 @@ P85-IF closes only when:
 - export/redaction/RLS/replay/operational evidence cover all new records;
 - full verification is green except explicitly documented local Supabase skips;
 - R-405 remains open unless independently remediated or accepted;
-- R-406 remains pending without current local Supabase evidence;
+- current local Supabase evidence must be explicit when claimed;
 - production pilot remains `NO-GO`;
 - real providers, real channels, and real health data remain disabled.
+
+## 17. P85-IF Remediation Post-Closure Audit - 2026-07-11
+
+The six-step P85-IF remediation plan was re-audited after R1-R6 closure. The audit found gaps in R1 message-provenance tenant-composite integrity, R2 structured baseline/resolution authority, R3 activation/inbound lock ordering, R6 runtime export leak enforcement, and remediation traceability. R4 and R5 were reviewed with no new code findings.
+
+Post-closure fixes are complete:
+
+- R1: append-only message provenance and actor-binding tenant-composite migration.
+- R2: real app-state structured baselines plus target-panel-specific structured notification resolution.
+- R3: deterministic client-before-conversation lock ordering for expected conversation revision checks.
+- R6: client export leak detection wired into the real export path.
+- Traceability: dedicated post-closure evidence documents for R1, R2, R3, and the overall audit.
+
+Verification passed targeted app/core tests, local Supabase reset, local RLS 30/30, lint, build, full app 828 passed / 4 skipped, core 234/234, channel replay, and unified production-scale rehearsal. This updates the P85-IF closure baseline without approving production pilot, closing R-405, or opening real provider/channel/health-data paths. Stage 4B remains the next Phase 85 planning target.

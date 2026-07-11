@@ -1462,3 +1462,9 @@ Evidence from the latest test checkout: the invite was consumed, the tenant `Olk
 The Phase 84 commercial SaaS relaunch track (84A-84H) is repo-local complete as of 2026-07-03. VPS verification is the remaining operator step. Canonical spec: `docs/PHASE_84_COMMERCIAL_SAAS_RELAUNCH_AND_ONBOARDING_SPEC.md`.
 
 This track does not approve production pilot launch, close R-405, activate live Stripe, connect real providers/channels, or process real client health data. Production pilot remains `NO-GO`.
+
+## Phase 85 P85-IF Post-Closure Baseline - 2026-07-11
+
+P85-IF R1-R6 remediation was audited after closure and required additional fixes before the plan could be treated as architecture-clean. The post-closure pass added tenant-composite message provenance constraints, real structured revision baselines, target-panel-specific structured notification resolution, deterministic activation/inbound lock ordering, and runtime export leak detection inside the actual client export path.
+
+The closure evidence is recorded in `docs/PHASE_85_IF_REMEDIATION_POST_CLOSURE_AUDIT_EVIDENCE.md` and track-specific R1/R2/R3 evidence documents. Verification passed targeted app/core tests, local Supabase reset, local RLS 30/30, lint, build, full app 828 passed / 4 skipped, core 234/234, channel replay, and production-scale rehearsal. Production pilot remains `NO-GO`; R-405 remains open; no real provider, channel, monitoring, backup, secret-manager, or real health-data path was enabled. Stage 4B remains the next Phase 85 planning target.

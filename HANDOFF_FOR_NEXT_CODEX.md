@@ -2822,3 +2822,17 @@ app: npm run release:verify -> passed; core tests 122/122, app tests 176/176, li
 ### Next Correct Step For Codex
 
 Implement Phase 70 User-Supplied Form Hardening only after the user supplies final dietitian/client forms. If forms are not supplied, stop and ask for them instead of inventing production form schemas. Keep all real providers/channels, monitoring, secret manager, and real client health data disconnected.
+
+## P85-IF Remediation Post-Closure Handoff - 2026-07-11
+
+Latest baseline: P85-IF R1-R6 remediation has been post-closure audited and fixed. New evidence lives in `docs/PHASE_85_IF_REMEDIATION_POST_CLOSURE_AUDIT_EVIDENCE.md`, `docs/PHASE_85_IF_R1_PERSISTENCE_TENANT_INTEGRITY_EVIDENCE.md`, `docs/PHASE_85_IF_R2_RETRIEVAL_AUTHORITY_TEMPORAL_EVIDENCE.md`, and `docs/PHASE_85_IF_R3_ATOMIC_AI_ACTIVATION_RACE_EVIDENCE.md`.
+
+Important implementation facts:
+
+- R1 now has append-only tenant-composite constraints for message provenance and actor bindings.
+- R2 now derives structured baselines from app state and resolves only against the target panel revision.
+- R3 now uses deterministic client-before-conversation lock ordering for expected conversation revision checks.
+- R6 export leak detection now runs inside `buildClientScopedExport`.
+- R4/R5 were reviewed and had no new code findings.
+
+Verification passed targeted app/core tests, local Supabase reset, local RLS 30/30, lint, build, full app 828 passed / 4 skipped, core 234/234, channel replay, and unified production-scale rehearsal. Do not rewrite the historical R1/R2 combined commit; the current post-closure commit is the honest traceability boundary. Next correct work is Phase 85 Stage 4B planning. Production pilot remains `NO-GO`; R-405 remains open; real providers/channels/health-data paths remain closed.

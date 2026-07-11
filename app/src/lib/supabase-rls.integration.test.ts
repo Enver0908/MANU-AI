@@ -15,6 +15,7 @@ import {
   loadSupabaseState,
   patchSupabaseClientRecord,
   rejectSupabaseContextIntakeProposal,
+  resolveSupabaseStructuredRecordUpdateNotification,
   resetSupabaseState,
   runSupabaseSimulation,
   saveSupabaseFormResponse,
@@ -509,6 +510,13 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     });
 
     expect(response.error?.message).toMatch(/foreign key/i);
+
+    const messageProvenance = await admin
+      .from("messages")
+      .update({ provider_account_binding_id: OTHER_P85_CHANNEL_ACCOUNT_BINDING_ID })
+      .eq("id", TEST_MESSAGE_ID)
+      .eq("tenant_id", TEST_TENANT_ID);
+    expect(messageProvenance.error?.message).toMatch(/foreign key/i);
   });
 
   it("blocks auditor access to raw client, message, AI, handoff, risk, and copilot tables", async () => {
@@ -1253,6 +1261,100 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
         expectedClientContextRevision: inactiveClient.contextRevision,
       }),
     ).rejects.toMatchObject({ status: 409, message: "reactivation_conflict_client_context_revision" });
+
+    await resetSupabaseState();
+  }, 30000);
+
+  it("serializes activation against inbound, red-risk, and human-echo conversation commits", async () => {
+    for (const scenario of ["inbound", "red-risk", "human-echo"]) {
+      await resetSupabaseState();
+      const initial = await loadSupabaseState();
+      const client = initial.clients[0]!;
+      await patchSupabaseClientRecord(client.id, { aiStatus: "passive", aiMode: "manual" });
+      const before = await loadSupabaseState();
+      const inactiveClient = before.clients.find((item) => item.id === client.id)!;
+      const conversation = before.conversations.find((item) => item.clientId === client.id)!;
+
+      const activation = activateSupabaseClientAi(client.id, {
+        requestedAiMode: "copilot",
+        expectedConversationRevision: conversation.revision,
+        expectedClientContextRevision: inactiveClient.contextRevision,
+      });
+      const competingCommit = admin.rpc("commit_inbound_simulation", {
+        p_tenant_id: inactiveClient.tenantId,
+        p_payload: {
+          expectedConversationRevisions: { [conversation.id]: conversation.revision },
+          conversationUpdates: [{ id: conversation.id, revision: conversation.revision + 1 }],
+          auditEvents: [{
+            id: crypto.randomUUID(),
+            eventType: `p85_if_r3_race_${scenario}`,
+            entityType: "conversation",
+            entityId: conversation.id,
+            metadata: { scenario },
+            createdAt: new Date().toISOString(),
+          }],
+        },
+      }).then((result) => {
+        if (result.error) throw new Error(result.error.message);
+        return result;
+      });
+
+      const results = await Promise.allSettled([activation, competingCommit]);
+      expect(results.filter((result) => result.status === "fulfilled")).toHaveLength(1);
+      const rejected = results.find((result) => result.status === "rejected") as PromiseRejectedResult;
+      expect(String(rejected.reason)).toMatch(/reactivation_conflict_(client_context|conversation)_revision/);
+      expect(String(rejected.reason)).not.toMatch(/deadlock/i);
+    }
+
+    await resetSupabaseState();
+  }, 60000);
+
+  it("resolves structured updates atomically against the target panel revision", async () => {
+    await resetSupabaseState();
+    const state = await loadSupabaseState();
+    const client = state.clients[0]!;
+    const notificationId = crypto.randomUUID();
+    const sourceMessage = state.messages.find((message) =>
+      state.conversations.some(
+        (conversation) => conversation.clientId === client.id && conversation.id === message.conversationId,
+      ),
+    )!;
+
+    const insert = await admin.from("notifications").insert({
+      id: notificationId,
+      tenant_id: client.tenantId,
+      type: "system",
+      entity_type: "client",
+      entity_id: client.id,
+      title: "Structured update",
+      body: "Diet plan update required",
+      read: false,
+      dedupe_key: `p85-if-e:structured:${client.id}:diet_plan:${sourceMessage.id}`,
+      source_message_id: sourceMessage.id,
+      target_panel: "diet_plan",
+      baseline_revision: client.contextRevision,
+      created_at: new Date().toISOString(),
+    });
+    expect(insert.error).toBeNull();
+
+    await expect(resolveSupabaseStructuredRecordUpdateNotification(notificationId)).rejects.toMatchObject({
+      status: 409,
+      message: "structured_update_revision_pending",
+    });
+
+    await patchSupabaseClientRecord(client.id, {
+      dietPlan: { ...client.dietPlan, summary: `${client.dietPlan.summary} revised` },
+    });
+    await resolveSupabaseStructuredRecordUpdateNotification(notificationId);
+    const resolved = await admin
+      .from("notifications")
+      .select("resolved_at, resolved_by_dietitian_id")
+      .eq("tenant_id", client.tenantId)
+      .eq("id", notificationId)
+      .single();
+    expect(resolved.error).toBeNull();
+    expect(resolved.data?.resolved_at).toBeTruthy();
+    expect(resolved.data?.resolved_by_dietitian_id).toBe(state.dietitian.id);
 
     await resetSupabaseState();
   }, 30000);

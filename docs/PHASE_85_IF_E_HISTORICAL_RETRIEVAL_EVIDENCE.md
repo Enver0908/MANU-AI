@@ -44,3 +44,9 @@ Production pilot: `NO-GO`
 - No Stage 4B alert/notification product UX.
 - No risk-resolution / direct AI reactivation semantics (P85-IF-F).
 - No controlled off-channel AI chat intake (P85-IF-G).
+
+## Post-Closure Audit Update - 2026-07-11
+
+R2 remediation reopened the structured-update portion of P85-IF-E and found that the original baseline was not fully connected to real app state. The fix now derives menu, food-rule, client-form, and diet-plan revisions before prompt compilation, carries the target baseline through core `structured_record_update_required` signals, and resolves notifications only when the affected target panel advances. Supabase uses service-role-only RPC `p85_if_postclosure_resolve_structured_update_notification` with notification and target-row locks.
+
+Evidence: `docs/PHASE_85_IF_R2_RETRIEVAL_AUTHORITY_TEMPORAL_EVIDENCE.md` and `docs/PHASE_85_IF_REMEDIATION_POST_CLOSURE_AUDIT_EVIDENCE.md`. Verification passed targeted app/core tests, local Supabase reset, local RLS 30/30, full app 828 passed / 4 skipped, full core 234/234, build, channel replay, and production-scale rehearsal.

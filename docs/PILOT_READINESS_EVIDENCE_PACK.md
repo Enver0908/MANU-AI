@@ -34,6 +34,8 @@ P85-IF-R5 on 2026-07-10: operational trust/quarantine details are removed from c
 
 P85-IF-R6 on 2026-07-11: lifecycle/RLS re-closure persists Supabase P85-IF-I redaction, adds owner/admin tenant channel-binding revoke RPC/API with tenant automation rollback disabled, adds export leak detection, and blocks program closure pass on missing/skipped/timeout full verification evidence. Evidence is in `docs/PHASE_85_IF_R6_LIFECYCLE_RLS_RE_CLOSURE_EVIDENCE.md`. Verification passed: targeted lifecycle 14/14, local Supabase reset, local `npm run test:rls` 28/28, lint, production build, full app 825 passed / 4 skipped, channel replay, production-scale rehearsal, `git diff --check`, secret scan, and forbidden future-phase naming scan. Production pilot remains `NO-GO`; R-405 remains open.
 
+P85-IF post-closure audit on 2026-07-11: R1 message provenance tenant integrity, R2 structured retrieval baseline/resolution authority, R3 activation/inbound lock ordering, and R6 runtime export leak enforcement are fixed. Evidence is in `docs/PHASE_85_IF_REMEDIATION_POST_CLOSURE_AUDIT_EVIDENCE.md`, with dedicated R1/R2/R3 evidence documents. Verification passed targeted app/core tests, local Supabase reset, local RLS 30/30, lint, build, full app 828 passed / 4 skipped, core 234/234, channel replay, and production-scale rehearsal. Production pilot remains `NO-GO`; R-405 remains open.
+
 Phase 85 Stage 4A.3 Menu (2026-07-08): dashboard client menu tab now exposes four-format menu create/edit/activate/export with conflict review, activation hard-block on severe conflicts, and MANU-only export eligibility via existing menu plan/export routes. Stage 4A.4 was later implemented, so Stage 4A is complete. This does not approve production pilot, close launch gates, resolve R-405/R-406, or connect real provider/channel/monitoring/backup/secret-manager/real health-data paths.
 
 Phase 85 Stage 4A.2 Aktif Beslenme Plani (2026-07-08): dashboard client tab now exposes dense Phase 77D catalog tree selection with conflict review and existing food-rule profile save path. This does not approve production pilot, close launch gates, resolve R-405/R-406, or connect real provider/channel/monitoring/backup/secret-manager/real health-data paths.
@@ -595,3 +597,9 @@ Phase 84B rebuilt `/` as the SiriusAI marketing homepage with env-gated demo ent
 `https://siriusai.store` is now a sandbox VPS deployment with HTTPS and Stripe test webhook delivery. This evidence supports commercial workflow validation only. It confirms that test checkout can consume an invite, provision a tenant, activate entitlement, and write ledger entries.
 
 It does not provide production pilot approval evidence. The original post-payment customer onboarding/auth gap was closed for the hosted sandbox by Phase 84D-84J: magic-link login, tenant claim, owner membership/profile creation, Resend custom SMTP, and real dashboard access are verified. This does not change production pilot `NO-GO`.
+
+## P85-IF Remediation Post-Closure Evidence - 2026-07-11
+
+The P85-IF remediation plan has post-closure audit evidence in `docs/PHASE_85_IF_REMEDIATION_POST_CLOSURE_AUDIT_EVIDENCE.md`. The audit fixed R1 message-provenance tenant integrity, R2 structured retrieval baseline/resolution authority, R3 activation/inbound lock ordering, and R6 runtime export leak enforcement.
+
+Verification passed targeted app/core tests, local Supabase reset, local RLS 30/30, lint, build, full app 828 passed / 4 skipped, full core 234/234, channel replay, and unified production-scale rehearsal. This is local readiness evidence only. It does not approve production pilot launch, real health-data processing, real channels/providers, external monitoring, secret manager, backup provider, R-405 acceptance, or launch-gate closure.

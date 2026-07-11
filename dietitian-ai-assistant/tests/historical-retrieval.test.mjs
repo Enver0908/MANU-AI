@@ -1,10 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { compilePromptContext, CONTEXT_POLICY_V2 } from "../src/context-compiler.js";
 import {
-  compilePromptContext,
-  CONTEXT_POLICY_V2,
-} from "../src/context-compiler.js";
-import {
+  detectStructuredRecordUpdateSignals,
   isGenericGreeting,
   isRetrievalEvidencedDietitianMessage,
   retrieveHistoricalMessages,
@@ -206,4 +204,24 @@ test("compilePromptContext includes historical segments under policy v2", () => 
 
   assert.equal(compiled.contextManifest.contextPolicyVersion, "context-policy-v2");
   assert.ok(compiled.promptContext.segments.some((segment) => segment.type === "historical_message"));
+});
+
+test("structured update signals retain the target panel baseline revision", () => {
+  const signals = detectStructuredRecordUpdateSignals({
+    retrievedSources: [{
+      sourceId: "instruction-structured-1",
+      origin: "dietitian_manual",
+      body: "Menu kahvaltisini lor peyniri ile degistir.",
+      providerSentAt: "2026-05-22T10:00:00.000Z",
+      createdAt: "2026-05-22T10:00:00.000Z",
+    }],
+    structuredBaseline: {
+      menuPlanRevision: 7,
+      menuPlanUpdatedAt: "2026-05-22T09:00:00.000Z",
+    },
+  });
+
+  assert.equal(signals.length, 1);
+  assert.equal(signals[0].targetPanel, "menu");
+  assert.equal(signals[0].baselineRevision, 7);
 });

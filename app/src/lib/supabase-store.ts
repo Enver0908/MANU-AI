@@ -9,7 +9,6 @@ import {
   recordClientExportInState,
   removeClientInState,
 } from "./data-governance";
-import { resolveStructuredRecordUpdateNotificationInState } from "./phase-85-if-e-historical-retrieval";
 import { sanitizeClientScopedExportForClientFacing } from "./phase-77v-copilot-quality-workflow";
 import {
   buildClientCreateValidationState,
@@ -1984,23 +1983,15 @@ export async function resolveSupabaseStructuredRecordUpdateNotification(
   notificationId: string,
   context = demoTenantContext(),
 ) {
-  const state = await loadSupabaseState(context);
-  const next = resolveStructuredRecordUpdateNotificationInState(state, notificationId, context.dietitianId);
-  const notification = next.notifications.find((item) => item.id === notificationId);
-  if (!notification) throw new AppDomainError(404, "notification_not_found");
-
-  const { error } = await requireSupabase()
-    .from("notifications")
-    .update({
-      acknowledged_at: notification.acknowledgedAt,
-      resolved_at: notification.resolvedAt,
-      resolved_by_dietitian_id: notification.resolvedByDietitianId,
-    })
-    .eq("id", notificationId)
-    .eq("tenant_id", context.tenantId)
-    .is("resolved_at", null);
-  throwIfError(error);
-  await assertSupabaseNotificationExists(notificationId, context);
+  const { error } = await requireSupabase().rpc(
+    "p85_if_postclosure_resolve_structured_update_notification",
+    {
+      p_tenant_id: context.tenantId,
+      p_notification_id: notificationId,
+      p_dietitian_id: context.dietitianId,
+    },
+  );
+  if (error) throwControlledRpcError(error);
   return loadSupabaseState(context);
 }
 
@@ -3387,6 +3378,18 @@ function throwControlledRpcError(error: { message?: string }) {
   }
   if (message.includes("red_risk_lock_not_active_for_handoff")) {
     throw new AppDomainError(409, "red_risk_lock_not_active_for_handoff");
+  }
+  if (message.includes("notification_not_found")) {
+    throw new AppDomainError(404, "notification_not_found");
+  }
+  if (message.includes("structured_update_notification_not_resolvable")) {
+    throw new AppDomainError(409, "structured_update_notification_not_resolvable");
+  }
+  if (message.includes("structured_update_revision_pending")) {
+    throw new AppDomainError(409, "structured_update_revision_pending");
+  }
+  if (message.includes("structured_update_target_panel_invalid")) {
+    throw new AppDomainError(409, "structured_update_target_panel_invalid");
   }
   if (message.includes("context_intake_proposal_not_found")) {
     throw new AppDomainError(404, "context_intake_proposal_not_found");

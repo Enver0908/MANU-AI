@@ -202,6 +202,14 @@ export function detectP85IfIClientExportLeaks(exportData: Record<string, unknown
   };
 }
 
+export function assertP85IfIClientExportHasNoLeaks(exportData: Record<string, unknown>) {
+  const result = detectP85IfIClientExportLeaks(exportData);
+  if (!result.passed) {
+    throw new Error(`client_export_leak_detected:${result.failures.join(",")}`);
+  }
+  return exportData;
+}
+
 export function redactP85IfIClientScopedRecordsInState(state: ManuAppState, clientId: string): ManuAppState {
   const conversationIds = conversationIdsForClient(state, clientId);
   const messageIds = messageIdsForClient(state, clientId);

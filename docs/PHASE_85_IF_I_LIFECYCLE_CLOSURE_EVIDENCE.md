@@ -44,3 +44,9 @@ Next Phase 85 target: Stage 4B Uyari ve Bildirimler
 ## P85-IF program closure statement
 
 P85-IF-A through P85-IF-I are implemented. Stage 4B alert/notification product UX remains the next Phase 85 target. Production pilot remains `NO-GO`.
+
+## Post-Closure Audit Update - 2026-07-11
+
+The P85-IF remediation post-closure audit added runtime export enforcement that was missing from the earlier R6 closure: `buildClientScopedExport` now calls `assertP85IfIClientExportHasNoLeaks` before returning client-scoped exports. The audit also added R1 message-provenance tenant-composite migration coverage, R2 target-panel structured resolution, and R3 deterministic lock ordering.
+
+Evidence: `docs/PHASE_85_IF_REMEDIATION_POST_CLOSURE_AUDIT_EVIDENCE.md`, `docs/PHASE_85_IF_R1_PERSISTENCE_TENANT_INTEGRITY_EVIDENCE.md`, `docs/PHASE_85_IF_R2_RETRIEVAL_AUTHORITY_TEMPORAL_EVIDENCE.md`, and `docs/PHASE_85_IF_R3_ATOMIC_AI_ACTIVATION_RACE_EVIDENCE.md`. Local RLS now passes 30/30 for this post-closure baseline. Production pilot remains `NO-GO`; R-405 remains open.

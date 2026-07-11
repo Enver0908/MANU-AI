@@ -129,6 +129,7 @@ export function compilePromptContext({
       foodRuleUpdatedAt: capsule?.client?.foodRuleUpdatedAt ?? null,
       formRevision: capsule?.client?.formRevision ?? null,
       formUpdatedAt: capsule?.client?.formUpdatedAt ?? null,
+      dietPlanRevision: capsule?.client?.dietPlanRevision ?? null,
       dietPlanUpdatedAt: capsule?.client?.dietPlanUpdatedAt ?? null,
     },
   });

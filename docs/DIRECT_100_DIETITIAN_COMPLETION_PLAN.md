@@ -34,6 +34,8 @@ P85-IF-R5 remediation note (2026-07-10): operational trust/quarantine inspection
 
 P85-IF-R6 remediation note (2026-07-11): lifecycle/RLS re-closure persists Supabase P85-IF-I redaction, adds owner/admin tenant channel-binding revoke RPC/API with tenant automation rollback disabled, adds export leak detection, and blocks program closure pass on missing/skipped/timeout full verification evidence. Evidence: `docs/PHASE_85_IF_R6_LIFECYCLE_RLS_RE_CLOSURE_EVIDENCE.md`. Verification passed with targeted lifecycle 14/14, local Supabase reset, local RLS 28/28, lint, production build, full app 825 passed / 4 skipped, channel replay, production-scale rehearsal, `git diff --check`, secret scan, and forbidden future-phase naming scan. This does not change direct-pilot `NO-GO`, external gate status, R-405, or any real provider/channel/production-data path.
 
+P85-IF post-closure audit note (2026-07-11): R1 message provenance tenant integrity, R2 structured retrieval baseline/resolution authority, R3 activation/inbound lock ordering, and R6 runtime export leak enforcement are fixed. Evidence: `docs/PHASE_85_IF_REMEDIATION_POST_CLOSURE_AUDIT_EVIDENCE.md`. Verification passed targeted app/core tests, local Supabase reset, local RLS 30/30, lint, build, full app 828 passed / 4 skipped, core 234/234, channel replay, and production-scale rehearsal. This does not change direct-pilot `NO-GO`, external gate status, R-405, or any real provider/channel/production-data path.
+
 ## Fixed Product Laws
 These rules are non-negotiable and apply to every future phase:
 - The client must experience WhatsApp messages as coming from the dietitian, not from an AI system.
@@ -47,17 +49,17 @@ These rules are non-negotiable and apply to every future phase:
 - Autopilot is not globally enabled for all 5,000 clients by default. It is enabled only for selected qualified clients after all gates, monitoring, and rollback controls are ready.
 
 ## Current Baseline
-- Latest completed implementation phase: P85-IF-C secure ingress, ledger, routing, and quarantine engine complete (2026-07-10), after P85-IF-B trust-root/provenance data model foundation.
-- Next operator step: P85-IF-E full-history retrieval and prompt authority; Stage 4B resumes only after P85-IF-I closure; external production prerequisites remain open; no production GO.
+- Latest completed implementation phase: P85-IF post-closure audit and remediation baseline (2026-07-11), after P85-IF-A through P85-IF-I and R1-R6 remediation.
+- Next operator step: Phase 85 Stage 4B planning; external production prerequisites remain open; no production GO.
 - Primary open product risk: R-425 is mitigated in the hosted commercial sandbox path, but production launch gates remain open.
 - Latest roadmap rebaseline: Phase 77A manual source authority rebaseline spec (2026-06-10).
 - Detailed Phase 77 implementation plan: `docs/PHASE_77_MASTER_IMPLEMENTATION_PLAN.md`.
 - AI quality master plan: `docs/PHASE_77M_77Y_AI_QUALITY_MASTER_PLAN.md`.
-- Latest verification: Phase 83F hosted Supabase diagnostics passed targeted Phase 83F diagnostics tests 12/12, lint with two pre-existing warnings, and production build on 2026-07-02. Phase 83 final remediation passed targeted Phase 83 tests 64/64, full app suite 665 passed / 4 skipped, visual 16/16, and release verify core 225/225 + app 665 passed / 4 skipped on 2026-07-01; `npm run test:rls` skipped 21/21, so R-406 current re-run remains pending when local Supabase is unavailable.
+- Latest verification: P85-IF post-closure audit verification passed targeted app/core tests, local Supabase reset, local RLS 30/30, lint, build, full app 828 passed / 4 skipped, core 234/234, channel replay, and production-scale rehearsal on 2026-07-11.
 - Production pilot status: `NO-GO` (Phase 82 baseline `NO_GO_EXTERNAL_PREREQUISITES_OPEN`; Phase 83 does not change clinical production GO).
 - Phase 78 R-405 status: stable `next@latest` is `16.2.9` but still bundles nested `postcss@8.4.31`; no dependency files changed; R-405 and `dependency_audit_clearance` remain open.
 - Phase 80G R-405 hardening status: technical closure now requires safe stable patch path, dependency update evidence, and clean production audit; unknown production audit findings block closure; formal acceptance requires complete external acceptance metadata. No dependency files changed; R-405 and `dependency_audit_clearance` remain open.
-- Phase 80E/R-406 status: Phase 50/52 baseline local RLS mitigation remains valid; current post-76N/77AA-77AI/79/80/81/82/83 migration/RLS re-run is pending when local Supabase is unavailable.
+- Phase 80E/R-406 status: Phase 50/52 baseline local RLS mitigation remains valid, and the latest P85-IF post-closure local RLS run passed 30/30 on 2026-07-11. This remains local readiness evidence and does not authorize production pilot traffic.
 - Real WhatsApp, Gemini, monitoring, secret manager, and real client health data remain disconnected.
 - Existing usable foundations:
   - Client forms with prompt visibility.
@@ -1092,4 +1094,10 @@ The commercial sandbox path has reached VPS/domain/HTTPS/test-webhook validation
 
 The next product-completion dependency is Phase 84: build the real customer account/onboarding path after payment and replace the public demo-style entry with a professional SiriusAI public site and admin subdomain. Phase 84A (architecture freeze) is complete on 2026-07-02. Next sub-phase: 84B. Canonical spec: `docs/PHASE_84_COMMERCIAL_SAAS_RELAUNCH_AND_ONBOARDING_SPEC.md`.
 
-This remains a commercial/frontend/onboarding track only. It does not close legal/privacy, clinical, provider, channel, incident/DSAR, backup/restore, secret rotation, dependency, R-405, or current RLS evidence gates.
+This remains a commercial/frontend/onboarding track only. It does not close legal/privacy, clinical, provider, channel, incident/DSAR, backup/restore, secret rotation, dependency, R-405, or production authorization gates.
+
+## P85-IF Post-Closure Scale And Safety Addendum - 2026-07-11
+
+The direct 100-dietitian / 5,000-client path now has a cleaner P85-IF interstage baseline: message provenance is tenant-composite constrained, structured-update notifications resolve only after target-panel revision advancement, activation/inbound race protection uses deterministic lock ordering, and client exports run leak detection on the real export path.
+
+Verification passed the unified production-scale rehearsal with 5,000 expanded AI cases, full channel replay, 7/7 production-scale acceptance tests, release verification, local RLS 30/30, full app 828 passed / 4 skipped, and core 234/234. This strengthens local readiness evidence only. It does not close external legal/privacy, clinical, provider, channel, operations, dependency, R-405, or production approval gates.

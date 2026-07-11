@@ -3,7 +3,7 @@
 Date: 2026-07-10
 Canonical code: `P85-IF`
 Track: `P85-IF-A`, `P85-IF-B`, and `P85-IF-C`
-Status: P85-IF-A complete; P85-IF-B trust-root/provenance data model complete; P85-IF-C secure ingress/ledger/routing/quarantine complete; P85-IF-D complete transcript and human control complete; P85-IF-E full-history retrieval and prompt authority V2 complete; P85-IF-F risk resolution, AI reactivation, and concurrency complete with R3 remediation; P85-IF-G controlled off-channel AI chat intake complete with R4 remediation; P85-IF-H minimal operational visibility complete with R5 owner/admin operational access remediation; P85-IF-I lifecycle/RLS/closure complete with R6 evidence-based re-closure verified. Stage 4B may resume.
+Status: P85-IF-A complete; P85-IF-B trust-root/provenance data model complete; P85-IF-C secure ingress/ledger/routing/quarantine complete; P85-IF-D complete transcript and human control complete; P85-IF-E full-history retrieval and prompt authority V2 complete; P85-IF-F risk resolution, AI reactivation, and concurrency complete with R3 remediation; P85-IF-G controlled off-channel AI chat intake complete with R4 remediation; P85-IF-H minimal operational visibility complete with R5 owner/admin operational access remediation; P85-IF-I lifecycle/RLS/closure complete with R6 evidence-based re-closure verified; P85-IF post-closure audit complete on 2026-07-11. Stage 4B may resume.
 Placement: Phase 85 Stage 4A complete -> P85-IF -> Phase 85 Stage 4B.
 Production pilot: `NO-GO`.
 Deployment: none.
@@ -34,7 +34,7 @@ The following boundaries are fixed for all P85-IF tracks:
 - Real WhatsApp, Telegram, Gemini/provider, live billing, monitoring, backup, secret manager, and real health-data paths remain disconnected.
 - Production pilot remains `NO-GO`.
 - R-405 remains open unless independently remediated or externally accepted through the existing R-405 procedure.
-- R-406 current local Supabase/RLS evidence was refreshed for R5 on 2026-07-10 with local `npm run test:rls` passing 26/26; production pilot remains blocked by other open gates.
+- R-406 current local Supabase/RLS evidence was refreshed by the P85-IF post-closure audit on 2026-07-11 with local `npm run test:rls` passing 30/30; production pilot remains blocked by other open gates.
 
 R5 operational access remediation: trust-binding, actor-binding, channel-event, event-only revision, and inbound-quarantine inspection details must not travel through common app-state. Owner/admin inspection is served only by `GET /api/operational-foundation` behind `read_operational_foundation`, and select RLS for operational trust/quarantine tables is owner/admin only. Dietitians retain message provenance, human-control, risk activity, and context-intake workflow visibility without direct operational payload-digest/trust-root inspection.
 
@@ -493,3 +493,14 @@ P85-IF-D is complete when routed transcript persistence, human-control coordinat
 Evidence: `docs/PHASE_85_IF_D_TRANSCRIPT_HUMAN_CONTROL_EVIDENCE.md`.
 
 The next track is P85-IF-E: full-history retrieval and prompt authority.
+
+## 21. P85-IF Remediation Post-Closure Audit - 2026-07-11
+
+The P85-IF remediation sequence was audited after R1-R6 completion. Findings were resolved through append-only migrations, app/core fixes, and new evidence documents:
+
+- R1 message provenance now has tenant-composite constraints for conversation, dietitian author/approver, AI decision, source message, provider account binding, actor binding, and actor-binding ownership.
+- R2 structured-update authority now derives menu, food-rule, client-form, and diet-plan baselines from live app state and resolves only after the target panel revision advances.
+- R3 expected-conversation revision checks now follow the same deterministic client-before-conversation lock order as atomic AI activation.
+- R6 client export leak detection now runs inside `buildClientScopedExport`.
+
+Evidence: `docs/PHASE_85_IF_REMEDIATION_POST_CLOSURE_AUDIT_EVIDENCE.md`, `docs/PHASE_85_IF_R1_PERSISTENCE_TENANT_INTEGRITY_EVIDENCE.md`, `docs/PHASE_85_IF_R2_RETRIEVAL_AUTHORITY_TEMPORAL_EVIDENCE.md`, and `docs/PHASE_85_IF_R3_ATOMIC_AI_ACTIVATION_RACE_EVIDENCE.md`. Verification passed local RLS 30/30 and the full post-closure chain. Stage 4B remains next; production pilot remains `NO-GO`.

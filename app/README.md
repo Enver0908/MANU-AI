@@ -4,6 +4,8 @@
 
 2026-07-10: Phase 85 Stages 1-3 and Stage 4A are complete. The mandatory cross-cutting Phase 85 Interstage Foundation (`P85-IF`) is canonically planned in `../docs/PHASE_85_INTERSTAGE_TRUSTED_CLINICAL_COMMUNICATION_MEMORY_PLAN.md`; P85-IF-A through P85-IF-I and the approved remediation sequence are complete. Stage 4B may resume. Production pilot remains `NO-GO`; real provider/channel/health-data paths remain disconnected.
 
+2026-07-11 post-closure audit: R1 message provenance tenant integrity, R2 structured retrieval baseline/resolution authority, R3 activation/inbound lock ordering, and R6 runtime export leak enforcement are fixed and verified. Evidence: `../docs/PHASE_85_IF_REMEDIATION_POST_CLOSURE_AUDIT_EVIDENCE.md`. Verification passed targeted app/core tests, local Supabase reset, local RLS 30/30, lint, build, full app 828 passed / 4 skipped, core 234/234, channel replay, and production-scale rehearsal.
+
 2026-07-11 R6 remediation: P85-IF-I lifecycle/RLS re-closure now persists P85-IF-I redaction through Supabase removal/anonymization, adds owner/admin tenant binding revoke at `src/app/api/operational-foundation/revoke-channel-bindings/route.ts`, disables tenant channel automation rollback during revoke, adds export leak detection, and makes program closure evidence fail without explicit passed full verification inputs. Migration `20260710230000_phase_85_if_remediation_lifecycle_reclosure.sql` applied in local reset; verification passed with targeted lifecycle 14/14, local `npm run test:rls` 28/28, lint, production build, full app 825 passed / 4 skipped, channel replay, production-scale rehearsal, `git diff --check`, secret scan, and forbidden future-phase naming scan.
 
 2026-07-10 R5 remediation: P85-IF-H operational inspection details are no longer delivered in common app-state. Owner/admin inspection now uses `src/app/api/operational-foundation/route.ts` with `read_operational_foundation`; direct unauthorized API calls return 403. Migration `20260710220000_phase_85_if_remediation_operational_access_boundaries.sql` restricts select RLS for operational trust/quarantine tables to owner/admin while dietitian clinical workflow records remain visible. Local Supabase reset passed, targeted P85-IF-H/supabase-store passed 11/11, and local `npm run test:rls` passed 26/26.
@@ -92,7 +94,7 @@
 
 2026-07-02: Phase 84A froze the SiriusAI commercial SaaS relaunch spec in `../docs/PHASE_84_COMMERCIAL_SAAS_RELAUNCH_AND_ONBOARDING_SPEC.md`. Architecture locks public (`/`), customer (`/login`, `/onboarding`, `/dashboard`), and admin (`admin.siriusai.store` → `/admin`) surfaces. Sanitized VPS evidence: test checkout consumed invite, provisioned tenant, active entitlement, billing ledger entries. The original R-425 gap is superseded by Phase 84D-84J hosted sandbox verification.
 
-Production pilot remains `NO-GO`; R-405 remains open; R-406 current post-83 local Supabase/RLS re-run remains pending when Supabase is unavailable.
+Production pilot remains `NO-GO`; R-405 remains open. Latest local P85 post-closure Supabase/RLS evidence passed 30/30 on 2026-07-11, but this does not close external launch gates or authorize production traffic.
 
 ## Phase 83F Hosted Supabase Recovery Diagnostics
 
@@ -434,3 +436,14 @@ The app has been deployed to a Hetzner VPS for sandbox validation:
 Observed successful test payment path: invite was consumed, tenant was provisioned, active entitlement was created, and `checkout.session.completed` plus `invoice.paid` were written to the billing ledger.
 
 Phase 84D-84J later closed the hosted sandbox onboarding/email path with magic-link login, post-payment tenant claim, `tenant_memberships` creation, `dietitians` profile creation, admin subdomain support, and custom SMTP verification. Production pilot remains `NO-GO`. See `../docs/PHASE_84_COMMERCIAL_SAAS_RELAUNCH_AND_ONBOARDING_SPEC.md`.
+
+## Current P85-IF Post-Closure Baseline - 2026-07-11
+
+The app now includes the P85-IF remediation post-closure fixes:
+
+- Supabase message provenance tenant-composite constraints.
+- Structured update notifications resolve against menu, food-rule, client-form, or diet-plan target revisions instead of generic client context revision.
+- Atomic activation and inbound expected-revision checks share deterministic lock ordering.
+- Client-scoped exports run P85-IF leak detection before returning.
+
+Verification passed local Supabase reset, local RLS 30/30, full app 828 passed / 4 skipped, lint, production build, channel replay, and unified production-scale rehearsal. This remains local/mock gated work; real WhatsApp, Telegram, Gemini/provider, live billing, monitoring, backup, secret manager, and real health-data paths remain disconnected.

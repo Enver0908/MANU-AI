@@ -363,3 +363,9 @@ Phase 85 can close only when:
 ## Current Next Step
 
 Proceed to Stage 4B Uyari ve Bildirimler planning only after explicit user approval. Stage 4C, Stage 4D, Stage 5, Stage 6, and Stage 7 remain unplanned until each prior stage is closed.
+
+## P85-IF Interstage Baseline For Stage 4B - 2026-07-11
+
+Before Stage 4B planning resumes, P85-IF R1-R6 remediation has been post-closure audited and fixed. The stable notification/alert inputs now include tenant-safe message provenance, target-panel structured-update resolution, deterministic activation race protection, and runtime export leak enforcement. Evidence: `docs/PHASE_85_IF_REMEDIATION_POST_CLOSURE_AUDIT_EVIDENCE.md`.
+
+Stage 4B may plan the notification product experience on top of these contracts, but it must not reopen real providers/channels, live billing, monitoring, backup, secret-manager, or real health-data paths. Production pilot remains `NO-GO`; R-405 remains open.

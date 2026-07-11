@@ -201,6 +201,7 @@ export function detectStructuredRecordUpdateSignals({
       kind: "structured_record_update_required",
       targetPanel: "menu",
       sourceMessageId: newest.sourceId,
+      baselineRevision: structuredBaseline.menuPlanRevision,
       reason: "newer_dietitian_whatsapp_instruction",
     });
   }
@@ -209,6 +210,7 @@ export function detectStructuredRecordUpdateSignals({
       kind: "structured_record_update_required",
       targetPanel: "active_nutrition_plan",
       sourceMessageId: newest.sourceId,
+      baselineRevision: structuredBaseline.foodRuleRevision,
       reason: "newer_dietitian_whatsapp_instruction",
     });
   }
@@ -217,14 +219,20 @@ export function detectStructuredRecordUpdateSignals({
       kind: "structured_record_update_required",
       targetPanel: "client_form",
       sourceMessageId: newest.sourceId,
+      baselineRevision: structuredBaseline.formRevision,
       reason: "newer_dietitian_whatsapp_instruction",
     });
   }
-  if (structuredBaseline.dietPlanUpdatedAt && newestTime > Date.parse(structuredBaseline.dietPlanUpdatedAt)) {
+  if (
+    structuredBaseline.dietPlanRevision != null &&
+    structuredBaseline.dietPlanUpdatedAt &&
+    newestTime > Date.parse(structuredBaseline.dietPlanUpdatedAt)
+  ) {
     signals.push({
       kind: "structured_record_update_required",
       targetPanel: "diet_plan",
       sourceMessageId: newest.sourceId,
+      baselineRevision: structuredBaseline.dietPlanRevision,
       reason: "newer_dietitian_whatsapp_instruction",
     });
   }

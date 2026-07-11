@@ -3,6 +3,7 @@ import { buildClientScopedExport, anonymizeClientInState } from "./data-governan
 import { buildPhase74ExportPackage } from "./phase-74-data-lifecycle-policy";
 import { applyPhase79LifecycleRedactionContract } from "./phase-79e-lifecycle-redaction-evidence";
 import {
+  assertP85IfIClientExportHasNoLeaks,
   buildP85IfILifecycleClosureEvidence,
   detectP85IfIClientExportLeaks,
   evaluateP85IfIProgramClosureEvidence,
@@ -199,6 +200,15 @@ describe("phase-85-if-i lifecycle closure", () => {
     expect(exported.retrievalSourceReferences?.length).toBeGreaterThan(0);
     expect(exportExcludesTenantChannelBindings(exported)).toBe(true);
     expect(detectP85IfIClientExportLeaks(exported).passed).toBe(true);
+    expect(assertP85IfIClientExportHasNoLeaks(exported)).toBe(exported);
+  });
+
+  it("fails closed when the runtime export contains operational trust markers", () => {
+    expect(() => assertP85IfIClientExportHasNoLeaks({
+      clientId: "client-p85-if-i",
+      channelAccountBindings: [{ id: "binding-1" }],
+      payloadDigest: "must-not-export",
+    })).toThrowError(/client_export_leak_detected/);
   });
 
   it("includes interstage export files in phase 74 export package", () => {

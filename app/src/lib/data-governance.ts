@@ -3,6 +3,7 @@ import { redactClientContextUpdatesForAnonymization } from "./client-context-upd
 import { redactContextIntakeProposalsForAnonymization } from "./phase-85-if-g-context-intake";
 import {
   appendP85IfIRecordsToClientExport,
+  assertP85IfIClientExportHasNoLeaks,
   redactP85IfIClientScopedRecordsInState,
 } from "./phase-85-if-i-lifecycle-closure";
 import { redactStructuredFoodRuleAnswers } from "./phase-76n-food-rule-lifecycle";
@@ -116,7 +117,7 @@ export function buildClientScopedExport(state: ManuAppState, clientId: string): 
   const handoffs = state.handoffCases.filter((handoff) => handoff.clientId === client.id);
   const handoffIds = new Set(handoffs.map((handoff) => handoff.id));
 
-  return appendP85IfIRecordsToClientExport(
+  const exportData = appendP85IfIRecordsToClientExport(
     {
       tenantId: state.tenant.id,
       clientId: client.id,
@@ -151,6 +152,8 @@ export function buildClientScopedExport(state: ManuAppState, clientId: string): 
     },
     state,
   );
+  assertP85IfIClientExportHasNoLeaks(exportData);
+  return exportData;
 }
 
 export function anonymizeClientInState(state: ManuAppState, clientId: string): ManuAppState {

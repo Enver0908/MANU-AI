@@ -23,6 +23,7 @@ Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized reference
 - P85-IF-R4 on 2026-07-10 hardens the context-intake Supabase workflow with service-role-only atomic confirm/recheck/apply/reject RPCs, wrong-client `404`, stale proposal `409`, structured revision evidence, double-confirmation enforcement, and transactional draft invalidation on apply. Evidence is in `docs/PHASE_85_IF_R4_CONTEXT_INTAKE_REMEDIATION_EVIDENCE.md`; local Supabase RLS passed 25/25. This checkpoint does not close any launch gate or approve production pilot.
 - P85-IF-R5 on 2026-07-10 hardens P85-IF-H operational access boundaries. Common app-state redacts operational trust/quarantine inspection details, `GET /api/operational-foundation` is owner/admin-only, unauthorized direct calls return 403, and migration `20260710220000_phase_85_if_remediation_operational_access_boundaries.sql` restricts select RLS for operational trust/quarantine tables to owner/admin. Evidence is in `docs/PHASE_85_IF_R5_OPERATIONAL_ACCESS_BOUNDARIES_EVIDENCE.md`; local Supabase RLS passed 26/26. This checkpoint does not close any launch gate or approve production pilot.
 - P85-IF-R6 on 2026-07-11 hardens P85-IF-I lifecycle/RLS closure. Supabase redaction is persisted through removal/anonymization RPC, tenant channel-binding revoke is owner/admin API + service-role RPC backed, export leak detection is explicit, and program closure evidence cannot pass on skipped/timeout/missing verification. Evidence is in `docs/PHASE_85_IF_R6_LIFECYCLE_RLS_RE_CLOSURE_EVIDENCE.md`; verification passed with targeted lifecycle 14/14, local Supabase reset, local RLS 28/28, lint, production build, full app 825 passed / 4 skipped, channel replay, production-scale rehearsal, `git diff --check`, secret scan, and forbidden future-phase naming scan. This checkpoint does not close any launch gate or approve production pilot.
+- P85-IF post-closure audit on 2026-07-11 fixes R1 message-provenance tenant integrity, R2 structured retrieval baseline/resolution authority, R3 activation/inbound lock ordering, and R6 runtime export leak enforcement. Evidence is in `docs/PHASE_85_IF_REMEDIATION_POST_CLOSURE_AUDIT_EVIDENCE.md`; local Supabase/RLS passed 30/30 and the full verification chain passed. This checkpoint does not close any launch gate or approve production pilot.
 - Phase 85 Interstage Foundation P85-IF-I on 2026-07-10 implements lifecycle export/redaction, unified lifecycle evidence, tenant channel-binding revoke lifecycle, RLS integration coverage for interstage tables, and program closure evidence; evidence is in `docs/PHASE_85_IF_I_LIFECYCLE_CLOSURE_EVIDENCE.md`. Targeted 12/12, app 818 passed / 4 skipped, lint, production build, `npm run release:verify`, `npm run rehearse:channel:replay`, and `npm run rehearse:production-scale:79g` passed. `npm run test:rls` skipped 22/22. Production pilot remains `NO-GO`.
 - Phase 85 Interstage Foundation P85-IF-D on 2026-07-10 implements complete transcript and human-control coordination; evidence is in `docs/PHASE_85_IF_D_TRANSCRIPT_HUMAN_CONTROL_EVIDENCE.md`. Targeted 7/7, updated ledger 11/11, app 787 passed / 4 skipped, core 225/225, lint, production build, and full mock channel replay passed. The live webhook remains unchanged. Production pilot remains `NO-GO`.
 - Phase 85 Stage 4A.3 on 2026-07-08 implemented the dashboard Menu with four template types, conflict review, activation hard-block, and MANU-only export against existing menu plan/export routes. This does not close any launch gate, approve production pilot, resolve R-405/R-406, or connect real clinical/provider/channel/monitoring/backup/secret-manager paths. Production pilot remains `NO-GO`.
@@ -191,6 +192,8 @@ Recorded on 2026-06-30 from `app/src/lib/phase-80e-current-rls-evidence.ts`:
 
 RLS evidence does not close any launch gate by itself.
 
+Post-closure update on 2026-07-11: local Supabase reset and `npm run test:rls` passed 30/30 for the P85-IF post-closure baseline. This supersedes the current local RLS evidence gap for the audited P85 scope, but it still does not close any external launch gate or approve production pilot traffic.
+
 ## Phase 80F Final Readiness Decision
 
 Recorded on 2026-06-30 from `app/src/lib/phase-80f-final-readiness-decision.ts`:
@@ -247,7 +250,7 @@ Phase 77M-77Y gate interpretation: `PHASE_77M_MASTER_REBASELINE_AND_SPEC.md` and
 - Channel packet: `PRODUCTION_PILOT_CHANNEL_POLICY_REVIEW_PACKET.md`, WhatsApp feasibility checklist, Telegram bot/privacy checklist, opt-in/out and service-window procedure, identity quarantine and idempotency evidence.
 - Operations packet: `PRODUCTION_PILOT_INCIDENT_DSAR_REVIEW_PACKET.md`, `PRODUCTION_PILOT_BACKUP_RESTORE_REVIEW_PACKET.md`, `PRODUCTION_PILOT_SECRET_ROTATION_REVIEW_PACKET.md`, incident owner placeholder, DSAR/deletion procedure placeholder, backup/restore drill placeholder, secret inventory and rotation owner placeholder.
 - Dependency packet: `PRODUCTION_PILOT_DEPENDENCY_AUDIT_CLEARANCE_PACKET.md`, latest `npm run release:verify` output, R-405 risk record, stable Next.js/PostCSS tracking note.
-- RLS evidence packet: latest Phase 50/52 baseline `npm run test:rls` output from local Supabase showing 1 file and 19/19 tests passed, plus Phase 79 current RLS evidence status and Phase 80E current re-run evidence. Current post-76N/77AA-77AI/79/80 re-run remains pending when local Supabase is unavailable.
+- RLS evidence packet: latest Phase 50/52 baseline `npm run test:rls` output from local Supabase showing 1 file and 19/19 tests passed, Phase 79/80 historical current-evidence notes, and the 2026-07-11 P85-IF post-closure local RLS pass at 30/30. This remains internal readiness evidence and does not close launch gates by itself.
 - Approval intake packet: sanitized external approval artifact references tracked in `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md`, then evaluated through the Phase 64 structured evidence engine.
 
 ## Non-Approvals
@@ -261,7 +264,7 @@ Phase 77M-77Y gate interpretation: `PHASE_77M_MASTER_REBASELINE_AND_SPEC.md` and
 - This dossier does not approve sending dietitian context updates to a real Gemini or external LLM provider.
 - This dossier does not approve production client-messaging email, push, monitoring, analytics, or secret manager vendors beyond the limited Phase 84J hosted-sandbox auth-email SMTP verification.
 - This dossier does not resolve or accept R-405.
-- This dossier records Phase 50/52 R-406 baseline mitigation and Phase 79 current re-run pending status, but it does not approve production pilot launch.
+- This dossier records Phase 50/52 R-406 baseline mitigation and the 2026-07-11 P85-IF post-closure local RLS pass, but it does not approve production pilot launch.
 
 ## Commercial Sandbox Deployment Note - 2026-07-02
 
@@ -270,3 +273,9 @@ The Hetzner VPS, `siriusai.store` HTTPS setup, Stripe test webhook, and Phase 85
 Phase 84B public website on 2026-07-02 rebuilt the SiriusAI marketing homepage. Productization evidence only; the original R-425 gap is superseded by Phase 84D-84J hosted sandbox verification.
 
 Phase 84A-84J are complete for the hosted commercial sandbox path, including contact leads, customer magic-link login, post-payment claim, admin subdomain, Resend custom SMTP, fragment-session bridge, and real inbox magic-link dashboard verification. This mitigates R-425 in the hosted sandbox path only. Next work is external launch-gate/R-405/current RLS and production-operations prerequisite closure. Canonical spec: `docs/PHASE_84_COMMERCIAL_SAAS_RELAUNCH_AND_ONBOARDING_SPEC.md`.
+
+## P85-IF Remediation Post-Closure Gate Note - 2026-07-11
+
+P85-IF post-closure local evidence is complete: R1 tenant-composite message provenance, R2 target-panel structured resolution, R3 deterministic activation/inbound lock ordering, and R6 runtime export leak enforcement are implemented and verified. Local Supabase/RLS passed 30/30 for this baseline, and the full verification chain passed.
+
+This updates the internal evidence packet, not the gate decision. All production-pilot gates remain open until external approval artifacts are supplied and evaluated; R-405 remains open; production pilot remains `NO-GO`.

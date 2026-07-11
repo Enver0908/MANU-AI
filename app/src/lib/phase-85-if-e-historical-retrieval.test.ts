@@ -7,6 +7,7 @@ import {
 } from "./phase-85-if-e-historical-retrieval";
 import { createInitialState } from "./seed-data";
 import { mapSupabaseSearchRowToRetrievalCandidate } from "./phase-85-if-e-supabase-search";
+import { buildP85IfEStructuredRevisionContext } from "./simulator";
 import type { MessageRecord } from "./types";
 
 function buildMessage(overrides: Partial<MessageRecord> = {}): MessageRecord {
@@ -27,6 +28,43 @@ function buildMessage(overrides: Partial<MessageRecord> = {}): MessageRecord {
 }
 
 describe("phase-85-if-e historical retrieval", () => {
+  it("derives target-specific structured revisions from application state", () => {
+    const state = createInitialState();
+    const client = state.clients.find((item) => item.id === "client-mert")!;
+    const context = buildP85IfEStructuredRevisionContext(client, {
+      ...state,
+      clientMenuPlans: [{
+        id: "menu-context-1",
+        tenantId: state.tenant.id,
+        clientId: client.id,
+        dietitianId: state.dietitian.id,
+        templateType: "day_by_day_detailed",
+        status: "active",
+        version: 1,
+        revision: 9,
+        title: "Menu",
+        effectiveDate: null,
+        mealSlots: [],
+        preferredFoods: [],
+        avoidFoods: [],
+        dietitianNotes: "",
+        clientFacingNotes: "",
+        exportVisible: true,
+        migratedFromLegacyDietPlan: false,
+        catalogVersion: "test",
+        catalogSourceSha256: "test",
+        catalogRecordSetSha256: "test",
+        createdAt: "2026-05-22T08:00:00.000Z",
+        updatedAt: "2026-05-22T09:00:00.000Z",
+        activatedAt: "2026-05-22T09:00:00.000Z",
+      }],
+    });
+
+    expect(context.menuPlanRevision).toBe(9);
+    expect(context.menuPlanUpdatedAt).toBe("2026-05-22T09:00:00.000Z");
+    expect(context.dietPlanRevision).toBe(client.contextRevision);
+  });
+
   it("maps message records into retrieval candidates with legacy eligibility", () => {
     const candidate = mapMessageRecordToRetrievalCandidate(
       buildMessage({ contentStatus: "revoked", retrievalEligibility: undefined }),
@@ -83,6 +121,7 @@ describe("phase-85-if-e historical retrieval", () => {
             kind: "structured_record_update_required",
             targetPanel: "menu",
             sourceMessageId: "message-1",
+            baselineRevision: 3,
             reason: "newer_dietitian_whatsapp_instruction",
           },
         ],
@@ -112,6 +151,7 @@ describe("phase-85-if-e historical retrieval", () => {
             kind: "structured_record_update_required",
             targetPanel: "menu",
             sourceMessageId: "message-1",
+            baselineRevision: 3,
             reason: "newer_dietitian_whatsapp_instruction",
           },
         ],
@@ -120,7 +160,7 @@ describe("phase-85-if-e historical retrieval", () => {
     expect(deduped).toHaveLength(2);
   });
 
-  it("requires a post-notification context revision before structured notification closure", () => {
+  it("requires the target panel revision to advance before structured notification closure", () => {
     const state = createInitialState();
     const notification = {
       id: "structured-update-1",
@@ -135,14 +175,42 @@ describe("phase-85-if-e historical retrieval", () => {
       dedupeKey: "p85-if-e:structured:client-mert:menu:message-1",
       sourceMessageId: "message-1",
       targetPanel: "menu",
-      baselineRevision: 1,
+      baselineRevision: 3,
       resolvedAt: null,
       resolvedByDietitianId: null,
       createdAt: "2026-05-22T12:00:00.000Z",
     };
 
     expect(() => resolveStructuredRecordUpdateNotificationInState(
-      { ...state, notifications: [notification] },
+      {
+        ...state,
+        clientMenuPlans: [{
+          id: "menu-1",
+          tenantId: state.tenant.id,
+          clientId: "client-mert",
+          dietitianId: state.dietitian.id,
+          templateType: "day_by_day_detailed",
+          status: "active",
+          version: 1,
+          revision: 3,
+          title: "Menu",
+          effectiveDate: null,
+          mealSlots: [],
+          preferredFoods: [],
+          avoidFoods: [],
+          dietitianNotes: "",
+          clientFacingNotes: "",
+          exportVisible: true,
+          migratedFromLegacyDietPlan: false,
+          catalogVersion: "test",
+          catalogSourceSha256: "test",
+          catalogRecordSetSha256: "test",
+          createdAt: "2026-05-22T10:00:00.000Z",
+          updatedAt: "2026-05-22T10:00:00.000Z",
+          activatedAt: "2026-05-22T10:00:00.000Z",
+        }],
+        notifications: [notification],
+      },
       notification.id,
       state.dietitian.id,
     )).toThrowError(/structured_update_revision_pending/);
@@ -150,14 +218,71 @@ describe("phase-85-if-e historical retrieval", () => {
     const resolved = resolveStructuredRecordUpdateNotificationInState(
       {
         ...state,
-        clients: state.clients.map((client) =>
-          client.id === "client-mert" ? { ...client, contextRevision: 2 } : client,
-        ),
+        clientMenuPlans: [{
+          id: "menu-1",
+          tenantId: state.tenant.id,
+          clientId: "client-mert",
+          dietitianId: state.dietitian.id,
+          templateType: "day_by_day_detailed",
+          status: "active",
+          version: 1,
+          revision: 4,
+          title: "Menu",
+          effectiveDate: null,
+          mealSlots: [],
+          preferredFoods: [],
+          avoidFoods: [],
+          dietitianNotes: "",
+          clientFacingNotes: "",
+          exportVisible: true,
+          migratedFromLegacyDietPlan: false,
+          catalogVersion: "test",
+          catalogSourceSha256: "test",
+          catalogRecordSetSha256: "test",
+          createdAt: "2026-05-22T10:00:00.000Z",
+          updatedAt: "2026-05-22T11:00:00.000Z",
+          activatedAt: "2026-05-22T10:00:00.000Z",
+        }],
         notifications: [notification],
       },
       notification.id,
       state.dietitian.id,
     );
     expect(resolved.notifications[0]?.resolvedAt).toBeTruthy();
+  });
+
+  it("does not close a menu notification when only client context revision advances", () => {
+    const state = createInitialState();
+    const notification = {
+      id: "structured-update-context-only",
+      tenantId: state.tenant.id,
+      type: "system" as const,
+      entityType: "client",
+      entityId: "client-mert",
+      title: "Structured record update required",
+      body: "Update required",
+      read: false,
+      acknowledgedAt: null,
+      dedupeKey: "p85-if-e:structured:client-mert:menu:message-1",
+      sourceMessageId: "message-1",
+      targetPanel: "menu",
+      baselineRevision: 2,
+      resolvedAt: null,
+      resolvedByDietitianId: null,
+      createdAt: "2026-05-22T12:00:00.000Z",
+    };
+
+    expect(() => resolveStructuredRecordUpdateNotificationInState(
+      {
+        ...state,
+        clients: state.clients.map((client) =>
+          client.id === "client-mert" ? { ...client, contextRevision: client.contextRevision + 10 } : client,
+        ),
+        clientMenuPlans: [],
+        notifications: [notification],
+      },
+      notification.id,
+      state.dietitian.id,
+    )).toThrowError(/structured_update_revision_pending/);
   });
 });

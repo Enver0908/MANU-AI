@@ -25,6 +25,7 @@ export type StructuredRecordUpdateSignal = {
   kind: "structured_record_update_required";
   targetPanel: "menu" | "active_nutrition_plan" | "client_form" | "diet_plan";
   sourceMessageId: string;
+  baselineRevision: number;
   reason: string;
 };
 
@@ -68,7 +69,6 @@ export function buildStructuredRecordUpdateNotification(
   clientId: string,
   signal: StructuredRecordUpdateSignal,
   createdAt: string,
-  baselineRevision: number | null = null,
 ): NotificationRecord {
   const panelLabel = structuredPanelLabel(signal.targetPanel);
   return {
@@ -84,7 +84,7 @@ export function buildStructuredRecordUpdateNotification(
     dedupeKey: `p85-if-e:structured:${clientId}:${signal.targetPanel}:${signal.sourceMessageId}`,
     sourceMessageId: signal.sourceMessageId,
     targetPanel: signal.targetPanel,
-    baselineRevision,
+    baselineRevision: signal.baselineRevision,
     resolvedAt: null,
     resolvedByDietitianId: null,
     createdAt,
@@ -127,7 +127,6 @@ export function appendP85IfEHistoricalRetrievalNotifications(input: {
   clientId: string;
   contextManifest?: Record<string, unknown> | null;
   createdAt: string;
-  baselineRevision?: number | null;
 }): NotificationRecord[] {
   const { structuredRecordUpdates, ambiguousCompetingSources } = extractP85IfEContextManifestSignals(
     input.contextManifest,
@@ -140,7 +139,6 @@ export function appendP85IfEHistoricalRetrievalNotifications(input: {
       input.clientId,
       signal,
       input.createdAt,
-      input.baselineRevision ?? null,
     );
     const alreadyOpen = next.some(
       (notification) => notification.dedupeKey === candidate.dedupeKey && notification.resolvedAt == null,
@@ -165,9 +163,12 @@ export function resolveStructuredRecordUpdateNotificationInState(
   if (!notification.dedupeKey?.startsWith("p85-if-e:structured:") || notification.resolvedAt) {
     throw new AppDomainError(409, "structured_update_notification_not_resolvable");
   }
-  const client = state.clients.find((item) => item.id === notification.entityId);
-  if (!client) throw new AppDomainError(404, "client_not_found");
-  if (notification.baselineRevision == null || client.contextRevision <= notification.baselineRevision) {
+  const currentTargetRevision = resolveStructuredTargetRevision(
+    state,
+    notification.entityId,
+    notification.targetPanel,
+  );
+  if (notification.baselineRevision == null || currentTargetRevision <= notification.baselineRevision) {
     throw new AppDomainError(409, "structured_update_revision_pending");
   }
 
@@ -179,6 +180,42 @@ export function resolveStructuredRecordUpdateNotificationInState(
         : item,
     ),
   };
+}
+
+export function resolveStructuredTargetRevision(
+  state: ManuAppState,
+  clientId: string,
+  targetPanel: string | null | undefined,
+) {
+  const client = state.clients.find((item) => item.id === clientId);
+  if (!client) throw new AppDomainError(404, "client_not_found");
+
+  if (targetPanel === "menu") {
+    return maxRevision(state.clientMenuPlans.filter((plan) => plan.clientId === clientId).map((plan) => plan.revision));
+  }
+  if (targetPanel === "active_nutrition_plan") {
+    return maxRevision(
+      state.clientFoodRuleProfiles.filter((profile) => profile.clientId === clientId).map((profile) => profile.revision),
+    );
+  }
+  if (targetPanel === "client_form") {
+    return maxRevision(
+      state.clientFormResponses
+        .filter((response) => response.clientId === clientId)
+        .map((response) => timestampRevision(response.updatedAt)),
+    );
+  }
+  if (targetPanel === "diet_plan") return client.contextRevision;
+  throw new AppDomainError(409, "structured_update_target_panel_invalid");
+}
+
+function maxRevision(revisions: number[]) {
+  return revisions.length > 0 ? Math.max(...revisions) : 0;
+}
+
+function timestampRevision(value: string) {
+  const timestamp = Date.parse(value);
+  return Number.isFinite(timestamp) ? Math.floor(timestamp / 1000) : 0;
 }
 
 function structuredPanelLabel(targetPanel: StructuredRecordUpdateSignal["targetPanel"]) {

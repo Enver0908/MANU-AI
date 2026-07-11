@@ -38,3 +38,9 @@ Status: complete; full lifecycle/RLS re-closure evidence verified
 ## Closure Decision
 
 P85-IF-R6 is closed. The P85-IF remediation sequence is verified and Stage 4B planning may resume. Production pilot remains `NO-GO`; R-405 remains open.
+
+## Post-Closure Audit Addendum - 2026-07-11
+
+The post-closure architecture audit found one additional R6 issue: export leak detection was implemented and tested, but the normal client export builder did not invoke it. `buildClientScopedExport` now calls `assertP85IfIClientExportHasNoLeaks` before returning export data. The lifecycle test suite covers both the pass and fail-closed leak-detection paths.
+
+The same audit also closed R1, R2, and R3 follow-up findings through append-only migrations and targeted app/core/RLS tests. Evidence is consolidated in `docs/PHASE_85_IF_REMEDIATION_POST_CLOSURE_AUDIT_EVIDENCE.md`. Latest local RLS/integration evidence for the post-closure baseline passed 30/30.

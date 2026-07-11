@@ -43,3 +43,9 @@ Production pilot: `NO-GO`
 - No Stage 4B alert/notification product UX.
 - No off-channel AI chat intake (P85-IF-G).
 - No lifecycle export/redaction closure (P85-IF-I).
+
+## Post-Closure Audit Update - 2026-07-11
+
+R3 remediation was re-audited for activation/inbound concurrency. Atomic activation already required expected conversation and client-context revisions, but the audit found a lock-order inversion between activation and inbound expected-conversation checks. Append-only migration `20260711202000_phase_85_if_postclosure_r3_lock_order.sql` now locks affected clients before conversations in deterministic order, matching activation.
+
+Evidence: `docs/PHASE_85_IF_R3_ATOMIC_AI_ACTIVATION_RACE_EVIDENCE.md` and `docs/PHASE_85_IF_REMEDIATION_POST_CLOSURE_AUDIT_EVIDENCE.md`. Local RLS/integration passed 30/30 with activation versus inbound, red-risk, and verified human-echo race coverage.

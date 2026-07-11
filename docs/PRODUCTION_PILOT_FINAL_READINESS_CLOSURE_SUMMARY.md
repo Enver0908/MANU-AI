@@ -343,3 +343,9 @@ Commercial sandbox deployment reached HTTPS/domain/test-webhook validation on `h
 Phase 84A-84J later completed the hosted commercial sandbox relaunch/onboarding path: SiriusAI public site, contact lead capture, customer magic-link login, post-payment tenant claim, admin subdomain, Resend custom SMTP, fragment-session bridge, and real inbox magic-link dashboard verification.
 
 This does not alter final readiness: production pilot remains `NO-GO`. Next work is external production prerequisite closure: launch-gate evidence, R-405 technical resolution or formal acceptance, current RLS evidence, and production operations approvals. Canonical commercial spec: `docs/PHASE_84_COMMERCIAL_SAAS_RELAUNCH_AND_ONBOARDING_SPEC.md`.
+
+## P85-IF Remediation Post-Closure Readiness Note - 2026-07-11
+
+The latest repo-local P85-IF remediation baseline passed post-closure audit and verification. Evidence: `docs/PHASE_85_IF_REMEDIATION_POST_CLOSURE_AUDIT_EVIDENCE.md`. Local Supabase reset and local RLS passed 30/30; full app passed 828 / 4 skipped; core passed 234/234; lint, build, channel replay, and unified production-scale rehearsal passed.
+
+Final readiness remains `NO-GO`. This evidence does not supply external legal/privacy, clinical, provider, channel, operations, backup/restore, secret-rotation, dependency, R-405, or production authorization approvals.

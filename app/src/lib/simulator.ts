@@ -365,7 +365,33 @@ function withPromptContext(client: ClientRecord, state: ManuAppState) {
     ...client,
     clientFormSummary: buildClientFormSummary(state, client.id),
     contextUpdates: buildClientContextUpdateSummary(state, client.id),
+    ...buildP85IfEStructuredRevisionContext(client, state),
   };
+}
+
+export function buildP85IfEStructuredRevisionContext(client: ClientRecord, state: ManuAppState) {
+  const menuPlan = latestByRevision(state.clientMenuPlans.filter((plan) => plan.clientId === client.id));
+  const foodRuleProfile = latestByRevision(
+    state.clientFoodRuleProfiles.filter((profile) => profile.clientId === client.id),
+  );
+  const formResponse = [...state.clientFormResponses]
+    .filter((response) => response.clientId === client.id)
+    .sort((left, right) => Date.parse(right.updatedAt) - Date.parse(left.updatedAt))[0];
+
+  return {
+    menuPlanRevision: menuPlan?.revision ?? null,
+    menuPlanUpdatedAt: menuPlan?.updatedAt ?? null,
+    foodRuleRevision: foodRuleProfile?.revision ?? null,
+    foodRuleUpdatedAt: foodRuleProfile?.updatedAt ?? null,
+    formRevision: formResponse ? Math.floor(Date.parse(formResponse.updatedAt) / 1000) : null,
+    formUpdatedAt: formResponse?.updatedAt ?? null,
+    dietPlanRevision: client.contextRevision,
+    dietPlanUpdatedAt: client.createdAt,
+  };
+}
+
+function latestByRevision<T extends { revision: number }>(records: T[]) {
+  return [...records].sort((left, right) => right.revision - left.revision)[0];
 }
 
 export function updateClientInState(
@@ -1550,7 +1576,6 @@ function applyP85IfEHistoricalRetrievalSideEffects(ctx: SimulationAppendContext)
     clientId: ctx.client.id,
     contextManifest: ctx.coreResult.contextManifest,
     createdAt: ctx.now,
-    baselineRevision: ctx.client.contextRevision,
   });
 }
 
