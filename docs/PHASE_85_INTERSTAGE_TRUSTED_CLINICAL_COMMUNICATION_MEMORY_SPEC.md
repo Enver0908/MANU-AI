@@ -3,7 +3,7 @@
 Date: 2026-07-10
 Canonical code: `P85-IF`
 Track: `P85-IF-A`, `P85-IF-B`, and `P85-IF-C`
-Status: P85-IF-A complete; P85-IF-B trust-root/provenance data model complete; P85-IF-C secure ingress/ledger/routing/quarantine complete; P85-IF-D complete transcript and human control complete; P85-IF-E full-history retrieval and prompt authority V2 complete; P85-IF-F risk resolution, AI reactivation, and concurrency complete with R3 remediation; P85-IF-G controlled off-channel AI chat intake complete with R4 remediation; P85-IF-H minimal operational visibility complete with R5 owner/admin operational access remediation; P85-IF-I lifecycle/RLS/closure complete. P85-IF is closed; Stage 4B is next after the approved remediation sequence.
+Status: P85-IF-A complete; P85-IF-B trust-root/provenance data model complete; P85-IF-C secure ingress/ledger/routing/quarantine complete; P85-IF-D complete transcript and human control complete; P85-IF-E full-history retrieval and prompt authority V2 complete; P85-IF-F risk resolution, AI reactivation, and concurrency complete with R3 remediation; P85-IF-G controlled off-channel AI chat intake complete with R4 remediation; P85-IF-H minimal operational visibility complete with R5 owner/admin operational access remediation; P85-IF-I lifecycle/RLS/closure complete with R6 evidence-based re-closure verified. Stage 4B may resume.
 Placement: Phase 85 Stage 4A complete -> P85-IF -> Phase 85 Stage 4B.
 Production pilot: `NO-GO`.
 Deployment: none.
@@ -37,6 +37,8 @@ The following boundaries are fixed for all P85-IF tracks:
 - R-406 current local Supabase/RLS evidence was refreshed for R5 on 2026-07-10 with local `npm run test:rls` passing 26/26; production pilot remains blocked by other open gates.
 
 R5 operational access remediation: trust-binding, actor-binding, channel-event, event-only revision, and inbound-quarantine inspection details must not travel through common app-state. Owner/admin inspection is served only by `GET /api/operational-foundation` behind `read_operational_foundation`, and select RLS for operational trust/quarantine tables is owner/admin only. Dietitians retain message provenance, human-control, risk activity, and context-intake workflow visibility without direct operational payload-digest/trust-root inspection.
+
+R6 lifecycle/RLS re-closure: Supabase client removal/anonymization must persist P85-IF-I redaction for provenance, revisions, sessions, risk events, context-intake source text, quarantine identifiers, and retrieval manifests. Tenant channel-binding revoke must be owner/admin controlled and backed by a service-role RPC that revokes account and actor bindings transactionally while disabling tenant channel automation rollback. Program closure evidence must fail on missing, skipped, failed, or timed-out full-suite/RLS/replay/scale/build/lifecycle evidence.
 
 ## 3. Current Runtime Baseline
 

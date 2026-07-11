@@ -3,6 +3,8 @@
 Date: 2026-07-10
 Track: P85-IF-I
 Status: complete
+
+R6 remediation update, 2026-07-11: lifecycle/RLS re-closure is implemented and verified in `docs/PHASE_85_IF_R6_LIFECYCLE_RLS_RE_CLOSURE_EVIDENCE.md`. Supabase removal/anonymization now persists P85-IF-I redaction records, tenant channel-binding revoke is owner/admin API + service-role RPC backed, export leak detection is explicit, and program closure evidence no longer returns fixed success without full verification inputs. R6 verification passed targeted lifecycle 14/14, local Supabase reset, local RLS 28/28, lint, production build, full app 825 passed / 4 skipped, channel replay, production-scale rehearsal, `git diff --check`, secret scan, and forbidden future-phase naming scan.
 Next Phase 85 target: Stage 4B Uyari ve Bildirimler
 
 ## Scope delivered
@@ -23,7 +25,7 @@ Next Phase 85 target: Stage 4B Uyari ve Bildirimler
 
 - Client export includes interstage evidence where client-scoped; tenant account/actor bindings stay out of client export.
 - Anonymization/deletion redacts provider IDs, session links, revision digests, retrieval manifests, and proposal source text; audit retains minimized metadata only.
-- Local Supabase absence documents R-406 as pending and does not count as RLS closure.
+- Local Supabase absence in the original P85-IF-I run did not count as RLS closure; R6 later re-ran local Supabase/RLS evidence successfully.
 - Production pilot remains `NO-GO`; R-405 remains open; live providers/channels/health-data paths remain disconnected.
 
 ## Verification

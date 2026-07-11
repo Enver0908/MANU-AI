@@ -32,6 +32,8 @@ P85-IF-R4 remediation note (2026-07-10): context-intake Supabase confirm/recheck
 
 P85-IF-R5 remediation note (2026-07-10): operational trust/quarantine inspection details are removed from common app-state and restricted to owner/admin through `GET /api/operational-foundation`, `read_operational_foundation`, and owner/admin-only select RLS. Evidence: `docs/PHASE_85_IF_R5_OPERATIONAL_ACCESS_BOUNDARIES_EVIDENCE.md`. Local RLS passed 26/26. This does not change direct-pilot `NO-GO`, external gate status, R-405, or any real provider/channel/production-data path.
 
+P85-IF-R6 remediation note (2026-07-11): lifecycle/RLS re-closure persists Supabase P85-IF-I redaction, adds owner/admin tenant channel-binding revoke RPC/API with tenant automation rollback disabled, adds export leak detection, and blocks program closure pass on missing/skipped/timeout full verification evidence. Evidence: `docs/PHASE_85_IF_R6_LIFECYCLE_RLS_RE_CLOSURE_EVIDENCE.md`. Verification passed with targeted lifecycle 14/14, local Supabase reset, local RLS 28/28, lint, production build, full app 825 passed / 4 skipped, channel replay, production-scale rehearsal, `git diff --check`, secret scan, and forbidden future-phase naming scan. This does not change direct-pilot `NO-GO`, external gate status, R-405, or any real provider/channel/production-data path.
+
 ## Fixed Product Laws
 These rules are non-negotiable and apply to every future phase:
 - The client must experience WhatsApp messages as coming from the dietitian, not from an AI system.

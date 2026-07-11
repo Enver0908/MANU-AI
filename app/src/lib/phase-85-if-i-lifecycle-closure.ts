@@ -59,6 +59,20 @@ export type P85IfILifecycleClosureEvidence = {
   failures: string[];
 };
 
+export type P85IfIClosureCheckStatus = "pass" | "fail" | "skipped" | "timeout";
+
+export type P85IfIProgramClosureVerificationInput = {
+  interstageTrackResults: Partial<Record<`P85-IF-${"A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I"}`, P85IfIClosureCheckStatus>>;
+  targetedTests: P85IfIClosureCheckStatus;
+  fullAppSuite: P85IfIClosureCheckStatus;
+  rlsSuite: P85IfIClosureCheckStatus;
+  channelReplay: P85IfIClosureCheckStatus;
+  productionScaleRehearsal: P85IfIClosureCheckStatus;
+  productionBuild: P85IfIClosureCheckStatus;
+  lifecycleRoundTrip: P85IfIClosureCheckStatus;
+  exportLeakDetector: P85IfIClosureCheckStatus;
+};
+
 export type P85IfIProgramClosureEvidence = {
   version: string;
   status: "pass" | "fail";
@@ -167,6 +181,25 @@ export function appendP85IfIRecordsToClientExport(
 
 export function exportExcludesTenantChannelBindings(exportData: Record<string, unknown>) {
   return !("channelAccountBindings" in exportData) && !("channelActorBindings" in exportData);
+}
+
+export function detectP85IfIClientExportLeaks(exportData: Record<string, unknown>) {
+  const failures: string[] = [];
+  if (!exportExcludesTenantChannelBindings(exportData)) {
+    failures.push("tenant_channel_bindings_leaked");
+  }
+
+  const serialized = JSON.stringify(exportData);
+  for (const marker of ["payloadDigest", "payload_digest", "providerAccountId", "provider_account_id"]) {
+    if (serialized.includes(marker)) {
+      failures.push(`operational_marker_leaked:${marker}`);
+    }
+  }
+
+  return {
+    passed: failures.length === 0,
+    failures,
+  };
 }
 
 export function redactP85IfIClientScopedRecordsInState(state: ManuAppState, clientId: string): ManuAppState {
@@ -416,32 +449,63 @@ export function buildP85IfILifecycleClosureEvidence(state: ManuAppState, clientI
   };
 }
 
-export function evaluateP85IfIProgramClosureEvidence(options?: {
-  localSupabaseAvailable?: boolean;
-}): P85IfIProgramClosureEvidence {
+export function evaluateP85IfIProgramClosureEvidence(
+  verification?: P85IfIProgramClosureVerificationInput,
+): P85IfIProgramClosureEvidence {
   const failures: string[] = [];
-  const localSupabaseAvailable = options?.localSupabaseAvailable ?? false;
+  const requiredTracks = [
+    "P85-IF-A",
+    "P85-IF-B",
+    "P85-IF-C",
+    "P85-IF-D",
+    "P85-IF-E",
+    "P85-IF-F",
+    "P85-IF-G",
+    "P85-IF-H",
+    "P85-IF-I",
+  ] as const;
+
+  if (!verification) {
+    failures.push("program_closure_verification_missing");
+  }
+
+  const interstageTracksComplete = requiredTracks.filter(
+    (track) => verification?.interstageTrackResults[track] === "pass",
+  );
+
+  if (verification) {
+    for (const track of requiredTracks) {
+      if (verification.interstageTrackResults[track] !== "pass") {
+        failures.push(`${track.toLowerCase()}_not_verified`);
+      }
+    }
+
+    for (const [key, status] of Object.entries({
+      targetedTests: verification.targetedTests,
+      fullAppSuite: verification.fullAppSuite,
+      rlsSuite: verification.rlsSuite,
+      channelReplay: verification.channelReplay,
+      productionScaleRehearsal: verification.productionScaleRehearsal,
+      productionBuild: verification.productionBuild,
+      lifecycleRoundTrip: verification.lifecycleRoundTrip,
+      exportLeakDetector: verification.exportLeakDetector,
+    })) {
+      if (status !== "pass") {
+        failures.push(`${key}_${status}`);
+      }
+    }
+  }
 
   return {
     version: PHASE_85_IF_I_LIFECYCLE_CLOSURE_VERSION,
     status: failures.length === 0 ? "pass" : "fail",
-    interstageTracksComplete: [
-      "P85-IF-A",
-      "P85-IF-B",
-      "P85-IF-C",
-      "P85-IF-D",
-      "P85-IF-E",
-      "P85-IF-F",
-      "P85-IF-G",
-      "P85-IF-H",
-      "P85-IF-I",
-    ],
+    interstageTracksComplete,
     riskRegisterUpdated: true,
     exportExtensionVersion: PHASE_85_IF_I_EXPORT_EXTENSION_VERSION,
-    rlsCoverageDeclared: true,
+    rlsCoverageDeclared: verification?.rlsSuite === "pass",
     productionPilotNoGo: true,
     r405Open: true,
-    r406PendingWithoutLocalSupabase: !localSupabaseAvailable,
+    r406PendingWithoutLocalSupabase: verification?.rlsSuite !== "pass",
     failures,
   };
 }

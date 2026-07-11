@@ -4,6 +4,7 @@ import { buildPhase74ExportPackage } from "./phase-74-data-lifecycle-policy";
 import { applyPhase79LifecycleRedactionContract } from "./phase-79e-lifecycle-redaction-evidence";
 import {
   buildP85IfILifecycleClosureEvidence,
+  detectP85IfIClientExportLeaks,
   evaluateP85IfIProgramClosureEvidence,
   exportExcludesTenantChannelBindings,
   revokeTenantChannelBindingsInState,
@@ -197,6 +198,7 @@ describe("phase-85-if-i lifecycle closure", () => {
     expect(exported.channelMessageRevisions).toHaveLength(1);
     expect(exported.retrievalSourceReferences?.length).toBeGreaterThan(0);
     expect(exportExcludesTenantChannelBindings(exported)).toBe(true);
+    expect(detectP85IfIClientExportLeaks(exported).passed).toBe(true);
   });
 
   it("includes interstage export files in phase 74 export package", () => {
@@ -240,11 +242,64 @@ describe("phase-85-if-i lifecycle closure", () => {
     expect(buildClientScopedExport(revoked, "client-mert").channelAccountBindings).toBeUndefined();
   });
 
-  it("records program closure readiness with production pilot NO-GO and R-406 pending without local Supabase", () => {
-    const closure = evaluateP85IfIProgramClosureEvidence({ localSupabaseAvailable: false });
+  it("does not close program evidence without explicit full verification inputs", () => {
+    const closure = evaluateP85IfIProgramClosureEvidence();
+    expect(closure.status).toBe("fail");
+    expect(closure.failures).toContain("program_closure_verification_missing");
+    expect(closure.r406PendingWithoutLocalSupabase).toBe(true);
+  });
+
+  it("records program closure readiness only with passed full verification evidence", () => {
+    const closure = evaluateP85IfIProgramClosureEvidence({
+      interstageTrackResults: {
+        "P85-IF-A": "pass",
+        "P85-IF-B": "pass",
+        "P85-IF-C": "pass",
+        "P85-IF-D": "pass",
+        "P85-IF-E": "pass",
+        "P85-IF-F": "pass",
+        "P85-IF-G": "pass",
+        "P85-IF-H": "pass",
+        "P85-IF-I": "pass",
+      },
+      targetedTests: "pass",
+      fullAppSuite: "pass",
+      rlsSuite: "pass",
+      channelReplay: "pass",
+      productionScaleRehearsal: "pass",
+      productionBuild: "pass",
+      lifecycleRoundTrip: "pass",
+      exportLeakDetector: "pass",
+    });
     expect(closure.status).toBe("pass");
     expect(closure.productionPilotNoGo).toBe(true);
-    expect(closure.r406PendingWithoutLocalSupabase).toBe(true);
+    expect(closure.r406PendingWithoutLocalSupabase).toBe(false);
     expect(closure.interstageTracksComplete).toContain("P85-IF-I");
+  });
+
+  it("fails program closure when RLS is skipped or production-scale rehearsal times out", () => {
+    const closure = evaluateP85IfIProgramClosureEvidence({
+      interstageTrackResults: {
+        "P85-IF-A": "pass",
+        "P85-IF-B": "pass",
+        "P85-IF-C": "pass",
+        "P85-IF-D": "pass",
+        "P85-IF-E": "pass",
+        "P85-IF-F": "pass",
+        "P85-IF-G": "pass",
+        "P85-IF-H": "pass",
+        "P85-IF-I": "pass",
+      },
+      targetedTests: "pass",
+      fullAppSuite: "pass",
+      rlsSuite: "skipped",
+      channelReplay: "pass",
+      productionScaleRehearsal: "timeout",
+      productionBuild: "pass",
+      lifecycleRoundTrip: "pass",
+      exportLeakDetector: "pass",
+    });
+    expect(closure.status).toBe("fail");
+    expect(closure.failures).toEqual(expect.arrayContaining(["rlsSuite_skipped", "productionScaleRehearsal_timeout"]));
   });
 });

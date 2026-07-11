@@ -2,7 +2,7 @@
 
 Date: 2026-07-10
 Canonical code: `P85-IF`
-Status: Planning complete; P85-IF-A through P85-IF-I complete; R5 operational access remediation complete; approved remediation sequence continues before Stage 4B resumes.
+Status: Planning complete; P85-IF-A through P85-IF-I complete; R6 lifecycle/RLS re-closure verified; Stage 4B may resume.
 Placement: Phase 85 Stage 4A complete -> P85-IF -> Phase 85 Stage 4B.
 Production pilot: `NO-GO`.
 Deployment: none.
@@ -83,6 +83,8 @@ flowchart TD
 | P85-IF-I | Lifecycle, RLS, export, evidence, verification, closure | Complete |
 
 R5 remediation note, 2026-07-10: P85-IF-H operational visibility now has a hard API/RLS boundary. Common app-state redacts trust-binding, actor-binding, channel-event, event-only revision, and inbound-quarantine inspection details. Owner/admin inspection is retrieved only through `GET /api/operational-foundation` with `read_operational_foundation`; direct unauthorized access returns 403. Migration `20260710220000_phase_85_if_remediation_operational_access_boundaries.sql` restricts select RLS for the operational trust/quarantine tables to owner/admin. Evidence: `docs/PHASE_85_IF_R5_OPERATIONAL_ACCESS_BOUNDARIES_EVIDENCE.md`.
+
+R6 remediation note, 2026-07-11: P85-IF-I lifecycle/RLS re-closure now persists Supabase removal/anonymization redaction for P85-IF records, adds owner/admin tenant channel-binding revoke RPC/API with tenant automation rollback disabled, adds export leak detection, and requires explicit full verification inputs for program closure evidence. Verification passed with targeted lifecycle 14/14, local Supabase reset, local RLS 28/28, lint, production build, full app 825 passed / 4 skipped, channel replay, production-scale rehearsal, `git diff --check`, secret scan, and forbidden future-phase naming scan. Evidence: `docs/PHASE_85_IF_R6_LIFECYCLE_RLS_RE_CLOSURE_EVIDENCE.md`.
 
 ## 5. P85-IF-A - Canonical Contract And Threat Model
 

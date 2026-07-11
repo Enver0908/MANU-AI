@@ -62,6 +62,7 @@ import {
   buildOperationalFoundationInspectionDto,
   type OperationalFoundationInspectionDto,
 } from "./phase-85-if-h-operational-visibility";
+import { revokeTenantChannelBindingsInState } from "./phase-85-if-i-lifecycle-closure";
 import type { CreateClientContextUpdateInput } from "./client-context-updates";
 import type { ApplyClientUpdateProposalInput, CreateClientUpdateProposalInput } from "./client-update-proposals";
 import type { SaveClientFoodRuleProfileV2Input } from "./phase-77e-client-food-rule-profile";
@@ -784,6 +785,10 @@ export async function loadSupabaseState(context = demoTenantContext()) {
 export async function loadSupabaseOperationalFoundationInspection(
   context = demoTenantContext(),
 ): Promise<OperationalFoundationInspectionDto> {
+  return buildOperationalFoundationInspectionDto(await loadSupabaseOperationalFoundationState(context));
+}
+
+async function loadSupabaseOperationalFoundationState(context = demoTenantContext()): Promise<ManuAppState> {
   const supabase = requireSupabase();
   const [
     inboundQuarantinesResult,
@@ -819,7 +824,7 @@ export async function loadSupabaseOperationalFoundationInspection(
     channelAdapterRollback: mapChannelAdapterRollbackControls(channelAdapterRollbackResult.data),
   };
 
-  return buildOperationalFoundationInspectionDto(state);
+  return state as ManuAppState;
 }
 
 export async function loadSupabaseWindowedDashboardPayload(
@@ -1713,6 +1718,13 @@ export async function setSupabaseChannelAdapterRollback(
   return loadSupabaseState(context);
 }
 
+export async function revokeSupabaseTenantChannelBindings(context = demoTenantContext()) {
+  const before = await loadSupabaseOperationalFoundationOperationState(context);
+  const after = revokeTenantChannelBindingsInState(before, context.tenantId, context.dietitianId);
+  await commitStateDeltaRpc(requireSupabase(), "p85_if_r6_revoke_tenant_channel_bindings", before, after);
+  return loadSupabaseOperationalFoundationInspection(context);
+}
+
 async function persistSupabaseClientRemovalLifecycle(
   before: ManuAppState,
   after: ManuAppState,
@@ -1789,6 +1801,17 @@ async function persistSupabaseClientRemovalLifecycle(
   }
 
   return loadSupabaseState(context);
+}
+
+async function loadSupabaseOperationalFoundationOperationState(context = demoTenantContext()) {
+  const state = await loadSupabaseState({ ...context, role: "owner" });
+  const operationalState = await loadSupabaseOperationalFoundationState(context);
+  return {
+    ...state,
+    channelAccountBindings: operationalState.channelAccountBindings,
+    channelActorBindings: operationalState.channelActorBindings,
+    channelAdapterRollback: operationalState.channelAdapterRollback,
+  };
 }
 
 export async function addSupabaseManualReply(clientId: string, body: string, context = demoTenantContext()) {
@@ -2759,6 +2782,8 @@ function buildStateDeltaPayload(
   const beforeQuarantines = new Set(before.inboundQuarantines.map((item) => item.id));
   const beforeChannelDeliveries = new Set(before.channelDeliveries.map((item) => item.id));
   const beforeChannelEventsById = new Map(before.channelEvents.map((item) => [item.id, item]));
+  const beforeChannelAccountBindingsById = new Map(before.channelAccountBindings.map((item) => [item.id, item]));
+  const beforeChannelActorBindingsById = new Map(before.channelActorBindings.map((item) => [item.id, item]));
   const beforeChannelMessageRevisionsById = new Map(before.channelMessageRevisions.map((item) => [item.id, item]));
   const beforeHumanControlSessionsById = new Map(before.humanControlSessions.map((item) => [item.id, item]));
   const beforeRiskActivityEventsById = new Map(before.riskActivityEvents.map((item) => [item.id, item]));
@@ -2767,6 +2792,8 @@ function buildStateDeltaPayload(
   const beforeFormResponsesById = new Map(before.clientFormResponses.map((item) => [item.id, item]));
   const beforeContextUpdatesById = new Map(before.clientContextUpdates.map((item) => [item.id, item]));
   const beforeProposalsById = new Map(before.clientUpdateProposals.map((item) => [item.id, item]));
+  const beforeContextIntakeProposalsById = new Map(before.contextIntakeProposals.map((item) => [item.id, item]));
+  const beforeQuarantinesById = new Map(before.inboundQuarantines.map((item) => [item.id, item]));
   const beforeNotificationsById = new Map(before.notifications.map((item) => [item.id, item]));
   const changedClients = after.clients.filter((client) => {
     const beforeClient = beforeClientsById.get(client.id);
@@ -2800,6 +2827,22 @@ function buildStateDeltaPayload(
     const beforeNotification = beforeNotificationsById.get(notification.id);
     return beforeNotification && JSON.stringify(beforeNotification) !== JSON.stringify(notification);
   });
+  const changedContextIntakeProposals = after.contextIntakeProposals.filter((proposal) => {
+    const beforeProposal = beforeContextIntakeProposalsById.get(proposal.id);
+    return beforeProposal && JSON.stringify(beforeProposal) !== JSON.stringify(proposal);
+  });
+  const changedInboundQuarantines = after.inboundQuarantines.filter((quarantine) => {
+    const beforeQuarantine = beforeQuarantinesById.get(quarantine.id);
+    return beforeQuarantine && JSON.stringify(beforeQuarantine) !== JSON.stringify(quarantine);
+  });
+  const changedChannelAccountBindings = after.channelAccountBindings.filter((binding) => {
+    const beforeBinding = beforeChannelAccountBindingsById.get(binding.id);
+    return beforeBinding && JSON.stringify(beforeBinding) !== JSON.stringify(binding);
+  });
+  const changedChannelActorBindings = after.channelActorBindings.filter((binding) => {
+    const beforeBinding = beforeChannelActorBindingsById.get(binding.id);
+    return beforeBinding && JSON.stringify(beforeBinding) !== JSON.stringify(binding);
+  });
 
   return {
     expectedClientRevisions: Object.fromEntries(
@@ -2829,6 +2872,9 @@ function buildStateDeltaPayload(
     inboundQuarantines: after.inboundQuarantines
       .filter((item) => !beforeQuarantines.has(item.id))
       .map(serializeInboundQuarantineForRpc),
+    inboundQuarantineUpdates: changedInboundQuarantines.map(serializeInboundQuarantineForRpc),
+    channelAccountBindingUpdates: changedChannelAccountBindings.map(serializeChannelAccountBindingForRpc),
+    channelActorBindingUpdates: changedChannelActorBindings.map(serializeChannelActorBindingForRpc),
     channelDeliveries: after.channelDeliveries
       .filter((item) => !beforeChannelDeliveries.has(item.id))
       .map(serializeChannelDeliveryForRpc),
@@ -2865,6 +2911,7 @@ function buildStateDeltaPayload(
       .map(serializeClientContextUpdateForRpc),
     clientContextUpdateUpdates: changedContextUpdates.map(serializeClientContextUpdateUpdateForRpc),
     clientUpdateProposals: changedProposals.map(serializeClientUpdateProposalForRpc),
+    contextIntakeProposalUpdates: changedContextIntakeProposals.map(serializeContextIntakeProposalForRpc),
     notificationUpdates: changedNotifications.map(serializeNotificationUpdateForRpc),
     formResponses: after.clientFormResponses
       .filter((item) => {
@@ -3141,6 +3188,26 @@ function serializeChannelEventForRpc(event: ChannelEventRecord) {
   };
 }
 
+function serializeChannelAccountBindingForRpc(binding: ChannelAccountBindingRecord) {
+  return {
+    id: binding.id,
+    lifecycleStatus: binding.lifecycleStatus,
+    revokedAt: binding.revokedAt,
+    revokedByDietitianId: binding.revokedByDietitianId,
+    updatedAt: binding.updatedAt,
+  };
+}
+
+function serializeChannelActorBindingForRpc(binding: ChannelActorBindingRecord) {
+  return {
+    id: binding.id,
+    accountBindingId: binding.accountBindingId,
+    revokedAt: binding.revokedAt,
+    revokedByDietitianId: binding.revokedByDietitianId,
+    validTo: binding.validTo,
+  };
+}
+
 function serializeChannelMessageRevisionForRpc(revision: ChannelMessageRevisionRecord) {
   return {
     id: revision.id,
@@ -3192,6 +3259,19 @@ function serializeRiskActivityEventForRpc(event: RiskActivityEventRecord) {
     aiDecisionId: event.aiDecisionId,
     metadata: event.metadata,
     createdAt: event.createdAt,
+  };
+}
+
+function serializeContextIntakeProposalForRpc(proposal: ContextIntakeProposalRecord) {
+  return {
+    id: proposal.id,
+    sourceText: proposal.sourceText,
+    rawSourceReference: proposal.rawSourceReference,
+    title: proposal.title,
+    summary: proposal.summary,
+    details: proposal.details,
+    status: proposal.status,
+    updatedAt: proposal.updatedAt,
   };
 }
 

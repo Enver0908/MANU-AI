@@ -86,6 +86,7 @@ const TEST_P85_CHANNEL_ACTOR_BINDING_ID = "00000000-0000-4000-8000-000000000954"
 const OTHER_P85_CHANNEL_ACTOR_BINDING_ID = "00000000-0000-4000-8000-000000000955";
 const TEST_P85_CHANNEL_EVENT_ID = "00000000-0000-4000-8000-000000000956";
 const OTHER_P85_CHANNEL_EVENT_ID = "00000000-0000-4000-8000-000000000957";
+const TEST_P85_CHANNEL_MESSAGE_REVISION_ID = "00000000-0000-4000-8000-000000000958";
 const TEST_P85_RISK_ACTIVITY_ID = "00000000-0000-4000-8000-000000000952";
 const PASSWORD = "manu-rls-test-password";
 
@@ -901,6 +902,184 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     await resetSupabaseState();
   }, 30000);
 
+  it("persists P85-IF-I lifecycle redaction fields through Supabase remove and reload", async () => {
+    const lifecycle = await admin.rpc("commit_client_removal_lifecycle", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_payload: {
+        messageUpdates: [
+          {
+            id: TEST_MESSAGE_ID,
+            body: "REDACTED_BY_PHASE74_POLICY",
+            providerEventId: null,
+            providerMessageId: null,
+            providerAccountBindingId: null,
+            actorBindingId: null,
+          },
+        ],
+        channelMessageRevisions: [
+          {
+            id: TEST_P85_CHANNEL_MESSAGE_REVISION_ID,
+            channelEventId: null,
+            providerEventId: null,
+            priorBodyDigest: "REDACTED_BY_PHASE74_POLICY",
+            currentBodyDigest: "REDACTED_BY_PHASE74_POLICY",
+          },
+        ],
+        humanControlSessions: [
+          {
+            id: TEST_P85_HUMAN_CONTROL_SESSION_ID,
+            openedByMessageId: null,
+            latestHumanMessageId: null,
+            linkedYellowHoldMessageId: null,
+            linkedHandoffId: null,
+          },
+        ],
+        riskActivityEvents: [
+          {
+            id: TEST_P85_RISK_ACTIVITY_ID,
+            sourceMessageId: null,
+            handoffId: null,
+            aiDecisionId: null,
+            humanControlSessionId: null,
+            metadata: { minimized: true, reason: "client_data_anonymized" },
+          },
+        ],
+        contextIntakeProposalUpdates: [
+          {
+            id: TEST_P85_CONTEXT_INTAKE_ID,
+            sourceText: null,
+            rawSourceReference: null,
+            title: "REDACTED_BY_PHASE74_POLICY",
+            summary: "REDACTED_BY_PHASE74_POLICY",
+            details: "",
+          },
+        ],
+      },
+    });
+    expect(lifecycle.error).toBeNull();
+
+    const message = await admin
+      .from("messages")
+      .select("body, provider_event_id, provider_message_id, provider_account_binding_id, actor_binding_id")
+      .eq("id", TEST_MESSAGE_ID)
+      .single();
+    expect(message.error).toBeNull();
+    expect(message.data).toMatchObject({
+      body: "REDACTED_BY_PHASE74_POLICY",
+      provider_event_id: null,
+      provider_message_id: null,
+      provider_account_binding_id: null,
+      actor_binding_id: null,
+    });
+
+    const session = await admin
+      .from("human_control_sessions")
+      .select("opened_by_message_id, latest_human_message_id, linked_yellow_hold_message_id, linked_handoff_id")
+      .eq("id", TEST_P85_HUMAN_CONTROL_SESSION_ID)
+      .single();
+    expect(session.error).toBeNull();
+    expect(session.data).toMatchObject({
+      opened_by_message_id: null,
+      latest_human_message_id: null,
+      linked_yellow_hold_message_id: null,
+      linked_handoff_id: null,
+    });
+
+    const proposal = await admin
+      .from("context_intake_proposals")
+      .select("source_text, raw_source_reference, title")
+      .eq("id", TEST_P85_CONTEXT_INTAKE_ID)
+      .single();
+    expect(proposal.error).toBeNull();
+    expect(proposal.data).toMatchObject({
+      source_text: null,
+      raw_source_reference: null,
+      title: "REDACTED_BY_PHASE74_POLICY",
+    });
+
+    const revision = await admin
+      .from("channel_message_revisions")
+      .select("channel_event_id, provider_event_id, prior_body_digest, current_body_digest")
+      .eq("id", TEST_P85_CHANNEL_MESSAGE_REVISION_ID)
+      .single();
+    expect(revision.error).toBeNull();
+    expect(revision.data).toMatchObject({
+      channel_event_id: null,
+      provider_event_id: null,
+      prior_body_digest: "REDACTED_BY_PHASE74_POLICY",
+      current_body_digest: "REDACTED_BY_PHASE74_POLICY",
+    });
+  });
+
+  it("persists tenant channel-binding revoke with rollback automation disabled", async () => {
+    const revokedAt = "2026-07-11T00:00:00.000Z";
+    const revoke = await admin.rpc("p85_if_r6_revoke_tenant_channel_bindings", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_payload: {
+        channelAccountBindingUpdates: [
+          {
+            id: TEST_P85_CHANNEL_ACCOUNT_BINDING_ID,
+            lifecycleStatus: "revoked",
+            revokedAt,
+            revokedByDietitianId: TEST_DIETITIAN_ID,
+            updatedAt: revokedAt,
+          },
+        ],
+        channelActorBindingUpdates: [
+          {
+            id: TEST_P85_CHANNEL_ACTOR_BINDING_ID,
+            revokedAt,
+            revokedByDietitianId: TEST_DIETITIAN_ID,
+          },
+        ],
+        channelAdapterRollbackControls: {
+          globalChannelAutomationDisabled: true,
+          tenantChannelAutomationDisabled: true,
+          disabledDietitianIds: [],
+          disabledClientIds: [],
+        },
+        auditEvents: [
+          {
+            id: "00000000-0000-4000-8000-000000000959",
+            eventType: "tenant_channel_bindings_revoked",
+            entityType: "tenant",
+            entityId: TEST_TENANT_ID,
+            metadata: { minimized: true },
+            createdAt: revokedAt,
+          },
+        ],
+      },
+    });
+    expect(revoke.error).toBeNull();
+
+    const account = await admin
+      .from("channel_account_bindings")
+      .select("lifecycle_status, revoked_at, revoked_by_dietitian_id")
+      .eq("id", TEST_P85_CHANNEL_ACCOUNT_BINDING_ID)
+      .single();
+    expect(account.error).toBeNull();
+    expect(account.data?.lifecycle_status).toBe("revoked");
+    expect(account.data?.revoked_at).not.toBeNull();
+    expect(account.data?.revoked_by_dietitian_id).toBe(TEST_DIETITIAN_ID);
+
+    const actor = await admin
+      .from("channel_actor_bindings")
+      .select("revoked_at, revoked_by_dietitian_id")
+      .eq("id", TEST_P85_CHANNEL_ACTOR_BINDING_ID)
+      .single();
+    expect(actor.error).toBeNull();
+    expect(actor.data?.revoked_at).not.toBeNull();
+    expect(actor.data?.revoked_by_dietitian_id).toBe(TEST_DIETITIAN_ID);
+
+    const rollback = await admin
+      .from("channel_adapter_rollback_controls")
+      .select("tenant_channel_automation_disabled")
+      .eq("tenant_id", TEST_TENANT_ID)
+      .single();
+    expect(rollback.error).toBeNull();
+    expect(rollback.data?.tenant_channel_automation_disabled).toBe(true);
+  });
+
   it("stores yellow risk hold state and refreshes the active draft through transactional RPC", async () => {
     await resetSupabaseState();
     const state = await loadSupabaseState();
@@ -1483,6 +1662,8 @@ async function seedTenants(
         sender: "client",
         origin: "client_inbound",
         body: "Visible risk message",
+        provider_event_id: "rls-visible-provider-event",
+        provider_message_id: "rls-visible-provider-message",
       },
       {
         id: OTHER_MESSAGE_ID,
@@ -1853,6 +2034,21 @@ async function seedTenants(
     ]),
   );
   await checked(
+    admin.from("channel_message_revisions").insert({
+      id: TEST_P85_CHANNEL_MESSAGE_REVISION_ID,
+      tenant_id: TEST_TENANT_ID,
+      message_id: TEST_MESSAGE_ID,
+      channel_event_id: TEST_P85_CHANNEL_EVENT_ID,
+      provider_event_id: "rls-visible-provider-event",
+      revision_action: "edit",
+      prior_content_status: "available",
+      current_content_status: "edited",
+      prior_body_digest: "rls-prior-digest",
+      current_body_digest: "rls-current-digest",
+      revision_sequence: 1,
+    }),
+  );
+  await checked(
     admin.from("human_control_sessions").insert([
       {
         id: TEST_P85_HUMAN_CONTROL_SESSION_ID,
@@ -1863,6 +2059,10 @@ async function seedTenants(
         status: "active",
         previous_ai_status: "active",
         previous_ai_mode: "copilot",
+        linked_handoff_id: TEST_HANDOFF_CASE_ID,
+        linked_yellow_hold_message_id: TEST_MESSAGE_ID,
+        opened_by_message_id: TEST_MESSAGE_ID,
+        latest_human_message_id: TEST_MESSAGE_ID,
       },
       {
         id: OTHER_P85_HUMAN_CONTROL_SESSION_ID,
@@ -1885,6 +2085,9 @@ async function seedTenants(
         conversation_id: TEST_CONVERSATION_ID,
         human_control_session_id: TEST_P85_HUMAN_CONTROL_SESSION_ID,
         event_type: "ai_paused",
+        source_message_id: TEST_MESSAGE_ID,
+        handoff_id: TEST_HANDOFF_CASE_ID,
+        ai_decision_id: TEST_AI_DECISION_ID,
         metadata: { minimized: true },
       },
     ]),
@@ -1899,6 +2102,8 @@ async function seedTenants(
         source_channel: "internal_copilot",
         intake_source: "phone",
         source_text_digest: "digest-visible",
+        source_text: "Visible source text",
+        raw_source_reference: TEST_MESSAGE_ID,
         occurred_at: "2026-07-10T10:00:00.000Z",
         title: "Visible intake",
         summary: "Visible summary",
