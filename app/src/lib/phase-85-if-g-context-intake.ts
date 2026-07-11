@@ -23,6 +23,13 @@ export const CONTEXT_INTAKE_STRUCTURED_PANEL_LINKS: Record<ContextIntakeStructur
   menu_plan: "tab_menu",
 };
 
+export const CONTEXT_INTAKE_STRUCTURED_PANEL_LABELS: Record<ContextIntakeStructuredImpactFlag, string> = {
+  form: "Danisan formu",
+  active_plan: "Kritik baglam",
+  food_rules: "Aktif beslenme plani",
+  menu_plan: "Menu",
+};
+
 export type ResolveContextIntakeClientInput = {
   fullName?: string;
   phoneE164?: string;

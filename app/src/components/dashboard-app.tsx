@@ -27,6 +27,7 @@ import type {
   ClientContextUpdateImportance,
   ClientContextUpdateSource,
   ClientRecord,
+  NotificationRecord,
   Phase77FMenuPlanTemplateType,
 } from "@/lib/types";
 import type { OperationalFoundationInspectionDto } from "@/lib/phase-85-if-h-operational-visibility";
@@ -43,6 +44,10 @@ import {
 } from "@/lib/phase-77f-client-menu-plan";
 import { getActiveFormSchema } from "@/lib/client-forms";
 import { useManuState } from "@/lib/use-manu-state";
+import {
+  isP85Stage4AResolvableStructuredNotification,
+  resolveP85Stage4AStructuredNotificationTab,
+} from "@/lib/phase-85-stage-4a-post-if-remediation";
 import { type SupportedLanguageCode } from "@/lib/languages";
 import { t, type DashboardMessageKey } from "@/lib/i18n";
 import {
@@ -111,6 +116,7 @@ export function DashboardApp({
     dismissHandoff,
     markNotificationRead,
     acknowledgeNotification,
+    resolveStructuredUpdateNotification,
     resetState,
     addVoiceSamples,
     updateVoiceSampleStatus,
@@ -157,6 +163,8 @@ export function DashboardApp({
   const [isCopilotSending, setIsCopilotSending] = useState(false);
   const [isProposalUpdating, setIsProposalUpdating] = useState(false);
   const [isActivatingAi, setIsActivatingAi] = useState(false);
+  const [isReleasingHumanTakeover, setIsReleasingHumanTakeover] = useState(false);
+  const [resolvingStructuredNotificationId, setResolvingStructuredNotificationId] = useState<string | null>(null);
   const [contextUpdateSource, setContextUpdateSource] = useState<ClientContextUpdateSource>("phone");
   const [contextUpdateImportance, setContextUpdateImportance] =
     useState<ClientContextUpdateImportance>("important");
@@ -322,7 +330,7 @@ export function DashboardApp({
     setManualReply("");
   };
 
-  const activateSelectedClientAi = async (clientId: string) => {
+  const activateSelectedClientAi = async (clientId: string, requestedAiMode?: "copilot" | "autopilot") => {
     const client = state.clients.find((item) => item.id === clientId);
     const conversation = state.conversations.find((item) => item.clientId === clientId);
     if (!client || !conversation) {
@@ -331,6 +339,7 @@ export function DashboardApp({
     setIsActivatingAi(true);
     try {
       return await activateClientAi(clientId, {
+        requestedAiMode,
         expectedConversationRevision: conversation.revision,
         expectedClientContextRevision: client.contextRevision,
       });
@@ -339,9 +348,38 @@ export function DashboardApp({
     }
   };
 
+  const releaseSelectedHumanTakeover = async (clientId: string) => {
+    if (isReleasingHumanTakeover) return state;
+    setIsReleasingHumanTakeover(true);
+    try {
+      return await releaseHumanTakeover(clientId);
+    } finally {
+      setIsReleasingHumanTakeover(false);
+    }
+  };
+
   const openClientPanelFromConversation = (panelKey: string) => {
     setView("clients");
     setClientDetailTab(panelKey as ClientDetailTab);
+  };
+
+  const openStructuredNotificationTarget = (notification: NotificationRecord) => {
+    const targetTab = resolveP85Stage4AStructuredNotificationTab(notification.targetPanel);
+    if (!targetTab || notification.entityType !== "client") return;
+    setSelectedClientId(notification.entityId);
+    setClientDetailTab(targetTab as ClientDetailTab);
+    setView("clients");
+    setShowNotifications(false);
+  };
+
+  const resolveStructuredNotification = async (notificationId: string) => {
+    if (resolvingStructuredNotificationId) return;
+    setResolvingStructuredNotificationId(notificationId);
+    try {
+      await resolveStructuredUpdateNotification(notificationId);
+    } finally {
+      setResolvingStructuredNotificationId(null);
+    }
   };
 
   const addVoiceSamplesFromInput = async () => {
@@ -634,6 +672,25 @@ export function DashboardApp({
                                     </div>
                                     <p className="mt-1 text-sm text-stone-600">{notif.body}</p>
                                     <p className="mt-1.5 text-xs text-stone-400">{formatTime(notif.createdAt)}</p>
+                                    {isP85Stage4AResolvableStructuredNotification(notif) && (
+                                      <div className="mt-2 flex flex-wrap gap-2">
+                                        <button
+                                          onClick={() => openStructuredNotificationTarget(notif)}
+                                          className="inline-flex min-h-11 items-center rounded border border-stone-200 bg-white px-2 text-xs font-semibold text-stone-700 hover:bg-stone-50"
+                                          type="button"
+                                        >
+                                          Ilgili panele git
+                                        </button>
+                                        <button
+                                          onClick={() => resolveStructuredNotification(notif.id)}
+                                          disabled={resolvingStructuredNotificationId === notif.id}
+                                          className="inline-flex min-h-11 items-center rounded border border-emerald-200 bg-white px-2 text-xs font-semibold text-emerald-800 hover:bg-emerald-50 disabled:cursor-not-allowed disabled:opacity-60"
+                                          type="button"
+                                        >
+                                          Guncellemeyi tamamla
+                                        </button>
+                                      </div>
+                                    )}
                                   </div>
                                   <div className="flex flex-col gap-1">
                                     {!notif.read && (
@@ -729,6 +786,10 @@ export function DashboardApp({
                 onNewClientPhone={setNewClientPhone}
                 onNewClientLanguage={setNewClientLanguage}
                 onUpdateClient={updateSelectedClient}
+                onActivateAi={activateSelectedClientAi}
+                onReleaseHumanTakeover={releaseSelectedHumanTakeover}
+                isActivatingAi={isActivatingAi}
+                isReleasingHumanTakeover={isReleasingHumanTakeover}
                 onRemoveClient={removeSelectedClient}
                 contextUpdates={selectedContextUpdates}
                 contextUpdateSource={contextUpdateSource}
@@ -772,7 +833,7 @@ export function DashboardApp({
                 manualReply={manualReply}
                 onManualReply={setManualReply}
                 onSendManualReply={sendManualReply}
-                onReleaseHumanTakeover={releaseHumanTakeover}
+                onReleaseHumanTakeover={releaseSelectedHumanTakeover}
                 onActivateAi={activateSelectedClientAi}
                 isActivatingAi={isActivatingAi}
                 onApproveDraft={approveDraft}
@@ -830,6 +891,7 @@ export function DashboardApp({
                 onInput={setCopilotInput}
                 onAsk={askInternalCopilot}
                 onRejectProposal={rejectSelectedProposal}
+                onOpenClientPanel={openClientPanelFromConversation}
               />
             )}
 

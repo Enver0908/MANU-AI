@@ -504,3 +504,14 @@ The P85-IF remediation sequence was audited after R1-R6 completion. Findings wer
 - R6 client export leak detection now runs inside `buildClientScopedExport`.
 
 Evidence: `docs/PHASE_85_IF_REMEDIATION_POST_CLOSURE_AUDIT_EVIDENCE.md`, `docs/PHASE_85_IF_R1_PERSISTENCE_TENANT_INTEGRITY_EVIDENCE.md`, `docs/PHASE_85_IF_R2_RETRIEVAL_AUTHORITY_TEMPORAL_EVIDENCE.md`, and `docs/PHASE_85_IF_R3_ATOMIC_AI_ACTIVATION_RACE_EVIDENCE.md`. Verification passed local RLS 30/30 and the full post-closure chain. Stage 4B remains next; production pilot remains `NO-GO`.
+
+## 22. Stage 4A Post-P85-IF Compatibility Contract - 2026-07-11
+
+Stage 4A now consumes the P85-IF post-closure contracts instead of the pre-P85-IF assumptions it was originally built against:
+
+- `aiStatus: active` is no longer a UI patch action. It is an activation command routed through `/api/clients/[id]/activate-ai` with expected revisions.
+- `humanTakeoverLocked: false` is no longer a UI patch release action. It is a release command routed through `/api/clients/[id]/release-takeover`.
+- Context-intake structured flags must be presented as allowed dashboard destinations, not raw internal tab ids.
+- P85-IF-E structured-update notifications are not resolved by read/ack; they resolve only through the structured-update endpoint after the target panel revision advances.
+
+Evidence: `docs/PHASE_85_STAGE_4A_POST_IF_REMEDIATION_EVIDENCE.md`. This contract preserves P85-IF closure and keeps Stage 4B as the next notification/alerts product track.

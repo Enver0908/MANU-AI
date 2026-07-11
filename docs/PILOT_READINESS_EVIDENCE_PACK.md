@@ -603,3 +603,9 @@ It does not provide production pilot approval evidence. The original post-paymen
 The P85-IF remediation plan has post-closure audit evidence in `docs/PHASE_85_IF_REMEDIATION_POST_CLOSURE_AUDIT_EVIDENCE.md`. The audit fixed R1 message-provenance tenant integrity, R2 structured retrieval baseline/resolution authority, R3 activation/inbound lock ordering, and R6 runtime export leak enforcement.
 
 Verification passed targeted app/core tests, local Supabase reset, local RLS 30/30, lint, build, full app 828 passed / 4 skipped, full core 234/234, channel replay, and unified production-scale rehearsal. This is local readiness evidence only. It does not approve production pilot launch, real health-data processing, real channels/providers, external monitoring, secret manager, backup provider, R-405 acceptance, or launch-gate closure.
+
+## Phase 85 Stage 4A Post-P85-IF Compatibility Evidence - 2026-07-11
+
+`docs/PHASE_85_STAGE_4A_POST_IF_REMEDIATION_EVIDENCE.md` records the local remediation that aligns completed Stage 4A dashboard controls with P85-IF post-closure contracts. The remediation removes the UI dependency on direct active-state client PATCH, routes human takeover release through the dedicated endpoint, surfaces human-control session evidence, turns structured context-intake flags into readable panel navigation, and adds a minimal structured-update notification resolution bridge.
+
+This evidence is dashboard/operator-readiness evidence only. It does not approve production pilot launch or any real provider, channel, monitoring, backup, secret-manager, live billing, or real health-data path.

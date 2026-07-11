@@ -204,3 +204,9 @@ The P85-IF remediation plan was audited after R1-R6 completion and is now closed
 - Dedicated post-closure evidence: `docs/PHASE_85_IF_REMEDIATION_POST_CLOSURE_AUDIT_EVIDENCE.md`.
 
 Verification passed targeted app/core tests, local Supabase reset, local RLS 30/30, lint, build, full app 828 passed / 4 skipped, full core 234/234, channel replay, and unified production-scale rehearsal. Real providers, real channels, live billing, monitoring, backup, secret manager, and real health-data paths remain disconnected.
+
+## Current Phase 85 Stage 4A Post-P85-IF Remediation - 2026-07-11
+
+After P85-IF and R1-R6 post-closure remediation, Stage 4A was remediated to match the newer activation, human-control, structured-intake, and structured-notification contracts. The AI assistant control panel now routes activation through the atomic `/api/clients/[id]/activate-ai` endpoint, releases human takeover through `/api/clients/[id]/release-takeover`, shows active human-control session evidence, maps structured context-intake flags to readable client panel labels, and exposes a minimal structured-update notification bridge for target-panel navigation and resolution.
+
+Evidence: `docs/PHASE_85_STAGE_4A_POST_IF_REMEDIATION_EVIDENCE.md`. This is local/mock dashboard compatibility work only. Stage 4B remains the next Phase 85 planning/implementation target; production pilot remains `NO-GO`; R-405 remains open; real providers, real channels, live billing, monitoring, backup, secret manager, and real health-data paths remain disconnected.

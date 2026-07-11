@@ -2421,3 +2421,9 @@ Do not treat the VPS deployment or Stripe test webhook as production GO. Keep li
 P85-IF R1-R6 remediation is post-closure audited and fixed. The next correct Phase 85 work is Stage 4B planning, using the stable contracts from `docs/PHASE_85_IF_REMEDIATION_POST_CLOSURE_AUDIT_EVIDENCE.md`.
 
 Current local verification for this baseline passed targeted app/core tests, local Supabase reset, local RLS 30/30, lint, build, full app 828 passed / 4 skipped, core 234/234, channel replay, and production-scale rehearsal. This does not approve production pilot, close R-405, or open real provider/channel/health-data paths.
+
+## Current Phase 85 Stage 4A Post-P85-IF Remediation - 2026-07-11
+
+Before Stage 4B begins, execute from the `P85-4A-POST-IF-R` compatibility baseline. Stage 4A now uses atomic AI activation, dedicated human-takeover release, readable structured context-intake panel navigation, and the minimal structured-update notification resolution bridge introduced after P85-IF post-closure remediation.
+
+Evidence: `docs/PHASE_85_STAGE_4A_POST_IF_REMEDIATION_EVIDENCE.md`. The next correct Phase 85 work remains Stage 4B Uyari ve Bildirimler. Do not reopen P85-IF scopes, do not call this a new major phase, and keep production pilot `NO-GO`, R-405 open, and all real provider/channel/health-data paths closed.

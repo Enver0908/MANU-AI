@@ -447,3 +447,14 @@ The app now includes the P85-IF remediation post-closure fixes:
 - Client-scoped exports run P85-IF leak detection before returning.
 
 Verification passed local Supabase reset, local RLS 30/30, full app 828 passed / 4 skipped, lint, production build, channel replay, and unified production-scale rehearsal. This remains local/mock gated work; real WhatsApp, Telegram, Gemini/provider, live billing, monitoring, backup, secret manager, and real health-data paths remain disconnected.
+
+## Current Stage 4A Post-P85-IF Compatibility Note - 2026-07-11
+
+The dashboard Stage 4A client-control surfaces now match the P85-IF post-closure contracts:
+
+- AI activation from the AI Asistan Kontrolu panel uses `/api/clients/[id]/activate-ai` with expected conversation and client context revisions.
+- Human takeover release uses `/api/clients/[id]/release-takeover`; the panel shows active human-control session evidence.
+- Structured context-intake flags render as readable client-panel labels instead of raw tab ids.
+- Structured-update notifications expose a minimal local bridge for target-panel navigation and `/api/notifications/[id]/resolve-structured-update`.
+
+Evidence: `../docs/PHASE_85_STAGE_4A_POST_IF_REMEDIATION_EVIDENCE.md`. Stage 4B remains next. This does not connect real providers/channels, live billing, monitoring, backup, secret manager, or real health-data paths.

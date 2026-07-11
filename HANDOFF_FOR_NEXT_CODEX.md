@@ -2836,3 +2836,26 @@ Important implementation facts:
 - R4/R5 were reviewed and had no new code findings.
 
 Verification passed targeted app/core tests, local Supabase reset, local RLS 30/30, lint, build, full app 828 passed / 4 skipped, core 234/234, channel replay, and unified production-scale rehearsal. Do not rewrite the historical R1/R2 combined commit; the current post-closure commit is the honest traceability boundary. Next correct work is Phase 85 Stage 4B planning. Production pilot remains `NO-GO`; R-405 remains open; real providers/channels/health-data paths remain closed.
+
+## Phase 85 Stage 4A Post-P85-IF Compatibility Remediation - 2026-07-11
+
+Completed by: Codex
+
+What was done:
+
+- Added `docs/PHASE_85_STAGE_4A_POST_IF_REMEDIATION_EVIDENCE.md`.
+- Updated Stage 4A AI Asistan Kontrolu so active AI state no longer uses the general client PATCH path; it calls atomic activation with expected conversation/client context revisions.
+- Kept passive AI state as the safe direct client patch path.
+- Kept manual takeover start on the existing safe mutation path, but release now uses `/api/clients/[id]/release-takeover`.
+- Added active human-control session visibility and mismatch fail-closed messaging in the control panel.
+- Added a minimal structured-update notification bridge: target-panel navigation plus `/api/notifications/[id]/resolve-structured-update`.
+- Replaced raw structured context-intake tab ids with readable client-panel labels and navigation.
+
+What was not done:
+
+- No migration was added.
+- No Stage 4B full notification center/filtering/grouping/mobile redesign was implemented.
+- No real WhatsApp, Telegram, Gemini/provider, live billing, monitoring, backup, secret manager, or real health-data path was enabled.
+- No production pilot GO decision was made; production pilot remains `NO-GO`; R-405 remains open.
+
+Next correct work: Phase 85 Stage 4B Uyari ve Bildirimler planning/implementation on top of this compatibility baseline.

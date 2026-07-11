@@ -349,3 +349,9 @@ This does not alter final readiness: production pilot remains `NO-GO`. Next work
 The latest repo-local P85-IF remediation baseline passed post-closure audit and verification. Evidence: `docs/PHASE_85_IF_REMEDIATION_POST_CLOSURE_AUDIT_EVIDENCE.md`. Local Supabase reset and local RLS passed 30/30; full app passed 828 / 4 skipped; core passed 234/234; lint, build, channel replay, and unified production-scale rehearsal passed.
 
 Final readiness remains `NO-GO`. This evidence does not supply external legal/privacy, clinical, provider, channel, operations, backup/restore, secret-rotation, dependency, R-405, or production authorization approvals.
+
+## Stage 4A Post-P85-IF Compatibility Readiness Note - 2026-07-11
+
+Stage 4A was remediated after P85-IF so dashboard operators use the post-closure activation, human-control, structured-intake, and structured-notification contracts. Evidence: `docs/PHASE_85_STAGE_4A_POST_IF_REMEDIATION_EVIDENCE.md`.
+
+Final readiness remains `NO-GO`. This compatibility remediation does not supply external approval artifacts, does not resolve R-405, and does not authorize real providers/channels, monitoring, backup, secret manager, live billing, or real health-data processing.

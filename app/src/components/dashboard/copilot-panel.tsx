@@ -12,8 +12,11 @@ import {
   PHASE_77B_DEPRECATED_PROPOSAL_HEADLINE,
   PHASE_77B_MANUAL_SOURCE_AUTHORITY_COPY,
 } from "@/lib/phase-77b-chat-mutation-boundary";
-import { CONTEXT_INTAKE_STRUCTURED_PANEL_LINKS } from "@/lib/phase-85-if-g-context-intake";
-import { Badge, EmptyState, formatSafetyFlag, formatTime, groupProposalPatches } from "./shared";
+import {
+  CONTEXT_INTAKE_STRUCTURED_PANEL_LABELS,
+  CONTEXT_INTAKE_STRUCTURED_PANEL_LINKS,
+} from "@/lib/phase-85-if-g-context-intake";
+import { Badge, EmptyState, formatSafetyFlag, formatTime, groupProposalPatches, type ClientDetailTab } from "./shared";
 import { MobileStickyActionBar } from "./mobile-ergonomics";
 import { MOBILE_CHROME_CLASS, MOBILE_FIELD_CLASS } from "@/lib/phase-83e5-mobile-ergonomics";
 
@@ -37,6 +40,7 @@ export function CopilotPanel({
   onInput,
   onAsk,
   onRejectProposal,
+  onOpenClientPanel,
 }: {
   state: ManuAppState;
   selectedClient: ClientRecord;
@@ -57,6 +61,7 @@ export function CopilotPanel({
   onInput: (value: string) => void;
   onAsk: (body?: string) => void;
   onRejectProposal: (proposalId: string) => void;
+  onOpenClientPanel: (tab: ClientDetailTab) => void;
 }) {
   const messages = state.internalCopilotMessages.slice(-40);
   const quickPrompts = [
@@ -226,6 +231,7 @@ export function CopilotPanel({
                   onRecheck={onRecheckContextIntakeProposal}
                   onApply={onApplyContextIntakeProposal}
                   onReject={onRejectContextIntakeProposal}
+                  onOpenClientPanel={onOpenClientPanel}
                 />
               ))
             )}
@@ -288,6 +294,7 @@ function ContextIntakeProposalCard({
   onRecheck,
   onApply,
   onReject,
+  onOpenClientPanel,
 }: {
   proposal: ContextIntakeProposalRecord;
   isProposalUpdating: boolean;
@@ -295,6 +302,7 @@ function ContextIntakeProposalCard({
   onRecheck: (proposalId: string) => void;
   onApply: (proposalId: string) => void;
   onReject: (proposalId: string) => void;
+  onOpenClientPanel: (tab: ClientDetailTab) => void;
 }) {
   const structuredFlags = proposal.structuredImpactFlags;
   const canApply =
@@ -314,13 +322,26 @@ function ContextIntakeProposalCard({
       {structuredFlags.length > 0 && (
         <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-2 text-sm text-amber-900">
           <p className="font-semibold">Structured update required</p>
-          <ul className="mt-1 list-disc pl-5">
+          <div className="mt-2 flex flex-wrap gap-2">
             {structuredFlags.map((flag) => (
-              <li key={flag}>
-                {flag} → {CONTEXT_INTAKE_STRUCTURED_PANEL_LINKS[flag as keyof typeof CONTEXT_INTAKE_STRUCTURED_PANEL_LINKS]}
-              </li>
+              <button
+                key={flag}
+                type="button"
+                onClick={() =>
+                  onOpenClientPanel(
+                    CONTEXT_INTAKE_STRUCTURED_PANEL_LINKS[
+                      flag as keyof typeof CONTEXT_INTAKE_STRUCTURED_PANEL_LINKS
+                    ] as ClientDetailTab,
+                  )
+                }
+                className="inline-flex min-h-11 items-center rounded-md border border-amber-200 bg-white px-2 py-1 text-left text-sm font-semibold text-amber-950 hover:bg-amber-100"
+              >
+                {CONTEXT_INTAKE_STRUCTURED_PANEL_LABELS[
+                  flag as keyof typeof CONTEXT_INTAKE_STRUCTURED_PANEL_LABELS
+                ] || flag}
+              </button>
             ))}
-          </ul>
+          </div>
         </div>
       )}
       <div className="mt-3 flex flex-wrap gap-2">

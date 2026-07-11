@@ -177,6 +177,10 @@ export function useManuState() {
         replaceFromApi(`/api/notifications/${notificationId}/acknowledge`, {
           method: "POST",
         }),
+      resolveStructuredUpdateNotification: (notificationId: string) =>
+        replaceFromApi(`/api/notifications/${notificationId}/resolve-structured-update`, {
+          method: "POST",
+        }),
       resetState: () =>
         replaceFromApi("/api/app-state", {
           method: "POST",

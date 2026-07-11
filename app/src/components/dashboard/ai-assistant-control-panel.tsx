@@ -19,6 +19,7 @@ import type { AiMode, AiStatus, ClientRecord, ManuAppState, SafetyChecklist } fr
 import type { SupportedLanguageCode } from "@/lib/languages";
 import {
   Badge,
+  ConfirmButton,
   DateTimeInput,
   SegmentedControl,
   SelectInput,
@@ -33,12 +34,20 @@ export function AiAssistantControlPanel({
   uiLanguage,
   disabled,
   onUpdateClient,
+  onActivateAi,
+  onReleaseHumanTakeover,
+  isActivatingAi = false,
+  isReleasingHumanTakeover = false,
 }: {
   client: ClientRecord;
   state: ManuAppState;
   uiLanguage: SupportedLanguageCode;
   disabled?: boolean;
-  onUpdateClient: (patch: Partial<ClientRecord>) => void;
+  onUpdateClient: (patch: Partial<ClientRecord>) => Promise<void> | void;
+  onActivateAi: (clientId: string, requestedAiMode?: "copilot" | "autopilot") => Promise<unknown> | unknown;
+  onReleaseHumanTakeover: (clientId: string) => Promise<unknown> | unknown;
+  isActivatingAi?: boolean;
+  isReleasingHumanTakeover?: boolean;
 }) {
   const summary = summarizeAiAssistantControl(state, client);
   const readiness = summarizeAutopilotReadinessGate(state, client);
@@ -47,6 +56,26 @@ export function AiAssistantControlPanel({
   const redLocked = isAiControlLockedByRedRisk(client);
   const controlsDisabled = disabled || redLocked || client.lifecycleStatus === "removed_anonymized";
   const selectedPersona = personas.find((persona) => persona.id === client.selectedPersonaId);
+  const activeHumanControlSession = state.humanControlSessions
+    .filter((session) => session.clientId === client.id && session.status === "active")
+    .sort((a, b) => new Date(b.openedAt).getTime() - new Date(a.openedAt).getTime())[0];
+  const takeoverMismatch = client.humanTakeoverLocked !== Boolean(activeHumanControlSession);
+
+  const updateAiStatus = (value: AiStatus) => {
+    if (value === "active") {
+      void onActivateAi(client.id, client.aiMode === "autopilot" ? "autopilot" : "copilot");
+      return;
+    }
+    void onUpdateClient({ aiStatus: "passive" });
+  };
+
+  const updateHumanTakeover = (checked: boolean) => {
+    if (checked) {
+      void onUpdateClient({ humanTakeoverLocked: true });
+      return;
+    }
+    void onReleaseHumanTakeover(client.id);
+  };
 
   const updateSafetyChecklist = (key: keyof SafetyChecklist, checked: boolean) => {
     const nextChecklist = {
@@ -97,8 +126,13 @@ export function AiAssistantControlPanel({
                 ["active", AI_STATUS_LABELS_TR.active],
                 ["passive", AI_STATUS_LABELS_TR.passive],
               ]}
-              onChange={(value) => onUpdateClient({ aiStatus: value as AiStatus })}
+              onChange={(value) => updateAiStatus(value as AiStatus)}
             />
+            {isActivatingAi && (
+              <p className="text-xs font-medium text-stone-500">
+                Aktivasyon atomik endpoint uzerinden dogrulaniyor.
+              </p>
+            )}
             <SegmentedControl
               label="AI modu"
               value={client.aiMode}
@@ -119,8 +153,20 @@ export function AiAssistantControlPanel({
             <ToggleRow
               label="Diyetisyen devralma kilidi"
               checked={client.humanTakeoverLocked}
-              onChange={(checked) => onUpdateClient({ humanTakeoverLocked: checked })}
+              onChange={updateHumanTakeover}
             />
+            {client.humanTakeoverLocked && (
+              <ConfirmButton
+                label={isReleasingHumanTakeover ? "Devralma cozuluyor" : "Devralmayi cozumle"}
+                confirmLabel="Devralmayi cozumle"
+                onConfirm={() => {
+                  void onReleaseHumanTakeover(client.id);
+                }}
+                disabled={isReleasingHumanTakeover}
+                className="inline-flex min-h-11 items-center justify-center rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm font-semibold text-amber-900 transition hover:bg-amber-50 disabled:cursor-not-allowed disabled:opacity-60"
+                confirmClassName="inline-flex min-h-11 items-center justify-center rounded-lg bg-amber-700 px-3 py-2 text-sm font-semibold text-white transition hover:bg-amber-800"
+              />
+            )}
             <div className="grid gap-3 md:grid-cols-2">
               <DateTimeInput
                 label="Aktif baslangic"
@@ -210,11 +256,24 @@ export function AiAssistantControlPanel({
             <div className="flex items-center justify-between gap-3 rounded-md bg-stone-50 px-3 py-2">
               <span className="text-stone-600">Diyetisyen devralma</span>
               <Badge
-                label={summary.humanTakeoverLocked ? "Kilitli" : "Acik"}
-                tone={summary.humanTakeoverLocked ? "amber" : "emerald"}
+                label={takeoverMismatch ? "Kontrol gerekli" : summary.humanTakeoverLocked ? "Kilitli" : "Acik"}
+                tone={takeoverMismatch ? "red" : summary.humanTakeoverLocked ? "amber" : "emerald"}
               />
             </div>
           </div>
+          {activeHumanControlSession && (
+            <div className="mt-3 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-950">
+              <p className="font-semibold">Aktif insan kontrol oturumu</p>
+              <p className="mt-1">
+                {activeHumanControlSession.reason} · {formatSessionTime(activeHumanControlSession.openedAt)}
+              </p>
+            </div>
+          )}
+          {takeoverMismatch && (
+            <p className="mt-3 text-sm text-red-700">
+              Client kilidi ile aktif insan kontrol oturumu uyusmuyor. Cozum endpointi ile kapatilana kadar AI kontrolu fail-closed kalir.
+            </p>
+          )}
           {redLocked && (
             <p className="mt-3 text-sm text-red-700">
               Kirmizi risk kilidi aktif. Yeniden aktivasyon yalnizca devir cozum akisindan yapilabilir.
@@ -253,4 +312,12 @@ export function AiAssistantControlPanel({
       )}
     </section>
   );
+}
+
+function formatSessionTime(value: string) {
+  return new Intl.DateTimeFormat("tr-TR", {
+    dateStyle: "short",
+    timeStyle: "short",
+    timeZone: "Europe/Istanbul",
+  }).format(new Date(value));
 }

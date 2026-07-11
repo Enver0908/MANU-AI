@@ -1101,3 +1101,9 @@ This remains a commercial/frontend/onboarding track only. It does not close lega
 The direct 100-dietitian / 5,000-client path now has a cleaner P85-IF interstage baseline: message provenance is tenant-composite constrained, structured-update notifications resolve only after target-panel revision advancement, activation/inbound race protection uses deterministic lock ordering, and client exports run leak detection on the real export path.
 
 Verification passed the unified production-scale rehearsal with 5,000 expanded AI cases, full channel replay, 7/7 production-scale acceptance tests, release verification, local RLS 30/30, full app 828 passed / 4 skipped, and core 234/234. This strengthens local readiness evidence only. It does not close external legal/privacy, clinical, provider, channel, operations, dependency, R-405, or production approval gates.
+
+## Stage 4A Post-P85-IF Compatibility Addendum - 2026-07-11
+
+The direct 100-dietitian path now includes a Stage 4A compatibility remediation after P85-IF: dashboard AI activation, human takeover release, structured context-intake navigation, and structured-update notification resolution are aligned with post-closure P85-IF contracts. Evidence: `docs/PHASE_85_STAGE_4A_POST_IF_REMEDIATION_EVIDENCE.md`.
+
+This improves local operator safety for the dashboard but does not change direct-pilot authorization. External launch gates, R-405 closure or formal acceptance, production operations evidence, and real provider/channel approvals remain required before any production pilot.

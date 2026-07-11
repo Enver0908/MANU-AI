@@ -81,6 +81,10 @@ export function ClientsPanel({
   onNewClientPhone,
   onNewClientLanguage,
   onUpdateClient,
+  onActivateAi,
+  onReleaseHumanTakeover,
+  isActivatingAi,
+  isReleasingHumanTakeover,
   onRemoveClient,
   contextUpdates,
   contextUpdateSource,
@@ -129,7 +133,11 @@ export function ClientsPanel({
   onNewClientHandle: (value: string) => void;
   onNewClientPhone: (value: string) => void;
   onNewClientLanguage: (value: SupportedLanguageCode) => void;
-  onUpdateClient: (patch: Partial<ClientRecord>) => void;
+  onUpdateClient: (patch: Partial<ClientRecord>) => Promise<void> | void;
+  onActivateAi: (clientId: string, requestedAiMode?: "copilot" | "autopilot") => Promise<unknown> | unknown;
+  onReleaseHumanTakeover: (clientId: string) => Promise<unknown> | unknown;
+  isActivatingAi?: boolean;
+  isReleasingHumanTakeover?: boolean;
   onRemoveClient: () => void;
   contextUpdates: ClientContextUpdateRecord[];
   contextUpdateSource: ClientContextUpdateSource;
@@ -245,6 +253,10 @@ export function ClientsPanel({
         client={selectedClient}
         uiLanguage={uiLanguage}
         onUpdateClient={onUpdateClient}
+        onActivateAi={onActivateAi}
+        onReleaseHumanTakeover={onReleaseHumanTakeover}
+        isActivatingAi={isActivatingAi}
+        isReleasingHumanTakeover={isReleasingHumanTakeover}
         onRemoveClient={onRemoveClient}
         contextUpdates={contextUpdates}
         contextUpdateSource={contextUpdateSource}
@@ -284,6 +296,10 @@ function ClientDetailForm({
   client,
   uiLanguage,
   onUpdateClient,
+  onActivateAi,
+  onReleaseHumanTakeover,
+  isActivatingAi,
+  isReleasingHumanTakeover,
   onRemoveClient,
   contextUpdates,
   contextUpdateSource,
@@ -317,7 +333,11 @@ function ClientDetailForm({
 }: {
   client: ClientRecord;
   uiLanguage: SupportedLanguageCode;
-  onUpdateClient: (patch: Partial<ClientRecord>) => void;
+  onUpdateClient: (patch: Partial<ClientRecord>) => Promise<void> | void;
+  onActivateAi: (clientId: string, requestedAiMode?: "copilot" | "autopilot") => Promise<unknown> | unknown;
+  onReleaseHumanTakeover: (clientId: string) => Promise<unknown> | unknown;
+  isActivatingAi?: boolean;
+  isReleasingHumanTakeover?: boolean;
   onRemoveClient: () => void;
   contextUpdates: ClientContextUpdateRecord[];
   contextUpdateSource: ClientContextUpdateSource;
@@ -527,6 +547,10 @@ function ClientDetailForm({
             uiLanguage={uiLanguage}
             disabled={client.lifecycleStatus === "removed_anonymized"}
             onUpdateClient={onUpdateClient}
+            onActivateAi={onActivateAi}
+            onReleaseHumanTakeover={onReleaseHumanTakeover}
+            isActivatingAi={isActivatingAi}
+            isReleasingHumanTakeover={isReleasingHumanTakeover}
           />
         )}
 

@@ -453,3 +453,15 @@ Post-closure fixes are complete:
 - Traceability: dedicated post-closure evidence documents for R1, R2, R3, and the overall audit.
 
 Verification passed targeted app/core tests, local Supabase reset, local RLS 30/30, lint, build, full app 828 passed / 4 skipped, core 234/234, channel replay, and unified production-scale rehearsal. This updates the P85-IF closure baseline without approving production pilot, closing R-405, or opening real provider/channel/health-data paths. Stage 4B remains the next Phase 85 planning target.
+
+## 18. Stage 4A Post-P85-IF Compatibility Remediation - 2026-07-11
+
+P85-IF remains closed. A separate compatibility remediation was completed because Stage 4A was implemented before P85-IF and R1-R6 post-closure changes. The remediation aligns Stage 4A UI operations with the P85-IF contracts:
+
+- AI activation uses the atomic activation endpoint with expected conversation/client context revisions.
+- Direct active-state client PATCH remains blocked by backend contracts; passive-state patch remains allowed.
+- Human takeover release uses the dedicated release endpoint and exposes active session evidence.
+- Structured context-intake impact flags display readable target-panel labels and navigation.
+- Structured-update notifications expose minimal target-panel navigation and target-revision resolution.
+
+Evidence: `docs/PHASE_85_STAGE_4A_POST_IF_REMEDIATION_EVIDENCE.md`. Full Stage 4B notification product work remains next; no real provider/channel/health-data path was opened.

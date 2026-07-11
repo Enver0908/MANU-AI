@@ -369,3 +369,9 @@ Proceed to Stage 4B Uyari ve Bildirimler planning only after explicit user appro
 Before Stage 4B planning resumes, P85-IF R1-R6 remediation has been post-closure audited and fixed. The stable notification/alert inputs now include tenant-safe message provenance, target-panel structured-update resolution, deterministic activation race protection, and runtime export leak enforcement. Evidence: `docs/PHASE_85_IF_REMEDIATION_POST_CLOSURE_AUDIT_EVIDENCE.md`.
 
 Stage 4B may plan the notification product experience on top of these contracts, but it must not reopen real providers/channels, live billing, monitoring, backup, secret-manager, or real health-data paths. Production pilot remains `NO-GO`; R-405 remains open.
+
+## Stage 4A Post-P85-IF Compatibility Remediation - 2026-07-11
+
+Before Stage 4B starts, the completed Stage 4A dashboard controls were reconciled with P85-IF post-closure runtime contracts. The AI Asistan Kontrolu active-state path now uses atomic activation instead of direct client patch, human takeover release uses the dedicated release endpoint, active human-control evidence is visible, structured context-intake panel links are readable and navigable, and structured-update notifications have a minimal target-panel navigation/resolution bridge.
+
+This is a compatibility remediation, not Stage 4B notification-center implementation. Full alert grouping, prioritization, mobile notification ergonomics, and notification-center redesign remain Stage 4B scope. Evidence: `docs/PHASE_85_STAGE_4A_POST_IF_REMEDIATION_EVIDENCE.md`.
