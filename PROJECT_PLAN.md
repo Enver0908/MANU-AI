@@ -1510,3 +1510,6 @@ R2 added bounded Supabase v2 list/detail projections, actor-scoped unread aggreg
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R3 - 2026-07-12
 
 R3 implemented transaction-scoped idempotency and server-side authorization for conversation manual/draft mutations. The RLS environment gate remains open if Docker is unavailable. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R3_EVIDENCE.md`. **Next:** R4; Stage 4C remains blocked.
+## Phase 85 Stage 4B-2 Post-Closure Remediation R4 - 2026-07-12
+
+R4 corrects explicit conversation deep-links, stale anchor handling, API-authoritative unread counts, and the 768px split layout without opening new persistence or integration paths. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R4_EVIDENCE.md`. R5 is next; production remains `NO-GO`.

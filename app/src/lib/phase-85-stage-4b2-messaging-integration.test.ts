@@ -85,6 +85,15 @@ describe("phase-85-stage-4b2-messaging-integration", () => {
 
     const scoped = buildClientScopedExport(state, "client-mert") as Record<string, unknown>;
     expect(detectConversationReadReceiptExportLeaks(scoped).passed).toBe(true);
+
+    expect(
+      resolveMessagingTargetValidity(state, {
+        clientId: "client-mert",
+        conversationId: "conversation-from-old-link",
+        messageId: "message-from-old-link",
+        allowRemoteTarget: true,
+      }),
+    ).toMatchObject({ valid: true, reason: "ok" });
   });
 
   it("evaluates lifecycle anonymization and revoked message rendering", () => {

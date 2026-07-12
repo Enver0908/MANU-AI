@@ -510,3 +510,6 @@ R2 keeps P85-IF as the authority for transcript/provenance and adds only bounded
 ## Stage 4B-2 Post-Closure Remediation R3 - 2026-07-12
 
 R3 preserves P85-IF conversation revision, risk, human-control, provenance, and lifecycle authority while moving messaging manual/draft idempotency and authorization into one transaction-scoped RPC boundary. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R3_EVIDENCE.md`.
+## Stage 4B-2 Post-Closure Remediation R4 - 2026-07-12
+
+R4 preserves P85-IF as the clinical/provenance authority. It changes only client-side messaging route resolution, bounded hook consumption, unread presentation, and responsive rendering. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R4_EVIDENCE.md`.

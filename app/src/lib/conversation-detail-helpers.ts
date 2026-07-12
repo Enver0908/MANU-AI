@@ -124,23 +124,36 @@ export function buildConversationTimelineItems(
   return items;
 }
 
-export function isYellowDraftReviewMessage(message: ConversationMessageDto, client: ClientRecord) {
-  return message.isDraft && client.yellowRiskHold.status === "active";
+export function isYellowDraftReviewMessage(message: ConversationMessageDto, client: ClientRecord | null | undefined) {
+  return Boolean(client && message.isDraft && client.yellowRiskHold.status === "active");
 }
 
-export function isGreenDraftMessage(message: ConversationMessageDto, client: ClientRecord) {
-  return message.isDraft && client.yellowRiskHold.status !== "active" && client.redRiskLock.status !== "locked";
+export function isGreenDraftMessage(message: ConversationMessageDto, client: ClientRecord | null | undefined) {
+  return Boolean(
+    client &&
+      message.isDraft &&
+      client.yellowRiskHold.status !== "active" &&
+      client.redRiskLock.status !== "locked",
+  );
 }
 
-export function resolveActiveYellowDraft(messages: ConversationMessageDto[], client: ClientRecord) {
+export function resolveActiveYellowDraft(messages: ConversationMessageDto[], client: ClientRecord | null | undefined) {
   return [...messages].reverse().find((message) => isYellowDraftReviewMessage(message, client)) ?? null;
 }
 
 export function resolveConversationDetailMutationVisibility(
   permissions: ConversationPermissions | null | undefined,
-  client: ClientRecord,
+  client: ClientRecord | null | undefined,
   options?: { canManageAiControls?: boolean },
 ): ConversationDetailMutationVisibility {
+  if (!client) {
+    return {
+      showComposer: false,
+      showDraftControls: false,
+      showAiControls: false,
+      showYellowDraftReview: false,
+    };
+  }
   const canManageAiControls = options?.canManageAiControls ?? true;
   const readOnly = permissions?.isReadOnly ?? true;
   return {
@@ -151,7 +164,7 @@ export function resolveConversationDetailMutationVisibility(
     showYellowDraftReview:
       Boolean(permissions?.canReviewDraft) &&
       !readOnly &&
-      client.yellowRiskHold.status === "active",
+      client?.yellowRiskHold.status === "active",
   };
 }
 

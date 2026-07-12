@@ -548,3 +548,6 @@ The messaging read boundary now uses append-only v2 RPCs with actor-scoped bound
 ## Stage 4B-2 Post-Closure Remediation R3 - 2026-07-12
 
 R3 adds no new clinical authority. It enforces actor/assignment authorization, conversation/client locking, revision checks, and exact idempotent mutation response persistence around the existing P85-IF-aware state delta. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R3_EVIDENCE.md`.
+## Stage 4B-2 Post-Closure Remediation R4 - 2026-07-12
+
+R4 adds no clinical or provenance authority. Explicit URL targets are passed to the bounded detail API, missing legacy anchors are not treated as proof of invalidity, and absent legacy client state yields transcript-only rendering with mutation controls disabled. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R4_EVIDENCE.md`.

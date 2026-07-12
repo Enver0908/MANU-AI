@@ -375,3 +375,7 @@ Phase 4 verification passed the dedicated 5-test read API file, Phase 3/1 regres
 Phase 0 locks this action plan, its role/read-receipt clarification, the yellow reviewed-manual boundary, the red atomic-activation boundary, bounded message APIs, append-only persistence/RLS direction, exact phase sequence, verification matrix, documentation set, production `NO-GO`, R-405 open status, and real-integration shutdown.
 
 Phase 0 changes no runtime code, SQL migration, API route, provider, channel adapter, billing, monitoring, backup, secret-manager, or real health-data path. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_0_DOCUMENTATION_EVIDENCE.md`.
+
+## Post-closure remediation R4 completion record - 2026-07-12
+
+The separate remediation plan `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md` now records R4 complete. R4 corrected the Phase 6 hook/deep-link lifecycle, Phase 7 tablet split and aggregate unread presentation, and Phase 8 transcript-only rendering when legacy client state is absent. The implementation evidence is `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R4_EVIDENCE.md`; R5 remains the next authorized remediation unit.

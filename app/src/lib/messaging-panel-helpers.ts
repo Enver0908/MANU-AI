@@ -6,7 +6,7 @@ import type { DashboardMessageKey } from "./i18n";
 
 export const MESSAGING_PANEL_ROW_MIN_HEIGHT_CLASS = "min-h-11";
 export const MESSAGING_PANEL_SKELETON_ROW_COUNT = 6;
-export const MESSAGING_PANEL_LIST_WIDTH_CLASS = "lg:w-[360px] lg:max-w-[360px] lg:shrink-0";
+export const MESSAGING_PANEL_LIST_WIDTH_CLASS = "md:max-w-[360px] md:shrink-0";
 
 export const CONVERSATION_CHANNEL_ICON: Record<Channel, LucideIcon> = {
   whatsapp: MessageCircle,

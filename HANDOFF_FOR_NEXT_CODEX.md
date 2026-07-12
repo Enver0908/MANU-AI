@@ -2905,3 +2905,6 @@ R2 implementation is complete and evidenced in `docs/PHASE_85_STAGE_4B_2_POST_CL
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R3 - 2026-07-12
 
 R3 is complete and committed as the atomic authorized mutation boundary. Continue with R4 only after verifying the R3 evidence and a clean worktree. R3 migration: `app/supabase/migrations/20260712180000_phase_85_stage_4b2_r3_atomic_mutations.sql`; evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R3_EVIDENCE.md`. Preserve production `NO-GO`, R-405 open, append-only migrations, and all real provider/channel/health-data shutdowns.
+## Phase 85 Stage 4B-2 Post-Closure Remediation R4 - 2026-07-12
+
+R4 is implemented locally. Verify `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R4_EVIDENCE.md` and the clean commit before starting R5. R4 changed no migration; explicit deep-links survive incomplete legacy cache, unread badges use API aggregates, and tablet split UI is covered by four visual projects. Full app timed out and RLS remains Docker-blocked. Preserve production `NO-GO`, R-405 open, append-only migrations, and all real integration shutdowns.

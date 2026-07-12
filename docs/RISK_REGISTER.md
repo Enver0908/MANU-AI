@@ -173,3 +173,6 @@ R2 implements bounded Supabase v2 list/detail RPCs, actor-scoped unread aggregat
 ## Stage 4B-2 Post-Closure Remediation R3 - 2026-07-12
 
 R3 addresses the implementation side of mutation authorization, transaction-scoped idempotency, and red/yellow ordering. R-4B2-01, R-4B2-02, and R-4B2-03 remain evidence-open until the real RLS/API matrix and concurrent database rehearsals pass. R4-R7 remain active.
+## Stage 4B-2 Post-Closure Remediation R4 - 2026-07-12
+
+R4 implements the client-side portions of R-4B2-06, R-4B2-07, and R-4B2-08: actor-scoped aggregate unread presentation, tablet split layout, and legacy-cache-tolerant deep-links. R-4B2-09 remains open for full regression, RLS, replay, scale, and independent verification; R-4B2-10 remains open until R7. Production remains `NO-GO`; R-405 remains open. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R4_EVIDENCE.md`.

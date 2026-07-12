@@ -1,6 +1,6 @@
 # Phase 85 Stage 4B-2 Post-Closure Remediation Action Plan
 
-Status: **R3 complete; remediation active (2026-07-12)**
+Status: **R4 complete; remediation active (2026-07-12)**
 
 Baseline branch: `codex/phase-85-interstage-clinical-memory`
 Baseline commit: `3d67ba5 Close Phase 85 Stage 4B-2 with canonical spec, closure evidence, and continuity updates.`
@@ -14,7 +14,7 @@ The Stage 4B-2 audit found that the implementation is substantial but is not yet
 
 Stage 4C is blocked until remediation R0-R6 verification is green and the R7 evidence closure is committed separately.
 
-R1 is complete at the TypeScript contract/projection layer. R2 remains the next authorized implementation unit.
+R1, R2, R3, and R4 implementation units are complete. R5 remains the next authorized implementation unit; RLS, full-suite, replay, scale, and independent verification gates remain open.
 
 ## 2. Locked findings
 
@@ -76,3 +76,9 @@ R2 implementation evidence is `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION
 R3 added the append-only migration `20260712180000_phase_85_stage_4b2_r3_atomic_mutations.sql`. Manual replies and draft mutations now reserve and lock idempotency before domain work, repeat actor/assignment/operation authorization inside the service-role RPC, lock the client before the conversation revision, reject out-of-scope payload entities, reject yellow review after a red lock is observed, execute the existing domain state delta, and persist the exact bounded response before returning. Supabase store callers replay cached requests before local state derivation and otherwise consume the atomic RPC response.
 
 R3 implementation evidence is `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R3_EVIDENCE.md`. R4 remains the next authorized unit. RLS execution remains an explicit open environment gate.
+
+## 9. R4 completion record - 2026-07-12
+
+R4 corrected the client lifecycle around the bounded messaging APIs. Explicit `conversationId` URLs now remain loadable when the legacy conversation/message cache is incomplete; only locally contradictory client/conversation links fail closed, while the bounded detail API validates old anchors. The hook now consumes actor-scoped `unreadConversationCount` and `unreadMessageCount` for navigation and panel badges, and its filter callback dependency is stable. Messaging uses a `md` split layout so the 768px tablet has list/detail panes while mobile keeps drill-down navigation. A detail DTO without a legacy client renders transcript-only with all mutation controls hidden, preventing a synthetic client record and sensitive state expansion.
+
+R4 implementation evidence is `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R4_EVIDENCE.md`. Targeted routing/integration/detail tests, production build, lint, and four-viewport visual messaging tests passed. The full app command timed out in the OneDrive workspace and is not claimed as pass; RLS remains environment-blocked. R5 owns the remaining security, lifecycle, scale, replay, accessibility, full-regression, and RLS evidence.

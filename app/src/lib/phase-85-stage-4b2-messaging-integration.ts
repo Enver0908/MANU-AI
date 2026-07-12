@@ -95,6 +95,7 @@ export function resolveMessagingTargetValidity(
     conversationId: string | null | undefined;
     messageId?: string | null | undefined;
     activeClientIds?: ReadonlySet<string>;
+    allowRemoteTarget?: boolean;
   },
 ): Stage4B2MessagingTargetValidity {
   const clientId = input.clientId?.trim();
@@ -117,14 +118,21 @@ export function resolveMessagingTargetValidity(
   }
 
   const conversation = state.conversations.find((item) => item.id === conversationId);
-  if (!conversation || conversation.clientId !== clientId) {
+  if (!conversation) {
+    return input.allowRemoteTarget
+      ? { valid: true, reason: "ok" }
+      : { valid: false, reason: "broken_source_link" };
+  }
+  if (conversation.clientId !== clientId) {
     return { valid: false, reason: "broken_source_link" };
   }
 
   const messageId = input.messageId?.trim();
   if (messageId) {
     const message = state.messages.find((item) => item.id === messageId);
-    if (!message || message.conversationId !== conversationId) {
+    // The bounded detail API, not the legacy app-state cache, validates an
+    // anchor that has aged out of the client snapshot.
+    if (message && message.conversationId !== conversationId) {
       return { valid: false, reason: "broken_source_link" };
     }
   }

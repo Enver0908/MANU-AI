@@ -14,7 +14,6 @@ import { mergeConversationDetailMessages } from "./conversation-detail-helpers";
 import {
   buildStage4B2ConversationDetailRequestQuery,
   buildStage4B2ConversationsRequestQuery,
-  resolveMessagingUnreadBadgeCount,
   type DashboardUrlState,
 } from "./phase-85-stage-4b-dashboard-routing";
 import {
@@ -41,6 +40,8 @@ export type Stage4B2MessagingSnapshot = {
   isLoadingNewerMessages: boolean;
   lastSuccessAt: string | null;
   messagingBadgeCount: number;
+  unreadConversationCount: number;
+  unreadMessageCount: number;
 };
 
 type UseStage4B2MessagingOptions = {
@@ -191,7 +192,7 @@ export function useStage4B2Messaging({
       setListError(null);
       return payload;
     },
-    [applyListResponse, filters.conversationQuery, filters.conversationStatus],
+    [applyListResponse, filters],
   );
 
   const fetchDetail = useCallback(
@@ -428,7 +429,9 @@ export function useStage4B2Messaging({
       isLoadingOlderMessages,
       isLoadingNewerMessages,
       lastSuccessAt,
-      messagingBadgeCount: resolveMessagingUnreadBadgeCount(listItems),
+      messagingBadgeCount: list?.unreadMessageCount ?? 0,
+      unreadConversationCount: list?.unreadConversationCount ?? 0,
+      unreadMessageCount: list?.unreadMessageCount ?? 0,
     }),
     [
       conversationId,

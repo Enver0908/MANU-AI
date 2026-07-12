@@ -1071,3 +1071,6 @@ R2 implementation is complete for bounded Supabase read RPCs and receipt/RLS gua
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R3 - 2026-07-12
 
 R3 completed the server-side atomic mutation/idempotency correction for manual replies and draft actions. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R3_EVIDENCE.md`. R4 is the next authorized unit; Stage 4C remains blocked and production pilot remains `NO-GO`.
+## Phase 85 Stage 4B-2 Post-Closure Remediation R4 - 2026-07-12
+
+R4 completes the client hook, deep-link, unread aggregate, and tablet/mobile messaging UI correction. Targeted tests, build, lint, and all four messaging visual projects passed; full app and RLS remain unclaimed because the full command timed out and Docker is unavailable. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R4_EVIDENCE.md`. **Next:** R5; Stage 4C remains blocked.

@@ -249,8 +249,9 @@ export function resolveMessagingRouteSelection(
   activeClientIds: ReadonlySet<string>,
 ): MessagingRouteSelection {
   const messageId = urlState.messageId;
-  const conversationById = urlState.conversationId
-    ? conversations.find((item) => item.id === urlState.conversationId)
+  const explicitConversationId = urlState.conversationId?.trim() || null;
+  const conversationById = explicitConversationId
+    ? conversations.find((item) => item.id === explicitConversationId)
     : undefined;
   if (conversationById && activeClientIds.has(conversationById.clientId)) {
     return {
@@ -263,6 +264,21 @@ export function resolveMessagingRouteSelection(
         !urlState.conversationId ||
         urlState.conversationId !== conversationById.id ||
         urlState.clientId !== conversationById.clientId,
+    };
+  }
+
+  // A copied URL is authoritative for the conversation. The list/state cache
+  // may not contain an older conversation yet; the bounded detail API remains
+  // the authority for whether that target is readable.
+  if (explicitConversationId) {
+    const explicitClientId = urlState.clientId?.trim() || conversationById?.clientId || null;
+    return {
+      conversationId: explicitConversationId,
+      clientId: explicitClientId,
+      messageId,
+      canonicalConversationId: null,
+      canonicalClientId: null,
+      needsCanonicalization: false,
     };
   }
 

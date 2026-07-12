@@ -246,3 +246,6 @@ R2 adds append-only bounded Supabase v2 list/detail RPCs, actor-scoped unread ag
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R3 - 2026-07-12
 
 R3 is complete for the atomic authorized mutation boundary. Manual replies and draft mutations now use a transaction-scoped idempotency reservation, server-side actor/assignment checks, client-before-conversation locking, red/yellow race rejection, and exact bounded response replay. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R3_EVIDENCE.md`. **Next:** R4; Stage 4C remains blocked. Production pilot remains `NO-GO`; R-405 remains open.
+## Phase 85 Stage 4B-2 Post-Closure Remediation R4 - 2026-07-12
+
+R4 completes hook, explicit deep-link, actor-scoped unread aggregate, and responsive messaging UI corrections. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R4_EVIDENCE.md`. The full app command timed out and RLS remains Docker-blocked; neither is claimed as pass. **Next:** R5. Production pilot remains `NO-GO`; R-405 remains open.

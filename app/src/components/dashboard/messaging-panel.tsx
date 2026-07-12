@@ -22,6 +22,8 @@ export function MessagingPanel({
   filters,
   items,
   filteredTotal,
+  unreadConversationCount,
+  unreadMessageCount,
   nextCursor,
   listError,
   detailError,
@@ -42,6 +44,8 @@ export function MessagingPanel({
   filters: Pick<DashboardUrlState, "conversationStatus" | "conversationQuery">;
   items: ConversationInboxItem[];
   filteredTotal: number;
+  unreadConversationCount: number;
+  unreadMessageCount: number;
   nextCursor: string | null;
   listError: string | null;
   detailError: string | null;
@@ -58,14 +62,17 @@ export function MessagingPanel({
   detail: ReactNode;
   detailUnavailable?: boolean;
 }) {
-  const unreadCount = items.filter((item) => item.hasUnread).length;
   const statusLabels: Record<ConversationListStatus, string> = {
     all: t(uiLanguage, "filterAll"),
     unread: t(uiLanguage, "filterUnread"),
   };
   const statusOptions: Array<[ConversationListStatus, string]> = (["all", "unread"] as const).map((segment) => [
     segment,
-    buildConversationStatusSegmentLabel(segment, { all: filteredTotal, unread: unreadCount }, statusLabels),
+    buildConversationStatusSegmentLabel(
+      segment,
+      { all: filteredTotal, unread: unreadConversationCount },
+      statusLabels,
+    ),
   ]);
   const emptyState = resolveMessagingEmptyStateKeys(filters.conversationStatus, filters.conversationQuery);
   const showInitialLoading = isListRefreshing && items.length === 0;
@@ -165,7 +172,7 @@ export function MessagingPanel({
       </div>
 
       <p className="mt-3 shrink-0 text-xs text-stone-500">
-        {t(uiLanguage, "inboxFilteredTotal")}: {filteredTotal}
+        {t(uiLanguage, "inboxFilteredTotal")}: {filteredTotal} · {t(uiLanguage, "filterUnread")}: {unreadMessageCount}
         {lastSuccessAt ? ` · ${t(uiLanguage, "inboxLastRefresh")}: ${new Date(lastSuccessAt).toLocaleString("tr-TR")}` : ""}
       </p>
     </div>
@@ -174,11 +181,11 @@ export function MessagingPanel({
   const detailPane = (
     <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
       {selectedConversationId ? (
-        <div className="mb-3 flex items-center gap-2 lg:hidden">
+        <div className="mb-3 flex items-center gap-2 md:hidden">
           <button
             type="button"
             onClick={onBackToList}
-            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-stone-200 bg-white text-stone-700 transition hover:bg-stone-100"
+            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-stone-200 bg-white text-stone-700 transition hover:bg-stone-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
             aria-label={t(uiLanguage, "messagingBackToList")}
           >
             <ArrowLeft size={18} aria-hidden="true" />
@@ -232,17 +239,17 @@ export function MessagingPanel({
         </button>
       </div>
 
-      <div className="mt-4 flex min-h-0 flex-1 flex-col gap-4 overflow-hidden lg:flex-row">
+      <div className="mt-4 grid min-h-0 flex-1 grid-cols-1 gap-4 overflow-hidden md:grid-cols-[minmax(250px,0.38fr)_minmax(0,1fr)]">
         <div
           className={`min-h-0 min-w-0 flex-col overflow-hidden ${MESSAGING_PANEL_LIST_WIDTH_CLASS} ${
-            showListOnMobile ? "flex" : "hidden lg:flex"
+            showListOnMobile ? "flex" : "hidden md:flex"
           }`}
         >
           {listPane}
         </div>
         <div
-          className={`min-h-0 min-w-0 flex-1 flex-col overflow-hidden border-stone-200 lg:border-l lg:pl-4 ${
-            showDetailOnMobile ? "flex" : "hidden lg:flex"
+          className={`min-h-0 min-w-0 flex-1 flex-col overflow-hidden border-stone-200 md:border-l md:pl-4 ${
+            showDetailOnMobile ? "flex" : "hidden md:flex"
           }`}
         >
           {detailPane}

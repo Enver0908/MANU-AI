@@ -26,7 +26,7 @@ export function ConversationMessageBubble({
   onDismissDraft,
 }: {
   message: ConversationMessageDto;
-  client: ClientRecord;
+  client: ClientRecord | null;
   uiLanguage: SupportedLanguageCode;
   draftEdit: string;
   onDraftEdit: (value: string) => void;

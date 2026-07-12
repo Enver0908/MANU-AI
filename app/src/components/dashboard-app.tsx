@@ -180,11 +180,15 @@ export function DashboardApp({
     if (section !== "messages" || !messagingRoute.conversationId) {
       return { valid: true, reason: "ok" as const };
     }
+    if (!messagingRoute.clientId) {
+      return { valid: true, reason: "ok" as const };
+    }
     return resolveMessagingTargetValidity(state, {
       clientId: messagingRoute.clientId,
       conversationId: messagingRoute.conversationId,
       messageId: urlState.messageId,
       activeClientIds,
+      allowRemoteTarget: true,
     });
   }, [
     activeClientIds,
@@ -831,6 +835,8 @@ export function DashboardApp({
                 filters={urlState}
                 items={stage4bMessaging.listItems}
                 filteredTotal={stage4bMessaging.list?.filteredTotal ?? 0}
+                unreadConversationCount={stage4bMessaging.unreadConversationCount}
+                unreadMessageCount={stage4bMessaging.unreadMessageCount}
                 nextCursor={stage4bMessaging.listNextCursor}
                 listError={stage4bMessaging.listError}
                 detailError={stage4bMessaging.detailError}
@@ -857,13 +863,12 @@ export function DashboardApp({
                   })
                 }
                 detailUnavailable={Boolean(
-                  messagingRoute.conversationId &&
-                    (!messagingTargetValidity.valid || (!selectedClient && !stage4bMessaging.isDetailRefreshing)),
+                  messagingRoute.conversationId && !messagingTargetValidity.valid,
                 )}
                 detail={
-                  selectedClient && stage4bMessaging.detail?.conversation ? (
+                  stage4bMessaging.detail?.conversation ? (
                     <ConversationPanel
-                      client={selectedClient}
+                      client={selectedClient ?? null}
                       conversation={stage4bMessaging.detail.conversation}
                       messages={stage4bMessaging.detailMessages}
                       pagination={stage4bMessaging.detail.pagination}
@@ -895,7 +900,7 @@ export function DashboardApp({
                       isDetailRefreshing={stage4bMessaging.isDetailRefreshing}
                       detailError={stage4bMessaging.detailError}
                     />
-                  ) : selectedClient && stage4bMessaging.isDetailRefreshing ? (
+                  ) : stage4bMessaging.isDetailRefreshing ? (
                     <div className="rounded-lg border border-stone-200 bg-white p-6 text-sm text-stone-600" aria-busy="true">
                       {t(uiLanguage, "refreshInbox")}
                     </div>

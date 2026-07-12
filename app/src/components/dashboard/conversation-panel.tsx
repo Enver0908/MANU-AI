@@ -57,7 +57,7 @@ export function ConversationPanel({
   detailError,
   state,
 }: {
-  client: ClientRecord;
+  client: ClientRecord | null;
   conversation: ConversationSummaryDto;
   messages: ConversationMessageDto[];
   pagination: ConversationPagination | null;
@@ -88,7 +88,7 @@ export function ConversationPanel({
   const timelineRef = useRef<HTMLDivElement>(null);
   const [draftEdits, setDraftEdits] = useState<Record<string, string>>({});
   const [yellowDraftEdits, setYellowDraftEdits] = useState<Record<string, string>>({});
-  const redRiskLocked = isRedRiskLockActive(client);
+  const redRiskLocked = client ? isRedRiskLockActive(client) : false;
   const visibility = resolveConversationDetailMutationVisibility(permissions, client, { canManageAiControls });
   const timelineItems = useMemo(() => buildConversationTimelineItems(messages), [messages]);
   const activeYellowDraft = useMemo(
@@ -99,8 +99,8 @@ export function ConversationPanel({
     ? (yellowDraftEdits[activeYellowDraft.id] ?? activeYellowDraft.body ?? "")
     : "";
   const humanControlBanner = useMemo(
-    () => buildClientHumanControlBanner(state, client.id),
-    [state, client.id],
+    () => (client ? buildClientHumanControlBanner(state, client.id) : null),
+    [client, state],
   );
 
   useEffect(() => {
@@ -130,7 +130,7 @@ export function ConversationPanel({
         </div>
       ) : null}
 
-      {humanControlBanner ? (
+      {client && humanControlBanner ? (
         <div className="mt-3">
           <HumanControlSessionBanner
             banner={{ ...humanControlBanner, canActivateAi: humanControlBanner.canActivateAi && canManageAiControls }}
@@ -256,7 +256,7 @@ export function ConversationPanel({
         />
       ) : null}
 
-      {visibility.showAiControls ? (
+      {visibility.showAiControls && client ? (
         <ConversationAiControlsStrip
           client={client}
           uiLanguage={uiLanguage}

@@ -323,3 +323,6 @@ R2 adds bounded v2 Supabase projections and receipt authorization guards only. I
 ## Stage 4B-2 Post-Closure Remediation R3 - 2026-07-12
 
 R3 is not a production gate closure. Atomic mutation implementation is recorded for local verification only; R-405 and all remaining release/RLS gates stay open. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R3_EVIDENCE.md`.
+## Stage 4B-2 Post-Closure Remediation R4 - 2026-07-12
+
+R4 is not a production gate closure. It records local client messaging corrections only; R-405, full regression, RLS, scale, and remaining release gates stay open. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R4_EVIDENCE.md`.

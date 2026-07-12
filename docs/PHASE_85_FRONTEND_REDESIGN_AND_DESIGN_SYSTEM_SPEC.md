@@ -410,3 +410,6 @@ R2 supplies the messaging consumer with SQL-authoritative unread aggregates and 
 ## Stage 4B-2 Post-Closure Remediation R3 - 2026-07-12
 
 R3 changes the backend mutation contract consumed by the messaging UI: first-party manual/draft actions now receive exact transaction-scoped idempotent responses and server-enforced role/assignment failures. No visual layout or navigation behavior is opened by R3. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R3_EVIDENCE.md`.
+## Stage 4B-2 Post-Closure Remediation R4 - 2026-07-12
+
+R4 applies the locked messaging UI correction: API aggregate unread counts, explicit deep-link loading, legacy-cache-tolerant transcript rendering, and list/detail split from the tablet breakpoint. No provider/channel or broad shell redesign changed. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R4_EVIDENCE.md`.

@@ -646,3 +646,6 @@ R2 is a local bounded-read/receipt implementation correction only. It contribute
 ## Stage 4B-2 Post-Closure Remediation R3 - 2026-07-12
 
 R3 contributes no production readiness approval. It corrects local atomic mutation/idempotency behavior while leaving the pilot `NO-GO`, R-405 open, and SQL/RLS/environment gates unresolved where verification is unavailable. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R3_EVIDENCE.md`.
+## Stage 4B-2 Post-Closure Remediation R4 - 2026-07-12
+
+R4 contributes no production readiness approval. It corrects local messaging navigation, hook aggregates, stale-anchor loading, and tablet layout. Full app and RLS remain open; production remains `NO-GO` and R-405 remains open. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R4_EVIDENCE.md`.

@@ -555,3 +555,6 @@ R2 changed no Stage 4B alert/notification ownership. It only hardens the Stage 4
 ## Stage 4B-2 Post-Closure Remediation R3 - 2026-07-12
 
 R3 changes only the Stage 4B-2 conversation mutation boundary. Stage 4B alert/notification ownership and lifecycle remain unchanged. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R3_EVIDENCE.md`; R4 is next.
+## Stage 4B-2 Post-Closure Remediation R4 - 2026-07-12
+
+R4 changes only the Stage 4B-2 messaging consumer. Stage 4B alert/notification ownership and lifecycle remain unchanged. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R4_EVIDENCE.md`; R5 is next.

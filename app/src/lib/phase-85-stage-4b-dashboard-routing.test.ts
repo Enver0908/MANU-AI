@@ -169,6 +169,20 @@ describe("phase-85-stage-4b dashboard routing", () => {
     });
   });
 
+  it("preserves an explicit conversation deep-link until the bounded detail API resolves it", () => {
+    const selection = resolveMessagingRouteSelection(
+      { conversationId: "conversation-from-old-link", clientId: "client-mert", messageId: "message-old" },
+      [],
+      new Set(["client-mert"]),
+    );
+    expect(selection).toMatchObject({
+      conversationId: "conversation-from-old-link",
+      clientId: "client-mert",
+      messageId: "message-old",
+      needsCanonicalization: false,
+    });
+  });
+
   it("builds bounded detail request queries with anchor support", () => {
     const query = buildStage4B2ConversationDetailRequestQuery({
       anchorMessageId: "message-anchor",

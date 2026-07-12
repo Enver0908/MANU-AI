@@ -492,3 +492,6 @@ R2 adds `20260712170000_phase_85_stage_4b2_r2_bounded_reads_rls.sql`, switches S
 ## Stage 4B-2 Post-Closure Remediation R3 - 2026-07-12
 
 R3 routes first-party manual replies and draft mutations through the atomic v2 mutation RPC. The RPC owns idempotency reservation/replay, actor/assignment authorization, target scope, client/conversation locking, red/yellow race rejection, and bounded response persistence. Evidence: `../docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R3_EVIDENCE.md`. **Next:** R4.
+## Stage 4B-2 Post-Closure Remediation R4 - 2026-07-12
+
+R4 wires API-authoritative unread aggregates into the navigation/panel, preserves explicit conversation deep-links across incomplete legacy state, and enables the list/detail split at the tablet breakpoint. Targeted tests, build, lint, and visual projects pass; full app and RLS are not claimed. Evidence: `../docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R4_EVIDENCE.md`. **Next:** R5.

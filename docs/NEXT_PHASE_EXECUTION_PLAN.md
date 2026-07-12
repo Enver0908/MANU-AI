@@ -2452,3 +2452,6 @@ R2 bounded the Supabase list/detail projections and receipt read mutation throug
 ## Stage 4B-2 Post-Closure Remediation R3 - 2026-07-12
 
 R3 is complete for atomic authorized manual/draft mutations. R4 is next and owns hook, deep-link, responsive UI, and unread integration corrections. Stage 4C remains blocked until R1-R7 evidence closes.
+## Stage 4B-2 Post-Closure Remediation R4 - 2026-07-12
+
+R4 is complete for hook, deep-link, responsive UI, and unread integration corrections. R5 is next and owns the remaining security, lifecycle, scale, replay, accessibility, and full-regression evidence. Stage 4C remains blocked.
