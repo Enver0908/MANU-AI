@@ -3,11 +3,15 @@ import {
   buildDashboardHref,
   buildStage4BAlertsRequestQuery,
   buildStage4BNotificationsRequestQuery,
+  buildStage4B2ConversationsRequestQuery,
+  buildStage4B2ConversationDetailRequestQuery,
   formatStage4BBadgeCount,
   mergeDashboardUrlState,
   parseDashboardSearchParams,
   resolveAlertsBadgeCount,
   resolveDashboardSection,
+  resolveMessagingRouteSelection,
+  resolveMessagingUnreadBadgeCount,
   serializeDashboardSearchParams,
 } from "./phase-85-stage-4b-dashboard-routing";
 
@@ -112,5 +116,55 @@ describe("phase-85-stage-4b dashboard routing", () => {
     expect(formatStage4BBadgeCount(12)).toBe("12");
     expect(formatStage4BBadgeCount(100)).toBe("99+");
     expect(resolveAlertsBadgeCount({ red: 1, yellow: 2 })).toBe(3);
+    expect(resolveMessagingUnreadBadgeCount([{ unreadCount: 2 }, { unreadCount: 4 }])).toBe(6);
+  });
+
+  it("round-trips conversation list filters in the URL", () => {
+    const parsed = parseDashboardSearchParams(
+      new URLSearchParams("section=messages&conversationStatus=unread&conversationQuery=elif"),
+    );
+    expect(parsed.conversationStatus).toBe("unread");
+    expect(parsed.conversationQuery).toBe("elif");
+    const query = buildStage4B2ConversationsRequestQuery(parsed);
+    expect(query.get("status")).toBe("unread");
+    expect(query.get("query")).toBe("elif");
+  });
+
+  it("canonicalizes legacy clientId routes to conversationId", () => {
+    const conversations = [
+      { id: "conversation-client-mert", clientId: "client-mert" },
+      { id: "conversation-client-elif", clientId: "client-elif" },
+    ];
+    const active = new Set(["client-mert"]);
+    const fromClient = resolveMessagingRouteSelection(
+      { conversationId: null, clientId: "client-mert", messageId: null },
+      conversations,
+      active,
+    );
+    expect(fromClient).toMatchObject({
+      conversationId: "conversation-client-mert",
+      canonicalConversationId: "conversation-client-mert",
+      needsCanonicalization: true,
+    });
+
+    const fromConversation = resolveMessagingRouteSelection(
+      { conversationId: "conversation-client-mert", clientId: null, messageId: "message-1" },
+      conversations,
+      active,
+    );
+    expect(fromConversation).toMatchObject({
+      conversationId: "conversation-client-mert",
+      clientId: "client-mert",
+      needsCanonicalization: true,
+    });
+  });
+
+  it("builds bounded detail request queries with anchor support", () => {
+    const query = buildStage4B2ConversationDetailRequestQuery({
+      anchorMessageId: "message-anchor",
+      limit: 50,
+    });
+    expect(query.get("anchorMessageId")).toBe("message-anchor");
+    expect(query.get("limit")).toBe("50");
   });
 });

@@ -1,10 +1,17 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { AppRequestError } from "./app-errors";
 import {
   mergeScopedClientMutationResponseIntoAppState,
   type Phase79ScopedClientMutationResponse,
 } from "./phase-79c-scoped-client-mutation";
+import type { ConversationDetailResponse, ConversationMutationResponse } from "./phase-85-stage-4b2-contracts";
+import {
+  mergeConversationDetailResponseIntoAppState,
+  mergeConversationMutationResponseIntoAppState,
+  shouldRefreshAppStateAfterConversationMutation,
+} from "./phase-85-stage-4b2-state-merge";
 import { createInitialState } from "./seed-data";
 import type {
   Channel,
@@ -36,15 +43,24 @@ export function useManuState() {
     });
 
     if (!response.ok) {
+      let code = `request_failed_${response.status}`;
       if (response.status === 401 || response.status === 403) {
         try {
           const body = await response.json();
           setAuthError(body.error || `auth_error_${response.status}`);
+          code = body.error || code;
         } catch {
           setAuthError(`auth_error_${response.status}`);
         }
+      } else {
+        try {
+          const body = await response.json();
+          if (body.error) code = body.error;
+        } catch {
+          // ignore parse errors
+        }
       }
-      throw new Error(`Request failed: ${response.status}`);
+      throw new AppRequestError(response.status, code);
     }
 
     setAuthError(null);
@@ -70,12 +86,34 @@ export function useManuState() {
     [requestJson],
   );
 
+  const mergeConversationDetailIntoState = useCallback((detail: ConversationDetailResponse) => {
+    let mergedState = createInitialState();
+    setState((current) => {
+      mergedState = mergeConversationDetailResponseIntoAppState(current, detail);
+      return mergedState;
+    });
+    return mergedState;
+  }, []);
+
+  const mergeConversationMutationIntoState = useCallback((mutation: ConversationMutationResponse) => {
+    let mergedState = createInitialState();
+    setState((current) => {
+      mergedState = mergeConversationMutationResponseIntoAppState(current, mutation);
+      return mergedState;
+    });
+    return mergedState;
+  }, []);
+
   const conversationMutationFromApi = useCallback(
     async (url: string, init?: RequestInit) => {
-      await requestJson(url, init);
-      return replaceFromApi("/api/app-state");
+      const payload = (await requestJson(url, init)) as ConversationMutationResponse;
+      let mergedState = mergeConversationMutationIntoState(payload);
+      if (shouldRefreshAppStateAfterConversationMutation(payload.operation)) {
+        mergedState = await replaceFromApi("/api/app-state");
+      }
+      return mergedState;
     },
-    [requestJson, replaceFromApi],
+    [mergeConversationMutationIntoState, replaceFromApi, requestJson],
   );
 
   useEffect(() => {
@@ -95,6 +133,8 @@ export function useManuState() {
       state,
       hydrated,
       authError,
+      mergeConversationDetailIntoState,
+      mergeConversationMutationIntoState,
       createClient: (input: {
         fullName: string;
         channel: Channel;
@@ -197,7 +237,7 @@ export function useManuState() {
           ? state.conversations.find((item) => item.id === message.conversationId)
           : undefined;
         if (!conversation) {
-          throw new Error("conversation_not_found");
+          throw new AppRequestError(404, "conversation_not_found");
         }
         return conversationMutationFromApi(`/api/messages/drafts/${messageId}`, {
           method: "POST",
@@ -205,6 +245,28 @@ export function useManuState() {
             action: "dismiss",
             requestId: crypto.randomUUID(),
             expectedConversationRevision: conversation.revision ?? 1,
+          }),
+        });
+      },
+      reviewSendManualFromDraft: (messageId: string, body?: string) => {
+        const message = state.messages.find((item) => item.id === messageId);
+        const conversation = message
+          ? state.conversations.find((item) => item.id === message.conversationId)
+          : undefined;
+        const client = conversation
+          ? state.clients.find((item) => item.id === conversation.clientId)
+          : undefined;
+        if (!conversation) {
+          throw new AppRequestError(404, "conversation_not_found");
+        }
+        return conversationMutationFromApi(`/api/messages/drafts/${messageId}`, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "review_send_manual",
+            body,
+            requestId: crypto.randomUUID(),
+            expectedConversationRevision: conversation.revision ?? 1,
+            expectedClientContextRevision: client?.contextRevision,
           }),
         });
       },
@@ -376,6 +438,15 @@ export function useManuState() {
           method: "POST",
         }),
     }),
-    [authError, conversationMutationFromApi, hydrated, mergeScopedClientMutationFromApi, replaceFromApi, state],
+    [
+      authError,
+      conversationMutationFromApi,
+      hydrated,
+      mergeConversationDetailIntoState,
+      mergeConversationMutationIntoState,
+      mergeScopedClientMutationFromApi,
+      replaceFromApi,
+      state,
+    ],
   );
 }

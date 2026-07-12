@@ -8,6 +8,18 @@ export class AppDomainError extends Error {
   }
 }
 
+export class AppRequestError extends Error {
+  status: number;
+  code: string;
+
+  constructor(status: number, code: string) {
+    super(code);
+    this.name = "AppRequestError";
+    this.status = status;
+    this.code = code;
+  }
+}
+
 export function domainErrorResponse(error: unknown) {
   if (error instanceof AppDomainError) {
     return Response.json({ error: error.message }, { status: error.status });

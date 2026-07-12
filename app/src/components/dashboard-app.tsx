@@ -15,10 +15,13 @@ import type {
   ClientContextUpdateImportance,
   ClientContextUpdateSource,
   ClientRecord,
+  ManuAppState,
   Phase77FMenuPlanTemplateType,
 } from "@/lib/types";
 import { useDashboardUrl } from "@/lib/use-dashboard-url";
 import { useStage4BInbox } from "@/lib/use-stage-4b-inbox";
+import { useStage4B2Messaging } from "@/lib/use-stage-4b2-messaging";
+import { AppRequestError } from "@/lib/app-errors";
 import type { ClinicalAlertListItem, SystemNotificationListItem } from "@/lib/phase-85-stage-4b-contracts";
 import type { OperationalFoundationInspectionDto } from "@/lib/phase-85-if-h-operational-visibility";
 import {
@@ -54,6 +57,7 @@ import {
 } from "@/components/dashboard/shared";
 import { DASHBOARD_MAIN_ID } from "@/lib/phase-83e6-states-polish";
 import type { DashboardSection } from "@/lib/phase-85-stage-4b-dashboard-routing";
+import { resolveMessagingRouteSelection } from "@/lib/phase-85-stage-4b-dashboard-routing";
 import {
   DashboardHeaderBell,
   DashboardMobileNav,
@@ -112,6 +116,8 @@ export function DashboardApp({
     recheckContextIntakeProposal,
     applyContextIntakeProposal,
     rejectContextIntakeProposal,
+    mergeConversationDetailIntoState,
+    mergeConversationMutationIntoState,
   } = useManuState();
   const { urlState, section, navigateDashboard, openSection } = useDashboardUrl();
   const stage4bInbox = useStage4BInbox(urlState);
@@ -158,6 +164,35 @@ export function DashboardApp({
     [activeClients],
   );
 
+  const messagingRoute = useMemo(
+    () => resolveMessagingRouteSelection(urlState, state.conversations, activeClientIds),
+    [activeClientIds, state.conversations, urlState],
+  );
+
+  const stage4bMessaging = useStage4B2Messaging({
+    enabled: section === "messages",
+    conversationId: section === "messages" ? messagingRoute.conversationId : null,
+    anchorMessageId: urlState.messageId,
+    filters: {
+      conversationStatus: urlState.conversationStatus,
+      conversationQuery: urlState.conversationQuery,
+    },
+    mergeDetailIntoState: mergeConversationDetailIntoState,
+    mergeMutationIntoState: mergeConversationMutationIntoState,
+  });
+
+  useEffect(() => {
+    if (section !== "messages" || !messagingRoute.needsCanonicalization) return;
+    if (!messagingRoute.canonicalConversationId || !messagingRoute.canonicalClientId) return;
+    navigateDashboard(
+      {
+        conversationId: messagingRoute.canonicalConversationId,
+        clientId: messagingRoute.canonicalClientId,
+      },
+      { replace: true },
+    );
+  }, [messagingRoute, navigateDashboard, section]);
+
   const notificationActorContext = useMemo(
     () => ({
       role: (authInfo?.role ?? "dietitian") as "owner" | "admin" | "dietitian" | "assistant" | "auditor",
@@ -167,6 +202,9 @@ export function DashboardApp({
   );
 
   const resolvedClientId = useMemo(() => {
+    if (section === "messages" && messagingRoute.clientId) {
+      return messagingRoute.clientId;
+    }
     if (urlState.clientId && activeClients.some((client) => client.id === urlState.clientId)) {
       return urlState.clientId;
     }
@@ -174,7 +212,7 @@ export function DashboardApp({
       return activeClients[0]?.id ?? null;
     }
     return null;
-  }, [activeClients, section, urlState.clientId]);
+  }, [activeClients, messagingRoute.clientId, section, urlState.clientId]);
 
   const selectedClient = useMemo(() => {
     if (!resolvedClientId) return undefined;
@@ -335,8 +373,33 @@ export function DashboardApp({
 
   const sendManualReply = async () => {
     if (!selectedClient || !manualReply.trim()) return;
-    await sendManualReplyRequest({ clientId: selectedClient.id, body: manualReply });
-    setManualReply("");
+    const body = manualReply;
+    try {
+      await sendManualReplyRequest({ clientId: selectedClient.id, body });
+      setManualReply("");
+      void stage4bMessaging.refreshAfterMutation();
+      void stage4bInbox.refreshAfterMutation();
+    } catch (error) {
+      if (error instanceof AppRequestError && error.status === 409) {
+        void stage4bMessaging.refreshAfterMutation();
+        return;
+      }
+      throw error;
+    }
+  };
+
+  const runConversationMutation = async (operation: () => Promise<ManuAppState>) => {
+    try {
+      const result = await operation();
+      void stage4bMessaging.refreshAfterMutation();
+      void stage4bInbox.refreshAfterMutation();
+      return result;
+    } catch (error) {
+      if (error instanceof AppRequestError && error.status === 409) {
+        void stage4bMessaging.refreshAfterMutation();
+      }
+      throw error;
+    }
   };
 
   const activateSelectedClientAi = async (clientId: string, requestedAiMode?: "copilot" | "autopilot") => {
@@ -754,9 +817,11 @@ export function DashboardApp({
                 onReleaseHumanTakeover={releaseSelectedHumanTakeover}
                 onActivateAi={activateSelectedClientAi}
                 isActivatingAi={isActivatingAi}
-                onApproveDraft={approveDraft}
-                onEditAndSendDraft={editAndSendDraft}
-                onDismissDraft={dismissDraft}
+                onApproveDraft={(messageId) => runConversationMutation(() => approveDraft(messageId))}
+                onEditAndSendDraft={(messageId, body) =>
+                  runConversationMutation(() => editAndSendDraft(messageId, body))
+                }
+                onDismissDraft={(messageId) => runConversationMutation(() => dismissDraft(messageId))}
                 onOpenSimulator={() => navigateToSection("simulator")}
                 onOpenClientPanel={openClientPanelFromConversation}
               />

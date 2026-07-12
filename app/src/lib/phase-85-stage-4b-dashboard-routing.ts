@@ -3,6 +3,8 @@ import type { NotificationCategory, NotificationPriority } from "./phase-85-stag
 import type { ClinicalAlertFilterSeverity } from "./phase-85-stage-4b-alerts";
 import type { NotificationListStatus } from "./phase-85-stage-4b-api";
 import { STAGE_4B_DEFAULT_PAGE_SIZE } from "./phase-85-stage-4b-api";
+import type { ConversationListStatus } from "./phase-85-stage-4b2-contracts";
+import { CONVERSATION_LIST_DEFAULT_PAGE_SIZE } from "./phase-85-stage-4b2-contracts";
 
 export const PHASE_85_STAGE_4B_DASHBOARD_ROUTING_VERSION = "p85-stage-4b-dashboard-routing-v1";
 
@@ -32,6 +34,8 @@ export type DashboardUrlState = {
   notificationPriority: NotificationPriority | null;
   notificationCategory: NotificationCategory | null;
   notificationQuery: string;
+  conversationStatus: ConversationListStatus;
+  conversationQuery: string;
 };
 
 const DASHBOARD_SECTION_ALLOWLIST = new Set<DashboardSection>([
@@ -64,6 +68,8 @@ const DEFAULT_DASHBOARD_URL_STATE: DashboardUrlState = {
   notificationPriority: null,
   notificationCategory: null,
   notificationQuery: "",
+  conversationStatus: "all",
+  conversationQuery: "",
 };
 
 export function formatStage4BBadgeCount(count: number) {
@@ -123,6 +129,12 @@ function parseMessageSource(value: string | null): DashboardMessageSource | null
   return null;
 }
 
+function parseConversationListStatus(value: string | null): ConversationListStatus {
+  if (!value || value === "all") return "all";
+  if (value === "unread") return "unread";
+  return "all";
+}
+
 export function parseDashboardSearchParams(
   searchParams: Pick<ReadonlyURLSearchParams, "get"> | URLSearchParams,
 ): DashboardUrlState {
@@ -140,6 +152,8 @@ export function parseDashboardSearchParams(
     notificationPriority: parseNotificationPriority(searchParams.get("notificationPriority")),
     notificationCategory: parseNotificationCategory(searchParams.get("notificationCategory")),
     notificationQuery: searchParams.get("notificationQuery")?.trim() ?? "",
+    conversationStatus: parseConversationListStatus(searchParams.get("conversationStatus")),
+    conversationQuery: searchParams.get("conversationQuery")?.trim() ?? "",
   };
 }
 
@@ -159,6 +173,8 @@ export function serializeDashboardSearchParams(state: DashboardUrlState) {
   if (state.notificationPriority) params.set("notificationPriority", state.notificationPriority);
   if (state.notificationCategory) params.set("notificationCategory", state.notificationCategory);
   if (state.notificationQuery) params.set("notificationQuery", state.notificationQuery);
+  if (state.conversationStatus !== "all") params.set("conversationStatus", state.conversationStatus);
+  if (state.conversationQuery) params.set("conversationQuery", state.conversationQuery);
   return params;
 }
 
@@ -210,4 +226,98 @@ export function buildStage4BNotificationsRequestQuery(
 export function resolveAlertsBadgeCount(counts: { red: number; yellow: number } | null | undefined) {
   if (!counts) return 0;
   return counts.red + counts.yellow;
+}
+
+export type MessagingRouteConversation = {
+  id: string;
+  clientId: string;
+};
+
+export type MessagingRouteSelection = {
+  conversationId: string | null;
+  clientId: string | null;
+  messageId: string | null;
+  canonicalConversationId: string | null;
+  canonicalClientId: string | null;
+  needsCanonicalization: boolean;
+};
+
+export function resolveMessagingRouteSelection(
+  urlState: Pick<DashboardUrlState, "conversationId" | "clientId" | "messageId">,
+  conversations: readonly MessagingRouteConversation[],
+  activeClientIds: ReadonlySet<string>,
+): MessagingRouteSelection {
+  const messageId = urlState.messageId;
+  const conversationById = urlState.conversationId
+    ? conversations.find((item) => item.id === urlState.conversationId)
+    : undefined;
+  if (conversationById && activeClientIds.has(conversationById.clientId)) {
+    return {
+      conversationId: conversationById.id,
+      clientId: conversationById.clientId,
+      messageId,
+      canonicalConversationId: conversationById.id,
+      canonicalClientId: conversationById.clientId,
+      needsCanonicalization:
+        !urlState.conversationId ||
+        urlState.conversationId !== conversationById.id ||
+        urlState.clientId !== conversationById.clientId,
+    };
+  }
+
+  const conversationByClient = urlState.clientId
+    ? conversations.find((item) => item.clientId === urlState.clientId)
+    : undefined;
+  if (conversationByClient && activeClientIds.has(conversationByClient.clientId)) {
+    return {
+      conversationId: conversationByClient.id,
+      clientId: conversationByClient.clientId,
+      messageId,
+      canonicalConversationId: conversationByClient.id,
+      canonicalClientId: conversationByClient.clientId,
+      needsCanonicalization: urlState.conversationId !== conversationByClient.id,
+    };
+  }
+
+  return {
+    conversationId: null,
+    clientId: urlState.clientId && activeClientIds.has(urlState.clientId) ? urlState.clientId : null,
+    messageId,
+    canonicalConversationId: null,
+    canonicalClientId: urlState.clientId && activeClientIds.has(urlState.clientId) ? urlState.clientId : null,
+    needsCanonicalization: false,
+  };
+}
+
+export function buildStage4B2ConversationsRequestQuery(
+  state: Pick<DashboardUrlState, "conversationStatus" | "conversationQuery">,
+  options?: { cursor?: string | null; limit?: number },
+) {
+  const params = new URLSearchParams();
+  if (state.conversationStatus !== "all") params.set("status", state.conversationStatus);
+  if (state.conversationQuery) params.set("query", state.conversationQuery);
+  params.set("limit", String(options?.limit ?? CONVERSATION_LIST_DEFAULT_PAGE_SIZE));
+  if (options?.cursor) params.set("cursor", options.cursor);
+  return params;
+}
+
+export function buildStage4B2ConversationDetailRequestQuery(options?: {
+  anchorMessageId?: string | null;
+  cursor?: string | null;
+  direction?: "older" | "newer";
+  limit?: number;
+}) {
+  const params = new URLSearchParams();
+  params.set("limit", String(options?.limit ?? 50));
+  if (options?.direction) params.set("direction", options.direction);
+  if (options?.cursor) params.set("cursor", options.cursor);
+  if (options?.anchorMessageId) params.set("anchorMessageId", options.anchorMessageId);
+  return params;
+}
+
+export function resolveMessagingUnreadBadgeCount(
+  items: readonly { unreadCount: number }[] | null | undefined,
+) {
+  if (!items?.length) return 0;
+  return items.reduce((total, item) => total + Math.max(0, item.unreadCount), 0);
 }
