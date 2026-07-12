@@ -19,7 +19,7 @@ export type DashboardSection =
   | "voice"
   | "forms";
 
-export type DashboardMessageSource = "alert";
+export type DashboardMessageSource = "alert" | "notification";
 
 export type DashboardUrlState = {
   section: DashboardSection;
@@ -126,6 +126,7 @@ function parseNotificationCategory(value: string | null): NotificationCategory |
 
 function parseMessageSource(value: string | null): DashboardMessageSource | null {
   if (value === "alert") return "alert";
+  if (value === "notification") return "notification";
   return null;
 }
 

@@ -63,6 +63,16 @@ describe("phase-85-stage-4b dashboard routing", () => {
     expect(href).toContain("source=alert");
   });
 
+  it("parses notification message deep-link source", () => {
+    const parsed = parseDashboardSearchParams(
+      new URLSearchParams(
+        "section=messages&clientId=client-mert&conversationId=conversation-client-mert&source=notification&sourceId=notification-1&messageId=message-1",
+      ),
+    );
+    expect(parsed.source).toBe("notification");
+    expect(parsed.sourceId).toBe("notification-1");
+  });
+
   it("merges partial navigation patches without dropping filters", () => {
     const current = parseDashboardSearchParams(new URLSearchParams("section=alerts&alertSeverity=red&alertQuery=alerji"));
     const next = mergeDashboardUrlState(current, { section: "messages", clientId: "client-elif" });

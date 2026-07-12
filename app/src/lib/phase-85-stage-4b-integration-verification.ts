@@ -11,6 +11,7 @@ import {
   STAGE_4B_DEFAULT_PAGE_SIZE,
   STAGE_4B_MAX_PAGE_SIZE,
 } from "./phase-85-stage-4b-api";
+import { detectConversationReadReceiptExportLeaks } from "./phase-85-stage-4b2-messaging-integration";
 import { buildTestNotification } from "./phase-85-stage-4b-notifications";
 import { runInboundSimulation } from "./simulator";
 
@@ -325,10 +326,18 @@ export function evaluateStage4BDataGovernanceEvidence(state: ManuAppState, clien
   if (exportJson.includes("dietitian-other")) {
     failures.push("client_export_contains_other_actor_receipt");
   }
+  const exportReceiptLeaks = detectConversationReadReceiptExportLeaks(exportPayload as Record<string, unknown>);
+  if (!exportReceiptLeaks.passed) {
+    failures.push(...exportReceiptLeaks.failures);
+  }
 
   const scopedExport = buildClientScopedExport(state, resolvedClientId);
   if ("notificationReceipts" in scopedExport) {
     failures.push("scoped_export_contains_notification_receipts");
+  }
+  const scopedReceiptLeaks = detectConversationReadReceiptExportLeaks(scopedExport as Record<string, unknown>);
+  if (!scopedReceiptLeaks.passed) {
+    failures.push(...scopedReceiptLeaks.failures);
   }
 
   const projected = projectClinicalAlertsFromState(state, {

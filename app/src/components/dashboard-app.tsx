@@ -58,6 +58,12 @@ import { DASHBOARD_MAIN_ID } from "@/lib/phase-83e6-states-polish";
 import type { DashboardSection } from "@/lib/phase-85-stage-4b-dashboard-routing";
 import { resolveMessagingRouteSelection } from "@/lib/phase-85-stage-4b-dashboard-routing";
 import {
+  buildClinicalAlertMessagingNavigationPatch,
+  buildSystemNotificationNavigationAction,
+  refreshStage4B2OperationalSurfaces,
+  resolveMessagingTargetValidity,
+} from "@/lib/phase-85-stage-4b2-messaging-integration";
+import {
   DashboardHeaderBell,
   DashboardMobileNav,
   DashboardSidebarNav,
@@ -170,6 +176,25 @@ export function DashboardApp({
     [activeClientIds, state.conversations, urlState],
   );
 
+  const messagingTargetValidity = useMemo(() => {
+    if (section !== "messages" || !messagingRoute.conversationId) {
+      return { valid: true, reason: "ok" as const };
+    }
+    return resolveMessagingTargetValidity(state, {
+      clientId: messagingRoute.clientId,
+      conversationId: messagingRoute.conversationId,
+      messageId: urlState.messageId,
+      activeClientIds,
+    });
+  }, [
+    activeClientIds,
+    messagingRoute.clientId,
+    messagingRoute.conversationId,
+    section,
+    state,
+    urlState.messageId,
+  ]);
+
   const stage4bMessaging = useStage4B2Messaging({
     enabled: hydrated,
     conversationId: section === "messages" ? messagingRoute.conversationId : null,
@@ -181,6 +206,16 @@ export function DashboardApp({
     mergeDetailIntoState: mergeConversationDetailIntoState,
     mergeMutationIntoState: mergeConversationMutationIntoState,
   });
+
+  const refreshStage4B2Surfaces = (options?: { anchorMessageId?: string | null }) => {
+    refreshStage4B2OperationalSurfaces(
+      {
+        refreshMessaging: (refreshOptions) => void stage4bMessaging.refreshAfterMutation(refreshOptions),
+        refreshInbox: () => void stage4bInbox.refreshAfterMutation(),
+      },
+      options,
+    );
+  };
 
   useEffect(() => {
     if (section !== "messages" || !messagingRoute.needsCanonicalization) return;
@@ -371,11 +406,10 @@ export function DashboardApp({
     try {
       await sendManualReplyRequest({ clientId: selectedClient.id, body });
       setManualReply("");
-      void stage4bMessaging.refreshAfterMutation();
-      void stage4bInbox.refreshAfterMutation();
+      refreshStage4B2Surfaces({ anchorMessageId: urlState.messageId });
     } catch (error) {
       if (error instanceof AppRequestError && error.status === 409) {
-        void stage4bMessaging.refreshAfterMutation();
+        refreshStage4B2Surfaces({ anchorMessageId: urlState.messageId });
         return;
       }
       throw error;
@@ -385,12 +419,11 @@ export function DashboardApp({
   const runConversationMutation = async (operation: () => Promise<ManuAppState>) => {
     try {
       const result = await operation();
-      void stage4bMessaging.refreshAfterMutation();
-      void stage4bInbox.refreshAfterMutation();
+      refreshStage4B2Surfaces({ anchorMessageId: urlState.messageId });
       return result;
     } catch (error) {
       if (error instanceof AppRequestError && error.status === 409) {
-        void stage4bMessaging.refreshAfterMutation();
+        refreshStage4B2Surfaces({ anchorMessageId: urlState.messageId });
       }
       throw error;
     }
@@ -409,7 +442,7 @@ export function DashboardApp({
         expectedConversationRevision: conversation.revision,
         expectedClientContextRevision: client.contextRevision,
       });
-      void stage4bInbox.refreshAfterMutation();
+      refreshStage4B2Surfaces({ anchorMessageId: urlState.messageId });
       return nextState;
     } finally {
       setIsActivatingAi(false);
@@ -432,33 +465,22 @@ export function DashboardApp({
   };
 
   const openAlertTarget = (alert: ClinicalAlertListItem) => {
-    navigateDashboard({
-      section: "messages",
-      clientId: alert.clientId,
-      conversationId: alert.conversationId,
-      source: "alert",
-      sourceId: alert.id,
-      messageId: alert.sourceMessageId,
-    });
+    const patch = buildClinicalAlertMessagingNavigationPatch(alert);
+    if (!patch) return;
+    navigateDashboard(patch);
   };
 
   const openNotificationTarget = (notification: SystemNotificationListItem) => {
-    if (notification.target.section === "messages") {
-      navigateDashboard({
-        section: "messages",
-        clientId: notification.clientId,
-        conversationId: notification.conversationId,
-        messageId: notification.messageId,
-      });
+    const action = buildSystemNotificationNavigationAction(notification);
+    if (!action) return;
+    if (action.type === "dashboard") {
+      navigateDashboard(action.patch);
       return;
     }
-    if (notification.target.section === "ai-control" && notification.clientId) {
-      selectClient(notification.clientId, { section: "clients", clientDetailTab: "tab_ai_assistant" });
-      return;
-    }
-    if (notification.clientId) {
-      selectClient(notification.clientId, { section: "clients" });
-    }
+    selectClient(action.clientId, {
+      section: "clients",
+      clientDetailTab: action.clientDetailTab,
+    });
   };
 
   const addVoiceSamplesFromInput = async () => {
@@ -830,7 +852,8 @@ export function DashboardApp({
                   })
                 }
                 detailUnavailable={Boolean(
-                  messagingRoute.conversationId && !selectedClient && !stage4bMessaging.isDetailRefreshing,
+                  messagingRoute.conversationId &&
+                    (!messagingTargetValidity.valid || (!selectedClient && !stage4bMessaging.isDetailRefreshing)),
                 )}
                 detail={
                   selectedClient && stage4bMessaging.detail?.conversation ? (
@@ -929,7 +952,7 @@ export function DashboardApp({
                 onRefresh={() => void stage4bInbox.refresh({ resetBackoff: true })}
                 onLoadMore={() => void stage4bInbox.loadMoreNotifications()}
                 onOpenNotificationTarget={openNotificationTarget}
-                onMutationComplete={() => stage4bInbox.refreshAfterMutation()}
+                onMutationComplete={() => refreshStage4B2Surfaces({ anchorMessageId: urlState.messageId })}
               />
             )}
 
