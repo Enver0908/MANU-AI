@@ -551,3 +551,6 @@ R3 adds no new clinical authority. It enforces actor/assignment authorization, c
 ## Stage 4B-2 Post-Closure Remediation R4 - 2026-07-12
 
 R4 adds no clinical or provenance authority. Explicit URL targets are passed to the bounded detail API, missing legacy anchors are not treated as proof of invalidity, and absent legacy client state yields transcript-only rendering with mutation controls disabled. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R4_EVIDENCE.md`.
+## Stage 4B-2 Post-Closure Remediation R5 - 2026-07-13
+
+R5 adds no clinical or provenance authority. Its evidence checks confirm bounded DTO behavior, receipt/export separation, replay hard-zero metrics, and accessible messaging controls while keeping all P85-IF boundaries unchanged. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R5_EVIDENCE.md`.

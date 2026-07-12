@@ -558,3 +558,6 @@ R3 changes only the Stage 4B-2 conversation mutation boundary. Stage 4B alert/no
 ## Stage 4B-2 Post-Closure Remediation R4 - 2026-07-12
 
 R4 changes only the Stage 4B-2 messaging consumer. Stage 4B alert/notification ownership and lifecycle remain unchanged. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R4_EVIDENCE.md`; R5 is next.
+## Stage 4B-2 Post-Closure Remediation R5 - 2026-07-13
+
+R5 changes no Stage 4B alert/notification ownership. It records messaging replay, accessibility, lifecycle/export, scale, and regression evidence only. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R5_EVIDENCE.md`; R6 is next.

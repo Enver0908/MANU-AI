@@ -1,6 +1,6 @@
 # Phase 85 Stage 4B-2 Post-Closure Remediation Action Plan
 
-Status: **R4 complete; remediation active (2026-07-12)**
+Status: **R5 complete; remediation active (2026-07-13)**
 
 Baseline branch: `codex/phase-85-interstage-clinical-memory`
 Baseline commit: `3d67ba5 Close Phase 85 Stage 4B-2 with canonical spec, closure evidence, and continuity updates.`
@@ -14,7 +14,7 @@ The Stage 4B-2 audit found that the implementation is substantial but is not yet
 
 Stage 4C is blocked until remediation R0-R6 verification is green and the R7 evidence closure is committed separately.
 
-R1, R2, R3, and R4 implementation units are complete. R5 remains the next authorized implementation unit; RLS, full-suite, replay, scale, and independent verification gates remain open.
+R1 through R5 implementation units are complete. R6 remains the next authorized implementation unit; real RLS execution, SQL EXPLAIN evidence, and independent release verification remain open.
 
 ## 2. Locked findings
 
@@ -82,3 +82,9 @@ R3 implementation evidence is `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION
 R4 corrected the client lifecycle around the bounded messaging APIs. Explicit `conversationId` URLs now remain loadable when the legacy conversation/message cache is incomplete; only locally contradictory client/conversation links fail closed, while the bounded detail API validates old anchors. The hook now consumes actor-scoped `unreadConversationCount` and `unreadMessageCount` for navigation and panel badges, and its filter callback dependency is stable. Messaging uses a `md` split layout so the 768px tablet has list/detail panes while mobile keeps drill-down navigation. A detail DTO without a legacy client renders transcript-only with all mutation controls hidden, preventing a synthetic client record and sensitive state expansion.
 
 R4 implementation evidence is `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R4_EVIDENCE.md`. Targeted routing/integration/detail tests, production build, lint, and four-viewport visual messaging tests passed. The full app command timed out in the OneDrive workspace and is not claimed as pass; RLS remains environment-blocked. R5 owns the remaining security, lifecycle, scale, replay, accessibility, full-regression, and RLS evidence.
+
+## 10. R5 completion record - 2026-07-13
+
+R5 rebuilt the missing test and scale evidence without changing runtime provider/channel behavior or adding a migration. The new R5 evidence module tests cross-page actor-scoped unread aggregate invariants, a 10,000-conversation fixture, a 10,000-message single-transcript detail window, bounded response payloads, R2/R3 SQL contract markers, and client-export receipt/lifecycle leak guards. A dedicated Playwright accessibility spec covers named rows, tab semantics, keyboard focus, mobile detail navigation, and horizontal overflow across desktop, tablet, Android, and iOS. A reproducible R5 rehearsal script runs the full bounded scale test, full mock channel replay, and accessibility projects.
+
+R5 evidence is `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R5_EVIDENCE.md`. Full app regression passed with 153 files and 959 tests passed / 6 skipped; core passed 234/234; full 79G production-scale acceptance passed 7/7; full 100x50 channel replay passed; R5 bounded-scale passed 4/4; accessibility passed 4/4; lint and build passed. `npm run test:rls` still skips 35 tests because Docker/Supabase is unavailable and is not counted as pass. R6 remains responsible for independent release verification, real RLS/EXPLAIN execution, and final gate closure.

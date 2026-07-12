@@ -1137,3 +1137,6 @@ R3 is an implementation correction, not a pilot approval. Production remains `NO
 ## Stage 4B-2 Post-Closure Remediation R4 - 2026-07-12
 
 R4 is an implementation correction, not a pilot approval. Production remains `NO-GO`, R-405 remains open, R5-R7 remain required, and full app/RLS evidence is not claimed. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R4_EVIDENCE.md`.
+## Stage 4B-2 Post-Closure Remediation R5 - 2026-07-13
+
+R5 is a test/evidence reconstruction, not a pilot approval. Production remains `NO-GO`, R-405 remains open, R6-R7 remain required, and real RLS/EXPLAIN evidence remains open. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R5_EVIDENCE.md`.

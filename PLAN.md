@@ -1074,3 +1074,6 @@ R3 completed the server-side atomic mutation/idempotency correction for manual r
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R4 - 2026-07-12
 
 R4 completes the client hook, deep-link, unread aggregate, and tablet/mobile messaging UI correction. Targeted tests, build, lint, and all four messaging visual projects passed; full app and RLS remain unclaimed because the full command timed out and Docker is unavailable. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R4_EVIDENCE.md`. **Next:** R5; Stage 4C remains blocked.
+## Phase 85 Stage 4B-2 Post-Closure Remediation R5 - 2026-07-13
+
+R5 rebuilt the scale, replay, lifecycle/export, accessibility, and regression evidence. Full app passed 153 files and 959 tests with 6 skipped; RLS remains 35 skipped due unavailable Docker. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R5_EVIDENCE.md`. **Next:** R6; Stage 4C remains blocked and production remains `NO-GO`.

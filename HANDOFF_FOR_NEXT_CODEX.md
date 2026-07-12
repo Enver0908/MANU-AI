@@ -2908,3 +2908,6 @@ R3 is complete and committed as the atomic authorized mutation boundary. Continu
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R4 - 2026-07-12
 
 R4 is implemented locally. Verify `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R4_EVIDENCE.md` and the clean commit before starting R5. R4 changed no migration; explicit deep-links survive incomplete legacy cache, unread badges use API aggregates, and tablet split UI is covered by four visual projects. Full app timed out and RLS remains Docker-blocked. Preserve production `NO-GO`, R-405 open, append-only migrations, and all real integration shutdowns.
+## Phase 85 Stage 4B-2 Post-Closure Remediation R5 - 2026-07-13
+
+R5 is implemented and evidenced in `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R5_EVIDENCE.md`. Full app, core, 79G scale, channel replay, bounded 10k messaging scale, accessibility, lint, and build passed. `npm run test:rls` still skips 35 tests because Docker/Supabase is unavailable; do not claim the RLS gate green. R6 is next. Preserve production `NO-GO`, R-405 open, append-only migrations, and all real integration shutdowns.

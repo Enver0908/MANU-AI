@@ -1513,3 +1513,6 @@ R3 implemented transaction-scoped idempotency and server-side authorization for 
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R4 - 2026-07-12
 
 R4 corrects explicit conversation deep-links, stale anchor handling, API-authoritative unread counts, and the 768px split layout without opening new persistence or integration paths. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R4_EVIDENCE.md`. R5 is next; production remains `NO-GO`.
+## Phase 85 Stage 4B-2 Post-Closure Remediation R5 - 2026-07-13
+
+R5 adds reproducible 10k messaging scale evidence, full regression, replay hard-zero checks, lifecycle/export guards, and accessibility projects. Real RLS/EXPLAIN remains open because Docker is unavailable. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R5_EVIDENCE.md`. **Next:** R6; production remains `NO-GO`.

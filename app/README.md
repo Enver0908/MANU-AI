@@ -495,3 +495,6 @@ R3 routes first-party manual replies and draft mutations through the atomic v2 m
 ## Stage 4B-2 Post-Closure Remediation R4 - 2026-07-12
 
 R4 wires API-authoritative unread aggregates into the navigation/panel, preserves explicit conversation deep-links across incomplete legacy state, and enables the list/detail split at the tablet breakpoint. Targeted tests, build, lint, and visual projects pass; full app and RLS are not claimed. Evidence: `../docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R4_EVIDENCE.md`. **Next:** R5.
+## Stage 4B-2 Post-Closure Remediation R5 - 2026-07-13
+
+R5 adds the repeatable bounded-scale evidence module, full replay/accessibility rehearsal, lifecycle/export leak assertions, and full app regression record. Full app is 959 passed / 6 skipped; RLS is 35 skipped and unclaimed because Docker is unavailable. Evidence: `../docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R5_EVIDENCE.md`. **Next:** R6.

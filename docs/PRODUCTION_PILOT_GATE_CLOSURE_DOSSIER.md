@@ -326,3 +326,6 @@ R3 is not a production gate closure. Atomic mutation implementation is recorded 
 ## Stage 4B-2 Post-Closure Remediation R4 - 2026-07-12
 
 R4 is not a production gate closure. It records local client messaging corrections only; R-405, full regression, RLS, scale, and remaining release gates stay open. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R4_EVIDENCE.md`.
+## Stage 4B-2 Post-Closure Remediation R5 - 2026-07-13
+
+R5 is not a production gate closure. Local full regression, 79G scale, replay, accessibility, and export evidence passed; R-405, real RLS/EXPLAIN, and independent release gates remain open. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R5_EVIDENCE.md`.

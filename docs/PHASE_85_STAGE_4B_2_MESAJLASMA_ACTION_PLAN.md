@@ -379,3 +379,6 @@ Phase 0 changes no runtime code, SQL migration, API route, provider, channel ada
 ## Post-closure remediation R4 completion record - 2026-07-12
 
 The separate remediation plan `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md` now records R4 complete. R4 corrected the Phase 6 hook/deep-link lifecycle, Phase 7 tablet split and aggregate unread presentation, and Phase 8 transcript-only rendering when legacy client state is absent. The implementation evidence is `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R4_EVIDENCE.md`; R5 remains the next authorized remediation unit.
+## Post-closure remediation R5 completion record - 2026-07-13
+
+The separate remediation plan now records R5 complete for application-level test and scale evidence. The R5 harness covers full app regression, bounded 10k conversation/detail behavior, SQL contract markers, lifecycle/export leak guards, full replay, and accessibility projects. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R5_EVIDENCE.md`; RLS/EXPLAIN and independent release verification remain open for R6.

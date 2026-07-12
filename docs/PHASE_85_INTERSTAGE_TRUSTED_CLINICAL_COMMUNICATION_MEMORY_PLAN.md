@@ -513,3 +513,6 @@ R3 preserves P85-IF conversation revision, risk, human-control, provenance, and 
 ## Stage 4B-2 Post-Closure Remediation R4 - 2026-07-12
 
 R4 preserves P85-IF as the clinical/provenance authority. It changes only client-side messaging route resolution, bounded hook consumption, unread presentation, and responsive rendering. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R4_EVIDENCE.md`.
+## Stage 4B-2 Post-Closure Remediation R5 - 2026-07-13
+
+R5 preserves P85-IF clinical, provenance, lifecycle, and human-control authority. It adds evidence harnesses and tests around the messaging consumer without opening a new runtime authority or integration path. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R5_EVIDENCE.md`.

@@ -176,3 +176,6 @@ R3 addresses the implementation side of mutation authorization, transaction-scop
 ## Stage 4B-2 Post-Closure Remediation R4 - 2026-07-12
 
 R4 implements the client-side portions of R-4B2-06, R-4B2-07, and R-4B2-08: actor-scoped aggregate unread presentation, tablet split layout, and legacy-cache-tolerant deep-links. R-4B2-09 remains open for full regression, RLS, replay, scale, and independent verification; R-4B2-10 remains open until R7. Production remains `NO-GO`; R-405 remains open. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R4_EVIDENCE.md`.
+## Stage 4B-2 Post-Closure Remediation R5 - 2026-07-13
+
+R5 closes the application-level portion of R-4B2-09 with full regression, bounded 10k messaging scale, 79G acceptance, full replay, accessibility, and lifecycle/export checks. Real RLS/EXPLAIN and independent verification remain open; R-4B2-10 remains open until R7. Production remains `NO-GO`; R-405 remains open. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R5_EVIDENCE.md`.

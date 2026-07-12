@@ -2455,3 +2455,6 @@ R3 is complete for atomic authorized manual/draft mutations. R4 is next and owns
 ## Stage 4B-2 Post-Closure Remediation R4 - 2026-07-12
 
 R4 is complete for hook, deep-link, responsive UI, and unread integration corrections. R5 is next and owns the remaining security, lifecycle, scale, replay, accessibility, and full-regression evidence. Stage 4C remains blocked.
+## Stage 4B-2 Post-Closure Remediation R5 - 2026-07-13
+
+R5 is complete for application-level test and scale evidence. Full app, core, 79G, replay, messaging scale, accessibility, lint, and build passed; real RLS/EXPLAIN remains open. R6 is next and owns independent full verification and release gating. Stage 4C remains blocked.

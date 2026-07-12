@@ -649,3 +649,6 @@ R3 contributes no production readiness approval. It corrects local atomic mutati
 ## Stage 4B-2 Post-Closure Remediation R4 - 2026-07-12
 
 R4 contributes no production readiness approval. It corrects local messaging navigation, hook aggregates, stale-anchor loading, and tablet layout. Full app and RLS remain open; production remains `NO-GO` and R-405 remains open. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R4_EVIDENCE.md`.
+## Stage 4B-2 Post-Closure Remediation R5 - 2026-07-13
+
+R5 contributes no production readiness approval. Full regression, scale, replay, accessibility, and lifecycle/export evidence passed locally; real RLS/EXPLAIN remains open. Production remains `NO-GO`; R-405 remains open. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R5_EVIDENCE.md`.

@@ -249,3 +249,6 @@ R3 is complete for the atomic authorized mutation boundary. Manual replies and d
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R4 - 2026-07-12
 
 R4 completes hook, explicit deep-link, actor-scoped unread aggregate, and responsive messaging UI corrections. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R4_EVIDENCE.md`. The full app command timed out and RLS remains Docker-blocked; neither is claimed as pass. **Next:** R5. Production pilot remains `NO-GO`; R-405 remains open.
+## Phase 85 Stage 4B-2 Post-Closure Remediation R5 - 2026-07-13
+
+R5 reconstructs the bounded-scale, replay, accessibility, lifecycle/export, and full-regression evidence. Full app passed 959/6 skipped, core 234/234, full 79G 7/7, full channel replay, R5 scale 4/4, accessibility 4/4, lint, and build. RLS remains Docker-blocked with 35 skipped and is not claimed. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R5_EVIDENCE.md`. **Next:** R6; production remains `NO-GO`, R-405 remains open.
