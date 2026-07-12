@@ -60,7 +60,7 @@ function parseUuid(value: unknown, errorCode: string): string {
 }
 
 function parseExpectedConversationRevision(value: unknown): number {
-  if (typeof value !== "number" || !Number.isInteger(value) || value < 1) {
+  if (typeof value !== "number" || !Number.isSafeInteger(value) || value < 1) {
     throw new AppDomainError(400, "expected_conversation_revision_invalid");
   }
   return value;
@@ -68,7 +68,7 @@ function parseExpectedConversationRevision(value: unknown): number {
 
 function parseOptionalExpectedClientContextRevision(value: unknown): number | undefined {
   if (value == null) return undefined;
-  if (typeof value !== "number" || !Number.isInteger(value) || value < 1) {
+  if (typeof value !== "number" || !Number.isSafeInteger(value) || value < 1) {
     throw new AppDomainError(400, "expected_client_context_revision_invalid");
   }
   return value;
@@ -141,12 +141,16 @@ export function parseConversationDraftMutationRequest(body: unknown): Conversati
   if (action === "review_send_manual" && raw.body != null && typeof raw.body === "string" && raw.body.trim()) {
     assertValidManualMessageBody(raw.body);
   }
+  const expectedClientContextRevision = parseOptionalExpectedClientContextRevision(raw.expectedClientContextRevision);
+  if (action === "review_send_manual" && expectedClientContextRevision == null) {
+    throw new AppDomainError(400, "expected_client_context_revision_required");
+  }
   return {
     action,
     body: typeof raw.body === "string" ? raw.body : undefined,
     requestId: parseUuid(raw.requestId, "request_id_invalid"),
     expectedConversationRevision: parseExpectedConversationRevision(raw.expectedConversationRevision),
-    expectedClientContextRevision: parseOptionalExpectedClientContextRevision(raw.expectedClientContextRevision),
+    expectedClientContextRevision,
   };
 }
 

@@ -32,7 +32,7 @@ Phase 5 makes conversation-scoped message mutations idempotent, CAS-controlled, 
 ## 4. Locked Behaviors Proven
 
 - `POST /api/messages/manual` requires `conversationId` (or legacy `clientId` resolution), `body`, UUID `requestId`, and `expectedConversationRevision`.
-- `POST /api/messages/drafts/[id]` requires `action`, UUID `requestId`, and `expectedConversationRevision`; optional `expectedClientContextRevision`.
+- `POST /api/messages/drafts/[id]` requires `action`, UUID `requestId`, and `expectedConversationRevision`; `review_send_manual` additionally requires `expectedClientContextRevision`.
 - Duplicate `requestId` returns the same bounded mutation response without duplicate writes.
 - Stale `expectedConversationRevision` returns `409 reactivation_conflict_conversation_revision`.
 - Blocked/opted-out channel permission returns `409 context_changed_before_send`.

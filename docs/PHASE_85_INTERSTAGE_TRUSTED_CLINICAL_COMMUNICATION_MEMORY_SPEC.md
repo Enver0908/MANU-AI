@@ -538,3 +538,6 @@ The Phase 1 implementation adds bounded messaging contracts and pure authorizati
 ## Stage 4B-2 Post-Closure Remediation R0 - 2026-07-12
 
 The Stage 4B-2 consumer boundary remains valid, but its implementation closure is conditional from the technical audit perspective. R1-R7 must close server-side authorization, atomic mutation, bounded Supabase reads, lifecycle, and verification findings before Stage 4C planning resumes.
+## Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
+
+The Stage 4B-2 consumer contract now separates AI activation from configuration, preserves red-lock activation semantics, and reports unread aggregates over the full actor-visible projection. R1 adds no provider, channel, health-data, migration, or production path. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R1_EVIDENCE.md`.

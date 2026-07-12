@@ -68,7 +68,7 @@ P85-IF-D added complete transcript and human-control coordination for business-h
 
 This repository is a local SaaS/PWA pilot prototype and architecture workspace. It is not a production-connected system yet.
 
-**Latest implementation phase:** Phase 85 Stage 4B-2 Mesajlaşma is implemented locally and is under post-closure remediation (R0 complete, 2026-07-12). **Next work:** remediation R1; Stage 4C remains blocked. **Production pilot:** `NO-GO` (unchanged); R-405 remains open.
+**Latest implementation phase:** Phase 85 Stage 4B-2 Mesajlaşma is implemented locally and is under post-closure remediation (R1 complete, 2026-07-12). **Next work:** remediation R2; Stage 4C remains blocked. **Production pilot:** `NO-GO` (unchanged); R-405 remains open.
 
 **Phase 82 verification:** targeted Phase 82 tests passed (5 files, 31/31); Phase 82G records `repoLocalClosureComplete: true` with verification `blocked` because `npm run test:rls` remains skipped/pending when local Supabase is unavailable.
 
@@ -235,3 +235,7 @@ The decision-complete Mesajlasma action plan is recorded in `docs/PHASE_85_STAGE
 ## Phase 85 Stage 4B-2 Post-Closure Remediation - 2026-07-12
 
 Stage 4B-2 implementation is under post-closure remediation. The canonical remediation plan is `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`; R0 is documentation-only and complete. Stage 4C remains blocked until the remediation verification chain closes. Production pilot remains `NO-GO`, R-405 remains open, and real provider/channel/health-data paths remain disabled.
+
+## Phase 85 Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
+
+R1 is complete for the domain/DTO/permission projection contract. The split AI activation/configuration permissions, red-lock activation rule, full visible-scope unread aggregates, bounded cursor/safe-integer validation, and yellow client-context revision precondition are implemented and evidenced in `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R1_EVIDENCE.md`. **Next:** R2; Stage 4C remains blocked.

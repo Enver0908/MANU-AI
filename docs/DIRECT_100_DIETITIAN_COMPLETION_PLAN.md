@@ -1124,3 +1124,6 @@ Phase 1 is a pure bounded-domain foundation: assignment-aware permissions, allow
 ## Stage 4B-2 Post-Closure Remediation R0 - 2026-07-12
 
 Direct-scale readiness cannot consume the historical Stage 4B-2 closure as final evidence. Database-bounded messaging reads, server-side assignment authorization, atomic idempotency, zero-skip RLS, and SQL-backed scale rehearsal remain required under `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`.
+## Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
+
+R1 contract corrections are complete and evidenced in `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R1_EVIDENCE.md`. This does not change pilot readiness: production remains `NO-GO`, R-405 remains open, and R2-R7 remain required.

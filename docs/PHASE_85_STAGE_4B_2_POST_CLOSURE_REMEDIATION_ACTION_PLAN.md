@@ -1,9 +1,10 @@
 # Phase 85 Stage 4B-2 Post-Closure Remediation Action Plan
 
-Status: **R0 locked - remediation active (2026-07-12)**
+Status: **R1 complete; remediation active (2026-07-12)**
 
 Baseline branch: `codex/phase-85-interstage-clinical-memory`
 Baseline commit: `3d67ba5 Close Phase 85 Stage 4B-2 with canonical spec, closure evidence, and continuity updates.`
+R0 baseline commit: `f66c4cc Lock Stage 4B-2 post-closure remediation R0`.
 
 Production pilot remains **NO-GO**. R-405 remains open. Real WhatsApp, Telegram, Gemini, external LLM, live billing, monitoring, backup, secret-manager, and real health-data paths remain disabled.
 
@@ -12,6 +13,8 @@ Production pilot remains **NO-GO**. R-405 remains open. Real WhatsApp, Telegram,
 The Stage 4B-2 audit found that the implementation is substantial but is not yet a complete implementation of the locked technical intent. This remediation track is the controlled work item for closing those findings. The prior closure evidence remains historical implementation evidence; it does not authorize Stage 4C while the remediation gates below are open.
 
 Stage 4C is blocked until remediation R0-R6 verification is green and the R7 evidence closure is committed separately.
+
+R1 is complete at the TypeScript contract/projection layer. R2 remains the next authorized implementation unit.
 
 ## 2. Locked findings
 
@@ -55,3 +58,9 @@ Each unit is implemented, tested, documented, and committed separately. A skippe
 ## 5. R0 completion criteria
 
 R0 is complete only when the findings, remediation order, non-negotiable boundaries, current RLS block, pilot posture, and document update obligations are recorded in this action plan and the R0 evidence document. R0 changes no TypeScript/JavaScript runtime, SQL migration, API route, component, provider, channel, billing, monitoring, backup, secret-manager, or health-data path.
+
+## 6. R1 completion record - 2026-07-12
+
+R1 corrected the shared Stage 4B-2 domain and DTO contract without adding a migration, route, RPC, provider, channel, billing, monitoring, backup, secret-manager, or health-data path. The contract/API version is now `v2`; AI permissions are split into activation and configuration capabilities; red-lock semantics permit activation while denying configuration; unread aggregates are calculated over the complete actor-visible projection before pagination; cursor and numeric input validation use bounded base64url and safe-integer rules; and yellow reviewed-manual send requires the expected client context revision.
+
+The implementation and verification record is `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R1_EVIDENCE.md`. R2 remains responsible for database-bounded reads and server-side assignment authorization; R1 does not close those findings.

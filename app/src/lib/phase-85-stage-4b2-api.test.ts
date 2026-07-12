@@ -69,7 +69,8 @@ describe("phase-85-stage-4b-2 domain and api contracts", () => {
       canMarkRead: true,
       canSendManualReply: true,
       canReviewDraft: true,
-      canControlAi: true,
+      canActivateAi: true,
+      canConfigureAi: true,
       assignmentLevel: "tenant",
       scope: "tenant",
     });
@@ -109,7 +110,8 @@ describe("phase-85-stage-4b-2 domain and api contracts", () => {
       canMarkRead: true,
       canSendManualReply: false,
       canReviewDraft: false,
-      canControlAi: false,
+      canActivateAi: false,
+      canConfigureAi: false,
       isReadOnly: true,
       assignmentLevel: "viewer",
     });
@@ -125,7 +127,8 @@ describe("phase-85-stage-4b-2 domain and api contracts", () => {
       canMarkRead: true,
       canSendManualReply: false,
       canReviewDraft: false,
-      canControlAi: false,
+      canActivateAi: false,
+      canConfigureAi: false,
       isReadOnly: true,
       scope: "assigned",
     });
@@ -138,6 +141,21 @@ describe("phase-85-stage-4b-2 domain and api contracts", () => {
     });
     expect(auditor.canRead).toBe(false);
     expect(auditor.canMarkRead).toBe(false);
+
+    const redLocked = resolveConversationPermissions({
+      actor: actor("dietitian"),
+      conversation: primaryConversation,
+      client: {
+        ...primaryClient,
+        redRiskLock: {
+          ...primaryClient.redRiskLock,
+          status: "locked",
+        },
+      },
+      assignments,
+    });
+    expect(redLocked.canActivateAi).toBe(true);
+    expect(redLocked.canConfigureAi).toBe(false);
   });
 
   it("keeps assignment normalization fallback-compatible and tenant-scoped", () => {
@@ -196,6 +214,7 @@ describe("phase-85-stage-4b-2 domain and api contracts", () => {
       AppDomainError,
     );
     expect(() => decodeConversationListCursor("not-a-cursor")).toThrowError(AppDomainError);
+    expect(() => decodeConversationListCursor("A".repeat(2049))).toThrowError(AppDomainError);
   });
 
   it("projects a bounded list with name-only search, deterministic order and actor unread state", () => {
@@ -243,6 +262,8 @@ describe("phase-85-stage-4b-2 domain and api contracts", () => {
     expect(response.items.find((item) => item.id === "conversation-client-mert")?.unreadCount).toBe(1);
     expect(buildConversationListResponse(source, actor("dietitian"), [], { query: "clinical" }).filteredTotal).toBe(0);
     expect(buildConversationListResponse(source, actor("dietitian"), [], { query: "MERT" }).filteredTotal).toBe(1);
+    expect(response.unreadConversationCount).toBe(2);
+    expect(response.unreadMessageCount).toBe(2);
 
     const serialized = JSON.stringify(response);
     expect(serialized).not.toContain("healthProfile");

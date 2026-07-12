@@ -20,7 +20,7 @@ describe("phase-85-stage-4b-2 read api", () => {
     const list = listFallbackConversations({ limit: 5 });
     expect(list.items.length).toBeGreaterThan(0);
     expect(list.items.length).toBeLessThanOrEqual(5);
-    expect(list.version).toBe("p85-stage-4b-2-api-v1");
+    expect(list.version).toBe("p85-stage-4b-2-api-v2");
 
     const conversationId = list.items[0]!.id;
     const detail = getFallbackConversationDetail(conversationId, { limit: 50 });

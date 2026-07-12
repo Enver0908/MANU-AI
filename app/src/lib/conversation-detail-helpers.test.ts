@@ -44,7 +44,8 @@ const permissions: ConversationPermissions = {
   canMarkRead: true,
   canSendManualReply: true,
   canReviewDraft: true,
-  canControlAi: true,
+  canActivateAi: true,
+  canConfigureAi: true,
   canResolveRisk: true,
   canMutateConversation: true,
   isReadOnly: false,
@@ -89,7 +90,14 @@ describe("conversation-detail-helpers", () => {
     expect(isGreenDraftMessage(draft, buildClient())).toBe(true);
     expect(
       resolveConversationDetailMutationVisibility(
-        { ...permissions, canSendManualReply: false, canReviewDraft: false, canControlAi: false, isReadOnly: true },
+        {
+          ...permissions,
+          canSendManualReply: false,
+          canReviewDraft: false,
+          canActivateAi: false,
+          canConfigureAi: false,
+          isReadOnly: true,
+        },
         yellowClient,
       ),
     ).toEqual({

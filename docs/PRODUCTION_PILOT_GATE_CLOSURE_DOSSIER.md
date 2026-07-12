@@ -313,3 +313,6 @@ Phase 1 is pure domain/DTO/authorization projection evidence, not a production g
 ## Stage 4B-2 Post-Closure Remediation R0 - 2026-07-12
 
 The Stage 4B-2 historical closure does not close production gates. Remediation R1-R7, current zero-skip RLS evidence, R-405 status, and all external launch prerequisites remain required. Production pilot remains `NO-GO`.
+## Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
+
+R1 corrected only the application domain/DTO/permission projection contract. It is not a pilot gate closure, does not open production paths, and leaves R-405 and all R2-R7 gates open. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R1_EVIDENCE.md`.

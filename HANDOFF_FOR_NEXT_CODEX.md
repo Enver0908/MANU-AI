@@ -2,7 +2,7 @@
 
 ## Read This First
 
-Latest Phase 85 Stage 4B-2 status (2026-07-12): **Mesajlaşma implementation and evidence closure are complete locally; current RLS closure is environment-blocked.** Bounded conversation list/detail APIs, per-actor unread receipts, manual/yellow/draft mutations, WhatsApp-like detail UX, Mesajlaşma navigation, Stage 4B deep-link integration, scale/visual/release verification, and canonical spec are implemented. Evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`. Verification: core 234/234, app 953 passed / 6 skipped, Stage 4B-2 rehearsal passed, 79G/release verification passed, lint/build passed, Playwright visual 40/40. `npm run test:rls` skips 35/35 because Docker Desktop is unavailable; this is not counted as pass. **Next work:** Stage 4C Diyetisyen Icin AI Chat. Production pilot remains `NO-GO`; R-405 remains open; all real provider/channel/health-data and production-operations paths remain closed.
+Latest Phase 85 Stage 4B-2 status (2026-07-12): **Mesajlaşma implementation exists locally and is under post-closure remediation; R1 contract correction is complete and current RLS closure is environment-blocked.** Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R1_EVIDENCE.md`. **Next work:** remediation R2; Stage 4C remains blocked. Production pilot remains `NO-GO`; R-405 remains open; all real provider/channel/health-data and production-operations paths remain closed.
 
 Latest Phase 85 Stage 4B-2 Phase 3 status (2026-07-12): superseded by Phase 4 closure above. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_3_BOUNDED_PROJECTION_EVIDENCE.md`.
 
@@ -2894,3 +2894,7 @@ The next operator must begin at Phase 2: append-only conversation receipt migrat
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R0 - 2026-07-12
 
 Baseline branch: `codex/phase-85-interstage-clinical-memory`. Baseline before R0: `3d67ba5`. R0 is documentation-only and is evidenced by `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R0_EVIDENCE.md`. The active plan is `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`; the next authorized unit is R1. Stage 4C is blocked until R1-R7 close. Preserve production `NO-GO`, R-405 open, append-only migrations, and all real provider/channel/health-data shutdowns.
+
+## Phase 85 Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
+
+R1 is complete for the domain/DTO/permission contract. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R1_EVIDENCE.md`. Continue with R2 only after verifying this commit and a clean worktree. R2 owns database-bounded reads and server-side assignment authorization; Stage 4C remains blocked. Preserve production `NO-GO`, R-405 open, append-only migrations, and all real provider/channel/health-data shutdowns.

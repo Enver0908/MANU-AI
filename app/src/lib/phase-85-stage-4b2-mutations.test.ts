@@ -57,7 +57,7 @@ describe("phase-85-stage-4b2-mutations", () => {
       expectedConversationRevision: conversationRevisionOrDefault(conversation!),
     });
 
-    expect(response.version).toBe("p85-stage-4b-2-api-v1");
+    expect(response.version).toBe("p85-stage-4b-2-api-v2");
     expect(response.operation).toBe("manual_reply");
     expect(response.message?.origin).toBe("dietitian_manual");
     expect(response.message?.status).toBe("sent");
@@ -193,5 +193,22 @@ describe("phase-85-stage-4b2-mutations", () => {
         expectedConversationRevision: 1,
       }),
     ).toThrowError(new AppDomainError(400, "invalid_message_body"));
+
+    expect(() =>
+      parseConversationDraftMutationRequest({
+        action: "review_send_manual",
+        requestId: REQUEST_ID,
+        expectedConversationRevision: 1,
+      }),
+    ).toThrowError(new AppDomainError(400, "expected_client_context_revision_required"));
+
+    expect(
+      parseConversationDraftMutationRequest({
+        action: "review_send_manual",
+        requestId: REQUEST_ID,
+        expectedConversationRevision: 1,
+        expectedClientContextRevision: 2,
+      }).expectedClientContextRevision,
+    ).toBe(2);
   });
 });

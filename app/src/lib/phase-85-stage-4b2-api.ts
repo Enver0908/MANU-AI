@@ -30,6 +30,7 @@ import {
   CONVERSATION_LIST_DEFAULT_PAGE_SIZE,
   CONVERSATION_LIST_MAX_PAGE_SIZE,
   CONVERSATION_MAX_MESSAGE_BODY_LENGTH,
+  CONVERSATION_MAX_CURSOR_LENGTH,
   CONVERSATION_MAX_PREVIEW_LENGTH,
   CONVERSATION_MAX_QUERY_LENGTH,
   CONVERSATION_UNAVAILABLE_PREVIEW,
@@ -100,7 +101,7 @@ function truncateCodePoints(value: string, maxLength: number) {
 function parsePositiveInteger(value: string | number | null | undefined, defaultValue: number, max: number) {
   if (value == null || (typeof value === "string" && value.trim() === "")) return defaultValue;
   const parsed = typeof value === "number" ? value : Number(value.trim());
-  if (!Number.isInteger(parsed) || parsed <= 0 || !Number.isFinite(parsed)) {
+  if (!Number.isSafeInteger(parsed) || parsed <= 0) {
     invalidInput("invalid_limit");
   }
   return Math.min(parsed, max);
@@ -169,6 +170,9 @@ function encodeCursor(payload: Record<string, unknown>) {
 
 function decodeCursor(value: string | null | undefined): Record<string, unknown> {
   if (!value) invalidInput("invalid_cursor");
+  if (codePointLength(value) > CONVERSATION_MAX_CURSOR_LENGTH || !/^[A-Za-z0-9_-]+$/.test(value)) {
+    invalidInput("invalid_cursor");
+  }
   try {
     const decoded = JSON.parse(Buffer.from(value, "base64url").toString("utf8")) as unknown;
     if (!decoded || typeof decoded !== "object" || Array.isArray(decoded)) {
@@ -333,7 +337,8 @@ function deniedConversationPermissions(): ConversationPermissions {
     canMarkRead: false,
     canSendManualReply: false,
     canReviewDraft: false,
-    canControlAi: false,
+    canActivateAi: false,
+    canConfigureAi: false,
     canResolveRisk: false,
     canMutateConversation: false,
     isReadOnly: true,
@@ -347,14 +352,17 @@ function buildConversationPermissions(
   canMutate: boolean,
   assignmentLevel: ConversationAssignmentLevel,
   scope: "tenant" | "assigned" | "none",
+  client: Pick<ConversationProjectionClient, "redRiskLock">,
 ): ConversationPermissions {
+  const redLocked = client.redRiskLock.status === "locked";
   return {
     canRead,
     canViewTranscript: canRead,
     canMarkRead: canRead,
     canSendManualReply: canMutate,
     canReviewDraft: canMutate,
-    canControlAi: canMutate,
+    canActivateAi: canMutate,
+    canConfigureAi: canMutate && !redLocked,
     canResolveRisk: canMutate,
     canMutateConversation: canMutate,
     isReadOnly: canRead && !canMutate,
@@ -376,7 +384,7 @@ export function resolveConversationPermissions(input: ConversationPermissionInpu
   const assignment = resolveConversationAssignment(actor, client, input.assignments);
 
   if (actor.role === "owner" || actor.role === "admin") {
-    return buildConversationPermissions(true, true, "tenant", "tenant");
+    return buildConversationPermissions(true, true, "tenant", "tenant", client);
   }
 
   if (actor.role === "auditor" || !assignment.level) {
@@ -384,11 +392,11 @@ export function resolveConversationPermissions(input: ConversationPermissionInpu
   }
 
   if (actor.role === "assistant") {
-    return buildConversationPermissions(true, false, assignment.level, "assigned");
+    return buildConversationPermissions(true, false, assignment.level, "assigned", client);
   }
 
   const canMutate = actor.role === "dietitian" && (assignment.level === "primary" || assignment.level === "care_team");
-  return buildConversationPermissions(true, canMutate, assignment.level, "assigned");
+  return buildConversationPermissions(true, canMutate, assignment.level, "assigned", client);
 }
 
 export function canPerformConversationOperation(
@@ -399,7 +407,8 @@ export function canPerformConversationOperation(
   if (operation === "mark_read") return permissions.canMarkRead;
   if (operation === "manual_reply") return permissions.canSendManualReply;
   if (operation === "draft_review") return permissions.canReviewDraft;
-  if (operation === "ai_control") return permissions.canControlAi;
+  if (operation === "ai_activate") return permissions.canActivateAi;
+  if (operation === "ai_configure") return permissions.canConfigureAi;
   return permissions.canResolveRisk;
 }
 

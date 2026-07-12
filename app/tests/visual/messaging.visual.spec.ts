@@ -90,7 +90,8 @@ test("stage 4b-2 messaging surfaces render across viewports", async ({ page }) =
         isReadOnly: true,
         canSendManualReply: false,
         canReviewDraft: false,
-        canControlAi: false,
+        canActivateAi: false,
+        canConfigureAi: false,
         canMutateConversation: false,
       };
     }

@@ -12,8 +12,8 @@ import type {
   TenantRole,
 } from "./types";
 
-export const PHASE_85_STAGE_4B_2_CONTRACT_VERSION = "p85-stage-4b-2-contracts-v1";
-export const PHASE_85_STAGE_4B_2_API_VERSION = "p85-stage-4b-2-api-v1";
+export const PHASE_85_STAGE_4B_2_CONTRACT_VERSION = "p85-stage-4b-2-contracts-v2";
+export const PHASE_85_STAGE_4B_2_API_VERSION = "p85-stage-4b-2-api-v2";
 export const CONVERSATION_LIST_DEFAULT_PAGE_SIZE = 30;
 export const CONVERSATION_LIST_MAX_PAGE_SIZE = 100;
 export const CONVERSATION_DETAIL_DEFAULT_PAGE_SIZE = 50;
@@ -24,6 +24,7 @@ export const CONVERSATION_MAX_PREVIEW_LENGTH = 120;
 export const CONVERSATION_ANCHOR_BEFORE_COUNT = 25;
 export const CONVERSATION_ANCHOR_AFTER_COUNT = 24;
 export const CONVERSATION_CURSOR_VERSION = 1;
+export const CONVERSATION_MAX_CURSOR_LENGTH = 2048;
 
 export const CONVERSATION_DRAFT_PREVIEW = "Taslak inceleme bekliyor";
 export const CONVERSATION_UNAVAILABLE_PREVIEW = "Icerik kullanilamiyor";
@@ -37,7 +38,8 @@ export type ConversationMutationOperation =
   | "mark_read"
   | "manual_reply"
   | "draft_review"
-  | "ai_control"
+  | "ai_activate"
+  | "ai_configure"
   | "risk_resolution";
 
 export type ConversationActorContext = {
@@ -81,7 +83,8 @@ export type ConversationPermissions = {
   canMarkRead: boolean;
   canSendManualReply: boolean;
   canReviewDraft: boolean;
-  canControlAi: boolean;
+  canActivateAi: boolean;
+  canConfigureAi: boolean;
   canResolveRisk: boolean;
   canMutateConversation: boolean;
   isReadOnly: boolean;
@@ -109,6 +112,8 @@ export type ConversationListResponse = {
   items: ConversationInboxItem[];
   nextCursor: string | null;
   filteredTotal: number;
+  unreadConversationCount: number;
+  unreadMessageCount: number;
 };
 
 export type ConversationMessageDto = {
@@ -284,7 +289,8 @@ export type ConversationListItemPermissionFlags = Pick<
   | "canMarkRead"
   | "canSendManualReply"
   | "canReviewDraft"
-  | "canControlAi"
+  | "canActivateAi"
+  | "canConfigureAi"
   | "isReadOnly"
 >;
 

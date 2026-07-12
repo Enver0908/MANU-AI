@@ -99,7 +99,7 @@ The server-side Supabase store uses actor-validating security-definer RPCs for l
 | auditor | empty | denied | denied | denied | denied | denied |
 | cross-tenant / unassigned | empty or `404` | denied | denied | denied | denied | denied |
 
-Permission DTO fields: `canRead`, `canMarkRead`, `canReply`, `canReviewDraft`, `canActivateAi`, `canConfigureAi`. UI hides composer, draft review, and AI controls when permissions deny them.
+Permission DTO fields: `canRead`, `canMarkRead`, `canReply`, `canReviewDraft`, `canActivateAi`, `canConfigureAi`. Under a red lock, activation remains allowed for an authorized actor while configuration is denied. UI hides composer, draft review, and AI controls when permissions deny them.
 
 ## 8. API surface
 

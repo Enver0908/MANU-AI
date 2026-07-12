@@ -544,3 +544,7 @@ Stage 4B-2 consumes Stage 4B alert/notification targets but owns the conversatio
 ## Stage 4B-2 Post-Closure Remediation R0 - 2026-07-12
 
 Stage 4B-2 currently consumes this track but is under remediation. No Stage 4B alert/notification ownership changes are authorized by R0. The active remediation contract is `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`; Stage 4C remains blocked.
+
+## Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
+
+R1 corrected the downstream Stage 4B-2 domain/DTO/permission contract without changing Stage 4B alert or notification ownership. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R1_EVIDENCE.md`. R2 is next; Stage 4C remains blocked.

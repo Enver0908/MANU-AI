@@ -163,3 +163,6 @@ Canonical contract: `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`; historical cl
 | R-4B2-10 | Continuity documents contain stale handoffs and unconditional closure wording. | medium | R7 canonical document reconciliation and reference scan. | open |
 
 Production pilot remains `NO-GO`; R-405 remains open; real integration paths remain closed.
+## Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
+
+R1 corrected the shared DTO and permission projection contract and added bounded cursor/safe-integer validation plus complete visible-scope unread aggregates. The related risks are not closed: server-side assignment authorization, database-bounded reads, transactional idempotency, concurrency ordering, UI integration, RLS, and release evidence remain assigned to R2-R7.

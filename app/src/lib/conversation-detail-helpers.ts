@@ -146,7 +146,8 @@ export function resolveConversationDetailMutationVisibility(
   return {
     showComposer: Boolean(permissions?.canSendManualReply) && !readOnly,
     showDraftControls: Boolean(permissions?.canReviewDraft) && !readOnly,
-    showAiControls: Boolean(permissions?.canControlAi) && canManageAiControls && !readOnly,
+    showAiControls:
+      Boolean(permissions?.canActivateAi || permissions?.canConfigureAi) && canManageAiControls && !readOnly,
     showYellowDraftReview:
       Boolean(permissions?.canReviewDraft) &&
       !readOnly &&

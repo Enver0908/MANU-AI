@@ -382,3 +382,6 @@ Phase 1 domain/DTO/authorization projection is implemented and locally verified,
 ## Stage 4B-2 Post-Closure Remediation R0 - 2026-07-12
 
 The final readiness posture is unchanged: Stage 4B-2 remediation is active, Stage 4C is blocked, production pilot is `NO-GO`, and R-405 remains open. No real provider/channel, billing, monitoring, backup, secret-manager, or health-data path is authorized.
+## Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
+
+R1 is complete at the contract/projection layer only. The production pilot remains `NO-GO`; R-405 remains open; R2-R7 remediation and independent release evidence remain required.

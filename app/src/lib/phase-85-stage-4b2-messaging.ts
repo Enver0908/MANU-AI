@@ -410,7 +410,7 @@ export function buildConversationListResponse(
       .map((client) => [client.id, client]),
   );
 
-  const projected = source.conversations
+  const visibleProjected = source.conversations
     .filter((conversation) => conversation.tenantId === actor.tenantId)
     .map((conversation) => {
       const client = clientsById.get(conversation.clientId);
@@ -419,7 +419,9 @@ export function buildConversationListResponse(
       if (!permissions.canRead) return null;
       return projectInboxItem(source, actor, assignments, conversation, client);
     })
-    .filter((item): item is ConversationInboxItem => item !== null)
+    .filter((item): item is ConversationInboxItem => item !== null);
+
+  const projected = visibleProjected
     .filter((item) => matchesClientName(item.clientFullName, query.query))
     .filter((item) => query.status === "all" || item.hasUnread)
     .sort(compareInboxItems);
@@ -448,6 +450,8 @@ export function buildConversationListResponse(
     items,
     nextCursor,
     filteredTotal: projected.length,
+    unreadConversationCount: visibleProjected.filter((item) => item.hasUnread).length,
+    unreadMessageCount: visibleProjected.reduce((total, item) => total + item.unreadCount, 0),
   };
 }
 
@@ -635,7 +639,7 @@ export function countActorConversationUnreadTotal(
     status: "all",
     limit: CONVERSATION_LIST_MAX_PAGE_SIZE,
   });
-  return list.items.reduce((total, item) => total + item.unreadCount, 0);
+  return list.unreadMessageCount;
 }
 
 export function formatActorConversationUnreadBadge(unreadTotal: number) {

@@ -400,3 +400,6 @@ Phase 1 now supplies the UI with bounded list/detail/mutation DTO contracts and 
 ## Stage 4B-2 Post-Closure Remediation R0 - 2026-07-12
 
 The Stage 4B-2 visual/runtime implementation is historical and remediation is active. R4 owns the tablet split-layout, unread aggregate, deep-link, anchor, 320px, focus, and sensitive rendering corrections. Stage 4C remains blocked until `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md` R1-R7 closes.
+## Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
+
+R1 updates the messaging consumer contract to split AI activation/configuration permissions and expose complete visible-scope unread aggregates. No visual layout, navigation, provider, or production-pilot behavior is authorized by this remediation unit. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R1_EVIDENCE.md`.

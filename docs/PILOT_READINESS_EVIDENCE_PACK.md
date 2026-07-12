@@ -636,3 +636,6 @@ Phase 1 adds pure domain/DTO/authorization projection evidence only. Dedicated t
 ## Stage 4B-2 Post-Closure Remediation R0 - 2026-07-12
 
 Stage 4B-2 remains a local implementation under remediation and does not close any production pilot gate. RLS, authorization, atomic mutation, bounded database read, scale, and independent release evidence remain open. Production pilot remains `NO-GO`.
+## Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
+
+R1 is recorded as a local contract/projection correction only. It contributes no production readiness approval and does not alter the `NO-GO` posture, open R-405, or the closed real provider/channel/health-data paths. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R1_EVIDENCE.md`.

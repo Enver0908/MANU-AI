@@ -12,7 +12,7 @@ Current redesign status, 2026-07-07: Phase 85A opened `docs/PHASE_85_FRONTEND_RE
 
 Phase 85B update, 2026-07-07: the frontend foundation now loads Fraunces display with Geist Sans/Mono and exposes the approved Phase 85 palette through CSS/Tailwind tokens. Focused UI token tests assert the palette and radius constraints. Component, public website, dashboard, and PWA redesign remain pending for later user-approved sub-phases.
 
-Phase 85 Stage 4B-2 update, 2026-07-12: Mesajlasma implementation exists locally, but audit remediation is active. Core, offline, scale, release, build, lint, and historical visual evidence are recorded; the current 35-test RLS suite is blocked by unavailable Docker and is not counted as pass. Evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md`; active remediation: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. **Next:** remediation R1; Stage 4C remains blocked. Production pilot remains `NO-GO`; R-405 remains open.
+Phase 85 Stage 4B-2 update, 2026-07-12: Mesajlasma implementation exists locally, but audit remediation is active; R1 is complete. Core, offline, scale, release, build, lint, and historical visual evidence are recorded; the current 35-test RLS suite is blocked by unavailable Docker and is not counted as pass. Evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R1_EVIDENCE.md`; active remediation: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. **Next:** remediation R2; Stage 4C remains blocked. Production pilot remains `NO-GO`; R-405 remains open.
 
 Phase 85 Stage 4B update, 2026-07-12: Uyari ve Bildirimler implementation and post-closure remediation are complete locally — bounded actor-aware Supabase reads, safe linkage, lifecycle producers, atomic review, role boundaries, and visual/accessibility evidence are implemented. Core/app, scale, replay, release, build, lint, and visual verification passed; the current 33-test RLS suite is blocked by unavailable Docker and is not counted as pass. Evidence: `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md`. Stage 4B-2 Mesajlasma is now complete.
 
@@ -1499,3 +1499,7 @@ Phase 1 is complete and evidenced in `docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DT
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R0 - 2026-07-12
 
 R0 is complete as a documentation-only remediation lock. The next authorized work is R1 contract/authorization correction, not Stage 4C. The remediation plan and evidence are `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md` and `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R0_EVIDENCE.md`. No runtime, migration, provider, channel, billing, monitoring, backup, secret-manager, or health-data path changed.
+
+## Phase 85 Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
+
+R1 corrected the Stage 4B-2 domain/DTO/permission projection contract and is evidenced in `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R1_EVIDENCE.md`. The next authorized work is R2 database-bounded reads and server-side assignment authorization. Stage 4C remains blocked; production pilot remains `NO-GO`.

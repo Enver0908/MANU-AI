@@ -2441,4 +2441,7 @@ Phase 0 is complete. The decision-complete execution contract is `docs/PHASE_85_
 Stage 4B-2 Phases 0–11 are historical implementation evidence and are under post-closure remediation. Runtime spec: `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`. Historical closure evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md`. Active remediation: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. Verification includes an RLS run skipped 35/35 because Docker was unavailable; this is not a pass. **Next:** remediation R1; Stage 4C remains blocked. Preserve bounded messaging contracts, per-actor receipts, yellow reviewed-manual semantics, red atomic activation, append-only migrations, production `NO-GO`, R-405 open, and all real provider/channel/health-data shutdowns.
 ## Current Phase 85 Stage 4B-2 Post-Closure Remediation - 2026-07-12
 
-The next authorized implementation unit is Phase R1 of `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. Stage 4C is blocked. R0 is documentation-only; no runtime, migration, provider, channel, billing, monitoring, backup, secret-manager, or health-data path changed.
+R1 is complete. The next authorized implementation unit is Phase R2 of `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. Stage 4C is blocked; no provider, channel, billing, monitoring, backup, secret-manager, or health-data path may be opened.
+## Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
+
+R1 is complete for the domain/DTO/permission projection layer. The next authorized unit is R2, covering database-bounded reads and server-side assignment authorization. Stage 4C remains blocked until R1-R7 evidence closes.
