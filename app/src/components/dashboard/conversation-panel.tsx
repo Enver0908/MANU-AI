@@ -1,233 +1,271 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
-import { Bot, MessageSquareText, Send, ShieldCheck } from "lucide-react";
-import type { AiDecisionRecord, ClientRecord, ManuAppState, MessageRecord, SupportedLanguageCode } from "@/lib/types";
-import { buildCopilotQualityReviewForPendingDraft } from "@/lib/phase-77v-copilot-quality-workflow";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { MessageSquareText, RefreshCcw } from "lucide-react";
+import type {
+  ConversationMessageDto,
+  ConversationPagination,
+  ConversationPermissions,
+  ConversationSummaryDto,
+} from "@/lib/phase-85-stage-4b2-contracts";
+import {
+  buildConversationTimelineItems,
+  isYellowDraftReviewMessage,
+  resolveActiveYellowDraft,
+  resolveConversationDetailMutationVisibility,
+} from "@/lib/conversation-detail-helpers";
+import { isRedRiskLockActive } from "@/lib/ai-assistant-control-panel-helpers";
+import type { ClientRecord, ManuAppState } from "@/lib/types";
+import type { SupportedLanguageCode } from "@/lib/languages";
 import { t } from "@/lib/i18n";
-import { RED_LOCK_ATOMIC_ACTIVATION_CTA_TR } from "@/lib/ai-assistant-control-panel-helpers";
-import {
-  buildClientHumanControlBanner,
-  buildStructuredUpdateSourceLinks,
-  resolveMessageProvenancePresentation,
-} from "@/lib/phase-85-if-h-operational-visibility";
-import {
-  CopilotQualityReviewPanel,
-  ConfirmButton,
-  EmptyState,
-  InfoLine,
-  MessageBubble,
-  TextareaInput,
-  removeKey,
-} from "./shared";
-import { HumanControlSessionBanner, StructuredUpdateSourceLinksPanel } from "./operational-visibility";
-import { MobileStickyActionBar } from "./mobile-ergonomics";
+import { buildClientHumanControlBanner } from "@/lib/phase-85-if-h-operational-visibility";
+import { EmptyState, removeKey } from "./shared";
+import { HumanControlSessionBanner } from "./operational-visibility";
+import { ConversationHeader } from "./conversation-header";
+import { ConversationMessageBubble } from "./conversation-message-bubble";
+import { ConversationComposer } from "./conversation-composer";
+import { ConversationDraftReviewPanel } from "./conversation-draft-review-panel";
+import { ConversationAiControlsStrip } from "./conversation-ai-controls-strip";
 import { MOBILE_CHROME_CLASS } from "@/lib/phase-83e5-mobile-ergonomics";
 
 export function ConversationPanel({
   client,
+  conversation,
   messages,
-  aiDecisions,
-  state,
+  pagination,
+  permissions,
+  anchorMessageId,
   uiLanguage,
   canManageAiControls = true,
   manualReply,
   onManualReply,
   onSendManualReply,
-  onReleaseHumanTakeover,
   onActivateAi,
+  onSetAiPassive,
   isActivatingAi,
   onApproveDraft,
   onEditAndSendDraft,
   onDismissDraft,
+  onReviewSendManualFromDraft,
   onOpenSimulator,
-  onOpenClientPanel,
+  onLoadOlder,
+  onLoadNewer,
+  onRetryDetail,
+  isLoadingOlder,
+  isLoadingNewer,
+  isDetailRefreshing,
+  detailError,
+  state,
 }: {
   client: ClientRecord;
-  messages: MessageRecord[];
-  aiDecisions: AiDecisionRecord[];
-  state: ManuAppState;
+  conversation: ConversationSummaryDto;
+  messages: ConversationMessageDto[];
+  pagination: ConversationPagination | null;
+  permissions: ConversationPermissions | null;
+  anchorMessageId?: string | null;
   uiLanguage: SupportedLanguageCode;
   canManageAiControls?: boolean;
   manualReply: string;
   onManualReply: (value: string) => void;
   onSendManualReply: () => void;
-  onReleaseHumanTakeover: (clientId: string) => Promise<ManuAppState>;
   onActivateAi: (clientId: string) => Promise<ManuAppState>;
+  onSetAiPassive: (clientId: string) => Promise<ManuAppState>;
   isActivatingAi?: boolean;
   onApproveDraft: (messageId: string) => Promise<ManuAppState>;
   onEditAndSendDraft: (messageId: string, body: string) => Promise<ManuAppState>;
   onDismissDraft: (messageId: string) => Promise<ManuAppState>;
+  onReviewSendManualFromDraft: (messageId: string, body: string) => Promise<ManuAppState>;
   onOpenSimulator: () => void;
-  onOpenClientPanel?: (panelKey: string) => void;
+  onLoadOlder: () => void;
+  onLoadNewer: () => void;
+  onRetryDetail: () => void;
+  isLoadingOlder: boolean;
+  isLoadingNewer: boolean;
+  isDetailRefreshing: boolean;
+  detailError: string | null;
+  state: ManuAppState;
 }) {
   const timelineRef = useRef<HTMLDivElement>(null);
   const [draftEdits, setDraftEdits] = useState<Record<string, string>>({});
-  const redRiskLocked = client.redRiskLock.status === "locked";
-  const yellowRiskHeld = client.yellowRiskHold.status === "active";
-  const qualityReview = buildCopilotQualityReviewForPendingDraft(aiDecisions, messages, draftEdits);
+  const [yellowDraftEdits, setYellowDraftEdits] = useState<Record<string, string>>({});
+  const redRiskLocked = isRedRiskLockActive(client);
+  const visibility = resolveConversationDetailMutationVisibility(permissions, client, { canManageAiControls });
+  const timelineItems = useMemo(() => buildConversationTimelineItems(messages), [messages]);
+  const activeYellowDraft = useMemo(
+    () => (visibility.showYellowDraftReview ? resolveActiveYellowDraft(messages, client) : null),
+    [client, messages, visibility.showYellowDraftReview],
+  );
+  const yellowDraftBody = activeYellowDraft
+    ? (yellowDraftEdits[activeYellowDraft.id] ?? activeYellowDraft.body ?? "")
+    : "";
   const humanControlBanner = useMemo(
     () => buildClientHumanControlBanner(state, client.id),
     [state, client.id],
   );
-  const structuredSourceLinks = useMemo(
-    () => buildStructuredUpdateSourceLinks(state, client.id),
-    [state, client.id],
-  );
 
-  const scrollToMessage = (messageId: string) => {
-    const target = timelineRef.current?.querySelector(`[data-message-id="${messageId}"]`);
+  useEffect(() => {
+    if (!anchorMessageId) return;
+    const target = timelineRef.current?.querySelector(`[data-message-id="${anchorMessageId}"]`);
     if (target instanceof HTMLElement) {
       target.scrollIntoView({ behavior: "smooth", block: "center" });
       target.classList.add("ring-2", "ring-emerald-500");
       window.setTimeout(() => target.classList.remove("ring-2", "ring-emerald-500"), 1600);
     }
-  };
+  }, [anchorMessageId, messages]);
 
   return (
-    <>
-    <div className={`grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px] ${MOBILE_CHROME_CLASS.bottomNavWithStickyActions}`}>
-      <section className="rounded-lg border border-stone-200 bg-white p-4 shadow-sm">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h3 className="text-xl font-semibold">{client.fullName}</h3>
-            <p className="mt-1 text-sm text-stone-600">Kaynak etiketli görüşme zaman çizelgesi</p>
-          </div>
+    <div
+      className={`flex min-h-0 flex-1 flex-col overflow-hidden ${MOBILE_CHROME_CLASS.bottomNavWithStickyActions}`}
+      data-testid="conversation-panel"
+    >
+      <ConversationHeader conversation={conversation} uiLanguage={uiLanguage} onOpenSimulator={onOpenSimulator} />
+
+      {redRiskLocked ? (
+        <div
+          className="mt-3 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm leading-6 text-red-900"
+          data-testid="conversation-red-banner"
+          role="alert"
+        >
+          {t(uiLanguage, "conversationRedBannerBody")}
+        </div>
+      ) : null}
+
+      {humanControlBanner ? (
+        <div className="mt-3">
+          <HumanControlSessionBanner
+            banner={{ ...humanControlBanner, canActivateAi: humanControlBanner.canActivateAi && canManageAiControls }}
+            uiLanguage={uiLanguage}
+            isActivating={isActivatingAi}
+            onActivateAi={() => {
+              void onActivateAi(client.id);
+            }}
+          />
+        </div>
+      ) : null}
+
+      {permissions?.isReadOnly ? (
+        <p className="mt-3 rounded-lg border border-stone-200 bg-stone-50 px-3 py-2 text-sm text-stone-700">
+          {t(uiLanguage, "conversationReadOnlyNotice")}
+        </p>
+      ) : null}
+
+      {detailError ? (
+        <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-950" role="alert">
+          {t(uiLanguage, "inboxRefreshError")} ({detailError})
           <button
-            onClick={onOpenSimulator}
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-emerald-950 px-3 py-2 text-sm font-semibold text-white transition hover:bg-emerald-900"
             type="button"
+            onClick={onRetryDetail}
+            className="mt-2 inline-flex min-h-11 items-center gap-2 rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm font-semibold text-stone-700"
           >
-            <Bot size={16} />
-            Gelen mesajı simüle et
+            <RefreshCcw size={16} />
+            {t(uiLanguage, "refreshInbox")}
           </button>
         </div>
+      ) : null}
 
-        {humanControlBanner ? (
-          <div className="mt-4">
-            <HumanControlSessionBanner
-              banner={{ ...humanControlBanner, canActivateAi: humanControlBanner.canActivateAi && canManageAiControls }}
-              uiLanguage={uiLanguage}
-              isActivating={isActivatingAi}
-              onActivateAi={() => {
-                void onActivateAi(client.id);
-              }}
-            />
-          </div>
+      <div ref={timelineRef} className="mt-3 min-h-0 flex-1 space-y-3 overflow-y-auto overflow-x-hidden px-1 py-2">
+        {pagination?.hasOlder ? (
+          <button
+            type="button"
+            onClick={onLoadOlder}
+            disabled={isLoadingOlder}
+            className="min-h-11 w-full rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm font-semibold text-stone-700 transition hover:bg-stone-50 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {isLoadingOlder ? t(uiLanguage, "refreshInbox") : t(uiLanguage, "conversationLoadOlder")}
+          </button>
         ) : null}
 
-        <div ref={timelineRef} className="mt-5 space-y-3">
-          {messages.length === 0 ? (
-            <EmptyState
-              icon={MessageSquareText}
-              title="Henüz mesaj yok"
-              message="Simülatörü çalıştırın veya manuel yanıt gönderin."
-            />
-          ) : (
-            messages.map((message) => {
-              const provenance = resolveMessageProvenancePresentation(message);
-              return (
-              <MessageBubble
-                key={message.id}
-                message={message}
-                provenanceLabel={t(uiLanguage, provenance.i18nKey)}
-                provenanceTone={provenance.tone}
-                draftEdit={draftEdits[message.id] ?? message.body}
-                onDraftEdit={(value) => setDraftEdits((current) => ({ ...current, [message.id]: value }))}
+        {isDetailRefreshing && messages.length === 0 ? (
+          <p className="text-sm text-stone-600" aria-busy="true">
+            {t(uiLanguage, "refreshInbox")}
+          </p>
+        ) : messages.length === 0 ? (
+          <EmptyState
+            icon={MessageSquareText}
+            title={t(uiLanguage, "conversationEmptyTitle")}
+            message={t(uiLanguage, "conversationEmptyHint")}
+          />
+        ) : (
+          timelineItems.map((item) =>
+            item.type === "date" ? (
+              <div key={item.key} className="flex justify-center py-1">
+                <span className="rounded-md bg-stone-100 px-2 py-1 text-xs font-medium text-stone-600">{item.label}</span>
+              </div>
+            ) : (
+              <ConversationMessageBubble
+                key={item.key}
+                message={item.message}
+                client={client}
+                uiLanguage={uiLanguage}
+                draftEdit={draftEdits[item.message.id] ?? item.message.body ?? ""}
+                onDraftEdit={(value) => setDraftEdits((current) => ({ ...current, [item.message.id]: value }))}
+                showDraftControls={visibility.showDraftControls && !isYellowDraftReviewMessage(item.message, client)}
                 onApproveDraft={async () => {
-                  await onApproveDraft(message.id);
-                  setDraftEdits((current) => removeKey(current, message.id));
+                  await onApproveDraft(item.message.id);
+                  setDraftEdits((current) => removeKey(current, item.message.id));
                 }}
                 onEditAndSendDraft={async () => {
-                  await onEditAndSendDraft(message.id, draftEdits[message.id] ?? message.body);
-                  setDraftEdits((current) => removeKey(current, message.id));
+                  await onEditAndSendDraft(item.message.id, draftEdits[item.message.id] ?? item.message.body ?? "");
+                  setDraftEdits((current) => removeKey(current, item.message.id));
                 }}
                 onDismissDraft={async () => {
-                  await onDismissDraft(message.id);
-                  setDraftEdits((current) => removeKey(current, message.id));
+                  await onDismissDraft(item.message.id);
+                  setDraftEdits((current) => removeKey(current, item.message.id));
                 }}
               />
-            );
-            })
-          )}
-        </div>
-      </section>
+            ),
+          )
+        )}
 
-      <aside className="space-y-4">
-        <StructuredUpdateSourceLinksPanel
-          links={structuredSourceLinks}
-          uiLanguage={uiLanguage}
-          onScrollToMessage={scrollToMessage}
-          onOpenPanel={onOpenClientPanel}
-        />
-
-        <CopilotQualityReviewPanel review={qualityReview} />
-
-        <section className="rounded-lg border border-stone-200 bg-white p-4 shadow-sm">
-          <h3 className="text-sm font-semibold">Manuel yanıt</h3>
-          <TextareaInput label="Yanıt metni" value={manualReply} onChange={onManualReply} rows={5} />
+        {pagination?.hasNewer ? (
           <button
-            onClick={onSendManualReply}
-            className="mt-3 hidden min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-stone-950 px-3 py-2 text-sm font-semibold text-white transition hover:bg-stone-800 lg:inline-flex"
             type="button"
+            onClick={onLoadNewer}
+            disabled={isLoadingNewer}
+            className="min-h-11 w-full rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm font-semibold text-stone-700 transition hover:bg-stone-50 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            <Send size={16} />
-            Manuel yanıtı kaydet
+            {isLoadingNewer ? t(uiLanguage, "refreshInbox") : t(uiLanguage, "conversationLoadNewer")}
           </button>
-        </section>
+        ) : null}
+      </div>
 
-        <section className="rounded-lg border border-stone-200 bg-white p-4 shadow-sm">
-          <h3 className="text-sm font-semibold">Güncel kontroller</h3>
-          <div className="mt-3 space-y-2 text-sm">
-            <InfoLine label="AI" value={`${client.aiStatus} / ${client.aiMode}`} />
-            <InfoLine label="Persona" value={client.selectedPersonaId} />
-            <InfoLine label="Devralma" value={client.humanTakeoverLocked ? "kilitli" : "açık"} />
-            <InfoLine label="İzin" value={client.channelPermission} />
-            {redRiskLocked && <InfoLine label="Kırmızı risk" value="atomik AI aktivasyonu gerekli" />}
-            {yellowRiskHeld && !redRiskLocked && <InfoLine label="Sarı risk" value="inceleme bekliyor" />}
-          </div>
-          {redRiskLocked && (
-            <div className="mt-3 space-y-3 rounded-lg border border-red-200 bg-red-50 p-3 text-sm leading-6 text-red-900">
-              <p>
-                Kırmızı risk kilidi aktif. AI&apos;yi etkinleştirmek kırmızı uyarıyı atomik olarak kapatır; manuel yanıt
-                kilidi çözmez.
-              </p>
-              <ConfirmButton
-                label={isActivatingAi ? "Aktivasyon doğrulanıyor" : RED_LOCK_ATOMIC_ACTIVATION_CTA_TR}
-                confirmLabel={RED_LOCK_ATOMIC_ACTIVATION_CTA_TR}
-                onConfirm={() => {
-                  void onActivateAi(client.id);
-                }}
-                disabled={isActivatingAi}
-                className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-emerald-950 px-3 py-2 text-sm font-semibold text-white transition hover:bg-emerald-900 disabled:cursor-not-allowed disabled:opacity-60"
-                confirmClassName="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-emerald-800 px-3 py-2 text-sm font-semibold text-white transition hover:bg-emerald-900"
-              />
-            </div>
-          )}
-          {client.humanTakeoverLocked && !redRiskLocked && (
-            <button
-              onClick={() => onReleaseHumanTakeover(client.id)}
-              className="mt-3 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-emerald-950 px-3 py-2 text-sm font-semibold text-white transition hover:bg-emerald-900"
-              type="button"
-            >
-              <ShieldCheck size={16} />
-              Devralmayı bırak
-            </button>
-          )}
-        </section>
-      </aside>
+      {activeYellowDraft ? (
+        <ConversationDraftReviewPanel
+          draft={activeYellowDraft}
+          uiLanguage={uiLanguage}
+          body={yellowDraftBody}
+          onBodyChange={(value) => {
+            if (!activeYellowDraft) return;
+            setYellowDraftEdits((current) => ({ ...current, [activeYellowDraft.id]: value }));
+          }}
+          disabled={!visibility.showDraftControls}
+          onReviewSendManual={async () => {
+            if (!activeYellowDraft) return;
+            await onReviewSendManualFromDraft(activeYellowDraft.id, yellowDraftBody);
+            setYellowDraftEdits((current) => removeKey(current, activeYellowDraft.id));
+          }}
+        />
+      ) : null}
+
+      {visibility.showComposer ? (
+        <ConversationComposer
+          uiLanguage={uiLanguage}
+          value={manualReply}
+          onChange={onManualReply}
+          onSend={onSendManualReply}
+        />
+      ) : null}
+
+      {visibility.showAiControls ? (
+        <ConversationAiControlsStrip
+          client={client}
+          uiLanguage={uiLanguage}
+          canManageAiControls={canManageAiControls}
+          isActivatingAi={isActivatingAi}
+          onActivateAi={onActivateAi}
+          onSetPassive={onSetAiPassive}
+        />
+      ) : null}
     </div>
-
-    <MobileStickyActionBar>
-      <button
-        onClick={onSendManualReply}
-        className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-stone-950 px-3 py-2 text-sm font-semibold text-white transition hover:bg-stone-800"
-        type="button"
-      >
-        <Send size={16} />
-        Manuel yanıtı kaydet
-      </button>
-    </MobileStickyActionBar>
-    </>
   );
 }

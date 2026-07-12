@@ -6,9 +6,11 @@ import type {
   ConversationDetailResponse,
   ConversationInboxItem,
   ConversationListResponse,
+  ConversationMessageDto,
   ConversationMutationResponse,
   ConversationPermissions,
 } from "./phase-85-stage-4b2-contracts";
+import { mergeConversationDetailMessages } from "./conversation-detail-helpers";
 import {
   buildStage4B2ConversationDetailRequestQuery,
   buildStage4B2ConversationsRequestQuery,
@@ -28,12 +30,15 @@ export type Stage4B2MessagingSnapshot = {
   listItems: ConversationInboxItem[];
   listNextCursor: string | null;
   detail: ConversationDetailResponse | null;
+  detailMessages: ConversationMessageDto[];
   permissions: ConversationPermissions | null;
   listError: string | null;
   detailError: string | null;
   isListRefreshing: boolean;
   isDetailRefreshing: boolean;
   isLoadingMoreList: boolean;
+  isLoadingOlderMessages: boolean;
+  isLoadingNewerMessages: boolean;
   lastSuccessAt: string | null;
   messagingBadgeCount: number;
 };
@@ -81,12 +86,15 @@ export function useStage4B2Messaging({
   const [listItems, setListItems] = useState<ConversationInboxItem[]>([]);
   const [listNextCursor, setListNextCursor] = useState<string | null>(null);
   const [detail, setDetail] = useState<ConversationDetailResponse | null>(null);
+  const [detailMessages, setDetailMessages] = useState<ConversationMessageDto[]>([]);
   const [permissions, setPermissions] = useState<ConversationPermissions | null>(null);
   const [listError, setListError] = useState<string | null>(null);
   const [detailError, setDetailError] = useState<string | null>(null);
   const [isListRefreshing, setIsListRefreshing] = useState(false);
   const [isDetailRefreshing, setIsDetailRefreshing] = useState(false);
   const [isLoadingMoreList, setIsLoadingMoreList] = useState(false);
+  const [isLoadingOlderMessages, setIsLoadingOlderMessages] = useState(false);
+  const [isLoadingNewerMessages, setIsLoadingNewerMessages] = useState(false);
   const [lastSuccessAt, setLastSuccessAt] = useState<string | null>(null);
   const consecutiveErrorsRef = useRef(0);
   const listInflightRef = useRef(new Map<string, Promise<ConversationListResponse>>());
@@ -95,6 +103,7 @@ export function useStage4B2Messaging({
   const pollTimerRef = useRef<number | null>(null);
   const listAbortRef = useRef<AbortController | null>(null);
   const detailAbortRef = useRef<AbortController | null>(null);
+  const paginationAbortRef = useRef<AbortController | null>(null);
   const mountedRef = useRef(true);
   const detailRenderedRef = useRef(false);
   const pendingMarkReadSequenceRef = useRef<number | null>(null);
@@ -106,17 +115,64 @@ export function useStage4B2Messaging({
   }, []);
 
   const applyDetailResponse = useCallback(
-    (payload: ConversationDetailResponse) => {
+    (payload: ConversationDetailResponse, mergeMode: "replace" | "older" | "newer" = "replace") => {
       setDetail(payload);
       setPermissions(payload.permissions);
+      setDetailMessages((current) => {
+        const merged =
+          mergeMode === "replace"
+            ? payload.messages
+            : mergeConversationDetailMessages(current, payload.messages, mergeMode);
+        pendingMarkReadSequenceRef.current = merged.reduce(
+          (max, message) => Math.max(max, message.conversationSequence ?? 0),
+          0,
+        );
+        return merged;
+      });
       mergeDetailIntoState(payload);
       detailRenderedRef.current = false;
-      pendingMarkReadSequenceRef.current = payload.messages.reduce(
-        (max, message) => Math.max(max, message.conversationSequence ?? 0),
-        0,
-      );
     },
     [mergeDetailIntoState],
+  );
+
+  const fetchDetailPage = useCallback(
+    async (
+      targetConversationId: string,
+      options?: {
+        anchorMessageId?: string | null;
+        direction?: "older" | "newer";
+        cursor?: string | null;
+        mergeMode?: "replace" | "older" | "newer";
+        abortController?: AbortController;
+      },
+    ) => {
+      const controller = options?.abortController ?? new AbortController();
+      if (!options?.abortController) {
+        detailAbortRef.current?.abort();
+        detailAbortRef.current = controller;
+      }
+      const query = buildStage4B2ConversationDetailRequestQuery({
+        anchorMessageId: options?.anchorMessageId ?? anchorMessageId,
+        direction: options?.direction,
+        cursor: options?.cursor,
+        limit: 50,
+      }).toString();
+      const payload = await fetchWithInflightDedupe<ConversationDetailResponse>(
+        detailInflightRef.current,
+        `conversation-detail:${targetConversationId}:${query}`,
+        () =>
+          requestJson<ConversationDetailResponse>(
+            `/api/conversations/${encodeURIComponent(targetConversationId)}/messages?${query}`,
+            undefined,
+            controller.signal,
+          ),
+      );
+      if (!mountedRef.current || controller.signal.aborted) return payload;
+      applyDetailResponse(payload, options?.mergeMode ?? "replace");
+      setDetailError(null);
+      return payload;
+    },
+    [anchorMessageId, applyDetailResponse],
   );
 
   const fetchListPage = useCallback(
@@ -140,29 +196,12 @@ export function useStage4B2Messaging({
 
   const fetchDetail = useCallback(
     async (targetConversationId: string, options?: { anchorMessageId?: string | null }) => {
-      detailAbortRef.current?.abort();
-      const controller = new AbortController();
-      detailAbortRef.current = controller;
-      const query = buildStage4B2ConversationDetailRequestQuery({
+      return fetchDetailPage(targetConversationId, {
         anchorMessageId: options?.anchorMessageId ?? anchorMessageId,
-        limit: 50,
-      }).toString();
-      const payload = await fetchWithInflightDedupe<ConversationDetailResponse>(
-        detailInflightRef.current,
-        `conversation-detail:${targetConversationId}:${query}`,
-        () =>
-          requestJson<ConversationDetailResponse>(
-            `/api/conversations/${encodeURIComponent(targetConversationId)}/messages?${query}`,
-            undefined,
-            controller.signal,
-          ),
-      );
-      if (!mountedRef.current || controller.signal.aborted) return payload;
-      applyDetailResponse(payload);
-      setDetailError(null);
-      return payload;
+        mergeMode: "replace",
+      });
     },
-    [anchorMessageId, applyDetailResponse],
+    [anchorMessageId, fetchDetailPage],
   );
 
   const markReadThroughSequence = useCallback(
@@ -253,6 +292,50 @@ export function useStage4B2Messaging({
     [refreshAll],
   );
 
+  const loadOlderMessages = useCallback(async () => {
+    if (!conversationId || !detail?.pagination.hasOlder || isLoadingOlderMessages) return;
+    paginationAbortRef.current?.abort();
+    const controller = new AbortController();
+    paginationAbortRef.current = controller;
+    setIsLoadingOlderMessages(true);
+    try {
+      await fetchDetailPage(conversationId, {
+        direction: "older",
+        cursor: detail.pagination.olderCursor,
+        mergeMode: "older",
+        abortController: controller,
+      });
+    } catch (error) {
+      if (mountedRef.current && !(error instanceof DOMException && error.name === "AbortError")) {
+        setDetailError(error instanceof Error ? error.message : "conversation_detail_load_older_failed");
+      }
+    } finally {
+      if (mountedRef.current) setIsLoadingOlderMessages(false);
+    }
+  }, [conversationId, detail, fetchDetailPage, isLoadingOlderMessages]);
+
+  const loadNewerMessages = useCallback(async () => {
+    if (!conversationId || !detail?.pagination.hasNewer || isLoadingNewerMessages) return;
+    paginationAbortRef.current?.abort();
+    const controller = new AbortController();
+    paginationAbortRef.current = controller;
+    setIsLoadingNewerMessages(true);
+    try {
+      await fetchDetailPage(conversationId, {
+        direction: "newer",
+        cursor: detail.pagination.newerCursor,
+        mergeMode: "newer",
+        abortController: controller,
+      });
+    } catch (error) {
+      if (mountedRef.current && !(error instanceof DOMException && error.name === "AbortError")) {
+        setDetailError(error instanceof Error ? error.message : "conversation_detail_load_newer_failed");
+      }
+    } finally {
+      if (mountedRef.current) setIsLoadingNewerMessages(false);
+    }
+  }, [conversationId, detail, fetchDetailPage, isLoadingNewerMessages]);
+
   const loadMoreList = useCallback(async () => {
     if (!listNextCursor || isLoadingMoreList) return;
     setIsLoadingMoreList(true);
@@ -273,6 +356,7 @@ export function useStage4B2Messaging({
       mountedRef.current = false;
       listAbortRef.current?.abort();
       detailAbortRef.current?.abort();
+      paginationAbortRef.current?.abort();
       if (pollTimerRef.current != null) window.clearTimeout(pollTimerRef.current);
     };
   }, []);
@@ -334,12 +418,15 @@ export function useStage4B2Messaging({
       listItems,
       listNextCursor,
       detail: detail && detail.conversation.id === conversationId ? detail : null,
+      detailMessages: detail && detail.conversation.id === conversationId ? detailMessages : [],
       permissions: detail && detail.conversation.id === conversationId ? permissions : null,
       listError,
       detailError,
       isListRefreshing,
       isDetailRefreshing,
       isLoadingMoreList,
+      isLoadingOlderMessages,
+      isLoadingNewerMessages,
       lastSuccessAt,
       messagingBadgeCount: resolveMessagingUnreadBadgeCount(listItems),
     }),
@@ -347,9 +434,12 @@ export function useStage4B2Messaging({
       conversationId,
       detail,
       detailError,
+      detailMessages,
       isDetailRefreshing,
       isListRefreshing,
       isLoadingMoreList,
+      isLoadingOlderMessages,
+      isLoadingNewerMessages,
       lastSuccessAt,
       list,
       listError,
@@ -366,6 +456,8 @@ export function useStage4B2Messaging({
     refreshAll,
     refreshAfterMutation,
     loadMoreList,
+    loadOlderMessages,
+    loadNewerMessages,
     markReadThroughSequence,
     isRequestError: (error: unknown): error is AppRequestError => error instanceof AppRequestError,
   };

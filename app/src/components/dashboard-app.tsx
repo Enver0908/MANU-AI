@@ -96,6 +96,7 @@ export function DashboardApp({
     approveDraft,
     editAndSendDraft,
     dismissDraft,
+    reviewSendManualFromDraft,
     resetState,
     addVoiceSamples,
     updateVoiceSampleStatus,
@@ -219,17 +220,6 @@ export function DashboardApp({
     return activeClients.find((client) => client.id === resolvedClientId);
   }, [activeClients, resolvedClientId]);
 
-  const selectedConversation = useMemo(
-    () => state.conversations.find((conversation) => conversation.clientId === selectedClient?.id),
-    [selectedClient?.id, state.conversations],
-  );
-
-  const selectedMessages = useMemo(() => {
-    if (!selectedConversation) return [];
-    return state.messages
-      .filter((message) => message.conversationId === selectedConversation.id)
-      .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-  }, [selectedConversation, state.messages]);
 
   const filteredClients = useMemo(() => {
     const needle = search.trim().toLocaleLowerCase("tr-TR");
@@ -331,6 +321,10 @@ export function DashboardApp({
 
   const navigateToSection = (nextSection: DashboardSection) => {
     openSection(nextSection, resolvedClientId ? { clientId: resolvedClientId } : {});
+  };
+
+  const setSelectedClientAiPassive = async (clientId: string) => {
+    return updateClient(clientId, { aiStatus: "passive" });
   };
 
   const removeSelectedClient = async () => {
@@ -839,28 +833,44 @@ export function DashboardApp({
                   messagingRoute.conversationId && !selectedClient && !stage4bMessaging.isDetailRefreshing,
                 )}
                 detail={
-                  selectedClient ? (
+                  selectedClient && stage4bMessaging.detail?.conversation ? (
                     <ConversationPanel
                       client={selectedClient}
-                      messages={selectedMessages}
-                      aiDecisions={state.aiDecisions.filter((decision) => decision.clientId === selectedClient.id)}
+                      conversation={stage4bMessaging.detail.conversation}
+                      messages={stage4bMessaging.detailMessages}
+                      pagination={stage4bMessaging.detail.pagination}
+                      permissions={stage4bMessaging.permissions}
+                      anchorMessageId={urlState.messageId}
                       state={state}
                       uiLanguage={uiLanguage}
                       canManageAiControls={canManageAiControls}
                       manualReply={manualReply}
                       onManualReply={setManualReply}
                       onSendManualReply={sendManualReply}
-                      onReleaseHumanTakeover={releaseSelectedHumanTakeover}
                       onActivateAi={activateSelectedClientAi}
+                      onSetAiPassive={setSelectedClientAiPassive}
                       isActivatingAi={isActivatingAi}
                       onApproveDraft={(messageId) => runConversationMutation(() => approveDraft(messageId))}
                       onEditAndSendDraft={(messageId, body) =>
                         runConversationMutation(() => editAndSendDraft(messageId, body))
                       }
                       onDismissDraft={(messageId) => runConversationMutation(() => dismissDraft(messageId))}
+                      onReviewSendManualFromDraft={(messageId, body) =>
+                        runConversationMutation(() => reviewSendManualFromDraft(messageId, body))
+                      }
                       onOpenSimulator={() => navigateToSection("simulator")}
-                      onOpenClientPanel={openClientPanelFromConversation}
+                      onLoadOlder={() => void stage4bMessaging.loadOlderMessages()}
+                      onLoadNewer={() => void stage4bMessaging.loadNewerMessages()}
+                      onRetryDetail={() => void stage4bMessaging.refreshDetail({ resetBackoff: true })}
+                      isLoadingOlder={stage4bMessaging.isLoadingOlderMessages}
+                      isLoadingNewer={stage4bMessaging.isLoadingNewerMessages}
+                      isDetailRefreshing={stage4bMessaging.isDetailRefreshing}
+                      detailError={stage4bMessaging.detailError}
                     />
+                  ) : selectedClient && stage4bMessaging.isDetailRefreshing ? (
+                    <div className="rounded-lg border border-stone-200 bg-white p-6 text-sm text-stone-600" aria-busy="true">
+                      {t(uiLanguage, "refreshInbox")}
+                    </div>
                   ) : null
                 }
               />

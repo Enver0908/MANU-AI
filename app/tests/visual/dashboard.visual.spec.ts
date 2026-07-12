@@ -41,7 +41,7 @@ test("dashboard core views render in fallback mode", async ({ page }) => {
 
   await page.getByRole("button", { name: "Mesajlaşma" }).click();
   await expect(page.getByTestId("messaging-panel")).toBeVisible();
-  await expect(page.getByText("Kaynak etiketli görüşme zaman çizelgesi")).toBeVisible();
+  await expect(page.getByText("Kaynak etiketli mesaj geçmişi")).toBeVisible();
   await expect(page.getByRole("button", { name: "Manuel yanıtı kaydet" })).toBeVisible();
 
   await page.getByRole("button", { name: "Simülatör" }).click();
