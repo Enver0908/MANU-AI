@@ -36,6 +36,8 @@ P85-IF-R6 remediation note (2026-07-11): lifecycle/RLS re-closure persists Supab
 
 P85-IF post-closure audit note (2026-07-11): R1 message provenance tenant integrity, R2 structured retrieval baseline/resolution authority, R3 activation/inbound lock ordering, and R6 runtime export leak enforcement are fixed. Evidence: `docs/PHASE_85_IF_REMEDIATION_POST_CLOSURE_AUDIT_EVIDENCE.md`. Verification passed targeted app/core tests, local Supabase reset, local RLS 30/30, lint, build, full app 828 passed / 4 skipped, core 234/234, channel replay, and production-scale rehearsal. This does not change direct-pilot `NO-GO`, external gate status, R-405, or any real provider/channel/production-data path.
 
+Phase 85 Stage 4B post-closure remediation note (2026-07-12): bounded actor-aware Supabase alert/notification reads, tenant-safe target linkage, client-specific draft lifecycle, atomic unsupported-media review, role-aware UI controls, and visual/accessibility evidence are implemented. Core/app, Stage 4B scale, channel replay, 79G, release verification, lint, build, and visual checks passed. The 33-test RLS suite is currently blocked by unavailable Docker and is not counted as pass. Evidence: `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md`. This does not change direct-pilot `NO-GO`, external gate status, R-405, or any real provider/channel/production-data path. Stage 4B-2 Mesajlasma is next; Stage 4C remains blocked.
+
 ## Fixed Product Laws
 These rules are non-negotiable and apply to every future phase:
 - The client must experience WhatsApp messages as coming from the dietitian, not from an AI system.

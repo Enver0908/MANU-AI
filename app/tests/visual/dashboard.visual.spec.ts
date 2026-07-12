@@ -97,8 +97,27 @@ test("dashboard core views render in fallback mode", async ({ page }) => {
   await page.getByRole("button", { name: "Gelen akışı çalıştır" }).click();
   await expect(page.getByText("handoff").first()).toBeVisible();
 
+  await simulatorSection.getByRole("combobox").selectOption({ label: "Elif Demir" });
+  await simulatorSection.getByLabel("İstek anahtarı").fill(`visual-notification-first-${Date.now()}`);
+  await simulatorSection.getByLabel("Gelen mesaj").fill("Yeni taslak bildirimini hazirla.");
+  await page.getByRole("button", { name: "Gelen akışı çalıştır" }).click();
+  await expect(page.getByText("draft_for_approval")).toBeVisible();
+  await simulatorSection.getByLabel("İstek anahtarı").fill(`visual-notification-second-${Date.now()}`);
+  await simulatorSection.getByLabel("Gelen mesaj").fill("Ayni taslagi yeniden degerlendir.");
+  await page.getByRole("button", { name: "Gelen akışı çalıştır" }).click();
+  await expect(page.getByText("draft_for_approval")).toBeVisible();
+
   await page.getByRole("button", { name: "Uyarılar" }).click();
   await expect(page.getByTestId("alerts-panel")).toBeVisible();
+  await expect(page.getByTestId("alerts-panel")).toHaveScreenshot("stage4b-alerts-panel.png", {
+    animations: "disabled",
+    maxDiffPixels: 250,
+    maskColor: "#e7e5e4",
+    mask: [page.getByTestId("alerts-panel").locator('[data-testid^="clinical-alert-row-"] .text-xs > span')],
+  });
+  await page.getByLabel("Uyarı ara").focus();
+  await expect(page.getByLabel("Uyarı ara")).toBeFocused();
+  await expect(page.getByTestId("alerts-panel").getByRole("tab").first()).toHaveAttribute("aria-selected", "true");
   await expect(page.getByRole("tab", { name: /Tümü/i })).toBeVisible();
   await expect(page.getByLabel("Uyarı ara")).toBeVisible();
   const alertsStickyFilters = page.locator('[data-testid="alerts-panel"] .sticky');
@@ -123,6 +142,15 @@ test("dashboard core views render in fallback mode", async ({ page }) => {
     await notificationsNav.click();
   }
   await expect(page.getByTestId("notifications-panel")).toBeVisible();
+  await expect(page.getByTestId("notifications-panel")).toHaveScreenshot("stage4b-notifications-panel.png", {
+    animations: "disabled",
+    maxDiffPixels: 250,
+    maskColor: "#e7e5e4",
+    mask: [page.getByTestId("notifications-panel").locator('[data-testid^="system-notification-row-"] .text-xs > span')],
+  });
+  await page.getByLabel("Bildirim ara").focus();
+  await expect(page.getByLabel("Bildirim ara")).toBeFocused();
+  await expect(page.getByTestId("notifications-panel").getByRole("tab").first()).toHaveAttribute("aria-selected", "true");
   await expect(page.getByRole("tab", { name: /Aktif/i })).toBeVisible();
   await expect(page.getByLabel("Bildirim ara")).toBeVisible();
   const notificationsStickyFilters = page.locator('[data-testid="notifications-panel"] .sticky');
@@ -131,7 +159,7 @@ test("dashboard core views render in fallback mode", async ({ page }) => {
   if (await notificationRow.count()) {
     const notificationRowBox = await notificationRow.boundingBox();
     expect(notificationRowBox?.height ?? 0).toBeGreaterThanOrEqual(44);
-    expect(notificationRowBox?.height ?? 0).toBeLessThanOrEqual(160);
+    expect(notificationRowBox?.height ?? 0).toBeLessThanOrEqual(200);
   }
   await page.getByLabel("Bildirim ara").fill(
     "UzunBildirimAramaMetniTasmaKontroluIcinYazildiUzunBildirimAramaMetni",

@@ -238,6 +238,8 @@ export function DashboardApp({
   useMobileKeyboardScroll(mainContentRef);
 
   const uiLanguage = state.dietitian.uiLanguage || "tr";
+  const canManageAiControls =
+    !authInfo || (authInfo.role !== "assistant" && authInfo.role !== "auditor");
   const showOperationalInspection = authInfo?.role === "owner" || authInfo?.role === "admin";
 
   useEffect(() => {
@@ -691,6 +693,7 @@ export function DashboardApp({
                 newClientPhone={newClientPhone}
                 newClientLanguage={newClientLanguage}
                 uiLanguage={uiLanguage}
+                canManageAiControls={canManageAiControls}
                 onSearch={setSearch}
                 onSelect={(id) => selectClient(id, { section: "clients", clientDetailTab: "tab_overview" })}
                 onAddClient={addClient}
@@ -744,6 +747,7 @@ export function DashboardApp({
                 aiDecisions={state.aiDecisions.filter((decision) => decision.clientId === selectedClient.id)}
                 state={state}
                 uiLanguage={uiLanguage}
+                canManageAiControls={canManageAiControls}
                 manualReply={manualReply}
                 onManualReply={setManualReply}
                 onSendManualReply={sendManualReply}

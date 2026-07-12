@@ -11,6 +11,7 @@ import {
   parseNotificationStatusFilter,
   parseStage4BLimit,
   projectSystemNotificationListItems,
+  resolveNotificationSearchKinds,
   resolveVisibleClientIds,
 } from "./phase-85-stage-4b-api";
 import type { AppTenantContext } from "./auth-context";
@@ -197,6 +198,11 @@ describe("phase-85-stage-4b api", () => {
     expect(mert.filteredTotal).toBe(response.filteredTotal);
   });
 
+  it("searches structured notification titles in the actor language", () => {
+    expect(resolveNotificationSearchKinds("desteklenmeyen", "tr")).toContain("unsupported_media_review");
+    expect(resolveNotificationSearchKinds("unsupported", "en")).toContain("unsupported_media_review");
+  });
+
   it("rejects malformed notification cursors", () => {
     expect(() => decodeNotificationCursor(parseNotificationStatusFilter("active"), "not-a-cursor")).toThrow();
   });
@@ -219,6 +225,27 @@ describe("phase-85-stage-4b api", () => {
     );
     expect(["messages", "clients", "ai-control"]).toContain(target.section);
     expect(target.clientId).toBe(client.id);
+  });
+
+  it("does not preserve a foreign conversation or message in a notification target", () => {
+    const state = createInitialState();
+    const client = state.clients[0]!;
+    const foreignConversation = state.conversations.find((item) => item.clientId !== client.id)!;
+    const target = buildNotificationNavigationTarget(
+      {
+        id: "notif-cross-client",
+        kind: "safe_reply_unavailable",
+        clientId: client.id,
+        conversationId: foreignConversation.id,
+        messageId: state.messages[0]?.id ?? "message-1",
+        entityType: "conversation",
+        entityId: foreignConversation.id,
+      },
+      state,
+    );
+    expect(target.section).toBe("clients");
+    expect(target.conversationId).toBeUndefined();
+    expect(target.messageId).toBeUndefined();
   });
 
   it("scopes visible clients for dietitian primary ownership", () => {

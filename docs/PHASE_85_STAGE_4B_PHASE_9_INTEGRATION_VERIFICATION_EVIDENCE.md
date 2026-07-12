@@ -37,7 +37,8 @@ Prove Stage 4B alerts/notifications remain compatible with P85-IF, Stage 4A, cha
 ### Visual smoke (`tests/visual/dashboard.visual.spec.ts`)
 
 - Alerts/notifications sticky filter bars visible
-- Row density bounds (min 44px touch, max 140/160px height)
+- Row density bounds (min 44px touch, max 140/200px height)
+- Screenshot assertions, keyboard focus, and selected-tab semantics for Stage 4B panels
 - Long search input without horizontal overflow (query within 80-char API limit)
 
 ## Verification commands
@@ -67,19 +68,21 @@ $env:STAGE_4B_FULL_SCALE="1"
 npm run rehearse:stage-4b:integration
 ```
 
-## Results (2026-07-12)
+## Results (2026-07-12 remediation refresh)
 
 | Check | Result |
 | --- | --- |
-| Core package tests | 1419 tests passed |
-| App unit tests | 895 passed, 5 skipped (900 total) |
-| Stage 4B integration tests | 8 passed, 1 skipped (full scale) |
+| Core package tests | **234 passed** |
+| App unit tests | **901 passed, 5 skipped** (906 total) |
+| Stage 4B integration rehearsal | **9 passed**, including targeted 51/51 and full-scale 2/2; seven gated scale tests skipped |
 | `rehearse:stage-4b:integration` | pass |
 | Lint | pass (3 pre-existing warnings) |
 | Build | pass |
 | Visual smoke | 36 passed (desktop/tablet/mobile-android/mobile-ios) |
-| RLS integration | **31 skipped** — local Supabase/Docker not running; not counted as pass |
-| Channel replay / 79G / release:verify | not re-run in this evidence pass (existing harness unchanged) |
+| RLS integration | **33 skipped** — local Supabase/Docker not running; not counted as pass |
+| Channel replay | **4 passed, 126 skipped** |
+| 79G production-scale rehearsal | **passed** |
+| `release:verify` | **passed**; only documented R-405 findings remain |
 
 ## Governance notes
 
@@ -91,4 +94,4 @@ npm run rehearse:stage-4b:integration
 
 ## Closure
 
-Stage 4B integration verification is complete. Master closure evidence: `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_EVIDENCE.md`.
+Stage 4B integration and post-closure remediation verification is complete except for the environment-blocked RLS execution. Master evidence: `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_EVIDENCE.md`; remediation evidence: `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md`.

@@ -79,3 +79,7 @@ Visual smoke updated: handoffs nav → alerts section panel.
 - Stage 4B-2 user-facing “Mesajlaşma” label rename
 
 Production pilot remains **NO-GO**.
+
+## Post-closure remediation reconciliation - 2026-07-12
+
+The URL/navigation contract remains separate from the Stage 4B-2 messaging inbox. The remediation added route-level malformed-query handling, bounded Supabase resource refreshes without broad state reloads, and visual keyboard/selected-tab assertions. Full visual verification passed 36/36; current RLS execution remains explicitly blocked by unavailable Docker.

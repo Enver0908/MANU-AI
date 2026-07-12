@@ -521,3 +521,7 @@ Evidence: `docs/PHASE_85_STAGE_4A_POST_IF_REMEDIATION_EVIDENCE.md`. This contrac
 The binding Stage 4B plan is `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_ACTION_PLAN.md`. Stage 4B must preserve the following P85-IF authority rules: risk state, not notification text, owns clinical alert lifecycle; red lock wins over yellow hold; message/provenance IDs are routing hints only and never authorization; direct activation is the atomic red reactivation command; read/ack cannot resolve structured or clinical conditions; and operational trust/quarantine evidence remains owner/admin-only.
 
 No Stage 4B API may expose raw transcript text, provider payload, prompt context, raw risk reasons, or cross-tenant operational evidence in alert/notification list DTOs.
+
+## Stage 4B Post-Closure Consumer Reconciliation - 2026-07-12
+
+The Stage 4B consumer preserves the P85-IF authority boundary: alerts are projections of active risk state, system notifications are structured operational facts, source links are tenant/client/conversation checked, and red closure uses atomic activation. Current implementation evidence is in `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md`; the current RLS run is environment-blocked and is not claimed as passed. Real provider, channel, billing, monitoring, backup, secret-manager, and health-data paths remain disabled.

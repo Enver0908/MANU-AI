@@ -3,14 +3,14 @@
 Date: 2026-07-12  
 Branch: `codex/phase-85-interstage-clinical-memory`  
 Canonical plan: `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_ACTION_PLAN.md`  
-Status: **complete (local verification)**  
+Status: **implementation complete; remediation verified; conditional local closure pending RLS re-run**
 Production pilot: **NO-GO**  
 R-405: **open**  
-R-406: local Supabase/RLS re-run **pending** when Docker/Supabase unavailable
+R-406: local Supabase/RLS re-run **blocked**; Docker Desktop Linux engine unavailable
 
 ## 1. Purpose
 
-This is the single closure evidence pack for Phase 85 Stage 4B. It consolidates Phases 0–9 sub-evidence, verification outputs, role matrix, deferred Stage 4B-2 boundaries, and the controlled handoff to Stage 4B-2 Mesajlasma.
+This is the master evidence pack for Phase 85 Stage 4B. It consolidates Phases 0–9 sub-evidence, the post-closure remediation, verification outputs, role matrix, deferred Stage 4B-2 boundaries, and the controlled handoff to Stage 4B-2 Mesajlasma. It does not convert the unavailable RLS run into a pass.
 
 Stage 4B delivers:
 
@@ -49,16 +49,17 @@ Sub-phase evidence:
 
 ## 3. Migration and RLS
 
-Migration: `app/supabase/migrations/20260711090000_phase_85_stage_4b_alerts_notifications.sql`
+Migrations: `app/supabase/migrations/20260711090000_phase_85_stage_4b_alerts_notifications.sql` and append-only `app/supabase/migrations/20260712120000_phase_85_stage_4b_postclosure_remediation.sql`
 
 - Extended `notifications` with Stage 4B fields
 - `notification_receipts` composite PK `(tenant_id, notification_id, dietitian_id)`
 - RLS: notification SELECT via `p85_stage_4b_can_read_notification`; receipt SELECT owner/admin or own dietitian
-- RPCs: list alerts/notifications, mark read, acknowledge, mark-all-read
+- RPCs: actor-aware bounded v2 list/count/receipt paths, atomic unsupported-media review, plus the historical v1 contracts
+- Dietitian form schema/response persistence for latest-response SLA inputs
 
-**Local RLS result (2026-07-12):** `npm run test:rls` → **31 skipped** (local Supabase/Docker not running). Skipped RLS is **not** counted as pass. Baseline from P85-IF post-closure audit (30/30 when Supabase available) must be re-run with this migration before merge/deploy claims.
+**Local RLS result (2026-07-12):** `npm run test:rls` → **33 skipped** (Docker Desktop Linux engine unavailable). Skipped RLS is **not** counted as pass. The v2 actor/role matrix is present but must be executed after a local Supabase reset with the append-only remediation migration before fully green persistence/deploy claims.
 
-Targeted RLS coverage in integration test file includes `p85_stage_4b_mark_notification_read_v1`, acknowledge, and assistant forbidden paths when Supabase is up.
+Targeted RLS coverage in the integration test file includes v2 owner/assistant/dietitian/auditor visibility, tenant receipt isolation, assistant mutation denial, and atomic unsupported-media review preconditions.
 
 ## 4. Role matrix (fail-closed)
 
@@ -93,17 +94,17 @@ git diff --check
 | Check | Result |
 | --- | --- |
 | Core package tests | pass |
-| App unit tests | **895 passed**, 5 skipped (900 total) |
-| Stage 4B integration tests | 8 passed, 1 skipped (full 5k/10k gated by `STAGE_4B_FULL_SCALE=1`) |
+| App unit tests | **901 passed**, 5 skipped (906 total) |
+| Stage 4B integration rehearsal | **9 passed**, including targeted 51/51 and full-scale 2/2; seven gated scale tests skipped |
 | `rehearse:stage-4b:integration` | pass |
 | Lint | pass (3 pre-existing warnings) |
 | Build | pass |
 | Visual smoke (desktop/tablet/mobile-android/mobile-ios) | **36 passed** |
-| RLS integration | **31 skipped** — blocked, not pass |
-| Channel replay (`rehearse:channel:replay`) | existing harness unchanged; not re-run in this closure pass |
-| Production-scale 79G (`rehearse:production-scale:79g`) | existing harness unchanged; not re-run in this closure pass |
-| `release:verify` | not re-run in this closure pass |
-| Secret / Phase 86 naming scan | no new secrets; no Phase 86 residue in Stage 4B diff |
+| RLS integration | **33 skipped** — blocked, not pass |
+| Channel replay (`rehearse:channel:replay`) | **4 passed, 126 skipped** |
+| Production-scale 79G (`rehearse:production-scale:79g`) | **passed** |
+| `release:verify` | **passed**; only documented R-405 findings remain |
+| Secret / forbidden-phase naming scan | recorded in post-closure remediation evidence after final diff scan |
 | `git diff --check` | clean apart from CRLF warnings |
 
 DTO governance: list items use allowlisted keys only; sensitive patterns (`body`, raw reason codes, handoff narrative) rejected in `phase-85-stage-4b-integration-verification.ts`.
@@ -128,15 +129,15 @@ Playwright visual smoke covers:
 - Notifications panel: sticky filters, status segments, priority/category filters, row density, overflow guard
 - Viewports: desktop, tablet, mobile-android, mobile-ios
 
-## 8. Risk closure (R-426 – R-430)
+## 8. Risk closure (R-433 – R-437)
 
 | ID | Status | Evidence |
 | --- | --- | --- |
-| R-426 | mitigated | Alerts projection-only; clinical handoff not surfaced as system notifications |
-| R-427 | mitigated | Red closure via atomic activation only; Phase 5 UX + tests |
-| R-428 | mitigated | Per-actor receipts, assistant/auditor mutation blocks, RLS RPCs |
-| R-429 | mitigated | Allowlisted DTOs, i18n keys, export governance tests |
-| R-430 | mitigated | Cursor APIs, page size 30, integration scale fixture, inbox scheduler dedupe |
+| R-433 | mitigated locally | Alerts projection-only; clinical handoff not surfaced as system notifications |
+| R-434 | mitigated locally | Red closure via atomic activation only; activation conflict tests |
+| R-435 | mitigated locally; RLS re-run pending | Per-actor receipts, assistant/auditor mutation blocks, actor-aware RPCs |
+| R-436 | mitigated locally | Allowlisted DTOs, i18n keys, linkage validation, export governance tests |
+| R-437 | mitigated locally | Cursor APIs, page size 30, full-scale bounded-read rehearsal |
 
 ## 9. Known deferred — Stage 4B-2 Mesajlasma (next)
 
@@ -174,8 +175,8 @@ Stage 4B-2 is **not implemented**. Next approved work:
 
 ## 11. Closure commit
 
-Single Stage 4B closure commit message:
+Implementation and remediation commit message:
 
-`Implement Phase 85 Stage 4B alerts and notifications`
+`Remediate Phase 85 Stage 4B closure findings`
 
 Production pilot remains **NO-GO**. Do not enable real providers, channels, or live billing.

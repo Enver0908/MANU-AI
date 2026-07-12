@@ -35,6 +35,7 @@ export function AiAssistantControlPanel({
   state,
   uiLanguage,
   disabled,
+  canManageAiControls = true,
   onUpdateClient,
   onActivateAi,
   onReleaseHumanTakeover,
@@ -45,6 +46,7 @@ export function AiAssistantControlPanel({
   state: ManuAppState;
   uiLanguage: SupportedLanguageCode;
   disabled?: boolean;
+  canManageAiControls?: boolean;
   onUpdateClient: (patch: Partial<ClientRecord>) => Promise<void> | void;
   onActivateAi: (clientId: string, requestedAiMode?: "copilot" | "autopilot") => Promise<unknown> | unknown;
   onReleaseHumanTakeover: (clientId: string) => Promise<unknown> | unknown;
@@ -57,7 +59,7 @@ export function AiAssistantControlPanel({
   const safetyChecklist = normalizeSafetyChecklist(client.safetyChecklist);
   const redLocked = isAiConfigurationLockedByRedRisk(client);
   const { activationDisabled, configurationDisabled } = resolveAiControlDisabledState(client, {
-    disabled,
+    disabled: disabled || !canManageAiControls,
     isActivatingAi,
   });
   const selectedPersona = personas.find((persona) => persona.id === client.selectedPersonaId);

@@ -12,16 +12,16 @@ import {
 import { isSupabaseStoreConfigured, listSupabaseNotifications } from "@/lib/supabase-store";
 
 export async function GET(request: Request) {
-  const url = new URL(request.url);
-  const status = parseNotificationStatusFilter(url.searchParams.get("status"));
-  const priority = parseNotificationPriorityFilter(url.searchParams.get("priority"));
-  const category = parseNotificationCategoryFilter(url.searchParams.get("category"));
-  const query = parseStage4BQuery(url.searchParams.get("query"));
-  const cursor = url.searchParams.get("cursor");
-  const limit = parseStage4BLimit(url.searchParams.get("limit"));
+  try {
+    const url = new URL(request.url);
+    const status = parseNotificationStatusFilter(url.searchParams.get("status"));
+    const priority = parseNotificationPriorityFilter(url.searchParams.get("priority"));
+    const category = parseNotificationCategoryFilter(url.searchParams.get("category"));
+    const query = parseStage4BQuery(url.searchParams.get("query"));
+    const cursor = url.searchParams.get("cursor");
+    const limit = parseStage4BLimit(url.searchParams.get("limit"));
 
-  if (isSupabaseStoreConfigured()) {
-    try {
+    if (isSupabaseStoreConfigured()) {
       const tenantContext = await resolveAppTenantContext();
       requireCapability(tenantContext, "read_app_state");
       return NextResponse.json(
@@ -34,20 +34,16 @@ export async function GET(request: Request) {
           limit,
         }),
       );
-    } catch (error) {
-      try {
-        return authErrorResponse(error);
-      } catch (authError) {
-        return domainErrorResponse(authError);
-      }
     }
-  }
 
-  try {
     return NextResponse.json(
       listFallbackNotifications({ status, priority, category, query, cursor, limit }),
     );
   } catch (error) {
-    return domainErrorResponse(error);
+    try {
+      return authErrorResponse(error);
+    } catch (authError) {
+      return domainErrorResponse(authError);
+    }
   }
 }

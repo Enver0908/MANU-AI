@@ -1,4 +1,5 @@
 import { AppDomainError } from "./app-errors";
+import { emitDraftInvalidatedNotifications } from "./phase-85-stage-4b-notifications";
 import { assertChatSourceMutationAllowed } from "./phase-77b-chat-mutation-boundary";
 import {
   parseEquivalentExchangeGroups,
@@ -581,7 +582,7 @@ function invalidatePendingDrafts(state: ManuAppState, clientId: string, createdA
   if (draftMessages.length === 0) return state;
 
   const decisionIds = new Set(draftMessages.map((message) => message.generatedByAiDecisionId).filter(Boolean));
-  return {
+  const next = {
     ...state,
     messages: state.messages.map((message) =>
       draftMessages.some((draft) => draft.id === message.id) ? { ...message, status: "blocked" as const } : message,
@@ -604,6 +605,18 @@ function invalidatePendingDrafts(state: ManuAppState, clientId: string, createdA
       },
     ],
   };
+  const client = state.clients.find((item) => item.id === clientId);
+  const conversation = state.conversations.find((item) => item.clientId === clientId);
+  return client && conversation
+    ? emitDraftInvalidatedNotifications(next, {
+        clientId,
+        conversationId: conversation.id,
+        clientName: client.fullName,
+        decisionIds: [...decisionIds].filter((id): id is string => Boolean(id)),
+        reason: "client_update_proposal_applied",
+        now: createdAt,
+      })
+    : next;
 }
 
 function dedupePatches(patches: ClientUpdateProposalPatch[]) {

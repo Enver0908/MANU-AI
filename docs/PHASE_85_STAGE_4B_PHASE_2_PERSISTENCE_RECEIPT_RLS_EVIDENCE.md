@@ -44,6 +44,10 @@ npm run build → pass
 - Assistant/auditor cannot mutate receipts; `client_id IS NULL` tenant-operational notifications owner/admin only
 - Legacy `read` / `acknowledged_at` columns retained; new paths use receipts
 
+## Post-closure remediation reconciliation - 2026-07-12
+
+The original Phase 2 evidence is historical. The append-only migration `20260712120000_phase_85_stage_4b_postclosure_remediation.sql` adds actor-aware v2 bounded RPCs, tenant/user/dietitian/role validation, fail-closed linked-resource projection, atomic unsupported-media review, and persisted dietitian form schema/response inputs used by the Supabase SLA reader. The current RLS test matrix contains 33 tests but is blocked because Docker Desktop is unavailable; no skipped test is counted as a pass. See `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md`.
+
 ## Out of scope (Phase 3+)
 
 - Full notification producer/dedupe lifecycle for all system events

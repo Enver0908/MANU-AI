@@ -58,6 +58,7 @@ const OTHER_INTERNAL_COPILOT_TOOL_CALL_ID = "00000000-0000-4000-8000-00000000091
 const ASSISTANT_DIETITIAN_ID = "00000000-0000-4000-8000-000000000920";
 const VIEWER_DIETITIAN_ID = "00000000-0000-4000-8000-000000000921";
 const CARE_TEAM_DIETITIAN_ID = "00000000-0000-4000-8000-000000000922";
+const AUDITOR_DIETITIAN_ID = "00000000-0000-4000-8000-000000000961";
 const UNASSIGNED_CLIENT_ID = "00000000-0000-4000-8000-000000000923";
 const UNASSIGNED_CONVERSATION_ID = "00000000-0000-4000-8000-000000000924";
 const OWNED_DIETITIAN_CLIENT_ID = "00000000-0000-4000-8000-000000000925";
@@ -89,6 +90,8 @@ const TEST_P85_CHANNEL_EVENT_ID = "00000000-0000-4000-8000-000000000956";
 const OTHER_P85_CHANNEL_EVENT_ID = "00000000-0000-4000-8000-000000000957";
 const TEST_P85_CHANNEL_MESSAGE_REVISION_ID = "00000000-0000-4000-8000-000000000958";
 const TEST_P85_RISK_ACTIVITY_ID = "00000000-0000-4000-8000-000000000952";
+const TEST_STAGE4B_NOTIFICATION_ID = "00000000-0000-4000-8000-000000000959";
+const TEST_STAGE4B_MEDIA_NOTIFICATION_ID = "00000000-0000-4000-8000-000000000960";
 const PASSWORD = "manu-rls-test-password";
 
 const maybeDescribe = shouldRun ? describe : describe.skip;
@@ -119,6 +122,7 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     auditorUserId = await ensureUser(admin, "rls-auditor@manu.local");
     await seedTenants(admin, {
       memberUserId,
+      outsiderUserId,
       assistantUserId,
       viewerUserId,
       careTeamUserId,
@@ -1635,6 +1639,164 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     expect(contextUpdate.data).toMatchObject({ title: "Phone check-in", source: "phone" });
     await resetSupabaseState();
   }, 30000);
+
+  it("uses actor-aware bounded Stage 4B RPCs and isolates receipts", async () => {
+    await resetSupabaseState();
+    const now = new Date().toISOString();
+    await checked(
+      admin.from("notifications").insert({
+        id: TEST_STAGE4B_NOTIFICATION_ID,
+        tenant_id: TEST_TENANT_ID,
+        type: "system",
+        kind: "safe_reply_unavailable",
+        priority: "intervention_required",
+        entity_type: "message",
+        entity_id: TEST_MESSAGE_ID,
+        client_id: TEST_CLIENT_ID,
+        conversation_id: TEST_CONVERSATION_ID,
+        message_id: TEST_MESSAGE_ID,
+        occurrence_count: 1,
+        last_occurred_at: now,
+        title: "Hidden structured title",
+        body: "Raw body must not leave the RPC.",
+        read: false,
+        created_at: now,
+      }),
+    );
+
+    const owner = await signIn("rls-member@manu.local");
+    const assistant = await signIn("rls-assistant@manu.local");
+    const assignedDietitian = await signIn("rls-viewer@manu.local");
+    const auditor = await signIn("rls-auditor@manu.local");
+    const listArgs = {
+      p_status: "active",
+      p_limit: 30,
+    };
+
+    const ownerList = await owner.rpc("p85_stage_4b_list_notifications_v2", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_user_id: memberUserId,
+      p_dietitian_id: TEST_DIETITIAN_ID,
+      p_role: "owner",
+      ...listArgs,
+    });
+    expect(ownerList.error).toBeNull();
+    expect(ownerList.data?.some((row: { id: string }) => row.id === TEST_STAGE4B_NOTIFICATION_ID)).toBe(true);
+
+    const assistantList = await assistant.rpc("p85_stage_4b_list_notifications_v2", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_user_id: assistantUserId,
+      p_dietitian_id: ASSISTANT_DIETITIAN_ID,
+      p_role: "assistant",
+      ...listArgs,
+    });
+    expect(assistantList.error).toBeNull();
+    expect(assistantList.data?.some((row: { id: string }) => row.id === TEST_STAGE4B_NOTIFICATION_ID)).toBe(true);
+
+    const assignedList = await assignedDietitian.rpc("p85_stage_4b_list_notifications_v2", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_user_id: viewerUserId,
+      p_dietitian_id: VIEWER_DIETITIAN_ID,
+      p_role: "dietitian",
+      ...listArgs,
+    });
+    expect(assignedList.error).toBeNull();
+    expect(assignedList.data?.some((row: { id: string }) => row.id === TEST_STAGE4B_NOTIFICATION_ID)).toBe(true);
+
+    const auditorList = await auditor.rpc("p85_stage_4b_list_notifications_v2", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_user_id: auditorUserId,
+      p_dietitian_id: AUDITOR_DIETITIAN_ID,
+      p_role: "auditor",
+      ...listArgs,
+    });
+    expect(auditorList.error).toBeNull();
+    expect(auditorList.data).toEqual([]);
+
+    const ownerRead = await owner.rpc("p85_stage_4b_mark_notification_read_v2", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_user_id: memberUserId,
+      p_dietitian_id: TEST_DIETITIAN_ID,
+      p_role: "owner",
+      p_notification_id: TEST_STAGE4B_NOTIFICATION_ID,
+    });
+    expect(ownerRead.error).toBeNull();
+    const assistantMutation = await assistant.rpc("p85_stage_4b_mark_notification_read_v2", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_user_id: assistantUserId,
+      p_dietitian_id: ASSISTANT_DIETITIAN_ID,
+      p_role: "assistant",
+      p_notification_id: TEST_STAGE4B_NOTIFICATION_ID,
+    });
+    expect(assistantMutation.error?.message).toMatch(/notification_not_found/i);
+
+    const receipts = await admin
+      .from("notification_receipts")
+      .select("dietitian_id, read_at")
+      .eq("tenant_id", TEST_TENANT_ID)
+      .eq("notification_id", TEST_STAGE4B_NOTIFICATION_ID);
+    expect(receipts.error).toBeNull();
+    expect(receipts.data).toEqual([expect.objectContaining({ dietitian_id: TEST_DIETITIAN_ID })]);
+    expect(receipts.data?.some((receipt) => receipt.dietitian_id === ASSISTANT_DIETITIAN_ID)).toBe(false);
+
+    await resetSupabaseState();
+  }, 30000);
+
+  it("requires an acknowledged actor receipt for atomic unsupported-media completion", async () => {
+    await resetSupabaseState();
+    const now = new Date().toISOString();
+    await checked(
+      admin.from("notifications").insert({
+        id: TEST_STAGE4B_MEDIA_NOTIFICATION_ID,
+        tenant_id: TEST_TENANT_ID,
+        type: "system",
+        kind: "unsupported_media_review",
+        priority: "review_required",
+        entity_type: "conversation",
+        entity_id: TEST_CONVERSATION_ID,
+        client_id: TEST_CLIENT_ID,
+        conversation_id: TEST_CONVERSATION_ID,
+        message_id: TEST_MESSAGE_ID,
+        occurrence_count: 1,
+        last_occurred_at: now,
+        title: "Unsupported media",
+        body: "Raw body must not leave the RPC.",
+        read: false,
+        created_at: now,
+      }),
+    );
+
+    const owner = await signIn("rls-member@manu.local");
+    const completeBeforeAck = await owner.rpc("p85_stage_4b_complete_unsupported_media_review_v2", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_user_id: memberUserId,
+      p_dietitian_id: TEST_DIETITIAN_ID,
+      p_role: "owner",
+      p_notification_id: TEST_STAGE4B_MEDIA_NOTIFICATION_ID,
+    });
+    expect(completeBeforeAck.error?.message).toMatch(/requires_acknowledged_receipt/i);
+
+    const acknowledgement = await owner.rpc("p85_stage_4b_acknowledge_notification_v2", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_user_id: memberUserId,
+      p_dietitian_id: TEST_DIETITIAN_ID,
+      p_role: "owner",
+      p_notification_id: TEST_STAGE4B_MEDIA_NOTIFICATION_ID,
+    });
+    expect(acknowledgement.error).toBeNull();
+
+    const complete = await owner.rpc("p85_stage_4b_complete_unsupported_media_review_v2", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_user_id: memberUserId,
+      p_dietitian_id: TEST_DIETITIAN_ID,
+      p_role: "owner",
+      p_notification_id: TEST_STAGE4B_MEDIA_NOTIFICATION_ID,
+    });
+    expect(complete.error).toBeNull();
+    expect(complete.data?.[0]?.resolved_at).toBeTruthy();
+
+    await resetSupabaseState();
+  }, 30000);
 });
 
 function loadEnvLocal() {
@@ -1687,6 +1849,7 @@ async function seedTenants(
   admin: SupabaseClient,
   users: {
     memberUserId: string;
+    outsiderUserId: string;
     assistantUserId: string;
     viewerUserId: string;
     careTeamUserId: string;
@@ -1749,6 +1912,12 @@ async function seedTenants(
         tenant_id: TEST_TENANT_ID,
         display_name: "RLS Care Team Dietitian",
         auth_user_id: users.careTeamUserId,
+      },
+      {
+        id: AUDITOR_DIETITIAN_ID,
+        tenant_id: TEST_TENANT_ID,
+        display_name: "RLS Auditor Profile",
+        auth_user_id: users.auditorUserId,
       },
       {
         id: OTHER_DIETITIAN_ID,

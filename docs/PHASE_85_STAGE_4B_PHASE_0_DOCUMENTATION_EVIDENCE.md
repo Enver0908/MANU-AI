@@ -43,3 +43,7 @@ Phase 0 locked the Stage 4B contract and documentation baseline. It did not impl
 - Production pilot remains `NO-GO`.
 - R-405 remains open.
 - Real WhatsApp, Telegram, Gemini/provider, billing, monitoring, backup, secret-manager, and real health-data paths remain disabled.
+
+## Post-closure remediation reconciliation - 2026-07-12
+
+The Phase 0 record is historical. Runtime implementation and post-closure findings are now recorded in `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_SPEC.md`. The planned Stage 4B risk identifiers were made unique in the canonical risk register as R-433 through R-437 because R-426 through R-432 already belong to P85-IF risks. Current RLS execution is environment-blocked and is not claimed as pass.

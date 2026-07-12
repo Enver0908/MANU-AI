@@ -8,6 +8,7 @@ import type {
   ManuAppState,
 } from "./types";
 import { normalizeE164Phone, normalizeLanguageCode } from "./languages";
+import { emitDraftInvalidatedNotifications } from "./phase-85-stage-4b-notifications";
 
 export function createClientFormSchemaInState(
   state: ManuAppState,
@@ -223,7 +224,7 @@ function invalidatePendingDraftsForFormChange(state: ManuAppState, clientId: str
   if (draftMessages.length === 0) return state;
 
   const decisionIds = new Set(draftMessages.map((message) => message.generatedByAiDecisionId).filter(Boolean));
-  return {
+  const next = {
     ...state,
     messages: state.messages.map((message) =>
       draftMessages.some((draft) => draft.id === message.id) ? { ...message, status: "blocked" as const } : message,
@@ -238,4 +239,16 @@ function invalidatePendingDraftsForFormChange(state: ManuAppState, clientId: str
       buildAudit(state, "draft_context_invalidated", "client", clientId, createdAt),
     ],
   };
+  const client = state.clients.find((item) => item.id === clientId);
+  const conversation = state.conversations.find((item) => item.clientId === clientId);
+  return client && conversation
+    ? emitDraftInvalidatedNotifications(next, {
+        clientId,
+        conversationId: conversation.id,
+        clientName: client.fullName,
+        decisionIds: [...decisionIds].filter((id): id is string => Boolean(id)),
+        reason: "client_form_response_changed",
+        now: createdAt,
+      })
+    : next;
 }

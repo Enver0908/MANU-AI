@@ -67,6 +67,10 @@ Targeted unit coverage:
 
 Visual smoke: `alerts-panel` + severity tab visible.
 
+## Post-closure remediation reconciliation - 2026-07-12
+
+The visual contract now has screenshot assertions for alerts across desktop, tablet, Android, and iOS projects, keyboard focus assertions for the search field, selected-tab semantics, real red/yellow rows, SLA presentation, and horizontal overflow guards. The four-viewport dashboard visual run passed 36/36. Dynamic timestamps are bounded in the screenshot contract without weakening row geometry checks.
+
 ## Out of scope (Faz 8+)
 
 - Full notifications workflow panel

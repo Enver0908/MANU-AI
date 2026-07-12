@@ -249,11 +249,16 @@ export function filterClinicalAlerts(
 
 export function projectClinicalAlerts(input: ClinicalAlertProjectionInput): ClinicalAlertListItem[] {
   const visibleClientIds = input.visibleClientIds;
-  const conversationByClientId = new Map(
-    input.conversations.map((conversation) => [conversation.clientId, conversation]),
-  );
+  const conversationByClientId = new Map<string, ConversationRecord>();
+  const conversationById = new Map(input.conversations.map((conversation) => [conversation.id, conversation]));
+  for (const conversation of input.conversations) {
+    const current = conversationByClientId.get(conversation.clientId);
+    if (!current || conversation.id.localeCompare(current.id) < 0) {
+      conversationByClientId.set(conversation.clientId, conversation);
+    }
+  }
   const handoffById = new Map(input.handoffCases.map((handoff) => [handoff.id, handoff]));
-  const messageIds = new Set(input.messages.map((message) => message.id));
+  const messageById = new Map(input.messages.map((message) => [message.id, message]));
   const alerts: ClinicalAlertListItem[] = [];
 
   for (const client of input.clients) {
@@ -268,8 +273,9 @@ export function projectClinicalAlerts(input: ClinicalAlertProjectionInput): Clin
       const redAlert = projectRedClinicalAlert({
         client,
         conversation,
+        conversationById,
         handoffById,
-        messageIds,
+        messageById,
         now: input.now,
         timezone,
         slaConfig,
@@ -282,7 +288,7 @@ export function projectClinicalAlerts(input: ClinicalAlertProjectionInput): Clin
       const yellowAlert = projectYellowClinicalAlert({
         client,
         conversation,
-        messageIds,
+        messageById,
         now: input.now,
         timezone,
         slaConfig,
@@ -297,8 +303,9 @@ export function projectClinicalAlerts(input: ClinicalAlertProjectionInput): Clin
 function projectRedClinicalAlert(input: {
   client: ClientRecord;
   conversation: ConversationRecord | null;
+  conversationById: ReadonlyMap<string, ConversationRecord>;
   handoffById: ReadonlyMap<string, HandoffCaseRecord>;
-  messageIds: ReadonlySet<string>;
+  messageById: ReadonlyMap<string, MessageRecord>;
   now: string;
   timezone: string;
   slaConfig: DietitianSlaConfig;
@@ -322,14 +329,16 @@ function projectRedClinicalAlert(input: {
     });
   }
 
+  const handoffConversation = input.conversationById.get(handoff.conversationId);
   const conversation =
-    input.conversation && input.conversation.id === handoff.conversationId
-      ? input.conversation
+    handoffConversation && handoffConversation.clientId === input.client.id
+      ? handoffConversation
       : null;
   const sourceMessageId = resolveSafeSourceMessageId(
     handoff.triggeringMessageId,
     lock.reasons,
-    input.messageIds,
+    input.messageById,
+    conversation?.id ?? null,
   );
   const taxonomy = resolveClinicalAlertKind(lock.reasons);
   const sla = resolveDietitianClinicalSla({
@@ -369,7 +378,7 @@ function projectRedClinicalAlert(input: {
 function projectYellowClinicalAlert(input: {
   client: ClientRecord;
   conversation: ConversationRecord | null;
-  messageIds: ReadonlySet<string>;
+  messageById: ReadonlyMap<string, MessageRecord>;
   now: string;
   timezone: string;
   slaConfig: DietitianSlaConfig;
@@ -380,10 +389,11 @@ function projectYellowClinicalAlert(input: {
   const sourceMessageId = resolveSafeSourceMessageId(
     hold.latestMessageId || hold.firstMessageId,
     hold.messageIds,
-    input.messageIds,
+    input.messageById,
+    input.conversation?.id ?? null,
   );
   const activeDraftMessageId =
-    hold.activeDraftMessageId && input.messageIds.has(hold.activeDraftMessageId)
+    hold.activeDraftMessageId && isMessageForConversation(input.messageById, hold.activeDraftMessageId, input.conversation?.id ?? null)
       ? hold.activeDraftMessageId
       : null;
   const taxonomy = resolveClinicalAlertKind(hold.reasons);
@@ -496,15 +506,25 @@ function buildClinicalAlertTarget(input: {
 function resolveSafeSourceMessageId(
   preferredMessageId: string | null | undefined,
   relatedIds: string[],
-  visibleMessageIds: ReadonlySet<string>,
+  visibleMessages: ReadonlyMap<string, MessageRecord>,
+  conversationId: string | null,
 ): string | null {
-  if (preferredMessageId && visibleMessageIds.has(preferredMessageId)) {
+  if (preferredMessageId && isMessageForConversation(visibleMessages, preferredMessageId, conversationId)) {
     return preferredMessageId;
   }
   for (const candidate of relatedIds) {
-    if (visibleMessageIds.has(candidate)) return candidate;
+    if (isMessageForConversation(visibleMessages, candidate, conversationId)) return candidate;
   }
   return null;
+}
+
+function isMessageForConversation(
+  messages: ReadonlyMap<string, MessageRecord>,
+  messageId: string,
+  conversationId: string | null,
+) {
+  const message = messages.get(messageId);
+  return Boolean(message && conversationId && message.conversationId === conversationId);
 }
 
 type DietitianSlaConfig = {

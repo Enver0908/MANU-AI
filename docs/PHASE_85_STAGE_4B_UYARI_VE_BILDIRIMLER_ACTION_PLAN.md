@@ -1,7 +1,7 @@
 # Phase 85 Stage 4B - Uyari ve Bildirimler Eylem Plani
 
 Date: 2026-07-11
-Status: complete (2026-07-12 closure)
+Status: implementation complete; post-closure remediation verified (2026-07-12); current RLS re-run blocked by unavailable Docker
 Canonical baseline: commit `5048e22` (`Align Stage 4A with P85-IF contracts`)
 Required branch: `codex/phase-85-interstage-clinical-memory`
 
@@ -24,7 +24,7 @@ The canonical sequence is:
 2. P85-IF-A through P85-IF-I - completed.
 3. P85-IF remediation R1-R6 and post-closure audit - completed.
 4. Stage 4A post-P85-IF compatibility remediation - completed at `5048e22`.
-5. Stage 4B - Uyari ve Bildirimler - **complete** (2026-07-12). Evidence: `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_EVIDENCE.md`.
+5. Stage 4B - Uyari ve Bildirimler - **implementation complete; conditional local closure** (2026-07-12). Evidence: `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md`.
 6. Stage 4B-2 - Mesajlasma - **next**; mandatory after Stage 4B; owns conversation list/detail, unread message state, WhatsApp-like detail, yellow draft workflow, red manual reply, and in-detail AI control.
 7. Stage 4C - blocked until Stage 4B-2 is complete.
 8. Stage 4D, Stage 5, Stage 6, and Stage 7 follow in their existing order.
@@ -526,4 +526,8 @@ Phase 0 locked the stage order, Stage 4B/4B-2/4C boundaries, alert-versus-notifi
 
 Phase 1 completed on 2026-07-12: clinical alert projection, reason taxonomy, SLA calculation, sorting/filtering helpers, safe DTO contracts, i18n reason labels, and fallback/Supabase projection parity. Evidence: `docs/PHASE_85_STAGE_4B_PHASE_1_ALERT_PROJECTION_EVIDENCE.md`. Targeted tests 11/11; lint and production build passed.
 
-The next action is Phase 2 of this plan: append-only notification columns, `notification_receipts`, backfill, composite FK/index/RLS/RPC.
+## Stage 4B Post-Closure Remediation Execution Record - 2026-07-12
+
+The original local closure evidence was re-audited before handoff. The remediation added bounded actor-aware Supabase v2 RPCs, persistent dietitian-form SLA inputs, fail-closed target linkage, client-specific draft lifecycle producers, atomic unsupported-media receipt gating, assistant/auditor UI restrictions, route error-boundary hardening, and screenshot/keyboard/accessibility assertions. Full core/app, scale, replay, release, build, lint, and visual verification passed. The current RLS suite has 33 skipped tests because Docker Desktop is unavailable; those tests are explicitly not counted as pass. Detailed evidence: `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md` and runtime contract: `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_SPEC.md`.
+
+The next implementation track remains Stage 4B-2 Mesajlasma. Stage 4C remains blocked. Production pilot remains `NO-GO`; R-405 remains open; real provider/channel/health-data paths remain disabled.

@@ -1079,6 +1079,15 @@ export function invalidatePendingDrafts(
       .filter((conversation) => conversationIds.has(conversation.id))
       .map((conversation) => conversation.clientId),
   );
+  const decisionIdsByClient = new Map<string, Set<string>>();
+  for (const message of messages) {
+    if (!pendingDraftIds.has(message.id) || !message.generatedByAiDecisionId) continue;
+    const conversation = state.conversations.find((item) => item.id === message.conversationId);
+    if (!conversation) continue;
+    const decisionIds = decisionIdsByClient.get(conversation.clientId) ?? new Set<string>();
+    decisionIds.add(message.generatedByAiDecisionId);
+    decisionIdsByClient.set(conversation.clientId, decisionIds);
+  }
 
   let next: ManuAppState = {
     ...state,
@@ -1096,15 +1105,20 @@ export function invalidatePendingDrafts(
       (item) => item.clientId === clientId && conversationIds.has(item.id),
     );
     if (!client || !conversation) continue;
-    next = emitDraftInvalidatedNotifications(next, {
-      clientId,
-      conversationId: conversation.id,
-      clientName: client.fullName,
-      decisionIds: [...changedDecisionIds],
-      reason,
-      now: createdAt,
-    });
-    next = reconcileDraftInvalidatedNotifications(next, conversation.id, createdAt);
+    const decisionIds = decisionIdsByClient.get(clientId);
+    if (!decisionIds || decisionIds.size === 0) continue;
+    if (reason === "dietitian_manual_reply" || reason === "handled_through_external_human_conversation") {
+      next = reconcileDraftInvalidatedNotifications(next, conversation.id, createdAt);
+    } else {
+      next = emitDraftInvalidatedNotifications(next, {
+        clientId,
+        conversationId: conversation.id,
+        clientName: client.fullName,
+        decisionIds: [...decisionIds],
+        reason,
+        now: createdAt,
+      });
+    }
   }
 
   return next;
@@ -1497,6 +1511,26 @@ function appendDraftSimulationResult(ctx: SimulationAppendContext) {
         buildAuditEvent(state, "yellow_risk_hold_draft_refreshed", "message", draftMessage.id, now),
       );
     }
+    applySimulationNotificationEmitter(
+      ctx,
+      emitDraftInvalidatedNotifications(
+        {
+          ...ctx.state,
+          clients: ctx.nextClients,
+          messages: ctx.nextMessages,
+          aiDecisions: ctx.nextAiDecisions,
+          notifications: ctx.notifications,
+        },
+        {
+          clientId: client.id,
+          conversationId: conversation.id,
+          clientName: client.fullName,
+          decisionIds: [activeHold.activeDecisionId],
+          reason: "draft_superseded",
+          now,
+        },
+      ),
+    );
   } else {
     ctx.auditEvents.push(buildAuditEvent(state, "yellow_risk_hold_created", "client", client.id, now));
   }

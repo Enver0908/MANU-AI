@@ -68,6 +68,33 @@ describe("phase-85-stage-4b alerts", () => {
     });
   });
 
+  it("drops foreign conversation messages from alert linkage", () => {
+    const state = createInitialState();
+    const foreignMessageId = state.messages[0]!.id;
+    const patched = withClientPatch(state, "client-elif", {
+      yellowRiskHold: {
+        status: "active",
+        startedAt: NOW,
+        firstMessageId: foreignMessageId,
+        latestMessageId: foreignMessageId,
+        activeDraftMessageId: foreignMessageId,
+        activeDecisionId: null,
+        messageIds: [foreignMessageId],
+        reasons: ["symptom_question"],
+        previousAiStatus: "active",
+        previousAiMode: "copilot",
+        blockedByRedHandoffId: null,
+      },
+    });
+
+    const alert = projectClinicalAlertsFromState(patched, { now: NOW }).find(
+      (item) => item.clientId === "client-elif",
+    );
+    expect(alert?.sourceMessageId).toBeNull();
+    expect(alert?.activeDraftMessageId).toBeNull();
+    expect(alert?.target.messageId).toBeUndefined();
+  });
+
   it("resolves SLA states for configured, same-day, and invalid values", () => {
     expect(
       resolveDietitianClinicalSla({

@@ -75,7 +75,7 @@ export type Stage4BNavigationTarget = {
   clientId: string;
   conversationId?: string;
   messageId?: string;
-  source?: "alert";
+  source?: "alert" | "notification";
   sourceId?: string;
 };
 

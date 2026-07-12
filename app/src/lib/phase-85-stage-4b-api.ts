@@ -29,6 +29,8 @@ import {
   resolveNotificationPriority,
 } from "./phase-85-stage-4b-notifications";
 import type { ClientRecord, ManuAppState, NotificationRecord } from "./types";
+import type { SupportedLanguageCode } from "./languages";
+import { t } from "./i18n";
 
 export const PHASE_85_STAGE_4B_API_VERSION = "p85-stage-4b-api-v1";
 export const STAGE_4B_DEFAULT_PAGE_SIZE = 30;
@@ -49,7 +51,7 @@ const NOTIFICATION_PRIORITY_RANK: Record<NotificationPriority, number> = {
   info: 2,
 };
 
-const NOTIFICATION_KIND_I18N_KEYS: Record<
+export const STAGE4B_NOTIFICATION_I18N_KEYS: Record<
   NotificationKind,
   { titleKey: string; summaryKey: string }
 > = {
@@ -103,14 +105,30 @@ const NOTIFICATION_KIND_I18N_KEYS: Record<
   },
 };
 
-type AlertCursorPayload = {
+export function resolveNotificationSearchKinds(query: string, language: SupportedLanguageCode = "tr") {
+  const normalized = query.trim().toLocaleLowerCase(language === "tr" ? "tr-TR" : language);
+  if (!normalized) return [] as NotificationKind[];
+
+  return (Object.entries(STAGE4B_NOTIFICATION_I18N_KEYS) as Array<[
+    NotificationKind,
+    { titleKey: string; summaryKey: string },
+  ]>)
+    .filter(([, keys]) => {
+      const title = t(language, keys.titleKey as never).toLocaleLowerCase(language === "tr" ? "tr-TR" : language);
+      const summary = t(language, keys.summaryKey as never).toLocaleLowerCase(language === "tr" ? "tr-TR" : language);
+      return title.includes(normalized) || summary.includes(normalized);
+    })
+    .map(([kind]) => kind);
+}
+
+export type AlertCursorPayload = {
   v: number;
   severityRank: number;
   startedAt: string;
   id: string;
 };
 
-type NotificationActiveCursorPayload = {
+export type NotificationActiveCursorPayload = {
   v: number;
   mode: "active" | "unread";
   priorityRank: number;
@@ -118,7 +136,7 @@ type NotificationActiveCursorPayload = {
   id: string;
 };
 
-type NotificationHistoryCursorPayload = {
+export type NotificationHistoryCursorPayload = {
   v: number;
   mode: "history";
   historyAt: string;
@@ -209,6 +227,22 @@ export function parseNotificationCategoryFilter(value: string | null | undefined
 
 function encodeCursor(payload: Record<string, unknown>) {
   return Buffer.from(JSON.stringify(payload), "utf8").toString("base64url");
+}
+
+export function encodeAlertCursor(payload: Omit<AlertCursorPayload, "v">) {
+  return encodeCursor({ v: STAGE_4B_CURSOR_VERSION, ...payload });
+}
+
+export function encodeNotificationCursor(
+  payload: Omit<NotificationActiveCursorPayload, "v">,
+): string;
+export function encodeNotificationCursor(
+  payload: Omit<NotificationHistoryCursorPayload, "v">,
+): string;
+export function encodeNotificationCursor(
+  payload: Omit<NotificationActiveCursorPayload, "v"> | Omit<NotificationHistoryCursorPayload, "v">,
+) {
+  return encodeCursor({ v: STAGE_4B_CURSOR_VERSION, ...payload });
 }
 
 function decodeCursorValue<T extends { v: number }>(
@@ -384,12 +418,17 @@ function normalizeSearchQuery(value: string) {
   return value.trim().slice(0, STAGE_4B_MAX_QUERY_LENGTH).toLocaleLowerCase("tr");
 }
 
-function matchesNotificationSearch(item: SystemNotificationListItem, query: string) {
+function matchesNotificationSearch(
+  item: SystemNotificationListItem,
+  query: string,
+  language: SupportedLanguageCode = "tr",
+) {
   if (!query) return true;
   const normalized = normalizeSearchQuery(query);
   const clientName = item.clientFullName ? normalizeSearchQuery(item.clientFullName) : "";
-  const titleKey = normalizeSearchQuery(item.titleKey);
-  return clientName.includes(normalized) || titleKey.includes(normalized);
+  const title = normalizeSearchQuery(t(language, item.titleKey as never));
+  const summary = normalizeSearchQuery(t(language, item.summaryKey as never));
+  return clientName.includes(normalized) || title.includes(normalized) || summary.includes(normalized);
 }
 
 export function buildNotificationNavigationTarget(
@@ -400,42 +439,64 @@ export function buildNotificationNavigationTarget(
   state: Pick<ManuAppState, "clients" | "conversations" | "messages">,
 ): Stage4BNavigationTarget {
   const clientId = notification.clientId;
-  if (!clientId || !state.clients.some((client) => client.id === clientId)) {
-    return { section: "clients", clientId: clientId || "unknown", source: "alert", sourceId: notification.id };
+  const conversation = notification.conversationId
+    ? state.conversations.find(
+        (item) => item.id === notification.conversationId && item.clientId === clientId,
+      )
+    : undefined;
+  const message = notification.messageId
+    ? state.messages.find(
+        (item) => item.id === notification.messageId && item.conversationId === conversation?.id,
+      )
+    : undefined;
+
+  return buildStage4BNotificationTargetFromLinks(
+    {
+      id: notification.id,
+      kind: notification.kind,
+      clientId,
+      conversationId: conversation?.id ?? null,
+      messageId: message?.id ?? null,
+    },
+    {
+      clientExists: Boolean(clientId && state.clients.some((client) => client.id === clientId)),
+      source: "alert",
+    },
+  );
+}
+
+export function buildStage4BNotificationTargetFromLinks(
+  input: {
+    id: string;
+    kind: NotificationKind;
+    clientId: string | null | undefined;
+    conversationId: string | null | undefined;
+    messageId: string | null | undefined;
+  },
+  validation: { clientExists: boolean; source?: "alert" | "notification" },
+): Stage4BNavigationTarget {
+  const clientId = input.clientId || "unknown";
+  const source = validation.source ?? "notification";
+  if (!input.clientId || !validation.clientExists) {
+    return { section: "clients", clientId, source, sourceId: input.id };
   }
 
-  const section = resolveNotificationTargetSection(notification.kind);
-  if (section === "ai-control") {
-    return { section, clientId, source: "alert", sourceId: notification.id };
-  }
-  if (section === "clients") {
-    return { section, clientId, source: "alert", sourceId: notification.id };
+  const section = resolveNotificationTargetSection(input.kind);
+  if (section === "ai-control" || section === "clients") {
+    return { section, clientId, source, sourceId: input.id };
   }
 
-  const conversationId =
-    notification.conversationId &&
-    state.conversations.some(
-      (conversation) => conversation.id === notification.conversationId && conversation.clientId === clientId,
-    )
-      ? notification.conversationId
-      : state.conversations.find((conversation) => conversation.clientId === clientId)?.id;
-
-  if (!conversationId) {
-    return { section: "clients", clientId, source: "alert", sourceId: notification.id };
+  if (!input.conversationId) {
+    return { section: "clients", clientId, source, sourceId: input.id };
   }
-
-  const messageId =
-    notification.messageId && state.messages.some((message) => message.id === notification.messageId)
-      ? notification.messageId
-      : undefined;
 
   return {
     section: "messages",
     clientId,
-    conversationId,
-    messageId,
-    source: "alert",
-    sourceId: notification.id,
+    conversationId: input.conversationId,
+    messageId: input.messageId ?? undefined,
+    source,
+    sourceId: input.id,
   };
 }
 
@@ -496,7 +557,7 @@ export function projectSystemNotificationListItems(
         context.dietitianId,
       );
       const lifecycleState = resolveNotificationLifecycleState(notification, receipt);
-      const i18nKeys = NOTIFICATION_KIND_I18N_KEYS[notification.kind];
+      const i18nKeys = STAGE4B_NOTIFICATION_I18N_KEYS[notification.kind];
       const client = notification.clientId ? clientsById.get(notification.clientId) : undefined;
       return {
         id: notification.id,
@@ -621,7 +682,7 @@ export function buildSystemNotificationsListResponse(
   const filtered = items.filter((item) => {
     if (input.priority && item.priority !== input.priority) return false;
     if (input.category && item.category !== input.category) return false;
-    if (!matchesNotificationSearch(item, input.query || "")) return false;
+    if (!matchesNotificationSearch(item, input.query || "", state.dietitian.uiLanguage || "tr")) return false;
     const unread = !item.readAt;
     return matchesNotificationStatusBucket(item.lifecycleState, unread, status);
   });

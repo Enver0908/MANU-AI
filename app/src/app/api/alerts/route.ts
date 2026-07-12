@@ -10,31 +10,27 @@ import {
 import { isSupabaseStoreConfigured, listSupabaseClinicalAlerts } from "@/lib/supabase-store";
 
 export async function GET(request: Request) {
-  const url = new URL(request.url);
-  const severity = parseAlertSeverityFilter(url.searchParams.get("severity"));
-  const query = parseStage4BQuery(url.searchParams.get("query"));
-  const cursor = url.searchParams.get("cursor");
-  const limit = parseStage4BLimit(url.searchParams.get("limit"));
+  try {
+    const url = new URL(request.url);
+    const severity = parseAlertSeverityFilter(url.searchParams.get("severity"));
+    const query = parseStage4BQuery(url.searchParams.get("query"));
+    const cursor = url.searchParams.get("cursor");
+    const limit = parseStage4BLimit(url.searchParams.get("limit"));
 
-  if (isSupabaseStoreConfigured()) {
-    try {
+    if (isSupabaseStoreConfigured()) {
       const tenantContext = await resolveAppTenantContext();
       requireCapability(tenantContext, "read_app_state");
       return NextResponse.json(
         await listSupabaseClinicalAlerts(tenantContext, { severity, query, cursor, limit }),
       );
-    } catch (error) {
-      try {
-        return authErrorResponse(error);
-      } catch (authError) {
-        return domainErrorResponse(authError);
-      }
     }
-  }
 
-  try {
     return NextResponse.json(listFallbackClinicalAlerts({ severity, query, cursor, limit }));
   } catch (error) {
-    return domainErrorResponse(error);
+    try {
+      return authErrorResponse(error);
+    } catch (authError) {
+      return domainErrorResponse(authError);
+    }
   }
 }

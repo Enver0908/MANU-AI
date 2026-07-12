@@ -78,3 +78,7 @@ Targeted new coverage:
 - Navigation badges and header bell wiring
 
 Production pilot remains **NO-GO**.
+
+## Post-closure remediation reconciliation - 2026-07-12
+
+The atomic activation contract remains the only red closure action. The remediation separated red-lock activation controls from red-lock configuration disablement and kept activation available under the lock for authorized actors, while assistant/auditor controls remain read-only. Full app and Stage 4B rehearsal verification passed; production pilot remains `NO-GO`.

@@ -42,6 +42,6 @@ npm run build
 - Reconciliation runs on domain mutations, not GET endpoints
 - Production pilot remains `NO-GO`
 
-## Known follow-up
+## Post-closure remediation reconciliation - 2026-07-12
 
-- Bulk mutation RPC `notificationUpdates` loop still updates legacy fields only; occurrence/resolution DB sync for in-place upserts may need a small RPC patch when Supabase path is exercised end-to-end
+Producer coverage now includes client-specific form/context/proposal draft invalidation, explicit superseded-draft notification emission, manual-human reconciliation, and runtime human-control integrity reconciliation. The existing Supabase inbound notification commit already persists occurrence and resolution fields through the Stage 4B migration; the old follow-up note about legacy-only notification updates is superseded. Current bounded read and atomic review evidence is in `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md`.

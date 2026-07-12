@@ -385,3 +385,7 @@ This is a compatibility remediation, not Stage 4B notification-center implementa
 The full decision record is `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_ACTION_PLAN.md`. Uyarilar and Bildirimler are separate full dashboard views using dense thin rows, not cards or overview bands. Uyarilar has name search plus Tumu/Kirmizi/Sari segments; Bildirimler has Aktif/Okunmamis/Gecmis segments plus priority, category, and search filters. The header bell opens the full notification page. Clinical alert rows contain only safe mapped reasons; system rows use neutral operational priority styling.
 
 On mobile, Uyarilar sits beside the current Gorusme bottom-nav entry and Bildirimler remains in the persistent header bell. Sticky filters, 44px targets, text containment, and no horizontal overflow are mandatory. Stage 4B-2 later renames/replaces Gorusme with Mesajlasma; Stage 5 retains ownership of the comprehensive mobile shell redesign.
+
+## Stage 4B Post-Closure Remediation - 2026-07-12
+
+The Stage 4B frontend evidence was refreshed after implementation audit. Alerts and notifications now have screenshot assertions across desktop, tablet, Android, and iOS projects, focus/selected-tab assertions, real red/yellow and system-event rows, mobile text containment, and overflow guards. Role-aware UI controls remain read-only for assistant/auditor actors. The implementation and visual chain passed locally; current Supabase/RLS execution remains explicitly blocked by unavailable Docker. Evidence: `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md`.

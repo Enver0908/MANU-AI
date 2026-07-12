@@ -81,6 +81,8 @@ import type {
   ClientUpdateProposalRecord,
   ConversationRecord,
   DataRequestRecord,
+  DietitianFormResponseRecord,
+  DietitianFormSchemaRecord,
   DietitianVoiceProfileRecord,
   DietitianVoiceSampleRecord,
   HandoffCaseRecord,
@@ -114,17 +116,34 @@ import {
   type SupabaseConversationMessageSearchRow,
 } from "./phase-85-if-e-supabase-search";
 import {
-  completeUnsupportedMediaReviewInState,
   isStage4BNotificationVisible,
   normalizeNotificationsInState,
 } from "./phase-85-stage-4b-notifications";
-import { projectClinicalAlertsFromState, type ClinicalAlertFilterSeverity } from "./phase-85-stage-4b-alerts";
-import type { NotificationCategory, NotificationPriority, NotificationReceiptRecord } from "./phase-85-stage-4b-contracts";
 import {
-  buildClinicalAlertsListResponse,
-  buildNotificationMutationResponse,
-  buildNotificationReadAllResponse,
-  buildSystemNotificationsListResponse,
+  projectClinicalAlertsFromState,
+  resolveClinicalAlertKind,
+  resolveDietitianClinicalSla,
+  type ClinicalAlertFilterSeverity,
+} from "./phase-85-stage-4b-alerts";
+import type {
+  ClinicalAlertListItem,
+  ClinicalAlertsListResponse,
+  NotificationCategory,
+  NotificationPriority,
+  NotificationReceiptRecord,
+  Stage4BNotificationMutationResponse,
+  Stage4BNotificationReadAllResponse,
+  SystemNotificationListItem,
+  SystemNotificationsListResponse,
+} from "./phase-85-stage-4b-contracts";
+import {
+  buildStage4BNotificationTargetFromLinks,
+  decodeAlertCursor,
+  decodeNotificationCursor,
+  encodeAlertCursor,
+  encodeNotificationCursor,
+  resolveNotificationSearchKinds,
+  STAGE4B_NOTIFICATION_I18N_KEYS,
   type NotificationListStatus,
 } from "./phase-85-stage-4b-api";
 
@@ -313,6 +332,56 @@ type DbNotificationReceipt = {
   created_at: string;
   updated_at: string;
 };
+type DbStage4BAlertCandidate = {
+  alert_id: string;
+  client_id: string;
+  conversation_id: string | null;
+  client_full_name: string;
+  severity: "red" | "yellow";
+  started_at: string;
+  handoff_id: string | null;
+  source_message_id: string | null;
+  active_draft_message_id: string | null;
+  first_message_id: string | null;
+  reason_codes: string[] | null;
+};
+type DbStage4BAlertCounts = {
+  filtered_total: number;
+  all_count: number;
+  red_count: number;
+  yellow_count: number;
+};
+type SupabaseDietitianSlaConfig = {
+  timezone: string;
+  redResponseSla: string | null;
+  yellowReviewSla: string | null;
+};
+type DbStage4BNotificationCandidate = {
+  id: string;
+  kind: NotificationRecord["kind"];
+  priority: NotificationPriority;
+  category: NotificationCategory;
+  client_id: string | null;
+  conversation_id: string | null;
+  message_id: string | null;
+  handoff_id: string | null;
+  client_full_name: string | null;
+  occurrence_count: number;
+  last_occurred_at: string;
+  resolved_at: string | null;
+  read_at: string | null;
+  acknowledged_at: string | null;
+  lifecycle_state: "active" | "unread" | "history";
+  priority_rank: number;
+  history_at: string;
+};
+type DbStage4BNotificationCounts = {
+  active_count: number;
+  unread_count: number;
+  history_count: number;
+  intervention_required_count: number;
+  filtered_total: number;
+};
 type DbDataRequest = {
   id: string;
   tenant_id: string;
@@ -391,6 +460,31 @@ type DbFormResponse = {
   schema_snapshot: ClientFormSchemaRecord;
   language_code: SupportedLanguageCode | null;
   submitted_phone_e164: string | null;
+  answers: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+};
+type DbDietitianFormSchema = {
+  id: string;
+  tenant_id: string;
+  dietitian_id: string;
+  title: string;
+  language_code: SupportedLanguageCode | null;
+  version: number;
+  status: DietitianFormSchemaRecord["status"];
+  fields: ClientFormFieldDefinition[];
+  registry_version: string | null;
+  created_at: string;
+  published_at: string | null;
+};
+type DbDietitianFormResponse = {
+  id: string;
+  tenant_id: string;
+  dietitian_id: string;
+  schema_id: string;
+  schema_version: number;
+  schema_snapshot: DietitianFormSchemaRecord;
+  language_code: SupportedLanguageCode | null;
   answers: Record<string, unknown>;
   created_at: string;
   updated_at: string;
@@ -660,6 +754,8 @@ export async function loadSupabaseState(context = demoTenantContext()) {
     voiceProfilesResult,
     formSchemasResult,
     formResponsesResult,
+    dietitianFormSchemasResult,
+    dietitianFormResponsesResult,
     clientContextUpdatesResult,
     clientUpdateProposalsResult,
     clientFoodRuleProfilesResult,
@@ -697,6 +793,18 @@ export async function loadSupabaseState(context = demoTenantContext()) {
     supabase.from("dietitian_voice_profiles").select("*").eq("tenant_id", context.tenantId).order("updated_at"),
     supabase.from("client_form_schemas").select("*").eq("tenant_id", context.tenantId).order("version"),
     supabase.from("client_form_responses").select("*").eq("tenant_id", context.tenantId).order("updated_at"),
+    supabase
+      .from("dietitian_form_schemas")
+      .select("*")
+      .eq("tenant_id", context.tenantId)
+      .eq("dietitian_id", context.dietitianId)
+      .order("version"),
+    supabase
+      .from("dietitian_form_responses")
+      .select("*")
+      .eq("tenant_id", context.tenantId)
+      .eq("dietitian_id", context.dietitianId)
+      .order("updated_at"),
     supabase.from("client_context_updates").select("*").eq("tenant_id", context.tenantId).order("created_at"),
     supabase.from("client_update_proposals").select("*").eq("tenant_id", context.tenantId).order("created_at"),
     supabase.from("client_food_rule_profiles").select("*").eq("tenant_id", context.tenantId).order("updated_at"),
@@ -735,6 +843,8 @@ export async function loadSupabaseState(context = demoTenantContext()) {
   throwIfError(voiceProfilesResult.error);
   throwIfError(formSchemasResult.error);
   throwIfError(formResponsesResult.error);
+  throwIfError(dietitianFormSchemasResult.error);
+  throwIfError(dietitianFormResponsesResult.error);
   throwIfError(clientContextUpdatesResult.error);
   throwIfError(clientUpdateProposalsResult.error);
   throwIfError(clientFoodRuleProfilesResult.error);
@@ -772,8 +882,8 @@ export async function loadSupabaseState(context = demoTenantContext()) {
       styleEditHistory: [],
       clientFormSchemas: (formSchemasResult.data || []).map(mapFormSchema),
       clientFormResponses: (formResponsesResult.data || []).map(mapFormResponse),
-      dietitianFormSchemas: [],
-      dietitianFormResponses: [],
+      dietitianFormSchemas: (dietitianFormSchemasResult.data || []).map(mapDietitianFormSchema),
+      dietitianFormResponses: (dietitianFormResponsesResult.data || []).map(mapDietitianFormResponse),
       clientContextUpdates: (clientContextUpdatesResult.data || []).map(mapClientContextUpdate),
       clientUpdateProposals: (clientUpdateProposalsResult.data || []).map(mapClientUpdateProposal),
       clientFoodRuleProfiles: (clientFoodRuleProfilesResult.data || []).map(mapClientFoodRuleProfile),
@@ -2019,54 +2129,56 @@ export async function resolveAndReactivateSupabaseRedRisk(
 }
 
 export async function markSupabaseNotificationRead(notificationId: string, context = demoTenantContext()) {
-  const { error } = await requireSupabase().rpc("p85_stage_4b_mark_notification_read_v1", {
+  const { error } = await requireSupabase().rpc("p85_stage_4b_mark_notification_read_v2", {
     p_tenant_id: context.tenantId,
+    p_user_id: context.userId,
+    p_dietitian_id: context.dietitianId,
+    p_role: context.role,
     p_notification_id: notificationId,
   });
   if (error) throwControlledRpcError(error);
-  const [state, assignments] = await Promise.all([
-    loadSupabaseState(context),
-    fetchClientAssignments(context),
-  ]);
-  return buildNotificationMutationResponse(state, context, assignments, notificationId);
+  return buildSupabaseNotificationMutationResponse(context, notificationId);
 }
 
 export async function acknowledgeSupabaseNotification(notificationId: string, context = demoTenantContext()) {
-  const { error } = await requireSupabase().rpc("p85_stage_4b_acknowledge_notification_v1", {
+  const { error } = await requireSupabase().rpc("p85_stage_4b_acknowledge_notification_v2", {
     p_tenant_id: context.tenantId,
+    p_user_id: context.userId,
+    p_dietitian_id: context.dietitianId,
+    p_role: context.role,
     p_notification_id: notificationId,
   });
   if (error) throwControlledRpcError(error);
-  const [state, assignments] = await Promise.all([
-    loadSupabaseState(context),
-    fetchClientAssignments(context),
-  ]);
-  return buildNotificationMutationResponse(state, context, assignments, notificationId);
+  return buildSupabaseNotificationMutationResponse(context, notificationId);
 }
 
 export async function markAllSupabaseNotificationsRead(context = demoTenantContext()) {
-  const { data, error } = await requireSupabase().rpc("p85_stage_4b_mark_all_notifications_read_v1", {
+  const { data, error } = await requireSupabase().rpc("p85_stage_4b_mark_all_notifications_read_v2", {
     p_tenant_id: context.tenantId,
+    p_user_id: context.userId,
+    p_dietitian_id: context.dietitianId,
+    p_role: context.role,
   });
   if (error) throwControlledRpcError(error);
-  const [state, assignments] = await Promise.all([
-    loadSupabaseState(context),
-    fetchClientAssignments(context),
-  ]);
-  return buildNotificationReadAllResponse(state, context, assignments, Number(data ?? 0));
+  const summary = await listSupabaseNotifications(context, { status: "active", limit: 1 });
+  return {
+    version: "p85-stage-4b-api-v1",
+    generatedAt: new Date().toISOString(),
+    markedReadCount: Number(data ?? 0),
+    counts: summary.counts,
+  } satisfies Stage4BNotificationReadAllResponse;
 }
 
 export async function completeSupabaseUnsupportedMediaReview(notificationId: string, context = demoTenantContext()) {
-  const before = await loadSupabaseState(context);
-  const after = completeUnsupportedMediaReviewInState(before, notificationId, context.dietitianId);
-  await commitStateDeltaRpc(requireSupabase(), "commit_draft_review", before, after);
-  const { error: ackError } = await requireSupabase().rpc("p85_stage_4b_acknowledge_notification_v1", {
+  const { error } = await requireSupabase().rpc("p85_stage_4b_complete_unsupported_media_review_v2", {
     p_tenant_id: context.tenantId,
+    p_user_id: context.userId,
+    p_dietitian_id: context.dietitianId,
+    p_role: context.role,
     p_notification_id: notificationId,
   });
-  if (ackError) throwControlledRpcError(ackError);
-  const assignments = await fetchClientAssignments(context);
-  return buildNotificationMutationResponse(after, context, assignments, notificationId);
+  if (error) throwControlledRpcError(error);
+  return buildSupabaseNotificationMutationResponse(context, notificationId);
 }
 
 export async function listSupabaseClinicalAlerts(
@@ -2078,8 +2190,67 @@ export async function listSupabaseClinicalAlerts(
     limit?: number;
   },
 ) {
-  const [state, assignments] = await Promise.all([loadSupabaseState(context), fetchClientAssignments(context)]);
-  return buildClinicalAlertsListResponse(state, context, assignments, input);
+  const supabase = requireSupabase();
+  const cursor = decodeAlertCursor(input.cursor);
+  const limit = input.limit ?? 30;
+  const generatedAt = new Date().toISOString();
+  const slaConfig = context.role === "auditor"
+    ? { timezone: "UTC", redResponseSla: null, yellowReviewSla: null }
+    : await fetchSupabaseDietitianSlaConfig(context);
+  const [pageResult, countResult] = await Promise.all([
+    supabase.rpc("p85_stage_4b_list_alerts_v2", {
+      p_tenant_id: context.tenantId,
+      p_user_id: context.userId,
+      p_dietitian_id: context.dietitianId,
+      p_role: context.role,
+      p_severity: input.severity ?? null,
+      p_query: input.query ?? "",
+      p_cursor_severity_rank: cursor?.severityRank ?? null,
+      p_cursor_started_at: cursor?.startedAt ?? null,
+      p_cursor_id: cursor?.id ?? null,
+      p_limit: limit,
+    }),
+    supabase.rpc("p85_stage_4b_count_alerts_v2", {
+      p_tenant_id: context.tenantId,
+      p_user_id: context.userId,
+      p_dietitian_id: context.dietitianId,
+      p_role: context.role,
+      p_severity: input.severity ?? null,
+      p_query: input.query ?? "",
+    }),
+  ]);
+  throwIfError(pageResult.error);
+  throwIfError(countResult.error);
+
+  const rawRows = (pageResult.data || []) as unknown as DbStage4BAlertCandidate[];
+  const count = ((countResult.data || [])[0] || {
+    filtered_total: 0,
+    all_count: 0,
+    red_count: 0,
+    yellow_count: 0,
+  }) as unknown as DbStage4BAlertCounts;
+  const items = rawRows.slice(0, limit).map((row) => mapSupabaseClinicalAlertCandidate(row, slaConfig, generatedAt));
+  const last = items.at(-1);
+  const nextCursor = rawRows.length > limit && last
+    ? encodeAlertCursor({
+        severityRank: last.severity === "red" ? 0 : 1,
+        startedAt: last.startedAt,
+        id: last.id,
+      })
+    : null;
+
+  return {
+    version: "p85-stage-4b-api-v1",
+    generatedAt,
+    items,
+    nextCursor,
+    filteredTotal: Number(count.filtered_total || 0),
+    counts: {
+      all: Number(count.all_count || 0),
+      red: Number(count.red_count || 0),
+      yellow: Number(count.yellow_count || 0),
+    },
+  } satisfies ClinicalAlertsListResponse;
 }
 
 export async function listSupabaseNotifications(
@@ -2093,17 +2264,259 @@ export async function listSupabaseNotifications(
     limit?: number;
   },
 ) {
-  const [state, assignments] = await Promise.all([loadSupabaseState(context), fetchClientAssignments(context)]);
-  return buildSystemNotificationsListResponse(state, context, assignments, input);
+  const supabase = requireSupabase();
+  const status = input.status ?? "active";
+  const cursor = decodeNotificationCursor(status, input.cursor);
+  const limit = input.limit ?? 30;
+  const uiLanguage = input.query && context.role !== "auditor"
+    ? await fetchSupabaseDietitianLanguage(context)
+    : "tr";
+  const kindFilter = input.query ? resolveNotificationSearchKinds(input.query, uiLanguage) : [];
+  const rpcInput = {
+    p_tenant_id: context.tenantId,
+    p_user_id: context.userId,
+    p_dietitian_id: context.dietitianId,
+    p_role: context.role,
+    p_status: status,
+    p_priority: input.priority ?? null,
+    p_category: input.category ?? null,
+    p_query: input.query ?? "",
+    p_kind_filter: kindFilter.length > 0 ? kindFilter : null,
+    p_cursor_mode: cursor?.mode ?? null,
+    p_cursor_priority_rank: status === "history" ? null : (cursor as { priorityRank?: number } | null)?.priorityRank ?? null,
+    p_cursor_last_occurred_at: status === "history" ? null : (cursor as { lastOccurredAt?: string } | null)?.lastOccurredAt ?? null,
+    p_cursor_history_at: status === "history" ? (cursor as { historyAt?: string } | null)?.historyAt ?? null : null,
+    p_cursor_id: cursor?.id ?? null,
+    p_limit: limit,
+  };
+  const [pageResult, countResult] = await Promise.all([
+    supabase.rpc("p85_stage_4b_list_notifications_v2", rpcInput),
+    supabase.rpc("p85_stage_4b_count_notifications_v2", {
+      p_tenant_id: context.tenantId,
+      p_user_id: context.userId,
+      p_dietitian_id: context.dietitianId,
+      p_role: context.role,
+      p_status: status,
+      p_priority: input.priority ?? null,
+      p_category: input.category ?? null,
+      p_query: input.query ?? "",
+      p_kind_filter: kindFilter.length > 0 ? kindFilter : null,
+    }),
+  ]);
+  throwIfError(pageResult.error);
+  throwIfError(countResult.error);
+
+  const rawRows = (pageResult.data || []) as unknown as DbStage4BNotificationCandidate[];
+  const count = ((countResult.data || [])[0] || {
+    active_count: 0,
+    unread_count: 0,
+    history_count: 0,
+    intervention_required_count: 0,
+    filtered_total: 0,
+  }) as unknown as DbStage4BNotificationCounts;
+  const items = rawRows.slice(0, limit).map(mapSupabaseNotificationCandidate);
+  const last = items.at(-1);
+  const nextCursor = rawRows.length > limit && last
+    ? status === "history"
+      ? encodeNotificationCursor({ mode: "history", historyAt: new Date(resolveNotificationHistoryTimestamp(last)).toISOString(), id: last.id })
+      : encodeNotificationCursor({
+          mode: status,
+          priorityRank: resolveNotificationPriorityRank(last.priority),
+          lastOccurredAt: last.lastOccurredAt,
+          id: last.id,
+        })
+    : null;
+
+  return {
+    version: "p85-stage-4b-api-v1",
+    generatedAt: new Date().toISOString(),
+    items,
+    nextCursor,
+    filteredTotal: Number(count.filtered_total || 0),
+    counts: {
+      active: Number(count.active_count || 0),
+      unread: Number(count.unread_count || 0),
+      history: Number(count.history_count || 0),
+      interventionRequired: Number(count.intervention_required_count || 0),
+    },
+  } satisfies SystemNotificationsListResponse;
 }
 
-async function fetchClientAssignments(context: AppTenantContext): Promise<DbClientAssignment[]> {
+async function fetchSupabaseDietitianLanguage(context: AppTenantContext): Promise<SupportedLanguageCode> {
   const { data, error } = await requireSupabase()
-    .from("client_assignments")
-    .select("client_id, dietitian_id")
-    .eq("tenant_id", context.tenantId);
+    .from("dietitians")
+    .select("ui_language")
+    .eq("tenant_id", context.tenantId)
+    .eq("id", context.dietitianId)
+    .maybeSingle();
   throwIfError(error);
-  return data ?? [];
+  return normalizeLanguageCode(data?.ui_language);
+}
+
+async function fetchSupabaseDietitianSlaConfig(context: AppTenantContext): Promise<SupabaseDietitianSlaConfig> {
+  const [dietitianResult, responseResult] = await Promise.all([
+    requireSupabase()
+      .from("dietitians")
+      .select("timezone")
+      .eq("tenant_id", context.tenantId)
+      .eq("id", context.dietitianId)
+      .maybeSingle(),
+    requireSupabase()
+      .from("dietitian_form_responses")
+      .select("answers")
+      .eq("tenant_id", context.tenantId)
+      .eq("dietitian_id", context.dietitianId)
+      .order("updated_at", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+  ]);
+  throwIfError(dietitianResult.error);
+  throwIfError(responseResult.error);
+  const answers = (responseResult.data?.answers || {}) as Record<string, unknown>;
+  const readAnswer = (key: string) => {
+    const value = answers[key];
+    return typeof value === "string" && value.trim() ? value.trim() : null;
+  };
+  return {
+    timezone: dietitianResult.data?.timezone || "UTC",
+    redResponseSla: readAnswer("red_response_sla"),
+    yellowReviewSla: readAnswer("yellow_review_sla"),
+  };
+}
+
+function mapSupabaseClinicalAlertCandidate(
+  row: DbStage4BAlertCandidate,
+  config: SupabaseDietitianSlaConfig,
+  now: string,
+): ClinicalAlertListItem {
+  const severity = row.severity;
+  const taxonomy = resolveClinicalAlertKind(row.reason_codes || []);
+  const sla = resolveDietitianClinicalSla({
+    severity,
+    startedAt: row.started_at,
+    now,
+    timezone: config.timezone,
+    redResponseSla: config.redResponseSla,
+    yellowReviewSla: config.yellowReviewSla,
+  });
+  const target = row.conversation_id
+    ? {
+        section: "messages" as const,
+        clientId: row.client_id,
+        conversationId: row.conversation_id,
+        messageId: row.source_message_id || row.active_draft_message_id || undefined,
+        source: "alert" as const,
+        sourceId: row.alert_id,
+      }
+    : {
+        section: "clients" as const,
+        clientId: row.client_id,
+        source: "alert" as const,
+        sourceId: row.alert_id,
+      };
+
+  return {
+    id: row.alert_id,
+    clientId: row.client_id,
+    conversationId: row.conversation_id,
+    clientFullName: row.client_full_name,
+    severity,
+    kind: taxonomy.kind,
+    reasonLabelKey: taxonomy.reasonLabelKey,
+    additionalReasonCount: taxonomy.additionalReasonCount,
+    sourceMessageId: row.source_message_id,
+    activeDraftMessageId: row.active_draft_message_id,
+    handoffId: row.handoff_id,
+    startedAt: row.started_at,
+    elapsedMinutes: sla.elapsedMinutes,
+    slaDeadline: sla.slaDeadline,
+    slaState: sla.slaState,
+    target,
+  };
+}
+
+function resolveNotificationPriorityRank(priority: NotificationPriority) {
+  if (priority === "intervention_required") return 0;
+  if (priority === "review_required") return 1;
+  return 2;
+}
+
+function resolveNotificationHistoryTimestamp(item: SystemNotificationListItem) {
+  return Date.parse(item.resolvedAt || item.readAt || item.lastOccurredAt);
+}
+
+function mapSupabaseNotificationCandidate(row: DbStage4BNotificationCandidate): SystemNotificationListItem {
+  const i18nKeys = STAGE4B_NOTIFICATION_I18N_KEYS[row.kind];
+  return {
+    id: row.id,
+    kind: row.kind,
+    priority: row.priority,
+    category: row.category,
+    clientId: row.client_id,
+    conversationId: row.conversation_id,
+    messageId: row.message_id,
+    handoffId: row.handoff_id,
+    clientFullName: row.client_full_name,
+    titleKey: i18nKeys.titleKey,
+    summaryKey: i18nKeys.summaryKey,
+    occurrenceCount: row.occurrence_count,
+    lastOccurredAt: row.last_occurred_at,
+    readAt: row.read_at,
+    acknowledgedAt: row.acknowledged_at,
+    resolvedAt: row.resolved_at,
+    lifecycleState: row.lifecycle_state,
+    target: buildStage4BNotificationTargetFromLinks(
+      {
+        id: row.id,
+        kind: row.kind,
+        clientId: row.client_id,
+        conversationId: row.conversation_id,
+        messageId: row.message_id,
+      },
+      {
+        clientExists: Boolean(row.client_id && row.client_full_name),
+        source: "notification",
+      },
+    ),
+  };
+}
+
+async function fetchSupabaseNotificationCandidate(
+  context: AppTenantContext,
+  notificationId: string,
+): Promise<DbStage4BNotificationCandidate> {
+  const { data, error } = await requireSupabase().rpc("p85_stage_4b_get_notification_v2", {
+    p_tenant_id: context.tenantId,
+    p_user_id: context.userId,
+    p_dietitian_id: context.dietitianId,
+    p_role: context.role,
+    p_notification_id: notificationId,
+  });
+  throwIfError(error);
+  const candidate = ((data || [])[0] || null) as DbStage4BNotificationCandidate | null;
+  if (!candidate) throw new AppDomainError(404, "notification_not_found");
+  return candidate;
+}
+
+async function buildSupabaseNotificationMutationResponse(
+  context: AppTenantContext,
+  notificationId: string,
+): Promise<Stage4BNotificationMutationResponse> {
+  const [candidate, summary] = await Promise.all([
+    fetchSupabaseNotificationCandidate(context, notificationId),
+    listSupabaseNotifications(context, { status: "active", limit: 1 }),
+  ]);
+  const item = mapSupabaseNotificationCandidate(candidate);
+  return {
+    version: "p85-stage-4b-api-v1",
+    generatedAt: new Date().toISOString(),
+    notificationId,
+    readAt: item.readAt,
+    acknowledgedAt: item.acknowledgedAt,
+    resolvedAt: item.resolvedAt,
+    target: item.target,
+    counts: summary.counts,
+  };
 }
 
 export async function resolveSupabaseStructuredRecordUpdateNotification(
@@ -2587,6 +3000,7 @@ async function ensureDemoData(supabase: SupabaseClient, userId = DEMO_USER_UUID)
   throwIfError(existing.error);
   if (existing.data) {
     await ensureDemoMembership(supabase, userId);
+    await ensureDemoDietitianFormData(supabase);
     await ensureDemoCommercialEntitlement();
     return;
   }
@@ -2623,6 +3037,8 @@ async function ensureDemoData(supabase: SupabaseClient, userId = DEMO_USER_UUID)
     await upsertFormSchema(supabase, { ...schema, tenantId: seed.tenant.id });
   }
 
+  await ensureDemoDietitianFormData(supabase, seed);
+
   for (const client of seed.clients) {
     await insertClientBundle(
       supabase,
@@ -2643,6 +3059,20 @@ async function ensureDemoData(supabase: SupabaseClient, userId = DEMO_USER_UUID)
     }),
   );
   await ensureDemoCommercialEntitlement();
+}
+
+async function ensureDemoDietitianFormData(supabase: SupabaseClient, seed = remapSeedIds(createInitialState())) {
+  for (const schema of seed.dietitianFormSchemas) {
+    await upsertDietitianFormSchema(supabase, { ...schema, tenantId: seed.tenant.id }, seed.dietitian.id);
+  }
+  for (const response of seed.dietitianFormResponses) {
+    await upsertDietitianFormResponse(supabase, {
+      ...response,
+      tenantId: seed.tenant.id,
+      dietitianId: seed.dietitian.id,
+      schemaSnapshot: { ...response.schemaSnapshot, tenantId: seed.tenant.id },
+    });
+  }
 }
 
 async function ensureDemoCommercialEntitlement() {
@@ -2694,6 +3124,8 @@ async function deleteDemoData(supabase: SupabaseClient, tenantId = DEMO_TENANT_U
     "client_context_updates",
     "client_form_responses",
     "client_form_schemas",
+    "dietitian_form_responses",
+    "dietitian_form_schemas",
     "dietitian_voice_samples",
     "internal_copilot_messages",
     "internal_copilot_tool_calls",
@@ -3746,6 +4178,48 @@ async function upsertFormSchema(supabase: SupabaseClient, schema: ClientFormSche
   );
 }
 
+async function upsertDietitianFormSchema(
+  supabase: SupabaseClient,
+  schema: DietitianFormSchemaRecord,
+  dietitianId: string,
+) {
+  await checked(
+    supabase.from("dietitian_form_schemas").upsert({
+      id: schema.id,
+      tenant_id: schema.tenantId,
+      dietitian_id: dietitianId,
+      title: schema.title,
+      language_code: schema.languageCode,
+      version: schema.version,
+      status: schema.status,
+      fields: schema.fields,
+      registry_version: schema.registryVersion ?? null,
+      created_at: schema.createdAt,
+      published_at: schema.publishedAt,
+    }),
+  );
+}
+
+async function upsertDietitianFormResponse(supabase: SupabaseClient, response: DietitianFormResponseRecord) {
+  await checked(
+    supabase.from("dietitian_form_responses").upsert(
+      {
+        id: response.id,
+        tenant_id: response.tenantId,
+        dietitian_id: response.dietitianId,
+        schema_id: response.schemaId,
+        schema_version: response.schemaVersion,
+        schema_snapshot: response.schemaSnapshot,
+        language_code: response.languageCode,
+        answers: response.answers,
+        created_at: response.createdAt,
+        updated_at: response.updatedAt,
+      },
+      { onConflict: "tenant_id,dietitian_id,schema_id" },
+    ),
+  );
+}
+
 async function insertDataRequest(supabase: SupabaseClient, request: DataRequestRecord) {
   await checked(
     supabase.from("data_requests").insert({
@@ -4137,6 +4611,36 @@ function mapFormResponse(response: DbFormResponse): ClientFormResponseRecord {
     schemaSnapshot: response.schema_snapshot,
     languageCode: normalizeLanguageCode(response.language_code),
     submittedPhoneE164: response.submitted_phone_e164 || null,
+    answers: response.answers || {},
+    createdAt: response.created_at,
+    updatedAt: response.updated_at,
+  };
+}
+
+function mapDietitianFormSchema(schema: DbDietitianFormSchema): DietitianFormSchemaRecord {
+  return {
+    id: schema.id,
+    tenantId: schema.tenant_id,
+    title: schema.title,
+    languageCode: normalizeLanguageCode(schema.language_code),
+    version: schema.version,
+    status: schema.status,
+    fields: schema.fields || [],
+    createdAt: schema.created_at,
+    publishedAt: schema.published_at,
+    registryVersion: schema.registry_version,
+  };
+}
+
+function mapDietitianFormResponse(response: DbDietitianFormResponse): DietitianFormResponseRecord {
+  return {
+    id: response.id,
+    tenantId: response.tenant_id,
+    dietitianId: response.dietitian_id,
+    schemaId: response.schema_id,
+    schemaVersion: response.schema_version,
+    schemaSnapshot: response.schema_snapshot,
+    languageCode: normalizeLanguageCode(response.language_code),
     answers: response.answers || {},
     createdAt: response.created_at,
     updatedAt: response.updated_at,

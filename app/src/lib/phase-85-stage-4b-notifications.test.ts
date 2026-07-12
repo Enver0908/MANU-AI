@@ -6,6 +6,7 @@ import {
   buildTestNotification,
   canMutateStage4BNotificationReceipt,
   classifyLegacyNotificationKind,
+  completeUnsupportedMediaReviewInState,
   emitSafeReplyUnavailableNotification,
   isNotificationUnreadForActor,
   isStage4BNotificationVisible,
@@ -15,6 +16,7 @@ import {
   reconcileSafeReplyUnavailableNotifications,
   resolveNotificationCategory,
   resolveNotificationPriority,
+  resolveNotificationLinks,
   shouldEmitClinicalHandoffNotification,
   upsertSystemNotificationInState,
 } from "./phase-85-stage-4b-notifications";
@@ -88,6 +90,50 @@ describe("phase-85-stage-4b notifications", () => {
     expect(normalized.notifications[0]?.kind).toBe("legacy_handoff");
     expect(normalized.notifications[0]?.clientId).toBe(handoff.clientId);
     expect(normalized.notifications[0]?.handoffId).toBe(handoff.id);
+  });
+
+  it("fails closed for a notification with foreign conversation or message links", () => {
+    const state = createInitialState();
+    const client = state.clients[0]!;
+    const foreignConversation = state.conversations.find((item) => item.clientId !== client.id)!;
+    const links = resolveNotificationLinks({
+      notification: {
+        entityType: "conversation",
+        entityId: foreignConversation.id,
+        clientId: client.id,
+        conversationId: foreignConversation.id,
+        messageId: state.messages[0]?.id ?? null,
+        sourceMessageId: null,
+        handoffId: null,
+      },
+      clients: state.clients,
+      handoffCases: state.handoffCases,
+      messages: state.messages,
+      conversations: state.conversations,
+    });
+    expect(links.clientId).toBe(client.id);
+    expect(links.conversationId).toBeNull();
+    expect(links.messageId).toBeNull();
+  });
+
+  it("fails closed for an explicit client link outside the supplied client scope", () => {
+    const state = createInitialState();
+    const links = resolveNotificationLinks({
+      notification: {
+        entityType: "client",
+        entityId: "foreign-client-id",
+        clientId: "foreign-client-id",
+        conversationId: null,
+        messageId: null,
+        sourceMessageId: null,
+        handoffId: null,
+      },
+      clients: [{ id: state.clients[0]!.id }],
+      handoffCases: state.handoffCases,
+      messages: state.messages,
+      conversations: state.conversations,
+    });
+    expect(links).toEqual({ clientId: null, conversationId: null, messageId: null, handoffId: null });
   });
 
   it("enforces actor receipt visibility and mutation rules", () => {
@@ -284,5 +330,42 @@ describe("phase-85-stage-4b notifications", () => {
       "2026-05-22T10:05:00.000Z",
     );
     expect(reconciled.notifications[0]?.resolvedAt).toBe("2026-05-22T10:05:00.000Z");
+  });
+
+  it("requires read and acknowledge before completing unsupported media review", () => {
+    const state = createInitialState();
+    const notification = buildTestNotification({
+      id: "unsupported-media-1",
+      tenantId: state.tenant.id,
+      type: "system",
+      entityType: "conversation",
+      entityId: state.conversations[0]!.id,
+      kind: "unsupported_media_review",
+      clientId: state.clients[0]!.id,
+      conversationId: state.conversations[0]!.id,
+      title: "hidden",
+      body: "hidden",
+      read: false,
+      acknowledgedAt: null,
+      createdAt: "2026-05-22T10:00:00.000Z",
+    });
+    const withNotification = { ...state, notifications: [notification] };
+    expect(() => completeUnsupportedMediaReviewInState(withNotification, notification.id, state.dietitian.id)).toThrow(
+      "unsupported_media_review_requires_acknowledged_receipt",
+    );
+
+    const acknowledged = acknowledgeNotificationReceiptInState(
+      markNotificationReceiptReadInState(withNotification, notification.id, state.dietitian.id, "2026-05-22T10:01:00.000Z"),
+      notification.id,
+      state.dietitian.id,
+      "2026-05-22T10:02:00.000Z",
+    );
+    const completed = completeUnsupportedMediaReviewInState(
+      acknowledged,
+      notification.id,
+      state.dietitian.id,
+      "2026-05-22T10:03:00.000Z",
+    );
+    expect(completed.notifications[0]?.resolvedAt).toBe("2026-05-22T10:03:00.000Z");
   });
 });

@@ -49,3 +49,7 @@ npm run build
 - Inaccessible notification IDs return `404` (enumeration-safe)
 - Read/ack/read-all mutate actor receipts only; read-all does not bulk acknowledge/resolve
 - Production pilot remains `NO-GO`
+
+## Post-closure remediation reconciliation - 2026-07-12
+
+The Supabase implementation now uses actor-aware v2 bounded list/count RPCs rather than `loadSupabaseState` for Stage 4B resource reads. Service-role actor context is validated against tenant membership, translated notification title/summary search is mapped to stable kinds, and explicit foreign conversation/message links fail closed. Route query parsing is inside the controlled error boundary. See `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md`.

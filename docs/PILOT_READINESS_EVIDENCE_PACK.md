@@ -10,6 +10,8 @@ Production pilot is still blocked. This evidence pack does not approve legal/pri
 
 No real WhatsApp, Telegram, Gemini, external LLM provider, production client-messaging email, push, monitoring, analytics, secret manager, or real client health data is connected. Hosted sandbox auth email is limited to Supabase magic links through the verified Phase 84J Resend custom-SMTP setup.
 
+Phase 85 Stage 4B post-closure remediation (2026-07-12): the local implementation now has bounded actor-aware alert/notification Supabase reads, safe target linkage, lifecycle-correct draft invalidation, atomic unsupported-media review, role-aware UI restrictions, and screenshot/accessibility evidence. Core/app, Stage 4B scale, channel replay, 79G, release verification, lint, build, and visual checks passed. The current RLS suite skips 33 tests because Docker Desktop is unavailable; this is not counted as pass and does not close any pilot gate. Evidence: `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md`. Stage 4B-2 Mesajlasma is next; Stage 4C remains blocked; production pilot remains `NO-GO`; R-405 remains open.
+
 Phase 84I update (2026-07-03): commercial onboarding remediation now covers auth callback cookie preservation, token-hash OTP callback support, admin callback URL separation, admin-host routing coverage, and duplicate claim recovery. VPS sandbox generated token-hash fallback verified `/onboarding`, authenticated claimable status, owner membership/profile creation, `/dashboard` 200, and idempotent repeat claim. Verification passed with token-hash auth/onboarding tests 16/16 and build; earlier Phase 84/remediation targeted tests 41/41, visual tests 36/36, and release verify core 225/225 + app 709 passed / 4 skipped remain the local baseline. Phase 84J superseded the Phase 84I email-delivery gap with verified Resend custom SMTP; current RLS re-run evidence remains pending.
 
 Phase 84J completion (2026-07-03): custom SMTP is configured with Resend after Porkbun DNS verification, and a real inbox magic-link click reached `https://siriusai.store/dashboard` after fragment-session bridge remediation. This evidence pack still does not approve production pilot or connect real provider/channel/monitoring/backup/secret-manager/real health-data paths.
@@ -612,6 +614,6 @@ This evidence is dashboard/operator-readiness evidence only. It does not approve
 
 ## Phase 85 Stage 4B Closure Evidence - 2026-07-12
 
-Stage 4B Uyari ve Bildirimler is implemented and verified locally. Evidence: `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_EVIDENCE.md`. App tests 895 passed / 5 skipped; visual 36/36; `npm run test:rls` skipped 31/31 (not counted as pass). This adds no production authorization. **Next:** Stage 4B-2 Mesajlasma.
+Stage 4B Uyari ve Bildirimler implementation and post-closure remediation are verified locally. Evidence: `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md`. Core 234/234, app 901 passed / 5 skipped, Stage 4B scale/replay/79G/release checks passed, and visual 36/36 passed; `npm run test:rls` skipped 33/33 because Docker was unavailable and is not counted as pass. This adds no production authorization. **Next:** Stage 4B-2 Mesajlasma; Stage 4C remains blocked until it closes.
 
 Production pilot remains `NO-GO`; R-405 and all external gates remain open.

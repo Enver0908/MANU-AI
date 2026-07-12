@@ -69,6 +69,10 @@ Targeted unit coverage:
 
 Visual smoke: `notifications-panel` + Aktif tab visible.
 
+## Post-closure remediation reconciliation - 2026-07-12
+
+The visual contract now includes real `draft_invalidated` rows, screenshot assertions across all four viewport projects, keyboard focus and selected-tab checks, mobile text containment, and overflow guards. The role contract keeps assistant/auditor receipt actions unavailable. The full visual run passed 36/36.
+
 ## Out of scope (Faz 10 closure)
 
 Canonical closure evidence: `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_EVIDENCE.md`

@@ -72,6 +72,7 @@ export function ClientsPanel({
   newClientPhone,
   newClientLanguage,
   uiLanguage,
+  canManageAiControls = true,
   onSearch,
   onSelect,
   onAddClient,
@@ -125,6 +126,7 @@ export function ClientsPanel({
   newClientPhone: string;
   newClientLanguage: SupportedLanguageCode;
   uiLanguage: SupportedLanguageCode;
+  canManageAiControls?: boolean;
   onSearch: (value: string) => void;
   onSelect: (clientId: string) => void;
   onAddClient: () => void;
@@ -252,6 +254,7 @@ export function ClientsPanel({
       <ClientDetailForm
         client={selectedClient}
         uiLanguage={uiLanguage}
+        canManageAiControls={canManageAiControls}
         onUpdateClient={onUpdateClient}
         onActivateAi={onActivateAi}
         onReleaseHumanTakeover={onReleaseHumanTakeover}
@@ -295,6 +298,7 @@ export function ClientsPanel({
 function ClientDetailForm({
   client,
   uiLanguage,
+  canManageAiControls = true,
   onUpdateClient,
   onActivateAi,
   onReleaseHumanTakeover,
@@ -333,6 +337,7 @@ function ClientDetailForm({
 }: {
   client: ClientRecord;
   uiLanguage: SupportedLanguageCode;
+  canManageAiControls?: boolean;
   onUpdateClient: (patch: Partial<ClientRecord>) => Promise<void> | void;
   onActivateAi: (clientId: string, requestedAiMode?: "copilot" | "autopilot") => Promise<unknown> | unknown;
   onReleaseHumanTakeover: (clientId: string) => Promise<unknown> | unknown;
@@ -546,6 +551,7 @@ function ClientDetailForm({
             state={state}
             uiLanguage={uiLanguage}
             disabled={client.lifecycleStatus === "removed_anonymized"}
+            canManageAiControls={canManageAiControls}
             onUpdateClient={onUpdateClient}
             onActivateAi={onActivateAi}
             onReleaseHumanTakeover={onReleaseHumanTakeover}

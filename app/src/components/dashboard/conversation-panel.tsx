@@ -30,6 +30,7 @@ export function ConversationPanel({
   aiDecisions,
   state,
   uiLanguage,
+  canManageAiControls = true,
   manualReply,
   onManualReply,
   onSendManualReply,
@@ -47,6 +48,7 @@ export function ConversationPanel({
   aiDecisions: AiDecisionRecord[];
   state: ManuAppState;
   uiLanguage: SupportedLanguageCode;
+  canManageAiControls?: boolean;
   manualReply: string;
   onManualReply: (value: string) => void;
   onSendManualReply: () => void;
@@ -104,7 +106,7 @@ export function ConversationPanel({
         {humanControlBanner ? (
           <div className="mt-4">
             <HumanControlSessionBanner
-              banner={humanControlBanner}
+              banner={{ ...humanControlBanner, canActivateAi: humanControlBanner.canActivateAi && canManageAiControls }}
               uiLanguage={uiLanguage}
               isActivating={isActivatingAi}
               onActivateAi={() => {

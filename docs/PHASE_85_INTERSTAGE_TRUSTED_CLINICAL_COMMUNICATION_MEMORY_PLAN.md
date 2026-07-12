@@ -471,3 +471,7 @@ Evidence: `docs/PHASE_85_STAGE_4A_POST_IF_REMEDIATION_EVIDENCE.md`. Full Stage 4
 Stage 4B now has an approved implementation plan at `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_ACTION_PLAN.md`. It consumes P85-IF records without reopening P85-IF: active yellow/red lifecycle state becomes the Uyarilar projection; provenance-safe source IDs become access-checked conversation targets; structured retrieval, unsupported media, verified-human pause, delivery, permission, draft invalidation, and integrity events become typed system notifications. Trust/quarantine internals stay outside dietitian surfaces.
 
 Red reactivation remains the P85-IF-F/R3 atomic activation transition. Stage 4B must not add an independent handoff resolution path or weaken non-green send blocking.
+
+## Stage 4B Consumer Remediation Reconciliation - 2026-07-12
+
+Stage 4B has consumed the P85-IF contracts through bounded actor-aware Supabase resources, provenance-safe target linkage, lifecycle-aware draft invalidation, atomic unsupported-media review, and role-scoped receipt mutations. The remediation does not reopen the P85-IF track or any real provider/channel path. Evidence: `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md`. Stage 4B-2 Mesajlasma is next; Stage 4C remains blocked.

@@ -65,47 +65,104 @@ export function resolveNotificationLinks(input: {
   handoffCases: HandoffCaseRecord[];
   messages: MessageRecord[];
   conversations: Array<{ id: string; clientId: string }>;
+  clients?: Array<{ id: string }>;
 }): {
   clientId: string | null;
   conversationId: string | null;
   messageId: string | null;
   handoffId: string | null;
 } {
-  if (input.notification.clientId) {
-    return {
-      clientId: input.notification.clientId,
-      conversationId: input.notification.conversationId ?? null,
-      messageId: input.notification.messageId ?? input.notification.sourceMessageId ?? null,
-      handoffId: input.notification.handoffId ?? null,
-    };
+  const clientIds = input.clients ? new Set(input.clients.map((client) => client.id)) : null;
+  const conversationById = new Map(input.conversations.map((conversation) => [conversation.id, conversation]));
+  const messageById = new Map(input.messages.map((message) => [message.id, message]));
+  const handoffById = new Map(input.handoffCases.map((handoff) => [handoff.id, handoff]));
+  const isKnownClient = (clientId: string | null | undefined) =>
+    Boolean(clientId && (!clientIds || clientIds.has(clientId)));
+
+  if (
+    (input.clients && input.notification.clientId && !clientIds?.has(input.notification.clientId)) ||
+    (input.clients &&
+      input.notification.entityType === "client" &&
+      input.notification.entityId &&
+      !clientIds?.has(input.notification.entityId))
+  ) {
+    return { clientId: null, conversationId: null, messageId: null, handoffId: null };
   }
 
-  let clientId: string | null = null;
-  let conversationId: string | null = input.notification.conversationId ?? null;
-  let messageId: string | null = input.notification.messageId ?? input.notification.sourceMessageId ?? null;
-  let handoffId: string | null = input.notification.handoffId ?? null;
+  let clientId: string | null = isKnownClient(input.notification.clientId) ? input.notification.clientId! : null;
+  let conversationId: string | null = null;
+  let messageId: string | null = null;
+  let handoffId: string | null = null;
+
+  const requestedConversation = input.notification.conversationId
+    ? conversationById.get(input.notification.conversationId)
+    : undefined;
+  const hasInvalidRequestedConversation = Boolean(
+    input.notification.conversationId &&
+      (!requestedConversation || (clientId && requestedConversation.clientId !== clientId)),
+  );
+  if (requestedConversation && (!clientId || requestedConversation.clientId === clientId)) {
+    conversationId = requestedConversation.id;
+    clientId = clientId ?? requestedConversation.clientId;
+  }
 
   if (input.notification.entityType === "client") {
-    clientId = input.notification.entityId;
+    if (isKnownClient(input.notification.entityId)) {
+      clientId = clientId ?? input.notification.entityId;
+    }
   }
 
   if (input.notification.entityType === "handoff_case") {
-    handoffId = handoffId ?? input.notification.entityId;
-    const handoff = input.handoffCases.find((item) => item.id === handoffId);
+    const requestedHandoffId = input.notification.handoffId ?? input.notification.entityId;
+    const handoff = requestedHandoffId ? handoffById.get(requestedHandoffId) : undefined;
     if (handoff) {
-      clientId = handoff.clientId;
-      conversationId = conversationId ?? handoff.conversationId;
-      messageId = messageId ?? handoff.triggeringMessageId;
+      if (!clientId || clientId === handoff.clientId) {
+        clientId = clientId ?? handoff.clientId;
+        handoffId = handoff.id;
+        const handoffConversation = conversationById.get(handoff.conversationId);
+        if (!conversationId || conversationId === handoff.conversationId) {
+          conversationId = handoffConversation?.clientId === clientId ? handoff.conversationId : null;
+        }
+        const triggeringMessage = handoff.triggeringMessageId
+          ? messageById.get(handoff.triggeringMessageId)
+          : undefined;
+        if (
+          triggeringMessage &&
+          triggeringMessage.conversationId === handoff.conversationId &&
+          (!conversationId || conversationId === triggeringMessage.conversationId)
+        ) {
+          messageId = handoff.triggeringMessageId;
+        }
+      }
     }
   }
 
-  if (messageId) {
-    const message = input.messages.find((item) => item.id === messageId);
-    if (message) {
+  const requestedMessageId = input.notification.messageId ?? input.notification.sourceMessageId;
+  const message = requestedMessageId ? messageById.get(requestedMessageId) : undefined;
+  if (message) {
+    const messageConversation = conversationById.get(message.conversationId);
+    if (
+      messageConversation &&
+      (!clientId || messageConversation.clientId === clientId) &&
+      (!conversationId || conversationId === message.conversationId)
+    ) {
+      messageId = message.id;
       conversationId = conversationId ?? message.conversationId;
-      const conversation = input.conversations.find((item) => item.id === message.conversationId);
-      clientId = clientId ?? conversation?.clientId ?? null;
+      clientId = clientId ?? messageConversation.clientId;
     }
+  }
+
+  if (input.notification.handoffId && !handoffId) {
+    const handoff = handoffById.get(input.notification.handoffId);
+    if (handoff && (!clientId || handoff.clientId === clientId)) {
+      handoffId = handoff.id;
+      clientId = clientId ?? handoff.clientId;
+    }
+  }
+
+  if (hasInvalidRequestedConversation) {
+    conversationId = null;
+    messageId = null;
   }
 
   return { clientId, conversationId, messageId, handoffId };
@@ -117,6 +174,7 @@ export function normalizeNotificationRecord(
     handoffCases: HandoffCaseRecord[];
     messages: MessageRecord[];
     conversations: Array<{ id: string; clientId: string }>;
+    clients?: Array<{ id: string }>;
     now?: string;
   },
 ): NotificationRecord {
@@ -126,6 +184,7 @@ export function normalizeNotificationRecord(
     handoffCases: input.handoffCases,
     messages: input.messages,
     conversations: input.conversations,
+    clients: input.clients,
   });
   const timestamp = input.now ?? notification.lastOccurredAt ?? notification.createdAt;
 
@@ -150,7 +209,7 @@ export function isStage4BNotificationVisible(
 ): boolean {
   if (context.role === "auditor") return false;
   if (context.role === "owner" || context.role === "admin") {
-    return notification.clientId ? true : true;
+    return true;
   }
 
   if (!notification.clientId) return false;
@@ -412,6 +471,7 @@ export function upsertSystemNotificationInState(
                 handoffCases: state.handoffCases,
                 messages: state.messages,
                 conversations: state.conversations,
+                clients: state.clients,
                 now,
               },
             )
@@ -632,6 +692,10 @@ export function completeUnsupportedMediaReviewInState(
   const notification = state.notifications.find((item) => item.id === notificationId);
   if (!notification || notification.kind !== "unsupported_media_review" || notification.resolvedAt) {
     throw new AppDomainError(409, "unsupported_media_review_not_completable");
+  }
+  const receipt = getNotificationReceiptForActor(state.notificationReceipts, notificationId, dietitianId);
+  if (!receipt?.readAt || !receipt.acknowledgedAt) {
+    throw new AppDomainError(409, "unsupported_media_review_requires_acknowledged_receipt");
   }
   const withResolution = {
     ...state,
@@ -914,13 +978,34 @@ export function reconcileStage4BNotificationsForClient(
 ) {
   const client = state.clients.find((item) => item.id === clientId);
   if (!client) return state;
-  const conversation = state.conversations.find((item) => item.clientId === clientId);
   let next = reconcilePermissionClosedNotifications(state, clientId, client.channelPermission, now);
   next = reconcileCompetingInstructionNotifications(next, clientId, client.contextRevision, now);
   next = reconcileAiPausedByVerifiedHumanNotifications(next, clientId, now);
-  next = reconcileHumanControlIntegrityNotifications(next, clientId, now);
-  if (conversation) {
-    next = reconcileDraftInvalidatedNotifications(next, conversation.id, now);
+  const currentClient = next.clients.find((item) => item.id === clientId);
+  const activeSession = next.humanControlSessions.find(
+    (session) => session.clientId === clientId && session.status === "active",
+  );
+  const redLockConsistent =
+    currentClient?.redRiskLock.status !== "locked" ||
+    Boolean(
+      currentClient?.redRiskLock.status === "locked" &&
+      activeSession &&
+        activeSession.reason === "red_risk_lock" &&
+        activeSession.linkedHandoffId === currentClient.redRiskLock.handoffId,
+    );
+  const takeoverLockRequired =
+    activeSession != null &&
+    activeSession.reason !== "yellow_risk_hold";
+  const humanControlConsistent = client.humanTakeoverLocked === takeoverLockRequired && redLockConsistent;
+  if (humanControlConsistent) {
+    next = reconcileHumanControlIntegrityNotifications(next, clientId, now);
+  } else {
+    next = emitHumanControlIntegrityNotification(next, {
+      clientId,
+      clientName: client.fullName,
+      issueCode: "human_control_lock_session_mismatch",
+      now,
+    });
   }
   return next;
 }
@@ -948,6 +1033,7 @@ export function normalizeNotificationsInState(state: ManuAppState): ManuAppState
         handoffCases: state.handoffCases,
         messages: state.messages,
         conversations: state.conversations,
+        clients: state.clients,
       }),
     ),
   };

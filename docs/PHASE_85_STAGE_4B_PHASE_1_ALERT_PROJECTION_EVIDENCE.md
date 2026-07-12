@@ -49,3 +49,7 @@ Phase 1 implemented clinical alert projection, reason taxonomy, SLA calculation,
 ## Next Action
 
 Implement Stage 4B Phase 2: append-only notification columns, `notification_receipts`, backfill, composite FK/index/RLS/RPC.
+
+## Post-closure remediation reconciliation - 2026-07-12
+
+Phase 1 projection contracts remain the source of truth. The remediation preserved red precedence and added Supabase bounded v2 projection parity, latest dietitian-form SLA input persistence, and fail-closed source linkage. Current evidence: `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md`.

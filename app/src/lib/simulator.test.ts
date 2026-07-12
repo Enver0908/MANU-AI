@@ -4,6 +4,7 @@ import { buildTestNotification } from "./phase-85-stage-4b-notifications";
 import {
   acknowledgeNotificationInState,
   approveDraftMessageInState,
+  appendDietitianManualReply,
   markNotificationReadInState,
   runInboundSimulation,
   updateClientInState,
@@ -577,6 +578,20 @@ describe("local inbound simulator", () => {
     expect(supersededDecision?.blockedReason).toBe("yellow_hold_draft_superseded");
     expect(activeHold).toMatchObject({ status: "active", activeDraftMessageId: draft?.id });
     expect(activeHold?.status === "active" ? activeHold.messageIds : []).toHaveLength(3);
+    expect(
+      next.notifications.some(
+        (notification) =>
+          notification.kind === "draft_invalidated" &&
+          notification.clientId === "client-elif" &&
+          notification.resolvedAt == null,
+      ),
+    ).toBe(true);
+    const afterManualReply = appendDietitianManualReply(next, "client-elif", "Diyetisyen yaniti");
+    expect(
+      afterManualReply.notifications
+        .filter((notification) => notification.kind === "draft_invalidated" && notification.clientId === "client-elif")
+        .every((notification) => notification.resolvedAt != null),
+    ).toBe(true);
     expect(next.riskAssessments.at(-2)?.reasons).toContain("yellow_hold_pending_context");
     expect(next.auditEvents.some((event) => event.eventType === "yellow_risk_hold_draft_refreshed")).toBe(true);
   });
