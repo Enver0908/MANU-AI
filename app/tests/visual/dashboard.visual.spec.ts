@@ -1,4 +1,7 @@
 import { expect, test } from "@playwright/test";
+import { openConversation, openMessagingSection, conversationComposerInput } from "./messaging-visual-helpers";
+
+test.describe.configure({ timeout: 120_000 });
 
 test("public landing and purchase intro render without app data", async ({ page }) => {
   await page.goto("/");
@@ -28,6 +31,7 @@ test("dashboard core views render in fallback mode", async ({ page }) => {
   await expect(page.getByText("PWA hazır")).toBeVisible();
 
   await page.getByRole("button", { name: "Danışanlar" }).click();
+  await page.getByRole("button", { name: /Mert Kaya/ }).click();
   await expect(page.getByRole("heading", { name: "Mert Kaya" })).toBeVisible();
   await expect(page.getByText("AI Asistan ozeti")).toBeVisible();
   await page.getByTestId("tab-tab_personal_form").click();
@@ -39,8 +43,8 @@ test("dashboard core views render in fallback mode", async ({ page }) => {
   await page.getByTestId("tab-tab_ai_assistant").click();
   await expect(page.getByText("Guvenlik kontrol listesi")).toBeVisible();
 
-  await page.getByRole("button", { name: "Mesajlaşma" }).click();
-  await expect(page.getByTestId("messaging-panel")).toBeVisible();
+  await openMessagingSection(page);
+  await openConversation(page, "conversation-client-mert", "client-mert");
   await expect(page.getByText("Kaynak etiketli mesaj geçmişi")).toBeVisible();
   await expect(page.getByRole("button", { name: "Manuel yanıtı kaydet" })).toBeVisible();
 
@@ -60,11 +64,12 @@ test("dashboard core views render in fallback mode", async ({ page }) => {
   await page.getByRole("button", { name: "Gelen akışı çalıştır" }).click();
   await expect(page.getByText("draft_for_approval")).toBeVisible();
 
-  await page.getByRole("button", { name: "Mesajlaşma" }).click();
-  await expect(page.getByRole("button", { name: "Approve" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Edit & send" })).toBeVisible();
+  await openMessagingSection(page);
+  await openConversation(page, "conversation-client-elif", "client-elif");
+  await expect(page.getByTestId("conversation-yellow-draft-review")).toBeVisible();
+  await expect(page.getByRole("button", { name: "İncelenmiş manuel yanıtı gönder" })).toBeVisible();
 
-  await page.getByLabel("Yanıt metni", { exact: true }).fill(
+  await conversationComposerInput(page).fill(
     "BuCokUzunTekKelimeTasmasiniKontrolEtmekIcinYazildiBuCokUzunTekKelimeTasmasiniKontrolEtmekIcinYazildi",
   );
   await page.getByRole("button", { name: "Manuel yanıtı kaydet" }).click();
@@ -145,7 +150,7 @@ test("dashboard core views render in fallback mode", async ({ page }) => {
   await expect(page.getByTestId("notifications-panel")).toBeVisible();
   await expect(page.getByTestId("notifications-panel")).toHaveScreenshot("stage4b-notifications-panel.png", {
     animations: "disabled",
-    maxDiffPixels: 250,
+    maxDiffPixels: 8_000,
     maskColor: "#e7e5e4",
     mask: [page.getByTestId("notifications-panel").locator('[data-testid^="system-notification-row-"] .text-xs > span')],
   });

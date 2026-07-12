@@ -8,7 +8,9 @@ This is the final summary for the 13-phase completion roadmap, updated through P
 
 Production pilot is not approved.
 
-Phase 85 Stage 4B post-closure remediation (2026-07-12) is implemented and locally verified through bounded actor-aware Supabase contracts, safe linkage, lifecycle producers, atomic review, role boundaries, 79G/release verification, and four-viewport visual evidence. Core 234/234 and app 901 passed / 5 skipped; the current 33-test RLS suite is blocked by unavailable Docker and is not counted as pass. Evidence: `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md`. Stage 4B-2 Mesajlasma is next; Stage 4C remains blocked. This changes no production gate, and production pilot remains `NO-GO`; R-405 remains open.
+Phase 85 Stage 4B-2 Mesajlasma closure (2026-07-12) is implemented and locally verified through bounded APIs, per-actor receipts, mutations, detail UX, integration, scale/visual/release checks, and canonical spec. Core 234/234 and app 953 passed / 6 skipped; visual 40/40 passed; the current 35-test RLS suite is blocked by unavailable Docker and is not counted as pass. Evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md`. **Next:** Stage 4C. This changes no production gate, and production pilot remains `NO-GO`; R-405 remains open.
+
+Phase 85 Stage 4B post-closure remediation (2026-07-12) is implemented and locally verified through bounded actor-aware Supabase contracts, safe linkage, lifecycle producers, atomic review, role boundaries, 79G/release verification, and four-viewport visual evidence. Core 234/234 and app 901 passed / 5 skipped; the current 33-test RLS suite is blocked by unavailable Docker and is not counted as pass. Evidence: `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md`. Stage 4B-2 is now complete.
 
 Phase 84I auth/admin/onboarding remediation on 2026-07-03 addresses commercial onboarding closure gaps: callback cookies survive final auth redirects, token-hash OTP callbacks can create sessions, admin callbacks use a separate admin base URL, admin-host routing covers non-static paths, and duplicate same-tenant onboarding claims recover idempotently. Verification passed with token-hash auth/onboarding tests 16/16 and build; earlier Phase 84/remediation targeted tests 41/41, visual tests 36/36, and release verify core 225/225 + app 709 passed / 4 skipped remain the local baseline. VPS sandbox generated token-hash fallback verified onboarding claim, owner membership/profile creation, dashboard 200, and idempotent repeat claim. Phase 84J later superseded the email-delivery gap with verified Resend custom SMTP. Current RLS evidence, R-405 closure/acceptance, and external approvals remain open; production pilot remains `NO-GO`.
 
@@ -360,9 +362,15 @@ Final readiness remains `NO-GO`. This compatibility remediation does not supply 
 
 ## Stage 4B Closure Readiness Note - 2026-07-12
 
-Stage 4B is implemented and locally verified. Canonical evidence: `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_EVIDENCE.md`. Production pilot remains `NO-GO`; R-405 open. Stage 4B-2 Mesajlasma is next; Stage 4C blocked until 4B-2 closes.
+Stage 4B-2 is implemented and locally verified. Canonical evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`. Production pilot remains `NO-GO`; R-405 open. **Next:** Stage 4C Diyetisyen Icin AI Chat.
+
+Stage 4B is implemented and locally verified. Canonical evidence: `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_EVIDENCE.md`. Production pilot remains `NO-GO`; R-405 open.
 
 Final readiness remains `NO-GO`; this planning artifact closes no production gate and changes no external evidence requirement.
+
+## Stage 4B-2 Closure Readiness Note - 2026-07-12
+
+Stage 4B-2 Mesajlaşma implementation and evidence closure are locally verified. Bounded APIs, per-actor receipts, mutations, detail UX, integration, scale/visual/release checks, and canonical spec are complete. Evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md`. Final readiness remains `NO-GO`; R-405 remains open; RLS re-run remains environment-blocked. **Next:** Stage 4C.
 
 ## Stage 4B-2 Phase 0 Readiness Note - 2026-07-12
 

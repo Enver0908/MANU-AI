@@ -10,7 +10,9 @@ Production pilot is still blocked. This evidence pack does not approve legal/pri
 
 No real WhatsApp, Telegram, Gemini, external LLM provider, production client-messaging email, push, monitoring, analytics, secret manager, or real client health data is connected. Hosted sandbox auth email is limited to Supabase magic links through the verified Phase 84J Resend custom-SMTP setup.
 
-Phase 85 Stage 4B post-closure remediation (2026-07-12): the local implementation now has bounded actor-aware alert/notification Supabase reads, safe target linkage, lifecycle-correct draft invalidation, atomic unsupported-media review, role-aware UI restrictions, and screenshot/accessibility evidence. Core/app, Stage 4B scale, channel replay, 79G, release verification, lint, build, and visual checks passed. The current RLS suite skips 33 tests because Docker Desktop is unavailable; this is not counted as pass and does not close any pilot gate. Evidence: `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md`. Stage 4B-2 Mesajlasma is next; Stage 4C remains blocked; production pilot remains `NO-GO`; R-405 remains open.
+Phase 85 Stage 4B-2 Mesajlasma closure (2026-07-12): bounded conversation list/detail APIs, per-actor unread receipts, mutations, WhatsApp-like detail UX, Mesajlaşma navigation, Stage 4B integration, scale/visual/release verification, and canonical spec are implemented locally. Core 234/234, app 953 passed / 6 skipped, Stage 4B-2 rehearsal, 79G/release checks, lint, build, and visual 40/40 passed. The current RLS suite skips 35 tests because Docker Desktop is unavailable; this is not counted as pass and does not close any pilot gate. Evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md`. **Next:** Stage 4C; production pilot remains `NO-GO`; R-405 remains open.
+
+Phase 85 Stage 4B post-closure remediation (2026-07-12): the local implementation now has bounded actor-aware alert/notification Supabase reads, safe target linkage, lifecycle-correct draft invalidation, atomic unsupported-media review, role-aware UI restrictions, and screenshot/accessibility evidence. Core/app, Stage 4B scale, channel replay, 79G, release verification, lint, build, and visual checks passed. The current RLS suite skips 33 tests because Docker Desktop is unavailable; this is not counted as pass and does not close any pilot gate. Evidence: `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md`. Stage 4B-2 is now complete.
 
 Phase 84I update (2026-07-03): commercial onboarding remediation now covers auth callback cookie preservation, token-hash OTP callback support, admin callback URL separation, admin-host routing coverage, and duplicate claim recovery. VPS sandbox generated token-hash fallback verified `/onboarding`, authenticated claimable status, owner membership/profile creation, `/dashboard` 200, and idempotent repeat claim. Verification passed with token-hash auth/onboarding tests 16/16 and build; earlier Phase 84/remediation targeted tests 41/41, visual tests 36/36, and release verify core 225/225 + app 709 passed / 4 skipped remain the local baseline. Phase 84J superseded the Phase 84I email-delivery gap with verified Resend custom SMTP; current RLS re-run evidence remains pending.
 
@@ -614,9 +616,15 @@ This evidence is dashboard/operator-readiness evidence only. It does not approve
 
 ## Phase 85 Stage 4B Closure Evidence - 2026-07-12
 
-Stage 4B Uyari ve Bildirimler implementation and post-closure remediation are verified locally. Evidence: `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md`. Core 234/234, app 901 passed / 5 skipped, Stage 4B scale/replay/79G/release checks passed, and visual 36/36 passed; `npm run test:rls` skipped 33/33 because Docker was unavailable and is not counted as pass. This adds no production authorization. **Next:** Stage 4B-2 Mesajlasma; Stage 4C remains blocked until it closes.
+Phase 85 Stage 4B-2 Mesajlasma closure (2026-07-12) is implemented and locally verified through bounded APIs, per-actor receipts, mutations, detail UX, integration, scale/visual/release checks, and canonical spec. Core 234/234 and app 953 passed / 6 skipped; visual 40/40 passed; `npm run test:rls` skipped 35/35 because Docker was unavailable and is not counted as pass. Evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md`. This adds no production authorization. **Next:** Stage 4C; production pilot remains `NO-GO`; R-405 remains open.
+
+Phase 85 Stage 4B post-closure remediation (2026-07-12) is implemented and locally verified. Evidence: `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md`. Core 234/234, app 901 passed / 5 skipped, Stage 4B scale/replay/79G/release checks passed, and visual 36/36 passed; `npm run test:rls` skipped 33/33 because Docker was unavailable and is not counted as pass. Stage 4B-2 is now complete.
 
 Production pilot remains `NO-GO`; R-405 and all external gates remain open.
+
+## Phase 85 Stage 4B-2 Closure Evidence - 2026-07-12
+
+Stage 4B-2 Mesajlasma implementation and evidence closure are verified locally. Evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`. Core 234/234, app 953 passed / 6 skipped, Stage 4B-2 rehearsal, 79G/release checks, lint, build, and visual 40/40 passed; `npm run test:rls` skipped 35/35 because Docker was unavailable and is not counted as pass. This adds no production authorization. **Next:** Stage 4C; production pilot remains `NO-GO`; R-405 remains open.
 
 ## Stage 4B-2 Phase 0 Planning Evidence - 2026-07-12
 

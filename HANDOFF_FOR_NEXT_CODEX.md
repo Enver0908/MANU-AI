@@ -2,13 +2,13 @@
 
 ## Read This First
 
-Latest Phase 85 Stage 4B-2 status (2026-07-12): Phase 4 actor-aware read APIs are complete. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_4_READ_APIS_EVIDENCE.md`. Next work is Phase 5 manual reply, yellow reviewed-manual, and draft mutations. Stage 4C remains blocked; production pilot remains `NO-GO`; R-405 remains open; all real provider/channel/health-data and production-operations paths remain closed.
+Latest Phase 85 Stage 4B-2 status (2026-07-12): **Mesajlaşma implementation and evidence closure are complete locally; current RLS closure is environment-blocked.** Bounded conversation list/detail APIs, per-actor unread receipts, manual/yellow/draft mutations, WhatsApp-like detail UX, Mesajlaşma navigation, Stage 4B deep-link integration, scale/visual/release verification, and canonical spec are implemented. Evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`. Verification: core 234/234, app 953 passed / 6 skipped, Stage 4B-2 rehearsal passed, 79G/release verification passed, lint/build passed, Playwright visual 40/40. `npm run test:rls` skips 35/35 because Docker Desktop is unavailable; this is not counted as pass. **Next work:** Stage 4C Diyetisyen Icin AI Chat. Production pilot remains `NO-GO`; R-405 remains open; all real provider/channel/health-data and production-operations paths remain closed.
 
 Latest Phase 85 Stage 4B-2 Phase 3 status (2026-07-12): superseded by Phase 4 closure above. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_3_BOUNDED_PROJECTION_EVIDENCE.md`.
 
 Latest Phase 85 Stage 4B-2 Phase 1 status (2026-07-12): superseded by Phase 2 closure above. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`.
 
-Latest Phase 85 Stage 4B status (2026-07-12): **implementation and post-closure remediation are complete locally; current RLS closure is environment-blocked.** Clinical alert projection, structured system notifications, per-actor receipt persistence, bounded actor-aware Supabase RPCs, safe target linkage, lifecycle producers, atomic unsupported-media review, role boundaries, URL navigation/badges/inbox refresh, atomic red-lock activation UX, dense Uyarilar/Bildirimler panels, and integration/scale/visual verification are implemented. Evidence: `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_SPEC.md`. Verification: core 234/234, app 901 passed / 5 skipped, Stage 4B rehearsal 9/9, 79G/release verification passed, lint/build passed, and Playwright visual 36/36. `npm run test:rls` skips 33/33 because Docker Desktop is unavailable; this is not counted as pass. Production pilot remains `NO-GO`; R-405 remains open. **Next work:** Stage 4B-2 Mesajlasma (conversation list, unread state, WhatsApp-like detail, yellow draft ergonomics, Görüşme -> Mesajlaşma nav). **Stage 4C remains blocked** until Stage 4B-2 closes.
+Latest Phase 85 Stage 4B status (2026-07-12): **implementation and post-closure remediation are complete locally; current RLS closure is environment-blocked.** Clinical alert projection, structured system notifications, per-actor receipt persistence, bounded actor-aware Supabase RPCs, safe target linkage, lifecycle producers, atomic unsupported-media review, role boundaries, URL navigation/badges/inbox refresh, atomic red-lock activation UX, dense Uyarilar/Bildirimler panels, and integration/scale/visual verification are implemented. Evidence: `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_SPEC.md`. Verification: core 234/234, app 901 passed / 5 skipped, Stage 4B rehearsal 9/9, 79G/release verification passed, lint/build passed, and Playwright visual 36/36. `npm run test:rls` skips 33/33 because Docker Desktop is unavailable; this is not counted as pass. Production pilot remains `NO-GO`; R-405 remains open. **Next work:** Stage 4C (Stage 4B-2 Mesajlasma is complete).
 
 Latest Phase 85 Stage 4B Phase 1 status (2026-07-12): superseded by Stage 4B closure above.
 
@@ -544,7 +544,7 @@ The product must be both:
 
 ## Current Next Phase
 
-P85-IF-A through P85-IF-I are complete and P85-IF is closed. The next authorized implementation unit is Phase 85 Stage 4B Uyari ve Bildirimler, followed by mandatory Stage 4B-2 Mesajlasma, then Stage 4C, Stage 4D, Stage 5, Stage 6, and Stage 7. Production pilot remains `NO-GO`; all external launch gates remain open; R-405 remains open; R-406 current local Supabase/RLS re-run remains pending.
+P85-IF-A through P85-IF-I are complete and P85-IF is closed. Stage 4B Uyari ve Bildirimler and Stage 4B-2 Mesajlasma are complete (2026-07-12). **Next authorized implementation unit:** Stage 4C Diyetisyen Icin AI Chat, then Stage 4D, Stage 5, Stage 6, and Stage 7. Production pilot remains `NO-GO`; all external launch gates remain open; R-405 remains open; R-406 current local Supabase/RLS re-run remains pending (35 tests skipped on 2026-07-12).
 
 ## Previous Next Phase - Phase 82F - 2026-06-30
 
@@ -2884,9 +2884,7 @@ Canonical action plan: `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md`.
 
 Phase 0 documentation evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_0_DOCUMENTATION_EVIDENCE.md`.
 
-Phase 0 is complete and contains no runtime implementation. The next operator must begin at Stage 4B-2 Phase 1 after verifying a clean worktree. Locked boundaries are: `messages` remains the internal section id; Mesajlasma replaces Gorusme; list/detail reads are bounded; unread receipts are per actor/conversation; assistant reads assigned conversations and writes only its own receipt; viewer is read-only; auditor sees no conversations; yellow AI drafts are never sent as non-green AI output; red manual reply does not close red; and only existing expected-revision atomic activation closes red.
-
-Stage 4C remains blocked until Stage 4B-2 closes. Production pilot remains `NO-GO`; R-405 remains open; real provider/channel/health-data, live billing, monitoring, backup, and secret-manager paths remain disabled.
+Stage 4B-2 Phases 0–11 are complete (2026-07-12). Runtime spec: `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`. Closure evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md`. **Next:** Stage 4C. Production pilot remains `NO-GO`; R-405 remains open; real provider/channel/health-data, live billing, monitoring, backup, and secret-manager paths remain disabled.
 
 ## Approved Phase 85 Stage 4B-2 Phase 1 Handoff - 2026-07-12
 

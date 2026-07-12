@@ -195,14 +195,19 @@ export function DashboardApp({
     urlState.messageId,
   ]);
 
+  const messagingListFilters = useMemo(
+    () => ({
+      conversationStatus: urlState.conversationStatus,
+      conversationQuery: urlState.conversationQuery,
+    }),
+    [urlState.conversationQuery, urlState.conversationStatus],
+  );
+
   const stage4bMessaging = useStage4B2Messaging({
     enabled: hydrated,
     conversationId: section === "messages" ? messagingRoute.conversationId : null,
     anchorMessageId: urlState.messageId,
-    filters: {
-      conversationStatus: urlState.conversationStatus,
-      conversationQuery: urlState.conversationQuery,
-    },
+    filters: messagingListFilters,
     mergeDetailIntoState: mergeConversationDetailIntoState,
     mergeMutationIntoState: mergeConversationMutationIntoState,
   });

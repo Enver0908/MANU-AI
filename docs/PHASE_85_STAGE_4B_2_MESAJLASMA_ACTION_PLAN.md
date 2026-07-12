@@ -1,6 +1,6 @@
 # Phase 85 Stage 4B-2 - Mesajlasma Eylem Plani
 
-Status: **Phase 0 documentation lock, Phase 1 domain/DTO/authorization projection, Phase 2 receipt persistence/RLS, Phase 3 bounded projection, and Phase 4 read APIs are complete; Phase 5 mutations are next.**
+Status: **complete (Phases 0–11, 2026-07-12).** Runtime spec: `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`. Closure evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md`. **Next:** Stage 4C Diyetisyen Icin AI Chat.
 
 Baseline branch: `codex/phase-85-interstage-clinical-memory`
 
@@ -19,8 +19,8 @@ Stage 4B-2 owns the dietitian-facing conversation inbox and transcript workflow.
 1. Stage 4A Danisan Kontrol Paneli - complete.
 2. P85-IF-A through P85-IF-I and post-closure audit - complete.
 3. Stage 4B Uyari ve Bildirimler - complete locally; current RLS execution remains environment-blocked when Docker is unavailable.
-4. Stage 4B-2 Mesajlasma - this plan; Phase 0 through Phase 4 are complete, and Phase 5 is next.
-5. Stage 4C Diyetisyen Icin AI Chat - blocked until Stage 4B-2 closes.
+4. Stage 4B-2 Mesajlasma - complete (2026-07-12); evidence in `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md`.
+5. Stage 4C Diyetisyen Icin AI Chat - **next**.
 
 The internal dashboard section identifier remains `messages`. Only the visible label changes from the temporary Gorusme label to Mesajlasma. No permanent duplicate Gorusme entry may remain.
 

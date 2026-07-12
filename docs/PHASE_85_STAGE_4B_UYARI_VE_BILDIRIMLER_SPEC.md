@@ -12,7 +12,7 @@ Stage 4B owns two separate dashboard views:
 - **Uyarilar:** active clinical-operational projections from `yellowRiskHold` and `redRiskLock`.
 - **Bildirimler:** structured system events with actor-scoped receipt state.
 
-Stage 4B does not add an `alerts` table, does not expose raw message or health content, and does not implement the conversation inbox. Stage 4B-2 owns the conversation list/detail and the final messaging workflow. Stage 4C remains blocked until Stage 4B-2 closes.
+Stage 4B does not add an `alerts` table, does not expose raw message or health content, and does not implement the conversation inbox. Stage 4B-2 owns the conversation list/detail and the final messaging workflow; it is complete as of 2026-07-12. Stage 4C is next.
 
 ## 2. Alert contract
 
@@ -70,6 +70,6 @@ The same rules are enforced in fallback code, API routes, actor-aware RPCs, and 
 
 The local code, fallback behavior, mock channel behavior, production-scale rehearsal, build, lint, release verification, and visual snapshots are verified. The current RLS suite is not claimed as passed because Docker Desktop's Supabase engine is unavailable. No provider, live channel, live billing, monitoring, backup, secret-manager, or real health-data path is opened by this specification.
 
-## Stage 4B-2 Consumer Phase 0 Lock - 2026-07-12
+## Stage 4B-2 Consumer Closure - 2026-07-12
 
-Stage 4B-2 owns the bounded conversation list/detail and message unread receipt workflow. Its complete contract is `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md`; its Phase 0 documentation evidence is `docs/PHASE_85_STAGE_4B_2_PHASE_0_DOCUMENTATION_EVIDENCE.md`; and its Phase 1 pure domain/DTO/authorization evidence is `docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`. This consumer boundary does not add an alerts table, alter Stage 4B notification lifecycle, weaken non-green AI draft blocking, or change red atomic activation. Phase 2 receipt persistence/RLS is next; routes, UI, and mutations remain deferred.
+Stage 4B-2 Mesajlaşma is complete. Runtime contract: `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`. Closure evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md`. Stage 4C may begin; this boundary does not alter Stage 4B alert/notification lifecycle, non-green AI draft blocking, or red atomic activation.

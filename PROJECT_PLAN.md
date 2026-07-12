@@ -12,7 +12,9 @@ Current redesign status, 2026-07-07: Phase 85A opened `docs/PHASE_85_FRONTEND_RE
 
 Phase 85B update, 2026-07-07: the frontend foundation now loads Fraunces display with Geist Sans/Mono and exposes the approved Phase 85 palette through CSS/Tailwind tokens. Focused UI token tests assert the palette and radius constraints. Component, public website, dashboard, and PWA redesign remain pending for later user-approved sub-phases.
 
-Phase 85 Stage 4B update, 2026-07-12: Uyari ve Bildirimler implementation and post-closure remediation are complete locally — bounded actor-aware Supabase reads, safe linkage, lifecycle producers, atomic review, role boundaries, and visual/accessibility evidence are implemented. Core/app, scale, replay, release, build, lint, and visual verification passed; the current 33-test RLS suite is blocked by unavailable Docker and is not counted as pass. Evidence: `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md`. **Next:** Stage 4B-2 Mesajlasma. Stage 4C remains blocked; production pilot remains `NO-GO`; R-405 remains open.
+Phase 85 Stage 4B-2 update, 2026-07-12: Mesajlasma implementation and evidence closure are complete locally — bounded conversation list/detail APIs, per-actor unread receipts, manual/yellow/draft mutations, WhatsApp-like detail UX, Mesajlaşma navigation, Stage 4B integration, scale/visual/release verification, and canonical spec are implemented. Core 234/234, app 953 passed / 6 skipped, Stage 4B-2 rehearsal, 79G, release, build, lint, and visual 40/40 passed; the current 35-test RLS suite is blocked by unavailable Docker and is not counted as pass. Evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`. **Next:** Stage 4C Diyetisyen Icin AI Chat. Production pilot remains `NO-GO`; R-405 remains open.
+
+Phase 85 Stage 4B update, 2026-07-12: Uyari ve Bildirimler implementation and post-closure remediation are complete locally — bounded actor-aware Supabase reads, safe linkage, lifecycle producers, atomic review, role boundaries, and visual/accessibility evidence are implemented. Core/app, scale, replay, release, build, lint, and visual verification passed; the current 33-test RLS suite is blocked by unavailable Docker and is not counted as pass. Evidence: `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md`. Stage 4B-2 Mesajlasma is now complete.
 
 Phase 85 Stage 2 update, 2026-07-07: shared UI primitives now use the approved plum/sage/warm component language, with compatibility aliases for existing primitive `emerald`/`amber` calls. Form, card, tabs, segmented control, table, dialog, sheet, app-shell, alert, empty-state, and loading primitives are aligned. Public/commercial surfaces were completed in Stage 3 and Stage 4A is complete. P85-IF-A through P85-IF-I are complete and P85-IF is closed. The current execution order is Stage 4B, Stage 4C, Stage 4D, Stage 5, Stage 6, and Stage 7.
 
@@ -1477,7 +1479,11 @@ The closure evidence is recorded in `docs/PHASE_85_IF_REMEDIATION_POST_CLOSURE_A
 
 The Stage 4B architecture is frozen in `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_ACTION_PLAN.md`. Alerts are read-only projections of `yellowRiskHold` and `redRiskLock`; notifications are structured event facts with personal receipt state. The design preserves P85-IF authority, provenance, activation concurrency, lifecycle, access, and export boundaries. Red closure reuses the atomic activation RPC/API and does not introduce a second handoff-resolution workflow.
 
-Delivery order is Stage 4B (complete 2026-07-12) -> Stage 4B-2 Mesajlasma (next) -> Stage 4C. Stage 4B-2 owns the conversation list, unread message state, WhatsApp-like detail, and final yellow-draft interaction model. Evidence: `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_EVIDENCE.md`. This planning lock changes no production readiness gate.
+Delivery order is Stage 4B (complete 2026-07-12) -> Stage 4B-2 Mesajlasma (complete 2026-07-12) -> Stage 4C (next). Evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`. This planning lock changes no production readiness gate.
+
+## Phase 85 Stage 4B-2 Closure - 2026-07-12
+
+Stage 4B-2 Mesajlaşma Phases 0–11 are complete. Bounded conversation APIs, per-actor unread receipts, mutations, WhatsApp-like detail UX, Mesajlaşma navigation, Stage 4B integration, scale/visual/release verification, and canonical runtime spec are implemented. Core 234/234, app 953 passed / 6 skipped, visual 40/40; RLS skipped 35/35 (Docker unavailable, not counted as pass). **Next:** Stage 4C. Production pilot remains `NO-GO`; R-405 remains open.
 
 ## Phase 85 Stage 4B Post-Closure Remediation - 2026-07-12
 

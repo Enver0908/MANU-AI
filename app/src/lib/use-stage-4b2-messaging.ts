@@ -191,7 +191,7 @@ export function useStage4B2Messaging({
       setListError(null);
       return payload;
     },
-    [applyListResponse, filters],
+    [applyListResponse, filters.conversationQuery, filters.conversationStatus],
   );
 
   const fetchDetail = useCallback(
