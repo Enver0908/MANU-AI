@@ -2458,3 +2458,7 @@ R4 is complete for hook, deep-link, responsive UI, and unread integration correc
 ## Stage 4B-2 Post-Closure Remediation R5 - 2026-07-13
 
 R5 is complete for application-level test and scale evidence. Full app, core, 79G, replay, messaging scale, accessibility, lint, and build passed; real RLS/EXPLAIN remains open. R6 is next and owns independent full verification and release gating. Stage 4C remains blocked.
+
+## Stage 4B-2 Post-Closure Remediation R6 - 2026-07-13
+
+R6 executed the independent full verification gate. Available checks passed, including core/app regression, scale, replay, visual/accessibility 8/8, lint, build, and scans. The gate is `BLOCKED` because the required RLS suite skipped all 35 tests without Docker/Supabase; SQL EXPLAIN/buffer evidence remains open. Stage 4C cannot proceed; R7 must not convert this blocked result into closure. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R6_EVIDENCE.md`.

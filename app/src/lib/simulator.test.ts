@@ -379,6 +379,14 @@ describe("local inbound simulator", () => {
     expect(countGeneratedMessages(next)).toBe(countGeneratedMessages(state));
     expect(next.aiDecisions.at(-1)?.providerStatus).toBe("not_called");
     expect(next.aiDecisions.at(-1)?.providerAttempted).toBe(false);
+
+    const conversationMessages = next.messages.filter((message) => message.conversationId === "conversation-client-mert");
+    const inboundIndex = conversationMessages.findIndex((message) => message.id === next.handoffCases[0].triggeringMessageId);
+    const handoffIndex = conversationMessages.findIndex((message) => message.status === "handoff");
+    expect(inboundIndex).toBeGreaterThanOrEqual(0);
+    expect(handoffIndex).toBeGreaterThan(inboundIndex);
+    expect(conversationMessages[inboundIndex]?.conversationSequence).toBeDefined();
+    expect(conversationMessages[handoffIndex]?.conversationSequence).toBeDefined();
   });
 
   it("quarantines WhatsApp group messages without client context or AI processing", async () => {

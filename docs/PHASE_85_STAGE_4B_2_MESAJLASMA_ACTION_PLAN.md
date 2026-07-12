@@ -382,3 +382,7 @@ The separate remediation plan `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION
 ## Post-closure remediation R5 completion record - 2026-07-13
 
 The separate remediation plan now records R5 complete for application-level test and scale evidence. The R5 harness covers full app regression, bounded 10k conversation/detail behavior, SQL contract markers, lifecycle/export leak guards, full replay, and accessibility projects. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R5_EVIDENCE.md`; RLS/EXPLAIN and independent release verification remain open for R6.
+
+## Post-closure remediation R6 verification record - 2026-07-13
+
+The separate remediation plan now records the independent R6 gate as executed but `BLOCKED`. Core/app regression, bounded scale, 79G, replay, visual/accessibility, lint, build, dependency exception, diff, and secret/name checks passed. The required Supabase RLS suite skipped all 35 tests without Docker/Supabase, and SQL EXPLAIN/buffer evidence was unavailable. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R6_EVIDENCE.md`; Stage 4C remains blocked.

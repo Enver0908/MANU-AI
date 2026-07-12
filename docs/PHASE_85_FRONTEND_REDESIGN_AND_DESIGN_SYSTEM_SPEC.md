@@ -416,3 +416,7 @@ R4 applies the locked messaging UI correction: API aggregate unread counts, expl
 ## Stage 4B-2 Post-Closure Remediation R5 - 2026-07-13
 
 R5 adds dedicated messaging accessibility checks for named rows, tabs, keyboard focus, mobile navigation, and overflow, plus reproducible bounded-scale evidence. No broad shell or provider/channel behavior changed. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R5_EVIDENCE.md`.
+
+## Stage 4B-2 Post-Closure Remediation R6 - 2026-07-13
+
+R6 independently verified the messaging UI across desktop, tablet, Android, and iOS with visual/accessibility 8/8, after stabilizing same-timestamp simulator transcript ordering with `conversationSequence`. No broad shell, provider, channel, or production-pilot behavior changed. The release gate remains `BLOCKED` by skipped real Supabase/RLS tests and unavailable SQL EXPLAIN evidence. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R6_EVIDENCE.md`.

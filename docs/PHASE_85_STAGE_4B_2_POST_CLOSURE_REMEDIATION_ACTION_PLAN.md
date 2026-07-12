@@ -1,6 +1,6 @@
 # Phase 85 Stage 4B-2 Post-Closure Remediation Action Plan
 
-Status: **R5 complete; remediation active (2026-07-13)**
+Status: **R6 executed; gate blocked by unavailable Supabase/Docker (2026-07-13)**
 
 Baseline branch: `codex/phase-85-interstage-clinical-memory`
 Baseline commit: `3d67ba5 Close Phase 85 Stage 4B-2 with canonical spec, closure evidence, and continuity updates.`
@@ -14,7 +14,7 @@ The Stage 4B-2 audit found that the implementation is substantial but is not yet
 
 Stage 4C is blocked until remediation R0-R6 verification is green and the R7 evidence closure is committed separately.
 
-R1 through R5 implementation units are complete. R6 remains the next authorized implementation unit; real RLS execution, SQL EXPLAIN evidence, and independent release verification remain open.
+R1 through R5 implementation units are complete. R6 independent verification is executed, but the gate is blocked because real RLS execution and SQL EXPLAIN evidence require an unavailable Supabase/Docker environment. R7 cannot close the track while this required gate is blocked.
 
 ## 2. Locked findings
 
@@ -88,3 +88,9 @@ R4 implementation evidence is `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION
 R5 rebuilt the missing test and scale evidence without changing runtime provider/channel behavior or adding a migration. The new R5 evidence module tests cross-page actor-scoped unread aggregate invariants, a 10,000-conversation fixture, a 10,000-message single-transcript detail window, bounded response payloads, R2/R3 SQL contract markers, and client-export receipt/lifecycle leak guards. A dedicated Playwright accessibility spec covers named rows, tab semantics, keyboard focus, mobile detail navigation, and horizontal overflow across desktop, tablet, Android, and iOS. A reproducible R5 rehearsal script runs the full bounded scale test, full mock channel replay, and accessibility projects.
 
 R5 evidence is `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R5_EVIDENCE.md`. Full app regression passed with 153 files and 959 tests passed / 6 skipped; core passed 234/234; full 79G production-scale acceptance passed 7/7; full 100x50 channel replay passed; R5 bounded-scale passed 4/4; accessibility passed 4/4; lint and build passed. `npm run test:rls` still skips 35 tests because Docker/Supabase is unavailable and is not counted as pass. R6 remains responsible for independent release verification, real RLS/EXPLAIN execution, and final gate closure.
+
+## 11. R6 independent verification record - 2026-07-13
+
+R6 executed `npm run rehearse:stage-4b2-r6` through the independent gate runner. The gate contract tests passed 3/3; core passed 234/234; the full app passed 153 files with 959 passed / 6 skipped; lint had 0 errors and 3 pre-existing warnings; the production build passed; R5 scale passed 4/4; 79G passed 7/7; full 100x50 channel replay passed; and messaging visual/accessibility passed 8/8 across desktop, tablet, Android, and iOS. The runner also passed the documented R-405-only production dependency audit exception, diff check, and diff-added/untracked secret and forbidden-name scan.
+
+The final R6 report is `BLOCKED`, not pass: `npm run test:rls` skipped all 35 required tests because Docker/Supabase was unavailable, and no real SQL EXPLAIN/buffer evidence could be produced. R6 evidence is `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R6_EVIDENCE.md`. A deterministic `conversationSequence` assignment was added to local simulator messages after the gate exposed a same-timestamp transcript ordering flake; the targeted simulator assertion and full visual suite passed afterward. Stage 4C remains blocked; R7 must not reinterpret this result as closure.

@@ -498,3 +498,7 @@ R4 wires API-authoritative unread aggregates into the navigation/panel, preserve
 ## Stage 4B-2 Post-Closure Remediation R5 - 2026-07-13
 
 R5 adds the repeatable bounded-scale evidence module, full replay/accessibility rehearsal, lifecycle/export leak assertions, and full app regression record. Full app is 959 passed / 6 skipped; RLS is 35 skipped and unclaimed because Docker is unavailable. Evidence: `../docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R5_EVIDENCE.md`. **Next:** R6.
+
+## Stage 4B-2 Post-Closure Remediation R6 - 2026-07-13
+
+R6 adds `rehearse:stage-4b2-r6`, an independent child-process verification gate with fail-closed RLS classification, R-405-only audit exception handling, diff/untracked secret-name scanning, and an explicit `productionPilotGo: false` report. The gate passed core 234/234, app 959/6 skipped, full scale/replay, visual/accessibility 8/8, lint, and build. It is `BLOCKED` because the required 35-test RLS suite skipped without Docker/Supabase; SQL EXPLAIN/buffer evidence remains unavailable. Evidence: `../docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R6_EVIDENCE.md`.

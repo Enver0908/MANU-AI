@@ -398,3 +398,7 @@ R4 does not change final readiness: production remains `NO-GO`, R-405 remains op
 ## Stage 4B-2 Post-Closure Remediation R5 - 2026-07-13
 
 R5 closes the application-level test/scale evidence unit but does not change final readiness: production remains `NO-GO`, R-405 remains open, and R6-R7 plus real RLS/EXPLAIN evidence remain required. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R5_EVIDENCE.md`.
+
+## Stage 4B-2 Post-Closure Remediation R6 - 2026-07-13
+
+R6 does not change final readiness. The independent gate passed core/app regression, scale, replay, visual/accessibility, lint, build, and scans, but remains `BLOCKED` because all 35 required RLS tests skipped without Docker/Supabase; SQL EXPLAIN/buffer evidence remains open. Production remains `NO-GO`; R-405 remains open; Stage 4C and R7 remain blocked. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R6_EVIDENCE.md`.

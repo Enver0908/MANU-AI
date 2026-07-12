@@ -2911,3 +2911,7 @@ R4 is implemented locally. Verify `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIA
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R5 - 2026-07-13
 
 R5 is implemented and evidenced in `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R5_EVIDENCE.md`. Full app, core, 79G scale, channel replay, bounded 10k messaging scale, accessibility, lint, and build passed. `npm run test:rls` still skips 35 tests because Docker/Supabase is unavailable; do not claim the RLS gate green. R6 is next. Preserve production `NO-GO`, R-405 open, append-only migrations, and all real integration shutdowns.
+
+## Phase 85 Stage 4B-2 Post-Closure Remediation R6 - 2026-07-13
+
+R6 is implemented and independently executed. The gate passed its contract tests, core/app regression, scale, replay, visual/accessibility, lint, build, dependency exception, diff, and secret/name checks. The final gate is `BLOCKED` because `npm run test:rls` skipped all 35 required tests without Docker/Supabase; SQL EXPLAIN evidence is also unavailable. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R6_EVIDENCE.md`. Next work requires a real Supabase/Docker run with zero RLS skips and SQL EXPLAIN/buffer capture; do not start R7 closure or claim production readiness. Preserve production `NO-GO`, R-405 open, append-only migrations, and all real integration shutdowns.

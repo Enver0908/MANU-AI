@@ -17,7 +17,8 @@
     "rehearse:production-scale:79g": "node scripts/rehearse-production-scale-79g.mjs",
     "rehearse:stage-4b:integration": "node scripts/rehearse-stage-4b-integration.mjs",
     "rehearse:stage-4b2:verification": "node scripts/rehearse-stage-4b2-verification.mjs",
-    "rehearse:stage-4b2-r5": "node scripts/rehearse-stage-4b2-r5.mjs"
+    "rehearse:stage-4b2-r5": "node scripts/rehearse-stage-4b2-r5.mjs",
+    "rehearse:stage-4b2-r6": "node scripts/rehearse-stage-4b2-r6.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.10.3",

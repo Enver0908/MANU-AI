@@ -1140,3 +1140,7 @@ R4 is an implementation correction, not a pilot approval. Production remains `NO
 ## Stage 4B-2 Post-Closure Remediation R5 - 2026-07-13
 
 R5 is a test/evidence reconstruction, not a pilot approval. Production remains `NO-GO`, R-405 remains open, R6-R7 remain required, and real RLS/EXPLAIN evidence remains open. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R5_EVIDENCE.md`.
+
+## Stage 4B-2 Post-Closure Remediation R6 - 2026-07-13
+
+R6 is an independent verification attempt, not a pilot approval. All available checks passed, but the gate remains `BLOCKED` because the 35-test real RLS role matrix skipped without Docker/Supabase and SQL EXPLAIN/buffer evidence was unavailable. Production remains `NO-GO`; R-405 remains open; R7 and the environment gate remain required. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R6_EVIDENCE.md`.

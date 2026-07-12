@@ -179,3 +179,7 @@ R4 implements the client-side portions of R-4B2-06, R-4B2-07, and R-4B2-08: acto
 ## Stage 4B-2 Post-Closure Remediation R5 - 2026-07-13
 
 R5 closes the application-level portion of R-4B2-09 with full regression, bounded 10k messaging scale, 79G acceptance, full replay, accessibility, and lifecycle/export checks. Real RLS/EXPLAIN and independent verification remain open; R-4B2-10 remains open until R7. Production remains `NO-GO`; R-405 remains open. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R5_EVIDENCE.md`.
+
+## Stage 4B-2 Post-Closure Remediation R6 - 2026-07-13
+
+R6 independently verified the available application/runtime gates and closed the transient visual-ordering flake by assigning deterministic simulator `conversationSequence` values. R-4B2-09 remains open at the environment boundary: the required RLS role matrix is `BLOCKED` with 35 skipped tests because Docker/Supabase is unavailable, and SQL EXPLAIN/buffer evidence is missing. R-4B2-10 remains open until R7. Production remains `NO-GO`; R-405 remains open. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R6_EVIDENCE.md`.

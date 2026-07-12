@@ -1516,3 +1516,7 @@ R4 corrects explicit conversation deep-links, stale anchor handling, API-authori
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R5 - 2026-07-13
 
 R5 adds reproducible 10k messaging scale evidence, full regression, replay hard-zero checks, lifecycle/export guards, and accessibility projects. Real RLS/EXPLAIN remains open because Docker is unavailable. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R5_EVIDENCE.md`. **Next:** R6; production remains `NO-GO`.
+
+## Phase 85 Stage 4B-2 Post-Closure Remediation R6 - 2026-07-13
+
+R6 executed the independent release gate and passed every available repository/runtime check: core 234/234, app 959/6 skipped, scale/replay, visual/accessibility 8/8, lint, build, audit exception, diff, and secret/name scan. RLS remains `BLOCKED` because all 35 required tests skipped without Docker/Supabase; SQL EXPLAIN/buffer evidence was not available. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R6_EVIDENCE.md`. Stage 4C and production remain blocked/`NO-GO`.

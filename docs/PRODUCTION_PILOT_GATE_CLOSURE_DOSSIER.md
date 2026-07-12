@@ -329,3 +329,7 @@ R4 is not a production gate closure. It records local client messaging correctio
 ## Stage 4B-2 Post-Closure Remediation R5 - 2026-07-13
 
 R5 is not a production gate closure. Local full regression, 79G scale, replay, accessibility, and export evidence passed; R-405, real RLS/EXPLAIN, and independent release gates remain open. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R5_EVIDENCE.md`.
+
+## Stage 4B-2 Post-Closure Remediation R6 - 2026-07-13
+
+R6 is not a production gate closure. The independent full verification runner passed the available checks, but the final gate is `BLOCKED` because the required 35-test Supabase RLS matrix skipped without Docker/Supabase and SQL EXPLAIN/buffer evidence was unavailable. Production pilot remains `NO-GO`; R-405 remains open. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R6_EVIDENCE.md`.

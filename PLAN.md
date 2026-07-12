@@ -1077,3 +1077,7 @@ R4 completes the client hook, deep-link, unread aggregate, and tablet/mobile mes
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R5 - 2026-07-13
 
 R5 rebuilt the scale, replay, lifecycle/export, accessibility, and regression evidence. Full app passed 153 files and 959 tests with 6 skipped; RLS remains 35 skipped due unavailable Docker. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R5_EVIDENCE.md`. **Next:** R6; Stage 4C remains blocked and production remains `NO-GO`.
+
+## Phase 85 Stage 4B-2 Post-Closure Remediation R6 - 2026-07-13
+
+R6 ran the independent full verification gate. All repository/runtime checks passed, including core 234/234, app 959/6 skipped, full scale/replay, visual/accessibility 8/8, lint, build, audit exception handling, diff, and secret/name scans. The required Supabase RLS suite skipped all 35 tests because Docker was unavailable, so the gate is `BLOCKED`; SQL EXPLAIN evidence is likewise still open. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R6_EVIDENCE.md`. Stage 4C remains blocked; production remains `NO-GO`.

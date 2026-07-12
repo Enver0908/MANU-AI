@@ -252,3 +252,7 @@ R4 completes hook, explicit deep-link, actor-scoped unread aggregate, and respon
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R5 - 2026-07-13
 
 R5 reconstructs the bounded-scale, replay, accessibility, lifecycle/export, and full-regression evidence. Full app passed 959/6 skipped, core 234/234, full 79G 7/7, full channel replay, R5 scale 4/4, accessibility 4/4, lint, and build. RLS remains Docker-blocked with 35 skipped and is not claimed. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R5_EVIDENCE.md`. **Next:** R6; production remains `NO-GO`, R-405 remains open.
+
+## Phase 85 Stage 4B-2 Post-Closure Remediation R6 - 2026-07-13
+
+R6 executed the independent full gate. Core 234/234, app 959/6 skipped, lint/build, R5 scale 4/4, 79G 7/7, full channel replay, visual/accessibility 8/8, dependency audit exception handling, diff check, and diff-added/untracked secret-name scans passed. The gate is **BLOCKED**, not green, because the required 35-test Supabase RLS suite skipped without Docker; SQL EXPLAIN/buffer evidence is also unavailable. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R6_EVIDENCE.md`. Production remains `NO-GO`; R-405 remains open.

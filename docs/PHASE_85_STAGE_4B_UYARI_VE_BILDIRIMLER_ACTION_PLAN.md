@@ -561,3 +561,7 @@ R4 changes only the Stage 4B-2 messaging consumer. Stage 4B alert/notification o
 ## Stage 4B-2 Post-Closure Remediation R5 - 2026-07-13
 
 R5 changes no Stage 4B alert/notification ownership. It records messaging replay, accessibility, lifecycle/export, scale, and regression evidence only. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R5_EVIDENCE.md`; R6 is next.
+
+## Stage 4B-2 Post-Closure Remediation R6 - 2026-07-13
+
+R6 changes no Stage 4B alert/notification ownership. It independently verifies the messaging consumer and release evidence; all available checks pass, while the required real Supabase/RLS matrix is `BLOCKED` with 35 skipped tests because Docker is unavailable. SQL EXPLAIN evidence remains open. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R6_EVIDENCE.md`; Stage 4C remains blocked.

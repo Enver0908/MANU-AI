@@ -554,3 +554,7 @@ R4 adds no clinical or provenance authority. Explicit URL targets are passed to 
 ## Stage 4B-2 Post-Closure Remediation R5 - 2026-07-13
 
 R5 adds no clinical or provenance authority. Its evidence checks confirm bounded DTO behavior, receipt/export separation, replay hard-zero metrics, and accessible messaging controls while keeping all P85-IF boundaries unchanged. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R5_EVIDENCE.md`.
+
+## Stage 4B-2 Post-Closure Remediation R6 - 2026-07-13
+
+R6 adds no clinical or provenance authority. The independent gate confirms the available runtime contracts and keeps all real provider/channel/health-data paths closed. The gate is `BLOCKED` until zero-skip Supabase/RLS execution and SQL EXPLAIN/buffer evidence are available. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R6_EVIDENCE.md`.

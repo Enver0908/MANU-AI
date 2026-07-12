@@ -2306,6 +2306,13 @@ function buildMessage({
   status?: MessageRecord["status"];
   createdAt?: string;
 }): MessageRecord {
+  const conversationMessages = state.messages.filter((message) => message.conversationId === conversation.id);
+  const highestSequence = conversationMessages.reduce((highest, message) => {
+    if (!Number.isInteger(message.conversationSequence)) return highest;
+    return Math.max(highest, message.conversationSequence as number);
+  }, 0);
+  const conversationSequence = highestSequence > 0 ? highestSequence + 1 : conversationMessages.length + 1;
+
   return {
     id: crypto.randomUUID(),
     tenantId: state.tenant.id,
@@ -2318,6 +2325,7 @@ function buildMessage({
     generatedByAiDecisionId,
     risk,
     status,
+    conversationSequence,
     createdAt,
   };
 }
