@@ -1,25 +1,19 @@
-import { NextResponse, type NextRequest } from "next/server";
-import { approveDraftInState, dismissDraftInState, getFallbackState, saveFallbackState } from "@/lib/app-state-store";
+import { type NextRequest } from "next/server";
+import { applyFallbackDraftMutationWithResponse } from "@/lib/app-state-store";
 import { domainErrorResponse } from "@/lib/app-errors";
 import { authErrorResponse, requireCapability, resolveAppTenantContext } from "@/lib/auth-context";
 import { assertRateLimit, RATE_LIMITS } from "@/lib/rate-limit";
-import { approveSupabaseDraftMessage, dismissSupabaseDraftMessage, isSupabaseStoreConfigured } from "@/lib/supabase-store";
-
-type DraftActionRequest = {
-  action?: "approve" | "edit_send" | "dismiss";
-  body?: string;
-};
+import { conversationApiJsonResponse } from "@/lib/phase-85-stage-4b2-read-api";
+import { parseConversationDraftMutationRequest } from "@/lib/phase-85-stage-4b2-mutations";
+import { applySupabaseDraftMutation, isSupabaseStoreConfigured } from "@/lib/supabase-store";
 
 export async function POST(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   const { id } = await context.params;
-  const body = (await request.json()) as DraftActionRequest;
-
-  if (!body.action) {
-    return NextResponse.json({ error: "action_required" }, { status: 400 });
-  }
-
-  if (body.action === "edit_send" && !body.body?.trim()) {
-    return NextResponse.json({ error: "body_required" }, { status: 400 });
+  let parsed;
+  try {
+    parsed = parseConversationDraftMutationRequest(await request.json());
+  } catch (error) {
+    return domainErrorResponse(error);
   }
 
   if (isSupabaseStoreConfigured()) {
@@ -31,13 +25,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
         tenantId: tenantContext.tenantId,
         ...RATE_LIMITS.draftReview,
       });
-      if (body.action === "dismiss") {
-        return NextResponse.json(await dismissSupabaseDraftMessage(id, tenantContext));
-      }
-
-      return NextResponse.json(
-        await approveSupabaseDraftMessage(id, body.action === "edit_send" ? body.body : undefined, tenantContext),
-      );
+      return conversationApiJsonResponse(await applySupabaseDraftMutation(id, parsed, tenantContext));
     } catch (error) {
       try {
         return authErrorResponse(error);
@@ -49,13 +37,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
 
   try {
     await assertRateLimit({ key: `fallback:draft:${id}`, ...RATE_LIMITS.draftReview });
-    const state = getFallbackState();
-    const nextState =
-      body.action === "dismiss"
-        ? dismissDraftInState(state, id)
-        : approveDraftInState(state, id, body.action === "edit_send" ? body.body : undefined);
-
-    return NextResponse.json(saveFallbackState(nextState));
+    return conversationApiJsonResponse(applyFallbackDraftMutationWithResponse(id, parsed));
   } catch (error) {
     return domainErrorResponse(error);
   }

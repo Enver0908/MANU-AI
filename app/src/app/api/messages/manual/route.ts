@@ -1,15 +1,24 @@
-import { NextResponse, type NextRequest } from "next/server";
-import { addManualReplyInState, getFallbackState, saveFallbackState } from "@/lib/app-state-store";
+import { type NextRequest } from "next/server";
+import {
+  addFallbackManualReplyWithResponse,
+  getFallbackState,
+} from "@/lib/app-state-store";
 import { domainErrorResponse } from "@/lib/app-errors";
 import { authErrorResponse, requireCapability, resolveAppTenantContext } from "@/lib/auth-context";
 import { assertRateLimit, RATE_LIMITS } from "@/lib/rate-limit";
+import { conversationApiJsonResponse } from "@/lib/phase-85-stage-4b2-read-api";
+import { parseConversationManualReplyRequest, resolveConversationIdFromManualRequest } from "@/lib/phase-85-stage-4b2-mutations";
 import { addSupabaseManualReply, isSupabaseStoreConfigured } from "@/lib/supabase-store";
 
 export async function POST(request: NextRequest) {
-  const body = (await request.json()) as { clientId?: string; body?: string };
-
-  if (!body.clientId || !body.body?.trim()) {
-    return NextResponse.json({ error: "clientId_and_body_required" }, { status: 400 });
+  let parsed;
+  try {
+    const body = await request.json();
+    parsed = parseConversationManualReplyRequest(body, (raw) =>
+      resolveConversationIdFromManualRequest(getFallbackState(), raw),
+    );
+  } catch (error) {
+    return domainErrorResponse(error);
   }
 
   if (isSupabaseStoreConfigured()) {
@@ -17,11 +26,11 @@ export async function POST(request: NextRequest) {
       const tenantContext = await resolveAppTenantContext();
       requireCapability(tenantContext, "manual_reply");
       await assertRateLimit({
-        key: `${tenantContext.tenantId}:manual:${body.clientId}`,
+        key: `${tenantContext.tenantId}:manual:${parsed.conversationId}`,
         tenantId: tenantContext.tenantId,
         ...RATE_LIMITS.manualReply,
       });
-      return NextResponse.json(await addSupabaseManualReply(body.clientId, body.body, tenantContext));
+      return conversationApiJsonResponse(await addSupabaseManualReply(parsed, tenantContext));
     } catch (error) {
       try {
         return authErrorResponse(error);
@@ -32,8 +41,11 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    await assertRateLimit({ key: `fallback:manual:${body.clientId}`, ...RATE_LIMITS.manualReply });
-    return NextResponse.json(saveFallbackState(addManualReplyInState(getFallbackState(), body.clientId, body.body)));
+    await assertRateLimit({
+      key: `fallback:manual:${parsed.conversationId}`,
+      ...RATE_LIMITS.manualReply,
+    });
+    return conversationApiJsonResponse(addFallbackManualReplyWithResponse(parsed));
   } catch (error) {
     return domainErrorResponse(error);
   }

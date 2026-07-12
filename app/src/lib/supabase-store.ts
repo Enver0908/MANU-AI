@@ -123,6 +123,16 @@ import {
   type ConversationProjectionSnakeRows,
 } from "./phase-85-stage-4b2-messaging";
 import { buildConversationMarkReadMutationResponse } from "./phase-85-stage-4b2-read-api";
+import {
+  appendDietitianManualReplyByConversation,
+  approveDraftMessageInStateWithRevision,
+  dismissDraftMessageInStateWithRevision,
+  reviewSendManualFromYellowDraftInState,
+} from "./simulator";
+import {
+  buildConversationMutationResponse,
+  resolveDraftMutationResultMessage,
+} from "./phase-85-stage-4b2-mutations";
 import { normalizeLanguageCode } from "./languages";
 import { processWhatsAppMockWebhookInState } from "./whatsapp-mock-webhook";
 import { createDefaultChannelAdapterRollbackControls } from "./channel-adapter-rollback";
@@ -1564,6 +1574,71 @@ async function loadSupabaseDraftOperationState(messageId: string, context: AppTe
   }
 }
 
+async function loadSupabaseConversationOperationState(conversationId: string, context: AppTenantContext) {
+  const supabase = requireSupabase();
+  const conversationResult = await supabase
+    .from("conversations")
+    .select("id, client_id")
+    .eq("tenant_id", context.tenantId)
+    .eq("id", conversationId)
+    .maybeSingle();
+  throwIfError(conversationResult.error);
+  if (!conversationResult.data) {
+    throw new AppDomainError(404, "conversation_not_found");
+  }
+
+  return loadSupabaseClientOperationState(conversationResult.data.client_id, context);
+}
+
+async function getSupabaseConversationMutationIdempotency(
+  tenantId: string,
+  requestId: string,
+): Promise<ConversationMutationResponse | null> {
+  const supabase = requireSupabase();
+  const { data, error } = await supabase.rpc("p85_stage_4b2_get_conversation_mutation_idempotency_v1", {
+    p_tenant_id: tenantId,
+    p_request_id: requestId,
+  });
+  if (error) throwControlledRpcError(error);
+  if (!data) return null;
+  return data as ConversationMutationResponse;
+}
+
+async function storeSupabaseConversationMutationIdempotency(
+  tenantId: string,
+  requestId: string,
+  operation: "manual_reply" | "draft_review",
+  conversationId: string,
+  response: ConversationMutationResponse,
+) {
+  const { error } = await requireSupabase().rpc("p85_stage_4b2_store_conversation_mutation_idempotency_v1", {
+    p_tenant_id: tenantId,
+    p_request_id: requestId,
+    p_operation: operation,
+    p_conversation_id: conversationId,
+    p_response_json: response,
+  });
+  if (error) throwControlledRpcError(error);
+}
+
+async function buildSupabaseConversationMutationResponse(
+  context: AppTenantContext,
+  conversationId: string,
+  operation: ConversationMutationResponse["operation"],
+  message: MessageRecord | null,
+) {
+  const { source, assignments } = await loadSupabaseConversationProjectionBundle(context, conversationId);
+  return buildConversationMutationResponse(
+    source,
+    conversationActorFromContext(context),
+    assignments,
+    operation,
+    conversationId,
+    message,
+    new Date().toISOString(),
+  );
+}
+
 export function scopeSupabaseState(
   state: ManuAppState,
   context: AppTenantContext,
@@ -2028,13 +2103,115 @@ async function loadSupabaseOperationalFoundationOperationState(context = demoTen
   };
 }
 
-export async function addSupabaseManualReply(clientId: string, body: string, context = demoTenantContext()) {
+export async function addSupabaseManualReply(
+  request: {
+    conversationId: string;
+    body: string;
+    requestId: string;
+    expectedConversationRevision: number;
+  },
+  context = demoTenantContext(),
+) {
+  const cached = await getSupabaseConversationMutationIdempotency(context.tenantId, request.requestId);
+  if (cached) return cached;
+
+  const state = await loadSupabaseConversationOperationState(request.conversationId, context);
+  const { nextState, message } = appendDietitianManualReplyByConversation(state, {
+    conversationId: request.conversationId,
+    body: request.body,
+    expectedConversationRevision: request.expectedConversationRevision,
+    authorDietitianId: context.dietitianId,
+  });
+  await commitStateDeltaRpc(requireSupabase(), "commit_manual_reply", state, nextState);
+  const response = await buildSupabaseConversationMutationResponse(
+    context,
+    request.conversationId,
+    "manual_reply",
+    message,
+  );
+  await storeSupabaseConversationMutationIdempotency(
+    context.tenantId,
+    request.requestId,
+    "manual_reply",
+    request.conversationId,
+    response,
+  );
+  return response;
+}
+
+export async function applySupabaseDraftMutation(
+  messageId: string,
+  request: {
+    action: "approve" | "edit_send" | "dismiss" | "review_send_manual";
+    body?: string;
+    requestId: string;
+    expectedConversationRevision: number;
+    expectedClientContextRevision?: number;
+  },
+  context = demoTenantContext(),
+) {
+  const cached = await getSupabaseConversationMutationIdempotency(context.tenantId, request.requestId);
+  if (cached) return cached;
+
+  const state = await loadSupabaseDraftOperationState(messageId, context);
+  const draft = state.messages.find((item) => item.id === messageId);
+  if (!draft) {
+    throw new AppDomainError(404, "message_not_found");
+  }
+
+  let nextState = state;
+  let resultMessage: MessageRecord | null = null;
+
+  if (request.action === "dismiss") {
+    nextState = dismissDraftMessageInStateWithRevision(
+      state,
+      messageId,
+      request.expectedConversationRevision,
+    );
+  } else if (request.action === "review_send_manual") {
+    const result = reviewSendManualFromYellowDraftInState(state, messageId, {
+      body: request.body,
+      expectedConversationRevision: request.expectedConversationRevision,
+      expectedClientContextRevision: request.expectedClientContextRevision,
+    });
+    nextState = result.nextState;
+    resultMessage = resolveDraftMutationResultMessage(request.action, draft, result.message);
+  } else {
+    const result = approveDraftMessageInStateWithRevision(state, messageId, {
+      body: request.action === "edit_send" ? request.body : undefined,
+      expectedConversationRevision: request.expectedConversationRevision,
+      expectedClientContextRevision: request.expectedClientContextRevision,
+    });
+    nextState = result.nextState;
+    resultMessage = resolveDraftMutationResultMessage(request.action, draft, result.message);
+  }
+
+  await commitStateDeltaRpc(requireSupabase(), "commit_draft_review", state, nextState);
+  const response = await buildSupabaseConversationMutationResponse(
+    context,
+    draft.conversationId,
+    "draft_review",
+    resultMessage,
+  );
+  await storeSupabaseConversationMutationIdempotency(
+    context.tenantId,
+    request.requestId,
+    "draft_review",
+    draft.conversationId,
+    response,
+  );
+  return response;
+}
+
+/** @deprecated Use addSupabaseManualReply with bounded mutation request. */
+export async function addSupabaseManualReplyLegacy(clientId: string, body: string, context = demoTenantContext()) {
   const state = await loadSupabaseClientOperationState(clientId, context);
   const next = addManualReplyInState(state, clientId, body);
   await commitStateDeltaRpc(requireSupabase(), "commit_manual_reply", state, next);
   return loadSupabaseState(context);
 }
 
+/** @deprecated Use applySupabaseDraftMutation with bounded mutation request. */
 export async function approveSupabaseDraftMessage(
   messageId: string,
   body: string | undefined,
@@ -2046,6 +2223,7 @@ export async function approveSupabaseDraftMessage(
   return loadSupabaseState(context);
 }
 
+/** @deprecated Use applySupabaseDraftMutation with bounded mutation request. */
 export async function dismissSupabaseDraftMessage(messageId: string, context = demoTenantContext()) {
   const state = await loadSupabaseDraftOperationState(messageId, context);
   const next = dismissDraftInState(state, messageId);

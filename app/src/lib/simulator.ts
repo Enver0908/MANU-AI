@@ -535,6 +535,71 @@ export function appendDietitianManualReply(
     : nextState;
 }
 
+export function appendDietitianManualReplyByConversation(
+  state: ManuAppState,
+  input: {
+    conversationId: string;
+    body: string;
+    expectedConversationRevision: number;
+    sourceMessageId?: string | null;
+    authorDietitianId?: string;
+  },
+): { nextState: ManuAppState; message: MessageRecord } {
+  const conversation = state.conversations.find((item) => item.id === input.conversationId);
+  if (!conversation) {
+    throw new AppDomainError(404, "conversation_not_found");
+  }
+  const client = state.clients.find((item) => item.id === conversation.clientId);
+  if (!client || client.lifecycleStatus === "removed_anonymized") {
+    throw new AppDomainError(409, "client_removed_anonymized");
+  }
+  if (conversationRevisionOrDefault(conversation) !== input.expectedConversationRevision) {
+    throw new AppDomainError(409, "reactivation_conflict_conversation_revision");
+  }
+  if (client.channelPermission !== "ready") {
+    throw new AppDomainError(409, "context_changed_before_send");
+  }
+
+  const trimmed = input.body.trim();
+  if (!trimmed) {
+    throw new AppDomainError(400, "invalid_message_body");
+  }
+  if (Array.from(trimmed).length > 4096) {
+    throw new AppDomainError(400, "invalid_message_body");
+  }
+
+  const now = new Date().toISOString();
+  const message = buildMessage({
+    state,
+    conversation,
+    sender: "dietitian",
+    origin: "dietitian_manual",
+    body: trimmed,
+    status: "sent",
+    authorDietitianId: input.authorDietitianId ?? state.dietitian.id,
+    sourceMessageId: input.sourceMessageId ?? null,
+  });
+
+  const nextState = reconcileSafeReplyUnavailableNotifications(
+    invalidatePendingDrafts(
+      incrementConversationRevision(
+        {
+          ...state,
+          messages: [...state.messages, message],
+        },
+        conversation.id,
+        now,
+      ),
+      now,
+      "dietitian_manual_reply",
+    ),
+    conversation.id,
+    now,
+  );
+
+  return { nextState, message };
+}
+
 export function approveDraftMessageInState(
   state: ManuAppState,
   messageId: string,
@@ -768,6 +833,213 @@ function blockDraftForRevalidationFailure(
       buildAuditEvent(state, "draft_send_revalidation_blocked", "message", draft.id, now),
     ],
   };
+}
+
+export function reviewSendManualFromYellowDraftInState(
+  state: ManuAppState,
+  messageId: string,
+  input: {
+    body?: string;
+    expectedConversationRevision: number;
+    expectedClientContextRevision?: number;
+  },
+): { nextState: ManuAppState; message: MessageRecord } {
+  const draft = findAiDraftCandidate(state, messageId);
+  const decision = state.aiDecisions.find((item) => item.id === draft.generatedByAiDecisionId);
+
+  if (decision?.sendStatus === "legacy_draft_unverified") {
+    throw new AppDomainError(409, "draft_recompile_required");
+  }
+  if (decision?.sendStatus === "draft_invalidated") {
+    throw new AppDomainError(409, "draft_context_invalidated");
+  }
+  if (draft.status !== "draft") {
+    throw new AppDomainError(400, "message_not_ai_draft");
+  }
+  if (!decision) {
+    throw new AppDomainError(409, "draft_recompile_required");
+  }
+  if (decision.risk === "green") {
+    throw new AppDomainError(400, "draft_not_yellow_review_candidate");
+  }
+
+  const conversation = state.conversations.find((item) => item.id === draft.conversationId);
+  if (!conversation) {
+    throw new AppDomainError(404, "conversation_not_found");
+  }
+  if (conversationRevisionOrDefault(conversation) !== input.expectedConversationRevision) {
+    throw new AppDomainError(409, "reactivation_conflict_conversation_revision");
+  }
+
+  const client = state.clients.find((item) => item.id === conversation.clientId);
+  if (!client || client.lifecycleStatus === "removed_anonymized") {
+    throw new AppDomainError(409, "client_removed_anonymized");
+  }
+  if (
+    input.expectedClientContextRevision != null &&
+    input.expectedClientContextRevision !== client.contextRevision
+  ) {
+    throw new AppDomainError(409, "reactivation_conflict_client_context_revision");
+  }
+
+  const revalidationFailure = revalidateDraftBeforeSend(state, draft, decision);
+  if (revalidationFailure) {
+    return {
+      nextState: blockDraftForRevalidationFailure(state, draft, decision, revalidationFailure),
+      message: draft,
+    };
+  }
+
+  const finalBody = (input.body?.trim() || draft.body).trim();
+  if (!finalBody) {
+    throw new AppDomainError(400, "invalid_message_body");
+  }
+  if (Array.from(finalBody).length > 4096) {
+    throw new AppDomainError(400, "invalid_message_body");
+  }
+
+  const covenantIssues = detectProductCommunicationCovenantIssues(finalBody);
+  if (covenantIssues.length > 0) {
+    return {
+      nextState: blockDraftForRevalidationFailure(
+        state,
+        draft,
+        decision,
+        "product_communication_covenant_violation",
+        covenantIssues,
+      ),
+      message: draft,
+    };
+  }
+
+  const activeYellowHold =
+    client.yellowRiskHold.status === "active" && client.yellowRiskHold.activeDraftMessageId === draft.id;
+  const now = new Date().toISOString();
+  const edited = Boolean(input.body?.trim() && input.body.trim() !== draft.body);
+  const manualMessage = buildMessage({
+    state,
+    conversation,
+    sender: "dietitian",
+    origin: "dietitian_manual",
+    body: finalBody,
+    status: "sent",
+    authorDietitianId: state.dietitian.id,
+    sourceMessageId: draft.id,
+  });
+
+  let nextState: ManuAppState = incrementConversationRevision(
+    {
+      ...state,
+      clients: activeYellowHold
+        ? state.clients.map((item) =>
+            item.id === client.id && item.yellowRiskHold.status === "active"
+              ? {
+                  ...item,
+                  aiStatus:
+                    item.redRiskLock.status === "locked" ? item.aiStatus : item.yellowRiskHold.previousAiStatus,
+                  aiMode: item.redRiskLock.status === "locked" ? item.aiMode : item.yellowRiskHold.previousAiMode,
+                  yellowRiskHold: { status: "none" as const },
+                }
+              : item,
+          )
+        : state.clients,
+      messages: [
+        ...state.messages.map((message) =>
+          message.id === messageId ? { ...message, status: "blocked" as const } : message,
+        ),
+        manualMessage,
+      ],
+      aiDecisions: state.aiDecisions.map((item) =>
+        item.id === decision.id
+          ? {
+              ...item,
+              sendStatus: "draft_invalidated" as const,
+              blockedReason: "yellow_reviewed_manual_send",
+            }
+          : item,
+      ),
+      auditEvents: [
+        ...state.auditEvents,
+        buildAuditEvent(
+          state,
+          edited ? "yellow_draft_reviewed_manual_edit_send" : "yellow_draft_reviewed_manual_send",
+          "message",
+          manualMessage.id,
+          now,
+        ),
+        buildAuditEvent(state, "draft_invalidated_after_yellow_review", "message", messageId, now),
+        ...(activeYellowHold
+          ? [buildAuditEvent(state, "yellow_risk_hold_resolved", "client", client.id, now)]
+          : []),
+      ],
+    },
+    conversation.id,
+    now,
+  );
+
+  if (edited) {
+    nextState = recordStyleEditHistoryInState(nextState, {
+      aiDraft: draft.body,
+      dietitianFinal: finalBody,
+      clientId: client.id,
+      createdAt: now,
+    });
+  }
+
+  nextState = reconcileSafeReplyUnavailableNotifications(
+    reconcileDraftInvalidatedNotifications(nextState, conversation.id, now),
+    conversation.id,
+    now,
+  );
+
+  return { nextState, message: manualMessage };
+}
+
+export function approveDraftMessageInStateWithRevision(
+  state: ManuAppState,
+  messageId: string,
+  input: {
+    body?: string;
+    expectedConversationRevision: number;
+    expectedClientContextRevision?: number;
+  },
+): { nextState: ManuAppState; message: MessageRecord | null } {
+  const draft = findAiDraftCandidate(state, messageId);
+  const conversation = state.conversations.find((item) => item.id === draft.conversationId);
+  if (!conversation) {
+    throw new AppDomainError(404, "conversation_not_found");
+  }
+  if (conversationRevisionOrDefault(conversation) !== input.expectedConversationRevision) {
+    throw new AppDomainError(409, "reactivation_conflict_conversation_revision");
+  }
+  const client = state.clients.find((item) => item.id === conversation.clientId);
+  if (
+    client &&
+    input.expectedClientContextRevision != null &&
+    input.expectedClientContextRevision !== client.contextRevision
+  ) {
+    throw new AppDomainError(409, "reactivation_conflict_client_context_revision");
+  }
+
+  const nextState = approveDraftMessageInState(state, messageId, input.body);
+  const message = nextState.messages.find((item) => item.id === messageId) ?? null;
+  return { nextState, message };
+}
+
+export function dismissDraftMessageInStateWithRevision(
+  state: ManuAppState,
+  messageId: string,
+  expectedConversationRevision: number,
+): ManuAppState {
+  const draft = findDraftMessage(state, messageId);
+  const conversation = state.conversations.find((item) => item.id === draft.conversationId);
+  if (!conversation) {
+    throw new AppDomainError(404, "conversation_not_found");
+  }
+  if (conversationRevisionOrDefault(conversation) !== expectedConversationRevision) {
+    throw new AppDomainError(409, "reactivation_conflict_conversation_revision");
+  }
+  return dismissDraftMessageInState(state, messageId);
 }
 
 export function dismissDraftMessageInState(state: ManuAppState, messageId: string): ManuAppState {

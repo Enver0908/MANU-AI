@@ -35,12 +35,16 @@ import {
 } from "./voice-profile-workflow";
 import {
   approveDraftMessageInState,
+  approveDraftMessageInStateWithRevision,
   addClientToState,
   appendDietitianManualReply,
+  appendDietitianManualReplyByConversation,
   activateClientAiWithControlledRiskResolutionInState,
   dismissDraftMessageInState,
+  dismissDraftMessageInStateWithRevision,
   releaseHumanTakeoverLockInState,
   resolveAndReactivateRedRiskInState as resolveAndReactivateRedRiskInStateImpl,
+  reviewSendManualFromYellowDraftInState,
   runInboundSimulation,
   updateClientInState,
   markNotificationReadInState,
@@ -61,6 +65,8 @@ import {
 import {
   buildConversationDetailResponseFromAppState,
   buildConversationListResponseFromAppState,
+} from "./phase-85-stage-4b2-api";
+import {
   conversationActorFromContext,
   conversationProjectionSourceFromAppState,
   type ConversationDetailBuildInput,
@@ -70,6 +76,19 @@ import {
   buildConversationMarkReadMutationResponse,
   markConversationReadInState,
 } from "./phase-85-stage-4b2-read-api";
+import type {
+  ConversationDraftMutationRequest,
+  ConversationManualReplyRequest,
+  ConversationMutationResponse,
+} from "./phase-85-stage-4b2-contracts";
+import {
+  assertConversationMutationAllowed,
+  buildConversationMutationResponseFromState,
+  getFallbackConversationMutationIdempotency,
+  resetFallbackConversationMutationIdempotency,
+  storeFallbackConversationMutationIdempotency,
+  resolveDraftMutationResultMessage,
+} from "./phase-85-stage-4b2-mutations";
 import type { NotificationCategory, NotificationPriority } from "./phase-85-stage-4b-contracts";
 import type { ClinicalAlertFilterSeverity } from "./phase-85-stage-4b-alerts";
 import {
@@ -78,7 +97,7 @@ import {
   normalizeNotificationsInState,
 } from "./phase-85-stage-4b-notifications";
 import type { AppTenantContext } from "./auth-context";
-import type { ClientRecord, ManuAppState, SimulationRequest } from "./types";
+import type { ClientRecord, ManuAppState, MessageRecord, SimulationRequest } from "./types";
 import { setChannelAdapterRollbackInState as applyChannelAdapterRollbackInState } from "./channel-adapter-rollback";
 import type { ApplyClientUpdateProposalInput, CreateClientUpdateProposalInput } from "./client-update-proposals";
 import type { CreateClientContextUpdateInput } from "./client-context-updates";
@@ -103,6 +122,7 @@ export function getFallbackState() {
 }
 
 export function resetFallbackState() {
+  resetFallbackConversationMutationIdempotency();
   globalStore.manuAiFallbackState = createInitialState();
   return globalStore.manuAiFallbackState;
 }
@@ -416,6 +436,99 @@ export function markFallbackConversationRead(conversationId: string, throughSequ
     conversationId,
     receipt,
   );
+}
+
+export function addFallbackManualReplyWithResponse(request: ConversationManualReplyRequest) {
+  const state = getFallbackState();
+  const context = fallbackTenantContext(state);
+  const actor = conversationActorFromContext(context);
+  const assignments = listFallbackAssignments();
+  const cached = getFallbackConversationMutationIdempotency(context.tenantId, request.requestId);
+  if (cached) return cached;
+
+  assertConversationMutationAllowedForFallback(actor, state, assignments, request.conversationId, "manual_reply");
+  const { nextState, message } = appendDietitianManualReplyByConversation(state, {
+    conversationId: request.conversationId,
+    body: request.body,
+    expectedConversationRevision: request.expectedConversationRevision,
+    authorDietitianId: context.dietitianId,
+  });
+  saveFallbackState(nextState);
+  const response = buildConversationMutationResponseFromState(
+    nextState,
+    actor,
+    assignments,
+    "manual_reply",
+    request.conversationId,
+    message,
+  );
+  storeFallbackConversationMutationIdempotency(context.tenantId, request.requestId, response);
+  return response;
+}
+
+export function applyFallbackDraftMutationWithResponse(
+  messageId: string,
+  request: ConversationDraftMutationRequest,
+): ConversationMutationResponse {
+  const state = getFallbackState();
+  const context = fallbackTenantContext(state);
+  const actor = conversationActorFromContext(context);
+  const assignments = listFallbackAssignments();
+  const cached = getFallbackConversationMutationIdempotency(context.tenantId, request.requestId);
+  if (cached) return cached;
+
+  const draft = state.messages.find((item) => item.id === messageId);
+  if (!draft) {
+    throw new AppDomainError(404, "message_not_found");
+  }
+  const conversationId = draft.conversationId;
+  assertConversationMutationAllowedForFallback(actor, state, assignments, conversationId, "draft_review");
+
+  let nextState = state;
+  let resultMessage: MessageRecord | null = null;
+
+  if (request.action === "dismiss") {
+    nextState = dismissDraftMessageInStateWithRevision(state, messageId, request.expectedConversationRevision);
+  } else if (request.action === "review_send_manual") {
+    const result = reviewSendManualFromYellowDraftInState(state, messageId, {
+      body: request.body,
+      expectedConversationRevision: request.expectedConversationRevision,
+      expectedClientContextRevision: request.expectedClientContextRevision,
+    });
+    nextState = result.nextState;
+    resultMessage = resolveDraftMutationResultMessage(request.action, draft, result.message);
+  } else {
+    const result = approveDraftMessageInStateWithRevision(state, messageId, {
+      body: request.action === "edit_send" ? request.body : undefined,
+      expectedConversationRevision: request.expectedConversationRevision,
+      expectedClientContextRevision: request.expectedClientContextRevision,
+    });
+    nextState = result.nextState;
+    resultMessage = resolveDraftMutationResultMessage(request.action, draft, result.message);
+  }
+
+  saveFallbackState(nextState);
+  const response = buildConversationMutationResponseFromState(
+    nextState,
+    actor,
+    assignments,
+    "draft_review",
+    conversationId,
+    resultMessage,
+  );
+  storeFallbackConversationMutationIdempotency(context.tenantId, request.requestId, response);
+  return response;
+}
+
+function assertConversationMutationAllowedForFallback(
+  actor: ReturnType<typeof conversationActorFromContext>,
+  state: ManuAppState,
+  assignments: ReturnType<typeof listFallbackAssignments>,
+  conversationId: string,
+  operation: "manual_reply" | "draft_review",
+) {
+  const source = conversationProjectionSourceFromAppState(state);
+  assertConversationMutationAllowed(actor, source, assignments, conversationId, operation);
 }
 
 export function acknowledgeNotification(state: ManuAppState, notificationId: string) {

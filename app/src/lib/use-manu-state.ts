@@ -70,6 +70,14 @@ export function useManuState() {
     [requestJson],
   );
 
+  const conversationMutationFromApi = useCallback(
+    async (url: string, init?: RequestInit) => {
+      await requestJson(url, init);
+      return replaceFromApi("/api/app-state");
+    },
+    [requestJson, replaceFromApi],
+  );
+
   useEffect(() => {
     const timeout = window.setTimeout(() => {
       replaceFromApi("/api/app-state")
@@ -133,26 +141,73 @@ export function useManuState() {
           method: "POST",
           body: JSON.stringify(input),
         }),
-      sendManualReply: (input: { clientId: string; body: string }) =>
-        replaceFromApi("/api/messages/manual", {
+      sendManualReply: (input: { clientId: string; body: string }) => {
+        const conversation = state.conversations.find((item) => item.clientId === input.clientId);
+        if (!conversation) {
+          throw new Error("conversation_not_found");
+        }
+        return conversationMutationFromApi("/api/messages/manual", {
           method: "POST",
-          body: JSON.stringify(input),
-        }),
-      approveDraft: (messageId: string) =>
-        replaceFromApi(`/api/messages/drafts/${messageId}`, {
+          body: JSON.stringify({
+            conversationId: conversation.id,
+            body: input.body,
+            requestId: crypto.randomUUID(),
+            expectedConversationRevision: conversation.revision ?? 1,
+          }),
+        });
+      },
+      approveDraft: (messageId: string) => {
+        const message = state.messages.find((item) => item.id === messageId);
+        const conversation = message
+          ? state.conversations.find((item) => item.id === message.conversationId)
+          : undefined;
+        if (!conversation) {
+          throw new Error("conversation_not_found");
+        }
+        return conversationMutationFromApi(`/api/messages/drafts/${messageId}`, {
           method: "POST",
-          body: JSON.stringify({ action: "approve" }),
-        }),
-      editAndSendDraft: (messageId: string, body: string) =>
-        replaceFromApi(`/api/messages/drafts/${messageId}`, {
+          body: JSON.stringify({
+            action: "approve",
+            requestId: crypto.randomUUID(),
+            expectedConversationRevision: conversation.revision ?? 1,
+          }),
+        });
+      },
+      editAndSendDraft: (messageId: string, body: string) => {
+        const message = state.messages.find((item) => item.id === messageId);
+        const conversation = message
+          ? state.conversations.find((item) => item.id === message.conversationId)
+          : undefined;
+        if (!conversation) {
+          throw new Error("conversation_not_found");
+        }
+        return conversationMutationFromApi(`/api/messages/drafts/${messageId}`, {
           method: "POST",
-          body: JSON.stringify({ action: "edit_send", body }),
-        }),
-      dismissDraft: (messageId: string) =>
-        replaceFromApi(`/api/messages/drafts/${messageId}`, {
+          body: JSON.stringify({
+            action: "edit_send",
+            body,
+            requestId: crypto.randomUUID(),
+            expectedConversationRevision: conversation.revision ?? 1,
+          }),
+        });
+      },
+      dismissDraft: (messageId: string) => {
+        const message = state.messages.find((item) => item.id === messageId);
+        const conversation = message
+          ? state.conversations.find((item) => item.id === message.conversationId)
+          : undefined;
+        if (!conversation) {
+          throw new Error("conversation_not_found");
+        }
+        return conversationMutationFromApi(`/api/messages/drafts/${messageId}`, {
           method: "POST",
-          body: JSON.stringify({ action: "dismiss" }),
-        }),
+          body: JSON.stringify({
+            action: "dismiss",
+            requestId: crypto.randomUUID(),
+            expectedConversationRevision: conversation.revision ?? 1,
+          }),
+        });
+      },
       resolveHandoff: (handoffId: string) =>
         replaceFromApi(`/api/handoffs/${handoffId}/resolve`, {
           method: "POST",
@@ -321,6 +376,6 @@ export function useManuState() {
           method: "POST",
         }),
     }),
-    [authError, hydrated, mergeScopedClientMutationFromApi, replaceFromApi, state],
+    [authError, conversationMutationFromApi, hydrated, mergeScopedClientMutationFromApi, replaceFromApi, state],
   );
 }

@@ -167,6 +167,27 @@ export type ConversationMutationResponse = {
   permissions: ConversationPermissions;
 };
 
+export type ConversationManualReplyRequest = {
+  conversationId: string;
+  body: string;
+  requestId: string;
+  expectedConversationRevision: number;
+};
+
+export type ConversationDraftAction =
+  | "approve"
+  | "edit_send"
+  | "dismiss"
+  | "review_send_manual";
+
+export type ConversationDraftMutationRequest = {
+  action: ConversationDraftAction;
+  body?: string;
+  requestId: string;
+  expectedConversationRevision: number;
+  expectedClientContextRevision?: number;
+};
+
 export type ConversationListCursorPayload = {
   v: number;
   mode: "conversation_list";

@@ -61,7 +61,11 @@ describe("API controlled domain errors", () => {
     const response = await postDraftAction(
       new Request("http://localhost/api/messages/drafts/message-seed-1", {
         method: "POST",
-        body: JSON.stringify({ action: "approve" }),
+        body: JSON.stringify({
+          action: "approve",
+          requestId: "00000000-0000-4000-8000-000000000099",
+          expectedConversationRevision: 1,
+        }),
       }) as never,
       { params: Promise.resolve({ id: "message-seed-1" }) },
     );
