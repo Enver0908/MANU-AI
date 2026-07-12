@@ -264,6 +264,7 @@ export type ConversationProjectionSource = {
   clients: readonly ConversationProjectionClient[];
   messages: readonly ConversationProjectionMessage[];
   receipts?: readonly ConversationReadReceiptRecord[];
+  unreadCounts?: readonly { conversationId: string; unreadCount: number }[];
 };
 
 export type ConversationClientStatusSource = Pick<

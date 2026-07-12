@@ -63,3 +63,4 @@ Phase 6 may now add URL state, bounded client hooks, polling, and proper mutatio
 - Changed runtime files are limited to the migration, mutation modules, simulator/store/route updates, hook bridge, and targeted tests listed above.
 - Production pilot remains `NO-GO`; R-405 remains open; real integration paths remain closed.
 - Next authorized implementation unit is Phase 6.
+R2 also routes conversation read receipts through the append-only v2 bounded/authorized receipt RPC. RLS execution remains an explicit open verification gate because local Docker/Supabase is unavailable.

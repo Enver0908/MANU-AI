@@ -385,3 +385,7 @@ The final readiness posture is unchanged: Stage 4B-2 remediation is active, Stag
 ## Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
 
 R1 is complete at the contract/projection layer only. The production pilot remains `NO-GO`; R-405 remains open; R2-R7 remediation and independent release evidence remain required.
+
+## Stage 4B-2 Post-Closure Remediation R2 - 2026-07-12
+
+R2 implementation is complete for bounded reads and receipt guards, but it does not close production readiness. RLS execution is skipped while Docker is unavailable; R-405 remains open and R3-R7 remain required.

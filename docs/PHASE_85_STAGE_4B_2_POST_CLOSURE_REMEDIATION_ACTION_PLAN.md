@@ -1,6 +1,6 @@
 # Phase 85 Stage 4B-2 Post-Closure Remediation Action Plan
 
-Status: **R1 complete; remediation active (2026-07-12)**
+Status: **R2 complete; remediation active (2026-07-12)**
 
 Baseline branch: `codex/phase-85-interstage-clinical-memory`
 Baseline commit: `3d67ba5 Close Phase 85 Stage 4B-2 with canonical spec, closure evidence, and continuity updates.`
@@ -64,3 +64,9 @@ R0 is complete only when the findings, remediation order, non-negotiable boundar
 R1 corrected the shared Stage 4B-2 domain and DTO contract without adding a migration, route, RPC, provider, channel, billing, monitoring, backup, secret-manager, or health-data path. The contract/API version is now `v2`; AI permissions are split into activation and configuration capabilities; red-lock semantics permit activation while denying configuration; unread aggregates are calculated over the complete actor-visible projection before pagination; cursor and numeric input validation use bounded base64url and safe-integer rules; and yellow reviewed-manual send requires the expected client context revision.
 
 The implementation and verification record is `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R1_EVIDENCE.md`. R2 remains responsible for database-bounded reads and server-side assignment authorization; R1 does not close those findings.
+
+## 7. R2 completion record - 2026-07-12
+
+R2 added the append-only migration `20260712170000_phase_85_stage_4b2_r2_bounded_reads_rls.sql`. The v2 list RPC limits the conversation page and each JSON branch before aggregation, returns actor-scoped unread aggregates and per-conversation unread counts, and limits assignment/receipt projections to the selected page. The v2 detail RPC limits transcript rows to the bounded detail window and scopes every projection branch to the authorized conversation. Receipt mutation now uses a v2 RPC with explicit actor-context, auditor, and conversation-visibility guards. The application store consumes only the v2 read/receipt RPCs.
+
+R2 implementation evidence is `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R2_EVIDENCE.md`. R3 remains the next authorized unit. RLS execution is still environment-blocked and is not represented as green.

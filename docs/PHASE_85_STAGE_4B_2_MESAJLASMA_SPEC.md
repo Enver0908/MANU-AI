@@ -141,3 +141,6 @@ Production pilot remains **NO-GO**. R-405 remains open.
 ## Stage 4C Consumer Gate — 2026-07-12
 
 Stage 4C planning and implementation remain blocked while post-closure remediation is active. The required consumer gate is `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md` phases R1-R7, including a zero-skip RLS run and independent release verification. Stage 4C must not weaken non-green AI draft blocking, red atomic activation, per-actor receipts, bounded list/detail reads, or Stage 4B alert/notification contracts.
+## Post-Closure Remediation R2 - 2026-07-12
+
+The Supabase conversation list/detail boundary now uses append-only v2 RPCs with bounded SQL projection branches, actor-scoped unread aggregates, and v2 receipt authorization guards. The current RLS suite remains environment-blocked and is not claimed as passed. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R2_EVIDENCE.md`; R3 remains next.

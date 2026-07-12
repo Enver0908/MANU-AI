@@ -239,3 +239,7 @@ Stage 4B-2 implementation is under post-closure remediation. The canonical remed
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
 
 R1 is complete for the domain/DTO/permission projection contract. The split AI activation/configuration permissions, red-lock activation rule, full visible-scope unread aggregates, bounded cursor/safe-integer validation, and yellow client-context revision precondition are implemented and evidenced in `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R1_EVIDENCE.md`. **Next:** R2; Stage 4C remains blocked.
+
+## Phase 85 Stage 4B-2 Post-Closure Remediation R2 - 2026-07-12
+
+R2 adds append-only bounded Supabase v2 list/detail RPCs, actor-scoped unread aggregates, and receipt v2 authorization guards. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R2_EVIDENCE.md`. **Next:** R3; RLS remains environment-blocked, Stage 4C remains blocked, and production remains `NO-GO`.

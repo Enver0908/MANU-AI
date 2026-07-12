@@ -316,3 +316,7 @@ The Stage 4B-2 historical closure does not close production gates. Remediation R
 ## Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
 
 R1 corrected only the application domain/DTO/permission projection contract. It is not a pilot gate closure, does not open production paths, and leaves R-405 and all R2-R7 gates open. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R1_EVIDENCE.md`.
+
+## Stage 4B-2 Post-Closure Remediation R2 - 2026-07-12
+
+R2 adds bounded v2 Supabase projections and receipt authorization guards only. It is not a pilot gate closure; R-405, RLS execution, R3-R7, and production `NO-GO` remain unchanged. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R2_EVIDENCE.md`.

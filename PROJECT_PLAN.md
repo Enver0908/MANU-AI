@@ -1503,3 +1503,7 @@ R0 is complete as a documentation-only remediation lock. The next authorized wor
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
 
 R1 corrected the Stage 4B-2 domain/DTO/permission projection contract and is evidenced in `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R1_EVIDENCE.md`. The next authorized work is R2 database-bounded reads and server-side assignment authorization. Stage 4C remains blocked; production pilot remains `NO-GO`.
+
+## Phase 85 Stage 4B-2 Post-Closure Remediation R2 - 2026-07-12
+
+R2 added bounded Supabase v2 list/detail projections, actor-scoped unread aggregates, and receipt mutation guards in an append-only migration. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R2_EVIDENCE.md`. RLS reset/role-matrix verification remains environment-blocked; R3 is next.

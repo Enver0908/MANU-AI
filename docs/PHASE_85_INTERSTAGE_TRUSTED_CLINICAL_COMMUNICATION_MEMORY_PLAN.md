@@ -503,3 +503,7 @@ P85-IF remains authoritative and is not reopened. Stage 4B-2 audit remediation m
 ## Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
 
 R1 completed the application contract correction for Stage 4B-2 messaging. It does not alter P85-IF authority, real provider/channel shutdowns, production `NO-GO`, or R-405. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R1_EVIDENCE.md`; next remediation unit: R2.
+
+## Stage 4B-2 Post-Closure Remediation R2 - 2026-07-12
+
+R2 keeps P85-IF as the authority for transcript/provenance and adds only bounded Supabase projection and receipt guards for the Stage 4B-2 consumer. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R2_EVIDENCE.md`; next remediation unit: R3.

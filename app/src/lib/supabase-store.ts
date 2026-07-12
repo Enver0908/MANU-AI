@@ -111,6 +111,7 @@ import type {
 import type {
   ConversationAssignmentInput,
   ConversationMutationResponse,
+  ConversationProjectionSource,
   ConversationReadReceiptRecord,
 } from "./phase-85-stage-4b2-contracts";
 import {
@@ -122,6 +123,7 @@ import {
   type ConversationListBuildInput,
   type ConversationProjectionSnakeRows,
 } from "./phase-85-stage-4b2-messaging";
+import { decodeConversationListCursor, encodeConversationListCursor } from "./phase-85-stage-4b2-api";
 import { buildConversationMarkReadMutationResponse } from "./phase-85-stage-4b2-read-api";
 import {
   appendDietitianManualReplyByConversation,
@@ -2376,7 +2378,7 @@ export async function markSupabaseConversationRead(
   throughSequence: number,
   context = demoTenantContext(),
 ): Promise<SupabaseConversationReadMutationResult> {
-  const { data, error } = await requireSupabase().rpc("p85_stage_4b2_mark_conversation_read_v1", {
+  const { data, error } = await requireSupabase().rpc("p85_stage_4b2_mark_conversation_read_v2", {
     p_tenant_id: context.tenantId,
     p_user_id: context.userId,
     p_dietitian_id: context.dietitianId,
@@ -2415,6 +2417,11 @@ type SupabaseConversationProjectionBundle = ConversationProjectionSnakeRows & {
     dietitian_id: string;
     access_level?: "care_team" | "viewer" | null;
   }>;
+  unread_counts?: Array<{ conversation_id: string; unread_count: number }>;
+  filtered_total?: number;
+  unread_conversation_count?: number;
+  unread_message_count?: number;
+  next_cursor?: string | null;
 };
 
 function mapSupabaseConversationAssignments(
@@ -2431,21 +2438,33 @@ function mapSupabaseConversationAssignments(
 async function loadSupabaseConversationProjectionBundle(
   context: AppTenantContext,
   conversationId: string | null,
+  listInput: ConversationListBuildInput = {},
+  detailInput: ConversationDetailBuildInput = {},
 ) {
   const supabase = requireSupabase();
+  const listCursor = listInput.cursor ? decodeConversationListCursor(listInput.cursor) : null;
   const rpcResult = conversationId
-    ? await supabase.rpc("p85_stage_4b2_load_detail_projection_source_v1", {
+    ? await supabase.rpc("p85_stage_4b2_load_detail_projection_source_v2", {
         p_tenant_id: context.tenantId,
         p_user_id: context.userId,
         p_dietitian_id: context.dietitianId,
         p_role: context.role,
         p_conversation_id: conversationId,
+        p_direction: detailInput.direction ?? "older",
+        p_cursor: detailInput.cursor ?? null,
+        p_anchor_message_id: detailInput.anchorMessageId ?? null,
+        p_limit: detailInput.limit ?? 50,
       })
-    : await supabase.rpc("p85_stage_4b2_load_list_projection_source_v1", {
+    : await supabase.rpc("p85_stage_4b2_load_list_projection_source_v2", {
         p_tenant_id: context.tenantId,
         p_user_id: context.userId,
         p_dietitian_id: context.dietitianId,
         p_role: context.role,
+        p_status: listInput.status ?? "all",
+        p_query: listInput.query ?? "",
+        p_cursor_last_activity: listCursor?.lastActivityAt ?? null,
+        p_cursor_conversation_id: listCursor?.conversationId ?? null,
+        p_limit: listInput.limit ?? 30,
       });
   if (rpcResult.error) throwControlledRpcError(rpcResult.error);
   const bundle = (rpcResult.data ?? {
@@ -2455,14 +2474,27 @@ async function loadSupabaseConversationProjectionBundle(
     messages: [],
     receipts: [],
   }) as SupabaseConversationProjectionBundle;
-  return {
-    source: conversationProjectionSourceFromSnakeRows({
+  const source: ConversationProjectionSource = {
+    ...conversationProjectionSourceFromSnakeRows({
       conversations: bundle.conversations ?? [],
       clients: bundle.clients ?? [],
       messages: bundle.messages ?? [],
       receipts: bundle.receipts ?? [],
     }),
+    unreadCounts: (bundle.unread_counts ?? []).map((item) => ({
+      conversationId: item.conversation_id,
+      unreadCount: Number(item.unread_count),
+    })),
+  };
+  return {
+    source,
     assignments: mapSupabaseConversationAssignments(bundle.assignments),
+    metadata: {
+      filteredTotal: Number(bundle.filtered_total ?? 0),
+      unreadConversationCount: Number(bundle.unread_conversation_count ?? 0),
+      unreadMessageCount: Number(bundle.unread_message_count ?? 0),
+      nextCursor: bundle.next_cursor ?? null,
+    },
   };
 }
 
@@ -2470,13 +2502,31 @@ export async function listSupabaseConversations(
   context: AppTenantContext,
   input: ConversationListBuildInput = {},
 ) {
-  const { source, assignments } = await loadSupabaseConversationProjectionBundle(context, null);
-  return buildConversationListResponse(
+  const { source, assignments, metadata } = await loadSupabaseConversationProjectionBundle(context, null, input);
+  const response = buildConversationListResponse(
     source,
     conversationActorFromContext(context),
     assignments,
-    input,
+    { ...input, cursor: null },
   );
+  const lastItem = response.items[response.items.length - 1];
+  const nextCursor =
+    metadata.nextCursor ??
+    (lastItem && metadata.filteredTotal > response.items.length
+      ? encodeConversationListCursor({
+          status: input.status === "unread" ? "unread" : "all",
+          query: input.query ?? "",
+          lastActivityAt: lastItem.lastActivityAt,
+          conversationId: lastItem.id,
+        })
+      : null);
+  return {
+    ...response,
+    nextCursor,
+    filteredTotal: metadata.filteredTotal,
+    unreadConversationCount: metadata.unreadConversationCount,
+    unreadMessageCount: metadata.unreadMessageCount,
+  };
 }
 
 export async function getSupabaseConversationMessages(
@@ -2484,7 +2534,7 @@ export async function getSupabaseConversationMessages(
   conversationId: string,
   input: ConversationDetailBuildInput = {},
 ) {
-  const { source, assignments } = await loadSupabaseConversationProjectionBundle(context, conversationId);
+  const { source, assignments } = await loadSupabaseConversationProjectionBundle(context, conversationId, {}, input);
   return buildConversationDetailResponse(
     source,
     conversationActorFromContext(context),

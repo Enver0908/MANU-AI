@@ -403,3 +403,7 @@ The Stage 4B-2 visual/runtime implementation is historical and remediation is ac
 ## Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
 
 R1 updates the messaging consumer contract to split AI activation/configuration permissions and expose complete visible-scope unread aggregates. No visual layout, navigation, provider, or production-pilot behavior is authorized by this remediation unit. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R1_EVIDENCE.md`.
+
+## Stage 4B-2 Post-Closure Remediation R2 - 2026-07-12
+
+R2 supplies the messaging consumer with SQL-authoritative unread aggregates and physically bounded list/detail payloads through v2 RPCs. No visual redesign, navigation, provider, or production-pilot behavior changed. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R2_EVIDENCE.md`.

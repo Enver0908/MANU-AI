@@ -639,3 +639,7 @@ Stage 4B-2 remains a local implementation under remediation and does not close a
 ## Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
 
 R1 is recorded as a local contract/projection correction only. It contributes no production readiness approval and does not alter the `NO-GO` posture, open R-405, or the closed real provider/channel/health-data paths. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R1_EVIDENCE.md`.
+
+## Stage 4B-2 Post-Closure Remediation R2 - 2026-07-12
+
+R2 is a local bounded-read/receipt implementation correction only. It contributes no production readiness approval; RLS reset and EXPLAIN evidence remain open. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R2_EVIDENCE.md`.

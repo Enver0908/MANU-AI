@@ -1127,3 +1127,7 @@ Direct-scale readiness cannot consume the historical Stage 4B-2 closure as final
 ## Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
 
 R1 contract corrections are complete and evidenced in `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R1_EVIDENCE.md`. This does not change pilot readiness: production remains `NO-GO`, R-405 remains open, and R2-R7 remain required.
+
+## Stage 4B-2 Post-Closure Remediation R2 - 2026-07-12
+
+R2 implementation is evidenced in `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R2_EVIDENCE.md`. It does not close a production gate; RLS is still environment-blocked, production remains `NO-GO`, R-405 remains open, and R3-R7 remain required.

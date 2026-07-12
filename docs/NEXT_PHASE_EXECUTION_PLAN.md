@@ -2445,3 +2445,7 @@ R1 is complete. The next authorized implementation unit is Phase R2 of `docs/PHA
 ## Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
 
 R1 is complete for the domain/DTO/permission projection layer. The next authorized unit is R2, covering database-bounded reads and server-side assignment authorization. Stage 4C remains blocked until R1-R7 evidence closes.
+
+## Stage 4B-2 Post-Closure Remediation R2 - 2026-07-12
+
+R2 bounded the Supabase list/detail projections and receipt read mutation through append-only v2 RPCs. The next authorized unit is R3; Stage 4C remains blocked until remediation evidence closes and RLS is run without skips.

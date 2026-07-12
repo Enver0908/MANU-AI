@@ -358,7 +358,9 @@ function projectInboxItem(
 ): ConversationInboxItem {
   const messages = sortedConversationMessages(source, conversation.id, actor.tenantId);
   const receipt = getActorReceipt(source, actor, conversation.id);
-  const unreadCount = countConversationUnreadMessages(messages, receipt);
+  const unreadCount =
+    source.unreadCounts?.find((item) => item.conversationId === conversation.id)?.unreadCount ??
+    countConversationUnreadMessages(messages, receipt);
   const permissions = resolveConversationPermissions({ actor, conversation, client, assignments });
   const latest = latestTranscriptMessage(messages);
 

@@ -485,3 +485,7 @@ Stage 4B-2 runtime exists but is under post-closure remediation. R1 is complete.
 ## Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
 
 R1 corrected the shared domain/DTO/permission projection contract: contract/API `v2`, split AI activation/configuration capabilities, red-lock activation allowance, full visible-scope unread aggregates, bounded cursor/safe-integer validation, and yellow client-context revision enforcement. Evidence: `../docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R1_EVIDENCE.md`. **Next:** R2 database-bounded reads and server-side assignment authorization.
+
+## Stage 4B-2 Post-Closure Remediation R2 - 2026-07-12
+
+R2 adds `20260712170000_phase_85_stage_4b2_r2_bounded_reads_rls.sql`, switches Supabase conversation list/detail/receipt calls to v2 RPCs, and carries SQL-authoritative unread aggregates into the bounded DTO. Evidence: `../docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R2_EVIDENCE.md`. **Next:** R3; RLS remains Docker-blocked and unclaimed.

@@ -166,3 +166,7 @@ Production pilot remains `NO-GO`; R-405 remains open; real integration paths rem
 ## Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
 
 R1 corrected the shared DTO and permission projection contract and added bounded cursor/safe-integer validation plus complete visible-scope unread aggregates. The related risks are not closed: server-side assignment authorization, database-bounded reads, transactional idempotency, concurrency ordering, UI integration, RLS, and release evidence remain assigned to R2-R7.
+
+## Stage 4B-2 Post-Closure Remediation R2 - 2026-07-12
+
+R2 implements bounded Supabase v2 list/detail RPCs, actor-scoped unread aggregates, and receipt mutation guards. Database role-matrix/RLS and EXPLAIN verification remain open because Docker is unavailable; R3-R7 remain assigned.
