@@ -1,6 +1,6 @@
 # Phase 85 Stage 4B-2 - Mesajlasma Eylem Plani
 
-Status: **Phase 0 documentation lock, Phase 1 domain/DTO/authorization projection, and Phase 2 receipt persistence/RLS are complete; Phase 3 bounded projection is next.**
+Status: **Phase 0 documentation lock, Phase 1 domain/DTO/authorization projection, Phase 2 receipt persistence/RLS, and Phase 3 bounded projection are complete; Phase 4 read APIs are next.**
 
 Baseline branch: `codex/phase-85-interstage-clinical-memory`
 
@@ -19,7 +19,7 @@ Stage 4B-2 owns the dietitian-facing conversation inbox and transcript workflow.
 1. Stage 4A Danisan Kontrol Paneli - complete.
 2. P85-IF-A through P85-IF-I and post-closure audit - complete.
 3. Stage 4B Uyari ve Bildirimler - complete locally; current RLS execution remains environment-blocked when Docker is unavailable.
-4. Stage 4B-2 Mesajlasma - this plan; Phase 0, Phase 1, and Phase 2 are complete, and Phase 3 is next.
+4. Stage 4B-2 Mesajlasma - this plan; Phase 0 through Phase 3 are complete, and Phase 4 is next.
 5. Stage 4C Diyetisyen Icin AI Chat - blocked until Stage 4B-2 closes.
 
 The internal dashboard section identifier remains `messages`. Only the visible label changes from the temporary Gorusme label to Mesajlasma. No permanent duplicate Gorusme entry may remain.
@@ -187,7 +187,11 @@ Phase 1 verification passed the dedicated 8-test file, the combined Stage 4B reg
 
 **Phase 2 completion record (2026-07-12):** migration `20260712140000_phase_85_stage_4b2_receipt_persistence_rls.sql` adds `conversation_read_receipts`, deterministic `conversation_sequence` backfill, actor-validating `p85_stage_4b2_mark_conversation_read_v1`, unread counting aligned with Phase 1 semantics, RLS select policy, lifecycle receipt deletion on client removal, Supabase store load/map/mark helpers, and fallback lifecycle receipt cleanup. No read API route, UI, or message mutation was added in this phase.
 
-Phase 2 verification passed the dedicated 2-test lifecycle file, the Phase 1 8-test regression file, and the full app suite (`143 files, 911 passed, 5 skipped`). `npm run test:rls` skipped 34/34 because Docker/Supabase was unavailable and is not counted as pass. The next authorized implementation unit is Phase 3.
+Phase 2 verification passed the dedicated 2-test lifecycle file, the Phase 1 8-test regression file, and the full app suite (`143 files, 911 passed, 5 skipped`). `npm run test:rls` skipped 34/34 because Docker/Supabase was unavailable and is not counted as pass.
+
+**Phase 3 completion record (2026-07-12):** `phase-85-stage-4b2-messaging.ts` centralizes bounded list/detail projection for fallback and Supabase-shaped sources, inbox unread badge formatting, scale fixtures, and fallback store helpers (`listFallbackConversations`, `getFallbackConversationDetail`). No read API route, UI, or message mutation was added in this phase.
+
+Phase 3 verification passed the dedicated 4-test messaging file, Phase 1/2 regression files, and the full app suite (`144 files, 915 passed, 5 skipped`). `npm run build` passed after restoring the `ConversationProjectionClient` import in `phase-85-stage-4b2-api.ts`. The next authorized implementation unit is Phase 4.
 
 ### Phase 3 - Bounded Conversation and Transcript Projection
 

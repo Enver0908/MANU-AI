@@ -4,9 +4,11 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 ## Current Status
 
-**2026-07-12 Stage 4B-2 Phase 2:** Conversation read receipt persistence, deterministic `conversation_sequence` backfill, monotonic actor-owned mark-read RPC, RLS, lifecycle receipt cleanup, and Supabase store wiring are implemented. Dedicated Phase 2 lifecycle tests passed 2/2; Phase 1 regression passed 8/8; full app passed 911 with 5 skips; build passed; lint has 0 errors and 3 pre-existing warnings. RLS remains environment-skipped (34/34) and is not counted as pass. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_2_RECEIPT_PERSISTENCE_RLS_EVIDENCE.md`. Phase 3 bounded projection is next; routes, UI, mutations, Stage 4C, production pilot, R-405, and real provider/channel/health-data paths remain closed.
+**2026-07-12 Stage 4B-2 Phase 3:** Bounded conversation list/detail transcript projection is implemented for fallback and Supabase-shaped sources, with inbox unread badge formatting, scale fixtures, and fallback store helpers. Dedicated Phase 3 tests passed 4/4; Phase 1 regression passed 8/8; Phase 2 lifecycle passed 2/2; full app passed 915 with 5 skips; build passed; lint has 0 errors and 3 pre-existing warnings. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_3_BOUNDED_PROJECTION_EVIDENCE.md`. Phase 4 read APIs are next; UI, mutations, Stage 4C, production pilot, R-405, and real provider/channel/health-data paths remain closed.
 
-**2026-07-12 Stage 4B-2 Phase 1:** superseded by Phase 2 closure above.
+**2026-07-12 Stage 4B-2 Phase 2:** superseded by Phase 3 closure above.
+
+**2026-07-12 Stage 4B-2 Phase 1:** superseded by Phase 3 closure above.
 
 **2026-07-12 Stage 4B post-closure remediation:** The Stage 4B implementation audit findings are resolved in code and evidence. Supabase alerts/notifications use bounded actor-aware v2 RPCs instead of full-state reads; target links, draft lifecycle, unsupported-media review, role boundaries, and route error handling are hardened; dietitian form persistence supplies the latest-response SLA input; and visual screenshots/keyboard checks cover real alert and notification rows. Core tests passed 234/234, app tests passed 901 with 5 skips, Stage 4B rehearsal passed 9/9, 79G/release verification passed, and visual verification passed 36/36. `npm run test:rls` currently skips 33 tests because the Docker Desktop Linux engine is unavailable; this is not counted as pass. Evidence: `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_SPEC.md`. Stage 4B-2 Mesajlasma remains next, Stage 4C remains blocked, production pilot remains `NO-GO`, and R-405 remains open.
 
@@ -66,7 +68,7 @@ P85-IF-D added complete transcript and human-control coordination for business-h
 
 This repository is a local SaaS/PWA pilot prototype and architecture workspace. It is not a production-connected system yet.
 
-**Latest implementation phase:** Phase 85 Stage 4B implementation and post-closure remediation are complete locally, and Stage 4B-2 Phase 1 domain/DTO/authorization projection is complete. Current RLS execution remains blocked by unavailable Docker. **Next work:** Stage 4B-2 Phase 2 receipt persistence/RLS; Stage 4C remains blocked until Stage 4B-2 closes. **Production pilot:** `NO-GO` (unchanged); R-405 remains open.
+**Latest implementation phase:** Phase 85 Stage 4B implementation and post-closure remediation are complete locally, and Stage 4B-2 Phase 3 bounded list/detail projection is complete. Current RLS execution remains blocked by unavailable Docker. **Next work:** Stage 4B-2 Phase 4 actor-aware read APIs; Stage 4C remains blocked until Stage 4B-2 closes. **Production pilot:** `NO-GO` (unchanged); R-405 remains open.
 
 **Phase 82 verification:** targeted Phase 82 tests passed (5 files, 31/31); Phase 82G records `repoLocalClosureComplete: true` with verification `blocked` because `npm run test:rls` remains skipped/pending when local Supabase is unavailable.
 
@@ -229,4 +231,4 @@ The canonical order is Stage 4B, then mandatory Stage 4B-2 Mesajlasma, then Stag
 
 ## Phase 85 Stage 4B-2 Phase 0 Documentation Lock - 2026-07-12
 
-The decision-complete Mesajlasma action plan is recorded in `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md`; Phase 0 evidence is recorded in `docs/PHASE_85_STAGE_4B_2_PHASE_0_DOCUMENTATION_EVIDENCE.md`; Phase 1 evidence is recorded in `docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`. Phase 1 now supplies bounded conversation DTOs, actor/assignment permissions, safe previews, sequence unread projection, and cursor/detail projection helpers. No migration, route, UI, mutation, or real integration changed. Stage 4B-2 Phase 2 is next; Stage 4C remains blocked; production pilot remains `NO-GO`; R-405 remains open.
+The decision-complete Mesajlasma action plan is recorded in `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md`; Phase 0 evidence is recorded in `docs/PHASE_85_STAGE_4B_2_PHASE_0_DOCUMENTATION_EVIDENCE.md`; Phase 1 evidence is recorded in `docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`; Phase 2 evidence is recorded in `docs/PHASE_85_STAGE_4B_2_PHASE_2_RECEIPT_PERSISTENCE_RLS_EVIDENCE.md`; Phase 3 evidence is recorded in `docs/PHASE_85_STAGE_4B_2_PHASE_3_BOUNDED_PROJECTION_EVIDENCE.md`. Phase 3 now supplies bounded list/detail projection for fallback and Supabase-shaped sources. No read API route, UI, mutation, or real integration changed in Phase 3. Stage 4B-2 Phase 4 read APIs are next; Stage 4C remains blocked; production pilot remains `NO-GO`; R-405 remains open.

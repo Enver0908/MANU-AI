@@ -58,6 +58,12 @@ import {
   projectSystemNotificationListItems,
   type NotificationListStatus,
 } from "./phase-85-stage-4b-api";
+import {
+  buildConversationDetailResponseFromAppState,
+  buildConversationListResponseFromAppState,
+  type ConversationDetailBuildInput,
+  type ConversationListBuildInput,
+} from "./phase-85-stage-4b2-messaging";
 import type { NotificationCategory, NotificationPriority } from "./phase-85-stage-4b-contracts";
 import type { ClinicalAlertFilterSeverity } from "./phase-85-stage-4b-alerts";
 import {
@@ -359,6 +365,24 @@ export function listFallbackNotifications(input: {
   const state = getFallbackState();
   const context = fallbackTenantContext(state);
   return buildSystemNotificationsListResponse(state, context, listFallbackAssignments(), input);
+}
+
+export function listFallbackConversations(input: ConversationListBuildInput = {}) {
+  const state = getFallbackState();
+  const context = fallbackTenantContext(state);
+  return buildConversationListResponseFromAppState(state, context, listFallbackAssignments(), input);
+}
+
+export function getFallbackConversationDetail(conversationId: string, input: ConversationDetailBuildInput = {}) {
+  const state = getFallbackState();
+  const context = fallbackTenantContext(state);
+  return buildConversationDetailResponseFromAppState(
+    state,
+    context,
+    listFallbackAssignments(),
+    conversationId,
+    input,
+  );
 }
 
 export function acknowledgeNotification(state: ManuAppState, notificationId: string) {

@@ -2,7 +2,9 @@
 
 ## Read This First
 
-Latest Phase 85 Stage 4B-2 status (2026-07-12): Phase 2 receipt persistence, sequence backfill, monotonic actor-owned read markers, RLS, lifecycle cleanup, and Supabase store wiring are complete. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_2_RECEIPT_PERSISTENCE_RLS_EVIDENCE.md`. Next work is Phase 3 bounded list/detail/read projections. Stage 4C remains blocked; production pilot remains `NO-GO`; R-405 remains open; all real provider/channel/health-data and production-operations paths remain closed.
+Latest Phase 85 Stage 4B-2 status (2026-07-12): Phase 3 bounded list/detail transcript projection is complete. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_3_BOUNDED_PROJECTION_EVIDENCE.md`. Next work is Phase 4 actor-aware read APIs (`/api/conversations/**`). Stage 4C remains blocked; production pilot remains `NO-GO`; R-405 remains open; all real provider/channel/health-data and production-operations paths remain closed.
+
+Latest Phase 85 Stage 4B-2 Phase 2 status (2026-07-12): superseded by Phase 3 closure above. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_2_RECEIPT_PERSISTENCE_RLS_EVIDENCE.md`.
 
 Latest Phase 85 Stage 4B-2 Phase 1 status (2026-07-12): superseded by Phase 2 closure above. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`.
 

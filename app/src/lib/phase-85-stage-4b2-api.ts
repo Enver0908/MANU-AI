@@ -8,13 +8,9 @@ import type {
   ConversationAssignmentAccess,
   ConversationAssignmentInput,
   ConversationAssignmentLevel,
-  ConversationClientStatusSource,
   ConversationDetailQuery,
-  ConversationDetailResponse,
-  ConversationInboxItem,
   ConversationListCursorPayload,
   ConversationListQuery,
-  ConversationListResponse,
   ConversationListStatus,
   ConversationMessageCursorPayload,
   ConversationMessageDirection,
@@ -24,14 +20,9 @@ import type {
   ConversationPermissions,
   ConversationProjectionClient,
   ConversationProjectionMessage,
-  ConversationProjectionSource,
   ConversationReadReceiptRecord,
-  ConversationSafeStatus,
-  ConversationSummaryDto,
 } from "./phase-85-stage-4b2-contracts";
 import {
-  CONVERSATION_ANCHOR_AFTER_COUNT,
-  CONVERSATION_ANCHOR_BEFORE_COUNT,
   CONVERSATION_CURSOR_VERSION,
   CONVERSATION_DETAIL_DEFAULT_PAGE_SIZE,
   CONVERSATION_DETAIL_MAX_PAGE_SIZE,
@@ -42,7 +33,6 @@ import {
   CONVERSATION_MAX_PREVIEW_LENGTH,
   CONVERSATION_MAX_QUERY_LENGTH,
   CONVERSATION_UNAVAILABLE_PREVIEW,
-  PHASE_85_STAGE_4B_2_API_VERSION,
 } from "./phase-85-stage-4b2-contracts";
 
 const CONTENT_UNAVAILABLE_STATUSES = new Set<MessageContentStatus>([
@@ -429,59 +419,6 @@ export function assertConversationOperationAllowed(
   }
 }
 
-function timestampValue(value: string | null) {
-  if (!value) return Number.NEGATIVE_INFINITY;
-  const parsed = Date.parse(value);
-  return Number.isNaN(parsed) ? Number.NEGATIVE_INFINITY : parsed;
-}
-
-function compareTimestampAscending(left: string | null, right: string | null) {
-  const leftValue = timestampValue(left);
-  const rightValue = timestampValue(right);
-  if (leftValue === rightValue) return 0;
-  if (leftValue === Number.NEGATIVE_INFINITY) return -1;
-  if (rightValue === Number.NEGATIVE_INFINITY) return 1;
-  return leftValue - rightValue;
-}
-
-function compareMessageChronologically(left: ConversationProjectionMessage, right: ConversationProjectionMessage) {
-  const byTime = compareTimestampAscending(left.createdAt, right.createdAt);
-  if (byTime !== 0) return byTime;
-
-  const leftSequence = left.conversationSequence;
-  const rightSequence = right.conversationSequence;
-  if (leftSequence !== rightSequence) {
-    if (leftSequence == null) return 1;
-    if (rightSequence == null) return -1;
-    return leftSequence - rightSequence;
-  }
-
-  return left.id.localeCompare(right.id);
-}
-
-function sortedConversationMessages(
-  source: ConversationProjectionSource,
-  conversationId: string,
-  tenantId: string,
-) {
-  return source.messages
-    .filter((message) => message.tenantId === tenantId && message.conversationId === conversationId)
-    .slice()
-    .sort(compareMessageChronologically);
-}
-
-function latestMessage(messages: readonly ConversationProjectionMessage[]) {
-  return messages.length ? messages[messages.length - 1] : null;
-}
-
-function isContentUnavailable(status: MessageContentStatus) {
-  return CONTENT_UNAVAILABLE_STATUSES.has(status);
-}
-
-function isUnreadEligibleContent(status: MessageContentStatus) {
-  return status !== "revoked" && status !== "redacted";
-}
-
 function normalizeContentStatus(message: Pick<ConversationProjectionMessage, "contentStatus">): MessageContentStatus {
   return message.contentStatus ?? "available";
 }
@@ -534,282 +471,12 @@ export function countConversationUnreadMessages(
   }).length;
 }
 
-function getActorReceipt(
-  source: ConversationProjectionSource,
-  actor: ConversationActorContext,
-  conversationId: string,
-) {
-  return (
-    source.receipts?.find(
-      (receipt) =>
-        receipt.tenantId === actor.tenantId &&
-        receipt.conversationId === conversationId &&
-        receipt.dietitianId === actor.dietitianId,
-    ) ?? null
-  );
+function isContentUnavailable(status: MessageContentStatus) {
+  return CONTENT_UNAVAILABLE_STATUSES.has(status);
 }
 
-function safeStatusForClient(client: ConversationClientStatusSource): ConversationSafeStatus {
-  if (
-    client.humanTakeoverLocked ||
-    client.redRiskLock.status === "locked" ||
-    client.yellowRiskHold.status === "active"
-  ) {
-    return "attention";
-  }
-  return client.aiStatus === "passive" ? "ai_passive" : "normal";
-}
-
-function projectConversationSummary(
-  conversation: ConversationProjectionSource["conversations"][number],
-  client: ConversationProjectionClient,
-  messages: readonly ConversationProjectionMessage[],
-): ConversationSummaryDto {
-  const latest = latestMessage(messages);
-  return {
-    id: conversation.id,
-    clientId: client.id,
-    clientFullName: client.fullName,
-    channel: conversation.channel,
-    revision: conversation.revision,
-    lastActivityAt: latest?.createdAt ?? null,
-    safeStatus: safeStatusForClient(client),
-  };
-}
-
-function compareInboxItems(left: Pick<ConversationInboxItem, "id" | "lastActivityAt">, right: Pick<ConversationInboxItem, "id" | "lastActivityAt">) {
-  const byActivity = compareTimestampAscending(right.lastActivityAt, left.lastActivityAt);
-  if (byActivity !== 0) return byActivity;
-  return right.id.localeCompare(left.id);
-}
-
-function isAfterListCursor(item: ConversationInboxItem, cursor: ConversationListCursorPayload) {
-  const byActivity = compareTimestampAscending(cursor.lastActivityAt, item.lastActivityAt);
-  if (byActivity !== 0) return byActivity > 0;
-  return item.id.localeCompare(cursor.conversationId) < 0;
-}
-
-function projectInboxItem(
-  source: ConversationProjectionSource,
-  actor: ConversationActorContext,
-  assignments: readonly ConversationAssignmentInput[],
-  conversation: ConversationProjectionSource["conversations"][number],
-  client: ConversationProjectionClient,
-): ConversationInboxItem {
-  const messages = sortedConversationMessages(source, conversation.id, actor.tenantId);
-  const receipt = getActorReceipt(source, actor, conversation.id);
-  const unreadCount = countConversationUnreadMessages(messages, receipt);
-  const permissions = resolveConversationPermissions({ actor, conversation, client, assignments });
-  const latest = latestMessage(messages);
-
-  return {
-    id: conversation.id,
-    clientId: client.id,
-    clientFullName: client.fullName,
-    channel: conversation.channel,
-    preview: normalizeConversationPreview(latest),
-    lastActivityAt: latest?.createdAt ?? null,
-    lastMessageId: latest?.id ?? null,
-    unreadCount,
-    hasUnread: unreadCount > 0,
-    safeStatus: safeStatusForClient(client),
-    permissions,
-  };
-}
-
-function matchesClientName(clientFullName: string, query: string) {
-  if (!query) return true;
-  return clientFullName.toLocaleLowerCase("tr-TR").includes(query.toLocaleLowerCase("tr-TR"));
-}
-
-function findConversationPageStart(
-  items: readonly ConversationInboxItem[],
-  cursor: ConversationListCursorPayload | null,
-) {
-  if (!cursor) return 0;
-  const cursorIndex = items.findIndex((item) => item.id === cursor.conversationId);
-  if (cursorIndex >= 0) return cursorIndex + 1;
-  return items.findIndex((item) => isAfterListCursor(item, cursor));
-}
-
-export function buildConversationListResponse(
-  source: ConversationProjectionSource,
-  actor: ConversationActorContext,
-  assignments: readonly ConversationAssignmentInput[],
-  input: ConversationListBuildInput = {},
-): ConversationListResponse {
-  const query = parseConversationListQuery({
-    status: input.status == null ? null : String(input.status),
-    query: input.query,
-    cursor: input.cursor,
-    limit: input.limit == null ? null : String(input.limit),
-  });
-  const clientsById = new Map(
-    source.clients
-      .filter((client) => client.tenantId === actor.tenantId)
-      .map((client) => [client.id, client]),
-  );
-
-  const projected = source.conversations
-    .filter((conversation) => conversation.tenantId === actor.tenantId)
-    .map((conversation) => {
-      const client = clientsById.get(conversation.clientId);
-      if (!client || client.lifecycleStatus !== "active") return null;
-      const permissions = resolveConversationPermissions({ actor, conversation, client, assignments });
-      if (!permissions.canRead) return null;
-      return projectInboxItem(source, actor, assignments, conversation, client);
-    })
-    .filter((item): item is ConversationInboxItem => item !== null)
-    .filter((item) => matchesClientName(item.clientFullName, query.query))
-    .filter((item) => query.status === "all" || item.hasUnread)
-    .sort(compareInboxItems);
-
-  const cursor = decodeConversationListCursor(query.cursor, {
-    status: query.status,
-    query: query.query,
-  });
-  const start = findConversationPageStart(projected, cursor);
-  const safeStart = start < 0 ? projected.length : start;
-  const items = projected.slice(safeStart, safeStart + query.limit);
-  const lastItem = items[items.length - 1];
-  const nextCursor =
-    lastItem && safeStart + items.length < projected.length
-      ? encodeConversationListCursor({
-          status: query.status,
-          query: query.query,
-          lastActivityAt: lastItem.lastActivityAt,
-          conversationId: lastItem.id,
-        })
-      : null;
-
-  return {
-    version: PHASE_85_STAGE_4B_2_API_VERSION,
-    generatedAt: input.generatedAt ?? new Date().toISOString(),
-    items,
-    nextCursor,
-    filteredTotal: projected.length,
-  };
-}
-
-function findMessageIndex(messages: readonly ConversationProjectionMessage[], messageId: string) {
-  return messages.findIndex((message) => message.id === messageId);
-}
-
-function cursorForMessage(
-  conversationId: string,
-  direction: ConversationMessageDirection,
-  message: ConversationProjectionMessage,
-) {
-  return encodeConversationMessageCursor({
-    direction,
-    conversationId,
-    messageId: message.id,
-    conversationSequence: message.conversationSequence ?? null,
-    createdAt: message.createdAt,
-  });
-}
-
-function resolveDetailWindow(
-  messages: readonly ConversationProjectionMessage[],
-  conversationId: string,
-  query: ConversationDetailQuery,
-) {
-  if (query.anchorMessageId) {
-    const anchorIndex = findMessageIndex(messages, query.anchorMessageId);
-    if (anchorIndex < 0) throw new AppDomainError(404, "message_not_found");
-    return {
-      start: Math.max(0, anchorIndex - CONVERSATION_ANCHOR_BEFORE_COUNT),
-      end: Math.min(messages.length, anchorIndex + CONVERSATION_ANCHOR_AFTER_COUNT + 1),
-    };
-  }
-
-  if (!query.cursor) {
-    return {
-      start: Math.max(0, messages.length - query.limit),
-      end: messages.length,
-    };
-  }
-
-  const cursor = decodeConversationMessageCursor(query.cursor, {
-    direction: query.direction,
-    conversationId,
-  });
-  if (!cursor) throw new AppDomainError(400, "invalid_cursor");
-  const boundaryIndex = findMessageIndex(messages, cursor.messageId);
-  if (boundaryIndex < 0) throw new AppDomainError(400, "invalid_cursor");
-
-  if (query.direction === "older") {
-    return {
-      start: Math.max(0, boundaryIndex - query.limit),
-      end: boundaryIndex,
-    };
-  }
-
-  return {
-    start: boundaryIndex + 1,
-    end: Math.min(messages.length, boundaryIndex + 1 + query.limit),
-  };
-}
-
-export function buildConversationDetailResponse(
-  source: ConversationProjectionSource,
-  actor: ConversationActorContext,
-  assignments: readonly ConversationAssignmentInput[],
-  conversationId: string,
-  input: ConversationDetailBuildInput = {},
-): ConversationDetailResponse {
-  const query = parseConversationDetailQuery({
-    direction: input.direction == null ? null : String(input.direction),
-    cursor: input.cursor,
-    anchorMessageId: input.anchorMessageId,
-    limit: input.limit == null ? null : String(input.limit),
-  });
-  const conversation = source.conversations.find(
-    (item) => item.tenantId === actor.tenantId && item.id === conversationId,
-  );
-  const client = conversation
-    ? source.clients.find(
-        (item) =>
-          item.tenantId === actor.tenantId &&
-          item.id === conversation.clientId &&
-          item.lifecycleStatus === "active",
-      )
-    : undefined;
-
-  if (!conversation || !client) throw new AppDomainError(404, "conversation_not_found");
-  const permissions = resolveConversationPermissions({ actor, conversation, client, assignments });
-  assertConversationReadable(permissions);
-
-  const messages = sortedConversationMessages(source, conversation.id, actor.tenantId);
-  const window = resolveDetailWindow(messages, conversation.id, query);
-  const visibleMessages = messages.slice(window.start, window.end);
-  const firstVisible = visibleMessages[0];
-  const lastVisible = visibleMessages[visibleMessages.length - 1];
-  const receipt = getActorReceipt(source, actor, conversation.id);
-
-  return {
-    version: PHASE_85_STAGE_4B_2_API_VERSION,
-    generatedAt: input.generatedAt ?? new Date().toISOString(),
-    conversation: projectConversationSummary(conversation, client, messages),
-    messages: visibleMessages.map(projectConversationMessage),
-    pagination: {
-      requestedDirection: query.direction,
-      anchorMessageId: query.anchorMessageId,
-      olderCursor:
-        window.start > 0 && firstVisible
-          ? cursorForMessage(conversation.id, "older", firstVisible)
-          : null,
-      newerCursor:
-        window.end < messages.length && lastVisible
-          ? cursorForMessage(conversation.id, "newer", lastVisible)
-          : null,
-      hasOlder: window.start > 0,
-      hasNewer: window.end < messages.length,
-    },
-    receipt,
-    unreadCount: countConversationUnreadMessages(messages, receipt),
-    permissions,
-  };
+function isUnreadEligibleContent(status: MessageContentStatus) {
+  return status !== "revoked" && status !== "redacted";
 }
 
 export function assertConversationId(value: string) {
@@ -818,26 +485,11 @@ export function assertConversationId(value: string) {
   return normalized;
 }
 
-export function projectConversationInboxItemForActor(
-  source: ConversationProjectionSource,
-  actor: ConversationActorContext,
-  assignments: readonly ConversationAssignmentInput[],
-  conversationId: string,
-): ConversationInboxItem {
-  const conversation = source.conversations.find(
-    (item) => item.tenantId === actor.tenantId && item.id === conversationId,
-  );
-  const client = conversation
-    ? source.clients.find((item) => item.tenantId === actor.tenantId && item.id === conversation.clientId)
-    : undefined;
-  if (!conversation || !client || client.lifecycleStatus !== "active") {
-    throw new AppDomainError(404, "conversation_not_found");
-  }
-  const permissions = resolveConversationPermissions({ actor, conversation, client, assignments });
-  assertConversationReadable(permissions);
-  return projectInboxItem(source, actor, assignments, conversation, client);
-}
-
-export function buildEmptyConversationProjectionSource(): ConversationProjectionSource {
-  return { conversations: [], clients: [], messages: [], receipts: [] };
-}
+export {
+  buildConversationDetailResponse,
+  buildConversationDetailResponseFromAppState,
+  buildConversationListResponse,
+  buildConversationListResponseFromAppState,
+  buildEmptyConversationProjectionSource,
+  projectConversationInboxItemForActor,
+} from "./phase-85-stage-4b2-messaging";
