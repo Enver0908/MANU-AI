@@ -545,3 +545,6 @@ The Stage 4B-2 consumer contract now separates AI activation from configuration,
 ## Stage 4B-2 Post-Closure Remediation R2 - 2026-07-12
 
 The messaging read boundary now uses append-only v2 RPCs with actor-scoped bounded projection, receipt guards, and SQL-authoritative unread totals. P85-IF authority and all external integration shutdowns remain unchanged. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R2_EVIDENCE.md`.
+## Stage 4B-2 Post-Closure Remediation R3 - 2026-07-12
+
+R3 adds no new clinical authority. It enforces actor/assignment authorization, conversation/client locking, revision checks, and exact idempotent mutation response persistence around the existing P85-IF-aware state delta. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R3_EVIDENCE.md`.

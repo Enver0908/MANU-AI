@@ -170,3 +170,6 @@ R1 corrected the shared DTO and permission projection contract and added bounded
 ## Stage 4B-2 Post-Closure Remediation R2 - 2026-07-12
 
 R2 implements bounded Supabase v2 list/detail RPCs, actor-scoped unread aggregates, and receipt mutation guards. Database role-matrix/RLS and EXPLAIN verification remain open because Docker is unavailable; R3-R7 remain assigned.
+## Stage 4B-2 Post-Closure Remediation R3 - 2026-07-12
+
+R3 addresses the implementation side of mutation authorization, transaction-scoped idempotency, and red/yellow ordering. R-4B2-01, R-4B2-02, and R-4B2-03 remain evidence-open until the real RLS/API matrix and concurrent database rehearsals pass. R4-R7 remain active.

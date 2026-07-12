@@ -1507,3 +1507,6 @@ R1 corrected the Stage 4B-2 domain/DTO/permission projection contract and is evi
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R2 - 2026-07-12
 
 R2 added bounded Supabase v2 list/detail projections, actor-scoped unread aggregates, and receipt mutation guards in an append-only migration. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R2_EVIDENCE.md`. RLS reset/role-matrix verification remains environment-blocked; R3 is next.
+## Phase 85 Stage 4B-2 Post-Closure Remediation R3 - 2026-07-12
+
+R3 implemented transaction-scoped idempotency and server-side authorization for conversation manual/draft mutations. The RLS environment gate remains open if Docker is unavailable. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R3_EVIDENCE.md`. **Next:** R4; Stage 4C remains blocked.

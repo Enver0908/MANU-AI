@@ -2449,3 +2449,6 @@ R1 is complete for the domain/DTO/permission projection layer. The next authoriz
 ## Stage 4B-2 Post-Closure Remediation R2 - 2026-07-12
 
 R2 bounded the Supabase list/detail projections and receipt read mutation through append-only v2 RPCs. The next authorized unit is R3; Stage 4C remains blocked until remediation evidence closes and RLS is run without skips.
+## Stage 4B-2 Post-Closure Remediation R3 - 2026-07-12
+
+R3 is complete for atomic authorized manual/draft mutations. R4 is next and owns hook, deep-link, responsive UI, and unread integration corrections. Stage 4C remains blocked until R1-R7 evidence closes.

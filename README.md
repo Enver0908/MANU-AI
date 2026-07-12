@@ -243,3 +243,6 @@ R1 is complete for the domain/DTO/permission projection contract. The split AI a
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R2 - 2026-07-12
 
 R2 adds append-only bounded Supabase v2 list/detail RPCs, actor-scoped unread aggregates, and receipt v2 authorization guards. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R2_EVIDENCE.md`. **Next:** R3; RLS remains environment-blocked, Stage 4C remains blocked, and production remains `NO-GO`.
+## Phase 85 Stage 4B-2 Post-Closure Remediation R3 - 2026-07-12
+
+R3 is complete for the atomic authorized mutation boundary. Manual replies and draft mutations now use a transaction-scoped idempotency reservation, server-side actor/assignment checks, client-before-conversation locking, red/yellow race rejection, and exact bounded response replay. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R3_EVIDENCE.md`. **Next:** R4; Stage 4C remains blocked. Production pilot remains `NO-GO`; R-405 remains open.

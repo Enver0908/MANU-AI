@@ -643,3 +643,6 @@ R1 is recorded as a local contract/projection correction only. It contributes no
 ## Stage 4B-2 Post-Closure Remediation R2 - 2026-07-12
 
 R2 is a local bounded-read/receipt implementation correction only. It contributes no production readiness approval; RLS reset and EXPLAIN evidence remain open. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R2_EVIDENCE.md`.
+## Stage 4B-2 Post-Closure Remediation R3 - 2026-07-12
+
+R3 contributes no production readiness approval. It corrects local atomic mutation/idempotency behavior while leaving the pilot `NO-GO`, R-405 open, and SQL/RLS/environment gates unresolved where verification is unavailable. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R3_EVIDENCE.md`.

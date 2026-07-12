@@ -76,6 +76,23 @@ describe("phase 85 stage 4b-2 verification", () => {
     expect(evidence.filteredTotal).toBeGreaterThan(STAGE_4B2_SCALE_TARGETS.defaultListPageSize);
   });
 
+  it("locks the R3 mutation RPC contract to one transaction and server-side scope", () => {
+    const migration = readRepoSnippet(
+      "app",
+      "supabase",
+      "migrations",
+      "20260712180000_phase_85_stage_4b2_r3_atomic_mutations.sql",
+    );
+    expect(migration).toContain("p85_stage_4b2_commit_conversation_mutation_v2");
+    expect(migration).toContain("on conflict (tenant_id, request_id) do nothing");
+    expect(migration).toContain("for update of cl");
+    expect(migration).toContain("p85_stage_4b2_actor_can_mutate_conversation");
+    expect(migration).toContain("p85_stage_4b2_assert_mutation_payload_scope");
+    expect(migration).toContain("red_lock_superseded");
+    expect(migration).toContain("set response_json = p_response_json");
+    expect(migration).toContain("to service_role");
+  });
+
   it("rejects Phase 86 references and embedded secret markers in tracked snippets", () => {
     const hygiene = evaluateStage4B2WorkspaceHygieneEvidence({
       action_plan: readRepoSnippet("docs", "PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md"),

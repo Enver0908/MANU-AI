@@ -1068,3 +1068,6 @@ R1 is complete for the domain/DTO/authorization projection contract. Evidence: `
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R2 - 2026-07-12
 
 R2 implementation is complete for bounded Supabase read RPCs and receipt/RLS guards. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R2_EVIDENCE.md`. The local RLS suite remains blocked by unavailable Docker and is not counted as pass. **Next:** R3; Stage 4C remains blocked.
+## Phase 85 Stage 4B-2 Post-Closure Remediation R3 - 2026-07-12
+
+R3 completed the server-side atomic mutation/idempotency correction for manual replies and draft actions. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R3_EVIDENCE.md`. R4 is the next authorized unit; Stage 4C remains blocked and production pilot remains `NO-GO`.

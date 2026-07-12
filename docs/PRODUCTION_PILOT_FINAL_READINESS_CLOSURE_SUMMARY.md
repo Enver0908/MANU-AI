@@ -389,3 +389,6 @@ R1 is complete at the contract/projection layer only. The production pilot remai
 ## Stage 4B-2 Post-Closure Remediation R2 - 2026-07-12
 
 R2 implementation is complete for bounded reads and receipt guards, but it does not close production readiness. RLS execution is skipped while Docker is unavailable; R-405 remains open and R3-R7 remain required.
+## Stage 4B-2 Post-Closure Remediation R3 - 2026-07-12
+
+R3 does not change final readiness: production remains `NO-GO`, R-405 remains open, and R4-R7 plus environment-level RLS evidence remain required.

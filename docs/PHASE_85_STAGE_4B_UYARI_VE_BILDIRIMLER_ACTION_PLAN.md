@@ -552,3 +552,6 @@ R1 corrected the downstream Stage 4B-2 domain/DTO/permission contract without ch
 ## Stage 4B-2 Post-Closure Remediation R2 - 2026-07-12
 
 R2 changed no Stage 4B alert/notification ownership. It only hardens the Stage 4B-2 Supabase bounded read and receipt persistence boundary through append-only v2 RPCs. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R2_EVIDENCE.md`; R3 is next.
+## Stage 4B-2 Post-Closure Remediation R3 - 2026-07-12
+
+R3 changes only the Stage 4B-2 conversation mutation boundary. Stage 4B alert/notification ownership and lifecycle remain unchanged. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R3_EVIDENCE.md`; R4 is next.

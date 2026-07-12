@@ -2902,3 +2902,6 @@ R1 is complete for the domain/DTO/permission contract. Evidence: `docs/PHASE_85_
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R2 - 2026-07-12
 
 R2 implementation is complete and evidenced in `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R2_EVIDENCE.md`. The next authorized unit is R3. Verify commit `88781e0` plus the R2 commit and a clean worktree before proceeding. RLS remains unverified because Docker is unavailable; do not claim the persistence gate green. Preserve production `NO-GO`, R-405 open, append-only migrations, and all real provider/channel/health-data shutdowns.
+## Phase 85 Stage 4B-2 Post-Closure Remediation R3 - 2026-07-12
+
+R3 is complete and committed as the atomic authorized mutation boundary. Continue with R4 only after verifying the R3 evidence and a clean worktree. R3 migration: `app/supabase/migrations/20260712180000_phase_85_stage_4b2_r3_atomic_mutations.sql`; evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R3_EVIDENCE.md`. Preserve production `NO-GO`, R-405 open, append-only migrations, and all real provider/channel/health-data shutdowns.

@@ -1131,3 +1131,6 @@ R1 contract corrections are complete and evidenced in `docs/PHASE_85_STAGE_4B_2_
 ## Stage 4B-2 Post-Closure Remediation R2 - 2026-07-12
 
 R2 implementation is evidenced in `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R2_EVIDENCE.md`. It does not close a production gate; RLS is still environment-blocked, production remains `NO-GO`, R-405 remains open, and R3-R7 remain required.
+## Stage 4B-2 Post-Closure Remediation R3 - 2026-07-12
+
+R3 is an implementation correction, not a pilot approval. Production remains `NO-GO`, R-405 remains open, R4-R7 remain required, and real integrations remain disabled. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R3_EVIDENCE.md`.

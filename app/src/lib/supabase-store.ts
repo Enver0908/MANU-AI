@@ -132,7 +132,7 @@ import {
   reviewSendManualFromYellowDraftInState,
 } from "./simulator";
 import {
-  buildConversationMutationResponse,
+  buildConversationMutationResponseFromState,
   resolveDraftMutationResultMessage,
 } from "./phase-85-stage-4b2-mutations";
 import { normalizeLanguageCode } from "./languages";
@@ -1596,49 +1596,12 @@ async function getSupabaseConversationMutationIdempotency(
   tenantId: string,
   requestId: string,
 ): Promise<ConversationMutationResponse | null> {
-  const supabase = requireSupabase();
-  const { data, error } = await supabase.rpc("p85_stage_4b2_get_conversation_mutation_idempotency_v1", {
+  const { data, error } = await requireSupabase().rpc("p85_stage_4b2_get_conversation_mutation_idempotency_v1", {
     p_tenant_id: tenantId,
     p_request_id: requestId,
   });
   if (error) throwControlledRpcError(error);
-  if (!data) return null;
-  return data as ConversationMutationResponse;
-}
-
-async function storeSupabaseConversationMutationIdempotency(
-  tenantId: string,
-  requestId: string,
-  operation: "manual_reply" | "draft_review",
-  conversationId: string,
-  response: ConversationMutationResponse,
-) {
-  const { error } = await requireSupabase().rpc("p85_stage_4b2_store_conversation_mutation_idempotency_v1", {
-    p_tenant_id: tenantId,
-    p_request_id: requestId,
-    p_operation: operation,
-    p_conversation_id: conversationId,
-    p_response_json: response,
-  });
-  if (error) throwControlledRpcError(error);
-}
-
-async function buildSupabaseConversationMutationResponse(
-  context: AppTenantContext,
-  conversationId: string,
-  operation: ConversationMutationResponse["operation"],
-  message: MessageRecord | null,
-) {
-  const { source, assignments } = await loadSupabaseConversationProjectionBundle(context, conversationId);
-  return buildConversationMutationResponse(
-    source,
-    conversationActorFromContext(context),
-    assignments,
-    operation,
-    conversationId,
-    message,
-    new Date().toISOString(),
-  );
+  return data ? (data as ConversationMutationResponse) : null;
 }
 
 export function scopeSupabaseState(
@@ -2124,21 +2087,27 @@ export async function addSupabaseManualReply(
     expectedConversationRevision: request.expectedConversationRevision,
     authorDietitianId: context.dietitianId,
   });
-  await commitStateDeltaRpc(requireSupabase(), "commit_manual_reply", state, nextState);
-  const response = await buildSupabaseConversationMutationResponse(
-    context,
-    request.conversationId,
+  const { assignments } = await loadSupabaseConversationProjectionBundle(context, request.conversationId);
+  const response = buildConversationMutationResponseFromState(
+    nextState,
+    conversationActorFromContext(context),
+    assignments,
     "manual_reply",
+    request.conversationId,
     message,
+    new Date().toISOString(),
   );
-  await storeSupabaseConversationMutationIdempotency(
-    context.tenantId,
+  return commitSupabaseConversationMutationRpc(
+    context,
     request.requestId,
     "manual_reply",
+    "manual_reply",
     request.conversationId,
+    null,
+    state,
+    nextState,
     response,
   );
-  return response;
 }
 
 export async function applySupabaseDraftMutation(
@@ -2188,21 +2157,27 @@ export async function applySupabaseDraftMutation(
     resultMessage = resolveDraftMutationResultMessage(request.action, draft, result.message);
   }
 
-  await commitStateDeltaRpc(requireSupabase(), "commit_draft_review", state, nextState);
-  const response = await buildSupabaseConversationMutationResponse(
-    context,
-    draft.conversationId,
+  const { assignments } = await loadSupabaseConversationProjectionBundle(context, draft.conversationId);
+  const response = buildConversationMutationResponseFromState(
+    nextState,
+    conversationActorFromContext(context),
+    assignments,
     "draft_review",
+    draft.conversationId,
     resultMessage,
+    new Date().toISOString(),
   );
-  await storeSupabaseConversationMutationIdempotency(
-    context.tenantId,
+  return commitSupabaseConversationMutationRpc(
+    context,
     request.requestId,
     "draft_review",
+    request.action,
     draft.conversationId,
+    messageId,
+    state,
+    nextState,
     response,
   );
-  return response;
 }
 
 /** @deprecated Use addSupabaseManualReply with bounded mutation request. */
@@ -3751,6 +3726,35 @@ async function commitStateDeltaRpc(
   }
 }
 
+async function commitSupabaseConversationMutationRpc(
+  context: AppTenantContext,
+  requestId: string,
+  operation: "manual_reply" | "draft_review",
+  action: "manual_reply" | "approve" | "edit_send" | "dismiss" | "review_send_manual",
+  conversationId: string,
+  messageId: string | null,
+  before: ManuAppState,
+  after: ManuAppState,
+  response: ConversationMutationResponse,
+) {
+  const payload = buildStateDeltaPayload(before, after);
+  const { data, error } = await requireSupabase().rpc("p85_stage_4b2_commit_conversation_mutation_v2", {
+    p_tenant_id: context.tenantId,
+    p_user_id: context.userId,
+    p_dietitian_id: context.dietitianId,
+    p_role: context.role,
+    p_request_id: requestId,
+    p_operation: operation,
+    p_action: action,
+    p_conversation_id: conversationId,
+    p_message_id: messageId,
+    p_payload: payload,
+    p_response_json: response,
+  });
+  if (error) throwControlledRpcError(error);
+  return data as ConversationMutationResponse;
+}
+
 function buildStateDeltaPayload(
   before: ManuAppState,
   after: ManuAppState,
@@ -4371,6 +4375,24 @@ function throwControlledRpcError(error: { message?: string }) {
   }
   if (message.includes("conversation_read_forbidden")) {
     throw new AppDomainError(403, "conversation_read_forbidden");
+  }
+  if (message.includes("conversation_mutation_forbidden")) {
+    throw new AppDomainError(403, "conversation_mutation_forbidden");
+  }
+  if (message.includes("idempotency_key_conflict")) {
+    throw new AppDomainError(409, "idempotency_key_conflict");
+  }
+  if (message.includes("red_lock_superseded")) {
+    throw new AppDomainError(409, "red_lock_superseded");
+  }
+  if (message.includes("mutation_scope_violation")) {
+    throw new AppDomainError(400, "mutation_scope_violation");
+  }
+  if (message.includes("mutation_operation_invalid")) {
+    throw new AppDomainError(400, "mutation_operation_invalid");
+  }
+  if (message.includes("mutation_request_invalid")) {
+    throw new AppDomainError(400, "mutation_request_invalid");
   }
   if (message.includes("expected_conversation_revision_required")) {
     throw new AppDomainError(400, "expected_conversation_revision_required");

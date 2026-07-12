@@ -64,3 +64,6 @@ Phase 6 may now add URL state, bounded client hooks, polling, and proper mutatio
 - Production pilot remains `NO-GO`; R-405 remains open; real integration paths remain closed.
 - Next authorized implementation unit is Phase 6.
 R2 also routes conversation read receipts through the append-only v2 bounded/authorized receipt RPC. RLS execution remains an explicit open verification gate because local Docker/Supabase is unavailable.
+## R3 Mutation Boundary Correction - 2026-07-12
+
+The historical Phase 5 implementation used post-commit idempotency persistence. R3 supersedes that first-party Supabase path with `p85_stage_4b2_commit_conversation_mutation_v2`, which reserves idempotency before domain work and stores the exact bounded response in the same transaction. Historical Phase 5 behavior remains evidence; R3 is the active mutation contract.

@@ -407,3 +407,6 @@ R1 updates the messaging consumer contract to split AI activation/configuration 
 ## Stage 4B-2 Post-Closure Remediation R2 - 2026-07-12
 
 R2 supplies the messaging consumer with SQL-authoritative unread aggregates and physically bounded list/detail payloads through v2 RPCs. No visual redesign, navigation, provider, or production-pilot behavior changed. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R2_EVIDENCE.md`.
+## Stage 4B-2 Post-Closure Remediation R3 - 2026-07-12
+
+R3 changes the backend mutation contract consumed by the messaging UI: first-party manual/draft actions now receive exact transaction-scoped idempotent responses and server-enforced role/assignment failures. No visual layout or navigation behavior is opened by R3. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R3_EVIDENCE.md`.

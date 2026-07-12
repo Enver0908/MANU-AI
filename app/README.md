@@ -489,3 +489,6 @@ R1 corrected the shared domain/DTO/permission projection contract: contract/API 
 ## Stage 4B-2 Post-Closure Remediation R2 - 2026-07-12
 
 R2 adds `20260712170000_phase_85_stage_4b2_r2_bounded_reads_rls.sql`, switches Supabase conversation list/detail/receipt calls to v2 RPCs, and carries SQL-authoritative unread aggregates into the bounded DTO. Evidence: `../docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R2_EVIDENCE.md`. **Next:** R3; RLS remains Docker-blocked and unclaimed.
+## Stage 4B-2 Post-Closure Remediation R3 - 2026-07-12
+
+R3 routes first-party manual replies and draft mutations through the atomic v2 mutation RPC. The RPC owns idempotency reservation/replay, actor/assignment authorization, target scope, client/conversation locking, red/yellow race rejection, and bounded response persistence. Evidence: `../docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R3_EVIDENCE.md`. **Next:** R4.
