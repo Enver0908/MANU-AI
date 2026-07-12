@@ -305,6 +305,9 @@ function redactClientDataInState(
     ],
     dataRequests: [...state.dataRequests, dataRequest],
     channelDeliveries: state.channelDeliveries.filter((delivery) => delivery.clientId !== client.id),
+    conversationReadReceipts: state.conversationReadReceipts.filter(
+      (receipt) => !conversationIds.has(receipt.conversationId),
+    ),
   };
 
   return redactP85IfIClientScopedRecordsInState(

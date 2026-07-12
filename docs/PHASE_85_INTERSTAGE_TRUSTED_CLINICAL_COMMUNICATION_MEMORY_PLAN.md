@@ -482,6 +482,10 @@ Stage 4B-2 now has a decision-complete consumer plan at `docs/PHASE_85_STAGE_4B_
 
 The yellow reviewed-manual command must preserve non-green AI draft blocking, and red manual reply must preserve the atomic activation-only closure rule. Phase 0 changes no P85-IF runtime or migration.
 
+## Stage 4B-2 Consumer Phase 2 Handoff - 2026-07-12
+
+Phase 2 added durable per-actor conversation read receipts, deterministic sequence backfill, monotonic mark-read RPC/RLS, lifecycle receipt cleanup, and Supabase store wiring without reopening P85-IF provider/channel paths or adding messaging read APIs/UI. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_2_RECEIPT_PERSISTENCE_RLS_EVIDENCE.md`. Phase 3 bounded projection is next.
+
 ## Stage 4B-2 Consumer Phase 1 Handoff - 2026-07-12
 
 Phase 1 implemented only the consumer-side domain foundation: assignment access-level types, bounded DTOs, actor-aware permissions, safe preview/message projection, sequence unread calculation, and versioned cursors. It did not reopen or modify P85-IF persistence, lifecycle, provider/channel, or health-data paths. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`. Phase 2 receipt persistence/RLS is next.

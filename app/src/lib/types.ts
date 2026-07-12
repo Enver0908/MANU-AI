@@ -3,6 +3,7 @@ import type {
   NotificationPriority,
   NotificationReceiptRecord,
 } from "./phase-85-stage-4b-contracts";
+import type { ConversationReadReceiptRecord } from "./phase-85-stage-4b2-contracts";
 
 export type AiStatus = "active" | "passive";
 export type AiMode = "autopilot" | "copilot" | "manual" | "paused";
@@ -948,6 +949,7 @@ export type ManuAppState = {
   auditEvents: AuditEventRecord[];
   notifications: NotificationRecord[];
   notificationReceipts: NotificationReceiptRecord[];
+  conversationReadReceipts: ConversationReadReceiptRecord[];
   inboundQuarantines: InboundQuarantineRecord[];
   channelAccountBindings: ChannelAccountBindingRecord[];
   channelActorBindings: ChannelActorBindingRecord[];
@@ -1014,3 +1016,4 @@ export type {
   Stage4BNavigationTarget,
   SystemNotificationListItem,
 } from "./phase-85-stage-4b-contracts";
+export type { ConversationReadReceiptRecord } from "./phase-85-stage-4b2-contracts";

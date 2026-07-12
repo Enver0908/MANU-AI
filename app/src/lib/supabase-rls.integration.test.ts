@@ -1430,6 +1430,170 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     await resetSupabaseState();
   }, 30000);
 
+  it("persists actor-owned monotonic conversation read receipts with role boundaries", async () => {
+    await resetSupabaseState();
+    const now = new Date().toISOString();
+    const inboundTwoId = "00000000-0000-4000-8000-000000000962";
+    const inboundThreeId = "00000000-0000-4000-8000-000000000963";
+    const revokedInboundId = "00000000-0000-4000-8000-000000000964";
+
+    await checked(
+      admin.from("messages").insert([
+        {
+          id: inboundTwoId,
+          tenant_id: TEST_TENANT_ID,
+          conversation_id: TEST_CONVERSATION_ID,
+          sender: "client",
+          origin: "client_inbound",
+          body: "Second inbound",
+          conversation_sequence: 2,
+          created_at: now,
+        },
+        {
+          id: inboundThreeId,
+          tenant_id: TEST_TENANT_ID,
+          conversation_id: TEST_CONVERSATION_ID,
+          sender: "client",
+          origin: "client_inbound",
+          body: "Third inbound",
+          conversation_sequence: 3,
+          created_at: now,
+        },
+        {
+          id: revokedInboundId,
+          tenant_id: TEST_TENANT_ID,
+          conversation_id: TEST_CONVERSATION_ID,
+          sender: "client",
+          origin: "client_inbound",
+          body: "Revoked inbound",
+          conversation_sequence: 4,
+          content_status: "revoked",
+          created_at: now,
+        },
+      ]),
+    );
+
+    await checked(
+      admin
+        .from("messages")
+        .update({ conversation_sequence: 1 })
+        .eq("tenant_id", TEST_TENANT_ID)
+        .eq("id", TEST_MESSAGE_ID),
+    );
+
+    const owner = await signIn("rls-member@manu.local");
+    const assistant = await signIn("rls-assistant@manu.local");
+    const auditor = await signIn("rls-auditor@manu.local");
+
+    const firstRead = await owner.rpc("p85_stage_4b2_mark_conversation_read_v1", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_user_id: memberUserId,
+      p_dietitian_id: TEST_DIETITIAN_ID,
+      p_role: "owner",
+      p_conversation_id: TEST_CONVERSATION_ID,
+      p_through_sequence: 1,
+    });
+    expect(firstRead.error).toBeNull();
+    expect(firstRead.data?.[0]?.last_read_sequence).toBe(1);
+    expect(Number(firstRead.data?.[0]?.unread_count)).toBe(2);
+
+    const backwardRead = await owner.rpc("p85_stage_4b2_mark_conversation_read_v1", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_user_id: memberUserId,
+      p_dietitian_id: TEST_DIETITIAN_ID,
+      p_role: "owner",
+      p_conversation_id: TEST_CONVERSATION_ID,
+      p_through_sequence: 1,
+    });
+    expect(backwardRead.error).toBeNull();
+    expect(backwardRead.data?.[0]?.last_read_sequence).toBe(1);
+
+    const fullRead = await owner.rpc("p85_stage_4b2_mark_conversation_read_v1", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_user_id: memberUserId,
+      p_dietitian_id: TEST_DIETITIAN_ID,
+      p_role: "owner",
+      p_conversation_id: TEST_CONVERSATION_ID,
+      p_through_sequence: 3,
+    });
+    expect(fullRead.error).toBeNull();
+    expect(fullRead.data?.[0]?.last_read_sequence).toBe(3);
+    expect(Number(fullRead.data?.[0]?.unread_count)).toBe(0);
+
+    const assistantRead = await assistant.rpc("p85_stage_4b2_mark_conversation_read_v1", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_user_id: assistantUserId,
+      p_dietitian_id: ASSISTANT_DIETITIAN_ID,
+      p_role: "assistant",
+      p_conversation_id: TEST_CONVERSATION_ID,
+      p_through_sequence: 2,
+    });
+    expect(assistantRead.error).toBeNull();
+    expect(assistantRead.data?.[0]?.last_read_sequence).toBe(2);
+    expect(Number(assistantRead.data?.[0]?.unread_count)).toBe(1);
+
+    const ownerReceipts = await owner
+      .from("conversation_read_receipts")
+      .select("dietitian_id, last_read_sequence")
+      .eq("tenant_id", TEST_TENANT_ID)
+      .eq("conversation_id", TEST_CONVERSATION_ID);
+    expect(ownerReceipts.error).toBeNull();
+    expect(ownerReceipts.data).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ dietitian_id: TEST_DIETITIAN_ID, last_read_sequence: 3 }),
+        expect.objectContaining({ dietitian_id: ASSISTANT_DIETITIAN_ID, last_read_sequence: 2 }),
+      ]),
+    );
+
+    const auditorRead = await auditor.rpc("p85_stage_4b2_mark_conversation_read_v1", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_user_id: auditorUserId,
+      p_dietitian_id: AUDITOR_DIETITIAN_ID,
+      p_role: "auditor",
+      p_conversation_id: TEST_CONVERSATION_ID,
+      p_through_sequence: 1,
+    });
+    expect(auditorRead.error?.message).toMatch(/conversation_not_found/i);
+
+    const auditorReceipts = await auditor
+      .from("conversation_read_receipts")
+      .select("conversation_id")
+      .eq("tenant_id", TEST_TENANT_ID);
+    expect(auditorReceipts.error).toBeNull();
+    expect(auditorReceipts.data).toEqual([]);
+
+    const crossTenantRead = await owner.rpc("p85_stage_4b2_mark_conversation_read_v1", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_user_id: memberUserId,
+      p_dietitian_id: TEST_DIETITIAN_ID,
+      p_role: "owner",
+      p_conversation_id: OTHER_CONVERSATION_ID,
+      p_through_sequence: 1,
+    });
+    expect(crossTenantRead.error?.message).toMatch(/conversation_not_found/i);
+
+    const invalidSequence = await owner.rpc("p85_stage_4b2_mark_conversation_read_v1", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_user_id: memberUserId,
+      p_dietitian_id: TEST_DIETITIAN_ID,
+      p_role: "owner",
+      p_conversation_id: TEST_CONVERSATION_ID,
+      p_through_sequence: 99,
+    });
+    expect(invalidSequence.error?.message).toMatch(/conversation_read_sequence_invalid/i);
+
+    const directInsert = await assistant.from("conversation_read_receipts").insert({
+      tenant_id: TEST_TENANT_ID,
+      conversation_id: TEST_CONVERSATION_ID,
+      dietitian_id: ASSISTANT_DIETITIAN_ID,
+      last_read_sequence: 1,
+      read_at: now,
+    });
+    expect(directInsert.error?.message).toMatch(/row-level security/i);
+
+    await resetSupabaseState();
+  }, 30000);
+
   it("uses atomic context intake RPCs with client-safe proposal guards", async () => {
     await resetSupabaseState();
     const state = await loadSupabaseState();
@@ -2589,6 +2753,7 @@ async function cleanup(admin: SupabaseClient) {
   await admin.from("channel_deliveries").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("inbound_quarantines").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("notification_receipts").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("conversation_read_receipts").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("notifications").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("data_requests").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("client_ai_status_events").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);

@@ -105,8 +105,10 @@ import type {
   RiskAssessmentRecord,
   SimulationRequest,
   SupportedLanguageCode,
+  TenantRole,
   VoiceSampleStatus,
 } from "./types";
+import type { ConversationReadReceiptRecord } from "./phase-85-stage-4b2-contracts";
 import { normalizeLanguageCode } from "./languages";
 import { processWhatsAppMockWebhookInState } from "./whatsapp-mock-webhook";
 import { createDefaultChannelAdapterRollbackControls } from "./channel-adapter-rollback";
@@ -329,6 +331,15 @@ type DbNotificationReceipt = {
   dietitian_id: string;
   read_at: string | null;
   acknowledged_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
+type DbConversationReadReceipt = {
+  tenant_id: string;
+  conversation_id: string;
+  dietitian_id: string;
+  last_read_sequence: number;
+  read_at: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -747,6 +758,9 @@ export async function loadSupabaseState(context = demoTenantContext()) {
     handoffsResult,
     notificationsResult,
     notificationReceiptsResult,
+    conversationReadReceiptsResult,
+    tenantDietitiansResult,
+    tenantMembershipsResult,
     dataRequestsResult,
     internalCopilotMessagesResult,
     internalCopilotToolCallsResult,
@@ -786,6 +800,9 @@ export async function loadSupabaseState(context = demoTenantContext()) {
     supabase.from("handoff_cases").select("*").eq("tenant_id", context.tenantId).order("created_at"),
     supabase.from("notifications").select("*").eq("tenant_id", context.tenantId).order("created_at"),
     supabase.from("notification_receipts").select("*").eq("tenant_id", context.tenantId).order("updated_at"),
+    supabase.from("conversation_read_receipts").select("*").eq("tenant_id", context.tenantId).order("updated_at"),
+    supabase.from("dietitians").select("id, auth_user_id").eq("tenant_id", context.tenantId),
+    supabase.from("tenant_memberships").select("user_id, role").eq("tenant_id", context.tenantId),
     supabase.from("data_requests").select("*").eq("tenant_id", context.tenantId).order("created_at"),
     supabase.from("internal_copilot_messages").select("*").eq("tenant_id", context.tenantId).order("created_at"),
     supabase.from("internal_copilot_tool_calls").select("*").eq("tenant_id", context.tenantId).order("created_at"),
@@ -836,6 +853,9 @@ export async function loadSupabaseState(context = demoTenantContext()) {
   throwIfError(handoffsResult.error);
   throwIfError(notificationsResult.error);
   throwIfError(notificationReceiptsResult.error);
+  throwIfError(conversationReadReceiptsResult.error);
+  throwIfError(tenantDietitiansResult.error);
+  throwIfError(tenantMembershipsResult.error);
   throwIfError(dataRequestsResult.error);
   throwIfError(internalCopilotMessagesResult.error);
   throwIfError(internalCopilotToolCallsResult.error);
@@ -864,6 +884,10 @@ export async function loadSupabaseState(context = demoTenantContext()) {
 
   const channels = channelsResult.data || [];
   const memories = memoriesResult.data || [];
+  const dietitianRoleById = buildDietitianRoleMap(
+    tenantDietitiansResult.data || [],
+    tenantMembershipsResult.data || [],
+  );
   const scopedState = scopeSupabaseState(
     normalizeNotificationsInState({
       tenant: {
@@ -898,6 +922,9 @@ export async function loadSupabaseState(context = demoTenantContext()) {
       handoffCases: (handoffsResult.data || []).map(mapHandoff),
       notifications: (notificationsResult.data || []).map(mapNotification),
       notificationReceipts: (notificationReceiptsResult.data || []).map(mapNotificationReceipt),
+      conversationReadReceipts: (conversationReadReceiptsResult.data || []).map((receipt) =>
+        mapConversationReadReceipt(receipt, dietitianRoleById),
+      ),
       inboundQuarantines: (inboundQuarantinesResult.data || []).map(mapInboundQuarantine),
       channelAccountBindings: (channelAccountBindingsResult.data || []).map(mapChannelAccountBinding),
       channelActorBindings: (channelActorBindingsResult.data || []).map(mapChannelActorBinding),
@@ -1121,6 +1148,7 @@ export async function loadSupabaseWindowedDashboardPayload(
       handoffCases: (handoffsResult.data || []).map(mapHandoff),
       notifications: (notificationsResult.data || []).map(mapNotification),
       notificationReceipts: [],
+      conversationReadReceipts: [],
       inboundQuarantines: [],
       channelAccountBindings: [],
       channelActorBindings: [],
@@ -1408,6 +1436,7 @@ async function loadSupabaseClientOperationState(
       handoffCases: mergeById([...(handoffsResult.data || []), ...(requiredHandoffResult.data || [])]).map(mapHandoff),
       notifications: [],
       notificationReceipts: [],
+      conversationReadReceipts: [],
       inboundQuarantines: [],
       channelAccountBindings: [],
       channelActorBindings: [],
@@ -1739,6 +1768,7 @@ async function loadSupabaseClientCreateContext(context: AppTenantContext) {
       auditEvents: [],
       notifications: [],
       notificationReceipts: [],
+      conversationReadReceipts: [],
       inboundQuarantines: [],
       channelAccountBindings: [],
       channelActorBindings: [],
@@ -2138,6 +2168,52 @@ export async function markSupabaseNotificationRead(notificationId: string, conte
   });
   if (error) throwControlledRpcError(error);
   return buildSupabaseNotificationMutationResponse(context, notificationId);
+}
+
+export type SupabaseConversationReadMutationResult = {
+  conversationId: string;
+  dietitianId: string;
+  actorRole: TenantRole;
+  lastReadSequence: number;
+  readAt: string | null;
+  unreadCount: number;
+};
+
+export async function markSupabaseConversationRead(
+  conversationId: string,
+  throughSequence: number,
+  context = demoTenantContext(),
+): Promise<SupabaseConversationReadMutationResult> {
+  const { data, error } = await requireSupabase().rpc("p85_stage_4b2_mark_conversation_read_v1", {
+    p_tenant_id: context.tenantId,
+    p_user_id: context.userId,
+    p_dietitian_id: context.dietitianId,
+    p_role: context.role,
+    p_conversation_id: conversationId,
+    p_through_sequence: throughSequence,
+  });
+  if (error) throwControlledRpcError(error);
+  const row = (Array.isArray(data) ? data[0] : data) as
+    | {
+        conversation_id: string;
+        dietitian_id: string;
+        actor_role: TenantRole;
+        last_read_sequence: number;
+        read_at: string | null;
+        unread_count: number;
+      }
+    | undefined;
+  if (!row) {
+    throw new AppDomainError(409, "conversation_read_mutation_empty");
+  }
+  return {
+    conversationId: row.conversation_id,
+    dietitianId: row.dietitian_id,
+    actorRole: row.actor_role,
+    lastReadSequence: Number(row.last_read_sequence),
+    readAt: row.read_at,
+    unreadCount: Number(row.unread_count),
+  };
 }
 
 export async function acknowledgeSupabaseNotification(notificationId: string, context = demoTenantContext()) {
@@ -3131,6 +3207,7 @@ async function deleteDemoData(supabase: SupabaseClient, tenantId = DEMO_TENANT_U
     "internal_copilot_tool_calls",
     "data_requests",
     "notification_receipts",
+    "conversation_read_receipts",
     "notifications",
     "channel_deliveries",
     "context_intake_proposals",
@@ -3950,6 +4027,9 @@ function throwControlledRpcError(error: { message?: string }) {
   }
   if (message.includes("red_risk_lock_not_active_for_handoff")) {
     throw new AppDomainError(409, "red_risk_lock_not_active_for_handoff");
+  }
+  if (message.includes("conversation_read_sequence_invalid")) {
+    throw new AppDomainError(400, "conversation_read_sequence_invalid");
   }
   if (message.includes("notification_receipt_mutation_forbidden")) {
     throw new AppDomainError(409, "notification_receipt_mutation_forbidden");
@@ -4995,6 +5075,34 @@ function mapNotificationReceipt(receipt: DbNotificationReceipt): NotificationRec
     dietitianId: receipt.dietitian_id,
     readAt: receipt.read_at,
     acknowledgedAt: receipt.acknowledged_at,
+    createdAt: receipt.created_at,
+    updatedAt: receipt.updated_at,
+  };
+}
+
+function buildDietitianRoleMap(
+  dietitians: Array<{ id: string; auth_user_id: string | null }>,
+  memberships: Array<{ user_id: string; role: string }>,
+): Map<string, TenantRole> {
+  const roleByUserId = new Map(memberships.map((membership) => [membership.user_id, membership.role as TenantRole]));
+  return new Map(
+    dietitians
+      .filter((dietitian) => dietitian.auth_user_id)
+      .map((dietitian) => [dietitian.id, roleByUserId.get(dietitian.auth_user_id!) ?? "dietitian"]),
+  );
+}
+
+function mapConversationReadReceipt(
+  receipt: DbConversationReadReceipt,
+  dietitianRoleById: Map<string, TenantRole>,
+): ConversationReadReceiptRecord {
+  return {
+    tenantId: receipt.tenant_id,
+    conversationId: receipt.conversation_id,
+    dietitianId: receipt.dietitian_id,
+    actorRole: dietitianRoleById.get(receipt.dietitian_id) ?? "dietitian",
+    lastReadSequence: Number(receipt.last_read_sequence),
+    readAt: receipt.read_at,
     createdAt: receipt.created_at,
     updatedAt: receipt.updated_at,
   };
