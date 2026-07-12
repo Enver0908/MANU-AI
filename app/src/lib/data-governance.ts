@@ -137,7 +137,7 @@ export function buildClientScopedExport(state: ManuAppState, clientId: string): 
       ),
       handoffCases: handoffs,
       notifications: state.notifications.filter(
-        (notification) => notification.entityType === "handoff_case" && handoffIds.has(notification.entityId),
+        (notification) => notification.clientId === client.id || handoffIds.has(notification.handoffId ?? notification.entityId),
       ),
       dataRequests: state.dataRequests.filter((request) => request.clientId === client.id),
       auditEvents: state.auditEvents.filter(
@@ -275,7 +275,10 @@ function redactClientDataInState(
         : handoff,
     ),
     notifications: state.notifications.map((notification) =>
-      state.handoffCases.some((handoff) => handoff.clientId === client.id && handoff.id === notification.entityId)
+      (notification.clientId === client.id ||
+        state.handoffCases.some(
+          (handoff) => handoff.clientId === client.id && handoff.id === (notification.handoffId ?? notification.entityId),
+        ))
         ? { ...notification, title: "Handoff: anonymized client", body: "Client data anonymized; review audit record." }
         : notification,
     ),

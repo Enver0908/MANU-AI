@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
-import { getFallbackState, markNotificationRead, saveFallbackState } from "@/lib/app-state-store";
+import { markFallbackNotificationRead } from "@/lib/app-state-store";
 import { domainErrorResponse } from "@/lib/app-errors";
 import { authErrorResponse, requireCapability, resolveAppTenantContext } from "@/lib/auth-context";
 import { isSupabaseStoreConfigured, markSupabaseNotificationRead } from "@/lib/supabase-store";
 
 export async function POST(_request: Request, context: { params: Promise<{ id: string }> }) {
   const { id } = await context.params;
-  
+
   if (isSupabaseStoreConfigured()) {
     try {
       const tenantContext = await resolveAppTenantContext();
@@ -22,8 +22,7 @@ export async function POST(_request: Request, context: { params: Promise<{ id: s
   }
 
   try {
-    const state = getFallbackState();
-    return NextResponse.json(saveFallbackState(markNotificationRead(state, id)));
+    return NextResponse.json(markFallbackNotificationRead(id));
   } catch (error) {
     return domainErrorResponse(error);
   }

@@ -1,4 +1,9 @@
 import { AppDomainError } from "./app-errors";
+import {
+  buildStage4BDedupeKey,
+  buildStage4BNotificationSeed,
+  upsertSystemNotificationInState,
+} from "./phase-85-stage-4b-notifications";
 import type { ManuAppState, MessageRecord, NotificationRecord } from "./types";
 import { resolveLegacyRetrievalEligibility } from "./phase-85-if-b-provenance-model";
 
@@ -71,24 +76,32 @@ export function buildStructuredRecordUpdateNotification(
   createdAt: string,
 ): NotificationRecord {
   const panelLabel = structuredPanelLabel(signal.targetPanel);
-  return {
+  return buildStage4BNotificationSeed({
     id: crypto.randomUUID(),
     tenantId,
     type: "system",
+    kind: "structured_record_update_required",
     entityType: "client",
     entityId: clientId,
+    clientId,
+    messageId: signal.sourceMessageId,
     title: "Structured record update required",
     body: `WhatsApp instruction ${signal.sourceMessageId} requires a ${panelLabel} update before related AI intents can proceed.`,
     read: false,
     acknowledgedAt: null,
-    dedupeKey: `p85-if-e:structured:${clientId}:${signal.targetPanel}:${signal.sourceMessageId}`,
+    dedupeKey: buildStage4BDedupeKey({
+      kind: "structured_record_update_required",
+      scopeId: clientId,
+      entityId: signal.targetPanel,
+      sourceId: signal.sourceMessageId,
+    }),
     sourceMessageId: signal.sourceMessageId,
     targetPanel: signal.targetPanel,
     baselineRevision: signal.baselineRevision,
     resolvedAt: null,
     resolvedByDietitianId: null,
     createdAt,
-  };
+  });
 }
 
 export function buildAmbiguousSourceReviewNotification(
@@ -97,18 +110,26 @@ export function buildAmbiguousSourceReviewNotification(
   signal: AmbiguousCompetingSourceSignal,
   createdAt: string,
 ): NotificationRecord {
-  return {
+  return buildStage4BNotificationSeed({
     id: crypto.randomUUID(),
     tenantId,
     type: "system",
+    kind: "competing_authoritative_instructions",
     entityType: "client",
     entityId: clientId,
+    clientId,
     title: "Competing dietitian instructions require review",
     body: `Ambiguous authoritative sources ${signal.sourceMessageIds.join(", ")} block affected intent resolution.`,
     read: false,
     acknowledgedAt: null,
+    dedupeKey: buildStage4BDedupeKey({
+      kind: "competing_authoritative_instructions",
+      scopeId: clientId,
+      entityId: clientId,
+      sourceId: signal.sourceMessageIds.join(":"),
+    }),
     createdAt,
-  };
+  });
 }
 
 export function extractP85IfEContextManifestSignals(contextManifest: Record<string, unknown> | null | undefined) {
@@ -121,6 +142,68 @@ export function extractP85IfEContextManifestSignals(contextManifest: Record<stri
   return { structuredRecordUpdates, ambiguousCompetingSources };
 }
 
+export function applyP85IfEHistoricalRetrievalNotifications(
+  state: ManuAppState,
+  input: {
+    clientId: string;
+    contextManifest?: Record<string, unknown> | null;
+    createdAt: string;
+  },
+): ManuAppState {
+  const { structuredRecordUpdates, ambiguousCompetingSources } = extractP85IfEContextManifestSignals(
+    input.contextManifest,
+  );
+  const client = state.clients.find((item) => item.id === input.clientId);
+  let next = state;
+
+  for (const signal of structuredRecordUpdates) {
+    const candidate = buildStructuredRecordUpdateNotification(state.tenant.id, input.clientId, signal, input.createdAt);
+    next = upsertSystemNotificationInState(
+      next,
+      {
+        kind: "structured_record_update_required",
+        tenantId: state.tenant.id,
+        type: "system",
+        entityType: "client",
+        entityId: input.clientId,
+        clientId: input.clientId,
+        messageId: signal.sourceMessageId,
+        sourceMessageId: signal.sourceMessageId,
+        targetPanel: signal.targetPanel,
+        baselineRevision: signal.baselineRevision,
+        dedupeKey: candidate.dedupeKey ?? undefined,
+        title: candidate.title,
+        body: candidate.body,
+        createdAt: input.createdAt,
+      },
+      input.createdAt,
+    );
+  }
+
+  for (const signal of ambiguousCompetingSources) {
+    const candidate = buildAmbiguousSourceReviewNotification(state.tenant.id, input.clientId, signal, input.createdAt);
+    next = upsertSystemNotificationInState(
+      next,
+      {
+        kind: "competing_authoritative_instructions",
+        tenantId: state.tenant.id,
+        type: "system",
+        entityType: "client",
+        entityId: input.clientId,
+        clientId: input.clientId,
+        baselineRevision: client?.contextRevision ?? null,
+        dedupeKey: candidate.dedupeKey ?? undefined,
+        title: candidate.title,
+        body: candidate.body,
+        createdAt: input.createdAt,
+      },
+      input.createdAt,
+    );
+  }
+
+  return next;
+}
+
 export function appendP85IfEHistoricalRetrievalNotifications(input: {
   notifications: NotificationRecord[];
   tenantId: string;
@@ -128,28 +211,27 @@ export function appendP85IfEHistoricalRetrievalNotifications(input: {
   contextManifest?: Record<string, unknown> | null;
   createdAt: string;
 }): NotificationRecord[] {
-  const { structuredRecordUpdates, ambiguousCompetingSources } = extractP85IfEContextManifestSignals(
-    input.contextManifest,
-  );
-  const next = [...input.notifications];
+  const base = {
+    tenant: { id: input.tenantId, name: "tenant", slug: "tenant", createdAt: input.createdAt },
+    notifications: input.notifications,
+    handoffCases: [],
+    messages: [],
+    conversations: [],
+    clients: [
+      {
+        id: input.clientId,
+        tenantId: input.tenantId,
+        contextRevision: 1,
+        fullName: "Client",
+      },
+    ],
+  } as unknown as ManuAppState;
 
-  for (const signal of structuredRecordUpdates) {
-    const candidate = buildStructuredRecordUpdateNotification(
-      input.tenantId,
-      input.clientId,
-      signal,
-      input.createdAt,
-    );
-    const alreadyOpen = next.some(
-      (notification) => notification.dedupeKey === candidate.dedupeKey && notification.resolvedAt == null,
-    );
-    if (!alreadyOpen) next.push(candidate);
-  }
-  for (const signal of ambiguousCompetingSources) {
-    next.push(buildAmbiguousSourceReviewNotification(input.tenantId, input.clientId, signal, input.createdAt));
-  }
-
-  return next;
+  return applyP85IfEHistoricalRetrievalNotifications(base, {
+    clientId: input.clientId,
+    contextManifest: input.contextManifest,
+    createdAt: input.createdAt,
+  }).notifications;
 }
 
 export function resolveStructuredRecordUpdateNotificationInState(
@@ -160,7 +242,7 @@ export function resolveStructuredRecordUpdateNotificationInState(
 ): ManuAppState {
   const notification = state.notifications.find((item) => item.id === notificationId);
   if (!notification) throw new AppDomainError(404, "notification_not_found");
-  if (!notification.dedupeKey?.startsWith("p85-if-e:structured:") || notification.resolvedAt) {
+  if (!notification || notification.kind !== "structured_record_update_required" || notification.resolvedAt) {
     throw new AppDomainError(409, "structured_update_notification_not_resolvable");
   }
   const currentTargetRevision = resolveStructuredTargetRevision(

@@ -1,7 +1,7 @@
 # Phase 85: SiriusAI Frontend Redesign And Design System Spec
 
 Date: 2026-07-07
-Status: Stage 1 design foundation, Stage 2 shared component system, Stage 3 public/commercial entry integration, and Stage 4A Danisan Kontrol Paneli complete; Stage 3 is deployed to the hosted sandbox at `https://siriusai.store`. P85-IF is the mandatory cross-cutting foundation program between Stage 4A and Stage 4B. P85-IF-A through P85-IF-I are complete, and R6 lifecycle/RLS re-closure is verified. Work returns to Stage 4B Uyari ve Bildirimler.
+Status: Stage 1 design foundation, Stage 2 shared component system, Stage 3 public/commercial entry integration, and Stage 4A Danisan Kontrol Paneli complete; Stage 3 is deployed to the hosted sandbox at `https://siriusai.store`. P85-IF-A through P85-IF-I are complete. **Stage 4B Uyari ve Bildirimler is complete (2026-07-12).** Evidence: `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_EVIDENCE.md`. **Next:** Stage 4B-2 Mesajlasma.
 Production pilot: NO-GO.
 Clinical production GO: not in scope for Phase 85.
 R-405: Open unless technically remediated through the Phase 22 procedure or formally accepted by external engineering/security approval.
@@ -44,13 +44,17 @@ Stage 4A changed dashboard danisan kontrol paneli UI only. It does not alter bac
 
 ## Stage 4B - Uyari ve Bildirimler
 
-Status: pending and blocked on the approved P85-IF remediation sequence. This stage resumes as the next Phase 85 planning target only after that sequence closes.
+Status: **complete (2026-07-12)**. Evidence: `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_EVIDENCE.md`.
 
-Stage 4B must be planned with the user after P85-IF closure and before implementation. P85-IF owns the underlying actor, transcript, retrieval, human-control, risk-resolution, and alert-versus-notification contracts plus minimal verification visibility. Stage 4B owns the complete dashboard alert/notification service surface, including notification priority, acknowledgement/read flows, clinically relevant blockers, handoff visibility, navigation, filters, grouping, mobile/PWA ergonomics, and final visual design. No Stage 4B runtime work is approved until P85-IF closes and the Stage 4B action plan is explicitly approved.
+P85-IF owns the underlying actor, transcript, retrieval, human-control, risk-resolution, and alert-versus-notification contracts plus minimal verification visibility. Stage 4B owns the complete dashboard alert/notification service surface, including notification priority, acknowledgement/read flows, clinically relevant blockers, handoff visibility, navigation, filters, grouping, mobile/PWA ergonomics, and final visual design. The approved implementation contract is `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_ACTION_PLAN.md`; runtime work must follow that document and must not reopen P85-IF scopes.
+
+## Stage 4B-2 - Mesajlasma
+
+Status: **next**. Mandatory after Stage 4B; owns conversation list/detail, unread message state, WhatsApp-like detail, yellow draft workflow, and Görüşme → Mesajlaşma navigation.
 
 ## Stage 4C - Diyetisyen Icin AI Chat
 
-Status: pending. This stage will be planned only after Stage 4B is completed and closed.
+Status: pending. Blocked until Stage 4B-2 Mesajlasma closes.
 
 Stage 4C must define the dietitian-facing AI chat experience without weakening internal copilot safety, data isolation, prompt visibility, clinical boundaries, provider gates, or real-provider disablement. No Stage 4C runtime work is approved until its action plan is created and explicitly approved.
 
@@ -362,16 +366,22 @@ Phase 85 can close only when:
 
 ## Current Next Step
 
-Proceed to Stage 4B Uyari ve Bildirimler planning only after explicit user approval. Stage 4C, Stage 4D, Stage 5, Stage 6, and Stage 7 remain unplanned until each prior stage is closed.
+Stage 4B Uyari ve Bildirimler is complete (2026-07-12). Stage 4B-2 Mesajlasma is mandatory next before Stage 4C; later stages remain blocked until each prior stage is closed.
 
 ## P85-IF Interstage Baseline For Stage 4B - 2026-07-11
 
-Before Stage 4B planning resumes, P85-IF R1-R6 remediation has been post-closure audited and fixed. The stable notification/alert inputs now include tenant-safe message provenance, target-panel structured-update resolution, deterministic activation race protection, and runtime export leak enforcement. Evidence: `docs/PHASE_85_IF_REMEDIATION_POST_CLOSURE_AUDIT_EVIDENCE.md`.
+Before Stage 4B implementation, P85-IF R1-R6 remediation has been post-closure audited and fixed. The stable notification/alert inputs now include tenant-safe message provenance, target-panel structured-update resolution, deterministic activation race protection, and runtime export leak enforcement. Evidence: `docs/PHASE_85_IF_REMEDIATION_POST_CLOSURE_AUDIT_EVIDENCE.md`.
 
-Stage 4B may plan the notification product experience on top of these contracts, but it must not reopen real providers/channels, live billing, monitoring, backup, secret-manager, or real health-data paths. Production pilot remains `NO-GO`; R-405 remains open.
+Stage 4B implementation may proceed only through the approved action plan on top of these contracts. It must not reopen real providers/channels, live billing, monitoring, backup, secret-manager, or real health-data paths. Production pilot remains `NO-GO`; R-405 remains open.
 
 ## Stage 4A Post-P85-IF Compatibility Remediation - 2026-07-11
 
 Before Stage 4B starts, the completed Stage 4A dashboard controls were reconciled with P85-IF post-closure runtime contracts. The AI Asistan Kontrolu active-state path now uses atomic activation instead of direct client patch, human takeover release uses the dedicated release endpoint, active human-control evidence is visible, structured context-intake panel links are readable and navigable, and structured-update notifications have a minimal target-panel navigation/resolution bridge.
 
 This is a compatibility remediation, not Stage 4B notification-center implementation. Full alert grouping, prioritization, mobile notification ergonomics, and notification-center redesign remain Stage 4B scope. Evidence: `docs/PHASE_85_STAGE_4A_POST_IF_REMEDIATION_EVIDENCE.md`.
+
+## Stage 4B Approved UX Contract - 2026-07-11
+
+The full decision record is `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_ACTION_PLAN.md`. Uyarilar and Bildirimler are separate full dashboard views using dense thin rows, not cards or overview bands. Uyarilar has name search plus Tumu/Kirmizi/Sari segments; Bildirimler has Aktif/Okunmamis/Gecmis segments plus priority, category, and search filters. The header bell opens the full notification page. Clinical alert rows contain only safe mapped reasons; system rows use neutral operational priority styling.
+
+On mobile, Uyarilar sits beside the current Gorusme bottom-nav entry and Bildirimler remains in the persistent header bell. Sticky filters, 44px targets, text containment, and no horizontal overflow are mandatory. Stage 4B-2 later renames/replaces Gorusme with Mesajlasma; Stage 5 retains ownership of the comprehensive mobile shell redesign.

@@ -47,7 +47,7 @@ export type HumanControlBannerModel = {
   latestHumanResponseAt: string | null;
   humanResponseCount: number;
   canActivateAi: boolean;
-  requiresHandoffResolution: boolean;
+  requiresAtomicRedActivation: boolean;
 };
 
 export type ChannelTrustOperationalSnapshot = {
@@ -161,7 +161,7 @@ export function buildClientHumanControlBanner(state: ManuAppState, clientId: str
     latestHumanResponseAt,
     humanResponseCount: session.humanResponseObservedCount,
     canActivateAi: Boolean(client && client.aiStatus !== "active"),
-    requiresHandoffResolution: client?.redRiskLock.status === "locked",
+    requiresAtomicRedActivation: client?.redRiskLock.status === "locked",
   };
 }
 

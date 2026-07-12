@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { DashboardApp } from "@/components/dashboard-app";
@@ -109,7 +110,9 @@ export default async function DashboardPage() {
   if (auth.gate === "fallback") {
     return (
       <PwaSubscriberShell registerServiceWorker={false}>
-        <DashboardApp />
+        <Suspense fallback={null}>
+          <DashboardApp />
+        </Suspense>
       </PwaSubscriberShell>
     );
   }
@@ -129,13 +132,15 @@ export default async function DashboardPage() {
 
   return (
     <PwaSubscriberShell registerServiceWorker={registerServiceWorker}>
-      <DashboardApp
-        authInfo={{ displayName: auth.displayName, role: auth.role }}
-        commercialInfo={{
-          subscriptionStatus: auth.entitlementStatus,
-          installReady: registerServiceWorker,
-        }}
-      />
+      <Suspense fallback={null}>
+        <DashboardApp
+          authInfo={{ displayName: auth.displayName, role: auth.role }}
+          commercialInfo={{
+            subscriptionStatus: auth.entitlementStatus,
+            installReady: registerServiceWorker,
+          }}
+        />
+      </Suspense>
     </PwaSubscriberShell>
   );
 }

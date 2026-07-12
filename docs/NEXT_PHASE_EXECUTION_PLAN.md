@@ -16,7 +16,7 @@ Current override after Phase 85A frontend redesign scope lock (2026-07-07): `doc
 
 Current override after Phase 85B design tokens/font foundation (2026-07-07): Fraunces display + Geist Sans/Mono are wired through `next/font/google`; Phase 85 CSS/Tailwind tokens are exposed for paper, surface, ink, primary plum, hover plum, soft plum, sage, warm accent, borders, and focus; UI token tests assert the approved palette. This is foundation-only. Component foundation, public website redesign, and dashboard/PWA redesign require separate user-approved plans. Production pilot remains `NO-GO`; R-405 and current RLS re-run remain open.
 
-Current Phase 85 staging update (2026-07-10): Stages 1-3, Stage 4A, and P85-IF-A through P85-IF-I are complete. P85-IF is closed. The next operator action is Stage 4B Uyari ve Bildirimler, followed by Stage 4C, Stage 4D, Stage 5, Stage 6, and Stage 7. Runtime provider/channel behavior remains closed.
+Current Phase 85 staging update (2026-07-12): Stages 1-3, Stage 4A, P85-IF-A through P85-IF-I, and **Stage 4B Uyari ve Bildirimler are complete.** Evidence: `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_EVIDENCE.md`. **Next operator action:** Stage 4B-2 Mesajlasma, then Stage 4C, Stage 4D, Stage 5, Stage 6, and Stage 7. Runtime provider/channel behavior remains closed.
 
 Current P85-IF-R4 update (2026-07-10): P85-IF-G context-intake Supabase remediation is complete. Evidence is in `docs/PHASE_85_IF_R4_CONTEXT_INTAKE_REMEDIATION_EVIDENCE.md`. Migration `20260710210000_phase_85_if_remediation_client_safe_context_intake.sql` adds service-role-only atomic confirm/recheck/apply/reject proposal RPCs; wrong-client or missing proposals return `404`; stale proposal states return `409`; structured-impact proposals still require panel revision evidence and two confirmations; apply creates only a context update and invalidates drafts transactionally. Verification passed: local Supabase reset, targeted P85-IF-G 11/11, and local `npm run test:rls` 25/25. Production pilot remains `NO-GO`; R-405 remains open.
 
@@ -24,9 +24,9 @@ Current P85-IF-R5 update (2026-07-10): P85-IF-H operational access remediation i
 
 Current P85-IF-R6 update (2026-07-11): P85-IF-I lifecycle/RLS re-closure is complete and the approved remediation sequence is closed. Evidence is in `docs/PHASE_85_IF_R6_LIFECYCLE_RLS_RE_CLOSURE_EVIDENCE.md`. Supabase removal/anonymization persists P85 redaction records, tenant channel-binding revoke is owner/admin API + service-role RPC backed, export leak detection is explicit, and program closure evidence fails without full passed verification inputs. Verification passed: targeted lifecycle 14/14, local Supabase reset, local RLS 28/28, lint, production build, full app 825 passed / 4 skipped, channel replay, production-scale rehearsal, `git diff --check`, secret scan, and forbidden future-phase naming scan. Production pilot remains `NO-GO`; R-405 remains open.
 
-Current P85-IF post-closure audit update (2026-07-11): R1 message provenance tenant integrity, R2 structured retrieval baseline/resolution authority, R3 activation/inbound lock ordering, and R6 runtime export leak enforcement are fixed and documented in `docs/PHASE_85_IF_REMEDIATION_POST_CLOSURE_AUDIT_EVIDENCE.md`. Verification passed targeted app/core tests, local Supabase reset, local RLS 30/30, lint, build, full app 828 passed / 4 skipped, core 234/234, channel replay, and production-scale rehearsal. Stage 4B is next; production pilot remains `NO-GO`; R-405 remains open.
+Current P85-IF post-closure audit update (2026-07-11): R1 message provenance tenant integrity, R2 structured retrieval baseline/resolution authority, R3 activation/inbound lock ordering, and R6 runtime export leak enforcement are fixed and documented in `docs/PHASE_85_IF_REMEDIATION_POST_CLOSURE_AUDIT_EVIDENCE.md`. Verification passed targeted app/core tests, local Supabase reset, local RLS 30/30, lint, build, full app 828 passed / 4 skipped, core 234/234, channel replay, and production-scale rehearsal. Stage 4B planning and Phase 0 contract lock are complete; approved Stage 4B implementation is next; production pilot remains `NO-GO`; R-405 remains open.
 
-Current P85-IF-I update (2026-07-10): lifecycle, RLS, export, evidence, verification, and closure are implemented in `phase-85-if-i-lifecycle-closure.ts` with unified lifecycle evidence in `phase-79e-lifecycle-redaction-evidence.ts`. Evidence is in `docs/PHASE_85_IF_I_LIFECYCLE_CLOSURE_EVIDENCE.md`. The 2026-07-11 post-closure audit supersedes the earlier skipped local RLS note with local RLS 30/30 and full verification. Production pilot remains `NO-GO`; R-405 remains open. Stage 4B is next.
+Current P85-IF-I update (2026-07-10): lifecycle, RLS, export, evidence, verification, and closure are implemented in `phase-85-if-i-lifecycle-closure.ts` with unified lifecycle evidence in `phase-79e-lifecycle-redaction-evidence.ts`. Evidence is in `docs/PHASE_85_IF_I_LIFECYCLE_CLOSURE_EVIDENCE.md`. The 2026-07-11 post-closure audit supersedes the earlier skipped local RLS note with local RLS 30/30 and full verification. Production pilot remains `NO-GO`; R-405 remains open. Stage 4B Phase 0 is complete and Stage 4B implementation is next.
 
 Current P85-IF-D update (2026-07-10): complete transcript and human-control coordination is implemented in `phase-85-if-d-transcript-human-control.ts` and wired into the P85-IF-C ledger for routed non-client-text events. Evidence is in `docs/PHASE_85_IF_D_TRANSCRIPT_HUMAN_CONTROL_EVIDENCE.md`. Verification passed: targeted 7/7, updated ledger 11/11, app 787 passed / 4 skipped, core 225/225, lint 0 errors with 3 unchanged warnings, production build, and full mock channel replay. Production pilot remains `NO-GO`; R-405 remains open; R-406 current environment re-run remains pending.
 
@@ -36,7 +36,7 @@ Current Phase 85 Stage 2 update (2026-07-07): shared UI component system foundat
 
 Current Phase 85 Stage 3 implementation/deploy update (2026-07-07): `docs/PHASE_85_STAGE_3_PUBLIC_COMMERCIAL_ENTRY_ACTION_PLAN.md` is implemented for public website and commercial entry surfaces and deployed to the hosted sandbox as release `phase85-stage3-redesign-20260707225306` on `https://siriusai.store`. Stage 3 remains invite-led, not open self-serve signup: contact request -> admin review -> admin invite code -> approved email + invite code -> sandbox checkout -> magic-link -> onboarding claim -> dashboard/PWA. Locked navbar: `SiriusAI | Nasil calisir | Guvenlik | Mobil | Iletisim | Giris yap | Davet koduyla basla`. The user-provided `public-website-redesign.zip` visual direction was adapted without copying mock API routes, the runtime palette was corrected to the user's broken-white + purple system, and all Phase 83/84 API/auth/entitlement/onboarding/sandbox billing contracts remain preserved. Production pilot remains `NO-GO`; R-405 and current RLS re-run remain open.
 
-Current Phase 85 Stage 4A update (2026-07-08): Stage 4A.1 through Stage 4A.4 are implemented; Stage 4A Danisan Kontrol Paneli is complete. P85-IF-A through P85-IF-C are now complete and P85-IF-D is next, with Stage 4B resuming after P85-IF closure. Production pilot remains `NO-GO`; R-405 and current RLS re-run remain open.
+Current Phase 85 Stage 4A update (2026-07-08): Stage 4A.1 through Stage 4A.4 are implemented; Stage 4A Danisan Kontrol Paneli is complete. P85-IF-A through P85-IF-I and R1-R6 post-closure remediation are complete. Stage 4B Phase 0 is complete, with Stage 4B implementation next. Production pilot remains `NO-GO`; R-405 and current RLS re-run remain open.
 
 Superseded Phase 84D override: Phase 84D customer auth foundation completed on 2026-07-02.
 
@@ -100,8 +100,8 @@ Locked decisions:
 
 Next implementation order:
 
-1. Plan Phase 85 Stage 4B Uyari ve Bildirimler after explicit user approval. Phase 85 is frontend/design-only and does not approve production pilot launch.
-2. Continue Phase 85 through Stage 4C, Stage 4D, Stage 5 dashboard/PWA shell, Stage 6 dashboard workflows, and Stage 7 QA/closure only after each user-approved stage plan and implementation closure.
+1. Plan and implement Phase 85 Stage 4B-2 Mesajlasma (conversation list, unread state, WhatsApp-like detail, yellow draft ergonomics, Görüşme → Mesajlaşma nav). Stage 4B is complete; evidence in `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_EVIDENCE.md`.
+2. Continue through Stage 4C, Stage 4D, Stage 5 dashboard/PWA shell, Stage 6 dashboard workflows, and Stage 7 QA/closure only after each user-approved stage plan and implementation closure.
 3. External launch-gate / R-405 / current RLS closure prerequisites remain required for production readiness. Phase 83A-83H, Phase 84A-84J, and Phase 85 do not approve production pilot launch.
 4. External launch-gate closure, R-405 technical resolution or formal acceptance, and current RLS evidence pass before Phase 82 can reach `READY_FOR_EXTERNAL_CONTROLLED_LAUNCH_AUTHORIZATION` (unchanged clinical readiness track).
 3. No further repo-local Phase 82 sub-phases remain; Phase 82 track closed on 2026-06-30.
@@ -2418,7 +2418,7 @@ Do not treat the VPS deployment or Stripe test webhook as production GO. Keep li
 
 ## Current P85-IF Post-Closure Execution Baseline - 2026-07-11
 
-P85-IF R1-R6 remediation is post-closure audited and fixed. The next correct Phase 85 work is Stage 4B planning, using the stable contracts from `docs/PHASE_85_IF_REMEDIATION_POST_CLOSURE_AUDIT_EVIDENCE.md`.
+P85-IF R1-R6 remediation is post-closure audited and fixed. Stage 4B planning is complete; the next correct Phase 85 work is its approved implementation, using the stable contracts from `docs/PHASE_85_IF_REMEDIATION_POST_CLOSURE_AUDIT_EVIDENCE.md`.
 
 Current local verification for this baseline passed targeted app/core tests, local Supabase reset, local RLS 30/30, lint, build, full app 828 passed / 4 skipped, core 234/234, channel replay, and production-scale rehearsal. This does not approve production pilot, close R-405, or open real provider/channel/health-data paths.
 
@@ -2427,3 +2427,7 @@ Current local verification for this baseline passed targeted app/core tests, loc
 Before Stage 4B begins, execute from the `P85-4A-POST-IF-R` compatibility baseline. Stage 4A now uses atomic AI activation, dedicated human-takeover release, readable structured context-intake panel navigation, and the minimal structured-update notification resolution bridge introduced after P85-IF post-closure remediation.
 
 Evidence: `docs/PHASE_85_STAGE_4A_POST_IF_REMEDIATION_EVIDENCE.md`. The next correct Phase 85 work remains Stage 4B Uyari ve Bildirimler. Do not reopen P85-IF scopes, do not call this a new major phase, and keep production pilot `NO-GO`, R-405 open, and all real provider/channel/health-data paths closed.
+
+## Next Execution Lock - Phase 85 Stage 4B-2 Mesajlasma
+
+Stage 4B is complete. Evidence: `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_EVIDENCE.md`. Plan Stage 4B-2 with user approval: conversation list, unread message receipt/state, WhatsApp-like conversation detail, yellow draft review/edit/send, red manual reply ergonomics, and Mesajlaşma navigation replacing standalone Görüşme. Do not begin Stage 4C until Stage 4B-2 closes.

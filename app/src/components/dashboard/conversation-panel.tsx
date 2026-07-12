@@ -5,6 +5,7 @@ import { Bot, MessageSquareText, Send, ShieldCheck } from "lucide-react";
 import type { AiDecisionRecord, ClientRecord, ManuAppState, MessageRecord, SupportedLanguageCode } from "@/lib/types";
 import { buildCopilotQualityReviewForPendingDraft } from "@/lib/phase-77v-copilot-quality-workflow";
 import { t } from "@/lib/i18n";
+import { RED_LOCK_ATOMIC_ACTIVATION_CTA_TR } from "@/lib/ai-assistant-control-panel-helpers";
 import {
   buildClientHumanControlBanner,
   buildStructuredUpdateSourceLinks,
@@ -12,6 +13,7 @@ import {
 } from "@/lib/phase-85-if-h-operational-visibility";
 import {
   CopilotQualityReviewPanel,
+  ConfirmButton,
   EmptyState,
   InfoLine,
   MessageBubble,
@@ -179,12 +181,25 @@ export function ConversationPanel({
             <InfoLine label="Persona" value={client.selectedPersonaId} />
             <InfoLine label="Devralma" value={client.humanTakeoverLocked ? "kilitli" : "açık"} />
             <InfoLine label="İzin" value={client.channelPermission} />
-            {redRiskLocked && <InfoLine label="Kırmızı risk" value="manuel reaktivasyon gerekli" />}
+            {redRiskLocked && <InfoLine label="Kırmızı risk" value="atomik AI aktivasyonu gerekli" />}
             {yellowRiskHeld && !redRiskLocked && <InfoLine label="Sarı risk" value="inceleme bekliyor" />}
           </div>
           {redRiskLocked && (
-            <div className="mt-3 rounded-lg border border-red-200 bg-red-50 p-3 text-sm leading-6 text-red-900">
-              AI yeniden etkinleştirilmeden önce kırmızı devir, devir kuyruğundan çözülmelidir.
+            <div className="mt-3 space-y-3 rounded-lg border border-red-200 bg-red-50 p-3 text-sm leading-6 text-red-900">
+              <p>
+                Kırmızı risk kilidi aktif. AI&apos;yi etkinleştirmek kırmızı uyarıyı atomik olarak kapatır; manuel yanıt
+                kilidi çözmez.
+              </p>
+              <ConfirmButton
+                label={isActivatingAi ? "Aktivasyon doğrulanıyor" : RED_LOCK_ATOMIC_ACTIVATION_CTA_TR}
+                confirmLabel={RED_LOCK_ATOMIC_ACTIVATION_CTA_TR}
+                onConfirm={() => {
+                  void onActivateAi(client.id);
+                }}
+                disabled={isActivatingAi}
+                className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-emerald-950 px-3 py-2 text-sm font-semibold text-white transition hover:bg-emerald-900 disabled:cursor-not-allowed disabled:opacity-60"
+                confirmClassName="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-emerald-800 px-3 py-2 text-sm font-semibold text-white transition hover:bg-emerald-900"
+              />
             </div>
           )}
           {client.humanTakeoverLocked && !redRiskLocked && (

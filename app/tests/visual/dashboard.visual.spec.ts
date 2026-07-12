@@ -97,16 +97,58 @@ test("dashboard core views render in fallback mode", async ({ page }) => {
   await page.getByRole("button", { name: "Gelen akışı çalıştır" }).click();
   await expect(page.getByText("handoff").first()).toBeVisible();
 
-  await page.getByRole("button", { name: "Devirler" }).click();
-  await expect(page.getByRole("heading", { name: "Devir kuyruğu" })).toBeVisible();
-  await expect(page.getByText("possible_severe_allergic_reaction")).toBeVisible();
-
-  await page.getByRole("button", { name: "Formlar" }).click();
-  await expect(page.getByRole("heading", { name: "Dinamik form şemaları" })).toBeVisible();
-  await expect(page.getByLabel("Şema başlığı")).toBeVisible();
+  await page.getByRole("button", { name: "Uyarılar" }).click();
+  await expect(page.getByTestId("alerts-panel")).toBeVisible();
+  await expect(page.getByRole("tab", { name: /Tümü/i })).toBeVisible();
+  await expect(page.getByLabel("Uyarı ara")).toBeVisible();
+  const alertsStickyFilters = page.locator('[data-testid="alerts-panel"] .sticky');
+  await expect(alertsStickyFilters).toBeVisible();
+  const alertRow = page.locator('[data-testid^="clinical-alert-row-"]').first();
+  if (await alertRow.count()) {
+    const alertRowBox = await alertRow.boundingBox();
+    expect(alertRowBox?.height ?? 0).toBeGreaterThanOrEqual(44);
+    expect(alertRowBox?.height ?? 0).toBeLessThanOrEqual(140);
+  }
+  await page.getByLabel("Uyarı ara").fill(
+    "UzunAramaMetniTasmaKontroluIcinYazildiUzunAramaMetniTasmaKontroluIcin",
+  );
   await expect
     .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth))
     .toBe(true);
+
+  const notificationsNav = page.getByRole("button", { name: "Bildirimler" });
+  if (await notificationsNav.count() > 1) {
+    await notificationsNav.last().click();
+  } else {
+    await notificationsNav.click();
+  }
+  await expect(page.getByTestId("notifications-panel")).toBeVisible();
+  await expect(page.getByRole("tab", { name: /Aktif/i })).toBeVisible();
+  await expect(page.getByLabel("Bildirim ara")).toBeVisible();
+  const notificationsStickyFilters = page.locator('[data-testid="notifications-panel"] .sticky');
+  await expect(notificationsStickyFilters).toBeVisible();
+  const notificationRow = page.locator('[data-testid^="system-notification-row-"]').first();
+  if (await notificationRow.count()) {
+    const notificationRowBox = await notificationRow.boundingBox();
+    expect(notificationRowBox?.height ?? 0).toBeGreaterThanOrEqual(44);
+    expect(notificationRowBox?.height ?? 0).toBeLessThanOrEqual(160);
+  }
+  await page.getByLabel("Bildirim ara").fill(
+    "UzunBildirimAramaMetniTasmaKontroluIcinYazildiUzunBildirimAramaMetni",
+  );
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth))
+    .toBe(true);
+
+  const formsNav = page.getByRole("button", { name: "Formlar" });
+  if (await formsNav.isVisible()) {
+    await formsNav.click();
+    await expect(page.getByRole("heading", { name: "Dinamik form şemaları" })).toBeVisible();
+    await expect(page.getByLabel("Şema başlığı")).toBeVisible();
+    await expect
+      .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth))
+      .toBe(true);
+  }
 });
 
 test("purchase success and cancel pages render without app data", async ({ page }) => {

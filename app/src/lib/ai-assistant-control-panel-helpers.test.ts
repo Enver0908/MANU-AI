@@ -2,9 +2,8 @@ import { describe, expect, it } from "vitest";
 import { createInitialState } from "./seed-data";
 import {
   collectAiPreflightBlockers,
-  countAiControlBlockers,
   formatActivationWindowLabel,
-  isAiControlLockedByRedRisk,
+  resolveAiControlDisabledState,
   summarizeAutopilotReadinessGate,
 } from "./ai-assistant-control-panel-helpers";
 import type { ClientRecord } from "./types";
@@ -21,8 +20,11 @@ function buildClient(partial: Partial<ClientRecord> = {}): ClientRecord {
 }
 
 describe("ai assistant control panel helpers", () => {
-  it("detects red risk lock as control blocker", () => {
+  it("detects red risk lock as configuration lock without hard activation blocker", () => {
     const client = buildClient({
+      aiStatus: "passive",
+      aiMode: "copilot",
+      humanTakeoverLocked: false,
       redRiskLock: {
         status: "locked",
         handoffId: "handoff-1",
@@ -32,8 +34,15 @@ describe("ai assistant control panel helpers", () => {
         previousAiMode: "copilot",
       },
     });
-    expect(isAiControlLockedByRedRisk(client)).toBe(true);
-    expect(countAiControlBlockers(createInitialState(), client)).toBeGreaterThan(0);
+    const gates = resolveAiControlDisabledState(client);
+    expect(gates.activationDisabled).toBe(false);
+    expect(gates.configurationDisabled).toBe(true);
+    const blockers = collectAiPreflightBlockers(createInitialState(), client);
+    const redBlocker = blockers.find((blocker) => blocker.code === "red_risk_lock_active");
+    expect(redBlocker?.severity).toBe("warn");
+    expect(blockers.some((blocker) => blocker.severity === "block" && blocker.code === "red_risk_lock_active")).toBe(
+      false,
+    );
   });
 
   it("formats activation window labels", () => {

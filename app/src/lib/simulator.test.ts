@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createInitialState } from "./seed-data";
+import { buildTestNotification } from "./phase-85-stage-4b-notifications";
 import {
   acknowledgeNotificationInState,
   approveDraftMessageInState,
@@ -156,7 +157,7 @@ describe("local inbound simulator", () => {
     expect(client?.aiActiveUntil).toBeNull();
     expect(client?.contextRevision).toBe(state.clients.find((item) => item.id === "client-mert")!.contextRevision + 1);
     expect(next.auditEvents.some((event) => event.eventType === "client_ai_window_expired")).toBe(true);
-    expect(next.notifications.some((notification) => notification.type === "system" && notification.entityId === "client-mert")).toBe(true);
+    expect(next.notifications.some((notification) => notification.kind === "ai_window_expired" && notification.entityId === "client-mert")).toBe(true);
 
     const again = await runInboundSimulation(next, {
       clientId: "client-mert",
@@ -447,7 +448,8 @@ describe("local inbound simulator", () => {
     expect(next.lastSimulation?.blockedReason).toBe("provider_timeout");
     expect(countGeneratedMessages(next)).toBe(countGeneratedMessages(state));
     expect(next.handoffCases.length).toBeGreaterThan(state.handoffCases.length);
-    expect(next.notifications.some((item) => item.type.startsWith("handoff_"))).toBe(true);
+    expect(next.notifications.some((item) => item.kind === "safe_reply_unavailable")).toBe(true);
+    expect(next.notifications.some((item) => item.type.startsWith("handoff_"))).toBe(false);
     expect(next.aiDecisions.at(-1)?.model).toBe("gemini-1.5-flash");
     expect(next.aiDecisions.at(-1)?.providerAttempted).toBe(true);
     expect(next.aiDecisions.at(-1)?.providerStatus).toBe("failed");
@@ -931,7 +933,7 @@ describe("local inbound simulator", () => {
     expect((auditEvent?.metadata as Record<string, unknown>).previousPermission).toBe("ready");
     expect((auditEvent?.metadata as Record<string, unknown>).newPermission).toBe("opted_out");
   });
-  it("creates a notification record for urgent handoffs without raw message content", async () => {
+  it("does not create notification records for clinical red handoffs", async () => {
     const state = createInitialState();
     const next = await runInboundSimulation(state, {
       clientId: "client-mert",
@@ -940,40 +942,45 @@ describe("local inbound simulator", () => {
       now: "2026-05-22T10:40:00.000Z",
     });
 
-    expect(next.notifications).toHaveLength(1);
-    const notification = next.notifications[0];
-    expect(notification.type).toBe("handoff_urgent");
-    expect(notification.entityType).toBe("handoff_case");
-    expect(notification.title).toContain("Mert Kaya");
-    expect(notification.body).not.toContain("nefes");
-    expect(notification.body).not.toContain("bogazim");
-    expect(notification.read).toBe(false);
-    expect(notification.acknowledgedAt).toBeNull();
+    expect(next.handoffCases).toHaveLength(1);
+    expect(next.notifications.some((notification) => notification.kind === "legacy_handoff")).toBe(false);
+    expect(next.notifications.some((notification) => notification.kind === "safe_reply_unavailable")).toBe(false);
   });
 
-  it("marks notifications as read and acknowledged", () => {
+  it("marks notifications as read and acknowledged via actor receipts", () => {
     const state = createInitialState();
     const notificationId = "notif-1";
-    state.notifications.push({
-      id: notificationId,
-      tenantId: state.tenant.id,
-      type: "handoff_urgent",
-      entityType: "handoff_case",
-      entityId: "case-1",
-      title: "Handoff",
-      body: "Review required.",
-      read: false,
-      acknowledgedAt: null,
-      createdAt: new Date().toISOString(),
-    });
+    state.notifications.push(
+      buildTestNotification({
+        id: notificationId,
+        tenantId: state.tenant.id,
+        type: "handoff_urgent",
+        kind: "legacy_handoff",
+        entityType: "handoff_case",
+        entityId: "case-1",
+        handoffId: "case-1",
+        title: "Handoff",
+        body: "Review required.",
+        read: false,
+        acknowledgedAt: null,
+        createdAt: new Date().toISOString(),
+      }),
+    );
 
     const readState = markNotificationReadInState(state, notificationId);
-    expect(readState.notifications[0].read).toBe(true);
-    expect(readState.notifications[0].acknowledgedAt).toBeNull();
+    const readReceipt = readState.notificationReceipts.find(
+      (receipt) => receipt.notificationId === notificationId && receipt.dietitianId === state.dietitian.id,
+    );
+    expect(readReceipt?.readAt).toBeTruthy();
+    expect(readReceipt?.acknowledgedAt).toBeNull();
+    expect(readState.notifications[0].read).toBe(false);
 
     const ackState = acknowledgeNotificationInState(readState, notificationId);
-    expect(ackState.notifications[0].read).toBe(true);
-    expect(ackState.notifications[0].acknowledgedAt).not.toBeNull();
+    const ackReceipt = ackState.notificationReceipts.find(
+      (receipt) => receipt.notificationId === notificationId && receipt.dietitianId === state.dietitian.id,
+    );
+    expect(ackReceipt?.readAt).toBeTruthy();
+    expect(ackReceipt?.acknowledgedAt).toBeTruthy();
   });
 });
 

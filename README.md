@@ -14,7 +14,11 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 **2026-07-10 P85-IF-R3 atomic activation remediation:** Hardened P85-IF-F activation concurrency. `activate-ai` now requires `expectedConversationRevision` and `expectedClientContextRevision`; direct `PATCH /api/clients/[id]` activation is rejected; append-only migration `20260710200000_phase_85_if_remediation_atomic_activation.sql` adds service-role-only atomic activation plus inbound/draft expected-conversation revision guards. Verification passed: local Supabase migration reset, targeted R3/historical tests 12/12, `npm run test:rls` 24/24, lint 0 errors with 2 unchanged warnings, production build, `git diff --check`, secret scan, and forbidden future-phase naming scan. Production pilot remains `NO-GO`; R-405 remains open.
 
-P85-IF-I closed the Phase 85 Interstage Foundation program with lifecycle export/redaction extensions, unified lifecycle evidence, tenant channel-binding revoke lifecycle, RLS integration coverage for interstage tables, and program closure evidence. Evidence: `docs/PHASE_85_IF_I_LIFECYCLE_CLOSURE_EVIDENCE.md`. Verification on 2026-07-10 passed, and the 2026-07-11 post-closure audit supersedes the earlier skipped local RLS note with local RLS 30/30 plus full verification. Production pilot remains `NO-GO`; R-405 remains open. **Next work:** Phase 85 Stage 4B Uyari ve Bildirimler.
+**2026-07-12 Phase 85 Stage 4B complete:** Uyari ve Bildirimler implemented end-to-end — projection-only alerts, structured notifications with per-actor receipts, bounded cursor APIs, dashboard panels, integration verification. Evidence: `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_EVIDENCE.md`. App tests 895 passed / 5 skipped; visual 36/36; `npm run test:rls` skipped 31/31 locally. **Next:** Stage 4B-2 Mesajlasma. Production pilot remains `NO-GO`; R-405 remains open.
+
+**2026-07-12 Phase 85 Stage 4B Phase 1:** superseded by Stage 4B closure above.
+
+P85-IF-I closed the Phase 85 Interstage Foundation program with lifecycle export/redaction extensions, unified lifecycle evidence, tenant channel-binding revoke lifecycle, RLS integration coverage for interstage tables, and program closure evidence. Evidence: `docs/PHASE_85_IF_I_LIFECYCLE_CLOSURE_EVIDENCE.md`. Verification on 2026-07-10 passed, and the 2026-07-11 post-closure audit supersedes the earlier skipped local RLS note with local RLS 30/30 plus full verification. Production pilot remains `NO-GO`; R-405 remains open.
 
 P85-IF-D added complete transcript and human-control coordination for business-human echoes, history reconcile, unsupported media, edit/revoke lifecycle, and outbound-status correlation. Evidence: `docs/PHASE_85_IF_D_TRANSCRIPT_HUMAN_CONTROL_EVIDENCE.md`. Verification on 2026-07-10: targeted P85-IF-D 7/7 plus updated P85-IF-C ledger 11/11, full app 787 passed / 4 skipped, core 225/225, lint 0 errors with 3 unchanged warnings, production build passed, and full mock channel replay passed. Production pilot remains `NO-GO`; R-405 remains open.
 
@@ -56,7 +60,7 @@ P85-IF-D added complete transcript and human-control coordination for business-h
 
 This repository is a local SaaS/PWA pilot prototype and architecture workspace. It is not a production-connected system yet.
 
-**Latest implementation phase:** Phase 85 Stage 4A Danisan Kontrol Paneli is complete (Stage 4A.1-4A.4), and P85-IF-A through P85-IF-I are complete. P85-IF is closed. **Next work:** Phase 85 Stage 4B Uyari ve Bildirimler, then Stage 4C, Stage 4D, Stage 5, Stage 6, and Stage 7. **Production pilot:** `NO-GO` (unchanged).
+**Latest implementation phase:** Phase 85 Stage 4B Phase 1 alert projection is complete. Stage 4A (4A.1-4A.4) and P85-IF-A through P85-IF-I are complete. **Next work:** Stage 4B Phase 2 persistence/receipt/RLS, then remaining Stage 4B phases, mandatory Stage 4B-2 Mesajlasma, Stage 4C, Stage 4D, Stage 5, Stage 6, and Stage 7. **Production pilot:** `NO-GO` (unchanged).
 
 **Phase 82 verification:** targeted Phase 82 tests passed (5 files, 31/31); Phase 82G records `repoLocalClosureComplete: true` with verification `blocked` because `npm run test:rls` remains skipped/pending when local Supabase is unavailable.
 
@@ -191,7 +195,7 @@ The commercial sandbox has been exercised on a Hetzner VPS for workflow validati
 
 Verified result: invite + Stripe test checkout can consume the invite, create a tenant, create an active entitlement, and write billing ledger events. Hosted onboarding/auth now includes magic-link login, membership/profile claim, Phase 84I callback remediation, and Phase 84J Resend custom-SMTP real email delivery. R-425 is mitigated in the hosted sandbox path.
 
-Next canonical plan: Phase 85 Stage 4B planning after the P85-IF post-closure audit. Production pilot remains `NO-GO`; R-405 remains open. Latest local P85 post-closure Supabase/RLS evidence passed 30/30 on 2026-07-11, but this does not close external launch gates or authorize production traffic.
+Next canonical implementation: the approved Phase 85 Stage 4B action plan after the P85-IF post-closure audit. Production pilot remains `NO-GO`; R-405 remains open. Latest local P85 post-closure Supabase/RLS evidence passed 30/30 on 2026-07-11, but this does not close external launch gates or authorize production traffic.
 
 ## Current P85-IF Post-Closure Baseline - 2026-07-11
 
@@ -209,4 +213,10 @@ Verification passed targeted app/core tests, local Supabase reset, local RLS 30/
 
 After P85-IF and R1-R6 post-closure remediation, Stage 4A was remediated to match the newer activation, human-control, structured-intake, and structured-notification contracts. The AI assistant control panel now routes activation through the atomic `/api/clients/[id]/activate-ai` endpoint, releases human takeover through `/api/clients/[id]/release-takeover`, shows active human-control session evidence, maps structured context-intake flags to readable client panel labels, and exposes a minimal structured-update notification bridge for target-panel navigation and resolution.
 
-Evidence: `docs/PHASE_85_STAGE_4A_POST_IF_REMEDIATION_EVIDENCE.md`. This is local/mock dashboard compatibility work only. Stage 4B remains the next Phase 85 planning/implementation target; production pilot remains `NO-GO`; R-405 remains open; real providers, real channels, live billing, monitoring, backup, secret manager, and real health-data paths remain disconnected.
+Evidence: `docs/PHASE_85_STAGE_4A_POST_IF_REMEDIATION_EVIDENCE.md`. This is local/mock dashboard compatibility work only. The approved Stage 4B plan is the next Phase 85 implementation target; production pilot remains `NO-GO`; R-405 remains open; real providers, real channels, live billing, monitoring, backup, secret manager, and real health-data paths remain disconnected.
+
+## Phase 85 Stage 4B Planning Lock - 2026-07-11
+
+The decision-complete Stage 4B action plan is now recorded in `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_ACTION_PLAN.md`. Stage 4B will add separate Uyarilar and Bildirimler dashboard views. Clinical alerts will be derived from active yellow holds/red locks rather than a new alert table; system notifications will use structured kinds, deterministic priority, per-actor receipts, bounded APIs, and tenant/client access checks. A red alert will close through the existing atomic direct AI activation contract, without a separate handoff-resolution screen.
+
+The canonical order is Stage 4B, then mandatory Stage 4B-2 Mesajlasma, then Stage 4C. Stage 4B implementation has not started in this documentation baseline. Production pilot remains `NO-GO`; R-405 remains open; real integration paths remain disconnected.

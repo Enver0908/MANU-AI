@@ -384,11 +384,11 @@ Status: complete on 2026-07-10. Evidence: `docs/PHASE_85_IF_H_OPERATIONAL_VISIBI
 
 ### Documentation and commit protocol
 
-Each P85-IF track updates the required continuity documents and receives its own commit. P85-IF-I updates the complete evidence/dossier set and records that Stage 4B is again the next Phase 85 planning target.
+Each P85-IF track updates the required continuity documents and receives its own commit. P85-IF-I updated the complete evidence/dossier set and returned control to Stage 4B; Stage 4B planning subsequently completed.
 
 No deploy occurs during P85-IF unless separately authorized. If a future sandbox deploy is explicitly approved, hosted evidence and Phase 84 hosted-sandbox notes must be updated separately.
 
-Status: complete on 2026-07-10. Evidence: `docs/PHASE_85_IF_I_LIFECYCLE_CLOSURE_EVIDENCE.md`. P85-IF is closed; Stage 4B is the next Phase 85 planning target.
+Status: complete on 2026-07-10. Evidence: `docs/PHASE_85_IF_I_LIFECYCLE_CLOSURE_EVIDENCE.md`. P85-IF is closed; the approved Stage 4B implementation is now the next Phase 85 target.
 
 ## 14. Critical Acceptance Scenarios
 
@@ -452,7 +452,7 @@ Post-closure fixes are complete:
 - R6: client export leak detection wired into the real export path.
 - Traceability: dedicated post-closure evidence documents for R1, R2, R3, and the overall audit.
 
-Verification passed targeted app/core tests, local Supabase reset, local RLS 30/30, lint, build, full app 828 passed / 4 skipped, core 234/234, channel replay, and unified production-scale rehearsal. This updates the P85-IF closure baseline without approving production pilot, closing R-405, or opening real provider/channel/health-data paths. Stage 4B remains the next Phase 85 planning target.
+Verification passed targeted app/core tests, local Supabase reset, local RLS 30/30, lint, build, full app 828 passed / 4 skipped, core 234/234, channel replay, and unified production-scale rehearsal. This updates the P85-IF closure baseline without approving production pilot, closing R-405, or opening real provider/channel/health-data paths. Stage 4B planning is complete and implementation is next.
 
 ## 18. Stage 4A Post-P85-IF Compatibility Remediation - 2026-07-11
 
@@ -465,3 +465,9 @@ P85-IF remains closed. A separate compatibility remediation was completed becaus
 - Structured-update notifications expose minimal target-panel navigation and target-revision resolution.
 
 Evidence: `docs/PHASE_85_STAGE_4A_POST_IF_REMEDIATION_EVIDENCE.md`. Full Stage 4B notification product work remains next; no real provider/channel/health-data path was opened.
+
+## Stage 4B Consumer Contract - 2026-07-11
+
+Stage 4B now has an approved implementation plan at `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_ACTION_PLAN.md`. It consumes P85-IF records without reopening P85-IF: active yellow/red lifecycle state becomes the Uyarilar projection; provenance-safe source IDs become access-checked conversation targets; structured retrieval, unsupported media, verified-human pause, delivery, permission, draft invalidation, and integrity events become typed system notifications. Trust/quarantine internals stay outside dietitian surfaces.
+
+Red reactivation remains the P85-IF-F/R3 atomic activation transition. Stage 4B must not add an independent handoff resolution path or weaken non-green send blocking.

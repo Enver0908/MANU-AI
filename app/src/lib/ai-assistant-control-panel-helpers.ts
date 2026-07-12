@@ -80,6 +80,29 @@ export function isAiControlLockedByRedRisk(client: ClientRecord) {
   return isRedRiskLockActive(client);
 }
 
+export function isAiConfigurationLockedByRedRisk(client: ClientRecord) {
+  return isRedRiskLockActive(client);
+}
+
+export type AiControlDisabledState = {
+  activationDisabled: boolean;
+  configurationDisabled: boolean;
+};
+
+export function resolveAiControlDisabledState(
+  client: ClientRecord,
+  input: { disabled?: boolean; isActivatingAi?: boolean } = {},
+): AiControlDisabledState {
+  const removed = client.lifecycleStatus === "removed_anonymized";
+  const globallyDisabled = Boolean(input.disabled) || removed;
+  return {
+    activationDisabled: globallyDisabled || Boolean(input.isActivatingAi),
+    configurationDisabled: globallyDisabled || isAiConfigurationLockedByRedRisk(client),
+  };
+}
+
+export const RED_LOCK_ATOMIC_ACTIVATION_CTA_TR = "AI'yi etkinlestir ve kirmizi uyariyi kapat";
+
 export function formatAutopilotMissingLabel(code: string) {
   if (AUTOPILOT_MISSING_LABELS_TR[code]) return AUTOPILOT_MISSING_LABELS_TR[code];
   if (code.startsWith("form_field_missing_")) {
@@ -139,8 +162,8 @@ export function collectAiPreflightBlockers(state: ManuAppState, client: ClientRe
   if (isRedRiskLockActive(client)) {
     blockers.push({
       id: "red_risk_lock",
-      label: "Kirmizi risk kilidi aktif; yeniden aktivasyon devir akisindan yapilmali",
-      severity: "block",
+      label: "Kirmizi risk kilidi aktif; atomik AI aktivasyonu ile kapanir",
+      severity: "warn",
       code: "red_risk_lock_active",
     });
   }

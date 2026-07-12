@@ -286,3 +286,9 @@ This updates the internal evidence packet, not the gate decision. All production
 Stage 4A post-P85-IF remediation is local dashboard compatibility evidence only. It aligns UI operations with atomic activation, human-control release, structured-intake navigation, and structured-update notification resolution contracts, but it does not provide external approval evidence, production monitoring evidence, provider/channel approval, dependency clearance, or R-405 acceptance.
 
 All production-pilot gates remain open and production pilot remains `NO-GO`.
+
+## Stage 4B Closure Gate Note - 2026-07-12
+
+Stage 4B local implementation and verification are complete. Evidence: `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_EVIDENCE.md`. This adds **no** gate closure. Production pilot remains `NO-GO`; R-405 remains open. Local RLS re-run with Stage 4B migration remains pending when Supabase is unavailable.
+
+Planning completion is not implementation, deployment, provider/channel approval, clinical approval, dependency clearance, or R-405 acceptance. Production pilot remains `NO-GO`.

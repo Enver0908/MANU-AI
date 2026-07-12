@@ -4,7 +4,7 @@ Date: 2026-07-10
 Canonical code: `P85-IF`
 Track: `P85-IF-A`, `P85-IF-B`, and `P85-IF-C`
 Status: P85-IF-A complete; P85-IF-B trust-root/provenance data model complete; P85-IF-C secure ingress/ledger/routing/quarantine complete; P85-IF-D complete transcript and human control complete; P85-IF-E full-history retrieval and prompt authority V2 complete; P85-IF-F risk resolution, AI reactivation, and concurrency complete with R3 remediation; P85-IF-G controlled off-channel AI chat intake complete with R4 remediation; P85-IF-H minimal operational visibility complete with R5 owner/admin operational access remediation; P85-IF-I lifecycle/RLS/closure complete with R6 evidence-based re-closure verified; P85-IF post-closure audit complete on 2026-07-11. Stage 4B may resume.
-Placement: Phase 85 Stage 4A complete -> P85-IF -> Phase 85 Stage 4B.
+Placement: Phase 85 Stage 4A complete -> P85-IF -> Phase 85 Stage 4B (complete 2026-07-12) -> Stage 4B-2 Mesajlasma (next).
 Production pilot: `NO-GO`.
 Deployment: none.
 
@@ -396,7 +396,7 @@ Implementation status on 2026-07-10: complete. `phase-85-if-h-operational-visibi
 
 - Export, anonymization, deletion, RLS, replay, operational evidence, risk register, and closure docs are complete.
 - Full verification is green except documented local Supabase skips.
-- P85-IF closes and Stage 4B becomes the next Phase 85 planning target.
+- P85-IF closes and returns control to Stage 4B; Stage 4B planning later completes under its approved action plan.
 
 Implementation status on 2026-07-10: complete. `phase-85-if-i-lifecycle-closure.ts`, export/redaction extensions in `data-governance.ts` and `phase-74-data-lifecycle-policy.ts`, unified lifecycle evidence in `phase-79e-lifecycle-redaction-evidence.ts`, Supabase RLS coverage for interstage tables, risk-register closure narratives, and targeted tests implement P85-IF-I closure without enabling live providers or production pilot. Evidence: `docs/PHASE_85_IF_I_LIFECYCLE_CLOSURE_EVIDENCE.md`. P85-IF is closed; Stage 4B is next.
 
@@ -515,3 +515,9 @@ Stage 4A now consumes the P85-IF post-closure contracts instead of the pre-P85-I
 - P85-IF-E structured-update notifications are not resolved by read/ack; they resolve only through the structured-update endpoint after the target panel revision advances.
 
 Evidence: `docs/PHASE_85_STAGE_4A_POST_IF_REMEDIATION_EVIDENCE.md`. This contract preserves P85-IF closure and keeps Stage 4B as the next notification/alerts product track.
+
+## Stage 4B Binding Addendum - 2026-07-11
+
+The binding Stage 4B plan is `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_ACTION_PLAN.md`. Stage 4B must preserve the following P85-IF authority rules: risk state, not notification text, owns clinical alert lifecycle; red lock wins over yellow hold; message/provenance IDs are routing hints only and never authorization; direct activation is the atomic red reactivation command; read/ack cannot resolve structured or clinical conditions; and operational trust/quarantine evidence remains owner/admin-only.
+
+No Stage 4B API may expose raw transcript text, provider payload, prompt context, raw risk reasons, or cross-tenant operational evidence in alert/notification list DTOs.

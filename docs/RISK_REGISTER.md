@@ -123,3 +123,15 @@ Phase 83A scope lock added `docs/PHASE_83_COMMERCIAL_PWA_AND_FRONTEND_RELAUNCH_S
 The VPS/domain/HTTPS/Stripe test webhook validation proves that sandbox payment provisioning can create the commercial tenant and active entitlement. It also exposed the next product risk: successful checkout must create or claim a real authenticated dashboard user. R-425 tracks this until Phase 84 proves magic-link login, onboarding claim, tenant membership/profile creation, dashboard access, and reliable email delivery.
 
 Phase 84D-84E (2026-07-02) implemented magic-link login and onboarding claim locally. Phase 84I (2026-07-03) adds callback cookie persistence, token-hash OTP callback support, admin callback URL separation, admin-host routing, and duplicate claim recovery; targeted/visual/release verification passed locally. Hosted Supabase migrations are applied and VPS generated token-hash fallback verified onboarding claim/dashboard access. Phase 84J (2026-07-03) enabled Resend custom SMTP after Porkbun DNS verification and verified a real inbox magic-link click reaching the dashboard. R-425 is now mitigated in the hosted sandbox path; this does not approve production pilot, live Stripe, real channels/providers, real monitoring/backup/secret-manager, or real client health-data processing.
+
+## Phase 85 Stage 4B Planning Risks (2026-07-11)
+
+| ID | Risk | Severity | Planned mitigation | Status |
+| --- | --- | --- | --- | --- |
+| R-426 | Clinical risk is duplicated or diverges between handoff notifications and the alert screen. | critical | Derive Uyarilar only from active yellow/red client state, apply red precedence, and exclude clinical handoff notifications from the system surface. | mitigated (Stage 4B closure 2026-07-12) |
+| R-427 | Red alert closure is split across UI and handoff mutations, leaving AI, lock, handoff, and human session inconsistent. | critical | Use only the expected-revision atomic activation API/RPC; no separate handoff resolution UI; test conflict rollback and lock ordering. | mitigated (Stage 4B closure 2026-07-12) |
+| R-428 | Global notification read/ack state leaks one user's actions to another or crosses tenant/client scope. | high | Add tenant-composite per-dietitian receipts, actor-own mutation, linked-client visibility checks, service-layer authorization, and RLS role-matrix tests. | mitigated (Stage 4B closure 2026-07-12; local RLS re-run pending) |
+| R-429 | Alert/notification lists expose raw client messages, clinical details, provider payloads, or trust/quarantine evidence. | critical | Use allowlisted safe DTOs, reason-code-to-i18n mapping, no raw notification body, P85-IF-R5 boundaries, and leak/export/redaction regression tests. | mitigated (Stage 4B closure 2026-07-12) |
+| R-430 | Alert/notification refresh reintroduces broad app-state reads or becomes unbounded at 100 dietitians/5,000 clients. | high | Use bounded cursor APIs, server-side filters, dedicated resources, visible-tab 30-second polling, in-flight dedupe/backoff, and production-scale rehearsal. | mitigated (Stage 4B closure 2026-07-12) |
+
+Canonical evidence: `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_EVIDENCE.md`.

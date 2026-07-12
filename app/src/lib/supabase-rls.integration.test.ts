@@ -320,6 +320,13 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     expect(notificationUpdate.error).toBeNull();
     expect(notificationUpdate.count ?? 0).toBe(0);
 
+    const sameTenantNotificationUpdate = await member
+      .from("notifications")
+      .update({ read: true })
+      .eq("id", TEST_NOTIFICATION_ID);
+
+    expect(sameTenantNotificationUpdate.error?.message).toMatch(/row-level security/i);
+
     const quarantineInsert = await member.from("inbound_quarantines").insert({
       tenant_id: OTHER_TENANT_ID,
       channel: "whatsapp",
@@ -1324,8 +1331,11 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
       id: notificationId,
       tenant_id: client.tenantId,
       type: "system",
+      kind: "structured_record_update_required",
+      priority: "review_required",
       entity_type: "client",
       entity_id: client.id,
+      client_id: client.id,
       title: "Structured update",
       body: "Diet plan update required",
       read: false,
@@ -1333,6 +1343,8 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
       source_message_id: sourceMessage.id,
       target_panel: "diet_plan",
       baseline_revision: client.contextRevision,
+      occurrence_count: 1,
+      last_occurred_at: new Date().toISOString(),
       created_at: new Date().toISOString(),
     });
     expect(insert.error).toBeNull();
@@ -1355,6 +1367,61 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     expect(resolved.error).toBeNull();
     expect(resolved.data?.resolved_at).toBeTruthy();
     expect(resolved.data?.resolved_by_dietitian_id).toBe(state.dietitian.id);
+
+    await resetSupabaseState();
+  }, 30000);
+
+  it("mutates notification receipts per actor and blocks assistant direct receipt writes", async () => {
+    await resetSupabaseState();
+    const member = await signIn("rls-member@manu.local");
+    const assistant = await signIn("rls-assistant@manu.local");
+
+    const beforeReceipts = await member
+      .from("notification_receipts")
+      .select("notification_id, read_at, acknowledged_at")
+      .eq("notification_id", TEST_NOTIFICATION_ID);
+    expect(beforeReceipts.error).toBeNull();
+    expect(beforeReceipts.data).toEqual([]);
+
+    const read = await member.rpc("p85_stage_4b_mark_notification_read_v1", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_notification_id: TEST_NOTIFICATION_ID,
+    });
+    expect(read.error).toBeNull();
+
+    const afterRead = await member
+      .from("notification_receipts")
+      .select("notification_id, read_at, acknowledged_at")
+      .eq("notification_id", TEST_NOTIFICATION_ID);
+    expect(afterRead.error).toBeNull();
+    expect(afterRead.data?.[0]?.read_at).toBeTruthy();
+    expect(afterRead.data?.[0]?.acknowledged_at).toBeNull();
+
+    const ack = await member.rpc("p85_stage_4b_acknowledge_notification_v1", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_notification_id: TEST_NOTIFICATION_ID,
+    });
+    expect(ack.error).toBeNull();
+
+    const afterAck = await member
+      .from("notification_receipts")
+      .select("notification_id, read_at, acknowledged_at")
+      .eq("notification_id", TEST_NOTIFICATION_ID);
+    expect(afterAck.data?.[0]?.acknowledged_at).toBeTruthy();
+
+    const assistantMutation = await assistant.rpc("p85_stage_4b_mark_notification_read_v1", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_notification_id: TEST_NOTIFICATION_ID,
+    });
+    expect(assistantMutation.error?.message).toMatch(/notification_receipt_mutation_forbidden/i);
+
+    const receiptInsert = await assistant.from("notification_receipts").insert({
+      tenant_id: TEST_TENANT_ID,
+      notification_id: TEST_NOTIFICATION_ID,
+      dietitian_id: ASSISTANT_DIETITIAN_ID,
+      read_at: new Date().toISOString(),
+    });
+    expect(receiptInsert.error?.message).toMatch(/row-level security/i);
 
     await resetSupabaseState();
   }, 30000);
@@ -1945,17 +2012,30 @@ async function seedTenants(
         id: TEST_NOTIFICATION_ID,
         tenant_id: TEST_TENANT_ID,
         type: "handoff_urgent",
+        kind: "legacy_handoff",
+        priority: "review_required",
         entity_type: "handoff_case",
-        entity_id: "test-handoff",
+        entity_id: TEST_HANDOFF_CASE_ID,
+        client_id: TEST_CLIENT_ID,
+        conversation_id: TEST_CONVERSATION_ID,
+        message_id: TEST_MESSAGE_ID,
+        handoff_id: TEST_HANDOFF_CASE_ID,
+        occurrence_count: 1,
+        last_occurred_at: "2026-05-25T00:00:00.000Z",
         title: "Visible notification",
         body: "Review required.",
       },
       {
         id: OTHER_NOTIFICATION_ID,
         tenant_id: OTHER_TENANT_ID,
-        type: "handoff_urgent",
-        entity_type: "handoff_case",
-        entity_id: "other-handoff",
+        type: "system",
+        kind: "legacy_system",
+        priority: "review_required",
+        entity_type: "client",
+        entity_id: OTHER_CLIENT_ID,
+        client_id: OTHER_CLIENT_ID,
+        occurrence_count: 1,
+        last_occurred_at: "2026-05-25T00:00:00.000Z",
         title: "Hidden notification",
         body: "Review required.",
       },
@@ -2339,6 +2419,7 @@ async function cleanup(admin: SupabaseClient) {
   await admin.from("internal_copilot_tool_calls").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("channel_deliveries").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("inbound_quarantines").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("notification_receipts").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("notifications").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("data_requests").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("client_ai_status_events").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);

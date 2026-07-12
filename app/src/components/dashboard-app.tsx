@@ -2,24 +2,12 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
-  Activity,
-  AlertTriangle,
-  Bell,
-  BellRing,
-  Bot,
-  Check,
-  CheckCheck,
-  ClipboardList,
   CreditCard,
-  Database,
   LogOut,
-  MessageSquareText,
   RefreshCcw,
   ShieldCheck,
-  SlidersHorizontal,
   Smartphone,
   UserRound,
-  UsersRound,
 } from "lucide-react";
 import { getSupabaseStatus } from "@/lib/supabase";
 import type {
@@ -27,9 +15,11 @@ import type {
   ClientContextUpdateImportance,
   ClientContextUpdateSource,
   ClientRecord,
-  NotificationRecord,
   Phase77FMenuPlanTemplateType,
 } from "@/lib/types";
+import { useDashboardUrl } from "@/lib/use-dashboard-url";
+import { useStage4BInbox } from "@/lib/use-stage-4b-inbox";
+import type { ClinicalAlertListItem, SystemNotificationListItem } from "@/lib/phase-85-stage-4b-contracts";
 import type { OperationalFoundationInspectionDto } from "@/lib/phase-85-if-h-operational-visibility";
 import {
   getClientFoodRuleProfileV2Record,
@@ -44,12 +34,8 @@ import {
 } from "@/lib/phase-77f-client-menu-plan";
 import { getActiveFormSchema } from "@/lib/client-forms";
 import { useManuState } from "@/lib/use-manu-state";
-import {
-  isP85Stage4AResolvableStructuredNotification,
-  resolveP85Stage4AStructuredNotificationTab,
-} from "@/lib/phase-85-stage-4a-post-if-remediation";
 import { type SupportedLanguageCode } from "@/lib/languages";
-import { t, type DashboardMessageKey } from "@/lib/i18n";
+import { t } from "@/lib/i18n";
 import {
   describeInstallState,
   describeSubscriptionStatus,
@@ -58,37 +44,32 @@ import type { CommercialEntitlementStatus } from "@/lib/phase-83b-commercial-ent
 import {
   SelectInput,
   StatusPill,
-  formatTime,
+  EmptyState,
   fromDateTimeLocal,
   languageOptions,
   parseAnswerLines,
   parseSchemaFields,
   scenarioMessages,
   type ClientDetailTab,
-  type ViewKey,
 } from "@/components/dashboard/shared";
+import { DASHBOARD_MAIN_ID } from "@/lib/phase-83e6-states-polish";
+import type { DashboardSection } from "@/lib/phase-85-stage-4b-dashboard-routing";
+import {
+  DashboardHeaderBell,
+  DashboardMobileNav,
+  DashboardSidebarNav,
+} from "@/components/dashboard/dashboard-navigation";
+import { AlertsPanel } from "@/components/dashboard/alerts-panel";
+import { NotificationsPanel } from "@/components/dashboard/notifications-panel";
 import { OverviewPanel } from "@/components/dashboard/overview-panel";
 import { ClientsPanel } from "@/components/dashboard/clients-panel";
 import { ConversationPanel } from "@/components/dashboard/conversation-panel";
 import { SimulatorPanel } from "@/components/dashboard/simulator-panel";
-import { HandoffsPanel } from "@/components/dashboard/handoffs-panel";
 import { CopilotPanel } from "@/components/dashboard/copilot-panel";
 import { VoicePanel } from "@/components/dashboard/voice-panel";
 import { FormsPanel } from "@/components/dashboard/forms-panel";
 import { useMobileKeyboardScroll } from "@/components/dashboard/mobile-ergonomics";
 import { DashboardLoadingSkeleton, ErrorState } from "@/components/dashboard/state-primitives";
-import { DASHBOARD_MAIN_ID } from "@/lib/phase-83e6-states-polish";
-
-const viewItems: Array<{ key: ViewKey; labelKey: DashboardMessageKey; icon: typeof Activity }> = [
-  { key: "overview", labelKey: "overview", icon: Activity },
-  { key: "clients", labelKey: "clients", icon: UsersRound },
-  { key: "conversation", labelKey: "conversation", icon: MessageSquareText },
-  { key: "simulator", labelKey: "simulator", icon: Bot },
-  { key: "handoffs", labelKey: "handoffs", icon: BellRing },
-  { key: "copilot", labelKey: "copilot", icon: Database },
-  { key: "voice", labelKey: "voice", icon: ClipboardList },
-  { key: "forms", labelKey: "forms", icon: SlidersHorizontal },
-];
 
 export function DashboardApp({
   authInfo,
@@ -111,12 +92,6 @@ export function DashboardApp({
     approveDraft,
     editAndSendDraft,
     dismissDraft,
-    resolveHandoff,
-    resolveAndReactivateHandoff,
-    dismissHandoff,
-    markNotificationRead,
-    acknowledgeNotification,
-    resolveStructuredUpdateNotification,
     resetState,
     addVoiceSamples,
     updateVoiceSampleStatus,
@@ -138,10 +113,10 @@ export function DashboardApp({
     applyContextIntakeProposal,
     rejectContextIntakeProposal,
   } = useManuState();
+  const { urlState, section, navigateDashboard, openSection } = useDashboardUrl();
+  const stage4bInbox = useStage4BInbox(urlState);
   const [operationalFoundation, setOperationalFoundation] =
     useState<OperationalFoundationInspectionDto | null>(null);
-  const [view, setView] = useState<ViewKey>("overview");
-  const [selectedClientId, setSelectedClientId] = useState("client-mert");
   const [clientDetailTab, setClientDetailTab] = useState<ClientDetailTab>("tab_overview");
   const [search, setSearch] = useState("");
   const [manualReply, setManualReply] = useState("");
@@ -153,7 +128,6 @@ export function DashboardApp({
   const [newClientHandle, setNewClientHandle] = useState("");
   const [newClientPhone, setNewClientPhone] = useState("");
   const [newClientLanguage, setNewClientLanguage] = useState<SupportedLanguageCode>("tr");
-  const [showNotifications, setShowNotifications] = useState(false);
   const [voiceRawInput, setVoiceRawInput] = useState("");
   const [schemaTitle, setSchemaTitle] = useState("Client intake");
   const [schemaLanguage, setSchemaLanguage] = useState<SupportedLanguageCode>("tr");
@@ -164,7 +138,6 @@ export function DashboardApp({
   const [isProposalUpdating, setIsProposalUpdating] = useState(false);
   const [isActivatingAi, setIsActivatingAi] = useState(false);
   const [isReleasingHumanTakeover, setIsReleasingHumanTakeover] = useState(false);
-  const [resolvingStructuredNotificationId, setResolvingStructuredNotificationId] = useState<string | null>(null);
   const [contextUpdateSource, setContextUpdateSource] = useState<ClientContextUpdateSource>("phone");
   const [contextUpdateImportance, setContextUpdateImportance] =
     useState<ClientContextUpdateImportance>("important");
@@ -180,10 +153,33 @@ export function DashboardApp({
     [state.clients],
   );
 
-  const selectedClient = useMemo(
-    () => activeClients.find((client) => client.id === selectedClientId) || activeClients[0],
-    [activeClients, selectedClientId],
+  const activeClientIds = useMemo(
+    () => new Set(activeClients.map((client) => client.id)),
+    [activeClients],
   );
+
+  const notificationActorContext = useMemo(
+    () => ({
+      role: (authInfo?.role ?? "dietitian") as "owner" | "admin" | "dietitian" | "assistant" | "auditor",
+      dietitianId: state.dietitian.id,
+    }),
+    [authInfo?.role, state.dietitian.id],
+  );
+
+  const resolvedClientId = useMemo(() => {
+    if (urlState.clientId && activeClients.some((client) => client.id === urlState.clientId)) {
+      return urlState.clientId;
+    }
+    if (section === "clients" || section === "simulator" || section === "copilot" || section === "forms") {
+      return activeClients[0]?.id ?? null;
+    }
+    return null;
+  }, [activeClients, section, urlState.clientId]);
+
+  const selectedClient = useMemo(() => {
+    if (!resolvedClientId) return undefined;
+    return activeClients.find((client) => client.id === resolvedClientId);
+  }, [activeClients, resolvedClientId]);
 
   const selectedConversation = useMemo(
     () => state.conversations.find((conversation) => conversation.clientId === selectedClient?.id),
@@ -235,8 +231,7 @@ export function DashboardApp({
     const urgentHandoffs = state.handoffCases.filter((handoff) => handoff.status === "open").length;
     const aiSent = state.messages.filter((message) => message.origin === "ai_generated" && message.status === "sent").length;
     const passive = activeClients.filter((client) => client.aiStatus === "passive").length;
-    const unreadNotifications = state.notifications.filter((n) => !n.read).length;
-    return { pendingDrafts, urgentHandoffs, aiSent, passive, unreadNotifications };
+    return { pendingDrafts, urgentHandoffs, aiSent, passive };
   }, [activeClients, state]);
 
   const mainContentRef = useRef<HTMLDivElement>(null);
@@ -282,12 +277,28 @@ export function DashboardApp({
     await updateClient(selectedClient.id, patch);
   };
 
+  const selectClient = (clientId: string, patch: { section?: DashboardSection; clientDetailTab?: ClientDetailTab } = {}) => {
+    navigateDashboard({
+      section: patch.section ?? section,
+      clientId,
+    });
+    if (patch.clientDetailTab) {
+      setClientDetailTab(patch.clientDetailTab);
+    } else if ((patch.section ?? section) === "clients") {
+      setClientDetailTab("tab_overview");
+    }
+  };
+
+  const navigateToSection = (nextSection: DashboardSection) => {
+    openSection(nextSection, resolvedClientId ? { clientId: resolvedClientId } : {});
+  };
+
   const removeSelectedClient = async () => {
     if (!selectedClient) return;
     const nextState = await removeClient(selectedClient.id);
     const nextActiveClient = nextState.clients.find((client) => client.lifecycleStatus !== "removed_anonymized");
     if (nextActiveClient) {
-      setSelectedClientId(nextActiveClient.id);
+      selectClient(nextActiveClient.id, { section: "clients" });
     }
   };
 
@@ -302,11 +313,7 @@ export function DashboardApp({
       communicationLanguage: newClientLanguage,
     });
     const createdClient = nextState.clients[nextState.clients.length - 1];
-    setSelectedClientId(createdClient.id);
-    setNewClientName("");
-    setNewClientHandle("");
-    setNewClientPhone("");
-    setView("clients");
+    selectClient(createdClient.id, { section: "clients" });
   };
 
   const runSimulation = async () => {
@@ -318,7 +325,7 @@ export function DashboardApp({
         body: simBody,
         idempotencyKey: simKey,
       });
-      setView("simulator");
+      navigateToSection("simulator");
     } finally {
       setIsSimulating(false);
     }
@@ -338,11 +345,13 @@ export function DashboardApp({
     }
     setIsActivatingAi(true);
     try {
-      return await activateClientAi(clientId, {
+      const nextState = await activateClientAi(clientId, {
         requestedAiMode,
         expectedConversationRevision: conversation.revision,
         expectedClientContextRevision: client.contextRevision,
       });
+      void stage4bInbox.refreshAfterMutation();
+      return nextState;
     } finally {
       setIsActivatingAi(false);
     }
@@ -359,26 +368,37 @@ export function DashboardApp({
   };
 
   const openClientPanelFromConversation = (panelKey: string) => {
-    setView("clients");
-    setClientDetailTab(panelKey as ClientDetailTab);
+    if (!selectedClient) return;
+    selectClient(selectedClient.id, { section: "clients", clientDetailTab: panelKey as ClientDetailTab });
   };
 
-  const openStructuredNotificationTarget = (notification: NotificationRecord) => {
-    const targetTab = resolveP85Stage4AStructuredNotificationTab(notification.targetPanel);
-    if (!targetTab || notification.entityType !== "client") return;
-    setSelectedClientId(notification.entityId);
-    setClientDetailTab(targetTab as ClientDetailTab);
-    setView("clients");
-    setShowNotifications(false);
+  const openAlertTarget = (alert: ClinicalAlertListItem) => {
+    navigateDashboard({
+      section: "messages",
+      clientId: alert.clientId,
+      conversationId: alert.conversationId,
+      source: "alert",
+      sourceId: alert.id,
+      messageId: alert.sourceMessageId,
+    });
   };
 
-  const resolveStructuredNotification = async (notificationId: string) => {
-    if (resolvingStructuredNotificationId) return;
-    setResolvingStructuredNotificationId(notificationId);
-    try {
-      await resolveStructuredUpdateNotification(notificationId);
-    } finally {
-      setResolvingStructuredNotificationId(null);
+  const openNotificationTarget = (notification: SystemNotificationListItem) => {
+    if (notification.target.section === "messages") {
+      navigateDashboard({
+        section: "messages",
+        clientId: notification.clientId,
+        conversationId: notification.conversationId,
+        messageId: notification.messageId,
+      });
+      return;
+    }
+    if (notification.target.section === "ai-control" && notification.clientId) {
+      selectClient(notification.clientId, { section: "clients", clientDetailTab: "tab_ai_assistant" });
+      return;
+    }
+    if (notification.clientId) {
+      selectClient(notification.clientId, { section: "clients" });
     }
   };
 
@@ -455,7 +475,7 @@ export function DashboardApp({
     try {
       await sendInternalCopilotMessage(trimmed);
       setCopilotInput("");
-      setView("copilot");
+      navigateToSection("copilot");
     } finally {
       setIsCopilotSending(false);
     }
@@ -512,8 +532,8 @@ export function DashboardApp({
     setContextUpdateDetails("");
   };
 
-  const viewsWithMobileStickyActions: ViewKey[] = ["conversation", "simulator", "copilot"];
-  const mainMobilePadding = viewsWithMobileStickyActions.includes(view)
+  const viewsWithMobileStickyActions: DashboardSection[] = ["messages", "simulator", "copilot"];
+  const mainMobilePadding = viewsWithMobileStickyActions.includes(section)
     ? "lg:pb-5"
     : "pb-mobile-nav lg:pb-5";
 
@@ -543,27 +563,15 @@ export function DashboardApp({
             </form>
           </div>
 
-          <nav className="hidden gap-2 overflow-x-auto px-3 pb-3 lg:block lg:space-y-1 lg:overflow-visible" aria-label="Panel görünümleri">
-            {viewItems.map((item) => {
-              const Icon = item.icon;
-              const active = item.key === view;
-              return (
-                <button
-                  key={item.key}
-                  onClick={() => setView(item.key)}
-                  className={`inline-flex min-h-11 min-w-fit items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition lg:w-full ${
-                    active
-                      ? "bg-emerald-950 text-white"
-                      : "text-stone-700 hover:bg-stone-100 hover:text-stone-950"
-                  }`}
-                  type="button"
-                >
-                  <Icon size={18} />
-                  {t(uiLanguage, item.labelKey)}
-                </button>
-              );
-            })}
-          </nav>
+          <DashboardSidebarNav
+            activeSection={section}
+            uiLanguage={uiLanguage}
+            badges={{
+              alerts: stage4bInbox.alertsBadgeCount,
+              notifications: stage4bInbox.notificationsBadgeCount,
+            }}
+            onNavigate={navigateToSection}
+          />
 
           <div className="hidden px-5 py-5 lg:block">
             <div className="rounded-lg border border-stone-200 bg-stone-50 p-4">
@@ -624,104 +632,10 @@ export function DashboardApp({
                   label={getSupabaseStatus() === "configured" ? "Supabase yapılandırıldı" : "Yerel veri"}
                   tone="amber"
                 />
-                <div className="relative">
-                  <button
-                    onClick={() => setShowNotifications(!showNotifications)}
-                    className="relative inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-stone-200 bg-white text-stone-700 transition hover:bg-stone-100"
-                    type="button"
-                  >
-                    <Bell size={18} />
-                    {metrics.unreadNotifications > 0 && (
-                      <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white">
-                        {metrics.unreadNotifications}
-                      </span>
-                    )}
-                  </button>
-
-                  {showNotifications && (
-                    <div className="absolute right-0 top-12 z-50 w-80 sm:w-96 rounded-lg border border-stone-200 bg-white shadow-xl">
-                      <div className="flex items-center justify-between border-b border-stone-100 px-4 py-3">
-                        <h3 className="font-semibold">Bildirimler</h3>
-                        {metrics.unreadNotifications > 0 && (
-                          <span className="rounded bg-stone-100 px-2 py-0.5 text-xs font-semibold text-stone-600">
-                            {metrics.unreadNotifications} yeni
-                          </span>
-                        )}
-                      </div>
-                      <div className="max-h-96 overflow-y-auto p-2">
-                        {state.notifications.length === 0 ? (
-                          <div className="p-4 text-center text-sm text-stone-500">Henüz bildirim yok.</div>
-                        ) : (
-                          state.notifications
-                            .slice()
-                            .reverse()
-                            .map((notif) => (
-                              <div
-                                key={notif.id}
-                                className={`mb-2 rounded-lg p-3 text-left transition ${
-                                  notif.read ? "bg-white opacity-70" : "bg-stone-50"
-                                }`}
-                              >
-                                <div className="flex items-start justify-between gap-3">
-                                  <div className="min-w-0 flex-1">
-                                    <div className="flex items-center gap-2">
-                                      {notif.type === "handoff_urgent" && <AlertTriangle size={14} className="text-red-600" />}
-                                      <p className={`text-sm truncate ${notif.read ? "font-medium" : "font-semibold"}`}>
-                                        {notif.title}
-                                      </p>
-                                    </div>
-                                    <p className="mt-1 text-sm text-stone-600">{notif.body}</p>
-                                    <p className="mt-1.5 text-xs text-stone-400">{formatTime(notif.createdAt)}</p>
-                                    {isP85Stage4AResolvableStructuredNotification(notif) && (
-                                      <div className="mt-2 flex flex-wrap gap-2">
-                                        <button
-                                          onClick={() => openStructuredNotificationTarget(notif)}
-                                          className="inline-flex min-h-11 items-center rounded border border-stone-200 bg-white px-2 text-xs font-semibold text-stone-700 hover:bg-stone-50"
-                                          type="button"
-                                        >
-                                          Ilgili panele git
-                                        </button>
-                                        <button
-                                          onClick={() => resolveStructuredNotification(notif.id)}
-                                          disabled={resolvingStructuredNotificationId === notif.id}
-                                          className="inline-flex min-h-11 items-center rounded border border-emerald-200 bg-white px-2 text-xs font-semibold text-emerald-800 hover:bg-emerald-50 disabled:cursor-not-allowed disabled:opacity-60"
-                                          type="button"
-                                        >
-                                          Guncellemeyi tamamla
-                                        </button>
-                                      </div>
-                                    )}
-                                  </div>
-                                  <div className="flex flex-col gap-1">
-                                    {!notif.read && (
-                                      <button
-                                        onClick={() => markNotificationRead(notif.id)}
-                                        className="inline-flex min-h-11 min-w-11 items-center justify-center rounded bg-white px-2 border border-stone-200 text-xs font-medium text-stone-600 hover:bg-stone-50"
-                                        title="Okundu işaretle"
-                                        type="button"
-                                      >
-                                        <Check size={14} />
-                                      </button>
-                                    )}
-                                    {!notif.acknowledgedAt && (
-                                      <button
-                                        onClick={() => acknowledgeNotification(notif.id)}
-                                        className="inline-flex min-h-11 min-w-11 items-center justify-center rounded bg-white px-2 border border-stone-200 text-xs font-medium text-emerald-700 hover:bg-emerald-50"
-                                        title="Onayla"
-                                        type="button"
-                                      >
-                                        <CheckCheck size={14} />
-                                      </button>
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
-                            ))
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
+                <DashboardHeaderBell
+                  unreadCount={stage4bInbox.notificationsBadgeCount}
+                  onOpenNotifications={() => navigateToSection("notifications")}
+                />
 
                 <button
                   onClick={resetState}
@@ -753,7 +667,7 @@ export function DashboardApp({
             tabIndex={-1}
             className={`min-w-0 flex-1 px-safe py-5 sm:px-6 ${mainMobilePadding}`}
           >
-            {view === "overview" && (
+            {section === "overview" && (
               <OverviewPanel
                 metrics={metrics}
                 selectedClient={selectedClient}
@@ -761,12 +675,12 @@ export function DashboardApp({
                 uiLanguage={uiLanguage}
                 showInspectionDetails={showOperationalInspection}
                 operationalFoundation={showOperationalInspection ? operationalFoundation : null}
-                onOpenSimulator={() => setView("simulator")}
-                onOpenClients={() => setView("clients")}
+                onOpenSimulator={() => navigateToSection("simulator")}
+                onOpenClients={() => navigateToSection("clients")}
               />
             )}
 
-            {view === "clients" && selectedClient && (
+            {section === "clients" && selectedClient && (
               <ClientsPanel
                 clients={filteredClients}
                 selectedClient={selectedClient}
@@ -778,7 +692,7 @@ export function DashboardApp({
                 newClientLanguage={newClientLanguage}
                 uiLanguage={uiLanguage}
                 onSearch={setSearch}
-                onSelect={(id) => { setSelectedClientId(id); setClientDetailTab("tab_overview"); }}
+                onSelect={(id) => selectClient(id, { section: "clients", clientDetailTab: "tab_overview" })}
                 onAddClient={addClient}
                 onNewClientName={setNewClientName}
                 onNewClientChannel={setNewClientChannel}
@@ -823,7 +737,7 @@ export function DashboardApp({
               />
             )}
 
-            {view === "conversation" && selectedClient && (
+            {section === "messages" && selectedClient && (
               <ConversationPanel
                 client={selectedClient}
                 messages={selectedMessages}
@@ -839,12 +753,19 @@ export function DashboardApp({
                 onApproveDraft={approveDraft}
                 onEditAndSendDraft={editAndSendDraft}
                 onDismissDraft={dismissDraft}
-                onOpenSimulator={() => setView("simulator")}
+                onOpenSimulator={() => navigateToSection("simulator")}
                 onOpenClientPanel={openClientPanelFromConversation}
               />
             )}
 
-            {view === "simulator" && selectedClient && (
+            {section === "messages" && !selectedClient && (
+              <EmptyState
+                title={t(uiLanguage, "messagesTargetMissing")}
+                message={t(uiLanguage, "messagesTargetMissingHint")}
+              />
+            )}
+
+            {section === "simulator" && selectedClient && (
               <SimulatorPanel
                 state={state}
                 selectedClient={selectedClient}
@@ -852,25 +773,56 @@ export function DashboardApp({
                 simBody={simBody}
                 simKey={simKey}
                 isSimulating={isSimulating}
-                onSelectClient={setSelectedClientId}
+                onSelectClient={(clientId) => selectClient(clientId, { section: "simulator" })}
                 onSimBody={setSimBody}
                 onSimKey={setSimKey}
                 onRun={runSimulation}
-                onOpenConversation={() => setView("conversation")}
+                onOpenConversation={() => navigateToSection("messages")}
               />
             )}
 
-            {view === "handoffs" && (
-              <HandoffsPanel
-                state={state}
-                onSelectClient={setSelectedClientId}
-                onResolveHandoff={resolveHandoff}
-                onResolveAndReactivateHandoff={resolveAndReactivateHandoff}
-                onDismissHandoff={dismissHandoff}
+            {section === "alerts" && (
+              <AlertsPanel
+                uiLanguage={uiLanguage}
+                filters={urlState}
+                items={stage4bInbox.alertItems}
+                counts={stage4bInbox.alerts?.counts ?? null}
+                filteredTotal={stage4bInbox.alerts?.filteredTotal ?? 0}
+                nextCursor={stage4bInbox.alertsNextCursor}
+                error={stage4bInbox.alertsError}
+                isRefreshing={stage4bInbox.isRefreshing}
+                isLoadingMore={stage4bInbox.isLoadingMoreAlerts}
+                lastSuccessAt={stage4bInbox.lastSuccessAt}
+                onFiltersChange={(patch) => navigateDashboard(patch)}
+                onRefresh={() => void stage4bInbox.refresh({ resetBackoff: true })}
+                onLoadMore={() => void stage4bInbox.loadMoreAlerts()}
+                onOpenAlertTarget={openAlertTarget}
               />
             )}
 
-            {view === "copilot" && selectedClient && (
+            {section === "notifications" && (
+              <NotificationsPanel
+                uiLanguage={uiLanguage}
+                filters={urlState}
+                items={stage4bInbox.notificationItems}
+                counts={stage4bInbox.notifications?.counts ?? null}
+                filteredTotal={stage4bInbox.notifications?.filteredTotal ?? 0}
+                nextCursor={stage4bInbox.notificationsNextCursor}
+                error={stage4bInbox.notificationsError}
+                isRefreshing={stage4bInbox.isRefreshing}
+                isLoadingMore={stage4bInbox.isLoadingMoreNotifications}
+                lastSuccessAt={stage4bInbox.lastSuccessAt}
+                actorContext={notificationActorContext}
+                activeClientIds={activeClientIds}
+                onFiltersChange={(patch) => navigateDashboard(patch)}
+                onRefresh={() => void stage4bInbox.refresh({ resetBackoff: true })}
+                onLoadMore={() => void stage4bInbox.loadMoreNotifications()}
+                onOpenNotificationTarget={openNotificationTarget}
+                onMutationComplete={() => stage4bInbox.refreshAfterMutation()}
+              />
+            )}
+
+            {section === "copilot" && selectedClient && (
               <CopilotPanel
                 state={state}
                 selectedClient={selectedClient}
@@ -895,7 +847,7 @@ export function DashboardApp({
               />
             )}
 
-            {view === "voice" && (
+            {section === "voice" && (
               <VoicePanel
                 state={state}
                 rawInput={voiceRawInput}
@@ -906,7 +858,7 @@ export function DashboardApp({
               />
             )}
 
-            {view === "forms" && selectedClient && (
+            {section === "forms" && selectedClient && (
               <FormsPanel
                 state={state}
                 selectedClient={selectedClient}
@@ -928,31 +880,15 @@ export function DashboardApp({
         </main>
       </div>
 
-      <nav
-        className="fixed inset-x-0 bottom-0 z-40 flex overflow-x-auto border-t border-stone-200 bg-white pb-safe lg:hidden"
-        aria-label="Mobil navigasyon"
-      >
-        {viewItems.map((item) => {
-          const Icon = item.icon;
-          const active = item.key === view;
-          const label = t(uiLanguage, item.labelKey);
-          return (
-            <button
-              key={item.key}
-              onClick={() => setView(item.key)}
-              aria-current={active ? "page" : undefined}
-              aria-label={label}
-              className={`relative flex min-h-14 w-20 shrink-0 flex-col items-center justify-center gap-0.5 text-[11px] font-medium transition sm:flex-1 ${
-                active ? "text-emerald-900" : "text-stone-500"
-              }`}
-              type="button"
-            >
-              <Icon size={20} aria-hidden="true" />
-              <span className="truncate px-1">{label}</span>
-            </button>
-          );
-        })}
-      </nav>
+      <DashboardMobileNav
+        activeSection={section}
+        uiLanguage={uiLanguage}
+        badges={{
+          alerts: stage4bInbox.alertsBadgeCount,
+          notifications: stage4bInbox.notificationsBadgeCount,
+        }}
+        onNavigate={navigateToSection}
+      />
     </div>
   );
 }

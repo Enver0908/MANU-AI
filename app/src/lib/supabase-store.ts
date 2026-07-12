@@ -113,6 +113,20 @@ import {
   mapSupabaseSearchRowToRetrievalCandidate,
   type SupabaseConversationMessageSearchRow,
 } from "./phase-85-if-e-supabase-search";
+import {
+  completeUnsupportedMediaReviewInState,
+  isStage4BNotificationVisible,
+  normalizeNotificationsInState,
+} from "./phase-85-stage-4b-notifications";
+import { projectClinicalAlertsFromState, type ClinicalAlertFilterSeverity } from "./phase-85-stage-4b-alerts";
+import type { NotificationCategory, NotificationPriority, NotificationReceiptRecord } from "./phase-85-stage-4b-contracts";
+import {
+  buildClinicalAlertsListResponse,
+  buildNotificationMutationResponse,
+  buildNotificationReadAllResponse,
+  buildSystemNotificationsListResponse,
+  type NotificationListStatus,
+} from "./phase-85-stage-4b-api";
 
 export const DEMO_TENANT_UUID = "00000000-0000-4000-8000-000000000001";
 export const DEMO_DIETITIAN_UUID = "00000000-0000-4000-8000-000000000002";
@@ -268,6 +282,8 @@ type DbNotification = {
   id: string;
   tenant_id: string;
   type: NotificationRecord["type"];
+  kind: NotificationRecord["kind"];
+  priority: NotificationRecord["priority"];
   entity_type: string;
   entity_id: string;
   title: string;
@@ -280,7 +296,22 @@ type DbNotification = {
   baseline_revision: number | null;
   resolved_at: string | null;
   resolved_by_dietitian_id: string | null;
+  client_id: string | null;
+  conversation_id: string | null;
+  message_id: string | null;
+  handoff_id: string | null;
+  occurrence_count: number;
+  last_occurred_at: string;
   created_at: string;
+};
+type DbNotificationReceipt = {
+  tenant_id: string;
+  notification_id: string;
+  dietitian_id: string;
+  read_at: string | null;
+  acknowledged_at: string | null;
+  created_at: string;
+  updated_at: string;
 };
 type DbDataRequest = {
   id: string;
@@ -621,6 +652,7 @@ export async function loadSupabaseState(context = demoTenantContext()) {
     riskAssessmentsResult,
     handoffsResult,
     notificationsResult,
+    notificationReceiptsResult,
     dataRequestsResult,
     internalCopilotMessagesResult,
     internalCopilotToolCallsResult,
@@ -657,6 +689,7 @@ export async function loadSupabaseState(context = demoTenantContext()) {
     supabase.from("risk_assessments").select("*").eq("tenant_id", context.tenantId).order("created_at"),
     supabase.from("handoff_cases").select("*").eq("tenant_id", context.tenantId).order("created_at"),
     supabase.from("notifications").select("*").eq("tenant_id", context.tenantId).order("created_at"),
+    supabase.from("notification_receipts").select("*").eq("tenant_id", context.tenantId).order("updated_at"),
     supabase.from("data_requests").select("*").eq("tenant_id", context.tenantId).order("created_at"),
     supabase.from("internal_copilot_messages").select("*").eq("tenant_id", context.tenantId).order("created_at"),
     supabase.from("internal_copilot_tool_calls").select("*").eq("tenant_id", context.tenantId).order("created_at"),
@@ -694,6 +727,7 @@ export async function loadSupabaseState(context = demoTenantContext()) {
   throwIfError(riskAssessmentsResult.error);
   throwIfError(handoffsResult.error);
   throwIfError(notificationsResult.error);
+  throwIfError(notificationReceiptsResult.error);
   throwIfError(dataRequestsResult.error);
   throwIfError(internalCopilotMessagesResult.error);
   throwIfError(internalCopilotToolCallsResult.error);
@@ -721,7 +755,7 @@ export async function loadSupabaseState(context = demoTenantContext()) {
   const channels = channelsResult.data || [];
   const memories = memoriesResult.data || [];
   const scopedState = scopeSupabaseState(
-    {
+    normalizeNotificationsInState({
       tenant: {
         id: tenantResult.data.id,
         name: tenantResult.data.name,
@@ -753,6 +787,7 @@ export async function loadSupabaseState(context = demoTenantContext()) {
       riskAssessments: (riskAssessmentsResult.data || []).map(mapRiskAssessment),
       handoffCases: (handoffsResult.data || []).map(mapHandoff),
       notifications: (notificationsResult.data || []).map(mapNotification),
+      notificationReceipts: (notificationReceiptsResult.data || []).map(mapNotificationReceipt),
       inboundQuarantines: (inboundQuarantinesResult.data || []).map(mapInboundQuarantine),
       channelAccountBindings: (channelAccountBindingsResult.data || []).map(mapChannelAccountBinding),
       channelActorBindings: (channelActorBindingsResult.data || []).map(mapChannelActorBinding),
@@ -773,7 +808,7 @@ export async function loadSupabaseState(context = demoTenantContext()) {
       auditEvents: (auditEventsResult.data || []).map(mapAuditEvent),
       processedSimulationKeys: (processedEventsResult.data || []).map((event) => event.provider_event_id),
       lastSimulation: null,
-    },
+    }),
     context,
     assignmentsResult.data || [],
   );
@@ -975,6 +1010,7 @@ export async function loadSupabaseWindowedDashboardPayload(
       riskAssessments: [],
       handoffCases: (handoffsResult.data || []).map(mapHandoff),
       notifications: (notificationsResult.data || []).map(mapNotification),
+      notificationReceipts: [],
       inboundQuarantines: [],
       channelAccountBindings: [],
       channelActorBindings: [],
@@ -1261,6 +1297,7 @@ async function loadSupabaseClientOperationState(
         .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()),
       handoffCases: mergeById([...(handoffsResult.data || []), ...(requiredHandoffResult.data || [])]).map(mapHandoff),
       notifications: [],
+      notificationReceipts: [],
       inboundQuarantines: [],
       channelAccountBindings: [],
       channelActorBindings: [],
@@ -1443,8 +1480,17 @@ export function scopeSupabaseState(
         visibleConversationIds.has(assessment.conversationId) || visibleMessageIds.has(assessment.messageId),
     ),
     handoffCases: visibleHandoffs,
-    notifications: state.notifications.filter(
-      (notification) => notification.entityType === "handoff_case" && visibleHandoffIds.has(notification.entityId),
+    notifications: state.notifications.filter((notification) =>
+      isStage4BNotificationVisible(notification, context, assignments, state.clients),
+    ),
+    notificationReceipts: state.notificationReceipts.filter(
+      (receipt) =>
+        receipt.dietitianId === context.dietitianId &&
+        state.notifications.some(
+          (notification) =>
+            notification.id === receipt.notificationId &&
+            isStage4BNotificationVisible(notification, context, assignments, state.clients),
+        ),
     ),
     inboundQuarantines: visibleInboundQuarantines,
     channelAccountBindings: visibleChannelAccountBindings,
@@ -1477,6 +1523,20 @@ export function scopeSupabaseState(
         (canReadRollbackAudit && event.eventType === "channel_automation_rollback_updated"),
     ),
   };
+}
+
+export function projectClinicalAlertsFromSupabaseState(
+  state: ManuAppState,
+  context: AppTenantContext,
+  assignments: DbClientAssignment[],
+  input: { now?: string; dietitianTimezones?: ReadonlyMap<string, string> } = {},
+) {
+  const scoped = scopeSupabaseState(state, context, assignments);
+  return projectClinicalAlertsFromState(scoped, {
+    now: input.now,
+    visibleClientIds: new Set(scoped.clients.map((client) => client.id)),
+    dietitianTimezones: input.dietitianTimezones,
+  });
 }
 
 function getVisibleClientIds(
@@ -1568,6 +1628,7 @@ async function loadSupabaseClientCreateContext(context: AppTenantContext) {
       handoffCases: [],
       auditEvents: [],
       notifications: [],
+      notificationReceipts: [],
       inboundQuarantines: [],
       channelAccountBindings: [],
       channelActorBindings: [],
@@ -1958,25 +2019,91 @@ export async function resolveAndReactivateSupabaseRedRisk(
 }
 
 export async function markSupabaseNotificationRead(notificationId: string, context = demoTenantContext()) {
-  const { error } = await requireSupabase()
-    .from("notifications")
-    .update({ read: true })
-    .eq("id", notificationId)
-    .eq("tenant_id", context.tenantId);
-  throwIfError(error);
-  await assertSupabaseNotificationExists(notificationId, context);
-  return loadSupabaseState(context);
+  const { error } = await requireSupabase().rpc("p85_stage_4b_mark_notification_read_v1", {
+    p_tenant_id: context.tenantId,
+    p_notification_id: notificationId,
+  });
+  if (error) throwControlledRpcError(error);
+  const [state, assignments] = await Promise.all([
+    loadSupabaseState(context),
+    fetchClientAssignments(context),
+  ]);
+  return buildNotificationMutationResponse(state, context, assignments, notificationId);
 }
 
 export async function acknowledgeSupabaseNotification(notificationId: string, context = demoTenantContext()) {
-  const { error } = await requireSupabase()
-    .from("notifications")
-    .update({ read: true, acknowledged_at: new Date().toISOString() })
-    .eq("id", notificationId)
+  const { error } = await requireSupabase().rpc("p85_stage_4b_acknowledge_notification_v1", {
+    p_tenant_id: context.tenantId,
+    p_notification_id: notificationId,
+  });
+  if (error) throwControlledRpcError(error);
+  const [state, assignments] = await Promise.all([
+    loadSupabaseState(context),
+    fetchClientAssignments(context),
+  ]);
+  return buildNotificationMutationResponse(state, context, assignments, notificationId);
+}
+
+export async function markAllSupabaseNotificationsRead(context = demoTenantContext()) {
+  const { data, error } = await requireSupabase().rpc("p85_stage_4b_mark_all_notifications_read_v1", {
+    p_tenant_id: context.tenantId,
+  });
+  if (error) throwControlledRpcError(error);
+  const [state, assignments] = await Promise.all([
+    loadSupabaseState(context),
+    fetchClientAssignments(context),
+  ]);
+  return buildNotificationReadAllResponse(state, context, assignments, Number(data ?? 0));
+}
+
+export async function completeSupabaseUnsupportedMediaReview(notificationId: string, context = demoTenantContext()) {
+  const before = await loadSupabaseState(context);
+  const after = completeUnsupportedMediaReviewInState(before, notificationId, context.dietitianId);
+  await commitStateDeltaRpc(requireSupabase(), "commit_draft_review", before, after);
+  const { error: ackError } = await requireSupabase().rpc("p85_stage_4b_acknowledge_notification_v1", {
+    p_tenant_id: context.tenantId,
+    p_notification_id: notificationId,
+  });
+  if (ackError) throwControlledRpcError(ackError);
+  const assignments = await fetchClientAssignments(context);
+  return buildNotificationMutationResponse(after, context, assignments, notificationId);
+}
+
+export async function listSupabaseClinicalAlerts(
+  context: AppTenantContext,
+  input: {
+    severity?: ClinicalAlertFilterSeverity;
+    query?: string;
+    cursor?: string | null;
+    limit?: number;
+  },
+) {
+  const [state, assignments] = await Promise.all([loadSupabaseState(context), fetchClientAssignments(context)]);
+  return buildClinicalAlertsListResponse(state, context, assignments, input);
+}
+
+export async function listSupabaseNotifications(
+  context: AppTenantContext,
+  input: {
+    status?: NotificationListStatus;
+    priority?: NotificationPriority | null;
+    category?: NotificationCategory | null;
+    query?: string;
+    cursor?: string | null;
+    limit?: number;
+  },
+) {
+  const [state, assignments] = await Promise.all([loadSupabaseState(context), fetchClientAssignments(context)]);
+  return buildSystemNotificationsListResponse(state, context, assignments, input);
+}
+
+async function fetchClientAssignments(context: AppTenantContext): Promise<DbClientAssignment[]> {
+  const { data, error } = await requireSupabase()
+    .from("client_assignments")
+    .select("client_id, dietitian_id")
     .eq("tenant_id", context.tenantId);
   throwIfError(error);
-  await assertSupabaseNotificationExists(notificationId, context);
-  return loadSupabaseState(context);
+  return data ?? [];
 }
 
 export async function resolveSupabaseStructuredRecordUpdateNotification(
@@ -2571,6 +2698,7 @@ async function deleteDemoData(supabase: SupabaseClient, tenantId = DEMO_TENANT_U
     "internal_copilot_messages",
     "internal_copilot_tool_calls",
     "data_requests",
+    "notification_receipts",
     "notifications",
     "channel_deliveries",
     "context_intake_proposals",
@@ -3111,6 +3239,8 @@ function serializeNotificationForRpc(notification: NotificationRecord) {
   return {
     id: notification.id,
     type: notification.type,
+    kind: notification.kind,
+    priority: notification.priority,
     entityType: notification.entityType,
     entityId: notification.entityId,
     title: notification.title,
@@ -3123,6 +3253,12 @@ function serializeNotificationForRpc(notification: NotificationRecord) {
     baselineRevision: notification.baselineRevision ?? null,
     resolvedAt: notification.resolvedAt ?? null,
     resolvedByDietitianId: notification.resolvedByDietitianId ?? null,
+    clientId: notification.clientId ?? null,
+    conversationId: notification.conversationId ?? null,
+    messageId: notification.messageId ?? null,
+    handoffId: notification.handoffId ?? null,
+    occurrenceCount: notification.occurrenceCount,
+    lastOccurredAt: notification.lastOccurredAt,
     createdAt: notification.createdAt,
   };
 }
@@ -3324,6 +3460,10 @@ function serializeNotificationUpdateForRpc(notification: NotificationRecord) {
     body: notification.body,
     read: notification.read,
     acknowledgedAt: notification.acknowledgedAt,
+    occurrenceCount: notification.occurrenceCount,
+    lastOccurredAt: notification.lastOccurredAt,
+    resolvedAt: notification.resolvedAt,
+    resolvedByDietitianId: notification.resolvedByDietitianId,
   };
 }
 
@@ -3378,6 +3518,9 @@ function throwControlledRpcError(error: { message?: string }) {
   }
   if (message.includes("red_risk_lock_not_active_for_handoff")) {
     throw new AppDomainError(409, "red_risk_lock_not_active_for_handoff");
+  }
+  if (message.includes("notification_receipt_mutation_forbidden")) {
+    throw new AppDomainError(409, "notification_receipt_mutation_forbidden");
   }
   if (message.includes("notification_not_found")) {
     throw new AppDomainError(404, "notification_not_found");
@@ -4317,6 +4460,8 @@ function mapNotification(notification: DbNotification): NotificationRecord {
     id: notification.id,
     tenantId: notification.tenant_id,
     type: notification.type,
+    kind: notification.kind,
+    priority: notification.priority,
     entityType: notification.entity_type,
     entityId: notification.entity_id,
     title: notification.title,
@@ -4329,7 +4474,25 @@ function mapNotification(notification: DbNotification): NotificationRecord {
     baselineRevision: notification.baseline_revision,
     resolvedAt: notification.resolved_at,
     resolvedByDietitianId: notification.resolved_by_dietitian_id,
+    clientId: notification.client_id,
+    conversationId: notification.conversation_id,
+    messageId: notification.message_id,
+    handoffId: notification.handoff_id,
+    occurrenceCount: notification.occurrence_count,
+    lastOccurredAt: notification.last_occurred_at,
     createdAt: notification.created_at,
+  };
+}
+
+function mapNotificationReceipt(receipt: DbNotificationReceipt): NotificationReceiptRecord {
+  return {
+    tenantId: receipt.tenant_id,
+    notificationId: receipt.notification_id,
+    dietitianId: receipt.dietitian_id,
+    readAt: receipt.read_at,
+    acknowledgedAt: receipt.acknowledged_at,
+    createdAt: receipt.created_at,
+    updatedAt: receipt.updated_at,
   };
 }
 
@@ -4570,20 +4733,6 @@ function mapInternalCopilotToolCall(call: DbInternalCopilotToolCall): InternalCo
     resultSummary: call.result_summary || "",
     createdAt: call.created_at,
   };
-}
-
-async function assertSupabaseNotificationExists(notificationId: string, context: AppTenantContext) {
-  const result = await requireSupabase()
-    .from("notifications")
-    .select("id")
-    .eq("id", notificationId)
-    .eq("tenant_id", context.tenantId)
-    .maybeSingle();
-  throwIfError(result.error);
-
-  if (!result.data) {
-    throw new AppDomainError(404, "notification_not_found");
-  }
 }
 
 async function checked(result: PromiseLike<{ error: unknown }> | { error: unknown }) {

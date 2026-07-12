@@ -43,17 +43,27 @@ export function HumanControlSessionBanner({
               value={String(banner.humanResponseCount)}
             />
           </div>
-          {banner.requiresHandoffResolution && (
+          {banner.requiresAtomicRedActivation && (
             <p className="mt-3 rounded-lg border border-red-200 bg-red-50 p-3 text-sm leading-6 text-red-900">
               <ShieldAlert size={16} className="mr-1 inline" />
-              {t(uiLanguage, "humanControlReasonRedLock")}
+              {t(uiLanguage, "humanControlRedLockAtomicActivationHint")}
             </p>
           )}
         </div>
-        {banner.canActivateAi && !banner.requiresHandoffResolution && (
+        {banner.canActivateAi && (
           <ConfirmButton
-            label={t(uiLanguage, "humanControlActivateAi")}
-            confirmLabel={t(uiLanguage, "humanControlActivateAi")}
+            label={
+              isActivating
+                ? t(uiLanguage, "humanControlActivatingAi")
+                : banner.requiresAtomicRedActivation
+                  ? t(uiLanguage, "humanControlActivateAiAndCloseRedAlert")
+                  : t(uiLanguage, "humanControlActivateAi")
+            }
+            confirmLabel={
+              banner.requiresAtomicRedActivation
+                ? t(uiLanguage, "humanControlActivateAiAndCloseRedAlert")
+                : t(uiLanguage, "humanControlActivateAi")
+            }
             onConfirm={onActivateAi}
             disabled={isActivating}
             className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-lg bg-emerald-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-900 disabled:cursor-not-allowed disabled:opacity-60"

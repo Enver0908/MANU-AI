@@ -8,7 +8,6 @@ import {
   updateClientInState,
 } from "./simulator";
 import { conversationRevisionOrDefault } from "./phase-85-if-f-conversation-revision";
-import { DIRECT_DIETITIAN_REACTIVATION_REASON_CODE } from "./phase-85-if-f-risk-reactivation";
 
 describe("phase-85-if-f risk reactivation and concurrency", () => {
   it("resolves yellow hold and restores previous mode through controlled activation", async () => {
@@ -81,22 +80,17 @@ describe("phase-85-if-f risk reactivation and concurrency", () => {
     expect(activated.clients.find((item) => item.id === "client-mert")?.aiMode).toBe("copilot");
   });
 
-  it("uses canonical activation for client patch aiStatus active on red lock", async () => {
+  it("rejects direct client patch aiStatus active on red lock", async () => {
     const withHandoff = await runInboundSimulation(createInitialState(), {
       clientId: "client-mert",
       body: "Alerjiden nefes alamiyorum, bogazim sisti.",
       idempotencyKey: "p85-if-f-red-patch-1",
       now: "2026-05-22T10:31:00.000Z",
     });
-    const handoffId = withHandoff.handoffCases[0]?.id;
-    expect(handoffId).toBeTruthy();
 
-    const activated = updateClientInState(withHandoff, "client-mert", { aiStatus: "active", aiMode: "copilot" });
-    const client = activated.clients.find((item) => item.id === "client-mert");
-    expect(client?.aiStatus).toBe("active");
-    expect(client?.redRiskLock.status).toBe("reactivated");
-    expect(activated.handoffCases[0]?.status).toBe("resolved");
-    expect(client?.redRiskLock.reactivationReason).toBe(DIRECT_DIETITIAN_REACTIVATION_REASON_CODE);
+    expect(() =>
+      updateClientInState(withHandoff, "client-mert", { aiStatus: "active", aiMode: "copilot" }),
+    ).toThrowError(/direct_ai_activation_requires_activate_ai_endpoint/);
   });
 
   it("blocks controlled activation when conversation revision CAS fails", async () => {

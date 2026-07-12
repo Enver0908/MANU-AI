@@ -6,6 +6,7 @@ import {
   resolveStructuredRecordUpdateNotificationInState,
 } from "./phase-85-if-e-historical-retrieval";
 import { createInitialState } from "./seed-data";
+import { buildTestNotification } from "./phase-85-stage-4b-notifications";
 import { mapSupabaseSearchRowToRetrievalCandidate } from "./phase-85-if-e-supabase-search";
 import { buildP85IfEStructuredRevisionContext } from "./simulator";
 import type { MessageRecord } from "./types";
@@ -158,28 +159,32 @@ describe("phase-85-if-e historical retrieval", () => {
       },
     });
     expect(deduped).toHaveLength(2);
+    expect(deduped[0]?.occurrenceCount).toBe(2);
+    expect(deduped[0]?.dedupeKey).toContain("p85-4b:v1:structured_record_update_required:");
   });
 
   it("requires the target panel revision to advance before structured notification closure", () => {
     const state = createInitialState();
-    const notification = {
+    const notification = buildTestNotification({
       id: "structured-update-1",
       tenantId: state.tenant.id,
-      type: "system" as const,
+      type: "system",
+      kind: "structured_record_update_required",
       entityType: "client",
       entityId: "client-mert",
+      clientId: "client-mert",
       title: "Structured record update required",
       body: "Update required",
       read: false,
       acknowledgedAt: null,
-      dedupeKey: "p85-if-e:structured:client-mert:menu:message-1",
+      dedupeKey: "p85-4b:v1:structured_record_update_required:client-mert:menu:message-1",
       sourceMessageId: "message-1",
       targetPanel: "menu",
       baselineRevision: 3,
       resolvedAt: null,
       resolvedByDietitianId: null,
       createdAt: "2026-05-22T12:00:00.000Z",
-    };
+    });
 
     expect(() => resolveStructuredRecordUpdateNotificationInState(
       {
@@ -253,24 +258,26 @@ describe("phase-85-if-e historical retrieval", () => {
 
   it("does not close a menu notification when only client context revision advances", () => {
     const state = createInitialState();
-    const notification = {
+    const notification = buildTestNotification({
       id: "structured-update-context-only",
       tenantId: state.tenant.id,
-      type: "system" as const,
+      type: "system",
+      kind: "structured_record_update_required",
       entityType: "client",
       entityId: "client-mert",
+      clientId: "client-mert",
       title: "Structured record update required",
       body: "Update required",
       read: false,
       acknowledgedAt: null,
-      dedupeKey: "p85-if-e:structured:client-mert:menu:message-1",
+      dedupeKey: "p85-4b:v1:structured_record_update_required:client-mert:menu:message-1",
       sourceMessageId: "message-1",
       targetPanel: "menu",
       baselineRevision: 2,
       resolvedAt: null,
       resolvedByDietitianId: null,
       createdAt: "2026-05-22T12:00:00.000Z",
-    };
+    });
 
     expect(() => resolveStructuredRecordUpdateNotificationInState(
       {

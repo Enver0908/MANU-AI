@@ -2,6 +2,8 @@
 
 ## Phase 85 Roadmap Restructure
 
+2026-07-12: **Stage 4B Uyari ve Bildirimler is complete.** Implemented in `src/lib/phase-85-stage-4b-*.ts`, `src/components/dashboard/alerts-panel.tsx`, `notifications-panel.tsx`, API routes `/api/alerts` and `/api/notifications/*`, migration `20260711090000_phase_85_stage_4b_alerts_notifications.sql`. Evidence: `../docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_EVIDENCE.md`. **Next:** Stage 4B-2 Mesajlasma. Production pilot remains `NO-GO`.
+
 2026-07-10: Phase 85 Stages 1-3 and Stage 4A are complete. The mandatory cross-cutting Phase 85 Interstage Foundation (`P85-IF`) is canonically planned in `../docs/PHASE_85_INTERSTAGE_TRUSTED_CLINICAL_COMMUNICATION_MEMORY_PLAN.md`; P85-IF-A through P85-IF-I and the approved remediation sequence are complete. Stage 4B may resume. Production pilot remains `NO-GO`; real provider/channel/health-data paths remain disconnected.
 
 2026-07-11 post-closure audit: R1 message provenance tenant integrity, R2 structured retrieval baseline/resolution authority, R3 activation/inbound lock ordering, and R6 runtime export leak enforcement are fixed and verified. Evidence: `../docs/PHASE_85_IF_REMEDIATION_POST_CLOSURE_AUDIT_EVIDENCE.md`. Verification passed targeted app/core tests, local Supabase reset, local RLS 30/30, lint, build, full app 828 passed / 4 skipped, core 234/234, channel replay, and production-scale rehearsal.
@@ -458,3 +460,7 @@ The dashboard Stage 4A client-control surfaces now match the P85-IF post-closure
 - Structured-update notifications expose a minimal local bridge for target-panel navigation and `/api/notifications/[id]/resolve-structured-update`.
 
 Evidence: `../docs/PHASE_85_STAGE_4A_POST_IF_REMEDIATION_EVIDENCE.md`. Stage 4B remains next. This does not connect real providers/channels, live billing, monitoring, backup, secret manager, or real health-data paths.
+
+## Stage 4B App Contract — complete 2026-07-12
+
+Implemented per `../docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_ACTION_PLAN.md`. Devirler replaced by bounded Uyarilar; separate Bildirimler view; header bell opens full-page notifications; Gorusme remains temporary alert/notification target; red-risk atomic activation while red-locked config disabled. Dedicated list APIs (`/api/alerts`, `/api/notifications`) replace full `ManuAppState` polling for inbox views. **Next:** Stage 4B-2 Mesajlasma owns conversation inbox and unread-message model.

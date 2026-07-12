@@ -3,6 +3,11 @@ import type { RawChannelEventCandidate } from "./phase-85-if-c-channel-event-nor
 import type { ChannelEventRoutedOutcome } from "./phase-85-if-c-channel-event-routing";
 import { resolveLegacyRetrievalEligibility } from "./phase-85-if-b-provenance-model";
 import { invalidatePendingDrafts } from "./simulator";
+import {
+  buildStage4BDedupeKey,
+  emitAiPausedByVerifiedHumanNotification,
+  upsertSystemNotificationInState,
+} from "./phase-85-stage-4b-notifications";
 import type {
   AuditEventRecord,
   ChannelDeliveryStatus,
@@ -14,7 +19,6 @@ import type {
   MessageContentStatus,
   MessageOrigin,
   MessageRecord,
-  NotificationRecord,
   RiskActivityEventRecord,
   SenderType,
 } from "./types";
@@ -90,7 +94,7 @@ function applyBusinessHumanEchoMediaUnsupported(state: ManuAppState, context: Ro
   });
 
   let next = applyBusinessHumanSideEffects(state, context, message);
-  next = appendReviewNotification(next, context.routing.clientId!, "Unsupported business-human media requires review.");
+  next = appendReviewNotification(next, context.routing.clientId!, context.routing.conversationId!, message.id, "Unsupported business-human media requires review.");
   return next;
 }
 
@@ -173,6 +177,8 @@ function applyClientMediaUnsupported(state: ManuAppState, context: RoutedTranscr
   next = appendReviewNotification(
     next,
     client.id,
+    context.routing.conversationId!,
+    message.id,
     `Unsupported inbound media for ${client.fullName} requires dietitian review.`,
   );
   return next;
@@ -404,6 +410,13 @@ function applyBusinessHumanSideEffects(
       humanControlSessionId: session.id,
       metadata: { reason: "external_human_response" },
     });
+    next = emitAiPausedByVerifiedHumanNotification(next, {
+      clientId: client.id,
+      conversationId: context.routing.conversationId!,
+      messageId: message.id,
+      clientName: client.fullName,
+      now: context.observedAt,
+    });
   }
 
   return next;
@@ -590,21 +603,38 @@ function bumpClientContextRevision(state: ManuAppState, clientId: string): ManuA
   };
 }
 
-function appendReviewNotification(state: ManuAppState, clientId: string, body: string): ManuAppState {
+function appendReviewNotification(
+  state: ManuAppState,
+  clientId: string,
+  conversationId: string,
+  messageId: string,
+  body: string,
+): ManuAppState {
   const client = findClient(state, clientId);
-  const notification: NotificationRecord = {
-    id: crypto.randomUUID(),
-    tenantId: state.tenant.id,
-    type: "system",
-    entityType: "client",
-    entityId: clientId,
-    title: `Channel review required: ${client.fullName}`,
-    body,
-    read: false,
-    acknowledgedAt: null,
-    createdAt: new Date().toISOString(),
-  };
-  return { ...state, notifications: [...state.notifications, notification] };
+  return upsertSystemNotificationInState(
+    state,
+    {
+      kind: "unsupported_media_review",
+      tenantId: state.tenant.id,
+      type: "system",
+      entityType: "client",
+      entityId: clientId,
+      clientId,
+      conversationId,
+      messageId,
+      sourceMessageId: messageId,
+      dedupeKey: buildStage4BDedupeKey({
+        kind: "unsupported_media_review",
+        scopeId: clientId,
+        entityId: messageId,
+        sourceId: "unsupported_media",
+      }),
+      title: `Channel review required: ${client.fullName}`,
+      body,
+      createdAt: new Date().toISOString(),
+    },
+    new Date().toISOString(),
+  );
 }
 
 function appendRiskActivity(

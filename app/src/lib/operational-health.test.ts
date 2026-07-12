@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createInitialState } from "./seed-data";
+import { buildTestNotification } from "./phase-85-stage-4b-notifications";
 import { buildOperationalHealthSnapshot } from "./operational-health";
 import { createDirectPilotScaleFixture } from "./direct-pilot-scale-readiness";
 import { PRODUCTION_PILOT_LAUNCH_GATES, type LaunchGateDefinition } from "./launch-gates";
@@ -172,18 +173,20 @@ function operationalFixture(): ManuAppState {
       },
     ],
     notifications: [
-      {
+      buildTestNotification({
         id: "notification-unread",
         tenantId: state.tenant.id,
         type: "handoff_urgent",
+        kind: "legacy_handoff",
         entityType: "handoff_case",
         entityId: "handoff-urgent",
+        handoffId: "handoff-urgent",
         title: "Safe title",
         body: "Safe body",
         read: false,
         acknowledgedAt: null,
         createdAt: "2026-05-25T10:00:00.000Z",
-      },
+      }),
     ],
   };
 }

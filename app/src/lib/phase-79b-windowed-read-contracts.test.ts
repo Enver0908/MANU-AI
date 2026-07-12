@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createInitialState } from "./seed-data";
+import { buildTestNotification } from "./phase-85-stage-4b-notifications";
 import {
   PHASE_79B_VERSION,
   WINDOWED_READ_DEFAULTS,
@@ -191,18 +192,21 @@ describe("Phase 79B windowed read contracts", () => {
     it("paginates notifications with cursor", () => {
       const state = createInitialState();
       for (let i = 0; i < 30; i += 1) {
-        state.notifications.push({
-          id: `notif-gen-${i}`,
-          tenantId: "demo-tenant",
-          type: "system",
-          entityType: "client",
-          entityId: state.clients[0].id,
-          title: `Notification ${i}`,
-          body: "test body",
-          read: false,
-          acknowledgedAt: null,
-          createdAt: `2026-06-${String(i + 1).padStart(2, "0")}T00:00:00.000Z`,
-        });
+        state.notifications.push(
+          buildTestNotification({
+            id: `notif-gen-${i}`,
+            tenantId: "demo-tenant",
+            type: "system",
+            entityType: "client",
+            entityId: state.clients[0].id,
+            clientId: state.clients[0].id,
+            title: `Notification ${i}`,
+            body: "test body",
+            read: false,
+            acknowledgedAt: null,
+            createdAt: `2026-06-${String(i + 1).padStart(2, "0")}T00:00:00.000Z`,
+          }),
+        );
       }
       const first = windowNotifications(state, { limit: 10 });
       expect(first.items.length).toBe(10);
@@ -211,18 +215,21 @@ describe("Phase 79B windowed read contracts", () => {
 
     it("does not include raw notification body in windowed entries", () => {
       const state = createInitialState();
-      state.notifications.push({
-        id: "notif-body-test",
-        tenantId: "demo-tenant",
-        type: "system",
-        entityType: "client",
-        entityId: state.clients[0].id,
-        title: "Test",
-        body: "secret body content",
-        read: false,
-        acknowledgedAt: null,
-        createdAt: "2026-06-01T00:00:00.000Z",
-      });
+      state.notifications.push(
+        buildTestNotification({
+          id: "notif-body-test",
+          tenantId: "demo-tenant",
+          type: "system",
+          entityType: "client",
+          entityId: state.clients[0].id,
+          clientId: state.clients[0].id,
+          title: "Test",
+          body: "secret body content",
+          read: false,
+          acknowledgedAt: null,
+          createdAt: "2026-06-01T00:00:00.000Z",
+        }),
+      );
       const result = windowNotifications(state, { limit: 10 });
       for (const entry of result.items) {
         expect(entry).not.toHaveProperty("body");
@@ -231,18 +238,21 @@ describe("Phase 79B windowed read contracts", () => {
 
     it("excludes notifications for removed clients", () => {
       const { state, removedClientId } = stateWithRemovedClient();
-      state.notifications.push({
-        id: "notif-removed-client",
-        tenantId: "demo-tenant",
-        type: "system",
-        entityType: "client",
-        entityId: removedClientId,
-        title: "Removed client should not show",
-        body: "hidden",
-        read: false,
-        acknowledgedAt: null,
-        createdAt: "2026-06-20T00:00:00.000Z",
-      });
+      state.notifications.push(
+        buildTestNotification({
+          id: "notif-removed-client",
+          tenantId: "demo-tenant",
+          type: "system",
+          entityType: "client",
+          entityId: removedClientId,
+          clientId: removedClientId,
+          title: "Removed client should not show",
+          body: "hidden",
+          read: false,
+          acknowledgedAt: null,
+          createdAt: "2026-06-20T00:00:00.000Z",
+        }),
+      );
 
       const result = windowNotifications(state, { limit: 10 });
       expect(result.items.map((item) => item.id)).not.toContain("notif-removed-client");
@@ -250,18 +260,20 @@ describe("Phase 79B windowed read contracts", () => {
 
     it("excludes unknown notification entity types fail-closed", () => {
       const state = createInitialState();
-      state.notifications.push({
-        id: "notif-unknown-entity",
-        tenantId: "demo-tenant",
-        type: "system",
-        entityType: "unknown_external_entity",
-        entityId: "external-1",
-        title: "Unknown",
-        body: "hidden",
-        read: false,
-        acknowledgedAt: null,
-        createdAt: "2026-06-20T00:00:00.000Z",
-      });
+      state.notifications.push(
+        buildTestNotification({
+          id: "notif-unknown-entity",
+          tenantId: "demo-tenant",
+          type: "system",
+          entityType: "unknown_external_entity",
+          entityId: "external-1",
+          title: "Unknown",
+          body: "hidden",
+          read: false,
+          acknowledgedAt: null,
+          createdAt: "2026-06-20T00:00:00.000Z",
+        }),
+      );
 
       const result = windowNotifications(state, { limit: 10 });
       expect(result.items.map((item) => item.id)).not.toContain("notif-unknown-entity");
@@ -306,18 +318,21 @@ describe("Phase 79B windowed read contracts", () => {
   describe("buildPhase79WindowedDashboardPayload", () => {
     it("builds a bounded dashboard payload without notification bodies", () => {
       const state = createInitialState();
-      state.notifications.push({
-        id: "notif-visible-payload",
-        tenantId: "demo-tenant",
-        type: "system",
-        entityType: "client",
-        entityId: state.clients[0].id,
-        title: "Visible",
-        body: "secret body content",
-        read: false,
-        acknowledgedAt: null,
-        createdAt: "2026-06-20T00:00:00.000Z",
-      });
+      state.notifications.push(
+        buildTestNotification({
+          id: "notif-visible-payload",
+          tenantId: "demo-tenant",
+          type: "system",
+          entityType: "client",
+          entityId: state.clients[0].id,
+          clientId: state.clients[0].id,
+          title: "Visible",
+          body: "secret body content",
+          read: false,
+          acknowledgedAt: null,
+          createdAt: "2026-06-20T00:00:00.000Z",
+        }),
+      );
 
       const payload = buildPhase79WindowedDashboardPayload(state, {
         clientLimit: 2,
@@ -373,18 +388,21 @@ describe("Phase 79B windowed read contracts", () => {
 
     it("keeps removed client notifications out of readiness evidence", () => {
       const { state, removedClientId } = stateWithRemovedClient();
-      state.notifications.push({
-        id: "notif-removed-evidence",
-        tenantId: "demo-tenant",
-        type: "system",
-        entityType: "client",
-        entityId: removedClientId,
-        title: "Removed client evidence",
-        body: "hidden",
-        read: false,
-        acknowledgedAt: null,
-        createdAt: "2026-06-20T00:00:00.000Z",
-      });
+      state.notifications.push(
+        buildTestNotification({
+          id: "notif-removed-evidence",
+          tenantId: "demo-tenant",
+          type: "system",
+          entityType: "client",
+          entityId: removedClientId,
+          clientId: removedClientId,
+          title: "Removed client evidence",
+          body: "hidden",
+          read: false,
+          acknowledgedAt: null,
+          createdAt: "2026-06-20T00:00:00.000Z",
+        }),
+      );
 
       const evidence = evaluatePhase79bWindowedReadEvidence(state);
       expect(evidence.removedClientLeakDetected).toBe(false);

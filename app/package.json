@@ -14,7 +14,8 @@
     "rehearse:ai": "node ../dietitian-ai-assistant/scripts/rehearse-ai.mjs",
     "rehearse:ai:expanded": "node ../dietitian-ai-assistant/scripts/rehearse-ai-expanded.mjs",
     "rehearse:channel:replay": "node scripts/rehearse-channel-replay.mjs",
-    "rehearse:production-scale:79g": "node scripts/rehearse-production-scale-79g.mjs"
+    "rehearse:production-scale:79g": "node scripts/rehearse-production-scale-79g.mjs",
+    "rehearse:stage-4b:integration": "node scripts/rehearse-stage-4b-integration.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.10.3",

@@ -116,20 +116,32 @@ describe("API controlled domain errors", () => {
         method: "POST",
         body: JSON.stringify({
           clientId: "client-mert",
-          body: "Alerjiden nefes alamiyorum, bogazim sisti.",
-          idempotencyKey: "notification-api-red",
+          body: "Bugun kahvaltida yumurta yerine ne yiyebilirim?",
+          idempotencyKey: "notification-api-safe-reply",
+          mockProviderFailure: "provider_timeout",
         }),
       }) as never,
     );
     const simulationPayload = await simulationResponse.json();
-    const notificationId = simulationPayload.notifications[0].id;
+    const notificationId = simulationPayload.notifications.find(
+      (notification: { kind: string }) => notification.kind === "safe_reply_unavailable",
+    )?.id;
+    expect(notificationId).toBeTruthy();
 
     const readResponse = await postReadNotification(new Request("http://localhost/api/notifications/read") as never, {
       params: Promise.resolve({ id: notificationId }),
     });
     const readPayload = await readResponse.json();
     expect(readResponse.status).toBe(200);
-    expect(readPayload.notifications[0].read).toBe(true);
+    expect(readPayload.notificationId).toBe(notificationId);
+    expect(readPayload.readAt).toBeTruthy();
+    expect(readPayload.target.section).toBeTruthy();
+    expect(readPayload.counts).toMatchObject({
+      active: expect.any(Number),
+      unread: expect.any(Number),
+      history: expect.any(Number),
+      interventionRequired: expect.any(Number),
+    });
 
     const acknowledgeResponse = await postAcknowledgeNotification(
       new Request("http://localhost/api/notifications/acknowledge") as never,
@@ -139,7 +151,7 @@ describe("API controlled domain errors", () => {
     );
     const acknowledgePayload = await acknowledgeResponse.json();
     expect(acknowledgeResponse.status).toBe(200);
-    expect(acknowledgePayload.notifications[0].acknowledgedAt).not.toBeNull();
+    expect(acknowledgePayload.acknowledgedAt).toBeTruthy();
   });
 
   it("returns a controlled error for unknown notification actions", async () => {

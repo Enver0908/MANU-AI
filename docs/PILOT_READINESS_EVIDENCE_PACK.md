@@ -55,7 +55,7 @@ Latest result, re-verified on 2026-07-03 after Phase 84I live onboarding remedia
 - Phase 85 Stage 2 on 2026-07-07: shared component system foundation implemented; focused UI token/component contract tests passed 8/8; production pilot remains `NO-GO`.
 - Phase 85 Stage 3 implementation/deploy on 2026-07-07: invite-led public/commercial entry surfaces implemented from the approved plan and user-provided zip design direction, color-corrected to the user's broken-white + purple palette, and deployed to the hosted sandbox; production pilot remains `NO-GO`.
 - Phase 85 Stage 4A on 2026-07-08: Stage 4A.1-4A.4 implemented the client form, active nutrition plan, menu workflow/export, and AI assistant control dashboard modules; existing form, food-rule profile, menu/export, and client patch API contracts remain unchanged; production pilot remains `NO-GO`.
-- Phase 85 roadmap restructure on 2026-07-08: Stage 4B Uyari ve Bildirimler is the next planning target after completed Stage 4A; production pilot remains `NO-GO`.
+- Phase 85 roadmap restructure on 2026-07-08: Stage 4B Uyari ve Bildirimler follows completed Stage 4A/P85-IF remediation; its planning is now approved and implementation is next; production pilot remains `NO-GO`.
 - P85-IF-I on 2026-07-10: lifecycle export/redaction, unified lifecycle evidence, tenant channel-binding revoke lifecycle, RLS integration coverage for interstage tables, and program closure evidence implemented; evidence is in `docs/PHASE_85_IF_I_LIFECYCLE_CLOSURE_EVIDENCE.md`. Targeted 12/12, app 818 passed / 4 skipped, lint 0 errors with 3 unchanged warnings, production build, `npm run release:verify`, `npm run rehearse:channel:replay`, and `npm run rehearse:production-scale:79g` passed. `npm run test:rls` skipped 22/22. P85-IF is closed; Stage 4B is next. Production pilot remains `NO-GO`.
 - P85-IF-B on 2026-07-10: trust-root/provenance data model foundation implemented; production pilot remains `NO-GO`.
 - P85-IF-C on 2026-07-10: secure ingress, ledger, routing, and quarantine engine implemented and post-commit remediated; evidence is in `docs/PHASE_85_IF_C_SECURE_INGRESS_ROUTING_REMEDIATION_EVIDENCE.md`. Targeted 40/40, app 780 passed / 4 skipped, core 225/225, lint 0 errors with 3 unchanged warnings, production build, and full mock channel replay passed. Production pilot remains `NO-GO`.
@@ -609,3 +609,9 @@ Verification passed targeted app/core tests, local Supabase reset, local RLS 30/
 `docs/PHASE_85_STAGE_4A_POST_IF_REMEDIATION_EVIDENCE.md` records the local remediation that aligns completed Stage 4A dashboard controls with P85-IF post-closure contracts. The remediation removes the UI dependency on direct active-state client PATCH, routes human takeover release through the dedicated endpoint, surfaces human-control session evidence, turns structured context-intake flags into readable panel navigation, and adds a minimal structured-update notification resolution bridge.
 
 This evidence is dashboard/operator-readiness evidence only. It does not approve production pilot launch or any real provider, channel, monitoring, backup, secret-manager, live billing, or real health-data path.
+
+## Phase 85 Stage 4B Closure Evidence - 2026-07-12
+
+Stage 4B Uyari ve Bildirimler is implemented and verified locally. Evidence: `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_EVIDENCE.md`. App tests 895 passed / 5 skipped; visual 36/36; `npm run test:rls` skipped 31/31 (not counted as pass). This adds no production authorization. **Next:** Stage 4B-2 Mesajlasma.
+
+Production pilot remains `NO-GO`; R-405 and all external gates remain open.

@@ -264,6 +264,7 @@ export function createInitialState(): ManuAppState {
     handoffCases: [],
     auditEvents: [],
     notifications: [],
+    notificationReceipts: [],
     inboundQuarantines: [],
     channelAccountBindings: [],
     channelActorBindings: [],

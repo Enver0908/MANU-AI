@@ -30,9 +30,10 @@ export { EmptyState } from "./state-primitives";
 export type ViewKey =
   | "overview"
   | "clients"
-  | "conversation"
+  | "messages"
   | "simulator"
-  | "handoffs"
+  | "alerts"
+  | "notifications"
   | "copilot"
   | "voice"
   | "forms";

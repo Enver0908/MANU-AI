@@ -48,6 +48,24 @@ import {
 } from "./simulator";
 import type { ControlledAiActivationInput } from "./phase-85-if-f-risk-reactivation";
 import { resolveStructuredRecordUpdateNotificationInState } from "./phase-85-if-e-historical-retrieval";
+import {
+  buildClinicalAlertsListResponse,
+  buildNotificationMutationResponse,
+  buildNotificationReadAllResponse,
+  buildSystemNotificationsListResponse,
+  assertNotificationAccessibleInState,
+  listFallbackAssignments,
+  projectSystemNotificationListItems,
+  type NotificationListStatus,
+} from "./phase-85-stage-4b-api";
+import type { NotificationCategory, NotificationPriority } from "./phase-85-stage-4b-contracts";
+import type { ClinicalAlertFilterSeverity } from "./phase-85-stage-4b-alerts";
+import {
+  completeUnsupportedMediaReviewInState,
+  markAllVisibleNotificationReceiptsReadInState,
+  normalizeNotificationsInState,
+} from "./phase-85-stage-4b-notifications";
+import type { AppTenantContext } from "./auth-context";
 import type { ClientRecord, ManuAppState, SimulationRequest } from "./types";
 import { setChannelAdapterRollbackInState as applyChannelAdapterRollbackInState } from "./channel-adapter-rollback";
 import type { ApplyClientUpdateProposalInput, CreateClientUpdateProposalInput } from "./client-update-proposals";
@@ -261,6 +279,86 @@ export function assertHandoffExistsInState(state: ManuAppState, handoffId: strin
 export function markNotificationRead(state: ManuAppState, notificationId: string) {
   assertNotificationExistsInState(state, notificationId);
   return markNotificationReadInState(state, notificationId);
+}
+
+function fallbackTenantContext(state: ManuAppState): AppTenantContext {
+  return {
+    tenantId: state.tenant.id,
+    dietitianId: state.dietitian.id,
+    userId: "fallback-user",
+    role: "owner",
+  };
+}
+
+export function markFallbackNotificationRead(notificationId: string) {
+  const state = getFallbackState();
+  const context = fallbackTenantContext(state);
+  const assignments = listFallbackAssignments();
+  assertNotificationAccessibleInState(state, notificationId, context, assignments);
+  const next = markNotificationReadInState(state, notificationId);
+  saveFallbackState(next);
+  return buildNotificationMutationResponse(next, context, assignments, notificationId);
+}
+
+export function acknowledgeFallbackNotification(notificationId: string) {
+  const state = getFallbackState();
+  const context = fallbackTenantContext(state);
+  const assignments = listFallbackAssignments();
+  assertNotificationAccessibleInState(state, notificationId, context, assignments);
+  const next = acknowledgeNotificationInState(state, notificationId);
+  saveFallbackState(next);
+  return buildNotificationMutationResponse(next, context, assignments, notificationId);
+}
+
+export function markAllFallbackNotificationsRead() {
+  const state = getFallbackState();
+  const context = fallbackTenantContext(state);
+  const assignments = listFallbackAssignments();
+  const unreadIds = projectSystemNotificationListItems(state, context, assignments)
+    .filter((item) => !item.readAt)
+    .map((item) => item.id);
+  const next = markAllVisibleNotificationReceiptsReadInState(
+    state,
+    context.dietitianId,
+    new Set(unreadIds),
+    new Date().toISOString(),
+  );
+  saveFallbackState(next);
+  return buildNotificationReadAllResponse(next, context, assignments, unreadIds.length);
+}
+
+export function completeFallbackUnsupportedMediaReview(notificationId: string) {
+  const state = getFallbackState();
+  const context = fallbackTenantContext(state);
+  const assignments = listFallbackAssignments();
+  assertNotificationAccessibleInState(state, notificationId, context, assignments);
+  const next = completeUnsupportedMediaReviewInState(state, notificationId, context.dietitianId);
+  saveFallbackState(next);
+  return buildNotificationMutationResponse(next, context, assignments, notificationId);
+}
+
+export function listFallbackClinicalAlerts(input: {
+  severity?: ClinicalAlertFilterSeverity;
+  query?: string;
+  cursor?: string | null;
+  limit?: number;
+}) {
+  const state = getFallbackState();
+  const context = fallbackTenantContext(state);
+  return buildClinicalAlertsListResponse(state, context, listFallbackAssignments(), input);
+}
+
+export function listFallbackNotifications(input: {
+  status?: NotificationListStatus;
+  priority?: NotificationPriority | null;
+  category?: NotificationCategory | null;
+  query?: string;
+  cursor?: string | null;
+  limit?: number;
+}) {
+  const state = getFallbackState();
+  const context = fallbackTenantContext(state);
+  return buildSystemNotificationsListResponse(state, context, listFallbackAssignments(), input);
 }
 
 export function acknowledgeNotification(state: ManuAppState, notificationId: string) {

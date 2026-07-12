@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createInitialState } from "./seed-data";
+import { buildTestNotification } from "./phase-85-stage-4b-notifications";
 import {
   buildChannelTrustOperationalSnapshot,
   buildClientHumanControlBanner,
@@ -133,18 +134,22 @@ describe("phase-85-if-h operational visibility", () => {
         },
       ],
       notifications: [
-        {
+        buildTestNotification({
           id: "notification-1",
           tenantId: "tenant-manu-demo",
           type: "system",
+          kind: "structured_record_update_required",
           entityType: "client",
           entityId: "client-elif",
+          clientId: "client-elif",
+          messageId: "message-structured-1",
+          sourceMessageId: "message-structured-1",
           title: "Structured record update required",
           body: "WhatsApp instruction message-structured-1 requires a menu plan update before related AI intents can proceed.",
           read: false,
           acknowledgedAt: null,
           createdAt: "2026-07-10T09:02:00.000Z",
-        },
+        }),
       ],
     };
 

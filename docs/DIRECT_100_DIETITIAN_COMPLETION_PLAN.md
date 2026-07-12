@@ -18,7 +18,7 @@ Phase 85 Stage 3 implementation/deploy note (2026-07-07): `docs/PHASE_85_STAGE_3
 
 Phase 85 Stage 4A Danisan Kontrol Paneli Mimari ve Hizmet Akisi Plani note (2026-07-08): `docs/PHASE_85_STAGE_4A_DANISAN_KONTROL_PANELI_MIMARI_VE_HIZMET_AKISI_PLANI.md` records the completed code-backed client form, active nutrition plan, menu/export, and AI assistant control dashboard work. This Stage 4A dashboard UI implementation does not change direct-pilot `NO-GO`, external gate status, R-405, R-406, or any real provider/channel/production-data path.
 
-Phase 85 roadmap restructure note (2026-07-08): Phase 85 proceeds as Stage 1, Stage 2, Stage 3, Stage 4A Danisan Kontrol Paneli, Stage 4B Uyari ve Bildirimler, Stage 4C Diyetisyen Icin AI Chat, Stage 4D Ayarlar / Hesap, Stage 5 Dashboard and Mobile PWA Shell, Stage 6 Dashboard Core Workflows, and Stage 7 closure.
+Phase 85 roadmap restructure note (2026-07-08): Phase 85 proceeds as Stage 1, Stage 2, Stage 3, Stage 4A Danisan Kontrol Paneli, Stage 4B Uyari ve Bildirimler, mandatory Stage 4B-2 Mesajlasma, Stage 4C Diyetisyen Icin AI Chat, Stage 4D Ayarlar / Hesap, Stage 5 Dashboard and Mobile PWA Shell, Stage 6 Dashboard Core Workflows, and Stage 7 closure.
 
 Phase 85 Interstage Foundation P85-IF-A note (2026-07-10): `docs/PHASE_85_INTERSTAGE_TRUSTED_CLINICAL_COMMUNICATION_MEMORY_PLAN.md` inserts P85-IF between completed Stage 4A and Stage 4B, and `docs/PHASE_85_INTERSTAGE_TRUSTED_CLINICAL_COMMUNICATION_MEMORY_SPEC.md` now locks the canonical provider contract, threat model, state machines, prompt authority, off-channel context-intake rules, and Stage 4B boundary. P85-IF-A is complete and is now followed by completed P85-IF-B data model work. Stage 4B resumes after P85-IF-I. This does not change direct-pilot `NO-GO`, external gate status, R-405, R-406, or any real provider/channel/production-data path.
 
@@ -50,7 +50,7 @@ These rules are non-negotiable and apply to every future phase:
 
 ## Current Baseline
 - Latest completed implementation phase: P85-IF post-closure audit and remediation baseline (2026-07-11), after P85-IF-A through P85-IF-I and R1-R6 remediation.
-- Next operator step: Phase 85 Stage 4B planning; external production prerequisites remain open; no production GO.
+- Next operator step: **Stage 4B-2 Mesajlasma** (Stage 4B complete 2026-07-12); external production prerequisites remain open; no production GO.
 - Primary open product risk: R-425 is mitigated in the hosted commercial sandbox path, but production launch gates remain open.
 - Latest roadmap rebaseline: Phase 77A manual source authority rebaseline spec (2026-06-10).
 - Detailed Phase 77 implementation plan: `docs/PHASE_77_MASTER_IMPLEMENTATION_PLAN.md`.
@@ -1107,3 +1107,7 @@ Verification passed the unified production-scale rehearsal with 5,000 expanded A
 The direct 100-dietitian path now includes a Stage 4A compatibility remediation after P85-IF: dashboard AI activation, human takeover release, structured context-intake navigation, and structured-update notification resolution are aligned with post-closure P85-IF contracts. Evidence: `docs/PHASE_85_STAGE_4A_POST_IF_REMEDIATION_EVIDENCE.md`.
 
 This improves local operator safety for the dashboard but does not change direct-pilot authorization. External launch gates, R-405 closure or formal acceptance, production operations evidence, and real provider/channel approvals remain required before any production pilot.
+
+## Stage 4B Direct-Scale Closure - 2026-07-12
+
+Stage 4B implementation is complete. Bounded cursor APIs, per-actor receipt state, visible-client scoping, inbox scheduler dedupe, and sample/full scale rehearsal (`STAGE_4B_FULL_SCALE=1`) are implemented and evidenced in `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_EVIDENCE.md`. This does not change direct-pilot eligibility; production pilot remains `NO-GO`.

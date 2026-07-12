@@ -1,3 +1,9 @@
+import type {
+  NotificationKind,
+  NotificationPriority,
+  NotificationReceiptRecord,
+} from "./phase-85-stage-4b-contracts";
+
 export type AiStatus = "active" | "passive";
 export type AiMode = "autopilot" | "copilot" | "manual" | "paused";
 export type Channel = "whatsapp" | "telegram";
@@ -600,6 +606,8 @@ export type NotificationRecord = {
   id: string;
   tenantId: string;
   type: "handoff_urgent" | "handoff_standard" | "system";
+  kind: NotificationKind;
+  priority: NotificationPriority;
   entityType: string;
   entityId: string;
   title: string;
@@ -612,6 +620,12 @@ export type NotificationRecord = {
   baselineRevision?: number | null;
   resolvedAt?: string | null;
   resolvedByDietitianId?: string | null;
+  clientId?: string | null;
+  conversationId?: string | null;
+  messageId?: string | null;
+  handoffId?: string | null;
+  occurrenceCount: number;
+  lastOccurredAt: string;
   createdAt: string;
 };
 
@@ -924,6 +938,7 @@ export type ManuAppState = {
   handoffCases: HandoffCaseRecord[];
   auditEvents: AuditEventRecord[];
   notifications: NotificationRecord[];
+  notificationReceipts: NotificationReceiptRecord[];
   inboundQuarantines: InboundQuarantineRecord[];
   channelAccountBindings: ChannelAccountBindingRecord[];
   channelActorBindings: ChannelActorBindingRecord[];
@@ -975,3 +990,18 @@ export type SimulationResult = {
   draft: string | null;
   decisionId: string | null;
 };
+
+export type {
+  ClinicalAlertKind,
+  ClinicalAlertListItem,
+  ClinicalAlertReasonLabelKey,
+  ClinicalAlertSeverity,
+  ClinicalAlertSlaState,
+  NotificationCategory,
+  NotificationKind,
+  NotificationPriority,
+  NotificationReceiptRecord,
+  Stage4BNavigationSection,
+  Stage4BNavigationTarget,
+  SystemNotificationListItem,
+} from "./phase-85-stage-4b-contracts";

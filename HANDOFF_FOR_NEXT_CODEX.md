@@ -2,7 +2,11 @@
 
 ## Read This First
 
-Latest Phase 85 Interstage Foundation P85-IF-R6 status (2026-07-11): P85-IF-I lifecycle/RLS re-closure is complete and the approved remediation sequence is closed. Evidence at `docs/PHASE_85_IF_R6_LIFECYCLE_RLS_RE_CLOSURE_EVIDENCE.md`. Migration `20260710230000_phase_85_if_remediation_lifecycle_reclosure.sql` persists P85-IF-I redaction through `commit_client_removal_lifecycle`, adds service-role-only tenant channel-binding revoke with tenant automation rollback disabled, and keeps tenant account/actor bindings out of client export with leak detection. API `POST /api/operational-foundation/revoke-channel-bindings` is owner/admin-only via `revoke_tenant_channel_bindings`. `evaluateP85IfIProgramClosureEvidence` now fails on missing/skipped/failed/timeout verification evidence. Verification passed: targeted lifecycle 14/14, local Supabase reset, local RLS 28/28, lint, production build, full app 825 passed / 4 skipped, channel replay, production-scale rehearsal without timeout, `git diff --check`, secret scan, and forbidden future-phase naming scan. Real provider/channel/health-data paths remain disconnected. Production pilot remains `NO-GO`; R-405 remains open. Stage 4B planning may resume.
+Latest Phase 85 Stage 4B status (2026-07-12): **Stage 4B Uyari ve Bildirimler is complete.** Clinical alert projection, structured system notifications, per-actor receipt persistence/RLS, bounded cursor APIs, URL navigation/badges/inbox refresh, atomic red-lock activation UX, dense Uyarilar/Bildirimler panels, and integration/scale/visual verification are implemented. Closure evidence: `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_EVIDENCE.md`. Verification: app `npm test` 895 passed / 5 skipped, lint pass, build pass, Playwright visual 36/36, `rehearse:stage-4b:integration` pass. `npm run test:rls` skipped 31/31 (local Supabase unavailable — not counted as pass). Production pilot remains `NO-GO`; R-405 remains open. **Next work:** Stage 4B-2 Mesajlasma (conversation list, unread state, WhatsApp-like detail, yellow draft ergonomics, Görüşme → Mesajlaşma nav). **Stage 4C remains blocked** until Stage 4B-2 closes.
+
+Latest Phase 85 Stage 4B Phase 1 status (2026-07-12): superseded by Stage 4B closure above.
+
+Latest Phase 85 Interstage Foundation P85-IF-R6 status (2026-07-11): P85-IF-I lifecycle/RLS re-closure is complete and the approved remediation sequence is closed. Evidence at `docs/PHASE_85_IF_R6_LIFECYCLE_RLS_RE_CLOSURE_EVIDENCE.md`. Migration `20260710230000_phase_85_if_remediation_lifecycle_reclosure.sql` persists P85-IF-I redaction through `commit_client_removal_lifecycle`, adds service-role-only tenant channel-binding revoke with tenant automation rollback disabled, and keeps tenant account/actor bindings out of client export with leak detection. API `POST /api/operational-foundation/revoke-channel-bindings` is owner/admin-only via `revoke_tenant_channel_bindings`. `evaluateP85IfIProgramClosureEvidence` now fails on missing/skipped/failed/timeout verification evidence. Verification passed: targeted lifecycle 14/14, local Supabase reset, local RLS 28/28, lint, production build, full app 825 passed / 4 skipped, channel replay, production-scale rehearsal without timeout, `git diff --check`, secret scan, and forbidden future-phase naming scan. Real provider/channel/health-data paths remain disconnected. Production pilot remains `NO-GO`; R-405 remains open. Stage 4B planning subsequently completed and approved implementation is next.
 
 Latest Phase 85 Interstage Foundation P85-IF-R5 status (2026-07-10): P85-IF-H operational access remediation is complete. Evidence at `docs/PHASE_85_IF_R5_OPERATIONAL_ACCESS_BOUNDARIES_EVIDENCE.md`. Common app-state no longer includes inbound quarantine rows, channel account bindings, actor bindings, channel events, or event-only channel message revisions. Owner/admin inspection uses `GET /api/operational-foundation` behind `read_operational_foundation`; unauthorized direct API calls return 403. Migration `20260710220000_phase_85_if_remediation_operational_access_boundaries.sql` restricts select RLS on operational trust/quarantine tables to owner/admin while preserving dietitian clinical workflow visibility. Verification passed: local Supabase reset, targeted P85-IF-H/supabase-store 11/11, and local RLS 26/26. Real provider/channel/health-data paths remain disconnected. Production pilot remains `NO-GO`; R-405 remains open. Next approved remediation track follows the user-supplied remediation plan unless the user redirects; Stage 4B remains blocked until that sequence closes.
 
@@ -534,7 +538,7 @@ The product must be both:
 
 ## Current Next Phase
 
-P85-IF-A through P85-IF-I are complete and P85-IF is closed. The next authorized implementation unit is Phase 85 Stage 4B Uyari ve Bildirimler, followed by Stage 4C, Stage 4D, Stage 5, Stage 6, and Stage 7. Production pilot remains `NO-GO`; all external launch gates remain open; R-405 remains open; R-406 current local Supabase/RLS re-run remains pending.
+P85-IF-A through P85-IF-I are complete and P85-IF is closed. The next authorized implementation unit is Phase 85 Stage 4B Uyari ve Bildirimler, followed by mandatory Stage 4B-2 Mesajlasma, then Stage 4C, Stage 4D, Stage 5, Stage 6, and Stage 7. Production pilot remains `NO-GO`; all external launch gates remain open; R-405 remains open; R-406 current local Supabase/RLS re-run remains pending.
 
 ## Previous Next Phase - Phase 82F - 2026-06-30
 
@@ -2835,7 +2839,7 @@ Important implementation facts:
 - R6 export leak detection now runs inside `buildClientScopedExport`.
 - R4/R5 were reviewed and had no new code findings.
 
-Verification passed targeted app/core tests, local Supabase reset, local RLS 30/30, lint, build, full app 828 passed / 4 skipped, core 234/234, channel replay, and unified production-scale rehearsal. Do not rewrite the historical R1/R2 combined commit; the current post-closure commit is the honest traceability boundary. Next correct work is Phase 85 Stage 4B planning. Production pilot remains `NO-GO`; R-405 remains open; real providers/channels/health-data paths remain closed.
+Verification passed targeted app/core tests, local Supabase reset, local RLS 30/30, lint, build, full app 828 passed / 4 skipped, core 234/234, channel replay, and unified production-scale rehearsal. Do not rewrite the historical R1/R2 combined commit; the current post-closure commit is the honest traceability boundary. Stage 4B planning is complete and approved implementation is next. Production pilot remains `NO-GO`; R-405 remains open; real providers/channels/health-data paths remain closed.
 
 ## Phase 85 Stage 4A Post-P85-IF Compatibility Remediation - 2026-07-11
 
@@ -2858,4 +2862,12 @@ What was not done:
 - No real WhatsApp, Telegram, Gemini/provider, live billing, monitoring, backup, secret manager, or real health-data path was enabled.
 - No production pilot GO decision was made; production pilot remains `NO-GO`; R-405 remains open.
 
-Next correct work: Phase 85 Stage 4B Uyari ve Bildirimler planning/implementation on top of this compatibility baseline.
+Next correct work: implement the approved Phase 85 Stage 4B Uyari ve Bildirimler plan on top of this compatibility baseline.
+
+## Approved Phase 85 Stage 4B Handoff - 2026-07-11
+
+Canonical implementation contract: `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_ACTION_PLAN.md`.
+
+Implementation must begin at the plan's Phase 1 after re-verifying branch `codex/phase-85-interstage-clinical-memory`, baseline commit `5048e22`, and a clean worktree. Do not redesign the plan during implementation. Key locks are: no alerts table; red-over-yellow projection; no raw clinical content in list DTOs; per-actor notification receipts; auditor zero client visibility; assistant read-only assigned scope; direct AI activation atomically closes red; Devirler becomes Uyarilar; header bell opens full Bildirimler; current Gorusme remains the Stage 4B target; Stage 4B-2 replaces it with Mesajlasma before Stage 4C.
+
+Stage 4B is one implementation stage, one evidence pack, and one commit. Production pilot remains `NO-GO`; R-405 remains open; all real provider/channel/health-data and production-operations paths remain closed.

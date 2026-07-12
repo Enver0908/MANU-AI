@@ -35,9 +35,25 @@ import {
 import { appendPermissionGraphEvaluation } from "./phase-76l-permission-graph-runtime";
 import { appendScopeGuardEvaluation } from "./scope-guard-runtime";
 import {
-  appendP85IfEHistoricalRetrievalNotifications,
+  applyP85IfEHistoricalRetrievalNotifications,
   mapConversationMessagesForRetrieval,
 } from "./phase-85-if-e-historical-retrieval";
+import {
+  acknowledgeNotificationReceiptInState,
+  emitAiWindowExpiredNotification,
+  emitCommunicationPermissionClosedNotification,
+  emitDeliveryFailedNotification,
+  emitDraftInvalidatedNotifications,
+  emitSafeReplyUnavailableNotification,
+  isSafeReplyUnavailableBlockedReason,
+  markNotificationReceiptReadInState,
+  reconcileDeliveryFailedNotifications,
+  reconcileDraftInvalidatedNotifications,
+  reconcilePermissionClosedNotifications,
+  reconcileSafeReplyUnavailableNotifications,
+  reconcileStage4BNotificationsForClient,
+  shouldEmitClinicalHandoffNotification,
+} from "./phase-85-stage-4b-notifications";
 import {
   appendControlledActivationAudit,
   closeHumanControlSessionsForReactivation,
@@ -185,7 +201,7 @@ export async function runInboundSimulation(
 
   const preflightBlock = getPreflightBlock(stateAfterInboundInvalidation, client);
   if (preflightBlock) {
-    return appendBlockedSimulationResult({
+  return appendBlockedSimulationResult({
       state: stateAfterInboundInvalidation,
       client,
       conversation,
@@ -405,15 +421,7 @@ export function updateClientInState(
   }
 
   if (patch.aiStatus === "active" && existingClient && existingClient.aiStatus !== "active") {
-    const existingConversation = state.conversations.find((conversation) => conversation.clientId === clientId);
-    if (!existingConversation) throw new AppDomainError(404, "conversation_not_found");
-    return activateClientAiWithControlledRiskResolutionInState(state, clientId, {
-      requestedAiMode:
-        patch.aiMode === "autopilot" || patch.aiMode === "copilot" ? patch.aiMode : undefined,
-      expectedConversationRevision: conversationRevisionOrDefault(existingConversation),
-      expectedClientContextRevision: existingClient.contextRevision,
-      activationSource: "client_patch",
-    });
+    throw new AppDomainError(409, "direct_ai_activation_requires_activate_ai_endpoint");
   }
 
   assertPatchAllowedByRedRiskLock(existingClient, patch);
@@ -458,6 +466,16 @@ export function updateClientInState(
   let finalState = promptAffecting
     ? incrementConversationRevisionForClient(withDraftInvalidation, clientId, now)
     : withDraftInvalidation;
+
+  if (existingClient && patch.channelPermission && patch.channelPermission !== existingClient.channelPermission) {
+    finalState = emitCommunicationPermissionClosedNotification(finalState, {
+      clientId,
+      clientName: existingClient.fullName,
+      permission: patch.channelPermission,
+      now,
+    });
+    finalState = reconcilePermissionClosedNotifications(finalState, clientId, patch.channelPermission, now);
+  }
 
   if (patch.humanTakeoverLocked === true && existingClient && !existingClient.humanTakeoverLocked) {
     const conversation = finalState.conversations.find((item) => item.clientId === clientId);
@@ -508,7 +526,13 @@ export function appendDietitianManualReply(
       )
     : state;
 
-  return body.trim() ? invalidatePendingDrafts(nextState, now, "dietitian_manual_reply") : nextState;
+  return body.trim()
+    ? reconcileSafeReplyUnavailableNotifications(
+        invalidatePendingDrafts(nextState, now, "dietitian_manual_reply"),
+        conversation.id,
+        now,
+      )
+    : nextState;
 }
 
 export function approveDraftMessageInState(
@@ -929,7 +953,11 @@ export function activateClientAiWithControlledRiskResolutionInState(
     });
     next = closeHumanControlSessionsForReactivation(next, clientId, state.dietitian.id, aiMode, true, now);
     next = incrementConversationRevision(next, conversation.id, now);
-    return appendControlledActivationAudit(next, clientId, handoffId, aiMode, "red_lock_resolved", now);
+    return reconcileStage4BNotificationsForClient(
+      appendControlledActivationAudit(next, clientId, handoffId, aiMode, "red_lock_resolved", now),
+      clientId,
+      now,
+    );
   }
 
   const activeSession = findActiveHumanControlSession(state, clientId);
@@ -998,7 +1026,11 @@ export function activateClientAiWithControlledRiskResolutionInState(
       ? "manual_resume"
       : "simple_activation";
 
-  return appendControlledActivationAudit(next, clientId, null, restoredMode, resolutionKind, now);
+  return reconcileStage4BNotificationsForClient(
+    appendControlledActivationAudit(next, clientId, null, restoredMode, resolutionKind, now),
+    clientId,
+    now,
+  );
 }
 
 export function invalidatePendingDrafts(
@@ -1037,7 +1069,18 @@ export function invalidatePendingDrafts(
     return { ...state, messages, aiDecisions };
   }
 
-  return {
+  const conversationIds = new Set(
+    messages
+      .filter((message) => pendingDraftIds.has(message.id))
+      .map((message) => message.conversationId),
+  );
+  const clientIds = new Set(
+    state.conversations
+      .filter((conversation) => conversationIds.has(conversation.id))
+      .map((conversation) => conversation.clientId),
+  );
+
+  let next: ManuAppState = {
     ...state,
     messages,
     aiDecisions,
@@ -1046,6 +1089,25 @@ export function invalidatePendingDrafts(
       buildAuditEvent(state, "draft_context_invalidated", "ai_decision", [...changedDecisionIds].join(","), createdAt),
     ],
   };
+
+  for (const clientId of clientIds) {
+    const client = state.clients.find((item) => item.id === clientId);
+    const conversation = state.conversations.find(
+      (item) => item.clientId === clientId && conversationIds.has(item.id),
+    );
+    if (!client || !conversation) continue;
+    next = emitDraftInvalidatedNotifications(next, {
+      clientId,
+      conversationId: conversation.id,
+      clientName: client.fullName,
+      decisionIds: [...changedDecisionIds],
+      reason,
+      now: createdAt,
+    });
+    next = reconcileDraftInvalidatedNotifications(next, conversation.id, createdAt);
+  }
+
+  return next;
 }
 
 function incrementConversationRevisionForClient(
@@ -1096,19 +1158,11 @@ function assertPatchAllowedByRedRiskLock(existingClient: ClientRecord | undefine
 }
 
 export function markNotificationReadInState(state: ManuAppState, notificationId: string): ManuAppState {
-  return {
-    ...state,
-    notifications: state.notifications.map((n) => (n.id === notificationId ? { ...n, read: true } : n)),
-  };
+  return markNotificationReceiptReadInState(state, notificationId, state.dietitian.id);
 }
 
 export function acknowledgeNotificationInState(state: ManuAppState, notificationId: string): ManuAppState {
-  return {
-    ...state,
-    notifications: state.notifications.map((n) =>
-      n.id === notificationId ? { ...n, acknowledgedAt: new Date().toISOString() } : n,
-    ),
-  };
+  return acknowledgeNotificationReceiptInState(state, notificationId, state.dietitian.id);
 }
 
 type SimulationAppendContext = {
@@ -1149,6 +1203,13 @@ function createSimulationAppendContext(input: {
   };
 }
 
+function applySimulationNotificationEmitter(
+  ctx: SimulationAppendContext,
+  nextState: ManuAppState,
+) {
+  ctx.notifications = nextState.notifications;
+}
+
 function applyExpiredActivationSideEffects(ctx: SimulationAppendContext) {
   if (ctx.coreResult.blockedReason !== "client_ai_window_expired") return;
 
@@ -1165,18 +1226,13 @@ function applyExpiredActivationSideEffects(ctx: SimulationAppendContext) {
   ctx.auditEvents.push(
     buildAuditEvent(ctx.state, "client_ai_window_expired", "client", ctx.client.id, ctx.now),
   );
-  ctx.notifications.push({
-    id: crypto.randomUUID(),
-    tenantId: ctx.state.tenant.id,
-    type: "system",
-    entityType: "client",
-    entityId: ctx.client.id,
-    title: `AI window expired: ${ctx.client.fullName}`,
-    body: `AI was passivated for ${ctx.client.fullName} because the activation window ended.`,
-    read: false,
-    acknowledgedAt: null,
-    createdAt: ctx.now,
-  });
+  applySimulationNotificationEmitter(
+    ctx,
+    emitAiWindowExpiredNotification(
+      { ...ctx.state, clients: ctx.nextClients, notifications: ctx.notifications },
+      { clientId: ctx.client.id, clientName: ctx.client.fullName, now: ctx.now },
+    ),
+  );
 }
 
 function applyWhatsAppOutboundPolicyGate(
@@ -1325,6 +1381,33 @@ function appendMockChannelDeliveryRecord(
     },
     createdAt: ctx.now,
   });
+
+  if (record.deliveryStatus === "failed") {
+    applySimulationNotificationEmitter(
+      ctx,
+      emitDeliveryFailedNotification(
+        { ...ctx.state, notifications: ctx.notifications },
+        {
+          clientId: ctx.client.id,
+          conversationId: ctx.conversation.id,
+          messageId: outboundMessage.id,
+          deliveryId: record.id,
+          clientName: ctx.client.fullName,
+          now: ctx.now,
+        },
+      ),
+    );
+  } else {
+    applySimulationNotificationEmitter(
+      ctx,
+      reconcileDeliveryFailedNotifications(
+        { ...ctx.state, notifications: ctx.notifications },
+        outboundMessage.id,
+        record.deliveryStatus,
+        ctx.now,
+      ),
+    );
+  }
 }
 
 function appendDraftSimulationResult(ctx: SimulationAppendContext) {
@@ -1521,18 +1604,27 @@ function appendHandoffSimulationResult(ctx: SimulationAppendContext): ManuAppSta
   if (redRiskLockAudit) ctx.auditEvents.push(redRiskLockAudit);
   ctx.auditEvents.push(buildAuditEvent(state, "handoff_notification_queued", "handoff_case", handoffCase.id, now));
 
-  ctx.notifications.push({
-    id: crypto.randomUUID(),
-    tenantId: state.tenant.id,
-    type: handoffCase.urgency === "urgent" ? "handoff_urgent" : "handoff_standard",
-    entityType: "handoff_case",
-    entityId: handoffCase.id,
-    title: `Handoff: ${client.fullName}`,
-    body: `Urgent handoff for ${client.fullName} — review required.`,
-    read: false,
-    acknowledgedAt: null,
-    createdAt: now,
-  });
+  if (
+    shouldEmitClinicalHandoffNotification({
+      risk: handoffCase.risk,
+      blockedReason: coreResult.blockedReason,
+    })
+  ) {
+    applySimulationNotificationEmitter(
+      ctx,
+      emitSafeReplyUnavailableNotification(
+        { ...state, clients: ctx.nextClients, notifications: ctx.notifications, handoffCases: ctx.handoffCases },
+        {
+          clientId: client.id,
+          conversationId: conversation.id,
+          messageId: inboundMessage.id,
+          blockedReason: coreResult.blockedReason ?? "provider_failure",
+          clientName: client.fullName,
+          now,
+        },
+      ),
+    );
+  }
 
   ctx.nextMessages.push(
     buildMessage({
@@ -1570,13 +1662,15 @@ function appendNoAiSimulationResult(ctx: SimulationAppendContext) {
 }
 
 function applyP85IfEHistoricalRetrievalSideEffects(ctx: SimulationAppendContext) {
-  ctx.notifications = appendP85IfEHistoricalRetrievalNotifications({
-    notifications: ctx.notifications,
-    tenantId: ctx.state.tenant.id,
-    clientId: ctx.client.id,
-    contextManifest: ctx.coreResult.contextManifest,
-    createdAt: ctx.now,
-  });
+  const next = applyP85IfEHistoricalRetrievalNotifications(
+    { ...ctx.state, notifications: ctx.notifications },
+    {
+      clientId: ctx.client.id,
+      contextManifest: ctx.coreResult.contextManifest,
+      createdAt: ctx.now,
+    },
+  );
+  ctx.notifications = next.notifications;
 }
 
 function finalizeSimulationAppendContext(ctx: SimulationAppendContext): ManuAppState {
@@ -1706,7 +1800,7 @@ function appendBlockedSimulationResult({
     createdAt: now,
   });
 
-  return {
+  let next: ManuAppState = {
     ...state,
     messages: [...state.messages, systemMessage],
     aiDecisions: [...state.aiDecisions, decision],
@@ -1721,6 +1815,19 @@ function appendBlockedSimulationResult({
       decisionId: decision.id,
     },
   };
+
+  if (isSafeReplyUnavailableBlockedReason(blockedReason)) {
+    next = emitSafeReplyUnavailableNotification(next, {
+      clientId: client.id,
+      conversationId: conversation.id,
+      messageId: inboundMessage.id,
+      blockedReason,
+      clientName: client.fullName,
+      now,
+    });
+  }
+
+  return next;
 }
 
 function buildRiskAssessment({
@@ -1975,3 +2082,5 @@ function appendChannelDuplicateIgnoredAudit(
     },
   };
 }
+
+export { projectClinicalAlertsFromState } from "./phase-85-stage-4b-alerts";

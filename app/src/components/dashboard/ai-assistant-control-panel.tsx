@@ -6,7 +6,9 @@ import {
   AI_MODE_LABELS_TR,
   AI_STATUS_LABELS_TR,
   collectAiPreflightBlockers,
-  isAiControlLockedByRedRisk,
+  isAiConfigurationLockedByRedRisk,
+  RED_LOCK_ATOMIC_ACTIVATION_CTA_TR,
+  resolveAiControlDisabledState,
   summarizeAiAssistantControl,
   summarizeAutopilotReadinessGate,
 } from "@/lib/ai-assistant-control-panel-helpers";
@@ -53,8 +55,11 @@ export function AiAssistantControlPanel({
   const readiness = summarizeAutopilotReadinessGate(state, client);
   const blockers = collectAiPreflightBlockers(state, client);
   const safetyChecklist = normalizeSafetyChecklist(client.safetyChecklist);
-  const redLocked = isAiControlLockedByRedRisk(client);
-  const controlsDisabled = disabled || redLocked || client.lifecycleStatus === "removed_anonymized";
+  const redLocked = isAiConfigurationLockedByRedRisk(client);
+  const { activationDisabled, configurationDisabled } = resolveAiControlDisabledState(client, {
+    disabled,
+    isActivatingAi,
+  });
   const selectedPersona = personas.find((persona) => persona.id === client.selectedPersonaId);
   const activeHumanControlSession = state.humanControlSessions
     .filter((session) => session.clientId === client.id && session.status === "active")
@@ -88,6 +93,10 @@ export function AiAssistantControlPanel({
     });
   };
 
+  const activateAiFromRedLock = () => {
+    void onActivateAi(client.id, client.aiMode === "autopilot" ? "autopilot" : "copilot");
+  };
+
   return (
     <section className="space-y-4" data-testid="ai-assistant-control-panel">
       <div className="rounded-lg border border-stone-200 bg-stone-50 p-4">
@@ -116,23 +125,45 @@ export function AiAssistantControlPanel({
       </div>
 
       <div className="grid gap-4 xl:grid-cols-2">
-        <fieldset className="rounded-lg border border-stone-200 bg-white p-4" disabled={controlsDisabled}>
-          <legend className="px-1 text-sm font-semibold text-stone-800">Durum ve mod</legend>
-          <div className="mt-3 space-y-4">
-            <SegmentedControl
-              label="AI durumu"
-              value={client.aiStatus}
-              options={[
-                ["active", AI_STATUS_LABELS_TR.active],
-                ["passive", AI_STATUS_LABELS_TR.passive],
-              ]}
-              onChange={(value) => updateAiStatus(value as AiStatus)}
-            />
+        <div className="rounded-lg border border-stone-200 bg-white p-4">
+          <p className="px-1 text-sm font-semibold text-stone-800">Durum ve mod</p>
+          <div className="mt-3 space-y-4" data-testid="ai-activation-controls">
+            {redLocked && client.aiStatus !== "active" ? (
+              <div className="space-y-3 rounded-lg border border-red-200 bg-red-50 p-3">
+                <p className="text-sm leading-6 text-red-900">
+                  Kirmizi risk kilidi aktif. AI aktivasyonu kirmizi uyaruyi atomik olarak kapatir; mod ve konfigurasyon
+                  alanlari kilitli kalir.
+                </p>
+                <ConfirmButton
+                  label={isActivatingAi ? "Aktivasyon dogrulaniyor" : RED_LOCK_ATOMIC_ACTIVATION_CTA_TR}
+                  confirmLabel={RED_LOCK_ATOMIC_ACTIVATION_CTA_TR}
+                  onConfirm={activateAiFromRedLock}
+                  disabled={activationDisabled}
+                  className="inline-flex min-h-11 w-full items-center justify-center rounded-lg bg-emerald-950 px-3 py-2 text-sm font-semibold text-white transition hover:bg-emerald-900 disabled:cursor-not-allowed disabled:opacity-60"
+                  confirmClassName="inline-flex min-h-11 w-full items-center justify-center rounded-lg bg-emerald-800 px-3 py-2 text-sm font-semibold text-white transition hover:bg-emerald-900"
+                />
+              </div>
+            ) : (
+              <div className={activationDisabled ? "pointer-events-none opacity-60" : undefined}>
+                <SegmentedControl
+                  label="AI durumu"
+                  value={client.aiStatus}
+                  options={[
+                    ["active", AI_STATUS_LABELS_TR.active],
+                    ["passive", AI_STATUS_LABELS_TR.passive],
+                  ]}
+                  onChange={(value) => updateAiStatus(value as AiStatus)}
+                />
+              </div>
+            )}
             {isActivatingAi && (
               <p className="text-xs font-medium text-stone-500">
                 Aktivasyon atomik endpoint uzerinden dogrulaniyor.
               </p>
             )}
+          </div>
+
+          <fieldset className="mt-4 space-y-4 border-0 p-0" disabled={configurationDisabled}>
             <SegmentedControl
               label="AI modu"
               value={client.aiMode}
@@ -162,7 +193,7 @@ export function AiAssistantControlPanel({
                 onConfirm={() => {
                   void onReleaseHumanTakeover(client.id);
                 }}
-                disabled={isReleasingHumanTakeover}
+                disabled={isReleasingHumanTakeover || configurationDisabled}
                 className="inline-flex min-h-11 items-center justify-center rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm font-semibold text-amber-900 transition hover:bg-amber-50 disabled:cursor-not-allowed disabled:opacity-60"
                 confirmClassName="inline-flex min-h-11 items-center justify-center rounded-lg bg-amber-700 px-3 py-2 text-sm font-semibold text-white transition hover:bg-amber-800"
               />
@@ -179,11 +210,14 @@ export function AiAssistantControlPanel({
                 onChange={(value) => onUpdateClient({ aiActiveUntil: fromDateTimeLocal(value) })}
               />
             </div>
-          </div>
-        </fieldset>
+          </fieldset>
+        </div>
 
         <div className="space-y-4">
-          <div className="rounded-lg border border-stone-200 bg-white p-4">
+          <fieldset
+            className="rounded-lg border border-stone-200 bg-white p-4"
+            disabled={configurationDisabled}
+          >
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
                 <ShieldCheck size={16} className="text-stone-700" />
@@ -204,7 +238,7 @@ export function AiAssistantControlPanel({
                 />
               ))}
             </div>
-          </div>
+          </fieldset>
 
           <div
             className="rounded-lg border border-stone-200 bg-white p-4"
@@ -276,7 +310,7 @@ export function AiAssistantControlPanel({
           )}
           {redLocked && (
             <p className="mt-3 text-sm text-red-700">
-              Kirmizi risk kilidi aktif. Yeniden aktivasyon yalnizca devir cozum akisindan yapilabilir.
+              Kirmizi risk kilidi aktif. Yeniden aktivasyon yalnizca atomik AI aktivasyon CTA uzerinden yapilabilir.
             </p>
           )}
         </div>
