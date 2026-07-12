@@ -310,3 +310,6 @@ Stage 4B-2 Phase 0 is a documentation and decision lock only. `docs/PHASE_85_STA
 ## Stage 4B-2 Phase 1 Gate Note - 2026-07-12
 
 Phase 1 is pure domain/DTO/authorization projection evidence, not a production gate closure. It adds no receipt table, RLS policy, route, UI, message mutation, provider/channel path, or pilot authorization. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`. Phase 2 receipt persistence/RLS is next; production pilot remains `NO-GO`, R-405 remains open, and Stage 4C remains blocked.
+## Stage 4B-2 Post-Closure Remediation R0 - 2026-07-12
+
+The Stage 4B-2 historical closure does not close production gates. Remediation R1-R7, current zero-skip RLS evidence, R-405 status, and all external launch prerequisites remain required. Production pilot remains `NO-GO`.

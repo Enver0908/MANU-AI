@@ -145,4 +145,21 @@ Canonical evidence: `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_EVIDENCE.md`; r
 | R-440 | Yellow AI draft is sent as an unreviewed non-green AI message or red lock closes on manual reply. | critical | Create reviewed yellow replies as new `dietitian_manual` provenance; preserve non-green send blocking; keep red closure on existing atomic activation only; add race/CAS tests. | mitigated locally (Stage 4B-2 closure 2026-07-12) |
 | R-441 | Messaging UX grants assistant/viewer/auditor unauthorized domain controls. | high | Project explicit permissions, hide/deny composer/draft/AI controls, enforce API/RLS, and verify assistant assigned read-only transcript access with own receipt. | mitigated locally (Stage 4B-2 closure 2026-07-12); current RLS re-run blocked |
 
-Canonical contract: `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`; closure evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md`. These risks are mitigated in local implementation and offline verification; full RLS pass remains environment-blocked. Production pilot remains `NO-GO`; R-405 remains open; real integration paths remain closed.
+Canonical contract: `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`; historical closure evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md`; active remediation: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`.
+
+## Phase 85 Stage 4B-2 Post-Closure Remediation Risks - 2026-07-12
+
+| ID | Risk | Severity | Required remediation evidence | Status |
+| --- | --- | --- | --- | --- |
+| R-4B2-01 | Viewer assignment can reach Supabase messaging mutations through role-only capability checks. | critical | R1/R2/R3 actor-aware API and RLS matrix denies viewer domain mutation server-side. | open |
+| R-4B2-02 | Mutation idempotency is persisted after the domain transaction and can duplicate under concurrent retry. | critical | R3 transactional idempotency claim, fingerprint conflict, replay, and rollback evidence. | open |
+| R-4B2-03 | Yellow review can commit while a red lock supersedes the yellow hold. | critical | R3 transaction-level red/yellow race test with zero partial writes. | open |
+| R-4B2-04 | Supabase projection RPCs load unbounded transcript/source data before application slicing. | critical | R2 SQL-bounded RPC, explain plan, and scale evidence. | open |
+| R-4B2-05 | Current Stage 4B-2 RLS suite is skipped because local Docker/Supabase is unavailable. | high | R6 local reset and zero-skip RLS role matrix. | open |
+| R-4B2-06 | Unread navigation badge reflects only loaded pages rather than actor-scoped aggregate totals. | high | R1/R4 aggregate contract and pagination-scale tests. | open |
+| R-4B2-07 | Tablet layout uses mobile drill-down below the `lg` breakpoint. | high | R4 responsive layout correction and tablet visual evidence. | open |
+| R-4B2-08 | Valid old message anchors are rejected when absent from legacy app-state. | high | R4 API-backed target resolution and deep-link tests. | open |
+| R-4B2-09 | Hook, route, concurrency, SQL-scale, and visual evidence is incomplete or synthetic. | medium | R5/R6 zero-skip targeted and independent verification. | open |
+| R-4B2-10 | Continuity documents contain stale handoffs and unconditional closure wording. | medium | R7 canonical document reconciliation and reference scan. | open |
+
+Production pilot remains `NO-GO`; R-405 remains open; real integration paths remain closed.

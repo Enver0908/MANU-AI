@@ -535,3 +535,6 @@ No Stage 4B-2 Phase 0 change wires the additive channel event engine into the li
 ## Stage 4B-2 Consumer Phase 1 Boundary - 2026-07-12
 
 The Phase 1 implementation adds bounded messaging contracts and pure authorization/projection helpers while preserving P85-IF as the authority for provenance, conversation sequence, human-control, red/yellow state, retrieval, and lifecycle. No SQL, receipt persistence, route, provider, channel, or health-data behavior changed. The next authorized unit is Phase 2 receipt persistence and RLS. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`.
+## Stage 4B-2 Post-Closure Remediation R0 - 2026-07-12
+
+The Stage 4B-2 consumer boundary remains valid, but its implementation closure is conditional from the technical audit perspective. R1-R7 must close server-side authorization, atomic mutation, bounded Supabase reads, lifecycle, and verification findings before Stage 4C planning resumes.

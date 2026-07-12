@@ -68,7 +68,7 @@ P85-IF-D added complete transcript and human-control coordination for business-h
 
 This repository is a local SaaS/PWA pilot prototype and architecture workspace. It is not a production-connected system yet.
 
-**Latest implementation phase:** Phase 85 Stage 4B-2 Mesajlaşma is complete (2026-07-12). **Next work:** Stage 4C Diyetisyen Icin AI Chat. **Production pilot:** `NO-GO` (unchanged); R-405 remains open.
+**Latest implementation phase:** Phase 85 Stage 4B-2 Mesajlaşma is implemented locally and is under post-closure remediation (R0 complete, 2026-07-12). **Next work:** remediation R1; Stage 4C remains blocked. **Production pilot:** `NO-GO` (unchanged); R-405 remains open.
 
 **Phase 82 verification:** targeted Phase 82 tests passed (5 files, 31/31); Phase 82G records `repoLocalClosureComplete: true` with verification `blocked` because `npm run test:rls` remains skipped/pending when local Supabase is unavailable.
 
@@ -232,3 +232,6 @@ The canonical order is Stage 4B, mandatory Stage 4B-2 Mesajlasma, then Stage 4C.
 ## Phase 85 Stage 4B-2 Phase 0 Documentation Lock - 2026-07-12
 
 The decision-complete Mesajlasma action plan is recorded in `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md`; runtime spec in `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`; closure evidence in `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md`. Stage 4B-2 Phases 0–11 are complete. **Next:** Stage 4C; production pilot remains `NO-GO`; R-405 remains open.
+## Phase 85 Stage 4B-2 Post-Closure Remediation - 2026-07-12
+
+Stage 4B-2 implementation is under post-closure remediation. The canonical remediation plan is `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`; R0 is documentation-only and complete. Stage 4C remains blocked until the remediation verification chain closes. Production pilot remains `NO-GO`, R-405 remains open, and real provider/channel/health-data paths remain disabled.

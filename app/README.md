@@ -478,3 +478,6 @@ Implemented per `../docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_ACTION_PLAN.md`.
 ## Stage 4B-2 Phase 1 App Contract - 2026-07-12
 
 Phase 1 is complete for the domain/DTO/authorization projection foundation. `src/lib/types.ts` adds assignment access-level types; `src/lib/phase-85-stage-4b2-contracts.ts` defines bounded messaging DTOs and cursors; `src/lib/phase-85-stage-4b2-api.ts` implements role/assignment permissions, safe previews, sequence unread projection, deterministic list/detail windows, and fail-closed operation guards; and the dedicated test file covers the role matrix and allowlists. No route, migration, persistence, UI, or provider/channel behavior changed. Evidence: `../docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`. **Next:** Phase 2 receipt persistence/RLS; Stage 4C remains blocked and production pilot remains `NO-GO`.
+## Stage 4B-2 Remediation Lock
+
+Stage 4B-2 runtime exists but is under post-closure remediation. Start from `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md` Phase R1 only after confirming the R0 evidence commit and a clean worktree. Do not open Stage 4C, real integrations, or production pilot paths during remediation.

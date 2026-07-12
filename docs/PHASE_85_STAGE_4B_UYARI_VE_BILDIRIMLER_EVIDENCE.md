@@ -192,3 +192,6 @@ Implementation and remediation commit message:
 `Remediate Phase 85 Stage 4B closure findings`
 
 Production pilot remains **NO-GO**. Do not enable real providers, channels, or live billing.
+## Stage 4B-2 Post-Closure Remediation R0 - 2026-07-12
+
+The previous Stage 4B-2 deferred-runtime wording is historical. Stage 4B-2 implementation exists but its audit findings are tracked in `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. R0 changes no Stage 4B runtime ownership; Stage 4C remains blocked until remediation closes.

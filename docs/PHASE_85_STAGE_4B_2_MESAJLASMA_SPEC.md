@@ -140,4 +140,4 @@ Production pilot remains **NO-GO**. R-405 remains open.
 
 ## Stage 4C Consumer Gate — 2026-07-12
 
-Stage 4C (Diyetisyen İçin AI Chat) may begin planning and implementation only after `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md` is recorded and continuity docs list Stage 4C as next. Stage 4C must not weaken non-green AI draft blocking, red atomic activation, per-actor receipts, bounded list/detail reads, or Stage 4B alert/notification contracts.
+Stage 4C planning and implementation remain blocked while post-closure remediation is active. The required consumer gate is `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md` phases R1-R7, including a zero-skip RLS run and independent release verification. Stage 4C must not weaken non-green AI draft blocking, red atomic activation, per-actor receipts, bounded list/detail reads, or Stage 4B alert/notification contracts.

@@ -74,3 +74,7 @@ The next authorized implementation unit is Phase 1 of `docs/PHASE_85_STAGE_4B_2_
 ## 9. Subsequent Phase 1 Handoff
 
 Phase 1 was implemented after this documentation-only lock and is evidenced separately in `docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`. The Phase 0 record remains the authority for the original decision lock; Phase 1 adds only pure domain types, bounded DTO/projection helpers, and authorization projection. Phase 2 receipt persistence and RLS is now the next authorized unit. Production pilot remains `NO-GO`, R-405 remains open, and Stage 4C remains blocked.
+
+## 10. Post-Closure Remediation R0 Handoff - 2026-07-12
+
+The later Stage 4B-2 implementation and audit are governed by `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. Its R0 documentation/evidence lock is complete; the next authorized unit is remediation R1. This historical Phase 0 record does not claim that later runtime findings are resolved. Stage 4C remains blocked, production pilot remains `NO-GO`, and R-405 remains open.

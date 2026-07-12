@@ -541,3 +541,6 @@ The next implementation track remains Stage 4B-2 Mesajlasma. Stage 4C remains bl
 The complete Stage 4B-2 action plan is now `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md`; Phase 0 evidence is `docs/PHASE_85_STAGE_4B_2_PHASE_0_DOCUMENTATION_EVIDENCE.md`.
 
 Stage 4B-2 consumes Stage 4B alert/notification targets but owns the conversation list, unread message receipts, bounded transcript detail, yellow reviewed-manual workflow, red manual reply workflow, and in-detail AI control. Assistant access is explicitly assigned-conversation read-only with own message receipt mutation; viewer assignment is read-only; auditor has no conversation visibility. This consumer lock adds no Stage 4B runtime work and does not change the Stage 4B no-alert-table, red-precedence, safe-list-DTO, notification-lifecycle, or production `NO-GO` decisions.
+## Stage 4B-2 Post-Closure Remediation R0 - 2026-07-12
+
+Stage 4B-2 currently consumes this track but is under remediation. No Stage 4B alert/notification ownership changes are authorized by R0. The active remediation contract is `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`; Stage 4C remains blocked.

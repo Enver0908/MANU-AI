@@ -2884,10 +2884,13 @@ Canonical action plan: `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md`.
 
 Phase 0 documentation evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_0_DOCUMENTATION_EVIDENCE.md`.
 
-Stage 4B-2 Phases 0–11 are complete (2026-07-12). Runtime spec: `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`. Closure evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md`. **Next:** Stage 4C. Production pilot remains `NO-GO`; R-405 remains open; real provider/channel/health-data, live billing, monitoring, backup, and secret-manager paths remain disabled.
+Stage 4B-2 Phases 0–11 are historical implementation evidence (2026-07-12) and are under post-closure remediation. Runtime spec: `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`. Historical closure evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md`. Active remediation: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. **Next:** remediation R1; Stage 4C remains blocked. Production pilot remains `NO-GO`; R-405 remains open; real provider/channel/health-data, live billing, monitoring, backup, and secret-manager paths remain disabled.
 
 ## Approved Phase 85 Stage 4B-2 Phase 1 Handoff - 2026-07-12
 
 Phase 1 is complete. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`. The new pure contract/projection boundary is in `app/src/lib/phase-85-stage-4b2-contracts.ts` and `app/src/lib/phase-85-stage-4b2-api.ts`, with assignment domain types in `app/src/lib/types.ts` and focused tests in `app/src/lib/phase-85-stage-4b2-api.test.ts`.
 
 The next operator must begin at Phase 2: append-only conversation receipt migration, deterministic sequence backfill, actor-owned monotonic marker RPC, and RLS. Do not add routes, UI, message mutations, provider/channel calls, or full-state messaging responses while implementing Phase 2. Preserve assistant assigned transcript/read-marker-only access, viewer read-only access, auditor zero visibility, production `NO-GO`, R-405 open status, and all real integration shutdowns.
+## Phase 85 Stage 4B-2 Post-Closure Remediation R0 - 2026-07-12
+
+Baseline branch: `codex/phase-85-interstage-clinical-memory`. Baseline before R0: `3d67ba5`. R0 is documentation-only and is evidenced by `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R0_EVIDENCE.md`. The active plan is `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`; the next authorized unit is R1. Stage 4C is blocked until R1-R7 close. Preserve production `NO-GO`, R-405 open, append-only migrations, and all real provider/channel/health-data shutdowns.

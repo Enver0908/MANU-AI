@@ -633,3 +633,6 @@ Phase 0 documentation evidence is `docs/PHASE_85_STAGE_4B_2_PHASE_0_DOCUMENTATIO
 ## Stage 4B-2 Phase 1 Local Evidence - 2026-07-12
 
 Phase 1 adds pure domain/DTO/authorization projection evidence only. Dedicated tests passed 8/8, combined Stage 4B regression passed 61 with 1 skipped, core passed 234/234, build passed, and lint passed with 0 errors and 3 pre-existing warnings. RLS skipped 33 tests because Docker/Supabase was unavailable. This contributes no pilot readiness credit and does not approve production messaging, live providers/channels, or any external launch gate. Phase 2 receipt persistence/RLS is next; production pilot remains `NO-GO` and R-405 remains open.
+## Stage 4B-2 Post-Closure Remediation R0 - 2026-07-12
+
+Stage 4B-2 remains a local implementation under remediation and does not close any production pilot gate. RLS, authorization, atomic mutation, bounded database read, scale, and independent release evidence remain open. Production pilot remains `NO-GO`.

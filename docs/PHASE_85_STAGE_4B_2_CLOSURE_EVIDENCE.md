@@ -3,11 +3,11 @@
 Date: 2026-07-12  
 Branch: `codex/phase-85-interstage-clinical-memory`  
 Scope: Stage 4B-2 Mesajlaşma Phases 0–11 (documentation through evidence closure)  
-Status: **implementation and offline/full-scale/visual verification complete; current RLS closure is blocked by unavailable Docker**
+Status: **historical implementation and offline/full-scale/visual evidence recorded; post-closure remediation active; current RLS closure is blocked by unavailable Docker**
 
 Production pilot: **NO-GO**  
 R-405: **open**  
-Stage 4C: **next authorized stage**
+Stage 4C: **blocked by post-closure remediation**
 
 ## 1. Phase evidence chain
 
@@ -79,7 +79,7 @@ Stage 4C: **next authorized stage**
 | `npm run test:visual` | **40/40 passed** (desktop, tablet, mobile-android, mobile-ios) |
 | `npm run test:rls` | **35 skipped** — Docker/local Supabase unavailable; **not counted as pass** |
 | `git diff --check` | **pass** |
-| Workspace hygiene scan | **pass** (no Phase 86 leaks, live Stripe keys, embedded service role) |
+| Workspace hygiene scan | **historical scoped pass** (no forbidden future-phase leaks, live Stripe keys, embedded service role) |
 | Bounded messaging sample | list default **30**, max **100**; detail default **50**, max **100** on 10k fixture sample |
 
 ## 4. Role matrix (tested application/RPC contract)
@@ -140,4 +140,4 @@ A passing role matrix is required before describing Stage 4B-2 persistence/RLS e
 
 ## 9. Next stage
 
-**Stage 4C — Diyetisyen İçin AI Chat** is the next authorized Phase 85 stage. Begin only from an approved Stage 4C plan; do not weaken Stage 4B-2 messaging, Stage 4B alert/notification, or P85-IF contracts.
+This closure is historical implementation evidence and is superseded for execution ordering by `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. Stage 4C remains blocked until remediation R0-R6 verification is green and the separate R7 evidence closure is committed. Do not weaken Stage 4B-2 messaging, Stage 4B alert/notification, or P85-IF contracts.

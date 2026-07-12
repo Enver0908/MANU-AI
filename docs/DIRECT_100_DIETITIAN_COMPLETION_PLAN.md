@@ -1121,3 +1121,6 @@ The Stage 4B-2 Mesajlasma contract is locked in `docs/PHASE_85_STAGE_4B_2_MESAJL
 ## Stage 4B-2 Phase 1 Direct-Scale Handoff - 2026-07-12
 
 Phase 1 is a pure bounded-domain foundation: assignment-aware permissions, allowlisted DTOs, safe preview/body limits, sequence unread projection, deterministic cursors, and fallback-compatible list/detail windows. It is not direct-pilot scale evidence, persistence/RLS evidence, route evidence, UI evidence, or production authorization. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`. Phase 2 must add durable actor receipts and RLS before any direct-scale messaging rehearsal; production pilot remains `NO-GO` and R-405 remains open.
+## Stage 4B-2 Post-Closure Remediation R0 - 2026-07-12
+
+Direct-scale readiness cannot consume the historical Stage 4B-2 closure as final evidence. Database-bounded messaging reads, server-side assignment authorization, atomic idempotency, zero-skip RLS, and SQL-backed scale rehearsal remain required under `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`.

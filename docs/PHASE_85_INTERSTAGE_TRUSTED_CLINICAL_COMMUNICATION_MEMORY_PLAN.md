@@ -497,3 +497,6 @@ Phase 2 added durable per-actor conversation read receipts, deterministic sequen
 ## Stage 4B-2 Consumer Phase 1 Handoff - 2026-07-12
 
 Phase 1 implemented only the consumer-side domain foundation: assignment access-level types, bounded DTOs, actor-aware permissions, safe preview/message projection, sequence unread calculation, and versioned cursors. It did not reopen or modify P85-IF persistence, lifecycle, provider/channel, or health-data paths. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`. Phase 2 receipt persistence/RLS is next.
+## Stage 4B-2 Post-Closure Remediation R0 - 2026-07-12
+
+P85-IF remains authoritative and is not reopened. Stage 4B-2 audit remediation must preserve provenance, conversation revision, human-control, red/yellow, lifecycle, export, and RLS contracts. The active remediation plan is `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`; Stage 4C remains blocked.

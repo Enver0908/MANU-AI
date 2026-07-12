@@ -15,7 +15,7 @@ Independently prove Stage 4B-2 messaging meets bounded list/detail contracts, hy
 - `STAGE_4B2_SCALE_TARGETS`: 10k conversations; list 30/100; detail 50/100 page limits
 - DTO allowlists + `assertConversationInboxItemDtoSafety` / `assertConversationMessageDtoSafety`
 - `evaluateStage4B2BoundedMessagingEvidence` (sample + optional full 10k via `STAGE_4B2_FULL_SCALE=1`)
-- `evaluateStage4B2WorkspaceHygieneEvidence` (Phase 86 name scan with `\bPhase\s+86\b`, live Stripe key, embedded service role)
+- `evaluateStage4B2WorkspaceHygieneEvidence` (forbidden future-phase name scan, live Stripe key, embedded service role)
 - Integration with Stage 4B channel checks and messaging integration evidence
 
 ### Tests and rehearsal
@@ -75,7 +75,7 @@ npm run rehearse:stage-4b2:verification
 | `npm run test:visual` | **40 passed** (4 projects × messaging + dashboard + commercial) |
 | `npm run release:verify` | **pass** (R-405 documented moderate audit findings remain) |
 | `git diff --check` | **pass** (no conflict markers; CRLF line-ending notices only) |
-| Workspace hygiene scan | **pass** (no Phase 86 leaks, live Stripe keys, or embedded service role in scanned paths) |
+| Workspace hygiene scan | **historical scoped pass** (no forbidden future-phase leaks, live Stripe keys, or embedded service role in scanned paths) |
 | Bounded messaging sample | list default **30**, max **100**; detail default **50**, max **100** on 10k fixture sample |
 
 ## Visual coverage (Stage 4B-2)
@@ -98,4 +98,4 @@ Snapshots: `app/tests/visual/messaging.visual.spec.ts-snapshots/`
 
 ## Stage 4C gate
 
-Faz 10 verification chain complete with documented RLS skip. **Stage 4C is next** after Faz 11 evidence closure (`docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md`).
+Faz 10 records historical offline verification with an environment-blocked RLS run. It does not satisfy the current remediation release gate. **Stage 4C remains blocked** until `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md` phases R1-R6 close and the separate R7 evidence closure is committed.

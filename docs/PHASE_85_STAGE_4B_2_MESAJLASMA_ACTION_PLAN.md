@@ -1,6 +1,6 @@
 # Phase 85 Stage 4B-2 - Mesajlasma Eylem Plani
 
-Status: **complete (Phases 0–11, 2026-07-12).** Runtime spec: `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`. Closure evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md`. **Next:** Stage 4C Diyetisyen Icin AI Chat.
+Status: **historical implementation complete; post-closure remediation active (R0 locked, 2026-07-12).** Runtime spec: `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`. Historical closure evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md`. Remediation plan: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. **Next authorized work:** Phase R1 remediation. Stage 4C remains blocked.
 
 Baseline branch: `codex/phase-85-interstage-clinical-memory`
 
@@ -19,8 +19,8 @@ Stage 4B-2 owns the dietitian-facing conversation inbox and transcript workflow.
 1. Stage 4A Danisan Kontrol Paneli - complete.
 2. P85-IF-A through P85-IF-I and post-closure audit - complete.
 3. Stage 4B Uyari ve Bildirimler - complete locally; current RLS execution remains environment-blocked when Docker is unavailable.
-4. Stage 4B-2 Mesajlasma - complete (2026-07-12); evidence in `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md`.
-5. Stage 4C Diyetisyen Icin AI Chat - **next**.
+4. Stage 4B-2 Mesajlasma - historical implementation evidence (2026-07-12); remediation is active under `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`.
+5. Stage 4C Diyetisyen Icin AI Chat - **blocked until remediation R1-R7 closes**.
 
 The internal dashboard section identifier remains `messages`. Only the visible label changes from the temporary Gorusme label to Mesajlasma. No permanent duplicate Gorusme entry may remain.
 

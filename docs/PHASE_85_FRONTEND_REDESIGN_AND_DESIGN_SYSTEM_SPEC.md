@@ -397,3 +397,6 @@ The Mesajlasma action plan is locked in `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACT
 ## Stage 4B-2 Phase 1 Domain/DTO/Authorization Handoff - 2026-07-12
 
 Phase 1 now supplies the UI with bounded list/detail/mutation DTO contracts and actor-aware permission flags, but it does not implement dashboard routing, components, polling, visual states, or message mutation controls. The list/detail UI must consume the `messages` section contract, preserve assistant read-only transcript plus own receipt behavior, hide viewer domain controls, and provide no auditor conversation surface. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`. Phase 2 receipt persistence/RLS is next; visual implementation remains later in the locked Stage 4B-2 order.
+## Stage 4B-2 Post-Closure Remediation R0 - 2026-07-12
+
+The Stage 4B-2 visual/runtime implementation is historical and remediation is active. R4 owns the tablet split-layout, unread aggregate, deep-link, anchor, 320px, focus, and sensitive rendering corrections. Stage 4C remains blocked until `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md` R1-R7 closes.
