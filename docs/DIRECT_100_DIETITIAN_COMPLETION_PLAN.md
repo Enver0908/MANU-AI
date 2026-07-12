@@ -1113,3 +1113,7 @@ This improves local operator safety for the dashboard but does not change direct
 ## Stage 4B Direct-Scale Closure - 2026-07-12
 
 Stage 4B implementation is complete. Bounded cursor APIs, per-actor receipt state, visible-client scoping, inbox scheduler dedupe, and sample/full scale rehearsal (`STAGE_4B_FULL_SCALE=1`) are implemented and evidenced in `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_EVIDENCE.md`. This does not change direct-pilot eligibility; production pilot remains `NO-GO`.
+
+## Stage 4B-2 Phase 0 Documentation Lock - 2026-07-12
+
+The Stage 4B-2 Mesajlasma contract is locked in `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md`. Phase 0 records the bounded inbox/detail architecture, per-actor unread receipts, assistant assigned read-only transcript access with own receipt mutation, yellow reviewed-manual provenance, red activation-only closure, lifecycle/RLS obligations and complete verification matrix. No direct-pilot, provider, channel, clinical, legal, dependency or production gate changed. Stage 4B-2 Phase 1 is next; Stage 4C remains blocked.

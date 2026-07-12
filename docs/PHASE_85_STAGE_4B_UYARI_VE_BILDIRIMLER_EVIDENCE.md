@@ -155,6 +155,10 @@ Stage 4B-2 is **not implemented**. Next approved work:
 
 **Still out of scope:** real WhatsApp/Telegram/provider paths, live billing, production pilot GO, hosted sandbox doc changes without deploy.
 
+## Stage 4B-2 Phase 0 Handoff - 2026-07-12
+
+Stage 4B-2 remains runtime-unimplemented at this boundary. Its decision-complete implementation contract is `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md`; its documentation-only lock is evidenced by `docs/PHASE_85_STAGE_4B_2_PHASE_0_DOCUMENTATION_EVIDENCE.md`. The next authorized work is Stage 4B-2 Phase 1. This handoff preserves the Stage 4B boundaries and does not authorize real provider/channel paths.
+
 ## 10. Acceptance criteria mapping (plan)
 
 1. Uyarilar and Bildirimler are separate full dashboard sections — **yes**

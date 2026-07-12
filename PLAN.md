@@ -1034,6 +1034,10 @@ Phase 85 P85-IF is closed after a post-closure architecture audit and remediatio
 
 Evidence: `docs/PHASE_85_IF_REMEDIATION_POST_CLOSURE_AUDIT_EVIDENCE.md`, plus dedicated R1/R2/R3 evidence documents. Verification passed targeted app/core tests, local Supabase reset, local RLS 30/30, lint, build, full app 828 passed / 4 skipped, full core 234/234, channel replay, and production-scale rehearsal. Stage 4B planning is now complete and its approved implementation is next. Production pilot remains `NO-GO`; R-405 remains open; real providers/channels/health-data paths remain disabled.
 
+## Phase 85 Stage 4B-2 Phase 0 Documentation Lock - 2026-07-12
+
+Phase 0 is complete as a documentation-only lock. The full action plan and evidence are `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md` and `docs/PHASE_85_STAGE_4B_2_PHASE_0_DOCUMENTATION_EVIDENCE.md`. Runtime work starts only at Stage 4B-2 Phase 1. The lock preserves mock-only providers/channels, Stage 4B alert/notification boundaries, P85-IF authority, production `NO-GO`, R-405 open status, and the existing auth/onboarding/billing/admin/entitlement/PWA contracts.
+
 ## Approved Next Step - Phase 85 Stage 4B-2 Mesajlasma
 
 Stage 4B implementation and post-closure remediation are recorded under `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_SPEC.md`. Core/app, scale, replay, release, build, lint, and visual verification passed; the current 33-test RLS suite is blocked by unavailable Docker and is not counted as pass. **Next:** plan and implement Stage 4B-2 Mesajlasma — conversation list, unread message state, WhatsApp-like conversation detail, yellow draft review/edit/send ergonomics, red manual reply, and Görüşme → Mesajlaşma navigation. Stage 4C remains blocked until Stage 4B-2 closes. Preserve `NO-GO`, R-405, mock-only providers/channels, existing auth/onboarding/billing/admin/entitlement/PWA contracts, and append-only migrations.

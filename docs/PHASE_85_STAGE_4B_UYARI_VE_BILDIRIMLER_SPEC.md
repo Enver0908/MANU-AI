@@ -69,3 +69,7 @@ The same rules are enforced in fallback code, API routes, actor-aware RPCs, and 
 ## 7. Verification boundary
 
 The local code, fallback behavior, mock channel behavior, production-scale rehearsal, build, lint, release verification, and visual snapshots are verified. The current RLS suite is not claimed as passed because Docker Desktop's Supabase engine is unavailable. No provider, live channel, live billing, monitoring, backup, secret-manager, or real health-data path is opened by this specification.
+
+## Stage 4B-2 Consumer Phase 0 Lock - 2026-07-12
+
+Stage 4B-2 owns the bounded conversation list/detail and message unread receipt workflow. Its complete contract is `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md`; its documentation evidence is `docs/PHASE_85_STAGE_4B_2_PHASE_0_DOCUMENTATION_EVIDENCE.md`. This consumer boundary does not add an alerts table, alter Stage 4B notification lifecycle, weaken non-green AI draft blocking, or change red atomic activation. Runtime implementation starts at Stage 4B-2 Phase 1.

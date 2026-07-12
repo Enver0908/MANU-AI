@@ -525,3 +525,9 @@ No Stage 4B API may expose raw transcript text, provider payload, prompt context
 ## Stage 4B Post-Closure Consumer Reconciliation - 2026-07-12
 
 The Stage 4B consumer preserves the P85-IF authority boundary: alerts are projections of active risk state, system notifications are structured operational facts, source links are tenant/client/conversation checked, and red closure uses atomic activation. Current implementation evidence is in `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md`; the current RLS run is environment-blocked and is not claimed as passed. Real provider, channel, billing, monitoring, backup, secret-manager, and health-data paths remain disabled.
+
+## Stage 4B-2 Consumer Phase 0 Lock - 2026-07-12
+
+The Stage 4B-2 consumer contract is `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md`. It preserves P85-IF authority: conversation sequence and provenance remain the transcript order/source model; message/provenance ids are routing hints and never authorization; human-control and red/yellow state remain domain-owned; read receipts are non-clinical per-actor UI state; and lifecycle redaction/export boundaries remain mandatory.
+
+No Stage 4B-2 Phase 0 change wires the additive channel event engine into the live webhook or opens any real provider/channel path. Stage 4B-2 Phase 1 is the next authorized implementation unit.

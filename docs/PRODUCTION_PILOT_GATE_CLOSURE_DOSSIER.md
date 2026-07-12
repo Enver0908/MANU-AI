@@ -296,3 +296,7 @@ All production-pilot gates remain open and production pilot remains `NO-GO`.
 Stage 4B local implementation and post-closure remediation are complete subject to the environment-blocked RLS execution. Evidence: `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md`. This adds **no** gate closure. Production pilot remains `NO-GO`; R-405 remains open. Local RLS re-run with the append-only Stage 4B remediation migration remains blocked while Supabase/Docker is unavailable.
 
 Planning completion is not implementation, deployment, provider/channel approval, clinical approval, dependency clearance, or R-405 acceptance. Production pilot remains `NO-GO`.
+
+## Stage 4B-2 Phase 0 Gate Note - 2026-07-12
+
+Stage 4B-2 Phase 0 is a documentation and decision lock only. `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md` and its evidence file define the future bounded messaging inbox/detail, receipt, role, yellow, red, RLS, lifecycle and verification contracts. No production gate is closed, no provider/channel is approved, no R-405 decision is changed, and Stage 4C remains blocked until runtime implementation and evidence close.

@@ -1482,3 +1482,7 @@ Delivery order is Stage 4B (complete 2026-07-12) -> Stage 4B-2 Mesajlasma (next)
 ## Phase 85 Stage 4B Post-Closure Remediation - 2026-07-12
 
 The Stage 4B implementation was audited against the approved plan before handoff. The remediation closes the bounded Supabase read, actor validation, safe-link, lifecycle producer, atomic unsupported-media, role-gating, route parsing, and visual evidence gaps. The runtime contract is `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_SPEC.md`; evidence is `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md`. RLS remains an explicit environment-blocked condition until Docker/local Supabase is available. No real provider/channel/health-data path or production gate changed.
+
+## Phase 85 Stage 4B-2 Phase 0 Documentation Lock - 2026-07-12
+
+Stage 4B-2 is now governed by `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md`. Phase 0 locks the conversation list/detail boundary, per-actor unread receipts, assistant assigned read-only transcript access with own receipt, viewer read-only access, yellow reviewed-manual semantics, red atomic activation closure, bounded API/RLS contracts, lifecycle requirements, and the phase-by-phase verification protocol. No runtime implementation or migration was introduced. Stage 4B-2 Phase 1 is the next authorized work; Stage 4C remains blocked; production pilot remains `NO-GO`; R-405 remains open.

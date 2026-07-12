@@ -461,6 +461,10 @@ The dashboard Stage 4A client-control surfaces now match the P85-IF post-closure
 
 Evidence: `../docs/PHASE_85_STAGE_4A_POST_IF_REMEDIATION_EVIDENCE.md`. Stage 4B remains next. This does not connect real providers/channels, live billing, monitoring, backup, secret manager, or real health-data paths.
 
+## Stage 4B-2 Phase 0 App Contract - 2026-07-12
+
+The Stage 4B-2 documentation lock is recorded in `../docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md` and `../docs/PHASE_85_STAGE_4B_2_PHASE_0_DOCUMENTATION_EVIDENCE.md`. Phase 0 changes no app runtime, route, migration, provider, channel, auth, billing, entitlement, or PWA behavior. The next app work is Phase 1 domain/DTO/authorization projection. Stage 4C remains blocked and production pilot remains `NO-GO`.
+
 ## Stage 4B App Contract — complete 2026-07-12
 
 Implemented per `../docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_ACTION_PLAN.md`. Devirler replaced by bounded Uyarilar; separate Bildirimler view; header bell opens full-page notifications; Gorusme remains temporary alert/notification target; red-risk atomic activation while red-locked config disabled. Dedicated list APIs (`/api/alerts`, `/api/notifications`) replace full `ManuAppState` polling for inbox views. **Next:** Stage 4B-2 Mesajlasma owns conversation inbox and unread-message model.

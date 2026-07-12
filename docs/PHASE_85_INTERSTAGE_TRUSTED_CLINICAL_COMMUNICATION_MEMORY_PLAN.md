@@ -475,3 +475,9 @@ Red reactivation remains the P85-IF-F/R3 atomic activation transition. Stage 4B 
 ## Stage 4B Consumer Remediation Reconciliation - 2026-07-12
 
 Stage 4B has consumed the P85-IF contracts through bounded actor-aware Supabase resources, provenance-safe target linkage, lifecycle-aware draft invalidation, atomic unsupported-media review, and role-scoped receipt mutations. The remediation does not reopen the P85-IF track or any real provider/channel path. Evidence: `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md`. Stage 4B-2 Mesajlasma is next; Stage 4C remains blocked.
+
+## Stage 4B-2 Consumer Phase 0 Lock - 2026-07-12
+
+Stage 4B-2 now has a decision-complete consumer plan at `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md`. It consumes P85-IF transcript, provenance, conversation revision, human-control, risk-reactivation, retrieval, lifecycle, and RLS authority without reopening P85-IF. The messaging read receipt is a new per-actor UI-state contract; assistant may advance only its own assigned-conversation receipt, while assistant remains unable to perform domain mutations.
+
+The yellow reviewed-manual command must preserve non-green AI draft blocking, and red manual reply must preserve the atomic activation-only closure rule. Phase 0 changes no P85-IF runtime or migration.

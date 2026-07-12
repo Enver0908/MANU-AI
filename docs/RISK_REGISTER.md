@@ -135,3 +135,14 @@ Phase 84D-84E (2026-07-02) implemented magic-link login and onboarding claim loc
 | R-437 | Alert/notification refresh reintroduces broad app-state reads or becomes unbounded at 100 dietitians/5,000 clients. | high | Use bounded cursor APIs, server-side filters, dedicated resources, visible-tab 30-second polling, in-flight dedupe/backoff, and production-scale rehearsal. | mitigated locally (Stage 4B remediation 2026-07-12) |
 
 Canonical evidence: `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_EVIDENCE.md`; remediation evidence: `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md`. Stage 4B risk identifiers are R-433 through R-437 to avoid collisions with the existing P85-IF R-426 through R-432 records.
+
+## Phase 85 Stage 4B-2 Documentation-Lock Risks - 2026-07-12
+
+| ID | Risk | Severity | Planned mitigation | Status |
+| --- | --- | --- | --- | --- |
+| R-438 | Conversation list/detail reads expose tenant-wide or unbounded transcript data. | critical | Use actor-aware bounded list/detail RPCs, keyset cursors, safe DTO allowlists, no full app-state fetch, cross-tenant `404`, and scale tests. | open; Phase 1-10 implementation pending |
+| R-439 | A shared unread marker lets one dietitian or assistant clear another actor's unread state. | high | Use tenant/conversation/dietitian composite receipts, monotonic sequence markers, own-actor mutation, assistant own-receipt exception only, and RLS race tests. | open; Phase 2 implementation pending |
+| R-440 | Yellow AI draft is sent as an unreviewed non-green AI message or red lock closes on manual reply. | critical | Create reviewed yellow replies as new `dietitian_manual` provenance; preserve non-green send blocking; keep red closure on existing atomic activation only; add race/CAS tests. | open; Phase 5 implementation pending |
+| R-441 | Messaging UX grants assistant/viewer/auditor unauthorized domain controls. | high | Project explicit permissions, hide/deny composer/draft/AI controls, enforce API/RLS, and verify assistant assigned read-only transcript access with own receipt. | open; Phase 1-10 implementation pending |
+
+Canonical Phase 0 contract: `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md`; Phase 0 evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_0_DOCUMENTATION_EVIDENCE.md`. These risks are planning risks only and do not alter production pilot `NO-GO`, R-405 open status, or real integration shutdown.

@@ -2430,6 +2430,10 @@ Before Stage 4B begins, execute from the `P85-4A-POST-IF-R` compatibility baseli
 
 Evidence: `docs/PHASE_85_STAGE_4A_POST_IF_REMEDIATION_EVIDENCE.md`. The next correct Phase 85 work remains Stage 4B Uyari ve Bildirimler. Do not reopen P85-IF scopes, do not call this a new major phase, and keep production pilot `NO-GO`, R-405 open, and all real provider/channel/health-data paths closed.
 
+## Stage 4B-2 Phase 0 Documentation Lock - 2026-07-12
+
+Phase 0 is complete. The decision-complete execution contract is `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md` and the evidence is `docs/PHASE_85_STAGE_4B_2_PHASE_0_DOCUMENTATION_EVIDENCE.md`. Begin only at Phase 1. Preserve bounded conversation/detail reads, per-actor dietitian/assistant receipts, viewer read-only access, auditor zero conversation visibility, yellow reviewed-manual semantics, red atomic activation closure, append-only migrations, production `NO-GO`, R-405 open, and all real provider/channel/health-data shutdowns.
+
 ## Next Execution Lock - Phase 85 Stage 4B-2 Mesajlasma
 
 Stage 4B is complete. Evidence: `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_EVIDENCE.md`. Plan Stage 4B-2 with user approval: conversation list, unread message receipt/state, WhatsApp-like conversation detail, yellow draft review/edit/send, red manual reply ergonomics, and Mesajlaşma navigation replacing standalone Görüşme. Do not begin Stage 4C until Stage 4B-2 closes.

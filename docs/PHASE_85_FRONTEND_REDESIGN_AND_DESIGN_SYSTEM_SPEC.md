@@ -389,3 +389,7 @@ On mobile, Uyarilar sits beside the current Gorusme bottom-nav entry and Bildiri
 ## Stage 4B Post-Closure Remediation - 2026-07-12
 
 The Stage 4B frontend evidence was refreshed after implementation audit. Alerts and notifications now have screenshot assertions across desktop, tablet, Android, and iOS projects, focus/selected-tab assertions, real red/yellow and system-event rows, mobile text containment, and overflow guards. Role-aware UI controls remain read-only for assistant/auditor actors. The implementation and visual chain passed locally; current Supabase/RLS execution remains explicitly blocked by unavailable Docker. Evidence: `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md`.
+
+## Stage 4B-2 Phase 0 Documentation Lock - 2026-07-12
+
+The Mesajlasma action plan is locked in `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md`. The future UI contract is list-first/detail-second, with a desktop split layout, mobile drill-down, thin rows, per-actor unread state, bounded transcript pagination, yellow reviewed-manual controls, red manual-reply controls, and in-detail AI active/passive boundaries. Phase 0 is documentation-only; Stage 4B-2 runtime and visual work begin in Phase 1 and Stage 4C remains blocked.

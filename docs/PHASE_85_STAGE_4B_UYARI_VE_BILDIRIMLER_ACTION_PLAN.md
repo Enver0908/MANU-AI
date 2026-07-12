@@ -531,3 +531,9 @@ Phase 1 completed on 2026-07-12: clinical alert projection, reason taxonomy, SLA
 The original local closure evidence was re-audited before handoff. The remediation added bounded actor-aware Supabase v2 RPCs, persistent dietitian-form SLA inputs, fail-closed target linkage, client-specific draft lifecycle producers, atomic unsupported-media receipt gating, assistant/auditor UI restrictions, route error-boundary hardening, and screenshot/keyboard/accessibility assertions. Full core/app, scale, replay, release, build, lint, and visual verification passed. The current RLS suite has 33 skipped tests because Docker Desktop is unavailable; those tests are explicitly not counted as pass. Detailed evidence: `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md` and runtime contract: `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_SPEC.md`.
 
 The next implementation track remains Stage 4B-2 Mesajlasma. Stage 4C remains blocked. Production pilot remains `NO-GO`; R-405 remains open; real provider/channel/health-data paths remain disabled.
+
+## Stage 4B-2 Consumer Documentation Lock - 2026-07-12
+
+The complete Stage 4B-2 action plan is now `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md`; Phase 0 evidence is `docs/PHASE_85_STAGE_4B_2_PHASE_0_DOCUMENTATION_EVIDENCE.md`.
+
+Stage 4B-2 consumes Stage 4B alert/notification targets but owns the conversation list, unread message receipts, bounded transcript detail, yellow reviewed-manual workflow, red manual reply workflow, and in-detail AI control. Assistant access is explicitly assigned-conversation read-only with own message receipt mutation; viewer assignment is read-only; auditor has no conversation visibility. This consumer lock adds no Stage 4B runtime work and does not change the Stage 4B no-alert-table, red-precedence, safe-list-DTO, notification-lifecycle, or production `NO-GO` decisions.

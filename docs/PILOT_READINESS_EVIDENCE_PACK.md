@@ -617,3 +617,7 @@ This evidence is dashboard/operator-readiness evidence only. It does not approve
 Stage 4B Uyari ve Bildirimler implementation and post-closure remediation are verified locally. Evidence: `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md`. Core 234/234, app 901 passed / 5 skipped, Stage 4B scale/replay/79G/release checks passed, and visual 36/36 passed; `npm run test:rls` skipped 33/33 because Docker was unavailable and is not counted as pass. This adds no production authorization. **Next:** Stage 4B-2 Mesajlasma; Stage 4C remains blocked until it closes.
 
 Production pilot remains `NO-GO`; R-405 and all external gates remain open.
+
+## Stage 4B-2 Phase 0 Planning Evidence - 2026-07-12
+
+Phase 0 documentation evidence is `docs/PHASE_85_STAGE_4B_2_PHASE_0_DOCUMENTATION_EVIDENCE.md`; the implementation contract is `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md`. This is a local planning lock only. It adds no production authorization, no real messaging path, no provider call, no health-data path, and no pilot readiness credit. Stage 4C remains blocked; production pilot remains `NO-GO`; R-405 remains open.

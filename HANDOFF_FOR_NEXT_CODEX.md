@@ -2871,3 +2871,13 @@ Canonical implementation contract: `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_
 Implementation must begin at the plan's Phase 1 after re-verifying branch `codex/phase-85-interstage-clinical-memory`, baseline commit `5048e22`, and a clean worktree. Do not redesign the plan during implementation. Key locks are: no alerts table; red-over-yellow projection; no raw clinical content in list DTOs; per-actor notification receipts; auditor zero client visibility; assistant read-only assigned scope; direct AI activation atomically closes red; Devirler becomes Uyarilar; header bell opens full Bildirimler; current Gorusme remains the Stage 4B target; Stage 4B-2 replaces it with Mesajlasma before Stage 4C.
 
 Stage 4B is one implementation stage, one evidence pack, and one commit. Production pilot remains `NO-GO`; R-405 remains open; all real provider/channel/health-data and production-operations paths remain closed.
+
+## Approved Phase 85 Stage 4B-2 Phase 0 Handoff - 2026-07-12
+
+Canonical action plan: `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md`.
+
+Phase 0 documentation evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_0_DOCUMENTATION_EVIDENCE.md`.
+
+Phase 0 is complete and contains no runtime implementation. The next operator must begin at Stage 4B-2 Phase 1 after verifying a clean worktree. Locked boundaries are: `messages` remains the internal section id; Mesajlasma replaces Gorusme; list/detail reads are bounded; unread receipts are per actor/conversation; assistant reads assigned conversations and writes only its own receipt; viewer is read-only; auditor sees no conversations; yellow AI drafts are never sent as non-green AI output; red manual reply does not close red; and only existing expected-revision atomic activation closes red.
+
+Stage 4C remains blocked until Stage 4B-2 closes. Production pilot remains `NO-GO`; R-405 remains open; real provider/channel/health-data, live billing, monitoring, backup, and secret-manager paths remain disabled.
