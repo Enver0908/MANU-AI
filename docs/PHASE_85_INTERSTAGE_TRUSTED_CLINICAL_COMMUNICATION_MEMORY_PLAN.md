@@ -481,3 +481,7 @@ Stage 4B has consumed the P85-IF contracts through bounded actor-aware Supabase 
 Stage 4B-2 now has a decision-complete consumer plan at `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md`. It consumes P85-IF transcript, provenance, conversation revision, human-control, risk-reactivation, retrieval, lifecycle, and RLS authority without reopening P85-IF. The messaging read receipt is a new per-actor UI-state contract; assistant may advance only its own assigned-conversation receipt, while assistant remains unable to perform domain mutations.
 
 The yellow reviewed-manual command must preserve non-green AI draft blocking, and red manual reply must preserve the atomic activation-only closure rule. Phase 0 changes no P85-IF runtime or migration.
+
+## Stage 4B-2 Consumer Phase 1 Handoff - 2026-07-12
+
+Phase 1 implemented only the consumer-side domain foundation: assignment access-level types, bounded DTOs, actor-aware permissions, safe preview/message projection, sequence unread calculation, and versioned cursors. It did not reopen or modify P85-IF persistence, lifecycle, provider/channel, or health-data paths. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`. Phase 2 receipt persistence/RLS is next.

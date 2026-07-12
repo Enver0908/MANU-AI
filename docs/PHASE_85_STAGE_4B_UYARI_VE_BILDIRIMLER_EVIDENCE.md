@@ -141,7 +141,7 @@ Playwright visual smoke covers:
 
 ## 9. Known deferred — Stage 4B-2 Mesajlasma (next)
 
-Stage 4B-2 is **not implemented**. Next approved work:
+Stage 4B-2 conversation routes, UI, persistence, and message mutations are **not implemented**. Its Phase 1 pure domain/DTO/authorization projection foundation is complete; next approved work is Phase 2 receipt persistence and RLS.
 
 1. Conversation list (thin rows, newest first, last-message preview/time, unread indicator)
 2. Per-conversation unread message receipt/state
@@ -157,7 +157,7 @@ Stage 4B-2 is **not implemented**. Next approved work:
 
 ## Stage 4B-2 Phase 0 Handoff - 2026-07-12
 
-Stage 4B-2 remains runtime-unimplemented at this boundary. Its decision-complete implementation contract is `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md`; its documentation-only lock is evidenced by `docs/PHASE_85_STAGE_4B_2_PHASE_0_DOCUMENTATION_EVIDENCE.md`. The next authorized work is Stage 4B-2 Phase 1. This handoff preserves the Stage 4B boundaries and does not authorize real provider/channel paths.
+Stage 4B-2 Phase 1 pure domain/DTO/authorization projection is complete. Its implementation evidence is `docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`; its decision-complete implementation contract is `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md`. The next authorized work is Stage 4B-2 Phase 2 receipt persistence and RLS. This handoff preserves the Stage 4B boundaries and does not authorize real provider/channel paths.
 
 ## 10. Acceptance criteria mapping (plan)
 

@@ -509,6 +509,15 @@ export type ConversationRecord = {
   revision: number;
 };
 
+export type ClientAssignmentAccessLevel = "care_team" | "viewer";
+
+export type ClientAssignmentRecord = {
+  tenantId: string;
+  clientId: string;
+  dietitianId: string;
+  accessLevel: ClientAssignmentAccessLevel;
+};
+
 export type MessageRecord = {
   id: string;
   tenantId: string;

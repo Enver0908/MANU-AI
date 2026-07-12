@@ -300,3 +300,7 @@ Planning completion is not implementation, deployment, provider/channel approval
 ## Stage 4B-2 Phase 0 Gate Note - 2026-07-12
 
 Stage 4B-2 Phase 0 is a documentation and decision lock only. `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md` and its evidence file define the future bounded messaging inbox/detail, receipt, role, yellow, red, RLS, lifecycle and verification contracts. No production gate is closed, no provider/channel is approved, no R-405 decision is changed, and Stage 4C remains blocked until runtime implementation and evidence close.
+
+## Stage 4B-2 Phase 1 Gate Note - 2026-07-12
+
+Phase 1 is pure domain/DTO/authorization projection evidence, not a production gate closure. It adds no receipt table, RLS policy, route, UI, message mutation, provider/channel path, or pilot authorization. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`. Phase 2 receipt persistence/RLS is next; production pilot remains `NO-GO`, R-405 remains open, and Stage 4C remains blocked.

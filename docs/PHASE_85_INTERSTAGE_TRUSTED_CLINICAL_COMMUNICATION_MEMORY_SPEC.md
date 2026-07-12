@@ -530,4 +530,8 @@ The Stage 4B consumer preserves the P85-IF authority boundary: alerts are projec
 
 The Stage 4B-2 consumer contract is `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md`. It preserves P85-IF authority: conversation sequence and provenance remain the transcript order/source model; message/provenance ids are routing hints and never authorization; human-control and red/yellow state remain domain-owned; read receipts are non-clinical per-actor UI state; and lifecycle redaction/export boundaries remain mandatory.
 
-No Stage 4B-2 Phase 0 change wires the additive channel event engine into the live webhook or opens any real provider/channel path. Stage 4B-2 Phase 1 is the next authorized implementation unit.
+No Stage 4B-2 Phase 0 change wires the additive channel event engine into the live webhook or opens any real provider/channel path. Stage 4B-2 Phase 1 is now complete as a pure domain/DTO/authorization layer; Phase 2 receipt persistence/RLS is the next authorized implementation unit.
+
+## Stage 4B-2 Consumer Phase 1 Boundary - 2026-07-12
+
+The Phase 1 implementation adds bounded messaging contracts and pure authorization/projection helpers while preserving P85-IF as the authority for provenance, conversation sequence, human-control, red/yellow state, retrieval, and lifecycle. No SQL, receipt persistence, route, provider, channel, or health-data behavior changed. The next authorized unit is Phase 2 receipt persistence and RLS. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`.

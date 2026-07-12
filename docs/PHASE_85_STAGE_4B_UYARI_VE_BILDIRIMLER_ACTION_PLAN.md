@@ -526,6 +526,10 @@ Phase 0 locked the stage order, Stage 4B/4B-2/4C boundaries, alert-versus-notifi
 
 Phase 1 completed on 2026-07-12: clinical alert projection, reason taxonomy, SLA calculation, sorting/filtering helpers, safe DTO contracts, i18n reason labels, and fallback/Supabase projection parity. Evidence: `docs/PHASE_85_STAGE_4B_PHASE_1_ALERT_PROJECTION_EVIDENCE.md`. Targeted tests 11/11; lint and production build passed.
 
+## Stage 4B-2 Phase 1 Handoff - 2026-07-12
+
+Stage 4B-2 Phase 1 has now completed its pure domain/DTO/authorization projection foundation. The implementation evidence is `docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`; receipt persistence, RLS, routes, UI, and mutations remain Stage 4B-2 work and do not reopen this Stage 4B plan. Stage 4C remains blocked.
+
 ## Stage 4B Post-Closure Remediation Execution Record - 2026-07-12
 
 The original local closure evidence was re-audited before handoff. The remediation added bounded actor-aware Supabase v2 RPCs, persistent dietitian-form SLA inputs, fail-closed target linkage, client-specific draft lifecycle producers, atomic unsupported-media receipt gating, assistant/auditor UI restrictions, route error-boundary hardening, and screenshot/keyboard/accessibility assertions. Full core/app, scale, replay, release, build, lint, and visual verification passed. The current RLS suite has 33 skipped tests because Docker Desktop is unavailable; those tests are explicitly not counted as pass. Detailed evidence: `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md` and runtime contract: `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_SPEC.md`.

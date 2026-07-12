@@ -1117,3 +1117,7 @@ Stage 4B implementation is complete. Bounded cursor APIs, per-actor receipt stat
 ## Stage 4B-2 Phase 0 Documentation Lock - 2026-07-12
 
 The Stage 4B-2 Mesajlasma contract is locked in `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md`. Phase 0 records the bounded inbox/detail architecture, per-actor unread receipts, assistant assigned read-only transcript access with own receipt mutation, yellow reviewed-manual provenance, red activation-only closure, lifecycle/RLS obligations and complete verification matrix. No direct-pilot, provider, channel, clinical, legal, dependency or production gate changed. Stage 4B-2 Phase 1 is next; Stage 4C remains blocked.
+
+## Stage 4B-2 Phase 1 Direct-Scale Handoff - 2026-07-12
+
+Phase 1 is a pure bounded-domain foundation: assignment-aware permissions, allowlisted DTOs, safe preview/body limits, sequence unread projection, deterministic cursors, and fallback-compatible list/detail windows. It is not direct-pilot scale evidence, persistence/RLS evidence, route evidence, UI evidence, or production authorization. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`. Phase 2 must add durable actor receipts and RLS before any direct-scale messaging rehearsal; production pilot remains `NO-GO` and R-405 remains open.

@@ -393,3 +393,7 @@ The Stage 4B frontend evidence was refreshed after implementation audit. Alerts 
 ## Stage 4B-2 Phase 0 Documentation Lock - 2026-07-12
 
 The Mesajlasma action plan is locked in `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md`. The future UI contract is list-first/detail-second, with a desktop split layout, mobile drill-down, thin rows, per-actor unread state, bounded transcript pagination, yellow reviewed-manual controls, red manual-reply controls, and in-detail AI active/passive boundaries. Phase 0 is documentation-only; Stage 4B-2 runtime and visual work begin in Phase 1 and Stage 4C remains blocked.
+
+## Stage 4B-2 Phase 1 Domain/DTO/Authorization Handoff - 2026-07-12
+
+Phase 1 now supplies the UI with bounded list/detail/mutation DTO contracts and actor-aware permission flags, but it does not implement dashboard routing, components, polling, visual states, or message mutation controls. The list/detail UI must consume the `messages` section contract, preserve assistant read-only transcript plus own receipt behavior, hide viewer domain controls, and provide no auditor conversation surface. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`. Phase 2 receipt persistence/RLS is next; visual implementation remains later in the locked Stage 4B-2 order.

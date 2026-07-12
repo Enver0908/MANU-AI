@@ -67,6 +67,10 @@ The next authorized implementation unit is Phase 1 of `docs/PHASE_85_STAGE_4B_2_
 - Full app `npm test`: the run exceeded the local 180-second execution window before completion; it is not claimed as passed.
 - `git diff --check`: passed with no whitespace errors.
 - High-confidence secret/token scan: no matches.
-- Forbidden `Phase 86` naming scan: no matches.
+- Forbidden future-phase naming scan: no matches.
 - Canonical references to the new Stage 4B-2 action plan and Phase 0 evidence are present.
 - The pending diff contains only the Phase 0 documentation set; no runtime source or migration file was changed.
+
+## 9. Subsequent Phase 1 Handoff
+
+Phase 1 was implemented after this documentation-only lock and is evidenced separately in `docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`. The Phase 0 record remains the authority for the original decision lock; Phase 1 adds only pure domain types, bounded DTO/projection helpers, and authorization projection. Phase 2 receipt persistence and RLS is now the next authorized unit. Production pilot remains `NO-GO`, R-405 remains open, and Stage 4C remains blocked.

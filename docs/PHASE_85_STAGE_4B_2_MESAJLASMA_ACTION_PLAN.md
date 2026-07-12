@@ -1,6 +1,6 @@
 # Phase 85 Stage 4B-2 - Mesajlasma Eylem Plani
 
-Status: **Phase 0 documentation lock complete; runtime implementation has not started.**
+Status: **Phase 0 documentation lock and Phase 1 domain/DTO/authorization projection complete; Phase 2 receipt persistence/RLS is next.**
 
 Baseline branch: `codex/phase-85-interstage-clinical-memory`
 
@@ -19,7 +19,7 @@ Stage 4B-2 owns the dietitian-facing conversation inbox and transcript workflow.
 1. Stage 4A Danisan Kontrol Paneli - complete.
 2. P85-IF-A through P85-IF-I and post-closure audit - complete.
 3. Stage 4B Uyari ve Bildirimler - complete locally; current RLS execution remains environment-blocked when Docker is unavailable.
-4. Stage 4B-2 Mesajlasma - this plan; Phase 0 is complete and Phase 1 is next.
+4. Stage 4B-2 Mesajlasma - this plan; Phase 0 and Phase 1 are complete, and Phase 2 is next.
 5. Stage 4C Diyetisyen Icin AI Chat - blocked until Stage 4B-2 closes.
 
 The internal dashboard section identifier remains `messages`. Only the visible label changes from the temporary Gorusme label to Mesajlasma. No permanent duplicate Gorusme entry may remain.
@@ -162,6 +162,10 @@ Every phase is implemented separately, verified separately, documented separatel
 **Errors and edges:** invalid query/limit/cursor, missing conversation, viewer write, assistant domain mutation, auditor access, redacted/unavailable message and empty transcript.
 
 **Tests/validation/completion:** unit/golden tests prove role matrix, allowlists, deterministic sorting, preview limits and cursor contracts with zero raw state leakage.
+
+**Phase 1 completion record (2026-07-12):** `types.ts` now owns the client-assignment access-level domain types. `phase-85-stage-4b2-contracts.ts` defines the bounded list/detail/mutation DTOs, actor receipt shape, permission flags, projection source interfaces, and versioned cursors. `phase-85-stage-4b2-api.ts` implements tenant/assignment-aware permissions, fail-closed operation checks, name-only search, bounded query/limit/cursor parsing, safe preview/message projection, actor-specific sequence unread counting, deterministic list ordering, and bounded detail windows. No route, migration, receipt write, provider/channel path, or full-state messaging response was added in this phase.
+
+Phase 1 verification passed the dedicated 8-test file, the combined Stage 4B regression set (`7 files, 61 passed, 1 skipped`), and the full app suite (`142 files, 909 passed, 5 skipped`). The next authorized implementation unit is Phase 2.
 
 ### Phase 2 - Receipt Persistence, Sequence Backfill, and RLS
 
@@ -359,4 +363,3 @@ Every phase is implemented separately, verified separately, documented separatel
 Phase 0 locks this action plan, its role/read-receipt clarification, the yellow reviewed-manual boundary, the red atomic-activation boundary, bounded message APIs, append-only persistence/RLS direction, exact phase sequence, verification matrix, documentation set, production `NO-GO`, R-405 open status, and real-integration shutdown.
 
 Phase 0 changes no runtime code, SQL migration, API route, provider, channel adapter, billing, monitoring, backup, secret-manager, or real health-data path. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_0_DOCUMENTATION_EVIDENCE.md`.
-

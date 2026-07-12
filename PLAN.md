@@ -1034,6 +1034,10 @@ Phase 85 P85-IF is closed after a post-closure architecture audit and remediatio
 
 Evidence: `docs/PHASE_85_IF_REMEDIATION_POST_CLOSURE_AUDIT_EVIDENCE.md`, plus dedicated R1/R2/R3 evidence documents. Verification passed targeted app/core tests, local Supabase reset, local RLS 30/30, lint, build, full app 828 passed / 4 skipped, full core 234/234, channel replay, and production-scale rehearsal. Stage 4B planning is now complete and its approved implementation is next. Production pilot remains `NO-GO`; R-405 remains open; real providers/channels/health-data paths remain disabled.
 
+## Phase 85 Stage 4B-2 Phase 1 - 2026-07-12
+
+Phase 1 is complete for the pure domain/DTO/authorization projection boundary. It adds assignment access-level types, bounded conversation list/detail/mutation contracts, actor-specific permission flags, safe preview/message projection, sequence unread calculation, deterministic versioned cursors, and fallback-compatible projections. Dedicated tests passed 8/8; combined Stage 4B regression tests passed 61 with 1 skipped; core passed 234/234; build passed; lint has 0 errors and 3 pre-existing warnings. RLS skipped 33 tests because Docker/Supabase was unavailable and is not counted as pass. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`. Phase 2 receipt persistence/RLS is next; Stage 4C remains blocked, production pilot remains `NO-GO`, and R-405 remains open.
+
 ## Phase 85 Stage 4B-2 Phase 0 Documentation Lock - 2026-07-12
 
 Phase 0 is complete as a documentation-only lock. The full action plan and evidence are `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md` and `docs/PHASE_85_STAGE_4B_2_PHASE_0_DOCUMENTATION_EVIDENCE.md`. Runtime work starts only at Stage 4B-2 Phase 1. The lock preserves mock-only providers/channels, Stage 4B alert/notification boundaries, P85-IF authority, production `NO-GO`, R-405 open status, and the existing auth/onboarding/billing/admin/entitlement/PWA contracts.

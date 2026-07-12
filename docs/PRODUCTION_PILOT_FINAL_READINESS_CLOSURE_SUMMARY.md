@@ -367,3 +367,7 @@ Final readiness remains `NO-GO`; this planning artifact closes no production gat
 ## Stage 4B-2 Phase 0 Readiness Note - 2026-07-12
 
 The Stage 4B-2 Mesajlasma action plan and Phase 0 evidence are now locked. This is not implementation or release evidence: it contributes no production readiness, does not authorize real messaging, and does not change R-405. Stage 4C remains blocked until Stage 4B-2 runtime and verification evidence close. Final readiness remains `NO-GO`.
+
+## Stage 4B-2 Phase 1 Readiness Note - 2026-07-12
+
+Phase 1 domain/DTO/authorization projection is implemented and locally verified, but it is not release or production-readiness evidence. Receipt persistence/RLS, API routes, UI, mutations, visual checks, scale rehearsal, and full Stage 4B-2 closure remain outstanding. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`. Final readiness remains `NO-GO`; R-405 remains open and Stage 4C remains blocked.

@@ -463,8 +463,12 @@ Evidence: `../docs/PHASE_85_STAGE_4A_POST_IF_REMEDIATION_EVIDENCE.md`. Stage 4B 
 
 ## Stage 4B-2 Phase 0 App Contract - 2026-07-12
 
-The Stage 4B-2 documentation lock is recorded in `../docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md` and `../docs/PHASE_85_STAGE_4B_2_PHASE_0_DOCUMENTATION_EVIDENCE.md`. Phase 0 changes no app runtime, route, migration, provider, channel, auth, billing, entitlement, or PWA behavior. The next app work is Phase 1 domain/DTO/authorization projection. Stage 4C remains blocked and production pilot remains `NO-GO`.
+The Stage 4B-2 documentation lock is recorded in `../docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md` and `../docs/PHASE_85_STAGE_4B_2_PHASE_0_DOCUMENTATION_EVIDENCE.md`. Phase 0 changed no app runtime, route, migration, provider, channel, auth, billing, entitlement, or PWA behavior. Phase 1 domain/DTO/authorization projection is complete; the next app work is Phase 2 receipt persistence/RLS. Stage 4C remains blocked and production pilot remains `NO-GO`.
 
 ## Stage 4B App Contract — complete 2026-07-12
 
 Implemented per `../docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_ACTION_PLAN.md`. Devirler replaced by bounded Uyarilar; separate Bildirimler view; header bell opens full-page notifications; Gorusme remains temporary alert/notification target; red-risk atomic activation while red-locked config disabled. Dedicated list APIs (`/api/alerts`, `/api/notifications`) replace full `ManuAppState` polling for inbox views. **Next:** Stage 4B-2 Mesajlasma owns conversation inbox and unread-message model.
+
+## Stage 4B-2 Phase 1 App Contract - 2026-07-12
+
+Phase 1 is complete for the domain/DTO/authorization projection foundation. `src/lib/types.ts` adds assignment access-level types; `src/lib/phase-85-stage-4b2-contracts.ts` defines bounded messaging DTOs and cursors; `src/lib/phase-85-stage-4b2-api.ts` implements role/assignment permissions, safe previews, sequence unread projection, deterministic list/detail windows, and fail-closed operation guards; and the dedicated test file covers the role matrix and allowlists. No route, migration, persistence, UI, or provider/channel behavior changed. Evidence: `../docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`. **Next:** Phase 2 receipt persistence/RLS; Stage 4C remains blocked and production pilot remains `NO-GO`.
