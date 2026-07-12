@@ -97,6 +97,29 @@ describe("phase-85-stage-4b-2 messaging projection", () => {
     expect(snakeDetail).toEqual(fallbackDetail);
   });
 
+  it("uses the SQL-authoritative unread count when detail messages are physically bounded", () => {
+    const state = createInitialState();
+    const conversationId = state.conversations[0]!.id;
+    const source = {
+      ...conversationProjectionSourceFromAppState(state),
+      messages: conversationProjectionSourceFromAppState(state).messages.filter(
+        (message) => message.conversationId !== conversationId,
+      ),
+      unreadCounts: [{ conversationId, unreadCount: 101 }],
+    };
+
+    const detail = buildConversationDetailResponse(
+      source,
+      actor("owner"),
+      [],
+      conversationId,
+      { limit: 50 },
+    );
+
+    expect(detail.messages).toHaveLength(0);
+    expect(detail.unreadCount).toBe(101);
+  });
+
   it("bounds scale list output and preserves deterministic ordering for equal timestamps", () => {
     const source = createStage4B2MessagingScaleFixture(250, {
       tenantId: DEMO_TENANT_ID,

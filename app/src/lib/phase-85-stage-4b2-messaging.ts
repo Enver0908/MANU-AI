@@ -573,7 +573,9 @@ export function buildConversationDetailResponse(
       hasNewer: window.end < messages.length,
     },
     receipt,
-    unreadCount: countConversationUnreadMessages(messages, receipt),
+    unreadCount:
+      source.unreadCounts?.find((item) => item.conversationId === conversationId)?.unreadCount ??
+      countConversationUnreadMessages(messages, receipt),
     permissions,
   };
 }

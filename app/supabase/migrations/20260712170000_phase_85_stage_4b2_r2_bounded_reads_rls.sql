@@ -312,7 +312,24 @@ begin
       where cr.tenant_id = p_tenant_id
         and cr.conversation_id = p_conversation_id
         and cr.dietitian_id = p_dietitian_id
-    ), '[]'::jsonb)
+    ), '[]'::jsonb),
+    'unread_counts', jsonb_build_array(jsonb_build_object(
+      'conversation_id', p_conversation_id,
+      'unread_count', (
+        select count(*)::bigint
+        from messages m
+        left join conversation_read_receipts cr
+          on cr.tenant_id = m.tenant_id
+         and cr.conversation_id = m.conversation_id
+         and cr.dietitian_id = p_dietitian_id
+        where m.tenant_id = p_tenant_id
+          and m.conversation_id = p_conversation_id
+          and m.origin = 'client_inbound'
+          and m.conversation_sequence is not null
+          and m.conversation_sequence > coalesce(cr.last_read_sequence, 0)
+          and m.content_status not in ('revoked', 'redacted')
+      )
+    ))
   ) into v_result;
 
   return v_result;

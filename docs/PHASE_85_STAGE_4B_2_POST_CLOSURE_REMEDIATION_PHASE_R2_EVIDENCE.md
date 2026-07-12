@@ -14,21 +14,22 @@ R2 corrects the Supabase read and receipt persistence boundary. It is append-onl
 
 - Added `20260712170000_phase_85_stage_4b2_r2_bounded_reads_rls.sql` with v2 list/detail projection RPCs and a v2 mark-read RPC.
 - List SQL limits the page to 100 rows, limits assignment projection to 500 rows, returns only one latest message per listed conversation, and scopes clients, conversations, receipts, and unread-count rows to that page.
-- Detail SQL limits transcript payload to 100 messages and scopes all related projection branches to the authorized conversation and actor.
+- Detail SQL limits transcript payload to 100 messages, scopes all related projection branches to the authorized conversation and actor, and returns the actor-scoped unread count separately from that window.
 - Unread totals are calculated from actor-scoped receipt state and returned independently from the page, so pagination no longer changes the inbox aggregate values.
 - Receipt mutation is RPC-only and fails closed for invalid actor context, auditor actors, hidden conversations, invalid sequences, and cross-tenant identifiers.
 - `supabase-store.ts` now sends list/detail/mark-read requests to v2 RPCs, passes list filters/cursor state to SQL, maps per-conversation unread aggregates, and preserves API cursor metadata.
 - The projection source carries optional unread-count metadata while fallback/in-memory behavior remains unchanged.
+- Detail and mark-read response builders consume the SQL-authoritative per-conversation unread count, so a 100-message transcript window cannot undercount older unread inbound messages.
 
 ## Data flow
 
 The list route parses the public query, decodes the cursor, and passes status, name query, cursor boundary, and bounded limit to the v2 RPC. SQL authorizes the actor, derives the visible base set, calculates unread aggregates, selects the page, and only then builds bounded JSON branches. The store maps the page into the existing projection builder and replaces only aggregate/cursor fields with the SQL-authoritative values.
 
-The detail route passes the authorized conversation and bounded detail parameters to the v2 RPC. SQL authorizes the resource before selecting the bounded transcript and related rows. The mark-read route calls the v2 receipt RPC, which delegates to the monotonic receipt implementation only after repeating actor and conversation guards.
+The detail route passes the authorized conversation and bounded detail parameters to the v2 RPC. SQL authorizes the resource before selecting the bounded transcript and related rows, while unread counting remains authoritative over the complete conversation. The mark-read route calls the v2 receipt RPC, which delegates to the monotonic receipt implementation only after repeating actor and conversation guards; the resulting unread count is preserved in the mutation DTO instead of being recomputed from the bounded transcript window.
 
 ## Verification
 
-- Targeted app Vitest: 4 files, 20 tests passed, 0 failed.
+- Targeted app Vitest: 4 files, 27 tests passed, 0 failed, including the bounded-detail authoritative-unread regression.
 - Core suite: 234 passed, 0 failed.
 - `npm run lint`: passed with 0 errors and 4 existing warnings.
 - `npm run build`: passed; TypeScript and route generation completed.
