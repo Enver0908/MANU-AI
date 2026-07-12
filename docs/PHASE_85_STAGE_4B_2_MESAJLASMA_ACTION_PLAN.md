@@ -1,6 +1,6 @@
 # Phase 85 Stage 4B-2 - Mesajlasma Eylem Plani
 
-Status: **Phase 0 documentation lock, Phase 1 domain/DTO/authorization projection, Phase 2 receipt persistence/RLS, and Phase 3 bounded projection are complete; Phase 4 read APIs are next.**
+Status: **Phase 0 documentation lock, Phase 1 domain/DTO/authorization projection, Phase 2 receipt persistence/RLS, Phase 3 bounded projection, and Phase 4 read APIs are complete; Phase 5 mutations are next.**
 
 Baseline branch: `codex/phase-85-interstage-clinical-memory`
 
@@ -19,7 +19,7 @@ Stage 4B-2 owns the dietitian-facing conversation inbox and transcript workflow.
 1. Stage 4A Danisan Kontrol Paneli - complete.
 2. P85-IF-A through P85-IF-I and post-closure audit - complete.
 3. Stage 4B Uyari ve Bildirimler - complete locally; current RLS execution remains environment-blocked when Docker is unavailable.
-4. Stage 4B-2 Mesajlasma - this plan; Phase 0 through Phase 3 are complete, and Phase 4 is next.
+4. Stage 4B-2 Mesajlasma - this plan; Phase 0 through Phase 4 are complete, and Phase 5 is next.
 5. Stage 4C Diyetisyen Icin AI Chat - blocked until Stage 4B-2 closes.
 
 The internal dashboard section identifier remains `messages`. Only the visible label changes from the temporary Gorusme label to Mesajlasma. No permanent duplicate Gorusme entry may remain.
@@ -191,7 +191,11 @@ Phase 2 verification passed the dedicated 2-test lifecycle file, the Phase 1 8-t
 
 **Phase 3 completion record (2026-07-12):** `phase-85-stage-4b2-messaging.ts` centralizes bounded list/detail projection for fallback and Supabase-shaped sources, inbox unread badge formatting, scale fixtures, and fallback store helpers (`listFallbackConversations`, `getFallbackConversationDetail`). No read API route, UI, or message mutation was added in this phase.
 
-Phase 3 verification passed the dedicated 4-test messaging file, Phase 1/2 regression files, and the full app suite (`144 files, 915 passed, 5 skipped`). `npm run build` passed after restoring the `ConversationProjectionClient` import in `phase-85-stage-4b2-api.ts`. The next authorized implementation unit is Phase 4.
+Phase 3 verification passed the dedicated 4-test messaging file, Phase 1/2 regression files, and the full app suite (`144 files, 915 passed, 5 skipped`). `npm run build` passed after restoring the `ConversationProjectionClient` import in `phase-85-stage-4b2-api.ts`.
+
+**Phase 4 completion record (2026-07-12):** append-only migration `20260712150000_phase_85_stage_4b2_read_api_projection_rpcs.sql` adds actor-scoped projection RPCs; `/api/conversations`, `/api/conversations/[id]/messages`, and `/api/conversations/[id]/read` expose bounded list/detail/mark-read responses with `Cache-Control: no-store`; Supabase store helpers avoid full app-state reads. No dashboard UI or message mutation was added in this phase.
+
+Phase 4 verification passed the dedicated 5-test read API file, Phase 3/1 regression files, and the full app suite (`145 files, 920 passed, 5 skipped`). The next authorized implementation unit is Phase 5.
 
 ### Phase 3 - Bounded Conversation and Transcript Projection
 

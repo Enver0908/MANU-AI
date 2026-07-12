@@ -1594,6 +1594,51 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     await resetSupabaseState();
   }, 30000);
 
+  it("returns actor-scoped Stage 4B-2 projection bundles for list and detail reads", async () => {
+    await resetSupabaseState();
+    const owner = await signIn("rls-member@manu.local");
+    const auditor = await signIn("rls-auditor@manu.local");
+
+    const listBundle = await owner.rpc("p85_stage_4b2_load_list_projection_source_v1", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_user_id: memberUserId,
+      p_dietitian_id: TEST_DIETITIAN_ID,
+      p_role: "owner",
+    });
+    expect(listBundle.error).toBeNull();
+    expect(Array.isArray(listBundle.data?.conversations)).toBe(true);
+    expect(listBundle.data?.conversations?.length).toBeGreaterThan(0);
+
+    const detailBundle = await owner.rpc("p85_stage_4b2_load_detail_projection_source_v1", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_user_id: memberUserId,
+      p_dietitian_id: TEST_DIETITIAN_ID,
+      p_role: "owner",
+      p_conversation_id: TEST_CONVERSATION_ID,
+    });
+    expect(detailBundle.error).toBeNull();
+    expect(detailBundle.data?.conversations?.[0]?.id).toBe(TEST_CONVERSATION_ID);
+
+    const auditorList = await auditor.rpc("p85_stage_4b2_load_list_projection_source_v1", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_user_id: auditorUserId,
+      p_dietitian_id: AUDITOR_DIETITIAN_ID,
+      p_role: "auditor",
+    });
+    expect(auditorList.error?.message).toMatch(/conversation_read_forbidden/i);
+
+    const hiddenDetail = await owner.rpc("p85_stage_4b2_load_detail_projection_source_v1", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_user_id: memberUserId,
+      p_dietitian_id: TEST_DIETITIAN_ID,
+      p_role: "owner",
+      p_conversation_id: OTHER_CONVERSATION_ID,
+    });
+    expect(hiddenDetail.error?.message).toMatch(/conversation_not_found/i);
+
+    await resetSupabaseState();
+  }, 30000);
+
   it("uses atomic context intake RPCs with client-safe proposal guards", async () => {
     await resetSupabaseState();
     const state = await loadSupabaseState();

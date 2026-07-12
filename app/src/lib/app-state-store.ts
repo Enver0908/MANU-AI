@@ -61,9 +61,15 @@ import {
 import {
   buildConversationDetailResponseFromAppState,
   buildConversationListResponseFromAppState,
+  conversationActorFromContext,
+  conversationProjectionSourceFromAppState,
   type ConversationDetailBuildInput,
   type ConversationListBuildInput,
 } from "./phase-85-stage-4b2-messaging";
+import {
+  buildConversationMarkReadMutationResponse,
+  markConversationReadInState,
+} from "./phase-85-stage-4b2-read-api";
 import type { NotificationCategory, NotificationPriority } from "./phase-85-stage-4b-contracts";
 import type { ClinicalAlertFilterSeverity } from "./phase-85-stage-4b-alerts";
 import {
@@ -382,6 +388,33 @@ export function getFallbackConversationDetail(conversationId: string, input: Con
     listFallbackAssignments(),
     conversationId,
     input,
+  );
+}
+
+export function markFallbackConversationRead(conversationId: string, throughSequence: number) {
+  const state = getFallbackState();
+  const context = fallbackTenantContext(state);
+  const assignments = listFallbackAssignments();
+  const actor = conversationActorFromContext(context);
+  const next = markConversationReadInState(state, actor, conversationId, throughSequence, assignments);
+  saveFallbackState(next);
+  const source = conversationProjectionSourceFromAppState(next);
+  const receipt =
+    source.receipts?.find(
+      (item) =>
+        item.tenantId === actor.tenantId &&
+        item.conversationId === conversationId &&
+        item.dietitianId === actor.dietitianId,
+    ) ?? null;
+  if (!receipt) {
+    throw new AppDomainError(409, "conversation_read_mutation_empty");
+  }
+  return buildConversationMarkReadMutationResponse(
+    source,
+    actor,
+    assignments,
+    conversationId,
+    receipt,
   );
 }
 

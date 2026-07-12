@@ -108,7 +108,21 @@ import type {
   TenantRole,
   VoiceSampleStatus,
 } from "./types";
-import type { ConversationReadReceiptRecord } from "./phase-85-stage-4b2-contracts";
+import type {
+  ConversationAssignmentInput,
+  ConversationMutationResponse,
+  ConversationReadReceiptRecord,
+} from "./phase-85-stage-4b2-contracts";
+import {
+  buildConversationDetailResponse,
+  buildConversationListResponse,
+  conversationActorFromContext,
+  conversationProjectionSourceFromSnakeRows,
+  type ConversationDetailBuildInput,
+  type ConversationListBuildInput,
+  type ConversationProjectionSnakeRows,
+} from "./phase-85-stage-4b2-messaging";
+import { buildConversationMarkReadMutationResponse } from "./phase-85-stage-4b2-read-api";
 import { normalizeLanguageCode } from "./languages";
 import { processWhatsAppMockWebhookInState } from "./whatsapp-mock-webhook";
 import { createDefaultChannelAdapterRollbackControls } from "./channel-adapter-rollback";
@@ -2216,6 +2230,120 @@ export async function markSupabaseConversationRead(
   };
 }
 
+type SupabaseConversationProjectionBundle = ConversationProjectionSnakeRows & {
+  assignments?: Array<{
+    tenant_id: string;
+    client_id: string;
+    dietitian_id: string;
+    access_level?: "care_team" | "viewer" | null;
+  }>;
+};
+
+function mapSupabaseConversationAssignments(
+  rows: SupabaseConversationProjectionBundle["assignments"],
+): ConversationAssignmentInput[] {
+  return (rows ?? []).map((assignment) => ({
+    tenantId: assignment.tenant_id,
+    clientId: assignment.client_id,
+    dietitianId: assignment.dietitian_id,
+    accessLevel: assignment.access_level ?? "care_team",
+  }));
+}
+
+async function loadSupabaseConversationProjectionBundle(
+  context: AppTenantContext,
+  conversationId: string | null,
+) {
+  const supabase = requireSupabase();
+  const rpcResult = conversationId
+    ? await supabase.rpc("p85_stage_4b2_load_detail_projection_source_v1", {
+        p_tenant_id: context.tenantId,
+        p_user_id: context.userId,
+        p_dietitian_id: context.dietitianId,
+        p_role: context.role,
+        p_conversation_id: conversationId,
+      })
+    : await supabase.rpc("p85_stage_4b2_load_list_projection_source_v1", {
+        p_tenant_id: context.tenantId,
+        p_user_id: context.userId,
+        p_dietitian_id: context.dietitianId,
+        p_role: context.role,
+      });
+  if (rpcResult.error) throwControlledRpcError(rpcResult.error);
+  const bundle = (rpcResult.data ?? {
+    assignments: [],
+    clients: [],
+    conversations: [],
+    messages: [],
+    receipts: [],
+  }) as SupabaseConversationProjectionBundle;
+  return {
+    source: conversationProjectionSourceFromSnakeRows({
+      conversations: bundle.conversations ?? [],
+      clients: bundle.clients ?? [],
+      messages: bundle.messages ?? [],
+      receipts: bundle.receipts ?? [],
+    }),
+    assignments: mapSupabaseConversationAssignments(bundle.assignments),
+  };
+}
+
+export async function listSupabaseConversations(
+  context: AppTenantContext,
+  input: ConversationListBuildInput = {},
+) {
+  const { source, assignments } = await loadSupabaseConversationProjectionBundle(context, null);
+  return buildConversationListResponse(
+    source,
+    conversationActorFromContext(context),
+    assignments,
+    input,
+  );
+}
+
+export async function getSupabaseConversationMessages(
+  context: AppTenantContext,
+  conversationId: string,
+  input: ConversationDetailBuildInput = {},
+) {
+  const { source, assignments } = await loadSupabaseConversationProjectionBundle(context, conversationId);
+  return buildConversationDetailResponse(
+    source,
+    conversationActorFromContext(context),
+    assignments,
+    conversationId,
+    input,
+  );
+}
+
+export async function markSupabaseConversationReadWithResponse(
+  conversationId: string,
+  throughSequence: number,
+  context = demoTenantContext(),
+): Promise<ConversationMutationResponse> {
+  await markSupabaseConversationRead(conversationId, throughSequence, context);
+  const { source, assignments } = await loadSupabaseConversationProjectionBundle(context, conversationId);
+  const actor = conversationActorFromContext(context);
+  const receipt =
+    source.receipts?.find(
+      (item) =>
+        item.tenantId === actor.tenantId &&
+        item.conversationId === conversationId &&
+        item.dietitianId === actor.dietitianId,
+    ) ?? null;
+  if (!receipt) {
+    throw new AppDomainError(409, "conversation_read_mutation_empty");
+  }
+  return buildConversationMarkReadMutationResponse(
+    source,
+    actor,
+    assignments,
+    conversationId,
+    receipt,
+    new Date().toISOString(),
+  );
+}
+
 export async function acknowledgeSupabaseNotification(notificationId: string, context = demoTenantContext()) {
   const { error } = await requireSupabase().rpc("p85_stage_4b_acknowledge_notification_v2", {
     p_tenant_id: context.tenantId,
@@ -4012,6 +4140,9 @@ function throwControlledRpcError(error: { message?: string }) {
   }
   if (message.includes("conversation_not_found")) {
     throw new AppDomainError(404, "conversation_not_found");
+  }
+  if (message.includes("conversation_read_forbidden")) {
+    throw new AppDomainError(403, "conversation_read_forbidden");
   }
   if (message.includes("expected_conversation_revision_required")) {
     throw new AppDomainError(400, "expected_conversation_revision_required");

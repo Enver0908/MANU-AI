@@ -1034,6 +1034,10 @@ Phase 85 P85-IF is closed after a post-closure architecture audit and remediatio
 
 Evidence: `docs/PHASE_85_IF_REMEDIATION_POST_CLOSURE_AUDIT_EVIDENCE.md`, plus dedicated R1/R2/R3 evidence documents. Verification passed targeted app/core tests, local Supabase reset, local RLS 30/30, lint, build, full app 828 passed / 4 skipped, full core 234/234, channel replay, and production-scale rehearsal. Stage 4B planning is now complete and its approved implementation is next. Production pilot remains `NO-GO`; R-405 remains open; real providers/channels/health-data paths remain disabled.
 
+## Phase 85 Stage 4B-2 Phase 4 - 2026-07-12
+
+Phase 4 is complete for actor-aware read APIs. Migration `20260712150000_phase_85_stage_4b2_read_api_projection_rpcs.sql` adds bounded projection RPCs; `/api/conversations`, `/api/conversations/[id]/messages`, and `/api/conversations/[id]/read` return allowlisted DTOs with `Cache-Control: no-store` without full app-state reads. Dedicated read API tests passed 5/5; full app passed 920 with 5 skips; build passed; lint has 0 errors and 3 pre-existing warnings. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_4_READ_APIS_EVIDENCE.md`. Phase 5 mutations are next; Stage 4C remains blocked, production pilot remains `NO-GO`, and R-405 remains open.
+
 ## Phase 85 Stage 4B-2 Phase 3 - 2026-07-12
 
 Phase 3 is complete for bounded list/detail transcript projection. `phase-85-stage-4b2-messaging.ts` adds fallback and snake-case projection adapters, bounded list/detail builders, anchor windows, inbox unread badge formatting, scale fixtures, and fallback store helpers. Dedicated messaging tests passed 4/4; Phase 1 regression passed 8/8; Phase 2 lifecycle passed 2/2; full app passed 915 with 5 skips; build passed; lint has 0 errors and 3 pre-existing warnings. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_3_BOUNDED_PROJECTION_EVIDENCE.md`. Phase 4 read APIs are next; Stage 4C remains blocked, production pilot remains `NO-GO`, and R-405 remains open.

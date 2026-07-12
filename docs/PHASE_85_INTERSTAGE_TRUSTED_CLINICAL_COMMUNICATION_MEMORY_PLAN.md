@@ -482,6 +482,10 @@ Stage 4B-2 now has a decision-complete consumer plan at `docs/PHASE_85_STAGE_4B_
 
 The yellow reviewed-manual command must preserve non-green AI draft blocking, and red manual reply must preserve the atomic activation-only closure rule. Phase 0 changes no P85-IF runtime or migration.
 
+## Stage 4B-2 Consumer Phase 4 Handoff - 2026-07-12
+
+Phase 4 added actor-aware conversation read APIs and bounded Supabase projection RPCs without reopening P85-IF provider/channel paths or adding dashboard UI or message mutations. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_4_READ_APIS_EVIDENCE.md`. Phase 5 manual/yellow/draft mutations are next.
+
 ## Stage 4B-2 Consumer Phase 3 Handoff - 2026-07-12
 
 Phase 3 added server-independent bounded list/detail transcript projection for fallback and Supabase-shaped sources, inbox unread badge formatting, scale fixtures, and fallback store helpers without reopening P85-IF provider/channel paths or adding messaging read APIs/UI. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_3_BOUNDED_PROJECTION_EVIDENCE.md`. Phase 4 actor-aware read APIs are next.

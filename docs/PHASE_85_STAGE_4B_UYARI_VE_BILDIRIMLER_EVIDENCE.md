@@ -155,6 +155,10 @@ Stage 4B-2 conversation routes, UI, persistence, and message mutations are **not
 
 **Still out of scope:** real WhatsApp/Telegram/provider paths, live billing, production pilot GO, hosted sandbox doc changes without deploy.
 
+## Stage 4B-2 Phase 4 Handoff - 2026-07-12
+
+Stage 4B-2 Phase 4 actor-aware read APIs are complete. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_4_READ_APIS_EVIDENCE.md`. The next authorized work is Stage 4B-2 Phase 5 manual/yellow/draft mutations. This handoff preserves the Stage 4B boundaries and does not authorize real provider/channel paths.
+
 ## Stage 4B-2 Phase 3 Handoff - 2026-07-12
 
 Stage 4B-2 Phase 3 bounded list/detail transcript projection is complete. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_3_BOUNDED_PROJECTION_EVIDENCE.md`. The next authorized work is Stage 4B-2 Phase 4 actor-aware read APIs. This handoff preserves the Stage 4B boundaries and does not authorize real provider/channel paths.
