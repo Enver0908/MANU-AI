@@ -47,7 +47,6 @@ import type { CommercialEntitlementStatus } from "@/lib/phase-83b-commercial-ent
 import {
   SelectInput,
   StatusPill,
-  EmptyState,
   fromDateTimeLocal,
   languageOptions,
   parseAnswerLines,
@@ -68,6 +67,7 @@ import { NotificationsPanel } from "@/components/dashboard/notifications-panel";
 import { OverviewPanel } from "@/components/dashboard/overview-panel";
 import { ClientsPanel } from "@/components/dashboard/clients-panel";
 import { ConversationPanel } from "@/components/dashboard/conversation-panel";
+import { MessagingPanel } from "@/components/dashboard/messaging-panel";
 import { SimulatorPanel } from "@/components/dashboard/simulator-panel";
 import { CopilotPanel } from "@/components/dashboard/copilot-panel";
 import { VoicePanel } from "@/components/dashboard/voice-panel";
@@ -170,7 +170,7 @@ export function DashboardApp({
   );
 
   const stage4bMessaging = useStage4B2Messaging({
-    enabled: section === "messages",
+    enabled: hydrated,
     conversationId: section === "messages" ? messagingRoute.conversationId : null,
     anchorMessageId: urlState.messageId,
     filters: {
@@ -634,6 +634,7 @@ export function DashboardApp({
             badges={{
               alerts: stage4bInbox.alertsBadgeCount,
               notifications: stage4bInbox.notificationsBadgeCount,
+              messages: stage4bMessaging.messagingBadgeCount,
             }}
             onNavigate={navigateToSection}
           />
@@ -803,34 +804,65 @@ export function DashboardApp({
               />
             )}
 
-            {section === "messages" && selectedClient && (
-              <ConversationPanel
-                client={selectedClient}
-                messages={selectedMessages}
-                aiDecisions={state.aiDecisions.filter((decision) => decision.clientId === selectedClient.id)}
-                state={state}
+            {section === "messages" && (
+              <MessagingPanel
                 uiLanguage={uiLanguage}
-                canManageAiControls={canManageAiControls}
-                manualReply={manualReply}
-                onManualReply={setManualReply}
-                onSendManualReply={sendManualReply}
-                onReleaseHumanTakeover={releaseSelectedHumanTakeover}
-                onActivateAi={activateSelectedClientAi}
-                isActivatingAi={isActivatingAi}
-                onApproveDraft={(messageId) => runConversationMutation(() => approveDraft(messageId))}
-                onEditAndSendDraft={(messageId, body) =>
-                  runConversationMutation(() => editAndSendDraft(messageId, body))
+                filters={urlState}
+                items={stage4bMessaging.listItems}
+                filteredTotal={stage4bMessaging.list?.filteredTotal ?? 0}
+                nextCursor={stage4bMessaging.listNextCursor}
+                listError={stage4bMessaging.listError}
+                detailError={stage4bMessaging.detailError}
+                isListRefreshing={stage4bMessaging.isListRefreshing}
+                isDetailRefreshing={stage4bMessaging.isDetailRefreshing}
+                isLoadingMore={stage4bMessaging.isLoadingMoreList}
+                lastSuccessAt={stage4bMessaging.lastSuccessAt}
+                selectedConversationId={messagingRoute.conversationId}
+                onFiltersChange={(patch) => navigateDashboard(patch)}
+                onRefreshList={() => void stage4bMessaging.refreshList({ resetBackoff: true })}
+                onLoadMore={() => void stage4bMessaging.loadMoreList()}
+                onSelectConversation={(item) =>
+                  navigateDashboard({
+                    section: "messages",
+                    conversationId: item.id,
+                    clientId: item.clientId,
+                    messageId: null,
+                  })
                 }
-                onDismissDraft={(messageId) => runConversationMutation(() => dismissDraft(messageId))}
-                onOpenSimulator={() => navigateToSection("simulator")}
-                onOpenClientPanel={openClientPanelFromConversation}
-              />
-            )}
-
-            {section === "messages" && !selectedClient && (
-              <EmptyState
-                title={t(uiLanguage, "messagesTargetMissing")}
-                message={t(uiLanguage, "messagesTargetMissingHint")}
+                onBackToList={() =>
+                  navigateDashboard({
+                    conversationId: null,
+                    messageId: null,
+                  })
+                }
+                detailUnavailable={Boolean(
+                  messagingRoute.conversationId && !selectedClient && !stage4bMessaging.isDetailRefreshing,
+                )}
+                detail={
+                  selectedClient ? (
+                    <ConversationPanel
+                      client={selectedClient}
+                      messages={selectedMessages}
+                      aiDecisions={state.aiDecisions.filter((decision) => decision.clientId === selectedClient.id)}
+                      state={state}
+                      uiLanguage={uiLanguage}
+                      canManageAiControls={canManageAiControls}
+                      manualReply={manualReply}
+                      onManualReply={setManualReply}
+                      onSendManualReply={sendManualReply}
+                      onReleaseHumanTakeover={releaseSelectedHumanTakeover}
+                      onActivateAi={activateSelectedClientAi}
+                      isActivatingAi={isActivatingAi}
+                      onApproveDraft={(messageId) => runConversationMutation(() => approveDraft(messageId))}
+                      onEditAndSendDraft={(messageId, body) =>
+                        runConversationMutation(() => editAndSendDraft(messageId, body))
+                      }
+                      onDismissDraft={(messageId) => runConversationMutation(() => dismissDraft(messageId))}
+                      onOpenSimulator={() => navigateToSection("simulator")}
+                      onOpenClientPanel={openClientPanelFromConversation}
+                    />
+                  ) : null
+                }
               />
             )}
 
@@ -955,6 +987,7 @@ export function DashboardApp({
         badges={{
           alerts: stage4bInbox.alertsBadgeCount,
           notifications: stage4bInbox.notificationsBadgeCount,
+          messages: stage4bMessaging.messagingBadgeCount,
         }}
         onNavigate={navigateToSection}
       />

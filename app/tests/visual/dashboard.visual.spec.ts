@@ -39,7 +39,8 @@ test("dashboard core views render in fallback mode", async ({ page }) => {
   await page.getByTestId("tab-tab_ai_assistant").click();
   await expect(page.getByText("Guvenlik kontrol listesi")).toBeVisible();
 
-  await page.getByRole("button", { name: "Görüşme" }).click();
+  await page.getByRole("button", { name: "Mesajlaşma" }).click();
+  await expect(page.getByTestId("messaging-panel")).toBeVisible();
   await expect(page.getByText("Kaynak etiketli görüşme zaman çizelgesi")).toBeVisible();
   await expect(page.getByRole("button", { name: "Manuel yanıtı kaydet" })).toBeVisible();
 
@@ -59,7 +60,7 @@ test("dashboard core views render in fallback mode", async ({ page }) => {
   await page.getByRole("button", { name: "Gelen akışı çalıştır" }).click();
   await expect(page.getByText("draft_for_approval")).toBeVisible();
 
-  await page.getByRole("button", { name: "Görüşme" }).click();
+  await page.getByRole("button", { name: "Mesajlaşma" }).click();
   await expect(page.getByRole("button", { name: "Approve" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Edit & send" })).toBeVisible();
 

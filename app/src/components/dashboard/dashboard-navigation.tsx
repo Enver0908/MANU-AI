@@ -47,10 +47,11 @@ export const mobileDashboardNavItems: DashboardNavItem[] = [
 
 function resolveNavBadgeCount(
   item: DashboardNavItem,
-  badges: { alerts: number; notifications: number },
+  badges: { alerts: number; notifications: number; messages: number },
 ) {
   if (item.key === "alerts") return badges.alerts;
   if (item.key === "notifications") return badges.notifications;
+  if (item.key === "messages") return badges.messages;
   return 0;
 }
 
@@ -71,7 +72,7 @@ export function DashboardSidebarNav({
 }: {
   activeSection: DashboardSection;
   uiLanguage: SupportedLanguageCode;
-  badges: { alerts: number; notifications: number };
+  badges: { alerts: number; notifications: number; messages: number };
   onNavigate: (section: DashboardSection) => void;
 }) {
   return (
@@ -109,7 +110,7 @@ export function DashboardMobileNav({
 }: {
   activeSection: DashboardSection;
   uiLanguage: SupportedLanguageCode;
-  badges: { alerts: number; notifications: number };
+  badges: { alerts: number; notifications: number; messages: number };
   onNavigate: (section: DashboardSection) => void;
 }) {
   return (
