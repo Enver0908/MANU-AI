@@ -4,7 +4,9 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 ## Current Status
 
-**2026-07-14 Stage 4B-3 Phase 5 deterministic local vision provider:** Gated mock vision (`MANU_ALLOW_MOCK_VISION`), sanitized-hash fixture manifest, schema validation, immutable `VisualAnalysisRecord` persistence, and zero external egress. Evidence: `docs/PHASE_85_STAGE_4B_3_PHASE_5_DETERMINISTIC_VISION_PROVIDER_EVIDENCE.md`. **Next:** Stage 4B-3 Phase 6. Production pilot remains `NO-GO`; R-405 remains open.
+**2026-07-14 Stage 4B-3 Phase 6 multimodal understanding and source authority:** Bounded multimodal envelope builder, core `resolveVisualMeaningV1` bridge, active-menu exact match, label/screenshot source gates, and media-worker understanding hook without orchestration or client sends. Evidence: `docs/PHASE_85_STAGE_4B_3_PHASE_6_MULTIMODAL_UNDERSTANDING_EVIDENCE.md`. **Next:** Stage 4B-3 Phase 7. Production pilot remains `NO-GO`; R-405 remains open.
+
+**2026-07-14 Stage 4B-3 Phase 5 deterministic local vision provider:** Gated mock vision (`MANU_ALLOW_MOCK_VISION`), sanitized-hash fixture manifest, schema validation, immutable `VisualAnalysisRecord` persistence, and zero external egress. Evidence: `docs/PHASE_85_STAGE_4B_3_PHASE_5_DETERMINISTIC_VISION_PROVIDER_EVIDENCE.md`. Phase 6 subsequently completed; see the Phase 6 evidence above.
 
 **2026-07-13 Stage 4B-3 Phase 4 bundle correlation and silence queue:** 120-second inbound bundle correlation, bundled client text/image ingress without `processMockChannelInbound`, business-human echo supersede, cap overflow to `review_required`, and due-bundle worker claim without orchestration. Evidence: `docs/PHASE_85_STAGE_4B_3_PHASE_4_BUNDLE_SILENCE_QUEUE_EVIDENCE.md`. Phase 5 subsequently completed; see the Phase 5 evidence above.
 

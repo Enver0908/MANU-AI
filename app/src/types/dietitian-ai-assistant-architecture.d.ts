@@ -1279,4 +1279,85 @@ declare module "dietitian-ai-assistant-architecture" {
       fallbackReason?: string | null;
     } | null | undefined,
   ): { action?: string; reason?: string };
+
+  export const VISUAL_MEANING_RESOLVER_V1_VERSION: string;
+  export const VISUAL_SOURCE_AUTHORITY_STATES: string[];
+  export const VISUAL_WORKFLOW_STATES: string[];
+
+  export type VisualMeaningTextBinding = {
+    primaryBinding: "caption" | "reply" | "sequential_bundle" | "none";
+    captionText: string | null;
+    replyText: string | null;
+    sequentialTexts: string[];
+    replyToProviderMessageId: string | null;
+  };
+
+  export type VisualMeaningSegmentResolution = {
+    analysisId: string;
+    mediaAssetId: string;
+    sceneType: string;
+    reasonCodes: string[];
+    sourceAuthority: string;
+    workflowState: string;
+    menuMatch: Record<string, unknown> | null;
+    labelEvidence: Record<string, unknown> | null;
+    screenshotQuery: string | null;
+    screenshotApprovedSourceHit: boolean;
+    productDecision: string | null;
+  };
+
+  export type VisualMeaningResolution = {
+    schemaVersion: string;
+    bundleId: string;
+    textBinding: VisualMeaningTextBinding;
+    visualSegments: VisualMeaningSegmentResolution[];
+    sourceAuthorityState: "unresolved" | "partial" | "approved_only";
+    extractedQuestions: string[];
+    absenceOfEvidenceAllowedCount: number;
+    ocrNeverApprovedSource: boolean;
+    providerContextBound: Record<string, unknown> | null;
+  };
+
+  export function resolveVisualMeaningV1(input?: {
+    envelope?: {
+      bundleId?: string;
+      textSegments?: Array<{
+        body?: string;
+        replyToProviderMessageId?: string | null;
+      }>;
+      visualSegments?: Array<{
+        messageId?: string;
+        mediaAssetId?: string;
+        analysisId?: string;
+        captionText?: string | null;
+        observation?: Record<string, unknown>;
+      }>;
+    };
+    activeMenu?: { mealSlots?: Array<{ items?: unknown[]; alternatives?: unknown[] }> } | null;
+    foodRules?: Record<string, unknown>;
+    messagesByProviderMessageId?: Record<string, { id: string; providerMessageId: string | null }>;
+    providerContext?: Record<string, unknown> | null;
+  }): VisualMeaningResolution;
+
+  export function resolveTextBinding(
+    envelope: {
+      textSegments?: Array<{ body?: string; replyToProviderMessageId?: string | null }>;
+      visualSegments?: Array<{ messageId?: string; captionText?: string | null }>;
+    },
+    messagesByProviderMessageId?: Record<string, { id: string; providerMessageId: string | null }>,
+  ): VisualMeaningTextBinding;
+
+  export function findExactMenuItemMatch(
+    menu: { mealSlots?: Array<{ items?: unknown[]; alternatives?: unknown[] }> } | null,
+    phrase: string,
+  ): { menuItemId: string; matchedLabel: string } | null;
+
+  export function evaluateScreenshotApprovedSourceHit(
+    query: string,
+    activeMenu: { mealSlots?: Array<{ items?: unknown[]; alternatives?: unknown[] }> } | null,
+  ): boolean;
+
+  export function hasHighIntegrityLabel(observation: Record<string, unknown>): boolean;
+
+  export class VisualMeaningResolverError extends Error {}
 }

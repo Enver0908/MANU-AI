@@ -1,6 +1,8 @@
 # MANU-AI Local App Prototype
 
-2026-07-14: **Stage 4B-3 Phase 5 deterministic local vision provider is complete locally.** Mock vision gate, fixture manifest, observation validator, and vision analysis worker live under `src/lib/phase-85-stage-4b3-*`. Evidence: `../docs/PHASE_85_STAGE_4B_3_PHASE_5_DETERMINISTIC_VISION_PROVIDER_EVIDENCE.md`. **Next:** Stage 4B-3 Phase 6 multimodal understanding. Stage 4C remains blocked; production pilot remains `NO-GO`.
+2026-07-14: **Stage 4B-3 Phase 6 multimodal understanding and source authority is complete locally.** Envelope builder and understanding bridge live under `src/lib/phase-85-stage-4b3-multimodal-*.ts` with core resolver in `../dietitian-ai-assistant/src/visual-meaning-resolver-v1.js`. Evidence: `../docs/PHASE_85_STAGE_4B_3_PHASE_6_MULTIMODAL_UNDERSTANDING_EVIDENCE.md`. **Next:** Stage 4B-3 Phase 7 visual risk overlay and intent integration. Stage 4C remains blocked; production pilot remains `NO-GO`.
+
+2026-07-14: **Stage 4B-3 Phase 5 deterministic local vision provider is complete locally.** Mock vision gate, fixture manifest, observation validator, and vision analysis worker live under `src/lib/phase-85-stage-4b3-*`. Evidence: `../docs/PHASE_85_STAGE_4B_3_PHASE_5_DETERMINISTIC_VISION_PROVIDER_EVIDENCE.md`. Phase 6 subsequently completed; see the Phase 6 evidence above.
 
 2026-07-13: **Stage 4B-3 Phase 2 database/storage/RLS foundation is complete locally.** Migration `supabase/migrations/20260713120000_phase_85_stage_4b3_media_foundation.sql`, mappers in `src/lib/phase-85-stage-4b3-supabase-mappers.ts`, and RLS coverage are in place. Evidence: `../docs/PHASE_85_STAGE_4B_3_PHASE_2_DATABASE_STORAGE_RLS_EVIDENCE.md`. **Next:** Stage 4B-3 Phase 3 media ingress admission. Stage 4C remains blocked; production pilot remains `NO-GO`.
 

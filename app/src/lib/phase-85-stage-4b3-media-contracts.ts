@@ -285,6 +285,7 @@ export type MultimodalTextSegment = {
 };
 
 export type MultimodalVisualSegment = {
+  messageId: string;
   mediaAssetId: string;
   analysisId: string;
   observation: VisualObservationV1;

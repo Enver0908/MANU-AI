@@ -244,3 +244,14 @@ export {
   mergeVisualRiskOverlay,
   assertVisualSceneExhaustive,
 } from "./visual-observation-v1.js";
+export {
+  VISUAL_MEANING_RESOLVER_V1_VERSION,
+  VISUAL_SOURCE_AUTHORITY_STATES,
+  VISUAL_WORKFLOW_STATES,
+  resolveVisualMeaningV1,
+  resolveTextBinding,
+  findExactMenuItemMatch,
+  evaluateScreenshotApprovedSourceHit,
+  hasHighIntegrityLabel,
+  VisualMeaningResolverError,
+} from "./visual-meaning-resolver-v1.js";
