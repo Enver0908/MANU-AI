@@ -20,6 +20,8 @@ import {
 import type { Stage4B3MediaStoragePort } from "./phase-85-stage-4b3-media-storage";
 import type { Stage4B3MediaTransportPort } from "./phase-85-stage-4b3-media-transport";
 import { processStage4B3DueInboundBundles } from "./phase-85-stage-4b3-media-worker";
+import { processStage4B3PendingVisionAnalysis } from "./phase-85-stage-4b3-vision-analysis";
+import type { Stage4B3VisionProviderPort } from "./phase-85-stage-4b3-vision-provider";
 
 // Phase 85 Interstage Foundation - P85-IF-C ledger, secure gate, quarantine, and replay.
 //
@@ -80,7 +82,9 @@ const NEW_MESSAGE_EVENT_KINDS: ReadonlySet<ChannelEventKind> = new Set([
 export type Stage4B3AdmissionRuntime = {
   transport: Stage4B3MediaTransportPort;
   storage: Stage4B3MediaStoragePort;
+  visionProvider?: Stage4B3VisionProviderPort;
   autoProcessPending?: boolean;
+  autoProcessVision?: boolean;
   autoProcessBundles?: boolean;
   workerId?: string;
 };
@@ -174,7 +178,7 @@ export async function processInboundWhatsAppChannelBatch(
 async function ingestSingleCandidate(
   state: ManuAppState,
   candidate: RawChannelEventCandidate,
-  options: { stage4b3Admission?: Stage4B3AdmissionRuntime; now?: string } = {},
+  options: { env?: NodeJS.ProcessEnv; stage4b3Admission?: Stage4B3AdmissionRuntime; now?: string } = {},
 ): Promise<{ state: ManuAppState; outcome: ChannelEventIngressOutcome }> {
   if (candidate.providerEventId) {
     const existingEvent = state.channelEvents.find(
@@ -263,6 +267,16 @@ async function ingestSingleCandidate(
       nextState = await processStage4B3PendingMediaAssets(nextState, {
         transport: options.stage4b3Admission.transport,
         storage: options.stage4b3Admission.storage,
+        now: record.observedAt,
+      });
+    }
+    if (
+      options.stage4b3Admission?.autoProcessVision !== false &&
+      options.stage4b3Admission?.visionProvider
+    ) {
+      nextState = await processStage4B3PendingVisionAnalysis(nextState, {
+        env: options.env ?? process.env,
+        provider: options.stage4b3Admission.visionProvider,
         now: record.observedAt,
       });
     }
