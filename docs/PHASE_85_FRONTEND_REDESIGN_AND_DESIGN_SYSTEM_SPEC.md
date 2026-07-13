@@ -1,9 +1,9 @@
 # Phase 85: SiriusAI Frontend Redesign And Design System Spec
 
-Current Stage 4B-2 status, 2026-07-13: post-closure remediation R0-R7 and the separate security advisory RLS hardening are complete locally. The advisory closure enables RLS on `conversation_mutation_idempotency` and `personas`, removes direct `anon`/`authenticated` grants, and preserves service-role mediated behavior. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`. Stage 4C is next; production remains `NO-GO`.
+Current Stage 4B-3 status, 2026-07-13: Stage 4B-2 post-closure remediation R0-R7 and the separate security advisory RLS hardening are complete locally. Stage 4B-3 Multimodal Gorsel Guvenligi ve Yanit Orkestrasyonu is inserted before Stage 4C. Canonical plan: `docs/PHASE_85_STAGE_4B_3_MULTIMODAL_GORSEL_GUVENLIGI_VE_YANIT_ORK_PLAN.md`. Stage 4C is blocked until Stage 4B-3 closes; production remains `NO-GO`.
 
 Date: 2026-07-07
-Status: Stage 1 design foundation, Stage 2 shared component system, Stage 3 public/commercial entry integration, and Stage 4A Danisan Kontrol Paneli complete; Stage 3 is deployed to the hosted sandbox at `https://siriusai.store`. P85-IF-A through P85-IF-I are complete. **Stage 4B Uyari ve Bildirimler is complete (2026-07-12).** Evidence: `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_EVIDENCE.md`. **Next:** Stage 4B-2 Mesajlasma.
+Status: Stage 1 design foundation, Stage 2 shared component system, Stage 3 public/commercial entry integration, and Stage 4A Danisan Kontrol Paneli complete; Stage 3 is deployed to the hosted sandbox at `https://siriusai.store`. P85-IF-A through P85-IF-I are complete. **Stage 4B Uyari ve Bildirimler is complete (2026-07-12).** Evidence: `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_EVIDENCE.md`. **Stage 4B-2 Mesajlasma is complete locally (2026-07-13).** **Next:** Stage 4B-3 Multimodal Gorsel Guvenligi ve Yanit Orkestrasyonu.
 Production pilot: NO-GO.
 Clinical production GO: not in scope for Phase 85.
 R-405: Open unless technically remediated through the Phase 22 procedure or formally accepted by external engineering/security approval.
@@ -23,6 +23,8 @@ The user-approved implementation order is now restructured into the following st
 4A. Danisan Kontrol Paneli Mimari ve Hizmet Akisi Plani.
 IF. Phase 85 Interstage Foundation - trusted clinical communication and memory.
 4B. Uyari ve Bildirimler.
+4B-2. Mesajlasma.
+4B-3. Multimodal Gorsel Guvenligi ve Yanit Orkestrasyonu.
 4C. Diyetisyen Icin AI Chat.
 4D. Ayarlar / Hesap.
 5. Dashboard and Mobile PWA Shell.
@@ -52,11 +54,15 @@ P85-IF owns the underlying actor, transcript, retrieval, human-control, risk-res
 
 ## Stage 4B-2 - Mesajlasma
 
-Status: **next**. Mandatory after Stage 4B; owns conversation list/detail, unread message state, WhatsApp-like detail, yellow draft workflow, and Görüşme → Mesajlaşma navigation.
+Status: **complete locally (2026-07-13)**. Mandatory after Stage 4B; owns conversation list/detail, unread message state, WhatsApp-like detail, yellow draft workflow, and Görüşme → Mesajlaşma navigation.
+
+## Stage 4B-3 - Multimodal Gorsel Guvenligi ve Yanit Orkestrasyonu
+
+Status: **current**. Mandatory after Stage 4B-2 and before Stage 4C; owns visual media admission, deterministic local vision observation, 120-second bundle correlation, multimodal risk/source/autopilot integration, private media lifecycle, review/correction UI, and closure evidence. Canonical plan: `docs/PHASE_85_STAGE_4B_3_MULTIMODAL_GORSEL_GUVENLIGI_VE_YANIT_ORK_PLAN.md`.
 
 ## Stage 4C - Diyetisyen Icin AI Chat
 
-Status: pending. Blocked until Stage 4B-2 Mesajlasma closes.
+Status: pending. Blocked until Stage 4B-3 Multimodal Gorsel Guvenligi ve Yanit Orkestrasyonu closes.
 
 Stage 4C must define the dietitian-facing AI chat experience without weakening internal copilot safety, data isolation, prompt visibility, clinical boundaries, provider gates, or real-provider disablement. No Stage 4C runtime work is approved until its action plan is created and explicitly approved.
 
@@ -368,7 +374,7 @@ Phase 85 can close only when:
 
 ## Current Next Step
 
-Stage 4B Uyari ve Bildirimler and mandatory Stage 4B-2 Mesajlasma are complete locally. Stage 4B-2 remediation R0-R7 and advisory RLS hardening are also closed locally. The current next Phase 85 unit is Stage 4C, beginning with its own plan/read gate.
+Stage 4B Uyari ve Bildirimler and mandatory Stage 4B-2 Mesajlasma are complete locally. Stage 4B-2 remediation R0-R7 and advisory RLS hardening are also closed locally. The current next Phase 85 unit is Stage 4B-3, beginning with its own Phase 1 implementation after the Phase 0 documentation lock.
 
 ## P85-IF Interstage Baseline For Stage 4B - 2026-07-11
 
@@ -394,14 +400,14 @@ The Stage 4B frontend evidence was refreshed after implementation audit. Alerts 
 
 ## Stage 4B-2 Phase 0 Documentation Lock - 2026-07-12
 
-Historical Phase 0 contract: the Mesajlasma action plan is locked in `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md`. Its list-first/detail-second UI, tablet/desktop split layout, mobile drill-down, thin rows, per-actor unread state, bounded transcript pagination, yellow reviewed-manual controls, red manual-reply controls, and in-detail AI boundaries are now implemented and closed through R7. This paragraph is not an active handoff; Stage 4C is next.
+Historical Phase 0 contract: the Mesajlasma action plan is locked in `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md`. Its list-first/detail-second UI, tablet/desktop split layout, mobile drill-down, thin rows, per-actor unread state, bounded transcript pagination, yellow reviewed-manual controls, red manual-reply controls, and in-detail AI boundaries are now implemented and closed through R7. This paragraph is not an active handoff; Stage 4B-3 is next.
 
 ## Stage 4B-2 Phase 1 Domain/DTO/Authorization Handoff - 2026-07-12
 
 Historical Phase 1 record: bounded list/detail/mutation DTO contracts and actor-aware permission flags were established in `docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`. Routing, polling, receipt persistence, visual states, mutations, and R0-R7 remediation subsequently closed. This paragraph is not an active handoff.
 ## Stage 4B-2 Post-Closure Remediation R0 - 2026-07-12
 
-Historical remediation record: R4 owned the tablet split-layout, unread aggregate, deep-link, anchor, 320px, focus, and sensitive-rendering corrections. R4-R7 are now closed; the current next unit is Stage 4C.
+Historical remediation record: R4 owned the tablet split-layout, unread aggregate, deep-link, anchor, 320px, focus, and sensitive-rendering corrections. R4-R7 are now closed; the current next unit is Stage 4B-3.
 ## Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
 
 R1 updates the messaging consumer contract to split AI activation/configuration permissions and expose complete visible-scope unread aggregates. No visual layout, navigation, provider, or production-pilot behavior is authorized by this remediation unit. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R1_EVIDENCE.md`.

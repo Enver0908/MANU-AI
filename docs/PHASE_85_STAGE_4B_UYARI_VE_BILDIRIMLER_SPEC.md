@@ -12,7 +12,7 @@ Stage 4B owns two separate dashboard views:
 - **Uyarilar:** active clinical-operational projections from `yellowRiskHold` and `redRiskLock`.
 - **Bildirimler:** structured system events with actor-scoped receipt state.
 
-Stage 4B does not add an `alerts` table, does not expose raw message or health content, and does not implement the conversation inbox. Stage 4B-2 owns the conversation list/detail and the final messaging workflow; it is complete as of 2026-07-12. Stage 4C is next.
+Stage 4B does not add an `alerts` table, does not expose raw message or health content, and does not implement the conversation inbox. Stage 4B-2 owns the conversation list/detail and the final messaging workflow; it is complete as of 2026-07-13 after R7 and advisory hardening. Stage 4B-3 is next.
 
 ## 2. Alert contract
 

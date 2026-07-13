@@ -1,5 +1,7 @@
 # MANU-AI Pilot Readiness Evidence Pack
 
+Phase 85 Stage 4B-3 Phase 0 documentation lock, 2026-07-13: Stage 4B-3 Multimodal Gorsel Guvenligi ve Yanit Orkestrasyonu is inserted between completed Stage 4B-2 and Stage 4C. Canonical plan: `docs/PHASE_85_STAGE_4B_3_MULTIMODAL_GORSEL_GUVENLIGI_VE_YANIT_ORK_PLAN.md`. Phase 0 evidence: `docs/PHASE_85_STAGE_4B_3_PHASE_0_DOCUMENTATION_EVIDENCE.md`. This is local engineering planning only; it does not approve media handling in production, production pilot remains `NO-GO`, R-405 and external approvals remain open, and real integration paths remain closed. Any older Stage 4C next-step text in this evidence pack is historical until Stage 4B-3 closes.
+
 Phase 85 Stage 4B-2 security advisory RLS hardening, 2026-07-13: the separate Supabase advisory for RLS-disabled `conversation_mutation_idempotency` and `personas` is closed locally. Evidence: `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`. This contributes local engineering evidence only; production pilot remains `NO-GO`, R-405 and external approvals remain open, and real integration paths remain closed.
 
 Phase 85 Stage 4B-2 remediation R7 update, 2026-07-13: R0-R7 are complete locally after zero-skip RLS and executed bounded list/detail SQL buffer evidence. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. This contributes local engineering evidence only; production pilot remains `NO-GO`, R-405 and external approvals remain open, and real integration paths remain closed.
@@ -16,7 +18,7 @@ No real WhatsApp, Telegram, Gemini, external LLM provider, production client-mes
 
 Phase 85 Stage 4B-2 local RLS re-closure (2026-07-13): Docker Desktop/local Supabase is available for the current local RLS suite. `npx supabase db reset` passed and `npm run test:rls` passed 35/35 with 0 skipped after append-only re-closure migration `20260713024000_phase_85_stage_4b2_rls_local_reclosure.sql`. Evidence: `docs/PHASE_85_STAGE_4B_2_RLS_LOCAL_RECLOSURE_EVIDENCE.md`. This does not approve production pilot, close R-405, enable real provider/channel/health-data paths, or claim SQL buffer/EXPLAIN closure.
 
-Phase 85 Stage 4B-2 Mesajlasma closure (2026-07-12): bounded conversation list/detail APIs, per-actor unread receipts, mutations, WhatsApp-like detail UX, Mesajlaşma navigation, Stage 4B integration, scale/visual/release verification, and canonical spec are implemented locally. The initial Docker-blocked RLS snapshot was subsequently superseded by R7 zero-skip RLS/SQL evidence and advisory-hardening 36/36. Current authority: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`. **Next:** Stage 4C plan/read gate; production pilot remains `NO-GO`; R-405 remains open.
+Phase 85 Stage 4B-2 Mesajlasma closure (2026-07-12): bounded conversation list/detail APIs, per-actor unread receipts, mutations, WhatsApp-like detail UX, Mesajlaşma navigation, Stage 4B integration, scale/visual/release verification, and canonical spec are implemented locally. The initial Docker-blocked RLS snapshot was subsequently superseded by R7 zero-skip RLS/SQL evidence and advisory-hardening 36/36. Current authority: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`. **Next:** Stage 4B-3; production pilot remains `NO-GO`; R-405 remains open.
 
 Phase 85 Stage 4B post-closure remediation (2026-07-12): the local implementation has bounded actor-aware alert/notification Supabase reads, safe target linkage, lifecycle-correct draft invalidation, atomic unsupported-media review, role-aware UI restrictions, and screenshot/accessibility evidence. Its historical 33-test Docker block was superseded by the complete-chain 35/35 re-closure and advisory-hardening 36/36 run. Evidence: `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md`, `docs/PHASE_85_STAGE_4B_2_RLS_LOCAL_RECLOSURE_EVIDENCE.md`, and `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`.
 
@@ -622,7 +624,7 @@ This evidence is dashboard/operator-readiness evidence only. It does not approve
 
 ## Phase 85 Stage 4B Closure Evidence - 2026-07-12
 
-Phase 85 Stage 4B-2 Mesajlasma closure (2026-07-12) is implemented and locally verified through bounded APIs, per-actor receipts, mutations, detail UX, integration, scale/visual/release checks, and canonical spec. Core 234/234 and app 953 passed / 6 skipped; visual 40/40 passed; `npm run test:rls` skipped 35/35 because Docker was unavailable and is not counted as pass. Evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md`. This adds no production authorization. **Next:** Stage 4C; production pilot remains `NO-GO`; R-405 remains open.
+Phase 85 Stage 4B-2 Mesajlasma closure (2026-07-12) is implemented and locally verified through bounded APIs, per-actor receipts, mutations, detail UX, integration, scale/visual/release checks, and canonical spec. The historical Docker-blocked RLS result was later superseded by R7 and advisory hardening. Evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md`. This adds no production authorization. **Next:** Stage 4B-3; production pilot remains `NO-GO`; R-405 remains open.
 
 Phase 85 Stage 4B post-closure remediation (2026-07-12) is implemented and locally verified. Evidence: `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md`. Core 234/234, app 901 passed / 5 skipped, Stage 4B scale/replay/79G/release checks passed, and visual 36/36 passed; `npm run test:rls` skipped 33/33 because Docker was unavailable and is not counted as pass. Stage 4B-2 is now complete.
 
@@ -630,7 +632,7 @@ Production pilot remains `NO-GO`; R-405 and all external gates remain open.
 
 ## Phase 85 Stage 4B-2 Closure Evidence - 2026-07-12
 
-Stage 4B-2 Mesajlasma implementation and evidence closure are verified locally. Evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`. Core 234/234, app 953 passed / 6 skipped, Stage 4B-2 rehearsal, 79G/release checks, lint, build, and visual 40/40 passed; `npm run test:rls` skipped 35/35 because Docker was unavailable and is not counted as pass. This adds no production authorization. **Next:** Stage 4C; production pilot remains `NO-GO`; R-405 remains open.
+Stage 4B-2 Mesajlasma implementation and evidence closure are verified locally. Evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`. The historical Docker-blocked RLS result was later superseded by R7 and advisory hardening. This adds no production authorization. **Next:** Stage 4B-3; production pilot remains `NO-GO`; R-405 remains open.
 
 ## Stage 4B-2 Phase 0 Planning Evidence - 2026-07-12
 

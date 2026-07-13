@@ -1,8 +1,8 @@
 # Phase 85 Stage 4B-2 - Mesajlasma Eylem Plani
 
-Current status, 2026-07-13: implementation and post-closure remediation R0-R7 are complete locally. R7 evidence supersedes older active-remediation handoffs in this historical execution plan: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. Stage 4C is next; production remains `NO-GO`, R-405 remains open.
+Current status, 2026-07-13: implementation and post-closure remediation R0-R7 are complete locally. R7 evidence supersedes older active-remediation handoffs in this historical execution plan: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. Stage 4B-3 is next before Stage 4C; production remains `NO-GO`, R-405 remains open.
 
-Status: **implementation Phases 0-11 and post-closure remediation R0-R7 complete locally; advisory hardening complete.** Runtime spec: `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`. Current closure authority: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`. **Next authorized work:** Stage 4C plan/read gate.
+Status: **implementation Phases 0-11 and post-closure remediation R0-R7 complete locally; advisory hardening complete.** Runtime spec: `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`. Current closure authority: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`. **Next authorized work:** Stage 4B-3 Phase 1 after the Phase 0 documentation lock.
 
 Baseline branch: `codex/phase-85-interstage-clinical-memory`
 
@@ -22,7 +22,8 @@ Stage 4B-2 owns the dietitian-facing conversation inbox and transcript workflow.
 2. P85-IF-A through P85-IF-I and post-closure audit - complete.
 3. Stage 4B Uyari ve Bildirimler - complete locally; historical Docker block superseded by complete-chain zero-skip RLS and advisory hardening.
 4. Stage 4B-2 Mesajlasma - historical implementation evidence (2026-07-12); remediation is active under `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`.
-5. Stage 4C Diyetisyen Icin AI Chat - **blocked until remediation R1-R7 closes**.
+5. Stage 4B-3 Multimodal Gorsel Guvenligi ve Yanit Orkestrasyonu - **current after Phase 0 lock**.
+6. Stage 4C Diyetisyen Icin AI Chat - **blocked until Stage 4B-3 closes**.
 
 The internal dashboard section identifier remains `messages`. Only the visible label changes from the temporary Gorusme label to Mesajlasma. No permanent duplicate Gorusme entry may remain.
 
@@ -387,4 +388,4 @@ The separate remediation plan now records R5 complete for application-level test
 
 ## Post-closure remediation R6 verification record - 2026-07-13
 
-The separate remediation plan records the historical R6 environment block and its actual re-closure through RLS 35/35 plus executed SQL buffer evidence. R7 is complete; evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. Stage 4C is next.
+The separate remediation plan records the historical R6 environment block and its actual re-closure through RLS 35/35 plus executed SQL buffer evidence. R7 is complete; evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. Stage 4B-3 is next.

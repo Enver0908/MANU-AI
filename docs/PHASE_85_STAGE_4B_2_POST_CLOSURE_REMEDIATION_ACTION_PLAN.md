@@ -12,7 +12,7 @@ Production pilot remains **NO-GO**. R-405 remains open. Real WhatsApp, Telegram,
 
 The Stage 4B-2 audit found that the implementation is substantial but is not yet a complete implementation of the locked technical intent. This remediation track is the controlled work item for closing those findings. The prior closure evidence remains historical implementation evidence; it does not authorize Stage 4C while the remediation gates below are open.
 
-Stage 4C was blocked until remediation R0-R6 verification was green and the R7 evidence closure was completed separately. R0-R7 are now closed locally; Stage 4C is the next authorized Phase 85 unit.
+Stage 4C was blocked until remediation R0-R6 verification was green and the R7 evidence closure was completed separately. R0-R7 are now closed locally; Stage 4B-3 is the next authorized Phase 85 unit before Stage 4C.
 
 R1 through R5 implementation units are complete. R6 was re-closed on 2026-07-13 with local Supabase reset, RLS 35/35 with zero skips, and executed SQL buffer evidence for the bounded list/detail projection RPCs. R7 canonical closure is complete. The separate Supabase advisory for RLS-disabled `conversation_mutation_idempotency` and `personas` was closed locally by `20260713030000_phase_85_stage_4b2_security_advisory_rls_hardening.sql`; evidence is `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`. Production pilot remains `NO-GO`, R-405 remains open, and real integration paths remain closed.
 

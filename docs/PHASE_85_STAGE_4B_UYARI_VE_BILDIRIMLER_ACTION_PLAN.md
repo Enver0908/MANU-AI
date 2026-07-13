@@ -1,6 +1,6 @@
 # Phase 85 Stage 4B - Uyari ve Bildirimler Eylem Plani
 
-Current downstream status, 2026-07-13: Stage 4B-2 remediation R0-R7, the separate security advisory RLS hardening, and continuity/routing reconciliation are complete locally without changing Stage 4B alert/notification ownership. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`, `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`, and `docs/PHASE_85_STAGE_4B_2_CONTINUITY_AND_ROUTING_RECONCILIATION_EVIDENCE.md`. Stage 4C is next; production remains `NO-GO`, R-405 remains open.
+Current downstream status, 2026-07-13: Stage 4B-2 remediation R0-R7, the separate security advisory RLS hardening, and continuity/routing reconciliation are complete locally without changing Stage 4B alert/notification ownership. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`, `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`, and `docs/PHASE_85_STAGE_4B_2_CONTINUITY_AND_ROUTING_RECONCILIATION_EVIDENCE.md`. Stage 4B-3 is next; production remains `NO-GO`, R-405 remains open.
 
 Date: 2026-07-11
 Status: implementation and post-closure remediation complete; historical Docker block superseded by complete-chain 35/35 and advisory-hardening 36/36 local RLS evidence
@@ -545,7 +545,7 @@ The complete Stage 4B-2 action plan is now `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_
 Stage 4B-2 consumes Stage 4B alert/notification targets but owns the conversation list, unread message receipts, bounded transcript detail, yellow reviewed-manual workflow, red manual reply workflow, and in-detail AI control. Assistant access is explicitly assigned-conversation read-only with own message receipt mutation; viewer assignment is read-only; auditor has no conversation visibility. This consumer lock adds no Stage 4B runtime work and does not change the Stage 4B no-alert-table, red-precedence, safe-list-DTO, notification-lifecycle, or production `NO-GO` decisions.
 ## Stage 4B-2 Post-Closure Remediation R0 - 2026-07-12
 
-Stage 4B-2 consumed this track without changing Stage 4B alert/notification ownership. Its remediation R0-R7 is complete locally; Stage 4C is next.
+Stage 4B-2 consumed this track without changing Stage 4B alert/notification ownership. Its remediation R0-R7 is complete locally; Stage 4B-3 is next.
 
 ## Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
 
@@ -566,4 +566,4 @@ Historical R5 checkpoint: messaging replay, accessibility, lifecycle/export, sca
 
 ## Stage 4B-2 Post-Closure Remediation R6 - 2026-07-13
 
-R6 changed no Stage 4B alert/notification ownership. Its original environment block was resolved by zero-skip RLS and SQL buffer execution recorded in R7. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`; Stage 4C is next.
+R6 changed no Stage 4B alert/notification ownership. Its original environment block was resolved by zero-skip RLS and SQL buffer execution recorded in R7. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`; Stage 4B-3 is next.
