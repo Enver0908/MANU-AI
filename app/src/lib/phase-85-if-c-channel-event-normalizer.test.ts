@@ -13,6 +13,8 @@ type GoldenCandidateExpectation = {
   toIdentity?: string;
   counterpartyIdentity?: string;
   body?: string;
+  providerMediaId?: string;
+  declaredMimeType?: string;
 };
 
 type ChannelEventGoldenCase = {
@@ -42,14 +44,16 @@ function matchesExpectation(candidate: RawChannelEventCandidate, expectation: Go
   if (expectation.toIdentity !== undefined && candidate.toIdentity !== expectation.toIdentity) return false;
   if (expectation.counterpartyIdentity !== undefined && candidate.counterpartyIdentity !== expectation.counterpartyIdentity) return false;
   if (expectation.body !== undefined && candidate.body !== expectation.body) return false;
+  if (expectation.providerMediaId !== undefined && candidate.providerMediaId !== expectation.providerMediaId) return false;
+  if (expectation.declaredMimeType !== undefined && candidate.declaredMimeType !== expectation.declaredMimeType) return false;
   return true;
 }
 
 describe("phase 85 if-c channel event normalizer", () => {
-  it("loads twelve golden categories from jsonl", () => {
+  it("loads thirteen golden categories from jsonl", () => {
     const cases = loadChannelEventGoldenCases();
-    expect(cases).toHaveLength(12);
-    expect(new Set(cases.map((item) => item.category)).size).toBe(12);
+    expect(cases).toHaveLength(13);
+    expect(new Set(cases.map((item) => item.category)).size).toBe(13);
   });
 
   it("evaluates every golden case without leaking secrets", () => {

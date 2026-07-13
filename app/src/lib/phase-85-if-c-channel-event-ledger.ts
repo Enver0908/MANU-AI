@@ -7,6 +7,12 @@ import {
 import { routeChannelEvent } from "./phase-85-if-c-channel-event-routing";
 import { applyRoutedTranscriptSideEffects } from "./phase-85-if-d-transcript-human-control";
 import { processMockChannelInbound } from "./channel-adapters";
+import {
+  processStage4B3PendingMediaAssets,
+  stageClientImageIngressMetadata,
+} from "./phase-85-stage-4b3-media-admission";
+import type { Stage4B3MediaStoragePort } from "./phase-85-stage-4b3-media-storage";
+import type { Stage4B3MediaTransportPort } from "./phase-85-stage-4b3-media-transport";
 
 // Phase 85 Interstage Foundation - P85-IF-C ledger, secure gate, quarantine, and replay.
 //
@@ -56,12 +62,19 @@ async function applyRoutedTranscriptEffectsIfNeeded(
 
 const NEW_MESSAGE_EVENT_KINDS: ReadonlySet<ChannelEventKind> = new Set([
   "client_message_text",
+  "client_message_image",
   "client_message_media_unsupported",
   "business_human_echo_text",
   "business_human_echo_media_unsupported",
   "history_client_message",
   "history_business_human_message",
 ]);
+
+export type Stage4B3AdmissionRuntime = {
+  transport: Stage4B3MediaTransportPort;
+  storage: Stage4B3MediaStoragePort;
+  autoProcessPending?: boolean;
+};
 
 export type SecureChannelIngressGateResult = {
   enabled: boolean;
@@ -120,7 +133,11 @@ export type ChannelEventIngressResult =
 export async function processInboundWhatsAppChannelBatch(
   state: ManuAppState,
   payload: unknown,
-  options: { providedSecret?: string | null; env?: NodeJS.ProcessEnv } = {},
+  options: {
+    providedSecret?: string | null;
+    env?: NodeJS.ProcessEnv;
+    stage4b3Admission?: Stage4B3AdmissionRuntime;
+  } = {},
 ): Promise<{ state: ManuAppState; result: ChannelEventIngressResult }> {
   const gate = resolveSecureChannelIngressGate(options.env ?? process.env, options.providedSecret ?? null);
   if (!gate.enabled) {
@@ -136,7 +153,7 @@ export async function processInboundWhatsAppChannelBatch(
   const outcomes: ChannelEventIngressOutcome[] = [];
 
   for (const candidate of normalized.candidates) {
-    const { state: nextState, outcome } = await ingestSingleCandidate(workingState, candidate);
+    const { state: nextState, outcome } = await ingestSingleCandidate(workingState, candidate, options);
     workingState = nextState;
     outcomes.push(outcome);
   }
@@ -147,6 +164,7 @@ export async function processInboundWhatsAppChannelBatch(
 async function ingestSingleCandidate(
   state: ManuAppState,
   candidate: RawChannelEventCandidate,
+  options: { stage4b3Admission?: Stage4B3AdmissionRuntime } = {},
 ): Promise<{ state: ManuAppState; outcome: ChannelEventIngressOutcome }> {
   if (candidate.providerEventId) {
     const existingEvent = state.channelEvents.find(
@@ -213,6 +231,20 @@ async function ingestSingleCandidate(
 
   if (routing.finalEventKind === "client_message_text") {
     nextState = await applyRoutedClientInbound(nextState, candidate, routing, record.observedAt);
+  } else if (routing.finalEventKind === "client_message_image") {
+    nextState = stageClientImageIngressMetadata(nextState, {
+      candidate,
+      routing,
+      channelEventId: record.id,
+      observedAt: record.observedAt,
+    });
+    if (options.stage4b3Admission?.autoProcessPending !== false && options.stage4b3Admission) {
+      nextState = await processStage4B3PendingMediaAssets(nextState, {
+        transport: options.stage4b3Admission.transport,
+        storage: options.stage4b3Admission.storage,
+        now: record.observedAt,
+      });
+    }
   } else {
     nextState = await applyRoutedTranscriptEffectsIfNeeded(
       nextState,
@@ -423,6 +455,13 @@ export async function replayQuarantinedChannelEvent(
   let replayState = replaceChannelEvent(state, replayed);
   if (routing.finalEventKind === "client_message_text") {
     replayState = await applyRoutedClientInbound(replayState, candidate, routing, now);
+  } else if (routing.finalEventKind === "client_message_image") {
+    replayState = stageClientImageIngressMetadata(replayState, {
+      candidate,
+      routing,
+      channelEventId: replayed.id,
+      observedAt: now,
+    });
   } else {
     replayState = await applyRoutedTranscriptEffectsIfNeeded(
       replayState,

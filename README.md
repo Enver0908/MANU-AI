@@ -4,6 +4,8 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 ## Current Status
 
+**2026-07-13 Stage 4B-3 Phase 3 secure visual ingress:** Mock-gated `client_message_image` normalization, `sharp`/`file-type` admission, EXIF-stripped sanitized private objects, and ledger ingress without client AI replies. Evidence: `docs/PHASE_85_STAGE_4B_3_PHASE_3_SECURE_VISUAL_INGRESS_EVIDENCE.md`. **Next:** Stage 4B-3 Phase 4. Production pilot remains `NO-GO`; R-405 remains open.
+
 **2026-07-13 Stage 4B-3 Phase 2 database/storage/RLS foundation:** Append-only migration `20260713120000_phase_85_stage_4b3_media_foundation.sql` adds media tables, private bucket `p85-stage-4b3-media`, conversation-scoped RLS, service-role worker claim RPCs, and `loadSupabaseState` media loading. Evidence: `docs/PHASE_85_STAGE_4B_3_PHASE_2_DATABASE_STORAGE_RLS_EVIDENCE.md`. **Next:** Stage 4B-3 Phase 3. Production pilot remains `NO-GO`; R-405 remains open.
 
 **2026-07-13 Stage 4B-3 Phase 1 domain/type contract:** Media asset, visual observation, inbound bundle, correction, multimodal envelope, autopilot eligibility, and client-safe DTO contracts are implemented in `app/src/lib/phase-85-stage-4b3-media-contracts.ts` with core `dietitian-ai-assistant/src/visual-observation-v1.js` validation. `ManuAppState` now carries empty Stage 4B-3 media collections; `ChannelEventKind` adds `client_message_image`; media retrieval exclusions are typed. No runtime ingress, storage, API, or provider egress changed. Evidence: `docs/PHASE_85_STAGE_4B_3_PHASE_1_DOMAIN_TYPE_CONTRACT_EVIDENCE.md`. **Next:** Stage 4B-3 Phase 2. Production pilot remains `NO-GO`; R-405 remains open.

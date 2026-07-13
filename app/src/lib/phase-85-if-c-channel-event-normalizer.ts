@@ -13,7 +13,6 @@ import type { ChannelEventKind } from "./types";
 export const PHASE_85_IF_C_NORMALIZER_VERSION = "p85-if-c-channel-event-normalizer-v1";
 
 const UNSUPPORTED_MEDIA_TYPES = new Set([
-  "image",
   "audio",
   "video",
   "document",
@@ -24,6 +23,8 @@ const UNSUPPORTED_MEDIA_TYPES = new Set([
   "button",
   "reaction",
 ]);
+
+const SUPPORTED_IMAGE_MIME_TYPES = new Set(["image/jpeg", "image/png"]);
 
 export type RawChannelEventCandidate = {
   eventKind: ChannelEventKind;
@@ -41,6 +42,12 @@ export type RawChannelEventCandidate = {
   providerTimeInvalid: boolean;
   payloadDigest: string;
   malformedReason: string | null;
+  providerMediaId: string | null;
+  declaredMimeType: string | null;
+  payloadSha256: string | null;
+  caption: string | null;
+  replyToProviderMessageId: string | null;
+  byteSize: number | null;
 };
 
 export type ChannelEventBatchNormalizationFailure = {
@@ -253,6 +260,61 @@ function normalizeMessageItem(
     });
   }
 
+  if (type === "image") {
+    const imageObject = item.image && isRecord(item.image) ? item.image : null;
+    const providerMediaId = imageObject ? readTrimmedString(imageObject.id) || null : null;
+    const declaredMimeType = imageObject ? readTrimmedString(imageObject.mime_type) || null : null;
+    const payloadSha256 = imageObject ? readTrimmedString(imageObject.sha256) || null : null;
+    const caption = imageObject ? readTrimmedString(imageObject.caption) || null : null;
+    const byteSize =
+      imageObject && typeof imageObject.file_size === "number" && Number.isFinite(imageObject.file_size)
+        ? Math.max(0, Math.trunc(imageObject.file_size))
+        : null;
+    const replyToProviderMessageId = readReplyToProviderMessageId(item);
+
+    if (!isEcho && declaredMimeType && SUPPORTED_IMAGE_MIME_TYPES.has(declaredMimeType)) {
+      return buildCandidate({
+        eventKind: "client_message_image",
+        wabaId,
+        businessPhoneNumberId,
+        raw: item,
+        providerEventId,
+        fromIdentity: from,
+        toIdentity: to,
+        counterpartyIdentity: isEcho ? to : from,
+        messageType: type,
+        providerTime,
+        providerTimeInvalid,
+        providerMediaId,
+        declaredMimeType,
+        payloadSha256,
+        caption,
+        replyToProviderMessageId,
+        byteSize,
+      });
+    }
+
+    return buildCandidate({
+      eventKind: isEcho ? "business_human_echo_media_unsupported" : "client_message_media_unsupported",
+      wabaId,
+      businessPhoneNumberId,
+      raw: item,
+      providerEventId,
+      fromIdentity: from,
+      toIdentity: to,
+      counterpartyIdentity: isEcho ? to : from,
+      messageType: type,
+      providerTime,
+      providerTimeInvalid,
+      providerMediaId,
+      declaredMimeType,
+      payloadSha256,
+      caption,
+      replyToProviderMessageId,
+      byteSize,
+    });
+  }
+
   if (type && UNSUPPORTED_MEDIA_TYPES.has(type)) {
     return buildCandidate({
       eventKind: isEcho ? "business_human_echo_media_unsupported" : "client_message_media_unsupported",
@@ -384,6 +446,12 @@ type BuildCandidateInput = {
   providerTime?: string | null;
   providerTimeInvalid?: boolean;
   malformedReason?: string | null;
+  providerMediaId?: string | null;
+  declaredMimeType?: string | null;
+  payloadSha256?: string | null;
+  caption?: string | null;
+  replyToProviderMessageId?: string | null;
+  byteSize?: number | null;
 };
 
 function buildCandidate(input: BuildCandidateInput): RawChannelEventCandidate {
@@ -403,6 +471,12 @@ function buildCandidate(input: BuildCandidateInput): RawChannelEventCandidate {
     providerTimeInvalid: input.providerTimeInvalid ?? false,
     payloadDigest: computeDigest(input.raw),
     malformedReason: input.malformedReason ?? null,
+    providerMediaId: input.providerMediaId ?? null,
+    declaredMimeType: input.declaredMimeType ?? null,
+    payloadSha256: input.payloadSha256 ?? null,
+    caption: input.caption ?? null,
+    replyToProviderMessageId: input.replyToProviderMessageId ?? null,
+    byteSize: input.byteSize ?? null,
   };
 }
 
@@ -434,6 +508,13 @@ function parseProviderTimestamp(timestamp: unknown) {
   }
 
   return { providerTime: date.toISOString(), providerTimeInvalid: false };
+}
+
+function readReplyToProviderMessageId(item: Record<string, unknown>) {
+  if (!isRecord(item.context)) {
+    return null;
+  }
+  return readTrimmedString(item.context.message_id) || null;
 }
 
 function readTrimmedString(value: unknown) {
