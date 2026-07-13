@@ -1,5 +1,7 @@
 # Phase 85 Stage 4B-2 Post-Closure Remediation - Phase R6 Evidence
 
+Current resolution, 2026-07-13: **GREEN for the local remediation gate.** The historical blocked execution below is superseded by an actual local reset, RLS 35/35 with zero skips, and executed PostgreSQL list/detail buffer plans. Exact metrics and interpretation: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. Production remains `NO-GO`; R-405 remains open.
+
 Date: 2026-07-13
 Status: **UPDATED — independent gate executed; local RLS re-run later passed**
 

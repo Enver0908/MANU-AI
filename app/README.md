@@ -482,7 +482,7 @@ Implemented per `../docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_ACTION_PLAN.md`.
 Phase 1 is complete for the domain/DTO/authorization projection foundation. `src/lib/types.ts` adds assignment access-level types; `src/lib/phase-85-stage-4b2-contracts.ts` defines bounded messaging DTOs and cursors; `src/lib/phase-85-stage-4b2-api.ts` implements role/assignment permissions, safe previews, sequence unread projection, deterministic list/detail windows, and fail-closed operation guards; and the dedicated test file covers the role matrix and allowlists. No route, migration, persistence, UI, or provider/channel behavior changed. Evidence: `../docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`. **Next:** Phase 2 receipt persistence/RLS; Stage 4C remains blocked and production pilot remains `NO-GO`.
 ## Stage 4B-2 Remediation Lock
 
-Stage 4B-2 runtime exists but is under post-closure remediation. R1 is complete. Start from `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md` Phase R2 only after confirming the R1 evidence commit and a clean worktree. Do not open Stage 4C, real integrations, or production pilot paths during remediation.
+Stage 4B-2 runtime and post-closure remediation R0-R7 are complete locally. Evidence: `../docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. Stage 4C is the next authorized Phase 85 unit after its plan/read gate. Do not enable real integrations or production-pilot paths.
 
 ## Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
 
@@ -503,4 +503,8 @@ R5 adds the repeatable bounded-scale evidence module, full replay/accessibility 
 
 ## Stage 4B-2 Post-Closure Remediation R6 - 2026-07-13
 
-R6 adds `rehearse:stage-4b2-r6`, an independent child-process verification gate with fail-closed RLS classification, R-405-only audit exception handling, diff/untracked secret-name scanning, and an explicit `productionPilotGo: false` report. The gate passed core 234/234, app 959/6 skipped, full scale/replay, visual/accessibility 8/8, lint, and build. It is `BLOCKED` because the required 35-test RLS suite skipped without Docker/Supabase; SQL EXPLAIN/buffer evidence remains unavailable. Evidence: `../docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R6_EVIDENCE.md`.
+R6 adds `rehearse:stage-4b2-r6`, an independent child-process verification gate with fail-closed RLS classification, R-405-only audit exception handling, diff/untracked secret-name scanning, and an explicit `productionPilotGo: false` report. The gate passed core 234/234, app 959/6 skipped, full scale/replay, visual/accessibility 8/8, lint, and build. Its original environment block was later resolved by zero-skip RLS and executed SQL buffer evidence in R7. Evidence: `../docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R6_EVIDENCE.md`.
+
+## Stage 4B-2 Post-Closure Remediation R7 - 2026-07-13
+
+R7 reconciles canonical status and risk/handoff evidence after local RLS 35/35 and executed PostgreSQL list/detail buffer plans closed the R6 environment prerequisite. R0-R7 are complete locally; Stage 4C is next. Production remains `NO-GO`; R-405 remains open.

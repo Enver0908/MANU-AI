@@ -1,5 +1,7 @@
 # MANU-AI Production Pilot Final Readiness Closure Summary
 
+Phase 85 Stage 4B-2 remediation R7 update, 2026-07-13: R0-R7 are complete locally. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. Final production readiness is unchanged: production pilot remains `NO-GO`, R-405 and external approvals remain open, and real integration paths remain closed.
+
 Date: 2026-06-30
 
 ## Status
@@ -390,7 +392,7 @@ R1 is complete at the contract/projection layer only. The production pilot remai
 
 ## Stage 4B-2 Post-Closure Remediation R2 - 2026-07-12
 
-R2 implementation is complete for bounded reads and receipt guards, but it does not close production readiness. RLS execution is skipped while Docker is unavailable; R-405 remains open and R3-R7 remain required.
+R2 implementation is historical evidence within the R7-closed local remediation sequence; it does not close production readiness. R-405 remains open.
 ## Stage 4B-2 Post-Closure Remediation R3 - 2026-07-12
 
 R3 does not change final readiness: production remains `NO-GO`, R-405 remains open, and R4-R7 plus environment-level RLS evidence remain required.
@@ -403,4 +405,4 @@ R5 closes the application-level test/scale evidence unit but does not change fin
 
 ## Stage 4B-2 Post-Closure Remediation R6 - 2026-07-13
 
-R6 does not change final readiness. The independent gate passed core/app regression, scale, replay, visual/accessibility, lint, build, and scans, but remains `BLOCKED` because all 35 required RLS tests skipped without Docker/Supabase; SQL EXPLAIN/buffer evidence remains open. Production remains `NO-GO`; R-405 remains open; Stage 4C and R7 remain blocked. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R6_EVIDENCE.md`.
+R6 does not change final readiness. Its original environment block was resolved by actual RLS 35/35 and SQL buffer execution; R7 closes the local remediation sequence. Production remains `NO-GO`; R-405 remains open. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`.

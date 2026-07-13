@@ -1,5 +1,7 @@
 # MANU-AI Production Pilot Gate Closure Dossier
 
+Phase 85 Stage 4B-2 remediation R7 update, 2026-07-13: R0-R7 are complete locally with RLS 35/35, executed SQL buffer plans, bounded scale, and canonical closure evidence. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. No production gate is closed by this result; production remains `NO-GO`, R-405 remains open, and real integration paths remain closed.
+
 Date: 2026-06-03
 
 ## Status
@@ -336,4 +338,4 @@ R5 is not a production gate closure. Local full regression, 79G scale, replay, a
 
 ## Stage 4B-2 Post-Closure Remediation R6 - 2026-07-13
 
-R6 is not a production gate closure. The independent full verification runner passed the available checks, but the final gate is `BLOCKED` because the required 35-test Supabase RLS matrix skipped without Docker/Supabase and SQL EXPLAIN/buffer evidence was unavailable. Production pilot remains `NO-GO`; R-405 remains open. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R6_EVIDENCE.md`.
+R6 is not a production gate closure. Its original environment block was resolved by actual RLS 35/35 and SQL buffer execution; R7 closes the local remediation sequence only. Production pilot remains `NO-GO`; R-405 remains open. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`.

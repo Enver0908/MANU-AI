@@ -1,5 +1,7 @@
 # Phase 85 Interstage Foundation - Trusted Clinical Communication And Memory Plan
 
+Current downstream status, 2026-07-13: Stage 4B-2 post-closure remediation R0-R7 is complete locally while preserving P85-IF authority, lifecycle, provenance, and human-control boundaries. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. Stage 4C is next; production remains `NO-GO` and R-405 remains open.
+
 Date: 2026-07-10
 Canonical code: `P85-IF`
 Status: Planning complete; P85-IF-A through P85-IF-I complete; R6 lifecycle/RLS re-closure verified; Stage 4B may resume.
@@ -499,7 +501,7 @@ Phase 2 added durable per-actor conversation read receipts, deterministic sequen
 Phase 1 implemented only the consumer-side domain foundation: assignment access-level types, bounded DTOs, actor-aware permissions, safe preview/message projection, sequence unread calculation, and versioned cursors. It did not reopen or modify P85-IF persistence, lifecycle, provider/channel, or health-data paths. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`. Phase 2 receipt persistence/RLS is next.
 ## Stage 4B-2 Post-Closure Remediation R0 - 2026-07-12
 
-P85-IF remains authoritative and is not reopened. Stage 4B-2 audit remediation must preserve provenance, conversation revision, human-control, red/yellow, lifecycle, export, and RLS contracts. The active remediation plan is `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`; Stage 4C remains blocked.
+P85-IF remains authoritative and is not reopened. Stage 4B-2 remediation preserved provenance, conversation revision, human-control, red/yellow, lifecycle, export, and RLS contracts and is closed locally through R7. Stage 4C is next.
 ## Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
 
 R1 completed the application contract correction for Stage 4B-2 messaging. It does not alter P85-IF authority, real provider/channel shutdowns, production `NO-GO`, or R-405. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R1_EVIDENCE.md`; next remediation unit: R2.

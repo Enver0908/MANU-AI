@@ -1,5 +1,7 @@
 # Phase 85: SiriusAI Frontend Redesign And Design System Spec
 
+Current Stage 4B-2 status, 2026-07-13: post-closure remediation R0-R7 is complete locally. The tablet split, deep-link, unread, visual, and accessibility contracts remain as verified in R4-R6; R7 changes documentation/handoff only. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. Stage 4C is next; production remains `NO-GO`.
+
 Date: 2026-07-07
 Status: Stage 1 design foundation, Stage 2 shared component system, Stage 3 public/commercial entry integration, and Stage 4A Danisan Kontrol Paneli complete; Stage 3 is deployed to the hosted sandbox at `https://siriusai.store`. P85-IF-A through P85-IF-I are complete. **Stage 4B Uyari ve Bildirimler is complete (2026-07-12).** Evidence: `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_EVIDENCE.md`. **Next:** Stage 4B-2 Mesajlasma.
 Production pilot: NO-GO.

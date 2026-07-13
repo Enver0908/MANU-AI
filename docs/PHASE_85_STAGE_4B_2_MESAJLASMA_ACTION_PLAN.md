@@ -1,5 +1,7 @@
 # Phase 85 Stage 4B-2 - Mesajlasma Eylem Plani
 
+Current status, 2026-07-13: implementation and post-closure remediation R0-R7 are complete locally. R7 evidence supersedes older active-remediation handoffs in this historical execution plan: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. Stage 4C is next; production remains `NO-GO`, R-405 remains open.
+
 Status: **historical implementation complete; post-closure remediation active (R0 locked, 2026-07-12).** Runtime spec: `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`. Historical closure evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md`. Remediation plan: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. **Next authorized work:** Phase R1 remediation. Stage 4C remains blocked.
 
 Baseline branch: `codex/phase-85-interstage-clinical-memory`
@@ -385,4 +387,4 @@ The separate remediation plan now records R5 complete for application-level test
 
 ## Post-closure remediation R6 verification record - 2026-07-13
 
-The separate remediation plan now records the independent R6 gate as executed but `BLOCKED`. Core/app regression, bounded scale, 79G, replay, visual/accessibility, lint, build, dependency exception, diff, and secret/name checks passed. The required Supabase RLS suite skipped all 35 tests without Docker/Supabase, and SQL EXPLAIN/buffer evidence was unavailable. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R6_EVIDENCE.md`; Stage 4C remains blocked.
+The separate remediation plan records the historical R6 environment block and its actual re-closure through RLS 35/35 plus executed SQL buffer evidence. R7 is complete; evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. Stage 4C is next.

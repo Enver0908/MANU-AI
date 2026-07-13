@@ -1,5 +1,7 @@
 # MANU-AI Next Phase Execution Plan
 
+Current execution handoff, 2026-07-13: Phase 85 Stage 4B-2 post-closure remediation R0-R7 is complete locally. Local reset/RLS 35/35, SQL buffer plans, bounded SQL/scale evidence, and canonical reconciliation are recorded in `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. The next authorized Phase 85 unit is Stage 4C, beginning with its plan/read gate. Production remains `NO-GO`; R-405 remains open; real integration paths remain closed.
+
 ## Current Position
 
 Current Stage 4B-2 local RLS re-closure override (2026-07-13): Docker Desktop/local Supabase is available again for the current local suite. `npx supabase db reset` passed and `npm run test:rls` passed 35/35 with 0 skipped after append-only re-closure migration `20260713024000_phase_85_stage_4b2_rls_local_reclosure.sql`. Evidence: `docs/PHASE_85_STAGE_4B_2_RLS_LOCAL_RECLOSURE_EVIDENCE.md`. This does not approve production pilot, close R-405, enable real provider/channel/health-data paths, or claim SQL buffer/EXPLAIN closure.
@@ -2440,7 +2442,7 @@ Phase 0 is complete. The decision-complete execution contract is `docs/PHASE_85_
 
 ## Stage 4B-2 Closure - 2026-07-12
 
-Stage 4B-2 Phases 0–11 are historical implementation evidence and are under post-closure remediation. Runtime spec: `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`. Historical closure evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md`. Active remediation: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. Verification includes an RLS run skipped 35/35 because Docker was unavailable; this is not a pass. **Next:** remediation R1; Stage 4C remains blocked. Preserve bounded messaging contracts, per-actor receipts, yellow reviewed-manual semantics, red atomic activation, append-only migrations, production `NO-GO`, R-405 open, and all real provider/channel/health-data shutdowns.
+Stage 4B-2 Phases 0-11 and remediation R0-R6 are historical evidence; R7 is the current local closure authority. Runtime spec: `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`; closure: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. **Next:** Stage 4C plan/read gate. Preserve bounded messaging contracts, per-actor receipts, yellow reviewed-manual semantics, red atomic activation, append-only migrations, production `NO-GO`, R-405 open, and all real provider/channel/health-data shutdowns.
 ## Current Phase 85 Stage 4B-2 Post-Closure Remediation - 2026-07-12
 
 R1 is complete. The next authorized implementation unit is Phase R2 of `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. Stage 4C is blocked; no provider, channel, billing, monitoring, backup, secret-manager, or health-data path may be opened.
@@ -2463,4 +2465,4 @@ R5 is complete for application-level test and scale evidence. Full app, core, 79
 
 ## Stage 4B-2 Post-Closure Remediation R6 - 2026-07-13
 
-R6 executed the independent full verification gate. Available checks passed, including core/app regression, scale, replay, visual/accessibility 8/8, lint, build, and scans. The gate is `BLOCKED` because the required RLS suite skipped all 35 tests without Docker/Supabase; SQL EXPLAIN/buffer evidence remains open. Stage 4C cannot proceed; R7 must not convert this blocked result into closure. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R6_EVIDENCE.md`.
+R6 executed the independent full verification gate. Its original environment block was later resolved by actual RLS 35/35 and SQL buffer execution; R7 records the resulting closure without reclassifying skipped checks. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`.

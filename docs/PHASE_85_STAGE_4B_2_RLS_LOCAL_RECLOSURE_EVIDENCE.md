@@ -43,8 +43,12 @@ git diff --check
 PASS
 ```
 
+## Subsequent SQL Plan Closure
+
+R7 executed `EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON)` against the authorized local seed for both bounded v2 projection-source RPCs. The list call completed in 9.767 ms with 2061 shared-hit blocks; the detail call completed in 8.565 ms with 1969 shared-hit blocks. Both had zero shared-read, temp-read/write, and local-read/write blocks. Full interpretation is recorded in `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`.
+
 ## Remaining Caveat
 
 `npx supabase db query` surfaced a local advisory that RLS is disabled on `public.conversation_mutation_idempotency` and `public.personas`. This was not auto-remediated because enabling RLS without policies can break access. It must be handled as a separate explicit SQL/RLS policy decision.
 
-SQL `EXPLAIN ANALYZE BUFFERS` for the Stage 4B-2 bounded list/detail RPCs was attempted after the RLS pass, but the standalone DB session did not contain the actor membership seed required by the actor-aware RPCs and correctly failed closed. This evidence therefore closes the zero-skip RLS execution blocker, but does not claim SQL buffer evidence closure.
+The initial standalone SQL attempt lacked actor context and correctly failed closed. R7 supersedes that attempt with an authorized service-role seed context and records the resulting buffer evidence separately.

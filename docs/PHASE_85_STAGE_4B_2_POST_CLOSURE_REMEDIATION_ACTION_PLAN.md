@@ -12,9 +12,9 @@ Production pilot remains **NO-GO**. R-405 remains open. Real WhatsApp, Telegram,
 
 The Stage 4B-2 audit found that the implementation is substantial but is not yet a complete implementation of the locked technical intent. This remediation track is the controlled work item for closing those findings. The prior closure evidence remains historical implementation evidence; it does not authorize Stage 4C while the remediation gates below are open.
 
-Stage 4C is blocked until remediation R0-R6 verification is green and the R7 evidence closure is committed separately.
+Stage 4C was blocked until remediation R0-R6 verification was green and the R7 evidence closure was completed separately. R0-R7 are now closed locally; Stage 4C is the next authorized Phase 85 unit.
 
-R1 through R5 implementation units are complete. R6 independent verification is executed, but the gate is blocked because real RLS execution and SQL EXPLAIN evidence require an unavailable Supabase/Docker environment. R7 cannot close the track while this required gate is blocked.
+R1 through R5 implementation units are complete. R6 was re-closed on 2026-07-13 with local Supabase reset, RLS 35/35 with zero skips, and executed SQL buffer evidence for the bounded list/detail projection RPCs. R7 canonical closure is complete; production pilot remains `NO-GO`, R-405 remains open, and real integration paths remain closed.
 
 ## 2. Locked findings
 
@@ -94,3 +94,9 @@ R5 evidence is `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R5_EVIDE
 R6 executed `npm run rehearse:stage-4b2-r6` through the independent gate runner. The gate contract tests passed 3/3; core passed 234/234; the full app passed 153 files with 959 passed / 6 skipped; lint had 0 errors and 3 pre-existing warnings; the production build passed; R5 scale passed 4/4; 79G passed 7/7; full 100x50 channel replay passed; and messaging visual/accessibility passed 8/8 across desktop, tablet, Android, and iOS. The runner also passed the documented R-405-only production dependency audit exception, diff check, and diff-added/untracked secret and forbidden-name scan.
 
 The final R6 report is `BLOCKED`, not pass: `npm run test:rls` skipped all 35 required tests because Docker/Supabase was unavailable, and no real SQL EXPLAIN/buffer evidence could be produced. R6 evidence is `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R6_EVIDENCE.md`. A deterministic `conversationSequence` assignment was added to local simulator messages after the gate exposed a same-timestamp transcript ordering flake; the targeted simulator assertion and full visual suite passed afterward. Stage 4C remains blocked; R7 must not reinterpret this result as closure.
+
+## 12. R7 canonical closure and handoff - 2026-07-13
+
+The historical R6 blocked report above was subsequently superseded by real local environment evidence: database reset passed, the complete RLS role matrix passed 35/35 with zero skips, and PostgreSQL `EXPLAIN (ANALYZE, BUFFERS)` executed for both bounded v2 projection-source RPCs. Combined with R2 limit-before-aggregation SQL and R5 10k scale evidence, the R6 prerequisite is green without converting a skipped check into a pass.
+
+R7 reconciled the canonical documents, marked R-4B2-01 through R-4B2-10 mitigated in the local prototype, and created `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. R0-R7 are complete locally. The next authorized Phase 85 unit is Stage 4C, which must begin with its own plan and affected-file review. Production pilot remains `NO-GO`; R-405 remains open; no real provider/channel, billing, monitoring, backup, secret-manager, or health-data path is enabled.

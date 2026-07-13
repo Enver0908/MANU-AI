@@ -1,5 +1,7 @@
 # MANU-AI Pilot Readiness Evidence Pack
 
+Phase 85 Stage 4B-2 remediation R7 update, 2026-07-13: R0-R7 are complete locally after zero-skip RLS and executed bounded list/detail SQL buffer evidence. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. This contributes local engineering evidence only; production pilot remains `NO-GO`, R-405 and external approvals remain open, and real integration paths remain closed.
+
 Date: 2026-06-03
 
 ## Status
@@ -657,4 +659,4 @@ R5 contributes no production readiness approval. Full regression, scale, replay,
 
 ## Stage 4B-2 Post-Closure Remediation R6 - 2026-07-13
 
-R6 contributes no production readiness approval. The independent gate passed all available application/runtime checks and classified the required Supabase RLS role matrix as `BLOCKED` because all 35 tests skipped without Docker. SQL EXPLAIN/buffer evidence is not available. Production remains `NO-GO`; R-405 remains open. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R6_EVIDENCE.md`.
+R6 contributes no production readiness approval. Its original environment block was resolved by actual RLS 35/35 and executed SQL buffer evidence; R7 closes the local remediation sequence. Production remains `NO-GO`; R-405 remains open. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`.

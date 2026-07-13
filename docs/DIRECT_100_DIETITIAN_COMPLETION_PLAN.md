@@ -1,4 +1,6 @@
 # Direct 100 Dietitian Completion Plan
+
+Current Phase 85 status, 2026-07-13: Stage 4B-2 remediation R0-R7 is complete locally, including zero-skip RLS, SQL buffer evidence, 10k bounded scale, and canonical closure. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. This does not approve a 100-dietitian production pilot; production remains `NO-GO` and R-405 remains open.
 Date: 2026-06-05
 
 ## Purpose
@@ -1128,21 +1130,21 @@ Phase 1 is a pure bounded-domain foundation: assignment-aware permissions, allow
 Direct-scale readiness cannot consume the historical Stage 4B-2 closure as final evidence. Database-bounded messaging reads, server-side assignment authorization, atomic idempotency, zero-skip RLS, and SQL-backed scale rehearsal remain required under `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`.
 ## Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
 
-R1 contract corrections are complete and evidenced in `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R1_EVIDENCE.md`. This does not change pilot readiness: production remains `NO-GO`, R-405 remains open, and R2-R7 remain required.
+R1 contract corrections are complete and remain historical evidence; R7 now closes the full local remediation sequence. This does not change pilot readiness: production remains `NO-GO` and R-405 remains open.
 
 ## Stage 4B-2 Post-Closure Remediation R2 - 2026-07-12
 
-R2 implementation is evidenced in `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R2_EVIDENCE.md`. It does not close a production gate; RLS is still environment-blocked, production remains `NO-GO`, R-405 remains open, and R3-R7 remain required.
+R2 implementation remains historical evidence within the R7-closed local sequence. It does not close a production gate; production remains `NO-GO` and R-405 remains open.
 ## Stage 4B-2 Post-Closure Remediation R3 - 2026-07-12
 
-R3 is an implementation correction, not a pilot approval. Production remains `NO-GO`, R-405 remains open, R4-R7 remain required, and real integrations remain disabled. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R3_EVIDENCE.md`.
+R3 is an implementation correction within the R7-closed local sequence, not a pilot approval. Production remains `NO-GO`, R-405 remains open, and real integrations remain disabled.
 ## Stage 4B-2 Post-Closure Remediation R4 - 2026-07-12
 
-R4 is an implementation correction, not a pilot approval. Production remains `NO-GO`, R-405 remains open, R5-R7 remain required, and full app/RLS evidence is not claimed. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R4_EVIDENCE.md`.
+R4 is an implementation correction within the R7-closed local sequence, not a pilot approval. Production remains `NO-GO` and R-405 remains open.
 ## Stage 4B-2 Post-Closure Remediation R5 - 2026-07-13
 
-R5 is a test/evidence reconstruction, not a pilot approval. Production remains `NO-GO`, R-405 remains open, R6-R7 remain required, and real RLS/EXPLAIN evidence remains open. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R5_EVIDENCE.md`.
+R5 is test/scale evidence within the R7-closed local sequence, not a pilot approval. Production remains `NO-GO` and R-405 remains open.
 
 ## Stage 4B-2 Post-Closure Remediation R6 - 2026-07-13
 
-R6 is an independent verification attempt, not a pilot approval. All available checks passed, but the gate remains `BLOCKED` because the 35-test real RLS role matrix skipped without Docker/Supabase and SQL EXPLAIN/buffer evidence was unavailable. Production remains `NO-GO`; R-405 remains open; R7 and the environment gate remain required. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R6_EVIDENCE.md`.
+R6 is independent verification, not a pilot approval. Its original environment block was resolved by actual RLS and SQL buffer execution; R7 is complete. Production remains `NO-GO`; R-405 remains open. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`.

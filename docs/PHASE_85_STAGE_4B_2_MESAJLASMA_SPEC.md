@@ -1,9 +1,10 @@
 # Phase 85 Stage 4B-2 — Mesajlaşma Runtime Specification
 
 Date: 2026-07-12  
-Status: **implemented; conditional closure with environment-blocked RLS re-run**  
+Status: **implemented; post-closure remediation R0-R7 complete locally on 2026-07-13**
 Canonical plan: `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md`  
 Closure evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md`
+Remediation closure evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`
 
 ## 1. Boundary
 

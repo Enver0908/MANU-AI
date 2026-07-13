@@ -4,6 +4,8 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 ## Current Status
 
+**2026-07-13 Stage 4B-2 post-closure remediation R7:** R0-R7 are complete locally. Local Supabase reset and RLS passed 35/35 with zero skips; executed PostgreSQL list/detail buffer plans, R2 bounded SQL, R5 10k scale evidence, and the R6 independent gate close the remediation prerequisites. R-4B2-01 through R-4B2-10 are mitigated in the local prototype. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. **Next Phase 85 unit:** Stage 4C. Production pilot remains `NO-GO`; R-405 remains open; real integration paths remain closed.
+
 **2026-07-13 Stage 4B-2 local RLS re-closure:** Local Supabase/Docker is now running and the current RLS suite passed with zero skips. `npx supabase db reset` passed, `npm run test:rls` passed 35/35, targeted `supabase-store`/`client-forms` tests passed 9/9, and `git diff --check` passed. Evidence: `docs/PHASE_85_STAGE_4B_2_RLS_LOCAL_RECLOSURE_EVIDENCE.md`. Production pilot remains `NO-GO`; R-405 remains open; real provider/channel/health-data paths remain closed.
 
 **2026-07-12 Stage 4B-2 closure:** Mesajlaşma implementation and evidence closure are complete locally; current RLS execution is environment-blocked. Bounded conversation list/detail APIs, per-actor unread receipts, manual/yellow/draft mutations, WhatsApp-like detail UX, Mesajlaşma navigation, Stage 4B integration, scale/visual/release verification, and canonical runtime spec are implemented. Core 234/234, app 953 passed / 6 skipped, Stage 4B-2 rehearsal, 79G/release verification, build, lint, and visual 40/40 passed. `npm run test:rls` skips 35 tests because Docker Desktop is unavailable; this is not counted as pass. Evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`. **Next:** Stage 4C Diyetisyen Icin AI Chat. Production pilot remains `NO-GO`; R-405 remains open; real provider/channel/health-data paths remain closed.
@@ -70,7 +72,7 @@ P85-IF-D added complete transcript and human-control coordination for business-h
 
 This repository is a local SaaS/PWA pilot prototype and architecture workspace. It is not a production-connected system yet.
 
-**Latest implementation phase:** Phase 85 Stage 4B-2 Mesajlaşma is implemented locally and is under post-closure remediation (R1 complete, 2026-07-12). **Next work:** remediation R2; Stage 4C remains blocked. **Production pilot:** `NO-GO` (unchanged); R-405 remains open.
+**Latest implementation phase:** Phase 85 Stage 4B-2 Mesajlasma and post-closure remediation R0-R7 are complete locally (2026-07-13). **Next work:** Stage 4C plan/read gate. **Production pilot:** `NO-GO` (unchanged); R-405 remains open.
 
 **Phase 82 verification:** targeted Phase 82 tests passed (5 files, 31/31); Phase 82G records `repoLocalClosureComplete: true` with verification `blocked` because `npm run test:rls` remains skipped/pending when local Supabase is unavailable.
 
@@ -236,7 +238,7 @@ The canonical order is Stage 4B, mandatory Stage 4B-2 Mesajlasma, then Stage 4C.
 The decision-complete Mesajlasma action plan is recorded in `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md`; runtime spec in `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`; closure evidence in `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md`. Stage 4B-2 Phases 0–11 are complete. **Next:** Stage 4C; production pilot remains `NO-GO`; R-405 remains open.
 ## Phase 85 Stage 4B-2 Post-Closure Remediation - 2026-07-12
 
-Stage 4B-2 implementation is under post-closure remediation. The canonical remediation plan is `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`; R0 is documentation-only and complete. Stage 4C remains blocked until the remediation verification chain closes. Production pilot remains `NO-GO`, R-405 remains open, and real provider/channel/health-data paths remain disabled.
+Stage 4B-2 implementation and post-closure remediation R0-R7 are complete locally. The canonical remediation plan is `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`; R7 evidence is the current closure authority. Stage 4C is next. Production pilot remains `NO-GO`, R-405 remains open, and real provider/channel/health-data paths remain disabled.
 
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
 
@@ -257,4 +259,8 @@ R5 reconstructs the bounded-scale, replay, accessibility, lifecycle/export, and 
 
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R6 - 2026-07-13
 
-R6 executed the independent full gate. Core 234/234, app 959/6 skipped, lint/build, R5 scale 4/4, 79G 7/7, full channel replay, visual/accessibility 8/8, dependency audit exception handling, diff check, and diff-added/untracked secret-name scans passed. The gate is **BLOCKED**, not green, because the required 35-test Supabase RLS suite skipped without Docker; SQL EXPLAIN/buffer evidence is also unavailable. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R6_EVIDENCE.md`. Production remains `NO-GO`; R-405 remains open.
+R6 executed the independent full gate. Core 234/234, app 959/6 skipped, lint/build, R5 scale 4/4, 79G 7/7, full channel replay, visual/accessibility 8/8, dependency audit exception handling, diff check, and diff-added/untracked secret-name scans passed. Its original environment block was later resolved by RLS 35/35 and executed SQL buffer evidence; see the R7 record below. Production remains `NO-GO`; R-405 remains open.
+
+## Phase 85 Stage 4B-2 Post-Closure Remediation R7 - 2026-07-13
+
+The historical R6 environment block is superseded by zero-skip RLS and executed SQL buffer evidence. Canonical status, risks, and handoff are reconciled in `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. R0-R7 are complete locally; Stage 4C is next. This does not approve the production pilot or close R-405.

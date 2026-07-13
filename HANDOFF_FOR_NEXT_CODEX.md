@@ -2,9 +2,11 @@
 
 ## Read This First
 
-Latest Phase 85 Stage 4B-2 local RLS re-closure status (2026-07-13): **local Supabase reset now passes and `npm run test:rls` passes 35/35 with 0 skipped.** Evidence: `docs/PHASE_85_STAGE_4B_2_RLS_LOCAL_RECLOSURE_EVIDENCE.md`. The prior Docker/Supabase skip blocker is superseded for the current local RLS suite. SQL buffer/EXPLAIN evidence for bounded list/detail RPCs is not claimed closed in this note. Production pilot remains `NO-GO`; R-405 remains open; real provider/channel/health-data and production-operations paths remain closed.
+Latest Phase 85 Stage 4B-2 status (2026-07-13): **Mesajlasma post-closure remediation R0-R7 is complete locally.** Local reset and RLS passed 35/35 with zero skips; executed PostgreSQL list/detail buffer plans, R2 bounded SQL, R5 scale evidence, and R6 independent verification satisfy the closure prerequisites. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. **Next work:** Stage 4C, beginning with its explicit plan/read gate. Production pilot remains `NO-GO`; R-405 remains open; all real integration paths remain closed. This current handoff supersedes older next-phase statements below.
 
-Latest Phase 85 Stage 4B-2 status (2026-07-12): **Mesajlaşma implementation exists locally and is under post-closure remediation; R1 contract correction is complete and current RLS closure is environment-blocked.** Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R1_EVIDENCE.md`. **Next work:** remediation R2; Stage 4C remains blocked. Production pilot remains `NO-GO`; R-405 remains open; all real provider/channel/health-data and production-operations paths remain closed.
+Latest Phase 85 Stage 4B-2 local environment status (2026-07-13): **local Supabase reset and `npm run test:rls` pass with 35/35 and 0 skipped; R7 also records executed list/detail SQL buffer evidence.** Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. Production pilot remains `NO-GO`; R-405 remains open; real provider/channel/health-data and production-operations paths remain closed.
+
+Historical Stage 4B-2 remediation opening (2026-07-12): superseded by the R7 closure handoff above.
 
 Latest Phase 85 Stage 4B-2 Phase 3 status (2026-07-12): superseded by Phase 4 closure above. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_3_BOUNDED_PROJECTION_EVIDENCE.md`.
 
@@ -2886,7 +2888,7 @@ Canonical action plan: `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md`.
 
 Phase 0 documentation evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_0_DOCUMENTATION_EVIDENCE.md`.
 
-Stage 4B-2 Phases 0–11 are historical implementation evidence (2026-07-12) and are under post-closure remediation. Runtime spec: `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`. Historical closure evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md`. Active remediation: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. **Next:** remediation R1; Stage 4C remains blocked. Production pilot remains `NO-GO`; R-405 remains open; real provider/channel/health-data, live billing, monitoring, backup, and secret-manager paths remain disabled.
+Stage 4B-2 Phases 0-11 and remediation R0-R6 are historical implementation evidence; R7 is the current closure authority. Runtime spec: `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`. Closure evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. **Next:** Stage 4C plan/read gate. Production pilot remains `NO-GO`; R-405 remains open; real provider/channel/health-data, live billing, monitoring, backup, and secret-manager paths remain disabled.
 
 ## Approved Phase 85 Stage 4B-2 Phase 1 Handoff - 2026-07-12
 
@@ -2916,4 +2918,4 @@ R5 is implemented and evidenced in `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDI
 
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R6 - 2026-07-13
 
-R6 is implemented and independently executed. The gate passed its contract tests, core/app regression, scale, replay, visual/accessibility, lint, build, dependency exception, diff, and secret/name checks. The final gate is `BLOCKED` because `npm run test:rls` skipped all 35 required tests without Docker/Supabase; SQL EXPLAIN evidence is also unavailable. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R6_EVIDENCE.md`. Next work requires a real Supabase/Docker run with zero RLS skips and SQL EXPLAIN/buffer capture; do not start R7 closure or claim production readiness. Preserve production `NO-GO`, R-405 open, append-only migrations, and all real integration shutdowns.
+R6 was implemented and independently executed. Its original environment block was resolved by an actual local Supabase reset, RLS 35/35 with zero skips, and SQL buffer capture. R7 is complete; evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. Preserve production `NO-GO`, R-405 open, append-only migrations, and all real integration shutdowns.
