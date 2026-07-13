@@ -4,6 +4,7 @@ import {
   type ConversationMessageDto,
   type ConversationPermissions,
 } from "./phase-85-stage-4b2-contracts";
+import { resolveConversationMessageBodyWithMedia } from "./phase-85-stage-4b3-bounded-media";
 import type { ClientRecord, MessageContentStatus, MessageOrigin, SenderType } from "./types";
 
 export type ConversationTimelineItem =
@@ -48,6 +49,9 @@ export function isConversationContentUnavailable(status: MessageContentStatus) {
 export function resolveConversationMessageBody(message: ConversationMessageDto) {
   if (isConversationContentUnavailable(message.contentStatus)) {
     return CONVERSATION_UNAVAILABLE_PREVIEW;
+  }
+  if (message.media.length > 0) {
+    return resolveConversationMessageBodyWithMedia(message);
   }
   return message.body?.trim() ? message.body : CONVERSATION_UNAVAILABLE_PREVIEW;
 }

@@ -65,8 +65,6 @@ import {
 import {
   buildConversationDetailResponseFromAppState,
   buildConversationListResponseFromAppState,
-} from "./phase-85-stage-4b2-api";
-import {
   conversationActorFromContext,
   conversationProjectionSourceFromAppState,
   type ConversationDetailBuildInput,
@@ -89,6 +87,13 @@ import {
   storeFallbackConversationMutationIdempotency,
   resolveDraftMutationResultMessage,
 } from "./phase-85-stage-4b2-mutations";
+import { resolveConversationPermissions } from "./phase-85-stage-4b2-api";
+import {
+  assertVisualCorrectionAllowed,
+  parseVisualCorrectionMutationBody,
+} from "./phase-85-stage-4b3-bounded-media";
+import type { VisualCorrectionRequest } from "./phase-85-stage-4b3-media-contracts";
+import { submitVisualCorrection } from "./phase-85-stage-4b3-visual-corrections";
 import type { NotificationCategory, NotificationPriority } from "./phase-85-stage-4b-contracts";
 import type { ClinicalAlertFilterSeverity } from "./phase-85-stage-4b-alerts";
 import {
@@ -648,4 +653,53 @@ export function setChannelAdapterRollbackInState(
   input: Parameters<typeof applyChannelAdapterRollbackInState>[1],
 ) {
   return applyChannelAdapterRollbackInState(state, input);
+}
+
+export function submitFallbackVisualCorrection(
+  conversationId: string,
+  request: VisualCorrectionRequest,
+) {
+  const state = getFallbackState();
+  const context = fallbackTenantContext(state);
+  const actor = conversationActorFromContext(context);
+  const assignments = listFallbackAssignments();
+  const conversation = state.conversations.find((entry) => entry.id === conversationId);
+  const client = conversation
+    ? state.clients.find((entry) => entry.id === conversation.clientId && entry.lifecycleStatus === "active")
+    : undefined;
+  if (!conversation || !client) {
+    throw new AppDomainError(404, "conversation_not_found");
+  }
+  const permissions = resolveConversationPermissions({
+    actor,
+    conversation,
+    client,
+    assignments,
+  });
+  assertVisualCorrectionAllowed(permissions, actor.role);
+  parseVisualCorrectionMutationBody(request);
+
+  const result = submitVisualCorrection(state, {
+    ...request,
+    dietitianId: context.dietitianId,
+  });
+  if (!result.ok) {
+    throw new AppDomainError(409, result.failureCode);
+  }
+
+  saveFallbackState(result.state);
+  const detail = buildConversationDetailResponseFromAppState(
+    result.state,
+    context,
+    assignments,
+    conversationId,
+  );
+  return {
+    version: "p85-stage-4b3-visual-correction-v1",
+    generatedAt: new Date().toISOString(),
+    correctionId: result.correctionId,
+    resultAction: result.resultAction,
+    conversationId,
+    detail,
+  };
 }

@@ -116,6 +116,7 @@ import type {
 } from "./phase-85-stage-4b2-contracts";
 import {
   buildConversationDetailResponse,
+  buildConversationDetailResponseFromAppState,
   buildConversationListResponse,
   conversationActorFromContext,
   conversationProjectionSourceFromSnakeRows,
@@ -123,8 +124,14 @@ import {
   type ConversationListBuildInput,
   type ConversationProjectionSnakeRows,
 } from "./phase-85-stage-4b2-messaging";
-import { decodeConversationListCursor, encodeConversationListCursor } from "./phase-85-stage-4b2-api";
+import { decodeConversationListCursor, encodeConversationListCursor, resolveConversationPermissions } from "./phase-85-stage-4b2-api";
 import { buildConversationMarkReadMutationResponse } from "./phase-85-stage-4b2-read-api";
+import {
+  assertVisualCorrectionAllowed,
+  parseVisualCorrectionMutationBody,
+} from "./phase-85-stage-4b3-bounded-media";
+import type { VisualCorrectionRequest } from "./phase-85-stage-4b3-media-contracts";
+import { submitVisualCorrection } from "./phase-85-stage-4b3-visual-corrections";
 import {
   appendDietitianManualReplyByConversation,
   approveDraftMessageInStateWithRevision,
@@ -5785,6 +5792,91 @@ function demoTenantContext(): AppTenantContext {
     dietitianId: DEMO_DIETITIAN_UUID,
     userId: DEMO_USER_UUID,
     role: "owner",
+  };
+}
+
+export async function submitSupabaseVisualCorrection(
+  conversationId: string,
+  request: VisualCorrectionRequest,
+  context: AppTenantContext,
+) {
+  const state = await loadSupabaseConversationOperationState(conversationId, context);
+  const actor = conversationActorFromContext(context);
+  const conversation = state.conversations.find((entry) => entry.id === conversationId);
+  const client = conversation
+    ? state.clients.find((entry) => entry.id === conversation.clientId && entry.lifecycleStatus === "active")
+    : undefined;
+  if (!conversation || !client) {
+    throw new AppDomainError(404, "conversation_not_found");
+  }
+  const { assignments } = await loadSupabaseConversationProjectionBundle(context, conversationId);
+  const permissions = resolveConversationPermissions({ actor, conversation, client, assignments });
+  assertVisualCorrectionAllowed(permissions, actor.role);
+  parseVisualCorrectionMutationBody(request);
+
+  const result = submitVisualCorrection(state, {
+    ...request,
+    dietitianId: context.dietitianId,
+  });
+  if (!result.ok) {
+    throw new AppDomainError(409, result.failureCode);
+  }
+
+  const correction = result.state.visualCorrections.find((entry) => entry.id === result.correctionId);
+  if (!correction) {
+    throw new Error("visual_correction_persist_failed");
+  }
+
+  const supabase = requireSupabase();
+  const { error } = await supabase.from("visual_corrections").insert({
+    id: correction.id,
+    tenant_id: correction.tenantId,
+    client_id: correction.clientId,
+    conversation_id: correction.conversationId,
+    analysis_id: correction.analysisId,
+    dietitian_id: correction.dietitianId,
+    status: correction.status,
+    reason_code: correction.reasonCode,
+    explanation: correction.explanation,
+    corrected_scene_type: correction.correctedSceneType,
+    corrected_ocr_text: correction.correctedOcrText,
+    corrected_entity_labels: correction.correctedEntityLabels,
+    conversation_revision_at_submit: correction.conversationRevisionAtSubmit,
+    analysis_revision_at_submit: correction.analysisRevisionAtSubmit,
+    result_action: correction.resultAction,
+    created_at: correction.createdAt,
+    updated_at: correction.updatedAt,
+  });
+  if (error) throwControlledRpcError(error);
+
+  const updatedClient = result.state.clients.find((entry) => entry.id === client.id);
+  if (updatedClient && updatedClient !== client) {
+    await supabase
+      .from("clients")
+      .update({
+        ai_status: updatedClient.aiStatus,
+        ai_mode: updatedClient.aiMode,
+        human_takeover_locked: updatedClient.humanTakeoverLocked,
+        context_revision: updatedClient.contextRevision,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("tenant_id", context.tenantId)
+      .eq("id", updatedClient.id);
+  }
+
+  const detail = buildConversationDetailResponseFromAppState(
+    result.state,
+    context,
+    assignments,
+    conversationId,
+  );
+  return {
+    version: "p85-stage-4b3-visual-correction-v1",
+    generatedAt: new Date().toISOString(),
+    correctionId: result.correctionId,
+    resultAction: result.resultAction,
+    conversationId,
+    detail,
   };
 }
 

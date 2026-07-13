@@ -8,12 +8,14 @@ import type {
   MessageContentStatus,
   MessageOrigin,
   MessageRecord,
+  MessageRetrievalEligibility,
   SenderType,
   TenantRole,
 } from "./types";
+import type { ConversationMediaDto, VisualReviewDto } from "./phase-85-stage-4b3-media-contracts";
 
 export const PHASE_85_STAGE_4B_2_CONTRACT_VERSION = "p85-stage-4b-2-contracts-v2";
-export const PHASE_85_STAGE_4B_2_API_VERSION = "p85-stage-4b-2-api-v2";
+export const PHASE_85_STAGE_4B_2_API_VERSION = "p85-stage-4b-2-api-v3";
 export const CONVERSATION_LIST_DEFAULT_PAGE_SIZE = 30;
 export const CONVERSATION_LIST_MAX_PAGE_SIZE = 100;
 export const CONVERSATION_DETAIL_DEFAULT_PAGE_SIZE = 50;
@@ -128,6 +130,8 @@ export type ConversationMessageDto = {
   sourceMessageId: string | null;
   createdAt: string;
   conversationSequence: number | null;
+  media: ConversationMediaDto[];
+  visualReview: VisualReviewDto | null;
 };
 
 export type ConversationSummaryDto = {
@@ -255,6 +259,7 @@ export type ConversationProjectionMessage = Pick<
   | "sourceMessageId"
   | "conversationSequence"
   | "contentStatus"
+  | "retrievalEligibility"
   | "status"
   | "createdAt"
 >;
@@ -265,6 +270,7 @@ export type ConversationProjectionSource = {
   messages: readonly ConversationProjectionMessage[];
   receipts?: readonly ConversationReadReceiptRecord[];
   unreadCounts?: readonly { conversationId: string; unreadCount: number }[];
+  media?: import("./phase-85-stage-4b3-bounded-media").Stage4B3ConversationMediaProjectionSource;
 };
 
 export type ConversationClientStatusSource = Pick<

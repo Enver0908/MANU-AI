@@ -338,6 +338,7 @@ export type ConversationMediaDto = {
 
 export type VisualReviewDto = {
   analysisId: string;
+  analysisRevision: number;
   mediaAssetId: string;
   messageId: string;
   bundleId: string | null;
@@ -655,7 +656,10 @@ export function canAccessVisualReview(role: TenantRole): boolean {
 
 export function buildVisualReviewDto(input: {
   role: TenantRole;
-  analysis: Pick<VisualAnalysisRecord, "id" | "mediaAssetId" | "messageId" | "bundleId" | "observation">;
+  analysis: Pick<
+    VisualAnalysisRecord,
+    "id" | "analysisRevision" | "mediaAssetId" | "messageId" | "bundleId" | "observation"
+  >;
   reviewState: VisualReviewDto["reviewState"];
   latestCorrectionId: string | null;
 }): VisualReviewDto | null {
@@ -666,6 +670,7 @@ export function buildVisualReviewDto(input: {
   const observation = input.analysis.observation;
   return {
     analysisId: input.analysis.id,
+    analysisRevision: input.analysis.analysisRevision,
     mediaAssetId: input.analysis.mediaAssetId,
     messageId: input.analysis.messageId,
     bundleId: input.analysis.bundleId,

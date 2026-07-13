@@ -49,7 +49,7 @@ describe("phase 85 stage 4b-2 verification", () => {
     );
 
     expect(CONVERSATION_INBOX_ITEM_DTO_KEYS).toHaveLength(11);
-    expect(CONVERSATION_MESSAGE_DTO_KEYS).toHaveLength(11);
+    expect(CONVERSATION_MESSAGE_DTO_KEYS).toHaveLength(13);
     for (const item of list.items) {
       assertConversationInboxItemDtoSafety(item);
     }

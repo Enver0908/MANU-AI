@@ -9,10 +9,12 @@ import {
   resolveConversationMessageBody,
   resolveConversationMessageProvenance,
 } from "@/lib/conversation-detail-helpers";
+import type { ConversationMediaDto } from "@/lib/phase-85-stage-4b3-media-contracts";
 import type { ClientRecord } from "@/lib/types";
 import type { SupportedLanguageCode } from "@/lib/languages";
 import { t } from "@/lib/i18n";
 import { Badge, ConfirmButton, TextareaInput } from "./shared";
+import { ConversationMessageMedia } from "./conversation-message-media";
 
 export function ConversationMessageBubble({
   message,
@@ -24,6 +26,7 @@ export function ConversationMessageBubble({
   onApproveDraft,
   onEditAndSendDraft,
   onDismissDraft,
+  onOpenMediaPreview,
 }: {
   message: ConversationMessageDto;
   client: ClientRecord | null;
@@ -34,6 +37,7 @@ export function ConversationMessageBubble({
   onApproveDraft: () => Promise<void>;
   onEditAndSendDraft: () => Promise<void>;
   onDismissDraft: () => Promise<void>;
+  onOpenMediaPreview?: (asset: ConversationMediaDto) => void;
 }) {
   const provenance = resolveConversationMessageProvenance(message);
   const body = resolveConversationMessageBody(message);
@@ -67,6 +71,12 @@ export function ConversationMessageBubble({
         >
           {body}
         </p>
+        <ConversationMessageMedia
+          conversationId={message.conversationId}
+          media={message.media}
+          uiLanguage={uiLanguage}
+          onOpenPreview={onOpenMediaPreview}
+        />
         {isGreenDraft && showDraftControls ? (
           <div className="mt-3 border-t border-emerald-200 pt-3">
             <TextareaInput

@@ -452,6 +452,32 @@ export function useStage4B2Messaging({
     ],
   );
 
+  const submitVisualCorrection = useCallback(
+    async (
+      targetConversationId: string,
+      input: {
+        analysisId: string;
+        requestId: string;
+        expectedConversationRevision: number;
+        expectedAnalysisRevision: number;
+        reasonCode: string;
+        explanation: string;
+      },
+    ) => {
+      const payload = await requestJson<{
+        detail: ConversationDetailResponse;
+      }>(`/api/conversations/${encodeURIComponent(targetConversationId)}/visual-corrections`, {
+        method: "POST",
+        body: JSON.stringify(input),
+      });
+      applyDetailResponse(payload.detail, "replace");
+      mergeDetailIntoState(payload.detail);
+      setLastSuccessAt(new Date().toISOString());
+      consecutiveErrorsRef.current = 0;
+    },
+    [applyDetailResponse, mergeDetailIntoState],
+  );
+
   return {
     ...snapshot,
     refreshList,
@@ -462,6 +488,7 @@ export function useStage4B2Messaging({
     loadOlderMessages,
     loadNewerMessages,
     markReadThroughSequence,
+    submitVisualCorrection,
     isRequestError: (error: unknown): error is AppRequestError => error instanceof AppRequestError,
   };
 }

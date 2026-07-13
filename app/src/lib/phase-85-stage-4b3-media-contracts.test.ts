@@ -109,6 +109,7 @@ describe("phase-85-stage-4b3-media-contracts", () => {
   it("limits visual review DTO to authorized dietitian roles", () => {
     const analysis = {
       id: "analysis-1",
+      analysisRevision: 1,
       mediaAssetId: "asset-1",
       messageId: "message-1",
       bundleId: "bundle-1",

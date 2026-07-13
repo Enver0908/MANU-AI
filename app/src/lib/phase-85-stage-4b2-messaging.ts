@@ -39,6 +39,11 @@ import {
   type ConversationDetailBuildInput,
   type ConversationListBuildInput,
 } from "./phase-85-stage-4b2-api";
+import {
+  buildStage4B3MediaProjectionSourceFromState,
+  filterStage4B3MediaProjectionForConversation,
+  projectConversationMessageWithMedia,
+} from "./phase-85-stage-4b3-bounded-media";
 
 export const STAGE_4B2_INBOX_UNREAD_DISPLAY_CAP = 99;
 export const STAGE_4B2_MESSAGING_PROJECTION_VERSION = "p85-stage-4b2-messaging-v1";
@@ -74,6 +79,7 @@ export type ConversationProjectionSnakeMessage = {
   source_message_id?: string | null;
   conversation_sequence?: number | null;
   content_status?: ConversationProjectionMessage["contentStatus"];
+  retrieval_eligibility?: ConversationProjectionMessage["retrievalEligibility"];
   status?: ConversationProjectionMessage["status"];
   created_at: string;
 };
@@ -142,10 +148,12 @@ export function conversationProjectionSourceFromAppState(state: ManuAppState): C
       sourceMessageId: message.sourceMessageId,
       conversationSequence: message.conversationSequence,
       contentStatus: message.contentStatus,
+      retrievalEligibility: message.retrievalEligibility ?? "eligible",
       status: message.status,
       createdAt: message.createdAt,
     })),
     receipts: state.conversationReadReceipts,
+    media: buildStage4B3MediaProjectionSourceFromState(state),
   };
 }
 
@@ -182,6 +190,7 @@ export function conversationProjectionSourceFromSnakeRows(
       sourceMessageId: message.source_message_id ?? null,
       conversationSequence: message.conversation_sequence ?? null,
       contentStatus: message.content_status,
+      retrievalEligibility: message.retrieval_eligibility ?? "eligible",
       status: message.status,
       createdAt: message.created_at,
     })),
@@ -369,7 +378,7 @@ function projectInboxItem(
     clientId: client.id,
     clientFullName: client.fullName,
     channel: conversation.channel,
-    preview: normalizeConversationPreview(latest),
+    preview: normalizeConversationPreview(latest, source.media),
     lastActivityAt: latest?.createdAt ?? null,
     lastMessageId: latest?.id ?? null,
     unreadCount,
@@ -553,11 +562,22 @@ export function buildConversationDetailResponse(
   const lastVisible = visibleMessages[visibleMessages.length - 1];
   const receipt = getActorReceipt(source, actor, conversation.id);
 
+  const conversationMedia = source.media
+    ? filterStage4B3MediaProjectionForConversation(source.media, actor.tenantId, conversation.id)
+    : undefined;
+
   return {
     version: PHASE_85_STAGE_4B_2_API_VERSION,
     generatedAt: input.generatedAt ?? new Date().toISOString(),
     conversation: projectConversationSummary(conversation, client, messages),
-    messages: visibleMessages.map(projectConversationMessage),
+    messages: visibleMessages.map((message) =>
+      projectConversationMessageWithMedia(
+        message,
+        actor,
+        conversationMedia,
+        projectConversationMessage(message),
+      ),
+    ),
     pagination: {
       requestedDirection: query.direction,
       anchorMessageId: query.anchorMessageId,

@@ -57,7 +57,7 @@ describe("phase-85-stage-4b2-mutations", () => {
       expectedConversationRevision: conversationRevisionOrDefault(conversation!),
     });
 
-    expect(response.version).toBe("p85-stage-4b-2-api-v2");
+    expect(response.version).toBe("p85-stage-4b-2-api-v3");
     expect(response.operation).toBe("manual_reply");
     expect(response.message?.origin).toBe("dietitian_manual");
     expect(response.message?.status).toBe("sent");

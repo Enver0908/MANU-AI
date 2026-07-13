@@ -56,6 +56,8 @@ export const CONVERSATION_MESSAGE_DTO_KEYS = [
   "sourceMessageId",
   "createdAt",
   "conversationSequence",
+  "media",
+  "visualReview",
 ] as const;
 
 export const STAGE_4B2_SENSITIVE_DTO_PATTERNS =

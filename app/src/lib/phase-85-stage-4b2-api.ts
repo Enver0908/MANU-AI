@@ -23,6 +23,11 @@ import type {
   ConversationReadReceiptRecord,
 } from "./phase-85-stage-4b2-contracts";
 import {
+  isMediaOnlyConversationMessage,
+  resolveConversationListMediaPreview,
+  STAGE_4B3_CONVERSATION_MEDIA_PREVIEW_LABEL,
+} from "./phase-85-stage-4b3-bounded-media";
+import {
   CONVERSATION_CURSOR_VERSION,
   CONVERSATION_DETAIL_DEFAULT_PAGE_SIZE,
   CONVERSATION_DETAIL_MAX_PAGE_SIZE,
@@ -436,11 +441,17 @@ export function normalizeConversationMessageBody(value: string) {
   return truncateCodePoints(value, CONVERSATION_MAX_MESSAGE_BODY_LENGTH);
 }
 
-export function normalizeConversationPreview(message: ConversationProjectionMessage | null) {
+export function normalizeConversationPreview(
+  message: ConversationProjectionMessage | null,
+  media?: import("./phase-85-stage-4b3-bounded-media").Stage4B3ConversationMediaProjectionSource,
+) {
   if (!message) return "";
   const status = normalizeContentStatus(message);
   if (message.origin === "ai_generated" && message.status === "draft") return CONVERSATION_DRAFT_PREVIEW;
   if (isContentUnavailable(status)) return CONVERSATION_UNAVAILABLE_PREVIEW;
+  const mediaPreview = resolveConversationListMediaPreview(message, media);
+  if (mediaPreview) return mediaPreview;
+  if (isMediaOnlyConversationMessage(message)) return STAGE_4B3_CONVERSATION_MEDIA_PREVIEW_LABEL;
   const compact = message.body.trim().replace(/\s+/g, " ");
   return truncateCodePoints(compact, CONVERSATION_MAX_PREVIEW_LENGTH);
 }
@@ -460,6 +471,8 @@ export function projectConversationMessage(message: ConversationProjectionMessag
     sourceMessageId: message.sourceMessageId ?? null,
     createdAt: message.createdAt,
     conversationSequence: message.conversationSequence ?? null,
+    media: [],
+    visualReview: null,
   };
 }
 

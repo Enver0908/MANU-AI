@@ -16,6 +16,7 @@ import {
 } from "@/lib/conversation-detail-helpers";
 import { isRedRiskLockActive } from "@/lib/ai-assistant-control-panel-helpers";
 import type { ClientRecord, ManuAppState } from "@/lib/types";
+import type { ConversationMediaDto } from "@/lib/phase-85-stage-4b3-media-contracts";
 import type { SupportedLanguageCode } from "@/lib/languages";
 import { t } from "@/lib/i18n";
 import { buildClientHumanControlBanner } from "@/lib/phase-85-if-h-operational-visibility";
@@ -23,6 +24,8 @@ import { EmptyState, removeKey } from "./shared";
 import { HumanControlSessionBanner } from "./operational-visibility";
 import { ConversationHeader } from "./conversation-header";
 import { ConversationMessageBubble } from "./conversation-message-bubble";
+import { ConversationMediaPreviewModal } from "./conversation-message-media";
+import { ConversationVisualReviewPanel } from "./conversation-visual-review-panel";
 import { ConversationComposer } from "./conversation-composer";
 import { ConversationDraftReviewPanel } from "./conversation-draft-review-panel";
 import { ConversationAiControlsStrip } from "./conversation-ai-controls-strip";
@@ -56,6 +59,7 @@ export function ConversationPanel({
   isDetailRefreshing,
   detailError,
   state,
+  onSubmitVisualCorrection,
 }: {
   client: ClientRecord | null;
   conversation: ConversationSummaryDto;
@@ -84,10 +88,19 @@ export function ConversationPanel({
   isDetailRefreshing: boolean;
   detailError: string | null;
   state: ManuAppState;
+  onSubmitVisualCorrection?: (input: {
+    analysisId: string;
+    requestId: string;
+    expectedConversationRevision: number;
+    expectedAnalysisRevision: number;
+    reasonCode: string;
+    explanation: string;
+  }) => Promise<void>;
 }) {
   const timelineRef = useRef<HTMLDivElement>(null);
   const [draftEdits, setDraftEdits] = useState<Record<string, string>>({});
   const [yellowDraftEdits, setYellowDraftEdits] = useState<Record<string, string>>({});
+  const [previewAsset, setPreviewAsset] = useState<ConversationMediaDto | null>(null);
   const redRiskLocked = client ? isRedRiskLockActive(client) : false;
   const visibility = resolveConversationDetailMutationVisibility(permissions, client, { canManageAiControls });
   const timelineItems = useMemo(() => buildConversationTimelineItems(messages), [messages]);
@@ -200,6 +213,7 @@ export function ConversationPanel({
                 draftEdit={draftEdits[item.message.id] ?? item.message.body ?? ""}
                 onDraftEdit={(value) => setDraftEdits((current) => ({ ...current, [item.message.id]: value }))}
                 showDraftControls={visibility.showDraftControls && !isYellowDraftReviewMessage(item.message, client)}
+                onOpenMediaPreview={setPreviewAsset}
                 onApproveDraft={async () => {
                   await onApproveDraft(item.message.id);
                   setDraftEdits((current) => removeKey(current, item.message.id));
@@ -228,6 +242,31 @@ export function ConversationPanel({
           </button>
         ) : null}
       </div>
+
+      {messages
+        .filter((message) => message.visualReview?.correctionAllowed)
+        .slice(-1)
+        .map((message) => (
+          <ConversationVisualReviewPanel
+            key={`visual-review-${message.id}`}
+            message={message}
+            conversationRevision={conversation.revision}
+            uiLanguage={uiLanguage}
+            disabled={!onSubmitVisualCorrection || permissions?.isReadOnly}
+            onSubmit={async (input) => {
+              if (!onSubmitVisualCorrection) return;
+              await onSubmitVisualCorrection(input);
+            }}
+          />
+        ))}
+
+      <ConversationMediaPreviewModal
+        open={previewAsset !== null}
+        conversationId={conversation.id}
+        asset={previewAsset}
+        uiLanguage={uiLanguage}
+        onClose={() => setPreviewAsset(null)}
+      />
 
       {activeYellowDraft ? (
         <ConversationDraftReviewPanel

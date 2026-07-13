@@ -49,6 +49,11 @@ const bundleDecisionMigration = readFileSync(
   "utf8",
 );
 
+const boundedMediaMigration = readFileSync(
+  resolve(__dirname, "../../supabase/migrations/20260713140000_phase_85_stage_4b3_bounded_media_reads.sql"),
+  "utf8",
+);
+
 describe("P85 Stage 4B-3 Phase 8 atomic bundle decision migration", () => {
   it("creates bundle decision idempotency storage and commit RPC", () => {
     expect(bundleDecisionMigration).toContain("bundle_decision_idempotency");
@@ -56,5 +61,17 @@ describe("P85 Stage 4B-3 Phase 8 atomic bundle decision migration", () => {
     expect(bundleDecisionMigration).toContain("stale_bundle_revision");
     expect(bundleDecisionMigration).toContain("stale_conversation_revision");
     expect(bundleDecisionMigration).toContain("grant execute on function p85_stage_4b3_commit_bundle_decision_v1");
+  });
+});
+
+describe("P85 Stage 4B-3 Phase 9 bounded media reads migration", () => {
+  it("creates bounded metadata and stream resolution RPCs without object keys", () => {
+    expect(boundedMediaMigration).toContain("p85_stage_4b3_load_bounded_media_metadata_v1");
+    expect(boundedMediaMigration).toContain("p85_stage_4b3_resolve_media_stream_v1");
+    expect(boundedMediaMigration).toContain("'has_thumbnail', ma.thumbnail_object_key is not null");
+    expect(boundedMediaMigration).not.toContain("'thumbnail_object_key', ma.thumbnail_object_key");
+    expect(boundedMediaMigration).not.toContain("'sanitized_full_object_key'");
+    expect(boundedMediaMigration).toContain("grant execute on function p85_stage_4b3_load_bounded_media_metadata_v1");
+    expect(boundedMediaMigration).toContain("grant execute on function p85_stage_4b3_resolve_media_stream_v1");
   });
 });
