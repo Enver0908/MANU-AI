@@ -49,6 +49,6 @@ R7 executed `EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON)` against the authorized loc
 
 ## Remaining Caveat
 
-`npx supabase db query` surfaced a local advisory that RLS is disabled on `public.conversation_mutation_idempotency` and `public.personas`. This was not auto-remediated because enabling RLS without policies can break access. It must be handled as a separate explicit SQL/RLS policy decision.
+The previously surfaced local advisory for RLS-disabled `public.conversation_mutation_idempotency` and `public.personas` was closed as a separate hardening unit on 2026-07-13. Evidence: `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`. The closure enables RLS on both tables, removes direct `anon`/`authenticated` grants, adds no direct-user policies, and preserves service-role mediated behavior.
 
 The initial standalone SQL attempt lacked actor context and correctly failed closed. R7 supersedes that attempt with an authorized service-role seed context and records the resulting buffer evidence separately.

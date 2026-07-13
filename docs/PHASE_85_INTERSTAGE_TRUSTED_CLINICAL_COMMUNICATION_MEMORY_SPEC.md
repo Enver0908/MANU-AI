@@ -1,6 +1,6 @@
 # Phase 85 Interstage Foundation - Trusted Clinical Communication And Memory Spec
 
-Current downstream status, 2026-07-13: Stage 4B-2 remediation R0-R7 is complete locally and adds no new clinical, source, provider, channel, or lifecycle authority. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. Stage 4C is next; production remains `NO-GO` and R-405 remains open.
+Current downstream status, 2026-07-13: Stage 4B-2 remediation R0-R7 and the separate security advisory RLS hardening are complete locally and add no new clinical, source, provider, channel, or lifecycle authority. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`. Stage 4C is next; production remains `NO-GO` and R-405 remains open.
 
 Date: 2026-07-10
 Canonical code: `P85-IF`

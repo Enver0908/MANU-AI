@@ -379,6 +379,32 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     expect(copilotToolInsert.error?.message).toMatch(/row-level security|violates foreign key/i);
   });
 
+  it("keeps Stage 4B-2 advisory tables off direct anon/authenticated access", async () => {
+    const member = await signIn("rls-member@manu.local");
+
+    const personaRead = await member.from("personas").select("id").limit(1);
+    expect(personaRead.error?.message).toMatch(/permission denied|row-level security/i);
+
+    const personaInsert = await member.from("personas").insert({
+      id: "blocked_rls_test_persona",
+      label: "Blocked RLS Test Persona",
+      behavior_contract: { tone: "blocked" },
+    });
+    expect(personaInsert.error?.message).toMatch(/permission denied|row-level security/i);
+
+    const idempotencyRead = await member.from("conversation_mutation_idempotency").select("request_id").limit(1);
+    expect(idempotencyRead.error?.message).toMatch(/permission denied|row-level security/i);
+
+    const idempotencyInsert = await member.from("conversation_mutation_idempotency").insert({
+      tenant_id: TEST_TENANT_ID,
+      request_id: "00000000-0000-4000-8000-000000000980",
+      operation: "manual_reply",
+      conversation_id: TEST_CONVERSATION_ID,
+      response_json: { blocked: true },
+    });
+    expect(idempotencyInsert.error?.message).toMatch(/permission denied|row-level security/i);
+  });
+
   it("enforces assigned assistant read-only access", async () => {
     const assistant = await signIn("rls-assistant@manu.local");
 

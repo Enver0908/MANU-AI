@@ -1,6 +1,6 @@
 # Phase 85 Stage 4B-2 Post-Closure Remediation Action Plan
 
-Status: **R6 executed; gate blocked by unavailable Supabase/Docker (2026-07-13)**
+Status: **R0-R7 closed locally; separate security advisory RLS hardening closed locally (2026-07-13)**
 
 Baseline branch: `codex/phase-85-interstage-clinical-memory`
 Baseline commit: `3d67ba5 Close Phase 85 Stage 4B-2 with canonical spec, closure evidence, and continuity updates.`
@@ -14,7 +14,7 @@ The Stage 4B-2 audit found that the implementation is substantial but is not yet
 
 Stage 4C was blocked until remediation R0-R6 verification was green and the R7 evidence closure was completed separately. R0-R7 are now closed locally; Stage 4C is the next authorized Phase 85 unit.
 
-R1 through R5 implementation units are complete. R6 was re-closed on 2026-07-13 with local Supabase reset, RLS 35/35 with zero skips, and executed SQL buffer evidence for the bounded list/detail projection RPCs. R7 canonical closure is complete; production pilot remains `NO-GO`, R-405 remains open, and real integration paths remain closed.
+R1 through R5 implementation units are complete. R6 was re-closed on 2026-07-13 with local Supabase reset, RLS 35/35 with zero skips, and executed SQL buffer evidence for the bounded list/detail projection RPCs. R7 canonical closure is complete. The separate Supabase advisory for RLS-disabled `conversation_mutation_idempotency` and `personas` was closed locally by `20260713030000_phase_85_stage_4b2_security_advisory_rls_hardening.sql`; evidence is `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`. Production pilot remains `NO-GO`, R-405 remains open, and real integration paths remain closed.
 
 ## 2. Locked findings
 

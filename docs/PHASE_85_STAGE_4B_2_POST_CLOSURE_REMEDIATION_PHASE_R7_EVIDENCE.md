@@ -41,7 +41,7 @@ The next authorized Phase 85 implementation unit is Stage 4C, subject to its own
 
 ## Security advisory boundary
 
-The local Supabase advisory reports RLS disabled on `public.conversation_mutation_idempotency` and `public.personas`. A grant inspection found `conversation_mutation_idempotency` table privileges only for `postgres` and `service_role`, with no direct `anon` or `authenticated` table grant; the Stage 4B-2 mutation path remains service-role RPC mediated. R7 does not auto-enable RLS because doing so without an explicit policy decision can block intended access. This advisory remains a separate security-hardening decision and is not represented as production approval.
+The local Supabase advisory for RLS-disabled `public.conversation_mutation_idempotency` and `public.personas` was closed after R7 as a separate security-hardening unit. Evidence: `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`. The closure enables RLS on both tables, removes direct `anon`/`authenticated` grants, adds no direct-user policies, and preserves service-role mediated behavior. This does not change the R7 production boundary: production remains `NO-GO`, R-405 remains open, and real integration paths remain closed.
 
 ## Completion criteria
 

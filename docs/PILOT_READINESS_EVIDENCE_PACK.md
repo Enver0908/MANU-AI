@@ -1,5 +1,7 @@
 # MANU-AI Pilot Readiness Evidence Pack
 
+Phase 85 Stage 4B-2 security advisory RLS hardening, 2026-07-13: the separate Supabase advisory for RLS-disabled `conversation_mutation_idempotency` and `personas` is closed locally. Evidence: `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`. This contributes local engineering evidence only; production pilot remains `NO-GO`, R-405 and external approvals remain open, and real integration paths remain closed.
+
 Phase 85 Stage 4B-2 remediation R7 update, 2026-07-13: R0-R7 are complete locally after zero-skip RLS and executed bounded list/detail SQL buffer evidence. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. This contributes local engineering evidence only; production pilot remains `NO-GO`, R-405 and external approvals remain open, and real integration paths remain closed.
 
 Date: 2026-06-03

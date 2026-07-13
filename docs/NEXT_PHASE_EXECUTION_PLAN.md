@@ -1,6 +1,6 @@
 # MANU-AI Next Phase Execution Plan
 
-Current execution handoff, 2026-07-13: Phase 85 Stage 4B-2 post-closure remediation R0-R7 is complete locally. Local reset/RLS 35/35, SQL buffer plans, bounded SQL/scale evidence, and canonical reconciliation are recorded in `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. The next authorized Phase 85 unit is Stage 4C, beginning with its plan/read gate. Production remains `NO-GO`; R-405 remains open; real integration paths remain closed.
+Current execution handoff, 2026-07-13: Phase 85 Stage 4B-2 post-closure remediation R0-R7 and the separate security advisory RLS hardening are complete locally. Local reset/RLS, SQL buffer plans, bounded SQL/scale evidence, canonical reconciliation, and advisory closure are recorded in `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`. The next authorized Phase 85 unit is Stage 4C, beginning with its plan/read gate. Production remains `NO-GO`; R-405 remains open; real integration paths remain closed.
 
 ## Current Position
 

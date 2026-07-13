@@ -1,6 +1,6 @@
 # Phase 85 Stage 4B - Uyari ve Bildirimler Eylem Plani
 
-Current downstream status, 2026-07-13: Stage 4B-2 remediation R0-R7 is complete locally without changing Stage 4B alert/notification ownership. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. Stage 4C is next; production remains `NO-GO`, R-405 remains open.
+Current downstream status, 2026-07-13: Stage 4B-2 remediation R0-R7 and the separate security advisory RLS hardening are complete locally without changing Stage 4B alert/notification ownership. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`. Stage 4C is next; production remains `NO-GO`, R-405 remains open.
 
 Date: 2026-07-11
 Status: implementation complete; post-closure remediation verified (2026-07-12); current RLS re-run blocked by unavailable Docker

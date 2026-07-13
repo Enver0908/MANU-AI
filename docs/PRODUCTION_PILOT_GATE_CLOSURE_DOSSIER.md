@@ -1,5 +1,7 @@
 # MANU-AI Production Pilot Gate Closure Dossier
 
+Phase 85 Stage 4B-2 security advisory RLS hardening, 2026-07-13: the separate local Supabase advisory for RLS-disabled `conversation_mutation_idempotency` and `personas` is closed locally by append-only migration `20260713030000_phase_85_stage_4b2_security_advisory_rls_hardening.sql`. Evidence: `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`. No production gate is closed by this result; production remains `NO-GO`, R-405 remains open, and real integration paths remain closed.
+
 Phase 85 Stage 4B-2 remediation R7 update, 2026-07-13: R0-R7 are complete locally with RLS 35/35, executed SQL buffer plans, bounded scale, and canonical closure evidence. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. No production gate is closed by this result; production remains `NO-GO`, R-405 remains open, and real integration paths remain closed.
 
 Date: 2026-06-03

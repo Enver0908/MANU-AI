@@ -1,6 +1,6 @@
 # Direct 100 Dietitian Completion Plan
 
-Current Phase 85 status, 2026-07-13: Stage 4B-2 remediation R0-R7 is complete locally, including zero-skip RLS, SQL buffer evidence, 10k bounded scale, and canonical closure. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. This does not approve a 100-dietitian production pilot; production remains `NO-GO` and R-405 remains open.
+Current Phase 85 status, 2026-07-13: Stage 4B-2 remediation R0-R7 and the separate security advisory RLS hardening are complete locally, including zero-skip RLS, SQL buffer evidence, 10k bounded scale, canonical closure, and RLS-enabled `conversation_mutation_idempotency`/`personas` without direct `anon`/`authenticated` grants. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`. This does not approve a 100-dietitian production pilot; production remains `NO-GO` and R-405 remains open.
 Date: 2026-06-05
 
 ## Purpose
