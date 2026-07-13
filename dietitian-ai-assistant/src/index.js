@@ -233,3 +233,14 @@ export {
 export { MODEL_ROUTING, selectModelForRisk } from "./model-routing.js";
 export { resolveAiActivation } from "./ai-activation.js";
 export { MESSAGE_ORIGINS, buildMessageProvenance } from "./message-provenance.js";
+export {
+  VISUAL_OBSERVATION_V1_VERSION,
+  VISUAL_SCENE_TYPES,
+  NON_AUTOPILOT_VISUAL_SCENES,
+  validateVisualObservationV1,
+  isVisualSceneType,
+  isUnitConfidence,
+  isNonAutopilotVisualScene,
+  mergeVisualRiskOverlay,
+  assertVisualSceneExhaustive,
+} from "./visual-observation-v1.js";

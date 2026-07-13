@@ -1,4 +1,5 @@
 import { AppDomainError } from "./app-errors";
+import { createEmptyStage4B3MediaCollections } from "./phase-85-stage-4b3-media-contracts";
 import type {
   AuditEventRecord,
   ClientRecord,
@@ -55,6 +56,7 @@ function emptyMutationShell(base: ManuAppState): ManuAppState {
     clientFoodRuleProfiles: [],
     processedSimulationKeys: [],
     lastSimulation: null,
+    ...createEmptyStage4B3MediaCollections(),
   };
 }
 

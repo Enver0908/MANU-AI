@@ -135,6 +135,7 @@ import {
   buildConversationMutationResponseFromState,
   resolveDraftMutationResultMessage,
 } from "./phase-85-stage-4b2-mutations";
+import { createEmptyStage4B3MediaCollections } from "./phase-85-stage-4b3-media-contracts";
 import { normalizeLanguageCode } from "./languages";
 import { processWhatsAppMockWebhookInState } from "./whatsapp-mock-webhook";
 import { createDefaultChannelAdapterRollbackControls } from "./channel-adapter-rollback";
@@ -971,6 +972,7 @@ export async function loadSupabaseState(context = demoTenantContext()) {
       auditEvents: (auditEventsResult.data || []).map(mapAuditEvent),
       processedSimulationKeys: (processedEventsResult.data || []).map((event) => event.provider_event_id),
       lastSimulation: null,
+      ...createEmptyStage4B3MediaCollections(),
     }),
     context,
     assignmentsResult.data || [],
@@ -1195,6 +1197,7 @@ export async function loadSupabaseWindowedDashboardPayload(
       auditEvents: (auditEventsResult.data || []).map(mapAuditEvent),
       processedSimulationKeys: [],
       lastSimulation: null,
+      ...createEmptyStage4B3MediaCollections(),
     },
     context,
     assignmentsResult.data || [],
@@ -1483,6 +1486,7 @@ async function loadSupabaseClientOperationState(
       auditEvents: [],
       processedSimulationKeys: (processedEventsResult.data || []).map((event) => event.provider_event_id),
       lastSimulation: null,
+      ...createEmptyStage4B3MediaCollections(),
     },
     context,
     assignmentsResult.data || [],
@@ -1842,6 +1846,7 @@ async function loadSupabaseClientCreateContext(context: AppTenantContext) {
       permissionGraphEvaluations: [],
       processedSimulationKeys: [],
       lastSimulation: null,
+      ...createEmptyStage4B3MediaCollections(),
     },
     context,
     assignmentsResult.data || [],

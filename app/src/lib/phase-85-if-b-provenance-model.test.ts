@@ -19,6 +19,7 @@ describe("P85-IF-B provenance model contract", () => {
     expect(CHANNEL_ACTOR_ATTRIBUTION_BASES).toContain("shared_authorized_team");
     expect(CHANNEL_AUTHOR_INTERFACES).toContain("whatsapp_business_surface");
     expect(CHANNEL_EVENT_KINDS).toContain("business_human_echo_text");
+    expect(CHANNEL_EVENT_KINDS).toContain("client_message_image");
     expect(CHANNEL_EVENT_KINDS).toContain("message_revision_unknown_target");
     expect(CHANNEL_EVENT_PROCESSING_STATUSES).toContain("quarantined");
     expect(CHANNEL_EVENT_PROCESSING_STATUSES).toContain("replayed");

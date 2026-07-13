@@ -1,6 +1,6 @@
 # MANU-AI Plan
 
-Current continuity status, 2026-07-13: Stage 4B-2 R0-R7 and advisory hardening are closed locally, superseded RLS blocks and intermediate next-step directives are marked historical, and code/document routing is reconciled in `docs/PHASE_85_STAGE_4B_2_CONTINUITY_AND_ROUTING_RECONCILIATION_EVIDENCE.md`. Stage 4C plan/read gate is next. Production remains `NO-GO`; R-405 remains open.
+Current continuity status, 2026-07-13: Stage 4B-2 R0-R7 and advisory hardening are closed locally, superseded RLS blocks and intermediate next-step directives are marked historical, and code/document routing is reconciled in `docs/PHASE_85_STAGE_4B_2_CONTINUITY_AND_ROUTING_RECONCILIATION_EVIDENCE.md`. Stage 4B-3 Phase 1 domain/type contract is complete locally; Stage 4B-3 Phase 2 database/storage/RLS foundation is next. Canonical plan: `docs/PHASE_85_STAGE_4B_3_MULTIMODAL_GORSEL_GUVENLIGI_VE_YANIT_ORK_PLAN.md`. Stage 4C plan/read gate is blocked until Stage 4B-3 closes. Production remains `NO-GO`; R-405 remains open.
 
 ## Project Summary
 
@@ -19,11 +19,11 @@ On 2026-07-08, Phase 85 was restructured into this explicit stage ladder: Stage 
 
 ## Phase 85 Interstage Foundation - P85-IF
 
-Stage 4B-2 security advisory RLS hardening on 2026-07-13 closes the separate local Supabase advisory for RLS-disabled `public.conversation_mutation_idempotency` and `public.personas`. Append-only migration `20260713030000_phase_85_stage_4b2_security_advisory_rls_hardening.sql` enables RLS on both tables, removes direct `anon`/`authenticated` grants, adds no direct-user policies, and preserves service-role mediated internal behavior. Evidence: `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`. Stage 4B-2 R0-R7 remain closed locally; Stage 4C remains next. Production pilot remains `NO-GO`; R-405 remains open.
+Stage 4B-2 security advisory RLS hardening on 2026-07-13 closes the separate local Supabase advisory for RLS-disabled `public.conversation_mutation_idempotency` and `public.personas`. Append-only migration `20260713030000_phase_85_stage_4b2_security_advisory_rls_hardening.sql` enables RLS on both tables, removes direct `anon`/`authenticated` grants, adds no direct-user policies, and preserves service-role mediated internal behavior. Evidence: `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`. Stage 4B-2 R0-R7 remain closed locally; Stage 4B-3 remains next. Production pilot remains `NO-GO`; R-405 remains open.
 
 Stage 4B-2 local RLS re-closure on 2026-07-13 supersedes the prior Docker-blocked RLS note for the current local suite. Local Supabase reset passed, `npm run test:rls` passed 35/35 with 0 skipped, targeted `supabase-store`/`client-forms` tests passed 9/9, and `git diff --check` passed. Evidence: `docs/PHASE_85_STAGE_4B_2_RLS_LOCAL_RECLOSURE_EVIDENCE.md`. This does not approve production pilot, close R-405, enable real provider/channel paths, or claim SQL buffer/EXPLAIN closure.
 
-The canonical planning baseline is `docs/PHASE_85_INTERSTAGE_TRUSTED_CLINICAL_COMMUNICATION_MEMORY_PLAN.md`. P85-IF-A through P85-IF-I are complete and P85-IF is closed. Evidence: `docs/PHASE_85_IF_I_LIFECYCLE_CLOSURE_EVIDENCE.md`. Runtime provider/channel behavior remains closed. **Stage 4B Uyari ve Bildirimler is complete (2026-07-12).** Evidence: `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_EVIDENCE.md`. **Stage 4B-2 Mesajlasma and post-closure remediation R0-R7 are complete locally (2026-07-13).** Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. **Next operator action:** Stage 4C plan/read gate. Production pilot remains `NO-GO`; R-405 remains open.
+The canonical planning baseline is `docs/PHASE_85_INTERSTAGE_TRUSTED_CLINICAL_COMMUNICATION_MEMORY_PLAN.md`. P85-IF-A through P85-IF-I are complete and P85-IF is closed. Evidence: `docs/PHASE_85_IF_I_LIFECYCLE_CLOSURE_EVIDENCE.md`. Runtime provider/channel behavior remains closed. **Stage 4B Uyari ve Bildirimler is complete (2026-07-12).** Evidence: `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_EVIDENCE.md`. **Stage 4B-2 Mesajlasma and post-closure remediation R0-R7 are complete locally (2026-07-13).** Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. **Stage 4B-3 Phase 1 domain/type contract is complete locally (2026-07-13).** Evidence: `docs/PHASE_85_STAGE_4B_3_PHASE_1_DOMAIN_TYPE_CONTRACT_EVIDENCE.md`. **Next operator action:** Stage 4B-3 Phase 2. Production pilot remains `NO-GO`; R-405 remains open.
 
 P85-IF post-closure audit verification on 2026-07-11: R1 message provenance tenant integrity, R2 structured baseline/resolution authority, R3 activation/inbound lock ordering, and R6 runtime export leak enforcement are fixed. Evidence: `docs/PHASE_85_IF_REMEDIATION_POST_CLOSURE_AUDIT_EVIDENCE.md`, `docs/PHASE_85_IF_R1_PERSISTENCE_TENANT_INTEGRITY_EVIDENCE.md`, `docs/PHASE_85_IF_R2_RETRIEVAL_AUTHORITY_TEMPORAL_EVIDENCE.md`, and `docs/PHASE_85_IF_R3_ATOMIC_AI_ACTIVATION_RACE_EVIDENCE.md`. Verification passed targeted app/core tests, local Supabase reset, local RLS 30/30, lint, build, full app 828 passed / 4 skipped, core 234/234, channel replay, and production-scale rehearsal. Production pilot remains `NO-GO`; R-405 remains open.
 
@@ -1062,14 +1062,14 @@ Phase 0 is complete as a documentation-only lock. The full action plan and evide
 
 ## Approved Next Step - Phase 85 Stage 4B-2 Mesajlasma
 
-Stage 4B implementation and post-closure remediation are recorded under `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_SPEC.md`. Stage 4B-2 Mesajlasma is complete; evidence in `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`. Core/app, scale, replay, release, build, lint, and visual verification passed; the current 35-test RLS suite is blocked by unavailable Docker and is not counted as pass. **Next:** Stage 4C Diyetisyen Icin AI Chat. Preserve `NO-GO`, R-405, mock-only providers/channels, existing auth/onboarding/billing/admin/entitlement/PWA contracts, and append-only migrations.
+Stage 4B implementation and post-closure remediation are recorded under `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_SPEC.md`. Stage 4B-2 Mesajlasma is complete; evidence in `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`. The historical RLS block was later superseded by R7 and advisory hardening. **Next:** Stage 4B-3 Multimodal Gorsel Guvenligi ve Yanit Orkestrasyonu. Preserve `NO-GO`, R-405, mock-only providers/channels, existing auth/onboarding/billing/admin/entitlement/PWA contracts, and append-only migrations.
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R0 - 2026-07-12
 
 Historical R0 checkpoint: the Stage 4B-2 audit opened remediation findings and locked `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. R1-R7 subsequently closed. This is not an active handoff; Stage 4C is current. Production pilot remains `NO-GO`; R-405 remains open.
 
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
 
-Historical R1 checkpoint: the domain/DTO/authorization projection contract completed. R2-R7 subsequently closed; current work is Stage 4C planning.
+Historical R1 checkpoint: the domain/DTO/authorization projection contract completed. R2-R7 subsequently closed; current work is Stage 4B-3.
 
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R2 - 2026-07-12
 
@@ -1090,4 +1090,4 @@ R6 ran the independent full verification gate. All repository/runtime checks pas
 
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R7 - 2026-07-13
 
-R7 closes the remediation track locally after the R6 environment prerequisite was re-run: local reset passed, RLS passed 35/35 with zero skips, and real list/detail SQL buffer plans were captured and evaluated with R2 bounded SQL and R5 10k scale evidence. Canonical documents and R-4B2-01 through R-4B2-10 are reconciled. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. Stage 4C is the next authorized Phase 85 unit; production remains `NO-GO` and R-405 remains open.
+R7 closes the remediation track locally after the R6 environment prerequisite was re-run: local reset passed, RLS passed 35/35 with zero skips, and real list/detail SQL buffer plans were captured and evaluated with R2 bounded SQL and R5 10k scale evidence. Canonical documents and R-4B2-01 through R-4B2-10 are reconciled. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. Stage 4B-3 is the next authorized Phase 85 unit; production remains `NO-GO` and R-405 remains open.

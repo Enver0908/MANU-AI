@@ -41,6 +41,7 @@ export const CHANNEL_AUTHOR_INTERFACES: readonly ChannelAuthorInterface[] = [
 
 export const CHANNEL_EVENT_KINDS: readonly ChannelEventKind[] = [
   "client_message_text",
+  "client_message_image",
   "client_message_media_unsupported",
   "business_human_echo_text",
   "business_human_echo_media_unsupported",
