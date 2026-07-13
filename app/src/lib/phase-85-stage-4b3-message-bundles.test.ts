@@ -295,7 +295,7 @@ describe("phase-85-stage-4b3 bundle ingress integration", () => {
       now: T119,
     });
     state = promoteDueInboundBundles(followUp.state, T240);
-    const worker = processStage4B3DueInboundBundles(state, {
+    const worker = await processStage4B3DueInboundBundles(state, {
       workerId: "bundle-test-worker",
       now: T240,
       releaseAfterClaim: false,
@@ -304,7 +304,7 @@ describe("phase-85-stage-4b3 bundle ingress integration", () => {
     expect(worker.claimedBundles[0]?.status).toBe("processing");
     expect(worker.state.aiDecisions).toHaveLength(SEED_AI_DECISION_COUNT);
 
-    const secondClaim = processStage4B3DueInboundBundles(worker.state, {
+    const secondClaim = await processStage4B3DueInboundBundles(worker.state, {
       workerId: "bundle-test-worker",
       now: T240,
       releaseAfterClaim: false,

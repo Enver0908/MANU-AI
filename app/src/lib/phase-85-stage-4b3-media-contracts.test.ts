@@ -168,6 +168,7 @@ describe("phase-85-stage-4b3-media-contracts", () => {
       inboundMessageBundles: [],
       inboundMessageBundleItems: [],
       visualCorrections: [],
+      processedBundleDecisionKeys: [],
     });
     expect(state.mediaAssets).toEqual([]);
     expect(state.inboundMessageBundles).toEqual([]);

@@ -1,6 +1,6 @@
 # Phase 85 Stage 4B-3 - Multimodal Gorsel Guvenligi ve Yanit Orkestrasyonu Eylem Plani
 
-Phase 0 status, 2026-07-14: canonical plan and handoff lock are active. Stage 4B-3 Phase 7 visual risk overlay, intent, answerability, narrow autopilot, and output guard integration is complete locally. Evidence: `docs/PHASE_85_STAGE_4B_3_PHASE_7_VISUAL_RISK_INTENT_AUTOPILOT_EVIDENCE.md`. **Next:** Phase 8 orchestration and atomic decision commit. Stage order is Stage 4B-2 -> Stage 4B-3 -> Stage 4C. Stage 4C is blocked until Stage 4B-3 implementation, verification, evidence closure, risk-register reconciliation, and handoff update are complete.
+Phase 0 status, 2026-07-14: canonical plan and handoff lock are active. Stage 4B-3 Phase 8 orchestration, atomic decision commit, and correction workflow is complete locally. Evidence: `docs/PHASE_85_STAGE_4B_3_PHASE_8_ORCHESTRATION_ATOMIC_DECISION_EVIDENCE.md`. **Next:** Phase 9 bounded APIs, media stream, and conversation UI. Stage order is Stage 4B-2 -> Stage 4B-3 -> Stage 4C. Stage 4C is blocked until Stage 4B-3 implementation, verification, evidence closure, risk-register reconciliation, and handoff update are complete.
 
 Production pilot remains `NO-GO`. R-405 remains open. Real WhatsApp, Telegram, Gemini, external LLM, live billing, monitoring, backup, secret-manager, production webhook, and real client health-data paths remain disabled. Stage 4B-3 is limited to gated local end-to-end behavior with mock WhatsApp ingress and deterministic local vision observations.
 

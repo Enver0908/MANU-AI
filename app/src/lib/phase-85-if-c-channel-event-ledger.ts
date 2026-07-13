@@ -281,11 +281,12 @@ async function ingestSingleCandidate(
       });
     }
     if (options.stage4b3Admission?.autoProcessBundles !== false && options.stage4b3Admission) {
-      nextState = processStage4B3DueInboundBundles(nextState, {
+      const worker = await processStage4B3DueInboundBundles(nextState, {
         workerId: options.stage4b3Admission.workerId ?? "stage4b3-ledger-worker",
         now: record.observedAt,
         releaseAfterClaim: false,
-      }).state;
+      });
+      nextState = worker.state;
     }
   } else if (routing.finalEventKind === "business_human_echo_text" && routing.conversationId) {
     nextState = supersedeConversationBundles(nextState, routing.conversationId, record.observedAt);

@@ -825,6 +825,7 @@ export async function loadSupabaseState(context = demoTenantContext()) {
     inboundMessageBundlesResult,
     inboundMessageBundleItemsResult,
     visualCorrectionsResult,
+    bundleDecisionIdempotencyResult,
   ] = await Promise.all([
     supabase.from("tenants").select("*").eq("id", context.tenantId).single(),
     supabase.from("dietitians").select("*").eq("id", context.dietitianId).eq("tenant_id", context.tenantId).single(),
@@ -882,6 +883,7 @@ export async function loadSupabaseState(context = demoTenantContext()) {
     supabase.from("inbound_message_bundles").select("*").eq("tenant_id", context.tenantId).order("created_at"),
     supabase.from("inbound_message_bundle_items").select("*").eq("tenant_id", context.tenantId).order("ordinal"),
     supabase.from("visual_corrections").select("*").eq("tenant_id", context.tenantId).order("created_at"),
+    supabase.from("bundle_decision_idempotency").select("idempotency_key").eq("tenant_id", context.tenantId),
   ]);
 
   throwIfError(tenantResult.error);
@@ -930,6 +932,7 @@ export async function loadSupabaseState(context = demoTenantContext()) {
   throwIfError(inboundMessageBundlesResult.error);
   throwIfError(inboundMessageBundleItemsResult.error);
   throwIfError(visualCorrectionsResult.error);
+  throwIfError(bundleDecisionIdempotencyResult.error);
 
   const channels = channelsResult.data || [];
   const memories = memoriesResult.data || [];
@@ -999,6 +1002,9 @@ export async function loadSupabaseState(context = demoTenantContext()) {
       inboundMessageBundles: (inboundMessageBundlesResult.data || []).map(mapInboundMessageBundle),
       inboundMessageBundleItems: (inboundMessageBundleItemsResult.data || []).map(mapInboundMessageBundleItem),
       visualCorrections: (visualCorrectionsResult.data || []).map(mapVisualCorrection),
+      processedBundleDecisionKeys: (bundleDecisionIdempotencyResult.data || []).map(
+        (row) => row.idempotency_key as string,
+      ),
     }),
     context,
     assignmentsResult.data || [],

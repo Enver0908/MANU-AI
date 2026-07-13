@@ -4,7 +4,7 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 ## Current Status
 
-**2026-07-14 Stage 4B-3 Phase 7 visual risk overlay, intent, answerability, narrow autopilot, and output guard:** Multimodal safety chain (`evaluateMultimodalVisualSafetyChainV1`), visual risk overlay that never downgrades base risk, narrow green allowlist for exact menu/label/screenshot paths, ineligibility codes, deterministic `visual_progress_ack_v1` template, OCR/confidence leak guard, and media-worker `safetyChains[]` without orchestration or client sends. Evidence: `docs/PHASE_85_STAGE_4B_3_PHASE_7_VISUAL_RISK_INTENT_AUTOPILOT_EVIDENCE.md`. **Next:** Stage 4B-3 Phase 8. Production pilot remains `NO-GO`; R-405 remains open.
+**2026-07-14 Stage 4B-3 Phase 8 orchestration, atomic decision commit, and correction workflow:** Shared inbound turn pipeline for text and multimodal bundles (`runMultimodalBundleInboundTurn`), atomic bundle decision commit with idempotency, visual correction workflow (no auto corrective send after sent), migration `20260713130000_phase_85_stage_4b3_atomic_bundle_decisions.sql`. Evidence: `docs/PHASE_85_STAGE_4B_3_PHASE_8_ORCHESTRATION_ATOMIC_DECISION_EVIDENCE.md`. **Next:** Stage 4B-3 Phase 9. Production pilot remains `NO-GO`; R-405 remains open.
 
 **2026-07-14 Stage 4B-3 Phase 6 multimodal understanding and source authority:** Bounded multimodal envelope builder, core `resolveVisualMeaningV1` bridge, active-menu exact match, label/screenshot source gates, and media-worker understanding hook without orchestration or client sends. Evidence: `docs/PHASE_85_STAGE_4B_3_PHASE_6_MULTIMODAL_UNDERSTANDING_EVIDENCE.md`. Phase 7 subsequently completed; see the Phase 7 evidence above.
 

@@ -367,6 +367,7 @@ export type Stage4B3MediaStateSlice = {
   inboundMessageBundles: InboundMessageBundleRecord[];
   inboundMessageBundleItems: InboundMessageBundleItemRecord[];
   visualCorrections: VisualCorrectionRecord[];
+  processedBundleDecisionKeys: string[];
 };
 
 const RISK_RANK: Record<RiskLevel, number> = {
@@ -382,6 +383,7 @@ export function createEmptyStage4B3MediaCollections(): Stage4B3MediaStateSlice {
     inboundMessageBundles: [],
     inboundMessageBundleItems: [],
     visualCorrections: [],
+    processedBundleDecisionKeys: [],
   };
 }
 

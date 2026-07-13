@@ -5,13 +5,17 @@ import {
 } from "./phase-85-stage-4b3-message-bundles";
 import type { InboundMessageBundleRecord } from "./phase-85-stage-4b3-media-contracts";
 import {
-  resolveMultimodalBundleUnderstanding,
-  type Stage4B3MultimodalUnderstandingResult,
-} from "./phase-85-stage-4b3-multimodal-understanding";
+  runMultimodalBundleInboundTurn,
+  type MultimodalBundleTurnResult,
+} from "./phase-85-stage-4b3-bundle-orchestration";
 import {
   evaluateMultimodalBundleSafetyChain,
   type Stage4B3MultimodalSafetyChain,
 } from "./phase-85-stage-4b3-multimodal-safety";
+import {
+  resolveMultimodalBundleUnderstanding,
+  type Stage4B3MultimodalUnderstandingResult,
+} from "./phase-85-stage-4b3-multimodal-understanding";
 import type { ManuAppState } from "./types";
 
 export const STAGE_4B3_MEDIA_WORKER_VERSION = "p85-stage-4b3-media-worker-v1";
@@ -22,17 +26,25 @@ export type Stage4B3BundleWorkerResult = {
   claimedBundles: InboundMessageBundleRecord[];
   understandings: Stage4B3MultimodalUnderstandingResult[];
   safetyChains: Stage4B3MultimodalSafetyChain[];
+  bundleTurns: MultimodalBundleTurnResult[];
 };
 
-export function processStage4B3DueInboundBundles(
+export async function processStage4B3DueInboundBundles(
   state: ManuAppState,
-  input: { workerId: string; now?: string; releaseAfterClaim?: boolean; resolveUnderstanding?: boolean },
-): Stage4B3BundleWorkerResult {
+  input: {
+    workerId: string;
+    now?: string;
+    releaseAfterClaim?: boolean;
+    resolveUnderstanding?: boolean;
+    runOrchestration?: boolean;
+  },
+): Promise<Stage4B3BundleWorkerResult> {
   const now = input.now ?? new Date().toISOString();
   let workingState = promoteDueInboundBundles(state, now);
   const claimedBundles: InboundMessageBundleRecord[] = [];
   const understandings: Stage4B3MultimodalUnderstandingResult[] = [];
   const safetyChains: Stage4B3MultimodalSafetyChain[] = [];
+  const bundleTurns: MultimodalBundleTurnResult[] = [];
 
   while (true) {
     const claim = claimReadyInboundBundle(workingState, { workerId: input.workerId, now });
@@ -53,6 +65,16 @@ export function processStage4B3DueInboundBundles(
         );
       }
     }
+    if (input.runOrchestration) {
+      const turn = await runMultimodalBundleInboundTurn(workingState, claim.claimed.id, {
+        now,
+        idempotencyKey: `bundle-turn-${claim.claimed.id}-${claim.claimed.bundleRevision}`,
+      });
+      bundleTurns.push(turn);
+      if (turn.ok) {
+        workingState = turn.state;
+      }
+    }
     if (input.releaseAfterClaim) {
       workingState = releaseInboundBundleLease(workingState, claim.claimed.id, {
         workerId: input.workerId,
@@ -62,5 +84,5 @@ export function processStage4B3DueInboundBundles(
     }
   }
 
-  return { state: workingState, claimedBundles, understandings, safetyChains };
+  return { state: workingState, claimedBundles, understandings, safetyChains, bundleTurns };
 }

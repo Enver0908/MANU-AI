@@ -111,6 +111,245 @@ type CoreResult = {
   qualityIssues: string[];
 };
 
+export type InboundCoreResult = CoreResult;
+
+export type InboundTurnPipelineResult =
+  | {
+      blocked: false;
+      state: ManuAppState;
+      classified: Awaited<ReturnType<typeof classifySimulationRisk>>;
+    }
+  | {
+      blocked: true;
+      state: ManuAppState;
+      blockedReason: string;
+      reasons: string[];
+      riskLevel: CoreResult["risk"];
+    };
+
+export async function prepareInboundTurnPipeline(input: {
+  state: ManuAppState;
+  client: ClientRecord;
+  conversation: ConversationRecord;
+  inboundMessage: MessageRecord;
+  evaluationText: string;
+  riskDecisionOverride?: { level: CoreResult["risk"]; reasons: string[]; classifierVersion?: string };
+  classified?: Awaited<ReturnType<typeof classifySimulationRisk>>;
+  now?: string;
+}): Promise<InboundTurnPipelineResult> {
+  const now = input.now || new Date().toISOString();
+  const priorConversationMessages = input.state.messages.filter(
+    (message) => message.conversationId === input.conversation.id && message.id !== input.inboundMessage.id,
+  );
+  const yellowHoldAtInbound = input.client.yellowRiskHold.status === "active" ? input.client.yellowRiskHold : null;
+  const classified =
+    input.classified ||
+    (await classifySimulationRisk(input.state, input.client, input.evaluationText, priorConversationMessages, {
+      conversationId: input.conversation.id,
+      messageId: input.inboundMessage.id,
+    }));
+  let riskDecision = input.riskDecisionOverride
+    ? {
+        ...classified.riskDecision,
+        ...input.riskDecisionOverride,
+        reasons: input.riskDecisionOverride.reasons ?? classified.riskDecision.reasons,
+      }
+    : classified.riskDecision;
+  if (yellowHoldAtInbound && riskDecision.level !== "red") {
+    riskDecision = {
+      ...riskDecision,
+      level: "yellow" as const,
+      reasons: Array.from(new Set([...riskDecision.reasons, "yellow_hold_pending_context"])),
+    };
+  }
+  const riskAssessment = buildRiskAssessment({
+    state: input.state,
+    conversation: input.conversation,
+    inboundMessage: input.inboundMessage,
+    riskDecision,
+    createdAt: now,
+  });
+  const stateWithRisk: ManuAppState = appendPermissionGraphEvaluation(
+    appendScopeGuardEvaluation(
+      {
+        ...input.state,
+        riskAssessments: [...input.state.riskAssessments, riskAssessment],
+      },
+      classified.scopeGuardEvaluation,
+    ),
+    classified.permissionGraphEvaluation,
+  );
+  const stateAfterInboundInvalidation = invalidatePendingDrafts(
+    stateWithRisk,
+    now,
+    "new_inbound_message",
+    yellowHoldAtInbound?.activeDraftMessageId ? [yellowHoldAtInbound.activeDraftMessageId] : [],
+  );
+
+  const preflightBlock = getPreflightBlock(stateAfterInboundInvalidation, input.client);
+  if (preflightBlock) {
+    return {
+      blocked: true,
+      state: appendBlockedSimulationResult({
+        state: stateAfterInboundInvalidation,
+        client: input.client,
+        conversation: input.conversation,
+        inboundMessage: input.inboundMessage,
+        now,
+        blockedReason: preflightBlock.blockedReason,
+        reasons: preflightBlock.reasons,
+        riskLevel: riskDecision.level,
+      }),
+      blockedReason: preflightBlock.blockedReason,
+      reasons: preflightBlock.reasons,
+      riskLevel: riskDecision.level,
+    };
+  }
+
+  return { blocked: false, state: stateAfterInboundInvalidation, classified };
+}
+
+export async function runInboundTurnCore(input: {
+  state: ManuAppState;
+  client: ClientRecord;
+  conversation: ConversationRecord;
+  inboundMessage: MessageRecord;
+  evaluationText: string;
+  request: SimulationRequest;
+  classified: Awaited<ReturnType<typeof classifySimulationRisk>>;
+  precomputedCoreResult?: CoreResult;
+}): Promise<ManuAppState> {
+  const { state, client, conversation, inboundMessage, evaluationText, request, classified } = input;
+  const now = request.now || new Date().toISOString();
+  const yellowHoldAtInbound = client.yellowRiskHold.status === "active" ? client.yellowRiskHold : null;
+  let riskDecision = input.precomputedCoreResult
+    ? {
+        ...classified.riskDecision,
+        level: input.precomputedCoreResult.risk,
+        reasons: input.precomputedCoreResult.reasons,
+      }
+    : classified.riskDecision;
+  if (!input.precomputedCoreResult && yellowHoldAtInbound && riskDecision.level !== "red") {
+    riskDecision = {
+      ...riskDecision,
+      level: "yellow" as const,
+      reasons: Array.from(new Set([...riskDecision.reasons, "yellow_hold_pending_context"])),
+    };
+  }
+
+  if (input.precomputedCoreResult) {
+    return appendInboundCoreResult({
+      state,
+      client,
+      conversation,
+      inboundMessage,
+      coreResult: input.precomputedCoreResult,
+      permissionGraph: classified.permissionGraph,
+      now,
+      channelPolicyMock: request.channelPolicyMock,
+    });
+  }
+
+  const promptClient = withPromptContext(
+    yellowHoldAtInbound
+      ? {
+          ...client,
+          aiStatus: yellowHoldAtInbound.previousAiStatus,
+          aiMode: yellowHoldAtInbound.previousAiMode,
+        }
+      : client,
+    state,
+  );
+
+  const priorConversationMessages = state.messages.filter(
+    (message) => message.conversationId === conversation.id && message.id !== inboundMessage.id,
+  );
+  const conversationCorpus = mapConversationMessagesForRetrieval(state.messages, state.tenant.id, conversation.id);
+
+  const coreResult = (await handleInboundMessage(
+    {
+      tenantId: state.tenant.id,
+      dietitian: state.dietitian,
+      client: promptClient,
+      conversation,
+      message: { id: inboundMessage.id, body: evaluationText },
+      recentMessages: priorConversationMessages,
+      conversationMessages: conversationCorpus,
+      memory: {
+        rollingSummary: conversation.rollingSummary,
+        memoryVersion: conversation.memoryVersion,
+        memoryRevision: conversation.memoryRevision,
+        durableFacts: {},
+      },
+      voiceProfile: getActiveVoiceProfile(state) || undefined,
+      styleEditHistorySignals: getStyleEditHistorySignals(state),
+      promptVersion: PROMPT_VERSION,
+      providerId: MOCK_PROVIDER_ID,
+      now,
+      riskDecisionOverride: riskDecision,
+      structuredFoodRules: buildStructuredFoodRulesFromClientState(state, client.id) || undefined,
+      foodRuleDecisionOverride:
+        evaluateClientFoodRuleDecision(state, client.id, evaluationText, {
+          riskLevel: riskDecision.level,
+          productIngredientEvidence: resolveProductIngredientEvidence(evaluationText) || undefined,
+        }) || undefined,
+      foodDecisionV2: (() => {
+        const decision = evaluateClientFoodDecisionV2FromState(state, client.id, evaluationText, {
+          riskLevel: riskDecision.level,
+          productIngredientEvidence: resolveProductIngredientEvidence(evaluationText) || undefined,
+        });
+        return shouldUseFoodDecisionV2Result(decision) ? decision : undefined;
+      })(),
+      productIngredientEvidence: resolveProductIngredientEvidence(evaluationText) || undefined,
+    },
+    {
+      generateReply: async (payload: Record<string, unknown>) => {
+        const payloadRiskDecision = payload.riskDecision as { level: string };
+        const promptContext = payload.promptContext as { segments: Array<{ type: string; text: string }> };
+        const responsePlan = (payload.contextManifest as { responsePlan?: { replyMode?: string } } | undefined)
+          ?.responsePlan;
+        if (!responsePlan || !isResponsePlanProviderEligible(responsePlan)) {
+          throw new MockProviderError("provider_policy_violation", "response_plan_required");
+        }
+        if (request.mockProviderOutput === "covenant_violation") {
+          return "As an AI, I cannot provide medical advice. Please consult your doctor.";
+        }
+        return generateMockProviderReply(
+          buildMockProviderInput(promptContext, payloadRiskDecision.level as AiDecisionRecord["risk"]),
+          {
+            failureMode: request.mockProviderFailure,
+            forceMissingHistoricalContext: request.mockProviderOutput === "missing_historical_context",
+          },
+        );
+      },
+    },
+  )) as CoreResult;
+
+  return appendInboundCoreResult({
+    state,
+    client,
+    conversation,
+    inboundMessage,
+    coreResult,
+    permissionGraph: classified.permissionGraph,
+    now,
+    channelPolicyMock: request.channelPolicyMock,
+  });
+}
+
+export function appendInboundCoreResult(input: {
+  state: ManuAppState;
+  client: ClientRecord;
+  conversation: ConversationRecord;
+  inboundMessage: MessageRecord;
+  coreResult: CoreResult;
+  permissionGraph?: Record<string, unknown>;
+  now: string;
+  channelPolicyMock?: SimulationRequest["channelPolicyMock"];
+}): ManuAppState {
+  return appendCoreSimulationResult(input);
+}
+
 export async function runInboundSimulation(
   state: ManuAppState,
   request: SimulationRequest,
@@ -161,143 +400,26 @@ export async function runInboundSimulation(
     conversation.id,
     now,
   );
-  const priorConversationMessages = state.messages.filter((message) => message.conversationId === conversation.id);
-  const yellowHoldAtInbound = client.yellowRiskHold.status === "active" ? client.yellowRiskHold : null;
-  const classified = await classifySimulationRisk(state, client, trimmedBody, priorConversationMessages, {
-    conversationId: conversation.id,
-    messageId: inboundMessage.id,
-  });
-  let riskDecision = classified.riskDecision;
-  if (yellowHoldAtInbound && riskDecision.level !== "red") {
-    riskDecision = {
-      ...riskDecision,
-      level: "yellow" as const,
-      reasons: Array.from(new Set([...riskDecision.reasons, "yellow_hold_pending_context"])),
-    };
-  }
-  const riskAssessment = buildRiskAssessment({
-    state,
-    conversation,
-    inboundMessage,
-    riskDecision,
-    createdAt: now,
-  });
-  const stateWithInboundAndRisk: ManuAppState = appendPermissionGraphEvaluation(
-    appendScopeGuardEvaluation(
-      {
-        ...stateWithInbound,
-        riskAssessments: [...stateWithInbound.riskAssessments, riskAssessment],
-      },
-      classified.scopeGuardEvaluation,
-    ),
-    classified.permissionGraphEvaluation,
-  );
-  const stateAfterInboundInvalidation = invalidatePendingDrafts(
-    stateWithInboundAndRisk,
-    now,
-    "new_inbound_message",
-    yellowHoldAtInbound?.activeDraftMessageId ? [yellowHoldAtInbound.activeDraftMessageId] : [],
-  );
-
-  const preflightBlock = getPreflightBlock(stateAfterInboundInvalidation, client);
-  if (preflightBlock) {
-  return appendBlockedSimulationResult({
-      state: stateAfterInboundInvalidation,
-      client,
-      conversation,
-      inboundMessage,
-      now,
-      blockedReason: preflightBlock.blockedReason,
-      reasons: preflightBlock.reasons,
-      riskLevel: riskDecision.level,
-    });
-  }
-
-  const promptClient = withPromptContext(
-    yellowHoldAtInbound
-      ? {
-          ...client,
-          aiStatus: yellowHoldAtInbound.previousAiStatus,
-          aiMode: yellowHoldAtInbound.previousAiMode,
-        }
-      : client,
-    state,
-  );
-
-  const conversationCorpus = mapConversationMessagesForRetrieval(
-    stateWithInbound.messages,
-    state.tenant.id,
-    conversation.id,
-  );
-
-  const coreResult = (await handleInboundMessage(
-    {
-      tenantId: state.tenant.id,
-      dietitian: state.dietitian,
-      client: promptClient,
-      conversation,
-      message: { id: inboundMessage.id, body: trimmedBody },
-      recentMessages: priorConversationMessages,
-      conversationMessages: conversationCorpus,
-      memory: {
-        rollingSummary: conversation.rollingSummary,
-        memoryVersion: conversation.memoryVersion,
-        memoryRevision: conversation.memoryRevision,
-        durableFacts: {},
-      },
-      voiceProfile: getActiveVoiceProfile(state) || undefined,
-      styleEditHistorySignals: getStyleEditHistorySignals(state),
-      promptVersion: PROMPT_VERSION,
-      providerId: MOCK_PROVIDER_ID,
-      now,
-      riskDecisionOverride: riskDecision,
-      structuredFoodRules: buildStructuredFoodRulesFromClientState(state, client.id) || undefined,
-      foodRuleDecisionOverride:
-        evaluateClientFoodRuleDecision(state, client.id, trimmedBody, {
-          riskLevel: riskDecision.level,
-          productIngredientEvidence: resolveProductIngredientEvidence(trimmedBody) || undefined,
-        }) || undefined,
-      foodDecisionV2: (() => {
-        const decision = evaluateClientFoodDecisionV2FromState(state, client.id, trimmedBody, {
-          riskLevel: riskDecision.level,
-          productIngredientEvidence: resolveProductIngredientEvidence(trimmedBody) || undefined,
-        });
-        return shouldUseFoodDecisionV2Result(decision) ? decision : undefined;
-      })(),
-      productIngredientEvidence: resolveProductIngredientEvidence(trimmedBody) || undefined,
-    },
-    {
-      generateReply: async (payload: Record<string, unknown>) => {
-        const riskDecision = payload.riskDecision as { level: string };
-        const promptContext = payload.promptContext as { segments: Array<{ type: string; text: string }> };
-        const responsePlan = (payload.contextManifest as { responsePlan?: { replyMode?: string } } | undefined)
-          ?.responsePlan;
-        if (!responsePlan || !isResponsePlanProviderEligible(responsePlan)) {
-          throw new MockProviderError("provider_policy_violation", "response_plan_required");
-        }
-        if (request.mockProviderOutput === "covenant_violation") {
-          return "As an AI, I cannot provide medical advice. Please consult your doctor.";
-        }
-        return generateMockProviderReply(
-          buildMockProviderInput(promptContext, riskDecision.level as AiDecisionRecord["risk"]),
-          {
-            failureMode: request.mockProviderFailure,
-            forceMissingHistoricalContext: request.mockProviderOutput === "missing_historical_context",
-          },
-        );
-      },
-    },
-  )) as CoreResult;
-
-  return appendCoreSimulationResult({
-    state: stateAfterInboundInvalidation,
+  const prepared = await prepareInboundTurnPipeline({
+    state: stateWithInbound,
     client,
     conversation,
     inboundMessage,
-    coreResult,
-    permissionGraph: classified.permissionGraph,
+    evaluationText: trimmedBody,
     now,
-    channelPolicyMock: request.channelPolicyMock,
+  });
+  if (prepared.blocked) {
+    return prepared.state;
+  }
+
+  return runInboundTurnCore({
+    state: prepared.state,
+    client,
+    conversation,
+    inboundMessage,
+    evaluationText: trimmedBody,
+    request,
+    classified: prepared.classified,
   });
 }
 

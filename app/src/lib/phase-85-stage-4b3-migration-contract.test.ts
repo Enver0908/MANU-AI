@@ -43,3 +43,18 @@ describe("P85 Stage 4B-3 migration contract", () => {
     expect(migration).toContain("media_assets_tenant_message_idx");
   });
 });
+
+const bundleDecisionMigration = readFileSync(
+  resolve(__dirname, "../../supabase/migrations/20260713130000_phase_85_stage_4b3_atomic_bundle_decisions.sql"),
+  "utf8",
+);
+
+describe("P85 Stage 4B-3 Phase 8 atomic bundle decision migration", () => {
+  it("creates bundle decision idempotency storage and commit RPC", () => {
+    expect(bundleDecisionMigration).toContain("bundle_decision_idempotency");
+    expect(bundleDecisionMigration).toContain("p85_stage_4b3_commit_bundle_decision_v1");
+    expect(bundleDecisionMigration).toContain("stale_bundle_revision");
+    expect(bundleDecisionMigration).toContain("stale_conversation_revision");
+    expect(bundleDecisionMigration).toContain("grant execute on function p85_stage_4b3_commit_bundle_decision_v1");
+  });
+});
