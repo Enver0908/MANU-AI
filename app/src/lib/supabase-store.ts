@@ -136,6 +136,13 @@ import {
   resolveDraftMutationResultMessage,
 } from "./phase-85-stage-4b2-mutations";
 import { createEmptyStage4B3MediaCollections } from "./phase-85-stage-4b3-media-contracts";
+import {
+  mapInboundMessageBundle,
+  mapInboundMessageBundleItem,
+  mapMediaAsset,
+  mapVisualAnalysisRecord,
+  mapVisualCorrection,
+} from "./phase-85-stage-4b3-supabase-mappers";
 import { normalizeLanguageCode } from "./languages";
 import { processWhatsAppMockWebhookInState } from "./whatsapp-mock-webhook";
 import { createDefaultChannelAdapterRollbackControls } from "./channel-adapter-rollback";
@@ -813,6 +820,11 @@ export async function loadSupabaseState(context = demoTenantContext()) {
     channelAdapterRollbackResult,
     auditEventsResult,
     processedEventsResult,
+    mediaAssetsResult,
+    visualAnalysisRecordsResult,
+    inboundMessageBundlesResult,
+    inboundMessageBundleItemsResult,
+    visualCorrectionsResult,
   ] = await Promise.all([
     supabase.from("tenants").select("*").eq("id", context.tenantId).single(),
     supabase.from("dietitians").select("*").eq("id", context.dietitianId).eq("tenant_id", context.tenantId).single(),
@@ -865,6 +877,11 @@ export async function loadSupabaseState(context = demoTenantContext()) {
     supabase.from("channel_adapter_rollback_controls").select("*").eq("tenant_id", context.tenantId).maybeSingle(),
     supabase.from("audit_events").select("*").eq("tenant_id", context.tenantId).order("created_at"),
     supabase.from("processed_inbound_events").select("*").eq("tenant_id", context.tenantId),
+    supabase.from("media_assets").select("*").eq("tenant_id", context.tenantId).order("created_at"),
+    supabase.from("visual_analysis_records").select("*").eq("tenant_id", context.tenantId).order("created_at"),
+    supabase.from("inbound_message_bundles").select("*").eq("tenant_id", context.tenantId).order("created_at"),
+    supabase.from("inbound_message_bundle_items").select("*").eq("tenant_id", context.tenantId).order("ordinal"),
+    supabase.from("visual_corrections").select("*").eq("tenant_id", context.tenantId).order("created_at"),
   ]);
 
   throwIfError(tenantResult.error);
@@ -908,6 +925,11 @@ export async function loadSupabaseState(context = demoTenantContext()) {
   throwIfError(channelAdapterRollbackResult.error);
   throwIfError(auditEventsResult.error);
   throwIfError(processedEventsResult.error);
+  throwIfError(mediaAssetsResult.error);
+  throwIfError(visualAnalysisRecordsResult.error);
+  throwIfError(inboundMessageBundlesResult.error);
+  throwIfError(inboundMessageBundleItemsResult.error);
+  throwIfError(visualCorrectionsResult.error);
 
   const channels = channelsResult.data || [];
   const memories = memoriesResult.data || [];
@@ -972,7 +994,11 @@ export async function loadSupabaseState(context = demoTenantContext()) {
       auditEvents: (auditEventsResult.data || []).map(mapAuditEvent),
       processedSimulationKeys: (processedEventsResult.data || []).map((event) => event.provider_event_id),
       lastSimulation: null,
-      ...createEmptyStage4B3MediaCollections(),
+      mediaAssets: (mediaAssetsResult.data || []).map(mapMediaAsset),
+      visualAnalysisRecords: (visualAnalysisRecordsResult.data || []).map(mapVisualAnalysisRecord),
+      inboundMessageBundles: (inboundMessageBundlesResult.data || []).map(mapInboundMessageBundle),
+      inboundMessageBundleItems: (inboundMessageBundleItemsResult.data || []).map(mapInboundMessageBundleItem),
+      visualCorrections: (visualCorrectionsResult.data || []).map(mapVisualCorrection),
     }),
     context,
     assignmentsResult.data || [],

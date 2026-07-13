@@ -1,5 +1,7 @@
 # MANU-AI Local App Prototype
 
+2026-07-13: **Stage 4B-3 Phase 2 database/storage/RLS foundation is complete locally.** Migration `supabase/migrations/20260713120000_phase_85_stage_4b3_media_foundation.sql`, mappers in `src/lib/phase-85-stage-4b3-supabase-mappers.ts`, and RLS coverage are in place. Evidence: `../docs/PHASE_85_STAGE_4B_3_PHASE_2_DATABASE_STORAGE_RLS_EVIDENCE.md`. **Next:** Stage 4B-3 Phase 3 media ingress admission. Stage 4C remains blocked; production pilot remains `NO-GO`.
+
 2026-07-13: **Stage 4B-3 Phase 1 domain/type contract is complete locally.** Contracts live in `src/lib/phase-85-stage-4b3-media-contracts.ts` with core validation in `../dietitian-ai-assistant/src/visual-observation-v1.js`. Evidence: `../docs/PHASE_85_STAGE_4B_3_PHASE_1_DOMAIN_TYPE_CONTRACT_EVIDENCE.md`. **Next:** Stage 4B-3 Phase 2 database/storage/RLS foundation. Stage 4C remains blocked; production pilot remains `NO-GO`.
 
 2026-07-13: **Stage 4B-3 Phase 0 documentation lock is active.** The current Phase 85 work is `Stage 4B-3 Multimodal Gorsel Guvenligi ve Yanit Orkestrasyonu`, inserted between completed Stage 4B-2 and Stage 4C. Canonical plan: `../docs/PHASE_85_STAGE_4B_3_MULTIMODAL_GORSEL_GUVENLIGI_VE_YANIT_ORK_PLAN.md`. Phase 0 evidence: `../docs/PHASE_85_STAGE_4B_3_PHASE_0_DOCUMENTATION_EVIDENCE.md`. Stage 4C is blocked until Stage 4B-3 closes; production pilot remains `NO-GO`.

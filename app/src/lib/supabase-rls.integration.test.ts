@@ -92,6 +92,19 @@ const TEST_P85_CHANNEL_MESSAGE_REVISION_ID = "00000000-0000-4000-8000-0000000009
 const TEST_P85_RISK_ACTIVITY_ID = "00000000-0000-4000-8000-000000000952";
 const TEST_STAGE4B_NOTIFICATION_ID = "00000000-0000-4000-8000-000000000959";
 const TEST_STAGE4B_MEDIA_NOTIFICATION_ID = "00000000-0000-4000-8000-000000000960";
+const TEST_STAGE4B3_MEDIA_ASSET_ID = "00000000-0000-4000-8000-000000000962";
+const OTHER_STAGE4B3_MEDIA_ASSET_ID = "00000000-0000-4000-8000-000000000963";
+const TEST_STAGE4B3_CLAIM_MEDIA_ASSET_ID = "00000000-0000-4000-8000-000000000964";
+const TEST_STAGE4B3_VISUAL_ANALYSIS_ID = "00000000-0000-4000-8000-000000000965";
+const OTHER_STAGE4B3_VISUAL_ANALYSIS_ID = "00000000-0000-4000-8000-000000000966";
+const TEST_STAGE4B3_BUNDLE_ID = "00000000-0000-4000-8000-000000000967";
+const OTHER_STAGE4B3_BUNDLE_ID = "00000000-0000-4000-8000-000000000968";
+const TEST_STAGE4B3_CLAIM_BUNDLE_ID = "00000000-0000-4000-8000-000000000969";
+const TEST_STAGE4B3_BUNDLE_ITEM_ID = "00000000-0000-4000-8000-000000000970";
+const OTHER_STAGE4B3_BUNDLE_ITEM_ID = "00000000-0000-4000-8000-000000000971";
+const TEST_STAGE4B3_VISUAL_CORRECTION_ID = "00000000-0000-4000-8000-000000000972";
+const OTHER_STAGE4B3_VISUAL_CORRECTION_ID = "00000000-0000-4000-8000-000000000973";
+const TEST_STAGE4B3_CLAIM_MESSAGE_ID = "00000000-0000-4000-8000-000000000974";
 const PASSWORD = "manu-rls-test-password";
 
 const maybeDescribe = shouldRun ? describe : describe.skip;
@@ -2034,6 +2047,128 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
 
     await resetSupabaseState();
   }, 30000);
+
+  it("scopes Stage 4B-3 media tables to assigned conversations and blocks direct writes", async () => {
+    const member = await signIn("rls-member@manu.local");
+    const assistant = await signIn("rls-assistant@manu.local");
+    const auditor = await signIn("rls-auditor@manu.local");
+
+    const visibleAssets = await member.from("media_assets").select("id").eq("id", TEST_STAGE4B3_MEDIA_ASSET_ID);
+    expect(visibleAssets.error).toBeNull();
+    expect(visibleAssets.data).toEqual([{ id: TEST_STAGE4B3_MEDIA_ASSET_ID }]);
+
+    const hiddenAssets = await member.from("media_assets").select("id").eq("id", OTHER_STAGE4B3_MEDIA_ASSET_ID);
+    expect(hiddenAssets.error).toBeNull();
+    expect(hiddenAssets.data).toEqual([]);
+
+    const assistantAssets = await assistant.from("media_assets").select("id").eq("id", TEST_STAGE4B3_MEDIA_ASSET_ID);
+    expect(assistantAssets.error).toBeNull();
+    expect(assistantAssets.data).toEqual([{ id: TEST_STAGE4B3_MEDIA_ASSET_ID }]);
+
+    const auditorAssets = await auditor.from("media_assets").select("id").eq("id", TEST_STAGE4B3_MEDIA_ASSET_ID);
+    expect(auditorAssets.error).toBeNull();
+    expect(auditorAssets.data).toEqual([]);
+
+    const visibleAnalysis = await member
+      .from("visual_analysis_records")
+      .select("id")
+      .eq("id", TEST_STAGE4B3_VISUAL_ANALYSIS_ID);
+    expect(visibleAnalysis.error).toBeNull();
+    expect(visibleAnalysis.data).toEqual([{ id: TEST_STAGE4B3_VISUAL_ANALYSIS_ID }]);
+
+    const visibleBundles = await member.from("inbound_message_bundles").select("id").eq("id", TEST_STAGE4B3_BUNDLE_ID);
+    expect(visibleBundles.error).toBeNull();
+    expect(visibleBundles.data).toEqual([{ id: TEST_STAGE4B3_BUNDLE_ID }]);
+
+    const visibleBundleItems = await member
+      .from("inbound_message_bundle_items")
+      .select("id")
+      .eq("id", TEST_STAGE4B3_BUNDLE_ITEM_ID);
+    expect(visibleBundleItems.error).toBeNull();
+    expect(visibleBundleItems.data).toEqual([{ id: TEST_STAGE4B3_BUNDLE_ITEM_ID }]);
+
+    const memberCorrections = await member
+      .from("visual_corrections")
+      .select("id")
+      .eq("id", TEST_STAGE4B3_VISUAL_CORRECTION_ID);
+    expect(memberCorrections.error).toBeNull();
+    expect(memberCorrections.data).toEqual([{ id: TEST_STAGE4B3_VISUAL_CORRECTION_ID }]);
+
+    const assistantCorrections = await assistant
+      .from("visual_corrections")
+      .select("id")
+      .eq("id", TEST_STAGE4B3_VISUAL_CORRECTION_ID);
+    expect(assistantCorrections.error).toBeNull();
+    expect(assistantCorrections.data).toEqual([]);
+
+    const directInsert = await member.from("media_assets").insert({
+      id: "00000000-0000-4000-8000-000000000975",
+      tenant_id: TEST_TENANT_ID,
+      client_id: TEST_CLIENT_ID,
+      conversation_id: TEST_CONVERSATION_ID,
+      message_id: TEST_MESSAGE_ID,
+      declared_mime_type: "image/jpeg",
+      status: "admitted",
+    });
+    expect(directInsert.error?.message).toMatch(/permission denied|row-level security/i);
+
+    const bucket = await admin.storage.getBucket("p85-stage-4b3-media");
+    expect(bucket.error).toBeNull();
+    expect(bucket.data?.public).toBe(false);
+  });
+
+  it("claims Stage 4B-3 worker leases through service-role RPCs only", async () => {
+    const member = await signIn("rls-member@manu.local");
+
+    const deniedClaim = await member.rpc("p85_stage_4b3_claim_media_asset_worker", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_worker_id: "blocked-worker",
+    });
+    expect(deniedClaim.error?.message).toMatch(/permission denied|service_role_required/i);
+
+    const claimedAsset = await admin.rpc("p85_stage_4b3_claim_media_asset_worker", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_worker_id: "rls-test-worker",
+    });
+    expect(claimedAsset.error).toBeNull();
+    expect(claimedAsset.data?.[0]?.id).toBe(TEST_STAGE4B3_CLAIM_MEDIA_ASSET_ID);
+    expect(claimedAsset.data?.[0]?.lease_owner).toBe("rls-test-worker");
+    expect(claimedAsset.data?.[0]?.lease_expires_at).toBeTruthy();
+
+    const releasedAsset = await admin.rpc("p85_stage_4b3_release_media_asset_lease", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_asset_id: TEST_STAGE4B3_CLAIM_MEDIA_ASSET_ID,
+      p_worker_id: "rls-test-worker",
+      p_success: true,
+    });
+    expect(releasedAsset.error).toBeNull();
+    expect(releasedAsset.data?.lease_owner).toBeNull();
+
+    const deniedBundleClaim = await member.rpc("p85_stage_4b3_claim_inbound_message_bundle_worker", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_worker_id: "blocked-worker",
+    });
+    expect(deniedBundleClaim.error?.message).toMatch(/permission denied|service_role_required/i);
+
+    const claimedBundle = await admin.rpc("p85_stage_4b3_claim_inbound_message_bundle_worker", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_worker_id: "rls-test-worker",
+    });
+    expect(claimedBundle.error).toBeNull();
+    expect(claimedBundle.data?.[0]?.id).toBe(TEST_STAGE4B3_CLAIM_BUNDLE_ID);
+    expect(claimedBundle.data?.[0]?.status).toBe("processing");
+    expect(claimedBundle.data?.[0]?.lease_owner).toBe("rls-test-worker");
+
+    const releasedBundle = await admin.rpc("p85_stage_4b3_release_inbound_bundle_lease", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_bundle_id: TEST_STAGE4B3_CLAIM_BUNDLE_ID,
+      p_worker_id: "rls-test-worker",
+      p_success: true,
+      p_reopen: false,
+    });
+    expect(releasedBundle.error).toBeNull();
+    expect(releasedBundle.data?.lease_owner).toBeNull();
+  });
 });
 
 function loadEnvLocal() {
@@ -2247,6 +2382,14 @@ async function seedTenants(
         sender: "client",
         origin: "client_inbound",
         body: "Hidden risk message",
+      },
+      {
+        id: TEST_STAGE4B3_CLAIM_MESSAGE_ID,
+        tenant_id: TEST_TENANT_ID,
+        conversation_id: UNASSIGNED_CONVERSATION_ID,
+        sender: "client",
+        origin: "client_inbound",
+        body: "Stage 4B-3 claim message",
       },
     ]),
   );
@@ -2719,6 +2862,158 @@ async function seedTenants(
     ]),
   );
   await checked(
+    admin.from("media_assets").insert([
+      {
+        id: TEST_STAGE4B3_MEDIA_ASSET_ID,
+        tenant_id: TEST_TENANT_ID,
+        client_id: TEST_CLIENT_ID,
+        conversation_id: TEST_CONVERSATION_ID,
+        message_id: TEST_MESSAGE_ID,
+        declared_mime_type: "image/jpeg",
+        detected_mime_type: "image/jpeg",
+        width: 640,
+        height: 480,
+        status: "analysis_ready",
+        sanitized_full_object_key: "tenant/visible/full.jpg",
+        thumbnail_object_key: "tenant/visible/thumb.jpg",
+      },
+      {
+        id: OTHER_STAGE4B3_MEDIA_ASSET_ID,
+        tenant_id: OTHER_TENANT_ID,
+        client_id: OTHER_CLIENT_ID,
+        conversation_id: OTHER_CONVERSATION_ID,
+        message_id: OTHER_MESSAGE_ID,
+        declared_mime_type: "image/png",
+        status: "sanitized",
+      },
+      {
+        id: TEST_STAGE4B3_CLAIM_MEDIA_ASSET_ID,
+        tenant_id: TEST_TENANT_ID,
+        client_id: UNASSIGNED_CLIENT_ID,
+        conversation_id: UNASSIGNED_CONVERSATION_ID,
+        message_id: TEST_STAGE4B3_CLAIM_MESSAGE_ID,
+        declared_mime_type: "image/jpeg",
+        status: "download_pending",
+      },
+    ]),
+  );
+  await checked(
+    admin.from("inbound_message_bundles").insert([
+      {
+        id: TEST_STAGE4B3_BUNDLE_ID,
+        tenant_id: TEST_TENANT_ID,
+        client_id: TEST_CLIENT_ID,
+        conversation_id: TEST_CONVERSATION_ID,
+        anchor_message_id: TEST_MESSAGE_ID,
+        status: "open",
+        ready_at: "2026-07-10T10:00:00.000Z",
+        item_count: 1,
+        image_count: 1,
+        unicode_codepoint_count: 12,
+      },
+      {
+        id: OTHER_STAGE4B3_BUNDLE_ID,
+        tenant_id: OTHER_TENANT_ID,
+        client_id: OTHER_CLIENT_ID,
+        conversation_id: OTHER_CONVERSATION_ID,
+        anchor_message_id: OTHER_MESSAGE_ID,
+        status: "open",
+        ready_at: "2026-07-10T10:00:00.000Z",
+        item_count: 1,
+        image_count: 1,
+        unicode_codepoint_count: 10,
+      },
+      {
+        id: TEST_STAGE4B3_CLAIM_BUNDLE_ID,
+        tenant_id: TEST_TENANT_ID,
+        client_id: UNASSIGNED_CLIENT_ID,
+        conversation_id: UNASSIGNED_CONVERSATION_ID,
+        anchor_message_id: TEST_STAGE4B3_CLAIM_MESSAGE_ID,
+        status: "ready",
+        ready_at: "2026-07-10T09:00:00.000Z",
+        item_count: 1,
+        image_count: 1,
+        unicode_codepoint_count: 8,
+      },
+    ]),
+  );
+  await checked(
+    admin.from("visual_analysis_records").insert([
+      {
+        id: TEST_STAGE4B3_VISUAL_ANALYSIS_ID,
+        tenant_id: TEST_TENANT_ID,
+        client_id: TEST_CLIENT_ID,
+        conversation_id: TEST_CONVERSATION_ID,
+        media_asset_id: TEST_STAGE4B3_MEDIA_ASSET_ID,
+        message_id: TEST_MESSAGE_ID,
+        bundle_id: TEST_STAGE4B3_BUNDLE_ID,
+        status: "ready",
+      },
+      {
+        id: OTHER_STAGE4B3_VISUAL_ANALYSIS_ID,
+        tenant_id: OTHER_TENANT_ID,
+        client_id: OTHER_CLIENT_ID,
+        conversation_id: OTHER_CONVERSATION_ID,
+        media_asset_id: OTHER_STAGE4B3_MEDIA_ASSET_ID,
+        message_id: OTHER_MESSAGE_ID,
+        bundle_id: OTHER_STAGE4B3_BUNDLE_ID,
+        status: "pending",
+      },
+    ]),
+  );
+  await checked(
+    admin.from("inbound_message_bundle_items").insert([
+      {
+        id: TEST_STAGE4B3_BUNDLE_ITEM_ID,
+        tenant_id: TEST_TENANT_ID,
+        bundle_id: TEST_STAGE4B3_BUNDLE_ID,
+        message_id: TEST_MESSAGE_ID,
+        media_asset_id: TEST_STAGE4B3_MEDIA_ASSET_ID,
+        ordinal: 1,
+        item_type: "image",
+      },
+      {
+        id: OTHER_STAGE4B3_BUNDLE_ITEM_ID,
+        tenant_id: OTHER_TENANT_ID,
+        bundle_id: OTHER_STAGE4B3_BUNDLE_ID,
+        message_id: OTHER_MESSAGE_ID,
+        media_asset_id: OTHER_STAGE4B3_MEDIA_ASSET_ID,
+        ordinal: 1,
+        item_type: "image",
+      },
+    ]),
+  );
+  await checked(
+    admin.from("visual_corrections").insert([
+      {
+        id: TEST_STAGE4B3_VISUAL_CORRECTION_ID,
+        tenant_id: TEST_TENANT_ID,
+        client_id: TEST_CLIENT_ID,
+        conversation_id: TEST_CONVERSATION_ID,
+        analysis_id: TEST_STAGE4B3_VISUAL_ANALYSIS_ID,
+        dietitian_id: TEST_DIETITIAN_ID,
+        reason_code: "wrong_scene",
+        explanation: "Visible correction",
+        conversation_revision_at_submit: 1,
+        analysis_revision_at_submit: 1,
+        result_action: "supersede_rerun",
+      },
+      {
+        id: OTHER_STAGE4B3_VISUAL_CORRECTION_ID,
+        tenant_id: OTHER_TENANT_ID,
+        client_id: OTHER_CLIENT_ID,
+        conversation_id: OTHER_CONVERSATION_ID,
+        analysis_id: OTHER_STAGE4B3_VISUAL_ANALYSIS_ID,
+        dietitian_id: OTHER_DIETITIAN_ID,
+        reason_code: "wrong_scene",
+        explanation: "Hidden correction",
+        conversation_revision_at_submit: 1,
+        analysis_revision_at_submit: 1,
+        result_action: "manual_follow_up",
+      },
+    ]),
+  );
+  await checked(
     admin.from("commercial_invites").insert([
       {
         id: TEST_COMMERCIAL_INVITE_ID,
@@ -2808,6 +3103,11 @@ async function seedTenants(
 
 async function cleanup(admin: SupabaseClient) {
   await admin.from("processed_inbound_events").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("visual_corrections").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("inbound_message_bundle_items").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("visual_analysis_records").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("inbound_message_bundles").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("media_assets").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("mobile_install_audit_events").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("billing_event_ledger").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("billing_customers").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
