@@ -2,6 +2,8 @@
 
 ## Read This First
 
+Latest Phase 85 Stage 4B-2 local RLS re-closure status (2026-07-13): **local Supabase reset now passes and `npm run test:rls` passes 35/35 with 0 skipped.** Evidence: `docs/PHASE_85_STAGE_4B_2_RLS_LOCAL_RECLOSURE_EVIDENCE.md`. The prior Docker/Supabase skip blocker is superseded for the current local RLS suite. SQL buffer/EXPLAIN evidence for bounded list/detail RPCs is not claimed closed in this note. Production pilot remains `NO-GO`; R-405 remains open; real provider/channel/health-data and production-operations paths remain closed.
+
 Latest Phase 85 Stage 4B-2 status (2026-07-12): **Mesajlaşma implementation exists locally and is under post-closure remediation; R1 contract correction is complete and current RLS closure is environment-blocked.** Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R1_EVIDENCE.md`. **Next work:** remediation R2; Stage 4C remains blocked. Production pilot remains `NO-GO`; R-405 remains open; all real provider/channel/health-data and production-operations paths remain closed.
 
 Latest Phase 85 Stage 4B-2 Phase 3 status (2026-07-12): superseded by Phase 4 closure above. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_3_BOUNDED_PROJECTION_EVIDENCE.md`.

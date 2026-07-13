@@ -952,7 +952,7 @@ revoke execute on function p85_stage_4b_count_alerts_v2(uuid, uuid, uuid, text, 
 revoke execute on function p85_stage_4b_visible_notification_candidates_v2(uuid, uuid, uuid, text) from public;
 revoke execute on function p85_stage_4b_get_notification_v2(uuid, uuid, uuid, text, uuid) from public;
 revoke execute on function p85_stage_4b_list_notifications_v2(uuid, uuid, uuid, text, text, text, text, text, text[], text, integer, timestamptz, timestamptz, uuid, integer) from public;
-revoke execute on function p85_stage_4b_count_notifications_v2(uuid, uuid, uuid, text, text, text, text, text[]) from public;
+revoke execute on function p85_stage_4b_count_notifications_v2(uuid, uuid, uuid, text, text, text, text, text, text[]) from public;
 revoke execute on function p85_stage_4b_mark_notification_read_v2(uuid, uuid, uuid, text, uuid) from public;
 revoke execute on function p85_stage_4b_acknowledge_notification_v2(uuid, uuid, uuid, text, uuid) from public;
 revoke execute on function p85_stage_4b_mark_all_notifications_read_v2(uuid, uuid, uuid, text) from public;

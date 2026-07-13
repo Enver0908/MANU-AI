@@ -18,6 +18,8 @@ R5 reconstructs security, lifecycle, bounded-scale, replay, accessibility, and r
 
 ## Verification
 
+RLS update, 2026-07-13: the prior Docker-blocked RLS entry below is superseded by local re-closure evidence. Local Supabase reset passed and `npm run test:rls` passed 35/35 with 0 skipped. Evidence: `docs/PHASE_85_STAGE_4B_2_RLS_LOCAL_RECLOSURE_EVIDENCE.md`.
+
 | Check | Result |
 | --- | --- |
 | R5 focused evidence | 3/3 passed |

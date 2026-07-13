@@ -4,6 +4,8 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 ## Current Status
 
+**2026-07-13 Stage 4B-2 local RLS re-closure:** Local Supabase/Docker is now running and the current RLS suite passed with zero skips. `npx supabase db reset` passed, `npm run test:rls` passed 35/35, targeted `supabase-store`/`client-forms` tests passed 9/9, and `git diff --check` passed. Evidence: `docs/PHASE_85_STAGE_4B_2_RLS_LOCAL_RECLOSURE_EVIDENCE.md`. Production pilot remains `NO-GO`; R-405 remains open; real provider/channel/health-data paths remain closed.
+
 **2026-07-12 Stage 4B-2 closure:** Mesajlaşma implementation and evidence closure are complete locally; current RLS execution is environment-blocked. Bounded conversation list/detail APIs, per-actor unread receipts, manual/yellow/draft mutations, WhatsApp-like detail UX, Mesajlaşma navigation, Stage 4B integration, scale/visual/release verification, and canonical runtime spec are implemented. Core 234/234, app 953 passed / 6 skipped, Stage 4B-2 rehearsal, 79G/release verification, build, lint, and visual 40/40 passed. `npm run test:rls` skips 35 tests because Docker Desktop is unavailable; this is not counted as pass. Evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`. **Next:** Stage 4C Diyetisyen Icin AI Chat. Production pilot remains `NO-GO`; R-405 remains open; real provider/channel/health-data paths remain closed.
 
 **2026-07-12 Stage 4B-2 Phase 4:** superseded by Stage 4B-2 closure above.

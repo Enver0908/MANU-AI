@@ -1447,6 +1447,7 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
           origin: "client_inbound",
           body: "Second inbound",
           conversation_sequence: 2,
+          content_status: "available",
           created_at: now,
         },
         {
@@ -1457,6 +1458,7 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
           origin: "client_inbound",
           body: "Third inbound",
           conversation_sequence: 3,
+          content_status: "available",
           created_at: now,
         },
         {

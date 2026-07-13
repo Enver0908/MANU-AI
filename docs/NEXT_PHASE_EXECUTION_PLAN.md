@@ -2,6 +2,8 @@
 
 ## Current Position
 
+Current Stage 4B-2 local RLS re-closure override (2026-07-13): Docker Desktop/local Supabase is available again for the current local suite. `npx supabase db reset` passed and `npm run test:rls` passed 35/35 with 0 skipped after append-only re-closure migration `20260713024000_phase_85_stage_4b2_rls_local_reclosure.sql`. Evidence: `docs/PHASE_85_STAGE_4B_2_RLS_LOCAL_RECLOSURE_EVIDENCE.md`. This does not approve production pilot, close R-405, enable real provider/channel/health-data paths, or claim SQL buffer/EXPLAIN closure.
+
 MANU-AI is in pilot-foundation mode. The local SaaS/PWA prototype, Supabase-backed state, fallback store, simulator, risk assessment persistence, core safety tests, RLS guard, controlled API errors, expanded dashboard visual smoke checks, voice-profile workflow, dynamic client forms, read-only internal dietitian copilot, and dietitian-entered critical context updates exist.
 
 Real WhatsApp, Telegram, Gemini/external LLM, production client-messaging email, push, monitoring, secret manager, and real client health data remain disconnected. Hosted sandbox auth email is limited to Supabase magic links through the verified Phase 84J Resend custom-SMTP setup.

@@ -1,7 +1,13 @@
 # Phase 85 Stage 4B-2 Post-Closure Remediation - Phase R6 Evidence
 
 Date: 2026-07-13
-Status: **BLOCKED — independent gate executed; real Supabase/RLS environment unavailable**
+Status: **UPDATED — independent gate executed; local RLS re-run later passed**
+
+## 2026-07-13 Local RLS Re-Closure Addendum
+
+The prior R6 blocked status for the Supabase role-matrix suite is superseded for RLS execution. Docker Desktop/local Supabase was started, `npx supabase db reset` passed, and `npm run test:rls` passed 35/35 with 0 skipped. Evidence: `docs/PHASE_85_STAGE_4B_2_RLS_LOCAL_RECLOSURE_EVIDENCE.md`.
+
+This addendum does not claim SQL `EXPLAIN ANALYZE BUFFERS` closure for the bounded list/detail RPCs and does not approve Stage 4C, production pilot, real provider/channel paths, or R-405 closure.
 
 ## Decision
 

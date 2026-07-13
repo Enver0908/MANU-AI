@@ -10,6 +10,10 @@ No real WhatsApp, Telegram, Gemini, external LLM provider, production client-mes
 
 All production-pilot launch gates remain open until the user supplies external approval evidence.
 
+## Phase 85 Stage 4B-2 Local RLS Re-Closure Note - 2026-07-13
+
+The previous Docker-blocked local RLS execution is superseded for the current suite. Local Supabase reset passed and `npm run test:rls` passed 35/35 with 0 skipped. Evidence: `docs/PHASE_85_STAGE_4B_2_RLS_LOCAL_RECLOSURE_EVIDENCE.md`. This does not close any production-pilot launch gate, does not close R-405, does not enable real provider/channel/health-data paths, and does not claim SQL buffer/EXPLAIN closure.
+
 ## Phase 85 Stage 4B Post-Closure Remediation Note - 2026-07-12
 
 Stage 4B-2 Mesajlasma closure (2026-07-12): bounded conversation APIs, per-actor receipts, mutations, detail UX, integration, scale/visual/release verification, and canonical spec are in place. Core 234/234, app 953 passed / 6 skipped, visual 40/40 passed. The current RLS run skips 35 tests because Docker Desktop is unavailable; this is an explicit blocker and not a pass. Evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md`. **Next:** Stage 4C. This note changes no production gate: production pilot remains `NO-GO`, R-405 remains open, and real paths remain disabled.

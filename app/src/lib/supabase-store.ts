@@ -4662,10 +4662,13 @@ async function upsertDietitianFormSchema(
 }
 
 async function upsertDietitianFormResponse(supabase: SupabaseClient, response: DietitianFormResponseRecord) {
+  const id = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(response.id)
+    ? response.id
+    : undefined;
   await checked(
     supabase.from("dietitian_form_responses").upsert(
       {
-        id: response.id,
+        ...(id ? { id } : {}),
         tenant_id: response.tenantId,
         dietitian_id: response.dietitianId,
         schema_id: response.schemaId,

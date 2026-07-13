@@ -8,6 +8,8 @@ This is the final summary for the 13-phase completion roadmap, updated through P
 
 Production pilot is not approved.
 
+Phase 85 Stage 4B-2 local RLS re-closure (2026-07-13): local Supabase reset passed and the current `npm run test:rls` suite passed 35/35 with 0 skipped. Evidence: `docs/PHASE_85_STAGE_4B_2_RLS_LOCAL_RECLOSURE_EVIDENCE.md`. This updates the local RLS evidence only; production pilot remains `NO-GO`, R-405 remains open, all external launch gates remain open, and real provider/channel/health-data paths remain disconnected.
+
 Phase 85 Stage 4B-2 Mesajlasma closure (2026-07-12) is implemented and locally verified through bounded APIs, per-actor receipts, mutations, detail UX, integration, scale/visual/release checks, and canonical spec. Core 234/234 and app 953 passed / 6 skipped; visual 40/40 passed; the current 35-test RLS suite is blocked by unavailable Docker and is not counted as pass. Evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md`. **Next:** Stage 4C. This changes no production gate, and production pilot remains `NO-GO`; R-405 remains open.
 
 Phase 85 Stage 4B post-closure remediation (2026-07-12) is implemented and locally verified through bounded actor-aware Supabase contracts, safe linkage, lifecycle producers, atomic review, role boundaries, 79G/release verification, and four-viewport visual evidence. Core 234/234 and app 901 passed / 5 skipped; the current 33-test RLS suite is blocked by unavailable Docker and is not counted as pass. Evidence: `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md`. Stage 4B-2 is now complete.
