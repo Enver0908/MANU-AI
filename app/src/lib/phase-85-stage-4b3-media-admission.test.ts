@@ -129,6 +129,8 @@ describe("phase-85-stage-4b3-media-admission ingress", () => {
     expect(asset?.sanitizedFullObjectKey).toBeTruthy();
     expect(asset?.thumbnailObjectKey).toBeTruthy();
     expect(storage.objects.size).toBe(2);
+    expect(next.inboundMessageBundles).toHaveLength(1);
+    expect(next.inboundMessageBundleItems).toHaveLength(1);
 
     const draftCountAfter = next.messages.filter((message) => message.status === "draft").length;
     expect(draftCountAfter).toBe(draftCountBefore);

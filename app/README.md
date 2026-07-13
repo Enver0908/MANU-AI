@@ -1,6 +1,6 @@
 # MANU-AI Local App Prototype
 
-2026-07-13: **Stage 4B-3 Phase 3 secure visual ingress is complete locally.** Normalizer/ledger image ingress, mock transport, and sanitized storage admission live under `src/lib/phase-85-stage-4b3-*`. Evidence: `../docs/PHASE_85_STAGE_4B_3_PHASE_3_SECURE_VISUAL_INGRESS_EVIDENCE.md`. **Next:** Stage 4B-3 Phase 4 bundle correlation. Stage 4C remains blocked; production pilot remains `NO-GO`.
+2026-07-13: **Stage 4B-3 Phase 4 bundle correlation and silence queue is complete locally.** Bundle ingress, timer reset, overflow, supersede, and due-bundle worker live under `src/lib/phase-85-stage-4b3-message-bundles.ts` and `phase-85-stage-4b3-media-worker.ts`. Evidence: `../docs/PHASE_85_STAGE_4B_3_PHASE_4_BUNDLE_SILENCE_QUEUE_EVIDENCE.md`. **Next:** Stage 4B-3 Phase 5 deterministic local vision provider. Stage 4C remains blocked; production pilot remains `NO-GO`.
 
 2026-07-13: **Stage 4B-3 Phase 2 database/storage/RLS foundation is complete locally.** Migration `supabase/migrations/20260713120000_phase_85_stage_4b3_media_foundation.sql`, mappers in `src/lib/phase-85-stage-4b3-supabase-mappers.ts`, and RLS coverage are in place. Evidence: `../docs/PHASE_85_STAGE_4B_3_PHASE_2_DATABASE_STORAGE_RLS_EVIDENCE.md`. **Next:** Stage 4B-3 Phase 3 media ingress admission. Stage 4C remains blocked; production pilot remains `NO-GO`.
 

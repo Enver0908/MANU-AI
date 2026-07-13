@@ -4,7 +4,9 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 ## Current Status
 
-**2026-07-13 Stage 4B-3 Phase 3 secure visual ingress:** Mock-gated `client_message_image` normalization, `sharp`/`file-type` admission, EXIF-stripped sanitized private objects, and ledger ingress without client AI replies. Evidence: `docs/PHASE_85_STAGE_4B_3_PHASE_3_SECURE_VISUAL_INGRESS_EVIDENCE.md`. **Next:** Stage 4B-3 Phase 4. Production pilot remains `NO-GO`; R-405 remains open.
+**2026-07-13 Stage 4B-3 Phase 4 bundle correlation and silence queue:** 120-second inbound bundle correlation, bundled client text/image ingress without `processMockChannelInbound`, business-human echo supersede, cap overflow to `review_required`, and due-bundle worker claim without orchestration. Evidence: `docs/PHASE_85_STAGE_4B_3_PHASE_4_BUNDLE_SILENCE_QUEUE_EVIDENCE.md`. **Next:** Stage 4B-3 Phase 5. Production pilot remains `NO-GO`; R-405 remains open.
+
+**2026-07-13 Stage 4B-3 Phase 3 secure visual ingress:** Mock-gated `client_message_image` normalization, `sharp`/`file-type` admission, EXIF-stripped sanitized private objects, and ledger ingress without client AI replies. Evidence: `docs/PHASE_85_STAGE_4B_3_PHASE_3_SECURE_VISUAL_INGRESS_EVIDENCE.md`. Phase 4 subsequently completed; see the Phase 4 evidence above.
 
 **2026-07-13 Stage 4B-3 Phase 2 database/storage/RLS foundation:** Append-only migration `20260713120000_phase_85_stage_4b3_media_foundation.sql` adds media tables, private bucket `p85-stage-4b3-media`, conversation-scoped RLS, service-role worker claim RPCs, and `loadSupabaseState` media loading. Evidence: `docs/PHASE_85_STAGE_4B_3_PHASE_2_DATABASE_STORAGE_RLS_EVIDENCE.md`. **Next:** Stage 4B-3 Phase 3. Production pilot remains `NO-GO`; R-405 remains open.
 

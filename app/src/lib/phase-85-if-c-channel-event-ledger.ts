@@ -8,11 +8,18 @@ import { routeChannelEvent } from "./phase-85-if-c-channel-event-routing";
 import { applyRoutedTranscriptSideEffects } from "./phase-85-if-d-transcript-human-control";
 import { processMockChannelInbound } from "./channel-adapters";
 import {
+  applyBundledClientTextIngress,
+  hasActiveInboundBundle,
+  integrateClientImageIntoBundle,
+  supersedeConversationBundles,
+} from "./phase-85-stage-4b3-message-bundles";
+import {
   processStage4B3PendingMediaAssets,
   stageClientImageIngressMetadata,
 } from "./phase-85-stage-4b3-media-admission";
 import type { Stage4B3MediaStoragePort } from "./phase-85-stage-4b3-media-storage";
 import type { Stage4B3MediaTransportPort } from "./phase-85-stage-4b3-media-transport";
+import { processStage4B3DueInboundBundles } from "./phase-85-stage-4b3-media-worker";
 
 // Phase 85 Interstage Foundation - P85-IF-C ledger, secure gate, quarantine, and replay.
 //
@@ -74,6 +81,8 @@ export type Stage4B3AdmissionRuntime = {
   transport: Stage4B3MediaTransportPort;
   storage: Stage4B3MediaStoragePort;
   autoProcessPending?: boolean;
+  autoProcessBundles?: boolean;
+  workerId?: string;
 };
 
 export type SecureChannelIngressGateResult = {
@@ -137,6 +146,7 @@ export async function processInboundWhatsAppChannelBatch(
     providedSecret?: string | null;
     env?: NodeJS.ProcessEnv;
     stage4b3Admission?: Stage4B3AdmissionRuntime;
+    now?: string;
   } = {},
 ): Promise<{ state: ManuAppState; result: ChannelEventIngressResult }> {
   const gate = resolveSecureChannelIngressGate(options.env ?? process.env, options.providedSecret ?? null);
@@ -164,7 +174,7 @@ export async function processInboundWhatsAppChannelBatch(
 async function ingestSingleCandidate(
   state: ManuAppState,
   candidate: RawChannelEventCandidate,
-  options: { stage4b3Admission?: Stage4B3AdmissionRuntime } = {},
+  options: { stage4b3Admission?: Stage4B3AdmissionRuntime; now?: string } = {},
 ): Promise<{ state: ManuAppState; outcome: ChannelEventIngressOutcome }> {
   if (candidate.providerEventId) {
     const existingEvent = state.channelEvents.find(
@@ -226,18 +236,29 @@ async function ingestSingleCandidate(
     processingStatus: "committed",
     eventKindOverride: routing.finalEventKind,
     accountBindingId: routing.accountBindingId,
+    observedAt: options.now,
   });
   let nextState = pushChannelEvent(state, record);
+  const ingressContext = {
+    candidate,
+    routing,
+    channelEventId: record.id,
+    observedAt: record.observedAt,
+  };
 
   if (routing.finalEventKind === "client_message_text") {
-    nextState = await applyRoutedClientInbound(nextState, candidate, routing, record.observedAt);
+    if (routing.conversationId && hasActiveInboundBundle(nextState, routing.conversationId)) {
+      nextState = applyBundledClientTextIngress(nextState, ingressContext);
+    } else {
+      nextState = await applyRoutedClientInbound(nextState, candidate, routing, record.observedAt);
+    }
   } else if (routing.finalEventKind === "client_message_image") {
-    nextState = stageClientImageIngressMetadata(nextState, {
-      candidate,
-      routing,
-      channelEventId: record.id,
-      observedAt: record.observedAt,
-    });
+    nextState = stageClientImageIngressMetadata(nextState, ingressContext);
+    const message = nextState.messages[nextState.messages.length - 1];
+    const asset = nextState.mediaAssets[nextState.mediaAssets.length - 1];
+    if (message && asset) {
+      nextState = integrateClientImageIntoBundle(nextState, ingressContext, message.id, asset.id);
+    }
     if (options.stage4b3Admission?.autoProcessPending !== false && options.stage4b3Admission) {
       nextState = await processStage4B3PendingMediaAssets(nextState, {
         transport: options.stage4b3Admission.transport,
@@ -245,6 +266,22 @@ async function ingestSingleCandidate(
         now: record.observedAt,
       });
     }
+    if (options.stage4b3Admission?.autoProcessBundles !== false && options.stage4b3Admission) {
+      nextState = processStage4B3DueInboundBundles(nextState, {
+        workerId: options.stage4b3Admission.workerId ?? "stage4b3-ledger-worker",
+        now: record.observedAt,
+        releaseAfterClaim: false,
+      }).state;
+    }
+  } else if (routing.finalEventKind === "business_human_echo_text" && routing.conversationId) {
+    nextState = supersedeConversationBundles(nextState, routing.conversationId, record.observedAt);
+    nextState = await applyRoutedTranscriptEffectsIfNeeded(
+      nextState,
+      candidate,
+      routing,
+      record.id,
+      record.observedAt,
+    );
   } else {
     nextState = await applyRoutedTranscriptEffectsIfNeeded(
       nextState,
@@ -315,9 +352,10 @@ function buildLedgerRecord(
     processingStatus: ChannelEventRecord["processingStatus"];
     eventKindOverride: ChannelEventKind;
     accountBindingId: string | null;
+    observedAt?: string;
   },
 ): ChannelEventRecord {
-  const now = new Date().toISOString();
+  const now = options.observedAt ?? new Date().toISOString();
   const isNewMessage = NEW_MESSAGE_EVENT_KINDS.has(options.eventKindOverride);
 
   return {
