@@ -93,7 +93,7 @@ R5 evidence is `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R5_EVIDE
 
 R6 executed `npm run rehearse:stage-4b2-r6` through the independent gate runner. The gate contract tests passed 3/3; core passed 234/234; the full app passed 153 files with 959 passed / 6 skipped; lint had 0 errors and 3 pre-existing warnings; the production build passed; R5 scale passed 4/4; 79G passed 7/7; full 100x50 channel replay passed; and messaging visual/accessibility passed 8/8 across desktop, tablet, Android, and iOS. The runner also passed the documented R-405-only production dependency audit exception, diff check, and diff-added/untracked secret and forbidden-name scan.
 
-The final R6 report is `BLOCKED`, not pass: `npm run test:rls` skipped all 35 required tests because Docker/Supabase was unavailable, and no real SQL EXPLAIN/buffer evidence could be produced. R6 evidence is `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R6_EVIDENCE.md`. A deterministic `conversationSequence` assignment was added to local simulator messages after the gate exposed a same-timestamp transcript ordering flake; the targeted simulator assertion and full visual suite passed afterward. Stage 4C remains blocked; R7 must not reinterpret this result as closure.
+Historical R6 checkpoint: the report was correctly `BLOCKED`, not pass, because all 35 RLS tests skipped and SQL buffer evidence was unavailable. R7 did not reinterpret that skip; it reran the environment and supplied independent zero-skip RLS plus executed SQL evidence. The historical R6 block is therefore superseded by R7, and Stage 4C is current.
 
 ## 12. R7 canonical closure and handoff - 2026-07-13
 

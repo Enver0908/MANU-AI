@@ -144,7 +144,7 @@ Production pilot remains **NO-GO**. R-405 remains open.
 Stage 4C planning and implementation remain blocked while post-closure remediation is active. The required consumer gate is `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md` phases R1-R7, including a zero-skip RLS run and independent release verification. Stage 4C must not weaken non-green AI draft blocking, red atomic activation, per-actor receipts, bounded list/detail reads, or Stage 4B alert/notification contracts.
 ## Post-Closure Remediation R2 - 2026-07-12
 
-The Supabase conversation list/detail boundary now uses append-only v2 RPCs with bounded SQL projection branches, actor-scoped unread aggregates, and v2 receipt authorization guards. The current RLS suite remains environment-blocked and is not claimed as passed. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R2_EVIDENCE.md`; R3 remains next.
+The Supabase conversation list/detail boundary uses append-only v2 RPCs with bounded SQL projection branches, actor-scoped unread aggregates, and v2 receipt authorization guards. R7 subsequently closed the historical RLS/SQL evidence block with zero-skip execution and SQL buffer evidence; advisory hardening then passed 36/36. Current authority: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`.
 ## Post-Closure Remediation R3 - 2026-07-12
 
 Manual replies and draft mutations now use the atomic authorized v2 RPC boundary. The RPC persists the exact bounded response with the idempotency key in the same transaction as the domain state delta, rejects viewer/assistant/auditor mutation attempts server-side, and rejects yellow review when a red lock is held. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R3_EVIDENCE.md`.

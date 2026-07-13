@@ -1,5 +1,7 @@
 # MANU-AI Plan
 
+Current continuity status, 2026-07-13: Stage 4B-2 R0-R7 and advisory hardening are closed locally, superseded RLS blocks and intermediate next-step directives are marked historical, and code/document routing is reconciled in `docs/PHASE_85_STAGE_4B_2_CONTINUITY_AND_ROUTING_RECONCILIATION_EVIDENCE.md`. Stage 4C plan/read gate is next. Production remains `NO-GO`; R-405 remains open.
+
 ## Project Summary
 
 MANU-AI is a supervised AI messaging assistant for dietitians. It helps dietitians answer routine client messages over WhatsApp and Telegram, while preserving strict client isolation and escalating risky nutrition or health messages to the dietitian.
@@ -601,7 +603,7 @@ Key modules:
 - `src/context-capsule.js`: tenant/client-scoped context.
 - `src/personas.js`: six personas.
 - `src/voice-profile.js`: dietitian tone profile builder.
-- `docs/data-model.sql`: reference database model.
+- `dietitian-ai-assistant/docs/data-model.sql`: reference database model.
 
 Current tests:
 
@@ -1040,19 +1042,19 @@ Evidence: `docs/PHASE_85_IF_REMEDIATION_POST_CLOSURE_AUDIT_EVIDENCE.md`, plus de
 
 ## Phase 85 Stage 4B-2 Phase 4 - 2026-07-12
 
-Phase 4 is complete for actor-aware read APIs. Migration `20260712150000_phase_85_stage_4b2_read_api_projection_rpcs.sql` adds bounded projection RPCs; `/api/conversations`, `/api/conversations/[id]/messages`, and `/api/conversations/[id]/read` return allowlisted DTOs with `Cache-Control: no-store` without full app-state reads. Dedicated read API tests passed 5/5; full app passed 920 with 5 skips; build passed; lint has 0 errors and 3 pre-existing warnings. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_4_READ_APIS_EVIDENCE.md`. Phase 5 mutations are next; Stage 4C remains blocked, production pilot remains `NO-GO`, and R-405 remains open.
+Historical Phase 4 checkpoint: actor-aware bounded read APIs completed in `docs/PHASE_85_STAGE_4B_2_PHASE_4_READ_APIS_EVIDENCE.md`. Phases 5-11 and remediation R0-R7 subsequently closed. This is not an active handoff; Stage 4C is current. Production pilot remains `NO-GO`; R-405 remains open.
 
 ## Phase 85 Stage 4B-2 Phase 3 - 2026-07-12
 
-Phase 3 is complete for bounded list/detail transcript projection. `phase-85-stage-4b2-messaging.ts` adds fallback and snake-case projection adapters, bounded list/detail builders, anchor windows, inbox unread badge formatting, scale fixtures, and fallback store helpers. Dedicated messaging tests passed 4/4; Phase 1 regression passed 8/8; Phase 2 lifecycle passed 2/2; full app passed 915 with 5 skips; build passed; lint has 0 errors and 3 pre-existing warnings. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_3_BOUNDED_PROJECTION_EVIDENCE.md`. Phase 4 read APIs are next; Stage 4C remains blocked, production pilot remains `NO-GO`, and R-405 remains open.
+Historical Phase 3 checkpoint: bounded list/detail transcript projection completed in `docs/PHASE_85_STAGE_4B_2_PHASE_3_BOUNDED_PROJECTION_EVIDENCE.md`. Phases 4-11 and remediation R0-R7 subsequently closed. This is not an active handoff.
 
 ## Phase 85 Stage 4B-2 Phase 2 - 2026-07-12
 
-Phase 2 is complete for durable actor-owned conversation read receipts. Migration `20260712140000_phase_85_stage_4b2_receipt_persistence_rls.sql` backfills nullable `conversation_sequence` values, adds `conversation_read_receipts`, monotonic `p85_stage_4b2_mark_conversation_read_v1`, RLS, lifecycle receipt deletion on client removal, Supabase store load/map/mark helpers, and fallback lifecycle cleanup. Dedicated lifecycle tests passed 2/2; Phase 1 regression passed 8/8; full app passed 911 with 5 skips; build passed; lint has 0 errors and 3 pre-existing warnings. RLS skipped 34 tests because Docker/Supabase was unavailable and is not counted as pass. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_2_RECEIPT_PERSISTENCE_RLS_EVIDENCE.md`. Phase 3 bounded projection is next; Stage 4C remains blocked, production pilot remains `NO-GO`, and R-405 remains open.
+Historical Phase 2 checkpoint: durable actor-owned conversation receipts completed while that checkpoint's RLS run was skipped. Phases 3-11, remediation R0-R7, and zero-skip RLS subsequently closed. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_2_RECEIPT_PERSISTENCE_RLS_EVIDENCE.md`. This is not an active handoff.
 
 ## Phase 85 Stage 4B-2 Phase 1 - 2026-07-12
 
-Phase 1 is complete for the pure domain/DTO/authorization projection boundary. It adds assignment access-level types, bounded conversation list/detail/mutation contracts, actor-specific permission flags, safe preview/message projection, sequence unread calculation, deterministic versioned cursors, and fallback-compatible projections. Dedicated tests passed 8/8; combined Stage 4B regression tests passed 61 with 1 skipped; core passed 234/234; build passed; lint has 0 errors and 3 pre-existing warnings. RLS skipped 33 tests because Docker/Supabase was unavailable and is not counted as pass. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`. Phase 2 receipt persistence/RLS is next; Stage 4C remains blocked, production pilot remains `NO-GO`, and R-405 remains open.
+Historical Phase 1 checkpoint: the pure domain/DTO/authorization projection boundary completed while that checkpoint's RLS run was skipped. Phases 2-11, remediation R0-R7, and zero-skip RLS subsequently closed. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`. This is not an active handoff.
 
 ## Phase 85 Stage 4B-2 Phase 0 Documentation Lock - 2026-07-12
 
@@ -1063,24 +1065,24 @@ Phase 0 is complete as a documentation-only lock. The full action plan and evide
 Stage 4B implementation and post-closure remediation are recorded under `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_SPEC.md`. Stage 4B-2 Mesajlasma is complete; evidence in `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`. Core/app, scale, replay, release, build, lint, and visual verification passed; the current 35-test RLS suite is blocked by unavailable Docker and is not counted as pass. **Next:** Stage 4C Diyetisyen Icin AI Chat. Preserve `NO-GO`, R-405, mock-only providers/channels, existing auth/onboarding/billing/admin/entitlement/PWA contracts, and append-only migrations.
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R0 - 2026-07-12
 
-The Stage 4B-2 audit found open technical findings in server-side assignment authorization, transactional idempotency, yellow/red race handling, database-bounded reads, unread aggregation, responsive tablet behavior, deep-link resolution, verification coverage, and continuity status. R0 locks `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md` and its evidence document. The previous implementation closure is historical; Stage 4C remains blocked until R1-R7 remediation gates close. Production pilot remains `NO-GO`; R-405 remains open.
+Historical R0 checkpoint: the Stage 4B-2 audit opened remediation findings and locked `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. R1-R7 subsequently closed. This is not an active handoff; Stage 4C is current. Production pilot remains `NO-GO`; R-405 remains open.
 
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
 
-R1 is complete for the domain/DTO/authorization projection contract. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R1_EVIDENCE.md`. R2 is the next authorized unit for database-bounded reads and server-side assignment authorization; Stage 4C remains blocked.
+Historical R1 checkpoint: the domain/DTO/authorization projection contract completed. R2-R7 subsequently closed; current work is Stage 4C planning.
 
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R2 - 2026-07-12
 
-R2 implementation is complete for bounded Supabase read RPCs and receipt/RLS guards. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R2_EVIDENCE.md`. The local RLS suite remains blocked by unavailable Docker and is not counted as pass. **Next:** R3; Stage 4C remains blocked.
+Historical R2 checkpoint: bounded Supabase read RPCs and receipt/RLS guards completed while local RLS was then blocked. R3-R7 and zero-skip RLS subsequently closed; this is not an active handoff.
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R3 - 2026-07-12
 
-R3 completed the server-side atomic mutation/idempotency correction for manual replies and draft actions. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R3_EVIDENCE.md`. R4 is the next authorized unit; Stage 4C remains blocked and production pilot remains `NO-GO`.
+Historical R3 checkpoint: server-side atomic mutation/idempotency correction completed. R4-R7 subsequently closed; this is not an active handoff. Production pilot remains `NO-GO`.
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R4 - 2026-07-12
 
-R4 completes the client hook, deep-link, unread aggregate, and tablet/mobile messaging UI correction. Targeted tests, build, lint, and all four messaging visual projects passed; full app and RLS remain unclaimed because the full command timed out and Docker is unavailable. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R4_EVIDENCE.md`. **Next:** R5; Stage 4C remains blocked.
+Historical R4 checkpoint: client hook, deep-link, unread aggregate, and responsive UI correction completed while full app/RLS were then unclaimed. R5-R7 subsequently closed those gates; this is not an active handoff.
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R5 - 2026-07-13
 
-R5 rebuilt the scale, replay, lifecycle/export, accessibility, and regression evidence. Full app passed 153 files and 959 tests with 6 skipped; RLS remains 35 skipped due unavailable Docker. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R5_EVIDENCE.md`. **Next:** R6; Stage 4C remains blocked and production remains `NO-GO`.
+Historical R5 checkpoint: scale, replay, lifecycle/export, accessibility, and full regression passed while RLS was then skipped. R6/R7 subsequently supplied zero-skip RLS and SQL buffer evidence; this is not an active handoff. Production remains `NO-GO`.
 
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R6 - 2026-07-13
 

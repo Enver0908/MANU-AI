@@ -2,7 +2,7 @@
 
 Current status, 2026-07-13: implementation and post-closure remediation R0-R7 are complete locally. R7 evidence supersedes older active-remediation handoffs in this historical execution plan: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. Stage 4C is next; production remains `NO-GO`, R-405 remains open.
 
-Status: **historical implementation complete; post-closure remediation active (R0 locked, 2026-07-12).** Runtime spec: `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`. Historical closure evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md`. Remediation plan: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. **Next authorized work:** Phase R1 remediation. Stage 4C remains blocked.
+Status: **implementation Phases 0-11 and post-closure remediation R0-R7 complete locally; advisory hardening complete.** Runtime spec: `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`. Current closure authority: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`. **Next authorized work:** Stage 4C plan/read gate.
 
 Baseline branch: `codex/phase-85-interstage-clinical-memory`
 
@@ -20,7 +20,7 @@ Stage 4B-2 owns the dietitian-facing conversation inbox and transcript workflow.
 
 1. Stage 4A Danisan Kontrol Paneli - complete.
 2. P85-IF-A through P85-IF-I and post-closure audit - complete.
-3. Stage 4B Uyari ve Bildirimler - complete locally; current RLS execution remains environment-blocked when Docker is unavailable.
+3. Stage 4B Uyari ve Bildirimler - complete locally; historical Docker block superseded by complete-chain zero-skip RLS and advisory hardening.
 4. Stage 4B-2 Mesajlasma - historical implementation evidence (2026-07-12); remediation is active under `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`.
 5. Stage 4C Diyetisyen Icin AI Chat - **blocked until remediation R1-R7 closes**.
 
@@ -353,7 +353,7 @@ Phase 4 verification passed the dedicated 5-test read API file, Phase 3/1 regres
 
 **Affected components/files:** README, PLAN, PROJECT_PLAN, HANDOFF, app README, frontend/P85-IF/next/direct/pilot/gate/risk documents, Stage 4B-2 evidence files.
 
-**Architecture decisions:** production pilot remains `NO-GO`; R-405 remains open; no hosted-sandbox document changes without deploy; Stage 4C remains blocked until the evidence pack is complete.
+**Architecture decisions:** production pilot remains `NO-GO`; R-405 remains open; no hosted-sandbox document changes without deploy. The Stage 4C prerequisite was satisfied when the evidence pack, R0-R7 remediation, and advisory hardening closed locally.
 
 **Steps/technical method/data flow/dependencies:** update exact verification counts, API/schema/role contracts, open blockers and next-stage lock; commit once after all checks; verify final worktree clean.
 

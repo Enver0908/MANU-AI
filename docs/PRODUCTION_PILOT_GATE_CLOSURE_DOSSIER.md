@@ -20,9 +20,9 @@ The previous Docker-blocked local RLS execution is superseded for the current su
 
 ## Phase 85 Stage 4B Post-Closure Remediation Note - 2026-07-12
 
-Stage 4B-2 Mesajlasma closure (2026-07-12): bounded conversation APIs, per-actor receipts, mutations, detail UX, integration, scale/visual/release verification, and canonical spec are in place. Core 234/234, app 953 passed / 6 skipped, visual 40/40 passed. The current RLS run skips 35 tests because Docker Desktop is unavailable; this is an explicit blocker and not a pass. Evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md`. **Next:** Stage 4C. This note changes no production gate: production pilot remains `NO-GO`, R-405 remains open, and real paths remain disabled.
+Stage 4B-2 Mesajlasma closure (2026-07-12): bounded conversation APIs, per-actor receipts, mutations, detail UX, integration, scale/visual/release verification, and canonical spec are in place. Its initial Docker-blocked RLS run was subsequently superseded by R7 zero-skip RLS/SQL evidence and advisory-hardening 36/36. Current authority: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`. **Next:** Stage 4C plan/read gate. This note changes no production gate: production pilot remains `NO-GO`, R-405 remains open, and real paths remain disabled.
 
-Stage 4B implementation findings are remediated locally: bounded actor-aware alert/notification Supabase reads, safe target linkage, lifecycle-correct draft invalidation, atomic unsupported-media review, role-aware UI controls, and visual/accessibility evidence are in place. Core/app, scale, replay, release, lint, build, and visual verification passed. The current RLS run skips 33 tests because Docker Desktop is unavailable; this is an explicit blocker and not a pass. Evidence: `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md`. Stage 4B-2 is now complete.
+Stage 4B implementation findings are remediated locally: bounded actor-aware alert/notification Supabase reads, safe target linkage, lifecycle-correct draft invalidation, atomic unsupported-media review, role-aware UI controls, and visual/accessibility evidence are in place. Its historical 33-test Docker block was superseded by the complete-chain 35/35 re-closure and advisory-hardening 36/36 run. Evidence: `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md`, `docs/PHASE_85_STAGE_4B_2_RLS_LOCAL_RECLOSURE_EVIDENCE.md`, and `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`.
 
 Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized references to approval artifacts. Do not paste secrets, raw client health data, or real client identifiers into repository documentation.
 
@@ -303,21 +303,21 @@ All production-pilot gates remain open and production pilot remains `NO-GO`.
 
 ## Stage 4B Closure Gate Note - 2026-07-12
 
-Stage 4B local implementation and post-closure remediation are complete subject to the environment-blocked RLS execution. Evidence: `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md`. This adds **no** gate closure. Production pilot remains `NO-GO`; R-405 remains open. Local RLS re-run with the append-only Stage 4B remediation migration remains blocked while Supabase/Docker is unavailable.
+Stage 4B local implementation and post-closure remediation are complete. The historical environment-blocked RLS result was subsequently superseded by complete-chain zero-skip RLS and advisory hardening. Evidence: `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md`, `docs/PHASE_85_STAGE_4B_2_RLS_LOCAL_RECLOSURE_EVIDENCE.md`, and `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`. This adds **no** production gate closure. Production pilot remains `NO-GO`; R-405 remains open.
 
 Planning completion is not implementation, deployment, provider/channel approval, clinical approval, dependency clearance, or R-405 acceptance. Production pilot remains `NO-GO`.
 
 ## Stage 4B-2 Closure Gate Note - 2026-07-12
 
-Stage 4B-2 Mesajlaşma Phases 0–11 are complete locally. Runtime spec: `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`. Closure evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md`. This is not a production gate closure: RLS re-run remains environment-blocked (35 skipped), no provider/channel is approved, no R-405 decision is changed, and production pilot remains `NO-GO`. **Next authorized stage:** Stage 4C.
+Stage 4B-2 Mesajlaşma Phases 0–11 are complete locally. Its initial 35-skipped RLS snapshot was subsequently superseded by R7 zero-skip RLS/SQL evidence and advisory hardening. Current authority: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`. This is not a production gate closure: no provider/channel is approved, no R-405 decision is changed, and production pilot remains `NO-GO`. **Next authorized stage:** Stage 4C plan/read gate.
 
 ## Stage 4B-2 Phase 0 Gate Note - 2026-07-12
 
-Stage 4B-2 Phase 0 is a documentation and decision lock only. `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md` and its evidence file define the future bounded messaging inbox/detail, receipt, role, yellow, red, RLS, lifecycle and verification contracts. No production gate is closed, no provider/channel is approved, no R-405 decision is changed, and Stage 4C remains blocked until runtime implementation and evidence close.
+Historical Phase 0 snapshot: `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md` and its evidence file defined the then-future bounded messaging contracts. Runtime, verification, remediation R0-R7, and advisory hardening subsequently closed locally. This paragraph is not an active handoff. No production gate is closed, no provider/channel is approved, and no R-405 decision is changed.
 
 ## Stage 4B-2 Phase 1 Gate Note - 2026-07-12
 
-Phase 1 is pure domain/DTO/authorization projection evidence, not a production gate closure. It adds no receipt table, RLS policy, route, UI, message mutation, provider/channel path, or pilot authorization. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`. Phase 2 receipt persistence/RLS is next; production pilot remains `NO-GO`, R-405 remains open, and Stage 4C remains blocked.
+Historical Phase 1 snapshot: domain/DTO/authorization projection evidence was complete before receipt persistence, routes, UI, and mutations. Those items subsequently closed locally through R7. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`. This is not an active handoff; production pilot remains `NO-GO` and R-405 remains open.
 ## Stage 4B-2 Post-Closure Remediation R0 - 2026-07-12
 
 The Stage 4B-2 historical closure does not close production gates. Remediation R1-R7, current zero-skip RLS evidence, R-405 status, and all external launch prerequisites remain required. Production pilot remains `NO-GO`.

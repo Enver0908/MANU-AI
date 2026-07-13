@@ -75,4 +75,4 @@ The local code, fallback behavior, mock channel behavior, production-scale rehea
 Stage 4B-2 Mesajlaşma is complete. Runtime contract: `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`. Closure evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md`. Stage 4C may begin; this boundary does not alter Stage 4B alert/notification lifecycle, non-green AI draft blocking, or red atomic activation.
 ## Stage 4B-2 Post-Closure Remediation R0 - 2026-07-12
 
-Stage 4B-2 remediation is a consumer-track correction and does not change alert/notification ownership, red precedence, notification lifecycle, or the no-alert-table decision. Stage 4C remains blocked while remediation is active.
+Stage 4B-2 remediation was a consumer-track correction and did not change alert/notification ownership, red precedence, notification lifecycle, or the no-alert-table decision. R0-R7 are now closed locally; Stage 4C is current.

@@ -1,6 +1,6 @@
 # Direct 100 Dietitian Completion Plan
 
-Current Phase 85 status, 2026-07-13: Stage 4B-2 remediation R0-R7 and the separate security advisory RLS hardening are complete locally, including zero-skip RLS, SQL buffer evidence, 10k bounded scale, canonical closure, and RLS-enabled `conversation_mutation_idempotency`/`personas` without direct `anon`/`authenticated` grants. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`. This does not approve a 100-dietitian production pilot; production remains `NO-GO` and R-405 remains open.
+Current Phase 85 status, 2026-07-13: Stage 4B-2 remediation R0-R7, the separate security advisory RLS hardening, and continuity/routing reconciliation are complete locally, including zero-skip RLS, SQL buffer evidence, 10k bounded scale, canonical closure, and RLS-enabled `conversation_mutation_idempotency`/`personas` without direct `anon`/`authenticated` grants. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`, `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`, and `docs/PHASE_85_STAGE_4B_2_CONTINUITY_AND_ROUTING_RECONCILIATION_EVIDENCE.md`. This does not approve a 100-dietitian production pilot; production remains `NO-GO` and R-405 remains open.
 Date: 2026-06-05
 
 ## Purpose
@@ -40,7 +40,7 @@ P85-IF-R6 remediation note (2026-07-11): lifecycle/RLS re-closure persists Supab
 
 P85-IF post-closure audit note (2026-07-11): R1 message provenance tenant integrity, R2 structured retrieval baseline/resolution authority, R3 activation/inbound lock ordering, and R6 runtime export leak enforcement are fixed. Evidence: `docs/PHASE_85_IF_REMEDIATION_POST_CLOSURE_AUDIT_EVIDENCE.md`. Verification passed targeted app/core tests, local Supabase reset, local RLS 30/30, lint, build, full app 828 passed / 4 skipped, core 234/234, channel replay, and production-scale rehearsal. This does not change direct-pilot `NO-GO`, external gate status, R-405, or any real provider/channel/production-data path.
 
-Phase 85 Stage 4B post-closure remediation note (2026-07-12): bounded actor-aware Supabase alert/notification reads, tenant-safe target linkage, client-specific draft lifecycle, atomic unsupported-media review, role-aware UI controls, and visual/accessibility evidence are implemented. Core/app, Stage 4B scale, channel replay, 79G, release verification, lint, build, and visual checks passed. The 33-test RLS suite is currently blocked by unavailable Docker and is not counted as pass. Evidence: `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md`. This does not change direct-pilot `NO-GO`, external gate status, R-405, or any real provider/channel/production-data path. Stage 4B-2 Mesajlasma is next; Stage 4C remains blocked.
+Phase 85 Stage 4B post-closure remediation historical note (2026-07-12): bounded actor-aware Supabase alert/notification reads, tenant-safe target linkage, client-specific draft lifecycle, atomic unsupported-media review, role-aware UI controls, and visual/accessibility evidence were implemented. The then-blocked 33-test RLS run was subsequently superseded by the complete-chain 35/35 re-closure and advisory-hardening 36/36 run. Evidence: `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md`, `docs/PHASE_85_STAGE_4B_2_RLS_LOCAL_RECLOSURE_EVIDENCE.md`, and `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`. Stage 4B-2 is closed and Stage 4C is next. Direct-pilot remains `NO-GO`; R-405 and external gates remain open.
 
 ## Fixed Product Laws
 These rules are non-negotiable and apply to every future phase:
@@ -1120,7 +1120,7 @@ Stage 4B implementation is complete. Bounded cursor APIs, per-actor receipt stat
 
 ## Stage 4B-2 Phase 0 Documentation Lock - 2026-07-12
 
-The Stage 4B-2 Mesajlasma contract is locked in `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md`. Phase 0 records the bounded inbox/detail architecture, per-actor unread receipts, assistant assigned read-only transcript access with own receipt mutation, yellow reviewed-manual provenance, red activation-only closure, lifecycle/RLS obligations and complete verification matrix. No direct-pilot, provider, channel, clinical, legal, dependency or production gate changed. Stage 4B-2 Phase 1 is next; Stage 4C remains blocked.
+Historical Phase 0 record: the Stage 4B-2 Mesajlasma contract is locked in `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md`. Its bounded inbox/detail architecture, per-actor unread receipts, assistant assigned read-only transcript access with own receipt mutation, yellow reviewed-manual provenance, red activation-only closure, lifecycle/RLS obligations, and verification matrix are now implemented and closed through R7 plus advisory hardening. This is not an active handoff; Stage 4C is next. No direct-pilot, provider, channel, clinical, legal, dependency, or production gate changed.
 
 ## Stage 4B-2 Phase 1 Direct-Scale Handoff - 2026-07-12
 

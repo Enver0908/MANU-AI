@@ -1,11 +1,11 @@
 # Phase 85 Interstage Foundation - Trusted Clinical Communication And Memory Spec
 
-Current downstream status, 2026-07-13: Stage 4B-2 remediation R0-R7 and the separate security advisory RLS hardening are complete locally and add no new clinical, source, provider, channel, or lifecycle authority. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`. Stage 4C is next; production remains `NO-GO` and R-405 remains open.
+Current downstream status, 2026-07-13: Stage 4B-2 remediation R0-R7, the separate security advisory RLS hardening, and continuity/routing reconciliation are complete locally and add no new clinical, source, provider, channel, or lifecycle authority. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`, `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`, and `docs/PHASE_85_STAGE_4B_2_CONTINUITY_AND_ROUTING_RECONCILIATION_EVIDENCE.md`. Stage 4C is next; production remains `NO-GO` and R-405 remains open.
 
 Date: 2026-07-10
 Canonical code: `P85-IF`
 Track: `P85-IF-A`, `P85-IF-B`, and `P85-IF-C`
-Status: P85-IF-A complete; P85-IF-B trust-root/provenance data model complete; P85-IF-C secure ingress/ledger/routing/quarantine complete; P85-IF-D complete transcript and human control complete; P85-IF-E full-history retrieval and prompt authority V2 complete; P85-IF-F risk resolution, AI reactivation, and concurrency complete with R3 remediation; P85-IF-G controlled off-channel AI chat intake complete with R4 remediation; P85-IF-H minimal operational visibility complete with R5 owner/admin operational access remediation; P85-IF-I lifecycle/RLS/closure complete with R6 evidence-based re-closure verified; P85-IF post-closure audit complete on 2026-07-11. Stage 4B may resume.
+Status: P85-IF-A through P85-IF-I and the P85-IF post-closure audit are complete. Downstream Stage 4B and Stage 4B-2 are complete locally; Stage 4C is next.
 Placement: Phase 85 Stage 4A complete -> P85-IF -> Phase 85 Stage 4B (complete 2026-07-12) -> Stage 4B-2 Mesajlasma (next).
 Production pilot: `NO-GO`.
 Deployment: none.
@@ -526,13 +526,13 @@ No Stage 4B API may expose raw transcript text, provider payload, prompt context
 
 ## Stage 4B Post-Closure Consumer Reconciliation - 2026-07-12
 
-The Stage 4B consumer preserves the P85-IF authority boundary: alerts are projections of active risk state, system notifications are structured operational facts, source links are tenant/client/conversation checked, and red closure uses atomic activation. Current implementation evidence is in `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md`; the current RLS run is environment-blocked and is not claimed as passed. Real provider, channel, billing, monitoring, backup, secret-manager, and health-data paths remain disabled.
+The Stage 4B consumer preserves the P85-IF authority boundary: alerts are projections of active risk state, system notifications are structured operational facts, source links are tenant/client/conversation checked, and red closure uses atomic activation. The historical environment block was superseded by complete-chain zero-skip RLS and advisory hardening. Real provider, channel, billing, monitoring, backup, secret-manager, and health-data paths remain disabled.
 
 ## Stage 4B-2 Consumer Phase 0 Lock - 2026-07-12
 
 The Stage 4B-2 consumer contract is `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md`. It preserves P85-IF authority: conversation sequence and provenance remain the transcript order/source model; message/provenance ids are routing hints and never authorization; human-control and red/yellow state remain domain-owned; read receipts are non-clinical per-actor UI state; and lifecycle redaction/export boundaries remain mandatory.
 
-No Stage 4B-2 Phase 0 change wires the additive channel event engine into the live webhook or opens any real provider/channel path. Stage 4B-2 Phase 1 is now complete as a pure domain/DTO/authorization layer; Phase 2 receipt persistence/RLS is the next authorized implementation unit.
+Historical Phase 0/1 checkpoint: no Stage 4B-2 change wired the additive channel event engine into the live webhook or opened any real provider/channel path. Later implementation phases and remediation R0-R7 subsequently closed; Stage 4C is current.
 
 ## Stage 4B-2 Consumer Phase 1 Boundary - 2026-07-12
 

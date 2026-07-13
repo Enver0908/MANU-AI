@@ -1,9 +1,9 @@
 # Phase 85 Stage 4B - Uyari ve Bildirimler Eylem Plani
 
-Current downstream status, 2026-07-13: Stage 4B-2 remediation R0-R7 and the separate security advisory RLS hardening are complete locally without changing Stage 4B alert/notification ownership. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`. Stage 4C is next; production remains `NO-GO`, R-405 remains open.
+Current downstream status, 2026-07-13: Stage 4B-2 remediation R0-R7, the separate security advisory RLS hardening, and continuity/routing reconciliation are complete locally without changing Stage 4B alert/notification ownership. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`, `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`, and `docs/PHASE_85_STAGE_4B_2_CONTINUITY_AND_ROUTING_RECONCILIATION_EVIDENCE.md`. Stage 4C is next; production remains `NO-GO`, R-405 remains open.
 
 Date: 2026-07-11
-Status: implementation complete; post-closure remediation verified (2026-07-12); current RLS re-run blocked by unavailable Docker
+Status: implementation and post-closure remediation complete; historical Docker block superseded by complete-chain 35/35 and advisory-hardening 36/36 local RLS evidence
 Canonical baseline: commit `5048e22` (`Align Stage 4A with P85-IF contracts`)
 Required branch: `codex/phase-85-interstage-clinical-memory`
 
@@ -457,7 +457,7 @@ Authenticated direct notification writes are removed/restricted; system producer
 **Errors/edges:** unavailable RLS is a blocker, not a pass; generated artifacts remain untracked/ignored.
 **Tests:** all commands in Section 11.
 **Validation:** no regression, no secret, no forbidden naming, clean status.
-**Completion:** one Stage 4B commit; Stage 4B-2 becomes next; Stage 4C remains blocked.
+**Historical completion rule:** one Stage 4B commit; Stage 4B-2 then became next. Stage 4B-2 has since closed locally and Stage 4C is current.
 
 ## 11. Required Verification
 
@@ -530,13 +530,13 @@ Phase 1 completed on 2026-07-12: clinical alert projection, reason taxonomy, SLA
 
 ## Stage 4B-2 Phase 1 Handoff - 2026-07-12
 
-Stage 4B-2 Phase 1 has now completed its pure domain/DTO/authorization projection foundation. The implementation evidence is `docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`; receipt persistence, RLS, routes, UI, and mutations remain Stage 4B-2 work and do not reopen this Stage 4B plan. Stage 4C remains blocked.
+Historical Phase 1 checkpoint: the pure domain/DTO/authorization projection foundation completed while receipt persistence, routes, UI, and mutations remained. Those items and remediation R0-R7 subsequently closed without reopening Stage 4B ownership. Stage 4C is current.
 
 ## Stage 4B Post-Closure Remediation Execution Record - 2026-07-12
 
 The original local closure evidence was re-audited before handoff. The remediation added bounded actor-aware Supabase v2 RPCs, persistent dietitian-form SLA inputs, fail-closed target linkage, client-specific draft lifecycle producers, atomic unsupported-media receipt gating, assistant/auditor UI restrictions, route error-boundary hardening, and screenshot/keyboard/accessibility assertions. Full core/app, scale, replay, release, build, lint, and visual verification passed. The current RLS suite has 33 skipped tests because Docker Desktop is unavailable; those tests are explicitly not counted as pass. Detailed evidence: `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md` and runtime contract: `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_SPEC.md`.
 
-The next implementation track remains Stage 4B-2 Mesajlasma. Stage 4C remains blocked. Production pilot remains `NO-GO`; R-405 remains open; real provider/channel/health-data paths remain disabled.
+Historical checkpoint: Stage 4B-2 Mesajlasma was next at this point. It subsequently closed through R7 and advisory hardening. Stage 4C is current. Production pilot remains `NO-GO`; R-405 remains open; real provider/channel/health-data paths remain disabled.
 
 ## Stage 4B-2 Consumer Documentation Lock - 2026-07-12
 
@@ -549,20 +549,20 @@ Stage 4B-2 consumed this track without changing Stage 4B alert/notification owne
 
 ## Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
 
-R1 corrected the downstream Stage 4B-2 domain/DTO/permission contract without changing Stage 4B alert or notification ownership. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R1_EVIDENCE.md`. R2 is next; Stage 4C remains blocked.
+Historical R1 checkpoint: the downstream Stage 4B-2 domain/DTO/permission contract was corrected without changing Stage 4B ownership. R2-R7 subsequently closed; this is not an active handoff.
 
 ## Stage 4B-2 Post-Closure Remediation R2 - 2026-07-12
 
-R2 changed no Stage 4B alert/notification ownership. It only hardens the Stage 4B-2 Supabase bounded read and receipt persistence boundary through append-only v2 RPCs. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R2_EVIDENCE.md`; R3 is next.
+Historical R2 checkpoint: Stage 4B-2 bounded reads and receipt persistence were hardened without changing Stage 4B ownership. R3-R7 subsequently closed.
 ## Stage 4B-2 Post-Closure Remediation R3 - 2026-07-12
 
-R3 changes only the Stage 4B-2 conversation mutation boundary. Stage 4B alert/notification ownership and lifecycle remain unchanged. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R3_EVIDENCE.md`; R4 is next.
+Historical R3 checkpoint: only the Stage 4B-2 conversation mutation boundary changed; Stage 4B ownership remained unchanged. R4-R7 subsequently closed.
 ## Stage 4B-2 Post-Closure Remediation R4 - 2026-07-12
 
-R4 changes only the Stage 4B-2 messaging consumer. Stage 4B alert/notification ownership and lifecycle remain unchanged. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R4_EVIDENCE.md`; R5 is next.
+Historical R4 checkpoint: only the Stage 4B-2 messaging consumer changed; Stage 4B ownership remained unchanged. R5-R7 subsequently closed.
 ## Stage 4B-2 Post-Closure Remediation R5 - 2026-07-13
 
-R5 changes no Stage 4B alert/notification ownership. It records messaging replay, accessibility, lifecycle/export, scale, and regression evidence only. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R5_EVIDENCE.md`; R6 is next.
+Historical R5 checkpoint: messaging replay, accessibility, lifecycle/export, scale, and regression evidence changed no Stage 4B ownership. R6/R7 subsequently closed.
 
 ## Stage 4B-2 Post-Closure Remediation R6 - 2026-07-13
 

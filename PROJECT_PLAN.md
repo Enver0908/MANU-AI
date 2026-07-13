@@ -1,5 +1,7 @@
 # MANU-AI Project Plan v2
 
+Current continuity status, 2026-07-13: Stage 4B-2 R0-R7, local RLS re-closure, advisory hardening, and canonical routing reconciliation are complete locally. Historical blocked/skipped checkpoints no longer act as current handoffs. Evidence: `docs/PHASE_85_STAGE_4B_2_CONTINUITY_AND_ROUTING_RECONCILIATION_EVIDENCE.md`. Stage 4C plan/read gate is next; production remains `NO-GO` and R-405 remains open.
+
 ## Confidence Position
 
 This plan has been hardened after a gap audit against clinical safety, multi-tenant SaaS requirements, WhatsApp/Telegram platform constraints, AI-provider data handling, and KVKK/GDPR-style privacy expectations.
@@ -1495,31 +1497,31 @@ The Stage 4B implementation was audited against the approved plan before handoff
 
 ## Phase 85 Stage 4B-2 Phase 0 Documentation Lock - 2026-07-12
 
-Stage 4B-2 is now governed by `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md`. Phase 0 locks the conversation list/detail boundary, per-actor unread receipts, assistant assigned read-only transcript access with own receipt, viewer read-only access, yellow reviewed-manual semantics, red atomic activation closure, bounded API/RLS contracts, lifecycle requirements, and the phase-by-phase verification protocol. No runtime implementation or migration was introduced. Stage 4B-2 Phase 1 is the next authorized work; Stage 4C remains blocked; production pilot remains `NO-GO`; R-405 remains open.
+Historical Phase 0 checkpoint: `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md` locked the messaging contract before runtime work. Phases 1-11 and remediation R0-R7 subsequently closed. This is not an active handoff; Stage 4C is current. Production pilot remains `NO-GO`; R-405 remains open.
 
 ## Phase 85 Stage 4B-2 Phase 1 Domain/DTO/Authorization Closure - 2026-07-12
 
-Phase 1 is complete and evidenced in `docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`. The pure foundation now defines assignment access levels, bounded allowlisted DTOs, actor-aware role permissions, safe preview/body limits, sequence-based unread projection, versioned cursors, deterministic list/detail windows, and fail-closed missing/auditor/viewer/assistant operation behavior. No migration, route, receipt persistence, UI, message mutation, or real integration was added. Dedicated tests passed 8/8, combined Stage 4B regression passed 61 with 1 skipped, core passed 234/234, build passed, lint has 0 errors and 3 pre-existing warnings, and RLS skipped 33 tests because Docker/Supabase was unavailable. Phase 2 is next; Stage 4C remains blocked, production pilot remains `NO-GO`, and R-405 remains open.
+Historical Phase 1 checkpoint: domain/DTO/authorization foundation completed while its RLS run was then skipped. Phases 2-11, remediation R0-R7, and zero-skip RLS subsequently closed. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`. This is not an active handoff.
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R0 - 2026-07-12
 
 R0 is complete as a documentation-only remediation lock. The next authorized work is R1 contract/authorization correction, not Stage 4C. The remediation plan and evidence are `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md` and `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R0_EVIDENCE.md`. No runtime, migration, provider, channel, billing, monitoring, backup, secret-manager, or health-data path changed.
 
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
 
-R1 corrected the Stage 4B-2 domain/DTO/permission projection contract and is evidenced in `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R1_EVIDENCE.md`. The next authorized work is R2 database-bounded reads and server-side assignment authorization. Stage 4C remains blocked; production pilot remains `NO-GO`.
+Historical R1 checkpoint: the Stage 4B-2 domain/DTO/permission projection contract was corrected. R2-R7 subsequently closed; Stage 4C is current. Production pilot remains `NO-GO`.
 
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R2 - 2026-07-12
 
-R2 added bounded Supabase v2 list/detail projections, actor-scoped unread aggregates, and receipt mutation guards in an append-only migration. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R2_EVIDENCE.md`. RLS reset/role-matrix verification remains environment-blocked; R3 is next.
+Historical R2 checkpoint: bounded Supabase v2 projections, actor-scoped unread aggregates, and receipt guards were added while RLS was then blocked. R3-R7 and zero-skip RLS subsequently closed; this is not an active handoff.
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R3 - 2026-07-12
 
-R3 implemented transaction-scoped idempotency and server-side authorization for conversation manual/draft mutations. The RLS environment gate remains open if Docker is unavailable. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R3_EVIDENCE.md`. **Next:** R4; Stage 4C remains blocked.
+Historical R3 checkpoint: transaction-scoped idempotency and server-side mutation authorization completed while RLS was then open. R4-R7 and zero-skip RLS subsequently closed; this is not an active handoff.
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R4 - 2026-07-12
 
-R4 corrects explicit conversation deep-links, stale anchor handling, API-authoritative unread counts, and the 768px split layout without opening new persistence or integration paths. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R4_EVIDENCE.md`. R5 is next; production remains `NO-GO`.
+Historical R4 checkpoint: deep-links, stale anchors, API-authoritative unread counts, and the 768px split layout were corrected. R5-R7 subsequently closed; this is not an active handoff. Production remains `NO-GO`.
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R5 - 2026-07-13
 
-R5 adds reproducible 10k messaging scale evidence, full regression, replay hard-zero checks, lifecycle/export guards, and accessibility projects. Real RLS/EXPLAIN remains open because Docker is unavailable. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R5_EVIDENCE.md`. **Next:** R6; production remains `NO-GO`.
+Historical R5 checkpoint: 10k scale, full regression, replay, lifecycle/export, and accessibility evidence passed while RLS/EXPLAIN was then open. R6/R7 subsequently closed those gates; this is not an active handoff. Production remains `NO-GO`.
 
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R6 - 2026-07-13
 

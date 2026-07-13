@@ -368,7 +368,7 @@ Phase 85 can close only when:
 
 ## Current Next Step
 
-Stage 4B Uyari ve Bildirimler is complete (2026-07-12). Stage 4B-2 Mesajlasma is mandatory next before Stage 4C; later stages remain blocked until each prior stage is closed.
+Stage 4B Uyari ve Bildirimler and mandatory Stage 4B-2 Mesajlasma are complete locally. Stage 4B-2 remediation R0-R7 and advisory RLS hardening are also closed locally. The current next Phase 85 unit is Stage 4C, beginning with its own plan/read gate.
 
 ## P85-IF Interstage Baseline For Stage 4B - 2026-07-11
 
@@ -390,18 +390,18 @@ On mobile, Uyarilar sits beside the current Gorusme bottom-nav entry and Bildiri
 
 ## Stage 4B Post-Closure Remediation - 2026-07-12
 
-The Stage 4B frontend evidence was refreshed after implementation audit. Alerts and notifications now have screenshot assertions across desktop, tablet, Android, and iOS projects, focus/selected-tab assertions, real red/yellow and system-event rows, mobile text containment, and overflow guards. Role-aware UI controls remain read-only for assistant/auditor actors. The implementation and visual chain passed locally; current Supabase/RLS execution remains explicitly blocked by unavailable Docker. Evidence: `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md`.
+The Stage 4B frontend evidence was refreshed after implementation audit. Alerts and notifications have screenshot assertions across desktop, tablet, Android, and iOS projects, focus/selected-tab assertions, real red/yellow and system-event rows, mobile text containment, and overflow guards. Role-aware UI controls remain read-only for assistant/auditor actors. The historical Docker block was subsequently cleared by the complete-chain 35/35 local RLS re-closure and the 36/36 advisory-hardening run. Evidence: `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md`, `docs/PHASE_85_STAGE_4B_2_RLS_LOCAL_RECLOSURE_EVIDENCE.md`, and `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`.
 
 ## Stage 4B-2 Phase 0 Documentation Lock - 2026-07-12
 
-The Mesajlasma action plan is locked in `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md`. The future UI contract is list-first/detail-second, with a desktop split layout, mobile drill-down, thin rows, per-actor unread state, bounded transcript pagination, yellow reviewed-manual controls, red manual-reply controls, and in-detail AI active/passive boundaries. Phase 0 is documentation-only; Stage 4B-2 runtime and visual work begin in Phase 1 and Stage 4C remains blocked.
+Historical Phase 0 contract: the Mesajlasma action plan is locked in `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md`. Its list-first/detail-second UI, tablet/desktop split layout, mobile drill-down, thin rows, per-actor unread state, bounded transcript pagination, yellow reviewed-manual controls, red manual-reply controls, and in-detail AI boundaries are now implemented and closed through R7. This paragraph is not an active handoff; Stage 4C is next.
 
 ## Stage 4B-2 Phase 1 Domain/DTO/Authorization Handoff - 2026-07-12
 
-Phase 1 now supplies the UI with bounded list/detail/mutation DTO contracts and actor-aware permission flags, but it does not implement dashboard routing, components, polling, visual states, or message mutation controls. The list/detail UI must consume the `messages` section contract, preserve assistant read-only transcript plus own receipt behavior, hide viewer domain controls, and provide no auditor conversation surface. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`. Phase 2 receipt persistence/RLS is next; visual implementation remains later in the locked Stage 4B-2 order.
+Historical Phase 1 record: bounded list/detail/mutation DTO contracts and actor-aware permission flags were established in `docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`. Routing, polling, receipt persistence, visual states, mutations, and R0-R7 remediation subsequently closed. This paragraph is not an active handoff.
 ## Stage 4B-2 Post-Closure Remediation R0 - 2026-07-12
 
-The Stage 4B-2 visual/runtime implementation is historical and remediation is active. R4 owns the tablet split-layout, unread aggregate, deep-link, anchor, 320px, focus, and sensitive rendering corrections. Stage 4C remains blocked until `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md` R1-R7 closes.
+Historical remediation record: R4 owned the tablet split-layout, unread aggregate, deep-link, anchor, 320px, focus, and sensitive-rendering corrections. R4-R7 are now closed; the current next unit is Stage 4C.
 ## Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
 
 R1 updates the messaging consumer contract to split AI activation/configuration permissions and expose complete visible-scope unread aggregates. No visual layout, navigation, provider, or production-pilot behavior is authorized by this remediation unit. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R1_EVIDENCE.md`.
@@ -421,4 +421,4 @@ R5 adds dedicated messaging accessibility checks for named rows, tabs, keyboard 
 
 ## Stage 4B-2 Post-Closure Remediation R6 - 2026-07-13
 
-R6 independently verified the messaging UI across desktop, tablet, Android, and iOS with visual/accessibility 8/8, after stabilizing same-timestamp simulator transcript ordering with `conversationSequence`. No broad shell, provider, channel, or production-pilot behavior changed. The release gate remains `BLOCKED` by skipped real Supabase/RLS tests and unavailable SQL EXPLAIN evidence. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R6_EVIDENCE.md`.
+R6 independently verified the messaging UI across desktop, tablet, Android, and iOS with visual/accessibility 8/8, after stabilizing same-timestamp simulator transcript ordering with `conversationSequence`. Its historical blocked result was subsequently cleared by zero-skip RLS and executed SQL buffer evidence in R7. No broad shell, provider, channel, or production-pilot behavior changed. Current authority: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`.

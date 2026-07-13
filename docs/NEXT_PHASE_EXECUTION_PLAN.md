@@ -1,6 +1,6 @@
 # MANU-AI Next Phase Execution Plan
 
-Current execution handoff, 2026-07-13: Phase 85 Stage 4B-2 post-closure remediation R0-R7 and the separate security advisory RLS hardening are complete locally. Local reset/RLS, SQL buffer plans, bounded SQL/scale evidence, canonical reconciliation, and advisory closure are recorded in `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`. The next authorized Phase 85 unit is Stage 4C, beginning with its plan/read gate. Production remains `NO-GO`; R-405 remains open; real integration paths remain closed.
+Current execution handoff, 2026-07-13: Phase 85 Stage 4B-2 post-closure remediation R0-R7, the separate security advisory RLS hardening, and continuity/routing reconciliation are complete locally. Local reset/RLS, SQL buffer plans, bounded SQL/scale evidence, advisory closure, code/document routing, and historical-handoff cleanup are recorded in `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`, `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`, and `docs/PHASE_85_STAGE_4B_2_CONTINUITY_AND_ROUTING_RECONCILIATION_EVIDENCE.md`. The next authorized Phase 85 unit is Stage 4C, beginning with its plan/read gate. Production remains `NO-GO`; R-405 remains open; real integration paths remain closed.
 
 ## Current Position
 
@@ -22,7 +22,7 @@ Current override after Phase 85B design tokens/font foundation (2026-07-07): Fra
 
 Current Phase 85 staging update (2026-07-12): Stages 1-3, Stage 4A, P85-IF-A through P85-IF-I, Stage 4B Uyari ve Bildirimler, and **Stage 4B-2 Mesajlasma are complete.** Evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`. **Next operator action:** Stage 4C Diyetisyen Icin AI Chat. Runtime provider/channel behavior remains closed.
 
-Current Stage 4B-2 closure override (2026-07-12): bounded conversation list/detail APIs, per-actor unread receipts, mutations, WhatsApp-like detail UX, Mesajlaşma navigation, Stage 4B integration, scale/visual/release verification, and canonical spec are complete. Core 234/234, app 953 passed / 6 skipped, Stage 4B-2 rehearsal, 79G/release verification, lint, build, and 40-viewport visual verification passed. The current RLS suite skips 35 tests because Docker Desktop is unavailable; this is an explicit environment blocker, not a pass. Evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md`. **Next:** Stage 4C; production pilot remains `NO-GO`; R-405 remains open.
+Historical Stage 4B-2 closure override (2026-07-12): bounded conversation APIs, receipts, mutations, UX, integration, scale, visual, and release verification were complete while that checkpoint's RLS suite was Docker-blocked. R7 subsequently supplied zero-skip RLS/SQL evidence and advisory hardening passed 36/36. Current authority: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. **Next:** Stage 4C plan/read gate; production pilot remains `NO-GO`; R-405 remains open.
 
 Current P85-IF-R4 update (2026-07-10): P85-IF-G context-intake Supabase remediation is complete. Evidence is in `docs/PHASE_85_IF_R4_CONTEXT_INTAKE_REMEDIATION_EVIDENCE.md`. Migration `20260710210000_phase_85_if_remediation_client_safe_context_intake.sql` adds service-role-only atomic confirm/recheck/apply/reject proposal RPCs; wrong-client or missing proposals return `404`; stale proposal states return `409`; structured-impact proposals still require panel revision evidence and two confirmations; apply creates only a context update and invalidates drafts transactionally. Verification passed: local Supabase reset, targeted P85-IF-G 11/11, and local `npm run test:rls` 25/25. Production pilot remains `NO-GO`; R-405 remains open.
 
@@ -2443,25 +2443,25 @@ Phase 0 is complete. The decision-complete execution contract is `docs/PHASE_85_
 ## Stage 4B-2 Closure - 2026-07-12
 
 Stage 4B-2 Phases 0-11 and remediation R0-R6 are historical evidence; R7 is the current local closure authority. Runtime spec: `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`; closure: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. **Next:** Stage 4C plan/read gate. Preserve bounded messaging contracts, per-actor receipts, yellow reviewed-manual semantics, red atomic activation, append-only migrations, production `NO-GO`, R-405 open, and all real provider/channel/health-data shutdowns.
-## Current Phase 85 Stage 4B-2 Post-Closure Remediation - 2026-07-12
+## Historical Phase 85 Stage 4B-2 Post-Closure Remediation Snapshot - 2026-07-12
 
-R1 is complete. The next authorized implementation unit is Phase R2 of `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. Stage 4C is blocked; no provider, channel, billing, monitoring, backup, secret-manager, or health-data path may be opened.
+At this historical checkpoint R1 was complete and R2 was next. R2-R7 subsequently closed; this is not the current operator handoff. Stage 4C is now the next authorized plan/read gate. No provider, channel, billing, monitoring, backup, secret-manager, or health-data path may be opened.
 ## Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
 
-R1 is complete for the domain/DTO/permission projection layer. The next authorized unit is R2, covering database-bounded reads and server-side assignment authorization. Stage 4C remains blocked until R1-R7 evidence closes.
+Historical checkpoint: R1 completed the domain/DTO/permission projection layer. R2-R7 subsequently closed; current work is Stage 4C planning.
 
 ## Stage 4B-2 Post-Closure Remediation R2 - 2026-07-12
 
-R2 bounded the Supabase list/detail projections and receipt read mutation through append-only v2 RPCs. The next authorized unit is R3; Stage 4C remains blocked until remediation evidence closes and RLS is run without skips.
+Historical checkpoint: R2 bounded the Supabase list/detail projections and receipt read mutation through append-only v2 RPCs. R3-R7 and zero-skip RLS subsequently closed; this is not an active handoff.
 ## Stage 4B-2 Post-Closure Remediation R3 - 2026-07-12
 
-R3 is complete for atomic authorized manual/draft mutations. R4 is next and owns hook, deep-link, responsive UI, and unread integration corrections. Stage 4C remains blocked until R1-R7 evidence closes.
+Historical checkpoint: R3 completed atomic authorized manual/draft mutations. R4-R7 subsequently closed; this is not an active handoff.
 ## Stage 4B-2 Post-Closure Remediation R4 - 2026-07-12
 
-R4 is complete for hook, deep-link, responsive UI, and unread integration corrections. R5 is next and owns the remaining security, lifecycle, scale, replay, accessibility, and full-regression evidence. Stage 4C remains blocked.
+Historical checkpoint: R4 completed hook, deep-link, responsive UI, and unread integration corrections. R5-R7 subsequently closed; this is not an active handoff.
 ## Stage 4B-2 Post-Closure Remediation R5 - 2026-07-13
 
-R5 is complete for application-level test and scale evidence. Full app, core, 79G, replay, messaging scale, accessibility, lint, and build passed; real RLS/EXPLAIN remains open. R6 is next and owns independent full verification and release gating. Stage 4C remains blocked.
+Historical checkpoint: R5 completed application-level test and scale evidence. Its then-open RLS/EXPLAIN gate was subsequently closed by R7 zero-skip RLS and SQL buffer evidence. This is not an active handoff.
 
 ## Stage 4B-2 Post-Closure Remediation R6 - 2026-07-13
 

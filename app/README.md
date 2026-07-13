@@ -1,14 +1,16 @@
 # MANU-AI Local App Prototype
 
+2026-07-13: **Stage 4B-2 continuity and routing reconciliation is complete locally.** Dashboard `messages` navigation, bounded conversation APIs, DTO/permission contracts, v2 RPCs, append-only RLS migrations, and canonical documentation were cross-checked. Superseded Docker/RLS blocks are historical, and Stage 4C plan/read gate is the only current Phase 85 handoff. Evidence: `../docs/PHASE_85_STAGE_4B_2_CONTINUITY_AND_ROUTING_RECONCILIATION_EVIDENCE.md`.
+
 ## Phase 85 Roadmap Restructure
 
 2026-07-13: **Stage 4B-2 security advisory RLS hardening is complete locally.** Migration `20260713030000_phase_85_stage_4b2_security_advisory_rls_hardening.sql` enables RLS on `conversation_mutation_idempotency` and `personas`, removes direct `anon`/`authenticated` grants, adds no direct-user policies, and preserves service-role mediated internal behavior. Evidence: `../docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`. Stage 4C remains next; production pilot remains `NO-GO`.
 
 2026-07-13: **Stage 4B-2 local RLS re-closure is complete.** Local Supabase reset passed and `npm run test:rls` passed 35/35 with 0 skipped. The append-only migration `20260713024000_phase_85_stage_4b2_rls_local_reclosure.sql` removes legacy broad notification policies, restores direct notification update denial, re-routes form/context notification commits through the Stage 4B notification helper, and fixes receipt RPC name ambiguity. Evidence: `../docs/PHASE_85_STAGE_4B_2_RLS_LOCAL_RECLOSURE_EVIDENCE.md`. Production pilot remains `NO-GO`.
 
-2026-07-12: **Stage 4B-2 Mesajlaşma implementation and evidence closure are complete locally; current RLS execution is blocked by Docker.** Implemented in `src/lib/phase-85-stage-4b2-*.ts`, `src/components/dashboard/messaging-panel.tsx`, `conversation-panel.tsx`, `use-stage-4b2-messaging.ts`, API routes `/api/conversations/**`, migrations `20260712140000_phase_85_stage_4b2_receipt_persistence_rls.sql`, `20260712150000_phase_85_stage_4b2_read_api_projection_rpcs.sql`, `20260712160000_phase_85_stage_4b2_mutation_idempotency.sql`, and visual smoke `tests/visual/messaging.visual.spec.ts`. Evidence: `../docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md`; runtime contract: `../docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`. Core/app, Stage 4B-2 rehearsal, scale, replay, release, build, lint, and visual 40/40 verification passed; `npm run test:rls` skips 35 tests and is not counted as pass. **Next:** Stage 4C Diyetisyen Icin AI Chat. Production pilot remains `NO-GO`.
+2026-07-12: **Stage 4B-2 Mesajlaşma implementation closure, historical snapshot.** The Docker-blocked 35-test RLS result recorded at closure was subsequently superseded by R7 zero-skip RLS/SQL evidence and the advisory-hardening 36/36 run. Runtime remains implemented in `src/lib/phase-85-stage-4b2-*.ts`, `src/components/dashboard/messaging-panel.tsx`, `conversation-panel.tsx`, `use-stage-4b2-messaging.ts`, `/api/conversations/**`, and append-only Stage 4B-2 migrations. Current authority: `../docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md` plus `../docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`. **Next:** Stage 4C plan/read gate. Production pilot remains `NO-GO`.
 
-2026-07-12: **Stage 4B Uyari ve Bildirimler implementation and post-closure remediation are complete locally; current RLS execution is blocked by Docker.** Implemented in `src/lib/phase-85-stage-4b-*.ts`, `src/components/dashboard/alerts-panel.tsx`, `notifications-panel.tsx`, API routes `/api/alerts` and `/api/notifications/*`, the original migration `20260711090000_phase_85_stage_4b_alerts_notifications.sql`, and append-only remediation migration `20260712120000_phase_85_stage_4b_postclosure_remediation.sql`. Evidence: `../docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md`; runtime contract: `../docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_SPEC.md`. Core/app, scale, replay, release, build, lint, and visual verification passed; `npm run test:rls` skips 33 tests and is not counted as pass.
+2026-07-12: **Stage 4B Uyari ve Bildirimler implementation closure, historical verification snapshot.** The then-blocked 33-test RLS result was subsequently superseded by the complete migration-chain 35/35 local re-closure and advisory-hardening 36/36 run. Runtime remains implemented in `src/lib/phase-85-stage-4b-*.ts`, `src/components/dashboard/alerts-panel.tsx`, `notifications-panel.tsx`, `/api/alerts`, `/api/notifications/*`, and append-only Stage 4B migrations. Current RLS authority: `../docs/PHASE_85_STAGE_4B_2_RLS_LOCAL_RECLOSURE_EVIDENCE.md` and `../docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`.
 
 2026-07-10: Phase 85 Stages 1-3 and Stage 4A are complete. The mandatory cross-cutting Phase 85 Interstage Foundation (`P85-IF`) is canonically planned in `../docs/PHASE_85_INTERSTAGE_TRUSTED_CLINICAL_COMMUNICATION_MEMORY_PLAN.md`; P85-IF-A through P85-IF-I and the approved remediation sequence are complete. Stage 4B may resume. Production pilot remains `NO-GO`; real provider/channel/health-data paths remain disconnected.
 
@@ -473,7 +475,7 @@ Stage 4B-2 Mesajlaşma is complete. Runtime spec: `../docs/PHASE_85_STAGE_4B_2_M
 
 ## Stage 4B-2 Phase 0 App Contract - 2026-07-12
 
-The Stage 4B-2 documentation lock is recorded in `../docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md` and `../docs/PHASE_85_STAGE_4B_2_PHASE_0_DOCUMENTATION_EVIDENCE.md`. Phase 0 changed no app runtime, route, migration, provider, channel, auth, billing, entitlement, or PWA behavior. Phase 1 domain/DTO/authorization projection is complete; the next app work is Phase 2 receipt persistence/RLS. Stage 4C remains blocked and production pilot remains `NO-GO`.
+Historical Phase 0 record: the Stage 4B-2 documentation lock is recorded in `../docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md` and `../docs/PHASE_85_STAGE_4B_2_PHASE_0_DOCUMENTATION_EVIDENCE.md`. Phases 1-11 and remediation R0-R7 subsequently closed. This is not an active handoff; the current next unit is Stage 4C and production pilot remains `NO-GO`.
 
 ## Stage 4B App Contract — complete 2026-07-12
 
@@ -481,27 +483,27 @@ Implemented per `../docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_ACTION_PLAN.md`.
 
 ## Stage 4B-2 Phase 1 App Contract - 2026-07-12
 
-Phase 1 is complete for the domain/DTO/authorization projection foundation. `src/lib/types.ts` adds assignment access-level types; `src/lib/phase-85-stage-4b2-contracts.ts` defines bounded messaging DTOs and cursors; `src/lib/phase-85-stage-4b2-api.ts` implements role/assignment permissions, safe previews, sequence unread projection, deterministic list/detail windows, and fail-closed operation guards; and the dedicated test file covers the role matrix and allowlists. No route, migration, persistence, UI, or provider/channel behavior changed. Evidence: `../docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`. **Next:** Phase 2 receipt persistence/RLS; Stage 4C remains blocked and production pilot remains `NO-GO`.
+Historical Phase 1 checkpoint: domain/DTO/authorization projection completed in `../docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`. Phases 2-11 and remediation R0-R7 subsequently closed. This is not an active handoff; Stage 4C plan/read gate is current and production pilot remains `NO-GO`.
 ## Stage 4B-2 Remediation Lock
 
 Stage 4B-2 runtime and post-closure remediation R0-R7 are complete locally. Evidence: `../docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. Stage 4C is the next authorized Phase 85 unit after its plan/read gate. Do not enable real integrations or production-pilot paths.
 
 ## Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
 
-R1 corrected the shared domain/DTO/permission projection contract: contract/API `v2`, split AI activation/configuration capabilities, red-lock activation allowance, full visible-scope unread aggregates, bounded cursor/safe-integer validation, and yellow client-context revision enforcement. Evidence: `../docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R1_EVIDENCE.md`. **Next:** R2 database-bounded reads and server-side assignment authorization.
+Historical R1 checkpoint: the shared domain/DTO/permission projection contract was corrected. R2-R7 subsequently closed; current work is Stage 4C planning.
 
 ## Stage 4B-2 Post-Closure Remediation R2 - 2026-07-12
 
-R2 adds `20260712170000_phase_85_stage_4b2_r2_bounded_reads_rls.sql`, switches Supabase conversation list/detail/receipt calls to v2 RPCs, and carries SQL-authoritative unread aggregates into the bounded DTO. Evidence: `../docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R2_EVIDENCE.md`. **Next:** R3; RLS remains Docker-blocked and unclaimed.
+Historical R2 checkpoint: `20260712170000_phase_85_stage_4b2_r2_bounded_reads_rls.sql` added bounded v2 reads and SQL-authoritative unread aggregates. R3-R7 and zero-skip RLS subsequently closed; this is not an active handoff.
 ## Stage 4B-2 Post-Closure Remediation R3 - 2026-07-12
 
-R3 routes first-party manual replies and draft mutations through the atomic v2 mutation RPC. The RPC owns idempotency reservation/replay, actor/assignment authorization, target scope, client/conversation locking, red/yellow race rejection, and bounded response persistence. Evidence: `../docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R3_EVIDENCE.md`. **Next:** R4.
+Historical R3 checkpoint: first-party manual replies and draft mutations were routed through the atomic v2 mutation RPC. R4-R7 subsequently closed; this is not an active handoff.
 ## Stage 4B-2 Post-Closure Remediation R4 - 2026-07-12
 
-R4 wires API-authoritative unread aggregates into the navigation/panel, preserves explicit conversation deep-links across incomplete legacy state, and enables the list/detail split at the tablet breakpoint. Targeted tests, build, lint, and visual projects pass; full app and RLS are not claimed. Evidence: `../docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R4_EVIDENCE.md`. **Next:** R5.
+Historical R4 checkpoint: API-authoritative unread aggregates, deep-links, and tablet split layout were completed. R5-R7 subsequently supplied full regression and zero-skip RLS evidence; this is not an active handoff.
 ## Stage 4B-2 Post-Closure Remediation R5 - 2026-07-13
 
-R5 adds the repeatable bounded-scale evidence module, full replay/accessibility rehearsal, lifecycle/export leak assertions, and full app regression record. Full app is 959 passed / 6 skipped; RLS is 35 skipped and unclaimed because Docker is unavailable. Evidence: `../docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R5_EVIDENCE.md`. **Next:** R6.
+Historical R5 checkpoint: bounded-scale, replay/accessibility, lifecycle/export, and full regression evidence passed while RLS was then skipped. R6/R7 subsequently supplied zero-skip RLS and SQL buffer evidence; this is not an active handoff.
 
 ## Stage 4B-2 Post-Closure Remediation R6 - 2026-07-13
 
