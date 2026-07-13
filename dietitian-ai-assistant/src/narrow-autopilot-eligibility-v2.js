@@ -20,6 +20,13 @@ export const NARROW_AUTOPILOT_INELIGIBLE_REASON_CODES = [
   "claim_manifest_incomplete",
   "source_conflict",
   "output_guard_violation",
+  "visual_scene_not_allowlisted",
+  "visual_confidence_insufficient",
+  "visual_context_unresolved",
+  "visual_ocr_incomplete",
+  "visual_prompt_injection",
+  "visual_sensitive_class",
+  "visual_multiple_images_ambiguous",
 ];
 
 const SUPPORTED_NARROW_AUTOPILOT_INTENT_FAMILIES = new Set([
@@ -31,6 +38,9 @@ const SUPPORTED_NARROW_AUTOPILOT_INTENT_FAMILIES = new Set([
   "green_logistics",
   "green_meal_reminder",
   "green_context_recap",
+  "green_visual_progress_acknowledgement",
+  "green_visual_product_conflict",
+  "green_visual_screenshot_confirmation",
 ]);
 
 const FOOD_GROUNDED_INTENT_FAMILIES = new Set([
@@ -73,6 +83,7 @@ export function evaluateNarrowAutopilotEligibilityV2(input = {}) {
 
   if (phase === "pre_provider") {
     collectPreProviderIneligibleReasons(input, reasonCodes);
+    collectVisualOverlayIneligibleReasons(input, reasonCodes);
   }
 
   const eligible = reasonCodes.length === 0;
@@ -88,6 +99,27 @@ export function evaluateNarrowAutopilotEligibilityV2(input = {}) {
   }
 
   return buildIneligibleResult(reasonCodes, phase, "pre_provider");
+}
+
+function collectVisualOverlayIneligibleReasons(input, reasonCodes) {
+  const overlay = input.visualRiskOverlay;
+  if (!overlay) return;
+
+  for (const code of overlay.ineligibilityReasons || []) {
+    if (!reasonCodes.includes(code)) {
+      reasonCodes.push(code);
+    }
+  }
+
+  if (!overlay.allowlisted) {
+    if (!reasonCodes.includes("visual_scene_not_allowlisted")) {
+      reasonCodes.push("visual_scene_not_allowlisted");
+    }
+  }
+
+  if (overlay.providerBlocked && overlay.mergedRiskLevel !== "green" && !reasonCodes.includes("risk_not_green")) {
+    reasonCodes.push("risk_not_green");
+  }
 }
 
 function collectPreProviderIneligibleReasons(input, reasonCodes) {
@@ -181,6 +213,17 @@ function hasSourceConflict(input) {
 function hasApprovedFoodGrounding(input, intentFamily) {
   const foodDecisionV2 = input.foodDecisionV2;
   const foodRule = input.foodRule;
+
+  if (
+    input.visualRiskOverlay?.allowlisted &&
+    input.answerability?.decision === "source_backed_green" &&
+    (intentFamily === "green_visual_progress_acknowledgement" ||
+      intentFamily === "green_visual_product_conflict" ||
+      intentFamily === "green_visual_screenshot_confirmation" ||
+      intentFamily === "green_allowed_food_confirmation")
+  ) {
+    return true;
+  }
 
   if (intentFamily === "green_allowed_substitution" && hasApprovedSubstitutionLegacyGrounding(input)) {
     return true;

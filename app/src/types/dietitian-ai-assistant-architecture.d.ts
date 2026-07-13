@@ -1360,4 +1360,48 @@ declare module "dietitian-ai-assistant-architecture" {
   export function hasHighIntegrityLabel(observation: Record<string, unknown>): boolean;
 
   export class VisualMeaningResolverError extends Error {}
+
+  export const VISUAL_RISK_OVERLAY_V1_VERSION: string;
+  export const VISUAL_INELIGIBILITY_REASON_CODES: string[];
+  export function evaluateVisualRiskOverlay(input?: {
+    baseRiskDecision?: { level: "green" | "yellow" | "red"; reasons?: string[] };
+    meaning?: VisualMeaningResolution;
+    envelope?: Record<string, unknown>;
+  }): {
+    version: string;
+    baseRiskLevel: "green" | "yellow" | "red";
+    visualRiskLevel: "green" | "yellow" | "red";
+    mergedRiskLevel: "green" | "yellow" | "red";
+    riskEscalated: boolean;
+    ineligibilityReasons: string[];
+    allowlisted: boolean;
+    reasonCodes: string[];
+    providerBlocked: boolean;
+    providerAttempted: boolean;
+  };
+
+  export const VISUAL_INTENT_BRIDGE_V1_VERSION: string;
+  export const VISUAL_GREEN_INTENT_FAMILIES: string[];
+  export function resolveVisualCanonicalIntent(input?: Record<string, unknown>): Record<string, unknown> | null;
+
+  export const VISUAL_ANSWERABILITY_V1_VERSION: string;
+  export function evaluateVisualAnswerability(input?: Record<string, unknown>): Record<string, unknown> | null;
+
+  export const VISUAL_MULTIMODAL_SAFETY_V1_VERSION: string;
+  export function evaluateMultimodalVisualSafetyChainV1(input?: Record<string, unknown>): {
+    version: string;
+    visualRiskOverlay: ReturnType<typeof evaluateVisualRiskOverlay>;
+    mergedRiskDecision: { level: "green" | "yellow" | "red"; reasons: string[] };
+    visualCanonicalIntent: Record<string, unknown> | null;
+    answerability: Record<string, unknown>;
+    greenIntent: Record<string, unknown>;
+    modeDecision: { action: string; reason?: string };
+    responsePlan: Record<string, unknown>;
+    narrowAutopilotEligibility: Record<string, unknown>;
+    providerAttempted: boolean;
+    clientSendEligible: boolean;
+    outputGuardSample: { allowed: boolean; issues: string[] } | null;
+  };
+  export function isVisualClientSendEligible(chainResult: { clientSendEligible?: boolean } | null | undefined): boolean;
+  export function detectVisualMetadataLeaks(text: string): string[];
 }

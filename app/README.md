@@ -1,6 +1,8 @@
 # MANU-AI Local App Prototype
 
-2026-07-14: **Stage 4B-3 Phase 6 multimodal understanding and source authority is complete locally.** Envelope builder and understanding bridge live under `src/lib/phase-85-stage-4b3-multimodal-*.ts` with core resolver in `../dietitian-ai-assistant/src/visual-meaning-resolver-v1.js`. Evidence: `../docs/PHASE_85_STAGE_4B_3_PHASE_6_MULTIMODAL_UNDERSTANDING_EVIDENCE.md`. **Next:** Stage 4B-3 Phase 7 visual risk overlay and intent integration. Stage 4C remains blocked; production pilot remains `NO-GO`.
+2026-07-14: **Stage 4B-3 Phase 7 visual risk overlay, intent, answerability, narrow autopilot, and output guard integration is complete locally.** Safety bridge lives in `src/lib/phase-85-stage-4b3-multimodal-safety.ts` with core chain in `../dietitian-ai-assistant/src/visual-multimodal-safety-v1.js`; media worker records `safetyChains[]` after understanding. Evidence: `../docs/PHASE_85_STAGE_4B_3_PHASE_7_VISUAL_RISK_INTENT_AUTOPILOT_EVIDENCE.md`. **Next:** Stage 4B-3 Phase 8 orchestration and atomic decision commit. Stage 4C remains blocked; production pilot remains `NO-GO`.
+
+2026-07-14: **Stage 4B-3 Phase 6 multimodal understanding and source authority is complete locally.** Envelope builder and understanding bridge live under `src/lib/phase-85-stage-4b3-multimodal-*.ts` with core resolver in `../dietitian-ai-assistant/src/visual-meaning-resolver-v1.js`. Evidence: `../docs/PHASE_85_STAGE_4B_3_PHASE_6_MULTIMODAL_UNDERSTANDING_EVIDENCE.md`. Phase 7 subsequently completed; see the Phase 7 evidence above.
 
 2026-07-14: **Stage 4B-3 Phase 5 deterministic local vision provider is complete locally.** Mock vision gate, fixture manifest, observation validator, and vision analysis worker live under `src/lib/phase-85-stage-4b3-*`. Evidence: `../docs/PHASE_85_STAGE_4B_3_PHASE_5_DETERMINISTIC_VISION_PROVIDER_EVIDENCE.md`. Phase 6 subsequently completed; see the Phase 6 evidence above.
 

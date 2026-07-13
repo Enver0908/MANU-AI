@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
+  detectVisualMetadataLeaks,
   findExactMenuItemMatch,
   resolveVisualMeaningV1,
 } from "dietitian-ai-assistant-architecture";
+import { resolveMultimodalBundleSafety } from "./phase-85-stage-4b3-multimodal-safety";
 import { DEMO_TENANT_ID, createInitialState, DEMO_DIETITIAN_ID } from "./seed-data";
 import {
   buildMultimodalMessageEnvelope,
@@ -473,5 +475,56 @@ describe("phase-85-stage-4b3-multimodal-understanding", () => {
     expect(built.ok).toBe(false);
     if (built.ok) return;
     expect(built.failureCode).toBe("bundle_not_terminal");
+  });
+});
+
+describe("phase-85-stage-4b3-multimodal-safety", () => {
+  it("allows narrow autopilot only for exact active-menu visual allowlist", () => {
+    const observation = buildVisualObservationFromFixtureTemplate(STAGE_4B3_VISION_FIXTURE_TEMPLATES.meal_plate);
+    const result = resolveMultimodalBundleSafety(buildReadyBundleState({ observation }), "bundle-mm-1");
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.safety.mergedRiskDecision.level).toBe("green");
+    expect(result.safety.clientSendEligible).toBe(true);
+    expect(result.safety.responsePlan.templateId).toBe("visual_progress_ack_v1");
+    expect(result.safety.providerAttempted).toBe(false);
+  });
+
+  it("blocks client send for supplement visual scenes", () => {
+    const observation = buildVisualObservationFromFixtureTemplate(STAGE_4B3_VISION_FIXTURE_TEMPLATES.supplement_bottle);
+    const result = resolveMultimodalBundleSafety(buildReadyBundleState({ observation }), "bundle-mm-1");
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.safety.mergedRiskDecision.level).toBe("yellow");
+    expect(result.safety.clientSendEligible).toBe(false);
+    expect(result.safety.narrowAutopilotEligibility.eligible).toBe(false);
+  });
+
+  it("never downgrades an existing yellow base risk", () => {
+    const observation = buildVisualObservationFromFixtureTemplate(STAGE_4B3_VISION_FIXTURE_TEMPLATES.meal_plate);
+    const result = resolveMultimodalBundleSafety(buildReadyBundleState({ observation }), "bundle-mm-1", {
+      baseRiskDecision: { level: "yellow", reasons: ["base_review"] },
+    });
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.safety.mergedRiskDecision.level).toBe("yellow");
+    expect(result.safety.clientSendEligible).toBe(false);
+  });
+
+  it("maps food questions on exact menu visuals to allowed food confirmation", () => {
+    const observation = buildVisualObservationFromFixtureTemplate(STAGE_4B3_VISION_FIXTURE_TEMPLATES.meal_plate);
+    const result = resolveMultimodalBundleSafety(buildReadyBundleState({ observation }), "bundle-mm-1", {
+      textMessage: "izgara tavuk yiyebilir miyim?",
+    });
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.safety.visualCanonicalIntent?.intentFamily).toBe("green_allowed_food_confirmation");
+    expect(result.safety.responsePlan.templateId).toBe("allowed_food_answer_v1");
+  });
+
+  it("blocks client-facing OCR and confidence wording in output guard", () => {
+    expect(detectVisualMetadataLeaks("Gorsel analiz confidence skoru %96.")).toEqual(
+      expect.arrayContaining(["visual_confidence_leak"]),
+    );
   });
 });

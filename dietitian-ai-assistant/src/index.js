@@ -226,6 +226,7 @@ export {
   detectFoodRuleOutputViolations,
   detectFoodDecisionV2OutputViolations,
   detectProductCommunicationCovenantIssues,
+  detectVisualMetadataLeaks,
   guardAssistantReply,
   guardProviderOutput,
   hasMissingHistoricalContextToken,
@@ -255,3 +256,22 @@ export {
   hasHighIntegrityLabel,
   VisualMeaningResolverError,
 } from "./visual-meaning-resolver-v1.js";
+export {
+  VISUAL_RISK_OVERLAY_V1_VERSION,
+  VISUAL_INELIGIBILITY_REASON_CODES,
+  evaluateVisualRiskOverlay,
+} from "./visual-risk-overlay-v1.js";
+export {
+  VISUAL_INTENT_BRIDGE_V1_VERSION,
+  VISUAL_GREEN_INTENT_FAMILIES,
+  resolveVisualCanonicalIntent,
+} from "./visual-intent-bridge-v1.js";
+export {
+  VISUAL_ANSWERABILITY_V1_VERSION,
+  evaluateVisualAnswerability,
+} from "./visual-answerability-v1.js";
+export {
+  VISUAL_MULTIMODAL_SAFETY_V1_VERSION,
+  evaluateMultimodalVisualSafetyChainV1,
+  isVisualClientSendEligible,
+} from "./visual-multimodal-safety-v1.js";

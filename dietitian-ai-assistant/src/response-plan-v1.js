@@ -28,6 +28,9 @@ const INTENT_TEMPLATE_IDS = {
   green_meal_reminder: "meal_reminder_v1",
   green_low_risk_clarification: "low_risk_clarification_v1",
   green_context_recap: "context_recap_v1",
+  green_visual_progress_acknowledgement: "visual_progress_ack_v1",
+  green_visual_product_conflict: "forbidden_food_response_v1",
+  green_visual_screenshot_confirmation: "allowed_food_answer_v1",
   unknown_intent: "unknown_intent_clarify_v1",
 };
 

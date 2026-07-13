@@ -14,6 +14,7 @@ export const KNOWN_TEMPLATE_IDS = [
   "logistics_reply_v1",
   "meal_reminder_v1",
   "context_recap_v1",
+  "visual_progress_ack_v1",
   "provider_styled_send_v1",
   "provider_styled_draft_v1",
 ];
@@ -84,6 +85,10 @@ const TEMPLATE_COPY = {
   context_recap_v1: {
     tr: "Son konustugumuz noktalar planina uygun sekilde devam ediyor. Belirli bir ogun veya degisim soruyorsan yaz.",
     en: "What we discussed recently still fits your plan. Tell me which meal or change you mean.",
+  },
+  visual_progress_ack_v1: {
+    tr: "Paylastigin ogun planindaki secimle uyumlu gorunuyor. Planindaki porsiyonu korumaya devam edebilirsin.",
+    en: "What you shared looks aligned with your planned meal choice. Keep following the portion in your plan.",
   },
   provider_styled_send_v1: {
     tr: "Planina uygun sekilde ilerleyebilirsin. Belirli bir yemek veya degisim soruyorsan yaz.",

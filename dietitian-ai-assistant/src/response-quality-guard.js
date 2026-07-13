@@ -104,6 +104,7 @@ export function guardAssistantReply({ draft, capsule, riskDecision }) {
     if (rule.pattern.test(normalizedText)) issues.push(rule.issue);
   }
   issues.push(...detectProductCommunicationCovenantIssues(text));
+  issues.push(...detectVisualMetadataLeaks(text));
 
   return {
     allowed: issues.length === 0,
@@ -262,6 +263,33 @@ export function detectProductCommunicationCovenantIssues(text) {
     if (rule.pattern.test(normalizedText)) issues.push(rule.issue);
   }
 
+  return Array.from(new Set(issues));
+}
+
+const visualMetadataLeakPatterns = [
+  {
+    issue: "visual_ocr_leak",
+    pattern:
+      /\b(?:ocr|optik karakter|görüntü analiz|goruntu analiz|image analysis|foto analiz|vision model|görsel model)\b/i,
+  },
+  {
+    issue: "visual_confidence_leak",
+    pattern: /\b(?:confidence|guven skoru|güven skoru|guvenilirlik orani|güvenilirlik oranı)\b/i,
+  },
+  {
+    issue: "visual_model_leak",
+    pattern: /\b(?:vision provider|görsel sağlayıcı|goruntu saglayici|multimodal model)\b/i,
+  },
+];
+
+export function detectVisualMetadataLeaks(text) {
+  const normalizedText = normalizeForSafetyPatterns(String(text || ""));
+  const issues = [];
+  for (const rule of visualMetadataLeakPatterns) {
+    if (rule.pattern.test(normalizedText)) {
+      issues.push(rule.issue);
+    }
+  }
   return Array.from(new Set(issues));
 }
 
