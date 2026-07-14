@@ -125,3 +125,20 @@ describe("P85 Stage 4B-3 remediation R2 durable queue migration", () => {
     expect(durableQueueMigration).toContain("grant execute on function p85_stage_4b3_load_bounded_media_v2");
   });
 });
+
+const canonicalIngressMigration = readFileSync(
+  resolve(__dirname, "../../supabase/migrations/20260714120000_phase_85_stage_4b3_canonical_ingress_v2.sql"),
+  "utf8",
+);
+
+describe("P85 Stage 4B-3 remediation R3 canonical ingress migration", () => {
+  it("creates atomic canonical ingress and sanitized media commit RPCs", () => {
+    expect(canonicalIngressMigration).toContain("p85_stage_4b3_commit_canonical_inbound_v2");
+    expect(canonicalIngressMigration).toContain("p85_stage_4b3_commit_sanitized_media_v2");
+    expect(canonicalIngressMigration).toContain("p85_stage_4b3_enqueue_media_object_operation_v2");
+    expect(canonicalIngressMigration).toContain("p85_stage_4b3_finalize_terminal_admission_failure_v2");
+    expect(canonicalIngressMigration).toContain("visual_message_review");
+    expect(canonicalIngressMigration).toContain("duplicate_event");
+    expect(canonicalIngressMigration).toContain("grant execute on function p85_stage_4b3_commit_canonical_inbound_v2");
+  });
+});

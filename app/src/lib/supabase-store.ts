@@ -1,3 +1,4 @@
+import type { WhatsAppMockWebhookResult } from "./whatsapp-mock-webhook";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { getSupabaseAdminClient } from "./supabase";
 import { createPlaceholderScopeRules } from "./scope-corpus";
@@ -2333,15 +2334,44 @@ export async function runSupabaseSecureWhatsAppIngress(
 ) {
   const state = await loadSupabaseState(context);
   const { processCanonicalWhatsAppIngressInState } = await import("./phase-85-stage-4b3-canonical-ingress");
+  const {
+    commitStage4B3CanonicalInboundV2,
+    ingressIncludesStage4B3ImageCommit,
+  } = await import("./phase-85-stage-4b3-supabase-canonical-ingress");
   const { state: next, result: webhookResult, ingress } = await processCanonicalWhatsAppIngressInState(state, payload, {
     providedSecret,
     bootstrapDemoBindings: true,
+    stage4b3Admission: (
+      await import("./phase-85-stage-4b3-canonical-ingress")
+    ).createStage4B3LocalAdmissionRuntime({
+      autoProcessPending: false,
+      autoProcessVision: false,
+      autoProcessBundles: false,
+      useDurableFixtureTransport: true,
+    }),
   });
 
-  if (ingress.ok) {
-    await commitStateDeltaRpc(requireSupabase(), "commit_inbound_simulation", state, next, "whatsapp");
+  if (!ingress.ok) {
+    return { webhookResult, ingress };
   }
 
+  if (ingressIncludesStage4B3ImageCommit(ingress)) {
+    const commit = await commitStage4B3CanonicalInboundV2(requireSupabase(), context.tenantId, state, next);
+    if (commit.status === "duplicate_event" || commit.status === "duplicate_content_hash") {
+      const duplicateResult: WhatsAppMockWebhookResult = {
+        status: "duplicate_ignored",
+        action: null,
+        blockedReason: commit.status,
+      };
+      return {
+        webhookResult: duplicateResult,
+        ingress,
+      };
+    }
+    return { webhookResult, ingress };
+  }
+
+  await commitStateDeltaRpc(requireSupabase(), "commit_inbound_simulation", state, next, "whatsapp");
   return { webhookResult, ingress };
 }
 
@@ -2351,10 +2381,11 @@ export async function runSupabaseStage4B3VisualSimulation(
 ) {
   const state = await loadSupabaseState(context);
   const { runStage4B3VisualSimulationInState } = await import("./phase-85-stage-4b3-visual-simulator");
+  const { commitStage4B3CanonicalInboundV2 } = await import("./phase-85-stage-4b3-supabase-canonical-ingress");
   const simulation = await runStage4B3VisualSimulationInState(state, request, {
     providedSecret: process.env.MANU_MOCK_WHATSAPP_WEBHOOK_SECRET ?? null,
   });
-  await commitStateDeltaRpc(requireSupabase(), "commit_inbound_simulation", state, simulation.state, "whatsapp");
+  await commitStage4B3CanonicalInboundV2(requireSupabase(), context.tenantId, state, simulation.state);
   return loadSupabaseStateWithLastSimulation(simulation.state, context);
 }
 

@@ -11,6 +11,7 @@ import {
   type Stage4B3MediaAdmissionFailureCode,
 } from "./phase-85-stage-4b3-image-admission";
 import type { Stage4B3MediaStoragePort } from "./phase-85-stage-4b3-media-storage";
+import { uploadSanitizedMediaObjectsWithRollback } from "./phase-85-stage-4b3-durable-media-admission";
 import { hashProviderMediaId, type Stage4B3MediaTransportPort } from "./phase-85-stage-4b3-media-transport";
 import type { ManuAppState, MessageRecord } from "./types";
 
@@ -116,12 +117,12 @@ export async function admitSinglePendingMediaAsset(
 
   const objectKeys = buildStage4B3MediaObjectKeys(asset.tenantId, asset.id);
   try {
-    await options.storage.uploadObject(
-      objectKeys.sanitizedFullObjectKey,
-      sanitized.artifacts.sanitizedFullBytes,
-      "image/jpeg",
-    );
-    await options.storage.uploadObject(objectKeys.thumbnailObjectKey, sanitized.artifacts.thumbnailBytes, "image/jpeg");
+    await uploadSanitizedMediaObjectsWithRollback({
+      storage: options.storage,
+      tenantId: asset.tenantId,
+      assetId: asset.id,
+      artifacts: sanitized.artifacts,
+    });
   } catch {
     return finalizeFailedAdmission(state, asset.id, "storage_upload_failed");
   }

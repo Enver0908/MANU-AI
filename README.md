@@ -4,7 +4,7 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 ## Current Status
 
-**Current authority (2026-07-14):** Stage 4B-3 post-closure remediation R0, R1, and R2 are complete locally. R3 is next; Stage 4C remains blocked. Active plan: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. R2 evidence: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_R2_EVIDENCE.md`. Phase 12 entries below are historical only. R-405 remains open; production remains `NO-GO`.
+**Current authority (2026-07-14):** Stage 4B-3 post-closure remediation R0–R3 are complete locally. R4 is next; Stage 4C remains blocked. Active plan: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. R3 evidence: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_R3_EVIDENCE.md`. Phase 12 entries below are historical only. R-405 remains open; production remains `NO-GO`.
 
 **2026-07-14 Stage 4B-3 Phase 12 golden corpus, red team, scale rehearsal, and closure:** Synthetic golden corpus, multimodal red-team evaluator, `npm run rehearse:stage-4b3:media`, four-viewport visual simulator acceptance, and canonical runtime spec `docs/PHASE_85_STAGE_4B_3_MULTIMODAL_GORSEL_GUVENLIK_SPEC.md`. Evidence: `docs/PHASE_85_STAGE_4B_3_PHASE_12_GOLDEN_CORPUS_RED_TEAM_CLOSURE_EVIDENCE.md`. **Next:** Stage 4C plan/read gate. Production pilot remains `NO-GO`; R-405 remains open.
 

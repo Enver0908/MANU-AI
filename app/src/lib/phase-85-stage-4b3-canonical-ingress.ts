@@ -10,6 +10,7 @@ import {
 import { hashMediaBytes, validateAndSanitizeImageBytes } from "./phase-85-stage-4b3-image-admission";
 import { getFallbackStage4B3MediaStorage } from "./phase-85-stage-4b3-fallback-media-storage";
 import { getFallbackStage4B3MockMediaRegistry } from "./phase-85-stage-4b3-fallback-media-registry";
+import { createStage4B3DurableMediaTransport } from "./phase-85-stage-4b3-durable-media-transport";
 import {
   createInMemoryStage4B3MediaTransport,
   registerStage4B3MockMediaAsset,
@@ -126,10 +127,13 @@ export function createStage4B3LocalAdmissionRuntime(input?: {
   autoProcessVision?: boolean;
   autoProcessBundles?: boolean;
   workerId?: string;
+  useDurableFixtureTransport?: boolean;
 }): Stage4B3AdmissionRuntime {
   const registry = input?.registry ?? getFallbackStage4B3MockMediaRegistry();
   return {
-    transport: createInMemoryStage4B3MediaTransport(registry),
+    transport: input?.useDurableFixtureTransport
+      ? createStage4B3DurableMediaTransport()
+      : createInMemoryStage4B3MediaTransport(registry),
     storage: getFallbackStage4B3MediaStorage(),
     visionProvider: createStage4B3MockVisionProvider({ manifest: input?.manifest }),
     autoProcessPending: input?.autoProcessPending ?? true,

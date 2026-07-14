@@ -84,10 +84,10 @@ export async function runStage4B3VisualSimulationInState(
     registerStage4B3MockMediaAsset(
       getFallbackStage4B3MockMediaRegistry(),
       mediaId,
-      request.uploadBytes,
-      mimeType,
+      sanitized.artifacts.sanitizedFullBytes,
+      "image/jpeg",
     );
-    sha256 = hashMediaBytes(request.uploadBytes);
+    sha256 = sanitized.artifacts.contentSha256;
     manifest = undefined;
   } else {
     const sceneId = request.fixtureSceneId ?? "meal_plate";
