@@ -162,6 +162,7 @@ export function routeChannelEvent(state: ManuAppState, candidate: RawChannelEven
   if (
     candidate.eventKind === "client_message_text" ||
     candidate.eventKind === "client_message_image" ||
+    candidate.eventKind === "client_message_audio" ||
     candidate.eventKind === "client_message_media_unsupported" ||
     candidate.eventKind === "history_client_message"
   ) {

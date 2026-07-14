@@ -2421,7 +2421,9 @@ export async function runSupabaseSecureWhatsAppIngress(
   const { processCanonicalWhatsAppIngressInState } = await import("./phase-85-stage-4b3-canonical-ingress");
   const {
     commitStage4B3CanonicalInboundV2,
+    commitStage4B4CanonicalInboundV3,
     ingressIncludesStage4B3ImageCommit,
+    ingressIncludesStage4B4AudioCommit,
   } = await import("./phase-85-stage-4b3-supabase-canonical-ingress");
   const { state: next, result: webhookResult, ingress } = await processCanonicalWhatsAppIngressInState(state, payload, {
     providedSecret,
@@ -2430,6 +2432,7 @@ export async function runSupabaseSecureWhatsAppIngress(
       await import("./phase-85-stage-4b3-canonical-ingress")
     ).createStage4B3LocalAdmissionRuntime({
       autoProcessPending: false,
+      autoProcessAudioPending: false,
       autoProcessVision: false,
       autoProcessBundles: false,
       useDurableFixtureTransport: true,
@@ -2437,6 +2440,22 @@ export async function runSupabaseSecureWhatsAppIngress(
   });
 
   if (!ingress.ok) {
+    return { webhookResult, ingress };
+  }
+
+  if (ingressIncludesStage4B4AudioCommit(ingress)) {
+    const commit = await commitStage4B4CanonicalInboundV3(requireSupabase(), context.tenantId, state, next);
+    if (commit.status === "duplicate_event" || commit.status === "duplicate_content_hash") {
+      const duplicateResult: WhatsAppMockWebhookResult = {
+        status: "duplicate_ignored",
+        action: null,
+        blockedReason: commit.status,
+      };
+      return {
+        webhookResult: duplicateResult,
+        ingress,
+      };
+    }
     return { webhookResult, ingress };
   }
 

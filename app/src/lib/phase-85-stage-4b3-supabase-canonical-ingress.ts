@@ -88,6 +88,14 @@ function serializeMediaAssetForCanonicalRpc(asset: MediaAssetRecord) {
     contentSha256: asset.contentSha256,
     sanitizedFullObjectKey: asset.sanitizedFullObjectKey,
     thumbnailObjectKey: asset.thumbnailObjectKey,
+    mediaKind: asset.mediaKind ?? "image",
+    voiceMessage: asset.voiceMessage ?? null,
+    durationMs: asset.durationMs ?? null,
+    audioCodec: asset.audioCodec ?? null,
+    audioChannels: asset.audioChannels ?? null,
+    sampleRateHz: asset.sampleRateHz ?? null,
+    sanitizedAudioObjectKey: asset.sanitizedAudioObjectKey ?? null,
+    transcriptionId: asset.transcriptionId ?? null,
     status: asset.status,
     retryCount: asset.retryCount,
     nextAttemptAt: asset.nextAttemptAt,
@@ -115,6 +123,8 @@ function serializeBundleForCanonicalRpc(bundle: InboundMessageBundleRecord) {
     conversationRevisionAtOpen: bundle.conversationRevisionAtOpen,
     itemCount: bundle.itemCount,
     imageCount: bundle.imageCount,
+    audioCount: bundle.audioCount,
+    audioDurationMs: bundle.audioDurationMs,
     unicodeCodepointCount: bundle.unicodeCodepointCount,
     retryCount: bundle.retryCount,
     createdAt: bundle.createdAt,
@@ -136,6 +146,7 @@ function serializeBundleItemForCanonicalRpc(item: InboundMessageBundleItemRecord
     actorType: item.actorType ?? "client",
     senderId: item.senderId ?? null,
     observedAt: item.observedAt,
+    transcriptionId: item.transcriptionId ?? null,
     createdAt: item.createdAt,
   };
 }
@@ -154,6 +165,18 @@ function serializeAuditForCanonicalRpc(audit: AuditEventRecord) {
 }
 
 export function extractImageIngressDelta(before: ManuAppState, after: ManuAppState) {
+  return extractMediaIngressDelta(before, after, "client_message_image");
+}
+
+export function extractAudioIngressDelta(before: ManuAppState, after: ManuAppState) {
+  return extractMediaIngressDelta(before, after, "client_message_audio");
+}
+
+function extractMediaIngressDelta(
+  before: ManuAppState,
+  after: ManuAppState,
+  eventKind: "client_message_image" | "client_message_audio",
+) {
   const newMessages = after.messages.filter((message) => !before.messages.some((item) => item.id === message.id));
   const newAssets = after.mediaAssets.filter((asset) => !before.mediaAssets.some((item) => item.id === asset.id));
   const newBundles = after.inboundMessageBundles.filter(
@@ -168,7 +191,7 @@ export function extractImageIngressDelta(before: ManuAppState, after: ManuAppSta
   const imageMessage = newMessages.find((message) => message.origin === "client_inbound") ?? null;
   const mediaAsset = newAssets[0] ?? null;
   const channelEvent =
-    newChannelEvents.find((event) => event.eventKind === "client_message_image") ?? newChannelEvents[0] ?? null;
+    newChannelEvents.find((event) => event.eventKind === eventKind) ?? newChannelEvents[0] ?? null;
   const bundleItem = newBundleItems[0] ?? null;
   const openedBundle = newBundles[0] ?? null;
   const appendedBundle =
@@ -199,6 +222,54 @@ export function extractImageIngressDelta(before: ManuAppState, after: ManuAppSta
 
 export function ingressIncludesStage4B3ImageCommit(ingress: ChannelEventIngressResult): boolean {
   return ingress.ok && ingress.outcomes.some((outcome) => outcome.event.eventKind === "client_message_image");
+}
+
+export function ingressIncludesStage4B4AudioCommit(ingress: ChannelEventIngressResult): boolean {
+  return ingress.ok && ingress.outcomes.some((outcome) => outcome.event.eventKind === "client_message_audio");
+}
+
+export async function commitStage4B4CanonicalInboundV3(
+  supabase: SupabaseClient,
+  tenantId: string,
+  before: ManuAppState,
+  after: ManuAppState,
+): Promise<CanonicalInboundV2CommitResult> {
+  const delta =
+    extractAudioIngressDelta(before, after) ?? extractImageIngressDelta(before, after);
+  if (!delta?.channelEvent || !delta.message) {
+    throw new Error("canonical_inbound_media_delta_missing");
+  }
+
+  const payload = {
+    bundleAction: delta.bundleAction,
+    channelEvent: serializeChannelEventForCanonicalRpc(delta.channelEvent),
+    message: serializeMessageForCanonicalRpc(delta.message),
+    mediaAsset: delta.mediaAsset ? serializeMediaAssetForCanonicalRpc(delta.mediaAsset) : null,
+    bundle: delta.bundle ? serializeBundleForCanonicalRpc(delta.bundle) : null,
+    bundleItem: delta.bundleItem ? serializeBundleItemForCanonicalRpc(delta.bundleItem) : null,
+    auditEvent: delta.audit ? serializeAuditForCanonicalRpc(delta.audit) : null,
+  };
+
+  const { data, error } = await supabase.rpc("p85_stage_4b4_commit_canonical_inbound_v3", {
+    p_tenant_id: tenantId,
+    p_payload: payload,
+  });
+  if (error) {
+    throw error;
+  }
+
+  const status = typeof data?.status === "string" ? data.status : "committed";
+  if (status === "duplicate_event" || status === "duplicate_content_hash") {
+    return { status };
+  }
+
+  return {
+    status: "committed",
+    channelEventId: String(data?.channelEventId ?? delta.channelEvent.id),
+    messageId: String(data?.messageId ?? delta.message.id),
+    mediaAssetId: data?.mediaAssetId ? String(data.mediaAssetId) : delta.mediaAsset?.id ?? null,
+    bundleId: data?.bundleId ? String(data.bundleId) : delta.bundle?.id ?? null,
+  };
 }
 
 export async function commitStage4B3CanonicalInboundV2(

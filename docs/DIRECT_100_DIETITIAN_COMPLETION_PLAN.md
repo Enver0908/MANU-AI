@@ -2,7 +2,7 @@
 
 **Current authority (2026-07-15):** Stage 4B-4 Sesli Mesaj Guvenligi ve Transkripsiyon Orkestrasyonu Phase 1 is complete locally after Phase 0. Active plan: `docs/PHASE_85_STAGE_4B_4_SESLI_MESAJ_GUVENLIGI_VE_TRANSKRIPSIYON_ORK_PLAN.md`. Phase 1 evidence: `docs/PHASE_85_STAGE_4B_4_PHASE_1_DOMAIN_TYPE_CONTRACT_EVIDENCE.md`. Stage 4C is blocked until Stage 4B-4 closes. Production remains `NO-GO`; R-405 remains open.
 
-Current Phase 85 status, 2026-07-15: Stage 4B-4 Phase 2 database/storage/RLS foundation is complete locally. Evidence: `docs/PHASE_85_STAGE_4B_4_PHASE_2_DATABASE_STORAGE_RLS_EVIDENCE.md`. **Next:** Stage 4B-4 Phase 3 canonical WhatsApp audio ingress and secure admission. This does not approve a 100-dietitian production pilot; production remains `NO-GO` and R-405 remains open.
+Current Phase 85 status, 2026-07-15: Stage 4B-4 Phase 3 canonical WhatsApp audio ingress and secure admission are complete locally. Evidence: `docs/PHASE_85_STAGE_4B_4_PHASE_3_CANONICAL_INGRESS_AUDIO_ADMISSION_EVIDENCE.md`. **Next:** Stage 4B-4 Phase 4 deterministic mock transcription provider. This does not approve a 100-dietitian production pilot; production remains `NO-GO` and R-405 remains open.
 Date: 2026-06-05
 
 ## Purpose

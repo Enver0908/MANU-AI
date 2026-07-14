@@ -25,6 +25,16 @@ import {
 import { processStage4B3PendingMediaAssets } from "./phase-85-stage-4b3-media-admission";
 import { processStage4B3DueInboundBundles } from "./phase-85-stage-4b3-media-worker";
 import { processStage4B3PendingVisionAnalysis } from "./phase-85-stage-4b3-vision-analysis";
+import { createStage4B4DurableAudioTransport } from "./phase-85-stage-4b4-audio-transport";
+import {
+  createInMemoryStage4B4AudioStorage,
+  type Stage4B4AudioStoragePort,
+} from "./phase-85-stage-4b4-audio-storage";
+import {
+  resolveAllowlistedStage4B4AudioFixtureBytes,
+  type Stage4B4VoiceFixtureId,
+} from "./phase-85-stage-4b4-audio-fixture-resolver";
+import { processStage4B4PendingAudioAssets } from "./phase-85-stage-4b4-audio-admission";
 import type { WhatsAppMockWebhookResult } from "./whatsapp-mock-webhook";
 import { toWhatsAppMockWebhookResult } from "./whatsapp-mock-webhook";
 
@@ -124,10 +134,12 @@ export function createStage4B3LocalAdmissionRuntime(input?: {
   registry?: ReturnType<typeof getFallbackStage4B3MockMediaRegistry>;
   manifest?: ReturnType<typeof createStage4B3VisionFixtureManifest>;
   autoProcessPending?: boolean;
+  autoProcessAudioPending?: boolean;
   autoProcessVision?: boolean;
   autoProcessBundles?: boolean;
   workerId?: string;
   useDurableFixtureTransport?: boolean;
+  audioStorage?: Stage4B4AudioStoragePort;
 }): Stage4B3AdmissionRuntime {
   const registry = input?.registry ?? getFallbackStage4B3MockMediaRegistry();
   return {
@@ -135,8 +147,11 @@ export function createStage4B3LocalAdmissionRuntime(input?: {
       ? createStage4B3DurableMediaTransport()
       : createInMemoryStage4B3MediaTransport(registry),
     storage: getFallbackStage4B3MediaStorage(),
+    audioTransport: createStage4B4DurableAudioTransport(),
+    audioStorage: input?.audioStorage ?? createInMemoryStage4B4AudioStorage(),
     visionProvider: createStage4B3MockVisionProvider({ manifest: input?.manifest }),
     autoProcessPending: input?.autoProcessPending ?? true,
+    autoProcessAudioPending: input?.autoProcessAudioPending ?? true,
     autoProcessVision: input?.autoProcessVision ?? true,
     autoProcessBundles: input?.autoProcessBundles ?? false,
     workerId: input?.workerId ?? "stage4b3-local-worker",
@@ -168,6 +183,26 @@ export async function registerStage4B3FixtureMediaAsset(input: {
     bytes,
     contentSha256: sanitized.artifacts.contentSha256,
     manifest,
+  };
+}
+
+export function registerStage4B4FixtureMediaAsset(input: {
+  fixtureId: Stage4B4VoiceFixtureId;
+  mediaId?: string;
+}): {
+  mediaId: string;
+  bytes: Buffer;
+  contentSha256: string;
+} {
+  const mediaId = input.mediaId ?? `MOCK_AUDIO_${input.fixtureId.toUpperCase()}`;
+  const fixture = resolveAllowlistedStage4B4AudioFixtureBytes(mediaId);
+  if (!fixture) {
+    throw new Error(`fixture_resolve_failed:${input.fixtureId}`);
+  }
+  return {
+    mediaId,
+    bytes: fixture.bytes,
+    contentSha256: fixture.sha256,
   };
 }
 
@@ -250,6 +285,15 @@ export function mapCanonicalIngressToWebhookResult(
     };
   }
 
+  const audioCommitted = result.outcomes.some((outcome) => outcome.event.eventKind === "client_message_audio");
+  if (audioCommitted) {
+    return {
+      status: "processed",
+      action: null,
+      blockedReason: null,
+    };
+  }
+
   return {
     status: "processed",
     action: null,
@@ -318,6 +362,14 @@ export async function runStage4B3LocalWorkerTick(
     });
   }
 
+  if (admission.audioTransport && admission.audioStorage) {
+    workingState = await processStage4B4PendingAudioAssets(workingState, {
+      transport: admission.audioTransport,
+      storage: admission.audioStorage,
+      now,
+    });
+  }
+
   if (admission.visionProvider) {
     workingState = await processStage4B3PendingVisionAnalysis(workingState, {
       env: input.env ?? process.env,
@@ -371,6 +423,51 @@ export function buildCanonicalWhatsAppTextPayload(input: {
                   timestamp: input.timestamp ?? "1720000000",
                   type: "text",
                   text: { body: input.body },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    ],
+  };
+}
+
+export function buildCanonicalWhatsAppVoicePayload(input: {
+  providerEventId: string;
+  from: string;
+  mediaId: string;
+  sha256: string;
+  durationMs?: number;
+  timestamp?: string;
+  businessPhoneNumberId?: string;
+}) {
+  return {
+    object: "whatsapp_business_account",
+    entry: [
+      {
+        id: "SYNTHETIC_WABA_1",
+        changes: [
+          {
+            field: "messages",
+            value: {
+              messaging_product: "whatsapp",
+              metadata: {
+                phone_number_id: input.businessPhoneNumberId ?? STAGE_4B3_DEMO_BUSINESS_PHONE_NUMBER_ID,
+              },
+              messages: [
+                {
+                  from: normalizeClientWhatsAppIdentity(input.from),
+                  id: input.providerEventId,
+                  timestamp: input.timestamp ?? "1720000000",
+                  type: "audio",
+                  audio: {
+                    id: input.mediaId,
+                    mime_type: "audio/ogg; codecs=opus",
+                    sha256: input.sha256,
+                    voice: true,
+                    ...(input.durationMs !== undefined ? { duration: input.durationMs / 1000 } : {}),
+                  },
                 },
               ],
             },

@@ -13,7 +13,6 @@ import type { ChannelEventKind } from "./types";
 export const PHASE_85_IF_C_NORMALIZER_VERSION = "p85-if-c-channel-event-normalizer-v1";
 
 const UNSUPPORTED_MEDIA_TYPES = new Set([
-  "audio",
   "video",
   "document",
   "sticker",
@@ -48,6 +47,8 @@ export type RawChannelEventCandidate = {
   caption: string | null;
   replyToProviderMessageId: string | null;
   byteSize: number | null;
+  voiceFlag: boolean | null;
+  durationMs: number | null;
 };
 
 export type ChannelEventBatchNormalizationFailure = {
@@ -332,6 +333,72 @@ function normalizeMessageItem(
     });
   }
 
+  if (type === "audio") {
+    const audioObject = item.audio && isRecord(item.audio) ? item.audio : null;
+    const providerMediaId = audioObject ? readTrimmedString(audioObject.id) || null : null;
+    const declaredMimeType = audioObject ? readTrimmedString(audioObject.mime_type) || null : null;
+    const payloadSha256 = audioObject ? readTrimmedString(audioObject.sha256) || null : null;
+    const voiceFlag = audioObject?.voice === true;
+    const byteSize =
+      audioObject && typeof audioObject.file_size === "number" && Number.isFinite(audioObject.file_size)
+        ? Math.max(0, Math.trunc(audioObject.file_size))
+        : null;
+    const durationMs =
+      audioObject && typeof audioObject.duration === "number" && Number.isFinite(audioObject.duration)
+        ? Math.max(0, Math.trunc(audioObject.duration * 1000))
+        : null;
+    const replyToProviderMessageId = readReplyToProviderMessageId(item);
+
+    if (
+      !isEcho &&
+      voiceFlag &&
+      declaredMimeType &&
+      (declaredMimeType.toLowerCase() === "audio/ogg" || declaredMimeType.toLowerCase().startsWith("audio/ogg;"))
+    ) {
+      return buildCandidate({
+        eventKind: "client_message_audio",
+        wabaId,
+        businessPhoneNumberId,
+        raw: item,
+        providerEventId,
+        fromIdentity: from,
+        toIdentity: to,
+        counterpartyIdentity: isEcho ? to : from,
+        messageType: type,
+        providerTime,
+        providerTimeInvalid,
+        providerMediaId,
+        declaredMimeType,
+        payloadSha256,
+        replyToProviderMessageId,
+        byteSize,
+        voiceFlag,
+        durationMs,
+      });
+    }
+
+    return buildCandidate({
+      eventKind: isEcho ? "business_human_echo_media_unsupported" : "client_message_media_unsupported",
+      wabaId,
+      businessPhoneNumberId,
+      raw: item,
+      providerEventId,
+      fromIdentity: from,
+      toIdentity: to,
+      counterpartyIdentity: isEcho ? to : from,
+      messageType: type,
+      providerTime,
+      providerTimeInvalid,
+      providerMediaId,
+      declaredMimeType,
+      payloadSha256,
+      replyToProviderMessageId,
+      byteSize,
+      voiceFlag,
+      durationMs,
+    });
+  }
+
   if (type && UNSUPPORTED_MEDIA_TYPES.has(type)) {
     return buildCandidate({
       eventKind: isEcho ? "business_human_echo_media_unsupported" : "client_message_media_unsupported",
@@ -469,6 +536,8 @@ type BuildCandidateInput = {
   caption?: string | null;
   replyToProviderMessageId?: string | null;
   byteSize?: number | null;
+  voiceFlag?: boolean | null;
+  durationMs?: number | null;
 };
 
 function buildCandidate(input: BuildCandidateInput): RawChannelEventCandidate {
@@ -494,6 +563,8 @@ function buildCandidate(input: BuildCandidateInput): RawChannelEventCandidate {
     caption: input.caption ?? null,
     replyToProviderMessageId: input.replyToProviderMessageId ?? null,
     byteSize: input.byteSize ?? null,
+    voiceFlag: input.voiceFlag ?? null,
+    durationMs: input.durationMs ?? null,
   };
 }
 

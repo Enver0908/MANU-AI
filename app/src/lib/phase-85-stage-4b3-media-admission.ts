@@ -68,7 +68,10 @@ export async function processStage4B3PendingMediaAssets(
 ): Promise<ManuAppState> {
   let workingState = state;
   const pendingAssets = workingState.mediaAssets.filter(
-    (asset) => asset.tenantId === workingState.tenant.id && asset.status === "download_pending",
+    (asset) =>
+      asset.tenantId === workingState.tenant.id &&
+      asset.status === "download_pending" &&
+      (asset.mediaKind ?? "image") === "image",
   );
 
   for (const asset of pendingAssets) {
@@ -88,7 +91,7 @@ export async function admitSinglePendingMediaAsset(
   },
 ): Promise<ManuAppState> {
   const asset = state.mediaAssets.find((item) => item.id === assetId && item.tenantId === state.tenant.id);
-  if (!asset || asset.status !== "download_pending") {
+  if (!asset || asset.status !== "download_pending" || (asset.mediaKind ?? "image") !== "image") {
     return state;
   }
 

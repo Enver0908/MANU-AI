@@ -12,6 +12,11 @@ const queueMigration = readFileSync(
   "utf8",
 );
 
+const canonicalIngressV3Migration = readFileSync(
+  resolve(__dirname, "../../supabase/migrations/20260714190000_phase_85_stage_4b4_canonical_ingress_v3.sql"),
+  "utf8",
+);
+
 const stage4B4Tables = [
   "audio_transcription_records",
   "audio_transcript_corrections",
@@ -64,6 +69,23 @@ describe("P85 Stage 4B-4 Phase 2 audio queue migration", () => {
     expect(queueMigration).toContain("service_role_required");
     expect(queueMigration).toContain(
       "revoke all on function p85_stage_4b4_claim_transcription_work_v1(uuid, text) from public, anon, authenticated",
+    );
+  });
+});
+
+describe("P85 Stage 4B-4 Phase 3 canonical ingress V3 migration", () => {
+  it("creates the V3 canonical inbound RPC with audio metadata columns", () => {
+    expect(canonicalIngressV3Migration).toContain("p85_stage_4b4_commit_canonical_inbound_v3");
+    expect(canonicalIngressV3Migration).toContain("media_kind");
+    expect(canonicalIngressV3Migration).toContain("voice_message");
+    expect(canonicalIngressV3Migration).toContain("duration_ms");
+    expect(canonicalIngressV3Migration).toContain("sanitized_audio_object_key");
+    expect(canonicalIngressV3Migration).toContain("audio_count");
+    expect(canonicalIngressV3Migration).toContain("audio_duration_ms");
+    expect(canonicalIngressV3Migration).toContain("transcription_id");
+    expect(canonicalIngressV3Migration).toContain("service_role_required");
+    expect(canonicalIngressV3Migration).toContain(
+      "grant execute on function p85_stage_4b4_commit_canonical_inbound_v3",
     );
   });
 });

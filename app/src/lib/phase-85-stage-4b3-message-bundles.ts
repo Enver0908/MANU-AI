@@ -12,6 +12,10 @@ import {
   type InboundMessageBundleStatus,
 } from "./phase-85-stage-4b3-media-contracts";
 import {
+  STAGE_4B4_MAX_BUNDLE_VOICE_DURATION_MS,
+  STAGE_4B4_MAX_VOICE_NOTES_PER_BUNDLE,
+} from "./phase-85-stage-4b4-voice-contracts";
+import {
   defaultFailureCodeForBundleWorkerOutcome,
   mapBundleWorkerOutcomeToStatus,
   type Stage4B3BundleWorkerOutcome,
@@ -48,6 +52,7 @@ export type Stage4B3BundleAppendInput = {
   replyToProviderMessageId?: string | null;
   mediaAssetId?: string | null;
   bodyText?: string;
+  audioDurationMs?: number;
 };
 
 export function countUnicodeCodepoints(value: string): number {
@@ -176,6 +181,8 @@ export function appendInboundBundleItem(
   const nextCounts = {
     itemCount: bundle.itemCount + increment.itemCount,
     imageCount: bundle.imageCount + increment.imageCount,
+    audioCount: bundle.audioCount + increment.audioCount,
+    audioDurationMs: bundle.audioDurationMs + increment.audioDurationMs,
     unicodeCodepointCount: bundle.unicodeCodepointCount + increment.unicodeCodepointCount,
   };
   const overflow = detectBundleOverflow(bundle, nextCounts);
@@ -197,6 +204,8 @@ export function appendInboundBundleItem(
     bundleRevision: bundle.bundleRevision + 1,
     itemCount: nextCounts.itemCount,
     imageCount: nextCounts.imageCount,
+    audioCount: nextCounts.audioCount,
+    audioDurationMs: nextCounts.audioDurationMs,
     unicodeCodepointCount: nextCounts.unicodeCodepointCount,
     leaseExpiresAt: null,
     failureCode: overflow ?? bundle.failureCode,
@@ -274,6 +283,43 @@ export function integrateClientImageIntoBundle(
     replyToProviderMessageId: context.candidate.replyToProviderMessageId,
     mediaAssetId,
     bodyText: context.candidate.caption ?? undefined,
+  };
+
+  const activeBundle = findActiveInboundBundle(state, context.routing.conversationId);
+  if (activeBundle) {
+    return appendInboundBundleItem(state, activeBundle.id, item);
+  }
+
+  return openInboundMessageBundle(state, {
+    clientId: context.routing.clientId,
+    conversationId: context.routing.conversationId,
+    anchorMessageId: messageId,
+    observedAt: context.observedAt,
+    item,
+  });
+}
+
+export function integrateClientVoiceIntoBundle(
+  state: ManuAppState,
+  context: Stage4B3BundleIngressContext,
+  messageId: string,
+  mediaAssetId: string,
+): ManuAppState {
+  if (!context.routing.clientId || !context.routing.conversationId) {
+    return state;
+  }
+
+  const item: Stage4B3BundleAppendInput = {
+    messageId,
+    channelEventId: context.channelEventId,
+    observedAt: context.observedAt,
+    itemType: "voice",
+    actorType: "client",
+    senderId: context.routing.clientId,
+    captionText: null,
+    replyToProviderMessageId: context.candidate.replyToProviderMessageId,
+    mediaAssetId,
+    audioDurationMs: context.candidate.durationMs ?? 0,
   };
 
   const activeBundle = findActiveInboundBundle(state, context.routing.conversationId);
@@ -565,19 +611,33 @@ function computeBundleCounts(item: Stage4B3BundleAppendInput) {
   return {
     itemCount: 1,
     imageCount: item.itemType === "image" || item.itemType === "caption" ? 1 : 0,
+    audioCount: item.itemType === "voice" ? 1 : 0,
+    audioDurationMs: item.itemType === "voice" ? Math.max(0, item.audioDurationMs ?? 0) : 0,
     unicodeCodepointCount: countUnicodeCodepoints(body),
   };
 }
 
 function detectBundleOverflow(
   bundle: InboundMessageBundleRecord,
-  nextCounts: { itemCount: number; imageCount: number; unicodeCodepointCount: number },
+  nextCounts: {
+    itemCount: number;
+    imageCount: number;
+    audioCount: number;
+    audioDurationMs: number;
+    unicodeCodepointCount: number;
+  },
 ): string | null {
   if (nextCounts.itemCount > STAGE_4B3_BUNDLE_MAX_MESSAGES) {
     return "bundle_message_cap_exceeded";
   }
   if (nextCounts.imageCount > STAGE_4B3_BUNDLE_MAX_IMAGES) {
     return "bundle_image_cap_exceeded";
+  }
+  if (nextCounts.audioCount > STAGE_4B4_MAX_VOICE_NOTES_PER_BUNDLE) {
+    return "bundle_audio_cap_exceeded";
+  }
+  if (nextCounts.audioDurationMs > STAGE_4B4_MAX_BUNDLE_VOICE_DURATION_MS) {
+    return "bundle_audio_duration_cap_exceeded";
   }
   if (nextCounts.unicodeCodepointCount > STAGE_4B3_BUNDLE_MAX_UNICODE_CODEPOINTS) {
     return "bundle_unicode_cap_exceeded";

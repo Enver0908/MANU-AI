@@ -334,7 +334,7 @@ describe("phase-85-stage-4b4-voice-contracts", () => {
     ).toBe("duplicate_media");
   });
 
-  it("keeps legacy normalizer audio on unsupported-media path until later ingress phases", () => {
+  it("routes voice-flagged OGG audio through the canonical client_message_audio path", () => {
     const result = normalizeChannelEventBatch({
       object: "whatsapp_business_account",
       entry: [
@@ -371,7 +371,8 @@ describe("phase-85-stage-4b4-voice-contracts", () => {
     if (!result.ok) {
       throw new Error("expected normalized batch");
     }
-    expect(result.candidates[0]?.eventKind).toBe("client_message_media_unsupported");
+    expect(result.candidates[0]?.eventKind).toBe("client_message_audio");
+    expect(result.candidates[0]?.voiceFlag).toBe(true);
   });
 
   it("resolves transcript eligibility from transcription and asset status", () => {

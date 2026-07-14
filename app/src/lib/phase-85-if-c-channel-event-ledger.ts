@@ -11,12 +11,16 @@ import {
   applyBundledClientTextIngress,
   hasActiveInboundBundle,
   integrateClientImageIntoBundle,
+  integrateClientVoiceIntoBundle,
   integrateDietitianMessageIntoBundle,
 } from "./phase-85-stage-4b3-message-bundles";
 import {
   processStage4B3PendingMediaAssets,
   stageClientImageIngressMetadata,
 } from "./phase-85-stage-4b3-media-admission";
+import { processStage4B4PendingAudioAssets, stageClientAudioIngressMetadata } from "./phase-85-stage-4b4-audio-admission";
+import { createStage4B4DurableAudioTransport, type Stage4B4AudioTransportPort } from "./phase-85-stage-4b4-audio-transport";
+import { createInMemoryStage4B4AudioStorage, type Stage4B4AudioStoragePort } from "./phase-85-stage-4b4-audio-storage";
 import type { Stage4B3MediaStoragePort } from "./phase-85-stage-4b3-media-storage";
 import type { Stage4B3MediaTransportPort } from "./phase-85-stage-4b3-media-transport";
 import { processStage4B3DueInboundBundles } from "./phase-85-stage-4b3-media-worker";
@@ -72,6 +76,7 @@ async function applyRoutedTranscriptEffectsIfNeeded(
 const NEW_MESSAGE_EVENT_KINDS: ReadonlySet<ChannelEventKind> = new Set([
   "client_message_text",
   "client_message_image",
+  "client_message_audio",
   "client_message_media_unsupported",
   "business_human_echo_text",
   "business_human_echo_media_unsupported",
@@ -82,8 +87,11 @@ const NEW_MESSAGE_EVENT_KINDS: ReadonlySet<ChannelEventKind> = new Set([
 export type Stage4B3AdmissionRuntime = {
   transport: Stage4B3MediaTransportPort;
   storage: Stage4B3MediaStoragePort;
+  audioTransport?: Stage4B4AudioTransportPort;
+  audioStorage?: Stage4B4AudioStoragePort;
   visionProvider?: Stage4B3VisionProviderPort;
   autoProcessPending?: boolean;
+  autoProcessAudioPending?: boolean;
   autoProcessVision?: boolean;
   autoProcessBundles?: boolean;
   workerId?: string;
@@ -277,6 +285,30 @@ async function ingestSingleCandidate(
       nextState = await processStage4B3PendingVisionAnalysis(nextState, {
         env: options.env ?? process.env,
         provider: options.stage4b3Admission.visionProvider,
+        now: record.observedAt,
+      });
+    }
+    if (options.stage4b3Admission?.autoProcessBundles !== false && options.stage4b3Admission) {
+      const worker = await processStage4B3DueInboundBundles(nextState, {
+        workerId: options.stage4b3Admission.workerId ?? "stage4b3-ledger-worker",
+        now: record.observedAt,
+        finalizeClaims: false,
+      });
+      nextState = worker.state;
+    }
+  } else if (routing.finalEventKind === "client_message_audio") {
+    nextState = stageClientAudioIngressMetadata(nextState, ingressContext);
+    const message = nextState.messages[nextState.messages.length - 1];
+    const asset = nextState.mediaAssets[nextState.mediaAssets.length - 1];
+    if (message && asset) {
+      nextState = integrateClientVoiceIntoBundle(nextState, ingressContext, message.id, asset.id);
+    }
+    const audioTransport = options.stage4b3Admission?.audioTransport ?? createStage4B4DurableAudioTransport();
+    const audioStorage = options.stage4b3Admission?.audioStorage ?? createInMemoryStage4B4AudioStorage();
+    if (options.stage4b3Admission?.autoProcessAudioPending !== false) {
+      nextState = await processStage4B4PendingAudioAssets(nextState, {
+        transport: audioTransport,
+        storage: audioStorage,
         now: record.observedAt,
       });
     }
@@ -520,6 +552,13 @@ export async function replayQuarantinedChannelEvent(
     replayState = await applyRoutedClientInbound(replayState, candidate, routing, now);
   } else if (routing.finalEventKind === "client_message_image") {
     replayState = stageClientImageIngressMetadata(replayState, {
+      candidate,
+      routing,
+      channelEventId: replayed.id,
+      observedAt: now,
+    });
+  } else if (routing.finalEventKind === "client_message_audio") {
+    replayState = stageClientAudioIngressMetadata(replayState, {
       candidate,
       routing,
       channelEventId: replayed.id,
