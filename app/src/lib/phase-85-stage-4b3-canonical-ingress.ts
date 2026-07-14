@@ -330,7 +330,7 @@ export async function runStage4B3LocalWorkerTick(
     workerId: input.workerId ?? admission.workerId ?? "stage4b3-local-worker",
     now,
     runOrchestration: input.runOrchestration ?? true,
-    releaseAfterClaim: true,
+    finalizeClaims: true,
   });
 
   return worker.state;

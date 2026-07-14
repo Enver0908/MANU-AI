@@ -142,3 +142,20 @@ describe("P85 Stage 4B-3 remediation R3 canonical ingress migration", () => {
     expect(canonicalIngressMigration).toContain("grant execute on function p85_stage_4b3_commit_canonical_inbound_v2");
   });
 });
+
+const bundleCorrelationMigration = readFileSync(
+  resolve(__dirname, "../../supabase/migrations/20260714130000_phase_85_stage_4b3_bundle_correlation_v2.sql"),
+  "utf8",
+);
+
+describe("P85 Stage 4B-3 remediation R4 bundle correlation migration", () => {
+  it("creates unified append RPC, outcome-based release, and decided guard", () => {
+    expect(bundleCorrelationMigration).toContain("p85_stage_4b3_append_bundle_item_v2");
+    expect(bundleCorrelationMigration).toContain("inbound_message_bundles_decided_requires_decision_id");
+    expect(bundleCorrelationMigration).toContain("human_handled");
+    expect(bundleCorrelationMigration).toContain("retryable_failure");
+    expect(bundleCorrelationMigration).toContain("bundleAppend");
+    expect(bundleCorrelationMigration).toContain("interval '120 seconds'");
+    expect(bundleCorrelationMigration).toContain("grant execute on function p85_stage_4b3_append_bundle_item_v2");
+  });
+});

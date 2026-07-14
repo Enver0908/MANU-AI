@@ -11,7 +11,7 @@ import {
   applyBundledClientTextIngress,
   hasActiveInboundBundle,
   integrateClientImageIntoBundle,
-  supersedeConversationBundles,
+  integrateDietitianMessageIntoBundle,
 } from "./phase-85-stage-4b3-message-bundles";
 import {
   processStage4B3PendingMediaAssets,
@@ -284,12 +284,11 @@ async function ingestSingleCandidate(
       const worker = await processStage4B3DueInboundBundles(nextState, {
         workerId: options.stage4b3Admission.workerId ?? "stage4b3-ledger-worker",
         now: record.observedAt,
-        releaseAfterClaim: false,
+        finalizeClaims: false,
       });
       nextState = worker.state;
     }
   } else if (routing.finalEventKind === "business_human_echo_text" && routing.conversationId) {
-    nextState = supersedeConversationBundles(nextState, routing.conversationId, record.observedAt);
     nextState = await applyRoutedTranscriptEffectsIfNeeded(
       nextState,
       candidate,
@@ -297,6 +296,17 @@ async function ingestSingleCandidate(
       record.id,
       record.observedAt,
     );
+    const dietitianMessage = nextState.messages[nextState.messages.length - 1];
+    if (dietitianMessage && dietitianMessage.origin === "dietitian_manual") {
+      nextState = integrateDietitianMessageIntoBundle(nextState, {
+        conversationId: routing.conversationId,
+        messageId: dietitianMessage.id,
+        observedAt: record.observedAt,
+        bodyText: dietitianMessage.body,
+        senderId: dietitianMessage.authorDietitianId ?? dietitianMessage.actorBindingId ?? routing.clientId ?? "business_human",
+        channelEventId: record.id,
+      });
+    }
   } else {
     nextState = await applyRoutedTranscriptEffectsIfNeeded(
       nextState,

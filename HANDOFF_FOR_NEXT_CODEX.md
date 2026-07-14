@@ -1,6 +1,6 @@
 # Handoff For Next Codex
 
-**Current authority (2026-07-14):** Stage 4B-3 post-closure remediation R0, R1, R2, and R3 are complete locally. R4 bundle correlation and worker result semantics is next. Stage 4C remains blocked. Active plan: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. R3 evidence: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_R3_EVIDENCE.md`. Production remains `NO-GO`; R-405 remains open.
+**Current authority (2026-07-14):** Stage 4B-3 post-closure remediation R0–R4 are complete locally. R5 multimodal source authority is next. Stage 4C remains blocked. Active plan: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. R4 evidence: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_R4_EVIDENCE.md`. Production remains `NO-GO`; R-405 remains open.
 
 All pre-existing Stage 4B-3 closure and Stage 4C-next paragraphs below this authority block are historical snapshots and must not be used as an implementation handoff.
 

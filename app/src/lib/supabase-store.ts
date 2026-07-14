@@ -151,6 +151,7 @@ import {
   mapVisualAnalysisRecord,
   mapVisualCorrection,
 } from "./phase-85-stage-4b3-supabase-mappers";
+import { buildBundleAppendRpcPayload } from "./phase-85-stage-4b3-message-bundles";
 import { normalizeLanguageCode } from "./languages";
 import { createDefaultChannelAdapterRollbackControls } from "./channel-adapter-rollback";
 import {
@@ -3931,6 +3932,8 @@ function buildStateDeltaPayload(
     return beforeBinding && JSON.stringify(beforeBinding) !== JSON.stringify(binding);
   });
 
+  const bundleAppend = buildBundleAppendRpcPayload(before, after);
+
   return {
     expectedClientRevisions: Object.fromEntries(
       changedClients.map((client) => [client.id, beforeClientsById.get(client.id)?.contextRevision || 1]),
@@ -4013,6 +4016,7 @@ function buildStateDeltaPayload(
         channel: processedEventChannel || after.clients[0]?.channel || "whatsapp",
         providerEventId,
       })),
+    ...(bundleAppend ? { bundleAppend } : {}),
   };
 }
 

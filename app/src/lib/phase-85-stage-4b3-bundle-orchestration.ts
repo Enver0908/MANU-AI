@@ -10,6 +10,7 @@ import {
 } from "./phase-85-stage-4b3-multimodal-safety";
 import { resolveMultimodalBundleUnderstanding } from "./phase-85-stage-4b3-multimodal-understanding";
 import { commitInboundBundleDecision } from "./phase-85-stage-4b3-bundle-decisions";
+import { bundleHasDietitianReply } from "./phase-85-stage-4b3-message-bundles";
 import {
   appendInboundCoreResult,
   prepareInboundTurnPipeline,
@@ -272,6 +273,9 @@ export async function runMultimodalBundleInboundTurn(
   }
 
   const { bundle, anchorMessage } = located;
+  if (bundleHasDietitianReply(state, bundleId)) {
+    return { ok: false, failureCode: "bundle_human_handled", state };
+  }
   if (bundle.status !== "processing" && bundle.status !== "ready") {
     return {
       ok: false,

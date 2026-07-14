@@ -11,10 +11,24 @@ import {
   type InboundMessageBundleRecord,
   type InboundMessageBundleStatus,
 } from "./phase-85-stage-4b3-media-contracts";
+import {
+  defaultFailureCodeForBundleWorkerOutcome,
+  mapBundleWorkerOutcomeToStatus,
+  type Stage4B3BundleWorkerOutcome,
+} from "./phase-85-stage-4b3-bundle-worker-outcomes";
 import type { ManuAppState, MessageRecord } from "./types";
 
 export const STAGE_4B3_MESSAGE_BUNDLES_VERSION = "p85-stage-4b3-message-bundles-v1";
 export const STAGE_4B3_ACTIVE_BUNDLE_STATUSES = ["open", "ready", "processing"] as const satisfies readonly InboundMessageBundleStatus[];
+
+export function bundleHasDietitianReply(state: ManuAppState, bundleId: string): boolean {
+  return state.inboundMessageBundleItems.some(
+    (item) =>
+      item.tenantId === state.tenant.id &&
+      item.bundleId === bundleId &&
+      item.actorType === "dietitian",
+  );
+}
 
 export type Stage4B3BundleIngressContext = {
   candidate: RawChannelEventCandidate;
@@ -25,9 +39,11 @@ export type Stage4B3BundleIngressContext = {
 
 export type Stage4B3BundleAppendInput = {
   messageId: string;
-  channelEventId: string;
+  channelEventId: string | null;
   observedAt: string;
   itemType: InboundMessageBundleItemType;
+  actorType?: "client" | "dietitian" | "system";
+  senderId?: string | null;
   captionText?: string | null;
   replyToProviderMessageId?: string | null;
   mediaAssetId?: string | null;
@@ -250,6 +266,8 @@ export function integrateClientImageIntoBundle(
     channelEventId: context.channelEventId,
     observedAt: context.observedAt,
     itemType: context.candidate.caption?.trim() ? "caption" : "image",
+    actorType: "client",
+    senderId: context.routing.clientId,
     captionText: context.candidate.caption ?? null,
     replyToProviderMessageId: context.candidate.replyToProviderMessageId,
     mediaAssetId,
@@ -290,10 +308,68 @@ export function integrateClientTextIntoBundle(
     channelEventId: context.channelEventId,
     observedAt: context.observedAt,
     itemType: "text",
+    actorType: "client",
+    senderId: context.routing.clientId ?? null,
     captionText: null,
     replyToProviderMessageId: context.candidate.replyToProviderMessageId,
     mediaAssetId: null,
     bodyText: message.body,
+  });
+}
+
+export function buildBundleAppendRpcPayload(
+  before: ManuAppState,
+  after: ManuAppState,
+): Record<string, unknown> | null {
+  const newItems = after.inboundMessageBundleItems.filter(
+    (item) => !before.inboundMessageBundleItems.some((entry) => entry.id === item.id),
+  );
+  const dietitianItem = newItems.find((item) => item.actorType === "dietitian");
+  if (!dietitianItem) {
+    return null;
+  }
+  const message = after.messages.find((entry) => entry.id === dietitianItem.messageId);
+  return {
+    itemId: dietitianItem.id,
+    bundleId: dietitianItem.bundleId,
+    messageId: dietitianItem.messageId,
+    channelEventId: dietitianItem.channelEventId,
+    observedAt: dietitianItem.observedAt,
+    itemType: dietitianItem.itemType,
+    actorType: dietitianItem.actorType ?? "dietitian",
+    senderId: dietitianItem.senderId,
+    captionText: dietitianItem.captionText,
+    bodyText: message?.body ?? "",
+  };
+}
+
+export function integrateDietitianMessageIntoBundle(
+  state: ManuAppState,
+  input: {
+    conversationId: string;
+    messageId: string;
+    observedAt: string;
+    bodyText: string;
+    senderId: string;
+    channelEventId?: string | null;
+  },
+): ManuAppState {
+  const activeBundle = findActiveInboundBundle(state, input.conversationId);
+  if (!activeBundle) {
+    return state;
+  }
+
+  return appendInboundBundleItem(state, activeBundle.id, {
+    messageId: input.messageId,
+    channelEventId: input.channelEventId ?? null,
+    observedAt: input.observedAt,
+    itemType: "text",
+    actorType: "dietitian",
+    senderId: input.senderId,
+    captionText: null,
+    replyToProviderMessageId: null,
+    mediaAssetId: null,
+    bodyText: input.bodyText,
   });
 }
 
@@ -381,17 +457,47 @@ export function claimReadyInboundBundle(
   };
 }
 
-export function releaseInboundBundleLease(
+export function releaseInboundBundleWork(
   state: ManuAppState,
   bundleId: string,
-  input: { workerId: string; now: string; success: boolean },
+  input: {
+    workerId: string;
+    now: string;
+    outcome: Stage4B3BundleWorkerOutcome;
+    failureCode?: string | null;
+  },
 ): ManuAppState {
   const bundle = state.inboundMessageBundles.find((entry) => entry.id === bundleId);
-  if (!bundle || bundle.status !== "processing") {
+  if (!bundle) {
     return state;
   }
 
-  const nextStatus: InboundMessageBundleStatus = input.success ? "decided" : "ready";
+  if (input.outcome === "success") {
+    if (bundle.status !== "decided" || !bundle.decisionId) {
+      return state;
+    }
+    return {
+      ...state,
+      inboundMessageBundles: state.inboundMessageBundles.map((entry) =>
+        entry.id === bundleId
+          ? {
+              ...entry,
+              leaseExpiresAt: null,
+              updatedAt: input.now,
+            }
+          : entry,
+      ),
+    };
+  }
+
+  if (bundle.status !== "processing") {
+    return state;
+  }
+
+  const nextRetryCount = input.outcome === "retryable_failure" ? bundle.retryCount + 1 : bundle.retryCount;
+  const nextStatus = mapBundleWorkerOutcomeToStatus(input.outcome, { retryCount: bundle.retryCount });
+  const failureCode = defaultFailureCodeForBundleWorkerOutcome(input.outcome, input.failureCode);
+
   return {
     ...state,
     inboundMessageBundles: state.inboundMessageBundles.map((entry) =>
@@ -399,12 +505,32 @@ export function releaseInboundBundleLease(
         ? {
             ...entry,
             status: nextStatus,
+            retryCount: nextRetryCount,
+            nextAttemptAt:
+              input.outcome === "retryable_failure" && nextRetryCount < 3
+                ? new Date(new Date(input.now).getTime() + 30_000).toISOString()
+                : null,
             leaseExpiresAt: null,
+            failureCode: failureCode ?? entry.failureCode,
             updatedAt: input.now,
           }
         : entry,
     ),
   };
+}
+
+/** @deprecated Use releaseInboundBundleWork with an explicit worker outcome. */
+export function releaseInboundBundleLease(
+  state: ManuAppState,
+  bundleId: string,
+  input: { workerId: string; now: string; success: boolean },
+): ManuAppState {
+  return releaseInboundBundleWork(state, bundleId, {
+    workerId: input.workerId,
+    now: input.now,
+    outcome: input.success ? "success" : "retryable_failure",
+    failureCode: input.success ? null : "legacy_release_without_outcome",
+  });
 }
 
 function buildBundleItem(
@@ -413,6 +539,7 @@ function buildBundleItem(
   item: Stage4B3BundleAppendInput,
   ordinal: number,
 ): InboundMessageBundleItemRecord {
+  const bundle = state.inboundMessageBundles.find((entry) => entry.id === bundleId);
   return {
     id: crypto.randomUUID(),
     tenantId: state.tenant.id,
@@ -424,6 +551,8 @@ function buildBundleItem(
     itemType: item.itemType,
     captionText: item.captionText ?? null,
     replyToProviderMessageId: item.replyToProviderMessageId ?? null,
+    actorType: item.actorType ?? "client",
+    senderId: item.senderId ?? bundle?.clientId ?? undefined,
     observedAt: item.observedAt,
     createdAt: item.observedAt,
   };

@@ -67,6 +67,7 @@ import {
   conversationRevisionOrDefault,
   incrementConversationRevision,
 } from "./phase-85-if-f-conversation-revision";
+import { integrateDietitianMessageIntoBundle } from "./phase-85-stage-4b3-message-bundles";
 import { SAFETY_CLASSIFIER_VERSION, classifySimulationRisk } from "./simulator-risk";
 import type {
   AiDecisionRecord,
@@ -638,23 +639,35 @@ export function appendDietitianManualReply(
   });
 
   const nextState = body.trim()
-    ? incrementConversationRevision(
-        {
-          ...state,
-          messages: [...state.messages, message],
-        },
+    ? reconcileSafeReplyUnavailableNotifications(
+        integrateDietitianMessageIntoBundle(
+          invalidatePendingDrafts(
+            incrementConversationRevision(
+              {
+                ...state,
+                messages: [...state.messages, message],
+              },
+              conversation.id,
+              now,
+            ),
+            now,
+            "dietitian_manual_reply",
+          ),
+          {
+            conversationId: conversation.id,
+            messageId: message.id,
+            observedAt: now,
+            bodyText: body.trim(),
+            senderId: state.dietitian.id,
+            channelEventId: null,
+          },
+        ),
         conversation.id,
         now,
       )
     : state;
 
-  return body.trim()
-    ? reconcileSafeReplyUnavailableNotifications(
-        invalidatePendingDrafts(nextState, now, "dietitian_manual_reply"),
-        conversation.id,
-        now,
-      )
-    : nextState;
+  return nextState;
 }
 
 export function appendDietitianManualReplyByConversation(
@@ -703,17 +716,27 @@ export function appendDietitianManualReplyByConversation(
   });
 
   const nextState = reconcileSafeReplyUnavailableNotifications(
-    invalidatePendingDrafts(
-      incrementConversationRevision(
-        {
-          ...state,
-          messages: [...state.messages, message],
-        },
-        conversation.id,
+    integrateDietitianMessageIntoBundle(
+      invalidatePendingDrafts(
+        incrementConversationRevision(
+          {
+            ...state,
+            messages: [...state.messages, message],
+          },
+          conversation.id,
+          now,
+        ),
         now,
+        "dietitian_manual_reply",
       ),
-      now,
-      "dietitian_manual_reply",
+      {
+        conversationId: conversation.id,
+        messageId: message.id,
+        observedAt: now,
+        bodyText: trimmed,
+        senderId: input.authorDietitianId ?? state.dietitian.id,
+        channelEventId: null,
+      },
     ),
     conversation.id,
     now,

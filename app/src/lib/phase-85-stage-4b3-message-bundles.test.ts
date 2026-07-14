@@ -34,6 +34,7 @@ function testEnv(): NodeJS.ProcessEnv {
     NODE_ENV: "test",
     MANU_ALLOW_MOCK_WHATSAPP_WEBHOOK: "true",
     MANU_MOCK_WHATSAPP_WEBHOOK_SECRET: TEST_SECRET,
+    MANU_DEV_FALLBACK_STORE: "true",
   } as NodeJS.ProcessEnv;
 }
 
@@ -188,6 +189,7 @@ describe("phase-85-stage-4b3 bundle ingress integration", () => {
   };
 
   beforeAll(async () => {
+    process.env.MANU_DEV_FALLBACK_STORE = "true";
     validJpeg = await sharp({
       create: { width: 320, height: 240, channels: 3, background: "#336699" },
     })
@@ -298,7 +300,7 @@ describe("phase-85-stage-4b3 bundle ingress integration", () => {
     const worker = await processStage4B3DueInboundBundles(state, {
       workerId: "bundle-test-worker",
       now: T240,
-      releaseAfterClaim: false,
+      finalizeClaims: false,
     });
     expect(worker.claimedBundles).toHaveLength(1);
     expect(worker.claimedBundles[0]?.status).toBe("processing");
@@ -307,12 +309,12 @@ describe("phase-85-stage-4b3 bundle ingress integration", () => {
     const secondClaim = await processStage4B3DueInboundBundles(worker.state, {
       workerId: "bundle-test-worker",
       now: T240,
-      releaseAfterClaim: false,
+      finalizeClaims: false,
     });
     expect(secondClaim.claimedBundles).toHaveLength(0);
   });
 
-  it("supersedes an active bundle when a business-human echo arrives", async () => {
+  it("appends a dietitian actor item when a business-human echo arrives", async () => {
     let state = baseState();
     const image = await processInboundWhatsAppChannelBatch(
       state,
@@ -325,6 +327,7 @@ describe("phase-85-stage-4b3 bundle ingress integration", () => {
       },
     );
     state = image.state;
+    const conversationId = state.conversations[0]!.id;
     const echo = await processInboundWhatsAppChannelBatch(
       { ...state, channelActorBindings: buildBusinessActorBindings() },
       businessEchoPayload("wamid.ECHO_SUPERSEDE"),
@@ -334,9 +337,13 @@ describe("phase-85-stage-4b3 bundle ingress integration", () => {
         now: T119,
       },
     );
-    const superseded = echo.state.inboundMessageBundles.find((bundle) => bundle.status === "superseded");
-    expect(superseded).toBeTruthy();
-    expect(findActiveInboundBundle(echo.state, echo.state.conversations[0]!.id)).toBeNull();
+    const activeBundle = findActiveInboundBundle(echo.state, conversationId);
+    expect(activeBundle).toBeTruthy();
+    expect(activeBundle?.itemCount).toBe(2);
+    expect(activeBundle?.readyAt).toBe(T239);
+    const dietitianItem = echo.state.inboundMessageBundleItems.find((item) => item.actorType === "dietitian");
+    expect(dietitianItem).toBeTruthy();
+    expect(echo.state.aiDecisions).toHaveLength(SEED_AI_DECISION_COUNT);
   });
 
   it("keeps the bundle open across unlimited total duration when silence resets repeatedly", async () => {
