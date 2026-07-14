@@ -35,6 +35,12 @@ import {
   PHASE_85_IF_I_EXPORT_FILES,
   serializeP85IfIExportFiles,
 } from "./phase-85-if-i-lifecycle-closure";
+import {
+  evaluateStage4B3MediaRedactionInvariants,
+  serializeStage4B3MediaExportMetadata,
+  STAGE_4B3_MEDIA_EXPORT_FILE,
+  detectStage4B3MediaExportLeaks,
+} from "./phase-85-stage-4b3-media-lifecycle";
 import type { LaunchGateEvidenceRecord } from "./launch-gates";
 import type { ClientRecord, ManuAppState, MessageRecord } from "./types";
 
@@ -158,6 +164,8 @@ export const PHASE_74_RETENTION_POLICY: Phase74RetentionEntry[] = [
   entry("audit_events", "Guvenlik/compliance", "5 yil", "Minimized non-identifying evidence", "Raw health content yok."),
   entry("dsar_deletion_evidence", "Talep kaniti", "5 yil", "Minimized evidence", "Talep ve islem kaniti."),
   entry("backups", "Operasyonel recovery", "30 gun rolling", "Expire by rotation", "Restore sonrasi redaction replay zorunlu."),
+  entry("stage4b3_media_objects", "Gorsel dosya metadata", "30 gun", "Object delete + expired status", "Sanitize full/thumbnail only; ham byte 0 gun."),
+  entry("stage4b3_visual_analysis", "Gorsel observation kaniti", "24 ay", "OCR/entity redact; prompt disi 30 gun sonra", "Mesaj kaniti olarak metadata kalir."),
 ];
 
 export const PHASE_74_EXPORT_EXCLUDED_CATEGORIES = [
@@ -193,6 +201,7 @@ export const PHASE_74_EXPORT_INCLUDED_FILES = [
   "audit_events_minimized.jsonl",
   "channel_deliveries.jsonl",
   ...PHASE_85_IF_I_EXPORT_FILES,
+  STAGE_4B3_MEDIA_EXPORT_FILE,
   "checksums.sha256",
 ] as const;
 
@@ -407,6 +416,11 @@ export function evaluatePhase74RedactionInvariants(
     blockingReasons.push("channel delivery records must be removed");
   }
 
+  const mediaInvariants = evaluateStage4B3MediaRedactionInvariants(state, clientId);
+  if (!mediaInvariants.passed) {
+    blockingReasons.push(...mediaInvariants.blockingReasons);
+  }
+
   return {
     passed: blockingReasons.length === 0,
     blockingReasons,
@@ -522,7 +536,13 @@ export function buildPhase74ExportPackage(
       .map((delivery) => JSON.stringify(serializeChannelDeliveryForExport(delivery)))
       .join("\n"),
     ...serializeP85IfIExportFiles(exportData),
+    [STAGE_4B3_MEDIA_EXPORT_FILE]: serializeStage4B3MediaExportMetadata(state, clientId),
   };
+
+  const mediaLeakCheck = detectStage4B3MediaExportLeaks(JSON.parse(files[STAGE_4B3_MEDIA_EXPORT_FILE]!));
+  if (!mediaLeakCheck.passed) {
+    throw new Error(`stage4b3_media_export_leak_detected:${mediaLeakCheck.failures.join(",")}`);
+  }
 
   const manifest: Phase74ExportManifest = {
     exportVersion: PHASE_74_EXPORT_VERSION,

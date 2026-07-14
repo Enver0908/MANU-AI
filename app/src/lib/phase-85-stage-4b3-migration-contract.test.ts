@@ -75,3 +75,18 @@ describe("P85 Stage 4B-3 Phase 9 bounded media reads migration", () => {
     expect(boundedMediaMigration).toContain("grant execute on function p85_stage_4b3_resolve_media_stream_v1");
   });
 });
+
+const lifecycleMigration = readFileSync(
+  resolve(__dirname, "../../supabase/migrations/20260713150000_phase_85_stage_4b3_media_lifecycle.sql"),
+  "utf8",
+);
+
+describe("P85 Stage 4B-3 Phase 11 media lifecycle migration", () => {
+  it("creates expiry indexes and service-role lifecycle RPCs", () => {
+    expect(lifecycleMigration).toContain("media_assets_expiry_due_idx");
+    expect(lifecycleMigration).toContain("p85_stage_4b3_finalize_media_asset_expiry");
+    expect(lifecycleMigration).toContain("p85_stage_4b3_redact_client_media_metadata");
+    expect(lifecycleMigration).toContain("grant execute on function p85_stage_4b3_finalize_media_asset_expiry");
+    expect(lifecycleMigration).toContain("grant execute on function p85_stage_4b3_redact_client_media_metadata");
+  });
+});

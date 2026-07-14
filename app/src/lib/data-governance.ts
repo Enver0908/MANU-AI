@@ -6,6 +6,10 @@ import {
   assertP85IfIClientExportHasNoLeaks,
   redactP85IfIClientScopedRecordsInState,
 } from "./phase-85-if-i-lifecycle-closure";
+import {
+  purgeFallbackStage4B3MediaObjectKeys,
+  redactStage4B3MediaRecordsForClientInState,
+} from "./phase-85-stage-4b3-media-lifecycle";
 import { redactStructuredFoodRuleAnswers } from "./phase-76n-food-rule-lifecycle";
 import { redactClientFoodRuleProfileV2 } from "./phase-77e-client-food-rule-profile";
 import { redactClientMenuPlanV1 } from "./phase-77f-client-menu-plan";
@@ -310,13 +314,20 @@ function redactClientDataInState(
     ),
   };
 
-  return redactP85IfIClientScopedRecordsInState(
+  const withInterstageRedaction = redactP85IfIClientScopedRecordsInState(
     redactContextIntakeProposalsForAnonymization(
       redactClientContextUpdatesForAnonymization(anonymizedBase, client.id),
       client.id,
     ),
     client.id,
   );
+  const { state: withMediaRedaction, objectKeys } = redactStage4B3MediaRecordsForClientInState(
+    withInterstageRedaction,
+    client.id,
+    now,
+  );
+  purgeFallbackStage4B3MediaObjectKeys(objectKeys);
+  return withMediaRedaction;
 }
 
 export function recordClientExportInState(state: ManuAppState, clientId: string): ManuAppState {

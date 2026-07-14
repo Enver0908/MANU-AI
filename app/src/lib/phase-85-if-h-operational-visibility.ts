@@ -1,4 +1,10 @@
 import { buildChannelAdapterHealthSignal } from "./channel-adapter-health";
+import { getFallbackStage4B3MediaStorage } from "./phase-85-stage-4b3-fallback-media-storage";
+import {
+  buildStage4B3MediaOperationalHealth,
+  detectStage4B3MediaOrphans,
+  type Stage4B3MediaOperationalHealth,
+} from "./phase-85-stage-4b3-media-lifecycle";
 import { isVerifiedBusinessHumanMessage } from "./phase-85-if-b-provenance-model";
 import { findActiveHumanControlSession } from "./phase-85-if-f-risk-reactivation";
 import { CONTEXT_INTAKE_STRUCTURED_PANEL_LINKS } from "./phase-85-if-g-context-intake";
@@ -89,16 +95,20 @@ export type OperationalFoundationInspectionDto = {
   channelTrust: ChannelTrustOperationalSnapshot;
   quarantineRows: QuarantineInspectionRow[];
   trustBindings: ReturnType<typeof buildTrustBindingInspectionSummary>;
+  mediaLifecycle: Stage4B3MediaOperationalHealth;
 };
 
 export function buildOperationalFoundationInspectionDto(
   state: ManuAppState,
   limit = 8,
 ): OperationalFoundationInspectionDto {
+  const storage = getFallbackStage4B3MediaStorage();
+  const orphanReport = detectStage4B3MediaOrphans(state, storage);
   return {
     channelTrust: buildChannelTrustOperationalSnapshot(state),
     quarantineRows: buildQuarantineInspectionRows(state, limit),
     trustBindings: buildTrustBindingInspectionSummary(state),
+    mediaLifecycle: buildStage4B3MediaOperationalHealth(state, orphanReport),
   };
 }
 
