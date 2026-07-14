@@ -229,6 +229,23 @@ function normalizeMessageItem(
   }
 
   if (type === "text") {
+    const groupId = readTrimmedString(
+      isRecord(item.context) ? (item.context as Record<string, unknown>).group_id : undefined,
+    );
+    if (groupId && !isEcho) {
+      return buildCandidate({
+        eventKind: "unsupported_event",
+        wabaId,
+        businessPhoneNumberId,
+        raw: item,
+        providerEventId,
+        fromIdentity: from,
+        malformedReason: "whatsapp_group_unsupported",
+        providerTime,
+        providerTimeInvalid,
+      });
+    }
+
     const body = readTrimmedString(item.text && isRecord(item.text) ? item.text.body : undefined);
     if (!body) {
       return buildCandidate({

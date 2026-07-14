@@ -14,6 +14,24 @@ import {
 } from "@/lib/whatsapp-channel-policy-mock";
 import { processWhatsAppMockWebhookInState } from "@/lib/whatsapp-mock-webhook";
 
+const TEST_SECRET = "SYNTHETIC_WEBHOOK_SECRET_DO_NOT_STORE";
+
+function canonicalTestEnv(): NodeJS.ProcessEnv {
+  return {
+    NODE_ENV: "test",
+    MANU_ALLOW_MOCK_WHATSAPP_WEBHOOK: "true",
+    MANU_MOCK_WHATSAPP_WEBHOOK_SECRET: TEST_SECRET,
+    MANU_ALLOW_MOCK_VISION: "true",
+  } as NodeJS.ProcessEnv;
+}
+
+async function processWithCanonicalSecret(state: ReturnType<typeof createInitialState>, payload: unknown) {
+  return processWhatsAppMockWebhookInState(state, payload, {
+    providedSecret: TEST_SECRET,
+    env: canonicalTestEnv(),
+  });
+}
+
 const goldenCasesPath = join(dirname(fileURLToPath(import.meta.url)), "whatsapp-cloud-payload-golden-cases.jsonl");
 
 function loadGoldenPayload(id: string) {
@@ -118,7 +136,7 @@ describe("phase 77ad whatsapp channel policy mock", () => {
     stopPayload.entry[0].changes[0].value.messages[0].id = "wamid.SYNTH_STOP_1";
 
     const state = createInitialState();
-    const { state: next, result } = await processWhatsAppMockWebhookInState(state, stopPayload);
+    const { state: next, result } = await processWithCanonicalSecret(state, stopPayload);
 
     expect(result.status).toBe("blocked");
     expect(result.blockedReason).toBe("channel_policy_opt_out_received");
@@ -135,8 +153,8 @@ describe("phase 77ad whatsapp channel policy mock", () => {
     stopPayload.entry[0].changes[0].value.messages[0].text.body = "STOP";
     stopPayload.entry[0].changes[0].value.messages[0].id = "wamid.SYNTH_STOP_DUP";
 
-    const first = await processWhatsAppMockWebhookInState(createInitialState(), stopPayload);
-    const second = await processWhatsAppMockWebhookInState(first.state, stopPayload);
+    const first = await processWithCanonicalSecret(createInitialState(), stopPayload);
+    const second = await processWithCanonicalSecret(first.state, stopPayload);
 
     expect(second.result.status).toBe("duplicate_ignored");
     expect(second.state.messages).toHaveLength(first.state.messages.length);

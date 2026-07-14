@@ -151,7 +151,6 @@ import {
   mapVisualCorrection,
 } from "./phase-85-stage-4b3-supabase-mappers";
 import { normalizeLanguageCode } from "./languages";
-import { processWhatsAppMockWebhookInState } from "./whatsapp-mock-webhook";
 import { createDefaultChannelAdapterRollbackControls } from "./channel-adapter-rollback";
 import {
   buildSearchConversationMessagesRpcParams,
@@ -2324,14 +2323,39 @@ export async function runSupabaseSimulation(request: SimulationRequest, context 
 }
 
 export async function runSupabaseWhatsAppMockWebhook(payload: unknown, context = demoTenantContext()) {
-  const state = await loadSupabaseState(context);
-  const { state: next, result } = await processWhatsAppMockWebhookInState(state, payload);
+  return runSupabaseSecureWhatsAppIngress(payload, null, context);
+}
 
-  if (result.status !== "rejected") {
+export async function runSupabaseSecureWhatsAppIngress(
+  payload: unknown,
+  providedSecret: string | null | undefined,
+  context = demoTenantContext(),
+) {
+  const state = await loadSupabaseState(context);
+  const { processCanonicalWhatsAppIngressInState } = await import("./phase-85-stage-4b3-canonical-ingress");
+  const { state: next, result: webhookResult, ingress } = await processCanonicalWhatsAppIngressInState(state, payload, {
+    providedSecret,
+    bootstrapDemoBindings: true,
+  });
+
+  if (ingress.ok) {
     await commitStateDeltaRpc(requireSupabase(), "commit_inbound_simulation", state, next, "whatsapp");
   }
 
-  return { webhookResult: result };
+  return { webhookResult, ingress };
+}
+
+export async function runSupabaseStage4B3VisualSimulation(
+  request: import("./phase-85-stage-4b3-visual-simulator").Stage4B3VisualSimulationRequest,
+  context = demoTenantContext(),
+) {
+  const state = await loadSupabaseState(context);
+  const { runStage4B3VisualSimulationInState } = await import("./phase-85-stage-4b3-visual-simulator");
+  const simulation = await runStage4B3VisualSimulationInState(state, request, {
+    providedSecret: process.env.MANU_MOCK_WHATSAPP_WEBHOOK_SECRET ?? null,
+  });
+  await commitStateDeltaRpc(requireSupabase(), "commit_inbound_simulation", state, simulation.state, "whatsapp");
+  return loadSupabaseStateWithLastSimulation(simulation.state, context);
 }
 
 export async function updateSupabaseHandoffStatus(

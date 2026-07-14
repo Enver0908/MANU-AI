@@ -181,6 +181,54 @@ export function useManuState() {
           method: "POST",
           body: JSON.stringify(input),
         }),
+      runVisualSimulation: async (input: {
+        clientId: string;
+        idempotencyKey: string;
+        fixtureSceneId?: string;
+        caption?: string;
+        burstMessages?: string[];
+        flushSilence?: boolean;
+        imageFile?: File | null;
+      }) => {
+        const form = new FormData();
+        form.set("clientId", input.clientId);
+        form.set("idempotencyKey", input.idempotencyKey);
+        if (input.fixtureSceneId) {
+          form.set("fixtureSceneId", input.fixtureSceneId);
+        }
+        if (input.caption) {
+          form.set("caption", input.caption);
+        }
+        if (input.burstMessages?.length) {
+          form.set("burstMessages", input.burstMessages.join("\n"));
+        }
+        if (input.flushSilence === false) {
+          form.set("flushSilence", "false");
+        }
+        if (input.imageFile) {
+          form.set("image", input.imageFile);
+        }
+
+        const response = await fetch("/api/simulator/visual", {
+          method: "POST",
+          body: form,
+        });
+
+        if (!response.ok) {
+          let code = `request_failed_${response.status}`;
+          try {
+            const body = await response.json();
+            if (body.error) code = body.error;
+          } catch {
+            // ignore parse errors
+          }
+          throw new AppRequestError(response.status, code);
+        }
+
+        const nextState = (await response.json()) as ManuAppState;
+        setState(nextState);
+        return nextState;
+      },
       sendManualReply: (input: { clientId: string; body: string }) => {
         const conversation = state.conversations.find((item) => item.clientId === input.clientId);
         if (!conversation) {

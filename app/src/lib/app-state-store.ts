@@ -703,3 +703,44 @@ export function submitFallbackVisualCorrection(
     detail,
   };
 }
+
+export async function runFallbackStage4B3VisualSimulation(
+  request: import("./phase-85-stage-4b3-visual-simulator").Stage4B3VisualSimulationRequest,
+) {
+  const state = getFallbackState();
+  const { runStage4B3VisualSimulationInState } = await import("./phase-85-stage-4b3-visual-simulator");
+  const result = await runStage4B3VisualSimulationInState(state, request, {
+    providedSecret: process.env.MANU_MOCK_WHATSAPP_WEBHOOK_SECRET ?? null,
+  });
+  saveFallbackState(result.state);
+  return result.state;
+}
+
+export async function runFallbackStage4B3WorkerTick() {
+  const state = getFallbackState();
+  const { runStage4B3LocalWorkerTick } = await import("./phase-85-stage-4b3-canonical-ingress");
+  const next = await runStage4B3LocalWorkerTick(state, { runOrchestration: true });
+  saveFallbackState(next);
+  return {
+    version: "p85-stage-4b3-local-worker-v1",
+    generatedAt: new Date().toISOString(),
+    pendingMediaAssets: next.mediaAssets.filter((asset) => asset.status === "download_pending" || asset.status === "analysis_pending").length,
+    openBundles: next.inboundMessageBundles.filter((bundle) => bundle.status === "open" || bundle.status === "ready" || bundle.status === "processing").length,
+    lastSimulation: next.lastSimulation,
+  };
+}
+
+export async function runFallbackStage4B3MediaLifecycleTick() {
+  const state = getFallbackState();
+  const { processDueStage4B3MediaExpiryInState, STAGE_4B3_MEDIA_LIFECYCLE_VERSION } = await import(
+    "./phase-85-stage-4b3-media-lifecycle"
+  );
+  const next = await processDueStage4B3MediaExpiryInState(state);
+  saveFallbackState(next);
+  return {
+    version: STAGE_4B3_MEDIA_LIFECYCLE_VERSION,
+    generatedAt: new Date().toISOString(),
+    expiredAssets: next.mediaAssets.filter((asset) => asset.status === "expired").length,
+    revokedAssets: next.mediaAssets.filter((asset) => asset.status === "revoked").length,
+  };
+}

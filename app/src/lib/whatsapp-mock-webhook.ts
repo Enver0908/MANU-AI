@@ -1,6 +1,9 @@
-import { normalizeWhatsAppCloudPayload } from "./whatsapp-cloud-payload-normalizer";
-import { processMockChannelInbound } from "./channel-adapters";
-import type { ManuAppState, SimulationResult } from "./types";
+import type { ManuAppState } from "./types";
+import type { SimulationResult } from "./types";
+import {
+  processCanonicalWhatsAppIngressInState,
+  type CanonicalIngressProcessOptions,
+} from "./phase-85-stage-4b3-canonical-ingress";
 
 export type WhatsAppMockWebhookStatus = "processed" | "blocked" | "duplicate_ignored" | "rejected";
 
@@ -18,24 +21,12 @@ export function isMockWhatsAppWebhookEnabled() {
 export async function processWhatsAppMockWebhookInState(
   state: ManuAppState,
   payload: unknown,
+  options: CanonicalIngressProcessOptions = {},
 ): Promise<{ state: ManuAppState; result: WhatsAppMockWebhookResult }> {
-  const normalized = normalizeWhatsAppCloudPayload(payload);
-  if (!normalized.ok) {
-    return {
-      state,
-      result: {
-        status: "rejected",
-        action: null,
-        blockedReason: normalized.code,
-        normalizationCode: normalized.code,
-      },
-    };
-  }
-
-  const next = await processMockChannelInbound(state, normalized.event);
+  const canonical = await processCanonicalWhatsAppIngressInState(state, payload, options);
   return {
-    state: next,
-    result: toWhatsAppMockWebhookResult(next.lastSimulation),
+    state: canonical.state,
+    result: canonical.result,
   };
 }
 

@@ -98,6 +98,7 @@ export function DashboardApp({
     releaseHumanTakeover,
     activateClientAi,
     runSimulation: runSimulationRequest,
+    runVisualSimulation: runVisualSimulationRequest,
     sendManualReply: sendManualReplyRequest,
     approveDraft,
     editAndSendDraft,
@@ -135,7 +136,15 @@ export function DashboardApp({
   const [manualReply, setManualReply] = useState("");
   const [simBody, setSimBody] = useState(scenarioMessages[0].body);
   const [simKey, setSimKey] = useState("local-1");
+  const [visualKey, setVisualKey] = useState("vis-local-1");
+  const [visualCaption, setVisualCaption] = useState("");
+  const [visualBurst, setVisualBurst] = useState("Bu öğünü yedim\nTeşekkürler");
+  const [visualFixtureSceneId, setVisualFixtureSceneId] =
+    useState<import("@/lib/phase-85-stage-4b3-vision-fixture-manifest").Stage4B3VisionFixtureSceneId>("meal_plate");
+  const [visualImageFile, setVisualImageFile] = useState<File | null>(null);
+  const [visualFlushSilence, setVisualFlushSilence] = useState(true);
   const [isSimulating, setIsSimulating] = useState(false);
+  const [isVisualSimulating, setIsVisualSimulating] = useState(false);
   const [newClientName, setNewClientName] = useState("");
   const [newClientChannel, setNewClientChannel] = useState<Channel>("whatsapp");
   const [newClientHandle, setNewClientHandle] = useState("");
@@ -395,7 +404,7 @@ export function DashboardApp({
   };
 
   const runSimulation = async () => {
-    if (!selectedClient || isSimulating) return;
+    if (!selectedClient || isSimulating || isVisualSimulating) return;
     setIsSimulating(true);
     try {
       await runSimulationRequest({
@@ -406,6 +415,29 @@ export function DashboardApp({
       navigateToSection("simulator");
     } finally {
       setIsSimulating(false);
+    }
+  };
+
+  const runVisualSimulation = async () => {
+    if (!selectedClient || isSimulating || isVisualSimulating) return;
+    setIsVisualSimulating(true);
+    try {
+      await runVisualSimulationRequest({
+        clientId: selectedClient.id,
+        idempotencyKey: visualKey,
+        fixtureSceneId: visualImageFile ? undefined : visualFixtureSceneId,
+        caption: visualCaption.trim() || undefined,
+        burstMessages: visualBurst
+          .split(/\r?\n/)
+          .map((line) => line.trim())
+          .filter(Boolean),
+        flushSilence: visualFlushSilence,
+        imageFile: visualImageFile,
+      });
+      setVisualKey(`vis-sim-${Date.now()}`);
+      navigateToSection("simulator");
+    } finally {
+      setIsVisualSimulating(false);
     }
   };
 
@@ -919,11 +951,25 @@ export function DashboardApp({
                 clients={activeClients}
                 simBody={simBody}
                 simKey={simKey}
+                visualKey={visualKey}
+                visualCaption={visualCaption}
+                visualBurst={visualBurst}
+                visualFixtureSceneId={visualFixtureSceneId}
+                visualImageFile={visualImageFile}
+                visualFlushSilence={visualFlushSilence}
                 isSimulating={isSimulating}
+                isVisualSimulating={isVisualSimulating}
                 onSelectClient={(clientId) => selectClient(clientId, { section: "simulator" })}
                 onSimBody={setSimBody}
                 onSimKey={setSimKey}
+                onVisualKey={setVisualKey}
+                onVisualCaption={setVisualCaption}
+                onVisualBurst={setVisualBurst}
+                onVisualFixtureSceneId={setVisualFixtureSceneId}
+                onVisualImageFile={setVisualImageFile}
+                onVisualFlushSilence={setVisualFlushSilence}
                 onRun={runSimulation}
+                onRunVisual={runVisualSimulation}
                 onOpenConversation={() => navigateToSection("messages")}
               />
             )}

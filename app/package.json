@@ -18,7 +18,11 @@
     "rehearse:stage-4b:integration": "node scripts/rehearse-stage-4b-integration.mjs",
     "rehearse:stage-4b2:verification": "node scripts/rehearse-stage-4b2-verification.mjs",
     "rehearse:stage-4b2-r5": "node scripts/rehearse-stage-4b2-r5.mjs",
-    "rehearse:stage-4b2-r6": "node scripts/rehearse-stage-4b2-r6.mjs"
+    "rehearse:stage-4b2-r6": "node scripts/rehearse-stage-4b2-r6.mjs",
+    "worker:media:stage4b3": "node scripts/worker-media-stage4b3.mjs",
+    "worker:media:stage4b3:once": "node scripts/worker-media-stage4b3.mjs --once",
+    "worker:media:lifecycle": "node scripts/worker-media-lifecycle-stage4b3.mjs",
+    "worker:media:lifecycle:once": "node scripts/worker-media-lifecycle-stage4b3.mjs --once"
   },
   "dependencies": {
     "@supabase/ssr": "^0.10.3",
