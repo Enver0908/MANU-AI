@@ -23,7 +23,7 @@ import {
 } from "./phase-85-stage-4b3-media-contracts";
 import type { ManuAppState, MessageRetrievalEligibility, TenantRole } from "./types";
 
-export const STAGE_4B3_BOUNDED_MEDIA_VERSION = "p85-stage-4b3-bounded-media-v1";
+export const STAGE_4B3_BOUNDED_MEDIA_VERSION = "p85-stage-4b3-bounded-media-v2";
 export const STAGE_4B3_CONVERSATION_MEDIA_PREVIEW_LABEL = "Görsel";
 export const STAGE_4B3_MEDIA_STREAM_CACHE_CONTROL = "private, no-store";
 export const STAGE_4B3_MEDIA_STREAM_FILENAME = "image.jpg";
@@ -310,9 +310,15 @@ export function assertConversationMediaReadable(
 }
 
 export function resolveMediaStreamHttpStatus(
-  asset: Pick<MediaAssetRecord, "status" | "thumbnailObjectKey" | "sanitizedFullObjectKey">,
+  asset: Pick<
+    MediaAssetRecord,
+    "status" | "thumbnailObjectKey" | "sanitizedFullObjectKey" | "deletedAt"
+  >,
   variant: ConversationMediaStreamVariant,
 ): 200 | 404 | 410 {
+  if (asset.deletedAt) {
+    return 410;
+  }
   if (asset.status === "expired" || asset.status === "revoked") {
     return 410;
   }
@@ -324,10 +330,13 @@ export function resolveMediaStreamHttpStatus(
 }
 
 export function resolveMediaStreamObjectKey(
-  asset: Pick<MediaAssetRecord, "thumbnailObjectKey" | "sanitizedFullObjectKey" | "status">,
+  asset: Pick<
+    MediaAssetRecord,
+    "thumbnailObjectKey" | "sanitizedFullObjectKey" | "status" | "deletedAt"
+  >,
   variant: ConversationMediaStreamVariant,
 ): string | null {
-  if (asset.status === "expired" || asset.status === "revoked") {
+  if (asset.deletedAt || asset.status === "expired" || asset.status === "revoked") {
     return null;
   }
   if (variant === "thumbnail") {

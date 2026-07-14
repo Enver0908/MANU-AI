@@ -1,7 +1,5 @@
 import { domainErrorResponse } from "@/lib/app-errors";
-import {
-  submitFallbackVisualCorrection,
-} from "@/lib/app-state-store";
+import { submitFallbackVisualCorrection } from "@/lib/app-state-store";
 import { authErrorResponse, requireCapability, resolveAppTenantContext } from "@/lib/auth-context";
 import { assertConversationId } from "@/lib/phase-85-stage-4b2-api";
 import { conversationApiJsonResponse, requireConversationApiActor } from "@/lib/phase-85-stage-4b2-read-api";
@@ -15,16 +13,17 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     const body = await request.json();
     const parsed = parseVisualCorrectionMutationBody(body);
 
+    const tenantContext = await resolveAppTenantContext();
+    requireCapability(tenantContext, "read_app_state");
+    requireConversationApiActor(tenantContext);
+
     if (isSupabaseStoreConfigured()) {
-      const tenantContext = await resolveAppTenantContext();
-      requireCapability(tenantContext, "read_app_state");
-      requireConversationApiActor(tenantContext);
       return conversationApiJsonResponse(
         await submitSupabaseVisualCorrection(conversationId, parsed, tenantContext),
       );
     }
 
-    return conversationApiJsonResponse(submitFallbackVisualCorrection(conversationId, parsed));
+    return conversationApiJsonResponse(submitFallbackVisualCorrection(conversationId, parsed, tenantContext));
   } catch (error) {
     try {
       return authErrorResponse(error);

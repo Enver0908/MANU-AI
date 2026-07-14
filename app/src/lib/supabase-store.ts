@@ -146,6 +146,7 @@ import {
   resolveDraftMutationResultMessage,
 } from "./phase-85-stage-4b2-mutations";
 import { createEmptyStage4B3MediaCollections } from "./phase-85-stage-4b3-media-contracts";
+import { loadBoundedMediaProjectionFromSupabaseV2 } from "./phase-85-stage-4b3-bounded-media-rpc";
 import {
   mapInboundMessageBundle,
   mapInboundMessageBundleItem,
@@ -2601,6 +2602,21 @@ async function loadSupabaseConversationProjectionBundle(
       unreadCount: Number(item.unread_count),
     })),
   };
+
+  if (conversationId) {
+    const conversationRow = (bundle.conversations ?? []).find((row) => row.id === conversationId);
+    const messageIds = (bundle.messages ?? []).map((message) => message.id);
+    if (conversationRow && messageIds.length > 0) {
+      source.media = await loadBoundedMediaProjectionFromSupabaseV2({
+        supabase,
+        context,
+        conversationId,
+        clientId: conversationRow.client_id,
+        messageIds,
+      });
+    }
+  }
+
   return {
     source,
     assignments: mapSupabaseConversationAssignments(bundle.assignments),

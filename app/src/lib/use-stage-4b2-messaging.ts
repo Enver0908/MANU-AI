@@ -462,6 +462,9 @@ export function useStage4B2Messaging({
         expectedAnalysisRevision: number;
         reasonCode: string;
         explanation: string;
+        correctedSceneType?: string | null;
+        correctedOcrText?: string | null;
+        correctedEntityLabels?: string[];
       },
     ) => {
       const payload = await requestJson<{

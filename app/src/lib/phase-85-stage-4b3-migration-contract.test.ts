@@ -122,7 +122,16 @@ describe("P85 Stage 4B-3 remediation R2 durable queue migration", () => {
     expect(durableQueueMigration).toContain("for update skip locked");
     expect(durableQueueMigration).toContain("p85_stage_4b3_load_bounded_media_v2");
     expect(durableQueueMigration).not.toContain("'observation', va.observation");
-    expect(durableQueueMigration).toContain("grant execute on function p85_stage_4b3_load_bounded_media_v2");
+    expect(durableQueueMigration).toContain("p85_stage_4b3_resolve_media_stream_v2");
+    expect(durableQueueMigration).toContain("grant execute on function p85_stage_4b3_resolve_media_stream_v2");
+  });
+});
+
+describe("P85 Stage 4B-3 remediation R7 bounded media API migration contract", () => {
+  it("keeps bounded media V2 RPCs service-role only without raw observation in metadata RPC", () => {
+    expect(durableQueueMigration).toContain("scene_type");
+    expect(durableQueueMigration).not.toContain("'observation', va.observation");
+    expect(durableQueueMigration).toContain("media_asset_unavailable");
   });
 });
 

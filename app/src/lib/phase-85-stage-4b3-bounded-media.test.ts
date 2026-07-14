@@ -23,7 +23,7 @@ import {
 } from "./phase-85-stage-4b3-vision-fixture-manifest";
 import { createInitialState, DEMO_TENANT_ID } from "./seed-data";
 
-function buildAsset(overrides: Partial<MediaAssetRecord> = {}): MediaAssetRecord {
+export function buildAsset(overrides: Partial<MediaAssetRecord> = {}): MediaAssetRecord {
   return {
     id: "asset-1",
     tenantId: DEMO_TENANT_ID,

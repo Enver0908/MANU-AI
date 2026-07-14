@@ -658,10 +658,11 @@ export function setChannelAdapterRollbackInState(
 export function submitFallbackVisualCorrection(
   conversationId: string,
   request: VisualCorrectionRequest,
+  context?: AppTenantContext,
 ) {
   const state = getFallbackState();
-  const context = fallbackTenantContext(state);
-  const actor = conversationActorFromContext(context);
+  const tenantContext = context ?? fallbackTenantContext(state);
+  const actor = conversationActorFromContext(tenantContext);
   const assignments = listFallbackAssignments();
   const conversation = state.conversations.find((entry) => entry.id === conversationId);
   const client = conversation
@@ -681,7 +682,7 @@ export function submitFallbackVisualCorrection(
 
   const result = submitVisualCorrection(state, {
     ...request,
-    dietitianId: context.dietitianId,
+    dietitianId: tenantContext.dietitianId,
   });
   if (!result.ok) {
     throw new AppDomainError(409, result.failureCode);
@@ -690,7 +691,7 @@ export function submitFallbackVisualCorrection(
   saveFallbackState(result.state);
   const detail = buildConversationDetailResponseFromAppState(
     result.state,
-    context,
+    tenantContext,
     assignments,
     conversationId,
   );

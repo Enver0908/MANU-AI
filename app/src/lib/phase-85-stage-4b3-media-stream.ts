@@ -112,7 +112,7 @@ export async function streamConversationMediaFromSupabase(input: {
   if (!supabase) {
     throw new Error("supabase_unavailable");
   }
-  const rpc = await supabase.rpc("p85_stage_4b3_resolve_media_stream_v1", {
+  const rpc = await supabase.rpc("p85_stage_4b3_resolve_media_stream_v2", {
     p_tenant_id: actor.tenantId,
     p_user_id: actor.userId,
     p_dietitian_id: actor.dietitianId,

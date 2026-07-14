@@ -693,6 +693,7 @@ export function buildVisualReviewDto(input: {
   }
 
   const observation = input.analysis.observation;
+  const isBoundedProjection = observation.providerId === "bounded_projection";
   return {
     analysisId: input.analysis.id,
     analysisRevision: input.analysis.analysisRevision,
@@ -701,12 +702,18 @@ export function buildVisualReviewDto(input: {
     bundleId: input.analysis.bundleId,
     sceneType: observation.sceneType,
     reviewState: input.reviewState,
-    entitySummary: observation.entityCandidates.slice(0, 5).map((candidate) => candidate.normalizedLabel),
-    labelIntegritySummary: [
-      observation.labelIntegrity.completePanel ? "complete_panel" : "incomplete_panel",
-      observation.labelIntegrity.ingredientsHeaderPresent ? "ingredients_header_present" : "ingredients_header_missing",
-      observation.labelIntegrity.cropOrGlareSuspected ? "crop_or_glare_suspected" : "crop_or_glare_clear",
-    ],
+    entitySummary: isBoundedProjection
+      ? []
+      : observation.entityCandidates.slice(0, 5).map((candidate) => candidate.normalizedLabel),
+    labelIntegritySummary: isBoundedProjection
+      ? []
+      : [
+          observation.labelIntegrity.completePanel ? "complete_panel" : "incomplete_panel",
+          observation.labelIntegrity.ingredientsHeaderPresent
+            ? "ingredients_header_present"
+            : "ingredients_header_missing",
+          observation.labelIntegrity.cropOrGlareSuspected ? "crop_or_glare_suspected" : "crop_or_glare_clear",
+        ],
     correctionAllowed: input.role === "owner" || input.role === "admin" || input.role === "dietitian",
     latestCorrectionId: input.latestCorrectionId,
   };

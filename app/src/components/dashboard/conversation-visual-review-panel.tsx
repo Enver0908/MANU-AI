@@ -2,19 +2,23 @@
 
 import { useState } from "react";
 import type { ConversationMessageDto } from "@/lib/phase-85-stage-4b2-contracts";
-import type { VisualCorrectionReasonCode } from "@/lib/phase-85-stage-4b3-media-contracts";
+import {
+  VISUAL_CORRECTION_REASON_CODES,
+  VISUAL_SCENE_TYPES,
+  type VisualCorrectionReasonCode,
+  type VisualSceneType,
+} from "@/lib/phase-85-stage-4b3-media-contracts";
+import {
+  reasonRequiresCorrectedEntityLabels,
+  reasonRequiresCorrectedOcrText,
+  reasonRequiresCorrectedSceneType,
+  resolveVisualCorrectionReasonLabel,
+  resolveVisualReviewStateLabel,
+  resolveVisualSceneTypeLabel,
+} from "@/lib/phase-85-stage-4b3-visual-review-labels";
 import type { SupportedLanguageCode } from "@/lib/languages";
 import { t } from "@/lib/i18n";
 import { TextareaInput } from "./shared";
-
-const REASON_OPTIONS: VisualCorrectionReasonCode[] = [
-  "wrong_scene",
-  "wrong_food_candidate",
-  "wrong_ocr_reading",
-  "wrong_label_interpretation",
-  "sensitive_content_missed",
-  "other_clinical_mismatch",
-];
 
 export function ConversationVisualReviewPanel({
   message,
@@ -34,11 +38,17 @@ export function ConversationVisualReviewPanel({
     expectedAnalysisRevision: number;
     reasonCode: VisualCorrectionReasonCode;
     explanation: string;
+    correctedSceneType?: VisualSceneType | null;
+    correctedOcrText?: string | null;
+    correctedEntityLabels?: string[];
   }) => Promise<void>;
 }) {
   const review = message.visualReview;
   const [reasonCode, setReasonCode] = useState<VisualCorrectionReasonCode>("wrong_scene");
   const [explanation, setExplanation] = useState("");
+  const [correctedSceneType, setCorrectedSceneType] = useState<VisualSceneType>("meal");
+  const [correctedEntityLabels, setCorrectedEntityLabels] = useState("");
+  const [correctedOcrText, setCorrectedOcrText] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -53,8 +63,12 @@ export function ConversationVisualReviewPanel({
       <p className="text-sm font-semibold text-stone-900">{t(uiLanguage, "conversationVisualReviewTitle")}</p>
       <p className="mt-1 text-sm text-stone-600">{t(uiLanguage, "conversationVisualReviewHint")}</p>
       <div className="mt-3 flex flex-wrap gap-2">
-        <span className="rounded-md bg-stone-100 px-2 py-1 text-xs font-medium text-stone-700">{review.sceneType}</span>
-        <span className="rounded-md bg-stone-100 px-2 py-1 text-xs font-medium text-stone-700">{review.reviewState}</span>
+        <span className="rounded-md bg-stone-100 px-2 py-1 text-xs font-medium text-stone-700">
+          {resolveVisualSceneTypeLabel(uiLanguage, review.sceneType)}
+        </span>
+        <span className="rounded-md bg-stone-100 px-2 py-1 text-xs font-medium text-stone-700">
+          {resolveVisualReviewStateLabel(uiLanguage, review.reviewState)}
+        </span>
       </div>
       {review.entitySummary.length > 0 ? (
         <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-stone-700">
@@ -74,13 +88,61 @@ export function ConversationVisualReviewPanel({
           disabled={disabled || isSubmitting}
           onChange={(event) => setReasonCode(event.target.value as VisualCorrectionReasonCode)}
         >
-          {REASON_OPTIONS.map((option) => (
+          {VISUAL_CORRECTION_REASON_CODES.map((option) => (
             <option key={option} value={option}>
-              {option}
+              {resolveVisualCorrectionReasonLabel(uiLanguage, option)}
             </option>
           ))}
         </select>
       </div>
+
+      {reasonRequiresCorrectedSceneType(reasonCode) ? (
+        <div className="mt-3">
+          <label className="text-sm font-medium text-stone-700" htmlFor={`visual-correction-scene-${message.id}`}>
+            {t(uiLanguage, "visualCorrectionCorrectedScene")}
+          </label>
+          <select
+            id={`visual-correction-scene-${message.id}`}
+            className="mt-1 min-h-11 w-full rounded-lg border border-stone-200 bg-white px-3 text-sm"
+            value={correctedSceneType}
+            disabled={disabled || isSubmitting}
+            onChange={(event) => setCorrectedSceneType(event.target.value as VisualSceneType)}
+          >
+            {VISUAL_SCENE_TYPES.map((option) => (
+              <option key={option} value={option}>
+                {resolveVisualSceneTypeLabel(uiLanguage, option)}
+              </option>
+            ))}
+          </select>
+        </div>
+      ) : null}
+
+      {reasonRequiresCorrectedEntityLabels(reasonCode) ? (
+        <div className="mt-3">
+          <label className="text-sm font-medium text-stone-700" htmlFor={`visual-correction-entities-${message.id}`}>
+            {t(uiLanguage, "visualCorrectionCorrectedEntities")}
+          </label>
+          <input
+            id={`visual-correction-entities-${message.id}`}
+            className="mt-1 min-h-11 w-full rounded-lg border border-stone-200 bg-white px-3 text-sm"
+            value={correctedEntityLabels}
+            disabled={disabled || isSubmitting}
+            onChange={(event) => setCorrectedEntityLabels(event.target.value)}
+          />
+        </div>
+      ) : null}
+
+      {reasonRequiresCorrectedOcrText(reasonCode) ? (
+        <div className="mt-3">
+          <TextareaInput
+            label={t(uiLanguage, "visualCorrectionCorrectedOcr")}
+            value={correctedOcrText}
+            onChange={setCorrectedOcrText}
+            rows={3}
+          />
+        </div>
+      ) : null}
+
       <div className="mt-3">
         <TextareaInput
           label={t(uiLanguage, "conversationVisualReviewExplanation")}
@@ -108,8 +170,20 @@ export function ConversationVisualReviewPanel({
             expectedAnalysisRevision: review.analysisRevision,
             reasonCode,
             explanation: explanation.trim(),
+            correctedSceneType: reasonRequiresCorrectedSceneType(reasonCode) ? correctedSceneType : null,
+            correctedOcrText: reasonRequiresCorrectedOcrText(reasonCode) ? correctedOcrText.trim() || null : null,
+            correctedEntityLabels: reasonRequiresCorrectedEntityLabels(reasonCode)
+              ? correctedEntityLabels
+                  .split(",")
+                  .map((entry) => entry.trim())
+                  .filter(Boolean)
+              : undefined,
           })
-            .then(() => setExplanation(""))
+            .then(() => {
+              setExplanation("");
+              setCorrectedEntityLabels("");
+              setCorrectedOcrText("");
+            })
             .catch((submitError) => {
               setError(submitError instanceof Error ? submitError.message : "visual_correction_failed");
             })
