@@ -42,6 +42,8 @@ export type NotificationKind =
   | "structured_record_update_required"
   | "competing_authoritative_instructions"
   | "unsupported_media_review"
+  | "visual_message_review"
+  | "visual_correction_follow_up"
   | "safe_reply_unavailable"
   | "delivery_failed"
   | "communication_permission_closed"

@@ -369,6 +369,18 @@ export type VisualCorrectionRequest = {
   correctedEntityLabels?: string[];
 };
 
+export type BundleDecisionIdempotencyReplay = {
+  decisionId: string;
+  bundleId: string;
+  bundleRevision: number;
+  conversationRevision: number;
+};
+
+export type VisualCorrectionIdempotencyReplay = {
+  correctionId: string;
+  resultAction: string;
+};
+
 export type Stage4B3MediaStateSlice = {
   mediaAssets: MediaAssetRecord[];
   visualAnalysisRecords: VisualAnalysisRecord[];
@@ -376,6 +388,9 @@ export type Stage4B3MediaStateSlice = {
   inboundMessageBundleItems: InboundMessageBundleItemRecord[];
   visualCorrections: VisualCorrectionRecord[];
   processedBundleDecisionKeys: string[];
+  bundleDecisionReplayByKey: Record<string, BundleDecisionIdempotencyReplay>;
+  processedVisualCorrectionRequestIds: string[];
+  visualCorrectionReplayByRequestId: Record<string, VisualCorrectionIdempotencyReplay>;
 };
 
 const RISK_RANK: Record<RiskLevel, number> = {
@@ -392,6 +407,9 @@ export function createEmptyStage4B3MediaCollections(): Stage4B3MediaStateSlice {
     inboundMessageBundleItems: [],
     visualCorrections: [],
     processedBundleDecisionKeys: [],
+    bundleDecisionReplayByKey: {},
+    processedVisualCorrectionRequestIds: [],
+    visualCorrectionReplayByRequestId: {},
   };
 }
 

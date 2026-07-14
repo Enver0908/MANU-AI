@@ -159,3 +159,27 @@ describe("P85 Stage 4B-3 remediation R4 bundle correlation migration", () => {
     expect(bundleCorrelationMigration).toContain("grant execute on function p85_stage_4b3_append_bundle_item_v2");
   });
 });
+
+const atomicDecisionCorrectionMigration = readFileSync(
+  resolve(__dirname, "../../supabase/migrations/20260714150000_phase_85_stage_4b3_atomic_decision_correction.sql"),
+  "utf8",
+);
+
+describe("P85 Stage 4B-3 remediation R6 atomic decision correction migration", () => {
+  it("creates v2 commit RPCs, outcome validation, and correction idempotency", () => {
+    expect(atomicDecisionCorrectionMigration).toContain("visual_correction_idempotency");
+    expect(atomicDecisionCorrectionMigration).toContain("p85_stage_4b3_validate_bundle_decision_outcome_v2");
+    expect(atomicDecisionCorrectionMigration).toContain("p85_stage_4b3_commit_bundle_decision_v2");
+    expect(atomicDecisionCorrectionMigration).toContain("p85_stage_4b3_commit_visual_correction_v2");
+    expect(atomicDecisionCorrectionMigration).toContain("non_green_boundary_response_forbidden");
+    expect(atomicDecisionCorrectionMigration).toContain("sent_correction_auto_message_forbidden");
+    expect(atomicDecisionCorrectionMigration).toContain("bundle_human_handled");
+    expect(atomicDecisionCorrectionMigration).toContain("on conflict (tenant_id, dedupe_key)");
+    expect(atomicDecisionCorrectionMigration).toContain(
+      "grant execute on function p85_stage_4b3_commit_bundle_decision_v2",
+    );
+    expect(atomicDecisionCorrectionMigration).toContain(
+      "grant execute on function p85_stage_4b3_commit_visual_correction_v2",
+    );
+  });
+});

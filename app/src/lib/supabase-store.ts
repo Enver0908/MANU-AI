@@ -132,6 +132,8 @@ import {
   parseVisualCorrectionMutationBody,
 } from "./phase-85-stage-4b3-bounded-media";
 import type { VisualCorrectionRequest } from "./phase-85-stage-4b3-media-contracts";
+import { commitSupabaseVisualCorrectionV2 } from "./phase-85-stage-4b3-supabase-atomic-decisions";
+import { buildVisualCorrectionRpcOutcome } from "./phase-85-stage-4b3-atomic-visual-correction";
 import { submitVisualCorrection } from "./phase-85-stage-4b3-visual-corrections";
 import {
   appendDietitianManualReplyByConversation,
@@ -834,6 +836,7 @@ export async function loadSupabaseState(context = demoTenantContext()) {
     inboundMessageBundleItemsResult,
     visualCorrectionsResult,
     bundleDecisionIdempotencyResult,
+    visualCorrectionIdempotencyResult,
   ] = await Promise.all([
     supabase.from("tenants").select("*").eq("id", context.tenantId).single(),
     supabase.from("dietitians").select("*").eq("id", context.dietitianId).eq("tenant_id", context.tenantId).single(),
@@ -891,7 +894,14 @@ export async function loadSupabaseState(context = demoTenantContext()) {
     supabase.from("inbound_message_bundles").select("*").eq("tenant_id", context.tenantId).order("created_at"),
     supabase.from("inbound_message_bundle_items").select("*").eq("tenant_id", context.tenantId).order("ordinal"),
     supabase.from("visual_corrections").select("*").eq("tenant_id", context.tenantId).order("created_at"),
-    supabase.from("bundle_decision_idempotency").select("idempotency_key").eq("tenant_id", context.tenantId),
+    supabase
+      .from("bundle_decision_idempotency")
+      .select("idempotency_key, bundle_id, bundle_revision, decision_id, conversation_revision")
+      .eq("tenant_id", context.tenantId),
+    supabase
+      .from("visual_correction_idempotency")
+      .select("idempotency_key, correction_id, response_json")
+      .eq("tenant_id", context.tenantId),
   ]);
 
   throwIfError(tenantResult.error);
@@ -941,6 +951,7 @@ export async function loadSupabaseState(context = demoTenantContext()) {
   throwIfError(inboundMessageBundleItemsResult.error);
   throwIfError(visualCorrectionsResult.error);
   throwIfError(bundleDecisionIdempotencyResult.error);
+  throwIfError(visualCorrectionIdempotencyResult.error);
 
   const channels = channelsResult.data || [];
   const memories = memoriesResult.data || [];
@@ -1012,6 +1023,35 @@ export async function loadSupabaseState(context = demoTenantContext()) {
       visualCorrections: (visualCorrectionsResult.data || []).map(mapVisualCorrection),
       processedBundleDecisionKeys: (bundleDecisionIdempotencyResult.data || []).map(
         (row) => row.idempotency_key as string,
+      ),
+      bundleDecisionReplayByKey: Object.fromEntries(
+        (bundleDecisionIdempotencyResult.data || []).map((row) => [
+          row.idempotency_key as string,
+          {
+            decisionId: row.decision_id as string,
+            bundleId: row.bundle_id as string,
+            bundleRevision: Number(row.bundle_revision),
+            conversationRevision: Number(row.conversation_revision),
+          },
+        ]),
+      ),
+      processedVisualCorrectionRequestIds: (visualCorrectionIdempotencyResult.data || []).map(
+        (row) => row.idempotency_key as string,
+      ),
+      visualCorrectionReplayByRequestId: Object.fromEntries(
+        (visualCorrectionIdempotencyResult.data || []).map((row) => {
+          const responseJson =
+            row.response_json && typeof row.response_json === "object"
+              ? (row.response_json as { resultAction?: string })
+              : {};
+          return [
+            row.idempotency_key as string,
+            {
+              correctionId: row.correction_id as string,
+              resultAction: responseJson.resultAction ?? "manual_follow_up",
+            },
+          ];
+        }),
       ),
     }),
     context,
@@ -5887,41 +5927,26 @@ export async function submitSupabaseVisualCorrection(
   }
 
   const supabase = requireSupabase();
-  const { error } = await supabase.from("visual_corrections").insert({
-    id: correction.id,
-    tenant_id: correction.tenantId,
-    client_id: correction.clientId,
-    conversation_id: correction.conversationId,
-    analysis_id: correction.analysisId,
-    dietitian_id: correction.dietitianId,
-    status: correction.status,
-    reason_code: correction.reasonCode,
-    explanation: correction.explanation,
-    corrected_scene_type: correction.correctedSceneType,
-    corrected_ocr_text: correction.correctedOcrText,
-    corrected_entity_labels: correction.correctedEntityLabels,
-    conversation_revision_at_submit: correction.conversationRevisionAtSubmit,
-    analysis_revision_at_submit: correction.analysisRevisionAtSubmit,
-    result_action: correction.resultAction,
-    created_at: correction.createdAt,
-    updated_at: correction.updatedAt,
+  const responseJson = {
+    version: "p85-stage-4b3-visual-correction-v2",
+    correctionId: result.correctionId,
+    resultAction: result.resultAction,
+    conversationId,
+  };
+  const outcome = buildVisualCorrectionRpcOutcome({
+    state: result.state,
+    baseState: state,
+    correctionId: result.correctionId,
+    resultAction: result.resultAction,
+    request: { ...request, dietitianId: context.dietitianId },
   });
-  if (error) throwControlledRpcError(error);
-
-  const updatedClient = result.state.clients.find((entry) => entry.id === client.id);
-  if (updatedClient && updatedClient !== client) {
-    await supabase
-      .from("clients")
-      .update({
-        ai_status: updatedClient.aiStatus,
-        ai_mode: updatedClient.aiMode,
-        human_takeover_locked: updatedClient.humanTakeoverLocked,
-        context_revision: updatedClient.contextRevision,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("tenant_id", context.tenantId)
-      .eq("id", updatedClient.id);
-  }
+  await commitSupabaseVisualCorrectionV2({
+    supabase,
+    tenantId: context.tenantId,
+    idempotencyKey: request.requestId,
+    outcome,
+    responseJson,
+  });
 
   const detail = buildConversationDetailResponseFromAppState(
     result.state,
@@ -5930,7 +5955,7 @@ export async function submitSupabaseVisualCorrection(
     conversationId,
   );
   return {
-    version: "p85-stage-4b3-visual-correction-v1",
+    version: "p85-stage-4b3-visual-correction-v2",
     generatedAt: new Date().toISOString(),
     correctionId: result.correctionId,
     resultAction: result.resultAction,

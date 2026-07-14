@@ -67,6 +67,14 @@ export const STAGE4B_NOTIFICATION_I18N_KEYS: Record<
     titleKey: "notificationTitleUnsupportedMediaReview",
     summaryKey: "notificationSummaryUnsupportedMediaReview",
   },
+  visual_message_review: {
+    titleKey: "notificationTitleVisualMessageReview",
+    summaryKey: "notificationSummaryVisualMessageReview",
+  },
+  visual_correction_follow_up: {
+    titleKey: "notificationTitleVisualCorrectionFollowUp",
+    summaryKey: "notificationSummaryVisualCorrectionFollowUp",
+  },
   safe_reply_unavailable: {
     titleKey: "notificationTitleSafeReplyUnavailable",
     summaryKey: "notificationSummarySafeReplyUnavailable",

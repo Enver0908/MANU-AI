@@ -9,10 +9,9 @@ import {
   type Stage4B3MultimodalSafetyChain,
 } from "./phase-85-stage-4b3-multimodal-safety";
 import { resolveMultimodalBundleUnderstanding } from "./phase-85-stage-4b3-multimodal-understanding";
-import { commitInboundBundleDecision } from "./phase-85-stage-4b3-bundle-decisions";
+import { commitAtomicBundleDecisionV2 } from "./phase-85-stage-4b3-atomic-bundle-decision";
 import { bundleHasDietitianReply } from "./phase-85-stage-4b3-message-bundles";
 import {
-  appendInboundCoreResult,
   prepareInboundTurnPipeline,
   type InboundCoreResult,
 } from "./simulator";
@@ -273,6 +272,14 @@ export async function runMultimodalBundleInboundTurn(
   }
 
   const { bundle, anchorMessage } = located;
+  const idempotencyKey = input.idempotencyKey ?? `bundle-decision-${bundleId}-${bundle.bundleRevision}`;
+  if (state.processedBundleDecisionKeys.includes(idempotencyKey) && bundle.decisionId) {
+    const replay = state.bundleDecisionReplayByKey[idempotencyKey];
+    if (!replay || replay.decisionId === bundle.decisionId) {
+      return { ok: true, state, decisionId: bundle.decisionId, bundleId };
+    }
+    return { ok: false, failureCode: "idempotency_key_conflict", state };
+  }
   if (bundleHasDietitianReply(state, bundleId)) {
     return { ok: false, failureCode: "bundle_human_handled", state };
   }
@@ -343,33 +350,22 @@ export async function runMultimodalBundleInboundTurn(
     return { ok: false, failureCode: prepared.blockedReason, state: prepared.state };
   }
 
-  const turned = appendInboundCoreResult({
-    state: prepared.state,
+  const committed = commitAtomicBundleDecisionV2(state, {
+    bundleId,
+    idempotencyKey,
+    expectedBundleRevision: bundle.bundleRevision,
+    expectedConversationRevision: bundle.conversationRevisionAtOpen,
+    preparedState: prepared.state,
     client,
     conversation,
     inboundMessage: anchorMessage,
     coreResult,
-    permissionGraph: classified.permissionGraph,
-    now,
     channelPolicyMock: input.channelPolicyMock,
-  });
-
-  const decisionId = turned.lastSimulation?.decisionId;
-  if (!decisionId) {
-    return { ok: false, failureCode: "bundle_decision_missing", state };
-  }
-
-  const committed = commitInboundBundleDecision(turned, {
-    bundleId,
-    expectedBundleRevision: bundle.bundleRevision,
-    expectedConversationRevision: bundle.conversationRevisionAtOpen,
-    idempotencyKey: input.idempotencyKey ?? `bundle-decision-${bundleId}-${bundle.bundleRevision}`,
-    decisionId,
     now,
   });
   if (!committed.ok) {
     return { ok: false, failureCode: committed.failureCode, state };
   }
 
-  return { ok: true, state: committed.state, decisionId, bundleId };
+  return { ok: true, state: committed.state, decisionId: committed.decisionId, bundleId };
 }
