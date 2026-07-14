@@ -206,6 +206,9 @@ function appendPendingTranscriptionRecord(
     providerMode: "mock",
     retrievalEligible: false,
     evidenceExpiresAt: asset.expiresAt ?? null,
+    retryCount: 0,
+    nextAttemptAt: null,
+    failureCode: null,
     createdAt: observedAt,
     updatedAt: observedAt,
   };

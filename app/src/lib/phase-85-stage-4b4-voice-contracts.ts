@@ -195,6 +195,9 @@ export type AudioTranscriptionRecord = {
   providerMode: "mock";
   retrievalEligible?: boolean;
   evidenceExpiresAt?: string | null;
+  retryCount?: number;
+  nextAttemptAt?: string | null;
+  failureCode?: string | null;
   createdAt: string;
   updatedAt: string;
 };

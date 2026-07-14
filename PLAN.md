@@ -1,6 +1,6 @@
 # MANU-AI Plan
 
-**Current authority (2026-07-15):** Stage 4B-4 Sesli Mesaj Guvenligi ve Transkripsiyon Orkestrasyonu Phase 3 is complete locally after Phase 2. Active plan: `docs/PHASE_85_STAGE_4B_4_SESLI_MESAJ_GUVENLIGI_VE_TRANSKRIPSIYON_ORK_PLAN.md`. Phase 3 evidence: `docs/PHASE_85_STAGE_4B_4_PHASE_3_CANONICAL_INGRESS_AUDIO_ADMISSION_EVIDENCE.md`. **Next:** Stage 4B-4 Phase 4 deterministic mock transcription provider. Stage 4C is blocked until Stage 4B-4 closes. Production remains `NO-GO`; R-405 remains open.
+**Current authority (2026-07-15):** Stage 4B-4 Sesli Mesaj Guvenligi ve Transkripsiyon Orkestrasyonu Phase 4 is complete locally after Phase 3. Active plan: `docs/PHASE_85_STAGE_4B_4_SESLI_MESAJ_GUVENLIGI_VE_TRANSKRIPSIYON_ORK_PLAN.md`. Phase 4 evidence: `docs/PHASE_85_STAGE_4B_4_PHASE_4_DETERMINISTIC_TRANSCRIPTION_PROVIDER_EVIDENCE.md`. **Next:** Stage 4B-4 Phase 5 bundle correlation and typed-text bridge. Stage 4C is blocked until Stage 4B-4 closes. Production remains `NO-GO`; R-405 remains open.
 
 Current continuity status, 2026-07-14: Stage 4B-2 R0-R7 and advisory hardening are closed locally; Stage 4B-3 post-closure remediation R0-R9 is closed locally with measured R9 evidence. Stage 4B-4 is inserted before Stage 4C for voice-message safety and deterministic transcription orchestration. Stage 4C read gate and implementation are blocked until Stage 4B-4 implementation, verification, evidence closure, and risk reconciliation pass. Production remains `NO-GO`; R-405 remains open.
 

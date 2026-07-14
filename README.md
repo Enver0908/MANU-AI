@@ -6,6 +6,8 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 **Current authority (2026-07-15):** Stage 4B-4 Sesli Mesaj Guvenligi ve Transkripsiyon Orkestrasyonu Phase 1 is complete locally after Phase 0. Active plan: `docs/PHASE_85_STAGE_4B_4_SESLI_MESAJ_GUVENLIGI_VE_TRANSKRIPSIYON_ORK_PLAN.md`. Phase 1 evidence: `docs/PHASE_85_STAGE_4B_4_PHASE_1_DOMAIN_TYPE_CONTRACT_EVIDENCE.md`. Stage 4C is blocked until Stage 4B-4 closes. R-405 remains open; production remains `NO-GO`.
 
+**2026-07-15 Stage 4B-4 Phase 4 deterministic transcription:** Mock-gated provider port, hash fixture manifest, quality gate, transcription worker, and `worker:audio:stage4b4` scripts are locked locally. Evidence: `docs/PHASE_85_STAGE_4B_4_PHASE_4_DETERMINISTIC_TRANSCRIPTION_PROVIDER_EVIDENCE.md`.
+
 **2026-07-15 Stage 4B-4 Phase 3 canonical audio ingress:** Mock-gated WhatsApp voice-note ingress (`client_message_audio`), OGG→16 kHz mono WAV admission, private storage write, pending transcription row, and V3 canonical inbound RPC are locked locally. Evidence: `docs/PHASE_85_STAGE_4B_4_PHASE_3_CANONICAL_INGRESS_AUDIO_ADMISSION_EVIDENCE.md`.
 
 **2026-07-15 Stage 4B-4 Phase 2 audio persistence foundation:** Private `p85-stage-4b4-audio` bucket, audio transcription/correction tables, deny-all RLS, service-role worker queue RPCs, Supabase mappers, and state loading are locked locally. Evidence: `docs/PHASE_85_STAGE_4B_4_PHASE_2_DATABASE_STORAGE_RLS_EVIDENCE.md`.
@@ -98,7 +100,7 @@ P85-IF-D added complete transcript and human-control coordination for business-h
 
 This repository is a local SaaS/PWA pilot prototype and architecture workspace. It is not a production-connected system yet.
 
-**Latest implementation phase:** Phase 85 Stage 4B-4 Phase 3 canonical WhatsApp audio ingress and secure admission are complete locally (2026-07-15). **Current work:** Stage 4B-4 Sesli Mesaj Guvenligi ve Transkripsiyon Orkestrasyonu. **Next:** Stage 4B-4 Phase 4 deterministic mock transcription provider. **After closure:** Stage 4C plan/read gate. **Production pilot:** `NO-GO` (unchanged); R-405 remains open.
+**Latest implementation phase:** Phase 85 Stage 4B-4 Phase 4 deterministic mock transcription provider and quality gate are complete locally (2026-07-15). **Current work:** Stage 4B-4 Sesli Mesaj Guvenligi ve Transkripsiyon Orkestrasyonu. **Next:** Stage 4B-4 Phase 5 bundle correlation and typed-text bridge. **After closure:** Stage 4C plan/read gate. **Production pilot:** `NO-GO` (unchanged); R-405 remains open.
 
 **Phase 82 verification:** targeted Phase 82 tests passed (5 files, 31/31); Phase 82G records `repoLocalClosureComplete: true` with verification `blocked` because `npm run test:rls` remains skipped/pending when local Supabase is unavailable.
 

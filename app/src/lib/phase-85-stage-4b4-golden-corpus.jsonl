@@ -1,0 +1,5 @@
+{"fixtureId":"golden_voice_note","sceneId":"meal_update_tr","locale":"tr-TR","expectedTerminalStatus":"accepted","description":"Accepted Turkish meal-update transcript for canonical golden voice fixture"}
+{"fixtureId":"golden_voice_note","sceneId":"low_confidence_tr","locale":"tr-TR","expectedTerminalStatus":"review_required","description":"Fail-closed review when overall confidence is below threshold"}
+{"fixtureId":"golden_voice_note","sceneId":"wrong_language_tr","locale":"tr-TR","expectedTerminalStatus":"review_required","description":"Fail-closed review when provider locale mismatches client communication language"}
+{"fixtureId":"golden_voice_note","sceneId":"empty_transcript","locale":"tr-TR","expectedTerminalStatus":"review_required","description":"Silence or empty transcript routes to dietitian review"}
+{"fixtureId":"golden_voice_note","sceneId":"uncertain_span_tr","locale":"tr-TR","expectedTerminalStatus":"review_required","description":"Uncertain spans block automatic acceptance"}

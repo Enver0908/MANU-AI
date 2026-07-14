@@ -35,6 +35,13 @@ import {
   type Stage4B4VoiceFixtureId,
 } from "./phase-85-stage-4b4-audio-fixture-resolver";
 import { processStage4B4PendingAudioAssets } from "./phase-85-stage-4b4-audio-admission";
+import { createStage4B4MockTranscriptionProvider } from "./phase-85-stage-4b4-mock-transcription-provider";
+import {
+  createStage4B4TranscriptionFixtureManifest,
+  type Stage4B4TranscriptionFixtureManifest,
+} from "./phase-85-stage-4b4-transcription-fixture-manifest";
+import type { Stage4B4TranscriptionProviderPort } from "./phase-85-stage-4b4-transcription-provider";
+import { processStage4B4PendingTranscriptions } from "./phase-85-stage-4b4-transcription-worker";
 import type { WhatsAppMockWebhookResult } from "./whatsapp-mock-webhook";
 import { toWhatsAppMockWebhookResult } from "./whatsapp-mock-webhook";
 
@@ -135,13 +142,17 @@ export function createStage4B3LocalAdmissionRuntime(input?: {
   manifest?: ReturnType<typeof createStage4B3VisionFixtureManifest>;
   autoProcessPending?: boolean;
   autoProcessAudioPending?: boolean;
+  autoProcessTranscription?: boolean;
   autoProcessVision?: boolean;
   autoProcessBundles?: boolean;
   workerId?: string;
   useDurableFixtureTransport?: boolean;
   audioStorage?: Stage4B4AudioStoragePort;
+  transcriptionManifest?: Stage4B4TranscriptionFixtureManifest;
+  transcriptionProvider?: Stage4B4TranscriptionProviderPort;
 }): Stage4B3AdmissionRuntime {
   const registry = input?.registry ?? getFallbackStage4B3MockMediaRegistry();
+  const transcriptionManifest = input?.transcriptionManifest ?? createStage4B4TranscriptionFixtureManifest();
   return {
     transport: input?.useDurableFixtureTransport
       ? createStage4B3DurableMediaTransport()
@@ -149,10 +160,13 @@ export function createStage4B3LocalAdmissionRuntime(input?: {
     storage: getFallbackStage4B3MediaStorage(),
     audioTransport: createStage4B4DurableAudioTransport(),
     audioStorage: input?.audioStorage ?? createInMemoryStage4B4AudioStorage(),
+    transcriptionProvider:
+      input?.transcriptionProvider ??
+      createStage4B4MockTranscriptionProvider({ manifest: transcriptionManifest }),
     visionProvider: createStage4B3MockVisionProvider({ manifest: input?.manifest }),
     autoProcessPending: input?.autoProcessPending ?? true,
     autoProcessAudioPending: input?.autoProcessAudioPending ?? true,
-    autoProcessVision: input?.autoProcessVision ?? true,
+    autoProcessTranscription: input?.autoProcessTranscription ?? true,
     autoProcessBundles: input?.autoProcessBundles ?? false,
     workerId: input?.workerId ?? "stage4b3-local-worker",
   };
@@ -365,6 +379,19 @@ export async function runStage4B3LocalWorkerTick(
   if (admission.audioTransport && admission.audioStorage) {
     workingState = await processStage4B4PendingAudioAssets(workingState, {
       transport: admission.audioTransport,
+      storage: admission.audioStorage,
+      now,
+    });
+  }
+
+  if (
+    admission.transcriptionProvider &&
+    admission.audioStorage &&
+    admission.autoProcessTranscription !== false
+  ) {
+    workingState = await processStage4B4PendingTranscriptions(workingState, {
+      env: input.env ?? process.env,
+      provider: admission.transcriptionProvider,
       storage: admission.audioStorage,
       now,
     });

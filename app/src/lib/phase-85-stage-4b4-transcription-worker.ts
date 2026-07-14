@@ -1,0 +1,280 @@
+import type { MediaAssetRecord } from "./phase-85-stage-4b3-media-contracts";
+import { evaluateStage4B4VoiceTranscriptionProviderGate } from "./phase-85-stage-4b4-provider-gate";
+import type { Stage4B4AudioStoragePort } from "./phase-85-stage-4b4-audio-storage";
+import type { Stage4B4TranscriptionProviderPort } from "./phase-85-stage-4b4-transcription-provider";
+import { applyTranscriptQualityGate } from "./phase-85-stage-4b4-transcript-quality";
+import {
+  COMMUNICATION_LANGUAGE_TO_LOCALE,
+  parseAudioTranscriptionObservationV1,
+  type AudioQualityCode,
+  type AudioTranscriptionRecord,
+  type Stage4B4SupportedLocale,
+} from "./phase-85-stage-4b4-voice-contracts";
+import type { ManuAppState } from "./types";
+
+export const STAGE_4B4_TRANSCRIPTION_WORKER_VERSION = "p85-stage-4b4-transcription-worker-v1";
+export const STAGE_4B4_TRANSCRIPTION_IN_PROCESS_RETRIES = 2;
+export const STAGE_4B4_TRANSCRIPTION_MAX_DURABLE_RETRIES = 3;
+export const STAGE_4B4_TRANSCRIPTION_RETRY_DELAY_MS = [30_000, 120_000, 300_000] as const;
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
+function resolveClientLocale(state: ManuAppState, clientId: string): Stage4B4SupportedLocale {
+  const client = state.clients.find((entry) => entry.id === clientId);
+  if (!client?.communicationLanguage) {
+    return "tr-TR";
+  }
+  return COMMUNICATION_LANGUAGE_TO_LOCALE[client.communicationLanguage] ?? "tr-TR";
+}
+
+function updateMediaAsset(state: ManuAppState, assetId: string, patch: Partial<MediaAssetRecord>): ManuAppState {
+  const now = new Date().toISOString();
+  return {
+    ...state,
+    mediaAssets: state.mediaAssets.map((asset) =>
+      asset.id === assetId && asset.tenantId === state.tenant.id ? { ...asset, ...patch, updatedAt: now } : asset,
+    ),
+  };
+}
+
+function updateTranscriptionRecord(
+  state: ManuAppState,
+  transcriptionId: string,
+  patch: Partial<AudioTranscriptionRecord>,
+): ManuAppState {
+  const now = new Date().toISOString();
+  return {
+    ...state,
+    audioTranscriptionRecords: state.audioTranscriptionRecords.map((record) =>
+      record.id === transcriptionId && record.tenantId === state.tenant.id
+        ? { ...record, ...patch, updatedAt: now }
+        : record,
+    ),
+  };
+}
+
+async function invokeProviderWithRetries(
+  provider: Stage4B4TranscriptionProviderPort,
+  input: {
+    requestId: string;
+    contentSha256: string;
+    locale: Stage4B4SupportedLocale;
+    wavBytes: Buffer;
+  },
+): Promise<{ observation: AudioTranscriptionRecord["observation"]; failureCode: string | null }> {
+  let lastFailureCode: string | null = null;
+  for (let attempt = 0; attempt <= STAGE_4B4_TRANSCRIPTION_IN_PROCESS_RETRIES; attempt += 1) {
+    const result = await provider.transcribe(input);
+    if (!result.ok) {
+      lastFailureCode = result.failureCode;
+      if (result.retryable && attempt < STAGE_4B4_TRANSCRIPTION_IN_PROCESS_RETRIES) {
+        await sleep(50);
+        continue;
+      }
+      return { observation: null, failureCode: lastFailureCode ?? "provider_invalid_output" };
+    }
+
+    try {
+      return {
+        observation: parseAudioTranscriptionObservationV1(result.observation),
+        failureCode: null,
+      };
+    } catch (error) {
+      lastFailureCode = error instanceof Error ? error.message : "observation_validation_failed";
+      return { observation: null, failureCode: lastFailureCode };
+    }
+  }
+
+  return { observation: null, failureCode: lastFailureCode ?? "provider_timeout" };
+}
+
+function mapProviderFailureToQualityCode(failureCode: string | null): AudioQualityCode {
+  if (failureCode === "unknown_fixture") {
+    return "unknown_fixture";
+  }
+  if (failureCode === "provider_gate_disabled") {
+    return "provider_disabled";
+  }
+  return "malformed_observation";
+}
+
+export async function transcribeSinglePendingAudioRecord(
+  state: ManuAppState,
+  transcriptionId: string,
+  options: {
+    env: NodeJS.ProcessEnv;
+    provider: Stage4B4TranscriptionProviderPort;
+    storage: Stage4B4AudioStoragePort;
+    now?: string;
+  },
+): Promise<ManuAppState> {
+  const gate = evaluateStage4B4VoiceTranscriptionProviderGate(options.env);
+  if (!gate.mockVoiceTranscriptionAllowed) {
+    return state;
+  }
+
+  const record = state.audioTranscriptionRecords.find(
+    (entry) => entry.id === transcriptionId && entry.tenantId === state.tenant.id,
+  );
+  if (!record || record.status !== "pending") {
+    return state;
+  }
+
+  const asset = state.mediaAssets.find(
+    (entry) => entry.id === record.mediaAssetId && entry.tenantId === state.tenant.id,
+  );
+  if (!asset || asset.mediaKind !== "audio" || asset.status !== "analysis_pending") {
+    return state;
+  }
+  if (!asset.contentSha256 || !asset.sanitizedAudioObjectKey) {
+    return finalizeFailedTranscription(state, record, asset, "missing_content_sha256", options.now);
+  }
+
+  const now = options.now ?? new Date().toISOString();
+  let workingState = updateTranscriptionRecord(state, transcriptionId, {
+    status: "processing",
+    updatedAt: now,
+  });
+
+  const stored = await options.storage.downloadObject(asset.sanitizedAudioObjectKey);
+  if (!stored?.bytes?.byteLength) {
+    return finalizeFailedTranscription(workingState, record, asset, "storage_upload_failed", now);
+  }
+
+  const providerResult = await invokeProviderWithRetries(options.provider, {
+    requestId: transcriptionId,
+    contentSha256: asset.contentSha256,
+    locale: record.locale ?? resolveClientLocale(state, asset.clientId),
+    wavBytes: stored.bytes,
+  });
+
+  if (!providerResult.observation) {
+    const nextRetryCount = (record.retryCount ?? 0) + 1;
+    const failureCode = providerResult.failureCode ?? "provider_invalid_output";
+    if (nextRetryCount > STAGE_4B4_TRANSCRIPTION_MAX_DURABLE_RETRIES) {
+      return finalizeFailedTranscription(workingState, record, asset, failureCode, now, nextRetryCount);
+    }
+
+    const retryDelay =
+      STAGE_4B4_TRANSCRIPTION_RETRY_DELAY_MS[
+        Math.min(nextRetryCount - 1, STAGE_4B4_TRANSCRIPTION_RETRY_DELAY_MS.length - 1)
+      ];
+    const retryAt = new Date(new Date(now).getTime() + retryDelay).toISOString();
+    return updateTranscriptionRecord(workingState, transcriptionId, {
+      status: "pending",
+      retryCount: nextRetryCount,
+      nextAttemptAt: retryAt,
+      rejectionReasons: [mapProviderFailureToQualityCode(failureCode)],
+      updatedAt: now,
+    });
+  }
+
+  const quality = applyTranscriptQualityGate({
+    observation: providerResult.observation,
+    expectedLocale: record.locale ?? resolveClientLocale(state, asset.clientId),
+  });
+
+  const completedAt = options.now ?? new Date().toISOString();
+  workingState = updateTranscriptionRecord(workingState, transcriptionId, {
+    status: quality.terminalStatus,
+    observation: providerResult.observation,
+    qualityDecision: quality.qualityDecision,
+    rejectionReasons: quality.rejectionReasons,
+    retrievalEligible: quality.terminalStatus === "accepted",
+    updatedAt: completedAt,
+  });
+
+  if (quality.terminalStatus === "accepted") {
+    return updateMediaAsset(workingState, asset.id, {
+      status: "analysis_ready",
+      failureCode: null,
+      nextAttemptAt: null,
+      updatedAt: completedAt,
+    });
+  }
+
+  return updateMediaAsset(workingState, asset.id, {
+    status: "analysis_pending",
+    failureCode: quality.rejectionReasons[0] ?? "overall_confidence_low",
+    updatedAt: completedAt,
+  });
+}
+
+function finalizeFailedTranscription(
+  state: ManuAppState,
+  record: AudioTranscriptionRecord,
+  asset: MediaAssetRecord,
+  failureCode: string,
+  now?: string,
+  retryCount?: number,
+): ManuAppState {
+  const observedAt = now ?? new Date().toISOString();
+  const qualityCode = mapProviderFailureToQualityCode(failureCode);
+  let workingState = updateTranscriptionRecord(state, record.id, {
+    status: "failed",
+    observation: null,
+    qualityDecision: { accepted: false, reasonCodes: [qualityCode] },
+    rejectionReasons: [qualityCode],
+    retryCount: retryCount ?? (record.retryCount ?? 0) + 1,
+    updatedAt: observedAt,
+  });
+  workingState = updateMediaAsset(workingState, asset.id, {
+    status: "failed",
+    failureCode,
+    updatedAt: observedAt,
+  });
+  workingState = {
+    ...workingState,
+    messages: workingState.messages.map((message) =>
+      message.id === asset.messageId
+        ? {
+            ...message,
+            contentStatus: "content_unavailable",
+            retrievalEligibility: "excluded_unavailable",
+          }
+        : message,
+    ),
+  };
+  return workingState;
+}
+
+export async function processStage4B4PendingTranscriptions(
+  state: ManuAppState,
+  options: {
+    env: NodeJS.ProcessEnv;
+    provider: Stage4B4TranscriptionProviderPort;
+    storage: Stage4B4AudioStoragePort;
+    now?: string;
+  },
+): Promise<ManuAppState> {
+  const gate = evaluateStage4B4VoiceTranscriptionProviderGate(options.env);
+  if (!gate.mockVoiceTranscriptionAllowed) {
+    return state;
+  }
+
+  const now = options.now ?? new Date().toISOString();
+  const dueRecords = state.audioTranscriptionRecords.filter((record) => {
+    if (record.tenantId !== state.tenant.id || record.status !== "pending") {
+      return false;
+    }
+    const asset = state.mediaAssets.find((entry) => entry.id === record.mediaAssetId);
+    if (!asset || asset.status !== "analysis_pending") {
+      return false;
+    }
+    if (!record.nextAttemptAt) {
+      return true;
+    }
+    return new Date(record.nextAttemptAt).getTime() <= new Date(now).getTime();
+  });
+
+  let workingState = state;
+  for (const record of dueRecords) {
+    workingState = await transcribeSinglePendingAudioRecord(workingState, record.id, options);
+  }
+
+  return workingState;
+}

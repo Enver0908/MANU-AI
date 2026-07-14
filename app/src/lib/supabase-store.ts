@@ -2433,6 +2433,7 @@ export async function runSupabaseSecureWhatsAppIngress(
     ).createStage4B3LocalAdmissionRuntime({
       autoProcessPending: false,
       autoProcessAudioPending: false,
+      autoProcessTranscription: false,
       autoProcessVision: false,
       autoProcessBundles: false,
       useDurableFixtureTransport: true,

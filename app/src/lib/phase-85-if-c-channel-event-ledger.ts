@@ -19,6 +19,7 @@ import {
   stageClientImageIngressMetadata,
 } from "./phase-85-stage-4b3-media-admission";
 import { processStage4B4PendingAudioAssets, stageClientAudioIngressMetadata } from "./phase-85-stage-4b4-audio-admission";
+import { processStage4B4PendingTranscriptions } from "./phase-85-stage-4b4-transcription-worker";
 import { createStage4B4DurableAudioTransport, type Stage4B4AudioTransportPort } from "./phase-85-stage-4b4-audio-transport";
 import { createInMemoryStage4B4AudioStorage, type Stage4B4AudioStoragePort } from "./phase-85-stage-4b4-audio-storage";
 import type { Stage4B3MediaStoragePort } from "./phase-85-stage-4b3-media-storage";
@@ -89,9 +90,11 @@ export type Stage4B3AdmissionRuntime = {
   storage: Stage4B3MediaStoragePort;
   audioTransport?: Stage4B4AudioTransportPort;
   audioStorage?: Stage4B4AudioStoragePort;
+  transcriptionProvider?: import("./phase-85-stage-4b4-transcription-provider").Stage4B4TranscriptionProviderPort;
   visionProvider?: Stage4B3VisionProviderPort;
   autoProcessPending?: boolean;
   autoProcessAudioPending?: boolean;
+  autoProcessTranscription?: boolean;
   autoProcessVision?: boolean;
   autoProcessBundles?: boolean;
   workerId?: string;
@@ -308,6 +311,17 @@ async function ingestSingleCandidate(
     if (options.stage4b3Admission?.autoProcessAudioPending !== false) {
       nextState = await processStage4B4PendingAudioAssets(nextState, {
         transport: audioTransport,
+        storage: audioStorage,
+        now: record.observedAt,
+      });
+    }
+    if (
+      options.stage4b3Admission?.transcriptionProvider &&
+      options.stage4b3Admission.autoProcessTranscription !== false
+    ) {
+      nextState = await processStage4B4PendingTranscriptions(nextState, {
+        env: options.env ?? process.env,
+        provider: options.stage4b3Admission.transcriptionProvider,
         storage: audioStorage,
         now: record.observedAt,
       });
