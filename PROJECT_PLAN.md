@@ -1,8 +1,8 @@
 # MANU-AI Project Plan v2
 
-**Current authority (2026-07-14):** Stage 4B-3 remediation R0–R4 are complete locally; R5 is next; Stage 4C is blocked. Active plan: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. R4 evidence: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_R4_EVIDENCE.md`. Production remains `NO-GO`; R-405 remains open.
+**Current authority (2026-07-14):** Stage 4B-3 remediation R0-R9 is complete locally; Stage 4C read gate and user-approved implementation are next. Active plan: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. R9 evidence: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_R9_EVIDENCE.md`. Production remains `NO-GO`; R-405 remains open.
 
-Current continuity status, 2026-07-14: Stage 4B-2 R0-R7, local RLS re-closure, advisory hardening, and Stage 4B-3 Phases 0–12 are complete locally. Canonical spec: `docs/PHASE_85_STAGE_4B_3_MULTIMODAL_GORSEL_GUVENLIK_SPEC.md`. **Next:** Stage 4C plan/read gate. Production remains `NO-GO` and R-405 remains open.
+Current continuity status, 2026-07-14: Stage 4B-2 R0-R7, local RLS re-closure, advisory hardening, and Stage 4B-3 post-closure remediation R0-R9 are complete locally. Canonical closure evidence: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_R9_EVIDENCE.md`. **Next:** Stage 4C plan/read gate and user-approved implementation. Production remains `NO-GO` and R-405 remains open.
 
 ## Confidence Position
 

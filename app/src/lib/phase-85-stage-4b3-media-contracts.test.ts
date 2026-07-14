@@ -56,7 +56,8 @@ describe("phase-85-stage-4b3-media-contracts", () => {
     expect(STAGE_4B3_IMAGE_CHANNEL_EVENT_KIND).toBe("client_message_image");
     expect(CHANNEL_EVENT_KINDS).toContain("client_message_image");
     expect(VISUAL_SCENE_TYPES).toHaveLength(9);
-    expect(MEDIA_ASSET_STATUSES).toHaveLength(8);
+    expect(MEDIA_ASSET_STATUSES).toHaveLength(9);
+    expect(MEDIA_ASSET_STATUSES).toContain("deletion_pending");
     expect(INBOUND_MESSAGE_BUNDLE_STATUSES).toHaveLength(9);
     expect(VISUAL_CORRECTION_STATUSES).toHaveLength(4);
   });

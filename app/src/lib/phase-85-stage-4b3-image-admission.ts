@@ -211,7 +211,7 @@ export async function validateAndSanitizeImageBytes(input: {
 
 async function detectMimeFromBytes(bytes: Buffer): Promise<string | null> {
   const fileType = await import("file-type");
-  const detected = await fileType.fromBuffer(bytes);
+  const detected = await fileType.fileTypeFromBuffer(bytes);
   return detected?.mime ?? null;
 }
 

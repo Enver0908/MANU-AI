@@ -19,6 +19,9 @@ export default defineConfig({
     env: {
       MANU_DEV_FALLBACK_STORE: "true",
       MANU_ALLOW_PUBLIC_DEMO_LOGIN: "true",
+      MANU_ALLOW_MOCK_VISION: "true",
+      MANU_ALLOW_MOCK_WHATSAPP_WEBHOOK: "true",
+      MANU_MOCK_WHATSAPP_WEBHOOK_SECRET: "synthetic-visual-smoke-secret",
       NEXT_PUBLIC_SUPABASE_URL: "",
       NEXT_PUBLIC_SUPABASE_ANON_KEY: "",
       SUPABASE_SERVICE_ROLE_KEY: "",

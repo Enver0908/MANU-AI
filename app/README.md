@@ -1,6 +1,6 @@
 # MANU-AI Local App Prototype
 
-**Current authority (2026-07-14):** Stage 4B-3 remediation R0–R4 are complete locally; R5 is next; Stage 4C is blocked. Active plan: `../docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. R4 evidence: `../docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_R4_EVIDENCE.md`. V2 contracts: `src/lib/phase-85-stage-4b3-media-contracts-v2.ts`. Runtime provider/channel paths remain disabled.
+**Current authority (2026-07-14):** Stage 4B-3 remediation R0-R9 is complete locally; Stage 4C read gate and user-approved implementation are next. Active plan: `../docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. R9 evidence: `../docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_R9_EVIDENCE.md`. V2 contracts: `src/lib/phase-85-stage-4b3-media-contracts-v2.ts`. Runtime provider/channel paths remain disabled.
 
 2026-07-14: **Stage 4B-3 Phase 12 golden corpus, red team, scale rehearsal, and closure evidence is complete locally.** Closure evaluator in `src/lib/phase-85-stage-4b3-closure.ts`, golden corpus in `src/lib/phase-85-stage-4b3-golden-corpus.jsonl`, rehearsal via `npm run rehearse:stage-4b3:media`, visual spec in `tests/visual/stage-4b3-media.visual.spec.ts`. Evidence: `../docs/PHASE_85_STAGE_4B_3_PHASE_12_GOLDEN_CORPUS_RED_TEAM_CLOSURE_EVIDENCE.md`. Canonical spec: `../docs/PHASE_85_STAGE_4B_3_MULTIMODAL_GORSEL_GUVENLIK_SPEC.md`. **Next:** Stage 4C plan/read gate. Production pilot remains `NO-GO`.
 
@@ -502,7 +502,7 @@ Implemented per `../docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_ACTION_PLAN.md`.
 Historical Phase 1 checkpoint: domain/DTO/authorization projection completed in `../docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`. Phases 2-11 and remediation R0-R7 subsequently closed. This is not an active handoff; Stage 4B-3 is current and production pilot remains `NO-GO`.
 ## Stage 4B-2 Remediation Lock
 
-Stage 4B-2 runtime and post-closure remediation R0-R7 are complete locally. Evidence: `../docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. Stage 4B-3 is the next authorized Phase 85 unit; Stage 4C remains blocked until Stage 4B-3 closes. Do not enable real integrations or production-pilot paths.
+Stage 4B-2 runtime and post-closure remediation R0-R7 are complete locally. Evidence: `../docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. Stage 4B-3 post-closure remediation R0-R9 is now complete locally; Stage 4C is the next authorized Phase 85 unit. Do not enable real integrations or production-pilot paths.
 
 ## Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
 

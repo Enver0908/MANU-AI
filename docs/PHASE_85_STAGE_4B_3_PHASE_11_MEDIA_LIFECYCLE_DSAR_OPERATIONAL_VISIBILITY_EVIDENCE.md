@@ -41,4 +41,4 @@ Executed on 2026-07-14:
 
 ## Next
 
-- Phase 12 golden corpus, red team, scale rehearsal, and Stage 4B-3 closure evidence before Stage 4C handoff
+Stage 4B-3 is closed locally. See Phase 12 evidence: `docs/PHASE_85_STAGE_4B_3_PHASE_12_GOLDEN_CORPUS_RED_TEAM_CLOSURE_EVIDENCE.md`.

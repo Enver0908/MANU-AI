@@ -1,8 +1,8 @@
 # Direct 100 Dietitian Completion Plan
 
-**Current authority (2026-07-14):** Stage 4B-3 remediation R0 and R1 are complete locally; R2 is next; Stage 4C is blocked. Active plan: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. R1 evidence: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_R1_EVIDENCE.md`. Production remains `NO-GO`; R-405 remains open.
+**Current authority (2026-07-14):** Stage 4B-3 remediation R0-R9 is complete locally; Stage 4C read gate and user-approved implementation are next. Active plan: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. R9 evidence: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_R9_EVIDENCE.md`. Production remains `NO-GO`; R-405 remains open.
 
-Current Phase 85 status, 2026-07-14: Stage 4B-3 Multimodal Gorsel Guvenligi ve Yanit Orkestrasyonu Phases 0–12 are complete locally. Evidence: `docs/PHASE_85_STAGE_4B_3_PHASE_12_GOLDEN_CORPUS_RED_TEAM_CLOSURE_EVIDENCE.md`. Canonical spec: `docs/PHASE_85_STAGE_4B_3_MULTIMODAL_GORSEL_GUVENLIK_SPEC.md`. **Next:** Stage 4C. This does not approve a 100-dietitian production pilot; production remains `NO-GO` and R-405 remains open.
+Current Phase 85 status, 2026-07-14: Stage 4B-3 post-closure remediation R0-R9 is complete locally. Evidence: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_R9_EVIDENCE.md`. Canonical spec: `docs/PHASE_85_STAGE_4B_3_MULTIMODAL_GORSEL_GUVENLIK_SPEC.md`. **Next:** Stage 4C. This does not approve a 100-dietitian production pilot; production remains `NO-GO` and R-405 remains open.
 Date: 2026-06-05
 
 ## Purpose

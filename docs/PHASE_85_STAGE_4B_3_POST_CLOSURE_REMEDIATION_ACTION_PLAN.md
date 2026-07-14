@@ -1,13 +1,13 @@
 # Phase 85 Stage 4B-3 Post-Closure Remediation Action Plan
 
 Date opened: 2026-07-14
-Status: **R4 complete; R5 next; Stage 4B-3 closure reopened; Stage 4C blocked**
+Status: **R0-R9 complete locally; Stage 4B-3 post-closure remediation closed; Stage 4C read gate authorized**
 
-This document is the active authority after the post-closure audit of the local Stage 4B-3 implementation. The original Stage 4B-3 plan, specification, and Phase 12 closure evidence remain historical records. They are not Stage 4C authorization.
+This document is the active authority after the post-closure audit of the local Stage 4B-3 implementation. The original Stage 4B-3 plan, specification, and Phase 12 closure evidence remain historical records; Stage 4C authorization now comes only from the completed R9 evidence.
 
 ## Decision
 
-The Phase 12 closure is reopened because the audit found gaps between in-memory simulator behavior, Supabase persistence, worker execution, media source authority, role boundaries, lifecycle enforcement, and closure measurement. Stage 4C implementation, migrations, provider work, and read-gate work are prohibited until remediation R0-R9 produces a fresh complete PASS.
+The Phase 12 closure was reopened because the audit found gaps between in-memory simulator behavior, Supabase persistence, worker execution, media source authority, role boundaries, lifecycle enforcement, and closure measurement. Remediation R0-R9 produced a fresh local complete PASS on 2026-07-14. Stage 4C planning, read-gate work, and user-approved implementation are authorized next.
 
 Production remains `NO-GO`. Real WhatsApp, Telegram, Gemini, external LLM, production webhook, monitoring, secret-manager, billing, and real client health-data paths remain disabled.
 
@@ -45,4 +45,10 @@ Production remains `NO-GO`. Real WhatsApp, Telegram, Gemini, external LLM, produ
 
 R0 is complete only when active handoff documents name this remediation track as current, the original closure artifacts are explicitly historical, R-442 through R-450 are reopened, R-4B3-01 through R-4B3-13 are open, Stage 4C authorization is false, production `NO-GO` and R-405 open remain explicit, and `git diff --check` passes.
 
-R4 is complete. Evidence: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_R4_EVIDENCE.md`. R5 is the next authorized phase. Media lifecycle worker subprocess replacement remains for R8.
+R0 is complete. Evidence: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_R0_EVIDENCE.md`.
+
+## R9 Closure Gate
+
+R9 is complete. Evidence: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_R9_EVIDENCE.md`.
+
+The reconciled handoff is `Stage 4B-2 -> Stage 4B-3 post-closure remediation R0-R9 -> Stage 4C`. Stage 4C is authorized only as the next local implementation/read-gate unit. Production remains `NO-GO`; R-405 remains open; real provider/channel/health-data paths remain disabled.

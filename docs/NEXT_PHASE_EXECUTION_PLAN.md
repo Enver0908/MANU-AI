@@ -1,10 +1,10 @@
 # MANU-AI Next Phase Execution Plan
 
-**Current authority (2026-07-14):** Stage 4B-3 remediation R0–R4 are complete locally. R5 multimodal source authority is next. Stage 4C is blocked. Active plan: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. R4 evidence: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_R4_EVIDENCE.md`. Production remains `NO-GO`; R-405 remains open.
+**Current authority (2026-07-14):** Stage 4B-3 remediation R0-R9 is complete locally. Stage 4C read gate and user-approved implementation are next. Active plan: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. R9 evidence: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_R9_EVIDENCE.md`. Production remains `NO-GO`; R-405 remains open.
 
-All pre-existing Stage 4B-3 closure and Stage 4C-next paragraphs below this authority block are historical snapshots and must not be used as an implementation handoff.
+Pre-R9 Stage 4B-3 closure and blocked-Stage-4C paragraphs below this authority block are historical snapshots. Use the R9 evidence as the current implementation handoff.
 
-Current execution handoff, 2026-07-14: Phase 85 Stage 4B-3 Phases 0–12 are complete locally. Evidence: `docs/PHASE_85_STAGE_4B_3_PHASE_12_GOLDEN_CORPUS_RED_TEAM_CLOSURE_EVIDENCE.md`. Canonical spec: `docs/PHASE_85_STAGE_4B_3_MULTIMODAL_GORSEL_GUVENLIK_SPEC.md`. **Next:** Stage 4C Diyetisyen Icin AI Chat plan/read gate and user-approved implementation. Production remains `NO-GO`; R-405 remains open; real integration paths remain closed.
+Current execution handoff, 2026-07-14: Phase 85 Stage 4B-3 post-closure remediation R0-R9 is complete locally. Evidence: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_R9_EVIDENCE.md`. Canonical spec: `docs/PHASE_85_STAGE_4B_3_MULTIMODAL_GORSEL_GUVENLIK_SPEC.md`. **Next:** Stage 4C Diyetisyen Icin AI Chat plan/read gate and user-approved implementation. Production remains `NO-GO`; R-405 remains open; real integration paths remain closed.
 
 ## Current Position
 

@@ -1,5 +1,7 @@
 # Phase 85 Stage 4B-3 - Phase 0 Documentation Evidence
 
+> **Historical handoff evidence; superseded by post-closure remediation R0-R9 on 2026-07-14.** The original documentation lock remains a historical record. The active authority is `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`; current closure evidence is `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_R9_EVIDENCE.md`.
+
 Date: 2026-07-13
 
 ## Scope
