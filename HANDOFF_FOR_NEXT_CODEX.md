@@ -1,14 +1,14 @@
 # Handoff For Next Codex
 
-**Current authority (2026-07-14):** Stage 4B-3 post-closure remediation R0-R9 is complete locally. Stage 4C read gate and user-approved implementation are next. Active plan: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. R9 evidence: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_R9_EVIDENCE.md`. Production remains `NO-GO`; R-405 remains open.
+**Current authority (2026-07-14):** Stage 4B-4 Sesli Mesaj Guvenligi ve Transkripsiyon Orkestrasyonu Phase 0 is active after Stage 4B-3 post-closure remediation R0-R9. Active plan: `docs/PHASE_85_STAGE_4B_4_SESLI_MESAJ_GUVENLIGI_VE_TRANSKRIPSIYON_ORK_PLAN.md`. Phase 0 evidence: `docs/PHASE_85_STAGE_4B_4_PHASE_0_DOCUMENTATION_EVIDENCE.md`. Stage 4C is blocked until Stage 4B-4 closes. Production remains `NO-GO`; R-405 remains open.
 
-Pre-R9 Stage 4B-3 closure and blocked-Stage-4C paragraphs below this authority block are historical snapshots. Use the R9 evidence as the current handoff.
+Pre-Stage-4B-4 Stage 4B-3 closure and Stage 4C-next paragraphs below this authority block are historical snapshots. Use the Stage 4B-4 plan as the current handoff.
 
 Continuity audit, 2026-07-13: canonical status, repository-relative references, dashboard messaging navigation, bounded APIs, DTO/permission contracts, append-only RPC/RLS migrations, and current evidence were reconciled. Treat older R1-R6 and Docker-blocked paragraphs as historical snapshots only. Evidence: `docs/PHASE_85_STAGE_4B_2_CONTINUITY_AND_ROUTING_RECONCILIATION_EVIDENCE.md`. Phase 0 now inserts Stage 4B-3 before Stage 4C. The current Phase 85 handoff is Stage 4B-3 Multimodal Gorsel Guvenligi ve Yanit Orkestrasyonu.
 
 ## Read This First
 
-Latest Phase 85 handoff (2026-07-14): **Stage 4B-3 post-closure remediation R0-R9 is complete locally.** R9 evidence: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_R9_EVIDENCE.md`. Canonical spec remains `docs/PHASE_85_STAGE_4B_3_MULTIMODAL_GORSEL_GUVENLIK_SPEC.md` with R9 as the authorization layer. **Next work:** Stage 4C Diyetisyen Icin AI Chat plan/read gate and user-approved implementation. Stage 4B-3 is closed locally; production pilot remains `NO-GO`; R-405 remains open; all real integration paths remain closed.
+Latest Phase 85 handoff (2026-07-14): **Stage 4B-4 Sesli Mesaj Guvenligi ve Transkripsiyon Orkestrasyonu is current.** Stage 4B-3 post-closure remediation R0-R9 is complete locally; R9 evidence remains `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_R9_EVIDENCE.md`. Stage 4B-4 canonical plan: `docs/PHASE_85_STAGE_4B_4_SESLI_MESAJ_GUVENLIGI_VE_TRANSKRIPSIYON_ORK_PLAN.md`. **Next work:** Stage 4B-4 Phase 1 voice threat model, domain contract, and type boundary. Stage 4C is blocked until Stage 4B-4 closes; production pilot remains `NO-GO`; R-405 remains open; all real integration paths remain closed.
 
 Latest Phase 85 Stage 4B-3 Phase 4 status (2026-07-13): bundle correlation and silence queue complete locally. Evidence: `docs/PHASE_85_STAGE_4B_3_PHASE_4_BUNDLE_SILENCE_QUEUE_EVIDENCE.md`. Phase 5 subsequently completed; see the Phase 5 evidence above.
 

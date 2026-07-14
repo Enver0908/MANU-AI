@@ -1,8 +1,8 @@
 # MANU-AI Project Plan v2
 
-**Current authority (2026-07-14):** Stage 4B-3 remediation R0-R9 is complete locally; Stage 4C read gate and user-approved implementation are next. Active plan: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. R9 evidence: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_R9_EVIDENCE.md`. Production remains `NO-GO`; R-405 remains open.
+**Current authority (2026-07-14):** Stage 4B-4 Sesli Mesaj Guvenligi ve Transkripsiyon Orkestrasyonu Phase 0 is active after Stage 4B-3 remediation R0-R9 closure. Active plan: `docs/PHASE_85_STAGE_4B_4_SESLI_MESAJ_GUVENLIGI_VE_TRANSKRIPSIYON_ORK_PLAN.md`. Phase 0 evidence: `docs/PHASE_85_STAGE_4B_4_PHASE_0_DOCUMENTATION_EVIDENCE.md`. Stage 4C is blocked until Stage 4B-4 closes. Production remains `NO-GO`; R-405 remains open.
 
-Current continuity status, 2026-07-14: Stage 4B-2 R0-R7, local RLS re-closure, advisory hardening, and Stage 4B-3 post-closure remediation R0-R9 are complete locally. Canonical closure evidence: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_R9_EVIDENCE.md`. **Next:** Stage 4C plan/read gate and user-approved implementation. Production remains `NO-GO` and R-405 remains open.
+Current continuity status, 2026-07-14: Stage 4B-2 R0-R7, local RLS re-closure, advisory hardening, and Stage 4B-3 post-closure remediation R0-R9 are complete locally. Stage 4B-4 is now the mandatory voice-message safety stage before Stage 4C. Stage 4C read gate and implementation are blocked until Stage 4B-4 closes. Production remains `NO-GO` and R-405 remains open.
 
 ## Confidence Position
 
@@ -1499,7 +1499,7 @@ The Stage 4B implementation was audited against the approved plan before handoff
 
 ## Phase 85 Stage 4B-2 Phase 0 Documentation Lock - 2026-07-12
 
-Historical Phase 0 checkpoint: `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md` locked the messaging contract before runtime work. Phases 1-11 and remediation R0-R7 subsequently closed. This is not an active handoff; Stage 4C is current. Production pilot remains `NO-GO`; R-405 remains open.
+Historical Phase 0 checkpoint: `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md` locked the messaging contract before runtime work. Phases 1-11 and remediation R0-R7 subsequently closed. This is not an active handoff; Stage 4B-4 is current before Stage 4C. Production pilot remains `NO-GO`; R-405 remains open.
 
 ## Phase 85 Stage 4B-2 Phase 1 Domain/DTO/Authorization Closure - 2026-07-12
 
@@ -1510,7 +1510,7 @@ R0 is complete as a documentation-only remediation lock. The next authorized wor
 
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
 
-Historical R1 checkpoint: the Stage 4B-2 domain/DTO/permission projection contract was corrected. R2-R7 subsequently closed; Stage 4C is current. Production pilot remains `NO-GO`.
+Historical R1 checkpoint: the Stage 4B-2 domain/DTO/permission projection contract was corrected. R2-R7 subsequently closed; Stage 4B-4 is current before Stage 4C. Production pilot remains `NO-GO`.
 
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R2 - 2026-07-12
 

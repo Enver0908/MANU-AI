@@ -1,10 +1,10 @@
 # MANU-AI Next Phase Execution Plan
 
-**Current authority (2026-07-14):** Stage 4B-3 remediation R0-R9 is complete locally. Stage 4C read gate and user-approved implementation are next. Active plan: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. R9 evidence: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_R9_EVIDENCE.md`. Production remains `NO-GO`; R-405 remains open.
+**Current authority (2026-07-14):** Stage 4B-4 Sesli Mesaj Guvenligi ve Transkripsiyon Orkestrasyonu Phase 0 is active after Stage 4B-3 remediation R0-R9 closure. Active plan: `docs/PHASE_85_STAGE_4B_4_SESLI_MESAJ_GUVENLIGI_VE_TRANSKRIPSIYON_ORK_PLAN.md`. Phase 0 evidence: `docs/PHASE_85_STAGE_4B_4_PHASE_0_DOCUMENTATION_EVIDENCE.md`. Stage 4C is blocked until Stage 4B-4 closes. Production remains `NO-GO`; R-405 remains open.
 
-Pre-R9 Stage 4B-3 closure and blocked-Stage-4C paragraphs below this authority block are historical snapshots. Use the R9 evidence as the current implementation handoff.
+Pre-Stage-4B-4 Stage 4B-3 closure and Stage 4C-next paragraphs below this authority block are historical snapshots. Use the Stage 4B-4 plan as the current implementation handoff.
 
-Current execution handoff, 2026-07-14: Phase 85 Stage 4B-3 post-closure remediation R0-R9 is complete locally. Evidence: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_R9_EVIDENCE.md`. Canonical spec: `docs/PHASE_85_STAGE_4B_3_MULTIMODAL_GORSEL_GUVENLIK_SPEC.md`. **Next:** Stage 4C Diyetisyen Icin AI Chat plan/read gate and user-approved implementation. Production remains `NO-GO`; R-405 remains open; real integration paths remain closed.
+Current execution handoff, 2026-07-14: Phase 85 Stage 4B-3 post-closure remediation R0-R9 is complete locally. Evidence: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_R9_EVIDENCE.md`. **Next:** Stage 4B-4 Phase 1 voice threat model, domain contract, and type boundary. Stage 4C is blocked until Stage 4B-4 implementation, verification, evidence closure, and risk reconciliation pass. Production remains `NO-GO`; R-405 remains open; real integration paths remain closed.
 
 ## Current Position
 
@@ -24,7 +24,7 @@ Current override after Phase 85A frontend redesign scope lock (2026-07-07): `doc
 
 Current override after Phase 85B design tokens/font foundation (2026-07-07): Fraunces display + Geist Sans/Mono are wired through `next/font/google`; Phase 85 CSS/Tailwind tokens are exposed for paper, surface, ink, primary plum, hover plum, soft plum, sage, warm accent, borders, and focus; UI token tests assert the approved palette. This is foundation-only. Component foundation, public website redesign, and dashboard/PWA redesign require separate user-approved plans. Production pilot remains `NO-GO`; R-405 and current RLS re-run remain open.
 
-Current Phase 85 staging update (2026-07-12): Stages 1-3, Stage 4A, P85-IF-A through P85-IF-I, Stage 4B Uyari ve Bildirimler, and **Stage 4B-2 Mesajlasma are complete.** Evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`. **Next operator action:** Stage 4C Diyetisyen Icin AI Chat. Runtime provider/channel behavior remains closed.
+Historical Phase 85 staging update (2026-07-12): Stages 1-3, Stage 4A, P85-IF-A through P85-IF-I, Stage 4B Uyari ve Bildirimler, and **Stage 4B-2 Mesajlasma are complete.** Evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`. Stage 4B-3 and its R9 remediation subsequently closed; Stage 4B-4 is current before Stage 4C. Runtime provider/channel behavior remains closed.
 
 Historical Stage 4B-2 closure override (2026-07-12): bounded conversation APIs, receipts, mutations, UX, integration, scale, visual, and release verification were complete while that checkpoint's RLS suite was Docker-blocked. R7 subsequently supplied zero-skip RLS/SQL evidence and advisory hardening passed 36/36. Current authority: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. **Next:** Stage 4B-3; production pilot remains `NO-GO`; R-405 remains open.
 
