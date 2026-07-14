@@ -90,3 +90,38 @@ describe("P85 Stage 4B-3 Phase 11 media lifecycle migration", () => {
     expect(lifecycleMigration).toContain("grant execute on function p85_stage_4b3_redact_client_media_metadata");
   });
 });
+
+const remediationContractMigration = readFileSync(
+  resolve(__dirname, "../../supabase/migrations/20260714100000_phase_85_stage_4b3_remediation_contract_rls.sql"),
+  "utf8",
+);
+
+const durableQueueMigration = readFileSync(
+  resolve(__dirname, "../../supabase/migrations/20260714110000_phase_85_stage_4b3_durable_media_queue.sql"),
+  "utf8",
+);
+
+describe("P85 Stage 4B-3 remediation R2 contract/RLS migration", () => {
+  it("migrates bundle statuses to V2 and removes authenticated direct reads", () => {
+    expect(remediationContractMigration).toContain("status = 'decided'");
+    expect(remediationContractMigration).toContain("legacy_completed_without_decision");
+    expect(remediationContractMigration).toContain("actor_type");
+    expect(remediationContractMigration).toContain("retrieval_eligible");
+    expect(remediationContractMigration).toContain("revoke select on table media_assets from authenticated");
+    expect(remediationContractMigration).toContain("deny direct access");
+    expect(remediationContractMigration).toContain("revoke execute on function p85_stage_4b3_load_bounded_media_metadata_v1");
+  });
+});
+
+describe("P85 Stage 4B-3 remediation R2 durable queue migration", () => {
+  it("creates object deletion saga queue and V2 lease-token worker RPCs", () => {
+    expect(durableQueueMigration).toContain("media_object_operations");
+    expect(durableQueueMigration).toContain("p85_stage_4b3_claim_media_work_v2");
+    expect(durableQueueMigration).toContain("p85_stage_4b3_claim_bundle_v2");
+    expect(durableQueueMigration).toContain("lease_token");
+    expect(durableQueueMigration).toContain("for update skip locked");
+    expect(durableQueueMigration).toContain("p85_stage_4b3_load_bounded_media_v2");
+    expect(durableQueueMigration).not.toContain("'observation', va.observation");
+    expect(durableQueueMigration).toContain("grant execute on function p85_stage_4b3_load_bounded_media_v2");
+  });
+});

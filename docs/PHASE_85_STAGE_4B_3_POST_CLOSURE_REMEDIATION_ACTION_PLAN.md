@@ -1,7 +1,7 @@
 # Phase 85 Stage 4B-3 Post-Closure Remediation Action Plan
 
 Date opened: 2026-07-14
-Status: **R1 complete; R2 next; Stage 4B-3 closure reopened; Stage 4C blocked**
+Status: **R2 complete; R3 next; Stage 4B-3 closure reopened; Stage 4C blocked**
 
 This document is the active authority after the post-closure audit of the local Stage 4B-3 implementation. The original Stage 4B-3 plan, specification, and Phase 12 closure evidence remain historical records. They are not Stage 4C authorization.
 
@@ -45,4 +45,4 @@ Production remains `NO-GO`. Real WhatsApp, Telegram, Gemini, external LLM, produ
 
 R0 is complete only when active handoff documents name this remediation track as current, the original closure artifacts are explicitly historical, R-442 through R-450 are reopened, R-4B3-01 through R-4B3-13 are open, Stage 4C authorization is false, production `NO-GO` and R-405 open remain explicit, and `git diff --check` passes.
 
-R1 is complete. Evidence: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_R1_EVIDENCE.md`. R2 is the next authorized phase. R0 and R1 do not alter production runtime paths beyond contract registration.
+R2 is complete. Evidence: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_R2_EVIDENCE.md`. R3 is the next authorized phase. R0-R2 do not switch webhook ingress or replace test-subprocess workers.

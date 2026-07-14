@@ -211,7 +211,7 @@ describe("phase-85-stage-4b3-bundle-orchestration", () => {
     expect(turn.state.messages.length).toBe(beforeMessages + 1);
     expect(turn.state.aiDecisions.length).toBe(beforeDecisions + 1);
     const bundle = turn.state.inboundMessageBundles.find((entry) => entry.id === "bundle-mm-1");
-    expect(bundle?.status).toBe("completed");
+    expect(bundle?.status).toBe("decided");
     expect(bundle?.decisionId).toBe(turn.decisionId);
     const outbound = turn.state.messages.find((message) => message.generatedByAiDecisionId === turn.decisionId);
     expect(outbound?.status).toBe("sent");

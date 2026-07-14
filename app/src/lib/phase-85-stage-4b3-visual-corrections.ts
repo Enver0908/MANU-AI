@@ -138,7 +138,7 @@ export function submitVisualCorrection(
           entry.id === bundle.id
             ? {
                 ...entry,
-                status: entry.status === "completed" ? "ready" : entry.status,
+                status: entry.status === "decided" || entry.status === "completed" ? "ready" : entry.status,
                 decisionId: null,
                 leaseExpiresAt: null,
                 bundleRevision: entry.bundleRevision + 1,

@@ -138,7 +138,9 @@ function findBundleForMessage(
   return (
     bundles.find((bundle) => bundle.anchorMessageId === messageId) ??
     bundles.find((bundle) =>
-      bundle.status !== "superseded" && bundle.status !== "completed" ? bundle.anchorMessageId === messageId : false,
+      bundle.status !== "superseded" && bundle.status !== "decided" && bundle.status !== "completed"
+        ? bundle.anchorMessageId === messageId
+        : false,
     ) ??
     null
   );

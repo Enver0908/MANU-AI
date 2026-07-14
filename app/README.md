@@ -1,6 +1,6 @@
 # MANU-AI Local App Prototype
 
-**Current authority (2026-07-14):** Stage 4B-3 remediation R0 and R1 are complete locally; R2 is next; Stage 4C is blocked. Active plan: `../docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. R1 evidence: `../docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_R1_EVIDENCE.md`. V2 contracts: `src/lib/phase-85-stage-4b3-media-contracts-v2.ts`. Runtime provider/channel paths remain disabled.
+**Current authority (2026-07-14):** Stage 4B-3 remediation R0, R1, and R2 are complete locally; R3 is next; Stage 4C is blocked. Active plan: `../docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. R2 evidence: `../docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_R2_EVIDENCE.md`. V2 contracts: `src/lib/phase-85-stage-4b3-media-contracts-v2.ts`. Runtime provider/channel paths remain disabled.
 
 2026-07-14: **Stage 4B-3 Phase 12 golden corpus, red team, scale rehearsal, and closure evidence is complete locally.** Closure evaluator in `src/lib/phase-85-stage-4b3-closure.ts`, golden corpus in `src/lib/phase-85-stage-4b3-golden-corpus.jsonl`, rehearsal via `npm run rehearse:stage-4b3:media`, visual spec in `tests/visual/stage-4b3-media.visual.spec.ts`. Evidence: `../docs/PHASE_85_STAGE_4B_3_PHASE_12_GOLDEN_CORPUS_RED_TEAM_CLOSURE_EVIDENCE.md`. Canonical spec: `../docs/PHASE_85_STAGE_4B_3_MULTIMODAL_GORSEL_GUVENLIK_SPEC.md`. **Next:** Stage 4C plan/read gate. Production pilot remains `NO-GO`.
 

@@ -29,7 +29,7 @@ export function commitInboundBundleDecision(
   }
 
   if (candidateState.processedBundleDecisionKeys.includes(input.idempotencyKey)) {
-    if (bundle.decisionId === input.decisionId && bundle.status === "completed") {
+    if (bundle.decisionId === input.decisionId && (bundle.status === "decided" || bundle.status === "completed")) {
       return { ok: true, state: candidateState };
     }
     return { ok: false, failureCode: "idempotency_key_conflict", state: candidateState };
@@ -63,7 +63,7 @@ export function commitInboundBundleDecision(
       entry.id === bundle.id
         ? {
             ...entry,
-            status: "completed",
+            status: "decided",
             decisionId: input.decisionId,
             leaseExpiresAt: null,
             updatedAt: now,

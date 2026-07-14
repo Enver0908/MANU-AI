@@ -127,6 +127,8 @@ describe("phase-85-stage-4b3-supabase-mappers", () => {
       item_type: "image",
       caption_text: null,
       reply_to_provider_message_id: null,
+      actor_type: "dietitian",
+      sender_id: "dietitian-1",
       observed_at: "2026-07-13T00:00:00.000Z",
       created_at: "2026-07-13T00:00:00.000Z",
     };
@@ -152,6 +154,7 @@ describe("phase-85-stage-4b3-supabase-mappers", () => {
 
     expect(mapInboundMessageBundle(bundle).status).toBe("ready");
     expect(mapInboundMessageBundleItem(item).itemType).toBe("image");
+    expect(mapInboundMessageBundleItem(item).actorType).toBe("dietitian");
     expect(mapVisualCorrection(correction).reasonCode).toBe("wrong_scene");
   });
 });

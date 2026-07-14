@@ -1,6 +1,6 @@
 # Handoff For Next Codex
 
-**Current authority (2026-07-14):** Stage 4B-3 post-closure remediation R0 and R1 are complete locally. R2 durable DB/RLS/queue foundation is next. Stage 4C remains blocked. Active plan: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. R1 evidence: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_R1_EVIDENCE.md`. Production remains `NO-GO`; R-405 remains open.
+**Current authority (2026-07-14):** Stage 4B-3 post-closure remediation R0, R1, and R2 are complete locally. R3 canonical ingress and real worker runtime is next. Stage 4C remains blocked. Active plan: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. R2 evidence: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_R2_EVIDENCE.md`. Production remains `NO-GO`; R-405 remains open.
 
 All pre-existing Stage 4B-3 closure and Stage 4C-next paragraphs below this authority block are historical snapshots and must not be used as an implementation handoff.
 

@@ -51,6 +51,8 @@ export type DbVisualAnalysisRecord = {
   observation: VisualObservationV1 | null;
   superseded_by_analysis_id: string | null;
   failure_code: string | null;
+  retrieval_eligible?: boolean | null;
+  evidence_expires_at?: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -91,6 +93,9 @@ export type DbInboundMessageBundleItem = {
   item_type: InboundMessageBundleItemRecord["itemType"];
   caption_text: string | null;
   reply_to_provider_message_id: string | null;
+  actor_type?: string | null;
+  sender_id?: string | null;
+  reply_to_message_id?: string | null;
   observed_at: string;
   created_at: string;
 };
@@ -172,6 +177,8 @@ export function mapVisualAnalysisRecord(row: DbVisualAnalysisRecord): VisualAnal
     observation: parseObservation(row.observation),
     supersededByAnalysisId: row.superseded_by_analysis_id,
     failureCode: row.failure_code,
+    retrievalEligible: row.retrieval_eligible ?? true,
+    evidenceExpiresAt: row.evidence_expires_at ?? null,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
@@ -215,6 +222,12 @@ export function mapInboundMessageBundleItem(row: DbInboundMessageBundleItem): In
     itemType: row.item_type,
     captionText: row.caption_text,
     replyToProviderMessageId: row.reply_to_provider_message_id,
+    actorType:
+      row.actor_type === "client" || row.actor_type === "dietitian" || row.actor_type === "system"
+        ? row.actor_type
+        : undefined,
+    senderId: row.sender_id ?? undefined,
+    replyToMessageId: row.reply_to_message_id ?? null,
     observedAt: row.observed_at,
     createdAt: row.created_at,
   };

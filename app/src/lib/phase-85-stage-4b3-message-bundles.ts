@@ -391,7 +391,7 @@ export function releaseInboundBundleLease(
     return state;
   }
 
-  const nextStatus: InboundMessageBundleStatus = input.success ? "completed" : "ready";
+  const nextStatus: InboundMessageBundleStatus = input.success ? "decided" : "ready";
   return {
     ...state,
     inboundMessageBundles: state.inboundMessageBundles.map((entry) =>

@@ -2048,58 +2048,36 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     await resetSupabaseState();
   }, 30000);
 
-  it("scopes Stage 4B-3 media tables to assigned conversations and blocks direct writes", async () => {
+  it("denies authenticated direct reads on Stage 4B-3 media tables", async () => {
     const member = await signIn("rls-member@manu.local");
     const assistant = await signIn("rls-assistant@manu.local");
     const auditor = await signIn("rls-auditor@manu.local");
 
-    const visibleAssets = await member.from("media_assets").select("id").eq("id", TEST_STAGE4B3_MEDIA_ASSET_ID);
-    expect(visibleAssets.error).toBeNull();
-    expect(visibleAssets.data).toEqual([{ id: TEST_STAGE4B3_MEDIA_ASSET_ID }]);
+    for (const client of [member, assistant, auditor]) {
+      const assets = await client.from("media_assets").select("id").eq("id", TEST_STAGE4B3_MEDIA_ASSET_ID);
+      expect(assets.error?.message).toMatch(/permission denied|row-level security/i);
 
-    const hiddenAssets = await member.from("media_assets").select("id").eq("id", OTHER_STAGE4B3_MEDIA_ASSET_ID);
-    expect(hiddenAssets.error).toBeNull();
-    expect(hiddenAssets.data).toEqual([]);
+      const analysis = await client
+        .from("visual_analysis_records")
+        .select("id")
+        .eq("id", TEST_STAGE4B3_VISUAL_ANALYSIS_ID);
+      expect(analysis.error?.message).toMatch(/permission denied|row-level security/i);
 
-    const assistantAssets = await assistant.from("media_assets").select("id").eq("id", TEST_STAGE4B3_MEDIA_ASSET_ID);
-    expect(assistantAssets.error).toBeNull();
-    expect(assistantAssets.data).toEqual([{ id: TEST_STAGE4B3_MEDIA_ASSET_ID }]);
+      const bundles = await client.from("inbound_message_bundles").select("id").eq("id", TEST_STAGE4B3_BUNDLE_ID);
+      expect(bundles.error?.message).toMatch(/permission denied|row-level security/i);
 
-    const auditorAssets = await auditor.from("media_assets").select("id").eq("id", TEST_STAGE4B3_MEDIA_ASSET_ID);
-    expect(auditorAssets.error).toBeNull();
-    expect(auditorAssets.data).toEqual([]);
+      const bundleItems = await client
+        .from("inbound_message_bundle_items")
+        .select("id")
+        .eq("id", TEST_STAGE4B3_BUNDLE_ITEM_ID);
+      expect(bundleItems.error?.message).toMatch(/permission denied|row-level security/i);
 
-    const visibleAnalysis = await member
-      .from("visual_analysis_records")
-      .select("id")
-      .eq("id", TEST_STAGE4B3_VISUAL_ANALYSIS_ID);
-    expect(visibleAnalysis.error).toBeNull();
-    expect(visibleAnalysis.data).toEqual([{ id: TEST_STAGE4B3_VISUAL_ANALYSIS_ID }]);
-
-    const visibleBundles = await member.from("inbound_message_bundles").select("id").eq("id", TEST_STAGE4B3_BUNDLE_ID);
-    expect(visibleBundles.error).toBeNull();
-    expect(visibleBundles.data).toEqual([{ id: TEST_STAGE4B3_BUNDLE_ID }]);
-
-    const visibleBundleItems = await member
-      .from("inbound_message_bundle_items")
-      .select("id")
-      .eq("id", TEST_STAGE4B3_BUNDLE_ITEM_ID);
-    expect(visibleBundleItems.error).toBeNull();
-    expect(visibleBundleItems.data).toEqual([{ id: TEST_STAGE4B3_BUNDLE_ITEM_ID }]);
-
-    const memberCorrections = await member
-      .from("visual_corrections")
-      .select("id")
-      .eq("id", TEST_STAGE4B3_VISUAL_CORRECTION_ID);
-    expect(memberCorrections.error).toBeNull();
-    expect(memberCorrections.data).toEqual([{ id: TEST_STAGE4B3_VISUAL_CORRECTION_ID }]);
-
-    const assistantCorrections = await assistant
-      .from("visual_corrections")
-      .select("id")
-      .eq("id", TEST_STAGE4B3_VISUAL_CORRECTION_ID);
-    expect(assistantCorrections.error).toBeNull();
-    expect(assistantCorrections.data).toEqual([]);
+      const corrections = await client
+        .from("visual_corrections")
+        .select("id")
+        .eq("id", TEST_STAGE4B3_VISUAL_CORRECTION_ID);
+      expect(corrections.error?.message).toMatch(/permission denied|row-level security/i);
+    }
 
     const directInsert = await member.from("media_assets").insert({
       id: "00000000-0000-4000-8000-000000000975",
@@ -2168,6 +2146,70 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     });
     expect(releasedBundle.error).toBeNull();
     expect(releasedBundle.data?.lease_owner).toBeNull();
+  });
+
+  it("claims Stage 4B-3 V2 worker leases with lease tokens and blocks authenticated bounded media RPCs", async () => {
+    const member = await signIn("rls-member@manu.local");
+
+    const deniedV2Claim = await member.rpc("p85_stage_4b3_claim_media_work_v2", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_worker_id: "blocked-worker",
+    });
+    expect(deniedV2Claim.error?.message).toMatch(/permission denied|service_role_required/i);
+
+    const claimedAsset = await admin.rpc("p85_stage_4b3_claim_media_work_v2", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_worker_id: "rls-v2-worker",
+    });
+    expect(claimedAsset.error).toBeNull();
+    expect(claimedAsset.data?.[0]?.id).toBe(TEST_STAGE4B3_CLAIM_MEDIA_ASSET_ID);
+    expect(claimedAsset.data?.[0]?.lease_token).toBeTruthy();
+
+    const deniedRelease = await admin.rpc("p85_stage_4b3_release_media_work_v2", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_asset_id: TEST_STAGE4B3_CLAIM_MEDIA_ASSET_ID,
+      p_worker_id: "rls-v2-worker",
+      p_lease_token: "00000000-0000-4000-8000-000000000999",
+      p_success: true,
+    });
+    expect(deniedRelease.error?.message).toMatch(/media_asset_lease_not_found/i);
+
+    const releasedAsset = await admin.rpc("p85_stage_4b3_release_media_work_v2", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_asset_id: TEST_STAGE4B3_CLAIM_MEDIA_ASSET_ID,
+      p_worker_id: "rls-v2-worker",
+      p_lease_token: claimedAsset.data?.[0]?.lease_token,
+      p_success: true,
+    });
+    expect(releasedAsset.error).toBeNull();
+    expect(releasedAsset.data?.lease_token).toBeNull();
+
+    const deniedMetadata = await member.rpc("p85_stage_4b3_load_bounded_media_v2", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_user_id: memberUserId,
+      p_dietitian_id: TEST_DIETITIAN_ID,
+      p_role: "owner",
+      p_conversation_id: TEST_CONVERSATION_ID,
+      p_message_ids: [TEST_MESSAGE_ID],
+    });
+    expect(deniedMetadata.error?.message).toMatch(/permission denied|service_role_required/i);
+
+    const metadata = await admin.rpc("p85_stage_4b3_load_bounded_media_v2", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_user_id: memberUserId,
+      p_dietitian_id: TEST_DIETITIAN_ID,
+      p_role: "owner",
+      p_conversation_id: TEST_CONVERSATION_ID,
+      p_message_ids: [TEST_MESSAGE_ID],
+    });
+    expect(metadata.error).toBeNull();
+    const analysisRows = metadata.data?.visual_analysis_records ?? [];
+    expect(Array.isArray(analysisRows)).toBe(true);
+    if (analysisRows.length > 0) {
+      expect(analysisRows[0]).not.toHaveProperty("observation");
+      expect(analysisRows[0]).toHaveProperty("scene_type");
+      expect(analysisRows[0]).toHaveProperty("retrieval_eligible");
+    }
   });
 });
 
@@ -2971,6 +3013,8 @@ async function seedTenants(
         media_asset_id: TEST_STAGE4B3_MEDIA_ASSET_ID,
         ordinal: 1,
         item_type: "image",
+        actor_type: "client",
+        sender_id: TEST_CLIENT_ID,
       },
       {
         id: OTHER_STAGE4B3_BUNDLE_ITEM_ID,
@@ -2980,6 +3024,8 @@ async function seedTenants(
         media_asset_id: OTHER_STAGE4B3_MEDIA_ASSET_ID,
         ordinal: 1,
         item_type: "image",
+        actor_type: "client",
+        sender_id: OTHER_CLIENT_ID,
       },
     ]),
   );

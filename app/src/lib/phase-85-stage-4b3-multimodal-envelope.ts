@@ -38,6 +38,7 @@ export type Stage4B3BoundedVisualProviderContext = {
 const TERMINAL_BUNDLE_STATUSES = new Set<InboundMessageBundleRecord["status"]>([
   "ready",
   "processing",
+  "decided",
   "completed",
 ]);
 

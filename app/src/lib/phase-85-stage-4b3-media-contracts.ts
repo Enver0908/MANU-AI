@@ -42,10 +42,12 @@ export const INBOUND_MESSAGE_BUNDLE_STATUSES = [
   "open",
   "ready",
   "processing",
+  "decided",
   "completed",
   "review_required",
   "failed",
   "superseded",
+  "cancelled",
 ] as const;
 
 export type InboundMessageBundleStatus = (typeof INBOUND_MESSAGE_BUNDLE_STATUSES)[number];
@@ -214,6 +216,8 @@ export type VisualAnalysisRecord = {
   observation: VisualObservationV1 | null;
   supersededByAnalysisId: string | null;
   failureCode: string | null;
+  retrievalEligible?: boolean;
+  evidenceExpiresAt?: string | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -253,6 +257,9 @@ export type InboundMessageBundleItemRecord = {
   itemType: InboundMessageBundleItemType;
   captionText: string | null;
   replyToProviderMessageId: string | null;
+  actorType?: "client" | "dietitian" | "system";
+  senderId?: string;
+  replyToMessageId?: string | null;
   observedAt: string;
   createdAt: string;
 };
