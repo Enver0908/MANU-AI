@@ -55,4 +55,4 @@ Executed on 2026-07-15:
 
 ## Handoff
 
-Next implementation work is Stage 4B-4 Phase 2: Supabase schema, private audio storage, RLS, and queue foundation. Stage 4C remains blocked. Production pilot remains `NO-GO`; R-405 remains open; real provider/channel/STT egress paths remain closed.
+Next implementation work is Stage 4B-4 Phase 3: canonical WhatsApp audio ingress and secure admission. Stage 4C remains blocked. Production pilot remains `NO-GO`; R-405 remains open; real provider/channel/STT egress paths remain closed.

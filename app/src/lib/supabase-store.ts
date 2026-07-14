@@ -146,6 +146,10 @@ import {
   resolveDraftMutationResultMessage,
 } from "./phase-85-stage-4b2-mutations";
 import { createEmptyStage4B3MediaCollections } from "./phase-85-stage-4b3-media-contracts";
+import {
+  mapAudioTranscriptionRecord,
+  mapAudioTranscriptCorrection,
+} from "./phase-85-stage-4b4-supabase-mappers";
 import { createEmptyStage4B4VoiceCollections } from "./phase-85-stage-4b4-voice-contracts";
 import { loadBoundedMediaProjectionFromSupabaseV2 } from "./phase-85-stage-4b3-bounded-media-rpc";
 import { prepareSupabaseClientMediaDsar } from "./phase-85-stage-4b3-media-lifecycle-saga";
@@ -840,6 +844,9 @@ export async function loadSupabaseState(context = demoTenantContext()) {
     visualCorrectionsResult,
     bundleDecisionIdempotencyResult,
     visualCorrectionIdempotencyResult,
+    audioTranscriptionRecordsResult,
+    audioTranscriptCorrectionsResult,
+    audioTranscriptCorrectionIdempotencyResult,
   ] = await Promise.all([
     supabase.from("tenants").select("*").eq("id", context.tenantId).single(),
     supabase.from("dietitians").select("*").eq("id", context.dietitianId).eq("tenant_id", context.tenantId).single(),
@@ -905,6 +912,12 @@ export async function loadSupabaseState(context = demoTenantContext()) {
       .from("visual_correction_idempotency")
       .select("idempotency_key, correction_id, response_json")
       .eq("tenant_id", context.tenantId),
+    supabase.from("audio_transcription_records").select("*").eq("tenant_id", context.tenantId).order("created_at"),
+    supabase.from("audio_transcript_corrections").select("*").eq("tenant_id", context.tenantId).order("created_at"),
+    supabase
+      .from("audio_transcript_correction_idempotency")
+      .select("dedupe_key, correction_id, response_json")
+      .eq("tenant_id", context.tenantId),
   ]);
 
   throwIfError(tenantResult.error);
@@ -955,6 +968,9 @@ export async function loadSupabaseState(context = demoTenantContext()) {
   throwIfError(visualCorrectionsResult.error);
   throwIfError(bundleDecisionIdempotencyResult.error);
   throwIfError(visualCorrectionIdempotencyResult.error);
+  throwIfError(audioTranscriptionRecordsResult.error);
+  throwIfError(audioTranscriptCorrectionsResult.error);
+  throwIfError(audioTranscriptCorrectionIdempotencyResult.error);
 
   const channels = channelsResult.data || [];
   const memories = memoriesResult.data || [];
@@ -1057,6 +1073,26 @@ export async function loadSupabaseState(context = demoTenantContext()) {
         }),
       ),
       ...createEmptyStage4B4VoiceCollections(),
+      audioTranscriptionRecords: (audioTranscriptionRecordsResult.data || []).map(mapAudioTranscriptionRecord),
+      audioTranscriptCorrections: (audioTranscriptCorrectionsResult.data || []).map(mapAudioTranscriptCorrection),
+      processedTranscriptCorrectionRequestIds: (audioTranscriptCorrectionIdempotencyResult.data || []).map(
+        (row) => row.dedupe_key as string,
+      ),
+      transcriptCorrectionReplayByRequestId: Object.fromEntries(
+        (audioTranscriptCorrectionIdempotencyResult.data || []).map((row) => {
+          const responseJson =
+            row.response_json && typeof row.response_json === "object"
+              ? (row.response_json as { resultAction?: string })
+              : {};
+          return [
+            row.dedupe_key as string,
+            {
+              correctionId: row.correction_id as string,
+              resultAction: responseJson.resultAction ?? "manual_follow_up",
+            },
+          ];
+        }),
+      ),
     }),
     context,
     assignmentsResult.data || [],

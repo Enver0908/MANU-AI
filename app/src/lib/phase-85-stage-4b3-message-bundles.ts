@@ -131,6 +131,8 @@ export function openInboundMessageBundle(
     conversationRevisionAtOpen,
     itemCount: counts.itemCount,
     imageCount: counts.imageCount,
+    audioCount: 0,
+    audioDurationMs: 0,
     unicodeCodepointCount: counts.unicodeCodepointCount,
     retryCount: 0,
     nextAttemptAt: null,

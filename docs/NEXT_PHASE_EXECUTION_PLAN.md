@@ -4,7 +4,7 @@
 
 Pre-Stage-4B-4 Stage 4B-3 closure and Stage 4C-next paragraphs below this authority block are historical snapshots. Use the Stage 4B-4 plan as the current implementation handoff.
 
-Current execution handoff, 2026-07-15: Phase 85 Stage 4B-4 Phase 1 domain/type contract is complete locally. Evidence: `docs/PHASE_85_STAGE_4B_4_PHASE_1_DOMAIN_TYPE_CONTRACT_EVIDENCE.md`. **Next:** Stage 4B-4 Phase 2 persistence, private audio storage, RLS, and queue foundation. Stage 4C is blocked until Stage 4B-4 implementation, verification, evidence closure, and risk reconciliation pass. Production remains `NO-GO`; R-405 remains open; real integration paths remain closed.
+Current execution handoff, 2026-07-15: Phase 85 Stage 4B-4 Phase 2 database/storage/RLS foundation is complete locally. Evidence: `docs/PHASE_85_STAGE_4B_4_PHASE_2_DATABASE_STORAGE_RLS_EVIDENCE.md`. **Next:** Stage 4B-4 Phase 3 canonical WhatsApp audio ingress and secure admission. Stage 4C is blocked until Stage 4B-4 implementation, verification, evidence closure, and risk reconciliation pass. Production remains `NO-GO`; R-405 remains open; real integration paths remain closed.
 
 ## Current Position
 

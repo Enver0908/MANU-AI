@@ -105,6 +105,13 @@ const OTHER_STAGE4B3_BUNDLE_ITEM_ID = "00000000-0000-4000-8000-000000000971";
 const TEST_STAGE4B3_VISUAL_CORRECTION_ID = "00000000-0000-4000-8000-000000000972";
 const OTHER_STAGE4B3_VISUAL_CORRECTION_ID = "00000000-0000-4000-8000-000000000973";
 const TEST_STAGE4B3_CLAIM_MESSAGE_ID = "00000000-0000-4000-8000-000000000974";
+const TEST_STAGE4B4_AUDIO_ASSET_ID = "00000000-0000-4000-8000-000000000987";
+const TEST_STAGE4B4_CLAIM_AUDIO_ASSET_ID = "00000000-0000-4000-8000-000000000988";
+const TEST_STAGE4B4_TRANSCRIPTION_ID = "00000000-0000-4000-8000-000000000989";
+const TEST_STAGE4B4_CLAIM_TRANSCRIPTION_ID = "00000000-0000-4000-8000-000000000990";
+const TEST_STAGE4B4_AUDIO_MESSAGE_ID = "00000000-0000-4000-8000-000000000991";
+const TEST_STAGE4B4_VISIBLE_AUDIO_MESSAGE_ID = "00000000-0000-4000-8000-000000000994";
+const TEST_STAGE4B4_TRANSCRIPT_CORRECTION_ID = "00000000-0000-4000-8000-000000000992";
 const PASSWORD = "manu-rls-test-password";
 
 const maybeDescribe = shouldRun ? describe : describe.skip;
@@ -2211,6 +2218,105 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
       expect(analysisRows[0]).toHaveProperty("retrieval_eligible");
     }
   });
+
+  it("denies authenticated direct reads on Stage 4B-4 audio tables", async () => {
+    const member = await signIn("rls-member@manu.local");
+    const assistant = await signIn("rls-assistant@manu.local");
+    const auditor = await signIn("rls-auditor@manu.local");
+
+    for (const client of [member, assistant, auditor]) {
+      const transcriptions = await client
+        .from("audio_transcription_records")
+        .select("id")
+        .eq("id", TEST_STAGE4B4_TRANSCRIPTION_ID);
+      expect(transcriptions.error?.message).toMatch(/permission denied|row-level security/i);
+
+      const corrections = await client
+        .from("audio_transcript_corrections")
+        .select("id")
+        .eq("id", TEST_STAGE4B4_TRANSCRIPT_CORRECTION_ID);
+      expect(corrections.error?.message).toMatch(/permission denied|row-level security/i);
+
+      const idempotency = await client
+        .from("audio_transcript_correction_idempotency")
+        .select("dedupe_key")
+        .eq("tenant_id", TEST_TENANT_ID);
+      expect(idempotency.error?.message).toMatch(/permission denied|row-level security/i);
+    }
+
+    const directInsert = await member.from("audio_transcription_records").insert({
+      id: "00000000-0000-4000-8000-000000000993",
+      tenant_id: TEST_TENANT_ID,
+      client_id: TEST_CLIENT_ID,
+      conversation_id: TEST_CONVERSATION_ID,
+      message_id: TEST_MESSAGE_ID,
+      media_asset_id: TEST_STAGE4B4_AUDIO_ASSET_ID,
+      locale: "tr-TR",
+      status: "pending",
+    });
+    expect(directInsert.error?.message).toMatch(/permission denied|row-level security/i);
+
+    const bucket = await admin.storage.getBucket("p85-stage-4b4-audio");
+    expect(bucket.error).toBeNull();
+    expect(bucket.data?.public).toBe(false);
+  });
+
+  it("claims Stage 4B-4 audio worker leases through service-role RPCs only", async () => {
+    const member = await signIn("rls-member@manu.local");
+
+    const deniedAudioClaim = await member.rpc("p85_stage_4b4_claim_audio_admission_work_v1", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_worker_id: "blocked-worker",
+    });
+    expect(deniedAudioClaim.error?.message).toMatch(/permission denied|service_role_required/i);
+
+    const claimedAudio = await admin.rpc("p85_stage_4b4_claim_audio_admission_work_v1", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_worker_id: "rls-test-audio-worker",
+    });
+    expect(claimedAudio.error).toBeNull();
+    expect(claimedAudio.data?.[0]?.id).toBe(TEST_STAGE4B4_CLAIM_AUDIO_ASSET_ID);
+    expect(claimedAudio.data?.[0]?.lease_owner).toBe("rls-test-audio-worker");
+    expect(claimedAudio.data?.[0]?.lease_token).toBeTruthy();
+
+    const releasedAudio = await admin.rpc("p85_stage_4b4_release_audio_admission_work_v1", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_asset_id: TEST_STAGE4B4_CLAIM_AUDIO_ASSET_ID,
+      p_worker_id: "rls-test-audio-worker",
+      p_lease_token: claimedAudio.data?.[0]?.lease_token,
+      p_success: true,
+    });
+    expect(releasedAudio.error).toBeNull();
+    expect(releasedAudio.data?.lease_owner).toBeNull();
+    expect(releasedAudio.data?.lease_token).toBeNull();
+
+    const deniedTranscriptionClaim = await member.rpc("p85_stage_4b4_claim_transcription_work_v1", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_worker_id: "blocked-worker",
+    });
+    expect(deniedTranscriptionClaim.error?.message).toMatch(/permission denied|service_role_required/i);
+
+    const claimedTranscription = await admin.rpc("p85_stage_4b4_claim_transcription_work_v1", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_worker_id: "rls-test-transcription-worker",
+    });
+    expect(claimedTranscription.error).toBeNull();
+    expect(claimedTranscription.data?.[0]?.id).toBe(TEST_STAGE4B4_CLAIM_TRANSCRIPTION_ID);
+    expect(claimedTranscription.data?.[0]?.status).toBe("processing");
+    expect(claimedTranscription.data?.[0]?.lease_token).toBeTruthy();
+
+    const releasedTranscription = await admin.rpc("p85_stage_4b4_release_transcription_work_v1", {
+      p_tenant_id: TEST_TENANT_ID,
+      p_transcription_id: TEST_STAGE4B4_CLAIM_TRANSCRIPTION_ID,
+      p_worker_id: "rls-test-transcription-worker",
+      p_lease_token: claimedTranscription.data?.[0]?.lease_token,
+      p_success: true,
+      p_terminal_status: "accepted",
+    });
+    expect(releasedTranscription.error).toBeNull();
+    expect(releasedTranscription.data?.status).toBe("accepted");
+    expect(releasedTranscription.data?.lease_owner).toBeNull();
+  });
 });
 
 function loadEnvLocal() {
@@ -2418,6 +2524,14 @@ async function seedTenants(
         provider_message_id: "rls-visible-provider-message",
       },
       {
+        id: TEST_STAGE4B4_VISIBLE_AUDIO_MESSAGE_ID,
+        tenant_id: TEST_TENANT_ID,
+        conversation_id: TEST_CONVERSATION_ID,
+        sender: "client",
+        origin: "client_inbound",
+        body: "Stage 4B-4 visible audio message",
+      },
+      {
         id: OTHER_MESSAGE_ID,
         tenant_id: OTHER_TENANT_ID,
         conversation_id: OTHER_CONVERSATION_ID,
@@ -2432,6 +2546,14 @@ async function seedTenants(
         sender: "client",
         origin: "client_inbound",
         body: "Stage 4B-3 claim message",
+      },
+      {
+        id: TEST_STAGE4B4_AUDIO_MESSAGE_ID,
+        tenant_id: TEST_TENANT_ID,
+        conversation_id: UNASSIGNED_CONVERSATION_ID,
+        sender: "client",
+        origin: "client_inbound",
+        body: "Stage 4B-4 audio claim message",
       },
     ]),
   );
@@ -2937,6 +3059,34 @@ async function seedTenants(
         declared_mime_type: "image/jpeg",
         status: "download_pending",
       },
+      {
+        id: TEST_STAGE4B4_AUDIO_ASSET_ID,
+        tenant_id: TEST_TENANT_ID,
+        client_id: TEST_CLIENT_ID,
+        conversation_id: TEST_CONVERSATION_ID,
+        message_id: TEST_STAGE4B4_VISIBLE_AUDIO_MESSAGE_ID,
+        media_kind: "audio",
+        voice_message: true,
+        declared_mime_type: "audio/wav",
+        detected_mime_type: "audio/wav",
+        duration_ms: 3200,
+        audio_codec: "pcm_s16le",
+        audio_channels: 1,
+        sample_rate_hz: 16000,
+        sanitized_audio_object_key: "tenant/visible/voice.wav",
+        status: "analysis_ready",
+      },
+      {
+        id: TEST_STAGE4B4_CLAIM_AUDIO_ASSET_ID,
+        tenant_id: TEST_TENANT_ID,
+        client_id: UNASSIGNED_CLIENT_ID,
+        conversation_id: UNASSIGNED_CONVERSATION_ID,
+        message_id: TEST_STAGE4B4_AUDIO_MESSAGE_ID,
+        media_kind: "audio",
+        voice_message: true,
+        declared_mime_type: "audio/wav",
+        status: "admitted",
+      },
     ]),
   );
   await checked(
@@ -3060,6 +3210,50 @@ async function seedTenants(
     ]),
   );
   await checked(
+    admin.from("audio_transcription_records").insert([
+      {
+        id: TEST_STAGE4B4_TRANSCRIPTION_ID,
+        tenant_id: TEST_TENANT_ID,
+        client_id: TEST_CLIENT_ID,
+        conversation_id: TEST_CONVERSATION_ID,
+        message_id: TEST_STAGE4B4_VISIBLE_AUDIO_MESSAGE_ID,
+        media_asset_id: TEST_STAGE4B4_AUDIO_ASSET_ID,
+        locale: "tr-TR",
+        status: "accepted",
+        retrieval_eligible: true,
+      },
+      {
+        id: TEST_STAGE4B4_CLAIM_TRANSCRIPTION_ID,
+        tenant_id: TEST_TENANT_ID,
+        client_id: UNASSIGNED_CLIENT_ID,
+        conversation_id: UNASSIGNED_CONVERSATION_ID,
+        message_id: TEST_STAGE4B4_AUDIO_MESSAGE_ID,
+        media_asset_id: TEST_STAGE4B4_CLAIM_AUDIO_ASSET_ID,
+        locale: "tr-TR",
+        status: "pending",
+        retrieval_eligible: false,
+      },
+    ]),
+  );
+  await checked(
+    admin.from("audio_transcript_corrections").insert([
+      {
+        id: TEST_STAGE4B4_TRANSCRIPT_CORRECTION_ID,
+        tenant_id: TEST_TENANT_ID,
+        client_id: TEST_CLIENT_ID,
+        conversation_id: TEST_CONVERSATION_ID,
+        transcription_id: TEST_STAGE4B4_TRANSCRIPTION_ID,
+        dietitian_id: TEST_DIETITIAN_ID,
+        reason_code: "wrong_word",
+        explanation: "Visible transcript correction",
+        corrected_transcript: "Merhaba dunya",
+        conversation_revision_at_submit: 1,
+        transcription_revision_at_submit: 1,
+        result_action: "supersede_rerun",
+      },
+    ]),
+  );
+  await checked(
     admin.from("commercial_invites").insert([
       {
         id: TEST_COMMERCIAL_INVITE_ID,
@@ -3149,6 +3343,9 @@ async function seedTenants(
 
 async function cleanup(admin: SupabaseClient) {
   await admin.from("processed_inbound_events").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("audio_transcript_correction_idempotency").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("audio_transcript_corrections").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("audio_transcription_records").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("visual_corrections").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("inbound_message_bundle_items").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("visual_analysis_records").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);

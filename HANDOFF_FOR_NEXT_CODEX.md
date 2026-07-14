@@ -1,6 +1,6 @@
 # Handoff For Next Codex
 
-**Current authority (2026-07-15):** Stage 4B-4 Sesli Mesaj Guvenligi ve Transkripsiyon Orkestrasyonu Phase 1 is complete locally after Phase 0. Active plan: `docs/PHASE_85_STAGE_4B_4_SESLI_MESAJ_GUVENLIGI_VE_TRANSKRIPSIYON_ORK_PLAN.md`. Phase 1 evidence: `docs/PHASE_85_STAGE_4B_4_PHASE_1_DOMAIN_TYPE_CONTRACT_EVIDENCE.md`. **Next:** Stage 4B-4 Phase 2 persistence, private audio storage, RLS, and queue foundation. Stage 4C is blocked until Stage 4B-4 closes. Production remains `NO-GO`; R-405 remains open.
+**Current authority (2026-07-15):** Stage 4B-4 Sesli Mesaj Guvenligi ve Transkripsiyon Orkestrasyonu Phase 2 is complete locally after Phase 1. Active plan: `docs/PHASE_85_STAGE_4B_4_SESLI_MESAJ_GUVENLIGI_VE_TRANSKRIPSIYON_ORK_PLAN.md`. Phase 2 evidence: `docs/PHASE_85_STAGE_4B_4_PHASE_2_DATABASE_STORAGE_RLS_EVIDENCE.md`. **Next:** Stage 4B-4 Phase 3 canonical WhatsApp audio ingress and secure admission. Stage 4C is blocked until Stage 4B-4 closes. Production remains `NO-GO`; R-405 remains open.
 
 Pre-Stage-4B-4 Stage 4B-3 closure and Stage 4C-next paragraphs below this authority block are historical snapshots. Use the Stage 4B-4 plan as the current handoff.
 
@@ -8,7 +8,7 @@ Continuity audit, 2026-07-13: canonical status, repository-relative references, 
 
 ## Read This First
 
-Latest Phase 85 handoff (2026-07-15): **Stage 4B-4 Phase 1 voice threat model, domain contract, and type boundary are complete locally.** Phase 1 evidence: `docs/PHASE_85_STAGE_4B_4_PHASE_1_DOMAIN_TYPE_CONTRACT_EVIDENCE.md`. **Next work:** Stage 4B-4 Phase 2 persistence, private audio storage, RLS, and queue foundation. Stage 4C is blocked until Stage 4B-4 closes; production pilot remains `NO-GO`; R-405 remains open; all real integration paths remain closed.
+Latest Phase 85 handoff (2026-07-15): **Stage 4B-4 Phase 2 database, private audio storage, RLS, and queue foundation are complete locally.** Phase 2 evidence: `docs/PHASE_85_STAGE_4B_4_PHASE_2_DATABASE_STORAGE_RLS_EVIDENCE.md`. **Next work:** Stage 4B-4 Phase 3 canonical WhatsApp audio ingress and secure admission. Stage 4C is blocked until Stage 4B-4 closes; production pilot remains `NO-GO`; R-405 remains open; all real integration paths remain closed.
 
 Latest Phase 85 Stage 4B-3 Phase 4 status (2026-07-13): bundle correlation and silence queue complete locally. Evidence: `docs/PHASE_85_STAGE_4B_3_PHASE_4_BUNDLE_SILENCE_QUEUE_EVIDENCE.md`. Phase 5 subsequently completed; see the Phase 5 evidence above.
 

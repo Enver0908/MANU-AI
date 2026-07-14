@@ -25,6 +25,14 @@ export type DbMediaAsset = {
   content_sha256: string | null;
   sanitized_full_object_key: string | null;
   thumbnail_object_key: string | null;
+  media_kind?: "image" | "audio" | null;
+  voice_message?: boolean | null;
+  duration_ms?: number | null;
+  audio_codec?: string | null;
+  audio_channels?: number | null;
+  sample_rate_hz?: number | null;
+  sanitized_audio_object_key?: string | null;
+  transcription_id?: string | null;
   status: MediaAssetRecord["status"];
   retry_count: number;
   next_attempt_at: string | null;
@@ -71,6 +79,8 @@ export type DbInboundMessageBundle = {
   conversation_revision_at_open: number;
   item_count: number;
   image_count: number;
+  audio_count?: number | null;
+  audio_duration_ms?: number | null;
   unicode_codepoint_count: number;
   retry_count: number;
   next_attempt_at: string | null;
@@ -89,6 +99,7 @@ export type DbInboundMessageBundleItem = {
   message_id: string;
   channel_event_id: string | null;
   media_asset_id: string | null;
+  transcription_id?: string | null;
   ordinal: number;
   item_type: InboundMessageBundleItemRecord["itemType"];
   caption_text: string | null;
@@ -150,6 +161,14 @@ export function mapMediaAsset(row: DbMediaAsset): MediaAssetRecord {
     contentSha256: row.content_sha256,
     sanitizedFullObjectKey: row.sanitized_full_object_key,
     thumbnailObjectKey: row.thumbnail_object_key,
+    mediaKind: row.media_kind ?? "image",
+    voiceMessage: row.voice_message ?? null,
+    durationMs: row.duration_ms ?? null,
+    audioCodec: row.audio_codec ?? null,
+    audioChannels: row.audio_channels ?? null,
+    sampleRateHz: row.sample_rate_hz ?? null,
+    sanitizedAudioObjectKey: row.sanitized_audio_object_key ?? null,
+    transcriptionId: row.transcription_id ?? null,
     status: row.status,
     retryCount: row.retry_count,
     nextAttemptAt: row.next_attempt_at,
@@ -199,6 +218,8 @@ export function mapInboundMessageBundle(row: DbInboundMessageBundle): InboundMes
     conversationRevisionAtOpen: row.conversation_revision_at_open,
     itemCount: row.item_count,
     imageCount: row.image_count,
+    audioCount: row.audio_count ?? 0,
+    audioDurationMs: row.audio_duration_ms ?? 0,
     unicodeCodepointCount: row.unicode_codepoint_count,
     retryCount: row.retry_count,
     nextAttemptAt: row.next_attempt_at,
@@ -218,6 +239,7 @@ export function mapInboundMessageBundleItem(row: DbInboundMessageBundleItem): In
     messageId: row.message_id,
     channelEventId: row.channel_event_id,
     mediaAssetId: row.media_asset_id,
+    transcriptionId: row.transcription_id ?? null,
     ordinal: row.ordinal,
     itemType: row.item_type,
     captionText: row.caption_text,

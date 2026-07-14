@@ -209,6 +209,8 @@ export function buildStage4B3GoldenCorpusState(input: {
     conversationRevisionAtOpen: 1,
     itemCount: 1,
     imageCount: 1,
+    audioCount: 0,
+    audioDurationMs: 0,
     unicodeCodepointCount: 0,
     retryCount: 0,
     nextAttemptAt: null,

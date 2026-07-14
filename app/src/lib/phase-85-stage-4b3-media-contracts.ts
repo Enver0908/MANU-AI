@@ -62,7 +62,7 @@ export const VISUAL_CORRECTION_STATUSES = [
 
 export type VisualCorrectionStatus = (typeof VISUAL_CORRECTION_STATUSES)[number];
 
-export const INBOUND_MESSAGE_BUNDLE_ITEM_TYPES = ["text", "image", "caption"] as const;
+export const INBOUND_MESSAGE_BUNDLE_ITEM_TYPES = ["text", "image", "caption", "voice"] as const;
 
 export type InboundMessageBundleItemType = (typeof INBOUND_MESSAGE_BUNDLE_ITEM_TYPES)[number];
 
@@ -245,6 +245,8 @@ export type InboundMessageBundleRecord = {
   conversationRevisionAtOpen: number;
   itemCount: number;
   imageCount: number;
+  audioCount: number;
+  audioDurationMs: number;
   unicodeCodepointCount: number;
   retryCount: number;
   nextAttemptAt: string | null;
@@ -262,6 +264,7 @@ export type InboundMessageBundleItemRecord = {
   messageId: string;
   channelEventId: string | null;
   mediaAssetId: string | null;
+  transcriptionId?: string | null;
   ordinal: number;
   itemType: InboundMessageBundleItemType;
   captionText: string | null;
