@@ -152,3 +152,21 @@ test("visual metadata leak detector blocks OCR and confidence wording", () => {
   const safe = renderDeterministicTemplate({ templateId: "visual_progress_ack_v1", language: "tr" });
   assert.equal(detectVisualMetadataLeaks(safe).length, 0);
 });
+
+test("multimodal visual safety chain applies mandatory output guard on draft text", () => {
+  const chain = evaluateMultimodalVisualSafetyChainV1({
+    baseRiskDecision: { level: "green", reasons: [] },
+    meaning: buildMeaning("meal_exact_menu"),
+    envelope: buildEnvelope(mealObservation()),
+  });
+  assert.equal(chain.outputGuard.allowed, true);
+  assert.equal(chain.clientSendEligible, true);
+
+  const leaked = evaluateMultimodalVisualSafetyChainV1({
+    baseRiskDecision: { level: "green", reasons: [] },
+    meaning: buildMeaning("meal_exact_menu"),
+    envelope: buildEnvelope(mealObservation()),
+    outputSampleText: "OCR ile okudum, guven skoru yuksek.",
+  });
+  assert.equal(leaked.outputGuardSample.allowed, false);
+});

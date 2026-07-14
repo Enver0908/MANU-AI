@@ -14,26 +14,25 @@ import type { ManuAppState, MessageRecord } from "./types";
 export const STAGE_4B3_MULTIMODAL_ENVELOPE_VERSION = "p85-stage-4b3-multimodal-envelope-v1";
 export const STAGE_4B3_MAX_VISUAL_PROVIDER_CONTEXT_BYTES = 12 * 1024;
 
-export type Stage4B3MultimodalEnvelopeBuildResult =
-  | { ok: true; envelope: MultimodalMessageEnvelope; providerContext: Stage4B3BoundedVisualProviderContext }
-  | { ok: false; failureCode: string };
-
 export type Stage4B3BoundedVisualProviderContext = {
   byteSize: number;
   withinLimit: boolean;
   excludesRawMedia: true;
+  excludesRawOcr: true;
   segments: Array<{
     analysisId: string;
     mediaAssetId: string;
     sceneType: VisualObservationV1["sceneType"];
-    sceneConfidence: number;
-    overallConfidence: number;
     entityLabels: string[];
     captionText: string | null;
-    ocrSummary: string;
+    sourceGatedSummary: null;
     observedAt: string;
   }>;
 };
+
+export type Stage4B3MultimodalEnvelopeBuildResult =
+  | { ok: true; envelope: MultimodalMessageEnvelope; providerContext: Stage4B3BoundedVisualProviderContext }
+  | { ok: false; failureCode: string };
 
 const TERMINAL_BUNDLE_STATUSES = new Set<InboundMessageBundleRecord["status"]>([
   "ready",
@@ -51,6 +50,12 @@ const FORBIDDEN_PROVIDER_CONTEXT_KEYS = [
   "providerMediaId",
   "http://",
   "https://",
+  "ocrSummary",
+  "ocr_summary",
+  "ocrBlocks",
+  "ocr_blocks",
+  "ocrText",
+  "ocr_text",
 ];
 
 export function buildMultimodalMessageEnvelope(
@@ -168,26 +173,22 @@ export function buildBoundedVisualProviderContext(
     analysisId: segment.analysisId,
     mediaAssetId: segment.mediaAssetId,
     sceneType: segment.observation.sceneType,
-    sceneConfidence: segment.observation.sceneConfidence,
-    overallConfidence: segment.observation.overallConfidence,
     entityLabels: segment.observation.entityCandidates.map((candidate) => candidate.normalizedLabel),
     captionText: segment.captionText,
-    ocrSummary: summarizeOcrBlocks(segment.observation),
+    sourceGatedSummary: null,
     observedAt: segment.observedAt,
   }));
 
-  let serialized = JSON.stringify({ segments });
+  let serialized = JSON.stringify({ excludesRawOcr: true, segments });
   while (Buffer.byteLength(serialized, "utf8") > STAGE_4B3_MAX_VISUAL_PROVIDER_CONTEXT_BYTES && segments.length > 0) {
     const last = segments[segments.length - 1];
     if (!last) break;
-    if (last.ocrSummary.length > 32) {
-      last.ocrSummary = `${last.ocrSummary.slice(0, 32)}…`;
-    } else if (last.entityLabels.length > 0) {
+    if (last.entityLabels.length > 0) {
       last.entityLabels = last.entityLabels.slice(0, -1);
     } else {
       segments = segments.slice(0, -1);
     }
-    serialized = JSON.stringify({ segments });
+    serialized = JSON.stringify({ excludesRawOcr: true, segments });
   }
 
   const byteSize = Buffer.byteLength(serialized, "utf8");
@@ -195,6 +196,7 @@ export function buildBoundedVisualProviderContext(
     byteSize,
     withinLimit: byteSize <= STAGE_4B3_MAX_VISUAL_PROVIDER_CONTEXT_BYTES,
     excludesRawMedia: true,
+    excludesRawOcr: true,
     segments,
   };
 }
@@ -275,13 +277,6 @@ function computeEnvelopeConfidenceBand(
     return "low";
   }
   return "insufficient";
-}
-
-function summarizeOcrBlocks(observation: VisualObservationV1): string {
-  return observation.ocrBlocks
-    .map((block) => `${block.blockKind}:${block.text}`)
-    .join(" | ")
-    .slice(0, 512);
 }
 
 function assertProviderContextExcludesRawMedia(context: Stage4B3BoundedVisualProviderContext): void {

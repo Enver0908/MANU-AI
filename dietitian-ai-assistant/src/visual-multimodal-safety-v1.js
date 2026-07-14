@@ -1,6 +1,7 @@
 import { decideModeAction } from "./orchestrator.js";
 import { evaluateGreenIntentTaxonomy } from "./green-intent-taxonomy.js";
 import { buildResponsePlanV1 } from "./response-plan-v1.js";
+import { renderDeterministicTemplate } from "./deterministic-template-library-v1.js";
 import { evaluateNarrowAutopilotEligibilityV2 } from "./narrow-autopilot-eligibility-v2.js";
 import { detectVisualMetadataLeaks } from "./response-quality-guard.js";
 import { evaluateVisualAnswerability } from "./visual-answerability-v1.js";
@@ -96,18 +97,26 @@ export function evaluateMultimodalVisualSafetyChainV1(input = {}) {
   });
 
   const providerAttempted = false;
-  const clientSendEligible =
-    mergedRiskDecision.level === "green" &&
-    modeDecision.action === "auto_send" &&
-    responsePlan.replyMode === "send" &&
-    narrowAutopilotEligibility.eligible === true;
-
+  const outboundDraftText = resolveOutboundDraftText(responsePlan);
+  const outputGuardIssues = detectVisualMetadataLeaks(outboundDraftText);
+  const outputGuard = {
+    allowed: outputGuardIssues.length === 0,
+    issues: outputGuardIssues,
+    textSample: outboundDraftText.slice(0, 240),
+  };
   const outputGuardSample = input.outputSampleText
     ? {
         allowed: detectVisualMetadataLeaks(input.outputSampleText).length === 0,
         issues: detectVisualMetadataLeaks(input.outputSampleText),
       }
-    : null;
+    : outputGuard;
+
+  const clientSendEligible =
+    mergedRiskDecision.level === "green" &&
+    modeDecision.action === "auto_send" &&
+    responsePlan.replyMode === "send" &&
+    narrowAutopilotEligibility.eligible === true &&
+    outputGuard.allowed;
 
   return {
     version: VISUAL_MULTIMODAL_SAFETY_V1_VERSION,
@@ -121,6 +130,7 @@ export function evaluateMultimodalVisualSafetyChainV1(input = {}) {
     narrowAutopilotEligibility,
     providerAttempted,
     clientSendEligible,
+    outputGuard,
     outputGuardSample,
   };
 }
@@ -137,4 +147,22 @@ function buildVisualOnlyPromptContext({ textMessage, riskLevel }) {
     segments: [{ type: "current_message", text: body }],
     rendered: body,
   };
+}
+
+function resolveOutboundDraftText(responsePlan) {
+  const templateId = responsePlan?.templateId;
+  if (!templateId) {
+    return responsePlan?.clientMessagePlan?.summary || "";
+  }
+
+  try {
+    return renderDeterministicTemplate({
+      templateId,
+      language: "tr",
+      replyMode: responsePlan.replyMode,
+      riskClass: responsePlan.riskClass,
+    });
+  } catch {
+    return responsePlan?.clientMessagePlan?.summary || "";
+  }
 }

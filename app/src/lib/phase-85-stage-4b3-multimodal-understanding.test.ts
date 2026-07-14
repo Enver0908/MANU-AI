@@ -300,6 +300,8 @@ describe("phase-85-stage-4b3-multimodal-envelope", () => {
     expect(built.providerContext.withinLimit).toBe(true);
     expect(built.providerContext.byteSize).toBeLessThanOrEqual(STAGE_4B3_MAX_VISUAL_PROVIDER_CONTEXT_BYTES);
     expect(JSON.stringify(built.providerContext)).not.toMatch(/https?:\/\//);
+    expect(JSON.stringify(built.providerContext)).not.toContain("ocrSummary");
+    expect(built.providerContext.excludesRawOcr).toBe(true);
   });
 });
 
@@ -475,6 +477,61 @@ describe("phase-85-stage-4b3-multimodal-understanding", () => {
     expect(built.ok).toBe(false);
     if (built.ok) return;
     expect(built.failureCode).toBe("bundle_not_terminal");
+  });
+
+  it("R5 blocks pizza visual with conflicting grilled chicken caption", () => {
+    const observation = buildVisualObservationFromFixtureTemplate({
+      ...STAGE_4B3_VISION_FIXTURE_TEMPLATES.meal_plate,
+      entityCandidates: [
+        {
+          label: "Pizza",
+          normalizedLabel: "pizza",
+          confidence: 0.96,
+          candidateKind: "food",
+        },
+      ],
+    });
+    const state = buildReadyBundleState({ observation });
+    state.inboundMessageBundleItems[0]!.captionText = "izgara tavuk";
+    const result = resolveMultimodalBundleUnderstanding(state, "bundle-mm-1");
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.meaning.visualSegments[0]?.workflowState).toBe("meal_ambiguous");
+    expect(result.meaning.visualSegments[0]?.reasonCodes).toContain("caption_entity_contradiction");
+  });
+
+  it("R5 rebuilds provider context without raw OCR after meaning resolution", () => {
+    const observation = buildVisualObservationFromFixtureTemplate(STAGE_4B3_VISION_FIXTURE_TEMPLATES.packaged_food_label_complete);
+    const result = resolveMultimodalBundleUnderstanding(
+      buildReadyBundleState({
+        observation,
+        foodRuleForbidden: ["fistik"],
+      }),
+      "bundle-mm-1",
+    );
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    const serialized = JSON.stringify(result.providerContext);
+    expect(serialized).not.toContain("ocrSummary");
+    expect(serialized).not.toContain("Icindekiler");
+    expect(result.providerContext.excludesRawOcr).toBe(true);
+  });
+
+  it("R5 includes dietitian pinned notes in approved source manifest", () => {
+    const observation = buildVisualObservationFromFixtureTemplate(STAGE_4B3_VISION_FIXTURE_TEMPLATES.meal_plate);
+    const state = buildReadyBundleState({ observation });
+    state.clients[0]!.pinnedNotes = ["Avoid peanut suggestions."];
+    const result = resolveMultimodalBundleUnderstanding(state, "bundle-mm-1");
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.meaning.approvedSourceManifest).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          authority: "dietitian_authored",
+          text: "Avoid peanut suggestions.",
+        }),
+      ]),
+    );
   });
 });
 

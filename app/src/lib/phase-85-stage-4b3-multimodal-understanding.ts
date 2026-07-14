@@ -1,11 +1,13 @@
 import {
+  buildApprovedDietitianVisualSources,
+  buildSourceGatedVisualProviderContext,
   resolveVisualMeaningV1,
   VISUAL_MEANING_RESOLVER_V1_VERSION,
 } from "dietitian-ai-assistant-architecture";
+import { buildClientContextUpdateSummary } from "./client-context-updates";
 import { getClientFoodRuleProfileV2Record } from "./phase-77e-client-food-rule-profile";
 import {
   buildMultimodalMessageEnvelope,
-  type Stage4B3BoundedVisualProviderContext,
   type Stage4B3MultimodalEnvelopeBuildResult,
 } from "./phase-85-stage-4b3-multimodal-envelope";
 import type { MultimodalMessageEnvelope } from "./phase-85-stage-4b3-media-contracts";
@@ -13,11 +15,13 @@ import type { ManuAppState } from "./types";
 
 export const STAGE_4B3_MULTIMODAL_UNDERSTANDING_VERSION = "p85-stage-4b3-multimodal-understanding-v1";
 
+export type Stage4B3SourceGatedVisualProviderContext = ReturnType<typeof buildSourceGatedVisualProviderContext>;
+
 export type Stage4B3MultimodalUnderstandingResult =
   | {
       ok: true;
       envelope: MultimodalMessageEnvelope;
-      providerContext: Stage4B3BoundedVisualProviderContext;
+      providerContext: Stage4B3SourceGatedVisualProviderContext;
       meaning: ReturnType<typeof resolveVisualMeaningV1>;
     }
   | { ok: false; failureCode: string; envelopeBuild?: Stage4B3MultimodalEnvelopeBuildResult };
@@ -60,6 +64,14 @@ export function buildMessagesByProviderMessageId(state: ManuAppState, conversati
   return map;
 }
 
+export function buildApprovedDietitianVisualSourcesForClient(state: ManuAppState, clientId: string) {
+  const client = state.clients.find((entry) => entry.id === clientId && entry.tenantId === state.tenant.id);
+  return buildApprovedDietitianVisualSources({
+    pinnedNotes: client?.pinnedNotes ?? [],
+    contextUpdates: buildClientContextUpdateSummary(state, clientId),
+  });
+}
+
 export function resolveMultimodalBundleUnderstanding(
   state: ManuAppState,
   bundleId: string,
@@ -74,13 +86,26 @@ export function resolveMultimodalBundleUnderstanding(
     return { ok: false, failureCode: "bundle_not_found" };
   }
 
+  const foodRules = buildVisualMeaningFoodRules(state, bundle.clientId);
+  const approvedDietitianSources = buildApprovedDietitianVisualSourcesForClient(state, bundle.clientId);
+
   const meaning = resolveVisualMeaningV1({
     envelope: built.envelope,
     activeMenu: getActiveClientMenuPlan(state, bundle.clientId),
-    foodRules: buildVisualMeaningFoodRules(state, bundle.clientId),
+    foodRules,
     messagesByProviderMessageId: buildMessagesByProviderMessageId(state, bundle.conversationId),
     providerContext: built.providerContext,
+    approvedDietitianSources,
   });
+
+  const providerContext = buildSourceGatedVisualProviderContext({
+    envelope: built.envelope,
+    meaning,
+    foodRules,
+  });
+  if (!providerContext.withinLimit) {
+    return { ok: false, failureCode: "visual_provider_context_limit_exceeded" };
+  }
 
   const envelope: MultimodalMessageEnvelope = {
     ...built.envelope,
@@ -90,7 +115,7 @@ export function resolveMultimodalBundleUnderstanding(
   return {
     ok: true,
     envelope,
-    providerContext: built.providerContext,
+    providerContext,
     meaning,
   };
 }

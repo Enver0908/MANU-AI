@@ -1303,7 +1303,17 @@ declare module "dietitian-ai-assistant-architecture" {
     labelEvidence: Record<string, unknown> | null;
     screenshotQuery: string | null;
     screenshotApprovedSourceHit: boolean;
+    approvedSourceId: string | null;
     productDecision: string | null;
+  };
+
+  export type ApprovedDietitianVisualSource = {
+    category: string;
+    segmentType: string;
+    sourceId: string | null;
+    authority: string;
+    origin: string;
+    text: string;
   };
 
   export type VisualMeaningResolution = {
@@ -1316,6 +1326,7 @@ declare module "dietitian-ai-assistant-architecture" {
     absenceOfEvidenceAllowedCount: number;
     ocrNeverApprovedSource: boolean;
     providerContextBound: Record<string, unknown> | null;
+    approvedSourceManifest: ApprovedDietitianVisualSource[];
   };
 
   export function resolveVisualMeaningV1(input?: {
@@ -1337,6 +1348,7 @@ declare module "dietitian-ai-assistant-architecture" {
     foodRules?: Record<string, unknown>;
     messagesByProviderMessageId?: Record<string, { id: string; providerMessageId: string | null }>;
     providerContext?: Record<string, unknown> | null;
+    approvedDietitianSources?: ApprovedDietitianVisualSource[];
   }): VisualMeaningResolution;
 
   export function resolveTextBinding(
@@ -1400,8 +1412,34 @@ declare module "dietitian-ai-assistant-architecture" {
     narrowAutopilotEligibility: Record<string, unknown>;
     providerAttempted: boolean;
     clientSendEligible: boolean;
+    outputGuard: { allowed: boolean; issues: string[]; textSample: string };
     outputGuardSample: { allowed: boolean; issues: string[] } | null;
   };
   export function isVisualClientSendEligible(chainResult: { clientSendEligible?: boolean } | null | undefined): boolean;
   export function detectVisualMetadataLeaks(text: string): string[];
+
+  export const VISUAL_EVIDENCE_SOURCE_V2_VERSION: string;
+  export const VISUAL_EVIDENCE_SOURCE_TYPES: string[];
+  export function mapVisualOcrIngredientSourceType(): "visual_label_ocr";
+  export function buildSourceGatedVisualSummary(input: Record<string, unknown>): Record<string, unknown>;
+  export function assertProviderContextExcludesRawOcr(value: unknown): void;
+
+  export const VISUAL_SOURCE_GATE_V1_VERSION: string;
+  export function extractAllowlistedConflictTokens(input?: Record<string, unknown>): string[];
+  export function buildSegmentSourceGatedSummary(input?: Record<string, unknown>): Record<string, unknown> | null;
+  export function buildSourceGatedVisualProviderContext(input?: Record<string, unknown>): {
+    version: string;
+    byteSize: number;
+    withinLimit: boolean;
+    excludesRawMedia: boolean;
+    excludesRawOcr: boolean;
+    segments: Array<Record<string, unknown>>;
+  };
+  export function buildApprovedDietitianVisualSources(input?: {
+    pinnedNotes?: string[];
+    contextUpdates?: Array<{ id?: string; summary?: string; body?: string }>;
+  }): ApprovedDietitianVisualSource[];
+  export function evaluateMultiImageSourceIdentity(
+    segmentResolutions?: Array<Record<string, unknown>>,
+  ): { consistent: boolean; reasonCode: string | null };
 }

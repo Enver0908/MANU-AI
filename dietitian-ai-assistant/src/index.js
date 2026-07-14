@@ -275,3 +275,25 @@ export {
   evaluateMultimodalVisualSafetyChainV1,
   isVisualClientSendEligible,
 } from "./visual-multimodal-safety-v1.js";
+export {
+  VISUAL_EVIDENCE_SOURCE_V2_VERSION,
+  VISUAL_EVIDENCE_SOURCE_TYPES,
+  VISUAL_EVIDENCE_AUTHORITIES,
+  VISUAL_EVIDENCE_ALLOWED_USES,
+  VisualEvidenceSourceError,
+  isVisualEvidenceSourceType,
+  assertVisualEvidenceSourceType,
+  mapVisualOcrIngredientSourceType,
+  parseVisualEvidenceRefV2,
+  createRawVisualOcrEvidence,
+  buildSourceGatedVisualSummary,
+  assertProviderContextExcludesRawOcr,
+} from "./visual-evidence-source-v2.js";
+export {
+  VISUAL_SOURCE_GATE_V1_VERSION,
+  extractAllowlistedConflictTokens,
+  buildSegmentSourceGatedSummary,
+  buildSourceGatedVisualProviderContext,
+  buildApprovedDietitianVisualSources,
+  evaluateMultiImageSourceIdentity,
+} from "./visual-source-gate-v1.js";

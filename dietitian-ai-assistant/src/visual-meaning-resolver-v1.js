@@ -1,5 +1,6 @@
 import { findMenuRecipeForPhrase, normalizeFoodPhrase } from "./food-understanding-v3.js";
 import { evaluateProductIngredientVerification } from "./product-ingredient-verification.js";
+import { mapVisualOcrIngredientSourceType } from "./visual-evidence-source-v2.js";
 
 export const VISUAL_MEANING_RESOLVER_V1_VERSION = "visual-meaning-resolver-v1-v0.1.0";
 
@@ -65,6 +66,7 @@ export function resolveVisualMeaningV1(input = {}) {
     absenceOfEvidenceAllowedCount: absenceAllowedCount,
     ocrNeverApprovedSource: true,
     providerContextBound: input.providerContext || null,
+    approvedSourceManifest: Array.isArray(input.approvedDietitianSources) ? input.approvedDietitianSources : [],
   };
 }
 
@@ -82,6 +84,7 @@ function resolveVisualSegment({ segment, index, envelope, textBinding, activeMen
     labelEvidence: null,
     screenshotQuery: null,
     screenshotApprovedSourceHit: false,
+    approvedSourceId: null,
     productDecision: null,
   };
 
@@ -140,6 +143,21 @@ function resolveMealSegment({ segment, observation, activeMenu, textBinding, foo
     (candidate) => candidate.confidence >= HIGH_CONFIDENCE_THRESHOLD,
   );
 
+  const captionContradiction = detectCaptionEntityContradiction(observation, segment.captionText);
+  if (captionContradiction) {
+    return {
+      ...base,
+      workflowState: "meal_ambiguous",
+      sourceAuthority: "no_authority",
+      reasonCodes: ["caption_entity_contradiction"],
+      menuMatch: {
+        status: "ambiguous",
+        matchedLabel: captionContradiction.caption,
+        entityLabel: captionContradiction.entity,
+      },
+    };
+  }
+
   if (highConfidenceCandidates.length > 1) {
     return {
       ...base,
@@ -161,10 +179,27 @@ function resolveMealSegment({ segment, observation, activeMenu, textBinding, foo
   const exactMenuItem = activeMenu ? findExactMenuItemMatch(activeMenu, phrase) : null;
 
   if (exactMenuItem && highConfidenceCandidates.length === 1) {
+    const entityNorm = normalizeFoodPhrase(highConfidenceCandidates[0].normalizedLabel);
+    const phraseNorm = normalizeFoodPhrase(phrase);
+    if (entityNorm && phraseNorm && entityNorm !== phraseNorm) {
+      return {
+        ...base,
+        workflowState: "meal_ambiguous",
+        sourceAuthority: "no_authority",
+        reasonCodes: ["caption_entity_menu_contradiction"],
+        menuMatch: {
+          status: "ambiguous",
+          matchedLabel: phraseNorm,
+          entityLabel: entityNorm,
+        },
+      };
+    }
+
     return {
       ...base,
       workflowState: "meal_exact_menu",
       sourceAuthority: "approved_menu_exact",
+      approvedSourceId: exactMenuItem.menuItemId,
       reasonCodes: recipe ? ["active_menu_exact_match", "active_menu_recipe_present"] : ["active_menu_exact_match"],
       menuMatch: {
         status: "exact",
@@ -224,7 +259,7 @@ function resolveLabelSegment({ observation, foodRules, ...base }) {
     .trim();
 
   const verification = evaluateProductIngredientVerification({
-    ingredientSourceType: "user_label_text",
+    ingredientSourceType: mapVisualOcrIngredientSourceType(),
     ingredientText,
     ingredientConfidence: "high",
     ingredientAllergenKeywords: foodRules.ingredientAllergenKeywords || [],
@@ -252,6 +287,17 @@ function resolveLabelSegment({ observation, foodRules, ...base }) {
       reasonCodes: [...(verification.reasons || []), "visual_label_ocr_forbidden_only"],
       labelEvidence: { status: "high_integrity_forbidden_only", canInferAllowed: false },
       productDecision: "product_blocked",
+    };
+  }
+
+  if (verification.reasons?.includes("visual_label_ocr_absence_not_allowed")) {
+    return {
+      ...base,
+      workflowState: "label_absence_not_allowed",
+      sourceAuthority: "no_authority",
+      reasonCodes: ["label_absence_not_evidence", ...(verification.reasons || [])],
+      labelEvidence: { status: "absence_not_allowed", canInferAllowed: false },
+      productDecision: "requires_review",
     };
   }
 
@@ -283,14 +329,21 @@ function resolveScreenshotSegment({ observation, activeMenu, envelope, ...base }
     };
   }
 
-  const approvedSourceHit = evaluateScreenshotApprovedSourceHit(screenshotQuery, activeMenu);
+  const normalizedQuery = normalizeFoodPhrase(screenshotQuery);
+  const extractedPhrase = extractScreenshotFoodPhrase(normalizedQuery);
+  const menuMatch = findExactMenuItemMatch(activeMenu, extractedPhrase || normalizedQuery);
+  const approvedSourceHit = Boolean(menuMatch);
   return {
     ...base,
     workflowState: approvedSourceHit ? "screenshot_approved_source_hit" : "screenshot_no_approved_source",
     sourceAuthority: approvedSourceHit ? "approved_source_only" : "untrusted_visual",
+    approvedSourceId: menuMatch?.menuItemId ?? null,
     reasonCodes: approvedSourceHit ? ["screenshot_query_matches_approved_source"] : ["screenshot_query_untrusted"],
     screenshotQuery: screenshotQuery || null,
     screenshotApprovedSourceHit: approvedSourceHit,
+    menuMatch: menuMatch
+      ? { status: "exact", menuItemId: menuMatch.menuItemId, matchedLabel: menuMatch.matchedLabel }
+      : null,
   };
 }
 
@@ -424,6 +477,27 @@ function extractQuestions(envelope) {
     }
   }
   return questions;
+}
+
+function detectCaptionEntityContradiction(observation, captionText) {
+  const caption = String(captionText || "").trim();
+  if (!caption) return null;
+
+  const highConfidenceCandidates = (observation?.entityCandidates || []).filter(
+    (candidate) => candidate.confidence >= HIGH_CONFIDENCE_THRESHOLD,
+  );
+  if (highConfidenceCandidates.length !== 1) return null;
+
+  const entityNorm = normalizeFoodPhrase(highConfidenceCandidates[0].normalizedLabel);
+  const captionNorm = normalizeFoodPhrase(caption);
+  if (!entityNorm || !captionNorm || entityNorm === captionNorm) {
+    return null;
+  }
+  if (entityNorm.includes(captionNorm) || captionNorm.includes(entityNorm)) {
+    return null;
+  }
+
+  return { entity: entityNorm, caption: captionNorm };
 }
 
 function isMixedDishSignal(observation, phrase) {

@@ -99,11 +99,15 @@ function buildVisualSourceRefs(meaning, intentFamily) {
   }
 
   if (intentFamily === "green_visual_screenshot_confirmation") {
+    const approvedSourceId = segment.approvedSourceId ?? segment.menuMatch?.menuItemId ?? null;
+    if (!approvedSourceId) {
+      return [];
+    }
     return [
       {
         category: "active_menu_plan",
         segmentType: "visual_screenshot_approved_source",
-        sourceId: segment.menuMatch?.menuItemId || segment.analysisId,
+        sourceId: approvedSourceId,
         authority: "approved_source_only",
         origin: "visual_observation",
       },

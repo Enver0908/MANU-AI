@@ -1,4 +1,5 @@
 import { CANONICAL_INTENT_RESOLVER_V2_VERSION } from "./canonical-intent-resolver-v2.js";
+import { evaluateMultiImageSourceIdentity } from "./visual-source-gate-v1.js";
 
 export const VISUAL_INTENT_BRIDGE_V1_VERSION = "visual-intent-bridge-v1-v0.1.0";
 
@@ -32,6 +33,19 @@ export function resolveVisualCanonicalIntent(input = {}) {
   }
 
   if (meaning.visualSegments.length > 1) {
+    const identity = evaluateMultiImageSourceIdentity(meaning.visualSegments);
+    if (!identity.consistent) {
+      return buildCanonicalIntent({
+        decision: "blocked_sensitive_intent",
+        allowed: false,
+        intentFamily: null,
+        blockedFamily: identity.reasonCode || "visual_multiple_images_ambiguous",
+        precedenceStage: "visual_ambiguous",
+        workflowState: "handoff",
+        reasons: [identity.reasonCode || "visual_multiple_images_ambiguous"],
+      });
+    }
+
     const workflows = new Set(meaning.visualSegments.map((segment) => segment.workflowState));
     if (workflows.size > 1) {
       return buildCanonicalIntent({

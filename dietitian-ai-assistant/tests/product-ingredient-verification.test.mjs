@@ -49,6 +49,28 @@ test("product ingredient verification requires review for unknown source type", 
   assert.ok(result.reasons.includes("product_ingredient_source_untrusted"));
 });
 
+test("visual label OCR can only block forbidden matches or require review", () => {
+  const blocked = evaluateProductIngredientVerification({
+    ingredientSourceType: "visual_label_ocr",
+    ingredientText: "milk, sugar, whey",
+    ingredientConfidence: "high",
+    ...dairyRules,
+  });
+  assert.equal(blocked.decision, "product_blocked");
+
+  const absence = evaluateProductIngredientVerification({
+    ingredientSourceType: "visual_label_ocr",
+    ingredientText: "oats, water",
+    ingredientConfidence: "high",
+    ingredientAllergenKeywords: ["fistik"],
+    forbiddenFoodItems: ["peanut"],
+    forbiddenFoodGroups: [],
+    dietTypeRules: null,
+  });
+  assert.equal(absence.decision, "requires_review");
+  assert.ok(absence.reasons.includes("visual_label_ocr_absence_not_allowed"));
+});
+
 test("product ingredient verification blocks vegan diet conflict without explicit allergen keyword", () => {
   const result = evaluateProductIngredientVerification({
     ingredientSourceType: "user_label_text",

@@ -1,4 +1,5 @@
 import { mergeVisualRiskOverlay } from "./visual-observation-v1.js";
+import { evaluateMultiImageSourceIdentity } from "./visual-source-gate-v1.js";
 
 export const VISUAL_RISK_OVERLAY_V1_VERSION = "visual-risk-overlay-v1-v0.1.0";
 
@@ -48,13 +49,20 @@ export function evaluateVisualRiskOverlay(input = {}) {
   let allowlisted = false;
 
   if (meaning.visualSegments.length > 1) {
-    const workflowStates = meaning.visualSegments.map((segment) => segment.workflowState);
-    const uniqueWorkflows = new Set(workflowStates);
-    const allowlistedCount = workflowStates.filter((state) => ALLOWLISTED_WORKFLOW_STATES.has(state)).length;
-    if (uniqueWorkflows.size > 1 || (allowlistedCount > 0 && allowlistedCount < meaning.visualSegments.length)) {
+    const identity = evaluateMultiImageSourceIdentity(meaning.visualSegments);
+    if (!identity.consistent) {
       visualLevel = escalateRisk(visualLevel, "yellow");
-      pushUnique(ineligibilityReasons, "visual_multiple_images_ambiguous");
-      reasonCodes.push("visual_multiple_images_ambiguous");
+      pushUnique(ineligibilityReasons, identity.reasonCode || "visual_multiple_images_ambiguous");
+      reasonCodes.push(identity.reasonCode || "visual_multiple_images_ambiguous");
+    } else {
+      const workflowStates = meaning.visualSegments.map((segment) => segment.workflowState);
+      const uniqueWorkflows = new Set(workflowStates);
+      const allowlistedCount = workflowStates.filter((state) => ALLOWLISTED_WORKFLOW_STATES.has(state)).length;
+      if (uniqueWorkflows.size > 1 || (allowlistedCount > 0 && allowlistedCount < meaning.visualSegments.length)) {
+        visualLevel = escalateRisk(visualLevel, "yellow");
+        pushUnique(ineligibilityReasons, "visual_multiple_images_ambiguous");
+        reasonCodes.push("visual_multiple_images_ambiguous");
+      }
     }
   }
 
@@ -112,7 +120,21 @@ export function evaluateVisualRiskOverlay(input = {}) {
         break;
       case "label_absence_not_allowed":
       case "meal_ambiguous":
+        if (segment.reasonCodes?.includes("caption_entity_contradiction")) {
+          visualLevel = escalateRisk(visualLevel, "yellow");
+          pushUnique(ineligibilityReasons, "visual_context_unresolved");
+          reasonCodes.push("visual_caption_entity_contradiction");
+          break;
+        }
+        visualLevel = escalateRisk(visualLevel, "yellow");
+        pushUnique(ineligibilityReasons, "visual_context_unresolved");
+        reasonCodes.push(`visual_context_unresolved:${segment.workflowState}`);
+        break;
       case "meal_no_match":
+        visualLevel = escalateRisk(visualLevel, "yellow");
+        pushUnique(ineligibilityReasons, "visual_context_unresolved");
+        reasonCodes.push(`visual_context_unresolved:${segment.workflowState}`);
+        break;
       case "meal_mixed_dish":
         visualLevel = escalateRisk(visualLevel, "yellow");
         pushUnique(ineligibilityReasons, "visual_context_unresolved");

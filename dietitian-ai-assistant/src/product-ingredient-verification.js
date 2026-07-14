@@ -61,6 +61,31 @@ export function evaluateProductIngredientVerification(input = {}) {
     dietTypeConflictGroup: null,
   };
 
+  if (ingredientSourceType === "visual_label_ocr") {
+    if (!ingredientText) {
+      return finish("requires_review", ["product_ingredient_text_missing"], base);
+    }
+    if (!TRUSTED_CONFIDENCE.has(ingredientConfidence)) {
+      return finish("requires_review", ["product_ingredient_confidence_insufficient", ingredientConfidence], base);
+    }
+
+    const normalizedText = normalize(ingredientText);
+    const matchedForbiddenKeywordIds = matchForbiddenKeywordIds(
+      normalizedText,
+      ingredientAllergenKeywords,
+      forbiddenFoodItems,
+      forbiddenFoodGroups,
+    );
+    if (matchedForbiddenKeywordIds.length > 0) {
+      return finish("product_blocked", ["product_ingredient_forbidden_keyword_match"], {
+        ...base,
+        matchedForbiddenKeywordIds,
+      });
+    }
+
+    return finish("requires_review", ["visual_label_ocr_absence_not_allowed"], base);
+  }
+
   if (!TRUSTED_SOURCE_TYPES.has(ingredientSourceType)) {
     return finish("requires_review", ["product_ingredient_source_untrusted"], base);
   }
