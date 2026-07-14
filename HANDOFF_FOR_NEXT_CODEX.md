@@ -1,10 +1,14 @@
 # Handoff For Next Codex
 
+**Current authority (2026-07-14):** Stage 4B-3 post-closure remediation R0 and R1 are complete locally. R2 durable DB/RLS/queue foundation is next. Stage 4C remains blocked. Active plan: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. R1 evidence: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_R1_EVIDENCE.md`. Production remains `NO-GO`; R-405 remains open.
+
+All pre-existing Stage 4B-3 closure and Stage 4C-next paragraphs below this authority block are historical snapshots and must not be used as an implementation handoff.
+
 Continuity audit, 2026-07-13: canonical status, repository-relative references, dashboard messaging navigation, bounded APIs, DTO/permission contracts, append-only RPC/RLS migrations, and current evidence were reconciled. Treat older R1-R6 and Docker-blocked paragraphs as historical snapshots only. Evidence: `docs/PHASE_85_STAGE_4B_2_CONTINUITY_AND_ROUTING_RECONCILIATION_EVIDENCE.md`. Phase 0 now inserts Stage 4B-3 before Stage 4C. The current Phase 85 handoff is Stage 4B-3 Multimodal Gorsel Guvenligi ve Yanit Orkestrasyonu.
 
 ## Read This First
 
-Latest Phase 85 handoff (2026-07-14): **Stage 4B-3 Phase 11 media lifecycle, DSAR redaction, and operational visibility is complete locally.** Canonical plan: `docs/PHASE_85_STAGE_4B_3_MULTIMODAL_GORSEL_GUVENLIGI_VE_YANIT_ORK_PLAN.md`. Phase 11 evidence: `docs/PHASE_85_STAGE_4B_3_PHASE_11_MEDIA_LIFECYCLE_DSAR_OPERATIONAL_VISIBILITY_EVIDENCE.md`. Phase 10 evidence: `docs/PHASE_85_STAGE_4B_3_PHASE_10_CANONICAL_WEBHOOK_WORKER_VISUAL_SIMULATOR_EVIDENCE.md`. **Next work:** Stage 4B-3 Phase 12 golden corpus, red team, scale rehearsal, and closure evidence before Stage 4C. Stage 4C remains blocked until Stage 4B-3 closes. Production pilot remains `NO-GO`; R-405 remains open; all real integration paths remain closed.
+Latest Phase 85 handoff (2026-07-14): **Stage 4B-3 Phase 12 golden corpus, red team, scale rehearsal, and closure evidence is complete locally.** Canonical spec: `docs/PHASE_85_STAGE_4B_3_MULTIMODAL_GORSEL_GUVENLIK_SPEC.md`. Phase 12 evidence: `docs/PHASE_85_STAGE_4B_3_PHASE_12_GOLDEN_CORPUS_RED_TEAM_CLOSURE_EVIDENCE.md`. Phase 11 evidence: `docs/PHASE_85_STAGE_4B_3_PHASE_11_MEDIA_LIFECYCLE_DSAR_OPERATIONAL_VISIBILITY_EVIDENCE.md`. **Next work:** Stage 4C Diyetisyen Icin AI Chat plan/read gate and user-approved implementation. Stage 4B-3 is closed locally; production pilot remains `NO-GO`; R-405 remains open; all real integration paths remain closed.
 
 Latest Phase 85 Stage 4B-3 Phase 4 status (2026-07-13): bundle correlation and silence queue complete locally. Evidence: `docs/PHASE_85_STAGE_4B_3_PHASE_4_BUNDLE_SILENCE_QUEUE_EVIDENCE.md`. Phase 5 subsequently completed; see the Phase 5 evidence above.
 

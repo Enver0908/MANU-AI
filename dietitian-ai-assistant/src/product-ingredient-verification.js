@@ -2,6 +2,7 @@ export const PRODUCT_INGREDIENT_VERIFICATION_VERSION = "product-ingredient-verif
 
 export const INGREDIENT_SOURCE_TYPES = [
   "user_label_text",
+  "visual_label_ocr",
   "barcode_database",
   "approved_product_catalog",
   "dietitian_product_note",

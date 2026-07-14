@@ -4,7 +4,9 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 ## Current Status
 
-**2026-07-14 Stage 4B-3 Phase 8 orchestration, atomic decision commit, and correction workflow:** Shared inbound turn pipeline for text and multimodal bundles (`runMultimodalBundleInboundTurn`), atomic bundle decision commit with idempotency, visual correction workflow (no auto corrective send after sent), migration `20260713130000_phase_85_stage_4b3_atomic_bundle_decisions.sql`. Evidence: `docs/PHASE_85_STAGE_4B_3_PHASE_8_ORCHESTRATION_ATOMIC_DECISION_EVIDENCE.md`. **Next:** Stage 4B-3 Phase 9. Production pilot remains `NO-GO`; R-405 remains open.
+**Current authority (2026-07-14):** Stage 4B-3 post-closure remediation R0 and R1 are complete locally. R2 is next; Stage 4C remains blocked. Active plan: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. R1 evidence: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_R1_EVIDENCE.md`. Phase 12 entries below are historical only. R-405 remains open; production remains `NO-GO`.
+
+**2026-07-14 Stage 4B-3 Phase 12 golden corpus, red team, scale rehearsal, and closure:** Synthetic golden corpus, multimodal red-team evaluator, `npm run rehearse:stage-4b3:media`, four-viewport visual simulator acceptance, and canonical runtime spec `docs/PHASE_85_STAGE_4B_3_MULTIMODAL_GORSEL_GUVENLIK_SPEC.md`. Evidence: `docs/PHASE_85_STAGE_4B_3_PHASE_12_GOLDEN_CORPUS_RED_TEAM_CLOSURE_EVIDENCE.md`. **Next:** Stage 4C plan/read gate. Production pilot remains `NO-GO`; R-405 remains open.
 
 **2026-07-14 Stage 4B-3 Phase 6 multimodal understanding and source authority:** Bounded multimodal envelope builder, core `resolveVisualMeaningV1` bridge, active-menu exact match, label/screenshot source gates, and media-worker understanding hook without orchestration or client sends. Evidence: `docs/PHASE_85_STAGE_4B_3_PHASE_6_MULTIMODAL_UNDERSTANDING_EVIDENCE.md`. Phase 7 subsequently completed; see the Phase 7 evidence above.
 

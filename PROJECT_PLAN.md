@@ -1,6 +1,8 @@
 # MANU-AI Project Plan v2
 
-Current continuity status, 2026-07-14: Stage 4B-2 R0-R7, local RLS re-closure, advisory hardening, and canonical routing reconciliation are complete locally. Historical blocked/skipped checkpoints no longer act as current handoffs. Evidence: `docs/PHASE_85_STAGE_4B_2_CONTINUITY_AND_ROUTING_RECONCILIATION_EVIDENCE.md`. Stage 4B-3 Phase 8 orchestration, atomic decision commit, and correction workflow is complete locally; Stage 4B-3 Phase 9 is next. Stage 4C plan/read gate is blocked until Stage 4B-3 closes. Canonical plan: `docs/PHASE_85_STAGE_4B_3_MULTIMODAL_GORSEL_GUVENLIGI_VE_YANIT_ORK_PLAN.md`. Production remains `NO-GO` and R-405 remains open.
+**Current authority (2026-07-14):** Stage 4B-3 remediation R0 and R1 are complete locally; R2 is next; Stage 4C is blocked. Active plan: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. R1 evidence: `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_R1_EVIDENCE.md`. Production remains `NO-GO`; R-405 remains open.
+
+Current continuity status, 2026-07-14: Stage 4B-2 R0-R7, local RLS re-closure, advisory hardening, and Stage 4B-3 Phases 0–12 are complete locally. Canonical spec: `docs/PHASE_85_STAGE_4B_3_MULTIMODAL_GORSEL_GUVENLIK_SPEC.md`. **Next:** Stage 4C plan/read gate. Production remains `NO-GO` and R-405 remains open.
 
 ## Confidence Position
 
