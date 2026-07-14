@@ -319,7 +319,7 @@ export function resolveMediaStreamHttpStatus(
   if (asset.deletedAt) {
     return 410;
   }
-  if (asset.status === "expired" || asset.status === "revoked") {
+  if (asset.status === "expired" || asset.status === "revoked" || asset.status === "deletion_pending") {
     return 410;
   }
   const objectKey = resolveMediaStreamObjectKey(asset, variant);
@@ -336,7 +336,7 @@ export function resolveMediaStreamObjectKey(
   >,
   variant: ConversationMediaStreamVariant,
 ): string | null {
-  if (asset.deletedAt || asset.status === "expired" || asset.status === "revoked") {
+  if (asset.deletedAt || asset.status === "expired" || asset.status === "revoked" || asset.status === "deletion_pending") {
     return null;
   }
   if (variant === "thumbnail") {

@@ -165,6 +165,12 @@ describe("phase-85-stage-4b3-bounded-media-rpc", () => {
   it("returns 410 for deletion-pending media assets", () => {
     expect(
       resolveMediaStreamHttpStatus(
+        buildAsset({ status: "deletion_pending", deletedAt: null }),
+        "thumbnail",
+      ),
+    ).toBe(410);
+    expect(
+      resolveMediaStreamHttpStatus(
         buildAsset({ deletedAt: "2026-07-14T10:00:00.000Z" }),
         "thumbnail",
       ),

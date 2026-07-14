@@ -170,12 +170,23 @@ describe("phase 85 stage 4b-3 media lifecycle", () => {
     const storage = createInMemoryStage4B3MediaStorage();
     await storage.uploadObject("tenant/full-life-1.jpg", Buffer.from("full"), "image/jpeg");
     const state = seedStateWithMedia();
-    const { state: revoked, objectKeys } = revokeMediaAssetsForMessageInState(
+    const { state: prepared, objectKeys } = revokeMediaAssetsForMessageInState(
       state,
       "message-image-1",
       "2026-07-14T10:00:00.000Z",
     );
     expect(objectKeys).toEqual(["tenant/full-life-1.jpg", "tenant/thumb-life-1.jpg"]);
+    expect(prepared.mediaAssets[0]?.status).toBe("deletion_pending");
+    for (const objectKey of objectKeys) {
+      await storage.deleteObject(objectKey);
+    }
+    const { finalizeMediaAssetDeletionInState } = await import("./phase-85-stage-4b3-media-lifecycle-saga");
+    const revoked = finalizeMediaAssetDeletionInState(
+      prepared,
+      "asset-life-1",
+      "revoked",
+      "2026-07-14T10:00:00.000Z",
+    );
     expect(revoked.mediaAssets[0]?.status).toBe("revoked");
     expect(revoked.messages.find((message) => message.id === "message-image-1")?.retrievalEligibility).toBe(
       "excluded_revoked",

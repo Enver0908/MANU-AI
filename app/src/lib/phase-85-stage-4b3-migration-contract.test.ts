@@ -192,3 +192,23 @@ describe("P85 Stage 4B-3 remediation R6 atomic decision correction migration", (
     );
   });
 });
+
+const lifecycleSagaMigration = readFileSync(
+  resolve(__dirname, "../../supabase/migrations/20260714160000_phase_85_stage_4b3_lifecycle_saga.sql"),
+  "utf8",
+);
+
+describe("P85 Stage 4B-3 remediation R8 lifecycle saga migration", () => {
+  it("creates prepare-delete-finalize saga RPCs and pending object key storage", () => {
+    expect(lifecycleSagaMigration).toContain("deletion_pending");
+    expect(lifecycleSagaMigration).toContain("media_pending_object_keys");
+    expect(lifecycleSagaMigration).toContain("media_legal_hold");
+    expect(lifecycleSagaMigration).toContain("p85_stage_4b3_prepare_media_asset_deletion_v2");
+    expect(lifecycleSagaMigration).toContain("p85_stage_4b3_prepare_client_media_dsar_v2");
+    expect(lifecycleSagaMigration).toContain("p85_stage_4b3_claim_media_object_operation_v2");
+    expect(lifecycleSagaMigration).toContain("p85_stage_4b3_release_media_object_operation_v2");
+    expect(lifecycleSagaMigration).toContain("p85_stage_4b3_redact_stale_visual_evidence_v2");
+    expect(lifecycleSagaMigration).toContain("retrieval_eligible = false");
+    expect(lifecycleSagaMigration).toContain("grant execute on function p85_stage_4b3_prepare_client_media_dsar_v2");
+  });
+});

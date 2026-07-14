@@ -6,6 +6,7 @@ import {
   purgeFallbackStage4B3MediaObjectKeys,
   revokeMediaAssetsForMessageInState,
 } from "./phase-85-stage-4b3-media-lifecycle";
+import { finalizeMediaAssetDeletionInState } from "./phase-85-stage-4b3-media-lifecycle-saga";
 import { invalidatePendingDrafts } from "./simulator";
 import {
   buildStage4BDedupeKey,
@@ -304,7 +305,11 @@ function applyMessageRevoke(state: ManuAppState, context: RoutedTranscriptContex
 
   const revokedMedia = revokeMediaAssetsForMessageInState(next, target.id, context.observedAt);
   purgeFallbackStage4B3MediaObjectKeys(revokedMedia.objectKeys);
-  return revokedMedia.state;
+  const asset = revokedMedia.state.mediaAssets.find((item) => item.messageId === target.id);
+  if (!asset) {
+    return revokedMedia.state;
+  }
+  return finalizeMediaAssetDeletionInState(revokedMedia.state, asset.id, "revoked", context.observedAt);
 }
 
 function applyOutboundStatusUpdate(state: ManuAppState, context: RoutedTranscriptContext): ManuAppState {

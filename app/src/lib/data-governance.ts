@@ -10,6 +10,7 @@ import {
   purgeFallbackStage4B3MediaObjectKeys,
   redactStage4B3MediaRecordsForClientInState,
 } from "./phase-85-stage-4b3-media-lifecycle";
+import { finalizePreparedClientMediaDeletionsInState } from "./phase-85-stage-4b3-media-lifecycle-saga";
 import { redactStructuredFoodRuleAnswers } from "./phase-76n-food-rule-lifecycle";
 import { redactClientFoodRuleProfileV2 } from "./phase-77e-client-food-rule-profile";
 import { redactClientMenuPlanV1 } from "./phase-77f-client-menu-plan";
@@ -327,7 +328,7 @@ function redactClientDataInState(
     now,
   );
   purgeFallbackStage4B3MediaObjectKeys(objectKeys);
-  return withMediaRedaction;
+  return finalizePreparedClientMediaDeletionsInState(withMediaRedaction, client.id, "revoked", now);
 }
 
 export function recordClientExportInState(state: ManuAppState, clientId: string): ManuAppState {

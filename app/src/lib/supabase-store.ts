@@ -147,6 +147,7 @@ import {
 } from "./phase-85-stage-4b2-mutations";
 import { createEmptyStage4B3MediaCollections } from "./phase-85-stage-4b3-media-contracts";
 import { loadBoundedMediaProjectionFromSupabaseV2 } from "./phase-85-stage-4b3-bounded-media-rpc";
+import { prepareSupabaseClientMediaDsar } from "./phase-85-stage-4b3-media-lifecycle-saga";
 import {
   mapInboundMessageBundle,
   mapInboundMessageBundleItem,
@@ -2085,6 +2086,7 @@ async function persistSupabaseClientRemovalLifecycle(
   const beforeRequests = new Set(before.dataRequests.map((item) => item.id));
 
   await commitStateDeltaRpc(supabase, "commit_client_removal_lifecycle", before, after);
+  await prepareSupabaseClientMediaDsar(supabase, context.tenantId, client.id);
   await checked(
     supabase
       .from("channel_deliveries")

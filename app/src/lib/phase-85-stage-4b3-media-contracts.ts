@@ -32,6 +32,7 @@ export const MEDIA_ASSET_STATUSES = [
   "analysis_pending",
   "analysis_ready",
   "failed",
+  "deletion_pending",
   "expired",
   "revoked",
 ] as const;

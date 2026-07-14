@@ -1,5 +1,10 @@
 import { PHASE_74_REDACTION_MARKER } from "./data-governance";
 import {
+  finalizeMediaAssetDeletionInState,
+  prepareMediaAssetDeletionInState,
+  processDueStage4B3MediaExpirySagaInState,
+} from "./phase-85-stage-4b3-media-lifecycle-saga";
+import {
   STAGE_4B3_MEDIA_RETENTION_DAYS,
   type InboundMessageBundleRecord,
   type MediaAssetRecord,
@@ -9,9 +14,9 @@ import {
 } from "./phase-85-stage-4b3-media-contracts";
 import { getFallbackStage4B3MediaStorage } from "./phase-85-stage-4b3-fallback-media-storage";
 import type { Stage4B3MediaStoragePort } from "./phase-85-stage-4b3-media-storage";
-import type { ManuAppState, MessageRecord } from "./types";
+import type { ManuAppState } from "./types";
 
-export const STAGE_4B3_MEDIA_LIFECYCLE_VERSION = "p85-stage-4b3-media-lifecycle-v1";
+export const STAGE_4B3_MEDIA_LIFECYCLE_VERSION = "p85-stage-4b3-media-lifecycle-v2";
 export const STAGE_4B3_MEDIA_ANALYSIS_EVIDENCE_RETENTION_MONTHS = 24;
 export const STAGE_4B3_MEDIA_EXPORT_FILE = "media_metadata.json";
 
@@ -198,48 +203,17 @@ export function revokeMediaAssetsForMessageInState(
   messageId: string,
   now: string,
 ): { state: ManuAppState; objectKeys: string[] } {
-  const objectKeys: string[] = [];
-  const nextAssets = state.mediaAssets.map((asset) => {
-    if (asset.messageId !== messageId || TERMINAL_ASSET_STATUSES.has(asset.status)) {
-      return asset;
-    }
-    objectKeys.push(...collectMediaAssetObjectKeys(asset));
-    return finalizeRevokedMediaAsset(asset, now);
-  });
-
-  const nextMessages = state.messages.map((message) =>
-    message.id === messageId
-      ? {
-          ...message,
-          contentStatus: "revoked" as const,
-          retrievalEligibility: "excluded_revoked" as const,
-          observedAt: now,
-        }
-      : message,
+  const asset = state.mediaAssets.find(
+    (item) => item.messageId === messageId && !TERMINAL_ASSET_STATUSES.has(item.status) && item.status !== "deletion_pending",
   );
+  if (!asset) {
+    return { state, objectKeys: [] };
+  }
 
+  const prepared = prepareMediaAssetDeletionInState(state, asset.id, "revoked", now);
   return {
-    state: {
-      ...state,
-      mediaAssets: nextAssets,
-      messages: nextMessages,
-      auditEvents: [
-        ...state.auditEvents,
-        {
-          id: crypto.randomUUID(),
-          tenantId: state.tenant.id,
-          eventType: "media_asset_revoked",
-          entityType: "message",
-          entityId: messageId,
-          metadata: {
-            objectCount: objectKeys.length,
-            minimized: true,
-          },
-          createdAt: now,
-        },
-      ],
-    },
-    objectKeys,
+    state: prepared.state,
+    objectKeys: prepared.pendingObjectKeys.map((entry) => entry.objectKey),
   };
 }
 
@@ -248,35 +222,26 @@ export function redactStage4B3MediaRecordsForClientInState(
   clientId: string,
   now: string,
 ): { state: ManuAppState; objectKeys: string[] } {
-  const objectKeys = state.mediaAssets
-    .filter((asset) => asset.clientId === clientId)
-    .flatMap((asset) => collectMediaAssetObjectKeys(asset));
-
   let next = cancelOpenInboundBundlesForClientInState(state, clientId, now);
+  const objectKeys: string[] = [];
+
+  for (const asset of next.mediaAssets.filter((item) => item.clientId === clientId)) {
+    if (TERMINAL_ASSET_STATUSES.has(asset.status) || asset.status === "deletion_pending") {
+      continue;
+    }
+    const prepared = prepareMediaAssetDeletionInState(next, asset.id, "revoked", now);
+    next = prepared.state;
+    objectKeys.push(...prepared.pendingObjectKeys.map((entry) => entry.objectKey));
+  }
+
   next = {
     ...next,
-    mediaAssets: next.mediaAssets.map((asset) =>
-      asset.clientId === clientId ? finalizeRevokedMediaAsset(asset, now) : asset,
-    ),
     visualAnalysisRecords: next.visualAnalysisRecords.map((record) =>
       record.clientId === clientId ? redactVisualAnalysisForLifecycle(record, now) : record,
     ),
     visualCorrections: next.visualCorrections.map((correction) =>
       correction.clientId === clientId ? redactVisualCorrectionForLifecycle(correction, now) : correction,
     ),
-    messages: next.messages.map((message) => {
-      const conversation = next.conversations.find((item) => item.id === message.conversationId);
-      if (conversation?.clientId !== clientId) {
-        return message;
-      }
-      if (next.mediaAssets.some((asset) => asset.messageId === message.id)) {
-        return {
-          ...message,
-          retrievalEligibility: "excluded_media_expired",
-        } satisfies MessageRecord;
-      }
-      return message;
-    }),
     auditEvents: [
       ...next.auditEvents,
       {
@@ -324,32 +289,22 @@ export async function processDueStage4B3MediaExpiryInState(
   const now = input.now ?? new Date().toISOString();
   const storage = input.storage ?? getFallbackStage4B3MediaStorage();
   const dueAssets = state.mediaAssets.filter((asset) => isMediaAssetDueForExpiry(asset, now));
-  const objectKeys = dueAssets.flatMap((asset) => collectMediaAssetObjectKeys(asset));
-  await purgeStage4B3MediaObjectKeys(storage, objectKeys);
-
   if (dueAssets.length === 0) {
     return state;
   }
 
-  const dueIds = new Set(dueAssets.map((asset) => asset.id));
+  const next = await processDueStage4B3MediaExpirySagaInState(state, {
+    now,
+    storage,
+  });
+
   return {
-    ...state,
-    mediaAssets: state.mediaAssets.map((asset) =>
-      dueIds.has(asset.id) ? finalizeExpiredMediaAsset(asset, now) : asset,
-    ),
-    messages: state.messages.map((message) =>
-      dueAssets.some((asset) => asset.messageId === message.id)
-        ? {
-            ...message,
-            retrievalEligibility: "excluded_media_expired",
-          }
-        : message,
-    ),
+    ...next,
     auditEvents: [
-      ...state.auditEvents,
+      ...next.auditEvents,
       {
         id: crypto.randomUUID(),
-        tenantId: state.tenant.id,
+        tenantId: next.tenant.id,
         eventType: "media_asset_expired",
         entityType: "media_asset",
         entityId: dueAssets[0]!.id,
