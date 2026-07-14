@@ -246,6 +246,14 @@ export {
   assertVisualSceneExhaustive,
 } from "./visual-observation-v1.js";
 export {
+  AUDIO_TRANSCRIPTION_OBSERVATION_V1_VERSION,
+  STAGE_4B4_SUPPORTED_LOCALES,
+  AudioTranscriptionObservationValidationError,
+  validateAudioTranscriptionObservationV1,
+  evaluateTranscriptQualityGate,
+  mergeVoiceRiskOverlay,
+} from "./audio-transcription-observation-v1.js";
+export {
   VISUAL_MEANING_RESOLVER_V1_VERSION,
   VISUAL_SOURCE_AUTHORITY_STATES,
   VISUAL_WORKFLOW_STATES,

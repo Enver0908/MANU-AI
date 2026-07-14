@@ -4,9 +4,9 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 ## Current Status
 
-**Current authority (2026-07-14):** Stage 4B-4 Sesli Mesaj Guvenligi ve Transkripsiyon Orkestrasyonu Phase 0 is active after Stage 4B-3 post-closure remediation R0-R9. Active plan: `docs/PHASE_85_STAGE_4B_4_SESLI_MESAJ_GUVENLIGI_VE_TRANSKRIPSIYON_ORK_PLAN.md`. Phase 0 evidence: `docs/PHASE_85_STAGE_4B_4_PHASE_0_DOCUMENTATION_EVIDENCE.md`. Stage 4C is blocked until Stage 4B-4 closes. R-405 remains open; production remains `NO-GO`.
+**Current authority (2026-07-15):** Stage 4B-4 Sesli Mesaj Guvenligi ve Transkripsiyon Orkestrasyonu Phase 1 is complete locally after Phase 0. Active plan: `docs/PHASE_85_STAGE_4B_4_SESLI_MESAJ_GUVENLIGI_VE_TRANSKRIPSIYON_ORK_PLAN.md`. Phase 1 evidence: `docs/PHASE_85_STAGE_4B_4_PHASE_1_DOMAIN_TYPE_CONTRACT_EVIDENCE.md`. Stage 4C is blocked until Stage 4B-4 closes. R-405 remains open; production remains `NO-GO`.
 
-**2026-07-14 Stage 4B-4 Phase 0 voice-message documentation lock:** Stage 4B-4 is inserted between completed Stage 4B-3 R9 and Stage 4C. The stage covers direct WhatsApp-like voice notes, deterministic mock transcription, strict transcript quality gates, text-only replies, and reuse of the existing typed-message clinical safety chain after transcript acceptance. Real speech-to-text provider egress, real WhatsApp production webhooks, and real client health-data paths remain disabled. Evidence: `docs/PHASE_85_STAGE_4B_4_PHASE_0_DOCUMENTATION_EVIDENCE.md`.
+**2026-07-15 Stage 4B-4 Phase 1 voice domain contract:** TypeScript voice contracts, `client_message_audio` vocabulary, transcript quality gate, ingress metadata evaluator, conversation audio/transcript DTO redaction, and core observation validator are locked locally. Runtime ingress still routes audio to unsupported-media until Phase 3. Evidence: `docs/PHASE_85_STAGE_4B_4_PHASE_1_DOMAIN_TYPE_CONTRACT_EVIDENCE.md`.
 
 **2026-07-14 Stage 4B-3 Phase 12 golden corpus, red team, scale rehearsal, and closure:** Synthetic golden corpus, multimodal red-team evaluator, `npm run rehearse:stage-4b3:media`, four-viewport visual simulator acceptance, and canonical runtime spec `docs/PHASE_85_STAGE_4B_3_MULTIMODAL_GORSEL_GUVENLIK_SPEC.md`. Evidence: `docs/PHASE_85_STAGE_4B_3_PHASE_12_GOLDEN_CORPUS_RED_TEAM_CLOSURE_EVIDENCE.md`. Stage 4B-3 later closed through R9; Stage 4B-4 is current before Stage 4C. Production pilot remains `NO-GO`; R-405 remains open.
 
@@ -96,7 +96,7 @@ P85-IF-D added complete transcript and human-control coordination for business-h
 
 This repository is a local SaaS/PWA pilot prototype and architecture workspace. It is not a production-connected system yet.
 
-**Latest implementation phase:** Phase 85 Stage 4B-3 post-closure remediation R0-R9 is complete locally (2026-07-14). **Current work:** Stage 4B-4 Sesli Mesaj Guvenligi ve Transkripsiyon Orkestrasyonu. **Next after closure:** Stage 4C plan/read gate. **Production pilot:** `NO-GO` (unchanged); R-405 remains open.
+**Latest implementation phase:** Phase 85 Stage 4B-4 Phase 1 domain/type contract is complete locally (2026-07-15). **Current work:** Stage 4B-4 Sesli Mesaj Guvenligi ve Transkripsiyon Orkestrasyonu. **Next:** Stage 4B-4 Phase 2 persistence, private audio storage, RLS, and queue foundation. **After closure:** Stage 4C plan/read gate. **Production pilot:** `NO-GO` (unchanged); R-405 remains open.
 
 **Phase 82 verification:** targeted Phase 82 tests passed (5 files, 31/31); Phase 82G records `repoLocalClosureComplete: true` with verification `blocked` because `npm run test:rls` remains skipped/pending when local Supabase is unavailable.
 

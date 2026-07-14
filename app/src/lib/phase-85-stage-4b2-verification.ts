@@ -58,6 +58,8 @@ export const CONVERSATION_MESSAGE_DTO_KEYS = [
   "conversationSequence",
   "media",
   "visualReview",
+  "audio",
+  "voiceTranscript",
 ] as const;
 
 export const STAGE_4B2_SENSITIVE_DTO_PATTERNS =

@@ -2,6 +2,8 @@
 
 Phase 0 status, 2026-07-14: canonical plan and handoff lock are active. Stage 4B-4 is inserted between completed Stage 4B-3 post-closure remediation R0-R9 and Stage 4C. Stage 4C is blocked until Stage 4B-4 implementation, verification, evidence closure, risk-register reconciliation, and handoff update are complete.
 
+Phase 1 status, 2026-07-15: voice threat model, domain contract, and type boundary are complete locally. Evidence: `docs/PHASE_85_STAGE_4B_4_PHASE_1_DOMAIN_TYPE_CONTRACT_EVIDENCE.md`. **Next:** Phase 2 persistence, private audio storage, RLS, and queue foundation.
+
 Production pilot remains `NO-GO`. R-405 remains open. Real WhatsApp, Telegram, Gemini, external LLM, production webhook, monitoring, backup, secret-manager, billing, and real client health-data paths remain disabled. Stage 4B-4 is limited to local gated WhatsApp-like audio payload handling, deterministic mock transcription, and text-only response orchestration.
 
 ## Locked Decisions

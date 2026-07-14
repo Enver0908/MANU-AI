@@ -13,6 +13,7 @@ import type {
   TenantRole,
 } from "./types";
 import type { ConversationMediaDto, VisualReviewDto } from "./phase-85-stage-4b3-media-contracts";
+import type { ConversationAudioDto, ConversationVoiceTranscriptDto } from "./phase-85-stage-4b4-voice-contracts";
 
 export const PHASE_85_STAGE_4B_2_CONTRACT_VERSION = "p85-stage-4b-2-contracts-v2";
 export const PHASE_85_STAGE_4B_2_API_VERSION = "p85-stage-4b-2-api-v3";
@@ -132,6 +133,8 @@ export type ConversationMessageDto = {
   conversationSequence: number | null;
   media: ConversationMediaDto[];
   visualReview: VisualReviewDto | null;
+  audio: ConversationAudioDto | null;
+  voiceTranscript: ConversationVoiceTranscriptDto | null;
 };
 
 export type ConversationSummaryDto = {

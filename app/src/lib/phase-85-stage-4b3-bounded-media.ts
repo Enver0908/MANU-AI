@@ -222,6 +222,8 @@ export function projectConversationMessageWithMedia(
     ...base,
     media: mediaItems,
     visualReview,
+    audio: null,
+    voiceTranscript: null,
   };
   assertClientSafeMediaPayload(dto);
   return dto;

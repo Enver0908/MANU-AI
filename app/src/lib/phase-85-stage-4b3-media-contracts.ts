@@ -160,6 +160,14 @@ export type MediaAssetRecord = {
   contentSha256: string | null;
   sanitizedFullObjectKey: string | null;
   thumbnailObjectKey: string | null;
+  mediaKind?: "image" | "audio" | null;
+  voiceMessage?: boolean | null;
+  durationMs?: number | null;
+  audioCodec?: string | null;
+  audioChannels?: number | null;
+  sampleRateHz?: number | null;
+  sanitizedAudioObjectKey?: string | null;
+  transcriptionId?: string | null;
   status: MediaAssetStatus;
   retryCount: number;
   nextAttemptAt: string | null;

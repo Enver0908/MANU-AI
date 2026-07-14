@@ -5,6 +5,7 @@ import type {
 } from "./phase-85-stage-4b-contracts";
 import type { ConversationReadReceiptRecord } from "./phase-85-stage-4b2-contracts";
 import type { Stage4B3MediaStateSlice } from "./phase-85-stage-4b3-media-contracts";
+import type { Stage4B4VoiceStateSlice } from "./phase-85-stage-4b4-voice-contracts";
 
 export type AiStatus = "active" | "passive";
 export type AiMode = "autopilot" | "copilot" | "manual" | "paused";
@@ -86,6 +87,7 @@ export type ChannelAuthorInterface =
 export type ChannelEventKind =
   | "client_message_text"
   | "client_message_image"
+  | "client_message_audio"
   | "client_message_media_unsupported"
   | "business_human_echo_text"
   | "business_human_echo_media_unsupported"
@@ -123,7 +125,10 @@ export type MessageRetrievalEligibility =
   | "excluded_unverified_actor"
   | "excluded_media_pending"
   | "excluded_media_only"
-  | "excluded_media_expired";
+  | "excluded_media_expired"
+  | "excluded_voice_pending"
+  | "excluded_voice_only"
+  | "excluded_voice_expired";
 export type ChannelMessageRevisionAction = "edit" | "revoke" | "unknown_target";
 export type HumanControlSessionReason =
   | "yellow_risk_hold"
@@ -974,7 +979,8 @@ export type ManuAppState = {
   permissionGraphEvaluations: PermissionGraphEvaluationRecord[];
   processedSimulationKeys: string[];
   lastSimulation: SimulationResult | null;
-} & Stage4B3MediaStateSlice;
+} & Stage4B3MediaStateSlice &
+  Stage4B4VoiceStateSlice;
 
 export type SimulationRequest = {
   clientId?: string;
@@ -1037,3 +1043,13 @@ export type {
   VisualReviewDto,
   VisualSceneType,
 } from "./phase-85-stage-4b3-media-contracts";
+export type {
+  AudioTranscriptionObservationV1,
+  AudioTranscriptionRecord,
+  AudioTranscriptCorrectionRecord,
+  ConversationAudioDto,
+  ConversationVoiceTranscriptDto,
+  Stage4B4VoiceStateSlice,
+  TranscriptCorrectionRequest,
+  VoiceTranscriptEligibility,
+} from "./phase-85-stage-4b4-voice-contracts";

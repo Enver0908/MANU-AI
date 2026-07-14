@@ -473,6 +473,8 @@ export function projectConversationMessage(message: ConversationProjectionMessag
     conversationSequence: message.conversationSequence ?? null,
     media: [],
     visualReview: null,
+    audio: null,
+    voiceTranscript: null,
   };
 }
 

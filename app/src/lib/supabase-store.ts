@@ -146,6 +146,7 @@ import {
   resolveDraftMutationResultMessage,
 } from "./phase-85-stage-4b2-mutations";
 import { createEmptyStage4B3MediaCollections } from "./phase-85-stage-4b3-media-contracts";
+import { createEmptyStage4B4VoiceCollections } from "./phase-85-stage-4b4-voice-contracts";
 import { loadBoundedMediaProjectionFromSupabaseV2 } from "./phase-85-stage-4b3-bounded-media-rpc";
 import { prepareSupabaseClientMediaDsar } from "./phase-85-stage-4b3-media-lifecycle-saga";
 import {
@@ -1055,6 +1056,7 @@ export async function loadSupabaseState(context = demoTenantContext()) {
           ];
         }),
       ),
+      ...createEmptyStage4B4VoiceCollections(),
     }),
     context,
     assignmentsResult.data || [],
@@ -1280,6 +1282,7 @@ export async function loadSupabaseWindowedDashboardPayload(
       processedSimulationKeys: [],
       lastSimulation: null,
       ...createEmptyStage4B3MediaCollections(),
+      ...createEmptyStage4B4VoiceCollections(),
     },
     context,
     assignmentsResult.data || [],
@@ -1569,6 +1572,7 @@ async function loadSupabaseClientOperationState(
       processedSimulationKeys: (processedEventsResult.data || []).map((event) => event.provider_event_id),
       lastSimulation: null,
       ...createEmptyStage4B3MediaCollections(),
+      ...createEmptyStage4B4VoiceCollections(),
     },
     context,
     assignmentsResult.data || [],
@@ -1929,6 +1933,7 @@ async function loadSupabaseClientCreateContext(context: AppTenantContext) {
       processedSimulationKeys: [],
       lastSimulation: null,
       ...createEmptyStage4B3MediaCollections(),
+      ...createEmptyStage4B4VoiceCollections(),
     },
     context,
     assignmentsResult.data || [],

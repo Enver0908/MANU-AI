@@ -1,6 +1,6 @@
 # Handoff For Next Codex
 
-**Current authority (2026-07-14):** Stage 4B-4 Sesli Mesaj Guvenligi ve Transkripsiyon Orkestrasyonu Phase 0 is active after Stage 4B-3 post-closure remediation R0-R9. Active plan: `docs/PHASE_85_STAGE_4B_4_SESLI_MESAJ_GUVENLIGI_VE_TRANSKRIPSIYON_ORK_PLAN.md`. Phase 0 evidence: `docs/PHASE_85_STAGE_4B_4_PHASE_0_DOCUMENTATION_EVIDENCE.md`. Stage 4C is blocked until Stage 4B-4 closes. Production remains `NO-GO`; R-405 remains open.
+**Current authority (2026-07-15):** Stage 4B-4 Sesli Mesaj Guvenligi ve Transkripsiyon Orkestrasyonu Phase 1 is complete locally after Phase 0. Active plan: `docs/PHASE_85_STAGE_4B_4_SESLI_MESAJ_GUVENLIGI_VE_TRANSKRIPSIYON_ORK_PLAN.md`. Phase 1 evidence: `docs/PHASE_85_STAGE_4B_4_PHASE_1_DOMAIN_TYPE_CONTRACT_EVIDENCE.md`. **Next:** Stage 4B-4 Phase 2 persistence, private audio storage, RLS, and queue foundation. Stage 4C is blocked until Stage 4B-4 closes. Production remains `NO-GO`; R-405 remains open.
 
 Pre-Stage-4B-4 Stage 4B-3 closure and Stage 4C-next paragraphs below this authority block are historical snapshots. Use the Stage 4B-4 plan as the current handoff.
 
@@ -8,7 +8,7 @@ Continuity audit, 2026-07-13: canonical status, repository-relative references, 
 
 ## Read This First
 
-Latest Phase 85 handoff (2026-07-14): **Stage 4B-4 Sesli Mesaj Guvenligi ve Transkripsiyon Orkestrasyonu is current.** Stage 4B-3 post-closure remediation R0-R9 is complete locally; R9 evidence remains `docs/PHASE_85_STAGE_4B_3_POST_CLOSURE_REMEDIATION_R9_EVIDENCE.md`. Stage 4B-4 canonical plan: `docs/PHASE_85_STAGE_4B_4_SESLI_MESAJ_GUVENLIGI_VE_TRANSKRIPSIYON_ORK_PLAN.md`. **Next work:** Stage 4B-4 Phase 1 voice threat model, domain contract, and type boundary. Stage 4C is blocked until Stage 4B-4 closes; production pilot remains `NO-GO`; R-405 remains open; all real integration paths remain closed.
+Latest Phase 85 handoff (2026-07-15): **Stage 4B-4 Phase 1 voice threat model, domain contract, and type boundary are complete locally.** Phase 1 evidence: `docs/PHASE_85_STAGE_4B_4_PHASE_1_DOMAIN_TYPE_CONTRACT_EVIDENCE.md`. **Next work:** Stage 4B-4 Phase 2 persistence, private audio storage, RLS, and queue foundation. Stage 4C is blocked until Stage 4B-4 closes; production pilot remains `NO-GO`; R-405 remains open; all real integration paths remain closed.
 
 Latest Phase 85 Stage 4B-3 Phase 4 status (2026-07-13): bundle correlation and silence queue complete locally. Evidence: `docs/PHASE_85_STAGE_4B_3_PHASE_4_BUNDLE_SILENCE_QUEUE_EVIDENCE.md`. Phase 5 subsequently completed; see the Phase 5 evidence above.
 
