@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  STAGE_4B4_EXTERNAL_TRANSCRIPTION_EGRESS_COUNT,
   STAGE_4B4_MOCK_VOICE_TRANSCRIPTION_ENV_FLAG,
   evaluateStage4B4VoiceTranscriptionProviderGate,
   isStage4B4MockVoiceTranscriptionAllowed,
@@ -43,5 +44,14 @@ describe("phase 85 stage 4b-4 provider gate", () => {
         NODE_ENV: "test",
       } as NodeJS.ProcessEnv).blockingReasons,
     ).toContain("mock_voice_transcription_gate_disabled");
+  });
+
+  it("keeps external transcription egress structurally zero", () => {
+    expect(STAGE_4B4_EXTERNAL_TRANSCRIPTION_EGRESS_COUNT).toBe(0);
+    const gate = evaluateStage4B4VoiceTranscriptionProviderGate({
+      NODE_ENV: "test",
+      [STAGE_4B4_MOCK_VOICE_TRANSCRIPTION_ENV_FLAG]: "true",
+    } as NodeJS.ProcessEnv);
+    expect(gate).not.toHaveProperty("realSttEgressAllowed");
   });
 });

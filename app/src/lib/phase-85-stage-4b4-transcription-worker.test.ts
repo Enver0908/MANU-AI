@@ -123,7 +123,7 @@ describe("phase 85 stage 4b-4 transcription worker", () => {
     expect(updatedAsset?.status).toBe("analysis_pending");
   });
 
-  it("fails closed when the canonical hash is unknown to the mock manifest", async () => {
+  it("fails closed to review_required when the canonical hash is unknown to the mock manifest", async () => {
     const { state, admission, asset } = await admitGoldenVoice("meal_update_tr");
     const unknownProvider = createStage4B4MockTranscriptionProvider({ env: testEnv() });
     const transcribed = await processStage4B4PendingTranscriptions(state, {
@@ -134,12 +134,11 @@ describe("phase 85 stage 4b-4 transcription worker", () => {
     });
 
     const record = transcribed.audioTranscriptionRecords.find((entry) => entry.mediaAssetId === asset.id);
-    expect(record?.status).toBe("pending");
-    expect(record?.retryCount).toBe(1);
+    expect(record?.status).toBe("review_required");
     expect(record?.rejectionReasons).toContain("unknown_fixture");
   });
 
-  it("does not run when the mock transcription gate is disabled", async () => {
+  it("terminalizes pending transcriptions as review_required when the mock gate is disabled", async () => {
     const { state, admission, asset } = await admitGoldenVoice("meal_update_tr");
     const disabledEnv = {
       NODE_ENV: "test",
@@ -152,7 +151,8 @@ describe("phase 85 stage 4b-4 transcription worker", () => {
     });
 
     const record = transcribed.audioTranscriptionRecords.find((entry) => entry.mediaAssetId === asset.id);
-    expect(record?.status).toBe("pending");
-    expect(transcribed).toEqual(state);
+    expect(record?.status).toBe("review_required");
+    expect(record?.rejectionReasons).toContain("provider_disabled");
+    expect(transcribed.mediaAssets.find((entry) => entry.id === asset.id)?.status).toBe("analysis_pending");
   });
 });

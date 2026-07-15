@@ -1,21 +1,18 @@
-export const STAGE_4B4_PROVIDER_GATE_VERSION = "p85-stage-4b4-provider-gate-v1";
+export const STAGE_4B4_PROVIDER_GATE_VERSION = "p85-stage-4b4-provider-gate-v2";
 
 export const STAGE_4B4_MOCK_VOICE_TRANSCRIPTION_ENV_FLAG = "MANU_ALLOW_MOCK_VOICE_TRANSCRIPTION";
-export const STAGE_4B4_REAL_STT_EGRESS_ENV_FLAG = "MANU_ALLOW_REAL_STT_EGRESS";
+
+/** Structural guarantee: no external STT egress path exists in this remediation track. */
+export const STAGE_4B4_EXTERNAL_TRANSCRIPTION_EGRESS_COUNT = 0 as const;
 
 export type Stage4B4VoiceTranscriptionProviderGateEvaluation = {
   packVersion: string;
   mockVoiceTranscriptionAllowed: boolean;
-  realSttEgressAllowed: boolean;
   blockingReasons: string[];
 };
 
 export function isStage4B4MockVoiceTranscriptionAllowed(env: NodeJS.ProcessEnv = process.env): boolean {
   return env[STAGE_4B4_MOCK_VOICE_TRANSCRIPTION_ENV_FLAG] === "true";
-}
-
-export function isStage4B4RealSttEgressAllowed(): boolean {
-  return false;
 }
 
 export function evaluateStage4B4VoiceTranscriptionProviderGate(
@@ -37,14 +34,9 @@ export function evaluateStage4B4VoiceTranscriptionProviderGate(
     blockingReasons.push("hosted_sandbox_refused");
   }
 
-  if (env[STAGE_4B4_REAL_STT_EGRESS_ENV_FLAG] === "true") {
-    blockingReasons.push("real_stt_egress_forbidden");
-  }
-
   return {
     packVersion: STAGE_4B4_PROVIDER_GATE_VERSION,
     mockVoiceTranscriptionAllowed,
-    realSttEgressAllowed: false,
     blockingReasons,
   };
 }

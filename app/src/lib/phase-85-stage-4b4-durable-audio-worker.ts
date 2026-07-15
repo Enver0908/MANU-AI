@@ -13,12 +13,17 @@ import {
 } from "./phase-85-stage-4b4-voice-contracts";
 import { createStage4B4MockTranscriptionProvider } from "./phase-85-stage-4b4-mock-transcription-provider";
 import {
+  invokeStage4B4TranscriptionProviderWithDeadline,
+  isRetryableTranscriptionProviderFailure,
+  mapTranscriptionProviderFailureToQualityCode,
+} from "./phase-85-stage-4b4-transcription-provider";
+import {
   completeTranscriptionV2,
   failTranscriptionWorkV2,
   STAGE_4B4_DURABLE_PIPELINE_SAGA_VERSION,
 } from "./phase-85-stage-4b4-durable-pipeline-saga";
 
-export const STAGE_4B4_DURABLE_AUDIO_WORKER_VERSION = "p85-stage-4b4-durable-audio-worker-v2";
+export const STAGE_4B4_DURABLE_AUDIO_WORKER_VERSION = "p85-stage-4b4-durable-audio-worker-v3";
 export const STAGE_4B4_TRANSCRIPTION_WORKER_BATCH_LIMIT = 8;
 export const STAGE_4B4_TRANSCRIPTION_WORKER_LEASE_RENEW_MS = 20_000;
 
@@ -68,6 +73,27 @@ async function renewTranscriptionLease(
   });
 }
 
+async function terminalizeClaimedTranscriptionReviewRequired(input: {
+  supabase: SupabaseClient;
+  tenantId: string;
+  workerId: string;
+  claimed: ClaimedTranscriptionRow;
+  failureCode: string;
+  rejectionReasons: string[];
+  terminalClass?: "security" | "transient" | "review_required";
+}) {
+  await failTranscriptionWorkV2({
+    supabase: input.supabase,
+    tenantId: input.tenantId,
+    transcriptionId: input.claimed.id,
+    workerId: input.workerId,
+    leaseToken: input.claimed.lease_token,
+    failureCode: input.failureCode,
+    terminalClass: input.terminalClass ?? "review_required",
+    rejectionReasons: input.rejectionReasons,
+  });
+}
+
 export async function runStage4B4DurableTranscriptionWorkerBatch(input: {
   supabase: SupabaseClient;
   tenantId: string;
@@ -90,10 +116,6 @@ export async function runStage4B4DurableTranscriptionWorkerBatch(input: {
     failed: 0,
     retriesScheduled: 0,
   };
-
-  if (!gate.mockVoiceTranscriptionAllowed) {
-    return summary;
-  }
 
   const storage = createSupabaseStage4B4AudioStorage(input.supabase);
   let manifest = createStage4B4TranscriptionFixtureManifest();
@@ -120,6 +142,20 @@ export async function runStage4B4DurableTranscriptionWorkerBatch(input: {
     }
     summary.claimed += 1;
 
+    if (!gate.mockVoiceTranscriptionAllowed) {
+      await terminalizeClaimedTranscriptionReviewRequired({
+        supabase: input.supabase,
+        tenantId: input.tenantId,
+        workerId,
+        claimed,
+        failureCode: "provider_gate_disabled",
+        rejectionReasons: ["provider_disabled"],
+        terminalClass: "review_required",
+      });
+      summary.reviewRequired += 1;
+      continue;
+    }
+
     const { data: assetRow, error: assetError } = await input.supabase
       .from("media_assets")
       .select("id, content_sha256, sanitized_audio_object_key, status")
@@ -128,36 +164,37 @@ export async function runStage4B4DurableTranscriptionWorkerBatch(input: {
       .maybeSingle();
 
     if (assetError || !assetRow) {
-      await failTranscriptionWorkV2({
+      await terminalizeClaimedTranscriptionReviewRequired({
         supabase: input.supabase,
         tenantId: input.tenantId,
-        transcriptionId: claimed.id,
         workerId,
-        leaseToken: claimed.lease_token,
+        claimed,
         failureCode: "missing_asset",
-        terminalClass: "security",
+        rejectionReasons: ["malformed_observation"],
+        terminalClass: "review_required",
       });
-      summary.failed += 1;
+      summary.reviewRequired += 1;
       continue;
     }
 
     const asset = assetRow as MediaAssetRow;
     if (!asset.content_sha256 || !asset.sanitized_audio_object_key) {
-      await failTranscriptionWorkV2({
+      await terminalizeClaimedTranscriptionReviewRequired({
         supabase: input.supabase,
         tenantId: input.tenantId,
-        transcriptionId: claimed.id,
         workerId,
-        leaseToken: claimed.lease_token,
+        claimed,
         failureCode: "missing_content_sha256",
-        terminalClass: "security",
+        rejectionReasons: ["malformed_observation"],
+        terminalClass: "review_required",
       });
-      summary.failed += 1;
+      summary.reviewRequired += 1;
       continue;
     }
 
     const stored = await storage.downloadObject(asset.sanitized_audio_object_key);
     if (!stored?.bytes?.byteLength) {
+      const qualityCode = mapTranscriptionProviderFailureToQualityCode("storage_upload_failed");
       const result = await input.supabase.rpc("p85_stage_4b4_fail_transcription_work_v2", {
         p_tenant_id: input.tenantId,
         p_transcription_id: claimed.id,
@@ -165,6 +202,7 @@ export async function runStage4B4DurableTranscriptionWorkerBatch(input: {
         p_lease_token: claimed.lease_token,
         p_failure_code: "storage_upload_failed",
         p_terminal_class: "transient",
+        p_rejection_reasons: [qualityCode],
       });
       if (result.error) {
         throw result.error;
@@ -172,7 +210,7 @@ export async function runStage4B4DurableTranscriptionWorkerBatch(input: {
       if (result.data?.status === "retry_scheduled") {
         summary.retriesScheduled += 1;
       } else {
-        summary.failed += 1;
+        summary.reviewRequired += 1;
       }
       continue;
     }
@@ -189,7 +227,7 @@ export async function runStage4B4DurableTranscriptionWorkerBatch(input: {
 
     let providerResult;
     try {
-      providerResult = await provider.transcribe({
+      providerResult = await invokeStage4B4TranscriptionProviderWithDeadline(provider, {
         requestId: claimed.id,
         contentSha256: asset.content_sha256,
         locale: claimed.locale as never,
@@ -200,25 +238,24 @@ export async function runStage4B4DurableTranscriptionWorkerBatch(input: {
     }
 
     if (!providerResult.ok) {
+      const qualityCode = mapTranscriptionProviderFailureToQualityCode(providerResult.failureCode);
+      const retryable = providerResult.retryable || isRetryableTranscriptionProviderFailure(providerResult.failureCode);
       const result = await input.supabase.rpc("p85_stage_4b4_fail_transcription_work_v2", {
         p_tenant_id: input.tenantId,
         p_transcription_id: claimed.id,
         p_worker_id: workerId,
         p_lease_token: claimed.lease_token,
         p_failure_code: providerResult.failureCode,
-        p_terminal_class: providerResult.retryable ? "transient" : "security",
+        p_terminal_class: retryable ? "transient" : "review_required",
+        p_rejection_reasons: [qualityCode],
       });
       if (result.error) {
         throw result.error;
       }
       if (result.data?.status === "retry_scheduled") {
         summary.retriesScheduled += 1;
-      } else if (result.data?.status === "terminal_failure") {
-        if (providerResult.retryable) {
-          summary.failed += 1;
-        } else {
-          summary.reviewRequired += 1;
-        }
+      } else {
+        summary.reviewRequired += 1;
       }
       continue;
     }
@@ -227,14 +264,14 @@ export async function runStage4B4DurableTranscriptionWorkerBatch(input: {
     try {
       observation = parseAudioTranscriptionObservationV1(providerResult.observation);
     } catch {
-      await failTranscriptionWorkV2({
+      await terminalizeClaimedTranscriptionReviewRequired({
         supabase: input.supabase,
         tenantId: input.tenantId,
-        transcriptionId: claimed.id,
         workerId,
-        leaseToken: claimed.lease_token,
+        claimed,
         failureCode: "observation_validation_failed",
-        terminalClass: "security",
+        rejectionReasons: ["malformed_observation"],
+        terminalClass: "review_required",
       });
       summary.reviewRequired += 1;
       continue;

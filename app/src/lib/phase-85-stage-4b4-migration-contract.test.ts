@@ -42,6 +42,11 @@ const durablePipelineMigration = readFileSync(
   "utf8",
 );
 
+const failClosedQualityMigration = readFileSync(
+  resolve(__dirname, "../../supabase/migrations/20260715120000_phase_85_stage_4b4_fail_closed_quality_gate.sql"),
+  "utf8",
+);
+
 const stage4B4Tables = [
   "audio_transcription_records",
   "audio_transcript_corrections",
@@ -82,6 +87,19 @@ describe("P85 Stage 4B-4 remediation R3 durable pipeline migration", () => {
     expect(durablePipelineMigration).toContain("for update skip locked");
     expect(durablePipelineMigration).toContain(
       "grant execute on function p85_stage_4b4_complete_transcription_v2",
+    );
+  });
+});
+
+describe("P85 Stage 4B-4 remediation R4 fail-closed quality migration", () => {
+  it("routes exhausted transcription failures to review_required with quality rejection reasons", () => {
+    expect(failClosedQualityMigration).toContain("drop function if exists p85_stage_4b4_fail_transcription_work_v2");
+    expect(failClosedQualityMigration).toContain("p_rejection_reasons text[]");
+    expect(failClosedQualityMigration).toContain("set status = 'review_required'");
+    expect(failClosedQualityMigration).toContain("array['retry_limit_exceeded']");
+    expect(failClosedQualityMigration).toContain("array['provider_disabled']");
+    expect(failClosedQualityMigration).toContain(
+      "grant execute on function p85_stage_4b4_fail_transcription_work_v2",
     );
   });
 });

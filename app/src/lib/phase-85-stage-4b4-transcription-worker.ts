@@ -1,7 +1,12 @@
 import type { MediaAssetRecord } from "./phase-85-stage-4b3-media-contracts";
 import { evaluateStage4B4VoiceTranscriptionProviderGate } from "./phase-85-stage-4b4-provider-gate";
 import type { Stage4B4AudioStoragePort } from "./phase-85-stage-4b4-audio-storage";
-import type { Stage4B4TranscriptionProviderPort } from "./phase-85-stage-4b4-transcription-provider";
+import {
+  invokeStage4B4TranscriptionProviderWithDeadline,
+  isRetryableTranscriptionProviderFailure,
+  mapTranscriptionProviderFailureToQualityCode,
+  type Stage4B4TranscriptionProviderPort,
+} from "./phase-85-stage-4b4-transcription-provider";
 import { applyTranscriptQualityGate } from "./phase-85-stage-4b4-transcript-quality";
 import {
   applyAcceptedTranscriptionBridge,
@@ -18,7 +23,7 @@ import {
 } from "./phase-85-stage-4b4-voice-contracts";
 import type { ManuAppState } from "./types";
 
-export const STAGE_4B4_TRANSCRIPTION_WORKER_VERSION = "p85-stage-4b4-transcription-worker-v1";
+export const STAGE_4B4_TRANSCRIPTION_WORKER_VERSION = "p85-stage-4b4-transcription-worker-v2";
 export const STAGE_4B4_TRANSCRIPTION_IN_PROCESS_RETRIES = 2;
 export const STAGE_4B4_TRANSCRIPTION_MAX_DURABLE_RETRIES = 3;
 export const STAGE_4B4_TRANSCRIPTION_RETRY_DELAY_MS = [30_000, 120_000, 300_000] as const;
@@ -74,10 +79,11 @@ async function invokeProviderWithRetries(
 ): Promise<{ observation: AudioTranscriptionRecord["observation"]; failureCode: string | null }> {
   let lastFailureCode: string | null = null;
   for (let attempt = 0; attempt <= STAGE_4B4_TRANSCRIPTION_IN_PROCESS_RETRIES; attempt += 1) {
-    const result = await provider.transcribe(input);
+    const result = await invokeStage4B4TranscriptionProviderWithDeadline(provider, input);
     if (!result.ok) {
       lastFailureCode = result.failureCode;
-      if (result.retryable && attempt < STAGE_4B4_TRANSCRIPTION_IN_PROCESS_RETRIES) {
+      const retryable = result.retryable || isRetryableTranscriptionProviderFailure(result.failureCode);
+      if (retryable && attempt < STAGE_4B4_TRANSCRIPTION_IN_PROCESS_RETRIES) {
         await sleep(50);
         continue;
       }
@@ -89,23 +95,40 @@ async function invokeProviderWithRetries(
         observation: parseAudioTranscriptionObservationV1(result.observation),
         failureCode: null,
       };
-    } catch (error) {
-      lastFailureCode = error instanceof Error ? error.message : "observation_validation_failed";
-      return { observation: null, failureCode: lastFailureCode };
+    } catch {
+      return { observation: null, failureCode: "observation_validation_failed" };
     }
   }
 
   return { observation: null, failureCode: lastFailureCode ?? "provider_timeout" };
 }
 
-function mapProviderFailureToQualityCode(failureCode: string | null): AudioQualityCode {
-  if (failureCode === "unknown_fixture") {
-    return "unknown_fixture";
-  }
-  if (failureCode === "provider_gate_disabled") {
-    return "provider_disabled";
-  }
-  return "malformed_observation";
+function finalizeReviewRequiredTranscription(
+  state: ManuAppState,
+  record: AudioTranscriptionRecord,
+  asset: MediaAssetRecord,
+  rejectionReasons: AudioQualityCode[],
+  now?: string,
+  retryCount?: number,
+): ManuAppState {
+  const observedAt = now ?? new Date().toISOString();
+  let workingState = updateTranscriptionRecord(state, record.id, {
+    status: "review_required",
+    observation: null,
+    qualityDecision: { accepted: false, reasonCodes: rejectionReasons },
+    rejectionReasons,
+    retryCount: retryCount ?? record.retryCount ?? 0,
+    nextAttemptAt: null,
+    failureCode: rejectionReasons[0] ?? "malformed_observation",
+    updatedAt: observedAt,
+  });
+  workingState = updateMediaAsset(workingState, asset.id, {
+    status: "analysis_pending",
+    failureCode: rejectionReasons[0] ?? "malformed_observation",
+    updatedAt: observedAt,
+  });
+  workingState = reconcileBundleForVoiceTranscriptionOutcome(workingState, record.id, observedAt);
+  return workingState;
 }
 
 export async function transcribeSinglePendingAudioRecord(
@@ -119,10 +142,6 @@ export async function transcribeSinglePendingAudioRecord(
   },
 ): Promise<ManuAppState> {
   const gate = evaluateStage4B4VoiceTranscriptionProviderGate(options.env);
-  if (!gate.mockVoiceTranscriptionAllowed) {
-    return state;
-  }
-
   const record = state.audioTranscriptionRecords.find(
     (entry) => entry.id === transcriptionId && entry.tenantId === state.tenant.id,
   );
@@ -136,8 +155,13 @@ export async function transcribeSinglePendingAudioRecord(
   if (!asset || asset.mediaKind !== "audio" || asset.status !== "analysis_pending") {
     return state;
   }
+
+  if (!gate.mockVoiceTranscriptionAllowed) {
+    return finalizeReviewRequiredTranscription(state, record, asset, ["provider_disabled"], options.now);
+  }
+
   if (!asset.contentSha256 || !asset.sanitizedAudioObjectKey) {
-    return finalizeFailedTranscription(state, record, asset, "missing_content_sha256", options.now);
+    return finalizeReviewRequiredTranscription(state, record, asset, ["malformed_observation"], options.now);
   }
 
   const now = options.now ?? new Date().toISOString();
@@ -148,7 +172,29 @@ export async function transcribeSinglePendingAudioRecord(
 
   const stored = await options.storage.downloadObject(asset.sanitizedAudioObjectKey);
   if (!stored?.bytes?.byteLength) {
-    return finalizeFailedTranscription(workingState, record, asset, "storage_upload_failed", now);
+    const nextRetryCount = (record.retryCount ?? 0) + 1;
+    if (nextRetryCount >= STAGE_4B4_TRANSCRIPTION_MAX_DURABLE_RETRIES) {
+      return finalizeReviewRequiredTranscription(
+        workingState,
+        record,
+        asset,
+        ["retry_limit_exceeded"],
+        now,
+        nextRetryCount,
+      );
+    }
+    const retryDelay =
+      STAGE_4B4_TRANSCRIPTION_RETRY_DELAY_MS[
+        Math.min(nextRetryCount - 1, STAGE_4B4_TRANSCRIPTION_RETRY_DELAY_MS.length - 1)
+      ];
+    const retryAt = new Date(new Date(now).getTime() + retryDelay).toISOString();
+    return updateTranscriptionRecord(workingState, transcriptionId, {
+      status: "pending",
+      retryCount: nextRetryCount,
+      nextAttemptAt: retryAt,
+      rejectionReasons: [mapTranscriptionProviderFailureToQualityCode("storage_upload_failed")],
+      updatedAt: now,
+    });
   }
 
   const providerResult = await invokeProviderWithRetries(options.provider, {
@@ -159,10 +205,23 @@ export async function transcribeSinglePendingAudioRecord(
   });
 
   if (!providerResult.observation) {
-    const nextRetryCount = (record.retryCount ?? 0) + 1;
     const failureCode = providerResult.failureCode ?? "provider_invalid_output";
-    if (nextRetryCount > STAGE_4B4_TRANSCRIPTION_MAX_DURABLE_RETRIES) {
-      return finalizeFailedTranscription(workingState, record, asset, failureCode, now, nextRetryCount);
+    const qualityCode = mapTranscriptionProviderFailureToQualityCode(failureCode);
+    const retryable = isRetryableTranscriptionProviderFailure(failureCode);
+    const nextRetryCount = (record.retryCount ?? 0) + 1;
+    if (!retryable || nextRetryCount >= STAGE_4B4_TRANSCRIPTION_MAX_DURABLE_RETRIES) {
+      const terminalReasons: AudioQualityCode[] =
+        retryable && nextRetryCount >= STAGE_4B4_TRANSCRIPTION_MAX_DURABLE_RETRIES
+          ? ["retry_limit_exceeded"]
+          : [qualityCode];
+      return finalizeReviewRequiredTranscription(
+        workingState,
+        record,
+        asset,
+        terminalReasons,
+        now,
+        nextRetryCount,
+      );
     }
 
     const retryDelay =
@@ -174,7 +233,7 @@ export async function transcribeSinglePendingAudioRecord(
       status: "pending",
       retryCount: nextRetryCount,
       nextAttemptAt: retryAt,
-      rejectionReasons: [mapProviderFailureToQualityCode(failureCode)],
+      rejectionReasons: [qualityCode],
       updatedAt: now,
     });
   }
@@ -217,45 +276,6 @@ export async function transcribeSinglePendingAudioRecord(
   return workingState;
 }
 
-function finalizeFailedTranscription(
-  state: ManuAppState,
-  record: AudioTranscriptionRecord,
-  asset: MediaAssetRecord,
-  failureCode: string,
-  now?: string,
-  retryCount?: number,
-): ManuAppState {
-  const observedAt = now ?? new Date().toISOString();
-  const qualityCode = mapProviderFailureToQualityCode(failureCode);
-  let workingState = updateTranscriptionRecord(state, record.id, {
-    status: "failed",
-    observation: null,
-    qualityDecision: { accepted: false, reasonCodes: [qualityCode] },
-    rejectionReasons: [qualityCode],
-    retryCount: retryCount ?? (record.retryCount ?? 0) + 1,
-    updatedAt: observedAt,
-  });
-  workingState = updateMediaAsset(workingState, asset.id, {
-    status: "failed",
-    failureCode,
-    updatedAt: observedAt,
-  });
-  workingState = {
-    ...workingState,
-    messages: workingState.messages.map((message) =>
-      message.id === asset.messageId
-        ? {
-            ...message,
-            contentStatus: "content_unavailable",
-            retrievalEligibility: "excluded_unavailable",
-          }
-        : message,
-    ),
-  };
-  workingState = reconcileBundleForVoiceTranscriptionOutcome(workingState, record.id, observedAt);
-  return workingState;
-}
-
 export async function processStage4B4PendingTranscriptions(
   state: ManuAppState,
   options: {
@@ -265,11 +285,6 @@ export async function processStage4B4PendingTranscriptions(
     now?: string;
   },
 ): Promise<ManuAppState> {
-  const gate = evaluateStage4B4VoiceTranscriptionProviderGate(options.env);
-  if (!gate.mockVoiceTranscriptionAllowed) {
-    return state;
-  }
-
   const now = options.now ?? new Date().toISOString();
   const dueRecords = state.audioTranscriptionRecords.filter((record) => {
     if (record.tenantId !== state.tenant.id || record.status !== "pending") {

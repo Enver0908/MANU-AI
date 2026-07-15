@@ -33,6 +33,6 @@ describe("phase-85-stage-4b4-durable-pipeline", () => {
 
   it("bumps durable worker versions for remediation R3", () => {
     expect(STAGE_4B4_DURABLE_ADMISSION_WORKER_VERSION).toContain("admission-worker");
-    expect(STAGE_4B4_DURABLE_AUDIO_WORKER_VERSION).toContain("v2");
+    expect(STAGE_4B4_DURABLE_AUDIO_WORKER_VERSION).toContain("v3");
   });
 });

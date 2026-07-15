@@ -94,6 +94,8 @@ export const AUDIO_QUALITY_CODES = [
   "missing_confidence",
   "malformed_observation",
   "provider_disabled",
+  "provider_timeout",
+  "retry_limit_exceeded",
   "unknown_fixture",
   "segment_overlap",
   "segment_timing_invalid",
@@ -624,6 +626,13 @@ export function parseAudioTranscriptionObservationV1(input: unknown): AudioTrans
   };
 }
 
+export function evaluateAudioTranscriptionQuality(input: {
+  observation: AudioTranscriptionObservationV1;
+  expectedLocale: Stage4B4SupportedLocale;
+}): AudioTranscriptionQualityDecision {
+  return evaluateTranscriptQualityGate(input);
+}
+
 export function evaluateTranscriptQualityGate(input: {
   observation: AudioTranscriptionObservationV1;
   expectedLocale: Stage4B4SupportedLocale;
@@ -631,7 +640,12 @@ export function evaluateTranscriptQualityGate(input: {
   const reasonCodes: AudioQualityCode[] = [];
   const { observation, expectedLocale } = input;
   const metrics = computeTranscriptionDerivedMetrics(observation);
-  const codepointCount = countUnicodeCodepoints(observation.transcriptText.trim());
+  const trimmedTranscript = observation.transcriptText.trim();
+  const codepointCount = countUnicodeCodepoints(trimmedTranscript);
+
+  if (observation.segments.length < 1) {
+    reasonCodes.push("malformed_observation");
+  }
 
   if (codepointCount < STAGE_4B4_MIN_TRANSCRIPT_CODEPOINTS) {
     reasonCodes.push("empty_transcript");
@@ -642,10 +656,17 @@ export function evaluateTranscriptQualityGate(input: {
   if (metrics.detectedLocale !== expectedLocale) {
     reasonCodes.push("wrong_language");
   }
-  if (!isUnitConfidence(metrics.overallConfidence)) {
+
+  const derivedMinimumConfidence = metrics.minimumSegmentConfidence;
+  if (!isUnitConfidence(derivedMinimumConfidence)) {
     reasonCodes.push("missing_confidence");
-  } else if (metrics.overallConfidence < STAGE_4B4_OVERALL_CONFIDENCE_THRESHOLD) {
-    reasonCodes.push("overall_confidence_low");
+  } else {
+    if (derivedMinimumConfidence < STAGE_4B4_OVERALL_CONFIDENCE_THRESHOLD) {
+      reasonCodes.push("overall_confidence_low");
+    }
+    if (derivedMinimumConfidence < STAGE_4B4_MIN_SEGMENT_CONFIDENCE_THRESHOLD) {
+      reasonCodes.push("segment_confidence_low");
+    }
   }
 
   for (const segment of observation.segments) {

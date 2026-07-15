@@ -223,7 +223,8 @@ export async function failTranscriptionWorkV2(input: {
   workerId: string;
   leaseToken: string;
   failureCode: string;
-  terminalClass?: "security" | "transient";
+  terminalClass?: "security" | "transient" | "review_required";
+  rejectionReasons?: string[];
 }): Promise<void> {
   const { error } = await input.supabase.rpc("p85_stage_4b4_fail_transcription_work_v2", {
     p_tenant_id: input.tenantId,
@@ -232,6 +233,7 @@ export async function failTranscriptionWorkV2(input: {
     p_lease_token: input.leaseToken,
     p_failure_code: input.failureCode,
     p_terminal_class: input.terminalClass ?? "transient",
+    p_rejection_reasons: input.rejectionReasons ?? null,
   });
   if (error) {
     throw error;
