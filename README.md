@@ -4,9 +4,9 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 ## Current Status
 
-**Current authority (2026-07-15):** Stage 4B-4 Sesli Mesaj Guvenligi ve Transkripsiyon Orkestrasyonu Phase 11 is complete locally. Active plan: `docs/PHASE_85_STAGE_4B_4_SESLI_MESAJ_GUVENLIGI_VE_TRANSKRIPSIYON_ORK_PLAN.md`. Phase 11 evidence: `docs/PHASE_85_STAGE_4B_4_PHASE_11_MEASURED_CLOSURE_STAGE_4C_HANDOFF_EVIDENCE.md`. **Next:** Stage 4C Diyetisyen Icin AI Chat. Stage 4C read gate is authorized. R-405 remains open; production remains `NO-GO`.
+**Current authority (2026-07-15):** Stage 4B-4 post-closure remediation is active. Active plan: `docs/PHASE_85_STAGE_4B_4_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. R0 evidence: `docs/PHASE_85_STAGE_4B_4_POST_CLOSURE_REMEDIATION_R0_EVIDENCE.md`. The Phase 11 closure evidence remains historical and is superseded as a Stage 4C authorization artifact. **Next:** Stage 4B-4 remediation R1 - domain contracts, lineage, and database invariants. Stage 4C is blocked until R9. R-405 remains open; production remains `NO-GO`.
 
-**2026-07-15 Stage 4B-4 Phase 11 measured closure:** Program closure evaluator, risk reconciliation for `R-451`..`R-461`, `npm run rehearse:stage-4b4:closure`, and Stage 4C read-gate authorization are locked locally. Evidence: `docs/PHASE_85_STAGE_4B_4_PHASE_11_MEASURED_CLOSURE_STAGE_4C_HANDOFF_EVIDENCE.md`.
+**2026-07-15 Stage 4B-4 post-closure remediation R0:** Phase 11 remains historical, but Stage 4C authorization is revoked while R0-R9 remediation is active. Evidence: `docs/PHASE_85_STAGE_4B_4_POST_CLOSURE_REMEDIATION_R0_EVIDENCE.md`.
 
 **2026-07-15 Stage 4B-4 Phase 4 deterministic transcription:** Mock-gated provider port, hash fixture manifest, quality gate, transcription worker, and `worker:audio:stage4b4` scripts are locked locally. Evidence: `docs/PHASE_85_STAGE_4B_4_PHASE_4_DETERMINISTIC_TRANSCRIPTION_PROVIDER_EVIDENCE.md`.
 
@@ -102,7 +102,7 @@ P85-IF-D added complete transcript and human-control coordination for business-h
 
 This repository is a local SaaS/PWA pilot prototype and architecture workspace. It is not a production-connected system yet.
 
-**Latest implementation phase:** Phase 85 Stage 4B-4 Phase 5 bundle correlation and typed-text bridge are complete locally (2026-07-15). **Current work:** Stage 4B-4 Sesli Mesaj Guvenligi ve Transkripsiyon Orkestrasyonu. **Next:** Stage 4B-4 Phase 6 existing risk chain and atomic response orchestration. **After closure:** Stage 4C plan/read gate. **Production pilot:** `NO-GO` (unchanged); R-405 remains open.
+**Latest implementation phase:** Phase 85 Stage 4B-4 post-closure remediation R0 is complete locally (2026-07-15). **Current work:** Stage 4B-4 remediation R0-R9. **Next:** R1 domain contracts, lineage, and database invariants. **After R9 closure:** Stage 4C plan/read gate. **Production pilot:** `NO-GO` (unchanged); R-405 remains open.
 
 **Phase 82 verification:** targeted Phase 82 tests passed (5 files, 31/31); Phase 82G records `repoLocalClosureComplete: true` with verification `blocked` because `npm run test:rls` remains skipped/pending when local Supabase is unavailable.
 
@@ -268,7 +268,7 @@ The canonical order is Stage 4B, mandatory Stage 4B-2 Mesajlasma, Stage 4B-3, th
 The decision-complete Mesajlasma action plan is recorded in `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md`; runtime spec in `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`; closure evidence in `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md`. Stage 4B-2 Phases 0–11 are complete. **Next:** Stage 4B-3; production pilot remains `NO-GO`; R-405 remains open.
 ## Phase 85 Stage 4B-2 Post-Closure Remediation - 2026-07-12
 
-Stage 4B-2 implementation and post-closure remediation R0-R7 are complete locally. The canonical remediation plan is `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`; R7 evidence is the current closure authority. Stage 4B-3 is next. Production pilot remains `NO-GO`, R-405 remains open, and real provider/channel/health-data paths remain disabled.
+Stage 4B-2 implementation and post-closure remediation R0-R7 are complete locally. The canonical remediation plan is `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`; R7 evidence is historical closure authority for that stage. Stage 4B-3 subsequently closed and Stage 4B-4 post-closure remediation is now active. Production pilot remains `NO-GO`, R-405 remains open, and real provider/channel/health-data paths remain disabled.
 
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
 
@@ -293,4 +293,4 @@ R6 executed the independent full gate. Core 234/234, app 959/6 skipped, lint/bui
 
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R7 - 2026-07-13
 
-The historical R6 environment block is superseded by zero-skip RLS and executed SQL buffer evidence. Canonical status, risks, and handoff are reconciled in `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. R0-R7 are complete locally; Stage 4B-3 is next. This does not approve the production pilot or close R-405.
+The historical R6 environment block is superseded by zero-skip RLS and executed SQL buffer evidence. Canonical status, risks, and handoff are reconciled in `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. R0-R7 are complete locally; Stage 4B-3 subsequently closed and Stage 4B-4 post-closure remediation is now active. This does not approve the production pilot or close R-405.

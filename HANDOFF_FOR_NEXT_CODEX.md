@@ -1,6 +1,6 @@
 # Handoff For Next Codex
 
-**Current authority (2026-07-15):** Stage 4B-4 Sesli Mesaj Guvenligi ve Transkripsiyon Orkestrasyonu Phase 11 is complete locally after Phase 10. Active plan: `docs/PHASE_85_STAGE_4B_4_SESLI_MESAJ_GUVENLIGI_VE_TRANSKRIPSIYON_ORK_PLAN.md`. Phase 11 evidence: `docs/PHASE_85_STAGE_4B_4_PHASE_11_MEASURED_CLOSURE_STAGE_4C_HANDOFF_EVIDENCE.md`. **Next:** Stage 4C Diyetisyen Icin AI Chat plan/read gate and user-approved implementation. Stage 4C read gate is authorized. Production remains `NO-GO`; R-405 remains open.
+**Current authority (2026-07-15):** Stage 4B-4 post-closure remediation is active. Active plan: `docs/PHASE_85_STAGE_4B_4_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. R0 evidence: `docs/PHASE_85_STAGE_4B_4_POST_CLOSURE_REMEDIATION_R0_EVIDENCE.md`. The Phase 11 closure evidence remains historical and is superseded as a Stage 4C authorization artifact. **Next:** Stage 4B-4 remediation R1 - domain contracts, lineage, and database invariants. Stage 4C read gate and implementation are blocked until R9 produces a fresh complete PASS. Production remains `NO-GO`; R-405 remains open.
 
 Pre-Stage-4B-4 Stage 4B-3 closure and Stage 4C-next paragraphs below this authority block are historical snapshots. Use the Stage 4B-4 plan as the current handoff.
 
@@ -8,13 +8,13 @@ Continuity audit, 2026-07-13: canonical status, repository-relative references, 
 
 ## Read This First
 
-Latest Phase 85 handoff (2026-07-15): **Stage 4B-4 Phase 11 measured closure, risk reconciliation, and Stage 4C handoff are complete locally.** Phase 11 evidence: `docs/PHASE_85_STAGE_4B_4_PHASE_11_MEASURED_CLOSURE_STAGE_4C_HANDOFF_EVIDENCE.md`. **Next work:** Stage 4C Diyetisyen Icin AI Chat plan/read gate and user-approved implementation. Stage 4C read gate is authorized; production pilot remains `NO-GO`; R-405 remains open; all real integration paths remain closed.
+Latest Phase 85 handoff (2026-07-15): **Stage 4B-4 post-closure remediation R0 is complete and remediation is active.** R0 evidence: `docs/PHASE_85_STAGE_4B_4_POST_CLOSURE_REMEDIATION_R0_EVIDENCE.md`. **Next work:** Stage 4B-4 remediation R1 - domain contracts, lineage, and database invariants. Stage 4C read gate and implementation are blocked until R9 produces a fresh complete PASS; production pilot remains `NO-GO`; R-405 remains open; all real integration paths remain closed.
 
 Latest Phase 85 Stage 4B-3 Phase 4 status (2026-07-13): bundle correlation and silence queue complete locally. Evidence: `docs/PHASE_85_STAGE_4B_3_PHASE_4_BUNDLE_SILENCE_QUEUE_EVIDENCE.md`. Phase 5 subsequently completed; see the Phase 5 evidence above.
 
 Latest Phase 85 Stage 4B-3 Phase 2 status (2026-07-13): database/storage/RLS foundation complete locally. Evidence: `docs/PHASE_85_STAGE_4B_3_PHASE_2_DATABASE_STORAGE_RLS_EVIDENCE.md`. Phase 3 subsequently completed; see the Phase 3 evidence above.
 
-Latest Phase 85 Stage 4B-2 status (2026-07-13): **Mesajlasma post-closure remediation R0-R7 and the separate security advisory RLS hardening are complete locally.** The advisory hardening migration `20260713030000_phase_85_stage_4b2_security_advisory_rls_hardening.sql` enables RLS on `conversation_mutation_idempotency` and `personas`, removes direct `anon`/`authenticated` grants, adds no direct-user policies, and preserves service-role mediated behavior. Evidence: `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`. R7 evidence remains `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. **Next work:** Stage 4B-3, beginning with Phase 1 domain/threat/type contract after the Phase 0 lock. Production pilot remains `NO-GO`; R-405 remains open; all real integration paths remain closed. This current handoff supersedes older next-phase statements below.
+Historical Phase 85 Stage 4B-2 status (2026-07-13): **Mesajlasma post-closure remediation R0-R7 and the separate security advisory RLS hardening are complete locally.** The advisory hardening migration `20260713030000_phase_85_stage_4b2_security_advisory_rls_hardening.sql` enables RLS on `conversation_mutation_idempotency` and `personas`, removes direct `anon`/`authenticated` grants, adds no direct-user policies, and preserves service-role mediated behavior. Evidence: `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`. R7 evidence remains `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. Stage 4B-3 and Stage 4B-4 subsequently ran; the current active handoff is Stage 4B-4 post-closure remediation R1. Production pilot remains `NO-GO`; R-405 remains open; all real integration paths remain closed.
 
 Latest Phase 85 Stage 4B-2 local environment status (2026-07-13): **local Supabase reset and `npm run test:rls` pass with 35/35 and 0 skipped; R7 also records executed list/detail SQL buffer evidence.** Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. Production pilot remains `NO-GO`; R-405 remains open; real provider/channel/health-data and production-operations paths remain closed.
 
@@ -24,7 +24,7 @@ Latest Phase 85 Stage 4B-2 Phase 3 status (2026-07-12): superseded by Phase 4 cl
 
 Latest Phase 85 Stage 4B-2 Phase 1 status (2026-07-12): superseded by Phase 2 closure above. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`.
 
-Historical Stage 4B verification snapshot (2026-07-12): implementation and post-closure remediation completed locally, while that day's 33-test RLS run was Docker-blocked. The block was subsequently superseded by complete-chain 35/35 zero-skip RLS and advisory-hardening 36/36 evidence. Current authority is the Stage 4B-2 R7 and advisory records at the top of this handoff. **Next work:** Stage 4B-3. Production pilot remains `NO-GO`; R-405 remains open.
+Historical Stage 4B verification snapshot (2026-07-12): implementation and post-closure remediation completed locally, while that day's 33-test RLS run was Docker-blocked. The block was subsequently superseded by complete-chain 35/35 zero-skip RLS and advisory-hardening 36/36 evidence. Stage 4B-3 and Stage 4B-4 subsequently ran; the active handoff is Stage 4B-4 post-closure remediation R1. Production pilot remains `NO-GO`; R-405 remains open.
 
 Latest Phase 85 Stage 4B Phase 1 status (2026-07-12): superseded by Stage 4B closure above.
 

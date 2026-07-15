@@ -1,7 +1,11 @@
 # Phase 85 Stage 4B-4 - Phase 11 Measured Closure, Risk Reconciliation, and Stage 4C Handoff Evidence
 
 Date: 2026-07-15
-Status: **Phase 11 complete; Stage 4B-4 closed locally; Stage 4C read gate authorized**
+Status: **Historical Phase 11 closure evidence; superseded by Stage 4B-4 post-closure remediation R0**
+
+## Supersession Notice - 2026-07-15
+
+This file remains a historical record of the Phase 11 local closure commands and observations. It is no longer an active Stage 4C authorization artifact. Stage 4B-4 post-closure remediation R0 reopened the closure, revoked Stage 4C authorization, and made `docs/PHASE_85_STAGE_4B_4_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md` the active authority. Stage 4C remains blocked until remediation R9 produces a fresh complete PASS.
 
 ## Scope
 
@@ -11,9 +15,11 @@ Production remains `NO-GO`; R-405 remains open for the known Next/PostCSS produc
 
 ## Closure Decision
 
-Stage 4B-4 Phases 0-11 are closed locally with PASS for the local prototype and mock-provider/media paths. Stage 4C planning, read-gate work, and user-approved implementation may proceed.
+Historical Phase 11 decision: Stage 4B-4 Phases 0-11 were closed locally with PASS for the local prototype and mock-provider/media paths, and Stage 4C planning/read-gate work was authorized at that time.
 
-The authorization is limited to the next Phase 85 implementation unit. It is not a production pilot approval and does not enable any real provider/channel path.
+Current decision: this authorization is revoked by Stage 4B-4 post-closure remediation R0 and cannot be used for Stage 4C work.
+
+The historical authorization was limited to the next Phase 85 implementation unit. It was not a production pilot approval and did not enable any real provider/channel path.
 
 ## Code Adjustments Made During Phase 11
 
@@ -50,15 +56,17 @@ Notes:
 
 ## Risk Reconciliation
 
-The following risks are reconciled as mitigated locally by Stage 4B-4 Phases 0-11 and this evidence:
+Historical Phase 11 reconciliation marked the following risks as mitigated locally by Stage 4B-4 Phases 0-11 and this evidence:
 
 - `R-451` through `R-461`
 
-Mitigation is local prototype mitigation only. Production pilot, real provider/channel integration, and real client health-data processing remain blocked by the broader launch gates, including R-405 and external approvals.
+Current remediation status: R0 reopens `R-451` through `R-461` until R9 produces measured closure evidence. Production pilot, real provider/channel integration, and real client health-data processing remain blocked by the broader launch gates, including R-405 and external approvals.
 
 ## Stage 4C Handoff
 
-Authorized next step: **Stage 4C - Diyetisyen Icin AI Chat** planning/read gate and user-approved implementation.
+Historical authorized next step: **Stage 4C - Diyetisyen Icin AI Chat** planning/read gate and user-approved implementation.
+
+Current authorized next step: **Stage 4B-4 post-closure remediation R1 - domain contracts, lineage, and database invariants**. Stage 4C read gate and implementation are blocked until R9.
 
 Required carry-forward constraints:
 
