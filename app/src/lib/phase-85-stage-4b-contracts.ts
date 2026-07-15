@@ -44,6 +44,7 @@ export type NotificationKind =
   | "unsupported_media_review"
   | "visual_message_review"
   | "visual_correction_follow_up"
+  | "voice_transcript_correction_follow_up"
   | "safe_reply_unavailable"
   | "delivery_failed"
   | "communication_permission_closed"

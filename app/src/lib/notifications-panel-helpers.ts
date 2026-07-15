@@ -36,6 +36,7 @@ export const NOTIFICATION_KIND_ICON: Record<NotificationKind, LucideIcon> = {
   unsupported_media_review: Image,
   visual_message_review: Image,
   visual_correction_follow_up: MessageSquareWarning,
+  voice_transcript_correction_follow_up: MessageSquareWarning,
   safe_reply_unavailable: MessageSquareWarning,
   delivery_failed: Send,
   communication_permission_closed: Lock,

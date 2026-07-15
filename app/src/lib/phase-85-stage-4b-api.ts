@@ -75,6 +75,10 @@ export const STAGE4B_NOTIFICATION_I18N_KEYS: Record<
     titleKey: "notificationTitleVisualCorrectionFollowUp",
     summaryKey: "notificationSummaryVisualCorrectionFollowUp",
   },
+  voice_transcript_correction_follow_up: {
+    titleKey: "notificationTitleVoiceTranscriptCorrectionFollowUp",
+    summaryKey: "notificationSummaryVoiceTranscriptCorrectionFollowUp",
+  },
   safe_reply_unavailable: {
     titleKey: "notificationTitleSafeReplyUnavailable",
     summaryKey: "notificationSummarySafeReplyUnavailable",

@@ -94,6 +94,12 @@ import {
 } from "./phase-85-stage-4b3-bounded-media";
 import type { VisualCorrectionRequest } from "./phase-85-stage-4b3-media-contracts";
 import { submitVisualCorrection } from "./phase-85-stage-4b3-visual-corrections";
+import {
+  assertTranscriptCorrectionAllowed,
+  parseTranscriptCorrectionMutationBody,
+} from "./phase-85-stage-4b4-transcript-correction-bounded";
+import { submitTranscriptCorrection } from "./phase-85-stage-4b4-transcript-corrections";
+import type { TranscriptCorrectionRequest } from "./phase-85-stage-4b4-voice-contracts";
 import type { NotificationCategory, NotificationPriority } from "./phase-85-stage-4b-contracts";
 import type { ClinicalAlertFilterSeverity } from "./phase-85-stage-4b-alerts";
 import {
@@ -697,6 +703,63 @@ export function submitFallbackVisualCorrection(
   );
   return {
     version: "p85-stage-4b3-visual-correction-v1",
+    generatedAt: new Date().toISOString(),
+    correctionId: result.correctionId,
+    resultAction: result.resultAction,
+    conversationId,
+    detail,
+  };
+}
+
+export function submitFallbackTranscriptCorrection(
+  conversationId: string,
+  request: TranscriptCorrectionRequest,
+  context?: AppTenantContext,
+) {
+  const state = getFallbackState();
+  const tenantContext = context ?? fallbackTenantContext(state);
+  const actor = conversationActorFromContext(tenantContext);
+  const assignments = listFallbackAssignments();
+  const conversation = state.conversations.find((entry) => entry.id === conversationId);
+  const client = conversation
+    ? state.clients.find((entry) => entry.id === conversation.clientId && entry.lifecycleStatus === "active")
+    : undefined;
+  if (!conversation || !client) {
+    throw new AppDomainError(404, "conversation_not_found");
+  }
+  const transcription = state.audioTranscriptionRecords.find(
+    (entry) => entry.id === request.transcriptionId && entry.conversationId === conversationId,
+  );
+  if (!transcription) {
+    throw new AppDomainError(404, "transcription_not_found");
+  }
+
+  const permissions = resolveConversationPermissions({
+    actor,
+    conversation,
+    client,
+    assignments,
+  });
+  assertTranscriptCorrectionAllowed(permissions, actor.role);
+  parseTranscriptCorrectionMutationBody(request);
+
+  const result = submitTranscriptCorrection(state, {
+    ...request,
+    dietitianId: tenantContext.dietitianId,
+  });
+  if (!result.ok) {
+    throw new AppDomainError(409, result.failureCode);
+  }
+
+  saveFallbackState(result.state);
+  const detail = buildConversationDetailResponseFromAppState(
+    result.state,
+    tenantContext,
+    assignments,
+    conversationId,
+  );
+  return {
+    version: "p85-stage-4b4-transcript-correction-v1",
     generatedAt: new Date().toISOString(),
     correctionId: result.correctionId,
     resultAction: result.resultAction,

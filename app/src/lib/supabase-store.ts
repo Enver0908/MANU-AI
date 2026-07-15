@@ -132,9 +132,16 @@ import {
   parseVisualCorrectionMutationBody,
 } from "./phase-85-stage-4b3-bounded-media";
 import type { VisualCorrectionRequest } from "./phase-85-stage-4b3-media-contracts";
-import { commitSupabaseVisualCorrectionV2 } from "./phase-85-stage-4b3-supabase-atomic-decisions";
+import { commitSupabaseTranscriptCorrectionV2, commitSupabaseVisualCorrectionV2 } from "./phase-85-stage-4b3-supabase-atomic-decisions";
 import { buildVisualCorrectionRpcOutcome } from "./phase-85-stage-4b3-atomic-visual-correction";
 import { submitVisualCorrection } from "./phase-85-stage-4b3-visual-corrections";
+import {
+  assertTranscriptCorrectionAllowed,
+  parseTranscriptCorrectionMutationBody,
+} from "./phase-85-stage-4b4-transcript-correction-bounded";
+import { buildTranscriptCorrectionRpcOutcome } from "./phase-85-stage-4b4-atomic-transcript-correction";
+import { submitTranscriptCorrection } from "./phase-85-stage-4b4-transcript-corrections";
+import type { TranscriptCorrectionRequest } from "./phase-85-stage-4b4-voice-contracts";
 import {
   appendDietitianManualReplyByConversation,
   approveDraftMessageInStateWithRevision,
@@ -6035,6 +6042,83 @@ export async function submitSupabaseVisualCorrection(
   );
   return {
     version: "p85-stage-4b3-visual-correction-v2",
+    generatedAt: new Date().toISOString(),
+    correctionId: result.correctionId,
+    resultAction: result.resultAction,
+    conversationId,
+    detail,
+  };
+}
+
+export async function submitSupabaseTranscriptCorrection(
+  conversationId: string,
+  request: TranscriptCorrectionRequest,
+  context: AppTenantContext,
+) {
+  const state = await loadSupabaseConversationOperationState(conversationId, context);
+  const actor = conversationActorFromContext(context);
+  const conversation = state.conversations.find((entry) => entry.id === conversationId);
+  const client = conversation
+    ? state.clients.find((entry) => entry.id === conversation.clientId && entry.lifecycleStatus === "active")
+    : undefined;
+  if (!conversation || !client) {
+    throw new AppDomainError(404, "conversation_not_found");
+  }
+  const transcription = state.audioTranscriptionRecords.find(
+    (entry) => entry.id === request.transcriptionId && entry.conversationId === conversationId,
+  );
+  if (!transcription) {
+    throw new AppDomainError(404, "transcription_not_found");
+  }
+
+  const { assignments } = await loadSupabaseConversationProjectionBundle(context, conversationId);
+  const permissions = resolveConversationPermissions({ actor, conversation, client, assignments });
+  assertTranscriptCorrectionAllowed(permissions, actor.role);
+  parseTranscriptCorrectionMutationBody(request);
+
+  const result = submitTranscriptCorrection(state, {
+    ...request,
+    dietitianId: context.dietitianId,
+  });
+  if (!result.ok) {
+    throw new AppDomainError(409, result.failureCode);
+  }
+
+  const correction = result.state.audioTranscriptCorrections.find((entry) => entry.id === result.correctionId);
+  if (!correction) {
+    throw new Error("transcript_correction_persist_failed");
+  }
+
+  const supabase = requireSupabase();
+  const responseJson = {
+    version: "p85-stage-4b4-transcript-correction-v1",
+    correctionId: result.correctionId,
+    resultAction: result.resultAction,
+    conversationId,
+  };
+  const outcome = buildTranscriptCorrectionRpcOutcome({
+    state: result.state,
+    baseState: state,
+    correctionId: result.correctionId,
+    resultAction: result.resultAction,
+    request: { ...request, dietitianId: context.dietitianId },
+  });
+  await commitSupabaseTranscriptCorrectionV2({
+    supabase,
+    tenantId: context.tenantId,
+    idempotencyKey: request.requestId,
+    outcome,
+    responseJson,
+  });
+
+  const detail = buildConversationDetailResponseFromAppState(
+    result.state,
+    context,
+    assignments,
+    conversationId,
+  );
+  return {
+    version: "p85-stage-4b4-transcript-correction-v1",
     generatedAt: new Date().toISOString(),
     correctionId: result.correctionId,
     resultAction: result.resultAction,

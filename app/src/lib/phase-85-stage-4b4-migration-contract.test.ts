@@ -17,6 +17,11 @@ const canonicalIngressV3Migration = readFileSync(
   "utf8",
 );
 
+const transcriptCorrectionMigration = readFileSync(
+  resolve(__dirname, "../../supabase/migrations/20260714210000_phase_85_stage_4b4_atomic_transcription_correction.sql"),
+  "utf8",
+);
+
 const stage4B4Tables = [
   "audio_transcription_records",
   "audio_transcript_corrections",
@@ -86,6 +91,19 @@ describe("P85 Stage 4B-4 Phase 3 canonical ingress V3 migration", () => {
     expect(canonicalIngressV3Migration).toContain("service_role_required");
     expect(canonicalIngressV3Migration).toContain(
       "grant execute on function p85_stage_4b4_commit_canonical_inbound_v3",
+    );
+  });
+});
+
+describe("P85 Stage 4B-4 Phase 7 atomic transcript correction migration", () => {
+  it("creates the transcript correction RPC with service_role-only execution", () => {
+    expect(transcriptCorrectionMigration).toContain("p85_stage_4b4_commit_transcript_correction_v2");
+    expect(transcriptCorrectionMigration).toContain("audio_transcript_correction_idempotency");
+    expect(transcriptCorrectionMigration).toContain("stale_transcription_revision");
+    expect(transcriptCorrectionMigration).toContain("sent_correction_auto_message_forbidden");
+    expect(transcriptCorrectionMigration).toContain("service_role_required");
+    expect(transcriptCorrectionMigration).toContain(
+      "grant execute on function p85_stage_4b4_commit_transcript_correction_v2",
     );
   });
 });
