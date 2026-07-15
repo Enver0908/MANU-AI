@@ -1,5 +1,6 @@
 import type { ChannelEventKind, MessageRetrievalEligibility, RiskLevel, SupportedLanguageCode, TenantRole } from "./types";
 import type { MediaAssetStatus } from "./phase-85-stage-4b3-media-contracts";
+import { detectVisualMetadataLeaks } from "dietitian-ai-assistant-architecture";
 
 export const PHASE_85_STAGE_4B4_VOICE_CONTRACT_VERSION = "p85-stage-4b4-voice-contracts-v2";
 export const STAGE_4B4_DIETITIAN_CORRECTION_PROVIDER_ID = "dietitian-correction";
@@ -279,7 +280,7 @@ export type ConversationAudioDto = {
 export type ConversationVoiceTranscriptDto = {
   transcriptionId: string;
   transcriptionRevision: number;
-  status: "pending" | "accepted" | "corrected" | "review_required" | "failed" | "expired";
+  status: "pending" | "accepted" | "corrected" | "review_required" | "failed" | "expired" | "unavailable";
   transcriptText: string | null;
   correctionAllowed: boolean;
   latestCorrectionId: string | null;
@@ -523,6 +524,23 @@ export function mapCommunicationLanguageToLocale(language: SupportedLanguageCode
 
 export function countUnicodeCodepoints(value: string): number {
   return [...value].length;
+}
+
+export function sanitizeBoundedTranscriptTextForDto(text: string | null | undefined): string | null {
+  if (typeof text !== "string") {
+    return null;
+  }
+  const trimmed = text.trim();
+  if (!trimmed) {
+    return null;
+  }
+  if (countUnicodeCodepoints(trimmed) > STAGE_4B4_MAX_TRANSCRIPT_CODEPOINTS) {
+    return null;
+  }
+  if (detectVisualMetadataLeaks(trimmed).length > 0) {
+    return null;
+  }
+  return trimmed;
 }
 
 function assertPlainObject(value: unknown, label: string): Record<string, unknown> {
@@ -979,20 +997,22 @@ export function buildConversationVoiceTranscriptDto(input: {
   const accepted = input.transcription.status === "accepted" && input.transcription.qualityDecision?.accepted === true;
   const corrected =
     Boolean(input.correctedTranscript) || isDietitianCorrectedTranscription(input.transcription);
+  const sanitizedCorrection = sanitizeBoundedTranscriptTextForDto(input.correctedTranscript);
+  const sanitizedAcceptedText = sanitizeBoundedTranscriptTextForDto(
+    input.transcription.transcriptText ?? input.transcription.observation?.transcriptText ?? null,
+  );
   const transcriptText =
-    corrected && input.correctedTranscript
-      ? input.correctedTranscript
+    corrected && sanitizedCorrection
+      ? sanitizedCorrection
       : accepted
-        ? input.transcription.transcriptText ??
-          input.transcription.observation?.transcriptText ??
-          null
+        ? sanitizedAcceptedText
         : null;
 
   let status: ConversationVoiceTranscriptDto["status"] = "pending";
   if (corrected) {
     status = "corrected";
   } else if (accepted) {
-    status = "accepted";
+    status = sanitizedAcceptedText ? "accepted" : "unavailable";
   } else if (input.transcription.status === "review_required" || input.transcription.status === "rejected") {
     status = "review_required";
   } else if (input.transcription.status === "failed") {

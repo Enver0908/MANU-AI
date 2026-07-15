@@ -100,6 +100,7 @@ export function ConversationPanel({
   }) => Promise<void>;
   onSubmitTranscriptCorrection?: (input: {
     transcriptionId: string;
+    targetMessageId: string;
     requestId: string;
     expectedConversationRevision: number;
     expectedTranscriptionRevision: number;
@@ -276,7 +277,7 @@ export function ConversationPanel({
         .slice(-1)
         .map((message) => (
           <ConversationVoiceTranscriptReviewPanel
-            key={`voice-review-${message.id}`}
+            key={`voice-review-${message.id}-${message.voiceTranscript?.transcriptionRevision}-${message.voiceTranscript?.latestCorrectionId ?? "none"}-${message.voiceTranscript?.status}`}
             message={message}
             conversationRevision={conversation.revision}
             uiLanguage={uiLanguage}

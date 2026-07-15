@@ -42,7 +42,7 @@ export async function GET(
       });
       if (!stream.ok) {
         if (stream.status === 416) {
-          return new NextResponse(null, { status: 416, headers: { "Content-Range": "bytes */0" } });
+          return new NextResponse(null, { status: 416, headers: stream.headers ?? { "Content-Range": "bytes */0" } });
         }
         return NextResponse.json({ error: stream.code }, { status: stream.status });
       }

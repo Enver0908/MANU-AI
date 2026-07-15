@@ -3,6 +3,21 @@ export type ParsedHttpByteRange =
   | { kind: "partial"; start: number; end: number }
   | { kind: "unsatisfied" };
 
+export function buildRangeNotSatisfiableHeaders(totalSize: number): Record<string, string> {
+  return {
+    "Content-Range": `bytes */${Math.max(totalSize, 0)}`,
+    "Accept-Ranges": "bytes",
+  };
+}
+
+export function buildAudioStreamEtag(etagToken: string | null | undefined): string | undefined {
+  const normalized = etagToken?.trim();
+  if (!normalized) {
+    return undefined;
+  }
+  return normalized.startsWith('"') ? normalized : `"${normalized}"`;
+}
+
 export function parseHttpByteRangeHeader(
   rangeHeader: string | null | undefined,
   totalSize: number,
@@ -15,7 +30,12 @@ export function parseHttpByteRangeHeader(
     return { kind: "unsatisfied" };
   }
 
-  const spec = normalized.slice("bytes=".length).split(",")[0]?.trim() ?? "";
+  const rangeValue = normalized.slice("bytes=".length);
+  if (rangeValue.includes(",")) {
+    return { kind: "unsatisfied" };
+  }
+
+  const spec = rangeValue.trim();
   const dashIndex = spec.indexOf("-");
   if (dashIndex === -1) {
     return { kind: "unsatisfied" };
@@ -62,6 +82,7 @@ export function buildAudioStreamResponseHeaders(input: {
   range: ParsedHttpByteRange;
   cacheControl: string;
   filename?: string;
+  etag?: string;
 }) {
   const headers: Record<string, string> = {
     "Cache-Control": input.cacheControl,
@@ -70,6 +91,10 @@ export function buildAudioStreamResponseHeaders(input: {
     "Accept-Ranges": "bytes",
     "Content-Disposition": `inline; filename="${input.filename ?? "voice.wav"}"`,
   };
+
+  if (input.etag) {
+    headers.ETag = input.etag;
+  }
 
   if (input.range.kind === "partial") {
     const chunkSize = input.range.end - input.range.start + 1;

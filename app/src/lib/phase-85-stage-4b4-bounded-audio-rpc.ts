@@ -4,12 +4,13 @@ import { conversationActorFromContext } from "./phase-85-stage-4b2-messaging";
 import type { MediaAssetRecord } from "./phase-85-stage-4b3-media-contracts";
 import {
   createPendingTranscriptionLineageDefaults,
+  sanitizeBoundedTranscriptTextForDto,
   type AudioTranscriptCorrectionRecord,
   type AudioTranscriptionRecord,
 } from "./phase-85-stage-4b4-voice-contracts";
 import type { Stage4B4ConversationVoiceProjectionSource } from "./phase-85-stage-4b4-bounded-audio";
 
-export const STAGE_4B4_BOUNDED_AUDIO_RPC_VERSION = "p85-stage-4b4-bounded-audio-rpc-v1";
+export const STAGE_4B4_BOUNDED_AUDIO_RPC_VERSION = "p85-stage-4b4-bounded-audio-rpc-v2";
 
 type BoundedAudioRpcAsset = {
   id: string;
@@ -30,12 +31,19 @@ type BoundedAudioRpcTranscription = {
   message_id: string;
   transcription_revision: number;
   status: AudioTranscriptionRecord["status"];
+  origin: string | null;
+  transcript_text: string | null;
+  supersedes_transcription_id: string | null;
   transcript_status: string;
+  latest_correction_id: string | null;
 };
 
 type BoundedAudioRpcCorrection = {
   id: string;
   transcription_id: string;
+  source_transcription_id: string | null;
+  corrected_transcription_id: string | null;
+  target_message_id: string | null;
   status: AudioTranscriptCorrectionRecord["status"];
   corrected_transcript: string;
   created_at: string;
@@ -90,33 +98,52 @@ export function mapBoundedAudioRpcPayload(input: {
   }));
 
   const audioTranscriptionRecords: AudioTranscriptionRecord[] = (input.payload.audio_transcription_records ?? []).map(
-    (row) => ({
-      id: row.id,
-      tenantId: input.tenantId,
-      clientId: input.clientId,
-      conversationId: input.conversationId,
-      messageId: row.message_id,
-      mediaAssetId: row.media_asset_id,
-      bundleId: null,
-      transcriptionRevision: row.transcription_revision,
-      status: row.status,
-      locale: "tr-TR",
-      observation: null,
-      qualityDecision: {
-        accepted: row.transcript_status === "accepted" || row.transcript_status === "corrected",
-        reasonCodes: [],
-      },
-      rejectionReasons: [],
-      failureCode: null,
-      retryCount: 0,
-      nextAttemptAt: null,
-      leaseExpiresAt: null,
-      sourceModality: "voice_transcript",
-      providerMode: "mock",
-      ...createPendingTranscriptionLineageDefaults(),
-      createdAt: now,
-      updatedAt: now,
-    }),
+    (row) => {
+      const origin =
+        row.origin === "dietitian_correction" || row.origin === "mock_provider"
+          ? row.origin
+          : createPendingTranscriptionLineageDefaults().origin;
+      const sanitizedTranscript = sanitizeBoundedTranscriptTextForDto(row.transcript_text);
+      return {
+        id: row.id,
+        tenantId: input.tenantId,
+        clientId: input.clientId,
+        conversationId: input.conversationId,
+        messageId: row.message_id,
+        mediaAssetId: row.media_asset_id,
+        bundleId: null,
+        transcriptionRevision: row.transcription_revision,
+        status: row.status,
+        locale: "tr-TR",
+        observation: null,
+        qualityDecision: {
+          accepted:
+            row.transcript_status === "accepted" ||
+            row.transcript_status === "corrected" ||
+            row.status === "accepted",
+          reasonCodes: [],
+        },
+        rejectionReasons: [],
+        failureCode: null,
+        retryCount: 0,
+        nextAttemptAt: null,
+        leaseExpiresAt: null,
+        sourceModality: "voice_transcript",
+        providerMode: "mock",
+        origin,
+        transcriptText: sanitizedTranscript,
+        detectedLocale: "tr-TR",
+        overallConfidence: origin === "dietitian_correction" ? null : null,
+        minimumSegmentConfidence: null,
+        uncertainSpanCount: null,
+        segmentCount: null,
+        speakerState: "single_speaker",
+        supersedesTranscriptionId: row.supersedes_transcription_id,
+        supersededByTranscriptionId: null,
+        createdAt: now,
+        updatedAt: now,
+      };
+    },
   );
 
   const audioTranscriptCorrections: AudioTranscriptCorrectionRecord[] = (
@@ -127,16 +154,16 @@ export function mapBoundedAudioRpcPayload(input: {
     clientId: input.clientId,
     conversationId: input.conversationId,
     transcriptionId: row.transcription_id,
-    sourceTranscriptionId: row.transcription_id,
-    correctedTranscriptionId: null,
-    targetMessageId: "",
+    sourceTranscriptionId: row.source_transcription_id ?? row.transcription_id,
+    correctedTranscriptionId: row.corrected_transcription_id,
+    targetMessageId: row.target_message_id ?? "",
     supersededDecisionId: null,
     rerunDecisionId: null,
     dietitianId: "",
     status: row.status,
     reasonCode: "other_clinical_mismatch",
     explanation: "",
-    correctedTranscript: row.corrected_transcript,
+    correctedTranscript: sanitizeBoundedTranscriptTextForDto(row.corrected_transcript) ?? row.corrected_transcript.trim(),
     conversationRevisionAtSubmit: 1,
     transcriptionRevisionAtSubmit: 1,
     resultAction: "manual_follow_up",
@@ -151,7 +178,7 @@ export function mapBoundedAudioRpcPayload(input: {
   };
 }
 
-export async function loadBoundedVoiceProjectionFromSupabaseV1(input: {
+export async function loadBoundedVoiceProjectionFromSupabaseV2(input: {
   supabase: SupabaseClient;
   context: AppTenantContext;
   conversationId: string;
@@ -159,7 +186,7 @@ export async function loadBoundedVoiceProjectionFromSupabaseV1(input: {
   messageIds: string[];
 }): Promise<Stage4B4ConversationVoiceProjectionSource> {
   const actor = conversationActorFromContext(input.context);
-  const { data, error } = await input.supabase.rpc("p85_stage_4b4_load_bounded_voice_v1", {
+  const { data, error } = await input.supabase.rpc("p85_stage_4b4_load_bounded_voice_v2", {
     p_tenant_id: actor.tenantId,
     p_user_id: actor.userId,
     p_dietitian_id: actor.dietitianId,
@@ -181,4 +208,15 @@ export async function loadBoundedVoiceProjectionFromSupabaseV1(input: {
       audio_transcript_corrections?: BoundedAudioRpcCorrection[];
     },
   });
+}
+
+/** @deprecated Use loadBoundedVoiceProjectionFromSupabaseV2. */
+export async function loadBoundedVoiceProjectionFromSupabaseV1(input: {
+  supabase: SupabaseClient;
+  context: AppTenantContext;
+  conversationId: string;
+  clientId: string;
+  messageIds: string[];
+}): Promise<Stage4B4ConversationVoiceProjectionSource> {
+  return loadBoundedVoiceProjectionFromSupabaseV2(input);
 }

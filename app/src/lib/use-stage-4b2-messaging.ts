@@ -486,6 +486,7 @@ export function useStage4B2Messaging({
       targetConversationId: string,
       input: {
         transcriptionId: string;
+        targetMessageId: string;
         requestId: string;
         expectedConversationRevision: number;
         expectedTranscriptionRevision: number;

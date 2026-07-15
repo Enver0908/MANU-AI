@@ -20,6 +20,8 @@ export function resolveVoiceTranscriptStatusLabel(
       return t(uiLanguage, "conversationVoiceTranscriptFailed");
     case "expired":
       return t(uiLanguage, "conversationVoiceTranscriptExpired");
+    case "unavailable":
+      return t(uiLanguage, "conversationVoiceTranscriptUnavailable");
     default:
       return status;
   }

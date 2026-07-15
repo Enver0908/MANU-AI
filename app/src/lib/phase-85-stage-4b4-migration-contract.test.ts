@@ -57,6 +57,11 @@ const correctionLineageMigration = readFileSync(
   "utf8",
 );
 
+const boundedReadsV2Migration = readFileSync(
+  resolve(__dirname, "../../supabase/migrations/20260715150000_phase_85_stage_4b4_bounded_reads_v2.sql"),
+  "utf8",
+);
+
 const stage4B4Tables = [
   "audio_transcription_records",
   "audio_transcript_corrections",
@@ -97,6 +102,23 @@ describe("P85 Stage 4B-4 remediation R3 durable pipeline migration", () => {
     expect(durablePipelineMigration).toContain("for update skip locked");
     expect(durablePipelineMigration).toContain(
       "grant execute on function p85_stage_4b4_complete_transcription_v2",
+    );
+  });
+});
+
+describe("P85 Stage 4B-4 remediation R7 bounded reads v2 migration", () => {
+  it("creates bounded voice read v2 RPC and extends media stream metadata", () => {
+    expect(boundedReadsV2Migration).toContain("p85_stage_4b4_load_bounded_voice_v2");
+    expect(boundedReadsV2Migration).toContain("transcript_text");
+    expect(boundedReadsV2Migration).toContain("latest_correction_id");
+    expect(boundedReadsV2Migration).toContain("target_message_id");
+    expect(boundedReadsV2Migration).toContain("corrected_transcription_id");
+    expect(boundedReadsV2Migration).toContain("transcript_status");
+    expect(boundedReadsV2Migration).toContain("byte_size");
+    expect(boundedReadsV2Migration).toContain("etag");
+    expect(boundedReadsV2Migration).toContain("p85_stage_4b2_actor_can_read_conversation");
+    expect(boundedReadsV2Migration).toContain(
+      "grant execute on function p85_stage_4b4_load_bounded_voice_v2",
     );
   });
 });

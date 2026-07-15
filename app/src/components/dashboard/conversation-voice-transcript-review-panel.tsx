@@ -27,6 +27,7 @@ export function ConversationVoiceTranscriptReviewPanel({
   disabled?: boolean;
   onSubmit: (input: {
     transcriptionId: string;
+    targetMessageId: string;
     requestId: string;
     expectedConversationRevision: number;
     expectedTranscriptionRevision: number;
@@ -59,6 +60,8 @@ export function ConversationVoiceTranscriptReviewPanel({
       </div>
       {review.transcriptText ? (
         <p className="mt-3 whitespace-pre-wrap break-words text-sm text-stone-800">{review.transcriptText}</p>
+      ) : review.status === "unavailable" ? (
+        <p className="mt-3 text-sm text-stone-600">{t(uiLanguage, "conversationVoiceTranscriptUnavailable")}</p>
       ) : null}
       <div className="mt-4">
         <label className="text-sm font-medium text-stone-700" htmlFor={`voice-correction-reason-${message.id}`}>
@@ -108,6 +111,7 @@ export function ConversationVoiceTranscriptReviewPanel({
           setError(null);
           void onSubmit({
             transcriptionId: review.transcriptionId,
+            targetMessageId: message.id,
             requestId: crypto.randomUUID(),
             expectedConversationRevision: conversationRevision,
             expectedTranscriptionRevision: review.transcriptionRevision,

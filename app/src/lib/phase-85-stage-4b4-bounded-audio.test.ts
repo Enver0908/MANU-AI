@@ -335,4 +335,73 @@ describe("phase-85-stage-4b4-bounded-audio", () => {
       expect(dto).not.toHaveProperty(key);
     }
   });
+
+  it("marks accepted transcripts without safe text as unavailable", () => {
+    const state = createInitialState();
+    const conversation = state.conversations[0]!;
+    const messageId = "voice-message-unavailable";
+    const assetId = "voice-asset-unavailable";
+    const transcriptionId = "voice-tx-unavailable";
+
+    state.mediaAssets = [
+      buildAsset({
+        id: assetId,
+        clientId: conversation.clientId,
+        conversationId: conversation.id,
+        messageId,
+        mediaKind: "audio",
+        voiceMessage: true,
+        durationMs: 8_000,
+        sanitizedAudioObjectKey: "tenant/voice.wav",
+        declaredMimeType: "audio/ogg",
+        detectedMimeType: "audio/wav",
+        status: "analysis_ready",
+      }),
+    ];
+    state.audioTranscriptionRecords = [
+      {
+        id: transcriptionId,
+        tenantId: DEMO_TENANT_ID,
+        clientId: conversation.clientId,
+        conversationId: conversation.id,
+        messageId,
+        mediaAssetId: assetId,
+        bundleId: "bundle-voice-unavailable",
+        transcriptionRevision: 1,
+        status: "accepted",
+        locale: "tr-TR",
+        observation: null,
+        qualityDecision: { accepted: true, reasonCodes: [] },
+        rejectionReasons: [],
+        origin: "mock_provider",
+        transcriptText: null,
+        detectedLocale: "tr-TR",
+        overallConfidence: 0.98,
+        minimumSegmentConfidence: 0.98,
+        uncertainSpanCount: 0,
+        segmentCount: 1,
+        speakerState: "single_speaker",
+        supersedesTranscriptionId: null,
+        supersededByTranscriptionId: null,
+        sourceModality: "voice_transcript",
+        providerMode: "mock",
+        createdAt: "2026-07-14T10:01:00.000Z",
+        updatedAt: "2026-07-14T10:01:00.000Z",
+      },
+    ];
+
+    const voice = filterStage4B4VoiceProjectionForConversation(
+      buildStage4B4VoiceProjectionSourceFromState(state),
+      DEMO_TENANT_ID,
+      conversation.id,
+    );
+    const dto = projectMessageVoiceTranscriptDto(
+      messageId,
+      { tenantId: DEMO_TENANT_ID, dietitianId: state.dietitian.id, role: "dietitian" },
+      voice,
+    );
+
+    expect(dto?.status).toBe("unavailable");
+    expect(dto?.transcriptText).toBeNull();
+  });
 });

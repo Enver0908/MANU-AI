@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { parseHttpByteRangeHeader, sliceBufferForRange } from "./phase-85-stage-4b4-media-range";
+import {
+  buildRangeNotSatisfiableHeaders,
+  parseHttpByteRangeHeader,
+  sliceBufferForRange,
+} from "./phase-85-stage-4b4-media-range";
 
 describe("phase-85-stage-4b4-media-range", () => {
   it("parses full, partial, and unsatisfied byte ranges", () => {
@@ -10,6 +14,17 @@ describe("phase-85-stage-4b4-media-range", () => {
     expect(parseHttpByteRangeHeader("bytes=0-200", 100)).toEqual({ kind: "partial", start: 0, end: 99 });
     expect(parseHttpByteRangeHeader("bytes=150-200", 100)).toEqual({ kind: "unsatisfied" });
     expect(parseHttpByteRangeHeader("invalid", 100)).toEqual({ kind: "unsatisfied" });
+  });
+
+  it("rejects multi-range requests", () => {
+    expect(parseHttpByteRangeHeader("bytes=0-1,2-3", 100)).toEqual({ kind: "unsatisfied" });
+  });
+
+  it("builds 416 headers with the real asset size", () => {
+    expect(buildRangeNotSatisfiableHeaders(4096)).toEqual({
+      "Content-Range": "bytes */4096",
+      "Accept-Ranges": "bytes",
+    });
   });
 
   it("slices buffers for partial ranges", () => {
