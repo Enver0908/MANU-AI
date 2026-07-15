@@ -10,6 +10,7 @@ import {
 } from "./phase-85-stage-4b4-transcript-bridge";
 import {
   COMMUNICATION_LANGUAGE_TO_LOCALE,
+  buildTranscriptionLineageFieldsFromObservation,
   parseAudioTranscriptionObservationV1,
   type AudioQualityCode,
   type AudioTranscriptionRecord,
@@ -190,6 +191,9 @@ export async function transcribeSinglePendingAudioRecord(
     qualityDecision: quality.qualityDecision,
     rejectionReasons: quality.rejectionReasons,
     retrievalEligible: quality.terminalStatus === "accepted",
+    ...buildTranscriptionLineageFieldsFromObservation({
+      observation: providerResult.observation,
+    }),
     updatedAt: completedAt,
   });
 

@@ -2,9 +2,10 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { AppTenantContext } from "./auth-context";
 import { conversationActorFromContext } from "./phase-85-stage-4b2-messaging";
 import type { MediaAssetRecord } from "./phase-85-stage-4b3-media-contracts";
-import type {
-  AudioTranscriptCorrectionRecord,
-  AudioTranscriptionRecord,
+import {
+  createPendingTranscriptionLineageDefaults,
+  type AudioTranscriptCorrectionRecord,
+  type AudioTranscriptionRecord,
 } from "./phase-85-stage-4b4-voice-contracts";
 import type { Stage4B4ConversationVoiceProjectionSource } from "./phase-85-stage-4b4-bounded-audio";
 
@@ -112,6 +113,7 @@ export function mapBoundedAudioRpcPayload(input: {
       leaseExpiresAt: null,
       sourceModality: "voice_transcript",
       providerMode: "mock",
+      ...createPendingTranscriptionLineageDefaults(),
       createdAt: now,
       updatedAt: now,
     }),
@@ -125,6 +127,11 @@ export function mapBoundedAudioRpcPayload(input: {
     clientId: input.clientId,
     conversationId: input.conversationId,
     transcriptionId: row.transcription_id,
+    sourceTranscriptionId: row.transcription_id,
+    correctedTranscriptionId: null,
+    targetMessageId: "",
+    supersededDecisionId: null,
+    rerunDecisionId: null,
     dietitianId: "",
     status: row.status,
     reasonCode: "other_clinical_mismatch",

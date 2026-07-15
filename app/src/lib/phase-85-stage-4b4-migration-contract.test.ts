@@ -32,11 +32,35 @@ const audioLifecycleMigration = readFileSync(
   "utf8",
 );
 
+const remediationContractsMigration = readFileSync(
+  resolve(__dirname, "../../supabase/migrations/20260715100000_phase_85_stage_4b4_remediation_contracts.sql"),
+  "utf8",
+);
+
 const stage4B4Tables = [
   "audio_transcription_records",
   "audio_transcript_corrections",
   "audio_transcript_correction_idempotency",
 ] as const;
+
+describe("P85 Stage 4B-4 remediation R1 contracts migration", () => {
+  it("adds transcription lineage columns, constraints, and validation RPCs", () => {
+    expect(remediationContractsMigration).toContain("add column if not exists origin text");
+    expect(remediationContractsMigration).toContain("add column if not exists speaker_state text");
+    expect(remediationContractsMigration).toContain("add column if not exists supersedes_transcription_id uuid");
+    expect(remediationContractsMigration).toContain("audio_transcription_records_origin_check");
+    expect(remediationContractsMigration).toContain("audio_transcription_records_speaker_state_check");
+    expect(remediationContractsMigration).toContain("audio_transcription_records_tenant_message_revision_idx");
+    expect(remediationContractsMigration).toContain("media_assets_transcription_tenant_fk");
+    expect(remediationContractsMigration).toContain("p85_stage_4b4_validate_transcription_supersession_lineage_v1");
+    expect(remediationContractsMigration).toContain("p85_stage_4b4_validate_transcript_correction_lineage_v1");
+    expect(remediationContractsMigration).toContain("source_transcription_id");
+    expect(remediationContractsMigration).toContain("corrected_transcription_id");
+    expect(remediationContractsMigration).toContain("target_message_id");
+    expect(remediationContractsMigration).toContain("transcription_supersession_cycle_detected");
+    expect(remediationContractsMigration).toContain("correction_lineage_scope_mismatch");
+  });
+});
 
 describe("P85 Stage 4B-4 Phase 2 audio foundation migration", () => {
   it("creates every canonical audio table with deny-all RLS enabled", () => {

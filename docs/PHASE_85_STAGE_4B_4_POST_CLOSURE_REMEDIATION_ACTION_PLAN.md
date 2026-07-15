@@ -1,7 +1,7 @@
 # Phase 85 Stage 4B-4 Post-Closure Remediation Action Plan
 
 Date opened: 2026-07-15
-Status: **R0 complete; remediation active; Stage 4C blocked**
+Status: **R1 complete; remediation active; Stage 4C blocked**
 
 This document is the active authority after the post-closure audit of the local Stage 4B-4 voice-message implementation. The original Stage 4B-4 plan and Phase 11 closure evidence remain historical records. Stage 4C authorization is revoked until R9 produces a fresh complete PASS.
 
@@ -43,6 +43,8 @@ Production remains `NO-GO`. R-405 remains open. Real WhatsApp, Telegram, Gemini/
 R0 is complete only when active handoff documents name this remediation track as current, the Phase 11 closure evidence is explicitly historical/superseded for authorization, R-451 through R-461 are reopened, Stage 4C authorization is false, production `NO-GO` and R-405 open remain explicit, runtime files are unchanged by R0, and `git diff --check` passes.
 
 R0 is complete. Evidence: `docs/PHASE_85_STAGE_4B_4_POST_CLOSURE_REMEDIATION_R0_EVIDENCE.md`.
+
+R1 is complete. Evidence: `docs/PHASE_85_STAGE_4B_4_POST_CLOSURE_REMEDIATION_R1_EVIDENCE.md`.
 
 ## R9 Closure Gate
 

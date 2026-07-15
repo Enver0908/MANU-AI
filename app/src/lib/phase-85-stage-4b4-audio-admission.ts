@@ -3,6 +3,7 @@ import { hashProviderMediaId } from "./phase-85-stage-4b3-media-transport";
 import type { Stage4B3ImageIngressContext } from "./phase-85-stage-4b3-media-admission";
 import {
   COMMUNICATION_LANGUAGE_TO_LOCALE,
+  createPendingTranscriptionLineageDefaults,
   evaluateAudioIngressMetadata,
   STAGE_4B4_MEDIA_RETENTION_DAYS,
   STAGE_4B4_PLACEHOLDER_VOICE_MESSAGE_BODY,
@@ -209,6 +210,7 @@ function appendPendingTranscriptionRecord(
     retryCount: 0,
     nextAttemptAt: null,
     failureCode: null,
+    ...createPendingTranscriptionLineageDefaults(),
     createdAt: observedAt,
     updatedAt: observedAt,
   };

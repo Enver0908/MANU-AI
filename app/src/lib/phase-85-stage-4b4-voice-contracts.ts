@@ -1,7 +1,14 @@
 import type { ChannelEventKind, MessageRetrievalEligibility, RiskLevel, SupportedLanguageCode, TenantRole } from "./types";
 import type { MediaAssetStatus } from "./phase-85-stage-4b3-media-contracts";
 
-export const PHASE_85_STAGE_4B4_VOICE_CONTRACT_VERSION = "p85-stage-4b4-voice-contracts-v1";
+export const PHASE_85_STAGE_4B4_VOICE_CONTRACT_VERSION = "p85-stage-4b4-voice-contracts-v2";
+export const STAGE_4B4_DIETITIAN_CORRECTION_PROVIDER_ID = "dietitian-correction";
+
+export const AUDIO_TRANSCRIPTION_ORIGINS = ["mock_provider", "dietitian_correction"] as const;
+export type AudioTranscriptionOrigin = (typeof AUDIO_TRANSCRIPTION_ORIGINS)[number];
+
+export const AUDIO_SPEAKER_STATES = ["single_speaker", "multiple_speakers", "unknown"] as const;
+export type AudioSpeakerState = (typeof AUDIO_SPEAKER_STATES)[number];
 export const AUDIO_TRANSCRIPTION_OBSERVATION_SCHEMA_VERSION = "audio-transcription-observation-v1-v0.1.0";
 
 export const STAGE_4B4_AUDIO_CHANNEL_EVENT_KIND = "client_message_audio" as const satisfies ChannelEventKind;
@@ -80,6 +87,8 @@ export const AUDIO_QUALITY_CODES = [
   "unknown_fixture",
   "segment_overlap",
   "segment_timing_invalid",
+  "multiple_speakers_present",
+  "unknown_speaker_state",
 ] as const;
 
 export type AudioQualityCode = (typeof AUDIO_QUALITY_CODES)[number];
@@ -169,6 +178,17 @@ export type AudioTranscriptionObservationV1 = {
   uncertainSpanCount: number;
   providerId: string;
   providerVersion: string;
+  speakerState?: AudioSpeakerState;
+};
+
+export type AudioTranscriptionDerivedMetrics = {
+  transcriptText: string;
+  detectedLocale: Stage4B4SupportedLocale;
+  overallConfidence: number;
+  minimumSegmentConfidence: number;
+  uncertainSpanCount: number;
+  segmentCount: number;
+  speakerState: AudioSpeakerState;
 };
 
 export type AudioTranscriptionQualityDecision = {
@@ -197,6 +217,16 @@ export type AudioTranscriptionRecord = {
   retryCount?: number;
   nextAttemptAt?: string | null;
   failureCode?: string | null;
+  origin: AudioTranscriptionOrigin | null;
+  transcriptText: string | null;
+  detectedLocale: Stage4B4SupportedLocale | null;
+  overallConfidence: number | null;
+  minimumSegmentConfidence: number | null;
+  uncertainSpanCount: number | null;
+  segmentCount: number | null;
+  speakerState: AudioSpeakerState | null;
+  supersedesTranscriptionId: string | null;
+  supersededByTranscriptionId: string | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -206,7 +236,13 @@ export type AudioTranscriptCorrectionRecord = {
   tenantId: string;
   clientId: string;
   conversationId: string;
+  /** @deprecated Use sourceTranscriptionId for new writes. */
   transcriptionId: string;
+  sourceTranscriptionId: string;
+  correctedTranscriptionId: string | null;
+  targetMessageId: string;
+  supersededDecisionId: string | null;
+  rerunDecisionId: string | null;
   dietitianId: string;
   status: AudioTranscriptCorrectionStatus;
   reasonCode: AudioTranscriptCorrectionReasonCode;
@@ -307,6 +343,112 @@ export function createEmptyStage4B4VoiceCollections(): Stage4B4VoiceStateSlice {
   };
 }
 
+export function isAudioTranscriptionOrigin(value: unknown): value is AudioTranscriptionOrigin {
+  return typeof value === "string" && (AUDIO_TRANSCRIPTION_ORIGINS as readonly string[]).includes(value);
+}
+
+export function isAudioSpeakerState(value: unknown): value is AudioSpeakerState {
+  return typeof value === "string" && (AUDIO_SPEAKER_STATES as readonly string[]).includes(value);
+}
+
+export function resolveTranscriptionOriginFromObservation(
+  observation: Pick<AudioTranscriptionObservationV1, "providerId">,
+): AudioTranscriptionOrigin {
+  return observation.providerId === STAGE_4B4_DIETITIAN_CORRECTION_PROVIDER_ID
+    ? "dietitian_correction"
+    : "mock_provider";
+}
+
+export function createPendingTranscriptionLineageDefaults(): Pick<
+  AudioTranscriptionRecord,
+  | "origin"
+  | "transcriptText"
+  | "detectedLocale"
+  | "overallConfidence"
+  | "minimumSegmentConfidence"
+  | "uncertainSpanCount"
+  | "segmentCount"
+  | "speakerState"
+  | "supersedesTranscriptionId"
+  | "supersededByTranscriptionId"
+> {
+  return {
+    origin: null,
+    transcriptText: null,
+    detectedLocale: null,
+    overallConfidence: null,
+    minimumSegmentConfidence: null,
+    uncertainSpanCount: null,
+    segmentCount: null,
+    speakerState: null,
+    supersedesTranscriptionId: null,
+    supersededByTranscriptionId: null,
+  };
+}
+
+export function computeTranscriptionDerivedMetrics(
+  observation: AudioTranscriptionObservationV1,
+): AudioTranscriptionDerivedMetrics {
+  const segmentConfidences = observation.segments.map((segment) => segment.confidence);
+  const minimumSegmentConfidence = Math.min(...segmentConfidences);
+  const uncertainSpanCount = observation.segments.filter((segment) => segment.uncertain).length;
+  const speakerState = observation.speakerState ?? "single_speaker";
+
+  return {
+    transcriptText: observation.transcriptText,
+    detectedLocale: observation.locale,
+    overallConfidence: minimumSegmentConfidence,
+    minimumSegmentConfidence,
+    uncertainSpanCount,
+    segmentCount: observation.segments.length,
+    speakerState,
+  };
+}
+
+export function buildTranscriptionLineageFieldsFromObservation(input: {
+  observation: AudioTranscriptionObservationV1;
+  origin?: AudioTranscriptionOrigin;
+  supersedesTranscriptionId?: string | null;
+  supersededByTranscriptionId?: string | null;
+}): Pick<
+  AudioTranscriptionRecord,
+  | "origin"
+  | "transcriptText"
+  | "detectedLocale"
+  | "overallConfidence"
+  | "minimumSegmentConfidence"
+  | "uncertainSpanCount"
+  | "segmentCount"
+  | "speakerState"
+  | "supersedesTranscriptionId"
+  | "supersededByTranscriptionId"
+> {
+  const metrics = computeTranscriptionDerivedMetrics(input.observation);
+  const origin = input.origin ?? resolveTranscriptionOriginFromObservation(input.observation);
+  const confidenceFields =
+    origin === "dietitian_correction"
+      ? {
+          overallConfidence: null,
+          minimumSegmentConfidence: null,
+        }
+      : {
+          overallConfidence: metrics.overallConfidence,
+          minimumSegmentConfidence: metrics.minimumSegmentConfidence,
+        };
+
+  return {
+    origin,
+    transcriptText: metrics.transcriptText,
+    detectedLocale: metrics.detectedLocale,
+    ...confidenceFields,
+    uncertainSpanCount: metrics.uncertainSpanCount,
+    segmentCount: metrics.segmentCount,
+    speakerState: metrics.speakerState,
+    supersedesTranscriptionId: input.supersedesTranscriptionId ?? null,
+    supersededByTranscriptionId: input.supersededByTranscriptionId ?? null,
+  };
+}
+
 export function isAudioTranscriptionStatus(value: unknown): value is AudioTranscriptionStatus {
   return typeof value === "string" && (AUDIO_TRANSCRIPTION_STATUSES as readonly string[]).includes(value);
 }
@@ -350,6 +492,9 @@ function parseSegments(value: unknown): AudioTranscriptSegmentV1[] {
   if (!Array.isArray(value)) {
     throw new Stage4B4VoiceContractError("segments_must_be_array");
   }
+  if (value.length < 1) {
+    throw new Stage4B4VoiceContractError("segments_required");
+  }
   if (value.length > STAGE_4B4_MAX_TRANSCRIPT_SEGMENTS) {
     throw new Stage4B4VoiceContractError("segments_limit_exceeded");
   }
@@ -372,6 +517,9 @@ function parseSegments(value: unknown): AudioTranscriptSegmentV1[] {
     }
     if (typeof record.text !== "string") {
       throw new Stage4B4VoiceContractError(`segment_${index}_text_required`);
+    }
+    if (countUnicodeCodepoints(record.text.trim()) < 1) {
+      throw new Stage4B4VoiceContractError(`segment_${index}_text_empty`);
     }
     if (!isUnitConfidence(record.confidence)) {
       throw new Stage4B4VoiceContractError(`segment_${index}_confidence_invalid`);
@@ -406,6 +554,7 @@ export function parseAudioTranscriptionObservationV1(input: unknown): AudioTrans
       "uncertainSpanCount",
       "providerId",
       "providerVersion",
+      "speakerState",
     ],
     "audio_transcription_observation",
   );
@@ -433,9 +582,22 @@ export function parseAudioTranscriptionObservationV1(input: unknown): AudioTrans
   }
 
   const segments = parseSegments(record.segments);
+  const speakerState =
+    record.speakerState === undefined
+      ? "single_speaker"
+      : isAudioSpeakerState(record.speakerState)
+        ? record.speakerState
+        : (() => {
+            throw new Stage4B4VoiceContractError("audio_transcription_observation_speaker_state_invalid");
+          })();
   const codepointCount = countUnicodeCodepoints(record.transcriptText);
   if (codepointCount > STAGE_4B4_MAX_TRANSCRIPT_CODEPOINTS) {
     throw new Stage4B4VoiceContractError("audio_transcription_observation_transcript_overlong");
+  }
+
+  const derivedUncertainSpanCount = segments.filter((segment) => segment.uncertain).length;
+  if (record.uncertainSpanCount !== derivedUncertainSpanCount) {
+    throw new Stage4B4VoiceContractError("audio_transcription_observation_uncertain_span_count_mismatch");
   }
 
   return {
@@ -444,9 +606,10 @@ export function parseAudioTranscriptionObservationV1(input: unknown): AudioTrans
     transcriptText: record.transcriptText,
     overallConfidence: record.overallConfidence,
     segments,
-    uncertainSpanCount: record.uncertainSpanCount,
+    uncertainSpanCount: derivedUncertainSpanCount,
     providerId: record.providerId,
     providerVersion: record.providerVersion,
+    speakerState,
   };
 }
 
@@ -456,20 +619,21 @@ export function evaluateTranscriptQualityGate(input: {
 }): AudioTranscriptionQualityDecision {
   const reasonCodes: AudioQualityCode[] = [];
   const { observation, expectedLocale } = input;
-  const codepointCount = countUnicodeCodepoints(observation.transcriptText);
+  const metrics = computeTranscriptionDerivedMetrics(observation);
+  const codepointCount = countUnicodeCodepoints(observation.transcriptText.trim());
 
   if (codepointCount < STAGE_4B4_MIN_TRANSCRIPT_CODEPOINTS) {
     reasonCodes.push("empty_transcript");
   }
-  if (codepointCount > STAGE_4B4_MAX_TRANSCRIPT_CODEPOINTS) {
+  if (countUnicodeCodepoints(observation.transcriptText) > STAGE_4B4_MAX_TRANSCRIPT_CODEPOINTS) {
     reasonCodes.push("overlong_transcript");
   }
-  if (observation.locale !== expectedLocale) {
+  if (metrics.detectedLocale !== expectedLocale) {
     reasonCodes.push("wrong_language");
   }
-  if (!isUnitConfidence(observation.overallConfidence)) {
+  if (!isUnitConfidence(metrics.overallConfidence)) {
     reasonCodes.push("missing_confidence");
-  } else if (observation.overallConfidence < STAGE_4B4_OVERALL_CONFIDENCE_THRESHOLD) {
+  } else if (metrics.overallConfidence < STAGE_4B4_OVERALL_CONFIDENCE_THRESHOLD) {
     reasonCodes.push("overall_confidence_low");
   }
 
@@ -488,8 +652,14 @@ export function evaluateTranscriptQualityGate(input: {
     }
   }
 
-  if (observation.uncertainSpanCount > 0) {
+  if (metrics.uncertainSpanCount > 0) {
     reasonCodes.push("uncertain_spans_present");
+  }
+
+  if (metrics.speakerState === "multiple_speakers") {
+    reasonCodes.push("multiple_speakers_present");
+  } else if (metrics.speakerState === "unknown") {
+    reasonCodes.push("unknown_speaker_state");
   }
 
   return {
@@ -691,7 +861,10 @@ export function canAccessVoiceTranscriptCorrection(role: TenantRole): boolean {
 
 export function buildConversationVoiceTranscriptDto(input: {
   role: TenantRole;
-  transcription: Pick<AudioTranscriptionRecord, "id" | "status" | "observation" | "qualityDecision" | "transcriptionRevision">;
+  transcription: Pick<
+    AudioTranscriptionRecord,
+    "id" | "status" | "observation" | "qualityDecision" | "transcriptionRevision" | "transcriptText"
+  >;
   latestCorrectionId: string | null;
   correctedTranscript?: string | null;
 }): ConversationVoiceTranscriptDto | null {
@@ -705,7 +878,9 @@ export function buildConversationVoiceTranscriptDto(input: {
     corrected && input.correctedTranscript
       ? input.correctedTranscript
       : accepted
-        ? input.transcription.observation?.transcriptText ?? null
+        ? input.transcription.transcriptText ??
+          input.transcription.observation?.transcriptText ??
+          null
         : null;
 
   let status: ConversationVoiceTranscriptDto["status"] = "pending";

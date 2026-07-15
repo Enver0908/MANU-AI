@@ -18,7 +18,11 @@ import {
 } from "./phase-85-stage-4b4-audio-lifecycle-saga";
 import { createInMemoryStage4B4AudioStorage } from "./phase-85-stage-4b4-audio-storage";
 import type { MediaAssetRecord } from "./phase-85-stage-4b3-media-contracts";
-import type { AudioTranscriptionObservationV1, AudioTranscriptionRecord } from "./phase-85-stage-4b4-voice-contracts";
+import {
+  buildTranscriptionLineageFieldsFromObservation,
+  type AudioTranscriptionObservationV1,
+  type AudioTranscriptionRecord,
+} from "./phase-85-stage-4b4-voice-contracts";
 import { createInitialState, DEMO_TENANT_ID } from "./seed-data";
 import { resetFallbackState } from "./app-state-store";
 
@@ -75,6 +79,7 @@ function buildObservation(): AudioTranscriptionObservationV1 {
 }
 
 function buildTranscription(overrides: Partial<AudioTranscriptionRecord> = {}): AudioTranscriptionRecord {
+  const observation = buildObservation();
   return {
     id: "transcription-life-1",
     tenantId: DEMO_TENANT_ID,
@@ -86,13 +91,14 @@ function buildTranscription(overrides: Partial<AudioTranscriptionRecord> = {}): 
     transcriptionRevision: 1,
     status: "accepted",
     locale: "tr-TR",
-    observation: buildObservation(),
+    observation,
     qualityDecision: { accepted: true, reasonCodes: [] },
     rejectionReasons: [],
     sourceModality: "voice_transcript",
     providerMode: "mock",
     retrievalEligible: true,
     evidenceExpiresAt: "2026-07-01T10:00:00.000Z",
+    ...buildTranscriptionLineageFieldsFromObservation({ observation }),
     createdAt: "2026-06-01T10:00:00.000Z",
     updatedAt: "2026-06-01T10:00:00.000Z",
     ...overrides,

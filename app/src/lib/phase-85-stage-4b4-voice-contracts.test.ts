@@ -13,6 +13,7 @@ import {
   assertClientSafeAudioPayload,
   buildConversationAudioDto,
   buildConversationVoiceTranscriptDto,
+  computeTranscriptionDerivedMetrics,
   createEmptyStage4B4VoiceCollections,
   evaluateAudioIngressMetadata,
   evaluateTranscriptQualityGate,
@@ -50,7 +51,7 @@ function buildSampleObservation(
 
 describe("phase-85-stage-4b4-voice-contracts", () => {
   it("exports locked vocabulary and channel event kind", () => {
-    expect(PHASE_85_STAGE_4B4_VOICE_CONTRACT_VERSION).toBe("p85-stage-4b4-voice-contracts-v1");
+    expect(PHASE_85_STAGE_4B4_VOICE_CONTRACT_VERSION).toBe("p85-stage-4b4-voice-contracts-v2");
     expect(STAGE_4B4_AUDIO_CHANNEL_EVENT_KIND).toBe("client_message_audio");
     expect(CHANNEL_EVENT_KINDS).toContain("client_message_audio");
     expect(AUDIO_TRANSCRIPTION_STATUSES).toHaveLength(7);
@@ -70,7 +71,10 @@ describe("phase-85-stage-4b4-voice-contracts", () => {
 
   it("round-trips transcription observation schema and rejects unknown keys", () => {
     const observation = buildSampleObservation();
-    expect(parseAudioTranscriptionObservationV1(observation)).toEqual(observation);
+    expect(parseAudioTranscriptionObservationV1(observation)).toEqual({
+      ...observation,
+      speakerState: "single_speaker",
+    });
     expect(() => parseAudioTranscriptionObservationV1({ ...observation, extra: true })).toThrow(
       Stage4B4VoiceContractError,
     );
@@ -83,6 +87,61 @@ describe("phase-85-stage-4b4-voice-contracts", () => {
         segments: [{ startMs: 100, endMs: 50, text: "x", confidence: 0.9, uncertain: false }],
       }),
     ).toThrow(Stage4B4VoiceContractError);
+  });
+
+  it("rejects zero segments and empty segment text", () => {
+    const observation = buildSampleObservation();
+    expect(() => parseAudioTranscriptionObservationV1({ ...observation, segments: [] })).toThrow(
+      Stage4B4VoiceContractError,
+    );
+    expect(() =>
+      parseAudioTranscriptionObservationV1({
+        ...observation,
+        segments: [{ startMs: 0, endMs: 1000, text: "   ", confidence: 0.99, uncertain: false }],
+      }),
+    ).toThrow(Stage4B4VoiceContractError);
+  });
+
+  it("derives quality metrics from segments instead of provider overall confidence", () => {
+    const observation = buildSampleObservation({
+      overallConfidence: 0.99,
+      segments: [
+        {
+          startMs: 0,
+          endMs: 1000,
+          text: "test",
+          confidence: 0.8,
+          uncertain: false,
+        },
+      ],
+    });
+    const metrics = computeTranscriptionDerivedMetrics(observation);
+    expect(metrics.minimumSegmentConfidence).toBe(0.8);
+    expect(metrics.overallConfidence).toBe(0.8);
+    expect(metrics.segmentCount).toBe(1);
+
+    const gate = evaluateTranscriptQualityGate({
+      observation,
+      expectedLocale: "tr-TR",
+    });
+    expect(gate.accepted).toBe(false);
+    expect(gate.reasonCodes).toContain("overall_confidence_low");
+  });
+
+  it("rejects multi-speaker and unknown speaker states for auto acceptance", () => {
+    const multiSpeaker = evaluateTranscriptQualityGate({
+      observation: buildSampleObservation({ speakerState: "multiple_speakers" }),
+      expectedLocale: "tr-TR",
+    });
+    expect(multiSpeaker.accepted).toBe(false);
+    expect(multiSpeaker.reasonCodes).toContain("multiple_speakers_present");
+
+    const unknownSpeaker = evaluateTranscriptQualityGate({
+      observation: buildSampleObservation({ speakerState: "unknown" }),
+      expectedLocale: "tr-TR",
+    });
+    expect(unknownSpeaker.accepted).toBe(false);
+    expect(unknownSpeaker.reasonCodes).toContain("unknown_speaker_state");
   });
 
   it("rejects more than 128 segments and overlong transcript text", () => {
@@ -158,7 +217,18 @@ describe("phase-85-stage-4b4-voice-contracts", () => {
     expect(accepted.reasonCodes).toEqual([]);
 
     const lowOverall = evaluateTranscriptQualityGate({
-      observation: buildSampleObservation({ overallConfidence: STAGE_4B4_OVERALL_CONFIDENCE_THRESHOLD - 0.01 }),
+      observation: buildSampleObservation({
+        overallConfidence: STAGE_4B4_OVERALL_CONFIDENCE_THRESHOLD - 0.01,
+        segments: [
+          {
+            startMs: 0,
+            endMs: 2400,
+            text: "Bugun ogle yemeginde mercimek corbasi yedim.",
+            confidence: STAGE_4B4_OVERALL_CONFIDENCE_THRESHOLD - 0.01,
+            uncertain: false,
+          },
+        ],
+      }),
       expectedLocale: "tr-TR",
     });
     expect(lowOverall.accepted).toBe(false);
@@ -207,7 +277,7 @@ describe("phase-85-stage-4b4-voice-contracts", () => {
     expect(wrongLanguage.reasonCodes).toContain("wrong_language");
 
     const empty = evaluateTranscriptQualityGate({
-      observation: buildSampleObservation({ transcriptText: "" }),
+      observation: buildSampleObservation({ transcriptText: " " }),
       expectedLocale: "tr-TR",
     });
     expect(empty.accepted).toBe(false);

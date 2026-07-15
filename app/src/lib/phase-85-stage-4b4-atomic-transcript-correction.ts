@@ -1,7 +1,11 @@
 import { conversationRevisionOrDefault } from "./phase-85-if-f-conversation-revision";
-import { applyStage4B4TranscriptCorrectionFollowUpNotification } from "./phase-85-stage-4b4-bundle-notifications";
+import {
+  applyStage4B4TranscriptCorrectionFollowUpNotification,
+} from "./phase-85-stage-4b4-bundle-notifications";
 import {
   AUDIO_TRANSCRIPTION_OBSERVATION_SCHEMA_VERSION,
+  buildTranscriptionLineageFieldsFromObservation,
+  STAGE_4B4_DIETITIAN_CORRECTION_PROVIDER_ID,
   type AudioTranscriptionObservationV1,
   type AudioTranscriptionRecord,
   type TranscriptCorrectionRequest,
@@ -11,7 +15,6 @@ import type { ManuAppState } from "./types";
 
 export const STAGE_4B4_ATOMIC_TRANSCRIPT_CORRECTION_VERSION = "p85-stage-4b4-atomic-transcript-correction-v2";
 export const STAGE_4B4_TRANSCRIPT_CORRECTION_OUTCOME_VERSION = "p85-stage-4b4-transcript-correction-outcome-v1";
-export const STAGE_4B4_DIETITIAN_CORRECTION_PROVIDER_ID = "dietitian-correction";
 export const STAGE_4B4_DIETITIAN_CORRECTION_PROVIDER_VERSION = "v1";
 
 export type AtomicTranscriptCorrectionSubmitResult =
@@ -68,6 +71,11 @@ function buildCorrectedTranscriptionRecord(input: {
     providerMode: "mock",
     retrievalEligible: true,
     evidenceExpiresAt: input.source.evidenceExpiresAt ?? null,
+    ...buildTranscriptionLineageFieldsFromObservation({
+      observation,
+      origin: "dietitian_correction",
+      supersedesTranscriptionId: input.source.id,
+    }),
     createdAt: input.now,
     updatedAt: input.now,
   };
@@ -191,6 +199,11 @@ export function commitAtomicTranscriptCorrectionV2(
         clientId: transcription.clientId,
         conversationId: transcription.conversationId,
         transcriptionId: transcription.id,
+        sourceTranscriptionId: transcription.id,
+        correctedTranscriptionId,
+        targetMessageId: transcription.messageId,
+        supersededDecisionId: bundle?.decisionId ?? null,
+        rerunDecisionId: null,
         dietitianId: request.dietitianId,
         status,
         reasonCode: request.reasonCode,
@@ -209,6 +222,7 @@ export function commitAtomicTranscriptCorrectionV2(
           ? {
               ...entry,
               status: "superseded" as const,
+              supersededByTranscriptionId: correctedTranscriptionId,
               updatedAt: now,
             }
           : entry,
