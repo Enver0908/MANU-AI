@@ -5,7 +5,7 @@ import { runStage4B4DurableTranscriptionWorkerBatch } from "./phase-85-stage-4b4
 const once = process.argv.includes("--once");
 const intervalMs = Number(process.env.MANU_STAGE4B4_WORKER_INTERVAL_MS || "3000");
 const tenantId = process.env.MANU_STAGE4B4_WORKER_TENANT_ID || DEMO_TENANT_ID;
-const workerId = process.env.MANU_STAGE4B4_WORKER_ID || "stage4b4-durable-audio-worker";
+const workerId = process.env.MANU_STAGE4B4_TRANSCRIPTION_WORKER_ID || "stage4b4-durable-transcription-worker";
 
 function requireEnv(name: string): string {
   const value = process.env[name]?.trim();
@@ -22,7 +22,7 @@ async function runBatch(supabase: SupabaseClient) {
     workerId,
   });
   console.log(
-    `[worker:audio:stage4b4] claimed=${summary.claimed} accepted=${summary.accepted} reviewRequired=${summary.reviewRequired} failed=${summary.failed}`,
+    `[worker:audio:stage4b4:transcription] claimed=${summary.claimed} accepted=${summary.accepted} reviewRequired=${summary.reviewRequired} failed=${summary.failed} retriesScheduled=${summary.retriesScheduled}`,
   );
 }
 
@@ -42,8 +42,8 @@ async function main() {
 
   console.log(
     once
-      ? `[worker:audio:stage4b4] running one transcription batch for tenant ${tenantId}`
-      : `[worker:audio:stage4b4] polling every ${intervalMs}ms for tenant ${tenantId} (Ctrl+C to stop)`,
+      ? `[worker:audio:stage4b4:transcription] running one transcription batch for tenant ${tenantId}`
+      : `[worker:audio:stage4b4:transcription] polling every ${intervalMs}ms for tenant ${tenantId} (Ctrl+C to stop)`,
   );
 
   do {

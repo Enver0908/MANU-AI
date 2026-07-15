@@ -26,6 +26,10 @@
     "worker:media:stage4b3:once": "node scripts/worker-media-stage4b3.mjs --once",
     "worker:audio:stage4b4": "node scripts/worker-audio-stage4b4.mjs",
     "worker:audio:stage4b4:once": "node scripts/worker-audio-stage4b4.mjs --once",
+    "worker:audio:stage4b4:admission": "node scripts/worker-audio-stage4b4-admission.mjs",
+    "worker:audio:stage4b4:admission:once": "node scripts/worker-audio-stage4b4-admission.mjs --once",
+    "worker:audio:stage4b4:transcription": "node scripts/worker-audio-stage4b4-transcription.mjs",
+    "worker:audio:stage4b4:transcription:once": "node scripts/worker-audio-stage4b4-transcription.mjs --once",
     "worker:media:lifecycle": "node scripts/worker-media-lifecycle-stage4b3.mjs",
     "worker:media:lifecycle:once": "node scripts/worker-media-lifecycle-stage4b3.mjs --once"
   },

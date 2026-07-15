@@ -37,6 +37,11 @@ const remediationContractsMigration = readFileSync(
   "utf8",
 );
 
+const durablePipelineMigration = readFileSync(
+  resolve(__dirname, "../../supabase/migrations/20260715110000_phase_85_stage_4b4_durable_pipeline.sql"),
+  "utf8",
+);
+
 const stage4B4Tables = [
   "audio_transcription_records",
   "audio_transcript_corrections",
@@ -59,6 +64,25 @@ describe("P85 Stage 4B-4 remediation R1 contracts migration", () => {
     expect(remediationContractsMigration).toContain("target_message_id");
     expect(remediationContractsMigration).toContain("transcription_supersession_cycle_detected");
     expect(remediationContractsMigration).toContain("correction_lineage_scope_mismatch");
+  });
+});
+
+describe("P85 Stage 4B-4 remediation R3 durable pipeline migration", () => {
+  it("creates lease-safe admission/transcription RPCs and bridge job queue", () => {
+    expect(durablePipelineMigration).toContain("audio_transcript_bridge_jobs");
+    expect(durablePipelineMigration).toContain("p85_stage_4b4_claim_audio_admission_work_v2");
+    expect(durablePipelineMigration).toContain("p85_stage_4b4_complete_audio_admission_v2");
+    expect(durablePipelineMigration).toContain("p85_stage_4b4_fail_audio_admission_v2");
+    expect(durablePipelineMigration).toContain("p85_stage_4b4_claim_transcription_work_v2");
+    expect(durablePipelineMigration).toContain("p85_stage_4b4_renew_transcription_lease_v2");
+    expect(durablePipelineMigration).toContain("p85_stage_4b4_complete_transcription_v2");
+    expect(durablePipelineMigration).toContain("interval '60 seconds'");
+    expect(durablePipelineMigration).toContain("interval '1 second'");
+    expect(durablePipelineMigration).toContain("interval '5 seconds'");
+    expect(durablePipelineMigration).toContain("for update skip locked");
+    expect(durablePipelineMigration).toContain(
+      "grant execute on function p85_stage_4b4_complete_transcription_v2",
+    );
   });
 });
 
