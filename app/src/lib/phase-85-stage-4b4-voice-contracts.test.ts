@@ -291,6 +291,7 @@ describe("phase-85-stage-4b4-voice-contracts", () => {
       mimeType: "audio/ogg; codecs=opus",
       providerMediaId: "media-1",
       fromIdentity: "905551112233",
+      sourceAuthority: "verified_direct",
       isGroupContext: false,
       isForwarded: false,
       isBusinessEcho: false,
@@ -423,6 +424,7 @@ describe("phase-85-stage-4b4-voice-contracts", () => {
                     from: "905551112233",
                     timestamp: "1710000000",
                     type: "audio",
+                    context: { forwarded: false },
                     audio: {
                       id: "media-audio-1",
                       mime_type: "audio/ogg; codecs=opus",

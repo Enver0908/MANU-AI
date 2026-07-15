@@ -23,7 +23,7 @@ describe("phase 85 stage 4b-4 audio canonicalizer", () => {
 
     expect(result.ok).toBe(true);
     if (!result.ok) {
-      throw new Error("expected canonicalization success");
+      throw new Error(`expected canonicalization success, got ${result.failureCode}`);
     }
     expect(result.artifacts.sampleRateHz).toBe(STAGE_4B4_CANONICAL_SAMPLE_RATE_HZ);
     expect(result.artifacts.audioChannels).toBe(STAGE_4B4_CANONICAL_AUDIO_CHANNELS);

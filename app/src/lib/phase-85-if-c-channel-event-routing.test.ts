@@ -21,6 +21,17 @@ function baseCandidate(overrides: Partial<RawChannelEventCandidate>): RawChannel
     providerTimeInvalid: false,
     payloadDigest: "test-digest",
     malformedReason: null,
+    providerMediaId: null,
+    declaredMimeType: null,
+    payloadSha256: null,
+    caption: null,
+    replyToProviderMessageId: null,
+    byteSize: null,
+    voiceFlag: null,
+    durationMs: null,
+    isProviderEcho: false,
+    providerGroupId: null,
+    providerForwardedFlag: null,
     ...overrides,
   };
 }

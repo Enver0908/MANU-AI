@@ -14,10 +14,11 @@ import {
 import type { Stage4B4AudioTransportFailureCode } from "./phase-85-stage-4b4-audio-transport";
 import { canonicalizeOggOpusVoiceBytes, type Stage4B4AudioCanonicalizationFailureCode } from "./phase-85-stage-4b4-audio-canonicalizer";
 import { buildStage4B4AudioObjectKey, type Stage4B4AudioStoragePort } from "./phase-85-stage-4b4-audio-storage";
+import { buildAudioIngressMetadataInput } from "./phase-85-stage-4b4-audio-source-authority";
 import type { Stage4B4AudioTransportPort } from "./phase-85-stage-4b4-audio-transport";
 import type { ManuAppState, MessageRecord } from "./types";
 
-export const STAGE_4B4_AUDIO_ADMISSION_VERSION = "p85-stage-4b4-audio-admission-v1";
+export const STAGE_4B4_AUDIO_ADMISSION_VERSION = "p85-stage-4b4-audio-admission-v2";
 
 export type Stage4B4AudioIngressContext = Stage4B3ImageIngressContext;
 
@@ -46,27 +47,20 @@ export function stageClientAudioIngressMetadata(state: ManuAppState, context: St
     return state;
   }
 
-  const evaluation = evaluateAudioIngressMetadata({
-    messageType: context.candidate.messageType,
-    voiceFlag: context.candidate.voiceFlag === true,
-    mimeType: context.candidate.declaredMimeType,
-    providerMediaId: context.candidate.providerMediaId,
-    fromIdentity: context.candidate.fromIdentity,
-    isGroupContext: false,
-    isForwarded: false,
-    isBusinessEcho: false,
-    isTrustedDirectClient: true,
-    byteSize: context.candidate.byteSize,
-    durationMs: context.candidate.durationMs,
-    isDuplicateMedia: state.mediaAssets.some(
-      (asset) =>
-        asset.tenantId === state.tenant.id &&
-        asset.providerMediaIdHash === hashProviderMediaId(context.candidate.providerMediaId ?? "") &&
-        asset.status !== "failed" &&
-        asset.status !== "revoked" &&
-        asset.status !== "expired",
-    ),
-  });
+  const evaluation = evaluateAudioIngressMetadata(
+    buildAudioIngressMetadataInput({
+      candidate: context.candidate,
+      routing: context.routing,
+      isDuplicateMedia: state.mediaAssets.some(
+        (asset) =>
+          asset.tenantId === state.tenant.id &&
+          asset.providerMediaIdHash === hashProviderMediaId(context.candidate.providerMediaId ?? "") &&
+          asset.status !== "failed" &&
+          asset.status !== "revoked" &&
+          asset.status !== "expired",
+      ),
+    }),
+  );
 
   if (evaluation.decision !== "admitted") {
     return markFailedClientAudioIngress(state, context, "ingress_metadata_rejected");

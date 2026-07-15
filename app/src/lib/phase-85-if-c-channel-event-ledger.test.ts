@@ -294,6 +294,17 @@ describe("phase 85 if-c channel event ledger", () => {
       providerTimeInvalid: false,
       payloadDigest: "digest",
       malformedReason: null,
+      providerMediaId: null,
+      declaredMimeType: null,
+      payloadSha256: null,
+      caption: null,
+      replyToProviderMessageId: null,
+      byteSize: null,
+      voiceFlag: null,
+      durationMs: null,
+      isProviderEcho: false,
+      providerGroupId: null,
+      providerForwardedFlag: null,
     };
 
     const quarantinedEvent = {
@@ -365,6 +376,17 @@ describe("phase 85 if-c channel event ledger", () => {
       providerTimeInvalid: false,
       payloadDigest: "digest",
       malformedReason: null,
+      providerMediaId: null,
+      declaredMimeType: null,
+      payloadSha256: null,
+      caption: null,
+      replyToProviderMessageId: null,
+      byteSize: null,
+      voiceFlag: null,
+      durationMs: null,
+      isProviderEcho: false,
+      providerGroupId: null,
+      providerForwardedFlag: null,
     };
     const quarantinedEvent = {
       id: "channel-event-replay-2",

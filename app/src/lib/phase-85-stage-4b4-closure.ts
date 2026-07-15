@@ -172,6 +172,7 @@ function defaultAdmissionInput(overrides: Partial<AudioIngressMetadataInput> = {
     mimeType: "audio/ogg",
     providerMediaId: "MOCK_AUDIO_GOLDEN_VOICE_NOTE",
     fromIdentity: "905551110001",
+    sourceAuthority: "verified_direct",
     isGroupContext: false,
     isForwarded: false,
     isBusinessEcho: false,

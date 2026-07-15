@@ -147,4 +147,53 @@ describe("phase 85 stage 4b-4 audio admission", () => {
     ).toBe("content_unavailable");
     expect(workerState.audioTranscriptionRecords).toHaveLength(0);
   });
+
+  it("rejects forwarded and unknown-source voice ingress before decode", async () => {
+    const fixture = registerStage4B4FixtureMediaAsset({ fixtureId: "golden_voice_note" });
+    const audioStorage = createInMemoryStage4B4AudioStorage();
+    const admission = createStage4B3LocalAdmissionRuntime({
+      autoProcessAudioPending: false,
+      autoProcessPending: false,
+      autoProcessVision: false,
+      autoProcessBundles: false,
+      audioStorage,
+    });
+
+    const forwardedIngress = await processCanonicalWhatsAppIngressInState(
+      createInitialState(),
+      buildCanonicalWhatsAppVoicePayload({
+        providerEventId: "wamid.AUDIO_FORWARDED_1",
+        from: "905551110001",
+        mediaId: fixture.mediaId,
+        sha256: fixture.contentSha256,
+        forwarded: true,
+      }),
+      {
+        providedSecret: TEST_SECRET,
+        env: testEnv(),
+        stage4b3Admission: admission,
+      },
+    );
+    expect(forwardedIngress.state.audioTranscriptionRecords).toHaveLength(0);
+    expect(forwardedIngress.state.mediaAssets.find((entry) => entry.mediaKind === "audio")?.status).toBe("failed");
+
+    const unknownIngress = await processCanonicalWhatsAppIngressInState(
+      createInitialState(),
+      buildCanonicalWhatsAppVoicePayload({
+        providerEventId: "wamid.AUDIO_UNKNOWN_1",
+        from: "905551110001",
+        mediaId: fixture.mediaId,
+        sha256: fixture.contentSha256,
+        omitForwardingContext: true,
+      }),
+      {
+        providedSecret: TEST_SECRET,
+        env: testEnv(),
+        stage4b3Admission: admission,
+      },
+    );
+    expect(unknownIngress.state.audioTranscriptionRecords).toHaveLength(0);
+    expect(unknownIngress.state.mediaAssets.find((entry) => entry.mediaKind === "audio")?.status).toBe("failed");
+    expect(audioStorage.objects.size).toBe(0);
+  });
 });

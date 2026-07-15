@@ -49,6 +49,9 @@ export type RawChannelEventCandidate = {
   byteSize: number | null;
   voiceFlag: boolean | null;
   durationMs: number | null;
+  isProviderEcho: boolean;
+  providerGroupId: string | null;
+  providerForwardedFlag: boolean | null;
 };
 
 export type ChannelEventBatchNormalizationFailure = {
@@ -154,6 +157,7 @@ function normalizeMessageItem(
   const type = readTrimmedString(item.type) || null;
   const editedMessageId = readTrimmedString(item.edited_message_id) || null;
   const { providerTime, providerTimeInvalid } = parseProviderTimestamp(item.timestamp);
+  const contextFields = extractProviderContextFields(item);
 
   if (!providerEventId) {
     return buildCandidate({
@@ -230,10 +234,7 @@ function normalizeMessageItem(
   }
 
   if (type === "text") {
-    const groupId = readTrimmedString(
-      isRecord(item.context) ? (item.context as Record<string, unknown>).group_id : undefined,
-    );
-    if (groupId && !isEcho) {
+    if (contextFields.providerGroupId && !isEcho) {
       return buildCandidate({
         eventKind: "unsupported_event",
         wabaId,
@@ -244,6 +245,8 @@ function normalizeMessageItem(
         malformedReason: "whatsapp_group_unsupported",
         providerTime,
         providerTimeInvalid,
+        isProviderEcho: isEcho,
+        ...contextFields,
       });
     }
 
@@ -374,6 +377,8 @@ function normalizeMessageItem(
         byteSize,
         voiceFlag,
         durationMs,
+        isProviderEcho: isEcho,
+        ...contextFields,
       });
     }
 
@@ -396,6 +401,8 @@ function normalizeMessageItem(
       byteSize,
       voiceFlag,
       durationMs,
+      isProviderEcho: isEcho,
+      ...contextFields,
     });
   }
 
@@ -538,6 +545,9 @@ type BuildCandidateInput = {
   byteSize?: number | null;
   voiceFlag?: boolean | null;
   durationMs?: number | null;
+  isProviderEcho?: boolean;
+  providerGroupId?: string | null;
+  providerForwardedFlag?: boolean | null;
 };
 
 function buildCandidate(input: BuildCandidateInput): RawChannelEventCandidate {
@@ -565,7 +575,29 @@ function buildCandidate(input: BuildCandidateInput): RawChannelEventCandidate {
     byteSize: input.byteSize ?? null,
     voiceFlag: input.voiceFlag ?? null,
     durationMs: input.durationMs ?? null,
+    isProviderEcho: input.isProviderEcho ?? false,
+    providerGroupId: input.providerGroupId ?? null,
+    providerForwardedFlag: input.providerForwardedFlag ?? null,
   };
+}
+
+function extractProviderContextFields(item: Record<string, unknown>): {
+  providerGroupId: string | null;
+  providerForwardedFlag: boolean | null;
+} {
+  const context = isRecord(item.context) ? item.context : null;
+  if (!context) {
+    return { providerGroupId: null, providerForwardedFlag: null };
+  }
+
+  const providerGroupId = readTrimmedString(context.group_id) || null;
+  if (typeof context.forwarded === "boolean") {
+    return { providerGroupId, providerForwardedFlag: context.forwarded };
+  }
+  if (typeof context.frequently_forwarded === "boolean") {
+    return { providerGroupId, providerForwardedFlag: context.frequently_forwarded };
+  }
+  return { providerGroupId, providerForwardedFlag: null };
 }
 
 function computeDigest(value: unknown): string {

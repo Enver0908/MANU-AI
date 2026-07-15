@@ -74,6 +74,16 @@ export const AUDIO_ADMISSION_DECISIONS = [
 
 export type AudioAdmissionDecision = (typeof AUDIO_ADMISSION_DECISIONS)[number];
 
+export const AUDIO_INGRESS_SOURCE_AUTHORITIES = [
+  "verified_direct",
+  "forwarded",
+  "group",
+  "business_echo",
+  "unknown",
+] as const;
+
+export type AudioIngressSourceAuthority = (typeof AUDIO_INGRESS_SOURCE_AUTHORITIES)[number];
+
 export const AUDIO_QUALITY_CODES = [
   "overall_confidence_low",
   "segment_confidence_low",
@@ -288,6 +298,7 @@ export type AudioIngressMetadataInput = {
   mimeType: string | null;
   providerMediaId: string | null;
   fromIdentity: string | null;
+  sourceAuthority?: AudioIngressSourceAuthority;
   isGroupContext: boolean;
   isForwarded: boolean;
   isBusinessEcho: boolean;
@@ -676,10 +687,27 @@ function isSupportedVoiceMimeType(mimeType: string | null): boolean {
   return STAGE_4B4_SUPPORTED_VOICE_MIME_TYPES.some((candidate) => normalized === candidate.toLowerCase());
 }
 
+function resolveEffectiveSourceAuthority(input: AudioIngressMetadataInput): AudioIngressSourceAuthority {
+  if (input.sourceAuthority) {
+    return input.sourceAuthority;
+  }
+  if (input.isBusinessEcho) {
+    return "business_echo";
+  }
+  if (input.isGroupContext) {
+    return "group";
+  }
+  if (input.isForwarded || !input.isTrustedDirectClient) {
+    return "forwarded";
+  }
+  return "verified_direct";
+}
+
 export function evaluateAudioIngressMetadata(input: AudioIngressMetadataInput): AudioIngressEvaluation {
   const failureCodes: string[] = [];
+  const sourceAuthority = resolveEffectiveSourceAuthority(input);
 
-  if (input.isBusinessEcho) {
+  if (sourceAuthority === "business_echo") {
     return {
       decision: "unsupported_media",
       reviewRequired: true,
@@ -710,7 +738,7 @@ export function evaluateAudioIngressMetadata(input: AudioIngressMetadataInput): 
     failureCodes.push("unsupported_mime_type");
   }
 
-  if (input.isGroupContext) {
+  if (sourceAuthority === "group") {
     return {
       decision: "group_context",
       reviewRequired: true,
@@ -719,11 +747,20 @@ export function evaluateAudioIngressMetadata(input: AudioIngressMetadataInput): 
     };
   }
 
-  if (input.isForwarded || !input.isTrustedDirectClient) {
+  if (sourceAuthority === "forwarded") {
     return {
       decision: "untrusted_forward",
       reviewRequired: true,
       failureCodes: [...failureCodes, "forwarded_or_untrusted_voice"],
+      normalizedEventKind: "client_message_media_unsupported",
+    };
+  }
+
+  if (sourceAuthority === "unknown") {
+    return {
+      decision: "review_required",
+      reviewRequired: true,
+      failureCodes: [...failureCodes, "unknown_source_authority"],
       normalizedEventKind: "client_message_media_unsupported",
     };
   }

@@ -472,6 +472,9 @@ export function buildCanonicalWhatsAppVoicePayload(input: {
   durationMs?: number;
   timestamp?: string;
   businessPhoneNumberId?: string;
+  forwarded?: boolean;
+  groupId?: string;
+  omitForwardingContext?: boolean;
 }) {
   return {
     object: "whatsapp_business_account",
@@ -492,6 +495,14 @@ export function buildCanonicalWhatsAppVoicePayload(input: {
                   id: input.providerEventId,
                   timestamp: input.timestamp ?? "1720000000",
                   type: "audio",
+                  ...(input.omitForwardingContext
+                    ? {}
+                    : {
+                        context: {
+                          forwarded: input.forwarded ?? false,
+                          ...(input.groupId ? { group_id: input.groupId } : {}),
+                        },
+                      }),
                   audio: {
                     id: input.mediaId,
                     mime_type: "audio/ogg; codecs=opus",
