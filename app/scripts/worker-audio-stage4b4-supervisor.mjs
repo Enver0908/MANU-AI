@@ -14,6 +14,10 @@ const workers = [
     label: "transcription",
     script: "worker-audio-stage4b4-transcription.mjs",
   },
+  {
+    label: "bridge",
+    script: "worker-audio-stage4b4-bridge.mjs",
+  },
 ];
 
 const children = workers.map((worker) => {

@@ -37,4 +37,4 @@ npm run build
 
 ## Next Phase
 
-R5 is next: durable transcript bridge, bundle deadline, and atomic risk orchestration. Stage 4C remains blocked until R9 fresh complete PASS.
+R6 is next: correction lineage, decision supersession, and human control. Stage 4C remains blocked until R9 fresh complete PASS.

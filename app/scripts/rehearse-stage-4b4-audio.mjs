@@ -10,6 +10,7 @@ const targetedStage4B4Tests = [
   "src/lib/phase-85-stage-4b4-audio-admission.test.ts",
   "src/lib/phase-85-stage-4b4-transcription-worker.test.ts",
   "src/lib/phase-85-stage-4b4-transcript-bridge.test.ts",
+  "src/lib/phase-85-stage-4b4-durable-transcript-bridge-worker.test.ts",
   "src/lib/phase-85-stage-4b4-voice-bundle-orchestration.test.ts",
   "src/lib/phase-85-stage-4b3-bundle-orchestration.test.ts",
   "src/lib/phase-85-stage-4b4-transcript-corrections.test.ts",

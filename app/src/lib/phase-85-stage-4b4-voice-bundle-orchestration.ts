@@ -6,7 +6,17 @@ import { computeInboundTurnCoreResult, type InboundCoreResult } from "./simulato
 import { classifySimulationRisk } from "./simulator-risk";
 import type { ClientRecord, ConversationRecord, ManuAppState, MessageRecord } from "./types";
 
-export const STAGE_4B4_VOICE_BUNDLE_ORCHESTRATION_VERSION = "p85-stage-4b4-voice-bundle-orchestration-v1";
+export const STAGE_4B4_VOICE_BUNDLE_ORCHESTRATION_VERSION = "p85-stage-4b4-voice-bundle-orchestration-v2";
+
+export function buildBundleOrchestrationIdempotencyKey(input: {
+  conversationId: string;
+  bundleId: string;
+  bundleRevision: number;
+  transcriptionRevisions: number[];
+}): string {
+  const revisionToken = [...input.transcriptionRevisions].sort((left, right) => left - right).join(",");
+  return `bundle-decision:${input.conversationId}:${input.bundleId}:${input.bundleRevision}:${revisionToken}`;
+}
 
 export type VoiceTranscriptProvenance = {
   messageId: string;

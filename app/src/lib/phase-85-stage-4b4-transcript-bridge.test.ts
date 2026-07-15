@@ -23,8 +23,10 @@ import {
   applyAcceptedTranscriptionBridge,
   buildTranscriptBridgeIdempotencyKey,
   evaluateInboundBundleDerivationReadiness,
+  isBundleVoiceTranscriptionDeadlineExceeded,
   isVoiceMessageBridged,
   processStage4B4AcceptedTranscriptionBridges,
+  resolveBundleVoiceTranscriptionDeadline,
 } from "./phase-85-stage-4b4-transcript-bridge";
 import { processStage4B4PendingTranscriptions } from "./phase-85-stage-4b4-transcription-worker";
 import { processStage4B3DueInboundBundles } from "./phase-85-stage-4b3-media-worker";
@@ -182,7 +184,7 @@ describe("phase-85-stage-4b4-transcript-bridge", () => {
     expect(voiceAsset?.status).toBe("download_pending");
     expect(evaluateInboundBundleDerivationReadiness(ingress.state, bundle!).status).toBe("pending");
 
-    const promoted = promoteDueInboundBundles(ingress.state, T120);
+    const promoted = promoteDueInboundBundles(ingress.state, T119);
     const stillOpen = findConversationBundle(promoted, conversationId);
     expect(stillOpen?.status).toBe("open");
     expect(evaluateInboundBundleDerivationReadiness(promoted, stillOpen!).status).toBe("pending");
@@ -239,14 +241,85 @@ describe("phase-85-stage-4b4-transcript-bridge", () => {
     expect(state.messages.some((entry) => entry.body === STAGE_4B4_PLACEHOLDER_VOICE_MESSAGE_BODY)).toBe(true);
   });
 
-  it("builds stable bridge idempotency keys", () => {
+  it("builds stable bridge idempotency keys with transcription revision", () => {
     const key = buildTranscriptBridgeIdempotencyKey({
       conversationId: "conversation-1",
       mediaAssetId: "asset-1",
       transcriptionId: "transcription-1",
+      transcriptionRevision: 1,
       bundleId: "bundle-1",
     });
-    expect(key).toBe("voice-bridge:conversation-1:bundle-1:asset-1:transcription-1");
+    expect(key).toBe("voice-bridge:conversation-1:bundle-1:asset-1:transcription-1:1");
+  });
+
+  it("does not overwrite a non-placeholder voice message body during bridge", async () => {
+    const { state, asset } = await admitAndTranscribeVoice("meal_update_tr");
+    const record = state.audioTranscriptionRecords.find((entry) => entry.mediaAssetId === asset.id);
+    if (!record) {
+      throw new Error("expected transcription record");
+    }
+
+    const manualBody = "Diyetisyen tarafindan onceden yazilmis metin";
+    const withManualBody = {
+      ...state,
+      processedTranscriptBridgeKeys: [],
+      messages: state.messages.map((message) =>
+        message.id === asset.messageId ? { ...message, body: manualBody } : message,
+      ),
+    };
+
+    const bridged = applyAcceptedTranscriptionBridge(withManualBody, record.id, T120);
+    const message = bridged.messages.find((entry) => entry.id === asset.messageId);
+    expect(message?.body).toBe(manualBody);
+    expect(bridged.inboundMessageBundleItems.find((entry) => entry.mediaAssetId === asset.id)?.transcriptionId).toBe(
+      record.id,
+    );
+  });
+
+  it("closes pending voice bundles to review_required after the 120s transcription deadline", async () => {
+    const fixture = registerStage4B4FixtureMediaAsset({
+      fixtureId: "golden_voice_note",
+    });
+    const audioStorage = createInMemoryStage4B4AudioStorage();
+    const admission = createStage4B3LocalAdmissionRuntime({
+      autoProcessAudioPending: false,
+      autoProcessTranscription: false,
+      autoProcessBundles: false,
+      audioStorage,
+    });
+
+    const ingress = await processCanonicalWhatsAppIngressInState(
+      createInitialState(),
+      buildCanonicalWhatsAppVoicePayload({
+        providerEventId: "wamid.BRIDGE_TIMEOUT",
+        from: "905551110001",
+        mediaId: fixture.mediaId,
+        sha256: fixture.contentSha256,
+        durationMs: 3_000,
+      }),
+      {
+        providedSecret: TEST_SECRET,
+        env: testEnv(),
+        stage4b3Admission: admission,
+        now: T0,
+      },
+    );
+
+    const conversationId = ingress.state.conversations[0]!.id;
+    const bundle = findConversationBundle(ingress.state, conversationId);
+    if (!bundle) {
+      throw new Error("expected bundle");
+    }
+
+    const deadline = resolveBundleVoiceTranscriptionDeadline(ingress.state, bundle.id);
+    expect(deadline).toBe("2026-07-14T12:02:00.000Z");
+    expect(isBundleVoiceTranscriptionDeadlineExceeded(ingress.state, bundle.id, T119)).toBe(false);
+    expect(isBundleVoiceTranscriptionDeadlineExceeded(ingress.state, bundle.id, T120)).toBe(true);
+
+    const promoted = promoteDueInboundBundles(ingress.state, T240);
+    const timedOut = findConversationBundle(promoted, conversationId);
+    expect(timedOut?.status).toBe("review_required");
+    expect(timedOut?.failureCode).toBe("transcription_timeout");
   });
 
   it("reports derivation readiness for accepted bridged voice", async () => {

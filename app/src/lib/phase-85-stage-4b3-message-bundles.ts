@@ -15,7 +15,11 @@ import {
   STAGE_4B4_MAX_BUNDLE_VOICE_DURATION_MS,
   STAGE_4B4_MAX_VOICE_NOTES_PER_BUNDLE,
 } from "./phase-85-stage-4b4-voice-contracts";
-import { evaluateInboundBundleDerivationReadiness } from "./phase-85-stage-4b4-transcript-bridge";
+import {
+  bundleHasVoiceItems,
+  evaluateInboundBundleDerivationReadiness,
+  isBundleVoiceTranscriptionDeadlineExceeded,
+} from "./phase-85-stage-4b4-transcript-bridge";
 import {
   defaultFailureCodeForBundleWorkerOutcome,
   mapBundleWorkerOutcomeToStatus,
@@ -95,6 +99,38 @@ export function promoteDueInboundBundles(state: ManuAppState, now: string): Manu
       if (bundle.tenantId !== state.tenant.id || bundle.status !== "open") {
         return bundle;
       }
+
+      const voiceCapOverflow = detectBundleOverflow(bundle, {
+        itemCount: bundle.itemCount,
+        imageCount: bundle.imageCount,
+        audioCount: bundle.audioCount,
+        audioDurationMs: bundle.audioDurationMs,
+        unicodeCodepointCount: bundle.unicodeCodepointCount,
+      });
+      if (voiceCapOverflow) {
+        return {
+          ...bundle,
+          status: "review_required",
+          failureCode: voiceCapOverflow,
+          updatedAt: now,
+        };
+      }
+
+      if (
+        bundleHasVoiceItems(state, bundle.id) &&
+        isBundleVoiceTranscriptionDeadlineExceeded(state, bundle.id, now)
+      ) {
+        const derivation = evaluateInboundBundleDerivationReadiness(state, bundle);
+        if (derivation.status === "pending") {
+          return {
+            ...bundle,
+            status: "review_required",
+            failureCode: "transcription_timeout",
+            updatedAt: now,
+          };
+        }
+      }
+
       if (new Date(bundle.readyAt).getTime() > new Date(now).getTime()) {
         return bundle;
       }

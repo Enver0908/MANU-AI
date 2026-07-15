@@ -5,11 +5,12 @@ import {
 import type { InboundMessageBundleRecord } from "./phase-85-stage-4b3-media-contracts";
 import {
   STAGE_4B4_PLACEHOLDER_VOICE_MESSAGE_BODY,
+  STAGE_4B4_VOICE_TRANSCRIPTION_DEADLINE_SECONDS,
   type AudioTranscriptionRecord,
 } from "./phase-85-stage-4b4-voice-contracts";
 import type { ManuAppState, MessageRecord } from "./types";
 
-export const STAGE_4B4_TRANSCRIPT_BRIDGE_VERSION = "p85-stage-4b4-transcript-bridge-v1";
+export const STAGE_4B4_TRANSCRIPT_BRIDGE_VERSION = "p85-stage-4b4-transcript-bridge-v2";
 
 export type BundleDerivationReadiness =
   | { status: "ready" }
@@ -20,9 +21,54 @@ export function buildTranscriptBridgeIdempotencyKey(input: {
   conversationId: string;
   mediaAssetId: string;
   transcriptionId: string;
+  transcriptionRevision: number;
   bundleId: string;
 }): string {
-  return `voice-bridge:${input.conversationId}:${input.bundleId}:${input.mediaAssetId}:${input.transcriptionId}`;
+  return `voice-bridge:${input.conversationId}:${input.bundleId}:${input.mediaAssetId}:${input.transcriptionId}:${input.transcriptionRevision}`;
+}
+
+export function resolveFirstVoiceObservedAt(state: ManuAppState, bundleId: string): string | null {
+  const voiceItems = state.inboundMessageBundleItems
+    .filter(
+      (item) =>
+        item.tenantId === state.tenant.id && item.bundleId === bundleId && item.itemType === "voice",
+    )
+    .sort((left, right) => left.observedAt.localeCompare(right.observedAt));
+  return voiceItems[0]?.observedAt ?? null;
+}
+
+export function resolveBundleVoiceTranscriptionDeadline(
+  state: ManuAppState,
+  bundleId: string,
+): string | null {
+  const firstObservedAt = resolveFirstVoiceObservedAt(state, bundleId);
+  if (!firstObservedAt) {
+    return null;
+  }
+  const observedMs = new Date(firstObservedAt).getTime();
+  if (!Number.isFinite(observedMs)) {
+    return null;
+  }
+  return new Date(observedMs + STAGE_4B4_VOICE_TRANSCRIPTION_DEADLINE_SECONDS * 1000).toISOString();
+}
+
+export function isBundleVoiceTranscriptionDeadlineExceeded(
+  state: ManuAppState,
+  bundleId: string,
+  now: string,
+): boolean {
+  const deadline = resolveBundleVoiceTranscriptionDeadline(state, bundleId);
+  if (!deadline) {
+    return false;
+  }
+  return new Date(now).getTime() >= new Date(deadline).getTime();
+}
+
+export function bundleHasVoiceItems(state: ManuAppState, bundleId: string): boolean {
+  return state.inboundMessageBundleItems.some(
+    (item) =>
+      item.tenantId === state.tenant.id && item.bundleId === bundleId && item.itemType === "voice",
+  );
 }
 
 export function isVoiceMessageBridged(message: MessageRecord): boolean {
@@ -86,24 +132,31 @@ export function applyAcceptedTranscriptionBridge(
     conversationId: record.conversationId,
     mediaAssetId: record.mediaAssetId,
     transcriptionId: record.id,
+    transcriptionRevision: record.transcriptionRevision,
     bundleId,
   });
-  if (state.processedTranscriptBridgeKeys.includes(idempotencyKey) || isVoiceMessageBridged(message)) {
+  if (state.processedTranscriptBridgeKeys.includes(idempotencyKey)) {
     return state;
   }
 
   const observedAt = now ?? new Date().toISOString();
   const transcriptText = record.observation.transcriptText.trim();
-  const bridgedMessage: MessageRecord = {
-    ...message,
-    body: transcriptText,
-    contentStatus: "available",
-    retrievalEligibility: "eligible",
-  };
+  const shouldUpdateBody = !isVoiceMessageBridged(message);
 
   let nextState: ManuAppState = {
     ...state,
-    messages: state.messages.map((entry) => (entry.id === message.id ? bridgedMessage : entry)),
+    messages: shouldUpdateBody
+      ? state.messages.map((entry) =>
+          entry.id === message.id
+            ? {
+                ...entry,
+                body: transcriptText,
+                contentStatus: "available",
+                retrievalEligibility: "eligible",
+              }
+            : entry,
+        )
+      : state.messages,
     inboundMessageBundleItems: state.inboundMessageBundleItems.map((entry) =>
       entry.id === bundleItem?.id
         ? {
@@ -115,7 +168,9 @@ export function applyAcceptedTranscriptionBridge(
     processedTranscriptBridgeKeys: [...state.processedTranscriptBridgeKeys, idempotencyKey],
   };
 
-  nextState = applyBundleUnicodeAfterVoiceBridge(nextState, bundleId, transcriptText, observedAt);
+  if (shouldUpdateBody) {
+    nextState = applyBundleUnicodeAfterVoiceBridge(nextState, bundleId, transcriptText, observedAt);
+  }
   return nextState;
 }
 

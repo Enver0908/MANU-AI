@@ -13,8 +13,10 @@ import { commitAtomicBundleDecisionV2 } from "./phase-85-stage-4b3-atomic-bundle
 import { bundleHasDietitianReply } from "./phase-85-stage-4b3-message-bundles";
 import {
   bundleShouldUseTypedTextRiskChain,
+  buildBundleOrchestrationIdempotencyKey,
   computeTypedBundleCoreResult,
   isBundleEvaluationTextReady,
+  resolveVoiceTranscriptProvenance,
 } from "./phase-85-stage-4b4-voice-bundle-orchestration";
 import {
   prepareInboundTurnPipeline,
@@ -277,7 +279,17 @@ export async function runMultimodalBundleInboundTurn(
   }
 
   const { bundle, anchorMessage } = located;
-  const idempotencyKey = input.idempotencyKey ?? `bundle-decision-${bundleId}-${bundle.bundleRevision}`;
+  const voiceProvenance = resolveVoiceTranscriptProvenance(state, bundleId);
+  const idempotencyKey =
+    input.idempotencyKey ??
+    (voiceProvenance.length > 0
+      ? buildBundleOrchestrationIdempotencyKey({
+          conversationId: bundle.conversationId,
+          bundleId,
+          bundleRevision: bundle.bundleRevision,
+          transcriptionRevisions: voiceProvenance.map((entry) => entry.transcriptionRevision),
+        })
+      : `bundle-decision-${bundleId}-${bundle.bundleRevision}`);
   if (state.processedBundleDecisionKeys.includes(idempotencyKey) && bundle.decisionId) {
     const replay = state.bundleDecisionReplayByKey[idempotencyKey];
     if (!replay || replay.decisionId === bundle.decisionId) {

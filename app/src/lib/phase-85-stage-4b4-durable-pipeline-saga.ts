@@ -164,21 +164,15 @@ export async function completeTranscriptionV2(input: {
   failureCode?: string | null;
 }): Promise<void> {
   const bridgeIdempotencyKey =
-    input.terminalStatus === "accepted" && input.record.bundleId
+    input.terminalStatus === "accepted"
       ? buildTranscriptBridgeIdempotencyKey({
           conversationId: input.record.conversationId,
           mediaAssetId: input.record.mediaAssetId,
           transcriptionId: input.transcriptionId,
-          bundleId: input.record.bundleId,
+          transcriptionRevision: input.record.transcriptionRevision,
+          bundleId: input.record.bundleId ?? input.transcriptionId,
         })
-      : input.terminalStatus === "accepted"
-        ? buildTranscriptBridgeIdempotencyKey({
-            conversationId: input.record.conversationId,
-            mediaAssetId: input.record.mediaAssetId,
-            transcriptionId: input.transcriptionId,
-            bundleId: input.record.bundleId ?? input.transcriptionId,
-          })
-        : null;
+      : null;
 
   const { error } = await input.supabase.rpc("p85_stage_4b4_complete_transcription_v2", {
     p_tenant_id: input.tenantId,

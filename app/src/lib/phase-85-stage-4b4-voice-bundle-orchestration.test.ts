@@ -21,6 +21,7 @@ import {
 } from "./phase-85-stage-4b4-transcription-fixture-manifest";
 import { processStage4B4PendingTranscriptions } from "./phase-85-stage-4b4-transcription-worker";
 import {
+  buildBundleOrchestrationIdempotencyKey,
   buildVoiceTranscriptContextManifest,
   resolveVoiceTranscriptProvenance,
   STAGE_4B4_VOICE_BUNDLE_ORCHESTRATION_VERSION,
@@ -289,5 +290,34 @@ describe("phase-85-stage-4b4-voice-bundle-orchestration", () => {
     expect(voiceTurn.state.lastSimulation?.action).toBe("draft_for_approval");
     const outbound = voiceTurn.state.messages.find((message) => message.generatedByAiDecisionId === voiceTurn.decisionId);
     expect(outbound?.status).not.toBe("sent");
+  });
+
+  it("builds orchestration idempotency keys from bundle and transcript revisions", () => {
+    const key = buildBundleOrchestrationIdempotencyKey({
+      conversationId: "conversation-1",
+      bundleId: "bundle-1",
+      bundleRevision: 3,
+      transcriptionRevisions: [2, 1],
+    });
+    expect(key).toBe("bundle-decision:conversation-1:bundle-1:3:1,2");
+  });
+
+  it("replays duplicate voice orchestration without creating a second outbound send", async () => {
+    const { state: bridged } = await admitAndTranscribeVoice();
+    const { state: ready, bundleId } = await prepareVoiceBundleForOrchestration(bridged);
+    const first = await runMultimodalBundleInboundTurn(ready, bundleId, { now: T240 });
+    expect(first.ok).toBe(true);
+    if (!first.ok) return;
+
+    const outboundCount = first.state.messages.filter(
+      (message) => message.generatedByAiDecisionId === first.decisionId,
+    ).length;
+    const replay = await runMultimodalBundleInboundTurn(first.state, bundleId, { now: T240 });
+    expect(replay.ok).toBe(true);
+    if (!replay.ok) return;
+    expect(replay.decisionId).toBe(first.decisionId);
+    expect(
+      replay.state.messages.filter((message) => message.generatedByAiDecisionId === first.decisionId),
+    ).toHaveLength(outboundCount);
   });
 });

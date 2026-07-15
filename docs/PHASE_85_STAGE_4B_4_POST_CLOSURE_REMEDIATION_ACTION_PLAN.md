@@ -1,7 +1,7 @@
 # Phase 85 Stage 4B-4 Post-Closure Remediation Action Plan
 
 Date opened: 2026-07-15
-Status: **R4 complete; remediation active; Stage 4C blocked**
+Status: **R5 complete; remediation active; Stage 4C blocked**
 
 This document is the active authority after the post-closure audit of the local Stage 4B-4 voice-message implementation. The original Stage 4B-4 plan and Phase 11 closure evidence remain historical records. Stage 4C authorization is revoked until R9 produces a fresh complete PASS.
 
@@ -51,6 +51,8 @@ R2 is complete. Evidence: `docs/PHASE_85_STAGE_4B_4_POST_CLOSURE_REMEDIATION_R2_
 R3 is complete. Evidence: `docs/PHASE_85_STAGE_4B_4_POST_CLOSURE_REMEDIATION_R3_EVIDENCE.md`.
 
 R4 is complete. Evidence: `docs/PHASE_85_STAGE_4B_4_POST_CLOSURE_REMEDIATION_R4_EVIDENCE.md`.
+
+R5 is complete. Evidence: `docs/PHASE_85_STAGE_4B_4_POST_CLOSURE_REMEDIATION_R5_EVIDENCE.md`.
 
 ## R9 Closure Gate
 

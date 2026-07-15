@@ -27,11 +27,12 @@ describe("phase-85-stage-4b4-durable-pipeline", () => {
       bundleId: "bundle-1",
       mediaAssetId: "asset-1",
       transcriptionId: "transcription-1",
+      transcriptionRevision: 2,
     });
-    expect(key).toBe("voice-bridge:conversation-1:bundle-1:asset-1:transcription-1");
+    expect(key).toBe("voice-bridge:conversation-1:bundle-1:asset-1:transcription-1:2");
   });
 
-  it("bumps durable worker versions for remediation R3", () => {
+  it("bumps durable worker versions for remediation R3/R5", () => {
     expect(STAGE_4B4_DURABLE_ADMISSION_WORKER_VERSION).toContain("admission-worker");
     expect(STAGE_4B4_DURABLE_AUDIO_WORKER_VERSION).toContain("v3");
   });

@@ -47,6 +47,11 @@ const failClosedQualityMigration = readFileSync(
   "utf8",
 );
 
+const transcriptBridgePipelineMigration = readFileSync(
+  resolve(__dirname, "../../supabase/migrations/20260715130000_phase_85_stage_4b4_transcript_bridge_pipeline.sql"),
+  "utf8",
+);
+
 const stage4B4Tables = [
   "audio_transcription_records",
   "audio_transcript_corrections",
@@ -87,6 +92,21 @@ describe("P85 Stage 4B-4 remediation R3 durable pipeline migration", () => {
     expect(durablePipelineMigration).toContain("for update skip locked");
     expect(durablePipelineMigration).toContain(
       "grant execute on function p85_stage_4b4_complete_transcription_v2",
+    );
+  });
+});
+
+describe("P85 Stage 4B-4 remediation R5 transcript bridge pipeline migration", () => {
+  it("creates bridge worker RPCs, lease columns, and voice bundle deadline promotion", () => {
+    expect(transcriptBridgePipelineMigration).toContain("p85_stage_4b4_claim_transcript_bridge_work_v2");
+    expect(transcriptBridgePipelineMigration).toContain("p85_stage_4b4_complete_transcript_bridge_v2");
+    expect(transcriptBridgePipelineMigration).toContain("p85_stage_4b4_fail_transcript_bridge_work_v2");
+    expect(transcriptBridgePipelineMigration).toContain("p85_stage_4b4_promote_voice_bundle_deadlines_v2");
+    expect(transcriptBridgePipelineMigration).toContain("interval '120 seconds'");
+    expect(transcriptBridgePipelineMigration).toContain("transcription_timeout");
+    expect(transcriptBridgePipelineMigration).toContain("for update of job skip locked");
+    expect(transcriptBridgePipelineMigration).toContain(
+      "grant execute on function p85_stage_4b4_complete_transcript_bridge_v2",
     );
   });
 });
