@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { detectVisualMetadataLeaks, loadHarnessCasesFromJsonl } from "dietitian-ai-assistant-architecture";
@@ -37,10 +37,12 @@ import {
   type AudioIngressMetadataInput,
 } from "./phase-85-stage-4b4-voice-contracts";
 import { createInMemoryStage4B4AudioStorage } from "./phase-85-stage-4b4-audio-storage";
+import { detectStage4B4AudioOrphans } from "./phase-85-stage-4b4-audio-lifecycle";
 import { createInitialState, DEMO_TENANT_ID } from "./seed-data";
 import type { ManuAppState } from "./types";
 
 export const PHASE_85_STAGE_4B_4_CLOSURE_VERSION = "p85-stage-4b4-closure-v1";
+export const PHASE_85_STAGE_4B_4_PROGRAM_CLOSURE_VERSION = "p85-stage-4b4-program-closure-v1";
 export const STAGE_4B4_CACHED_DECISION_TARGET = 5_000;
 export const STAGE_4B4_ADMISSION_ROUNDTRIP_TARGET = 200;
 export const STAGE_4B4_VOICE_REPLAY_TARGET = 5_000;
@@ -56,7 +58,49 @@ export const STAGE_4B4_HARD_ZERO_METRIC_IDS = [
   "stale_correction_send_count",
 ] as const;
 
+export const STAGE_4B4_PROGRAM_CLOSURE_METRIC_IDS = [
+  ...STAGE_4B4_HARD_ZERO_METRIC_IDS,
+  "audio_lifecycle_orphan_count",
+] as const;
+
+export const STAGE_4B4_RISK_REGISTER_IDS = [
+  "R-451",
+  "R-452",
+  "R-453",
+  "R-454",
+  "R-455",
+  "R-456",
+  "R-457",
+  "R-458",
+  "R-459",
+  "R-460",
+  "R-461",
+] as const;
+
+export const STAGE_4B4_PHASE_EVIDENCE_DOCS = [
+  "docs/PHASE_85_STAGE_4B_4_PHASE_0_DOCUMENTATION_EVIDENCE.md",
+  "docs/PHASE_85_STAGE_4B_4_PHASE_1_DOMAIN_TYPE_CONTRACT_EVIDENCE.md",
+  "docs/PHASE_85_STAGE_4B_4_PHASE_2_DATABASE_STORAGE_RLS_EVIDENCE.md",
+  "docs/PHASE_85_STAGE_4B_4_PHASE_3_CANONICAL_INGRESS_AUDIO_ADMISSION_EVIDENCE.md",
+  "docs/PHASE_85_STAGE_4B_4_PHASE_4_DETERMINISTIC_TRANSCRIPTION_PROVIDER_EVIDENCE.md",
+  "docs/PHASE_85_STAGE_4B_4_PHASE_5_BUNDLE_CORRELATION_TYPED_TEXT_BRIDGE_EVIDENCE.md",
+  "docs/PHASE_85_STAGE_4B_4_PHASE_6_RISK_CHAIN_ATOMIC_ORCHESTRATION_EVIDENCE.md",
+  "docs/PHASE_85_STAGE_4B_4_PHASE_7_TRANSCRIPT_CORRECTION_HUMAN_CONTROL_EVIDENCE.md",
+  "docs/PHASE_85_STAGE_4B_4_PHASE_8_BOUNDED_API_AUDIO_UI_EVIDENCE.md",
+  "docs/PHASE_85_STAGE_4B_4_PHASE_9_RETENTION_DSAR_LEGAL_HOLD_EVIDENCE.md",
+  "docs/PHASE_85_STAGE_4B_4_PHASE_10_SIMULATOR_GOLDEN_CORPUS_RED_TEAM_EVIDENCE.md",
+] as const;
+
+export type Stage4B4RiskReconciliationStatus = "mitigated_locally" | "open_production";
+
+export type Stage4B4RiskReconciliationEntry = {
+  riskId: (typeof STAGE_4B4_RISK_REGISTER_IDS)[number];
+  status: Stage4B4RiskReconciliationStatus;
+  scope: string;
+};
+
 const moduleDir = dirname(fileURLToPath(import.meta.url));
+const repoRootDir = join(moduleDir, "../../..");
 const TEST_SECRET = "synthetic-stage4b4-closure-secret";
 const T0 = "2026-07-14T12:00:00.000Z";
 const T120 = "2026-07-14T12:02:00.000Z";
@@ -81,16 +125,21 @@ export type Stage4B4ProgramClosureVerificationInput = {
   visualSuite?: "pass" | "skipped" | "fail" | "pending";
   channelReplay?: "pass" | "skipped" | "fail" | "pending";
   productionScaleRehearsal?: "pass" | "skipped" | "fail" | "pending";
+  releaseVerify?: "pass" | "skipped" | "fail" | "pending";
+  secretScan?: "pass" | "skipped" | "fail" | "pending";
+  audioLifecycleOrphanCount?: number;
   phaseEvidenceComplete?: boolean;
 };
 
 export type Stage4B4ProgramClosureEvidence = {
   status: "pass" | "fail";
-  phase: typeof PHASE_85_STAGE_4B_4_CLOSURE_VERSION;
+  phase: typeof PHASE_85_STAGE_4B_4_PROGRAM_CLOSURE_VERSION;
   productionPilotGo: false;
   r405Open: true;
   stage4cAuthorized: boolean;
   goldenCorpus: Stage4B4GoldenCorpusBatchMetrics;
+  audioLifecycleOrphanCount: number;
+  riskReconciliation: Stage4B4RiskReconciliationEntry[];
   failures: string[];
 };
 
@@ -692,7 +741,7 @@ export function buildStage4B4ClosureEvidencePackMetrics(input: {
     status: input.status,
     production_pilot_go: false,
     r405_open: true,
-    stage_4c_authorized: false,
+    stage_4c_authorized: input.status === "pass",
     tenant_id: DEMO_TENANT_ID,
     golden_case_count: input.goldenCorpus.caseCount,
     cached_decision_count: input.goldenCorpus.cachedDecisionCount,
@@ -708,45 +757,103 @@ export function buildStage4B4ClosureEvidencePackMetrics(input: {
   };
 }
 
+export function measureStage4B4BaselineAudioLifecycleOrphanCount(
+  state: ManuAppState = createInitialState(),
+  storage = createInMemoryStage4B4AudioStorage(),
+) {
+  return detectStage4B4AudioOrphans(state, storage).orphanCount;
+}
+
+export function evaluateStage4B4PhaseEvidenceDocs(repoRoot: string = repoRootDir) {
+  const missing = STAGE_4B4_PHASE_EVIDENCE_DOCS.filter((docPath) => !existsSync(join(repoRoot, docPath)));
+  return {
+    complete: missing.length === 0,
+    missing,
+  };
+}
+
+export function buildStage4B4RiskReconciliationReport(
+  closureStatus: "pass" | "fail",
+): Stage4B4RiskReconciliationEntry[] {
+  const status: Stage4B4RiskReconciliationStatus =
+    closureStatus === "pass" ? "mitigated_locally" : "open_production";
+  return STAGE_4B4_RISK_REGISTER_IDS.map((riskId) => ({
+    riskId,
+    status,
+    scope: "Stage 4B-4 local prototype and mock-provider paths only; production pilot remains NO-GO",
+  }));
+}
+
+export function collectStage4B4ProgramClosureFailures(
+  verification: Stage4B4ProgramClosureVerificationInput | undefined,
+  rehearsalStatus: "pass" | "fail",
+  audioLifecycleOrphanCount: number,
+) {
+  const failures: string[] = [];
+
+  if (rehearsalStatus !== "pass") {
+    failures.push("rehearsal_status_fail");
+  }
+  if (audioLifecycleOrphanCount > 0) {
+    failures.push("audio_lifecycle_orphan_count_non_zero");
+  }
+
+  if (!verification) {
+    failures.push("program_closure_verification_missing");
+    return failures;
+  }
+
+  if (verification.rlsSuite !== "pass") {
+    failures.push(
+      verification.rlsSuite === "skipped" ? "rls_suite_skipped_not_allowed" : `rls_suite_${verification.rlsSuite ?? "missing"}`,
+    );
+  }
+  if ((verification.rlsSkippedCount ?? 0) > 0) {
+    failures.push("rls_suite_had_skips");
+  }
+  if (verification.visualSuite !== "pass") {
+    failures.push(`visual_suite_${verification.visualSuite ?? "missing"}`);
+  }
+  if (verification.channelReplay !== "pass") {
+    failures.push(`channel_replay_${verification.channelReplay ?? "missing"}`);
+  }
+  if (verification.productionScaleRehearsal !== "pass") {
+    failures.push(`production_scale_${verification.productionScaleRehearsal ?? "missing"}`);
+  }
+  if (verification.releaseVerify !== "pass") {
+    failures.push(`release_verify_${verification.releaseVerify ?? "missing"}`);
+  }
+  if (verification.secretScan !== "pass") {
+    failures.push(`secret_scan_${verification.secretScan ?? "missing"}`);
+  }
+  if (verification.phaseEvidenceComplete === false) {
+    failures.push("phase_evidence_incomplete");
+  }
+
+  return failures;
+}
+
 export function evaluateStage4B4ProgramClosureEvidence(
   rehearsal: Awaited<ReturnType<typeof runStage4B4ClosureRehearsalSample>>,
   verification?: Stage4B4ProgramClosureVerificationInput,
 ): Stage4B4ProgramClosureEvidence {
-  const failures = [...rehearsal.failures];
+  const audioLifecycleOrphanCount =
+    verification?.audioLifecycleOrphanCount ?? measureStage4B4BaselineAudioLifecycleOrphanCount();
+  const failures = [
+    ...rehearsal.failures,
+    ...collectStage4B4ProgramClosureFailures(verification, rehearsal.status, audioLifecycleOrphanCount),
+  ];
+  const status = failures.length === 0 ? "pass" : "fail";
 
-  if (!verification) {
-    failures.push("program_closure_verification_missing");
-  } else {
-    if (verification.rlsSuite && verification.rlsSuite !== "pass") {
-      failures.push(
-        verification.rlsSuite === "skipped" ? "rls_suite_skipped_not_allowed" : `rls_suite_${verification.rlsSuite}`,
-      );
-    }
-    if ((verification.rlsSkippedCount ?? 0) > 0) {
-      failures.push("rls_suite_had_skips");
-    }
-    if (verification.visualSuite && verification.visualSuite !== "pass") {
-      failures.push(`visual_suite_${verification.visualSuite}`);
-    }
-    if (verification.channelReplay && verification.channelReplay !== "pass") {
-      failures.push(`channel_replay_${verification.channelReplay}`);
-    }
-    if (verification.productionScaleRehearsal && verification.productionScaleRehearsal !== "pass") {
-      failures.push(`production_scale_${verification.productionScaleRehearsal}`);
-    }
-    if (verification.phaseEvidenceComplete === false) {
-      failures.push("phase_evidence_incomplete");
-    }
-  }
-
-  const status = failures.length === 0 && rehearsal.status === "pass" ? "pass" : "fail";
   return {
     status,
-    phase: PHASE_85_STAGE_4B_4_CLOSURE_VERSION,
+    phase: PHASE_85_STAGE_4B_4_PROGRAM_CLOSURE_VERSION,
     productionPilotGo: false,
     r405Open: true,
-    stage4cAuthorized: false,
+    stage4cAuthorized: status === "pass",
     goldenCorpus: rehearsal.goldenCorpus,
+    audioLifecycleOrphanCount,
+    riskReconciliation: buildStage4B4RiskReconciliationReport(status),
     failures,
   };
 }

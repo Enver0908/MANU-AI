@@ -1,13 +1,18 @@
 import { describe, expect, it } from "vitest";
 import {
   PHASE_85_STAGE_4B_4_CLOSURE_VERSION,
+  PHASE_85_STAGE_4B_4_PROGRAM_CLOSURE_VERSION,
   STAGE_4B4_ADMISSION_ROUNDTRIP_TARGET,
   STAGE_4B4_CACHED_DECISION_TARGET,
   STAGE_4B4_HARD_ZERO_METRIC_IDS,
+  STAGE_4B4_RISK_REGISTER_IDS,
   buildStage4B4ClosureEvidencePackMetrics,
+  buildStage4B4RiskReconciliationReport,
   collectStage4B4HardZeroFailures,
+  evaluateStage4B4PhaseEvidenceDocs,
   evaluateStage4B4ProgramClosureEvidence,
   loadStage4B4GoldenCorpusCases,
+  measureStage4B4BaselineAudioLifecycleOrphanCount,
   runStage4B4AdmissionRoundTrips,
   runStage4B4CachedDecisionRehearsal,
   runStage4B4ClosureRehearsalFull,
@@ -32,6 +37,22 @@ describe("phase 85 stage 4b-4 closure", () => {
     for (const category of STAGE_4B4_RED_TEAM_CATEGORIES) {
       expect(cases.some((entry) => entry.redTeamCategory === category)).toBe(true);
     }
+  });
+
+  it("records complete phase evidence docs for program closure", () => {
+    const evidence = evaluateStage4B4PhaseEvidenceDocs();
+    expect(evidence.complete).toBe(true);
+    expect(evidence.missing).toEqual([]);
+  });
+
+  it("measures zero baseline audio lifecycle orphans on seed state", () => {
+    expect(measureStage4B4BaselineAudioLifecycleOrphanCount()).toBe(0);
+  });
+
+  it("reconciles R-451 through R-461 as mitigated locally on pass", () => {
+    const report = buildStage4B4RiskReconciliationReport("pass");
+    expect(report).toHaveLength(STAGE_4B4_RISK_REGISTER_IDS.length);
+    expect(report.every((entry) => entry.status === "mitigated_locally")).toBe(true);
   });
 
   it("syncs golden corpus jsonl with the deterministic catalog", () => {
@@ -90,7 +111,26 @@ describe("phase 85 stage 4b-4 closure", () => {
     expect(stage4B4ClosureMetricsAreAggregateOnly(evidence)).toBe(true);
   }, 180_000);
 
-  it("keeps Stage 4C blocked during Phase 10 rehearsal evidence", async () => {
+  it("fails program closure when RLS suite is skipped", async () => {
+    const rehearsal = await runStage4B4ClosureRehearsalSample();
+    const closure = evaluateStage4B4ProgramClosureEvidence(rehearsal, {
+      rlsSuite: "skipped",
+      rlsSkippedCount: 21,
+      visualSuite: "pass",
+      channelReplay: "pass",
+      productionScaleRehearsal: "pass",
+      releaseVerify: "pass",
+      secretScan: "pass",
+      audioLifecycleOrphanCount: 0,
+      phaseEvidenceComplete: true,
+    });
+    expect(closure.status).toBe("fail");
+    expect(closure.stage4cAuthorized).toBe(false);
+    expect(closure.failures).toContain("rls_suite_skipped_not_allowed");
+    expect(closure.phase).toBe(PHASE_85_STAGE_4B_4_PROGRAM_CLOSURE_VERSION);
+  }, 180_000);
+
+  it("authorizes Stage 4C read gate only when verification inputs pass", async () => {
     const rehearsal = await runStage4B4ClosureRehearsalSample();
     const closure = evaluateStage4B4ProgramClosureEvidence(rehearsal, {
       rlsSuite: "pass",
@@ -98,12 +138,17 @@ describe("phase 85 stage 4b-4 closure", () => {
       visualSuite: "pass",
       channelReplay: "pass",
       productionScaleRehearsal: "pass",
+      releaseVerify: "pass",
+      secretScan: "pass",
+      audioLifecycleOrphanCount: 0,
       phaseEvidenceComplete: true,
     });
     expect(closure.status).toBe("pass");
-    expect(closure.stage4cAuthorized).toBe(false);
+    expect(closure.stage4cAuthorized).toBe(true);
     expect(closure.productionPilotGo).toBe(false);
     expect(closure.r405Open).toBe(true);
+    expect(closure.audioLifecycleOrphanCount).toBe(0);
+    expect(closure.riskReconciliation.every((entry) => entry.status === "mitigated_locally")).toBe(true);
   }, 180_000);
 
   fullScaleIt(

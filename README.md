@@ -4,7 +4,9 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 ## Current Status
 
-**Current authority (2026-07-15):** Stage 4B-4 Sesli Mesaj Guvenligi ve Transkripsiyon Orkestrasyonu Phase 1 is complete locally after Phase 0. Active plan: `docs/PHASE_85_STAGE_4B_4_SESLI_MESAJ_GUVENLIGI_VE_TRANSKRIPSIYON_ORK_PLAN.md`. Phase 1 evidence: `docs/PHASE_85_STAGE_4B_4_PHASE_1_DOMAIN_TYPE_CONTRACT_EVIDENCE.md`. Stage 4C is blocked until Stage 4B-4 closes. R-405 remains open; production remains `NO-GO`.
+**Current authority (2026-07-15):** Stage 4B-4 Sesli Mesaj Guvenligi ve Transkripsiyon Orkestrasyonu Phase 11 is complete locally. Active plan: `docs/PHASE_85_STAGE_4B_4_SESLI_MESAJ_GUVENLIGI_VE_TRANSKRIPSIYON_ORK_PLAN.md`. Phase 11 evidence: `docs/PHASE_85_STAGE_4B_4_PHASE_11_MEASURED_CLOSURE_STAGE_4C_HANDOFF_EVIDENCE.md`. **Next:** Stage 4C Diyetisyen Icin AI Chat. Stage 4C read gate is authorized. R-405 remains open; production remains `NO-GO`.
+
+**2026-07-15 Stage 4B-4 Phase 11 measured closure:** Program closure evaluator, risk reconciliation for `R-451`..`R-461`, `npm run rehearse:stage-4b4:closure`, and Stage 4C read-gate authorization are locked locally. Evidence: `docs/PHASE_85_STAGE_4B_4_PHASE_11_MEASURED_CLOSURE_STAGE_4C_HANDOFF_EVIDENCE.md`.
 
 **2026-07-15 Stage 4B-4 Phase 4 deterministic transcription:** Mock-gated provider port, hash fixture manifest, quality gate, transcription worker, and `worker:audio:stage4b4` scripts are locked locally. Evidence: `docs/PHASE_85_STAGE_4B_4_PHASE_4_DETERMINISTIC_TRANSCRIPTION_PROVIDER_EVIDENCE.md`.
 

@@ -1,6 +1,6 @@
 # MANU-AI Project Plan v2
 
-**Current authority (2026-07-15):** Stage 4B-4 Sesli Mesaj Guvenligi ve Transkripsiyon Orkestrasyonu Phase 1 is complete locally after Phase 0. Active plan: `docs/PHASE_85_STAGE_4B_4_SESLI_MESAJ_GUVENLIGI_VE_TRANSKRIPSIYON_ORK_PLAN.md`. Phase 1 evidence: `docs/PHASE_85_STAGE_4B_4_PHASE_1_DOMAIN_TYPE_CONTRACT_EVIDENCE.md`. Stage 4C is blocked until Stage 4B-4 closes. Production remains `NO-GO`; R-405 remains open.
+**Current authority (2026-07-15):** Stage 4B-4 Sesli Mesaj Guvenligi ve Transkripsiyon Orkestrasyonu Phase 11 is complete locally. Active plan: `docs/PHASE_85_STAGE_4B_4_SESLI_MESAJ_GUVENLIGI_VE_TRANSKRIPSIYON_ORK_PLAN.md`. Phase 11 evidence: `docs/PHASE_85_STAGE_4B_4_PHASE_11_MEASURED_CLOSURE_STAGE_4C_HANDOFF_EVIDENCE.md`. **Next:** Stage 4C Diyetisyen Icin AI Chat. Stage 4C read gate is authorized. Production remains `NO-GO`; R-405 remains open.
 
 Current continuity status, 2026-07-14: Stage 4B-2 R0-R7, local RLS re-closure, advisory hardening, and Stage 4B-3 post-closure remediation R0-R9 are complete locally. Stage 4B-4 is now the mandatory voice-message safety stage before Stage 4C. Stage 4C read gate and implementation are blocked until Stage 4B-4 closes. Production remains `NO-GO` and R-405 remains open.
 

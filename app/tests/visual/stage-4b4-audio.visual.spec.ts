@@ -16,4 +16,12 @@ for (const viewport of [
     await expect(page.getByTestId("messaging-panel")).toBeVisible();
     await assertNoHorizontalOverflow(page);
   });
+
+  test(`voice simulator panel renders without overflow on ${viewport.name}`, async ({ page }) => {
+    await page.setViewportSize({ width: viewport.width, height: viewport.height });
+    await bootstrapDashboard(page);
+    await page.goto("/dashboard?section=simulator");
+    await expect(page.getByTestId("voice-simulator-panel")).toBeVisible();
+    await assertNoHorizontalOverflow(page);
+  });
 }
