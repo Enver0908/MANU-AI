@@ -5,6 +5,7 @@ import { projectConversationMessageWithMedia } from "./phase-85-stage-4b3-bounde
 import { FORBIDDEN_CLIENT_AUDIO_DTO_KEYS } from "./phase-85-stage-4b4-voice-contracts";
 import {
   buildConversationAudioStreamUrl,
+  buildStage4B4VoiceProjectionSourceFromState,
   filterStage4B4VoiceProjectionForConversation,
   projectMessageAudioDto,
   projectMessageVoiceTranscriptDto,
@@ -195,5 +196,143 @@ describe("phase-85-stage-4b4-bounded-audio", () => {
     expect(assistantTranscript?.correctionAllowed).toBe(false);
     expect(projectMessageAudioDto(messageId, conversation.id, voice)?.playbackState).toBe("available");
     expect(STAGE_4B4_CONVERSATION_VOICE_PREVIEW_LABEL).toBe("Sesli mesaj");
+  });
+
+  it("projects corrected transcript status from the latest active revision without confidence fields", () => {
+    const state = createInitialState();
+    const conversation = state.conversations[0]!;
+    const messageId = "voice-message-corrected";
+    const assetId = "voice-asset-corrected";
+    const sourceTranscriptionId = "voice-tx-source";
+    const correctedTranscriptionId = "voice-tx-corrected";
+    const correctionId = "voice-correction-1";
+
+    state.mediaAssets = [
+      buildAsset({
+        id: assetId,
+        clientId: conversation.clientId,
+        conversationId: conversation.id,
+        messageId,
+        mediaKind: "audio",
+        voiceMessage: true,
+        durationMs: 4_000,
+        sanitizedAudioObjectKey: "tenant/voice-corrected.wav",
+        status: "analysis_ready",
+        transcriptionId: correctedTranscriptionId,
+      }),
+    ];
+    state.audioTranscriptionRecords = [
+      {
+        id: sourceTranscriptionId,
+        tenantId: DEMO_TENANT_ID,
+        clientId: conversation.clientId,
+        conversationId: conversation.id,
+        messageId,
+        mediaAssetId: assetId,
+        bundleId: null,
+        transcriptionRevision: 1,
+        status: "superseded",
+        locale: "tr-TR",
+        observation: {
+          schemaVersion: "audio-transcription-observation-v1-v0.1.0",
+          locale: "tr-TR",
+          transcriptText: "Eski metin",
+          overallConfidence: 0.98,
+          segments: [],
+          uncertainSpanCount: 0,
+          providerId: "mock-local-stt",
+          providerVersion: "mock-v1",
+        },
+        qualityDecision: { accepted: true, reasonCodes: [] },
+        rejectionReasons: [],
+        origin: "mock_provider",
+        transcriptText: "Eski metin",
+        detectedLocale: "tr-TR",
+        overallConfidence: 0.98,
+        minimumSegmentConfidence: 0.98,
+        uncertainSpanCount: 0,
+        segmentCount: 1,
+        speakerState: "single_speaker",
+        supersedesTranscriptionId: null,
+        supersededByTranscriptionId: correctedTranscriptionId,
+        sourceModality: "voice_transcript",
+        providerMode: "mock",
+        createdAt: "2026-07-14T10:01:00.000Z",
+        updatedAt: "2026-07-14T10:02:00.000Z",
+      },
+      {
+        id: correctedTranscriptionId,
+        tenantId: DEMO_TENANT_ID,
+        clientId: conversation.clientId,
+        conversationId: conversation.id,
+        messageId,
+        mediaAssetId: assetId,
+        bundleId: null,
+        transcriptionRevision: 2,
+        status: "accepted",
+        locale: "tr-TR",
+        observation: null,
+        qualityDecision: { accepted: true, reasonCodes: [] },
+        rejectionReasons: [],
+        origin: "dietitian_correction",
+        transcriptText: "Duzeltilmis metin",
+        detectedLocale: "tr-TR",
+        overallConfidence: null,
+        minimumSegmentConfidence: null,
+        uncertainSpanCount: null,
+        segmentCount: null,
+        speakerState: "single_speaker",
+        supersedesTranscriptionId: sourceTranscriptionId,
+        supersededByTranscriptionId: null,
+        sourceModality: "voice_transcript",
+        providerMode: "mock",
+        createdAt: "2026-07-14T10:03:00.000Z",
+        updatedAt: "2026-07-14T10:03:00.000Z",
+      },
+    ];
+    state.audioTranscriptCorrections = [
+      {
+        id: correctionId,
+        tenantId: DEMO_TENANT_ID,
+        clientId: conversation.clientId,
+        conversationId: conversation.id,
+        transcriptionId: sourceTranscriptionId,
+        sourceTranscriptionId,
+        correctedTranscriptionId,
+        targetMessageId: messageId,
+        supersededDecisionId: null,
+        rerunDecisionId: null,
+        dietitianId: state.dietitian.id,
+        status: "applied_to_pending",
+        reasonCode: "wrong_word",
+        explanation: "Kelime duzeltildi",
+        correctedTranscript: "Duzeltilmis metin",
+        conversationRevisionAtSubmit: 1,
+        transcriptionRevisionAtSubmit: 1,
+        resultAction: "invalidate_pending",
+        createdAt: "2026-07-14T10:03:00.000Z",
+        updatedAt: "2026-07-14T10:03:00.000Z",
+      },
+    ];
+
+    const voice = filterStage4B4VoiceProjectionForConversation(
+      buildStage4B4VoiceProjectionSourceFromState(state),
+      DEMO_TENANT_ID,
+      conversation.id,
+    );
+    const dto = projectMessageVoiceTranscriptDto(
+      messageId,
+      { tenantId: DEMO_TENANT_ID, dietitianId: state.dietitian.id, role: "dietitian" },
+      voice,
+    );
+
+    expect(dto?.status).toBe("corrected");
+    expect(dto?.transcriptionId).toBe(correctedTranscriptionId);
+    expect(dto?.transcriptionRevision).toBe(2);
+    expect(dto?.transcriptText).toBe("Duzeltilmis metin");
+    expect(dto?.latestCorrectionId).toBe(correctionId);
+    for (const key of FORBIDDEN_CLIENT_AUDIO_DTO_KEYS) {
+      expect(dto).not.toHaveProperty(key);
+    }
   });
 });

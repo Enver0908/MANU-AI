@@ -9,6 +9,7 @@ describe("phase-85-stage-4b4-transcript-correction-bounded", () => {
   it("parses valid correction requests", () => {
     const parsed = parseTranscriptCorrectionMutationBody({
       transcriptionId: "transcription-1",
+      targetMessageId: "message-1",
       requestId: "request-1",
       expectedConversationRevision: 1,
       expectedTranscriptionRevision: 1,

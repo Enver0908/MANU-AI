@@ -287,6 +287,7 @@ export type ConversationVoiceTranscriptDto = {
 
 export type TranscriptCorrectionRequest = {
   transcriptionId: string;
+  targetMessageId: string;
   requestId: string;
   expectedConversationRevision: number;
   expectedTranscriptionRevision: number;
@@ -417,6 +418,43 @@ export function computeTranscriptionDerivedMetrics(
     segmentCount: observation.segments.length,
     speakerState,
   };
+}
+
+export function buildDietitianCorrectionTranscriptionLineage(input: {
+  correctedTranscript: string;
+  locale: Stage4B4SupportedLocale;
+  supersedesTranscriptionId: string;
+}): Pick<
+  AudioTranscriptionRecord,
+  | "origin"
+  | "transcriptText"
+  | "detectedLocale"
+  | "overallConfidence"
+  | "minimumSegmentConfidence"
+  | "uncertainSpanCount"
+  | "segmentCount"
+  | "speakerState"
+  | "supersedesTranscriptionId"
+  | "supersededByTranscriptionId"
+> {
+  return {
+    origin: "dietitian_correction",
+    transcriptText: input.correctedTranscript.trim(),
+    detectedLocale: input.locale,
+    overallConfidence: null,
+    minimumSegmentConfidence: null,
+    uncertainSpanCount: null,
+    segmentCount: null,
+    speakerState: "single_speaker",
+    supersedesTranscriptionId: input.supersedesTranscriptionId,
+    supersededByTranscriptionId: null,
+  };
+}
+
+export function isDietitianCorrectedTranscription(
+  transcription: Pick<AudioTranscriptionRecord, "origin" | "supersedesTranscriptionId">,
+): boolean {
+  return transcription.origin === "dietitian_correction" || transcription.supersedesTranscriptionId !== null;
 }
 
 export function buildTranscriptionLineageFieldsFromObservation(input: {
@@ -922,7 +960,14 @@ export function buildConversationVoiceTranscriptDto(input: {
   role: TenantRole;
   transcription: Pick<
     AudioTranscriptionRecord,
-    "id" | "status" | "observation" | "qualityDecision" | "transcriptionRevision" | "transcriptText"
+    | "id"
+    | "status"
+    | "observation"
+    | "qualityDecision"
+    | "transcriptionRevision"
+    | "transcriptText"
+    | "origin"
+    | "supersedesTranscriptionId"
   >;
   latestCorrectionId: string | null;
   correctedTranscript?: string | null;
@@ -932,7 +977,8 @@ export function buildConversationVoiceTranscriptDto(input: {
   }
 
   const accepted = input.transcription.status === "accepted" && input.transcription.qualityDecision?.accepted === true;
-  const corrected = Boolean(input.correctedTranscript);
+  const corrected =
+    Boolean(input.correctedTranscript) || isDietitianCorrectedTranscription(input.transcription);
   const transcriptText =
     corrected && input.correctedTranscript
       ? input.correctedTranscript

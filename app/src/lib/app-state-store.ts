@@ -711,7 +711,7 @@ export function submitFallbackVisualCorrection(
   };
 }
 
-export function submitFallbackTranscriptCorrection(
+export async function submitFallbackTranscriptCorrection(
   conversationId: string,
   request: TranscriptCorrectionRequest,
   context?: AppTenantContext,
@@ -743,7 +743,7 @@ export function submitFallbackTranscriptCorrection(
   assertTranscriptCorrectionAllowed(permissions, actor.role);
   parseTranscriptCorrectionMutationBody(request);
 
-  const result = submitTranscriptCorrection(state, {
+  const result = await submitTranscriptCorrection(state, {
     ...request,
     dietitianId: tenantContext.dietitianId,
   });

@@ -38,4 +38,4 @@ npm run build
 
 ## Next Phase
 
-R6 is next: correction lineage, decision supersession, and human control. Stage 4C remains blocked until R9 fresh complete PASS.
+R7 is next: bounded API, secure audio streaming, and UI correctness. Stage 4C remains blocked until R9 fresh complete PASS.

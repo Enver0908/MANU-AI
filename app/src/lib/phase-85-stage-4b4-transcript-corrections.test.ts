@@ -114,9 +114,14 @@ async function prepareVoiceBundleForOrchestration(state: ManuAppState) {
   return { state: worker.state, bundleId };
 }
 
-function correctionRequest(transcriptionId: string, correctedTranscript: string) {
+function correctionRequest(
+  transcriptionId: string,
+  messageId: string,
+  correctedTranscript: string,
+) {
   return {
     transcriptionId,
+    targetMessageId: messageId,
     requestId: crypto.randomUUID(),
     expectedConversationRevision: 1,
     expectedTranscriptionRevision: 1,
@@ -131,7 +136,10 @@ describe("phase-85-stage-4b4-transcript-corrections", () => {
   it("supersedes transcription revision and updates message body before send", async () => {
     const { state, transcription } = await admitAndTranscribeVoice();
     const correctedText = "Bugun ogle yemeginde nohut yedim.";
-    const correction = submitTranscriptCorrection(state, correctionRequest(transcription.id, correctedText));
+    const correction = await submitTranscriptCorrection(
+      state,
+      correctionRequest(transcription.id, transcription.messageId, correctedText),
+    );
     expect(correction.ok).toBe(true);
     if (!correction.ok) return;
 
@@ -141,7 +149,10 @@ describe("phase-85-stage-4b4-transcript-corrections", () => {
     );
     expect(superseded?.status).toBe("superseded");
     expect(nextRevision?.transcriptionRevision).toBe(2);
-    expect(nextRevision?.observation?.transcriptText).toBe(correctedText);
+    expect(nextRevision?.observation).toBeNull();
+    expect(nextRevision?.overallConfidence).toBeNull();
+    expect(nextRevision?.origin).toBe("dietitian_correction");
+    expect(nextRevision?.transcriptText).toBe(correctedText);
     expect(superseded?.observation?.transcriptText).toBe(
       STAGE_4B4_TRANSCRIPTION_FIXTURE_TEMPLATES.meal_update_tr.transcriptText,
     );
@@ -177,16 +188,20 @@ describe("phase-85-stage-4b4-transcript-corrections", () => {
     if (!turn.ok) return;
     expect(turn.state.lastSimulation?.action).toBe("draft_for_approval");
 
-    const correction = submitTranscriptCorrection(
+    const correction = await submitTranscriptCorrection(
       turn.state,
-      correctionRequest(transcription.id, "D vitamini kullanmayi birakmak istiyorum."),
+      correctionRequest(
+        transcription.id,
+        transcription.messageId,
+        "D vitamini kullanmayi birakmak istiyorum.",
+      ),
     );
     expect(correction.ok).toBe(true);
     if (!correction.ok) return;
     expect(correction.resultAction).toBe("invalidate_pending");
+    expect(correction.rerunDecisionId).toBeTruthy();
     const bundle = correction.state.inboundMessageBundles.find((entry) => entry.id === bundleId);
-    expect(bundle?.decisionId).toBeNull();
-    expect(bundle?.status).toBe("ready");
+    expect(bundle?.decisionId).toBe(correction.rerunDecisionId);
     expect(
       correction.state.messages.some(
         (message) => message.generatedByAiDecisionId === turn.decisionId && message.status === "draft",
@@ -204,9 +219,13 @@ describe("phase-85-stage-4b4-transcript-corrections", () => {
     const sentBefore = turn.state.messages.filter(
       (message) => message.origin === "ai_generated" && message.status === "sent",
     ).length;
-    const correction = submitTranscriptCorrection(
+    const correction = await submitTranscriptCorrection(
       turn.state,
-      correctionRequest(transcription.id, "Bugun ogle yemeginde mercimek corbasi ve salata yedim."),
+      correctionRequest(
+        transcription.id,
+        transcription.messageId,
+        "Bugun ogle yemeginde mercimek corbasi ve salata yedim.",
+      ),
     );
     expect(correction.ok).toBe(true);
     if (!correction.ok) return;
@@ -224,16 +243,16 @@ describe("phase-85-stage-4b4-transcript-corrections", () => {
 
   it("rejects stale conversation and transcription revisions", async () => {
     const { state, transcription } = await admitAndTranscribeVoice();
-    const staleConversation = submitTranscriptCorrection(state, {
-      ...correctionRequest(transcription.id, "Bugun salata yedim."),
+    const staleConversation = await submitTranscriptCorrection(state, {
+      ...correctionRequest(transcription.id, transcription.messageId, "Bugun salata yedim."),
       expectedConversationRevision: 99,
     });
     expect(staleConversation.ok).toBe(false);
     if (staleConversation.ok) return;
     expect(staleConversation.failureCode).toBe("stale_conversation_revision");
 
-    const staleTranscription = submitTranscriptCorrection(state, {
-      ...correctionRequest(transcription.id, "Bugun salata yedim."),
+    const staleTranscription = await submitTranscriptCorrection(state, {
+      ...correctionRequest(transcription.id, transcription.messageId, "Bugun salata yedim."),
       expectedTranscriptionRevision: 99,
     });
     expect(staleTranscription.ok).toBe(false);
@@ -244,13 +263,13 @@ describe("phase-85-stage-4b4-transcript-corrections", () => {
   it("replays the same request idempotently", async () => {
     const { state, transcription } = await admitAndTranscribeVoice();
     const request = {
-      ...correctionRequest(transcription.id, "Bugun salata yedim."),
+      ...correctionRequest(transcription.id, transcription.messageId, "Bugun salata yedim."),
       requestId: "corr-replay-1",
     };
-    const first = submitTranscriptCorrection(state, request);
+    const first = await submitTranscriptCorrection(state, request);
     expect(first.ok).toBe(true);
     if (!first.ok) return;
-    const replay = submitTranscriptCorrection(first.state, request);
+    const replay = await submitTranscriptCorrection(first.state, request);
     expect(replay.ok).toBe(true);
     if (!replay.ok) return;
     expect(replay.state).toEqual(first.state);
@@ -277,12 +296,62 @@ describe("phase-85-stage-4b4-transcript-corrections", () => {
           : client,
       ),
     };
-    const correction = submitTranscriptCorrection(
+    const correction = await submitTranscriptCorrection(
       locked,
-      correctionRequest(transcription.id, "Bugun sadece salata yedim."),
+      correctionRequest(transcription.id, transcription.messageId, "Bugun sadece salata yedim."),
     );
     expect(correction.ok).toBe(true);
     if (!correction.ok) return;
     expect(correction.state.clients[0]?.redRiskLock.status).toBe("locked");
+  });
+
+  it("rejects target message mismatches and supersedes stale draft decisions on rerun", async () => {
+    const { state, transcription } = await admitAndTranscribeVoice();
+    const mismatch = await submitTranscriptCorrection(state, {
+      ...correctionRequest(transcription.id, transcription.messageId, "Bugun salata yedim."),
+      targetMessageId: crypto.randomUUID(),
+    });
+    expect(mismatch.ok).toBe(false);
+    if (mismatch.ok) return;
+    expect(mismatch.failureCode).toBe("transcript_correction_target_message_mismatch");
+
+    const replaced = {
+      ...state,
+      messages: state.messages.map((message) =>
+        message.id === transcription.messageId
+          ? { ...message, body: "D vitamini takviyesi kullanayim mi?" }
+          : message,
+      ),
+      audioTranscriptionRecords: state.audioTranscriptionRecords.map((record) =>
+        record.id === transcription.id && record.observation
+          ? {
+              ...record,
+              observation: {
+                ...record.observation,
+                transcriptText: "D vitamini takviyesi kullanayim mi?",
+              },
+              transcriptText: "D vitamini takviyesi kullanayim mi?",
+            }
+          : record,
+      ),
+    };
+    const { state: ready, bundleId } = await prepareVoiceBundleForOrchestration(replaced);
+    const turn = await runMultimodalBundleInboundTurn(ready, bundleId, { now: T240 });
+    expect(turn.ok).toBe(true);
+    if (!turn.ok) return;
+    expect(turn.state.lastSimulation?.action).toBe("draft_for_approval");
+
+    const correction = await submitTranscriptCorrection(
+      turn.state,
+      correctionRequest(transcription.id, transcription.messageId, "D vitamini kullanmayi birakmak istiyorum."),
+    );
+    expect(correction.ok).toBe(true);
+    if (!correction.ok) return;
+
+    const superseded = correction.state.aiDecisions.find((entry) => entry.id === turn.decisionId);
+    expect(superseded?.sendStatus).toBe("draft_invalidated");
+    expect(superseded?.blockedReason).toBe("transcript_correction_superseded");
+    expect(correction.rerunDecisionId).toBeTruthy();
+    expect(correction.rerunDecisionId).not.toBe(turn.decisionId);
   });
 });

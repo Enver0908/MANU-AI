@@ -52,6 +52,11 @@ const transcriptBridgePipelineMigration = readFileSync(
   "utf8",
 );
 
+const correctionLineageMigration = readFileSync(
+  resolve(__dirname, "../../supabase/migrations/20260715140000_phase_85_stage_4b4_correction_lineage.sql"),
+  "utf8",
+);
+
 const stage4B4Tables = [
   "audio_transcription_records",
   "audio_transcript_corrections",
@@ -92,6 +97,22 @@ describe("P85 Stage 4B-4 remediation R3 durable pipeline migration", () => {
     expect(durablePipelineMigration).toContain("for update skip locked");
     expect(durablePipelineMigration).toContain(
       "grant execute on function p85_stage_4b4_complete_transcription_v2",
+    );
+  });
+});
+
+describe("P85 Stage 4B-4 remediation R6 correction lineage migration", () => {
+  it("hardens dietitian correction lineage, scope validation, and decision supersession", () => {
+    expect(correctionLineageMigration).toContain(
+      "audio_transcription_records_dietitian_correction_confidence_check",
+    );
+    expect(correctionLineageMigration).toContain("p85_stage_4b4_assert_transcript_correction_scope_v1");
+    expect(correctionLineageMigration).toContain("p85_stage_4b4_supersede_transcript_correction_decision_v1");
+    expect(correctionLineageMigration).toContain("transcript_correction_target_message_mismatch");
+    expect(correctionLineageMigration).toContain("p85-stage-4b4-transcript-correction-outcome-v2");
+    expect(correctionLineageMigration).toContain("rerun_decision_id");
+    expect(correctionLineageMigration).toContain(
+      "grant execute on function p85_stage_4b4_commit_transcript_correction_v2",
     );
   });
 });

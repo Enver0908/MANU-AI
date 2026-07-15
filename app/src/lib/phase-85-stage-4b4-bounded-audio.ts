@@ -99,14 +99,19 @@ function findLatestTranscriptionForAsset(
   return matches[0] ?? null;
 }
 
-function findLatestCorrectionForTranscription(
+function findLatestCorrectionForMessage(
   corrections: readonly AudioTranscriptCorrectionRecord[],
-  transcriptionId: string,
+  messageId: string,
+  transcription: AudioTranscriptionRecord,
 ): AudioTranscriptCorrectionRecord | null {
-  const matches = corrections
-    .filter((correction) => correction.transcriptionId === transcriptionId)
-    .sort((left, right) => right.createdAt.localeCompare(left.createdAt));
-  return matches[0] ?? null;
+  const matches = corrections.filter(
+    (correction) =>
+      correction.targetMessageId === messageId ||
+      correction.sourceTranscriptionId === transcription.id ||
+      correction.correctedTranscriptionId === transcription.id ||
+      correction.transcriptionId === transcription.id,
+  );
+  return matches.sort((left, right) => right.createdAt.localeCompare(left.createdAt))[0] ?? null;
 }
 
 export function projectMessageAudioDto(
@@ -141,7 +146,11 @@ export function projectMessageVoiceTranscriptDto(
   const transcription = findLatestTranscriptionForAsset(voice.audioTranscriptionRecords, asset.id);
   if (!transcription) return null;
 
-  const latestCorrection = findLatestCorrectionForTranscription(voice.audioTranscriptCorrections, transcription.id);
+  const latestCorrection = findLatestCorrectionForMessage(
+    voice.audioTranscriptCorrections,
+    asset.messageId,
+    transcription,
+  );
   const dto = buildConversationVoiceTranscriptDto({
     role: actor.role,
     transcription,

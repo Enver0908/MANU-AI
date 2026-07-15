@@ -30,6 +30,7 @@ export function parseTranscriptCorrectionMutationBody(body: unknown): Transcript
 
   const record = body as Record<string, unknown>;
   const transcriptionId = typeof record.transcriptionId === "string" ? record.transcriptionId.trim() : "";
+  const targetMessageId = typeof record.targetMessageId === "string" ? record.targetMessageId.trim() : "";
   const requestId = typeof record.requestId === "string" ? record.requestId.trim() : "";
   const reasonCode = typeof record.reasonCode === "string" ? record.reasonCode.trim() : "";
   const explanation = typeof record.explanation === "string" ? record.explanation.trim() : "";
@@ -40,6 +41,9 @@ export function parseTranscriptCorrectionMutationBody(body: unknown): Transcript
 
   if (!transcriptionId) {
     throw new AppDomainError(400, "transcript_correction_transcription_id_required");
+  }
+  if (!targetMessageId) {
+    throw new AppDomainError(400, "transcript_correction_target_message_id_required");
   }
   if (!requestId) {
     throw new AppDomainError(400, "transcript_correction_request_id_required");
@@ -73,6 +77,7 @@ export function parseTranscriptCorrectionMutationBody(body: unknown): Transcript
 
   return {
     transcriptionId,
+    targetMessageId,
     requestId,
     expectedConversationRevision,
     expectedTranscriptionRevision,

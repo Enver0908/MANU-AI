@@ -3,48 +3,19 @@ import {
   applyStage4B4TranscriptCorrectionFollowUpNotification,
 } from "./phase-85-stage-4b4-bundle-notifications";
 import {
-  AUDIO_TRANSCRIPTION_OBSERVATION_SCHEMA_VERSION,
-  buildTranscriptionLineageFieldsFromObservation,
-  STAGE_4B4_DIETITIAN_CORRECTION_PROVIDER_ID,
-  type AudioTranscriptionObservationV1,
+  buildDietitianCorrectionTranscriptionLineage,
   type AudioTranscriptionRecord,
   type TranscriptCorrectionRequest,
 } from "./phase-85-stage-4b4-voice-contracts";
 import { invalidatePendingDrafts } from "./simulator";
 import type { ManuAppState } from "./types";
 
-export const STAGE_4B4_ATOMIC_TRANSCRIPT_CORRECTION_VERSION = "p85-stage-4b4-atomic-transcript-correction-v2";
-export const STAGE_4B4_TRANSCRIPT_CORRECTION_OUTCOME_VERSION = "p85-stage-4b4-transcript-correction-outcome-v1";
-export const STAGE_4B4_DIETITIAN_CORRECTION_PROVIDER_VERSION = "v1";
+export const STAGE_4B4_ATOMIC_TRANSCRIPT_CORRECTION_VERSION = "p85-stage-4b4-atomic-transcript-correction-v3";
+export const STAGE_4B4_TRANSCRIPT_CORRECTION_OUTCOME_VERSION = "p85-stage-4b4-transcript-correction-outcome-v2";
 
 export type AtomicTranscriptCorrectionSubmitResult =
   | { ok: true; state: ManuAppState; correctionId: string; resultAction: string; replay: boolean }
   | { ok: false; failureCode: string; state: ManuAppState };
-
-function buildCorrectedTranscriptionObservation(
-  source: AudioTranscriptionRecord,
-  correctedTranscript: string,
-): AudioTranscriptionObservationV1 {
-  const durationMs = Math.max(1, correctedTranscript.length * 40);
-  return {
-    schemaVersion: AUDIO_TRANSCRIPTION_OBSERVATION_SCHEMA_VERSION,
-    locale: source.locale,
-    transcriptText: correctedTranscript,
-    overallConfidence: 1,
-    segments: [
-      {
-        startMs: 0,
-        endMs: durationMs,
-        text: correctedTranscript,
-        confidence: 1,
-        uncertain: false,
-      },
-    ],
-    uncertainSpanCount: 0,
-    providerId: STAGE_4B4_DIETITIAN_CORRECTION_PROVIDER_ID,
-    providerVersion: STAGE_4B4_DIETITIAN_CORRECTION_PROVIDER_VERSION,
-  };
-}
 
 function buildCorrectedTranscriptionRecord(input: {
   source: AudioTranscriptionRecord;
@@ -52,7 +23,12 @@ function buildCorrectedTranscriptionRecord(input: {
   correctedTranscriptionId: string;
   now: string;
 }): AudioTranscriptionRecord {
-  const observation = buildCorrectedTranscriptionObservation(input.source, input.correctedTranscript);
+  const lineage = buildDietitianCorrectionTranscriptionLineage({
+    correctedTranscript: input.correctedTranscript,
+    locale: input.source.locale,
+    supersedesTranscriptionId: input.source.id,
+  });
+
   return {
     id: input.correctedTranscriptionId,
     tenantId: input.source.tenantId,
@@ -64,20 +40,34 @@ function buildCorrectedTranscriptionRecord(input: {
     transcriptionRevision: input.source.transcriptionRevision + 1,
     status: "accepted",
     locale: input.source.locale,
-    observation,
+    observation: null,
     qualityDecision: { accepted: true, reasonCodes: [] },
     rejectionReasons: [],
     sourceModality: "voice_transcript",
     providerMode: "mock",
     retrievalEligible: true,
     evidenceExpiresAt: input.source.evidenceExpiresAt ?? null,
-    ...buildTranscriptionLineageFieldsFromObservation({
-      observation,
-      origin: "dietitian_correction",
-      supersedesTranscriptionId: input.source.id,
-    }),
+    ...lineage,
     createdAt: input.now,
     updatedAt: input.now,
+  };
+}
+
+function supersedeTranscriptCorrectionDecision(
+  state: ManuAppState,
+  decisionId: string,
+): ManuAppState {
+  return {
+    ...state,
+    aiDecisions: state.aiDecisions.map((decision) =>
+      decision.id === decisionId
+        ? {
+            ...decision,
+            sendStatus: "draft_invalidated",
+            blockedReason: "transcript_correction_superseded",
+          }
+        : decision,
+    ),
   };
 }
 
@@ -117,6 +107,12 @@ export function commitAtomicTranscriptCorrectionV2(
   }
   if (transcription.transcriptionRevision !== request.expectedTranscriptionRevision) {
     return { ok: false, failureCode: "stale_transcription_revision", state: baseState };
+  }
+  if (request.targetMessageId !== transcription.messageId) {
+    return { ok: false, failureCode: "transcript_correction_target_message_mismatch", state: baseState };
+  }
+  if (transcription.tenantId !== baseState.tenant.id) {
+    return { ok: false, failureCode: "transcript_correction_tenant_mismatch", state: baseState };
   }
 
   const conversation = baseState.conversations.find((entry) => entry.id === transcription.conversationId);
@@ -275,6 +271,9 @@ export function commitAtomicTranscriptCorrectionV2(
   };
 
   if (resultAction === "invalidate_pending" || resultAction === "supersede_rerun") {
+    if (bundle?.decisionId) {
+      nextState = supersedeTranscriptCorrectionDecision(nextState, bundle.decisionId);
+    }
     nextState = invalidatePendingDrafts(nextState, now, "transcript_correction_submitted");
     if (bundle) {
       nextState = {
@@ -368,15 +367,17 @@ export function buildTranscriptCorrectionRpcOutcome(input: {
   }
 
   const sourceTranscription = input.state.audioTranscriptionRecords.find(
-    (entry) => entry.id === correction.transcriptionId,
+    (entry) => entry.id === correction.sourceTranscriptionId,
   );
   const correctedTranscription =
+    input.state.audioTranscriptionRecords.find((entry) => entry.id === correction.correctedTranscriptionId) ??
     input.state.audioTranscriptionRecords.find(
       (entry) =>
         entry.mediaAssetId === sourceTranscription?.mediaAssetId &&
         entry.transcriptionRevision === (sourceTranscription?.transcriptionRevision ?? 0) + 1 &&
         entry.status === "accepted",
-    ) ?? null;
+    ) ??
+    null;
 
   const bundle =
     sourceTranscription?.bundleId != null
@@ -403,7 +404,10 @@ export function buildTranscriptCorrectionRpcOutcome(input: {
     expectedConversationRevision: correction.conversationRevisionAtSubmit,
     expectedTranscriptionRevision: correction.transcriptionRevisionAtSubmit,
     resultAction: input.resultAction,
-    correction,
+    correction: {
+      ...correction,
+      correctedTranscriptionId: correction.correctedTranscriptionId,
+    },
     correctedTranscriptionId: correctedTranscription?.id ?? null,
     correctedTranscription,
     messageUpdate:

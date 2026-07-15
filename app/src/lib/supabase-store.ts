@@ -6096,7 +6096,7 @@ export async function submitSupabaseTranscriptCorrection(
   assertTranscriptCorrectionAllowed(permissions, actor.role);
   parseTranscriptCorrectionMutationBody(request);
 
-  const result = submitTranscriptCorrection(state, {
+  const result = await submitTranscriptCorrection(state, {
     ...request,
     dietitianId: context.dietitianId,
   });

@@ -23,7 +23,9 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
       );
     }
 
-    return conversationApiJsonResponse(submitFallbackTranscriptCorrection(conversationId, parsed, tenantContext));
+    return conversationApiJsonResponse(
+      await submitFallbackTranscriptCorrection(conversationId, parsed, tenantContext),
+    );
   } catch (error) {
     try {
       return authErrorResponse(error);
