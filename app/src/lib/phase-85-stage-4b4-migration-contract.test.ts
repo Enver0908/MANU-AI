@@ -62,6 +62,11 @@ const boundedReadsV2Migration = readFileSync(
   "utf8",
 );
 
+const lifecycleWorkersMigration = readFileSync(
+  resolve(__dirname, "../../supabase/migrations/20260715160000_phase_85_stage_4b4_lifecycle_workers.sql"),
+  "utf8",
+);
+
 const stage4B4Tables = [
   "audio_transcription_records",
   "audio_transcript_corrections",
@@ -102,6 +107,21 @@ describe("P85 Stage 4B-4 remediation R3 durable pipeline migration", () => {
     expect(durablePipelineMigration).toContain("for update skip locked");
     expect(durablePipelineMigration).toContain(
       "grant execute on function p85_stage_4b4_complete_transcription_v2",
+    );
+  });
+});
+
+describe("P85 Stage 4B-4 remediation R8 lifecycle workers migration", () => {
+  it("creates dedicated audio lifecycle claim, release, complete, and orphan RPCs", () => {
+    expect(lifecycleWorkersMigration).toContain("p85_stage_4b4_claim_audio_lifecycle_work_v1");
+    expect(lifecycleWorkersMigration).toContain("p85_stage_4b4_release_audio_lifecycle_work_v1");
+    expect(lifecycleWorkersMigration).toContain("p85_stage_4b4_complete_audio_lifecycle_work_v1");
+    expect(lifecycleWorkersMigration).toContain("p85_stage_4b4_enqueue_audio_orphan_cleanup_v1");
+    expect(lifecycleWorkersMigration).toContain("p85_stage_4b4_fail_audio_row_without_object_v1");
+    expect(lifecycleWorkersMigration).toContain("p85_stage_4b4_is_audio_lifecycle_object_key");
+    expect(lifecycleWorkersMigration).toContain("audio_lifecycle_operation_required");
+    expect(lifecycleWorkersMigration).toContain(
+      "grant execute on function p85_stage_4b4_claim_audio_lifecycle_work_v1",
     );
   });
 });

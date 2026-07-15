@@ -24,6 +24,7 @@ export type Stage4B4AudioStoragePort = {
     objectKey: string,
     range: Stage4B4ObjectByteRange | null,
   ): Promise<Stage4B4ObjectRangeReadResult | null>;
+  listObjectKeys?(prefix: string, input?: { limit?: number; offset?: number }): Promise<string[]>;
   deleteObject(objectKey: string): Promise<void>;
 };
 
@@ -82,6 +83,13 @@ export function createInMemoryStage4B4AudioStorage(): Stage4B4AudioStoragePort &
         return null;
       }
       return sliceStoredObject(entry, range);
+    },
+    async listObjectKeys(prefix, input = {}) {
+      const limit = input.limit ?? 256;
+      const offset = input.offset ?? 0;
+      return [...objects.keys()]
+        .filter((key) => key.startsWith(prefix))
+        .slice(offset, offset + limit);
     },
     async deleteObject(objectKey) {
       objects.delete(objectKey);
@@ -170,6 +178,26 @@ export function createSupabaseStage4B4AudioStorage(supabase: SupabaseClient): St
       if (error) {
         throw new Error(`storage_delete_failed:${error.message}`);
       }
+    },
+    async listObjectKeys(prefix, input = {}) {
+      const limit = input.limit ?? 256;
+      const offset = input.offset ?? 0;
+      const normalizedPrefix = prefix.replace(/\/$/, "");
+      const segments = normalizedPrefix.split("/").filter(Boolean);
+      const parentPath = segments.slice(0, -1).join("/");
+      const searchPrefix = segments.at(-1) ?? "";
+      const { data, error } = await supabase.storage.from(STAGE_4B4_AUDIO_BUCKET_ID).list(parentPath || undefined, {
+        limit,
+        offset,
+        search: searchPrefix || undefined,
+        sortBy: { column: "name", order: "asc" },
+      });
+      if (error) {
+        throw new Error(`storage_list_failed:${error.message}`);
+      }
+      return (data ?? [])
+        .filter((entry) => entry.id)
+        .map((entry) => `${normalizedPrefix}/${entry.name}`.replace(/\/+/g, "/"));
     },
   };
 }

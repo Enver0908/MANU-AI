@@ -2,6 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { MediaAssetStatus } from "./phase-85-stage-4b3-media-contracts";
 import { isStorageObjectAlreadyDeletedError } from "./phase-85-stage-4b3-media-lifecycle-saga";
 import {
+  buildStage4B4VoiceDsarExportPackage,
   collectMediaAssetAudioObjectKeys,
   finalizeExpiredVoiceAsset,
   finalizeRevokedVoiceAsset,
@@ -11,11 +12,12 @@ import {
   STAGE_4B4_AUDIO_LIFECYCLE_VERSION,
   type Stage4B4AudioOrphanEntry,
   type Stage4B4AudioOrphanReport,
+  type Stage4B4VoiceDsarExportPackage,
 } from "./phase-85-stage-4b4-audio-lifecycle";
 import type { Stage4B4AudioStoragePort } from "./phase-85-stage-4b4-audio-storage";
 import type { ManuAppState } from "./types";
 
-export const STAGE_4B4_AUDIO_LIFECYCLE_SAGA_VERSION = "p85-stage-4b4-audio-lifecycle-saga-v1";
+export const STAGE_4B4_AUDIO_LIFECYCLE_SAGA_VERSION = "p85-stage-4b4-audio-lifecycle-saga-v2";
 export const STAGE_4B4_AUDIO_OBJECT_DELETE_MAX_RETRIES = 3;
 export const STAGE_4B4_AUDIO_ORPHAN_SCAN_PAGE_SIZE = 256;
 
@@ -34,13 +36,17 @@ export type Stage4B4AudioLifecycleWorkerSummary = {
   tenantId: string;
   workerId: string;
   expiryPrepared: number;
+  legalHoldDeferred: number;
   legalHoldResumed: number;
-  objectOperationsClaimed: number;
-  objectOperationsCompleted: number;
-  objectOperationsFailed: number;
+  claimed: number;
+  completed: number;
+  retried: number;
+  failures: number;
   evidenceRedacted: number;
-  orphanObjectOpsEnqueued: number;
+  orphanEnqueued: number;
   rowWithoutObjectFailures: number;
+  orphanObjectCount: number;
+  orphanRowCount: number;
 };
 
 export type Stage4B4PaginatedAudioStoragePort = Stage4B4AudioStoragePort & {
@@ -273,13 +279,51 @@ type ClaimedObjectOperationRow = {
   object_key: string;
   operation_kind: string;
   lease_token: string | null;
+  retry_count: number | null;
 };
+
+async function reconcileStage4B4AudioOrphans(input: {
+  supabase: SupabaseClient;
+  tenantId: string;
+  storage: Stage4B4PaginatedAudioStoragePort;
+  state: ManuAppState;
+  summary: Stage4B4AudioLifecycleWorkerSummary;
+}): Promise<void> {
+  const orphanReport = await detectStage4B4AudioOrphansFromStorage(input.state, input.storage, `${input.tenantId}/`);
+  input.summary.orphanObjectCount = orphanReport.entries.filter((entry) => entry.kind === "object_without_row").length;
+  input.summary.orphanRowCount = orphanReport.entries.filter((entry) => entry.kind === "row_without_object").length;
+
+  for (const entry of orphanReport.entries) {
+    if (entry.kind === "object_without_row" && entry.objectKey) {
+      const { error } = await input.supabase.rpc("p85_stage_4b4_enqueue_audio_orphan_cleanup_v1", {
+        p_tenant_id: input.tenantId,
+        p_object_key: entry.objectKey,
+      });
+      if (!error) {
+        input.summary.orphanEnqueued += 1;
+      }
+      continue;
+    }
+
+    if (entry.kind === "row_without_object" && entry.assetId && entry.objectKey) {
+      const { error } = await input.supabase.rpc("p85_stage_4b4_fail_audio_row_without_object_v1", {
+        p_tenant_id: input.tenantId,
+        p_asset_id: entry.assetId,
+        p_object_key: entry.objectKey,
+      });
+      if (!error) {
+        input.summary.rowWithoutObjectFailures += 1;
+      }
+    }
+  }
+}
 
 export async function runStage4B4AudioLifecycleWorkerBatch(input: {
   supabase: SupabaseClient;
   tenantId: string;
   workerId?: string;
-  storage: Stage4B4AudioStoragePort;
+  storage: Stage4B4PaginatedAudioStoragePort;
+  state?: ManuAppState;
   batchLimit?: number;
 }): Promise<Stage4B4AudioLifecycleWorkerSummary> {
   const workerId = input.workerId ?? "stage4b4-audio-lifecycle-worker";
@@ -289,13 +333,17 @@ export async function runStage4B4AudioLifecycleWorkerBatch(input: {
     tenantId: input.tenantId,
     workerId,
     expiryPrepared: 0,
+    legalHoldDeferred: 0,
     legalHoldResumed: 0,
-    objectOperationsClaimed: 0,
-    objectOperationsCompleted: 0,
-    objectOperationsFailed: 0,
+    claimed: 0,
+    completed: 0,
+    retried: 0,
+    failures: 0,
     evidenceRedacted: 0,
-    orphanObjectOpsEnqueued: 0,
+    orphanEnqueued: 0,
     rowWithoutObjectFailures: 0,
+    orphanObjectCount: 0,
+    orphanRowCount: 0,
   };
 
   const { data: expiryBatch, error: expiryError } = await input.supabase.rpc(
@@ -334,9 +382,19 @@ export async function runStage4B4AudioLifecycleWorkerBatch(input: {
   }
   summary.evidenceRedacted = Number(evidenceBatch?.transcriptionsRedacted ?? 0);
 
+  if (input.state) {
+    await reconcileStage4B4AudioOrphans({
+      supabase: input.supabase,
+      tenantId: input.tenantId,
+      storage: input.storage,
+      state: input.state,
+      summary,
+    });
+  }
+
   for (let index = 0; index < (input.batchLimit ?? 8); index += 1) {
     const { data: claimedRows, error: claimError } = await input.supabase.rpc(
-      "p85_stage_4b3_claim_media_object_operation_v2",
+      "p85_stage_4b4_claim_audio_lifecycle_work_v1",
       {
         p_tenant_id: input.tenantId,
         p_worker_id: workerId,
@@ -350,10 +408,7 @@ export async function runStage4B4AudioLifecycleWorkerBatch(input: {
     if (!claimed?.id || !claimed.lease_token) {
       break;
     }
-    if (!claimed.object_key.includes("/voice.wav")) {
-      continue;
-    }
-    summary.objectOperationsClaimed += 1;
+    summary.claimed += 1;
 
     let success = false;
     let failureCode: string | null = null;
@@ -368,33 +423,80 @@ export async function runStage4B4AudioLifecycleWorkerBatch(input: {
       }
     }
 
-    const { error: releaseError } = await input.supabase.rpc("p85_stage_4b3_release_media_object_operation_v2", {
-      p_tenant_id: input.tenantId,
-      p_operation_id: claimed.id,
-      p_worker_id: workerId,
-      p_lease_token: claimed.lease_token,
-      p_success: success,
-      p_failure_code: failureCode,
-    });
+    const releaseRpc = success
+      ? "p85_stage_4b4_complete_audio_lifecycle_work_v1"
+      : "p85_stage_4b4_release_audio_lifecycle_work_v1";
+    const releaseArgs = success
+      ? {
+          p_tenant_id: input.tenantId,
+          p_operation_id: claimed.id,
+          p_worker_id: workerId,
+          p_lease_token: claimed.lease_token,
+        }
+      : {
+          p_tenant_id: input.tenantId,
+          p_operation_id: claimed.id,
+          p_worker_id: workerId,
+          p_lease_token: claimed.lease_token,
+          p_success: false,
+          p_failure_code: failureCode,
+        };
+
+    const { data: releaseData, error: releaseError } = await input.supabase.rpc(releaseRpc, releaseArgs);
     if (releaseError) {
       throw releaseError;
     }
 
     if (success) {
-      summary.objectOperationsCompleted += 1;
+      summary.completed += 1;
+    } else if (releaseData && typeof releaseData === "object" && (releaseData as { status?: string }).status === "pending") {
+      summary.retried += 1;
     } else {
-      summary.objectOperationsFailed += 1;
+      summary.failures += 1;
     }
   }
 
   return summary;
 }
 
+export async function runStage4B4AudioLifecycleWorkerLoop(input: {
+  supabase: SupabaseClient;
+  tenantId: string;
+  workerId?: string;
+  storage: Stage4B4PaginatedAudioStoragePort;
+  state?: ManuAppState;
+  intervalMs?: number;
+  once?: boolean;
+  shouldContinue?: () => boolean;
+}): Promise<void> {
+  const intervalMs = input.intervalMs ?? 60_000;
+  const shouldContinue = input.shouldContinue ?? (() => true);
+
+  do {
+    const summary = await runStage4B4AudioLifecycleWorkerBatch({
+      supabase: input.supabase,
+      tenantId: input.tenantId,
+      workerId: input.workerId,
+      storage: input.storage,
+      state: input.state,
+    });
+    console.log("[worker:audio:lifecycle:stage4b4]", JSON.stringify(summary));
+    if (input.once) {
+      break;
+    }
+    if (!shouldContinue()) {
+      break;
+    }
+    await new Promise((resolve) => setTimeout(resolve, intervalMs));
+  } while (true);
+}
+
 export async function prepareSupabaseClientAudioDsar(
   supabase: SupabaseClient,
   tenantId: string,
   clientId: string,
-): Promise<Record<string, unknown>> {
+  state?: ManuAppState,
+): Promise<{ rpc: Record<string, unknown>; exportPackage?: Stage4B4VoiceDsarExportPackage }> {
   const { data, error } = await supabase.rpc("p85_stage_4b4_prepare_client_audio_dsar_v1", {
     p_tenant_id: tenantId,
     p_client_id: clientId,
@@ -402,5 +504,11 @@ export async function prepareSupabaseClientAudioDsar(
   if (error) {
     throw error;
   }
-  return (data ?? {}) as Record<string, unknown>;
+  const rpc = (data ?? {}) as Record<string, unknown>;
+  return {
+    rpc,
+    exportPackage: state ? buildStage4B4VoiceDsarExportPackage(state, clientId) : undefined,
+  };
 }
+
+export type { Stage4B4AudioOrphanEntry, Stage4B4AudioOrphanReport };

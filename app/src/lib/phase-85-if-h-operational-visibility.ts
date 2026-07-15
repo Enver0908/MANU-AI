@@ -10,7 +10,9 @@ import {
   buildStage4B4AudioOperationalHealth,
   detectStage4B4AudioOrphans,
   type Stage4B4AudioOperationalHealth,
+  type Stage4B4AudioOrphanReport,
 } from "./phase-85-stage-4b4-audio-lifecycle";
+import type { Stage4B4PaginatedAudioStoragePort } from "./phase-85-stage-4b4-audio-lifecycle-saga";
 import { isVerifiedBusinessHumanMessage } from "./phase-85-if-b-provenance-model";
 import { findActiveHumanControlSession } from "./phase-85-if-f-risk-reactivation";
 import { CONTEXT_INTAKE_STRUCTURED_PANEL_LINKS } from "./phase-85-if-g-context-intake";
@@ -108,11 +110,17 @@ export type OperationalFoundationInspectionDto = {
 export function buildOperationalFoundationInspectionDto(
   state: ManuAppState,
   limit = 8,
+  storagePorts: {
+    media?: Parameters<typeof detectStage4B3MediaOrphans>[1];
+    audio?: Stage4B4PaginatedAudioStoragePort;
+    audioOrphanReport?: Stage4B4AudioOrphanReport;
+  } = {},
 ): OperationalFoundationInspectionDto {
-  const mediaStorage = getFallbackStage4B3MediaStorage();
-  const audioStorage = getFallbackStage4B4AudioStorage();
+  const mediaStorage = storagePorts.media ?? getFallbackStage4B3MediaStorage();
+  const audioStorage = storagePorts.audio ?? getFallbackStage4B4AudioStorage();
   const mediaOrphanReport = detectStage4B3MediaOrphans(state, mediaStorage);
-  const audioOrphanReport = detectStage4B4AudioOrphans(state, audioStorage);
+  const audioOrphanReport =
+    storagePorts.audioOrphanReport ?? detectStage4B4AudioOrphans(state, audioStorage);
   return {
     channelTrust: buildChannelTrustOperationalSnapshot(state),
     quarantineRows: buildQuarantineInspectionRows(state, limit),

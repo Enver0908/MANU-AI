@@ -5,6 +5,7 @@ import {
   isMediaAssetDueForExpiry,
 } from "./phase-85-stage-4b3-media-lifecycle";
 import type { MediaAssetRecord } from "./phase-85-stage-4b3-media-contracts";
+import { buildConversationAudioStreamUrl } from "./phase-85-stage-4b4-bounded-audio";
 import { getFallbackStage4B4AudioStorage } from "./phase-85-stage-4b4-fallback-audio-storage";
 import { prepareAudioAssetDeletionInState, processDueStage4B4AudioExpirySagaInState } from "./phase-85-stage-4b4-audio-lifecycle-saga";
 import type { AudioPendingObjectKeyRecord } from "./phase-85-stage-4b4-audio-lifecycle-saga";
@@ -17,7 +18,7 @@ import {
 } from "./phase-85-stage-4b4-voice-contracts";
 import type { ManuAppState } from "./types";
 
-export const STAGE_4B4_AUDIO_LIFECYCLE_VERSION = "p85-stage-4b4-audio-lifecycle-v1";
+export const STAGE_4B4_AUDIO_LIFECYCLE_VERSION = "p85-stage-4b4-audio-lifecycle-v2";
 export const STAGE_4B4_VOICE_EXPORT_FILE = "voice_transcripts.json";
 
 const TERMINAL_ASSET_STATUSES = new Set<MediaAssetRecord["status"]>(["expired", "revoked"]);
@@ -64,6 +65,22 @@ export type Stage4B4VoiceTranscriptExportEntry = {
   storedAt: string | null;
   expiresAt: string | null;
   deletedAt: string | null;
+  authorizedStreamUrl: string | null;
+};
+
+export type Stage4B4VoiceCorrectionExportEntry = {
+  correctionId: string;
+  transcriptionId: string;
+  targetMessageId: string;
+  status: AudioTranscriptCorrectionRecord["status"];
+  createdAt: string;
+};
+
+export type Stage4B4VoiceDsarExportPackage = {
+  version: string;
+  retentionDays: number;
+  transcripts: Stage4B4VoiceTranscriptExportEntry[];
+  corrections: Stage4B4VoiceCorrectionExportEntry[];
 };
 
 export type Stage4B4AudioRedactionInvariantResult = {
@@ -375,9 +392,41 @@ function resolveTranscriptSummaryForExport(
   return null;
 }
 
+function resolveAuthorizedVoiceStreamUrl(
+  asset: MediaAssetRecord | undefined,
+  now: string,
+): string | null {
+  if (!asset || asset.deletedAt || asset.status === "expired" || asset.status === "revoked") {
+    return null;
+  }
+  if (asset.expiresAt && asset.expiresAt <= now) {
+    return null;
+  }
+  if (!["analysis_ready", "deletion_pending"].includes(asset.status)) {
+    return null;
+  }
+  return buildConversationAudioStreamUrl(asset.conversationId, asset.id);
+}
+
+export function buildStage4B4VoiceCorrectionExport(
+  state: ManuAppState,
+  clientId: string,
+): Stage4B4VoiceCorrectionExportEntry[] {
+  return state.audioTranscriptCorrections
+    .filter((correction) => correction.clientId === clientId)
+    .map((correction) => ({
+      correctionId: correction.id,
+      transcriptionId: correction.transcriptionId,
+      targetMessageId: correction.targetMessageId,
+      status: correction.status,
+      createdAt: correction.createdAt,
+    }));
+}
+
 export function buildStage4B4VoiceTranscriptExport(
   state: ManuAppState,
   clientId: string,
+  now: string = new Date().toISOString(),
 ): Stage4B4VoiceTranscriptExportEntry[] {
   const voiceAssetIds = new Set(
     state.mediaAssets.filter((asset) => asset.clientId === clientId && isVoiceMediaAsset(asset)).map((asset) => asset.id),
@@ -403,20 +452,26 @@ export function buildStage4B4VoiceTranscriptExport(
         storedAt: asset?.storedAt ?? null,
         expiresAt: asset?.expiresAt ?? null,
         deletedAt: asset?.deletedAt ?? null,
+        authorizedStreamUrl: resolveAuthorizedVoiceStreamUrl(asset, now),
       };
     });
 }
 
+export function buildStage4B4VoiceDsarExportPackage(
+  state: ManuAppState,
+  clientId: string,
+  now: string = new Date().toISOString(),
+): Stage4B4VoiceDsarExportPackage {
+  return {
+    version: STAGE_4B4_AUDIO_LIFECYCLE_VERSION,
+    retentionDays: STAGE_4B4_MEDIA_RETENTION_DAYS,
+    transcripts: buildStage4B4VoiceTranscriptExport(state, clientId, now),
+    corrections: buildStage4B4VoiceCorrectionExport(state, clientId),
+  };
+}
+
 export function serializeStage4B4VoiceTranscriptExport(state: ManuAppState, clientId: string): string {
-  return JSON.stringify(
-    {
-      version: STAGE_4B4_AUDIO_LIFECYCLE_VERSION,
-      retentionDays: STAGE_4B4_MEDIA_RETENTION_DAYS,
-      transcripts: buildStage4B4VoiceTranscriptExport(state, clientId),
-    },
-    null,
-    2,
-  );
+  return JSON.stringify(buildStage4B4VoiceDsarExportPackage(state, clientId), null, 2);
 }
 
 export function detectStage4B4VoiceTranscriptExportLeaks(payload: unknown): { passed: boolean; failures: string[] } {

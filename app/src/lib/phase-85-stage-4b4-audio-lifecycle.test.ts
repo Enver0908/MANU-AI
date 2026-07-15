@@ -224,6 +224,10 @@ describe("phase 85 stage 4b-4 audio lifecycle", () => {
 
   it("keeps voice transcript export bounded without object keys or provider confidence", () => {
     const state = seedStateWithVoice();
+    state.mediaAssets = state.mediaAssets.map((asset) => ({
+      ...asset,
+      expiresAt: "2026-08-01T10:00:00.000Z",
+    }));
     const pkg = buildPhase74ExportPackage(state, "client-mert");
     expect(pkg.files[STAGE_4B4_VOICE_EXPORT_FILE]).toBeTruthy();
     expect(pkg.files[STAGE_4B4_VOICE_EXPORT_FILE]).not.toContain("sanitizedAudioObjectKey");
@@ -231,6 +235,8 @@ describe("phase 85 stage 4b-4 audio lifecycle", () => {
     expect(pkg.files[STAGE_4B4_VOICE_EXPORT_FILE]).not.toContain("segments");
     expect(pkg.files[STAGE_4B4_VOICE_EXPORT_FILE]).toContain("transcription-life-1");
     expect(pkg.files[STAGE_4B4_VOICE_EXPORT_FILE]).toContain("mercimek corbasi");
+    expect(pkg.files[STAGE_4B4_VOICE_EXPORT_FILE]).toContain("corrections");
+    expect(pkg.files[STAGE_4B4_VOICE_EXPORT_FILE]).toContain("/api/conversations/");
   });
 
   it("detects orphan audio objects and missing objects", () => {
