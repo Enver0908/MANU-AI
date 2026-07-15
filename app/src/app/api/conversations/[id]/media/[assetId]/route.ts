@@ -30,6 +30,7 @@ export async function GET(
 
     const url = new URL(request.url);
     const variant = parseConversationMediaStreamVariant(url.searchParams.get("variant"));
+    const rangeHeader = request.headers.get("range");
 
     if (isSupabaseStoreConfigured()) {
       const stream = await streamConversationMediaFromSupabase({
@@ -37,11 +38,15 @@ export async function GET(
         conversationId,
         assetId: normalizedAssetId,
         variant,
+        rangeHeader,
       });
       if (!stream.ok) {
+        if (stream.status === 416) {
+          return new NextResponse(null, { status: 416, headers: { "Content-Range": "bytes */0" } });
+        }
         return NextResponse.json({ error: stream.code }, { status: stream.status });
       }
-      return new NextResponse(new Uint8Array(stream.body), { status: 200, headers: stream.headers });
+      return new NextResponse(new Uint8Array(stream.body), { status: stream.status, headers: stream.headers });
     }
 
     const stream = await streamConversationMediaFromFallbackState({
@@ -51,11 +56,15 @@ export async function GET(
       conversationId,
       assetId: normalizedAssetId,
       variant,
+      rangeHeader,
     });
     if (!stream.ok) {
+      if (stream.status === 416) {
+        return new NextResponse(null, { status: 416, headers: { "Content-Range": "bytes */0" } });
+      }
       return NextResponse.json({ error: stream.code }, { status: stream.status });
     }
-    return new NextResponse(new Uint8Array(stream.body), { status: 200, headers: stream.headers });
+    return new NextResponse(new Uint8Array(stream.body), { status: stream.status, headers: stream.headers });
   } catch (error) {
     try {
       return authErrorResponse(error);

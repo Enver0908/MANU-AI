@@ -274,6 +274,7 @@ export type ConversationProjectionSource = {
   receipts?: readonly ConversationReadReceiptRecord[];
   unreadCounts?: readonly { conversationId: string; unreadCount: number }[];
   media?: import("./phase-85-stage-4b3-bounded-media").Stage4B3ConversationMediaProjectionSource;
+  voice?: import("./phase-85-stage-4b4-bounded-audio").Stage4B4ConversationVoiceProjectionSource;
 };
 
 export type ConversationClientStatusSource = Pick<

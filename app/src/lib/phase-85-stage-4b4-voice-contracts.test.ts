@@ -120,6 +120,7 @@ describe("phase-85-stage-4b4-voice-contracts", () => {
   it("limits voice transcript DTO to authorized dietitian roles for non-accepted states", () => {
     const transcription = {
       id: "tx-1",
+      transcriptionRevision: 1,
       status: "review_required" as const,
       observation: null,
       qualityDecision: { accepted: false, reasonCodes: ["overall_confidence_low"] as const },

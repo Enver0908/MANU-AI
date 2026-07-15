@@ -22,6 +22,11 @@ const transcriptCorrectionMigration = readFileSync(
   "utf8",
 );
 
+const boundedAudioReadsMigration = readFileSync(
+  resolve(__dirname, "../../supabase/migrations/20260714220000_phase_85_stage_4b4_bounded_audio_reads.sql"),
+  "utf8",
+);
+
 const stage4B4Tables = [
   "audio_transcription_records",
   "audio_transcript_corrections",
@@ -104,6 +109,20 @@ describe("P85 Stage 4B-4 Phase 7 atomic transcript correction migration", () => 
     expect(transcriptCorrectionMigration).toContain("service_role_required");
     expect(transcriptCorrectionMigration).toContain(
       "grant execute on function p85_stage_4b4_commit_transcript_correction_v2",
+    );
+  });
+});
+
+describe("P85 Stage 4B-4 Phase 8 bounded audio reads migration", () => {
+  it("creates bounded voice read RPC and extends media stream for audio variant", () => {
+    expect(boundedAudioReadsMigration).toContain("p85_stage_4b4_load_bounded_voice_v1");
+    expect(boundedAudioReadsMigration).toContain("audio_transcription_records");
+    expect(boundedAudioReadsMigration).toContain("audio_transcript_corrections");
+    expect(boundedAudioReadsMigration).toContain("p85_stage_4b3_resolve_media_stream_v2");
+    expect(boundedAudioReadsMigration).toContain("p85-stage-4b4-audio");
+    expect(boundedAudioReadsMigration).toContain("sanitized_audio_object_key");
+    expect(boundedAudioReadsMigration).toContain(
+      "grant execute on function p85_stage_4b4_load_bounded_voice_v1",
     );
   });
 });

@@ -934,6 +934,9 @@ export function DashboardApp({
                       onSubmitVisualCorrection={(input) =>
                         stage4bMessaging.submitVisualCorrection(messagingRoute.conversationId!, input)
                       }
+                      onSubmitTranscriptCorrection={(input) =>
+                        stage4bMessaging.submitTranscriptCorrection(messagingRoute.conversationId!, input)
+                      }
                     />
                   ) : stage4bMessaging.isDetailRefreshing ? (
                     <div className="rounded-lg border border-stone-200 bg-white p-6 text-sm text-stone-600" aria-busy="true">

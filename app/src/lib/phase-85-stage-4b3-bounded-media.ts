@@ -21,6 +21,10 @@ import {
   type VisualCorrectionRequest,
   type VisualReviewDto,
 } from "./phase-85-stage-4b3-media-contracts";
+import {
+  projectConversationMessageVoiceFields,
+  type Stage4B4ConversationVoiceProjectionSource,
+} from "./phase-85-stage-4b4-bounded-audio";
 import type { ManuAppState, MessageRetrievalEligibility, TenantRole } from "./types";
 
 export const STAGE_4B3_BOUNDED_MEDIA_VERSION = "p85-stage-4b3-bounded-media-v2";
@@ -33,7 +37,7 @@ export type Stage4B3ConversationMediaProjectionSource = Pick<
   "mediaAssets" | "visualAnalysisRecords" | "inboundMessageBundles" | "visualCorrections"
 >;
 
-export type ConversationMediaStreamVariant = "thumbnail" | "full";
+export type ConversationMediaStreamVariant = "thumbnail" | "full" | "audio";
 
 const MEDIA_RETRIEVAL_EXCLUSION_SET = new Set<string>(STAGE_4B3_MEDIA_RETRIEVAL_EXCLUSIONS);
 
@@ -215,15 +219,16 @@ export function projectConversationMessageWithMedia(
   actor: ConversationActorContext,
   media: Stage4B3ConversationMediaProjectionSource | undefined,
   base: ConversationMessageDto,
+  voice?: Stage4B4ConversationVoiceProjectionSource,
 ): ConversationMessageDto {
   const mediaItems = projectMessageMediaDto(message.id, media);
   const visualReview = projectMessageVisualReview(message.id, actor, media);
+  const voiceFields = projectConversationMessageVoiceFields(message, actor, voice, base);
   const dto: ConversationMessageDto = {
     ...base,
     media: mediaItems,
     visualReview,
-    audio: null,
-    voiceTranscript: null,
+    ...voiceFields,
   };
   assertClientSafeMediaPayload(dto);
   return dto;
@@ -295,6 +300,7 @@ export function parseConversationMediaStreamVariant(
   value: string | null | undefined,
 ): ConversationMediaStreamVariant {
   if (value === "full") return "full";
+  if (value === "audio") return "audio";
   return "thumbnail";
 }
 
@@ -334,12 +340,15 @@ export function resolveMediaStreamHttpStatus(
 export function resolveMediaStreamObjectKey(
   asset: Pick<
     MediaAssetRecord,
-    "thumbnailObjectKey" | "sanitizedFullObjectKey" | "status" | "deletedAt"
+    "thumbnailObjectKey" | "sanitizedFullObjectKey" | "sanitizedAudioObjectKey" | "status" | "deletedAt" | "mediaKind" | "voiceMessage"
   >,
   variant: ConversationMediaStreamVariant,
 ): string | null {
   if (asset.deletedAt || asset.status === "expired" || asset.status === "revoked" || asset.status === "deletion_pending") {
     return null;
+  }
+  if (variant === "audio") {
+    return asset.sanitizedAudioObjectKey ?? null;
   }
   if (variant === "thumbnail") {
     return asset.thumbnailObjectKey ?? asset.sanitizedFullObjectKey;
@@ -348,22 +357,32 @@ export function resolveMediaStreamObjectKey(
 }
 
 export function resolveMediaStreamContentType(
-  asset: Pick<MediaAssetRecord, "detectedMimeType" | "declaredMimeType">,
+  asset: Pick<MediaAssetRecord, "detectedMimeType" | "declaredMimeType" | "mediaKind" | "voiceMessage">,
   variant: ConversationMediaStreamVariant,
 ): string {
+  if (variant === "audio") {
+    return "audio/wav";
+  }
   if (variant === "thumbnail") {
     return "image/jpeg";
   }
   return asset.detectedMimeType ?? asset.declaredMimeType ?? "image/jpeg";
 }
 
-export function buildConversationMediaStreamHeaders(contentType: string) {
-  return {
+export function buildConversationMediaStreamHeaders(contentType: string, totalSize?: number) {
+  const headers: Record<string, string> = {
     "Cache-Control": STAGE_4B3_MEDIA_STREAM_CACHE_CONTROL,
     "X-Content-Type-Options": "nosniff",
     "Content-Type": contentType,
-    "Content-Disposition": `inline; filename="${STAGE_4B3_MEDIA_STREAM_FILENAME}"`,
+    "Content-Disposition": `inline; filename="${contentType.startsWith("audio/") ? "voice.wav" : STAGE_4B3_MEDIA_STREAM_FILENAME}"`,
   };
+  if (contentType.startsWith("audio/")) {
+    headers["Accept-Ranges"] = "bytes";
+    if (typeof totalSize === "number") {
+      headers["Content-Length"] = String(totalSize);
+    }
+  }
+  return headers;
 }
 
 export function resolveConversationMessageBodyWithMedia(message: ConversationMessageDto): string {

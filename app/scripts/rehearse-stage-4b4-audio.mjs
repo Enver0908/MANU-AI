@@ -12,6 +12,8 @@ const targetedStage4B4Tests = [
   "src/lib/phase-85-stage-4b3-bundle-orchestration.test.ts",
   "src/lib/phase-85-stage-4b4-transcript-corrections.test.ts",
   "src/lib/phase-85-stage-4b4-transcript-correction-bounded.test.ts",
+  "src/lib/phase-85-stage-4b4-bounded-audio.test.ts",
+  "src/lib/phase-85-stage-4b4-media-range.test.ts",
   "src/lib/phase-85-stage-4b4-supabase-mappers.test.ts",
 ];
 

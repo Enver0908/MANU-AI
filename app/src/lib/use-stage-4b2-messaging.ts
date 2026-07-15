@@ -481,6 +481,33 @@ export function useStage4B2Messaging({
     [applyDetailResponse, mergeDetailIntoState],
   );
 
+  const submitTranscriptCorrection = useCallback(
+    async (
+      targetConversationId: string,
+      input: {
+        transcriptionId: string;
+        requestId: string;
+        expectedConversationRevision: number;
+        expectedTranscriptionRevision: number;
+        reasonCode: string;
+        explanation: string;
+        correctedTranscript: string;
+      },
+    ) => {
+      const payload = await requestJson<{
+        detail: ConversationDetailResponse;
+      }>(`/api/conversations/${encodeURIComponent(targetConversationId)}/voice-transcript-corrections`, {
+        method: "POST",
+        body: JSON.stringify(input),
+      });
+      applyDetailResponse(payload.detail, "replace");
+      mergeDetailIntoState(payload.detail);
+      setLastSuccessAt(new Date().toISOString());
+      consecutiveErrorsRef.current = 0;
+    },
+    [applyDetailResponse, mergeDetailIntoState],
+  );
+
   return {
     ...snapshot,
     refreshList,
@@ -492,6 +519,7 @@ export function useStage4B2Messaging({
     loadNewerMessages,
     markReadThroughSequence,
     submitVisualCorrection,
+    submitTranscriptCorrection,
     isRequestError: (error: unknown): error is AppRequestError => error instanceof AppRequestError,
   };
 }

@@ -26,6 +26,7 @@ import { ConversationHeader } from "./conversation-header";
 import { ConversationMessageBubble } from "./conversation-message-bubble";
 import { ConversationMediaPreviewModal } from "./conversation-message-media";
 import { ConversationVisualReviewPanel } from "./conversation-visual-review-panel";
+import { ConversationVoiceTranscriptReviewPanel } from "./conversation-voice-transcript-review-panel";
 import { ConversationComposer } from "./conversation-composer";
 import { ConversationDraftReviewPanel } from "./conversation-draft-review-panel";
 import { ConversationAiControlsStrip } from "./conversation-ai-controls-strip";
@@ -60,6 +61,7 @@ export function ConversationPanel({
   detailError,
   state,
   onSubmitVisualCorrection,
+  onSubmitTranscriptCorrection,
 }: {
   client: ClientRecord | null;
   conversation: ConversationSummaryDto;
@@ -95,6 +97,15 @@ export function ConversationPanel({
     expectedAnalysisRevision: number;
     reasonCode: string;
     explanation: string;
+  }) => Promise<void>;
+  onSubmitTranscriptCorrection?: (input: {
+    transcriptionId: string;
+    requestId: string;
+    expectedConversationRevision: number;
+    expectedTranscriptionRevision: number;
+    reasonCode: string;
+    explanation: string;
+    correctedTranscript: string;
   }) => Promise<void>;
 }) {
   const timelineRef = useRef<HTMLDivElement>(null);
@@ -256,6 +267,23 @@ export function ConversationPanel({
             onSubmit={async (input) => {
               if (!onSubmitVisualCorrection) return;
               await onSubmitVisualCorrection(input);
+            }}
+          />
+        ))}
+
+      {messages
+        .filter((message) => message.voiceTranscript?.correctionAllowed)
+        .slice(-1)
+        .map((message) => (
+          <ConversationVoiceTranscriptReviewPanel
+            key={`voice-review-${message.id}`}
+            message={message}
+            conversationRevision={conversation.revision}
+            uiLanguage={uiLanguage}
+            disabled={!onSubmitTranscriptCorrection || permissions?.isReadOnly}
+            onSubmit={async (input) => {
+              if (!onSubmitTranscriptCorrection) return;
+              await onSubmitTranscriptCorrection(input);
             }}
           />
         ))}

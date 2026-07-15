@@ -149,7 +149,6 @@ export const FORBIDDEN_CLIENT_AUDIO_DTO_KEYS = [
   "observation",
   "qualityDecision",
   "rejectionReasons",
-  "transcriptionRevision",
   "canonicalAudioHash",
 ] as const;
 
@@ -230,6 +229,7 @@ export type ConversationAudioDto = {
 
 export type ConversationVoiceTranscriptDto = {
   transcriptionId: string;
+  transcriptionRevision: number;
   status: "pending" | "accepted" | "corrected" | "review_required" | "failed" | "expired";
   transcriptText: string | null;
   correctionAllowed: boolean;
@@ -691,7 +691,7 @@ export function canAccessVoiceTranscriptCorrection(role: TenantRole): boolean {
 
 export function buildConversationVoiceTranscriptDto(input: {
   role: TenantRole;
-  transcription: Pick<AudioTranscriptionRecord, "id" | "status" | "observation" | "qualityDecision">;
+  transcription: Pick<AudioTranscriptionRecord, "id" | "status" | "observation" | "qualityDecision" | "transcriptionRevision">;
   latestCorrectionId: string | null;
   correctedTranscript?: string | null;
 }): ConversationVoiceTranscriptDto | null {
@@ -723,6 +723,7 @@ export function buildConversationVoiceTranscriptDto(input: {
 
   return {
     transcriptionId: input.transcription.id,
+    transcriptionRevision: input.transcription.transcriptionRevision,
     status,
     transcriptText,
     correctionAllowed: canAccessVoiceTranscriptCorrection(input.role) && (accepted || corrected),

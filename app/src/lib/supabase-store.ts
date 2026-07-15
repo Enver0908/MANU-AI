@@ -159,6 +159,7 @@ import {
 } from "./phase-85-stage-4b4-supabase-mappers";
 import { createEmptyStage4B4VoiceCollections } from "./phase-85-stage-4b4-voice-contracts";
 import { loadBoundedMediaProjectionFromSupabaseV2 } from "./phase-85-stage-4b3-bounded-media-rpc";
+import { loadBoundedVoiceProjectionFromSupabaseV1 } from "./phase-85-stage-4b4-bounded-audio-rpc";
 import { prepareSupabaseClientMediaDsar } from "./phase-85-stage-4b3-media-lifecycle-saga";
 import {
   mapInboundMessageBundle,
@@ -2678,6 +2679,13 @@ async function loadSupabaseConversationProjectionBundle(
     const messageIds = (bundle.messages ?? []).map((message) => message.id);
     if (conversationRow && messageIds.length > 0) {
       source.media = await loadBoundedMediaProjectionFromSupabaseV2({
+        supabase,
+        context,
+        conversationId,
+        clientId: conversationRow.client_id,
+        messageIds,
+      });
+      source.voice = await loadBoundedVoiceProjectionFromSupabaseV1({
         supabase,
         context,
         conversationId,

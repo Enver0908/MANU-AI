@@ -15,6 +15,7 @@ import type { SupportedLanguageCode } from "@/lib/languages";
 import { t } from "@/lib/i18n";
 import { Badge, ConfirmButton, TextareaInput } from "./shared";
 import { ConversationMessageMedia } from "./conversation-message-media";
+import { ConversationMessageAudio } from "./conversation-message-audio";
 
 export function ConversationMessageBubble({
   message,
@@ -77,6 +78,7 @@ export function ConversationMessageBubble({
           uiLanguage={uiLanguage}
           onOpenPreview={onOpenMediaPreview}
         />
+        {message.audio ? <ConversationMessageAudio audio={message.audio} uiLanguage={uiLanguage} /> : null}
         {isGreenDraft && showDraftControls ? (
           <div className="mt-3 border-t border-emerald-200 pt-3">
             <TextareaInput

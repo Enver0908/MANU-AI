@@ -44,6 +44,10 @@ import {
   filterStage4B3MediaProjectionForConversation,
   projectConversationMessageWithMedia,
 } from "./phase-85-stage-4b3-bounded-media";
+import {
+  buildStage4B4VoiceProjectionSourceFromState,
+  filterStage4B4VoiceProjectionForConversation,
+} from "./phase-85-stage-4b4-bounded-audio";
 
 export const STAGE_4B2_INBOX_UNREAD_DISPLAY_CAP = 99;
 export const STAGE_4B2_MESSAGING_PROJECTION_VERSION = "p85-stage-4b2-messaging-v1";
@@ -154,6 +158,7 @@ export function conversationProjectionSourceFromAppState(state: ManuAppState): C
     })),
     receipts: state.conversationReadReceipts,
     media: buildStage4B3MediaProjectionSourceFromState(state),
+    voice: buildStage4B4VoiceProjectionSourceFromState(state),
   };
 }
 
@@ -565,6 +570,9 @@ export function buildConversationDetailResponse(
   const conversationMedia = source.media
     ? filterStage4B3MediaProjectionForConversation(source.media, actor.tenantId, conversation.id)
     : undefined;
+  const conversationVoice = source.voice
+    ? filterStage4B4VoiceProjectionForConversation(source.voice, actor.tenantId, conversation.id)
+    : undefined;
 
   return {
     version: PHASE_85_STAGE_4B_2_API_VERSION,
@@ -576,6 +584,7 @@ export function buildConversationDetailResponse(
         actor,
         conversationMedia,
         projectConversationMessage(message),
+        conversationVoice,
       ),
     ),
     pagination: {

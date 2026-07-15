@@ -30,6 +30,7 @@ import {
   createInMemoryStage4B4AudioStorage,
   type Stage4B4AudioStoragePort,
 } from "./phase-85-stage-4b4-audio-storage";
+import { getFallbackStage4B4AudioStorage } from "./phase-85-stage-4b4-fallback-audio-storage";
 import {
   resolveAllowlistedStage4B4AudioFixtureBytes,
   type Stage4B4VoiceFixtureId,
@@ -160,7 +161,7 @@ export function createStage4B3LocalAdmissionRuntime(input?: {
       : createInMemoryStage4B3MediaTransport(registry),
     storage: getFallbackStage4B3MediaStorage(),
     audioTransport: createStage4B4DurableAudioTransport(),
-    audioStorage: input?.audioStorage ?? createInMemoryStage4B4AudioStorage(),
+    audioStorage: input?.audioStorage ?? getFallbackStage4B4AudioStorage(),
     transcriptionProvider:
       input?.transcriptionProvider ??
       createStage4B4MockTranscriptionProvider({ manifest: transcriptionManifest }),
