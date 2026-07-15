@@ -2502,6 +2502,18 @@ export async function runSupabaseStage4B3VisualSimulation(
   return loadSupabaseStateWithLastSimulation(simulation.state, context);
 }
 
+export async function runSupabaseStage4B4VoiceSimulation(
+  request: import("./phase-85-stage-4b4-voice-simulator").Stage4B4VoiceSimulationRequest,
+  context = demoTenantContext(),
+) {
+  const state = await loadSupabaseState(context);
+  const { runStage4B4VoiceSimulationInState } = await import("./phase-85-stage-4b4-voice-simulator");
+  const simulation = await runStage4B4VoiceSimulationInState(state, request, {
+    providedSecret: process.env.MANU_MOCK_WHATSAPP_WEBHOOK_SECRET ?? null,
+  });
+  return loadSupabaseStateWithLastSimulation(simulation.state, context);
+}
+
 export async function updateSupabaseHandoffStatus(
   handoffId: string,
   status: "resolved" | "dismissed",

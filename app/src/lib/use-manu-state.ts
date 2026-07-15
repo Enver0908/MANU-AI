@@ -229,6 +229,50 @@ export function useManuState() {
         setState(nextState);
         return nextState;
       },
+      runVoiceSimulation: async (input: {
+        clientId: string;
+        idempotencyKey: string;
+        fixtureId?: "golden_voice_note" | "stereo_voice_note";
+        transcriptionSceneId?: string;
+        burstMessages?: string[];
+        flushSilence?: boolean;
+      }) => {
+        const form = new FormData();
+        form.set("clientId", input.clientId);
+        form.set("idempotencyKey", input.idempotencyKey);
+        if (input.fixtureId) {
+          form.set("fixtureId", input.fixtureId);
+        }
+        if (input.transcriptionSceneId) {
+          form.set("transcriptionSceneId", input.transcriptionSceneId);
+        }
+        if (input.burstMessages?.length) {
+          form.set("burstMessages", input.burstMessages.join("\n"));
+        }
+        if (input.flushSilence === false) {
+          form.set("flushSilence", "false");
+        }
+
+        const response = await fetch("/api/simulator/voice", {
+          method: "POST",
+          body: form,
+        });
+
+        if (!response.ok) {
+          let code = `request_failed_${response.status}`;
+          try {
+            const body = await response.json();
+            if (body.error) code = body.error;
+          } catch {
+            // ignore parse errors
+          }
+          throw new AppRequestError(response.status, code);
+        }
+
+        const nextState = (await response.json()) as ManuAppState;
+        setState(nextState);
+        return nextState;
+      },
       sendManualReply: (input: { clientId: string; body: string }) => {
         const conversation = state.conversations.find((item) => item.clientId === input.clientId);
         if (!conversation) {

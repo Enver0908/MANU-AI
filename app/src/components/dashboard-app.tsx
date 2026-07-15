@@ -99,6 +99,7 @@ export function DashboardApp({
     activateClientAi,
     runSimulation: runSimulationRequest,
     runVisualSimulation: runVisualSimulationRequest,
+    runVoiceSimulation: runVoiceSimulationRequest,
     sendManualReply: sendManualReplyRequest,
     approveDraft,
     editAndSendDraft,
@@ -143,8 +144,16 @@ export function DashboardApp({
     useState<import("@/lib/phase-85-stage-4b3-vision-fixture-manifest").Stage4B3VisionFixtureSceneId>("meal_plate");
   const [visualImageFile, setVisualImageFile] = useState<File | null>(null);
   const [visualFlushSilence, setVisualFlushSilence] = useState(true);
+  const [voiceKey, setVoiceKey] = useState("voice-local-1");
+  const [voiceBurst, setVoiceBurst] = useState("Bu öğünü yedim\nTeşekkürler");
+  const [voiceFixtureId, setVoiceFixtureId] =
+    useState<import("@/lib/phase-85-stage-4b4-audio-fixture-resolver").Stage4B4VoiceFixtureId>("golden_voice_note");
+  const [voiceTranscriptionSceneId, setVoiceTranscriptionSceneId] =
+    useState<import("@/lib/phase-85-stage-4b4-transcription-fixture-manifest").Stage4B4TranscriptionFixtureSceneId>("meal_update_tr");
+  const [voiceFlushSilence, setVoiceFlushSilence] = useState(true);
   const [isSimulating, setIsSimulating] = useState(false);
   const [isVisualSimulating, setIsVisualSimulating] = useState(false);
+  const [isVoiceSimulating, setIsVoiceSimulating] = useState(false);
   const [newClientName, setNewClientName] = useState("");
   const [newClientChannel, setNewClientChannel] = useState<Channel>("whatsapp");
   const [newClientHandle, setNewClientHandle] = useState("");
@@ -404,7 +413,7 @@ export function DashboardApp({
   };
 
   const runSimulation = async () => {
-    if (!selectedClient || isSimulating || isVisualSimulating) return;
+    if (!selectedClient || isSimulating || isVisualSimulating || isVoiceSimulating) return;
     setIsSimulating(true);
     try {
       await runSimulationRequest({
@@ -419,7 +428,7 @@ export function DashboardApp({
   };
 
   const runVisualSimulation = async () => {
-    if (!selectedClient || isSimulating || isVisualSimulating) return;
+    if (!selectedClient || isSimulating || isVisualSimulating || isVoiceSimulating) return;
     setIsVisualSimulating(true);
     try {
       await runVisualSimulationRequest({
@@ -438,6 +447,28 @@ export function DashboardApp({
       navigateToSection("simulator");
     } finally {
       setIsVisualSimulating(false);
+    }
+  };
+
+  const runVoiceSimulation = async () => {
+    if (!selectedClient || isSimulating || isVisualSimulating || isVoiceSimulating) return;
+    setIsVoiceSimulating(true);
+    try {
+      await runVoiceSimulationRequest({
+        clientId: selectedClient.id,
+        idempotencyKey: voiceKey,
+        fixtureId: voiceFixtureId,
+        transcriptionSceneId: voiceTranscriptionSceneId,
+        burstMessages: voiceBurst
+          .split(/\r?\n/)
+          .map((line) => line.trim())
+          .filter(Boolean),
+        flushSilence: voiceFlushSilence,
+      });
+      setVoiceKey(`voice-sim-${Date.now()}`);
+      navigateToSection("simulator");
+    } finally {
+      setIsVoiceSimulating(false);
     }
   };
 
@@ -960,8 +991,14 @@ export function DashboardApp({
                 visualFixtureSceneId={visualFixtureSceneId}
                 visualImageFile={visualImageFile}
                 visualFlushSilence={visualFlushSilence}
+                voiceKey={voiceKey}
+                voiceBurst={voiceBurst}
+                voiceFixtureId={voiceFixtureId}
+                voiceTranscriptionSceneId={voiceTranscriptionSceneId}
+                voiceFlushSilence={voiceFlushSilence}
                 isSimulating={isSimulating}
                 isVisualSimulating={isVisualSimulating}
+                isVoiceSimulating={isVoiceSimulating}
                 onSelectClient={(clientId) => selectClient(clientId, { section: "simulator" })}
                 onSimBody={setSimBody}
                 onSimKey={setSimKey}
@@ -971,8 +1008,14 @@ export function DashboardApp({
                 onVisualFixtureSceneId={setVisualFixtureSceneId}
                 onVisualImageFile={setVisualImageFile}
                 onVisualFlushSilence={setVisualFlushSilence}
+                onVoiceKey={setVoiceKey}
+                onVoiceBurst={setVoiceBurst}
+                onVoiceFixtureId={setVoiceFixtureId}
+                onVoiceTranscriptionSceneId={setVoiceTranscriptionSceneId}
+                onVoiceFlushSilence={setVoiceFlushSilence}
                 onRun={runSimulation}
                 onRunVisual={runVisualSimulation}
+                onRunVoice={runVoiceSimulation}
                 onOpenConversation={() => navigateToSection("messages")}
               />
             )}

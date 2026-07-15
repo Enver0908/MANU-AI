@@ -780,6 +780,18 @@ export async function runFallbackStage4B3VisualSimulation(
   return result.state;
 }
 
+export async function runFallbackStage4B4VoiceSimulation(
+  request: import("./phase-85-stage-4b4-voice-simulator").Stage4B4VoiceSimulationRequest,
+) {
+  const state = getFallbackState();
+  const { runStage4B4VoiceSimulationInState } = await import("./phase-85-stage-4b4-voice-simulator");
+  const result = await runStage4B4VoiceSimulationInState(state, request, {
+    providedSecret: process.env.MANU_MOCK_WHATSAPP_WEBHOOK_SECRET ?? null,
+  });
+  saveFallbackState(result.state);
+  return result.state;
+}
+
 export async function runFallbackStage4B3WorkerTick() {
   const state = getFallbackState();
   const { runStage4B3LocalWorkerTick } = await import("./phase-85-stage-4b3-canonical-ingress");
