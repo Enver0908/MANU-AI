@@ -41,4 +41,4 @@ Executed on 2026-07-15:
 
 ## Handoff
 
-Next implementation work is Stage 4B-4 Phase 6: route accepted voice transcript text through the existing typed-message risk chain and atomic decision commit. Stage 4C remains blocked. Production pilot remains `NO-GO`; R-405 remains open; real STT/Meta egress remains closed.
+Next implementation work is Stage 4B-4 Phase 7: transcript correction, revision locks, and human-control rerun semantics. Stage 4C remains blocked. Production pilot remains `NO-GO`; R-405 remains open; real STT/Meta egress remains closed.

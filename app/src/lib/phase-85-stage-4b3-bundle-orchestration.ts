@@ -12,6 +12,11 @@ import { resolveMultimodalBundleUnderstanding } from "./phase-85-stage-4b3-multi
 import { commitAtomicBundleDecisionV2 } from "./phase-85-stage-4b3-atomic-bundle-decision";
 import { bundleHasDietitianReply } from "./phase-85-stage-4b3-message-bundles";
 import {
+  bundleShouldUseTypedTextRiskChain,
+  computeTypedBundleCoreResult,
+  isBundleEvaluationTextReady,
+} from "./phase-85-stage-4b4-voice-bundle-orchestration";
+import {
   prepareInboundTurnPipeline,
   type InboundCoreResult,
 } from "./simulator";
@@ -316,24 +321,42 @@ export async function runMultimodalBundleInboundTurn(
     conversationId: conversation.id,
     messageId: anchorMessage.id,
   });
+
+  const useTypedTextRiskChain =
+    bundleShouldUseTypedTextRiskChain(understanding.envelope) && isBundleEvaluationTextReady(evaluationText);
   const textRisk = classified.riskDecision.level;
-  const safety = evaluateMultimodalBundleSafetyChain({
-    understanding,
-    baseRiskDecision: {
-      level: textRisk,
-      reasons: classified.riskDecision.reasons,
-    },
-    textMessage: evaluationText,
-    clientAiMode: client.aiMode,
-  });
-  const contextManifest = buildBoundedVisualContextManifest({ envelope: understanding.envelope, safety });
-  const coreResult = mapMultimodalSafetyToCoreResult({
-    client,
-    conversation,
-    evaluationText,
-    safety,
-    contextManifest,
-  });
+  const safety = useTypedTextRiskChain
+    ? null
+    : evaluateMultimodalBundleSafetyChain({
+        understanding,
+        baseRiskDecision: {
+          level: textRisk,
+          reasons: classified.riskDecision.reasons,
+        },
+        textMessage: evaluationText,
+        clientAiMode: client.aiMode,
+      });
+  const contextManifest = useTypedTextRiskChain
+    ? null
+    : buildBoundedVisualContextManifest({ envelope: understanding.envelope, safety: safety! });
+  const coreResult: InboundCoreResult = useTypedTextRiskChain
+    ? await computeTypedBundleCoreResult({
+        state,
+        client,
+        conversation,
+        inboundMessage: anchorMessage,
+        envelope: understanding.envelope,
+        evaluationText,
+        classified,
+        now: input.now,
+      })
+    : mapMultimodalSafetyToCoreResult({
+        client,
+        conversation,
+        evaluationText,
+        safety: safety!,
+        contextManifest: contextManifest!,
+      });
 
   const now = input.now ?? new Date().toISOString();
   const prepared = await prepareInboundTurnPipeline({
@@ -342,7 +365,7 @@ export async function runMultimodalBundleInboundTurn(
     conversation,
     inboundMessage: anchorMessage,
     evaluationText,
-    riskDecisionOverride: safety.mergedRiskDecision,
+    riskDecisionOverride: useTypedTextRiskChain ? undefined : safety!.mergedRiskDecision,
     classified,
     now,
   });

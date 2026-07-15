@@ -210,6 +210,125 @@ export async function prepareInboundTurnPipeline(input: {
   return { blocked: false, state: stateAfterInboundInvalidation, classified };
 }
 
+function resolveInboundTurnRiskDecision(input: {
+  classified: Awaited<ReturnType<typeof classifySimulationRisk>>;
+  client: ClientRecord;
+  precomputedCoreResult?: CoreResult;
+}) {
+  const yellowHoldAtInbound = input.client.yellowRiskHold.status === "active" ? input.client.yellowRiskHold : null;
+  let riskDecision = input.precomputedCoreResult
+    ? {
+        ...input.classified.riskDecision,
+        level: input.precomputedCoreResult.risk,
+        reasons: input.precomputedCoreResult.reasons,
+      }
+    : input.classified.riskDecision;
+  if (!input.precomputedCoreResult && yellowHoldAtInbound && riskDecision.level !== "red") {
+    riskDecision = {
+      ...riskDecision,
+      level: "yellow" as const,
+      reasons: Array.from(new Set([...riskDecision.reasons, "yellow_hold_pending_context"])),
+    };
+  }
+  return riskDecision;
+}
+
+export async function computeInboundTurnCoreResult(input: {
+  state: ManuAppState;
+  client: ClientRecord;
+  conversation: ConversationRecord;
+  inboundMessage: MessageRecord;
+  evaluationText: string;
+  classified: Awaited<ReturnType<typeof classifySimulationRisk>>;
+  now?: string;
+  mockProviderOutput?: SimulationRequest["mockProviderOutput"];
+  mockProviderFailure?: SimulationRequest["mockProviderFailure"];
+}): Promise<InboundCoreResult> {
+  const now = input.now || new Date().toISOString();
+  const yellowHoldAtInbound = input.client.yellowRiskHold.status === "active" ? input.client.yellowRiskHold : null;
+  const riskDecision = resolveInboundTurnRiskDecision({
+    classified: input.classified,
+    client: input.client,
+  });
+  const promptClient = withPromptContext(
+    yellowHoldAtInbound
+      ? {
+          ...input.client,
+          aiStatus: yellowHoldAtInbound.previousAiStatus,
+          aiMode: yellowHoldAtInbound.previousAiMode,
+        }
+      : input.client,
+    input.state,
+  );
+  const priorConversationMessages = input.state.messages.filter(
+    (message) => message.conversationId === input.conversation.id && message.id !== input.inboundMessage.id,
+  );
+  const conversationCorpus = mapConversationMessagesForRetrieval(
+    input.state.messages,
+    input.state.tenant.id,
+    input.conversation.id,
+  );
+
+  return (await handleInboundMessage(
+    {
+      tenantId: input.state.tenant.id,
+      dietitian: input.state.dietitian,
+      client: promptClient,
+      conversation: input.conversation,
+      message: { id: input.inboundMessage.id, body: input.evaluationText },
+      recentMessages: priorConversationMessages,
+      conversationMessages: conversationCorpus,
+      memory: {
+        rollingSummary: input.conversation.rollingSummary,
+        memoryVersion: input.conversation.memoryVersion,
+        memoryRevision: input.conversation.memoryRevision,
+        durableFacts: {},
+      },
+      voiceProfile: getActiveVoiceProfile(input.state) || undefined,
+      styleEditHistorySignals: getStyleEditHistorySignals(input.state),
+      promptVersion: PROMPT_VERSION,
+      providerId: MOCK_PROVIDER_ID,
+      now,
+      riskDecisionOverride: riskDecision,
+      structuredFoodRules: buildStructuredFoodRulesFromClientState(input.state, input.client.id) || undefined,
+      foodRuleDecisionOverride:
+        evaluateClientFoodRuleDecision(input.state, input.client.id, input.evaluationText, {
+          riskLevel: riskDecision.level,
+          productIngredientEvidence: resolveProductIngredientEvidence(input.evaluationText) || undefined,
+        }) || undefined,
+      foodDecisionV2: (() => {
+        const decision = evaluateClientFoodDecisionV2FromState(input.state, input.client.id, input.evaluationText, {
+          riskLevel: riskDecision.level,
+          productIngredientEvidence: resolveProductIngredientEvidence(input.evaluationText) || undefined,
+        });
+        return shouldUseFoodDecisionV2Result(decision) ? decision : undefined;
+      })(),
+      productIngredientEvidence: resolveProductIngredientEvidence(input.evaluationText) || undefined,
+    },
+    {
+      generateReply: async (payload: Record<string, unknown>) => {
+        const payloadRiskDecision = payload.riskDecision as { level: string };
+        const promptContext = payload.promptContext as { segments: Array<{ type: string; text: string }> };
+        const responsePlan = (payload.contextManifest as { responsePlan?: { replyMode?: string } } | undefined)
+          ?.responsePlan;
+        if (!responsePlan || !isResponsePlanProviderEligible(responsePlan)) {
+          throw new MockProviderError("provider_policy_violation", "response_plan_required");
+        }
+        if (input.mockProviderOutput === "covenant_violation") {
+          return "As an AI, I cannot provide medical advice. Please consult your doctor.";
+        }
+        return generateMockProviderReply(
+          buildMockProviderInput(promptContext, payloadRiskDecision.level as AiDecisionRecord["risk"]),
+          {
+            failureMode: input.mockProviderFailure,
+            forceMissingHistoricalContext: input.mockProviderOutput === "missing_historical_context",
+          },
+        );
+      },
+    },
+  )) as InboundCoreResult;
+}
+
 export async function runInboundTurnCore(input: {
   state: ManuAppState;
   client: ClientRecord;
@@ -222,21 +341,6 @@ export async function runInboundTurnCore(input: {
 }): Promise<ManuAppState> {
   const { state, client, conversation, inboundMessage, evaluationText, request, classified } = input;
   const now = request.now || new Date().toISOString();
-  const yellowHoldAtInbound = client.yellowRiskHold.status === "active" ? client.yellowRiskHold : null;
-  let riskDecision = input.precomputedCoreResult
-    ? {
-        ...classified.riskDecision,
-        level: input.precomputedCoreResult.risk,
-        reasons: input.precomputedCoreResult.reasons,
-      }
-    : classified.riskDecision;
-  if (!input.precomputedCoreResult && yellowHoldAtInbound && riskDecision.level !== "red") {
-    riskDecision = {
-      ...riskDecision,
-      level: "yellow" as const,
-      reasons: Array.from(new Set([...riskDecision.reasons, "yellow_hold_pending_context"])),
-    };
-  }
 
   if (input.precomputedCoreResult) {
     return appendInboundCoreResult({
@@ -251,80 +355,17 @@ export async function runInboundTurnCore(input: {
     });
   }
 
-  const promptClient = withPromptContext(
-    yellowHoldAtInbound
-      ? {
-          ...client,
-          aiStatus: yellowHoldAtInbound.previousAiStatus,
-          aiMode: yellowHoldAtInbound.previousAiMode,
-        }
-      : client,
+  const coreResult = await computeInboundTurnCoreResult({
     state,
-  );
-
-  const priorConversationMessages = state.messages.filter(
-    (message) => message.conversationId === conversation.id && message.id !== inboundMessage.id,
-  );
-  const conversationCorpus = mapConversationMessagesForRetrieval(state.messages, state.tenant.id, conversation.id);
-
-  const coreResult = (await handleInboundMessage(
-    {
-      tenantId: state.tenant.id,
-      dietitian: state.dietitian,
-      client: promptClient,
-      conversation,
-      message: { id: inboundMessage.id, body: evaluationText },
-      recentMessages: priorConversationMessages,
-      conversationMessages: conversationCorpus,
-      memory: {
-        rollingSummary: conversation.rollingSummary,
-        memoryVersion: conversation.memoryVersion,
-        memoryRevision: conversation.memoryRevision,
-        durableFacts: {},
-      },
-      voiceProfile: getActiveVoiceProfile(state) || undefined,
-      styleEditHistorySignals: getStyleEditHistorySignals(state),
-      promptVersion: PROMPT_VERSION,
-      providerId: MOCK_PROVIDER_ID,
-      now,
-      riskDecisionOverride: riskDecision,
-      structuredFoodRules: buildStructuredFoodRulesFromClientState(state, client.id) || undefined,
-      foodRuleDecisionOverride:
-        evaluateClientFoodRuleDecision(state, client.id, evaluationText, {
-          riskLevel: riskDecision.level,
-          productIngredientEvidence: resolveProductIngredientEvidence(evaluationText) || undefined,
-        }) || undefined,
-      foodDecisionV2: (() => {
-        const decision = evaluateClientFoodDecisionV2FromState(state, client.id, evaluationText, {
-          riskLevel: riskDecision.level,
-          productIngredientEvidence: resolveProductIngredientEvidence(evaluationText) || undefined,
-        });
-        return shouldUseFoodDecisionV2Result(decision) ? decision : undefined;
-      })(),
-      productIngredientEvidence: resolveProductIngredientEvidence(evaluationText) || undefined,
-    },
-    {
-      generateReply: async (payload: Record<string, unknown>) => {
-        const payloadRiskDecision = payload.riskDecision as { level: string };
-        const promptContext = payload.promptContext as { segments: Array<{ type: string; text: string }> };
-        const responsePlan = (payload.contextManifest as { responsePlan?: { replyMode?: string } } | undefined)
-          ?.responsePlan;
-        if (!responsePlan || !isResponsePlanProviderEligible(responsePlan)) {
-          throw new MockProviderError("provider_policy_violation", "response_plan_required");
-        }
-        if (request.mockProviderOutput === "covenant_violation") {
-          return "As an AI, I cannot provide medical advice. Please consult your doctor.";
-        }
-        return generateMockProviderReply(
-          buildMockProviderInput(promptContext, payloadRiskDecision.level as AiDecisionRecord["risk"]),
-          {
-            failureMode: request.mockProviderFailure,
-            forceMissingHistoricalContext: request.mockProviderOutput === "missing_historical_context",
-          },
-        );
-      },
-    },
-  )) as CoreResult;
+    client,
+    conversation,
+    inboundMessage,
+    evaluationText,
+    classified,
+    now,
+    mockProviderOutput: request.mockProviderOutput,
+    mockProviderFailure: request.mockProviderFailure,
+  });
 
   return appendInboundCoreResult({
     state,
