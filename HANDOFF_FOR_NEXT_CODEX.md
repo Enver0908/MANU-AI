@@ -1,6 +1,6 @@
 # Handoff For Next Codex
 
-**Current authority (2026-07-15):** Stage 4B-4 Sesli Mesaj Guvenligi ve Transkripsiyon Orkestrasyonu Phase 8 is complete locally after Phase 7. Active plan: `docs/PHASE_85_STAGE_4B_4_SESLI_MESAJ_GUVENLIGI_VE_TRANSKRIPSIYON_ORK_PLAN.md`. Phase 8 evidence: `docs/PHASE_85_STAGE_4B_4_PHASE_8_BOUNDED_API_AUDIO_UI_EVIDENCE.md`. **Next:** Stage 4B-4 Phase 9 retention, DSAR, legal hold, and operational visibility. Stage 4C is blocked until Stage 4B-4 closes. Production remains `NO-GO`; R-405 remains open.
+**Current authority (2026-07-15):** Stage 4B-4 Sesli Mesaj Guvenligi ve Transkripsiyon Orkestrasyonu Phase 9 is complete locally after Phase 8. Active plan: `docs/PHASE_85_STAGE_4B_4_SESLI_MESAJ_GUVENLIGI_VE_TRANSKRIPSIYON_ORK_PLAN.md`. Phase 9 evidence: `docs/PHASE_85_STAGE_4B_4_PHASE_9_RETENTION_DSAR_LEGAL_HOLD_EVIDENCE.md`. **Next:** Stage 4B-4 Phase 10 simulator, golden corpus, red team, and scale rehearsal. Stage 4C is blocked until Stage 4B-4 closes. Production remains `NO-GO`; R-405 remains open.
 
 Pre-Stage-4B-4 Stage 4B-3 closure and Stage 4C-next paragraphs below this authority block are historical snapshots. Use the Stage 4B-4 plan as the current handoff.
 
@@ -8,7 +8,7 @@ Continuity audit, 2026-07-13: canonical status, repository-relative references, 
 
 ## Read This First
 
-Latest Phase 85 handoff (2026-07-15): **Stage 4B-4 Phase 8 bounded API, audio playback, and dietitian transcript review UI are complete locally.** Phase 8 evidence: `docs/PHASE_85_STAGE_4B_4_PHASE_8_BOUNDED_API_AUDIO_UI_EVIDENCE.md`. **Next work:** Stage 4B-4 Phase 9 retention, DSAR, legal hold, and operational visibility. Stage 4C is blocked until Stage 4B-4 closes; production pilot remains `NO-GO`; R-405 remains open; all real integration paths remain closed.
+Latest Phase 85 handoff (2026-07-15): **Stage 4B-4 Phase 9 retention, DSAR, legal hold, and operational visibility are complete locally.** Phase 9 evidence: `docs/PHASE_85_STAGE_4B_4_PHASE_9_RETENTION_DSAR_LEGAL_HOLD_EVIDENCE.md`. **Next work:** Stage 4B-4 Phase 10 simulator, golden corpus, red team, and scale rehearsal. Stage 4C is blocked until Stage 4B-4 closes; production pilot remains `NO-GO`; R-405 remains open; all real integration paths remain closed.
 
 Latest Phase 85 Stage 4B-3 Phase 4 status (2026-07-13): bundle correlation and silence queue complete locally. Evidence: `docs/PHASE_85_STAGE_4B_3_PHASE_4_BUNDLE_SILENCE_QUEUE_EVIDENCE.md`. Phase 5 subsequently completed; see the Phase 5 evidence above.
 

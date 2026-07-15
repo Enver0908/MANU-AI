@@ -27,6 +27,11 @@ const boundedAudioReadsMigration = readFileSync(
   "utf8",
 );
 
+const audioLifecycleMigration = readFileSync(
+  resolve(__dirname, "../../supabase/migrations/20260714200000_phase_85_stage_4b4_audio_lifecycle_bounded_reads.sql"),
+  "utf8",
+);
+
 const stage4B4Tables = [
   "audio_transcription_records",
   "audio_transcript_corrections",
@@ -123,6 +128,21 @@ describe("P85 Stage 4B-4 Phase 8 bounded audio reads migration", () => {
     expect(boundedAudioReadsMigration).toContain("sanitized_audio_object_key");
     expect(boundedAudioReadsMigration).toContain(
       "grant execute on function p85_stage_4b4_load_bounded_voice_v1",
+    );
+  });
+});
+
+describe("P85 Stage 4B-4 Phase 9 audio lifecycle migration", () => {
+  it("extends media deletion saga for audio keys, DSAR, and transcription evidence redaction", () => {
+    expect(audioLifecycleMigration).toContain("object_kind in ('full', 'thumbnail', 'audio')");
+    expect(audioLifecycleMigration).toContain("sanitized_audio_object_key = null");
+    expect(audioLifecycleMigration).toContain("p85_stage_4b4_process_due_audio_expiry_batch_v1");
+    expect(audioLifecycleMigration).toContain("p85_stage_4b4_resume_legal_hold_audio_deletions_v1");
+    expect(audioLifecycleMigration).toContain("p85_stage_4b4_redact_stale_audio_transcription_evidence_v1");
+    expect(audioLifecycleMigration).toContain("p85_stage_4b4_prepare_client_audio_dsar_v1");
+    expect(audioLifecycleMigration).toContain("excluded_voice_expired");
+    expect(audioLifecycleMigration).toContain(
+      "grant execute on function p85_stage_4b4_prepare_client_audio_dsar_v1",
     );
   });
 });

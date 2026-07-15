@@ -9,6 +9,11 @@ import {
   type Stage4B3MediaOrphanReport,
   STAGE_4B3_MEDIA_LIFECYCLE_VERSION,
 } from "./phase-85-stage-4b3-media-lifecycle";
+import {
+  collectMediaAssetAudioObjectKeys,
+  isVoiceMediaAsset,
+  redactAudioTranscriptionEvidenceForAssetInState,
+} from "./phase-85-stage-4b4-audio-lifecycle";
 import type { Stage4B3MediaStoragePort } from "./phase-85-stage-4b3-media-storage";
 import type { ManuAppState } from "./types";
 
@@ -21,7 +26,7 @@ export type MediaDeletionTerminalIntent = "expired" | "revoked";
 export type MediaPendingObjectKeyRecord = {
   assetId: string;
   objectKey: string;
-  objectKind: "full" | "thumbnail";
+  objectKind: "full" | "thumbnail" | "audio";
   terminalIntent: MediaDeletionTerminalIntent;
 };
 
@@ -59,12 +64,20 @@ export function prepareMediaAssetDeletionInState(
     return { state, pendingObjectKeys: [] };
   }
 
-  const pendingObjectKeys = collectMediaAssetObjectKeys(asset).map((objectKey) => ({
-    assetId: asset.id,
-    objectKey,
-    objectKind: objectKey === asset.thumbnailObjectKey ? ("thumbnail" as const) : ("full" as const),
-    terminalIntent,
-  }));
+  const pendingObjectKeys = [
+    ...collectMediaAssetObjectKeys(asset).map((objectKey) => ({
+      assetId: asset.id,
+      objectKey,
+      objectKind: objectKey === asset.thumbnailObjectKey ? ("thumbnail" as const) : ("full" as const),
+      terminalIntent,
+    })),
+    ...collectMediaAssetAudioObjectKeys(asset).map((objectKey) => ({
+      assetId: asset.id,
+      objectKey,
+      objectKind: "audio" as const,
+      terminalIntent,
+    })),
+  ];
 
   const nextAssets = state.mediaAssets.map((item) =>
     item.id === assetId
@@ -73,6 +86,7 @@ export function prepareMediaAssetDeletionInState(
           status: "deletion_pending" as MediaAssetStatus,
           sanitizedFullObjectKey: null,
           thumbnailObjectKey: null,
+          sanitizedAudioObjectKey: null,
           updatedAt: now,
         }
       : item,
@@ -87,20 +101,29 @@ export function prepareMediaAssetDeletionInState(
       ? {
           ...message,
           retrievalEligibility:
-            terminalIntent === "revoked" ? ("excluded_revoked" as const) : ("excluded_media_expired" as const),
+            terminalIntent === "revoked"
+              ? ("excluded_revoked" as const)
+              : isVoiceMediaAsset(asset)
+                ? ("excluded_voice_expired" as const)
+                : ("excluded_media_expired" as const),
           contentStatus: terminalIntent === "revoked" ? ("revoked" as const) : message.contentStatus,
           observedAt: now,
         }
       : message,
   );
 
+  let nextState: ManuAppState = {
+    ...state,
+    mediaAssets: nextAssets,
+    visualAnalysisRecords: nextAnalyses,
+    messages: nextMessages,
+  };
+  if (isVoiceMediaAsset(asset)) {
+    nextState = redactAudioTranscriptionEvidenceForAssetInState(nextState, assetId, now);
+  }
+
   return {
-    state: {
-      ...state,
-      mediaAssets: nextAssets,
-      visualAnalysisRecords: nextAnalyses,
-      messages: nextMessages,
-    },
+    state: nextState,
     pendingObjectKeys,
   };
 }

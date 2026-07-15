@@ -11,6 +11,11 @@ import {
   redactStage4B3MediaRecordsForClientInState,
 } from "./phase-85-stage-4b3-media-lifecycle";
 import { finalizePreparedClientMediaDeletionsInState } from "./phase-85-stage-4b3-media-lifecycle-saga";
+import {
+  purgeFallbackStage4B4AudioObjectKeys,
+  redactStage4B4AudioRecordsForClientInState,
+} from "./phase-85-stage-4b4-audio-lifecycle";
+import { finalizePreparedClientAudioDeletionsInState } from "./phase-85-stage-4b4-audio-lifecycle-saga";
 import { redactStructuredFoodRuleAnswers } from "./phase-76n-food-rule-lifecycle";
 import { redactClientFoodRuleProfileV2 } from "./phase-77e-client-food-rule-profile";
 import { redactClientMenuPlanV1 } from "./phase-77f-client-menu-plan";
@@ -327,8 +332,18 @@ function redactClientDataInState(
     client.id,
     now,
   );
-  purgeFallbackStage4B3MediaObjectKeys(objectKeys);
-  return finalizePreparedClientMediaDeletionsInState(withMediaRedaction, client.id, "revoked", now);
+  const imageObjectKeys = objectKeys.filter((objectKey) => !objectKey.endsWith("/voice.wav"));
+  const audioObjectKeysFromMedia = objectKeys.filter((objectKey) => objectKey.endsWith("/voice.wav"));
+  purgeFallbackStage4B3MediaObjectKeys(imageObjectKeys);
+  purgeFallbackStage4B4AudioObjectKeys(audioObjectKeysFromMedia);
+  const withMediaFinalized = finalizePreparedClientMediaDeletionsInState(withMediaRedaction, client.id, "revoked", now);
+  const { state: withAudioRedaction, objectKeys: audioObjectKeys } = redactStage4B4AudioRecordsForClientInState(
+    withMediaFinalized,
+    client.id,
+    now,
+  );
+  purgeFallbackStage4B4AudioObjectKeys(audioObjectKeys);
+  return finalizePreparedClientAudioDeletionsInState(withAudioRedaction, client.id, "revoked", now);
 }
 
 export function recordClientExportInState(state: ManuAppState, clientId: string): ManuAppState {

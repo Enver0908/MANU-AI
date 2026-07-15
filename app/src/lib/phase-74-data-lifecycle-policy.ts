@@ -41,6 +41,12 @@ import {
   STAGE_4B3_MEDIA_EXPORT_FILE,
   detectStage4B3MediaExportLeaks,
 } from "./phase-85-stage-4b3-media-lifecycle";
+import {
+  detectStage4B4VoiceTranscriptExportLeaks,
+  evaluateStage4B4AudioRedactionInvariants,
+  serializeStage4B4VoiceTranscriptExport,
+  STAGE_4B4_VOICE_EXPORT_FILE,
+} from "./phase-85-stage-4b4-audio-lifecycle";
 import type { LaunchGateEvidenceRecord } from "./launch-gates";
 import type { ClientRecord, ManuAppState, MessageRecord } from "./types";
 
@@ -202,6 +208,7 @@ export const PHASE_74_EXPORT_INCLUDED_FILES = [
   "channel_deliveries.jsonl",
   ...PHASE_85_IF_I_EXPORT_FILES,
   STAGE_4B3_MEDIA_EXPORT_FILE,
+  STAGE_4B4_VOICE_EXPORT_FILE,
   "checksums.sha256",
 ] as const;
 
@@ -421,6 +428,11 @@ export function evaluatePhase74RedactionInvariants(
     blockingReasons.push(...mediaInvariants.blockingReasons);
   }
 
+  const audioInvariants = evaluateStage4B4AudioRedactionInvariants(state, clientId);
+  if (!audioInvariants.passed) {
+    blockingReasons.push(...audioInvariants.blockingReasons);
+  }
+
   return {
     passed: blockingReasons.length === 0,
     blockingReasons,
@@ -537,11 +549,17 @@ export function buildPhase74ExportPackage(
       .join("\n"),
     ...serializeP85IfIExportFiles(exportData),
     [STAGE_4B3_MEDIA_EXPORT_FILE]: serializeStage4B3MediaExportMetadata(state, clientId),
+    [STAGE_4B4_VOICE_EXPORT_FILE]: serializeStage4B4VoiceTranscriptExport(state, clientId),
   };
 
   const mediaLeakCheck = detectStage4B3MediaExportLeaks(JSON.parse(files[STAGE_4B3_MEDIA_EXPORT_FILE]!));
   if (!mediaLeakCheck.passed) {
     throw new Error(`stage4b3_media_export_leak_detected:${mediaLeakCheck.failures.join(",")}`);
+  }
+
+  const voiceLeakCheck = detectStage4B4VoiceTranscriptExportLeaks(JSON.parse(files[STAGE_4B4_VOICE_EXPORT_FILE]!));
+  if (!voiceLeakCheck.passed) {
+    throw new Error(`stage4b4_voice_export_leak_detected:${voiceLeakCheck.failures.join(",")}`);
   }
 
   const manifest: Phase74ExportManifest = {

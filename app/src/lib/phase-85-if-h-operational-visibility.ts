@@ -5,6 +5,12 @@ import {
   detectStage4B3MediaOrphans,
   type Stage4B3MediaOperationalHealth,
 } from "./phase-85-stage-4b3-media-lifecycle";
+import { getFallbackStage4B4AudioStorage } from "./phase-85-stage-4b4-fallback-audio-storage";
+import {
+  buildStage4B4AudioOperationalHealth,
+  detectStage4B4AudioOrphans,
+  type Stage4B4AudioOperationalHealth,
+} from "./phase-85-stage-4b4-audio-lifecycle";
 import { isVerifiedBusinessHumanMessage } from "./phase-85-if-b-provenance-model";
 import { findActiveHumanControlSession } from "./phase-85-if-f-risk-reactivation";
 import { CONTEXT_INTAKE_STRUCTURED_PANEL_LINKS } from "./phase-85-if-g-context-intake";
@@ -96,19 +102,23 @@ export type OperationalFoundationInspectionDto = {
   quarantineRows: QuarantineInspectionRow[];
   trustBindings: ReturnType<typeof buildTrustBindingInspectionSummary>;
   mediaLifecycle: Stage4B3MediaOperationalHealth;
+  audioLifecycle: Stage4B4AudioOperationalHealth;
 };
 
 export function buildOperationalFoundationInspectionDto(
   state: ManuAppState,
   limit = 8,
 ): OperationalFoundationInspectionDto {
-  const storage = getFallbackStage4B3MediaStorage();
-  const orphanReport = detectStage4B3MediaOrphans(state, storage);
+  const mediaStorage = getFallbackStage4B3MediaStorage();
+  const audioStorage = getFallbackStage4B4AudioStorage();
+  const mediaOrphanReport = detectStage4B3MediaOrphans(state, mediaStorage);
+  const audioOrphanReport = detectStage4B4AudioOrphans(state, audioStorage);
   return {
     channelTrust: buildChannelTrustOperationalSnapshot(state),
     quarantineRows: buildQuarantineInspectionRows(state, limit),
     trustBindings: buildTrustBindingInspectionSummary(state),
-    mediaLifecycle: buildStage4B3MediaOperationalHealth(state, orphanReport),
+    mediaLifecycle: buildStage4B3MediaOperationalHealth(state, mediaOrphanReport),
+    audioLifecycle: buildStage4B4AudioOperationalHealth(state, audioOrphanReport),
   };
 }
 

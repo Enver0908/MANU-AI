@@ -119,6 +119,7 @@ export function finalizeExpiredMediaAsset(asset: MediaAssetRecord, now: string):
     providerMediaId: null,
     sanitizedFullObjectKey: null,
     thumbnailObjectKey: null,
+    sanitizedAudioObjectKey: null,
     deletedAt: now,
     updatedAt: now,
   };
@@ -131,6 +132,7 @@ export function finalizeRevokedMediaAsset(asset: MediaAssetRecord, now: string):
     providerMediaId: null,
     sanitizedFullObjectKey: null,
     thumbnailObjectKey: null,
+    sanitizedAudioObjectKey: null,
     deletedAt: now,
     updatedAt: now,
   };

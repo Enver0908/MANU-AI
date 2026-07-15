@@ -62,4 +62,4 @@ Executed on 2026-07-15:
 
 ## Handoff
 
-Next implementation work is Stage 4B-4 Phase 9: retention, DSAR, legal hold, and operational visibility. Stage 4C remains blocked. Production pilot remains `NO-GO`; R-405 remains open.
+Next implementation work is Stage 4B-4 Phase 10: simulator, golden corpus, red team, and scale rehearsal. Stage 4C remains blocked. Production pilot remains `NO-GO`; R-405 remains open.
