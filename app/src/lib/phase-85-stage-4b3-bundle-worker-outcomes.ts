@@ -54,6 +54,10 @@ export function isRetryableUnderstandingFailure(failureCode: string): boolean {
     failureCode === "bundle_not_processable" ||
     failureCode === "stale_bundle_revision" ||
     failureCode === "stale_conversation_revision" ||
-    failureCode === "bundle_context_missing"
+    failureCode === "bundle_context_missing" ||
+    failureCode === "media_asset_not_analysis_ready" ||
+    failureCode === "visual_analysis_not_ready" ||
+    failureCode === "voice_transcript_not_bridged" ||
+    failureCode === "voice_transcript_pending"
   );
 }

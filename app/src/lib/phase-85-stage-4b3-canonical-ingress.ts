@@ -42,6 +42,7 @@ import {
 } from "./phase-85-stage-4b4-transcription-fixture-manifest";
 import type { Stage4B4TranscriptionProviderPort } from "./phase-85-stage-4b4-transcription-provider";
 import { processStage4B4PendingTranscriptions } from "./phase-85-stage-4b4-transcription-worker";
+import { processStage4B4AcceptedTranscriptionBridges } from "./phase-85-stage-4b4-transcript-bridge";
 import type { WhatsAppMockWebhookResult } from "./whatsapp-mock-webhook";
 import { toWhatsAppMockWebhookResult } from "./whatsapp-mock-webhook";
 
@@ -396,6 +397,8 @@ export async function runStage4B3LocalWorkerTick(
       now,
     });
   }
+
+  workingState = processStage4B4AcceptedTranscriptionBridges(workingState, now);
 
   if (admission.visionProvider) {
     workingState = await processStage4B3PendingVisionAnalysis(workingState, {

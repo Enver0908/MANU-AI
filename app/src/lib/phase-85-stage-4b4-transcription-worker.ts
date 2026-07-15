@@ -4,6 +4,11 @@ import type { Stage4B4AudioStoragePort } from "./phase-85-stage-4b4-audio-storag
 import type { Stage4B4TranscriptionProviderPort } from "./phase-85-stage-4b4-transcription-provider";
 import { applyTranscriptQualityGate } from "./phase-85-stage-4b4-transcript-quality";
 import {
+  applyAcceptedTranscriptionBridge,
+  processStage4B4AcceptedTranscriptionBridges,
+  reconcileBundleForVoiceTranscriptionOutcome,
+} from "./phase-85-stage-4b4-transcript-bridge";
+import {
   COMMUNICATION_LANGUAGE_TO_LOCALE,
   parseAudioTranscriptionObservationV1,
   type AudioQualityCode,
@@ -189,19 +194,23 @@ export async function transcribeSinglePendingAudioRecord(
   });
 
   if (quality.terminalStatus === "accepted") {
-    return updateMediaAsset(workingState, asset.id, {
+    workingState = updateMediaAsset(workingState, asset.id, {
       status: "analysis_ready",
       failureCode: null,
       nextAttemptAt: null,
       updatedAt: completedAt,
     });
+    workingState = applyAcceptedTranscriptionBridge(workingState, transcriptionId, completedAt);
+    return workingState;
   }
 
-  return updateMediaAsset(workingState, asset.id, {
+  workingState = updateMediaAsset(workingState, asset.id, {
     status: "analysis_pending",
     failureCode: quality.rejectionReasons[0] ?? "overall_confidence_low",
     updatedAt: completedAt,
   });
+  workingState = reconcileBundleForVoiceTranscriptionOutcome(workingState, transcriptionId, completedAt);
+  return workingState;
 }
 
 function finalizeFailedTranscription(
@@ -239,6 +248,7 @@ function finalizeFailedTranscription(
         : message,
     ),
   };
+  workingState = reconcileBundleForVoiceTranscriptionOutcome(workingState, record.id, observedAt);
   return workingState;
 }
 
@@ -276,5 +286,5 @@ export async function processStage4B4PendingTranscriptions(
     workingState = await transcribeSinglePendingAudioRecord(workingState, record.id, options);
   }
 
-  return workingState;
+  return processStage4B4AcceptedTranscriptionBridges(workingState, now);
 }

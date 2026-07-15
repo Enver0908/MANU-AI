@@ -15,6 +15,7 @@ import {
   STAGE_4B4_MAX_BUNDLE_VOICE_DURATION_MS,
   STAGE_4B4_MAX_VOICE_NOTES_PER_BUNDLE,
 } from "./phase-85-stage-4b4-voice-contracts";
+import { evaluateInboundBundleDerivationReadiness } from "./phase-85-stage-4b4-transcript-bridge";
 import {
   defaultFailureCodeForBundleWorkerOutcome,
   mapBundleWorkerOutcomeToStatus,
@@ -97,6 +98,20 @@ export function promoteDueInboundBundles(state: ManuAppState, now: string): Manu
       if (new Date(bundle.readyAt).getTime() > new Date(now).getTime()) {
         return bundle;
       }
+
+      const derivation = evaluateInboundBundleDerivationReadiness(state, bundle);
+      if (derivation.status === "pending") {
+        return bundle;
+      }
+      if (derivation.status === "failed") {
+        return {
+          ...bundle,
+          status: "review_required",
+          failureCode: derivation.failureCode,
+          updatedAt: now,
+        };
+      }
+
       return {
         ...bundle,
         status: "ready",
@@ -136,8 +151,8 @@ export function openInboundMessageBundle(
     conversationRevisionAtOpen,
     itemCount: counts.itemCount,
     imageCount: counts.imageCount,
-    audioCount: 0,
-    audioDurationMs: 0,
+    audioCount: counts.audioCount,
+    audioDurationMs: counts.audioDurationMs,
     unicodeCodepointCount: counts.unicodeCodepointCount,
     retryCount: 0,
     nextAttemptAt: null,
@@ -617,7 +632,7 @@ function computeBundleCounts(item: Stage4B3BundleAppendInput) {
   };
 }
 
-function detectBundleOverflow(
+export function detectBundleOverflow(
   bundle: InboundMessageBundleRecord,
   nextCounts: {
     itemCount: number;

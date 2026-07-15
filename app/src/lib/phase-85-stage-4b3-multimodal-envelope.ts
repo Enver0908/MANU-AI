@@ -1,6 +1,10 @@
 import { conversationRevisionOrDefault } from "./phase-85-if-f-conversation-revision";
 import { STAGE_4B3_CLIENT_IMAGE_TRANSCRIPT_PLACEHOLDER } from "./phase-85-stage-4b3-media-admission";
 import {
+  isVoiceMessageBridged,
+} from "./phase-85-stage-4b4-transcript-bridge";
+import { STAGE_4B4_PLACEHOLDER_VOICE_MESSAGE_BODY } from "./phase-85-stage-4b4-voice-contracts";
+import {
   PHASE_85_STAGE_4B3_MEDIA_CONTRACT_VERSION,
   type InboundMessageBundleRecord,
   type MultimodalMessageEnvelope,
@@ -87,6 +91,19 @@ export function buildMultimodalMessageEnvelope(
     }
 
     if (item.itemType === "text") {
+      textSegments.push({
+        messageId: message.id,
+        body: message.body,
+        observedAt: item.observedAt,
+        replyToProviderMessageId: item.replyToProviderMessageId,
+      });
+      continue;
+    }
+
+    if (item.itemType === "voice") {
+      if (!isVoiceMessageBridged(message)) {
+        return { ok: false, failureCode: "voice_transcript_not_bridged" };
+      }
       textSegments.push({
         messageId: message.id,
         body: message.body,
@@ -246,7 +263,11 @@ function resolveTerminalVisualAnalysis(
 
 function extractCaptionFromMessage(message: MessageRecord): string | null {
   const body = message.body.trim();
-  if (!body || body === STAGE_4B3_CLIENT_IMAGE_TRANSCRIPT_PLACEHOLDER) {
+  if (
+    !body ||
+    body === STAGE_4B3_CLIENT_IMAGE_TRANSCRIPT_PLACEHOLDER ||
+    body === STAGE_4B4_PLACEHOLDER_VOICE_MESSAGE_BODY
+  ) {
     return null;
   }
   return body;

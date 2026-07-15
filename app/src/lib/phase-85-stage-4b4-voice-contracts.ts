@@ -278,6 +278,7 @@ export type Stage4B4VoiceStateSlice = {
   audioTranscriptCorrections: AudioTranscriptCorrectionRecord[];
   processedTranscriptCorrectionRequestIds: string[];
   transcriptCorrectionReplayByRequestId: Record<string, TranscriptCorrectionIdempotencyReplay>;
+  processedTranscriptBridgeKeys: string[];
 };
 
 const RISK_RANK: Record<RiskLevel, number> = {
@@ -302,6 +303,7 @@ export function createEmptyStage4B4VoiceCollections(): Stage4B4VoiceStateSlice {
     audioTranscriptCorrections: [],
     processedTranscriptCorrectionRequestIds: [],
     transcriptCorrectionReplayByRequestId: {},
+    processedTranscriptBridgeKeys: [],
   };
 }
 

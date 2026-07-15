@@ -1,8 +1,6 @@
-import sharp from "sharp";
 import { beforeAll, describe, expect, it } from "vitest";
 import { createInitialState, DEMO_TENANT_ID } from "./seed-data";
 import { processInboundWhatsAppChannelBatch } from "./phase-85-if-c-channel-event-ledger";
-import { hashMediaBytes } from "./phase-85-stage-4b3-image-admission";
 import {
   appendInboundBundleItem,
   computeBundleReadyAt,
@@ -12,11 +10,13 @@ import {
 } from "./phase-85-stage-4b3-message-bundles";
 import { processStage4B3DueInboundBundles } from "./phase-85-stage-4b3-media-worker";
 import { createInMemoryStage4B3MediaStorage } from "./phase-85-stage-4b3-media-storage";
+import { getFallbackStage4B3MockMediaRegistry } from "./phase-85-stage-4b3-fallback-media-registry";
 import {
-  createEmptyStage4B3MockMediaRegistry,
   createInMemoryStage4B3MediaTransport,
-  registerStage4B3MockMediaAsset,
 } from "./phase-85-stage-4b3-media-transport";
+import { createStage4B3MockVisionProvider } from "./phase-85-stage-4b3-mock-vision-provider";
+import type { Stage4B3AdmissionRuntime } from "./phase-85-if-c-channel-event-ledger";
+import { registerStage4B3FixtureMediaAsset } from "./phase-85-stage-4b3-canonical-ingress";
 import type { ChannelAccountBindingRecord } from "./types";
 
 const TEST_SECRET = "synthetic-ifc-test-secret";
@@ -34,6 +34,7 @@ function testEnv(): NodeJS.ProcessEnv {
     NODE_ENV: "test",
     MANU_ALLOW_MOCK_WHATSAPP_WEBHOOK: "true",
     MANU_MOCK_WHATSAPP_WEBHOOK_SECRET: TEST_SECRET,
+    MANU_ALLOW_MOCK_VISION: "true",
     MANU_DEV_FALLBACK_STORE: "true",
   } as NodeJS.ProcessEnv;
 }
@@ -179,29 +180,22 @@ describe("phase-85-stage-4b3-message-bundles", () => {
 });
 
 describe("phase-85-stage-4b3 bundle ingress integration", () => {
-  let validJpeg: Buffer;
-  let admissionRuntime: {
-    transport: ReturnType<typeof createInMemoryStage4B3MediaTransport>;
-    storage: ReturnType<typeof createInMemoryStage4B3MediaStorage>;
-    autoProcessPending: boolean;
-    autoProcessBundles: boolean;
-    workerId: string;
-  };
+  let bundleFixtureSha256: string;
+  let admissionRuntime: Stage4B3AdmissionRuntime;
 
   beforeAll(async () => {
     process.env.MANU_DEV_FALLBACK_STORE = "true";
-    validJpeg = await sharp({
-      create: { width: 320, height: 240, channels: 3, background: "#336699" },
-    })
-      .jpeg()
-      .toBuffer();
-
-    const registry = createEmptyStage4B3MockMediaRegistry();
-    registerStage4B3MockMediaAsset(registry, "MOCK_MEDIA_BUNDLE", validJpeg, "image/jpeg");
+    const fixture = await registerStage4B3FixtureMediaAsset({
+      sceneId: "meal_plate",
+      mediaId: "MOCK_MEDIA_BUNDLE",
+    });
+    bundleFixtureSha256 = fixture.contentSha256;
     admissionRuntime = {
-      transport: createInMemoryStage4B3MediaTransport(registry),
+      transport: createInMemoryStage4B3MediaTransport(getFallbackStage4B3MockMediaRegistry()),
       storage: createInMemoryStage4B3MediaStorage(),
+      visionProvider: createStage4B3MockVisionProvider({ manifest: fixture.manifest }),
       autoProcessPending: true,
+      autoProcessVision: true,
       autoProcessBundles: false,
       workerId: "bundle-test-worker",
     };
@@ -226,7 +220,7 @@ describe("phase-85-stage-4b3 bundle ingress integration", () => {
 
     const imageFirst = await processInboundWhatsAppChannelBatch(
       baseState(),
-      imagePayload("wamid.IMG_BUNDLE", "MOCK_MEDIA_BUNDLE", hashMediaBytes(validJpeg)),
+      imagePayload("wamid.IMG_BUNDLE", "MOCK_MEDIA_BUNDLE", bundleFixtureSha256),
       {
         providedSecret: TEST_SECRET,
         env: testEnv(),
@@ -248,7 +242,7 @@ describe("phase-85-stage-4b3 bundle ingress integration", () => {
     let state = baseState();
     const image = await processInboundWhatsAppChannelBatch(
       state,
-      imagePayload("wamid.IMG_RESET", "MOCK_MEDIA_BUNDLE", hashMediaBytes(validJpeg)),
+      imagePayload("wamid.IMG_RESET", "MOCK_MEDIA_BUNDLE", bundleFixtureSha256),
       {
         providedSecret: TEST_SECRET,
         env: testEnv(),
@@ -281,7 +275,7 @@ describe("phase-85-stage-4b3 bundle ingress integration", () => {
     let state = baseState();
     const image = await processInboundWhatsAppChannelBatch(
       state,
-      imagePayload("wamid.IMG_CLAIM", "MOCK_MEDIA_BUNDLE", hashMediaBytes(validJpeg)),
+      imagePayload("wamid.IMG_CLAIM", "MOCK_MEDIA_BUNDLE", bundleFixtureSha256),
       {
         providedSecret: TEST_SECRET,
         env: testEnv(),
@@ -318,7 +312,7 @@ describe("phase-85-stage-4b3 bundle ingress integration", () => {
     let state = baseState();
     const image = await processInboundWhatsAppChannelBatch(
       state,
-      imagePayload("wamid.IMG_SUPERSEDE", "MOCK_MEDIA_BUNDLE", hashMediaBytes(validJpeg)),
+      imagePayload("wamid.IMG_SUPERSEDE", "MOCK_MEDIA_BUNDLE", bundleFixtureSha256),
       {
         providedSecret: TEST_SECRET,
         env: testEnv(),
@@ -350,7 +344,7 @@ describe("phase-85-stage-4b3 bundle ingress integration", () => {
     let state = baseState();
     const image = await processInboundWhatsAppChannelBatch(
       state,
-      imagePayload("wamid.IMG_UNLIMITED", "MOCK_MEDIA_BUNDLE", hashMediaBytes(validJpeg)),
+      imagePayload("wamid.IMG_UNLIMITED", "MOCK_MEDIA_BUNDLE", bundleFixtureSha256),
       {
         providedSecret: TEST_SECRET,
         env: testEnv(),
@@ -387,14 +381,22 @@ describe("phase-85-stage-4b3 bundle ingress integration", () => {
   });
 
   it("marks a bundle review_required when image cap overflow is reached", async () => {
-    const registry = createEmptyStage4B3MockMediaRegistry();
-    for (let index = 1; index <= 5; index += 1) {
-      registerStage4B3MockMediaAsset(registry, `MOCK_MEDIA_OVERFLOW_${index}`, validJpeg, "image/jpeg");
+    const overflowManifest = (await registerStage4B3FixtureMediaAsset({
+      sceneId: "meal_plate",
+      mediaId: "MOCK_MEDIA_OVERFLOW_1",
+    })).manifest;
+    for (let index = 2; index <= 5; index += 1) {
+      await registerStage4B3FixtureMediaAsset({
+        sceneId: "meal_plate",
+        mediaId: `MOCK_MEDIA_OVERFLOW_${index}`,
+      });
     }
-    const overflowRuntime = {
-      transport: createInMemoryStage4B3MediaTransport(registry),
+    const overflowRuntime: Stage4B3AdmissionRuntime = {
+      transport: createInMemoryStage4B3MediaTransport(getFallbackStage4B3MockMediaRegistry()),
       storage: createInMemoryStage4B3MediaStorage(),
+      visionProvider: createStage4B3MockVisionProvider({ manifest: overflowManifest }),
       autoProcessPending: true,
+      autoProcessVision: true,
       autoProcessBundles: false,
       workerId: "bundle-overflow-worker",
     };
@@ -403,7 +405,7 @@ describe("phase-85-stage-4b3 bundle ingress integration", () => {
     for (let index = 1; index <= 5; index += 1) {
       const result = await processInboundWhatsAppChannelBatch(
         state,
-        imagePayload(`wamid.IMG_OVERFLOW_${index}`, `MOCK_MEDIA_OVERFLOW_${index}`, hashMediaBytes(validJpeg)),
+        imagePayload(`wamid.IMG_OVERFLOW_${index}`, `MOCK_MEDIA_OVERFLOW_${index}`, bundleFixtureSha256),
         {
           providedSecret: TEST_SECRET,
           env: testEnv(),
