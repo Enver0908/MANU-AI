@@ -455,7 +455,7 @@ export function buildDietitianCorrectionTranscriptionLineage(input: {
 export function isDietitianCorrectedTranscription(
   transcription: Pick<AudioTranscriptionRecord, "origin" | "supersedesTranscriptionId">,
 ): boolean {
-  return transcription.origin === "dietitian_correction" || transcription.supersedesTranscriptionId !== null;
+  return transcription.origin === "dietitian_correction" || transcription.supersedesTranscriptionId != null;
 }
 
 export function buildTranscriptionLineageFieldsFromObservation(input: {

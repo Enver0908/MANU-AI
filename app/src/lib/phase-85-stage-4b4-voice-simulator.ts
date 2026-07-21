@@ -11,12 +11,14 @@ import {
 import type { Stage4B4VoiceFixtureId } from "./phase-85-stage-4b4-audio-fixture-resolver";
 import { createStage4B4MockTranscriptionProvider } from "./phase-85-stage-4b4-mock-transcription-provider";
 import { STAGE_4B4_MOCK_VOICE_TRANSCRIPTION_ENV_FLAG } from "./phase-85-stage-4b4-provider-gate";
+import { STAGE_4B4_PLACEHOLDER_VOICE_MESSAGE_BODY } from "./phase-85-stage-4b4-voice-contracts";
 import {
   createStage4B4TranscriptionFixtureManifest,
   registerStage4B4TranscriptionFixtureHash,
   type Stage4B4TranscriptionFixtureSceneId,
 } from "./phase-85-stage-4b4-transcription-fixture-manifest";
 import { AppDomainError } from "./app-errors";
+import { runInboundSimulation } from "./simulator";
 import type { ManuAppState, SimulationResult } from "./types";
 
 export const STAGE_4B4_VOICE_SIMULATOR_VERSION = "p85-stage-4b4-voice-simulator-v1";
@@ -79,7 +81,12 @@ export async function runStage4B4VoiceSimulationInState(
   const fixtureId = request.fixtureId ?? "golden_voice_note";
   const fixture = registerStage4B4FixtureMediaAsset({ fixtureId });
   let manifest = createStage4B4TranscriptionFixtureManifest();
+  if (request.transcriptionSceneId) {
+    manifest = registerStage4B4TranscriptionFixtureHash(manifest, fixture.contentSha256, request.transcriptionSceneId);
+  }
   const admission = createStage4B3LocalAdmissionRuntime({
+    autoProcessAudioPending: false,
+    autoProcessTranscription: false,
     autoProcessBundles: false,
     workerId: "stage4b4-voice-simulator",
     transcriptionProvider: createStage4B4MockTranscriptionProvider({ env: testEnv(secret), manifest }),
@@ -133,7 +140,15 @@ export async function runStage4B4VoiceSimulationInState(
   let flushedSilence = false;
   if (request.flushSilence !== false) {
     const flushAt = computeBundleReadyAt(observedAt);
-    const asset = workingState.mediaAssets.find((entry) => entry.mediaKind === "audio");
+    admission.autoProcessTranscription = false;
+    workingState = await runStage4B3LocalWorkerTick(workingState, {
+      now: advanceIsoTimestamp(baseNow, 60_000),
+      env: options.env ?? testEnv(secret),
+      admission,
+      runOrchestration: false,
+      workerId: "stage4b4-voice-simulator-admission",
+    });
+    const asset = workingState.mediaAssets.find((entry) => entry.mediaKind === "audio" && entry.status !== "failed");
     if (asset?.contentSha256 && request.transcriptionSceneId) {
       manifest = registerStage4B4TranscriptionFixtureHash(manifest, asset.contentSha256, request.transcriptionSceneId);
       admission.transcriptionProvider = createStage4B4MockTranscriptionProvider({
@@ -141,6 +156,7 @@ export async function runStage4B4VoiceSimulationInState(
         manifest,
       });
     }
+    admission.autoProcessTranscription = true;
     workingState = await runStage4B3LocalWorkerTick(workingState, {
       now: flushAt,
       env: options.env ?? testEnv(secret),
@@ -148,6 +164,32 @@ export async function runStage4B4VoiceSimulationInState(
       runOrchestration: true,
       workerId: "stage4b4-voice-simulator",
     });
+    if (!workingState.lastSimulation) {
+      const bridgedVoiceMessage = [...workingState.messages].reverse().find(
+        (message) =>
+          message.sender === "client" &&
+          message.body.trim() &&
+          message.body !== STAGE_4B4_PLACEHOLDER_VOICE_MESSAGE_BODY &&
+          workingState.mediaAssets.some(
+            (asset) => asset.mediaKind === "audio" && asset.messageId === message.id && asset.status === "analysis_ready",
+          ),
+      );
+      const acceptedTranscript = [...workingState.audioTranscriptionRecords].reverse().find(
+        (record) =>
+          record.clientId === request.clientId &&
+          record.status === "accepted" &&
+          record.observation?.transcriptText.trim(),
+      );
+      const typedBridgeBody = bridgedVoiceMessage?.body ?? acceptedTranscript?.observation?.transcriptText ?? null;
+      if (typedBridgeBody) {
+        workingState = await runInboundSimulation(workingState, {
+          clientId: request.clientId,
+          body: typedBridgeBody,
+          idempotencyKey: `voice-sim-typed-bridge-${request.idempotencyKey}`,
+          now: flushAt,
+        });
+      }
+    }
     flushedSilence = true;
   }
 

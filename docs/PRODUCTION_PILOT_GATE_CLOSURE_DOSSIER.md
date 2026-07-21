@@ -1,6 +1,6 @@
 # MANU-AI Production Pilot Gate Closure Dossier
 
-Phase 85 Stage 4B-4 post-closure remediation R0, 2026-07-15: Stage 4B-4 Phase 11 local closure evidence is historical and no longer authorizes Stage 4C. Active authority is `docs/PHASE_85_STAGE_4B_4_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`; R0 evidence is `docs/PHASE_85_STAGE_4B_4_POST_CLOSURE_REMEDIATION_R0_EVIDENCE.md`. Stage 4C remains blocked until R9 produces a fresh complete PASS. No production gate is closed by this result; production remains `NO-GO`, R-405 remains open, and real provider/channel/STT/health-data paths remain disabled.
+Phase 85 Stage 4B-4 post-closure remediation R9, 2026-07-18: Stage 4B-4 post-closure remediation R0-R9 is closed locally with measured R9 evidence at `docs/PHASE_85_STAGE_4B_4_POST_CLOSURE_REMEDIATION_R9_EVIDENCE.md`. Stage 4C planning/read-gate work is authorized for the local prototype. No production gate is closed by this result; production remains `NO-GO`, R-405 remains open, and real provider/channel/STT/health-data paths remain disabled.
 
 Phase 85 Stage 4B-3 Phase 0 documentation lock, 2026-07-13: Stage 4B-3 Multimodal Gorsel Guvenligi ve Yanit Orkestrasyonu is inserted before Stage 4C to close visual-message safety locally. Canonical plan: `docs/PHASE_85_STAGE_4B_3_MULTIMODAL_GORSEL_GUVENLIGI_VE_YANIT_ORK_PLAN.md`. No production gate is closed by this result; production remains `NO-GO`, R-405 remains open, and real integration paths remain closed. Any older Stage 4C next-step text in this dossier is historical until Stage 4B-3 closes.
 
@@ -313,11 +313,11 @@ Planning completion is not implementation, deployment, provider/channel approval
 
 ## Stage 4B-4 Post-Closure Remediation R0 - 2026-07-15
 
-Stage 4B-4 Phase 11 local closure evidence is historical and no longer authorizes Stage 4C. Post-closure remediation R0 reopened voice-message risks `R-451` through `R-461`, made `docs/PHASE_85_STAGE_4B_4_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md` the active authority, and blocked Stage 4C until R9 produces a fresh complete PASS. This does not close any production gate, approve real STT/provider/channel egress, process real health data, resolve R-405, or change production pilot `NO-GO`.
+Stage 4B-4 Phase 11 local closure evidence is historical and no longer authorizes Stage 4C. Post-closure remediation R0 reopened voice-message risks `R-451` through `R-461`; remediation R9 then produced the fresh complete local PASS, reconciled those risks as locally mitigated, and became the active Stage 4C authorization artifact. This does not close any production gate, approve real STT/provider/channel egress, process real health data, resolve R-405, or change production pilot `NO-GO`.
 
 ## Stage 4B-2 Closure Gate Note - 2026-07-12
 
-Stage 4B-2 Mesajlaşma Phases 0–11 are complete locally. Its initial 35-skipped RLS snapshot was subsequently superseded by R7 zero-skip RLS/SQL evidence and advisory hardening. Current authority: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`. This is not a production gate closure: no provider/channel is approved, no R-405 decision is changed, and production pilot remains `NO-GO`. This Stage 4B-2 handoff is historical; Stage 4B-4 post-closure remediation is now active before Stage 4C.
+Stage 4B-2 Mesajlaşma Phases 0–11 are complete locally. Its initial 35-skipped RLS snapshot was subsequently superseded by R7 zero-skip RLS/SQL evidence and advisory hardening. Historical authority: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`. This is not a production gate closure: no provider/channel is approved, no R-405 decision is changed, and production pilot remains `NO-GO`. Stage 4B-3 and Stage 4B-4 subsequently closed through R9; Stage 4C is current.
 
 ## Stage 4B-2 Phase 0 Gate Note - 2026-07-12
 

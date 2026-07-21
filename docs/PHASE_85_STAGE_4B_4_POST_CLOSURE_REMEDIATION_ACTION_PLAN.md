@@ -1,9 +1,9 @@
 # Phase 85 Stage 4B-4 Post-Closure Remediation Action Plan
 
 Date opened: 2026-07-15
-Status: **R8 complete; remediation active; Stage 4C blocked**
+Status: **R9 complete; remediation closed locally; Stage 4C read gate authorized**
 
-This document is the active authority after the post-closure audit of the local Stage 4B-4 voice-message implementation. The original Stage 4B-4 plan and Phase 11 closure evidence remain historical records. Stage 4C authorization is revoked until R9 produces a fresh complete PASS.
+This document is the active authority after the post-closure audit of the local Stage 4B-4 voice-message implementation. The original Stage 4B-4 plan and Phase 11 closure evidence remain historical records. R9 produced the fresh complete local PASS on 2026-07-18, so Stage 4C planning/read-gate work and user-approved implementation are authorized again.
 
 ## Decision
 
@@ -60,6 +60,10 @@ R7 is complete. Evidence: `docs/PHASE_85_STAGE_4B_4_POST_CLOSURE_REMEDIATION_R7_
 
 R8 is complete. Evidence: `docs/PHASE_85_STAGE_4B_4_POST_CLOSURE_REMEDIATION_R8_EVIDENCE.md`.
 
+R9 is complete. Evidence: `docs/PHASE_85_STAGE_4B_4_POST_CLOSURE_REMEDIATION_R9_EVIDENCE.md`.
+
 ## R9 Closure Gate
 
-R9 may close only when all R1-R8 phases have evidence, local verification is complete with no skipped required checks, voice risks are reconciled from measured evidence, and active handoff documents are updated from remediation to Stage 4C. Until that file exists and passes, Stage 4C remains blocked.
+R9 may close only when all R1-R8 phases have evidence, local verification is complete with no skipped required checks, voice risks are reconciled from measured evidence, and active handoff documents are updated from remediation to Stage 4C.
+
+R9 closed on 2026-07-18 with local Supabase RLS 41/41 and 0 skipped, full-scale Stage 4B-4 closure, release verification, build, lint, visual acceptance, channel replay, app/core tests, and dependency audit limited to known R-405. Stage 4C read gate is authorized. Production remains `NO-GO`; R-405 remains open; real WhatsApp, Telegram, Gemini/external LLM, real STT, production webhook, monitoring, secret-manager, billing, and real client health-data paths remain disabled.

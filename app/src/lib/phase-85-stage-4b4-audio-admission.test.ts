@@ -65,6 +65,7 @@ describe("phase 85 stage 4b-4 audio admission", () => {
     const audioStorage = createInMemoryStage4B4AudioStorage();
     const admission = createStage4B3LocalAdmissionRuntime({
       autoProcessAudioPending: false,
+      autoProcessTranscription: false,
       autoProcessPending: false,
       autoProcessVision: false,
       autoProcessBundles: false,

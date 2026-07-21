@@ -1,11 +1,15 @@
 # Phase 85 Stage 4B-4 - Phase 11 Measured Closure, Risk Reconciliation, and Stage 4C Handoff Evidence
 
 Date: 2026-07-15
-Status: **Historical Phase 11 closure evidence; superseded by Stage 4B-4 post-closure remediation R0**
+Status: **Historical Phase 11 closure evidence; superseded by Stage 4B-4 post-closure remediation R9**
 
 ## Supersession Notice - 2026-07-15
 
-This file remains a historical record of the Phase 11 local closure commands and observations. It is no longer an active Stage 4C authorization artifact. Stage 4B-4 post-closure remediation R0 reopened the closure, revoked Stage 4C authorization, and made `docs/PHASE_85_STAGE_4B_4_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md` the active authority. Stage 4C remains blocked until remediation R9 produces a fresh complete PASS.
+This file remains a historical record of the Phase 11 local closure commands and observations. It is no longer an active Stage 4C authorization artifact. Stage 4B-4 post-closure remediation R0 reopened the closure, revoked Stage 4C authorization, and made `docs/PHASE_85_STAGE_4B_4_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md` the active authority. Stage 4C remained blocked until remediation R9 produced a fresh complete PASS on 2026-07-18.
+
+## R9 Resupersession Notice - 2026-07-18
+
+Stage 4B-4 post-closure remediation R9 produced the fresh complete local PASS and is now the active Stage 4C authorization artifact. Use `docs/PHASE_85_STAGE_4B_4_POST_CLOSURE_REMEDIATION_R9_EVIDENCE.md` for the current handoff. This Phase 11 file remains historical only.
 
 ## Scope
 
@@ -66,7 +70,7 @@ Current remediation status: R0 reopens `R-451` through `R-461` until R9 produces
 
 Historical authorized next step: **Stage 4C - Diyetisyen Icin AI Chat** planning/read gate and user-approved implementation.
 
-Current authorized next step: **Stage 4B-4 post-closure remediation R1 - domain contracts, lineage, and database invariants**. Stage 4C read gate and implementation are blocked until R9.
+Current authorized next step after R9: **Stage 4C - Diyetisyen Icin AI Chat** planning/read gate and user-approved implementation. Use `docs/PHASE_85_STAGE_4B_4_POST_CLOSURE_REMEDIATION_R9_EVIDENCE.md` as the active authorization artifact.
 
 Required carry-forward constraints:
 

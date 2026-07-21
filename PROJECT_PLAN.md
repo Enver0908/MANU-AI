@@ -1,8 +1,8 @@
 # MANU-AI Project Plan v2
 
-**Current authority (2026-07-15):** Stage 4B-4 post-closure remediation is active. Active plan: `docs/PHASE_85_STAGE_4B_4_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. R0 evidence: `docs/PHASE_85_STAGE_4B_4_POST_CLOSURE_REMEDIATION_R0_EVIDENCE.md`. The Phase 11 closure evidence remains historical and is superseded as a Stage 4C authorization artifact. **Next:** Stage 4B-4 remediation R1 - domain contracts, lineage, and database invariants. Stage 4C read gate and implementation are blocked until R9 produces a fresh complete PASS. Production remains `NO-GO`; R-405 remains open.
+**Current authority (2026-07-18):** Stage 4B-4 post-closure remediation R0-R9 is closed locally. Active evidence: `docs/PHASE_85_STAGE_4B_4_POST_CLOSURE_REMEDIATION_R9_EVIDENCE.md`; active plan: `docs/PHASE_85_STAGE_4B_4_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. The original Phase 11 closure evidence remains historical, but R9 is now the Stage 4C authorization artifact. **Next:** Stage 4C - Diyetisyen Icin AI Chat planning/read gate and user-approved implementation. Production remains `NO-GO`; R-405 remains open.
 
-Current continuity status, 2026-07-15: Stage 4B-2 R0-R7, local RLS re-closure, advisory hardening, and Stage 4B-3 post-closure remediation R0-R9 are complete locally. Stage 4B-4 is reopened for post-closure remediation R0-R9 before Stage 4C. Stage 4C read gate and implementation are blocked until Stage 4B-4 remediation R9 closes with a fresh complete PASS. Production remains `NO-GO` and R-405 remains open.
+Current continuity status, 2026-07-18: Stage 4B-2 R0-R7, local RLS re-closure, advisory hardening, Stage 4B-3 post-closure remediation R0-R9, and Stage 4B-4 post-closure remediation R0-R9 are complete locally. Stage 4C read gate is authorized after Stage 4B-4 R9 verification, evidence closure, and risk reconciliation. Production remains `NO-GO` and R-405 remains open.
 
 ## Confidence Position
 
@@ -12,9 +12,9 @@ No serious health-data SaaS plan can be guaranteed with literal 100 percent cert
 
 Current commercial/frontend status, 2026-07-03: Phase 84A-84J is complete for the hosted commercial sandbox path. Phase 84I verified VPS onboarding/dashboard through generated token-hash fallback; Phase 84J enabled Resend custom SMTP through Porkbun DNS, added fragment-session bridging for real Supabase email links, and verified a real inbox magic-link click reaching `https://siriusai.store/dashboard`. Verification passed with targeted auth/session tests 7/7, earlier auth/onboarding targeted tests 19/19, production build locally, production build on VPS, and PM2 online. R-425 is mitigated in the hosted sandbox path.
 
-Historical Stage 4B-2 advisory hardening closure, 2026-07-13: the separate Supabase advisory for RLS-disabled `conversation_mutation_idempotency` and `personas` is closed locally by append-only migration `20260713030000_phase_85_stage_4b2_security_advisory_rls_hardening.sql`. Both tables are RLS-enabled, direct `anon`/`authenticated` grants are removed, no direct-user policies were added, and service-role mediated internal behavior is preserved. Evidence: `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`. Stage 4B-2 R0-R7 remain closed locally; Stage 4B-3 subsequently closed and Stage 4B-4 post-closure remediation is now active. Production pilot remains `NO-GO`; R-405 remains open; real provider/channel/health-data paths remain closed.
+Historical Stage 4B-2 advisory hardening closure, 2026-07-13: the separate Supabase advisory for RLS-disabled `conversation_mutation_idempotency` and `personas` is closed locally by append-only migration `20260713030000_phase_85_stage_4b2_security_advisory_rls_hardening.sql`. Both tables are RLS-enabled, direct `anon`/`authenticated` grants are removed, no direct-user policies were added, and service-role mediated internal behavior is preserved. Evidence: `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`. Stage 4B-2 R0-R7 remain closed locally; Stage 4B-3 and Stage 4B-4 subsequently closed through R9, and Stage 4C is current. Production pilot remains `NO-GO`; R-405 remains open; real provider/channel/health-data paths remain closed.
 
-Historical Stage 4B-2 remediation closure, 2026-07-13: R0-R7 are complete locally. Docker Desktop/local Supabase reset passed, `npm run test:rls` passed 35/35 with 0 skipped, and real PostgreSQL list/detail buffer plans were captured and evaluated with R2 bounded SQL and R5 10k scale evidence. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. Stage 4B-3 subsequently closed and Stage 4B-4 post-closure remediation is now active. Production pilot remains `NO-GO`; R-405 remains open; real provider/channel/health-data paths remain closed.
+Historical Stage 4B-2 remediation closure, 2026-07-13: R0-R7 are complete locally. Docker Desktop/local Supabase reset passed, `npm run test:rls` passed 35/35 with 0 skipped, and real PostgreSQL list/detail buffer plans were captured and evaluated with R2 bounded SQL and R5 10k scale evidence. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. Stage 4B-3 and Stage 4B-4 subsequently closed through R9, and Stage 4C is current. Production pilot remains `NO-GO`; R-405 remains open; real provider/channel/health-data paths remain closed.
 
 Current redesign status, 2026-07-07: Phase 85A opened `docs/PHASE_85_FRONTEND_REDESIGN_AND_DESIGN_SYSTEM_SPEC.md` for a full SiriusAI frontend redesign. The approved direction is warm clinical SaaS, with design system -> public website/onboarding -> dashboard/PWA as the implementation order. Palette, typography, density, shape language, and visual-asset direction are locked in the spec. This is documentation-only; no runtime frontend code changed and production pilot remains `NO-GO`.
 
@@ -1487,7 +1487,7 @@ The closure evidence is recorded in `docs/PHASE_85_IF_REMEDIATION_POST_CLOSURE_A
 
 The Stage 4B architecture is frozen in `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_ACTION_PLAN.md`. Alerts are read-only projections of `yellowRiskHold` and `redRiskLock`; notifications are structured event facts with personal receipt state. The design preserves P85-IF authority, provenance, activation concurrency, lifecycle, access, and export boundaries. Red closure reuses the atomic activation RPC/API and does not introduce a second handoff-resolution workflow.
 
-Delivery order is Stage 4B (complete 2026-07-12) -> Stage 4B-2 Mesajlasma (complete 2026-07-12) -> Stage 4B-3 (Phase 1 complete 2026-07-13) -> Stage 4C (blocked until Stage 4B-3 closes). Evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md`, `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`, and `docs/PHASE_85_STAGE_4B_3_PHASE_1_DOMAIN_TYPE_CONTRACT_EVIDENCE.md`. This planning lock changes no production readiness gate.
+Historical delivery checkpoint: Stage 4B was complete on 2026-07-12, Stage 4B-2 Mesajlasma was complete on 2026-07-12, and Stage 4B-3 Phase 1 was complete on 2026-07-13. Stage 4B-3 and the later Stage 4B-4 have since closed through R9; Stage 4C is current. Evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md`, `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`, and `docs/PHASE_85_STAGE_4B_3_PHASE_1_DOMAIN_TYPE_CONTRACT_EVIDENCE.md`. This planning lock changes no production readiness gate.
 
 ## Phase 85 Stage 4B-2 Closure - 2026-07-12
 
@@ -1499,7 +1499,7 @@ The Stage 4B implementation was audited against the approved plan before handoff
 
 ## Phase 85 Stage 4B-2 Phase 0 Documentation Lock - 2026-07-12
 
-Historical Phase 0 checkpoint: `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md` locked the messaging contract before runtime work. Phases 1-11 and remediation R0-R7 subsequently closed. This is not an active handoff; Stage 4B-4 is current before Stage 4C. Production pilot remains `NO-GO`; R-405 remains open.
+Historical Phase 0 checkpoint: `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md` locked the messaging contract before runtime work. Phases 1-11 and remediation R0-R7 subsequently closed. This is not an active handoff; Stage 4B-3 and Stage 4B-4 subsequently closed through R9, and Stage 4C is current. Production pilot remains `NO-GO`; R-405 remains open.
 
 ## Phase 85 Stage 4B-2 Phase 1 Domain/DTO/Authorization Closure - 2026-07-12
 
@@ -1510,7 +1510,7 @@ R0 is complete as a documentation-only remediation lock. The next authorized wor
 
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
 
-Historical R1 checkpoint: the Stage 4B-2 domain/DTO/permission projection contract was corrected. R2-R7 subsequently closed; Stage 4B-4 is current before Stage 4C. Production pilot remains `NO-GO`.
+Historical R1 checkpoint: the Stage 4B-2 domain/DTO/permission projection contract was corrected. R2-R7 subsequently closed; Stage 4B-3 and Stage 4B-4 later closed through R9, and Stage 4C is current. Production pilot remains `NO-GO`.
 
 ## Phase 85 Stage 4B-2 Post-Closure Remediation R2 - 2026-07-12
 
