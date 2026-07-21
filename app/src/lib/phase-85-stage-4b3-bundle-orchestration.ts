@@ -119,7 +119,7 @@ export function mapMultimodalSafetyToCoreResult(input: {
   safety: Stage4B3MultimodalSafetyChain;
   contextManifest: Record<string, unknown>;
 }): InboundCoreResult {
-  const { client, conversation, evaluationText, safety, contextManifest } = input;
+  const { client, safety, contextManifest } = input;
   const mergedRisk = safety.mergedRiskDecision.level;
   const reasons = [...safety.mergedRiskDecision.reasons];
 

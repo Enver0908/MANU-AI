@@ -1,6 +1,5 @@
 import { PHASE_74_REDACTION_MARKER } from "./data-governance";
 import {
-  finalizeMediaAssetDeletionInState,
   prepareMediaAssetDeletionInState,
   processDueStage4B3MediaExpirySagaInState,
 } from "./phase-85-stage-4b3-media-lifecycle-saga";

@@ -63,6 +63,7 @@ describe("phase 84f admin console", () => {
     expect(shouldRewriteAdminHostPath("/favicon.ico")).toBe(false);
     expect(resolveAdminHostInternalPath("/")).toBe("/admin");
     expect(resolveAdminHostInternalPath("/leads")).toBe("/admin");
+    expect(resolveAdminHostInternalPath("/admin/leads")).toBe("/admin/leads");
     expect(JSON.stringify(summarizePhase84fAdminConsole())).toContain("/admin");
   });
 });

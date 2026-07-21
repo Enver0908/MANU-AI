@@ -26,10 +26,7 @@ import { processStage4B3PendingMediaAssets } from "./phase-85-stage-4b3-media-ad
 import { processStage4B3DueInboundBundles } from "./phase-85-stage-4b3-media-worker";
 import { processStage4B3PendingVisionAnalysis } from "./phase-85-stage-4b3-vision-analysis";
 import { createStage4B4DurableAudioTransport } from "./phase-85-stage-4b4-audio-transport";
-import {
-  createInMemoryStage4B4AudioStorage,
-  type Stage4B4AudioStoragePort,
-} from "./phase-85-stage-4b4-audio-storage";
+import type { Stage4B4AudioStoragePort } from "./phase-85-stage-4b4-audio-storage";
 import { getFallbackStage4B4AudioStorage } from "./phase-85-stage-4b4-fallback-audio-storage";
 import {
   resolveAllowlistedStage4B4AudioFixtureBytes,
@@ -78,9 +75,10 @@ export function extractWebhookPayloadAndSecret(
   const record = payload as Record<string, unknown>;
   const bodySecret = typeof record.webhook_secret === "string" ? record.webhook_secret.trim() : "";
   if (bodySecret) {
-    const { webhook_secret: _ignored, ...rest } = record;
+    const sanitizedPayload = { ...record };
+    delete sanitizedPayload.webhook_secret;
     return {
-      sanitizedPayload: rest,
+      sanitizedPayload,
       providedSecret: headerSecret?.trim() || bodySecret,
     };
   }

@@ -211,6 +211,7 @@ Common checks:
 cd app
 npm test
 npm run lint
+npm run typecheck
 npm run release:verify
 ```
 

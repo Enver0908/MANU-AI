@@ -6,6 +6,7 @@ const knownAuditFindings = new Set(["next:postcss", "postcss:GHSA-qx2v-qp2m-jg93
 const checks = [
   { label: "core package tests", command: "npm", args: ["test"], cwd: "../dietitian-ai-assistant" },
   { label: "lint", command: "npm", args: ["run", "lint"] },
+  { label: "production typecheck", command: "npm", args: ["run", "typecheck"] },
   { label: "unit tests", command: "npm", args: ["test"] },
   { label: "production build", command: "npm", args: ["run", "build"], before: cleanNextBuildOutput },
 ];

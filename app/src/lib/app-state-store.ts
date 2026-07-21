@@ -105,7 +105,6 @@ import type { ClinicalAlertFilterSeverity } from "./phase-85-stage-4b-alerts";
 import {
   completeUnsupportedMediaReviewInState,
   markAllVisibleNotificationReceiptsReadInState,
-  normalizeNotificationsInState,
 } from "./phase-85-stage-4b-notifications";
 import type { AppTenantContext } from "./auth-context";
 import type { ClientRecord, ManuAppState, MessageRecord, SimulationRequest } from "./types";

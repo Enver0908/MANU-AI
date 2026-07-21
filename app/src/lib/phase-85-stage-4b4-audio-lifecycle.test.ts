@@ -261,7 +261,6 @@ describe("phase 85 stage 4b-4 audio lifecycle", () => {
   });
 
   it("treats idempotent object deletion as success during finalize", async () => {
-    const storage = createInMemoryStage4B4AudioStorage();
     const state = seedStateWithVoice();
     const { state: prepared, pendingObjectKeys } = prepareAudioAssetDeletionInState(
       state,

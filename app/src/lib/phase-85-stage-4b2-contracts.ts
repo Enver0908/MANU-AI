@@ -8,7 +8,6 @@ import type {
   MessageContentStatus,
   MessageOrigin,
   MessageRecord,
-  MessageRetrievalEligibility,
   SenderType,
   TenantRole,
 } from "./types";

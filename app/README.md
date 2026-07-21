@@ -296,6 +296,7 @@ If starting from the root page, use the demo sign-in button to enter `/dashboard
 
 ```bash
 npm run lint
+npm run typecheck
 npm test
 npm run test:rls
 npm run build
@@ -305,7 +306,7 @@ npm run rehearse:production-scale:79g
 
 The scripts use `--webpack` because Turbopack did not resolve the local symlinked core package reliably.
 
-`npm run release:verify` runs the core package tests, lint, unit/API tests, production build, and the production dependency audit gate. It cleans generated `.next` output before the production build so repeated local Windows/OneDrive runs do not fail on stale build artifacts. It allows only the documented R-405 Next.js/PostCSS finding and does not run `npm audit fix --force`.
+`npm run typecheck` validates production application sources with `tsconfig.production.json`; legacy Vitest fixture typing remains outside this production gate and is exercised by the full runtime test suite. `npm run release:verify` runs the core package tests, lint, production typecheck, unit/API tests, production build, and the production dependency audit gate. It cleans generated `.next` output before the production build so repeated local Windows/OneDrive runs do not fail on stale build artifacts. It allows only the documented R-405 Next.js/PostCSS finding and does not run `npm audit fix --force`.
 
 Latest local Phase 82G verification refresh on 2026-06-30: targeted Phase 82 tests passed (5 files, 31 tests), targeted Phase 80 regression tests (4 files, 29 tests), targeted Phase 81 regression tests (3 files, 19 tests), `npm run release:verify` passed with core tests 225/225 and app tests 595 passed / 4 skipped across 94 files, `npm run test:rls` skipped 20/20, and `npm run rehearse:production-scale:79g` passed. Phase 82 track is closed; baseline outcome remains `NO_GO_EXTERNAL_PREREQUISITES_OPEN`; production pilot remains `NO-GO`; `productionPilotStarted` remains `false`; R-405 remains open; R-406 current re-run remains pending. Next work is external launch-gate/R-405/RLS closure prerequisites.
 

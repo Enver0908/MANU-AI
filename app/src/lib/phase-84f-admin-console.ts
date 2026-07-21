@@ -91,7 +91,7 @@ export function shouldRewriteAdminHostPath(pathname: string) {
 }
 
 export function resolveAdminHostInternalPath(pathname: string) {
-  return "/admin";
+  return pathname.startsWith("/admin") ? pathname : "/admin";
 }
 
 export function summarizePhase84fAdminConsole(env: Record<string, string | undefined> = process.env) {

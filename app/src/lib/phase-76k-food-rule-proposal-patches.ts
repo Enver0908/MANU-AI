@@ -108,7 +108,7 @@ function extractForbiddenPatches(clause: string, normalized: string) {
     return [foodRulePatch("forbidden_food_groups", "Yasak besin grubu", group)];
   }
 
-  const item = extractForbiddenItem(clause, normalized);
+  const item = extractForbiddenItem(clause);
   return item ? [foodRulePatch("forbidden_food_items", "Yasak besin", item)] : [];
 }
 
@@ -199,7 +199,7 @@ function extractDietTypePatches(normalized: string) {
   return [];
 }
 
-function extractForbiddenItem(clause: string, normalized: string) {
+function extractForbiddenItem(clause: string) {
   const marker = /(yemesin|yememeli|yasakla?|tuketmemeli|tuketmesin|olmasin|listeden cikar)/i;
   const markerMatch = clause.match(marker);
   if (!markerMatch || markerMatch.index === undefined) return "";
