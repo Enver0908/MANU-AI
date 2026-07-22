@@ -1512,6 +1512,37 @@ declare module "dietitian-ai-assistant-architecture" {
     intent: string;
     toolPlan: string[];
   };
+  export const DIETITIAN_CHAT_ANSWERABILITY_VERSION: string;
+  export function validateDietitianChatStructuredAnswerSchema(input: unknown): {
+    ok: boolean;
+    code?: string | null;
+    errors: string[];
+    answer?: Record<string, unknown> | null;
+  };
+  export function validateDietitianChatSourcedAnswer(input: {
+    structuredAnswer: Record<string, unknown> | null;
+    allowedSourceIds: string[];
+    sourceTypesById?: Record<string, string>;
+    sourceExcerptById?: Record<string, string>;
+    runId?: string | null;
+    clientId?: string | null;
+  }): {
+    ok: boolean;
+    stage: string;
+    code?: string | null;
+    answerability: string;
+    errors: string[];
+    answer?: Record<string, unknown> | null;
+  };
+  export function detectDietitianChatPromptInjectionSignals(text: string): {
+    flagged: boolean;
+    reasons: string[];
+  };
+  export function wrapUntrustedSourceContent(text: string): string;
+  export function buildDeidentifiedWebResearchQuery(input: {
+    query: string;
+    clientNames?: string[];
+  }): { ok: boolean; reason: string | null; query: string };
   export function finalizeDietitianChatRun(input: {
     runStatus: string;
     providerResult: {
@@ -1519,7 +1550,9 @@ declare module "dietitian-ai-assistant-architecture" {
       answerability?: string | null;
       riskLevel?: string | null;
       completionState?: string | null;
+      structuredAnswer?: Record<string, unknown> | null;
     };
+    sourcedValidation?: { ok: boolean; answerability?: string | null; code?: string | null } | null;
   }): {
     terminalStatus: string;
     validation: ReturnType<typeof validateDietitianChatAssistantOutput>;

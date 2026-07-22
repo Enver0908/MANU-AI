@@ -64,6 +64,13 @@ import {
   toAccessibleClientIdentity,
   type ClientGatewayFixture,
 } from "./phase-85-stage-4c-context-fixtures";
+import {
+  createInMemoryApprovedSourceStateFromManifest,
+  searchInMemoryApprovedSources,
+  type AiChatRunSourceClaimDto,
+  type AiChatRunSourcesResponse,
+  type InMemoryApprovedSourceState,
+} from "./phase-85-stage-4c-sources";
 import type { AiChatContextTool, AiChatConversationRecord } from "./phase-85-stage-4c-contracts";
 
 export type BranchMessageChainItem = {
@@ -172,6 +179,44 @@ export interface AiChatStore {
     options?: { failRisk?: boolean; delayMs?: number };
   }): Promise<ContextToolExecutionResult>;
   saveContextSnapshot(input: AiChatContextSnapshotInput): Promise<void>;
+  searchApprovedClinicalSources(tenantId: string, query: string, limit?: number): Promise<
+    Array<{
+      sourceRefId: string;
+      sourceType: "approved_clinical_source";
+      canonicalEntityId: string;
+      locator: string;
+      excerpt: string;
+      title: string;
+      publisher: string;
+      sourceUrl: string;
+      sourceDate: string | null;
+      contentHash: string;
+    }>
+  >;
+  persistRunAnswerArtifacts(
+    tenantId: string,
+    runId: string,
+    input: {
+      conversationId: string;
+      createdByUserId: string;
+      clientId: string | null;
+      directAnswer: string;
+      answerability: AiChatRunDto["answerability"];
+      riskLevel: AiChatRunDto["riskLevel"];
+      claims: AiChatRunSourceClaimDto[];
+      sourceRefs: Array<{
+        sourceRefId: string;
+        sourceType: string;
+        canonicalEntityId: string;
+        locator: string | null;
+        sourceDate: string | null;
+        contentHash: string | null;
+        excerpt: string;
+        claimId?: string | null;
+      }>;
+    },
+  ): Promise<void>;
+  listRunSources(tenantId: string, runId: string, userId: string): Promise<AiChatRunSourcesResponse>;
 }
 
 type InMemoryConversation = {
@@ -231,6 +276,37 @@ type InMemoryState = {
   clientGatewayFixtures: Record<string, ClientGatewayFixture>;
   clientRevisionOverrides: Record<string, string>;
   contextSnapshots: Array<AiChatContextSnapshotInput & { id: string; createdAt: string }>;
+  approvedSources: InMemoryApprovedSourceState;
+  persistedSourceRefs: Array<{
+    id: string;
+    tenantId: string;
+    runId: string;
+    conversationId: string;
+    createdByUserId: string;
+    sourceType: string;
+    canonicalEntityId: string;
+    locator: string | null;
+    sourceDate: string | null;
+    contentHash: string | null;
+    claimId: string | null;
+    clientId: string | null;
+    excerpt: string;
+    title: string | null;
+    publisher: string | null;
+    sourceUrl: string | null;
+    createdAt: string;
+  }>;
+  answerEnvelopes: Array<{
+    tenantId: string;
+    runId: string;
+    conversationId: string;
+    createdByUserId: string;
+    directAnswer: string;
+    answerability: string;
+    riskLevel: string | null;
+    claims: AiChatRunSourceClaimDto[];
+    createdAt: string;
+  }>;
 };
 
 let inMemoryState: InMemoryState = {
@@ -247,6 +323,9 @@ let inMemoryState: InMemoryState = {
   clientGatewayFixtures: {},
   clientRevisionOverrides: {},
   contextSnapshots: [],
+  approvedSources: createInMemoryApprovedSourceStateFromManifest(),
+  persistedSourceRefs: [],
+  answerEnvelopes: [],
 };
 
 export function resetInMemoryAiChatStoreForTests(state: Partial<InMemoryState> = {}) {
@@ -264,6 +343,9 @@ export function resetInMemoryAiChatStoreForTests(state: Partial<InMemoryState> =
     clientGatewayFixtures: {},
     clientRevisionOverrides: {},
     contextSnapshots: [],
+    approvedSources: createInMemoryApprovedSourceStateFromManifest(),
+    persistedSourceRefs: [],
+    answerEnvelopes: [],
     ...state,
   };
 }
@@ -1554,7 +1636,85 @@ const inMemoryAiChatStore: AiChatStore = {
       input.clientId,
       client?.fullName ?? "Client",
     );
-    return executeInMemoryContextTool(fixture, input.tool, input.args, input.options);
+    return executeInMemoryContextTool(fixture, input.tool, input.args, {
+      ...input.options,
+      approvedSources: inMemoryState.approvedSources,
+    });
+  },
+
+  async searchApprovedClinicalSources(tenantId, query, limit = 5) {
+    void tenantId;
+    return searchInMemoryApprovedSources(inMemoryState.approvedSources, query, limit);
+  },
+
+  async persistRunAnswerArtifacts(tenantId, runId, input) {
+    const now = new Date().toISOString();
+    inMemoryState.answerEnvelopes.push({
+      tenantId,
+      runId,
+      conversationId: input.conversationId,
+      createdByUserId: input.createdByUserId,
+      directAnswer: input.directAnswer,
+      answerability: input.answerability ?? "answerable",
+      riskLevel: input.riskLevel,
+      claims: input.claims,
+      createdAt: now,
+    });
+    for (const sourceRef of input.sourceRefs) {
+      const approved = inMemoryState.approvedSources.chunks.find((item) => item.id === sourceRef.sourceRefId);
+      const approvedSource = approved
+        ? inMemoryState.approvedSources.sources.find((item) => item.id === approved.approvedSourceId)
+        : null;
+      inMemoryState.persistedSourceRefs.push({
+        id: sourceRef.sourceRefId,
+        tenantId,
+        runId,
+        conversationId: input.conversationId,
+        createdByUserId: input.createdByUserId,
+        sourceType: sourceRef.sourceType,
+        canonicalEntityId: sourceRef.canonicalEntityId,
+        locator: sourceRef.locator,
+        sourceDate: sourceRef.sourceDate,
+        contentHash: sourceRef.contentHash,
+        claimId: sourceRef.claimId ?? null,
+        clientId: input.clientId,
+        excerpt: sourceRef.excerpt,
+        title: approvedSource?.title ?? null,
+        publisher: approvedSource?.publisher ?? null,
+        sourceUrl: approvedSource?.sourceUrl ?? null,
+        createdAt: now,
+      });
+    }
+  },
+
+  async listRunSources(tenantId, runId, userId) {
+    const run = inMemoryState.runs.find(
+      (item) => item.tenantId === tenantId && item.id === runId && item.createdByUserId === userId,
+    );
+    if (!run) {
+      throw new AppRequestError(404, "ai_chat_run_not_found");
+    }
+    const envelope = [...inMemoryState.answerEnvelopes]
+      .reverse()
+      .find((item) => item.tenantId === tenantId && item.runId === runId);
+    const sources = inMemoryState.persistedSourceRefs
+      .filter((item) => item.tenantId === tenantId && item.runId === runId)
+      .map((item) => ({
+        sourceRefId: item.id,
+        sourceType: item.sourceType,
+        title: item.title ?? item.canonicalEntityId,
+        publisher: item.publisher,
+        sourceUrl: item.sourceUrl,
+        locator: item.locator,
+        sourceDate: item.sourceDate,
+        excerpt: item.excerpt,
+        dateLabel: item.sourceDate ? null : "date_unknown",
+      }));
+    return {
+      runId,
+      claims: envelope?.claims ?? [],
+      sources,
+    };
   },
 
   async saveContextSnapshot(input) {
@@ -2154,5 +2314,77 @@ const supabaseAiChatStore: AiChatStore = {
       p_evidence_excerpts: input.evidenceExcerpts,
     });
     if (error) mapRpcError(error);
+  },
+
+  async searchApprovedClinicalSources(tenantId, query, limit = 5) {
+    void tenantId;
+    const supabase = requireSupabaseAdmin();
+    const { data, error } = await supabase.rpc("p85_stage_4c_search_approved_sources_v1", {
+      p_query: query,
+      p_limit: limit,
+    });
+    if (error) mapRpcError(error);
+    return ((data as Array<Record<string, unknown>>) ?? []).map((item) => ({
+      sourceRefId: String(item.source_ref_id),
+      sourceType: "approved_clinical_source" as const,
+      canonicalEntityId: String(item.canonical_entity_id),
+      locator: String(item.locator),
+      excerpt: String(item.excerpt ?? ""),
+      title: String(item.title ?? ""),
+      publisher: String(item.publisher ?? ""),
+      sourceUrl: String(item.source_url ?? ""),
+      sourceDate: (item.source_date as string | null) ?? null,
+      contentHash: String(item.content_hash ?? ""),
+    }));
+  },
+
+  async persistRunAnswerArtifacts(tenantId, runId, input) {
+    const supabase = requireSupabaseAdmin();
+    const { error: envelopeError } = await supabase.rpc("p85_stage_4c_save_answer_envelope_v1", {
+      p_tenant_id: tenantId,
+      p_run_id: runId,
+      p_conversation_id: input.conversationId,
+      p_created_by_user_id: input.createdByUserId,
+      p_direct_answer: input.directAnswer,
+      p_answerability: input.answerability,
+      p_risk_level: input.riskLevel,
+      p_claims: input.claims,
+    });
+    if (envelopeError) mapRpcError(envelopeError);
+    if (input.sourceRefs.length > 0) {
+      const { error: sourceError } = await supabase.rpc("p85_stage_4c_persist_run_source_refs_v1", {
+        p_tenant_id: tenantId,
+        p_run_id: runId,
+        p_conversation_id: input.conversationId,
+        p_created_by_user_id: input.createdByUserId,
+        p_client_id: input.clientId,
+        p_source_refs: input.sourceRefs.map((item) => ({
+          sourceRefId: item.sourceRefId,
+          sourceType: item.sourceType,
+          canonicalEntityId: item.canonicalEntityId,
+          locator: item.locator,
+          sourceDate: item.sourceDate,
+          contentHash: item.contentHash,
+          claimId: item.claimId ?? null,
+        })),
+      });
+      if (sourceError) mapRpcError(sourceError);
+    }
+  },
+
+  async listRunSources(tenantId, runId, userId) {
+    const supabase = requireSupabaseAdmin();
+    const { data, error } = await supabase.rpc("p85_stage_4c_list_run_sources_v1", {
+      p_tenant_id: tenantId,
+      p_run_id: runId,
+      p_user_id: userId,
+    });
+    if (error) mapRpcError(error);
+    const row = (data ?? {}) as AiChatRunSourcesResponse;
+    return {
+      runId: String(row.runId ?? runId),
+      claims: (row.claims as AiChatRunSourceClaimDto[]) ?? [],
+      sources: (row.sources as AiChatRunSourcesResponse["sources"]) ?? [],
+    };
   },
 };

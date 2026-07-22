@@ -1,7 +1,7 @@
 # Phase 85 Stage 4C Evidence
 
 Date: 2026-07-22
-Status: **Faz 6 complete locally; Faz 7 is next (requires explicit user approval)**
+Status: **Faz 7 complete locally; Faz 8 is next (requires explicit user approval)**
 
 Production remains `NO-GO`. R-405 remains open.
 
@@ -265,7 +265,33 @@ Status: **complete locally**
 
 ### Next
 
-Faz 7: Kaynak Kayit Defteri, Answerability ve Kaynakli Klinik Yanit — after explicit user approval.
+Faz 8: Guvenli Gorsel, Dokuman ve Ses Eki Isleme — after explicit user approval.
+
+## Faz 7: Kaynak Kayit Defteri, Answerability ve Kaynakli Klinik Yanit
+
+Completed locally on 2026-07-22.
+
+### Delivered
+
+- Migration `20260722150000_phase_85_stage_4c_sources_answerability.sql` — approved source/chunk tables, answer envelopes, import/search/list RPCs
+- `app/src/lib/phase-85-stage-4c-sources.ts` — Phase 71 manifest import, idempotent hash versioning, in-memory search, disabled web research port
+- `dietitian-ai-assistant/src/dietitian-chat-answerability.js` — schema/source-scope/claim-support/clinical answerability validators
+- Extended `dietitian-chat-output-guard.js` and run pipeline with bounded JSON repair + sourced validation
+- `app/scripts/import-approved-ai-chat-sources.mjs` + CLI importer
+- `GET /api/ai-chat/runs/[runId]/sources` and source drawer UI
+- Tests: `phase-85-stage-4c-sources.test.ts`, `dietitian-chat-answerability.test.mjs`
+
+### Verification (Faz 7)
+
+- `npm run lint` — 0 errors
+- Targeted vitest (`phase-85-stage-4c-sources.test.ts`, `phase-85-stage-4c-run-service.test.ts`, `phase-85-stage-4c-context-gateway.test.ts`) — 18/18 passed
+- `node --test dietitian-ai-assistant/tests/dietitian-chat-answerability.test.mjs` — 7/7 passed
+- `npm test` — 1300 passed, 8 skipped (209 files)
+- `npm run build` — success
+
+### Open Blockers After Faz 7
+
+- Faz 8 multimodal attachments require explicit user approval
 
 ## Faz 6: Danisan Baglam Gecidi ve Buyuk Veri Kapsami
 

@@ -7,12 +7,30 @@ export type AiChatProviderDelta = {
   sequence: number;
 };
 
+export type AiChatStructuredClaim = {
+  claimId: string;
+  text: string;
+  sourceRefIds: string[];
+  uncertainty?: string | null;
+};
+
+export type AiChatStructuredAnswer = {
+  directAnswer: string;
+  verifiedFacts: AiChatStructuredClaim[];
+  inferences: AiChatStructuredClaim[];
+  recommendations: AiChatStructuredClaim[];
+  missingData?: string[];
+  conflictingData?: string[];
+};
+
 export type AiChatProviderResult = {
   directAnswer: string | null;
   answerability: AiChatAnswerability;
   riskLevel: AiChatRiskLevel;
   completionState: "complete" | "incomplete";
   deltas: AiChatProviderDelta[];
+  structuredAnswer?: AiChatStructuredAnswer | null;
+  schemaValid?: boolean;
 };
 
 export type AiChatProviderContextEnvelope = {
@@ -29,6 +47,10 @@ export type AiChatGenerationRequest = {
   triggerBody: string;
   messages: Array<{ role: "user" | "assistant"; body: string }>;
   contextEnvelope?: AiChatProviderContextEnvelope | null;
+  allowedSourceIds?: string[];
+  sourceTypesById?: Record<string, string>;
+  sourceExcerptById?: Record<string, string>;
+  repairAttempt?: boolean;
   signal?: AbortSignal;
 };
 
@@ -79,6 +101,21 @@ const FIXTURE_RESPONSES: Record<
     riskLevel: "green",
     text: "Deterministic context-aware response.",
   },
+  sourced: {
+    answerability: "answerable",
+    riskLevel: "green",
+    text: "Deterministic sourced clinical response.",
+  },
+  "schema-bad": {
+    answerability: "answerable",
+    riskLevel: "green",
+    text: "Deterministic schema repair response.",
+  },
+  "unsourced-claim": {
+    answerability: "answerable",
+    riskLevel: "yellow",
+    text: "Deterministic unsourced claim response.",
+  },
 };
 
 function unavailableResult(): AiChatProviderResult {
@@ -88,6 +125,8 @@ function unavailableResult(): AiChatProviderResult {
     riskLevel: "green",
     completionState: "incomplete",
     deltas: [],
+    structuredAnswer: null,
+    schemaValid: false,
   };
 }
 
@@ -96,18 +135,119 @@ function resolveFixtureKey(body: string) {
   return match?.[1]?.toLowerCase() ?? null;
 }
 
+function pickSourcesByType(request: AiChatGenerationRequest) {
+  const clientSource = (request.allowedSourceIds ?? []).find(
+    (id) => request.sourceTypesById?.[id] === "client_record",
+  );
+  const clinicalSource = (request.allowedSourceIds ?? []).find(
+    (id) => request.sourceTypesById?.[id] === "approved_clinical_source",
+  );
+  const fallback = request.allowedSourceIds?.[0] ?? "source-missing";
+  return {
+    clientSource: clientSource ?? fallback,
+    clinicalSource: clinicalSource ?? fallback,
+  };
+}
+
+function buildStructuredFixtureAnswer(
+  fixtureKey: string,
+  request: AiChatGenerationRequest,
+  directAnswer: string,
+): { structuredAnswer: AiChatStructuredAnswer | null; schemaValid: boolean } {
+  if (fixtureKey === "schema-bad" && !request.repairAttempt) {
+    return {
+      structuredAnswer: {
+        directAnswer: "",
+        verifiedFacts: [{ claimId: "bad", text: "invalid", sourceRefIds: [] }],
+        inferences: [],
+        recommendations: [],
+      },
+      schemaValid: false,
+    };
+  }
+
+  if (fixtureKey === "unsourced-claim") {
+    return {
+      structuredAnswer: {
+        directAnswer,
+        verifiedFacts: [{ claimId: "u1", text: "Unsupported clinical claim", sourceRefIds: [] }],
+        inferences: [],
+        recommendations: [],
+      },
+      schemaValid: true,
+    };
+  }
+
+  if (!["context", "sourced", "schema-bad"].includes(fixtureKey)) {
+    return { structuredAnswer: null, schemaValid: true };
+  }
+
+  const { clientSource, clinicalSource } = pickSourcesByType(request);
+  const clientExcerpt = request.sourceExcerptById?.[clientSource] ?? "Client profile snapshot.";
+  const clinicalExcerpt =
+    request.sourceExcerptById?.[clinicalSource] ?? "Approved clinical source on fiber intake.";
+
+  if (fixtureKey === "context") {
+    return {
+      structuredAnswer: {
+        directAnswer,
+        verifiedFacts: [
+          {
+            claimId: "vf1",
+            text: clientExcerpt.slice(0, 80),
+            sourceRefIds: [clientSource],
+          },
+        ],
+        inferences: [],
+        recommendations: [],
+      },
+      schemaValid: true,
+    };
+  }
+
+  return {
+    structuredAnswer: {
+      directAnswer,
+      verifiedFacts: [
+        {
+          claimId: "vf1",
+          text: clientExcerpt.slice(0, 80),
+          sourceRefIds: [clientSource],
+        },
+        {
+          claimId: "vf2",
+          text: clinicalExcerpt.slice(0, 80),
+          sourceRefIds: [clinicalSource],
+        },
+      ],
+      inferences: [
+        {
+          claimId: "inf1",
+          text: "AI inference based on retrieved evidence.",
+          sourceRefIds: [clientSource, clinicalSource],
+        },
+      ],
+      recommendations: [
+        {
+          claimId: "rec1",
+          text: "Consider gradual fiber adjustment",
+          sourceRefIds: [clientSource, clinicalSource],
+          uncertainty: "Monitor tolerance and adherence.",
+        },
+      ],
+      missingData: [],
+      conflictingData: [],
+    },
+    schemaValid: true,
+  };
+}
+
 export function createDeterministicAiChatProvider(): AiChatGenerationProvider {
   return {
     name: "deterministic-fixture",
     async generate(request) {
       if (request.signal?.aborted) {
-        return {
-          directAnswer: null,
-          answerability: "insufficient",
-          riskLevel: "green",
-          completionState: "incomplete",
-          deltas: [],
-        };
+        return unavailableResult();
       }
 
       const fixtureKey = resolveFixtureKey(request.triggerBody);
@@ -132,6 +272,8 @@ export function createDeterministicAiChatProvider(): AiChatGenerationProvider {
             riskLevel: fixture.riskLevel,
             completionState: "incomplete",
             deltas,
+            structuredAnswer: null,
+            schemaValid: false,
           };
         }
         const chunk = chunks[index];
@@ -149,8 +291,11 @@ export function createDeterministicAiChatProvider(): AiChatGenerationProvider {
           ? ` [context:${request.contextEnvelope.sourceRefCount}]`
           : "";
 
+      const directAnswer = `${assembled}${contextSuffix}`;
+      const structured = buildStructuredFixtureAnswer(fixtureKey, request, directAnswer);
+
       return {
-        directAnswer: `${assembled}${contextSuffix}`,
+        directAnswer,
         answerability: request.contextEnvelope?.insufficientEvidence
           ? "insufficient"
           : request.contextEnvelope?.conflictingEvidence
@@ -161,6 +306,8 @@ export function createDeterministicAiChatProvider(): AiChatGenerationProvider {
         riskLevel: fixture.riskLevel,
         completionState: "complete",
         deltas,
+        structuredAnswer: structured.structuredAnswer,
+        schemaValid: structured.schemaValid,
       };
     },
   };

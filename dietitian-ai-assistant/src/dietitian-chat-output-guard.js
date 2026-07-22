@@ -1,4 +1,6 @@
-export const DIETITIAN_CHAT_OUTPUT_GUARD_VERSION = "dietitian-chat-output-guard-v1";
+import { validateDietitianChatStructuredAnswerSchema } from "./dietitian-chat-answerability.js";
+
+export const DIETITIAN_CHAT_OUTPUT_GUARD_VERSION = "dietitian-chat-output-guard-v2";
 
 const TERMINAL_RUN_STATUSES = new Set([
   "completed",
@@ -27,12 +29,43 @@ export function shouldAbortRun(status) {
  *   answerability?: string | null;
  *   riskLevel?: string | null;
  *   completionState?: string | null;
+ *   structuredAnswer?: Record<string, unknown> | null;
+ *   sourcedValidation?: { ok: boolean; answerability?: string | null; code?: string | null } | null;
  * }} input
  */
 export function validateAssistantOutput(input) {
   const directAnswer = typeof input.directAnswer === "string" ? input.directAnswer.trim() : "";
-  const answerability = input.answerability ?? (directAnswer ? "answerable" : "insufficient");
+  let answerability = input.answerability ?? (directAnswer ? "answerable" : "insufficient");
   const riskLevel = input.riskLevel ?? "green";
+
+  if (input.structuredAnswer) {
+    const schema = validateDietitianChatStructuredAnswerSchema(input.structuredAnswer);
+    if (!schema.ok) {
+      return {
+        ok: false,
+        code: schema.code ?? "structured_answer_invalid",
+        answerability: "insufficient",
+        riskLevel,
+        completionState: "incomplete",
+        directAnswer: directAnswer || null,
+      };
+    }
+  }
+
+  if (input.sourcedValidation && !input.sourcedValidation.ok) {
+    return {
+      ok: false,
+      code: input.sourcedValidation.code ?? "sourced_validation_failed",
+      answerability: input.sourcedValidation.answerability ?? "insufficient",
+      riskLevel,
+      completionState: "incomplete",
+      directAnswer: directAnswer || null,
+    };
+  }
+
+  if (input.sourcedValidation?.answerability === "partial") {
+    answerability = "partial";
+  }
 
   if (!directAnswer && answerability === "answerable") {
     return {

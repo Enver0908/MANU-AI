@@ -2,6 +2,7 @@ import { encodeClientReferenceCode, formatClientReferenceShort } from "./client-
 import type { AiChatContextTool } from "./phase-85-stage-4c-contracts";
 import type { CanonicalEvidenceRow } from "./phase-85-stage-4c-retrieval";
 import type { ContextToolExecutionResult } from "./phase-85-stage-4c-context-gateway";
+import { searchInMemoryApprovedSources, type InMemoryApprovedSourceState } from "./phase-85-stage-4c-sources";
 
 export type ClientGatewayFixture = {
   profile: CanonicalEvidenceRow | null;
@@ -236,7 +237,7 @@ export function executeInMemoryContextTool(
   fixture: ClientGatewayFixture,
   tool: AiChatContextTool,
   args: Record<string, unknown>,
-  options?: { failRisk?: boolean; delayMs?: number },
+  options?: { failRisk?: boolean; delayMs?: number; approvedSources?: InMemoryApprovedSourceState },
 ): Promise<ContextToolExecutionResult> {
   return new Promise((resolve) => {
     const finish = () => {
@@ -252,7 +253,7 @@ export function executeInMemoryContextTool(
         return;
       }
 
-      const rows = selectFixtureRows(fixture, tool, args);
+      const rows = selectFixtureRows(fixture, tool, args, options);
       resolve({
         tool,
         ok: true,
@@ -268,7 +269,12 @@ export function executeInMemoryContextTool(
   });
 }
 
-function selectFixtureRows(fixture: ClientGatewayFixture, tool: AiChatContextTool, args: Record<string, unknown>) {
+function selectFixtureRows(
+  fixture: ClientGatewayFixture,
+  tool: AiChatContextTool,
+  args: Record<string, unknown>,
+  options?: { approvedSources?: InMemoryApprovedSourceState },
+) {
   switch (tool) {
     case "load_client_profile":
       return fixture.profile ? [fixture.profile] : [];
@@ -297,8 +303,22 @@ function selectFixtureRows(fixture: ClientGatewayFixture, tool: AiChatContextToo
     case "load_client_record_assets":
       return fixture.recordAssets.filter((row) => row.retrievalEligible);
     case "search_approved_sources": {
-      const query = String(args.query ?? "").toLowerCase();
-      return fixture.approvedSources.filter((row) => row.excerpt.toLowerCase().includes(query) || !query);
+      const query = String(args.query ?? "");
+      if (!options?.approvedSources) return fixture.approvedSources;
+      return searchInMemoryApprovedSources(options.approvedSources, query, 5).map((item) => ({
+        sourceId: item.sourceRefId,
+        clientId: fixture.profile?.clientId ?? "",
+        sourceType: item.sourceType,
+        locator: item.locator,
+        excerpt: item.excerpt,
+        contentHash: item.contentHash,
+        sourceDate: item.sourceDate,
+        updatedAt: new Date().toISOString(),
+        occurredAt: null,
+        lifecycleStatus: "current" as const,
+        retrievalEligible: true,
+        authorityWeight: 2,
+      }));
     }
     default:
       return [];

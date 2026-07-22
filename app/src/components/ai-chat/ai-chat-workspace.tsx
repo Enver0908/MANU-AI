@@ -470,7 +470,7 @@ export function AiChatWorkspace({
 
       {!useOverlayChrome && mobileDrawer === "context" && (
         <aside className="hidden w-80 shrink-0 border-l border-stone-200 bg-stone-50 lg:flex lg:flex-col">
-          <AiChatContextPanelContent uiLanguage={uiLanguage} />
+          <AiChatContextPanelContent uiLanguage={uiLanguage} runId={runStream.state.runId} />
         </aside>
       )}
 
@@ -503,7 +503,7 @@ export function AiChatWorkspace({
             className="flex h-full w-80 max-w-[85vw] flex-col border-l border-stone-200 bg-white shadow-xl"
             onClick={(event) => event.stopPropagation()}
           >
-            <AiChatContextPanelContent uiLanguage={uiLanguage} />
+            <AiChatContextPanelContent uiLanguage={uiLanguage} runId={runStream.state.runId} />
           </div>
         </div>
       )}

@@ -139,6 +139,9 @@ describe("ai chat run flow (in-memory)", () => {
     const run = await store.getRunById(tenantContext.tenantId, send.runId);
     expect(run?.status).toBe("completed");
 
+    const sources = await store.listRunSources(tenantContext.tenantId, send.runId, tenantContext.userId);
+    expect(sources.sources.length).toBeGreaterThan(0);
+
     const events = await store.listRunEvents(tenantContext, send.runId, 0);
     expect(events.some((event) => event.eventType === "source.available")).toBe(true);
     expect(events.some((event) => event.eventType === "run.status" && event.payload.status === "retrieving")).toBe(

@@ -3,6 +3,7 @@ import {
   createDietitianChatRunPlan,
   finalizeDietitianChatRun,
   shouldAbortDietitianChatRun,
+  validateDietitianChatSourcedAnswer,
 } from "dietitian-ai-assistant-architecture";
 import type { AppTenantContext } from "./auth-context";
 import { AppRequestError } from "./app-errors";
@@ -35,7 +36,68 @@ import {
   recheckGatewayAccessBeforeCommit,
 } from "./phase-85-stage-4c-context-gateway";
 import { createDisabledSemanticRetriever } from "./phase-85-stage-4c-retrieval";
+import type { AiChatStructuredAnswer } from "./phase-85-stage-4c-provider";
+import type { AiChatRunSourceClaimDto } from "./phase-85-stage-4c-sources";
 import type { AiChatStore } from "./phase-85-stage-4c-store";
+
+function buildSourceMapsFromGateway(evidencePackage: {
+  sourceRefs: Array<{ sourceId: string; sourceType: string; excerpt: string }>;
+}) {
+  const allowedSourceIds = evidencePackage.sourceRefs.map((item) => item.sourceId);
+  const sourceTypesById = Object.fromEntries(
+    evidencePackage.sourceRefs.map((item) => [item.sourceId, item.sourceType]),
+  );
+  const sourceExcerptById = Object.fromEntries(
+    evidencePackage.sourceRefs.map((item) => [item.sourceId, item.excerpt]),
+  );
+  return { allowedSourceIds, sourceTypesById, sourceExcerptById };
+}
+
+function flattenStructuredClaims(answer: AiChatStructuredAnswer): AiChatRunSourceClaimDto[] {
+  const claims: AiChatRunSourceClaimDto[] = [];
+  for (const claim of answer.verifiedFacts ?? []) {
+    claims.push({
+      claimId: claim.claimId,
+      kind: "verified_fact",
+      text: claim.text,
+      label: null,
+      uncertainty: null,
+      sourceRefIds: claim.sourceRefIds,
+    });
+  }
+  for (const claim of answer.inferences ?? []) {
+    claims.push({
+      claimId: claim.claimId,
+      kind: "inference",
+      text: claim.text,
+      label: "AI çıkarımı",
+      uncertainty: null,
+      sourceRefIds: claim.sourceRefIds,
+    });
+  }
+  for (const claim of answer.recommendations ?? []) {
+    claims.push({
+      claimId: claim.claimId,
+      kind: "recommendation",
+      text: claim.text,
+      label: null,
+      uncertainty: claim.uncertainty ?? null,
+      sourceRefIds: claim.sourceRefIds,
+    });
+  }
+  return claims;
+}
+
+async function generateWithOptionalRepair(
+  provider: AiChatGenerationProvider,
+  request: Parameters<AiChatGenerationProvider["generate"]>[0],
+) {
+  const first = await provider.generate(request);
+  if (first.schemaValid === false && !request.repairAttempt) {
+    return provider.generate({ ...request, repairAttempt: true });
+  }
+  return first;
+}
 
 async function finalizeGatewayBlockedRun(
   store: AiChatStore,
@@ -379,14 +441,20 @@ async function processGenerationJob(
 
   await appendStatus("generating");
 
+  const sourceMaps = buildSourceMapsFromGateway(gateway.evidencePackage);
+  const providerRequestBase = {
+    triggerBody: triggerVersion.body,
+    messages: plan.context.visibleMessages,
+    contextEnvelope: buildProviderContextEnvelope(gateway.evidencePackage),
+    allowedSourceIds: sourceMaps.allowedSourceIds,
+    sourceTypesById: sourceMaps.sourceTypesById,
+    sourceExcerptById: sourceMaps.sourceExcerptById,
+    signal: abortController.signal,
+  };
+
   let streamedText = "";
   try {
-    const providerResult = await provider.generate({
-      triggerBody: triggerVersion.body,
-      messages: plan.context.visibleMessages,
-      contextEnvelope: buildProviderContextEnvelope(gateway.evidencePackage),
-      signal: abortController.signal,
-    });
+    const providerResult = await generateWithOptionalRepair(provider, providerRequestBase);
 
     for (const delta of providerResult.deltas) {
       if (Date.now() - startedAt > AI_CHAT_RUN_TIMEOUT_MS) {
@@ -420,14 +488,42 @@ async function processGenerationJob(
 
     await appendStatus("validating");
     const currentStatus = (await store.getRunById(job.tenantId, run.id))?.status ?? run.status;
+
+    let sourcedValidation: ReturnType<typeof validateDietitianChatSourcedAnswer> | null = null;
+    if (providerResult.structuredAnswer) {
+      sourcedValidation = validateDietitianChatSourcedAnswer({
+        structuredAnswer: providerResult.structuredAnswer,
+        allowedSourceIds: sourceMaps.allowedSourceIds,
+        sourceTypesById: sourceMaps.sourceTypesById,
+        sourceExcerptById: sourceMaps.sourceExcerptById,
+        runId: run.id,
+        clientId: conversation.clientId,
+      });
+      if (!sourcedValidation.ok) {
+        await store.finalizeRun(job.tenantId, run.id, {
+          status: "failed",
+          errorCode: sourcedValidation.code ?? "structured_answer_invalid",
+          answerability: asAnswerability(sourcedValidation.answerability),
+          riskLevel: asRiskLevel(providerResult.riskLevel),
+        });
+        await store.appendRunEvent(job.tenantId, run.id, {
+          eventType: "run.failed",
+          payload: { errorCode: sourcedValidation.code ?? "structured_answer_invalid", retryable: true },
+        });
+        return;
+      }
+    }
+
     const finalized = finalizeDietitianChatRun({
       runStatus: currentStatus,
       providerResult: {
         directAnswer: providerResult.directAnswer,
-        answerability: providerResult.answerability,
+        answerability: sourcedValidation?.answerability ?? providerResult.answerability,
         riskLevel: providerResult.riskLevel,
         completionState: providerResult.completionState,
+        structuredAnswer: providerResult.structuredAnswer ?? null,
       },
+      sourcedValidation,
     });
 
     if (shouldAbortDietitianChatRun(currentStatus)) {
@@ -481,6 +577,27 @@ async function processGenerationJob(
     }
 
     if (completionState === "complete" && directAnswer) {
+      if (providerResult.structuredAnswer && sourcedValidation?.answer) {
+        const claims = flattenStructuredClaims(sourcedValidation.answer as AiChatStructuredAnswer);
+        await store.persistRunAnswerArtifacts(job.tenantId, run.id, {
+          conversationId: run.conversationId,
+          createdByUserId: run.createdByUserId,
+          clientId: conversation.clientId,
+          directAnswer,
+          answerability: asAnswerability(finalized.validation.answerability),
+          riskLevel: asRiskLevel(finalized.validation.riskLevel),
+          claims,
+          sourceRefs: gateway.evidencePackage.sourceRefs.map((item) => ({
+            sourceRefId: item.sourceId,
+            sourceType: item.sourceType,
+            canonicalEntityId: item.sourceId,
+            locator: item.locator,
+            sourceDate: item.sourceDate,
+            contentHash: item.contentHash,
+            excerpt: item.excerpt,
+          })),
+        });
+      }
       await store.commitAssistantMessage(job.tenantId, run.id, {
         body: directAnswer,
         answerability: asAnswerability(finalized.validation.answerability),

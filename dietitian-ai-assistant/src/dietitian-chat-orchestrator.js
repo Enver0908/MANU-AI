@@ -39,7 +39,9 @@ export function createDietitianChatRunPlan(input) {
  *     answerability?: string | null;
  *     riskLevel?: string | null;
  *     completionState?: string | null;
+ *     structuredAnswer?: Record<string, unknown> | null;
  *   };
+ *   sourcedValidation?: { ok: boolean; answerability?: string | null; code?: string | null } | null;
  * }} input
  */
 export function finalizeDietitianChatRun(input) {
@@ -52,11 +54,20 @@ export function finalizeDietitianChatRun(input) {
         answerability: input.providerResult.answerability ?? "insufficient",
         riskLevel: input.providerResult.riskLevel ?? "green",
         completionState: "incomplete",
+        structuredAnswer: input.providerResult.structuredAnswer ?? null,
+        sourcedValidation: input.sourcedValidation ?? null,
       }),
     };
   }
 
-  const validation = validateAssistantOutput(input.providerResult);
+  const validation = validateAssistantOutput({
+    directAnswer: input.providerResult.directAnswer,
+    answerability: input.providerResult.answerability,
+    riskLevel: input.providerResult.riskLevel,
+    completionState: input.providerResult.completionState,
+    structuredAnswer: input.providerResult.structuredAnswer ?? null,
+    sourcedValidation: input.sourcedValidation ?? null,
+  });
   return {
     terminalStatus: validation.ok ? "completed" : "failed",
     validation,

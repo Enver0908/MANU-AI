@@ -306,6 +306,18 @@ export {
   evaluateMultiImageSourceIdentity,
 } from "./visual-source-gate-v1.js";
 export {
+  DIETITIAN_CHAT_ANSWERABILITY_VERSION,
+  validateDietitianChatStructuredAnswerSchema,
+  validateDietitianChatSourceScope,
+  validateDietitianChatClaimSupport,
+  evaluateDietitianChatClinicalAnswerability,
+  validateDietitianChatSourcedAnswer,
+  detectDietitianChatPromptInjectionSignals,
+  wrapUntrustedSourceContent,
+  buildDeidentifiedWebResearchQuery,
+  validateDietitianChatWebResearchResult,
+} from "./dietitian-chat-answerability.js";
+export {
   DIETITIAN_CHAT_CONTEXT_POLICY_VERSION,
   DIETITIAN_CHAT_INTENTS,
   AI_CHAT_CONTEXT_TOOLS,
