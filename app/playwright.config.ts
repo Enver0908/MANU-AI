@@ -25,12 +25,21 @@ export default defineConfig({
       NEXT_PUBLIC_SUPABASE_URL: "",
       NEXT_PUBLIC_SUPABASE_ANON_KEY: "",
       SUPABASE_SERVICE_ROLE_KEY: "",
+      // AI Chat routes are force-dynamic, so this server-only flag (and the
+      // in-memory store fallback) are re-evaluated per request by
+      // `next start` without requiring a rebuild.
+      AI_CHAT_UI_ENABLED: "true",
+      AI_CHAT_DETERMINISTIC_MODE: "true",
     },
   },
   projects: [
     {
       name: "desktop",
       use: { ...devices["Desktop Chrome"], browserName: "chromium", viewport: { width: 1440, height: 900 } },
+    },
+    {
+      name: "desktop-xl",
+      use: { ...devices["Desktop Chrome"], browserName: "chromium", viewport: { width: 1728, height: 1117 } },
     },
     {
       name: "tablet",

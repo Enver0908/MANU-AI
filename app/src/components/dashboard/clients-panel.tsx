@@ -5,13 +5,13 @@ import {
   Activity,
   Bot,
   ClipboardList,
-  Database,
   Download,
   FileText,
   PhoneCall,
   Plus,
   Search,
   Send,
+  Sparkles,
   UserX,
   UtensilsCrossed,
 } from "lucide-react";
@@ -116,6 +116,10 @@ export function ClientsPanel({
   onCopilotInput,
   onAskCopilot,
   onSaveFormResponse,
+  aiChatEnabled = false,
+  onEvaluateWithAi,
+  isEvaluatingWithAi = false,
+  evaluateWithAiError = null,
 }: {
   clients: ClientRecord[];
   selectedClient: ClientRecord;
@@ -175,6 +179,10 @@ export function ClientsPanel({
     answers: Record<string, unknown>;
     submittedPhoneE164?: string;
   }) => Promise<void>;
+  aiChatEnabled?: boolean;
+  onEvaluateWithAi?: (client: ClientRecord) => void;
+  isEvaluatingWithAi?: boolean;
+  evaluateWithAiError?: string | null;
 }) {
   return (
     <div className="grid gap-4 xl:grid-cols-[360px_minmax(0,1fr)]">
@@ -290,6 +298,10 @@ export function ClientsPanel({
         onCopilotInput={onCopilotInput}
         onAskCopilot={onAskCopilot}
         onSaveFormResponse={onSaveFormResponse}
+        aiChatEnabled={aiChatEnabled}
+        onEvaluateWithAi={onEvaluateWithAi}
+        isEvaluatingWithAi={isEvaluatingWithAi}
+        evaluateWithAiError={evaluateWithAiError}
       />
     </div>
   );
@@ -305,6 +317,10 @@ function ClientDetailForm({
   isActivatingAi,
   isReleasingHumanTakeover,
   onRemoveClient,
+  aiChatEnabled = false,
+  onEvaluateWithAi,
+  isEvaluatingWithAi = false,
+  evaluateWithAiError = null,
   contextUpdates,
   contextUpdateSource,
   contextUpdateImportance,
@@ -344,6 +360,10 @@ function ClientDetailForm({
   isActivatingAi?: boolean;
   isReleasingHumanTakeover?: boolean;
   onRemoveClient: () => void;
+  aiChatEnabled?: boolean;
+  onEvaluateWithAi?: (client: ClientRecord) => void;
+  isEvaluatingWithAi?: boolean;
+  evaluateWithAiError?: string | null;
   contextUpdates: ClientContextUpdateRecord[];
   contextUpdateSource: ClientContextUpdateSource;
   contextUpdateImportance: ClientContextUpdateImportance;
@@ -414,7 +434,6 @@ function ClientDetailForm({
       badge: aiBlockerCount > 0 ? String(aiBlockerCount) : undefined,
     },
     { key: "tab_critical_context", labelKey: "tabCriticalContext", icon: PhoneCall, badge: activeContextCount > 0 ? String(activeContextCount) : undefined },
-    { key: "tab_copilot", labelKey: "tabAiCopilot", icon: Database },
     { key: "tab_export", labelKey: "tabExport", icon: Download },
   ];
 
@@ -431,6 +450,18 @@ function ClientDetailForm({
           <Badge label={client.aiStatus} tone={client.aiStatus === "active" ? "emerald" : "stone"} />
           <Badge label={client.aiMode} tone={client.aiMode === "autopilot" ? "emerald" : "amber"} />
           <Badge label={client.channelPermission} tone={client.channelPermission === "ready" ? "emerald" : "amber"} />
+          {aiChatEnabled && onEvaluateWithAi && (
+            <button
+              type="button"
+              onClick={() => onEvaluateWithAi(client)}
+              disabled={isEvaluatingWithAi}
+              data-testid="client-evaluate-with-ai"
+              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-900 transition hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              <Sparkles size={16} />
+              {t(uiLanguage, "clientDetailAiEvaluate")}
+            </button>
+          )}
           <ConfirmButton
             label="Remove client"
             confirmLabel="Kaldırmayı onayla"
@@ -441,6 +472,12 @@ function ClientDetailForm({
           />
         </div>
       </div>
+
+      {aiChatEnabled && evaluateWithAiError && (
+        <p role="alert" data-testid="client-evaluate-with-ai-error" className="border-b border-red-200 bg-red-50 px-4 py-2 text-sm text-red-800">
+          {evaluateWithAiError}
+        </p>
+      )}
 
       <nav className="flex gap-1 overflow-x-auto border-b border-stone-200 px-4 pt-1" data-testid="client-detail-tabs">
         {tabItems.map((tab) => {

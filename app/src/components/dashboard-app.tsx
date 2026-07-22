@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   CreditCard,
   LogOut,
@@ -22,6 +23,7 @@ import { useDashboardUrl } from "@/lib/use-dashboard-url";
 import { useStage4BInbox } from "@/lib/use-stage-4b-inbox";
 import { useStage4B2Messaging } from "@/lib/use-stage-4b2-messaging";
 import { AppRequestError } from "@/lib/app-errors";
+import { createAiChatConversation, generateAiChatRequestId } from "@/lib/use-ai-chat";
 import type { ClinicalAlertListItem, SystemNotificationListItem } from "@/lib/phase-85-stage-4b-contracts";
 import type { OperationalFoundationInspectionDto } from "@/lib/phase-85-if-h-operational-visibility";
 import {
@@ -56,18 +58,18 @@ import {
 } from "@/components/dashboard/shared";
 import { DASHBOARD_MAIN_ID } from "@/lib/phase-83e6-states-polish";
 import type { DashboardSection } from "@/lib/phase-85-stage-4b-dashboard-routing";
-import { resolveMessagingRouteSelection } from "@/lib/phase-85-stage-4b-dashboard-routing";
+import {
+  resolveLegacyCopilotSectionRedirect,
+  resolveMessagingRouteSelection,
+} from "@/lib/phase-85-stage-4b-dashboard-routing";
 import {
   buildClinicalAlertMessagingNavigationPatch,
   buildSystemNotificationNavigationAction,
   refreshStage4B2OperationalSurfaces,
   resolveMessagingTargetValidity,
 } from "@/lib/phase-85-stage-4b2-messaging-integration";
-import {
-  DashboardHeaderBell,
-  DashboardMobileNav,
-  DashboardSidebarNav,
-} from "@/components/dashboard/dashboard-navigation";
+import { DashboardHeaderBell } from "@/components/dashboard/dashboard-navigation";
+import { DashboardShell } from "@/components/dashboard/dashboard-shell";
 import { AlertsPanel } from "@/components/dashboard/alerts-panel";
 import { NotificationsPanel } from "@/components/dashboard/notifications-panel";
 import { OverviewPanel } from "@/components/dashboard/overview-panel";
@@ -84,9 +86,11 @@ import { DashboardLoadingSkeleton, ErrorState } from "@/components/dashboard/sta
 export function DashboardApp({
   authInfo,
   commercialInfo,
+  aiChatEnabled = false,
 }: {
   authInfo?: { displayName: string; role: string };
   commercialInfo?: { subscriptionStatus: CommercialEntitlementStatus | null; installReady: boolean };
+  aiChatEnabled?: boolean;
 }) {
   const {
     state,
@@ -128,6 +132,7 @@ export function DashboardApp({
     mergeConversationDetailIntoState,
     mergeConversationMutationIntoState,
   } = useManuState();
+  const router = useRouter();
   const { urlState, section, navigateDashboard, openSection } = useDashboardUrl();
   const stage4bInbox = useStage4BInbox(urlState);
   const [operationalFoundation, setOperationalFoundation] =
@@ -169,6 +174,8 @@ export function DashboardApp({
   const [isProposalUpdating, setIsProposalUpdating] = useState(false);
   const [isActivatingAi, setIsActivatingAi] = useState(false);
   const [isReleasingHumanTakeover, setIsReleasingHumanTakeover] = useState(false);
+  const [isEvaluatingWithAi, setIsEvaluatingWithAi] = useState(false);
+  const [evaluateWithAiError, setEvaluateWithAiError] = useState<string | null>(null);
   const [contextUpdateSource, setContextUpdateSource] = useState<ClientContextUpdateSource>("phone");
   const [contextUpdateImportance, setContextUpdateImportance] =
     useState<ClientContextUpdateImportance>("important");
@@ -243,6 +250,11 @@ export function DashboardApp({
       options,
     );
   };
+
+  useEffect(() => {
+    const legacyRedirect = resolveLegacyCopilotSectionRedirect(section);
+    if (legacyRedirect) router.replace(legacyRedirect);
+  }, [router, section]);
 
   useEffect(() => {
     if (section !== "messages" || !messagingRoute.needsCanonicalization) return;
@@ -395,6 +407,26 @@ export function DashboardApp({
     const nextActiveClient = nextState.clients.find((client) => client.lifecycleStatus !== "removed_anonymized");
     if (nextActiveClient) {
       selectClient(nextActiveClient.id, { section: "clients" });
+    }
+  };
+
+  // Fail-closed: a failed create must surface an explicit error, never a
+  // silent no-op navigation (see CLAUDE.md fail-closed principle).
+  const evaluateClientWithAi = async (client: ClientRecord) => {
+    setIsEvaluatingWithAi(true);
+    setEvaluateWithAiError(null);
+    try {
+      const summary = await createAiChatConversation({
+        requestId: generateAiChatRequestId(),
+        scopeType: "client",
+        clientId: client.id,
+        title: client.fullName,
+      });
+      router.push(`/dashboard/ai-chat/${summary.id}`);
+    } catch {
+      setEvaluateWithAiError(t(uiLanguage, "aiChatActionFailed"));
+    } finally {
+      setIsEvaluatingWithAi(false);
     }
   };
 
@@ -691,57 +723,18 @@ export function DashboardApp({
     : "pb-mobile-nav lg:pb-5";
 
   return (
-    <div className="min-h-screen bg-[#f7f5ef] text-stone-950">
-      <a href={`#${DASHBOARD_MAIN_ID}`} className="skip-link">
-        İçeriğe atla
-      </a>
-      <div className="flex min-h-screen flex-col lg:flex-row">
-        <aside
-          className="border-b border-stone-200 bg-white px-safe lg:w-72 lg:border-b-0 lg:border-r lg:px-0"
-          aria-label="Ana navigasyon"
-        >
-          <div className="flex items-center justify-between gap-3 px-5 py-4 lg:block">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-700">MANU-AI</p>
-              <h1 className="mt-1 text-xl font-semibold">Diyetisyen konsolu</h1>
-            </div>
-            <form action="/api/demo-logout" method="post">
-              <button
-                className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-stone-200 bg-white text-stone-600 transition hover:bg-stone-100"
-                title="Demo oturumunu kapat"
-                aria-label="Demo oturumunu kapat"
-              >
-                <LogOut size={18} />
-              </button>
-            </form>
-          </div>
-
-          <DashboardSidebarNav
-            activeSection={section}
-            uiLanguage={uiLanguage}
-            badges={{
-              alerts: stage4bInbox.alertsBadgeCount,
-              notifications: stage4bInbox.notificationsBadgeCount,
-              messages: stage4bMessaging.messagingBadgeCount,
-            }}
-            onNavigate={navigateToSection}
-          />
-
-          <div className="hidden px-5 py-5 lg:block">
-            <div className="rounded-lg border border-stone-200 bg-stone-50 p-4">
-              <div className="flex items-center gap-2 text-sm font-semibold">
-                <ShieldCheck size={18} className="text-emerald-700" />
-                Yerel güvenli mod
-              </div>
-              <p className="mt-2 text-sm leading-6 text-stone-600">
-                Yalnızca simülatör. WhatsApp, Telegram veya canlı sağlık verisi sağlayıcısı bağlı değil.
-              </p>
-            </div>
-          </div>
-        </aside>
-
-        <main className="flex min-w-0 flex-1 flex-col">
-          <header className="border-b border-stone-200 bg-white px-safe py-4 pt-safe sm:px-6 lg:pt-4">
+    <DashboardShell
+      activeNavKey={section}
+      uiLanguage={uiLanguage}
+      badges={{
+        alerts: stage4bInbox.alertsBadgeCount,
+        notifications: stage4bInbox.notificationsBadgeCount,
+        messages: stage4bMessaging.messagingBadgeCount,
+      }}
+      aiChatEnabled={aiChatEnabled}
+      onNavigateSection={navigateToSection}
+    >
+      <header className="border-b border-stone-200 bg-white px-safe py-4 pt-safe sm:px-6 lg:pt-4">
             <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
               <div>
                 <p className="text-sm text-stone-500">{state.tenant.name}</p>
@@ -889,6 +882,10 @@ export function DashboardApp({
                 onCopilotInput={setCopilotInput}
                 onAskCopilot={askInternalCopilot}
                 onSaveFormResponse={saveSelectedFormResponse}
+                aiChatEnabled={aiChatEnabled}
+                onEvaluateWithAi={evaluateClientWithAi}
+                isEvaluatingWithAi={isEvaluatingWithAi}
+                evaluateWithAiError={evaluateWithAiError}
               />
             )}
 
@@ -1116,19 +1113,6 @@ export function DashboardApp({
               />
             )}
           </div>
-        </main>
-      </div>
-
-      <DashboardMobileNav
-        activeSection={section}
-        uiLanguage={uiLanguage}
-        badges={{
-          alerts: stage4bInbox.alertsBadgeCount,
-          notifications: stage4bInbox.notificationsBadgeCount,
-          messages: stage4bMessaging.messagingBadgeCount,
-        }}
-        onNavigate={navigateToSection}
-      />
-    </div>
+    </DashboardShell>
   );
 }

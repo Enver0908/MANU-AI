@@ -21,6 +21,29 @@ export type DashboardSection =
 
 export type DashboardMessageSource = "alert" | "notification";
 
+/**
+ * Nav highlighting key. AI Chat lives on real routes (`/dashboard/ai-chat`),
+ * not a `?section=` query value, so it needs its own key distinct from
+ * `DashboardSection` for sidebar/mobile-nav active-state comparisons.
+ */
+export type DashboardNavKey = DashboardSection | "ai_chat";
+
+export const AI_CHAT_ROOT_PATH = "/dashboard/ai-chat";
+
+/**
+ * Server-evaluated only (no `NEXT_PUBLIC_` prefix): callers must resolve this
+ * on the server and pass the result down as a prop, so `next start` picks up
+ * the flag at runtime without requiring a rebuild.
+ */
+export function isAiChatUiEnabled() {
+  return process.env.AI_CHAT_UI_ENABLED === "true";
+}
+
+/** Legacy `?section=copilot` deep links replace-redirect to the AI Chat route. */
+export function resolveLegacyCopilotSectionRedirect(section: DashboardSection): string | null {
+  return section === "copilot" ? AI_CHAT_ROOT_PATH : null;
+}
+
 export type DashboardUrlState = {
   section: DashboardSection;
   clientId: string | null;

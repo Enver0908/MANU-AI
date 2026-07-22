@@ -1,15 +1,18 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import {
+  AI_CHAT_ROOT_PATH,
   buildDashboardHref,
   buildStage4BAlertsRequestQuery,
   buildStage4BNotificationsRequestQuery,
   buildStage4B2ConversationsRequestQuery,
   buildStage4B2ConversationDetailRequestQuery,
   formatStage4BBadgeCount,
+  isAiChatUiEnabled,
   mergeDashboardUrlState,
   parseDashboardSearchParams,
   resolveAlertsBadgeCount,
   resolveDashboardSection,
+  resolveLegacyCopilotSectionRedirect,
   resolveMessagingRouteSelection,
   resolveMessagingUnreadBadgeCount,
   serializeDashboardSearchParams,
@@ -190,5 +193,35 @@ describe("phase-85-stage-4b dashboard routing", () => {
     });
     expect(query.get("anchorMessageId")).toBe("message-anchor");
     expect(query.get("limit")).toBe("50");
+  });
+
+  describe("AI Chat feature flag and legacy Copilot redirect", () => {
+    const originalFlag = process.env.AI_CHAT_UI_ENABLED;
+
+    afterEach(() => {
+      if (originalFlag === undefined) {
+        delete process.env.AI_CHAT_UI_ENABLED;
+      } else {
+        process.env.AI_CHAT_UI_ENABLED = originalFlag;
+      }
+    });
+
+    it("defaults to disabled when the flag is unset", () => {
+      delete process.env.AI_CHAT_UI_ENABLED;
+      expect(isAiChatUiEnabled()).toBe(false);
+    });
+
+    it("enables only on an explicit true value", () => {
+      process.env.AI_CHAT_UI_ENABLED = "true";
+      expect(isAiChatUiEnabled()).toBe(true);
+      process.env.AI_CHAT_UI_ENABLED = "1";
+      expect(isAiChatUiEnabled()).toBe(false);
+    });
+
+    it("redirects legacy ?section=copilot to the AI Chat route only", () => {
+      expect(resolveLegacyCopilotSectionRedirect("copilot")).toBe(AI_CHAT_ROOT_PATH);
+      expect(resolveLegacyCopilotSectionRedirect("overview")).toBeNull();
+      expect(resolveLegacyCopilotSectionRedirect("messages")).toBeNull();
+    });
   });
 });

@@ -1,24 +1,36 @@
 import { Suspense } from "react";
-import { DashboardApp } from "@/components/dashboard-app";
+import { notFound } from "next/navigation";
+import { AiChatPageClient } from "@/components/ai-chat/ai-chat-page-client";
 import { DashboardGatedState } from "@/components/auth-states";
 import { PwaSubscriberShell } from "@/components/pwa-subscriber-shell";
 import { resolveMobileInstallAccess } from "@/lib/commercial-install-access";
-import {
-  deriveDashboardAccessGate,
-  type DashboardAccessGate,
-} from "@/lib/phase-83e3-app-shell";
+import { deriveDashboardAccessGate, type DashboardAccessGate } from "@/lib/phase-83e3-app-shell";
 import { resolveDashboardAuth } from "@/lib/dashboard-server-auth";
 import { isAiChatUiEnabled } from "@/lib/phase-85-stage-4b-dashboard-routing";
+import { normalizeLanguageCode } from "@/lib/languages";
 
-export default async function DashboardPage() {
+// Force dynamic rendering so the `AI_CHAT_UI_ENABLED` runtime env var (and
+// auth cookies) are re-evaluated on every request instead of being baked
+// into a static build artifact.
+export const dynamic = "force-dynamic";
+
+export default async function AiChatConversationPage({
+  params,
+}: {
+  params: Promise<{ chatId: string }>;
+}) {
+  if (!isAiChatUiEnabled()) {
+    notFound();
+  }
+
+  const { chatId } = await params;
   const auth = await resolveDashboardAuth();
-  const aiChatEnabled = isAiChatUiEnabled();
 
   if (auth.gate === "fallback") {
     return (
       <PwaSubscriberShell registerServiceWorker={false}>
         <Suspense fallback={null}>
-          <DashboardApp aiChatEnabled={aiChatEnabled} />
+          <AiChatPageClient activeChatId={chatId} uiLanguage={normalizeLanguageCode(undefined)} canAccessAiChat />
         </Suspense>
       </PwaSubscriberShell>
     );
@@ -35,18 +47,14 @@ export default async function DashboardPage() {
   }
 
   const installAccess = await resolveMobileInstallAccess();
-  const registerServiceWorker = installAccess.gate === "granted";
 
   return (
-    <PwaSubscriberShell registerServiceWorker={registerServiceWorker}>
+    <PwaSubscriberShell registerServiceWorker={installAccess.gate === "granted"}>
       <Suspense fallback={null}>
-        <DashboardApp
-          authInfo={{ displayName: auth.displayName, role: auth.role }}
-          commercialInfo={{
-            subscriptionStatus: auth.entitlementStatus,
-            installReady: registerServiceWorker,
-          }}
-          aiChatEnabled={aiChatEnabled}
+        <AiChatPageClient
+          activeChatId={chatId}
+          uiLanguage={auth.uiLanguage}
+          canAccessAiChat={auth.role !== "assistant" && auth.role !== "auditor"}
         />
       </Suspense>
     </PwaSubscriberShell>

@@ -1,0 +1,263 @@
+"use client";
+
+import { useCallback, useEffect, useRef, useState } from "react";
+import { AppRequestError } from "./app-errors";
+import type {
+  AiChatApiErrorBody,
+  AiChatClientSearchItem,
+  AiChatConversationDetail,
+  AiChatConversationListItem,
+  AiChatConversationListResponse,
+  AiChatConversationSummary,
+  AiChatListScopeFilter,
+  AiChatScopeType,
+} from "./phase-85-stage-4c-contracts";
+
+// Independent from `useManuState`/internal-copilot state per Stage 4C Faz 4
+// architecture decisions: AI Chat owns its own bounded request/response cycle.
+
+async function requestAiChatJson<T>(url: string, init?: RequestInit): Promise<T> {
+  const response = await fetch(url, {
+    ...init,
+    headers: {
+      "content-type": "application/json",
+      ...init?.headers,
+    },
+  });
+
+  if (!response.ok) {
+    let code = `ai_chat_request_failed_${response.status}`;
+    let field: string | undefined;
+    let revision: number | undefined;
+    try {
+      const body = (await response.json()) as AiChatApiErrorBody;
+      code = body.error?.code || code;
+      field = body.error?.field;
+      revision = body.error?.revision;
+    } catch {
+      // ignore parse errors — fall back to the generic status code above
+    }
+    throw new AppRequestError(response.status, code, field, revision);
+  }
+
+  return response.json() as Promise<T>;
+}
+
+export function generateAiChatRequestId() {
+  return crypto.randomUUID();
+}
+
+export type AiChatDateGroupKey = "today" | "last7Days" | "last30Days" | "older";
+
+export const AI_CHAT_DATE_GROUP_ORDER: readonly AiChatDateGroupKey[] = [
+  "today",
+  "last7Days",
+  "last30Days",
+  "older",
+];
+
+/** Client-side date bucketing; the bounded API never groups by date. */
+export function resolveAiChatDateGroup(isoDate: string, now: Date = new Date()): AiChatDateGroupKey {
+  const value = new Date(isoDate).getTime();
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const dayMs = 24 * 60 * 60 * 1000;
+  if (Number.isNaN(value)) return "older";
+  if (value >= startOfToday) return "today";
+  if (value >= startOfToday - 7 * dayMs) return "last7Days";
+  if (value >= startOfToday - 30 * dayMs) return "last30Days";
+  return "older";
+}
+
+export type AiChatHistoryGroup = {
+  group: AiChatDateGroupKey;
+  items: AiChatConversationListItem[];
+};
+
+export function groupAiChatHistoryByDate(
+  items: readonly AiChatConversationListItem[],
+  now: Date = new Date(),
+): AiChatHistoryGroup[] {
+  const buckets = new Map<AiChatDateGroupKey, AiChatConversationListItem[]>();
+  for (const item of items) {
+    const sortAt = item.lastMessageAt ?? item.createdAt;
+    const group = resolveAiChatDateGroup(sortAt, now);
+    if (!buckets.has(group)) buckets.set(group, []);
+    buckets.get(group)!.push(item);
+  }
+  return AI_CHAT_DATE_GROUP_ORDER.filter((group) => buckets.has(group)).map((group) => ({
+    group,
+    items: buckets.get(group)!,
+  }));
+}
+
+function buildAiChatHistoryUrl(scope: AiChatListScopeFilter, query: string, cursor?: string | null) {
+  const params = new URLSearchParams();
+  if (scope !== "all") params.set("scope", scope);
+  if (query) params.set("query", query);
+  if (cursor) params.set("cursor", cursor);
+  const search = params.toString();
+  return search ? `/api/ai-chat/conversations?${search}` : "/api/ai-chat/conversations";
+}
+
+export type AiChatHistoryFilters = { scope: AiChatListScopeFilter; query: string };
+
+export function useAiChatHistory({ scope, query }: AiChatHistoryFilters) {
+  const [items, setItems] = useState<AiChatConversationListItem[]>([]);
+  const [nextCursor, setNextCursor] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const requestSeq = useRef(0);
+
+  const refresh = useCallback(async () => {
+    const seq = ++requestSeq.current;
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await requestAiChatJson<AiChatConversationListResponse>(
+        buildAiChatHistoryUrl(scope, query, null),
+      );
+      if (seq !== requestSeq.current) return;
+      setItems(response.items);
+      setNextCursor(response.nextCursor);
+    } catch (err) {
+      if (seq !== requestSeq.current) return;
+      setError(err instanceof AppRequestError ? err.code : "ai_chat_history_error");
+    } finally {
+      if (seq === requestSeq.current) setIsLoading(false);
+    }
+  }, [query, scope]);
+
+  const loadMore = useCallback(async () => {
+    if (!nextCursor || isLoadingMore) return;
+    setIsLoadingMore(true);
+    try {
+      const response = await requestAiChatJson<AiChatConversationListResponse>(
+        buildAiChatHistoryUrl(scope, query, nextCursor),
+      );
+      setItems((current) => [...current, ...response.items]);
+      setNextCursor(response.nextCursor);
+      setError(null);
+    } catch (err) {
+      setError(err instanceof AppRequestError ? err.code : "ai_chat_history_error");
+    } finally {
+      setIsLoadingMore(false);
+    }
+  }, [isLoadingMore, nextCursor, query, scope]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => void refresh(), 0);
+    return () => window.clearTimeout(timer);
+  }, [refresh]);
+
+  return { items, nextCursor, isLoading, isLoadingMore, error, refresh, loadMore };
+}
+
+export function useAiChatConversation(chatId: string | null) {
+  const [detail, setDetail] = useState<AiChatConversationDetail | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [notFound, setNotFound] = useState(false);
+
+  const refresh = useCallback(async () => {
+    if (!chatId) {
+      setDetail(null);
+      setNotFound(false);
+      setError(null);
+      return;
+    }
+    setIsLoading(true);
+    setError(null);
+    setNotFound(false);
+    try {
+      const response = await requestAiChatJson<AiChatConversationDetail>(
+        `/api/ai-chat/conversations/${encodeURIComponent(chatId)}`,
+      );
+      setDetail(response);
+    } catch (err) {
+      if (err instanceof AppRequestError && err.status === 404) {
+        setNotFound(true);
+        setDetail(null);
+      } else {
+        setError(err instanceof AppRequestError ? err.code : "ai_chat_history_error");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }, [chatId]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => void refresh(), 0);
+    return () => window.clearTimeout(timer);
+  }, [refresh]);
+
+  const rename = useCallback(
+    async (input: { requestId: string; expectedRevision: number; title: string }) => {
+      if (!chatId) throw new Error("no_active_chat");
+      const summary = await requestAiChatJson<AiChatConversationSummary>(
+        `/api/ai-chat/conversations/${encodeURIComponent(chatId)}`,
+        { method: "PATCH", body: JSON.stringify(input) },
+      );
+      setDetail((current) => (current ? { ...current, ...summary } : current));
+      return summary;
+    },
+    [chatId],
+  );
+
+  return { detail, isLoading, error, notFound, refresh, rename };
+}
+
+export function useAiChatClientSearch(query: string, debounceMs = 250) {
+  const [results, setResults] = useState<AiChatClientSearchItem[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const requestSeq = useRef(0);
+
+  useEffect(() => {
+    const trimmed = query.trim();
+    if (trimmed.length < 2) {
+      requestSeq.current += 1;
+      const resetTimer = window.setTimeout(() => {
+        setResults([]);
+        setError(null);
+        setIsLoading(false);
+      }, 0);
+      return () => window.clearTimeout(resetTimer);
+    }
+
+    const seq = ++requestSeq.current;
+    const timer = window.setTimeout(() => {
+      setIsLoading(true);
+      const params = new URLSearchParams({ query: trimmed });
+      requestAiChatJson<AiChatClientSearchItem[]>(`/api/ai-chat/clients?${params.toString()}`)
+        .then((response) => {
+          if (seq !== requestSeq.current) return;
+          setResults(response);
+          setError(null);
+        })
+        .catch((err: unknown) => {
+          if (seq !== requestSeq.current) return;
+          setError(err instanceof AppRequestError ? err.code : "aiChatActionFailed");
+        })
+        .finally(() => {
+          if (seq === requestSeq.current) setIsLoading(false);
+        });
+    }, debounceMs);
+
+    return () => window.clearTimeout(timer);
+  }, [debounceMs, query]);
+
+  return { results, isLoading, error };
+}
+
+export async function createAiChatConversation(input: {
+  requestId: string;
+  scopeType: AiChatScopeType;
+  clientId?: string | null;
+  title: string;
+}) {
+  return requestAiChatJson<AiChatConversationSummary>("/api/ai-chat/conversations", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
+}

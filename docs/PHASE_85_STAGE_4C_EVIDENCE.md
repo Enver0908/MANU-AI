@@ -1,7 +1,7 @@
 # Phase 85 Stage 4C Evidence
 
 Date: 2026-07-22
-Status: **Faz 3 complete locally; Faz 4 is next**
+Status: **Faz 4 complete locally; Faz 5 is next (requires explicit user approval)**
 
 Production remains `NO-GO`. R-405 remains open.
 
@@ -169,3 +169,100 @@ Status: **complete locally**
 ### Next
 
 Faz 4: Dashboard AI Chat Sayfasi ve ChatGPT Benzeri Arayuz Temeli — after explicit user approval.
+
+## Faz 4: Dashboard AI Chat Sayfasi ve ChatGPT Benzeri Arayuz Temeli
+
+Status: **complete locally**
+
+### Starting State
+
+- Branch: `codex/stage-4b4-voice-transcription`
+- Starting commit: `db72c68 Complete Stage 4C Faz 3 bounded service layer, CRUD API, and client search.`
+- Scope: dashboard shell extraction, real routes (`/dashboard/ai-chat`, `/dashboard/ai-chat/[chatId]`), nav replacement, legacy redirect, client "AI ile degerlendir" deep-link, three-pane workspace shell, history sidebar, new-chat client picker, focus mode, mobile drawers, i18n — no real message send/streaming (Faz 5)
+
+### Files Created
+
+- `app/src/app/dashboard/ai-chat/page.tsx`
+- `app/src/app/dashboard/ai-chat/[chatId]/page.tsx`
+- `app/src/components/ai-chat/ai-chat-page-client.tsx`
+- `app/src/components/ai-chat/ai-chat-workspace.tsx`
+- `app/src/components/ai-chat/ai-chat-history-sidebar.tsx`
+- `app/src/components/ai-chat/ai-chat-client-picker.tsx`
+- `app/src/components/ai-chat/ai-chat-message-list.tsx` (+ `.test.ts`)
+- `app/src/components/ai-chat/ai-chat-composer.tsx`
+- `app/src/components/ai-chat/ai-chat-context-drawer.tsx`
+- `app/src/components/dashboard/dashboard-shell.tsx`
+- `app/src/lib/dashboard-server-auth.ts`
+- `app/src/lib/use-ai-chat.ts` (+ `.test.ts`)
+- `app/tests/visual/ai-chat.visual.spec.ts` (+ snapshots)
+
+### Files Updated
+
+- `app/src/lib/phase-85-stage-4b-dashboard-routing.ts` / `.test.ts` — `DashboardNavKey`, `AI_CHAT_ROOT_PATH`, server-only `isAiChatUiEnabled()` (no `NEXT_PUBLIC_` prefix), `resolveLegacyCopilotSectionRedirect()`
+- `app/src/lib/i18n.ts` — AI Chat strings across all seven languages
+- `app/src/components/dashboard/dashboard-navigation.tsx` — removed Copilot nav entry; added real `Link`-based AI Chat entry gated by an `aiChatEnabled` prop (not the flag directly, so client bundles never need the server-only env var)
+- `app/src/components/dashboard/clients-panel.tsx` — removed `tab_copilot`; added "AI ile degerlendir" command gated by `aiChatEnabled` prop, with loading/fail-closed error state
+- `app/src/components/dashboard-app.tsx` — uses `DashboardShell`; legacy `?section=copilot` replace-redirect; `evaluateClientWithAi` (fail-closed error surface, no silent no-op)
+- `app/src/app/dashboard/page.tsx` — uses extracted `resolveDashboardAuth`; passes server-resolved `aiChatEnabled` down as a prop
+- `app/playwright.config.ts` — `desktop-xl` (1728x1117) project; `AI_CHAT_UI_ENABLED`/`AI_CHAT_DETERMINISTIC_MODE` webServer env
+- `app/package.json` / `package-lock.json` — added `@axe-core/playwright` devDependency for the axe serious/critical violation tests required by the plan
+
+### Architectural Decision: Feature Flag Is Server-Only, Not `NEXT_PUBLIC_`
+
+`isAiChatUiEnabled()` reads `process.env.AI_CHAT_UI_ENABLED` (no `NEXT_PUBLIC_` prefix) so it is resolved fresh per request on the server and passed down as a prop, instead of being inlined into the client bundle at build time. Both AI Chat route files set `export const dynamic = "force-dynamic"` so `next start` re-evaluates the flag (and auth cookies) on every request — without this, Next's build-time static analysis would have frozen the route as a permanently-404 static page whenever the flag was off during `next build` (verified: without `force-dynamic` the root route built as `○ Static`; with it, `ƒ Dynamic`). This lets ops toggle the flag at runtime without a rebuild, which a `NEXT_PUBLIC_` build-time flag could not do.
+
+### Delivered Behavior
+
+- `DashboardShell` (skip-link, sidebar nav, mobile nav) shared verbatim between the classic dashboard and AI Chat routes
+- AI Chat nav item is a real Next `Link` to `/dashboard/ai-chat`, gated by `aiChatEnabled`; old Copilot main-nav entry and client-detail tab removed
+- `?section=copilot` deep links replace-redirect to `/dashboard/ai-chat` (redirect fires regardless of the flag; when the flag is off the route itself renders `notFound()`)
+- Client detail "AI ile degerlendir" command creates a client-scoped chat and navigates to its URL; fails closed with a visible inline error (no silent no-op, no navigation) when creation fails
+- Three-pane workspace: history sidebar (desktop inline / mobile-tablet drawer), message column, context panel (desktop inline / drawer) — `mobileDrawer` is a single tri-state value so history/context drawers are mutually exclusive by construction
+- Unified history list with `Tumu`/`Genel`/`Danisan` segment control, client-side date grouping (Bugun/Son 7 Gun/Son 30 Gun/Daha Eski), 30-record cursor pages with `IntersectionObserver` infinite scroll, and a retry-able error state
+- New-chat modal: general/client scope tabs, debounced (250ms, min 2 chars) client search, title field, Tab-cycle focus trap, Escape-to-close, no client-change/second-client control anywhere
+- Chat header shows locked client name + reference code badge when scope is `client`; rename-in-place with revision-gated `PATCH`
+- Focus mode via `?focus=1` hides all shell chrome and persists across reload/navigation
+- Message list has a lightweight virtualization range calculator and per-chat `sessionStorage` scroll position; composer grows to a max of 8 lines (Enter sends, Shift+Enter newline) — actual sending remains disabled pending Faz 5's run/provider work
+- All new strings added to `i18n.ts` for all seven supported languages; no marketing/feature-explainer copy, only status/error/action text
+
+### Verification (Faz 4)
+
+| Command | Result |
+| --- | --- |
+| `npm run lint` | pass, 0 errors |
+| `npx vitest run src` | 206 files / 1282 passed, 8 skipped |
+| `npm run build` | pass; both AI Chat routes render as `ƒ` (dynamic) |
+| `npx playwright test tests/visual/ai-chat.visual.spec.ts` (all 5 viewport projects) | 48 passed, 2 skipped (compact-only test skipped on desktop/desktop-xl) |
+| `npx playwright test --grep-invert "ai-chat"` (pre-existing suites, all viewports) | 96 passed; 3 failures are a pre-existing `stage4b-alerts-panel` masked-timestamp baseline drift (baseline dated 2026-07-12, unrelated to this phase) and 1 is a non-reproducing flake under bulk parallel load (passed in isolation) |
+
+### Accessibility
+
+`@axe-core/playwright` was added as a devDependency (test-only, zero production/runtime impact) because the plan requires an axe serious/critical violation test, which the repository did not previously have. A real violation was found and fixed: `text-stone-500` on the `#f7f5ef` page background fell to a 4.39:1 contrast ratio (below the 4.5:1 WCAG AA text threshold); all AI Chat secondary/muted text was bumped to `text-stone-600` (~7:1 against the same background). Both the AI Chat root route and the new-chat modal now report zero serious/critical axe violations.
+
+### Test Coverage Added
+
+- Nav: AI Chat is a real route link; old Copilot nav/tab fully removed
+- Legacy `?section=copilot` deep-link redirect
+- Client detail "AI ile degerlendir" fail-closed error surface (no backend in the test environment)
+- Workspace shell renders with retry-able history error and empty-chat state
+- New-chat modal: focus trap, Escape close, general/client scope toggle, debounced client search min-chars hint
+- Focus mode chrome hiding + persistence across reload
+- Mobile/tablet history/context drawer mutual exclusion
+- Axe serious/critical violations (workspace root + new-chat modal)
+- Screenshot baseline across 390x844, 768x1024, 1440x900, and the newly added 1728x1117 `desktop-xl` project (also backfilled baselines for the two pre-existing suites that now run on `desktop-xl`)
+
+### Deferred To Faz 5 (Documented, Not Silently Dropped)
+
+- Real message send/streaming, edit/regenerate/stop/copy, and branch UI (composer send button remains disabled; no backend run/provider yet)
+- Visual tests for actual long message bodies / long client names in rendered chat content (requires Faz 5's real message data; the empty/error/history states reachable today are covered instead)
+- `npm run test:rls` remains skipped (remote Supabase; local reset not run this session) — unchanged from Faz 2/3 status
+
+### Open Blockers After Faz 4
+
+- `R-405` remains open; production remains `NO-GO`
+- `AI_CHAT_UI_ENABLED` remains unset (disabled) by default; no deployment config was changed
+- Faz 5 (Metin Mesaji, Dal/Surum ve Dayanikli Run Akisi) requires explicit user approval before implementation
+
+### Next
+
+Faz 5: Metin Mesaji, Dal/Surum ve Dayanikli Run Akisi — after explicit user approval.
