@@ -1,6 +1,6 @@
 # Direct 100 Dietitian Completion Plan
 
-**Current authority (2026-07-22):** Stage 4C Diyetisyen Icin AI Chat Faz 1 read gate is complete locally. Active plan: `docs/PHASE_85_STAGE_4C_DIYETISYEN_AI_CHAT_ACTION_PLAN.md`; active evidence: `docs/PHASE_85_STAGE_4C_PHASE_1_READ_GATE_EVIDENCE.md`. Stage 4C Faz 2 is next after explicit user approval. Production remains `NO-GO`; R-405 remains open.
+**Current authority (2026-07-22):** Stage 4C Diyetisyen Icin AI Chat Faz 2 data model, RLS, and capability baseline is complete locally. Active plan: `docs/PHASE_85_STAGE_4C_DIYETISYEN_AI_CHAT_ACTION_PLAN.md`; active evidence: `docs/PHASE_85_STAGE_4C_EVIDENCE.md`. Stage 4C Faz 3 is next after explicit user approval. Production remains `NO-GO`; R-405 remains open.
 
 Current Phase 85 status, 2026-07-22: Stage 4C Diyetisyen Icin AI Chat Faz 1 read gate is complete locally. Evidence: `docs/PHASE_85_STAGE_4C_PHASE_1_READ_GATE_EVIDENCE.md`. **Next:** Stage 4C Faz 2 - Veri Modeli, RLS ve Yetki Temeli after explicit user approval. This does not approve a 100-dietitian production pilot; production remains `NO-GO` and R-405 remains open.
 Date: 2026-06-05

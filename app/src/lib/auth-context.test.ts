@@ -57,15 +57,20 @@ describe("auth context error handling", () => {
     expect(hasCapability("owner", "internal_copilot_chat")).toBe(true);
     expect(hasCapability("admin", "internal_copilot_chat")).toBe(true);
     expect(hasCapability("dietitian", "internal_copilot_chat")).toBe(true);
+    expect(hasCapability("owner", "dietitian_ai_chat")).toBe(true);
+    expect(hasCapability("admin", "dietitian_ai_chat")).toBe(true);
+    expect(hasCapability("dietitian", "dietitian_ai_chat")).toBe(true);
   });
 
   it("keeps assistant and auditor roles fail-closed beyond read-only app state", () => {
     expect(hasCapability("assistant", "read_app_state")).toBe(true);
     expect(hasCapability("assistant", "manual_reply")).toBe(false);
     expect(hasCapability("assistant", "internal_copilot_chat")).toBe(false);
+    expect(hasCapability("assistant", "dietitian_ai_chat")).toBe(false);
     expect(hasCapability("auditor", "read_app_state")).toBe(true);
     expect(hasCapability("auditor", "export_client")).toBe(false);
     expect(hasCapability("auditor", "internal_copilot_chat")).toBe(false);
+    expect(hasCapability("auditor", "dietitian_ai_chat")).toBe(false);
   });
 
   it("requireCapability returns a controlled 403 for forbidden role actions", () => {
@@ -91,6 +96,19 @@ describe("auth context error handling", () => {
 
     expect(() => requireCapability(context, "internal_copilot_chat")).toThrow(
       new AppAuthError(403, "internal_copilot_forbidden"),
+    );
+  });
+
+  it("returns the Stage 4C controlled error for blocked AI chat roles", () => {
+    const context: AppTenantContext = {
+      tenantId: "tenant-demo",
+      dietitianId: "dietitian-demo",
+      userId: "user-demo",
+      role: "assistant",
+    };
+
+    expect(() => requireCapability(context, "dietitian_ai_chat")).toThrow(
+      new AppAuthError(403, "dietitian_ai_chat_forbidden"),
     );
   });
 });

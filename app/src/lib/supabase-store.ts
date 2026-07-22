@@ -158,6 +158,7 @@ import {
   mapAudioTranscriptCorrection,
 } from "./phase-85-stage-4b4-supabase-mappers";
 import { createEmptyStage4B4VoiceCollections } from "./phase-85-stage-4b4-voice-contracts";
+import { createEmptyStage4CAiChatCollections } from "./phase-85-stage-4c-contracts";
 import { loadBoundedMediaProjectionFromSupabaseV2 } from "./phase-85-stage-4b3-bounded-media-rpc";
 import { loadBoundedVoiceProjectionFromSupabaseV2 } from "./phase-85-stage-4b4-bounded-audio-rpc";
 import { prepareSupabaseClientMediaDsar } from "./phase-85-stage-4b3-media-lifecycle-saga";
@@ -1081,6 +1082,7 @@ export async function loadSupabaseState(context = demoTenantContext()) {
         }),
       ),
       ...createEmptyStage4B4VoiceCollections(),
+      ...createEmptyStage4CAiChatCollections(),
       audioTranscriptionRecords: (audioTranscriptionRecordsResult.data || []).map(mapAudioTranscriptionRecord),
       audioTranscriptCorrections: (audioTranscriptCorrectionsResult.data || []).map(mapAudioTranscriptCorrection),
       processedTranscriptCorrectionRequestIds: (audioTranscriptCorrectionIdempotencyResult.data || []).map(
@@ -1327,6 +1329,7 @@ export async function loadSupabaseWindowedDashboardPayload(
       lastSimulation: null,
       ...createEmptyStage4B3MediaCollections(),
       ...createEmptyStage4B4VoiceCollections(),
+      ...createEmptyStage4CAiChatCollections(),
     },
     context,
     assignmentsResult.data || [],
@@ -1617,6 +1620,7 @@ async function loadSupabaseClientOperationState(
       lastSimulation: null,
       ...createEmptyStage4B3MediaCollections(),
       ...createEmptyStage4B4VoiceCollections(),
+      ...createEmptyStage4CAiChatCollections(),
     },
     context,
     assignmentsResult.data || [],
@@ -1978,6 +1982,7 @@ async function loadSupabaseClientCreateContext(context: AppTenantContext) {
       lastSimulation: null,
       ...createEmptyStage4B3MediaCollections(),
       ...createEmptyStage4B4VoiceCollections(),
+      ...createEmptyStage4CAiChatCollections(),
     },
     context,
     assignmentsResult.data || [],

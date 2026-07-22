@@ -18,6 +18,7 @@ export type AppCapability =
   | "anonymize_client"
   | "release_takeover"
   | "internal_copilot_chat"
+  | "dietitian_ai_chat"
   | "read_operational_foundation"
   | "revoke_tenant_channel_bindings";
 
@@ -114,6 +115,9 @@ export function requireCapability(context: AppTenantContext, capability: AppCapa
     if (capability === "internal_copilot_chat") {
       throw new AppAuthError(403, "internal_copilot_forbidden");
     }
+    if (capability === "dietitian_ai_chat") {
+      throw new AppAuthError(403, "dietitian_ai_chat_forbidden");
+    }
     throw new AppAuthError(403, `rbac_forbidden_${capability}`);
   }
 }
@@ -121,6 +125,10 @@ export function requireCapability(context: AppTenantContext, capability: AppCapa
 export function hasCapability(role: TenantRole, capability: AppCapability) {
   if (capability === "read_operational_foundation" || capability === "revoke_tenant_channel_bindings") {
     return role === "owner" || role === "admin";
+  }
+
+  if (capability === "dietitian_ai_chat") {
+    return role === "owner" || role === "admin" || role === "dietitian";
   }
 
   if (role === "owner" || role === "admin" || role === "dietitian") {

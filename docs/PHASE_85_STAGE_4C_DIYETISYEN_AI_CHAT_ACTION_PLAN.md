@@ -1,7 +1,7 @@
 # Phase 85 Stage 4C - Diyetisyen Icin AI Chat Action Plan
 
 Date: 2026-07-22
-Status: **Faz 1 complete locally; Faz 2 is next**
+Status: **Faz 2 complete locally; Faz 3 is next**
 
 ## Current Authority
 
@@ -231,7 +231,7 @@ Create the isolated AI Chat persistence model, RLS policies, capability checks, 
 
 ### Testler ve Tamamlanma
 
-Targeted migration/RLS tests must pass with zero skipped RLS tests. No UI or orchestrator behavior is required in Faz 2.
+Targeted migration/RLS tests must pass with zero skipped RLS tests once local Supabase applies the new migration chain. No UI or orchestrator behavior is required in Faz 2.
 
 ## Faz 3: Bounded CRUD Servisi, API Iskeleti ve Danisan Arama
 

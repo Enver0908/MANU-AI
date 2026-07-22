@@ -4,6 +4,7 @@ import type {
   NotificationReceiptRecord,
 } from "./phase-85-stage-4b-contracts";
 import type { ConversationReadReceiptRecord } from "./phase-85-stage-4b2-contracts";
+import type { Stage4CAiChatStateSlice } from "./phase-85-stage-4c-contracts";
 import type { Stage4B3MediaStateSlice } from "./phase-85-stage-4b3-media-contracts";
 import type { Stage4B4VoiceStateSlice } from "./phase-85-stage-4b4-voice-contracts";
 
@@ -980,7 +981,8 @@ export type ManuAppState = {
   processedSimulationKeys: string[];
   lastSimulation: SimulationResult | null;
 } & Stage4B3MediaStateSlice &
-  Stage4B4VoiceStateSlice;
+  Stage4B4VoiceStateSlice &
+  Stage4CAiChatStateSlice;
 
 export type SimulationRequest = {
   clientId?: string;
@@ -1053,3 +1055,28 @@ export type {
   TranscriptCorrectionRequest,
   VoiceTranscriptEligibility,
 } from "./phase-85-stage-4b4-voice-contracts";
+export type {
+  AiChatAnswerEnvelope,
+  AiChatApiError,
+  AiChatApiErrorCode,
+  AiChatAttachmentDto,
+  AiChatBranchDto,
+  AiChatBranchRecord,
+  AiChatClientSearchItem,
+  AiChatConversationDetail,
+  AiChatConversationRecord,
+  AiChatConversationStatus,
+  AiChatConversationSummary,
+  AiChatMessageDto,
+  AiChatMessageRecord,
+  AiChatMessageRole,
+  AiChatMessageVersionDto,
+  AiChatMessageVersionRecord,
+  AiChatRunDto,
+  AiChatRunRecord,
+  AiChatRunStatus,
+  AiChatSafeDraftDto,
+  AiChatScopeType,
+  AiChatSourceRefDto,
+  Stage4CAiChatStateSlice,
+} from "./phase-85-stage-4c-contracts";

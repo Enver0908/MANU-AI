@@ -4,6 +4,7 @@ import type { ClientRecord, ConversationRecord, ManuAppState, MessageRecord } fr
 import { createDefaultChannelAdapterRollbackControls } from "./channel-adapter-rollback";
 import { createEmptyStage4B3MediaCollections } from "./phase-85-stage-4b3-media-contracts";
 import { createEmptyStage4B4VoiceCollections } from "./phase-85-stage-4b4-voice-contracts";
+import { createEmptyStage4CAiChatCollections } from "./phase-85-stage-4c-contracts";
 import { completeSafetyChecklist, emptySafetyChecklist } from "./safety-checklist";
 import { DEFAULT_LANGUAGE } from "./languages";
 import {
@@ -289,6 +290,7 @@ export function createInitialState(): ManuAppState {
     lastSimulation: null,
     ...createEmptyStage4B3MediaCollections(),
     ...createEmptyStage4B4VoiceCollections(),
+    ...createEmptyStage4CAiChatCollections(),
   };
 }
 

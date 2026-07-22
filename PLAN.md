@@ -1,8 +1,8 @@
 # MANU-AI Plan
 
-**Current authority (2026-07-22):** Stage 4C Diyetisyen Icin AI Chat Faz 1 read gate is complete locally. Active plan: `docs/PHASE_85_STAGE_4C_DIYETISYEN_AI_CHAT_ACTION_PLAN.md`; active evidence: `docs/PHASE_85_STAGE_4C_PHASE_1_READ_GATE_EVIDENCE.md`. **Next:** Stage 4C Faz 2 - Veri Modeli, RLS ve Yetki Temeli after explicit user approval. Production remains `NO-GO`; R-405 remains open.
+**Current authority (2026-07-22):** Stage 4C Diyetisyen Icin AI Chat Faz 2 data model, RLS, and capability baseline is complete locally. Active plan: `docs/PHASE_85_STAGE_4C_DIYETISYEN_AI_CHAT_ACTION_PLAN.md`; active evidence: `docs/PHASE_85_STAGE_4C_EVIDENCE.md`. **Next:** Stage 4C Faz 3 - Bounded CRUD Servisi, API Iskeleti ve Istemci Arama after explicit user approval. Production remains `NO-GO`; R-405 remains open.
 
-Current continuity status, 2026-07-22: Stage 4B-2 R0-R7 and advisory hardening are closed locally; Stage 4B-3 post-closure remediation R0-R9 is closed locally with measured R9 evidence; Stage 4B-4 post-closure remediation R0-R9 is closed locally with measured R9 evidence. Stage 4C Faz 1 is complete locally and locks the canonical AI Chat plan, threat model, and risk register. Stage 4C Faz 2 is next after explicit user approval. Production remains `NO-GO`; R-405 remains open.
+Current continuity status, 2026-07-22: Stage 4B-2 R0-R7 and advisory hardening are closed locally; Stage 4B-3 post-closure remediation R0-R9 is closed locally with measured R9 evidence; Stage 4B-4 post-closure remediation R0-R9 is closed locally with measured R9 evidence. Stage 4C Faz 1 and Faz 2 are complete locally. Stage 4C Faz 3 is next after explicit user approval. Production remains `NO-GO`; R-405 remains open.
 
 ## Project Summary
 

@@ -112,6 +112,15 @@ const TEST_STAGE4B4_CLAIM_TRANSCRIPTION_ID = "00000000-0000-4000-8000-0000000009
 const TEST_STAGE4B4_AUDIO_MESSAGE_ID = "00000000-0000-4000-8000-000000000991";
 const TEST_STAGE4B4_VISIBLE_AUDIO_MESSAGE_ID = "00000000-0000-4000-8000-000000000994";
 const TEST_STAGE4B4_TRANSCRIPT_CORRECTION_ID = "00000000-0000-4000-8000-000000000992";
+const TEST_AI_CHAT_GENERAL_CONVERSATION_ID = "00000000-0000-4000-8000-000000000995";
+const OTHER_AI_CHAT_GENERAL_CONVERSATION_ID = "00000000-0000-4000-8000-000000000996";
+const TEST_AI_CHAT_CLIENT_CONVERSATION_ID = "00000000-0000-4000-8000-000000000997";
+const TEST_AI_CHAT_GENERAL_BRANCH_ID = "00000000-0000-4000-8000-000000000998";
+const TEST_AI_CHAT_CLIENT_BRANCH_ID = "00000000-0000-4000-8000-000000000999";
+const TEST_AI_CHAT_MESSAGE_ID = "00000000-0000-4000-8000-000000001000";
+const TEST_AI_CHAT_MESSAGE_VERSION_ID = "00000000-0000-4000-8000-000000001001";
+const TEST_AI_CHAT_CARE_TEAM_CONVERSATION_ID = "00000000-0000-4000-8000-000000001002";
+const TEST_AI_CHAT_CARE_TEAM_BRANCH_ID = "00000000-0000-4000-8000-000000001003";
 const PASSWORD = "manu-rls-test-password";
 
 const maybeDescribe = shouldRun ? describe : describe.skip;
@@ -2317,6 +2326,127 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     expect(releasedTranscription.data?.status).toBe("accepted");
     expect(releasedTranscription.data?.lease_owner).toBeNull();
   });
+
+  it("isolates Stage 4C AI chat content by creator and tenant", async () => {
+    const member = await signIn("rls-member@manu.local");
+    const careTeam = await signIn("rls-care-team@manu.local");
+    const outsider = await signIn("rls-outsider@manu.local");
+
+    const ownGeneral = await member
+      .from("ai_chat_conversations")
+      .select("id, title")
+      .eq("id", TEST_AI_CHAT_GENERAL_CONVERSATION_ID);
+    expect(ownGeneral.error).toBeNull();
+    expect(ownGeneral.data).toEqual([{ id: TEST_AI_CHAT_GENERAL_CONVERSATION_ID, title: "Visible general chat" }]);
+
+    const hiddenTenant = await member
+      .from("ai_chat_conversations")
+      .select("id")
+      .eq("id", OTHER_AI_CHAT_GENERAL_CONVERSATION_ID);
+    expect(hiddenTenant.error).toBeNull();
+    expect(hiddenTenant.data).toHaveLength(0);
+
+    const crossCreator = await careTeam
+      .from("ai_chat_conversations")
+      .select("id")
+      .eq("id", TEST_AI_CHAT_GENERAL_CONVERSATION_ID);
+    expect(crossCreator.error).toBeNull();
+    expect(crossCreator.data).toHaveLength(0);
+
+    const outsiderRead = await outsider
+      .from("ai_chat_conversations")
+      .select("id")
+      .eq("id", TEST_AI_CHAT_GENERAL_CONVERSATION_ID);
+    expect(outsiderRead.error).toBeNull();
+    expect(outsiderRead.data).toHaveLength(0);
+
+    const ownMessages = await member
+      .from("ai_chat_message_versions")
+      .select("id, body")
+      .eq("id", TEST_AI_CHAT_MESSAGE_VERSION_ID);
+    expect(ownMessages.error).toBeNull();
+    expect(ownMessages.data).toEqual([
+      { id: TEST_AI_CHAT_MESSAGE_VERSION_ID, body: "Visible AI chat message body" },
+    ]);
+  });
+
+  it("blocks assistant and auditor access to Stage 4C AI chat tables", async () => {
+    const assistant = await signIn("rls-assistant@manu.local");
+    const auditor = await signIn("rls-auditor@manu.local");
+
+    const assistantRead = await assistant.from("ai_chat_conversations").select("id");
+    expect(assistantRead.error).toBeNull();
+    expect(assistantRead.data).toHaveLength(0);
+
+    const auditorRead = await auditor.from("ai_chat_message_versions").select("id");
+    expect(auditorRead.error).toBeNull();
+    expect(auditorRead.data).toHaveLength(0);
+  });
+
+  it("rejects authenticated direct Stage 4C mutations and worker table reads", async () => {
+    const member = await signIn("rls-member@manu.local");
+
+    const insertConversation = await member.from("ai_chat_conversations").insert({
+      tenant_id: TEST_TENANT_ID,
+      created_by_user_id: memberUserId,
+      created_by_dietitian_id: TEST_DIETITIAN_ID,
+      scope_type: "general",
+      title: "Blocked direct insert",
+    });
+    expect(insertConversation.error).toBeTruthy();
+
+    const mutationLedger = await member.from("ai_chat_mutation_ledger").select("request_id");
+    expect(mutationLedger.error).toBeNull();
+    expect(mutationLedger.data).toHaveLength(0);
+
+    const providerEgress = await member.from("ai_chat_provider_egress_manifests").select("id");
+    expect(providerEgress.error).toBeNull();
+    expect(providerEgress.data).toHaveLength(0);
+  });
+
+  it("blocks general-scope client source rows and immutable conversation scope updates", async () => {
+    const generalSourceInsert = await admin.from("ai_chat_source_refs").insert({
+      tenant_id: TEST_TENANT_ID,
+      run_id: "00000000-0000-4000-8000-000000001010",
+      conversation_id: TEST_AI_CHAT_GENERAL_CONVERSATION_ID,
+      created_by_user_id: memberUserId,
+      source_type: "client_record",
+      canonical_entity_id: TEST_CLIENT_ID,
+      client_id: TEST_CLIENT_ID,
+    });
+    expect(generalSourceInsert.error?.message).toMatch(/ai_chat_general_scope_client_source_forbidden/i);
+
+    const scopeMutation = await admin
+      .from("ai_chat_conversations")
+      .update({ scope_type: "client", client_id: TEST_CLIENT_ID })
+      .eq("id", TEST_AI_CHAT_GENERAL_CONVERSATION_ID);
+    expect(scopeMutation.error?.message).toMatch(/ai_chat_immutable_scope/i);
+  });
+
+  it("closes client-bound AI chat reads after assignment revocation", async () => {
+    const careTeam = await signIn("rls-care-team@manu.local");
+
+    const beforeRevocation = await careTeam
+      .from("ai_chat_conversations")
+      .select("id")
+      .eq("id", TEST_AI_CHAT_CARE_TEAM_CONVERSATION_ID);
+    expect(beforeRevocation.error).toBeNull();
+    expect(beforeRevocation.data).toEqual([{ id: TEST_AI_CHAT_CARE_TEAM_CONVERSATION_ID }]);
+
+    await checked(
+      admin
+        .from("client_assignments")
+        .delete()
+        .eq("id", CARE_TEAM_ASSIGNMENT_ID),
+    );
+
+    const afterRevocation = await careTeam
+      .from("ai_chat_conversations")
+      .select("id")
+      .eq("id", TEST_AI_CHAT_CARE_TEAM_CONVERSATION_ID);
+    expect(afterRevocation.error).toBeNull();
+    expect(afterRevocation.data).toHaveLength(0);
+  });
 });
 
 function loadEnvLocal() {
@@ -3339,10 +3469,148 @@ async function seedTenants(
       },
     ]),
   );
+  await checked(
+    admin.from("ai_chat_conversations").insert([
+      {
+        id: TEST_AI_CHAT_GENERAL_CONVERSATION_ID,
+        tenant_id: TEST_TENANT_ID,
+        created_by_user_id: users.memberUserId,
+        created_by_dietitian_id: TEST_DIETITIAN_ID,
+        scope_type: "general",
+        title: "Visible general chat",
+        status: "active",
+        revision: 1,
+      },
+      {
+        id: OTHER_AI_CHAT_GENERAL_CONVERSATION_ID,
+        tenant_id: OTHER_TENANT_ID,
+        created_by_user_id: users.outsiderUserId,
+        created_by_dietitian_id: OTHER_DIETITIAN_ID,
+        scope_type: "general",
+        title: "Hidden general chat",
+        status: "active",
+        revision: 1,
+      },
+      {
+        id: TEST_AI_CHAT_CLIENT_CONVERSATION_ID,
+        tenant_id: TEST_TENANT_ID,
+        created_by_user_id: users.memberUserId,
+        created_by_dietitian_id: TEST_DIETITIAN_ID,
+        scope_type: "client",
+        client_id: TEST_CLIENT_ID,
+        title: "Visible client chat",
+        status: "active",
+        revision: 1,
+      },
+      {
+        id: TEST_AI_CHAT_CARE_TEAM_CONVERSATION_ID,
+        tenant_id: TEST_TENANT_ID,
+        created_by_user_id: users.careTeamUserId,
+        created_by_dietitian_id: CARE_TEAM_DIETITIAN_ID,
+        scope_type: "client",
+        client_id: TEST_CLIENT_ID,
+        title: "Care team client chat",
+        status: "active",
+        revision: 1,
+      },
+    ]),
+  );
+  await checked(
+    admin.from("ai_chat_branches").insert([
+      {
+        id: TEST_AI_CHAT_GENERAL_BRANCH_ID,
+        tenant_id: TEST_TENANT_ID,
+        conversation_id: TEST_AI_CHAT_GENERAL_CONVERSATION_ID,
+        created_by_user_id: users.memberUserId,
+        fork_reason: "initial",
+        revision: 1,
+      },
+      {
+        id: TEST_AI_CHAT_CLIENT_BRANCH_ID,
+        tenant_id: TEST_TENANT_ID,
+        conversation_id: TEST_AI_CHAT_CLIENT_CONVERSATION_ID,
+        created_by_user_id: users.memberUserId,
+        fork_reason: "initial",
+        revision: 1,
+      },
+      {
+        id: TEST_AI_CHAT_CARE_TEAM_BRANCH_ID,
+        tenant_id: TEST_TENANT_ID,
+        conversation_id: TEST_AI_CHAT_CARE_TEAM_CONVERSATION_ID,
+        created_by_user_id: users.careTeamUserId,
+        fork_reason: "initial",
+        revision: 1,
+      },
+    ]),
+  );
+  await checked(
+    admin
+      .from("ai_chat_conversations")
+      .update({
+        active_branch_id: TEST_AI_CHAT_GENERAL_BRANCH_ID,
+      })
+      .eq("id", TEST_AI_CHAT_GENERAL_CONVERSATION_ID),
+  );
+  await checked(
+    admin
+      .from("ai_chat_conversations")
+      .update({
+        active_branch_id: TEST_AI_CHAT_CLIENT_BRANCH_ID,
+      })
+      .eq("id", TEST_AI_CHAT_CLIENT_CONVERSATION_ID),
+  );
+  await checked(
+    admin
+      .from("ai_chat_conversations")
+      .update({
+        active_branch_id: TEST_AI_CHAT_CARE_TEAM_BRANCH_ID,
+      })
+      .eq("id", TEST_AI_CHAT_CARE_TEAM_CONVERSATION_ID),
+  );
+  await checked(
+    admin.from("ai_chat_messages").insert([
+      {
+        id: TEST_AI_CHAT_MESSAGE_ID,
+        tenant_id: TEST_TENANT_ID,
+        conversation_id: TEST_AI_CHAT_GENERAL_CONVERSATION_ID,
+        created_by_user_id: users.memberUserId,
+        role: "user",
+        author_user_id: users.memberUserId,
+      },
+    ]),
+  );
+  await checked(
+    admin.from("ai_chat_message_versions").insert([
+      {
+        id: TEST_AI_CHAT_MESSAGE_VERSION_ID,
+        tenant_id: TEST_TENANT_ID,
+        conversation_id: TEST_AI_CHAT_GENERAL_CONVERSATION_ID,
+        message_id: TEST_AI_CHAT_MESSAGE_ID,
+        branch_id: TEST_AI_CHAT_GENERAL_BRANCH_ID,
+        created_by_user_id: users.memberUserId,
+        body: "Visible AI chat message body",
+        body_sha256: "sha256-visible-ai-chat-message",
+        content_status: "active",
+      },
+    ]),
+  );
 }
 
 async function cleanup(admin: SupabaseClient) {
   await admin.from("processed_inbound_events").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("ai_chat_message_versions").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("ai_chat_messages").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("ai_chat_runs").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("ai_chat_run_events").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("ai_chat_tool_calls").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("ai_chat_context_snapshots").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("ai_chat_source_refs").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("ai_chat_memory_summaries").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("ai_chat_provider_egress_manifests").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("ai_chat_mutation_ledger").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("ai_chat_events").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("ai_chat_branches").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("ai_chat_conversations").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("audio_transcript_correction_idempotency").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("audio_transcript_corrections").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("audio_transcription_records").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
