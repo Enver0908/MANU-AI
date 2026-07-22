@@ -28,6 +28,63 @@ export const AI_CHAT_SSE_WINDOW_MS = 25_000;
 export const AI_CHAT_SSE_HEARTBEAT_MS = 15_000;
 export const AI_CHAT_RUN_EVENT_RETENTION_HOURS = 24;
 
+export const DIETITIAN_CHAT_INTENTS = [
+  "general_non_client",
+  "client_current_status",
+  "client_longitudinal_summary",
+  "client_trend",
+  "client_period_comparison",
+  "client_specific_record",
+  "client_risk_review",
+  "client_source_explanation",
+  "client_safe_draft",
+  "unsupported_write_action",
+  "second_client_reference",
+] as const;
+export type DietitianChatIntent = (typeof DIETITIAN_CHAT_INTENTS)[number];
+
+export const AI_CHAT_CONTEXT_TOOLS = [
+  "load_client_profile",
+  "load_client_active_form",
+  "load_client_food_rule_profile",
+  "load_client_menu_plans",
+  "load_client_context_updates",
+  "load_client_recent_messages",
+  "search_client_messages",
+  "load_client_accepted_transcripts",
+  "load_client_risk_timeline",
+  "load_client_handoffs",
+  "load_client_ai_decisions",
+  "load_client_record_assets",
+  "search_approved_sources",
+] as const;
+export type AiChatContextTool = (typeof AI_CHAT_CONTEXT_TOOLS)[number];
+
+export const AI_CHAT_CONTEXT_FORBIDDEN_TOOL_ARG_KEYS = [
+  "tenant_id",
+  "tenantId",
+  "client_id",
+  "clientId",
+  "dietitian_id",
+  "dietitianId",
+] as const;
+
+export const AI_CHAT_CONTEXT_MAX_TOOL_CALLS_PER_RUN = 8;
+export const AI_CHAT_CONTEXT_MAX_PARALLEL_TOOL_CALLS = 4;
+export const AI_CHAT_CONTEXT_TOOL_TIMEOUT_MS = 2_000;
+export const AI_CHAT_CONTEXT_MAX_SOURCE_REFS = 30;
+export const AI_CHAT_CONTEXT_MAX_UNSTRUCTURED_EXCERPTS = 20;
+export const AI_CHAT_CONTEXT_MAX_EVIDENCE_CHARS = 32_000;
+export const AI_CHAT_CONTEXT_MAX_PROVIDER_SERIALIZED_CHARS = 60_000;
+export const AI_CHAT_CONTEXT_LIMIT_PROFILE_ROWS = 1;
+export const AI_CHAT_CONTEXT_LIMIT_ACTIVE_FORM_FIELDS = 250;
+export const AI_CHAT_CONTEXT_LIMIT_FOOD_RULE_RECORDS = 200;
+export const AI_CHAT_CONTEXT_LIMIT_MENU_PLANS = 12;
+export const AI_CHAT_CONTEXT_LIMIT_CONTEXT_UPDATES = 50;
+export const AI_CHAT_CONTEXT_LIMIT_RECENT_MESSAGES = 30;
+export const AI_CHAT_CONTEXT_LIMIT_SEARCH_CHUNKS = 20;
+export const AI_CHAT_CONTEXT_LIMIT_CATEGORY_ROWS = 20;
+
 export const AI_CHAT_RUN_EVENT_TYPES = [
   "run.accepted",
   "run.status",

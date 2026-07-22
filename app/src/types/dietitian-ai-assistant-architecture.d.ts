@@ -1444,6 +1444,8 @@ declare module "dietitian-ai-assistant-architecture" {
   ): { consistent: boolean; reasonCode: string | null };
 
   export const DIETITIAN_CHAT_CONTEXT_POLICY_VERSION: string;
+  export const DIETITIAN_CHAT_INTENTS: string[];
+  export const AI_CHAT_CONTEXT_TOOLS: string[];
   export const DIETITIAN_CHAT_MAX_VISIBLE_MESSAGES: number;
   export const DIETITIAN_CHAT_MAX_CONTEXT_CHARS: number;
   export const DIETITIAN_CHAT_MAX_ROLLING_SUMMARY_CHARS: number;
@@ -1464,6 +1466,19 @@ declare module "dietitian-ai-assistant-architecture" {
     maxMessages?: number,
     maxChars?: number,
   ): { visibleMessages: Array<{ role: "user" | "assistant"; body: string }>; totalChars: number };
+  export function classifyDietitianChatIntentFromSignals(input: {
+    triggerBody: string;
+    scopeType?: "general" | "client";
+  }): string;
+  export function planDietitianChatContextTools(
+    intent: string,
+    scopeType: "general" | "client",
+  ): string[];
+  export function buildDietitianChatEvidenceEnvelope(input: {
+    intent: string;
+    sourceRefs: Array<{ sourceId: string; excerpt: string }>;
+    structuredFacts?: Array<{ section: string; facts: string[]; isAiSynthesis: boolean }>;
+  }): string;
 
   export const DIETITIAN_CHAT_OUTPUT_GUARD_VERSION: string;
   export function isDietitianChatTerminalRunStatus(status: string | null | undefined): boolean;
@@ -1487,11 +1502,15 @@ declare module "dietitian-ai-assistant-architecture" {
   export function createDietitianChatRunPlan(input: {
     messages: Array<{ role: "user" | "assistant"; body: string }>;
     triggerBody: string;
+    scopeType?: "general" | "client";
   }): {
     version: string;
     phases: string[];
     context: ReturnType<typeof buildDietitianChatProviderContext>;
     triggerBody: string;
+    scopeType: "general" | "client";
+    intent: string;
+    toolPlan: string[];
   };
   export function finalizeDietitianChatRun(input: {
     runStatus: string;

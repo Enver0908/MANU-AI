@@ -1,6 +1,6 @@
 # Handoff For Next Codex
 
-**Current authority (2026-07-22):** Stage 4C Diyetisyen Icin AI Chat Faz 5 Metin Mesaji, Dal/Surum ve Dayanikli Run Akisi is complete locally. Active plan: `docs/PHASE_85_STAGE_4C_DIYETISYEN_AI_CHAT_ACTION_PLAN.md`; active evidence: `docs/PHASE_85_STAGE_4C_EVIDENCE.md`. **Next:** Stage 4C Faz 6 - Danisan Baglam Gecidi ve Buyuk Veri Kapsami after explicit user approval. Production remains `NO-GO`; R-405 remains open.
+**Current authority (2026-07-22):** Stage 4C Diyetisyen Icin AI Chat Faz 6 Danisan Baglam Gecidi ve Buyuk Veri Kapsami is complete locally. Active plan: `docs/PHASE_85_STAGE_4C_DIYETISYEN_AI_CHAT_ACTION_PLAN.md`; active evidence: `docs/PHASE_85_STAGE_4C_EVIDENCE.md`. **Next:** Stage 4C Faz 7 - Kaynak Kayit Defteri, Answerability ve Kaynakli Klinik Yanit after explicit user approval. Production remains `NO-GO`; R-405 remains open.
 
 Pre-Stage-4C Faz 1 Stage 4B-3 closure, Stage 4B-4 Phase 11 closure, and Stage 4B-4 R0-R9 paragraphs below this authority block are historical snapshots. Use the Stage 4C plan and Faz 1 evidence as the current handoff.
 
@@ -8,7 +8,7 @@ Historical continuity audit, 2026-07-13: canonical status, repository-relative r
 
 ## Read This First
 
-Latest Phase 85 handoff (2026-07-22): **Stage 4C Diyetisyen Icin AI Chat Faz 5 Metin Mesaji, Dal/Surum ve Dayanikli Run Akisi is complete locally.** Deterministic text chat send/stream/stop/edit/regenerate/copy is wired end-to-end via durable run jobs, SSE events, core orchestrator modules, and workspace UI. Real provider flags remain off; `AI_CHAT_DETERMINISTIC_MODE` drives fixture-only responses locally. Evidence: `docs/PHASE_85_STAGE_4C_EVIDENCE.md`. **Next:** Faz 6 context gateway after explicit user approval. Production pilot remains `NO-GO`; R-405 remains open.
+Latest Phase 85 handoff (2026-07-22): **Stage 4C Diyetisyen Icin AI Chat Faz 6 Danisan Baglam Gecidi ve Buyuk Veri Kapsami is complete locally.** Bounded intent-driven client context gateway, canonical verification, evidence budgets, context snapshots, access/revision recheck, and `source.available` SSE events are wired into the Faz 5 run pipeline. Real provider/embedding remain off; deterministic fixtures drive local tests. Evidence: `docs/PHASE_85_STAGE_4C_EVIDENCE.md`. **Next:** Faz 7 answerability/source registry after explicit user approval. Production pilot remains `NO-GO`; R-405 remains open.
 
 Latest Phase 85 Stage 4C Faz 3 status (2026-07-22): superseded by Faz 4 closure above. Evidence: `docs/PHASE_85_STAGE_4C_EVIDENCE.md`.
 

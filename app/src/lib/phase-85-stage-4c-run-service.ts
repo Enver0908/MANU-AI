@@ -28,7 +28,48 @@ import {
   resolveAiChatGenerationProvider,
   type AiChatGenerationProvider,
 } from "./phase-85-stage-4c-provider";
+import {
+  buildClientContext,
+  buildContextSnapshotFromPackage,
+  buildProviderContextEnvelope,
+  recheckGatewayAccessBeforeCommit,
+} from "./phase-85-stage-4c-context-gateway";
+import { createDisabledSemanticRetriever } from "./phase-85-stage-4c-retrieval";
 import type { AiChatStore } from "./phase-85-stage-4c-store";
+
+async function finalizeGatewayBlockedRun(
+  store: AiChatStore,
+  tenantId: string,
+  runId: string,
+  errorCode: string,
+) {
+  await store.finalizeRun(tenantId, runId, {
+    status: "superseded",
+    errorCode,
+    answerability: "not_authorized",
+  });
+  await store.appendRunEvent(tenantId, runId, {
+    eventType: "run.failed",
+    payload: { errorCode, retryable: true },
+  });
+}
+
+async function finalizeStaleContextRun(
+  store: AiChatStore,
+  tenantId: string,
+  runId: string,
+  errorCode: "stale_context" | "not_authorized",
+) {
+  await store.finalizeRun(tenantId, runId, {
+    status: "superseded",
+    errorCode,
+    answerability: errorCode === "not_authorized" ? "not_authorized" : "insufficient",
+  });
+  await store.appendRunEvent(tenantId, runId, {
+    eventType: "run.failed",
+    payload: { errorCode, retryable: true },
+  });
+}
 
 function asAnswerability(value: string | null | undefined): AiChatAnswerability | null {
   if (
@@ -228,9 +269,19 @@ async function processGenerationJob(
     return;
   }
 
+  const conversation = await store.getConversationRecord(job.tenantId, run.conversationId);
+  if (!conversation) {
+    await store.finalizeRun(job.tenantId, run.id, {
+      status: "failed",
+      errorCode: "conversation_missing",
+    });
+    return;
+  }
+
   const branchMessages = await store.getBranchMessageChain(job.tenantId, triggerVersion.branchId);
   const plan = createDietitianChatRunPlan({
     triggerBody: triggerVersion.body,
+    scopeType: conversation.scopeType,
     messages: branchMessages.map((item) => ({
       role: item.role,
       body: item.activeBody,
@@ -257,6 +308,75 @@ async function processGenerationJob(
     return;
   }
 
+  const gatewayAccessInput = {
+    tenantId: job.tenantId,
+    userId: run.createdByUserId,
+    dietitianId: conversation.createdByDietitianId,
+    role: "dietitian",
+    scopeType: conversation.scopeType,
+    clientId: conversation.clientId,
+    conversationRevision: conversation.revision,
+  };
+
+  const gateway = await buildClientContext({
+    scopeType: conversation.scopeType,
+    clientId: conversation.clientId,
+    triggerBody: triggerVersion.body,
+    accessCheck: () => store.getContextGatewayAccess(gatewayAccessInput),
+    listAccessibleClients: () => store.listContextGatewayAccessibleClients(job.tenantId),
+    executeTool: (tool, args) => {
+      if (!conversation.clientId) {
+        return Promise.resolve({ tool, ok: true, rows: [] });
+      }
+      return store.executeContextGatewayTool({
+        tenantId: job.tenantId,
+        clientId: conversation.clientId,
+        tool,
+        args,
+      });
+    },
+    semanticRetriever: createDisabledSemanticRetriever(),
+  });
+
+  if (gateway.blocked) {
+    await finalizeGatewayBlockedRun(store, job.tenantId, run.id, gateway.blockReason);
+    return;
+  }
+
+  const capturedRevisionToken = gateway.revisionManifest.revisionToken;
+  await store.saveContextSnapshot({
+    tenantId: job.tenantId,
+    runId: run.id,
+    conversationId: run.conversationId,
+    createdByUserId: run.createdByUserId,
+    ...buildContextSnapshotFromPackage(gateway.evidencePackage),
+  });
+
+  for (const sourceRef of gateway.evidencePackage.sourceRefs) {
+    await store.appendRunEvent(job.tenantId, run.id, {
+      eventType: "source.available",
+      payload: {
+        sourceId: sourceRef.sourceId,
+        sourceType: sourceRef.sourceType,
+        locator: sourceRef.locator,
+      },
+    });
+  }
+
+  if (gateway.evidencePackage.insufficientEvidence) {
+    await store.finalizeRun(job.tenantId, run.id, {
+      status: "failed",
+      errorCode: "insufficient_evidence",
+      answerability: "insufficient",
+      riskLevel: "green",
+    });
+    await store.appendRunEvent(job.tenantId, run.id, {
+      eventType: "run.failed",
+      payload: { errorCode: "insufficient_evidence", retryable: true },
+    });
+    return;
+  }
+
   await appendStatus("generating");
 
   let streamedText = "";
@@ -264,6 +384,7 @@ async function processGenerationJob(
     const providerResult = await provider.generate({
       triggerBody: triggerVersion.body,
       messages: plan.context.visibleMessages,
+      contextEnvelope: buildProviderContextEnvelope(gateway.evidencePackage),
       signal: abortController.signal,
     });
 
@@ -335,6 +456,29 @@ async function processGenerationJob(
 
     const completionState = finalized.validation.completionState as AiChatCompletionState;
     const directAnswer = finalized.validation.directAnswer ?? streamedText;
+
+    const recheck = recheckGatewayAccessBeforeCommit({
+      capturedRevisionToken,
+      currentAccess: await store.getContextGatewayAccess(gatewayAccessInput),
+    });
+    if (!recheck.ok) {
+      await finalizeStaleContextRun(store, job.tenantId, run.id, recheck.reason);
+      return;
+    }
+
+    if (gateway.evidencePackage.conflictingEvidence) {
+      await store.finalizeRun(job.tenantId, run.id, {
+        status: "failed",
+        errorCode: "conflicting_evidence",
+        answerability: "conflicting",
+        riskLevel: asRiskLevel(finalized.validation.riskLevel),
+      });
+      await store.appendRunEvent(job.tenantId, run.id, {
+        eventType: "run.failed",
+        payload: { errorCode: "conflicting_evidence", retryable: true },
+      });
+      return;
+    }
 
     if (completionState === "complete" && directAnswer) {
       await store.commitAssistantMessage(job.tenantId, run.id, {

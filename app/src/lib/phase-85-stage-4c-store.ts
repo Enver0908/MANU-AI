@@ -52,6 +52,19 @@ import {
   type AiChatLoadQuery,
   type AiChatRenameInput,
 } from "./phase-85-stage-4c-service";
+import type {
+  AccessibleClientIdentity,
+  AiChatContextSnapshotInput,
+  ContextGatewayAccessState,
+  ContextToolExecutionResult,
+} from "./phase-85-stage-4c-context-gateway";
+import {
+  createDefaultClientGatewayFixture,
+  executeInMemoryContextTool,
+  toAccessibleClientIdentity,
+  type ClientGatewayFixture,
+} from "./phase-85-stage-4c-context-fixtures";
+import type { AiChatContextTool, AiChatConversationRecord } from "./phase-85-stage-4c-contracts";
 
 export type BranchMessageChainItem = {
   messageId: string;
@@ -140,6 +153,25 @@ export interface AiChatStore {
   ): Promise<void>;
   enqueueTitleJob(tenantId: string, conversationId: string, userId: string): Promise<void>;
   applyAutoTitleIfEligible(tenantId: string, conversationId: string, maxLength: number): Promise<void>;
+  getConversationRecord(tenantId: string, conversationId: string): Promise<AiChatConversationRecord | null>;
+  getContextGatewayAccess(input: {
+    tenantId: string;
+    userId: string;
+    dietitianId: string;
+    role: string;
+    scopeType: AiChatScopeType;
+    clientId: string | null;
+    conversationRevision: number;
+  }): Promise<ContextGatewayAccessState>;
+  listContextGatewayAccessibleClients(tenantId: string): Promise<AccessibleClientIdentity[]>;
+  executeContextGatewayTool(input: {
+    tenantId: string;
+    clientId: string;
+    tool: AiChatContextTool;
+    args: Record<string, unknown>;
+    options?: { failRisk?: boolean; delayMs?: number };
+  }): Promise<ContextToolExecutionResult>;
+  saveContextSnapshot(input: AiChatContextSnapshotInput): Promise<void>;
 }
 
 type InMemoryConversation = {
@@ -196,6 +228,9 @@ type InMemoryState = {
     responseDigest: string;
   }>;
   clients: Array<{ id: string; tenantId: string; fullName: string; channel: string | null; accessible: boolean }>;
+  clientGatewayFixtures: Record<string, ClientGatewayFixture>;
+  clientRevisionOverrides: Record<string, string>;
+  contextSnapshots: Array<AiChatContextSnapshotInput & { id: string; createdAt: string }>;
 };
 
 let inMemoryState: InMemoryState = {
@@ -209,6 +244,9 @@ let inMemoryState: InMemoryState = {
   memorySummaries: [],
   ledger: [],
   clients: [],
+  clientGatewayFixtures: {},
+  clientRevisionOverrides: {},
+  contextSnapshots: [],
 };
 
 export function resetInMemoryAiChatStoreForTests(state: Partial<InMemoryState> = {}) {
@@ -223,8 +261,47 @@ export function resetInMemoryAiChatStoreForTests(state: Partial<InMemoryState> =
     memorySummaries: [],
     ledger: [],
     clients: [],
+    clientGatewayFixtures: {},
+    clientRevisionOverrides: {},
+    contextSnapshots: [],
     ...state,
   };
+}
+
+export function seedInMemoryClientGatewayFixture(client: {
+  id: string;
+  tenantId: string;
+  fullName: string;
+  accessible?: boolean;
+  fixture?: ClientGatewayFixture;
+}) {
+  const existing = inMemoryState.clients.find((item) => item.id === client.id);
+  if (!existing) {
+    inMemoryState.clients.push({
+      id: client.id,
+      tenantId: client.tenantId,
+      fullName: client.fullName,
+      channel: "whatsapp",
+      accessible: client.accessible ?? true,
+    });
+  }
+  inMemoryState.clientGatewayFixtures[client.id] =
+    client.fixture ?? createDefaultClientGatewayFixture(client.id, client.fullName);
+}
+
+export function setInMemoryClientRevisionToken(clientId: string, revisionToken: string) {
+  inMemoryState.clientRevisionOverrides[clientId] = revisionToken;
+}
+
+function getInMemoryClientGatewayFixture(clientId: string, fullName: string) {
+  if (!inMemoryState.clientGatewayFixtures[clientId]) {
+    inMemoryState.clientGatewayFixtures[clientId] = createDefaultClientGatewayFixture(clientId, fullName);
+  }
+  return inMemoryState.clientGatewayFixtures[clientId]!;
+}
+
+function resolveInMemoryClientRevisionToken(clientId: string, fixture: ClientGatewayFixture) {
+  return inMemoryState.clientRevisionOverrides[clientId] ?? fixture.revisionToken;
 }
 
 function canUseInMemoryAiChatStore() {
@@ -1401,6 +1478,92 @@ const inMemoryAiChatStore: AiChatStore = {
     conversation.titleSource = "auto";
     conversation.updatedAt = new Date().toISOString();
   },
+
+  async getConversationRecord(tenantId, conversationId) {
+    const conversation = inMemoryState.conversations.find(
+      (item) => item.tenantId === tenantId && item.id === conversationId,
+    );
+    if (!conversation) return null;
+    return {
+      id: conversation.id,
+      tenantId: conversation.tenantId,
+      createdByUserId: conversation.createdByUserId,
+      createdByDietitianId: conversation.createdByDietitianId,
+      scopeType: conversation.scopeType,
+      clientId: conversation.clientId,
+      title: conversation.title,
+      titleSource: conversation.titleSource,
+      status: conversation.status,
+      activeBranchId: conversation.activeBranchId,
+      revision: conversation.revision,
+      lastMessageAt: conversation.lastMessageAt,
+      createdAt: conversation.createdAt,
+      updatedAt: conversation.updatedAt,
+    };
+  },
+
+  async getContextGatewayAccess(input) {
+    const checkedAt = new Date().toISOString();
+    if (input.scopeType === "general") {
+      return {
+        authorized: true,
+        clientId: null,
+        revisionToken: `conversation:${input.conversationRevision}`,
+        checkedAt,
+      };
+    }
+    if (!input.clientId) {
+      return {
+        authorized: false,
+        clientId: null,
+        revisionToken: "",
+        checkedAt,
+      };
+    }
+    const client = inMemoryState.clients.find(
+      (item) => item.tenantId === input.tenantId && item.id === input.clientId && item.accessible,
+    );
+    if (!client) {
+      return {
+        authorized: false,
+        clientId: input.clientId,
+        revisionToken: "",
+        checkedAt,
+      };
+    }
+    const fixture = getInMemoryClientGatewayFixture(client.id, client.fullName);
+    return {
+      authorized: true,
+      clientId: input.clientId,
+      revisionToken: resolveInMemoryClientRevisionToken(input.clientId, fixture),
+      checkedAt,
+    };
+  },
+
+  async listContextGatewayAccessibleClients(tenantId) {
+    return inMemoryState.clients
+      .filter((item) => item.tenantId === tenantId && item.accessible)
+      .map((item) => toAccessibleClientIdentity(item));
+  },
+
+  async executeContextGatewayTool(input) {
+    const client = inMemoryState.clients.find(
+      (item) => item.tenantId === input.tenantId && item.id === input.clientId,
+    );
+    const fixture = getInMemoryClientGatewayFixture(
+      input.clientId,
+      client?.fullName ?? "Client",
+    );
+    return executeInMemoryContextTool(fixture, input.tool, input.args, input.options);
+  },
+
+  async saveContextSnapshot(input) {
+    inMemoryState.contextSnapshots.push({
+      ...input,
+      id: randomUUID(),
+      createdAt: new Date().toISOString(),
+    });
+  },
 };
 
 function requireSupabaseAdmin() {
@@ -1881,5 +2044,115 @@ const supabaseAiChatStore: AiChatStore = {
       p_conversation_id: conversationId,
       p_max_length: maxLength,
     });
+  },
+
+  async getConversationRecord(tenantId, conversationId) {
+    const supabase = requireSupabaseAdmin();
+    const { data, error } = await supabase
+      .from("ai_chat_conversations")
+      .select("*")
+      .eq("tenant_id", tenantId)
+      .eq("id", conversationId)
+      .maybeSingle();
+    if (error) mapRpcError(error);
+    if (!data) return null;
+    return {
+      id: String(data.id),
+      tenantId: String(data.tenant_id),
+      createdByUserId: String(data.created_by_user_id),
+      createdByDietitianId: String(data.created_by_dietitian_id),
+      scopeType: data.scope_type as AiChatScopeType,
+      clientId: (data.client_id as string | null) ?? null,
+      title: String(data.title),
+      titleSource: data.title_source as AiChatConversationRecord["titleSource"],
+      status: data.status as AiChatConversationRecord["status"],
+      activeBranchId: (data.active_branch_id as string | null) ?? null,
+      revision: Number(data.revision),
+      lastMessageAt: (data.last_message_at as string | null) ?? null,
+      createdAt: String(data.created_at),
+      updatedAt: String(data.updated_at),
+    };
+  },
+
+  async getContextGatewayAccess(input) {
+    const supabase = requireSupabaseAdmin();
+    const { data, error } = await supabase.rpc("p85_stage_4c_get_context_gateway_access_v1", {
+      p_tenant_id: input.tenantId,
+      p_user_id: input.userId,
+      p_dietitian_id: input.dietitianId,
+      p_role: input.role,
+      p_scope_type: input.scopeType,
+      p_client_id: input.clientId,
+      p_conversation_revision: input.conversationRevision,
+    });
+    if (error) mapRpcError(error);
+    const row = (data ?? {}) as Record<string, unknown>;
+    return {
+      authorized: Boolean(row.authorized),
+      clientId: (row.client_id as string | null) ?? null,
+      revisionToken: String(row.revision_token ?? ""),
+      checkedAt: String(row.checked_at ?? new Date().toISOString()),
+    };
+  },
+
+  async listContextGatewayAccessibleClients(tenantId) {
+    const supabase = requireSupabaseAdmin();
+    const { data, error } = await supabase.rpc("p85_stage_4c_list_context_gateway_clients_v1", {
+      p_tenant_id: tenantId,
+    });
+    if (error) mapRpcError(error);
+    return ((data as Array<Record<string, unknown>>) ?? []).map((row) =>
+      toAccessibleClientIdentity({
+        id: String(row.id),
+        fullName: String(row.full_name),
+      }),
+    );
+  },
+
+  async executeContextGatewayTool(input) {
+    const supabase = requireSupabaseAdmin();
+    const { data, error } = await supabase.rpc("p85_stage_4c_execute_context_tool_v1", {
+      p_tenant_id: input.tenantId,
+      p_client_id: input.clientId,
+      p_tool_name: input.tool,
+      p_args: input.args,
+    });
+    if (error) mapRpcError(error);
+    const row = (data ?? {}) as Record<string, unknown>;
+    return {
+      tool: input.tool,
+      ok: Boolean(row.ok),
+      errorCode: (row.error_code as string | undefined) ?? undefined,
+      rows: ((row.rows as Array<Record<string, unknown>>) ?? []).map((item) => ({
+        sourceId: String(item.source_id),
+        clientId: String(item.client_id),
+        sourceType: item.source_type as ContextToolExecutionResult["rows"][number]["sourceType"],
+        locator: (item.locator as string | null) ?? null,
+        excerpt: String(item.excerpt ?? ""),
+        contentHash: (item.content_hash as string | null) ?? null,
+        sourceDate: (item.source_date as string | null) ?? null,
+        updatedAt: (item.updated_at as string | null) ?? null,
+        occurredAt: (item.occurred_at as string | null) ?? null,
+        lifecycleStatus: item.lifecycle_status as ContextToolExecutionResult["rows"][number]["lifecycleStatus"],
+        retrievalEligible: Boolean(item.retrieval_eligible),
+        authorityWeight: Number(item.authority_weight ?? 1),
+      })),
+      categoryFailed: Boolean(row.category_failed),
+      categoryCritical: Boolean(row.category_critical),
+    };
+  },
+
+  async saveContextSnapshot(input) {
+    const supabase = requireSupabaseAdmin();
+    const { error } = await supabase.rpc("p85_stage_4c_save_context_snapshot_v1", {
+      p_tenant_id: input.tenantId,
+      p_run_id: input.runId,
+      p_conversation_id: input.conversationId,
+      p_created_by_user_id: input.createdByUserId,
+      p_source_identity_refs: input.sourceIdentityRefs,
+      p_freshness_metadata: input.freshnessMetadata,
+      p_evidence_excerpts: input.evidenceExcerpts,
+    });
+    if (error) mapRpcError(error);
   },
 };

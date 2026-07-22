@@ -1,7 +1,7 @@
 # Phase 85 Stage 4C Evidence
 
 Date: 2026-07-22
-Status: **Faz 5 complete locally; Faz 6 is next (requires explicit user approval)**
+Status: **Faz 6 complete locally; Faz 7 is next (requires explicit user approval)**
 
 Production remains `NO-GO`. R-405 remains open.
 
@@ -265,7 +265,33 @@ Status: **complete locally**
 
 ### Next
 
-Faz 6: Danisan Baglam Gecidi ve Buyuk Veri Kapsami — after explicit user approval.
+Faz 7: Kaynak Kayit Defteri, Answerability ve Kaynakli Klinik Yanit — after explicit user approval.
+
+## Faz 6: Danisan Baglam Gecidi ve Buyuk Veri Kapsami
+
+Completed locally on 2026-07-22.
+
+### Delivered
+
+- `app/src/lib/phase-85-stage-4c-context-gateway.ts` — `buildClientContext()` single entry, intent classification, tool planner, evidence budget, revision recheck
+- `app/src/lib/phase-85-stage-4c-retrieval.ts` — FTS sanitizer, canonical verification, semantic retriever port (disabled by default; fixture-only in tests)
+- Extended `phase-85-stage-4c-run-service.ts` — retrieving-phase gateway integration, snapshot persistence, `source.available` events, stale/not_authorized supersede before commit
+- Extended `phase-85-stage-4c-store.ts` — gateway access/tool/snapshot methods (in-memory + Supabase RPC stubs)
+- Extended `phase-85-stage-4c-provider.ts` — bounded `contextEnvelope` on generation requests
+- Core: extended `dietitian-chat-context-policy.js`, `dietitian-chat-orchestrator.js`, `tests/dietitian-chat-context-policy.test.mjs`
+- Migration: `20260722140000_phase_85_stage_4c_context_gateway.sql`
+
+### Verification (Faz 6)
+
+- `npm run lint` — 0 errors
+- Targeted vitest (`phase-85-stage-4c-context-gateway.test.ts`, `phase-85-stage-4c-run-service.test.ts`) — 15/15 passed
+- `node --test dietitian-ai-assistant/tests/dietitian-chat-context-policy.test.mjs` — 5/5 passed
+- `npm run build` — success
+
+### Open Blockers After Faz 6
+
+- Faz 7 answerability/source registry UI requires explicit user approval
+- Supabase context-tool RPC coverage is bounded to core loaders; remaining tool categories return empty arrays until expanded in a later hardening pass
 
 ## Faz 5: Metin Mesaji, Dal/Surum ve Dayanikli Run Akisi
 

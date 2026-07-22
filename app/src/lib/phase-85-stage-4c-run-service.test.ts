@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import type { AppTenantContext } from "./auth-context";
-import { resetInMemoryAiChatStoreForTests, resolveAiChatStore } from "./phase-85-stage-4c-store";
+import { resetInMemoryAiChatStoreForTests, resolveAiChatStore, seedInMemoryClientGatewayFixture } from "./phase-85-stage-4c-store";
 import {
   maybeProcessDeterministicAiChatJobs,
   parseAiChatSendMessageBody,
@@ -110,5 +110,39 @@ describe("ai chat run flow (in-memory)", () => {
     ).rejects.toMatchObject({ code: "ai_chat_message_not_latest_user" });
 
     expect(first.runId).toBeTruthy();
+  });
+
+  it("client chat run retrieves bounded context and emits source events", async () => {
+    const clientId = "cccccccc-cccc-4ccc-8ccc-cccccccccccc";
+    resetInMemoryAiChatStoreForTests();
+    seedInMemoryClientGatewayFixture({
+      id: clientId,
+      tenantId: tenantContext.tenantId,
+      fullName: "Client Context Fixture",
+    });
+
+    const store = resolveAiChatStore();
+    const conversation = await store.createConversation(tenantContext, {
+      requestId: "create-context",
+      scopeType: "client",
+      clientId,
+      title: "Client context",
+    });
+
+    const send = await store.sendMessage(tenantContext, conversation.id, {
+      requestId: "send-context",
+      expectedRevision: conversation.revision,
+      body: "__fixture:context__",
+    });
+    await maybeProcessDeterministicAiChatJobs(store);
+
+    const run = await store.getRunById(tenantContext.tenantId, send.runId);
+    expect(run?.status).toBe("completed");
+
+    const events = await store.listRunEvents(tenantContext, send.runId, 0);
+    expect(events.some((event) => event.eventType === "source.available")).toBe(true);
+    expect(events.some((event) => event.eventType === "run.status" && event.payload.status === "retrieving")).toBe(
+      true,
+    );
   });
 });

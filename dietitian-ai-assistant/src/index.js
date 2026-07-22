@@ -307,12 +307,17 @@ export {
 } from "./visual-source-gate-v1.js";
 export {
   DIETITIAN_CHAT_CONTEXT_POLICY_VERSION,
+  DIETITIAN_CHAT_INTENTS,
+  AI_CHAT_CONTEXT_TOOLS,
   MAX_VISIBLE_MESSAGES as DIETITIAN_CHAT_MAX_VISIBLE_MESSAGES,
   MAX_CONTEXT_CHARS as DIETITIAN_CHAT_MAX_CONTEXT_CHARS,
   MAX_ROLLING_SUMMARY_CHARS as DIETITIAN_CHAT_MAX_ROLLING_SUMMARY_CHARS,
   buildProviderContext as buildDietitianChatProviderContext,
   buildRollingSummary as buildDietitianChatRollingSummary,
   selectVisibleMessages as selectDietitianChatVisibleMessages,
+  classifyDietitianChatIntentFromSignals,
+  planDietitianChatContextTools,
+  buildDietitianChatEvidenceEnvelope,
 } from "./dietitian-chat-context-policy.js";
 export {
   DIETITIAN_CHAT_OUTPUT_GUARD_VERSION,

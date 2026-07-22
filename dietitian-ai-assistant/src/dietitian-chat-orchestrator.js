@@ -1,4 +1,8 @@
 import { buildProviderContext } from "./dietitian-chat-context-policy.js";
+import {
+  classifyDietitianChatIntentFromSignals,
+  planDietitianChatContextTools,
+} from "./dietitian-chat-context-policy.js";
 import { shouldAbortRun, validateAssistantOutput } from "./dietitian-chat-output-guard.js";
 
 export const DIETITIAN_CHAT_ORCHESTRATOR_VERSION = "dietitian-chat-orchestrator-v1";
@@ -10,11 +14,20 @@ export const RUN_PHASES = ["retrieving", "generating", "validating"];
  */
 export function createDietitianChatRunPlan(input) {
   const context = buildProviderContext({ messages: input.messages });
+  const scopeType = input.scopeType === "client" ? "client" : "general";
+  const intent = classifyDietitianChatIntentFromSignals({
+    triggerBody: input.triggerBody,
+    scopeType,
+  });
+  const toolPlan = planDietitianChatContextTools(intent, scopeType);
   return {
     version: DIETITIAN_CHAT_ORCHESTRATOR_VERSION,
     phases: [...RUN_PHASES],
     context,
     triggerBody: input.triggerBody,
+    scopeType,
+    intent,
+    toolPlan,
   };
 }
 

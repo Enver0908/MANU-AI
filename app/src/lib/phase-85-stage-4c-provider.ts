@@ -15,9 +15,20 @@ export type AiChatProviderResult = {
   deltas: AiChatProviderDelta[];
 };
 
+export type AiChatProviderContextEnvelope = {
+  intent: string;
+  evidenceText: string;
+  sourceRefCount: number;
+  partialEvidence: boolean;
+  insufficientEvidence: boolean;
+  conflictingEvidence: boolean;
+  serializedCharCount: number;
+};
+
 export type AiChatGenerationRequest = {
   triggerBody: string;
   messages: Array<{ role: "user" | "assistant"; body: string }>;
+  contextEnvelope?: AiChatProviderContextEnvelope | null;
   signal?: AbortSignal;
 };
 
@@ -62,6 +73,11 @@ const FIXTURE_RESPONSES: Record<
       "mid-stream behavior ",
       "in tests.",
     ],
+  },
+  context: {
+    answerability: "answerable",
+    riskLevel: "green",
+    text: "Deterministic context-aware response.",
   },
 };
 
@@ -128,9 +144,20 @@ export function createDeterministicAiChatProvider(): AiChatGenerationProvider {
         return unavailableResult();
       }
 
+      const contextSuffix =
+        request.contextEnvelope && request.contextEnvelope.sourceRefCount > 0
+          ? ` [context:${request.contextEnvelope.sourceRefCount}]`
+          : "";
+
       return {
-        directAnswer: assembled,
-        answerability: fixture.answerability,
+        directAnswer: `${assembled}${contextSuffix}`,
+        answerability: request.contextEnvelope?.insufficientEvidence
+          ? "insufficient"
+          : request.contextEnvelope?.conflictingEvidence
+            ? "conflicting"
+            : request.contextEnvelope?.partialEvidence
+              ? "partial"
+              : fixture.answerability,
         riskLevel: fixture.riskLevel,
         completionState: "complete",
         deltas,
