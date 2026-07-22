@@ -1,8 +1,8 @@
 # Direct 100 Dietitian Completion Plan
 
-**Current authority (2026-07-18):** Stage 4B-4 post-closure remediation R0-R9 is closed locally. Active evidence: `docs/PHASE_85_STAGE_4B_4_POST_CLOSURE_REMEDIATION_R9_EVIDENCE.md`; active plan: `docs/PHASE_85_STAGE_4B_4_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. The original Phase 11 closure evidence remains historical, but R9 is now the Stage 4C authorization artifact. Stage 4C planning/read-gate work is authorized. Production remains `NO-GO`; R-405 remains open.
+**Current authority (2026-07-22):** Stage 4C Diyetisyen Icin AI Chat Faz 1 read gate is complete locally. Active plan: `docs/PHASE_85_STAGE_4C_DIYETISYEN_AI_CHAT_ACTION_PLAN.md`; active evidence: `docs/PHASE_85_STAGE_4C_PHASE_1_READ_GATE_EVIDENCE.md`. Stage 4C Faz 2 is next after explicit user approval. Production remains `NO-GO`; R-405 remains open.
 
-Current Phase 85 status, 2026-07-18: Stage 4B-4 post-closure remediation R0-R9 is complete locally. Evidence: `docs/PHASE_85_STAGE_4B_4_POST_CLOSURE_REMEDIATION_R9_EVIDENCE.md`. **Next:** Stage 4C - Diyetisyen Icin AI Chat planning/read gate and user-approved implementation. This does not approve a 100-dietitian production pilot; production remains `NO-GO` and R-405 remains open.
+Current Phase 85 status, 2026-07-22: Stage 4C Diyetisyen Icin AI Chat Faz 1 read gate is complete locally. Evidence: `docs/PHASE_85_STAGE_4C_PHASE_1_READ_GATE_EVIDENCE.md`. **Next:** Stage 4C Faz 2 - Veri Modeli, RLS ve Yetki Temeli after explicit user approval. This does not approve a 100-dietitian production pilot; production remains `NO-GO` and R-405 remains open.
 Date: 2026-06-05
 
 ## Purpose

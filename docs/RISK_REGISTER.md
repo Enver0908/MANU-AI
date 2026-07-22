@@ -196,6 +196,30 @@ Canonical contract: `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`; historical cl
 | R-4B2-10 | Continuity documents contain stale handoffs and unconditional closure wording. | medium | R7 canonical document reconciliation and reference scan. | mitigated locally (R7) |
 
 Production pilot remains `NO-GO`; R-405 remains open; real integration paths remain closed.
+
+## Phase 85 Stage 4C AI Chat Planning Risks - 2026-07-22
+
+| ID | Risk | Severity | Planned mitigation | Status |
+| --- | --- | --- | --- | --- |
+| R-462 | AI Chat reuses old internal Copilot storage/API assumptions and leaks hidden client data. | critical | Stage 4C uses a separate domain, separate APIs, creator-private conversations, safe DTOs, and blocks assistant/auditor access. | open |
+| R-463 | General chat accidentally invokes client data tools or provider context containing PHI. | critical | Scope is immutable; `general` conversations have null `client_id`; context gateway blocks client tools unless scope is `client_bound`. | open |
+| R-464 | A client-bound chat accesses more than one client. | critical | Conversation `client_id` is immutable; all retrieval tools require the conversation client id and reject LLM-supplied client ids. | open |
+| R-465 | Large client records are dumped into prompts and increase hallucination or source confusion. | critical | Use bounded retrieval, map/reduce by domain, source caps, excerpt caps, and answerability gates instead of full-record prompt stuffing. | open |
+| R-466 | Client access is revoked after conversation creation but before retrieval or final answer. | critical | Recheck actor/client access and client revision before every tool call and before final message commit. | open |
+| R-467 | AI Chat expands automatic client-send authority. | critical | Safe draft transfer is explicit and never sends; green/yellow/red messaging contracts and existing handoff/manual-review gates remain authoritative. | open |
+| R-468 | Unsupported clinical claims are presented without approved source evidence. | critical | Personalized recommendations require client fact evidence plus approved clinical source evidence; unsupported claims fail closed. | open |
+| R-469 | Attachment OCR/STT/document text introduces prompt injection or unreviewed PHI into answers. | high | Raw files are never prompted; only scanned, parsed, reviewed/accepted derivatives enter retrieval with prompt-injection labeling. | open |
+| R-470 | Stop, edit, regenerate, or branch operations leave stale assistant answers visible as current. | high | Persist run states, branch heads, expected revisions, supersession markers, and descendant invalidation. | open |
+| R-471 | Latest-user-message delete removes too little or too much data. | high | Only the latest user-authored message in the active branch can be deleted; descendant assistant outputs, runs, tool calls, source refs, and chat-only attachments are purged transactionally. | open |
+| R-472 | AI Chat deletion breaks client-record evidence copied from chat attachments. | high | `copy-to-client-record` creates an independent sanitized client-record asset; chat deletion removes only chat-owned objects. | open |
+| R-473 | Provider egress is enabled before vendor/legal/security gates. | critical | Real providers are disabled locally; provider gates require DPA, no-training, retention, region, subprocessors, log redaction, incident terms, and secret-manager approval. | open |
+| R-474 | Role/capability drift lets assistant/auditor use or mutate AI Chat. | high | Add explicit `dietitian_ai_chat` capability checks and RLS role matrix tests; assistant/auditor fail closed. | open |
+| R-475 | AI Chat stores token/cost/capacity telemetry despite the no-quota decision. | medium | Do not add token, cost, capacity, daily quota, or monthly quota fields; keep only safety/concurrency/file-limit evidence. | open |
+| R-476 | Chat history search/list APIs become unbounded at 100 dietitians and 5,000 clients. | high | Cursor pagination, bounded search, creator-private indexes, and scale rehearsal are required before closure. | open |
+| R-477 | Sourced answer UI exposes raw hidden source text or provider payloads. | high | Source DTOs expose only allowlisted labels, excerpts, source kinds, and claim ids; raw payloads stay server-side. | open |
+| R-478 | Red-risk findings inside AI Chat are not surfaced through existing internal notification/handoff paths. | critical | Risk adapter maps red to deduplicated internal notification and explicit handoff link only; no client-send action is created. | open |
+| R-479 | Old internal Copilot visible UI remains alongside AI Chat and confuses dietitians. | medium | Stage 4C UI phase retires visible Copilot entry points and redirects legacy links while preserving historical data for audit. | open |
+| R-480 | Stage 4C is mistaken for production readiness or real provider/channel activation. | critical | Every Stage 4C evidence file repeats production `NO-GO`, R-405 open, and real provider/channel/health-data disabled status. | open |
 ## Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
 
 R1 corrected the shared DTO and permission projection contract and added bounded cursor/safe-integer validation plus complete visible-scope unread aggregates. The related risks are not closed: server-side assignment authorization, database-bounded reads, transactional idempotency, concurrency ordering, UI integration, RLS, and release evidence remain assigned to R2-R7.

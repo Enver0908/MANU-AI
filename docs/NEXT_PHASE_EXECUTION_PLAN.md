@@ -1,8 +1,8 @@
 # MANU-AI Next Phase Execution Plan
 
-**Current authority (2026-07-18):** Stage 4B-4 post-closure remediation R0-R9 is closed locally. Active evidence: `docs/PHASE_85_STAGE_4B_4_POST_CLOSURE_REMEDIATION_R9_EVIDENCE.md`; active plan: `docs/PHASE_85_STAGE_4B_4_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. The original Phase 11 closure evidence remains historical, but R9 is now the Stage 4C authorization artifact. **Next:** Stage 4C - Diyetisyen Icin AI Chat planning/read gate and user-approved implementation. Production remains `NO-GO`; R-405 remains open.
+**Current authority (2026-07-22):** Stage 4C Diyetisyen Icin AI Chat Faz 1 read gate is complete locally. Active plan: `docs/PHASE_85_STAGE_4C_DIYETISYEN_AI_CHAT_ACTION_PLAN.md`; active evidence: `docs/PHASE_85_STAGE_4C_PHASE_1_READ_GATE_EVIDENCE.md`. **Next:** Stage 4C Faz 2 - Veri Modeli, RLS ve Yetki Temeli after explicit user approval. Production remains `NO-GO`; R-405 remains open.
 
-Pre-Stage-4B-4 Stage 4B-3 closure, Stage 4B-4 Phase 11 closure, and Stage 4B-4 R0-R8 paragraphs below this authority block are historical snapshots. Use the Stage 4B-4 R9 evidence as the current implementation handoff.
+Pre-Stage-4C Faz 1 Stage 4B-3 closure, Stage 4B-4 Phase 11 closure, and Stage 4B-4 R0-R9 paragraphs below this authority block are historical snapshots. Use the Stage 4C plan and Faz 1 evidence as the current implementation handoff.
 
 Historical execution handoff, 2026-07-15: Phase 85 Stage 4B-4 Phase 5 bundle correlation and typed-text bridge were complete locally at that checkpoint. Evidence: `docs/PHASE_85_STAGE_4B_4_PHASE_5_BUNDLE_CORRELATION_TYPED_TEXT_BRIDGE_EVIDENCE.md`. Stage 4B-4 subsequently closed through remediation R9; the current handoff is Stage 4C. Production remains `NO-GO`; R-405 remains open; real integration paths remain closed.
 

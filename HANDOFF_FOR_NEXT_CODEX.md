@@ -1,14 +1,14 @@
 # Handoff For Next Codex
 
-**Current authority (2026-07-18):** Stage 4B-4 post-closure remediation R0-R9 is closed locally. Active evidence: `docs/PHASE_85_STAGE_4B_4_POST_CLOSURE_REMEDIATION_R9_EVIDENCE.md`; active plan: `docs/PHASE_85_STAGE_4B_4_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`. The original Phase 11 closure evidence remains historical, but R9 is now the Stage 4C authorization artifact. **Next:** Stage 4C - Diyetisyen Icin AI Chat planning/read gate and user-approved implementation. Production remains `NO-GO`; R-405 remains open.
+**Current authority (2026-07-22):** Stage 4C Diyetisyen Icin AI Chat Faz 1 read gate is complete locally. Active plan: `docs/PHASE_85_STAGE_4C_DIYETISYEN_AI_CHAT_ACTION_PLAN.md`; active evidence: `docs/PHASE_85_STAGE_4C_PHASE_1_READ_GATE_EVIDENCE.md`. **Next:** Stage 4C Faz 2 - Veri Modeli, RLS ve Yetki Temeli after explicit user approval. Production remains `NO-GO`; R-405 remains open.
 
-Pre-Stage-4B-4 Stage 4B-3 closure, Stage 4B-4 Phase 11 closure, and Stage 4B-4 R0-R8 paragraphs below this authority block are historical snapshots. Use the Stage 4B-4 R9 evidence as the current handoff.
+Pre-Stage-4C Faz 1 Stage 4B-3 closure, Stage 4B-4 Phase 11 closure, and Stage 4B-4 R0-R9 paragraphs below this authority block are historical snapshots. Use the Stage 4C plan and Faz 1 evidence as the current handoff.
 
 Historical continuity audit, 2026-07-13: canonical status, repository-relative references, dashboard messaging navigation, bounded APIs, DTO/permission contracts, append-only RPC/RLS migrations, and then-current evidence were reconciled. Treat older R1-R6 and Docker-blocked paragraphs as historical snapshots only. Evidence: `docs/PHASE_85_STAGE_4B_2_CONTINUITY_AND_ROUTING_RECONCILIATION_EVIDENCE.md`. Stage 4B-3 and Stage 4B-4 subsequently closed through R9; the current Phase 85 handoff is Stage 4C.
 
 ## Read This First
 
-Latest Phase 85 handoff (2026-07-18): **Stage 4B-4 post-closure remediation R0-R9 is complete locally.** R9 evidence: `docs/PHASE_85_STAGE_4B_4_POST_CLOSURE_REMEDIATION_R9_EVIDENCE.md`. **Next work:** Stage 4C - Diyetisyen Icin AI Chat planning/read gate and user-approved implementation. Production pilot remains `NO-GO`; R-405 remains open; all real integration paths remain closed.
+Latest Phase 85 handoff (2026-07-22): **Stage 4C Diyetisyen Icin AI Chat Faz 1 read gate is complete locally.** Active plan: `docs/PHASE_85_STAGE_4C_DIYETISYEN_AI_CHAT_ACTION_PLAN.md`; evidence: `docs/PHASE_85_STAGE_4C_PHASE_1_READ_GATE_EVIDENCE.md`. **Next work:** Stage 4C Faz 2 - Veri Modeli, RLS ve Yetki Temeli after explicit user approval. Production pilot remains `NO-GO`; R-405 remains open; all real integration paths remain closed.
 
 Latest Phase 85 Stage 4B-3 Phase 4 status (2026-07-13): bundle correlation and silence queue complete locally. Evidence: `docs/PHASE_85_STAGE_4B_3_PHASE_4_BUNDLE_SILENCE_QUEUE_EVIDENCE.md`. Phase 5 subsequently completed; see the Phase 5 evidence above.
 
