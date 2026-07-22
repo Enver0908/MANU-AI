@@ -3,6 +3,23 @@ export const PHASE_85_STAGE_4C_CONTRACT_VERSION = "p85-stage-4c-contracts-v1";
 export const AI_CHAT_TITLE_MAX_LENGTH = 120;
 export const AI_CHAT_MESSAGE_BODY_MAX_LENGTH = 12_000;
 export const AI_CHAT_SOURCE_EXCERPT_MAX_LENGTH = 1_200;
+export const AI_CHAT_LIST_DEFAULT_LIMIT = 30;
+export const AI_CHAT_LIST_MAX_LIMIT = 100;
+export const AI_CHAT_MESSAGE_LIST_DEFAULT_LIMIT = 50;
+export const AI_CHAT_MESSAGE_LIST_MAX_LIMIT = 100;
+export const AI_CHAT_CLIENT_SEARCH_DEFAULT_LIMIT = 20;
+export const AI_CHAT_CLIENT_SEARCH_MAX_LIMIT = 50;
+export const AI_CHAT_MAX_QUERY_LENGTH = 120;
+export const AI_CHAT_PREVIEW_MAX_LENGTH = 120;
+export const AI_CHAT_CURSOR_VERSION = 1;
+export const AI_CHAT_READ_RATE_LIMIT = 120;
+export const AI_CHAT_MUTATION_RATE_LIMIT = 60;
+
+export const AI_CHAT_TITLE_SOURCES = ["auto", "user"] as const;
+export type AiChatTitleSource = (typeof AI_CHAT_TITLE_SOURCES)[number];
+
+export const AI_CHAT_LIST_SCOPE_FILTERS = ["all", "general", "client"] as const;
+export type AiChatListScopeFilter = (typeof AI_CHAT_LIST_SCOPE_FILTERS)[number];
 
 export const AI_CHAT_SCOPE_TYPES = ["general", "client"] as const;
 export type AiChatScopeType = (typeof AI_CHAT_SCOPE_TYPES)[number];
@@ -90,6 +107,8 @@ export const AI_CHAT_API_ERROR_CODES = [
   "ai_chat_store_unavailable",
   "ai_chat_cursor_invalid",
   "ai_chat_title_required",
+  "ai_chat_title_too_long",
+  "ai_chat_conversation_locked",
   "ai_chat_message_version_immutable",
   "ai_chat_general_scope_client_source_forbidden",
 ] as const;
@@ -103,6 +122,7 @@ export type AiChatConversationSummary = {
   scopeType: AiChatScopeType;
   clientId: string | null;
   title: string;
+  titleSource: AiChatTitleSource;
   status: AiChatConversationStatus;
   activeBranchId: string | null;
   revision: number;
@@ -111,7 +131,14 @@ export type AiChatConversationSummary = {
   updatedAt: string;
 };
 
-export type AiChatConversationDetail = AiChatConversationSummary & {
+export type AiChatConversationListItem = AiChatConversationSummary & {
+  preview: string | null;
+  clientFullName: string | null;
+  clientReferenceCode: string | null;
+  clientReferenceShort: string | null;
+};
+
+export type AiChatConversationDetail = AiChatConversationListItem & {
   branches: AiChatBranchDto[];
   messages: AiChatMessageDto[];
 };
@@ -215,9 +242,26 @@ export type AiChatAttachmentDto = {
 };
 
 export type AiChatClientSearchItem = {
-  clientId: string;
+  id: string;
   fullName: string;
   displayReference: string;
+  shortDisplay: string;
+  channel: string | null;
+};
+
+export type AiChatConversationListResponse = {
+  items: AiChatConversationListItem[];
+  nextCursor: string | null;
+};
+
+export type AiChatApiErrorBody = {
+  error: {
+    code: AiChatApiErrorCode | string;
+    retryable: boolean;
+    field?: string;
+    revision?: number;
+  };
+  requestId: string | null;
 };
 
 export type AiChatSafeDraftDto = {
@@ -239,6 +283,7 @@ export type AiChatConversationRecord = {
   scopeType: AiChatScopeType;
   clientId: string | null;
   title: string;
+  titleSource: AiChatTitleSource;
   status: AiChatConversationStatus;
   activeBranchId: string | null;
   revision: number;

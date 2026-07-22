@@ -1,6 +1,6 @@
 # Handoff For Next Codex
 
-**Current authority (2026-07-22):** Stage 4C Diyetisyen Icin AI Chat Faz 2 data model, RLS, and capability baseline is complete locally. Active plan: `docs/PHASE_85_STAGE_4C_DIYETISYEN_AI_CHAT_ACTION_PLAN.md`; active evidence: `docs/PHASE_85_STAGE_4C_EVIDENCE.md`. **Next:** Stage 4C Faz 3 - Bounded CRUD Servisi, API Iskeleti ve Istemci Arama after explicit user approval. Production remains `NO-GO`; R-405 remains open.
+**Current authority (2026-07-22):** Stage 4C Diyetisyen Icin AI Chat Faz 3 bounded service layer, CRUD API, and client search is complete locally. Active plan: `docs/PHASE_85_STAGE_4C_DIYETISYEN_AI_CHAT_ACTION_PLAN.md`; active evidence: `docs/PHASE_85_STAGE_4C_EVIDENCE.md`. **Next:** Stage 4C Faz 4 - Dashboard AI Chat Arayuzu after explicit user approval. Production remains `NO-GO`; R-405 remains open.
 
 Pre-Stage-4C Faz 1 Stage 4B-3 closure, Stage 4B-4 Phase 11 closure, and Stage 4B-4 R0-R9 paragraphs below this authority block are historical snapshots. Use the Stage 4C plan and Faz 1 evidence as the current handoff.
 
@@ -8,7 +8,7 @@ Historical continuity audit, 2026-07-13: canonical status, repository-relative r
 
 ## Read This First
 
-Latest Phase 85 handoff (2026-07-22): **Stage 4C Diyetisyen Icin AI Chat Faz 2 data model, RLS, and capability baseline is complete locally.** Active plan: `docs/PHASE_85_STAGE_4C_DIYETISYEN_AI_CHAT_ACTION_PLAN.md`; evidence: `docs/PHASE_85_STAGE_4C_EVIDENCE.md`. **Next work:** Stage 4C Faz 3 - Bounded CRUD Servisi, API Iskeleti ve Istemci Arama after explicit user approval. Production pilot remains `NO-GO`; R-405 remains open; all real integration paths remain closed.
+Latest Phase 85 handoff (2026-07-22): **Stage 4C Diyetisyen Icin AI Chat Faz 3 bounded service layer, CRUD API, and client search is complete locally.** Active plan: `docs/PHASE_85_STAGE_4C_DIYETISYEN_AI_CHAT_ACTION_PLAN.md`; evidence: `docs/PHASE_85_STAGE_4C_EVIDENCE.md`. **Next work:** Stage 4C Faz 4 - Dashboard AI Chat Arayuzu after explicit user approval. Production pilot remains `NO-GO`; R-405 remains open; all real integration paths remain closed.
 
 Latest Phase 85 Stage 4B-3 Phase 4 status (2026-07-13): bundle correlation and silence queue complete locally. Evidence: `docs/PHASE_85_STAGE_4B_3_PHASE_4_BUNDLE_SILENCE_QUEUE_EVIDENCE.md`. Phase 5 subsequently completed; see the Phase 5 evidence above.
 
