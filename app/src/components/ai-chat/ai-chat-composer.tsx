@@ -11,9 +11,7 @@ const LINE_HEIGHT_PX = 24;
 const VERTICAL_PADDING_PX = 20;
 
 /**
- * Message send is implemented in a later phase (durable run flow); this is
- * the UI foundation only. `onSend` is optional so Enter is a safe no-op
- * until that capability lands.
+ * Message composer for AI Chat durable run flow (Faz 5).
  */
 export function AiChatComposer({
   uiLanguage,
@@ -22,7 +20,7 @@ export function AiChatComposer({
 }: {
   uiLanguage: SupportedLanguageCode;
   disabled?: boolean;
-  onSend?: (body: string) => void;
+  onSend?: (body: string) => void | Promise<void>;
 }) {
   const [value, setValue] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -37,8 +35,8 @@ export function AiChatComposer({
 
   const submit = () => {
     const trimmed = value.trim();
-    if (!trimmed || !onSend) return;
-    onSend(trimmed);
+    if (!trimmed || !onSend || disabled) return;
+    void onSend(trimmed);
     setValue("");
   };
 

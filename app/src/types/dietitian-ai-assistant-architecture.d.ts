@@ -1442,4 +1442,67 @@ declare module "dietitian-ai-assistant-architecture" {
   export function evaluateMultiImageSourceIdentity(
     segmentResolutions?: Array<Record<string, unknown>>,
   ): { consistent: boolean; reasonCode: string | null };
+
+  export const DIETITIAN_CHAT_CONTEXT_POLICY_VERSION: string;
+  export const DIETITIAN_CHAT_MAX_VISIBLE_MESSAGES: number;
+  export const DIETITIAN_CHAT_MAX_CONTEXT_CHARS: number;
+  export const DIETITIAN_CHAT_MAX_ROLLING_SUMMARY_CHARS: number;
+  export function buildDietitianChatProviderContext(input: {
+    messages: Array<{ role: "user" | "assistant"; body: string }>;
+  }): {
+    version: string;
+    visibleMessages: Array<{ role: "user" | "assistant"; body: string }>;
+    visibleCharCount: number;
+    rollingSummary: { summaryText: string; isAuthoritative: boolean };
+  };
+  export function buildDietitianChatRollingSummary(
+    olderMessages: Array<{ role: "user" | "assistant"; body: string }>,
+    maxChars?: number,
+  ): { summaryText: string; isAuthoritative: boolean };
+  export function selectDietitianChatVisibleMessages(
+    messages: Array<{ role: "user" | "assistant"; body: string }>,
+    maxMessages?: number,
+    maxChars?: number,
+  ): { visibleMessages: Array<{ role: "user" | "assistant"; body: string }>; totalChars: number };
+
+  export const DIETITIAN_CHAT_OUTPUT_GUARD_VERSION: string;
+  export function isDietitianChatTerminalRunStatus(status: string | null | undefined): boolean;
+  export function shouldAbortDietitianChatRun(status: string | null | undefined): boolean;
+  export function validateDietitianChatAssistantOutput(input: {
+    directAnswer: string | null;
+    answerability?: string | null;
+    riskLevel?: string | null;
+    completionState?: string | null;
+  }): {
+    ok: boolean;
+    code?: string;
+    answerability: string;
+    riskLevel: string;
+    completionState: string;
+    directAnswer: string | null;
+  };
+
+  export const DIETITIAN_CHAT_ORCHESTRATOR_VERSION: string;
+  export const DIETITIAN_CHAT_RUN_PHASES: string[];
+  export function createDietitianChatRunPlan(input: {
+    messages: Array<{ role: "user" | "assistant"; body: string }>;
+    triggerBody: string;
+  }): {
+    version: string;
+    phases: string[];
+    context: ReturnType<typeof buildDietitianChatProviderContext>;
+    triggerBody: string;
+  };
+  export function finalizeDietitianChatRun(input: {
+    runStatus: string;
+    providerResult: {
+      directAnswer: string | null;
+      answerability?: string | null;
+      riskLevel?: string | null;
+      completionState?: string | null;
+    };
+  }): {
+    terminalStatus: string;
+    validation: ReturnType<typeof validateDietitianChatAssistantOutput>;
+  };
 }

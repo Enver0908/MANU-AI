@@ -1,7 +1,7 @@
 # Phase 85 Stage 4C - Diyetisyen Icin AI Chat Action Plan
 
 Date: 2026-07-22
-Status: **Faz 4 complete locally; Faz 5 is next**
+Status: **Faz 5 complete locally; Faz 6 is next**
 
 ## Current Authority
 

@@ -1,7 +1,7 @@
 # Phase 85 Stage 4C Evidence
 
 Date: 2026-07-22
-Status: **Faz 4 complete locally; Faz 5 is next (requires explicit user approval)**
+Status: **Faz 5 complete locally; Faz 6 is next (requires explicit user approval)**
 
 Production remains `NO-GO`. R-405 remains open.
 
@@ -265,4 +265,31 @@ Status: **complete locally**
 
 ### Next
 
-Faz 5: Metin Mesaji, Dal/Surum ve Dayanikli Run Akisi — after explicit user approval.
+Faz 6: Danisan Baglam Gecidi ve Buyuk Veri Kapsami — after explicit user approval.
+
+## Faz 5: Metin Mesaji, Dal/Surum ve Dayanikli Run Akisi
+
+Completed locally on 2026-07-22.
+
+### Delivered
+
+- Core package: `dietitian-chat-orchestrator.js`, `dietitian-chat-context-policy.js`, `dietitian-chat-output-guard.js`, tests
+- App: `phase-85-stage-4c-run-service.ts`, `phase-85-stage-4c-provider.ts`, extended `phase-85-stage-4c-store.ts`
+- API: POST message (202), PATCH edit, POST regenerate, GET SSE events, POST stop
+- Migration: `20260722130000_phase_85_stage_4c_run_queue_streaming.sql` (`ai_chat_jobs`, run events/stop/claim RPCs)
+- Worker: `app/scripts/worker-ai-chat-stage4c.mjs`
+- UI: composer send, streaming deltas, stop, edit, regenerate, client-side copy
+- Deterministic fixture provider only (`__fixture:*__`); unknown prompts return controlled unavailable (no fabricated clinical answers)
+
+### Verification (Faz 5)
+
+- `npm run lint` — 0 errors
+- `npm test` — 1286 passed (8 skipped)
+- `npm run build` — success
+- `node --test dietitian-ai-assistant/tests/dietitian-chat-orchestrator.test.mjs` — 5/5 passed
+- In-memory integration: send/complete, edit-not-latest-user guard
+
+### Open Blockers After Faz 5
+
+- Supabase RPCs for send/edit/regenerate/commit remain to be expanded for production store path (in-memory deterministic path is the local closure authority)
+- Faz 6 requires explicit user approval before implementation

@@ -261,3 +261,270 @@ export async function createAiChatConversation(input: {
     body: JSON.stringify(input),
   });
 }
+
+export type AiChatStreamingState = {
+  runId: string | null;
+  status: string | null;
+  streamingText: string;
+  completionState: "complete" | "incomplete" | null;
+  lastSequence: number;
+  isStreaming: boolean;
+  error: string | null;
+};
+
+export const INITIAL_AI_CHAT_STREAMING_STATE: AiChatStreamingState = {
+  runId: null,
+  status: null,
+  streamingText: "",
+  completionState: null,
+  lastSequence: 0,
+  isStreaming: false,
+  error: null,
+};
+
+export function reduceAiChatRunEvent(
+  state: AiChatStreamingState,
+  event: { sequenceNumber: number; eventType: string; payload: Record<string, unknown> },
+): AiChatStreamingState {
+  if (event.sequenceNumber <= state.lastSequence) {
+    return state;
+  }
+
+  const next: AiChatStreamingState = {
+    ...state,
+    lastSequence: event.sequenceNumber,
+  };
+
+  if (event.eventType === "run.status" && typeof event.payload.status === "string") {
+    next.status = event.payload.status;
+    next.isStreaming = !["completed", "stopped", "failed", "superseded"].includes(event.payload.status);
+  }
+
+  if (event.eventType === "response.delta" && typeof event.payload.text === "string") {
+    next.streamingText += event.payload.text;
+    next.isStreaming = true;
+  }
+
+  if (event.eventType === "response.completed") {
+    next.completionState = "complete";
+    next.isStreaming = false;
+  }
+
+  if (event.eventType === "response.stopped") {
+    next.completionState =
+      event.payload.completionState === "complete" ? "complete" : "incomplete";
+    next.isStreaming = false;
+  }
+
+  if (event.eventType === "run.failed") {
+    next.isStreaming = false;
+    next.error = typeof event.payload.errorCode === "string" ? event.payload.errorCode : "ai_chat_run_failed";
+  }
+
+  return next;
+}
+
+async function consumeAiChatRunSse(runId: string, afterSequence: number, onEvent: (event: {
+  sequenceNumber: number;
+  eventType: string;
+  payload: Record<string, unknown>;
+}) => void) {
+  const params = new URLSearchParams();
+  if (afterSequence > 0) params.set("after", String(afterSequence));
+  const response = await fetch(
+    `/api/ai-chat/runs/${encodeURIComponent(runId)}/events?${params.toString()}`,
+    { headers: { accept: "text/event-stream" } },
+  );
+  if (!response.ok || !response.body) {
+    throw new AppRequestError(response.status, "ai_chat_stream_failed");
+  }
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const chunks = buffer.split("\n\n");
+    buffer = chunks.pop() ?? "";
+    for (const chunk of chunks) {
+      const lines = chunk.split("\n");
+      let eventType = "message";
+      let sequenceNumber = 0;
+      let data = "{}";
+      for (const line of lines) {
+        if (line.startsWith("event:")) eventType = line.slice(6).trim();
+        if (line.startsWith("id:")) sequenceNumber = Number(line.slice(3).trim());
+        if (line.startsWith("data:")) data = line.slice(5).trim();
+      }
+      try {
+        const payload = JSON.parse(data) as Record<string, unknown>;
+        onEvent({
+          sequenceNumber: Number(payload.sequenceNumber ?? sequenceNumber),
+          eventType: String(payload.eventType ?? eventType),
+          payload,
+        });
+      } catch {
+        // ignore malformed chunks
+      }
+    }
+  }
+}
+
+export async function subscribeToAiChatRun(input: {
+  runId: string;
+  afterSequence?: number;
+  onEvent: (event: {
+    sequenceNumber: number;
+    eventType: string;
+    payload: Record<string, unknown>;
+  }) => void;
+  maxReconnects?: number;
+}) {
+  let sequence = input.afterSequence ?? 0;
+  const maxReconnects = input.maxReconnects ?? 2;
+
+  for (let attempt = 0; attempt <= maxReconnects; attempt += 1) {
+    try {
+      await consumeAiChatRunSse(input.runId, sequence, (event) => {
+        sequence = Math.max(sequence, event.sequenceNumber);
+        input.onEvent(event);
+      });
+      return;
+    } catch (error) {
+      if (attempt === maxReconnects) throw error;
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    }
+  }
+}
+
+export function useAiChatRunStream(_chatId: string | null, onTerminal?: () => void) {
+  const [state, setState] = useState<AiChatStreamingState>(INITIAL_AI_CHAT_STREAMING_STATE);
+
+  const subscribe = useCallback(
+    async (runId: string, afterSequence = 0) => {
+      setState({
+        runId,
+        status: "queued",
+        streamingText: "",
+        completionState: null,
+        lastSequence: afterSequence,
+        isStreaming: true,
+        error: null,
+      });
+
+      try {
+        await subscribeToAiChatRun({
+          runId,
+          afterSequence,
+          onEvent: (event) => {
+            setState((current) => reduceAiChatRunEvent(current, event));
+          },
+        });
+        onTerminal?.();
+      } catch (error) {
+        const code = error instanceof AppRequestError ? error.code : "ai_chat_stream_failed";
+        setState((current) => ({ ...current, isStreaming: false, error: code }));
+      }
+    },
+    [onTerminal],
+  );
+
+  const reset = useCallback(() => {
+    setState(INITIAL_AI_CHAT_STREAMING_STATE);
+  }, []);
+
+  return { state, subscribe, reset };
+}
+
+export async function sendAiChatMessage(input: {
+  chatId: string;
+  requestId: string;
+  expectedRevision: number;
+  body: string;
+}) {
+  const response = await fetch(`/api/ai-chat/conversations/${encodeURIComponent(input.chatId)}/messages`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      requestId: input.requestId,
+      expectedRevision: input.expectedRevision,
+      body: input.body,
+    }),
+  });
+  if (!response.ok) {
+    let code = `ai_chat_request_failed_${response.status}`;
+    try {
+      const body = (await response.json()) as AiChatApiErrorBody;
+      code = body.error?.code || code;
+    } catch {
+      // ignore
+    }
+    throw new AppRequestError(response.status, code);
+  }
+  return response.json() as Promise<{
+    runId: string;
+    messageId: string;
+    messageVersionId: string;
+    conversationRevision: number;
+  }>;
+}
+
+export async function editAiChatMessage(input: {
+  messageId: string;
+  requestId: string;
+  expectedRevision: number;
+  body: string;
+}) {
+  const response = await fetch(`/api/ai-chat/messages/${encodeURIComponent(input.messageId)}`, {
+    method: "PATCH",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      requestId: input.requestId,
+      expectedRevision: input.expectedRevision,
+      body: input.body,
+    }),
+  });
+  if (!response.ok) {
+    throw new AppRequestError(response.status, "ai_chat_edit_failed");
+  }
+  return response.json() as Promise<{ runId: string; conversationRevision: number }>;
+}
+
+export async function regenerateAiChatMessage(input: {
+  messageId: string;
+  requestId: string;
+  expectedRevision: number;
+}) {
+  const response = await fetch(
+    `/api/ai-chat/messages/${encodeURIComponent(input.messageId)}/regenerate`,
+    {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(input),
+    },
+  );
+  if (!response.ok) {
+    throw new AppRequestError(response.status, "ai_chat_regenerate_failed");
+  }
+  return response.json() as Promise<{ runId: string; conversationRevision: number }>;
+}
+
+export async function stopAiChatRun(input: { runId: string; requestId: string }) {
+  return requestAiChatJson<{ runId: string; status: string }>(
+    `/api/ai-chat/runs/${encodeURIComponent(input.runId)}/stop`,
+    {
+      method: "POST",
+      body: JSON.stringify({ requestId: input.requestId }),
+    },
+  );
+}
+
+export async function copyAiChatText(text: string) {
+  if (!text.trim()) return false;
+  if (!navigator.clipboard?.writeText) return false;
+  await navigator.clipboard.writeText(text);
+  return true;
+}

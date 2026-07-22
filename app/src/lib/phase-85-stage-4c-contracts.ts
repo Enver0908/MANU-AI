@@ -15,6 +15,38 @@ export const AI_CHAT_CURSOR_VERSION = 1;
 export const AI_CHAT_READ_RATE_LIMIT = 120;
 export const AI_CHAT_MUTATION_RATE_LIMIT = 60;
 
+export const AI_CHAT_MAX_VISIBLE_MESSAGES = 12;
+export const AI_CHAT_MAX_CONTEXT_CHARS = 18_000;
+export const AI_CHAT_MAX_ROLLING_SUMMARY_CHARS = 4_000;
+export const AI_CHAT_MAX_USER_ACTIVE_RUNS = 3;
+export const AI_CHAT_AUTO_TITLE_MAX_LENGTH = 60;
+export const AI_CHAT_JOB_LEASE_MS = 60_000;
+export const AI_CHAT_JOB_HEARTBEAT_MS = 20_000;
+export const AI_CHAT_PROVIDER_TIMEOUT_MS = 15_000;
+export const AI_CHAT_RUN_TIMEOUT_MS = 120_000;
+export const AI_CHAT_SSE_WINDOW_MS = 25_000;
+export const AI_CHAT_SSE_HEARTBEAT_MS = 15_000;
+export const AI_CHAT_RUN_EVENT_RETENTION_HOURS = 24;
+
+export const AI_CHAT_RUN_EVENT_TYPES = [
+  "run.accepted",
+  "run.status",
+  "response.delta",
+  "source.available",
+  "risk.updated",
+  "response.completed",
+  "response.stopped",
+  "run.failed",
+  "heartbeat",
+] as const;
+export type AiChatRunEventType = (typeof AI_CHAT_RUN_EVENT_TYPES)[number];
+
+export const AI_CHAT_COMPLETION_STATES = ["complete", "incomplete"] as const;
+export type AiChatCompletionState = (typeof AI_CHAT_COMPLETION_STATES)[number];
+
+export const AI_CHAT_JOB_TYPES = ["generation", "title"] as const;
+export type AiChatJobType = (typeof AI_CHAT_JOB_TYPES)[number];
+
 export const AI_CHAT_TITLE_SOURCES = ["auto", "user"] as const;
 export type AiChatTitleSource = (typeof AI_CHAT_TITLE_SOURCES)[number];
 
@@ -111,6 +143,15 @@ export const AI_CHAT_API_ERROR_CODES = [
   "ai_chat_conversation_locked",
   "ai_chat_message_version_immutable",
   "ai_chat_general_scope_client_source_forbidden",
+  "ai_chat_message_body_required",
+  "ai_chat_message_body_too_long",
+  "ai_chat_message_not_latest_user",
+  "ai_chat_active_run_conflict",
+  "ai_chat_user_run_limit",
+  "ai_chat_run_not_found",
+  "ai_chat_run_already_terminal",
+  "ai_chat_message_not_found",
+  "ai_chat_regenerate_not_latest_assistant",
 ] as const;
 export type AiChatApiErrorCode = (typeof AI_CHAT_API_ERROR_CODES)[number];
 
@@ -198,6 +239,56 @@ export type AiChatRunDto = {
   safetyOutcome: string | null;
   cancelRequestedAt: string | null;
   errorCode: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type AiChatRunEventDto = {
+  id: string;
+  tenantId: string;
+  runId: string;
+  conversationId: string;
+  sequenceNumber: number;
+  eventType: AiChatRunEventType | string;
+  payload: Record<string, unknown>;
+  createdAt: string;
+};
+
+export type AiChatSendMessageResult = {
+  runId: string;
+  messageId: string;
+  messageVersionId: string;
+  conversationRevision: number;
+};
+
+export type AiChatMutationRunResult = {
+  runId: string;
+  conversationRevision: number;
+  branchId: string;
+  messageId?: string;
+  messageVersionId?: string;
+};
+
+export type AiChatStopRunResult = {
+  runId: string;
+  status: AiChatRunStatus;
+};
+
+export type AiChatJobRecord = {
+  id: string;
+  tenantId: string;
+  jobType: AiChatJobType;
+  runId: string | null;
+  conversationId: string;
+  createdByUserId: string;
+  status: AiChatJobStatus;
+  payload: Record<string, unknown>;
+  leaseOwner: string | null;
+  leaseToken: string | null;
+  leaseExpiresAt: string | null;
+  heartbeatAt: string | null;
+  retryCount: number;
+  nextAttemptAt: string;
   createdAt: string;
   updatedAt: string;
 };
@@ -356,6 +447,34 @@ export type Stage4CAiChatStateSlice = {
   aiChatMessages: AiChatMessageRecord[];
   aiChatMessageVersions: AiChatMessageVersionRecord[];
   aiChatRuns: AiChatRunRecord[];
+  aiChatRunEvents: AiChatRunEventRecord[];
+  aiChatJobs: AiChatJobRecord[];
+  aiChatMemorySummaries: AiChatMemorySummaryRecord[];
+};
+
+export type AiChatRunEventRecord = {
+  id: string;
+  tenantId: string;
+  runId: string;
+  conversationId: string;
+  createdByUserId: string;
+  sequenceNumber: number;
+  eventType: string;
+  payload: Record<string, unknown>;
+  expiresAt: string;
+  createdAt: string;
+};
+
+export type AiChatMemorySummaryRecord = {
+  id: string;
+  tenantId: string;
+  conversationId: string;
+  branchId: string;
+  createdByUserId: string;
+  summaryText: string;
+  isAuthoritative: boolean;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export function isAiChatScopeClientMismatch(scopeType: AiChatScopeType, clientId: string | null | undefined) {
@@ -372,5 +491,12 @@ export function createEmptyStage4CAiChatCollections(): Stage4CAiChatStateSlice {
     aiChatMessages: [],
     aiChatMessageVersions: [],
     aiChatRuns: [],
+    aiChatRunEvents: [],
+    aiChatJobs: [],
+    aiChatMemorySummaries: [],
   };
+}
+
+export function isNonTerminalAiChatRunStatus(status: AiChatRunStatus) {
+  return !["completed", "stopped", "failed", "superseded"].includes(status);
 }

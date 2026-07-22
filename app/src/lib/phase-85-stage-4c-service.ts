@@ -385,6 +385,33 @@ export function mapRpcError(error: { message?: string }, currentRevision?: numbe
   if (message.includes("ai_chat_conversation_locked")) {
     throw new AppRequestError(409, "ai_chat_conversation_locked");
   }
+  if (message.includes("ai_chat_message_body_required")) {
+    throw new AppRequestError(400, "ai_chat_message_body_required", "body");
+  }
+  if (message.includes("ai_chat_message_body_too_long")) {
+    throw new AppRequestError(400, "ai_chat_message_body_too_long", "body");
+  }
+  if (message.includes("ai_chat_message_not_latest_user")) {
+    throw new AppRequestError(409, "ai_chat_message_not_latest_user");
+  }
+  if (message.includes("ai_chat_active_run_conflict")) {
+    throw new AppRequestError(409, "ai_chat_active_run_conflict");
+  }
+  if (message.includes("ai_chat_user_run_limit")) {
+    throw new AppRequestError(409, "ai_chat_user_run_limit");
+  }
+  if (message.includes("ai_chat_run_not_found")) {
+    throw new AppRequestError(404, "ai_chat_run_not_found");
+  }
+  if (message.includes("ai_chat_run_already_terminal")) {
+    throw new AppRequestError(409, "ai_chat_run_already_terminal");
+  }
+  if (message.includes("ai_chat_message_not_found")) {
+    throw new AppRequestError(404, "ai_chat_message_not_found");
+  }
+  if (message.includes("ai_chat_regenerate_not_latest_assistant")) {
+    throw new AppRequestError(409, "ai_chat_regenerate_not_latest_assistant");
+  }
   if (message.includes("ai_chat_cursor_invalid")) {
     throw new AppRequestError(400, "ai_chat_cursor_invalid", "cursor");
   }

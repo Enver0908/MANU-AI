@@ -305,3 +305,24 @@ export {
   buildApprovedDietitianVisualSources,
   evaluateMultiImageSourceIdentity,
 } from "./visual-source-gate-v1.js";
+export {
+  DIETITIAN_CHAT_CONTEXT_POLICY_VERSION,
+  MAX_VISIBLE_MESSAGES as DIETITIAN_CHAT_MAX_VISIBLE_MESSAGES,
+  MAX_CONTEXT_CHARS as DIETITIAN_CHAT_MAX_CONTEXT_CHARS,
+  MAX_ROLLING_SUMMARY_CHARS as DIETITIAN_CHAT_MAX_ROLLING_SUMMARY_CHARS,
+  buildProviderContext as buildDietitianChatProviderContext,
+  buildRollingSummary as buildDietitianChatRollingSummary,
+  selectVisibleMessages as selectDietitianChatVisibleMessages,
+} from "./dietitian-chat-context-policy.js";
+export {
+  DIETITIAN_CHAT_OUTPUT_GUARD_VERSION,
+  isTerminalRunStatus as isDietitianChatTerminalRunStatus,
+  shouldAbortRun as shouldAbortDietitianChatRun,
+  validateAssistantOutput as validateDietitianChatAssistantOutput,
+} from "./dietitian-chat-output-guard.js";
+export {
+  DIETITIAN_CHAT_ORCHESTRATOR_VERSION,
+  RUN_PHASES as DIETITIAN_CHAT_RUN_PHASES,
+  createDietitianChatRunPlan,
+  finalizeDietitianChatRun,
+} from "./dietitian-chat-orchestrator.js";

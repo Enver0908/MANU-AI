@@ -14,9 +14,29 @@ import type {
   AiChatConversationDetail,
   AiChatConversationListResponse,
   AiChatConversationSummary,
+  AiChatJobRecord,
+  AiChatMessageVersionRecord,
+  AiChatMutationRunResult,
+  AiChatRunDto,
+  AiChatRunEventDto,
   AiChatScopeType,
+  AiChatSendMessageResult,
+  AiChatStopRunResult,
   AiChatTitleSource,
 } from "./phase-85-stage-4c-contracts";
+import { isNonTerminalAiChatRunStatus } from "./phase-85-stage-4c-contracts";
+import type {
+  AiChatEditMessageInput,
+  AiChatRegenerateMessageInput,
+  AiChatSendMessageInput,
+  AiChatStopRunInput,
+} from "./phase-85-stage-4c-run-service";
+import {
+  assertUserActiveRunBudget,
+  buildAcceptedRunEvent,
+  hashMessageBody,
+  runEventExpiryIso,
+} from "./phase-85-stage-4c-run-service";
 import {
   buildListResponse,
   canonicalAiChatBodyHash,
@@ -32,6 +52,13 @@ import {
   type AiChatLoadQuery,
   type AiChatRenameInput,
 } from "./phase-85-stage-4c-service";
+
+export type BranchMessageChainItem = {
+  messageId: string;
+  role: "user" | "assistant";
+  activeBody: string;
+  versionId: string;
+};
 
 export interface AiChatStore {
   createConversation(context: AppTenantContext, input: AiChatCreateInput): Promise<AiChatConversationSummary>;
@@ -56,6 +83,63 @@ export interface AiChatStore {
     context: AppTenantContext,
     input: AiChatClientSearchQuery,
   ): Promise<AiChatClientSearchItem[]>;
+  sendMessage(
+    context: AppTenantContext,
+    chatId: string,
+    input: AiChatSendMessageInput,
+  ): Promise<AiChatSendMessageResult>;
+  editMessage(
+    context: AppTenantContext,
+    messageId: string,
+    input: AiChatEditMessageInput,
+  ): Promise<AiChatMutationRunResult>;
+  regenerateMessage(
+    context: AppTenantContext,
+    messageId: string,
+    input: AiChatRegenerateMessageInput,
+  ): Promise<AiChatMutationRunResult>;
+  stopRun(context: AppTenantContext, runId: string, input: AiChatStopRunInput): Promise<AiChatStopRunResult>;
+  listRunEvents(
+    context: AppTenantContext,
+    runId: string,
+    afterSequence: number,
+  ): Promise<AiChatRunEventDto[]>;
+  getRunById(tenantId: string, runId: string): Promise<AiChatRunDto | null>;
+  getMessageVersionById(tenantId: string, versionId: string): Promise<AiChatMessageVersionRecord | null>;
+  getBranchMessageChain(tenantId: string, branchId: string): Promise<BranchMessageChainItem[]>;
+  claimNextAiChatJob(workerId: string, leaseMs: number): Promise<AiChatJobRecord | null>;
+  completeAiChatJob(jobId: string, workerId: string, leaseToken: string): Promise<void>;
+  failAiChatJob(jobId: string, workerId: string, leaseToken: string, errorCode: string): Promise<void>;
+  renewJobLease(jobId: string, workerId: string, leaseToken: string, leaseMs: number): Promise<void>;
+  shouldAbortRun(tenantId: string, runId: string): Promise<boolean>;
+  updateRunStatus(tenantId: string, runId: string, status: AiChatRunDto["status"]): Promise<void>;
+  appendRunEvent(
+    tenantId: string,
+    runId: string,
+    input: { eventType: string; payload: Record<string, unknown> },
+  ): Promise<AiChatRunEventDto>;
+  finalizeRun(
+    tenantId: string,
+    runId: string,
+    input: {
+      status: AiChatRunDto["status"];
+      answerability?: AiChatRunDto["answerability"];
+      riskLevel?: AiChatRunDto["riskLevel"];
+      errorCode?: string | null;
+    },
+  ): Promise<void>;
+  commitAssistantMessage(
+    tenantId: string,
+    runId: string,
+    input: {
+      body: string;
+      answerability: AiChatRunDto["answerability"];
+      riskLevel: AiChatRunDto["riskLevel"];
+      completionState?: "complete" | "incomplete";
+    },
+  ): Promise<void>;
+  enqueueTitleJob(tenantId: string, conversationId: string, userId: string): Promise<void>;
+  applyAutoTitleIfEligible(tenantId: string, conversationId: string, maxLength: number): Promise<void>;
 }
 
 type InMemoryConversation = {
@@ -80,10 +164,30 @@ type InMemoryConversation = {
 type InMemoryBranch = AiChatBranchDto;
 type InMemoryMessage = AiChatConversationDetail["messages"][number];
 
+type InMemoryRun = AiChatRunDto;
+type InMemoryRunEvent = AiChatRunEventDto & { createdByUserId: string; expiresAt: string };
+type InMemoryJob = AiChatJobRecord;
+type InMemoryMessageVersion = AiChatMessageVersionRecord;
+
 type InMemoryState = {
   conversations: InMemoryConversation[];
   branches: InMemoryBranch[];
   messages: InMemoryMessage[];
+  messageVersions: InMemoryMessageVersion[];
+  runs: InMemoryRun[];
+  runEvents: InMemoryRunEvent[];
+  jobs: InMemoryJob[];
+  memorySummaries: Array<{
+    id: string;
+    tenantId: string;
+    conversationId: string;
+    branchId: string;
+    createdByUserId: string;
+    summaryText: string;
+    isAuthoritative: boolean;
+    createdAt: string;
+    updatedAt: string;
+  }>;
   ledger: Array<{
     tenantId: string;
     requestId: string;
@@ -98,6 +202,11 @@ let inMemoryState: InMemoryState = {
   conversations: [],
   branches: [],
   messages: [],
+  messageVersions: [],
+  runs: [],
+  runEvents: [],
+  jobs: [],
+  memorySummaries: [],
   ledger: [],
   clients: [],
 };
@@ -107,6 +216,11 @@ export function resetInMemoryAiChatStoreForTests(state: Partial<InMemoryState> =
     conversations: [],
     branches: [],
     messages: [],
+    messageVersions: [],
+    runs: [],
+    runEvents: [],
+    jobs: [],
+    memorySummaries: [],
     ledger: [],
     clients: [],
     ...state,
@@ -184,6 +298,245 @@ function writeLedger(
     bodyHash,
     responseDigest,
   });
+}
+
+function countActiveRunsForUser(tenantId: string, userId: string) {
+  return inMemoryState.runs.filter(
+    (run) =>
+      run.tenantId === tenantId &&
+      run.createdByUserId === userId &&
+      isNonTerminalAiChatRunStatus(run.status),
+  ).length;
+}
+
+function countActiveRunsForConversation(tenantId: string, conversationId: string) {
+  return inMemoryState.runs.filter(
+    (run) =>
+      run.tenantId === tenantId &&
+      run.conversationId === conversationId &&
+      isNonTerminalAiChatRunStatus(run.status),
+  ).length;
+}
+
+function supersedeActiveRuns(tenantId: string, conversationId: string) {
+  const now = new Date().toISOString();
+  for (const run of inMemoryState.runs) {
+    if (
+      run.tenantId === tenantId &&
+      run.conversationId === conversationId &&
+      isNonTerminalAiChatRunStatus(run.status)
+    ) {
+      run.status = "superseded";
+      run.updatedAt = now;
+    }
+  }
+}
+
+function getBranch(tenantId: string, branchId: string) {
+  return inMemoryState.branches.find((item) => item.tenantId === tenantId && item.id === branchId) ?? null;
+}
+
+function buildBranchMessageChain(tenantId: string, branchId: string): BranchMessageChainItem[] {
+  const branch = getBranch(tenantId, branchId);
+  if (!branch?.activeLeafVersionId) return [];
+
+  const chain: BranchMessageChainItem[] = [];
+  let currentVersionId: string | null = branch.activeLeafVersionId;
+  const visited = new Set<string>();
+
+  while (currentVersionId && !visited.has(currentVersionId)) {
+    visited.add(currentVersionId);
+    const version =
+      inMemoryState.messageVersions.find(
+        (item) => item.tenantId === tenantId && item.id === currentVersionId,
+      ) ??
+      inMemoryState.messages
+        .flatMap((message) => message.versions)
+        .find((item) => item.id === currentVersionId);
+    if (!version) break;
+    const message =
+      inMemoryState.messages.find(
+        (item) => item.tenantId === tenantId && item.id === version.messageId,
+      ) ?? null;
+    if (!message) break;
+    chain.unshift({
+      messageId: message.id,
+      role: message.role,
+      activeBody: version.body,
+      versionId: version.id,
+    });
+    currentVersionId = version.parentVersionId;
+  }
+
+  return chain;
+}
+
+function materializeBranchMessages(
+  tenantId: string,
+  conversationId: string,
+  branchId: string,
+  limit: number,
+): InMemoryMessage[] {
+  const chain = buildBranchMessageChain(tenantId, branchId).slice(-limit);
+  return chain.map((item) => {
+    const message = inMemoryState.messages.find(
+      (entry) => entry.tenantId === tenantId && entry.id === item.messageId,
+    );
+    const versions =
+      inMemoryState.messageVersions.filter(
+        (entry) => entry.tenantId === tenantId && entry.messageId === item.messageId,
+      ) ?? message?.versions ??
+      [];
+    const mergedVersions = versions.length > 0 ? versions : message?.versions ?? [];
+    return {
+      id: item.messageId,
+      tenantId,
+      conversationId,
+      createdByUserId: message?.createdByUserId ?? "",
+      role: item.role,
+      authorUserId: message?.authorUserId ?? null,
+      deletedAt: message?.deletedAt ?? null,
+      createdAt: message?.createdAt ?? new Date().toISOString(),
+      updatedAt: message?.updatedAt ?? new Date().toISOString(),
+      versions: mergedVersions.map((version) => ({
+        ...version,
+        contentStatus: version.id === item.versionId ? "active" : version.contentStatus,
+      })),
+    };
+  });
+}
+
+function nextRunEventSequence(tenantId: string, runId: string) {
+  const existing = inMemoryState.runEvents.filter((item) => item.tenantId === tenantId && item.runId === runId);
+  return existing.reduce((max, item) => Math.max(max, item.sequenceNumber), 0) + 1;
+}
+
+function createInMemoryRunEvent(
+  tenantId: string,
+  runId: string,
+  conversationId: string,
+  userId: string,
+  eventType: string,
+  payload: Record<string, unknown>,
+): InMemoryRunEvent {
+  const event: InMemoryRunEvent = {
+    id: randomUUID(),
+    tenantId,
+    runId,
+    conversationId,
+    createdByUserId: userId,
+    sequenceNumber: nextRunEventSequence(tenantId, runId),
+    eventType,
+    payload,
+    expiresAt: runEventExpiryIso(),
+    createdAt: new Date().toISOString(),
+  };
+  inMemoryState.runEvents.push(event);
+  return event;
+}
+
+function createGenerationRun(input: {
+  tenantId: string;
+  conversationId: string;
+  userId: string;
+  triggerVersionId: string;
+}) {
+  const now = new Date().toISOString();
+  const run: InMemoryRun = {
+    id: randomUUID(),
+    tenantId: input.tenantId,
+    conversationId: input.conversationId,
+    createdByUserId: input.userId,
+    triggerMessageVersionId: input.triggerVersionId,
+    status: "queued",
+    answerability: null,
+    riskLevel: null,
+    safetyOutcome: null,
+    cancelRequestedAt: null,
+    errorCode: null,
+    createdAt: now,
+    updatedAt: now,
+  };
+  inMemoryState.runs.push(run);
+  return run;
+}
+
+function enqueueGenerationJob(input: {
+  tenantId: string;
+  conversationId: string;
+  userId: string;
+  runId: string;
+}) {
+  const now = new Date().toISOString();
+  const job: InMemoryJob = {
+    id: randomUUID(),
+    tenantId: input.tenantId,
+    jobType: "generation",
+    runId: input.runId,
+    conversationId: input.conversationId,
+    createdByUserId: input.userId,
+    status: "queued",
+    payload: {},
+    leaseOwner: null,
+    leaseToken: null,
+    leaseExpiresAt: null,
+    heartbeatAt: null,
+    retryCount: 0,
+    nextAttemptAt: now,
+    createdAt: now,
+    updatedAt: now,
+  };
+  inMemoryState.jobs.push(job);
+  return job;
+}
+
+function createUserMessageVersion(input: {
+  tenantId: string;
+  conversationId: string;
+  userId: string;
+  branchId: string;
+  body: string;
+  parentVersionId: string | null;
+  supersedesVersionId?: string | null;
+}) {
+  const now = new Date().toISOString();
+  const messageId = randomUUID();
+  const versionId = randomUUID();
+  const version: InMemoryMessageVersion = {
+    id: versionId,
+    tenantId: input.tenantId,
+    conversationId: input.conversationId,
+    messageId,
+    branchId: input.branchId,
+    createdByUserId: input.userId,
+    body: input.body,
+    bodySha256: hashMessageBody(input.body),
+    parentVersionId: input.parentVersionId,
+    supersedesVersionId: input.supersedesVersionId ?? null,
+    runId: null,
+    contentStatus: "active",
+    createdAt: now,
+  };
+  const message: InMemoryMessage = {
+    id: messageId,
+    tenantId: input.tenantId,
+    conversationId: input.conversationId,
+    createdByUserId: input.userId,
+    role: "user",
+    authorUserId: input.userId,
+    deletedAt: null,
+    createdAt: now,
+    updatedAt: now,
+    versions: [version],
+  };
+  inMemoryState.messages.push(message);
+  inMemoryState.messageVersions.push(version);
+  const branch = getBranch(input.tenantId, input.branchId);
+  if (branch) {
+    branch.activeLeafVersionId = versionId;
+    branch.updatedAt = now;
+  }
+  return { messageId, versionId };
 }
 
 const inMemoryAiChatStore: AiChatStore = {
@@ -350,9 +703,12 @@ const inMemoryAiChatStore: AiChatStore = {
     const branches = inMemoryState.branches.filter(
       (item) => item.tenantId === context.tenantId && item.conversationId === chatId,
     );
-    const messages = inMemoryState.messages
-      .filter((item) => item.tenantId === context.tenantId && item.conversationId === chatId)
-      .slice(0, input.messageLimit);
+    const messages = materializeBranchMessages(
+      context.tenantId,
+      chatId,
+      conversation.activeBranchId,
+      input.messageLimit,
+    );
 
     return {
       id: conversation.id,
@@ -529,6 +885,522 @@ const inMemoryAiChatStore: AiChatStore = {
         };
       });
   },
+
+  async sendMessage(context, chatId, input) {
+    const bodyHash = canonicalAiChatBodyHash(input);
+    const existingDigest = readLedger(context, input.requestId, bodyHash);
+    if (existingDigest) {
+      const [runId, messageId, messageVersionId, revision] = existingDigest.split("|");
+      return {
+        runId,
+        messageId,
+        messageVersionId,
+        conversationRevision: Number(revision),
+      };
+    }
+
+    const conversation = getInMemoryConversation(context, chatId);
+    if (conversation.status !== "active") {
+      throw new AppRequestError(409, "ai_chat_conversation_locked");
+    }
+    if (conversation.revision !== input.expectedRevision) {
+      throw new AppRequestError(409, "ai_chat_revision_conflict", undefined, conversation.revision);
+    }
+
+    const targetBranchId = input.branchId ?? conversation.activeBranchId;
+    if (input.branchId && input.branchId !== conversation.activeBranchId) {
+      conversation.activeBranchId = input.branchId;
+    }
+    const branch = getBranch(context.tenantId, targetBranchId);
+    if (!branch) throw new AppRequestError(404, "ai_chat_not_found");
+
+    if (countActiveRunsForConversation(context.tenantId, chatId) > 0) {
+      throw new AppRequestError(409, "ai_chat_active_run_conflict");
+    }
+    assertUserActiveRunBudget(countActiveRunsForUser(context.tenantId, context.userId));
+
+    const parentVersionId = branch.activeLeafVersionId;
+    const { messageId, versionId } = createUserMessageVersion({
+      tenantId: context.tenantId,
+      conversationId: chatId,
+      userId: context.userId,
+      branchId: targetBranchId,
+      body: input.body,
+      parentVersionId,
+    });
+
+    const run = createGenerationRun({
+      tenantId: context.tenantId,
+      conversationId: chatId,
+      userId: context.userId,
+      triggerVersionId: versionId,
+    });
+    enqueueGenerationJob({
+      tenantId: context.tenantId,
+      conversationId: chatId,
+      userId: context.userId,
+      runId: run.id,
+    });
+    createInMemoryRunEvent(
+      context.tenantId,
+      run.id,
+      chatId,
+      context.userId,
+      buildAcceptedRunEvent(run).eventType,
+      buildAcceptedRunEvent(run).payload,
+    );
+
+    conversation.revision += 1;
+    conversation.lastMessageAt = new Date().toISOString();
+    conversation.preview = input.body.slice(0, 120);
+    conversation.updatedAt = conversation.lastMessageAt;
+    writeLedger(
+      context,
+      input.requestId,
+      bodyHash,
+      `${run.id}|${messageId}|${versionId}|${conversation.revision}`,
+    );
+
+    return {
+      runId: run.id,
+      messageId,
+      messageVersionId: versionId,
+      conversationRevision: conversation.revision,
+    };
+  },
+
+  async editMessage(context, messageId, input) {
+    const bodyHash = canonicalAiChatBodyHash(input);
+    const existingDigest = readLedger(context, input.requestId, bodyHash);
+    if (existingDigest) {
+      const [runId, branchId, revision] = existingDigest.split("|");
+      return { runId, branchId, conversationRevision: Number(revision) };
+    }
+
+    const message = inMemoryState.messages.find(
+      (item) => item.tenantId === context.tenantId && item.id === messageId,
+    );
+    if (!message || message.role !== "user") {
+      throw new AppRequestError(404, "ai_chat_message_not_found");
+    }
+
+    const conversation = getInMemoryConversation(context, message.conversationId);
+    if (conversation.revision !== input.expectedRevision) {
+      throw new AppRequestError(409, "ai_chat_revision_conflict", undefined, conversation.revision);
+    }
+
+    const chain = buildBranchMessageChain(context.tenantId, conversation.activeBranchId);
+    const latestUser = [...chain].reverse().find((item) => item.role === "user");
+    if (!latestUser || latestUser.messageId !== messageId) {
+      throw new AppRequestError(409, "ai_chat_message_not_latest_user");
+    }
+
+    supersedeActiveRuns(context.tenantId, conversation.id);
+    const currentVersion = inMemoryState.messageVersions.find(
+      (item) => item.id === latestUser.versionId,
+    );
+    const now = new Date().toISOString();
+    const branchId = randomUUID();
+    const branch: InMemoryBranch = {
+      id: branchId,
+      tenantId: context.tenantId,
+      conversationId: conversation.id,
+      createdByUserId: context.userId,
+      parentBranchId: conversation.activeBranchId,
+      forkedFromMessageVersionId: currentVersion?.parentVersionId ?? null,
+      activeLeafVersionId: null,
+      forkReason: "edit",
+      revision: 1,
+      createdAt: now,
+      updatedAt: now,
+    };
+    inMemoryState.branches.push(branch);
+    conversation.activeBranchId = branchId;
+
+    const { messageId: newMessageId, versionId } = createUserMessageVersion({
+      tenantId: context.tenantId,
+      conversationId: conversation.id,
+      userId: context.userId,
+      branchId,
+      body: input.body,
+      parentVersionId: currentVersion?.parentVersionId ?? null,
+      supersedesVersionId: latestUser.versionId,
+    });
+
+    const run = createGenerationRun({
+      tenantId: context.tenantId,
+      conversationId: conversation.id,
+      userId: context.userId,
+      triggerVersionId: versionId,
+    });
+    enqueueGenerationJob({
+      tenantId: context.tenantId,
+      conversationId: conversation.id,
+      userId: context.userId,
+      runId: run.id,
+    });
+    createInMemoryRunEvent(
+      context.tenantId,
+      run.id,
+      conversation.id,
+      context.userId,
+      buildAcceptedRunEvent(run).eventType,
+      buildAcceptedRunEvent(run).payload,
+    );
+
+    conversation.revision += 1;
+    conversation.preview = input.body.slice(0, 120);
+    conversation.lastMessageAt = now;
+    conversation.updatedAt = now;
+    writeLedger(context, input.requestId, bodyHash, `${run.id}|${branchId}|${conversation.revision}`);
+
+    return {
+      runId: run.id,
+      branchId,
+      messageId: newMessageId,
+      messageVersionId: versionId,
+      conversationRevision: conversation.revision,
+    };
+  },
+
+  async regenerateMessage(context, messageId, input) {
+    const bodyHash = canonicalAiChatBodyHash(input);
+    const existingDigest = readLedger(context, input.requestId, bodyHash);
+    if (existingDigest) {
+      const [runId, branchId, revision] = existingDigest.split("|");
+      return { runId, branchId, conversationRevision: Number(revision) };
+    }
+
+    const message = inMemoryState.messages.find(
+      (item) => item.tenantId === context.tenantId && item.id === messageId,
+    );
+    if (!message || message.role !== "assistant") {
+      throw new AppRequestError(409, "ai_chat_regenerate_not_latest_assistant");
+    }
+
+    const conversation = getInMemoryConversation(context, message.conversationId);
+    if (conversation.revision !== input.expectedRevision) {
+      throw new AppRequestError(409, "ai_chat_revision_conflict", undefined, conversation.revision);
+    }
+
+    const chain = buildBranchMessageChain(context.tenantId, conversation.activeBranchId);
+    const latest = chain.at(-1);
+    if (!latest || latest.messageId !== messageId || latest.role !== "assistant") {
+      throw new AppRequestError(409, "ai_chat_regenerate_not_latest_assistant");
+    }
+
+    const assistantVersion = inMemoryState.messageVersions.find((item) => item.id === latest.versionId);
+    const parentUserVersionId = assistantVersion?.parentVersionId;
+    if (!parentUserVersionId) {
+      throw new AppRequestError(409, "ai_chat_regenerate_not_latest_assistant");
+    }
+
+    supersedeActiveRuns(context.tenantId, conversation.id);
+    const now = new Date().toISOString();
+    const branchId = randomUUID();
+    const branch: InMemoryBranch = {
+      id: branchId,
+      tenantId: context.tenantId,
+      conversationId: conversation.id,
+      createdByUserId: context.userId,
+      parentBranchId: conversation.activeBranchId,
+      forkedFromMessageVersionId: parentUserVersionId,
+      activeLeafVersionId: parentUserVersionId,
+      forkReason: "regenerate",
+      revision: 1,
+      createdAt: now,
+      updatedAt: now,
+    };
+    inMemoryState.branches.push(branch);
+    conversation.activeBranchId = branchId;
+
+    const run = createGenerationRun({
+      tenantId: context.tenantId,
+      conversationId: conversation.id,
+      userId: context.userId,
+      triggerVersionId: parentUserVersionId,
+    });
+    enqueueGenerationJob({
+      tenantId: context.tenantId,
+      conversationId: conversation.id,
+      userId: context.userId,
+      runId: run.id,
+    });
+    createInMemoryRunEvent(
+      context.tenantId,
+      run.id,
+      conversation.id,
+      context.userId,
+      buildAcceptedRunEvent(run).eventType,
+      buildAcceptedRunEvent(run).payload,
+    );
+
+    conversation.revision += 1;
+    conversation.updatedAt = now;
+    writeLedger(context, input.requestId, bodyHash, `${run.id}|${branchId}|${conversation.revision}`);
+
+    return {
+      runId: run.id,
+      branchId,
+      conversationRevision: conversation.revision,
+    };
+  },
+
+  async stopRun(context, runId, input) {
+    const bodyHash = canonicalAiChatBodyHash(input);
+    const existingDigest = readLedger(context, input.requestId, bodyHash);
+    if (existingDigest) {
+      return { runId, status: existingDigest as AiChatStopRunResult["status"] };
+    }
+
+    const run = inMemoryState.runs.find(
+      (item) =>
+        item.tenantId === context.tenantId &&
+        item.id === runId &&
+        item.createdByUserId === context.userId,
+    );
+    if (!run) throw new AppRequestError(404, "ai_chat_run_not_found");
+    if (!isNonTerminalAiChatRunStatus(run.status)) {
+      writeLedger(context, input.requestId, bodyHash, run.status);
+      return { runId, status: run.status };
+    }
+
+    run.status = "cancel_requested";
+    run.cancelRequestedAt = new Date().toISOString();
+    run.updatedAt = run.cancelRequestedAt;
+    writeLedger(context, input.requestId, bodyHash, run.status);
+    return { runId, status: run.status };
+  },
+
+  async listRunEvents(context, runId, afterSequence) {
+    const run = inMemoryState.runs.find(
+      (item) =>
+        item.tenantId === context.tenantId &&
+        item.id === runId &&
+        item.createdByUserId === context.userId,
+    );
+    if (!run) throw new AppRequestError(404, "ai_chat_run_not_found");
+    return inMemoryState.runEvents
+      .filter(
+        (item) =>
+          item.tenantId === context.tenantId &&
+          item.runId === runId &&
+          item.sequenceNumber > afterSequence,
+      )
+      .sort((a, b) => a.sequenceNumber - b.sequenceNumber)
+      .map((item) => ({
+        id: item.id,
+        tenantId: item.tenantId,
+        runId: item.runId,
+        conversationId: item.conversationId,
+        sequenceNumber: item.sequenceNumber,
+        eventType: item.eventType,
+        payload: item.payload,
+        createdAt: item.createdAt,
+      }));
+  },
+
+  async getRunById(tenantId, runId) {
+    return inMemoryState.runs.find((item) => item.tenantId === tenantId && item.id === runId) ?? null;
+  },
+
+  async getMessageVersionById(tenantId, versionId) {
+    return (
+      inMemoryState.messageVersions.find((item) => item.tenantId === tenantId && item.id === versionId) ??
+      null
+    );
+  },
+
+  async getBranchMessageChain(tenantId, branchId) {
+    return buildBranchMessageChain(tenantId, branchId);
+  },
+
+  async claimNextAiChatJob(workerId, leaseMs) {
+    const now = Date.now();
+    const job = inMemoryState.jobs
+      .filter((item) => item.status === "queued" || (item.leaseExpiresAt && new Date(item.leaseExpiresAt).getTime() <= now))
+      .sort((a, b) => a.createdAt.localeCompare(b.createdAt))[0];
+    if (!job) return null;
+    const leaseToken = randomUUID();
+    job.status = "processing";
+    job.leaseOwner = workerId;
+    job.leaseToken = leaseToken;
+    job.leaseExpiresAt = new Date(now + leaseMs).toISOString();
+    job.heartbeatAt = new Date().toISOString();
+    job.updatedAt = job.heartbeatAt;
+    return { ...job };
+  },
+
+  async completeAiChatJob(jobId, workerId, leaseToken) {
+    const job = inMemoryState.jobs.find((item) => item.id === jobId);
+    if (!job || job.leaseOwner !== workerId || job.leaseToken !== leaseToken) return;
+    job.status = "completed";
+    job.updatedAt = new Date().toISOString();
+  },
+
+  async failAiChatJob(jobId, workerId, leaseToken, errorCode) {
+    const job = inMemoryState.jobs.find((item) => item.id === jobId);
+    if (!job || job.leaseOwner !== workerId || job.leaseToken !== leaseToken) return;
+    job.retryCount += 1;
+    job.status = job.retryCount >= 3 ? "permanently_failed" : "retryable_failed";
+    job.payload = { ...job.payload, lastError: errorCode };
+    job.leaseOwner = null;
+    job.leaseToken = null;
+    job.updatedAt = new Date().toISOString();
+  },
+
+  async renewJobLease(jobId, workerId, leaseToken, leaseMs) {
+    const job = inMemoryState.jobs.find((item) => item.id === jobId);
+    if (!job || job.leaseOwner !== workerId || job.leaseToken !== leaseToken) return;
+    job.leaseExpiresAt = new Date(Date.now() + leaseMs).toISOString();
+    job.heartbeatAt = new Date().toISOString();
+    job.updatedAt = job.heartbeatAt;
+  },
+
+  async shouldAbortRun(tenantId, runId) {
+    const run = inMemoryState.runs.find((item) => item.tenantId === tenantId && item.id === runId);
+    if (!run) return true;
+    return ["cancel_requested", "superseded", "stopped", "failed", "completed"].includes(run.status);
+  },
+
+  async updateRunStatus(tenantId, runId, status) {
+    const run = inMemoryState.runs.find((item) => item.tenantId === tenantId && item.id === runId);
+    if (!run) return;
+    run.status = status;
+    run.updatedAt = new Date().toISOString();
+  },
+
+  async appendRunEvent(tenantId, runId, input) {
+    const run = inMemoryState.runs.find((item) => item.tenantId === tenantId && item.id === runId);
+    if (!run) throw new AppRequestError(404, "ai_chat_run_not_found");
+    const event = createInMemoryRunEvent(
+      tenantId,
+      runId,
+      run.conversationId,
+      run.createdByUserId,
+      input.eventType,
+      input.payload,
+    );
+    return {
+      id: event.id,
+      tenantId: event.tenantId,
+      runId: event.runId,
+      conversationId: event.conversationId,
+      sequenceNumber: event.sequenceNumber,
+      eventType: event.eventType,
+      payload: event.payload,
+      createdAt: event.createdAt,
+    };
+  },
+
+  async finalizeRun(tenantId, runId, input) {
+    const run = inMemoryState.runs.find((item) => item.tenantId === tenantId && item.id === runId);
+    if (!run) return;
+    run.status = input.status;
+    run.answerability = input.answerability ?? run.answerability;
+    run.riskLevel = input.riskLevel ?? run.riskLevel;
+    run.errorCode = input.errorCode ?? run.errorCode;
+    run.updatedAt = new Date().toISOString();
+  },
+
+  async commitAssistantMessage(tenantId, runId, input) {
+    const run = inMemoryState.runs.find((item) => item.tenantId === tenantId && item.id === runId);
+    if (!run) return;
+    const triggerVersion = inMemoryState.messageVersions.find(
+      (item) => item.tenantId === tenantId && item.id === run.triggerMessageVersionId,
+    );
+    if (!triggerVersion) return;
+
+    const existing = inMemoryState.messageVersions.find(
+      (item) => item.tenantId === tenantId && item.runId === runId,
+    );
+    if (existing) return;
+
+    const now = new Date().toISOString();
+    const messageId = randomUUID();
+    const versionId = randomUUID();
+    const version: InMemoryMessageVersion = {
+      id: versionId,
+      tenantId,
+      conversationId: run.conversationId,
+      messageId,
+      branchId: triggerVersion.branchId,
+      createdByUserId: run.createdByUserId,
+      body: input.body,
+      bodySha256: hashMessageBody(input.body),
+      parentVersionId: run.triggerMessageVersionId,
+      supersedesVersionId: null,
+      runId,
+      contentStatus: "active",
+      createdAt: now,
+    };
+    const message: InMemoryMessage = {
+      id: messageId,
+      tenantId,
+      conversationId: run.conversationId,
+      createdByUserId: run.createdByUserId,
+      role: "assistant",
+      authorUserId: null,
+      deletedAt: null,
+      createdAt: now,
+      updatedAt: now,
+      versions: [version],
+    };
+    inMemoryState.messages.push(message);
+    inMemoryState.messageVersions.push(version);
+    const branch = getBranch(tenantId, triggerVersion.branchId);
+    if (branch) {
+      branch.activeLeafVersionId = versionId;
+      branch.updatedAt = now;
+    }
+    const conversation = inMemoryState.conversations.find(
+      (item) => item.tenantId === tenantId && item.id === run.conversationId,
+    );
+    if (conversation) {
+      conversation.preview = input.body.slice(0, 120);
+      conversation.lastMessageAt = now;
+      conversation.updatedAt = now;
+    }
+  },
+
+  async enqueueTitleJob(tenantId, conversationId, userId) {
+    const conversation = inMemoryState.conversations.find(
+      (item) => item.tenantId === tenantId && item.id === conversationId,
+    );
+    if (!conversation || conversation.titleSource === "user") return;
+    const now = new Date().toISOString();
+    inMemoryState.jobs.push({
+      id: randomUUID(),
+      tenantId,
+      jobType: "title",
+      runId: null,
+      conversationId,
+      createdByUserId: userId,
+      status: "queued",
+      payload: {},
+      leaseOwner: null,
+      leaseToken: null,
+      leaseExpiresAt: null,
+      heartbeatAt: null,
+      retryCount: 0,
+      nextAttemptAt: now,
+      createdAt: now,
+      updatedAt: now,
+    });
+  },
+
+  async applyAutoTitleIfEligible(tenantId, conversationId, maxLength) {
+    const conversation = inMemoryState.conversations.find(
+      (item) => item.tenantId === tenantId && item.id === conversationId,
+    );
+    if (!conversation || conversation.titleSource === "user") return;
+    const chain = buildBranchMessageChain(tenantId, conversation.activeBranchId);
+    const firstUser = chain.find((item) => item.role === "user");
+    if (!firstUser?.activeBody) return;
+    conversation.title = firstUser.activeBody.slice(0, maxLength);
+    conversation.titleSource = "auto";
+    conversation.updatedAt = new Date().toISOString();
+  },
 };
 
 function requireSupabaseAdmin() {
@@ -692,6 +1564,322 @@ const supabaseAiChatStore: AiChatStore = {
         shortDisplay: formatClientReferenceShort(displayReference),
         channel: row.primary_channel,
       };
+    });
+  },
+
+  async sendMessage(context, chatId, input) {
+    const supabase = requireSupabaseAdmin();
+    const bodyHash = canonicalAiChatBodyHash(input);
+    const { data, error } = await supabase.rpc("p85_stage_4c_send_message_v1", {
+      p_tenant_id: context.tenantId,
+      p_user_id: context.userId,
+      p_dietitian_id: context.dietitianId,
+      p_role: context.role,
+      p_chat_id: chatId,
+      p_expected_revision: input.expectedRevision,
+      p_body: input.body,
+      p_branch_id: input.branchId,
+      p_request_id: input.requestId,
+      p_body_hash: bodyHash,
+    });
+    if (error) mapRpcError(error, input.expectedRevision);
+    const row = data as Record<string, unknown>;
+    return {
+      runId: String(row.run_id),
+      messageId: String(row.message_id),
+      messageVersionId: String(row.message_version_id),
+      conversationRevision: Number(row.conversation_revision),
+    };
+  },
+
+  async editMessage(context, messageId, input) {
+    const supabase = requireSupabaseAdmin();
+    const bodyHash = canonicalAiChatBodyHash(input);
+    const { data, error } = await supabase.rpc("p85_stage_4c_edit_message_v1", {
+      p_tenant_id: context.tenantId,
+      p_user_id: context.userId,
+      p_dietitian_id: context.dietitianId,
+      p_role: context.role,
+      p_message_id: messageId,
+      p_expected_revision: input.expectedRevision,
+      p_body: input.body,
+      p_request_id: input.requestId,
+      p_body_hash: bodyHash,
+    });
+    if (error) mapRpcError(error, input.expectedRevision);
+    const row = data as Record<string, unknown>;
+    return {
+      runId: String(row.run_id),
+      branchId: String(row.branch_id),
+      messageId: String(row.message_id),
+      messageVersionId: String(row.message_version_id),
+      conversationRevision: Number(row.conversation_revision),
+    };
+  },
+
+  async regenerateMessage(context, messageId, input) {
+    const supabase = requireSupabaseAdmin();
+    const bodyHash = canonicalAiChatBodyHash(input);
+    const { data, error } = await supabase.rpc("p85_stage_4c_regenerate_message_v1", {
+      p_tenant_id: context.tenantId,
+      p_user_id: context.userId,
+      p_dietitian_id: context.dietitianId,
+      p_role: context.role,
+      p_message_id: messageId,
+      p_expected_revision: input.expectedRevision,
+      p_request_id: input.requestId,
+      p_body_hash: bodyHash,
+    });
+    if (error) mapRpcError(error, input.expectedRevision);
+    const row = data as Record<string, unknown>;
+    return {
+      runId: String(row.run_id),
+      branchId: String(row.branch_id),
+      conversationRevision: Number(row.conversation_revision),
+    };
+  },
+
+  async stopRun(context, runId, input) {
+    const supabase = requireSupabaseAdmin();
+    const bodyHash = canonicalAiChatBodyHash(input);
+    const { data, error } = await supabase.rpc("p85_stage_4c_stop_run_v1", {
+      p_tenant_id: context.tenantId,
+      p_user_id: context.userId,
+      p_dietitian_id: context.dietitianId,
+      p_role: context.role,
+      p_run_id: runId,
+      p_request_id: input.requestId,
+      p_body_hash: bodyHash,
+    });
+    if (error) mapRpcError(error);
+    const row = data as Record<string, unknown>;
+    return { runId, status: row.status as AiChatStopRunResult["status"] };
+  },
+
+  async listRunEvents(context, runId, afterSequence) {
+    const supabase = requireSupabaseAdmin();
+    const { data, error } = await supabase.rpc("p85_stage_4c_list_run_events_v1", {
+      p_tenant_id: context.tenantId,
+      p_user_id: context.userId,
+      p_dietitian_id: context.dietitianId,
+      p_role: context.role,
+      p_run_id: runId,
+      p_after_sequence: afterSequence,
+    });
+    if (error) mapRpcError(error);
+    return (data as Record<string, unknown>[]).map((row) => ({
+      id: String(row.id),
+      tenantId: String(row.tenant_id),
+      runId: String(row.run_id),
+      conversationId: String(row.conversation_id),
+      sequenceNumber: Number(row.sequence_number),
+      eventType: String(row.event_type),
+      payload: (row.payload as Record<string, unknown>) ?? {},
+      createdAt: String(row.created_at),
+    }));
+  },
+
+  async getRunById(tenantId, runId) {
+    const supabase = requireSupabaseAdmin();
+    const { data, error } = await supabase
+      .from("ai_chat_runs")
+      .select("*")
+      .eq("tenant_id", tenantId)
+      .eq("id", runId)
+      .maybeSingle();
+    if (error || !data) return null;
+    return {
+      id: String(data.id),
+      tenantId: String(data.tenant_id),
+      conversationId: String(data.conversation_id),
+      createdByUserId: String(data.created_by_user_id),
+      triggerMessageVersionId: String(data.trigger_message_version_id),
+      status: data.status,
+      answerability: data.answerability,
+      riskLevel: data.risk_level,
+      safetyOutcome: data.safety_outcome,
+      cancelRequestedAt: data.cancel_requested_at,
+      errorCode: data.error_code,
+      createdAt: String(data.created_at),
+      updatedAt: String(data.updated_at),
+    };
+  },
+
+  async getMessageVersionById(tenantId, versionId) {
+    const supabase = requireSupabaseAdmin();
+    const { data, error } = await supabase
+      .from("ai_chat_message_versions")
+      .select("*")
+      .eq("tenant_id", tenantId)
+      .eq("id", versionId)
+      .maybeSingle();
+    if (error || !data) return null;
+    return {
+      id: String(data.id),
+      tenantId: String(data.tenant_id),
+      conversationId: String(data.conversation_id),
+      messageId: String(data.message_id),
+      branchId: String(data.branch_id),
+      createdByUserId: String(data.created_by_user_id),
+      body: String(data.body),
+      bodySha256: String(data.body_sha256),
+      parentVersionId: data.parent_version_id,
+      supersedesVersionId: data.supersedes_version_id,
+      runId: data.run_id,
+      contentStatus: data.content_status,
+      createdAt: String(data.created_at),
+    };
+  },
+
+  async getBranchMessageChain(tenantId, branchId) {
+    const supabase = requireSupabaseAdmin();
+    const { data, error } = await supabase.rpc("p85_stage_4c_get_branch_chain_v1", {
+      p_tenant_id: tenantId,
+      p_branch_id: branchId,
+    });
+    if (error) mapRpcError(error);
+    return (data as Array<Record<string, unknown>>).map((row) => ({
+      messageId: String(row.message_id),
+      role: row.role as "user" | "assistant",
+      activeBody: String(row.body),
+      versionId: String(row.version_id),
+    }));
+  },
+
+  async claimNextAiChatJob(workerId, leaseMs) {
+    const supabase = requireSupabaseAdmin();
+    const { data, error } = await supabase.rpc("p85_stage_4c_claim_ai_chat_job_v1", {
+      p_worker_id: workerId,
+      p_lease_ms: leaseMs,
+    });
+    if (error) mapRpcError(error);
+    const row = (data as Record<string, unknown>[])?.[0];
+    if (!row) return null;
+    return {
+      id: String(row.id),
+      tenantId: String(row.tenant_id),
+      jobType: row.job_type as AiChatJobRecord["jobType"],
+      runId: (row.run_id as string | null) ?? null,
+      conversationId: String(row.conversation_id),
+      createdByUserId: String(row.created_by_user_id),
+      status: row.status as AiChatJobRecord["status"],
+      payload: (row.payload as Record<string, unknown>) ?? {},
+      leaseOwner: (row.lease_owner as string | null) ?? null,
+      leaseToken: (row.lease_token as string | null) ?? null,
+      leaseExpiresAt: (row.lease_expires_at as string | null) ?? null,
+      heartbeatAt: (row.heartbeat_at as string | null) ?? null,
+      retryCount: Number(row.retry_count ?? 0),
+      nextAttemptAt: String(row.next_attempt_at),
+      createdAt: String(row.created_at),
+      updatedAt: String(row.updated_at),
+    };
+  },
+
+  async completeAiChatJob(jobId, workerId, leaseToken) {
+    const supabase = requireSupabaseAdmin();
+    await supabase.rpc("p85_stage_4c_complete_ai_chat_job_v1", {
+      p_job_id: jobId,
+      p_worker_id: workerId,
+      p_lease_token: leaseToken,
+    });
+  },
+
+  async failAiChatJob(jobId, workerId, leaseToken, errorCode) {
+    const supabase = requireSupabaseAdmin();
+    await supabase.rpc("p85_stage_4c_fail_ai_chat_job_v1", {
+      p_job_id: jobId,
+      p_worker_id: workerId,
+      p_lease_token: leaseToken,
+      p_error_code: errorCode,
+    });
+  },
+
+  async renewJobLease(jobId, workerId, leaseToken, leaseMs) {
+    const supabase = requireSupabaseAdmin();
+    await supabase.rpc("p85_stage_4c_renew_ai_chat_job_lease_v1", {
+      p_job_id: jobId,
+      p_worker_id: workerId,
+      p_lease_token: leaseToken,
+      p_lease_ms: leaseMs,
+    });
+  },
+
+  async shouldAbortRun(tenantId, runId) {
+    const run = await supabaseAiChatStore.getRunById(tenantId, runId);
+    if (!run) return true;
+    return ["cancel_requested", "superseded", "stopped", "failed", "completed"].includes(run.status);
+  },
+
+  async updateRunStatus(tenantId, runId, status) {
+    const supabase = requireSupabaseAdmin();
+    await supabase
+      .from("ai_chat_runs")
+      .update({ status, updated_at: new Date().toISOString() })
+      .eq("tenant_id", tenantId)
+      .eq("id", runId);
+  },
+
+  async appendRunEvent(tenantId, runId, input) {
+    const supabase = requireSupabaseAdmin();
+    const { data, error } = await supabase.rpc("p85_stage_4c_append_run_event_v1", {
+      p_tenant_id: tenantId,
+      p_run_id: runId,
+      p_event_type: input.eventType,
+      p_payload: input.payload,
+    });
+    if (error) mapRpcError(error);
+    const row = data as Record<string, unknown>;
+    return {
+      id: String(row.id),
+      tenantId: String(row.tenant_id),
+      runId: String(row.run_id),
+      conversationId: String(row.conversation_id),
+      sequenceNumber: Number(row.sequence_number),
+      eventType: String(row.event_type),
+      payload: (row.payload as Record<string, unknown>) ?? {},
+      createdAt: String(row.created_at),
+    };
+  },
+
+  async finalizeRun(tenantId, runId, input) {
+    const supabase = requireSupabaseAdmin();
+    await supabase.rpc("p85_stage_4c_finalize_run_v1", {
+      p_tenant_id: tenantId,
+      p_run_id: runId,
+      p_status: input.status,
+      p_answerability: input.answerability ?? null,
+      p_risk_level: input.riskLevel ?? null,
+      p_error_code: input.errorCode ?? null,
+    });
+  },
+
+  async commitAssistantMessage(tenantId, runId, input) {
+    const supabase = requireSupabaseAdmin();
+    await supabase.rpc("p85_stage_4c_commit_assistant_message_v1", {
+      p_tenant_id: tenantId,
+      p_run_id: runId,
+      p_body: input.body,
+      p_answerability: input.answerability,
+      p_risk_level: input.riskLevel,
+      p_completion_state: input.completionState ?? "complete",
+    });
+  },
+
+  async enqueueTitleJob(tenantId, conversationId, userId) {
+    const supabase = requireSupabaseAdmin();
+    await supabase.rpc("p85_stage_4c_enqueue_title_job_v1", {
+      p_tenant_id: tenantId,
+      p_conversation_id: conversationId,
+      p_user_id: userId,
+    });
+  },
+
+  async applyAutoTitleIfEligible(tenantId, conversationId, maxLength) {
+    const supabase = requireSupabaseAdmin();
+    await supabase.rpc("p85_stage_4c_apply_auto_title_v1", {
+      p_tenant_id: tenantId,
+      p_conversation_id: conversationId,
+      p_max_length: maxLength,
     });
   },
 };

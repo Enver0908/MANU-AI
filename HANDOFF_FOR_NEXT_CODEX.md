@@ -1,6 +1,6 @@
 # Handoff For Next Codex
 
-**Current authority (2026-07-22):** Stage 4C Diyetisyen Icin AI Chat Faz 4 Dashboard AI Chat Sayfasi ve ChatGPT Benzeri Arayuz Temeli is complete locally. Active plan: `docs/PHASE_85_STAGE_4C_DIYETISYEN_AI_CHAT_ACTION_PLAN.md`; active evidence: `docs/PHASE_85_STAGE_4C_EVIDENCE.md`. **Next:** Stage 4C Faz 5 - Metin Mesaji, Dal/Surum ve Dayanikli Run Akisi after explicit user approval. Production remains `NO-GO`; R-405 remains open.
+**Current authority (2026-07-22):** Stage 4C Diyetisyen Icin AI Chat Faz 5 Metin Mesaji, Dal/Surum ve Dayanikli Run Akisi is complete locally. Active plan: `docs/PHASE_85_STAGE_4C_DIYETISYEN_AI_CHAT_ACTION_PLAN.md`; active evidence: `docs/PHASE_85_STAGE_4C_EVIDENCE.md`. **Next:** Stage 4C Faz 6 - Danisan Baglam Gecidi ve Buyuk Veri Kapsami after explicit user approval. Production remains `NO-GO`; R-405 remains open.
 
 Pre-Stage-4C Faz 1 Stage 4B-3 closure, Stage 4B-4 Phase 11 closure, and Stage 4B-4 R0-R9 paragraphs below this authority block are historical snapshots. Use the Stage 4C plan and Faz 1 evidence as the current handoff.
 
@@ -8,7 +8,7 @@ Historical continuity audit, 2026-07-13: canonical status, repository-relative r
 
 ## Read This First
 
-Latest Phase 85 handoff (2026-07-22): **Stage 4C Diyetisyen Icin AI Chat Faz 4 Dashboard AI Chat Sayfasi ve ChatGPT Benzeri Arayuz Temeli is complete locally.** `DashboardShell` is shared between the classic dashboard and the new real routes `/dashboard/ai-chat` and `/dashboard/ai-chat/[chatId]`; the old Copilot main-nav entry and client-detail tab are removed and replaced by a flag-gated `AI Chat` nav link plus a client-detail "AI ile degerlendir" deep-link command; legacy `?section=copilot` deep links replace-redirect to `/dashboard/ai-chat`. The feature flag `AI_CHAT_UI_ENABLED` (server-only, no `NEXT_PUBLIC_` prefix, resolved per-request via `force-dynamic` routes) defaults off. The workspace shell (history sidebar, message column, context panel, new-chat client picker, focus mode, mobile drawers) renders against the real Faz 3 API but message sending remains disabled pending Faz 5. `@axe-core/playwright` was added as a devDependency to satisfy the plan's axe serious/critical violation test requirement; one real contrast violation was found and fixed (`text-stone-500` -> `text-stone-600` in AI Chat components). Evidence: `docs/PHASE_85_STAGE_4C_EVIDENCE.md`. **Next work:** Stage 4C Faz 5 - Metin Mesaji, Dal/Surum ve Dayanikli Run Akisi after explicit user approval. Production pilot remains `NO-GO`; R-405 remains open; all real integration paths remain closed.
+Latest Phase 85 handoff (2026-07-22): **Stage 4C Diyetisyen Icin AI Chat Faz 5 Metin Mesaji, Dal/Surum ve Dayanikli Run Akisi is complete locally.** Deterministic text chat send/stream/stop/edit/regenerate/copy is wired end-to-end via durable run jobs, SSE events, core orchestrator modules, and workspace UI. Real provider flags remain off; `AI_CHAT_DETERMINISTIC_MODE` drives fixture-only responses locally. Evidence: `docs/PHASE_85_STAGE_4C_EVIDENCE.md`. **Next:** Faz 6 context gateway after explicit user approval. Production pilot remains `NO-GO`; R-405 remains open.
 
 Latest Phase 85 Stage 4C Faz 3 status (2026-07-22): superseded by Faz 4 closure above. Evidence: `docs/PHASE_85_STAGE_4C_EVIDENCE.md`.
 

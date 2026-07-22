@@ -8,8 +8,12 @@ import {
   createAiChatConversation,
   generateAiChatRequestId,
   groupAiChatHistoryByDate,
+  regenerateAiChatMessage,
+  sendAiChatMessage,
+  stopAiChatRun,
   useAiChatConversation,
   useAiChatHistory,
+  useAiChatRunStream,
 } from "@/lib/use-ai-chat";
 import type { AiChatListScopeFilter, AiChatScopeType } from "@/lib/phase-85-stage-4c-contracts";
 import { AiChatHistorySidebar } from "./ai-chat-history-sidebar";
@@ -69,6 +73,11 @@ export function AiChatWorkspace({
   const debouncedHistoryQuery = useDebouncedValue(historyQuery, 300);
   const history = useAiChatHistory({ scope, query: debouncedHistoryQuery });
   const conversation = useAiChatConversation(activeChatId);
+  const runStream = useAiChatRunStream(activeChatId, () => {
+    void conversation.refresh();
+    void history.refresh();
+  });
+  const resetRunStream = runStream.reset;
 
   const [mobileDrawer, setMobileDrawer] = useState<"none" | "history" | "context">("none");
   const [isPickerOpen, setPickerOpen] = useState(false);
@@ -77,6 +86,8 @@ export function AiChatWorkspace({
   const [isRenaming, setIsRenaming] = useState(false);
   const [renameValue, setRenameValue] = useState("");
   const [renameError, setRenameError] = useState(false);
+  const [sendError, setSendError] = useState<string | null>(null);
+  const [editingMessage, setEditingMessage] = useState<{ id: string; body: string } | null>(null);
 
   const groups = useMemo(() => groupAiChatHistoryByDate(history.items), [history.items]);
 
@@ -84,9 +95,11 @@ export function AiChatWorkspace({
     const timer = window.setTimeout(() => {
       setMobileDrawer("none");
       setIsRenaming(false);
+      setEditingMessage(null);
+      resetRunStream();
     }, 0);
     return () => window.clearTimeout(timer);
-  }, [activeChatId]);
+  }, [activeChatId, resetRunStream]);
 
   const toggleHistoryDrawer = () => setMobileDrawer((current) => (current === "history" ? "none" : "history"));
   const toggleContextDrawer = () => setMobileDrawer((current) => (current === "context" ? "none" : "context"));
@@ -137,6 +150,60 @@ export function AiChatWorkspace({
       setRenameError(true);
     }
   };
+
+  const handleSend = useCallback(
+    async (body: string) => {
+      if (!conversation.detail || !activeChatId) return;
+      setSendError(null);
+      try {
+        const result = await sendAiChatMessage({
+          chatId: activeChatId,
+          requestId: generateAiChatRequestId(),
+          expectedRevision: conversation.detail.revision,
+          body,
+        });
+        await conversation.refresh();
+        void runStream.subscribe(result.runId);
+      } catch {
+        setSendError("failed");
+      }
+    },
+    [activeChatId, conversation, runStream],
+  );
+
+  const handleStop = useCallback(async () => {
+    if (!runStream.state.runId) return;
+    try {
+      await stopAiChatRun({
+        runId: runStream.state.runId,
+        requestId: generateAiChatRequestId(),
+      });
+    } catch {
+      setSendError("failed");
+    }
+  }, [runStream.state.runId]);
+
+  const handleRegenerate = useCallback(
+    async (messageId: string) => {
+      if (!conversation.detail) return;
+      try {
+        const result = await regenerateAiChatMessage({
+          messageId,
+          requestId: generateAiChatRequestId(),
+          expectedRevision: conversation.detail.revision,
+        });
+        await conversation.refresh();
+        void runStream.subscribe(result.runId);
+      } catch {
+        setSendError("failed");
+      }
+    },
+    [conversation, runStream],
+  );
+
+  const handleEdit = useCallback((messageId: string, body: string) => {
+    setEditingMessage({ id: messageId, body });
+  }, []);
 
   const historySidebar = (
     <AiChatHistorySidebar
@@ -284,8 +351,83 @@ export function AiChatWorkspace({
           </div>
         ) : activeChatId && conversation.detail ? (
           <>
-            <AiChatMessageList uiLanguage={uiLanguage} chatId={activeChatId} messages={conversation.detail.messages} />
-            <AiChatComposer uiLanguage={uiLanguage} />
+            <AiChatMessageList
+              uiLanguage={uiLanguage}
+              chatId={activeChatId}
+              messages={conversation.detail.messages}
+              streamingText={runStream.state.isStreaming ? runStream.state.streamingText : undefined}
+              streamingIncomplete={runStream.state.completionState === "incomplete"}
+              onEdit={handleEdit}
+              onRegenerate={(messageId) => void handleRegenerate(messageId)}
+            />
+            {runStream.state.isStreaming ? (
+              <div className="border-t border-stone-200 bg-white px-3 py-2">
+                <button
+                  type="button"
+                  onClick={() => void handleStop()}
+                  data-testid="ai-chat-stop-generation"
+                  className="inline-flex min-h-11 items-center rounded-lg border border-stone-200 px-3 text-sm font-semibold text-stone-700 hover:bg-stone-50"
+                >
+                  {t(uiLanguage, "aiChatStop")}
+                </button>
+              </div>
+            ) : null}
+            {sendError ? (
+              <p role="alert" className="px-3 text-xs font-medium text-red-700">
+                {t(uiLanguage, "aiChatActionFailed")}
+              </p>
+            ) : null}
+            {editingMessage ? (
+              <div className="border-t border-stone-200 bg-stone-50 px-3 py-2">
+                <textarea
+                  value={editingMessage.body}
+                  onChange={(event) =>
+                    setEditingMessage((current) =>
+                      current ? { ...current, body: event.target.value } : current,
+                    )
+                  }
+                  rows={3}
+                  className="w-full rounded-lg border border-stone-200 px-3 py-2 text-sm"
+                />
+                <div className="mt-2 flex gap-2">
+                  <button
+                    type="button"
+                    className="inline-flex min-h-11 items-center rounded-lg bg-emerald-950 px-3 text-sm font-semibold text-white"
+                    onClick={async () => {
+                      if (!conversation.detail || !editingMessage) return;
+                      try {
+                        const { editAiChatMessage } = await import("@/lib/use-ai-chat");
+                        const result = await editAiChatMessage({
+                          messageId: editingMessage.id,
+                          requestId: generateAiChatRequestId(),
+                          expectedRevision: conversation.detail.revision,
+                          body: editingMessage.body,
+                        });
+                        setEditingMessage(null);
+                        await conversation.refresh();
+                        void runStream.subscribe(result.runId);
+                      } catch {
+                        setSendError("failed");
+                      }
+                    }}
+                  >
+                    {t(uiLanguage, "aiChatEditSave")}
+                  </button>
+                  <button
+                    type="button"
+                    className="inline-flex min-h-11 items-center rounded-lg border border-stone-200 px-3 text-sm font-semibold text-stone-700"
+                    onClick={() => setEditingMessage(null)}
+                  >
+                    {t(uiLanguage, "aiChatCancel")}
+                  </button>
+                </div>
+              </div>
+            ) : null}
+            <AiChatComposer
+              uiLanguage={uiLanguage}
+              disabled={runStream.state.isStreaming}
+              onSend={handleSend}
+            />
           </>
         ) : activeChatId && conversation.error ? (
           <div className="flex flex-1 items-center justify-center p-6">
