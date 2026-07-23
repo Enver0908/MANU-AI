@@ -118,6 +118,10 @@ export function parseConversationManualReplyRequest(
     body: assertValidManualMessageBody(messageBody),
     requestId: parseUuid(raw.requestId, "request_id_invalid"),
     expectedConversationRevision: parseExpectedConversationRevision(raw.expectedConversationRevision),
+    aiChatDraftTransferId:
+      typeof raw.aiChatDraftTransferId === "string" && raw.aiChatDraftTransferId.trim()
+        ? raw.aiChatDraftTransferId.trim()
+        : undefined,
   };
 }
 

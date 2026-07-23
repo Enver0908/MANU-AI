@@ -22,6 +22,7 @@ import { AiChatMessageList } from "./ai-chat-message-list";
 import { AiChatComposer } from "./ai-chat-composer";
 import { AiChatContextPanelContent } from "./ai-chat-context-drawer";
 import { AiChatAttachmentReview } from "./ai-chat-attachment-review";
+import { AiChatRiskBanner } from "./ai-chat-risk-banner";
 
 const COMPACT_BREAKPOINT_PX = 1024;
 
@@ -424,6 +425,15 @@ export function AiChatWorkspace({
               streamingIncomplete={runStream.state.completionState === "incomplete"}
               onEdit={handleEdit}
               onRegenerate={(messageId) => void handleRegenerate(messageId)}
+            />
+            <AiChatRiskBanner
+              uiLanguage={uiLanguage}
+              runId={runStream.state.isStreaming ? null : runStream.state.runId}
+              scopeType={conversation.detail.scopeType}
+              isStreaming={runStream.state.isStreaming}
+              onActionComplete={() => {
+                void conversation.refresh();
+              }}
             />
             {runStream.state.isStreaming ? (
               <div className="border-t border-stone-200 bg-white px-3 py-2">

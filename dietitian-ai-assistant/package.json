@@ -3,7 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "exports": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./risk": "./src/dietitian-chat-risk.js"
+  },
   "scripts": {
     "test": "node --test",
     "rehearse:ai": "node scripts/rehearse-ai.mjs",

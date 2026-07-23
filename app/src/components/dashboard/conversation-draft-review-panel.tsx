@@ -28,9 +28,15 @@ export function ConversationDraftReviewPanel({
       aria-labelledby="conversation-yellow-draft-title"
     >
       <h4 id="conversation-yellow-draft-title" className="text-sm font-semibold text-amber-950">
-        {t(uiLanguage, "conversationYellowDraftTitle")}
+        {draft.reviewOrigin === "ai_chat"
+          ? t(uiLanguage, "conversationYellowDraftAiChatTitle")
+          : t(uiLanguage, "conversationYellowDraftTitle")}
       </h4>
-      <p className="mt-1 text-sm text-amber-900">{t(uiLanguage, "conversationYellowDraftHint")}</p>
+      <p className="mt-1 text-sm text-amber-900">
+        {draft.reviewOrigin === "ai_chat"
+          ? t(uiLanguage, "conversationYellowDraftAiChatHint")
+          : t(uiLanguage, "conversationYellowDraftHint")}
+      </p>
       <div className="mt-3">
         <TextareaInput
           label={t(uiLanguage, "conversationDraftEditLabel")}

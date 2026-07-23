@@ -528,3 +528,62 @@ export async function copyAiChatText(text: string) {
   await navigator.clipboard.writeText(text);
   return true;
 }
+
+export type AiChatRunRiskView = {
+  runId: string;
+  riskLevel: "green" | "yellow" | "red";
+  reasons: string[];
+  confidenceClass: string;
+  recommendedHumanAction: string;
+  hypotheticalRed: boolean;
+  safeDraft: { body: string; riskLevel: string | null; sourceRefIds: string[] } | null;
+  handoffConfirmationToken: string | null;
+  canTransferDraft: boolean;
+  canCreateHandoff: boolean;
+  destinations: Array<{ conversationId: string; clientId: string; channel: string; revision: number }>;
+  clientContextRevision: number | null;
+};
+
+export async function fetchAiChatRunRisk(runId: string) {
+  return requestAiChatJson<AiChatRunRiskView>(`/api/ai-chat/runs/${encodeURIComponent(runId)}/risk`);
+}
+
+export async function transferAiChatRunDraft(input: {
+  runId: string;
+  requestId: string;
+  destinationConversationId: string;
+  destinationRevision: number;
+  clientContextRevision: number;
+}) {
+  return requestAiChatJson<{ transfer: { id: string; transferMode: string } }>(
+    `/api/ai-chat/runs/${encodeURIComponent(input.runId)}/transfer-draft`,
+    {
+      method: "POST",
+      body: JSON.stringify({
+        requestId: input.requestId,
+        destinationConversationId: input.destinationConversationId,
+        destinationRevision: input.destinationRevision,
+        clientContextRevision: input.clientContextRevision,
+      }),
+    },
+  );
+}
+
+export async function createAiChatRunHandoff(input: {
+  runId: string;
+  requestId: string;
+  confirmationToken: string;
+  expectedClientContextRevision: number;
+}) {
+  return requestAiChatJson<{ handoffId: string }>(
+    `/api/ai-chat/runs/${encodeURIComponent(input.runId)}/create-handoff`,
+    {
+      method: "POST",
+      body: JSON.stringify({
+        requestId: input.requestId,
+        confirmationToken: input.confirmationToken,
+        expectedClientContextRevision: input.expectedClientContextRevision,
+      }),
+    },
+  );
+}

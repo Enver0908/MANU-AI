@@ -273,7 +273,7 @@ export function useManuState() {
         setState(nextState);
         return nextState;
       },
-      sendManualReply: (input: { clientId: string; body: string }) => {
+      sendManualReply: (input: { clientId: string; body: string; aiChatDraftTransferId?: string }) => {
         const conversation = state.conversations.find((item) => item.clientId === input.clientId);
         if (!conversation) {
           throw new Error("conversation_not_found");
@@ -285,6 +285,7 @@ export function useManuState() {
             body: input.body,
             requestId: crypto.randomUUID(),
             expectedConversationRevision: conversation.revision ?? 1,
+            aiChatDraftTransferId: input.aiChatDraftTransferId,
           }),
         });
       },

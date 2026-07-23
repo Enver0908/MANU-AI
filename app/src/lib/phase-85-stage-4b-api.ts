@@ -107,6 +107,10 @@ export const STAGE4B_NOTIFICATION_I18N_KEYS: Record<
     titleKey: "notificationTitleHumanControlIntegrity",
     summaryKey: "notificationSummaryHumanControlIntegrity",
   },
+  ai_chat_red_review_required: {
+    titleKey: "notificationTitleAiChatRedReviewRequired",
+    summaryKey: "notificationSummaryAiChatRedReviewRequired",
+  },
   legacy_system: {
     titleKey: "notificationTitleLegacySystem",
     summaryKey: "notificationSummaryLegacySystem",

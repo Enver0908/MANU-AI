@@ -454,7 +454,79 @@ export type AiChatApiErrorBody = {
 export type AiChatSafeDraftDto = {
   body: string;
   riskLevel: AiChatRiskLevel | null;
-  sourceRefs: AiChatSourceRefDto[];
+  sourceRefIds: string[];
+};
+
+export type AiChatRiskAssessmentDto = {
+  id: string;
+  tenantId: string;
+  runId: string;
+  conversationId: string;
+  createdByUserId: string;
+  clientId: string | null;
+  riskLevel: AiChatRiskLevel;
+  reasons: string[];
+  sourceRefIds: string[];
+  confidenceClass: string;
+  recommendedHumanAction: string;
+  hypotheticalRed: boolean;
+  sourceRevisionDigest: string;
+  handoffConfirmationToken: string | null;
+  status: "active" | "superseded";
+  supersededAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type AiChatDraftTransferDto = {
+  id: string;
+  tenantId: string;
+  runId: string;
+  sourceConversationId: string;
+  destinationConversationId: string;
+  destinationClientId: string;
+  createdByUserId: string;
+  riskLevel: "green" | "yellow";
+  reviewOrigin: "ai_chat";
+  transferMode: "composer_pending" | "yellow_review";
+  draftBody: string;
+  sourceRefIds: string[];
+  status: "pending" | "consumed" | "superseded" | "blocked";
+  destinationRevision: number;
+  clientContextRevision: number;
+  consumedAt: string | null;
+  supersededAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type AiChatHandoffLinkDto = {
+  id: string;
+  tenantId: string;
+  runId: string;
+  conversationId: string;
+  clientId: string;
+  createdByUserId: string;
+  handoffId: string;
+  fingerprint: string;
+  confirmationToken: string;
+  status: "active" | "superseded";
+  supersededAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type AiChatRunRiskSummaryDto = {
+  runId: string;
+  riskLevel: AiChatRiskLevel;
+  reasons: string[];
+  confidenceClass: string;
+  recommendedHumanAction: string;
+  hypotheticalRed: boolean;
+  safeDraft: AiChatSafeDraftDto | null;
+  handoffConfirmationToken: string | null;
+  canTransferDraft: boolean;
+  canCreateHandoff: boolean;
 };
 
 export type AiChatApiError = {

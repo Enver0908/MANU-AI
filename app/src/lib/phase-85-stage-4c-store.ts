@@ -19,6 +19,7 @@ import type {
   AiChatJobRecord,
   AiChatMessageVersionRecord,
   AiChatMutationRunResult,
+  AiChatRiskLevel,
   AiChatRunDto,
   AiChatRunEventDto,
   AiChatScopeType,
@@ -41,6 +42,19 @@ import {
   transferAttachmentToClientRecordInMemory,
   type InMemoryAttachmentState,
 } from "./phase-85-stage-4c-attachment-store";
+import {
+  applyInMemoryRunRiskPipeline,
+  consumeInMemoryDraftTransfer,
+  createInMemoryRunHandoff,
+  createRiskBridgeStoreSlice,
+  getInMemoryPendingComposerTransfer,
+  getInMemoryRunRiskSummary,
+  listInMemoryDraftDestinations,
+  supersedeInMemoryConversationRisk,
+  transferInMemoryRunDraft,
+  type InMemoryRiskBridgeState,
+} from "./phase-85-stage-4c-risk-store";
+import { buildSourceRevisionDigest } from "./phase-85-stage-4c-risk-bridge";
 import type {
   AiChatEditMessageInput,
   AiChatRegenerateMessageInput,
@@ -305,6 +319,47 @@ export interface AiChatStore {
   enqueueAttachmentParseJob(tenantId: string, conversationId: string, attachmentId: string, userId: string): Promise<void>;
   enqueueAttachmentCleanupJob(tenantId: string, conversationId: string, attachmentId: string, userId?: string): Promise<void>;
   getAttachmentObjectBytes(objectKey: string): Promise<Buffer | null>;
+  getRunRiskSummary(tenantId: string, runId: string, userId: string): Promise<import("./phase-85-stage-4c-contracts").AiChatRunRiskSummaryDto | null>;
+  listRunDraftDestinations(context: AppTenantContext, runId: string): Promise<Array<{ conversationId: string; clientId: string; channel: string; revision: number }>>;
+  transferRunDraft(
+    context: AppTenantContext,
+    runId: string,
+    input: {
+      sourceConversationId: string;
+      destinationConversationId: string;
+      destinationRevision: number;
+      clientContextRevision: number;
+    },
+  ): Promise<import("./phase-85-stage-4c-contracts").AiChatDraftTransferDto>;
+  createRunHandoff(
+    context: AppTenantContext,
+    runId: string,
+    input: { conversationId: string; clientId: string; confirmationToken: string; expectedClientContextRevision: number },
+  ): Promise<{ handoffId: string }>;
+  getPendingComposerDraftTransfer(tenantId: string, destinationConversationId: string): Promise<import("./phase-85-stage-4c-contracts").AiChatDraftTransferDto | null>;
+  consumeComposerDraftTransfer(input: {
+    tenantId: string;
+    transferId: string;
+    destinationConversationId: string;
+    destinationClientId: string;
+  }): Promise<void>;
+  applyRunRiskPipeline(input: {
+    tenantId: string;
+    runId: string;
+    conversationId: string;
+    createdByUserId: string;
+    scopeType: import("./phase-85-stage-4c-contracts").AiChatScopeType;
+    clientId: string | null;
+    triggerBody: string;
+    directAnswer: string | null;
+    answerability: AiChatRunDto["answerability"];
+    providerRiskLevel: AiChatRiskLevel | null;
+    verifiedFactTexts: string[];
+    attachmentExcerpts: string[];
+    sourceExcerptTexts: string[];
+    sourceRefIds: string[];
+    revisionToken?: string | null;
+  }): Promise<void>;
 }
 
 type InMemoryConversation = {
@@ -396,6 +451,7 @@ type InMemoryState = {
     createdAt: string;
   }>;
   attachmentState: InMemoryAttachmentState;
+  riskBridgeState: InMemoryRiskBridgeState;
 };
 
 let inMemoryState: InMemoryState = {
@@ -416,6 +472,7 @@ let inMemoryState: InMemoryState = {
   persistedSourceRefs: [],
   answerEnvelopes: [],
   attachmentState: createEmptyAttachmentState(),
+  riskBridgeState: createRiskBridgeStoreSlice(),
 };
 
 export function resetInMemoryAiChatStoreForTests(state: Partial<InMemoryState> = {}) {
@@ -437,6 +494,7 @@ export function resetInMemoryAiChatStoreForTests(state: Partial<InMemoryState> =
     persistedSourceRefs: [],
     answerEnvelopes: [],
     attachmentState: createEmptyAttachmentState(),
+    riskBridgeState: createRiskBridgeStoreSlice(),
     ...state,
   };
 }
@@ -489,6 +547,15 @@ export function resolveAiChatStore(): AiChatStore {
     return inMemoryAiChatStore;
   }
   throw new AppRequestError(503, "ai_chat_store_unavailable");
+}
+
+export function readFallbackPendingAiChatDraftTransfer(tenantId: string, destinationConversationId: string) {
+  if (!canUseInMemoryAiChatStore()) return null;
+  return getInMemoryPendingComposerTransfer(
+    inMemoryState.riskBridgeState,
+    tenantId,
+    destinationConversationId,
+  );
 }
 
 function assertInMemoryClientAccess(context: AppTenantContext, clientId: string | null) {
@@ -1246,6 +1313,10 @@ const inMemoryAiChatStore: AiChatStore = {
     }
 
     supersedeActiveRuns(context.tenantId, conversation.id);
+    supersedeInMemoryConversationRisk(inMemoryState.riskBridgeState, {
+      tenantId: context.tenantId,
+      conversationId: conversation.id,
+    });
     const currentVersion = inMemoryState.messageVersions.find(
       (item) => item.id === latestUser.versionId,
     );
@@ -1951,6 +2022,91 @@ const inMemoryAiChatStore: AiChatStore = {
 
   async getAttachmentObjectBytes(objectKey) {
     return inMemoryState.attachmentState.objects.get(objectKey) ?? null;
+  },
+
+  async getRunRiskSummary(tenantId, runId, userId) {
+    const run = inMemoryState.runs.find(
+      (item) => item.tenantId === tenantId && item.id === runId && item.createdByUserId === userId,
+    );
+    if (!run) throw new AppRequestError(404, "ai_chat_run_not_found");
+    return getInMemoryRunRiskSummary(inMemoryState.riskBridgeState, tenantId, runId);
+  },
+
+  async listRunDraftDestinations(context, runId) {
+    const run = inMemoryState.runs.find(
+      (item) => item.tenantId === context.tenantId && item.id === runId && item.createdByUserId === context.userId,
+    );
+    if (!run) throw new AppRequestError(404, "ai_chat_run_not_found");
+    const conversation = inMemoryState.conversations.find((item) => item.id === run.conversationId);
+    if (!conversation?.clientId) throw new AppRequestError(409, "ai_chat_destination_conversation_missing");
+    return listInMemoryDraftDestinations(context.tenantId, conversation.clientId);
+  },
+
+  async transferRunDraft(context, runId, input) {
+    const run = inMemoryState.runs.find(
+      (item) => item.tenantId === context.tenantId && item.id === runId && item.createdByUserId === context.userId,
+    );
+    if (!run) throw new AppRequestError(404, "ai_chat_run_not_found");
+    const conversation = inMemoryState.conversations.find((item) => item.id === run.conversationId);
+    if (!conversation) throw new AppRequestError(404, "ai_chat_conversation_not_found");
+    return transferInMemoryRunDraft(inMemoryState.riskBridgeState, context, {
+      runId,
+      sourceConversationId: input.sourceConversationId,
+      destinationConversationId: input.destinationConversationId,
+      destinationRevision: input.destinationRevision,
+      clientContextRevision: input.clientContextRevision,
+      scopeType: conversation.scopeType,
+    });
+  },
+
+  async createRunHandoff(context, runId, input) {
+    const run = inMemoryState.runs.find(
+      (item) => item.tenantId === context.tenantId && item.id === runId && item.createdByUserId === context.userId,
+    );
+    if (!run) throw new AppRequestError(404, "ai_chat_run_not_found");
+    const conversation = inMemoryState.conversations.find((item) => item.id === run.conversationId);
+    if (!conversation) throw new AppRequestError(404, "ai_chat_conversation_not_found");
+    const result = createInMemoryRunHandoff(inMemoryState.riskBridgeState, context, {
+      runId,
+      conversationId: input.conversationId,
+      clientId: input.clientId,
+      confirmationToken: input.confirmationToken,
+      expectedClientContextRevision: input.expectedClientContextRevision,
+      scopeType: conversation.scopeType,
+    });
+    return { handoffId: result.handoffId };
+  },
+
+  async getPendingComposerDraftTransfer(tenantId, destinationConversationId) {
+    return getInMemoryPendingComposerTransfer(inMemoryState.riskBridgeState, tenantId, destinationConversationId);
+  },
+
+  async consumeComposerDraftTransfer(input) {
+    consumeInMemoryDraftTransfer(inMemoryState.riskBridgeState, input);
+  },
+
+  async applyRunRiskPipeline(input) {
+    const sourceRevisionDigest = buildSourceRevisionDigest({
+      revisionToken: input.revisionToken ?? null,
+      sourceRefIds: input.sourceRefIds,
+    });
+    const assessment = applyInMemoryRunRiskPipeline(inMemoryState.riskBridgeState, {
+      ...input,
+      sourceRevisionDigest,
+    });
+    const run = inMemoryState.runs.find((item) => item.tenantId === input.tenantId && item.id === input.runId);
+    if (run) {
+      run.riskLevel = assessment.riskLevel;
+    }
+    await inMemoryAiChatStore.appendRunEvent(input.tenantId, input.runId, {
+      eventType: "risk.updated",
+      payload: {
+        riskLevel: assessment.riskLevel,
+        reasons: assessment.reasons,
+        confidenceClass: assessment.confidenceClass,
+        hypotheticalRed: assessment.hypotheticalRed,
+      },
+    });
   },
 
   async saveContextSnapshot(input) {
@@ -2697,5 +2853,39 @@ const supabaseAiChatStore: AiChatStore = {
   async getAttachmentObjectBytes(objectKey) {
     void objectKey;
     return null;
+  },
+  async getRunRiskSummary(tenantId, runId, userId) {
+    void tenantId;
+    void runId;
+    void userId;
+    return null;
+  },
+  async listRunDraftDestinations(context, runId) {
+    void context;
+    void runId;
+    return [];
+  },
+  async transferRunDraft(context, runId, input) {
+    void context;
+    void runId;
+    void input;
+    throw new AppRequestError(503, "ai_chat_risk_bridge_unavailable");
+  },
+  async createRunHandoff(context, runId, input) {
+    void context;
+    void runId;
+    void input;
+    throw new AppRequestError(503, "ai_chat_risk_bridge_unavailable");
+  },
+  async getPendingComposerDraftTransfer(tenantId, destinationConversationId) {
+    void tenantId;
+    void destinationConversationId;
+    return null;
+  },
+  async consumeComposerDraftTransfer(input) {
+    void input;
+  },
+  async applyRunRiskPipeline(input) {
+    void input;
   },
 };

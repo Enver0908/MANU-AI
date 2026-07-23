@@ -52,6 +52,7 @@ export type NotificationKind =
   | "ai_paused_by_verified_human"
   | "draft_invalidated"
   | "human_control_integrity"
+  | "ai_chat_red_review_required"
   | "legacy_system"
   | "legacy_handoff";
 

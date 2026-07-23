@@ -70,6 +70,7 @@ import {
   type ConversationDetailBuildInput,
   type ConversationListBuildInput,
 } from "./phase-85-stage-4b2-messaging";
+import { readFallbackPendingAiChatDraftTransfer } from "./phase-85-stage-4c-store";
 import {
   buildConversationMarkReadMutationResponse,
   markConversationReadInState,
@@ -412,13 +413,32 @@ export function listFallbackConversations(input: ConversationListBuildInput = {}
 export function getFallbackConversationDetail(conversationId: string, input: ConversationDetailBuildInput = {}) {
   const state = getFallbackState();
   const context = fallbackTenantContext(state);
-  return buildConversationDetailResponseFromAppState(
+  const response = buildConversationDetailResponseFromAppState(
     state,
     context,
     listFallbackAssignments(),
     conversationId,
     input,
   );
+  const pending = readFallbackPendingAiChatDraftTransfer(context.tenantId, conversationId);
+  if (pending) {
+    response.pendingAiChatDraftTransfer = {
+      transferId: pending.id,
+      body: pending.draftBody,
+      riskLevel: "green",
+      reviewOrigin: "ai_chat",
+    };
+  }
+  response.messages = response.messages.map((message) => {
+    const record = state.messages.find((item) => item.id === message.id);
+    if (!record?.generatedByAiDecisionId) return message;
+    const decision = state.aiDecisions.find((item) => item.id === record.generatedByAiDecisionId);
+    if (decision?.reasons?.includes("ai_chat_yellow_transfer")) {
+      return { ...message, reviewOrigin: "ai_chat" as const };
+    }
+    return message;
+  });
+  return response;
 }
 
 export function markFallbackConversationRead(conversationId: string, throughSequence: number) {
@@ -464,6 +484,19 @@ export function addFallbackManualReplyWithResponse(request: ConversationManualRe
     authorDietitianId: context.dietitianId,
   });
   saveFallbackState(nextState);
+  if (request.aiChatDraftTransferId) {
+    const conversation = nextState.conversations.find((item) => item.id === request.conversationId);
+    if (conversation) {
+      void import("./phase-85-stage-4c-store").then(({ resolveAiChatStore }) =>
+        resolveAiChatStore().consumeComposerDraftTransfer({
+          tenantId: context.tenantId,
+          transferId: request.aiChatDraftTransferId!,
+          destinationConversationId: request.conversationId,
+          destinationClientId: conversation.clientId,
+        }),
+      );
+    }
+  }
   const response = buildConversationMutationResponseFromState(
     nextState,
     actor,

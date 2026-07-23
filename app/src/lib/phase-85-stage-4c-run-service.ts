@@ -490,13 +490,6 @@ async function processGenerationJob(
       await store.renewJobLease(job.id, workerId, job.leaseToken!, AI_CHAT_JOB_HEARTBEAT_MS);
     }
 
-    if (providerResult.riskLevel) {
-      await store.appendRunEvent(job.tenantId, run.id, {
-        eventType: "risk.updated",
-        payload: { riskLevel: providerResult.riskLevel },
-      });
-    }
-
     if (await store.shouldAbortRun(job.tenantId, run.id)) {
       await finalizeStoppedRun(store, job.tenantId, run.id, streamedText || providerResult.directAnswer || "");
       return;
@@ -592,6 +585,8 @@ async function processGenerationJob(
       return;
     }
 
+    let finalRiskLevel = asRiskLevel(finalized.validation.riskLevel);
+
     if (completionState === "complete" && directAnswer) {
       if (providerResult.structuredAnswer && sourcedValidation?.answer) {
         const claims = flattenStructuredClaims(sourcedValidation.answer as AiChatStructuredAnswer);
@@ -601,7 +596,7 @@ async function processGenerationJob(
           clientId: conversation.clientId,
           directAnswer,
           answerability: asAnswerability(finalized.validation.answerability),
-          riskLevel: asRiskLevel(finalized.validation.riskLevel),
+          riskLevel: finalRiskLevel,
           claims,
           sourceRefs: gateway.evidencePackage.sourceRefs.map((item) => ({
             sourceRefId: item.sourceId,
@@ -614,16 +609,47 @@ async function processGenerationJob(
           })),
         });
       }
+
+      const structuredAnswer = sourcedValidation?.answer as AiChatStructuredAnswer | null | undefined;
+      const verifiedFactTexts = structuredAnswer?.verifiedFacts?.map((item) => item.text) ?? [];
+      const attachmentExcerpts = gateway.evidencePackage.unstructuredExcerpts
+        .filter((item) => String(item.sourceType ?? "").includes("attachment"))
+        .map((item) => item.excerpt);
+      const sourceExcerptTexts = gateway.evidencePackage.sourceRefs.map((item) => item.excerpt);
+      const sourceRefIds = gateway.evidencePackage.sourceRefs.map((item) => item.sourceId);
+
+      await store.applyRunRiskPipeline({
+        tenantId: job.tenantId,
+        runId: run.id,
+        conversationId: run.conversationId,
+        createdByUserId: run.createdByUserId,
+        scopeType: conversation.scopeType,
+        clientId: conversation.clientId,
+        triggerBody: triggerVersion.body,
+        directAnswer,
+        answerability: asAnswerability(finalized.validation.answerability),
+        providerRiskLevel: asRiskLevel(providerResult.riskLevel),
+        verifiedFactTexts,
+        attachmentExcerpts,
+        sourceExcerptTexts,
+        sourceRefIds,
+        revisionToken: capturedRevisionToken,
+      });
+      const riskSummary = await store.getRunRiskSummary(job.tenantId, run.id, run.createdByUserId);
+      if (riskSummary) {
+        finalRiskLevel = riskSummary.riskLevel;
+      }
+
       await store.commitAssistantMessage(job.tenantId, run.id, {
         body: directAnswer,
         answerability: asAnswerability(finalized.validation.answerability),
-        riskLevel: asRiskLevel(finalized.validation.riskLevel),
+        riskLevel: finalRiskLevel,
       });
     } else if (directAnswer) {
       await store.commitAssistantMessage(job.tenantId, run.id, {
         body: directAnswer,
         answerability: asAnswerability(finalized.validation.answerability),
-        riskLevel: asRiskLevel(finalized.validation.riskLevel),
+        riskLevel: finalRiskLevel,
         completionState: "incomplete",
       });
     }
@@ -632,7 +658,7 @@ async function processGenerationJob(
     await store.finalizeRun(job.tenantId, run.id, {
       status: terminalStatus === "stopped" ? "stopped" : completionState === "complete" ? "completed" : "stopped",
       answerability: asAnswerability(finalized.validation.answerability),
-      riskLevel: asRiskLevel(finalized.validation.riskLevel),
+      riskLevel: finalRiskLevel,
     });
 
     await store.appendRunEvent(job.tenantId, run.id, {
@@ -640,7 +666,7 @@ async function processGenerationJob(
       payload: {
         completionState,
         answerability: asAnswerability(finalized.validation.answerability),
-        riskLevel: asRiskLevel(finalized.validation.riskLevel),
+        riskLevel: finalRiskLevel,
       },
     });
 

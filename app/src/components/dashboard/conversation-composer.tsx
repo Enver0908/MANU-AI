@@ -12,16 +12,19 @@ export function ConversationComposer({
   onChange,
   onSend,
   disabled,
+  hint,
 }: {
   uiLanguage: SupportedLanguageCode;
   value: string;
   onChange: (value: string) => void;
   onSend: () => void;
   disabled?: boolean;
+  hint?: string;
 }) {
   return (
     <>
       <div className="hidden border-t border-stone-200 bg-white p-3 lg:block" data-testid="conversation-composer">
+        {hint ? <p className="mb-2 text-xs font-medium text-emerald-800">{hint}</p> : null}
         <TextareaInput
           label={t(uiLanguage, "conversationManualReplyLabel")}
           value={value}
@@ -41,6 +44,7 @@ export function ConversationComposer({
 
       <MobileStickyActionBar>
         <div className="w-full space-y-2 px-1 lg:hidden">
+          {hint ? <p className="text-xs font-medium text-emerald-800">{hint}</p> : null}
           <TextareaInput
             label={t(uiLanguage, "conversationManualReplyLabel")}
             value={value}

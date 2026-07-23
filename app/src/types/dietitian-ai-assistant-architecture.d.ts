@@ -1496,6 +1496,10 @@ declare module "dietitian-ai-assistant-architecture" {
     completionState: string;
     directAnswer: string | null;
   };
+  export function validateDietitianChatRiskAssessmentResult(input: {
+    riskAssessment: Record<string, unknown> | null | undefined;
+    providerRiskLevel?: string | null;
+  }): { ok: boolean; code?: string; riskLevel?: string; reasons?: string[] };
 
   export const DIETITIAN_CHAT_ORCHESTRATOR_VERSION: string;
   export const DIETITIAN_CHAT_RUN_PHASES: string[];
@@ -1557,4 +1561,23 @@ declare module "dietitian-ai-assistant-architecture" {
     terminalStatus: string;
     validation: ReturnType<typeof validateDietitianChatAssistantOutput>;
   };
+}
+
+declare module "dietitian-ai-assistant-architecture/risk" {
+  export const DIETITIAN_CHAT_RISK_VERSION: string;
+  export function classifyDietitianChatRisk(input: Record<string, unknown>): {
+    version: string;
+    riskLevel: string;
+    reasons: string[];
+    sourceRefIds: string[];
+    confidenceClass: string;
+    recommendedHumanAction: string;
+    hypotheticalRed: boolean;
+    safeDraft: { body: string; riskLevel: string | null; sourceRefIds: string[] } | null;
+  };
+  export function buildAiChatRedNotificationFingerprint(input: {
+    clientId: string;
+    reasons: string[];
+    sourceRevisionDigest: string;
+  }): string;
 }

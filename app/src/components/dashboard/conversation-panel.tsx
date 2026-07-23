@@ -44,6 +44,7 @@ export function ConversationPanel({
   manualReply,
   onManualReply,
   onSendManualReply,
+  pendingAiChatDraftTransfer,
   onActivateAi,
   onSetAiPassive,
   isActivatingAi,
@@ -74,6 +75,12 @@ export function ConversationPanel({
   manualReply: string;
   onManualReply: (value: string) => void;
   onSendManualReply: () => void;
+  pendingAiChatDraftTransfer?: {
+    transferId: string;
+    body: string;
+    riskLevel: "green";
+    reviewOrigin: "ai_chat";
+  } | null;
   onActivateAi: (clientId: string) => Promise<ManuAppState>;
   onSetAiPassive: (clientId: string) => Promise<ManuAppState>;
   isActivatingAi?: boolean;
@@ -137,6 +144,11 @@ export function ConversationPanel({
       window.setTimeout(() => target.classList.remove("ring-2", "ring-emerald-500"), 1600);
     }
   }, [anchorMessageId, messages]);
+
+  useEffect(() => {
+    if (!pendingAiChatDraftTransfer?.body) return;
+    onManualReply(pendingAiChatDraftTransfer.body);
+  }, [pendingAiChatDraftTransfer?.transferId, pendingAiChatDraftTransfer?.body, onManualReply]);
 
   return (
     <div
@@ -321,6 +333,11 @@ export function ConversationPanel({
           value={manualReply}
           onChange={onManualReply}
           onSend={onSendManualReply}
+          hint={
+            pendingAiChatDraftTransfer
+              ? t(uiLanguage, "conversationAiChatDraftTransferHint")
+              : undefined
+          }
         />
       ) : null}
 

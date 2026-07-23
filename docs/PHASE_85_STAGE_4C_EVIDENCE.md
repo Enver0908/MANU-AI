@@ -1,7 +1,7 @@
 # Phase 85 Stage 4C Evidence
 
 Date: 2026-07-23
-Status: **Faz 8 complete locally; Faz 9 is next (requires explicit user approval)**
+Status: **Faz 9 complete locally; Faz 10 is next (requires explicit user approval)**
 
 Production remains `NO-GO`. R-405 remains open.
 
@@ -292,9 +292,35 @@ Completed locally on 2026-07-23.
 
 ### Open Blockers After Faz 8
 
-- Faz 9 risk/handoff bridge requires explicit user approval
+- ~~Faz 9 risk/handoff bridge requires explicit user approval~~ (completed locally 2026-07-23)
 - Supabase attachment store RPCs remain stubbed; local in-memory path is the deterministic closure authority
 - Real OCR/STT/scanner/web adapters remain disabled
+
+## Faz 9: Klinik Risk, Bildirim, Handoff ve Guvenli Taslak Koprusu
+
+Completed locally on 2026-07-23.
+
+### Delivered
+
+- Migration `20260722170000_phase_85_stage_4c_risk_draft_handoff.sql` — risk assessments, draft transfers, handoff links, safe_draft on envelopes
+- Core: `dietitian-ai-assistant/src/dietitian-chat-risk.js` (server subpath export `./risk`), `validateRiskAssessmentResult` in output guard
+- App: `phase-85-stage-4c-risk-bridge.ts`, `phase-85-stage-4c-risk-store.ts`, run pipeline wiring in `phase-85-stage-4c-run-service.ts`
+- API: `POST /api/ai-chat/runs/[runId]/transfer-draft`, `POST /api/ai-chat/runs/[runId]/create-handoff`, `GET /api/ai-chat/runs/[runId]/risk`
+- UI: `ai-chat-risk-banner.tsx`, messaging bridge (`pendingAiChatDraftTransfer`, yellow `reviewOrigin=ai_chat`, manual send consumes transfer ID)
+- Notification kind `ai_chat_red_review_required` with dedupe fingerprint; zero automatic client send
+
+### Verification (Faz 9)
+
+- `npm run lint` — 0 errors
+- `npm test` — 1318 passed, 8 skipped
+- `npm run build` — success
+- `phase-85-stage-4c-risk-bridge.test.ts` + run-service risk fixture integration — passed
+- `node --test dietitian-ai-assistant/tests/dietitian-chat-risk.test.mjs` — passed
+
+### Open Blockers After Faz 9
+
+- Faz 10 lifecycle/DSAR requires explicit user approval
+- Supabase risk/transfer/handoff RPC path remains stubbed; in-memory bridge is local closure authority
 
 ## Faz 7: Kaynak Kayit Defteri, Answerability ve Kaynakli Klinik Yanit
 

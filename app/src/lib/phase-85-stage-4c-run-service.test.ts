@@ -148,4 +148,55 @@ describe("ai chat run flow (in-memory)", () => {
       true,
     );
   });
+
+  it("applies risk pipeline fixtures for client chat runs", async () => {
+    const clientId = "dddddddd-dddd-4ddd-8ddd-dddddddddddd";
+    resetInMemoryAiChatStoreForTests();
+    seedInMemoryClientGatewayFixture({
+      id: clientId,
+      tenantId: tenantContext.tenantId,
+      fullName: "Risk Fixture Client",
+    });
+
+    const store = resolveAiChatStore();
+    const conversation = await store.createConversation(tenantContext, {
+      requestId: "create-risk",
+      scopeType: "client",
+      clientId,
+      title: "Risk fixture",
+    });
+
+    const send = await store.sendMessage(tenantContext, conversation.id, {
+      requestId: "send-risk-green",
+      expectedRevision: conversation.revision,
+      body: "__fixture:risk:green__",
+    });
+    await maybeProcessDeterministicAiChatJobs(store);
+
+    const run = await store.getRunById(tenantContext.tenantId, send.runId);
+    expect(run?.status).toBe("completed");
+
+    const summary = await store.getRunRiskSummary(tenantContext.tenantId, send.runId, tenantContext.userId);
+    expect(summary?.riskLevel).toBe("green");
+    expect(summary?.canTransferDraft).toBe(true);
+
+    const redSend = await store.sendMessage(tenantContext, conversation.id, {
+      requestId: "send-risk-red",
+      expectedRevision: (await store.loadConversation(tenantContext, conversation.id, { messageLimit: 10 })).revision,
+      body: "__fixture:risk:red__",
+    });
+    await maybeProcessDeterministicAiChatJobs(store);
+    const redSummary = await store.getRunRiskSummary(tenantContext.tenantId, redSend.runId, tenantContext.userId);
+    expect(redSummary?.riskLevel).toBe("red");
+    expect(redSummary?.canTransferDraft).toBe(false);
+
+    await expect(
+      store.transferRunDraft(tenantContext, redSend.runId, {
+        sourceConversationId: conversation.id,
+        destinationConversationId: "missing",
+        destinationRevision: 1,
+        clientContextRevision: 1,
+      }),
+    ).rejects.toMatchObject({ code: "ai_chat_red_draft_blocked" });
+  });
 });

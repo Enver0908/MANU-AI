@@ -1,6 +1,6 @@
 import type { AiChatAnswerability, AiChatRiskLevel } from "./phase-85-stage-4c-contracts";
 
-export const AI_CHAT_FIXTURE_PATTERN = /^__fixture:([a-z0-9_-]+)__$/i;
+export const AI_CHAT_FIXTURE_PATTERN = /^__fixture:([a-z0-9_:-]+)__$/i;
 
 export type AiChatProviderDelta = {
   text: string;
@@ -115,6 +115,21 @@ const FIXTURE_RESPONSES: Record<
     answerability: "answerable",
     riskLevel: "yellow",
     text: "Deterministic unsourced claim response.",
+  },
+  "risk:green": {
+    answerability: "answerable",
+    riskLevel: "green",
+    text: "Deterministic green risk fixture response.",
+  },
+  "risk:yellow": {
+    answerability: "partial",
+    riskLevel: "yellow",
+    text: "Deterministic yellow risk fixture response.",
+  },
+  "risk:red": {
+    answerability: "answerable",
+    riskLevel: "red",
+    text: "Deterministic red risk fixture response.",
   },
 };
 

@@ -134,6 +134,7 @@ export type ConversationMessageDto = {
   visualReview: VisualReviewDto | null;
   audio: ConversationAudioDto | null;
   voiceTranscript: ConversationVoiceTranscriptDto | null;
+  reviewOrigin?: "ai_chat" | null;
 };
 
 export type ConversationSummaryDto = {
@@ -164,6 +165,12 @@ export type ConversationDetailResponse = {
   receipt: ConversationReadReceiptRecord | null;
   unreadCount: number;
   permissions: ConversationPermissions;
+  pendingAiChatDraftTransfer?: {
+    transferId: string;
+    body: string;
+    riskLevel: "green";
+    reviewOrigin: "ai_chat";
+  } | null;
 };
 
 export type ConversationMutationResponse = {
@@ -183,6 +190,7 @@ export type ConversationManualReplyRequest = {
   body: string;
   requestId: string;
   expectedConversationRevision: number;
+  aiChatDraftTransferId?: string;
 };
 
 export type ConversationDraftAction =

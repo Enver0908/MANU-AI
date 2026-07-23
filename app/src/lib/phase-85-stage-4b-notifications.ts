@@ -30,6 +30,7 @@ const NOTIFICATION_KIND_PRIORITY: Record<NotificationKind, NotificationPriority>
   ai_paused_by_verified_human: "review_required",
   draft_invalidated: "review_required",
   human_control_integrity: "intervention_required",
+  ai_chat_red_review_required: "intervention_required",
   legacy_system: "review_required",
   legacy_handoff: "review_required",
 };
@@ -368,6 +369,7 @@ export const NOTIFICATION_KIND_CATEGORY: Record<NotificationKind, NotificationCa
   ai_window_expired: "ai_control",
   ai_paused_by_verified_human: "ai_control",
   human_control_integrity: "ai_control",
+  ai_chat_red_review_required: "ai_control",
   legacy_system: "records",
   legacy_handoff: "records",
 };

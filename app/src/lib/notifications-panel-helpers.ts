@@ -8,6 +8,7 @@ import {
   Lock,
   MessageSquareWarning,
   Send,
+  ShieldAlert,
   ShieldCheck,
   UserRound,
 } from "lucide-react";
@@ -44,6 +45,7 @@ export const NOTIFICATION_KIND_ICON: Record<NotificationKind, LucideIcon> = {
   ai_paused_by_verified_human: UserRound,
   draft_invalidated: FileText,
   human_control_integrity: ShieldCheck,
+  ai_chat_red_review_required: ShieldAlert,
   legacy_system: Bell,
   legacy_handoff: Bell,
 };

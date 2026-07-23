@@ -507,8 +507,9 @@ export function DashboardApp({
   const sendManualReply = async () => {
     if (!selectedClient || !manualReply.trim()) return;
     const body = manualReply;
+    const aiChatDraftTransferId = stage4bMessaging.detail?.pendingAiChatDraftTransfer?.transferId;
     try {
-      await sendManualReplyRequest({ clientId: selectedClient.id, body });
+      await sendManualReplyRequest({ clientId: selectedClient.id, body, aiChatDraftTransferId });
       setManualReply("");
       refreshStage4B2Surfaces({ anchorMessageId: urlState.messageId });
     } catch (error) {
@@ -940,6 +941,7 @@ export function DashboardApp({
                       manualReply={manualReply}
                       onManualReply={setManualReply}
                       onSendManualReply={sendManualReply}
+                      pendingAiChatDraftTransfer={stage4bMessaging.detail?.pendingAiChatDraftTransfer ?? null}
                       onActivateAi={activateSelectedClientAi}
                       onSetAiPassive={setSelectedClientAiPassive}
                       isActivatingAi={isActivatingAi}

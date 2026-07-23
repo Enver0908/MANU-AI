@@ -336,6 +336,7 @@ export {
   isTerminalRunStatus as isDietitianChatTerminalRunStatus,
   shouldAbortRun as shouldAbortDietitianChatRun,
   validateAssistantOutput as validateDietitianChatAssistantOutput,
+  validateRiskAssessmentResult as validateDietitianChatRiskAssessmentResult,
 } from "./dietitian-chat-output-guard.js";
 export {
   DIETITIAN_CHAT_ORCHESTRATOR_VERSION,
