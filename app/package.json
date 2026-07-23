@@ -36,24 +36,30 @@
     "worker:audio:lifecycle:stage4b4": "node scripts/worker-audio-stage4b4-lifecycle.mjs",
     "worker:audio:lifecycle:stage4b4:once": "node scripts/worker-audio-stage4b4-lifecycle.mjs --once",
     "worker:media:lifecycle": "node scripts/worker-media-lifecycle-stage4b3.mjs",
-    "worker:media:lifecycle:once": "node scripts/worker-media-lifecycle-stage4b3.mjs --once"
+    "worker:media:lifecycle:once": "node scripts/worker-media-lifecycle-stage4b3.mjs --once",
+    "worker:ai-chat:stage4c": "node scripts/worker-ai-chat-stage4c.mjs",
+    "worker:ai-chat:stage4c:once": "node scripts/worker-ai-chat-stage4c.mjs --once"
   },
   "dependencies": {
     "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.106.1",
+    "csv-parse": "^5.6.0",
     "dietitian-ai-assistant-architecture": "file:../dietitian-ai-assistant",
     "docx": "^9.7.1",
     "file-type": "^21.3.4",
     "lucide-react": "^1.16.0",
+    "mammoth": "^1.9.0",
     "next": "16.2.6",
     "ogg-opus-decoder": "1.7.3",
+    "pdfjs-dist": "^4.10.38",
     "pdfmake": "^0.3.10",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "sharp": "^0.35.3",
     "stripe": "^18.5.0",
     "wave-resampler": "1.0.0",
-    "wavefile": "11.0.0"
+    "wavefile": "11.0.0",
+    "yauzl": "^3.2.0"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.12.1",
@@ -62,6 +68,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/yauzl": "^3.4.0",
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
     "opusscript": "^0.1.1",

@@ -14,6 +14,8 @@ import type {
   AiChatConversationDetail,
   AiChatConversationListResponse,
   AiChatConversationSummary,
+  AiChatAttachmentDto,
+  AiChatClientRecordCategory,
   AiChatJobRecord,
   AiChatMessageVersionRecord,
   AiChatMutationRunResult,
@@ -25,6 +27,20 @@ import type {
   AiChatTitleSource,
 } from "./phase-85-stage-4c-contracts";
 import { isNonTerminalAiChatRunStatus } from "./phase-85-stage-4c-contracts";
+import {
+  acceptAttachmentDerivativeCorrectionInMemory,
+  completeAttachmentUploadInMemory,
+  createAttachmentUploadSessionInMemory,
+  createEmptyAttachmentState,
+  deleteAttachmentInMemory,
+  enqueueAttachmentJobInMemory,
+  getAttachmentRecordInMemory,
+  listConversationAttachmentsInMemory,
+  mapAttachmentDto,
+  saveAttachmentDerivativeInMemory,
+  transferAttachmentToClientRecordInMemory,
+  type InMemoryAttachmentState,
+} from "./phase-85-stage-4c-attachment-store";
 import type {
   AiChatEditMessageInput,
   AiChatRegenerateMessageInput,
@@ -217,6 +233,78 @@ export interface AiChatStore {
     },
   ): Promise<void>;
   listRunSources(tenantId: string, runId: string, userId: string): Promise<AiChatRunSourcesResponse>;
+  createAttachmentUploadSession(
+    context: AppTenantContext,
+    input: {
+      conversationId: string;
+      fileName: string;
+      mimeType: string;
+      byteSize: number;
+      contentSha256: string;
+    },
+  ): Promise<{
+    attachment: AiChatAttachmentDto;
+    uploadUrl: string;
+    uploadToken: string;
+    expiresAt: string;
+    objectKey: string;
+  }>;
+  completeAttachmentUpload(
+    context: AppTenantContext,
+    attachmentId: string,
+    input: { bytes: Buffer; contentSha256: string },
+  ): Promise<AiChatAttachmentDto>;
+  listConversationAttachments(context: AppTenantContext, conversationId: string): Promise<AiChatAttachmentDto[]>;
+  getAttachmentById(context: AppTenantContext, attachmentId: string): Promise<AiChatAttachmentDto>;
+  getAttachmentRecordById(attachmentId: string): Promise<{
+    id: string;
+    tenantId: string;
+    conversationId: string;
+    createdByUserId: string;
+    scopeType: AiChatScopeType;
+    clientId: string | null;
+    kind: "image" | "document" | "audio";
+    mimeType: string;
+    fileName: string;
+    byteSize: number;
+    contentSha256: string;
+    objectKey: string;
+    status: AiChatAttachmentDto["status"];
+    pageCount: number | null;
+    durationSec: number | null;
+  } | null>;
+  deleteAttachment(context: AppTenantContext, attachmentId: string): Promise<void>;
+  updateAttachmentStatus(
+    attachmentId: string,
+    status: AiChatAttachmentDto["status"],
+    failureCode?: string | null,
+    meta?: { pageCount?: number | null; durationSec?: number | null },
+  ): Promise<void>;
+  saveAttachmentDerivative(input: {
+    attachmentId: string;
+    kind: "sanitized_original" | "extracted_text" | "ocr_text" | "transcript" | "chunk";
+    status: "pending" | "review_required" | "accepted" | "superseded" | "rejected";
+    contentSha256: string | null;
+    excerpt: string | null;
+    locator: Record<string, unknown>;
+    confidence: number | null;
+    payload?: Record<string, unknown>;
+  }): Promise<void>;
+  acceptAttachmentDerivativeCorrection(
+    context: AppTenantContext,
+    attachmentId: string,
+    derivativeId: string,
+    input: { correctedText: string },
+  ): Promise<AiChatAttachmentDto>;
+  transferAttachmentToClientRecord(
+    context: AppTenantContext,
+    attachmentId: string,
+    input: { clientId: string; category: AiChatClientRecordCategory; title: string; previewAccepted: boolean },
+  ): Promise<{ assetId: string; objectKey: string }>;
+  enqueueAttachmentScanJob(tenantId: string, conversationId: string, attachmentId: string, userId: string): Promise<void>;
+  enqueueAttachmentParseJob(tenantId: string, conversationId: string, attachmentId: string, userId: string): Promise<void>;
+  enqueueAttachmentCleanupJob(tenantId: string, conversationId: string, attachmentId: string, userId?: string): Promise<void>;
+  getAttachmentObjectBytes(objectKey: string): Promise<Buffer | null>;
 }
 
 type InMemoryConversation = {
@@ -307,6 +395,7 @@ type InMemoryState = {
     claims: AiChatRunSourceClaimDto[];
     createdAt: string;
   }>;
+  attachmentState: InMemoryAttachmentState;
 };
 
 let inMemoryState: InMemoryState = {
@@ -326,6 +415,7 @@ let inMemoryState: InMemoryState = {
   approvedSources: createInMemoryApprovedSourceStateFromManifest(),
   persistedSourceRefs: [],
   answerEnvelopes: [],
+  attachmentState: createEmptyAttachmentState(),
 };
 
 export function resetInMemoryAiChatStoreForTests(state: Partial<InMemoryState> = {}) {
@@ -346,6 +436,7 @@ export function resetInMemoryAiChatStoreForTests(state: Partial<InMemoryState> =
     approvedSources: createInMemoryApprovedSourceStateFromManifest(),
     persistedSourceRefs: [],
     answerEnvelopes: [],
+    attachmentState: createEmptyAttachmentState(),
     ...state,
   };
 }
@@ -1717,6 +1808,151 @@ const inMemoryAiChatStore: AiChatStore = {
     };
   },
 
+  async createAttachmentUploadSession(context, input) {
+    const conversation = inMemoryState.conversations.find(
+      (item) => item.id === input.conversationId && item.tenantId === context.tenantId && item.createdByUserId === context.userId,
+    );
+    if (!conversation) throw new AppRequestError(404, "ai_chat_conversation_not_found");
+    const existing = inMemoryState.attachmentState.attachments
+      .filter((item) => item.conversationId === input.conversationId && item.status !== "deleted")
+      .map((item) => ({ kind: item.kind, byteSize: item.byteSize, pageCount: item.pageCount ?? undefined, durationSec: item.durationSec ?? undefined }));
+    return createAttachmentUploadSessionInMemory(inMemoryState.attachmentState, context, {
+      conversationId: input.conversationId,
+      scopeType: conversation.scopeType,
+      clientId: conversation.clientId,
+      fileName: input.fileName,
+      mimeType: input.mimeType,
+      byteSize: input.byteSize,
+      contentSha256: input.contentSha256,
+      existing,
+    });
+  },
+
+  async completeAttachmentUpload(context, attachmentId, input) {
+    const attachment = completeAttachmentUploadInMemory(inMemoryState.attachmentState, context, attachmentId, input);
+    const record = getAttachmentRecordInMemory(inMemoryState.attachmentState, attachmentId);
+    if (record) {
+      enqueueAttachmentJobInMemory(inMemoryState.jobs, {
+        tenantId: record.tenantId,
+        conversationId: record.conversationId,
+        createdByUserId: record.createdByUserId,
+        jobType: "attachment_scan",
+        attachmentId: record.id,
+      });
+    }
+    return attachment;
+  },
+
+  async listConversationAttachments(context, conversationId) {
+    return listConversationAttachmentsInMemory(inMemoryState.attachmentState, context.tenantId, conversationId, context.userId);
+  },
+
+  async getAttachmentById(context, attachmentId) {
+    const record = getAttachmentRecordInMemory(inMemoryState.attachmentState, attachmentId);
+    if (!record || record.tenantId !== context.tenantId || record.createdByUserId !== context.userId) {
+      throw new AppRequestError(404, "ai_chat_attachment_not_found");
+    }
+    return mapAttachmentDto(record, inMemoryState.attachmentState.derivatives);
+  },
+
+  async getAttachmentRecordById(attachmentId) {
+    const record = getAttachmentRecordInMemory(inMemoryState.attachmentState, attachmentId);
+    if (!record) return null;
+    return {
+      id: record.id,
+      tenantId: record.tenantId,
+      conversationId: record.conversationId,
+      createdByUserId: record.createdByUserId,
+      scopeType: record.scopeType,
+      clientId: record.clientId,
+      kind: record.kind,
+      mimeType: record.mimeType,
+      fileName: record.fileName,
+      byteSize: record.byteSize,
+      contentSha256: record.contentSha256,
+      objectKey: record.objectKey,
+      status: record.status,
+      pageCount: record.pageCount,
+      durationSec: record.durationSec,
+    };
+  },
+
+  async deleteAttachment(context, attachmentId) {
+    deleteAttachmentInMemory(inMemoryState.attachmentState, context, attachmentId);
+    const record = getAttachmentRecordInMemory(inMemoryState.attachmentState, attachmentId);
+    if (record) {
+      enqueueAttachmentJobInMemory(inMemoryState.jobs, {
+        tenantId: record.tenantId,
+        conversationId: record.conversationId,
+        createdByUserId: record.createdByUserId,
+        jobType: "attachment_cleanup",
+        attachmentId: record.id,
+      });
+    }
+  },
+
+  async updateAttachmentStatus(attachmentId, status, failureCode = null, meta) {
+    const record = getAttachmentRecordInMemory(inMemoryState.attachmentState, attachmentId);
+    if (!record) return;
+    record.status = status;
+    record.failureCode = failureCode;
+    if (meta?.pageCount !== undefined) record.pageCount = meta.pageCount;
+    if (meta?.durationSec !== undefined) record.durationSec = meta.durationSec;
+    record.updatedAt = new Date().toISOString();
+  },
+
+  async saveAttachmentDerivative(input) {
+    saveAttachmentDerivativeInMemory(inMemoryState.attachmentState, input);
+  },
+
+  async acceptAttachmentDerivativeCorrection(context, attachmentId, derivativeId, input) {
+    return acceptAttachmentDerivativeCorrectionInMemory(
+      inMemoryState.attachmentState,
+      context,
+      attachmentId,
+      derivativeId,
+      input,
+    );
+  },
+
+  async transferAttachmentToClientRecord(context, attachmentId, input) {
+    return transferAttachmentToClientRecordInMemory(inMemoryState.attachmentState, context, attachmentId, input);
+  },
+
+  async enqueueAttachmentScanJob(tenantId, conversationId, attachmentId, userId) {
+    enqueueAttachmentJobInMemory(inMemoryState.jobs, {
+      tenantId,
+      conversationId,
+      createdByUserId: userId,
+      jobType: "attachment_scan",
+      attachmentId,
+    });
+  },
+
+  async enqueueAttachmentParseJob(tenantId, conversationId, attachmentId, userId) {
+    enqueueAttachmentJobInMemory(inMemoryState.jobs, {
+      tenantId,
+      conversationId,
+      createdByUserId: userId,
+      jobType: "attachment_parse",
+      attachmentId,
+    });
+  },
+
+  async enqueueAttachmentCleanupJob(tenantId, conversationId, attachmentId, userId = "system") {
+    enqueueAttachmentJobInMemory(inMemoryState.jobs, {
+      tenantId,
+      conversationId,
+      createdByUserId: userId,
+      jobType: "attachment_cleanup",
+      attachmentId,
+    });
+  },
+
+  async getAttachmentObjectBytes(objectKey) {
+    return inMemoryState.attachmentState.objects.get(objectKey) ?? null;
+  },
+
   async saveContextSnapshot(input) {
     inMemoryState.contextSnapshots.push({
       ...input,
@@ -2386,5 +2622,80 @@ const supabaseAiChatStore: AiChatStore = {
       claims: (row.claims as AiChatRunSourceClaimDto[]) ?? [],
       sources: (row.sources as AiChatRunSourcesResponse["sources"]) ?? [],
     };
+  },
+
+  async createAttachmentUploadSession(context, input) {
+    void context;
+    void input;
+    throw new AppRequestError(503, "ai_chat_attachment_store_unavailable");
+  },
+  async completeAttachmentUpload(context, attachmentId, input) {
+    void context;
+    void attachmentId;
+    void input;
+    throw new AppRequestError(503, "ai_chat_attachment_store_unavailable");
+  },
+  async listConversationAttachments(context, conversationId) {
+    void context;
+    void conversationId;
+    return [];
+  },
+  async getAttachmentById(context, attachmentId) {
+    void context;
+    void attachmentId;
+    throw new AppRequestError(503, "ai_chat_attachment_store_unavailable");
+  },
+  async getAttachmentRecordById(attachmentId) {
+    void attachmentId;
+    return null;
+  },
+  async deleteAttachment(context, attachmentId) {
+    void context;
+    void attachmentId;
+    throw new AppRequestError(503, "ai_chat_attachment_store_unavailable");
+  },
+  async updateAttachmentStatus(attachmentId, status, failureCode, meta) {
+    void attachmentId;
+    void status;
+    void failureCode;
+    void meta;
+  },
+  async saveAttachmentDerivative(input) {
+    void input;
+  },
+  async acceptAttachmentDerivativeCorrection(context, attachmentId, derivativeId, input) {
+    void context;
+    void attachmentId;
+    void derivativeId;
+    void input;
+    throw new AppRequestError(503, "ai_chat_attachment_store_unavailable");
+  },
+  async transferAttachmentToClientRecord(context, attachmentId, input) {
+    void context;
+    void attachmentId;
+    void input;
+    throw new AppRequestError(503, "ai_chat_attachment_store_unavailable");
+  },
+  async enqueueAttachmentScanJob(tenantId, conversationId, attachmentId, userId) {
+    void tenantId;
+    void conversationId;
+    void attachmentId;
+    void userId;
+  },
+  async enqueueAttachmentParseJob(tenantId, conversationId, attachmentId, userId) {
+    void tenantId;
+    void conversationId;
+    void attachmentId;
+    void userId;
+  },
+  async enqueueAttachmentCleanupJob(tenantId, conversationId, attachmentId, userId) {
+    void tenantId;
+    void conversationId;
+    void attachmentId;
+    void userId;
+  },
+  async getAttachmentObjectBytes(objectKey) {
+    void objectKey;
+    return null;
   },
 };

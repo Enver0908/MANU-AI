@@ -36,6 +36,11 @@ import {
   recheckGatewayAccessBeforeCommit,
 } from "./phase-85-stage-4c-context-gateway";
 import { createDisabledSemanticRetriever } from "./phase-85-stage-4c-retrieval";
+import {
+  processAttachmentCleanupJob,
+  processAttachmentParseJob,
+  processAttachmentScanJob,
+} from "./phase-85-stage-4c-attachment-workers";
 import type { AiChatStructuredAnswer } from "./phase-85-stage-4c-provider";
 import type { AiChatRunSourceClaimDto } from "./phase-85-stage-4c-sources";
 import type { AiChatStore } from "./phase-85-stage-4c-store";
@@ -299,6 +304,17 @@ export async function processAiChatWorkerBatch(
         await processGenerationJob(store, job, provider, workerId);
       } else if (job.jobType === "title") {
         await processTitleJob(store, job);
+      } else if (job.jobType === "attachment_scan") {
+        const attachmentId = String(job.payload.attachmentId ?? "");
+        await processAttachmentScanJob(store, attachmentId, (objectKey) => store.getAttachmentObjectBytes(objectKey));
+      } else if (job.jobType === "attachment_parse") {
+        const attachmentId = String(job.payload.attachmentId ?? "");
+        await processAttachmentParseJob(store, attachmentId, (objectKey) => store.getAttachmentObjectBytes(objectKey));
+      } else if (job.jobType === "attachment_cleanup") {
+        const attachmentId = String(job.payload.attachmentId ?? "");
+        await processAttachmentCleanupJob(store, attachmentId, async (objectKey) => {
+          void objectKey;
+        });
       }
       await store.completeAiChatJob(job.id, workerId, job.leaseToken!);
     } catch (error) {

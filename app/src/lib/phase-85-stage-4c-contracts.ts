@@ -101,7 +101,13 @@ export type AiChatRunEventType = (typeof AI_CHAT_RUN_EVENT_TYPES)[number];
 export const AI_CHAT_COMPLETION_STATES = ["complete", "incomplete"] as const;
 export type AiChatCompletionState = (typeof AI_CHAT_COMPLETION_STATES)[number];
 
-export const AI_CHAT_JOB_TYPES = ["generation", "title"] as const;
+export const AI_CHAT_JOB_TYPES = [
+  "generation",
+  "title",
+  "attachment_scan",
+  "attachment_parse",
+  "attachment_cleanup",
+] as const;
 export type AiChatJobType = (typeof AI_CHAT_JOB_TYPES)[number];
 
 export const AI_CHAT_TITLE_SOURCES = ["auto", "user"] as const;
@@ -379,12 +385,45 @@ export type AiChatSourceRefDto = {
   createdAt: string;
 };
 
+export type AiChatAttachmentKind = "image" | "document" | "audio";
+
+export const AI_CHAT_CLIENT_RECORD_CATEGORIES = [
+  "clinical_document",
+  "laboratory_result",
+  "diet_plan_reference",
+  "form_source",
+  "general_context",
+] as const;
+export type AiChatClientRecordCategory = (typeof AI_CHAT_CLIENT_RECORD_CATEGORIES)[number];
+
+export type AiChatAttachmentDerivativeDto = {
+  id: string;
+  attachmentId: string;
+  kind: "sanitized_original" | "extracted_text" | "ocr_text" | "transcript" | "chunk";
+  status: "pending" | "review_required" | "accepted" | "superseded" | "rejected";
+  excerpt: string | null;
+  locator: string | null;
+  confidence: number | null;
+  createdAt: string;
+};
+
 export type AiChatAttachmentDto = {
   id: string;
   tenantId: string;
   conversationId: string;
   createdByUserId: string;
+  scopeType: AiChatScopeType;
+  clientId: string | null;
+  kind: AiChatAttachmentKind;
+  fileName: string;
+  mimeType: string;
+  byteSize: number;
+  contentSha256: string;
   status: AiChatAttachmentStatus;
+  failureCode: string | null;
+  pageCount: number | null;
+  durationSec: number | null;
+  derivatives: AiChatAttachmentDerivativeDto[];
   createdAt: string;
   updatedAt: string;
 };

@@ -15,12 +15,13 @@ import {
   useAiChatHistory,
   useAiChatRunStream,
 } from "@/lib/use-ai-chat";
-import type { AiChatListScopeFilter, AiChatScopeType } from "@/lib/phase-85-stage-4c-contracts";
+import type { AiChatListScopeFilter, AiChatScopeType, AiChatAttachmentDto } from "@/lib/phase-85-stage-4c-contracts";
 import { AiChatHistorySidebar } from "./ai-chat-history-sidebar";
 import { AiChatClientPicker } from "./ai-chat-client-picker";
 import { AiChatMessageList } from "./ai-chat-message-list";
 import { AiChatComposer } from "./ai-chat-composer";
 import { AiChatContextPanelContent } from "./ai-chat-context-drawer";
+import { AiChatAttachmentReview } from "./ai-chat-attachment-review";
 
 const COMPACT_BREAKPOINT_PX = 1024;
 
@@ -88,8 +89,72 @@ export function AiChatWorkspace({
   const [renameError, setRenameError] = useState(false);
   const [sendError, setSendError] = useState<string | null>(null);
   const [editingMessage, setEditingMessage] = useState<{ id: string; body: string } | null>(null);
+  const [attachments, setAttachments] = useState<AiChatAttachmentDto[]>([]);
+  const [reviewAttachment, setReviewAttachment] = useState<AiChatAttachmentDto | null>(null);
+
+  useEffect(() => {
+    if (!activeChatId) return;
+    let cancelled = false;
+    void fetch(`/api/ai-chat/conversations/${encodeURIComponent(activeChatId)}/attachments`)
+      .then((response) => (response.ok ? response.json() : { items: [] }))
+      .then((payload: { items: AiChatAttachmentDto[] }) => {
+        if (!cancelled) setAttachments(payload.items ?? []);
+      })
+      .catch(() => {
+        if (!cancelled) setAttachments([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [activeChatId]);
 
   const groups = useMemo(() => groupAiChatHistoryByDate(history.items), [history.items]);
+
+  const handleSaveAttachmentCorrection = useCallback(
+    async (attachmentId: string, derivativeId: string, correctedText: string) => {
+      const response = await fetch(
+        `/api/ai-chat/attachments/${encodeURIComponent(attachmentId)}/derivatives/${encodeURIComponent(derivativeId)}`,
+        {
+          method: "PATCH",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ requestId: generateAiChatRequestId(), correctedText }),
+        },
+      );
+      if (!response.ok) return;
+      const updated = (await response.json()) as AiChatAttachmentDto;
+      setAttachments((current) => current.map((item) => (item.id === updated.id ? updated : item)));
+      setReviewAttachment(updated);
+    },
+    [],
+  );
+
+  const handleTransferAttachment = useCallback(
+    async (input: {
+      attachmentId: string;
+      category: "clinical_document" | "laboratory_result" | "diet_plan_reference" | "form_source" | "general_context";
+      title: string;
+      previewAccepted: boolean;
+    }) => {
+      if (!conversation.detail?.clientId) return;
+      const response = await fetch(
+        `/api/ai-chat/attachments/${encodeURIComponent(input.attachmentId)}/commit-to-client-record`,
+        {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            requestId: generateAiChatRequestId(),
+            clientId: conversation.detail.clientId,
+            category: input.category,
+            title: input.title,
+            previewAccepted: input.previewAccepted,
+          }),
+        },
+      );
+      if (!response.ok) return;
+      setReviewAttachment(null);
+    },
+    [conversation.detail],
+  );
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -424,9 +489,22 @@ export function AiChatWorkspace({
               </div>
             ) : null}
             <AiChatComposer
+              key={activeChatId ?? "no-chat"}
               uiLanguage={uiLanguage}
               disabled={runStream.state.isStreaming}
+              conversationId={activeChatId}
+              attachments={attachments}
+              onAttachmentsChange={setAttachments}
+              onReviewAttachment={setReviewAttachment}
               onSend={handleSend}
+            />
+            <AiChatAttachmentReview
+              uiLanguage={uiLanguage}
+              attachment={reviewAttachment}
+              clientId={conversation.detail?.clientId ?? null}
+              onClose={() => setReviewAttachment(null)}
+              onSaveCorrection={handleSaveAttachmentCorrection}
+              onTransfer={conversation.detail?.scopeType === "client" ? handleTransferAttachment : undefined}
             />
           </>
         ) : activeChatId && conversation.error ? (

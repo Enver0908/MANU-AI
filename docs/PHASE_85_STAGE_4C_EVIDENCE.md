@@ -1,7 +1,7 @@
 # Phase 85 Stage 4C Evidence
 
-Date: 2026-07-22
-Status: **Faz 7 complete locally; Faz 8 is next (requires explicit user approval)**
+Date: 2026-07-23
+Status: **Faz 8 complete locally; Faz 9 is next (requires explicit user approval)**
 
 Production remains `NO-GO`. R-405 remains open.
 
@@ -265,7 +265,36 @@ Status: **complete locally**
 
 ### Next
 
-Faz 8: Guvenli Gorsel, Dokuman ve Ses Eki Isleme — after explicit user approval.
+Faz 9: Klinik Risk, Bildirim, Handoff ve Guvenli Taslak Koprusu — after explicit user approval.
+
+## Faz 8: Guvenli Gorsel, Dokuman ve Ses Eki Isleme
+
+Completed locally on 2026-07-23.
+
+### Delivered
+
+- Migration `20260722160000_phase_85_stage_4c_multimodal.sql` — attachment/derivative/job/transfer tables, private storage buckets, RLS
+- `app/src/lib/phase-85-stage-4c-attachments.ts` — MIME/limit validation, pdfjs/mammoth/yauzl/csv/sharp parsers, WAV/OGG canonicalization, PII scan, deterministic scanner/OCR/STT fixtures (production fail-closed)
+- `app/src/lib/phase-85-stage-4c-attachment-workers.ts` — scan → parse → review/ready pipeline, citation locators, retrieval eligibility helpers
+- `app/src/lib/phase-85-stage-4c-attachment-store.ts` + extended `phase-85-stage-4c-store.ts` — in-memory attachment lifecycle (Supabase path returns `ai_chat_attachment_store_unavailable`)
+- API: `POST /api/ai-chat/attachments`, `POST .../complete`, `GET/PATCH/DELETE .../[attachmentId]`, `PATCH .../derivatives/[derivativeId]`, `POST .../commit-to-client-record`, `GET .../conversations/[chatId]/attachments`
+- UI: composer file picker + mic recording, attachment strip, review modal, PCM worklet (`public/audio/ai-chat-pcm-recorder.worklet.js`)
+- Worker scripts: `worker:ai-chat:stage4c` / `worker:ai-chat:stage4c:once`
+- New prod deps: `pdfjs-dist`, `mammoth`, `yauzl`, `csv-parse`; dev: `@types/yauzl`
+
+### Verification (Faz 8)
+
+- `npm run lint` — 0 errors
+- `npx vitest run src/lib/phase-85-stage-4c-attachments.test.ts src/lib/phase-85-stage-4c-run-service.test.ts` — 14/14 passed
+- `npm test` — 1309 passed, 8 skipped (210 files)
+- `npm run build` — success
+- `npm run release:verify` — production dependency audit reports known `mammoth`/`yauzl` (moderate, new Faz 8 parsers) plus pre-existing `sharp`/`next:postcss` findings under open `R-405`; no new unexplained production gate closure claimed
+
+### Open Blockers After Faz 8
+
+- Faz 9 risk/handoff bridge requires explicit user approval
+- Supabase attachment store RPCs remain stubbed; local in-memory path is the deterministic closure authority
+- Real OCR/STT/scanner/web adapters remain disabled
 
 ## Faz 7: Kaynak Kayit Defteri, Answerability ve Kaynakli Klinik Yanit
 
