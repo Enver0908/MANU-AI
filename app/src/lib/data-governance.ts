@@ -70,6 +70,7 @@ export type ClientScopedExport = {
   dataRequests: DataRequestRecord[];
   auditEvents: AuditEventRecord[];
   channelDeliveries: ChannelDeliveryRecord[];
+  aiChatClientScope?: import("./phase-85-stage-4c-contracts").AiChatClientScopedExportSlice;
 };
 
 export const RETENTION_POLICY_PLACEHOLDERS: RetentionPolicyPlaceholder[] = [

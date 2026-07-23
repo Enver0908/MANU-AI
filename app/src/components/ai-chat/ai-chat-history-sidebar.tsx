@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, Trash2 } from "lucide-react";
 import { formatTime } from "@/components/dashboard/shared";
 import { t } from "@/lib/i18n";
 import type { SupportedLanguageCode } from "@/lib/languages";
@@ -20,39 +20,66 @@ function HistoryRow({
   uiLanguage,
   active,
   onSelect,
+  onDelete,
 }: {
   item: AiChatConversationListItem;
   uiLanguage: SupportedLanguageCode;
   active: boolean;
   onSelect: (chatId: string) => void;
+  onDelete?: (chatId: string) => void;
 }) {
   const label = item.scopeType === "client" ? item.clientFullName || t(uiLanguage, "aiChatScopeClient") : t(uiLanguage, "aiChatScopeGeneral");
   const timestamp = item.lastMessageAt ?? item.createdAt;
 
   return (
-    <button
-      type="button"
-      onClick={() => onSelect(item.id)}
-      aria-current={active ? "page" : undefined}
-      data-testid={`ai-chat-history-row-${item.id}`}
-      className={`flex min-h-11 w-full flex-col items-start gap-0.5 rounded-lg px-3 py-2 text-left transition ${
+    <div
+      className={`flex min-h-11 w-full items-center gap-1 rounded-lg px-1 py-1 transition ${
         active ? "bg-emerald-950 text-white" : "text-stone-700 hover:bg-stone-100"
       }`}
     >
-      <span className="flex w-full items-center justify-between gap-2">
-        <span className="truncate text-sm font-semibold" style={{ overflowWrap: "anywhere" }}>
-          {item.title}
-        </span>
-        {item.status === "locked" && (
-          <span className={`shrink-0 text-[10px] font-bold uppercase ${active ? "text-emerald-200" : "text-amber-700"}`}>
-            {t(uiLanguage, "aiChatConversationLocked")}
+      <button
+        type="button"
+        onClick={() => onSelect(item.id)}
+        aria-current={active ? "page" : undefined}
+        data-testid={`ai-chat-history-row-${item.id}`}
+        className="flex min-h-11 min-w-0 flex-1 flex-col items-start gap-0.5 px-2 py-2 text-left"
+      >
+        <span className="flex w-full items-center justify-between gap-2">
+          <span className="truncate text-sm font-semibold" style={{ overflowWrap: "anywhere" }}>
+            {item.title}
           </span>
-        )}
-      </span>
-      <span className={`truncate text-xs ${active ? "text-emerald-100" : "text-stone-600"}`} style={{ overflowWrap: "anywhere" }}>
-        {label} · {formatTime(timestamp)}
-      </span>
-    </button>
+          {item.status === "locked" && (
+            <span className={`shrink-0 text-[10px] font-bold uppercase ${active ? "text-emerald-200" : "text-amber-700"}`}>
+              {t(uiLanguage, "aiChatConversationLocked")}
+            </span>
+          )}
+          {item.status === "deleting" && (
+            <span className={`shrink-0 text-[10px] font-bold uppercase ${active ? "text-emerald-200" : "text-stone-500"}`}>
+              {t(uiLanguage, "aiChatDeletingStatus")}
+            </span>
+          )}
+        </span>
+        <span className={`truncate text-xs ${active ? "text-emerald-100" : "text-stone-600"}`} style={{ overflowWrap: "anywhere" }}>
+          {label} · {formatTime(timestamp)}
+        </span>
+      </button>
+      {onDelete && item.status === "active" ? (
+        <button
+          type="button"
+          onClick={(event) => {
+            event.stopPropagation();
+            onDelete(item.id);
+          }}
+          aria-label={t(uiLanguage, "aiChatDeleteChat")}
+          data-testid={`ai-chat-delete-chat-${item.id}`}
+          className={`inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg ${
+            active ? "text-emerald-100 hover:bg-emerald-900" : "text-stone-600 hover:bg-stone-200"
+          }`}
+        >
+          <Trash2 size={14} />
+        </button>
+      ) : null}
+    </div>
   );
 }
 
@@ -72,6 +99,7 @@ export function AiChatHistorySidebar({
   hasNextPage,
   onLoadMore,
   onRetry,
+  onDeleteChat,
 }: {
   uiLanguage: SupportedLanguageCode;
   scope: AiChatListScopeFilter;
@@ -88,6 +116,7 @@ export function AiChatHistorySidebar({
   hasNextPage: boolean;
   onLoadMore: () => void;
   onRetry: () => void;
+  onDeleteChat?: (chatId: string) => void;
 }) {
   const sentinelRef = useRef<HTMLDivElement>(null);
 
@@ -188,6 +217,7 @@ export function AiChatHistorySidebar({
                       uiLanguage={uiLanguage}
                       active={item.id === activeChatId}
                       onSelect={onSelectChat}
+                      onDelete={onDeleteChat}
                     />
                   ))}
                 </div>

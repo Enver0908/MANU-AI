@@ -7,7 +7,9 @@ const workerId = process.env.MANU_STAGE4C_WORKER_ID || "stage4c-ai-chat-worker";
 
 async function tick() {
   const store = resolveAiChatStore();
+  await store.runLifecycleRetentionSweeps();
   await processAiChatWorkerBatch(store, workerId, 4);
+  await store.processLifecycleDeletionBatch(4);
 }
 
 async function main() {

@@ -1,7 +1,7 @@
 # Phase 85 Stage 4C Evidence
 
 Date: 2026-07-23
-Status: **Faz 9 complete locally; Faz 10 is next (requires explicit user approval)**
+Status: **Faz 10 complete locally; Faz 11 is next (requires explicit user approval)**
 
 Production remains `NO-GO`. R-405 remains open.
 
@@ -319,8 +319,33 @@ Completed locally on 2026-07-23.
 
 ### Open Blockers After Faz 9
 
-- Faz 10 lifecycle/DSAR requires explicit user approval
+- ~~Faz 10 lifecycle/DSAR requires explicit user approval~~ (completed locally 2026-07-23)
 - Supabase risk/transfer/handoff RPC path remains stubbed; in-memory bridge is local closure authority
+
+## Faz 10: Mesaj/Sohbet Silme, Retention, DSAR ve Yasam Dongusu
+
+Completed locally on 2026-07-23.
+
+### Delivered
+
+- Migration `20260722180000_phase_85_stage_4c_lifecycle.sql` — deletion jobs/ledger, legal holds, branch status, lifecycle job types
+- `app/src/lib/phase-85-stage-4c-lifecycle.ts` — full/message delete, batched purge, retention sweeps, DSAR export slice, ledger replay
+- API: `DELETE /api/ai-chat/conversations/[chatId]`, `DELETE /api/ai-chat/messages/[messageId]` (202 + async purge)
+- UI: history sidebar delete + confirmation modal, message trash icon, deleting/locked states
+- Worker: lifecycle sweeps + deletion batch in `phase-85-stage-4c-run-worker-cli.ts` / `worker-ai-chat-stage4c.mjs`
+- Client export/anonymization hooks in `supabase-store.ts` (`appendAiChatClientScopeToExport`, `triggerClientAiChatLifecycleDeletions`)
+
+### Verification (Faz 10)
+
+- `npm run lint` — 0 errors
+- `npm test` — 1325 passed, 8 skipped
+- `npm run build` — success
+- `phase-85-stage-4c-lifecycle.test.ts` — 7/7 passed
+
+### Open Blockers After Faz 10
+
+- Faz 11 security/clinical closure requires explicit user approval
+- Supabase lifecycle RPC path remains stubbed; in-memory lifecycle is local closure authority
 
 ## Faz 7: Kaynak Kayit Defteri, Answerability ve Kaynakli Klinik Yanit
 

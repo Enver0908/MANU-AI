@@ -20,6 +20,12 @@ export const AI_CHAT_MAX_CONTEXT_CHARS = 18_000;
 export const AI_CHAT_MAX_ROLLING_SUMMARY_CHARS = 4_000;
 export const AI_CHAT_MAX_USER_ACTIVE_RUNS = 3;
 export const AI_CHAT_AUTO_TITLE_MAX_LENGTH = 60;
+export const AI_CHAT_DEFAULT_CONVERSATION_TITLE = "Yeni sohbet";
+export const AI_CHAT_DELETION_DB_BATCH_SIZE = 500;
+export const AI_CHAT_DELETION_STORAGE_BATCH_SIZE = 100;
+export const AI_CHAT_DELETION_MAX_ATTEMPTS = 3;
+export const AI_CHAT_ORPHAN_RETENTION_HOURS = 24;
+export const AI_CHAT_SSE_RETENTION_HOURS = 24;
 export const AI_CHAT_JOB_LEASE_MS = 60_000;
 export const AI_CHAT_JOB_HEARTBEAT_MS = 20_000;
 export const AI_CHAT_PROVIDER_TIMEOUT_MS = 15_000;
@@ -107,6 +113,9 @@ export const AI_CHAT_JOB_TYPES = [
   "attachment_scan",
   "attachment_parse",
   "attachment_cleanup",
+  "conversation_purge",
+  "message_purge",
+  "lifecycle_sweep",
 ] as const;
 export type AiChatJobType = (typeof AI_CHAT_JOB_TYPES)[number];
 
@@ -184,7 +193,7 @@ export const AI_CHAT_JOB_STATUSES = [
 ] as const;
 export type AiChatJobStatus = (typeof AI_CHAT_JOB_STATUSES)[number];
 
-export const AI_CHAT_MESSAGE_VERSION_STATUSES = ["active", "superseded", "deleted"] as const;
+export const AI_CHAT_MESSAGE_VERSION_STATUSES = ["active", "superseded", "deleted", "deleting"] as const;
 export type AiChatMessageVersionStatus = (typeof AI_CHAT_MESSAGE_VERSION_STATUSES)[number];
 
 export const AI_CHAT_TOOL_CALL_STATUSES = ["allowed", "denied", "completed", "failed", "superseded"] as const;
@@ -215,6 +224,10 @@ export const AI_CHAT_API_ERROR_CODES = [
   "ai_chat_run_already_terminal",
   "ai_chat_message_not_found",
   "ai_chat_regenerate_not_latest_assistant",
+  "ai_chat_legal_hold",
+  "ai_chat_assistant_delete_forbidden",
+  "ai_chat_message_delete_in_progress",
+  "ai_chat_deletion_job_not_found",
 ] as const;
 export type AiChatApiErrorCode = (typeof AI_CHAT_API_ERROR_CODES)[number];
 
@@ -247,6 +260,9 @@ export type AiChatConversationDetail = AiChatConversationListItem & {
   messages: AiChatMessageDto[];
 };
 
+export const AI_CHAT_BRANCH_STATUSES = ["active", "deleted"] as const;
+export type AiChatBranchStatus = (typeof AI_CHAT_BRANCH_STATUSES)[number];
+
 export type AiChatBranchDto = {
   id: string;
   tenantId: string;
@@ -256,6 +272,7 @@ export type AiChatBranchDto = {
   forkedFromMessageVersionId: string | null;
   activeLeafVersionId: string | null;
   forkReason: string | null;
+  status: AiChatBranchStatus;
   revision: number;
   createdAt: string;
   updatedAt: string;
@@ -335,6 +352,111 @@ export type AiChatMutationRunResult = {
 export type AiChatStopRunResult = {
   runId: string;
   status: AiChatRunStatus;
+};
+
+export const AI_CHAT_DELETION_JOB_KINDS = [
+  "conversation_purge",
+  "message_purge",
+  "client_chats_purge",
+  "account_chats_purge",
+  "lifecycle_sweep",
+] as const;
+export type AiChatDeletionJobKind = (typeof AI_CHAT_DELETION_JOB_KINDS)[number];
+
+export const AI_CHAT_DELETION_JOB_STATUSES = [
+  "queued",
+  "processing",
+  "completed",
+  "failed",
+  "blocked_legal_hold",
+] as const;
+export type AiChatDeletionJobStatus = (typeof AI_CHAT_DELETION_JOB_STATUSES)[number];
+
+export type AiChatDeletionJobRecord = {
+  id: string;
+  tenantId: string;
+  jobKind: AiChatDeletionJobKind;
+  targetConversationId: string | null;
+  targetMessageId: string | null;
+  targetClientId: string | null;
+  targetUserId: string | null;
+  reason: string;
+  status: AiChatDeletionJobStatus;
+  attemptCount: number;
+  cursor: Record<string, unknown>;
+  requestedAt: string;
+  completedAt: string | null;
+  createdByUserId: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type AiChatDeletionLedgerRecord = {
+  id: string;
+  tenantId: string;
+  entityType: string;
+  entityIdHash: string;
+  reason: string;
+  requestedAt: string;
+  completedAt: string | null;
+  replayStatus: "pending" | "applied" | "verified";
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type AiChatDeleteConversationInput = {
+  requestId: string;
+  expectedRevision: number;
+};
+
+export type AiChatDeleteConversationResult = {
+  chatId: string;
+  deletionJobId: string;
+  status: "deleting";
+  conversationRevision: number;
+};
+
+export type AiChatDeleteMessageInput = {
+  requestId: string;
+  expectedRevision: number;
+};
+
+export type AiChatDeleteMessageResult = {
+  messageId: string;
+  deletionJobId: string;
+  conversationId: string;
+  conversationRevision: number;
+};
+
+export type AiChatClientScopedExportSlice = {
+  conversations: Array<{
+    id: string;
+    title: string;
+    scopeType: AiChatScopeType;
+    clientId: string | null;
+    lastMessageAt: string | null;
+    createdAt: string;
+  }>;
+  messages: Array<{
+    id: string;
+    conversationId: string;
+    role: AiChatMessageRole;
+    body: string;
+    createdAt: string;
+  }>;
+  sourceManifest: Array<{
+    sourceRefId: string;
+    sourceType: AiChatSourceType;
+    locator: string | null;
+    sourceDate: string | null;
+  }>;
+  clientRecordAssets: Array<{
+    id: string;
+    category: string;
+    title: string;
+    sourceChatIdHash: string | null;
+    createdAt: string;
+  }>;
 };
 
 export type AiChatJobRecord = {

@@ -26,6 +26,8 @@ import {
   type AiChatConversationListItem,
   type AiChatConversationListResponse,
   type AiChatConversationSummary,
+  type AiChatDeleteConversationInput,
+  type AiChatDeleteMessageInput,
   type AiChatListScopeFilter,
   type AiChatMessageDto,
   type AiChatMessageVersionDto,
@@ -258,6 +260,28 @@ export function parseAiChatActivateBranchBody(body: unknown): AiChatActivateBran
   return { requestId, expectedRevision, branchId };
 }
 
+export function parseAiChatDeleteConversationBody(body: unknown): AiChatDeleteConversationInput {
+  const record = assertPlainObject(body);
+  rejectUnknownFields(record, ["requestId", "expectedRevision"]);
+  const requestId = parseRequiredString(record, "requestId");
+  const expectedRevision = record.expectedRevision;
+  if (typeof expectedRevision !== "number" || !Number.isInteger(expectedRevision) || expectedRevision < 1) {
+    invalidInput("invalid_request_body", "expectedRevision");
+  }
+  return { requestId, expectedRevision };
+}
+
+export function parseAiChatDeleteMessageBody(body: unknown): AiChatDeleteMessageInput {
+  const record = assertPlainObject(body);
+  rejectUnknownFields(record, ["requestId", "expectedRevision"]);
+  const requestId = parseRequiredString(record, "requestId");
+  const expectedRevision = record.expectedRevision;
+  if (typeof expectedRevision !== "number" || !Number.isInteger(expectedRevision) || expectedRevision < 1) {
+    invalidInput("invalid_request_body", "expectedRevision");
+  }
+  return { requestId, expectedRevision };
+}
+
 export function assertAiChatId(value: string) {
   if (!UUID_PATTERN.test(value.trim())) {
     invalidInput("ai_chat_not_found");
@@ -389,6 +413,9 @@ export function mapRpcError(error: { message?: string }, currentRevision?: numbe
   if (message.includes("ai_chat_conversation_locked")) {
     throw new AppRequestError(409, "ai_chat_conversation_locked");
   }
+  if (message.includes("ai_chat_legal_hold")) {
+    throw new AppRequestError(423, "ai_chat_legal_hold");
+  }
   if (message.includes("ai_chat_message_body_required")) {
     throw new AppRequestError(400, "ai_chat_message_body_required", "body");
   }
@@ -518,6 +545,7 @@ function mapBranch(row: Record<string, unknown>): AiChatBranchDto {
     forkedFromMessageVersionId: (row.forked_from_message_version_id as string | null) ?? null,
     activeLeafVersionId: (row.active_leaf_version_id as string | null) ?? null,
     forkReason: (row.fork_reason as string | null) ?? null,
+    status: (row.status as AiChatBranchDto["status"] | undefined) ?? "active",
     revision: Number(row.revision),
     createdAt: String(row.created_at),
     updatedAt: String(row.updated_at),

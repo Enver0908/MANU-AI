@@ -16,6 +16,11 @@ import type {
   AiChatConversationSummary,
   AiChatAttachmentDto,
   AiChatClientRecordCategory,
+  AiChatClientScopedExportSlice,
+  AiChatDeleteConversationInput,
+  AiChatDeleteConversationResult,
+  AiChatDeleteMessageInput,
+  AiChatDeleteMessageResult,
   AiChatJobRecord,
   AiChatMessageVersionRecord,
   AiChatMutationRunResult,
@@ -55,6 +60,18 @@ import {
   type InMemoryRiskBridgeState,
 } from "./phase-85-stage-4c-risk-store";
 import { buildSourceRevisionDigest } from "./phase-85-stage-4c-risk-bridge";
+import {
+  buildAiChatClientScopedExportSlice,
+  claimNextDeletionJobInMemory,
+  createEmptyLifecycleState,
+  enqueueAccountAiChatDeletionsInMemory,
+  enqueueClientScopedAiChatDeletionsInMemory,
+  processDeletionJobInMemory,
+  requestDeleteConversationInMemory,
+  requestDeleteMessageInMemory,
+  runLifecycleRetentionSweepsInMemory,
+  type InMemoryLifecycleState,
+} from "./phase-85-stage-4c-lifecycle";
 import type {
   AiChatEditMessageInput,
   AiChatRegenerateMessageInput,
@@ -360,6 +377,24 @@ export interface AiChatStore {
     sourceRefIds: string[];
     revisionToken?: string | null;
   }): Promise<void>;
+  deleteConversation(
+    context: AppTenantContext,
+    chatId: string,
+    input: AiChatDeleteConversationInput,
+  ): Promise<AiChatDeleteConversationResult>;
+  deleteMessage(
+    context: AppTenantContext,
+    messageId: string,
+    input: AiChatDeleteMessageInput,
+  ): Promise<AiChatDeleteMessageResult>;
+  processLifecycleDeletionBatch(limit?: number): Promise<number>;
+  runLifecycleRetentionSweeps(): Promise<void>;
+  enqueueClientScopedDeletions(
+    context: AppTenantContext,
+    clientId: string,
+    reason: "client_anonymization" | "client_removal",
+  ): Promise<void>;
+  buildClientScopedExportSlice(clientId: string): Promise<AiChatClientScopedExportSlice>;
 }
 
 type InMemoryConversation = {
@@ -452,6 +487,7 @@ type InMemoryState = {
   }>;
   attachmentState: InMemoryAttachmentState;
   riskBridgeState: InMemoryRiskBridgeState;
+  lifecycleState: InMemoryLifecycleState;
 };
 
 let inMemoryState: InMemoryState = {
@@ -473,6 +509,7 @@ let inMemoryState: InMemoryState = {
   answerEnvelopes: [],
   attachmentState: createEmptyAttachmentState(),
   riskBridgeState: createRiskBridgeStoreSlice(),
+  lifecycleState: createEmptyLifecycleState(),
 };
 
 export function resetInMemoryAiChatStoreForTests(state: Partial<InMemoryState> = {}) {
@@ -495,6 +532,7 @@ export function resetInMemoryAiChatStoreForTests(state: Partial<InMemoryState> =
     answerEnvelopes: [],
     attachmentState: createEmptyAttachmentState(),
     riskBridgeState: createRiskBridgeStoreSlice(),
+    lifecycleState: createEmptyLifecycleState(),
     ...state,
   };
 }
@@ -539,6 +577,37 @@ function canUseInMemoryAiChatStore() {
   return process.env.NODE_ENV === "test" || process.env.AI_CHAT_DETERMINISTIC_MODE === "true";
 }
 
+export function buildInMemoryAiChatClientExportSlice(clientId: string) {
+  if (!canUseInMemoryAiChatStore()) return null;
+  return buildAiChatClientScopedExportSlice(inMemoryState, clientId);
+}
+
+export function readInMemoryAiChatLifecycleStateForTests() {
+  return inMemoryState.lifecycleState;
+}
+
+export function readInMemoryAiChatStateForLifecycle() {
+  return inMemoryState;
+}
+
+export function triggerClientAiChatLifecycleDeletions(
+  context: AppTenantContext,
+  clientId: string,
+  reason: "client_anonymization" | "client_removal",
+) {
+  if (!canUseInMemoryAiChatStore()) return;
+  enqueueClientScopedAiChatDeletionsInMemory(inMemoryState, context, clientId, reason);
+}
+
+export function triggerAccountAiChatLifecycleDeletions(
+  tenantId: string,
+  userId: string,
+  reason: "account_membership_removed" = "account_membership_removed",
+) {
+  if (!canUseInMemoryAiChatStore()) return;
+  enqueueAccountAiChatDeletionsInMemory(inMemoryState, tenantId, userId, reason);
+}
+
 export function resolveAiChatStore(): AiChatStore {
   if (isSupabaseStoreConfigured()) {
     return supabaseAiChatStore;
@@ -580,6 +649,9 @@ function getInMemoryConversation(context: AppTenantContext, chatId: string) {
   }
   if (conversation.scopeType === "client") {
     assertInMemoryClientAccess(context, conversation.clientId);
+  }
+  if (conversation.status === "deleting" || conversation.status === "deleted") {
+    throw new AppRequestError(404, "ai_chat_not_found");
   }
   return conversation;
 }
@@ -919,6 +991,7 @@ const inMemoryAiChatStore: AiChatStore = {
       forkedFromMessageVersionId: null,
       activeLeafVersionId: null,
       forkReason: "initial",
+      status: "active",
       revision: 1,
       createdAt: now,
       updatedAt: now,
@@ -953,6 +1026,7 @@ const inMemoryAiChatStore: AiChatStore = {
 
     const items = inMemoryState.conversations
       .filter((item) => item.tenantId === context.tenantId && item.createdByUserId === context.userId)
+      .filter((item) => item.status !== "deleting" && item.status !== "deleted")
       .filter((item) => input.scope === "all" || item.scopeType === input.scope)
       .filter((item) => {
         if (item.scopeType === "client") {
@@ -1331,6 +1405,7 @@ const inMemoryAiChatStore: AiChatStore = {
       forkedFromMessageVersionId: currentVersion?.parentVersionId ?? null,
       activeLeafVersionId: null,
       forkReason: "edit",
+      status: "active",
       revision: 1,
       createdAt: now,
       updatedAt: now,
@@ -1428,6 +1503,7 @@ const inMemoryAiChatStore: AiChatStore = {
       forkedFromMessageVersionId: parentUserVersionId,
       activeLeafVersionId: parentUserVersionId,
       forkReason: "regenerate",
+      status: "active",
       revision: 1,
       createdAt: now,
       updatedAt: now,
@@ -2109,6 +2185,72 @@ const inMemoryAiChatStore: AiChatStore = {
     });
   },
 
+  async deleteConversation(context, chatId, input) {
+    const bodyHash = canonicalAiChatBodyHash(input);
+    const result = requestDeleteConversationInMemory(
+      inMemoryState,
+      context,
+      chatId,
+      input,
+      bodyHash,
+      (requestId, hash) => readLedger(context, requestId, hash),
+      (requestId, hash, digest) => writeLedger(context, requestId, hash, digest),
+    );
+    supersedeInMemoryConversationRisk(inMemoryState.riskBridgeState, {
+      tenantId: context.tenantId,
+      conversationId: chatId,
+    });
+    return result;
+  },
+
+  async deleteMessage(context, messageId, input) {
+    const bodyHash = canonicalAiChatBodyHash(input);
+    const message = inMemoryState.messages.find(
+      (item) => item.tenantId === context.tenantId && item.id === messageId,
+    );
+    const result = requestDeleteMessageInMemory(
+      inMemoryState,
+      context,
+      messageId,
+      input,
+      bodyHash,
+      (requestId, hash) => readLedger(context, requestId, hash),
+      (requestId, hash, digest) => writeLedger(context, requestId, hash, digest),
+    );
+    if (message) {
+      supersedeInMemoryConversationRisk(inMemoryState.riskBridgeState, {
+        tenantId: context.tenantId,
+        conversationId: message.conversationId,
+      });
+    }
+    return result;
+  },
+
+  async processLifecycleDeletionBatch(limit = 4) {
+    let processed = 0;
+    for (let index = 0; index < limit; index += 1) {
+      const job = claimNextDeletionJobInMemory(inMemoryState.lifecycleState);
+      if (!job) break;
+      const result = processDeletionJobInMemory(inMemoryState, job.id);
+      if (result.processed) processed += 1;
+      if (result.completed) continue;
+      if (!result.processed) break;
+    }
+    return processed;
+  },
+
+  async runLifecycleRetentionSweeps() {
+    runLifecycleRetentionSweepsInMemory(inMemoryState);
+  },
+
+  async enqueueClientScopedDeletions(context, clientId, reason) {
+    enqueueClientScopedAiChatDeletionsInMemory(inMemoryState, context, clientId, reason);
+  },
+
+  async buildClientScopedExportSlice(clientId) {
+    return buildAiChatClientScopedExportSlice(inMemoryState, clientId);
+  },
+
   async saveContextSnapshot(input) {
     inMemoryState.contextSnapshots.push({
       ...input,
@@ -2235,6 +2377,7 @@ const supabaseAiChatStore: AiChatStore = {
       forkedFromMessageVersionId: (row.forked_from_message_version_id as string | null) ?? null,
       activeLeafVersionId: (row.active_leaf_version_id as string | null) ?? null,
       forkReason: (row.fork_reason as string | null) ?? null,
+      status: (row.status as AiChatBranchDto["status"] | undefined) ?? "active",
       revision: Number(row.revision),
       createdAt: String(row.created_at),
       updatedAt: String(row.updated_at),
@@ -2887,5 +3030,31 @@ const supabaseAiChatStore: AiChatStore = {
   },
   async applyRunRiskPipeline(input) {
     void input;
+  },
+  async deleteConversation(context, chatId, input) {
+    void context;
+    void chatId;
+    void input;
+    throw new AppRequestError(503, "ai_chat_store_unavailable");
+  },
+  async deleteMessage(context, messageId, input) {
+    void context;
+    void messageId;
+    void input;
+    throw new AppRequestError(503, "ai_chat_store_unavailable");
+  },
+  async processLifecycleDeletionBatch(limit) {
+    void limit;
+    return 0;
+  },
+  async runLifecycleRetentionSweeps() {},
+  async enqueueClientScopedDeletions(context, clientId, reason) {
+    void context;
+    void clientId;
+    void reason;
+  },
+  async buildClientScopedExportSlice(clientId) {
+    void clientId;
+    return { conversations: [], messages: [], sourceManifest: [], clientRecordAssets: [] };
   },
 };

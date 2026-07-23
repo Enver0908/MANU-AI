@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Copy, Pencil, RefreshCw } from "lucide-react";
+import { Copy, Pencil, RefreshCw, Trash2 } from "lucide-react";
 import { t } from "@/lib/i18n";
 import type { SupportedLanguageCode } from "@/lib/languages";
 import { copyAiChatText } from "@/lib/use-ai-chat";
@@ -41,6 +41,7 @@ function MessageBubble({
   isLatestAssistant,
   onEdit,
   onRegenerate,
+  onDelete,
 }: {
   message: AiChatMessageDto;
   uiLanguage: SupportedLanguageCode;
@@ -48,10 +49,15 @@ function MessageBubble({
   isLatestAssistant: boolean;
   onEdit?: (messageId: string, body: string) => void;
   onRegenerate?: (messageId: string) => void;
+  onDelete?: (messageId: string) => void;
 }) {
   const activeVersion = resolveActiveMessageVersion(message);
   const isUser = message.role === "user";
   const [copied, setCopied] = useState(false);
+  const isDeleting =
+    Boolean(message.deletedAt) ||
+    message.versions.some((version) => version.contentStatus === "deleting") ||
+    activeVersion?.contentStatus === "deleting";
 
   const handleCopy = async () => {
     if (!activeVersion?.body) return;
@@ -89,6 +95,17 @@ function MessageBubble({
               <Pencil size={14} />
             </button>
           ) : null}
+          {isUser && isLatestUser && onDelete ? (
+            <button
+              type="button"
+              onClick={() => onDelete(message.id)}
+              aria-label={t(uiLanguage, "aiChatDeleteMessage")}
+              data-testid={`ai-chat-delete-message-${message.id}`}
+              className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg text-stone-600 hover:bg-stone-100"
+            >
+              <Trash2 size={14} />
+            </button>
+          ) : null}
           {!isUser && isLatestAssistant && onRegenerate ? (
             <button
               type="button"
@@ -102,7 +119,7 @@ function MessageBubble({
         </div>
       </div>
       <p className="mt-1 whitespace-pre-wrap text-sm leading-6 text-stone-800" style={{ overflowWrap: "anywhere" }}>
-        {activeVersion?.body ?? ""}
+        {isDeleting ? t(uiLanguage, "aiChatMessageDeleting") : activeVersion?.body ?? ""}
       </p>
       {copied ? (
         <p className="mt-1 text-xs font-medium text-emerald-700">{t(uiLanguage, "aiChatCopied")}</p>
@@ -122,6 +139,7 @@ export function AiChatMessageList({
   streamingIncomplete = false,
   onEdit,
   onRegenerate,
+  onDelete,
 }: {
   uiLanguage: SupportedLanguageCode;
   chatId: string;
@@ -130,6 +148,7 @@ export function AiChatMessageList({
   streamingIncomplete?: boolean;
   onEdit?: (messageId: string, body: string) => void;
   onRegenerate?: (messageId: string) => void;
+  onDelete?: (messageId: string) => void;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [range, setRange] = useState({ start: 0, end: messages.length });
@@ -207,6 +226,7 @@ export function AiChatMessageList({
           isLatestAssistant={message.id === latestAssistantId}
           onEdit={onEdit}
           onRegenerate={onRegenerate}
+          onDelete={onDelete}
         />
       ))}
       {streamingText ? (

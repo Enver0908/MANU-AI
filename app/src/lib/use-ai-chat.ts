@@ -587,3 +587,39 @@ export async function createAiChatRunHandoff(input: {
     },
   );
 }
+
+export async function deleteAiChatConversation(input: {
+  chatId: string;
+  requestId: string;
+  expectedRevision: number;
+}) {
+  return requestAiChatJson<{ chatId: string; deletionJobId: string; status: "deleting"; conversationRevision: number }>(
+    `/api/ai-chat/conversations/${encodeURIComponent(input.chatId)}`,
+    {
+      method: "DELETE",
+      body: JSON.stringify({
+        requestId: input.requestId,
+        expectedRevision: input.expectedRevision,
+      }),
+    },
+  );
+}
+
+export async function deleteAiChatMessage(input: {
+  messageId: string;
+  requestId: string;
+  expectedRevision: number;
+}) {
+  return requestAiChatJson<{
+    messageId: string;
+    deletionJobId: string;
+    conversationId: string;
+    conversationRevision: number;
+  }>(`/api/ai-chat/messages/${encodeURIComponent(input.messageId)}`, {
+    method: "DELETE",
+    body: JSON.stringify({
+      requestId: input.requestId,
+      expectedRevision: input.expectedRevision,
+    }),
+  });
+}

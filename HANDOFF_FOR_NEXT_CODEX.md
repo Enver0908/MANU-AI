@@ -1,6 +1,6 @@
 # Handoff For Next Codex
 
-**Current authority (2026-07-23):** Stage 4C Diyetisyen Icin AI Chat Faz 9 Klinik Risk, Bildirim, Handoff ve Guvenli Taslak Koprusu is complete locally. Active plan: `docs/PHASE_85_STAGE_4C_DIYETISYEN_AI_CHAT_ACTION_PLAN.md`; active evidence: `docs/PHASE_85_STAGE_4C_EVIDENCE.md`. **Next:** Stage 4C Faz 10 - Mesaj/Sohbet Silme, Retention, DSAR ve Yasam Dongusu after explicit user approval. Production remains `NO-GO`; R-405 remains open.
+**Current authority (2026-07-23):** Stage 4C Diyetisyen Icin AI Chat Faz 10 Mesaj/Sohbet Silme, Retention, DSAR ve Yasam Dongusu is complete locally. Active plan: `docs/PHASE_85_STAGE_4C_DIYETISYEN_AI_CHAT_ACTION_PLAN.md`; active evidence: `docs/PHASE_85_STAGE_4C_EVIDENCE.md`. **Next:** Stage 4C Faz 11 - Guvenlik Sertlestirme, Klinik Degerlendirme ve Stage 4C Kapanisi after explicit user approval. Production remains `NO-GO`; R-405 remains open.
 
 Pre-Stage-4C Faz 1 Stage 4B-3 closure, Stage 4B-4 Phase 11 closure, and Stage 4B-4 R0-R9 paragraphs below this authority block are historical snapshots. Use the Stage 4C plan and Faz 1 evidence as the current handoff.
 
@@ -8,7 +8,7 @@ Historical continuity audit, 2026-07-13: canonical status, repository-relative r
 
 ## Read This First
 
-Latest Phase 85 handoff (2026-07-23): **Stage 4C Diyetisyen Icin AI Chat Faz 9 Klinik Risk, Bildirim, Handoff ve Guvenli Taslak Koprusu is complete locally.** Risk classifier, deduped red notifications, safe draft transfer (green composer / yellow review), explicit handoff with red lock, and messaging bridge are wired with zero automatic client send. Evidence: `docs/PHASE_85_STAGE_4C_EVIDENCE.md`. **Next:** Faz 10 lifecycle/DSAR after explicit user approval. Production pilot remains `NO-GO`; R-405 remains open.
+Latest Phase 85 handoff (2026-07-23): **Stage 4C Diyetisyen Icin AI Chat Faz 10 Mesaj/Sohbet Silme, Retention, DSAR ve Yasam Dongusu is complete locally.** Full/message delete, deletion ledger, legal hold 423, client-scoped DSAR export, retention sweeps, and UI delete flows are wired. Evidence: `docs/PHASE_85_STAGE_4C_EVIDENCE.md`. **Next:** Faz 11 security/clinical closure after explicit user approval. Production pilot remains `NO-GO`; R-405 remains open.
 
 Latest Phase 85 Stage 4C Faz 3 status (2026-07-22): superseded by Faz 4 closure above. Evidence: `docs/PHASE_85_STAGE_4C_EVIDENCE.md`.
 

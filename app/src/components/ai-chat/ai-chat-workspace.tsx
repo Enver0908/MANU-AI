@@ -6,6 +6,8 @@ import { t } from "@/lib/i18n";
 import type { SupportedLanguageCode } from "@/lib/languages";
 import {
   createAiChatConversation,
+  deleteAiChatConversation,
+  deleteAiChatMessage,
   generateAiChatRequestId,
   groupAiChatHistoryByDate,
   regenerateAiChatMessage,
@@ -92,6 +94,7 @@ export function AiChatWorkspace({
   const [editingMessage, setEditingMessage] = useState<{ id: string; body: string } | null>(null);
   const [attachments, setAttachments] = useState<AiChatAttachmentDto[]>([]);
   const [reviewAttachment, setReviewAttachment] = useState<AiChatAttachmentDto | null>(null);
+  const [pendingDeleteChatId, setPendingDeleteChatId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!activeChatId) return;
@@ -271,6 +274,49 @@ export function AiChatWorkspace({
     setEditingMessage({ id: messageId, body });
   }, []);
 
+  const handleDeleteChatRequest = useCallback((chatId: string) => {
+    setPendingDeleteChatId(chatId);
+  }, []);
+
+  const confirmDeleteChat = useCallback(async () => {
+    if (!pendingDeleteChatId) return;
+    const target =
+      history.items.find((item) => item.id === pendingDeleteChatId) ??
+      (conversation.detail?.id === pendingDeleteChatId ? conversation.detail : null);
+    if (!target) return;
+    try {
+      await deleteAiChatConversation({
+        chatId: pendingDeleteChatId,
+        requestId: generateAiChatRequestId(),
+        expectedRevision: target.revision,
+      });
+      const deletedId = pendingDeleteChatId;
+      setPendingDeleteChatId(null);
+      void history.refresh();
+      if (activeChatId === deletedId) onNavigateToRoot();
+    } catch {
+      setSendError("failed");
+    }
+  }, [activeChatId, conversation.detail, history, onNavigateToRoot, pendingDeleteChatId]);
+
+  const handleDeleteMessage = useCallback(
+    async (messageId: string) => {
+      if (!conversation.detail || conversation.detail.status !== "active") return;
+      try {
+        await deleteAiChatMessage({
+          messageId,
+          requestId: generateAiChatRequestId(),
+          expectedRevision: conversation.detail.revision,
+        });
+        await conversation.refresh();
+        void history.refresh();
+      } catch {
+        setSendError("failed");
+      }
+    },
+    [conversation, history],
+  );
+
   const historySidebar = (
     <AiChatHistorySidebar
       uiLanguage={uiLanguage}
@@ -288,6 +334,7 @@ export function AiChatWorkspace({
       hasNextPage={Boolean(history.nextCursor)}
       onLoadMore={() => void history.loadMore()}
       onRetry={() => void history.refresh()}
+      onDeleteChat={handleDeleteChatRequest}
     />
   );
 
@@ -417,6 +464,13 @@ export function AiChatWorkspace({
           </div>
         ) : activeChatId && conversation.detail ? (
           <>
+            {conversation.detail.status !== "active" ? (
+              <div className="border-b border-amber-200 bg-amber-50 px-3 py-2 text-sm font-medium text-amber-900" role="status">
+                {conversation.detail.status === "deleting"
+                  ? t(uiLanguage, "aiChatDeleting")
+                  : t(uiLanguage, "aiChatConversationLocked")}
+              </div>
+            ) : null}
             <AiChatMessageList
               uiLanguage={uiLanguage}
               chatId={activeChatId}
@@ -425,6 +479,9 @@ export function AiChatWorkspace({
               streamingIncomplete={runStream.state.completionState === "incomplete"}
               onEdit={handleEdit}
               onRegenerate={(messageId) => void handleRegenerate(messageId)}
+              onDelete={
+                conversation.detail.status === "active" ? (messageId) => void handleDeleteMessage(messageId) : undefined
+              }
             />
             <AiChatRiskBanner
               uiLanguage={uiLanguage}
@@ -595,6 +652,45 @@ export function AiChatWorkspace({
           </div>
         </div>
       )}
+
+      {pendingDeleteChatId ? (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-stone-950/40 p-4"
+          role="presentation"
+          data-testid="ai-chat-delete-chat-modal"
+          onClick={() => setPendingDeleteChatId(null)}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="ai-chat-delete-chat-title"
+            className="w-full max-w-md rounded-lg border border-stone-200 bg-white p-4 shadow-xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <h3 id="ai-chat-delete-chat-title" className="text-base font-semibold text-stone-900">
+              {t(uiLanguage, "aiChatDeleteChatTitle")}
+            </h3>
+            <p className="mt-2 text-sm text-stone-600">{t(uiLanguage, "aiChatDeleteChatMessage")}</p>
+            <div className="mt-4 flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setPendingDeleteChatId(null)}
+                className="inline-flex min-h-11 items-center rounded-lg border border-stone-200 px-3 text-sm font-semibold text-stone-700 hover:bg-stone-50"
+              >
+                {t(uiLanguage, "aiChatCancel")}
+              </button>
+              <button
+                type="button"
+                onClick={() => void confirmDeleteChat()}
+                data-testid="ai-chat-delete-chat-confirm"
+                className="inline-flex min-h-11 items-center rounded-lg bg-red-700 px-3 text-sm font-semibold text-white hover:bg-red-800"
+              >
+                {t(uiLanguage, "aiChatDeleteConfirm")}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       <AiChatClientPicker
         open={isPickerOpen}

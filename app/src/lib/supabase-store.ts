@@ -9,8 +9,18 @@ import {
   buildClientScopedExport,
   recordClientExportInState,
   removeClientInState,
+  type ClientScopedExport,
 } from "./data-governance";
+import { assertAiChatClientExportHasNoLeaks } from "./phase-85-stage-4c-lifecycle";
+import { buildInMemoryAiChatClientExportSlice } from "./phase-85-stage-4c-store";
 import { sanitizeClientScopedExportForClientFacing } from "./phase-77v-copilot-quality-workflow";
+
+function appendAiChatClientScopeToExport(exportData: ClientScopedExport, clientId: string): ClientScopedExport {
+  const slice = buildInMemoryAiChatClientExportSlice(clientId);
+  if (!slice) return exportData;
+  assertAiChatClientExportHasNoLeaks(slice);
+  return { ...exportData, aiChatClientScope: slice };
+}
 import {
   buildClientCreateValidationState,
   buildClientPatchValidationState,
@@ -2088,18 +2098,24 @@ export async function exportSupabaseClientData(clientId: string, context = demoT
     await insertAudit(supabase, audit);
   }
 
-  return sanitizeClientScopedExportForClientFacing(buildClientScopedExport(after, clientId));
+  return sanitizeClientScopedExportForClientFacing(
+    appendAiChatClientScopeToExport(buildClientScopedExport(after, clientId), clientId),
+  );
 }
 
 export async function anonymizeSupabaseClientData(clientId: string, context = demoTenantContext()) {
   const before = await loadSupabaseState(context);
   const after = anonymizeClientInState(before, clientId);
+  const { triggerClientAiChatLifecycleDeletions } = await import("./phase-85-stage-4c-store");
+  triggerClientAiChatLifecycleDeletions(context, clientId, "client_anonymization");
   return persistSupabaseClientRemovalLifecycle(before, after, clientId, context);
 }
 
 export async function removeSupabaseClientData(clientId: string, context = demoTenantContext()) {
   const before = await loadSupabaseState(context);
   const after = removeClientInState(before, clientId);
+  const { triggerClientAiChatLifecycleDeletions } = await import("./phase-85-stage-4c-store");
+  triggerClientAiChatLifecycleDeletions(context, clientId, "client_removal");
   return persistSupabaseClientRemovalLifecycle(before, after, clientId, context);
 }
 
