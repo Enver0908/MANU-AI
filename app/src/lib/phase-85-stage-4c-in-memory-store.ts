@@ -320,6 +320,18 @@ export function triggerClientAiChatLifecycleDeletions(
   clientId: string,
   reason: "client_anonymization" | "client_removal",
 ) {
+  void import("./supabase-store")
+    .then(async ({ isSupabaseStoreConfigured }) => {
+      if (!isSupabaseStoreConfigured()) return;
+      const { getSupabaseAdminClient } = await import("./supabase");
+      const { supabaseEnqueueClientScopedDeletions } = await import("./phase-85-stage-4c-supabase-lifecycle");
+      const supabase = getSupabaseAdminClient();
+      if (!supabase) return;
+      await supabaseEnqueueClientScopedDeletions(supabase, context, clientId, reason);
+    })
+    .catch(() => {
+      // fail-closed enqueue is retried by operational sweeps; in-memory path remains for deterministic tests
+    });
   if (!canUseInMemoryAiChatStore()) return;
   enqueueClientScopedAiChatDeletionsInMemory(inMemoryState, context, clientId, reason);
 }

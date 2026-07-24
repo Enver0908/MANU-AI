@@ -39,7 +39,9 @@
     "worker:media:lifecycle": "node scripts/worker-media-lifecycle-stage4b3.mjs",
     "worker:media:lifecycle:once": "node scripts/worker-media-lifecycle-stage4b3.mjs --once",
     "worker:ai-chat:stage4c": "node scripts/worker-ai-chat-stage4c.mjs",
-    "worker:ai-chat:stage4c:once": "node scripts/worker-ai-chat-stage4c.mjs --once"
+    "worker:ai-chat:stage4c:once": "node scripts/worker-ai-chat-stage4c.mjs --once",
+    "worker:ai-chat:lifecycle:stage4c": "node scripts/worker-ai-chat-lifecycle-stage4c.mjs",
+    "worker:ai-chat:lifecycle:stage4c:once": "node scripts/worker-ai-chat-lifecycle-stage4c.mjs --once"
   },
   "dependencies": {
     "@supabase/ssr": "^0.10.3",

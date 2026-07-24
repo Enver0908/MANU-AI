@@ -82,6 +82,14 @@ import {
   supabaseListRunDraftDestinations,
   supabaseTransferRunDraft,
 } from "./phase-85-stage-4c-supabase-risk";
+import {
+  supabaseBuildClientScopedExportSlice,
+  supabaseDeleteConversation,
+  supabaseDeleteMessage,
+  supabaseEnqueueClientScopedDeletions,
+  supabaseProcessLifecycleDeletionBatch,
+  supabaseRunLifecycleRetentionSweeps,
+} from "./phase-85-stage-4c-supabase-lifecycle";
 import { requireHandoffCapability } from "./phase-85-stage-4c-risk-bridge";
 import type { AiChatRunSourceClaimDto, AiChatRunSourcesResponse } from "./phase-85-stage-4c-sources";
 import type { AiChatStore, BranchMessageChainItem } from "./phase-85-stage-4c-store";
@@ -932,30 +940,39 @@ export const supabaseAiChatStore: AiChatStore = {
     });
   },
   async deleteConversation(context, chatId, input) {
-    void context;
-    void chatId;
-    void input;
-    throw new AppRequestError(503, "ai_chat_store_unavailable");
+    return supabaseDeleteConversation(requireSupabaseAdmin(), context, chatId, input);
   },
   async deleteMessage(context, messageId, input) {
-    void context;
-    void messageId;
-    void input;
-    throw new AppRequestError(503, "ai_chat_store_unavailable");
+    return supabaseDeleteMessage(requireSupabaseAdmin(), context, messageId, input);
   },
-  async processLifecycleDeletionBatch(limit) {
-    void limit;
-    return 0;
+  async processLifecycleDeletionBatch(limit = 4) {
+    return supabaseProcessLifecycleDeletionBatch(requireSupabaseAdmin(), limit);
   },
-  async runLifecycleRetentionSweeps() {},
+  async runLifecycleRetentionSweeps() {
+    await supabaseRunLifecycleRetentionSweeps(requireSupabaseAdmin());
+  },
   async enqueueClientScopedDeletions(context, clientId, reason) {
-    void context;
-    void clientId;
-    void reason;
+    await supabaseEnqueueClientScopedDeletions(requireSupabaseAdmin(), context, clientId, reason);
   },
   async buildClientScopedExportSlice(clientId) {
-    void clientId;
-    return { conversations: [], messages: [], sourceManifest: [], clientRecordAssets: [] };
+    const supabase = requireSupabaseAdmin();
+    const { data } = await supabase
+      .from("ai_chat_conversations")
+      .select("tenant_id, created_by_user_id, created_by_dietitian_id")
+      .eq("client_id", clientId)
+      .eq("scope_type", "client")
+      .limit(1)
+      .maybeSingle();
+    if (!data?.tenant_id || !data.created_by_user_id) {
+      return { conversations: [], messages: [], sourceManifest: [], clientRecordAssets: [] };
+    }
+    const context: AppTenantContext = {
+      tenantId: String(data.tenant_id),
+      userId: String(data.created_by_user_id),
+      dietitianId: String(data.created_by_dietitian_id),
+      role: "dietitian",
+    };
+    return supabaseBuildClientScopedExportSlice(supabase, context, clientId);
   },
 };
 
@@ -965,10 +982,18 @@ export function assertSupabaseAiChatCoreContractReady() {
   if (supabaseCoreContractReady) return;
   const source = Function.prototype.toString.call(supabaseAiChatStore.sendMessage);
   const applyRiskSource = Function.prototype.toString.call(supabaseApplyRunRiskPipeline);
+  const deleteConversationSource = Function.prototype.toString.call(supabaseDeleteConversation);
+  const deleteMessageSource = Function.prototype.toString.call(supabaseDeleteMessage);
   if (!source.includes("p85_stage_4c_send_message_v1")) {
     throw new AppRequestError(503, "ai_chat_store_contract_incomplete");
   }
   if (!applyRiskSource.includes("p85_stage_4c_apply_run_risk_pipeline_v1")) {
+    throw new AppRequestError(503, "ai_chat_store_contract_incomplete");
+  }
+  if (!deleteConversationSource.includes("p85_stage_4c_delete_conversation_v1")) {
+    throw new AppRequestError(503, "ai_chat_store_contract_incomplete");
+  }
+  if (!deleteMessageSource.includes("p85_stage_4c_delete_message_v1")) {
     throw new AppRequestError(503, "ai_chat_store_contract_incomplete");
   }
   supabaseCoreContractReady = true;

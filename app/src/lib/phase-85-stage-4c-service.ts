@@ -422,6 +422,9 @@ export function mapRpcError(error: { message?: string }, currentRevision?: numbe
   if (message.includes("ai_chat_message_body_too_long")) {
     throw new AppRequestError(400, "ai_chat_message_body_too_long", "body");
   }
+  if (message.includes("ai_chat_assistant_delete_forbidden")) {
+    throw new AppRequestError(409, "ai_chat_assistant_delete_forbidden");
+  }
   if (message.includes("ai_chat_message_not_latest_user")) {
     throw new AppRequestError(409, "ai_chat_message_not_latest_user");
   }

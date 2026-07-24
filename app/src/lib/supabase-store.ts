@@ -12,10 +12,21 @@ import {
   type ClientScopedExport,
 } from "./data-governance";
 import { assertAiChatClientExportHasNoLeaks } from "./phase-85-stage-4c-lifecycle";
+import { supabaseBuildClientScopedExportSlice } from "./phase-85-stage-4c-supabase-lifecycle";
 import { buildInMemoryAiChatClientExportSlice } from "./phase-85-stage-4c-store";
 import { sanitizeClientScopedExportForClientFacing } from "./phase-77v-copilot-quality-workflow";
 
-function appendAiChatClientScopeToExport(exportData: ClientScopedExport, clientId: string): ClientScopedExport {
+async function appendAiChatClientScopeToExport(
+  exportData: ClientScopedExport,
+  clientId: string,
+  context: AppTenantContext,
+): Promise<ClientScopedExport> {
+  const supabase = requireSupabase();
+  if (supabase) {
+    const slice = await supabaseBuildClientScopedExportSlice(supabase, context, clientId);
+    assertAiChatClientExportHasNoLeaks(slice);
+    return { ...exportData, aiChatClientScope: slice };
+  }
   const slice = buildInMemoryAiChatClientExportSlice(clientId);
   if (!slice) return exportData;
   assertAiChatClientExportHasNoLeaks(slice);
@@ -2099,7 +2110,7 @@ export async function exportSupabaseClientData(clientId: string, context = demoT
   }
 
   return sanitizeClientScopedExportForClientFacing(
-    appendAiChatClientScopeToExport(buildClientScopedExport(after, clientId), clientId),
+    await appendAiChatClientScopeToExport(buildClientScopedExport(after, clientId), clientId, context),
   );
 }
 

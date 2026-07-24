@@ -1,13 +1,50 @@
 # Phase 85 Stage 4C Remediation Evidence
 
 Date: 2026-07-25
-Status: **Faz 5 complete locally with RLS blocked (Docker/local Supabase unavailable)**
+Status: **Faz 6 complete locally with RLS blocked (Docker/local Supabase unavailable)**
 
 Production remains `NO-GO`. R-405 remains open.
 
 Authority plan: `docs/PHASE_85_STAGE_4C_REMEDIATION_ACTION_PLAN.md` (from user remediation plan 2026-07-25).
 
 Historical `PASS_LOCAL_STAGE_4C` claims are superseded by remediation-required status until Faz 8 hard-zero closure passes with zero-skip RLS.
+
+## Faz 6: Güvenli Silme, Attachment Sahipliği, Retention ve Tenant-Bağlı DSAR
+
+Status: **complete locally (code + targeted tests); local Supabase fixture tests blocked**
+
+### Delivered
+
+- Migration `20260725130000_phase_85_stage_4c_remediation_lifecycle_export.sql`:
+  - delete conversation/message RPCs with legal hold, revision, idempotent ledger
+  - deletion job claim/step/complete/fail with storage (100) and DB (500) batches
+  - client/account scoped purge enqueue, 24h retention sweep
+  - tenant+client DSAR export RPC; copied `client_record_assets` excluded from chat purge keys
+  - list/load conversation patches hide `deleting`/`deleted`
+  - `ai_chat_deletion_failed` notification kind
+- `phase-85-stage-4c-supabase-lifecycle.ts`: Supabase adapter (no lifecycle stubs)
+- `phase-85-stage-4c-lifecycle-worker-cli.ts` + `worker:ai-chat:lifecycle:stage4c` scripts
+- `AI_CHAT_DELETION_HMAC_SECRET` required in production via `resolveAiChatDeletionHmacSecret`
+- `supabase-store.ts` DSAR export + client removal enqueue wired to Supabase RPCs
+- Delete APIs already return `202` queued; UI optimistic-deleting states retained
+
+### Verification
+
+| Command | Result |
+| --- | --- |
+| `npm run typecheck` | pass |
+| `npm run lint` | pass (warnings only) |
+| `npx vitest run src/lib/phase-85-stage-4c-lifecycle.test.ts src/lib/phase-85-stage-4c-lifecycle-migration.test.ts src/lib/phase-85-stage-4c-core-rpc-migration.test.ts src/lib/phase-85-stage-4c-store-conformance.test.ts` | 15/15 pass |
+| `npm run test:rls` | **blocked** — Docker/local Supabase unavailable |
+
+### Open Blockers After Faz 6
+
+- Apply migration to local Supabase and run selective/full purge + DSAR + legal hold with zero-skip RLS
+- Production remains `NO-GO`; R-405 remains open
+
+### Next
+
+Faz 7: Ölçeklenebilir SSE, UI Dayanıklılığı ve Eski Copilot İzolasyonu
 
 ## Faz 5: Kalıcı Risk, Bildirim, Handoff ve Güvenli Taslak Akışı
 

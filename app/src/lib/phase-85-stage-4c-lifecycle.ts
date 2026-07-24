@@ -23,6 +23,22 @@ import type { InMemoryRiskBridgeState } from "./phase-85-stage-4c-risk-bridge";
 
 export const PHASE_85_STAGE_4C_LIFECYCLE_VERSION = "p85-stage-4c-lifecycle-v1";
 
+export const AI_CHAT_DELETION_HMAC_TEST_SECRET = "p85-stage-4c-lifecycle-test-secret";
+
+export function resolveAiChatDeletionHmacSecret() {
+  const configured = process.env.AI_CHAT_DELETION_HMAC_SECRET?.trim();
+  if (configured) {
+    return configured;
+  }
+  if (process.env.NODE_ENV === "test" || process.env.AI_CHAT_DETERMINISTIC_MODE === "true") {
+    return AI_CHAT_DELETION_HMAC_TEST_SECRET;
+  }
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("AI_CHAT_DELETION_HMAC_SECRET_required");
+  }
+  return AI_CHAT_DELETION_HMAC_TEST_SECRET;
+}
+
 const EXPORT_LEAK_MARKERS = [
   "toolArguments",
   "providerManifest",
@@ -75,7 +91,7 @@ export function createEmptyLifecycleState(): InMemoryLifecycleState {
 }
 
 export function hashDeletionEntityId(tenantId: string, entityType: string, entityId: string) {
-  const secret = process.env.AI_CHAT_DELETION_HMAC_SECRET || "p85-stage-4c-lifecycle-test-secret";
+  const secret = resolveAiChatDeletionHmacSecret();
   return createHmac("sha256", secret).update(`${tenantId}:${entityType}:${entityId}`).digest("hex");
 }
 
