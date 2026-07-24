@@ -1,6 +1,6 @@
 # MANU-AI Next Phase Execution Plan
 
-**Current authority (2026-07-22):** Stage 4C Diyetisyen Icin AI Chat Faz 3 bounded service layer, CRUD API, and client search is complete locally. Active plan: `docs/PHASE_85_STAGE_4C_DIYETISYEN_AI_CHAT_ACTION_PLAN.md`; active evidence: `docs/PHASE_85_STAGE_4C_EVIDENCE.md`. **Next:** Stage 4C Faz 4 - Dashboard AI Chat Arayuzu after explicit user approval. Production remains `NO-GO`; R-405 remains open.
+**Current authority (2026-07-25):** Stage 4C remediation Faz 2 complete locally. Evidence: `docs/PHASE_85_STAGE_4C_REMEDIATION_EVIDENCE.md`. **Next:** Faz 3 after zero-skip local Supabase RLS. Production remains `NO-GO`; R-405 remains open.
 
 Pre-Stage-4C Faz 1 Stage 4B-3 closure, Stage 4B-4 Phase 11 closure, and Stage 4B-4 R0-R9 paragraphs below this authority block are historical snapshots. Use the Stage 4C plan and Faz 1 evidence as the current implementation handoff.
 

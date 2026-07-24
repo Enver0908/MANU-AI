@@ -31,6 +31,23 @@ const isLocalSupabase =
   supabaseUrl?.startsWith("http://127.0.0.1:") || supabaseUrl?.startsWith("http://localhost:");
 const shouldRun = Boolean(supabaseUrl && anonKey && serviceRoleKey && (isLocalSupabase || allowRemoteRlsTests));
 
+describe("Supabase RLS preflight", () => {
+  it("fails closed instead of reporting a skipped RLS suite as success", () => {
+    if (shouldRun) return;
+
+    const missing = [
+      supabaseUrl ? null : "NEXT_PUBLIC_SUPABASE_URL",
+      anonKey ? null : "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+      serviceRoleKey ? null : "SUPABASE_SERVICE_ROLE_KEY",
+      supabaseUrl && !isLocalSupabase && !allowRemoteRlsTests ? "MANU_ALLOW_REMOTE_RLS_TESTS" : null,
+    ].filter(Boolean);
+
+    throw new Error(
+      `RLS suite blocked: ${missing.join(", ")}. Run local Supabase or set MANU_ALLOW_REMOTE_RLS_TESTS=true for an approved remote RLS target.`,
+    );
+  });
+});
+
 const TEST_TENANT_ID = "00000000-0000-4000-8000-000000000901";
 const OTHER_TENANT_ID = "00000000-0000-4000-8000-000000000902";
 const TEST_DIETITIAN_ID = "00000000-0000-4000-8000-000000000903";

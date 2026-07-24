@@ -429,7 +429,7 @@ export function mapRpcError(error: { message?: string }, currentRevision?: numbe
     throw new AppRequestError(409, "ai_chat_active_run_conflict");
   }
   if (message.includes("ai_chat_user_run_limit")) {
-    throw new AppRequestError(409, "ai_chat_user_run_limit");
+    throw new AppRequestError(429, "ai_chat_user_run_limit");
   }
   if (message.includes("ai_chat_run_not_found")) {
     throw new AppRequestError(404, "ai_chat_run_not_found");

@@ -1,6 +1,6 @@
 # MANU-AI Project Plan v2
 
-**Current authority (2026-07-24):** Stage 4C Faz 11 local closure complete. Evidence: `docs/PHASE_85_STAGE_4C_EVIDENCE.md`. **Next:** explicit user approval for Stage 4C local closure sign-off. Production remains `NO-GO`; R-405 remains open.
+**Current authority (2026-07-25):** Stage 4C remediation Faz 2 complete locally. Evidence: `docs/PHASE_85_STAGE_4C_REMEDIATION_EVIDENCE.md`. **Next:** Faz 3 after zero-skip local Supabase RLS. Production remains `NO-GO`; R-405 remains open.
 
 Current continuity status, 2026-07-22: Stage 4B-2 R0-R7, local RLS re-closure, advisory hardening, Stage 4B-3 post-closure remediation R0-R9, and Stage 4B-4 post-closure remediation R0-R9 are complete locally. Stage 4C Faz 1 through Faz 4 are complete locally and Stage 4C Faz 5 is the next user-approved implementation unit. Production remains `NO-GO` and R-405 remains open.
 

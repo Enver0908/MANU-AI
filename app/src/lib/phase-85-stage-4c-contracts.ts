@@ -1,4 +1,4 @@
-export const PHASE_85_STAGE_4C_CONTRACT_VERSION = "p85-stage-4c-contracts-v1";
+export const PHASE_85_STAGE_4C_CONTRACT_VERSION = "p85-stage-4c-contracts-v2";
 
 export const AI_CHAT_TITLE_MAX_LENGTH = 120;
 export const AI_CHAT_MESSAGE_BODY_MAX_LENGTH = 12_000;

@@ -1,6 +1,6 @@
 # MANU-AI Local App Prototype
 
-**Current authority (2026-07-22):** Stage 4C Diyetisyen Icin AI Chat Faz 3 bounded service layer, CRUD API, and client search is complete locally. Active plan: `../docs/PHASE_85_STAGE_4C_DIYETISYEN_AI_CHAT_ACTION_PLAN.md`; active evidence: `../docs/PHASE_85_STAGE_4C_EVIDENCE.md`. **Next:** Stage 4C Faz 4 - Dashboard AI Chat Arayuzu after explicit user approval. Production pilot remains `NO-GO`; R-405 remains open.
+**Current authority (2026-07-25):** Stage 4C remediation Faz 2 complete locally on `codex/stage-4c-remediation`. Evidence: `../docs/PHASE_85_STAGE_4C_REMEDIATION_EVIDENCE.md`. **Next:** Faz 3 after zero-skip local Supabase RLS. Production pilot remains `NO-GO`; R-405 remains open.
 
 2026-07-14: **Stage 4B-3 Phase 12 golden corpus, red team, scale rehearsal, and closure evidence is complete locally.** Closure evaluator in `src/lib/phase-85-stage-4b3-closure.ts`, golden corpus in `src/lib/phase-85-stage-4b3-golden-corpus.jsonl`, rehearsal via `npm run rehearse:stage-4b3:media`, visual spec in `tests/visual/stage-4b3-media.visual.spec.ts`. Evidence: `../docs/PHASE_85_STAGE_4B_3_PHASE_12_GOLDEN_CORPUS_RED_TEAM_CLOSURE_EVIDENCE.md`. Canonical spec: `../docs/PHASE_85_STAGE_4B_3_MULTIMODAL_GORSEL_GUVENLIK_SPEC.md`. Stage 4B-3 later closed through R9; Stage 4B-4 is current before Stage 4C. Production pilot remains `NO-GO`.
 
