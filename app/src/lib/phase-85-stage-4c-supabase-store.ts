@@ -73,6 +73,16 @@ import {
   supabaseTransferAttachmentToClientRecord,
   supabaseUpdateAttachmentStatus,
 } from "./phase-85-stage-4c-supabase-attachments";
+import {
+  supabaseApplyRunRiskPipeline,
+  supabaseConsumeComposerDraftTransfer,
+  supabaseCreateRunHandoff,
+  supabaseGetPendingComposerDraftTransfer,
+  supabaseGetRunRiskSummary,
+  supabaseListRunDraftDestinations,
+  supabaseTransferRunDraft,
+} from "./phase-85-stage-4c-supabase-risk";
+import { requireHandoffCapability } from "./phase-85-stage-4c-risk-bridge";
 import type { AiChatRunSourceClaimDto, AiChatRunSourcesResponse } from "./phase-85-stage-4c-sources";
 import type { AiChatStore, BranchMessageChainItem } from "./phase-85-stage-4c-store";
 
@@ -834,38 +844,92 @@ export const supabaseAiChatStore: AiChatStore = {
     return supabaseListMessageAttachmentDerivatives(requireSupabaseAdmin(), tenantId, messageVersionId);
   },
   async getRunRiskSummary(tenantId, runId, userId) {
-    void tenantId;
-    void runId;
-    void userId;
-    return null;
+    const run = await supabaseAiChatStore.getRunById(tenantId, runId);
+    if (!run || run.createdByUserId !== userId) return null;
+    const conversation = await supabaseAiChatStore.getConversationRecord(tenantId, run.conversationId);
+    if (!conversation) return null;
+    const context: AppTenantContext = {
+      tenantId,
+      userId,
+      dietitianId: conversation.createdByDietitianId,
+      role: "dietitian",
+    };
+    const result = await supabaseGetRunRiskSummary(requireSupabaseAdmin(), context, runId);
+    if (!result) return null;
+    return {
+      ...result.summary,
+      clientContextRevision: result.clientContextRevision,
+    };
   },
   async listRunDraftDestinations(context, runId) {
-    void context;
-    void runId;
-    return [];
+    return supabaseListRunDraftDestinations(requireSupabaseAdmin(), context, runId);
   },
   async transferRunDraft(context, runId, input) {
-    void context;
-    void runId;
-    void input;
-    throw new AppRequestError(503, "ai_chat_risk_bridge_unavailable");
+    return supabaseTransferRunDraft(requireSupabaseAdmin(), context, runId, input);
   },
   async createRunHandoff(context, runId, input) {
-    void context;
-    void runId;
-    void input;
-    throw new AppRequestError(503, "ai_chat_risk_bridge_unavailable");
+    requireHandoffCapability(context);
+    return supabaseCreateRunHandoff(requireSupabaseAdmin(), context, runId, input);
   },
   async getPendingComposerDraftTransfer(tenantId, destinationConversationId) {
-    void tenantId;
-    void destinationConversationId;
-    return null;
+    const supabase = requireSupabaseAdmin();
+    const { data } = await supabase
+      .from("ai_chat_draft_transfers")
+      .select("created_by_user_id")
+      .eq("tenant_id", tenantId)
+      .eq("destination_conversation_id", destinationConversationId)
+      .eq("status", "pending")
+      .eq("transfer_mode", "composer_pending")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (!data?.created_by_user_id) return null;
+    return supabaseGetPendingComposerDraftTransfer(
+      supabase,
+      tenantId,
+      String(data.created_by_user_id),
+      destinationConversationId,
+    );
   },
   async consumeComposerDraftTransfer(input) {
-    void input;
+    const supabase = requireSupabaseAdmin();
+    const { data, error } = await supabase
+      .from("ai_chat_draft_transfers")
+      .select("created_by_user_id")
+      .eq("tenant_id", input.tenantId)
+      .eq("id", input.transferId)
+      .maybeSingle();
+    if (error || !data?.created_by_user_id) {
+      throw new AppRequestError(409, "ai_chat_draft_transfer_unavailable");
+    }
+    await supabaseConsumeComposerDraftTransfer(supabase, {
+      tenantId: input.tenantId,
+      userId: String(data.created_by_user_id),
+      transferId: input.transferId,
+      destinationConversationId: input.destinationConversationId,
+      destinationClientId: input.destinationClientId,
+    });
   },
   async applyRunRiskPipeline(input) {
-    void input;
+    const supabase = requireSupabaseAdmin();
+    const conversation = await supabaseAiChatStore.getConversationRecord(input.tenantId, input.conversationId);
+    if (!conversation) return;
+    const context: AppTenantContext = {
+      tenantId: input.tenantId,
+      userId: input.createdByUserId,
+      dietitianId: conversation.createdByDietitianId,
+      role: "dietitian",
+    };
+    const assessment = await supabaseApplyRunRiskPipeline(supabase, context, input);
+    await supabaseAiChatStore.appendRunEvent(input.tenantId, input.runId, {
+      eventType: "risk.updated",
+      payload: {
+        riskLevel: assessment.riskLevel,
+        reasons: assessment.reasons,
+        confidenceClass: assessment.confidenceClass,
+        hypotheticalRed: assessment.hypotheticalRed,
+      },
+    });
   },
   async deleteConversation(context, chatId, input) {
     void context;
@@ -900,7 +964,11 @@ let supabaseCoreContractReady = false;
 export function assertSupabaseAiChatCoreContractReady() {
   if (supabaseCoreContractReady) return;
   const source = Function.prototype.toString.call(supabaseAiChatStore.sendMessage);
+  const applyRiskSource = Function.prototype.toString.call(supabaseApplyRunRiskPipeline);
   if (!source.includes("p85_stage_4c_send_message_v1")) {
+    throw new AppRequestError(503, "ai_chat_store_contract_incomplete");
+  }
+  if (!applyRiskSource.includes("p85_stage_4c_apply_run_risk_pipeline_v1")) {
     throw new AppRequestError(503, "ai_chat_store_contract_incomplete");
   }
   supabaseCoreContractReady = true;

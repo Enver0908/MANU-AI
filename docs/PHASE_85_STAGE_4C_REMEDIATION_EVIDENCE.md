@@ -1,13 +1,47 @@
 # Phase 85 Stage 4C Remediation Evidence
 
 Date: 2026-07-25
-Status: **Faz 4 complete locally with RLS blocked (Docker/local Supabase unavailable)**
+Status: **Faz 5 complete locally with RLS blocked (Docker/local Supabase unavailable)**
 
 Production remains `NO-GO`. R-405 remains open.
 
 Authority plan: `docs/PHASE_85_STAGE_4C_REMEDIATION_ACTION_PLAN.md` (from user remediation plan 2026-07-25).
 
 Historical `PASS_LOCAL_STAGE_4C` claims are superseded by remediation-required status until Faz 8 hard-zero closure passes with zero-skip RLS.
+
+## Faz 5: Kalıcı Risk, Bildirim, Handoff ve Güvenli Taslak Akışı
+
+Status: **complete locally (code + targeted tests); local Supabase fixture tests blocked**
+
+### Delivered
+
+- Migration `20260725120000_phase_85_stage_4c_remediation_risk_workflow.sql`:
+  - `assessment_fingerprint` idempotency on active risk assessments
+  - `ai_chat_red_review_required` notification kind
+  - RPCs: apply risk pipeline, risk summary, draft destinations, draft transfer, handoff create, pending/consume composer transfer
+- `phase-85-stage-4c-supabase-risk.ts`: Supabase adapter wiring (no 503/no-op stubs)
+- `finalizeRunOutcome` persists client-scoped risk for stopped partial and incomplete assistant outputs
+- Risk API route uses store-backed `clientContextRevision` (fallback state removed)
+- Red: no safe draft, handoff confirmation token + notification projection
+- Green/yellow: `composer_pending` / `yellow_review` draft transfer modes with revision recheck
+
+### Verification
+
+| Command | Result |
+| --- | --- |
+| `npm run typecheck` | pass |
+| `npm run lint` | pass (warnings only) |
+| `npx vitest run src/lib/phase-85-stage-4c-risk-bridge.test.ts src/lib/phase-85-stage-4c-risk-workflow-migration.test.ts src/lib/phase-85-stage-4c-run-service.test.ts src/lib/phase-85-stage-4c-store-conformance.test.ts` | 22/22 pass |
+| `npm run test:rls` | **blocked** — Docker/local Supabase unavailable |
+
+### Open Blockers After Faz 5
+
+- Apply migration to local Supabase and run green/yellow/red persistence + handoff lineage with zero-skip RLS
+- Production remains `NO-GO`; R-405 remains open
+
+### Next
+
+Faz 6: Güvenli Silme, Attachment Sahipliği, Retention ve Tenant-Bağlı DSAR
 
 ## Faz 4: Private Storage Tabanlı Multimodal Runtime ve Mesaj Bağlantısı
 

@@ -66,6 +66,9 @@ export function getInMemoryRunRiskSummary(
   const assessment = getActiveRunRiskAssessment(bridgeState, tenantId, runId);
   if (!assessment) return null;
   const safeDraft = bridgeState.safeDrafts.get(runId) ?? null;
+  const client = assessment.clientId
+    ? resolveFallbackMessagingState().clients.find((item) => item.id === assessment.clientId)
+    : null;
   return {
     runId,
     riskLevel: assessment.riskLevel,
@@ -77,6 +80,7 @@ export function getInMemoryRunRiskSummary(
     handoffConfirmationToken: assessment.handoffConfirmationToken,
     canTransferDraft: assessment.riskLevel !== "red" && Boolean(safeDraft?.body),
     canCreateHandoff: assessment.riskLevel === "red" && Boolean(assessment.clientId),
+    clientContextRevision: client?.contextRevision ?? null,
   } as AiChatRunRiskSummaryDto;
 }
 

@@ -239,6 +239,53 @@ function mergeRiskLevels(
   return order[classified] >= order[providerLevel] ? classified : providerLevel;
 }
 
+async function applyClientScopedRiskPipelineIfNeeded(input: {
+  store: AiChatStore;
+  tenantId: string;
+  runId: string;
+  run: { conversationId: string; createdByUserId: string };
+  conversation: {
+    scopeType: AiChatScopeType;
+    clientId: string | null;
+  };
+  triggerBody: string;
+  directAnswer: string | null;
+  answerability: AiChatRunDto["answerability"];
+  providerRiskLevel?: AiChatRiskLevel | null;
+  verifiedFactTexts?: string[];
+  attachmentExcerpts?: string[];
+  sourceExcerptTexts?: string[];
+  sourceRefIds?: string[];
+  revisionToken?: string | null;
+}): Promise<AiChatRiskLevel | null> {
+  if (input.conversation.scopeType !== "client" || !input.conversation.clientId || !input.directAnswer?.trim()) {
+    return null;
+  }
+  await input.store.applyRunRiskPipeline({
+    tenantId: input.tenantId,
+    runId: input.runId,
+    conversationId: input.run.conversationId,
+    createdByUserId: input.run.createdByUserId,
+    scopeType: input.conversation.scopeType,
+    clientId: input.conversation.clientId,
+    triggerBody: input.triggerBody,
+    directAnswer: input.directAnswer,
+    answerability: input.answerability,
+    providerRiskLevel: input.providerRiskLevel ?? null,
+    verifiedFactTexts: input.verifiedFactTexts ?? [],
+    attachmentExcerpts: input.attachmentExcerpts ?? [],
+    sourceExcerptTexts: input.sourceExcerptTexts ?? [],
+    sourceRefIds: input.sourceRefIds ?? [],
+    revisionToken: input.revisionToken ?? "",
+  });
+  const riskSummary = await input.store.getRunRiskSummary(
+    input.tenantId,
+    input.runId,
+    input.run.createdByUserId,
+  );
+  return riskSummary?.riskLevel ?? null;
+}
+
 export async function finalizeRunOutcome(input: FinalizeRunOutcomeInput): Promise<void> {
   const { store, tenantId, runId, triggerBody, conversation, gatewayAccessInput, capturedRevisionToken, outcome } =
     input;
@@ -303,18 +350,38 @@ export async function finalizeRunOutcome(input: FinalizeRunOutcomeInput): Promis
 
   if (outcome.kind === "stopped") {
     const trimmed = outcome.partialText.trim();
-    const riskAssessment = classifyDietitianChatRisk({
-      triggerBody,
-      directAnswer: trimmed || null,
-      scopeType: conversation.scopeType,
-      answerability: trimmed ? outcome.answerability ?? "partial" : "insufficient",
-      providerRiskLevel: outcome.providerRiskLevel ?? null,
-      verifiedFactTexts: [],
-      attachmentExcerpts: [],
-      sourceExcerptTexts: [],
-      sourceRefIds: [],
-    });
-    const riskLevel = mergeRiskLevels(riskAssessment.riskLevel as AiChatRiskLevel, outcome.providerRiskLevel);
+    let riskLevel = mergeRiskLevels(
+      classifyDietitianChatRisk({
+        triggerBody,
+        directAnswer: trimmed || null,
+        scopeType: conversation.scopeType,
+        answerability: trimmed ? outcome.answerability ?? "partial" : "insufficient",
+        providerRiskLevel: outcome.providerRiskLevel ?? null,
+        verifiedFactTexts: [],
+        attachmentExcerpts: [],
+        sourceExcerptTexts: [],
+        sourceRefIds: [],
+      }).riskLevel as AiChatRiskLevel,
+      outcome.providerRiskLevel,
+    );
+
+    if (trimmed && conversation.scopeType === "client" && conversation.clientId) {
+      const persistedRiskLevel = await applyClientScopedRiskPipelineIfNeeded({
+        store,
+        tenantId,
+        runId,
+        run: input.run,
+        conversation,
+        triggerBody,
+        directAnswer: trimmed,
+        answerability: outcome.answerability ?? "partial",
+        providerRiskLevel: outcome.providerRiskLevel ?? null,
+        revisionToken: capturedRevisionToken,
+      });
+      if (persistedRiskLevel) {
+        riskLevel = mergeRiskLevels(persistedRiskLevel, outcome.providerRiskLevel);
+      }
+    }
 
     if (trimmed) {
       await store.commitAssistantMessage(tenantId, runId, {
@@ -428,18 +495,38 @@ export async function finalizeRunOutcome(input: FinalizeRunOutcomeInput): Promis
       riskLevel: finalRiskLevel,
     });
   } else if (directAnswer) {
-    const classified = classifyDietitianChatRisk({
-      triggerBody,
-      directAnswer,
-      scopeType: conversation.scopeType,
-      answerability,
-      providerRiskLevel: providerRiskLevel ?? null,
-      verifiedFactTexts: [],
-      attachmentExcerpts: [],
-      sourceExcerptTexts: gateway.evidencePackage.sourceRefs.map((item) => item.excerpt),
-      sourceRefIds: gateway.evidencePackage.sourceRefs.map((item) => item.sourceId),
-    });
-    finalRiskLevel = mergeRiskLevels(classified.riskLevel as AiChatRiskLevel, providerRiskLevel);
+    if (conversation.scopeType === "client" && conversation.clientId) {
+      const persistedRiskLevel = await applyClientScopedRiskPipelineIfNeeded({
+        store,
+        tenantId,
+        runId,
+        run: input.run,
+        conversation,
+        triggerBody,
+        directAnswer,
+        answerability,
+        providerRiskLevel: providerRiskLevel ?? null,
+        sourceExcerptTexts: gateway.evidencePackage.sourceRefs.map((item) => item.excerpt),
+        sourceRefIds: gateway.evidencePackage.sourceRefs.map((item) => item.sourceId),
+        revisionToken: capturedRevisionToken,
+      });
+      if (persistedRiskLevel) {
+        finalRiskLevel = mergeRiskLevels(persistedRiskLevel, providerRiskLevel);
+      }
+    } else {
+      const classified = classifyDietitianChatRisk({
+        triggerBody,
+        directAnswer,
+        scopeType: conversation.scopeType,
+        answerability,
+        providerRiskLevel: providerRiskLevel ?? null,
+        verifiedFactTexts: [],
+        attachmentExcerpts: [],
+        sourceExcerptTexts: gateway.evidencePackage.sourceRefs.map((item) => item.excerpt),
+        sourceRefIds: gateway.evidencePackage.sourceRefs.map((item) => item.sourceId),
+      });
+      finalRiskLevel = mergeRiskLevels(classified.riskLevel as AiChatRiskLevel, providerRiskLevel);
+    }
     await store.commitAssistantMessage(tenantId, runId, {
       body: directAnswer,
       answerability,

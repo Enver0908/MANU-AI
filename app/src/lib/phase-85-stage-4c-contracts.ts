@@ -649,6 +649,7 @@ export type AiChatRunRiskSummaryDto = {
   handoffConfirmationToken: string | null;
   canTransferDraft: boolean;
   canCreateHandoff: boolean;
+  clientContextRevision?: number | null;
 };
 
 export type AiChatApiError = {
