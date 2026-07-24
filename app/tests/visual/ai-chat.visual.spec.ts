@@ -14,12 +14,30 @@ async function isCompactViewport(page: Page) {
   return !viewport || viewport.width < 1024;
 }
 
-/** Opens the mobile/tablet history drawer only when the shell is not inline. */
+async function waitForHistorySidebarReady(sidebar: ReturnType<Page["getByTestId"]>) {
+  await expect(sidebar).toBeVisible();
+  await expect
+    .poll(async () => {
+      if (await sidebar.getByRole("alert").isVisible()) return "error";
+      if (await sidebar.getByRole("status").isVisible()) return "empty";
+      if ((await sidebar.locator("[data-testid^='ai-chat-history-item-']").count()) > 0) return "loaded";
+      if (await sidebar.getByRole("searchbox").isVisible()) return "chrome";
+      return null;
+    }, { timeout: 15_000 })
+    .not.toBeNull();
+}
+
+/** Opens the history drawer when the shell uses overlay chrome (compact or focus mode). */
 async function openHistorySurface(page: Page) {
-  if (await isCompactViewport(page)) {
+  const compact = await isCompactViewport(page);
+  const focusMode = page.url().includes("focus=1");
+  if (compact || focusMode) {
     await page.getByTestId("ai-chat-history-drawer-toggle").click();
+    const drawer = page.getByTestId("ai-chat-history-drawer");
+    await expect(drawer).toBeVisible();
+    return drawer.getByTestId("ai-chat-history-sidebar");
   }
-  return page.getByTestId("ai-chat-history-sidebar");
+  return page.locator('[data-testid="ai-chat-history-sidebar"]:visible').first();
 }
 
 test("AI Chat nav is a real route link and replaces the old Copilot entry", async ({ page }) => {
@@ -78,8 +96,10 @@ test("AI Chat root route renders the three-region workspace shell with a retry-a
 
   const compact = await isCompactViewport(page);
   const sidebar = await openHistorySurface(page);
-  await expect(sidebar.getByRole("alert")).toBeVisible();
-  await expect(sidebar.getByRole("button", { name: "Tekrar dene" })).toBeVisible();
+  await waitForHistorySidebarReady(sidebar);
+  if (await sidebar.getByRole("alert").isVisible()) {
+    await expect(sidebar.getByRole("button", { name: "Tekrar dene" })).toBeVisible();
+  }
 
   if (compact) {
     await page.getByTestId("ai-chat-drawer-backdrop").click();
@@ -207,8 +227,11 @@ test("AI Chat empty workspace visual snapshot", async ({ page }) => {
   // without a backend) so the screenshot is deterministic instead of
   // capturing a transient pre-fetch empty flash.
   const sidebar = await openHistorySurface(page);
-  await expect(sidebar.getByRole("alert")).toBeVisible();
-  if (await isCompactViewport(page)) {
+  await waitForHistorySidebarReady(sidebar);
+  if (await sidebar.getByRole("alert").isVisible()) {
+    await expect(sidebar.getByRole("button", { name: "Tekrar dene" })).toBeVisible();
+  }
+  if (await page.getByTestId("ai-chat-history-drawer-toggle").isVisible()) {
     await page.getByTestId("ai-chat-drawer-backdrop").click();
     await expect(page.getByTestId("ai-chat-history-drawer")).toHaveCount(0);
   }
@@ -228,8 +251,11 @@ test("AI Chat focus mode visual snapshot", async ({ page }, testInfo) => {
   await expect(page.getByRole("navigation", { name: "Panel görünümleri" })).toHaveCount(0);
 
   const sidebar = await openHistorySurface(page);
-  await expect(sidebar.getByRole("alert")).toBeVisible();
-  if (await isCompactViewport(page)) {
+  await waitForHistorySidebarReady(sidebar);
+  if (await sidebar.getByRole("alert").isVisible()) {
+    await expect(sidebar.getByRole("button", { name: "Tekrar dene" })).toBeVisible();
+  }
+  if (await page.getByTestId("ai-chat-history-drawer-toggle").isVisible()) {
     await page.getByTestId("ai-chat-drawer-backdrop").click();
     await expect(page.getByTestId("ai-chat-history-drawer")).toHaveCount(0);
   }

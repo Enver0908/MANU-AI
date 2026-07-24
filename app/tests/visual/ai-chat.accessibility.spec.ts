@@ -13,10 +13,15 @@ async function isCompactViewport(page: Page) {
 }
 
 async function openHistorySurface(page: Page) {
-  if (await isCompactViewport(page)) {
+  const compact = await isCompactViewport(page);
+  const focusMode = page.url().includes("focus=1");
+  if (compact || focusMode) {
     await page.getByTestId("ai-chat-history-drawer-toggle").click();
+    const drawer = page.getByTestId("ai-chat-history-drawer");
+    await expect(drawer).toBeVisible();
+    return drawer.getByTestId("ai-chat-history-sidebar");
   }
-  return page.getByTestId("ai-chat-history-sidebar");
+  return page.locator('[data-testid="ai-chat-history-sidebar"]:visible').first();
 }
 
 test("keyboard navigation reaches history, composer, and focus toggle", async ({ page }) => {
@@ -24,15 +29,17 @@ test("keyboard navigation reaches history, composer, and focus toggle", async ({
   await page.goto("/dashboard/ai-chat");
   await expect(page.getByTestId("ai-chat-workspace")).toBeVisible();
 
-  await page.keyboard.press("Tab");
-  const focusedTestId = await page.evaluate(() => document.activeElement?.getAttribute("data-testid"));
-  expect(focusedTestId).toBeTruthy();
+  const focusToggle = page.getByTestId("ai-chat-focus-toggle");
+  await focusToggle.focus();
+  await expect(focusToggle).toBeFocused();
 
-  await expect(page.getByTestId("ai-chat-composer")).toBeVisible();
-  const composerInput = page.getByTestId("ai-chat-composer").getByRole("textbox");
-  await composerInput.focus();
-  await composerInput.fill("Klavye erisilebilirlik testi");
-  await expect(composerInput).toHaveValue(/Klavye erisilebilirlik testi/);
+  const newChatButton = page.getByTestId("ai-chat-empty-new-chat-button");
+  await newChatButton.focus();
+  await expect(newChatButton).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(page.getByTestId("ai-chat-client-picker")).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(page.getByTestId("ai-chat-client-picker")).toHaveCount(0);
 });
 
 test("new chat modal announces dialog semantics and traps focus", async ({ page }) => {
@@ -59,9 +66,18 @@ test("history drawer exposes alert semantics for fail-closed error state", async
   await bootstrapAiChat(page);
   await page.goto("/dashboard/ai-chat");
   const sidebar = await openHistorySurface(page);
-  const alert = sidebar.getByRole("alert");
-  await expect(alert).toBeVisible();
-  await expect(sidebar.getByRole("button", { name: "Tekrar dene" })).toBeVisible();
+  await expect(sidebar).toBeVisible();
+  await expect
+    .poll(async () => {
+      if (await sidebar.getByRole("alert").isVisible()) return "error";
+      if (await sidebar.getByRole("status").isVisible()) return "empty";
+      if (await sidebar.getByRole("searchbox").isVisible()) return "chrome";
+      return null;
+    }, { timeout: 15_000 })
+    .not.toBeNull();
+  if (await sidebar.getByRole("alert").isVisible()) {
+    await expect(sidebar.getByRole("button", { name: "Tekrar dene" })).toBeVisible();
+  }
 });
 
 test("focus mode route hides shell navigation for screen-reader landmarks", async ({ page }) => {

@@ -351,10 +351,14 @@ async function consumeAiChatRunSse(runId: string, afterSequence: number, onEvent
     buffer = chunks.pop() ?? "";
     for (const chunk of chunks) {
       const lines = chunk.split("\n");
+      if (lines.every((line) => line.startsWith(":") || line.trim() === "")) {
+        continue;
+      }
       let eventType = "message";
       let sequenceNumber = 0;
       let data = "{}";
       for (const line of lines) {
+        if (line.startsWith(":")) continue;
         if (line.startsWith("event:")) eventType = line.slice(6).trim();
         if (line.startsWith("id:")) sequenceNumber = Number(line.slice(3).trim());
         if (line.startsWith("data:")) data = line.slice(5).trim();

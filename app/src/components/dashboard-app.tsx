@@ -77,7 +77,6 @@ import { ClientsPanel } from "@/components/dashboard/clients-panel";
 import { ConversationPanel } from "@/components/dashboard/conversation-panel";
 import { MessagingPanel } from "@/components/dashboard/messaging-panel";
 import { SimulatorPanel } from "@/components/dashboard/simulator-panel";
-import { CopilotPanel } from "@/components/dashboard/copilot-panel";
 import { VoicePanel } from "@/components/dashboard/voice-panel";
 import { FormsPanel } from "@/components/dashboard/forms-panel";
 import { useMobileKeyboardScroll } from "@/components/dashboard/mobile-ergonomics";
@@ -122,13 +121,6 @@ export function DashboardApp({
     activateMenuPlan,
     updateDietitianPreferences,
     addClientContextUpdate,
-    sendInternalCopilotMessage,
-    rejectClientUpdateProposal,
-    createContextIntakeProposal,
-    confirmContextIntakeProposal,
-    recheckContextIntakeProposal,
-    applyContextIntakeProposal,
-    rejectContextIntakeProposal,
     mergeConversationDetailIntoState,
     mergeConversationMutationIntoState,
   } = useManuState();
@@ -169,9 +161,6 @@ export function DashboardApp({
   const [schemaLanguage, setSchemaLanguage] = useState<SupportedLanguageCode>("tr");
   const [schemaFieldsRaw, setSchemaFieldsRaw] = useState("daily_routine | Daily routine | textarea | prompt_allowed");
   const [formAnswersRaw, setFormAnswersRaw] = useState("");
-  const [copilotInput, setCopilotInput] = useState("");
-  const [isCopilotSending, setIsCopilotSending] = useState(false);
-  const [isProposalUpdating, setIsProposalUpdating] = useState(false);
   const [isActivatingAi, setIsActivatingAi] = useState(false);
   const [isReleasingHumanTakeover, setIsReleasingHumanTakeover] = useState(false);
   const [isEvaluatingWithAi, setIsEvaluatingWithAi] = useState(false);
@@ -183,8 +172,6 @@ export function DashboardApp({
   const [contextUpdateTitle, setContextUpdateTitle] = useState("");
   const [contextUpdateSummary, setContextUpdateSummary] = useState("");
   const [contextUpdateDetails, setContextUpdateDetails] = useState("");
-  const [intakeSourceText, setIntakeSourceText] = useState("");
-  const [intakeSource, setIntakeSource] = useState<ClientContextUpdateSource>("phone");
 
   const activeClients = useMemo(
     () => state.clients.filter((client) => client.lifecycleStatus !== "removed_anonymized"),
@@ -283,7 +270,7 @@ export function DashboardApp({
     if (urlState.clientId && activeClients.some((client) => client.id === urlState.clientId)) {
       return urlState.clientId;
     }
-    if (section === "clients" || section === "simulator" || section === "copilot" || section === "forms") {
+    if (section === "clients" || section === "simulator" || section === "forms") {
       return activeClients[0]?.id ?? null;
     }
     return null;
@@ -312,21 +299,6 @@ export function DashboardApp({
       .filter((update) => update.clientId === selectedClient.id)
       .sort((a, b) => new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime());
   }, [selectedClient, state.clientContextUpdates]);
-
-  const selectedUpdateProposals = useMemo(() => {
-    if (!selectedClient) return [];
-    return state.clientUpdateProposals
-      .filter((proposal) => proposal.clientId === selectedClient.id)
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-  }, [selectedClient, state.clientUpdateProposals]);
-
-  const selectedContextIntakeProposals = useMemo(() => {
-    if (!selectedClient) return [];
-    return state.contextIntakeProposals
-      .filter((proposal) => proposal.clientId === selectedClient.id)
-      .filter((proposal) => !["applied", "rejected", "stale", "expired"].includes(proposal.status))
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-  }, [selectedClient, state.contextIntakeProposals]);
 
   const metrics = useMemo(() => {
     const pendingDrafts = state.messages.filter((message) => message.status === "draft").length;
@@ -564,11 +536,6 @@ export function DashboardApp({
     }
   };
 
-  const openClientPanelFromConversation = (panelKey: string) => {
-    if (!selectedClient) return;
-    selectClient(selectedClient.id, { section: "clients", clientDetailTab: panelKey as ClientDetailTab });
-  };
-
   const openAlertTarget = (alert: ClinicalAlertListItem) => {
     const patch = buildClinicalAlertMessagingNavigationPatch(alert);
     if (!patch) return;
@@ -654,55 +621,6 @@ export function DashboardApp({
     await activateMenuPlan(selectedClient.id, planId);
   };
 
-  const askInternalCopilot = async (body = copilotInput) => {
-    const trimmed = body.trim();
-    if (!trimmed || isCopilotSending) return;
-    setIsCopilotSending(true);
-    try {
-      await sendInternalCopilotMessage(trimmed);
-      setCopilotInput("");
-      navigateToSection("copilot");
-    } finally {
-      setIsCopilotSending(false);
-    }
-  };
-
-  const rejectSelectedProposal = async (proposalId: string) => {
-    if (!selectedClient || isProposalUpdating) return;
-    setIsProposalUpdating(true);
-    try {
-      await rejectClientUpdateProposal(selectedClient.id, proposalId);
-    } finally {
-      setIsProposalUpdating(false);
-    }
-  };
-
-  const createSelectedContextIntakeProposal = async () => {
-    if (!selectedClient || isProposalUpdating || !intakeSourceText.trim()) return;
-    setIsProposalUpdating(true);
-    try {
-      await createContextIntakeProposal(selectedClient.id, {
-        sourceText: intakeSourceText,
-        intakeSource,
-        confirmFullName: selectedClient.fullName,
-        confirmPhoneE164: selectedClient.primaryPhoneE164 || undefined,
-      });
-      setIntakeSourceText("");
-    } finally {
-      setIsProposalUpdating(false);
-    }
-  };
-
-  const runContextIntakeAction = async (action: (clientId: string, proposalId: string) => Promise<unknown>, proposalId: string) => {
-    if (!selectedClient || isProposalUpdating) return;
-    setIsProposalUpdating(true);
-    try {
-      await action(selectedClient.id, proposalId);
-    } finally {
-      setIsProposalUpdating(false);
-    }
-  };
-
   const addSelectedContextUpdate = async () => {
     if (!selectedClient) return;
     await addClientContextUpdate(selectedClient.id, {
@@ -718,7 +636,7 @@ export function DashboardApp({
     setContextUpdateDetails("");
   };
 
-  const viewsWithMobileStickyActions: DashboardSection[] = ["messages", "simulator", "copilot"];
+  const viewsWithMobileStickyActions: DashboardSection[] = ["messages", "simulator"];
   const mainMobilePadding = viewsWithMobileStickyActions.includes(section)
     ? "lg:pb-5"
     : "pb-mobile-nav lg:pb-5";
@@ -878,10 +796,6 @@ export function DashboardApp({
                 onCreateMenuPlan={createSelectedMenuPlan}
                 onSaveMenuPlan={saveSelectedMenuPlan}
                 onActivateMenuPlan={activateSelectedMenuPlan}
-                copilotInput={copilotInput}
-                isCopilotSending={isCopilotSending}
-                onCopilotInput={setCopilotInput}
-                onAskCopilot={askInternalCopilot}
                 onSaveFormResponse={saveSelectedFormResponse}
                 aiChatEnabled={aiChatEnabled}
                 onEvaluateWithAi={evaluateClientWithAi}
@@ -1057,31 +971,6 @@ export function DashboardApp({
                 onLoadMore={() => void stage4bInbox.loadMoreNotifications()}
                 onOpenNotificationTarget={openNotificationTarget}
                 onMutationComplete={() => refreshStage4B2Surfaces({ anchorMessageId: urlState.messageId })}
-              />
-            )}
-
-            {section === "copilot" && selectedClient && (
-              <CopilotPanel
-                state={state}
-                selectedClient={selectedClient}
-                input={copilotInput}
-                isSending={isCopilotSending}
-                isProposalUpdating={isProposalUpdating}
-                updateProposals={selectedUpdateProposals}
-                contextIntakeProposals={selectedContextIntakeProposals}
-                intakeSource={intakeSource}
-                intakeSourceText={intakeSourceText}
-                onIntakeSource={setIntakeSource}
-                onIntakeSourceText={setIntakeSourceText}
-                onCreateContextIntakeProposal={createSelectedContextIntakeProposal}
-                onConfirmContextIntakeProposal={(proposalId) => runContextIntakeAction(confirmContextIntakeProposal, proposalId)}
-                onRecheckContextIntakeProposal={(proposalId) => runContextIntakeAction(recheckContextIntakeProposal, proposalId)}
-                onApplyContextIntakeProposal={(proposalId) => runContextIntakeAction(applyContextIntakeProposal, proposalId)}
-                onRejectContextIntakeProposal={(proposalId) => runContextIntakeAction(rejectContextIntakeProposal, proposalId)}
-                onInput={setCopilotInput}
-                onAsk={askInternalCopilot}
-                onRejectProposal={rejectSelectedProposal}
-                onOpenClientPanel={openClientPanelFromConversation}
               />
             )}
 

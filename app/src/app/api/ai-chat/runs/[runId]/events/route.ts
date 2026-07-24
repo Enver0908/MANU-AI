@@ -1,15 +1,14 @@
 import {
-  AI_CHAT_SSE_HEARTBEAT_MS,
-  AI_CHAT_SSE_WINDOW_MS,
-  isNonTerminalAiChatRunStatus,
-} from "@/lib/phase-85-stage-4c-contracts";
-import {
   assertRunOwnedByUser,
-  createHeartbeatRunEvent,
   parseRunEventsAfterParam,
-  runEventsToSseChunk,
 } from "@/lib/phase-85-stage-4c-run-service";
 import { withAiChatRoute } from "@/lib/phase-85-stage-4c-route";
+import { createAiChatRunEventSseStream } from "@/lib/phase-85-stage-4c-run-event-stream";
+import {
+  createInMemoryRunEventMultiplexerDeps,
+  createSupabaseRunEventMultiplexerDeps,
+} from "@/lib/phase-85-stage-4c-run-event-multiplexer";
+import { getSupabaseAdminClient } from "@/lib/supabase";
 
 type RouteContext = {
   params: Promise<{ runId: string }>;
@@ -22,43 +21,29 @@ export async function GET(request: Request, context: RouteContext) {
 
   return withAiChatRoute("read", async (tenantContext, store) => {
     await assertRunOwnedByUser(store, tenantContext, runId);
-    const encoder = new TextEncoder();
-    const startedAt = Date.now();
-    let lastSequence = afterSequence;
-    let lastHeartbeatAt = Date.now();
+    const supabase = getSupabaseAdminClient();
+    const deps = supabase
+      ? createSupabaseRunEventMultiplexerDeps(supabase, {
+          tenantId: tenantContext.tenantId,
+          userId: tenantContext.userId,
+          dietitianId: tenantContext.dietitianId,
+          role: tenantContext.role,
+          runId,
+        })
+      : createInMemoryRunEventMultiplexerDeps((after) =>
+          store.listRunEvents(tenantContext, runId, after),
+        );
 
-    const stream = new ReadableStream({
-      async start(controller) {
-        try {
-          while (Date.now() - startedAt < AI_CHAT_SSE_WINDOW_MS) {
-            const events = await store.listRunEvents(tenantContext, runId, lastSequence);
-            for (const event of events) {
-              if (event.sequenceNumber <= lastSequence) continue;
-              lastSequence = event.sequenceNumber;
-              controller.enqueue(encoder.encode(runEventsToSseChunk(event)));
-            }
-
-            const latestRun = await store.getRunById(tenantContext.tenantId, runId);
-            if (!latestRun || !isNonTerminalAiChatRunStatus(latestRun.status)) {
-              break;
-            }
-
-            if (Date.now() - lastHeartbeatAt >= AI_CHAT_SSE_HEARTBEAT_MS) {
-              const heartbeat = await store.appendRunEvent(
-                tenantContext.tenantId,
-                runId,
-                createHeartbeatRunEvent(),
-              );
-              controller.enqueue(encoder.encode(runEventsToSseChunk(heartbeat)));
-              lastHeartbeatAt = Date.now();
-            }
-
-            await new Promise((resolve) => setTimeout(resolve, 250));
-          }
-        } finally {
-          controller.close();
-        }
+    const stream = createAiChatRunEventSseStream({
+      tenantId: tenantContext.tenantId,
+      runId,
+      afterSequence,
+      signal: request.signal,
+      getRunStatus: async () => {
+        const run = await store.getRunById(tenantContext.tenantId, runId);
+        return run?.status ?? null;
       },
+      deps,
     });
 
     return new Response(stream, {

@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { computeVirtualizedMessageRange, resolveActiveMessageVersion } from "./ai-chat-message-list";
+import {
+  buildMessageHeightOffsets,
+  computeMeasuredVirtualizedMessageRange,
+  computeVirtualizedMessageRange,
+  measurePrependedBlockHeight,
+  resolveScrollTopAfterPrepend,
+  resolveActiveMessageVersion,
+} from "./ai-chat-message-list";
 import type { AiChatMessageDto, AiChatMessageVersionDto } from "@/lib/phase-85-stage-4c-contracts";
 
 function buildVersion(overrides: Partial<AiChatMessageVersionDto>): AiChatMessageVersionDto {
@@ -79,5 +86,41 @@ describe("computeVirtualizedMessageRange", () => {
   it("clamps the end of the range to the total count", () => {
     const range = computeVirtualizedMessageRange(5, 0, 2000, 100, 3);
     expect(range.end).toBe(5);
+  });
+});
+
+describe("measured message virtualization", () => {
+  it("builds cumulative offsets from measured heights with conservative fallback", () => {
+    const heights = new Map<string, number>([
+      ["m1", 120],
+      ["m2", 80],
+    ]);
+    const { offsets, totalHeight } = buildMessageHeightOffsets(["m1", "m2", "m3"], heights);
+    expect(offsets).toEqual([0, 132, 224]);
+    expect(totalHeight).toBe(320);
+  });
+
+  it("preserves scroll position after prepending older messages", () => {
+    const heights = new Map<string, number>([
+      ["old-1", 100],
+      ["old-2", 120],
+      ["visible", 96],
+    ]);
+    const prependedHeight = measurePrependedBlockHeight(["old-1", "old-2"], heights);
+    expect(resolveScrollTopAfterPrepend({ previousScrollTop: 240, prependedHeight })).toBe(472);
+  });
+
+  it("windows around measured offsets instead of a fixed estimate", () => {
+    const heights = new Map<string, number>([
+      ["m1", 200],
+      ["m2", 40],
+      ["m3", 300],
+      ["m4", 60],
+    ]);
+    const range = computeMeasuredVirtualizedMessageRange(["m1", "m2", "m3", "m4"], heights, 180, 220);
+    expect(range.start).toBe(0);
+    expect(range.end).toBeGreaterThan(0);
+    expect(range.spacerBefore).toBe(0);
+    expect(range.spacerAfter).toBeGreaterThanOrEqual(0);
   });
 });

@@ -45,7 +45,6 @@ export type ClientDetailTab =
   | "tab_menu"
   | "tab_ai_assistant"
   | "tab_critical_context"
-  | "tab_copilot"
   | "tab_export";
 
 export type IconComponent = typeof Activity;

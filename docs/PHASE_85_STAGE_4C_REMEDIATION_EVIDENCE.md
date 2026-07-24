@@ -1,13 +1,51 @@
 # Phase 85 Stage 4C Remediation Evidence
 
 Date: 2026-07-25
-Status: **Faz 6 complete locally with RLS blocked (Docker/local Supabase unavailable)**
+Status: **Faz 7 complete locally with RLS blocked (Docker/local Supabase unavailable)**
 
 Production remains `NO-GO`. R-405 remains open.
 
 Authority plan: `docs/PHASE_85_STAGE_4C_REMEDIATION_ACTION_PLAN.md` (from user remediation plan 2026-07-25).
 
 Historical `PASS_LOCAL_STAGE_4C` claims are superseded by remediation-required status until Faz 8 hard-zero closure passes with zero-skip RLS.
+
+## Faz 7: Ölçeklenebilir SSE, UI Dayanıklılığı ve Eski Copilot İzolasyonu
+
+Status: **complete locally (code + targeted tests); local Supabase fixture tests blocked**
+
+### Delivered
+
+- Migration `20260725140000_phase_85_stage_4c_remediation_event_stream.sql`:
+  - idempotent `ai_chat_run_events` Realtime publication
+  - bounded `p85_stage_4c_catch_up_run_events_v1` RPC (service-role only)
+- `phase-85-stage-4c-run-event-multiplexer.ts`: process-local ref-count fan-out, realtime + adaptive 1s→4s polling fallback, abort cleanup
+- `phase-85-stage-4c-run-event-stream.ts` + SSE route rewrite:
+  - comment heartbeats (`: heartbeat`) with zero DB writes
+  - 25s window + `afterSequence` reconnect
+  - terminal event closes stream
+- `ai-chat-message-list.tsx`: `ResizeObserver` height cache, measured virtual range, scroll anchor on prepend
+- `use-ai-chat.ts`: ignores SSE comment heartbeats
+- Legacy copilot render paths removed from `dashboard-app.tsx` and `clients-panel.tsx`; navigation remains `/dashboard/ai-chat` only
+- `phase-85-stage-4c-isolation.ts` + tests block internal-copilot imports and legacy endpoint usage in Stage 4C surfaces
+
+### Verification
+
+| Command | Result |
+| --- | --- |
+| `npm run typecheck` | pass |
+| `npm run lint` | pass (warnings only) |
+| `npx vitest run src/lib/phase-85-stage-4c-run-event-multiplexer.test.ts src/lib/phase-85-stage-4c-event-stream-migration.test.ts src/lib/phase-85-stage-4c-isolation.test.ts src/components/ai-chat/ai-chat-message-list.test.ts` | 17/17 pass |
+| `npx playwright test tests/visual/ai-chat.visual.spec.ts tests/visual/ai-chat.accessibility.spec.ts` | 80 passed, 5 skipped (desktop-only drawer tests) |
+| `npm run test:rls` | **blocked** — Docker/local Supabase unavailable |
+
+### Open Blockers After Faz 7
+
+- Apply event-stream migration to local Supabase and verify Realtime catch-up + multiplexer fan-out under RLS
+- Production remains `NO-GO`; R-405 remains open
+
+### Next
+
+Faz 8: Gerçek PostgreSQL Ölçek Rehearsal’ı, Hard-Zero Kapısı ve Nihai Kapanış
 
 ## Faz 6: Güvenli Silme, Attachment Sahipliği, Retention ve Tenant-Bağlı DSAR
 

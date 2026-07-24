@@ -10,7 +10,6 @@ import {
   PhoneCall,
   Plus,
   Search,
-  Send,
   Sparkles,
   UserX,
   UtensilsCrossed,
@@ -111,10 +110,6 @@ export function ClientsPanel({
   onCreateMenuPlan,
   onSaveMenuPlan,
   onActivateMenuPlan,
-  copilotInput,
-  isCopilotSending,
-  onCopilotInput,
-  onAskCopilot,
   onSaveFormResponse,
   aiChatEnabled = false,
   onEvaluateWithAi,
@@ -169,10 +164,6 @@ export function ClientsPanel({
   onCreateMenuPlan: (templateType: Phase77FMenuPlanTemplateType) => Promise<void>;
   onSaveMenuPlan: (plan: Omit<ClientMenuPlanV1State, "conflicts">) => Promise<void>;
   onActivateMenuPlan: (planId: string) => Promise<void>;
-  copilotInput: string;
-  isCopilotSending: boolean;
-  onCopilotInput: (value: string) => void;
-  onAskCopilot: (body?: string) => void;
   onSaveFormResponse: (input: {
     clientId: string;
     schemaId: string;
@@ -293,10 +284,6 @@ export function ClientsPanel({
         onCreateMenuPlan={onCreateMenuPlan}
         onSaveMenuPlan={onSaveMenuPlan}
         onActivateMenuPlan={onActivateMenuPlan}
-        copilotInput={copilotInput}
-        isCopilotSending={isCopilotSending}
-        onCopilotInput={onCopilotInput}
-        onAskCopilot={onAskCopilot}
         onSaveFormResponse={onSaveFormResponse}
         aiChatEnabled={aiChatEnabled}
         onEvaluateWithAi={onEvaluateWithAi}
@@ -345,10 +332,6 @@ function ClientDetailForm({
   onCreateMenuPlan,
   onSaveMenuPlan,
   onActivateMenuPlan,
-  copilotInput,
-  isCopilotSending,
-  onCopilotInput,
-  onAskCopilot,
   onSaveFormResponse,
 }: {
   client: ClientRecord;
@@ -388,10 +371,6 @@ function ClientDetailForm({
   onCreateMenuPlan: (templateType: Phase77FMenuPlanTemplateType) => Promise<void>;
   onSaveMenuPlan: (plan: Omit<ClientMenuPlanV1State, "conflicts">) => Promise<void>;
   onActivateMenuPlan: (planId: string) => Promise<void>;
-  copilotInput: string;
-  isCopilotSending: boolean;
-  onCopilotInput: (value: string) => void;
-  onAskCopilot: (body?: string) => void;
   onSaveFormResponse: (input: {
     clientId: string;
     schemaId: string;
@@ -616,17 +595,6 @@ function ClientDetailForm({
           />
         )}
 
-        {activeTab === "tab_copilot" && (
-          <ClientScopedCopilotTab
-            client={client}
-            state={state}
-            input={copilotInput}
-            isSending={isCopilotSending}
-            onInput={onCopilotInput}
-            onAsk={onAskCopilot}
-          />
-        )}
-
         {activeTab === "tab_export" && (
           <ClientExportTab
             client={client}
@@ -737,86 +705,6 @@ function ClientDetailStatusSummary({
         <button type="button" onClick={() => onNavigate("tab_critical_context")} className="flex min-h-11 w-full items-center justify-between gap-3 rounded-lg bg-stone-50 px-3 py-2 text-left text-sm transition hover:bg-stone-100">
           <span className="text-stone-600">{t(uiLanguage, "tabCriticalContext")}</span>
           <span className="text-xs font-medium text-stone-700">{activeContextCount} active</span>
-        </button>
-      </div>
-    </div>
-  );
-}
-
-function ClientScopedCopilotTab({
-  client,
-  state,
-  input,
-  isSending,
-  onInput,
-  onAsk,
-}: {
-  client: ClientRecord;
-  state: ManuAppState;
-  input: string;
-  isSending: boolean;
-  onInput: (value: string) => void;
-  onAsk: (body?: string) => void;
-}) {
-  const messages = state.internalCopilotMessages.slice(-20);
-  const quickPrompts = [
-    `${client.fullName} son durumu`,
-    `${client.fullName} diyet plan ozeti`,
-    `${client.fullName} besin kurallari`,
-  ];
-
-  return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap gap-2">
-        {quickPrompts.map((prompt) => (
-          <button
-            key={prompt}
-            onClick={() => onAsk(prompt)}
-            className="rounded-lg border border-stone-200 px-3 py-2 text-sm font-semibold text-stone-700 transition hover:bg-stone-50"
-            type="button"
-          >
-            {prompt}
-          </button>
-        ))}
-      </div>
-      <div className="min-h-[240px] space-y-3 rounded-lg border border-stone-100 bg-stone-50 p-3">
-        {messages.length === 0 ? (
-          <p className="p-4 text-sm text-stone-500">
-            Ask about this client&apos;s status, diet plan, food rules, recent messages, or AI decisions.
-          </p>
-        ) : (
-          messages.map((message) => (
-            <div
-              key={message.id}
-              className={`max-w-3xl rounded-lg border p-3 ${
-                message.role === "user"
-                  ? "ml-auto border-emerald-200 bg-emerald-50"
-                  : "border-stone-200 bg-white"
-              }`}
-            >
-              <p className="text-xs font-semibold uppercase text-stone-500">{message.role}</p>
-              <p className="mt-1 whitespace-pre-wrap text-sm leading-6 text-stone-800">{message.body}</p>
-            </div>
-          ))
-        )}
-      </div>
-      <div className="flex flex-col gap-2 sm:flex-row">
-        <input
-          value={input}
-          onChange={(event) => onInput(event.target.value)}
-          onKeyDown={(event) => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); onAsk(); } }}
-          enterKeyHint="send"
-          className="min-h-11 flex-1 rounded-lg border border-stone-200 bg-white px-3 py-2 text-base outline-none transition focus:border-emerald-700 sm:text-sm"
-          placeholder={`${client.fullName} hakkinda soru sor...`}
-        />
-        <button
-          onClick={() => onAsk()}
-          disabled={isSending}
-          className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-emerald-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-900 disabled:cursor-not-allowed disabled:opacity-60"
-          type="button"
-        >
-          <Send size={16} />
-          Ask
         </button>
       </div>
     </div>
