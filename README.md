@@ -4,7 +4,7 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 ## Current Status
 
-**Current authority (2026-07-22):** Stage 4C Diyetisyen Icin AI Chat Faz 3 bounded service layer, CRUD API, and client search is complete locally. Active plan: `docs/PHASE_85_STAGE_4C_DIYETISYEN_AI_CHAT_ACTION_PLAN.md`; active evidence: `docs/PHASE_85_STAGE_4C_EVIDENCE.md`. **Next:** Stage 4C Faz 4 - Dashboard AI Chat Arayuzu after explicit user approval. R-405 remains open; production remains `NO-GO`.
+**Current authority (2026-07-24):** Stage 4C Faz 11 local closure complete (`PASS_LOCAL_STAGE_4C` sample rehearsal). Evidence: `docs/PHASE_85_STAGE_4C_EVIDENCE.md`. **Next:** explicit user approval for Stage 4C local closure sign-off. R-405 remains open; production remains `NO-GO`.
 
 **2026-07-18 Stage 4B-4 post-closure remediation R9:** R0-R9 is closed locally with local Supabase RLS 41/41 zero-skip, full-scale voice closure, release verification, visual acceptance, channel replay, and risk reconciliation. Evidence: `docs/PHASE_85_STAGE_4B_4_POST_CLOSURE_REMEDIATION_R9_EVIDENCE.md`.
 

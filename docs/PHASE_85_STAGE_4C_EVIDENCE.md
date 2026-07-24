@@ -1,7 +1,7 @@
 # Phase 85 Stage 4C Evidence
 
-Date: 2026-07-23
-Status: **Faz 10 complete locally; Faz 11 is next (requires explicit user approval)**
+Date: 2026-07-24
+Status: **Faz 11 complete locally — Stage 4C local closure (`PASS_LOCAL_STAGE_4C`) pending explicit user approval**
 
 Production remains `NO-GO`. R-405 remains open.
 
@@ -344,8 +344,52 @@ Completed locally on 2026-07-23.
 
 ### Open Blockers After Faz 10
 
-- Faz 11 security/clinical closure requires explicit user approval
+- ~~Faz 11 security/clinical closure requires explicit user approval~~ (completed locally 2026-07-24)
 - Supabase lifecycle RPC path remains stubbed; in-memory lifecycle is local closure authority
+
+## Faz 11: Guvenlik Sertlestirme, Klinik Degerlendirme ve Stage 4C Kapanisi
+
+Completed locally on 2026-07-24.
+
+### Delivered
+
+- `dietitian-ai-assistant/tests/dietitian-chat-golden-cases.jsonl` — 240 synthetic golden cases (category-balanced, ≥10 true red)
+- `dietitian-ai-assistant/tests/dietitian-chat-red-team-cases.jsonl` — 105 adversarial cases (7 red-team categories)
+- `app/src/lib/phase-85-stage-4c-golden-corpus-catalog.ts` — deterministic corpus generator + sync helpers
+- `app/src/lib/phase-85-stage-4c-closure.ts` — closure evaluator, hard-zero metrics, scale rehearsal, `PASS_LOCAL_STAGE_4C` verdict
+- `app/src/lib/phase-85-stage-4c-closure.test.ts` — program closure tests
+- `dietitian-ai-assistant/tests/dietitian-chat-golden-corpus.test.mjs` + `dietitian-chat-red-team-corpus.test.mjs`
+- `app/scripts/rehearse-stage-4c-ai-chat.mjs` + `npm run rehearse:stage-4c`
+- `app/tests/visual/ai-chat.accessibility.spec.ts` — keyboard, dialog semantics, axe serious/critical gate
+- Extended `app/tests/visual/ai-chat.visual.spec.ts` — focus-mode snapshots on four canonical viewports
+
+### Verification (Faz 11)
+
+| Command | Result |
+| --- | --- |
+| `npm --prefix dietitian-ai-assistant test` (golden + red-team corpus tests) | 6/6 pass |
+| `npx vitest run src/lib/phase-85-stage-4c-closure.test.ts` | 12/12 pass |
+| `npm run lint` | pass |
+| `npm run typecheck` | pass |
+| `npx vitest run src --exclude src/lib/supabase-rls.integration.test.ts` | 1336 passed, 8 skipped; 1 pre-existing `phase-85-stage-4b3-closure` timeout (unrelated) |
+| `npm run build` | pass |
+| `npm run test:rls` | not re-run this session — local Supabase reset still required for zero-skip closure evidence |
+| `npm run rehearse:stage-4c` | wired; full chain requires local Supabase RLS zero-skip |
+| `npm run release:verify` | not re-run this session |
+
+### Closure Outcome
+
+- Sample closure rehearsal: **pass** (golden + red-team + scale latency targets + copilot isolation + production provider flags closed)
+- Program closure verdict with full verification input: **`PASS_LOCAL_STAGE_4C`** when all gates pass including RLS zero-skip
+- Production pilot: **`NO-GO`**
+- R-405: **open**
+- Real provider/web/OCR/STT flags: **closed**
+
+### Open Blockers After Faz 11
+
+- Explicit user approval required for Stage 4C local closure sign-off
+- Apply migrations to local Supabase and rerun `npm run test:rls` with **zero skipped** before claiming full `rehearse:stage-4c` pass
+- Production remains `NO-GO`; R-405 remains open
 
 ## Faz 7: Kaynak Kayit Defteri, Answerability ve Kaynakli Klinik Yanit
 

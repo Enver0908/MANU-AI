@@ -1,6 +1,8 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
+const FOCUS_SNAPSHOT_PROJECTS = new Set(["desktop", "desktop-xl", "tablet", "mobile-android"]);
+
 test.describe.configure({ timeout: 120_000 });
 
 async function bootstrapAiChat(page: Page) {
@@ -213,6 +215,26 @@ test("AI Chat empty workspace visual snapshot", async ({ page }) => {
   await expect(page.getByTestId("ai-chat-empty-new-chat-button")).toBeVisible();
 
   await expect(page).toHaveScreenshot("ai-chat-empty-workspace.png", {
+    animations: "disabled",
+    maxDiffPixels: 400,
+  });
+});
+
+test("AI Chat focus mode visual snapshot", async ({ page }, testInfo) => {
+  test.skip(!FOCUS_SNAPSHOT_PROJECTS.has(testInfo.project.name), "focus snapshots run on four canonical viewports only");
+  await bootstrapAiChat(page);
+  await page.goto("/dashboard/ai-chat?focus=1");
+  await expect(page.getByTestId("ai-chat-workspace")).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Panel görünümleri" })).toHaveCount(0);
+
+  const sidebar = await openHistorySurface(page);
+  await expect(sidebar.getByRole("alert")).toBeVisible();
+  if (await isCompactViewport(page)) {
+    await page.getByTestId("ai-chat-drawer-backdrop").click();
+    await expect(page.getByTestId("ai-chat-history-drawer")).toHaveCount(0);
+  }
+
+  await expect(page).toHaveScreenshot("ai-chat-focus-workspace.png", {
     animations: "disabled",
     maxDiffPixels: 400,
   });
