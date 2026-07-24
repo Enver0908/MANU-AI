@@ -99,6 +99,31 @@ export function isRetrievalEligibleMessageRow(row: {
   return true;
 }
 
+export function verifyGeneralScopeEvidenceRow(
+  row: CanonicalEvidenceRow,
+): { ok: true } | { ok: false; reason: string } {
+  if (row.clientId) {
+    return { ok: false, reason: "general_scope_client_id_forbidden" };
+  }
+  if (row.sourceType !== "approved_clinical_source") {
+    return { ok: false, reason: "general_scope_source_type_forbidden" };
+  }
+  if (!row.retrievalEligible) {
+    return { ok: false, reason: "retrieval_ineligible" };
+  }
+  if (row.lifecycleStatus === "deleted" || row.lifecycleStatus === "superseded") {
+    return { ok: false, reason: row.lifecycleStatus };
+  }
+  if (!row.excerpt.trim()) {
+    return { ok: false, reason: "empty_excerpt" };
+  }
+  return { ok: true };
+}
+
+export function rowViolatesGeneralScopePhiPolicy(row: CanonicalEvidenceRow) {
+  return Boolean(row.clientId) || row.sourceType === "client_record";
+}
+
 export function verifyCanonicalEvidenceRow(
   row: CanonicalEvidenceRow,
   expectedClientId: string,

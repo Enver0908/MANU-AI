@@ -107,6 +107,7 @@ import {
   createDefaultClientGatewayFixture,
   executeInMemoryContextTool,
   toAccessibleClientIdentity,
+  wrapContextToolExecutionResult,
   type ClientGatewayFixture,
 } from "./phase-85-stage-4c-context-fixtures";
 import {
@@ -1579,12 +1580,27 @@ export const inMemoryAiChatStore: AiChatStore = {
   },
 
   async executeContextGatewayTool(input) {
+    if (input.tool === "search_approved_sources") {
+      return executeInMemoryContextTool(
+        getInMemoryClientGatewayFixture(input.clientId ?? "general-scope", "General"),
+        input.tool,
+        input.args,
+        { approvedSources: inMemoryState.approvedSources },
+      );
+    }
     const client = inMemoryState.clients.find(
       (item) => item.tenantId === input.tenantId && item.id === input.clientId,
     );
+    if (!input.clientId || !client) {
+      return wrapContextToolExecutionResult(input.tool, [], {
+        status: "failed",
+        errorCode: "context_tool_client_required",
+        categoryFailed: true,
+      });
+    }
     const fixture = getInMemoryClientGatewayFixture(
       input.clientId,
-      client?.fullName ?? "Client",
+      client.fullName,
     );
     return executeInMemoryContextTool(fixture, input.tool, input.args, {
       ...input.options,

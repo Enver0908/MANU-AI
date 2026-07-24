@@ -4,6 +4,7 @@ import {
   AI_CHAT_CONTEXT_TOOLS,
   classifyDietitianChatIntentFromSignals,
   DIETITIAN_CHAT_INTENTS,
+  isGeneralClinicalQuery,
   planDietitianChatContextTools,
 } from "../src/dietitian-chat-context-policy.js";
 
@@ -23,10 +24,18 @@ describe("dietitian chat context policy", () => {
     );
   });
 
-  it("plans zero client tools for general scope", () => {
+  it("plans zero client tools for non-clinical general scope", () => {
     assert.deepEqual(
-      planDietitianChatContextTools("client_current_status", "general"),
+      planDietitianChatContextTools("client_current_status", "general", "Hello"),
       [],
+    );
+  });
+
+  it("plans approved-source retrieval for general clinical scope", () => {
+    assert.ok(isGeneralClinicalQuery("What is clinical nutrition evidence?"));
+    assert.deepEqual(
+      planDietitianChatContextTools("general_non_client", "general", "Protein kaynaklari"),
+      ["search_approved_sources"],
     );
   });
 

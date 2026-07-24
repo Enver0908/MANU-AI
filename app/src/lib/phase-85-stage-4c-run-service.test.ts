@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import type { AppTenantContext } from "./auth-context";
 import { resetInMemoryAiChatStoreForTests, resolveAiChatStore, seedInMemoryClientGatewayFixture } from "./phase-85-stage-4c-store";
 import {
+  finalizeRunOutcome,
   maybeProcessDeterministicAiChatJobs,
   parseAiChatSendMessageBody,
 } from "./phase-85-stage-4c-run-service";
@@ -40,6 +41,108 @@ describe("reduceAiChatRunEvent", () => {
       payload: { text: "ignored" },
     });
     expect(second.streamingText).toBe("hello");
+  });
+});
+
+describe("finalizeRunOutcome", () => {
+  beforeEach(() => {
+    resetInMemoryAiChatStoreForTests();
+  });
+
+  it("preserves red risk on stopped partial output", async () => {
+    const store = resolveAiChatStore();
+    const conversation = await store.createConversation(tenantContext, {
+      requestId: "create-stop-red",
+      scopeType: "general",
+      clientId: null,
+      title: "Stop red",
+    });
+    const send = await store.sendMessage(tenantContext, conversation.id, {
+      requestId: "send-stop-red",
+      expectedRevision: conversation.revision,
+      body: "__fixture:hello__",
+    });
+
+    await finalizeRunOutcome({
+      store,
+      tenantId: tenantContext.tenantId,
+      runId: send.runId,
+      run: { conversationId: conversation.id, createdByUserId: tenantContext.userId },
+      triggerBody: "__fixture:risk:red__",
+      conversation: {
+        scopeType: "general",
+        clientId: null,
+        id: conversation.id,
+        createdByDietitianId: tenantContext.dietitianId,
+        revision: conversation.revision,
+      },
+      gatewayAccessInput: {
+        tenantId: tenantContext.tenantId,
+        userId: tenantContext.userId,
+        dietitianId: tenantContext.dietitianId,
+        role: "dietitian",
+        scopeType: "general",
+        clientId: null,
+        conversationRevision: conversation.revision,
+      },
+      capturedRevisionToken: null,
+      outcome: {
+        kind: "stopped",
+        partialText: "Partial red answer",
+        providerRiskLevel: "red",
+      },
+    });
+
+    const run = await store.getRunById(tenantContext.tenantId, send.runId);
+    expect(run?.status).toBe("stopped");
+    expect(run?.riskLevel).toBe("red");
+  });
+
+  it("does not create assistant message on empty stop but still records risk", async () => {
+    const store = resolveAiChatStore();
+    const conversation = await store.createConversation(tenantContext, {
+      requestId: "create-stop-empty",
+      scopeType: "general",
+      clientId: null,
+      title: "Stop empty",
+    });
+    const send = await store.sendMessage(tenantContext, conversation.id, {
+      requestId: "send-stop-empty",
+      expectedRevision: conversation.revision,
+      body: "__fixture:hello__",
+    });
+
+    await finalizeRunOutcome({
+      store,
+      tenantId: tenantContext.tenantId,
+      runId: send.runId,
+      run: { conversationId: conversation.id, createdByUserId: tenantContext.userId },
+      triggerBody: "__fixture:risk:yellow__",
+      conversation: {
+        scopeType: "general",
+        clientId: null,
+        id: conversation.id,
+        createdByDietitianId: tenantContext.dietitianId,
+        revision: conversation.revision,
+      },
+      gatewayAccessInput: {
+        tenantId: tenantContext.tenantId,
+        userId: tenantContext.userId,
+        dietitianId: tenantContext.dietitianId,
+        role: "dietitian",
+        scopeType: "general",
+        clientId: null,
+        conversationRevision: conversation.revision,
+      },
+      capturedRevisionToken: null,
+      outcome: { kind: "stopped", partialText: "   " },
+    });
+
+    const detail = await store.loadConversation(tenantContext, conversation.id, { messageLimit: 20 });
+    expect(detail.messages.some((message) => message.role === "assistant")).toBe(false);
+    const run = await store.getRunById(tenantContext.tenantId, send.runId);
+    expect(run?.status).toBe("stopped");
+    expect(run?.riskLevel).toBe("yellow");
   });
 });
 

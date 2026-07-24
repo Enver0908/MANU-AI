@@ -54,7 +54,9 @@ import type {
   AiChatContextSnapshotInput,
   ContextGatewayAccessState,
   ContextToolExecutionResult,
+  ContextToolExecutionStatus,
 } from "./phase-85-stage-4c-context-gateway";
+import { normalizeContextToolExecutionResult } from "./phase-85-stage-4c-context-gateway";
 import { toAccessibleClientIdentity } from "./phase-85-stage-4c-context-fixtures";
 import type { AiChatRunSourceClaimDto, AiChatRunSourcesResponse } from "./phase-85-stage-4c-sources";
 import type { AiChatStore, BranchMessageChainItem } from "./phase-85-stage-4c-store";
@@ -615,13 +617,14 @@ export const supabaseAiChatStore: AiChatStore = {
     });
     if (error) mapRpcError(error);
     const row = (data ?? {}) as Record<string, unknown>;
-    return {
-      tool: input.tool,
-      ok: Boolean(row.ok),
+    const status = (row.status as ContextToolExecutionStatus | undefined) ?? undefined;
+    return normalizeContextToolExecutionResult(input.tool, {
+      status,
+      ok: row.ok === undefined ? undefined : Boolean(row.ok),
       errorCode: (row.error_code as string | undefined) ?? undefined,
       rows: ((row.rows as Array<Record<string, unknown>>) ?? []).map((item) => ({
         sourceId: String(item.source_id),
-        clientId: String(item.client_id),
+        clientId: String(item.client_id ?? ""),
         sourceType: item.source_type as ContextToolExecutionResult["rows"][number]["sourceType"],
         locator: (item.locator as string | null) ?? null,
         excerpt: String(item.excerpt ?? ""),
@@ -633,9 +636,9 @@ export const supabaseAiChatStore: AiChatStore = {
         retrievalEligible: Boolean(item.retrieval_eligible),
         authorityWeight: Number(item.authority_weight ?? 1),
       })),
-      categoryFailed: Boolean(row.category_failed),
-      categoryCritical: Boolean(row.category_critical),
-    };
+      categoryFailed: row.category_failed === undefined ? undefined : Boolean(row.category_failed),
+      categoryCritical: row.category_critical === undefined ? undefined : Boolean(row.category_critical),
+    });
   },
 
   async saveContextSnapshot(input) {

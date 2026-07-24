@@ -19,7 +19,7 @@ export function createDietitianChatRunPlan(input) {
     triggerBody: input.triggerBody,
     scopeType,
   });
-  const toolPlan = planDietitianChatContextTools(intent, scopeType);
+  const toolPlan = planDietitianChatContextTools(intent, scopeType, input.triggerBody);
   return {
     version: DIETITIAN_CHAT_ORCHESTRATOR_VERSION,
     phases: [...RUN_PHASES],

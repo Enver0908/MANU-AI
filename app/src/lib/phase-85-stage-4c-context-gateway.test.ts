@@ -7,6 +7,7 @@ import {
 import {
   buildClientContext,
   detectSecondClientReference,
+  normalizeContextToolExecutionResult,
   parseContextToolArgs,
   planContextTools,
   recheckGatewayAccessBeforeCommit,
@@ -16,6 +17,7 @@ import {
   createLargeClientGatewayFixture,
   executeInMemoryContextTool,
   toAccessibleClientIdentity,
+  wrapContextToolExecutionResult,
 } from "./phase-85-stage-4c-context-fixtures";
 import {
   createDisabledSemanticRetriever,
@@ -66,7 +68,104 @@ describe("phase-85 stage 4c context gateway", () => {
     }
   });
 
-  it("plans zero client tools in general chat", async () => {
+  it("plans approved-source retrieval for general clinical queries", async () => {
+    const tools = planContextTools("general_non_client", "general", "What is protein intake evidence?");
+    expect(tools).toEqual(["search_approved_sources"]);
+
+    const result = await buildClientContext({
+      scopeType: "general",
+      clientId: null,
+      triggerBody: "Protein kaynaklari nelerdir?",
+      accessCheck: async () => ({
+        authorized: true,
+        clientId: null,
+        revisionToken: "conversation:1",
+        checkedAt: "2026-07-22T10:00:00.000Z",
+      }),
+      listAccessibleClients: async () => [],
+      executeTool: async (tool, args) =>
+        wrapContextToolExecutionResult(tool, [
+          {
+            sourceId: "approved:1",
+            clientId: "",
+            sourceType: "approved_clinical_source",
+            locator: "approved:1",
+            excerpt: "Protein guidance excerpt.",
+            contentHash: "hash-1",
+            sourceDate: "2026-01-01",
+            updatedAt: "2026-01-01T00:00:00.000Z",
+            occurredAt: null,
+            lifecycleStatus: "current",
+            retrievalEligible: true,
+            authorityWeight: 2,
+          },
+        ]),
+    });
+    expect(result.blocked).toBe(false);
+    if (!result.blocked) {
+      expect(result.toolCalls).toEqual(["search_approved_sources"]);
+      expect(result.evidencePackage.sourceRefs.length).toBeGreaterThan(0);
+      expect(
+        result.evidencePackage.sourceRefs.every((item) => item.sourceType === "approved_clinical_source"),
+      ).toBe(true);
+    }
+  });
+
+  it("blocks general scope when client record evidence leaks into envelope", async () => {
+    const blocked = await buildClientContext({
+      scopeType: "general",
+      clientId: null,
+      triggerBody: "__fixture:general:clinical__",
+      accessCheck: async () => ({
+        authorized: true,
+        clientId: null,
+        revisionToken: "conversation:1",
+        checkedAt: "2026-07-22T10:00:00.000Z",
+      }),
+      listAccessibleClients: async () => [],
+      executeTool: async (tool) =>
+        wrapContextToolExecutionResult(tool, [
+          {
+            sourceId: "client:leak",
+            clientId: clientA,
+            sourceType: "client_record",
+            locator: "clients.profile",
+            excerpt: "Leaked PHI",
+            contentHash: "hash-leak",
+            sourceDate: null,
+            updatedAt: null,
+            occurredAt: null,
+            lifecycleStatus: "current",
+            retrievalEligible: true,
+            authorityWeight: 3,
+          },
+        ]),
+    });
+    expect(blocked.blocked).toBe(true);
+    if (blocked.blocked) {
+      expect(blocked.blockReason).toBe("general_scope_phi_leak");
+    }
+  });
+
+  it("distinguishes ok, empty, and failed tool execution statuses", () => {
+    expect(
+      normalizeContextToolExecutionResult("load_client_profile", {
+        status: "empty",
+        rows: [],
+      }),
+    ).toMatchObject({ status: "empty", ok: false, categoryFailed: false });
+
+    expect(
+      normalizeContextToolExecutionResult("load_client_risk_timeline", {
+        status: "failed",
+        errorCode: "tool_timeout",
+        rows: [],
+        categoryFailed: true,
+      }),
+    ).toMatchObject({ status: "failed", ok: false, categoryCritical: true });
+  });
+
+  it("plans zero client tools in non-clinical general chat", async () => {
     const result = await buildClientContext({
       scopeType: "general",
       clientId: null,
@@ -143,7 +242,7 @@ describe("phase-85 stage 4c context gateway", () => {
       buildGatewayInput({
         executeTool: async (tool, args) => {
           if (tool === "load_client_profile") {
-            return { tool, ok: true, rows: [crossClientRow, fixture.profile!] };
+            return wrapContextToolExecutionResult(tool, [crossClientRow, fixture.profile!]);
           }
           return executeInMemoryContextTool(fixture, tool, args);
         },

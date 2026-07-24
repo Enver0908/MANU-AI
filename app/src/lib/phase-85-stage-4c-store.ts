@@ -153,7 +153,7 @@ export interface AiChatStore {
   listContextGatewayAccessibleClients(tenantId: string): Promise<AccessibleClientIdentity[]>;
   executeContextGatewayTool(input: {
     tenantId: string;
-    clientId: string;
+    clientId: string | null;
     tool: AiChatContextTool;
     args: Record<string, unknown>;
     options?: { failRisk?: boolean; delayMs?: number };

@@ -5,6 +5,7 @@ import {
   shouldAbortDietitianChatRun,
   validateDietitianChatSourcedAnswer,
 } from "dietitian-ai-assistant-architecture";
+import { classifyDietitianChatRisk } from "dietitian-ai-assistant-architecture/risk";
 import type { AppTenantContext } from "./auth-context";
 import { AppRequestError } from "./app-errors";
 import {
@@ -23,6 +24,7 @@ import {
   type AiChatRunDto,
   type AiChatRunEventDto,
   type AiChatRunStatus,
+  type AiChatScopeType,
   isNonTerminalAiChatRunStatus,
 } from "./phase-85-stage-4c-contracts";
 import {
@@ -33,7 +35,9 @@ import {
   buildClientContext,
   buildContextSnapshotFromPackage,
   buildProviderContextEnvelope,
+  normalizeContextToolExecutionResult,
   recheckGatewayAccessBeforeCommit,
+  type ClientContextGatewayResult,
 } from "./phase-85-stage-4c-context-gateway";
 import { createDisabledSemanticRetriever } from "./phase-85-stage-4c-retrieval";
 import {
@@ -108,12 +112,22 @@ async function finalizeGatewayBlockedRun(
   store: AiChatStore,
   tenantId: string,
   runId: string,
-  errorCode: string,
+  blockReason: Extract<ClientContextGatewayResult, { blocked: true }>["blockReason"],
 ) {
+  if (blockReason === "general_scope_phi_leak") {
+    await finalizeStaleContextRun(store, tenantId, runId, "not_authorized");
+    return;
+  }
+  const errorCode =
+    blockReason === "not_authorized"
+      ? "not_authorized"
+      : blockReason === "second_client_reference"
+        ? "second_client_reference"
+        : "unsupported_write_action";
   await store.finalizeRun(tenantId, runId, {
-    status: "superseded",
+    status: "failed",
     errorCode,
-    answerability: "not_authorized",
+    answerability: blockReason === "not_authorized" ? "not_authorized" : null,
   });
   await store.appendRunEvent(tenantId, runId, {
     eventType: "run.failed",
@@ -156,7 +170,301 @@ function asRiskLevel(value: string | null | undefined): AiChatRiskLevel | null {
   return null;
 }
 
-export const STAGE_4C_RUN_SERVICE_VERSION = "p85-stage-4c-run-service-v1";
+export const STAGE_4C_RUN_SERVICE_VERSION = "p85-stage-4c-run-service-v2";
+
+type GatewayAccessInput = Parameters<AiChatStore["getContextGatewayAccess"]>[0];
+
+type FinalizeRunConversationContext = {
+  scopeType: AiChatScopeType;
+  clientId: string | null;
+  id: string;
+  createdByDietitianId: string;
+  revision: number;
+};
+
+export type FinalizeRunOutcomeInput = {
+  store: AiChatStore;
+  tenantId: string;
+  runId: string;
+  run: { conversationId: string; createdByUserId: string };
+  triggerBody: string;
+  conversation: FinalizeRunConversationContext;
+  gatewayAccessInput: GatewayAccessInput;
+  capturedRevisionToken: string | null;
+  outcome:
+    | {
+        kind: "gateway_blocked";
+        blockReason: Extract<ClientContextGatewayResult, { blocked: true }>["blockReason"];
+      }
+    | { kind: "insufficient_evidence" }
+    | {
+        kind: "failed";
+        errorCode: string;
+        answerability?: AiChatAnswerability | null;
+        riskLevel?: AiChatRiskLevel | null;
+        retryable?: boolean;
+      }
+    | { kind: "conflicting_evidence"; riskLevel?: AiChatRiskLevel | null }
+    | {
+        kind: "stopped";
+        partialText: string;
+        providerRiskLevel?: AiChatRiskLevel | null;
+        answerability?: AiChatAnswerability | null;
+      }
+    | {
+        kind: "completed";
+        directAnswer: string;
+        completionState: AiChatCompletionState;
+        answerability: AiChatAnswerability;
+        riskLevel: AiChatRiskLevel | null;
+        providerRiskLevel?: AiChatRiskLevel | null;
+        gateway: Extract<ClientContextGatewayResult, { blocked: false }>;
+        sourceMaps: ReturnType<typeof buildSourceMapsFromGateway>;
+        providerResult: {
+          structuredAnswer?: AiChatStructuredAnswer | null;
+          riskLevel?: AiChatRiskLevel | null;
+        };
+        sourcedValidation: ReturnType<typeof validateDietitianChatSourcedAnswer> | null;
+      };
+};
+
+function mergeRiskLevels(
+  classified: AiChatRiskLevel,
+  providerRiskLevel?: AiChatRiskLevel | null,
+): AiChatRiskLevel {
+  const order: Record<AiChatRiskLevel, number> = { green: 0, yellow: 1, red: 2 };
+  const providerLevel = providerRiskLevel ?? "green";
+  return order[classified] >= order[providerLevel] ? classified : providerLevel;
+}
+
+export async function finalizeRunOutcome(input: FinalizeRunOutcomeInput): Promise<void> {
+  const { store, tenantId, runId, triggerBody, conversation, gatewayAccessInput, capturedRevisionToken, outcome } =
+    input;
+
+  if (capturedRevisionToken) {
+    const recheck = recheckGatewayAccessBeforeCommit({
+      capturedRevisionToken,
+      currentAccess: await store.getContextGatewayAccess(gatewayAccessInput),
+    });
+    if (!recheck.ok) {
+      await finalizeStaleContextRun(store, tenantId, runId, recheck.reason);
+      return;
+    }
+  }
+
+  if (outcome.kind === "gateway_blocked") {
+    await finalizeGatewayBlockedRun(store, tenantId, runId, outcome.blockReason);
+    return;
+  }
+
+  if (outcome.kind === "insufficient_evidence") {
+    await store.finalizeRun(tenantId, runId, {
+      status: "failed",
+      errorCode: "insufficient_evidence",
+      answerability: "insufficient",
+      riskLevel: "green",
+    });
+    await store.appendRunEvent(tenantId, runId, {
+      eventType: "run.failed",
+      payload: { errorCode: "insufficient_evidence", retryable: true },
+    });
+    return;
+  }
+
+  if (outcome.kind === "failed") {
+    await store.finalizeRun(tenantId, runId, {
+      status: "failed",
+      errorCode: outcome.errorCode,
+      answerability: outcome.answerability ?? null,
+      riskLevel: outcome.riskLevel ?? null,
+    });
+    await store.appendRunEvent(tenantId, runId, {
+      eventType: "run.failed",
+      payload: { errorCode: outcome.errorCode, retryable: outcome.retryable ?? true },
+    });
+    return;
+  }
+
+  if (outcome.kind === "conflicting_evidence") {
+    await store.finalizeRun(tenantId, runId, {
+      status: "failed",
+      errorCode: "conflicting_evidence",
+      answerability: "conflicting",
+      riskLevel: outcome.riskLevel ?? null,
+    });
+    await store.appendRunEvent(tenantId, runId, {
+      eventType: "run.failed",
+      payload: { errorCode: "conflicting_evidence", retryable: true },
+    });
+    return;
+  }
+
+  if (outcome.kind === "stopped") {
+    const trimmed = outcome.partialText.trim();
+    const riskAssessment = classifyDietitianChatRisk({
+      triggerBody,
+      directAnswer: trimmed || null,
+      scopeType: conversation.scopeType,
+      answerability: trimmed ? outcome.answerability ?? "partial" : "insufficient",
+      providerRiskLevel: outcome.providerRiskLevel ?? null,
+      verifiedFactTexts: [],
+      attachmentExcerpts: [],
+      sourceExcerptTexts: [],
+      sourceRefIds: [],
+    });
+    const riskLevel = mergeRiskLevels(riskAssessment.riskLevel as AiChatRiskLevel, outcome.providerRiskLevel);
+
+    if (trimmed) {
+      await store.commitAssistantMessage(tenantId, runId, {
+        body: trimmed,
+        answerability: outcome.answerability ?? "partial",
+        riskLevel,
+        completionState: "incomplete",
+      });
+    }
+
+    await store.finalizeRun(tenantId, runId, {
+      status: "stopped",
+      answerability: trimmed ? outcome.answerability ?? "partial" : null,
+      riskLevel,
+    });
+    await store.appendRunEvent(tenantId, runId, {
+      eventType: "response.stopped",
+      payload: {
+        completionState: "incomplete",
+        answerability: trimmed ? outcome.answerability ?? "partial" : null,
+        riskLevel,
+      },
+    });
+    return;
+  }
+
+  const {
+    directAnswer,
+    completionState,
+    answerability,
+    riskLevel: initialRiskLevel,
+    providerRiskLevel,
+    gateway,
+    providerResult,
+    sourcedValidation,
+  } = outcome;
+
+  let finalRiskLevel = initialRiskLevel;
+
+  if (completionState === "complete" && directAnswer) {
+    if (providerResult.structuredAnswer && sourcedValidation?.answer) {
+      const claims = flattenStructuredClaims(sourcedValidation.answer as AiChatStructuredAnswer);
+      await store.persistRunAnswerArtifacts(tenantId, runId, {
+        conversationId: input.run.conversationId,
+        createdByUserId: input.run.createdByUserId,
+        clientId: conversation.clientId,
+        directAnswer,
+        answerability,
+        riskLevel: finalRiskLevel,
+        claims,
+        sourceRefs: gateway.evidencePackage.sourceRefs.map((item) => ({
+          sourceRefId: item.sourceId,
+          sourceType: item.sourceType,
+          canonicalEntityId: item.sourceId,
+          locator: item.locator,
+          sourceDate: item.sourceDate,
+          contentHash: item.contentHash,
+          excerpt: item.excerpt,
+        })),
+      });
+    }
+
+    if (conversation.scopeType === "client" && conversation.clientId) {
+      const structuredAnswer = sourcedValidation?.answer as AiChatStructuredAnswer | null | undefined;
+      const verifiedFactTexts = structuredAnswer?.verifiedFacts?.map((item) => item.text) ?? [];
+      const attachmentExcerpts = gateway.evidencePackage.unstructuredExcerpts
+        .filter((item) => String(item.sourceType ?? "").includes("attachment"))
+        .map((item) => item.excerpt);
+      const sourceExcerptTexts = gateway.evidencePackage.sourceRefs.map((item) => item.excerpt);
+      const sourceRefIds = gateway.evidencePackage.sourceRefs.map((item) => item.sourceId);
+
+      await store.applyRunRiskPipeline({
+        tenantId,
+        runId,
+        conversationId: input.run.conversationId,
+        createdByUserId: input.run.createdByUserId,
+        scopeType: conversation.scopeType,
+        clientId: conversation.clientId,
+        triggerBody,
+        directAnswer,
+        answerability,
+        providerRiskLevel: providerRiskLevel ?? null,
+        verifiedFactTexts,
+        attachmentExcerpts,
+        sourceExcerptTexts,
+        sourceRefIds,
+        revisionToken: capturedRevisionToken ?? "",
+      });
+      const riskSummary = await store.getRunRiskSummary(tenantId, runId, input.run.createdByUserId);
+      if (riskSummary) {
+        finalRiskLevel = mergeRiskLevels(riskSummary.riskLevel, providerRiskLevel);
+      }
+    } else {
+      const classified = classifyDietitianChatRisk({
+        triggerBody,
+        directAnswer,
+        scopeType: conversation.scopeType,
+        answerability,
+        providerRiskLevel: providerRiskLevel ?? null,
+        verifiedFactTexts: [],
+        attachmentExcerpts: [],
+        sourceExcerptTexts: gateway.evidencePackage.sourceRefs.map((item) => item.excerpt),
+        sourceRefIds: gateway.evidencePackage.sourceRefs.map((item) => item.sourceId),
+      });
+      finalRiskLevel = mergeRiskLevels(classified.riskLevel as AiChatRiskLevel, providerRiskLevel);
+    }
+
+    await store.commitAssistantMessage(tenantId, runId, {
+      body: directAnswer,
+      answerability,
+      riskLevel: finalRiskLevel,
+    });
+  } else if (directAnswer) {
+    const classified = classifyDietitianChatRisk({
+      triggerBody,
+      directAnswer,
+      scopeType: conversation.scopeType,
+      answerability,
+      providerRiskLevel: providerRiskLevel ?? null,
+      verifiedFactTexts: [],
+      attachmentExcerpts: [],
+      sourceExcerptTexts: gateway.evidencePackage.sourceRefs.map((item) => item.excerpt),
+      sourceRefIds: gateway.evidencePackage.sourceRefs.map((item) => item.sourceId),
+    });
+    finalRiskLevel = mergeRiskLevels(classified.riskLevel as AiChatRiskLevel, providerRiskLevel);
+    await store.commitAssistantMessage(tenantId, runId, {
+      body: directAnswer,
+      answerability,
+      riskLevel: finalRiskLevel,
+      completionState: "incomplete",
+    });
+  }
+
+  const terminalStatus = completionState === "complete" ? "completed" : "stopped";
+  await store.finalizeRun(tenantId, runId, {
+    status: terminalStatus,
+    answerability,
+    riskLevel: finalRiskLevel,
+  });
+  await store.appendRunEvent(tenantId, runId, {
+    eventType: completionState === "complete" ? "response.completed" : "response.stopped",
+    payload: {
+      completionState,
+      answerability,
+      riskLevel: finalRiskLevel,
+    },
+  });
+
+  if (completionState === "complete") {
+    await store.enqueueTitleJob(tenantId, input.run.conversationId, input.run.createdByUserId);
+  }
+}
 
 export type AiChatSendMessageInput = {
   requestId: string;
@@ -380,12 +688,6 @@ async function processGenerationJob(
     await store.renewJobLease(job.id, workerId, job.leaseToken!, AI_CHAT_JOB_HEARTBEAT_MS);
   };
 
-  await appendStatus("retrieving");
-  if (await store.shouldAbortRun(job.tenantId, run.id)) {
-    await finalizeStoppedRun(store, job.tenantId, run.id, "");
-    return;
-  }
-
   const gatewayAccessInput = {
     tenantId: job.tenantId,
     userId: run.createdByUserId,
@@ -396,6 +698,32 @@ async function processGenerationJob(
     conversationRevision: conversation.revision,
   };
 
+  const buildFinalizeBase = (capturedRevisionToken: string | null) => ({
+    store,
+    tenantId: job.tenantId,
+    runId: run.id,
+    run: { conversationId: run.conversationId, createdByUserId: run.createdByUserId },
+    triggerBody: triggerVersion.body,
+    conversation: {
+      scopeType: conversation.scopeType,
+      clientId: conversation.clientId,
+      id: conversation.id,
+      createdByDietitianId: conversation.createdByDietitianId,
+      revision: conversation.revision,
+    },
+    gatewayAccessInput,
+    capturedRevisionToken,
+  });
+
+  await appendStatus("retrieving");
+  if (await store.shouldAbortRun(job.tenantId, run.id)) {
+    await finalizeRunOutcome({
+      ...buildFinalizeBase(null),
+      outcome: { kind: "stopped", partialText: "" },
+    });
+    return;
+  }
+
   const gateway = await buildClientContext({
     scopeType: conversation.scopeType,
     clientId: conversation.clientId,
@@ -403,8 +731,35 @@ async function processGenerationJob(
     accessCheck: () => store.getContextGatewayAccess(gatewayAccessInput),
     listAccessibleClients: () => store.listContextGatewayAccessibleClients(job.tenantId),
     executeTool: (tool, args) => {
+      if (conversation.scopeType === "general") {
+        if (tool !== "search_approved_sources") {
+          return Promise.resolve(
+            normalizeContextToolExecutionResult(tool, {
+              status: "failed",
+              ok: false,
+              errorCode: "context_tool_not_allowed_in_general_scope",
+              rows: [],
+              categoryFailed: true,
+            }),
+          );
+        }
+        return store.executeContextGatewayTool({
+          tenantId: job.tenantId,
+          clientId: null,
+          tool,
+          args,
+        });
+      }
       if (!conversation.clientId) {
-        return Promise.resolve({ tool, ok: true, rows: [] });
+        return Promise.resolve(
+          normalizeContextToolExecutionResult(tool, {
+            status: "failed",
+            ok: false,
+            errorCode: "context_tool_client_required",
+            rows: [],
+            categoryFailed: true,
+          }),
+        );
       }
       return store.executeContextGatewayTool({
         tenantId: job.tenantId,
@@ -417,7 +772,10 @@ async function processGenerationJob(
   });
 
   if (gateway.blocked) {
-    await finalizeGatewayBlockedRun(store, job.tenantId, run.id, gateway.blockReason);
+    await finalizeRunOutcome({
+      ...buildFinalizeBase(null),
+      outcome: { kind: "gateway_blocked", blockReason: gateway.blockReason },
+    });
     return;
   }
 
@@ -442,15 +800,9 @@ async function processGenerationJob(
   }
 
   if (gateway.evidencePackage.insufficientEvidence) {
-    await store.finalizeRun(job.tenantId, run.id, {
-      status: "failed",
-      errorCode: "insufficient_evidence",
-      answerability: "insufficient",
-      riskLevel: "green",
-    });
-    await store.appendRunEvent(job.tenantId, run.id, {
-      eventType: "run.failed",
-      payload: { errorCode: "insufficient_evidence", retryable: true },
+    await finalizeRunOutcome({
+      ...buildFinalizeBase(capturedRevisionToken),
+      outcome: { kind: "insufficient_evidence" },
     });
     return;
   }
@@ -478,7 +830,15 @@ async function processGenerationJob(
       }
       if (await store.shouldAbortRun(job.tenantId, run.id)) {
         streamedText = providerResult.deltas.slice(0, delta.sequence).map((item) => item.text).join("");
-        await finalizeStoppedRun(store, job.tenantId, run.id, streamedText);
+        await finalizeRunOutcome({
+          ...buildFinalizeBase(capturedRevisionToken),
+          outcome: {
+            kind: "stopped",
+            partialText: streamedText,
+            providerRiskLevel: providerResult.riskLevel,
+            answerability: providerResult.answerability,
+          },
+        });
         return;
       }
       sawFirstDelta = true;
@@ -491,7 +851,15 @@ async function processGenerationJob(
     }
 
     if (await store.shouldAbortRun(job.tenantId, run.id)) {
-      await finalizeStoppedRun(store, job.tenantId, run.id, streamedText || providerResult.directAnswer || "");
+      await finalizeRunOutcome({
+        ...buildFinalizeBase(capturedRevisionToken),
+        outcome: {
+          kind: "stopped",
+          partialText: streamedText || providerResult.directAnswer || "",
+          providerRiskLevel: providerResult.riskLevel,
+          answerability: providerResult.answerability,
+        },
+      });
       return;
     }
 
@@ -509,15 +877,14 @@ async function processGenerationJob(
         clientId: conversation.clientId,
       });
       if (!sourcedValidation.ok) {
-        await store.finalizeRun(job.tenantId, run.id, {
-          status: "failed",
-          errorCode: sourcedValidation.code ?? "structured_answer_invalid",
-          answerability: asAnswerability(sourcedValidation.answerability),
-          riskLevel: asRiskLevel(providerResult.riskLevel),
-        });
-        await store.appendRunEvent(job.tenantId, run.id, {
-          eventType: "run.failed",
-          payload: { errorCode: sourcedValidation.code ?? "structured_answer_invalid", retryable: true },
+        await finalizeRunOutcome({
+          ...buildFinalizeBase(capturedRevisionToken),
+          outcome: {
+            kind: "failed",
+            errorCode: sourcedValidation.code ?? "structured_answer_invalid",
+            answerability: asAnswerability(sourcedValidation.answerability),
+            riskLevel: asRiskLevel(providerResult.riskLevel),
+          },
         });
         return;
       }
@@ -536,25 +903,27 @@ async function processGenerationJob(
     });
 
     if (shouldAbortDietitianChatRun(currentStatus)) {
-      await finalizeStoppedRun(
-        store,
-        job.tenantId,
-        run.id,
-        finalized.validation.directAnswer ?? streamedText,
-      );
+      await finalizeRunOutcome({
+        ...buildFinalizeBase(capturedRevisionToken),
+        outcome: {
+          kind: "stopped",
+          partialText: finalized.validation.directAnswer ?? streamedText,
+          providerRiskLevel: asRiskLevel(finalized.validation.riskLevel) ?? providerResult.riskLevel,
+          answerability: asAnswerability(finalized.validation.answerability) ?? providerResult.answerability,
+        },
+      });
       return;
     }
 
     if (!finalized.validation.ok && finalized.terminalStatus === "failed") {
-      await store.finalizeRun(job.tenantId, run.id, {
-        status: "failed",
-        errorCode: finalized.validation.code ?? "output_validation_failed",
-        answerability: asAnswerability(finalized.validation.answerability),
-        riskLevel: asRiskLevel(finalized.validation.riskLevel),
-      });
-      await store.appendRunEvent(job.tenantId, run.id, {
-        eventType: "run.failed",
-        payload: { errorCode: finalized.validation.code ?? "output_validation_failed" },
+      await finalizeRunOutcome({
+        ...buildFinalizeBase(capturedRevisionToken),
+        outcome: {
+          kind: "failed",
+          errorCode: finalized.validation.code ?? "output_validation_failed",
+          answerability: asAnswerability(finalized.validation.answerability),
+          riskLevel: asRiskLevel(finalized.validation.riskLevel),
+        },
       });
       return;
     }
@@ -562,158 +931,53 @@ async function processGenerationJob(
     const completionState = finalized.validation.completionState as AiChatCompletionState;
     const directAnswer = finalized.validation.directAnswer ?? streamedText;
 
-    const recheck = recheckGatewayAccessBeforeCommit({
-      capturedRevisionToken,
-      currentAccess: await store.getContextGatewayAccess(gatewayAccessInput),
-    });
-    if (!recheck.ok) {
-      await finalizeStaleContextRun(store, job.tenantId, run.id, recheck.reason);
-      return;
-    }
-
     if (gateway.evidencePackage.conflictingEvidence) {
-      await store.finalizeRun(job.tenantId, run.id, {
-        status: "failed",
-        errorCode: "conflicting_evidence",
-        answerability: "conflicting",
-        riskLevel: asRiskLevel(finalized.validation.riskLevel),
-      });
-      await store.appendRunEvent(job.tenantId, run.id, {
-        eventType: "run.failed",
-        payload: { errorCode: "conflicting_evidence", retryable: true },
+      await finalizeRunOutcome({
+        ...buildFinalizeBase(capturedRevisionToken),
+        outcome: {
+          kind: "conflicting_evidence",
+          riskLevel: asRiskLevel(finalized.validation.riskLevel),
+        },
       });
       return;
     }
 
-    let finalRiskLevel = asRiskLevel(finalized.validation.riskLevel);
-
-    if (completionState === "complete" && directAnswer) {
-      if (providerResult.structuredAnswer && sourcedValidation?.answer) {
-        const claims = flattenStructuredClaims(sourcedValidation.answer as AiChatStructuredAnswer);
-        await store.persistRunAnswerArtifacts(job.tenantId, run.id, {
-          conversationId: run.conversationId,
-          createdByUserId: run.createdByUserId,
-          clientId: conversation.clientId,
-          directAnswer,
-          answerability: asAnswerability(finalized.validation.answerability),
-          riskLevel: finalRiskLevel,
-          claims,
-          sourceRefs: gateway.evidencePackage.sourceRefs.map((item) => ({
-            sourceRefId: item.sourceId,
-            sourceType: item.sourceType,
-            canonicalEntityId: item.sourceId,
-            locator: item.locator,
-            sourceDate: item.sourceDate,
-            contentHash: item.contentHash,
-            excerpt: item.excerpt,
-          })),
-        });
-      }
-
-      const structuredAnswer = sourcedValidation?.answer as AiChatStructuredAnswer | null | undefined;
-      const verifiedFactTexts = structuredAnswer?.verifiedFacts?.map((item) => item.text) ?? [];
-      const attachmentExcerpts = gateway.evidencePackage.unstructuredExcerpts
-        .filter((item) => String(item.sourceType ?? "").includes("attachment"))
-        .map((item) => item.excerpt);
-      const sourceExcerptTexts = gateway.evidencePackage.sourceRefs.map((item) => item.excerpt);
-      const sourceRefIds = gateway.evidencePackage.sourceRefs.map((item) => item.sourceId);
-
-      await store.applyRunRiskPipeline({
-        tenantId: job.tenantId,
-        runId: run.id,
-        conversationId: run.conversationId,
-        createdByUserId: run.createdByUserId,
-        scopeType: conversation.scopeType,
-        clientId: conversation.clientId,
-        triggerBody: triggerVersion.body,
+    await finalizeRunOutcome({
+      ...buildFinalizeBase(capturedRevisionToken),
+      outcome: {
+        kind: "completed",
         directAnswer,
-        answerability: asAnswerability(finalized.validation.answerability),
-        providerRiskLevel: asRiskLevel(providerResult.riskLevel),
-        verifiedFactTexts,
-        attachmentExcerpts,
-        sourceExcerptTexts,
-        sourceRefIds,
-        revisionToken: capturedRevisionToken,
-      });
-      const riskSummary = await store.getRunRiskSummary(job.tenantId, run.id, run.createdByUserId);
-      if (riskSummary) {
-        finalRiskLevel = riskSummary.riskLevel;
-      }
-
-      await store.commitAssistantMessage(job.tenantId, run.id, {
-        body: directAnswer,
-        answerability: asAnswerability(finalized.validation.answerability),
-        riskLevel: finalRiskLevel,
-      });
-    } else if (directAnswer) {
-      await store.commitAssistantMessage(job.tenantId, run.id, {
-        body: directAnswer,
-        answerability: asAnswerability(finalized.validation.answerability),
-        riskLevel: finalRiskLevel,
-        completionState: "incomplete",
-      });
-    }
-
-    const terminalStatus = completionState === "complete" ? "completed" : finalized.terminalStatus;
-    await store.finalizeRun(job.tenantId, run.id, {
-      status: terminalStatus === "stopped" ? "stopped" : completionState === "complete" ? "completed" : "stopped",
-      answerability: asAnswerability(finalized.validation.answerability),
-      riskLevel: finalRiskLevel,
-    });
-
-    await store.appendRunEvent(job.tenantId, run.id, {
-      eventType: completionState === "complete" ? "response.completed" : "response.stopped",
-      payload: {
         completionState,
-        answerability: asAnswerability(finalized.validation.answerability),
-        riskLevel: finalRiskLevel,
+        answerability: asAnswerability(finalized.validation.answerability) ?? "answerable",
+        riskLevel: asRiskLevel(finalized.validation.riskLevel),
+        providerRiskLevel: providerResult.riskLevel,
+        gateway,
+        sourceMaps,
+        providerResult,
+        sourcedValidation,
       },
     });
-
-    if (completionState === "complete") {
-      await store.enqueueTitleJob(job.tenantId, run.conversationId, run.createdByUserId);
-    }
   } catch (error) {
     if (!sawFirstDelta) {
-      await store.finalizeRun(job.tenantId, run.id, {
-        status: "failed",
-        errorCode: String(error),
-      });
-      await store.appendRunEvent(job.tenantId, run.id, {
-        eventType: "run.failed",
-        payload: { errorCode: String(error), retryable: true },
+      await finalizeRunOutcome({
+        ...buildFinalizeBase(capturedRevisionToken ?? null),
+        outcome: {
+          kind: "failed",
+          errorCode: String(error),
+        },
       });
       throw error;
     }
-    await finalizeStoppedRun(store, job.tenantId, run.id, streamedText);
+    await finalizeRunOutcome({
+      ...buildFinalizeBase(capturedRevisionToken ?? null),
+      outcome: {
+        kind: "stopped",
+        partialText: streamedText,
+      },
+    });
   } finally {
     clearTimeout(providerTimeout);
   }
-}
-
-async function finalizeStoppedRun(
-  store: AiChatStore,
-  tenantId: string,
-  runId: string,
-  partialText: string,
-) {
-  if (partialText.trim()) {
-    await store.commitAssistantMessage(tenantId, runId, {
-      body: partialText,
-      answerability: "partial",
-      riskLevel: "green",
-      completionState: "incomplete",
-    });
-  }
-  await store.finalizeRun(tenantId, runId, {
-    status: "stopped",
-    answerability: "partial",
-    riskLevel: "green",
-  });
-  await store.appendRunEvent(tenantId, runId, {
-    eventType: "response.stopped",
-    payload: { completionState: "incomplete" },
-  });
 }
 
 export function mapRunDto(row: Record<string, unknown>): AiChatRunDto {

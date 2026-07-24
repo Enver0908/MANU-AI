@@ -1470,9 +1470,11 @@ declare module "dietitian-ai-assistant-architecture" {
     triggerBody: string;
     scopeType?: "general" | "client";
   }): string;
+  export function isGeneralClinicalQuery(triggerBody: string): boolean;
   export function planDietitianChatContextTools(
     intent: string,
     scopeType: "general" | "client",
+    triggerBody?: string,
   ): string[];
   export function buildDietitianChatEvidenceEnvelope(input: {
     intent: string;

@@ -11,7 +11,7 @@ import {
   wrapUntrustedSourceContent,
 } from "dietitian-ai-assistant-architecture";
 
-export const STAGE_4C_SOURCES_VERSION = "p85-stage-4c-sources-v1";
+export const STAGE_4C_SOURCES_VERSION = "p85-stage-4c-sources-v2";
 
 export type AiChatApprovedSourceStatus = "approved" | "review_required" | "retired";
 

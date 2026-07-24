@@ -204,11 +204,36 @@ export function classifyDietitianChatIntentFromSignals(input) {
 }
 
 /**
+ * @param {string} triggerBody
+ */
+export function isGeneralClinicalQuery(triggerBody) {
+  const trigger = String(triggerBody ?? "").trim();
+  const fixtureMatch = trigger.match(/^__fixture:(?:intent:)?([a-z_]+)__$/i);
+  if (fixtureMatch?.[1] === "general_clinical") {
+    return true;
+  }
+  if (/^__fixture:general:clinical__$/i.test(trigger)) {
+    return true;
+  }
+
+  const lowered = trigger.toLowerCase();
+  return /\b(kaynak|klinik|beslenme|protein|diyet|kanıt|fiber|vitamin|makro|kalori|source|clinical|nutrition|evidence)\b/u.test(
+    lowered,
+  );
+}
+
+/**
  * @param {string} intent
  * @param {"general" | "client"} scopeType
+ * @param {string} [triggerBody]
  */
-export function planDietitianChatContextTools(intent, scopeType) {
-  if (scopeType !== "client") return [];
+export function planDietitianChatContextTools(intent, scopeType, triggerBody = "") {
+  if (scopeType !== "client") {
+    if (isGeneralClinicalQuery(triggerBody)) {
+      return ["search_approved_sources"];
+    }
+    return [];
+  }
   if (intent === "unsupported_write_action" || intent === "second_client_reference" || intent === "general_non_client") {
     return [];
   }

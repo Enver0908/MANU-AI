@@ -21,12 +21,16 @@ import {
   computeEvidenceContentHash,
   dedupeEvidenceBySourceId,
   formatUnknownDateLabel,
+  rowViolatesGeneralScopePhiPolicy,
   sortEvidenceByTemporalPriority,
   truncateEvidenceExcerpt,
+  verifyCanonicalEvidenceRow,
+  verifyGeneralScopeEvidenceRow,
   type AiChatSemanticRetriever,
   type CanonicalEvidenceRow,
-  verifyCanonicalEvidenceRow,
 } from "./phase-85-stage-4c-retrieval";
+
+export type ContextToolExecutionStatus = "ok" | "empty" | "failed";
 
 export type AccessibleClientIdentity = {
   id: string;
@@ -44,6 +48,7 @@ export type ContextGatewayAccessState = {
 
 export type ContextToolExecutionResult = {
   tool: AiChatContextTool;
+  status: ContextToolExecutionStatus;
   ok: boolean;
   errorCode?: string;
   rows: CanonicalEvidenceRow[];
@@ -91,7 +96,11 @@ export type AiChatEvidencePackage = {
 export type ClientContextGatewayResult =
   | {
       blocked: true;
-      blockReason: "second_client_reference" | "unsupported_write_action" | "not_authorized";
+      blockReason:
+        | "second_client_reference"
+        | "unsupported_write_action"
+        | "not_authorized"
+        | "general_scope_phi_leak";
       intent: DietitianChatIntent;
       evidencePackage: null;
       revisionManifest: null;
@@ -188,8 +197,32 @@ export function parseContextToolArgs(rawArgs: Record<string, unknown> | null | u
   return args;
 }
 
-export function planContextTools(intent: DietitianChatIntent, scopeType: AiChatScopeType) {
-  return planDietitianChatContextTools(intent, scopeType) as AiChatContextTool[];
+export function normalizeContextToolExecutionResult(
+  tool: AiChatContextTool,
+  raw: Partial<ContextToolExecutionResult> & { ok?: boolean; rows?: CanonicalEvidenceRow[] },
+): ContextToolExecutionResult {
+  const status =
+    raw.status ??
+    (raw.ok === false || raw.categoryFailed ? "failed" : (raw.rows?.length ?? 0) > 0 ? "ok" : "empty");
+  const categoryFailed = raw.categoryFailed ?? status === "failed";
+  const categoryCritical = raw.categoryCritical ?? (tool === "load_client_risk_timeline" && categoryFailed);
+  return {
+    tool,
+    status,
+    ok: status === "ok",
+    errorCode: raw.errorCode,
+    rows: raw.rows ?? [],
+    categoryFailed,
+    categoryCritical,
+  };
+}
+
+export function planContextTools(
+  intent: DietitianChatIntent,
+  scopeType: AiChatScopeType,
+  triggerBody = "",
+) {
+  return planDietitianChatContextTools(intent, scopeType, triggerBody) as AiChatContextTool[];
 }
 
 export function classifyDietitianChatIntent(triggerBody: string, scopeType: AiChatScopeType) {
@@ -230,16 +263,18 @@ async function executeToolPlan(
           : parseContextToolArgs({});
       try {
         const result = await runWithTimeout(executeTool(tool, args), AI_CHAT_CONTEXT_TOOL_TIMEOUT_MS);
-        results.push(result);
+        results.push(normalizeContextToolExecutionResult(tool, result));
       } catch (error) {
-        results.push({
-          tool,
-          ok: false,
-          errorCode: error instanceof Error ? error.message : "tool_failed",
-          rows: [],
-          categoryFailed: true,
-          categoryCritical: tool === "load_client_risk_timeline",
-        });
+        results.push(
+          normalizeContextToolExecutionResult(tool, {
+            status: "failed",
+            ok: false,
+            errorCode: error instanceof Error ? error.message : "tool_failed",
+            rows: [],
+            categoryFailed: true,
+            categoryCritical: tool === "load_client_risk_timeline",
+          }),
+        );
       }
     }
   }
@@ -463,15 +498,38 @@ export async function buildClientContext(input: BuildClientContextInput): Promis
     };
   }
 
-  const toolPlan = planContextTools(intent, input.scopeType);
+  const toolPlan = planContextTools(intent, input.scopeType, input.triggerBody);
   const toolResults = toolPlan.length
     ? await executeToolPlan(toolPlan, input.executeTool, input.triggerBody)
     : [];
 
+  if (input.scopeType === "general") {
+    for (const result of toolResults) {
+      for (const row of result.rows) {
+        if (rowViolatesGeneralScopePhiPolicy(row)) {
+          return {
+            blocked: true,
+            blockReason: "general_scope_phi_leak",
+            intent,
+            evidencePackage: null,
+            revisionManifest: null,
+          };
+        }
+      }
+    }
+  }
+
   const verifiedRows: CanonicalEvidenceRow[] = [];
   for (const result of toolResults) {
-    if (!result.ok) continue;
+    if (result.status === "failed") continue;
     for (const row of result.rows) {
+      if (input.scopeType === "general") {
+        const verification = verifyGeneralScopeEvidenceRow(row);
+        if (verification.ok) {
+          verifiedRows.push(row);
+        }
+        continue;
+      }
       if (!input.clientId) continue;
       const verification = verifyCanonicalEvidenceRow(row, input.clientId);
       if (verification.ok) {
@@ -507,9 +565,11 @@ export async function buildClientContext(input: BuildClientContextInput): Promis
   const budgeted = applyEvidenceBudget(excerpts);
   const structuredFacts = buildStructuredFacts(intent, toolResults);
   const missingCategories = toolResults
-    .filter((result) => result.categoryFailed)
+    .filter((result) => result.status === "failed")
     .map((result) => result.tool);
-  const criticalFailure = toolResults.some((result) => result.categoryCritical && result.categoryFailed);
+  const criticalFailure = toolResults.some(
+    (result) => result.tool === "load_client_risk_timeline" && result.status === "failed",
+  );
   const partialEvidence = missingCategories.length > 0;
   const insufficientEvidence = criticalFailure || (input.scopeType === "client" && budgeted.sourceRefs.length === 0);
   const hashBySource = new Map<string, string>();

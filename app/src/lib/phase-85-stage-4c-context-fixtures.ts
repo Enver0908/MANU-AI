@@ -1,7 +1,8 @@
 import { encodeClientReferenceCode, formatClientReferenceShort } from "./client-reference-code";
 import type { AiChatContextTool } from "./phase-85-stage-4c-contracts";
 import type { CanonicalEvidenceRow } from "./phase-85-stage-4c-retrieval";
-import type { ContextToolExecutionResult } from "./phase-85-stage-4c-context-gateway";
+import type { ContextToolExecutionResult, ContextToolExecutionStatus } from "./phase-85-stage-4c-context-gateway";
+import { normalizeContextToolExecutionResult } from "./phase-85-stage-4c-context-gateway";
 import { searchInMemoryApprovedSources, type InMemoryApprovedSourceState } from "./phase-85-stage-4c-sources";
 
 export type ClientGatewayFixture = {
@@ -233,6 +234,25 @@ export function createLargeClientGatewayFixture(clientId: string, fullName: stri
   return fixture;
 }
 
+export function wrapContextToolExecutionResult(
+  tool: AiChatContextTool,
+  rows: CanonicalEvidenceRow[],
+  options?: {
+    status?: ContextToolExecutionStatus;
+    errorCode?: string;
+    categoryFailed?: boolean;
+    categoryCritical?: boolean;
+  },
+): ContextToolExecutionResult {
+  return normalizeContextToolExecutionResult(tool, {
+    status: options?.status,
+    errorCode: options?.errorCode,
+    rows,
+    categoryFailed: options?.categoryFailed,
+    categoryCritical: options?.categoryCritical,
+  });
+}
+
 export function executeInMemoryContextTool(
   fixture: ClientGatewayFixture,
   tool: AiChatContextTool,
@@ -242,23 +262,19 @@ export function executeInMemoryContextTool(
   return new Promise((resolve) => {
     const finish = () => {
       if (options?.failRisk && tool === "load_client_risk_timeline") {
-        resolve({
-          tool,
-          ok: false,
-          errorCode: "tool_failed",
-          rows: [],
-          categoryFailed: true,
-          categoryCritical: true,
-        });
+        resolve(
+          wrapContextToolExecutionResult(tool, [], {
+            status: "failed",
+            errorCode: "tool_failed",
+            categoryFailed: true,
+            categoryCritical: true,
+          }),
+        );
         return;
       }
 
       const rows = selectFixtureRows(fixture, tool, args, options);
-      resolve({
-        tool,
-        ok: true,
-        rows,
-      });
+      resolve(wrapContextToolExecutionResult(tool, rows));
     };
 
     if (options?.delayMs) {
@@ -307,8 +323,8 @@ function selectFixtureRows(
       if (!options?.approvedSources) return fixture.approvedSources;
       return searchInMemoryApprovedSources(options.approvedSources, query, 5).map((item) => ({
         sourceId: item.sourceRefId,
-        clientId: fixture.profile?.clientId ?? "",
-        sourceType: item.sourceType,
+        clientId: "",
+        sourceType: "approved_clinical_source" as const,
         locator: item.locator,
         excerpt: item.excerpt,
         contentHash: item.contentHash,
