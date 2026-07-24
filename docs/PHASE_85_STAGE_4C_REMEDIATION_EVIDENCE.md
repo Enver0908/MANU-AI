@@ -1,13 +1,48 @@
 # Phase 85 Stage 4C Remediation Evidence
 
 Date: 2026-07-25
-Status: **Faz 3 complete locally with RLS blocked (Docker/local Supabase unavailable)**
+Status: **Faz 4 complete locally with RLS blocked (Docker/local Supabase unavailable)**
 
 Production remains `NO-GO`. R-405 remains open.
 
 Authority plan: `docs/PHASE_85_STAGE_4C_REMEDIATION_ACTION_PLAN.md` (from user remediation plan 2026-07-25).
 
 Historical `PASS_LOCAL_STAGE_4C` claims are superseded by remediation-required status until Faz 8 hard-zero closure passes with zero-skip RLS.
+
+## Faz 4: Private Storage Tabanlı Multimodal Runtime ve Mesaj Bağlantısı
+
+Status: **complete locally (code + targeted tests); local Supabase fixture tests blocked**
+
+### Delivered
+
+- Migration `20260725110000_phase_85_stage_4c_remediation_multimodal_runtime.sql`:
+  - `ai_chat_message_attachments` join table with composite FK guards
+  - attachment session/complete/get/list/delete/status/derivative/correction/transfer/job RPCs
+  - `p85_stage_4c_send_message_v1` extended with `p_attachment_ids uuid[]`
+  - object key layout `tenant/user/conversation/attachment`
+- `phase-85-stage-4c-supabase-attachments.ts`: signed private upload, metadata-only completion, storage size verify, worker job enqueue
+- Upload completion no longer accepts base64 bytes; browser PUTs to signed storage URL (in-memory PUT route for deterministic tests)
+- Composer ready-gating, review-required hint, DELETE on remove, attachment-only send
+- Run context merges accepted message-bound derivatives via `mergeMessageAttachmentDerivativesIntoEvidencePackage`
+- Client-record transfer performs physical object copy to separate bucket lineage
+
+### Verification
+
+| Command | Result |
+| --- | --- |
+| `npm run typecheck` | pass |
+| `npm run lint` | pass (warnings only) |
+| `npx vitest run src/lib/phase-85-stage-4c-attachments.test.ts src/lib/phase-85-stage-4c-multimodal-migration.test.ts src/lib/phase-85-stage-4c-context-gateway.test.ts src/lib/phase-85-stage-4c-run-service.test.ts` | 34/34 pass |
+| `npm run test:rls` | **blocked** — Docker/local Supabase unavailable |
+
+### Open Blockers After Faz 4
+
+- Apply migrations to local Supabase and run direct-upload + attachment-only send integration with zero-skip RLS
+- Production remains `NO-GO`; R-405 remains open
+
+### Next
+
+Faz 5: Kalıcı Risk, Bildirim, Handoff ve Güvenli Taslak Akışı
 
 ## Faz 3: Eksiksiz Context Gateway, Genel Kaynak Araması ve Birleşik Klinik Finalizasyon
 

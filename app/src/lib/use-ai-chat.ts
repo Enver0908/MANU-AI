@@ -444,6 +444,7 @@ export async function sendAiChatMessage(input: {
   requestId: string;
   expectedRevision: number;
   body: string;
+  attachmentIds?: string[];
 }) {
   const response = await fetch(`/api/ai-chat/conversations/${encodeURIComponent(input.chatId)}/messages`, {
     method: "POST",
@@ -452,6 +453,7 @@ export async function sendAiChatMessage(input: {
       requestId: input.requestId,
       expectedRevision: input.expectedRevision,
       body: input.body,
+      attachmentIds: input.attachmentIds ?? [],
     }),
   });
   if (!response.ok) {

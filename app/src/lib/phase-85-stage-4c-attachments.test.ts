@@ -16,6 +16,7 @@ import {
   completeAttachmentUploadInMemory,
   createAttachmentUploadSessionInMemory,
   createEmptyAttachmentState,
+  putAttachmentObjectBytesInMemory,
   transferAttachmentToClientRecordInMemory,
 } from "./phase-85-stage-4c-attachment-store";
 import type { AppTenantContext } from "./auth-context";
@@ -45,7 +46,9 @@ describe("phase-85 stage 4c attachments", () => {
   });
 
   it("creates object keys without original filenames", () => {
-    expect(buildAiChatAttachmentObjectKey("tenant", "chat", "attachment")).toBe("tenant/chat/attachment");
+    expect(
+      buildAiChatAttachmentObjectKey("tenant", "user", "chat", "attachment"),
+    ).toBe("tenant/user/chat/attachment");
   });
 
   it("flags general-chat PII and client names", () => {
@@ -85,9 +88,10 @@ describe("phase-85 stage 4c attachments", () => {
       contentSha256,
       existing: [],
     });
+    putAttachmentObjectBytesInMemory(state, created.attachment.id, created.uploadToken, bytes);
     const completed = completeAttachmentUploadInMemory(state, tenantContext, created.attachment.id, {
-      bytes,
       contentSha256,
+      uploadToken: created.uploadToken,
     });
     expect(completed.status).toBe("scanning");
   });
@@ -106,9 +110,10 @@ describe("phase-85 stage 4c attachments", () => {
       contentSha256: hash,
       existing: [],
     });
+    putAttachmentObjectBytesInMemory(state, created.attachment.id, created.uploadToken, bytes);
     completeAttachmentUploadInMemory(state, tenantContext, created.attachment.id, {
-      bytes,
       contentSha256: hash,
+      uploadToken: created.uploadToken,
     });
     expect(() =>
       transferAttachmentToClientRecordInMemory(state, tenantContext, created.attachment.id, {

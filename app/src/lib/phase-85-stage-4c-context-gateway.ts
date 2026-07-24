@@ -632,6 +632,44 @@ export function recheckGatewayAccessBeforeCommit(input: {
   return { ok: true, revisionToken: input.currentAccess.revisionToken };
 }
 
+export function mergeMessageAttachmentDerivativesIntoEvidencePackage(
+  evidencePackage: AiChatEvidencePackage,
+  derivativeRows: CanonicalEvidenceRow[],
+  options: { scopeType: AiChatScopeType; clientId: string | null },
+): AiChatEvidencePackage {
+  const acceptedRows: CanonicalEvidenceRow[] = [];
+  for (const row of derivativeRows) {
+    if (options.scopeType === "general") {
+      if (row.sourceType !== "chat_attachment" || row.clientId) continue;
+      if (!row.excerpt.trim()) continue;
+      acceptedRows.push(row);
+      continue;
+    }
+    if (!options.clientId) continue;
+    const verification = verifyCanonicalEvidenceRow(row, options.clientId);
+    if (verification.ok) acceptedRows.push(row);
+  }
+  if (!acceptedRows.length) return evidencePackage;
+
+  const mergedExcerpts = [...evidencePackage.sourceRefs, ...rowsToExcerpts(acceptedRows)];
+  const budgeted = applyEvidenceBudget(mergedExcerpts);
+  const serialized = serializeEvidencePackage({
+    intent: evidencePackage.intent,
+    sourceRefs: budgeted.sourceRefs,
+    structuredFacts: evidencePackage.structuredFacts,
+  });
+  return {
+    ...evidencePackage,
+    sourceRefs: budgeted.sourceRefs,
+    unstructuredExcerpts: budgeted.unstructuredExcerpts,
+    serializedEvidence: serialized.serializedEvidence,
+    serializedCharCount: serialized.serializedCharCount,
+    insufficientEvidence:
+      evidencePackage.insufficientEvidence ||
+      (options.scopeType === "client" && budgeted.sourceRefs.length === 0),
+  };
+}
+
 export function buildProviderContextEnvelope(evidencePackage: AiChatEvidencePackage | null) {
   if (!evidencePackage) return null;
   return {

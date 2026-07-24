@@ -16,6 +16,7 @@ import {
   STAGE_4B4_CANONICAL_SAMPLE_RATE_HZ,
   STAGE_4B4_MAX_INPUT_BYTES,
 } from "./phase-85-stage-4b4-voice-contracts";
+import { computeEvidenceContentHash, truncateEvidenceExcerpt } from "./phase-85-stage-4c-retrieval";
 
 export const STAGE_4C_ATTACHMENTS_VERSION = "p85-stage-4c-attachments-v1";
 
@@ -138,8 +139,13 @@ export function hashAttachmentBytes(bytes: Buffer): string {
   return hashMediaBytes(bytes);
 }
 
-export function buildAiChatAttachmentObjectKey(tenantId: string, conversationId: string, attachmentId: string) {
-  return `${tenantId}/${conversationId}/${attachmentId}`;
+export function buildAiChatAttachmentObjectKey(
+  tenantId: string,
+  userId: string,
+  conversationId: string,
+  attachmentId: string,
+) {
+  return `${tenantId}/${userId}/${conversationId}/${attachmentId}`;
 }
 
 export function buildClientRecordObjectKey(tenantId: string, clientId: string, assetId: string) {
@@ -662,4 +668,35 @@ export function computeAttachmentRetryDelayMs(retryCount: number) {
 
 export function sha256FromArrayBuffer(buffer: ArrayBuffer) {
   return createHash("sha256").update(Buffer.from(buffer)).digest("hex");
+}
+
+export function buildAttachmentDerivativeEvidenceRows(
+  clientId: string | null,
+  items: Array<{
+    derivativeId: string;
+    attachmentId: string;
+    excerpt: string;
+    contentHash: string | null;
+    locator: string | null;
+  }>,
+) {
+  return items
+    .filter((item) => item.excerpt.trim())
+    .map((item) => {
+      const excerpt = truncateEvidenceExcerpt(item.excerpt.trim());
+      return {
+        sourceId: `attachment:${item.attachmentId}:${item.derivativeId}`,
+        clientId: clientId ?? "",
+        sourceType: "chat_attachment" as const,
+        locator: item.locator,
+        excerpt,
+        contentHash: item.contentHash ?? computeEvidenceContentHash(excerpt),
+        sourceDate: null,
+        updatedAt: null,
+        occurredAt: null,
+        lifecycleStatus: "current" as const,
+        retrievalEligible: true,
+        authorityWeight: 2,
+      };
+    });
 }

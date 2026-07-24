@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import { Mic, Paperclip, Send, Square } from "lucide-react";
 import { t } from "@/lib/i18n";
 import type { SupportedLanguageCode } from "@/lib/languages";
@@ -10,14 +10,12 @@ import { generateAiChatRequestId } from "@/lib/use-ai-chat";
 import type { AiChatAttachmentDto } from "@/lib/phase-85-stage-4c-contracts";
 import { AiChatAttachmentStrip } from "./ai-chat-attachment-strip";
 
-function arrayBufferToBase64(buffer: ArrayBuffer) {
-  const bytes = new Uint8Array(buffer);
-  let binary = "";
-  bytes.forEach((byte) => {
-    binary += String.fromCharCode(byte);
-  });
-  return btoa(binary);
-}
+const ATTACHMENT_BUSY_STATUSES = new Set<AiChatAttachmentDto["status"]>([
+  "upload_pending",
+  "uploaded",
+  "scanning",
+  "processing",
+]);
 
 async function encodePcm16Wav(samples: Float32Array, sampleRate: number) {
   const buffer = new ArrayBuffer(44 + samples.length * 2);
@@ -54,14 +52,16 @@ export function AiChatComposer({
   attachments,
   onAttachmentsChange,
   onSend,
+  onRemoveAttachment,
   onReviewAttachment,
 }: {
   uiLanguage: SupportedLanguageCode;
   disabled?: boolean;
   conversationId: string | null;
   attachments: AiChatAttachmentDto[];
-  onAttachmentsChange: (items: AiChatAttachmentDto[]) => void;
-  onSend?: (body: string) => void | Promise<void>;
+  onAttachmentsChange: Dispatch<SetStateAction<AiChatAttachmentDto[]>>;
+  onSend?: (input: { body: string; attachmentIds: string[] }) => void | Promise<void>;
+  onRemoveAttachment: (attachmentId: string) => void | Promise<void>;
   onReviewAttachment: (attachment: AiChatAttachmentDto) => void;
 }) {
   const [value, setValue] = useState("");
@@ -70,6 +70,18 @@ export function AiChatComposer({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const workletNodeRef = useRef<AudioWorkletNode | null>(null);
+
+  const allAttachmentsReady =
+    attachments.length === 0 || attachments.every((item) => item.status === "ready");
+  const hasPendingAttachments = attachments.some((item) => ATTACHMENT_BUSY_STATUSES.has(item.status));
+  const hasReviewRequired = attachments.some((item) => item.status === "review_required");
+  const readyAttachmentIds = attachments.filter((item) => item.status === "ready").map((item) => item.id);
+  const canSend =
+    Boolean(onSend) &&
+    !disabled &&
+    allAttachmentsReady &&
+    !hasPendingAttachments &&
+    (value.trim().length > 0 || readyAttachmentIds.length > 0);
 
   const uploadFile = useCallback(
     async (file: File) => {
@@ -89,26 +101,34 @@ export function AiChatComposer({
         }),
       });
       if (!createResponse.ok) return;
-      const created = (await createResponse.json()) as { attachment: AiChatAttachmentDto };
-      onAttachmentsChange([...attachments, created.attachment]);
+      const created = (await createResponse.json()) as {
+        attachment: AiChatAttachmentDto;
+        uploadUrl: string;
+        uploadToken: string;
+      };
+      onAttachmentsChange((current) => [...current, created.attachment]);
+      const uploadResponse = await fetch(created.uploadUrl, {
+        method: "PUT",
+        headers: { "content-type": file.type || "application/octet-stream" },
+        body: file,
+      });
+      if (!uploadResponse.ok) return;
       const completeResponse = await fetch(`/api/ai-chat/attachments/${created.attachment.id}/complete`, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           requestId: generateAiChatRequestId(),
           contentSha256,
-          contentBase64: arrayBufferToBase64(buffer),
+          uploadToken: created.uploadToken,
         }),
       });
       if (!completeResponse.ok) return;
       const completed = (await completeResponse.json()) as AiChatAttachmentDto;
-      onAttachmentsChange(
-        attachments.some((item) => item.id === completed.id)
-          ? attachments.map((item) => (item.id === completed.id ? completed : item))
-          : [...attachments.filter((item) => item.id !== created.attachment.id), completed],
+      onAttachmentsChange((current) =>
+        current.map((item) => (item.id === completed.id ? completed : item)),
       );
     },
-    [attachments, conversationId, onAttachmentsChange],
+    [conversationId, onAttachmentsChange],
   );
 
   const startRecording = useCallback(async () => {
@@ -140,18 +160,22 @@ export function AiChatComposer({
   }, []);
 
   const submit = () => {
-    const trimmed = value.trim();
-    if (!trimmed || !onSend || disabled) return;
-    void onSend(trimmed);
+    if (!canSend || !onSend) return;
+    void onSend({ body: value.trim(), attachmentIds: readyAttachmentIds });
     setValue("");
   };
 
   return (
     <div data-testid="ai-chat-composer">
+      {hasReviewRequired ? (
+        <p className="border-t border-amber-100 bg-amber-50 px-3 py-2 text-xs text-amber-900">
+          {t(uiLanguage, "aiChatAttachmentReviewRequiredHint")}
+        </p>
+      ) : null}
       <AiChatAttachmentStrip
         uiLanguage={uiLanguage}
         attachments={attachments}
-        onRemove={(attachmentId) => onAttachmentsChange(attachments.filter((item) => item.id !== attachmentId))}
+        onRemove={(attachmentId) => void onRemoveAttachment(attachmentId)}
         onReview={onReviewAttachment}
       />
       <div className="flex items-end gap-2 border-t border-stone-200 bg-white px-3 py-3 pb-safe">
@@ -204,7 +228,7 @@ export function AiChatComposer({
         <button
           type="button"
           onClick={submit}
-          disabled={disabled || !onSend || value.trim().length === 0}
+          disabled={!canSend}
           aria-label={t(uiLanguage, "aiChatComposerPlaceholder")}
           className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg bg-emerald-950 text-white transition hover:bg-emerald-900 disabled:cursor-not-allowed disabled:opacity-50"
         >

@@ -58,6 +58,21 @@ import type {
 } from "./phase-85-stage-4c-context-gateway";
 import { normalizeContextToolExecutionResult } from "./phase-85-stage-4c-context-gateway";
 import { toAccessibleClientIdentity } from "./phase-85-stage-4c-context-fixtures";
+import {
+  supabaseAcceptAttachmentDerivativeCorrection,
+  supabaseCompleteAttachmentUpload,
+  supabaseCreateAttachmentUploadSession,
+  supabaseDeleteAttachment,
+  supabaseEnqueueAttachmentJob,
+  supabaseGetAttachmentById,
+  supabaseGetAttachmentObjectBytes,
+  supabaseGetAttachmentRecordById,
+  supabaseListConversationAttachments,
+  supabaseListMessageAttachmentDerivatives,
+  supabaseSaveAttachmentDerivative,
+  supabaseTransferAttachmentToClientRecord,
+  supabaseUpdateAttachmentStatus,
+} from "./phase-85-stage-4c-supabase-attachments";
 import type { AiChatRunSourceClaimDto, AiChatRunSourcesResponse } from "./phase-85-stage-4c-sources";
 import type { AiChatStore, BranchMessageChainItem } from "./phase-85-stage-4c-store";
 
@@ -242,6 +257,7 @@ export const supabaseAiChatStore: AiChatStore = {
       p_branch_id: input.branchId,
       p_request_id: input.requestId,
       p_body_hash: bodyHash,
+      p_attachment_ids: input.attachmentIds ?? [],
     });
     if (error) mapRpcError(error, input.expectedRevision);
     const row = data as Record<string, unknown>;
@@ -728,78 +744,94 @@ export const supabaseAiChatStore: AiChatStore = {
   },
 
   async createAttachmentUploadSession(context, input) {
-    void context;
-    void input;
-    throw new AppRequestError(503, "ai_chat_attachment_store_unavailable");
+    return supabaseCreateAttachmentUploadSession(requireSupabaseAdmin(), context, input);
   },
   async completeAttachmentUpload(context, attachmentId, input) {
-    void context;
-    void attachmentId;
-    void input;
-    throw new AppRequestError(503, "ai_chat_attachment_store_unavailable");
+    return supabaseCompleteAttachmentUpload(requireSupabaseAdmin(), context, attachmentId, input);
+  },
+  async putAttachmentObjectBytes(_context, _attachmentId, _uploadToken, _bytes) {
+    throw new AppRequestError(409, "ai_chat_attachment_direct_upload_unsupported");
   },
   async listConversationAttachments(context, conversationId) {
-    void context;
-    void conversationId;
-    return [];
+    return supabaseListConversationAttachments(requireSupabaseAdmin(), context, conversationId);
   },
   async getAttachmentById(context, attachmentId) {
-    void context;
-    void attachmentId;
-    throw new AppRequestError(503, "ai_chat_attachment_store_unavailable");
+    return supabaseGetAttachmentById(requireSupabaseAdmin(), context, attachmentId);
   },
   async getAttachmentRecordById(attachmentId) {
-    void attachmentId;
-    return null;
+    return supabaseGetAttachmentRecordById(requireSupabaseAdmin(), attachmentId);
   },
   async deleteAttachment(context, attachmentId) {
-    void context;
-    void attachmentId;
-    throw new AppRequestError(503, "ai_chat_attachment_store_unavailable");
+    await supabaseDeleteAttachment(requireSupabaseAdmin(), context, attachmentId);
   },
   async updateAttachmentStatus(attachmentId, status, failureCode, meta) {
-    void attachmentId;
-    void status;
-    void failureCode;
-    void meta;
+    const record = await supabaseGetAttachmentRecordById(requireSupabaseAdmin(), attachmentId);
+    if (!record) return;
+    await supabaseUpdateAttachmentStatus(
+      requireSupabaseAdmin(),
+      record.tenantId,
+      attachmentId,
+      record.status,
+      status,
+      failureCode,
+      meta,
+    );
   },
   async saveAttachmentDerivative(input) {
-    void input;
+    const record = await supabaseGetAttachmentRecordById(requireSupabaseAdmin(), input.attachmentId);
+    if (!record) return;
+    await supabaseSaveAttachmentDerivative(requireSupabaseAdmin(), {
+      tenantId: record.tenantId,
+      ...input,
+    });
   },
   async acceptAttachmentDerivativeCorrection(context, attachmentId, derivativeId, input) {
-    void context;
-    void attachmentId;
-    void derivativeId;
-    void input;
-    throw new AppRequestError(503, "ai_chat_attachment_store_unavailable");
+    return supabaseAcceptAttachmentDerivativeCorrection(
+      requireSupabaseAdmin(),
+      context,
+      attachmentId,
+      derivativeId,
+      input.correctedText,
+    );
   },
   async transferAttachmentToClientRecord(context, attachmentId, input) {
-    void context;
-    void attachmentId;
-    void input;
-    throw new AppRequestError(503, "ai_chat_attachment_store_unavailable");
+    return supabaseTransferAttachmentToClientRecord(requireSupabaseAdmin(), context, attachmentId, input);
   },
   async enqueueAttachmentScanJob(tenantId, conversationId, attachmentId, userId) {
-    void tenantId;
-    void conversationId;
-    void attachmentId;
-    void userId;
+    await supabaseEnqueueAttachmentJob(
+      requireSupabaseAdmin(),
+      tenantId,
+      conversationId,
+      attachmentId,
+      userId,
+      "attachment_scan",
+    );
   },
   async enqueueAttachmentParseJob(tenantId, conversationId, attachmentId, userId) {
-    void tenantId;
-    void conversationId;
-    void attachmentId;
-    void userId;
+    await supabaseEnqueueAttachmentJob(
+      requireSupabaseAdmin(),
+      tenantId,
+      conversationId,
+      attachmentId,
+      userId,
+      "attachment_parse",
+    );
   },
   async enqueueAttachmentCleanupJob(tenantId, conversationId, attachmentId, userId) {
-    void tenantId;
-    void conversationId;
-    void attachmentId;
-    void userId;
+    await supabaseEnqueueAttachmentJob(
+      requireSupabaseAdmin(),
+      tenantId,
+      conversationId,
+      attachmentId,
+      userId ?? "system",
+      "attachment_cleanup",
+    );
   },
   async getAttachmentObjectBytes(objectKey) {
-    void objectKey;
-    return null;
+    return supabaseGetAttachmentObjectBytes(requireSupabaseAdmin(), objectKey);
+  },
+  async listMessageAttachmentDerivatives(tenantId, messageVersionId) {
+    return supabaseListMessageAttachmentDerivatives(requireSupabaseAdmin(), tenantId, messageVersionId);
   },
   async getRunRiskSummary(tenantId, runId, userId) {
     void tenantId;

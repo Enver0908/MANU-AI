@@ -66,12 +66,21 @@ export type InMemoryClientRecordAsset = {
   createdAt: string;
 };
 
+export type InMemoryMessageAttachmentRecord = {
+  tenantId: string;
+  conversationId: string;
+  messageVersionId: string;
+  attachmentId: string;
+  ordinal: number;
+};
+
 export type InMemoryAttachmentState = {
   attachments: InMemoryAttachmentRecord[];
   derivatives: InMemoryAttachmentDerivativeRecord[];
   objects: Map<string, Buffer>;
   signedUploadUrls: Map<string, { attachmentId: string; expiresAt: string }>;
   clientRecordAssets: InMemoryClientRecordAsset[];
+  messageAttachments: InMemoryMessageAttachmentRecord[];
   transfers: Array<{
     id: string;
     attachmentId: string;
@@ -88,6 +97,7 @@ export function createEmptyAttachmentState(): InMemoryAttachmentState {
     objects: new Map(),
     signedUploadUrls: new Map(),
     clientRecordAssets: [],
+    messageAttachments: [],
     transfers: [],
   };
 }
@@ -166,7 +176,12 @@ export function createAttachmentUploadSessionInMemory(
   }
   const now = new Date();
   const attachmentId = randomUUID();
-  const objectKey = buildAiChatAttachmentObjectKey(context.tenantId, input.conversationId, attachmentId);
+  const objectKey = buildAiChatAttachmentObjectKey(
+    context.tenantId,
+    context.userId,
+    input.conversationId,
+    attachmentId,
+  );
   const uploadExpiresAt = new Date(now.getTime() + AI_CHAT_ATTACHMENT_UPLOAD_TTL_SECONDS * 1000).toISOString();
   const record: InMemoryAttachmentRecord = {
     id: attachmentId,
@@ -205,7 +220,7 @@ export function completeAttachmentUploadInMemory(
   state: InMemoryAttachmentState,
   context: AppTenantContext,
   attachmentId: string,
-  input: { bytes: Buffer; contentSha256: string },
+  input: { contentSha256: string; uploadToken?: string },
 ) {
   const attachment = state.attachments.find(
     (item) => item.id === attachmentId && item.tenantId === context.tenantId && item.createdByUserId === context.userId,
@@ -217,7 +232,11 @@ export function completeAttachmentUploadInMemory(
   if (attachment.uploadExpiresAt && new Date(attachment.uploadExpiresAt).getTime() < Date.now()) {
     throw new AppRequestError(409, "ai_chat_attachment_upload_expired");
   }
-  const actualHash = hashAttachmentBytes(input.bytes);
+  const bytes = state.objects.get(attachment.objectKey);
+  if (!bytes) {
+    throw new AppRequestError(409, "ai_chat_attachment_object_missing");
+  }
+  const actualHash = hashAttachmentBytes(bytes);
   if (actualHash !== input.contentSha256 || actualHash !== attachment.contentSha256) {
     state.objects.delete(attachment.objectKey);
     attachment.status = "failed";
@@ -225,16 +244,33 @@ export function completeAttachmentUploadInMemory(
     attachment.updatedAt = new Date().toISOString();
     throw new AppRequestError(400, "ai_chat_attachment_hash_mismatch");
   }
-  if (input.bytes.byteLength !== attachment.byteSize) {
+  if (bytes.byteLength !== attachment.byteSize) {
     throw new AppRequestError(400, "ai_chat_attachment_size_mismatch");
   }
-  state.objects.set(attachment.objectKey, input.bytes);
   attachment.status = "scanning";
   attachment.updatedAt = new Date().toISOString();
   return mapAttachmentDto(
     attachment,
     state.derivatives.filter((item) => item.attachmentId === attachment.id),
   );
+}
+
+export function putAttachmentObjectBytesInMemory(
+  state: InMemoryAttachmentState,
+  attachmentId: string,
+  uploadToken: string,
+  bytes: Buffer,
+) {
+  const token = state.signedUploadUrls.get(uploadToken);
+  if (!token || token.attachmentId !== attachmentId) {
+    throw new AppRequestError(403, "ai_chat_attachment_not_found");
+  }
+  if (new Date(token.expiresAt).getTime() < Date.now()) {
+    throw new AppRequestError(409, "ai_chat_attachment_upload_expired");
+  }
+  const attachment = state.attachments.find((item) => item.id === attachmentId);
+  if (!attachment) throw new AppRequestError(404, "ai_chat_attachment_not_found");
+  state.objects.set(attachment.objectKey, bytes);
 }
 
 export function listConversationAttachmentsInMemory(
@@ -416,4 +452,79 @@ export function scheduleAttachmentJobRetryInMemory(
   job.nextAttemptAt = new Date(Date.now() + computeAttachmentRetryDelayMs(job.retryCount)).toISOString();
   job.updatedAt = new Date().toISOString();
   void errorCode;
+}
+
+export function linkMessageAttachmentsInMemory(
+  state: InMemoryAttachmentState,
+  input: {
+    tenantId: string;
+    conversationId: string;
+    messageVersionId: string;
+    attachmentIds: string[];
+    userId: string;
+  },
+) {
+  let ordinal = 1;
+  for (const attachmentId of input.attachmentIds) {
+    const attachment = state.attachments.find(
+      (item) =>
+        item.id === attachmentId &&
+        item.tenantId === input.tenantId &&
+        item.conversationId === input.conversationId &&
+        item.createdByUserId === input.userId,
+    );
+    if (!attachment || attachment.status !== "ready") {
+      throw new AppRequestError(409, "ai_chat_attachment_invalid_state");
+    }
+    state.messageAttachments.push({
+      tenantId: input.tenantId,
+      conversationId: input.conversationId,
+      messageVersionId: input.messageVersionId,
+      attachmentId,
+      ordinal,
+    });
+    ordinal += 1;
+  }
+}
+
+export function listMessageAttachmentDerivativesInMemory(
+  state: InMemoryAttachmentState,
+  tenantId: string,
+  messageVersionId: string,
+) {
+  const links = state.messageAttachments.filter(
+    (item) => item.tenantId === tenantId && item.messageVersionId === messageVersionId,
+  );
+  const results: Array<{
+    derivativeId: string;
+    attachmentId: string;
+    excerpt: string;
+    contentHash: string | null;
+    locator: string | null;
+    kind: string;
+  }> = [];
+  for (const link of links.sort((left, right) => left.ordinal - right.ordinal)) {
+    const accepted = state.derivatives.find(
+      (item) =>
+        item.attachmentId === link.attachmentId &&
+        item.status === "accepted" &&
+        item.excerpt &&
+        ["extracted_text", "ocr_text", "transcript", "chunk"].includes(item.kind),
+    );
+    if (!accepted?.excerpt) continue;
+    results.push({
+      derivativeId: accepted.id,
+      attachmentId: link.attachmentId,
+      excerpt: accepted.excerpt,
+      contentHash: accepted.contentSha256,
+      locator:
+        typeof accepted.payload.citation === "string"
+          ? accepted.payload.citation
+          : accepted.locator.section
+            ? String(accepted.locator.section)
+            : null,
+      kind: accepted.kind,
+    });
+  }
+  return results;
 }

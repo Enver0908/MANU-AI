@@ -216,8 +216,14 @@ export interface AiChatStore {
   completeAttachmentUpload(
     context: AppTenantContext,
     attachmentId: string,
-    input: { bytes: Buffer; contentSha256: string },
+    input: { contentSha256: string; uploadToken?: string },
   ): Promise<AiChatAttachmentDto>;
+  putAttachmentObjectBytes(
+    context: AppTenantContext,
+    attachmentId: string,
+    uploadToken: string,
+    bytes: Buffer,
+  ): Promise<void>;
   listConversationAttachments(context: AppTenantContext, conversationId: string): Promise<AiChatAttachmentDto[]>;
   getAttachmentById(context: AppTenantContext, attachmentId: string): Promise<AiChatAttachmentDto>;
   getAttachmentRecordById(attachmentId: string): Promise<{
@@ -269,6 +275,19 @@ export interface AiChatStore {
   enqueueAttachmentParseJob(tenantId: string, conversationId: string, attachmentId: string, userId: string): Promise<void>;
   enqueueAttachmentCleanupJob(tenantId: string, conversationId: string, attachmentId: string, userId?: string): Promise<void>;
   getAttachmentObjectBytes(objectKey: string): Promise<Buffer | null>;
+  listMessageAttachmentDerivatives(
+    tenantId: string,
+    messageVersionId: string,
+  ): Promise<
+    Array<{
+      derivativeId: string;
+      attachmentId: string;
+      excerpt: string;
+      contentHash: string | null;
+      locator: string | null;
+      kind: string;
+    }>
+  >;
   getRunRiskSummary(
     tenantId: string,
     runId: string,

@@ -15,7 +15,7 @@ import {
 import type { AiChatAttachmentStatus, AiChatScopeType } from "./phase-85-stage-4c-contracts";
 import type { AiChatStore } from "./phase-85-stage-4c-store";
 
-export const STAGE_4C_ATTACHMENT_WORKERS_VERSION = "p85-stage-4c-attachment-workers-v1";
+export const STAGE_4C_ATTACHMENT_WORKERS_VERSION = "p85-stage-4c-attachment-workers-v2";
 
 export type AttachmentWorkerAttachmentRecord = {
   id: string;

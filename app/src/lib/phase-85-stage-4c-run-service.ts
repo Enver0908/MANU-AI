@@ -35,10 +35,12 @@ import {
   buildClientContext,
   buildContextSnapshotFromPackage,
   buildProviderContextEnvelope,
+  mergeMessageAttachmentDerivativesIntoEvidencePackage,
   normalizeContextToolExecutionResult,
   recheckGatewayAccessBeforeCommit,
   type ClientContextGatewayResult,
 } from "./phase-85-stage-4c-context-gateway";
+import { buildAttachmentDerivativeEvidenceRows } from "./phase-85-stage-4c-attachments";
 import { createDisabledSemanticRetriever } from "./phase-85-stage-4c-retrieval";
 import {
   processAttachmentCleanupJob,
@@ -471,6 +473,7 @@ export type AiChatSendMessageInput = {
   expectedRevision: number;
   body: string;
   branchId?: string | null;
+  attachmentIds?: string[];
 };
 
 export type AiChatEditMessageInput = {
@@ -502,7 +505,7 @@ export function parseAiChatSendMessageBody(body: unknown): AiChatSendMessageInpu
   }
   const record = body as Record<string, unknown>;
   for (const key of Object.keys(record)) {
-    if (!["requestId", "expectedRevision", "body", "branchId"].includes(key)) {
+    if (!["requestId", "expectedRevision", "body", "branchId", "attachmentIds"].includes(key)) {
       throw new AppRequestError(400, "invalid_request_body", key);
     }
   }
@@ -513,8 +516,15 @@ export function parseAiChatSendMessageBody(body: unknown): AiChatSendMessageInpu
     throw new AppRequestError(400, "invalid_request_body", "expectedRevision");
   }
   const messageBody = typeof record.body === "string" ? record.body : "";
-  if (!messageBody.trim()) throw new AppRequestError(400, "ai_chat_message_body_required", "body");
-  if (Array.from(messageBody).length > AI_CHAT_MESSAGE_BODY_MAX_LENGTH) {
+  const attachmentIds = Array.isArray(record.attachmentIds)
+    ? record.attachmentIds
+        .filter((value): value is string => typeof value === "string" && value.trim().length > 0)
+        .map((value) => value.trim())
+    : undefined;
+  if (!messageBody.trim() && (!attachmentIds || attachmentIds.length === 0)) {
+    throw new AppRequestError(400, "ai_chat_message_body_required", "body");
+  }
+  if (messageBody.trim() && Array.from(messageBody).length > AI_CHAT_MESSAGE_BODY_MAX_LENGTH) {
     throw new AppRequestError(400, "ai_chat_message_body_too_long", "body");
   }
   const branchId =
@@ -523,7 +533,7 @@ export function parseAiChatSendMessageBody(body: unknown): AiChatSendMessageInpu
       : typeof record.branchId === "string" && record.branchId.trim()
         ? record.branchId.trim()
         : null;
-  return { requestId, expectedRevision, body: messageBody, branchId };
+  return { requestId, expectedRevision, body: messageBody, branchId, attachmentIds };
 }
 
 export function parseAiChatEditMessageBody(body: unknown): AiChatEditMessageInput {
@@ -779,16 +789,26 @@ async function processGenerationJob(
     return;
   }
 
+  const attachmentDerivativeItems = await store.listMessageAttachmentDerivatives(
+    job.tenantId,
+    triggerVersion.id,
+  );
+  const evidencePackage = mergeMessageAttachmentDerivativesIntoEvidencePackage(
+    gateway.evidencePackage,
+    buildAttachmentDerivativeEvidenceRows(conversation.clientId, attachmentDerivativeItems),
+    { scopeType: conversation.scopeType, clientId: conversation.clientId },
+  );
+
   const capturedRevisionToken = gateway.revisionManifest.revisionToken;
   await store.saveContextSnapshot({
     tenantId: job.tenantId,
     runId: run.id,
     conversationId: run.conversationId,
     createdByUserId: run.createdByUserId,
-    ...buildContextSnapshotFromPackage(gateway.evidencePackage),
+    ...buildContextSnapshotFromPackage(evidencePackage),
   });
 
-  for (const sourceRef of gateway.evidencePackage.sourceRefs) {
+  for (const sourceRef of evidencePackage.sourceRefs) {
     await store.appendRunEvent(job.tenantId, run.id, {
       eventType: "source.available",
       payload: {
@@ -799,7 +819,7 @@ async function processGenerationJob(
     });
   }
 
-  if (gateway.evidencePackage.insufficientEvidence) {
+  if (evidencePackage.insufficientEvidence) {
     await finalizeRunOutcome({
       ...buildFinalizeBase(capturedRevisionToken),
       outcome: { kind: "insufficient_evidence" },
@@ -809,11 +829,11 @@ async function processGenerationJob(
 
   await appendStatus("generating");
 
-  const sourceMaps = buildSourceMapsFromGateway(gateway.evidencePackage);
+  const sourceMaps = buildSourceMapsFromGateway(evidencePackage);
   const providerRequestBase = {
     triggerBody: triggerVersion.body,
     messages: plan.context.visibleMessages,
-    contextEnvelope: buildProviderContextEnvelope(gateway.evidencePackage),
+    contextEnvelope: buildProviderContextEnvelope(evidencePackage),
     allowedSourceIds: sourceMaps.allowedSourceIds,
     sourceTypesById: sourceMaps.sourceTypesById,
     sourceExcerptById: sourceMaps.sourceExcerptById,
@@ -931,7 +951,7 @@ async function processGenerationJob(
     const completionState = finalized.validation.completionState as AiChatCompletionState;
     const directAnswer = finalized.validation.directAnswer ?? streamedText;
 
-    if (gateway.evidencePackage.conflictingEvidence) {
+    if (evidencePackage.conflictingEvidence) {
       await finalizeRunOutcome({
         ...buildFinalizeBase(capturedRevisionToken),
         outcome: {

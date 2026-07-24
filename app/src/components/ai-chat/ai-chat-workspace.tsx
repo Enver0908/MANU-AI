@@ -112,6 +112,29 @@ export function AiChatWorkspace({
     };
   }, [activeChatId]);
 
+  useEffect(() => {
+    const pending = attachments.filter((item) =>
+      ["upload_pending", "uploaded", "scanning", "processing", "review_required"].includes(item.status),
+    );
+    if (!pending.length) return;
+    const timer = window.setInterval(() => {
+      void Promise.all(
+        pending.map(async (item) => {
+          const response = await fetch(`/api/ai-chat/attachments/${encodeURIComponent(item.id)}`);
+          if (!response.ok) return null;
+          return (await response.json()) as AiChatAttachmentDto;
+        }),
+      ).then((results) => {
+        const updates = results.filter((item): item is AiChatAttachmentDto => Boolean(item));
+        if (!updates.length) return;
+        setAttachments((current) =>
+          current.map((item) => updates.find((update) => update.id === item.id) ?? item),
+        );
+      });
+    }, 2000);
+    return () => window.clearInterval(timer);
+  }, [attachments]);
+
   const groups = useMemo(() => groupAiChatHistoryByDate(history.items), [history.items]);
 
   const handleSaveAttachmentCorrection = useCallback(
@@ -220,8 +243,16 @@ export function AiChatWorkspace({
     }
   };
 
+  const handleRemoveAttachment = useCallback(async (attachmentId: string) => {
+    const response = await fetch(`/api/ai-chat/attachments/${encodeURIComponent(attachmentId)}`, {
+      method: "DELETE",
+    });
+    if (!response.ok) return;
+    setAttachments((current) => current.filter((item) => item.id !== attachmentId));
+  }, []);
+
   const handleSend = useCallback(
-    async (body: string) => {
+    async (input: { body: string; attachmentIds: string[] }) => {
       if (!conversation.detail || !activeChatId) return;
       setSendError(null);
       try {
@@ -229,8 +260,10 @@ export function AiChatWorkspace({
           chatId: activeChatId,
           requestId: generateAiChatRequestId(),
           expectedRevision: conversation.detail.revision,
-          body,
+          body: input.body,
+          attachmentIds: input.attachmentIds,
         });
+        setAttachments([]);
         await conversation.refresh();
         void runStream.subscribe(result.runId);
       } catch {
@@ -562,6 +595,7 @@ export function AiChatWorkspace({
               conversationId={activeChatId}
               attachments={attachments}
               onAttachmentsChange={setAttachments}
+              onRemoveAttachment={handleRemoveAttachment}
               onReviewAttachment={setReviewAttachment}
               onSend={handleSend}
             />

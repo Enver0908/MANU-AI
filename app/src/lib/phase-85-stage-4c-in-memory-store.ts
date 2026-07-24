@@ -41,7 +41,10 @@ import {
   enqueueAttachmentJobInMemory,
   getAttachmentRecordInMemory,
   listConversationAttachmentsInMemory,
+  linkMessageAttachmentsInMemory,
+  listMessageAttachmentDerivativesInMemory,
   mapAttachmentDto,
+  putAttachmentObjectBytesInMemory,
   saveAttachmentDerivativeInMemory,
   transferAttachmentToClientRecordInMemory,
   type InMemoryAttachmentState,
@@ -1011,6 +1014,10 @@ export const inMemoryAiChatStore: AiChatStore = {
       throw new AppRequestError(409, "ai_chat_revision_conflict", undefined, conversation.revision);
     }
 
+    if (!input.body.trim() && (!input.attachmentIds || input.attachmentIds.length === 0)) {
+      throw new AppRequestError(400, "ai_chat_message_body_required");
+    }
+
     const targetBranchId = input.branchId ?? conversation.activeBranchId;
     if (input.branchId && input.branchId !== conversation.activeBranchId) {
       conversation.activeBranchId = input.branchId;
@@ -1032,6 +1039,16 @@ export const inMemoryAiChatStore: AiChatStore = {
       body: input.body,
       parentVersionId,
     });
+
+    if (input.attachmentIds?.length) {
+      linkMessageAttachmentsInMemory(inMemoryState.attachmentState, {
+        tenantId: context.tenantId,
+        conversationId: chatId,
+        messageVersionId: versionId,
+        attachmentIds: input.attachmentIds,
+        userId: context.userId,
+      });
+    }
 
     const run = createGenerationRun({
       tenantId: context.tenantId,
@@ -1056,7 +1073,11 @@ export const inMemoryAiChatStore: AiChatStore = {
 
     conversation.revision += 1;
     conversation.lastMessageAt = new Date().toISOString();
-    conversation.preview = input.body.slice(0, 120);
+    conversation.preview = input.body.trim()
+      ? input.body.slice(0, 120)
+      : input.attachmentIds?.length
+        ? "[attachments]"
+        : "";
     conversation.updatedAt = conversation.lastMessageAt;
     writeLedger(
       context,
@@ -1718,6 +1739,10 @@ export const inMemoryAiChatStore: AiChatStore = {
     return attachment;
   },
 
+  async putAttachmentObjectBytes(context, attachmentId, uploadToken, bytes) {
+    putAttachmentObjectBytesInMemory(inMemoryState.attachmentState, attachmentId, uploadToken, bytes);
+  },
+
   async listConversationAttachments(context, conversationId) {
     return listConversationAttachmentsInMemory(inMemoryState.attachmentState, context.tenantId, conversationId, context.userId);
   },
@@ -1826,6 +1851,14 @@ export const inMemoryAiChatStore: AiChatStore = {
 
   async getAttachmentObjectBytes(objectKey) {
     return inMemoryState.attachmentState.objects.get(objectKey) ?? null;
+  },
+
+  async listMessageAttachmentDerivatives(tenantId, messageVersionId) {
+    return listMessageAttachmentDerivativesInMemory(
+      inMemoryState.attachmentState,
+      tenantId,
+      messageVersionId,
+    );
   },
 
   async getRunRiskSummary(tenantId, runId, userId) {

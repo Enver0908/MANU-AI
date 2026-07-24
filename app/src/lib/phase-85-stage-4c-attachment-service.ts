@@ -28,10 +28,12 @@ export function parseAttachmentCompleteBody(body: unknown) {
   const record = body as Record<string, unknown>;
   const requestId = typeof record.requestId === "string" ? record.requestId.trim() : "";
   const contentSha256 = typeof record.contentSha256 === "string" ? record.contentSha256.trim().toLowerCase() : "";
+  const uploadToken =
+    typeof record.uploadToken === "string" && record.uploadToken.trim() ? record.uploadToken.trim() : undefined;
   if (!requestId || !SHA256_PATTERN.test(contentSha256)) {
     throw new AppRequestError(400, "ai_chat_invalid_body");
   }
-  return { requestId, contentSha256 };
+  return { requestId, contentSha256, uploadToken };
 }
 
 export function parseAttachmentCorrectionBody(body: unknown) {
