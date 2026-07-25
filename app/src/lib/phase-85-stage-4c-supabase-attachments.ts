@@ -4,6 +4,7 @@ import { AppRequestError } from "./app-errors";
 import {
   AI_CHAT_ATTACHMENT_BUCKET,
   buildClientRecordObjectKey,
+  hashAttachmentBytes,
 } from "./phase-85-stage-4c-attachments";
 import type { AiChatAttachmentDto } from "./phase-85-stage-4c-contracts";
 import { mapRpcError } from "./phase-85-stage-4c-service";
@@ -45,27 +46,23 @@ export function mapAttachmentDtoFromRpc(row: Record<string, unknown>): AiChatAtt
   };
 }
 
-async function verifyStorageObjectSize(
+async function verifyStorageObjectBytes(
   supabase: SupabaseClient,
   bucket: string,
   objectKey: string,
   expectedSize: number,
+  expectedSha256: string,
 ) {
-  const parts = objectKey.split("/");
-  const fileName = parts.pop();
-  if (!fileName) throw new AppRequestError(409, "ai_chat_attachment_object_missing");
-  const folder = parts.join("/");
-  const { data, error } = await supabase.storage.from(bucket).list(folder, {
-    search: fileName,
-    limit: 1,
-  });
-  if (error || !data?.length) {
+  const { data, error } = await supabase.storage.from(bucket).download(objectKey);
+  if (error || !data) {
     throw new AppRequestError(409, "ai_chat_attachment_object_missing");
   }
-  const metadata = data[0]?.metadata as { size?: number } | undefined;
-  const size = Number(metadata?.size ?? data[0]?.metadata?.size ?? -1);
-  if (!Number.isFinite(size) || size !== expectedSize) {
+  const bytes = Buffer.from(await data.arrayBuffer());
+  if (bytes.byteLength !== expectedSize) {
     throw new AppRequestError(400, "ai_chat_attachment_size_mismatch");
+  }
+  if (hashAttachmentBytes(bytes) !== expectedSha256) {
+    throw new AppRequestError(400, "ai_chat_attachment_hash_mismatch");
   }
 }
 
@@ -125,7 +122,13 @@ export async function supabaseCompleteAttachmentUpload(
   if (record.contentSha256 !== input.contentSha256) {
     throw new AppRequestError(400, "ai_chat_attachment_hash_mismatch");
   }
-  await verifyStorageObjectSize(supabase, AI_CHAT_ATTACHMENT_BUCKET, record.objectKey, record.byteSize);
+  await verifyStorageObjectBytes(
+    supabase,
+    AI_CHAT_ATTACHMENT_BUCKET,
+    record.objectKey,
+    record.byteSize,
+    record.contentSha256,
+  );
 
   const { data, error } = await supabase.rpc("p85_stage_4c_complete_attachment_upload_v1", {
     p_tenant_id: context.tenantId,

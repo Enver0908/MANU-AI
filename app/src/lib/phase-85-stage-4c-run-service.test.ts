@@ -144,6 +144,52 @@ describe("finalizeRunOutcome", () => {
     expect(run?.status).toBe("stopped");
     expect(run?.riskLevel).toBe("yellow");
   });
+
+  it("classifies insufficient evidence instead of forcing green", async () => {
+    const store = resolveAiChatStore();
+    const conversation = await store.createConversation(tenantContext, {
+      requestId: "create-insufficient-red",
+      scopeType: "general",
+      clientId: null,
+      title: "Insufficient red",
+    });
+    const send = await store.sendMessage(tenantContext, conversation.id, {
+      requestId: "send-insufficient-red",
+      expectedRevision: conversation.revision,
+      body: "__fixture:hello__",
+    });
+
+    await finalizeRunOutcome({
+      store,
+      tenantId: tenantContext.tenantId,
+      runId: send.runId,
+      run: { conversationId: conversation.id, createdByUserId: tenantContext.userId },
+      triggerBody: "__fixture:risk:red__",
+      conversation: {
+        scopeType: "general",
+        clientId: null,
+        id: conversation.id,
+        createdByDietitianId: tenantContext.dietitianId,
+        revision: conversation.revision,
+      },
+      gatewayAccessInput: {
+        tenantId: tenantContext.tenantId,
+        userId: tenantContext.userId,
+        dietitianId: tenantContext.dietitianId,
+        role: "dietitian",
+        scopeType: "general",
+        clientId: null,
+        conversationRevision: conversation.revision,
+      },
+      capturedRevisionToken: null,
+      outcome: { kind: "insufficient_evidence" },
+    });
+
+    const run = await store.getRunById(tenantContext.tenantId, send.runId);
+    expect(run?.status).toBe("failed");
+    expect(run?.answerability).toBe("insufficient");
+    expect(run?.riskLevel).toBe("red");
+  });
 });
 
 describe("ai chat run flow (in-memory)", () => {

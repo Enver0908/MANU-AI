@@ -1,7 +1,6 @@
 import { AppRequestError } from "./app-errors";
 import { encodeClientReferenceCode, formatClientReferenceShort } from "./client-reference-code";
 import { getSupabaseAdminClient } from "./supabase";
-import type { AppTenantContext } from "./auth-context";
 import type {
   AiChatBranchDto,
   AiChatClientSearchItem,
@@ -86,6 +85,7 @@ import {
   supabaseBuildClientScopedExportSlice,
   supabaseDeleteConversation,
   supabaseDeleteMessage,
+  supabaseEnqueueAccountScopedDeletions,
   supabaseEnqueueClientScopedDeletions,
   supabaseProcessLifecycleDeletionBatch,
   supabaseRunLifecycleRetentionSweeps,
@@ -93,6 +93,7 @@ import {
 import { requireHandoffCapability } from "./phase-85-stage-4c-risk-bridge";
 import type { AiChatRunSourceClaimDto, AiChatRunSourcesResponse } from "./phase-85-stage-4c-sources";
 import type { AiChatStore, BranchMessageChainItem } from "./phase-85-stage-4c-store";
+import type { TenantRole } from "./types";
 
 
 function requireSupabaseAdmin() {
@@ -606,6 +607,33 @@ export const supabaseAiChatStore: AiChatStore = {
     };
   },
 
+  async getRunActorContext(input) {
+    const supabase = requireSupabaseAdmin();
+    const membership = await supabase
+      .from("tenant_memberships")
+      .select("role")
+      .eq("tenant_id", input.tenantId)
+      .eq("user_id", input.userId)
+      .maybeSingle();
+    if (membership.error) mapRpcError(membership.error);
+    if (!membership.data?.role) return null;
+
+    const dietitian = await supabase
+      .from("dietitians")
+      .select("id")
+      .eq("tenant_id", input.tenantId)
+      .eq("auth_user_id", input.userId)
+      .maybeSingle();
+    if (dietitian.error) mapRpcError(dietitian.error);
+
+    return {
+      tenantId: input.tenantId,
+      userId: input.userId,
+      dietitianId: String(dietitian.data?.id ?? input.fallbackDietitianId),
+      role: membership.data.role as TenantRole,
+    };
+  },
+
   async getContextGatewayAccess(input) {
     const supabase = requireSupabaseAdmin();
     const { data, error } = await supabase.rpc("p85_stage_4c_get_context_gateway_access_v1", {
@@ -856,12 +884,12 @@ export const supabaseAiChatStore: AiChatStore = {
     if (!run || run.createdByUserId !== userId) return null;
     const conversation = await supabaseAiChatStore.getConversationRecord(tenantId, run.conversationId);
     if (!conversation) return null;
-    const context: AppTenantContext = {
+    const context = await supabaseAiChatStore.getRunActorContext({
       tenantId,
       userId,
-      dietitianId: conversation.createdByDietitianId,
-      role: "dietitian",
-    };
+      fallbackDietitianId: conversation.createdByDietitianId,
+    });
+    if (!context) return null;
     const result = await supabaseGetRunRiskSummary(requireSupabaseAdmin(), context, runId);
     if (!result) return null;
     return {
@@ -922,12 +950,14 @@ export const supabaseAiChatStore: AiChatStore = {
     const supabase = requireSupabaseAdmin();
     const conversation = await supabaseAiChatStore.getConversationRecord(input.tenantId, input.conversationId);
     if (!conversation) return;
-    const context: AppTenantContext = {
+    const context = await supabaseAiChatStore.getRunActorContext({
       tenantId: input.tenantId,
       userId: input.createdByUserId,
-      dietitianId: conversation.createdByDietitianId,
-      role: "dietitian",
-    };
+      fallbackDietitianId: conversation.createdByDietitianId,
+    });
+    if (!context) {
+      throw new AppRequestError(403, "ai_chat_access_check_failed");
+    }
     const assessment = await supabaseApplyRunRiskPipeline(supabase, context, input);
     await supabaseAiChatStore.appendRunEvent(input.tenantId, input.runId, {
       eventType: "risk.updated",
@@ -954,6 +984,9 @@ export const supabaseAiChatStore: AiChatStore = {
   async enqueueClientScopedDeletions(context, clientId, reason) {
     await supabaseEnqueueClientScopedDeletions(requireSupabaseAdmin(), context, clientId, reason);
   },
+  async enqueueAccountScopedDeletions(tenantId, userId, reason) {
+    await supabaseEnqueueAccountScopedDeletions(requireSupabaseAdmin(), tenantId, userId, reason);
+  },
   async buildClientScopedExportSlice(clientId) {
     const supabase = requireSupabaseAdmin();
     const { data } = await supabase
@@ -966,12 +999,12 @@ export const supabaseAiChatStore: AiChatStore = {
     if (!data?.tenant_id || !data.created_by_user_id) {
       return { conversations: [], messages: [], sourceManifest: [], clientRecordAssets: [] };
     }
-    const context: AppTenantContext = {
+    const context = await supabaseAiChatStore.getRunActorContext({
       tenantId: String(data.tenant_id),
       userId: String(data.created_by_user_id),
-      dietitianId: String(data.created_by_dietitian_id),
-      role: "dietitian",
-    };
+      fallbackDietitianId: String(data.created_by_dietitian_id),
+    });
+    if (!context) return { conversations: [], messages: [], sourceManifest: [], clientRecordAssets: [] };
     return supabaseBuildClientScopedExportSlice(supabase, context, clientId);
   },
 };
@@ -984,6 +1017,7 @@ export function assertSupabaseAiChatCoreContractReady() {
   const applyRiskSource = Function.prototype.toString.call(supabaseApplyRunRiskPipeline);
   const deleteConversationSource = Function.prototype.toString.call(supabaseDeleteConversation);
   const deleteMessageSource = Function.prototype.toString.call(supabaseDeleteMessage);
+  const accountDeletionSource = Function.prototype.toString.call(supabaseEnqueueAccountScopedDeletions);
   if (!source.includes("p85_stage_4c_send_message_v1")) {
     throw new AppRequestError(503, "ai_chat_store_contract_incomplete");
   }
@@ -994,6 +1028,9 @@ export function assertSupabaseAiChatCoreContractReady() {
     throw new AppRequestError(503, "ai_chat_store_contract_incomplete");
   }
   if (!deleteMessageSource.includes("p85_stage_4c_delete_message_v1")) {
+    throw new AppRequestError(503, "ai_chat_store_contract_incomplete");
+  }
+  if (!accountDeletionSource.includes("p85_stage_4c_enqueue_account_scoped_deletions_v1")) {
     throw new AppRequestError(503, "ai_chat_store_contract_incomplete");
   }
   supabaseCoreContractReady = true;

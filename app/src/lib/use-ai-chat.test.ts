@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
-import { groupAiChatHistoryByDate, resolveAiChatDateGroup } from "./use-ai-chat";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { groupAiChatHistoryByDate, resolveAiChatDateGroup, subscribeToAiChatRun } from "./use-ai-chat";
 import type { AiChatConversationListItem } from "./phase-85-stage-4c-contracts";
 
 const NOW = new Date("2026-07-22T12:00:00.000Z");
@@ -68,5 +68,59 @@ describe("groupAiChatHistoryByDate", () => {
     );
     expect(grouped).toHaveLength(1);
     expect(grouped[0].group).toBe("today");
+  });
+});
+
+function sseResponse(chunks: string[]) {
+  const encoder = new TextEncoder();
+  return new Response(
+    new ReadableStream<Uint8Array>({
+      start(controller) {
+        for (const chunk of chunks) {
+          controller.enqueue(encoder.encode(chunk));
+        }
+        controller.close();
+      },
+    }),
+    { status: 200, headers: { "content-type": "text/event-stream" } },
+  );
+}
+
+describe("subscribeToAiChatRun", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("reconnects after normal EOF when no terminal event was received", async () => {
+    vi.spyOn(Math, "random").mockReturnValue(0);
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        sseResponse([
+          'id: 1\nevent: response.delta\ndata: {"sequenceNumber":1,"eventType":"response.delta","text":"hel"}\n\n',
+        ]),
+      )
+      .mockResolvedValueOnce(
+        sseResponse([
+          'id: 2\nevent: response.completed\ndata: {"sequenceNumber":2,"eventType":"response.completed","completionState":"complete"}\n\n',
+        ]),
+      );
+    vi.stubGlobal("fetch", fetchMock);
+    const received: Array<{ sequenceNumber: number; eventType: string }> = [];
+
+    const result = await subscribeToAiChatRun({
+      runId: "run-a",
+      maxReconnects: 1,
+      onEvent: (event) => received.push({ sequenceNumber: event.sequenceNumber, eventType: event.eventType }),
+    });
+
+    expect(result.terminalSeen).toBe(true);
+    expect(result.lastSequence).toBe(2);
+    expect(received).toEqual([
+      { sequenceNumber: 1, eventType: "response.delta" },
+      { sequenceNumber: 2, eventType: "response.completed" },
+    ]);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(String(fetchMock.mock.calls[1][0])).toContain("after=1");
   });
 });

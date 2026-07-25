@@ -13,6 +13,7 @@ import {
 export const STAGE_4C_RUN_EVENT_STREAM_VERSION = "p85-stage-4c-run-event-stream-v1";
 
 export const SSE_HEARTBEAT_COMMENT = ": heartbeat\n\n";
+export const AI_CHAT_SSE_STATUS_POLL_MS = 1_000;
 
 function isTerminalRunEvent(event: AiChatRunEventDto) {
   return (
@@ -103,7 +104,7 @@ export function createAiChatRunEventSseStream(input: {
         ) {
           closeStream();
         }
-      }, 250);
+      }, AI_CHAT_SSE_STATUS_POLL_MS);
     },
     cancel() {
       closed = true;

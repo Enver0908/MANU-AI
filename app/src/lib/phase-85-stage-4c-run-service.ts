@@ -114,10 +114,36 @@ async function finalizeGatewayBlockedRun(
   store: AiChatStore,
   tenantId: string,
   runId: string,
+  input: {
+    run: { conversationId: string; createdByUserId: string };
+    conversation: { scopeType: AiChatScopeType; clientId: string | null };
+    triggerBody: string;
+  },
   blockReason: Extract<ClientContextGatewayResult, { blocked: true }>["blockReason"],
 ) {
+  const answerability = blockReason === "not_authorized" ? "not_authorized" : "insufficient";
+  const riskLevel = classifyTerminalRunRisk({
+    triggerBody: input.triggerBody,
+    directAnswer: null,
+    scopeType: input.conversation.scopeType,
+    answerability,
+    providerRiskLevel: null,
+  });
+  if (input.conversation.scopeType === "client" && input.conversation.clientId) {
+    await applyClientScopedRiskPipeline({
+      store,
+      tenantId,
+      runId,
+      run: input.run,
+      conversation: input.conversation,
+      triggerBody: input.triggerBody,
+      directAnswer: null,
+      answerability,
+      providerRiskLevel: null,
+    });
+  }
   if (blockReason === "general_scope_phi_leak") {
-    await finalizeStaleContextRun(store, tenantId, runId, "not_authorized");
+    await finalizeStaleContextRun(store, tenantId, runId, "not_authorized", riskLevel);
     return;
   }
   const errorCode =
@@ -129,7 +155,8 @@ async function finalizeGatewayBlockedRun(
   await store.finalizeRun(tenantId, runId, {
     status: "failed",
     errorCode,
-    answerability: blockReason === "not_authorized" ? "not_authorized" : null,
+    answerability,
+    riskLevel,
   });
   await store.appendRunEvent(tenantId, runId, {
     eventType: "run.failed",
@@ -142,11 +169,13 @@ async function finalizeStaleContextRun(
   tenantId: string,
   runId: string,
   errorCode: "stale_context" | "not_authorized",
+  riskLevel?: AiChatRiskLevel | null,
 ) {
   await store.finalizeRun(tenantId, runId, {
     status: "superseded",
     errorCode,
     answerability: errorCode === "not_authorized" ? "not_authorized" : "insufficient",
+    riskLevel: riskLevel ?? null,
   });
   await store.appendRunEvent(tenantId, runId, {
     eventType: "run.failed",
@@ -239,7 +268,32 @@ function mergeRiskLevels(
   return order[classified] >= order[providerLevel] ? classified : providerLevel;
 }
 
-async function applyClientScopedRiskPipelineIfNeeded(input: {
+function classifyTerminalRunRisk(input: {
+  triggerBody: string;
+  directAnswer: string | null;
+  scopeType: AiChatScopeType;
+  answerability: AiChatRunDto["answerability"];
+  providerRiskLevel?: AiChatRiskLevel | null;
+  verifiedFactTexts?: string[];
+  attachmentExcerpts?: string[];
+  sourceExcerptTexts?: string[];
+  sourceRefIds?: string[];
+}): AiChatRiskLevel {
+  const classified = classifyDietitianChatRisk({
+    triggerBody: input.triggerBody,
+    directAnswer: input.directAnswer,
+    scopeType: input.scopeType,
+    answerability: input.answerability,
+    providerRiskLevel: input.providerRiskLevel ?? null,
+    verifiedFactTexts: input.verifiedFactTexts ?? [],
+    attachmentExcerpts: input.attachmentExcerpts ?? [],
+    sourceExcerptTexts: input.sourceExcerptTexts ?? [],
+    sourceRefIds: input.sourceRefIds ?? [],
+  });
+  return mergeRiskLevels(classified.riskLevel as AiChatRiskLevel, input.providerRiskLevel);
+}
+
+async function applyClientScopedRiskPipeline(input: {
   store: AiChatStore;
   tenantId: string;
   runId: string;
@@ -258,7 +312,7 @@ async function applyClientScopedRiskPipelineIfNeeded(input: {
   sourceRefIds?: string[];
   revisionToken?: string | null;
 }): Promise<AiChatRiskLevel | null> {
-  if (input.conversation.scopeType !== "client" || !input.conversation.clientId || !input.directAnswer?.trim()) {
+  if (input.conversation.scopeType !== "client" || !input.conversation.clientId) {
     return null;
   }
   await input.store.applyRunRiskPipeline({
@@ -286,6 +340,31 @@ async function applyClientScopedRiskPipelineIfNeeded(input: {
   return riskSummary?.riskLevel ?? null;
 }
 
+async function applyClientScopedRiskPipelineIfNeeded(input: {
+  store: AiChatStore;
+  tenantId: string;
+  runId: string;
+  run: { conversationId: string; createdByUserId: string };
+  conversation: {
+    scopeType: AiChatScopeType;
+    clientId: string | null;
+  };
+  triggerBody: string;
+  directAnswer: string | null;
+  answerability: AiChatRunDto["answerability"];
+  providerRiskLevel?: AiChatRiskLevel | null;
+  verifiedFactTexts?: string[];
+  attachmentExcerpts?: string[];
+  sourceExcerptTexts?: string[];
+  sourceRefIds?: string[];
+  revisionToken?: string | null;
+}): Promise<AiChatRiskLevel | null> {
+  if (input.conversation.scopeType !== "client" || !input.conversation.clientId || !input.directAnswer?.trim()) {
+    return null;
+  }
+  return applyClientScopedRiskPipeline(input);
+}
+
 export async function finalizeRunOutcome(input: FinalizeRunOutcomeInput): Promise<void> {
   const { store, tenantId, runId, triggerBody, conversation, gatewayAccessInput, capturedRevisionToken, outcome } =
     input;
@@ -302,16 +381,44 @@ export async function finalizeRunOutcome(input: FinalizeRunOutcomeInput): Promis
   }
 
   if (outcome.kind === "gateway_blocked") {
-    await finalizeGatewayBlockedRun(store, tenantId, runId, outcome.blockReason);
+    await finalizeGatewayBlockedRun(
+      store,
+      tenantId,
+      runId,
+      { run: input.run, conversation, triggerBody },
+      outcome.blockReason,
+    );
     return;
   }
 
   if (outcome.kind === "insufficient_evidence") {
+    let riskLevel = classifyTerminalRunRisk({
+      triggerBody,
+      directAnswer: null,
+      scopeType: conversation.scopeType,
+      answerability: "insufficient",
+      providerRiskLevel: null,
+    });
+    const persistedRiskLevel = await applyClientScopedRiskPipeline({
+      store,
+      tenantId,
+      runId,
+      run: input.run,
+      conversation,
+      triggerBody,
+      directAnswer: null,
+      answerability: "insufficient",
+      providerRiskLevel: null,
+      revisionToken: capturedRevisionToken,
+    });
+    if (persistedRiskLevel) {
+      riskLevel = mergeRiskLevels(persistedRiskLevel, null);
+    }
     await store.finalizeRun(tenantId, runId, {
       status: "failed",
       errorCode: "insufficient_evidence",
       answerability: "insufficient",
-      riskLevel: "green",
+      riskLevel,
     });
     await store.appendRunEvent(tenantId, runId, {
       eventType: "run.failed",
@@ -321,11 +428,35 @@ export async function finalizeRunOutcome(input: FinalizeRunOutcomeInput): Promis
   }
 
   if (outcome.kind === "failed") {
+    let riskLevel =
+      outcome.riskLevel ??
+      classifyTerminalRunRisk({
+        triggerBody,
+        directAnswer: null,
+        scopeType: conversation.scopeType,
+        answerability: outcome.answerability ?? "insufficient",
+        providerRiskLevel: null,
+      });
+    const persistedRiskLevel = await applyClientScopedRiskPipeline({
+      store,
+      tenantId,
+      runId,
+      run: input.run,
+      conversation,
+      triggerBody,
+      directAnswer: null,
+      answerability: outcome.answerability ?? "insufficient",
+      providerRiskLevel: riskLevel,
+      revisionToken: capturedRevisionToken,
+    });
+    if (persistedRiskLevel) {
+      riskLevel = mergeRiskLevels(persistedRiskLevel, riskLevel);
+    }
     await store.finalizeRun(tenantId, runId, {
       status: "failed",
       errorCode: outcome.errorCode,
       answerability: outcome.answerability ?? null,
-      riskLevel: outcome.riskLevel ?? null,
+      riskLevel,
     });
     await store.appendRunEvent(tenantId, runId, {
       eventType: "run.failed",
@@ -335,11 +466,35 @@ export async function finalizeRunOutcome(input: FinalizeRunOutcomeInput): Promis
   }
 
   if (outcome.kind === "conflicting_evidence") {
+    let riskLevel =
+      outcome.riskLevel ??
+      classifyTerminalRunRisk({
+        triggerBody,
+        directAnswer: null,
+        scopeType: conversation.scopeType,
+        answerability: "conflicting",
+        providerRiskLevel: null,
+      });
+    const persistedRiskLevel = await applyClientScopedRiskPipeline({
+      store,
+      tenantId,
+      runId,
+      run: input.run,
+      conversation,
+      triggerBody,
+      directAnswer: null,
+      answerability: "conflicting",
+      providerRiskLevel: riskLevel,
+      revisionToken: capturedRevisionToken,
+    });
+    if (persistedRiskLevel) {
+      riskLevel = mergeRiskLevels(persistedRiskLevel, riskLevel);
+    }
     await store.finalizeRun(tenantId, runId, {
       status: "failed",
       errorCode: "conflicting_evidence",
       answerability: "conflicting",
-      riskLevel: outcome.riskLevel ?? null,
+      riskLevel,
     });
     await store.appendRunEvent(tenantId, runId, {
       eventType: "run.failed",
@@ -785,11 +940,45 @@ async function processGenerationJob(
     await store.renewJobLease(job.id, workerId, job.leaseToken!, AI_CHAT_JOB_HEARTBEAT_MS);
   };
 
-  const gatewayAccessInput = {
+  const actorContext = await store.getRunActorContext({
     tenantId: job.tenantId,
     userId: run.createdByUserId,
-    dietitianId: conversation.createdByDietitianId,
-    role: "dietitian",
+    fallbackDietitianId: conversation.createdByDietitianId,
+  });
+  if (!actorContext) {
+    await finalizeRunOutcome({
+      store,
+      tenantId: job.tenantId,
+      runId: run.id,
+      run: { conversationId: run.conversationId, createdByUserId: run.createdByUserId },
+      triggerBody: triggerVersion.body,
+      conversation: {
+        scopeType: conversation.scopeType,
+        clientId: conversation.clientId,
+        id: conversation.id,
+        createdByDietitianId: conversation.createdByDietitianId,
+        revision: conversation.revision,
+      },
+      gatewayAccessInput: {
+        tenantId: job.tenantId,
+        userId: run.createdByUserId,
+        dietitianId: conversation.createdByDietitianId,
+        role: "auditor",
+        scopeType: conversation.scopeType,
+        clientId: conversation.clientId,
+        conversationRevision: conversation.revision,
+      },
+      capturedRevisionToken: null,
+      outcome: { kind: "failed", errorCode: "ai_chat_access_check_failed", answerability: "not_authorized" },
+    });
+    return;
+  }
+
+  const gatewayAccessInput = {
+    tenantId: job.tenantId,
+    userId: actorContext.userId,
+    dietitianId: actorContext.dietitianId,
+    role: actorContext.role,
     scopeType: conversation.scopeType,
     clientId: conversation.clientId,
     conversationRevision: conversation.revision,

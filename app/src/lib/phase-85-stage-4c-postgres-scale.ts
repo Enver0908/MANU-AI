@@ -29,6 +29,7 @@ export type Stage4CScaleFixtureSeed = {
   messageVersionCount: number;
   sampleConversationId: string;
   sampleBranchId: string;
+  sampleRunId: string;
   sampleDietitianId: string;
   sampleClientId: string;
 };
@@ -278,28 +279,42 @@ export async function runStage4CPostgresScaleRehearsalFull(): Promise<Stage4CPos
       p_user_id: fixture.userId,
       p_dietitian_id: fixture.sampleDietitianId,
       p_role: "owner",
-      p_run_id: fixture.sampleConversationId,
+      p_run_id: fixture.sampleRunId,
       p_after_sequence: 0,
       p_limit: 200,
     });
 
     const sendDurations: number[] = [];
+    let expectedRevision = 1;
     for (let index = 0; index < 8; index += 1) {
       const started = performance.now();
-      const { error } = await client.rpc("p85_stage_4c_send_message_v1", {
+      const { data, error } = await client.rpc("p85_stage_4c_send_message_v1", {
         p_tenant_id: fixture.tenantId,
         p_user_id: fixture.userId,
         p_dietitian_id: fixture.sampleDietitianId,
         p_role: "owner",
         p_chat_id: fixture.sampleConversationId,
         p_request_id: `scale-send-${index}-${Date.now()}`,
-        p_expected_revision: 1 + index,
+        p_expected_revision: expectedRevision,
         p_body: `__fixture:hello__ ${index}`,
         p_branch_id: fixture.sampleBranchId,
         p_body_hash: `scale-body-hash-${index}`,
         p_attachment_ids: [],
       });
       if (error) throw new Error(`p85_stage_4c_send_message_v1:${error.message}`);
+      const row = (data ?? {}) as Record<string, unknown>;
+      const runId = String(row.run_id ?? row.runId ?? "");
+      expectedRevision = Number(row.conversation_revision ?? row.conversationRevision ?? expectedRevision + 1);
+      if (!runId) throw new Error("p85_stage_4c_send_message_v1:missing_run_id");
+      const finalize = await client.rpc("p85_stage_4c_finalize_run_v1", {
+        p_tenant_id: fixture.tenantId,
+        p_run_id: runId,
+        p_status: "completed",
+        p_answerability: "answerable",
+        p_risk_level: "green",
+        p_error_code: null,
+      });
+      if (finalize.error) throw new Error(`p85_stage_4c_finalize_run_v1:${finalize.error.message}`);
       sendDurations.push(performance.now() - started);
     }
     const sendTransactionP95Ms = percentile(sendDurations, 0.95);
@@ -307,8 +322,8 @@ export async function runStage4CPostgresScaleRehearsalFull(): Promise<Stage4CPos
     const contextToolP95Ms = await measureRpcDuration(client, "p85_stage_4c_execute_context_tool_v1", {
       p_tenant_id: fixture.tenantId,
       p_client_id: fixture.sampleClientId,
-      p_tool_name: "client_profile",
-      p_args: { clientId: fixture.sampleClientId },
+      p_tool_name: "load_client_profile",
+      p_args: {},
     });
 
     const boundedRetrievalP95Ms = await measureRpcDuration(client, "p85_stage_4c_get_context_gateway_access_v1", {
@@ -359,6 +374,7 @@ export async function runStage4CPostgresScaleRehearsalFull(): Promise<Stage4CPos
           messageVersionCount: 0,
           sampleConversationId: "",
           sampleBranchId: "",
+          sampleRunId: "",
           sampleDietitianId: "",
           sampleClientId: "",
         },
@@ -386,28 +402,28 @@ export async function runStage4CPostgresScaleRehearsalSample(): Promise<Stage4CP
   }
 
   return {
-    status: "pass",
-    reason: "sample_only",
+    status: "blocked",
+    reason: "full_postgres_rehearsal_required",
     fixture: null,
     scaleRehearsal: {
-      dietitianCount: STAGE_4C_SCALE_REHEARSAL_TARGETS.dietitians,
-      clientCount: STAGE_4C_SCALE_REHEARSAL_TARGETS.clients,
-      chatCount: STAGE_4C_SCALE_REHEARSAL_TARGETS.chats,
-      messageVersionCount: STAGE_4C_SCALE_REHEARSAL_TARGETS.messageVersions,
-      historyListP95Ms: 0,
-      conversationLoadP95Ms: 0,
-      runEventCatchUpP95Ms: 0,
-      sendTransactionP95Ms: 0,
-      contextToolP95Ms: 0,
-      boundedRetrievalP95Ms: 0,
-      branchDetailP95Ms: 0,
-      contextRetrievalP95Ms: 0,
-      sseFirstDeltaP95Ms: 0,
-      stopUiReflectionP95Ms: 0,
-      latencyTargetsMet: true,
-      failures: [],
+      dietitianCount: 0,
+      clientCount: 0,
+      chatCount: 0,
+      messageVersionCount: 0,
+      historyListP95Ms: Number.POSITIVE_INFINITY,
+      conversationLoadP95Ms: Number.POSITIVE_INFINITY,
+      runEventCatchUpP95Ms: Number.POSITIVE_INFINITY,
+      sendTransactionP95Ms: Number.POSITIVE_INFINITY,
+      contextToolP95Ms: Number.POSITIVE_INFINITY,
+      boundedRetrievalP95Ms: Number.POSITIVE_INFINITY,
+      branchDetailP95Ms: Number.POSITIVE_INFINITY,
+      contextRetrievalP95Ms: Number.POSITIVE_INFINITY,
+      sseFirstDeltaP95Ms: Number.POSITIVE_INFINITY,
+      stopUiReflectionP95Ms: Number.POSITIVE_INFINITY,
+      latencyTargetsMet: false,
+      failures: ["full_postgres_rehearsal_required"],
     },
     explainResults: [],
-    failures: [],
+    failures: ["full_postgres_rehearsal_required"],
   };
 }

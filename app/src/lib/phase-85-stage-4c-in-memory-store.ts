@@ -315,32 +315,36 @@ export function readInMemoryAiChatStateForLifecycle() {
   return inMemoryState;
 }
 
-export function triggerClientAiChatLifecycleDeletions(
+export async function triggerClientAiChatLifecycleDeletions(
   context: AppTenantContext,
   clientId: string,
   reason: "client_anonymization" | "client_removal",
 ) {
-  void import("./supabase-store")
-    .then(async ({ isSupabaseStoreConfigured }) => {
-      if (!isSupabaseStoreConfigured()) return;
-      const { getSupabaseAdminClient } = await import("./supabase");
-      const { supabaseEnqueueClientScopedDeletions } = await import("./phase-85-stage-4c-supabase-lifecycle");
-      const supabase = getSupabaseAdminClient();
-      if (!supabase) return;
-      await supabaseEnqueueClientScopedDeletions(supabase, context, clientId, reason);
-    })
-    .catch(() => {
-      // fail-closed enqueue is retried by operational sweeps; in-memory path remains for deterministic tests
-    });
+  const { isSupabaseStoreConfigured } = await import("./supabase-store");
+  if (isSupabaseStoreConfigured()) {
+    const { getSupabaseAdminClient } = await import("./supabase");
+    const { supabaseEnqueueClientScopedDeletions } = await import("./phase-85-stage-4c-supabase-lifecycle");
+    const supabase = getSupabaseAdminClient();
+    if (!supabase) throw new AppRequestError(503, "ai_chat_store_unavailable");
+    await supabaseEnqueueClientScopedDeletions(supabase, context, clientId, reason);
+  }
   if (!canUseInMemoryAiChatStore()) return;
   enqueueClientScopedAiChatDeletionsInMemory(inMemoryState, context, clientId, reason);
 }
 
-export function triggerAccountAiChatLifecycleDeletions(
+export async function triggerAccountAiChatLifecycleDeletions(
   tenantId: string,
   userId: string,
   reason: "account_membership_removed" = "account_membership_removed",
 ) {
+  const { isSupabaseStoreConfigured } = await import("./supabase-store");
+  if (isSupabaseStoreConfigured()) {
+    const { getSupabaseAdminClient } = await import("./supabase");
+    const { supabaseEnqueueAccountScopedDeletions } = await import("./phase-85-stage-4c-supabase-lifecycle");
+    const supabase = getSupabaseAdminClient();
+    if (!supabase) throw new AppRequestError(503, "ai_chat_store_unavailable");
+    await supabaseEnqueueAccountScopedDeletions(supabase, tenantId, userId, reason);
+  }
   if (!canUseInMemoryAiChatStore()) return;
   enqueueAccountAiChatDeletionsInMemory(inMemoryState, tenantId, userId, reason);
 }
@@ -1568,6 +1572,18 @@ export const inMemoryAiChatStore: AiChatStore = {
     };
   },
 
+  async getRunActorContext(input) {
+    const conversation = inMemoryState.conversations.find(
+      (item) => item.tenantId === input.tenantId && item.createdByUserId === input.userId,
+    );
+    return {
+      tenantId: input.tenantId,
+      userId: input.userId,
+      dietitianId: conversation?.createdByDietitianId ?? input.fallbackDietitianId,
+      role: "dietitian",
+    };
+  },
+
   async getContextGatewayAccess(input) {
     const checkedAt = new Date().toISOString();
     if (input.scopeType === "general") {
@@ -2018,6 +2034,10 @@ export const inMemoryAiChatStore: AiChatStore = {
 
   async enqueueClientScopedDeletions(context, clientId, reason) {
     enqueueClientScopedAiChatDeletionsInMemory(inMemoryState, context, clientId, reason);
+  },
+
+  async enqueueAccountScopedDeletions(tenantId, userId, reason) {
+    enqueueAccountAiChatDeletionsInMemory(inMemoryState, tenantId, userId, reason);
   },
 
   async buildClientScopedExportSlice(clientId) {

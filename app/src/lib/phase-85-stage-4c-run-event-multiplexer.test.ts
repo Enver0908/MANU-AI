@@ -94,6 +94,50 @@ describe("phase 85 stage 4c run event multiplexer", () => {
     sub.unsubscribe();
   });
 
+  it("does not let a newer subscriber advance the shared channel cursor past older subscribers", async () => {
+    resetRunEventMultiplexersForTests();
+    const events = [buildEvent(1), buildEvent(2), buildEvent(3), buildEvent(4), buildEvent(5)];
+    const receivedOld: number[] = [];
+    const receivedNew: number[] = [];
+    const deps: RunEventMultiplexerDeps = {
+      async listRunEvents(afterSequence) {
+        return events.filter((event) => event.sequenceNumber > afterSequence);
+      },
+    };
+
+    const oldSub = subscribeRunEventChannel({
+      tenantId: "tenant-a",
+      runId: "run-a",
+      deps,
+      subscriber: {
+        id: "old",
+        afterSequence: 0,
+        onEvent: (event) => receivedOld.push(event.sequenceNumber),
+      },
+    });
+    const newSub = subscribeRunEventChannel({
+      tenantId: "tenant-a",
+      runId: "run-a",
+      deps,
+      subscriber: {
+        id: "new",
+        afterSequence: 3,
+        onEvent: (event) => receivedNew.push(event.sequenceNumber),
+      },
+    });
+
+    expect(oldSub.getLastSequence()).toBe(0);
+
+    await oldSub.catchUp();
+    await newSub.catchUp();
+
+    expect(receivedOld).toEqual([1, 2, 3, 4, 5]);
+    expect(receivedNew).toEqual([4, 5]);
+
+    oldSub.unsubscribe();
+    newSub.unsubscribe();
+  });
+
   it("cleans up on abort signal", async () => {
     resetRunEventMultiplexersForTests();
     const controller = new AbortController();

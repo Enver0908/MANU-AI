@@ -50,6 +50,7 @@ declare
   v_branch_id uuid;
   v_message_id uuid;
   v_version_id uuid;
+  v_sample_run_id uuid := p85_stage_4c_scale_uuid_from_seed('run:0');
   v_parent_version_id uuid;
   v_now timestamptz := '2026-07-25T00:00:00.000Z'::timestamptz;
 begin
@@ -226,6 +227,69 @@ begin
       and id = v_branch_id;
   end loop;
 
+  insert into ai_chat_runs (
+    id,
+    tenant_id,
+    conversation_id,
+    created_by_user_id,
+    trigger_message_version_id,
+    status,
+    answerability,
+    risk_level,
+    created_at,
+    updated_at
+  )
+  values (
+    v_sample_run_id,
+    v_tenant_id,
+    p85_stage_4c_scale_uuid_from_seed('conversation:0'),
+    v_user_id,
+    p85_stage_4c_scale_uuid_from_seed('version:0:0'),
+    'completed',
+    'answerable',
+    'green',
+    v_now,
+    v_now
+  )
+  on conflict (id) do update
+    set status = excluded.status,
+        answerability = excluded.answerability,
+        risk_level = excluded.risk_level,
+        updated_at = excluded.updated_at;
+
+  insert into ai_chat_run_events (
+    id,
+    tenant_id,
+    run_id,
+    conversation_id,
+    created_by_user_id,
+    sequence_number,
+    event_type,
+    payload,
+    expires_at,
+    created_at
+  )
+  select
+    p85_stage_4c_scale_uuid_from_seed('run-event:0:' || seq::text),
+    v_tenant_id,
+    v_sample_run_id,
+    p85_stage_4c_scale_uuid_from_seed('conversation:0'),
+    v_user_id,
+    seq,
+    case when seq = 200 then 'response.completed' else 'response.delta' end,
+    case
+      when seq = 200 then jsonb_build_object('sequenceNumber', seq, 'eventType', 'response.completed')
+      else jsonb_build_object('sequenceNumber', seq, 'eventType', 'response.delta', 'text', 'chunk-' || seq::text)
+    end,
+    v_now + interval '24 hours',
+    v_now + (seq || ' milliseconds')::interval
+  from generate_series(1, 200) as seq
+  on conflict (tenant_id, run_id, sequence_number) do update
+    set event_type = excluded.event_type,
+        payload = excluded.payload,
+        expires_at = excluded.expires_at,
+        created_at = excluded.created_at;
+
   return jsonb_build_object(
     'tenantId', v_tenant_id,
     'userId', v_user_id,
@@ -235,6 +299,7 @@ begin
     'messageVersionCount', v_version_count,
     'sampleConversationId', p85_stage_4c_scale_uuid_from_seed('conversation:0'),
     'sampleBranchId', p85_stage_4c_scale_uuid_from_seed('branch:0'),
+    'sampleRunId', v_sample_run_id,
     'sampleDietitianId', p85_stage_4c_scale_uuid_from_seed('dietitian:0'),
     'sampleClientId', p85_stage_4c_scale_uuid_from_seed('client:0')
   );

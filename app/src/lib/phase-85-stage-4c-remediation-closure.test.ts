@@ -17,10 +17,12 @@ describe("phase 85 stage 4c remediation closure", () => {
     expect(scan.scannedFileCount).toBeGreaterThan(0);
   });
 
-  it("passes sample remediation rehearsal without local Supabase", async () => {
+  it("blocks sample remediation rehearsal without full local Supabase postgres scale proof", async () => {
     const rehearsal = await runStage4CRemediationClosureRehearsal();
     expect(rehearsal.concurrency.failures).toEqual([]);
-    expect(rehearsal.postgresScale.status).toBe("pass");
+    expect(rehearsal.status).toBe("fail");
+    expect(rehearsal.postgresScale.status).toBe("blocked");
+    expect(rehearsal.failures).toContain("full_postgres_rehearsal_required");
   }, 180_000);
 
   fullRehearsalIt(

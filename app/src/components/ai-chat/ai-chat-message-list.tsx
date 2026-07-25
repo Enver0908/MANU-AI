@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Copy, Pencil, RefreshCw, Trash2 } from "lucide-react";
 import { t } from "@/lib/i18n";
 import type { SupportedLanguageCode } from "@/lib/languages";
@@ -255,7 +255,7 @@ export function AiChatMessageList({
   const prevFirstMessageIdRef = useRef<string | null>(null);
   const prevMessageCountRef = useRef(0);
 
-  const messageIds = messages.map((message) => message.id);
+  const messageIds = useMemo(() => messages.map((message) => message.id), [messages]);
 
   const handleHeightChange = useCallback((messageId: string, height: number) => {
     setHeightsByMessageId((current) => {
@@ -266,9 +266,14 @@ export function AiChatMessageList({
     });
   }, []);
 
-  const latestUserId = [...messages].reverse().find((message) => message.role === "user")?.id ?? null;
-  const latestAssistantId =
-    [...messages].reverse().find((message) => message.role === "assistant")?.id ?? null;
+  const latestUserId = useMemo(
+    () => [...messages].reverse().find((message) => message.role === "user")?.id ?? null,
+    [messages],
+  );
+  const latestAssistantId = useMemo(
+    () => [...messages].reverse().find((message) => message.role === "assistant")?.id ?? null,
+    [messages],
+  );
 
   useEffect(() => {
     const container = containerRef.current;
@@ -311,13 +316,19 @@ export function AiChatMessageList({
   const refreshRange = useCallback(() => {
     const container = containerRef.current;
     if (!container) return;
-    setRange(
-      computeMeasuredVirtualizedMessageRange(
-        messageIds,
-        heightsByMessageId,
-        container.scrollTop,
-        container.clientHeight,
-      ),
+    const nextRange = computeMeasuredVirtualizedMessageRange(
+      messageIds,
+      heightsByMessageId,
+      container.scrollTop,
+      container.clientHeight,
+    );
+    setRange((current) =>
+      current.start === nextRange.start &&
+      current.end === nextRange.end &&
+      current.spacerBefore === nextRange.spacerBefore &&
+      current.spacerAfter === nextRange.spacerAfter
+        ? current
+        : nextRange,
     );
   }, [heightsByMessageId, messageIds]);
 

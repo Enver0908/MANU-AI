@@ -1,20 +1,28 @@
-# Stage 4C Remediation ve Teknik Kapanış Eylem Planı
+# Stage 4C Remediation and Technical Closure Action Plan
 
 Date: 2026-07-25
-Status: **Faz 8 complete locally (code + targeted tests); full rehearsal requires local Supabase zero-skip RLS**
+Status: **Remediation hardening applied through Faz 3; full closure blocked pending local Supabase/Postgres zero-skip rehearsal**
 
-Canonical user plan imported into repo on 2026-07-25. See `docs/PHASE_85_STAGE_4C_REMEDIATION_EVIDENCE.md` for verification authority.
+This document is the remediation authority for the three-phase hardening pass requested after the Stage 4C audit findings.
 
 Production remains `NO-GO`. R-405 remains open.
 
 ## Faz 1
 
-Documentation/read-gate and remediation authority reset — pending on clean `39107f5` worktree.
+Authorization, lifecycle, attachment hashing, terminal risk, and Supabase actor-context hardening applied in code and covered by targeted tests.
 
 ## Faz 2
 
-Modüler Store, Atomik Chat RPC'leri ve Çalıştırılmış RLS Temeli — **complete locally (RLS blocked pending local Supabase)**.
+SSE fan-out/catch-up, client reconnect semantics, render-loop resilience, and AI Chat accessibility/build validation applied in code and covered by targeted tests.
 
-## Faz 3-8
+## Faz 3
 
-See user remediation plan sections in repository handoff; do not start Faz 3 until Faz 2 RLS zero-skip evidence is recorded or explicitly waived by user.
+PostgreSQL scale rehearsal correctness, release audit gating, dependency remediation, and closure-document reconciliation applied.
+
+Full Stage 4C closure still requires:
+
+- local Supabase/Postgres migrations applied from a clean database state
+- `STAGE_4C_FULL_REHEARSAL=1` full rehearsal
+- zero skipped RLS tests
+- zero unknown production dependency audit findings
+- only documented R-405 nested Next.js/PostCSS/Sharp findings may remain accepted

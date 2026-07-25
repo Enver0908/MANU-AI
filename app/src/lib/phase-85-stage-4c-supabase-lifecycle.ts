@@ -248,6 +248,22 @@ export async function supabaseEnqueueClientScopedDeletions(
   }
 }
 
+export async function supabaseEnqueueAccountScopedDeletions(
+  supabase: SupabaseClient,
+  tenantId: string,
+  userId: string,
+  reason: "account_membership_removed",
+) {
+  const { error } = await supabase.rpc("p85_stage_4c_enqueue_account_scoped_deletions_v1", {
+    p_tenant_id: tenantId,
+    p_user_id: userId,
+    p_reason: reason,
+  });
+  if (error) {
+    mapRpcError(error);
+  }
+}
+
 export async function supabaseBuildClientScopedExportSlice(
   supabase: SupabaseClient,
   context: AppTenantContext,

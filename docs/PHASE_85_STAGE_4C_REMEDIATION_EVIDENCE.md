@@ -1,13 +1,27 @@
 # Phase 85 Stage 4C Remediation Evidence
 
 Date: 2026-07-25
-Status: **Faz 8 complete locally with RLS blocked (Docker/local Supabase unavailable)**
+Status: **Faz 1-3 hardening applied; full Stage 4C closure remains blocked**
 
 Production remains `NO-GO`. R-405 remains open.
 
 Authority plan: `docs/PHASE_85_STAGE_4C_REMEDIATION_ACTION_PLAN.md` (from user remediation plan 2026-07-25).
 
 Historical `PASS_LOCAL_STAGE_4C` claims are superseded by remediation closure authority; `PASS_LOCAL_STAGE_4C_REMEDIATED` requires zero-skip full rehearsal.
+
+## Current Remediation Update: 2026-07-25
+
+Status: **Faz 1-3 hardening applied; full Stage 4C closure remains blocked**.
+
+This update supersedes any older local-complete wording in this evidence file when it conflicts with the current closure gate.
+
+- Faz 1 hardening fixed actor-context derivation, lifecycle enqueue behavior, actual attachment-byte hashing, and terminal risk classification.
+- Faz 2 hardening fixed SSE subscriber catch-up semantics, client reconnect after premature EOF, render-loop risk in the virtualized message list, and SSE polling pressure.
+- Faz 3 hardening fixed PostgreSQL scale rehearsal correctness by using a real sample run id for event catch-up, finalizing each send-run during write measurement, and preventing sample rehearsals from returning false zero-latency pass results.
+- Production dependency remediation upgraded direct `mammoth` and `yauzl` findings; remaining production audit findings are accepted only as documented R-405 nested Next.js/PostCSS/Sharp findings.
+- `runStage4CPostgresScaleRehearsalSample()` must remain `blocked` until a real full Postgres rehearsal is executed.
+
+Full closure requires `STAGE_4C_FULL_REHEARSAL=1`, local Supabase/Postgres availability, applied migrations, zero skipped RLS tests, passing scale thresholds, and zero unknown production audit findings.
 
 ## Faz 8: Gerçek PostgreSQL Ölçek Rehearsal’ı, Hard-Zero Kapısı ve Nihai Kapanış
 

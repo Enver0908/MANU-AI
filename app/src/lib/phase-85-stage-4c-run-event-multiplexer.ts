@@ -61,8 +61,7 @@ function isSubscriberActive(subscriber: RunEventSubscriber) {
 }
 
 function fanOutEvent(state: RunChannelState, event: AiChatRunEventDto) {
-  if (event.sequenceNumber <= state.lastSequence) return;
-  state.lastSequence = event.sequenceNumber;
+  state.lastSequence = Math.max(state.lastSequence, event.sequenceNumber);
   for (const subscriber of state.subscribers.values()) {
     if (!isSubscriberActive(subscriber)) continue;
     if (event.sequenceNumber <= subscriber.afterSequence) continue;
@@ -71,10 +70,17 @@ function fanOutEvent(state: RunChannelState, event: AiChatRunEventDto) {
   }
 }
 
+function resolvePollAfterSequence(state: RunChannelState) {
+  pruneInactiveSubscribers(state);
+  const active = [...state.subscribers.values()].filter(isSubscriberActive);
+  if (active.length === 0) return state.lastSequence;
+  return Math.min(...active.map((subscriber) => subscriber.afterSequence));
+}
+
 async function pollOnce(state: RunChannelState) {
   if (state.disposed) return;
   try {
-    const events = await state.deps.listRunEvents(state.lastSequence);
+    const events = await state.deps.listRunEvents(resolvePollAfterSequence(state));
     for (const event of events) {
       fanOutEvent(state, event);
     }
@@ -180,8 +186,8 @@ export async function catchUpRunEventsForSubscriber(
   for (const event of events) {
     if (event.sequenceNumber <= subscriber.afterSequence) continue;
     subscriber.afterSequence = event.sequenceNumber;
-    state.lastSequence = Math.max(state.lastSequence, event.sequenceNumber);
     subscriber.onEvent(event);
+    state.lastSequence = Math.max(state.lastSequence, event.sequenceNumber);
   }
 }
 
@@ -193,7 +199,6 @@ export function subscribeRunEventChannel(input: {
 }) {
   const state = getOrCreateChannel(input.tenantId, input.runId, input.deps);
   state.subscribers.set(input.subscriber.id, input.subscriber);
-  state.lastSequence = Math.max(state.lastSequence, input.subscriber.afterSequence);
 
   const abortHandler = () => {
     unsubscribe();

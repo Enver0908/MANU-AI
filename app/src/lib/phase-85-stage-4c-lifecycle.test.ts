@@ -210,6 +210,31 @@ describe("phase 85 stage 4c lifecycle", () => {
     expect(list.items.some((item) => item.id === general.id)).toBe(true);
   });
 
+  it("account membership removal queues account-scoped chat purge", async () => {
+    const store = resolveAiChatStore();
+    const detail = await seedConversationWithMessages(store);
+
+    await store.enqueueAccountScopedDeletions(
+      tenantContext.tenantId,
+      tenantContext.userId,
+      "account_membership_removed",
+    );
+    const queued = readInMemoryAiChatLifecycleStateForTests().deletionJobs.find(
+      (item) =>
+        item.jobKind === "account_chats_purge" &&
+        item.tenantId === tenantContext.tenantId &&
+        item.targetUserId === tenantContext.userId,
+    );
+
+    expect(queued).toBeTruthy();
+    while ((await store.processLifecycleDeletionBatch(8)) > 0) {
+      // drain
+    }
+
+    const list = await store.listConversations(tenantContext, { scope: "all", query: "", limit: 30 });
+    expect(list.items.some((item) => item.id === detail.id)).toBe(false);
+  });
+
   it("replays deletion ledger after restore rehearsal", async () => {
     const store = resolveAiChatStore();
     const detail = await seedConversationWithMessages(store);

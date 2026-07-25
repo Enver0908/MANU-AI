@@ -324,16 +324,32 @@ export function reduceAiChatRunEvent(
   return next;
 }
 
+function isTerminalAiChatRunEvent(eventType: string) {
+  return eventType === "response.completed" || eventType === "response.stopped" || eventType === "run.failed";
+}
+
+function waitForAiChatReconnectDelay(ms: number, signal?: AbortSignal) {
+  if (signal?.aborted) return Promise.reject(new DOMException("Aborted", "AbortError"));
+  return new Promise<void>((resolve, reject) => {
+    const timer = globalThis.setTimeout(resolve, ms);
+    const onAbort = () => {
+      globalThis.clearTimeout(timer);
+      reject(new DOMException("Aborted", "AbortError"));
+    };
+    signal?.addEventListener("abort", onAbort, { once: true });
+  });
+}
+
 async function consumeAiChatRunSse(runId: string, afterSequence: number, onEvent: (event: {
   sequenceNumber: number;
   eventType: string;
   payload: Record<string, unknown>;
-}) => void) {
+}) => void, signal?: AbortSignal): Promise<{ lastSequence: number; terminalSeen: boolean }> {
   const params = new URLSearchParams();
   if (afterSequence > 0) params.set("after", String(afterSequence));
   const response = await fetch(
     `/api/ai-chat/runs/${encodeURIComponent(runId)}/events?${params.toString()}`,
-    { headers: { accept: "text/event-stream" } },
+    { headers: { accept: "text/event-stream" }, signal },
   );
   if (!response.ok || !response.body) {
     throw new AppRequestError(response.status, "ai_chat_stream_failed");
@@ -342,6 +358,8 @@ async function consumeAiChatRunSse(runId: string, afterSequence: number, onEvent
   const reader = response.body.getReader();
   const decoder = new TextDecoder();
   let buffer = "";
+  let sequence = afterSequence;
+  let terminalSeen = false;
 
   while (true) {
     const { done, value } = await reader.read();
@@ -365,16 +383,21 @@ async function consumeAiChatRunSse(runId: string, afterSequence: number, onEvent
       }
       try {
         const payload = JSON.parse(data) as Record<string, unknown>;
-        onEvent({
+        const event = {
           sequenceNumber: Number(payload.sequenceNumber ?? sequenceNumber),
           eventType: String(payload.eventType ?? eventType),
           payload,
-        });
+        };
+        sequence = Math.max(sequence, event.sequenceNumber);
+        terminalSeen = terminalSeen || isTerminalAiChatRunEvent(event.eventType);
+        onEvent(event);
       } catch {
         // ignore malformed chunks
       }
     }
   }
+
+  return { lastSequence: sequence, terminalSeen };
 }
 
 export async function subscribeToAiChatRun(input: {
@@ -386,29 +409,48 @@ export async function subscribeToAiChatRun(input: {
     payload: Record<string, unknown>;
   }) => void;
   maxReconnects?: number;
+  signal?: AbortSignal;
 }) {
   let sequence = input.afterSequence ?? 0;
-  const maxReconnects = input.maxReconnects ?? 2;
+  const maxReconnects = input.maxReconnects ?? 6;
+  let terminalSeen = false;
 
   for (let attempt = 0; attempt <= maxReconnects; attempt += 1) {
-    try {
-      await consumeAiChatRunSse(input.runId, sequence, (event) => {
-        sequence = Math.max(sequence, event.sequenceNumber);
-        input.onEvent(event);
-      });
-      return;
-    } catch (error) {
-      if (attempt === maxReconnects) throw error;
-      await new Promise((resolve) => setTimeout(resolve, 500));
+    if (input.signal?.aborted) {
+      throw new DOMException("Aborted", "AbortError");
     }
+    try {
+      const result = await consumeAiChatRunSse(input.runId, sequence, (event) => {
+        sequence = Math.max(sequence, event.sequenceNumber);
+        terminalSeen = terminalSeen || isTerminalAiChatRunEvent(event.eventType);
+        input.onEvent(event);
+      }, input.signal);
+      sequence = Math.max(sequence, result.lastSequence);
+      terminalSeen = terminalSeen || result.terminalSeen;
+      if (terminalSeen) return { terminalSeen: true, lastSequence: sequence };
+    } catch (error) {
+      if (input.signal?.aborted || (error instanceof DOMException && error.name === "AbortError")) {
+        throw error;
+      }
+      if (attempt === maxReconnects) throw error;
+    }
+    if (attempt === maxReconnects) break;
+    const jitter = Math.floor(Math.random() * 150);
+    await waitForAiChatReconnectDelay(Math.min(2_000, 350 * (attempt + 1)) + jitter, input.signal);
   }
+
+  return { terminalSeen: false, lastSequence: sequence };
 }
 
 export function useAiChatRunStream(_chatId: string | null, onTerminal?: () => void) {
   const [state, setState] = useState<AiChatStreamingState>(INITIAL_AI_CHAT_STREAMING_STATE);
+  const activeRunRef = useRef<{ runId: string; controller: AbortController } | null>(null);
 
   const subscribe = useCallback(
     async (runId: string, afterSequence = 0) => {
+      activeRunRef.current?.controller.abort();
+      const controller = new AbortController();
+      activeRunRef.current = { runId, controller };
       setState({
         runId,
         status: "queued",
@@ -420,24 +462,43 @@ export function useAiChatRunStream(_chatId: string | null, onTerminal?: () => vo
       });
 
       try {
-        await subscribeToAiChatRun({
+        const result = await subscribeToAiChatRun({
           runId,
           afterSequence,
+          signal: controller.signal,
           onEvent: (event) => {
-            setState((current) => reduceAiChatRunEvent(current, event));
+            setState((current) => {
+              if (current.runId !== runId) return current;
+              return reduceAiChatRunEvent(current, event);
+            });
           },
         });
-        onTerminal?.();
+        if (activeRunRef.current?.runId === runId && result.terminalSeen) {
+          onTerminal?.();
+        }
       } catch (error) {
+        if (controller.signal.aborted) return;
         const code = error instanceof AppRequestError ? error.code : "ai_chat_stream_failed";
-        setState((current) => ({ ...current, isStreaming: false, error: code }));
+        setState((current) => (current.runId === runId ? { ...current, isStreaming: false, error: code } : current));
+      } finally {
+        if (activeRunRef.current?.runId === runId) {
+          activeRunRef.current = null;
+        }
       }
     },
     [onTerminal],
   );
 
   const reset = useCallback(() => {
+    activeRunRef.current?.controller.abort();
+    activeRunRef.current = null;
     setState(INITIAL_AI_CHAT_STREAMING_STATE);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      activeRunRef.current?.controller.abort();
+    };
   }, []);
 
   return { state, subscribe, reset };

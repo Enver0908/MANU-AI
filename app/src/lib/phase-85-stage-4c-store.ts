@@ -141,6 +141,11 @@ export interface AiChatStore {
   enqueueTitleJob(tenantId: string, conversationId: string, userId: string): Promise<void>;
   applyAutoTitleIfEligible(tenantId: string, conversationId: string, maxLength: number): Promise<void>;
   getConversationRecord(tenantId: string, conversationId: string): Promise<AiChatConversationRecord | null>;
+  getRunActorContext(input: {
+    tenantId: string;
+    userId: string;
+    fallbackDietitianId: string;
+  }): Promise<AppTenantContext | null>;
   getContextGatewayAccess(input: {
     tenantId: string;
     userId: string;
@@ -355,6 +360,11 @@ export interface AiChatStore {
     context: AppTenantContext,
     clientId: string,
     reason: "client_anonymization" | "client_removal",
+  ): Promise<void>;
+  enqueueAccountScopedDeletions(
+    tenantId: string,
+    userId: string,
+    reason: "account_membership_removed",
   ): Promise<void>;
   buildClientScopedExportSlice(clientId: string): Promise<AiChatClientScopedExportSlice>;
 }

@@ -2118,7 +2118,7 @@ export async function anonymizeSupabaseClientData(clientId: string, context = de
   const before = await loadSupabaseState(context);
   const after = anonymizeClientInState(before, clientId);
   const { triggerClientAiChatLifecycleDeletions } = await import("./phase-85-stage-4c-store");
-  triggerClientAiChatLifecycleDeletions(context, clientId, "client_anonymization");
+  await triggerClientAiChatLifecycleDeletions(context, clientId, "client_anonymization");
   return persistSupabaseClientRemovalLifecycle(before, after, clientId, context);
 }
 
@@ -2126,7 +2126,7 @@ export async function removeSupabaseClientData(clientId: string, context = demoT
   const before = await loadSupabaseState(context);
   const after = removeClientInState(before, clientId);
   const { triggerClientAiChatLifecycleDeletions } = await import("./phase-85-stage-4c-store");
-  triggerClientAiChatLifecycleDeletions(context, clientId, "client_removal");
+  await triggerClientAiChatLifecycleDeletions(context, clientId, "client_removal");
   return persistSupabaseClientRemovalLifecycle(before, after, clientId, context);
 }
 

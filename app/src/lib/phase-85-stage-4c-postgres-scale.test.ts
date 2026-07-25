@@ -17,6 +17,9 @@ describe("phase 85 stage 4c postgres scale", () => {
     expect(migrationSource).toContain("p85_stage_4c_scale_fixture_seed_v1");
     expect(migrationSource).toContain("p85_stage_4c_scale_fixture_cleanup_v1");
     expect(migrationSource).toContain("p85_stage_4c_scale_explain_profile_v1");
+    expect(migrationSource).toContain("'sampleRunId'");
+    expect(migrationSource).toContain("insert into ai_chat_runs");
+    expect(migrationSource).toContain("insert into ai_chat_run_events");
     expect(migrationSource).toContain("ai_chat_message_versions_branch_order_idx");
     expect(migrationSource).toContain("ai_chat_attachment_derivatives_lineage_idx");
   });
@@ -35,9 +38,12 @@ describe("phase 85 stage 4c postgres scale", () => {
     expect(result.usesLeadingTenantIndex).toBe(true);
   });
 
-  it("runs sample postgres scale rehearsal without requiring local Supabase", async () => {
+  it("blocks sample postgres scale rehearsal until full local Supabase measurement runs", async () => {
     const result = await runStage4CPostgresScaleRehearsalSample();
-    expect(result.status).toBe("pass");
+    expect(result.status).toBe("blocked");
+    expect(result.reason).toBe("full_postgres_rehearsal_required");
+    expect(result.scaleRehearsal.latencyTargetsMet).toBe(false);
+    expect(result.failures).toContain("full_postgres_rehearsal_required");
     expect(STAGE_4C_SCALE_EXPLAIN_PROFILES.length).toBe(8);
   });
 });
