@@ -1,8 +1,8 @@
 # MANU-AI Plan
 
-**Current authority (2026-07-25):** Stage 4C remediation repo-local complete. Evidence: `docs/PHASE_85_STAGE_4C_REMEDIATION_EVIDENCE.md`. Production remains `NO-GO`; R-405 remains open; real provider and external gates remain closed.
+**Current authority (2026-07-25):** Stage 4C remediation Faz 1-3 hardening is applied and repo-local implementation is complete on `codex/stage-4c-remediation` at commit `83c200b`. Evidence: `docs/PHASE_85_STAGE_4C_REMEDIATION_EVIDENCE.md`. Full Stage 4C closure remains blocked until local Supabase/Postgres migrations, zero-skipped RLS, passing scale thresholds, `STAGE_4C_FULL_REHEARSAL=1`, and clean production audit gates pass. Production remains `NO-GO`; R-405 remains open; real provider and external gates remain closed.
 
-Current continuity status, 2026-07-22: Stage 4B-2 R0-R7 and advisory hardening are closed locally; Stage 4B-3 post-closure remediation R0-R9 is closed locally with measured R9 evidence; Stage 4B-4 post-closure remediation R0-R9 is closed locally with measured R9 evidence. Stage 4C Faz 1 through Faz 4 are complete locally (Faz 4 ships the AI Chat dashboard shell/routes/navigation with real message sending still disabled pending Faz 5). Stage 4C Faz 5 is next after explicit user approval. Production remains `NO-GO`; R-405 remains open.
+Current continuity status, 2026-07-25: Stage 4B-2 R0-R7 and advisory hardening are closed locally; Stage 4B-3 post-closure remediation R0-R9 is closed locally with measured R9 evidence; Stage 4B-4 post-closure remediation R0-R9 is closed locally with measured R9 evidence. Stage 4C implementation and remediation hardening are repo-local complete, but full closure cannot be declared until the zero-skip local Supabase/Postgres rehearsal gate passes. The next active unit is post-remediation production-gate/local-Supabase closure work only after explicit user approval. Production remains `NO-GO`; R-405 remains open.
 
 ## Project Summary
 

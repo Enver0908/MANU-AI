@@ -1,16 +1,16 @@
 # Handoff For Next Codex
 
-**Current authority (2026-07-25):** Stage 4C remediation repo-local complete on `codex/stage-4c-remediation`. Evidence: `docs/PHASE_85_STAGE_4C_REMEDIATION_EVIDENCE.md`. **Next:** explicit user approval for post-remediation production gate work only. Production remains `NO-GO`; R-405 remains open.
+**Current authority (2026-07-25):** Stage 4C remediation Faz 1-3 hardening is applied and repo-local implementation is complete on `codex/stage-4c-remediation` at commit `83c200b`. Evidence: `docs/PHASE_85_STAGE_4C_REMEDIATION_EVIDENCE.md`. Full Stage 4C closure remains blocked until local Supabase/Postgres migrations, zero-skipped RLS, passing scale thresholds, `STAGE_4C_FULL_REHEARSAL=1`, and clean production audit gates pass. **Next:** explicit user approval for post-remediation production-gate/local-Supabase closure work only. Production remains `NO-GO`; R-405 remains open.
 
-Pre-Stage-4C Faz 1 Stage 4B-3 closure, Stage 4B-4 Phase 11 closure, and Stage 4B-4 R0-R9 paragraphs below this authority block are historical snapshots. Use the Stage 4C plan and Faz 1 evidence as the current handoff.
+Pre-Stage-4C Faz 1 Stage 4B-3 closure, Stage 4B-4 Phase 11 closure, Stage 4B-4 R0-R9, and pre-remediation Stage 4C phase paragraphs below this authority block are historical snapshots. Use the Stage 4C remediation evidence as the current handoff.
 
 Historical continuity audit, 2026-07-13: canonical status, repository-relative references, dashboard messaging navigation, bounded APIs, DTO/permission contracts, append-only RPC/RLS migrations, and then-current evidence were reconciled. Treat older R1-R6 and Docker-blocked paragraphs as historical snapshots only. Evidence: `docs/PHASE_85_STAGE_4B_2_CONTINUITY_AND_ROUTING_RECONCILIATION_EVIDENCE.md`. Stage 4B-3 and Stage 4B-4 subsequently closed through R9; the current Phase 85 handoff is Stage 4C.
 
 ## Read This First
 
-Latest Phase 85 handoff (2026-07-23): **Stage 4C Diyetisyen Icin AI Chat Faz 10 Mesaj/Sohbet Silme, Retention, DSAR ve Yasam Dongusu is complete locally.** Full/message delete, deletion ledger, legal hold 423, client-scoped DSAR export, retention sweeps, and UI delete flows are wired. Evidence: `docs/PHASE_85_STAGE_4C_EVIDENCE.md`. **Next:** Faz 11 security/clinical closure after explicit user approval. Production pilot remains `NO-GO`; R-405 remains open.
+Historical Phase 85 handoff (2026-07-23): **Stage 4C Diyetisyen Icin AI Chat Faz 10 Mesaj/Sohbet Silme, Retention, DSAR ve Yasam Dongusu completed locally before the 2026-07-25 remediation authority.** Full/message delete, deletion ledger, legal hold 423, client-scoped DSAR export, retention sweeps, and UI delete flows are wired. Evidence: `docs/PHASE_85_STAGE_4C_EVIDENCE.md`. This is superseded by `docs/PHASE_85_STAGE_4C_REMEDIATION_EVIDENCE.md`; do not treat "Faz 11 next" or historical `PASS_LOCAL_STAGE_4C` wording as active. Production pilot remains `NO-GO`; R-405 remains open.
 
-Latest Phase 85 Stage 4C Faz 3 status (2026-07-22): superseded by Faz 4 closure above. Evidence: `docs/PHASE_85_STAGE_4C_EVIDENCE.md`.
+Historical Phase 85 Stage 4C Faz 3 status (2026-07-22): superseded first by later Stage 4C implementation evidence and now by the 2026-07-25 remediation authority. Evidence: `docs/PHASE_85_STAGE_4C_EVIDENCE.md`.
 
 Latest Phase 85 Stage 4B-3 Phase 4 status (2026-07-13): bundle correlation and silence queue complete locally. Evidence: `docs/PHASE_85_STAGE_4B_3_PHASE_4_BUNDLE_SILENCE_QUEUE_EVIDENCE.md`. Phase 5 subsequently completed; see the Phase 5 evidence above.
 

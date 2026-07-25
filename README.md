@@ -4,7 +4,7 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 ## Current Status
 
-**Current authority (2026-07-25):** Stage 4C remediation Faz 2 complete locally on branch `codex/stage-4c-remediation`. Evidence: `docs/PHASE_85_STAGE_4C_REMEDIATION_EVIDENCE.md`. **Next:** Faz 3 after zero-skip local Supabase RLS (currently blocked — Docker unavailable). Historical Faz 11 `PASS_LOCAL_STAGE_4C` is superseded by remediation-required status. Production remains `NO-GO`; R-405 remains open.
+**Current authority (2026-07-25):** Stage 4C remediation Faz 1-3 hardening is applied and repo-local implementation is complete on branch `codex/stage-4c-remediation` at commit `83c200b`. Evidence: `docs/PHASE_85_STAGE_4C_REMEDIATION_EVIDENCE.md`. Full Stage 4C closure remains blocked until local Supabase/Postgres migrations, zero-skipped RLS, passing scale thresholds, `STAGE_4C_FULL_REHEARSAL=1`, and clean production audit gates pass. Historical Faz 11 `PASS_LOCAL_STAGE_4C` is superseded; do not claim `PASS_LOCAL_STAGE_4C_REMEDIATED` yet. Production remains `NO-GO`; R-405 remains open.
 
 **2026-07-18 Stage 4B-4 post-closure remediation R9:** R0-R9 is closed locally with local Supabase RLS 41/41 zero-skip, full-scale voice closure, release verification, visual acceptance, channel replay, and risk reconciliation. Evidence: `docs/PHASE_85_STAGE_4B_4_POST_CLOSURE_REMEDIATION_R9_EVIDENCE.md`.
 
