@@ -1,7 +1,7 @@
 # Stage 4C Remediation ve Teknik Kapanış Eylem Planı
 
 Date: 2026-07-25
-Status: **Faz 2 complete locally; Faz 3 is next**
+Status: **Faz 8 complete locally (code + targeted tests); full rehearsal requires local Supabase zero-skip RLS**
 
 Canonical user plan imported into repo on 2026-07-25. See `docs/PHASE_85_STAGE_4C_REMEDIATION_EVIDENCE.md` for verification authority.
 

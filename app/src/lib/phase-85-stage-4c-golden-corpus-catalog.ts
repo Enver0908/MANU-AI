@@ -272,6 +272,8 @@ function buildSourceConflictCases(): Stage4CGoldenCorpusCase[] {
       intent: "client_source_explanation",
       answerability: "insufficient",
       invalidCitation: false,
+      autoClinicalWrite: false,
+      clientSendEligible: false,
     },
   }));
 }
@@ -346,6 +348,7 @@ function buildRedTeamCases(): Stage4CGoldenCorpusCase[] {
           secondClientRetrieval: false,
           deletedDataRetrieval: false,
           productionProviderFlag: false,
+          forbiddenTools: [],
         },
       };
 
@@ -392,7 +395,7 @@ function buildRedTeamCases(): Stage4CGoldenCorpusCase[] {
     }
   }
 
-  return cases.slice(0, Math.max(STAGE_4C_RED_TEAM_MIN_CASES, cases.length));
+  return cases.slice(0, STAGE_4C_RED_TEAM_MIN_CASES);
 }
 
 export function buildStage4CGoldenCorpusCases(): Stage4CGoldenCorpusCase[] {

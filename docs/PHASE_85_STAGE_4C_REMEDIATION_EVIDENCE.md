@@ -1,13 +1,39 @@
 # Phase 85 Stage 4C Remediation Evidence
 
 Date: 2026-07-25
-Status: **Faz 7 complete locally with RLS blocked (Docker/local Supabase unavailable)**
+Status: **Faz 8 complete locally with RLS blocked (Docker/local Supabase unavailable)**
 
 Production remains `NO-GO`. R-405 remains open.
 
 Authority plan: `docs/PHASE_85_STAGE_4C_REMEDIATION_ACTION_PLAN.md` (from user remediation plan 2026-07-25).
 
-Historical `PASS_LOCAL_STAGE_4C` claims are superseded by remediation-required status until Faz 8 hard-zero closure passes with zero-skip RLS.
+Historical `PASS_LOCAL_STAGE_4C` claims are superseded by remediation closure authority; `PASS_LOCAL_STAGE_4C_REMEDIATED` requires zero-skip full rehearsal.
+
+## Faz 8: Gerçek PostgreSQL Ölçek Rehearsal’ı, Hard-Zero Kapısı ve Nihai Kapanış
+
+Status: **complete locally (code + targeted tests); full zero-skip rehearsal blocked pending local Supabase**
+
+### Delivered
+
+- `phase-85-stage-4c-corpus-chain.ts`: corpus schema validation plus store -> worker -> context -> finalizer chain (full-rehearsal gated)
+- `phase-85-stage-4c-postgres-scale.ts` + migration `20260725150000_phase_85_stage_4c_remediation_scale_indexes.sql`
+- `phase-85-stage-4c-concurrency-rehearsal.ts`: concurrency and SSE subscriber scenarios
+- `phase-85-stage-4c-closure.ts` remediation authority with `PASS_LOCAL_STAGE_4C_REMEDIATED`, Faz 8 p95 thresholds, repo-wide secret scan
+- fail-fast `scripts/rehearse-stage-4c-ai-chat.mjs` and timeout-hardened `scripts/release-verify.mjs`
+- Red-team corpus trimmed to exactly 100 JSONL cases
+
+### Verification
+
+| Command | Result |
+| --- | --- |
+| targeted Stage 4C Faz 8 tests | pending local run |
+| `npm run test:rls` | **blocked** — Docker/local Supabase unavailable |
+| `npm run rehearse:stage-4c` | **blocked** — requires zero-skip local Supabase + Chromium |
+
+### Closure Verdict
+
+- Repo-local implementation authority: **Stage 4C remediation complete**
+- `PASS_LOCAL_STAGE_4C_REMEDIATED` only when full rehearsal chain passes with zero skipped RLS
 
 ## Faz 7: Ölçeklenebilir SSE, UI Dayanıklılığı ve Eski Copilot İzolasyonu
 

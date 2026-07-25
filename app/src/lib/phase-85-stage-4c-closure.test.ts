@@ -48,7 +48,7 @@ describe("phase 85 stage 4c closure", () => {
 
   it("builds at least 100 red-team cases with category coverage", () => {
     const cases = buildStage4CRedTeamCorpusCases();
-    expect(cases.length).toBeGreaterThanOrEqual(STAGE_4C_RED_TEAM_MIN_CASES);
+    expect(cases.length).toBe(STAGE_4C_RED_TEAM_MIN_CASES);
     for (const category of STAGE_4C_RED_TEAM_CATEGORIES) {
       expect(cases.some((entry) => entry.redTeamCategory === category)).toBe(true);
     }
@@ -122,6 +122,7 @@ describe("phase 85 stage 4c closure", () => {
 
   it("passes sample closure rehearsal and serializes aggregate-only evidence", async () => {
     const rehearsal = await runStage4CClosureRehearsalSample();
+    expect(rehearsal.failures).toEqual([]);
     expect(rehearsal.status).toBe("pass");
     expect(rehearsal.phase).toBe(PHASE_85_STAGE_4C_CLOSURE_VERSION);
 
@@ -172,6 +173,6 @@ describe("phase 85 stage 4c closure", () => {
     const report = buildStage4CRiskReconciliationReport("pass");
     expect(report).toHaveLength(STAGE_4C_RISK_REGISTER_IDS.length);
     expect(report.every((entry) => entry.status === "mitigated_locally")).toBe(true);
-    expect(PHASE_85_STAGE_4C_PROGRAM_CLOSURE_VERSION).toBe("p85-stage-4c-program-closure-v1");
+    expect(PHASE_85_STAGE_4C_PROGRAM_CLOSURE_VERSION).toBe("p85-stage-4c-program-closure-v2");
   });
 });

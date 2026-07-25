@@ -1,6 +1,6 @@
 # MANU-AI Plan
 
-**Current authority (2026-07-25):** Stage 4C remediation Faz 2 complete locally. Evidence: `docs/PHASE_85_STAGE_4C_REMEDIATION_EVIDENCE.md`. **Next:** Faz 3 after zero-skip local Supabase RLS. Production remains `NO-GO`; R-405 remains open.
+**Current authority (2026-07-25):** Stage 4C remediation repo-local complete. Evidence: `docs/PHASE_85_STAGE_4C_REMEDIATION_EVIDENCE.md`. Production remains `NO-GO`; R-405 remains open; real provider and external gates remain closed.
 
 Current continuity status, 2026-07-22: Stage 4B-2 R0-R7 and advisory hardening are closed locally; Stage 4B-3 post-closure remediation R0-R9 is closed locally with measured R9 evidence; Stage 4B-4 post-closure remediation R0-R9 is closed locally with measured R9 evidence. Stage 4C Faz 1 through Faz 4 are complete locally (Faz 4 ships the AI Chat dashboard shell/routes/navigation with real message sending still disabled pending Faz 5). Stage 4C Faz 5 is next after explicit user approval. Production remains `NO-GO`; R-405 remains open.
 

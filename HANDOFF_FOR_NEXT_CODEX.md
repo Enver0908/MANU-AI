@@ -1,6 +1,6 @@
 # Handoff For Next Codex
 
-**Current authority (2026-07-25):** Stage 4C remediation Faz 2 complete locally on `codex/stage-4c-remediation`. Evidence: `docs/PHASE_85_STAGE_4C_REMEDIATION_EVIDENCE.md`. **Next:** Faz 3 after zero-skip local Supabase RLS. Production remains `NO-GO`; R-405 remains open.
+**Current authority (2026-07-25):** Stage 4C remediation repo-local complete on `codex/stage-4c-remediation`. Evidence: `docs/PHASE_85_STAGE_4C_REMEDIATION_EVIDENCE.md`. **Next:** explicit user approval for post-remediation production gate work only. Production remains `NO-GO`; R-405 remains open.
 
 Pre-Stage-4C Faz 1 Stage 4B-3 closure, Stage 4B-4 Phase 11 closure, and Stage 4B-4 R0-R9 paragraphs below this authority block are historical snapshots. Use the Stage 4C plan and Faz 1 evidence as the current handoff.
 

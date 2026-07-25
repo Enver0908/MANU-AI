@@ -1,0 +1,55 @@
+import { describe, expect, it } from "vitest";
+import {
+  evaluateStage4CProgramClosureEvidence,
+  runStage4CRemediationClosureRehearsal,
+  STAGE_4C_REMEDIATED_PASS_VERDICT,
+  runStage4CSecretScan,
+} from "./phase-85-stage-4c-closure";
+
+const runFullRehearsal = process.env.STAGE_4C_FULL_REHEARSAL === "1";
+const fullRehearsalIt = runFullRehearsal ? it : it.skip;
+
+describe("phase 85 stage 4c remediation closure", () => {
+  it("passes repo-wide secret scan", () => {
+    const scan = runStage4CSecretScan();
+    expect(scan.hits).toEqual([]);
+    expect(scan.status).toBe("pass");
+    expect(scan.scannedFileCount).toBeGreaterThan(0);
+  });
+
+  it("passes sample remediation rehearsal without local Supabase", async () => {
+    const rehearsal = await runStage4CRemediationClosureRehearsal();
+    expect(rehearsal.concurrency.failures).toEqual([]);
+    expect(rehearsal.postgresScale.status).toBe("pass");
+  }, 180_000);
+
+  fullRehearsalIt(
+    "passes full remediation closure with remediated verdict",
+    async () => {
+      const rehearsal = await runStage4CRemediationClosureRehearsal();
+      const closure = evaluateStage4CProgramClosureEvidence(
+        rehearsal,
+        {
+          coreTests: "pass",
+          lint: "pass",
+          typecheck: "pass",
+          unitTests: "pass",
+          rlsSuite: "pass",
+          rlsSkippedCount: 0,
+          visualSuite: "pass",
+          accessibilitySuite: "pass",
+          releaseVerify: "pass",
+          dependencyAudit: "pass",
+          secretScan: "pass",
+          forbiddenNamingScan: "pass",
+          migrationReset: "pass",
+        },
+        { remediated: true },
+      );
+      expect(rehearsal.status).toBe("pass");
+      expect(closure.verdict).toBe(STAGE_4C_REMEDIATED_PASS_VERDICT);
+      expect(closure.failures).toEqual([]);
+    },
+    1_800_000,
+  );
+});

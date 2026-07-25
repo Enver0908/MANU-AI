@@ -1,5 +1,6 @@
 import { spawnSync } from "node:child_process";
 import { rmSync } from "node:fs";
+import { spawnWithTimeoutSync } from "./lib/spawn-with-timeout.mjs";
 
 const knownAuditFindings = new Set(["next:postcss", "postcss:GHSA-qx2v-qp2m-jg93"]);
 
@@ -24,14 +25,17 @@ function run({ label, command, args, cwd, before }) {
   if (typeof before === "function") {
     before();
   }
-  const result = spawnSync(command, args, {
+  const result = spawnWithTimeoutSync({
+    label,
+    command,
+    args,
     cwd,
+    timeoutMs: 900_000,
     stdio: "inherit",
-    shell: process.platform === "win32",
   });
 
-  if (result.status !== 0) {
-    process.exit(result.status ?? 1);
+  if (result.status !== "pass") {
+    process.exit(result.exitCode ?? 1);
   }
 }
 
@@ -42,17 +46,19 @@ function cleanNextBuildOutput() {
 
 function runDependencyAuditGate() {
   console.log("\n[release:verify] production dependency audit");
-  const result = spawnSync("npm", ["audit", "--omit=dev", "--json"], {
-    encoding: "utf8",
-    shell: process.platform === "win32",
+  const result = spawnWithTimeoutSync({
+    label: "production_dependency_audit",
+    command: "npm",
+    args: ["audit", "--omit=dev", "--json"],
+    timeoutMs: 120_000,
   });
 
-  if (result.error) {
-    console.error(result.error.message);
+  if (result.status === "timeout") {
+    console.error("Production dependency audit timed out.");
     process.exit(1);
   }
 
-  const output = `${result.stdout || ""}${result.stderr || ""}`.trim();
+  const output = `${result.output || ""}`.trim();
   const audit = parseAuditJson(output);
   const findings = collectAuditFindings(audit);
   const unknownFindings = findings.filter((finding) => !knownAuditFindings.has(finding.key));
