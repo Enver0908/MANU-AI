@@ -1,8 +1,8 @@
 # MANU-AI Project Plan v2
 
-**Current authority (2026-07-27):** Stage 4C remediation is complete locally with measured verdict `PASS_LOCAL_STAGE_4C_REMEDIATED`. Append-only operational-table RLS reclosure is applied, and clean reset, advisory/catalog posture, RLS 49/49 with 0 skipped, full PostgreSQL scale, visual/accessibility, app/core suites, build, and release verification passed. Evidence: `docs/PHASE_85_STAGE_4C_REMEDIATION_EVIDENCE.md` and `docs/PHASE_85_STAGE_4C_LOCAL_CLOSURE_REHEARSAL_EVIDENCE.md`. Production remains `NO-GO`; R-405 remains open.
+**Current authority (2026-07-28):** Stage 4C remediation is closed locally at `cd3d781` with measured verdict `PASS_LOCAL_STAGE_4C_REMEDIATED`. Faz 4 continuity reconciliation and Stage 4D handoff are complete in the current uncommitted worktree. Evidence: `docs/PHASE_85_STAGE_4C_REMEDIATION_EVIDENCE.md`, `docs/PHASE_85_STAGE_4C_LOCAL_CLOSURE_REHEARSAL_EVIDENCE.md`, and `docs/PHASE_85_STAGE_4C_TO_STAGE_4D_CONTINUITY_HANDOFF_EVIDENCE.md`. Production remains `NO-GO`; R-405 remains open.
 
-Current continuity status, 2026-07-27: prior Stage 4B tracks and Stage 4C remediation remain closed locally. Stage 4D has not started. The next active action is user approval to commit the completed, currently uncommitted Stage 4C closure unit; push and Stage 4D require separate explicit commands. Production remains `NO-GO` and R-405 remains open.
+Current continuity status, 2026-07-28: prior Stage 4B tracks and Stage 4C remediation remain closed locally. Stage 4D has not started. The next active action is user approval to commit Faz 4, followed by separate approval for the Stage 4D planning/read gate. Push remains a separate explicit action. Production remains `NO-GO` and R-405 remains open.
 
 ## Confidence Position
 

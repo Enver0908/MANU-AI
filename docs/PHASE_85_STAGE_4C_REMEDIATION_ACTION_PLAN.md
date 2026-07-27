@@ -1,7 +1,7 @@
 # Stage 4C Remediation and Technical Closure Action Plan
 
 Date: 2026-07-25
-Status: **Complete locally; measured verdict `PASS_LOCAL_STAGE_4C_REMEDIATED`**
+Status: **Stage 4C closure committed locally; Faz 4 continuity handoff complete in worktree**
 
 This document is the remediation authority for the three-phase hardening pass requested after the Stage 4C audit findings.
 
@@ -75,4 +75,21 @@ Append-only migration `20260725163000_phase_85_stage_4c_operational_tables_rls_r
 
 Clean reset through `20260725163000`, catalog/advisory inspection, DB lint, and the expanded RLS suite passed at 49/49 with 0 skipped. The final canonical `npm run rehearse:stage-4c` rerun passed and recorded `PASS_LOCAL_STAGE_4C_REMEDIATED`.
 
-Next single action: **obtain user approval to commit the completed Stage 4C closure unit**. Stage 4D has not started; push and Stage 4D require separate explicit commands.
+The Stage 4C closure unit was committed locally as `cd3d781 Complete Stage 4C hard-zero remediation closure`.
+
+## Faz 4: Repo-Wide Continuity Reconciliation and Stage 4D Handoff
+
+Status: **complete locally; uncommitted**.
+
+Active root, app, execution, handoff, remediation, risk, and pilot-readiness documents now agree that:
+
+- Stage 4C remediation is closed locally at `cd3d781`;
+- `PASS_LOCAL_STAGE_4C_REMEDIATED` is repo-local evidence only;
+- older Stage 4C-current/next/blocking statements are historical snapshots;
+- Stage 4D Ayarlar / Hesap is the next Phase 85 unit but has not started;
+- the first Stage 4D unit is a separately approved planning/read gate, not implementation;
+- production remains `NO-GO`, R-405 remains open, and real integration gates remain closed.
+
+Canonical handoff evidence: `docs/PHASE_85_STAGE_4C_TO_STAGE_4D_CONTINUITY_HANDOFF_EVIDENCE.md`.
+
+Next single action: **obtain user approval to commit Faz 4**. Push and Stage 4D planning remain separate explicit actions.

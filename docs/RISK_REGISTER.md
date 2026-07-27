@@ -224,6 +224,8 @@ Production pilot remains `NO-GO`; R-405 remains open; real integration paths rem
 
 2026-07-27 override for R-474 and R-481: the first pre-Stage-4D measurement passed 47/47 but exposed the four-table catalog coverage gap. The approved reclosure then passed clean reset, advisory/catalog checks, and the expanded RLS suite at 49/49 with 0 skipped. Treat older open/blocking wording as superseded by `docs/PHASE_85_STAGE_4C_REMEDIATION_EVIDENCE.md`; production pilot remains `NO-GO` and R-405 remains open.
 
+2026-07-28 continuity override: Stage 4C closure is committed locally at `cd3d781`, R-481 remains mitigated locally, and Faz 4 introduces no new runtime or production risk. Stage 4D has not started; its first unit must be a separately approved planning/read gate under `docs/PHASE_85_STAGE_4C_TO_STAGE_4D_CONTINUITY_HANDOFF_EVIDENCE.md`. Production remains `NO-GO`; R-405 and all external gates remain open.
+
 ## Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
 
 R1 corrected the shared DTO and permission projection contract and added bounded cursor/safe-integer validation plus complete visible-scope unread aggregates. The related risks are not closed: server-side assignment authorization, database-bounded reads, transactional idempotency, concurrency ordering, UI integration, RLS, and release evidence remain assigned to R2-R7.

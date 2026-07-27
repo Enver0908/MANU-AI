@@ -1,13 +1,19 @@
 # Phase 85 Stage 4C Remediation Evidence
 
 Date: 2026-07-25
-Status: **Complete locally; measured verdict `PASS_LOCAL_STAGE_4C_REMEDIATED`**
+Status: **Stage 4C closure committed locally at `cd3d781`; Faz 4 handoff complete in worktree**
 
 Production remains `NO-GO`. R-405 remains open.
 
 Authority plan: `docs/PHASE_85_STAGE_4C_REMEDIATION_ACTION_PLAN.md` (from user remediation plan 2026-07-25).
 
 Historical `PASS_LOCAL_STAGE_4C` claims are superseded by this remediation closure authority.
+
+## Stage 4D Continuity Handoff: 2026-07-28
+
+The measured Stage 4C remediation closure was committed locally as `cd3d781 Complete Stage 4C hard-zero remediation closure`. Faz 4 repo-wide continuity reconciliation is recorded in `docs/PHASE_85_STAGE_4C_TO_STAGE_4D_CONTINUITY_HANDOFF_EVIDENCE.md`.
+
+Stage 4D Ayarlar / Hesap is the next Phase 85 unit but has not started. Its first unit must be a separately user-approved planning/read gate. No Stage 4D code, migration, route, UI, test, spec, provider activation, or production authorization is part of this evidence.
 
 ## Current Remediation Closure: 2026-07-27
 
@@ -37,7 +43,7 @@ Each table now has RLS enabled, one explicit deny-all direct-user policy, no DML
 | Build and release | pass; only documented R-405 audit findings |
 | Canonical `npm run rehearse:stage-4c` | pass; verdict `PASS_LOCAL_STAGE_4C_REMEDIATED`; RLS skipped count 0 |
 
-R-481 is mitigated locally. Stage 4D has not started. The next single action is user approval to commit the completed closure unit; push and Stage 4D require separate explicit commands. Production remains `NO-GO`; R-405 remains open; external providers/channels and real health-data egress remain closed.
+R-481 is mitigated locally. The Stage 4C closure is committed locally at `cd3d781`. The next single action is user approval to commit Faz 4; Stage 4D planning and push require separate explicit commands. Production remains `NO-GO`; R-405 remains open; external providers/channels and real health-data egress remain closed.
 
 ## Historical Remediation Update: 2026-07-27 Faz 3
 

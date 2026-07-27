@@ -1,7 +1,7 @@
 # Phase 85 Stage 4C Evidence
 
 Date: 2026-07-24
-Status: **Faz 11 historical evidence - superseded by completed Stage 4C remediation (2026-07-27); see `docs/PHASE_85_STAGE_4C_REMEDIATION_EVIDENCE.md` for current authority**
+Status: **Faz 11 historical evidence - superseded by Stage 4C closure commit `cd3d781` and the Stage 4D continuity handoff; see `docs/PHASE_85_STAGE_4C_REMEDIATION_EVIDENCE.md`**
 
 Production remains `NO-GO`. R-405 remains open.
 

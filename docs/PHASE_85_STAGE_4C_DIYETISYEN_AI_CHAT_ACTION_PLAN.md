@@ -7,7 +7,7 @@ Status: **Historical implementation plan; Faz 11 and subsequent remediation are 
 
 Stage 4C builds a safe, sourced, context-bound AI working companion for the dietitian. It does not expand automatic client-reply authority. It sits on top of existing messaging, risk, retrieval, media, audio, notification, handoff, and RLS contracts.
 
-This phase-by-phase plan is retained as historical implementation authority. Current closure authority is `docs/PHASE_85_STAGE_4C_REMEDIATION_EVIDENCE.md`, which records measured verdict `PASS_LOCAL_STAGE_4C_REMEDIATED` on 2026-07-27. Stage 4D has not started.
+This phase-by-phase plan is retained as historical implementation authority. Current closure authority is `docs/PHASE_85_STAGE_4C_REMEDIATION_EVIDENCE.md`, which records measured verdict `PASS_LOCAL_STAGE_4C_REMEDIATED` and local closure commit `cd3d781`. Transition authority is `docs/PHASE_85_STAGE_4C_TO_STAGE_4D_CONTINUITY_HANDOFF_EVIDENCE.md`. Stage 4D has not started.
 
 Production remains `NO-GO`. R-405 remains open. Real WhatsApp, Telegram, external LLM, external embedding, external OCR, external STT, production monitoring, secret-manager, live billing, and real client health-data provider egress remain disabled unless a later explicitly approved production gate closes them.
 

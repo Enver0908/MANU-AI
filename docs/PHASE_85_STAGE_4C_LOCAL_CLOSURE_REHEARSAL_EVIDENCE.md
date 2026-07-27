@@ -5,6 +5,8 @@ Status: **PASS_LOCAL_STAGE_4C_REMEDIATED** (repo-local only; not production GO)
 
 Production remains `NO-GO`. R-405 remains open. This file is the dedicated target for `npm run rehearse:stage-4c` measured local closure output.
 
+The measured closure was committed locally at `cd3d781`. Current transition authority is `docs/PHASE_85_STAGE_4C_TO_STAGE_4D_CONTINUITY_HANDOFF_EVIDENCE.md`; Stage 4D has not started.
+
 The writer is intentionally bounded by generated markers so historical remediation evidence remains preserved in `docs/PHASE_85_STAGE_4C_REMEDIATION_EVIDENCE.md`.
 
 Current measured local gates:
