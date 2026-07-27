@@ -4,7 +4,7 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 ## Current Status
 
-**Current authority (2026-07-25):** Stage 4C remediation Faz 1-3 hardening is applied and repo-local implementation is complete on branch `codex/stage-4c-remediation` at commit `83c200b`. Evidence: `docs/PHASE_85_STAGE_4C_REMEDIATION_EVIDENCE.md`. Full Stage 4C closure remains blocked until local Supabase/Postgres migrations, zero-skipped RLS, passing scale thresholds, `STAGE_4C_FULL_REHEARSAL=1`, and clean production audit gates pass. Historical Faz 11 `PASS_LOCAL_STAGE_4C` is superseded; do not claim `PASS_LOCAL_STAGE_4C_REMEDIATED` yet. Production remains `NO-GO`; R-405 remains open.
+**Current authority (2026-07-27):** Stage 4C remediation is complete locally with measured verdict `PASS_LOCAL_STAGE_4C_REMEDIATED` on `codex/stage-4c-remediation`; the closure changes remain uncommitted. Append-only migration `20260725163000_phase_85_stage_4c_operational_tables_rls_reclosure.sql` closes the four-table operational RLS gap with explicit deny-direct-user policies while preserving service-role access. A clean reset through `20260725163000`, error-level DB lint, RLS 49/49 with 0 skipped, real PostgreSQL scale at 100 dietitians / 5,000 clients / 10,000 chats / 200,000 message versions, AI Chat visual/accessibility 80 passed / 5 viewport-conditional skipped, app 1,401 passed / 9 skipped, core 295/295, build, and `release:verify` passed. Stage 4D has not started; the next single action is user approval to commit this completed closure unit. Evidence: `docs/PHASE_85_STAGE_4C_REMEDIATION_EVIDENCE.md` and `docs/PHASE_85_STAGE_4C_LOCAL_CLOSURE_REHEARSAL_EVIDENCE.md`. Production remains `NO-GO`; R-405 remains open; real provider/channel/health-data paths remain closed.
 
 **2026-07-18 Stage 4B-4 post-closure remediation R9:** R0-R9 is closed locally with local Supabase RLS 41/41 zero-skip, full-scale voice closure, release verification, visual acceptance, channel replay, and risk reconciliation. Evidence: `docs/PHASE_85_STAGE_4B_4_POST_CLOSURE_REMEDIATION_R9_EVIDENCE.md`.
 
@@ -102,7 +102,7 @@ P85-IF-D added complete transcript and human-control coordination for business-h
 
 This repository is a local SaaS/PWA pilot prototype and architecture workspace. It is not a production-connected system yet.
 
-**Latest implementation phase:** Phase 85 Stage 4B-4 post-closure remediation R0-R9 is complete locally (2026-07-18). **Current work:** Stage 4C planning/read gate and user-approved implementation. **Production pilot:** `NO-GO` (unchanged); R-405 remains open.
+**Latest implementation phase:** Phase 85 Stage 4C remediation is complete locally with measured verdict `PASS_LOCAL_STAGE_4C_REMEDIATED` (2026-07-27). **Current work:** awaiting user approval to commit the completed closure unit; Stage 4D has not started. **Production pilot:** `NO-GO` (unchanged); R-405 remains open.
 
 **Phase 82 verification:** targeted Phase 82 tests passed (5 files, 31/31); Phase 82G records `repoLocalClosureComplete: true` with verification `blocked` because `npm run test:rls` remains skipped/pending when local Supabase is unavailable.
 

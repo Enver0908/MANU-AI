@@ -9,12 +9,26 @@ const knownAuditFindings = new Set([
   "postcss:GHSA-r28c-9q8g-f849",
   "sharp:GHSA-f88m-g3jw-g9cj",
 ]);
+const isolatedUnitTestEnv = {
+  MANU_DEV_FALLBACK_STORE: "true",
+  NEXT_PUBLIC_SUPABASE_URL: "",
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: "",
+  SUPABASE_URL: "",
+  SUPABASE_SERVICE_ROLE_KEY: "",
+  STAGE_4C_FULL_REHEARSAL: "",
+};
 
 const checks = [
   { label: "core package tests", command: "npm", args: ["test"], cwd: "../dietitian-ai-assistant" },
   { label: "lint", command: "npm", args: ["run", "lint"] },
   { label: "production typecheck", command: "npm", args: ["run", "typecheck"] },
-  { label: "unit tests", command: "npm", args: ["test"] },
+  {
+    label: "unit tests",
+    command: "npm",
+    args: ["test"],
+    env: isolatedUnitTestEnv,
+    timeoutMs: 2_400_000,
+  },
   { label: "production build", command: "npm", args: ["run", "build"], before: cleanNextBuildOutput },
 ];
 
@@ -26,7 +40,7 @@ runDependencyAuditGate();
 
 console.log("Release verification passed. R-405 remains a documented production launch blocker.");
 
-function run({ label, command, args, cwd, before }) {
+function run({ label, command, args, cwd, env, before, timeoutMs }) {
   console.log(`\n[release:verify] ${label}`);
   if (typeof before === "function") {
     before();
@@ -36,7 +50,8 @@ function run({ label, command, args, cwd, before }) {
     command,
     args,
     cwd,
-    timeoutMs: 900_000,
+    env,
+    timeoutMs: timeoutMs ?? 900_000,
     stdio: "inherit",
   });
 

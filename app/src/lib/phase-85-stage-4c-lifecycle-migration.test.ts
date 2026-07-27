@@ -33,4 +33,12 @@ describe("Stage 4C lifecycle migration", () => {
     expect(migrationSource).toContain("revoke all on function p85_stage_4c_delete_conversation_v1");
     expect(migrationSource).toContain("grant execute on function p85_stage_4c_build_client_scoped_export_v1");
   });
+
+  it("uses valid PL/pgSQL diagnostics statements for accumulated row counts", () => {
+    expect(migrationSource).not.toMatch(/get diagnostics\s+\w+\s*=\s*\w+\s*\+\s*row_count/i);
+    expect(migrationSource).toContain("get diagnostics v_recent_orphan_attachments = row_count;");
+    expect(migrationSource).toContain(
+      "v_orphan_attachments := v_orphan_attachments + v_recent_orphan_attachments;",
+    );
+  });
 });

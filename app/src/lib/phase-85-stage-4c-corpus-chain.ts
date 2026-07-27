@@ -7,11 +7,12 @@ import { maybeProcessDeterministicAiChatJobs } from "./phase-85-stage-4c-run-ser
 import { resetInMemoryAiChatStoreForTests } from "./phase-85-stage-4c-store";
 
 const CHAIN_TENANT: AppTenantContext = {
-  tenantId: "tenant-stage4c-corpus-chain",
-  userId: "user-stage4c-corpus-chain",
-  dietitianId: "dietitian-stage4c-corpus-chain",
+  tenantId: "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+  userId: "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
+  dietitianId: "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee",
   role: "dietitian",
 };
+const CHAIN_CLIENT_ID = "ffffffff-ffff-4fff-8fff-ffffffffffff";
 
 function shouldExerciseStoreChain(testCase: Stage4CGoldenCorpusCase) {
   if (testCase.expect.blocked) return false;
@@ -29,7 +30,7 @@ async function evaluateCorpusChainCase(testCase: Stage4CGoldenCorpusCase) {
   resetInMemoryAiChatStoreForTests();
   if (testCase.scopeType === "client") {
     seedInMemoryClientGatewayFixture({
-      id: "client-a",
+      id: CHAIN_CLIENT_ID,
       tenantId: CHAIN_TENANT.tenantId,
       fullName: "Ayse Yilmaz",
       accessible: testCase.expect.blockReason !== "not_authorized",
@@ -38,7 +39,7 @@ async function evaluateCorpusChainCase(testCase: Stage4CGoldenCorpusCase) {
   const conversation = await inMemoryAiChatStore.createConversation(CHAIN_TENANT, {
     requestId: `chain-create-${testCase.id}`,
     scopeType: testCase.scopeType,
-    clientId: testCase.scopeType === "client" ? "client-a" : null,
+    clientId: testCase.scopeType === "client" ? CHAIN_CLIENT_ID : null,
     title: `Corpus ${testCase.id}`,
   });
 

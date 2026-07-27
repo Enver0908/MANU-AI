@@ -1,8 +1,8 @@
 # MANU-AI Project Plan v2
 
-**Current authority (2026-07-25):** Stage 4C remediation Faz 1-3 hardening is applied and repo-local implementation is complete on `codex/stage-4c-remediation` at commit `83c200b`. Evidence: `docs/PHASE_85_STAGE_4C_REMEDIATION_EVIDENCE.md`. Full Stage 4C closure remains blocked until local Supabase/Postgres migrations, zero-skipped RLS, passing scale thresholds, `STAGE_4C_FULL_REHEARSAL=1`, and clean production audit gates pass. Production remains `NO-GO`; R-405 remains open.
+**Current authority (2026-07-27):** Stage 4C remediation is complete locally with measured verdict `PASS_LOCAL_STAGE_4C_REMEDIATED`. Append-only operational-table RLS reclosure is applied, and clean reset, advisory/catalog posture, RLS 49/49 with 0 skipped, full PostgreSQL scale, visual/accessibility, app/core suites, build, and release verification passed. Evidence: `docs/PHASE_85_STAGE_4C_REMEDIATION_EVIDENCE.md` and `docs/PHASE_85_STAGE_4C_LOCAL_CLOSURE_REHEARSAL_EVIDENCE.md`. Production remains `NO-GO`; R-405 remains open.
 
-Current continuity status, 2026-07-25: Stage 4B-2 R0-R7, local RLS re-closure, advisory hardening, Stage 4B-3 post-closure remediation R0-R9, and Stage 4B-4 post-closure remediation R0-R9 are complete locally. Stage 4C implementation and remediation hardening are repo-local complete, but `PASS_LOCAL_STAGE_4C_REMEDIATED` is blocked until the zero-skip local Supabase/Postgres full rehearsal gate passes. The next active unit is post-remediation production-gate/local-Supabase closure work only after explicit user approval. Production remains `NO-GO` and R-405 remains open.
+Current continuity status, 2026-07-27: prior Stage 4B tracks and Stage 4C remediation remain closed locally. Stage 4D has not started. The next active action is user approval to commit the completed, currently uncommitted Stage 4C closure unit; push and Stage 4D require separate explicit commands. Production remains `NO-GO` and R-405 remains open.
 
 ## Confidence Position
 

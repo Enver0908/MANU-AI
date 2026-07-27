@@ -118,7 +118,7 @@ describe("phase 85 stage 4c closure", () => {
   it("passes secret and forbidden naming scans", () => {
     expect(runStage4CSecretScan().status).toBe("pass");
     expect(runStage4CForbiddenNamingScan().status).toBe("pass");
-  });
+  }, 60_000);
 
   it("passes sample closure rehearsal and serializes aggregate-only evidence", async () => {
     const rehearsal = await runStage4CClosureRehearsalSample();

@@ -4,6 +4,14 @@ import { describe, expect, it } from "vitest";
 
 const repoRoot = resolve(__dirname, "../..");
 const storeSource = readFileSync(resolve(__dirname, "phase-85-stage-4c-supabase-store.ts"), "utf8");
+const pgcryptoCompatibilityMigrationName =
+  "20260725085000_phase_85_stage_4c_pgcrypto_search_path_compatibility.sql";
+const coreRunMigrationName =
+  "20260725090000_phase_85_stage_4c_remediation_core_run_rpcs.sql";
+const pgcryptoCompatibilityMigration = readFileSync(
+  resolve(repoRoot, "supabase/migrations", pgcryptoCompatibilityMigrationName),
+  "utf8",
+);
 const migrationSource = readdirSync(resolve(repoRoot, "supabase/migrations"))
   .filter((name) => name.includes("stage_4c"))
   .sort()
@@ -23,6 +31,27 @@ function collectDefinedStage4CRpcs() {
 }
 
 describe("Stage 4C Supabase RPC migration contract", () => {
+  it("provides a service-role-only pgcrypto bridge before locked-path hashing RPCs", () => {
+    expect(pgcryptoCompatibilityMigrationName < coreRunMigrationName).toBe(true);
+    expect(pgcryptoCompatibilityMigration).toContain("create or replace function public.digest");
+    expect(pgcryptoCompatibilityMigration).toContain("select extensions.digest(p_data, p_type)");
+    expect(pgcryptoCompatibilityMigration).toContain("set search_path = ''");
+    expect(pgcryptoCompatibilityMigration).toContain(
+      "revoke all on function public.digest(text, text) from public, anon, authenticated",
+    );
+    expect(pgcryptoCompatibilityMigration).toContain(
+      "grant execute on function public.digest(text, text) to service_role",
+    );
+    expect(pgcryptoCompatibilityMigration).toContain("create or replace function public.hmac");
+    expect(pgcryptoCompatibilityMigration).toContain("select extensions.hmac(p_data, p_key, p_type)");
+    expect(pgcryptoCompatibilityMigration).toContain(
+      "revoke all on function public.hmac(text, text, text) from public, anon, authenticated",
+    );
+    expect(pgcryptoCompatibilityMigration).toContain(
+      "grant execute on function public.hmac(text, text, text) to service_role",
+    );
+  });
+
   it("defines every Stage 4C RPC called by the Supabase store", () => {
     const called = new Set(collectCalledStage4CRpcs());
     const defined = new Set(collectDefinedStage4CRpcs());

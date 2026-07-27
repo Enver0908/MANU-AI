@@ -1,4 +1,7 @@
 import { performance } from "node:perf_hooks";
+import { spawnSync } from "node:child_process";
+import { existsSync, readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import {
   STAGE_4C_SCALE_REHEARSAL_TARGETS,
@@ -6,6 +9,7 @@ import {
 } from "./phase-85-stage-4c-closure";
 
 export const STAGE_4C_POSTGRES_SCALE_VERSION = "p85-stage-4c-postgres-scale-v1";
+const NPX_BIN = "npx";
 
 export const STAGE_4C_SCALE_EXPLAIN_PROFILES = [
   "history_list",
@@ -48,6 +52,9 @@ export type Stage4CPostgresScaleRehearsalResult = {
   explainResults: Stage4CScaleExplainResult[];
   failures: string[];
 };
+
+loadEnvLocalForStage4CScale();
+loadLocalSupabaseCliEnvForStage4CScale();
 
 function percentile(values: number[], ratio: number) {
   if (values.length === 0) return 0;
@@ -97,7 +104,7 @@ export function evaluateStage4CExplainPlan(
   }
   if (
     profile === "context_gateway_access" &&
-    !planUsesIndex(planJson, "clients_tenant_lifecycle_status_idx")
+    !planUsesIndex(planJson, "clients_tenant_lifecycle_id_idx")
   ) {
     failures.push("context_gateway_missing_bounded_client_idx");
     usesLeadingTenantIndex = false;
@@ -236,9 +243,10 @@ export async function runStage4CPostgresScaleRehearsalFull(): Promise<Stage4CPos
   const failures: string[] = [];
   let fixture: Stage4CScaleFixtureSeed | null = null;
   try {
-    const { data: seedData, error: seedError } = await client.rpc("p85_stage_4c_scale_fixture_seed_v1");
-    if (seedError) throw new Error(seedError.message);
-    fixture = seedData as Stage4CScaleFixtureSeed;
+    runLocalScaleFixtureCleanup();
+    fixture = runLocalServiceRoleSqlJson<Stage4CScaleFixtureSeed>(
+      "select p85_stage_4c_scale_fixture_seed_v1() as fixture from set_config('request.jwt.claim.role','service_role', true);",
+    );
 
     if (fixture.dietitianCount !== STAGE_4C_SCALE_REHEARSAL_TARGETS.dietitians) {
       failures.push("fixture_dietitian_count_mismatch");
@@ -391,7 +399,7 @@ export async function runStage4CPostgresScaleRehearsalFull(): Promise<Stage4CPos
     };
   } finally {
     if (client) {
-      await client.rpc("p85_stage_4c_scale_fixture_cleanup_v1");
+      runLocalScaleFixtureCleanup();
     }
   }
 }
@@ -426,4 +434,125 @@ export async function runStage4CPostgresScaleRehearsalSample(): Promise<Stage4CP
     explainResults: [],
     failures: ["full_postgres_rehearsal_required"],
   };
+}
+
+function loadEnvLocalForStage4CScale() {
+  try {
+    for (const line of readFileSync(resolve(process.cwd(), ".env.local"), "utf8").split(/\r?\n/)) {
+      const match = line.match(/^([^#=]+)=(.*)$/);
+      if (match) {
+        process.env[match[1]] = unquoteEnvValue(process.env[match[1]] ?? match[2]);
+      }
+    }
+  } catch {
+    // Missing local env is handled by the fail-closed scale rehearsal result.
+  }
+}
+
+function unquoteEnvValue(value: string) {
+  const trimmed = value.trim();
+  if (
+    (trimmed.startsWith('"') && trimmed.endsWith('"')) ||
+    (trimmed.startsWith("'") && trimmed.endsWith("'"))
+  ) {
+    return trimmed.slice(1, -1);
+  }
+  return trimmed;
+}
+
+function runSupabaseCli(args: string[], timeout: number, maxBuffer: number) {
+  if (process.platform !== "win32") {
+    return spawnSync(NPX_BIN, ["supabase", ...args], {
+      cwd: process.cwd(),
+      encoding: "utf8",
+      timeout,
+      maxBuffer,
+    });
+  }
+
+  const executableCandidates = [
+    resolve(process.cwd(), "node_modules", "@supabase", "cli-windows-x64", "bin", "supabase.exe"),
+    resolve(process.cwd(), "app", "node_modules", "@supabase", "cli-windows-x64", "bin", "supabase.exe"),
+  ];
+  const executable = executableCandidates.find((candidate) => existsSync(candidate));
+  if (!executable) {
+    return spawnSync("cmd.exe", ["/d", "/s", "/c", `${NPX_BIN} supabase ${args.join(" ")}`], {
+      cwd: process.cwd(),
+      encoding: "utf8",
+      timeout,
+      maxBuffer,
+    });
+  }
+
+  return spawnSync(executable, args, {
+    cwd: process.cwd(),
+    encoding: "utf8",
+    timeout,
+    maxBuffer,
+  });
+}
+
+function loadLocalSupabaseCliEnvForStage4CScale() {
+  const result = runSupabaseCli(["status", "-o", "env"], 120_000, 1024 * 1024);
+  if (result.status !== 0) return;
+  const parsed = new Map<string, string>();
+  for (const line of `${result.stdout || ""}`.split(/\r?\n/)) {
+    const match = line.match(/^(?:export\s+)?([^=]+)=(.*)$/);
+    if (match) parsed.set(match[1], unquoteEnvValue(match[2]));
+  }
+  const apiUrl = parsed.get("API_URL");
+  const anonKey = parsed.get("ANON_KEY");
+  const serviceRoleKey = parsed.get("SERVICE_ROLE_KEY");
+  if (apiUrl?.startsWith("http://127.0.0.1:") || apiUrl?.startsWith("http://localhost:")) {
+    process.env.NEXT_PUBLIC_SUPABASE_URL = apiUrl;
+    if (anonKey) process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = anonKey;
+    if (serviceRoleKey) process.env.SUPABASE_SERVICE_ROLE_KEY = serviceRoleKey;
+  }
+}
+
+function runLocalServiceRoleSqlJson<T = unknown>(sql: string): T {
+  const result = runSupabaseCli(["db", "query", "--local", "-o", "json", sql], 600_000, 10 * 1024 * 1024);
+  if (result.status !== 0) {
+    const message = `${result.stderr || result.stdout || result.error?.message || `local_sql_query_failed_status_${result.status ?? "null"}_signal_${result.signal ?? "none"}`}`.trim();
+    const lines = message
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter(Boolean);
+    const diagnostic =
+      lines.find((line) => /error|failed|timeout|violat|permission|relation|function/i.test(line)) ??
+      lines.find((line) => !line.startsWith("Connecting to local database")) ??
+      "local_sql_query_failed";
+    throw new Error(diagnostic);
+  }
+  const output = `${result.stdout || ""}${result.stderr || ""}`;
+  const jsonStart = output.indexOf("{");
+  const jsonEnd = output.lastIndexOf("}");
+  if (jsonStart < 0 || jsonEnd < jsonStart) {
+    throw new Error("local_sql_query_unparseable_json");
+  }
+  const parsed = JSON.parse(output.slice(jsonStart, jsonEnd + 1)) as { rows?: Array<{ fixture?: T }> };
+  const fixture = parsed.rows?.[0]?.fixture;
+  if (fixture === undefined) {
+    throw new Error("local_sql_query_missing_fixture");
+  }
+  return fixture;
+}
+
+function runLocalScaleFixtureCleanup() {
+  const tenantId = "p85_stage_4c_scale_uuid_from_seed('tenant')";
+  const presence = runLocalServiceRoleSqlJson<{ exists: boolean }>(
+    `select jsonb_build_object('exists', exists(select 1 from tenants where id = ${tenantId})) as fixture`,
+  );
+  if (!presence.exists) return;
+
+  const result = runSupabaseCli(["db", "reset"], 600_000, 10 * 1024 * 1024);
+  if (result.status !== 0) {
+    const message = `${result.stderr || result.stdout || result.error?.message || "local_supabase_reset_failed"}`.trim();
+    throw new Error(
+      message
+        .split(/\r?\n/)
+        .map((line) => line.trim())
+        .find((line) => /error|failed|timeout/i.test(line)) ?? "local_supabase_reset_failed",
+    );
+  }
 }

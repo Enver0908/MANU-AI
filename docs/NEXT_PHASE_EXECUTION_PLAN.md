@@ -1,8 +1,8 @@
 # MANU-AI Next Phase Execution Plan
 
-**Current authority (2026-07-25):** Stage 4C remediation repo-local complete. Evidence: `docs/PHASE_85_STAGE_4C_REMEDIATION_EVIDENCE.md`. Production remains `NO-GO`; R-405 remains open; real provider and external gates remain closed.
+**Current authority (2026-07-27):** Stage 4C remediation is complete locally with measured verdict `PASS_LOCAL_STAGE_4C_REMEDIATED`. Append-only operational-table RLS reclosure, expanded zero-skip tests, clean reset, advisory/catalog verification, and the final full rehearsal passed. Stage 4D has not started. The next single action is user approval to commit the completed Stage 4C closure unit; push and Stage 4D require separate explicit commands. Evidence: `docs/PHASE_85_STAGE_4C_REMEDIATION_EVIDENCE.md` and `docs/PHASE_85_STAGE_4C_LOCAL_CLOSURE_REHEARSAL_EVIDENCE.md`. Production remains `NO-GO`; R-405 remains open; real provider and external gates remain closed.
 
-Pre-Stage-4C Faz 1 Stage 4B-3 closure, Stage 4B-4 Phase 11 closure, and Stage 4B-4 R0-R9 paragraphs below this authority block are historical snapshots. Use the Stage 4C plan and Faz 1 evidence as the current implementation handoff.
+Pre-Stage-4C Faz 1 Stage 4B-3 closure, Stage 4B-4 Phase 11 closure, and Stage 4B-4 R0-R9 paragraphs below this authority block are historical snapshots. Use the Stage 4C remediation evidence and local closure rehearsal evidence as the current implementation handoff.
 
 Historical execution handoff, 2026-07-15: Phase 85 Stage 4B-4 Phase 5 bundle correlation and typed-text bridge were complete locally at that checkpoint. Evidence: `docs/PHASE_85_STAGE_4B_4_PHASE_5_BUNDLE_CORRELATION_TYPED_TEXT_BRIDGE_EVIDENCE.md`. Stage 4B-4 subsequently closed through remediation R9; the current handoff is Stage 4C. Production remains `NO-GO`; R-405 remains open; real integration paths remain closed.
 

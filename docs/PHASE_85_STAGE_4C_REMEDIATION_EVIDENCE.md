@@ -1,17 +1,100 @@
 # Phase 85 Stage 4C Remediation Evidence
 
 Date: 2026-07-25
-Status: **Faz 1-3 hardening applied; full Stage 4C closure remains blocked**
+Status: **Complete locally; measured verdict `PASS_LOCAL_STAGE_4C_REMEDIATED`**
 
 Production remains `NO-GO`. R-405 remains open.
 
 Authority plan: `docs/PHASE_85_STAGE_4C_REMEDIATION_ACTION_PLAN.md` (from user remediation plan 2026-07-25).
 
-Historical `PASS_LOCAL_STAGE_4C` claims are superseded by remediation closure authority; `PASS_LOCAL_STAGE_4C_REMEDIATED` requires zero-skip full rehearsal.
+Historical `PASS_LOCAL_STAGE_4C` claims are superseded by this remediation closure authority.
 
-## Current Remediation Update: 2026-07-25
+## Current Remediation Closure: 2026-07-27
 
-Status: **Faz 1-3 hardening applied; full Stage 4C closure remains blocked**.
+Status: **PASS_LOCAL_STAGE_4C_REMEDIATED** (repo-local only; not production GO).
+
+The approved worker-only access model is implemented by append-only migration `20260725163000_phase_85_stage_4c_operational_tables_rls_reclosure.sql` for:
+
+- `public.ai_chat_jobs`
+- `public.ai_chat_deletion_jobs`
+- `public.ai_chat_deletion_ledger`
+- `public.ai_chat_legal_holds`
+
+Each table now has RLS enabled, one explicit deny-all direct-user policy, no DML privilege for `anon` or `authenticated`, and preserved service-role access. Clean reset applied every migration through `20260725163000`; the absent `app/supabase/seed.sql` was reported and was not created.
+
+| Gate | Measured result |
+| --- | --- |
+| Migration contract | 1 file, 2/2 passed |
+| Clean local migration reset | pass through `20260725163000_phase_85_stage_4c_operational_tables_rls_reclosure.sql` |
+| Catalog/advisory posture | all four tables RLS enabled; 1 policy each; no anon/authenticated DML; service-role DML preserved; prior `rls_disabled` advisory absent |
+| RLS integration suite | 1 file, 49/49 passed, 0 skipped |
+| DB lint | pass at error level |
+| Real PostgreSQL scale | pass: 100 dietitians / 5,000 clients / 10,000 chats / 200,000 message versions; eight EXPLAIN profiles |
+| AI Chat visual/accessibility | 80 passed / 5 viewport-conditional skipped |
+| App suite | 230 files; 1,401 passed / 9 skipped |
+| Core suite | 295/295 passed |
+| Full rehearsal | 3/3 passed with `STAGE_4C_FULL_REHEARSAL=1` |
+| Build and release | pass; only documented R-405 audit findings |
+| Canonical `npm run rehearse:stage-4c` | pass; verdict `PASS_LOCAL_STAGE_4C_REMEDIATED`; RLS skipped count 0 |
+
+R-481 is mitigated locally. Stage 4D has not started. The next single action is user approval to commit the completed closure unit; push and Stage 4D require separate explicit commands. Production remains `NO-GO`; R-405 remains open; external providers/channels and real health-data egress remain closed.
+
+## Historical Remediation Update: 2026-07-27 Faz 3
+
+Status: **historical first measurement; superseded by the current remediation closure above**.
+
+| Gate | Measured result |
+| --- | --- |
+| Real PostgreSQL scale | pass: 100 dietitians / 5,000 clients / 10,000 chats / 200,000 message versions; eight EXPLAIN profiles |
+| Isolated app suite | 229 files; 1,399 passed / 9 skipped |
+| Clean local migration reset | pass through `20260725162000_phase_85_stage_4c_remediation_scale_explain_reclosure.sql`; absent `supabase/seed.sql` reported only |
+| Existing RLS integration suite | 47/47 passed, 0 skipped |
+| DB lint | no error-level findings |
+| AI Chat visual/accessibility | 80 passed / 5 viewport-conditional skipped |
+| `npm run release:verify` | pass: core 295/295; app 1,399 passed / 9 skipped; build pass; only documented R-405 findings |
+
+Append-only scale reclosure migrations `20260725161000_phase_85_stage_4c_remediation_scale_fixture_reclosure.sql` and `20260725162000_phase_85_stage_4c_remediation_scale_explain_reclosure.sql` provide deterministic bulk fixtures, corrected live-schema EXPLAIN profiles, and bounded indexes. Normal unit/release tests now explicitly isolate local Supabase credentials so the full rehearsal does not accidentally route fixture tests through persistence.
+
+Critical blocker discovered after the passing RLS suite:
+
+- `public.ai_chat_deletion_jobs`: RLS disabled, 0 policies
+- `public.ai_chat_deletion_ledger`: RLS disabled, 0 policies
+- `public.ai_chat_jobs`: RLS disabled, 0 policies
+- `public.ai_chat_legal_holds`: RLS disabled, 0 policies
+
+The database advisory classifies these tables as exposed to Supabase `anon`/`authenticated` roles. Bare RLS enablement was not applied because doing so without the intended policy model can block required worker/lifecycle access. The 47-test suite therefore has a coverage gap and cannot authorize `PASS_LOCAL_STAGE_4C_REMEDIATED`.
+
+This blocker was subsequently closed by the operational-table RLS reclosure documented above. Production remains `NO-GO`; R-405 remains open; external providers/channels and real health-data egress remain closed.
+
+## Historical Remediation Update: 2026-07-27 Faz 2
+
+Status: **historical Faz 2 checkpoint; superseded by the current remediation closure above**.
+
+Measured verification:
+
+| Command | Result |
+| --- | --- |
+| `npx vitest run src/lib/phase-85-stage-4c-db-lint-reclosure-migration.test.ts src/lib/phase-85-stage-4c-rls-helper-grants-migration.test.ts src/lib/phase-85-stage-4c-lifecycle-migration.test.ts src/lib/phase-85-stage-4c-core-rpc-migration.test.ts src/lib/phase-85-stage-4b4-migration-contract.test.ts --no-file-parallelism --maxWorkers=1` | 5 files passed, 30/30 tests |
+| `npx supabase db reset` | pass; all migrations through `20260725160000_phase_85_stage_4c_remediation_db_lint_reclosure.sql` applied; `supabase/seed.sql` absent and reported as warning only |
+| `npx supabase db lint` | pass with no error-level findings; warning-level PL/pgSQL hygiene findings remain |
+| `npm run test:rls` | pass, 1 file, 47/47 tests, 0 skipped |
+| `npm run typecheck` | pass |
+| `npm run lint` | pass, 0 errors / 69 existing warnings |
+| `git diff --check` | pass; Windows LF/CRLF warnings only |
+
+Implemented local closure remediation:
+
+- `20260714195000_phase_85_stage_4b4_audio_lifecycle_signature_transition.sql` drops the old Stage 4B-3 media redaction function signature before the Stage 4B-4 audio-aware replacement.
+- `20260725085000_phase_85_stage_4c_pgcrypto_search_path_compatibility.sql` adds locked, service-role-only `public.digest`/`public.hmac` wrappers for local pgcrypto-in-`extensions` compatibility.
+- `20260725155000_phase_85_stage_4c_remediation_rls_helper_grants.sql` grants authenticated execute only for Stage 4C RLS policy evaluation helpers.
+- `20260725160000_phase_85_stage_4c_remediation_db_lint_reclosure.sql` closes error-level local Postgres lint findings without enabling production gates or user mutation authority.
+- `supabase-rls.integration.test.ts` now distinguishes the no-membership outsider from the other-tenant owner fixture and gives heavy local media/audio deny-read tests explicit integration timeouts.
+
+This historical Faz 2 update did **not** claim `PASS_LOCAL_STAGE_4C_REMEDIATED`. Its former "Faz 3 next" instruction is superseded by the current remediation closure above. Production remains `NO-GO`; R-405 remains open; real provider/channel/health-data egress remains closed.
+
+## Historical Remediation Update: 2026-07-25
+
+Status: **historical pre-measurement checkpoint; superseded by the current remediation closure above**.
 
 This update supersedes any older local-complete wording in this evidence file when it conflicts with the current closure gate.
 
@@ -21,7 +104,16 @@ This update supersedes any older local-complete wording in this evidence file wh
 - Production dependency remediation upgraded direct `mammoth` and `yauzl` findings; remaining production audit findings are accepted only as documented R-405 nested Next.js/PostCSS/Sharp findings.
 - `runStage4CPostgresScaleRehearsalSample()` must remain `blocked` until a real full Postgres rehearsal is executed.
 
-Full closure requires `STAGE_4C_FULL_REHEARSAL=1`, local Supabase/Postgres availability, applied migrations, zero skipped RLS tests, passing scale thresholds, and zero unknown production audit findings.
+Full closure requires `STAGE_4C_FULL_REHEARSAL=1`, passing scale thresholds, and zero unknown production audit findings. The local Supabase/Postgres reset and zero-skipped RLS gate passed on 2026-07-27 but do not by themselves authorize `PASS_LOCAL_STAGE_4C_REMEDIATED`.
+
+## Current Remediation Update: 2026-07-27
+
+Status: **Faz 1 pre-Stage-4D closure-infrastructure hardening applied; measured closure still pending**.
+
+- `npm run rehearse:stage-4c` now writes successful measured closure output only to `docs/PHASE_85_STAGE_4C_LOCAL_CLOSURE_REHEARSAL_EVIDENCE.md`.
+- Historical remediation evidence in this file is no longer an automated write target and must remain preserved.
+- The local closure writer is bounded by generated markers, idempotent, and fail-closed for failed reports, skipped RLS, non-remediated verdicts, production GO flags, or broken generated markers.
+- This update does not claim `PASS_LOCAL_STAGE_4C_REMEDIATED`; the later 2026-07-27 Faz 2 update supplies the zero-skipped RLS gate, while full closure still requires the full rehearsal/scale gate.
 
 ## Faz 8: Gerçek PostgreSQL Ölçek Rehearsal’ı, Hard-Zero Kapısı ve Nihai Kapanış
 

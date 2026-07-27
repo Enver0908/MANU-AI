@@ -17,6 +17,16 @@ const canonicalIngressV3Migration = readFileSync(
   "utf8",
 );
 
+const audioLifecycleSignatureTransitionMigrationName =
+  "20260714195000_phase_85_stage_4b4_audio_lifecycle_signature_transition.sql";
+const audioLifecycleMigrationName =
+  "20260714200000_phase_85_stage_4b4_audio_lifecycle_bounded_reads.sql";
+
+const audioLifecycleSignatureTransitionMigration = readFileSync(
+  resolve(__dirname, `../../supabase/migrations/${audioLifecycleSignatureTransitionMigrationName}`),
+  "utf8",
+);
+
 const transcriptCorrectionMigration = readFileSync(
   resolve(__dirname, "../../supabase/migrations/20260714210000_phase_85_stage_4b4_atomic_transcription_correction.sql"),
   "utf8",
@@ -28,7 +38,7 @@ const boundedAudioReadsMigration = readFileSync(
 );
 
 const audioLifecycleMigration = readFileSync(
-  resolve(__dirname, "../../supabase/migrations/20260714200000_phase_85_stage_4b4_audio_lifecycle_bounded_reads.sql"),
+  resolve(__dirname, `../../supabase/migrations/${audioLifecycleMigrationName}`),
   "utf8",
 );
 
@@ -184,6 +194,19 @@ describe("P85 Stage 4B-4 remediation R4 fail-closed quality migration", () => {
     expect(failClosedQualityMigration).toContain(
       "grant execute on function p85_stage_4b4_fail_transcription_work_v2",
     );
+  });
+});
+
+describe("P85 Stage 4B-4 Phase 9 lifecycle signature transition", () => {
+  it("drops the Stage 4B-3 return signature before installing the audio-aware contract", () => {
+    expect(audioLifecycleSignatureTransitionMigrationName < audioLifecycleMigrationName).toBe(true);
+    expect(audioLifecycleSignatureTransitionMigration).toContain(
+      "drop function if exists p85_stage_4b3_redact_client_media_metadata",
+    );
+    expect(audioLifecycleSignatureTransitionMigration).toContain("uuid,\n  uuid,\n  timestamptz");
+    expect(audioLifecycleSignatureTransitionMigration).not.toContain("cascade");
+    expect(audioLifecycleMigration).toContain("transcriptions_updated integer");
+    expect(audioLifecycleMigration).toContain("transcript_corrections_updated integer");
   });
 });
 

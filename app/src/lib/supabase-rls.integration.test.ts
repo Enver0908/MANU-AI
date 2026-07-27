@@ -146,6 +146,7 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
   let admin: SupabaseClient;
   let memberUserId = "";
   let outsiderUserId = "";
+  let otherTenantUserId = "";
   let assistantUserId = "";
   let viewerUserId = "";
   let careTeamUserId = "";
@@ -162,6 +163,7 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     await cleanup(admin);
     memberUserId = await ensureUser(admin, "rls-member@manu.local");
     outsiderUserId = await ensureUser(admin, "rls-outsider@manu.local");
+    otherTenantUserId = await ensureUser(admin, "rls-other-tenant@manu.local");
     assistantUserId = await ensureUser(admin, "rls-assistant@manu.local");
     viewerUserId = await ensureUser(admin, "rls-viewer@manu.local");
     careTeamUserId = await ensureUser(admin, "rls-care-team@manu.local");
@@ -169,24 +171,26 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     await seedTenants(admin, {
       memberUserId,
       outsiderUserId,
+      otherTenantUserId,
       assistantUserId,
       viewerUserId,
       careTeamUserId,
       auditorUserId,
     });
-  });
+  }, 45_000);
 
   afterAll(async () => {
     if (admin) {
       await cleanup(admin);
       if (memberUserId) await admin.auth.admin.deleteUser(memberUserId);
       if (outsiderUserId) await admin.auth.admin.deleteUser(outsiderUserId);
+      if (otherTenantUserId) await admin.auth.admin.deleteUser(otherTenantUserId);
       if (assistantUserId) await admin.auth.admin.deleteUser(assistantUserId);
       if (viewerUserId) await admin.auth.admin.deleteUser(viewerUserId);
       if (careTeamUserId) await admin.auth.admin.deleteUser(careTeamUserId);
       if (auditorUserId) await admin.auth.admin.deleteUser(auditorUserId);
     }
-  });
+  }, 45_000);
 
   it("allows a tenant member to read only their tenant rows", async () => {
     const member = await signIn("rls-member@manu.local");
@@ -2126,7 +2130,7 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     const bucket = await admin.storage.getBucket("p85-stage-4b3-media");
     expect(bucket.error).toBeNull();
     expect(bucket.data?.public).toBe(false);
-  });
+  }, 30000);
 
   it("claims Stage 4B-3 worker leases through service-role RPCs only", async () => {
     const member = await signIn("rls-member@manu.local");
@@ -2285,7 +2289,7 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     const bucket = await admin.storage.getBucket("p85-stage-4b4-audio");
     expect(bucket.error).toBeNull();
     expect(bucket.data?.public).toBe(false);
-  });
+  }, 30000);
 
   it("claims Stage 4B-4 audio worker leases through service-role RPCs only", async () => {
     const member = await signIn("rls-member@manu.local");
@@ -2421,6 +2425,47 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     expect(providerEgress.data).toHaveLength(0);
   });
 
+  it("denies anon and authenticated direct access to Stage 4C operational tables", async () => {
+    const member = await signIn("rls-member@manu.local");
+    const anonymous = createClient(supabaseUrl!, anonKey!, {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+      },
+    });
+    const operationalTables = [
+      "ai_chat_jobs",
+      "ai_chat_deletion_jobs",
+      "ai_chat_deletion_ledger",
+      "ai_chat_legal_holds",
+    ] as const;
+
+    for (const table of operationalTables) {
+      const anonymousRead = await anonymous.from(table).select("id").limit(1);
+      expect(anonymousRead.error?.message).toMatch(/permission denied/i);
+
+      const memberRead = await member.from(table).select("id").limit(1);
+      expect(memberRead.error?.message).toMatch(/permission denied/i);
+
+      const memberInsert = await member.from(table).insert({});
+      expect(memberInsert.error?.message).toMatch(/permission denied/i);
+    }
+  });
+
+  it("preserves service-role access to Stage 4C operational tables", async () => {
+    const operationalTables = [
+      "ai_chat_jobs",
+      "ai_chat_deletion_jobs",
+      "ai_chat_deletion_ledger",
+      "ai_chat_legal_holds",
+    ] as const;
+
+    for (const table of operationalTables) {
+      const serviceRoleRead = await admin.from(table).select("id").limit(1);
+      expect(serviceRoleRead.error).toBeNull();
+    }
+  });
+
   it("blocks general-scope client source rows and immutable conversation scope updates", async () => {
     const generalSourceInsert = await admin.from("ai_chat_source_refs").insert({
       tenant_id: TEST_TENANT_ID,
@@ -2481,23 +2526,40 @@ function loadEnvLocal() {
 }
 
 async function ensureUser(admin: SupabaseClient, email: string) {
-  const listed = await admin.auth.admin.listUsers();
+  const listed = await withAuthRetry(() => admin.auth.admin.listUsers());
   if (listed.error) throw listed.error;
 
   const existing = listed.data.users.find((user) => user.email === email);
   if (existing) {
-    const updated = await admin.auth.admin.updateUserById(existing.id, { password: PASSWORD });
+    const updated = await withAuthRetry(() => admin.auth.admin.updateUserById(existing.id, { password: PASSWORD }));
     if (updated.error) throw updated.error;
     return updated.data.user.id;
   }
 
-  const created = await admin.auth.admin.createUser({
-    email,
-    password: PASSWORD,
-    email_confirm: true,
-  });
+  const created = await withAuthRetry(() =>
+    admin.auth.admin.createUser({
+      email,
+      password: PASSWORD,
+      email_confirm: true,
+    }),
+  );
   if (created.error) throw created.error;
   return created.data.user.id;
+}
+
+async function withAuthRetry<T>(operation: () => Promise<T>) {
+  let lastError: unknown;
+
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    try {
+      return await operation();
+    } catch (error) {
+      lastError = error;
+      await new Promise((resolve) => setTimeout(resolve, 250 * (attempt + 1)));
+    }
+  }
+
+  throw lastError;
 }
 
 async function signIn(email: string) {
@@ -2517,6 +2579,7 @@ async function seedTenants(
   users: {
     memberUserId: string;
     outsiderUserId: string;
+    otherTenantUserId: string;
     assistantUserId: string;
     viewerUserId: string;
     careTeamUserId: string;
@@ -2551,6 +2614,11 @@ async function seedTenants(
         tenant_id: TEST_TENANT_ID,
         user_id: users.auditorUserId,
         role: "auditor",
+      },
+      {
+        tenant_id: OTHER_TENANT_ID,
+        user_id: users.otherTenantUserId,
+        role: "owner",
       },
     ]),
   );
@@ -2590,7 +2658,7 @@ async function seedTenants(
         id: OTHER_DIETITIAN_ID,
         tenant_id: OTHER_TENANT_ID,
         display_name: "RLS Other Tenant Dietitian",
-        auth_user_id: users.outsiderUserId,
+        auth_user_id: users.otherTenantUserId,
       },
     ]),
   );
@@ -3501,7 +3569,7 @@ async function seedTenants(
       {
         id: OTHER_AI_CHAT_GENERAL_CONVERSATION_ID,
         tenant_id: OTHER_TENANT_ID,
-        created_by_user_id: users.outsiderUserId,
+        created_by_user_id: users.otherTenantUserId,
         created_by_dietitian_id: OTHER_DIETITIAN_ID,
         scope_type: "general",
         title: "Hidden general chat",
