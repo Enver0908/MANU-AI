@@ -2611,6 +2611,17 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
       .eq("id", TEST_DIETITIAN_ID);
     expect(directUpdate.error).not.toBeNull();
   }, 30000);
+
+  it("blocks direct authenticated writes to account_security_events", async () => {
+    const member = await signIn("rls-member@manu.local");
+    const insert = await member.from("account_security_events").insert({
+      auth_user_id: memberUserId,
+      event_type: "password_login",
+      outcome: "success",
+      idempotency_key: "blocked-direct-insert-test",
+    });
+    expect(insert.error).not.toBeNull();
+  }, 30000);
 });
 
 function loadEnvLocal() {
@@ -3784,6 +3795,7 @@ async function seedTenants(
 }
 
 async function cleanup(admin: SupabaseClient) {
+  await admin.from("account_security_events").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("processed_inbound_events").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("ai_chat_message_versions").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("ai_chat_messages").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);

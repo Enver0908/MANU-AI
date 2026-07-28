@@ -1,14 +1,15 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { AppDomainError } from "@/lib/app-errors";
-import { isRegisteredCommercialCustomerEmail } from "@/lib/customer-auth-store";
 import { insertCommercialOnboardingEvent } from "@/lib/commercial-onboarding-store";
-import { getSupabaseConfig, getSupabaseAdminClient } from "@/lib/supabase";
+import { getSupabaseConfig } from "@/lib/supabase";
 import {
   buildAuthCallbackUrlWithNext,
   MAGIC_LINK_RATE_LIMIT,
   sanitizePostAuthRedirectPath,
   validateMagicLinkRequest,
 } from "@/lib/phase-84d-customer-auth";
+import { genericMagicLinkAcceptedResponse } from "@/lib/phase-85-stage-4d-account-security";
+import { resolveAuthRouteIpKey } from "@/lib/phase-85-stage-4d-auth-server";
 import { assertRateLimit } from "@/lib/rate-limit";
 import { createClient } from "@supabase/supabase-js";
 
@@ -17,12 +18,6 @@ type MagicLinkBody = {
   next?: string;
   checkoutSessionId?: string;
 };
-
-function resolveRateLimitKey(request: NextRequest, email: string) {
-  const forwarded = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
-  const ip = forwarded || request.headers.get("x-real-ip") || "anonymous";
-  return `${ip}:${email}`;
-}
 
 export async function POST(request: NextRequest) {
   const config = getSupabaseConfig();
@@ -47,7 +42,7 @@ export async function POST(request: NextRequest) {
 
   try {
     await assertRateLimit({
-      key: resolveRateLimitKey(request, validation.normalizedEmail),
+      key: resolveAuthRouteIpKey(request, validation.normalizedEmail),
       scope: "auth_magic_link",
       limit: MAGIC_LINK_RATE_LIMIT.limit,
       windowMs: MAGIC_LINK_RATE_LIMIT.windowMs,
@@ -59,22 +54,6 @@ export async function POST(request: NextRequest) {
     throw error;
   }
 
-  const admin = getSupabaseAdminClient();
-  if (!admin) {
-    return NextResponse.json({ error: "auth_not_configured" }, { status: 503 });
-  }
-
-  const registered = await isRegisteredCommercialCustomerEmail(admin, validation.normalizedEmail);
-  if (!registered) {
-    return NextResponse.json(
-      {
-        error: "customer_access_not_found",
-        blockingReasons: ["no_registered_commercial_customer"],
-      },
-      { status: 403 },
-    );
-  }
-
   const supabase = createClient(config.url, config.anonKey, {
     auth: {
       persistSession: false,
@@ -82,29 +61,30 @@ export async function POST(request: NextRequest) {
     },
   });
 
-  const { error } = await supabase.auth.signInWithOtp({
+  await supabase.auth.signInWithOtp({
     email: validation.normalizedEmail,
     options: {
+      shouldCreateUser: false,
       emailRedirectTo: buildAuthCallbackUrlWithNext(body.next),
     },
   });
 
-  if (error) {
-    return NextResponse.json({ error: "magic_link_send_failed" }, { status: 500 });
+  const checkoutSessionId = body.checkoutSessionId?.trim() || null;
+  const { getSupabaseAdminClient } = await import("@/lib/supabase");
+  const admin = getSupabaseAdminClient();
+  if (admin) {
+    await insertCommercialOnboardingEvent(admin, {
+      eventType: "magic_link_requested",
+      normalizedEmail: validation.normalizedEmail,
+      checkoutSessionId,
+      payloadSummary: {
+        next: sanitizePostAuthRedirectPath(body.next),
+      },
+    }).catch(() => undefined);
   }
 
-  const checkoutSessionId = body.checkoutSessionId?.trim() || null;
-  await insertCommercialOnboardingEvent(admin, {
-    eventType: "magic_link_requested",
-    normalizedEmail: validation.normalizedEmail,
-    checkoutSessionId,
-    payloadSummary: {
-      next: sanitizePostAuthRedirectPath(body.next),
-    },
-  }).catch(() => undefined);
-
   return NextResponse.json({
+    ...genericMagicLinkAcceptedResponse(),
     sent: true,
-    normalizedEmail: validation.normalizedEmail,
   });
 }

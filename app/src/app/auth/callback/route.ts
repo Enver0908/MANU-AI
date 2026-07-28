@@ -142,6 +142,7 @@ export async function GET(request: NextRequest) {
 
   const tokenHash = request.nextUrl.searchParams.get("token_hash");
   const otpType = request.nextUrl.searchParams.get("type");
+  const isRecoveryFlow = otpType === "recovery";
   if (!code && tokenHash && otpType) {
     if (!SUPPORTED_EMAIL_OTP_TYPES.has(otpType)) {
       return NextResponse.redirect(buildExternalRedirectUrl(`${authErrorBase}?error=auth_callback_failed`, authErrorBase));
@@ -161,7 +162,10 @@ export async function GET(request: NextRequest) {
   }
 
   const facts = await resolveCustomerSessionFacts(supabase);
-  const destination = requestedNext ?? deriveCustomerAuthRedirect(facts);
+  let destination = requestedNext ?? deriveCustomerAuthRedirect(facts);
+  if (isRecoveryFlow) {
+    destination = "/account/recovery";
+  }
   const response = NextResponse.redirect(buildExternalRedirectUrl(destination, authErrorBase));
   return applyAuthSessionMutations(response, authCookiesToSet, authHeadersToSet);
 }

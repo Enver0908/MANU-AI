@@ -36,7 +36,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
             <p className="mb-2 text-xs font-semibold uppercase text-primary">Müşteri girişi</p>
             <h1 className="mb-2 font-display text-2xl font-bold text-off-black">SiriusAI müşteri girişi</h1>
             <p className="text-sm leading-relaxed text-muted-foreground">
-              Kayıtlı e-posta adresinize giriş bağlantısı göndereceğiz.
+              Varsayılan giriş e-posta bağlantısıdır; parola ile giriş ikincil seçenektir.
             </p>
           </div>
 

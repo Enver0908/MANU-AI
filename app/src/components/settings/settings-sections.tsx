@@ -6,6 +6,7 @@ import type { DashboardMessageKey } from "@/lib/i18n";
 import { t } from "@/lib/i18n";
 import type { SettingsAccountReadModel, SettingsTab } from "@/lib/phase-85-stage-4d-settings-contracts";
 import { SettingsProfileForm } from "@/components/settings/settings-profile-form";
+import { SettingsSecurityForm } from "@/components/settings/settings-security-form";
 import { Card, CardBody, CardHeader } from "@/components/ui";
 
 function FactRow({ label, value }: { label: string; value: string }) {
@@ -98,15 +99,24 @@ export function SettingsSecuritySection({
   model: SettingsAccountReadModel;
   uiLanguage: SupportedLanguageCode;
 }) {
+  const editable = model.runtime.mode === "configured" && model.runtime.identityActionsAvailable;
+
   return (
     <div data-testid="settings-section-security">
       <Card>
-        <CardHeader title={t(uiLanguage, "settingsSecurityHeading")} description={t(uiLanguage, "settingsSecurityReadOnlyHint")} />
+        <CardHeader
+          title={t(uiLanguage, "settingsSecurityHeading")}
+          description={
+            editable ? t(uiLanguage, "settingsSecurityEditableHint") : t(uiLanguage, "settingsSecurityReadOnlyHint")
+          }
+        />
         <CardBody>
           {!model.security.available ? (
             <p className="text-sm leading-6 text-ink-muted" role="status">
               {t(uiLanguage, "settingsSecurityUnavailable")}
             </p>
+          ) : editable ? (
+            <SettingsSecurityForm model={model} uiLanguage={uiLanguage} />
           ) : (
             <dl>
               <FactRow label={t(uiLanguage, "settingsSecurityEmail")} value={model.security.emailMasked || "—"} />

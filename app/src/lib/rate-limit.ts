@@ -20,6 +20,11 @@ export type RateLimitScope =
   | "commercial_checkout_create"
   | "commercial_contact_leads"
   | "auth_magic_link"
+  | "auth_password_login"
+  | "auth_password_reset"
+  | "auth_reauthenticate"
+  | "auth_password_update"
+  | "auth_email_change"
   | "dietitian_ai_chat";
 
 const IN_MEMORY_ONLY_RATE_LIMIT_SCOPES = new Set<RateLimitScope>([
@@ -27,6 +32,11 @@ const IN_MEMORY_ONLY_RATE_LIMIT_SCOPES = new Set<RateLimitScope>([
   "commercial_checkout_create",
   "commercial_contact_leads",
   "auth_magic_link",
+  "auth_password_login",
+  "auth_password_reset",
+  "auth_reauthenticate",
+  "auth_password_update",
+  "auth_email_change",
 ]);
 
 type RateLimitRpcResponse = {
