@@ -4,7 +4,7 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 ## Current Status
 
-**Current authority (2026-07-28):** Stage 4C remediation is closed locally at commit `cd3d781` with measured verdict `PASS_LOCAL_STAGE_4C_REMEDIATED`. Faz 4 repo-wide continuity reconciliation and Stage 4D handoff are applied in the current uncommitted worktree. The next Phase 85 unit is a separately user-approved Stage 4D Ayarlar / Hesap planning/read gate; Stage 4D implementation has not started. Evidence: `docs/PHASE_85_STAGE_4C_REMEDIATION_EVIDENCE.md`, `docs/PHASE_85_STAGE_4C_LOCAL_CLOSURE_REHEARSAL_EVIDENCE.md`, and `docs/PHASE_85_STAGE_4C_TO_STAGE_4D_CONTINUITY_HANDOFF_EVIDENCE.md`. Production remains `NO-GO`; R-405 remains open; real provider/channel/health-data paths remain closed.
+**Current authority (2026-07-28):** Stage 4C remediation is closed locally at commit `cd3d781` with measured verdict `PASS_LOCAL_STAGE_4C_REMEDIATED`; the Stage 4D handoff is committed at `bc57cfd`. Stage 4D Ayarlar / Hesap Faz 1 read gate is documentation-only complete: canonical plan `docs/PHASE_85_STAGE_4D_AYARLAR_HESAP_ACTION_PLAN.md`, evidence `docs/PHASE_85_STAGE_4D_PHASE_1_READ_GATE_EVIDENCE.md`. Stage 4D implementation has not started; next requires separate approval for Faz 2 Settings Navigation Shell and Read-Only Account Overview. Production remains `NO-GO`; R-405 remains open; real provider/channel/health-data paths remain closed.
 
 **2026-07-18 Stage 4B-4 post-closure remediation R9:** R0-R9 is closed locally with local Supabase RLS 41/41 zero-skip, full-scale voice closure, release verification, visual acceptance, channel replay, and risk reconciliation. Evidence: `docs/PHASE_85_STAGE_4B_4_POST_CLOSURE_REMEDIATION_R9_EVIDENCE.md`.
 
@@ -102,7 +102,7 @@ P85-IF-D added complete transcript and human-control coordination for business-h
 
 This repository is a local SaaS/PWA pilot prototype and architecture workspace. It is not a production-connected system yet.
 
-**Latest implementation phase:** Phase 85 Stage 4C remediation is closed locally at `cd3d781` with measured verdict `PASS_LOCAL_STAGE_4C_REMEDIATED`. **Current work:** Faz 4 continuity handoff is complete locally and awaits its own commit approval; Stage 4D has not started. **Production pilot:** `NO-GO` (unchanged); R-405 remains open.
+**Latest implementation phase:** Phase 85 Stage 4D Ayarlar / Hesap Faz 1 read gate is documentation-only complete. Stage 4C remediation remains closed locally at `cd3d781` with measured verdict `PASS_LOCAL_STAGE_4C_REMEDIATED`, and the Stage 4D handoff is committed at `bc57cfd`. **Current work:** Stage 4D implementation has not started; next requires separate approval for Faz 2 Settings Navigation Shell and Read-Only Account Overview. **Production pilot:** `NO-GO` (unchanged); R-405 remains open.
 
 **Phase 82 verification:** targeted Phase 82 tests passed (5 files, 31/31); Phase 82G records `repoLocalClosureComplete: true` with verification `blocked` because `npm run test:rls` remains skipped/pending when local Supabase is unavailable.
 

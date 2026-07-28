@@ -1,7 +1,7 @@
 # Stage 4C Remediation and Technical Closure Action Plan
 
 Date: 2026-07-25
-Status: **Stage 4C closure committed locally; Faz 4 continuity handoff complete in worktree**
+Status: **Stage 4C closure committed locally; Stage 4D Faz 1 read gate complete**
 
 This document is the remediation authority for the three-phase hardening pass requested after the Stage 4C audit findings.
 
@@ -79,17 +79,17 @@ The Stage 4C closure unit was committed locally as `cd3d781 Complete Stage 4C ha
 
 ## Faz 4: Repo-Wide Continuity Reconciliation and Stage 4D Handoff
 
-Status: **complete locally; uncommitted**.
+Status: **complete and committed at `bc57cfd`**.
 
 Active root, app, execution, handoff, remediation, risk, and pilot-readiness documents now agree that:
 
 - Stage 4C remediation is closed locally at `cd3d781`;
 - `PASS_LOCAL_STAGE_4C_REMEDIATED` is repo-local evidence only;
 - older Stage 4C-current/next/blocking statements are historical snapshots;
-- Stage 4D Ayarlar / Hesap is the next Phase 85 unit but has not started;
-- the first Stage 4D unit is a separately approved planning/read gate, not implementation;
+- Stage 4D Ayarlar / Hesap is the next Phase 85 implementation area;
+- Stage 4D Faz 1 read gate is complete as documentation only and implementation has not started;
 - production remains `NO-GO`, R-405 remains open, and real integration gates remain closed.
 
 Canonical handoff evidence: `docs/PHASE_85_STAGE_4C_TO_STAGE_4D_CONTINUITY_HANDOFF_EVIDENCE.md`.
 
-Next single action: **obtain user approval to commit Faz 4**. Push and Stage 4D planning remain separate explicit actions.
+Stage 4D planning/read gate subsequently completed as documentation-only Faz 1. Canonical Stage 4D plan: `docs/PHASE_85_STAGE_4D_AYARLAR_HESAP_ACTION_PLAN.md`; read-gate evidence: `docs/PHASE_85_STAGE_4D_PHASE_1_READ_GATE_EVIDENCE.md`. Next single action: obtain separate user approval for Stage 4D Faz 2. Push remains a separate explicit action.
