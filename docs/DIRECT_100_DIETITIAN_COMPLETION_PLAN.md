@@ -1,6 +1,6 @@
 # Direct 100 Dietitian Completion Plan
 
-**Current active remediation (2026-07-28):** Stage 4D post-closure remediation Faz 1 Profile and Tenant/Account Foundation plus Faz 2 Auth, Billing and PWA Hardening are implemented locally and evidenced in `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_1_ACCOUNT_FOUNDATION_EVIDENCE.md` and `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_2_SECURITY_BILLING_PWA_EVIDENCE.md`. This does not approve direct 100-dietitian production pilot, close R-405, or enable real provider/channel/health-data paths. RLS verification remains blocked/fail-closed.
+**Current active status (2026-07-29):** Stage 4D post-closure remediation is reclosed locally through Faz 3 evidence reconciliation and evidenced in `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_1_ACCOUNT_FOUNDATION_EVIDENCE.md`, `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_2_SECURITY_BILLING_PWA_EVIDENCE.md`, and `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_3_RECLOSURE_EVIDENCE.md`. Clean Supabase reset passed and `npm run test:rls` passed 53/53 with 0 skipped. This does not approve direct 100-dietitian production pilot, close R-405, or enable real provider/channel/health-data paths.
 
 **Historical Stage 4D Faz 2 authority (2026-07-28):** Stage 4C remediation is closed locally at commit `cd3d781` with measured verdict `PASS_LOCAL_STAGE_4C_REMEDIATED`; the Stage 4D handoff is committed at `bc57cfd`. Stage 4D Faz 2 settings foundation is complete (`/dashboard/settings` read-only). Evidence: `docs/PHASE_85_STAGE_4D_PHASE_2_SETTINGS_READ_ONLY_EVIDENCE.md`, `docs/PHASE_85_STAGE_4D_AYARLAR_HESAP_ACTION_PLAN.md`. Active next-step planning is superseded by the Stage 4D remediation evidence above. Production remains `NO-GO`; R-405 remains open.
 
@@ -59,13 +59,13 @@ These rules are non-negotiable and apply to every future phase:
 - Autopilot is not globally enabled for all 5,000 clients by default. It is enabled only for selected qualified clients after all gates, monitoring, and rollback controls are ready.
 
 ## Current Baseline
-- Latest completed implementation phase: P85-IF post-closure audit and remediation baseline (2026-07-11), after P85-IF-A through P85-IF-I and R1-R6 remediation.
-- Next operator step: **Stage 4B-3 Multimodal Gorsel Guvenligi ve Yanit Orkestrasyonu** (Stage 4B-2 complete 2026-07-13); external production prerequisites remain open; no production GO.
+- Latest completed implementation phase: Stage 4D post-closure remediation reclosure (2026-07-29), after Faz 1 Account Foundation, Faz 2 Auth/Billing/PWA Hardening, and Faz 3 evidence reconciliation.
+- Next operator step: approve the Stage 4D remediation reclosure commit, then separately approve Stage 5 Dashboard and Mobile PWA Shell if desired; external production prerequisites remain open; no production GO.
 - Primary open product risk: R-425 is mitigated in the hosted commercial sandbox path, but production launch gates remain open.
 - Latest roadmap rebaseline: Phase 77A manual source authority rebaseline spec (2026-06-10).
 - Detailed Phase 77 implementation plan: `docs/PHASE_77_MASTER_IMPLEMENTATION_PLAN.md`.
 - AI quality master plan: `docs/PHASE_77M_77Y_AI_QUALITY_MASTER_PLAN.md`.
-- Latest verification: P85-IF post-closure audit verification passed targeted app/core tests, local Supabase reset, local RLS 30/30, lint, build, full app 828 passed / 4 skipped, core 234/234, channel replay, and production-scale rehearsal on 2026-07-11.
+- Latest verification: Stage 4D remediation Faz 3 verification passed targeted Stage 4D tests 35/35, typecheck, lint with 69 existing warnings and 0 errors, production build, full app Vitest 1435 passed / 9 skipped, local Supabase reset, local RLS 53/53 with 0 skipped, Supabase DB lint with existing Stage 4B/4C warnings, and `npm run release:verify` with R-405 still open.
 - Production pilot status: `NO-GO` (Phase 82 baseline `NO_GO_EXTERNAL_PREREQUISITES_OPEN`; Phase 83 does not change clinical production GO).
 - Phase 78 R-405 status: stable `next@latest` is `16.2.9` but still bundles nested `postcss@8.4.31`; no dependency files changed; R-405 and `dependency_audit_clearance` remain open.
 - Phase 80G R-405 hardening status: technical closure now requires safe stable patch path, dependency update evidence, and clean production audit; unknown production audit findings block closure; formal acceptance requires complete external acceptance metadata. No dependency files changed; R-405 and `dependency_audit_clearance` remain open.

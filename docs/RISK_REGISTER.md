@@ -226,7 +226,7 @@ Production pilot remains `NO-GO`; R-405 remains open; real integration paths rem
 
 2026-07-27 override for R-474 and R-481: the first pre-Stage-4D measurement passed 47/47 but exposed the four-table catalog coverage gap. The approved reclosure then passed clean reset, advisory/catalog checks, and the expanded RLS suite at 49/49 with 0 skipped. Treat older open/blocking wording as superseded by `docs/PHASE_85_STAGE_4C_REMEDIATION_EVIDENCE.md`; production pilot remains `NO-GO` and R-405 remains open.
 
-2026-07-28 continuity override: Stage 4C closure is committed locally at `cd3d781`, the Stage 4D handoff is committed at `bc57cfd`, R-481 remains mitigated locally, and Stage 4D Faz 2 introduces a read-only settings route with no production risk expansion. Next work is separately approved Faz 3 under `docs/PHASE_85_STAGE_4D_AYARLAR_HESAP_ACTION_PLAN.md`. Production remains `NO-GO`; R-405 and all external gates remain open.
+2026-07-29 Stage 4D remediation reclosure override: Stage 4D post-closure remediation Faz 1, Faz 2, the pre-Faz 3 RLS repair, and Faz 3 evidence reconciliation are reclosed locally. Evidence: `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_3_RECLOSURE_EVIDENCE.md`. Clean Supabase reset passed, local RLS passed 53/53 with 0 skipped, and release verification passed while R-405 remains open. Production remains `NO-GO`; all external gates remain open.
 
 ## Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
 

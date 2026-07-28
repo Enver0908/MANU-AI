@@ -2,16 +2,16 @@
 
 Date: 2026-07-28
 
-Active remediation status: **POST-CLOSURE REMEDIATION IN PROGRESS - Faz 1 Profile and Tenant/Account Foundation plus Faz 2 Auth, Billing and PWA Hardening are implemented locally; RLS verification remains blocked by local/remote RLS preflight.**
+Active remediation status: **POST-CLOSURE REMEDIATION RECLOSED LOCALLY - Faz 1 Profile and Tenant/Account Foundation, Faz 2 Auth/Billing/PWA Hardening, the pre-Faz 3 RLS repair, and Faz 3 evidence reconciliation are implemented and verified locally.**
 
-Remediation authority: `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_1_ACCOUNT_FOUNDATION_EVIDENCE.md` and `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_2_SECURITY_BILLING_PWA_EVIDENCE.md`.
+Remediation authority: `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_1_ACCOUNT_FOUNDATION_EVIDENCE.md`, `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_2_SECURITY_BILLING_PWA_EVIDENCE.md`, and `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_3_RECLOSURE_EVIDENCE.md`.
 
 Historical closure snapshot:
 Status: **CLOSED locally — measured verdict `PASS_LOCAL_STAGE_4D_CLOSED` at closure commit on `codex/stage-4c-remediation`**
 
 Stage 4D owns authenticated dashboard settings and account workflows for the dietitian-facing SaaS/PWA prototype. Faz 1–6 are complete. Evidence: `docs/PHASE_85_STAGE_4D_CLOSURE_EVIDENCE.md`.
 
-Post-closure audit supersedes the practical next-step interpretation of the historical closure snapshot: tenant account/membership foundation, canonical profile API/timezone, profile RBAC, fallback mutation boundaries, auth security hardening, billing recovery, PWA audit idempotence, and durable rate-limit boundaries required remediation. Remediation Faz 1 and Faz 2 are implemented locally; Faz 3 remediation remains a separate future approval.
+Post-closure audit supersedes the practical next-step interpretation of the historical closure snapshot: tenant account/membership foundation, canonical profile API/timezone, profile RBAC, fallback mutation boundaries, auth security hardening, billing recovery, PWA audit idempotence, and durable rate-limit boundaries required remediation. Remediation Faz 1, Faz 2, the pre-Faz 3 RLS repair, and Faz 3 evidence reconciliation are implemented and verified locally.
 
 Production remains `NO-GO`. R-405 remains open. Real WhatsApp, Telegram, external LLM, embedding, OCR, STT, live billing, monitoring, backup, secret-manager, and real health-data egress paths remain closed.
 
@@ -27,14 +27,14 @@ Canonical closure evidence: `docs/PHASE_85_STAGE_4D_CLOSURE_EVIDENCE.md`. Per-fa
 
 ## Current Settings / Account Architecture
 
-Dedicated settings route exists at `/dashboard/settings?tab=profile|security|workspace|billing|application` after Faz 2. Mutations are still closed.
+Dedicated settings route exists at `/dashboard/settings?tab=profile|security|workspace|billing|application`. Stage 4D account mutations are open only through the scoped account/profile, account/workspace, auth-security, billing-portal, and mobile-install audit contracts implemented and hardened by remediation Faz 1 and Faz 2.
 
 - `resolveSettingsAccountReadModel()` in `app/src/lib/settings-server-read.ts` builds the cookie-bound read-only settings model without returning internal ids.
 - `resolveDashboardAuth()` in `app/src/lib/dashboard-server-auth.ts` remains the shared dashboard/AI Chat gate helper.
 - `resolveAppTenantContext()` in `app/src/lib/auth-context.ts` resolves API authority from Supabase user, first tenant membership, matching dietitian profile, entitlement check, and role capability.
-- Profile preferences currently live on `dietitians`: `display_name`, `timezone`, `ui_language`, `auth_user_id`. Only `ui_language` is currently editable through dashboard preference save behavior; settings profile remains read-only until Faz 3.
-- Tenant account identity currently lives on `tenants`: `id`, `name`, `created_at`. There is no owner/admin tenant settings editor.
-- Membership role is `owner | admin | dietitian | assistant | auditor`. Current `AppCapability` is clinical-workflow oriented and has no account-specific capability names yet.
+- Profile preferences currently live on `dietitians`: `display_name`, `timezone`, `ui_language`, `auth_user_id`. `GET /api/account/profile` and `PATCH /api/account/profile` provide the canonical self-profile contract for `displayName`, `timezone`, and `uiLanguage`; owner/admin/dietitian can update only their own profile and assistant/auditor writes are denied.
+- Tenant account identity currently lives on `tenants`: `id`, `name`, `created_at`, and remediation-added `settings_revision`. `GET /api/account/workspace` and `PATCH /api/account/workspace` provide owner/admin-only workspace settings with expected-revision conflict protection.
+- Membership role is `owner | admin | dietitian | assistant | auditor`. Account membership overview is exposed through `GET /api/account/members` for owner/admin only; account write capability is enforced at route/RPC boundaries rather than broad client-supplied ids.
 - Commercial entitlement/billing is tenant-owned through `tenant_entitlements`, `billing_customers`, `commercial_invites`, and `billing_event_ledger`.
 - `POST /api/commercial/billing-portal` is the existing Stripe portal boundary; after remediation Faz 2 it requires configured sandbox Stripe, Supabase commercial stores, account tenant context, owner/admin role, active or past-due entitlement, and Stripe customer id. It is no longer dependent on active dashboard entitlement for payment recovery.
 - PWA install readiness is resolved by `resolveMobileInstallAccess()` at dashboard entry and recorded through `mobile_install_audit_events`. After remediation Faz 2 blocked reasons are sanitized enum codes and audit inserts are daily idempotent.
@@ -247,4 +247,4 @@ Completion criteria:
 
 ## Next Single Phase
 
-Stage 4D post-closure remediation is active. Next implementation unit: **Stage 4D remediation Faz 2 - Auth, Billing, PWA Hardening** (separate user approval required). Stage 5 is not the next active implementation unit until Stage 4D remediation is re-closed. Commit, push, PR, deploy, and next-stage implementation each require explicit user command.
+Stage 4D post-closure remediation is reclosed locally. Next operator action: review and approve the Faz 3 reclosure commit. Stage 5 is the next Phase 85 implementation area only after explicit user approval; push, PR, deploy, and next-stage implementation each require a separate explicit user command.

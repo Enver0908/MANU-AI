@@ -1,6 +1,6 @@
 # MANU-AI Local App Prototype
 
-**Current active remediation (2026-07-29):** Stage 4D post-closure remediation Faz 1 Profile and Tenant/Account Foundation plus Faz 2 Auth, Billing and PWA Hardening are implemented locally and evidenced in `../docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_1_ACCOUNT_FOUNDATION_EVIDENCE.md` and `../docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_2_SECURITY_BILLING_PWA_EVIDENCE.md`. The pre-Faz 3 RLS repair is applied locally: clean Supabase reset passed and `npm run test:rls` passed 53/53 with 0 skipped after local env mapping. Next implementation is remediation Faz 3 only after separate approval. Production remains `NO-GO`; R-405 remains open.
+**Current active status (2026-07-29):** Stage 4D post-closure remediation is reclosed locally through Faz 3 evidence reconciliation. Evidence: `../docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_1_ACCOUNT_FOUNDATION_EVIDENCE.md`, `../docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_2_SECURITY_BILLING_PWA_EVIDENCE.md`, and `../docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_3_RECLOSURE_EVIDENCE.md`. Clean Supabase reset passed and `npm run test:rls` passed 53/53 with 0 skipped. Production remains `NO-GO`; R-405 remains open.
 
 **Historical closure authority (2026-07-28):** Stage 4D Ayarlar / Hesap was closed locally with measured verdict `PASS_LOCAL_STAGE_4D_CLOSED`. Evidence: `../docs/PHASE_85_STAGE_4D_CLOSURE_EVIDENCE.md`. Active next-step planning is superseded by the Stage 4D remediation evidence above. Production remains `NO-GO`; R-405 remains open.
 
