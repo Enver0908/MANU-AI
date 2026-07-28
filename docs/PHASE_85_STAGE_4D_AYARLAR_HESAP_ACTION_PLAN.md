@@ -7,9 +7,9 @@ Active remediation status: **POST-CLOSURE REMEDIATION RECLOSED LOCALLY - Faz 1 P
 Remediation authority: `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_1_ACCOUNT_FOUNDATION_EVIDENCE.md`, `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_2_SECURITY_BILLING_PWA_EVIDENCE.md`, and `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_3_RECLOSURE_EVIDENCE.md`.
 
 Historical closure snapshot:
-Status: **CLOSED locally — measured verdict `PASS_LOCAL_STAGE_4D_CLOSED` at closure commit on `codex/stage-4c-remediation`**
+Status: **CLOSED locally - measured verdict `PASS_LOCAL_STAGE_4D_CLOSED` at the historical closure commit on `codex/stage-4c-remediation`**
 
-Stage 4D owns authenticated dashboard settings and account workflows for the dietitian-facing SaaS/PWA prototype. Faz 1–6 are complete. Evidence: `docs/PHASE_85_STAGE_4D_CLOSURE_EVIDENCE.md`.
+Stage 4D owns authenticated dashboard settings and account workflows for the dietitian-facing SaaS/PWA prototype. Faz 1-6 are complete. Evidence: `docs/PHASE_85_STAGE_4D_CLOSURE_EVIDENCE.md`.
 
 Post-closure audit supersedes the practical next-step interpretation of the historical closure snapshot: tenant account/membership foundation, canonical profile API/timezone, profile RBAC, fallback mutation boundaries, auth security hardening, billing recovery, PWA audit idempotence, and durable rate-limit boundaries required remediation. Remediation Faz 1, Faz 2, the pre-Faz 3 RLS repair, and Faz 3 evidence reconciliation are implemented and verified locally.
 
@@ -19,7 +19,7 @@ Canonical closure evidence: `docs/PHASE_85_STAGE_4D_CLOSURE_EVIDENCE.md`. Per-fa
 
 ## Existing Authority
 
-- Repo baseline: branch `codex/stage-4c-remediation`, upstream `origin/codex/stage-4c-remediation`, HEAD `bc57cfd Reconcile Stage 4C continuity for Stage 4D handoff`.
+- Historical read-gate starting baseline: branch `codex/stage-4c-remediation`, upstream `origin/codex/stage-4c-remediation`, HEAD `bc57cfd Reconcile Stage 4C continuity for Stage 4D handoff`. This is not the current repository HEAD; the Stage 4D remediation reclosure is committed at `e369e1b`.
 - Stage 4C closure: `docs/PHASE_85_STAGE_4C_REMEDIATION_EVIDENCE.md`, `docs/PHASE_85_STAGE_4C_LOCAL_CLOSURE_REHEARSAL_EVIDENCE.md`, `docs/PHASE_85_STAGE_4C_TO_STAGE_4D_CONTINUITY_HANDOFF_EVIDENCE.md`.
 - Design authority: `docs/PHASE_85_FRONTEND_REDESIGN_AND_DESIGN_SYSTEM_SPEC.md`.
 - Auth/tenant authority: `app/src/lib/auth-context.ts`, `app/src/lib/dashboard-server-auth.ts`, `app/src/lib/customer-auth-session.ts`, `app/src/lib/customer-auth-store.ts`, `app/src/lib/supabase-store.ts`, `app/supabase/migrations/20260522000000_initial_manu_ai_schema.sql`, `app/supabase/migrations/20260530040000_ai_security_remediation.sql`.
@@ -247,4 +247,4 @@ Completion criteria:
 
 ## Next Single Phase
 
-Stage 4D post-closure remediation is reclosed locally. Next operator action: review and approve the Faz 3 reclosure commit. Stage 5 is the next Phase 85 implementation area only after explicit user approval; push, PR, deploy, and next-stage implementation each require a separate explicit user command.
+Stage 4D post-closure remediation is reclosed and committed locally at `e369e1b`. Stage 5 is the next Phase 85 implementation area only after explicit user approval; push, PR, deploy, and next-stage implementation each require a separate explicit user command.

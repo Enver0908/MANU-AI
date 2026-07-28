@@ -7,7 +7,9 @@
 
 ## Product and Legal Risks
 
-Current Phase 85 Stage 4D note, 2026-07-29: Stage 4D remediation Faz 1 and Faz 2 plus the pre-Faz 3 RLS repair are implemented locally. Clean local Supabase reset passed and `npm run test:rls` passed 53/53 with 0 skipped after local env mapping. This adds no production authorization, provider/channel egress, live billing, production schema rollout, or real-data path. Existing product, privacy, clinical, dependency, and production-gate risks remain unchanged; production remains `NO-GO` and R-405 remains open.
+Current Phase 85 Stage 4D note, 2026-07-29: Stage 4D remediation Faz 1 and Faz 2, the pre-Faz 3 RLS repair, and Faz 3 evidence reconciliation are reclosed and committed locally at `e369e1b`. Clean local Supabase reset passed and `npm run test:rls` passed 53/53 with 0 skipped after local env mapping. The branch has not been pushed and Stage 5 is unstarted. This adds no production authorization, provider/channel egress, live billing, production schema rollout, or real-data path. Existing product, privacy, clinical, dependency, and production-gate risks remain unchanged; production remains `NO-GO` and R-405 remains open.
+
+Document authority rule: the note above is the current Stage 4D risk context. Dated phase statements elsewhere in this register are historical snapshots and do not override it.
 
 | ID | Risk | Severity | Mitigation | Status |
 | --- | --- | --- | --- | --- |

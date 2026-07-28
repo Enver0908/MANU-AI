@@ -1,6 +1,8 @@
 # MANU-AI Production Pilot Final Readiness Closure Summary
 
-Phase 85 Stage 4D remediation reclosure update, 2026-07-29: Faz 1 Profile and Tenant/Account Foundation, Faz 2 Auth/Billing/PWA Hardening, the pre-Faz 3 RLS repair, and Faz 3 evidence reconciliation are reclosed locally and evidenced in `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_1_ACCOUNT_FOUNDATION_EVIDENCE.md`, `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_2_SECURITY_BILLING_PWA_EVIDENCE.md`, and `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_3_RECLOSURE_EVIDENCE.md`. Final production readiness is unchanged: clean local RLS passed 53/53 with 0 skipped, production pilot remains `NO-GO`, R-405 and external approvals remain open, and real integration paths remain closed.
+Phase 85 Stage 4D remediation reclosure update, 2026-07-29: Faz 1 Profile and Tenant/Account Foundation, Faz 2 Auth/Billing/PWA Hardening, the pre-Faz 3 RLS repair, and Faz 3 evidence reconciliation are reclosed and committed locally at `e369e1b`, with evidence in `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_1_ACCOUNT_FOUNDATION_EVIDENCE.md`, `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_2_SECURITY_BILLING_PWA_EVIDENCE.md`, and `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_3_RECLOSURE_EVIDENCE.md`. The branch has not been pushed and Stage 5 is unstarted. Final production readiness is unchanged: clean local RLS passed 53/53 with 0 skipped, production pilot remains `NO-GO`, R-405 and external approvals remain open, and real integration paths remain closed.
+
+Document authority rule: the update above and the Stage 4D remediation evidence chain govern current readiness interpretation. Dated phase entries below are historical snapshots; their `current`, `next`, `pending`, or `blocked` wording applies only to their checkpoint.
 
 Historical Phase 85 Stage 4D Faz 2 update, 2026-07-28: the measured Stage 4C closure is committed locally at `cd3d781`, the Stage 4D handoff is committed at `bc57cfd`, and Stage 4D Faz 2 settings foundation is complete as a read-only `/dashboard/settings` route. Active next-step planning is superseded by the Stage 4D remediation evidence above. Evidence: `docs/PHASE_85_STAGE_4D_PHASE_2_SETTINGS_READ_ONLY_EVIDENCE.md`, `docs/PHASE_85_STAGE_4D_AYARLAR_HESAP_ACTION_PLAN.md`, and `docs/PHASE_85_STAGE_4C_TO_STAGE_4D_CONTINUITY_HANDOFF_EVIDENCE.md`. Final production readiness is unchanged: production pilot remains `NO-GO`, R-405 and external approvals remain open, and real integration paths remain closed.
 
@@ -20,7 +22,7 @@ Production pilot is not approved.
 
 Phase 85 Stage 4B-2 local RLS re-closure (2026-07-13): local Supabase reset passed and the current `npm run test:rls` suite passed 35/35 with 0 skipped. Evidence: `docs/PHASE_85_STAGE_4B_2_RLS_LOCAL_RECLOSURE_EVIDENCE.md`. This updates the local RLS evidence only; production pilot remains `NO-GO`, R-405 remains open, all external launch gates remain open, and real provider/channel/health-data paths remain disconnected.
 
-Phase 85 Stage 4B-2 Mesajlasma closure (2026-07-12) is implemented and locally verified through bounded APIs, per-actor receipts, mutations, detail UX, integration, scale/visual/release checks, and canonical spec. Its initial Docker-blocked RLS snapshot was superseded on 2026-07-13 by R7 zero-skip RLS/SQL evidence and the expanded advisory-hardening 36/36 run. Current authority: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`. **Next:** Stage 4B-3. Production pilot remains `NO-GO`; R-405 remains open.
+Phase 85 Stage 4B-2 Mesajlasma closure (2026-07-12) is implemented and locally verified through bounded APIs, per-actor receipts, mutations, detail UX, integration, scale/visual/release checks, and canonical spec. Its initial Docker-blocked RLS snapshot was superseded on 2026-07-13 by R7 zero-skip RLS/SQL evidence and the expanded advisory-hardening 36/36 run. Current authority: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`. **Historical next at that checkpoint:** Stage 4B-3. Production pilot remains `NO-GO`; R-405 remains open.
 
 Phase 85 Stage 4B post-closure remediation (2026-07-12) is implemented and locally verified through bounded actor-aware Supabase contracts, safe linkage, lifecycle producers, atomic review, role boundaries, 79G/release verification, and four-viewport visual evidence. Its historical 33-test Docker block was superseded by the complete-chain 35/35 re-closure and advisory-hardening 36/36 run. Evidence: `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md`, `docs/PHASE_85_STAGE_4B_2_RLS_LOCAL_RECLOSURE_EVIDENCE.md`, and `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`.
 
@@ -374,7 +376,7 @@ Final readiness remains `NO-GO`. This compatibility remediation does not supply 
 
 ## Stage 4B Closure Readiness Note - 2026-07-12
 
-Stage 4B-2 is implemented and locally verified. Canonical evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`. Production pilot remains `NO-GO`; R-405 open. **Next:** Stage 4B-3.
+Stage 4B-2 is implemented and locally verified. Canonical evidence: `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`. Production pilot remains `NO-GO`; R-405 open. **Historical next at that checkpoint:** Stage 4B-3.
 
 Stage 4B is implemented and locally verified. Canonical evidence: `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_EVIDENCE.md`. Production pilot remains `NO-GO`; R-405 open.
 
@@ -382,7 +384,7 @@ Final readiness remains `NO-GO`; this planning artifact closes no production gat
 
 ## Stage 4B-2 Closure Readiness Note - 2026-07-12
 
-Stage 4B-2 Mesajlaşma implementation and evidence closure are locally verified. The environment-blocked RLS state recorded at initial closure was subsequently superseded by R7 zero-skip RLS/SQL evidence and advisory-hardening 36/36. Current authority: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`. Final readiness remains `NO-GO`; R-405 remains open. **Next:** Stage 4B-3.
+Stage 4B-2 Mesajlaşma implementation and evidence closure are locally verified. The environment-blocked RLS state recorded at initial closure was subsequently superseded by R7 zero-skip RLS/SQL evidence and advisory-hardening 36/36. Current authority: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`. Final readiness remains `NO-GO`; R-405 remains open. **Historical next at that checkpoint:** Stage 4B-3.
 
 ## Stage 4B-2 Phase 0 Readiness Note - 2026-07-12
 

@@ -4,7 +4,7 @@ Date: 2026-07-29
 
 Branch: `codex/stage-4c-remediation`
 
-Status: **RECLOSED LOCALLY - commit pending user approval**.
+Status: **RECLOSED AND COMMITTED LOCALLY at `e369e1b`**.
 
 This evidence covers only Stage 4D remediation Faz 3: remediation evidence reconciliation, closure verification, and canonical document handoff cleanup after Faz 1 Profile and Tenant/Account Foundation, Faz 2 Auth/Billing/PWA Hardening, and the pre-Faz 3 RLS repair. It does not implement new Stage 4D runtime code, UI, API, or migration behavior.
 
@@ -68,4 +68,4 @@ Executed from `app/` unless noted.
 - R-405 remains open and blocks production launch.
 - Production pilot remains `NO-GO`.
 - External legal/privacy, clinical, vendor/provider, WhatsApp/Telegram, monitoring, backup, secret-manager, and real-data approvals remain open.
-- Commit is pending explicit user approval.
+- The reclosure is committed locally at `e369e1b`; push remains pending a separate explicit user command.
