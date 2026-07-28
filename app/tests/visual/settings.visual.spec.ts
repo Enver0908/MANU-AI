@@ -34,10 +34,11 @@ test("invalid settings tab deep-links fall back to profile", async ({ page }) =>
   await expect(page.getByTestId("settings-section-profile")).toBeVisible();
 });
 
-test("settings tabs switch between five read-only sections without mutation controls", async ({ page }) => {
+test("settings tabs switch across five sections in fallback demo", async ({ page }) => {
   await bootstrapSettings(page);
   await page.goto("/dashboard/settings");
   await expect(page.getByTestId("settings-page")).toBeVisible();
+  await expect(page.getByTestId("settings-fallback-banner")).toBeVisible();
 
   const compact = await isCompactViewport(page);
   const tabs = [
@@ -58,8 +59,8 @@ test("settings tabs switch between five read-only sections without mutation cont
     await expect(page.getByTestId(sectionTestId)).toBeVisible();
   }
 
-  await expect(page.getByRole("button", { name: /kaydet|save|değiştir|change password/i })).toHaveCount(0);
-  await expect(page.locator("form[action*='account']")).toHaveCount(0);
+  await expect(page.getByTestId("settings-billing-portal")).toHaveCount(0);
+  await expect(page.getByTestId("settings-profile-save")).toHaveCount(0);
 });
 
 test("settings page has no serious or critical accessibility violations", async ({ page }) => {

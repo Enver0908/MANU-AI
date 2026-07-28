@@ -1,6 +1,6 @@
 # Handoff For Next Codex
 
-**Current authority (2026-07-28):** Stage 4C remediation is closed locally at commit `cd3d781` with measured verdict `PASS_LOCAL_STAGE_4C_REMEDIATED`; the Stage 4D handoff is committed at `bc57cfd`. Stage 4D Faz 2 settings foundation is complete (`/dashboard/settings` read-only). Evidence: `docs/PHASE_85_STAGE_4D_PHASE_2_SETTINGS_READ_ONLY_EVIDENCE.md`, `docs/PHASE_85_STAGE_4D_AYARLAR_HESAP_ACTION_PLAN.md`. **Next:** obtain separate user approval for Stage 4D Faz 3 Self Profile Preferences. Production remains `NO-GO`; R-405 remains open.
+**Current authority (2026-07-28):** Stage 4D Ayarlar / Hesap is closed locally on `codex/stage-4c-remediation` with measured verdict `PASS_LOCAL_STAGE_4D_CLOSED`. Evidence: `docs/PHASE_85_STAGE_4D_CLOSURE_EVIDENCE.md`, `docs/PHASE_85_STAGE_4D_AYARLAR_HESAP_ACTION_PLAN.md`. **Next:** obtain separate user approval for Phase 85 Stage 5 Dashboard and Mobile PWA Shell. Production remains `NO-GO`; R-405 remains open; R-406 local Supabase/RLS re-run remains **BLOCKED** without local Supabase.
 
 Pre-Stage-4D Stage 4B and Stage 4C paragraphs below this authority block are historical snapshots. Use the Stage 4D action plan, Stage 4D Faz 1 read-gate evidence, Stage 4C remediation evidence, and Stage 4C-to-Stage 4D continuity handoff evidence as current authority.
 

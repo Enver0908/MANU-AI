@@ -1,6 +1,6 @@
 # Phase 85: SiriusAI Frontend Redesign And Design System Spec
 
-Current Phase 85 status, 2026-07-28: Stage 4C remediation remains closed at `cd3d781`; Stage 4D Faz 2 settings foundation is complete at `/dashboard/settings` (read-only). Evidence: `docs/PHASE_85_STAGE_4D_PHASE_2_SETTINGS_READ_ONLY_EVIDENCE.md`. Next is separately approved Faz 3; production remains `NO-GO`.
+Current Phase 85 status, 2026-07-28: Stage 4C remediation remains closed at `cd3d781`; **Stage 4D Ayarlar / Hesap is closed locally** with verdict `PASS_LOCAL_STAGE_4D_CLOSED`. Evidence: `docs/PHASE_85_STAGE_4D_CLOSURE_EVIDENCE.md`. Next is separately approved Stage 5; production remains `NO-GO`.
 
 Date: 2026-07-07
 Status: Stage 1 design foundation, Stage 2 shared component system, Stage 3 public/commercial entry integration, and Stage 4A Danisan Kontrol Paneli complete; Stage 3 is deployed to the hosted sandbox at `https://siriusai.store`. P85-IF-A through P85-IF-I are complete. **Stage 4B Uyari ve Bildirimler is complete (2026-07-12).** Evidence: `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_EVIDENCE.md`. **Stage 4B-2 Mesajlasma is complete locally (2026-07-13).** **Next:** Stage 4B-3 Multimodal Gorsel Guvenligi ve Yanit Orkestrasyonu.
@@ -68,9 +68,9 @@ Stage 4C must define the dietitian-facing AI chat experience without weakening i
 
 ## Stage 4D - Ayarlar / Hesap
 
-Status: **Faz 2 settings foundation complete; next is separately approved Faz 3**.
+Status: **CLOSED locally — `PASS_LOCAL_STAGE_4D_CLOSED` (2026-07-28)**.
 
-Stage 4D defines settings/account workflows while preserving auth, membership, entitlement, onboarding, admin, billing, PWA install, and sandbox-only constraints. The canonical action plan is `docs/PHASE_85_STAGE_4D_AYARLAR_HESAP_ACTION_PLAN.md`; Faz 1 evidence is `docs/PHASE_85_STAGE_4D_PHASE_1_READ_GATE_EVIDENCE.md`; Faz 2 evidence is `docs/PHASE_85_STAGE_4D_PHASE_2_SETTINGS_READ_ONLY_EVIDENCE.md`. Faz 2 delivered the dedicated settings route and read-only account model. Faz 3 profile mutation requires separate approval.
+Stage 4D delivered `/dashboard/settings` with profile mutation, account security flows, owner/admin billing portal entry, and PWA install in Settings > Application. Canonical action plan: `docs/PHASE_85_STAGE_4D_AYARLAR_HESAP_ACTION_PLAN.md`; closure evidence: `docs/PHASE_85_STAGE_4D_CLOSURE_EVIDENCE.md`. Next Phase 85 unit: Stage 5 (separate approval).
 
 ## Scope Lock
 
