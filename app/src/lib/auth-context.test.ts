@@ -111,4 +111,12 @@ describe("auth context error handling", () => {
       new AppAuthError(403, "dietitian_ai_chat_forbidden"),
     );
   });
+
+  it("allows all active tenant roles to update their own profile only", () => {
+    for (const role of ["owner", "admin", "dietitian", "assistant", "auditor"] as const) {
+      expect(hasCapability(role, "update_own_profile")).toBe(true);
+    }
+    expect(hasCapability("assistant", "update_client")).toBe(false);
+    expect(hasCapability("auditor", "manual_reply")).toBe(false);
+  });
 });

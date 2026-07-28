@@ -20,7 +20,8 @@ export type AppCapability =
   | "internal_copilot_chat"
   | "dietitian_ai_chat"
   | "read_operational_foundation"
-  | "revoke_tenant_channel_bindings";
+  | "revoke_tenant_channel_bindings"
+  | "update_own_profile";
 
 export type AppTenantContext = {
   tenantId: string;
@@ -129,6 +130,10 @@ export function hasCapability(role: TenantRole, capability: AppCapability) {
 
   if (capability === "dietitian_ai_chat") {
     return role === "owner" || role === "admin" || role === "dietitian";
+  }
+
+  if (capability === "update_own_profile") {
+    return role === "owner" || role === "admin" || role === "dietitian" || role === "assistant" || role === "auditor";
   }
 
   if (role === "owner" || role === "admin" || role === "dietitian") {

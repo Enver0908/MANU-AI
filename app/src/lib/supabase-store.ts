@@ -12,6 +12,13 @@ import {
   type ClientScopedExport,
 } from "./data-governance";
 import { assertAiChatClientExportHasNoLeaks } from "./phase-85-stage-4c-lifecycle";
+import {
+  mapOwnProfileRpcError,
+  mapOwnProfileRpcResult,
+  OwnProfileValidationError,
+  validateDisplayName,
+  validateUiLanguage,
+} from "./phase-85-stage-4d-own-profile";
 import { supabaseBuildClientScopedExportSlice } from "./phase-85-stage-4c-supabase-lifecycle";
 import { buildInMemoryAiChatClientExportSlice } from "./phase-85-stage-4c-store";
 import { sanitizeClientScopedExportForClientFacing } from "./phase-77v-copilot-quality-workflow";
@@ -3383,14 +3390,50 @@ export async function updateSupabaseDietitianPreferences(
   input: { uiLanguage?: unknown },
   context = demoTenantContext(),
 ) {
-  await checked(
-    requireSupabase()
-      .from("dietitians")
-      .update({ ui_language: normalizeLanguageCode(input.uiLanguage) })
-      .eq("tenant_id", context.tenantId)
-      .eq("id", context.dietitianId),
+  if (input.uiLanguage === undefined) {
+    return loadSupabaseState(context);
+  }
+  const result = await updateSupabaseOwnProfile(
+    { uiLanguage: validateUiLanguage(normalizeLanguageCode(input.uiLanguage)) },
+    context,
   );
-  return loadSupabaseState(context);
+  const state = await loadSupabaseState(context);
+  return {
+    ...state,
+    dietitian: {
+      ...state.dietitian,
+      displayName: result.profile.displayName,
+      uiLanguage: result.profile.uiLanguage,
+    },
+  };
+}
+
+export async function updateSupabaseOwnProfile(
+  input: { displayName?: string; uiLanguage?: SupportedLanguageCode },
+  _context = demoTenantContext(),
+): Promise<{
+  profile: { displayName: string; uiLanguage: SupportedLanguageCode };
+  changedFields: Array<"displayName" | "uiLanguage">;
+}> {
+  const rpcArgs: { p_display_name?: string; p_ui_language?: string } = {};
+  if (input.displayName !== undefined) {
+    rpcArgs.p_display_name = validateDisplayName(input.displayName);
+  }
+  if (input.uiLanguage !== undefined) {
+    rpcArgs.p_ui_language = validateUiLanguage(input.uiLanguage);
+  }
+
+  if (!rpcArgs.p_display_name && !rpcArgs.p_ui_language) {
+    throw new OwnProfileValidationError("profile_patch_empty");
+  }
+
+  const supabase = requireSupabase();
+  const { data, error } = await supabase.rpc("p85_stage4d_update_own_profile", rpcArgs);
+  if (error) {
+    throw new Error(mapOwnProfileRpcError(error.message));
+  }
+
+  return mapOwnProfileRpcResult(data);
 }
 
 export async function addSupabaseClientContextUpdate(

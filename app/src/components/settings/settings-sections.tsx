@@ -5,6 +5,7 @@ import type { SupportedLanguageCode } from "@/lib/languages";
 import type { DashboardMessageKey } from "@/lib/i18n";
 import { t } from "@/lib/i18n";
 import type { SettingsAccountReadModel, SettingsTab } from "@/lib/phase-85-stage-4d-settings-contracts";
+import { SettingsProfileForm } from "@/components/settings/settings-profile-form";
 import { Card, CardBody, CardHeader } from "@/components/ui";
 
 function FactRow({ label, value }: { label: string; value: string }) {
@@ -57,18 +58,33 @@ export function SettingsProfileSection({
   model: SettingsAccountReadModel;
   uiLanguage: SupportedLanguageCode;
 }) {
+  const editable = model.runtime.mode === "configured" && model.runtime.identityActionsAvailable;
+
   return (
     <div data-testid="settings-section-profile">
       <Card>
-        <CardHeader title={t(uiLanguage, "settingsProfileHeading")} description={t(uiLanguage, "settingsProfileReadOnlyHint")} />
+        <CardHeader
+          title={t(uiLanguage, "settingsProfileHeading")}
+          description={
+            editable ? t(uiLanguage, "settingsProfileEditableHint") : t(uiLanguage, "settingsProfileReadOnlyHint")
+          }
+        />
         <CardBody>
-          <dl>
-            <FactRow label={t(uiLanguage, "settingsProfileDisplayName")} value={model.profile.displayName} />
-            <FactRow
-              label={t(uiLanguage, "settingsProfileLanguage")}
-              value={languageLabel(model.profile.uiLanguage)}
+          {editable ? (
+            <SettingsProfileForm
+              key={`${model.profile.displayName}:${model.profile.uiLanguage}`}
+              model={model}
+              uiLanguage={uiLanguage}
             />
-          </dl>
+          ) : (
+            <dl>
+              <FactRow label={t(uiLanguage, "settingsProfileDisplayName")} value={model.profile.displayName} />
+              <FactRow
+                label={t(uiLanguage, "settingsProfileLanguage")}
+                value={languageLabel(model.profile.uiLanguage)}
+              />
+            </dl>
+          )}
         </CardBody>
       </Card>
     </div>

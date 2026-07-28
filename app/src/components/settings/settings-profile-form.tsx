@@ -1,0 +1,154 @@
+"use client";
+
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button, Field, SelectInput, TextInput } from "@/components/ui";
+import { SUPPORTED_LANGUAGES, type SupportedLanguageCode } from "@/lib/languages";
+import type { DashboardMessageKey } from "@/lib/i18n";
+import { t } from "@/lib/i18n";
+import type { SettingsAccountReadModel } from "@/lib/phase-85-stage-4d-settings-contracts";
+
+type ProfileFormState = {
+  displayName: string;
+  uiLanguage: SupportedLanguageCode;
+};
+
+export function SettingsProfileForm({
+  model,
+  uiLanguage,
+}: {
+  model: SettingsAccountReadModel;
+  uiLanguage: SupportedLanguageCode;
+}) {
+  const router = useRouter();
+  const initial = useMemo<ProfileFormState>(
+    () => ({
+      displayName: model.profile.displayName,
+      uiLanguage: model.profile.uiLanguage,
+    }),
+    [model.profile.displayName, model.profile.uiLanguage],
+  );
+  const [form, setForm] = useState<ProfileFormState>(initial);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  const isDirty =
+    form.displayName.trim() !== initial.displayName.trim() || form.uiLanguage !== initial.uiLanguage;
+
+  useEffect(() => {
+    const onBeforeUnload = (event: BeforeUnloadEvent) => {
+      if (!isDirty) return;
+      event.preventDefault();
+      event.returnValue = "";
+    };
+    window.addEventListener("beforeunload", onBeforeUnload);
+    return () => window.removeEventListener("beforeunload", onBeforeUnload);
+  }, [isDirty]);
+
+  const onSave = useCallback(async () => {
+    if (!isDirty || saving) return;
+    setSaving(true);
+    setError(null);
+    setSuccess(false);
+
+    const payload: { displayName?: string; uiLanguage?: SupportedLanguageCode } = {};
+    if (form.displayName.trim() !== initial.displayName.trim()) {
+      payload.displayName = form.displayName.trim();
+    }
+    if (form.uiLanguage !== initial.uiLanguage) {
+      payload.uiLanguage = form.uiLanguage;
+    }
+
+    try {
+      const response = await fetch("/api/dietitian/preferences", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = (await response.json()) as { error?: string; profile?: ProfileFormState };
+      if (!response.ok) {
+        const key = `settingsProfileError_${data.error}` as DashboardMessageKey;
+        setError(t(uiLanguage, key) || t(uiLanguage, "settingsProfileSaveFailed"));
+        return;
+      }
+      if (data.profile) {
+        setForm({
+          displayName: data.profile.displayName,
+          uiLanguage: data.profile.uiLanguage,
+        });
+      }
+      setSuccess(true);
+      router.refresh();
+    } catch {
+      setError(t(uiLanguage, "settingsProfileSaveFailed"));
+    } finally {
+      setSaving(false);
+    }
+  }, [form, initial, isDirty, router, saving, uiLanguage]);
+
+  if (model.runtime.mode === "fallback" || !model.runtime.identityActionsAvailable) {
+    return null;
+  }
+
+  return (
+    <div data-testid="settings-profile-form" data-dirty={isDirty ? "true" : "false"} className="space-y-4">
+      <Field label={t(uiLanguage, "settingsProfileDisplayName")} htmlFor="settings-profile-display-name" required>
+        <TextInput
+          id="settings-profile-display-name"
+          value={form.displayName}
+          onChange={(event) => setForm((current) => ({ ...current, displayName: event.target.value }))}
+          maxLength={80}
+          disabled={saving}
+        />
+      </Field>
+
+      <Field label={t(uiLanguage, "settingsProfileLanguage")} htmlFor="settings-profile-language" required>
+        <SelectInput
+          id="settings-profile-language"
+          value={form.uiLanguage}
+          onChange={(event) =>
+            setForm((current) => ({
+              ...current,
+              uiLanguage: event.target.value as SupportedLanguageCode,
+            }))
+          }
+          disabled={saving}
+        >
+          {SUPPORTED_LANGUAGES.map((language) => (
+            <option key={language.code} value={language.code}>
+              {language.nativeLabel}
+            </option>
+          ))}
+        </SelectInput>
+      </Field>
+
+      {error ? (
+        <p className="text-sm font-medium text-red-700" role="alert" data-testid="settings-profile-error">
+          {error}
+        </p>
+      ) : null}
+      {success ? (
+        <p className="text-sm font-medium text-emerald-800" role="status" data-testid="settings-profile-success">
+          {t(uiLanguage, "settingsProfileSaveSuccess")}
+        </p>
+      ) : null}
+
+      <div className="flex flex-wrap items-center gap-3">
+        <Button
+          type="button"
+          onClick={onSave}
+          disabled={!isDirty || saving}
+          data-testid="settings-profile-save"
+        >
+          {saving ? t(uiLanguage, "settingsProfileSaving") : t(uiLanguage, "settingsProfileSave")}
+        </Button>
+        {isDirty ? (
+          <p className="text-xs text-ink-muted" role="status">
+            {t(uiLanguage, "settingsProfileUnsaved")}
+          </p>
+        ) : null}
+      </div>
+    </div>
+  );
+}

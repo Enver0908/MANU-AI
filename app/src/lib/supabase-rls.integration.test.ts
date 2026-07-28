@@ -2509,6 +2509,108 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     expect(afterRevocation.error).toBeNull();
     expect(afterRevocation.data).toHaveLength(0);
   });
+
+  it("updates own profile through Stage 4D RPC with idempotent minimized audit metadata", async () => {
+    const owner = await signIn("rls-member@manu.local");
+    const assistant = await signIn("rls-assistant@manu.local");
+    const auditor = await signIn("rls-auditor@manu.local");
+    const outsider = await signIn("rls-outsider@manu.local");
+
+    const beforeAudit = await admin
+      .from("audit_events")
+      .select("id", { count: "exact", head: true })
+      .eq("tenant_id", TEST_TENANT_ID)
+      .eq("event_type", "stage_4d_own_profile_updated");
+
+    const ownerUpdate = await owner.rpc("p85_stage4d_update_own_profile", {
+      p_display_name: "RLS Owner Profile",
+      p_ui_language: "en",
+    });
+    expect(ownerUpdate.error).toBeNull();
+    expect(ownerUpdate.data?.profile?.displayName).toBe("RLS Owner Profile");
+    expect(ownerUpdate.data?.changedFields).toEqual(expect.arrayContaining(["displayName", "uiLanguage"]));
+
+    const ownerDietitian = await admin
+      .from("dietitians")
+      .select("display_name, ui_language")
+      .eq("id", TEST_DIETITIAN_ID)
+      .single();
+    expect(ownerDietitian.data?.display_name).toBe("RLS Owner Profile");
+    expect(ownerDietitian.data?.ui_language).toBe("en");
+
+    const ownerAudit = await admin
+      .from("audit_events")
+      .select("metadata")
+      .eq("tenant_id", TEST_TENANT_ID)
+      .eq("event_type", "stage_4d_own_profile_updated")
+      .eq("entity_id", TEST_DIETITIAN_ID)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .single();
+    expect(ownerAudit.error).toBeNull();
+    expect(ownerAudit.data?.metadata).toEqual(
+      expect.objectContaining({ minimized: true, changedFields: expect.any(Array) }),
+    );
+    expect(JSON.stringify(ownerAudit.data?.metadata)).not.toMatch(/RLS Owner Profile/);
+
+    const idempotent = await owner.rpc("p85_stage4d_update_own_profile", {
+      p_display_name: "RLS Owner Profile",
+      p_ui_language: "en",
+    });
+    expect(idempotent.error).toBeNull();
+    expect(idempotent.data?.changedFields).toEqual([]);
+
+    const afterIdempotentAudit = await admin
+      .from("audit_events")
+      .select("id", { count: "exact", head: true })
+      .eq("tenant_id", TEST_TENANT_ID)
+      .eq("event_type", "stage_4d_own_profile_updated");
+    expect(afterIdempotentAudit.count).toBe((beforeAudit.count ?? 0) + 1);
+
+    const assistantUpdate = await assistant.rpc("p85_stage4d_update_own_profile", {
+      p_display_name: "RLS Assistant Updated",
+    });
+    expect(assistantUpdate.error).toBeNull();
+    const assistantProfile = await admin
+      .from("dietitians")
+      .select("display_name")
+      .eq("id", ASSISTANT_DIETITIAN_ID)
+      .single();
+    expect(assistantProfile.data?.display_name).toBe("RLS Assistant Updated");
+
+    const auditorUpdate = await auditor.rpc("p85_stage4d_update_own_profile", {
+      p_ui_language: "de",
+    });
+    expect(auditorUpdate.error).toBeNull();
+
+    const outsiderRpc = await outsider.rpc("p85_stage4d_update_own_profile", {
+      p_display_name: "Outsider Hack",
+    });
+    expect(outsiderRpc.error).not.toBeNull();
+
+    const crossTenant = await signIn("rls-other-tenant@manu.local");
+    const crossAttempt = await crossTenant.rpc("p85_stage4d_update_own_profile", {
+      p_display_name: "Cross Tenant Profile",
+    });
+    expect(crossAttempt.error).toBeNull();
+    const testDietitian = await admin
+      .from("dietitians")
+      .select("display_name")
+      .eq("id", TEST_DIETITIAN_ID)
+      .single();
+    expect(testDietitian.data?.display_name).toBe("RLS Owner Profile");
+
+    const invalidLang = await owner.rpc("p85_stage4d_update_own_profile", {
+      p_ui_language: "xx",
+    });
+    expect(invalidLang.error).not.toBeNull();
+
+    const directUpdate = await owner
+      .from("dietitians")
+      .update({ display_name: "Direct Table Hack" })
+      .eq("id", TEST_DIETITIAN_ID);
+    expect(directUpdate.error).not.toBeNull();
+  }, 30000);
 });
 
 function loadEnvLocal() {

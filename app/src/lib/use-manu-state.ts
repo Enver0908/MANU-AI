@@ -67,6 +67,28 @@ export function useManuState() {
     return response.json();
   }, []);
 
+  const mergeOwnProfileFromApi = useCallback(
+    async (url: string, init?: RequestInit) => {
+      const data = (await requestJson(url, init)) as {
+        profile?: { displayName?: string; uiLanguage?: SupportedLanguageCode };
+      };
+      let mergedState = createInitialState();
+      setState((current) => {
+        mergedState = {
+          ...current,
+          dietitian: {
+            ...current.dietitian,
+            ...(data.profile?.displayName !== undefined ? { displayName: data.profile.displayName } : {}),
+            ...(data.profile?.uiLanguage !== undefined ? { uiLanguage: data.profile.uiLanguage } : {}),
+          },
+        };
+        return mergedState;
+      });
+      return mergedState;
+    },
+    [requestJson],
+  );
+
   const replaceFromApi = useCallback(async (url: string, init?: RequestInit) => {
     const nextState = (await requestJson(url, init)) as ManuAppState;
     setState(nextState);
@@ -147,7 +169,7 @@ export function useManuState() {
           body: JSON.stringify(input),
         }),
       updateDietitianPreferences: (input: { uiLanguage: SupportedLanguageCode }) =>
-        replaceFromApi("/api/dietitian/preferences", {
+        mergeOwnProfileFromApi("/api/dietitian/preferences", {
           method: "PATCH",
           body: JSON.stringify(input),
         }),
@@ -537,6 +559,7 @@ export function useManuState() {
       hydrated,
       mergeConversationDetailIntoState,
       mergeConversationMutationIntoState,
+      mergeOwnProfileFromApi,
       mergeScopedClientMutationFromApi,
       replaceFromApi,
       state,

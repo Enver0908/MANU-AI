@@ -1,6 +1,6 @@
 import { createBlankClient, createInitialState } from "./seed-data";
 import { AppDomainError } from "./app-errors";
-import { normalizeE164Phone, normalizeLanguageCode } from "./languages";
+import { normalizeE164Phone, normalizeLanguageCode, type SupportedLanguageCode } from "./languages";
 import { buildClientScopedExport, recordClientExportInState } from "./data-governance";
 import { sanitizeClientScopedExportForClientFacing } from "./phase-77v-copilot-quality-workflow";
 import { applyPhase79LifecycleRedactionContract } from "./phase-79e-lifecycle-redaction-evidence";
@@ -220,14 +220,50 @@ export function activateMenuPlanInState(state: ManuAppState, clientId: string, p
 
 export function updateDietitianPreferencesInState(
   state: ManuAppState,
-  input: { uiLanguage?: unknown },
+  input: { displayName?: unknown; uiLanguage?: unknown },
 ): ManuAppState {
+  const nextDietitian = { ...state.dietitian };
+  if (input.displayName !== undefined) {
+    const displayName = String(input.displayName || "").trim();
+    if (displayName.length >= 2) {
+      nextDietitian.displayName = displayName.slice(0, 80);
+    }
+  }
+  if (input.uiLanguage !== undefined) {
+    nextDietitian.uiLanguage = normalizeLanguageCode(input.uiLanguage);
+  }
   return {
     ...state,
-    dietitian: {
-      ...state.dietitian,
-      uiLanguage: normalizeLanguageCode(input.uiLanguage),
+    dietitian: nextDietitian,
+  };
+}
+
+export function updateOwnProfileInState(
+  state: ManuAppState,
+  input: { displayName?: string; uiLanguage?: SupportedLanguageCode },
+): { state: ManuAppState; changedFields: Array<"displayName" | "uiLanguage"> } {
+  const changedFields: Array<"displayName" | "uiLanguage"> = [];
+  const nextDietitian = { ...state.dietitian };
+
+  if (input.displayName !== undefined && input.displayName !== nextDietitian.displayName) {
+    nextDietitian.displayName = input.displayName;
+    changedFields.push("displayName");
+  }
+  if (input.uiLanguage !== undefined && input.uiLanguage !== nextDietitian.uiLanguage) {
+    nextDietitian.uiLanguage = input.uiLanguage;
+    changedFields.push("uiLanguage");
+  }
+
+  if (changedFields.length === 0) {
+    return { state, changedFields };
+  }
+
+  return {
+    state: {
+      ...state,
+      dietitian: nextDietitian,
     },
+    changedFields,
   };
 }
 

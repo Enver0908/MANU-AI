@@ -52,9 +52,16 @@ export function SettingsPageClient({
   const onTabChange = useCallback(
     (id: string) => {
       const next = SETTINGS_TABS.includes(id as SettingsTab) ? (id as SettingsTab) : "profile";
+      if (activeTab === "profile" && next !== "profile") {
+        const dirtyForm = document.querySelector("[data-testid='settings-profile-form'][data-dirty='true']");
+        if (dirtyForm) {
+          const confirmed = window.confirm(t(uiLanguage, "settingsProfileLeaveWarning"));
+          if (!confirmed) return;
+        }
+      }
       router.replace(buildSettingsHref(next));
     },
-    [router],
+    [activeTab, router, uiLanguage],
   );
 
   return (
