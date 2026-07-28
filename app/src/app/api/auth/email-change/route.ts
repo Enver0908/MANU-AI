@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { AppDomainError } from "@/lib/app-errors";
 import { insertAccountSecurityEvent } from "@/lib/account-security-store";
-import { authErrorResponse, resolveAppTenantContext } from "@/lib/auth-context";
+import { authErrorResponse, resolveAccountTenantContext } from "@/lib/auth-context";
 import {
   createMutableSupabaseServerClient,
   resolveAuthRouteIpKey,
@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
 
   let tenantContext;
   try {
-    tenantContext = await resolveAppTenantContext();
+    tenantContext = await resolveAccountTenantContext();
   } catch (error) {
     return authErrorResponse(error);
   }

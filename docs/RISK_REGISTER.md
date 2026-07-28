@@ -7,7 +7,7 @@
 
 ## Product and Legal Risks
 
-Current Phase 85 Stage 4D remediation note, 2026-07-28: remediation Faz 1 Profile and Tenant/Account Foundation is implemented locally. It adds account/profile APIs, tenant workspace revision control, owner/admin member read foundation, and stricter profile RBAC. RLS verification remains blocked/fail-closed, so no production risk is closed by this evidence. Production remains `NO-GO`; R-405 remains open.
+Current Phase 85 Stage 4D remediation note, 2026-07-28: remediation Faz 1 Profile and Tenant/Account Foundation plus Faz 2 Auth, Billing and PWA Hardening are implemented locally. Faz 1 adds account/profile APIs, tenant workspace revision control, owner/admin member read foundation, and stricter profile RBAC. Faz 2 decouples identity security from entitlement, requires nonce or signed recovery flow evidence for password updates, adds durable global auth rate limits, hardens billing portal recovery for active/past-due owner/admin, and makes PWA install audit daily idempotent with stronger relation RLS. RLS verification remains blocked/fail-closed, so no production risk is closed by this evidence. Production remains `NO-GO`; R-405 remains open.
 
 Current Phase 85 Stage 4D note, 2026-07-28: Stage 4D Faz 2 settings foundation is complete as a read-only `/dashboard/settings` route. It adds no production authorization, provider/channel egress, live billing, schema mutation, or real-data path. Existing product, privacy, clinical, dependency, and production-gate risks remain unchanged; production remains `NO-GO` and R-405 remains open.
 

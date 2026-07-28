@@ -48,6 +48,7 @@ describe("phase-85-stage-4d settings contracts", () => {
       visibility: "subscription_status",
       entitlementStatus: "active",
       workspaceAccessActive: true,
+      portalState: "sandbox_unconfigured",
     });
 
     expect(
@@ -60,6 +61,7 @@ describe("phase-85-stage-4d settings contracts", () => {
       visibility: "workspace_access_active",
       entitlementStatus: null,
       workspaceAccessActive: true,
+      portalState: "forbidden",
     });
 
     expect(
@@ -72,6 +74,7 @@ describe("phase-85-stage-4d settings contracts", () => {
       visibility: "unavailable",
       entitlementStatus: null,
       workspaceAccessActive: false,
+      portalState: "unavailable",
     });
   });
 

@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import { createSupabaseServerClient } from "@/lib/supabase";
+import { AppAuthError, resolveAccountTenantContext } from "@/lib/auth-context";
 import {
   isCommercialBillingStoreConfigured,
   loadBillingCustomerByTenantId,
@@ -8,12 +7,12 @@ import {
 } from "@/lib/commercial-billing-store";
 import {
   createStripeBillingClient,
-  evaluateBillingPortalAccess,
   isStripeBillingConfigured,
   resolveStripeBillingConfig,
 } from "@/lib/phase-83c-stripe-billing-gate";
-import { buildSettingsHref } from "@/lib/phase-85-stage-4d-settings-contracts";
+import { buildSettingsHref, resolveBillingPortalState } from "@/lib/phase-85-stage-4d-settings-contracts";
 import { isSupabaseStoreConfigured } from "@/lib/supabase-store";
+import { getSupabaseAdminClient } from "@/lib/supabase";
 
 export async function POST() {
   const billingConfig = resolveStripeBillingConfig();
@@ -25,84 +24,64 @@ export async function POST() {
     return NextResponse.json({ error: "commercial_billing_not_configured" }, { status: 503 });
   }
 
-  const cookieStore = await cookies();
-  const supabase = createSupabaseServerClient({
-    getAll: () => cookieStore.getAll(),
-    setAll: (cookiesToSet) => {
-      cookiesToSet.forEach(({ name, value, options }) => {
-        cookieStore.set(name, value, options);
-      });
-    },
-  });
-
-  if (!supabase) {
-    return NextResponse.json({ error: "unauthenticated" }, { status: 401 });
+  let context: Awaited<ReturnType<typeof resolveAccountTenantContext>>;
+  try {
+    context = await resolveAccountTenantContext();
+  } catch (error) {
+    if (error instanceof AppAuthError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
+    throw error;
   }
 
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
-
-  if (userError || !user) {
-    return NextResponse.json({ error: "unauthenticated" }, { status: 401 });
-  }
-
-  const { data: membership } = await supabase
-    .from("tenant_memberships")
-    .select("tenant_id, role")
-    .eq("user_id", user.id)
-    .order("created_at", { ascending: true })
-    .limit(1)
-    .maybeSingle();
-
-  if (!membership) {
-    return NextResponse.json({ error: "no_membership" }, { status: 403 });
-  }
-
-  const { data: dietitian } = await supabase
-    .from("dietitians")
-    .select("id")
-    .eq("tenant_id", membership.tenant_id)
-    .eq("auth_user_id", user.id)
-    .maybeSingle();
-
-  const admin = (await import("@/lib/supabase")).getSupabaseAdminClient();
+  const admin = getSupabaseAdminClient();
   if (!admin) {
     return NextResponse.json({ error: "commercial_billing_not_configured" }, { status: 503 });
   }
 
-  const entitlement = await loadTenantEntitlementByTenantId(admin, membership.tenant_id);
-
-  if (membership.role !== "owner" && membership.role !== "admin") {
-    return NextResponse.json({ error: "billing_portal_forbidden" }, { status: 403 });
-  }
-
-  const billingCustomer = await loadBillingCustomerByTenantId(admin, membership.tenant_id);
-
-  const portalAccess = evaluateBillingPortalAccess({
-    isAuthenticated: true,
-    hasTenantMembership: true,
-    hasDietitianProfile: Boolean(dietitian),
+  const entitlement = await loadTenantEntitlementByTenantId(admin, context.tenantId);
+  const billingCustomer = await loadBillingCustomerByTenantId(admin, context.tenantId);
+  const stripeCustomerId = billingCustomer?.stripeCustomerId ?? entitlement?.stripeCustomerId ?? null;
+  const portalState = resolveBillingPortalState({
+    mode: "configured",
+    role: context.role,
+    stripeConfigured: true,
+    stripeCustomerId,
     entitlementStatus: entitlement?.status ?? null,
-    stripeCustomerId: billingCustomer?.stripeCustomerId ?? entitlement?.stripeCustomerId ?? null,
-    role: membership.role,
   });
 
-  if (!portalAccess.allowed) {
+  if (portalState === "forbidden") {
+    return NextResponse.json({ error: "billing_portal_forbidden" }, { status: 403 });
+  }
+  if (portalState === "customer_missing") {
+    return NextResponse.json({ error: "stripe_customer_not_found" }, { status: 404 });
+  }
+  if (portalState !== "available" || !stripeCustomerId) {
     return NextResponse.json({ error: "billing_portal_not_allowed" }, { status: 403 });
   }
 
-  const stripeCustomerId = billingCustomer?.stripeCustomerId ?? entitlement?.stripeCustomerId;
-  if (!stripeCustomerId) {
-    return NextResponse.json({ error: "stripe_customer_not_found" }, { status: 404 });
+  const stripeClient = createStripeBillingClient(billingConfig);
+  let portal;
+  try {
+    portal = await withBillingPortalTimeout(
+      stripeClient.createBillingPortalSession({
+        stripeCustomerId,
+        returnUrl: `${billingConfig.appUrl}${buildSettingsHref("billing")}`,
+      }),
+    );
+  } catch {
+    return NextResponse.json({ error: "billing_portal_provider_unavailable" }, { status: 502 });
   }
 
-  const stripeClient = createStripeBillingClient(billingConfig);
-  const portal = await stripeClient.createBillingPortalSession({
-    stripeCustomerId,
-    returnUrl: `${billingConfig.appUrl}${buildSettingsHref("billing")}`,
-  });
-
   return NextResponse.json({ portalUrl: portal.portalUrl });
+}
+
+function withBillingPortalTimeout<T>(operation: Promise<T>) {
+  const timeoutMs = Number(process.env.MANU_BILLING_PORTAL_TIMEOUT_MS ?? 8000);
+  return Promise.race([
+    operation,
+    new Promise<T>((_, reject) => {
+      setTimeout(() => reject(new Error("billing_portal_timeout")), timeoutMs);
+    }),
+  ]);
 }

@@ -4,6 +4,7 @@ import { isSupabaseStoreConfigured } from "./supabase-store";
 import {
   evaluateMobileInstallCenterAccess,
   type MobileInstallCenterAccessInput,
+  type MobileInstallBlockedReasonCode,
 } from "./phase-83d-pwa-install-gate";
 import { loadTenantEntitlementByTenantId } from "./commercial-billing-store";
 
@@ -12,9 +13,10 @@ export type MobileInstallAccessState =
       gate: "granted";
       tenantId: string;
       dietitianId: string;
+      userId: string;
       displayName: string;
     }
-  | { gate: "blocked"; blockingReasons: string[] }
+  | { gate: "blocked"; blockingReasons: MobileInstallBlockedReasonCode[] }
   | { gate: "unauthenticated" }
   | { gate: "fallback_demo" };
 
@@ -77,13 +79,14 @@ export async function resolveMobileInstallAccess(): Promise<MobileInstallAccessS
 
   const access = evaluateMobileInstallCenterAccess(accessInput);
   if (!access.allowed) {
-    return { gate: "blocked", blockingReasons: access.blockingReasons };
+    return { gate: "blocked", blockingReasons: access.blockingReasonCodes };
   }
 
   return {
     gate: "granted",
     tenantId: membership!.tenant_id,
     dietitianId: dietitian!.id,
+    userId: user.id,
     displayName: dietitian!.display_name || user.email || "Dietitian",
   };
 }

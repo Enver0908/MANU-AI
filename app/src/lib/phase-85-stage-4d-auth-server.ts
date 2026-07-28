@@ -35,7 +35,11 @@ export async function createMutableSupabaseServerClient() {
 }
 
 export function resolveAuthRouteIpKey(request: { headers: { get(name: string): string | null } }, suffix: string) {
-  const forwarded = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
-  const ip = forwarded || request.headers.get("x-real-ip") || "anonymous";
+  const trustProxyHeaders = process.env.MANU_TRUST_PROXY_HEADERS === "true";
+  const forwarded = trustProxyHeaders
+    ? request.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
+    : null;
+  const realIp = trustProxyHeaders ? request.headers.get("x-real-ip")?.trim() : null;
+  const ip = forwarded || realIp || "anonymous";
   return `${ip}:${suffix}`;
 }

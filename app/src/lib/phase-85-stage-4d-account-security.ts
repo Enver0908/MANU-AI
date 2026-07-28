@@ -1,4 +1,4 @@
-import { createHash, randomUUID } from "node:crypto";
+import { createHash, createHmac, randomUUID, timingSafeEqual } from "node:crypto";
 import {
   normalizeCommercialEmail,
   validateNormalizedCommercialEmail,
@@ -6,6 +6,8 @@ import {
 import { buildAuthCallbackUrlWithNext } from "./phase-84d-customer-auth";
 
 export const PHASE_85_STAGE_4D_ACCOUNT_SECURITY_VERSION = "p85-stage-4d-account-security-v1";
+export const ACCOUNT_RECOVERY_FLOW_COOKIE_NAME = "manu_account_recovery_flow";
+export const ACCOUNT_RECOVERY_FLOW_TTL_SECONDS = 10 * 60;
 
 export const ACCOUNT_SECURITY_EVENT_TYPES = [
   "password_login",
@@ -97,6 +99,50 @@ export function buildEmailChangeCallbackUrl(env: Record<string, string | undefin
   return buildAuthCallbackUrlWithNext("/dashboard/settings?tab=security", undefined, env);
 }
 
+export function buildAccountRecoveryFlowCookieValue(input: {
+  authUserId: string;
+  nowMs?: number;
+  env?: Record<string, string | undefined>;
+}) {
+  const issuedAtMs = input.nowMs ?? Date.now();
+  const payload = Buffer.from(
+    JSON.stringify({
+      sub: input.authUserId,
+      iat: issuedAtMs,
+    }),
+  ).toString("base64url");
+  const signature = signRecoveryCookiePayload(payload, input.env);
+  return `${payload}.${signature}`;
+}
+
+export function verifyAccountRecoveryFlowCookie(input: {
+  value: string | undefined | null;
+  authUserId: string;
+  nowMs?: number;
+  env?: Record<string, string | undefined>;
+}) {
+  if (!input.value || !input.value.includes(".")) {
+    return false;
+  }
+  const [payload, signature] = input.value.split(".", 2);
+  const expected = signRecoveryCookiePayload(payload, input.env);
+  if (!safeEqual(signature, expected)) {
+    return false;
+  }
+
+  let decoded: { sub?: unknown; iat?: unknown };
+  try {
+    decoded = JSON.parse(Buffer.from(payload, "base64url").toString("utf8")) as { sub?: unknown; iat?: unknown };
+  } catch {
+    return false;
+  }
+  if (decoded.sub !== input.authUserId || typeof decoded.iat !== "number") {
+    return false;
+  }
+  const ageMs = (input.nowMs ?? Date.now()) - decoded.iat;
+  return ageMs >= 0 && ageMs <= ACCOUNT_RECOVERY_FLOW_TTL_SECONDS * 1000;
+}
+
 export function buildAccountSecurityIdempotencyKey(
   eventType: AccountSecurityEventType,
   authUserId: string,
@@ -155,4 +201,19 @@ export function mapSupabaseAuthErrorMessage(message: string | undefined): string
 
 export function genericMagicLinkAcceptedResponse() {
   return { sent: true, message: "If an account exists, a sign-in link was sent." };
+}
+
+function signRecoveryCookiePayload(payload: string, env: Record<string, string | undefined> = process.env) {
+  const secret =
+    env.MANU_ACCOUNT_RECOVERY_COOKIE_SECRET ||
+    env.SUPABASE_SERVICE_ROLE_KEY ||
+    env.MANU_RATE_LIMIT_KEY_SECRET ||
+    "local-development-account-recovery-cookie-key";
+  return createHmac("sha256", secret).update(payload).digest("base64url");
+}
+
+function safeEqual(left: string, right: string) {
+  const leftBuffer = Buffer.from(left);
+  const rightBuffer = Buffer.from(right);
+  return leftBuffer.length === rightBuffer.length && timingSafeEqual(leftBuffer, rightBuffer);
 }

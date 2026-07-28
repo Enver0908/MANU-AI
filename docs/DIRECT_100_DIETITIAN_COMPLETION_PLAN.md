@@ -1,6 +1,6 @@
 # Direct 100 Dietitian Completion Plan
 
-**Current active remediation (2026-07-28):** Stage 4D post-closure remediation Faz 1 Profile and Tenant/Account Foundation is implemented locally and evidenced in `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_1_ACCOUNT_FOUNDATION_EVIDENCE.md`. This does not approve direct 100-dietitian production pilot, close R-405, or enable real provider/channel/health-data paths. RLS verification remains blocked/fail-closed.
+**Current active remediation (2026-07-28):** Stage 4D post-closure remediation Faz 1 Profile and Tenant/Account Foundation plus Faz 2 Auth, Billing and PWA Hardening are implemented locally and evidenced in `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_1_ACCOUNT_FOUNDATION_EVIDENCE.md` and `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_2_SECURITY_BILLING_PWA_EVIDENCE.md`. This does not approve direct 100-dietitian production pilot, close R-405, or enable real provider/channel/health-data paths. RLS verification remains blocked/fail-closed.
 
 **Historical Stage 4D Faz 2 authority (2026-07-28):** Stage 4C remediation is closed locally at commit `cd3d781` with measured verdict `PASS_LOCAL_STAGE_4C_REMEDIATED`; the Stage 4D handoff is committed at `bc57cfd`. Stage 4D Faz 2 settings foundation is complete (`/dashboard/settings` read-only). Evidence: `docs/PHASE_85_STAGE_4D_PHASE_2_SETTINGS_READ_ONLY_EVIDENCE.md`, `docs/PHASE_85_STAGE_4D_AYARLAR_HESAP_ACTION_PLAN.md`. Active next-step planning is superseded by the Stage 4D remediation evidence above. Production remains `NO-GO`; R-405 remains open.
 

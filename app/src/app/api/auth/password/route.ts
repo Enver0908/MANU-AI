@@ -1,18 +1,20 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { AppDomainError } from "@/lib/app-errors";
 import { insertAccountSecurityEvent } from "@/lib/account-security-store";
-import { resolveAppTenantContext } from "@/lib/auth-context";
+import { resolveAccountTenantContext } from "@/lib/auth-context";
 import {
   createMutableSupabaseServerClient,
   resolveAuthRouteIpKey,
 } from "@/lib/phase-85-stage-4d-auth-server";
 import {
+  ACCOUNT_RECOVERY_FLOW_COOKIE_NAME,
   ACCOUNT_SECURITY_RATE_LIMITS,
   AccountSecurityValidationError,
   buildAccountSecurityIdempotencyKey,
   mapSupabaseAuthErrorMessage,
   validatePasswordPair,
   validateNonce,
+  verifyAccountRecoveryFlowCookie,
 } from "@/lib/phase-85-stage-4d-account-security";
 import { assertRateLimit } from "@/lib/rate-limit";
 import { isSupabaseConfigured } from "@/lib/supabase";
@@ -45,7 +47,7 @@ export async function POST(request: NextRequest) {
     throw error;
   }
 
-  const { supabase, applyAuthMutations } = await createMutableSupabaseServerClient();
+  const { supabase, applyAuthMutations, cookieStore } = await createMutableSupabaseServerClient();
   if (!supabase) {
     return NextResponse.json({ error: "auth_not_configured" }, { status: 503 });
   }
@@ -71,14 +73,22 @@ export async function POST(request: NextRequest) {
     throw error;
   }
 
-  let tenantContext: Awaited<ReturnType<typeof resolveAppTenantContext>> | null = null;
+  let tenantContext: Awaited<ReturnType<typeof resolveAccountTenantContext>> | null = null;
   try {
-    tenantContext = await resolveAppTenantContext();
+    tenantContext = await resolveAccountTenantContext();
   } catch {
     tenantContext = null;
   }
 
   const hasNonce = typeof body.nonce === "string" && body.nonce.trim().length > 0;
+  const recoveryCookieValue = cookieStore.get(ACCOUNT_RECOVERY_FLOW_COOKIE_NAME)?.value;
+  const hasRecoveryFlowCookie = verifyAccountRecoveryFlowCookie({
+    value: recoveryCookieValue,
+    authUserId: user.id,
+  });
+  if (!hasNonce && !hasRecoveryFlowCookie) {
+    return NextResponse.json({ error: "invalid_or_expired_nonce" }, { status: 401 });
+  }
   const updatePayload = hasNonce
     ? { password, nonce: validateNonce(body.nonce) }
     : { password };
@@ -119,5 +129,14 @@ export async function POST(request: NextRequest) {
     auditPersisted: audit.persisted,
     ...(audit.persisted ? {} : { auditWarning: "audit_persist_failed" }),
   });
+  if (!hasNonce) {
+    response.cookies.set(ACCOUNT_RECOVERY_FLOW_COOKIE_NAME, "", {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: request.nextUrl.protocol === "https:",
+      path: "/",
+      maxAge: 0,
+    });
+  }
   return applyAuthMutations(response);
 }

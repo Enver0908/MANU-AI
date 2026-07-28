@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   AccountSecurityValidationError,
+  buildAccountRecoveryFlowCookieValue,
   buildAccountSecurityIdempotencyKey,
   genericMagicLinkAcceptedResponse,
   mapSupabaseAuthErrorMessage,
@@ -8,6 +9,7 @@ import {
   validateAccountEmail,
   validatePassword,
   validatePasswordPair,
+  verifyAccountRecoveryFlowCookie,
 } from "./phase-85-stage-4d-account-security";
 
 describe("phase-85-stage-4d account security", () => {
@@ -43,5 +45,39 @@ describe("phase-85-stage-4d account security", () => {
   it("returns enumeration-safe magic-link acceptance payload", () => {
     expect(genericMagicLinkAcceptedResponse().message).toContain("account exists");
     expect(buildAccountSecurityIdempotencyKey("password_login", "user@example.com").length).toBe(64);
+  });
+
+  it("signs and expires account recovery flow cookies", () => {
+    const env = { MANU_ACCOUNT_RECOVERY_COOKIE_SECRET: "test-secret" };
+    const value = buildAccountRecoveryFlowCookieValue({
+      authUserId: "user-1",
+      nowMs: 1000,
+      env,
+    });
+
+    expect(
+      verifyAccountRecoveryFlowCookie({
+        value,
+        authUserId: "user-1",
+        nowMs: 2000,
+        env,
+      }),
+    ).toBe(true);
+    expect(
+      verifyAccountRecoveryFlowCookie({
+        value,
+        authUserId: "user-2",
+        nowMs: 2000,
+        env,
+      }),
+    ).toBe(false);
+    expect(
+      verifyAccountRecoveryFlowCookie({
+        value,
+        authUserId: "user-1",
+        nowMs: 1_000_000,
+        env,
+      }),
+    ).toBe(false);
   });
 });

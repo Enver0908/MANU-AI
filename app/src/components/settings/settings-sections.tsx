@@ -183,7 +183,8 @@ export function SettingsBillingSection({
   const portalEnabled =
     model.runtime.mode === "configured" &&
     model.runtime.billingActionsAvailable &&
-    model.billing.visibility === "subscription_status";
+    model.billing.visibility === "subscription_status" &&
+    model.billing.portalState === "available";
 
   let body: string;
   if (model.billing.visibility === "unavailable") {

@@ -133,8 +133,8 @@ describe("phase 83c stripe billing gate", () => {
     expect(mapStripeSubscriptionStatusToEntitlement("canceled")).toBe("canceled");
   });
 
-  it("requires active entitlement and stripe customer for billing portal access", () => {
-    const blocked = evaluateBillingPortalAccess({
+  it("allows active or past-due entitlement with stripe customer for billing portal access", () => {
+    const recovery = evaluateBillingPortalAccess({
       isAuthenticated: true,
       hasTenantMembership: true,
       hasDietitianProfile: true,
@@ -142,7 +142,7 @@ describe("phase 83c stripe billing gate", () => {
       stripeCustomerId: "cus_test_1",
       role: "owner",
     });
-    expect(blocked.allowed).toBe(false);
+    expect(recovery.allowed).toBe(true);
 
     const allowed = evaluateBillingPortalAccess({
       isAuthenticated: true,

@@ -17,6 +17,12 @@ describe("phase 84d customer auth", () => {
     expect(
       buildAuthCallbackUrl(undefined, { NEXT_PUBLIC_APP_URL: "https://siriusai.store/" }),
     ).toBe("https://siriusai.store/auth/callback");
+    expect(
+      buildAuthCallbackUrl(undefined, { NEXT_PUBLIC_APP_URL: "http://localhost:3000/" }),
+    ).toBe("http://localhost:3000/auth/callback");
+    expect(() =>
+      buildAuthCallbackUrl(undefined, { NEXT_PUBLIC_APP_URL: "http://evil.example/" }),
+    ).toThrow("unsafe_auth_redirect_base_url");
   });
 
   it("redirects unauthenticated users to login", () => {

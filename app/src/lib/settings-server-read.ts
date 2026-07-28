@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { loadTenantEntitlementByTenantId } from "@/lib/commercial-billing-store";
+import { loadBillingCustomerByTenantId, loadTenantEntitlementByTenantId } from "@/lib/commercial-billing-store";
 import { resolveCustomerSessionFacts } from "@/lib/customer-auth-session";
 import { normalizeLanguageCode, type SupportedLanguageCode } from "@/lib/languages";
 import type { CommercialEntitlementStatus } from "@/lib/phase-83b-commercial-entitlement-model";
@@ -18,6 +18,7 @@ import {
   SETTINGS_ROOT_PATH,
   type SettingsAccountReadModel,
 } from "@/lib/phase-85-stage-4d-settings-contracts";
+import { isStripeBillingConfigured, resolveStripeBillingConfig } from "@/lib/phase-83c-stripe-billing-gate";
 import { createSupabaseServerClient, getSupabaseAdminClient, isSupabaseConfigured } from "@/lib/supabase";
 import { isSupabaseStoreConfigured } from "@/lib/supabase-store";
 import type { TenantRole } from "@/lib/types";
@@ -141,11 +142,15 @@ export async function resolveSettingsAccountReadModel(): Promise<SettingsServerR
 
   const admin = getSupabaseAdminClient();
   let entitlementStatus: CommercialEntitlementStatus | null = null;
+  let stripeCustomerId: string | null = null;
   try {
     const entitlement = admin ? await loadTenantEntitlementByTenantId(admin, membership.tenant_id) : null;
     entitlementStatus = entitlement?.status ?? null;
+    const billingCustomer = admin ? await loadBillingCustomerByTenantId(admin, membership.tenant_id) : null;
+    stripeCustomerId = billingCustomer?.stripeCustomerId ?? entitlement?.stripeCustomerId ?? null;
   } catch {
     entitlementStatus = null;
+    stripeCustomerId = null;
   }
 
   const gate = deriveDashboardAccessGate({
@@ -166,11 +171,18 @@ export async function resolveSettingsAccountReadModel(): Promise<SettingsServerR
   });
 
   const role = (membership.role || "member") as TenantRole | "member";
+  const billing = projectBillingVisibility({
+    role,
+    entitlementStatus,
+    mode: "configured",
+    stripeConfigured: isStripeBillingConfigured(resolveStripeBillingConfig()),
+    stripeCustomerId,
+  });
   const model: SettingsAccountReadModel = {
     runtime: {
       mode: "configured",
       identityActionsAvailable: true,
-      billingActionsAvailable: role === "owner" || role === "admin",
+      billingActionsAvailable: billing.portalState === "available",
       pwaActionsAvailable: installAccess.allowed,
     },
     profile: {
@@ -190,11 +202,7 @@ export async function resolveSettingsAccountReadModel(): Promise<SettingsServerR
       membershipActive: true,
       settingsRevision,
     },
-    billing: projectBillingVisibility({
-      role,
-      entitlementStatus,
-      mode: "configured",
-    }),
+    billing,
     application: {
       available: true,
       installReady: installAccess.allowed,

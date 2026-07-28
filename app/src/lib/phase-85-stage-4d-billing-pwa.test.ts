@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { buildSettingsHref } from "./phase-85-stage-4d-settings-contracts";
+import { buildSettingsHref, projectBillingVisibility } from "./phase-85-stage-4d-settings-contracts";
 import {
+  evaluateMobileInstallCenterAccess,
   isMobileInstallAuditEventType,
   sanitizeMobileInstallUserAgentSummary,
 } from "./phase-83d-pwa-install-gate";
@@ -24,6 +25,50 @@ describe("phase 85 stage 4d billing and PWA", () => {
       "Mozilla/5.0 Chrome +905551112233 dietitian@example.com",
     );
     expect(sanitized).not.toContain("+905551112233");
+    expect(sanitized).not.toContain("dietitian@example.com");
     expect(sanitized.length).toBeLessThanOrEqual(240);
+  });
+
+  it("projects billing portal recovery states without exposing Stripe ids", () => {
+    expect(
+      projectBillingVisibility({
+        role: "owner",
+        entitlementStatus: "past_due",
+        mode: "configured",
+        stripeConfigured: true,
+        stripeCustomerId: "cus_test_123",
+      }).portalState,
+    ).toBe("available");
+
+    expect(
+      projectBillingVisibility({
+        role: "dietitian",
+        entitlementStatus: "active",
+        mode: "configured",
+        stripeConfigured: true,
+        stripeCustomerId: "cus_test_123",
+      }).portalState,
+    ).toBe("forbidden");
+
+    expect(
+      projectBillingVisibility({
+        role: "owner",
+        entitlementStatus: "active",
+        mode: "configured",
+        stripeConfigured: false,
+        stripeCustomerId: "cus_test_123",
+      }).portalState,
+    ).toBe("sandbox_unconfigured");
+  });
+
+  it("returns sanitized mobile install blocked reason codes", () => {
+    expect(
+      evaluateMobileInstallCenterAccess({
+        isAuthenticated: true,
+        hasTenantMembership: false,
+        hasDietitianProfile: false,
+        entitlementStatus: "past_due",
+      }).blockingReasonCodes,
+    ).toEqual(["membership_required", "profile_required", "entitlement_inactive"]);
   });
 });

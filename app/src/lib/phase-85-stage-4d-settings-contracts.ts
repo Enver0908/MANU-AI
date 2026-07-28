@@ -17,6 +17,13 @@ export const SETTINGS_TABS = [
 export type SettingsTab = (typeof SETTINGS_TABS)[number];
 
 export type SettingsRuntimeMode = "configured" | "fallback";
+export type BillingPortalState =
+  | "available"
+  | "forbidden"
+  | "sandbox_unconfigured"
+  | "customer_missing"
+  | "entitlement_blocked"
+  | "unavailable";
 
 export type SettingsAccountReadModel = {
   runtime: {
@@ -47,6 +54,7 @@ export type SettingsAccountReadModel = {
     visibility: "subscription_status" | "workspace_access_active" | "unavailable";
     entitlementStatus: CommercialEntitlementStatus | null;
     workspaceAccessActive: boolean;
+    portalState: BillingPortalState;
   };
   application: {
     available: boolean;
@@ -92,21 +100,32 @@ export function projectBillingVisibility(input: {
   role: string | null | undefined;
   entitlementStatus: CommercialEntitlementStatus | null;
   mode: SettingsRuntimeMode;
+  stripeConfigured?: boolean;
+  stripeCustomerId?: string | null;
 }): SettingsAccountReadModel["billing"] {
   if (input.mode === "fallback") {
     return {
       visibility: "unavailable",
       entitlementStatus: null,
       workspaceAccessActive: false,
+      portalState: "unavailable",
     };
   }
 
   const workspaceAccessActive = input.entitlementStatus === "active";
+  const portalState = resolveBillingPortalState({
+    role: input.role,
+    mode: input.mode,
+    stripeConfigured: input.stripeConfigured ?? false,
+    stripeCustomerId: input.stripeCustomerId ?? null,
+    entitlementStatus: input.entitlementStatus,
+  });
   if (canViewSubscriptionStatus(input.role)) {
     return {
       visibility: "subscription_status",
       entitlementStatus: input.entitlementStatus,
       workspaceAccessActive,
+      portalState,
     };
   }
 
@@ -114,7 +133,33 @@ export function projectBillingVisibility(input: {
     visibility: "workspace_access_active",
     entitlementStatus: null,
     workspaceAccessActive,
+    portalState,
   };
+}
+
+export function resolveBillingPortalState(input: {
+  role: string | null | undefined;
+  entitlementStatus: CommercialEntitlementStatus | null;
+  mode: SettingsRuntimeMode;
+  stripeConfigured: boolean;
+  stripeCustomerId: string | null;
+}): BillingPortalState {
+  if (input.mode === "fallback") {
+    return "unavailable";
+  }
+  if (!canViewSubscriptionStatus(input.role)) {
+    return "forbidden";
+  }
+  if (!input.stripeConfigured) {
+    return "sandbox_unconfigured";
+  }
+  if (!input.stripeCustomerId) {
+    return "customer_missing";
+  }
+  if (input.entitlementStatus === "active" || input.entitlementStatus === "past_due") {
+    return "available";
+  }
+  return "entitlement_blocked";
 }
 
 export function buildFallbackSettingsAccountReadModel(

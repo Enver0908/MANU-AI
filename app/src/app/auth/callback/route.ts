@@ -7,6 +7,11 @@ import {
   sanitizePostAuthRedirectPath,
 } from "@/lib/phase-84d-customer-auth";
 import { resolveAdminAppBaseUrl } from "@/lib/phase-84f-admin-console";
+import {
+  ACCOUNT_RECOVERY_FLOW_COOKIE_NAME,
+  ACCOUNT_RECOVERY_FLOW_TTL_SECONDS,
+  buildAccountRecoveryFlowCookieValue,
+} from "@/lib/phase-85-stage-4d-account-security";
 import { createSupabaseServerClient, getSupabaseConfig, isSupabaseConfigured } from "@/lib/supabase";
 
 type AuthCookieMutation = {
@@ -166,6 +171,25 @@ export async function GET(request: NextRequest) {
   if (isRecoveryFlow) {
     destination = "/account/recovery";
   }
-  const response = NextResponse.redirect(buildExternalRedirectUrl(destination, authErrorBase));
+  const destinationUrl = buildExternalRedirectUrl(destination, authErrorBase);
+  const response = NextResponse.redirect(destinationUrl);
+  if (isRecoveryFlow) {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user) {
+      response.cookies.set(
+        ACCOUNT_RECOVERY_FLOW_COOKIE_NAME,
+        buildAccountRecoveryFlowCookieValue({ authUserId: user.id }),
+        {
+          httpOnly: true,
+          sameSite: "lax",
+          secure: destinationUrl.protocol === "https:",
+          path: "/",
+          maxAge: ACCOUNT_RECOVERY_FLOW_TTL_SECONDS,
+        },
+      );
+    }
+  }
   return applyAuthSessionMutations(response, authCookiesToSet, authHeadersToSet);
 }

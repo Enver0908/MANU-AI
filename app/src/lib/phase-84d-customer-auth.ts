@@ -33,13 +33,13 @@ export type CustomerSessionFacts = {
 export function resolveAppBaseUrl(env: Record<string, string | undefined> = process.env) {
   const configured = env.NEXT_PUBLIC_APP_URL?.trim();
   if (configured) {
-    return configured.replace(/\/$/, "");
+    return assertAllowedAuthBaseUrl(configured.replace(/\/$/, ""));
   }
   return "http://127.0.0.1:3000";
 }
 
 export function buildAuthCallbackUrl(baseUrl?: string, env: Record<string, string | undefined> = process.env) {
-  return `${baseUrl ?? resolveAppBaseUrl(env)}/auth/callback`;
+  return `${assertAllowedAuthBaseUrl(baseUrl ?? resolveAppBaseUrl(env))}/auth/callback`;
 }
 
 export function buildAuthCallbackUrlWithNext(
@@ -98,6 +98,24 @@ export function sanitizePostAuthRedirectPath(nextPath?: string | null) {
     return null;
   }
   return candidate;
+}
+
+export function assertAllowedAuthBaseUrl(baseUrl: string) {
+  let parsed: URL;
+  try {
+    parsed = new URL(baseUrl);
+  } catch {
+    throw new Error("unsafe_auth_redirect_base_url");
+  }
+
+  const hostname = parsed.hostname.toLowerCase();
+  const isLocalhost = hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1";
+  if (parsed.protocol !== "https:" && !(parsed.protocol === "http:" && isLocalhost)) {
+    throw new Error("unsafe_auth_redirect_base_url");
+  }
+  parsed.hash = "";
+  parsed.search = "";
+  return parsed.toString().replace(/\/$/, "");
 }
 
 export function summarizePhase84dCustomerAuth(env: Record<string, string | undefined> = process.env) {

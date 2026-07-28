@@ -12,6 +12,12 @@ export const MOBILE_INSTALL_AUDIT_EVENT_TYPES = [
 ] as const;
 
 export type MobileInstallAuditEventType = (typeof MOBILE_INSTALL_AUDIT_EVENT_TYPES)[number];
+export type MobileInstallBlockedReasonCode =
+  | "unauthenticated"
+  | "membership_required"
+  | "profile_required"
+  | "entitlement_required"
+  | "entitlement_inactive";
 
 export const SERVICE_WORKER_SHELL_PATHS = ["/", "/dashboard", "/app-install"] as const;
 
@@ -50,29 +56,38 @@ export function isMobileInstallAuditEventType(value: string): value is MobileIns
 
 export function sanitizeMobileInstallUserAgentSummary(userAgent: string) {
   const trimmed = userAgent.trim().slice(0, 240);
-  return trimmed.replace(/\+90\d{10}/g, "[redacted-phone]");
+  return trimmed
+    .replace(/\+?\d[\d\s().-]{7,}\d/g, "[redacted-phone]")
+    .replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, "[redacted-email]");
 }
 
 export function evaluateMobileInstallCenterAccess(input: MobileInstallCenterAccessInput) {
   const blockingReasons: string[] = [];
+  const blockingReasonCodes: MobileInstallBlockedReasonCode[] = [];
   if (!input.isAuthenticated) {
     blockingReasons.push("authentication required");
+    blockingReasonCodes.push("unauthenticated");
   }
   if (!input.hasTenantMembership) {
     blockingReasons.push("tenant membership required");
+    blockingReasonCodes.push("membership_required");
   }
   if (!input.hasDietitianProfile) {
     blockingReasons.push("dietitian profile required");
+    blockingReasonCodes.push("profile_required");
   }
   if (!input.entitlementStatus) {
     blockingReasons.push("entitlement record required");
+    blockingReasonCodes.push("entitlement_required");
   } else if (input.entitlementStatus !== "active") {
     blockingReasons.push(`entitlement status must be active (current: ${input.entitlementStatus})`);
+    blockingReasonCodes.push("entitlement_inactive");
   }
 
   return {
     allowed: blockingReasons.length === 0,
     blockingReasons,
+    blockingReasonCodes: [...new Set(blockingReasonCodes)],
   };
 }
 

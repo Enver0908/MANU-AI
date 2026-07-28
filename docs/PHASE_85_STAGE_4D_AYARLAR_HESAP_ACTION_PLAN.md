@@ -2,16 +2,16 @@
 
 Date: 2026-07-28
 
-Active remediation status: **POST-CLOSURE REMEDIATION IN PROGRESS - Faz 1 Profile and Tenant/Account Foundation implemented locally; RLS verification remains blocked by local/remote RLS preflight.**
+Active remediation status: **POST-CLOSURE REMEDIATION IN PROGRESS - Faz 1 Profile and Tenant/Account Foundation plus Faz 2 Auth, Billing and PWA Hardening are implemented locally; RLS verification remains blocked by local/remote RLS preflight.**
 
-Remediation authority: `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_1_ACCOUNT_FOUNDATION_EVIDENCE.md`.
+Remediation authority: `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_1_ACCOUNT_FOUNDATION_EVIDENCE.md` and `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_2_SECURITY_BILLING_PWA_EVIDENCE.md`.
 
 Historical closure snapshot:
 Status: **CLOSED locally — measured verdict `PASS_LOCAL_STAGE_4D_CLOSED` at closure commit on `codex/stage-4c-remediation`**
 
 Stage 4D owns authenticated dashboard settings and account workflows for the dietitian-facing SaaS/PWA prototype. Faz 1–6 are complete. Evidence: `docs/PHASE_85_STAGE_4D_CLOSURE_EVIDENCE.md`.
 
-Post-closure audit supersedes the practical next-step interpretation of the historical closure snapshot: tenant account/membership foundation, canonical profile API/timezone, profile RBAC, and fallback mutation boundaries required remediation. Remediation Faz 1 is implemented locally; Faz 2 and Faz 3 remediation remain separate future approvals.
+Post-closure audit supersedes the practical next-step interpretation of the historical closure snapshot: tenant account/membership foundation, canonical profile API/timezone, profile RBAC, fallback mutation boundaries, auth security hardening, billing recovery, PWA audit idempotence, and durable rate-limit boundaries required remediation. Remediation Faz 1 and Faz 2 are implemented locally; Faz 3 remediation remains a separate future approval.
 
 Production remains `NO-GO`. R-405 remains open. Real WhatsApp, Telegram, external LLM, embedding, OCR, STT, live billing, monitoring, backup, secret-manager, and real health-data egress paths remain closed.
 
@@ -36,8 +36,8 @@ Dedicated settings route exists at `/dashboard/settings?tab=profile|security|wor
 - Tenant account identity currently lives on `tenants`: `id`, `name`, `created_at`. There is no owner/admin tenant settings editor.
 - Membership role is `owner | admin | dietitian | assistant | auditor`. Current `AppCapability` is clinical-workflow oriented and has no account-specific capability names yet.
 - Commercial entitlement/billing is tenant-owned through `tenant_entitlements`, `billing_customers`, `commercial_invites`, and `billing_event_ledger`.
-- `POST /api/commercial/billing-portal` is the existing Stripe portal boundary; it requires configured sandbox Stripe, Supabase commercial stores, authenticated membership, dietitian profile, active entitlement, and Stripe customer id.
-- PWA install readiness is resolved by `resolveMobileInstallAccess()` at dashboard entry and recorded through `mobile_install_audit_events`.
+- `POST /api/commercial/billing-portal` is the existing Stripe portal boundary; after remediation Faz 2 it requires configured sandbox Stripe, Supabase commercial stores, account tenant context, owner/admin role, active or past-due entitlement, and Stripe customer id. It is no longer dependent on active dashboard entitlement for payment recovery.
+- PWA install readiness is resolved by `resolveMobileInstallAccess()` at dashboard entry and recorded through `mobile_install_audit_events`. After remediation Faz 2 blocked reasons are sanitized enum codes and audit inserts are daily idempotent.
 - Logout currently appears through `/api/demo-logout` forms in both `DashboardShell` and `DashboardApp`.
 
 ## Ownership Boundaries

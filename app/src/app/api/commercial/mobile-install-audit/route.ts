@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { cookies } from "next/headers";
+import { AppDomainError } from "@/lib/app-errors";
 import { createSupabaseServerClient } from "@/lib/supabase";
 import { isSupabaseStoreConfigured } from "@/lib/supabase-store";
 import { resolveMobileInstallAccess } from "@/lib/commercial-install-access";
@@ -7,6 +8,7 @@ import {
   isMobileInstallAuditEventType,
   sanitizeMobileInstallUserAgentSummary,
 } from "@/lib/phase-83d-pwa-install-gate";
+import { assertRateLimit, RATE_LIMITS } from "@/lib/rate-limit";
 
 type AuditBody = {
   eventType?: string;
@@ -54,18 +56,44 @@ export async function POST(request: NextRequest) {
   if (!user) {
     return NextResponse.json({ error: "unauthenticated" }, { status: 401 });
   }
+  if (user.id !== access.userId) {
+    return NextResponse.json({ error: "mobile_install_not_allowed" }, { status: 403 });
+  }
+
+  try {
+    await assertRateLimit({
+      key: `${access.userId}:${body.eventType}`,
+      tenantId: access.tenantId,
+      scope: RATE_LIMITS.commercialMobileInstallAudit.scope,
+      limit: RATE_LIMITS.commercialMobileInstallAudit.limit,
+      windowMs: RATE_LIMITS.commercialMobileInstallAudit.windowMs,
+    });
+  } catch (error) {
+    if (error instanceof AppDomainError && error.status === 429) {
+      return NextResponse.json({ error: "rate_limit_exceeded" }, { status: 429 });
+    }
+    throw error;
+  }
 
   const userAgentSummary = sanitizeMobileInstallUserAgentSummary(
     request.headers.get("user-agent") || "unknown",
   );
+  const eventDay = new Date().toISOString().slice(0, 10);
 
-  const { error } = await supabase.from("mobile_install_audit_events").insert({
-    tenant_id: access.tenantId,
-    dietitian_id: access.dietitianId,
-    auth_user_id: user.id,
-    event_type: body.eventType,
-    user_agent_summary: userAgentSummary,
-  });
+  const { error } = await supabase.from("mobile_install_audit_events").upsert(
+    {
+      tenant_id: access.tenantId,
+      dietitian_id: access.dietitianId,
+      auth_user_id: user.id,
+      event_type: body.eventType,
+      event_day: eventDay,
+      user_agent_summary: userAgentSummary,
+    },
+    {
+      onConflict: "tenant_id,dietitian_id,auth_user_id,event_type,event_day",
+      ignoreDuplicates: true,
+    },
+  );
 
   if (error) {
     return NextResponse.json({ error: "audit_insert_failed" }, { status: 500 });

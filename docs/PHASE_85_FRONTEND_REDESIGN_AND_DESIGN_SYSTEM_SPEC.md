@@ -1,8 +1,8 @@
 # Phase 85: SiriusAI Frontend Redesign And Design System Spec
 
-Current Stage 4D remediation UI note, 2026-07-28: remediation Faz 1 adds `timezone` to the existing Settings profile form and switches profile save to canonical `/api/account/profile`. This is a minimal settings-form extension, not a dashboard shell redesign. Evidence: `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_1_ACCOUNT_FOUNDATION_EVIDENCE.md`.
+Current Stage 4D remediation UI note, 2026-07-28: remediation Faz 1 adds `timezone` to the existing Settings profile form and switches profile save to canonical `/api/account/profile`; remediation Faz 2 adds the minimal `/account/billing` payment-recovery surface and ties Settings billing actions to `billing.portalState`. These are minimal account/billing hardening surfaces, not a dashboard shell redesign. Evidence: `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_1_ACCOUNT_FOUNDATION_EVIDENCE.md` and `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_2_SECURITY_BILLING_PWA_EVIDENCE.md`.
 
-Current Phase 85 status, 2026-07-28: Stage 4C remediation remains closed at `cd3d781`; **Stage 4D Ayarlar / Hesap is closed locally** with verdict `PASS_LOCAL_STAGE_4D_CLOSED`. Evidence: `docs/PHASE_85_STAGE_4D_CLOSURE_EVIDENCE.md`. Next is separately approved Stage 5; production remains `NO-GO`.
+Current Phase 85 status, 2026-07-28: Stage 4C remediation remains closed at `cd3d781`; Stage 4D historical closure evidence remains `PASS_LOCAL_STAGE_4D_CLOSED`, but post-closure remediation is active with Faz 1 and Faz 2 implemented locally. Next is separately approved remediation Faz 3; production remains `NO-GO`.
 
 Date: 2026-07-07
 Status: Stage 1 design foundation, Stage 2 shared component system, Stage 3 public/commercial entry integration, and Stage 4A Danisan Kontrol Paneli complete; Stage 3 is deployed to the hosted sandbox at `https://siriusai.store`. P85-IF-A through P85-IF-I are complete. **Stage 4B Uyari ve Bildirimler is complete (2026-07-12).** Evidence: `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_EVIDENCE.md`. **Stage 4B-2 Mesajlasma is complete locally (2026-07-13).** **Next:** Stage 4B-3 Multimodal Gorsel Guvenligi ve Yanit Orkestrasyonu.
@@ -70,9 +70,9 @@ Stage 4C must define the dietitian-facing AI chat experience without weakening i
 
 ## Stage 4D - Ayarlar / Hesap
 
-Status: **CLOSED locally — `PASS_LOCAL_STAGE_4D_CLOSED` (2026-07-28)**.
+Status: **post-closure remediation active; Faz 1 and Faz 2 implemented locally (2026-07-28)**.
 
-Stage 4D delivered `/dashboard/settings` with profile mutation, account security flows, owner/admin billing portal entry, and PWA install in Settings > Application. Canonical action plan: `docs/PHASE_85_STAGE_4D_AYARLAR_HESAP_ACTION_PLAN.md`; closure evidence: `docs/PHASE_85_STAGE_4D_CLOSURE_EVIDENCE.md`. Next Phase 85 unit: Stage 5 (separate approval).
+Stage 4D delivered `/dashboard/settings` with profile mutation, account security flows, owner/admin billing portal entry, and PWA install in Settings > Application. Post-closure remediation now adds account-context identity security, signed recovery flow evidence, durable global auth rate limits, payment-recovery billing access, and PWA audit hardening. Canonical action plan: `docs/PHASE_85_STAGE_4D_AYARLAR_HESAP_ACTION_PLAN.md`; remediation evidence: `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_1_ACCOUNT_FOUNDATION_EVIDENCE.md` and `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_2_SECURITY_BILLING_PWA_EVIDENCE.md`. Next Phase 85 unit: remediation Faz 3 (separate approval).
 
 ## Scope Lock
 

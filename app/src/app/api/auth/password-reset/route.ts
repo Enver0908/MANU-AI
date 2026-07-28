@@ -14,7 +14,7 @@ import {
   genericMagicLinkAcceptedResponse,
   validateAccountEmail,
 } from "@/lib/phase-85-stage-4d-account-security";
-import { resolveAppTenantContext } from "@/lib/auth-context";
+import { resolveAccountTenantContext } from "@/lib/auth-context";
 import { assertRateLimit } from "@/lib/rate-limit";
 import { getSupabaseConfig } from "@/lib/supabase";
 
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
     email = validateAccountEmail(user.email);
     authUserId = user.id;
     try {
-      const tenantContext = await resolveAppTenantContext();
+      const tenantContext = await resolveAccountTenantContext();
       tenantId = tenantContext.tenantId;
       dietitianId = tenantContext.dietitianId;
     } catch {
