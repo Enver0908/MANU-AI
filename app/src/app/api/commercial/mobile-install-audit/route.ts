@@ -10,7 +10,6 @@ import {
 
 type AuditBody = {
   eventType?: string;
-  userAgentSummary?: string;
 };
 
 export async function POST(request: NextRequest) {
@@ -57,7 +56,7 @@ export async function POST(request: NextRequest) {
   }
 
   const userAgentSummary = sanitizeMobileInstallUserAgentSummary(
-    body.userAgentSummary || "unknown",
+    request.headers.get("user-agent") || "unknown",
   );
 
   const { error } = await supabase.from("mobile_install_audit_events").insert({

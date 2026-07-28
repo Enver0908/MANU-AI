@@ -12,15 +12,13 @@ import {
   isStripeBillingConfigured,
   resolveStripeBillingConfig,
 } from "@/lib/phase-83c-stripe-billing-gate";
+import { buildSettingsHref } from "@/lib/phase-85-stage-4d-settings-contracts";
 import { isSupabaseStoreConfigured } from "@/lib/supabase-store";
 
 export async function POST() {
   const billingConfig = resolveStripeBillingConfig();
   if (!isStripeBillingConfigured(billingConfig)) {
-    return NextResponse.json(
-      { error: "stripe_sandbox_not_configured", blockingReasons: billingConfig.blockingReasons },
-      { status: 503 },
-    );
+    return NextResponse.json({ error: "stripe_sandbox_not_configured" }, { status: 503 });
   }
 
   if (!isSupabaseStoreConfigured() || !isCommercialBillingStoreConfigured()) {
@@ -52,7 +50,7 @@ export async function POST() {
 
   const { data: membership } = await supabase
     .from("tenant_memberships")
-    .select("tenant_id")
+    .select("tenant_id, role")
     .eq("user_id", user.id)
     .order("created_at", { ascending: true })
     .limit(1)
@@ -75,6 +73,11 @@ export async function POST() {
   }
 
   const entitlement = await loadTenantEntitlementByTenantId(admin, membership.tenant_id);
+
+  if (membership.role !== "owner" && membership.role !== "admin") {
+    return NextResponse.json({ error: "billing_portal_forbidden" }, { status: 403 });
+  }
+
   const billingCustomer = await loadBillingCustomerByTenantId(admin, membership.tenant_id);
 
   const portalAccess = evaluateBillingPortalAccess({
@@ -83,13 +86,11 @@ export async function POST() {
     hasDietitianProfile: Boolean(dietitian),
     entitlementStatus: entitlement?.status ?? null,
     stripeCustomerId: billingCustomer?.stripeCustomerId ?? entitlement?.stripeCustomerId ?? null,
+    role: membership.role,
   });
 
   if (!portalAccess.allowed) {
-    return NextResponse.json(
-      { error: "billing_portal_not_allowed", blockingReasons: portalAccess.blockingReasons },
-      { status: 403 },
-    );
+    return NextResponse.json({ error: "billing_portal_not_allowed" }, { status: 403 });
   }
 
   const stripeCustomerId = billingCustomer?.stripeCustomerId ?? entitlement?.stripeCustomerId;
@@ -100,7 +101,7 @@ export async function POST() {
   const stripeClient = createStripeBillingClient(billingConfig);
   const portal = await stripeClient.createBillingPortalSession({
     stripeCustomerId,
-    returnUrl: `${billingConfig.appUrl}/dashboard`,
+    returnUrl: `${billingConfig.appUrl}${buildSettingsHref("billing")}`,
   });
 
   return NextResponse.json({ portalUrl: portal.portalUrl });

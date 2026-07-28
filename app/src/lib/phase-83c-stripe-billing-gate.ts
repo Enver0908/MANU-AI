@@ -463,7 +463,12 @@ export function evaluateBillingPortalAccess(input: {
   hasDietitianProfile: boolean;
   entitlementStatus: CommercialEntitlementStatus | null;
   stripeCustomerId: string | null;
+  role?: string | null;
 }) {
+  if (input.role != null && input.role !== "owner" && input.role !== "admin") {
+    return { allowed: false, blockingReasons: ["billing_portal_role_forbidden"] };
+  }
+
   const dashboard = evaluateCommercialDashboardAccess({
     isAuthenticated: input.isAuthenticated,
     hasTenantMembership: input.hasTenantMembership,

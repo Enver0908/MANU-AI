@@ -20,10 +20,7 @@ async function recordInstallAudit(eventType: MobileInstallAuditEventType) {
   await fetch("/api/commercial/mobile-install-audit", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      eventType,
-      userAgentSummary: navigator.userAgent.slice(0, 240),
-    }),
+    body: JSON.stringify({ eventType }),
   }).catch(() => undefined);
 }
 
@@ -64,6 +61,11 @@ export function AppInstallCenter({ displayName }: AppInstallCenterProps) {
 
   const handleInstallClick = useCallback(async () => {
     if (!deferredPrompt) {
+      return;
+    }
+
+    if (!window.navigator.onLine) {
+      void recordInstallAudit("offline_banner_shown");
       return;
     }
 

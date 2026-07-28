@@ -7,6 +7,8 @@ import { t } from "@/lib/i18n";
 import type { SettingsAccountReadModel, SettingsTab } from "@/lib/phase-85-stage-4d-settings-contracts";
 import { SettingsProfileForm } from "@/components/settings/settings-profile-form";
 import { SettingsSecurityForm } from "@/components/settings/settings-security-form";
+import { SettingsBillingPortalButton } from "@/components/settings/settings-billing-portal-button";
+import { AppInstallCenter } from "@/components/app-install-center";
 import { Card, CardBody, CardHeader } from "@/components/ui";
 
 function FactRow({ label, value }: { label: string; value: string }) {
@@ -177,6 +179,11 @@ export function SettingsBillingSection({
   model: SettingsAccountReadModel;
   uiLanguage: SupportedLanguageCode;
 }) {
+  const portalEnabled =
+    model.runtime.mode === "configured" &&
+    model.runtime.billingActionsAvailable &&
+    model.billing.visibility === "subscription_status";
+
   let body: string;
   if (model.billing.visibility === "unavailable") {
     body = t(uiLanguage, "settingsBillingUnavailable");
@@ -191,11 +198,17 @@ export function SettingsBillingSection({
   return (
     <div data-testid="settings-section-billing">
       <Card>
-        <CardHeader title={t(uiLanguage, "settingsBillingHeading")} description={t(uiLanguage, "settingsBillingReadOnlyHint")} />
-        <CardBody>
+        <CardHeader
+          title={t(uiLanguage, "settingsBillingHeading")}
+          description={
+            portalEnabled ? t(uiLanguage, "settingsBillingEditableHint") : t(uiLanguage, "settingsBillingReadOnlyHint")
+          }
+        />
+        <CardBody className="space-y-4">
           <p className="text-sm leading-6 text-ink" role="status">
             {body}
           </p>
+          {portalEnabled ? <SettingsBillingPortalButton uiLanguage={uiLanguage} /> : null}
         </CardBody>
       </Card>
     </div>
@@ -209,6 +222,9 @@ export function SettingsApplicationSection({
   model: SettingsAccountReadModel;
   uiLanguage: SupportedLanguageCode;
 }) {
+  const installCenterEnabled =
+    model.runtime.mode === "configured" && model.runtime.pwaActionsAvailable && model.application.available;
+
   let body: string;
   if (!model.application.available || model.application.installState === "unavailable") {
     body = t(uiLanguage, "settingsApplicationUnavailable");
@@ -223,12 +239,21 @@ export function SettingsApplicationSection({
       <Card>
         <CardHeader
           title={t(uiLanguage, "settingsApplicationHeading")}
-          description={t(uiLanguage, "settingsApplicationReadOnlyHint")}
+          description={
+            installCenterEnabled
+              ? t(uiLanguage, "settingsApplicationEditableHint")
+              : t(uiLanguage, "settingsApplicationReadOnlyHint")
+          }
         />
-        <CardBody>
-          <p className="text-sm leading-6 text-ink" role="status">
-            {body}
-          </p>
+        <CardBody className="space-y-4">
+          {!installCenterEnabled ? (
+            <p className="text-sm leading-6 text-ink" role="status">
+              {body}
+            </p>
+          ) : null}
+          {installCenterEnabled ? (
+            <AppInstallCenter displayName={model.profile.displayName} />
+          ) : null}
         </CardBody>
       </Card>
     </div>

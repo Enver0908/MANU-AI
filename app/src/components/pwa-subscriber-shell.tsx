@@ -47,7 +47,6 @@ export function PwaSubscriberShell({ children, registerServiceWorker }: PwaSubsc
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           eventType: "offline_banner_shown",
-          userAgentSummary: navigator.userAgent.slice(0, 240),
         }),
       }).catch(() => undefined);
     }
@@ -86,7 +85,6 @@ export function PwaSubscriberShell({ children, registerServiceWorker }: PwaSubsc
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               eventType: "stale_session_detected",
-              userAgentSummary: navigator.userAgent.slice(0, 240),
             }),
           }).catch(() => undefined);
         }
