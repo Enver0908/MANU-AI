@@ -7,7 +7,7 @@
 
 ## Product and Legal Risks
 
-Current Phase 85 Stage 4D note, 2026-07-28: Stage 4D Ayarlar / Hesap Faz 1 is documentation-only complete. It adds no production authorization, provider/channel egress, live billing, schema mutation, or real-data path. Existing product, privacy, clinical, dependency, and production-gate risks remain unchanged; production remains `NO-GO` and R-405 remains open.
+Current Phase 85 Stage 4D note, 2026-07-28: Stage 4D Faz 2 settings foundation is complete as a read-only `/dashboard/settings` route. It adds no production authorization, provider/channel egress, live billing, schema mutation, or real-data path. Existing product, privacy, clinical, dependency, and production-gate risks remain unchanged; production remains `NO-GO` and R-405 remains open.
 
 | ID | Risk | Severity | Mitigation | Status |
 | --- | --- | --- | --- | --- |
@@ -226,7 +226,7 @@ Production pilot remains `NO-GO`; R-405 remains open; real integration paths rem
 
 2026-07-27 override for R-474 and R-481: the first pre-Stage-4D measurement passed 47/47 but exposed the four-table catalog coverage gap. The approved reclosure then passed clean reset, advisory/catalog checks, and the expanded RLS suite at 49/49 with 0 skipped. Treat older open/blocking wording as superseded by `docs/PHASE_85_STAGE_4C_REMEDIATION_EVIDENCE.md`; production pilot remains `NO-GO` and R-405 remains open.
 
-2026-07-28 continuity override: Stage 4C closure is committed locally at `cd3d781`, the Stage 4D handoff is committed at `bc57cfd`, R-481 remains mitigated locally, and Stage 4D Faz 1 introduces no new runtime or production risk. Stage 4D implementation has not started; next work is separately approved Faz 2 under `docs/PHASE_85_STAGE_4D_AYARLAR_HESAP_ACTION_PLAN.md`. Production remains `NO-GO`; R-405 and all external gates remain open.
+2026-07-28 continuity override: Stage 4C closure is committed locally at `cd3d781`, the Stage 4D handoff is committed at `bc57cfd`, R-481 remains mitigated locally, and Stage 4D Faz 2 introduces a read-only settings route with no production risk expansion. Next work is separately approved Faz 3 under `docs/PHASE_85_STAGE_4D_AYARLAR_HESAP_ACTION_PLAN.md`. Production remains `NO-GO`; R-405 and all external gates remain open.
 
 ## Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
 

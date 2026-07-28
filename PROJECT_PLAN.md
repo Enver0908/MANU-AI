@@ -1,8 +1,8 @@
 # MANU-AI Project Plan v2
 
-**Current authority (2026-07-28):** Stage 4C remediation is closed locally at `cd3d781` with measured verdict `PASS_LOCAL_STAGE_4C_REMEDIATED`; the Stage 4D handoff is committed at `bc57cfd`. Stage 4D Ayarlar / Hesap Faz 1 read gate is documentation-only complete. Evidence: `docs/PHASE_85_STAGE_4D_AYARLAR_HESAP_ACTION_PLAN.md`, `docs/PHASE_85_STAGE_4D_PHASE_1_READ_GATE_EVIDENCE.md`, and `docs/PHASE_85_STAGE_4C_TO_STAGE_4D_CONTINUITY_HANDOFF_EVIDENCE.md`. Production remains `NO-GO`; R-405 remains open.
+**Current authority (2026-07-28):** Stage 4C remediation is closed locally at commit `cd3d781` with measured verdict `PASS_LOCAL_STAGE_4C_REMEDIATED`; the Stage 4D handoff is committed at `bc57cfd`. Stage 4D Faz 2 settings foundation is complete (`/dashboard/settings` read-only). Evidence: `docs/PHASE_85_STAGE_4D_PHASE_2_SETTINGS_READ_ONLY_EVIDENCE.md`, `docs/PHASE_85_STAGE_4D_AYARLAR_HESAP_ACTION_PLAN.md`. **Next:** obtain separate user approval for Stage 4D Faz 3 Self Profile Preferences. Production remains `NO-GO`; R-405 remains open.
 
-Current continuity status, 2026-07-28: prior Stage 4B tracks and Stage 4C remediation remain closed locally. Stage 4D implementation has not started. The next active action is separate user approval for Stage 4D Faz 2 Settings Navigation Shell and Read-Only Account Overview. Push remains a separate explicit action. Production remains `NO-GO` and R-405 remains open.
+Current continuity status, 2026-07-28: prior Stage 4B tracks and Stage 4C remediation remain closed locally. Stage 4D Faz 2 settings foundation is complete. The next active action is separate user approval for Stage 4D Faz 3 Self Profile Preferences. Push remains a separate explicit action. Production remains `NO-GO` and R-405 remains open.
 
 ## Confidence Position
 

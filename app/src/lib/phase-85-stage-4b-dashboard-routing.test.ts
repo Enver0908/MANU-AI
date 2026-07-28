@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it } from "vitest";
 import {
   AI_CHAT_ROOT_PATH,
+  SETTINGS_ROOT_PATH,
   buildDashboardHref,
   buildStage4BAlertsRequestQuery,
   buildStage4BNotificationsRequestQuery,
@@ -223,5 +224,9 @@ describe("phase-85-stage-4b dashboard routing", () => {
       expect(resolveLegacyCopilotSectionRedirect("overview")).toBeNull();
       expect(resolveLegacyCopilotSectionRedirect("messages")).toBeNull();
     });
+  });
+
+  it("exposes the Stage 4D settings route path for real-link navigation", () => {
+    expect(SETTINGS_ROOT_PATH).toBe("/dashboard/settings");
   });
 });

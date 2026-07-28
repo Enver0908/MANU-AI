@@ -9,6 +9,7 @@ import {
   Bot,
   ClipboardList,
   MessageSquareText,
+  Settings,
   SlidersHorizontal,
   Sparkles,
   UsersRound,
@@ -17,6 +18,7 @@ import type { DashboardMessageKey } from "@/lib/i18n";
 import {
   AI_CHAT_ROOT_PATH,
   formatStage4BBadgeCount,
+  SETTINGS_ROOT_PATH,
   type DashboardNavKey,
   type DashboardSection,
 } from "@/lib/phase-85-stage-4b-dashboard-routing";
@@ -34,7 +36,7 @@ export type DashboardNavItem =
     }
   | {
       type: "link";
-      key: "ai_chat";
+      key: "ai_chat" | "settings";
       labelKey: DashboardMessageKey;
       icon: LucideIcon;
       href: string;
@@ -46,6 +48,14 @@ const AI_CHAT_NAV_ITEM: DashboardNavItem = {
   labelKey: "aiChat",
   icon: Sparkles,
   href: AI_CHAT_ROOT_PATH,
+};
+
+const SETTINGS_NAV_ITEM: DashboardNavItem = {
+  type: "link",
+  key: "settings",
+  labelKey: "settings",
+  icon: Settings,
+  href: SETTINGS_ROOT_PATH,
 };
 
 const desktopSectionNavItems: DashboardNavItem[] = [
@@ -68,15 +78,22 @@ const mobileSectionNavItems: DashboardNavItem[] = [
 ];
 
 // AI Chat replaces the old internal-Copilot nav entry; hidden entirely when
-// the feature flag is off (production default). The flag is resolved
-// server-side and passed down as a prop so `next start` picks up runtime
-// changes without a rebuild (no `NEXT_PUBLIC_` inlining involved).
+ // the feature flag is off (production default). The flag is resolved
+ // server-side and passed down as a prop so `next start` picks up runtime
+ // changes without a rebuild (no `NEXT_PUBLIC_` inlining involved).
+ // Settings is always a real route link on desktop and mobile.
 export function resolveDesktopDashboardNavItems(aiChatEnabled: boolean): DashboardNavItem[] {
-  return aiChatEnabled ? [...desktopSectionNavItems, AI_CHAT_NAV_ITEM] : desktopSectionNavItems;
+  const withOptionalAiChat = aiChatEnabled
+    ? [...desktopSectionNavItems, AI_CHAT_NAV_ITEM]
+    : desktopSectionNavItems;
+  return [...withOptionalAiChat, SETTINGS_NAV_ITEM];
 }
 
 export function resolveMobileDashboardNavItems(aiChatEnabled: boolean): DashboardNavItem[] {
-  return aiChatEnabled ? [...mobileSectionNavItems, AI_CHAT_NAV_ITEM] : mobileSectionNavItems;
+  const withOptionalAiChat = aiChatEnabled
+    ? [...mobileSectionNavItems, AI_CHAT_NAV_ITEM]
+    : mobileSectionNavItems;
+  return [...withOptionalAiChat, SETTINGS_NAV_ITEM];
 }
 
 function resolveNavBadgeCount(

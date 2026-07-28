@@ -1,5 +1,6 @@
 import { SUPPORTED_LANGUAGES, type SupportedLanguageCode } from "./languages";
 import { stage4bNotificationMessages } from "./phase-85-stage-4b-notification-i18n";
+import { stage4dSettingsMessages } from "./phase-85-stage-4d-settings-i18n";
 
 export const dashboardMessages = {
   tr: {
@@ -384,6 +385,7 @@ export const dashboardMessages = {
     conversationAiChatDraftTransferHint: "AI Chat güvenli taslağı yüklendi. Göndermeden önce düzenleyebilirsiniz.",
     clientDetailAiEvaluate: "AI ile değerlendir",
     ...stage4bNotificationMessages.tr,
+    ...stage4dSettingsMessages.tr,
   },
   en: {
     overview: "Overview",
@@ -767,6 +769,7 @@ export const dashboardMessages = {
     conversationAiChatDraftTransferHint: "AI Chat safe draft loaded. You can edit before sending.",
     clientDetailAiEvaluate: "Evaluate with AI",
     ...stage4bNotificationMessages.en,
+    ...stage4dSettingsMessages.en,
   },
   de: {
     overview: "Ubersicht",
@@ -1150,6 +1153,7 @@ export const dashboardMessages = {
     conversationAiChatDraftTransferHint: "AI Chat safe draft loaded. You can edit before sending.",
     clientDetailAiEvaluate: "Mit KI bewerten",
     ...stage4bNotificationMessages.de,
+    ...stage4dSettingsMessages.de,
   },
   fr: {
     overview: "Apercu",
@@ -1533,6 +1537,7 @@ export const dashboardMessages = {
     conversationAiChatDraftTransferHint: "AI Chat safe draft loaded. You can edit before sending.",
     clientDetailAiEvaluate: "Évaluer avec l'IA",
     ...stage4bNotificationMessages.fr,
+    ...stage4dSettingsMessages.fr,
   },
   es: {
     overview: "Resumen",
@@ -1916,6 +1921,7 @@ export const dashboardMessages = {
     conversationAiChatDraftTransferHint: "AI Chat safe draft loaded. You can edit before sending.",
     clientDetailAiEvaluate: "Evaluar con IA",
     ...stage4bNotificationMessages.es,
+    ...stage4dSettingsMessages.es,
   },
   pt: {
     overview: "Resumo",
@@ -2299,6 +2305,7 @@ export const dashboardMessages = {
     conversationAiChatDraftTransferHint: "AI Chat safe draft loaded. You can edit before sending.",
     clientDetailAiEvaluate: "Avaliar com IA",
     ...stage4bNotificationMessages.pt,
+    ...stage4dSettingsMessages.pt,
   },
   cs: {
     overview: "Prehled",
@@ -2682,6 +2689,7 @@ export const dashboardMessages = {
     conversationAiChatDraftTransferHint: "AI Chat safe draft loaded. You can edit before sending.",
     clientDetailAiEvaluate: "Vyhodnotit pomoci AI",
     ...stage4bNotificationMessages.cs,
+    ...stage4dSettingsMessages.cs,
   },
 } satisfies Record<SupportedLanguageCode, Record<string, string>>;
 

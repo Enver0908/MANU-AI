@@ -1,7 +1,7 @@
 # Phase 85 Stage 4C to Stage 4D Continuity Handoff Evidence
 
 Date: 2026-07-28
-Status: **Faz 4 committed at `bc57cfd`; Stage 4D Faz 1 read gate complete**
+Status: **Faz 4 committed at `bc57cfd`; Stage 4D Faz 2 settings foundation complete**
 
 ## Authority
 
@@ -29,7 +29,7 @@ Older Stage 4B and Stage 4C evidence may state that Stage 4C is current, next, b
 
 ## Stage 4D Handoff Boundary
 
-The next Phase 85 unit is **Stage 4D Ayarlar / Hesap**. Stage 4D Faz 1 read gate is complete as documentation only. No Stage 4D code, migration, route, UI, runtime test, or production authorization was created in Faz 4 or Faz 1.
+The active Phase 85 unit is **Stage 4D Ayarlar / Hesap**. Faz 1 remained documentation-only; Faz 2 added the read-only `/dashboard/settings` foundation without schema/migration/provider/billing activation.
 
 The completed Stage 4D Faz 1 read gate:
 
@@ -40,15 +40,15 @@ The completed Stage 4D Faz 1 read gate:
 - keeps production `NO-GO`, R-405 open, and all real integration gates closed;
 - created a dedicated Stage 4D action plan and read-gate evidence before implementation.
 
-Stage 4D Faz 1 created `docs/PHASE_85_STAGE_4D_AYARLAR_HESAP_ACTION_PLAN.md` and `docs/PHASE_85_STAGE_4D_PHASE_1_READ_GATE_EVIDENCE.md`. Next single action: obtain separate user approval for Stage 4D Faz 2 Settings Navigation Shell and Read-Only Account Overview. Push remains a separate user-authorized action and is not performed by this handoff.
+Stage 4D Faz 2 evidence: `docs/PHASE_85_STAGE_4D_PHASE_2_SETTINGS_READ_ONLY_EVIDENCE.md`. Next single action: obtain separate user approval for Stage 4D Faz 3 Self Profile Preferences. Push remains a separate user-authorized action.
 
 ## Verification
 
-- active authority and next-action documents reconciled to `cd3d781`;
-- stale commit-waiting guidance removed from active documents;
+- active authority and next-action documents reconciled through Stage 4D Faz 2;
+- stale Faz 1/Faz 2 waiting guidance removed from active documents;
 - historical Stage 4C-current references classified as historical rather than rewritten;
 - prohibited future-phase and numeric Stage 4C alias naming absent;
-- no Stage 4D implementation artifact introduced;
-- documentation references, `git diff --check`, and final worktree scope verified.
+- Stage 4D Faz 2 introduced only the approved read-only settings foundation;
+- documentation references, `git diff --check`, and final worktree scope verified for each Stage 4D phase commit.
 
-This documentation-only handoff does not alter the measured Stage 4C test counts or rerun them as new evidence.
+This continuity handoff does not alter the measured Stage 4C test counts or reopen production gates.

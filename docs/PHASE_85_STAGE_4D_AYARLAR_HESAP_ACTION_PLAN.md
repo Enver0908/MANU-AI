@@ -1,13 +1,13 @@
 # Phase 85 Stage 4D Ayarlar / Hesap Action Plan
 
 Date: 2026-07-28
-Status: **Faz 1 read gate complete; implementation not started**
+Status: **Faz 2 settings foundation complete; next is separately approved Faz 3**
 
 Stage 4D owns authenticated dashboard settings and account workflows for the dietitian-facing SaaS/PWA prototype. It must not reuse Stage 4C AI Chat authority, widen Internal Copilot authority, enable production billing, or open real provider/channel/health-data paths.
 
 Production remains `NO-GO`. R-405 remains open. Real WhatsApp, Telegram, external LLM, embedding, OCR, STT, live billing, monitoring, backup, secret-manager, and real health-data egress paths remain closed.
 
-Canonical evidence: `docs/PHASE_85_STAGE_4D_PHASE_1_READ_GATE_EVIDENCE.md`.
+Canonical evidence: `docs/PHASE_85_STAGE_4D_PHASE_2_SETTINGS_READ_ONLY_EVIDENCE.md`. Faz 1 evidence remains `docs/PHASE_85_STAGE_4D_PHASE_1_READ_GATE_EVIDENCE.md`.
 
 ## Existing Authority
 
@@ -19,13 +19,14 @@ Canonical evidence: `docs/PHASE_85_STAGE_4D_PHASE_1_READ_GATE_EVIDENCE.md`.
 
 ## Current Settings / Account Architecture
 
-There is no dedicated settings/account route or panel today. Account-adjacent behavior is spread across the dashboard header, dashboard shell, auth routes, commercial routes, and Supabase-backed profile storage.
+Dedicated settings route exists at `/dashboard/settings?tab=profile|security|workspace|billing|application` after Faz 2. Mutations are still closed.
 
-- `resolveDashboardAuth()` in `app/src/lib/dashboard-server-auth.ts` resolves the SSR dashboard gate from Supabase cookies, first tenant membership, matching dietitian profile, and tenant entitlement status.
+- `resolveSettingsAccountReadModel()` in `app/src/lib/settings-server-read.ts` builds the cookie-bound read-only settings model without returning internal ids.
+- `resolveDashboardAuth()` in `app/src/lib/dashboard-server-auth.ts` remains the shared dashboard/AI Chat gate helper.
 - `resolveAppTenantContext()` in `app/src/lib/auth-context.ts` resolves API authority from Supabase user, first tenant membership, matching dietitian profile, entitlement check, and role capability.
-- Profile preferences currently live on `dietitians`: `display_name`, `timezone`, `ui_language`, `auth_user_id`. Only `ui_language` is currently editable through dashboard preference save behavior.
+- Profile preferences currently live on `dietitians`: `display_name`, `timezone`, `ui_language`, `auth_user_id`. Only `ui_language` is currently editable through dashboard preference save behavior; settings profile remains read-only until Faz 3.
 - Tenant account identity currently lives on `tenants`: `id`, `name`, `created_at`. There is no owner/admin tenant settings editor.
-- Membership role is `owner | admin | dietitian | assistant | auditor`. Current `AppCapability` is clinical-workflow oriented and has no account-specific capability names.
+- Membership role is `owner | admin | dietitian | assistant | auditor`. Current `AppCapability` is clinical-workflow oriented and has no account-specific capability names yet.
 - Commercial entitlement/billing is tenant-owned through `tenant_entitlements`, `billing_customers`, `commercial_invites`, and `billing_event_ledger`.
 - `POST /api/commercial/billing-portal` is the existing Stripe portal boundary; it requires configured sandbox Stripe, Supabase commercial stores, authenticated membership, dietitian profile, active entitlement, and Stripe customer id.
 - PWA install readiness is resolved by `resolveMobileInstallAccess()` at dashboard entry and recorded through `mobile_install_audit_events`.
@@ -36,11 +37,11 @@ There is no dedicated settings/account route or panel today. Account-adjacent be
 | Domain | Owner | Data | Mutation boundary | Roles |
 | --- | --- | --- | --- | --- |
 | User auth identity | Supabase Auth | email, password setup/reset, session | Supabase Auth APIs and app auth routes only | authenticated user for own identity |
-| User profile preferences | Dietitian profile | display name, timezone, UI language | Stage 4D self-profile API using `resolveAppTenantContext()` | owner/admin/dietitian for self |
+| User profile preferences | Dietitian profile | display name, timezone, UI language | Stage 4D self-profile API using `resolveAppTenantContext()` | owner/admin/dietitian/assistant/auditor for own profile via future `update_own_profile` |
 | Security/session | Auth/session | logout, reset request, email-change request | Auth routes only | authenticated user for own session |
 | Tenant account | Tenant/account | tenant name and account settings | owner/admin account API with expected revision before writes | owner/admin |
 | Membership/RBAC | Tenant membership | member list, roles, future invites | owner/admin membership APIs; no self-lockout | owner/admin |
-| Commercial entitlement | Billing/commercial | entitlement, customer, portal status | existing commercial store and portal route | owner/admin for billing actions unless explicitly kept broader |
+| Commercial entitlement | Billing/commercial | entitlement, customer, portal status | existing commercial store and portal route | owner/admin for billing actions |
 | PWA install | Commercial install/PWA | install readiness, audit events | existing install access and audit route | granted authenticated tenant member |
 | Audit/lifecycle | Governance | minimized audit metadata | existing audit helpers/RPCs | owner/admin where already authorized |
 
@@ -64,37 +65,26 @@ Completion criteria:
 - Next phase is one separately approved phase.
 - `git diff --check`, secret/sensitive scan, stale wording scan, and worktree status are reported.
 
-### Faz 2 - Settings Navigation Shell and Read-Only Account Overview
+### Faz 2 - Settings Foundation and Read-Only Screen
 
-Purpose: add the settings entry point and read-only account overview before any new mutation exists.
+Purpose: let an authorized user read settings from a trusted server-side model on an accessible, responsive screen.
 
-Scope:
+Status: **complete** — evidence `docs/PHASE_85_STAGE_4D_PHASE_2_SETTINGS_READ_ONLY_EVIDENCE.md`.
 
-- Extend `DashboardSection`/URL parsing in `app/src/lib/phase-85-stage-4b-dashboard-routing.ts` with `settings`.
-- Add desktop/mobile settings nav items in `app/src/components/dashboard/dashboard-navigation.tsx` using a lucide settings/account icon.
-- Add `app/src/components/dashboard/settings-panel.tsx`.
-- Wire the section in `app/src/components/dashboard-app.tsx`.
-- Show only safe existing facts: display name, role, tenant name, subscription status, PWA install readiness, Supabase/local mode, and session state.
-- Keep existing logout behavior; do not remove header/sidebar controls in this phase unless tests are updated in the same change.
+Scope delivered:
+
+- Dedicated route `/dashboard/settings?tab=profile|security|workspace|billing|application`.
+- Contracts in `app/src/lib/phase-85-stage-4d-settings-contracts.ts` and server read in `app/src/lib/settings-server-read.ts`.
+- Page/client/section components under `app/src/app/dashboard/settings/` and `app/src/components/settings/`.
+- Desktop/mobile Settings nav as a real route link.
+- Read-only fields only; no new mutations, schema, or migrations.
 
 Architecture decisions:
 
-- Consume existing `authInfo`, `commercialInfo`, and `state` first.
-- Add no persistence contract.
-- Add no billing mutation.
-- Add no schema/migration.
-
-Tests:
-
-- Dashboard routing tests for `settings`.
-- Visual/accessibility coverage for desktop and mobile settings panel.
-- Targeted tests, `npm run typecheck`, `npm run lint`, `npm run build`, `git diff --check`, secret scan, cross-tenant scan, status.
-
-Completion criteria:
-
-- Settings is reachable by URL and nav on desktop/mobile.
-- It renders without text overlap at mobile widths.
-- It contains no new profile, tenant, billing, auth, PWA, or migration mutation except existing logout.
+- `SettingsAccountReadModel` returns profile/security/workspace/billing/application/runtime blocks only.
+- No raw tenant/user/dietitian/membership/Stripe ids reach the client.
+- Owner/admin see subscription status; other roles see workspace-access-active only.
+- Fallback demo mode shows synthetic profile/workspace and marks identity/billing/PWA actions unavailable.
 
 ### Faz 3 - Self Profile Preferences
 
@@ -249,6 +239,6 @@ Completion criteria:
 
 ## Next Single Phase
 
-Next implementation phase: **Faz 2 - Settings Navigation Shell and Read-Only Account Overview**.
+Next implementation phase: **Faz 3 - Self Profile Preferences**.
 
-Before Faz 2 starts, present exact file changes and wait for user approval. Faz 2 must not implement profile mutation, email/password flows, tenant mutation, billing changes, PWA service-worker changes, schema changes, migration work, provider/channel activation, production gate changes, push, PR, merge, or deploy.
+Before Faz 3 starts, present exact file changes and wait for user approval. Faz 3 must not implement email/password flows, tenant mutation, billing portal activation, PWA service-worker changes, provider/channel activation, production gate changes, push, PR, merge, or deploy.

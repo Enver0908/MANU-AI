@@ -22,13 +22,14 @@ export type DashboardSection =
 export type DashboardMessageSource = "alert" | "notification";
 
 /**
- * Nav highlighting key. AI Chat lives on real routes (`/dashboard/ai-chat`),
- * not a `?section=` query value, so it needs its own key distinct from
- * `DashboardSection` for sidebar/mobile-nav active-state comparisons.
+ * Nav highlighting key. AI Chat and Settings live on real routes
+ * (`/dashboard/ai-chat`, `/dashboard/settings`), not a `?section=` query value,
+ * so they need keys distinct from `DashboardSection`.
  */
-export type DashboardNavKey = DashboardSection | "ai_chat";
+export type DashboardNavKey = DashboardSection | "ai_chat" | "settings";
 
 export const AI_CHAT_ROOT_PATH = "/dashboard/ai-chat";
+export { SETTINGS_ROOT_PATH } from "./phase-85-stage-4d-settings-contracts";
 
 /**
  * Server-evaluated only (no `NEXT_PUBLIC_` prefix): callers must resolve this

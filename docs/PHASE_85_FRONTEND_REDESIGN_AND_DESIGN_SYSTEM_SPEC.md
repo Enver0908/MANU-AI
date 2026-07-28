@@ -1,6 +1,6 @@
 # Phase 85: SiriusAI Frontend Redesign And Design System Spec
 
-Current Phase 85 status, 2026-07-28: Stage 4C remediation is closed locally at `cd3d781`, the Stage 4D handoff is committed at `bc57cfd`, and Stage 4D Ayarlar / Hesap Faz 1 read gate is documentation-only complete. Canonical plan: `docs/PHASE_85_STAGE_4D_AYARLAR_HESAP_ACTION_PLAN.md`; evidence: `docs/PHASE_85_STAGE_4D_PHASE_1_READ_GATE_EVIDENCE.md`. Stage 4D implementation has not started; production remains `NO-GO`.
+Current Phase 85 status, 2026-07-28: Stage 4C remediation remains closed at `cd3d781`; Stage 4D Faz 2 settings foundation is complete at `/dashboard/settings` (read-only). Evidence: `docs/PHASE_85_STAGE_4D_PHASE_2_SETTINGS_READ_ONLY_EVIDENCE.md`. Next is separately approved Faz 3; production remains `NO-GO`.
 
 Date: 2026-07-07
 Status: Stage 1 design foundation, Stage 2 shared component system, Stage 3 public/commercial entry integration, and Stage 4A Danisan Kontrol Paneli complete; Stage 3 is deployed to the hosted sandbox at `https://siriusai.store`. P85-IF-A through P85-IF-I are complete. **Stage 4B Uyari ve Bildirimler is complete (2026-07-12).** Evidence: `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_EVIDENCE.md`. **Stage 4B-2 Mesajlasma is complete locally (2026-07-13).** **Next:** Stage 4B-3 Multimodal Gorsel Guvenligi ve Yanit Orkestrasyonu.
@@ -68,9 +68,9 @@ Stage 4C must define the dietitian-facing AI chat experience without weakening i
 
 ## Stage 4D - Ayarlar / Hesap
 
-Status: **Faz 1 read gate complete; implementation not started**.
+Status: **Faz 2 settings foundation complete; next is separately approved Faz 3**.
 
-Stage 4D defines settings/account workflows while preserving auth, membership, entitlement, onboarding, admin, billing, PWA install, and sandbox-only constraints. The canonical action plan is `docs/PHASE_85_STAGE_4D_AYARLAR_HESAP_ACTION_PLAN.md`; Faz 1 evidence is `docs/PHASE_85_STAGE_4D_PHASE_1_READ_GATE_EVIDENCE.md`. No Stage 4D runtime work is approved until the next single phase, Faz 2 Settings Navigation Shell and Read-Only Account Overview, is explicitly approved.
+Stage 4D defines settings/account workflows while preserving auth, membership, entitlement, onboarding, admin, billing, PWA install, and sandbox-only constraints. The canonical action plan is `docs/PHASE_85_STAGE_4D_AYARLAR_HESAP_ACTION_PLAN.md`; Faz 1 evidence is `docs/PHASE_85_STAGE_4D_PHASE_1_READ_GATE_EVIDENCE.md`; Faz 2 evidence is `docs/PHASE_85_STAGE_4D_PHASE_2_SETTINGS_READ_ONLY_EVIDENCE.md`. Faz 2 delivered the dedicated settings route and read-only account model. Faz 3 profile mutation requires separate approval.
 
 ## Scope Lock
 
