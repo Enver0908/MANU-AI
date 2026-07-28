@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
   OwnProfileValidationError,
@@ -53,5 +55,18 @@ describe("phase-85-stage-4d own profile", () => {
     const third = updateOwnProfileInState(second.state, { timezone: "Europe/London" });
     expect(third.changedFields).toEqual(["timezone"]);
     expect(third.state.dietitian.timezone).toBe("Europe/London");
+  });
+
+  it("keeps direct dietitian profile mutations behind RPC boundaries", () => {
+    const migration = readFileSync(
+      join(
+        process.cwd(),
+        "supabase/migrations/20260728190000_phase_85_stage_4d_pre_faz3_rls_reclosure.sql",
+      ),
+      "utf8",
+    );
+
+    expect(migration).toContain("revoke insert, update, delete on table dietitians from anon, authenticated");
+    expect(migration).toContain("grant select on table dietitians to authenticated, service_role");
   });
 });

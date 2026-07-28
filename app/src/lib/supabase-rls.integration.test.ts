@@ -666,10 +666,55 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
       tenant_id: TEST_TENANT_ID,
       dietitian_id: TEST_DIETITIAN_ID,
       auth_user_id: memberUserId,
-      event_type: "install_prompt_shown",
+      event_type: "install_accepted",
       user_agent_summary: "vitest",
     });
     expect(ownAuditInsert.error).toBeNull();
+
+    const duplicateDailyAuditInsert = await member.from("mobile_install_audit_events").insert({
+      id: "00000000-0000-4000-8000-000000001004",
+      tenant_id: TEST_TENANT_ID,
+      dietitian_id: TEST_DIETITIAN_ID,
+      auth_user_id: memberUserId,
+      event_type: "install_accepted",
+      user_agent_summary: "vitest-duplicate",
+    });
+    expect(duplicateDailyAuditInsert.error?.message).toMatch(/duplicate key|unique/i);
+
+    const duplicateDailyAuditUpsert = await member.from("mobile_install_audit_events").upsert(
+      {
+        id: "00000000-0000-4000-8000-000000001005",
+        tenant_id: TEST_TENANT_ID,
+        dietitian_id: TEST_DIETITIAN_ID,
+        auth_user_id: memberUserId,
+        event_type: "install_accepted",
+        event_day: new Date().toISOString().slice(0, 10),
+        user_agent_summary: "vitest-duplicate-upsert",
+      },
+      {
+        onConflict: "tenant_id,dietitian_id,auth_user_id,event_type,event_day",
+        ignoreDuplicates: true,
+      },
+    );
+    expect(duplicateDailyAuditUpsert.error).toBeNull();
+
+    const mismatchedDietitianAuditInsert = await member.from("mobile_install_audit_events").insert({
+      tenant_id: TEST_TENANT_ID,
+      dietitian_id: CARE_TEAM_DIETITIAN_ID,
+      auth_user_id: memberUserId,
+      event_type: "ios_instructions_viewed",
+      user_agent_summary: "vitest-mismatched-dietitian",
+    });
+    expect(mismatchedDietitianAuditInsert.error?.message).toMatch(/row-level security/i);
+
+    const mismatchedAuthAuditInsert = await member.from("mobile_install_audit_events").insert({
+      tenant_id: TEST_TENANT_ID,
+      dietitian_id: TEST_DIETITIAN_ID,
+      auth_user_id: careTeamUserId,
+      event_type: "ios_instructions_viewed",
+      user_agent_summary: "vitest-mismatched-auth",
+    });
+    expect(mismatchedAuthAuditInsert.error?.message).toMatch(/row-level security/i);
 
     const crossTenantAuditInsert = await member.from("mobile_install_audit_events").insert({
       tenant_id: OTHER_TENANT_ID,
@@ -841,6 +886,88 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     expect(differentScope.data).toMatchObject({ allowed: true, count: 1, scope: "draft_review" });
     expect(differentTenant.data).toMatchObject({ allowed: true, count: 1, scope: "manual_reply" });
     expect(differentKey.data).toMatchObject({ allowed: true, count: 1, scope: "manual_reply" });
+  });
+
+  it("keeps global rate-limit buckets service-role only and isolated by scope and key", async () => {
+    const member = await signIn("rls-member@manu.local");
+    const anon = createClient(supabaseUrl!, anonKey!, {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+      },
+    });
+    const keyHash = `cccccccccccccccccccccccccccccccc-${Date.now()}`;
+    const otherKeyHash = `dddddddddddddddddddddddddddddddd-${Date.now()}`;
+    const now = new Date().toISOString();
+
+    const first = await admin.rpc("consume_global_rate_limit", {
+      p_scope: "auth_password_reset",
+      p_key_hash: keyHash,
+      p_limit: 2,
+      p_window_seconds: 60,
+      p_now: now,
+    });
+    const second = await admin.rpc("consume_global_rate_limit", {
+      p_scope: "auth_password_reset",
+      p_key_hash: keyHash,
+      p_limit: 2,
+      p_window_seconds: 60,
+      p_now: now,
+    });
+    const denied = await admin.rpc("consume_global_rate_limit", {
+      p_scope: "auth_password_reset",
+      p_key_hash: keyHash,
+      p_limit: 2,
+      p_window_seconds: 60,
+      p_now: now,
+    });
+    const differentScope = await admin.rpc("consume_global_rate_limit", {
+      p_scope: "auth_email_change",
+      p_key_hash: keyHash,
+      p_limit: 2,
+      p_window_seconds: 60,
+      p_now: now,
+    });
+    const differentKey = await admin.rpc("consume_global_rate_limit", {
+      p_scope: "auth_password_reset",
+      p_key_hash: otherKeyHash,
+      p_limit: 2,
+      p_window_seconds: 60,
+      p_now: now,
+    });
+
+    expect(first.error).toBeNull();
+    expect(second.error).toBeNull();
+    expect(denied.error).toBeNull();
+    expect(differentScope.error).toBeNull();
+    expect(differentKey.error).toBeNull();
+    expect(first.data).toMatchObject({ allowed: true, count: 1, scope: "auth_password_reset" });
+    expect(second.data).toMatchObject({ allowed: true, count: 2, scope: "auth_password_reset" });
+    expect(denied.data).toMatchObject({ allowed: false, count: 3, scope: "auth_password_reset" });
+    expect(differentScope.data).toMatchObject({ allowed: true, count: 1, scope: "auth_email_change" });
+    expect(differentKey.data).toMatchObject({ allowed: true, count: 1, scope: "auth_password_reset" });
+
+    const memberRead = await member.from("global_rate_limit_buckets").select("scope");
+    expect(memberRead.error?.message).toMatch(/permission denied|row-level security/i);
+
+    const anonRead = await anon.from("global_rate_limit_buckets").select("scope");
+    expect(anonRead.error?.message).toMatch(/permission denied|row-level security/i);
+
+    const memberRpc = await member.rpc("consume_global_rate_limit", {
+      p_scope: "auth_password_reset",
+      p_key_hash: `eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee-${Date.now()}`,
+      p_limit: 1,
+      p_window_seconds: 60,
+      p_now: now,
+    });
+    expect(memberRpc.error?.message).toMatch(/permission denied/i);
+
+    const tenantBucketRead = await admin
+      .from("rate_limit_buckets")
+      .select("scope, key_hash")
+      .eq("key_hash", keyHash);
+    expect(tenantBucketRead.error).toBeNull();
+    expect(tenantBucketRead.data).toHaveLength(0);
   });
 
   it("maps Supabase rate-limit denials to controlled 429 errors", async () => {
@@ -3862,6 +3989,11 @@ async function seedTenants(
 }
 
 async function cleanup(admin: SupabaseClient) {
+  await admin.from("global_rate_limit_buckets").delete().neq("key_hash", "__never__");
+  await admin
+    .from("mobile_install_audit_event_duplicate_archive")
+    .delete()
+    .in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("account_security_events").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("processed_inbound_events").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("ai_chat_message_versions").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);

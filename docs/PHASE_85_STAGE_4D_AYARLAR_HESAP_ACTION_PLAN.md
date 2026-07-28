@@ -45,7 +45,7 @@ Dedicated settings route exists at `/dashboard/settings?tab=profile|security|wor
 | Domain | Owner | Data | Mutation boundary | Roles |
 | --- | --- | --- | --- | --- |
 | User auth identity | Supabase Auth | email, password setup/reset, session | Supabase Auth APIs and app auth routes only | authenticated user for own identity |
-| User profile preferences | Dietitian profile | display name, timezone, UI language | Stage 4D self-profile API using `resolveAppTenantContext()` | owner/admin/dietitian/assistant/auditor for own profile via future `update_own_profile` |
+| User profile preferences | Dietitian profile | display name, timezone, UI language | Stage 4D self-profile API using `resolveAccountTenantContext()` plus RPC-mediated profile mutation | owner/admin/dietitian only via `update_own_profile`; assistant/auditor are read-only for this mutation |
 | Security/session | Auth/session | logout, reset request, email-change request | Auth routes only | authenticated user for own session |
 | Tenant account | Tenant/account | tenant name and account settings | owner/admin account API with expected revision before writes | owner/admin |
 | Membership/RBAC | Tenant membership | member list, roles, future invites | owner/admin membership APIs; no self-lockout | owner/admin |

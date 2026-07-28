@@ -1,12 +1,12 @@
 # Phase 85 Stage 4D Remediation Phase 2 Security, Billing and PWA Evidence
 
-Date: 2026-07-28
+Date: 2026-07-29
 
-Status: **IMPLEMENTED LOCALLY - NOT RECLOSED**.
+Status: **RECLOSED LOCALLY AFTER PRE-FAZ 3 RLS REPAIR**.
 
 This evidence covers only Stage 4D remediation Faz 2: Auth, Billing and PWA Hardening. It does not approve production, push, deploy, live billing, real WhatsApp/Telegram, external LLM, embedding, OCR, STT, monitoring, backup, secret-manager, or real health-data egress.
 
-Production remains `NO-GO`. R-405 remains open. RLS verification remains fail-closed because local Docker/Supabase was unavailable and remote RLS tests were not explicitly enabled.
+Production remains `NO-GO`. R-405 remains open. Remote RLS override was not used. RLS verification was re-run against local Supabase after Docker Desktop became available.
 
 ## Implemented Scope
 
@@ -34,8 +34,10 @@ Production remains `NO-GO`. R-405 remains open. RLS verification remains fail-cl
   - service-role-only `consume_global_rate_limit`
   - updated tenant rate-limit scope support for `commercial_mobile_install_audit`
   - `mobile_install_audit_events.event_day`
+  - duplicate audit archive table `mobile_install_audit_event_duplicate_archive`
   - daily unique index on `(tenant_id, dietitian_id, auth_user_id, event_type, event_day)`
   - stricter insert RLS requiring tenant membership plus matching dietitian/user relation
+- Append-only migration `app/supabase/migrations/20260728190000_phase_85_stage_4d_pre_faz3_rls_reclosure.sql` closes the pre-Faz 3 direct profile mutation gap by revoking direct `dietitians` insert/update/delete from `anon` and `authenticated` while preserving authenticated read and RPC-mediated profile mutation.
 
 ## Architectural Boundaries
 
@@ -56,9 +58,11 @@ Executed from `app/` unless noted.
 | Typecheck | PASS | `npm run typecheck` exited 0. |
 | Lint | PASS with warnings | `npm run lint` exited 0 with 69 existing warnings in Stage 4C files; no lint errors. |
 | Production build | PASS | `npm run build` exited 0; `/account/billing` appeared in the route list. |
-| Full app Vitest excluding RLS | NOT COUNTED | `npx vitest run src --exclude src/lib/supabase-rls.integration.test.ts --no-file-parallelism --maxWorkers=1` produced no completion output after 120 seconds and was stopped. This is not counted as PASS. |
-| RLS integration | BLOCKED / FAIL-CLOSED | `npm run test:rls` -> 1 failed / 51 skipped. Error: `RLS suite blocked: MANU_ALLOW_REMOTE_RLS_TESTS`. This is not counted as PASS. |
-| Local Supabase status | BLOCKED | `npx supabase status` failed because Docker Desktop Linux engine pipe was unavailable. |
+| Full app Vitest excluding RLS | PASS | `npm run test` -> 237 files passed; 1435 tests passed; 9 skipped; duration 610.52s. The two stale own-profile role expectation tests were corrected to match the remediation Faz 1 RBAC contract (`owner/admin/dietitian` only). |
+| Pre-Faz 3 targeted Vitest | PASS | `npx vitest run src/lib/phase-85-stage-4d-own-profile.test.ts src/lib/phase-85-stage-4d-billing-pwa.test.ts src/lib/rate-limit.test.ts --no-file-parallelism --maxWorkers=1` -> 3 files passed, 16 tests passed. |
+| Clean local Supabase reset | PASS | `npx supabase db reset --local` exited 0 and applied through `20260728190000_phase_85_stage_4d_pre_faz3_rls_reclosure.sql`. |
+| RLS integration | PASS | Local Supabase CLI env was mapped in-process without editing `.env.local`; `npm run test:rls` -> 1 file passed, 53 tests passed, 0 skipped. |
+| Supabase DB lint | PASS with existing warnings | `npx supabase db lint --local` exited 0. Stage 4D `text[]` initialization warnings were removed; remaining warnings are existing Stage 4B/4C function warnings. |
 | `git diff --check` | PASS with CRLF warnings | Exited 0. Only Windows `LF will be replaced by CRLF` warnings were reported. |
 | Secret scan | PASS with documented false positives | `rg` found only existing docs/test fixture strings for sandbox `sk_test_`, blocked `sk_live_`, `whsec_test`, and scanner patterns; no new real secret values were added. |
 | Cross-tenant/body authority scan | PASS | Targeted `rg` over auth/commercial APIs and lib files found no new `body.tenantId`, `body.auth_user_id`, or body-supplied Stripe customer authority patterns. |
@@ -66,7 +70,7 @@ Executed from `app/` unless noted.
 
 ## Open Risks and Follow-Up
 
-- Stage 4D remediation is not re-closed until RLS can run against an approved local or remote Supabase target.
 - Remediation Faz 3 remains the next separately approved implementation unit.
 - Production pilot stays `NO-GO`; R-405 stays open.
 - Live billing remains closed; this phase only hardens sandbox billing portal access and recovery.
+- On Windows local Supabase, `supabase db reset --local` can leave Kong pointing at a stale Storage container IP. The verification run resolved this by restarting only the local `supabase_kong_manu-ai-local` container before the final RLS run.

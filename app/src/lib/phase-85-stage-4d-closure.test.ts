@@ -11,10 +11,12 @@ describe("phase 85 stage 4d closure contracts", () => {
     expect(resolveSettingsTab("invalid")).toBe("profile");
   });
 
-  it("limits own-profile mutation to active tenant members across roles", () => {
-    for (const role of ["owner", "admin", "dietitian", "assistant", "auditor"] as const) {
+  it("limits own-profile mutation to clinical account roles", () => {
+    for (const role of ["owner", "admin", "dietitian"] as const) {
       expect(hasCapability(role, "update_own_profile")).toBe(true);
     }
+    expect(hasCapability("assistant", "update_own_profile")).toBe(false);
+    expect(hasCapability("auditor", "update_own_profile")).toBe(false);
     expect(hasCapability("member", "update_own_profile")).toBe(false);
   });
 

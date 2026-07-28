@@ -16,7 +16,7 @@ declare
   v_current dietitians%rowtype;
   v_display_name text;
   v_ui_language text;
-  v_changed_fields text[] := '{}';
+  v_changed_fields text[] := array[]::text[];
   v_now timestamptz := now();
 begin
   if v_user_id is null then

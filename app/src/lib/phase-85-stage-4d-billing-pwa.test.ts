@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { buildSettingsHref, projectBillingVisibility } from "./phase-85-stage-4d-settings-contracts";
 import {
@@ -70,5 +72,26 @@ describe("phase 85 stage 4d billing and PWA", () => {
         entitlementStatus: "past_due",
       }).blockingReasonCodes,
     ).toEqual(["membership_required", "profile_required", "entitlement_inactive"]);
+  });
+
+  it("keeps the PWA audit migration idempotent and duplicate-safe before indexing", () => {
+    const migration = readFileSync(
+      join(
+        process.cwd(),
+        "supabase/migrations/20260728180000_phase_85_stage_4d_remediation_security_billing_pwa.sql",
+      ),
+      "utf8",
+    );
+
+    const archivePosition = migration.indexOf("create table if not exists mobile_install_audit_event_duplicate_archive");
+    const cleanupPosition = migration.indexOf("delete from mobile_install_audit_events events");
+    const uniqueIndexPosition = migration.indexOf("mobile_install_audit_events_daily_unique_idx");
+
+    expect(archivePosition).toBeGreaterThan(-1);
+    expect(cleanupPosition).toBeGreaterThan(archivePosition);
+    expect(uniqueIndexPosition).toBeGreaterThan(cleanupPosition);
+    expect(migration).toContain("alter table mobile_install_audit_event_duplicate_archive enable row level security");
+    expect(migration).toContain("revoke all on table mobile_install_audit_event_duplicate_archive");
+    expect(migration).toContain("on conflict (archived_id) do nothing");
   });
 });

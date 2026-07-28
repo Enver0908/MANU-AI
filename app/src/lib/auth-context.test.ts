@@ -112,10 +112,12 @@ describe("auth context error handling", () => {
     );
   });
 
-  it("allows all active tenant roles to update their own profile only", () => {
-    for (const role of ["owner", "admin", "dietitian", "assistant", "auditor"] as const) {
+  it("allows clinical account roles to update their own profile only", () => {
+    for (const role of ["owner", "admin", "dietitian"] as const) {
       expect(hasCapability(role, "update_own_profile")).toBe(true);
     }
+    expect(hasCapability("assistant", "update_own_profile")).toBe(false);
+    expect(hasCapability("auditor", "update_own_profile")).toBe(false);
     expect(hasCapability("assistant", "update_client")).toBe(false);
     expect(hasCapability("auditor", "manual_reply")).toBe(false);
   });

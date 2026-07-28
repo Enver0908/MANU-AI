@@ -232,6 +232,82 @@ alter table mobile_install_audit_events
   alter column event_day set default current_date,
   alter column event_day set not null;
 
+create table if not exists mobile_install_audit_event_duplicate_archive (
+  archived_id uuid primary key,
+  kept_id uuid not null,
+  tenant_id uuid not null,
+  dietitian_id uuid,
+  auth_user_id uuid,
+  event_type text not null,
+  event_day date not null,
+  user_agent_summary text not null default '',
+  original_created_at timestamptz not null,
+  archived_at timestamptz not null default now()
+);
+
+alter table mobile_install_audit_event_duplicate_archive enable row level security;
+
+drop policy if exists "service role only mobile install duplicate archive"
+on mobile_install_audit_event_duplicate_archive;
+create policy "service role only mobile install duplicate archive"
+on mobile_install_audit_event_duplicate_archive
+for all
+using (auth.role() = 'service_role')
+with check (auth.role() = 'service_role');
+
+with ranked as (
+  select
+    id,
+    first_value(id) over (
+      partition by tenant_id, dietitian_id, auth_user_id, event_type, event_day
+      order by created_at asc, id asc
+    ) as kept_id,
+    row_number() over (
+      partition by tenant_id, dietitian_id, auth_user_id, event_type, event_day
+      order by created_at asc, id asc
+    ) as duplicate_rank
+  from mobile_install_audit_events
+),
+duplicates as (
+  delete from mobile_install_audit_events events
+  using ranked
+  where events.id = ranked.id
+    and ranked.duplicate_rank > 1
+  returning
+    events.id,
+    ranked.kept_id,
+    events.tenant_id,
+    events.dietitian_id,
+    events.auth_user_id,
+    events.event_type,
+    events.event_day,
+    events.user_agent_summary,
+    events.created_at
+)
+insert into mobile_install_audit_event_duplicate_archive (
+  archived_id,
+  kept_id,
+  tenant_id,
+  dietitian_id,
+  auth_user_id,
+  event_type,
+  event_day,
+  user_agent_summary,
+  original_created_at
+)
+select
+  id,
+  kept_id,
+  tenant_id,
+  dietitian_id,
+  auth_user_id,
+  event_type,
+  event_day,
+  user_agent_summary,
+  created_at
+from duplicates
+on conflict (archived_id) do nothing;
+
 create unique index if not exists mobile_install_audit_events_daily_unique_idx
   on mobile_install_audit_events (tenant_id, dietitian_id, auth_user_id, event_type, event_day);
 
@@ -256,6 +332,7 @@ with check (
 );
 
 revoke all on table global_rate_limit_buckets from public, anon, authenticated;
+revoke all on table mobile_install_audit_event_duplicate_archive from public, anon, authenticated;
 revoke all on function consume_global_rate_limit(text, text, integer, integer, timestamptz) from public, anon, authenticated;
 grant execute on function consume_global_rate_limit(text, text, integer, integer, timestamptz) to service_role;
 grant execute on function consume_rate_limit(uuid, text, text, integer, integer, timestamptz) to service_role;

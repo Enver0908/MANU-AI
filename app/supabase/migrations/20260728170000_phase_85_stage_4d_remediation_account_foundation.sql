@@ -22,7 +22,7 @@ declare
   v_display_name text;
   v_ui_language text;
   v_timezone text;
-  v_changed_fields text[] := '{}';
+  v_changed_fields text[] := array[]::text[];
   v_now timestamptz := now();
 begin
   if v_user_id is null then
@@ -321,4 +321,3 @@ $$;
 
 revoke all on function p85_stage4d_read_account_members() from public, anon;
 grant execute on function p85_stage4d_read_account_members() to authenticated, service_role;
-
