@@ -1,6 +1,8 @@
 # MANU-AI Next Phase Execution Plan
 
-**Current authority (2026-07-28):** Stage 4C remediation is closed locally at commit `cd3d781` with measured verdict `PASS_LOCAL_STAGE_4C_REMEDIATED`; the Stage 4D handoff is committed at `bc57cfd`. Stage 4D Faz 2 settings foundation is complete (`/dashboard/settings` read-only). Evidence: `docs/PHASE_85_STAGE_4D_PHASE_2_SETTINGS_READ_ONLY_EVIDENCE.md`, `docs/PHASE_85_STAGE_4D_AYARLAR_HESAP_ACTION_PLAN.md`. **Next:** obtain separate user approval for Stage 4D Faz 3 Self Profile Preferences. Production remains `NO-GO`; R-405 remains open.
+**Current active remediation (2026-07-28):** Stage 4D post-closure remediation Faz 1 Profile and Tenant/Account Foundation is implemented locally and evidenced in `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_1_ACCOUNT_FOUNDATION_EVIDENCE.md`. The next implementation unit is remediation Faz 2 security/billing/PWA hardening only after separate approval. RLS verification remains blocked/fail-closed; production remains `NO-GO`; R-405 remains open.
+
+**Historical Stage 4D Faz 2 authority (2026-07-28):** Stage 4C remediation is closed locally at commit `cd3d781` with measured verdict `PASS_LOCAL_STAGE_4C_REMEDIATED`; the Stage 4D handoff is committed at `bc57cfd`. Stage 4D Faz 2 settings foundation is complete (`/dashboard/settings` read-only). Evidence: `docs/PHASE_85_STAGE_4D_PHASE_2_SETTINGS_READ_ONLY_EVIDENCE.md`, `docs/PHASE_85_STAGE_4D_AYARLAR_HESAP_ACTION_PLAN.md`. Active next-step planning is superseded by the Stage 4D remediation evidence above. Production remains `NO-GO`; R-405 remains open.
 
 Pre-Stage-4C Faz 1 Stage 4B-3 closure, Stage 4B-4 Phase 11 closure, and Stage 4B-4 R0-R9 paragraphs below this authority block are historical snapshots. Use the Stage 4C remediation evidence, local closure rehearsal evidence, and Stage 4C-to-Stage 4D continuity handoff evidence as current authority.
 

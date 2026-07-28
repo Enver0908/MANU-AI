@@ -1,6 +1,8 @@
 # MANU-AI Local App Prototype
 
-**Current authority (2026-07-28):** Stage 4D Ayarlar / Hesap is closed locally with measured verdict `PASS_LOCAL_STAGE_4D_CLOSED`. Evidence: `docs/PHASE_85_STAGE_4D_CLOSURE_EVIDENCE.md`. **Next:** separate user approval for Phase 85 Stage 5. Production remains `NO-GO`; R-405 remains open.
+**Current active remediation (2026-07-28):** Stage 4D post-closure remediation Faz 1 Profile and Tenant/Account Foundation is implemented locally and evidenced in `../docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_1_ACCOUNT_FOUNDATION_EVIDENCE.md`. RLS verification is still blocked/fail-closed, so Stage 4D remediation is not re-closed. Production remains `NO-GO`; R-405 remains open.
+
+**Historical closure authority (2026-07-28):** Stage 4D Ayarlar / Hesap was closed locally with measured verdict `PASS_LOCAL_STAGE_4D_CLOSED`. Evidence: `../docs/PHASE_85_STAGE_4D_CLOSURE_EVIDENCE.md`. Active next-step planning is superseded by the Stage 4D remediation evidence above. Production remains `NO-GO`; R-405 remains open.
 
 2026-07-14: **Stage 4B-3 Phase 12 golden corpus, red team, scale rehearsal, and closure evidence is complete locally.** Closure evaluator in `src/lib/phase-85-stage-4b3-closure.ts`, golden corpus in `src/lib/phase-85-stage-4b3-golden-corpus.jsonl`, rehearsal via `npm run rehearse:stage-4b3:media`, visual spec in `tests/visual/stage-4b3-media.visual.spec.ts`. Evidence: `../docs/PHASE_85_STAGE_4B_3_PHASE_12_GOLDEN_CORPUS_RED_TEAM_CLOSURE_EVIDENCE.md`. Canonical spec: `../docs/PHASE_85_STAGE_4B_3_MULTIMODAL_GORSEL_GUVENLIK_SPEC.md`. Stage 4B-3 later closed through R9; Stage 4B-4 is current before Stage 4C. Production pilot remains `NO-GO`.
 

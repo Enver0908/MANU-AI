@@ -240,9 +240,9 @@ export function updateDietitianPreferencesInState(
 
 export function updateOwnProfileInState(
   state: ManuAppState,
-  input: { displayName?: string; uiLanguage?: SupportedLanguageCode },
-): { state: ManuAppState; changedFields: Array<"displayName" | "uiLanguage"> } {
-  const changedFields: Array<"displayName" | "uiLanguage"> = [];
+  input: { displayName?: string; uiLanguage?: SupportedLanguageCode; timezone?: string },
+): { state: ManuAppState; changedFields: Array<"displayName" | "uiLanguage" | "timezone"> } {
+  const changedFields: Array<"displayName" | "uiLanguage" | "timezone"> = [];
   const nextDietitian = { ...state.dietitian };
 
   if (input.displayName !== undefined && input.displayName !== nextDietitian.displayName) {
@@ -252,6 +252,10 @@ export function updateOwnProfileInState(
   if (input.uiLanguage !== undefined && input.uiLanguage !== nextDietitian.uiLanguage) {
     nextDietitian.uiLanguage = input.uiLanguage;
     changedFields.push("uiLanguage");
+  }
+  if (input.timezone !== undefined && input.timezone !== nextDietitian.timezone) {
+    nextDietitian.timezone = input.timezone;
+    changedFields.push("timezone");
   }
 
   if (changedFields.length === 0) {

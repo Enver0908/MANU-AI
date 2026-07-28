@@ -1,9 +1,17 @@
 # Phase 85 Stage 4D Ayarlar / Hesap Action Plan
 
 Date: 2026-07-28
+
+Active remediation status: **POST-CLOSURE REMEDIATION IN PROGRESS - Faz 1 Profile and Tenant/Account Foundation implemented locally; RLS verification remains blocked by local/remote RLS preflight.**
+
+Remediation authority: `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_1_ACCOUNT_FOUNDATION_EVIDENCE.md`.
+
+Historical closure snapshot:
 Status: **CLOSED locally — measured verdict `PASS_LOCAL_STAGE_4D_CLOSED` at closure commit on `codex/stage-4c-remediation`**
 
 Stage 4D owns authenticated dashboard settings and account workflows for the dietitian-facing SaaS/PWA prototype. Faz 1–6 are complete. Evidence: `docs/PHASE_85_STAGE_4D_CLOSURE_EVIDENCE.md`.
+
+Post-closure audit supersedes the practical next-step interpretation of the historical closure snapshot: tenant account/membership foundation, canonical profile API/timezone, profile RBAC, and fallback mutation boundaries required remediation. Remediation Faz 1 is implemented locally; Faz 2 and Faz 3 remediation remain separate future approvals.
 
 Production remains `NO-GO`. R-405 remains open. Real WhatsApp, Telegram, external LLM, embedding, OCR, STT, live billing, monitoring, backup, secret-manager, and real health-data egress paths remain closed.
 
@@ -239,4 +247,4 @@ Completion criteria:
 
 ## Next Single Phase
 
-Stage 4D is closed. Next Phase 85 unit: **Stage 5 — Dashboard and Mobile PWA Shell** (separate user approval required). Commit, push, PR, deploy, and next-stage implementation each require explicit user command.
+Stage 4D post-closure remediation is active. Next implementation unit: **Stage 4D remediation Faz 2 - Auth, Billing, PWA Hardening** (separate user approval required). Stage 5 is not the next active implementation unit until Stage 4D remediation is re-closed. Commit, push, PR, deploy, and next-stage implementation each require explicit user command.

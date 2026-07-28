@@ -1,5 +1,7 @@
 # Phase 85: SiriusAI Frontend Redesign And Design System Spec
 
+Current Stage 4D remediation UI note, 2026-07-28: remediation Faz 1 adds `timezone` to the existing Settings profile form and switches profile save to canonical `/api/account/profile`. This is a minimal settings-form extension, not a dashboard shell redesign. Evidence: `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_1_ACCOUNT_FOUNDATION_EVIDENCE.md`.
+
 Current Phase 85 status, 2026-07-28: Stage 4C remediation remains closed at `cd3d781`; **Stage 4D Ayarlar / Hesap is closed locally** with verdict `PASS_LOCAL_STAGE_4D_CLOSED`. Evidence: `docs/PHASE_85_STAGE_4D_CLOSURE_EVIDENCE.md`. Next is separately approved Stage 5; production remains `NO-GO`.
 
 Date: 2026-07-07

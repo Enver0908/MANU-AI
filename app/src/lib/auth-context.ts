@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { assertActiveCommercialEntitlement } from "./commercial-entitlement-access";
 import { createSupabaseServerClient, isSupabaseConfigured } from "./supabase";
 import type { TenantRole } from "./types";
@@ -30,6 +31,10 @@ export type AppTenantContext = {
   role: TenantRole;
 };
 
+export type AccountTenantContext = AppTenantContext & {
+  supabase: SupabaseClient;
+};
+
 export class AppAuthError extends Error {
   status: 401 | 403;
 
@@ -41,6 +46,17 @@ export class AppAuthError extends Error {
 }
 
 export async function resolveAppTenantContext(): Promise<AppTenantContext> {
+  const accountContext = await resolveAccountTenantContext();
+  await assertActiveCommercialEntitlement(accountContext.tenantId);
+  return {
+    tenantId: accountContext.tenantId,
+    dietitianId: accountContext.dietitianId,
+    userId: accountContext.userId,
+    role: accountContext.role,
+  };
+}
+
+export async function resolveAccountTenantContext(): Promise<AccountTenantContext> {
   if (!isSupabaseConfigured()) {
     throw new AppAuthError(401, "supabase_not_configured");
   }
@@ -104,9 +120,8 @@ export async function resolveAppTenantContext(): Promise<AppTenantContext> {
     dietitianId: dietitian.data.id,
     userId: user.id,
     role: membership.data.role as TenantRole,
+    supabase,
   };
-
-  await assertActiveCommercialEntitlement(context.tenantId);
 
   return context;
 }
@@ -133,7 +148,7 @@ export function hasCapability(role: TenantRole, capability: AppCapability) {
   }
 
   if (capability === "update_own_profile") {
-    return role === "owner" || role === "admin" || role === "dietitian" || role === "assistant" || role === "auditor";
+    return role === "owner" || role === "admin" || role === "dietitian";
   }
 
   if (role === "owner" || role === "admin" || role === "dietitian") {

@@ -6,11 +6,13 @@ import { Button, Field, SelectInput, TextInput } from "@/components/ui";
 import { SUPPORTED_LANGUAGES, type SupportedLanguageCode } from "@/lib/languages";
 import type { DashboardMessageKey } from "@/lib/i18n";
 import { t } from "@/lib/i18n";
+import { COMMON_PROFILE_TIMEZONES } from "@/lib/phase-85-stage-4d-own-profile";
 import type { SettingsAccountReadModel } from "@/lib/phase-85-stage-4d-settings-contracts";
 
 type ProfileFormState = {
   displayName: string;
   uiLanguage: SupportedLanguageCode;
+  timezone: string;
 };
 
 export function SettingsProfileForm({
@@ -25,8 +27,9 @@ export function SettingsProfileForm({
     () => ({
       displayName: model.profile.displayName,
       uiLanguage: model.profile.uiLanguage,
+      timezone: model.profile.timezone,
     }),
-    [model.profile.displayName, model.profile.uiLanguage],
+    [model.profile.displayName, model.profile.timezone, model.profile.uiLanguage],
   );
   const [form, setForm] = useState<ProfileFormState>(initial);
   const [error, setError] = useState<string | null>(null);
@@ -34,7 +37,9 @@ export function SettingsProfileForm({
   const [saving, setSaving] = useState(false);
 
   const isDirty =
-    form.displayName.trim() !== initial.displayName.trim() || form.uiLanguage !== initial.uiLanguage;
+    form.displayName.trim() !== initial.displayName.trim() ||
+    form.uiLanguage !== initial.uiLanguage ||
+    form.timezone !== initial.timezone;
 
   useEffect(() => {
     const onBeforeUnload = (event: BeforeUnloadEvent) => {
@@ -52,16 +57,19 @@ export function SettingsProfileForm({
     setError(null);
     setSuccess(false);
 
-    const payload: { displayName?: string; uiLanguage?: SupportedLanguageCode } = {};
+    const payload: { displayName?: string; uiLanguage?: SupportedLanguageCode; timezone?: string } = {};
     if (form.displayName.trim() !== initial.displayName.trim()) {
       payload.displayName = form.displayName.trim();
     }
     if (form.uiLanguage !== initial.uiLanguage) {
       payload.uiLanguage = form.uiLanguage;
     }
+    if (form.timezone !== initial.timezone) {
+      payload.timezone = form.timezone;
+    }
 
     try {
-      const response = await fetch("/api/dietitian/preferences", {
+      const response = await fetch("/api/account/profile", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -76,6 +84,7 @@ export function SettingsProfileForm({
         setForm({
           displayName: data.profile.displayName,
           uiLanguage: data.profile.uiLanguage,
+          timezone: data.profile.timezone,
         });
       }
       setSuccess(true);
@@ -101,6 +110,21 @@ export function SettingsProfileForm({
           maxLength={80}
           disabled={saving}
         />
+      </Field>
+
+      <Field label={t(uiLanguage, "settingsProfileTimezone")} htmlFor="settings-profile-timezone" required>
+        <SelectInput
+          id="settings-profile-timezone"
+          value={form.timezone}
+          onChange={(event) => setForm((current) => ({ ...current, timezone: event.target.value }))}
+          disabled={saving}
+        >
+          {COMMON_PROFILE_TIMEZONES.map((timezone) => (
+            <option key={timezone} value={timezone}>
+              {timezone}
+            </option>
+          ))}
+        </SelectInput>
       </Field>
 
       <Field label={t(uiLanguage, "settingsProfileLanguage")} htmlFor="settings-profile-language" required>

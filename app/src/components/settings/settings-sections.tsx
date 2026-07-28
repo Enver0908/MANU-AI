@@ -75,7 +75,7 @@ export function SettingsProfileSection({
         <CardBody>
           {editable ? (
             <SettingsProfileForm
-              key={`${model.profile.displayName}:${model.profile.uiLanguage}`}
+              key={`${model.profile.displayName}:${model.profile.uiLanguage}:${model.profile.timezone}`}
               model={model}
               uiLanguage={uiLanguage}
             />
@@ -86,6 +86,7 @@ export function SettingsProfileSection({
                 label={t(uiLanguage, "settingsProfileLanguage")}
                 value={languageLabel(model.profile.uiLanguage)}
               />
+              <FactRow label={t(uiLanguage, "settingsProfileTimezone")} value={model.profile.timezone} />
             </dl>
           )}
         </CardBody>

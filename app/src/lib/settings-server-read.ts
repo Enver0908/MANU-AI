@@ -99,11 +99,11 @@ export async function resolveSettingsAccountReadModel(): Promise<SettingsServerR
     };
   }
 
-  let dietitian: { display_name: string | null; ui_language: string | null } | null = null;
+  let dietitian: { display_name: string | null; ui_language: string | null; timezone: string | null } | null = null;
   try {
     const dietitianResult = await supabase
       .from("dietitians")
-      .select("display_name, ui_language")
+      .select("display_name, ui_language, timezone")
       .eq("tenant_id", membership.tenant_id)
       .eq("auth_user_id", user.id)
       .maybeSingle();
@@ -122,14 +122,18 @@ export async function resolveSettingsAccountReadModel(): Promise<SettingsServerR
   const uiLanguage = normalizeLanguageCode(dietitian?.ui_language);
 
   let tenantName = "Çalışma alanı";
+  let settingsRevision = 0;
   try {
     const tenantResult = await supabase
       .from("tenants")
-      .select("name")
+      .select("name, settings_revision")
       .eq("id", membership.tenant_id)
       .maybeSingle();
     if (!tenantResult.error && tenantResult.data?.name) {
       tenantName = String(tenantResult.data.name);
+    }
+    if (!tenantResult.error && typeof tenantResult.data?.settings_revision === "number") {
+      settingsRevision = tenantResult.data.settings_revision;
     }
   } catch {
     // Keep generic workspace label; do not expose query details.
@@ -172,6 +176,7 @@ export async function resolveSettingsAccountReadModel(): Promise<SettingsServerR
     profile: {
       displayName: dietitian?.display_name || user.email || "Diyetisyen",
       uiLanguage,
+      timezone: dietitian?.timezone || "Europe/Istanbul",
     },
     security: {
       available: true,
@@ -183,6 +188,7 @@ export async function resolveSettingsAccountReadModel(): Promise<SettingsServerR
       name: tenantName,
       role,
       membershipActive: true,
+      settingsRevision,
     },
     billing: projectBillingVisibility({
       role,

@@ -4,7 +4,9 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 ## Current Status
 
-**Current authority (2026-07-28):** Stage 4D Ayarlar / Hesap is closed locally with measured verdict `PASS_LOCAL_STAGE_4D_CLOSED`. Evidence: `docs/PHASE_85_STAGE_4D_CLOSURE_EVIDENCE.md`. **Next:** separate user approval for Phase 85 Stage 5. Production remains `NO-GO`; R-405 remains open.
+**Current active remediation (2026-07-28):** Stage 4D post-closure remediation Faz 1 Profile and Tenant/Account Foundation is implemented locally and evidenced in `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_1_ACCOUNT_FOUNDATION_EVIDENCE.md`. RLS verification is still blocked/fail-closed, so Stage 4D remediation is not re-closed. Production remains `NO-GO`; R-405 remains open.
+
+**Historical closure authority (2026-07-28):** Stage 4D Ayarlar / Hesap was closed locally with measured verdict `PASS_LOCAL_STAGE_4D_CLOSED`. Evidence: `docs/PHASE_85_STAGE_4D_CLOSURE_EVIDENCE.md`. Active next-step planning is superseded by the Stage 4D remediation evidence above. Production remains `NO-GO`; R-405 remains open.
 
 **2026-07-18 Stage 4B-4 post-closure remediation R9:** R0-R9 is closed locally with local Supabase RLS 41/41 zero-skip, full-scale voice closure, release verification, visual acceptance, channel replay, and risk reconciliation. Evidence: `docs/PHASE_85_STAGE_4B_4_POST_CLOSURE_REMEDIATION_R9_EVIDENCE.md`.
 
@@ -102,7 +104,7 @@ P85-IF-D added complete transcript and human-control coordination for business-h
 
 This repository is a local SaaS/PWA pilot prototype and architecture workspace. It is not a production-connected system yet.
 
-**Latest implementation phase:** Phase 85 Stage 4D Ayarlar / Hesap is closed locally with verdict `PASS_LOCAL_STAGE_4D_CLOSED`. Evidence: `docs/PHASE_85_STAGE_4D_CLOSURE_EVIDENCE.md`. **Current work:** next requires separate approval for Phase 85 Stage 5. **Production pilot:** `NO-GO` (unchanged); R-405 remains open.
+**Latest implementation phase:** Phase 85 Stage 4D post-closure remediation Faz 1 Profile and Tenant/Account Foundation is implemented locally. Evidence: `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_1_ACCOUNT_FOUNDATION_EVIDENCE.md`. **Current work:** remediation Faz 2 requires separate approval; Stage 5 is not the next active implementation unit while remediation remains open. **Production pilot:** `NO-GO` (unchanged); R-405 remains open.
 
 **Phase 82 verification:** targeted Phase 82 tests passed (5 files, 31/31); Phase 82G records `repoLocalClosureComplete: true` with verification `blocked` because `npm run test:rls` remains skipped/pending when local Supabase is unavailable.
 

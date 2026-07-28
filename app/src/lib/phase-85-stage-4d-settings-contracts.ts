@@ -28,6 +28,7 @@ export type SettingsAccountReadModel = {
   profile: {
     displayName: string;
     uiLanguage: SupportedLanguageCode;
+    timezone: string;
   };
   security: {
     available: boolean;
@@ -39,6 +40,7 @@ export type SettingsAccountReadModel = {
     name: string;
     role: TenantRole | "member";
     membershipActive: boolean;
+    settingsRevision: number;
   };
   billing: {
     /** Owner/admin see subscription status; other roles only see workspace-access-active. */
@@ -128,6 +130,7 @@ export function buildFallbackSettingsAccountReadModel(
     profile: {
       displayName: "Demo Diyetisyen",
       uiLanguage,
+      timezone: "Europe/Istanbul",
     },
     security: {
       available: false,
@@ -139,6 +142,7 @@ export function buildFallbackSettingsAccountReadModel(
       name: "Demo Çalışma Alanı",
       role: "dietitian",
       membershipActive: true,
+      settingsRevision: 0,
     },
     billing: projectBillingVisibility({
       role: "dietitian",

@@ -1,6 +1,8 @@
 # Handoff For Next Codex
 
-**Current authority (2026-07-28):** Stage 4D Ayarlar / Hesap is closed locally on `codex/stage-4c-remediation` with measured verdict `PASS_LOCAL_STAGE_4D_CLOSED`. Evidence: `docs/PHASE_85_STAGE_4D_CLOSURE_EVIDENCE.md`, `docs/PHASE_85_STAGE_4D_AYARLAR_HESAP_ACTION_PLAN.md`. **Next:** obtain separate user approval for Phase 85 Stage 5 Dashboard and Mobile PWA Shell. Production remains `NO-GO`; R-405 remains open; R-406 local Supabase/RLS re-run remains **BLOCKED** without local Supabase.
+**Current active remediation (2026-07-28):** Stage 4D post-closure remediation Faz 1 Profile and Tenant/Account Foundation is implemented locally and evidenced in `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_1_ACCOUNT_FOUNDATION_EVIDENCE.md`. RLS verification is still blocked/fail-closed, so Stage 4D remediation is not re-closed. Next implementation is remediation Faz 2 only after separate approval. Production remains `NO-GO`; R-405 remains open.
+
+**Historical closure authority (2026-07-28):** Stage 4D Ayarlar / Hesap was closed locally on `codex/stage-4c-remediation` with measured verdict `PASS_LOCAL_STAGE_4D_CLOSED`. Evidence: `docs/PHASE_85_STAGE_4D_CLOSURE_EVIDENCE.md`, `docs/PHASE_85_STAGE_4D_AYARLAR_HESAP_ACTION_PLAN.md`. Active next-step planning is superseded by the Stage 4D remediation evidence above. Production remains `NO-GO`; R-405 remains open; RLS verification remains blocked/fail-closed.
 
 Pre-Stage-4D Stage 4B and Stage 4C paragraphs below this authority block are historical snapshots. Use the Stage 4D action plan, Stage 4D Faz 1 read-gate evidence, Stage 4C remediation evidence, and Stage 4C-to-Stage 4D continuity handoff evidence as current authority.
 
@@ -560,9 +562,9 @@ The product must be both:
 - Personas affect communication style only, never clinical safety.
 - The system must know which WhatsApp/Telegram messages were written by AI and which were written manually by the dietitian.
 
-## Current Next Phase
+## Historical Next Phase Snapshot
 
-P85-IF-A through P85-IF-I are complete and P85-IF is closed. Stage 4B Uyari ve Bildirimler and Stage 4B-2 Mesajlasma are complete (2026-07-12). **Next authorized implementation unit:** Stage 4C Diyetisyen Icin AI Chat, then Stage 4D, Stage 5, Stage 6, and Stage 7. Production pilot remains `NO-GO`; all external launch gates remain open; R-405 remains open; R-406 current local Supabase/RLS re-run remains pending (35 tests skipped on 2026-07-12).
+Historical 2026-07-12 snapshot: P85-IF-A through P85-IF-I were complete and P85-IF was closed. Stage 4B Uyari ve Bildirimler and Stage 4B-2 Mesajlasma were complete. That checkpoint's next-unit wording for Stage 4C/Stage 4D/Stage 5 is superseded by the active Stage 4D remediation authority at the top of this handoff. Production pilot remains `NO-GO`; all external launch gates remain open; R-405 remains open.
 
 ## Previous Next Phase - Phase 82F - 2026-06-30
 

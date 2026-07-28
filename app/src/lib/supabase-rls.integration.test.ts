@@ -2510,7 +2510,7 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     expect(afterRevocation.data).toHaveLength(0);
   });
 
-  it("updates own profile through Stage 4D RPC with idempotent minimized audit metadata", async () => {
+  it("updates own profile through Stage 4D v2 RPC with idempotent minimized audit metadata and role boundaries", async () => {
     const owner = await signIn("rls-member@manu.local");
     const assistant = await signIn("rls-assistant@manu.local");
     const auditor = await signIn("rls-auditor@manu.local");
@@ -2522,21 +2522,24 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
       .eq("tenant_id", TEST_TENANT_ID)
       .eq("event_type", "stage_4d_own_profile_updated");
 
-    const ownerUpdate = await owner.rpc("p85_stage4d_update_own_profile", {
+    const ownerUpdate = await owner.rpc("p85_stage4d_update_own_profile_v2", {
       p_display_name: "RLS Owner Profile",
       p_ui_language: "en",
+      p_timezone: "Europe/London",
     });
     expect(ownerUpdate.error).toBeNull();
     expect(ownerUpdate.data?.profile?.displayName).toBe("RLS Owner Profile");
-    expect(ownerUpdate.data?.changedFields).toEqual(expect.arrayContaining(["displayName", "uiLanguage"]));
+    expect(ownerUpdate.data?.profile?.timezone).toBe("Europe/London");
+    expect(ownerUpdate.data?.changedFields).toEqual(expect.arrayContaining(["displayName", "uiLanguage", "timezone"]));
 
     const ownerDietitian = await admin
       .from("dietitians")
-      .select("display_name, ui_language")
+      .select("display_name, ui_language, timezone")
       .eq("id", TEST_DIETITIAN_ID)
       .single();
     expect(ownerDietitian.data?.display_name).toBe("RLS Owner Profile");
     expect(ownerDietitian.data?.ui_language).toBe("en");
+    expect(ownerDietitian.data?.timezone).toBe("Europe/London");
 
     const ownerAudit = await admin
       .from("audit_events")
@@ -2551,11 +2554,12 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     expect(ownerAudit.data?.metadata).toEqual(
       expect.objectContaining({ minimized: true, changedFields: expect.any(Array) }),
     );
-    expect(JSON.stringify(ownerAudit.data?.metadata)).not.toMatch(/RLS Owner Profile/);
+    expect(JSON.stringify(ownerAudit.data?.metadata)).not.toMatch(/RLS Owner Profile|Europe\/London/);
 
-    const idempotent = await owner.rpc("p85_stage4d_update_own_profile", {
+    const idempotent = await owner.rpc("p85_stage4d_update_own_profile_v2", {
       p_display_name: "RLS Owner Profile",
       p_ui_language: "en",
+      p_timezone: "Europe/London",
     });
     expect(idempotent.error).toBeNull();
     expect(idempotent.data?.changedFields).toEqual([]);
@@ -2567,29 +2571,29 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
       .eq("event_type", "stage_4d_own_profile_updated");
     expect(afterIdempotentAudit.count).toBe((beforeAudit.count ?? 0) + 1);
 
-    const assistantUpdate = await assistant.rpc("p85_stage4d_update_own_profile", {
+    const assistantUpdate = await assistant.rpc("p85_stage4d_update_own_profile_v2", {
       p_display_name: "RLS Assistant Updated",
     });
-    expect(assistantUpdate.error).toBeNull();
+    expect(assistantUpdate.error?.message).toMatch(/rbac_forbidden_update_own_profile/i);
     const assistantProfile = await admin
       .from("dietitians")
       .select("display_name")
       .eq("id", ASSISTANT_DIETITIAN_ID)
       .single();
-    expect(assistantProfile.data?.display_name).toBe("RLS Assistant Updated");
+    expect(assistantProfile.data?.display_name).toBe("RLS Assistant Staff");
 
-    const auditorUpdate = await auditor.rpc("p85_stage4d_update_own_profile", {
+    const auditorUpdate = await auditor.rpc("p85_stage4d_update_own_profile_v2", {
       p_ui_language: "de",
     });
-    expect(auditorUpdate.error).toBeNull();
+    expect(auditorUpdate.error?.message).toMatch(/rbac_forbidden_update_own_profile/i);
 
-    const outsiderRpc = await outsider.rpc("p85_stage4d_update_own_profile", {
+    const outsiderRpc = await outsider.rpc("p85_stage4d_update_own_profile_v2", {
       p_display_name: "Outsider Hack",
     });
     expect(outsiderRpc.error).not.toBeNull();
 
     const crossTenant = await signIn("rls-other-tenant@manu.local");
-    const crossAttempt = await crossTenant.rpc("p85_stage4d_update_own_profile", {
+    const crossAttempt = await crossTenant.rpc("p85_stage4d_update_own_profile_v2", {
       p_display_name: "Cross Tenant Profile",
     });
     expect(crossAttempt.error).toBeNull();
@@ -2600,16 +2604,79 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
       .single();
     expect(testDietitian.data?.display_name).toBe("RLS Owner Profile");
 
-    const invalidLang = await owner.rpc("p85_stage4d_update_own_profile", {
+    const invalidLang = await owner.rpc("p85_stage4d_update_own_profile_v2", {
       p_ui_language: "xx",
     });
     expect(invalidLang.error).not.toBeNull();
+
+    const invalidTimezone = await owner.rpc("p85_stage4d_update_own_profile_v2", {
+      p_timezone: "Not/AZone",
+    });
+    expect(invalidTimezone.error?.message).toMatch(/invalid_timezone/i);
 
     const directUpdate = await owner
       .from("dietitians")
       .update({ display_name: "Direct Table Hack" })
       .eq("id", TEST_DIETITIAN_ID);
     expect(directUpdate.error).not.toBeNull();
+  }, 30000);
+
+  it("protects Stage 4D account workspace mutations with owner/admin RBAC and expected revision", async () => {
+    const owner = await signIn("rls-member@manu.local");
+    const assistant = await signIn("rls-assistant@manu.local");
+
+    const before = await admin
+      .from("tenants")
+      .select("name, settings_revision")
+      .eq("id", TEST_TENANT_ID)
+      .single();
+    expect(before.error).toBeNull();
+
+    const assistantAttempt = await assistant.rpc("p85_stage4d_update_account_workspace", {
+      p_name: "Assistant Workspace Hack",
+      p_expected_settings_revision: before.data?.settings_revision ?? 0,
+    });
+    expect(assistantAttempt.error?.message).toMatch(/rbac_forbidden_manage_account_settings/i);
+
+    const staleAttempt = await owner.rpc("p85_stage4d_update_account_workspace", {
+      p_name: "RLS Workspace Name",
+      p_expected_settings_revision: (before.data?.settings_revision ?? 0) + 1,
+    });
+    expect(staleAttempt.error?.message).toMatch(/settings_revision_conflict/i);
+
+    const ownerUpdate = await owner.rpc("p85_stage4d_update_account_workspace", {
+      p_name: "RLS Workspace Name",
+      p_expected_settings_revision: before.data?.settings_revision ?? 0,
+    });
+    expect(ownerUpdate.error).toBeNull();
+    expect(ownerUpdate.data).toEqual(
+      expect.objectContaining({
+        name: "RLS Workspace Name",
+        settingsRevision: (before.data?.settings_revision ?? 0) + 1,
+        role: "owner",
+        membershipActive: true,
+      }),
+    );
+
+    const tenant = await admin
+      .from("tenants")
+      .select("name, settings_revision")
+      .eq("id", TEST_TENANT_ID)
+      .single();
+    expect(tenant.data?.name).toBe("RLS Workspace Name");
+    expect(tenant.data?.settings_revision).toBe((before.data?.settings_revision ?? 0) + 1);
+
+    const members = await owner.rpc("p85_stage4d_read_account_members");
+    expect(members.error).toBeNull();
+    expect(members.data).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ role: "owner", membershipActive: true }),
+      ]),
+    );
+    expect(JSON.stringify(members.data)).not.toMatch(/00000000-|rls-member@manu.local/);
+
+    const assistantMembers = await assistant.rpc("p85_stage4d_read_account_members");
+    expect(assistantMembers.error?.message).toMatch(/rbac_forbidden_read_account_members/i);
   }, 30000);
 
   it("blocks direct authenticated writes to account_security_events", async () => {

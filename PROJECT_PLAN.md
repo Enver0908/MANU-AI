@@ -1,8 +1,10 @@
 # MANU-AI Project Plan v2
 
-**Current authority (2026-07-28):** Stage 4D Ayarlar / Hesap is closed locally on `codex/stage-4c-remediation` with measured verdict `PASS_LOCAL_STAGE_4D_CLOSED`. Evidence: `docs/PHASE_85_STAGE_4D_CLOSURE_EVIDENCE.md`. **Next:** separate user approval for Phase 85 Stage 5. Production remains `NO-GO`; R-405 remains open.
+**Current active remediation (2026-07-28):** Stage 4D post-closure remediation Faz 1 Profile and Tenant/Account Foundation is implemented locally and evidenced in `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_1_ACCOUNT_FOUNDATION_EVIDENCE.md`. RLS verification is still blocked/fail-closed, so Stage 4D remediation is not re-closed. Production remains `NO-GO`; R-405 remains open.
 
-Current continuity status, 2026-07-28: prior Stage 4B tracks and Stage 4C remediation remain closed locally. **Stage 4D is closed locally** with verdict `PASS_LOCAL_STAGE_4D_CLOSED`. Next active action: separate approval for Phase 85 Stage 5. Push remains separate. Production remains `NO-GO`; R-405 remains open.
+**Historical closure authority (2026-07-28):** Stage 4D Ayarlar / Hesap was closed locally on `codex/stage-4c-remediation` with measured verdict `PASS_LOCAL_STAGE_4D_CLOSED`. Evidence: `docs/PHASE_85_STAGE_4D_CLOSURE_EVIDENCE.md`. Active next-step planning is superseded by the Stage 4D remediation evidence above. Production remains `NO-GO`; R-405 remains open.
+
+Current continuity status, 2026-07-28: prior Stage 4B tracks and Stage 4C remediation remain closed locally. Stage 4D post-closure remediation is active; remediation Faz 1 is implemented locally and remediation Faz 2 requires separate approval. Push remains separate. Production remains `NO-GO`; R-405 remains open.
 
 ## Confidence Position
 

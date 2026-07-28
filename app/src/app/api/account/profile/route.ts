@@ -1,10 +1,49 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { authErrorResponse, requireCapability, resolveAccountTenantContext } from "@/lib/auth-context";
+import { normalizeLanguageCode } from "@/lib/languages";
 import {
   OwnProfileValidationError,
+  mapOwnProfileRpcError,
   parseOwnProfilePatchBody,
 } from "@/lib/phase-85-stage-4d-own-profile";
+import { buildFallbackSettingsAccountReadModel } from "@/lib/phase-85-stage-4d-settings-contracts";
 import { isSupabaseStoreConfigured, updateSupabaseOwnProfile } from "@/lib/supabase-store";
+
+export async function GET() {
+  if (!isSupabaseStoreConfigured()) {
+    const model = buildFallbackSettingsAccountReadModel();
+    return NextResponse.json({ profile: model.profile, runtime: model.runtime });
+  }
+
+  let tenantContext;
+  try {
+    tenantContext = await resolveAccountTenantContext();
+  } catch (error) {
+    return authErrorResponse(error);
+  }
+
+  const { data, error } = await tenantContext.supabase
+    .from("dietitians")
+    .select("display_name, ui_language, timezone")
+    .eq("tenant_id", tenantContext.tenantId)
+    .eq("auth_user_id", tenantContext.userId)
+    .maybeSingle();
+
+  if (error) {
+    return NextResponse.json({ error: "profile_read_failed" }, { status: 500 });
+  }
+  if (!data) {
+    return NextResponse.json({ error: "no_dietitian_profile" }, { status: 403 });
+  }
+
+  return NextResponse.json({
+    profile: {
+      displayName: data.display_name || "Diyetisyen",
+      uiLanguage: normalizeLanguageCode(data.ui_language),
+      timezone: data.timezone || "Europe/Istanbul",
+    },
+  });
+}
 
 export async function PATCH(request: NextRequest) {
   let body: Record<string, unknown>;
@@ -32,10 +71,10 @@ export async function PATCH(request: NextRequest) {
     const tenantContext = await resolveAccountTenantContext();
     requireCapability(tenantContext, "update_own_profile");
     const result = await updateSupabaseOwnProfile(patch, tenantContext, tenantContext.supabase);
-    return NextResponse.json({ ...result, compatibilityEndpoint: "/api/account/profile" });
+    return NextResponse.json(result);
   } catch (error) {
     if (error instanceof Error) {
-      const message = error.message;
+      const message = mapOwnProfileRpcError(error.message);
       if (message === "unauthenticated" || message === "supabase_not_configured") {
         return NextResponse.json({ error: message }, { status: 401 });
       }

@@ -81,6 +81,8 @@ describe("phase-85-stage-4d settings contracts", () => {
     expect(model.runtime.identityActionsAvailable).toBe(false);
     expect(model.runtime.billingActionsAvailable).toBe(false);
     expect(model.runtime.pwaActionsAvailable).toBe(false);
+    expect(model.profile.timezone).toBe("Europe/Istanbul");
+    expect(model.workspace.settingsRevision).toBe(0);
     expect(model.security.available).toBe(false);
     expect(model.application.installState).toBe("unavailable");
     expect(() => assertSettingsReadModelHasNoInternalIds(model)).not.toThrow();

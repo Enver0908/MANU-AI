@@ -15,8 +15,10 @@ import { assertAiChatClientExportHasNoLeaks } from "./phase-85-stage-4c-lifecycl
 import {
   mapOwnProfileRpcError,
   mapOwnProfileRpcResult,
+  type OwnProfileChangedField,
   OwnProfileValidationError,
   validateDisplayName,
+  validateTimezone,
   validateUiLanguage,
 } from "./phase-85-stage-4d-own-profile";
 import { supabaseBuildClientScopedExportSlice } from "./phase-85-stage-4c-supabase-lifecycle";
@@ -3409,26 +3411,31 @@ export async function updateSupabaseDietitianPreferences(
 }
 
 export async function updateSupabaseOwnProfile(
-  input: { displayName?: string; uiLanguage?: SupportedLanguageCode },
+  input: { displayName?: string; uiLanguage?: SupportedLanguageCode; timezone?: string },
   _context = demoTenantContext(),
+  rpcClient?: SupabaseClient,
 ): Promise<{
-  profile: { displayName: string; uiLanguage: SupportedLanguageCode };
-  changedFields: Array<"displayName" | "uiLanguage">;
+  profile: { displayName: string; uiLanguage: SupportedLanguageCode; timezone: string };
+  changedFields: OwnProfileChangedField[];
 }> {
-  const rpcArgs: { p_display_name?: string; p_ui_language?: string } = {};
+  const rpcArgs: { p_display_name?: string; p_ui_language?: string; p_timezone?: string } = {};
   if (input.displayName !== undefined) {
     rpcArgs.p_display_name = validateDisplayName(input.displayName);
   }
   if (input.uiLanguage !== undefined) {
     rpcArgs.p_ui_language = validateUiLanguage(input.uiLanguage);
   }
+  if (input.timezone !== undefined) {
+    rpcArgs.p_timezone = validateTimezone(input.timezone);
+  }
 
-  if (!rpcArgs.p_display_name && !rpcArgs.p_ui_language) {
+  if (!rpcArgs.p_display_name && !rpcArgs.p_ui_language && !rpcArgs.p_timezone) {
     throw new OwnProfileValidationError("profile_patch_empty");
   }
 
-  const supabase = requireSupabase();
-  const { data, error } = await supabase.rpc("p85_stage4d_update_own_profile", rpcArgs);
+  void _context;
+  const supabase = rpcClient ?? requireSupabase();
+  const { data, error } = await supabase.rpc("p85_stage4d_update_own_profile_v2", rpcArgs);
   if (error) {
     throw new Error(mapOwnProfileRpcError(error.message));
   }
