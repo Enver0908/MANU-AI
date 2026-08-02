@@ -9,6 +9,9 @@ import { sha256FromArrayBuffer } from "@/lib/phase-85-stage-4c-attachment-client
 import { generateAiChatRequestId } from "@/lib/use-ai-chat";
 import type { AiChatAttachmentDto } from "@/lib/phase-85-stage-4c-contracts";
 import { AiChatAttachmentStrip } from "./ai-chat-attachment-strip";
+import { useShellDirtyRegistration } from "@/lib/use-shell-dirty-registration";
+import type { ShellDirtyEntryState } from "@/lib/phase-85-stage-5-shell-dirty-registry";
+import { useShellKeyboardInset } from "@/components/dashboard/mobile-ergonomics";
 
 const ATTACHMENT_BUSY_STATUSES = new Set<AiChatAttachmentDto["status"]>([
   "upload_pending",
@@ -70,6 +73,15 @@ export function AiChatComposer({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const workletNodeRef = useRef<AudioWorkletNode | null>(null);
+  useShellKeyboardInset();
+
+  useShellDirtyRegistration({
+    id: "ai-chat-composer",
+    label: "AI Chat taslağı",
+    state: (value.trim() ? "dirty" : "clean") as ShellDirtyEntryState,
+    canSave: false,
+    onDiscard: () => setValue(""),
+  });
 
   const allAttachmentsReady =
     attachments.length === 0 || attachments.every((item) => item.status === "ready");

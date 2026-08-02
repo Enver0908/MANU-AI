@@ -25,6 +25,8 @@ import { AiChatComposer } from "./ai-chat-composer";
 import { AiChatContextPanelContent } from "./ai-chat-context-drawer";
 import { AiChatAttachmentReview } from "./ai-chat-attachment-review";
 import { AiChatRiskBanner } from "./ai-chat-risk-banner";
+import { useShellDirtyRegistration } from "@/lib/use-shell-dirty-registration";
+import type { ShellDirtyEntryState } from "@/lib/phase-85-stage-5-shell-dirty-registry";
 
 const COMPACT_BREAKPOINT_PX = 1024;
 
@@ -61,6 +63,7 @@ export function AiChatWorkspace({
   onNavigateToChat,
   onNavigateToRoot,
   onToggleFocusMode,
+  onScopedClientChange,
 }: {
   uiLanguage: SupportedLanguageCode;
   activeChatId: string | null;
@@ -68,6 +71,9 @@ export function AiChatWorkspace({
   onNavigateToChat: (chatId: string) => void;
   onNavigateToRoot: () => void;
   onToggleFocusMode: () => void;
+  onScopedClientChange?: (
+    client: { id: string; fullName: string; referenceShort: string } | null,
+  ) => void;
 }) {
   const isCompactViewport = useIsCompactViewport();
   const useOverlayChrome = focusMode || isCompactViewport;
@@ -95,6 +101,35 @@ export function AiChatWorkspace({
   const [attachments, setAttachments] = useState<AiChatAttachmentDto[]>([]);
   const [reviewAttachment, setReviewAttachment] = useState<AiChatAttachmentDto | null>(null);
   const [pendingDeleteChatId, setPendingDeleteChatId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const detail = conversation.detail;
+    if (!onScopedClientChange) return;
+    if (detail?.scopeType === "client" && detail.clientId) {
+      onScopedClientChange({
+        id: detail.clientId,
+        fullName: detail.clientFullName || detail.clientReferenceShort || detail.clientId,
+        referenceShort: detail.clientReferenceShort || detail.clientId.slice(0, 8),
+      });
+      return;
+    }
+    onScopedClientChange(null);
+  }, [
+    conversation.detail,
+    conversation.detail?.clientFullName,
+    conversation.detail?.clientId,
+    conversation.detail?.clientReferenceShort,
+    conversation.detail?.scopeType,
+    onScopedClientChange,
+  ]);
+
+  useShellDirtyRegistration({
+    id: "ai-chat-message-edit",
+    label: "AI mesaj düzenleme",
+    state: (editingMessage ? "dirty" : "clean") as ShellDirtyEntryState,
+    canSave: false,
+    onDiscard: () => setEditingMessage(null),
+  });
 
   useEffect(() => {
     if (!activeChatId) return;

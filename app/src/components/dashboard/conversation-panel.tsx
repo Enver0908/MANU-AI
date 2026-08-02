@@ -31,6 +31,8 @@ import { ConversationComposer } from "./conversation-composer";
 import { ConversationDraftReviewPanel } from "./conversation-draft-review-panel";
 import { ConversationAiControlsStrip } from "./conversation-ai-controls-strip";
 import { MOBILE_CHROME_CLASS } from "@/lib/phase-83e5-mobile-ergonomics";
+import { useShellDirtyRegistration } from "@/lib/use-shell-dirty-registration";
+import type { ShellDirtyEntryState } from "@/lib/phase-85-stage-5-shell-dirty-registry";
 
 export function ConversationPanel({
   client,
@@ -135,6 +137,37 @@ export function ConversationPanel({
     [client, state],
   );
 
+  const composerDirty = Boolean(manualReply.trim());
+  const draftEditDirty = useMemo(() => {
+    const timelineDirty = Object.entries(draftEdits).some(([messageId, body]) => {
+      const message = messages.find((item) => item.id === messageId);
+      return Boolean(message && body !== (message.body ?? ""));
+    });
+    const yellowDirty = Boolean(
+      activeYellowDraft && yellowDraftBody !== (activeYellowDraft.body ?? ""),
+    );
+    return timelineDirty || yellowDirty;
+  }, [activeYellowDraft, draftEdits, messages, yellowDraftBody]);
+
+  useShellDirtyRegistration({
+    id: "conversation-composer",
+    label: "Mesaj taslağı",
+    state: (composerDirty ? "dirty" : "clean") as ShellDirtyEntryState,
+    canSave: false,
+    onDiscard: () => onManualReply(""),
+  });
+
+  useShellDirtyRegistration({
+    id: "conversation-draft-edit",
+    label: "AI taslak düzenleme",
+    state: (draftEditDirty ? "dirty" : "clean") as ShellDirtyEntryState,
+    canSave: false,
+    onDiscard: () => {
+      setDraftEdits({});
+      setYellowDraftEdits({});
+    },
+  });
+
   useEffect(() => {
     if (!anchorMessageId) return;
     const target = timelineRef.current?.querySelector(`[data-message-id="${anchorMessageId}"]`);
@@ -180,9 +213,15 @@ export function ConversationPanel({
         </div>
       ) : null}
 
-      {permissions?.isReadOnly ? (
-        <p className="mt-3 rounded-lg border border-stone-200 bg-stone-50 px-3 py-2 text-sm text-stone-700">
-          {t(uiLanguage, "conversationReadOnlyNotice")}
+      {permissions?.isReadOnly || !canManageAiControls ? (
+        <p
+          className="mt-3 rounded-lg border border-stone-200 bg-stone-50 px-3 py-2 text-sm text-stone-700"
+          role="status"
+          data-testid="conversation-read-only-label"
+        >
+          {!canManageAiControls
+            ? "Salt okunur — asistan/denetçi rolünde mutasyon kontrolleri kapalı."
+            : t(uiLanguage, "conversationReadOnlyNotice")}
         </p>
       ) : null}
 

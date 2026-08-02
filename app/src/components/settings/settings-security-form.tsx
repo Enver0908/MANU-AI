@@ -7,6 +7,8 @@ import type { DashboardMessageKey } from "@/lib/i18n";
 import { t } from "@/lib/i18n";
 import type { SupportedLanguageCode } from "@/lib/languages";
 import type { SettingsAccountReadModel } from "@/lib/phase-85-stage-4d-settings-contracts";
+import { useShellDirtyRegistration } from "@/lib/use-shell-dirty-registration";
+import type { ShellDirtyEntryState } from "@/lib/phase-85-stage-5-shell-dirty-registry";
 
 type Step = "idle" | "reauth_sent" | "saving";
 
@@ -26,6 +28,36 @@ export function SettingsSecurityForm({
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+
+  const isDirty = Boolean(
+    newEmail.trim() || password.trim() || passwordConfirmation.trim() || nonce.trim(),
+  );
+  const dirtyState: ShellDirtyEntryState = busy
+    ? "saving"
+    : error
+      ? "error"
+      : isDirty
+        ? "dirty"
+        : "clean";
+
+  useShellDirtyRegistration({
+    id: "settings-security",
+    label: "Güvenlik",
+    state: dirtyState,
+    canSave: false,
+    onDiscard: () => {
+      setNewEmail("");
+      setPassword("");
+      setPasswordConfirmation("");
+      setNonce("");
+      setStep("idle");
+      setError(null);
+      setSuccess(null);
+    },
+    onFocusField: () => {
+      document.getElementById("settings-security-new-email")?.focus();
+    },
+  });
 
   const mapError = useCallback(
     (code?: string, fallbackKey: DashboardMessageKey = "settingsSecurityActionFailed") => {
@@ -153,7 +185,7 @@ export function SettingsSecurityForm({
   }
 
   return (
-    <div data-testid="settings-security-form" className="space-y-6">
+    <div data-testid="settings-security-form" data-dirty={isDirty ? "true" : "false"} className="space-y-6">
       <dl>
         <div className="flex min-w-0 flex-col gap-1 border-b border-line py-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
           <dt className="shrink-0 text-sm font-medium text-ink-muted">{t(uiLanguage, "settingsSecurityEmail")}</dt>

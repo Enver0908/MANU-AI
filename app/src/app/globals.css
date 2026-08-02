@@ -147,11 +147,12 @@ textarea:focus-visible,
   padding-right: max(1rem, env(safe-area-inset-right));
 }
 
-/* Phase 83E-5: mobile chrome spacing above the fixed bottom nav + sticky action bars.
+/* Phase 83E-5 / Stage 5 Faz 8: mobile chrome above bottom nav + keyboard inset.
+ * `--keyboard-inset` is maintained by visualViewport listeners in mobile-ergonomics.
  * Stage 5 Faz 5 compact bottom nav is 64px tall below 768px.
  */
 .bottom-above-nav {
-  bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
+  bottom: calc(4rem + env(safe-area-inset-bottom, 0px) + var(--keyboard-inset, 0px));
 }
 
 .pb-mobile-nav {

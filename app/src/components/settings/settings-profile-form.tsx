@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button, Field, SelectInput, TextInput } from "@/components/ui";
 import { SUPPORTED_LANGUAGES, type SupportedLanguageCode } from "@/lib/languages";
@@ -8,6 +8,8 @@ import type { DashboardMessageKey } from "@/lib/i18n";
 import { t } from "@/lib/i18n";
 import { COMMON_PROFILE_TIMEZONES } from "@/lib/phase-85-stage-4d-own-profile";
 import type { SettingsAccountReadModel } from "@/lib/phase-85-stage-4d-settings-contracts";
+import { useShellDirtyRegistration } from "@/lib/use-shell-dirty-registration";
+import type { ShellDirtyEntryState } from "@/lib/phase-85-stage-5-shell-dirty-registry";
 
 type ProfileFormState = {
   displayName: string;
@@ -23,6 +25,7 @@ export function SettingsProfileForm({
   uiLanguage: SupportedLanguageCode;
 }) {
   const router = useRouter();
+  const displayNameRef = useRef<HTMLInputElement>(null);
   const initial = useMemo<ProfileFormState>(
     () => ({
       displayName: model.profile.displayName,
@@ -41,18 +44,16 @@ export function SettingsProfileForm({
     form.uiLanguage !== initial.uiLanguage ||
     form.timezone !== initial.timezone;
 
-  useEffect(() => {
-    const onBeforeUnload = (event: BeforeUnloadEvent) => {
-      if (!isDirty) return;
-      event.preventDefault();
-      event.returnValue = "";
-    };
-    window.addEventListener("beforeunload", onBeforeUnload);
-    return () => window.removeEventListener("beforeunload", onBeforeUnload);
-  }, [isDirty]);
+  const dirtyState: ShellDirtyEntryState = saving
+    ? "saving"
+    : error
+      ? "error"
+      : isDirty
+        ? "dirty"
+        : "clean";
 
   const onSave = useCallback(async () => {
-    if (!isDirty || saving) return;
+    if (!isDirty || saving) return false;
     setSaving(true);
     setError(null);
     setSuccess(false);
@@ -78,7 +79,7 @@ export function SettingsProfileForm({
       if (!response.ok) {
         const key = `settingsProfileError_${data.error}` as DashboardMessageKey;
         setError(t(uiLanguage, key) || t(uiLanguage, "settingsProfileSaveFailed"));
-        return;
+        return false;
       }
       if (data.profile) {
         setForm({
@@ -89,12 +90,28 @@ export function SettingsProfileForm({
       }
       setSuccess(true);
       router.refresh();
+      return true;
     } catch {
       setError(t(uiLanguage, "settingsProfileSaveFailed"));
+      return false;
     } finally {
       setSaving(false);
     }
   }, [form, initial, isDirty, router, saving, uiLanguage]);
+
+  useShellDirtyRegistration({
+    id: "settings-profile",
+    label: "Profil",
+    state: dirtyState,
+    canSave: isDirty,
+    onSave,
+    onDiscard: () => {
+      setForm(initial);
+      setError(null);
+      setSuccess(false);
+    },
+    onFocusField: () => displayNameRef.current?.focus(),
+  });
 
   if (model.runtime.mode === "fallback" || !model.runtime.identityActionsAvailable) {
     return null;
@@ -105,6 +122,7 @@ export function SettingsProfileForm({
       <Field label={t(uiLanguage, "settingsProfileDisplayName")} htmlFor="settings-profile-display-name" required>
         <TextInput
           id="settings-profile-display-name"
+          ref={displayNameRef}
           value={form.displayName}
           onChange={(event) => setForm((current) => ({ ...current, displayName: event.target.value }))}
           maxLength={80}
@@ -161,7 +179,7 @@ export function SettingsProfileForm({
       <div className="flex flex-wrap items-center gap-3">
         <Button
           type="button"
-          onClick={onSave}
+          onClick={() => void onSave()}
           disabled={!isDirty || saving}
           data-testid="settings-profile-save"
         >

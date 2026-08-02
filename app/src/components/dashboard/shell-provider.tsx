@@ -8,6 +8,7 @@ import {
   useMemo,
   useReducer,
   useRef,
+  useState,
   type ReactNode,
 } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -59,6 +60,11 @@ import {
   shouldBlockOptionalPwaReload,
 } from "@/lib/phase-85-stage-5-shell-pwa";
 import type { ShellVersionDto } from "@/lib/phase-85-stage-5-shell-contracts";
+import {
+  shellDirtyRegistry,
+  type ShellDirtySnapshot,
+} from "@/lib/phase-85-stage-5-shell-dirty-registry";
+import { ShellDirtyNavigationDialog } from "@/components/dashboard/shell-dirty-navigation-dialog";
 
 export type ShellHeaderSlots = {
   title?: ReactNode;
@@ -71,6 +77,20 @@ type ActiveClientSelection = {
   fullName: string;
   referenceShort: string;
 };
+
+type ScopedAiChatClient = {
+  id: string;
+  fullName: string;
+  referenceShort: string;
+} | null;
+
+type PendingNavigation =
+  | { kind: "destination"; destination: ShellDestinationId }
+  | { kind: "logout" }
+  | { kind: "focus"; next: boolean }
+  | { kind: "href"; href: string }
+  | { kind: "client-switch"; client: ActiveClientSelection; proceed: () => Promise<boolean> }
+  | { kind: "sw-update" };
 
 type ShellProviderContextValue = {
   state: ShellProviderState;
@@ -85,10 +105,10 @@ type ShellProviderContextValue = {
   refreshBootstrap: () => void;
   navigateToDestination: (destination: ShellDestinationId) => void;
   navigateToSection: (section: DashboardSection) => void;
+  requestHrefNavigation: (href: string) => void;
   setFocusMode: (focusMode: boolean) => void;
-  /** Faz 8 dirty registry hook; always allows until that phase lands, unless tests force dirty. */
   canNavigateAway: () => boolean;
-  /** Test/Faz-8 hook to mark unsaved work without full dirty registry. */
+  /** Legacy/test helper — prefer useShellDirtyRegistration. */
   setNavigationDirty: (dirty: boolean) => void;
   selectActiveClient: (client: ActiveClientSelection) => Promise<boolean>;
   requestDirtyNavigationConfirm: (client: ActiveClientSelection) => string;
@@ -100,6 +120,12 @@ type ShellProviderContextValue = {
   updateRequired: boolean;
   applyWaitingServiceWorkerUpdate: () => void;
   dismissOptionalUpdate: () => void;
+  requestLogout: () => void;
+  dirtySnapshot: ShellDirtySnapshot;
+  scopedAiChatClient: ScopedAiChatClient;
+  setScopedAiChatClient: (client: ScopedAiChatClient) => void;
+  hideCompactNavigation: boolean;
+  setHideCompactNavigation: (hidden: boolean) => void;
 };
 
 const ShellProviderContext = createContext<ShellProviderContextValue | null>(null);
@@ -165,12 +191,19 @@ export function ShellProvider({
   );
   const sequenceRef = useRef(0);
   const abortRef = useRef<AbortController | null>(null);
-  const dirtyRef = useRef(false);
   const activityPendingRef = useRef(false);
   const lastActivitySentAtRef = useRef(0);
   const waitingWorkerRef = useRef<ServiceWorker | null>(null);
   const reconnectingRef = useRef(false);
   const bootstrapRetryRef = useRef(0);
+  const [dirtySnapshot, setDirtySnapshot] = useReducer(
+    (_prev: ShellDirtySnapshot, next: ShellDirtySnapshot) => next,
+    shellDirtyRegistry.snapshot(),
+  );
+  const [pendingNavigation, setPendingNavigation] = useState<PendingNavigation | null>(null);
+  const [confirmBusy, setConfirmBusy] = useState(false);
+  const [scopedAiChatClient, setScopedAiChatClient] = useState<ScopedAiChatClient>(null);
+  const [hideCompactNavigation, setHideCompactNavigation] = useState(false);
   const [headerSlots, setHeaderSlotsState] = useReducer(
     (_prev: ShellHeaderSlots, next: ShellHeaderSlots) => next,
     {},
@@ -453,118 +486,194 @@ export function ShellProvider({
     setHeaderSlotsState(slots);
   }, []);
 
-  const setNavigationDirty = useCallback((dirty: boolean) => {
-    dirtyRef.current = dirty;
+  useEffect(() => shellDirtyRegistry.subscribe(() => setDirtySnapshot(shellDirtyRegistry.snapshot())), []);
+
+  useEffect(() => {
+    const onBeforeUnload = (event: BeforeUnloadEvent) => {
+      const snap = shellDirtyRegistry.snapshot();
+      if (!snap.isDirty && !snap.isSaving) return;
+      event.preventDefault();
+      event.returnValue = "";
+    };
+    window.addEventListener("beforeunload", onBeforeUnload);
+    return () => window.removeEventListener("beforeunload", onBeforeUnload);
   }, []);
 
-  const canNavigateAway = useCallback(() => !dirtyRef.current, []);
+  const canNavigateAway = useCallback(() => {
+    const snap = shellDirtyRegistry.snapshot();
+    return !snap.isDirty && !snap.isSaving && !snap.hasError;
+  }, []);
+
+  const setNavigationDirty = useCallback((dirty: boolean) => {
+    if (dirty) {
+      shellDirtyRegistry.register({
+        id: "shell-test-dirty",
+        label: "Kaydedilmemiş çalışma",
+        state: "dirty",
+        canSave: false,
+      });
+      return;
+    }
+    shellDirtyRegistry.unregister("shell-test-dirty");
+  }, []);
 
   const requestDirtyNavigationConfirm = useCallback((client: ActiveClientSelection) => {
     return buildShellClientSwitchConfirmMessage(client);
   }, []);
 
-  const applyWaitingServiceWorkerUpdate = useCallback(() => {
-    if (
-      shouldBlockOptionalPwaReload({
-        dirty: dirtyRef.current,
-        updateRequired: state.updateRequired || state.runtime === "update_required",
-      })
-    ) {
-      return;
-    }
-    const worker = waitingWorkerRef.current;
-    if (!worker) return;
-    worker.postMessage({ type: SHELL_SW_SKIP_WAITING_MESSAGE });
-  }, [state.runtime, state.updateRequired]);
+  const runPendingNavigation = useCallback(
+    async (pending: PendingNavigation) => {
+      switch (pending.kind) {
+        case "destination": {
+          const safe = sanitizeShellDestination(pending.destination);
+          const enabled = state.bootstrap?.navigation.find((item) => item.id === safe)?.enabled;
+          if (state.bootstrap && enabled === false) return;
+          const href = buildShellHref(safe, {
+            current: urlState,
+            clientId: shellDestinationAcceptsClientId(safe) ? effectiveActiveClientId : null,
+            focusMode: false,
+          });
+          router.push(href);
+          markActivity();
+          return;
+        }
+        case "href":
+          router.push(pending.href);
+          return;
+        case "logout": {
+          const form = document.createElement("form");
+          form.method = "post";
+          form.action = "/api/demo-logout";
+          document.body.appendChild(form);
+          form.submit();
+          return;
+        }
+        case "focus": {
+          if (shellDestination !== "ai_chat") return;
+          const href = buildShellHref("ai_chat", {
+            chatId: extractAiChatId(pathname),
+            focusMode: pending.next,
+          });
+          router.push(href);
+          return;
+        }
+        case "client-switch":
+          await pending.proceed();
+          return;
+        case "sw-update": {
+          const worker = waitingWorkerRef.current;
+          if (!worker) return;
+          worker.postMessage({ type: SHELL_SW_SKIP_WAITING_MESSAGE });
+          return;
+        }
+        default:
+          return;
+      }
+    },
+    [effectiveActiveClientId, markActivity, pathname, router, shellDestination, state.bootstrap, urlState],
+  );
 
-  const dismissOptionalUpdate = useCallback(() => {
-    if (state.updateRequired || state.runtime === "update_required") return;
-    dispatch({ type: "set_update_waiting", waiting: false });
-  }, [state.runtime, state.updateRequired]);
+  const openDirtyConfirm = useCallback((pending: PendingNavigation) => {
+    if (shellDirtyRegistry.snapshot().isSaving) return;
+    setPendingNavigation(pending);
+  }, []);
+
   const selectActiveClient = useCallback(
     async (client: ActiveClientSelection) => {
       const bootstrap = state.bootstrap;
       if (!bootstrap) return false;
 
-      const previousClientId = bootstrap.activeClient?.id ?? bootstrap.preferences.activeClientId;
-      const previousHref = buildShellHref(shellDestination, {
-        current: urlState,
-        clientId: shellDestinationAcceptsClientId(shellDestination) ? previousClientId : null,
-        chatId: extractAiChatId(pathname),
-        focusMode: state.focusMode,
-      });
-
-      try {
-        const response = await fetch("/api/shell/preferences", {
-          method: "PATCH",
-          cache: "no-store",
-          credentials: "same-origin",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            "Cache-Control": "no-store",
-            [SIRIUSAI_CLIENT_VERSION_HEADER]: getClientBuildVersion(),
-            [SIRIUSAI_MUTATION_KIND_HEADER]: "save",
-          },
-          body: JSON.stringify({
-            requestId: createPreferenceRequestId(),
-            expectedRevision: bootstrap.preferences.revision,
-            activeClientId: client.id,
-          }),
-        });
-
-        if (response.status === 409) {
-          runBootstrap("explicit");
-          return false;
-        }
-
-        if (!response.ok) {
-          return false;
-        }
-
-        const preferences = (await response.json().catch(() => null)) as ShellPreferencesPatchResultDto | null;
-        if (!preferences || typeof preferences.revision !== "number") {
-          return false;
-        }
-
-        dirtyRef.current = false;
-
-        const nextHref = buildShellHref(shellDestination, {
+      const proceed = async () => {
+        const previousClientId = bootstrap.activeClient?.id ?? bootstrap.preferences.activeClientId;
+        const previousHref = buildShellHref(shellDestination, {
           current: urlState,
-          clientId: shellDestinationAcceptsClientId(shellDestination) ? client.id : null,
+          clientId: shellDestinationAcceptsClientId(shellDestination) ? previousClientId : null,
           chatId: extractAiChatId(pathname),
           focusMode: state.focusMode,
         });
 
-        if (nextHref === previousHref && shellDestinationAcceptsClientId(shellDestination) === false) {
-          runBootstrap("explicit");
-          return true;
-        }
+        try {
+          const response = await fetch("/api/shell/preferences", {
+            method: "PATCH",
+            cache: "no-store",
+            credentials: "same-origin",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              "Cache-Control": "no-store",
+              [SIRIUSAI_CLIENT_VERSION_HEADER]: getClientBuildVersion(),
+              [SIRIUSAI_MUTATION_KIND_HEADER]: "save",
+            },
+            body: JSON.stringify({
+              requestId: createPreferenceRequestId(),
+              expectedRevision: bootstrap.preferences.revision,
+              activeClientId: client.id,
+            }),
+          });
 
-        router.push(nextHref);
-        return true;
-      } catch {
+          if (response.status === 409) {
+            runBootstrap("explicit");
+            return false;
+          }
+
+          if (!response.ok) {
+            return false;
+          }
+
+          const preferences = (await response.json().catch(() => null)) as ShellPreferencesPatchResultDto | null;
+          if (!preferences || typeof preferences.revision !== "number") {
+            return false;
+          }
+
+          const nextHref = buildShellHref(shellDestination, {
+            current: urlState,
+            clientId: shellDestinationAcceptsClientId(shellDestination) ? client.id : null,
+            chatId: extractAiChatId(pathname),
+            focusMode: state.focusMode,
+          });
+
+          if (nextHref === previousHref && shellDestinationAcceptsClientId(shellDestination) === false) {
+            runBootstrap("explicit");
+            return true;
+          }
+
+          router.push(nextHref);
+          return true;
+        } catch {
+          return false;
+        }
+      };
+
+      if (!canNavigateAway()) {
+        openDirtyConfirm({ kind: "client-switch", client, proceed });
         return false;
       }
+
+      return proceed();
     },
-    [pathname, router, runBootstrap, shellDestination, state.bootstrap, state.focusMode, urlState],
+    [
+      canNavigateAway,
+      openDirtyConfirm,
+      pathname,
+      router,
+      runBootstrap,
+      shellDestination,
+      state.bootstrap,
+      state.focusMode,
+      urlState,
+    ],
   );
 
   const navigateToDestination = useCallback(
     (destination: ShellDestinationId) => {
-      if (!canNavigateAway()) return;
-      const safe = sanitizeShellDestination(destination);
-      const enabled = state.bootstrap?.navigation.find((item) => item.id === safe)?.enabled;
-      if (state.bootstrap && enabled === false) return;
-      const href = buildShellHref(safe, {
-        current: urlState,
-        clientId: shellDestinationAcceptsClientId(safe) ? effectiveActiveClientId : null,
-        focusMode: false,
-      });
-      router.push(href);
-      markActivity();
+      if (shellDirtyRegistry.snapshot().isSaving) return;
+      if (!canNavigateAway()) {
+        openDirtyConfirm({ kind: "destination", destination });
+        return;
+      }
+      void runPendingNavigation({ kind: "destination", destination });
     },
-    [canNavigateAway, effectiveActiveClientId, markActivity, router, state.bootstrap, urlState],
+    [canNavigateAway, openDirtyConfirm, runPendingNavigation],
   );
 
   const navigateToSection = useCallback(
@@ -574,16 +683,28 @@ export function ShellProvider({
     [navigateToDestination],
   );
 
+  const requestHrefNavigation = useCallback(
+    (href: string) => {
+      if (shellDirtyRegistry.snapshot().isSaving) return;
+      if (!canNavigateAway()) {
+        openDirtyConfirm({ kind: "href", href });
+        return;
+      }
+      void runPendingNavigation({ kind: "href", href });
+    },
+    [canNavigateAway, openDirtyConfirm, runPendingNavigation],
+  );
+
   const setFocusMode = useCallback(
     (next: boolean) => {
       if (shellDestination !== "ai_chat") return;
-      const href = buildShellHref("ai_chat", {
-        chatId: extractAiChatId(pathname),
-        focusMode: next,
-      });
-      router.push(href);
+      if (!canNavigateAway()) {
+        openDirtyConfirm({ kind: "focus", next });
+        return;
+      }
+      void runPendingNavigation({ kind: "focus", next });
     },
-    [pathname, router, shellDestination],
+    [canNavigateAway, openDirtyConfirm, runPendingNavigation, shellDestination],
   );
 
   const saveDestinationViewState = useCallback(
@@ -596,6 +717,60 @@ export function ShellProvider({
   const restoreDestinationViewState = useCallback((destinationId: ShellDestinationId) => {
     return shellDestinationViewStateRegistry.restore(destinationId);
   }, []);
+
+  const applyWaitingServiceWorkerUpdate = useCallback(() => {
+    if (
+      shouldBlockOptionalPwaReload({
+        dirty: !canNavigateAway(),
+        updateRequired: state.updateRequired || state.runtime === "update_required",
+      })
+    ) {
+      openDirtyConfirm({ kind: "sw-update" });
+      return;
+    }
+    void runPendingNavigation({ kind: "sw-update" });
+  }, [canNavigateAway, openDirtyConfirm, runPendingNavigation, state.runtime, state.updateRequired]);
+
+  const dismissOptionalUpdate = useCallback(() => {
+    if (state.updateRequired || state.runtime === "update_required") return;
+    dispatch({ type: "set_update_waiting", waiting: false });
+  }, [state.runtime, state.updateRequired]);
+
+  const requestLogout = useCallback(() => {
+    if (shellDirtyRegistry.snapshot().isSaving) return;
+    if (!canNavigateAway()) {
+      openDirtyConfirm({ kind: "logout" });
+      return;
+    }
+    void runPendingNavigation({ kind: "logout" });
+  }, [canNavigateAway, openDirtyConfirm, runPendingNavigation]);
+
+  const resolveDirtyConfirm = useCallback(
+    async (action: "stay" | "discard" | "save") => {
+      if (!pendingNavigation) return;
+      if (action === "stay") {
+        setPendingNavigation(null);
+        return;
+      }
+      if (action === "discard") {
+        shellDirtyRegistry.discardAll();
+        const pending = pendingNavigation;
+        setPendingNavigation(null);
+        await runPendingNavigation(pending);
+        return;
+      }
+      setConfirmBusy(true);
+      const result = await shellDirtyRegistry.saveAll();
+      setConfirmBusy(false);
+      if (!result.ok) {
+        return;
+      }
+      const pending = pendingNavigation;
+      setPendingNavigation(null);
+      await runPendingNavigation(pending);
+    },
+    [pendingNavigation, runPendingNavigation],
+  );
 
   const uiLanguage = normalizeLanguageCode(
     state.bootstrap?.uiLanguage ?? fallbackUiLanguage ?? "tr",
@@ -621,6 +796,7 @@ export function ShellProvider({
       refreshBootstrap: () => runBootstrap("explicit"),
       navigateToDestination,
       navigateToSection,
+      requestHrefNavigation,
       setFocusMode,
       canNavigateAway,
       setNavigationDirty,
@@ -634,21 +810,32 @@ export function ShellProvider({
       updateRequired: state.updateRequired || state.runtime === "update_required",
       applyWaitingServiceWorkerUpdate,
       dismissOptionalUpdate,
+      requestLogout,
+      dirtySnapshot,
+      scopedAiChatClient,
+      setScopedAiChatClient,
+      hideCompactNavigation: hideCompactNavigation || state.focusMode,
+      setHideCompactNavigation,
     }),
     [
       activeDestination,
       applyWaitingServiceWorkerUpdate,
       canNavigateAway,
       contextualBootstrap,
+      dirtySnapshot,
       dismissOptionalUpdate,
       effectiveActiveClientId,
       headerSlots,
+      hideCompactNavigation,
       navigateToDestination,
       navigateToSection,
+      requestHrefNavigation,
       requestDirtyNavigationConfirm,
+      requestLogout,
       restoreDestinationViewState,
       runBootstrap,
       saveDestinationViewState,
+      scopedAiChatClient,
       selectActiveClient,
       setFocusMode,
       setHeaderSlots,
@@ -660,7 +847,38 @@ export function ShellProvider({
     ],
   );
 
-  return <ShellProviderContext.Provider value={value}>{children}</ShellProviderContext.Provider>;
+  const canSaveAndContinue =
+    dirtySnapshot.entries
+      .filter((entry) => entry.state === "dirty" || entry.state === "error")
+      .every((entry) => entry.canSave && Boolean(entry.save)) &&
+    dirtySnapshot.entries.some((entry) => entry.state === "dirty" || entry.state === "error");
+
+  return (
+    <ShellProviderContext.Provider value={value}>
+      {children}
+      {pendingNavigation ? (
+        <ShellDirtyNavigationDialog
+          busy={confirmBusy || dirtySnapshot.isSaving}
+          request={{
+            snapshot: dirtySnapshot,
+            canSaveAndContinue,
+            onStay: () => void resolveDirtyConfirm("stay"),
+            onDiscard: () => void resolveDirtyConfirm("discard"),
+            onSaveAndContinue: canSaveAndContinue
+              ? () => void resolveDirtyConfirm("save")
+              : undefined,
+            onFocusError: dirtySnapshot.hasError
+              ? () => {
+                  const errored = dirtySnapshot.entries.find((entry) => entry.state === "error");
+                  errored?.focus?.();
+                  setPendingNavigation(null);
+                }
+              : undefined,
+          }}
+        />
+      ) : null}
+    </ShellProviderContext.Provider>
+  );
 }
 
 function extractAiChatId(pathname: string) {

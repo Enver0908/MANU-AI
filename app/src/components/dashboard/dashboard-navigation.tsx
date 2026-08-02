@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import {
   formatStage4BBadgeCount,
   type DashboardNavKey,
@@ -49,15 +48,18 @@ function ShellNavLink({
   item,
   active,
   layout,
+  navigationLocked = false,
   onNavigateDestination,
 }: {
   item: ShellNavVisualItem;
   active: boolean;
   layout: "wide" | "rail" | "compact";
+  navigationLocked?: boolean;
   onNavigateDestination: (destinationId: ShellNavVisualItem["destinationId"]) => void;
 }) {
+  const enabled = item.enabled && !navigationLocked;
   const Icon = item.icon;
-  const className = navClass(active, item.enabled, layout);
+  const className = navClass(active, enabled, layout);
   const content =
     layout === "wide" ? (
       <>
@@ -95,30 +97,15 @@ function ShellNavLink({
       </>
     );
 
-  if (!item.enabled) {
+  if (!enabled) {
     return (
-      <span className={className} aria-disabled="true" title={item.disabledReason}>
-        {content}
-      </span>
-    );
-  }
-
-  const isRouteLink =
-    item.destinationId === "ai_chat" ||
-    item.destinationId === "settings" ||
-    item.destinationId === "more";
-
-  if (isRouteLink) {
-    return (
-      <Link
-        href={item.href}
+      <span
         className={className}
-        aria-current={active ? "page" : undefined}
-        aria-label={item.label}
-        title={layout === "rail" ? item.label : undefined}
+        aria-disabled="true"
+        title={navigationLocked ? "Kayıt sürüyor" : item.disabledReason}
       >
         {content}
-      </Link>
+      </span>
     );
   }
 
@@ -141,12 +128,14 @@ export function DashboardWideSidebarNav({
   badges = DEFAULT_NAV_BADGES,
   navigation,
   role,
+  navigationLocked = false,
   onNavigateDestination,
 }: {
   activeNavKey: DashboardNavKey;
   badges?: ShellNavBadges;
   navigation?: readonly ShellNavigationItemDto[] | null;
   role: TenantRole;
+  navigationLocked?: boolean;
   onNavigateDestination: (destinationId: ShellNavVisualItem["destinationId"]) => void;
 }) {
   const items = resolveWideSidebarNavItems({ navigation, badges, role });
@@ -162,6 +151,7 @@ export function DashboardWideSidebarNav({
           item={item}
           active={item.navKey === activeNavKey}
           layout="wide"
+          navigationLocked={navigationLocked}
           onNavigateDestination={onNavigateDestination}
         />
       ))}
@@ -174,12 +164,14 @@ export function DashboardMediumRailNav({
   badges = DEFAULT_NAV_BADGES,
   navigation,
   role,
+  navigationLocked = false,
   onNavigateDestination,
 }: {
   activeNavKey: DashboardNavKey;
   badges?: ShellNavBadges;
   navigation?: readonly ShellNavigationItemDto[] | null;
   role: TenantRole;
+  navigationLocked?: boolean;
   onNavigateDestination: (destinationId: ShellNavVisualItem["destinationId"]) => void;
 }) {
   const items = resolveMediumRailNavItems({ navigation, badges, role });
@@ -195,6 +187,7 @@ export function DashboardMediumRailNav({
           item={item}
           active={item.navKey === activeNavKey}
           layout="rail"
+          navigationLocked={navigationLocked}
           onNavigateDestination={onNavigateDestination}
         />
       ))}
@@ -206,11 +199,13 @@ export function DashboardCompactBottomNav({
   activeNavKey,
   badges = DEFAULT_NAV_BADGES,
   navigation,
+  navigationLocked = false,
   onNavigateDestination,
 }: {
   activeNavKey: DashboardNavKey;
   badges?: ShellNavBadges;
   navigation?: readonly ShellNavigationItemDto[] | null;
+  navigationLocked?: boolean;
   onNavigateDestination: (destinationId: ShellNavVisualItem["destinationId"]) => void;
 }) {
   const items = resolveCompactBottomNavItems({ navigation, badges });
@@ -226,6 +221,7 @@ export function DashboardCompactBottomNav({
           item={item}
           active={item.navKey === activeNavKey}
           layout="compact"
+          navigationLocked={navigationLocked}
           onNavigateDestination={onNavigateDestination}
         />
       ))}

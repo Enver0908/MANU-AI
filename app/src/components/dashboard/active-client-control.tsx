@@ -47,13 +47,8 @@ async function fetchShellClients(query: string | null, signal: AbortSignal) {
   return payload?.items ?? [];
 }
 
-export function ActiveClientControl() {
-  const {
-    bootstrap,
-    selectActiveClient,
-    canNavigateAway,
-    requestDirtyNavigationConfirm,
-  } = useShellProvider();
+export function ActiveClientControl({ disabled = false }: { disabled?: boolean }) {
+  const { bootstrap, selectActiveClient, dirtySnapshot } = useShellProvider();
   const mode = useSelectorMode();
   const listboxId = useId();
   const [open, setOpen] = useState(false);
@@ -61,12 +56,12 @@ export function ActiveClientControl() {
   const [items, setItems] = useState<ShellClientSearchItemDto[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [confirmClient, setConfirmClient] = useState<ShellClientSearchItemDto | null>(null);
   const requestSeq = useRef(0);
   const abortRef = useRef<AbortController | null>(null);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const activeClient = bootstrap?.activeClient ?? null;
   const stale = Boolean(bootstrap?.warnings.includes("client_context_unavailable"));
+  const locked = disabled || dirtySnapshot.isSaving;
 
   useEffect(() => {
     if (!open) return;
@@ -112,7 +107,6 @@ export function ActiveClientControl() {
     if (!open) {
       setQuery("");
       setError(null);
-      setConfirmClient(null);
     }
   }, [open]);
 
@@ -122,14 +116,7 @@ export function ActiveClientControl() {
   }, [activeClient]);
 
   const trySelect = async (item: ShellClientSearchItemDto) => {
-    if (!canNavigateAway()) {
-      setConfirmClient(item);
-      return;
-    }
-    await commitSelect(item);
-  };
-
-  const commitSelect = async (item: ShellClientSearchItemDto) => {
+    if (locked) return;
     const ok = await selectActiveClient({
       id: item.id,
       fullName: item.fullName,
@@ -137,7 +124,6 @@ export function ActiveClientControl() {
     });
     if (ok) {
       setOpen(false);
-      setConfirmClient(null);
     }
   };
 
@@ -193,10 +179,11 @@ export function ActiveClientControl() {
       <button
         ref={triggerRef}
         type="button"
-        className="inline-flex min-h-11 max-w-full items-center gap-2 rounded-control border border-line bg-surface px-3 text-left text-sm font-medium text-ink hover:bg-surface-muted"
+        className="inline-flex min-h-11 max-w-full items-center gap-2 rounded-control border border-line bg-surface px-3 text-left text-sm font-medium text-ink hover:bg-surface-muted disabled:opacity-50"
         aria-haspopup="dialog"
         aria-expanded={open}
         aria-controls={listboxId}
+        disabled={locked}
         onClick={() => setOpen(true)}
         data-testid="active-client-trigger"
       >
@@ -231,38 +218,6 @@ export function ActiveClientControl() {
           >
             <p className="mb-2 text-sm font-semibold text-ink">Aktif danışan</p>
             {list}
-          </div>
-        </div>
-      ) : null}
-
-      {confirmClient ? (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-ink/45 px-4" role="presentation">
-          <div
-            role="alertdialog"
-            aria-modal="true"
-            className="w-full max-w-md rounded-card border border-line bg-surface p-4"
-            data-testid="active-client-dirty-confirm"
-          >
-            <h2 className="text-sm font-semibold text-ink">Kaydedilmemiş değişiklikler</h2>
-            <p className="mt-2 whitespace-pre-line text-sm text-ink-muted">
-              {requestDirtyNavigationConfirm(confirmClient)}
-            </p>
-            <div className="mt-4 flex justify-end gap-2">
-              <button
-                type="button"
-                className="inline-flex min-h-11 items-center rounded-control border border-line px-3 text-sm"
-                onClick={() => setConfirmClient(null)}
-              >
-                Vazgeç
-              </button>
-              <button
-                type="button"
-                className="inline-flex min-h-11 items-center rounded-control bg-primary px-3 text-sm font-medium text-white"
-                onClick={() => void commitSelect(confirmClient)}
-              >
-                Danışanı değiştir
-              </button>
-            </div>
           </div>
         </div>
       ) : null}

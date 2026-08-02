@@ -2,15 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  CreditCard,
-  LogOut,
-  RefreshCcw,
-  ShieldCheck,
-  Smartphone,
-  UserRound,
-} from "lucide-react";
-import { getSupabaseStatus } from "@/lib/supabase";
+import { RefreshCcw } from "lucide-react";
 import type {
   Channel,
   ClientContextUpdateImportance,
@@ -41,14 +33,9 @@ import { getActiveFormSchema } from "@/lib/client-forms";
 import { useManuState } from "@/lib/use-manu-state";
 import { type SupportedLanguageCode } from "@/lib/languages";
 import { t } from "@/lib/i18n";
-import {
-  describeInstallState,
-  describeSubscriptionStatus,
-} from "@/lib/phase-83e3-app-shell";
 import type { CommercialEntitlementStatus } from "@/lib/phase-83b-commercial-entitlement-model";
 import {
   SelectInput,
-  StatusPill,
   fromDateTimeLocal,
   languageOptions,
   parseAnswerLines,
@@ -69,7 +56,6 @@ import {
   refreshStage4B2OperationalSurfaces,
   resolveMessagingTargetValidity,
 } from "@/lib/phase-85-stage-4b2-messaging-integration";
-import { DashboardHeaderBell } from "@/components/dashboard/dashboard-navigation";
 import { useShellProvider } from "@/components/dashboard/shell-provider";
 import { AlertsPanel } from "@/components/dashboard/alerts-panel";
 import { NotificationsPanel } from "@/components/dashboard/notifications-panel";
@@ -87,7 +73,7 @@ import { resolveEffectiveShellActiveClientId } from "@/lib/phase-85-stage-5-shel
 
 export function DashboardApp({
   authInfo,
-  commercialInfo,
+  commercialInfo: _commercialInfo,
   aiChatEnabled = false,
 }: {
   authInfo?: { displayName: string; role: string };
@@ -720,40 +706,15 @@ export function DashboardApp({
               options={languageOptions}
             />
           </div>
-          {authInfo && (
-            <span className="inline-flex items-center gap-2 rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm font-medium text-stone-700">
-              <UserRound size={16} className="text-emerald-800" />
-              {authInfo.displayName}
-              <span className="rounded bg-stone-100 px-1.5 py-0.5 text-xs font-semibold uppercase text-stone-500">
-                {authInfo.role}
-              </span>
+          {!canManageAiControls ? (
+            <span
+              className="inline-flex items-center rounded-lg border border-stone-200 bg-stone-50 px-3 py-2 text-sm font-medium text-stone-700"
+              data-testid="dashboard-read-only-role-label"
+              role="status"
+            >
+              Salt okunur — asistan/denetçi
             </span>
-          )}
-          {commercialInfo ? (
-            <>
-              <StatusPill
-                icon={CreditCard}
-                label={describeSubscriptionStatus(commercialInfo.subscriptionStatus).label}
-                tone={describeSubscriptionStatus(commercialInfo.subscriptionStatus).tone}
-              />
-              <StatusPill
-                icon={Smartphone}
-                label={describeInstallState(commercialInfo.installReady).label}
-                tone={describeInstallState(commercialInfo.installReady).tone}
-              />
-            </>
-          ) : (
-            <StatusPill icon={Smartphone} label="PWA hazır" tone="emerald" />
-          )}
-          <StatusPill
-            icon={ShieldCheck}
-            label={getSupabaseStatus() === "configured" ? "Supabase yapılandırıldı" : "Yerel veri"}
-            tone="amber"
-          />
-          <DashboardHeaderBell
-            unreadCount={stage4bInbox.notificationsBadgeCount}
-            onOpenNotifications={() => navigateToSection("notifications")}
-          />
+          ) : null}
           <button
             onClick={resetState}
             className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm font-medium text-stone-700 transition hover:bg-stone-100"
@@ -762,27 +723,14 @@ export function DashboardApp({
             <RefreshCcw size={16} />
             Demoyu sıfırla
           </button>
-          {commercialInfo ? (
-            <form action="/api/demo-logout" method="post">
-              <button
-                type="submit"
-                className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm font-medium text-stone-700 transition hover:bg-stone-100"
-              >
-                <LogOut size={16} />
-                Oturumu kapat
-              </button>
-            </form>
-          ) : null}
         </>
       ),
     });
     return () => setHeaderSlots({});
   }, [
-    authInfo,
-    commercialInfo,
+    canManageAiControls,
     resetState,
     setHeaderSlots,
-    stage4bInbox.notificationsBadgeCount,
     state.tenant.name,
     uiLanguage,
     updateDietitianPreferences,

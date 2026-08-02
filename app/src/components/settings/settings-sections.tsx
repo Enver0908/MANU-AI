@@ -10,6 +10,7 @@ import { SettingsSecurityForm } from "@/components/settings/settings-security-fo
 import { SettingsBillingPortalButton } from "@/components/settings/settings-billing-portal-button";
 import { AppInstallCenter } from "@/components/app-install-center";
 import { Card, CardBody, CardHeader } from "@/components/ui";
+import { useShellDirtyRegistration } from "@/lib/use-shell-dirty-registration";
 
 function FactRow({ label, value }: { label: string; value: string }) {
   return (
@@ -150,6 +151,13 @@ export function SettingsWorkspaceSection({
   model: SettingsAccountReadModel;
   uiLanguage: SupportedLanguageCode;
 }) {
+  useShellDirtyRegistration({
+    id: "settings-workspace",
+    label: "Çalışma alanı",
+    state: "clean",
+    canSave: false,
+  });
+
   return (
     <div data-testid="settings-section-workspace">
       <Card>

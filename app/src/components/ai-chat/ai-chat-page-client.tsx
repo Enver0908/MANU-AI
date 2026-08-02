@@ -26,20 +26,37 @@ export function AiChatPageClient({
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { focusMode, setHeaderSlots, setFocusMode } = useShellProvider();
+  const {
+    focusMode,
+    setHeaderSlots,
+    setFocusMode,
+    setScopedAiChatClient,
+    scopedAiChatClient,
+    setHideCompactNavigation,
+  } = useShellProvider();
   const urlFocus = searchParams.get("focus") === "1";
 
   useEffect(() => {
+    setHideCompactNavigation(urlFocus);
+    return () => setHideCompactNavigation(false);
+  }, [setHideCompactNavigation, urlFocus]);
+
+  useEffect(() => {
+    const description = scopedAiChatClient
+      ? `Danışan sohbeti — ${scopedAiChatClient.fullName} (${scopedAiChatClient.referenceShort})`
+      : focusMode || urlFocus
+        ? "Odak modu açık"
+        : "Genel sohbet — danışan bağlamı kullanılmıyor";
     setHeaderSlots({
       title: <h1 className="text-2xl font-semibold">AI Chat</h1>,
-      description: (
-        <p className="mt-1 text-sm text-stone-500">
-          {focusMode || urlFocus ? "Odak modu açık" : "Genel sohbet — danışan bağlamı kullanılmıyor"}
-        </p>
-      ),
+      description: <p className="mt-1 text-sm text-stone-500">{description}</p>,
     });
     return () => setHeaderSlots({});
-  }, [focusMode, setHeaderSlots, urlFocus]);
+  }, [focusMode, scopedAiChatClient, setHeaderSlots, urlFocus]);
+
+  useEffect(() => {
+    return () => setScopedAiChatClient(null);
+  }, [setScopedAiChatClient]);
 
   const withFocusQuery = useCallback(
     (path: string) => (urlFocus ? `${path}?focus=1` : path),
@@ -70,6 +87,7 @@ export function AiChatPageClient({
           onNavigateToChat={navigateToChat}
           onNavigateToRoot={navigateToRoot}
           onToggleFocusMode={toggleFocusMode}
+          onScopedClientChange={setScopedAiChatClient}
         />
       ) : (
         <div className="flex flex-1 items-center justify-center p-6">

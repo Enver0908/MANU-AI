@@ -12,7 +12,6 @@ import {
 import { ActiveClientControl } from "@/components/dashboard/active-client-control";
 import { useShellProvider } from "@/components/dashboard/shell-provider";
 import { DASHBOARD_MAIN_ID } from "@/lib/phase-83e6-states-polish";
-import { AI_CHAT_ROOT_PATH } from "@/lib/phase-85-stage-4b-dashboard-routing";
 
 function ShellBlocker({
   title,
@@ -132,9 +131,13 @@ export function DashboardShell({ children }: { children: ReactNode }) {
     applyWaitingServiceWorkerUpdate,
     dismissOptionalUpdate,
     canNavigateAway,
+    requestLogout,
+    dirtySnapshot,
+    hideCompactNavigation,
     lastError,
   } = useShellProviderWithLastError();
 
+  const navigationLocked = dirtySnapshot.isSaving;
   const hardBlockRuntime =
     runtime === "booting" ||
     runtime === "offline" ||
@@ -217,9 +220,10 @@ export function DashboardShell({ children }: { children: ReactNode }) {
           <p className="text-sm font-medium text-ink">Odak modu</p>
           <button
             type="button"
-            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-control border border-line bg-surface text-ink"
+            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-control border border-line bg-surface text-ink disabled:opacity-50"
             aria-label="Odak modundan çık"
             data-testid="shell-exit-focus"
+            disabled={navigationLocked}
             onClick={() => setFocusMode(false)}
           >
             <Minimize2 size={18} />
@@ -252,6 +256,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
             badges={badges}
             navigation={bootstrap.navigation}
             role={bootstrap.role}
+            navigationLocked={navigationLocked}
             onNavigateDestination={navigateToDestination}
           />
         </aside>
@@ -267,15 +272,17 @@ export function DashboardShell({ children }: { children: ReactNode }) {
               <h1 className="mt-1 text-xl font-semibold text-ink">Diyetisyen konsolu</h1>
               <p className="mt-1 truncate text-sm text-ink-muted">{bootstrap.displayName}</p>
             </div>
-            <form action="/api/demo-logout" method="post">
-              <button
-                className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-control border border-line bg-surface text-ink-muted transition hover:bg-surface-muted"
-                title="Oturumu kapat"
-                aria-label="Oturumu kapat"
-              >
-                <LogOut size={18} />
-              </button>
-            </form>
+            <button
+              type="button"
+              className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-control border border-line bg-surface text-ink-muted transition hover:bg-surface-muted disabled:opacity-50"
+              title="Oturumu kapat"
+              aria-label="Oturumu kapat"
+              data-testid="shell-logout"
+              disabled={navigationLocked}
+              onClick={requestLogout}
+            >
+              <LogOut size={18} />
+            </button>
           </div>
 
           <div className="min-h-0 flex-1 overflow-y-auto py-3">
@@ -284,6 +291,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
               badges={badges}
               navigation={bootstrap.navigation}
               role={bootstrap.role}
+              navigationLocked={navigationLocked}
               onNavigateDestination={navigateToDestination}
             />
           </div>
@@ -299,7 +307,9 @@ export function DashboardShell({ children }: { children: ReactNode }) {
           </div>
         </aside>
 
-        <main className="flex min-w-0 flex-1 flex-col pb-shell-compact-nav">
+        <main
+          className={`flex min-w-0 flex-1 flex-col ${hideCompactNavigation ? "" : "pb-shell-compact-nav"}`}
+        >
           <header
             className="sticky top-0 z-30 flex min-h-16 items-center border-b border-line bg-surface px-safe pt-safe min-[1200px]:min-h-14"
             data-testid="shell-header"
@@ -313,25 +323,30 @@ export function DashboardShell({ children }: { children: ReactNode }) {
                 {headerSlots.description}
                 {showActiveClientControl ? (
                   <div className="mt-2" data-testid="shell-active-client">
-                    <ActiveClientControl />
+                    <ActiveClientControl disabled={navigationLocked} />
                   </div>
                 ) : null}
               </div>
               <div className="flex flex-wrap items-center gap-2">
                 <DashboardHeaderBell
                   unreadCount={badges.notifications}
-                  onOpenNotifications={() => navigateToDestination("notifications")}
+                  onOpenNotifications={() => {
+                    if (navigationLocked) return;
+                    navigateToDestination("notifications");
+                  }}
                 />
                 {headerSlots.actions}
                 {activeDestination === "ai_chat" ? (
-                  <Link
-                    href={`${AI_CHAT_ROOT_PATH}?focus=1`}
-                    className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-control border border-line bg-surface text-ink"
+                  <button
+                    type="button"
+                    className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-control border border-line bg-surface text-ink disabled:opacity-50"
                     aria-label="Odak moduna geç"
                     data-testid="shell-enter-focus"
+                    disabled={navigationLocked}
+                    onClick={() => setFocusMode(true)}
                   >
                     <Maximize2 size={18} />
-                  </Link>
+                  </button>
                 ) : null}
               </div>
             </div>
@@ -340,12 +355,15 @@ export function DashboardShell({ children }: { children: ReactNode }) {
         </main>
       </div>
 
-      <DashboardCompactBottomNav
-        activeNavKey={activeDestination}
-        badges={badges}
-        navigation={bootstrap.navigation}
-        onNavigateDestination={navigateToDestination}
-      />
+      {hideCompactNavigation ? null : (
+        <DashboardCompactBottomNav
+          activeNavKey={activeDestination}
+          badges={badges}
+          navigation={bootstrap.navigation}
+          navigationLocked={navigationLocked}
+          onNavigateDestination={navigateToDestination}
+        />
+      )}
     </div>
   );
 }

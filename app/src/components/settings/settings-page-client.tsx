@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useMemo } from "react";
-import { useRouter } from "next/navigation";
 import { useShellProvider } from "@/components/dashboard/shell-provider";
 import { SettingsActiveSection } from "@/components/settings/settings-sections";
 import { Tabs } from "@/components/ui";
@@ -32,8 +31,7 @@ export function SettingsPageClient({
   activeTab: SettingsTab;
   aiChatEnabled: boolean;
 }) {
-  const router = useRouter();
-  const { setHeaderSlots } = useShellProvider();
+  const { setHeaderSlots, requestHrefNavigation } = useShellProvider();
   const uiLanguage = model.profile.uiLanguage;
 
   useEffect(() => {
@@ -58,16 +56,9 @@ export function SettingsPageClient({
   const onTabChange = useCallback(
     (id: string) => {
       const next = SETTINGS_TABS.includes(id as SettingsTab) ? (id as SettingsTab) : "profile";
-      if (activeTab === "profile" && next !== "profile") {
-        const dirtyForm = document.querySelector("[data-testid='settings-profile-form'][data-dirty='true']");
-        if (dirtyForm) {
-          const confirmed = window.confirm(t(uiLanguage, "settingsProfileLeaveWarning"));
-          if (!confirmed) return;
-        }
-      }
-      router.replace(buildSettingsHref(next));
+      requestHrefNavigation(buildSettingsHref(next));
     },
-    [activeTab, router, uiLanguage],
+    [requestHrefNavigation],
   );
 
   return (

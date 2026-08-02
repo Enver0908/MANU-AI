@@ -20,6 +20,8 @@ import type { SupportedLanguageCode } from "@/lib/languages";
 import type { ClientFormFieldDefinition, ClientFormResponseRecord, ClientRecord, ManuAppState } from "@/lib/types";
 import { MOBILE_FIELD_CLASS } from "@/lib/phase-83e5-mobile-ergonomics";
 import { Badge, EmptyState, SelectInput } from "./shared";
+import { useShellDirtyRegistration } from "@/lib/use-shell-dirty-registration";
+import type { ShellDirtyEntryState } from "@/lib/phase-85-stage-5-shell-dirty-registry";
 
 export function ClientFormPanel({
   client,
@@ -97,6 +99,45 @@ function ClientFormPanelEditor({
   const sections = groupFormFieldsBySection(activeSchema.fields);
   const autopilotStatus = summarizeAutopilotFieldStatus(activeSchema.fields, draftAnswers);
   const disabled = client.lifecycleStatus === "removed_anonymized";
+  const isDirty = JSON.stringify(draftAnswers) !== JSON.stringify(initialAnswers);
+  const dirtyState: ShellDirtyEntryState = isSaving
+    ? "saving"
+    : saveError
+      ? "error"
+      : isDirty
+        ? "dirty"
+        : "clean";
+
+  useShellDirtyRegistration({
+    id: `client-form:${client.id}:${activeSchema.id}`,
+    label: "Danışan formu",
+    state: dirtyState,
+    canSave: isDirty && !disabled,
+    onSave: async () => {
+      if (disabled || isSaving) return false;
+      setIsSaving(true);
+      setSaveError(null);
+      try {
+        await onSave({
+          clientId: client.id,
+          schemaId: activeSchema.id,
+          answers: buildClientFormAnswersPayload(activeSchema.fields, draftAnswers),
+          submittedPhoneE164: client.primaryPhoneE164 || undefined,
+        });
+        return true;
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "form_save_failed";
+        setSaveError(message);
+        return false;
+      } finally {
+        setIsSaving(false);
+      }
+    },
+    onDiscard: () => {
+      setDraftAnswers(initialAnswers);
+      setSaveError(null);
+    },
+  });
 
   const updateField = (fieldId: string, value: unknown) => {
     setDraftAnswers((current) => ({ ...current, [fieldId]: value }));
