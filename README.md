@@ -4,7 +4,7 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 ## Current Status
 
-**Current active status (2026-08-02):** Stage 5 Faz 1 scope baseline and Faz 2 shell data foundation are complete locally (uncommitted pending user commit command). Evidence: `docs/PHASE_85_STAGE_5_PHASE_1_SCOPE_BASELINE_EVIDENCE.md` and `docs/PHASE_85_STAGE_5_PHASE_2_SHELL_DATA_FOUNDATION_EVIDENCE.md`. Faz 2 adds server-side 15-minute session inactivity enforcement and shell preference/session SQL foundation; targeted unit tests and typecheck passed. Local Supabase reset and `npm run test:rls` remain pending Docker availability. Stage 5 Faz 3 is next. The branch has not been pushed. Production remains `NO-GO`; R-405 remains open.
+**Current active status (2026-08-02):** Stage 5 Faz 1 scope baseline, Faz 2 shell data foundation, and Faz 3 bounded shell HTTP APIs are complete locally. Evidence: `docs/PHASE_85_STAGE_5_PHASE_1_SCOPE_BASELINE_EVIDENCE.md`, `docs/PHASE_85_STAGE_5_PHASE_2_SHELL_DATA_FOUNDATION_EVIDENCE.md`, and `docs/PHASE_85_STAGE_5_PHASE_3_BOUNDED_SHELL_API_EVIDENCE.md`. Faz 3 adds authenticated no-store shell routes and bounded bootstrap/search read model; targeted unit tests and typecheck passed. Local Supabase reset and `npm run test:rls` remain pending Docker availability. Stage 5 Faz 4 is next. The branch has not been pushed. Production remains `NO-GO`; R-405 remains open.
 
 **Document authority rule:** this current-status block and the Stage 4D remediation evidence chain govern the active handoff. Dated phase entries below are historical delivery snapshots; any `current`, `next`, `pending`, or `blocked` wording inside them applies only to that snapshot and does not override this block.
 
