@@ -43,16 +43,16 @@ export function AiChatPageClient({
 
   useEffect(() => {
     const description = scopedAiChatClient
-      ? `Danışan sohbeti — ${scopedAiChatClient.fullName} (${scopedAiChatClient.referenceShort})`
+      ? `${t(uiLanguage, "shellAiChatClientScoped")} — ${scopedAiChatClient.fullName} (${scopedAiChatClient.referenceShort})`
       : focusMode || urlFocus
-        ? "Odak modu açık"
-        : "Genel sohbet — danışan bağlamı kullanılmıyor";
+        ? t(uiLanguage, "shellAiChatFocusOpen")
+        : t(uiLanguage, "shellAiChatGeneralUnbound");
     setHeaderSlots({
       title: <h1 className="text-2xl font-semibold">AI Chat</h1>,
       description: <p className="mt-1 text-sm text-stone-500">{description}</p>,
     });
     return () => setHeaderSlots({});
-  }, [focusMode, scopedAiChatClient, setHeaderSlots, urlFocus]);
+  }, [focusMode, scopedAiChatClient, setHeaderSlots, uiLanguage, urlFocus]);
 
   useEffect(() => {
     return () => setScopedAiChatClient(null);

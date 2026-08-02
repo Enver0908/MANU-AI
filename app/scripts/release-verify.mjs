@@ -30,6 +30,7 @@ const checks = [
     timeoutMs: 2_400_000,
   },
   { label: "production build", command: "npm", args: ["run", "build"], before: cleanNextBuildOutput },
+  { label: "stage-5 shell verify", command: "npm", args: ["run", "test:stage-5-shell"] },
 ];
 
 for (const check of checks) {

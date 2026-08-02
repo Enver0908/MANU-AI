@@ -1,6 +1,6 @@
 # MANU-AI Project Plan v2
 
-**Current active status (2026-08-02):** Stage 5 Faz 1–8 are complete locally. Evidence: `docs/PHASE_85_STAGE_5_PHASE_1_SCOPE_BASELINE_EVIDENCE.md`, `docs/PHASE_85_STAGE_5_PHASE_2_SHELL_DATA_FOUNDATION_EVIDENCE.md`, `docs/PHASE_85_STAGE_5_PHASE_3_BOUNDED_SHELL_API_EVIDENCE.md`, `docs/PHASE_85_STAGE_5_PHASE_4_AUTHENTICATED_SHELL_PROVIDER_EVIDENCE.md`, `docs/PHASE_85_STAGE_5_PHASE_5_RESPONSIVE_NAV_BRANDING_EVIDENCE.md`, `docs/PHASE_85_STAGE_5_PHASE_6_GLOBAL_CLIENT_CONTEXT_HOME_ACTIONS_EVIDENCE.md`, `docs/PHASE_85_STAGE_5_PHASE_7_PWA_OFFLINE_UPDATE_PRIVACY_EVIDENCE.md`, and `docs/PHASE_85_STAGE_5_PHASE_8_ROUTE_DIRTY_MOBILE_EVIDENCE.md`. Stage 5 Faz 9 is next and requires separate explicit approval. Local Supabase reset/`test:rls` remain pending where Docker is unavailable. The branch has not been pushed. Production remains `NO-GO`; R-405 remains open.
+**Current active status (2026-08-02):** Stage 5 Faz 1–9 local automation is complete (`docs/PHASE_85_STAGE_5_PHASE_9_A11Y_PERF_CLOSURE_EVIDENCE.md`). Full Stage 5 closure remains BLOCKED on real-device PWA proof and clean local RLS. Production remains `NO-GO`; R-405 remains open. The branch has not been pushed.
 
 **Document authority rule:** this current-status block and the Stage 4D remediation evidence chain govern active execution. Every later dated phase entry is historical; its `current`, `next`, `pending`, or `blocked` wording describes only that checkpoint.
 

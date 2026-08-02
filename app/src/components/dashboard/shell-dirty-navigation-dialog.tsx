@@ -2,6 +2,8 @@
 
 import type { ShellDirtySnapshot } from "@/lib/phase-85-stage-5-shell-dirty-registry";
 import { buildShellDirtyConfirmMessage } from "@/lib/phase-85-stage-5-shell-dirty-registry";
+import type { SupportedLanguageCode } from "@/lib/languages";
+import { t } from "@/lib/i18n";
 
 export type ShellNavigationConfirmRequest = {
   title?: string;
@@ -19,9 +21,11 @@ export type ShellNavigationConfirmRequest = {
 export function ShellDirtyNavigationDialog({
   request,
   busy = false,
+  uiLanguage = "tr",
 }: {
   request: ShellNavigationConfirmRequest;
   busy?: boolean;
+  uiLanguage?: SupportedLanguageCode;
 }) {
   return (
     <div className="fixed inset-0 z-[70] flex items-center justify-center bg-ink/45 px-4" role="presentation">
@@ -33,14 +37,14 @@ export function ShellDirtyNavigationDialog({
         data-testid="shell-dirty-navigation-dialog"
       >
         <h2 id="shell-dirty-title" className="text-sm font-semibold text-ink">
-          {request.title ?? "Kaydedilmemiş değişiklikler"}
+          {request.title ?? t(uiLanguage, "shellDirtyTitle")}
         </h2>
         <p className="mt-2 whitespace-pre-line text-sm text-ink-muted">
-          {buildShellDirtyConfirmMessage(request.snapshot.labels)}
+          {buildShellDirtyConfirmMessage(request.snapshot.labels, uiLanguage)}
         </p>
         {request.snapshot.hasError ? (
           <p className="mt-2 text-sm text-ink-muted" role="status">
-            Kayıt hatası var. İlgili alana odaklanıp düzeltebilirsiniz.
+            {t(uiLanguage, "shellDirtyErrorHint")}
           </p>
         ) : null}
         <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:justify-end">
@@ -51,7 +55,7 @@ export function ShellDirtyNavigationDialog({
             disabled={busy}
             data-testid="shell-dirty-stay"
           >
-            Burada kal
+            {t(uiLanguage, "shellDirtyStay")}
           </button>
           {request.snapshot.hasError && request.onFocusError ? (
             <button
@@ -61,7 +65,7 @@ export function ShellDirtyNavigationDialog({
               disabled={busy}
               data-testid="shell-dirty-focus-error"
             >
-              Hataya git
+              {t(uiLanguage, "shellDirtyFocusError")}
             </button>
           ) : null}
           <button
@@ -71,7 +75,7 @@ export function ShellDirtyNavigationDialog({
             disabled={busy || request.snapshot.isSaving}
             data-testid="shell-dirty-discard"
           >
-            Değişiklikleri bırak
+            {t(uiLanguage, "shellDirtyDiscard")}
           </button>
           {request.canSaveAndContinue && request.onSaveAndContinue ? (
             <button
@@ -81,7 +85,7 @@ export function ShellDirtyNavigationDialog({
               disabled={busy || request.snapshot.isSaving}
               data-testid="shell-dirty-save-continue"
             >
-              {request.snapshot.isSaving ? "Kaydediliyor…" : "Kaydet ve devam et"}
+              {request.snapshot.isSaving ? t(uiLanguage, "shellDirtySaving") : t(uiLanguage, "shellDirtySaveContinue")}
             </button>
           ) : null}
         </div>

@@ -80,8 +80,15 @@ describe("phase 83d pwa install gate", () => {
     });
 
     expect(env.isIosSafari).toBe(false);
+    expect(env.isInAppBrowser).toBe(false);
     expect(env.supportsBeforeInstallPrompt).toBe(true);
     expect(env.isInstalled).toBe(false);
+
+    const inApp = buildPwaRuntimeEnvironment({
+      userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) Instagram 300.0.0",
+      displayMode: "browser",
+    });
+    expect(inApp.isInAppBrowser).toBe(true);
   });
 
   it("validates audit event types and sanitizes user agent summaries", () => {

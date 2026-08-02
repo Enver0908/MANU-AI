@@ -12,6 +12,8 @@ import {
 import { ActiveClientControl } from "@/components/dashboard/active-client-control";
 import { useShellProvider } from "@/components/dashboard/shell-provider";
 import { DASHBOARD_MAIN_ID } from "@/lib/phase-83e6-states-polish";
+import { t } from "@/lib/i18n";
+import type { SupportedLanguageCode } from "@/lib/languages";
 
 function ShellBlocker({
   title,
@@ -37,25 +39,30 @@ function ShellBlocker({
   );
 }
 
-function renderRuntimeBlocker(runtime: string, lastError: string | null, onRetry: () => void) {
+function renderRuntimeBlocker(
+  runtime: string,
+  lastError: string | null,
+  onRetry: () => void,
+  uiLanguage: SupportedLanguageCode,
+) {
   const primaryButton =
     "inline-flex min-h-11 items-center rounded-control bg-primary px-4 text-sm font-medium text-white";
   switch (runtime) {
     case "booting":
       return (
         <ShellBlocker
-          title="Kabuk yükleniyor"
-          message="Oturum ve kabuk durumu doğrulanıyor. Klinik içerik henüz açılmadı."
+          title={t(uiLanguage, "shellBootingTitle")}
+          message={t(uiLanguage, "shellBootingMessage")}
         />
       );
     case "offline":
       return (
         <ShellBlocker
-          title="İnternet bağlantısı gerekli"
-          message="Korumalı içerik çevrimdışıyken açılamaz. Bağlantı gelince yeniden deneyin."
+          title={t(uiLanguage, "shellOfflineTitle")}
+          message={t(uiLanguage, "shellOfflineMessage")}
           action={
             <button type="button" className={primaryButton} onClick={onRetry}>
-              Yeniden dene
+              {t(uiLanguage, "shellRetry")}
             </button>
           }
         />
@@ -63,11 +70,11 @@ function renderRuntimeBlocker(runtime: string, lastError: string | null, onRetry
     case "session_locked":
       return (
         <ShellBlocker
-          title="Oturum kilitlendi"
-          message="Hareketsizlik nedeniyle oturum kilitlendi. Devam etmek için yeniden giriş yapın."
+          title={t(uiLanguage, "shellSessionLockedTitle")}
+          message={t(uiLanguage, "shellSessionLockedMessage")}
           action={
             <Link href="/login?next=/dashboard" className={primaryButton}>
-              Yeniden giriş
+              {t(uiLanguage, "shellReLogin")}
             </Link>
           }
         />
@@ -75,11 +82,11 @@ function renderRuntimeBlocker(runtime: string, lastError: string | null, onRetry
     case "entitlement_blocked":
       return (
         <ShellBlocker
-          title="Erişim engellendi"
-          message="Aktif abonelik veya yetki olmadan kabuk açılamaz."
+          title={t(uiLanguage, "shellEntitlementBlockedTitle")}
+          message={t(uiLanguage, "shellEntitlementBlockedMessage")}
           action={
             <Link href="/pricing" className={primaryButton}>
-              Aboneliği kontrol et
+              {t(uiLanguage, "shellCheckSubscription")}
             </Link>
           }
         />
@@ -87,11 +94,11 @@ function renderRuntimeBlocker(runtime: string, lastError: string | null, onRetry
     case "update_required":
       return (
         <ShellBlocker
-          title="Güncelleme gerekli"
-          message="Bu sürüm artık desteklenmiyor. Uygulamayı yenileyip tekrar deneyin."
+          title={t(uiLanguage, "shellUpdateRequiredTitle")}
+          message={t(uiLanguage, "shellUpdateRequiredMessage")}
           action={
             <button type="button" className={primaryButton} onClick={() => window.location.reload()}>
-              Yenile
+              {t(uiLanguage, "shellReload")}
             </button>
           }
         />
@@ -100,11 +107,11 @@ function renderRuntimeBlocker(runtime: string, lastError: string | null, onRetry
     default:
       return (
         <ShellBlocker
-          title="Kabuk kullanılamıyor"
-          message={lastError ? `Durum: ${lastError}` : "Kabuk bootstrap başarısız oldu."}
+          title={t(uiLanguage, "shellUnavailableTitle")}
+          message={lastError ? `Durum: ${lastError}` : t(uiLanguage, "shellUnavailableMessage")}
           action={
             <button type="button" className={primaryButton} onClick={onRetry}>
-              Yeniden dene
+              {t(uiLanguage, "shellRetry")}
             </button>
           }
         />
@@ -134,6 +141,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
     requestLogout,
     dirtySnapshot,
     hideCompactNavigation,
+    uiLanguage,
     lastError,
   } = useShellProviderWithLastError();
 
@@ -146,7 +154,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
     runtime === "service_unavailable";
 
   if (hardBlockRuntime) {
-    return renderRuntimeBlocker(runtime, lastError, refreshBootstrap);
+    return renderRuntimeBlocker(runtime, lastError, refreshBootstrap, uiLanguage);
   }
 
   if (!bootstrap) {
@@ -154,6 +162,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
       runtime === "update_required" ? "update_required" : "booting",
       lastError,
       refreshBootstrap,
+      uiLanguage,
     );
   }
 
@@ -173,8 +182,8 @@ export function DashboardShell({ children }: { children: ReactNode }) {
         <div className="mx-auto flex max-w-6xl flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <p>
             {updateRequired
-              ? "Zorunlu güncelleme: kaydetme dışındaki işlemler kapalı. Kaydettikten sonra yenileme gerekir. Çıkış yapılabilir."
-              : "Yeni uygulama sürümü hazır. Kaydedilmemiş değişiklik varken isteğe bağlı yenileme ertelenir."}
+              ? t(uiLanguage, "shellUpdateRequiredBanner")
+              : t(uiLanguage, "shellUpdateWaitingBanner")}
           </p>
           <div className="flex flex-wrap gap-2">
             {updateRequired ? (
@@ -183,7 +192,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
                 className="inline-flex min-h-11 items-center rounded-control bg-primary px-3 text-sm font-medium text-white"
                 onClick={() => window.location.reload()}
               >
-                Şimdi yenile
+                {t(uiLanguage, "shellUpdateNow")}
               </button>
             ) : (
               <>
@@ -192,7 +201,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
                   className="inline-flex min-h-11 items-center rounded-control border border-line px-3 text-sm"
                   onClick={dismissOptionalUpdate}
                 >
-                  Sonra
+                  {t(uiLanguage, "shellUpdateLater")}
                 </button>
                 <button
                   type="button"
@@ -200,7 +209,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
                   disabled={!canNavigateAway()}
                   onClick={applyWaitingServiceWorkerUpdate}
                 >
-                  Güncelle
+                  {t(uiLanguage, "shellUpdateApply")}
                 </button>
               </>
             )}
@@ -213,15 +222,15 @@ export function DashboardShell({ children }: { children: ReactNode }) {
     return (
       <div className="min-h-dvh bg-paper text-ink" data-testid="authenticated-shell">
         <a href={`#${DASHBOARD_MAIN_ID}`} className="skip-link">
-          İçeriğe atla
+          {t(uiLanguage, "shellSkipToContent")}
         </a>
         {updateBanner}
         <div className="sticky top-0 z-40 flex min-h-11 items-center justify-between gap-3 border-b border-line bg-surface px-safe py-2">
-          <p className="text-sm font-medium text-ink">Odak modu</p>
+          <p className="text-sm font-medium text-ink">{t(uiLanguage, "shellFocusMode")}</p>
           <button
             type="button"
             className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-control border border-line bg-surface text-ink disabled:opacity-50"
-            aria-label="Odak modundan çık"
+            aria-label={t(uiLanguage, "shellFocusExit")}
             data-testid="shell-exit-focus"
             disabled={navigationLocked}
             onClick={() => setFocusMode(false)}
@@ -237,7 +246,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-dvh bg-paper text-ink" data-testid="authenticated-shell">
       <a href={`#${DASHBOARD_MAIN_ID}`} className="skip-link">
-        İçeriğe atla
+        {t(uiLanguage, "shellSkipToContent")}
       </a>
       {updateBanner}
       <div className="flex min-h-dvh flex-col min-[768px]:flex-row">
@@ -275,8 +284,8 @@ export function DashboardShell({ children }: { children: ReactNode }) {
             <button
               type="button"
               className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-control border border-line bg-surface text-ink-muted transition hover:bg-surface-muted disabled:opacity-50"
-              title="Oturumu kapat"
-              aria-label="Oturumu kapat"
+              title={t(uiLanguage, "shellLogout")}
+              aria-label={t(uiLanguage, "shellLogout")}
               data-testid="shell-logout"
               disabled={navigationLocked}
               onClick={requestLogout}
@@ -299,10 +308,10 @@ export function DashboardShell({ children }: { children: ReactNode }) {
           <div className="border-t border-line px-5 py-4">
             <div className="flex items-center gap-2 text-sm font-semibold text-ink">
               <ShieldCheck size={18} className="text-sage" />
-              Yerel güvenli mod
+              {t(uiLanguage, "shellLocalSafeMode")}
             </div>
             <p className="mt-2 text-sm leading-6 text-ink-muted">
-              Yalnızca simülatör. WhatsApp, Telegram veya canlı sağlık verisi sağlayıcısı bağlı değil.
+              {t(uiLanguage, "shellLocalSafeModeHint")}
             </p>
           </div>
         </aside>
@@ -340,7 +349,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
                   <button
                     type="button"
                     className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-control border border-line bg-surface text-ink disabled:opacity-50"
-                    aria-label="Odak moduna geç"
+                    aria-label={t(uiLanguage, "shellFocusEnter")}
                     data-testid="shell-enter-focus"
                     disabled={navigationLocked}
                     onClick={() => setFocusMode(true)}

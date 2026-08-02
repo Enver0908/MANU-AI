@@ -712,7 +712,7 @@ export function DashboardApp({
               data-testid="dashboard-read-only-role-label"
               role="status"
             >
-              Salt okunur — asistan/denetçi
+              {t(uiLanguage, "shellReadOnlyAssistantAuditor")}
             </span>
           ) : null}
           <button

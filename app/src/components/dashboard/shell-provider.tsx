@@ -65,6 +65,7 @@ import {
   type ShellDirtySnapshot,
 } from "@/lib/phase-85-stage-5-shell-dirty-registry";
 import { ShellDirtyNavigationDialog } from "@/components/dashboard/shell-dirty-navigation-dialog";
+import { ShellWebVitalsReporter } from "@/components/dashboard/shell-web-vitals-reporter";
 
 export type ShellHeaderSlots = {
   title?: ReactNode;
@@ -855,10 +856,12 @@ export function ShellProvider({
 
   return (
     <ShellProviderContext.Provider value={value}>
+      <ShellWebVitalsReporter />
       {children}
       {pendingNavigation ? (
         <ShellDirtyNavigationDialog
           busy={confirmBusy || dirtySnapshot.isSaving}
+          uiLanguage={uiLanguage}
           request={{
             snapshot: dirtySnapshot,
             canSaveAndContinue,

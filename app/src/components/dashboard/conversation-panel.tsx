@@ -220,7 +220,7 @@ export function ConversationPanel({
           data-testid="conversation-read-only-label"
         >
           {!canManageAiControls
-            ? "Salt okunur — asistan/denetçi rolünde mutasyon kontrolleri kapalı."
+            ? t(uiLanguage, "shellReadOnlyConversationAssistant")
             : t(uiLanguage, "conversationReadOnlyNotice")}
         </p>
       ) : null}

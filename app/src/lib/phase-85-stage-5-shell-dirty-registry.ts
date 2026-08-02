@@ -122,9 +122,12 @@ export class ShellDirtyRegistry {
 
 export const shellDirtyRegistry = new ShellDirtyRegistry();
 
-export function buildShellDirtyConfirmMessage(labels: string[]) {
+import { t } from "./i18n";
+import type { SupportedLanguageCode } from "./languages";
+
+export function buildShellDirtyConfirmMessage(labels: string[], uiLanguage: SupportedLanguageCode = "tr") {
   if (labels.length === 0) {
-    return "Kaydedilmemiş değişiklikler var.";
+    return t(uiLanguage, "shellDirtyGeneric");
   }
-  return `Kaydedilmemiş değişiklikler:\n- ${labels.join("\n- ")}`;
+  return `${t(uiLanguage, "shellDirtyListPrefix")}\n- ${labels.join("\n- ")}`;
 }

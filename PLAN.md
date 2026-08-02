@@ -1,12 +1,12 @@
 # MANU-AI Plan
 
-**Current active status (2026-08-02):** Stage 5 Faz 1–8 are complete locally. Evidence: `docs/PHASE_85_STAGE_5_PHASE_1_SCOPE_BASELINE_EVIDENCE.md`, `docs/PHASE_85_STAGE_5_PHASE_2_SHELL_DATA_FOUNDATION_EVIDENCE.md`, `docs/PHASE_85_STAGE_5_PHASE_3_BOUNDED_SHELL_API_EVIDENCE.md`, `docs/PHASE_85_STAGE_5_PHASE_4_AUTHENTICATED_SHELL_PROVIDER_EVIDENCE.md`, `docs/PHASE_85_STAGE_5_PHASE_5_RESPONSIVE_NAV_BRANDING_EVIDENCE.md`, `docs/PHASE_85_STAGE_5_PHASE_6_GLOBAL_CLIENT_CONTEXT_HOME_ACTIONS_EVIDENCE.md`, `docs/PHASE_85_STAGE_5_PHASE_7_PWA_OFFLINE_UPDATE_PRIVACY_EVIDENCE.md`, and `docs/PHASE_85_STAGE_5_PHASE_8_ROUTE_DIRTY_MOBILE_EVIDENCE.md`. Faz 8 delivers route integration, central dirty-state guard, and mobile keyboard/sticky ergonomics. Targeted unit tests and typecheck passed; local Supabase reset and `npm run test:rls` remain blocked (Docker unavailable). Stage 5 Faz 9 is next and requires separate explicit approval. The branch has not been pushed. Production remains `NO-GO`; R-405 remains open.
+**Current active status (2026-08-02):** Stage 5 Faz 1–9 local automation is complete. Evidence includes `docs/PHASE_85_STAGE_5_PHASE_9_A11Y_PERF_CLOSURE_EVIDENCE.md`. Full Stage 5 closure remains BLOCKED on real-device PWA proof and clean local RLS 0-skip. Production remains `NO-GO`; R-405 remains open. The branch has not been pushed.
 
 **Document authority rule:** this current-status block and the Stage 4D remediation evidence chain govern active execution. Every later dated phase entry is historical; its `current`, `next`, `pending`, or `blocked` wording describes only that checkpoint.
 
 **Historical closure authority (2026-07-28):** Stage 4D Ayarlar / Hesap was closed locally on `codex/stage-4c-remediation` with measured verdict `PASS_LOCAL_STAGE_4D_CLOSED`. Evidence: `docs/PHASE_85_STAGE_4D_CLOSURE_EVIDENCE.md`, `docs/PHASE_85_STAGE_4D_AYARLAR_HESAP_ACTION_PLAN.md`. This is superseded for active next-step planning by the Stage 4D remediation evidence above. Production remains `NO-GO`; R-405 remains open.
 
-Current continuity status, 2026-08-02: Stage 5 Faz 1–8 are complete locally; Faz 9 a11y/perf/closure is next after commit verification and local RLS re-run when Docker is available. Production remains `NO-GO` and R-405 remains open.
+Current continuity status, 2026-08-02: Stage 5 Faz 1–9 local automation is complete; full Stage 5 closure remains blocked on real-device PWA proof and clean local RLS 0-skip. Production remains `NO-GO` and R-405 remains open.
 
 ## Project Summary
 

@@ -107,6 +107,30 @@ export function AppInstallCenter({ displayName }: AppInstallCenterProps) {
     );
   }
 
+  if (runtime.isInAppBrowser) {
+    return (
+      <div
+        className="rounded-lg border border-border bg-surface p-5"
+        role="region"
+        aria-label="Uygulama içi tarayıcı kurulum rehberi"
+        data-testid="install-center-in-app-browser-guide"
+      >
+        <div className="flex items-center gap-3">
+          <div className="rounded-md bg-primary/10 p-2 text-primary">
+            <Share size={22} />
+          </div>
+          <div>
+            <h2 className="text-lg font-semibold text-foreground">Tarayıcıda açın</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Kurulum için bu sayfayı Safari (iOS) veya Chrome (Android) içinde açın. Uygulama içi
+              tarayıcılar PWA kurulumunu desteklemeyebilir.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (runtime.isIosSafari) {
     return (
       <div className="rounded-lg border border-border bg-surface p-5" role="region" aria-label="iOS kurulum rehberi">

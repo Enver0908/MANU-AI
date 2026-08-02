@@ -1,6 +1,7 @@
 import { SUPPORTED_LANGUAGES, type SupportedLanguageCode } from "./languages";
 import { stage4bNotificationMessages } from "./phase-85-stage-4b-notification-i18n";
 import { stage4dSettingsMessages } from "./phase-85-stage-4d-settings-i18n";
+import { stage5ShellMessages } from "./phase-85-stage-5-shell-i18n";
 
 export const dashboardMessages = {
   tr: {
@@ -386,6 +387,7 @@ export const dashboardMessages = {
     clientDetailAiEvaluate: "AI ile değerlendir",
     ...stage4bNotificationMessages.tr,
     ...stage4dSettingsMessages.tr,
+    ...stage5ShellMessages.tr,
   },
   en: {
     overview: "Overview",
@@ -770,6 +772,7 @@ export const dashboardMessages = {
     clientDetailAiEvaluate: "Evaluate with AI",
     ...stage4bNotificationMessages.en,
     ...stage4dSettingsMessages.en,
+    ...stage5ShellMessages.en,
   },
   de: {
     overview: "Ubersicht",
@@ -1154,6 +1157,7 @@ export const dashboardMessages = {
     clientDetailAiEvaluate: "Mit KI bewerten",
     ...stage4bNotificationMessages.de,
     ...stage4dSettingsMessages.de,
+    ...stage5ShellMessages.de,
   },
   fr: {
     overview: "Apercu",
@@ -1538,6 +1542,7 @@ export const dashboardMessages = {
     clientDetailAiEvaluate: "Évaluer avec l'IA",
     ...stage4bNotificationMessages.fr,
     ...stage4dSettingsMessages.fr,
+    ...stage5ShellMessages.fr,
   },
   es: {
     overview: "Resumen",
@@ -1922,6 +1927,7 @@ export const dashboardMessages = {
     clientDetailAiEvaluate: "Evaluar con IA",
     ...stage4bNotificationMessages.es,
     ...stage4dSettingsMessages.es,
+    ...stage5ShellMessages.es,
   },
   pt: {
     overview: "Resumo",
@@ -2306,6 +2312,7 @@ export const dashboardMessages = {
     clientDetailAiEvaluate: "Avaliar com IA",
     ...stage4bNotificationMessages.pt,
     ...stage4dSettingsMessages.pt,
+    ...stage5ShellMessages.pt,
   },
   cs: {
     overview: "Prehled",
@@ -2690,6 +2697,7 @@ export const dashboardMessages = {
     clientDetailAiEvaluate: "Vyhodnotit pomoci AI",
     ...stage4bNotificationMessages.cs,
     ...stage4dSettingsMessages.cs,
+    ...stage5ShellMessages.cs,
   },
 } satisfies Record<SupportedLanguageCode, Record<string, string>>;
 

@@ -1,5 +1,11 @@
 import { defineConfig, devices } from "@playwright/test";
 
+/**
+ * Stage 5 Faz 9 browser matrix:
+ * - Existing Chromium projects keep visual snapshot compatibility.
+ * - `mobile-ios` is Chromium iOS *emulation* — not real Safari.
+ * - Real WebKit (mobile/tablet) and Firefox (desktop) run Stage 5 shell a11y/responsive suites only.
+ */
 export default defineConfig({
   testDir: "./tests/visual",
   timeout: 30_000,
@@ -25,9 +31,6 @@ export default defineConfig({
       NEXT_PUBLIC_SUPABASE_URL: "",
       NEXT_PUBLIC_SUPABASE_ANON_KEY: "",
       SUPABASE_SERVICE_ROLE_KEY: "",
-      // AI Chat routes are force-dynamic, so this server-only flag (and the
-      // in-memory store fallback) are re-evaluated per request by
-      // `next start` without requiring a rebuild.
       AI_CHAT_UI_ENABLED: "true",
       AI_CHAT_DETERMINISTIC_MODE: "true",
     },
@@ -50,8 +53,24 @@ export default defineConfig({
       use: { ...devices["Pixel 5"], browserName: "chromium", viewport: { width: 390, height: 844 } },
     },
     {
+      // Chromium device emulation of iPhone — not a real Safari/WebKit proof.
       name: "mobile-ios",
       use: { ...devices["iPhone 13"], browserName: "chromium", viewport: { width: 390, height: 844 } },
+    },
+    {
+      name: "webkit-mobile",
+      testMatch: /stage-5-shell\.(accessibility|responsive)\.spec\.ts/,
+      use: { ...devices["iPhone 13"], browserName: "webkit" },
+    },
+    {
+      name: "webkit-tablet",
+      testMatch: /stage-5-shell\.(accessibility|responsive)\.spec\.ts/,
+      use: { ...devices["iPad Pro 11"], browserName: "webkit" },
+    },
+    {
+      name: "firefox-desktop",
+      testMatch: /stage-5-shell\.(accessibility|responsive)\.spec\.ts/,
+      use: { ...devices["Desktop Firefox"], browserName: "firefox", viewport: { width: 1440, height: 900 } },
     },
   ],
 });

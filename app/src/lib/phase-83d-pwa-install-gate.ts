@@ -40,6 +40,7 @@ export type PwaRuntimeEnvironment = {
   isInstalled: boolean;
   isOnline: boolean;
   isIosSafari: boolean;
+  isInAppBrowser: boolean;
   supportsBeforeInstallPrompt: boolean;
 };
 
@@ -127,6 +128,14 @@ export function detectIosSafariUserAgent(userAgent: string) {
   return isIos && isSafari;
 }
 
+/** Detect common in-app browsers that cannot complete PWA install. */
+export function detectInAppBrowserUserAgent(userAgent: string) {
+  const ua = userAgent.toLowerCase();
+  return /fbav|fban|fb_iab|instagram|line\/|twitter|linkedinapp|wv\)|; wv|micromessenger|tiktok|snapchat|pinterest/.test(
+    ua,
+  );
+}
+
 export function buildPwaRuntimeEnvironment(input: {
   userAgent: string;
   displayMode?: string | null;
@@ -144,6 +153,7 @@ export function buildPwaRuntimeEnvironment(input: {
     isInstalled: installed.isInstalled,
     isOnline: input.isOnline ?? true,
     isIosSafari: detectIosSafariUserAgent(input.userAgent),
+    isInAppBrowser: detectInAppBrowserUserAgent(input.userAgent),
     supportsBeforeInstallPrompt: input.supportsBeforeInstallPrompt ?? false,
   };
 }
