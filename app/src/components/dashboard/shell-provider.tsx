@@ -43,6 +43,22 @@ import {
   type ShellProviderState,
 } from "@/lib/phase-85-stage-5-shell-provider-state";
 import { normalizeLanguageCode, type SupportedLanguageCode } from "@/lib/languages";
+import {
+  getClientBuildVersion,
+  markShellReloadRequiredAfterSuccessfulSave,
+  setShellMutationUpdateGate,
+} from "@/lib/phase-85-stage-5-shell-authenticated-mutation";
+import {
+  buildShellReconnectHomeHref,
+  resolveClientBuildVersion,
+  resolveShellMutationUpdateGate,
+  SHELL_ACTIVITY_MIN_INTERVAL_MS,
+  SHELL_SW_SKIP_WAITING_MESSAGE,
+  SIRIUSAI_CLIENT_VERSION_HEADER,
+  SIRIUSAI_MUTATION_KIND_HEADER,
+  shouldBlockOptionalPwaReload,
+} from "@/lib/phase-85-stage-5-shell-pwa";
+import type { ShellVersionDto } from "@/lib/phase-85-stage-5-shell-contracts";
 
 export type ShellHeaderSlots = {
   title?: ReactNode;
@@ -80,6 +96,10 @@ type ShellProviderContextValue = {
   showActiveClientControl: boolean;
   saveDestinationViewState: (destinationId: ShellDestinationId, snapshot: ShellDestinationViewSnapshot) => void;
   restoreDestinationViewState: (destinationId: ShellDestinationId) => ShellDestinationViewSnapshot | null;
+  updateWaiting: boolean;
+  updateRequired: boolean;
+  applyWaitingServiceWorkerUpdate: () => void;
+  dismissOptionalUpdate: () => void;
 };
 
 const ShellProviderContext = createContext<ShellProviderContextValue | null>(null);
@@ -126,11 +146,13 @@ export function ShellProvider({
   mode = "live",
   fallbackDisplayName,
   fallbackUiLanguage,
+  registerServiceWorker = false,
   children,
 }: {
   mode?: ShellProviderMode;
   fallbackDisplayName?: string;
   fallbackUiLanguage?: string;
+  registerServiceWorker?: boolean;
   children: ReactNode;
 }) {
   const router = useRouter();
@@ -144,6 +166,11 @@ export function ShellProvider({
   const sequenceRef = useRef(0);
   const abortRef = useRef<AbortController | null>(null);
   const dirtyRef = useRef(false);
+  const activityPendingRef = useRef(false);
+  const lastActivitySentAtRef = useRef(0);
+  const waitingWorkerRef = useRef<ServiceWorker | null>(null);
+  const reconnectingRef = useRef(false);
+  const bootstrapRetryRef = useRef(0);
   const [headerSlots, setHeaderSlotsState] = useReducer(
     (_prev: ShellHeaderSlots, next: ShellHeaderSlots) => next,
     {},
@@ -189,6 +216,7 @@ export function ShellProvider({
 
       void fetchShellBootstrap(bootstrapClientId, controller.signal)
         .then((bootstrap) => {
+          bootstrapRetryRef.current = 0;
           const nextBootstrap =
             shellDestination === "ai_chat"
               ? { ...bootstrap, activeClient: null }
@@ -211,6 +239,13 @@ export function ShellProvider({
             typeof navigator !== "undefined" && navigator.onLine === false
               ? true
               : error instanceof TypeError;
+          // navigator.onLine can be true while network still fails — one short retry then unavailable.
+          if (!offline && bootstrapRetryRef.current < 1 && status >= 500) {
+            bootstrapRetryRef.current += 1;
+            window.setTimeout(() => runBootstrap("explicit"), 400);
+            return;
+          }
+          bootstrapRetryRef.current = 0;
           dispatch({
             type: "bootstrap_failed",
             sequence,
@@ -231,15 +266,183 @@ export function ShellProvider({
     };
   }, [pathname, searchKey, runBootstrap]);
 
+  const touchSessionActivity = useCallback(async () => {
+    if (typeof document !== "undefined" && document.visibilityState !== "visible") return;
+    if (typeof navigator !== "undefined" && navigator.onLine === false) return;
+    if (state.runtime === "offline" || state.runtime === "session_locked") return;
+    if (!activityPendingRef.current) return;
+
+    const now = Date.now();
+    if (now - lastActivitySentAtRef.current < SHELL_ACTIVITY_MIN_INTERVAL_MS) return;
+
+    activityPendingRef.current = false;
+    lastActivitySentAtRef.current = now;
+
+    try {
+      const response = await fetch("/api/session/activity", {
+        method: "POST",
+        cache: "no-store",
+        credentials: "same-origin",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          "Cache-Control": "no-store",
+          [SIRIUSAI_CLIENT_VERSION_HEADER]: getClientBuildVersion(),
+          [SIRIUSAI_MUTATION_KIND_HEADER]: "other",
+        },
+        body: "{}",
+      });
+      if (response.status === 401) {
+        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+        if (payload?.error === "session_inactive") {
+          shellDestinationViewStateRegistry.clear();
+          dispatch({ type: "session_locked", error: "session_inactive" });
+        }
+      }
+    } catch {
+      // Heartbeat failures do not surface stale clinical data.
+    }
+  }, [state.runtime]);
+  const markActivity = useCallback(() => {
+    activityPendingRef.current = true;
+    void touchSessionActivity();
+  }, [touchSessionActivity]);
+
   useEffect(() => {
     const onVisibility = () => {
-      if (document.visibilityState === "visible") {
-        runBootstrap("foreground");
-      }
+      if (document.visibilityState !== "visible") return;
+      // Bootstrap/session validation before heartbeat.
+      runBootstrap("foreground");
+      window.setTimeout(() => {
+        void touchSessionActivity();
+      }, 0);
     };
     document.addEventListener("visibilitychange", onVisibility);
     return () => document.removeEventListener("visibilitychange", onVisibility);
-  }, [runBootstrap]);
+  }, [runBootstrap, touchSessionActivity]);
+
+  useEffect(() => {
+    const onOffline = () => {
+      shellDestinationViewStateRegistry.clear();
+      abortRef.current?.abort();
+      dispatch({ type: "go_offline" });
+    };
+
+    const onOnline = () => {
+      if (reconnectingRef.current) return;
+      reconnectingRef.current = true;
+      // Reconnect lands on safe home first; prior client workflow is not auto-opened.
+      router.replace(buildShellReconnectHomeHref());
+      window.setTimeout(() => {
+        runBootstrap("explicit");
+        reconnectingRef.current = false;
+      }, 0);
+    };
+
+    if (typeof navigator !== "undefined" && navigator.onLine === false) {
+      onOffline();
+    }
+
+    window.addEventListener("offline", onOffline);
+    window.addEventListener("online", onOnline);
+    return () => {
+      window.removeEventListener("offline", onOffline);
+      window.removeEventListener("online", onOnline);
+    };
+  }, [router, runBootstrap]);
+
+  useEffect(() => {
+    const onPointer = () => markActivity();
+    const onKey = () => markActivity();
+    window.addEventListener("pointerdown", onPointer, { passive: true });
+    window.addEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("pointerdown", onPointer);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [markActivity]);
+
+  useEffect(() => {
+    // Successful shell navigation counts as activity.
+    markActivity();
+  }, [pathname, searchKey, markActivity]);
+
+  useEffect(() => {
+    const gate = resolveShellMutationUpdateGate({
+      updateRequired: state.updateRequired || state.runtime === "update_required",
+      optionalUpdateWaiting: state.updateWaiting,
+    });
+    setShellMutationUpdateGate(gate);
+    markShellReloadRequiredAfterSuccessfulSave(gate === "save_only");
+  }, [state.runtime, state.updateRequired, state.updateWaiting]);
+
+  useEffect(() => {
+    if (mode === "fallback" || !registerServiceWorker) return;
+    if (process.env.NODE_ENV !== "production") return;
+    if (!("serviceWorker" in navigator)) return;
+
+    let cancelled = false;
+    let registration: ServiceWorkerRegistration | null = null;
+
+    const trackWorker = (worker: ServiceWorker | null) => {
+      if (!worker || worker.state === "activated") return;
+      waitingWorkerRef.current = worker;
+      dispatch({ type: "set_update_waiting", waiting: true });
+      worker.addEventListener("statechange", () => {
+        if (worker.state === "installed" && navigator.serviceWorker.controller) {
+          waitingWorkerRef.current = worker;
+          dispatch({ type: "set_update_waiting", waiting: true });
+        }
+      });
+    };
+
+    void navigator.serviceWorker
+      .register("/sw.js")
+      .then((reg) => {
+        if (cancelled) return;
+        registration = reg;
+        trackWorker(reg.waiting);
+        reg.addEventListener("updatefound", () => {
+          trackWorker(reg.installing);
+        });
+      })
+      .catch(() => undefined);
+
+    const onControllerChange = () => {
+      shellDestinationViewStateRegistry.clear();
+      runBootstrap("explicit");
+    };
+    navigator.serviceWorker.addEventListener("controllerchange", onControllerChange);
+
+    return () => {
+      cancelled = true;
+      navigator.serviceWorker.removeEventListener("controllerchange", onControllerChange);
+      void registration;
+    };
+  }, [mode, registerServiceWorker, runBootstrap]);
+
+  useEffect(() => {
+    if (mode === "fallback") return;
+    let cancelled = false;
+    const clientVersion = resolveClientBuildVersion();
+    void fetch(`/api/shell/version?clientVersion=${encodeURIComponent(clientVersion)}`, {
+      method: "GET",
+      cache: "no-store",
+      credentials: "same-origin",
+      headers: { Accept: "application/json", "Cache-Control": "no-store" },
+    })
+      .then(async (response) => {
+        if (cancelled || !response.ok) return;
+        const payload = (await response.json()) as ShellVersionDto;
+        if (payload.updateRequired) {
+          dispatch({ type: "set_update_required", required: true });
+        }
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, [mode]);
 
   useEffect(() => {
     const focus = searchParams.get("focus") === "1";
@@ -260,6 +463,24 @@ export function ShellProvider({
     return buildShellClientSwitchConfirmMessage(client);
   }, []);
 
+  const applyWaitingServiceWorkerUpdate = useCallback(() => {
+    if (
+      shouldBlockOptionalPwaReload({
+        dirty: dirtyRef.current,
+        updateRequired: state.updateRequired || state.runtime === "update_required",
+      })
+    ) {
+      return;
+    }
+    const worker = waitingWorkerRef.current;
+    if (!worker) return;
+    worker.postMessage({ type: SHELL_SW_SKIP_WAITING_MESSAGE });
+  }, [state.runtime, state.updateRequired]);
+
+  const dismissOptionalUpdate = useCallback(() => {
+    if (state.updateRequired || state.runtime === "update_required") return;
+    dispatch({ type: "set_update_waiting", waiting: false });
+  }, [state.runtime, state.updateRequired]);
   const selectActiveClient = useCallback(
     async (client: ActiveClientSelection) => {
       const bootstrap = state.bootstrap;
@@ -282,6 +503,8 @@ export function ShellProvider({
             Accept: "application/json",
             "Content-Type": "application/json",
             "Cache-Control": "no-store",
+            [SIRIUSAI_CLIENT_VERSION_HEADER]: getClientBuildVersion(),
+            [SIRIUSAI_MUTATION_KIND_HEADER]: "save",
           },
           body: JSON.stringify({
             requestId: createPreferenceRequestId(),
@@ -339,8 +562,9 @@ export function ShellProvider({
         focusMode: false,
       });
       router.push(href);
+      markActivity();
     },
-    [canNavigateAway, effectiveActiveClientId, router, state.bootstrap, urlState],
+    [canNavigateAway, effectiveActiveClientId, markActivity, router, state.bootstrap, urlState],
   );
 
   const navigateToSection = useCallback(
@@ -406,11 +630,17 @@ export function ShellProvider({
       showActiveClientControl,
       saveDestinationViewState,
       restoreDestinationViewState,
+      updateWaiting: state.updateWaiting,
+      updateRequired: state.updateRequired || state.runtime === "update_required",
+      applyWaitingServiceWorkerUpdate,
+      dismissOptionalUpdate,
     }),
     [
       activeDestination,
+      applyWaitingServiceWorkerUpdate,
       canNavigateAway,
       contextualBootstrap,
+      dismissOptionalUpdate,
       effectiveActiveClientId,
       headerSlots,
       navigateToDestination,

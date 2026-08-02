@@ -1,12 +1,12 @@
 # MANU-AI Plan
 
-**Current active status (2026-08-02):** Stage 5 Faz 1–6 are complete locally. Evidence: `docs/PHASE_85_STAGE_5_PHASE_1_SCOPE_BASELINE_EVIDENCE.md`, `docs/PHASE_85_STAGE_5_PHASE_2_SHELL_DATA_FOUNDATION_EVIDENCE.md`, `docs/PHASE_85_STAGE_5_PHASE_3_BOUNDED_SHELL_API_EVIDENCE.md`, `docs/PHASE_85_STAGE_5_PHASE_4_AUTHENTICATED_SHELL_PROVIDER_EVIDENCE.md`, `docs/PHASE_85_STAGE_5_PHASE_5_RESPONSIVE_NAV_BRANDING_EVIDENCE.md`, and `docs/PHASE_85_STAGE_5_PHASE_6_GLOBAL_CLIENT_CONTEXT_HOME_ACTIONS_EVIDENCE.md`. Faz 6 delivers global active-client context and home actions. Targeted unit tests and typecheck passed; local Supabase reset and RLS re-run remain blocked (Docker unavailable). Stage 5 Faz 7 is next. The branch has not been pushed. Production remains `NO-GO`; R-405 remains open.
+**Current active status (2026-08-02):** Stage 5 Faz 1–7 are complete locally. Evidence: `docs/PHASE_85_STAGE_5_PHASE_1_SCOPE_BASELINE_EVIDENCE.md`, `docs/PHASE_85_STAGE_5_PHASE_2_SHELL_DATA_FOUNDATION_EVIDENCE.md`, `docs/PHASE_85_STAGE_5_PHASE_3_BOUNDED_SHELL_API_EVIDENCE.md`, `docs/PHASE_85_STAGE_5_PHASE_4_AUTHENTICATED_SHELL_PROVIDER_EVIDENCE.md`, `docs/PHASE_85_STAGE_5_PHASE_5_RESPONSIVE_NAV_BRANDING_EVIDENCE.md`, `docs/PHASE_85_STAGE_5_PHASE_6_GLOBAL_CLIENT_CONTEXT_HOME_ACTIONS_EVIDENCE.md`, and `docs/PHASE_85_STAGE_5_PHASE_7_PWA_OFFLINE_UPDATE_PRIVACY_EVIDENCE.md`. Faz 7 delivers PWA offline lock, reconnect, update, and privacy. Targeted unit tests and typecheck passed; local Supabase reset and RLS re-run remain blocked (Docker unavailable). Stage 5 Faz 8 is next. The branch has not been pushed. Production remains `NO-GO`; R-405 remains open.
 
 **Document authority rule:** this current-status block and the Stage 4D remediation evidence chain govern active execution. Every later dated phase entry is historical; its `current`, `next`, `pending`, or `blocked` wording describes only that checkpoint.
 
 **Historical closure authority (2026-07-28):** Stage 4D Ayarlar / Hesap was closed locally on `codex/stage-4c-remediation` with measured verdict `PASS_LOCAL_STAGE_4D_CLOSED`. Evidence: `docs/PHASE_85_STAGE_4D_CLOSURE_EVIDENCE.md`, `docs/PHASE_85_STAGE_4D_AYARLAR_HESAP_ACTION_PLAN.md`. This is superseded for active next-step planning by the Stage 4D remediation evidence above. Production remains `NO-GO`; R-405 remains open.
 
-Current continuity status, 2026-08-02: Stage 5 Faz 1–6 are complete locally; Faz 7 PWA offline lock / reconnect / update is next after commit verification and local RLS re-run when Docker is available. Production remains `NO-GO` and R-405 remains open.
+Current continuity status, 2026-08-02: Stage 5 Faz 1–7 are complete locally; Faz 8 route integration / dirty-state / mobile ergonomics is next after commit verification and local RLS re-run when Docker is available. Production remains `NO-GO` and R-405 remains open.
 
 ## Project Summary
 

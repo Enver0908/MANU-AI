@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Geist, Geist_Mono } from "next/font/google";
 import { PwaRuntime } from "@/components/pwa-runtime";
+import { resolveClientBuildVersion } from "@/lib/phase-85-stage-5-shell-pwa";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -19,6 +20,8 @@ const frauncesDisplay = Fraunces({
   axes: ["SOFT", "WONK", "opsz"],
 });
 
+const appVersion = resolveClientBuildVersion();
+
 export const metadata: Metadata = {
   title: "SiriusAI",
   description: "SiriusAI supervised dietitian messaging assistant",
@@ -29,6 +32,9 @@ export const metadata: Metadata = {
     title: "SiriusAI",
   },
   manifest: "/manifest.webmanifest",
+  other: {
+    "siriusai-app-version": appVersion,
+  },
 };
 
 export const viewport: Viewport = {
@@ -52,6 +58,9 @@ export default function RootLayout({
       lang="tr"
       className={`${geistSans.variable} ${geistMono.variable} ${frauncesDisplay.variable} h-full antialiased`}
     >
+      <head>
+        <meta name="siriusai-app-version" content={appVersion} />
+      </head>
       <body className="min-h-full">
         {devServiceWorkerCleanupScript ? (
           <script dangerouslySetInnerHTML={{ __html: devServiceWorkerCleanupScript }} />

@@ -127,11 +127,31 @@ export function DashboardShell({ children }: { children: ReactNode }) {
     setFocusMode,
     refreshBootstrap,
     showActiveClientControl,
+    updateWaiting,
+    updateRequired,
+    applyWaitingServiceWorkerUpdate,
+    dismissOptionalUpdate,
+    canNavigateAway,
     lastError,
   } = useShellProviderWithLastError();
 
-  if (runtime !== "ready" || !bootstrap) {
+  const hardBlockRuntime =
+    runtime === "booting" ||
+    runtime === "offline" ||
+    runtime === "session_locked" ||
+    runtime === "entitlement_blocked" ||
+    runtime === "service_unavailable";
+
+  if (hardBlockRuntime) {
     return renderRuntimeBlocker(runtime, lastError, refreshBootstrap);
+  }
+
+  if (!bootstrap) {
+    return renderRuntimeBlocker(
+      runtime === "update_required" ? "update_required" : "booting",
+      lastError,
+      refreshBootstrap,
+    );
   }
 
   const badges = {
@@ -140,12 +160,59 @@ export function DashboardShell({ children }: { children: ReactNode }) {
     messages: bootstrap.badgeCounts.messages,
   };
 
+  const updateBanner =
+    updateRequired || updateWaiting ? (
+      <div
+        className="border-b border-line bg-surface-muted px-safe py-2 text-sm text-ink"
+        role="status"
+        data-testid={updateRequired ? "shell-update-required-banner" : "shell-update-waiting-banner"}
+      >
+        <div className="mx-auto flex max-w-6xl flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <p>
+            {updateRequired
+              ? "Zorunlu güncelleme: kaydetme dışındaki işlemler kapalı. Kaydettikten sonra yenileme gerekir. Çıkış yapılabilir."
+              : "Yeni uygulama sürümü hazır. Kaydedilmemiş değişiklik varken isteğe bağlı yenileme ertelenir."}
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {updateRequired ? (
+              <button
+                type="button"
+                className="inline-flex min-h-11 items-center rounded-control bg-primary px-3 text-sm font-medium text-white"
+                onClick={() => window.location.reload()}
+              >
+                Şimdi yenile
+              </button>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  className="inline-flex min-h-11 items-center rounded-control border border-line px-3 text-sm"
+                  onClick={dismissOptionalUpdate}
+                >
+                  Sonra
+                </button>
+                <button
+                  type="button"
+                  className="inline-flex min-h-11 items-center rounded-control bg-primary px-3 text-sm font-medium text-white disabled:opacity-50"
+                  disabled={!canNavigateAway()}
+                  onClick={applyWaitingServiceWorkerUpdate}
+                >
+                  Güncelle
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    ) : null;
+
   if (focusMode) {
     return (
       <div className="min-h-dvh bg-paper text-ink" data-testid="authenticated-shell">
         <a href={`#${DASHBOARD_MAIN_ID}`} className="skip-link">
           İçeriğe atla
         </a>
+        {updateBanner}
         <div className="sticky top-0 z-40 flex min-h-11 items-center justify-between gap-3 border-b border-line bg-surface px-safe py-2">
           <p className="text-sm font-medium text-ink">Odak modu</p>
           <button
@@ -168,6 +235,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
       <a href={`#${DASHBOARD_MAIN_ID}`} className="skip-link">
         İçeriğe atla
       </a>
+      {updateBanner}
       <div className="flex min-h-dvh flex-col min-[768px]:flex-row">
         <aside
           className="hidden w-20 shrink-0 flex-col border-r border-line bg-surface min-[768px]:flex min-[1200px]:hidden"

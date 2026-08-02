@@ -19,9 +19,14 @@ export type MobileInstallBlockedReasonCode =
   | "entitlement_required"
   | "entitlement_inactive";
 
-export const SERVICE_WORKER_SHELL_PATHS = ["/", "/dashboard", "/app-install"] as const;
+export const SERVICE_WORKER_SHELL_PATHS = [] as const;
 
-export const SERVICE_WORKER_STATIC_ASSET_PREFIXES = ["/_next/static/", "/icon.svg", "/manifest.webmanifest"] as const;
+export const SERVICE_WORKER_STATIC_ASSET_PREFIXES = [
+  "/_next/static/",
+  "/icon.svg",
+  "/icons/",
+  "/manifest.webmanifest",
+] as const;
 
 export type MobileInstallCenterAccessInput = {
   isAuthenticated: boolean;
@@ -43,8 +48,15 @@ export function shouldServiceWorkerCachePath(pathname: string) {
     return false;
   }
 
-  if ((SERVICE_WORKER_SHELL_PATHS as readonly string[]).includes(pathname)) {
-    return true;
+  // Stage 5 Faz 7: navigation / dashboard HTML is network-only for privacy.
+  if (
+    pathname === "/" ||
+    pathname === "/dashboard" ||
+    pathname.startsWith("/dashboard/") ||
+    pathname === "/app-install" ||
+    pathname.startsWith("/app-install/")
+  ) {
+    return false;
   }
 
   return SERVICE_WORKER_STATIC_ASSET_PREFIXES.some((prefix) => pathname.startsWith(prefix));
@@ -142,6 +154,7 @@ export function summarizePhase83dPwaInstallGate() {
     installRoute: "/app-install",
     manifestStartUrl: "/dashboard",
     serviceWorkerShellPaths: [...SERVICE_WORKER_SHELL_PATHS],
+    navigationCachePolicy: "network_only",
     apiCachePolicy: "network_only",
     auditEventTypes: [...MOBILE_INSTALL_AUDIT_EVENT_TYPES],
   };

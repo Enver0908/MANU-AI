@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { AppRequestError } from "./app-errors";
+import { authenticatedMutationFetch } from "./phase-85-stage-5-shell-authenticated-mutation";
 import {
   mergeScopedClientMutationResponseIntoAppState,
   type Phase79ScopedClientMutationResponse,
@@ -33,14 +34,22 @@ export function useManuState() {
   const [hydrated, setHydrated] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
 
-  const requestJson = useCallback(async (url: string, init?: RequestInit) => {
-    const response = await fetch(url, {
-      ...init,
-      headers: {
-        "content-type": "application/json",
-        ...init?.headers,
-      },
-    });
+  const requestJson = useCallback(async (url: string, init?: RequestInit & { mutationKind?: "save" | "other" }) => {
+    const method = (init?.method ?? "GET").toUpperCase();
+    const isMutation = method === "POST" || method === "PUT" || method === "PATCH" || method === "DELETE";
+    const response = isMutation
+      ? await authenticatedMutationFetch(url, {
+          ...init,
+          mutationKind: init?.mutationKind ?? "other",
+        })
+      : await fetch(url, {
+          ...init,
+          headers: {
+            "content-type": "application/json",
+            ...init?.headers,
+          },
+          cache: "no-store",
+        });
 
     if (!response.ok) {
       let code = `request_failed_${response.status}`;

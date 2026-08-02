@@ -15,9 +15,9 @@ export type AuthenticatedShellBoundaryProps = {
 };
 
 /**
- * Client boundary that owns PWA registration, shell provider bootstrap, and
- * canonical dashboard chrome. Route pages keep independent server auth gates;
- * this boundary never replaces those checks.
+ * Client boundary that owns PWA registration, offline lock, session heartbeat,
+ * update messaging, shell provider bootstrap, and canonical dashboard chrome.
+ * Route pages keep independent server auth gates; this boundary never replaces those checks.
  */
 export function AuthenticatedShellBoundary({
   registerServiceWorker,
@@ -33,6 +33,7 @@ export function AuthenticatedShellBoundary({
           mode={mode}
           fallbackDisplayName={fallbackDisplayName}
           fallbackUiLanguage={fallbackUiLanguage}
+          registerServiceWorker={registerServiceWorker}
         >
           <DashboardShell>{children}</DashboardShell>
         </ShellProvider>

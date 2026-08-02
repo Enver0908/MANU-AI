@@ -5,17 +5,19 @@ import { describe, expect, it } from "vitest";
 describe("siriusai branding assets", () => {
   const publicDir = join(process.cwd(), "public");
 
-  it("uses SiriusAI manifest branding with unlocked orientation and raster icons", () => {
+  it("uses SiriusAI manifest branding without orientation lock and with raster icons", () => {
     const manifest = JSON.parse(readFileSync(join(publicDir, "manifest.webmanifest"), "utf8")) as {
       name: string;
       short_name: string;
-      orientation: string;
+      orientation?: string;
       theme_color: string;
+      start_url: string;
       icons: Array<{ src: string; purpose?: string }>;
     };
     expect(manifest.name).toBe("SiriusAI");
     expect(manifest.short_name).toBe("SiriusAI");
-    expect(manifest.orientation).toBe("any");
+    expect(manifest.orientation).toBeUndefined();
+    expect(manifest.start_url).toBe("/dashboard");
     expect(manifest.theme_color.toLowerCase()).toBe("#612e82");
     expect(manifest.name.toLowerCase()).not.toContain("manu");
     expect(manifest.icons.some((icon) => icon.src.includes("siriusai-180.png"))).toBe(true);

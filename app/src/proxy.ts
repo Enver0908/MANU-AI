@@ -6,10 +6,45 @@ import {
   shouldRewriteAdminHostPath,
 } from "./lib/phase-84f-admin-console";
 import { resolveAppBaseUrl } from "./lib/phase-84d-customer-auth";
+import {
+  isAuthenticatedMutationMethod,
+  isClientUpdateRequired,
+  isClientVersionCheckExemptPath,
+  SIRIUSAI_CLIENT_VERSION_HEADER,
+  SIRIUSAI_MUTATION_KIND_HEADER,
+} from "./lib/phase-85-stage-5-shell-pwa";
+
+function enforceClientVersionForAuthenticatedMutation(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+  if (!pathname.startsWith("/api/")) return null;
+  if (!isAuthenticatedMutationMethod(request.method)) return null;
+  if (isClientVersionCheckExemptPath(pathname)) return null;
+
+  const mutationKind = request.headers.get(SIRIUSAI_MUTATION_KIND_HEADER);
+  // Required-update clients may still attempt save mutations; other mutations close.
+  if (mutationKind === "save") return null;
+
+  const clientVersion = request.headers.get(SIRIUSAI_CLIENT_VERSION_HEADER);
+  // Only enforce when the client participates with a version header (authenticated helpers).
+  if (!clientVersion) return null;
+  if (isClientUpdateRequired(clientVersion)) {
+    return NextResponse.json(
+      { error: "client_update_required" },
+      {
+        status: 409,
+        headers: { "Cache-Control": "no-store" },
+      },
+    );
+  }
+  return null;
+}
 
 export async function proxy(request: NextRequest) {
   const hostname = request.nextUrl.hostname;
   const pathname = request.nextUrl.pathname;
+
+  const versionBlock = enforceClientVersionForAuthenticatedMutation(request);
+  if (versionBlock) return versionBlock;
 
   if (isAdminHost(hostname) && shouldRewriteAdminHostPath(pathname)) {
     const url = request.nextUrl.clone();
@@ -73,6 +108,7 @@ export const config = {
     "/dashboard/:path*",
     "/admin/:path*",
     "/commercial-admin/:path*",
-    "/((?!api|_next|auth|favicon.ico|manifest.webmanifest|sw.js|icons).*)",
+    "/api/:path*",
+    "/((?!_next|auth|favicon.ico|manifest.webmanifest|sw.js|icons).*)",
   ],
 };

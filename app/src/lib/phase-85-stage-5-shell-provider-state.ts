@@ -12,6 +12,10 @@ export type ShellProviderState = {
   focusMode: boolean;
   lastError: string | null;
   mode: ShellProviderMode;
+  /** Optional SW update waiting for user confirmation. */
+  updateWaiting: boolean;
+  /** Required update keeps content readable; non-save mutations close. */
+  updateRequired: boolean;
 };
 
 export type ShellProviderAction =
@@ -28,7 +32,11 @@ export type ShellProviderAction =
       error: string;
     }
   | { type: "set_focus_mode"; focusMode: boolean }
-  | { type: "reset_to_booting" };
+  | { type: "reset_to_booting" }
+  | { type: "go_offline" }
+  | { type: "session_locked"; error?: string }
+  | { type: "set_update_waiting"; waiting: boolean }
+  | { type: "set_update_required"; required: boolean };
 
 export function createInitialShellProviderState(
   mode: ShellProviderMode = "live",
@@ -40,6 +48,8 @@ export function createInitialShellProviderState(
     focusMode: false,
     lastError: null,
     mode,
+    updateWaiting: false,
+    updateRequired: false,
   };
 }
 
@@ -103,7 +113,7 @@ export function reduceShellProviderState(
       }
       return {
         ...state,
-        runtime: "ready",
+        runtime: state.updateRequired ? "update_required" : "ready",
         bootstrap: action.bootstrap,
         requestSequence: action.sequence,
         lastError: null,
@@ -111,6 +121,16 @@ export function reduceShellProviderState(
     case "bootstrap_failed":
       if (action.sequence < state.requestSequence) {
         return state;
+      }
+      if (action.runtime === "update_required") {
+        return {
+          ...state,
+          runtime: "update_required",
+          updateRequired: true,
+          requestSequence: action.sequence,
+          lastError: action.error,
+          // Keep prior bootstrap so dirty screens remain readable for save-only.
+        };
       }
       return {
         ...state,
@@ -127,6 +147,30 @@ export function reduceShellProviderState(
         runtime: "booting",
         bootstrap: null,
         lastError: null,
+      };
+    case "go_offline":
+      return {
+        ...state,
+        runtime: "offline",
+        bootstrap: null,
+        lastError: "offline",
+        focusMode: false,
+      };
+    case "session_locked":
+      return {
+        ...state,
+        runtime: "session_locked",
+        bootstrap: null,
+        lastError: action.error ?? "session_inactive",
+        focusMode: false,
+      };
+    case "set_update_waiting":
+      return { ...state, updateWaiting: action.waiting };
+    case "set_update_required":
+      return {
+        ...state,
+        updateRequired: action.required,
+        runtime: action.required ? "update_required" : state.runtime === "update_required" ? "ready" : state.runtime,
       };
     default:
       return state;
@@ -145,7 +189,7 @@ export function mapShellBootstrapHttpFailure(input: {
   if (input.status === 403) {
     return "entitlement_blocked";
   }
-  if (input.errorCode === "update_required") {
+  if (input.errorCode === "update_required" || input.errorCode === "client_update_required") {
     return "update_required";
   }
   return "service_unavailable";
