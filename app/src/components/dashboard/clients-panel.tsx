@@ -60,6 +60,8 @@ import {
   sourceLabel,
   type ClientDetailTab,
 } from "./shared";
+import { encodeClientReferenceCode, formatClientReferenceShort } from "@/lib/client-reference-code";
+import { buildShellHighImpactConfirmMessage } from "@/lib/phase-85-stage-5-shell-contracts";
 
 export function ClientsPanel({
   clients,
@@ -117,7 +119,7 @@ export function ClientsPanel({
   evaluateWithAiError = null,
 }: {
   clients: ClientRecord[];
-  selectedClient: ClientRecord;
+  selectedClient: ClientRecord | null;
   search: string;
   newClientName: string;
   newClientChannel: Channel;
@@ -205,7 +207,7 @@ export function ClientsPanel({
               key={client.id}
               onClick={() => onSelect(client.id)}
               className={`w-full rounded-lg border p-3 text-left shadow-sm transition ${
-                client.id === selectedClient.id
+                selectedClient && client.id === selectedClient.id
                   ? "border-emerald-900 bg-emerald-50"
                   : "border-stone-200 bg-white hover:border-stone-300"
               }`}
@@ -250,46 +252,50 @@ export function ClientsPanel({
         </div>
       </section>
 
-      <ClientDetailForm
-        client={selectedClient}
-        uiLanguage={uiLanguage}
-        canManageAiControls={canManageAiControls}
-        onUpdateClient={onUpdateClient}
-        onActivateAi={onActivateAi}
-        onReleaseHumanTakeover={onReleaseHumanTakeover}
-        isActivatingAi={isActivatingAi}
-        isReleasingHumanTakeover={isReleasingHumanTakeover}
-        onRemoveClient={onRemoveClient}
-        contextUpdates={contextUpdates}
-        contextUpdateSource={contextUpdateSource}
-        contextUpdateImportance={contextUpdateImportance}
-        contextUpdateOccurredAt={contextUpdateOccurredAt}
-        contextUpdateTitle={contextUpdateTitle}
-        contextUpdateSummary={contextUpdateSummary}
-        contextUpdateDetails={contextUpdateDetails}
-        onContextUpdateSource={onContextUpdateSource}
-        onContextUpdateImportance={onContextUpdateImportance}
-        onContextUpdateOccurredAt={onContextUpdateOccurredAt}
-        onContextUpdateTitle={onContextUpdateTitle}
-        onContextUpdateSummary={onContextUpdateSummary}
-        onContextUpdateDetails={onContextUpdateDetails}
-        onAddContextUpdate={onAddContextUpdate}
-        activeTab={clientDetailTab}
-        onTabChange={onClientDetailTab}
-        state={state}
-        foodRuleProfile={foodRuleProfile}
-        menuPlans={menuPlans}
-        activeMenuPlanId={activeMenuPlanId}
-        onSaveFoodRules={onSaveFoodRules}
-        onCreateMenuPlan={onCreateMenuPlan}
-        onSaveMenuPlan={onSaveMenuPlan}
-        onActivateMenuPlan={onActivateMenuPlan}
-        onSaveFormResponse={onSaveFormResponse}
-        aiChatEnabled={aiChatEnabled}
-        onEvaluateWithAi={onEvaluateWithAi}
-        isEvaluatingWithAi={isEvaluatingWithAi}
-        evaluateWithAiError={evaluateWithAiError}
-      />
+      {selectedClient ? (
+        <ClientDetailForm
+          client={selectedClient}
+          uiLanguage={uiLanguage}
+          canManageAiControls={canManageAiControls}
+          onUpdateClient={onUpdateClient}
+          onActivateAi={onActivateAi}
+          onReleaseHumanTakeover={onReleaseHumanTakeover}
+          isActivatingAi={isActivatingAi}
+          isReleasingHumanTakeover={isReleasingHumanTakeover}
+          onRemoveClient={onRemoveClient}
+          contextUpdates={contextUpdates}
+          contextUpdateSource={contextUpdateSource}
+          contextUpdateImportance={contextUpdateImportance}
+          contextUpdateOccurredAt={contextUpdateOccurredAt}
+          contextUpdateTitle={contextUpdateTitle}
+          contextUpdateSummary={contextUpdateSummary}
+          contextUpdateDetails={contextUpdateDetails}
+          onContextUpdateSource={onContextUpdateSource}
+          onContextUpdateImportance={onContextUpdateImportance}
+          onContextUpdateOccurredAt={onContextUpdateOccurredAt}
+          onContextUpdateTitle={onContextUpdateTitle}
+          onContextUpdateSummary={onContextUpdateSummary}
+          onContextUpdateDetails={onContextUpdateDetails}
+          onAddContextUpdate={onAddContextUpdate}
+          activeTab={clientDetailTab}
+          onTabChange={onClientDetailTab}
+          state={state}
+          foodRuleProfile={foodRuleProfile}
+          menuPlans={menuPlans}
+          activeMenuPlanId={activeMenuPlanId}
+          onSaveFoodRules={onSaveFoodRules}
+          onCreateMenuPlan={onCreateMenuPlan}
+          onSaveMenuPlan={onSaveMenuPlan}
+          onActivateMenuPlan={onActivateMenuPlan}
+          onSaveFormResponse={onSaveFormResponse}
+          aiChatEnabled={aiChatEnabled}
+          onEvaluateWithAi={onEvaluateWithAi}
+          isEvaluatingWithAi={isEvaluatingWithAi}
+          evaluateWithAiError={evaluateWithAiError}
+        />
+      ) : (
+        <EmptyState title="Danışan seçilmedi" message="Listeden bir danışan seçin. Otomatik seçim yapılmaz." />
+      )}
     </div>
   );
 }
@@ -443,7 +449,10 @@ function ClientDetailForm({
           )}
           <ConfirmButton
             label="Remove client"
-            confirmLabel="Kaldırmayı onayla"
+            confirmLabel={buildShellHighImpactConfirmMessage("Kaldırmayı onayla", {
+              fullName: client.fullName,
+              referenceShort: formatClientReferenceShort(encodeClientReferenceCode(client.id)),
+            })}
             onConfirm={onRemoveClient}
             icon={UserX}
             className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-red-200 bg-white px-3 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-50"

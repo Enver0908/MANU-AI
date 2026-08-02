@@ -18,12 +18,21 @@ import {
   resolveActiveDestination,
   resolveShellDestination,
   sanitizeShellDestination,
+  shellDestinationAcceptsClientId,
   type DashboardSection,
 } from "@/lib/phase-85-stage-4b-dashboard-routing";
 import type {
   ShellBootstrapDto,
   ShellDestinationId,
+  ShellPreferencesPatchResultDto,
   ShellRuntimeState,
+} from "@/lib/phase-85-stage-5-shell-contracts";
+import {
+  buildShellClientSwitchConfirmMessage,
+  resolveEffectiveShellActiveClientId,
+  shouldShowShellActiveClientControl,
+  shellDestinationViewStateRegistry,
+  type ShellDestinationViewSnapshot,
 } from "@/lib/phase-85-stage-5-shell-contracts";
 import {
   createFallbackShellBootstrap,
@@ -41,6 +50,12 @@ export type ShellHeaderSlots = {
   actions?: ReactNode;
 };
 
+type ActiveClientSelection = {
+  id: string;
+  fullName: string;
+  referenceShort: string;
+};
+
 type ShellProviderContextValue = {
   state: ShellProviderState;
   runtime: ShellRuntimeState;
@@ -55,8 +70,16 @@ type ShellProviderContextValue = {
   navigateToDestination: (destination: ShellDestinationId) => void;
   navigateToSection: (section: DashboardSection) => void;
   setFocusMode: (focusMode: boolean) => void;
-  /** Faz 8 dirty registry hook; always allows until that phase lands. */
+  /** Faz 8 dirty registry hook; always allows until that phase lands, unless tests force dirty. */
   canNavigateAway: () => boolean;
+  /** Test/Faz-8 hook to mark unsaved work without full dirty registry. */
+  setNavigationDirty: (dirty: boolean) => void;
+  selectActiveClient: (client: ActiveClientSelection) => Promise<boolean>;
+  requestDirtyNavigationConfirm: (client: ActiveClientSelection) => string;
+  effectiveActiveClientId: string | null;
+  showActiveClientControl: boolean;
+  saveDestinationViewState: (destinationId: ShellDestinationId, snapshot: ShellDestinationViewSnapshot) => void;
+  restoreDestinationViewState: (destinationId: ShellDestinationId) => ShellDestinationViewSnapshot | null;
 };
 
 const ShellProviderContext = createContext<ShellProviderContextValue | null>(null);
@@ -92,6 +115,13 @@ async function fetchShellBootstrap(activeClientId: string | null, signal: AbortS
   return payload as ShellBootstrapDto;
 }
 
+function createPreferenceRequestId() {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+  return `shell-pref-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+}
+
 export function ShellProvider({
   mode = "live",
   fallbackDisplayName,
@@ -113,6 +143,7 @@ export function ShellProvider({
   );
   const sequenceRef = useRef(0);
   const abortRef = useRef<AbortController | null>(null);
+  const dirtyRef = useRef(false);
   const [headerSlots, setHeaderSlotsState] = useReducer(
     (_prev: ShellHeaderSlots, next: ShellHeaderSlots) => next,
     {},
@@ -122,7 +153,11 @@ export function ShellProvider({
   const activeDestination = resolveActiveDestination(pathname, searchParams);
   const urlState = parseDashboardSearchParams(searchParams);
   const preferenceClientId = state.bootstrap?.preferences.activeClientId ?? null;
-  const effectiveClientId = urlState.clientId ?? preferenceClientId;
+  const effectiveActiveClientId = resolveEffectiveShellActiveClientId({
+    urlClientId: urlState.clientId,
+    preferenceClientId,
+  });
+  const showActiveClientControl = shouldShowShellActiveClientControl(shellDestination);
 
   const runBootstrap = useCallback(
     (reason: "mount" | "route" | "foreground" | "explicit") => {
@@ -149,9 +184,16 @@ export function ShellProvider({
       sequenceRef.current = sequence;
       dispatch({ type: "bootstrap_started", sequence });
 
-      void fetchShellBootstrap(urlState.clientId, controller.signal)
+      // General AI Chat must not bind global client context into the request.
+      const bootstrapClientId = shellDestination === "ai_chat" ? null : urlState.clientId;
+
+      void fetchShellBootstrap(bootstrapClientId, controller.signal)
         .then((bootstrap) => {
-          dispatch({ type: "bootstrap_succeeded", sequence, bootstrap });
+          const nextBootstrap =
+            shellDestination === "ai_chat"
+              ? { ...bootstrap, activeClient: null }
+              : bootstrap;
+          dispatch({ type: "bootstrap_succeeded", sequence, bootstrap: nextBootstrap });
         })
         .catch((error: unknown) => {
           if (controller.signal.aborted) return;
@@ -177,7 +219,7 @@ export function ShellProvider({
           });
         });
     },
-    [fallbackDisplayName, fallbackUiLanguage, mode, urlState.clientId],
+    [fallbackDisplayName, fallbackUiLanguage, mode, shellDestination, urlState.clientId],
   );
 
   const searchKey = searchParams.toString();
@@ -208,7 +250,82 @@ export function ShellProvider({
     setHeaderSlotsState(slots);
   }, []);
 
-  const canNavigateAway = useCallback(() => true, []);
+  const setNavigationDirty = useCallback((dirty: boolean) => {
+    dirtyRef.current = dirty;
+  }, []);
+
+  const canNavigateAway = useCallback(() => !dirtyRef.current, []);
+
+  const requestDirtyNavigationConfirm = useCallback((client: ActiveClientSelection) => {
+    return buildShellClientSwitchConfirmMessage(client);
+  }, []);
+
+  const selectActiveClient = useCallback(
+    async (client: ActiveClientSelection) => {
+      const bootstrap = state.bootstrap;
+      if (!bootstrap) return false;
+
+      const previousClientId = bootstrap.activeClient?.id ?? bootstrap.preferences.activeClientId;
+      const previousHref = buildShellHref(shellDestination, {
+        current: urlState,
+        clientId: shellDestinationAcceptsClientId(shellDestination) ? previousClientId : null,
+        chatId: extractAiChatId(pathname),
+        focusMode: state.focusMode,
+      });
+
+      try {
+        const response = await fetch("/api/shell/preferences", {
+          method: "PATCH",
+          cache: "no-store",
+          credentials: "same-origin",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            "Cache-Control": "no-store",
+          },
+          body: JSON.stringify({
+            requestId: createPreferenceRequestId(),
+            expectedRevision: bootstrap.preferences.revision,
+            activeClientId: client.id,
+          }),
+        });
+
+        if (response.status === 409) {
+          runBootstrap("explicit");
+          return false;
+        }
+
+        if (!response.ok) {
+          return false;
+        }
+
+        const preferences = (await response.json().catch(() => null)) as ShellPreferencesPatchResultDto | null;
+        if (!preferences || typeof preferences.revision !== "number") {
+          return false;
+        }
+
+        dirtyRef.current = false;
+
+        const nextHref = buildShellHref(shellDestination, {
+          current: urlState,
+          clientId: shellDestinationAcceptsClientId(shellDestination) ? client.id : null,
+          chatId: extractAiChatId(pathname),
+          focusMode: state.focusMode,
+        });
+
+        if (nextHref === previousHref && shellDestinationAcceptsClientId(shellDestination) === false) {
+          runBootstrap("explicit");
+          return true;
+        }
+
+        router.push(nextHref);
+        return true;
+      } catch {
+        return false;
+      }
+    },
+    [pathname, router, runBootstrap, shellDestination, state.bootstrap, state.focusMode, urlState],
+  );
 
   const navigateToDestination = useCallback(
     (destination: ShellDestinationId) => {
@@ -218,12 +335,12 @@ export function ShellProvider({
       if (state.bootstrap && enabled === false) return;
       const href = buildShellHref(safe, {
         current: urlState,
-        clientId: shellDestinationAcceptsClientFromUrl(safe) ? effectiveClientId : null,
+        clientId: shellDestinationAcceptsClientId(safe) ? effectiveActiveClientId : null,
         focusMode: false,
       });
       router.push(href);
     },
-    [canNavigateAway, effectiveClientId, router, state.bootstrap, urlState],
+    [canNavigateAway, effectiveActiveClientId, router, state.bootstrap, urlState],
   );
 
   const navigateToSection = useCallback(
@@ -245,15 +362,32 @@ export function ShellProvider({
     [pathname, router, shellDestination],
   );
 
+  const saveDestinationViewState = useCallback(
+    (destinationId: ShellDestinationId, snapshot: ShellDestinationViewSnapshot) => {
+      shellDestinationViewStateRegistry.save(destinationId, snapshot);
+    },
+    [],
+  );
+
+  const restoreDestinationViewState = useCallback((destinationId: ShellDestinationId) => {
+    return shellDestinationViewStateRegistry.restore(destinationId);
+  }, []);
+
   const uiLanguage = normalizeLanguageCode(
     state.bootstrap?.uiLanguage ?? fallbackUiLanguage ?? "tr",
   );
+
+  const contextualBootstrap = useMemo(() => {
+    if (!state.bootstrap) return null;
+    if (shellDestination !== "ai_chat") return state.bootstrap;
+    return { ...state.bootstrap, activeClient: null };
+  }, [shellDestination, state.bootstrap]);
 
   const value = useMemo<ShellProviderContextValue>(
     () => ({
       state,
       runtime: state.runtime,
-      bootstrap: state.bootstrap,
+      bootstrap: contextualBootstrap,
       focusMode: state.focusMode,
       activeDestination,
       shellDestination,
@@ -265,36 +399,38 @@ export function ShellProvider({
       navigateToSection,
       setFocusMode,
       canNavigateAway,
+      setNavigationDirty,
+      selectActiveClient,
+      requestDirtyNavigationConfirm,
+      effectiveActiveClientId: shellDestination === "ai_chat" ? null : effectiveActiveClientId,
+      showActiveClientControl,
+      saveDestinationViewState,
+      restoreDestinationViewState,
     }),
     [
       activeDestination,
       canNavigateAway,
+      contextualBootstrap,
+      effectiveActiveClientId,
       headerSlots,
       navigateToDestination,
       navigateToSection,
+      requestDirtyNavigationConfirm,
+      restoreDestinationViewState,
       runBootstrap,
+      saveDestinationViewState,
+      selectActiveClient,
       setFocusMode,
       setHeaderSlots,
+      setNavigationDirty,
       shellDestination,
+      showActiveClientControl,
       state,
       uiLanguage,
     ],
   );
 
   return <ShellProviderContext.Provider value={value}>{children}</ShellProviderContext.Provider>;
-}
-
-function shellDestinationAcceptsClientFromUrl(destination: ShellDestinationId) {
-  return (
-    destination === "home" ||
-    destination === "clients" ||
-    destination === "messages" ||
-    destination === "alerts" ||
-    destination === "notifications" ||
-    destination === "simulator" ||
-    destination === "voice" ||
-    destination === "forms"
-  );
 }
 
 function extractAiChatId(pathname: string) {

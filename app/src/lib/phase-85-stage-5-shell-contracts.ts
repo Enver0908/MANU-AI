@@ -52,9 +52,9 @@ export type ShellRuntimeState =
   | "update_required"
   | "service_unavailable";
 
-export type ShellRiskLevel = "green" | "yellow" | "red";
+export type ShellRiskLevel = "green" | "yellow" | "red" | "unknown";
 
-export type ShellHandoffState = "none" | "open" | "assigned" | "resolved" | "dismissed";
+export type ShellHandoffState = "none" | "open" | "assigned" | "resolved" | "dismissed" | "unknown";
 
 export type ShellHomeActionId =
   | "alerts"
@@ -69,8 +69,8 @@ export type ShellActiveClientDto = {
   referenceShort: string;
   riskLevel: ShellRiskLevel;
   handoffState: ShellHandoffState;
-  channelReadiness: PermissionState;
-  aiMode: AiMode;
+  channelReadiness: PermissionState | "unknown";
+  aiMode: AiMode | "unknown";
 };
 
 export type ShellBadgeCountsDto = {
@@ -458,6 +458,146 @@ export function formatShellBadgeDisplayCount(count: number) {
   if (!Number.isFinite(count) || count < 0) return "0";
   return count > 99 ? "99+" : String(count);
 }
+
+/**
+ * URL-accessible clientId wins, then server preference, then unbound null.
+ * Never auto-selects the first searchable client.
+ */
+export function resolveEffectiveShellActiveClientId(input: {
+  urlClientId?: string | null;
+  preferenceClientId?: string | null;
+}) {
+  const urlClientId = input.urlClientId?.trim() || null;
+  if (urlClientId) return urlClientId;
+  const preferenceClientId = input.preferenceClientId?.trim() || null;
+  return preferenceClientId;
+}
+
+export function shouldShowShellActiveClientControl(destinationId: ShellDestinationId) {
+  return destinationId !== "settings" && destinationId !== "ai_chat" && destinationId !== "more";
+}
+
+export type ShellStatusChip = {
+  key: "risk" | "handoff" | "channel" | "ai" | "unknown";
+  label: string;
+};
+
+const RISK_LABEL: Record<Exclude<ShellRiskLevel, "unknown">, string> = {
+  green: "Risk yeşil",
+  yellow: "Risk sarı",
+  red: "Risk kırmızı",
+};
+
+const HANDOFF_LABEL: Record<Exclude<ShellHandoffState, "unknown">, string> = {
+  none: "Devir yok",
+  open: "Devir açık",
+  assigned: "Devir atandı",
+  resolved: "Devir kapandı",
+  dismissed: "Devir kapatıldı",
+};
+
+const CHANNEL_LABEL: Record<PermissionState, string> = {
+  ready: "Kanal hazır",
+  pending: "Kanal bekliyor",
+  blocked: "Kanal engelli",
+  opted_out: "Kanal vazgeçti",
+};
+
+const AI_MODE_LABEL: Record<AiMode, string> = {
+  autopilot: "AI autopilot",
+  copilot: "AI copilot",
+  manual: "AI manuel",
+  paused: "AI duraklatıldı",
+};
+
+/**
+ * Status chips in fixed priority order: risk → handoff → channel → AI mode.
+ * Stale/missing projections fail closed to `unknown` (never assume green/safe).
+ */
+export function resolveShellClientStatusStrip(
+  client: ShellActiveClientDto | null,
+  options?: { stale?: boolean },
+): ShellStatusChip[] {
+  if (!client || options?.stale) {
+    return [{ key: "unknown", label: "Durum bilinmiyor" }];
+  }
+
+  const chips: ShellStatusChip[] = [];
+  if (client.riskLevel === "unknown") {
+    chips.push({ key: "unknown", label: "Durum bilinmiyor" });
+    return chips;
+  }
+  chips.push({ key: "risk", label: RISK_LABEL[client.riskLevel] });
+
+  if (client.handoffState === "unknown") {
+    chips.push({ key: "unknown", label: "Devir bilinmiyor" });
+  } else {
+    chips.push({ key: "handoff", label: HANDOFF_LABEL[client.handoffState] });
+  }
+
+  if (client.channelReadiness === "unknown") {
+    chips.push({ key: "unknown", label: "Kanal bilinmiyor" });
+  } else {
+    chips.push({ key: "channel", label: CHANNEL_LABEL[client.channelReadiness] });
+  }
+
+  if (client.aiMode === "unknown") {
+    chips.push({ key: "unknown", label: "AI durumu bilinmiyor" });
+  } else {
+    chips.push({ key: "ai", label: AI_MODE_LABEL[client.aiMode] });
+  }
+
+  return chips;
+}
+
+export function formatShellClientIdentity(client: Pick<ShellActiveClientDto, "fullName" | "referenceShort">) {
+  return `${client.fullName} · ${client.referenceShort}`;
+}
+
+export function buildShellClientSwitchConfirmMessage(client: Pick<ShellActiveClientDto, "fullName" | "referenceShort">) {
+  return `Kaydedilmemiş değişiklikler var. Danışanı değiştirmek istiyor musunuz?\n\nDanışan: ${formatShellClientIdentity(client)}`;
+}
+
+export function buildShellHighImpactConfirmMessage(
+  actionLabel: string,
+  client: Pick<ShellActiveClientDto, "fullName" | "referenceShort">,
+) {
+  return `${actionLabel}\n\nDanışan: ${formatShellClientIdentity(client)}`;
+}
+
+export type ShellDestinationViewSnapshot = {
+  search?: string;
+  filter?: string;
+  tab?: string;
+  scrollTop?: number;
+};
+
+/**
+ * In-memory only. Never persists to localStorage/sessionStorage.
+ * Cleared automatically when the app document unloads.
+ */
+export class ShellDestinationViewStateRegistry {
+  private readonly store = new Map<string, ShellDestinationViewSnapshot>();
+
+  save(destinationId: ShellDestinationId, snapshot: ShellDestinationViewSnapshot) {
+    this.store.set(destinationId, { ...snapshot });
+  }
+
+  restore(destinationId: ShellDestinationId): ShellDestinationViewSnapshot | null {
+    const value = this.store.get(destinationId);
+    return value ? { ...value } : null;
+  }
+
+  clear(destinationId?: ShellDestinationId) {
+    if (!destinationId) {
+      this.store.clear();
+      return;
+    }
+    this.store.delete(destinationId);
+  }
+}
+
+export const shellDestinationViewStateRegistry = new ShellDestinationViewStateRegistry();
 
 export const SHELL_PHI_FORBIDDEN_RESPONSE_KEYS = [
   "body",

@@ -9,10 +9,10 @@ import {
   DashboardMediumRailNav,
   DashboardWideSidebarNav,
 } from "@/components/dashboard/dashboard-navigation";
+import { ActiveClientControl } from "@/components/dashboard/active-client-control";
 import { useShellProvider } from "@/components/dashboard/shell-provider";
 import { DASHBOARD_MAIN_ID } from "@/lib/phase-83e6-states-polish";
 import { AI_CHAT_ROOT_PATH } from "@/lib/phase-85-stage-4b-dashboard-routing";
-import { formatShellBadgeDisplayCount } from "@/lib/phase-85-stage-5-shell-contracts";
 
 function ShellBlocker({
   title,
@@ -126,6 +126,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
     navigateToDestination,
     setFocusMode,
     refreshBootstrap,
+    showActiveClientControl,
     lastError,
   } = useShellProviderWithLastError();
 
@@ -242,13 +243,10 @@ export function DashboardShell({ children }: { children: ReactNode }) {
                 </div>
                 {headerSlots.title}
                 {headerSlots.description}
-                {bootstrap.activeClient ? (
-                  <p className="mt-1 text-sm text-ink-muted" data-testid="shell-active-client">
-                    {bootstrap.activeClient.fullName} · {bootstrap.activeClient.referenceShort}
-                    {bootstrap.badgeCounts.alerts > 0
-                      ? ` · uyarı ${formatShellBadgeDisplayCount(bootstrap.badgeCounts.alerts)}`
-                      : ""}
-                  </p>
+                {showActiveClientControl ? (
+                  <div className="mt-2" data-testid="shell-active-client">
+                    <ActiveClientControl />
+                  </div>
                 ) : null}
               </div>
               <div className="flex flex-wrap items-center gap-2">

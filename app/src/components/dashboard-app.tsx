@@ -57,10 +57,11 @@ import {
   type ClientDetailTab,
 } from "@/components/dashboard/shared";
 import { DASHBOARD_MAIN_ID } from "@/lib/phase-83e6-states-polish";
-import type { DashboardSection } from "@/lib/phase-85-stage-4b-dashboard-routing";
 import {
+  dashboardSectionToShellDestination,
   resolveLegacyCopilotSectionRedirect,
   resolveMessagingRouteSelection,
+  type DashboardSection,
 } from "@/lib/phase-85-stage-4b-dashboard-routing";
 import {
   buildClinicalAlertMessagingNavigationPatch,
@@ -73,6 +74,7 @@ import { useShellProvider } from "@/components/dashboard/shell-provider";
 import { AlertsPanel } from "@/components/dashboard/alerts-panel";
 import { NotificationsPanel } from "@/components/dashboard/notifications-panel";
 import { OverviewPanel } from "@/components/dashboard/overview-panel";
+import { ShellHomeLauncher } from "@/components/dashboard/shell-home-launcher";
 import { ClientsPanel } from "@/components/dashboard/clients-panel";
 import { ConversationPanel } from "@/components/dashboard/conversation-panel";
 import { MessagingPanel } from "@/components/dashboard/messaging-panel";
@@ -80,7 +82,8 @@ import { SimulatorPanel } from "@/components/dashboard/simulator-panel";
 import { VoicePanel } from "@/components/dashboard/voice-panel";
 import { FormsPanel } from "@/components/dashboard/forms-panel";
 import { useMobileKeyboardScroll } from "@/components/dashboard/mobile-ergonomics";
-import { DashboardLoadingSkeleton, ErrorState } from "@/components/dashboard/state-primitives";
+import { DashboardLoadingSkeleton, EmptyState, ErrorState } from "@/components/dashboard/state-primitives";
+import { resolveEffectiveShellActiveClientId } from "@/lib/phase-85-stage-5-shell-contracts";
 
 export function DashboardApp({
   authInfo,
@@ -125,7 +128,13 @@ export function DashboardApp({
     mergeConversationMutationIntoState,
   } = useManuState();
   const router = useRouter();
-  const { setHeaderSlots } = useShellProvider();
+  const {
+    setHeaderSlots,
+    bootstrap,
+    effectiveActiveClientId,
+    saveDestinationViewState,
+    restoreDestinationViewState,
+  } = useShellProvider();
   const { urlState, section, navigateDashboard, openSection } = useDashboardUrl();
   const stage4bInbox = useStage4BInbox(urlState);
   const [operationalFoundation, setOperationalFoundation] =
@@ -268,14 +277,23 @@ export function DashboardApp({
     if (section === "messages" && messagingRoute.clientId) {
       return messagingRoute.clientId;
     }
-    if (urlState.clientId && activeClients.some((client) => client.id === urlState.clientId)) {
-      return urlState.clientId;
+    const candidate = resolveEffectiveShellActiveClientId({
+      urlClientId: urlState.clientId,
+      preferenceClientId: bootstrap?.preferences.activeClientId ?? effectiveActiveClientId,
+    });
+    if (candidate && activeClients.some((client) => client.id === candidate)) {
+      return candidate;
     }
-    if (section === "clients" || section === "simulator" || section === "forms") {
-      return activeClients[0]?.id ?? null;
-    }
+    // Never auto-select the first listed client when context is missing/invalid.
     return null;
-  }, [activeClients, messagingRoute.clientId, section, urlState.clientId]);
+  }, [
+    activeClients,
+    bootstrap?.preferences.activeClientId,
+    effectiveActiveClientId,
+    messagingRoute.clientId,
+    section,
+    urlState.clientId,
+  ]);
 
   const selectedClient = useMemo(() => {
     if (!resolvedClientId) return undefined;
@@ -311,6 +329,54 @@ export function DashboardApp({
 
   const mainContentRef = useRef<HTMLDivElement>(null);
   useMobileKeyboardScroll(mainContentRef);
+  const previousSectionRef = useRef(section);
+
+  useEffect(() => {
+    const previous = previousSectionRef.current;
+    if (previous !== section) {
+      const previousDestination = dashboardSectionToShellDestination(previous);
+      if (previous === "clients") {
+        saveDestinationViewState(previousDestination, {
+          search,
+          tab: clientDetailTab,
+          scrollTop: mainContentRef.current?.scrollTop ?? 0,
+        });
+      }
+      const nextDestination = dashboardSectionToShellDestination(section);
+      const snapshot = restoreDestinationViewState(nextDestination);
+      if (section === "clients" && snapshot) {
+        if (typeof snapshot.search === "string") setSearch(snapshot.search);
+        if (typeof snapshot.tab === "string") {
+          setClientDetailTab(snapshot.tab as ClientDetailTab);
+        }
+        if (typeof snapshot.scrollTop === "number") {
+          requestAnimationFrame(() => {
+            if (mainContentRef.current) {
+              mainContentRef.current.scrollTop = snapshot.scrollTop ?? 0;
+            }
+          });
+        }
+      }
+      previousSectionRef.current = section;
+    }
+  }, [
+    clientDetailTab,
+    restoreDestinationViewState,
+    saveDestinationViewState,
+    search,
+    section,
+  ]);
+  useEffect(() => {
+    return () => {
+      if (section === "clients") {
+        saveDestinationViewState("clients", {
+          search,
+          tab: clientDetailTab,
+          scrollTop: mainContentRef.current?.scrollTop ?? 0,
+        });
+      }
+    };
+  }, [clientDetailTab, saveDestinationViewState, search, section]);
 
   const uiLanguage = state.dietitian.uiLanguage || "tr";
   const canManageAiControls =
@@ -376,11 +442,9 @@ export function DashboardApp({
 
   const removeSelectedClient = async () => {
     if (!selectedClient) return;
-    const nextState = await removeClient(selectedClient.id);
-    const nextActiveClient = nextState.clients.find((client) => client.lifecycleStatus !== "removed_anonymized");
-    if (nextActiveClient) {
-      selectClient(nextActiveClient.id, { section: "clients" });
-    }
+    await removeClient(selectedClient.id);
+    // Keep unbound after removal — never silently select the next list item.
+    navigateDashboard({ section: "clients", clientId: null });
   };
 
   // Fail-closed: a failed create must surface an explicit error, never a
@@ -738,22 +802,33 @@ export function DashboardApp({
             className={`min-w-0 flex-1 px-safe py-5 sm:px-6 ${mainMobilePadding}`}
           >
             {section === "overview" && (
-              <OverviewPanel
-                metrics={metrics}
-                selectedClient={selectedClient}
-                state={state}
-                uiLanguage={uiLanguage}
-                showInspectionDetails={showOperationalInspection}
-                operationalFoundation={showOperationalInspection ? operationalFoundation : null}
-                onOpenSimulator={() => navigateToSection("simulator")}
-                onOpenClients={() => navigateToSection("clients")}
-              />
+              <div className="space-y-4">
+                {bootstrap?.homeActions ? (
+                  <div className="min-[1200px]:order-none" data-testid="shell-home-launcher-wrap">
+                    <ShellHomeLauncher
+                      actions={bootstrap.homeActions}
+                      clientId={resolvedClientId}
+                      layout="stack"
+                    />
+                  </div>
+                ) : null}
+                <OverviewPanel
+                  metrics={metrics}
+                  selectedClient={selectedClient}
+                  state={state}
+                  uiLanguage={uiLanguage}
+                  showInspectionDetails={showOperationalInspection}
+                  operationalFoundation={showOperationalInspection ? operationalFoundation : null}
+                  onOpenSimulator={() => navigateToSection("simulator")}
+                  onOpenClients={() => navigateToSection("clients")}
+                />
+              </div>
             )}
 
-            {section === "clients" && selectedClient && (
+            {section === "clients" && (
               <ClientsPanel
                 clients={filteredClients}
-                selectedClient={selectedClient}
+                selectedClient={selectedClient ?? null}
                 search={search}
                 newClientName={newClientName}
                 newClientChannel={newClientChannel}
@@ -793,7 +868,9 @@ export function DashboardApp({
                 clientDetailTab={clientDetailTab}
                 onClientDetailTab={setClientDetailTab}
                 state={state}
-                foodRuleProfile={getClientFoodRuleProfileV2State(state, selectedClient.id)}
+                foodRuleProfile={
+                  selectedClient ? getClientFoodRuleProfileV2State(state, selectedClient.id) : null
+                }
                 menuPlans={menuPlansForSelectedClient}
                 activeMenuPlanId={activeMenuPlanId}
                 onSaveFoodRules={saveSelectedFoodRules}
@@ -895,6 +972,13 @@ export function DashboardApp({
               />
             )}
 
+            {section === "simulator" && !selectedClient ? (
+              <EmptyState
+                title="Danışan seçilmedi"
+                message="Simülatör için önce aktif danışanı seçin. Otomatik seçim yapılmaz."
+              />
+            ) : null}
+
             {section === "simulator" && selectedClient && (
               <SimulatorPanel
                 state={state}
@@ -988,6 +1072,13 @@ export function DashboardApp({
                 onGenerateProfile={generateVoiceProfile}
               />
             )}
+
+            {section === "forms" && !selectedClient ? (
+              <EmptyState
+                title="Danışan seçilmedi"
+                message="Formlar için önce aktif danışanı seçin. Otomatik seçim yapılmaz."
+              />
+            ) : null}
 
             {section === "forms" && selectedClient && (
               <FormsPanel
