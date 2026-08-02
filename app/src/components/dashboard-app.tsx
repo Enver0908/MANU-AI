@@ -69,7 +69,7 @@ import {
   resolveMessagingTargetValidity,
 } from "@/lib/phase-85-stage-4b2-messaging-integration";
 import { DashboardHeaderBell } from "@/components/dashboard/dashboard-navigation";
-import { DashboardShell } from "@/components/dashboard/dashboard-shell";
+import { useShellProvider } from "@/components/dashboard/shell-provider";
 import { AlertsPanel } from "@/components/dashboard/alerts-panel";
 import { NotificationsPanel } from "@/components/dashboard/notifications-panel";
 import { OverviewPanel } from "@/components/dashboard/overview-panel";
@@ -125,6 +125,7 @@ export function DashboardApp({
     mergeConversationMutationIntoState,
   } = useManuState();
   const router = useRouter();
+  const { setHeaderSlots } = useShellProvider();
   const { urlState, section, navigateDashboard, openSection } = useDashboardUrl();
   const stage4bInbox = useStage4BInbox(urlState);
   const [operationalFoundation, setOperationalFoundation] =
@@ -636,97 +637,100 @@ export function DashboardApp({
     setContextUpdateDetails("");
   };
 
+
+  useEffect(() => {
+    setHeaderSlots({
+      title: (
+        <div>
+          <p className="text-sm text-stone-500">{state.tenant.name}</p>
+          <h1 className="text-2xl font-semibold">Operasyon paneli</h1>
+        </div>
+      ),
+      actions: (
+        <>
+          <div className="w-44">
+            <SelectInput
+              label={t(uiLanguage, "dashboardLanguage")}
+              value={uiLanguage}
+              onChange={(value) => updateDietitianPreferences({ uiLanguage: value as SupportedLanguageCode })}
+              options={languageOptions}
+            />
+          </div>
+          {authInfo && (
+            <span className="inline-flex items-center gap-2 rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm font-medium text-stone-700">
+              <UserRound size={16} className="text-emerald-800" />
+              {authInfo.displayName}
+              <span className="rounded bg-stone-100 px-1.5 py-0.5 text-xs font-semibold uppercase text-stone-500">
+                {authInfo.role}
+              </span>
+            </span>
+          )}
+          {commercialInfo ? (
+            <>
+              <StatusPill
+                icon={CreditCard}
+                label={describeSubscriptionStatus(commercialInfo.subscriptionStatus).label}
+                tone={describeSubscriptionStatus(commercialInfo.subscriptionStatus).tone}
+              />
+              <StatusPill
+                icon={Smartphone}
+                label={describeInstallState(commercialInfo.installReady).label}
+                tone={describeInstallState(commercialInfo.installReady).tone}
+              />
+            </>
+          ) : (
+            <StatusPill icon={Smartphone} label="PWA hazır" tone="emerald" />
+          )}
+          <StatusPill
+            icon={ShieldCheck}
+            label={getSupabaseStatus() === "configured" ? "Supabase yapılandırıldı" : "Yerel veri"}
+            tone="amber"
+          />
+          <DashboardHeaderBell
+            unreadCount={stage4bInbox.notificationsBadgeCount}
+            onOpenNotifications={() => navigateToSection("notifications")}
+          />
+          <button
+            onClick={resetState}
+            className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm font-medium text-stone-700 transition hover:bg-stone-100"
+            type="button"
+          >
+            <RefreshCcw size={16} />
+            Demoyu sıfırla
+          </button>
+          {commercialInfo ? (
+            <form action="/api/demo-logout" method="post">
+              <button
+                type="submit"
+                className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm font-medium text-stone-700 transition hover:bg-stone-100"
+              >
+                <LogOut size={16} />
+                Oturumu kapat
+              </button>
+            </form>
+          ) : null}
+        </>
+      ),
+    });
+    return () => setHeaderSlots({});
+  }, [
+    authInfo,
+    commercialInfo,
+    resetState,
+    setHeaderSlots,
+    stage4bInbox.notificationsBadgeCount,
+    state.tenant.name,
+    uiLanguage,
+    updateDietitianPreferences,
+  ]);
+
   const viewsWithMobileStickyActions: DashboardSection[] = ["messages", "simulator"];
   const mainMobilePadding = viewsWithMobileStickyActions.includes(section)
     ? "lg:pb-5"
     : "pb-mobile-nav lg:pb-5";
 
   return (
-    <DashboardShell
-      activeNavKey={section}
-      uiLanguage={uiLanguage}
-      badges={{
-        alerts: stage4bInbox.alertsBadgeCount,
-        notifications: stage4bInbox.notificationsBadgeCount,
-        messages: stage4bMessaging.messagingBadgeCount,
-      }}
-      aiChatEnabled={aiChatEnabled}
-      onNavigateSection={navigateToSection}
-    >
-      <header className="border-b border-stone-200 bg-white px-safe py-4 pt-safe sm:px-6 lg:pt-4">
-            <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-              <div>
-                <p className="text-sm text-stone-500">{state.tenant.name}</p>
-                <h1 className="text-2xl font-semibold">Operasyon paneli</h1>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <div className="w-44">
-                  <SelectInput
-                    label={t(uiLanguage, "dashboardLanguage")}
-                    value={uiLanguage}
-                    onChange={(value) => updateDietitianPreferences({ uiLanguage: value as SupportedLanguageCode })}
-                    options={languageOptions}
-                  />
-                </div>
-                {authInfo && (
-                  <span className="inline-flex items-center gap-2 rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm font-medium text-stone-700">
-                    <UserRound size={16} className="text-emerald-800" />
-                    {authInfo.displayName}
-                    <span className="rounded bg-stone-100 px-1.5 py-0.5 text-xs font-semibold uppercase text-stone-500">
-                      {authInfo.role}
-                    </span>
-                  </span>
-                )}
-                {commercialInfo ? (
-                  <>
-                    <StatusPill
-                      icon={CreditCard}
-                      label={describeSubscriptionStatus(commercialInfo.subscriptionStatus).label}
-                      tone={describeSubscriptionStatus(commercialInfo.subscriptionStatus).tone}
-                    />
-                    <StatusPill
-                      icon={Smartphone}
-                      label={describeInstallState(commercialInfo.installReady).label}
-                      tone={describeInstallState(commercialInfo.installReady).tone}
-                    />
-                  </>
-                ) : (
-                  <StatusPill icon={Smartphone} label="PWA hazır" tone="emerald" />
-                )}
-                <StatusPill
-                  icon={ShieldCheck}
-                  label={getSupabaseStatus() === "configured" ? "Supabase yapılandırıldı" : "Yerel veri"}
-                  tone="amber"
-                />
-                <DashboardHeaderBell
-                  unreadCount={stage4bInbox.notificationsBadgeCount}
-                  onOpenNotifications={() => navigateToSection("notifications")}
-                />
-
-                <button
-                  onClick={resetState}
-                  className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm font-medium text-stone-700 transition hover:bg-stone-100"
-                  type="button"
-                >
-                  <RefreshCcw size={16} />
-                  Demoyu sıfırla
-                </button>
-
-                {commercialInfo ? (
-                  <form action="/api/demo-logout" method="post">
-                    <button
-                      type="submit"
-                      className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm font-medium text-stone-700 transition hover:bg-stone-100"
-                    >
-                      <LogOut size={16} />
-                      Oturumu kapat
-                    </button>
-                  </form>
-                ) : null}
-              </div>
-            </div>
-          </header>
-
+    <>
           <div
             ref={mainContentRef}
             id={DASHBOARD_MAIN_ID}
@@ -1004,6 +1008,6 @@ export function DashboardApp({
               />
             )}
           </div>
-    </DashboardShell>
+    </>
   );
 }

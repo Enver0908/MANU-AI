@@ -8,6 +8,7 @@ import {
   Bell,
   Bot,
   ClipboardList,
+  Ellipsis,
   MessageSquareText,
   Settings,
   SlidersHorizontal,
@@ -18,6 +19,7 @@ import type { DashboardMessageKey } from "@/lib/i18n";
 import {
   AI_CHAT_ROOT_PATH,
   formatStage4BBadgeCount,
+  MORE_ROOT_PATH,
   SETTINGS_ROOT_PATH,
   type DashboardNavKey,
   type DashboardSection,
@@ -36,7 +38,7 @@ export type DashboardNavItem =
     }
   | {
       type: "link";
-      key: "ai_chat" | "settings";
+      key: "ai_chat" | "settings" | "more";
       labelKey: DashboardMessageKey;
       icon: LucideIcon;
       href: string;
@@ -56,6 +58,14 @@ const SETTINGS_NAV_ITEM: DashboardNavItem = {
   labelKey: "settings",
   icon: Settings,
   href: SETTINGS_ROOT_PATH,
+};
+
+const MORE_NAV_ITEM: DashboardNavItem = {
+  type: "link",
+  key: "more",
+  labelKey: "overview",
+  icon: Ellipsis,
+  href: MORE_ROOT_PATH,
 };
 
 const desktopSectionNavItems: DashboardNavItem[] = [
@@ -86,14 +96,19 @@ export function resolveDesktopDashboardNavItems(aiChatEnabled: boolean): Dashboa
   const withOptionalAiChat = aiChatEnabled
     ? [...desktopSectionNavItems, AI_CHAT_NAV_ITEM]
     : desktopSectionNavItems;
-  return [...withOptionalAiChat, SETTINGS_NAV_ITEM];
+  return [...withOptionalAiChat, MORE_NAV_ITEM, SETTINGS_NAV_ITEM];
 }
 
 export function resolveMobileDashboardNavItems(aiChatEnabled: boolean): DashboardNavItem[] {
   const withOptionalAiChat = aiChatEnabled
     ? [...mobileSectionNavItems, AI_CHAT_NAV_ITEM]
     : mobileSectionNavItems;
-  return [...withOptionalAiChat, SETTINGS_NAV_ITEM];
+  return [...withOptionalAiChat, MORE_NAV_ITEM, SETTINGS_NAV_ITEM];
+}
+
+function navItemLabel(uiLanguage: SupportedLanguageCode, item: DashboardNavItem) {
+  if (item.key === "more") return "Diğer";
+  return t(uiLanguage, item.labelKey);
 }
 
 function resolveNavBadgeCount(
@@ -147,7 +162,7 @@ export function DashboardSidebarNav({
             <Link key={item.key} href={item.href} className={className} aria-current={active ? "page" : undefined}>
               <Icon size={18} />
               <span className="flex min-w-0 flex-1 items-center justify-between gap-2">
-                <span>{t(uiLanguage, item.labelKey)}</span>
+                <span>{navItemLabel(uiLanguage, item)}</span>
               </span>
             </Link>
           );
@@ -162,7 +177,7 @@ export function DashboardSidebarNav({
           >
             <Icon size={18} />
             <span className="flex min-w-0 flex-1 items-center justify-between gap-2">
-              <span>{t(uiLanguage, item.labelKey)}</span>
+              <span>{navItemLabel(uiLanguage, item)}</span>
               <NavBadge count={badgeCount} />
             </span>
           </button>
@@ -194,7 +209,7 @@ export function DashboardMobileNav({
       {items.map((item) => {
         const Icon = item.icon;
         const active = item.key === activeNavKey;
-        const label = t(uiLanguage, item.labelKey);
+        const label = navItemLabel(uiLanguage, item);
         const badgeCount = resolveNavBadgeCount(item, badges);
         const className = `relative flex min-h-14 w-20 shrink-0 flex-col items-center justify-center gap-0.5 text-[11px] font-medium transition sm:flex-1 ${
           active ? "text-emerald-900" : "text-stone-500"

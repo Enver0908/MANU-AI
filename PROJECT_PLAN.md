@@ -1,6 +1,6 @@
 # MANU-AI Project Plan v2
 
-**Current active status (2026-07-29):** Stage 4D post-closure remediation is reclosed and committed locally at `e369e1b`. Evidence: `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_1_ACCOUNT_FOUNDATION_EVIDENCE.md`, `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_2_SECURITY_BILLING_PWA_EVIDENCE.md`, and `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_3_RECLOSURE_EVIDENCE.md`. Clean Supabase reset passed and `npm run test:rls` passed 53/53 with 0 skipped. The branch has not been pushed. Stage 5 is unstarted and requires separate explicit approval. Production remains `NO-GO`; R-405 remains open.
+**Current active status (2026-08-02):** Stage 5 Faz 1–4 are complete locally. Evidence: `docs/PHASE_85_STAGE_5_PHASE_1_SCOPE_BASELINE_EVIDENCE.md`, `docs/PHASE_85_STAGE_5_PHASE_2_SHELL_DATA_FOUNDATION_EVIDENCE.md`, `docs/PHASE_85_STAGE_5_PHASE_3_BOUNDED_SHELL_API_EVIDENCE.md`, and `docs/PHASE_85_STAGE_5_PHASE_4_AUTHENTICATED_SHELL_PROVIDER_EVIDENCE.md`. Stage 5 Faz 5 is next and requires separate explicit approval. Local Supabase reset/`test:rls` remain pending where Docker is unavailable. The branch has not been pushed. Production remains `NO-GO`; R-405 remains open.
 
 **Document authority rule:** this current-status block and the Stage 4D remediation evidence chain govern active execution. Every later dated phase entry is historical; its `current`, `next`, `pending`, or `blocked` wording describes only that checkpoint.
 

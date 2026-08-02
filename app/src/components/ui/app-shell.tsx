@@ -1,4 +1,7 @@
+"use client";
+
 import type { ReactNode } from "react";
+import { useOptionalShellProvider } from "@/components/dashboard/shell-provider";
 import { cn } from "./cn";
 import type { IconType } from "./tokens";
 
@@ -11,9 +14,9 @@ export type AppShellNavItem = {
 };
 
 /**
- * Unified app shell: one structure that renders a desktop sidebar and a mobile
- * bottom navigation from the same nav items, plus a shared top bar. Layout only;
- * navigation state and active view are owned by the consumer.
+ * Transitional adapter: inside the Stage 5 authenticated shell, AppShell does
+ * not emit a second navigation landmark and only renders children. Outside that
+ * boundary it keeps the legacy primitive chrome for non-dashboard surfaces.
  */
 export function AppShell({
   brand,
@@ -28,8 +31,13 @@ export function AppShell({
   topBarActions?: ReactNode;
   children: ReactNode;
 }) {
+  const shell = useOptionalShellProvider();
+  if (shell) {
+    return <>{children}</>;
+  }
+
   return (
-    <div className="min-h-screen bg-paper text-ink">
+    <div className="min-h-screen bg-paper text-ink" data-testid="legacy-app-shell">
       <div className="mx-auto flex min-h-screen w-full max-w-7xl">
         <AppSidebar brand={brand} navItems={navItems} activeId={activeId} />
         <div className="flex min-w-0 flex-1 flex-col">
@@ -106,15 +114,12 @@ export function AppBottomNav({ navItems, activeId }: { navItems: AppShellNavItem
             onClick={item.onSelect}
             aria-current={active ? "page" : undefined}
             className={cn(
-              "relative flex min-h-14 flex-1 flex-col items-center justify-center gap-0.5 text-[11px] font-medium transition",
-              active ? "text-primary" : "text-ink-subtle",
+              "flex min-h-14 flex-1 flex-col items-center justify-center gap-0.5 text-[11px] font-medium",
+              active ? "text-primary" : "text-ink-muted",
             )}
           >
             <Icon size={20} />
             <span className="truncate px-1">{item.label}</span>
-            {item.badge ? (
-              <span className="absolute right-1/4 top-2 h-1.5 w-1.5 rounded-full bg-warm" aria-hidden />
-            ) : null}
           </button>
         );
       })}

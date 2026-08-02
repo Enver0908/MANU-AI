@@ -5,6 +5,9 @@ import type { NotificationListStatus } from "./phase-85-stage-4b-api";
 import { STAGE_4B_DEFAULT_PAGE_SIZE } from "./phase-85-stage-4b-api";
 import type { ConversationListStatus } from "./phase-85-stage-4b2-contracts";
 import { CONVERSATION_LIST_DEFAULT_PAGE_SIZE } from "./phase-85-stage-4b2-contracts";
+import type { ShellDestinationId } from "./phase-85-stage-5-shell-contracts";
+import { isShellDestinationId } from "./phase-85-stage-5-shell-contracts";
+import { SETTINGS_ROOT_PATH } from "./phase-85-stage-4d-settings-contracts";
 
 export const PHASE_85_STAGE_4B_DASHBOARD_ROUTING_VERSION = "p85-stage-4b-dashboard-routing-v1";
 
@@ -22,15 +25,16 @@ export type DashboardSection =
 export type DashboardMessageSource = "alert" | "notification";
 
 /**
- * Nav highlighting key. AI Chat and Settings live on real routes
- * (`/dashboard/ai-chat`, `/dashboard/settings`), not a `?section=` query value,
- * so they need keys distinct from `DashboardSection`.
+ * Nav highlighting key. AI Chat, Settings, and More live on real routes
+ * (`/dashboard/ai-chat`, `/dashboard/settings`, `/dashboard/more`), not a
+ * `?section=` query value, so they need keys distinct from `DashboardSection`.
  */
-export type DashboardNavKey = DashboardSection | "ai_chat" | "settings";
+export type DashboardNavKey = DashboardSection | "ai_chat" | "settings" | "more";
 
 export const AI_CHAT_ROOT_PATH = "/dashboard/ai-chat";
-export { SETTINGS_ROOT_PATH } from "./phase-85-stage-4d-settings-contracts";
-
+export const MORE_ROOT_PATH = "/dashboard/more";
+export const DASHBOARD_ROOT_PATH = "/dashboard";
+export { SETTINGS_ROOT_PATH };
 /**
  * Server-evaluated only (no `NEXT_PUBLIC_` prefix): callers must resolve this
  * on the server and pass the result down as a prop, so `next start` picks up
@@ -361,4 +365,173 @@ export function resolveMessagingUnreadBadgeCount(
 ) {
   if (!items?.length) return 0;
   return items.reduce((total, item) => total + Math.max(0, item.unreadCount), 0);
+}
+
+const SECTION_TO_SHELL_DESTINATION: Record<DashboardSection, ShellDestinationId> = {
+  overview: "home",
+  clients: "clients",
+  messages: "messages",
+  simulator: "simulator",
+  alerts: "alerts",
+  notifications: "notifications",
+  copilot: "ai_chat",
+  voice: "voice",
+  forms: "forms",
+};
+
+const SHELL_DESTINATION_TO_SECTION: Partial<Record<ShellDestinationId, DashboardSection>> = {
+  home: "overview",
+  clients: "clients",
+  messages: "messages",
+  simulator: "simulator",
+  alerts: "alerts",
+  notifications: "notifications",
+  voice: "voice",
+  forms: "forms",
+};
+
+const CLIENT_SCOPED_SHELL_DESTINATIONS = new Set<ShellDestinationId>([
+  "home",
+  "clients",
+  "messages",
+  "alerts",
+  "notifications",
+  "simulator",
+  "voice",
+  "forms",
+]);
+
+export type BuildShellHrefOptions = {
+  clientId?: string | null;
+  chatId?: string | null;
+  focusMode?: boolean;
+  current?: DashboardUrlState | null;
+  /** When true, preserve safe filter params for the target destination family. */
+  preserveFilters?: boolean;
+};
+
+/**
+ * Normalize an arbitrary destination token to a canonical Stage 5 destination.
+ * Unknown values fail closed to `home`. Legacy `copilot` resolves to `ai_chat`
+ * and must not appear in primary navigation.
+ */
+export function sanitizeShellDestination(value: string | null | undefined): ShellDestinationId {
+  if (!value) return "home";
+  const normalized = value.trim().toLowerCase();
+  if (normalized === "overview" || normalized === "home") return "home";
+  if (normalized === "copilot") return "ai_chat";
+  if (normalized === "conversation") return "messages";
+  if (normalized === "handoffs") return "alerts";
+  if (isShellDestinationId(normalized)) return normalized;
+  return "home";
+}
+
+/**
+ * Resolve the canonical shell destination from the current URL.
+ * URL is the source of truth for route state.
+ */
+export function resolveShellDestination(
+  pathname: string,
+  searchParams?: Pick<ReadonlyURLSearchParams, "get"> | URLSearchParams | null,
+): ShellDestinationId {
+  const path = pathname.replace(/\/+$/, "") || "/";
+  if (path === MORE_ROOT_PATH || path.startsWith(`${MORE_ROOT_PATH}/`)) {
+    return "more";
+  }
+  if (path === SETTINGS_ROOT_PATH || path.startsWith(`${SETTINGS_ROOT_PATH}/`)) {
+    return "settings";
+  }
+  if (path === AI_CHAT_ROOT_PATH || path.startsWith(`${AI_CHAT_ROOT_PATH}/`)) {
+    return "ai_chat";
+  }
+  if (path === DASHBOARD_ROOT_PATH || path.startsWith(`${DASHBOARD_ROOT_PATH}/`)) {
+    const section = resolveDashboardSection(searchParams?.get("section") ?? null);
+    return SECTION_TO_SHELL_DESTINATION[section];
+  }
+  return "home";
+}
+
+/**
+ * Nav-highlight key for the current URL. Maps shell `home` to legacy `overview`.
+ */
+export function resolveActiveDestination(
+  pathname: string,
+  searchParams?: Pick<ReadonlyURLSearchParams, "get"> | URLSearchParams | null,
+): DashboardNavKey {
+  const destination = resolveShellDestination(pathname, searchParams);
+  if (destination === "home") return "overview";
+  if (destination === "ai_chat") return "ai_chat";
+  if (destination === "settings") return "settings";
+  if (destination === "more") return "more";
+  return destination;
+}
+
+/**
+ * Build a typed href for a shell destination.
+ * Unauthorized/clinical params are not copied onto account-only destinations.
+ * `section=copilot` is never emitted; AI Chat uses the real route.
+ */
+export function buildShellHref(destination: ShellDestinationId, options: BuildShellHrefOptions = {}) {
+  const safeDestination = sanitizeShellDestination(destination);
+  const current = options.current ?? null;
+  const clientId =
+    options.clientId !== undefined ? options.clientId : current?.clientId ?? null;
+  const preserveFilters = options.preserveFilters !== false;
+
+  if (safeDestination === "ai_chat") {
+    const base = options.chatId
+      ? `${AI_CHAT_ROOT_PATH}/${options.chatId}`
+      : AI_CHAT_ROOT_PATH;
+    return options.focusMode ? `${base}?focus=1` : base;
+  }
+
+  if (safeDestination === "settings") {
+    return SETTINGS_ROOT_PATH;
+  }
+
+  if (safeDestination === "more") {
+    return MORE_ROOT_PATH;
+  }
+
+  const section = SHELL_DESTINATION_TO_SECTION[safeDestination] ?? "overview";
+  const next: DashboardUrlState = {
+    ...getDefaultDashboardUrlState(),
+    section,
+  };
+
+  if (clientId && CLIENT_SCOPED_SHELL_DESTINATIONS.has(safeDestination)) {
+    next.clientId = clientId;
+  }
+
+  if (preserveFilters && current) {
+    if (safeDestination === "alerts") {
+      next.alertSeverity = current.alertSeverity;
+      next.alertQuery = current.alertQuery;
+    }
+    if (safeDestination === "notifications") {
+      next.notificationStatus = current.notificationStatus;
+      next.notificationPriority = current.notificationPriority;
+      next.notificationCategory = current.notificationCategory;
+      next.notificationQuery = current.notificationQuery;
+    }
+    if (safeDestination === "messages") {
+      next.conversationStatus = current.conversationStatus;
+      next.conversationQuery = current.conversationQuery;
+      next.conversationId = current.conversationId;
+      next.messageId = current.messageId;
+      next.source = current.source;
+      next.sourceId = current.sourceId;
+      if (current.clientId) next.clientId = current.clientId;
+    }
+  }
+
+  return buildDashboardHref(DASHBOARD_ROOT_PATH, next);
+}
+
+export function shellDestinationAcceptsClientId(destination: ShellDestinationId) {
+  return CLIENT_SCOPED_SHELL_DESTINATIONS.has(sanitizeShellDestination(destination));
+}
+
+export function dashboardSectionToShellDestination(section: DashboardSection): ShellDestinationId {
+  return SECTION_TO_SHELL_DESTINATION[section];
 }

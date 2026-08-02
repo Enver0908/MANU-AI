@@ -1,21 +1,19 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { DashboardShell } from "@/components/dashboard/dashboard-shell";
+import { useShellProvider } from "@/components/dashboard/shell-provider";
 import { AiChatWorkspace } from "@/components/ai-chat/ai-chat-workspace";
 import { EmptyState } from "@/components/dashboard/state-primitives";
 import { DASHBOARD_MAIN_ID } from "@/lib/phase-83e6-states-polish";
 import { AI_CHAT_ROOT_PATH } from "@/lib/phase-85-stage-4b-dashboard-routing";
-import type { DashboardSection } from "@/lib/phase-85-stage-4b-dashboard-routing";
 import type { SupportedLanguageCode } from "@/lib/languages";
 import { t } from "@/lib/i18n";
 
 /**
  * Route-level wrapper for `/dashboard/ai-chat` and `/dashboard/ai-chat/[chatId]`.
- * Independent from `useManuState`/internal-copilot state; only the display
- * language and role come from the server-resolved auth (see
- * `resolveDashboardAuth`). The active chat URL is the single source of truth.
+ * Shell chrome comes from AuthenticatedShellBoundary; this component owns only
+ * the AI Chat workspace content and focus-mode URL toggles.
  */
 export function AiChatPageClient({
   activeChatId,
@@ -28,11 +26,24 @@ export function AiChatPageClient({
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const focusMode = searchParams.get("focus") === "1";
+  const { focusMode, setHeaderSlots, setFocusMode } = useShellProvider();
+  const urlFocus = searchParams.get("focus") === "1";
+
+  useEffect(() => {
+    setHeaderSlots({
+      title: <h1 className="text-2xl font-semibold">AI Chat</h1>,
+      description: (
+        <p className="mt-1 text-sm text-stone-500">
+          {focusMode || urlFocus ? "Odak modu açık" : "Genel sohbet — danışan bağlamı kullanılmıyor"}
+        </p>
+      ),
+    });
+    return () => setHeaderSlots({});
+  }, [focusMode, setHeaderSlots, urlFocus]);
 
   const withFocusQuery = useCallback(
-    (path: string) => (focusMode ? `${path}?focus=1` : path),
-    [focusMode],
+    (path: string) => (urlFocus ? `${path}?focus=1` : path),
+    [urlFocus],
   );
 
   const navigateToChat = useCallback(
@@ -46,39 +57,25 @@ export function AiChatPageClient({
   );
 
   const toggleFocusMode = useCallback(() => {
-    const base = activeChatId ? `${AI_CHAT_ROOT_PATH}/${activeChatId}` : AI_CHAT_ROOT_PATH;
-    router.push(focusMode ? base : `${base}?focus=1`);
-  }, [activeChatId, focusMode, router]);
-
-  const navigateSection = useCallback(
-    (section: DashboardSection) => router.push(`/dashboard?section=${section}`),
-    [router],
-  );
+    setFocusMode(!urlFocus);
+  }, [setFocusMode, urlFocus]);
 
   return (
-    <DashboardShell
-      activeNavKey="ai_chat"
-      uiLanguage={uiLanguage}
-      aiChatEnabled
-      onNavigateSection={navigateSection}
-      focusMode={focusMode}
-    >
-      <div id={DASHBOARD_MAIN_ID} tabIndex={-1} className="flex min-h-screen min-w-0 flex-1 flex-col outline-none">
-        {canAccessAiChat ? (
-          <AiChatWorkspace
-            uiLanguage={uiLanguage}
-            activeChatId={activeChatId}
-            focusMode={focusMode}
-            onNavigateToChat={navigateToChat}
-            onNavigateToRoot={navigateToRoot}
-            onToggleFocusMode={toggleFocusMode}
-          />
-        ) : (
-          <div className="flex flex-1 items-center justify-center p-6">
-            <EmptyState title={t(uiLanguage, "aiChatUnavailableTitle")} message={t(uiLanguage, "aiChatUnavailableMessage")} />
-          </div>
-        )}
-      </div>
-    </DashboardShell>
+    <div id={DASHBOARD_MAIN_ID} tabIndex={-1} className="flex min-h-screen min-w-0 flex-1 flex-col outline-none">
+      {canAccessAiChat ? (
+        <AiChatWorkspace
+          uiLanguage={uiLanguage}
+          activeChatId={activeChatId}
+          focusMode={urlFocus}
+          onNavigateToChat={navigateToChat}
+          onNavigateToRoot={navigateToRoot}
+          onToggleFocusMode={toggleFocusMode}
+        />
+      ) : (
+        <div className="flex flex-1 items-center justify-center p-6">
+          <EmptyState title={t(uiLanguage, "aiChatUnavailableTitle")} message={t(uiLanguage, "aiChatUnavailableMessage")} />
+        </div>
+      )}
+    </div>
   );
 }

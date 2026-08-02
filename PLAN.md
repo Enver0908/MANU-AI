@@ -1,12 +1,12 @@
 # MANU-AI Plan
 
-**Current active status (2026-08-02):** Stage 5 Faz 1 scope baseline, Faz 2 shell data foundation, and Faz 3 bounded shell HTTP APIs are complete locally. Evidence: `docs/PHASE_85_STAGE_5_PHASE_1_SCOPE_BASELINE_EVIDENCE.md`, `docs/PHASE_85_STAGE_5_PHASE_2_SHELL_DATA_FOUNDATION_EVIDENCE.md`, and `docs/PHASE_85_STAGE_5_PHASE_3_BOUNDED_SHELL_API_EVIDENCE.md`. Faz 3 delivers shell contracts/store, five no-store routes, bootstrap/search RPC migration `20260802120000_phase_85_stage_5_shell_api_foundation.sql`, and shell rate-limit scopes. Targeted unit/migration-contract tests and typecheck passed; local Supabase reset and RLS re-run remain blocked (Docker unavailable). Stage 5 Faz 4 is next. The branch has not been pushed. Production remains `NO-GO`; R-405 remains open.
+**Current active status (2026-08-02):** Stage 5 Faz 1–4 are complete locally. Evidence: `docs/PHASE_85_STAGE_5_PHASE_1_SCOPE_BASELINE_EVIDENCE.md`, `docs/PHASE_85_STAGE_5_PHASE_2_SHELL_DATA_FOUNDATION_EVIDENCE.md`, `docs/PHASE_85_STAGE_5_PHASE_3_BOUNDED_SHELL_API_EVIDENCE.md`, and `docs/PHASE_85_STAGE_5_PHASE_4_AUTHENTICATED_SHELL_PROVIDER_EVIDENCE.md`. Faz 4 delivers authenticated shell layout/provider, typed destination resolvers, `/dashboard/more`, and single-shell chrome for protected routes. Targeted unit tests and typecheck passed; local Supabase reset and RLS re-run remain blocked (Docker unavailable). Stage 5 Faz 5 is next. The branch has not been pushed. Production remains `NO-GO`; R-405 remains open.
 
 **Document authority rule:** this current-status block and the Stage 4D remediation evidence chain govern active execution. Every later dated phase entry is historical; its `current`, `next`, `pending`, or `blocked` wording describes only that checkpoint.
 
 **Historical closure authority (2026-07-28):** Stage 4D Ayarlar / Hesap was closed locally on `codex/stage-4c-remediation` with measured verdict `PASS_LOCAL_STAGE_4D_CLOSED`. Evidence: `docs/PHASE_85_STAGE_4D_CLOSURE_EVIDENCE.md`, `docs/PHASE_85_STAGE_4D_AYARLAR_HESAP_ACTION_PLAN.md`. This is superseded for active next-step planning by the Stage 4D remediation evidence above. Production remains `NO-GO`; R-405 remains open.
 
-Current continuity status, 2026-08-02: Stage 5 Faz 1–3 are complete locally; Faz 4 authenticated shell provider and dashboard layout are next after commit verification and local RLS re-run when Docker is available. Production remains `NO-GO` and R-405 remains open.
+Current continuity status, 2026-08-02: Stage 5 Faz 1–4 are complete locally; Faz 5 responsive navigation and SiriusAI branding are next after commit verification and local RLS re-run when Docker is available. Production remains `NO-GO` and R-405 remains open.
 
 ## Project Summary
 
