@@ -147,32 +147,43 @@ textarea:focus-visible,
   padding-right: max(1rem, env(safe-area-inset-right));
 }
 
-/* Phase 83E-5: mobile chrome spacing above the fixed bottom nav + sticky action bars. */
+/* Phase 83E-5: mobile chrome spacing above the fixed bottom nav + sticky action bars.
+ * Stage 5 Faz 5 compact bottom nav is 64px tall below 768px.
+ */
 .bottom-above-nav {
-  bottom: calc(3.5rem + env(safe-area-inset-bottom, 0px));
+  bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
 }
 
 .pb-mobile-nav {
-  padding-bottom: calc(3.5rem + env(safe-area-inset-bottom, 0px));
+  padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
+}
+
+.pb-shell-compact-nav {
+  padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
 }
 
 .pb-mobile-nav-actions {
-  padding-bottom: calc(7rem + env(safe-area-inset-bottom, 0px));
+  padding-bottom: calc(7.5rem + env(safe-area-inset-bottom, 0px));
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 768px) {
   .pb-mobile-nav,
-  .pb-mobile-nav-actions {
+  .pb-mobile-nav-actions,
+  .pb-shell-compact-nav {
     padding-bottom: 0;
+  }
+
+  .bottom-above-nav {
+    bottom: 0;
   }
 }
 
 /* Keep focused fields visible above the mobile bottom nav + sticky action bars. */
-@media (max-width: 1023px) {
+@media (max-width: 767px) {
   input,
   textarea,
   select {
-    scroll-margin-bottom: calc(7rem + env(safe-area-inset-bottom, 0px));
+    scroll-margin-bottom: calc(7.5rem + env(safe-area-inset-bottom, 0px));
   }
 }
 

@@ -1,6 +1,6 @@
 # Direct 100 Dietitian Completion Plan
 
-**Current active status (2026-08-02):** Stage 5 Faz 1–4 are complete locally, with evidence in `docs/PHASE_85_STAGE_5_PHASE_1_SCOPE_BASELINE_EVIDENCE.md`, `docs/PHASE_85_STAGE_5_PHASE_2_SHELL_DATA_FOUNDATION_EVIDENCE.md`, `docs/PHASE_85_STAGE_5_PHASE_3_BOUNDED_SHELL_API_EVIDENCE.md`, and `docs/PHASE_85_STAGE_5_PHASE_4_AUTHENTICATED_SHELL_PROVIDER_EVIDENCE.md`. Local Supabase reset and expanded RLS remain pending Docker availability. Stage 5 Faz 5 is next. The branch has not been pushed. This does not approve direct 100-dietitian production pilot, close R-405, or enable real provider/channel/health-data paths.
+**Current active status (2026-08-02):** Stage 5 Faz 1–5 are complete locally, with evidence in `docs/PHASE_85_STAGE_5_PHASE_1_SCOPE_BASELINE_EVIDENCE.md`, `docs/PHASE_85_STAGE_5_PHASE_2_SHELL_DATA_FOUNDATION_EVIDENCE.md`, `docs/PHASE_85_STAGE_5_PHASE_3_BOUNDED_SHELL_API_EVIDENCE.md`, `docs/PHASE_85_STAGE_5_PHASE_4_AUTHENTICATED_SHELL_PROVIDER_EVIDENCE.md`, and `docs/PHASE_85_STAGE_5_PHASE_5_RESPONSIVE_NAV_BRANDING_EVIDENCE.md`. Local Supabase reset and expanded RLS remain pending Docker availability. Stage 5 Faz 6 is next. The branch has not been pushed. This does not approve direct 100-dietitian production pilot, close R-405, or enable real provider/channel/health-data paths.
 
 **Document authority rule:** this current-status block and the Stage 4D remediation evidence chain govern active execution. All later dated entries are historical snapshots; their `current`, `next`, `pending`, or `blocked` wording applies only to the recorded checkpoint.
 
@@ -61,8 +61,8 @@ These rules are non-negotiable and apply to every future phase:
 - Autopilot is not globally enabled for all 5,000 clients by default. It is enabled only for selected qualified clients after all gates, monitoring, and rollback controls are ready.
 
 ## Current Baseline
-- Latest completed implementation phase: Stage 5 Faz 4 authenticated shell provider (2026-08-02), after Stage 5 Faz 3 bounded shell HTTP APIs.
-- Next operator step: commit Stage 5 Faz 4 locally, run local Supabase reset + `npm run test:rls` when Docker is available, then proceed to Stage 5 Faz 5 responsive navigation/branding; external production prerequisites remain open; no production GO.
+- Latest completed implementation phase: Stage 5 Faz 5 responsive navigation and SiriusAI branding (2026-08-02), after Stage 5 Faz 4 authenticated shell provider.
+- Next operator step: commit Stage 5 Faz 5 locally, run local Supabase reset + `npm run test:rls` when Docker is available, then proceed to Stage 5 Faz 6 active-client context; external production prerequisites remain open; no production GO.
 - Primary open product risk: R-425 is mitigated in the hosted commercial sandbox path, but production launch gates remain open.
 - Latest roadmap rebaseline: Phase 77A manual source authority rebaseline spec (2026-06-10).
 - Detailed Phase 77 implementation plan: `docs/PHASE_77_MASTER_IMPLEMENTATION_PLAN.md`.

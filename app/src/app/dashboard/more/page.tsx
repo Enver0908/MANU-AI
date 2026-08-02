@@ -8,13 +8,25 @@ import {
 import { resolveDashboardAuth } from "@/lib/dashboard-server-auth";
 import { isAiChatUiEnabled } from "@/lib/phase-85-stage-4b-dashboard-routing";
 import { normalizeLanguageCode } from "@/lib/languages";
+import type { TenantRole } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
+function asTenantRole(role: string | undefined): TenantRole {
+  if (
+    role === "owner" ||
+    role === "admin" ||
+    role === "dietitian" ||
+    role === "assistant" ||
+    role === "auditor"
+  ) {
+    return role;
+  }
+  return "dietitian";
+}
+
 /**
- * Stage 5 Faz 4: real `/dashboard/more` route.
- * Grouped More IA and branding polish are owned by Faz 5; this page only
- * establishes the route under the canonical shell.
+ * Stage 5 Faz 5: role-aware More route under the canonical shell.
  */
 export default async function MorePage() {
   const auth = await resolveDashboardAuth();
@@ -23,7 +35,11 @@ export default async function MorePage() {
   if (auth.gate === "fallback") {
     return (
       <Suspense fallback={null}>
-        <MorePageClient uiLanguage={normalizeLanguageCode(undefined)} aiChatEnabled={aiChatEnabled} />
+        <MorePageClient
+          uiLanguage={normalizeLanguageCode(undefined)}
+          aiChatEnabled={aiChatEnabled}
+          role="dietitian"
+        />
       </Suspense>
     );
   }
@@ -40,7 +56,11 @@ export default async function MorePage() {
 
   return (
     <Suspense fallback={null}>
-      <MorePageClient uiLanguage={auth.uiLanguage} aiChatEnabled={aiChatEnabled} />
+      <MorePageClient
+        uiLanguage={auth.uiLanguage}
+        aiChatEnabled={aiChatEnabled}
+        role={asTenantRole(auth.role)}
+      />
     </Suspense>
   );
 }

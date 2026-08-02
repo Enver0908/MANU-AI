@@ -1,19 +1,49 @@
 {
-  "name": "MANU-AI",
-  "short_name": "MANU-AI",
-  "description": "Dietitian operations console for the MANU-AI local prototype.",
+  "name": "SiriusAI",
+  "short_name": "SiriusAI",
+  "description": "SiriusAI supervised dietitian messaging assistant.",
   "start_url": "/dashboard",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#f7f5ef",
-  "theme_color": "#064e3b",
-  "orientation": "portrait-primary",
+  "background_color": "#FBFAF8",
+  "theme_color": "#612E82",
+  "orientation": "any",
   "icons": [
+    {
+      "src": "/icons/siriusai-180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/siriusai-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/siriusai-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/siriusai-192-maskable.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/siriusai-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
     {
       "src": "/icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "purpose": "any"
     }
   ]
 }

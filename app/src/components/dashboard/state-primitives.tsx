@@ -17,7 +17,7 @@ export function DashboardLoadingSkeleton() {
     <div
       className="min-h-screen bg-surface-muted text-ink"
       aria-busy="true"
-      aria-label="Loading MANU-AI workspace"
+      aria-label="Loading SiriusAI workspace"
       data-testid="dashboard-loading-skeleton"
     >
       <div className="flex min-h-screen flex-col lg:flex-row">

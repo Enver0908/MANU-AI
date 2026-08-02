@@ -4,49 +4,43 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { useShellProvider } from "@/components/dashboard/shell-provider";
 import { DASHBOARD_MAIN_ID } from "@/lib/phase-83e6-states-polish";
-import {
-  AI_CHAT_ROOT_PATH,
-  MORE_ROOT_PATH,
-  SETTINGS_ROOT_PATH,
-  buildShellHref,
-} from "@/lib/phase-85-stage-4b-dashboard-routing";
+import { MORE_ROOT_PATH } from "@/lib/phase-85-stage-4b-dashboard-routing";
+import { resolveMoreMenuSections } from "@/lib/phase-85-stage-5-shell-navigation";
 import type { SupportedLanguageCode } from "@/lib/languages";
-import { t } from "@/lib/i18n";
+import type { TenantRole } from "@/lib/types";
 
 /**
- * Minimal More destination for Faz 4 route wiring.
- * Faz 5 owns the grouped role-aware More IA and visual polish.
+ * Role-aware More destination with four fixed IA sections.
  */
 export function MorePageClient({
-  uiLanguage,
+  uiLanguage: _uiLanguage,
   aiChatEnabled,
+  role,
 }: {
   uiLanguage: SupportedLanguageCode;
   aiChatEnabled: boolean;
+  role: TenantRole;
 }) {
-  const { setHeaderSlots, bootstrap } = useShellProvider();
+  const { setHeaderSlots, bootstrap, navigateToDestination } = useShellProvider();
 
   useEffect(() => {
     setHeaderSlots({
       title: <h1 className="text-2xl font-semibold text-ink">Diğer</h1>,
       description: (
         <p className="mt-1 max-w-2xl text-sm leading-6 text-ink-muted">
-          Hesap, ayarlar ve ek araçlar. Gruplu More düzeni sonraki fazda tamamlanır.
+          AI araçları, danışan yardımcıları, hesap ve yönetim kısayolları.
         </p>
       ),
     });
     return () => setHeaderSlots({});
   }, [setHeaderSlots]);
 
-  const links = [
-    ...(aiChatEnabled
-      ? [{ href: AI_CHAT_ROOT_PATH, label: t(uiLanguage, "aiChat") }]
-      : []),
-    { href: buildShellHref("simulator"), label: t(uiLanguage, "simulator") },
-    { href: buildShellHref("voice"), label: t(uiLanguage, "voice") },
-    { href: buildShellHref("forms"), label: t(uiLanguage, "forms") },
-    { href: SETTINGS_ROOT_PATH, label: t(uiLanguage, "settings") },
-  ];
+  const sections = resolveMoreMenuSections({
+    role: bootstrap?.role ?? role,
+    navigation: bootstrap?.navigation,
+    aiChatEnabled,
+    capabilities: bootstrap?.capabilities,
+  });
 
   return (
     <div
@@ -56,20 +50,79 @@ export function MorePageClient({
       data-testid="more-page"
       data-path={MORE_ROOT_PATH}
     >
-      <ul className="space-y-2 px-safe py-5 pb-24 sm:px-6 lg:pb-6">
-        {links.map((link) => (
-          <li key={link.href}>
-            <Link
-              href={link.href}
-              className="inline-flex min-h-11 w-full items-center rounded-lg border border-stone-200 bg-white px-4 text-sm font-medium text-stone-800 transition hover:bg-stone-50"
-            >
-              {link.label}
-            </Link>
-          </li>
+      <div className="space-y-8 px-safe py-5 pb-24 sm:px-6 lg:pb-6">
+        {sections.map((section) => (
+          <section key={section.id} aria-labelledby={`more-section-${section.id}`} data-testid={`more-section-${section.id}`}>
+            <div className="border-b border-line pb-2">
+              <h2 id={`more-section-${section.id}`} className="text-sm font-semibold uppercase tracking-[0.12em] text-ink-muted">
+                {section.title}
+              </h2>
+            </div>
+            <ul className="mt-3 divide-y divide-line border-y border-line">
+              {section.items.map((item) => {
+                const className =
+                  "inline-flex min-h-11 w-full items-center justify-between gap-3 bg-surface px-1 text-sm font-medium transition";
+                if (!item.enabled) {
+                  return (
+                    <li key={item.id}>
+                      <span
+                        className={`${className} cursor-not-allowed text-ink-muted`}
+                        aria-disabled="true"
+                        title={item.disabledReason}
+                        data-testid={`more-item-${item.id}-disabled`}
+                      >
+                        <span>{item.label}</span>
+                        <span className="text-xs font-normal text-ink-subtle">
+                          {item.disabledReason === "feature_disabled"
+                            ? "Özellik kapalı"
+                            : "Kullanılamıyor"}
+                        </span>
+                      </span>
+                    </li>
+                  );
+                }
+
+                if (
+                  item.destinationId === "ai_chat" ||
+                  item.destinationId === "settings" ||
+                  item.destinationId === "operational_foundation"
+                ) {
+                  return (
+                    <li key={item.id}>
+                      <Link
+                        href={item.href}
+                        className={`${className} text-ink hover:bg-surface-muted`}
+                        data-testid={`more-item-${item.id}`}
+                      >
+                        {item.label}
+                      </Link>
+                    </li>
+                  );
+                }
+
+                return (
+                  <li key={item.id}>
+                    <button
+                      type="button"
+                      className={`${className} text-left text-ink hover:bg-surface-muted`}
+                      data-testid={`more-item-${item.id}`}
+                      onClick={() => {
+                        if (item.destinationId !== "operational_foundation") {
+                          navigateToDestination(item.destinationId);
+                        }
+                      }}
+                    >
+                      {item.label}
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
         ))}
-      </ul>
+      </div>
       {bootstrap?.warnings?.length ? (
-        <p className="px-safe text-sm text-stone-500 sm:px-6" role="status">
+        <p className="px-safe text-sm text-ink-muted sm:px-6" role="status">
           {bootstrap.warnings.join(", ")}
         </p>
       ) : null}
