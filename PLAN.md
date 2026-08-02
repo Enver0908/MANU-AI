@@ -1,12 +1,12 @@
 # MANU-AI Plan
 
-**Current active status (2026-07-29):** Stage 4D post-closure remediation is reclosed and committed locally at `e369e1b`. Faz 1 Profile and Tenant/Account Foundation, Faz 2 Auth/Billing/PWA Hardening, and the pre-Faz 3 RLS repair are accepted by clean Supabase reset and `npm run test:rls` 53/53 with 0 skipped. Evidence: `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_1_ACCOUNT_FOUNDATION_EVIDENCE.md`, `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_2_SECURITY_BILLING_PWA_EVIDENCE.md`, and `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_3_RECLOSURE_EVIDENCE.md`. The branch has not been pushed. Stage 5 is unstarted and requires separate explicit approval. Production remains `NO-GO`; R-405 remains open.
+**Current active status (2026-08-02):** Stage 5 Faz 1 scope baseline and Faz 2 shell data foundation are complete locally (uncommitted pending user commit command). Evidence: `docs/PHASE_85_STAGE_5_PHASE_1_SCOPE_BASELINE_EVIDENCE.md` and `docs/PHASE_85_STAGE_5_PHASE_2_SHELL_DATA_FOUNDATION_EVIDENCE.md`. Faz 2 delivers session activity/preferences SQL foundation, 15-minute inactivity lock RPCs, auth-context session guards, and local `auth.sessions.inactivity_timeout = "15m"`. Targeted unit/migration-contract tests and typecheck passed; local Supabase reset and RLS re-run are blocked here (Docker unavailable). Stage 5 Faz 3 is next. The branch has not been pushed. Production remains `NO-GO`; R-405 remains open.
 
 **Document authority rule:** this current-status block and the Stage 4D remediation evidence chain govern active execution. Every later dated phase entry is historical; its `current`, `next`, `pending`, or `blocked` wording describes only that checkpoint.
 
 **Historical closure authority (2026-07-28):** Stage 4D Ayarlar / Hesap was closed locally on `codex/stage-4c-remediation` with measured verdict `PASS_LOCAL_STAGE_4D_CLOSED`. Evidence: `docs/PHASE_85_STAGE_4D_CLOSURE_EVIDENCE.md`, `docs/PHASE_85_STAGE_4D_AYARLAR_HESAP_ACTION_PLAN.md`. This is superseded for active next-step planning by the Stage 4D remediation evidence above. Production remains `NO-GO`; R-405 remains open.
 
-Current continuity status, 2026-07-29: Stage 4B tracks and Stage 4C remediation remain closed locally. Stage 4D post-closure remediation is reclosed and committed locally at `e369e1b`; push and Stage 5 each require separate explicit user approval. Production remains `NO-GO` and R-405 remains open.
+Current continuity status, 2026-08-02: Stage 5 Faz 1 and Faz 2 are complete locally; Faz 3 bounded shell HTTP APIs are next after commit verification and local RLS re-run when Docker is available. Production remains `NO-GO` and R-405 remains open.
 
 ## Project Summary
 

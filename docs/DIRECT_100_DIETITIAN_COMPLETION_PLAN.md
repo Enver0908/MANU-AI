@@ -1,6 +1,6 @@
 # Direct 100 Dietitian Completion Plan
 
-**Current active status (2026-07-29):** Stage 4D post-closure remediation is reclosed and committed locally at `e369e1b`, with evidence in `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_1_ACCOUNT_FOUNDATION_EVIDENCE.md`, `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_2_SECURITY_BILLING_PWA_EVIDENCE.md`, and `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_3_RECLOSURE_EVIDENCE.md`. Clean Supabase reset passed and `npm run test:rls` passed 53/53 with 0 skipped. The branch has not been pushed; Stage 5 is unstarted and separately approval-gated. This does not approve direct 100-dietitian production pilot, close R-405, or enable real provider/channel/health-data paths.
+**Current active status (2026-08-02):** Stage 5 Faz 1 scope baseline and Faz 2 shell data foundation are complete locally (uncommitted pending user commit command), with evidence in `docs/PHASE_85_STAGE_5_PHASE_1_SCOPE_BASELINE_EVIDENCE.md` and `docs/PHASE_85_STAGE_5_PHASE_2_SHELL_DATA_FOUNDATION_EVIDENCE.md`. Local Supabase reset and expanded RLS for Stage 5 shell tables remain pending Docker availability. Stage 5 Faz 3 is next. The branch has not been pushed. This does not approve direct 100-dietitian production pilot, close R-405, or enable real provider/channel/health-data paths.
 
 **Document authority rule:** this current-status block and the Stage 4D remediation evidence chain govern active execution. All later dated entries are historical snapshots; their `current`, `next`, `pending`, or `blocked` wording applies only to the recorded checkpoint.
 
@@ -61,8 +61,8 @@ These rules are non-negotiable and apply to every future phase:
 - Autopilot is not globally enabled for all 5,000 clients by default. It is enabled only for selected qualified clients after all gates, monitoring, and rollback controls are ready.
 
 ## Current Baseline
-- Latest completed implementation phase: Stage 4D post-closure remediation reclosure (2026-07-29), after Faz 1 Account Foundation, Faz 2 Auth/Billing/PWA Hardening, and Faz 3 evidence reconciliation.
-- Next operator step: approve the Stage 4D remediation reclosure commit, then separately approve Stage 5 Dashboard and Mobile PWA Shell if desired; external production prerequisites remain open; no production GO.
+- Latest completed implementation phase: Stage 5 Faz 2 shell data foundation (2026-08-02), after Stage 5 Faz 1 scope baseline and Stage 4D post-closure remediation reclosure (2026-07-29).
+- Next operator step: commit Stage 5 Faz 1–2 locally, run local Supabase reset + `npm run test:rls` when Docker is available, then separately approve Stage 5 Faz 3 bounded shell HTTP APIs; external production prerequisites remain open; no production GO.
 - Primary open product risk: R-425 is mitigated in the hosted commercial sandbox path, but production launch gates remain open.
 - Latest roadmap rebaseline: Phase 77A manual source authority rebaseline spec (2026-06-10).
 - Detailed Phase 77 implementation plan: `docs/PHASE_77_MASTER_IMPLEMENTATION_PLAN.md`.

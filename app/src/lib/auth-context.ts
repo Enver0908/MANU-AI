@@ -2,6 +2,11 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { assertActiveCommercialEntitlement } from "./commercial-entitlement-access";
+import {
+  assertShellSessionActivity,
+  readVerifiedSessionIdFromAccessToken,
+  touchShellSessionActivity,
+} from "./phase-85-stage-5-shell-session";
 import { createSupabaseServerClient, isSupabaseConfigured } from "./supabase";
 import type { TenantRole } from "./types";
 
@@ -33,12 +38,17 @@ export type AppTenantContext = {
 
 export type AccountTenantContext = AppTenantContext & {
   supabase: SupabaseClient;
+  sessionId: string;
+};
+
+export type ResolveAccountTenantContextOptions = {
+  recordSessionActivity?: boolean;
 };
 
 export class AppAuthError extends Error {
-  status: 401 | 403;
+  status: 400 | 401 | 403;
 
-  constructor(status: 401 | 403, message: string) {
+  constructor(status: 400 | 401 | 403, message: string) {
     super(message);
     this.name = "AppAuthError";
     this.status = status;
@@ -56,7 +66,17 @@ export async function resolveAppTenantContext(): Promise<AppTenantContext> {
   };
 }
 
-export async function resolveAccountTenantContext(): Promise<AccountTenantContext> {
+/**
+ * Activity-endpoint resolver only. Records interactive session touch but cannot unlock
+ * an already locked session.
+ */
+export async function resolveAccountTenantContextForSessionActivity(): Promise<AccountTenantContext> {
+  return resolveAccountTenantContext({ recordSessionActivity: true });
+}
+
+export async function resolveAccountTenantContext(
+  options: ResolveAccountTenantContextOptions = {},
+): Promise<AccountTenantContext> {
   if (!isSupabaseConfigured()) {
     throw new AppAuthError(401, "supabase_not_configured");
   }
@@ -115,11 +135,26 @@ export async function resolveAccountTenantContext(): Promise<AccountTenantContex
     throw new AppAuthError(403, "no_dietitian_profile");
   }
 
+  const {
+    data: { session },
+    error: sessionError,
+  } = await supabase.auth.getSession();
+
+  const verifiedSessionId = readVerifiedSessionIdFromAccessToken(session?.access_token);
+  if (sessionError || !verifiedSessionId) {
+    throw new AppAuthError(401, "session_claim_missing");
+  }
+
+  const sessionActivity = options.recordSessionActivity
+    ? await touchShellSessionActivity(supabase)
+    : await assertShellSessionActivity(supabase);
+
   const context = {
     tenantId: membership.data.tenant_id,
     dietitianId: dietitian.data.id,
     userId: user.id,
     role: membership.data.role as TenantRole,
+    sessionId: sessionActivity.sessionId || verifiedSessionId,
     supabase,
   };
 

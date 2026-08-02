@@ -2816,6 +2816,121 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     });
     expect(insert.error).not.toBeNull();
   }, 30000);
+
+  it("blocks direct authenticated access to Stage 5 shell foundation tables", async () => {
+    const member = await signIn("rls-member@manu.local");
+
+    const sessionSelect = await member.from("app_session_activity").select("session_id").limit(1);
+    expect(sessionSelect.error).not.toBeNull();
+
+    const preferenceSelect = await member.from("app_user_shell_preferences").select("tenant_id").limit(1);
+    expect(preferenceSelect.error).not.toBeNull();
+
+    const sessionInsert = await member.from("app_session_activity").insert({
+      session_id: "00000000-0000-4000-8000-000000009901",
+      tenant_id: TEST_TENANT_ID,
+      auth_user_id: memberUserId,
+      dietitian_id: TEST_DIETITIAN_ID,
+      last_interactive_at: new Date().toISOString(),
+    });
+    expect(sessionInsert.error).not.toBeNull();
+  }, 30000);
+
+  it("enforces Stage 5 session inactivity lock and touch cooldown through RPCs", async () => {
+    const owner = await signIn("rls-member@manu.local");
+    const assertInitial = await owner.rpc("p85_stage_5_assert_session_activity_v1");
+    expect(assertInitial.error).toBeNull();
+    expect(assertInitial.data).toEqual(
+      expect.objectContaining({
+        locked: false,
+        sessionId: expect.any(String),
+      }),
+    );
+
+    const sessionId = assertInitial.data.sessionId as string;
+
+    const touchWithinCooldown = await owner.rpc("p85_stage_5_touch_session_activity_v1");
+    expect(touchWithinCooldown.error).toBeNull();
+    expect(touchWithinCooldown.data?.touched).toBe(false);
+
+    await admin
+      .from("app_session_activity")
+      .update({ last_interactive_at: new Date(Date.now() - 14 * 60_000).toISOString() })
+      .eq("session_id", sessionId);
+
+    const assertBeforeLock = await owner.rpc("p85_stage_5_assert_session_activity_v1");
+    expect(assertBeforeLock.error).toBeNull();
+
+    await admin
+      .from("app_session_activity")
+      .update({ last_interactive_at: new Date(Date.now() - 15 * 60_000).toISOString() })
+      .eq("session_id", sessionId);
+
+    const assertLocked = await owner.rpc("p85_stage_5_assert_session_activity_v1");
+    expect(assertLocked.error?.message).toMatch(/session_inactive/i);
+
+    const touchLocked = await owner.rpc("p85_stage_5_touch_session_activity_v1");
+    expect(touchLocked.error?.message).toMatch(/session_inactive/i);
+
+    const lockedRow = await admin
+      .from("app_session_activity")
+      .select("locked_at")
+      .eq("session_id", sessionId)
+      .single();
+    expect(lockedRow.data?.locked_at).not.toBeNull();
+
+    const securityEvents = await admin
+      .from("account_security_events")
+      .select("event_type")
+      .eq("auth_user_id", memberUserId)
+      .in("event_type", ["session_started", "session_locked"]);
+    expect(securityEvents.error).toBeNull();
+    expect(securityEvents.data?.some((row) => row.event_type === "session_locked")).toBe(true);
+  }, 30000);
+
+  it("updates shell preferences with revision control and client access checks", async () => {
+    const owner = await signIn("rls-member@manu.local");
+
+    const create = await owner.rpc("p85_stage_5_update_shell_preferences_v1", {
+      p_expected_revision: 0,
+      p_request_id: "stage5-shell-pref-create-01",
+      p_last_destination_id: "home",
+      p_destination_state: { section: "overview" },
+    });
+    expect(create.error).toBeNull();
+    expect(create.data).toEqual(
+      expect.objectContaining({
+        revision: 1,
+        lastDestinationId: "home",
+      }),
+    );
+
+    const replay = await owner.rpc("p85_stage_5_update_shell_preferences_v1", {
+      p_expected_revision: 0,
+      p_request_id: "stage5-shell-pref-create-01",
+      p_last_destination_id: "home",
+      p_destination_state: { section: "overview" },
+    });
+    expect(replay.error).toBeNull();
+    expect(replay.data?.idempotentReplay).toBe(true);
+    expect(replay.data?.revision).toBe(1);
+
+    const assignClient = await owner.rpc("p85_stage_5_update_shell_preferences_v1", {
+      p_expected_revision: 1,
+      p_request_id: "stage5-shell-pref-client-01",
+      p_active_client_id: TEST_CLIENT_ID,
+    });
+    expect(assignClient.error).toBeNull();
+    expect(assignClient.data?.activeClientId).toBe(TEST_CLIENT_ID);
+
+    const outsider = await signIn("rls-other-tenant@manu.local");
+    const crossTenantClient = await outsider.rpc("p85_stage_5_update_shell_preferences_v1", {
+      p_expected_revision: 0,
+      p_request_id: "stage5-shell-pref-cross-01",
+      p_active_client_id: TEST_CLIENT_ID,
+    });
+    expect(crossTenantClient.error?.message).toMatch(/client_context_unavailable/i);
+  }, 30000);
 });
 
 function loadEnvLocal() {
@@ -3995,6 +4110,8 @@ async function cleanup(admin: SupabaseClient) {
     .delete()
     .in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("account_security_events").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("app_user_shell_preferences").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("app_session_activity").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("processed_inbound_events").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("ai_chat_message_versions").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("ai_chat_messages").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);

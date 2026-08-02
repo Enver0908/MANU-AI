@@ -17,6 +17,8 @@ export const ACCOUNT_SECURITY_EVENT_TYPES = [
   "email_change_requested",
   "logout_local",
   "recovery_password_set",
+  "session_locked",
+  "session_started",
 ] as const;
 
 export type AccountSecurityEventType = (typeof ACCOUNT_SECURITY_EVENT_TYPES)[number];

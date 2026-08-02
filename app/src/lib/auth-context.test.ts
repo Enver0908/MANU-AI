@@ -79,6 +79,7 @@ describe("auth context error handling", () => {
       dietitianId: "dietitian-demo",
       userId: "user-demo",
       role: "assistant",
+      sessionId: "00000000-0000-4000-8000-000000000901",
     };
 
     expect(() => requireCapability(context, "create_client")).toThrow(
@@ -92,6 +93,7 @@ describe("auth context error handling", () => {
       dietitianId: "dietitian-demo",
       userId: "user-demo",
       role: "assistant",
+      sessionId: "00000000-0000-4000-8000-000000000901",
     };
 
     expect(() => requireCapability(context, "internal_copilot_chat")).toThrow(
@@ -105,6 +107,7 @@ describe("auth context error handling", () => {
       dietitianId: "dietitian-demo",
       userId: "user-demo",
       role: "assistant",
+      sessionId: "00000000-0000-4000-8000-000000000901",
     };
 
     expect(() => requireCapability(context, "dietitian_ai_chat")).toThrow(
