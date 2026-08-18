@@ -1,5 +1,5 @@
 import { type NextRequest } from "next/server";
-import { shellErrorResponse, shellJsonResponse } from "@/lib/phase-85-stage-5-shell-api";
+import { shellBoundedJsonResponse, shellErrorResponse } from "@/lib/phase-85-stage-5-shell-api";
 import { parseShellActiveClientIdParam } from "@/lib/phase-85-stage-5-shell-contracts";
 import {
   enforceShellBootstrapRateLimit,
@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     const activeClientId = parseShellActiveClientIdParam(
       request.nextUrl.searchParams.get("activeClientId"),
     );
-    return shellJsonResponse(await loadShellBootstrap(context, activeClientId));
+    return shellBoundedJsonResponse(await loadShellBootstrap(context, activeClientId));
   } catch (error) {
     return shellErrorResponse(error);
   }

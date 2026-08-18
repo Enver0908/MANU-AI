@@ -1,5 +1,7 @@
 # Phase 85 Stage 5 Phase 1 Scope Baseline Evidence
 
+> Historical phase snapshot. Phase-level open items below were superseded by the 2026-08-18 `STAGE_5_CLOSED` decision in `docs/PHASE_85_STAGE_5_CLOSURE_DECISION.json`; production remains independently `NO-GO`.
+
 Date: 2026-08-02
 
 Branch: `codex/stage-4c-remediation`

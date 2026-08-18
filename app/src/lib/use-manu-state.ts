@@ -240,8 +240,9 @@ export function useManuState() {
           form.set("image", input.imageFile);
         }
 
-        const response = await fetch("/api/simulator/visual", {
+        const response = await authenticatedMutationFetch("/api/simulator/visual", {
           method: "POST",
+          mutationKind: "other",
           body: form,
         });
 
@@ -284,8 +285,9 @@ export function useManuState() {
           form.set("flushSilence", "false");
         }
 
-        const response = await fetch("/api/simulator/voice", {
+        const response = await authenticatedMutationFetch("/api/simulator/voice", {
           method: "POST",
+          mutationKind: "other",
           body: form,
         });
 

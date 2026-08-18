@@ -1,0 +1,439 @@
+{
+  "schemaVersion": "stage5-evidence-v2",
+  "evidenceType": "real_device",
+  "sourceRevision": "3d03112db649148b4acaadcd2eea4a2caf93f62d",
+  "sourceTreeClean": false,
+  "packageLockSha256": "80ae808aad5ddb681a2a5b32fd5a4f71340772ac29ce1fd549156977302fa8c5",
+  "generatedAt": "2026-08-18T17:03:49.753Z",
+  "command": "npm run test:stage-5-real-device",
+  "environment": {
+    "nodeVersion": "v22.16.0",
+    "platform": "win32",
+    "architecture": "x64"
+  },
+  "status": "APPROVED",
+  "productionStatus": "NO-GO",
+  "requiredCaptures": {
+    "iphoneSafari": true,
+    "iphonePwa": true,
+    "androidChrome": true,
+    "androidPwa": true,
+    "offlinePrivacyLock": true
+  },
+  "blockers": [],
+  "details": [],
+  "instructions": "Populate this file with real iPhone Safari/PWA and Android Chrome/PWA capture metadata plus local screenshot/log artifacts. Emulator or browser device emulation is rejected.",
+  "expectedCaptureIds": [
+    "iphoneSafari",
+    "iphonePwa",
+    "androidChrome",
+    "androidPwa",
+    "offlinePrivacyLock"
+  ],
+  "expectedRouteWalk": [
+    "/dashboard",
+    "/dashboard?section=clients",
+    "/dashboard?section=messages",
+    "/dashboard/ai-chat",
+    "/dashboard/settings"
+  ],
+  "previousStatus": "BLOCKED",
+  "evidencePath": "C:\\Users\\Dell\\OneDrive\\Masaüstü\\MANU-AI\\docs\\PHASE_85_STAGE_5_REAL_DEVICE_EVIDENCE_STATUS.json",
+  "validationReportPath": "C:\\Users\\Dell\\OneDrive\\Masaüstü\\MANU-AI\\docs\\PHASE_85_STAGE_5_REAL_DEVICE_VALIDATION_REPORT.json",
+  "approvedBy": "Codex verification of user-operated physical Android and iPhone devices",
+  "capturedAt": "2026-08-17T10:56:52.778Z",
+  "deviceCaptures": {
+    "iphoneSafari": {
+      "status": "PASS",
+      "realDevice": true,
+      "emulator": false,
+      "device": {
+        "platform": "iOS",
+        "model": "Physical iPhone (model not provided)",
+        "osVersion": "Not provided",
+        "browser": "Safari",
+        "screen": "946x2048 screenshot",
+        "connection": "Physical iPhone over local Wi-Fi to Stage 5 capture server"
+      },
+      "routeWalk": [
+        "/dashboard",
+        "/dashboard?section=clients",
+        "/dashboard?section=messages",
+        "/dashboard/ai-chat",
+        "/dashboard/settings"
+      ],
+      "artifacts": [
+        {
+          "path": "stage-5-real-device/2026-08-17/iphone-safari-route-dashboard.png",
+          "type": "screenshot",
+          "sha256": "360960f91bb8542301211b5cb1907440fa344283af45d6bb2e7e90039d88cabf"
+        },
+        {
+          "path": "stage-5-real-device/2026-08-17/iphone-safari-route-clients.png",
+          "type": "screenshot",
+          "sha256": "58f91557e322fb818aa77d98465fc0dd63fb7b43b01da775e9d21d5e32bb704e"
+        },
+        {
+          "path": "stage-5-real-device/2026-08-17/iphone-safari-route-clients-create-form.png",
+          "type": "screenshot",
+          "sha256": "df042075d453de15b3938d462b6a8842f08634c06f046ce54e67567deecdc32e"
+        },
+        {
+          "path": "stage-5-real-device/2026-08-17/iphone-safari-route-messages.png",
+          "type": "screenshot",
+          "sha256": "9b0398e23d144532b180507b82b40872d02d89b48018d09384d7b2434cca7bde"
+        },
+        {
+          "path": "stage-5-real-device/2026-08-17/iphone-safari-route-messages-filters.png",
+          "type": "screenshot",
+          "sha256": "143a8a18fcab91f24582ecd93f6414a601804df78a6121df2690d91aba56b5bd"
+        },
+        {
+          "path": "stage-5-real-device/2026-08-17/iphone-safari-route-ai-chat.png",
+          "type": "screenshot",
+          "sha256": "8a7067a985c314589457db8f62f78fe5f4a17dc52754d79b2b200f6572d05eef"
+        },
+        {
+          "path": "stage-5-real-device/2026-08-17/iphone-safari-route-settings.png",
+          "type": "screenshot",
+          "sha256": "681c21df0237337e2332d4e98abeee6b4a7fc4405a20d0fb0c2e55777282125b"
+        },
+        {
+          "path": "stage-5-real-device/2026-08-17/iphone-safari-route-settings-billing.png",
+          "type": "screenshot",
+          "sha256": "cf1a0999d2f44fcde98d5f3ca58041ae115af6fa59199ff7d6d7a56832ef0537"
+        }
+      ]
+    },
+    "iphonePwa": {
+      "status": "PASS",
+      "realDevice": true,
+      "emulator": false,
+      "device": {
+        "platform": "iOS",
+        "model": "Physical iPhone (model not provided)",
+        "osVersion": "Not provided",
+        "browser": "Installed home-screen PWA (Safari WebKit)",
+        "screen": "946x2048 screenshot",
+        "connection": "Physical iPhone over local Wi-Fi to Stage 5 capture server; standalone display confirmed by absent Safari chrome"
+      },
+      "routeWalk": [
+        "/dashboard",
+        "/dashboard?section=clients",
+        "/dashboard?section=messages",
+        "/dashboard/ai-chat",
+        "/dashboard/settings"
+      ],
+      "artifacts": [
+        {
+          "path": "stage-5-real-device/2026-08-17/iphone-pwa-route-dashboard.png",
+          "type": "screenshot",
+          "sha256": "3633da06cdec0a35906c0556ae9258b709328e92cbc42014808d615585274072"
+        },
+        {
+          "path": "stage-5-real-device/2026-08-17/iphone-pwa-route-clients.png",
+          "type": "screenshot",
+          "sha256": "3a306ef61dfe9c968b7d64795005d7763aee126db668b8340192361498a34167"
+        },
+        {
+          "path": "stage-5-real-device/2026-08-17/iphone-pwa-route-messages.png",
+          "type": "screenshot",
+          "sha256": "7d39a911dc4c6632895e7dc59411f5e5f461e4c8bf4ae4f27f2ffed1839a7c27"
+        },
+        {
+          "path": "stage-5-real-device/2026-08-17/iphone-pwa-route-messages-top.png",
+          "type": "screenshot",
+          "sha256": "b1b16d04b971b1d7d338f7675f08de210f1f5ebcf6cbc8597a12795625fbf82d"
+        },
+        {
+          "path": "stage-5-real-device/2026-08-17/iphone-pwa-route-ai-chat.png",
+          "type": "screenshot",
+          "sha256": "057fadf4b20e8429ee7f46668e319e2e11c780b8af9c7cfc2974b91fd77ac49d"
+        },
+        {
+          "path": "stage-5-real-device/2026-08-17/iphone-pwa-route-settings.png",
+          "type": "screenshot",
+          "sha256": "8de0cfde634163876c4f01ede18a53d23fb94dfd3c79c68589e19f663d5b3257"
+        }
+      ]
+    },
+    "androidChrome": {
+      "status": "PASS",
+      "realDevice": true,
+      "emulator": false,
+      "device": {
+        "platform": "Android",
+        "model": "SM-S721B",
+        "osVersion": "16",
+        "browser": "Chrome 151.0.7922.137",
+        "screen": "1080x2340 @ 450dpi",
+        "connection": "USB ADB to physical Samsung S24 FE; Chrome DevTools target on device"
+      },
+      "routeWalk": [
+        "/dashboard",
+        "/dashboard?section=clients",
+        "/dashboard?section=messages",
+        "/dashboard/ai-chat",
+        "/dashboard/settings"
+      ],
+      "artifacts": [
+        {
+          "path": "stage-5-real-device/2026-08-17/android-chrome-route-dashboard.png",
+          "type": "screenshot",
+          "sha256": "4020501acafda5e3e9c672d06d3bf6bfa83ee155b3974bd15159572dbc62f7cb"
+        },
+        {
+          "path": "stage-5-real-device/2026-08-17/android-chrome-route-clients.png",
+          "type": "screenshot",
+          "sha256": "e59953574f3be9cf5caae3083b86773d58a1f1517f568530331f0b62e5d2640d"
+        },
+        {
+          "path": "stage-5-real-device/2026-08-17/android-chrome-route-messages.png",
+          "type": "screenshot",
+          "sha256": "8b933f2a32997b9ac63476a2e8c1330ac1c7799b5058cb213b5d115eebc33011"
+        },
+        {
+          "path": "stage-5-real-device/2026-08-17/android-chrome-route-ai-chat.png",
+          "type": "screenshot",
+          "sha256": "eed71f9ce79f7e33b076410168897f86ba6ad4273e52bfb65179025633ac67fa"
+        },
+        {
+          "path": "stage-5-real-device/2026-08-17/android-chrome-route-settings.png",
+          "type": "screenshot",
+          "sha256": "3dc061a2150e9a28aa4036c88d3545ae9366e3f0ad2cbca78c514ebc448d7da2"
+        }
+      ]
+    },
+    "androidPwa": {
+      "status": "PASS",
+      "realDevice": true,
+      "emulator": false,
+      "device": {
+        "platform": "Android",
+        "model": "SM-S721B",
+        "osVersion": "16",
+        "browser": "Installed PWA / WebAPK org.chromium.webapk.a68003d917cc7e3ee_v2",
+        "screen": "1080x2340 @ 450dpi",
+        "connection": "USB ADB to physical Samsung S24 FE; standalone SameTaskWebApkActivity"
+      },
+      "routeWalk": [
+        "/dashboard",
+        "/dashboard?section=clients",
+        "/dashboard?section=messages",
+        "/dashboard/ai-chat",
+        "/dashboard/settings"
+      ],
+      "artifacts": [
+        {
+          "path": "stage-5-real-device/2026-08-17/android-pwa-launch.png",
+          "type": "screenshot",
+          "sha256": "f07beadd683103c0fcbc486b786ea6ea68e82b2b066b2723e1e7713cbaf0c6a9"
+        },
+        {
+          "path": "stage-5-real-device/2026-08-17/android-pwa-route-clients.png",
+          "type": "screenshot",
+          "sha256": "a0f9a90cf0d21884a701539edafb3f8f840226c052ff4643520fe038b92e18a8"
+        },
+        {
+          "path": "stage-5-real-device/2026-08-17/android-pwa-route-messages.png",
+          "type": "screenshot",
+          "sha256": "635ffb3e075dbfeaf54913a368ef1c46fb9df1d687a9c64345f8b1365d3ce4b4"
+        },
+        {
+          "path": "stage-5-real-device/2026-08-17/android-pwa-route-ai-chat.png",
+          "type": "screenshot",
+          "sha256": "33af026a01fc57ec118a15acf18d2b29bcfba25c722596d8be085aca74ce84b7"
+        },
+        {
+          "path": "stage-5-real-device/2026-08-17/android-pwa-route-settings.png",
+          "type": "screenshot",
+          "sha256": "c66498f9affdaefffdd7ff5347d076aeff8d0d5204c94afb1bd3bdad544c4b5a"
+        },
+        {
+          "path": "stage-5-real-device/2026-08-17/android-pwa-install-dialog.png",
+          "type": "screenshot",
+          "sha256": "69e0166ad9aa2105df9b18a7ae37c18011ada32b97a5dc824a8049d99379290a"
+        },
+        {
+          "path": "stage-5-real-device/2026-08-17/android-pwa-install-confirm.png",
+          "type": "screenshot",
+          "sha256": "ee272219791d5319d29298b459590debceae81c41cb96c2eab848e556ec86b01"
+        }
+      ]
+    },
+    "offlinePrivacyLock": {
+      "status": "PASS",
+      "realDevice": true,
+      "emulator": false,
+      "noClientNamesVisible": true,
+      "protectedContentUnmounted": true,
+      "device": {
+        "platform": "Android",
+        "model": "SM-S721B",
+        "osVersion": "16",
+        "browser": "Installed PWA / WebAPK org.chromium.webapk.a68003d917cc7e3ee_v2"
+      },
+      "routeWalk": [
+        "/dashboard",
+        "/dashboard?section=clients",
+        "/dashboard?section=messages",
+        "/dashboard/ai-chat",
+        "/dashboard/settings"
+      ],
+      "artifacts": [
+        {
+          "path": "stage-5-real-device/2026-08-17/offline-privacy-lock-android-pwa.png",
+          "type": "screenshot",
+          "sha256": "6c266b9eb5f162a1db2e18a6a1b13e3502b3b8e043402d07ac3646d8090f2405"
+        }
+      ]
+    }
+  },
+  "normalizedArtifacts": {
+    "iphoneSafari": [
+      {
+        "path": "stage-5-real-device/2026-08-17/iphone-safari-route-dashboard.png",
+        "type": "screenshot",
+        "sha256": "360960f91bb8542301211b5cb1907440fa344283af45d6bb2e7e90039d88cabf"
+      },
+      {
+        "path": "stage-5-real-device/2026-08-17/iphone-safari-route-clients.png",
+        "type": "screenshot",
+        "sha256": "58f91557e322fb818aa77d98465fc0dd63fb7b43b01da775e9d21d5e32bb704e"
+      },
+      {
+        "path": "stage-5-real-device/2026-08-17/iphone-safari-route-clients-create-form.png",
+        "type": "screenshot",
+        "sha256": "df042075d453de15b3938d462b6a8842f08634c06f046ce54e67567deecdc32e"
+      },
+      {
+        "path": "stage-5-real-device/2026-08-17/iphone-safari-route-messages.png",
+        "type": "screenshot",
+        "sha256": "9b0398e23d144532b180507b82b40872d02d89b48018d09384d7b2434cca7bde"
+      },
+      {
+        "path": "stage-5-real-device/2026-08-17/iphone-safari-route-messages-filters.png",
+        "type": "screenshot",
+        "sha256": "143a8a18fcab91f24582ecd93f6414a601804df78a6121df2690d91aba56b5bd"
+      },
+      {
+        "path": "stage-5-real-device/2026-08-17/iphone-safari-route-ai-chat.png",
+        "type": "screenshot",
+        "sha256": "8a7067a985c314589457db8f62f78fe5f4a17dc52754d79b2b200f6572d05eef"
+      },
+      {
+        "path": "stage-5-real-device/2026-08-17/iphone-safari-route-settings.png",
+        "type": "screenshot",
+        "sha256": "681c21df0237337e2332d4e98abeee6b4a7fc4405a20d0fb0c2e55777282125b"
+      },
+      {
+        "path": "stage-5-real-device/2026-08-17/iphone-safari-route-settings-billing.png",
+        "type": "screenshot",
+        "sha256": "cf1a0999d2f44fcde98d5f3ca58041ae115af6fa59199ff7d6d7a56832ef0537"
+      }
+    ],
+    "iphonePwa": [
+      {
+        "path": "stage-5-real-device/2026-08-17/iphone-pwa-route-dashboard.png",
+        "type": "screenshot",
+        "sha256": "3633da06cdec0a35906c0556ae9258b709328e92cbc42014808d615585274072"
+      },
+      {
+        "path": "stage-5-real-device/2026-08-17/iphone-pwa-route-clients.png",
+        "type": "screenshot",
+        "sha256": "3a306ef61dfe9c968b7d64795005d7763aee126db668b8340192361498a34167"
+      },
+      {
+        "path": "stage-5-real-device/2026-08-17/iphone-pwa-route-messages.png",
+        "type": "screenshot",
+        "sha256": "7d39a911dc4c6632895e7dc59411f5e5f461e4c8bf4ae4f27f2ffed1839a7c27"
+      },
+      {
+        "path": "stage-5-real-device/2026-08-17/iphone-pwa-route-messages-top.png",
+        "type": "screenshot",
+        "sha256": "b1b16d04b971b1d7d338f7675f08de210f1f5ebcf6cbc8597a12795625fbf82d"
+      },
+      {
+        "path": "stage-5-real-device/2026-08-17/iphone-pwa-route-ai-chat.png",
+        "type": "screenshot",
+        "sha256": "057fadf4b20e8429ee7f46668e319e2e11c780b8af9c7cfc2974b91fd77ac49d"
+      },
+      {
+        "path": "stage-5-real-device/2026-08-17/iphone-pwa-route-settings.png",
+        "type": "screenshot",
+        "sha256": "8de0cfde634163876c4f01ede18a53d23fb94dfd3c79c68589e19f663d5b3257"
+      }
+    ],
+    "androidChrome": [
+      {
+        "path": "stage-5-real-device/2026-08-17/android-chrome-route-dashboard.png",
+        "type": "screenshot",
+        "sha256": "4020501acafda5e3e9c672d06d3bf6bfa83ee155b3974bd15159572dbc62f7cb"
+      },
+      {
+        "path": "stage-5-real-device/2026-08-17/android-chrome-route-clients.png",
+        "type": "screenshot",
+        "sha256": "e59953574f3be9cf5caae3083b86773d58a1f1517f568530331f0b62e5d2640d"
+      },
+      {
+        "path": "stage-5-real-device/2026-08-17/android-chrome-route-messages.png",
+        "type": "screenshot",
+        "sha256": "8b933f2a32997b9ac63476a2e8c1330ac1c7799b5058cb213b5d115eebc33011"
+      },
+      {
+        "path": "stage-5-real-device/2026-08-17/android-chrome-route-ai-chat.png",
+        "type": "screenshot",
+        "sha256": "eed71f9ce79f7e33b076410168897f86ba6ad4273e52bfb65179025633ac67fa"
+      },
+      {
+        "path": "stage-5-real-device/2026-08-17/android-chrome-route-settings.png",
+        "type": "screenshot",
+        "sha256": "3dc061a2150e9a28aa4036c88d3545ae9366e3f0ad2cbca78c514ebc448d7da2"
+      }
+    ],
+    "androidPwa": [
+      {
+        "path": "stage-5-real-device/2026-08-17/android-pwa-launch.png",
+        "type": "screenshot",
+        "sha256": "f07beadd683103c0fcbc486b786ea6ea68e82b2b066b2723e1e7713cbaf0c6a9"
+      },
+      {
+        "path": "stage-5-real-device/2026-08-17/android-pwa-route-clients.png",
+        "type": "screenshot",
+        "sha256": "a0f9a90cf0d21884a701539edafb3f8f840226c052ff4643520fe038b92e18a8"
+      },
+      {
+        "path": "stage-5-real-device/2026-08-17/android-pwa-route-messages.png",
+        "type": "screenshot",
+        "sha256": "635ffb3e075dbfeaf54913a368ef1c46fb9df1d687a9c64345f8b1365d3ce4b4"
+      },
+      {
+        "path": "stage-5-real-device/2026-08-17/android-pwa-route-ai-chat.png",
+        "type": "screenshot",
+        "sha256": "33af026a01fc57ec118a15acf18d2b29bcfba25c722596d8be085aca74ce84b7"
+      },
+      {
+        "path": "stage-5-real-device/2026-08-17/android-pwa-route-settings.png",
+        "type": "screenshot",
+        "sha256": "c66498f9affdaefffdd7ff5347d076aeff8d0d5204c94afb1bd3bdad544c4b5a"
+      },
+      {
+        "path": "stage-5-real-device/2026-08-17/android-pwa-install-dialog.png",
+        "type": "screenshot",
+        "sha256": "69e0166ad9aa2105df9b18a7ae37c18011ada32b97a5dc824a8049d99379290a"
+      },
+      {
+        "path": "stage-5-real-device/2026-08-17/android-pwa-install-confirm.png",
+        "type": "screenshot",
+        "sha256": "ee272219791d5319d29298b459590debceae81c41cb96c2eab848e556ec86b01"
+      }
+    ],
+    "offlinePrivacyLock": [
+      {
+        "path": "stage-5-real-device/2026-08-17/offline-privacy-lock-android-pwa.png",
+        "type": "screenshot",
+        "sha256": "6c266b9eb5f162a1db2e18a6a1b13e3502b3b8e043402d07ac3646d8090f2405"
+      }
+    ]
+  }
+}

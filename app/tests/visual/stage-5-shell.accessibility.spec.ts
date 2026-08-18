@@ -93,11 +93,6 @@ test("dirty confirmation dialog exposes alertdialog semantics and Escape stay pa
     test.skip(true, "Shell blocked in this environment.");
   }
 
-  await page.evaluate(() => {
-    const registry = (window as unknown as { __shellDirtyRegistry?: { register: Function } }).__shellDirtyRegistry;
-    // Fallback: mark via provider test helper if exposed; otherwise simulate dialog mount.
-  });
-
   // Inject dialog for contract check when no live dirty surface is available.
   await page.evaluate(() => {
     if (document.querySelector('[data-testid="shell-dirty-navigation-dialog"]')) return;

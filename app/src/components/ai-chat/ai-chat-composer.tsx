@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState, type Dispatch, type SetStateAction } from "react";
+import { useCallback, useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import { Mic, Paperclip, Send, Square } from "lucide-react";
 import { t } from "@/lib/i18n";
 import type { SupportedLanguageCode } from "@/lib/languages";
@@ -12,6 +12,7 @@ import { AiChatAttachmentStrip } from "./ai-chat-attachment-strip";
 import { useShellDirtyRegistration } from "@/lib/use-shell-dirty-registration";
 import type { ShellDirtyEntryState } from "@/lib/phase-85-stage-5-shell-dirty-registry";
 import { useShellKeyboardInset } from "@/components/dashboard/mobile-ergonomics";
+import { authenticatedMutationFetch } from "@/lib/phase-85-stage-5-shell-authenticated-mutation";
 
 const ATTACHMENT_BUSY_STATUSES = new Set<AiChatAttachmentDto["status"]>([
   "upload_pending",
@@ -73,21 +74,48 @@ export function AiChatComposer({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const workletNodeRef = useRef<AudioWorkletNode | null>(null);
+  const mediaStreamRef = useRef<MediaStream | null>(null);
   useShellKeyboardInset();
 
-  useShellDirtyRegistration({
-    id: "ai-chat-composer",
-    label: "AI Chat taslağı",
-    state: (value.trim() ? "dirty" : "clean") as ShellDirtyEntryState,
-    canSave: false,
-    onDiscard: () => setValue(""),
-  });
+  const cleanupRecording = useCallback(() => {
+    workletNodeRef.current?.disconnect();
+    workletNodeRef.current = null;
+    mediaStreamRef.current?.getTracks().forEach((track) => track.stop());
+    mediaStreamRef.current = null;
+    const audioContext = audioContextRef.current;
+    audioContextRef.current = null;
+    if (audioContext && audioContext.state !== "closed") {
+      void audioContext.close().catch(() => undefined);
+    }
+    setRecording(false);
+  }, []);
 
   const allAttachmentsReady =
     attachments.length === 0 || attachments.every((item) => item.status === "ready");
   const hasPendingAttachments = attachments.some((item) => ATTACHMENT_BUSY_STATUSES.has(item.status));
   const hasReviewRequired = attachments.some((item) => item.status === "review_required");
   const readyAttachmentIds = attachments.filter((item) => item.status === "ready").map((item) => item.id);
+  const hasComposerDraft =
+    value.trim().length > 0 ||
+    attachments.length > 0 ||
+    hasPendingAttachments ||
+    hasReviewRequired ||
+    recording;
+
+  useShellDirtyRegistration({
+    id: "ai-chat-composer",
+    label: "AI Chat taslağı",
+    state: (hasComposerDraft ? "dirty" : "clean") as ShellDirtyEntryState,
+    canSave: false,
+    onDiscard: () => {
+      setValue("");
+      onAttachmentsChange([]);
+      cleanupRecording();
+    },
+  });
+
+  useEffect(() => cleanupRecording, [cleanupRecording]);
+
   const canSend =
     Boolean(onSend) &&
     !disabled &&
@@ -100,8 +128,9 @@ export function AiChatComposer({
       if (!conversationId) return;
       const buffer = await file.arrayBuffer();
       const contentSha256 = await sha256FromArrayBuffer(buffer);
-      const createResponse = await fetch("/api/ai-chat/attachments", {
+      const createResponse = await authenticatedMutationFetch("/api/ai-chat/attachments", {
         method: "POST",
+        mutationKind: "other",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           requestId: generateAiChatRequestId(),
@@ -125,8 +154,9 @@ export function AiChatComposer({
         body: file,
       });
       if (!uploadResponse.ok) return;
-      const completeResponse = await fetch(`/api/ai-chat/attachments/${created.attachment.id}/complete`, {
+      const completeResponse = await authenticatedMutationFetch(`/api/ai-chat/attachments/${created.attachment.id}/complete`, {
         method: "POST",
+        mutationKind: "other",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           requestId: generateAiChatRequestId(),
@@ -147,25 +177,32 @@ export function AiChatComposer({
     if (!conversationId || recording) return;
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     const audioContext = new AudioContext({ sampleRate: 16000 });
-    await audioContext.audioWorklet.addModule("/audio/ai-chat-pcm-recorder.worklet.js");
+    mediaStreamRef.current = stream;
+    audioContextRef.current = audioContext;
+    try {
+      await audioContext.audioWorklet.addModule("/audio/ai-chat-pcm-recorder.worklet.js");
+    } catch (error) {
+      cleanupRecording();
+      throw error;
+    }
     const source = audioContext.createMediaStreamSource(stream);
     const worklet = new AudioWorkletNode(audioContext, "ai-chat-pcm-recorder");
     worklet.port.onmessage = async (event) => {
       if (event.data?.type !== "complete") return;
-      const blob = await encodePcm16Wav(event.data.samples as Float32Array, event.data.sampleRate as number);
-      const file = new File([blob], `voice-${Date.now()}.wav`, { type: "audio/wav" });
-      await uploadFile(file);
-      stream.getTracks().forEach((track) => track.stop());
-      await audioContext.close();
-      setRecording(false);
+      try {
+        const blob = await encodePcm16Wav(event.data.samples as Float32Array, event.data.sampleRate as number);
+        const file = new File([blob], `voice-${Date.now()}.wav`, { type: "audio/wav" });
+        await uploadFile(file);
+      } finally {
+        cleanupRecording();
+      }
     };
     source.connect(worklet);
     worklet.connect(audioContext.destination);
     worklet.port.postMessage({ type: "start" });
-    audioContextRef.current = audioContext;
     workletNodeRef.current = worklet;
     setRecording(true);
-  }, [conversationId, recording, uploadFile]);
+  }, [cleanupRecording, conversationId, recording, uploadFile]);
 
   const stopRecording = useCallback(() => {
     workletNodeRef.current?.port.postMessage({ type: "stop" });

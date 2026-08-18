@@ -13,8 +13,9 @@ import {
   Sparkles,
   UsersRound,
 } from "lucide-react";
-import type { AppCapability } from "./auth-context";
-import { hasCapability } from "./auth-context";
+import type { AppCapability } from "./app-capability-contracts";
+import { hasCapability } from "./app-capability-contracts";
+import type { SupportedLanguageCode } from "./languages";
 import {
   AI_CHAT_ROOT_PATH,
   MORE_ROOT_PATH,
@@ -70,26 +71,343 @@ export type MoreMenuSection = {
   items: MoreMenuItem[];
 };
 
-const DESTINATION_META: Record<
-  ShellDestinationId,
-  { navKey: DashboardNavKey; label: string; shortLabel: string; icon: LucideIcon }
-> = {
-  home: { navKey: "overview", label: "Ana Sayfa", shortLabel: "Ana", icon: Activity },
-  clients: { navKey: "clients", label: "Danışanlar", shortLabel: "Danışan", icon: UsersRound },
-  messages: { navKey: "messages", label: "Mesajlar", shortLabel: "Mesaj", icon: MessageSquareText },
-  alerts: { navKey: "alerts", label: "Uyarılar", shortLabel: "Uyarı", icon: AlertTriangle },
+type DestinationMeta = {
+  navKey: DashboardNavKey;
+  labelKey: ShellNavigationMessageKey;
+  shortLabelKey: ShellNavigationMessageKey;
+  fallbackLabel: string;
+  fallbackShortLabel: string;
+  icon: LucideIcon;
+};
+
+type ShellNavigationMessageKey =
+  | "shellNavHome"
+  | "shellNavClients"
+  | "shellNavMessages"
+  | "shellNavAlerts"
+  | "shellNavNotifications"
+  | "shellNavSimulator"
+  | "shellNavVoice"
+  | "shellNavForms"
+  | "shellNavAiChat"
+  | "shellNavSettings"
+  | "shellNavMore"
+  | "shellNavShortHome"
+  | "shellNavShortClients"
+  | "shellNavShortMessages"
+  | "shellNavShortAlerts"
+  | "shellNavShortNotifications"
+  | "shellNavShortSimulator"
+  | "shellNavShortVoice"
+  | "shellNavShortForms"
+  | "shellNavShortAiChat"
+  | "shellNavShortSettings"
+  | "shellNavShortMore"
+  | "shellMoreSectionAiTools"
+  | "shellMoreSectionClientTools"
+  | "shellMoreSectionAccount"
+  | "shellMoreSectionAdmin"
+  | "shellMoreOperationalFoundation";
+
+const SHELL_NAVIGATION_MESSAGES: Record<SupportedLanguageCode, Record<ShellNavigationMessageKey, string>> = {
+  tr: {
+    shellNavHome: "Ana Sayfa",
+    shellNavClients: "Danisanlar",
+    shellNavMessages: "Mesajlar",
+    shellNavAlerts: "Uyarilar",
+    shellNavNotifications: "Bildirimler",
+    shellNavSimulator: "Simulator",
+    shellNavVoice: "Ses",
+    shellNavForms: "Formlar",
+    shellNavAiChat: "AI Chat",
+    shellNavSettings: "Ayarlar",
+    shellNavMore: "Diger",
+    shellNavShortHome: "Ana",
+    shellNavShortClients: "Danisan",
+    shellNavShortMessages: "Mesaj",
+    shellNavShortAlerts: "Uyari",
+    shellNavShortNotifications: "Bildirim",
+    shellNavShortSimulator: "Sim",
+    shellNavShortVoice: "Ses",
+    shellNavShortForms: "Form",
+    shellNavShortAiChat: "AI",
+    shellNavShortSettings: "Ayar",
+    shellNavShortMore: "Diger",
+    shellMoreSectionAiTools: "AI ve is araclari",
+    shellMoreSectionClientTools: "Danisan araclari",
+    shellMoreSectionAccount: "Hesap ve uygulama",
+    shellMoreSectionAdmin: "Owner / admin yonetimi",
+    shellMoreOperationalFoundation: "Operasyon temeli",
+  },
+  en: {
+    shellNavHome: "Home",
+    shellNavClients: "Clients",
+    shellNavMessages: "Messaging",
+    shellNavAlerts: "Alerts",
+    shellNavNotifications: "Notifications",
+    shellNavSimulator: "Simulator",
+    shellNavVoice: "Voice",
+    shellNavForms: "Forms",
+    shellNavAiChat: "AI Chat",
+    shellNavSettings: "Settings",
+    shellNavMore: "More",
+    shellNavShortHome: "Home",
+    shellNavShortClients: "Client",
+    shellNavShortMessages: "Msg",
+    shellNavShortAlerts: "Alert",
+    shellNavShortNotifications: "Notif",
+    shellNavShortSimulator: "Sim",
+    shellNavShortVoice: "Voice",
+    shellNavShortForms: "Form",
+    shellNavShortAiChat: "AI",
+    shellNavShortSettings: "Set",
+    shellNavShortMore: "More",
+    shellMoreSectionAiTools: "AI and work tools",
+    shellMoreSectionClientTools: "Client tools",
+    shellMoreSectionAccount: "Account and app",
+    shellMoreSectionAdmin: "Owner / admin management",
+    shellMoreOperationalFoundation: "Operational foundation",
+  },
+  de: {
+    shellNavHome: "Startseite",
+    shellNavClients: "Klienten",
+    shellNavMessages: "Nachrichten",
+    shellNavAlerts: "Warnungen",
+    shellNavNotifications: "Benachrichtigungen",
+    shellNavSimulator: "Simulator",
+    shellNavVoice: "Stimme",
+    shellNavForms: "Formulare",
+    shellNavAiChat: "AI Chat",
+    shellNavSettings: "Einstellungen",
+    shellNavMore: "Mehr",
+    shellNavShortHome: "Start",
+    shellNavShortClients: "Klient",
+    shellNavShortMessages: "Msg",
+    shellNavShortAlerts: "Warn",
+    shellNavShortNotifications: "Hinw",
+    shellNavShortSimulator: "Sim",
+    shellNavShortVoice: "Stim",
+    shellNavShortForms: "Form",
+    shellNavShortAiChat: "AI",
+    shellNavShortSettings: "Einst",
+    shellNavShortMore: "Mehr",
+    shellMoreSectionAiTools: "AI- und Arbeitswerkzeuge",
+    shellMoreSectionClientTools: "Klientenwerkzeuge",
+    shellMoreSectionAccount: "Konto und App",
+    shellMoreSectionAdmin: "Owner-/Admin-Verwaltung",
+    shellMoreOperationalFoundation: "Operative Grundlage",
+  },
+  fr: {
+    shellNavHome: "Accueil",
+    shellNavClients: "Clients",
+    shellNavMessages: "Messagerie",
+    shellNavAlerts: "Alertes",
+    shellNavNotifications: "Notifications",
+    shellNavSimulator: "Simulateur",
+    shellNavVoice: "Voix",
+    shellNavForms: "Formulaires",
+    shellNavAiChat: "AI Chat",
+    shellNavSettings: "Parametres",
+    shellNavMore: "Plus",
+    shellNavShortHome: "Accueil",
+    shellNavShortClients: "Client",
+    shellNavShortMessages: "Msg",
+    shellNavShortAlerts: "Alerte",
+    shellNavShortNotifications: "Notif",
+    shellNavShortSimulator: "Sim",
+    shellNavShortVoice: "Voix",
+    shellNavShortForms: "Form",
+    shellNavShortAiChat: "AI",
+    shellNavShortSettings: "Regl",
+    shellNavShortMore: "Plus",
+    shellMoreSectionAiTools: "Outils AI et travail",
+    shellMoreSectionClientTools: "Outils client",
+    shellMoreSectionAccount: "Compte et application",
+    shellMoreSectionAdmin: "Gestion owner / admin",
+    shellMoreOperationalFoundation: "Fondation operationnelle",
+  },
+  es: {
+    shellNavHome: "Inicio",
+    shellNavClients: "Clientes",
+    shellNavMessages: "Mensajeria",
+    shellNavAlerts: "Alertas",
+    shellNavNotifications: "Notificaciones",
+    shellNavSimulator: "Simulador",
+    shellNavVoice: "Voz",
+    shellNavForms: "Formularios",
+    shellNavAiChat: "AI Chat",
+    shellNavSettings: "Ajustes",
+    shellNavMore: "Mas",
+    shellNavShortHome: "Inicio",
+    shellNavShortClients: "Cliente",
+    shellNavShortMessages: "Msg",
+    shellNavShortAlerts: "Alerta",
+    shellNavShortNotifications: "Notif",
+    shellNavShortSimulator: "Sim",
+    shellNavShortVoice: "Voz",
+    shellNavShortForms: "Form",
+    shellNavShortAiChat: "AI",
+    shellNavShortSettings: "Ajus",
+    shellNavShortMore: "Mas",
+    shellMoreSectionAiTools: "Herramientas AI y trabajo",
+    shellMoreSectionClientTools: "Herramientas de cliente",
+    shellMoreSectionAccount: "Cuenta y app",
+    shellMoreSectionAdmin: "Gestion owner / admin",
+    shellMoreOperationalFoundation: "Base operativa",
+  },
+  pt: {
+    shellNavHome: "Inicio",
+    shellNavClients: "Clientes",
+    shellNavMessages: "Mensagens",
+    shellNavAlerts: "Alertas",
+    shellNavNotifications: "Notificacoes",
+    shellNavSimulator: "Simulador",
+    shellNavVoice: "Voz",
+    shellNavForms: "Formularios",
+    shellNavAiChat: "AI Chat",
+    shellNavSettings: "Definicoes",
+    shellNavMore: "Mais",
+    shellNavShortHome: "Inicio",
+    shellNavShortClients: "Cliente",
+    shellNavShortMessages: "Msg",
+    shellNavShortAlerts: "Alerta",
+    shellNavShortNotifications: "Notif",
+    shellNavShortSimulator: "Sim",
+    shellNavShortVoice: "Voz",
+    shellNavShortForms: "Form",
+    shellNavShortAiChat: "AI",
+    shellNavShortSettings: "Def",
+    shellNavShortMore: "Mais",
+    shellMoreSectionAiTools: "Ferramentas AI e trabalho",
+    shellMoreSectionClientTools: "Ferramentas de cliente",
+    shellMoreSectionAccount: "Conta e app",
+    shellMoreSectionAdmin: "Gestao owner / admin",
+    shellMoreOperationalFoundation: "Fundacao operacional",
+  },
+  cs: {
+    shellNavHome: "Domu",
+    shellNavClients: "Klienti",
+    shellNavMessages: "Zpravy",
+    shellNavAlerts: "Alerty",
+    shellNavNotifications: "Oznameni",
+    shellNavSimulator: "Simulator",
+    shellNavVoice: "Hlas",
+    shellNavForms: "Formulare",
+    shellNavAiChat: "AI Chat",
+    shellNavSettings: "Nastaveni",
+    shellNavMore: "Vice",
+    shellNavShortHome: "Domu",
+    shellNavShortClients: "Klient",
+    shellNavShortMessages: "Zpr",
+    shellNavShortAlerts: "Alert",
+    shellNavShortNotifications: "Ozn",
+    shellNavShortSimulator: "Sim",
+    shellNavShortVoice: "Hlas",
+    shellNavShortForms: "Form",
+    shellNavShortAiChat: "AI",
+    shellNavShortSettings: "Nast",
+    shellNavShortMore: "Vice",
+    shellMoreSectionAiTools: "AI a pracovni nastroje",
+    shellMoreSectionClientTools: "Klientske nastroje",
+    shellMoreSectionAccount: "Ucet a aplikace",
+    shellMoreSectionAdmin: "Sprava owner / admin",
+    shellMoreOperationalFoundation: "Operacni zaklad",
+  },
+};
+
+function navMessage(language: SupportedLanguageCode, key: ShellNavigationMessageKey) {
+  return SHELL_NAVIGATION_MESSAGES[language]?.[key] ?? SHELL_NAVIGATION_MESSAGES.tr[key];
+}
+
+const DESTINATION_META: Record<ShellDestinationId, DestinationMeta> = {
+  home: {
+    navKey: "overview",
+    labelKey: "shellNavHome",
+    shortLabelKey: "shellNavShortHome",
+    fallbackLabel: "Ana Sayfa",
+    fallbackShortLabel: "Ana",
+    icon: Activity,
+  },
+  clients: {
+    navKey: "clients",
+    labelKey: "shellNavClients",
+    shortLabelKey: "shellNavShortClients",
+    fallbackLabel: "Danisanlar",
+    fallbackShortLabel: "Danisan",
+    icon: UsersRound,
+  },
+  messages: {
+    navKey: "messages",
+    labelKey: "shellNavMessages",
+    shortLabelKey: "shellNavShortMessages",
+    fallbackLabel: "Mesajlar",
+    fallbackShortLabel: "Mesaj",
+    icon: MessageSquareText,
+  },
+  alerts: {
+    navKey: "alerts",
+    labelKey: "shellNavAlerts",
+    shortLabelKey: "shellNavShortAlerts",
+    fallbackLabel: "Uyarilar",
+    fallbackShortLabel: "Uyari",
+    icon: AlertTriangle,
+  },
   notifications: {
     navKey: "notifications",
-    label: "Bildirimler",
-    shortLabel: "Bildirim",
+    labelKey: "shellNavNotifications",
+    shortLabelKey: "shellNavShortNotifications",
+    fallbackLabel: "Bildirimler",
+    fallbackShortLabel: "Bildirim",
     icon: Bell,
   },
-  simulator: { navKey: "simulator", label: "Simülatör", shortLabel: "Sim", icon: Bot },
-  voice: { navKey: "voice", label: "Ses", shortLabel: "Ses", icon: ClipboardList },
-  forms: { navKey: "forms", label: "Formlar", shortLabel: "Form", icon: SlidersHorizontal },
-  ai_chat: { navKey: "ai_chat", label: "AI Chat", shortLabel: "AI", icon: Sparkles },
-  settings: { navKey: "settings", label: "Ayarlar", shortLabel: "Ayar", icon: Settings },
-  more: { navKey: "more", label: "Diğer", shortLabel: "Diğer", icon: Ellipsis },
+  simulator: {
+    navKey: "simulator",
+    labelKey: "shellNavSimulator",
+    shortLabelKey: "shellNavShortSimulator",
+    fallbackLabel: "Simulator",
+    fallbackShortLabel: "Sim",
+    icon: Bot,
+  },
+  voice: {
+    navKey: "voice",
+    labelKey: "shellNavVoice",
+    shortLabelKey: "shellNavShortVoice",
+    fallbackLabel: "Ses",
+    fallbackShortLabel: "Ses",
+    icon: ClipboardList,
+  },
+  forms: {
+    navKey: "forms",
+    labelKey: "shellNavForms",
+    shortLabelKey: "shellNavShortForms",
+    fallbackLabel: "Formlar",
+    fallbackShortLabel: "Form",
+    icon: SlidersHorizontal,
+  },
+  ai_chat: {
+    navKey: "ai_chat",
+    labelKey: "shellNavAiChat",
+    shortLabelKey: "shellNavShortAiChat",
+    fallbackLabel: "AI Chat",
+    fallbackShortLabel: "AI",
+    icon: Sparkles,
+  },
+  settings: {
+    navKey: "settings",
+    labelKey: "shellNavSettings",
+    shortLabelKey: "shellNavShortSettings",
+    fallbackLabel: "Ayarlar",
+    fallbackShortLabel: "Ayar",
+    icon: Settings,
+  },
+  more: {
+    navKey: "more",
+    labelKey: "shellNavMore",
+    shortLabelKey: "shellNavShortMore",
+    fallbackLabel: "Diger",
+    fallbackShortLabel: "Diger",
+    icon: Ellipsis,
+  },
 };
 
 const WIDE_SIDEBAR_ORDER: ShellDestinationId[] = [
@@ -121,10 +439,19 @@ function navigationEnabledMap(navigation: readonly ShellNavigationItemDto[] | nu
   return map;
 }
 
+function isPermanentlyDenied(item: ShellNavVisualItem | MoreMenuItem) {
+  return (
+    item.disabledReason?.startsWith("rbac_") ||
+    item.disabledReason === "read_only_role" ||
+    item.disabledReason === "conversation_read_forbidden"
+  );
+}
+
 function toVisualItem(
   destinationId: ShellDestinationId,
   navigation: ReadonlyMap<ShellDestinationId, ShellNavigationItemDto>,
   badges: { alerts: number; messages: number; notifications: number },
+  uiLanguage: SupportedLanguageCode,
 ): ShellNavVisualItem {
   const meta = DESTINATION_META[destinationId];
   const projected = navigation.get(destinationId);
@@ -137,8 +464,8 @@ function toVisualItem(
   return {
     destinationId,
     navKey: meta.navKey,
-    label: meta.label,
-    shortLabel: meta.shortLabel,
+    label: navMessage(uiLanguage, meta.labelKey) || meta.fallbackLabel,
+    shortLabel: navMessage(uiLanguage, meta.shortLabelKey) || meta.fallbackShortLabel,
     href: hrefForDestination(destinationId),
     icon: meta.icon,
     badgeCount: enabled ? Math.max(0, badgeCount) : 0,
@@ -147,164 +474,142 @@ function toVisualItem(
   };
 }
 
-/**
- * Compact bottom nav is fixed to five destinations and never includes notifications.
- */
 export function resolveCompactBottomNavItems(input: {
   navigation?: readonly ShellNavigationItemDto[] | null;
   badges?: { alerts: number; messages: number; notifications: number };
+  role?: TenantRole;
+  uiLanguage?: SupportedLanguageCode;
 }): ShellNavVisualItem[] {
   const navigation = navigationEnabledMap(input.navigation);
   const badges = input.badges ?? { alerts: 0, messages: 0, notifications: 0 };
-  return SHELL_COMPACT_BOTTOM_NAV_IDS.map((id) => toVisualItem(id, navigation, badges));
+  const uiLanguage = input.uiLanguage ?? "tr";
+  return SHELL_COMPACT_BOTTOM_NAV_IDS
+    .map((id) => toVisualItem(id, navigation, badges, uiLanguage))
+    .filter((item) => {
+      if (!input.role || input.role === "owner" || input.role === "admin" || input.role === "dietitian") {
+        return true;
+      }
+      if (item.destinationId === "more") return true;
+      return !isPermanentlyDenied(item);
+    });
 }
 
 export function resolveMediumRailNavItems(input: {
   navigation?: readonly ShellNavigationItemDto[] | null;
   badges?: { alerts: number; messages: number; notifications: number };
   role: TenantRole;
+  uiLanguage?: SupportedLanguageCode;
 }): ShellNavVisualItem[] {
   const navigation = navigationEnabledMap(input.navigation);
   const badges = input.badges ?? { alerts: 0, messages: 0, notifications: 0 };
-  const order: ShellDestinationId[] = [
-    "home",
-    "clients",
-    "messages",
-    "alerts",
-    "more",
-    "settings",
-  ];
+  const order: ShellDestinationId[] = ["home", "clients", "messages", "alerts", "more", "settings"];
   if (input.role === "owner" || input.role === "admin" || input.role === "dietitian") {
     order.splice(5, 0, "notifications");
   }
   return order
-    .map((id) => toVisualItem(id, navigation, badges))
-    .filter((item) => item.enabled || item.destinationId === "more" || item.destinationId === "settings");
+    .map((id) => toVisualItem(id, navigation, badges, input.uiLanguage ?? "tr"))
+    .filter((item) => {
+      if (item.destinationId === "more" || item.destinationId === "settings") return true;
+      return item.enabled || !isPermanentlyDenied(item);
+    });
 }
 
 export function resolveWideSidebarNavItems(input: {
   navigation?: readonly ShellNavigationItemDto[] | null;
   badges?: { alerts: number; messages: number; notifications: number };
   role: TenantRole;
+  uiLanguage?: SupportedLanguageCode;
 }): ShellNavVisualItem[] {
   const navigation = navigationEnabledMap(input.navigation);
   const badges = input.badges ?? { alerts: 0, messages: 0, notifications: 0 };
-  return WIDE_SIDEBAR_ORDER.map((id) => toVisualItem(id, navigation, badges)).filter((item) => {
+  return WIDE_SIDEBAR_ORDER.map((id) => toVisualItem(id, navigation, badges, input.uiLanguage ?? "tr")).filter((item) => {
     if (item.destinationId === "more" || item.destinationId === "settings") return true;
     if (input.role === "assistant" || input.role === "auditor") {
       return item.enabled && hasCapability(input.role, "read_app_state");
     }
-    return item.enabled;
+    return item.enabled || !isPermanentlyDenied(item);
   });
 }
 
-function pushMoreItem(
-  items: MoreMenuItem[],
-  item: MoreMenuItem,
-  options: { omitIfPermanentlyDenied: boolean },
-) {
-  if (options.omitIfPermanentlyDenied && !item.enabled && item.disabledReason?.startsWith("rbac_")) {
-    return;
-  }
-  if (options.omitIfPermanentlyDenied && !item.enabled && item.disabledReason === "read_only_role") {
-    return;
-  }
-  if (options.omitIfPermanentlyDenied && !item.enabled && item.disabledReason === "conversation_read_forbidden") {
-    return;
-  }
+function pushMoreItem(items: MoreMenuItem[], item: MoreMenuItem) {
+  if (!item.enabled && isPermanentlyDenied(item)) return;
   items.push(item);
 }
 
-/**
- * More page IA: four fixed sections with capability/feature-flag projection.
- */
 export function resolveMoreMenuSections(input: {
   role: TenantRole;
   navigation?: readonly ShellNavigationItemDto[] | null;
   aiChatEnabled: boolean;
   capabilities?: readonly AppCapability[];
+  uiLanguage?: SupportedLanguageCode;
 }): MoreMenuSection[] {
   const navigation = navigationEnabledMap(input.navigation);
+  const uiLanguage = input.uiLanguage ?? "tr";
   const canReadOps =
     hasCapability(input.role, "read_operational_foundation") ||
     (input.capabilities?.includes("read_operational_foundation") ?? false);
 
   const aiItems: MoreMenuItem[] = [];
   const aiChat = navigation.get("ai_chat");
-  pushMoreItem(
-    aiItems,
-    {
-      id: "ai_chat",
-      destinationId: "ai_chat",
-      label: "AI Chat",
-      href: AI_CHAT_ROOT_PATH,
-      enabled: Boolean(input.aiChatEnabled && aiChat?.enabled !== false),
-      disabledReason: !input.aiChatEnabled
-        ? "feature_disabled"
-        : aiChat?.disabledReason,
-    },
-    { omitIfPermanentlyDenied: true },
-  );
+  pushMoreItem(aiItems, {
+    id: "ai_chat",
+    destinationId: "ai_chat",
+    label: navMessage(uiLanguage, "shellNavAiChat"),
+    href: AI_CHAT_ROOT_PATH,
+    enabled: Boolean(input.aiChatEnabled && aiChat?.enabled !== false),
+    disabledReason: !input.aiChatEnabled ? "feature_disabled" : aiChat?.disabledReason,
+  });
   for (const id of ["simulator", "voice"] as const) {
     const projected = navigation.get(id);
-    pushMoreItem(
-      aiItems,
-      {
-        id,
-        destinationId: id,
-        label: DESTINATION_META[id].label,
-        href: hrefForDestination(id),
-        enabled: projected?.enabled !== false,
-        disabledReason: projected?.disabledReason,
-      },
-      { omitIfPermanentlyDenied: true },
-    );
+    pushMoreItem(aiItems, {
+      id,
+      destinationId: id,
+      label: navMessage(uiLanguage, DESTINATION_META[id].labelKey),
+      href: hrefForDestination(id),
+      enabled: projected?.enabled !== false,
+      disabledReason: projected?.disabledReason,
+    });
   }
 
   const clientItems: MoreMenuItem[] = [];
   for (const id of ["forms", "notifications"] as const) {
     const projected = navigation.get(id);
-    pushMoreItem(
-      clientItems,
-      {
-        id,
-        destinationId: id,
-        label: DESTINATION_META[id].label,
-        href: hrefForDestination(id),
-        enabled: projected?.enabled !== false,
-        disabledReason: projected?.disabledReason,
-      },
-      { omitIfPermanentlyDenied: true },
-    );
+    pushMoreItem(clientItems, {
+      id,
+      destinationId: id,
+      label: navMessage(uiLanguage, DESTINATION_META[id].labelKey),
+      href: hrefForDestination(id),
+      enabled: projected?.enabled !== false,
+      disabledReason: projected?.disabledReason,
+    });
   }
 
-  const accountItems: MoreMenuItem[] = [
-    {
-      id: "settings",
-      destinationId: "settings",
-      label: "Ayarlar",
-      href: SETTINGS_ROOT_PATH,
-      enabled: navigation.get("settings")?.enabled !== false,
-      disabledReason: navigation.get("settings")?.disabledReason,
-    },
-  ];
+  const accountItems: MoreMenuItem[] = [];
+  pushMoreItem(accountItems, {
+    id: "settings",
+    destinationId: "settings",
+    label: navMessage(uiLanguage, "shellNavSettings"),
+    href: SETTINGS_ROOT_PATH,
+    enabled: navigation.get("settings")?.enabled !== false,
+    disabledReason: navigation.get("settings")?.disabledReason,
+  });
 
   const sections: MoreMenuSection[] = [
-    { id: "ai_tools", title: "AI ve iş araçları", items: aiItems },
-    { id: "client_tools", title: "Danışan araçları", items: clientItems },
-    { id: "account", title: "Hesap ve uygulama", items: accountItems },
+    { id: "ai_tools", title: navMessage(uiLanguage, "shellMoreSectionAiTools"), items: aiItems },
+    { id: "client_tools", title: navMessage(uiLanguage, "shellMoreSectionClientTools"), items: clientItems },
+    { id: "account", title: navMessage(uiLanguage, "shellMoreSectionAccount"), items: accountItems },
   ];
 
   if ((input.role === "owner" || input.role === "admin") && canReadOps) {
     sections.push({
       id: "admin",
-      title: "Owner / admin yönetimi",
+      title: navMessage(uiLanguage, "shellMoreSectionAdmin"),
       items: [
         {
           id: "operational_foundation",
           destinationId: "operational_foundation",
-          label: "Operasyon temeli",
-          href: buildShellHref("home"),
+          label: navMessage(uiLanguage, "shellMoreOperationalFoundation"),
+          href: "/dashboard?section=overview&inspection=operational",
           enabled: true,
         },
       ],

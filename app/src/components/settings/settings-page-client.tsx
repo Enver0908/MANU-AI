@@ -31,6 +31,7 @@ export function SettingsPageClient({
   activeTab: SettingsTab;
   aiChatEnabled: boolean;
 }) {
+  void _aiChatEnabled;
   const { setHeaderSlots, requestHrefNavigation } = useShellProvider();
   const uiLanguage = model.profile.uiLanguage;
 

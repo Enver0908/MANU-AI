@@ -19,6 +19,7 @@ import {
   describeCommercialBlockingReason,
   describeEntitlementStatusLabel,
 } from "@/lib/phase-84g-subscription-operations";
+import { authenticatedMutationFetch } from "@/lib/phase-85-stage-5-shell-authenticated-mutation";
 
 type AdminView = "blocked" | "login" | "console";
 
@@ -192,7 +193,6 @@ export function CommercialAdminConsole(props: {
     }
     let cancelled = false;
     // Session console hydrates operation data after allowlist auth on mount.
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- setState runs only inside async promise handlers
     void loadOperations()
       .catch((loadError) => {
         if (cancelled) {
@@ -259,8 +259,9 @@ export function CommercialAdminConsole(props: {
     setBusy(true);
     setCreatedInvite(null);
     try {
-      const response = await fetch("/api/commercial/admin/invites", {
+      const response = await authenticatedMutationFetch("/api/commercial/admin/invites", {
         method: "POST",
+        mutationKind: "other",
         headers: requestHeaders(),
         body: JSON.stringify({
           email: createEmail.trim(),
@@ -293,8 +294,9 @@ export function CommercialAdminConsole(props: {
     setError(null);
     setBusy(true);
     try {
-      const response = await fetch("/api/commercial/admin/invites", {
+      const response = await authenticatedMutationFetch("/api/commercial/admin/invites", {
         method: "PATCH",
+        mutationKind: "other",
         headers: requestHeaders(),
         body: JSON.stringify({ inviteId }),
       });
@@ -323,8 +325,9 @@ export function CommercialAdminConsole(props: {
     setError(null);
     setBusy(true);
     try {
-      const response = await fetch("/api/commercial/admin/entitlements/revoke", {
+      const response = await authenticatedMutationFetch("/api/commercial/admin/entitlements/revoke", {
         method: "POST",
+        mutationKind: "other",
         headers: requestHeaders(),
         body: JSON.stringify({ tenantId }),
       });
@@ -355,8 +358,9 @@ export function CommercialAdminConsole(props: {
     setError(null);
     setBusy(true);
     try {
-      const response = await fetch("/api/commercial/admin/subscriptions/cancel", {
+      const response = await authenticatedMutationFetch("/api/commercial/admin/subscriptions/cancel", {
         method: "POST",
+        mutationKind: "other",
         headers: requestHeaders(),
         body: JSON.stringify({ tenantId }),
       });
@@ -381,8 +385,9 @@ export function CommercialAdminConsole(props: {
     setError(null);
     setBusy(true);
     try {
-      const response = await fetch("/api/commercial/admin/leads", {
+      const response = await authenticatedMutationFetch("/api/commercial/admin/leads", {
         method: "PATCH",
+        mutationKind: "other",
         headers: requestHeaders(),
         body: JSON.stringify({ leadId, status }),
       });

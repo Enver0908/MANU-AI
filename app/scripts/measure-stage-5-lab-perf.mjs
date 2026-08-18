@@ -1,18 +1,20 @@
 #!/usr/bin/env node
 /**
- * Local lab PerformanceObserver harness for Stage 5 routes (Faz 9).
- * Reports p75 for LCP / CLS / TBT-proxy. Does NOT claim field Core Web Vitals.
+ * Stage 5 local lab performance harness.
+ * Measures production `next start` routes with Playwright and writes a v2
+ * local-lab evidence artifact. This is not field Core Web Vitals evidence.
  */
 
 import { spawn, spawnSync } from "node:child_process";
-import { writeFileSync, mkdirSync, existsSync } from "node:fs";
+import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
+import { appRoot, buildStage5EvidenceHeader, docsRoot, npmCommand } from "./lib/stage-5-evidence.mjs";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const appRoot = join(__dirname, "..");
-const evidencePath = join(appRoot, "..", "docs", "PHASE_85_STAGE_5_LAB_PERF_REPORT.json");
+const evidencePath = join(docsRoot, "PHASE_85_STAGE_5_LAB_PERF_REPORT.json");
+const nextCliPath = join(appRoot, "node_modules", "next", "dist", "bin", "next");
+const PORT = Number(process.env.STAGE5_LAB_PORT || 3110);
+const BASE_URL = `http://127.0.0.1:${PORT}`;
 
 const ROUTES = [
   { id: "home", path: "/dashboard" },
@@ -23,9 +25,11 @@ const ROUTES = [
 ];
 
 const RUNS = Number(process.env.STAGE5_LAB_RUNS || 10);
+const STRICT = process.env.STAGE5_LAB_STRICT === "true";
+const REUSE_BUILD = process.env.STAGE5_LAB_REUSE_BUILD === "true";
 const TARGETS = {
   lcpMs: 2500,
-  inpMs: 200,
+  interactionProxyMs: 200,
   cls: 0.1,
   tbtMs: 200,
 };
@@ -37,52 +41,203 @@ function percentile(values, p) {
   return sorted[Math.max(0, index)];
 }
 
-async function measureRoute(browser, baseURL, route) {
+function cleanNextBuildOutput() {
+  const nextDir = join(appRoot, ".next");
+  if (!existsSync(nextDir)) return;
+  rmSync(nextDir, { force: true, recursive: true, maxRetries: 10, retryDelay: 500 });
+}
+
+function writeReport(report) {
+  mkdirSync(dirname(evidencePath), { recursive: true });
+  writeFileSync(evidencePath, `${JSON.stringify(report, null, 2)}\n`, "utf8");
+  console.log(`[lab-perf] wrote ${evidencePath}`);
+}
+
+function stopServer(server) {
+  if (server.exitCode != null || server.killed) return;
+  if (process.platform === "win32") {
+    spawnSync("taskkill", ["/pid", String(server.pid), "/T", "/F"], { stdio: "ignore" });
+    return;
+  }
+  server.kill("SIGTERM");
+}
+
+async function waitForServer(server, output, timeoutMs = 90_000) {
+  const startedAt = Date.now();
+  while (Date.now() - startedAt < timeoutMs) {
+    if (server.exitCode != null) {
+      throw new Error(`next_start_exited_${server.exitCode}: ${output.join("\n").slice(-4_000)}`);
+    }
+    try {
+      const response = await fetch(BASE_URL, { cache: "no-store" });
+      if (response.status < 500) return;
+    } catch {
+      // Server is not ready yet.
+    }
+    await new Promise((resolve) => setTimeout(resolve, 1_000));
+  }
+  throw new Error(`next_start_timeout: ${output.join("\n").slice(-4_000)}`);
+}
+
+async function launchBrowser() {
+  const attempts = [
+    { name: "playwright-chromium", options: {} },
+    { name: "installed-msedge", options: { channel: "msedge" } },
+    { name: "installed-chrome", options: { channel: "chrome" } },
+  ];
+  const failures = [];
+  for (const attempt of attempts) {
+    try {
+      const browser = await chromium.launch(attempt.options);
+      return { browser, source: attempt.name, attempts: [...failures, { name: attempt.name, status: "PASS" }] };
+    } catch (error) {
+      failures.push({
+        name: attempt.name,
+        status: "FAIL",
+        error: error instanceof Error ? error.message.split("\n")[0] : String(error),
+      });
+    }
+  }
+  const details = failures.map((failure) => `${failure.name}:${failure.error}`).join("; ");
+  throw new Error(`playwright_browser_launch_blocked: ${details}`);
+}
+
+async function installPerfObservers(page) {
+  await page.addInitScript(() => {
+    window.__stage5Perf = {
+      lcp: 0,
+      cls: 0,
+      longTaskBlockingMs: 0,
+      longTaskCount: 0,
+    };
+    try {
+      new PerformanceObserver((list) => {
+        const entries = list.getEntries();
+        const last = entries[entries.length - 1];
+        if (last) window.__stage5Perf.lcp = last.startTime;
+      }).observe({ type: "largest-contentful-paint", buffered: true });
+    } catch {
+      // Older engines may not expose LCP in local lab mode.
+    }
+    try {
+      new PerformanceObserver((list) => {
+        for (const entry of list.getEntries()) {
+          if (!entry.hadRecentInput) window.__stage5Perf.cls += entry.value;
+        }
+      }).observe({ type: "layout-shift", buffered: true });
+    } catch {
+      // Older engines may not expose layout shift in local lab mode.
+    }
+    try {
+      new PerformanceObserver((list) => {
+        for (const entry of list.getEntries()) {
+          window.__stage5Perf.longTaskCount += 1;
+          window.__stage5Perf.longTaskBlockingMs += Math.max(0, entry.duration - 50);
+        }
+      }).observe({ type: "longtask", buffered: true });
+    } catch {
+      // Older engines may not expose long tasks in local lab mode.
+    }
+  });
+}
+
+async function measureRoute(browser, route) {
   const samples = [];
   for (let i = 0; i < RUNS; i += 1) {
-    const context = await browser.newContext();
+    const context = await browser.newContext({
+      viewport: { width: 390, height: 844 },
+      isMobile: true,
+      hasTouch: true,
+      deviceScaleFactor: 3,
+      userAgent:
+        "Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Mobile Safari/537.36 Stage5Lab",
+    });
     const page = await context.newPage();
-    await page.request.post(`${baseURL}/api/app-state`).catch(() => null);
-    await page.goto(`${baseURL}${route.path}`, { waitUntil: "networkidle", timeout: 60_000 });
+    await installPerfObservers(page);
+    await page.request.post(`${BASE_URL}/api/app-state`).catch(() => null);
+    await page.goto(`${BASE_URL}${route.path}`, { waitUntil: "domcontentloaded", timeout: 60_000 });
+    await page.waitForLoadState("load", { timeout: 30_000 }).catch(() => undefined);
     const metrics = await page.evaluate(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 1200));
+      await new Promise((resolve) => setTimeout(resolve, 1_500));
       const nav = performance.getEntriesByType("navigation")[0];
       const paints = performance.getEntriesByType("paint");
-      const lcpEntries = performance.getEntriesByType("largest-contentful-paint");
-      const lcp = lcpEntries.length ? lcpEntries[lcpEntries.length - 1].startTime : nav?.domContentLoadedEventEnd || 0;
-      const cls = performance.getEntriesByType("layout-shift").reduce((sum, entry) => {
-        if (entry.hadRecentInput) return sum;
-        return sum + entry.value;
-      }, 0);
-      const tbtProxy = Math.max(0, (nav?.domInteractive || 0) - (nav?.responseEnd || 0));
       const fcp = paints.find((item) => item.name === "first-contentful-paint")?.startTime || 0;
-      return { lcp, cls, tbtProxy, fcp, inpProxy: tbtProxy };
+      const fallbackLcp = fcp || nav?.domContentLoadedEventEnd || 0;
+      const longTaskBlockingMs = window.__stage5Perf?.longTaskBlockingMs ?? 0;
+      return {
+        lcpMs: window.__stage5Perf?.lcp || fallbackLcp,
+        cls: window.__stage5Perf?.cls ?? 0,
+        tbtMs: longTaskBlockingMs,
+        interactionProxyMs: longTaskBlockingMs,
+        fcpMs: fcp,
+        domContentLoadedMs: nav?.domContentLoadedEventEnd ?? 0,
+        longTaskCount: window.__stage5Perf?.longTaskCount ?? 0,
+      };
     });
     samples.push(metrics);
     await context.close();
   }
+  const p75 = {
+    lcpMs: percentile(samples.map((sample) => sample.lcpMs), 75),
+    cls: percentile(samples.map((sample) => sample.cls), 75),
+    tbtMs: percentile(samples.map((sample) => sample.tbtMs), 75),
+    interactionProxyMs: percentile(samples.map((sample) => sample.interactionProxyMs), 75),
+    fcpMs: percentile(samples.map((sample) => sample.fcpMs), 75),
+  };
+  const pass = {
+    lcp: p75.lcpMs != null && p75.lcpMs <= TARGETS.lcpMs,
+    cls: p75.cls != null && p75.cls <= TARGETS.cls,
+    tbt: p75.tbtMs != null && p75.tbtMs <= TARGETS.tbtMs,
+    interactionProxy: p75.interactionProxyMs != null && p75.interactionProxyMs <= TARGETS.interactionProxyMs,
+  };
   return {
     route: route.id,
+    path: route.path,
+    sampleCount: samples.length,
     runs: samples,
-    p75: {
-      lcpMs: percentile(samples.map((s) => s.lcp), 75),
-      cls: percentile(samples.map((s) => s.cls), 75),
-      tbtMs: percentile(samples.map((s) => s.tbtProxy), 75),
-      inpMs: percentile(samples.map((s) => s.inpProxy), 75),
+    p75,
+    pass,
+  };
+}
+
+function baseReport(status, blockers = []) {
+  return {
+    ...buildStage5EvidenceHeader("performance", "npm run test:stage-5-lab-perf"),
+    kind: "local_lab_only",
+    status,
+    productionStatus: "NO-GO",
+    disclaimer:
+      "Local lab measurement only. This is not field Core Web Vitals, not real-device evidence, and not a production launch approval.",
+    runsPerRoute: RUNS,
+    strictMode: STRICT,
+    targets: TARGETS,
+    measurement: {
+      baseUrl: BASE_URL,
+      routeCountRequired: ROUTES.length,
+      routeSet: ROUTES,
+      viewport: { width: 390, height: 844, isMobile: true, hasTouch: true },
+      waitAfterLoadMs: 1500,
+      observerTypes: ["largest-contentful-paint", "layout-shift", "longtask"],
     },
+    blockers,
+    evidencePath,
   };
 }
 
 async function main() {
-  if (!existsSync(join(appRoot, ".next"))) {
-    console.log("[lab-perf] building production app…");
-    const build = spawnSync("npm", ["run", "build"], { cwd: appRoot, stdio: "inherit", shell: true });
+  if (!REUSE_BUILD || !existsSync(join(appRoot, ".next"))) {
+    console.log("[lab-perf] building production app...");
+    cleanNextBuildOutput();
+    const build = spawnSync(npmCommand(), ["run", "build"], {
+      cwd: appRoot,
+      stdio: "inherit",
+      shell: process.platform === "win32",
+    });
     if (build.status !== 0) process.exit(build.status ?? 1);
   }
 
-  const server = spawn("npx", ["next", "start", "--port", "3110"], {
+  const server = spawn(process.execPath, [nextCliPath, "start", "--port", String(PORT)], {
     cwd: appRoot,
-    shell: true,
     env: {
       ...process.env,
       MANU_DEV_FALLBACK_STORE: "true",
@@ -95,48 +250,69 @@ async function main() {
     },
     stdio: ["ignore", "pipe", "pipe"],
   });
+  const serverOutput = [];
+  server.stdout.on("data", (chunk) => serverOutput.push(String(chunk)));
+  server.stderr.on("data", (chunk) => serverOutput.push(String(chunk)));
 
-  await new Promise((resolve) => setTimeout(resolve, 4000));
-  const browser = await chromium.launch();
-  const baseURL = "http://127.0.0.1:3110";
+  let browser = null;
+  let launch = null;
   const routeReports = [];
   try {
+    await waitForServer(server, serverOutput);
+    launch = await launchBrowser();
+    browser = launch.browser;
     for (const route of ROUTES) {
       console.log(`[lab-perf] measuring ${route.id} x${RUNS}`);
-      routeReports.push(await measureRoute(browser, baseURL, route));
+      routeReports.push(await measureRoute(browser, route));
     }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    const blocker = message.includes("playwright_browser_launch_blocked")
+      ? "playwright_browser_launch_blocked"
+      : "lab_perf_harness_failed";
+    writeReport({
+      ...baseReport("BLOCKED", [blocker]),
+      routes: routeReports,
+      summary: {
+        routeCount: routeReports.length,
+        failedRouteIds: ROUTES.map((route) => route.id),
+        allTargetsMet: false,
+      },
+      error: message,
+      serverOutputTail: serverOutput.join("\n").slice(-4_000),
+    });
+    throw error;
   } finally {
-    await browser.close();
-    server.kill("SIGTERM");
+    if (browser) await browser.close();
+    stopServer(server);
   }
-
-  const report = {
-    kind: "local_lab_only",
-    disclaimer:
-      "Not field Core Web Vitals. Not a real-dietitian usability study. Hardware variance can move results.",
-    generatedAt: new Date().toISOString(),
-    runsPerRoute: RUNS,
-    targets: TARGETS,
-    routes: routeReports,
-  };
-
-  for (const route of routeReports) {
-    route.pass = {
-      lcp: route.p75.lcpMs != null && route.p75.lcpMs <= TARGETS.lcpMs,
-      cls: route.p75.cls != null && route.p75.cls <= TARGETS.cls,
-      tbt: route.p75.tbtMs != null && route.p75.tbtMs <= TARGETS.tbtMs,
-      inp: route.p75.inpMs != null && route.p75.inpMs <= TARGETS.inpMs,
-    };
-  }
-
-  mkdirSync(dirname(evidencePath), { recursive: true });
-  writeFileSync(evidencePath, `${JSON.stringify(report, null, 2)}\n`, "utf8");
-  console.log(`[lab-perf] wrote ${evidencePath}`);
 
   const failed = routeReports.filter((route) => Object.values(route.pass).some((ok) => !ok));
+  const status = failed.length === 0 ? "PASS" : "TARGET_MISS_REPORTED";
+  const report = {
+    ...baseReport(status, failed.length === 0 ? [] : ["lab_perf_target_miss"]),
+    measurement: {
+      ...baseReport(status).measurement,
+      browser: {
+        engine: "chromium",
+        source: launch.source,
+        headless: true,
+        launchAttempts: launch.attempts,
+      },
+    },
+    routes: routeReports,
+    summary: {
+      routeCount: routeReports.length,
+      failedRouteIds: failed.map((route) => route.route),
+      allTargetsMet: failed.length === 0,
+    },
+  };
+
+  writeReport(report);
+
   if (failed.length) {
-    console.warn("[lab-perf] one or more lab p75 targets missed — results are reported, not hidden.");
-    process.exitCode = 0; // report honestly; closure evidence records miss
+    console.warn("[lab-perf] one or more lab p75 targets missed; results are reported, not hidden.");
+    process.exitCode = STRICT ? 1 : 0;
   }
 }
 

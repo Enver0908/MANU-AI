@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { AppAuthError } from "./auth-context";
 import { AppDomainError } from "./app-errors";
-import { shellErrorResponse, shellJsonResponse } from "./phase-85-stage-5-shell-api";
+import { shellBoundedJsonResponse, shellErrorResponse, shellJsonResponse } from "./phase-85-stage-5-shell-api";
 import { ShellApiError } from "./phase-85-stage-5-shell-contracts";
 import { resetRateLimits } from "./rate-limit";
 import {
@@ -31,6 +31,19 @@ describe("phase-85-stage-5-shell-api", () => {
     const response = shellJsonResponse({ ok: true });
     expect(response.headers.get("Cache-Control")).toBe("no-store");
     await expect(response.json()).resolves.toEqual({ ok: true });
+  });
+
+  it("fails closed with JSON for oversized bootstrap payloads and unknown errors", async () => {
+    const oversized = shellBoundedJsonResponse({ value: "x".repeat(12) }, { maxBytes: 8 });
+    expect(oversized.status).toBe(503);
+    await expect(oversized.json()).resolves.toEqual({ error: "shell_bootstrap_oversize" });
+
+    const unknown = shellErrorResponse(new Error("database html failure"));
+    expect(unknown.status).toBe(503);
+    await expect(unknown.json()).resolves.toEqual({
+      error: "shell_service_unavailable",
+      requestId: expect.any(String),
+    });
   });
 });
 

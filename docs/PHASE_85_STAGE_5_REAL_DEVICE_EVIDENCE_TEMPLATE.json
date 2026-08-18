@@ -1,0 +1,124 @@
+{
+  "schemaVersion": "stage5-evidence-v2",
+  "evidenceType": "real_device",
+  "status": "PENDING",
+  "productionStatus": "NO-GO",
+  "approvedBy": "",
+  "capturedAt": null,
+  "deviceCaptures": {
+    "iphoneSafari": {
+      "status": "PENDING",
+      "realDevice": false,
+      "emulator": false,
+      "device": {
+        "platform": "iOS",
+        "model": "REPLACE_WITH_IPHONE_MODEL",
+        "osVersion": "REPLACE_WITH_IOS_VERSION",
+        "browser": "Safari"
+      },
+      "routeWalk": [
+        "/dashboard",
+        "/dashboard?section=clients",
+        "/dashboard?section=messages",
+        "/dashboard/ai-chat",
+        "/dashboard/settings"
+      ],
+      "artifacts": [
+        {
+          "path": "stage-5-real-device/YYYY-MM-DD/iphone-safari-route-walk.png"
+        }
+      ]
+    },
+    "iphonePwa": {
+      "status": "PENDING",
+      "realDevice": false,
+      "emulator": false,
+      "device": {
+        "platform": "iOS",
+        "model": "REPLACE_WITH_IPHONE_MODEL",
+        "osVersion": "REPLACE_WITH_IOS_VERSION",
+        "browser": "Installed PWA"
+      },
+      "routeWalk": [
+        "/dashboard",
+        "/dashboard?section=clients",
+        "/dashboard?section=messages",
+        "/dashboard/ai-chat",
+        "/dashboard/settings"
+      ],
+      "artifacts": [
+        {
+          "path": "stage-5-real-device/YYYY-MM-DD/iphone-pwa-route-walk.png"
+        }
+      ]
+    },
+    "androidChrome": {
+      "status": "PENDING",
+      "realDevice": false,
+      "emulator": false,
+      "device": {
+        "platform": "Android",
+        "model": "REPLACE_WITH_ANDROID_MODEL",
+        "osVersion": "REPLACE_WITH_ANDROID_VERSION",
+        "browser": "Chrome"
+      },
+      "routeWalk": [
+        "/dashboard",
+        "/dashboard?section=clients",
+        "/dashboard?section=messages",
+        "/dashboard/ai-chat",
+        "/dashboard/settings"
+      ],
+      "artifacts": [
+        {
+          "path": "stage-5-real-device/YYYY-MM-DD/android-chrome-route-walk.png"
+        }
+      ]
+    },
+    "androidPwa": {
+      "status": "PENDING",
+      "realDevice": false,
+      "emulator": false,
+      "device": {
+        "platform": "Android",
+        "model": "REPLACE_WITH_ANDROID_MODEL",
+        "osVersion": "REPLACE_WITH_ANDROID_VERSION",
+        "browser": "Installed PWA"
+      },
+      "routeWalk": [
+        "/dashboard",
+        "/dashboard?section=clients",
+        "/dashboard?section=messages",
+        "/dashboard/ai-chat",
+        "/dashboard/settings"
+      ],
+      "artifacts": [
+        {
+          "path": "stage-5-real-device/YYYY-MM-DD/android-pwa-route-walk.png"
+        }
+      ]
+    },
+    "offlinePrivacyLock": {
+      "status": "PENDING",
+      "realDevice": false,
+      "emulator": false,
+      "noClientNamesVisible": true,
+      "protectedContentUnmounted": true,
+      "routeWalk": [
+        "/dashboard",
+        "/dashboard?section=clients",
+        "/dashboard?section=messages",
+        "/dashboard/ai-chat",
+        "/dashboard/settings"
+      ],
+      "artifacts": [
+        {
+          "path": "stage-5-real-device/YYYY-MM-DD/offline-privacy-lock-iphone-pwa.png"
+        },
+        {
+          "path": "stage-5-real-device/YYYY-MM-DD/offline-privacy-lock-android-pwa.png"
+        }
+      ]
+    }
+  }
+}

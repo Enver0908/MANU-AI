@@ -25,7 +25,6 @@ import {
 import type {
   ShellBootstrapDto,
   ShellDestinationId,
-  ShellPreferencesPatchResultDto,
   ShellRuntimeState,
 } from "@/lib/phase-85-stage-5-shell-contracts";
 import {
@@ -66,6 +65,7 @@ import {
 } from "@/lib/phase-85-stage-5-shell-dirty-registry";
 import { ShellDirtyNavigationDialog } from "@/components/dashboard/shell-dirty-navigation-dialog";
 import { ShellWebVitalsReporter } from "@/components/dashboard/shell-web-vitals-reporter";
+import { ShellPreferenceCoordinator } from "@/lib/phase-85-stage-5-shell-preference-coordinator";
 
 export type ShellHeaderSlots = {
   title?: ReactNode;
@@ -91,6 +91,7 @@ type PendingNavigation =
   | { kind: "focus"; next: boolean }
   | { kind: "href"; href: string }
   | { kind: "client-switch"; client: ActiveClientSelection; proceed: () => Promise<boolean> }
+  | { kind: "clear-client" }
   | { kind: "sw-update" };
 
 type ShellProviderContextValue = {
@@ -112,6 +113,7 @@ type ShellProviderContextValue = {
   /** Legacy/test helper — prefer useShellDirtyRegistration. */
   setNavigationDirty: (dirty: boolean) => void;
   selectActiveClient: (client: ActiveClientSelection) => Promise<boolean>;
+  clearActiveClient: () => Promise<boolean>;
   requestDirtyNavigationConfirm: (client: ActiveClientSelection) => string;
   effectiveActiveClientId: string | null;
   showActiveClientControl: boolean;
@@ -173,12 +175,14 @@ export function ShellProvider({
   mode = "live",
   fallbackDisplayName,
   fallbackUiLanguage,
+  fallbackAiChatEnabled,
   registerServiceWorker = false,
   children,
 }: {
   mode?: ShellProviderMode;
   fallbackDisplayName?: string;
   fallbackUiLanguage?: string;
+  fallbackAiChatEnabled?: boolean;
   registerServiceWorker?: boolean;
   children: ReactNode;
 }) {
@@ -197,6 +201,10 @@ export function ShellProvider({
   const waitingWorkerRef = useRef<ServiceWorker | null>(null);
   const reconnectingRef = useRef(false);
   const bootstrapRetryRef = useRef(0);
+  const preferenceRevisionRef = useRef<number | null>(null);
+  const bootstrapRefreshRef = useRef<() => void>(() => undefined);
+  const preferenceCoordinatorRef = useRef<ShellPreferenceCoordinator | null>(null);
+  const currentBrowserHrefRef = useRef("");
   const [dirtySnapshot, setDirtySnapshot] = useReducer(
     (_prev: ShellDirtySnapshot, next: ShellDirtySnapshot) => next,
     shellDirtyRegistry.snapshot(),
@@ -220,6 +228,15 @@ export function ShellProvider({
   });
   const showActiveClientControl = shouldShowShellActiveClientControl(shellDestination);
 
+  if (!preferenceCoordinatorRef.current) {
+    preferenceCoordinatorRef.current = new ShellPreferenceCoordinator({
+      getRevision: () => preferenceRevisionRef.current,
+      createRequestId: createPreferenceRequestId,
+      getClientBuildVersion,
+      refreshBootstrap: () => bootstrapRefreshRef.current(),
+    });
+  }
+
   const runBootstrap = useCallback(
     (reason: "mount" | "route" | "foreground" | "explicit") => {
       void reason;
@@ -233,6 +250,7 @@ export function ShellProvider({
           bootstrap: createFallbackShellBootstrap({
             displayName: fallbackDisplayName,
             uiLanguage: fallbackUiLanguage,
+            aiChatEnabled: fallbackAiChatEnabled,
           }),
         });
         return;
@@ -288,10 +306,22 @@ export function ShellProvider({
           });
         });
     },
-    [fallbackDisplayName, fallbackUiLanguage, mode, shellDestination, urlState.clientId],
+    [fallbackAiChatEnabled, fallbackDisplayName, fallbackUiLanguage, mode, shellDestination, urlState.clientId],
   );
 
+  useEffect(() => {
+    bootstrapRefreshRef.current = () => runBootstrap("explicit");
+  }, [runBootstrap]);
+
+  useEffect(() => {
+    preferenceRevisionRef.current = state.bootstrap?.preferences.revision ?? null;
+  }, [state.bootstrap?.preferences.revision]);
+
   const searchKey = searchParams.toString();
+
+  useEffect(() => {
+    currentBrowserHrefRef.current = `${pathname}${searchKey ? `?${searchKey}` : ""}`;
+  }, [pathname, searchKey]);
 
   useEffect(() => {
     runBootstrap("route");
@@ -490,6 +520,23 @@ export function ShellProvider({
   useEffect(() => shellDirtyRegistry.subscribe(() => setDirtySnapshot(shellDirtyRegistry.snapshot())), []);
 
   useEffect(() => {
+    if (!state.bootstrap?.warnings.includes("client_context_unavailable")) return;
+    shellDestinationViewStateRegistry.clear();
+    void preferenceCoordinatorRef.current?.update({ activeClientId: null }).then((preferences) => {
+      if (preferences) preferenceRevisionRef.current = preferences.revision;
+    });
+    if (urlState.clientId || urlState.conversationId || urlState.messageId) {
+      router.replace(buildShellHref("home"));
+    }
+  }, [
+    router,
+    state.bootstrap?.warnings,
+    urlState.clientId,
+    urlState.conversationId,
+    urlState.messageId,
+  ]);
+
+  useEffect(() => {
     const onBeforeUnload = (event: BeforeUnloadEvent) => {
       const snap = shellDirtyRegistry.snapshot();
       if (!snap.isDirty && !snap.isSaving) return;
@@ -535,6 +582,9 @@ export function ShellProvider({
             focusMode: false,
           });
           router.push(href);
+          void preferenceCoordinatorRef.current?.update({ lastDestinationId: safe }).then((preferences) => {
+            if (preferences) preferenceRevisionRef.current = preferences.revision;
+          });
           markActivity();
           return;
         }
@@ -561,6 +611,20 @@ export function ShellProvider({
         case "client-switch":
           await pending.proceed();
           return;
+        case "clear-client": {
+          const preferences = await preferenceCoordinatorRef.current?.update({ activeClientId: null });
+          if (!preferences) return;
+          preferenceRevisionRef.current = preferences.revision;
+          const href = buildShellHref(shellDestination, {
+            current: urlState,
+            clientId: null,
+            chatId: extractAiChatId(pathname),
+            focusMode: state.focusMode,
+          });
+          router.replace(href);
+          window.setTimeout(() => runBootstrap("explicit"), 0);
+          return;
+        }
         case "sw-update": {
           const worker = waitingWorkerRef.current;
           if (!worker) return;
@@ -571,13 +635,28 @@ export function ShellProvider({
           return;
       }
     },
-    [effectiveActiveClientId, markActivity, pathname, router, shellDestination, state.bootstrap, urlState],
+    [effectiveActiveClientId, markActivity, pathname, router, runBootstrap, shellDestination, state.bootstrap, state.focusMode, urlState],
   );
 
   const openDirtyConfirm = useCallback((pending: PendingNavigation) => {
     if (shellDirtyRegistry.snapshot().isSaving) return;
     setPendingNavigation(pending);
   }, []);
+
+  useEffect(() => {
+    const onPopState = () => {
+      const nextHref = `${window.location.pathname}${window.location.search}`;
+      if (canNavigateAway()) {
+        currentBrowserHrefRef.current = nextHref;
+        return;
+      }
+      const currentHref = currentBrowserHrefRef.current || nextHref;
+      window.history.pushState(null, "", currentHref);
+      openDirtyConfirm({ kind: "href", href: nextHref });
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, [canNavigateAway, openDirtyConfirm]);
 
   const selectActiveClient = useCallback(
     async (client: ActiveClientSelection) => {
@@ -594,37 +673,13 @@ export function ShellProvider({
         });
 
         try {
-          const response = await fetch("/api/shell/preferences", {
-            method: "PATCH",
-            cache: "no-store",
-            credentials: "same-origin",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-              "Cache-Control": "no-store",
-              [SIRIUSAI_CLIENT_VERSION_HEADER]: getClientBuildVersion(),
-              [SIRIUSAI_MUTATION_KIND_HEADER]: "save",
-            },
-            body: JSON.stringify({
-              requestId: createPreferenceRequestId(),
-              expectedRevision: bootstrap.preferences.revision,
-              activeClientId: client.id,
-            }),
+          const preferences = await preferenceCoordinatorRef.current?.update({
+            activeClientId: client.id,
           });
-
-          if (response.status === 409) {
-            runBootstrap("explicit");
-            return false;
-          }
-
-          if (!response.ok) {
-            return false;
-          }
-
-          const preferences = (await response.json().catch(() => null)) as ShellPreferencesPatchResultDto | null;
           if (!preferences || typeof preferences.revision !== "number") {
             return false;
           }
+          preferenceRevisionRef.current = preferences.revision;
 
           const nextHref = buildShellHref(shellDestination, {
             current: urlState,
@@ -664,6 +719,16 @@ export function ShellProvider({
       urlState,
     ],
   );
+
+  const clearActiveClient = useCallback(async () => {
+    if (shellDirtyRegistry.snapshot().isSaving) return false;
+    if (!canNavigateAway()) {
+      openDirtyConfirm({ kind: "clear-client" });
+      return false;
+    }
+    await runPendingNavigation({ kind: "clear-client" });
+    return true;
+  }, [canNavigateAway, openDirtyConfirm, runPendingNavigation]);
 
   const navigateToDestination = useCallback(
     (destination: ShellDestinationId) => {
@@ -802,6 +867,7 @@ export function ShellProvider({
       canNavigateAway,
       setNavigationDirty,
       selectActiveClient,
+      clearActiveClient,
       requestDirtyNavigationConfirm,
       effectiveActiveClientId: shellDestination === "ai_chat" ? null : effectiveActiveClientId,
       showActiveClientControl,
@@ -822,6 +888,7 @@ export function ShellProvider({
       activeDestination,
       applyWaitingServiceWorkerUpdate,
       canNavigateAway,
+      clearActiveClient,
       contextualBootstrap,
       dirtySnapshot,
       dismissOptionalUpdate,

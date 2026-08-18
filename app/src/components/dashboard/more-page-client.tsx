@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import Link from "next/link";
 import { useShellProvider } from "@/components/dashboard/shell-provider";
 import { DASHBOARD_MAIN_ID } from "@/lib/phase-83e6-states-polish";
 import { MORE_ROOT_PATH } from "@/lib/phase-85-stage-4b-dashboard-routing";
@@ -13,7 +12,7 @@ import type { TenantRole } from "@/lib/types";
  * Role-aware More destination with four fixed IA sections.
  */
 export function MorePageClient({
-  uiLanguage: _uiLanguage,
+  uiLanguage,
   aiChatEnabled,
   role,
 }: {
@@ -21,7 +20,7 @@ export function MorePageClient({
   aiChatEnabled: boolean;
   role: TenantRole;
 }) {
-  const { setHeaderSlots, bootstrap, navigateToDestination } = useShellProvider();
+  const { setHeaderSlots, bootstrap, navigateToDestination, requestHrefNavigation } = useShellProvider();
 
   useEffect(() => {
     setHeaderSlots({
@@ -40,6 +39,7 @@ export function MorePageClient({
     navigation: bootstrap?.navigation,
     aiChatEnabled,
     capabilities: bootstrap?.capabilities,
+    uiLanguage,
   });
 
   return (
@@ -89,13 +89,14 @@ export function MorePageClient({
                 ) {
                   return (
                     <li key={item.id}>
-                      <Link
-                        href={item.href}
-                        className={`${className} text-ink hover:bg-surface-muted`}
+                      <button
+                        type="button"
+                        className={`${className} text-left text-ink hover:bg-surface-muted`}
                         data-testid={`more-item-${item.id}`}
+                        onClick={() => requestHrefNavigation(item.href)}
                       >
                         {item.label}
-                      </Link>
+                      </button>
                     </li>
                   );
                 }

@@ -27,6 +27,7 @@ import { AiChatAttachmentReview } from "./ai-chat-attachment-review";
 import { AiChatRiskBanner } from "./ai-chat-risk-banner";
 import { useShellDirtyRegistration } from "@/lib/use-shell-dirty-registration";
 import type { ShellDirtyEntryState } from "@/lib/phase-85-stage-5-shell-dirty-registry";
+import { authenticatedMutationFetch } from "@/lib/phase-85-stage-5-shell-authenticated-mutation";
 
 const COMPACT_BREAKPOINT_PX = 1024;
 
@@ -131,6 +132,14 @@ export function AiChatWorkspace({
     onDiscard: () => setEditingMessage(null),
   });
 
+  useShellDirtyRegistration({
+    id: "ai-chat-attachment-review",
+    label: "AI Chat ek incelemesi",
+    state: (reviewAttachment ? "dirty" : "clean") as ShellDirtyEntryState,
+    canSave: false,
+    onDiscard: () => setReviewAttachment(null),
+  });
+
   useEffect(() => {
     if (!activeChatId) return;
     let cancelled = false;
@@ -174,10 +183,11 @@ export function AiChatWorkspace({
 
   const handleSaveAttachmentCorrection = useCallback(
     async (attachmentId: string, derivativeId: string, correctedText: string) => {
-      const response = await fetch(
+      const response = await authenticatedMutationFetch(
         `/api/ai-chat/attachments/${encodeURIComponent(attachmentId)}/derivatives/${encodeURIComponent(derivativeId)}`,
         {
           method: "PATCH",
+          mutationKind: "other",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({ requestId: generateAiChatRequestId(), correctedText }),
         },
@@ -198,10 +208,11 @@ export function AiChatWorkspace({
       previewAccepted: boolean;
     }) => {
       if (!conversation.detail?.clientId) return;
-      const response = await fetch(
+      const response = await authenticatedMutationFetch(
         `/api/ai-chat/attachments/${encodeURIComponent(input.attachmentId)}/commit-to-client-record`,
         {
           method: "POST",
+          mutationKind: "other",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({
             requestId: generateAiChatRequestId(),
@@ -279,8 +290,9 @@ export function AiChatWorkspace({
   };
 
   const handleRemoveAttachment = useCallback(async (attachmentId: string) => {
-    const response = await fetch(`/api/ai-chat/attachments/${encodeURIComponent(attachmentId)}`, {
+    const response = await authenticatedMutationFetch(`/api/ai-chat/attachments/${encodeURIComponent(attachmentId)}`, {
       method: "DELETE",
+      mutationKind: "other",
     });
     if (!response.ok) return;
     setAttachments((current) => current.filter((item) => item.id !== attachmentId));

@@ -1,5 +1,5 @@
-import type { AppCapability } from "./auth-context";
-import { hasCapability } from "./auth-context";
+import type { AppCapability } from "./app-capability-contracts";
+import { hasCapability } from "./app-capability-contracts";
 import { isAiChatUiEnabled } from "./phase-85-stage-4b-dashboard-routing";
 import type { AiMode, PermissionState, TenantRole } from "./types";
 
@@ -276,6 +276,9 @@ export function parseShellPreferencesPatchBody(body: Record<string, unknown>) {
   if ("destinationState" in body) {
     const value = body.destinationState;
     if (value === null || typeof value !== "object" || Array.isArray(value)) {
+      throw new ShellApiError(400, "invalid_destination_state");
+    }
+    if (Object.keys(value as Record<string, unknown>).length > 0) {
       throw new ShellApiError(400, "invalid_destination_state");
     }
     destinationState = value as Record<string, unknown>;
@@ -570,6 +573,7 @@ export type ShellDestinationViewSnapshot = {
   filter?: string;
   tab?: string;
   scrollTop?: number;
+  windowScrollY?: number;
 };
 
 /**

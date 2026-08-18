@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "stage5-evidence-v2",
+  "evidenceType": "rls",
+  "sourceRevision": "3d03112db649148b4acaadcd2eea4a2caf93f62d",
+  "sourceTreeClean": false,
+  "packageLockSha256": "80ae808aad5ddb681a2a5b32fd5a4f71340772ac29ce1fd549156977302fa8c5",
+  "generatedAt": "2026-08-04T13:31:40.717Z",
+  "command": "npm run test:stage-5-rls",
+  "environment": {
+    "nodeVersion": "v22.16.0",
+    "platform": "win32",
+    "architecture": "x64"
+  },
+  "status": "PASS",
+  "rlsStatus": "zero_skip_passed",
+  "productionStatus": "NO-GO",
+  "target": {
+    "kind": "local_supabase",
+    "projectId": "manu-ai-local",
+    "apiUrl": "http://127.0.0.1:54321",
+    "dbUrl": "postgresql://postgres:[redacted]@127.0.0.1:54322/postgres"
+  },
+  "preflight": {
+    "docker": {
+      "status": "PASS",
+      "exitCode": 0,
+      "serverVersion": "29.1.2"
+    },
+    "supabaseCli": {
+      "status": "PASS",
+      "exitCode": 0,
+      "version": "2.101.0"
+    },
+    "localOnly": true,
+    "envSource": "child_process_only",
+    "writesEnvLocal": false,
+    "reportSecretsRedacted": true
+  },
+  "reset": {
+    "status": "PASS",
+    "exitCode": 0
+  },
+  "test": {
+    "passed": 56,
+    "failed": 0,
+    "skipped": 0,
+    "total": 56,
+    "failures": [],
+    "zeroSkipped": true,
+    "minPassedRequired": 56,
+    "exitCode": 0
+  },
+  "passed": 56,
+  "failed": 0,
+  "skipped": 0,
+  "total": 56,
+  "zeroSkipped": true,
+  "rawReportRemoved": true,
+  "cleanup": {
+    "supabaseStop": {
+      "status": "PASS",
+      "exitCode": 0
+    }
+  },
+  "blockers": [],
+  "outputTail": "NOTICE (00000): policy \"p85 stage4c events deny direct access\" for relation \"ai_chat_events\" does not exist, skipping\nApplying migration 20260722120000_phase_85_stage_4c_bounded_api_rpcs.sql...\nNOTICE (00000): constraint \"ai_chat_conversations_title_source_check\" of relation \"ai_chat_conversations\" does not exist, skipping\nApplying migration 20260722130000_phase_85_stage_4c_run_queue_streaming.sql...\nApplying migration 20260722140000_phase_85_stage_4c_context_gateway.sql...\nApplying migration 20260722150000_phase_85_stage_4c_sources_answerability.sql...\nNOTICE (00000): policy \"p85 stage4c approved sources read authenticated\" for relation \"ai_chat_approved_sources\" does not exist, skipping\nNOTICE (00000): policy \"p85 stage4c approved sources deny mutation\" for relation \"ai_chat_approved_sources\" does not exist, skipping\nNOTICE (00000): policy \"p85 stage4c approved source chunks read authenticated\" for relation \"ai_chat_approved_source_chunks\" does not exist, skipping\nNOTICE (00000): policy \"p85 stage4c approved source chunks deny mutation\" for relation \"ai_chat_approved_source_chunks\" does not exist, skipping\nNOTICE (00000): policy \"p85 stage4c answer envelopes creator read\" for relation \"ai_chat_answer_envelopes\" does not exist, skipping\nNOTICE (00000): policy \"p85 stage4c answer envelopes deny mutation\" for relation \"ai_chat_answer_envelopes\" does not exist, skipping\nApplying migration 20260722160000_phase_85_stage_4c_multimodal.sql...\nNOTICE (00000): policy \"p85 stage4c attachments creator read\" for relation \"ai_chat_attachments\" does not exist, skipping\nNOTICE (00000): policy \"p85 stage4c attachments deny mutation\" for relation \"ai_chat_attachments\" does not exist, skipping\nApplying migration 20260722170000_phase_85_stage_4c_risk_draft_handoff.sql...\nNOTICE (00000): constraint \"handoff_cases_trigger_xor_check\" of relation \"handoff_cases\" does not exist, skipping\nNOTICE (00000): policy \"p85 stage4c run risk creator read\" for relation \"ai_chat_run_risk_assessments\" does not exist, skipping\nNOTICE (00000): policy \"p85 stage4c draft transfers creator read\" for relation \"ai_chat_draft_transfers\" does not exist, skipping\nNOTICE (00000): policy \"p85 stage4c handoff links creator read\" for relation \"ai_chat_handoff_links\" does not exist, skipping\nApplying migration 20260722180000_phase_85_stage_4c_lifecycle.sql...\nNOTICE (00000): constraint \"ai_chat_branches_status_check\" of relation \"ai_chat_branches\" does not exist, skipping\nApplying migration 20260725085000_phase_85_stage_4c_pgcrypto_search_path_compatibility.sql...\nApplying migration 20260725090000_phase_85_stage_4c_remediation_core_run_rpcs.sql...\nApplying migration 20260725100000_phase_85_stage_4c_remediation_context_safety.sql...\nApplying migration 20260725110000_phase_85_stage_4c_remediation_multimodal_runtime.sql...\nNOTICE (00000): policy \"p85 stage4c message attachments deny all\" for relation \"ai_chat_message_attachments\" does not exist, skipping\nApplying migration 20260725120000_phase_85_stage_4c_remediation_risk_workflow.sql...\nApplying migration 20260725130000_phase_85_stage_4c_remediation_lifecycle_export.sql...\nApplying migration 20260725140000_phase_85_stage_4c_remediation_event_stream.sql...\nApplying migration 20260725150000_phase_85_stage_4c_remediation_scale_indexes.sql...\nApplying migration 20260725155000_phase_85_stage_4c_remediation_rls_helper_grants.sql...\nApplying migration 20260725160000_phase_85_stage_4c_remediation_db_lint_reclosure.sql...\nApplying migration 20260725161000_phase_85_stage_4c_remediation_scale_fixture_reclosure.sql...\nApplying migration 20260725162000_phase_85_stage_4c_remediation_scale_explain_reclosure.sql...\nApplying migration 20260725163000_phase_85_stage_4c_operational_tables_rls_reclosure.sql...\nNOTICE (00000): policy \"p85 stage4c ai chat jobs deny direct access\" for relation \"public.ai_chat_jobs\" does not exist, skipping\nNOTICE (00000): policy \"p85 stage4c deletion jobs deny direct access\" for relation \"public.ai_chat_deletion_jobs\" does not exist, skipping\nNOTICE (00000): policy \"p85 stage4c deletion ledger deny direct access\" for relation \"public.ai_chat_deletion_ledger\" does not exist, skipping\nNOTICE (00000): policy \"p85 stage4c legal holds deny direct access\" for relation \"public.ai_chat_legal_holds\" does not exist, skipping\nApplying migration 20260728120000_phase_85_stage_4d_own_profile.sql...\nApplying migration 20260728130000_phase_85_stage_4d_account_security_audit.sql...\nApplying migration 20260728170000_phase_85_stage_4d_remediation_account_foundation.sql...\nApplying migration 20260728180000_phase_85_stage_4d_remediation_security_billing_pwa.sql...\nNOTICE (00000): policy \"service role only global rate limit buckets\" for relation \"global_rate_limit_buckets\" does not exist, skipping\nNOTICE (00000): policy \"service role only mobile install duplicate archive\" for relation \"mobile_install_audit_event_duplicate_archive\" does not exist, skipping\nApplying migration 20260728190000_phase_85_stage_4d_pre_faz3_rls_reclosure.sql...\nApplying migration 20260802090000_phase_85_stage_5_shell_foundation.sql...\nApplying migration 20260802120000_phase_85_stage_5_shell_api_foundation.sql...\nApplying migration 20260803090000_phase_85_stage_5_foundation_remediation.sql...\nWARN: no files matched pattern: supabase/seed.sql\nRestarting containers...\nFinished supabase db reset on branch main.\nA new version of Supabase CLI is available: v2.111.0 (currently installed v2.101.0)\nWe recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli\nJSON report written to C:/Users/Dell/OneDrive/Masaüstü/MANU-AI/docs/PHASE_85_STAGE_5_RLS_RAW_VITEST_REPORT.json\nStopping containers...\nStopped supabase local development setup.\nA new version of Supabase CLI is available: v2.111.0 (currently installed v2.101.0)\nWe recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli\n",
+  "evidencePath": "C:\\Users\\Dell\\OneDrive\\Masaüstü\\MANU-AI\\docs\\PHASE_85_STAGE_5_RLS_ZERO_SKIP_REPORT.json"
+}

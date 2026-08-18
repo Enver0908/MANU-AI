@@ -1,0 +1,14 @@
+{
+  "generatedAt": "2026-08-18T17:04:08.089Z",
+  "stageStatus": "STAGE_5_CLOSED",
+  "productionStatus": "NO-GO",
+  "blockers": [],
+  "evidencePaths": {
+    "verify": "C:\\Users\\Dell\\OneDrive\\Masaüstü\\MANU-AI\\docs\\PHASE_85_STAGE_5_SHELL_VERIFY_REPORT.json",
+    "dependency": "C:\\Users\\Dell\\OneDrive\\Masaüstü\\MANU-AI\\docs\\PHASE_85_STAGE_5_DEPENDENCY_SECURITY_REPORT.json",
+    "labPerf": "C:\\Users\\Dell\\OneDrive\\Masaüstü\\MANU-AI\\docs\\PHASE_85_STAGE_5_LAB_PERF_REPORT.json",
+    "rls": "C:\\Users\\Dell\\OneDrive\\Masaüstü\\MANU-AI\\docs\\PHASE_85_STAGE_5_RLS_ZERO_SKIP_REPORT.json",
+    "realDevice": "C:\\Users\\Dell\\OneDrive\\Masaüstü\\MANU-AI\\docs\\PHASE_85_STAGE_5_REAL_DEVICE_EVIDENCE_STATUS.json",
+    "decision": "C:\\Users\\Dell\\OneDrive\\Masaüstü\\MANU-AI\\docs\\PHASE_85_STAGE_5_CLOSURE_DECISION.json"
+  }
+}

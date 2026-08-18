@@ -85,6 +85,20 @@ describe("stage 5 shell destination routing", () => {
 });
 
 describe("stage 5 shell provider reducer", () => {
+  it("projects an explicitly enabled AI Chat flag into fallback navigation", () => {
+    const disabled = createFallbackShellBootstrap();
+    const enabled = createFallbackShellBootstrap({ aiChatEnabled: true });
+
+    expect(disabled.navigation.find((item) => item.id === "ai_chat")).toMatchObject({
+      enabled: false,
+      disabledReason: "feature_disabled",
+    });
+    expect(enabled.navigation.find((item) => item.id === "ai_chat")).toEqual({
+      id: "ai_chat",
+      enabled: true,
+    });
+  });
+
   it("ignores stale bootstrap success and failure", () => {
     let state = createInitialShellProviderState("live");
     state = reduceShellProviderState(state, { type: "bootstrap_started", sequence: 2 });

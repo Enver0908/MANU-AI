@@ -1,6 +1,8 @@
 # Direct 100 Dietitian Completion Plan
 
-**Current active status (2026-08-02):** Stage 5 Faz 1–5 are complete locally, with evidence in `docs/PHASE_85_STAGE_5_PHASE_1_SCOPE_BASELINE_EVIDENCE.md`, `docs/PHASE_85_STAGE_5_PHASE_2_SHELL_DATA_FOUNDATION_EVIDENCE.md`, `docs/PHASE_85_STAGE_5_PHASE_3_BOUNDED_SHELL_API_EVIDENCE.md`, `docs/PHASE_85_STAGE_5_PHASE_4_AUTHENTICATED_SHELL_PROVIDER_EVIDENCE.md`, and `docs/PHASE_85_STAGE_5_PHASE_5_RESPONSIVE_NAV_BRANDING_EVIDENCE.md`. Local Supabase reset and expanded RLS remain pending Docker availability. Stage 5 Faz 6 is next. The branch has not been pushed. This does not approve direct 100-dietitian production pilot, close R-405, or enable real provider/channel/health-data paths.
+**Current active status (2026-08-18):** Phase 85 Stage 5 is closed after implementation, remediation, automated verification, five-route performance measurement, local Supabase reset and RLS 56/56 with zero skipped, and physical iPhone/Android Safari/Chrome/installed-PWA evidence. Canonical decision: `docs/PHASE_85_STAGE_5_CLOSURE_DECISION.json`. R-405 is technically mitigated with a clean production dependency audit. The direct 100-dietitian production pilot remains `NO-GO` because its independent external launch, provider/channel, operations, billing, schema rollout, and real-data gates remain open.
+
+**Document authority rule:** the status above governs the current Stage 5 and R-405 technical state. Dated `current`, `next`, `pending`, `blocked`, or `R-405 open` statements below are historical checkpoint records unless they explicitly cite a later date. They do not reopen Stage 5 or reverse the current R-405 technical mitigation; production `NO-GO` remains independently authoritative.
 
 **Document authority rule:** this current-status block and the Stage 4D remediation evidence chain govern active execution. All later dated entries are historical snapshots; their `current`, `next`, `pending`, or `blocked` wording applies only to the recorded checkpoint.
 
@@ -61,16 +63,15 @@ These rules are non-negotiable and apply to every future phase:
 - Autopilot is not globally enabled for all 5,000 clients by default. It is enabled only for selected qualified clients after all gates, monitoring, and rollback controls are ready.
 
 ## Current Baseline
-- Latest completed implementation phase: Stage 5 Faz 5 responsive navigation and SiriusAI branding (2026-08-02), after Stage 5 Faz 4 authenticated shell provider.
-- Next operator step: commit Stage 5 Faz 5 locally, run local Supabase reset + `npm run test:rls` when Docker is available, then proceed to Stage 5 Faz 6 active-client context; external production prerequisites remain open; no production GO.
+- Latest completed implementation stage: Phase 85 Stage 5 Dashboard and Mobile PWA Shell, including remediation and closure verification (2026-08-18).
+- Next operator step: proceed from the closed Stage 5 baseline only through a separately approved next-stage plan; external production prerequisites remain open and there is no production GO.
 - Primary open product risk: R-425 is mitigated in the hosted commercial sandbox path, but production launch gates remain open.
 - Latest roadmap rebaseline: Phase 77A manual source authority rebaseline spec (2026-06-10).
 - Detailed Phase 77 implementation plan: `docs/PHASE_77_MASTER_IMPLEMENTATION_PLAN.md`.
 - AI quality master plan: `docs/PHASE_77M_77Y_AI_QUALITY_MASTER_PLAN.md`.
 - Latest verification: Stage 4D remediation Faz 3 verification passed targeted Stage 4D tests 35/35, typecheck, lint with 69 existing warnings and 0 errors, production build, full app Vitest 1435 passed / 9 skipped, local Supabase reset, local RLS 53/53 with 0 skipped, Supabase DB lint with existing Stage 4B/4C warnings, and `npm run release:verify` with R-405 still open.
 - Production pilot status: `NO-GO` (Phase 82 baseline `NO_GO_EXTERNAL_PREREQUISITES_OPEN`; Phase 83 does not change clinical production GO).
-- Phase 78 R-405 status: stable `next@latest` is `16.2.9` but still bundles nested `postcss@8.4.31`; no dependency files changed; R-405 and `dependency_audit_clearance` remain open.
-- Phase 80G R-405 hardening status: technical closure now requires safe stable patch path, dependency update evidence, and clean production audit; unknown production audit findings block closure; formal acceptance requires complete external acceptance metadata. No dependency files changed; R-405 and `dependency_audit_clearance` remain open.
+- R-405 current status: technically mitigated by the Stage 5 dependency remediation (`next` and `eslint-config-next` `16.3.0`, nested `postcss@8.5.23`, `sharp@0.35.3`, and zero production audit vulnerabilities). This local technical mitigation does not close independent production launch gates.
 - Phase 80E/R-406 status: Phase 50/52 baseline local RLS mitigation remains valid, and the latest P85-IF post-closure local RLS run passed 30/30 on 2026-07-11. This remains local readiness evidence and does not authorize production pilot traffic.
 - Real WhatsApp, Gemini, monitoring, secret manager, and real client health data remain disconnected.
 - Existing usable foundations:

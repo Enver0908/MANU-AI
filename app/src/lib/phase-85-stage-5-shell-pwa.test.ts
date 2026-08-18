@@ -8,10 +8,12 @@ import {
   isLegacyShellCacheName,
   isShellMutationAllowed,
   listAllowedShellCacheNames,
+  resolveAuthenticatedMutationPolicy,
   resolveShellMutationUpdateGate,
   shouldBlockOptionalPwaReload,
   shouldServiceWorkerCachePath,
   SHELL_LEGACY_CACHE_PREFIX,
+  SHELL_STATIC_CACHE_MAX_ENTRIES,
 } from "./phase-85-stage-5-shell-pwa";
 import { reduceShellProviderState, createInitialShellProviderState, createFallbackShellBootstrap } from "./phase-85-stage-5-shell-provider-state";
 
@@ -39,10 +41,15 @@ describe("phase-85-stage-5-shell-pwa", () => {
 
   it("deletes legacy manu-ai-shell caches and keeps siriusai allowlist", () => {
     expect(isLegacyShellCacheName(`${SHELL_LEGACY_CACHE_PREFIX}v2`)).toBe(true);
-    expect(listAllowedShellCacheNames()).toEqual(["siriusai-static-v1", "siriusai-assets-v1"]);
+    expect(listAllowedShellCacheNames()).toEqual([
+      "siriusai-static-stage5-remediation-v3",
+      "siriusai-assets-stage5-remediation-v3",
+    ]);
     const swSource = readFileSync(join(process.cwd(), "public", "sw.js"), "utf8");
     expect(swSource).toContain(SHELL_LEGACY_CACHE_PREFIX);
     expect(swSource).toContain("SKIP_WAITING");
+    expect(swSource).toContain("STATIC_CACHE_MAX_ENTRIES = 100");
+    expect(SHELL_STATIC_CACHE_MAX_ENTRIES).toBe(100);
     expect(swSource).not.toContain("BackgroundSync");
     expect(swSource).not.toContain("periodicsync");
     expect(swSource).not.toContain("syncmanager");
@@ -55,6 +62,12 @@ describe("phase-85-stage-5-shell-pwa", () => {
     expect(isClientVersionCheckExemptPath("/api/demo-logout")).toBe(true);
     expect(isClientVersionCheckExemptPath("/api/session/activity")).toBe(true);
     expect(isClientVersionCheckExemptPath("/api/app-state")).toBe(false);
+    expect(resolveAuthenticatedMutationPolicy("/api/contact/leads", "POST")).toBe("public_exempt");
+    expect(resolveAuthenticatedMutationPolicy("/api/commercial/mobile-install-audit", "POST")).toBe("public_exempt");
+    expect(resolveAuthenticatedMutationPolicy("/api/session/activity", "POST")).toBe("session_exempt");
+    expect(resolveAuthenticatedMutationPolicy("/api/clients/forms", "POST")).toBe("save_allowed_when_outdated");
+    expect(resolveAuthenticatedMutationPolicy("/api/shell/preferences", "PATCH")).toBe("blocked_when_outdated");
+    expect(resolveAuthenticatedMutationPolicy("/api/ai-chat/conversations", "POST")).toBe("blocked_when_outdated");
   });
 
   it("marks clients below min version as update-required", () => {
@@ -78,6 +91,39 @@ describe("phase-85-stage-5-shell-pwa", () => {
     );
     expect(isShellMutationAllowed("save_only", "save")).toBe(true);
     expect(isShellMutationAllowed("save_only", "other")).toBe(false);
+  });
+
+  it("keeps Stage 5 remediation guards wired through shell-controlled clients", () => {
+    const proxySource = readFileSync(join(process.cwd(), "src", "proxy.ts"), "utf8");
+    const mutationHelperSource = readFileSync(
+      join(process.cwd(), "src", "lib", "phase-85-stage-5-shell-authenticated-mutation.ts"),
+      "utf8",
+    );
+    const aiChatPageSource = readFileSync(
+      join(process.cwd(), "src", "components", "ai-chat", "ai-chat-page-client.tsx"),
+      "utf8",
+    );
+    const aiChatComposerSource = readFileSync(
+      join(process.cwd(), "src", "components", "ai-chat", "ai-chat-composer.tsx"),
+      "utf8",
+    );
+    const aiChatWorkspaceSource = readFileSync(
+      join(process.cwd(), "src", "components", "ai-chat", "ai-chat-workspace.tsx"),
+      "utf8",
+    );
+
+    expect(proxySource).toContain("client_version_required");
+    expect(proxySource).not.toContain("SIRIUSAI_MUTATION_KIND_HEADER");
+    expect(mutationHelperSource).toContain("requestInit.body instanceof FormData");
+    expect(mutationHelperSource).toContain('headers.delete("content-type")');
+    expect(aiChatPageSource).toContain("requestHrefNavigation");
+    expect(aiChatPageSource).not.toContain("router.push");
+    expect(aiChatComposerSource).toContain("authenticatedMutationFetch(\"/api/ai-chat/attachments\"");
+    expect(aiChatComposerSource).toContain("attachments.length > 0");
+    expect(aiChatComposerSource).toContain("cleanupRecording");
+    expect(aiChatComposerSource).toContain("onAttachmentsChange([])");
+    expect(aiChatWorkspaceSource).toContain("authenticatedMutationFetch");
+    expect(aiChatWorkspaceSource).toContain("ai-chat-attachment-review");
   });
 
   it("clears bootstrap on offline and preserves bootstrap on required update failure", () => {

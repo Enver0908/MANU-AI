@@ -14,9 +14,11 @@ export const PHASE_85_STAGE_5_SHELL_PWA_VERSION = "p85-stage-5-shell-pwa-v1";
 export const SIRIUSAI_CLIENT_VERSION_HEADER = "x-siriusai-client-version";
 export const SIRIUSAI_MUTATION_KIND_HEADER = "x-siriusai-mutation-kind";
 
-export const SHELL_STATIC_CACHE_NAME = "siriusai-static-v1";
-export const SHELL_ASSET_CACHE_NAME = "siriusai-assets-v1";
+export const SHELL_SW_CACHE_VERSION = "stage5-remediation-v3";
+export const SHELL_STATIC_CACHE_NAME = `siriusai-static-${SHELL_SW_CACHE_VERSION}`;
+export const SHELL_ASSET_CACHE_NAME = `siriusai-assets-${SHELL_SW_CACHE_VERSION}`;
 export const SHELL_LEGACY_CACHE_PREFIX = "manu-ai-shell-";
+export const SHELL_STATIC_CACHE_MAX_ENTRIES = 100;
 
 export const SHELL_ACTIVITY_MIN_INTERVAL_MS = 60_000;
 
@@ -30,6 +32,12 @@ export type ShellSwCacheClass =
 export type ShellMutationKind = "save" | "other";
 
 export type ShellMutationUpdateGate = "open" | "save_only" | "blocked";
+
+export type AuthenticatedMutationPolicy =
+  | "public_exempt"
+  | "session_exempt"
+  | "save_allowed_when_outdated"
+  | "blocked_when_outdated";
 
 /**
  * Navigation HTML/RSC and /api/* are never cacheable.
@@ -109,18 +117,55 @@ export function isClientUpdateRequired(
  * Webhooks, auth, and logout stay outside client-version enforcement.
  */
 export function isClientVersionCheckExemptPath(pathname: string) {
-  if (pathname.startsWith("/api/whatsapp/webhook")) return true;
-  if (pathname.startsWith("/api/commercial/webhook")) return true;
-  if (pathname.startsWith("/api/auth")) return true;
-  if (pathname === "/api/demo-logout" || pathname.startsWith("/api/demo-logout/")) return true;
-  if (pathname === "/api/session/activity" || pathname.startsWith("/api/session/activity/")) return true;
-  if (pathname.startsWith("/auth/")) return true;
-  return false;
+  const policy = resolveAuthenticatedMutationPolicy(pathname, "POST");
+  return policy === "public_exempt" || policy === "session_exempt";
 }
 
 export function isAuthenticatedMutationMethod(method: string) {
   const normalized = method.toUpperCase();
   return normalized === "POST" || normalized === "PUT" || normalized === "PATCH" || normalized === "DELETE";
+}
+
+export function resolveAuthenticatedMutationPolicy(
+  pathname: string,
+  method: string,
+): AuthenticatedMutationPolicy {
+  if (!isAuthenticatedMutationMethod(method)) return "public_exempt";
+
+  if (
+    pathname.startsWith("/api/whatsapp/webhook") ||
+    pathname.startsWith("/api/commercial/webhook") ||
+    pathname.startsWith("/api/contact/leads") ||
+    pathname.startsWith("/api/commercial/checkout") ||
+    pathname.startsWith("/api/commercial/invite-status") ||
+    pathname.startsWith("/api/commercial/mobile-install-audit") ||
+    pathname.startsWith("/api/commercial/onboarding/") ||
+    pathname.startsWith("/api/admin/auth/") ||
+    pathname === "/api/demo-login" ||
+    pathname.startsWith("/api/demo-login/")
+  ) {
+    return "public_exempt";
+  }
+
+  if (
+    pathname.startsWith("/api/auth") ||
+    pathname === "/api/demo-logout" ||
+    pathname.startsWith("/api/demo-logout/") ||
+    pathname === "/api/session/activity" ||
+    pathname.startsWith("/api/session/activity/")
+  ) {
+    return "session_exempt";
+  }
+
+  if (
+    (pathname === "/api/account/profile" && method.toUpperCase() === "PATCH") ||
+    (pathname === "/api/dietitian/preferences" && method.toUpperCase() === "PATCH") ||
+    (pathname === "/api/clients/forms" && method.toUpperCase() === "POST")
+  ) {
+    return "save_allowed_when_outdated";
+  }
+
+  return "blocked_when_outdated";
 }
 
 export function resolveShellMutationUpdateGate(input: {

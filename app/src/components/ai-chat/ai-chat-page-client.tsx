@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useShellProvider } from "@/components/dashboard/shell-provider";
 import { AiChatWorkspace } from "@/components/ai-chat/ai-chat-workspace";
 import { EmptyState } from "@/components/dashboard/state-primitives";
@@ -24,7 +24,6 @@ export function AiChatPageClient({
   uiLanguage: SupportedLanguageCode;
   canAccessAiChat: boolean;
 }) {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const {
     focusMode,
@@ -33,6 +32,7 @@ export function AiChatPageClient({
     setScopedAiChatClient,
     scopedAiChatClient,
     setHideCompactNavigation,
+    requestHrefNavigation,
   } = useShellProvider();
   const urlFocus = searchParams.get("focus") === "1";
 
@@ -64,13 +64,13 @@ export function AiChatPageClient({
   );
 
   const navigateToChat = useCallback(
-    (chatId: string) => router.push(withFocusQuery(`${AI_CHAT_ROOT_PATH}/${chatId}`)),
-    [router, withFocusQuery],
+    (chatId: string) => requestHrefNavigation(withFocusQuery(`${AI_CHAT_ROOT_PATH}/${chatId}`)),
+    [requestHrefNavigation, withFocusQuery],
   );
 
   const navigateToRoot = useCallback(
-    () => router.push(withFocusQuery(AI_CHAT_ROOT_PATH)),
-    [router, withFocusQuery],
+    () => requestHrefNavigation(withFocusQuery(AI_CHAT_ROOT_PATH)),
+    [requestHrefNavigation, withFocusQuery],
   );
 
   const toggleFocusMode = useCallback(() => {

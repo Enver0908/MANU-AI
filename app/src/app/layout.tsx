@@ -1,24 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Geist, Geist_Mono } from "next/font/google";
 import { PwaRuntime } from "@/components/pwa-runtime";
 import { resolveClientBuildVersion } from "@/lib/phase-85-stage-5-shell-pwa";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-const frauncesDisplay = Fraunces({
-  variable: "--font-fraunces",
-  subsets: ["latin", "latin-ext"],
-  axes: ["SOFT", "WONK", "opsz"],
-});
 
 const appVersion = resolveClientBuildVersion();
 
@@ -54,10 +37,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="tr"
-      className={`${geistSans.variable} ${geistMono.variable} ${frauncesDisplay.variable} h-full antialiased`}
-    >
+    <html lang="tr" className="h-full antialiased">
       <head>
         <meta name="siriusai-app-version" content={appVersion} />
       </head>

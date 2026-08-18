@@ -265,6 +265,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
             badges={badges}
             navigation={bootstrap.navigation}
             role={bootstrap.role}
+            uiLanguage={uiLanguage}
             navigationLocked={navigationLocked}
             onNavigateDestination={navigateToDestination}
           />
@@ -300,6 +301,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
               badges={badges}
               navigation={bootstrap.navigation}
               role={bootstrap.role}
+              uiLanguage={uiLanguage}
               navigationLocked={navigationLocked}
               onNavigateDestination={navigateToDestination}
             />
@@ -369,6 +371,8 @@ export function DashboardShell({ children }: { children: ReactNode }) {
           activeNavKey={activeDestination}
           badges={badges}
           navigation={bootstrap.navigation}
+          role={bootstrap.role}
+          uiLanguage={uiLanguage}
           navigationLocked={navigationLocked}
           onNavigateDestination={navigateToDestination}
         />

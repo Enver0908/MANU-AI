@@ -2838,10 +2838,13 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
 
   it("enforces Stage 5 session inactivity lock and touch cooldown through RPCs", async () => {
     const owner = await signIn("rls-member@manu.local");
-    const assertInitial = await owner.rpc("p85_stage_5_assert_session_activity_v1");
+    const assertInitial = await owner.rpc("p85_stage_5_record_session_activity_v2", {
+      p_mode: "assert",
+    });
     expect(assertInitial.error).toBeNull();
     expect(assertInitial.data).toEqual(
       expect.objectContaining({
+        status: "active",
         locked: false,
         sessionId: expect.any(String),
       }),
@@ -2849,7 +2852,9 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
 
     const sessionId = assertInitial.data.sessionId as string;
 
-    const touchWithinCooldown = await owner.rpc("p85_stage_5_touch_session_activity_v1");
+    const touchWithinCooldown = await owner.rpc("p85_stage_5_record_session_activity_v2", {
+      p_mode: "touch",
+    });
     expect(touchWithinCooldown.error).toBeNull();
     expect(touchWithinCooldown.data?.touched).toBe(false);
 
@@ -2858,7 +2863,9 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
       .update({ last_interactive_at: new Date(Date.now() - 14 * 60_000).toISOString() })
       .eq("session_id", sessionId);
 
-    const assertBeforeLock = await owner.rpc("p85_stage_5_assert_session_activity_v1");
+    const assertBeforeLock = await owner.rpc("p85_stage_5_record_session_activity_v2", {
+      p_mode: "assert",
+    });
     expect(assertBeforeLock.error).toBeNull();
 
     await admin
@@ -2866,11 +2873,23 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
       .update({ last_interactive_at: new Date(Date.now() - 15 * 60_000).toISOString() })
       .eq("session_id", sessionId);
 
-    const assertLocked = await owner.rpc("p85_stage_5_assert_session_activity_v1");
-    expect(assertLocked.error?.message).toMatch(/session_inactive/i);
+    const assertLocked = await owner.rpc("p85_stage_5_record_session_activity_v2", {
+      p_mode: "assert",
+    });
+    expect(assertLocked.error).toBeNull();
+    expect(assertLocked.data).toEqual(
+      expect.objectContaining({
+        status: "locked",
+        locked: true,
+        lockedAt: expect.any(String),
+      }),
+    );
 
-    const touchLocked = await owner.rpc("p85_stage_5_touch_session_activity_v1");
-    expect(touchLocked.error?.message).toMatch(/session_inactive/i);
+    const touchLocked = await owner.rpc("p85_stage_5_record_session_activity_v2", {
+      p_mode: "touch",
+    });
+    expect(touchLocked.error).toBeNull();
+    expect(touchLocked.data?.status).toBe("locked");
 
     const lockedRow = await admin
       .from("app_session_activity")
@@ -2891,11 +2910,11 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
   it("updates shell preferences with revision control and client access checks", async () => {
     const owner = await signIn("rls-member@manu.local");
 
-    const create = await owner.rpc("p85_stage_5_update_shell_preferences_v1", {
+    const create = await owner.rpc("p85_stage_5_update_shell_preferences_v2", {
       p_expected_revision: 0,
       p_request_id: "stage5-shell-pref-create-01",
       p_last_destination_id: "home",
-      p_destination_state: { section: "overview" },
+      p_destination_state: {},
     });
     expect(create.error).toBeNull();
     expect(create.data).toEqual(
@@ -2905,17 +2924,17 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
       }),
     );
 
-    const replay = await owner.rpc("p85_stage_5_update_shell_preferences_v1", {
+    const replay = await owner.rpc("p85_stage_5_update_shell_preferences_v2", {
       p_expected_revision: 0,
       p_request_id: "stage5-shell-pref-create-01",
       p_last_destination_id: "home",
-      p_destination_state: { section: "overview" },
+      p_destination_state: {},
     });
     expect(replay.error).toBeNull();
     expect(replay.data?.idempotentReplay).toBe(true);
     expect(replay.data?.revision).toBe(1);
 
-    const assignClient = await owner.rpc("p85_stage_5_update_shell_preferences_v1", {
+    const assignClient = await owner.rpc("p85_stage_5_update_shell_preferences_v2", {
       p_expected_revision: 1,
       p_request_id: "stage5-shell-pref-client-01",
       p_active_client_id: TEST_CLIENT_ID,
@@ -2924,12 +2943,27 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     expect(assignClient.data?.activeClientId).toBe(TEST_CLIENT_ID);
 
     const outsider = await signIn("rls-other-tenant@manu.local");
-    const crossTenantClient = await outsider.rpc("p85_stage_5_update_shell_preferences_v1", {
+    const crossTenantClient = await outsider.rpc("p85_stage_5_update_shell_preferences_v2", {
       p_expected_revision: 0,
       p_request_id: "stage5-shell-pref-cross-01",
       p_active_client_id: TEST_CLIENT_ID,
     });
     expect(crossTenantClient.error?.message).toMatch(/client_context_unavailable/i);
+
+    const clearLastDestination = await owner.rpc("p85_stage_5_update_shell_preferences_v2", {
+      p_expected_revision: 2,
+      p_request_id: "stage5-shell-pref-clear-01",
+      p_clear_last_destination: true,
+    });
+    expect(clearLastDestination.error).toBeNull();
+    expect(clearLastDestination.data?.lastDestinationId).toBeNull();
+
+    const nonEmptyDestinationState = await owner.rpc("p85_stage_5_update_shell_preferences_v2", {
+      p_expected_revision: 3,
+      p_request_id: "stage5-shell-pref-state-01",
+      p_destination_state: { section: "overview" },
+    });
+    expect(nonEmptyDestinationState.error?.message).toMatch(/invalid_destination_state/i);
   }, 30000);
 });
 

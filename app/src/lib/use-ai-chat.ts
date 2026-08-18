@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AppRequestError } from "./app-errors";
+import { authenticatedMutationFetch } from "./phase-85-stage-5-shell-authenticated-mutation";
 import type {
   AiChatApiErrorBody,
   AiChatClientSearchItem,
@@ -17,13 +18,24 @@ import type {
 // architecture decisions: AI Chat owns its own bounded request/response cycle.
 
 async function requestAiChatJson<T>(url: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(url, {
-    ...init,
-    headers: {
-      "content-type": "application/json",
-      ...init?.headers,
-    },
-  });
+  const method = (init?.method ?? "GET").toUpperCase();
+  const isMutation = method === "POST" || method === "PUT" || method === "PATCH" || method === "DELETE";
+  const response = isMutation
+    ? await authenticatedMutationFetch(url, {
+        ...init,
+        mutationKind: "other",
+        headers: {
+          "content-type": "application/json",
+          ...init?.headers,
+        },
+      })
+    : await fetch(url, {
+        ...init,
+        headers: {
+          "content-type": "application/json",
+          ...init?.headers,
+        },
+      });
 
   if (!response.ok) {
     let code = `ai_chat_request_failed_${response.status}`;
@@ -511,8 +523,9 @@ export async function sendAiChatMessage(input: {
   body: string;
   attachmentIds?: string[];
 }) {
-  const response = await fetch(`/api/ai-chat/conversations/${encodeURIComponent(input.chatId)}/messages`, {
+  const response = await authenticatedMutationFetch(`/api/ai-chat/conversations/${encodeURIComponent(input.chatId)}/messages`, {
     method: "POST",
+    mutationKind: "other",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({
       requestId: input.requestId,
@@ -545,8 +558,9 @@ export async function editAiChatMessage(input: {
   expectedRevision: number;
   body: string;
 }) {
-  const response = await fetch(`/api/ai-chat/messages/${encodeURIComponent(input.messageId)}`, {
+  const response = await authenticatedMutationFetch(`/api/ai-chat/messages/${encodeURIComponent(input.messageId)}`, {
     method: "PATCH",
+    mutationKind: "other",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({
       requestId: input.requestId,
@@ -565,10 +579,11 @@ export async function regenerateAiChatMessage(input: {
   requestId: string;
   expectedRevision: number;
 }) {
-  const response = await fetch(
+  const response = await authenticatedMutationFetch(
     `/api/ai-chat/messages/${encodeURIComponent(input.messageId)}/regenerate`,
     {
       method: "POST",
+      mutationKind: "other",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(input),
     },

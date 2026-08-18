@@ -11,6 +11,7 @@ export type AuthenticatedShellBoundaryProps = {
   mode?: ShellProviderMode;
   fallbackDisplayName?: string;
   fallbackUiLanguage?: string;
+  fallbackAiChatEnabled?: boolean;
   children: ReactNode;
 };
 
@@ -24,6 +25,7 @@ export function AuthenticatedShellBoundary({
   mode = "live",
   fallbackDisplayName,
   fallbackUiLanguage,
+  fallbackAiChatEnabled,
   children,
 }: AuthenticatedShellBoundaryProps) {
   return (
@@ -33,6 +35,7 @@ export function AuthenticatedShellBoundary({
           mode={mode}
           fallbackDisplayName={fallbackDisplayName}
           fallbackUiLanguage={fallbackUiLanguage}
+          fallbackAiChatEnabled={fallbackAiChatEnabled}
           registerServiceWorker={registerServiceWorker}
         >
           <DashboardShell>{children}</DashboardShell>

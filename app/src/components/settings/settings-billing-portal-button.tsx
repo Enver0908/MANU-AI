@@ -5,6 +5,7 @@ import { Button } from "@/components/ui";
 import type { DashboardMessageKey } from "@/lib/i18n";
 import { t } from "@/lib/i18n";
 import type { SupportedLanguageCode } from "@/lib/languages";
+import { authenticatedMutationFetch } from "@/lib/phase-85-stage-5-shell-authenticated-mutation";
 
 export function SettingsBillingPortalButton({ uiLanguage }: { uiLanguage: SupportedLanguageCode }) {
   const [error, setError] = useState<string | null>(null);
@@ -14,7 +15,10 @@ export function SettingsBillingPortalButton({ uiLanguage }: { uiLanguage: Suppor
     setBusy(true);
     setError(null);
     try {
-      const response = await fetch("/api/commercial/billing-portal", { method: "POST" });
+      const response = await authenticatedMutationFetch("/api/commercial/billing-portal", {
+        method: "POST",
+        mutationKind: "other",
+      });
       const data = (await response.json()) as { portalUrl?: string; error?: string };
       if (!response.ok || !data.portalUrl) {
         const key = `settingsBillingPortalError_${data.error}` as DashboardMessageKey;

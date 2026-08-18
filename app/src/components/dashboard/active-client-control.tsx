@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useId, useMemo, useRef, useState } from "react";
-import { ChevronsUpDown, Search, UserRound } from "lucide-react";
+import { ChevronsUpDown, Search, UserRound, X } from "lucide-react";
 import { Sheet } from "@/components/ui/sheet";
 import { useShellProvider } from "@/components/dashboard/shell-provider";
 import { ClientStatusStrip } from "@/components/dashboard/client-status-strip";
@@ -48,7 +48,7 @@ async function fetchShellClients(query: string | null, signal: AbortSignal) {
 }
 
 export function ActiveClientControl({ disabled = false }: { disabled?: boolean }) {
-  const { bootstrap, selectActiveClient, dirtySnapshot } = useShellProvider();
+  const { bootstrap, selectActiveClient, clearActiveClient, dirtySnapshot } = useShellProvider();
   const mode = useSelectorMode();
   const listboxId = useId();
   const [open, setOpen] = useState(false);
@@ -127,6 +127,12 @@ export function ActiveClientControl({ disabled = false }: { disabled?: boolean }
     }
   };
 
+  const tryClear = async () => {
+    if (locked) return;
+    const ok = await clearActiveClient();
+    if (ok) setOpen(false);
+  };
+
   const list = (
     <div className="space-y-3">
       <label className="block">
@@ -158,6 +164,7 @@ export function ActiveClientControl({ disabled = false }: { disabled?: boolean }
             <button
               type="button"
               role="option"
+              aria-selected={item.id === activeClient?.id}
               className="flex min-h-11 w-full flex-col items-start justify-center gap-0.5 px-1 py-2 text-left text-sm hover:bg-surface-muted"
               onClick={() => void trySelect(item)}
               data-testid={`active-client-option-${item.id}`}
@@ -193,8 +200,18 @@ export function ActiveClientControl({ disabled = false }: { disabled?: boolean }
       </button>
 
       {activeClient || stale ? (
-        <div className="mt-2">
+        <div className="mt-2 flex flex-wrap items-center gap-2">
           <ClientStatusStrip client={activeClient} stale={stale && !activeClient} />
+          <button
+            type="button"
+            className="inline-flex min-h-9 items-center gap-1 rounded-control border border-line bg-surface px-2 text-xs font-medium text-ink-muted hover:bg-surface-muted disabled:opacity-50"
+            disabled={locked}
+            onClick={() => void tryClear()}
+            data-testid="active-client-clear"
+          >
+            <X size={14} aria-hidden="true" />
+            <span>Danisan baglamini kaldir</span>
+          </button>
         </div>
       ) : null}
 

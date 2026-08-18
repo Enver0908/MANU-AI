@@ -1,0 +1,97 @@
+{
+  "schemaVersion": "stage5-evidence-v2",
+  "evidenceType": "dependency",
+  "sourceRevision": "3d03112db649148b4acaadcd2eea4a2caf93f62d",
+  "sourceTreeClean": false,
+  "packageLockSha256": "80ae808aad5ddb681a2a5b32fd5a4f71340772ac29ce1fd549156977302fa8c5",
+  "generatedAt": "2026-08-04T13:10:14.772Z",
+  "command": "npm run test:stage-5-dependencies",
+  "environment": {
+    "nodeVersion": "v22.16.0",
+    "platform": "win32",
+    "architecture": "x64"
+  },
+  "status": "PASS",
+  "r405Status": "technically_resolved",
+  "productionStatus": "NO-GO",
+  "packages": {
+    "next": "16.3.0",
+    "eslintConfigNext": "16.3.0",
+    "nextNestedPostcss": "8.5.23",
+    "nextNestedSharp": "0.35.3",
+    "directSharp": "0.35.3"
+  },
+  "productionAudit": {
+    "status": "PASS",
+    "command": "npm audit --omit=dev --json",
+    "exitCode": 0,
+    "totals": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "findings": []
+  },
+  "assertions": [
+    {
+      "code": "next_package_json_exact_16_3_0",
+      "passed": true,
+      "actual": "16.3.0",
+      "expected": "16.3.0"
+    },
+    {
+      "code": "eslint_config_next_package_json_exact_16_3_0",
+      "passed": true,
+      "actual": "16.3.0",
+      "expected": "16.3.0"
+    },
+    {
+      "code": "next_installed_16_3_0",
+      "passed": true,
+      "actual": "16.3.0",
+      "expected": "16.3.0"
+    },
+    {
+      "code": "eslint_config_next_installed_16_3_0",
+      "passed": true,
+      "actual": "16.3.0",
+      "expected": "16.3.0"
+    },
+    {
+      "code": "next_nested_postcss_patched",
+      "passed": true,
+      "actual": "8.5.23",
+      "minimum": "8.5.23"
+    },
+    {
+      "code": "next_nested_sharp_patched",
+      "passed": true,
+      "actual": "0.35.3",
+      "minimum": "0.35.0"
+    },
+    {
+      "code": "direct_sharp_patched",
+      "passed": true,
+      "actual": "0.35.3",
+      "minimum": "0.35.0"
+    },
+    {
+      "code": "production_audit_zero_vulnerabilities",
+      "passed": true,
+      "auditExitCode": 0,
+      "totals": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0,
+        "total": 0
+      }
+    }
+  ],
+  "blockers": [],
+  "evidencePath": "C:\\Users\\Dell\\OneDrive\\Masaüstü\\MANU-AI\\docs\\PHASE_85_STAGE_5_DEPENDENCY_SECURITY_REPORT.json"
+}

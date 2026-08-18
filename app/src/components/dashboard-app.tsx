@@ -73,7 +73,6 @@ import { resolveEffectiveShellActiveClientId } from "@/lib/phase-85-stage-5-shel
 
 export function DashboardApp({
   authInfo,
-  commercialInfo: _commercialInfo,
   aiChatEnabled = false,
 }: {
   authInfo?: { displayName: string; role: string };
@@ -325,7 +324,7 @@ export function DashboardApp({
         saveDestinationViewState(previousDestination, {
           search,
           tab: clientDetailTab,
-          scrollTop: mainContentRef.current?.scrollTop ?? 0,
+          windowScrollY: window.scrollY,
         });
       }
       const nextDestination = dashboardSectionToShellDestination(section);
@@ -335,11 +334,11 @@ export function DashboardApp({
         if (typeof snapshot.tab === "string") {
           setClientDetailTab(snapshot.tab as ClientDetailTab);
         }
-        if (typeof snapshot.scrollTop === "number") {
+        const windowScrollY =
+          typeof snapshot.windowScrollY === "number" ? snapshot.windowScrollY : snapshot.scrollTop;
+        if (typeof windowScrollY === "number") {
           requestAnimationFrame(() => {
-            if (mainContentRef.current) {
-              mainContentRef.current.scrollTop = snapshot.scrollTop ?? 0;
-            }
+            window.scrollTo({ top: windowScrollY, behavior: "auto" });
           });
         }
       }
@@ -358,7 +357,7 @@ export function DashboardApp({
         saveDestinationViewState("clients", {
           search,
           tab: clientDetailTab,
-          scrollTop: mainContentRef.current?.scrollTop ?? 0,
+          windowScrollY: window.scrollY,
         });
       }
     };
@@ -386,6 +385,54 @@ export function DashboardApp({
       cancelled = true;
     };
   }, [showOperationalInspection, state.channelDeliveries.length, state.handoffCases.length]);
+
+  useEffect(() => {
+    setHeaderSlots({
+      title: (
+        <div>
+          <p className="text-sm text-stone-500">{state.tenant.name}</p>
+          <h1 className="text-2xl font-semibold">Operasyon paneli</h1>
+        </div>
+      ),
+      actions: (
+        <>
+          <div className="w-44">
+            <SelectInput
+              label={t(uiLanguage, "dashboardLanguage")}
+              value={uiLanguage}
+              onChange={(value) => updateDietitianPreferences({ uiLanguage: value as SupportedLanguageCode })}
+              options={languageOptions}
+            />
+          </div>
+          {!canManageAiControls ? (
+            <span
+              className="inline-flex items-center rounded-lg border border-stone-200 bg-stone-50 px-3 py-2 text-sm font-medium text-stone-700"
+              data-testid="dashboard-read-only-role-label"
+              role="status"
+            >
+              {t(uiLanguage, "shellReadOnlyAssistantAuditor")}
+            </span>
+          ) : null}
+          <button
+            onClick={resetState}
+            className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm font-medium text-stone-700 transition hover:bg-stone-100"
+            type="button"
+          >
+            <RefreshCcw size={16} />
+            Demoyu sıfırla
+          </button>
+        </>
+      ),
+    });
+    return () => setHeaderSlots({});
+  }, [
+    canManageAiControls,
+    resetState,
+    setHeaderSlots,
+    state.tenant.name,
+    uiLanguage,
+    updateDietitianPreferences,
+  ]);
 
   if (!hydrated) {
     return <DashboardLoadingSkeleton />;
@@ -686,56 +733,6 @@ export function DashboardApp({
     setContextUpdateSummary("");
     setContextUpdateDetails("");
   };
-
-
-  useEffect(() => {
-    setHeaderSlots({
-      title: (
-        <div>
-          <p className="text-sm text-stone-500">{state.tenant.name}</p>
-          <h1 className="text-2xl font-semibold">Operasyon paneli</h1>
-        </div>
-      ),
-      actions: (
-        <>
-          <div className="w-44">
-            <SelectInput
-              label={t(uiLanguage, "dashboardLanguage")}
-              value={uiLanguage}
-              onChange={(value) => updateDietitianPreferences({ uiLanguage: value as SupportedLanguageCode })}
-              options={languageOptions}
-            />
-          </div>
-          {!canManageAiControls ? (
-            <span
-              className="inline-flex items-center rounded-lg border border-stone-200 bg-stone-50 px-3 py-2 text-sm font-medium text-stone-700"
-              data-testid="dashboard-read-only-role-label"
-              role="status"
-            >
-              {t(uiLanguage, "shellReadOnlyAssistantAuditor")}
-            </span>
-          ) : null}
-          <button
-            onClick={resetState}
-            className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm font-medium text-stone-700 transition hover:bg-stone-100"
-            type="button"
-          >
-            <RefreshCcw size={16} />
-            Demoyu sıfırla
-          </button>
-        </>
-      ),
-    });
-    return () => setHeaderSlots({});
-  }, [
-    canManageAiControls,
-    resetState,
-    setHeaderSlots,
-    state.tenant.name,
-    uiLanguage,
-    updateDietitianPreferences,
-  ]);
-
   const viewsWithMobileStickyActions: DashboardSection[] = ["messages", "simulator"];
   const mainMobilePadding = viewsWithMobileStickyActions.includes(section)
     ? "lg:pb-5"

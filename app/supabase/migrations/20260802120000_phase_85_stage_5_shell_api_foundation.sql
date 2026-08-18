@@ -65,24 +65,35 @@ begin
     tenant_id,
     scope,
     key_hash,
+    window_start,
+    reset_at,
     count,
-    reset_at
+    created_at,
+    updated_at
   ) values (
     p_tenant_id,
     p_scope,
     p_key_hash,
+    p_now,
+    p_now + window_interval,
     1,
-    p_now + window_interval
+    p_now,
+    p_now
   )
   on conflict (tenant_id, scope, key_hash) do update
-    set count = case
-          when buckets.reset_at <= p_now then 1
-          else buckets.count + 1
+    set window_start = case
+          when buckets.reset_at <= p_now then p_now
+          else buckets.window_start
         end,
         reset_at = case
           when buckets.reset_at <= p_now then p_now + window_interval
           else buckets.reset_at
-        end
+        end,
+        count = case
+          when buckets.reset_at <= p_now then 1
+          else buckets.count + 1
+        end,
+        updated_at = p_now
   returning * into bucket;
 
   return jsonb_build_object(

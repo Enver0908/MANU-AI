@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { AuthenticatedShellBoundary } from "@/components/dashboard/authenticated-shell-boundary";
 import { resolveMobileInstallAccess } from "@/lib/commercial-install-access";
 import { resolveDashboardAuth } from "@/lib/dashboard-server-auth";
+import { isAiChatUiEnabled } from "@/lib/phase-85-stage-4b-dashboard-routing";
 import { isSupabaseStoreConfigured } from "@/lib/supabase-store";
 
 /**
@@ -25,6 +26,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
       mode={fallbackMode ? "fallback" : "live"}
       fallbackDisplayName={auth.gate === "resolved" ? auth.displayName : undefined}
       fallbackUiLanguage={auth.gate === "resolved" ? auth.uiLanguage : undefined}
+      fallbackAiChatEnabled={fallbackMode && isAiChatUiEnabled()}
     >
       {children}
     </AuthenticatedShellBoundary>

@@ -2,10 +2,12 @@ import type {
   Stage4BNotificationMutationResponse,
   Stage4BNotificationReadAllResponse,
 } from "./phase-85-stage-4b-contracts";
+import { authenticatedMutationFetch } from "./phase-85-stage-5-shell-authenticated-mutation";
 
 async function postNotificationMutation<T>(url: string) {
-  const response = await fetch(url, {
+  const response = await authenticatedMutationFetch(url, {
     method: "POST",
+    mutationKind: "other",
     headers: { "content-type": "application/json" },
   });
   if (!response.ok) {

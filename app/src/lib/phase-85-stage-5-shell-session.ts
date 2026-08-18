@@ -9,6 +9,16 @@ export type ShellSessionActivityResult = {
   sessionId: string;
   locked: boolean;
   lastInteractiveAt: string;
+  lockedAt?: string | null;
+  touched?: boolean;
+};
+
+type ShellSessionActivityRpcResult = {
+  status?: "active" | "locked";
+  sessionId?: string;
+  locked?: boolean;
+  lastInteractiveAt?: string;
+  lockedAt?: string | null;
   touched?: boolean;
 };
 
@@ -62,21 +72,42 @@ export function extractShellSessionRpcCode(error: { message?: string | null }) {
 export async function assertShellSessionActivity(
   supabase: SupabaseClient,
 ): Promise<ShellSessionActivityResult> {
-  const { data, error } = await supabase.rpc("p85_stage_5_assert_session_activity_v1");
+  const { data, error } = await supabase.rpc("p85_stage_5_record_session_activity_v2", {
+    p_mode: "assert",
+  });
   if (error) {
     mapShellSessionRpcError(error);
   }
-  return data as ShellSessionActivityResult;
+  return toShellSessionActivityResult(data);
 }
 
 export async function touchShellSessionActivity(
   supabase: SupabaseClient,
 ): Promise<ShellSessionActivityResult> {
-  const { data, error } = await supabase.rpc("p85_stage_5_touch_session_activity_v1");
+  const { data, error } = await supabase.rpc("p85_stage_5_record_session_activity_v2", {
+    p_mode: "touch",
+  });
   if (error) {
     mapShellSessionRpcError(error);
   }
-  return data as ShellSessionActivityResult;
+  return toShellSessionActivityResult(data);
+}
+
+function toShellSessionActivityResult(data: unknown): ShellSessionActivityResult {
+  const row = (data ?? {}) as ShellSessionActivityRpcResult;
+  const locked = row.status === "locked" || row.locked === true;
+  const sessionId = String(row.sessionId ?? "");
+  const lastInteractiveAt = String(row.lastInteractiveAt ?? "");
+  if (locked) {
+    throw new AppAuthError(401, "session_inactive");
+  }
+  return {
+    sessionId,
+    locked: false,
+    lastInteractiveAt,
+    lockedAt: row.lockedAt ?? null,
+    touched: row.touched,
+  };
 }
 
 export function rejectClientSuppliedSessionIdentity(body: Record<string, unknown> | null | undefined) {

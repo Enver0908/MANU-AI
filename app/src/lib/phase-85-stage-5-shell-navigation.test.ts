@@ -33,6 +33,7 @@ describe("phase-85-stage-5-shell-navigation", () => {
     ]);
     const items = resolveCompactBottomNavItems({
       badges: { alerts: 2, messages: 3, notifications: 9 },
+      role: "dietitian",
       navigation: nav([
         { id: "home" },
         { id: "clients" },
@@ -52,6 +53,18 @@ describe("phase-85-stage-5-shell-navigation", () => {
     ]);
     expect(items.find((item) => item.destinationId === "messages")?.badgeCount).toBe(3);
     expect(items.some((item) => item.destinationId === "notifications")).toBe(false);
+
+    const auditorItems = resolveCompactBottomNavItems({
+      role: "auditor",
+      navigation: nav([
+        { id: "home" },
+        { id: "clients" },
+        { id: "messages", enabled: false, disabledReason: "conversation_read_forbidden" },
+        { id: "alerts" },
+        { id: "more" },
+      ]),
+    });
+    expect(auditorItems.map((item) => item.destinationId)).toEqual(["home", "clients", "alerts", "more"]);
   });
 
   it("keeps responsive shell geometry contracts", () => {
@@ -108,9 +121,15 @@ describe("phase-85-stage-5-shell-navigation", () => {
     const owner = resolveMoreMenuSections({
       role: "owner",
       aiChatEnabled: true,
+      uiLanguage: "en",
       navigation: nav([{ id: "ai_chat" }, { id: "simulator" }, { id: "voice" }, { id: "forms" }, { id: "notifications" }, { id: "settings" }]),
     });
     expect(owner.some((section) => section.id === "admin")).toBe(true);
+    expect(owner.find((section) => section.id === "admin")?.items[0]).toMatchObject({
+      id: "operational_foundation",
+      label: "Operational foundation",
+      href: "/dashboard?section=overview&inspection=operational",
+    });
   });
 
   it("filters auditor wide sidebar to readable destinations", () => {
@@ -144,6 +163,7 @@ describe("phase-85-stage-5-shell-navigation", () => {
   it("keeps medium rail short labels visible and includes more", () => {
     const items = resolveMediumRailNavItems({
       role: "dietitian",
+      uiLanguage: "en",
       badges: { alerts: 0, messages: 0, notifications: 0 },
       navigation: nav([
         { id: "home" },
@@ -157,5 +177,6 @@ describe("phase-85-stage-5-shell-navigation", () => {
     });
     expect(items.some((item) => item.destinationId === "more")).toBe(true);
     expect(items.every((item) => item.shortLabel.length > 0)).toBe(true);
+    expect(items.find((item) => item.destinationId === "clients")?.label).toBe("Clients");
   });
 });

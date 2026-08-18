@@ -8,6 +8,7 @@ import type { DashboardMessageKey } from "@/lib/i18n";
 import { t } from "@/lib/i18n";
 import { COMMON_PROFILE_TIMEZONES } from "@/lib/phase-85-stage-4d-own-profile";
 import type { SettingsAccountReadModel } from "@/lib/phase-85-stage-4d-settings-contracts";
+import { authenticatedMutationFetch } from "@/lib/phase-85-stage-5-shell-authenticated-mutation";
 import { useShellDirtyRegistration } from "@/lib/use-shell-dirty-registration";
 import type { ShellDirtyEntryState } from "@/lib/phase-85-stage-5-shell-dirty-registry";
 
@@ -70,8 +71,9 @@ export function SettingsProfileForm({
     }
 
     try {
-      const response = await fetch("/api/account/profile", {
+      const response = await authenticatedMutationFetch("/api/account/profile", {
         method: "PATCH",
+        mutationKind: "save",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });

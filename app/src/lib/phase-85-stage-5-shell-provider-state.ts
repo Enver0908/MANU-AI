@@ -57,6 +57,7 @@ export function createFallbackShellBootstrap(input?: {
   displayName?: string;
   uiLanguage?: string;
   timezone?: string;
+  aiChatEnabled?: boolean;
 }): ShellBootstrapDto {
   return {
     contractVersion: PHASE_85_STAGE_5_SHELL_CONTRACT_VERSION,
@@ -74,7 +75,9 @@ export function createFallbackShellBootstrap(input?: {
       { id: "simulator", enabled: true },
       { id: "voice", enabled: true },
       { id: "forms", enabled: true },
-      { id: "ai_chat", enabled: false, disabledReason: "feature_disabled" },
+      input?.aiChatEnabled
+        ? { id: "ai_chat", enabled: true }
+        : { id: "ai_chat", enabled: false, disabledReason: "feature_disabled" },
       { id: "settings", enabled: true },
       { id: "more", enabled: true },
     ],

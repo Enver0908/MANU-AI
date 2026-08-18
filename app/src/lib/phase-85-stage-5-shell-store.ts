@@ -167,10 +167,7 @@ function toPreferencesDto(row: ShellBootstrapRpcRow["preferences"]): ShellPrefer
       typeof lastDestinationId === "string" && isShellDestinationId(lastDestinationId)
         ? lastDestinationId
         : null,
-    destinationState:
-      row?.destinationState && typeof row.destinationState === "object" && !Array.isArray(row.destinationState)
-        ? row.destinationState
-        : {},
+    destinationState: {},
   };
 }
 
@@ -288,20 +285,21 @@ export async function updateShellPreferences(
   const rpcArgs: Record<string, unknown> = {
     p_expected_revision: patch.expectedRevision,
     p_request_id: patch.requestId,
-    p_clear_active_client: patch.clearActiveClient === true,
+    p_clear_active_client: patch.clearActiveClient === true || patch.activeClientId === null,
+    p_clear_last_destination: patch.lastDestinationId === null,
   };
-  if (patch.lastDestinationId !== undefined) {
+  if (patch.lastDestinationId !== undefined && patch.lastDestinationId !== null) {
     rpcArgs.p_last_destination_id = patch.lastDestinationId;
   }
   if (patch.destinationState !== undefined) {
     rpcArgs.p_destination_state = patch.destinationState;
   }
-  if (patch.clearActiveClient !== true && patch.activeClientId !== undefined) {
+  if (patch.clearActiveClient !== true && patch.activeClientId !== undefined && patch.activeClientId !== null) {
     rpcArgs.p_active_client_id = patch.activeClientId;
   }
 
   const { data, error } = await context.supabase.rpc(
-    "p85_stage_5_update_shell_preferences_v1",
+    "p85_stage_5_update_shell_preferences_v2",
     rpcArgs,
   );
   if (error) {
@@ -326,12 +324,7 @@ export async function updateShellPreferences(
       typeof lastDestinationId === "string" && isShellDestinationId(lastDestinationId)
         ? lastDestinationId
         : null,
-    destinationState:
-      row.destinationState &&
-      typeof row.destinationState === "object" &&
-      !Array.isArray(row.destinationState)
-        ? row.destinationState
-        : {},
+    destinationState: {},
     requestId: String(row.requestId ?? patch.requestId),
     idempotentReplay: row.idempotentReplay === true,
   };
@@ -356,5 +349,6 @@ export function assertSupabaseShellStoreConfigured(isConfigured: boolean) {
 }
 
 export function setShellStoreRpcClientForTests(_client: SupabaseClient | null) {
+  void _client;
   // Reserved for future route-level integration tests.
 }

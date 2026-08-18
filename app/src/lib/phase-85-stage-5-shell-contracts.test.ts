@@ -76,6 +76,14 @@ describe("phase-85-stage-5-shell-contracts", () => {
     });
     expect(patch.expectedRevision).toBe(2);
     expect(patch.lastDestinationId).toBe("messages");
+
+    expect(() =>
+      parseShellPreferencesPatchBody({
+        requestId: "req-12345678",
+        expectedRevision: 2,
+        destinationState: { search: "client" },
+      }),
+    ).toThrow(new ShellApiError(400, "invalid_destination_state"));
   });
 
   it("projects role-aware navigation and fixed-order home actions", () => {

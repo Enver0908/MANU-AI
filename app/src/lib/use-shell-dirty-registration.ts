@@ -39,7 +39,7 @@ export function useShellDirtyRegistration(input: {
     return () => {
       shellDirtyRegistry.unregister(input.id);
     };
-  }, [input.id, input.label]);
+  }, [input.canSave, input.id, input.label, input.onSave, input.state]);
 
   useEffect(() => {
     shellDirtyRegistry.update(input.id, {

@@ -1,7 +1,9 @@
-const STATIC_CACHE = "siriusai-static-v1";
-const ASSET_CACHE = "siriusai-assets-v1";
+const SW_CACHE_VERSION = "stage5-remediation-v3";
+const STATIC_CACHE = `siriusai-static-${SW_CACHE_VERSION}`;
+const ASSET_CACHE = `siriusai-assets-${SW_CACHE_VERSION}`;
 const LEGACY_CACHE_PREFIX = "manu-ai-shell-";
 const ALLOWED_CACHES = new Set([STATIC_CACHE, ASSET_CACHE]);
+const STATIC_CACHE_MAX_ENTRIES = 100;
 
 function classifyRequest(request) {
   const method = request.method.toUpperCase();
@@ -49,9 +51,17 @@ async function cacheFirst(cacheName, request) {
 
   const response = await fetch(request);
   if (response && response.status === 200 && response.type !== "opaque") {
-    cache.put(request, response.clone());
+    await cache.put(request, response.clone());
+    await trimCache(cacheName, STATIC_CACHE_MAX_ENTRIES);
   }
   return response;
+}
+
+async function trimCache(cacheName, maxEntries) {
+  const cache = await caches.open(cacheName);
+  const keys = await cache.keys();
+  if (keys.length <= maxEntries) return;
+  await Promise.all(keys.slice(0, keys.length - maxEntries).map((key) => cache.delete(key)));
 }
 
 async function staleWhileRevalidate(cacheName, request) {

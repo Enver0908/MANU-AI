@@ -226,7 +226,7 @@ describe("phase 85 stage 4b-4 audio lifecycle", () => {
     const state = seedStateWithVoice();
     state.mediaAssets = state.mediaAssets.map((asset) => ({
       ...asset,
-      expiresAt: "2026-08-01T10:00:00.000Z",
+      expiresAt: "2027-08-01T10:00:00.000Z",
     }));
     const pkg = buildPhase74ExportPackage(state, "client-mert");
     expect(pkg.files[STAGE_4B4_VOICE_EXPORT_FILE]).toBeTruthy();

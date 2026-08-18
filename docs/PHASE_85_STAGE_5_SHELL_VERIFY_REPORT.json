@@ -1,0 +1,42 @@
+{
+  "generatedAt": "2026-08-18T17:00:26.703Z",
+  "productionStatus": "NO-GO",
+  "closureStatus": "LOCAL_AUTOMATION_COMPLETE_DEDICATED_GATES_EVALUATED_SEPARATELY",
+  "r405": "covered_by_stage5_dependency_security_report",
+  "scope": "Stage 5 local shell verification only. Dependency security, real-device PWA proof, and zero-skip RLS are evaluated by dedicated Stage 5 gates; production launch gates remain separate from Stage 5.",
+  "gates": {
+    "production typecheck": {
+      "status": "PASS",
+      "durationMs": 19122,
+      "exitCode": 0
+    },
+    "stage-5 unit/contract tests": {
+      "status": "PASS",
+      "durationMs": 26392,
+      "exitCode": 0
+    },
+    "cleanNextBuildOutput": {
+      "status": "PASS"
+    },
+    "production build": {
+      "status": "PASS",
+      "durationMs": 148912,
+      "exitCode": 0
+    },
+    "bundleBudget": {
+      "currentGzipBytes": 130404,
+      "baselineGzipBytes": 125698,
+      "limitGzipBytes": 138267,
+      "withinBudget": true,
+      "filesMeasured": 4
+    },
+    "bundleBudgetStatus": "PASS"
+  },
+  "blockers": [],
+  "scopeNotes": [
+    "real_device_pwa_evidence_evaluated_by_stage5_closure_harness",
+    "zero_skip_rls_evaluated_by_stage5_closure_harness",
+    "dependency_security_evaluated_by_stage5_closure_harness",
+    "production_launch_gates_outside_stage5_scope"
+  ]
+}

@@ -70,6 +70,9 @@ export async function authenticatedMutationFetch(
   const headers = buildAuthenticatedMutationHeaders(requestInit.headers, {
     mutationKind: mutationKind ?? "other",
   });
+  if (requestInit.body instanceof FormData && !new Headers(requestInit.headers).has("content-type")) {
+    headers.delete("content-type");
+  }
   const response = await fetch(input, {
     ...requestInit,
     headers,

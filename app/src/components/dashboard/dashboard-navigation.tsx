@@ -12,6 +12,7 @@ import {
   resolveWideSidebarNavItems,
   type ShellNavVisualItem,
 } from "@/lib/phase-85-stage-5-shell-navigation";
+import type { SupportedLanguageCode } from "@/lib/languages";
 import type { TenantRole } from "@/lib/types";
 import { Bell } from "lucide-react";
 
@@ -128,6 +129,7 @@ export function DashboardWideSidebarNav({
   badges = DEFAULT_NAV_BADGES,
   navigation,
   role,
+  uiLanguage,
   navigationLocked = false,
   onNavigateDestination,
 }: {
@@ -135,10 +137,11 @@ export function DashboardWideSidebarNav({
   badges?: ShellNavBadges;
   navigation?: readonly ShellNavigationItemDto[] | null;
   role: TenantRole;
+  uiLanguage?: SupportedLanguageCode;
   navigationLocked?: boolean;
   onNavigateDestination: (destinationId: ShellNavVisualItem["destinationId"]) => void;
 }) {
-  const items = resolveWideSidebarNavItems({ navigation, badges, role });
+  const items = resolveWideSidebarNavItems({ navigation, badges, role, uiLanguage });
   return (
     <nav
       className="space-y-1 overflow-y-auto px-3 pb-3"
@@ -164,6 +167,7 @@ export function DashboardMediumRailNav({
   badges = DEFAULT_NAV_BADGES,
   navigation,
   role,
+  uiLanguage,
   navigationLocked = false,
   onNavigateDestination,
 }: {
@@ -171,10 +175,11 @@ export function DashboardMediumRailNav({
   badges?: ShellNavBadges;
   navigation?: readonly ShellNavigationItemDto[] | null;
   role: TenantRole;
+  uiLanguage?: SupportedLanguageCode;
   navigationLocked?: boolean;
   onNavigateDestination: (destinationId: ShellNavVisualItem["destinationId"]) => void;
 }) {
-  const items = resolveMediumRailNavItems({ navigation, badges, role });
+  const items = resolveMediumRailNavItems({ navigation, badges, role, uiLanguage });
   return (
     <nav
       className="flex h-full flex-col gap-1 overflow-y-auto px-1 py-2"
@@ -199,16 +204,20 @@ export function DashboardCompactBottomNav({
   activeNavKey,
   badges = DEFAULT_NAV_BADGES,
   navigation,
+  role,
+  uiLanguage,
   navigationLocked = false,
   onNavigateDestination,
 }: {
   activeNavKey: DashboardNavKey;
   badges?: ShellNavBadges;
   navigation?: readonly ShellNavigationItemDto[] | null;
+  role: TenantRole;
+  uiLanguage?: SupportedLanguageCode;
   navigationLocked?: boolean;
   onNavigateDestination: (destinationId: ShellNavVisualItem["destinationId"]) => void;
 }) {
-  const items = resolveCompactBottomNavItems({ navigation, badges });
+  const items = resolveCompactBottomNavItems({ navigation, badges, role, uiLanguage });
   return (
     <nav
       className="fixed inset-x-0 bottom-0 z-40 flex h-16 items-stretch border-t border-line bg-surface pb-safe min-[768px]:hidden"
@@ -256,11 +265,13 @@ export function DashboardHeaderBell({
 
 /** @deprecated Prefer destination-based shell nav helpers. */
 export function resolveDesktopDashboardNavItems(_aiChatEnabled: boolean) {
+  void _aiChatEnabled;
   return [];
 }
 
 /** @deprecated Prefer resolveCompactBottomNavItems. */
 export function resolveMobileDashboardNavItems(_aiChatEnabled: boolean) {
+  void _aiChatEnabled;
   return [];
 }
 
