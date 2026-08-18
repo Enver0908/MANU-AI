@@ -1,5 +1,9 @@
 # MANU-AI Pilot Readiness Evidence Pack
 
+**Current authority (2026-08-18):** Stage 5 is closed locally and R-405 is `technically_resolved` by `docs/PHASE_85_STAGE_5_CLOSURE_DECISION.json` and `docs/PHASE_85_STAGE_5_DEPENDENCY_SECURITY_REPORT.json`. Production remains `NO-GO`; external approval, operations, rollout, and real-integration gates remain independently open.
+
+**Historical interpretation rule:** older `Stage 5 unstarted/blocked` and `R-405 open` statements below describe their dated checkpoints and are superseded for current technical status. They do not supersede the continuing production `NO-GO` decision.
+
 Phase 85 Stage 4D remediation reclosure update, 2026-07-29: Faz 1 Profile and Tenant/Account Foundation, Faz 2 Auth/Billing/PWA Hardening, the pre-Faz 3 RLS repair, and Faz 3 evidence reconciliation are reclosed and committed locally at `e369e1b`, with evidence in `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_1_ACCOUNT_FOUNDATION_EVIDENCE.md`, `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_2_SECURITY_BILLING_PWA_EVIDENCE.md`, and `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_3_RECLOSURE_EVIDENCE.md`. Clean Supabase reset passed, `npm run test:rls` passed 53/53 with 0 skipped, and `npm run release:verify` passed with R-405 still open. The branch has not been pushed and Stage 5 is unstarted. This adds local account/security/billing/PWA engineering evidence only; production pilot remains `NO-GO`, R-405 and external approvals remain open, and real integration paths remain closed.
 
 Document authority rule: the update above and the Stage 4D remediation evidence chain govern current readiness interpretation. Dated phase entries below are historical snapshots; their `current`, `next`, `pending`, or `blocked` wording applies only to their checkpoint.

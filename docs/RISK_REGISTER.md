@@ -199,7 +199,7 @@ Canonical contract: `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`; historical cl
 | R-4B2-09 | Hook, route, concurrency, SQL-scale, and visual evidence is incomplete or synthetic. | medium | R5/R6 zero-skip targeted and independent verification. | mitigated locally (R5/R6/R7) |
 | R-4B2-10 | Continuity documents contain stale handoffs and unconditional closure wording. | medium | R7 canonical document reconciliation and reference scan. | mitigated locally (R7) |
 
-Production pilot remains `NO-GO`; R-405 remains open; real integration paths remain closed.
+Historical Stage 4B-2 checkpoint: production pilot remained `NO-GO`, R-405 was open, and real integration paths were closed. Current R-405 disposition is `technically_resolved` under the 2026-08-18 authority at the top of this register; production remains `NO-GO` and real integration paths remain closed.
 
 ## Phase 85 Stage 4C AI Chat Planning Risks - 2026-07-22
 

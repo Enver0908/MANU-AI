@@ -1,8 +1,12 @@
 # MANU-AI Production Pilot Final Readiness Closure Summary
 
+**Current authority (2026-08-18):** Stage 5 is closed locally and R-405 is `technically_resolved` by the current dependency evidence. Final production readiness remains `NO-GO` because external approvals, production operations, rollout controls, and real-integration gates are independent of Stage 5. Authority: `docs/PHASE_85_STAGE_5_CLOSURE_DECISION.json`, `docs/PHASE_85_STAGE_5_DEPENDENCY_SECURITY_REPORT.json`, and `docs/RISK_REGISTER.md`.
+
+**Historical interpretation rule:** all older `Stage 5 unstarted/blocked` and `R-405 open` wording below records its dated checkpoint. It is superseded for current technical status but remains part of the production `NO-GO` audit history.
+
 Phase 85 Stage 4D remediation reclosure update, 2026-07-29: Faz 1 Profile and Tenant/Account Foundation, Faz 2 Auth/Billing/PWA Hardening, the pre-Faz 3 RLS repair, and Faz 3 evidence reconciliation are reclosed and committed locally at `e369e1b`, with evidence in `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_1_ACCOUNT_FOUNDATION_EVIDENCE.md`, `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_2_SECURITY_BILLING_PWA_EVIDENCE.md`, and `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_3_RECLOSURE_EVIDENCE.md`. The branch has not been pushed and Stage 5 is unstarted. Final production readiness is unchanged: clean local RLS passed 53/53 with 0 skipped, production pilot remains `NO-GO`, R-405 and external approvals remain open, and real integration paths remain closed.
 
-Document authority rule: the update above and the Stage 4D remediation evidence chain govern current readiness interpretation. Dated phase entries below are historical snapshots; their `current`, `next`, `pending`, or `blocked` wording applies only to their checkpoint.
+Document authority rule: the 2026-08-18 authority block governs current readiness interpretation. Dated phase entries below are historical snapshots; their status wording applies only to their checkpoint.
 
 Historical Phase 85 Stage 4D Faz 2 update, 2026-07-28: the measured Stage 4C closure is committed locally at `cd3d781`, the Stage 4D handoff is committed at `bc57cfd`, and Stage 4D Faz 2 settings foundation is complete as a read-only `/dashboard/settings` route. Active next-step planning is superseded by the Stage 4D remediation evidence above. Evidence: `docs/PHASE_85_STAGE_4D_PHASE_2_SETTINGS_READ_ONLY_EVIDENCE.md`, `docs/PHASE_85_STAGE_4D_AYARLAR_HESAP_ACTION_PLAN.md`, and `docs/PHASE_85_STAGE_4C_TO_STAGE_4D_CONTINUITY_HANDOFF_EVIDENCE.md`. Final production readiness is unchanged: production pilot remains `NO-GO`, R-405 and external approvals remain open, and real integration paths remain closed.
 

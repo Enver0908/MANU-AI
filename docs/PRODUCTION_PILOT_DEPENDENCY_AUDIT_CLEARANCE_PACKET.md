@@ -1,5 +1,9 @@
 # MANU-AI Production Pilot Dependency Audit Clearance Packet
 
+**Current technical disposition (2026-08-18):** this packet is a historical pre-remediation review artifact. R-405 is now `technically_resolved` locally by the stable dependency upgrade and zero-production-vulnerability audit recorded in `docs/PHASE_85_STAGE_5_DEPENDENCY_SECURITY_REPORT.json` and `docs/RISK_REGISTER.md`. The independent production-pilot decision remains `NO-GO`; technical resolution does not constitute external security acceptance or production authorization.
+
+**Historical interpretation rule:** all `R-405 open`, `blocked`, and “does not resolve” statements below describe the packet's 2026-05-31 checkpoint and must not be read as current technical status.
+
 Date: 2026-05-31
 
 ## Status

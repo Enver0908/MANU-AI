@@ -1,12 +1,12 @@
 # MANU-AI Plan
 
-**Current active status (2026-08-02):** Stage 5 Faz 1–9 local automation is complete. Evidence includes `docs/PHASE_85_STAGE_5_PHASE_9_A11Y_PERF_CLOSURE_EVIDENCE.md`. Full Stage 5 closure remains BLOCKED on real-device PWA proof and clean local RLS 0-skip. Production remains `NO-GO`; R-405 remains open. The branch has not been pushed.
+**Current authority (2026-08-18):** Stage 5 is closed with verdict `STAGE_5_CLOSED` in `docs/PHASE_85_STAGE_5_CLOSURE_DECISION.json`. Physical iOS/Android PWA validation is approved, the Stage 5 RLS report is zero-skip, and R-405 is `technically_resolved` in `docs/PHASE_85_STAGE_5_DEPENDENCY_SECURITY_REPORT.json`. Production remains independently `NO-GO`; these local technical results do not authorize production launch or real integration paths. The local branch has not been pushed.
 
-**Document authority rule:** this current-status block and the Stage 4D remediation evidence chain govern active execution. Every later dated phase entry is historical; its `current`, `next`, `pending`, or `blocked` wording describes only that checkpoint.
+**Document authority rule:** the 2026-08-18 Stage 5 closure artifacts govern current Stage 5 and R-405 technical status. Every older dated entry is historical; its `current`, `next`, `pending`, `blocked`, `Stage 5 unstarted`, or `R-405 open` wording applies only to that checkpoint. Production `NO-GO` remains current until the separate launch gates close.
 
 **Historical closure authority (2026-07-28):** Stage 4D Ayarlar / Hesap was closed locally on `codex/stage-4c-remediation` with measured verdict `PASS_LOCAL_STAGE_4D_CLOSED`. Evidence: `docs/PHASE_85_STAGE_4D_CLOSURE_EVIDENCE.md`, `docs/PHASE_85_STAGE_4D_AYARLAR_HESAP_ACTION_PLAN.md`. This is superseded for active next-step planning by the Stage 4D remediation evidence above. Production remains `NO-GO`; R-405 remains open.
 
-Current continuity status, 2026-08-02: Stage 5 Faz 1–9 local automation is complete; full Stage 5 closure remains blocked on real-device PWA proof and clean local RLS 0-skip. Production remains `NO-GO` and R-405 remains open.
+Current continuity status, 2026-08-18: Stage 5 is closed locally; physical-device, RLS, dependency, shell, and closure evidence pass. R-405 is technically resolved locally. Production remains `NO-GO` under its independent external and operational gates.
 
 ## Project Summary
 

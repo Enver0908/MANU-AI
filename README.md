@@ -4,9 +4,11 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 ## Current Status
 
-**Current active status (2026-08-02):** Stage 5 Faz 1–9 local automation is complete (`docs/PHASE_85_STAGE_5_PHASE_9_A11Y_PERF_CLOSURE_EVIDENCE.md`). Full Stage 5 closure remains BLOCKED pending real iOS/Android PWA evidence and clean local RLS 0-skip. Production remains `NO-GO`; R-405 remains open. The branch has not been pushed.
+**Current authority (2026-08-18):** Stage 5 is closed with canonical verdict `STAGE_5_CLOSED`. The physical iOS/Android PWA evidence is approved, the Stage 5 RLS gate is zero-skip, and the shell/closure gates pass. Canonical authority: `docs/PHASE_85_STAGE_5_CLOSURE_DECISION.json`, supported by `docs/PHASE_85_STAGE_5_REAL_DEVICE_VALIDATION_REPORT.json`, `docs/PHASE_85_STAGE_5_RLS_ZERO_SKIP_REPORT.json`, and `docs/PHASE_85_STAGE_5_DEPENDENCY_SECURITY_REPORT.json`. R-405 is `technically_resolved` in the current local dependency report. Production remains independently `NO-GO`; Stage 5 closure and local R-405 remediation do not approve launch, provider/channel egress, live billing, production schema rollout, or real-data processing. The local branch has not been pushed.
 
-**Document authority rule:** this current-status block and the Stage 4D remediation evidence chain govern the active handoff. Dated phase entries below are historical delivery snapshots; any `current`, `next`, `pending`, or `blocked` wording inside them applies only to that snapshot and does not override this block.
+**Document authority rule:** the 2026-08-18 closure artifacts above govern current Stage 5 and R-405 technical status. Every older dated entry below is a historical delivery snapshot. Its `current`, `next`, `pending`, `blocked`, `Stage 5 unstarted`, or `R-405 open` wording describes only that checkpoint and is superseded for current status; production `NO-GO` remains in force until its independent launch gates close.
+
+**Repository layout:** this repository intentionally has no root `package.json`, root `supabase/`, or `app/src/hooks/` directory. Application commands and dependencies live in `app/package.json`, Supabase assets live in `app/supabase/`, and feature hooks are colocated with their owning component or library modules.
 
 **Historical closure authority (2026-07-28):** Stage 4D Ayarlar / Hesap was closed locally with measured verdict `PASS_LOCAL_STAGE_4D_CLOSED`. Evidence: `docs/PHASE_85_STAGE_4D_CLOSURE_EVIDENCE.md`. Active next-step planning is superseded by the Stage 4D remediation evidence above. Production remains `NO-GO`; R-405 remains open.
 
@@ -106,7 +108,7 @@ P85-IF-D added complete transcript and human-control coordination for business-h
 
 This repository is a local SaaS/PWA pilot prototype and architecture workspace. It is not a production-connected system yet.
 
-**Latest implementation phase:** Phase 85 Stage 4D post-closure remediation is reclosed locally through Faz 3 evidence reconciliation. Evidence: `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_3_RECLOSURE_EVIDENCE.md`. **Current work:** review/commit this reclosure; Stage 5 requires separate explicit approval. **Production pilot:** `NO-GO` (unchanged); R-405 remains open.
+**Historical implementation checkpoint (2026-07-29):** Phase 85 Stage 4D post-closure remediation was reclosed locally through Faz 3 evidence reconciliation. Evidence: `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_3_RECLOSURE_EVIDENCE.md`. Its Stage 5 approval and R-405 wording is superseded by the 2026-08-18 current authority above. Production remains `NO-GO`.
 
 **Phase 82 verification:** targeted Phase 82 tests passed (5 files, 31/31); Phase 82G records `repoLocalClosureComplete: true` with verification `blocked` because `npm run test:rls` remains skipped/pending when local Supabase is unavailable.
 
@@ -242,7 +244,7 @@ The commercial sandbox has been exercised on a Hetzner VPS for workflow validati
 
 Verified result: invite + Stripe test checkout can consume the invite, create a tenant, create an active entitlement, and write billing ledger events. Hosted onboarding/auth now includes magic-link login, membership/profile claim, Phase 84I callback remediation, and Phase 84J Resend custom-SMTP real email delivery. R-425 is mitigated in the hosted sandbox path.
 
-Current canonical implementation: Stage 4B and Stage 4B-2 are locally closed through the R7 and advisory-hardening records. The earlier 2026-07-12 Stage 4B Docker block is historical and was superseded by complete-chain zero-skip local RLS evidence. Production pilot remains `NO-GO`; R-405 remains open; this local evidence does not close external launch gates or authorize production traffic.
+Historical Stage 4B checkpoint: Stage 4B and Stage 4B-2 were locally closed through the R7 and advisory-hardening records. The earlier 2026-07-12 Stage 4B Docker block was superseded by complete-chain zero-skip local RLS evidence. Its R-405 wording is superseded by the 2026-08-18 current authority above; production remains `NO-GO`, and this local evidence does not close external launch gates or authorize production traffic.
 
 ## Current P85-IF Post-Closure Baseline - 2026-07-11
 

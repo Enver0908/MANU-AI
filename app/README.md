@@ -1,8 +1,10 @@
 # MANU-AI Local App Prototype
 
-**Current active status (2026-08-02):** Stage 5 Faz 1–9 local automation is complete (`../docs/PHASE_85_STAGE_5_PHASE_9_A11Y_PERF_CLOSURE_EVIDENCE.md`). Full Stage 5 closure remains BLOCKED on real-device PWA proof and clean local RLS. Production remains `NO-GO`; R-405 remains open. The branch has not been pushed.
+**Current authority (2026-08-18):** Stage 5 is closed with verdict `STAGE_5_CLOSED` in `../docs/PHASE_85_STAGE_5_CLOSURE_DECISION.json`. Physical iOS/Android PWA validation is approved, Stage 5 RLS is zero-skip, and R-405 is `technically_resolved` in the current dependency report. Production remains independently `NO-GO`; no production launch or real integration path is authorized. The local branch has not been pushed.
 
-**Document authority rule:** this current-status block and the Stage 4D remediation evidence chain govern active execution. Dated entries below are historical snapshots; their `current`, `next`, `pending`, or `blocked` wording applies only to the recorded checkpoint.
+**Document authority rule:** the 2026-08-18 closure artifacts govern current Stage 5 and R-405 technical status. Dated entries below are historical snapshots; their `current`, `next`, `pending`, `blocked`, `Stage 5 unstarted`, or `R-405 open` wording applies only to the recorded checkpoint. Production `NO-GO` remains current until separate launch gates close.
+
+**Repository layout:** run application commands from this directory using `package.json`. Supabase configuration and migrations live in `supabase/` relative to this directory. There is intentionally no root package manifest, root Supabase directory, or centralized `src/hooks/` directory.
 
 **Historical closure authority (2026-07-28):** Stage 4D Ayarlar / Hesap was closed locally with measured verdict `PASS_LOCAL_STAGE_4D_CLOSED`. Evidence: `../docs/PHASE_85_STAGE_4D_CLOSURE_EVIDENCE.md`. Active next-step planning is superseded by the Stage 4D remediation evidence above. Production remains `NO-GO`; R-405 remains open.
 
@@ -312,7 +314,7 @@ The scripts use `--webpack` because Turbopack did not resolve the local symlinke
 
 `npm run typecheck` validates production application sources with `tsconfig.production.json`; legacy Vitest fixture typing remains outside this production gate and is exercised by the full runtime test suite. `npm run release:verify` runs the core package tests, lint, production typecheck, unit/API tests, production build, and the production dependency audit gate. It cleans generated `.next` output before the production build so repeated local Windows/OneDrive runs do not fail on stale build artifacts. It allows only the documented R-405 Next.js/PostCSS finding and does not run `npm audit fix --force`.
 
-Latest local Phase 82G verification refresh on 2026-06-30: targeted Phase 82 tests passed (5 files, 31 tests), targeted Phase 80 regression tests (4 files, 29 tests), targeted Phase 81 regression tests (3 files, 19 tests), `npm run release:verify` passed with core tests 225/225 and app tests 595 passed / 4 skipped across 94 files, `npm run test:rls` skipped 20/20, and `npm run rehearse:production-scale:79g` passed. Phase 82 track is closed; baseline outcome remains `NO_GO_EXTERNAL_PREREQUISITES_OPEN`; production pilot remains `NO-GO`; `productionPilotStarted` remains `false`; R-405 remains open; R-406 current re-run remains pending. Next work is external launch-gate/R-405/RLS closure prerequisites.
+Historical local Phase 82G verification refresh on 2026-06-30: targeted Phase 82 tests passed (5 files, 31 tests), targeted Phase 80 regression tests (4 files, 29 tests), targeted Phase 81 regression tests (3 files, 19 tests), `npm run release:verify` passed with core tests 225/225 and app tests 595 passed / 4 skipped across 94 files, `npm run test:rls` skipped 20/20, and `npm run rehearse:production-scale:79g` passed. This snapshot's R-405/RLS prerequisite wording is superseded by the 2026-08-18 authority above. Production pilot remains `NO-GO` and `productionPilotStarted` remains `false` until independent launch gates close.
 
 Phase 77Y closed continuity/pilot/gate docs and recorded hard-zero expanded rehearsal sample metrics plus clinical red-team closure. Phase 77Z is repository cleanup only. Phase 77A-77K manual source authority work remains complete locally.
 
