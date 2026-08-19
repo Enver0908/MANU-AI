@@ -1,7 +1,11 @@
 import { getActiveFormSchema } from "./client-forms";
 import { getFallbackState, saveFallbackState, saveFormResponseInState } from "./app-state-store";
 import { requireCapability, type AppTenantContext } from "./auth-context";
-import { isSupabaseStoreConfigured, saveSupabaseFormResponse } from "./supabase-store";
+import {
+  isSupabaseStoreConfigured,
+  runSupabaseStage6IdempotentMutation,
+  saveSupabaseFormResponse,
+} from "./supabase-store";
 import {
   assertExpectedRevision,
   idempotencyLookup,
@@ -18,20 +22,22 @@ export async function saveStage6FormResponse(
   if (isSupabaseStoreConfigured()) {
     if (!tenantContext) throw new Error("tenant_context_required");
     requireCapability(tenantContext, "update_client");
-    const cached = idempotencyLookup(tenantContext.tenantId, envelope.requestId);
-    if (cached) return cached;
-    const result = await saveSupabaseFormResponse(
-      {
-        clientId,
-        schemaId: envelope.schemaId,
-        answers: envelope.answers,
-        submittedPhoneE164: envelope.submittedPhoneE164,
-      },
+    return runSupabaseStage6IdempotentMutation(
       tenantContext,
       envelope.requestId,
+      "client_form_save",
+      () =>
+        saveSupabaseFormResponse(
+          {
+            clientId,
+            schemaId: envelope.schemaId,
+            answers: envelope.answers,
+            submittedPhoneE164: envelope.submittedPhoneE164,
+          },
+          tenantContext,
+          envelope.requestId,
+        ),
     );
-    idempotencyRemember(tenantContext.tenantId, envelope.requestId, result);
-    return result;
   }
 
   const cached = idempotencyLookup("fallback", envelope.requestId);

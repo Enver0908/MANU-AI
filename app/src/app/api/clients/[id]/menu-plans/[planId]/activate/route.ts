@@ -2,7 +2,11 @@ import { type NextRequest } from "next/server";
 import { activateMenuPlanInState, getFallbackState, saveFallbackState } from "@/lib/app-state-store";
 import { AppDomainError } from "@/lib/app-errors";
 import { requireCapability, resolveAppTenantContext } from "@/lib/auth-context";
-import { isSupabaseStoreConfigured, activateSupabaseClientMenuPlan } from "@/lib/supabase-store";
+import {
+  isSupabaseStoreConfigured,
+  activateSupabaseClientMenuPlan,
+  runSupabaseStage6IdempotentMutation,
+} from "@/lib/supabase-store";
 import {
   assertExpectedRevision,
   idempotencyLookup,
@@ -24,17 +28,17 @@ export async function POST(
     if (isSupabaseStoreConfigured()) {
       const tenantContext = await resolveAppTenantContext();
       requireCapability(tenantContext, "update_client");
-      const cached = idempotencyLookup(tenantContext.tenantId, envelope.requestId);
-      if (cached) return stage6JsonResponse(cached);
-      const result = await activateSupabaseClientMenuPlan(
-        id,
-        planId,
-        tenantContext,
-        envelope.requestId,
-        envelope.expectedPlanRevision,
+      return stage6JsonResponse(
+        await runSupabaseStage6IdempotentMutation(tenantContext, envelope.requestId, "client_menu_activate", () =>
+          activateSupabaseClientMenuPlan(
+            id,
+            planId,
+            tenantContext,
+            envelope.requestId,
+            envelope.expectedPlanRevision,
+          ),
+        ),
       );
-      idempotencyRemember(tenantContext.tenantId, envelope.requestId, result);
-      return stage6JsonResponse(result);
     }
 
     const cached = idempotencyLookup("fallback", envelope.requestId);

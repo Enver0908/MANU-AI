@@ -12,6 +12,7 @@ import {
 import {
   isSupabaseStoreConfigured,
   loadSupabaseClientFoodRuleProfile,
+  runSupabaseStage6IdempotentMutation,
   saveSupabaseClientFoodRuleProfile,
 } from "@/lib/supabase-store";
 import {
@@ -50,11 +51,11 @@ export async function PUT(request: NextRequest, context: { params: Promise<{ id:
     if (isSupabaseStoreConfigured()) {
       const tenantContext = await resolveAppTenantContext();
       requireCapability(tenantContext, "update_client");
-      const cached = idempotencyLookup(tenantContext.tenantId, envelope.requestId);
-      if (cached) return stage6JsonResponse(cached);
-      const result = await saveSupabaseClientFoodRuleProfile(id, input, tenantContext, envelope.requestId);
-      idempotencyRemember(tenantContext.tenantId, envelope.requestId, result);
-      return stage6JsonResponse(result);
+      return stage6JsonResponse(
+        await runSupabaseStage6IdempotentMutation(tenantContext, envelope.requestId, "client_food_rule_save", () =>
+          saveSupabaseClientFoodRuleProfile(id, input, tenantContext, envelope.requestId),
+        ),
+      );
     }
 
     const cached = idempotencyLookup("fallback", envelope.requestId);

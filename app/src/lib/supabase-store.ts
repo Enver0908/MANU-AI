@@ -58,6 +58,10 @@ import {
   projectStage6Roster,
   projectStage6Workspace,
 } from "./phase-85-stage-6-client-workspace";
+import type {
+  ClientScopedMutationResponse,
+  Stage6MutationKind,
+} from "./phase-85-stage-6-dashboard-contracts";
 import {
   buildPhase79WindowedDashboardPayload,
   WINDOWED_READ_DEFAULTS,
@@ -2088,6 +2092,116 @@ export async function loadSupabaseStage6ContextUpdates(
 ) {
   const state = await loadSupabaseClientOperationState(clientId, context);
   return projectStage6ContextUpdates(state, clientId, query);
+}
+
+export async function runSupabaseStage6IdempotentMutation<T>(
+  context: AppTenantContext,
+  requestId: string,
+  expectedKind: Stage6MutationKind,
+  operation: () => Promise<ClientScopedMutationResponse<T>>,
+): Promise<ClientScopedMutationResponse<T>> {
+  const cached = await getSupabaseStage6MutationIdempotency<T>(context.tenantId, requestId, expectedKind);
+  if (cached) return cached;
+  const reservedReplay = await reserveSupabaseStage6MutationIdempotency<T>(context.tenantId, requestId, expectedKind);
+  if (reservedReplay) return reservedReplay;
+
+  let response: ClientScopedMutationResponse<T>;
+  try {
+    response = await operation();
+    if (response.kind !== expectedKind) {
+      throw new Error("stage_6_mutation_kind_mismatch");
+    }
+    if (response.requestId !== requestId) {
+      throw new Error("stage_6_request_id_mismatch");
+    }
+  } catch (error) {
+    await clearPendingSupabaseStage6MutationIdempotency(context.tenantId, requestId);
+    throw error;
+  }
+  await rememberSupabaseStage6MutationIdempotency(context.tenantId, requestId, response);
+  return response;
+}
+
+async function getSupabaseStage6MutationIdempotency<T>(
+  tenantId: string,
+  requestId: string,
+  expectedKind: Stage6MutationKind,
+): Promise<ClientScopedMutationResponse<T> | null> {
+  const { data, error } = await requireSupabase()
+    .from("stage_6_mutation_idempotency")
+    .select("mutation_kind, status, response_json")
+    .eq("tenant_id", tenantId)
+    .eq("request_id", requestId)
+    .maybeSingle();
+  if (error) throwControlledRpcError(error);
+  if (!data) return null;
+  if (data.mutation_kind !== expectedKind) {
+    throw new AppDomainError(409, "idempotency_key_conflict");
+  }
+  if (data.status !== "complete") {
+    throw new AppDomainError(409, "idempotency_request_in_progress");
+  }
+  const response = data.response_json as ClientScopedMutationResponse<T>;
+  if (!response || typeof response !== "object" || response.kind !== expectedKind || "state" in response) {
+    throw new Error("stage_6_idempotency_response_invalid");
+  }
+  return response;
+}
+
+async function reserveSupabaseStage6MutationIdempotency<T>(
+  tenantId: string,
+  requestId: string,
+  expectedKind: Stage6MutationKind,
+): Promise<ClientScopedMutationResponse<T> | null> {
+  const { error } = await requireSupabase().from("stage_6_mutation_idempotency").insert({
+    tenant_id: tenantId,
+    request_id: requestId,
+    mutation_kind: expectedKind,
+    status: "pending",
+  });
+  if (!error) return null;
+  if (typeof error === "object" && error && "code" in error && error.code === "23505") {
+    const cached = await getSupabaseStage6MutationIdempotency<T>(tenantId, requestId, expectedKind);
+    if (cached) return cached;
+  }
+  throwControlledRpcError(error);
+  throw error instanceof Error ? error : new Error(JSON.stringify(error));
+}
+
+async function clearPendingSupabaseStage6MutationIdempotency(tenantId: string, requestId: string) {
+  await checked(
+    requireSupabase()
+      .from("stage_6_mutation_idempotency")
+      .delete()
+      .eq("tenant_id", tenantId)
+      .eq("request_id", requestId)
+      .eq("status", "pending"),
+  );
+}
+
+async function rememberSupabaseStage6MutationIdempotency<T>(
+  tenantId: string,
+  requestId: string,
+  response: ClientScopedMutationResponse<T>,
+) {
+  await checked(
+    requireSupabase()
+      .from("stage_6_mutation_idempotency")
+      .update({
+        status: "complete",
+        mutation_kind: response.kind,
+        client_id: response.clientId,
+        response_json: response,
+        completed_at: new Date().toISOString(),
+      })
+      .eq("tenant_id", tenantId)
+      .eq("request_id", requestId)
+      .eq("status", "pending"),
+  );
+  const cached = await getSupabaseStage6MutationIdempotency(tenantId, requestId, response.kind);
+  if (!cached || cached.clientId !== response.clientId) {
+    throw new Error("stage_6_idempotency_commit_failed");
+  }
 }
 
 export async function createSupabaseClientRecord(

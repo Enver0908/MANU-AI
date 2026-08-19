@@ -5,6 +5,7 @@ import {
   addSupabaseClientContextUpdate,
   isSupabaseStoreConfigured,
   loadSupabaseStage6ContextUpdates,
+  runSupabaseStage6IdempotentMutation,
 } from "@/lib/supabase-store";
 import {
   idempotencyLookup,
@@ -41,23 +42,23 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
     if (isSupabaseStoreConfigured()) {
       const tenantContext = await resolveAppTenantContext();
       requireCapability(tenantContext, "update_client");
-      const cached = idempotencyLookup(tenantContext.tenantId, envelope.requestId);
-      if (cached) return stage6JsonResponse(cached);
-      const result = await addSupabaseClientContextUpdate(
-        id,
-        {
-          source: envelope.source,
-          occurredAt: envelope.occurredAt,
-          title: envelope.title,
-          summary: envelope.summary,
-          details: envelope.details,
-          importance: envelope.importance,
-        },
-        tenantContext,
-        envelope.requestId,
+      return stage6JsonResponse(
+        await runSupabaseStage6IdempotentMutation(tenantContext, envelope.requestId, "client_context_create", () =>
+          addSupabaseClientContextUpdate(
+            id,
+            {
+              source: envelope.source,
+              occurredAt: envelope.occurredAt,
+              title: envelope.title,
+              summary: envelope.summary,
+              details: envelope.details,
+              importance: envelope.importance,
+            },
+            tenantContext,
+            envelope.requestId,
+          ),
+        ),
       );
-      idempotencyRemember(tenantContext.tenantId, envelope.requestId, result);
-      return stage6JsonResponse(result);
     }
 
     const cached = idempotencyLookup("fallback", envelope.requestId);

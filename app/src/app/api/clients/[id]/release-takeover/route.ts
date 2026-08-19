@@ -5,11 +5,16 @@ import {
   saveFallbackState,
 } from "@/lib/app-state-store";
 import { requireCapability, resolveAppTenantContext } from "@/lib/auth-context";
-import { isSupabaseStoreConfigured, releaseSupabaseHumanTakeover } from "@/lib/supabase-store";
+import {
+  isSupabaseStoreConfigured,
+  releaseSupabaseHumanTakeover,
+  runSupabaseStage6IdempotentMutation,
+} from "@/lib/supabase-store";
 import {
   idempotencyLookup,
   idempotencyRemember,
   parseReleaseTakeoverEnvelope,
+  Stage6ContractError,
 } from "@/lib/phase-85-stage-6-dashboard-contracts";
 import { projectAiControl } from "@/lib/phase-85-stage-6-client-workspace";
 import { stage6ErrorResponse, stage6JsonResponse } from "@/lib/phase-85-stage-6-api";
@@ -22,11 +27,14 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     if (isSupabaseStoreConfigured()) {
       const tenantContext = await resolveAppTenantContext();
       requireCapability(tenantContext, "release_takeover");
-      const cached = idempotencyLookup(tenantContext.tenantId, envelope.requestId);
-      if (cached) return stage6JsonResponse(cached);
-      const result = await releaseSupabaseHumanTakeover(id, tenantContext, envelope.requestId);
-      idempotencyRemember(tenantContext.tenantId, envelope.requestId, result);
-      return stage6JsonResponse(result);
+      if (!envelope.requestId) {
+        throw new Stage6ContractError(400, "request_id_required");
+      }
+      return stage6JsonResponse(
+        await runSupabaseStage6IdempotentMutation(tenantContext, envelope.requestId, "client_release_takeover", () =>
+          releaseSupabaseHumanTakeover(id, tenantContext, envelope.requestId),
+        ),
+      );
     }
 
     const cached = idempotencyLookup("fallback", envelope.requestId);

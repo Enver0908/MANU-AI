@@ -1,5 +1,7 @@
 # MANU-AI Next Phase Execution Plan
 
+**Current active status (2026-08-19):** Stage 6 R1 data-integrity remediation is implemented locally after Faz 3. Supabase-backed Stage 6 dashboard mutations use durable tenant/request-scoped idempotency reservation and bounded response replay. Stage 5 remains closed (`STAGE_5_CLOSED`). Production remains independently `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_R1_DATA_INTEGRITY_BOUNDED_PERSISTENCE_EVIDENCE.md`. Phase 4 remains not started and requires separate approval.
+
 **Current active status (2026-08-19):** Stage 6 Faz 3 messaging, alerts, notifications, and More communication workflows are implemented locally. Stage 5 remains closed (`STAGE_5_CLOSED`). Production remains independently `NO-GO`. Canonical Stage 6 plan: `docs/PHASE_85_STAGE_6_DASHBOARD_CORE_WORKFLOWS_ACTION_PLAN.md`. Faz 3 evidence: `docs/PHASE_85_STAGE_6_PHASE_3_COMMUNICATION_OPERATIONS_EVIDENCE.md`. Next is Phase 4 and requires separate approval.
 
 **Current active status (2026-08-19):** Stage 6 Faz 2 dashboard home and client workspace are implemented locally. Stage 5 remains closed (`STAGE_5_CLOSED`). Production remains independently `NO-GO`. Canonical Stage 6 plan: `docs/PHASE_85_STAGE_6_DASHBOARD_CORE_WORKFLOWS_ACTION_PLAN.md`. Faz 2 evidence: `docs/PHASE_85_STAGE_6_PHASE_2_CLIENT_WORKSPACE_EVIDENCE.md`. Next is Phase 3 and requires separate approval.

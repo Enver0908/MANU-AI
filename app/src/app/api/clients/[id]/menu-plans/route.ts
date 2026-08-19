@@ -6,6 +6,7 @@ import {
   createSupabaseClientMenuPlan,
   isSupabaseStoreConfigured,
   loadSupabaseStage6ClientState,
+  runSupabaseStage6IdempotentMutation,
 } from "@/lib/supabase-store";
 import {
   idempotencyLookup,
@@ -44,11 +45,11 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
     if (isSupabaseStoreConfigured()) {
       const tenantContext = await resolveAppTenantContext();
       requireCapability(tenantContext, "update_client");
-      const cached = idempotencyLookup(tenantContext.tenantId, envelope.requestId);
-      if (cached) return stage6JsonResponse(cached);
-      const result = await createSupabaseClientMenuPlan(id, input, tenantContext, envelope.requestId);
-      idempotencyRemember(tenantContext.tenantId, envelope.requestId, result);
-      return stage6JsonResponse(result);
+      return stage6JsonResponse(
+        await runSupabaseStage6IdempotentMutation(tenantContext, envelope.requestId, "client_menu_create", () =>
+          createSupabaseClientMenuPlan(id, input, tenantContext, envelope.requestId),
+        ),
+      );
     }
 
     const cached = idempotencyLookup("fallback", envelope.requestId);

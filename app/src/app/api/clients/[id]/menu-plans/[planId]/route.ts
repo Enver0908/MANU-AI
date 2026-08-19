@@ -2,7 +2,11 @@ import { type NextRequest } from "next/server";
 import { getFallbackState, saveFallbackState, saveMenuPlanInState } from "@/lib/app-state-store";
 import { requireCapability, resolveAppTenantContext } from "@/lib/auth-context";
 import { type SaveClientMenuPlanV1Input } from "@/lib/phase-77f-client-menu-plan";
-import { isSupabaseStoreConfigured, saveSupabaseClientMenuPlan } from "@/lib/supabase-store";
+import {
+  isSupabaseStoreConfigured,
+  runSupabaseStage6IdempotentMutation,
+  saveSupabaseClientMenuPlan,
+} from "@/lib/supabase-store";
 import {
   idempotencyLookup,
   idempotencyRemember,
@@ -23,11 +27,11 @@ export async function PUT(
     if (isSupabaseStoreConfigured()) {
       const tenantContext = await resolveAppTenantContext();
       requireCapability(tenantContext, "update_client");
-      const cached = idempotencyLookup(tenantContext.tenantId, envelope.requestId);
-      if (cached) return stage6JsonResponse(cached);
-      const result = await saveSupabaseClientMenuPlan(id, planId, input, tenantContext, envelope.requestId);
-      idempotencyRemember(tenantContext.tenantId, envelope.requestId, result);
-      return stage6JsonResponse(result);
+      return stage6JsonResponse(
+        await runSupabaseStage6IdempotentMutation(tenantContext, envelope.requestId, "client_menu_save", () =>
+          saveSupabaseClientMenuPlan(id, planId, input, tenantContext, envelope.requestId),
+        ),
+      );
     }
 
     const cached = idempotencyLookup("fallback", envelope.requestId);

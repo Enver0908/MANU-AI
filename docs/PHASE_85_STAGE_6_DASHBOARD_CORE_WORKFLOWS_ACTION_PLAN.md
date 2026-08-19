@@ -2,7 +2,7 @@
 
 Date: 2026-08-19
 
-Status: **PHASE 3 COMPLETE; PHASE 4 NOT STARTED**
+Status: **PHASE 3 COMPLETE; R1 DATA-INTEGRITY REMEDIATION COMPLETE LOCALLY; PHASE 4 NOT STARTED**
 
 Production status: **NO-GO**
 
@@ -13,6 +13,8 @@ This document is the canonical execution plan for Stage 6 Dashboard Core Workflo
 The primary user is a dietitian. The primary surface is the installed mobile PWA, while the existing productive desktop layout remains supported. Selecting a client means making that client active and opening that client's workspace. Every client switch must pass through the existing central dirty-state guard.
 
 Implementation is divided into five phases. Only one phase may be implemented at a time. Before each implementation phase, the exact scope and concrete changes must be presented to the user and explicitly approved. Commit, push, merge, PR, deployment, production-gate changes, and the next phase each require separate explicit instructions.
+
+Post-Phase 3 R1 remediation (2026-08-19): Stage 6 Supabase-backed dashboard mutations now use durable tenant/request-scoped idempotency reservation and bounded response replay via `stage_6_mutation_idempotency`. Evidence: `docs/PHASE_85_STAGE_6_R1_DATA_INTEGRITY_BOUNDED_PERSISTENCE_EVIDENCE.md`. Stage 6 Phase 4 remains not started; production remains `NO-GO`.
 
 ## 2. Locked Scope
 
@@ -557,6 +559,7 @@ Authenticate -> shell bootstrap -> dashboard home -> roster page -> guarded acti
 | Active-client and viewed-target transitions can diverge across domains | Phases 2-3 | One guarded shell transition before workspace or communication navigation. |
 | Legacy card-heavy/stone/emerald styling in touched dashboard panels | Phase 2 | Align touched surfaces to current compact clinical design system. |
 | Messaging/alert/notification navigation and refresh ownership is split | Phase 3 | Typed navigation coordinator and bounded affected-surface refresh. |
+| Stage 6 Supabase mutation idempotency was process-local after Phase 3 | R1 remediation | Durable tenant/request-scoped reservation and bounded response replay in `stage_6_mutation_idempotency`. |
 | Risk of Stage 5 shell regression or production-scope drift | Phase 4 | Full regression, physical-device, evidence, and documentation closure gates. |
 
 ## 7. Phase Governance

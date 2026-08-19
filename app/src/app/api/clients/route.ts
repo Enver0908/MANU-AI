@@ -5,7 +5,12 @@ import {
 } from "@/lib/phase-79c-scoped-client-mutation";
 import { createClientInState, getFallbackState, saveFallbackState } from "@/lib/app-state-store";
 import { requireCapability, resolveAppTenantContext } from "@/lib/auth-context";
-import { createSupabaseClientRecord, isSupabaseStoreConfigured, listSupabaseStage6Roster } from "@/lib/supabase-store";
+import {
+  createSupabaseClientRecord,
+  isSupabaseStoreConfigured,
+  listSupabaseStage6Roster,
+  runSupabaseStage6IdempotentMutation,
+} from "@/lib/supabase-store";
 import {
   idempotencyLookup,
   idempotencyRemember,
@@ -42,27 +47,27 @@ export async function POST(request: NextRequest) {
     if (isSupabaseStoreConfigured()) {
       const tenantContext = await resolveAppTenantContext();
       requireCapability(tenantContext, "create_client");
-      const cached = idempotencyLookup(tenantContext.tenantId, input.requestId);
-      if (cached) return stage6JsonResponse(cached);
-      const created = await createSupabaseClientRecord(
-        {
-          fullName: input.fullName,
-          channel: input.channel,
-          channelUserId: input.channelUserId,
-          primaryPhoneE164: input.primaryPhoneE164,
-          communicationLanguage: input.communicationLanguage,
-        },
-        tenantContext,
+      return stage6JsonResponse(
+        await runSupabaseStage6IdempotentMutation(tenantContext, input.requestId, "client_create", async () => {
+          const created = await createSupabaseClientRecord(
+            {
+              fullName: input.fullName,
+              channel: input.channel,
+              channelUserId: input.channelUserId,
+              primaryPhoneE164: input.primaryPhoneE164,
+              communicationLanguage: input.communicationLanguage,
+            },
+            tenantContext,
+          );
+          return scopedMutation(
+            "client_create",
+            created.client.id,
+            { client: created.client, conversation: created.conversation ?? null },
+            { clientContextRevision: created.client.contextRevision },
+            input.requestId,
+          );
+        }),
       );
-      const response = scopedMutation(
-        "client_create",
-        created.client.id,
-        { client: created.client, conversation: created.conversation ?? null },
-        { clientContextRevision: created.client.contextRevision },
-        input.requestId,
-      );
-      idempotencyRemember(tenantContext.tenantId, input.requestId, response);
-      return stage6JsonResponse(response);
     }
 
     const cached = idempotencyLookup("fallback", input.requestId);

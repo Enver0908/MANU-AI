@@ -10,6 +10,7 @@ import {
   isSupabaseStoreConfigured,
   loadSupabaseStage6Workspace,
   patchSupabaseClientRecord,
+  runSupabaseStage6IdempotentMutation,
 } from "@/lib/supabase-store";
 import {
   assertExpectedRevision,
@@ -46,20 +47,20 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
     if (isSupabaseStoreConfigured()) {
       const tenantContext = await resolveAppTenantContext();
       requireCapability(tenantContext, "update_client");
-      const cached = idempotencyLookup(tenantContext.tenantId, envelope.requestId);
-      if (cached) return stage6JsonResponse(cached);
-      const loaded = await loadSupabaseStage6Workspace(id, tenantContext);
-      assertExpectedRevision(loaded.summary.contextRevision, envelope.expectedRevision, "client");
-      const patched = await patchSupabaseClientRecord(id, envelope.patch, tenantContext);
-      const response = scopedMutation(
-        "client_patch",
-        patched.client.id,
-        { client: patched.client },
-        { clientContextRevision: patched.client.contextRevision },
-        envelope.requestId,
+      return stage6JsonResponse(
+        await runSupabaseStage6IdempotentMutation(tenantContext, envelope.requestId, "client_patch", async () => {
+          const loaded = await loadSupabaseStage6Workspace(id, tenantContext);
+          assertExpectedRevision(loaded.summary.contextRevision, envelope.expectedRevision, "client");
+          const patched = await patchSupabaseClientRecord(id, envelope.patch, tenantContext);
+          return scopedMutation(
+            "client_patch",
+            patched.client.id,
+            { client: patched.client },
+            { clientContextRevision: patched.client.contextRevision },
+            envelope.requestId,
+          );
+        }),
       );
-      idempotencyRemember(tenantContext.tenantId, envelope.requestId, response);
-      return stage6JsonResponse(response);
     }
 
     const cached = idempotencyLookup("fallback", envelope.requestId);
