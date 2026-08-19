@@ -74,6 +74,8 @@ describe("alerts-panel-helpers", () => {
     expect(resolveAlertTypeLabelKey("lab_result")).toBe("alertTypeLabResult");
     expect(canNavigateToAlertTarget(buildAlert())).toBe(true);
     expect(canNavigateToAlertTarget(buildAlert({ clientId: "" }))).toBe(false);
+    expect(canNavigateToAlertTarget(buildAlert({ conversationId: null }))).toBe(false);
+    expect(canNavigateToAlertTarget(buildAlert(), new Set(["other"]))).toBe(false);
   });
 
   it("formats additional reason suffix and started timestamps", () => {

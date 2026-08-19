@@ -45,21 +45,23 @@ import {
 import { DASHBOARD_MAIN_ID } from "@/lib/phase-83e6-states-polish";
 import {
   commitDashboardHref,
+  currentDashboardHref,
   dashboardSectionToShellDestination,
   parseClientWorkspaceTask,
   resolveLegacyCopilotSectionRedirect,
   resolveMessagingRouteSelection,
+  resolveStage6CommunicationDestination,
   type ClientWorkspaceTask,
   type DashboardSection,
+  type Stage6CommunicationDestinationInput,
 } from "@/lib/phase-85-stage-4b-dashboard-routing";
 import {
   buildStage6ClientWorkspaceHref,
   formatStage6ClientReferenceShort,
   runStage6ClientActivation,
+  runStage6CommunicationOpen,
 } from "@/lib/phase-85-stage-6-client-selection";
 import {
-  buildClinicalAlertMessagingNavigationPatch,
-  buildSystemNotificationNavigationAction,
   refreshStage4B2OperationalSurfaces,
   resolveMessagingTargetValidity,
 } from "@/lib/phase-85-stage-4b2-messaging-integration";
@@ -138,6 +140,8 @@ export function DashboardApp({
     useState<OperationalFoundationInspectionDto | null>(null);
   const [search, setSearch] = useState("");
   const [manualReply, setManualReply] = useState("");
+  const [isSendingManualReply, setIsSendingManualReply] = useState(false);
+  const [messagingListScrollTop, setMessagingListScrollTop] = useState<number | null>(null);
   const [simBody, setSimBody] = useState(scenarioMessages[0].body);
   const [simKey, setSimKey] = useState("local-1");
   const [visualKey, setVisualKey] = useState("vis-local-1");
@@ -349,6 +353,14 @@ export function DashboardApp({
           windowScrollY: window.scrollY,
         });
       }
+      if (previous === "messages") {
+        const list = document.querySelector("[data-testid='messaging-list-scroll']");
+        saveDestinationViewState(previousDestination, {
+          search: urlState.conversationQuery,
+          filter: urlState.conversationStatus,
+          scrollTop: list instanceof HTMLElement ? list.scrollTop : messagingListScrollTop ?? undefined,
+        });
+      }
       const nextDestination = dashboardSectionToShellDestination(section);
       const snapshot = restoreDestinationViewState(nextDestination);
       if (section === "clients" && snapshot) {
@@ -365,6 +377,9 @@ export function DashboardApp({
           });
         }
       }
+      if (section === "messages" && snapshot && typeof snapshot.scrollTop === "number") {
+        setMessagingListScrollTop(snapshot.scrollTop);
+      }
       previousSectionRef.current = section;
     }
   }, [
@@ -373,6 +388,9 @@ export function DashboardApp({
     search,
     section,
     urlState.clientTask,
+    urlState.conversationQuery,
+    urlState.conversationStatus,
+    messagingListScrollTop,
     navigateDashboard,
   ]);
   useEffect(() => {
@@ -384,8 +402,16 @@ export function DashboardApp({
           windowScrollY: window.scrollY,
         });
       }
+      if (section === "messages") {
+        const list = document.querySelector("[data-testid='messaging-list-scroll']");
+        saveDestinationViewState("messages", {
+          search: urlState.conversationQuery,
+          filter: urlState.conversationStatus,
+          scrollTop: list instanceof HTMLElement ? list.scrollTop : messagingListScrollTop ?? undefined,
+        });
+      }
     };
-  }, [saveDestinationViewState, search, section, urlState.clientTask]);
+  }, [saveDestinationViewState, search, section, urlState.clientTask, urlState.conversationQuery, urlState.conversationStatus, messagingListScrollTop]);
 
   const uiLanguage = state.dietitian.uiLanguage || "tr";
   const canManageAiControls =
@@ -515,6 +541,58 @@ export function DashboardApp({
     );
   };
 
+  const openCommunicationDestination = async (input: Stage6CommunicationDestinationInput) => {
+    const knownClientIds = new Set(activeClients.map((item) => item.id));
+    const destination = resolveStage6CommunicationDestination(urlState, input, { knownClientIds });
+    const previousHref = currentDashboardHref();
+    const persistClient =
+      destination.requiresActiveClient && destination.linkedClientId
+        ? activeClients.find((item) => item.id === destination.linkedClientId)
+        : undefined;
+    const outcome = await runStage6CommunicationOpen(
+      {
+        destination,
+        previousHref,
+        isSaving: dirtySnapshot.isSaving,
+        currentActiveClientId: effectiveActiveClientId,
+      },
+      async () => {
+        if (!persistClient) return false;
+        return selectActiveClient(
+          {
+            id: persistClient.id,
+            fullName: persistClient.fullName,
+            referenceShort: formatStage6ClientReferenceShort(persistClient.id),
+          },
+          { afterHref: destination.href },
+        );
+      },
+    );
+    if (outcome.kind === "inaccessible") {
+      return "inaccessible" as const;
+    }
+    if (outcome.kind !== "opened") {
+      return outcome.kind;
+    }
+    if (destination.kind === "clientWorkspace" && destination.linkedClientId) {
+      const nextTask = parseClientWorkspaceTask(destination.urlPatch.clientTask) ?? "summary";
+      setWorkspaceOverride({ clientId: destination.linkedClientId, clientTask: nextTask });
+    }
+    if (!outcome.persistClientId) {
+      if (!canNavigateAway()) {
+        requestHrefNavigation(outcome.href);
+        return "opened" as const;
+      }
+      if (destination.kind === "settings" || destination.kind === "aiChat") {
+        requestHrefNavigation(destination.href);
+        return "opened" as const;
+      }
+      commitDashboardHref(destination.href, "push");
+      navigateDashboard(destination.urlPatch);
+    }
+    return "opened" as const;
+  };
+
   const openClientTask = (task: ClientWorkspaceTask) => {
     if (dirtySnapshot.isSaving) return;
     const clientId = workspaceUrlState.clientId;
@@ -641,9 +719,10 @@ export function DashboardApp({
   };
 
   const sendManualReply = async () => {
-    if (!selectedClient || !manualReply.trim()) return;
+    if (!selectedClient || !manualReply.trim() || isSendingManualReply) return;
     const body = manualReply;
     const aiChatDraftTransferId = stage4bMessaging.detail?.pendingAiChatDraftTransfer?.transferId;
+    setIsSendingManualReply(true);
     try {
       await sendManualReplyRequest({ clientId: selectedClient.id, body, aiChatDraftTransferId });
       setManualReply("");
@@ -654,6 +733,8 @@ export function DashboardApp({
         return;
       }
       throw error;
+    } finally {
+      setIsSendingManualReply(false);
     }
   };
 
@@ -701,21 +782,25 @@ export function DashboardApp({
   };
 
   const openAlertTarget = (alert: ClinicalAlertListItem) => {
-    const patch = buildClinicalAlertMessagingNavigationPatch(alert);
-    if (!patch) return;
-    navigateDashboard(patch);
+    void openCommunicationDestination({
+      section: "messages",
+      clientId: alert.clientId,
+      conversationId: alert.conversationId,
+      messageId: alert.sourceMessageId,
+      source: "alert",
+      sourceId: alert.id,
+    });
   };
 
   const openNotificationTarget = (notification: SystemNotificationListItem) => {
-    const action = buildSystemNotificationNavigationAction(notification);
-    if (!action) return;
-    if (action.type === "dashboard") {
-      navigateDashboard(action.patch);
-      return;
-    }
-    selectClient(action.clientId, {
-      section: "clients",
-      clientTask: parseClientWorkspaceTask(action.clientDetailTab ?? "summary") ?? "summary",
+    void openCommunicationDestination({
+      section: notification.target.section,
+      clientId: notification.clientId ?? notification.target.clientId,
+      conversationId: notification.target.conversationId ?? notification.conversationId,
+      messageId: notification.target.messageId ?? notification.messageId,
+      source: "notification",
+      sourceId: notification.id,
+      clientTask: notification.target.section === "ai-control" ? "ai" : "summary",
     });
   };
 
@@ -925,6 +1010,13 @@ export function DashboardApp({
                 onEvaluateWithAi={evaluateClientWithAi}
                 isEvaluatingWithAi={isEvaluatingWithAi}
                 evaluateWithAiError={evaluateWithAiError}
+                onOpenMessages={(clientId) =>
+                  void openCommunicationDestination({
+                    section: "messages",
+                    clientId,
+                    conversationId: state.conversations.find((item) => item.clientId === clientId)?.id ?? null,
+                  })
+                }
               />
             )}
 
@@ -947,20 +1039,29 @@ export function DashboardApp({
                 onFiltersChange={(patch) => navigateDashboard(patch)}
                 onRefreshList={() => void stage4bMessaging.refreshList({ resetBackoff: true })}
                 onLoadMore={() => void stage4bMessaging.loadMoreList()}
-                onSelectConversation={(item) =>
-                  navigateDashboard({
+                onSelectConversation={(item) => {
+                  const list = document.querySelector("[data-testid='messaging-list-scroll']");
+                  if (list instanceof HTMLElement) {
+                    setMessagingListScrollTop(list.scrollTop);
+                    saveDestinationViewState("messages", {
+                      search: urlState.conversationQuery,
+                      filter: urlState.conversationStatus,
+                      scrollTop: list.scrollTop,
+                    });
+                  }
+                  void openCommunicationDestination({
                     section: "messages",
                     conversationId: item.id,
                     clientId: item.clientId,
-                    messageId: null,
-                  })
-                }
+                  });
+                }}
                 onBackToList={() =>
                   navigateDashboard({
                     conversationId: null,
                     messageId: null,
                   })
                 }
+                restoreListScrollTop={messagingListScrollTop}
                 detailUnavailable={Boolean(
                   messagingRoute.conversationId && !messagingTargetValidity.valid,
                 )}
@@ -979,6 +1080,7 @@ export function DashboardApp({
                       manualReply={manualReply}
                       onManualReply={setManualReply}
                       onSendManualReply={sendManualReply}
+                      isSendingManualReply={isSendingManualReply}
                       pendingAiChatDraftTransfer={stage4bMessaging.detail?.pendingAiChatDraftTransfer ?? null}
                       onActivateAi={activateSelectedClientAi}
                       onSetAiPassive={setSelectedClientAiPassive}
@@ -992,6 +1094,13 @@ export function DashboardApp({
                         runConversationMutation(() => reviewSendManualFromDraft(messageId, body))
                       }
                       onOpenSimulator={() => navigateToSection("simulator")}
+                      onOpenClientWorkspace={() =>
+                        void openCommunicationDestination({
+                          section: "clients",
+                          clientId: selectedClient?.id ?? messagingRoute.clientId,
+                          clientTask: "summary",
+                        })
+                      }
                       onLoadOlder={() => void stage4bMessaging.loadOlderMessages()}
                       onLoadNewer={() => void stage4bMessaging.loadNewerMessages()}
                       onRetryDetail={() => void stage4bMessaging.refreshDetail({ resetBackoff: true })}
@@ -1101,7 +1210,8 @@ export function DashboardApp({
                 onRefresh={() => void stage4bInbox.refresh({ resetBackoff: true })}
                 onLoadMore={() => void stage4bInbox.loadMoreNotifications()}
                 onOpenNotificationTarget={openNotificationTarget}
-                onMutationComplete={() => refreshStage4B2Surfaces({ anchorMessageId: urlState.messageId })}
+                onReceiptMutated={(payload) => stage4bInbox.applyNotificationMutation(payload)}
+                onReadAllMutated={(payload) => stage4bInbox.applyNotificationReadAll(payload)}
               />
             )}
 

@@ -404,20 +404,8 @@ export function resolveMessagingRouteSelection(
     };
   }
 
-  const conversationByClient = urlState.clientId
-    ? conversations.find((item) => item.clientId === urlState.clientId)
-    : undefined;
-  if (conversationByClient && activeClientIds.has(conversationByClient.clientId)) {
-    return {
-      conversationId: conversationByClient.id,
-      clientId: conversationByClient.clientId,
-      messageId,
-      canonicalConversationId: conversationByClient.id,
-      canonicalClientId: conversationByClient.clientId,
-      needsCanonicalization: urlState.conversationId !== conversationByClient.id,
-    };
-  }
-
+  // Client-only URLs stay on the list. Auto-opening a conversation would
+  // prevent mobile back-to-list from restoring the inbox.
   return {
     conversationId: null,
     clientId: urlState.clientId && activeClientIds.has(urlState.clientId) ? urlState.clientId : null,
@@ -632,4 +620,163 @@ export function shellDestinationAcceptsClientId(destination: ShellDestinationId)
 
 export function dashboardSectionToShellDestination(section: DashboardSection): ShellDestinationId {
   return SECTION_TO_SHELL_DESTINATION[section];
+}
+
+export type Stage6CommunicationDestinationKind =
+  | "conversation"
+  | "clientWorkspace"
+  | "settings"
+  | "aiChat"
+  | "fallback";
+
+export type Stage6CommunicationDestinationInput = {
+  kindHint?: string | null;
+  section?: string | null;
+  clientId?: string | null;
+  conversationId?: string | null;
+  messageId?: string | null;
+  source?: DashboardMessageSource | null;
+  sourceId?: string | null;
+  clientTask?: string | null;
+};
+
+export type Stage6ResolvedCommunicationDestination = {
+  kind: Stage6CommunicationDestinationKind;
+  href: string;
+  urlPatch: Partial<DashboardUrlState>;
+  linkedClientId: string | null;
+  requiresActiveClient: boolean;
+  inaccessible: boolean;
+};
+
+function normalizeStage6CommunicationKind(
+  input: Stage6CommunicationDestinationInput,
+): Stage6CommunicationDestinationKind {
+  const hint = `${input.kindHint ?? ""} ${input.section ?? ""}`.trim().toLowerCase();
+  if (hint.includes("settings") || hint === "account") return "settings";
+  if (
+    hint.includes("ai_chat") ||
+    hint.includes("ai-chat") ||
+    hint.includes("aichat") ||
+    hint === "copilot"
+  ) {
+    return "aiChat";
+  }
+  if (hint.includes("message") || hint.includes("conversation")) return "conversation";
+  if (hint.includes("ai-control") || hint.includes("client")) return "clientWorkspace";
+  if (input.conversationId?.trim()) return "conversation";
+  return "fallback";
+}
+
+function inaccessibleStage6CommunicationDestination(
+  current: DashboardUrlState,
+): Stage6ResolvedCommunicationDestination {
+  return {
+    kind: "fallback",
+    href: buildDashboardHref(DASHBOARD_ROOT_PATH, current),
+    urlPatch: {},
+    linkedClientId: null,
+    requiresActiveClient: false,
+    inaccessible: true,
+  };
+}
+
+export function resolveStage6CommunicationDestination(
+  current: DashboardUrlState,
+  input: Stage6CommunicationDestinationInput,
+  options?: { knownClientIds?: ReadonlySet<string> },
+): Stage6ResolvedCommunicationDestination {
+  const kind = normalizeStage6CommunicationKind(input);
+  const clientId = input.clientId?.trim() || null;
+  const conversationId = input.conversationId?.trim() || null;
+  const messageId = input.messageId?.trim() || null;
+
+  if (clientId && options?.knownClientIds && !options.knownClientIds.has(clientId)) {
+    return inaccessibleStage6CommunicationDestination(current);
+  }
+
+  if (kind === "settings") {
+    return {
+      kind: "settings",
+      href: SETTINGS_ROOT_PATH,
+      urlPatch: {},
+      linkedClientId: null,
+      requiresActiveClient: false,
+      inaccessible: false,
+    };
+  }
+
+  if (kind === "aiChat") {
+    return {
+      kind: "aiChat",
+      href: AI_CHAT_ROOT_PATH,
+      urlPatch: {},
+      linkedClientId: null,
+      requiresActiveClient: false,
+      inaccessible: false,
+    };
+  }
+
+  if (kind === "conversation") {
+    if (!clientId || !conversationId) {
+      return inaccessibleStage6CommunicationDestination(current);
+    }
+    const urlPatch: Partial<DashboardUrlState> = {
+      section: "messages",
+      clientId,
+      conversationId,
+      messageId,
+      source: input.source ?? null,
+      sourceId: input.sourceId ?? null,
+    };
+    return {
+      kind: "conversation",
+      href: buildDashboardHref(DASHBOARD_ROOT_PATH, mergeDashboardUrlState(current, urlPatch)),
+      urlPatch,
+      linkedClientId: clientId,
+      requiresActiveClient: true,
+      inaccessible: false,
+    };
+  }
+
+  if (kind === "clientWorkspace") {
+    if (!clientId) {
+      return {
+        kind: "fallback",
+        href: buildDashboardHref(
+          DASHBOARD_ROOT_PATH,
+          mergeDashboardUrlState(current, { section: "overview" }),
+        ),
+        urlPatch: { section: "overview" },
+        linkedClientId: null,
+        requiresActiveClient: false,
+        inaccessible: false,
+      };
+    }
+    const clientTask =
+      parseClientWorkspaceTask(input.clientTask) ??
+      (String(input.section ?? "").toLowerCase() === "ai-control" ? "ai" : "summary");
+    const urlPatch: Partial<DashboardUrlState> = {
+      section: "clients",
+      clientId,
+      clientTask,
+    };
+    return {
+      kind: "clientWorkspace",
+      href: buildDashboardHref(DASHBOARD_ROOT_PATH, mergeDashboardUrlState(current, urlPatch)),
+      urlPatch,
+      linkedClientId: clientId,
+      requiresActiveClient: true,
+      inaccessible: false,
+    };
+  }
+
+  return {
+    kind: "fallback",
+    href: buildDashboardHref(DASHBOARD_ROOT_PATH, mergeDashboardUrlState(current, { section: "overview" })),
+    urlPatch: { section: "overview" },
+    linkedClientId: null,
+    requiresActiveClient: false,
+    inaccessible: false,
+  };
 }

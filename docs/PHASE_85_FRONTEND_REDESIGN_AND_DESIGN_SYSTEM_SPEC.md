@@ -339,7 +339,7 @@ Requires user approval before implementation.
 
 Goal: redesign high-use dashboard panels without changing clinical logic.
 
-Current Stage 6 note, 2026-08-19: Faz 1 bounded client contracts and Faz 2 dashboard home + client workspace are implemented locally. Phase 3 communication workflows are not started. Evidence: `docs/PHASE_85_STAGE_6_PHASE_2_CLIENT_WORKSPACE_EVIDENCE.md`. Production remains `NO-GO`.
+Current Stage 6 note, 2026-08-19: Faz 1–3 (bounded client contracts, dashboard home + client workspace, and communication/operational queues) are implemented locally. Phase 4 closure is not started. Evidence: `docs/PHASE_85_STAGE_6_PHASE_3_COMMUNICATION_OPERATIONS_EVIDENCE.md`. Production remains `NO-GO`.
 
 Expected scope:
 

@@ -1,4 +1,10 @@
 import { expect, test, type Page } from "@playwright/test";
+import {
+  conversationComposerInput,
+  openConversation,
+  openMessagingSection,
+  openVisibleShellNavOrHref,
+} from "./messaging-visual-helpers";
 
 test.describe.configure({ timeout: 120_000 });
 
@@ -108,4 +114,56 @@ test("keyboard can open a client task from the roster", async ({ page }) => {
   await expect(firstClient).toBeFocused();
   await page.keyboard.press("Enter");
   await expect(page.getByTestId("client-workspace-header")).toBeVisible();
+});
+
+test("messaging list and detail split on mobile and stay side by side on desktop", async ({ page }) => {
+  await openDashboard(page);
+  await openMessagingSection(page);
+  await expect(page.getByTestId("messaging-list-scroll")).toBeVisible();
+  await openConversation(page, "conversation-client-mert", "client-mert");
+  await expect(page.getByTestId("conversation-panel")).toBeVisible();
+  const composer = conversationComposerInput(page);
+  await composer.focus();
+  await expect(composer).toBeFocused();
+  await assertNoHorizontalPageScroll(page);
+
+  const back = page.getByRole("button", { name: "Konuşma listesine dön" });
+  const compactStack = await back.isVisible();
+  if (compactStack) {
+    await expect(page.getByTestId("messaging-list-scroll")).toBeHidden();
+    await back.click();
+    await expect(page.getByTestId("messaging-list-scroll")).toBeVisible();
+    await expect(page.getByTestId("conversation-panel")).toHaveCount(0);
+  } else {
+    await expect(page.getByTestId("messaging-list-scroll")).toBeVisible();
+    await expect(page.getByTestId("conversation-panel")).toBeVisible();
+  }
+});
+
+test("inaccessible conversation target stays fail-closed", async ({ page }) => {
+  await page.request.post("/api/app-state");
+  await page.goto("/dashboard?section=messages&clientId=missing-client&conversationId=missing-conversation");
+  await expect(page.getByTestId("messaging-target-unavailable")).toBeVisible();
+  await expect(page.getByText("Artık erişilemiyor")).toBeVisible();
+});
+
+test("workspace messaging shortcut and More AI Chat stay capability-filtered", async ({ page }) => {
+  await openDashboard(page);
+  await openMertWorkspace(page);
+  await page.getByTestId("client-workspace-open-messages").click();
+  await expect(page.getByTestId("messaging-panel")).toBeVisible();
+  await expect(page).toHaveURL(/section=messages/);
+  await expect(page).toHaveURL(/clientId=client-mert/);
+
+  await openVisibleShellNavOrHref(page, /Diğer|Diger/, "/dashboard/more");
+  await expect(page.getByTestId("more-page")).toBeVisible();
+  const aiChat = page.getByTestId("more-item-ai_chat");
+  const aiChatDisabled = page.getByTestId("more-item-ai_chat-disabled");
+  if (await aiChat.isVisible()) {
+    await aiChat.click();
+    await expect(page).toHaveURL(/\/dashboard\/ai-chat/);
+    expect(page.url()).not.toMatch(/clientId=/);
+  } else {
+    await expect(aiChatDisabled).toBeVisible();
+  }
 });

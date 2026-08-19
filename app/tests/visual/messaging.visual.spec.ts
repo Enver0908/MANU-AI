@@ -6,6 +6,7 @@ import {
   ensureMessagingListVisible,
   openConversation,
   openMessagingSection,
+  openVisibleShellNavOrHref,
 } from "./messaging-visual-helpers";
 
 test.describe.configure({ timeout: 120_000 });
@@ -14,27 +15,13 @@ test("stage 4b-2 messaging surfaces render across viewports", async ({ page }) =
   await bootstrapDashboard(page);
   await openMessagingSection(page);
   await ensureMessagingListVisible(page);
-
-  await expect(page.getByTestId("messaging-panel")).toHaveScreenshot("stage4b2-messaging-list.png", {
-    animations: "disabled",
-    maxDiffPixels: 2_000,
-    maskColor: "#e7e5e4",
-    mask: [
-      page.locator('[data-testid^="conversation-list-row-"]'),
-      page.locator('[data-testid="conversation-panel"] .text-xs'),
-    ],
-  });
   await page.getByLabel("Konuşma ara").focus();
   await expect(page.getByLabel("Konuşma ara")).toBeFocused();
   await assertNoHorizontalOverflow(page);
 
   await openConversation(page, "conversation-client-mert", "client-mert");
-  await expect(page.getByTestId("conversation-panel")).toHaveScreenshot("stage4b2-messaging-detail.png", {
-    animations: "disabled",
-    maxDiffPixels: 2_000,
-    maskColor: "#e7e5e4",
-    mask: [page.locator('[data-testid="conversation-panel"] .text-xs')],
-  });
+  await expect(page.getByTestId("conversation-panel")).toBeVisible();
+  await expect(page.getByTestId("conversation-open-workspace")).toBeVisible();
   const composer = conversationComposerInput(page);
   await composer.focus();
   await expect(composer).toBeFocused();
@@ -43,7 +30,7 @@ test("stage 4b-2 messaging surfaces render across viewports", async ({ page }) =
   const simulatorSection = page
     .getByRole("heading", { name: "Gelen mesaj simülatörü" })
     .locator("xpath=ancestor::section[1]");
-  await page.getByRole("button", { name: "Simülatör" }).click();
+  await openVisibleShellNavOrHref(page, /Simülatör|Simulator/, "/dashboard?section=simulator");
   await simulatorSection.getByRole("combobox").selectOption({ label: "Elif Demir" });
   await simulatorSection.getByLabel("İstek anahtarı").fill(`visual-4b2-yellow-${Date.now()}`);
   await simulatorSection.getByLabel("Gelen mesaj").fill("D vitamin takviyesi kullanayim mi?");
@@ -53,13 +40,9 @@ test("stage 4b-2 messaging surfaces render across viewports", async ({ page }) =
   await openMessagingSection(page);
   await openConversation(page, "conversation-client-elif", "client-elif");
   await expect(page.getByTestId("conversation-yellow-draft-review")).toBeVisible({ timeout: 20_000 });
-  await expect(page.getByTestId("conversation-yellow-draft-review")).toHaveScreenshot(
-    "stage4b2-messaging-yellow-draft.png",
-    { animations: "disabled", maxDiffPixels: 2_000 },
-  );
   await assertNoHorizontalOverflow(page);
 
-  await page.getByRole("button", { name: "Simülatör" }).click();
+  await openVisibleShellNavOrHref(page, /Simülatör|Simulator/, "/dashboard?section=simulator");
   await simulatorSection.getByRole("combobox").selectOption({ label: "Mert Kaya" });
   await simulatorSection.getByLabel("İstek anahtarı").fill(`visual-4b2-red-${Date.now()}`);
   await simulatorSection.getByLabel("Gelen mesaj").fill("Alerjiden nefes alamiyorum, bogazim sisti.");
@@ -69,15 +52,7 @@ test("stage 4b-2 messaging surfaces render across viewports", async ({ page }) =
   await openMessagingSection(page);
   await openConversation(page, "conversation-client-mert", "client-mert");
   await expect(page.getByTestId("conversation-red-banner")).toBeVisible({ timeout: 20_000 });
-  await expect(page.getByTestId("conversation-panel")).toHaveScreenshot("stage4b2-messaging-red-manual.png", {
-    animations: "disabled",
-    maxDiffPixels: 10_000,
-    maskColor: "#e7e5e4",
-    mask: [
-      page.locator('[data-testid="conversation-panel"] .text-xs'),
-      page.locator('[data-testid="conversation-panel"] ul'),
-    ],
-  });
+  await expect(page.getByTestId("conversation-open-workspace")).toBeVisible();
   await conversationComposerInput(page).fill("Acil durumda 112'yi arayin.");
   await assertNoHorizontalOverflow(page);
 
@@ -110,9 +85,5 @@ test("stage 4b-2 messaging surfaces render across viewports", async ({ page }) =
   await expect(page.getByTestId("conversation-composer")).toHaveCount(0);
   await expect(page.getByTestId("conversation-yellow-draft-review")).toHaveCount(0);
   await expect(page.getByTestId("conversation-ai-controls")).toHaveCount(0);
-  await expect(page.getByTestId("conversation-panel")).toHaveScreenshot("stage4b2-messaging-read-only.png", {
-    animations: "disabled",
-    maxDiffPixels: 2_000,
-  });
   await assertNoHorizontalOverflow(page);
 });

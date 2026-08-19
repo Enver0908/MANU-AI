@@ -4,6 +4,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type {
   ClinicalAlertListItem,
   ClinicalAlertsListResponse,
+  Stage4BNotificationMutationResponse,
+  Stage4BNotificationReadAllResponse,
   SystemNotificationListItem,
   SystemNotificationsListResponse,
 } from "./phase-85-stage-4b-contracts";
@@ -13,6 +15,10 @@ import {
   resolveAlertsBadgeCount,
   type DashboardUrlState,
 } from "./phase-85-stage-4b-dashboard-routing";
+import {
+  applyStage4BNotificationReadAllToItems,
+  mergeStage4BNotificationMutationIntoItems,
+} from "./notifications-panel-helpers";
 import {
   fetchWithInflightDedupe,
   resolveStage4BInboxPollDelayMs,
@@ -199,6 +205,17 @@ export function useStage4BInbox(filters: Pick<
     void refresh({ resetBackoff: true });
   }, [refresh]);
 
+  const applyNotificationMutation = useCallback((payload: Stage4BNotificationMutationResponse) => {
+    setNotificationItems((current) => mergeStage4BNotificationMutationIntoItems(current, payload));
+    setNotifications((current) => (current ? { ...current, counts: payload.counts } : current));
+  }, []);
+
+  const applyNotificationReadAll = useCallback((payload: Stage4BNotificationReadAllResponse) => {
+    const readAt = payload.generatedAt;
+    setNotificationItems((current) => applyStage4BNotificationReadAllToItems(current, payload, readAt));
+    setNotifications((current) => (current ? { ...current, counts: payload.counts } : current));
+  }, []);
+
   useEffect(() => {
     mountedRef.current = true;
     return () => {
@@ -290,6 +307,8 @@ export function useStage4BInbox(filters: Pick<
     ...snapshot,
     refresh,
     refreshAfterMutation,
+    applyNotificationMutation,
+    applyNotificationReadAll,
     loadMoreAlerts,
     loadMoreNotifications,
   };

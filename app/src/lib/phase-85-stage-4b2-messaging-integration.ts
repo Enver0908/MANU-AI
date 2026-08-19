@@ -1,5 +1,9 @@
 import type { ClinicalAlertListItem, SystemNotificationListItem } from "./phase-85-stage-4b-contracts";
-import type { DashboardUrlState } from "./phase-85-stage-4b-dashboard-routing";
+import {
+  getDefaultDashboardUrlState,
+  resolveStage6CommunicationDestination,
+  type DashboardUrlState,
+} from "./phase-85-stage-4b-dashboard-routing";
 import { detectP85IfIClientExportLeaks } from "./phase-85-if-i-lifecycle-closure";
 import type { ManuAppState } from "./types";
 
@@ -37,54 +41,48 @@ export function refreshStage4B2OperationalSurfaces(
 export function buildClinicalAlertMessagingNavigationPatch(
   alert: ClinicalAlertListItem,
 ): Partial<DashboardUrlState> | null {
-  if (!alert.clientId?.trim() || !alert.conversationId?.trim()) {
-    return null;
-  }
-  return {
+  const destination = resolveStage6CommunicationDestination(getDefaultDashboardUrlState(), {
     section: "messages",
     clientId: alert.clientId,
     conversationId: alert.conversationId,
+    messageId: alert.sourceMessageId,
     source: "alert",
     sourceId: alert.id,
-    messageId: alert.sourceMessageId,
-  };
+  });
+  if (destination.inaccessible || destination.kind !== "conversation") {
+    return null;
+  }
+  return destination.urlPatch;
 }
 
 export function buildSystemNotificationNavigationAction(
   notification: SystemNotificationListItem,
 ): Stage4B2NavigationAction | null {
   const target = notification.target;
-  if (!target.clientId?.trim()) return null;
-
-  if (target.section === "messages") {
-    return {
-      type: "dashboard",
-      patch: {
-        section: "messages",
-        clientId: target.clientId,
-        conversationId: target.conversationId ?? notification.conversationId,
-        messageId: target.messageId ?? notification.messageId,
-        source: "notification",
-        sourceId: notification.id,
-      },
-    };
+  const destination = resolveStage6CommunicationDestination(getDefaultDashboardUrlState(), {
+    section: target.section,
+    clientId: notification.clientId ?? target.clientId,
+    conversationId: target.conversationId ?? notification.conversationId,
+    messageId: target.messageId ?? notification.messageId,
+    source: "notification",
+    sourceId: notification.id,
+    clientTask: target.section === "ai-control" ? "ai" : "summary",
+  });
+  if (destination.inaccessible) return null;
+  if (destination.kind === "conversation" || destination.kind === "fallback") {
+    if (destination.kind === "fallback" && !destination.urlPatch.section) return null;
+    return { type: "dashboard", patch: destination.urlPatch };
   }
-
-  if (target.section === "ai-control") {
+  if (destination.kind === "clientWorkspace" && destination.linkedClientId) {
     return {
       type: "client-panel",
-      clientId: target.clientId,
-      clientDetailTab: "tab_ai_assistant",
+      clientId: destination.linkedClientId,
+      clientDetailTab: destination.urlPatch.clientTask === "ai" ? "tab_ai_assistant" : "tab_overview",
     };
   }
-
-  if (target.section === "clients") {
-    return {
-      type: "client-panel",
-      clientId: target.clientId,
-    };
+  if (destination.kind === "settings" || destination.kind === "aiChat") {
+    return { type: "dashboard", patch: destination.urlPatch };
   }
-
   return null;
 }
 

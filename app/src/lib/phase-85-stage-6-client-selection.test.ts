@@ -10,6 +10,7 @@ import {
   buildStage6ClientWorkspaceHref,
   formatStage6ClientReferenceShort,
   runStage6ClientActivation,
+  runStage6CommunicationOpen,
   shouldRestoreClientRosterFocus,
 } from "./phase-85-stage-6-client-selection";
 
@@ -114,5 +115,92 @@ describe("phase-85-stage-6 client activation order", () => {
     expect(shouldRestoreClientRosterFocus("list", "task")).toBe(true);
     expect(shouldRestoreClientRosterFocus("hub", "list")).toBe(false);
     expect(shouldRestoreClientRosterFocus("list", "list")).toBe(false);
+  });
+});
+
+describe("phase-85-stage-6 communication open order", () => {
+  const destination = {
+    kind: "conversation" as const,
+    href: "/dashboard?section=messages&clientId=client-b&conversationId=c-b",
+    urlPatch: { section: "messages" as const, clientId: "client-b", conversationId: "c-b" },
+    linkedClientId: "client-b",
+    requiresActiveClient: true,
+    inaccessible: false,
+  };
+
+  it("activates the linked client before committing the destination href", async () => {
+    const persist = vi.fn(async () => true);
+    const outcome = await runStage6CommunicationOpen(
+      {
+        destination,
+        previousHref: "/dashboard?section=alerts&clientId=client-a",
+        isSaving: false,
+        currentActiveClientId: "client-a",
+      },
+      persist,
+    );
+    expect(persist).toHaveBeenCalledTimes(1);
+    expect(outcome).toEqual({
+      kind: "opened",
+      href: destination.href,
+      persistClientId: "client-b",
+    });
+  });
+
+  it("does not persist or change the href when the target is inaccessible", async () => {
+    const persist = vi.fn(async () => true);
+    const outcome = await runStage6CommunicationOpen(
+      {
+        destination: { ...destination, inaccessible: true },
+        previousHref: "/dashboard?section=alerts",
+        isSaving: false,
+        currentActiveClientId: "client-a",
+      },
+      persist,
+    );
+    expect(persist).not.toHaveBeenCalled();
+    expect(outcome).toEqual({ kind: "inaccessible", href: "/dashboard?section=alerts" });
+  });
+
+  it("rolls back the previous href when active-client persistence fails", async () => {
+    const outcome = await runStage6CommunicationOpen(
+      {
+        destination,
+        previousHref: "/dashboard?section=alerts&clientId=client-a",
+        isSaving: false,
+        currentActiveClientId: "client-a",
+      },
+      async () => false,
+    );
+    expect(outcome).toEqual({
+      kind: "rolled_back",
+      href: "/dashboard?section=alerts&clientId=client-a",
+    });
+  });
+
+  it("opens a clientless destination without persisting an active client", async () => {
+    const persist = vi.fn(async () => true);
+    const outcome = await runStage6CommunicationOpen(
+      {
+        destination: {
+          kind: "settings",
+          href: "/dashboard/settings",
+          urlPatch: {},
+          linkedClientId: null,
+          requiresActiveClient: false,
+          inaccessible: false,
+        },
+        previousHref: "/dashboard?section=notifications",
+        isSaving: false,
+        currentActiveClientId: "client-a",
+      },
+      persist,
+    );
+    expect(persist).not.toHaveBeenCalled();
+    expect(outcome).toEqual({
+      kind: "opened",
+      href: "/dashboard/settings",
+      persistClientId: null,
+    });
   });
 });

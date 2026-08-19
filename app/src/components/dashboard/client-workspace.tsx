@@ -1,7 +1,7 @@
 "use client";
 
 import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
-import { Bot, Download, FileText, PhoneCall, Plus, Sparkles, UserX } from "lucide-react";
+import { Bot, Download, FileText, MessageSquareText, PhoneCall, Plus, Sparkles, UserX } from "lucide-react";
 import { personas } from "dietitian-ai-assistant-architecture";
 import {
   countAiControlBlockers,
@@ -160,6 +160,7 @@ export function ClientWorkspace({
   onEvaluateWithAi,
   isEvaluatingWithAi = false,
   evaluateWithAiError = null,
+  onOpenMessages,
 }: {
   urlState: DashboardUrlState;
   clients: ClientRecord[];
@@ -220,6 +221,7 @@ export function ClientWorkspace({
   onEvaluateWithAi?: (client: ClientRecord) => void;
   isEvaluatingWithAi?: boolean;
   evaluateWithAiError?: string | null;
+  onOpenMessages?: (clientId: string) => void;
 }) {
   const stage = resolveClientWorkspaceStage(urlState);
   const clientTask = resolveClientWorkspaceTask(urlState);
@@ -346,6 +348,7 @@ export function ClientWorkspace({
             onEvaluateWithAi={onEvaluateWithAi}
             isEvaluatingWithAi={isEvaluatingWithAi}
             evaluateWithAiError={evaluateWithAiError}
+            onOpenMessages={onOpenMessages}
           />
         ) : (
           <EmptyState title="Danışan seçilmedi" message="Listeden bir danışan seçin. Otomatik seçim yapılmaz." />
@@ -375,6 +378,7 @@ function ClientWorkspaceDetail({
   onEvaluateWithAi,
   isEvaluatingWithAi = false,
   evaluateWithAiError = null,
+  onOpenMessages,
   contextUpdates,
   contextUpdateSource,
   contextUpdateImportance,
@@ -418,6 +422,7 @@ function ClientWorkspaceDetail({
   onEvaluateWithAi?: (client: ClientRecord) => void;
   isEvaluatingWithAi?: boolean;
   evaluateWithAiError?: string | null;
+  onOpenMessages?: (clientId: string) => void;
   contextUpdates: ClientContextUpdateRecord[];
   contextUpdateSource: ClientContextUpdateSource;
   contextUpdateImportance: ClientContextUpdateImportance;
@@ -496,6 +501,17 @@ function ClientWorkspaceDetail({
         onBack={onBack}
       />
       <div className="mt-3 flex flex-wrap gap-2">
+        {onOpenMessages ? (
+          <button
+            type="button"
+            onClick={() => onOpenMessages(client.id)}
+            data-testid="client-workspace-open-messages"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-control border border-line bg-surface px-3 py-2 text-sm font-semibold text-ink transition hover:bg-surface-muted"
+          >
+            <MessageSquareText size={16} />
+            {t(uiLanguage, "clientWorkspaceOpenMessages")}
+          </button>
+        ) : null}
         {aiChatEnabled && onEvaluateWithAi ? (
           <button
             type="button"

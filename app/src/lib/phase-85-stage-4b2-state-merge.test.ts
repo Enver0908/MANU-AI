@@ -118,9 +118,9 @@ describe("phase-85-stage-4b2-state-merge", () => {
     );
   });
 
-  it("requires app-state refresh after client-affecting conversation mutations", () => {
-    expect(shouldRefreshAppStateAfterConversationMutation("manual_reply")).toBe(true);
-    expect(shouldRefreshAppStateAfterConversationMutation("draft_review")).toBe(true);
+  it("does not request a broad app-state refresh after conversation mutations", () => {
+    expect(shouldRefreshAppStateAfterConversationMutation("manual_reply")).toBe(false);
+    expect(shouldRefreshAppStateAfterConversationMutation("draft_review")).toBe(false);
     expect(shouldRefreshAppStateAfterConversationMutation("mark_read")).toBe(false);
   });
 });

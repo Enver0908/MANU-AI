@@ -19,6 +19,7 @@ import {
   resolveLegacyCopilotSectionRedirect,
   resolveMessagingRouteSelection,
   resolveMessagingUnreadBadgeCount,
+  resolveStage6CommunicationDestination,
   serializeDashboardSearchParams,
 } from "./phase-85-stage-4b-dashboard-routing";
 
@@ -169,7 +170,7 @@ describe("phase-85-stage-4b dashboard routing", () => {
     expect(query.get("query")).toBe("elif");
   });
 
-  it("canonicalizes legacy clientId routes to conversationId", () => {
+  it("keeps a client-only messages URL on the list instead of auto-opening a thread", () => {
     const conversations = [
       { id: "conversation-client-mert", clientId: "client-mert" },
       { id: "conversation-client-elif", clientId: "client-elif" },
@@ -181,9 +182,9 @@ describe("phase-85-stage-4b dashboard routing", () => {
       active,
     );
     expect(fromClient).toMatchObject({
-      conversationId: "conversation-client-mert",
-      canonicalConversationId: "conversation-client-mert",
-      needsCanonicalization: true,
+      conversationId: null,
+      clientId: "client-mert",
+      needsCanonicalization: false,
     });
 
     const fromConversation = resolveMessagingRouteSelection(
@@ -302,5 +303,53 @@ describe("phase-85-stage-4b dashboard routing", () => {
         Object.defineProperty(globalThis, "window", { configurable: true, value: originalWindow });
       }
     }
+  });
+
+  it("resolves typed communication destinations without inventing a client", () => {
+    const current = parseDashboardSearchParams(new URLSearchParams("section=alerts&clientId=client-mert"));
+    const conversation = resolveStage6CommunicationDestination(current, {
+      section: "messages",
+      clientId: "client-elif",
+      conversationId: "conversation-client-elif",
+      messageId: "message-1",
+      source: "alert",
+    });
+    expect(conversation).toMatchObject({
+      kind: "conversation",
+      linkedClientId: "client-elif",
+      requiresActiveClient: true,
+      inaccessible: false,
+    });
+    expect(conversation.href).toContain("section=messages");
+    expect(conversation.href).toContain("conversationId=conversation-client-elif");
+
+    const workspace = resolveStage6CommunicationDestination(current, {
+      section: "ai-control",
+      clientId: "client-elif",
+    });
+    expect(workspace.kind).toBe("clientWorkspace");
+    expect(workspace.urlPatch.clientTask).toBe("ai");
+
+    const settings = resolveStage6CommunicationDestination(current, { section: "settings" });
+    expect(settings).toMatchObject({ kind: "settings", requiresActiveClient: false, linkedClientId: null });
+    expect(settings.href).toBe("/dashboard/settings");
+
+    const aiChat = resolveStage6CommunicationDestination(current, { kindHint: "ai_chat" });
+    expect(aiChat).toMatchObject({ kind: "aiChat", requiresActiveClient: false, linkedClientId: null });
+    expect(aiChat.href).toBe("/dashboard/ai-chat");
+
+    const fallback = resolveStage6CommunicationDestination(current, { section: "clients" });
+    expect(fallback.kind).toBe("fallback");
+    expect(fallback.linkedClientId).toBeNull();
+    expect(fallback.inaccessible).toBe(false);
+    expect(fallback.href).not.toContain("client-elif");
+
+    const removed = resolveStage6CommunicationDestination(
+      current,
+      { section: "messages", clientId: "gone", conversationId: "conversation-gone" },
+      { knownClientIds: new Set(["client-mert"]) },
+    );
+    expect(removed.inaccessible).toBe(true);
+    expect(removed.linkedClientId).toBeNull();
   });
 });

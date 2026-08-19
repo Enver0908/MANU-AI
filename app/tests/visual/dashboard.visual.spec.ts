@@ -64,15 +64,27 @@ test("dashboard core views render in fallback mode", async ({ page }) => {
   await visibleTestId(page, "tab-tab_ai_assistant").click();
   await expect(page.getByText("Guvenlik kontrol listesi")).toBeVisible();
 
-  const viewportWidth = page.viewportSize()?.width ?? 0;
-  if (viewportWidth < 1200) {
-    return;
-  }
-
   await openMessagingSection(page);
   await openConversation(page, "conversation-client-mert", "client-mert");
   await expect(page.getByText("Kaynak etiketli mesaj geçmişi")).toBeVisible();
   await expect(page.getByRole("button", { name: "Manuel yanıtı kaydet" })).toBeVisible();
+
+  const viewportWidth = page.viewportSize()?.width ?? 0;
+  if (viewportWidth < 1200) {
+    const back = page.getByRole("button", { name: "Konuşma listesine dön" });
+    if (await back.isVisible()) {
+      await back.click();
+      await expect(page.getByTestId("messaging-list-scroll")).toBeVisible();
+    }
+    await visibleShellNavButton(page, /Uyarılar|Uyarilar/).click();
+    await expect(page.getByTestId("alerts-panel")).toBeVisible();
+    await openVisibleShellNavOrHref(page, /Bildirimler/, "/dashboard?section=notifications");
+    await expect(page.getByTestId("notifications-panel")).toBeVisible();
+    await expect
+      .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth))
+      .toBe(true);
+    return;
+  }
 
   await openVisibleShellNavOrHref(page, /Simülatör|Simulator/, "/dashboard?section=simulator");
   await expect(page.getByRole("heading", { name: "Gelen mesaj simülatörü" })).toBeVisible();

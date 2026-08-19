@@ -7,6 +7,8 @@
 
 ## Product and Legal Risks
 
+Current Phase 85 Stage 6 Faz 3 note, 2026-08-19: messaging, alerts, notifications, and More now use a typed destination coordinator with dirty-guarded active-client transitions and bounded receipt/conversation refresh. Stage 5 remains closed. Production remains independently `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_PHASE_3_COMMUNICATION_OPERATIONS_EVIDENCE.md`.
+
 Current Phase 85 Stage 6 Faz 2 note, 2026-08-19: dashboard home and the client workspace (list/hub/task, dirty-guarded active-client selection) are implemented locally. Stage 5 remains closed. Production remains independently `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_PHASE_2_CLIENT_WORKSPACE_EVIDENCE.md`.
 
 Current Phase 85 Stage 6 Faz 1 note, 2026-08-19: client workspace mutations now return bounded `ClientScopedMutationResponse` payloads instead of a broad app-state snapshot. Stage 5 remains closed. Production remains independently `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_PHASE_1_CLIENT_DOMAIN_CONTRACTS_EVIDENCE.md`.

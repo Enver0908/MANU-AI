@@ -114,7 +114,7 @@ type ShellProviderContextValue = {
   canNavigateAway: () => boolean;
   /** Legacy/test helper — prefer useShellDirtyRegistration. */
   setNavigationDirty: (dirty: boolean) => void;
-  selectActiveClient: (client: ActiveClientSelection) => Promise<boolean>;
+  selectActiveClient: (client: ActiveClientSelection, options?: { afterHref?: string }) => Promise<boolean>;
   clearActiveClient: () => Promise<boolean>;
   requestDirtyNavigationConfirm: (client: ActiveClientSelection) => string;
   effectiveActiveClientId: string | null;
@@ -670,7 +670,7 @@ export function ShellProvider({
   }, [canNavigateAway, openDirtyConfirm]);
 
   const selectActiveClient = useCallback(
-    async (client: ActiveClientSelection) => {
+    async (client: ActiveClientSelection, options?: { afterHref?: string }) => {
       const bootstrap = state.bootstrap;
       if (!bootstrap) return false;
 
@@ -709,12 +709,14 @@ export function ShellProvider({
                 },
               },
             });
-            const fallbackHref = buildShellHref(shellDestination, {
-              current: urlState,
-              clientId: shellDestinationAcceptsClientId(shellDestination) ? client.id : null,
-              chatId: extractAiChatId(pathname),
-              focusMode: state.focusMode,
-            });
+            const fallbackHref =
+              options?.afterHref ??
+              buildShellHref(shellDestination, {
+                current: urlState,
+                clientId: shellDestinationAcceptsClientId(shellDestination) ? client.id : null,
+                chatId: extractAiChatId(pathname),
+                focusMode: state.focusMode,
+              });
             commitDashboardHref(fallbackHref, "push");
             currentBrowserHrefRef.current = fallbackHref;
             try {
@@ -733,12 +735,14 @@ export function ShellProvider({
           }
           preferenceRevisionRef.current = preferences.revision;
 
-          const nextHref = buildShellHref(shellDestination, {
-            current: urlState,
-            clientId: shellDestinationAcceptsClientId(shellDestination) ? client.id : null,
-            chatId: extractAiChatId(pathname),
-            focusMode: state.focusMode,
-          });
+          const nextHref =
+            options?.afterHref ??
+            buildShellHref(shellDestination, {
+              current: urlState,
+              clientId: shellDestinationAcceptsClientId(shellDestination) ? client.id : null,
+              chatId: extractAiChatId(pathname),
+              focusMode: state.focusMode,
+            });
 
           if (nextHref === previousHref && shellDestinationAcceptsClientId(shellDestination) === false) {
             runBootstrap("explicit");

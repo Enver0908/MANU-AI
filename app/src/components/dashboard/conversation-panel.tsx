@@ -50,11 +50,13 @@ export function ConversationPanel({
   onActivateAi,
   onSetAiPassive,
   isActivatingAi,
+  isSendingManualReply = false,
   onApproveDraft,
   onEditAndSendDraft,
   onDismissDraft,
   onReviewSendManualFromDraft,
   onOpenSimulator,
+  onOpenClientWorkspace,
   onLoadOlder,
   onLoadNewer,
   onRetryDetail,
@@ -86,11 +88,13 @@ export function ConversationPanel({
   onActivateAi: (clientId: string) => Promise<ManuAppState>;
   onSetAiPassive: (clientId: string) => Promise<ManuAppState>;
   isActivatingAi?: boolean;
+  isSendingManualReply?: boolean;
   onApproveDraft: (messageId: string) => Promise<ManuAppState>;
   onEditAndSendDraft: (messageId: string, body: string) => Promise<ManuAppState>;
   onDismissDraft: (messageId: string) => Promise<ManuAppState>;
   onReviewSendManualFromDraft: (messageId: string, body: string) => Promise<ManuAppState>;
   onOpenSimulator: () => void;
+  onOpenClientWorkspace?: () => void;
   onLoadOlder: () => void;
   onLoadNewer: () => void;
   onRetryDetail: () => void;
@@ -188,7 +192,12 @@ export function ConversationPanel({
       className={`flex min-h-0 flex-1 flex-col overflow-hidden ${MOBILE_CHROME_CLASS.bottomNavWithStickyActions}`}
       data-testid="conversation-panel"
     >
-      <ConversationHeader conversation={conversation} uiLanguage={uiLanguage} onOpenSimulator={onOpenSimulator} />
+      <ConversationHeader
+        conversation={conversation}
+        uiLanguage={uiLanguage}
+        onOpenSimulator={onOpenSimulator}
+        onOpenClientWorkspace={onOpenClientWorkspace}
+      />
 
       {redRiskLocked ? (
         <div
@@ -372,6 +381,7 @@ export function ConversationPanel({
           value={manualReply}
           onChange={onManualReply}
           onSend={onSendManualReply}
+          sending={isSendingManualReply}
           hint={
             pendingAiChatDraftTransfer
               ? t(uiLanguage, "conversationAiChatDraftTransferHint")
