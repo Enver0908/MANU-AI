@@ -5,20 +5,18 @@ import { parseFormSaveEnvelope } from "@/lib/phase-85-stage-6-dashboard-contract
 import { saveStage6FormResponse } from "@/lib/phase-85-stage-6-mutations";
 import { stage6ErrorResponse, stage6JsonResponse } from "@/lib/phase-85-stage-6-api";
 
-export async function POST(request: NextRequest) {
+export async function PUT(request: NextRequest, context: { params: Promise<{ id: string; schemaId: string }> }) {
   try {
-    const envelope = parseFormSaveEnvelope(await request.json());
-    if (!envelope.clientId) {
-      return stage6JsonResponse({ error: "clientId_schemaId_answers_required" }, 400);
-    }
+    const { id, schemaId } = await context.params;
+    const envelope = parseFormSaveEnvelope({ ...(await request.json()), schemaId, clientId: id });
     const tenantContext = isSupabaseStoreConfigured()
       ? await (async () => {
-          const context = await resolveAppTenantContext();
-          requireCapability(context, "update_client");
-          return context;
+          const ctx = await resolveAppTenantContext();
+          requireCapability(ctx, "update_client");
+          return ctx;
         })()
       : undefined;
-    return stage6JsonResponse(await saveStage6FormResponse(envelope.clientId, envelope, tenantContext));
+    return stage6JsonResponse(await saveStage6FormResponse(id, envelope, tenantContext));
   } catch (error) {
     return stage6ErrorResponse(error, "form_schema");
   }

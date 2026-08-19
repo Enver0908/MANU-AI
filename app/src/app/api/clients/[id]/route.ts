@@ -1,56 +1,91 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { type NextRequest } from "next/server";
 import {
   buildClientPatchValidationState,
   mergeScopedClientPatchIntoAppState,
 } from "@/lib/phase-79c-scoped-client-mutation";
 import { getFallbackState, patchClientInState, saveFallbackState } from "@/lib/app-state-store";
-import { AppDomainError, domainErrorResponse } from "@/lib/app-errors";
-import { authErrorResponse, requireCapability, resolveAppTenantContext } from "@/lib/auth-context";
-import { isSupabaseStoreConfigured, patchSupabaseClientRecord } from "@/lib/supabase-store";
+import { AppDomainError } from "@/lib/app-errors";
+import { requireCapability, resolveAppTenantContext } from "@/lib/auth-context";
+import {
+  isSupabaseStoreConfigured,
+  loadSupabaseStage6Workspace,
+  patchSupabaseClientRecord,
+} from "@/lib/supabase-store";
+import {
+  assertExpectedRevision,
+  idempotencyLookup,
+  idempotencyRemember,
+  parseClientPatchEnvelope,
+  scopedMutation,
+} from "@/lib/phase-85-stage-6-dashboard-contracts";
+import { projectStage6Workspace } from "@/lib/phase-85-stage-6-client-workspace";
+import { stage6ErrorResponse, stage6JsonResponse } from "@/lib/phase-85-stage-6-api";
 import type { ClientRecord } from "@/lib/types";
 
-export async function PATCH(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> },
-) {
-  const { id } = await context.params;
-  let patch: Partial<ClientRecord>;
+export async function GET(_request: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
-    patch = (await request.json()) as Partial<ClientRecord>;
-    rejectDirectAiActivationPatch(patch);
+    const { id } = await context.params;
+    if (isSupabaseStoreConfigured()) {
+      const tenantContext = await resolveAppTenantContext();
+      requireCapability(tenantContext, "read_app_state");
+      const loaded = await loadSupabaseStage6Workspace(id, tenantContext);
+      return stage6JsonResponse(loaded.summary);
+    }
+    return stage6JsonResponse(projectStage6Workspace(getFallbackState(), id, { role: "dietitian" }));
   } catch (error) {
-    return domainErrorResponse(error);
+    return stage6ErrorResponse(error);
   }
+}
 
-  if (isSupabaseStoreConfigured()) {
-    try {
+export async function PATCH(request: NextRequest, context: { params: Promise<{ id: string }> }) {
+  try {
+    const { id } = await context.params;
+    const envelope = parseClientPatchEnvelope(await request.json());
+    rejectDirectAiActivationPatch(envelope.patch);
+
+    if (isSupabaseStoreConfigured()) {
       const tenantContext = await resolveAppTenantContext();
       requireCapability(tenantContext, "update_client");
-      return NextResponse.json(await patchSupabaseClientRecord(id, patch, tenantContext));
-    } catch (error) {
-      try {
-        return authErrorResponse(error);
-      } catch (authError) {
-        return domainErrorResponse(authError);
-      }
+      const cached = idempotencyLookup(tenantContext.tenantId, envelope.requestId);
+      if (cached) return stage6JsonResponse(cached);
+      const loaded = await loadSupabaseStage6Workspace(id, tenantContext);
+      assertExpectedRevision(loaded.summary.contextRevision, envelope.expectedRevision, "client");
+      const patched = await patchSupabaseClientRecord(id, envelope.patch, tenantContext);
+      const response = scopedMutation(
+        "client_patch",
+        patched.client.id,
+        { client: patched.client },
+        { clientContextRevision: patched.client.contextRevision },
+        envelope.requestId,
+      );
+      idempotencyRemember(tenantContext.tenantId, envelope.requestId, response);
+      return stage6JsonResponse(response);
     }
-  }
 
-  const base = getFallbackState();
-
-  try {
+    const cached = idempotencyLookup("fallback", envelope.requestId);
+    if (cached) return stage6JsonResponse(cached);
+    const base = getFallbackState();
+    const current = base.clients.find((item) => item.id === id);
+    if (!current || current.lifecycleStatus === "removed_anonymized") {
+      throw new AppDomainError(404, "client_not_found");
+    }
+    assertExpectedRevision(current.contextRevision, envelope.expectedRevision, "client");
     const validationState = buildClientPatchValidationState(base, id);
-    const patched = patchClientInState(validationState, id, patch);
+    const patched = patchClientInState(validationState, id, envelope.patch);
     const updatedClient = patched.clients.find((client) => client.id === id);
-
-    if (!updatedClient) {
-      return NextResponse.json({ error: "client_not_found" }, { status: 404 });
-    }
-
+    if (!updatedClient) throw new AppDomainError(404, "client_not_found");
     saveFallbackState(mergeScopedClientPatchIntoAppState(base, updatedClient));
-    return NextResponse.json({ kind: "client_patch", client: updatedClient, auditEvents: [] });
+    const response = scopedMutation(
+      "client_patch",
+      updatedClient.id,
+      { client: updatedClient },
+      { clientContextRevision: updatedClient.contextRevision },
+      envelope.requestId,
+    );
+    idempotencyRemember("fallback", envelope.requestId, response);
+    return stage6JsonResponse(response);
   } catch (error) {
-    return domainErrorResponse(error);
+    return stage6ErrorResponse(error, "client");
   }
 }
 

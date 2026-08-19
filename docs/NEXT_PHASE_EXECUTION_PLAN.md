@@ -1,5 +1,7 @@
 # MANU-AI Next Phase Execution Plan
 
+**Current active status (2026-08-19):** Stage 6 Faz 1 client domain bounded contracts are implemented locally. Stage 5 remains closed (`STAGE_5_CLOSED`). Production remains independently `NO-GO`. Canonical Stage 6 plan: `docs/PHASE_85_STAGE_6_DASHBOARD_CORE_WORKFLOWS_ACTION_PLAN.md`. Faz 1 evidence: `docs/PHASE_85_STAGE_6_PHASE_1_CLIENT_DOMAIN_CONTRACTS_EVIDENCE.md`.
+
 **Current active status (2026-08-18):** Phase 85 Stage 5 is closed. The canonical decision is `docs/PHASE_85_STAGE_5_CLOSURE_DECISION.json` with `stageStatus=STAGE_5_CLOSED` and no Stage 5 blockers. Dependency security, shell verification, five-route lab performance, local RLS (56/56 with zero skipped), and physical-device iPhone/Android browser and installed-PWA evidence all passed. Production remains independently `NO-GO`; Stage 5 closure does not authorize production deployment, real provider/channel egress, live billing, or real client health data.
 
 **Document authority rule:** this current-status block, `docs/PHASE_85_STAGE_5_CLOSURE_DECISION.json`, and `docs/PHASE_85_STAGE_5_REMEDIATION_PHASE_4_CLOSURE_EVIDENCE.md` govern Stage 5 status. All older dated phase entries are historical snapshots; their `current`, `next`, `pending`, `open`, or `blocked` wording applies only to the recorded checkpoint and does not reopen Stage 5.

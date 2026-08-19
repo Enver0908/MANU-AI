@@ -48,6 +48,17 @@ import {
   type Phase79ScopedClientPatchResponse,
 } from "./phase-79c-scoped-client-mutation";
 import {
+  projectAiControl,
+  projectContextCreate,
+  projectFoodRuleSave,
+  projectFormSave,
+  projectMenuMutation,
+  projectStage6ContextUpdates,
+  projectStage6Forms,
+  projectStage6Roster,
+  projectStage6Workspace,
+} from "./phase-85-stage-6-client-workspace";
+import {
   buildPhase79WindowedDashboardPayload,
   WINDOWED_READ_DEFAULTS,
   type Phase79WindowedDashboardPayload,
@@ -2048,6 +2059,37 @@ async function loadSupabaseClientPatchContext(clientId: string, context: AppTena
   return { validationState, beforeClient };
 }
 
+export async function loadSupabaseStage6ClientState(clientId: string, context = demoTenantContext()) {
+  return loadSupabaseClientOperationState(clientId, context);
+}
+
+export async function listSupabaseStage6Roster(
+  context = demoTenantContext(),
+  query: { query: string; cursor: string | null; limit: number },
+) {
+  const state = await loadSupabaseClientCreateContext(context);
+  return projectStage6Roster(state, query);
+}
+
+export async function loadSupabaseStage6Workspace(clientId: string, context = demoTenantContext()) {
+  const state = await loadSupabaseClientOperationState(clientId, context);
+  return { state, summary: projectStage6Workspace(state, clientId, context) };
+}
+
+export async function loadSupabaseStage6Forms(clientId: string, context = demoTenantContext()) {
+  const state = await loadSupabaseClientOperationState(clientId, context);
+  return projectStage6Forms(state, clientId);
+}
+
+export async function loadSupabaseStage6ContextUpdates(
+  clientId: string,
+  context = demoTenantContext(),
+  query: { cursor: string | null; limit: number },
+) {
+  const state = await loadSupabaseClientOperationState(clientId, context);
+  return projectStage6ContextUpdates(state, clientId, query);
+}
+
 export async function createSupabaseClientRecord(
   input: Pick<ClientRecord, "fullName" | "channel" | "channelUserId"> &
     Partial<Pick<ClientRecord, "primaryPhoneE164" | "communicationLanguage">>,
@@ -2386,7 +2428,11 @@ export async function dismissSupabaseDraftMessage(messageId: string, context = d
   return loadSupabaseState(context);
 }
 
-export async function releaseSupabaseHumanTakeover(clientId: string, context = demoTenantContext()) {
+export async function releaseSupabaseHumanTakeover(
+  clientId: string,
+  context = demoTenantContext(),
+  requestId: string | null = null,
+) {
   const state = await loadSupabaseClientOperationState(clientId, context);
   const next = releaseHumanTakeoverInState(state, clientId);
   const client = next.clients.find((item) => item.id === clientId);
@@ -2403,13 +2449,14 @@ export async function releaseSupabaseHumanTakeover(clientId: string, context = d
     await insertAudit(supabase, audit);
   }
 
-  return loadSupabaseState(context);
+  return projectAiControl(next, clientId, "client_release_takeover", requestId);
 }
 
 export async function activateSupabaseClientAi(
   clientId: string,
   input: ControlledAiActivationInput,
   context = demoTenantContext(),
+  requestId: string | null = null,
 ) {
   assertControlledActivationInput(input);
   const supabase = requireSupabase();
@@ -2425,7 +2472,8 @@ export async function activateSupabaseClientAi(
     throwControlledRpcError(error);
   }
 
-  return loadSupabaseState(context);
+  const next = await loadSupabaseClientOperationState(clientId, context);
+  return projectAiControl(next, clientId, "client_ai_activate", requestId);
 }
 
 function assertControlledActivationInput(input: ControlledAiActivationInput) {
@@ -3299,13 +3347,14 @@ export async function publishSupabaseFormSchema(schemaId: string, context = demo
 export async function saveSupabaseFormResponse(
   input: { clientId: string; schemaId: string; answers: Record<string, unknown>; submittedPhoneE164?: unknown },
   context = demoTenantContext(),
+  requestId: string | null = null,
 ) {
   const before = await loadSupabaseClientOperationState(input.clientId, context, {
     requiredFormSchemaId: input.schemaId,
   });
   const next = saveFormResponseInState(before, input);
   await commitStateDeltaRpc(requireSupabase(), "commit_form_response", before, next);
-  return loadSupabaseState(context);
+  return projectFormSave(next, input.clientId, input.schemaId, requestId);
 }
 
 export async function loadSupabaseClientFoodRuleProfile(clientId: string, context = demoTenantContext()) {
@@ -3316,6 +3365,7 @@ export async function saveSupabaseClientFoodRuleProfile(
   clientId: string,
   input: SaveClientFoodRuleProfileV2Input,
   context = demoTenantContext(),
+  requestId: string | null = null,
 ) {
   const before = await loadSupabaseClientOperationState(clientId, context);
   const next = saveClientFoodRuleProfileV2InState(before, clientId, input);
@@ -3324,7 +3374,7 @@ export async function saveSupabaseClientFoodRuleProfile(
   const supabase = requireSupabase();
   await upsertClientFoodRuleProfile(supabase, profile);
   await commitStateDeltaRpc(supabase, "commit_form_response", before, next);
-  return loadSupabaseState(context);
+  return projectFoodRuleSave(next, clientId, requestId);
 }
 
 export async function listSupabaseClientMenuPlans(clientId: string, context = demoTenantContext()) {
@@ -3351,6 +3401,7 @@ export async function createSupabaseClientMenuPlan(
   clientId: string,
   input: CreateClientMenuPlanV1Input,
   context = demoTenantContext(),
+  requestId: string | null = null,
 ) {
   const before = await loadSupabaseClientOperationState(clientId, context);
   const next = createMenuPlanInState(before, clientId, input);
@@ -3360,7 +3411,7 @@ export async function createSupabaseClientMenuPlan(
   );
   if (created) await upsertClientMenuPlan(supabase, created);
   await persistNewAudits(supabase, before, next);
-  return loadSupabaseState(context);
+  return projectMenuMutation(next, clientId, "client_menu_create", requestId);
 }
 
 export async function saveSupabaseClientMenuPlan(
@@ -3368,24 +3419,33 @@ export async function saveSupabaseClientMenuPlan(
   planId: string,
   input: SaveClientMenuPlanV1Input,
   context = demoTenantContext(),
+  requestId: string | null = null,
 ) {
   const before = await loadSupabaseClientOperationState(clientId, context);
   const next = saveMenuPlanInState(before, clientId, planId, input);
   const supabase = requireSupabase();
   await persistClientMenuPlanDelta(supabase, before, next, clientId);
-  return loadSupabaseState(context);
+  return projectMenuMutation(next, clientId, "client_menu_save", requestId);
 }
 
 export async function activateSupabaseClientMenuPlan(
   clientId: string,
   planId: string,
   context = demoTenantContext(),
+  requestId: string | null = null,
+  expectedPlanRevision?: number,
 ) {
   const before = await loadSupabaseClientOperationState(clientId, context);
+  if (expectedPlanRevision != null) {
+    const existing = before.clientMenuPlans.find((plan) => plan.id === planId && plan.clientId === clientId);
+    if (existing && existing.revision !== expectedPlanRevision) {
+      throw new AppDomainError(409, "profile_stale_recreate_required");
+    }
+  }
   const next = activateMenuPlanInState(before, clientId, planId);
   const supabase = requireSupabase();
   await persistClientMenuPlanDelta(supabase, before, next, clientId);
-  return loadSupabaseState(context);
+  return projectMenuMutation(next, clientId, "client_menu_activate", requestId);
 }
 
 export async function updateSupabaseDietitianPreferences(
@@ -3447,11 +3507,16 @@ export async function addSupabaseClientContextUpdate(
   clientId: string,
   input: CreateClientContextUpdateInput,
   context = demoTenantContext(),
+  requestId: string | null = null,
 ) {
   const before = await loadSupabaseClientOperationState(clientId, context);
   const next = addClientContextUpdateInState(before, clientId, input);
   await commitStateDeltaRpc(requireSupabase(), "commit_client_context_update", before, next);
-  return loadSupabaseState(context);
+  const created = next.clientContextUpdates.find(
+    (item) => item.clientId === clientId && !before.clientContextUpdates.some((existing) => existing.id === item.id),
+  );
+  if (!created) throw new AppDomainError(404, "client_context_update_not_found");
+  return projectContextCreate(next, clientId, created, requestId);
 }
 
 export async function createSupabaseClientUpdateProposal(

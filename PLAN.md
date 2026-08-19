@@ -1,5 +1,7 @@
 # MANU-AI Plan
 
+**Current authority (2026-08-19):** Stage 6 Faz 1 client domain bounded contracts are implemented locally. Stage 5 remains `STAGE_5_CLOSED`. Production remains independently `NO-GO`. Canonical Stage 6 plan: `docs/PHASE_85_STAGE_6_DASHBOARD_CORE_WORKFLOWS_ACTION_PLAN.md`. Faz 1 evidence: `docs/PHASE_85_STAGE_6_PHASE_1_CLIENT_DOMAIN_CONTRACTS_EVIDENCE.md`.
+
 **Current authority (2026-08-18):** Stage 5 is closed with verdict `STAGE_5_CLOSED` in `docs/PHASE_85_STAGE_5_CLOSURE_DECISION.json`. Physical iOS/Android PWA validation is approved, the Stage 5 RLS report is zero-skip, and R-405 is `technically_resolved` in `docs/PHASE_85_STAGE_5_DEPENDENCY_SECURITY_REPORT.json`. Production remains independently `NO-GO`; these local technical results do not authorize production launch or real integration paths. The local branch has not been pushed.
 
 **Document authority rule:** the 2026-08-18 Stage 5 closure artifacts govern current Stage 5 and R-405 technical status. Every older dated entry is historical; its `current`, `next`, `pending`, `blocked`, `Stage 5 unstarted`, or `R-405 open` wording applies only to that checkpoint. Production `NO-GO` remains current until the separate launch gates close.

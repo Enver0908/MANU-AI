@@ -1,5 +1,7 @@
 # Handoff For Next Codex
 
+**Current authority (2026-08-19):** Stage 6 Faz 1 client domain bounded contracts are implemented locally. Stage 5 remains `STAGE_5_CLOSED`. Production remains independently `NO-GO`. Canonical Stage 6 plan: `docs/PHASE_85_STAGE_6_DASHBOARD_CORE_WORKFLOWS_ACTION_PLAN.md`. Faz 1 evidence: `docs/PHASE_85_STAGE_6_PHASE_1_CLIENT_DOMAIN_CONTRACTS_EVIDENCE.md`.
+
 **Current authority (2026-08-18):** Stage 5 is closed with verdict `STAGE_5_CLOSED` in `docs/PHASE_85_STAGE_5_CLOSURE_DECISION.json`. Physical iOS/Android PWA evidence is approved, Stage 5 RLS is zero-skip, and the shell, performance, dependency, and closure gates pass. R-405 is `technically_resolved` in `docs/PHASE_85_STAGE_5_DEPENDENCY_SECURITY_REPORT.json`. Production remains independently `NO-GO`; no production launch or real integration path is authorized. The local branch has not been pushed.
 
 **Historical closure authority (2026-07-29):** Stage 4D post-closure remediation is reclosed and committed locally at `e369e1b`. Evidence: `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_1_ACCOUNT_FOUNDATION_EVIDENCE.md`, `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_2_SECURITY_BILLING_PWA_EVIDENCE.md`, and `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_3_RECLOSURE_EVIDENCE.md`. Clean Supabase reset passed and `npm run test:rls` passed 53/53 with 0 skipped after local env mapping at that checkpoint.

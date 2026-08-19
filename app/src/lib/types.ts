@@ -1080,3 +1080,5 @@ export type {
   AiChatSourceRefDto,
   Stage4CAiChatStateSlice,
 } from "./phase-85-stage-4c-contracts";
+
+export type { ClientScopedMutationResponse } from "./phase-85-stage-6-dashboard-contracts";

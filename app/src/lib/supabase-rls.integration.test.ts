@@ -1461,12 +1461,9 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
       expectedConversationRevision: inactiveConversation.revision,
       expectedClientContextRevision: inactiveClient.contextRevision,
     });
-    const activatedClient = activated.clients.find((item) => item.id === client.id)!;
-    const activatedConversation = activated.conversations.find((item) => item.clientId === client.id)!;
-
-    expect(activatedClient.aiStatus).toBe("active");
-    expect(activatedClient.aiMode).toBe("copilot");
-    expect(activatedConversation.revision).toBe(conversation.revision + 1);
+    expect(activated.payload.client.aiStatus).toBe("active");
+    expect(activated.payload.client.aiMode).toBe("copilot");
+    expect(activated.payload.conversation?.revision).toBe(conversation.revision + 1);
 
     await expect(
       activateSupabaseClientAi(client.id, {

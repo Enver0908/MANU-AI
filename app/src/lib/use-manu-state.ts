@@ -3,10 +3,12 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { AppRequestError } from "./app-errors";
 import { authenticatedMutationFetch } from "./phase-85-stage-5-shell-authenticated-mutation";
+import { getActiveFormSchema } from "./client-forms";
 import {
-  mergeScopedClientMutationResponseIntoAppState,
-  type Phase79ScopedClientMutationResponse,
-} from "./phase-79c-scoped-client-mutation";
+  mergeStage6MutationIntoAppState,
+  shouldApplyStage6Response,
+} from "./phase-85-stage-6-client-workspace";
+import type { ClientScopedMutationResponse } from "./phase-85-stage-6-dashboard-contracts";
 import type { ConversationDetailResponse, ConversationMutationResponse } from "./phase-85-stage-4b2-contracts";
 import {
   mergeConversationDetailResponseIntoAppState,
@@ -104,12 +106,16 @@ export function useManuState() {
     return nextState;
   }, [requestJson]);
 
-  const mergeScopedClientMutationFromApi = useCallback(
-    async (url: string, init?: RequestInit) => {
-      const payload = (await requestJson(url, init)) as Phase79ScopedClientMutationResponse;
+  const mergeStage6MutationFromApi = useCallback(
+    async (url: string, expectedClientId: string, init?: RequestInit) => {
+      const payload = (await requestJson(url, init)) as ClientScopedMutationResponse<unknown>;
       let mergedState = createInitialState();
       setState((current) => {
-        mergedState = mergeScopedClientMutationResponseIntoAppState(current, payload);
+        if (expectedClientId !== "*" && !shouldApplyStage6Response(payload, expectedClientId)) {
+          mergedState = current;
+          return current;
+        }
+        mergedState = mergeStage6MutationIntoAppState(current, payload);
         return mergedState;
       });
       return mergedState;
@@ -173,9 +179,9 @@ export function useManuState() {
         primaryPhoneE164: string;
         communicationLanguage: SupportedLanguageCode;
       }) =>
-        mergeScopedClientMutationFromApi("/api/clients", {
+        mergeStage6MutationFromApi("/api/clients", "*", {
           method: "POST",
-          body: JSON.stringify(input),
+          body: JSON.stringify({ ...input, requestId: crypto.randomUUID() }),
         }),
       updateDietitianPreferences: (input: { uiLanguage: SupportedLanguageCode }) =>
         mergeOwnProfileFromApi("/api/dietitian/preferences", {
@@ -183,17 +189,22 @@ export function useManuState() {
           body: JSON.stringify(input),
         }),
       updateClient: (clientId: string, patch: Partial<ClientRecord>) =>
-        mergeScopedClientMutationFromApi(`/api/clients/${clientId}`, {
+        mergeStage6MutationFromApi(`/api/clients/${clientId}`, clientId, {
           method: "PATCH",
-          body: JSON.stringify(patch),
+          body: JSON.stringify({
+            ...patch,
+            requestId: crypto.randomUUID(),
+            expectedRevision: state.clients.find((item) => item.id === clientId)?.contextRevision ?? 0,
+          }),
         }),
       removeClient: (clientId: string) =>
         replaceFromApi(`/api/clients/${clientId}/remove`, {
           method: "POST",
         }),
       releaseHumanTakeover: (clientId: string) =>
-        replaceFromApi(`/api/clients/${clientId}/release-takeover`, {
+        mergeStage6MutationFromApi(`/api/clients/${clientId}/release-takeover`, clientId, {
           method: "POST",
+          body: JSON.stringify({ requestId: crypto.randomUUID() }),
         }),
       activateClientAi: (
         clientId: string,
@@ -203,9 +214,9 @@ export function useManuState() {
           expectedClientContextRevision: number;
         },
       ) =>
-        replaceFromApi(`/api/clients/${clientId}/activate-ai`, {
+        mergeStage6MutationFromApi(`/api/clients/${clientId}/activate-ai`, clientId, {
           method: "POST",
-          body: JSON.stringify(input),
+          body: JSON.stringify({ ...input, requestId: crypto.randomUUID() }),
         }),
       runSimulation: (input: SimulationRequest) =>
         replaceFromApi("/api/simulator", {
@@ -458,9 +469,15 @@ export function useManuState() {
         answers: Record<string, unknown>;
         submittedPhoneE164?: string;
       }) =>
-        replaceFromApi("/api/clients/forms", {
+        mergeStage6MutationFromApi("/api/clients/forms", input.clientId, {
           method: "POST",
-          body: JSON.stringify(input),
+          body: JSON.stringify({
+            ...input,
+            requestId: crypto.randomUUID(),
+            expectedClientContextRevision:
+              state.clients.find((item) => item.id === input.clientId)?.contextRevision ?? 0,
+            expectedSchemaRevision: getActiveFormSchema(state)?.version ?? 0,
+          }),
         }),
       saveClientFoodRuleProfile: (
         clientId: string,
@@ -469,14 +486,14 @@ export function useManuState() {
           profile: Record<string, unknown>;
         },
       ) =>
-        replaceFromApi(`/api/clients/${clientId}/food-rule-profile`, {
+        mergeStage6MutationFromApi(`/api/clients/${clientId}/food-rule-profile`, clientId, {
           method: "PUT",
-          body: JSON.stringify(input),
+          body: JSON.stringify({ ...input, requestId: crypto.randomUUID() }),
         }),
       createMenuPlan: (clientId: string, input: { templateType: string; title?: string }) =>
-        replaceFromApi(`/api/clients/${clientId}/menu-plans`, {
+        mergeStage6MutationFromApi(`/api/clients/${clientId}/menu-plans`, clientId, {
           method: "POST",
-          body: JSON.stringify(input),
+          body: JSON.stringify({ ...input, requestId: crypto.randomUUID() }),
         }),
       saveMenuPlan: (
         clientId: string,
@@ -486,13 +503,17 @@ export function useManuState() {
           plan: Record<string, unknown>;
         },
       ) =>
-        replaceFromApi(`/api/clients/${clientId}/menu-plans/${planId}`, {
+        mergeStage6MutationFromApi(`/api/clients/${clientId}/menu-plans/${planId}`, clientId, {
           method: "PUT",
-          body: JSON.stringify(input),
+          body: JSON.stringify({ ...input, requestId: crypto.randomUUID() }),
         }),
       activateMenuPlan: (clientId: string, planId: string) =>
-        replaceFromApi(`/api/clients/${clientId}/menu-plans/${planId}/activate`, {
+        mergeStage6MutationFromApi(`/api/clients/${clientId}/menu-plans/${planId}/activate`, clientId, {
           method: "POST",
+          body: JSON.stringify({
+            requestId: crypto.randomUUID(),
+            expectedPlanRevision: state.clientMenuPlans.find((plan) => plan.id === planId)?.revision ?? 0,
+          }),
         }),
       addClientContextUpdate: (
         clientId: string,
@@ -505,9 +526,9 @@ export function useManuState() {
           importance: ClientContextUpdateImportance;
         },
       ) =>
-        replaceFromApi(`/api/clients/${clientId}/context-updates`, {
+        mergeStage6MutationFromApi(`/api/clients/${clientId}/context-updates`, clientId, {
           method: "POST",
-          body: JSON.stringify(input),
+          body: JSON.stringify({ ...input, requestId: crypto.randomUUID() }),
         }),
       sendInternalCopilotMessage: (body: string) =>
         replaceFromApi("/api/internal-copilot/messages", {
@@ -571,7 +592,7 @@ export function useManuState() {
       mergeConversationDetailIntoState,
       mergeConversationMutationIntoState,
       mergeOwnProfileFromApi,
-      mergeScopedClientMutationFromApi,
+      mergeStage6MutationFromApi,
       replaceFromApi,
       state,
     ],

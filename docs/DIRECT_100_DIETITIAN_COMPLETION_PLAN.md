@@ -1,5 +1,7 @@
 # Direct 100 Dietitian Completion Plan
 
+**Current active status (2026-08-19):** Stage 6 Faz 1 client domain bounded contracts are implemented locally. Stage 5 remains closed. The direct 100-dietitian production pilot remains `NO-GO`. Canonical Stage 6 plan: `docs/PHASE_85_STAGE_6_DASHBOARD_CORE_WORKFLOWS_ACTION_PLAN.md`. Faz 1 evidence: `docs/PHASE_85_STAGE_6_PHASE_1_CLIENT_DOMAIN_CONTRACTS_EVIDENCE.md`.
+
 **Current active status (2026-08-18):** Phase 85 Stage 5 is closed after implementation, remediation, automated verification, five-route performance measurement, local Supabase reset and RLS 56/56 with zero skipped, and physical iPhone/Android Safari/Chrome/installed-PWA evidence. Canonical decision: `docs/PHASE_85_STAGE_5_CLOSURE_DECISION.json`. R-405 is technically mitigated with a clean production dependency audit. The direct 100-dietitian production pilot remains `NO-GO` because its independent external launch, provider/channel, operations, billing, schema rollout, and real-data gates remain open.
 
 **Document authority rule:** the status above governs the current Stage 5 and R-405 technical state. Dated `current`, `next`, `pending`, `blocked`, or `R-405 open` statements below are historical checkpoint records unless they explicitly cite a later date. They do not reopen Stage 5 or reverse the current R-405 technical mitigation; production `NO-GO` remains independently authoritative.

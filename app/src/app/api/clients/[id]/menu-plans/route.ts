@@ -1,77 +1,63 @@
-import { NextResponse, type NextRequest } from "next/server";
-import {
-  createMenuPlanInState,
-  getFallbackState,
-  saveFallbackState,
-} from "@/lib/app-state-store";
-import { domainErrorResponse } from "@/lib/app-errors";
-import { authErrorResponse, requireCapability, resolveAppTenantContext } from "@/lib/auth-context";
-import {
-  getActiveClientMenuPlanV1Record,
-  listClientMenuPlanV1Records,
-  menuPlanV1RecordToState,
-  type CreateClientMenuPlanV1Input,
-} from "@/lib/phase-77f-client-menu-plan";
-import { getClientFoodRuleProfileV2Record } from "@/lib/phase-77e-client-food-rule-profile";
+import { type NextRequest } from "next/server";
+import { createMenuPlanInState, getFallbackState, saveFallbackState } from "@/lib/app-state-store";
+import { requireCapability, resolveAppTenantContext } from "@/lib/auth-context";
+import { type CreateClientMenuPlanV1Input } from "@/lib/phase-77f-client-menu-plan";
 import {
   createSupabaseClientMenuPlan,
   isSupabaseStoreConfigured,
-  listSupabaseClientMenuPlans,
+  loadSupabaseStage6ClientState,
 } from "@/lib/supabase-store";
+import {
+  idempotencyLookup,
+  idempotencyRemember,
+  parseMenuCreateEnvelope,
+  parseMenuPlanQuery,
+} from "@/lib/phase-85-stage-6-dashboard-contracts";
+import { projectMenuMutation, projectStage6MenuPlans } from "@/lib/phase-85-stage-6-client-workspace";
+import { stage6ErrorResponse, stage6JsonResponse } from "@/lib/phase-85-stage-6-api";
 
-export async function GET(_request: NextRequest, context: { params: Promise<{ id: string }> }) {
-  const { id } = await context.params;
-
-  if (isSupabaseStoreConfigured()) {
-    try {
+export async function GET(request: NextRequest, context: { params: Promise<{ id: string }> }) {
+  try {
+    const { id } = await context.params;
+    const query = parseMenuPlanQuery({
+      cursor: request.nextUrl.searchParams.get("cursor"),
+      limit: request.nextUrl.searchParams.get("limit"),
+    });
+    if (isSupabaseStoreConfigured()) {
       const tenantContext = await resolveAppTenantContext();
       requireCapability(tenantContext, "read_app_state");
-      const state = await listSupabaseClientMenuPlans(id, tenantContext);
-      const profile = getClientFoodRuleProfileV2Record(state, id);
-      const plans = listClientMenuPlanV1Records(state, id).map((plan) => menuPlanV1RecordToState(plan, profile));
-      const active = getActiveClientMenuPlanV1Record(state, id);
-      return NextResponse.json({ plans, activePlanId: active?.id || null });
-    } catch (error) {
-      try {
-        return authErrorResponse(error);
-      } catch (authError) {
-        return domainErrorResponse(authError);
-      }
+      const state = await loadSupabaseStage6ClientState(id, tenantContext);
+      return stage6JsonResponse(projectStage6MenuPlans(state, id, query));
     }
+    return stage6JsonResponse(projectStage6MenuPlans(getFallbackState(), id, query));
+  } catch (error) {
+    return stage6ErrorResponse(error);
   }
-
-  const state = getFallbackState();
-  const profile = getClientFoodRuleProfileV2Record(state, id);
-  const plans = listClientMenuPlanV1Records(state, id).map((plan) => menuPlanV1RecordToState(plan, profile));
-  const active = getActiveClientMenuPlanV1Record(state, id);
-  return NextResponse.json({ plans, activePlanId: active?.id || null });
 }
 
 export async function POST(request: NextRequest, context: { params: Promise<{ id: string }> }) {
-  const { id } = await context.params;
-  const body = (await request.json()) as CreateClientMenuPlanV1Input;
+  try {
+    const { id } = await context.params;
+    const envelope = parseMenuCreateEnvelope(await request.json());
+    const input = { templateType: envelope.templateType, title: envelope.title } as CreateClientMenuPlanV1Input;
 
-  if (!body.templateType) {
-    return NextResponse.json({ error: "client_menu_plan_invalid" }, { status: 400 });
-  }
-
-  if (isSupabaseStoreConfigured()) {
-    try {
+    if (isSupabaseStoreConfigured()) {
       const tenantContext = await resolveAppTenantContext();
       requireCapability(tenantContext, "update_client");
-      return NextResponse.json(await createSupabaseClientMenuPlan(id, body, tenantContext));
-    } catch (error) {
-      try {
-        return authErrorResponse(error);
-      } catch (authError) {
-        return domainErrorResponse(authError);
-      }
+      const cached = idempotencyLookup(tenantContext.tenantId, envelope.requestId);
+      if (cached) return stage6JsonResponse(cached);
+      const result = await createSupabaseClientMenuPlan(id, input, tenantContext, envelope.requestId);
+      idempotencyRemember(tenantContext.tenantId, envelope.requestId, result);
+      return stage6JsonResponse(result);
     }
-  }
 
-  try {
-    return NextResponse.json(saveFallbackState(createMenuPlanInState(getFallbackState(), id, body)));
+    const cached = idempotencyLookup("fallback", envelope.requestId);
+    if (cached) return stage6JsonResponse(cached);
+    const next = saveFallbackState(createMenuPlanInState(getFallbackState(), id, input));
+    const result = projectMenuMutation(next, id, "client_menu_create", envelope.requestId);
+    idempotencyRemember("fallback", envelope.requestId, result);
+    return stage6JsonResponse(result);
   } catch (error) {
-    return domainErrorResponse(error);
+    return stage6ErrorResponse(error);
   }
 }
