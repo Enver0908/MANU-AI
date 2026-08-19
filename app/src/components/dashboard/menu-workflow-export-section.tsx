@@ -61,10 +61,10 @@ export function MenuWorkflowExportSection({
   };
 
   return (
-    <div className="rounded-lg border border-stone-200 bg-white p-4" data-testid="menu-workflow-export">
-      <h5 className="text-sm font-semibold text-stone-900">{t(uiLanguage, "exportMenuTitle")}</h5>
+    <div className="rounded-card border border-line bg-surface p-4" data-testid="menu-workflow-export">
+      <h5 className="text-sm font-semibold text-ink">{t(uiLanguage, "exportMenuTitle")}</h5>
       {!eligible ? (
-        <p className="mt-2 text-sm text-stone-500">
+        <p className="mt-2 text-sm text-ink-subtle">
           {!activePlanId
             ? t(uiLanguage, "noActiveMenu")
             : !plan?.exportVisible
@@ -73,7 +73,7 @@ export function MenuWorkflowExportSection({
         </p>
       ) : (
         <div className="mt-3 space-y-3">
-          <label className="flex min-h-11 items-center gap-2 text-sm text-stone-700">
+          <label className="flex min-h-11 items-center gap-2 text-sm text-ink">
             <input
               type="checkbox"
               checked={includeRecipes}
@@ -83,9 +83,9 @@ export function MenuWorkflowExportSection({
             {t(uiLanguage, "exportIncludeRecipes")}
           </label>
           <div>
-            <p className="text-xs font-semibold uppercase text-stone-500">{t(uiLanguage, "exportPreviewTitle")}</p>
+            <p className="text-xs font-semibold uppercase text-ink-subtle">{t(uiLanguage, "exportPreviewTitle")}</p>
             <pre
-              className="mt-2 max-h-48 overflow-auto rounded-md border border-stone-200 bg-stone-50 p-3 text-xs whitespace-pre-wrap text-stone-700"
+              className="mt-2 max-h-48 overflow-auto rounded-md border border-line bg-surface-muted p-3 text-xs whitespace-pre-wrap text-ink"
               data-testid="menu-workflow-export-preview"
             >
               {exportPreview}
@@ -96,7 +96,7 @@ export function MenuWorkflowExportSection({
               type="button"
               onClick={() => downloadMenuExport("docx")}
               disabled={isDownloading !== null}
-              className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm font-medium text-stone-800 transition hover:bg-stone-50 disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex min-h-11 items-center gap-2 rounded-card border border-line bg-surface px-3 py-2 text-sm font-medium text-ink transition hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-60"
               data-testid="menu-workflow-export-docx"
             >
               <Download size={16} />
@@ -106,7 +106,7 @@ export function MenuWorkflowExportSection({
               type="button"
               onClick={() => downloadMenuExport("pdf")}
               disabled={isDownloading !== null}
-              className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm font-medium text-stone-800 transition hover:bg-stone-50 disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex min-h-11 items-center gap-2 rounded-card border border-line bg-surface px-3 py-2 text-sm font-medium text-ink transition hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-60"
               data-testid="menu-workflow-export-pdf"
             >
               <FileText size={16} />

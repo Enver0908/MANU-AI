@@ -7,6 +7,8 @@
 
 ## Product and Legal Risks
 
+Current Phase 85 Stage 6 Faz 2 note, 2026-08-19: dashboard home and the client workspace (list/hub/task, dirty-guarded active-client selection) are implemented locally. Stage 5 remains closed. Production remains independently `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_PHASE_2_CLIENT_WORKSPACE_EVIDENCE.md`.
+
 Current Phase 85 Stage 6 Faz 1 note, 2026-08-19: client workspace mutations now return bounded `ClientScopedMutationResponse` payloads instead of a broad app-state snapshot. Stage 5 remains closed. Production remains independently `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_PHASE_1_CLIENT_DOMAIN_CONTRACTS_EVIDENCE.md`.
 
 Current Phase 85 Stage 5 closure note, 2026-08-18: R-405 is technically resolved locally by upgrading `next` and `eslint-config-next` to stable `16.3.0`, which installs nested `postcss@8.5.23` and `sharp@0.35.3`; `npm audit --omit=dev --json` reports zero production vulnerabilities. Stage 5 is closed after shell, performance, zero-skip RLS, and physical-device evidence passed. Production remains independently `NO-GO`; Stage 5 closure does not authorize launch approvals, provider/channel egress, live billing, production schema rollout, or real-data paths.

@@ -68,7 +68,7 @@ export function EmptyState({
         </span>
       ) : null}
       {title ? <p className="text-sm font-semibold text-ink">{title}</p> : null}
-      <p className={`text-sm leading-6 text-ink-muted ${title ? "mt-1" : ""}`}>{message}</p>
+      <p className={`text-sm leading-6 text-ink ${title ? "mt-1" : ""}`}>{message}</p>
       {action ? <div className="mt-4">{action}</div> : null}
     </div>
   );

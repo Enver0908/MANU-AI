@@ -1,5 +1,7 @@
 # Handoff For Next Codex
 
+**Current authority (2026-08-19):** Stage 6 Faz 2 dashboard home and client workspace are implemented locally. Stage 5 remains `STAGE_5_CLOSED`. Production remains independently `NO-GO`. Canonical Stage 6 plan: `docs/PHASE_85_STAGE_6_DASHBOARD_CORE_WORKFLOWS_ACTION_PLAN.md`. Faz 2 evidence: `docs/PHASE_85_STAGE_6_PHASE_2_CLIENT_WORKSPACE_EVIDENCE.md`. Next is Phase 3 and requires separate approval.
+
 **Current authority (2026-08-19):** Stage 6 Faz 1 client domain bounded contracts are implemented locally. Stage 5 remains `STAGE_5_CLOSED`. Production remains independently `NO-GO`. Canonical Stage 6 plan: `docs/PHASE_85_STAGE_6_DASHBOARD_CORE_WORKFLOWS_ACTION_PLAN.md`. Faz 1 evidence: `docs/PHASE_85_STAGE_6_PHASE_1_CLIENT_DOMAIN_CONTRACTS_EVIDENCE.md`.
 
 **Current authority (2026-08-18):** Stage 5 is closed with verdict `STAGE_5_CLOSED` in `docs/PHASE_85_STAGE_5_CLOSURE_DECISION.json`. Physical iOS/Android PWA evidence is approved, Stage 5 RLS is zero-skip, and the shell, performance, dependency, and closure gates pass. R-405 is `technically_resolved` in `docs/PHASE_85_STAGE_5_DEPENDENCY_SECURITY_REPORT.json`. Production remains independently `NO-GO`; no production launch or real integration path is authorized. The local branch has not been pushed.

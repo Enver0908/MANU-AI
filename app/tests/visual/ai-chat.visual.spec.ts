@@ -68,7 +68,7 @@ test("client detail exposes an AI evaluate command that deep-links to a client c
   await bootstrapAiChat(page);
   await page.goto("/dashboard");
   await page.getByRole("button", { name: "Danışanlar" }).click();
-  await page.getByRole("button", { name: /Mert Kaya/ }).click();
+  await page.getByTestId("client-roster-item").filter({ hasText: "Mert Kaya" }).click();
   await expect(page.getByRole("heading", { name: "Mert Kaya" })).toBeVisible();
 
   const evaluateButton = page.getByTestId("client-evaluate-with-ai");

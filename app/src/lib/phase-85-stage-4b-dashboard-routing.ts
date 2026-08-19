@@ -49,9 +49,50 @@ export function resolveLegacyCopilotSectionRedirect(section: DashboardSection): 
   return section === "copilot" ? AI_CHAT_ROOT_PATH : null;
 }
 
+export type ClientWorkspaceSection = "summary" | "forms" | "nutrition" | "menu" | "ai";
+export type ClientWorkspaceTask = ClientWorkspaceSection | "context" | "export";
+export type ClientWorkspaceStage = "list" | "hub" | "task";
+
+export const CLIENT_WORKSPACE_SECTIONS: readonly ClientWorkspaceSection[] = [
+  "summary",
+  "forms",
+  "nutrition",
+  "menu",
+  "ai",
+];
+
+export const CLIENT_WORKSPACE_TASKS: readonly ClientWorkspaceTask[] = [
+  ...CLIENT_WORKSPACE_SECTIONS,
+  "context",
+  "export",
+];
+
+const CLIENT_WORKSPACE_TASK_SET = new Set<string>(CLIENT_WORKSPACE_TASKS);
+
+const LEGACY_CLIENT_TAB_TO_TASK: Record<string, ClientWorkspaceTask> = {
+  tab_overview: "summary",
+  tab_personal_form: "forms",
+  tab_food_rules: "nutrition",
+  tab_menu: "menu",
+  tab_ai_assistant: "ai",
+  tab_critical_context: "context",
+  tab_export: "export",
+};
+
+export const CLIENT_WORKSPACE_TASK_TO_LEGACY_TAB: Record<ClientWorkspaceTask, string> = {
+  summary: "tab_overview",
+  forms: "tab_personal_form",
+  nutrition: "tab_food_rules",
+  menu: "tab_menu",
+  ai: "tab_ai_assistant",
+  context: "tab_critical_context",
+  export: "tab_export",
+};
+
 export type DashboardUrlState = {
   section: DashboardSection;
   clientId: string | null;
+  clientTask: ClientWorkspaceTask | null;
   conversationId: string | null;
   messageId: string | null;
   source: DashboardMessageSource | null;
@@ -86,6 +127,7 @@ const LEGACY_SECTION_ALIASES: Record<string, DashboardSection> = {
 const DEFAULT_DASHBOARD_URL_STATE: DashboardUrlState = {
   section: "overview",
   clientId: null,
+  clientTask: null,
   conversationId: null,
   messageId: null,
   source: null,
@@ -164,6 +206,24 @@ function parseConversationListStatus(value: string | null): ConversationListStat
   return "all";
 }
 
+export function parseClientWorkspaceTask(value: string | null | undefined): ClientWorkspaceTask | null {
+  if (!value) return null;
+  const normalized = value.trim().toLowerCase();
+  if (CLIENT_WORKSPACE_TASK_SET.has(normalized)) return normalized as ClientWorkspaceTask;
+  return LEGACY_CLIENT_TAB_TO_TASK[normalized] ?? null;
+}
+
+export function resolveClientWorkspaceTask(state: Pick<DashboardUrlState, "section" | "clientId" | "clientTask">): ClientWorkspaceTask {
+  if (state.section !== "clients" || !state.clientId) return "summary";
+  return state.clientTask ?? "summary";
+}
+
+export function resolveClientWorkspaceStage(state: Pick<DashboardUrlState, "section" | "clientId" | "clientTask">): ClientWorkspaceStage {
+  if (state.section !== "clients" || !state.clientId) return "list";
+  const task = resolveClientWorkspaceTask(state);
+  return task === "summary" ? "hub" : "task";
+}
+
 export function parseDashboardSearchParams(
   searchParams: Pick<ReadonlyURLSearchParams, "get"> | URLSearchParams,
 ): DashboardUrlState {
@@ -171,6 +231,7 @@ export function parseDashboardSearchParams(
   return {
     section,
     clientId: readOptionalString(searchParams.get("clientId")),
+    clientTask: parseClientWorkspaceTask(searchParams.get("clientTask") ?? searchParams.get("tab")),
     conversationId: readOptionalString(searchParams.get("conversationId")),
     messageId: readOptionalString(searchParams.get("messageId")),
     source: parseMessageSource(searchParams.get("source")),
@@ -192,6 +253,7 @@ export function serializeDashboardSearchParams(state: DashboardUrlState) {
     params.set("section", state.section);
   }
   if (state.clientId) params.set("clientId", state.clientId);
+  if (state.clientTask && state.clientTask !== "summary") params.set("clientTask", state.clientTask);
   if (state.conversationId) params.set("conversationId", state.conversationId);
   if (state.messageId) params.set("messageId", state.messageId);
   if (state.source) params.set("source", state.source);
@@ -210,6 +272,38 @@ export function serializeDashboardSearchParams(state: DashboardUrlState) {
 export function buildDashboardHref(pathname: string, state: DashboardUrlState) {
   const query = serializeDashboardSearchParams(state).toString();
   return query ? `${pathname}?${query}` : pathname;
+}
+
+export function currentDashboardHref() {
+  if (typeof window === "undefined") return "";
+  return `${window.location.pathname}${window.location.search}`;
+}
+
+export const DASHBOARD_HREF_CHANGE_EVENT = "manu:dashboard-href-change";
+
+export function subscribeDashboardHrefChange(listener: () => void) {
+  if (typeof window === "undefined") return () => undefined;
+  window.addEventListener("popstate", listener);
+  window.addEventListener(DASHBOARD_HREF_CHANGE_EVENT, listener);
+  return () => {
+    window.removeEventListener("popstate", listener);
+    window.removeEventListener(DASHBOARD_HREF_CHANGE_EVENT, listener);
+  };
+}
+
+/**
+ * Same-page search-param updates are not always applied by the App Router.
+ * Native history is the live source of truth; listeners re-render from it.
+ */
+export function commitDashboardHref(href: string, mode: "push" | "replace" = "replace") {
+  if (typeof window === "undefined") return;
+  if (currentDashboardHref() === href) return;
+  if (mode === "push") {
+    window.history.pushState(window.history.state, "", href);
+  } else {
+    window.history.replaceState(window.history.state, "", href);
+  }
+  window.dispatchEvent(new Event(DASHBOARD_HREF_CHANGE_EVENT));
 }
 
 export function mergeDashboardUrlState(
@@ -501,6 +595,10 @@ export function buildShellHref(destination: ShellDestinationId, options: BuildSh
 
   if (clientId && CLIENT_SCOPED_SHELL_DESTINATIONS.has(safeDestination)) {
     next.clientId = clientId;
+  }
+
+  if (preserveFilters && current && safeDestination === "clients" && clientId && current.clientId === clientId) {
+    next.clientTask = current.clientTask;
   }
 
   if (preserveFilters && current) {

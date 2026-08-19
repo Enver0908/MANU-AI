@@ -1,83 +1,92 @@
 "use client";
 
 import {
-  AlertTriangle,
-  Bot,
-  CirclePause,
-  ClipboardList,
   MessageSquareText,
-  ShieldCheck,
-  SlidersHorizontal,
   UserRound,
 } from "lucide-react";
 import type { ClientRecord, ManuAppState, SupportedLanguageCode } from "@/lib/types";
 import type { OperationalFoundationInspectionDto } from "@/lib/phase-85-if-h-operational-visibility";
-import { ClientSummary, EmptyState, MetricCard, WorkflowItem } from "./shared";
+import { ClientSummary, EmptyState } from "./shared";
 import { OperationalFoundationPanel } from "./operational-foundation-panel";
 
 export function OverviewPanel({
-  metrics,
   selectedClient,
   state,
   uiLanguage,
   showInspectionDetails,
   operationalFoundation,
-  onOpenSimulator,
+  pendingMessageCount,
+  pendingAlertCount,
+  pendingNotificationCount,
   onOpenClients,
+  onOpenMessages,
+  onOpenAlerts,
+  onOpenNotifications,
 }: {
-  metrics: { pendingDrafts: number; urgentHandoffs: number; aiSent: number; passive: number };
   selectedClient?: ClientRecord;
   state: ManuAppState;
   uiLanguage: SupportedLanguageCode;
   showInspectionDetails: boolean;
   operationalFoundation?: OperationalFoundationInspectionDto | null;
-  onOpenSimulator: () => void;
+  pendingMessageCount: number;
+  pendingAlertCount: number;
+  pendingNotificationCount: number;
   onOpenClients: () => void;
+  onOpenMessages: () => void;
+  onOpenAlerts: () => void;
+  onOpenNotifications: () => void;
 }) {
   return (
     <div className="space-y-5">
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <MetricCard icon={Bot} label="AI gönderimleri" value={String(metrics.aiSent)} tone="emerald" />
-        <MetricCard icon={ClipboardList} label="Bekleyen taslaklar" value={String(metrics.pendingDrafts)} tone="amber" />
-        <MetricCard icon={AlertTriangle} label="Açık devirler" value={String(metrics.urgentHandoffs)} tone="red" />
-        <MetricCard icon={CirclePause} label="Pasif danışanlar" value={String(metrics.passive)} tone="stone" />
-      </div>
-
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1.4fr)_minmax(320px,0.8fr)]">
-        <section className="rounded-lg border border-stone-200 bg-white p-4 shadow-sm">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h3 className="text-lg font-semibold">Çalışma yüzeyi</h3>
-              <p className="mt-1 text-sm text-stone-600">Panel kabuğu, danışan kontrolleri, simülatör ve kaynak etiketleri.</p>
-            </div>
+        <section className="rounded-card border border-line bg-surface p-4">
+          <h3 className="text-lg font-semibold text-ink">Günlük iş girişi</h3>
+          <p className="mt-1 text-sm text-ink-muted">
+            Aktif danışan, bekleyen kuyruklar ve doğrudan görevler. Raporlama vitrini yoktur.
+          </p>
+          <div className="mt-4 grid gap-2 sm:grid-cols-3">
             <button
-              onClick={onOpenSimulator}
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-emerald-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-900"
               type="button"
+              onClick={onOpenMessages}
+              className="inline-flex min-h-11 items-center justify-between gap-2 rounded-control border border-line bg-surface px-3 text-sm font-medium text-ink transition hover:bg-surface-muted"
             >
-              <Bot size={17} />
-              Simülatörü çalıştır
+              <span className="inline-flex items-center gap-2">
+                <MessageSquareText size={16} className="text-primary" />
+                Mesajlar
+              </span>
+              <span className="font-semibold">{pendingMessageCount}</span>
             </button>
-          </div>
-          <div className="mt-4 grid gap-3 md:grid-cols-3">
-            <WorkflowItem icon={ShieldCheck} title="Aktivasyon kapısı" body="Aktif, pasif, zamanlama, devralma ve güvenlik profili engelleri." />
-            <WorkflowItem icon={SlidersHorizontal} title="Mod kontrolleri" body="Autopilot, copilot, manuel, duraklatılmış, persona ve zaman penceresi." />
-            <WorkflowItem icon={MessageSquareText} title="Zaman çizelgesi etiketleri" body="Danışan, AI, diyetisyen ve sistem kaynakları görünür kalır." />
+            <button
+              type="button"
+              onClick={onOpenAlerts}
+              className="inline-flex min-h-11 items-center justify-between gap-2 rounded-control border border-line bg-surface px-3 text-sm font-medium text-ink transition hover:bg-surface-muted"
+            >
+              Uyarılar
+              <span className="font-semibold">{pendingAlertCount}</span>
+            </button>
+            <button
+              type="button"
+              onClick={onOpenNotifications}
+              className="inline-flex min-h-11 items-center justify-between gap-2 rounded-control border border-line bg-surface px-3 text-sm font-medium text-ink transition hover:bg-surface-muted"
+            >
+              Bildirimler
+              <span className="font-semibold">{pendingNotificationCount}</span>
+            </button>
           </div>
         </section>
 
-        <section className="rounded-lg border border-stone-200 bg-white p-4 shadow-sm">
-          <h3 className="text-lg font-semibold">Seçili danışan</h3>
+        <section className="rounded-card border border-line bg-surface p-4">
+          <h3 className="text-lg font-semibold text-ink">Aktif danışan</h3>
           {selectedClient ? (
             <div className="mt-4 space-y-3">
               <ClientSummary client={selectedClient} compact />
               <button
                 onClick={onOpenClients}
-                className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-stone-200 px-3 py-2 text-sm font-semibold text-stone-800 transition hover:bg-stone-100"
+                className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-control border border-line px-3 py-2 text-sm font-semibold text-ink transition hover:bg-surface-muted"
                 type="button"
               >
                 <UserRound size={16} />
-                Danışanı yönet
+                Çalışma alanını aç
               </button>
             </div>
           ) : (
@@ -86,7 +95,7 @@ export function OverviewPanel({
         </section>
       </div>
 
-      <section className="rounded-lg border border-stone-200 bg-white p-4 shadow-sm">
+      <section className="rounded-card border border-line bg-surface p-4">
         <OperationalFoundationPanel
           state={state}
           uiLanguage={uiLanguage}

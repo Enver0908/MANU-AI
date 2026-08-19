@@ -3,6 +3,9 @@ import {
   AI_CHAT_ROOT_PATH,
   SETTINGS_ROOT_PATH,
   buildDashboardHref,
+  commitDashboardHref,
+  currentDashboardHref,
+  subscribeDashboardHrefChange,
   buildStage4BAlertsRequestQuery,
   buildStage4BNotificationsRequestQuery,
   buildStage4B2ConversationsRequestQuery,
@@ -47,6 +50,18 @@ describe("phase-85-stage-4b dashboard routing", () => {
     expect(serialized.get("notificationQuery")).toBe("menu");
   });
 
+  it("parses client workspace tasks and omits summary from the query string", () => {
+    const parsed = parseDashboardSearchParams(
+      new URLSearchParams("section=clients&clientId=client-mert&clientTask=forms"),
+    );
+    expect(parsed.clientTask).toBe("forms");
+    const summary = parseDashboardSearchParams(
+      new URLSearchParams("section=clients&clientId=client-mert&tab=tab_overview"),
+    );
+    expect(summary.clientTask).toBe("summary");
+    expect(serializeDashboardSearchParams({ ...summary, clientTask: "summary" }).get("clientTask")).toBeNull();
+  });
+
   it("preserves message deep-link params", () => {
     const parsed = parseDashboardSearchParams(
       new URLSearchParams(
@@ -65,6 +80,16 @@ describe("phase-85-stage-4b dashboard routing", () => {
     expect(href).toContain("section=messages");
     expect(href).toContain("clientId=client-mert");
     expect(href).toContain("source=alert");
+  });
+
+  it("builds a client workspace href that keeps clientId on the clients section", () => {
+    const href = buildDashboardHref(
+      "/dashboard",
+      mergeDashboardUrlState(parseDashboardSearchParams(new URLSearchParams("section=clients")), {
+        clientId: "client-mert",
+      }),
+    );
+    expect(href).toBe("/dashboard?section=clients&clientId=client-mert");
   });
 
   it("parses notification message deep-link source", () => {
@@ -228,5 +253,54 @@ describe("phase-85-stage-4b dashboard routing", () => {
 
   it("exposes the Stage 4D settings route path for real-link navigation", () => {
     expect(SETTINGS_ROOT_PATH).toBe("/dashboard/settings");
+  });
+
+  it("notifies subscribers when a same-page dashboard href is committed", () => {
+    const originalWindow = globalThis.window;
+    const listeners = new Map<string, Set<() => void>>();
+    const location = { pathname: "/dashboard", search: "" };
+    const fakeWindow = {
+      location,
+      history: {
+        state: null,
+        pushState(_state: unknown, _title: string, href: string) {
+          const url = new URL(href, "http://localhost");
+          location.pathname = url.pathname;
+          location.search = url.search;
+        },
+        replaceState(_state: unknown, _title: string, href: string) {
+          const url = new URL(href, "http://localhost");
+          location.pathname = url.pathname;
+          location.search = url.search;
+        },
+      },
+      addEventListener(type: string, listener: () => void) {
+        const set = listeners.get(type) ?? new Set();
+        set.add(listener);
+        listeners.set(type, set);
+      },
+      removeEventListener(type: string, listener: () => void) {
+        listeners.get(type)?.delete(listener);
+      },
+      dispatchEvent(event: Event) {
+        listeners.get(event.type)?.forEach((listener) => listener());
+        return true;
+      },
+    };
+    Object.defineProperty(globalThis, "window", { configurable: true, value: fakeWindow });
+
+    try {
+      const hrefs: string[] = [];
+      const unsubscribe = subscribeDashboardHrefChange(() => hrefs.push(currentDashboardHref()));
+      commitDashboardHref("/dashboard?section=messages", "push");
+      expect(hrefs).toEqual(["/dashboard?section=messages"]);
+      unsubscribe();
+    } finally {
+      if (originalWindow === undefined) {
+        Reflect.deleteProperty(globalThis, "window");
+      } else {
+        Object.defineProperty(globalThis, "window", { configurable: true, value: originalWindow });
+      }
+    }
   });
 });

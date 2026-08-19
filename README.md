@@ -4,6 +4,8 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 ## Current Status
 
+**Current authority (2026-08-19):** Stage 6 Faz 2 dashboard home and client workspace are implemented locally. Stage 5 remains `STAGE_5_CLOSED`. Production remains independently `NO-GO`. Canonical Stage 6 plan: `docs/PHASE_85_STAGE_6_DASHBOARD_CORE_WORKFLOWS_ACTION_PLAN.md`. Faz 2 evidence: `docs/PHASE_85_STAGE_6_PHASE_2_CLIENT_WORKSPACE_EVIDENCE.md`. Next is Phase 3 and requires separate approval.
+
 **Current authority (2026-08-19):** Stage 6 Faz 1 client domain bounded contracts are implemented locally. Stage 5 remains `STAGE_5_CLOSED`. Production remains independently `NO-GO`. Canonical Stage 6 plan: `docs/PHASE_85_STAGE_6_DASHBOARD_CORE_WORKFLOWS_ACTION_PLAN.md`. Faz 1 evidence: `docs/PHASE_85_STAGE_6_PHASE_1_CLIENT_DOMAIN_CONTRACTS_EVIDENCE.md`.
 
 **Current authority (2026-08-18):** Stage 5 is closed with canonical verdict `STAGE_5_CLOSED`. The physical iOS/Android PWA evidence is approved, the Stage 5 RLS gate is zero-skip, and the shell/closure gates pass. Canonical authority: `docs/PHASE_85_STAGE_5_CLOSURE_DECISION.json`, supported by `docs/PHASE_85_STAGE_5_REAL_DEVICE_VALIDATION_REPORT.json`, `docs/PHASE_85_STAGE_5_RLS_ZERO_SKIP_REPORT.json`, and `docs/PHASE_85_STAGE_5_DEPENDENCY_SECURITY_REPORT.json`. R-405 is `technically_resolved` in the current local dependency report. Production remains independently `NO-GO`; Stage 5 closure and local R-405 remediation do not approve launch, provider/channel egress, live billing, production schema rollout, or real-data processing. The local branch has not been pushed.

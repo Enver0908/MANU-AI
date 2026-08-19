@@ -1,0 +1,111 @@
+import { expect, test, type Page } from "@playwright/test";
+
+test.describe.configure({ timeout: 120_000 });
+
+function visibleTestId(page: Page, testId: string) {
+  return page.locator(`[data-testid="${testId}"]:visible`);
+}
+
+async function openDashboard(page: Page) {
+  await page.request.post("/api/app-state");
+  await page.goto("/dashboard");
+  await expect(page.getByRole("heading", { name: "Operasyon paneli" })).toBeVisible();
+}
+
+async function assertNoHorizontalPageScroll(page: Page) {
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+  );
+  expect(overflow).toBeLessThanOrEqual(1);
+}
+
+async function openMertWorkspace(page: Page) {
+  await page.goto("/dashboard?section=clients");
+  await expect(page.getByTestId("client-roster")).toBeVisible();
+  await page.getByTestId("client-roster-item").filter({ hasText: "Mert Kaya" }).click();
+  await expect(page.getByTestId("client-workspace-header")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Mert Kaya" })).toBeVisible();
+}
+
+test("home shows active client and queue entries without invented KPIs", async ({ page }) => {
+  await openDashboard(page);
+  await expect(page.getByRole("heading", { name: "Günlük iş girişi" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Aktif danışan" })).toBeVisible();
+  await expect(page.getByText("AI gönderimleri")).toHaveCount(0);
+  await assertNoHorizontalPageScroll(page);
+});
+
+test("client list, hub, and tasks stay usable without horizontal overflow", async ({ page }) => {
+  await openDashboard(page);
+  await openMertWorkspace(page);
+  await expect(page.getByTestId("client-workspace")).toBeVisible();
+  await visibleTestId(page, "tab-tab_personal_form").click();
+  await expect(page.getByTestId("client-form-panel")).toBeVisible();
+  const formSave = page.getByTestId("client-form-save");
+  const saveBox = await formSave.boundingBox();
+  expect(saveBox?.height ?? 0).toBeGreaterThanOrEqual(44);
+  await assertNoHorizontalPageScroll(page);
+
+  const back = page.getByTestId("client-workspace-back");
+  const mobileStack = await back.isVisible();
+  if (mobileStack) {
+    await back.click();
+    await expect(page.getByTestId("client-task-hub")).toBeVisible();
+    const hubButton = visibleTestId(page, "tab-tab_food_rules");
+    const hubBox = await hubButton.boundingBox();
+    expect(hubBox?.height ?? 0).toBeGreaterThanOrEqual(44);
+  }
+
+  await visibleTestId(page, "tab-tab_food_rules").click();
+  await expect(page.getByTestId("active-nutrition-plan-panel")).toBeVisible();
+  if (mobileStack) await back.click();
+  await visibleTestId(page, "tab-tab_menu").click();
+  await expect(page.getByTestId("menu-workflow-panel")).toBeVisible();
+  if (mobileStack) await back.click();
+  await visibleTestId(page, "tab-tab_ai_assistant").click();
+  await expect(page.getByText("Guvenlik kontrol listesi")).toBeVisible();
+  await assertNoHorizontalPageScroll(page);
+
+  if (mobileStack) {
+    await back.click();
+    await expect(page.getByTestId("client-task-hub")).toBeVisible();
+    await back.click();
+    await expect(page.getByTestId("client-roster")).toBeVisible();
+  }
+});
+
+test("narrow 320px client hub does not overflow", async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 720 });
+  await openDashboard(page);
+  await openMertWorkspace(page);
+  await expect(page.locator('[data-testid="client-task-hub"]:visible, [data-testid="client-detail-tabs"]:visible')).toBeVisible();
+  await assertNoHorizontalPageScroll(page);
+});
+
+test("inaccessible client deep-link stays fail-closed", async ({ page }) => {
+  await page.request.post("/api/app-state");
+  await page.goto("/dashboard?section=clients&clientId=missing-client");
+  await expect(page.getByTestId("client-workspace-inaccessible")).toBeVisible();
+  await expect(page.getByText("Danışan artık erişilemiyor")).toBeVisible();
+  await expect(page.getByText("Başka bir danışana yönlendirilmedi.")).toBeVisible();
+});
+
+test("desktop keeps the roster beside the workspace", async ({ page }) => {
+  const viewport = page.viewportSize();
+  test.skip((viewport?.width ?? 0) < 1024, "desktop list/detail only");
+  await openDashboard(page);
+  await openMertWorkspace(page);
+  await expect(page.getByTestId("client-roster")).toBeVisible();
+  await expect(page.getByTestId("client-workspace-header")).toBeVisible();
+  await expect(page.getByTestId("client-detail-tabs")).toBeVisible();
+});
+
+test("keyboard can open a client task from the roster", async ({ page }) => {
+  await openDashboard(page);
+  await page.goto("/dashboard?section=clients");
+  const firstClient = page.getByTestId("client-roster-item").first();
+  await firstClient.focus();
+  await expect(firstClient).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(page.getByTestId("client-workspace-header")).toBeVisible();
+});

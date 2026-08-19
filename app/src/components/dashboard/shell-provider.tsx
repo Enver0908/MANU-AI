@@ -11,9 +11,11 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useCommittedDashboardSearchParams } from "@/lib/use-dashboard-url";
 import {
   buildShellHref,
+  commitDashboardHref,
   dashboardSectionToShellDestination,
   parseDashboardSearchParams,
   resolveActiveDestination,
@@ -188,7 +190,7 @@ export function ShellProvider({
 }) {
   const router = useRouter();
   const pathname = usePathname() || "/dashboard";
-  const searchParams = useSearchParams();
+  const searchParams = useCommittedDashboardSearchParams();
   const [state, dispatch] = useReducer(
     reduceShellProviderState,
     mode,
@@ -205,6 +207,8 @@ export function ShellProvider({
   const bootstrapRefreshRef = useRef<() => void>(() => undefined);
   const preferenceCoordinatorRef = useRef<ShellPreferenceCoordinator | null>(null);
   const currentBrowserHrefRef = useRef("");
+  const bootstrapRef = useRef(state.bootstrap);
+  bootstrapRef.current = state.bootstrap;
   const [dirtySnapshot, setDirtySnapshot] = useReducer(
     (_prev: ShellDirtySnapshot, next: ShellDirtySnapshot) => next,
     shellDirtyRegistry.snapshot(),
@@ -247,11 +251,14 @@ export function ShellProvider({
         dispatch({
           type: "bootstrap_succeeded",
           sequence,
-          bootstrap: createFallbackShellBootstrap({
-            displayName: fallbackDisplayName,
-            uiLanguage: fallbackUiLanguage,
-            aiChatEnabled: fallbackAiChatEnabled,
-          }),
+          bootstrap:
+            reason !== "mount" && bootstrapRef.current
+              ? bootstrapRef.current
+              : createFallbackShellBootstrap({
+                  displayName: fallbackDisplayName,
+                  uiLanguage: fallbackUiLanguage,
+                  aiChatEnabled: fallbackAiChatEnabled,
+                }),
         });
         return;
       }
@@ -581,6 +588,8 @@ export function ShellProvider({
             clientId: shellDestinationAcceptsClientId(safe) ? effectiveActiveClientId : null,
             focusMode: false,
           });
+          commitDashboardHref(href, "push");
+          currentBrowserHrefRef.current = href;
           router.push(href);
           void preferenceCoordinatorRef.current?.update({ lastDestinationId: safe }).then((preferences) => {
             if (preferences) preferenceRevisionRef.current = preferences.revision;
@@ -589,6 +598,8 @@ export function ShellProvider({
           return;
         }
         case "href":
+          commitDashboardHref(pending.href, "push");
+          currentBrowserHrefRef.current = pending.href;
           router.push(pending.href);
           return;
         case "logout": {
@@ -673,6 +684,47 @@ export function ShellProvider({
         });
 
         try {
+          if (mode === "fallback") {
+            const nextRevision = (preferenceRevisionRef.current ?? 0) + 1;
+            preferenceRevisionRef.current = nextRevision;
+            const currentBootstrap = bootstrapRef.current ?? bootstrap;
+            dispatch({
+              type: "bootstrap_succeeded",
+              sequence: sequenceRef.current,
+              bootstrap: {
+                ...currentBootstrap,
+                activeClient: {
+                  id: client.id,
+                  fullName: client.fullName,
+                  referenceShort: client.referenceShort,
+                  riskLevel: "unknown",
+                  handoffState: "none",
+                  channelReadiness: "unknown",
+                  aiMode: "unknown",
+                },
+                preferences: {
+                  ...currentBootstrap.preferences,
+                  revision: nextRevision,
+                  activeClientId: client.id,
+                },
+              },
+            });
+            const fallbackHref = buildShellHref(shellDestination, {
+              current: urlState,
+              clientId: shellDestinationAcceptsClientId(shellDestination) ? client.id : null,
+              chatId: extractAiChatId(pathname),
+              focusMode: state.focusMode,
+            });
+            commitDashboardHref(fallbackHref, "push");
+            currentBrowserHrefRef.current = fallbackHref;
+            try {
+              router.push(fallbackHref);
+            } catch {
+              // Same-page query updates are already applied through history.
+            }
+            return true;
+          }
+
           const preferences = await preferenceCoordinatorRef.current?.update({
             activeClientId: client.id,
           });
@@ -693,7 +745,13 @@ export function ShellProvider({
             return true;
           }
 
-          router.push(nextHref);
+          commitDashboardHref(nextHref, "push");
+          currentBrowserHrefRef.current = nextHref;
+          try {
+            router.push(nextHref);
+          } catch {
+            // Same-page query updates are already applied through history.
+          }
           return true;
         } catch {
           return false;
@@ -709,6 +767,7 @@ export function ShellProvider({
     },
     [
       canNavigateAway,
+      mode,
       openDirtyConfirm,
       pathname,
       router,

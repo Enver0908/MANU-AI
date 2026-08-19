@@ -41,15 +41,22 @@ import {
   parseAnswerLines,
   parseSchemaFields,
   scenarioMessages,
-  type ClientDetailTab,
 } from "@/components/dashboard/shared";
 import { DASHBOARD_MAIN_ID } from "@/lib/phase-83e6-states-polish";
 import {
+  commitDashboardHref,
   dashboardSectionToShellDestination,
+  parseClientWorkspaceTask,
   resolveLegacyCopilotSectionRedirect,
   resolveMessagingRouteSelection,
+  type ClientWorkspaceTask,
   type DashboardSection,
 } from "@/lib/phase-85-stage-4b-dashboard-routing";
+import {
+  buildStage6ClientWorkspaceHref,
+  formatStage6ClientReferenceShort,
+  runStage6ClientActivation,
+} from "@/lib/phase-85-stage-6-client-selection";
 import {
   buildClinicalAlertMessagingNavigationPatch,
   buildSystemNotificationNavigationAction,
@@ -61,7 +68,7 @@ import { AlertsPanel } from "@/components/dashboard/alerts-panel";
 import { NotificationsPanel } from "@/components/dashboard/notifications-panel";
 import { OverviewPanel } from "@/components/dashboard/overview-panel";
 import { ShellHomeLauncher } from "@/components/dashboard/shell-home-launcher";
-import { ClientsPanel } from "@/components/dashboard/clients-panel";
+import { ClientWorkspace } from "@/components/dashboard/client-workspace";
 import { ConversationPanel } from "@/components/dashboard/conversation-panel";
 import { MessagingPanel } from "@/components/dashboard/messaging-panel";
 import { SimulatorPanel } from "@/components/dashboard/simulator-panel";
@@ -119,12 +126,16 @@ export function DashboardApp({
     effectiveActiveClientId,
     saveDestinationViewState,
     restoreDestinationViewState,
+    selectActiveClient,
+    canNavigateAway,
+    requestHrefNavigation,
+    navigateToDestination,
+    dirtySnapshot,
   } = useShellProvider();
   const { urlState, section, navigateDashboard, openSection } = useDashboardUrl();
   const stage4bInbox = useStage4BInbox(urlState);
   const [operationalFoundation, setOperationalFoundation] =
     useState<OperationalFoundationInspectionDto | null>(null);
-  const [clientDetailTab, setClientDetailTab] = useState<ClientDetailTab>("tab_overview");
   const [search, setSearch] = useState("");
   const [manualReply, setManualReply] = useState("");
   const [simBody, setSimBody] = useState(scenarioMessages[0].body);
@@ -160,6 +171,10 @@ export function DashboardApp({
   const [isReleasingHumanTakeover, setIsReleasingHumanTakeover] = useState(false);
   const [isEvaluatingWithAi, setIsEvaluatingWithAi] = useState(false);
   const [evaluateWithAiError, setEvaluateWithAiError] = useState<string | null>(null);
+  const [workspaceOverride, setWorkspaceOverride] = useState<{
+    clientId: string;
+    clientTask: ClientWorkspaceTask;
+  } | null>(null);
   const [contextUpdateSource, setContextUpdateSource] = useState<ClientContextUpdateSource>("phone");
   const [contextUpdateImportance, setContextUpdateImportance] =
     useState<ClientContextUpdateImportance>("important");
@@ -297,20 +312,27 @@ export function DashboardApp({
     );
   }, [activeClients, search]);
 
-  const selectedContextUpdates = useMemo(() => {
-    if (!selectedClient) return [];
-    return state.clientContextUpdates
-      .filter((update) => update.clientId === selectedClient.id)
-      .sort((a, b) => new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime());
-  }, [selectedClient, state.clientContextUpdates]);
+  const workspaceUrlState = useMemo(() => {
+    if (section !== "clients") return urlState;
+    return {
+      ...urlState,
+      clientId: urlState.clientId ?? workspaceOverride?.clientId ?? null,
+      clientTask: urlState.clientTask ?? workspaceOverride?.clientTask ?? null,
+    };
+  }, [section, urlState, workspaceOverride]);
 
-  const metrics = useMemo(() => {
-    const pendingDrafts = state.messages.filter((message) => message.status === "draft").length;
-    const urgentHandoffs = state.handoffCases.filter((handoff) => handoff.status === "open").length;
-    const aiSent = state.messages.filter((message) => message.origin === "ai_generated" && message.status === "sent").length;
-    const passive = activeClients.filter((client) => client.aiStatus === "passive").length;
-    return { pendingDrafts, urgentHandoffs, aiSent, passive };
-  }, [activeClients, state]);
+  const workspaceClient = useMemo(() => {
+    if (section !== "clients" || !workspaceUrlState.clientId) return null;
+    return activeClients.find((client) => client.id === workspaceUrlState.clientId) ?? null;
+  }, [activeClients, section, workspaceUrlState.clientId]);
+
+  const selectedContextUpdates = useMemo(() => {
+    const client = workspaceClient ?? selectedClient;
+    if (!client) return [];
+    return state.clientContextUpdates
+      .filter((update) => update.clientId === client.id)
+      .sort((a, b) => new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime());
+  }, [selectedClient, state.clientContextUpdates, workspaceClient]);
 
   const mainContentRef = useRef<HTMLDivElement>(null);
   useMobileKeyboardScroll(mainContentRef);
@@ -323,7 +345,7 @@ export function DashboardApp({
       if (previous === "clients") {
         saveDestinationViewState(previousDestination, {
           search,
-          tab: clientDetailTab,
+          tab: urlState.clientTask ?? "summary",
           windowScrollY: window.scrollY,
         });
       }
@@ -331,8 +353,9 @@ export function DashboardApp({
       const snapshot = restoreDestinationViewState(nextDestination);
       if (section === "clients" && snapshot) {
         if (typeof snapshot.search === "string") setSearch(snapshot.search);
-        if (typeof snapshot.tab === "string") {
-          setClientDetailTab(snapshot.tab as ClientDetailTab);
+        const restoredTask = parseClientWorkspaceTask(typeof snapshot.tab === "string" ? snapshot.tab : null);
+        if (restoredTask && !urlState.clientTask) {
+          navigateDashboard({ clientTask: restoredTask }, { replace: true });
         }
         const windowScrollY =
           typeof snapshot.windowScrollY === "number" ? snapshot.windowScrollY : snapshot.scrollTop;
@@ -345,23 +368,24 @@ export function DashboardApp({
       previousSectionRef.current = section;
     }
   }, [
-    clientDetailTab,
     restoreDestinationViewState,
     saveDestinationViewState,
     search,
     section,
+    urlState.clientTask,
+    navigateDashboard,
   ]);
   useEffect(() => {
     return () => {
       if (section === "clients") {
         saveDestinationViewState("clients", {
           search,
-          tab: clientDetailTab,
+          tab: urlState.clientTask ?? "summary",
           windowScrollY: window.scrollY,
         });
       }
     };
-  }, [clientDetailTab, saveDestinationViewState, search, section]);
+  }, [saveDestinationViewState, search, section, urlState.clientTask]);
 
   const uiLanguage = state.dietitian.uiLanguage || "tr";
   const canManageAiControls =
@@ -449,20 +473,61 @@ export function DashboardApp({
   }
 
   const updateSelectedClient = async (patch: Partial<ClientRecord>) => {
-    if (!selectedClient) return;
-    await updateClient(selectedClient.id, patch);
+    const client = workspaceClient ?? selectedClient;
+    if (!client) return;
+    await updateClient(client.id, patch);
   };
 
-  const selectClient = (clientId: string, patch: { section?: DashboardSection; clientDetailTab?: ClientDetailTab } = {}) => {
-    navigateDashboard({
-      section: patch.section ?? section,
-      clientId,
-    });
-    if (patch.clientDetailTab) {
-      setClientDetailTab(patch.clientDetailTab);
-    } else if ((patch.section ?? section) === "clients") {
-      setClientDetailTab("tab_overview");
+  const selectClient = async (
+    clientId: string,
+    patch: { section?: DashboardSection; clientTask?: ClientWorkspaceTask } = {},
+  ) => {
+    const client = activeClients.find((item) => item.id === clientId);
+    if (!client) return;
+    const previousHref = `${window.location.pathname}${window.location.search}`;
+    const nextTask = patch.clientTask ?? "summary";
+    const outcome = await runStage6ClientActivation(
+      {
+        requestedClientId: clientId,
+        previousHref,
+        isSaving: dirtySnapshot.isSaving,
+      },
+      () =>
+        selectActiveClient({
+          id: client.id,
+          fullName: client.fullName,
+          referenceShort: formatStage6ClientReferenceShort(client.id),
+        }),
+      () =>
+        `/dashboard?section=clients&clientId=${encodeURIComponent(clientId)}${nextTask !== "summary" ? `&clientTask=${nextTask}` : ""}`,
+    );
+    if (outcome.kind !== "activated") return;
+    setWorkspaceOverride({ clientId, clientTask: nextTask });
+    const href = buildStage6ClientWorkspaceHref(urlState, { clientId, clientTask: nextTask });
+    commitDashboardHref(href, "replace");
+    navigateDashboard(
+      {
+        section: patch.section ?? "clients",
+        clientId,
+        clientTask: nextTask,
+      },
+      { replace: true },
+    );
+  };
+
+  const openClientTask = (task: ClientWorkspaceTask) => {
+    if (dirtySnapshot.isSaving) return;
+    const clientId = workspaceUrlState.clientId;
+    const href = `/dashboard?section=clients&clientId=${encodeURIComponent(clientId ?? "")}${
+      task !== "summary" ? `&clientTask=${task}` : ""
+    }`;
+    if (!canNavigateAway()) {
+      requestHrefNavigation(href);
+      return;
     }
+    if (clientId) setWorkspaceOverride({ clientId, clientTask: task });
+    commitDashboardHref(href, "replace");
+    navigateDashboard({ section: "clients", clientId, clientTask: task });
   };
 
   const navigateToSection = (nextSection: DashboardSection) => {
@@ -474,8 +539,9 @@ export function DashboardApp({
   };
 
   const removeSelectedClient = async () => {
-    if (!selectedClient) return;
-    await removeClient(selectedClient.id);
+    const client = workspaceClient ?? selectedClient;
+    if (!client) return;
+    await removeClient(client.id);
     // Keep unbound after removal — never silently select the next list item.
     navigateDashboard({ section: "clients", clientId: null });
   };
@@ -649,7 +715,7 @@ export function DashboardApp({
     }
     selectClient(action.clientId, {
       section: "clients",
-      clientDetailTab: action.clientDetailTab,
+      clientTask: parseClientWorkspaceTask(action.clientDetailTab ?? "summary") ?? "summary",
     });
   };
 
@@ -688,40 +754,47 @@ export function DashboardApp({
   };
 
   const saveSelectedFoodRules = async (profile: Omit<ClientFoodRuleProfileV2State, "conflicts">) => {
-    if (!selectedClient) return;
+    const client = workspaceClient ?? selectedClient;
+    if (!client) return;
     const { revision, ...profileBody } = profile;
-    await saveClientFoodRuleProfile(selectedClient.id, {
+    await saveClientFoodRuleProfile(client.id, {
       revision,
       profile: profileBody,
     });
   };
 
-  const menuPlansForSelectedClient = selectedClient
-    ? listClientMenuPlanV1Records(state, selectedClient.id).map((plan) =>
-        menuPlanV1RecordToState(plan, getClientFoodRuleProfileV2Record(state, selectedClient.id)),
+  const menuPlansForSelectedClient = (workspaceClient ?? selectedClient)
+    ? listClientMenuPlanV1Records(state, (workspaceClient ?? selectedClient)!.id).map((plan) =>
+        menuPlanV1RecordToState(plan, getClientFoodRuleProfileV2Record(state, (workspaceClient ?? selectedClient)!.id)),
       )
     : [];
-  const activeMenuPlanId = selectedClient ? getActiveClientMenuPlanV1Record(state, selectedClient.id)?.id || null : null;
+  const activeMenuPlanId = (workspaceClient ?? selectedClient)
+    ? getActiveClientMenuPlanV1Record(state, (workspaceClient ?? selectedClient)!.id)?.id || null
+    : null;
 
   const createSelectedMenuPlan = async (templateType: Phase77FMenuPlanTemplateType) => {
-    if (!selectedClient) return;
-    await createMenuPlan(selectedClient.id, { templateType });
+    const client = workspaceClient ?? selectedClient;
+    if (!client) return;
+    await createMenuPlan(client.id, { templateType });
   };
 
   const saveSelectedMenuPlan = async (plan: Omit<ClientMenuPlanV1State, "conflicts">) => {
-    if (!selectedClient) return;
+    const client = workspaceClient ?? selectedClient;
+    if (!client) return;
     const { revision, id, ...planBody } = plan;
-    await saveMenuPlan(selectedClient.id, id, { revision, plan: planBody });
+    await saveMenuPlan(client.id, id, { revision, plan: planBody });
   };
 
   const activateSelectedMenuPlan = async (planId: string) => {
-    if (!selectedClient) return;
-    await activateMenuPlan(selectedClient.id, planId);
+    const client = workspaceClient ?? selectedClient;
+    if (!client) return;
+    await activateMenuPlan(client.id, planId);
   };
 
   const addSelectedContextUpdate = async () => {
-    if (!selectedClient) return;
-    await addClientContextUpdate(selectedClient.id, {
+    const client = workspaceClient ?? selectedClient;
+    if (!client) return;
+    await addClientContextUpdate(client.id, {
       source: contextUpdateSource,
       occurredAt: contextUpdateOccurredAt ? fromDateTimeLocal(contextUpdateOccurredAt) : null,
       title: contextUpdateTitle,
@@ -758,22 +831,42 @@ export function DashboardApp({
                   </div>
                 ) : null}
                 <OverviewPanel
-                  metrics={metrics}
                   selectedClient={selectedClient}
                   state={state}
                   uiLanguage={uiLanguage}
                   showInspectionDetails={showOperationalInspection}
                   operationalFoundation={showOperationalInspection ? operationalFoundation : null}
-                  onOpenSimulator={() => navigateToSection("simulator")}
-                  onOpenClients={() => navigateToSection("clients")}
+                  pendingMessageCount={
+                    bootstrap?.homeActions.find((action) => action.id === "messages")?.count ??
+                    stage4bMessaging.unreadMessageCount
+                  }
+                  pendingAlertCount={
+                    bootstrap?.homeActions.find((action) => action.id === "alerts")?.count ??
+                    stage4bInbox.alertsBadgeCount
+                  }
+                  pendingNotificationCount={
+                    bootstrap?.homeActions.find((action) => action.id === "notifications")?.count ??
+                    stage4bInbox.notificationsBadgeCount
+                  }
+                  onOpenClients={() => {
+                    if (resolvedClientId) {
+                      void selectClient(resolvedClientId, { section: "clients", clientTask: "summary" });
+                      return;
+                    }
+                    navigateToDestination("clients");
+                  }}
+                  onOpenMessages={() => navigateToDestination("messages")}
+                  onOpenAlerts={() => navigateToDestination("alerts")}
+                  onOpenNotifications={() => navigateToDestination("notifications")}
                 />
               </div>
             )}
 
             {section === "clients" && (
-              <ClientsPanel
+              <ClientWorkspace
+                urlState={workspaceUrlState}
                 clients={filteredClients}
-                selectedClient={selectedClient ?? null}
+                selectedClient={workspaceClient}
                 search={search}
                 newClientName={newClientName}
                 newClientChannel={newClientChannel}
@@ -783,7 +876,12 @@ export function DashboardApp({
                 uiLanguage={uiLanguage}
                 canManageAiControls={canManageAiControls}
                 onSearch={setSearch}
-                onSelect={(id) => selectClient(id, { section: "clients", clientDetailTab: "tab_overview" })}
+                onSelect={(id) => void selectClient(id, { section: "clients", clientTask: "summary" })}
+                onCloseWorkspace={() => {
+                  setWorkspaceOverride(null);
+                  requestHrefNavigation("/dashboard?section=clients");
+                }}
+                onClientTask={openClientTask}
                 onAddClient={addClient}
                 onNewClientName={setNewClientName}
                 onNewClientChannel={setNewClientChannel}
@@ -810,11 +908,11 @@ export function DashboardApp({
                 onContextUpdateSummary={setContextUpdateSummary}
                 onContextUpdateDetails={setContextUpdateDetails}
                 onAddContextUpdate={addSelectedContextUpdate}
-                clientDetailTab={clientDetailTab}
-                onClientDetailTab={setClientDetailTab}
                 state={state}
                 foodRuleProfile={
-                  selectedClient ? getClientFoodRuleProfileV2State(state, selectedClient.id) : null
+                  (workspaceClient ?? selectedClient)
+                    ? getClientFoodRuleProfileV2State(state, (workspaceClient ?? selectedClient)!.id)
+                    : null
                 }
                 menuPlans={menuPlansForSelectedClient}
                 activeMenuPlanId={activeMenuPlanId}

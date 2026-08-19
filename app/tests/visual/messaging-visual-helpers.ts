@@ -6,13 +6,27 @@ export async function bootstrapDashboard(page: Page) {
   await expect(page.getByRole("heading", { name: "Operasyon paneli" })).toBeVisible({ timeout: 30_000 });
 }
 
-export async function openMessagingSection(page: Page) {
-  const messagingNav = page.getByRole("button", { name: "Mesajlaşma" });
-  if ((await messagingNav.count()) > 1) {
-    await messagingNav.last().click();
-  } else {
-    await messagingNav.click();
+export function visibleShellNavButton(page: Page, name: string | RegExp) {
+  return page
+    .locator('[data-testid="shell-wide-nav"], [data-testid="shell-medium-rail"], [data-testid="shell-compact-bottom-nav"]')
+    .getByRole("button", { name })
+    .filter({ visible: true });
+}
+
+export async function openVisibleShellNavOrHref(page: Page, name: string | RegExp, href: string) {
+  const button = visibleShellNavButton(page, name);
+  if (await button.isVisible()) {
+    await button.click();
+    return;
   }
+  await page.evaluate((nextHref) => {
+    window.history.pushState(window.history.state, "", nextHref);
+    window.dispatchEvent(new Event("manu:dashboard-href-change"));
+  }, href);
+}
+
+export async function openMessagingSection(page: Page) {
+  await visibleShellNavButton(page, /Mesajlaşma|Mesajlar/).click();
   await expect(page.getByTestId("messaging-panel")).toBeVisible({ timeout: 30_000 });
   await expect
     .poll(async () => {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { AlertCircle, Check, Save } from "lucide-react";
 import { getActiveFormSchema } from "@/lib/client-forms";
 import {
@@ -95,6 +95,7 @@ function ClientFormPanelEditor({
   const [draftAnswers, setDraftAnswers] = useState(initialAnswers);
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const saveButtonRef = useRef<HTMLButtonElement>(null);
 
   const sections = groupFormFieldsBySection(activeSchema.fields);
   const autopilotStatus = summarizeAutopilotFieldStatus(activeSchema.fields, draftAnswers);
@@ -137,6 +138,7 @@ function ClientFormPanelEditor({
       setDraftAnswers(initialAnswers);
       setSaveError(null);
     },
+    onFocusField: () => saveButtonRef.current?.focus(),
   });
 
   const updateField = (fieldId: string, value: unknown) => {
@@ -165,11 +167,11 @@ function ClientFormPanelEditor({
 
   return (
     <div className="space-y-4" data-testid="client-form-panel">
-      <div className="rounded-lg border border-stone-200 bg-stone-50 p-4">
+      <div className="rounded-card border border-line bg-surface-muted p-4">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
           <div>
-            <h4 className="text-sm font-semibold text-stone-900">{activeSchema.title}</h4>
-            <p className="mt-1 text-sm text-stone-600">
+            <h4 className="text-sm font-semibold text-ink">{activeSchema.title}</h4>
+            <p className="mt-1 text-sm text-ink-muted">
               v{activeSchema.version} · {activeSchema.languageCode.toUpperCase()}
               {existingResponse ? ` · Son güncelleme ${new Date(existingResponse.updatedAt).toLocaleString("tr-TR")}` : " · Henüz kayıtlı yanıt yok"}
             </p>
@@ -184,14 +186,14 @@ function ClientFormPanelEditor({
             )}
           </div>
         </div>
-        <p className="mt-3 text-sm leading-6 text-stone-600">
+        <p className="mt-3 text-sm leading-6 text-ink-muted">
           Aktif Phase 77C şeması bölüm bölüm düzenlenir. AI prompt alanları, diyetisyen-only alanlar ve autopilot zorunlu alanlar ayrı etiketlenir.
         </p>
       </div>
 
       {sections.map(([sectionKey, fields]) => (
-        <fieldset key={sectionKey} className="rounded-lg border border-stone-200 p-4">
-          <legend className="px-1 text-sm font-semibold text-stone-900">{formatSectionLabel(sectionKey)}</legend>
+        <fieldset key={sectionKey} className="rounded-card border border-line p-4">
+          <legend className="px-1 text-sm font-semibold text-ink">{formatSectionLabel(sectionKey)}</legend>
           <div className="mt-3 grid gap-4 xl:grid-cols-2">
             {fields.map((field) => (
               <ClientFormFieldEditor
@@ -207,7 +209,11 @@ function ClientFormPanelEditor({
       ))}
 
       {saveError && (
-        <div className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
+        <div
+          role="alert"
+          aria-live="assertive"
+          className="flex items-start gap-2 rounded-card border border-red-200 bg-red-50 p-3 text-sm text-red-800"
+        >
           <AlertCircle size={16} className="mt-0.5 shrink-0" />
           <p>Kayıt başarısız: {saveError}</p>
         </div>
@@ -215,16 +221,17 @@ function ClientFormPanelEditor({
 
       <div className="flex flex-wrap items-center gap-3">
         <button
+          ref={saveButtonRef}
           type="button"
           onClick={handleSave}
           disabled={disabled || isSaving}
-          className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-emerald-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-900 disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex min-h-11 items-center gap-2 rounded-control bg-ink px-4 py-2 text-sm font-semibold text-white transition hover:bg-ink-alt disabled:cursor-not-allowed disabled:opacity-60"
           data-testid="client-form-save"
         >
           {isSaving ? <Save size={16} className="animate-pulse" /> : <Check size={16} />}
           {t(uiLanguage, "saveResponse")}
         </button>
-        {disabled && <p className="text-sm text-stone-500">Anonimleştirilmiş danışan kayıtları düzenlenemez.</p>}
+        {disabled && <p className="text-sm text-ink-subtle">Anonimleştirilmiş danışan kayıtları düzenlenemez.</p>}
       </div>
     </div>
   );
@@ -248,7 +255,7 @@ function ClientFormFieldEditor({
   return (
     <div className="space-y-2" data-testid={`client-form-field-${field.id}`}>
       <div className="flex flex-wrap items-center gap-2">
-        <p className="text-sm font-medium text-stone-800">
+        <p className="text-sm font-medium text-ink">
           {field.label}
           {field.required ? " *" : ""}
         </p>
@@ -273,11 +280,11 @@ function ClientFormFieldEditor({
           options={[["", "Seçin"], ...field.options.map((option) => [option, option] as [string, string])]}
         />
       ) : field.type === "multiselect" && field.options?.length ? (
-        <div className="grid gap-2 rounded-lg border border-stone-200 bg-white p-3">
+        <div className="grid gap-2 rounded-card border border-line bg-surface p-3">
           {field.options.map((option) => {
             const selected = Array.isArray(inputValue) ? inputValue.includes(option) : false;
             return (
-              <label key={option} className="flex min-h-11 items-center gap-2 text-sm text-stone-700">
+              <label key={option} className="flex min-h-11 items-center gap-2 text-sm text-ink">
                 <input
                   type="checkbox"
                   checked={selected}
@@ -297,13 +304,13 @@ function ClientFormFieldEditor({
           })}
         </div>
       ) : field.type === "date" ? (
-        <label className="block text-sm font-medium text-stone-700">
+        <label className="block text-sm font-medium text-ink">
           <input
             type="date"
             value={String(inputValue)}
             disabled={disabled}
             onChange={(event) => onChange(event.target.value)}
-            className="mt-1 min-h-11 w-full rounded-lg border border-stone-200 bg-white px-3 py-2 text-base outline-none transition focus:border-emerald-700 sm:text-sm"
+            className="mt-1 min-h-11 w-full rounded-card border border-line bg-surface px-3 py-2 text-base outline-none transition focus:border-primary sm:text-sm"
           />
         </label>
       ) : field.type === "number" ? (

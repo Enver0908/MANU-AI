@@ -1,7 +1,9 @@
 "use client";
 
 import { AlertTriangle, Check, Plus, Search } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
+import { useShellDirtyRegistration } from "@/lib/use-shell-dirty-registration";
+import type { ShellDirtyEntryState } from "@/lib/phase-85-stage-5-shell-dirty-registry";
 import { MenuWorkflowExportSection } from "@/components/dashboard/menu-workflow-export-section";
 import {
   formatMenuPlanStatusLabel,
@@ -49,10 +51,10 @@ export function MenuPlanPanel({
   if (!selectedPlan) {
     return (
       <section className="space-y-4" data-testid="menu-workflow-panel">
-        <div className="rounded-lg border border-stone-200 bg-stone-50 p-4">
-          <h4 className="text-sm font-semibold text-stone-900">Menu</h4>
-          <p className="mt-1 text-sm text-stone-600">{clientName} icin henuz menu plani yok.</p>
-          <p className="mt-2 text-sm leading-6 text-stone-600">
+        <div className="rounded-card border border-line bg-surface-muted p-4">
+          <h4 className="text-sm font-semibold text-ink">Menu</h4>
+          <p className="mt-1 text-sm text-ink-muted">{clientName} icin henuz menu plani yok.</p>
+          <p className="mt-2 text-sm leading-6 text-ink-muted">
             Dort sablon tipinden birini secerek yeni plan olusturun. Aktif plan legacy diyet ozetini kilitler.
           </p>
         </div>
@@ -111,6 +113,8 @@ function MenuPlanPanelEditor({
   const [catalogQuery, setCatalogQuery] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [isActivating, setIsActivating] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const saveButtonRef = useRef<HTMLButtonElement>(null);
 
   const catalogMatches = useMemo(() => searchPhase77DCatalogFoods(catalogQuery, 8), [catalogQuery]);
   const exportPreview = useMemo(() => {
@@ -120,6 +124,36 @@ function MenuPlanPanelEditor({
   }, [draft]);
   const activationBlocked = hasHardMenuPlanConflicts(draft.conflicts);
   const statusLabel = formatMenuPlanStatusLabel(draft, activePlanId, draft.id);
+  const isDirty = JSON.stringify(draft) !== JSON.stringify(selectedPlan);
+  const dirtyState: ShellDirtyEntryState = isSaving || isActivating ? "saving" : saveError ? "error" : isDirty ? "dirty" : "clean";
+
+  useShellDirtyRegistration({
+    id: `client-menu:${clientId}:${selectedPlan.id}`,
+    label: "Menü planı",
+    state: dirtyState,
+    canSave: isDirty && !disabled,
+    onSave: async () => {
+      if (disabled || isSaving) return false;
+      setIsSaving(true);
+      setSaveError(null);
+      try {
+        const { conflicts: _conflicts, ...payload } = draft;
+        void _conflicts;
+        await onSave(payload);
+        return true;
+      } catch (error) {
+        setSaveError(error instanceof Error ? error.message : "menu_save_failed");
+        return false;
+      } finally {
+        setIsSaving(false);
+      }
+    },
+    onDiscard: () => {
+      setDraft(selectedPlan);
+      setSaveError(null);
+    },
+    onFocusField: () => saveButtonRef.current?.focus(),
+  });
 
   const updateDraft = (patch: Partial<ClientMenuPlanV1State>) => {
     setDraft((current) => ({ ...current, ...patch, conflicts: current.conflicts }));
@@ -155,10 +189,13 @@ function MenuPlanPanelEditor({
   const save = async () => {
     if (disabled || isSaving) return;
     setIsSaving(true);
+    setSaveError(null);
     try {
-      const { conflicts, ...payload } = draft;
-      void conflicts;
+      const { conflicts: _conflicts, ...payload } = draft;
+      void _conflicts;
       await onSave(payload);
+    } catch (error) {
+      setSaveError(error instanceof Error ? error.message : "menu_save_failed");
     } finally {
       setIsSaving(false);
     }
@@ -176,20 +213,21 @@ function MenuPlanPanelEditor({
 
   return (
     <section className="space-y-4" data-testid="menu-workflow-panel">
-      <div className="rounded-lg border border-stone-200 bg-stone-50 p-4">
+      <div className="rounded-card border border-line bg-surface-muted p-4">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h4 className="text-sm font-semibold text-stone-900">Menu</h4>
-            <p className="mt-1 text-sm text-stone-600">
+            <h4 className="text-sm font-semibold text-ink">Menu</h4>
+            <p className="mt-1 text-sm text-ink-muted">
               {clientName} · {getMenuTemplateLabel(draft.templateType)} · revizyon {draft.revision}
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
             <button
+              ref={saveButtonRef}
               type="button"
               onClick={save}
               disabled={disabled || isSaving}
-              className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-emerald-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-900 disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex min-h-11 items-center gap-2 rounded-control bg-ink px-4 py-2 text-sm font-semibold text-white transition hover:bg-ink-alt disabled:cursor-not-allowed disabled:opacity-60"
               data-testid="menu-workflow-save"
             >
               <Check size={16} />
@@ -199,13 +237,18 @@ function MenuPlanPanelEditor({
               type="button"
               onClick={activate}
               disabled={disabled || isActivating || draft.status === "active" || activationBlocked}
-              className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-stone-300 bg-white px-4 py-2 text-sm font-semibold text-stone-800 transition hover:bg-stone-100 disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex min-h-11 items-center gap-2 rounded-card border border-line-strong bg-surface px-4 py-2 text-sm font-semibold text-ink transition hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-60"
               data-testid="menu-workflow-activate"
             >
               {isActivating ? "Aktive ediliyor..." : "Plani aktive et"}
             </button>
           </div>
         </div>
+        {saveError ? (
+          <p role="alert" aria-live="assertive" className="mt-3 rounded-card border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
+            Kayıt başarısız: {saveError}
+          </p>
+        ) : null}
         <div className="mt-3 flex flex-wrap gap-2">
           <SummaryBadge label={`Durum: ${statusLabel}`} tone={statusLabel === "Aktif" ? "active" : "neutral"} />
           <SummaryBadge label={`${workflowSummary.totalPlans} plan`} tone="neutral" />
@@ -217,7 +260,7 @@ function MenuPlanPanelEditor({
             tone={draft.exportVisible ? "active" : "neutral"}
           />
         </div>
-        <p className="mt-3 text-sm leading-6 text-stone-600">{MENU_TEMPLATE_DESCRIPTIONS_TR[draft.templateType]}</p>
+        <p className="mt-3 text-sm leading-6 text-ink-muted">{MENU_TEMPLATE_DESCRIPTIONS_TR[draft.templateType]}</p>
       </div>
 
       <div className="flex flex-wrap gap-2">
@@ -227,7 +270,7 @@ function MenuPlanPanelEditor({
             type="button"
             onClick={() => onSelectPlan(plan.id)}
             className={`min-h-11 rounded-full px-3 py-1.5 text-xs font-semibold transition ${
-              plan.id === draft.id ? "bg-stone-900 text-white" : "border border-stone-200 bg-white text-stone-700"
+              plan.id === draft.id ? "bg-ink text-white" : "border border-line bg-surface text-ink"
             }`}
           >
             {plan.title} · {formatMenuPlanStatusLabel(plan, activePlanId, plan.id)}
@@ -238,7 +281,7 @@ function MenuPlanPanelEditor({
       <TemplatePicker disabled={disabled} onCreate={onCreate} compact />
 
       {draft.conflicts.length > 0 ? (
-        <div className="space-y-2 rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-950">
+        <div className="space-y-2 rounded-card border border-rose-200 bg-rose-50 p-3 text-sm text-rose-950">
           {draft.conflicts.map((conflict) => (
             <p key={`${conflict.code}-${conflict.message}`} className="inline-flex items-start gap-2">
               <AlertTriangle size={16} className="mt-0.5 shrink-0" />
@@ -254,29 +297,29 @@ function MenuPlanPanelEditor({
       ) : null}
 
       <div className="grid gap-3 md:grid-cols-2">
-        <label className="block text-sm font-medium text-stone-700">
+        <label className="block text-sm font-medium text-ink">
           Plan basligi
           <input
             value={draft.title}
             onChange={(event) => updateDraft({ title: event.target.value })}
-            className="mt-1 min-h-11 w-full rounded-lg border border-stone-200 px-3 py-2 text-sm"
+            className="mt-1 min-h-11 w-full rounded-card border border-line px-3 py-2 text-sm"
           />
         </label>
-        <label className="block text-sm font-medium text-stone-700">
+        <label className="block text-sm font-medium text-ink">
           Gecerlilik tarihi
           <input
             type="date"
             value={draft.effectiveDate || ""}
             onChange={(event) => updateDraft({ effectiveDate: event.target.value || null })}
-            className="mt-1 min-h-11 w-full rounded-lg border border-stone-200 px-3 py-2 text-sm"
+            className="mt-1 min-h-11 w-full rounded-card border border-line px-3 py-2 text-sm"
           />
         </label>
       </div>
 
-      <div className="rounded-lg border border-stone-200 bg-white p-3">
-        <label className="block text-sm font-semibold text-stone-900">Katalog arama</label>
-        <div className="mt-2 flex min-h-11 items-center gap-2 rounded-lg border border-stone-200 px-3 py-2">
-          <Search size={16} className="text-stone-400" />
+      <div className="rounded-card border border-line bg-surface p-3">
+        <label className="block text-sm font-semibold text-ink">Katalog arama</label>
+        <div className="mt-2 flex min-h-11 items-center gap-2 rounded-card border border-line px-3 py-2">
+          <Search size={16} className="text-ink-subtle" />
           <input
             value={catalogQuery}
             onChange={(event) => setCatalogQuery(event.target.value)}
@@ -294,7 +337,7 @@ function MenuPlanPanelEditor({
                   const firstSlot = draft.mealSlots[0];
                   if (firstSlot) addItemToSlot(firstSlot.id, "items", match.name, match.id);
                 }}
-                className="min-h-11 rounded-lg border border-stone-200 px-2 py-1 text-xs font-semibold text-stone-700"
+                className="min-h-11 rounded-card border border-line px-2 py-1 text-xs font-semibold text-ink"
               >
                 {match.name}
               </button>
@@ -305,11 +348,11 @@ function MenuPlanPanelEditor({
 
       <div className="space-y-3">
         {draft.mealSlots.slice(0, draft.templateType === "day_by_day_detailed" ? 8 : draft.mealSlots.length).map((slot) => (
-          <div key={slot.id} className="rounded-lg border border-stone-200 bg-white p-3">
-            <p className="text-sm font-semibold text-stone-900">{slot.title}</p>
+          <div key={slot.id} className="rounded-card border border-line bg-surface p-3">
+            <p className="text-sm font-semibold text-ink">{slot.title}</p>
             <div className="mt-2 flex flex-wrap gap-2">
               {slot.items.map((item) => (
-                <span key={item.id} className="rounded-full bg-stone-100 px-2 py-1 text-xs text-stone-800">
+                <span key={item.id} className="rounded-full bg-surface-muted px-2 py-1 text-xs text-ink">
                   {item.freeText || item.catalogMatch?.catalogFoodName || item.label}
                 </span>
               ))}
@@ -317,7 +360,7 @@ function MenuPlanPanelEditor({
             <div className="mt-2 flex gap-2">
               <input
                 placeholder="Ogun ogesi ekle"
-                className="min-h-11 min-w-0 flex-1 rounded-lg border border-stone-200 px-3 py-2 text-sm"
+                className="min-h-11 min-w-0 flex-1 rounded-card border border-line px-3 py-2 text-sm"
                 onKeyDown={(event) => {
                   if (event.key === "Enter") {
                     addItemToSlot(slot.id, "items", (event.target as HTMLInputElement).value);
@@ -328,10 +371,10 @@ function MenuPlanPanelEditor({
             </div>
             {draft.templateType === "exchange_option_based" ? (
               <div className="mt-2">
-                <p className="text-xs font-semibold text-stone-600">Alternatifler</p>
+                <p className="text-xs font-semibold text-ink-muted">Alternatifler</p>
                 <div className="mt-1 flex flex-wrap gap-2">
                   {slot.alternatives.map((item) => (
-                    <span key={item.id} className="rounded-full bg-stone-100 px-2 py-1 text-xs text-stone-800">
+                    <span key={item.id} className="rounded-full bg-surface-muted px-2 py-1 text-xs text-ink">
                       {item.freeText || item.catalogMatch?.catalogFoodName || item.label}
                     </span>
                   ))}
@@ -344,7 +387,7 @@ function MenuPlanPanelEditor({
                 onChange={(event) => updateSlot(slot.id, { weeklyTargetNote: event.target.value })}
                 rows={2}
                 placeholder="Haftalik hedef notu"
-                className="mt-2 w-full rounded-lg border border-stone-200 px-3 py-2 text-sm"
+                className="mt-2 w-full rounded-card border border-line px-3 py-2 text-sm"
               />
             ) : null}
           </div>
@@ -364,30 +407,30 @@ function MenuPlanPanelEditor({
           onChange={(event) => updateDraft({ dietitianNotes: event.target.value })}
           rows={3}
           placeholder="Diyetisyen notlari"
-          className="w-full rounded-lg border border-stone-200 px-3 py-2 text-sm"
+          className="w-full rounded-card border border-line px-3 py-2 text-sm"
         />
         <textarea
           value={draft.clientFacingNotes}
           onChange={(event) => updateDraft({ clientFacingNotes: event.target.value })}
           rows={3}
           placeholder="Danisana yonelik notlar"
-          className="w-full rounded-lg border border-stone-200 px-3 py-2 text-sm"
+          className="w-full rounded-card border border-line px-3 py-2 text-sm"
         />
       </div>
 
-      <label className="flex min-h-11 items-center gap-2 text-sm text-stone-700">
+      <label className="flex min-h-11 items-center gap-2 text-sm text-ink">
         <input
           type="checkbox"
           checked={draft.exportVisible}
           onChange={(event) => updateDraft({ exportVisible: event.target.checked })}
-          className="h-4 w-4 rounded border-stone-300"
+          className="h-4 w-4 rounded border-line-strong"
           data-testid="menu-workflow-export-visible"
         />
         Disa aktarimda goster
       </label>
 
-      <div className="rounded-lg border border-stone-200 bg-white p-3 text-sm text-stone-700">
-        <p className="font-semibold text-stone-900">Turetilmis legacy ozet onizleme</p>
+      <div className="rounded-card border border-line bg-surface p-3 text-sm text-ink">
+        <p className="font-semibold text-ink">Turetilmis legacy ozet onizleme</p>
         <p className="mt-1 whitespace-pre-wrap">{exportPreview || "Kaydet veya aktive et."}</p>
       </div>
 
@@ -419,16 +462,16 @@ function TemplatePicker({
           type="button"
           disabled={disabled}
           onClick={() => onCreate(templateType)}
-          className={`rounded-lg border border-stone-200 bg-white text-left transition hover:border-stone-300 hover:bg-stone-50 disabled:cursor-not-allowed disabled:opacity-60 ${
+          className={`rounded-card border border-line bg-surface text-left transition hover:border-line-strong hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-60 ${
             compact ? "px-3 py-2" : "p-4"
           }`}
         >
-          <span className="inline-flex items-center gap-1 text-sm font-semibold text-stone-900">
+          <span className="inline-flex items-center gap-1 text-sm font-semibold text-ink">
             {!compact && <Plus size={14} />}
             {getMenuTemplateLabel(templateType)}
           </span>
           {!compact && (
-            <p className="mt-2 text-sm leading-6 text-stone-600">{MENU_TEMPLATE_DESCRIPTIONS_TR[templateType]}</p>
+            <p className="mt-2 text-sm leading-6 text-ink-muted">{MENU_TEMPLATE_DESCRIPTIONS_TR[templateType]}</p>
           )}
         </button>
       ))}
@@ -445,10 +488,10 @@ function SummaryBadge({
 }) {
   const classes =
     tone === "active"
-      ? "border-emerald-200 bg-emerald-50 text-emerald-900"
+      ? "border-primary/30 bg-primary/10 text-ink"
       : tone === "warning"
         ? "border-amber-200 bg-amber-50 text-amber-900"
-        : "border-stone-200 bg-white text-stone-700";
+        : "border-line bg-surface text-ink";
   return <span className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold ${classes}`}>{label}</span>;
 }
 
@@ -462,18 +505,18 @@ function TokenArea({
   onChange: (values: string[]) => void;
 }) {
   return (
-    <div className="rounded-lg border border-stone-200 bg-white p-3">
-      <p className="text-sm font-semibold text-stone-900">{label}</p>
+    <div className="rounded-card border border-line bg-surface p-3">
+      <p className="text-sm font-semibold text-ink">{label}</p>
       <div className="mt-2 flex flex-wrap gap-2">
         {values.map((value) => (
-          <span key={value} className="rounded-full bg-stone-100 px-2 py-1 text-xs text-stone-800">
+          <span key={value} className="rounded-full bg-surface-muted px-2 py-1 text-xs text-ink">
             {value}
           </span>
         ))}
       </div>
       <input
         placeholder={`${label} ekle`}
-        className="mt-2 min-h-11 w-full rounded-lg border border-stone-200 px-3 py-2 text-sm"
+        className="mt-2 min-h-11 w-full rounded-card border border-line px-3 py-2 text-sm"
         onKeyDown={(event) => {
           if (event.key !== "Enter") return;
           const value = (event.target as HTMLInputElement).value.trim();
