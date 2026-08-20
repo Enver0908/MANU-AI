@@ -1,5 +1,7 @@
 # MANU-AI Risk Register
 
+Current Phase 85 Stage 6 Phase 4 note, 2026-08-20: closure automation passed bounded-flow, full application, local RLS 56/56 zero-skip, build, release, dependency, Stage 5 shell, and strict performance gates. Stage 6 remains open because forms expose unnamed controls, nutrition exposes unnamed buttons and low contrast, menu/AI controls expose low contrast, and no post-Stage-6 physical iPhone/Android browser/PWA evidence exists. These are explicit closure blockers, not production approval. Evidence: `docs/PHASE_85_STAGE_6_PHASE_4_INTEGRATION_CLOSURE_EVIDENCE.md`.
+
 ## Risk Scale
 
 - Severity: `low`, `medium`, `high`, `critical`
@@ -7,7 +9,7 @@
 
 ## Product and Legal Risks
 
-Current Phase 85 Stage 6 R3 note, 2026-08-20: alert/notification polling, filter, pagination, and receipt-mutation races are mitigated locally through resource-owned latest-request gates, abort, mutation invalidation, and stable-id page merge. Clean local Supabase reset and RLS 56/56 with zero skipped passed. Stage 6 Phase 1-3 remediation R1-R3 is complete locally; Phase 4 is not started. Stage 5 remains closed and production remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_R3_INBOX_CONCURRENCY_SECURITY_CLOSURE_EVIDENCE.md`.
+Prior Phase 85 Stage 6 R3 checkpoint, 2026-08-20: alert/notification polling, filter, pagination, and receipt-mutation races are mitigated locally through resource-owned latest-request gates, abort, mutation invalidation, and stable-id page merge. Clean local Supabase reset and RLS 56/56 with zero skipped passed. Stage 6 Phase 1-3 remediation R1-R3 is complete locally; Phase 4 had not started at this checkpoint. Stage 5 remains closed and production remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_R3_INBOX_CONCURRENCY_SECURITY_CLOSURE_EVIDENCE.md`.
 
 Current dependency note, 2026-08-20: newly published production `nanoid` findings were removed through transitive patch-only lock updates (`3.3.18`, `5.1.16`), and the production audit/release gate is clean. Unfiltered `npm audit` still reports four development-only transitive findings (one low, three high) in Babel, brace-expansion, js-yaml, and Vite tooling; these remain open for a separately scoped tooling dependency update and do not authorize production.
 

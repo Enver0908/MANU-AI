@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "stage6-real-device-v1",
+  "status": "BLOCKED",
+  "productionStatus": "NO-GO",
+  "approvedBy": null,
+  "capturedAt": null,
+  "instructions": "Use synthetic data on physical iPhone Safari, installed iPhone PWA, physical Android Chrome, and installed Android PWA. Record every required workflow step and hash every artifact under docs/stage-6-real-device/. Browser emulation is not accepted.",
+  "requiredCaptureIds": [
+    "iphoneSafari",
+    "iphonePwa",
+    "androidChrome",
+    "androidPwa"
+  ],
+  "requiredWorkflowSteps": [
+    "dashboard_home",
+    "first_client_workspace",
+    "forms_revision_save",
+    "nutrition_task",
+    "menu_task",
+    "ai_controls",
+    "client_scoped_messages",
+    "guarded_second_client_switch",
+    "offline_privacy_lock"
+  ],
+  "deviceCaptures": {}
+}

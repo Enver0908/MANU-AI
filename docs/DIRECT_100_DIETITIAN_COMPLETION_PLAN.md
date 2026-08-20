@@ -1,6 +1,8 @@
 # Direct 100 Dietitian Completion Plan
 
-**Current active status (2026-08-20):** Stage 6 Phase 1-3 remediation R1-R3 is complete locally. R3 prevents stale inbox responses and duplicate pagination under concurrent poll/filter/receipt activity; clean local reset and RLS 56/56 zero-skip preserve tenant isolation. This does not approve the direct 100-dietitian pilot, which remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_R3_INBOX_CONCURRENCY_SECURITY_CLOSURE_EVIDENCE.md`. Stage 6 Phase 4 requires separate approval.
+**Current active status (2026-08-20):** Stage 6 Phase 4 is verification-complete but closure-blocked by four client-task accessibility surfaces and missing Stage 6 physical-device evidence. Automated bounded-flow, full app, clean RLS, build, release, dependency, shell, and strict local-lab performance gates passed. This does not approve the direct 100-dietitian pilot; production remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_PHASE_4_INTEGRATION_CLOSURE_EVIDENCE.md`.
+
+**Prior R3 checkpoint (2026-08-20):** Stage 6 Phase 1-3 remediation R1-R3 is complete locally. R3 prevents stale inbox responses and duplicate pagination under concurrent poll/filter/receipt activity; clean local reset and RLS 56/56 zero-skip preserve tenant isolation. This does not approve the direct 100-dietitian pilot, which remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_R3_INBOX_CONCURRENCY_SECURITY_CLOSURE_EVIDENCE.md`. Phase 4 required separate approval at this checkpoint.
 
 **Current active status (2026-08-19):** Stage 6 R2 workspace-state remediation is complete locally. Tenant/client/domain state ownership and guarded async editor navigation reduce cross-client display and silent-draft-loss risk without enabling offline storage or production integrations. Stage 5 remains closed. The direct 100-dietitian production pilot remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_R2_WORKSPACE_STATE_CONFLICT_DIRTY_NAVIGATION_EVIDENCE.md`.
 

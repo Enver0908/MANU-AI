@@ -1,10 +1,12 @@
 # MANU-AI
 
+**Current authority (2026-08-20):** Stage 6 Phase 4 verification is implemented but closure is blocked. Bounded workflow, full app, clean local RLS 56/56, production build, dependency, Stage 5 shell, strict local-lab performance, and release gates passed. Desktop/mobile axe found blocking defects in forms, nutrition, menu, and client AI controls; new post-Stage-6 physical iPhone/Android browser/PWA evidence is also pending. Stage 5 remains `STAGE_5_CLOSED`; Stage 6 is not closed and production remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_PHASE_4_INTEGRATION_CLOSURE_EVIDENCE.md`.
+
 MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to help dietitians manage client conversations, draft safe replies, and route clinically sensitive nutrition or health messages to human review.
 
 ## Current Status
 
-**Current authority (2026-08-20):** Stage 6 Phase 1-3 remediation R1-R3 is complete locally. Alerts/notifications inbox polling, filter changes, pagination, and receipt mutations now use resource-owned latest-request gates, abort stale requests, and merge stable identifiers without duplicates. Clean local Supabase reset and RLS 56/56 with zero skipped passed. Stage 5 remains `STAGE_5_CLOSED`; production remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_R3_INBOX_CONCURRENCY_SECURITY_CLOSURE_EVIDENCE.md`. Stage 6 Phase 4 remains not started and requires separate approval.
+**Prior R3 checkpoint (2026-08-20):** Stage 6 Phase 1-3 remediation R1-R3 is complete locally. Alerts/notifications inbox polling, filter changes, pagination, and receipt mutations now use resource-owned latest-request gates, abort stale requests, and merge stable identifiers without duplicates. Clean local Supabase reset and RLS 56/56 with zero skipped passed. Stage 5 remains `STAGE_5_CLOSED`; production remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_R3_INBOX_CONCURRENCY_SECURITY_CLOSURE_EVIDENCE.md`. Phase 4 had not started at this checkpoint.
 
 **Current authority (2026-08-19):** Stage 6 R2 workspace-state remediation is complete locally. Workspace reads are tenant/client/domain-owned, URL is the sole viewed-client/task authority, bounded form data reaches the editor, and async dirty/conflict navigation is fail-closed across client creation, forms, nutrition, menu, context, and AI controls. Stage 5 remains `STAGE_5_CLOSED`; production remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_R2_WORKSPACE_STATE_CONFLICT_DIRTY_NAVIGATION_EVIDENCE.md`. Phase 4 remains not started and requires separate approval.
 

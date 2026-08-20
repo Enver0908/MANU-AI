@@ -19,6 +19,7 @@
     "serve:stage-5-real-device": "node scripts/serve-stage-5-real-device.mjs",
     "test:stage-5-real-device": "node scripts/verify-stage-5-real-device-evidence.mjs",
     "test:stage-5-closure": "node scripts/verify-stage-5-closure.mjs",
+    "test:stage-6-real-device": "node scripts/verify-stage-6-real-device-evidence.mjs",
     "release:verify": "node scripts/release-verify.mjs",
     "rehearse:ai": "node ../dietitian-ai-assistant/scripts/rehearse-ai.mjs",
     "rehearse:ai:expanded": "node ../dietitian-ai-assistant/scripts/rehearse-ai-expanded.mjs",

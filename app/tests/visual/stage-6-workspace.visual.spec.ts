@@ -139,6 +139,12 @@ test("client switching keeps an unsaved roster draft behind the central dirty gu
 test("bounded form refresh marks a successful save clean before task navigation", async ({ page }) => {
   await openDashboard(page);
   await openMertWorkspace(page);
+  const broadMutationRefreshes: string[] = [];
+  page.on("request", (request) => {
+    if (request.method() === "POST" && new URL(request.url()).pathname === "/api/app-state") {
+      broadMutationRefreshes.push(request.url());
+    }
+  });
   await visibleTestId(page, "tab-tab_personal_form").click();
   const form = page.getByTestId("client-form-panel");
   await expect(form).toBeVisible();
@@ -156,6 +162,42 @@ test("bounded form refresh marks a successful save clean before task navigation"
   await visibleTestId(page, "tab-tab_food_rules").click();
   await expect(page.getByTestId("shell-dirty-navigation-dialog")).toHaveCount(0);
   await expect(page.getByTestId("active-nutrition-plan-panel")).toBeVisible();
+  expect(broadMutationRefreshes).toEqual([]);
+});
+
+test("workspace tasks load bounded resources lazily without broad app-state reads", async ({ page }) => {
+  await openDashboard(page);
+  await openMertWorkspace(page);
+  const requests: Array<{ method: string; path: string }> = [];
+  page.on("request", (request) => {
+    requests.push({ method: request.method(), path: new URL(request.url()).pathname });
+  });
+
+  const back = page.getByTestId("client-workspace-back");
+  const mobileStack = await back.isVisible();
+  const tasks = [
+    { testId: "tab-tab_personal_form", panel: "client-form-panel", path: "/api/clients/client-mert/forms" },
+    { testId: "tab-tab_food_rules", panel: "active-nutrition-plan-panel", path: "/api/clients/client-mert/food-rule-profile" },
+    { testId: "tab-tab_menu", panel: "menu-workflow-panel", path: "/api/clients/client-mert/menu-plans" },
+  ];
+
+  for (const task of tasks) {
+    if (mobileStack && !(await visibleTestId(page, task.testId).isVisible())) {
+      await back.click();
+      await expect(page.getByTestId("client-task-hub")).toBeVisible();
+    }
+    const response = page.waitForResponse(
+      (candidate) => candidate.request().method() === "GET" && new URL(candidate.url()).pathname === task.path,
+    );
+    await visibleTestId(page, task.testId).click();
+    await response;
+    await expect(page.getByTestId(task.panel)).toBeVisible();
+  }
+
+  expect(requests.some((request) => request.path === "/api/app-state")).toBe(false);
+  for (const task of tasks) {
+    expect(requests.filter((request) => request.method === "GET" && request.path === task.path)).toHaveLength(1);
+  }
 });
 
 test("messaging list and detail split on mobile and stay side by side on desktop", async ({ page }) => {

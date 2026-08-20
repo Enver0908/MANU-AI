@@ -20,6 +20,8 @@ Post-Phase 3 R2 remediation (2026-08-19): workspace reads are keyed by tenant/cl
 
 Post-Phase 3 R3 remediation (2026-08-20): alerts/notifications inbox requests are resource- and filter-owned, latest-request-wins, abortable, mutation-invalidated, and duplicate-free across pagination. Clean local Supabase reset and RLS 56/56 with zero skipped prove the retained route/persistence isolation boundary. Evidence: `docs/PHASE_85_STAGE_6_R3_INBOX_CONCURRENCY_SECURITY_CLOSURE_EVIDENCE.md`. R1-R3 remediation is complete locally; Stage 6 Phase 4 remains not started and requires separate approval.
 
+Phase 4 execution note (2026-08-20): automated bounded-flow, concurrency, RLS, build, dependency, shell, and strict local-lab performance gates passed, but Stage 6 is not closed. The new desktop/mobile axe gate found blocking accessibility defects in forms, nutrition, menu, and client AI controls, and no post-Stage-6 physical iPhone/Android browser/PWA evidence exists. Evidence: `docs/PHASE_85_STAGE_6_PHASE_4_INTEGRATION_CLOSURE_EVIDENCE.md`.
+
 ## 2. Locked Scope
 
 Included:
