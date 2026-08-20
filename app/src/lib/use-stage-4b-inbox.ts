@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type {
   ClinicalAlertListItem,
   ClinicalAlertsListResponse,
@@ -20,7 +20,8 @@ import {
   mergeStage4BNotificationMutationIntoItems,
 } from "./notifications-panel-helpers";
 import {
-  fetchWithInflightDedupe,
+  createStage4BInboxRequestGate,
+  mergeStage4BInboxPageItems,
   resolveStage4BInboxPollDelayMs,
   shouldPauseStage4BInboxPolling,
 } from "./phase-85-stage-4b-inbox-scheduler";
@@ -42,14 +43,19 @@ export type Stage4BInboxSnapshot = {
   notificationsBadgeCount: number;
 };
 
-async function requestJson<T>(url: string) {
+async function requestJson<T>(url: string, signal?: AbortSignal) {
   const response = await fetch(url, {
     headers: { "content-type": "application/json" },
+    signal,
   });
   if (!response.ok) {
     throw new Error(`stage_4b_inbox_request_failed_${response.status}`);
   }
   return (await response.json()) as T;
+}
+
+function isAbortError(error: unknown) {
+  return error instanceof DOMException && error.name === "AbortError";
 }
 
 export function useStage4BInbox(filters: Pick<
@@ -74,57 +80,84 @@ export function useStage4BInbox(filters: Pick<
   const [isLoadingMoreNotifications, setIsLoadingMoreNotifications] = useState(false);
   const [lastSuccessAt, setLastSuccessAt] = useState<string | null>(null);
   const consecutiveErrorsRef = useRef(0);
-  const alertsInflightRef = useRef(new Map<string, Promise<ClinicalAlertsListResponse>>());
-  const notificationsInflightRef = useRef(new Map<string, Promise<SystemNotificationsListResponse>>());
   const pollTimerRef = useRef<number | null>(null);
   const mountedRef = useRef(true);
+  const alertsOwnerKey = buildStage4BAlertsRequestQuery(filters).toString();
+  const notificationsOwnerKey = buildStage4BNotificationsRequestQuery(filters).toString();
+  const alertsGateRef = useRef(createStage4BInboxRequestGate(alertsOwnerKey));
+  const notificationsGateRef = useRef(createStage4BInboxRequestGate(notificationsOwnerKey));
+  const alertsAbortRef = useRef<AbortController | null>(null);
+  const notificationsAbortRef = useRef<AbortController | null>(null);
+  const alertsOperationRef = useRef<number | null>(null);
+  const notificationsOperationRef = useRef<number | null>(null);
+  const refreshSequenceRef = useRef(0);
 
   const applyAlertsResponse = useCallback((payload: ClinicalAlertsListResponse, append: boolean) => {
     setAlerts(payload);
-    setAlertItems((current) => (append ? [...current, ...payload.items] : payload.items));
+    setAlertItems((current) => (append ? mergeStage4BInboxPageItems(current, payload.items) : payload.items));
     setAlertsNextCursor(payload.nextCursor);
   }, []);
 
   const applyNotificationsResponse = useCallback((payload: SystemNotificationsListResponse, append: boolean) => {
     setNotifications(payload);
-    setNotificationItems((current) => (append ? [...current, ...payload.items] : payload.items));
+    setNotificationItems((current) =>
+      append ? mergeStage4BInboxPageItems(current, payload.items) : payload.items,
+    );
     setNotificationsNextCursor(payload.nextCursor);
   }, []);
 
   const fetchAlertsPage = useCallback(
     async (cursor?: string | null, append = false) => {
       const query = buildStage4BAlertsRequestQuery(filters, { cursor }).toString();
-      const payload = await fetchWithInflightDedupe<ClinicalAlertsListResponse>(
-        alertsInflightRef.current,
-        `alerts:${query}`,
-        () => requestJson<ClinicalAlertsListResponse>(`/api/alerts?${query}`),
-      );
-      if (!mountedRef.current) return payload;
-      applyAlertsResponse(payload, append);
-      setAlertsError(null);
-      return payload;
+      alertsAbortRef.current?.abort();
+      const controller = new AbortController();
+      alertsAbortRef.current = controller;
+      const token = alertsGateRef.current.begin(alertsOwnerKey);
+      alertsOperationRef.current = token.sequence;
+      try {
+        const payload = await requestJson<ClinicalAlertsListResponse>(`/api/alerts?${query}`, controller.signal);
+        if (!mountedRef.current || controller.signal.aborted || !alertsGateRef.current.canApply(token)) {
+          return { payload, applied: false };
+        }
+        applyAlertsResponse(payload, append);
+        setAlertsError(null);
+        return { payload, applied: true };
+      } finally {
+        if (alertsOperationRef.current === token.sequence) alertsOperationRef.current = null;
+      }
     },
-    [applyAlertsResponse, filters],
+    [alertsOwnerKey, applyAlertsResponse, filters],
   );
 
   const fetchNotificationsPage = useCallback(
     async (cursor?: string | null, append = false) => {
       const query = buildStage4BNotificationsRequestQuery(filters, { cursor }).toString();
-      const payload = await fetchWithInflightDedupe<SystemNotificationsListResponse>(
-        notificationsInflightRef.current,
-        `notifications:${query}`,
-        () => requestJson<SystemNotificationsListResponse>(`/api/notifications?${query}`),
-      );
-      if (!mountedRef.current) return payload;
-      applyNotificationsResponse(payload, append);
-      setNotificationsError(null);
-      return payload;
+      notificationsAbortRef.current?.abort();
+      const controller = new AbortController();
+      notificationsAbortRef.current = controller;
+      const token = notificationsGateRef.current.begin(notificationsOwnerKey);
+      notificationsOperationRef.current = token.sequence;
+      try {
+        const payload = await requestJson<SystemNotificationsListResponse>(
+          `/api/notifications?${query}`,
+          controller.signal,
+        );
+        if (!mountedRef.current || controller.signal.aborted || !notificationsGateRef.current.canApply(token)) {
+          return { payload, applied: false };
+        }
+        applyNotificationsResponse(payload, append);
+        setNotificationsError(null);
+        return { payload, applied: true };
+      } finally {
+        if (notificationsOperationRef.current === token.sequence) notificationsOperationRef.current = null;
+      }
     },
-    [applyNotificationsResponse, filters],
+    [applyNotificationsResponse, filters, notificationsOwnerKey],
   );
 
   const refresh = useCallback(
     async (options?: { resetBackoff?: boolean }) => {
+      const refreshSequence = ++refreshSequenceRef.current;
       if (options?.resetBackoff) {
         consecutiveErrorsRef.current = 0;
       }
@@ -135,17 +168,17 @@ export function useStage4BInbox(filters: Pick<
           fetchNotificationsPage(null, false),
         ]);
 
-        if (!mountedRef.current) return;
+        if (!mountedRef.current || refreshSequence !== refreshSequenceRef.current) return;
 
         let hadError = false;
-        if (alertsResult.status === "rejected") {
+        if (alertsResult.status === "rejected" && !isAbortError(alertsResult.reason)) {
           hadError = true;
           setAlertsError(alertsResult.reason instanceof Error ? alertsResult.reason.message : "alerts_refresh_failed");
         }
 
         if (notificationsResult.status === "fulfilled") {
-          setNotificationsError(null);
-        } else {
+          if (notificationsResult.value.applied) setNotificationsError(null);
+        } else if (!isAbortError(notificationsResult.reason)) {
           hadError = true;
           setNotificationsError(
             notificationsResult.reason instanceof Error
@@ -154,14 +187,19 @@ export function useStage4BInbox(filters: Pick<
           );
         }
 
+        const fullyApplied =
+          alertsResult.status === "fulfilled" &&
+          alertsResult.value.applied &&
+          notificationsResult.status === "fulfilled" &&
+          notificationsResult.value.applied;
         if (hadError) {
           consecutiveErrorsRef.current += 1;
-        } else {
+        } else if (fullyApplied) {
           consecutiveErrorsRef.current = 0;
           setLastSuccessAt(new Date().toISOString());
         }
       } finally {
-        if (mountedRef.current) {
+        if (mountedRef.current && refreshSequence === refreshSequenceRef.current) {
           setIsRefreshing(false);
         }
       }
@@ -170,7 +208,7 @@ export function useStage4BInbox(filters: Pick<
   );
 
   const loadMoreAlerts = useCallback(async () => {
-    if (!alertsNextCursor || isLoadingMoreAlerts) return;
+    if (!alertsNextCursor || isLoadingMoreAlerts || alertsOperationRef.current != null) return;
     setIsLoadingMoreAlerts(true);
     try {
       await fetchAlertsPage(alertsNextCursor, true);
@@ -186,7 +224,7 @@ export function useStage4BInbox(filters: Pick<
   }, [alertsNextCursor, fetchAlertsPage, isLoadingMoreAlerts]);
 
   const loadMoreNotifications = useCallback(async () => {
-    if (!notificationsNextCursor || isLoadingMoreNotifications) return;
+    if (!notificationsNextCursor || isLoadingMoreNotifications || notificationsOperationRef.current != null) return;
     setIsLoadingMoreNotifications(true);
     try {
       await fetchNotificationsPage(notificationsNextCursor, true);
@@ -206,11 +244,17 @@ export function useStage4BInbox(filters: Pick<
   }, [refresh]);
 
   const applyNotificationMutation = useCallback((payload: Stage4BNotificationMutationResponse) => {
+    notificationsGateRef.current.invalidateForMutation();
+    notificationsAbortRef.current?.abort();
+    notificationsOperationRef.current = null;
     setNotificationItems((current) => mergeStage4BNotificationMutationIntoItems(current, payload));
     setNotifications((current) => (current ? { ...current, counts: payload.counts } : current));
   }, []);
 
   const applyNotificationReadAll = useCallback((payload: Stage4BNotificationReadAllResponse) => {
+    notificationsGateRef.current.invalidateForMutation();
+    notificationsAbortRef.current?.abort();
+    notificationsOperationRef.current = null;
     const readAt = payload.generatedAt;
     setNotificationItems((current) => applyStage4BNotificationReadAllToItems(current, payload, readAt));
     setNotifications((current) => (current ? { ...current, counts: payload.counts } : current));
@@ -220,11 +264,35 @@ export function useStage4BInbox(filters: Pick<
     mountedRef.current = true;
     return () => {
       mountedRef.current = false;
+      alertsAbortRef.current?.abort();
+      notificationsAbortRef.current?.abort();
       if (pollTimerRef.current != null) {
         window.clearTimeout(pollTimerRef.current);
       }
     };
   }, []);
+
+  useLayoutEffect(() => {
+    alertsGateRef.current.setOwner(alertsOwnerKey);
+    alertsAbortRef.current?.abort();
+    alertsOperationRef.current = null;
+    setAlerts(null);
+    setAlertItems([]);
+    setAlertsNextCursor(null);
+    setAlertsError(null);
+    setIsLoadingMoreAlerts(false);
+  }, [alertsOwnerKey]);
+
+  useLayoutEffect(() => {
+    notificationsGateRef.current.setOwner(notificationsOwnerKey);
+    notificationsAbortRef.current?.abort();
+    notificationsOperationRef.current = null;
+    setNotifications(null);
+    setNotificationItems([]);
+    setNotificationsNextCursor(null);
+    setNotificationsError(null);
+    setIsLoadingMoreNotifications(false);
+  }, [notificationsOwnerKey]);
 
   useEffect(() => {
     const timeout = window.setTimeout(() => {

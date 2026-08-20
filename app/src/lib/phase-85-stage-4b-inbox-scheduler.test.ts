@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
+  createStage4BInboxRequestGate,
+  mergeStage4BInboxPageItems,
   resolveStage4BInboxPollDelayMs,
   shouldPauseStage4BInboxPolling,
   STAGE_4B_INBOX_POLL_INTERVAL_MS,
@@ -36,5 +38,45 @@ describe("phase-85-stage-4b inbox scheduler", () => {
     expect(second).toBe("ok");
     expect(runs).toBe(1);
     expect(inflight.size).toBe(0);
+  });
+
+  it("rejects responses owned by an old filter or superseded request", () => {
+    const gate = createStage4BInboxRequestGate("status=active");
+    const first = gate.begin("status=active");
+    const second = gate.begin("status=active");
+    expect(gate.canApply(first)).toBe(false);
+    expect(gate.canApply(second)).toBe(true);
+
+    gate.setOwner("status=history");
+    expect(gate.canApply(second)).toBe(false);
+    const history = gate.begin("status=history");
+    expect(gate.canApply(history)).toBe(true);
+  });
+
+  it("invalidates a pre-mutation response so it cannot restore stale receipt state", () => {
+    const gate = createStage4BInboxRequestGate("status=unread");
+    const beforeMutation = gate.begin("status=unread");
+    gate.invalidateForMutation();
+    expect(gate.canApply(beforeMutation)).toBe(false);
+    expect(gate.canApply(gate.begin("status=unread"))).toBe(true);
+  });
+
+  it("merges paginated items by stable id without duplicates", () => {
+    expect(
+      mergeStage4BInboxPageItems(
+        [
+          { id: "alert-1", revision: 1 },
+          { id: "alert-2", revision: 1 },
+        ],
+        [
+          { id: "alert-2", revision: 2 },
+          { id: "alert-3", revision: 1 },
+        ],
+      ),
+    ).toEqual([
+      { id: "alert-1", revision: 1 },
+      { id: "alert-2", revision: 2 },
+      { id: "alert-3", revision: 1 },
+    ]);
   });
 });

@@ -1,5 +1,7 @@
 # Handoff For Next Codex
 
+**Current authority (2026-08-20):** Stage 6 Phase 1-3 remediation R1-R3 is complete locally. Preserve the R3 inbox request gate: owner keys come from bounded filter queries, only the latest token may apply, notification mutations invalidate older polls, and pagination merges by stable id. Clean local reset and RLS 56/56 with zero skipped passed. Stage 5 remains closed and production remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_R3_INBOX_CONCURRENCY_SECURITY_CLOSURE_EVIDENCE.md`. Do not begin Stage 6 Phase 4 without separate approval.
+
 **Current authority (2026-08-19):** Stage 6 R2 workspace-state remediation is complete locally. Do not restore `workspaceOverride`: URL is the viewed-client/task authority, while shell active-client persistence precedes the exact target URL. Workspace state is tenant/client/domain-owned and client editor saves/conflicts are registered centrally. Stage 5 remains closed; production remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_R2_WORKSPACE_STATE_CONFLICT_DIRTY_NAVIGATION_EVIDENCE.md`. Phase 4 requires separate approval.
 
 **Current authority (2026-08-19):** Stage 6 R1 data-integrity remediation is implemented locally after Faz 3. Supabase-backed Stage 6 dashboard mutations use durable tenant/request-scoped idempotency reservation and bounded response replay. Stage 5 remains `STAGE_5_CLOSED`. Production remains independently `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_R1_DATA_INTEGRITY_BOUNDED_PERSISTENCE_EVIDENCE.md`. Phase 4 remains not started and requires separate approval.

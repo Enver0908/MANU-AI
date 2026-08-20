@@ -1,5 +1,7 @@
 # MANU-AI Next Phase Execution Plan
 
+**Current active status (2026-08-20):** Stage 6 Phase 1-3 remediation R1-R3 is complete locally. Inbox request ownership, sequencing, abort, mutation invalidation, and stable-id pagination close the remaining communication concurrency gap; clean local reset and RLS 56/56 zero-skip supply the security evidence. Stage 5 remains closed and production remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_R3_INBOX_CONCURRENCY_SECURITY_CLOSURE_EVIDENCE.md`. The next eligible unit is Stage 6 Phase 4 and requires separate approval.
+
 **Current active status (2026-08-19):** Stage 6 R2 workspace-state remediation is complete locally. Stale workspace ownership, duplicate viewed-client state, unawaited dirty saves, incomplete draft detection, and silent menu-plan switching are closed in the local implementation. Stage 5 remains closed; production remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_R2_WORKSPACE_STATE_CONFLICT_DIRTY_NAVIGATION_EVIDENCE.md`. Phase 4 remains not started and requires separate approval.
 
 **Current active status (2026-08-19):** Stage 6 R1 data-integrity remediation is implemented locally after Faz 3. Supabase-backed Stage 6 dashboard mutations use durable tenant/request-scoped idempotency reservation and bounded response replay. Stage 5 remains closed (`STAGE_5_CLOSED`). Production remains independently `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_R1_DATA_INTEGRITY_BOUNDED_PERSISTENCE_EVIDENCE.md`. Phase 4 remains not started and requires separate approval.

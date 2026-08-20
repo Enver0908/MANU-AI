@@ -1,5 +1,7 @@
 # MANU-AI Project Plan v2
 
+**Current authority (2026-08-20):** Stage 6 Phase 1-3 remediation R1-R3 is complete locally. The bounded inbox now has filter/resource ownership, latest-response sequencing, abort, mutation invalidation, and stable-id pagination merge; clean local reset and RLS 56/56 zero-skip preserve tenant/actor security authority. Stage 5 remains `STAGE_5_CLOSED`; production remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_R3_INBOX_CONCURRENCY_SECURITY_CLOSURE_EVIDENCE.md`. Stage 6 Phase 4 has not started.
+
 **Current authority (2026-08-19):** Stage 6 R2 workspace-state remediation is complete locally. Tenant/client/domain ownership prevents stale workspace projection, URL owns the viewed target, bounded forms state is consumed, and all touched client editors participate in real async dirty/conflict handling. Stage 5 remains `STAGE_5_CLOSED`; production remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_R2_WORKSPACE_STATE_CONFLICT_DIRTY_NAVIGATION_EVIDENCE.md`. Phase 4 remains not started and requires separate approval.
 
 **Current authority (2026-08-19):** Stage 6 R1 data-integrity remediation is implemented locally after Faz 3. Supabase-backed Stage 6 dashboard mutations use durable tenant/request-scoped idempotency reservation and bounded response replay. Stage 5 remains `STAGE_5_CLOSED`. Production remains independently `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_R1_DATA_INTEGRITY_BOUNDED_PERSISTENCE_EVIDENCE.md`. Phase 4 remains not started and requires separate approval.

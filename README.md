@@ -4,6 +4,8 @@ MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to
 
 ## Current Status
 
+**Current authority (2026-08-20):** Stage 6 Phase 1-3 remediation R1-R3 is complete locally. Alerts/notifications inbox polling, filter changes, pagination, and receipt mutations now use resource-owned latest-request gates, abort stale requests, and merge stable identifiers without duplicates. Clean local Supabase reset and RLS 56/56 with zero skipped passed. Stage 5 remains `STAGE_5_CLOSED`; production remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_R3_INBOX_CONCURRENCY_SECURITY_CLOSURE_EVIDENCE.md`. Stage 6 Phase 4 remains not started and requires separate approval.
+
 **Current authority (2026-08-19):** Stage 6 R2 workspace-state remediation is complete locally. Workspace reads are tenant/client/domain-owned, URL is the sole viewed-client/task authority, bounded form data reaches the editor, and async dirty/conflict navigation is fail-closed across client creation, forms, nutrition, menu, context, and AI controls. Stage 5 remains `STAGE_5_CLOSED`; production remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_R2_WORKSPACE_STATE_CONFLICT_DIRTY_NAVIGATION_EVIDENCE.md`. Phase 4 remains not started and requires separate approval.
 
 **Current authority (2026-08-19):** Stage 6 R1 data-integrity remediation is implemented locally after Faz 3. Supabase-backed Stage 6 dashboard mutations use durable tenant/request-scoped idempotency reservation and bounded response replay. Stage 5 remains `STAGE_5_CLOSED`. Production remains independently `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_R1_DATA_INTEGRITY_BOUNDED_PERSISTENCE_EVIDENCE.md`. Phase 4 remains not started and requires separate approval.

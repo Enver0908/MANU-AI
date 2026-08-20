@@ -2,7 +2,7 @@
 
 Date: 2026-08-19
 
-Status: **PHASE 3 COMPLETE; R1-R2 REMEDIATION COMPLETE LOCALLY; PHASE 4 NOT STARTED**
+Status: **PHASE 3 COMPLETE; R1-R3 REMEDIATION COMPLETE LOCALLY; PHASE 4 NOT STARTED**
 
 Production status: **NO-GO**
 
@@ -17,6 +17,8 @@ Implementation is divided into five phases. Only one phase may be implemented at
 Post-Phase 3 R1 remediation (2026-08-19): Stage 6 Supabase-backed dashboard mutations now use durable tenant/request-scoped idempotency reservation and bounded response replay via `stage_6_mutation_idempotency`. Evidence: `docs/PHASE_85_STAGE_6_R1_DATA_INTEGRITY_BOUNDED_PERSISTENCE_EVIDENCE.md`. Stage 6 Phase 4 remains not started; production remains `NO-GO`.
 
 Post-Phase 3 R2 remediation (2026-08-19): workspace reads are keyed by tenant/client/domain, URL is the sole viewed-client/task authority, bounded form reads drive the form editor, and all touched client editors expose awaited saving/error/conflict/dirty state. Menu plan switching and pending text cannot silently discard work. Evidence: `docs/PHASE_85_STAGE_6_R2_WORKSPACE_STATE_CONFLICT_DIRTY_NAVIGATION_EVIDENCE.md`. Stage 6 Phase 4 remains not started; production remains `NO-GO`.
+
+Post-Phase 3 R3 remediation (2026-08-20): alerts/notifications inbox requests are resource- and filter-owned, latest-request-wins, abortable, mutation-invalidated, and duplicate-free across pagination. Clean local Supabase reset and RLS 56/56 with zero skipped prove the retained route/persistence isolation boundary. Evidence: `docs/PHASE_85_STAGE_6_R3_INBOX_CONCURRENCY_SECURITY_CLOSURE_EVIDENCE.md`. R1-R3 remediation is complete locally; Stage 6 Phase 4 remains not started and requires separate approval.
 
 ## 2. Locked Scope
 
@@ -563,6 +565,7 @@ Authenticate -> shell bootstrap -> dashboard home -> roster page -> guarded acti
 | Messaging/alert/notification navigation and refresh ownership is split | Phase 3 | Typed navigation coordinator and bounded affected-surface refresh. |
 | Stage 6 Supabase mutation idempotency was process-local after Phase 3 | R1 remediation | Durable tenant/request-scoped reservation and bounded response replay in `stage_6_mutation_idempotency`. |
 | Workspace projections, viewed-target state, and editor dirty/conflict handling could diverge after Phases 1-3 | R2 remediation | Tenant/client/domain ownership, URL-only viewed target, exact shell destination, bounded form consumption, awaited saves, complete draft detection, and guarded menu-plan switching. |
+| Alert/notification polling, filters, pagination, and receipt mutations could apply out of order or duplicate rows | R3 remediation | Resource/filter owner keys, latest-request sequence gates, abort controllers, mutation invalidation, stable-id page merge, zero-skip 10k communication tests, and local RLS 56/56. |
 | Risk of Stage 5 shell regression or production-scope drift | Phase 4 | Full regression, physical-device, evidence, and documentation closure gates. |
 
 ## 7. Phase Governance

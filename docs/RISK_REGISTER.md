@@ -7,6 +7,10 @@
 
 ## Product and Legal Risks
 
+Current Phase 85 Stage 6 R3 note, 2026-08-20: alert/notification polling, filter, pagination, and receipt-mutation races are mitigated locally through resource-owned latest-request gates, abort, mutation invalidation, and stable-id page merge. Clean local Supabase reset and RLS 56/56 with zero skipped passed. Stage 6 Phase 1-3 remediation R1-R3 is complete locally; Phase 4 is not started. Stage 5 remains closed and production remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_R3_INBOX_CONCURRENCY_SECURITY_CLOSURE_EVIDENCE.md`.
+
+Current dependency note, 2026-08-20: newly published production `nanoid` findings were removed through transitive patch-only lock updates (`3.3.18`, `5.1.16`), and the production audit/release gate is clean. Unfiltered `npm audit` still reports four development-only transitive findings (one low, three high) in Babel, brace-expansion, js-yaml, and Vite tooling; these remain open for a separately scoped tooling dependency update and do not authorize production.
+
 Current Phase 85 Stage 6 R2 note, 2026-08-19: workspace projections are tenant/client/domain-owned; URL is the single viewed-client/task authority; bounded form reads are consumed; async saves, revision conflicts, pending text, and menu-plan switching are dirty-guarded. This mitigates local stale-client display and silent-draft-loss risk without persistent drafts or offline mutation. Stage 5 remains closed and production remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_R2_WORKSPACE_STATE_CONFLICT_DIRTY_NAVIGATION_EVIDENCE.md`.
 
 Current Phase 85 Stage 6 R1 note, 2026-08-19: Supabase-backed Stage 6 dashboard mutations now use durable tenant/request-scoped idempotency reservation and bounded response replay through `stage_6_mutation_idempotency`. Stage 5 remains closed. Production remains independently `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_R1_DATA_INTEGRITY_BOUNDED_PERSISTENCE_EVIDENCE.md`.
