@@ -12,7 +12,7 @@ Production status: `NO-GO`
 
 Phase 4 exercised integration, bounded request behavior, authorization and RLS isolation, concurrency/idempotency regressions, production build, dependency security, Stage 5 shell regression, local-lab performance, desktop/mobile accessibility, and the physical-device evidence gate. It added no runtime feature, API capability, schema, provider/channel egress, billing activation, production rollout, offline mutation, or sensitive-data cache.
 
-The source revision entering Phase 4 was `217209d` (`feat(stage-6): close inbox concurrency remediation`). Phase 4 remains uncommitted. Stage 5 remains closed; this evidence does not reopen its architecture or change production readiness.
+The source revision entering Phase 4 was `217209d` (`feat(stage-6): close inbox concurrency remediation`). Phase 4 verification and its fail-closed blocker record were committed as `061e221` (`test(stage-6): record phase 4 closure blockers`). Stage 5 remains closed; this evidence does not reopen its architecture or change production readiness.
 
 ## Added Closure Gates
 
