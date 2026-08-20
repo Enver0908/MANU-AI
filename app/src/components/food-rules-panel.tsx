@@ -24,6 +24,11 @@ import {
 } from "@/lib/phase-77e-client-food-rule-profile";
 import type { Phase77EFlexibilityLevel } from "@/lib/types";
 import { CatalogTreeBrowser } from "@/components/dashboard/catalog-tree-browser";
+import {
+  classifyStage6EditorFailure,
+  stage6EditorFailureMessage,
+  type Stage6EditorFailure,
+} from "@/lib/phase-85-stage-6-workspace-state";
 
 type FoodRulesPanelProps = {
   clientId?: string;
@@ -67,32 +72,34 @@ export function FoodRulesPanel({
   const [catalogQuery, setCatalogQuery] = useState("");
   const [draftItem, setDraftItem] = useState({ allowed: "", forbidden: "" });
   const [isSaving, setIsSaving] = useState(false);
-  const [saveError, setSaveError] = useState<string | null>(null);
+  const [saveFailure, setSaveFailure] = useState<Stage6EditorFailure | null>(null);
   const saveButtonRef = useRef<HTMLButtonElement>(null);
 
   const catalogMatches = useMemo(() => searchPhase77DCatalogFoods(catalogQuery, 12), [catalogQuery]);
   const conflicts = useMemo(() => detectClientFoodRuleProfileConflicts(profile), [profile]);
   const catalogSummary = useMemo(() => summarizeCatalogSelections(profile), [profile]);
   const saveBlocked = hasHardFoodRuleConflicts(conflicts);
-  const isDirty = JSON.stringify(profile) !== JSON.stringify(initialProfile);
-  const dirtyState: ShellDirtyEntryState = isSaving ? "saving" : saveError ? "error" : isDirty ? "dirty" : "clean";
+  const profileIsDirty = JSON.stringify(profile) !== JSON.stringify(initialProfile);
+  const hasPendingTokenDraft = Boolean(draftItem.allowed.trim() || draftItem.forbidden.trim());
+  const isDirty = profileIsDirty || hasPendingTokenDraft;
+  const dirtyState: ShellDirtyEntryState = isSaving ? "saving" : saveFailure ? "error" : isDirty ? "dirty" : "clean";
 
   useShellDirtyRegistration({
     id: `client-nutrition:${clientId || clientName}`,
     label: "Aktif beslenme planı",
     state: dirtyState,
-    canSave: isDirty && !disabled && !saveBlocked,
+    canSave: profileIsDirty && !hasPendingTokenDraft && !disabled && !saveBlocked,
     onSave: async () => {
-      if (disabled || isSaving || saveBlocked) return false;
+      if (disabled || isSaving || saveBlocked || !profileIsDirty || hasPendingTokenDraft) return false;
       setIsSaving(true);
-      setSaveError(null);
+      setSaveFailure(null);
       try {
         const { conflicts: _conflicts, ...payload } = profile;
         void _conflicts;
         await onSave(payload);
         return true;
       } catch (error) {
-        setSaveError(error instanceof Error ? error.message : "nutrition_save_failed");
+        setSaveFailure(classifyStage6EditorFailure(error, "nutrition_save_failed"));
         return false;
       } finally {
         setIsSaving(false);
@@ -100,7 +107,8 @@ export function FoodRulesPanel({
     },
     onDiscard: () => {
       setProfile(initialProfile);
-      setSaveError(null);
+      setDraftItem({ allowed: "", forbidden: "" });
+      setSaveFailure(null);
     },
     onFocusField: () => saveButtonRef.current?.focus(),
   });
@@ -154,15 +162,15 @@ export function FoodRulesPanel({
   };
 
   const save = async () => {
-    if (disabled || isSaving || saveBlocked) return;
+    if (disabled || isSaving || saveBlocked || !profileIsDirty || hasPendingTokenDraft) return;
     setIsSaving(true);
-    setSaveError(null);
+    setSaveFailure(null);
     try {
       const { conflicts: _conflicts, ...payload } = profile;
       void _conflicts;
       await onSave(payload);
     } catch (error) {
-      setSaveError(error instanceof Error ? error.message : "nutrition_save_failed");
+      setSaveFailure(classifyStage6EditorFailure(error, "nutrition_save_failed"));
     } finally {
       setIsSaving(false);
     }
@@ -182,7 +190,7 @@ export function FoodRulesPanel({
             ref={saveButtonRef}
             type="button"
             onClick={save}
-            disabled={disabled || isSaving || saveBlocked}
+            disabled={disabled || isSaving || saveBlocked || !profileIsDirty || hasPendingTokenDraft}
             className="inline-flex min-h-11 items-center gap-2 rounded-control bg-ink px-4 py-2 text-sm font-semibold text-white transition hover:bg-ink-alt disabled:cursor-not-allowed disabled:opacity-60"
             data-testid="active-nutrition-plan-save"
           >
@@ -200,9 +208,9 @@ export function FoodRulesPanel({
         <p className="mt-3 text-sm leading-6 text-ink-muted">
           Ana kategori, alt kategori ve besin duzeyinde izinli/yasak secimleri yapin. Hizli erisim icin arama kullanin.
         </p>
-        {saveError ? (
+        {saveFailure ? (
           <p role="alert" aria-live="assertive" className="mt-3 rounded-card border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
-            Kayıt başarısız: {saveError}
+            {stage6EditorFailureMessage(saveFailure)}
           </p>
         ) : null}
       </div>

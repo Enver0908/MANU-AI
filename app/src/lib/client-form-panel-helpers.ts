@@ -95,7 +95,7 @@ export function normalizeFieldValueForSave(field: ClientFormFieldDefinition, val
 
 export function buildInitialClientFormAnswers(
   client: ClientRecord,
-  response: ClientFormResponseRecord | null,
+  response: Pick<ClientFormResponseRecord, "answers"> | null,
 ): Record<string, unknown> {
   const answers: Record<string, unknown> = { ...(response?.answers || {}) };
   const [firstName = "", ...rest] = client.fullName.trim().split(/\s+/);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { AlertTriangle, Bot, ShieldCheck } from "lucide-react";
 import { personas } from "dietitian-ai-assistant-architecture";
 import {
@@ -23,6 +23,11 @@ import type { SupportedLanguageCode } from "@/lib/languages";
 import { Badge, ConfirmButton, DateTimeInput, SegmentedControl, SelectInput, ToggleRow, fromDateTimeLocal, toDateTimeLocal } from "./shared";
 import { useShellDirtyRegistration } from "@/lib/use-shell-dirty-registration";
 import type { ShellDirtyEntryState } from "@/lib/phase-85-stage-5-shell-dirty-registry";
+import {
+  classifyStage6EditorFailure,
+  stage6EditorFailureMessage,
+  type Stage6EditorFailure,
+} from "@/lib/phase-85-stage-6-workspace-state";
 
 export function AiAssistantControlPanel({
   client,
@@ -62,8 +67,14 @@ export function AiAssistantControlPanel({
     .sort((a, b) => new Date(b.openedAt).getTime() - new Date(a.openedAt).getTime())[0];
   const takeoverMismatch = client.humanTakeoverLocked !== Boolean(activeHumanControlSession);
   const panelRef = useRef<HTMLElement>(null);
+  const [isControlMutationPending, setIsControlMutationPending] = useState(false);
+  const [controlFailure, setControlFailure] = useState<Stage6EditorFailure | null>(null);
   const dirtyState: ShellDirtyEntryState =
-    isActivatingAi || isReleasingHumanTakeover ? "saving" : "clean";
+    isActivatingAi || isReleasingHumanTakeover || isControlMutationPending
+      ? "saving"
+      : controlFailure
+        ? "error"
+        : "clean";
 
   useShellDirtyRegistration({
     id: `client-ai:${client.id}`,
@@ -71,24 +82,37 @@ export function AiAssistantControlPanel({
     state: dirtyState,
     canSave: false,
     onSave: async () => false,
-    onDiscard: () => undefined,
+    onDiscard: () => setControlFailure(null),
     onFocusField: () => panelRef.current?.querySelector<HTMLElement>("button, [href], input, select, textarea")?.focus(),
   });
 
+  const runControlMutation = async (operation: () => Promise<unknown> | unknown) => {
+    if (isControlMutationPending || isActivatingAi || isReleasingHumanTakeover) return;
+    setIsControlMutationPending(true);
+    setControlFailure(null);
+    try {
+      await operation();
+    } catch (error) {
+      setControlFailure(classifyStage6EditorFailure(error, "ai_control_update_failed"));
+    } finally {
+      setIsControlMutationPending(false);
+    }
+  };
+
   const updateAiStatus = (value: AiStatus) => {
     if (value === "active") {
-      void onActivateAi(client.id, client.aiMode === "autopilot" ? "autopilot" : "copilot");
+      void runControlMutation(() => onActivateAi(client.id, client.aiMode === "autopilot" ? "autopilot" : "copilot"));
       return;
     }
-    void onUpdateClient({ aiStatus: "passive" });
+    void runControlMutation(() => onUpdateClient({ aiStatus: "passive" }));
   };
 
   const updateHumanTakeover = (checked: boolean) => {
     if (checked) {
-      void onUpdateClient({ humanTakeoverLocked: true });
+      void runControlMutation(() => onUpdateClient({ humanTakeoverLocked: true }));
       return;
     }
-    void onReleaseHumanTakeover(client.id);
+    void runControlMutation(() => onReleaseHumanTakeover(client.id));
   };
 
   const updateSafetyChecklist = (key: keyof SafetyChecklist, checked: boolean) => {
@@ -96,18 +120,25 @@ export function AiAssistantControlPanel({
       ...normalizeSafetyChecklist(client.safetyChecklist),
       [key]: checked,
     };
-    onUpdateClient({
-      safetyChecklist: nextChecklist,
-      mandatorySafetyComplete: isSafetyChecklistComplete({ ...client, safetyChecklist: nextChecklist }),
-    });
+    void runControlMutation(() =>
+      onUpdateClient({
+        safetyChecklist: nextChecklist,
+        mandatorySafetyComplete: isSafetyChecklistComplete({ ...client, safetyChecklist: nextChecklist }),
+      }),
+    );
   };
 
   const activateAiFromRedLock = () => {
-    void onActivateAi(client.id, client.aiMode === "autopilot" ? "autopilot" : "copilot");
+    void runControlMutation(() => onActivateAi(client.id, client.aiMode === "autopilot" ? "autopilot" : "copilot"));
   };
 
   return (
     <section ref={panelRef} className="space-y-4" data-testid="ai-assistant-control-panel">
+      {controlFailure ? (
+        <p role="alert" aria-live="assertive" className="rounded-control border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
+          {stage6EditorFailureMessage(controlFailure)}
+        </p>
+      ) : null}
       <div className="rounded-card border border-line bg-surface-muted p-4">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
@@ -172,7 +203,7 @@ export function AiAssistantControlPanel({
             )}
           </div>
 
-          <fieldset className="mt-4 space-y-4 border-0 p-0" disabled={configurationDisabled}>
+          <fieldset className="mt-4 space-y-4 border-0 p-0" disabled={configurationDisabled || isControlMutationPending}>
             <SegmentedControl
               label="AI modu"
               value={client.aiMode}
@@ -182,12 +213,12 @@ export function AiAssistantControlPanel({
                 ["manual", AI_MODE_LABELS_TR.manual],
                 ["paused", AI_MODE_LABELS_TR.paused],
               ]}
-              onChange={(value) => onUpdateClient({ aiMode: value as AiMode })}
+              onChange={(value) => void runControlMutation(() => onUpdateClient({ aiMode: value as AiMode }))}
             />
             <SelectInput
               label="Persona"
               value={client.selectedPersonaId}
-              onChange={(value) => onUpdateClient({ selectedPersonaId: value })}
+              onChange={(value) => void runControlMutation(() => onUpdateClient({ selectedPersonaId: value }))}
               options={personas.map((persona) => [persona.id, persona.label])}
             />
             <ToggleRow
@@ -200,9 +231,9 @@ export function AiAssistantControlPanel({
                 label={isReleasingHumanTakeover ? "Devralma cozuluyor" : "Devralmayi cozumle"}
                 confirmLabel="Devralmayi cozumle"
                 onConfirm={() => {
-                  void onReleaseHumanTakeover(client.id);
+                  void runControlMutation(() => onReleaseHumanTakeover(client.id));
                 }}
-                disabled={isReleasingHumanTakeover || configurationDisabled}
+                disabled={isReleasingHumanTakeover || isControlMutationPending || configurationDisabled}
                 className="inline-flex min-h-11 items-center justify-center rounded-card border border-amber-200 bg-surface px-3 py-2 text-sm font-semibold text-amber-900 transition hover:bg-amber-50 disabled:cursor-not-allowed disabled:opacity-60"
                 confirmClassName="inline-flex min-h-11 items-center justify-center rounded-card bg-amber-700 px-3 py-2 text-sm font-semibold text-white transition hover:bg-amber-800"
               />
@@ -211,12 +242,12 @@ export function AiAssistantControlPanel({
               <DateTimeInput
                 label="Aktif baslangic"
                 value={toDateTimeLocal(client.aiActiveFrom)}
-                onChange={(value) => onUpdateClient({ aiActiveFrom: fromDateTimeLocal(value) })}
+                onChange={(value) => void runControlMutation(() => onUpdateClient({ aiActiveFrom: fromDateTimeLocal(value) }))}
               />
               <DateTimeInput
                 label="Aktif bitis"
                 value={toDateTimeLocal(client.aiActiveUntil)}
-                onChange={(value) => onUpdateClient({ aiActiveUntil: fromDateTimeLocal(value) })}
+                onChange={(value) => void runControlMutation(() => onUpdateClient({ aiActiveUntil: fromDateTimeLocal(value) }))}
               />
             </div>
           </fieldset>
@@ -225,7 +256,7 @@ export function AiAssistantControlPanel({
         <div className="space-y-4">
           <fieldset
             className="rounded-card border border-line bg-surface p-4"
-            disabled={configurationDisabled}
+            disabled={configurationDisabled || isControlMutationPending}
           >
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">

@@ -7,6 +7,8 @@
 
 ## Product and Legal Risks
 
+Current Phase 85 Stage 6 R2 note, 2026-08-19: workspace projections are tenant/client/domain-owned; URL is the single viewed-client/task authority; bounded form reads are consumed; async saves, revision conflicts, pending text, and menu-plan switching are dirty-guarded. This mitigates local stale-client display and silent-draft-loss risk without persistent drafts or offline mutation. Stage 5 remains closed and production remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_R2_WORKSPACE_STATE_CONFLICT_DIRTY_NAVIGATION_EVIDENCE.md`.
+
 Current Phase 85 Stage 6 R1 note, 2026-08-19: Supabase-backed Stage 6 dashboard mutations now use durable tenant/request-scoped idempotency reservation and bounded response replay through `stage_6_mutation_idempotency`. Stage 5 remains closed. Production remains independently `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_R1_DATA_INTEGRITY_BOUNDED_PERSISTENCE_EVIDENCE.md`.
 
 Current Phase 85 Stage 6 Faz 3 note, 2026-08-19: messaging, alerts, notifications, and More now use a typed destination coordinator with dirty-guarded active-client transitions and bounded receipt/conversation refresh. Stage 5 remains closed. Production remains independently `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_PHASE_3_COMMUNICATION_OPERATIONS_EVIDENCE.md`.

@@ -116,6 +116,48 @@ test("keyboard can open a client task from the roster", async ({ page }) => {
   await expect(page.getByTestId("client-workspace-header")).toBeVisible();
 });
 
+test("client switching keeps an unsaved roster draft behind the central dirty guard", async ({ page }) => {
+  await openDashboard(page);
+  await page.goto("/dashboard?section=clients");
+  await page.getByLabel("Tam ad").fill("Taslak Danışan");
+
+  const mert = page.getByTestId("client-roster-item").filter({ hasText: "Mert Kaya" });
+  await mert.click();
+  await expect(page.getByTestId("shell-dirty-navigation-dialog")).toBeVisible();
+  await expect(page).toHaveURL(/section=clients/);
+  await expect(page).not.toHaveURL(/clientId=client-mert/);
+
+  await page.getByTestId("shell-dirty-stay").click();
+  await expect(page.getByLabel("Tam ad")).toHaveValue("Taslak Danışan");
+
+  await mert.click();
+  await page.getByTestId("shell-dirty-discard").click();
+  await expect(page).toHaveURL(/clientId=client-mert/);
+  await expect(page.getByRole("heading", { name: "Mert Kaya" })).toBeVisible();
+});
+
+test("bounded form refresh marks a successful save clean before task navigation", async ({ page }) => {
+  await openDashboard(page);
+  await openMertWorkspace(page);
+  await visibleTestId(page, "tab-tab_personal_form").click();
+  const form = page.getByTestId("client-form-panel");
+  await expect(form).toBeVisible();
+  const editable = form.locator("textarea").first();
+  await editable.fill(`${await editable.inputValue()} güncel`);
+  await page.getByTestId("client-form-save").click();
+  await expect(page.getByTestId("client-workspace-loading")).toBeHidden();
+  await expect(form).toBeVisible();
+
+  const back = page.getByTestId("client-workspace-back");
+  if (await back.isVisible()) {
+    await back.click();
+    await expect(page.getByTestId("shell-dirty-navigation-dialog")).toHaveCount(0);
+  }
+  await visibleTestId(page, "tab-tab_food_rules").click();
+  await expect(page.getByTestId("shell-dirty-navigation-dialog")).toHaveCount(0);
+  await expect(page.getByTestId("active-nutrition-plan-panel")).toBeVisible();
+});
+
 test("messaging list and detail split on mobile and stay side by side on desktop", async ({ page }) => {
   await openDashboard(page);
   await openMessagingSection(page);

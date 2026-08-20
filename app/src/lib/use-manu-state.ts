@@ -55,6 +55,8 @@ export function useManuState() {
 
     if (!response.ok) {
       let code = `request_failed_${response.status}`;
+      let field: string | undefined;
+      let revision: number | undefined;
       if (response.status === 401 || response.status === 403) {
         try {
           const body = await response.json();
@@ -67,11 +69,13 @@ export function useManuState() {
         try {
           const body = await response.json();
           if (body.error) code = body.error;
+          if (typeof body.field === "string") field = body.field;
+          if (typeof body.revision === "number") revision = body.revision;
         } catch {
           // ignore parse errors
         }
       }
-      throw new AppRequestError(response.status, code);
+      throw new AppRequestError(response.status, code, field, revision);
     }
 
     setAuthError(null);

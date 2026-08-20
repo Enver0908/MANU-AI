@@ -20,6 +20,11 @@ import {
 } from "@/lib/phase-77f-client-menu-plan";
 import type { Phase77FMenuPlanTemplateType } from "@/lib/types";
 import type { SupportedLanguageCode } from "@/lib/languages";
+import {
+  classifyStage6EditorFailure,
+  stage6EditorFailureMessage,
+  type Stage6EditorFailure,
+} from "@/lib/phase-85-stage-6-workspace-state";
 
 type MenuPlanPanelProps = {
   clientId: string;
@@ -45,12 +50,37 @@ export function MenuPlanPanel({
   onActivate,
 }: MenuPlanPanelProps) {
   const [selectedPlanId, setSelectedPlanId] = useState(plans[0]?.id || activePlanId || "");
+  const [isCreating, setIsCreating] = useState(false);
+  const [createFailure, setCreateFailure] = useState<Stage6EditorFailure | null>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const selectedPlan = plans.find((plan) => plan.id === selectedPlanId) || plans[0] || null;
   const workflowSummary = useMemo(() => summarizeMenuWorkflow(plans, activePlanId), [plans, activePlanId]);
 
+  useShellDirtyRegistration({
+    id: `client-menu-create:${clientId}`,
+    label: "Menü planı oluşturma",
+    state: isCreating ? "saving" : createFailure ? "error" : "clean",
+    canSave: false,
+    onDiscard: () => setCreateFailure(null),
+    onFocusField: () => panelRef.current?.querySelector<HTMLButtonElement>("button")?.focus(),
+  });
+
+  const handleCreate = async (templateType: Phase77FMenuPlanTemplateType) => {
+    if (disabled || isCreating) return;
+    setIsCreating(true);
+    setCreateFailure(null);
+    try {
+      await onCreate(templateType);
+    } catch (error) {
+      setCreateFailure(classifyStage6EditorFailure(error, "menu_create_failed"));
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
   if (!selectedPlan) {
     return (
-      <section className="space-y-4" data-testid="menu-workflow-panel">
+      <section ref={panelRef} className="space-y-4" data-testid="menu-workflow-panel">
         <div className="rounded-card border border-line bg-surface-muted p-4">
           <h4 className="text-sm font-semibold text-ink">Menu</h4>
           <p className="mt-1 text-sm text-ink-muted">{clientName} icin henuz menu plani yok.</p>
@@ -58,27 +88,39 @@ export function MenuPlanPanel({
             Dort sablon tipinden birini secerek yeni plan olusturun. Aktif plan legacy diyet ozetini kilitler.
           </p>
         </div>
-        <TemplatePicker disabled={disabled} onCreate={onCreate} />
+        {createFailure ? (
+          <p role="alert" aria-live="assertive" className="rounded-control border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
+            {stage6EditorFailureMessage(createFailure)}
+          </p>
+        ) : null}
+        <TemplatePicker disabled={disabled || isCreating} onCreate={handleCreate} />
       </section>
     );
   }
 
   return (
-    <MenuPlanPanelEditor
-      key={`${clientId}-${selectedPlan.id}-${selectedPlan.revision}`}
-      clientId={clientId}
-      clientName={clientName}
-      uiLanguage={uiLanguage}
-      plans={plans}
-      activePlanId={activePlanId}
-      selectedPlan={selectedPlan}
-      workflowSummary={workflowSummary}
-      disabled={disabled}
-      onSelectPlan={setSelectedPlanId}
-      onCreate={onCreate}
-      onSave={onSave}
-      onActivate={onActivate}
-    />
+    <div ref={panelRef} className="space-y-3">
+      {createFailure ? (
+        <p role="alert" aria-live="assertive" className="rounded-control border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
+          {stage6EditorFailureMessage(createFailure)}
+        </p>
+      ) : null}
+      <MenuPlanPanelEditor
+        key={`${clientId}-${selectedPlan.id}-${selectedPlan.revision}`}
+        clientId={clientId}
+        clientName={clientName}
+        uiLanguage={uiLanguage}
+        plans={plans}
+        activePlanId={activePlanId}
+        selectedPlan={selectedPlan}
+        workflowSummary={workflowSummary}
+        disabled={disabled || isCreating}
+        onSelectPlan={setSelectedPlanId}
+        onCreate={handleCreate}
+        onSave={onSave}
+        onActivate={onActivate}
+      />
+    </div>
   );
 }
 
@@ -111,9 +153,11 @@ function MenuPlanPanelEditor({
 }) {
   const [draft, setDraft] = useState(selectedPlan);
   const [catalogQuery, setCatalogQuery] = useState("");
+  const [pendingInputs, setPendingInputs] = useState<Record<string, string>>({});
+  const [pendingPlanSwitchId, setPendingPlanSwitchId] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isActivating, setIsActivating] = useState(false);
-  const [saveError, setSaveError] = useState<string | null>(null);
+  const [saveFailure, setSaveFailure] = useState<Stage6EditorFailure | null>(null);
   const saveButtonRef = useRef<HTMLButtonElement>(null);
 
   const catalogMatches = useMemo(() => searchPhase77DCatalogFoods(catalogQuery, 8), [catalogQuery]);
@@ -124,25 +168,27 @@ function MenuPlanPanelEditor({
   }, [draft]);
   const activationBlocked = hasHardMenuPlanConflicts(draft.conflicts);
   const statusLabel = formatMenuPlanStatusLabel(draft, activePlanId, draft.id);
-  const isDirty = JSON.stringify(draft) !== JSON.stringify(selectedPlan);
-  const dirtyState: ShellDirtyEntryState = isSaving || isActivating ? "saving" : saveError ? "error" : isDirty ? "dirty" : "clean";
+  const planIsDirty = JSON.stringify(draft) !== JSON.stringify(selectedPlan);
+  const hasPendingInput = Object.values(pendingInputs).some((value) => value.trim());
+  const isDirty = planIsDirty || hasPendingInput;
+  const dirtyState: ShellDirtyEntryState = isSaving || isActivating ? "saving" : saveFailure ? "error" : isDirty ? "dirty" : "clean";
 
   useShellDirtyRegistration({
     id: `client-menu:${clientId}:${selectedPlan.id}`,
     label: "Menü planı",
     state: dirtyState,
-    canSave: isDirty && !disabled,
+    canSave: planIsDirty && !hasPendingInput && !disabled,
     onSave: async () => {
-      if (disabled || isSaving) return false;
+      if (disabled || isSaving || !planIsDirty || hasPendingInput) return false;
       setIsSaving(true);
-      setSaveError(null);
+      setSaveFailure(null);
       try {
         const { conflicts: _conflicts, ...payload } = draft;
         void _conflicts;
         await onSave(payload);
         return true;
       } catch (error) {
-        setSaveError(error instanceof Error ? error.message : "menu_save_failed");
+        setSaveFailure(classifyStage6EditorFailure(error, "menu_save_failed"));
         return false;
       } finally {
         setIsSaving(false);
@@ -150,7 +196,9 @@ function MenuPlanPanelEditor({
     },
     onDiscard: () => {
       setDraft(selectedPlan);
-      setSaveError(null);
+      setPendingInputs({});
+      setPendingPlanSwitchId(null);
+      setSaveFailure(null);
     },
     onFocusField: () => saveButtonRef.current?.focus(),
   });
@@ -186,26 +234,49 @@ function MenuPlanPanelEditor({
     });
   };
 
+  const requestPlanSwitch = (planId: string) => {
+    if (planId === selectedPlan.id || isSaving || isActivating) return;
+    if (isDirty || saveFailure) {
+      setPendingPlanSwitchId(planId);
+      saveButtonRef.current?.focus();
+      return;
+    }
+    onSelectPlan(planId);
+  };
+
+  const discardAndSwitchPlan = () => {
+    if (!pendingPlanSwitchId) return;
+    const nextPlanId = pendingPlanSwitchId;
+    setDraft(selectedPlan);
+    setPendingInputs({});
+    setSaveFailure(null);
+    setPendingPlanSwitchId(null);
+    onSelectPlan(nextPlanId);
+  };
+
   const save = async () => {
-    if (disabled || isSaving) return;
+    if (disabled || isSaving || !planIsDirty || hasPendingInput) return;
     setIsSaving(true);
-    setSaveError(null);
+    setSaveFailure(null);
     try {
       const { conflicts: _conflicts, ...payload } = draft;
       void _conflicts;
       await onSave(payload);
     } catch (error) {
-      setSaveError(error instanceof Error ? error.message : "menu_save_failed");
+      setSaveFailure(classifyStage6EditorFailure(error, "menu_save_failed"));
     } finally {
       setIsSaving(false);
     }
   };
 
   const activate = async () => {
-    if (disabled || isActivating || activationBlocked) return;
+    if (disabled || isActivating || activationBlocked || isDirty || Boolean(saveFailure)) return;
     setIsActivating(true);
+    setSaveFailure(null);
     try {
       await onActivate(draft.id);
+    } catch (error) {
+      setSaveFailure(classifyStage6EditorFailure(error, "menu_activation_failed"));
     } finally {
       setIsActivating(false);
     }
@@ -226,7 +297,7 @@ function MenuPlanPanelEditor({
               ref={saveButtonRef}
               type="button"
               onClick={save}
-              disabled={disabled || isSaving}
+              disabled={disabled || isSaving || !planIsDirty || hasPendingInput}
               className="inline-flex min-h-11 items-center gap-2 rounded-control bg-ink px-4 py-2 text-sm font-semibold text-white transition hover:bg-ink-alt disabled:cursor-not-allowed disabled:opacity-60"
               data-testid="menu-workflow-save"
             >
@@ -236,7 +307,14 @@ function MenuPlanPanelEditor({
             <button
               type="button"
               onClick={activate}
-              disabled={disabled || isActivating || draft.status === "active" || activationBlocked}
+              disabled={
+                disabled ||
+                isActivating ||
+                draft.status === "active" ||
+                activationBlocked ||
+                isDirty ||
+                Boolean(saveFailure)
+              }
               className="inline-flex min-h-11 items-center gap-2 rounded-card border border-line-strong bg-surface px-4 py-2 text-sm font-semibold text-ink transition hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-60"
               data-testid="menu-workflow-activate"
             >
@@ -244,9 +322,9 @@ function MenuPlanPanelEditor({
             </button>
           </div>
         </div>
-        {saveError ? (
+        {saveFailure ? (
           <p role="alert" aria-live="assertive" className="mt-3 rounded-card border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
-            Kayıt başarısız: {saveError}
+            {stage6EditorFailureMessage(saveFailure)}
           </p>
         ) : null}
         <div className="mt-3 flex flex-wrap gap-2">
@@ -268,7 +346,7 @@ function MenuPlanPanelEditor({
           <button
             key={plan.id}
             type="button"
-            onClick={() => onSelectPlan(plan.id)}
+            onClick={() => requestPlanSwitch(plan.id)}
             className={`min-h-11 rounded-full px-3 py-1.5 text-xs font-semibold transition ${
               plan.id === draft.id ? "bg-ink text-white" : "border border-line bg-surface text-ink"
             }`}
@@ -277,6 +355,20 @@ function MenuPlanPanelEditor({
           </button>
         ))}
       </div>
+
+      {pendingPlanSwitchId ? (
+        <div role="alertdialog" aria-label="Menü planı geçiş onayı" className="rounded-card border border-amber-200 bg-amber-50 p-3 text-sm text-amber-950">
+          <p>Bu planda kaydedilmemiş çalışma var. Diğer planı açmadan önce burada kalın veya değişikliklerden vazgeçin.</p>
+          <div className="mt-3 flex flex-wrap justify-end gap-2">
+            <button type="button" className="min-h-11 rounded-control border border-amber-300 px-3" onClick={() => setPendingPlanSwitchId(null)}>
+              Burada kal
+            </button>
+            <button type="button" className="min-h-11 rounded-control bg-ink px-3 font-semibold text-white" onClick={discardAndSwitchPlan}>
+              Vazgeç ve diğer planı aç
+            </button>
+          </div>
+        </div>
+      ) : null}
 
       <TemplatePicker disabled={disabled} onCreate={onCreate} compact />
 
@@ -359,12 +451,16 @@ function MenuPlanPanelEditor({
             </div>
             <div className="mt-2 flex gap-2">
               <input
+                value={pendingInputs[`slot:${slot.id}`] ?? ""}
                 placeholder="Ogun ogesi ekle"
                 className="min-h-11 min-w-0 flex-1 rounded-card border border-line px-3 py-2 text-sm"
+                onChange={(event) =>
+                  setPendingInputs((current) => ({ ...current, [`slot:${slot.id}`]: event.target.value }))
+                }
                 onKeyDown={(event) => {
                   if (event.key === "Enter") {
-                    addItemToSlot(slot.id, "items", (event.target as HTMLInputElement).value);
-                    (event.target as HTMLInputElement).value = "";
+                    addItemToSlot(slot.id, "items", pendingInputs[`slot:${slot.id}`] ?? "");
+                    setPendingInputs((current) => ({ ...current, [`slot:${slot.id}`]: "" }));
                   }
                 }}
               />
@@ -396,8 +492,20 @@ function MenuPlanPanelEditor({
 
       {draft.templateType === "simple_guidance" ? (
         <div className="grid gap-3 md:grid-cols-2">
-          <TokenArea label="Tercih edilen besinler" values={draft.preferredFoods} onChange={(values) => updateDraft({ preferredFoods: values })} />
-          <TokenArea label="Kacinilacak besinler" values={draft.avoidFoods} onChange={(values) => updateDraft({ avoidFoods: values })} />
+          <TokenArea
+            label="Tercih edilen besinler"
+            values={draft.preferredFoods}
+            draftValue={pendingInputs.preferred ?? ""}
+            onDraftChange={(value) => setPendingInputs((current) => ({ ...current, preferred: value }))}
+            onChange={(values) => updateDraft({ preferredFoods: values })}
+          />
+          <TokenArea
+            label="Kacinilacak besinler"
+            values={draft.avoidFoods}
+            draftValue={pendingInputs.avoid ?? ""}
+            onDraftChange={(value) => setPendingInputs((current) => ({ ...current, avoid: value }))}
+            onChange={(values) => updateDraft({ avoidFoods: values })}
+          />
         </div>
       ) : null}
 
@@ -498,10 +606,14 @@ function SummaryBadge({
 function TokenArea({
   label,
   values,
+  draftValue,
+  onDraftChange,
   onChange,
 }: {
   label: string;
   values: string[];
+  draftValue: string;
+  onDraftChange: (value: string) => void;
   onChange: (values: string[]) => void;
 }) {
   return (
@@ -515,14 +627,16 @@ function TokenArea({
         ))}
       </div>
       <input
+        value={draftValue}
         placeholder={`${label} ekle`}
         className="mt-2 min-h-11 w-full rounded-card border border-line px-3 py-2 text-sm"
+        onChange={(event) => onDraftChange(event.target.value)}
         onKeyDown={(event) => {
           if (event.key !== "Enter") return;
-          const value = (event.target as HTMLInputElement).value.trim();
+          const value = draftValue.trim();
           if (!value) return;
           onChange([...new Set([...values, value])]);
-          (event.target as HTMLInputElement).value = "";
+          onDraftChange("");
         }}
       />
     </div>

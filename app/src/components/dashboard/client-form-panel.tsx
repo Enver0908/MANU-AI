@@ -17,20 +17,28 @@ import {
 } from "@/lib/client-form-panel-helpers";
 import { t } from "@/lib/i18n";
 import type { SupportedLanguageCode } from "@/lib/languages";
-import type { ClientFormFieldDefinition, ClientFormResponseRecord, ClientRecord, ManuAppState } from "@/lib/types";
+import type { ClientFormFieldDefinition, ClientRecord, ManuAppState } from "@/lib/types";
+import type { Stage6FormRead, Stage6FormSchemaDto } from "@/lib/phase-85-stage-6-dashboard-contracts";
 import { MOBILE_FIELD_CLASS } from "@/lib/phase-83e5-mobile-ergonomics";
 import { Badge, EmptyState, SelectInput } from "./shared";
 import { useShellDirtyRegistration } from "@/lib/use-shell-dirty-registration";
 import type { ShellDirtyEntryState } from "@/lib/phase-85-stage-5-shell-dirty-registry";
+import {
+  classifyStage6EditorFailure,
+  stage6EditorFailureMessage,
+  type Stage6EditorFailure,
+} from "@/lib/phase-85-stage-6-workspace-state";
 
 export function ClientFormPanel({
   client,
   state,
+  formRead,
   uiLanguage,
   onSave,
 }: {
   client: ClientRecord;
   state: ManuAppState;
+  formRead?: Stage6FormRead | null;
   uiLanguage: SupportedLanguageCode;
   onSave: (input: {
     clientId: string;
@@ -39,15 +47,16 @@ export function ClientFormPanel({
     submittedPhoneE164?: string;
   }) => Promise<void>;
 }) {
-  const activeSchema = getActiveFormSchema(state);
+  const activeSchema = formRead === undefined ? getActiveFormSchema(state) : formRead?.schema ?? null;
   const existingResponse = useMemo(() => {
     if (!activeSchema) return null;
+    if (formRead !== undefined) return formRead?.response ?? null;
     return (
       state.clientFormResponses.find(
         (item) => item.clientId === client.id && item.schemaId === activeSchema.id,
       ) || null
     );
-  }, [activeSchema, client.id, state.clientFormResponses]);
+  }, [activeSchema, client.id, formRead, state.clientFormResponses]);
 
   const draftKey = `${client.id}:${existingResponse?.updatedAt || "new"}`;
   const initialAnswers = useMemo(
@@ -82,8 +91,8 @@ function ClientFormPanelEditor({
 }: {
   client: ClientRecord;
   uiLanguage: SupportedLanguageCode;
-  activeSchema: NonNullable<ReturnType<typeof getActiveFormSchema>>;
-  existingResponse: ClientFormResponseRecord | null;
+  activeSchema: Stage6FormSchemaDto;
+  existingResponse: Stage6FormRead["response"];
   initialAnswers: Record<string, unknown>;
   onSave: (input: {
     clientId: string;
@@ -94,7 +103,7 @@ function ClientFormPanelEditor({
 }) {
   const [draftAnswers, setDraftAnswers] = useState(initialAnswers);
   const [isSaving, setIsSaving] = useState(false);
-  const [saveError, setSaveError] = useState<string | null>(null);
+  const [saveFailure, setSaveFailure] = useState<Stage6EditorFailure | null>(null);
   const saveButtonRef = useRef<HTMLButtonElement>(null);
 
   const sections = groupFormFieldsBySection(activeSchema.fields);
@@ -103,7 +112,7 @@ function ClientFormPanelEditor({
   const isDirty = JSON.stringify(draftAnswers) !== JSON.stringify(initialAnswers);
   const dirtyState: ShellDirtyEntryState = isSaving
     ? "saving"
-    : saveError
+    : saveFailure
       ? "error"
       : isDirty
         ? "dirty"
@@ -117,7 +126,7 @@ function ClientFormPanelEditor({
     onSave: async () => {
       if (disabled || isSaving) return false;
       setIsSaving(true);
-      setSaveError(null);
+      setSaveFailure(null);
       try {
         await onSave({
           clientId: client.id,
@@ -127,8 +136,7 @@ function ClientFormPanelEditor({
         });
         return true;
       } catch (error) {
-        const message = error instanceof Error ? error.message : "form_save_failed";
-        setSaveError(message);
+        setSaveFailure(classifyStage6EditorFailure(error, "form_save_failed"));
         return false;
       } finally {
         setIsSaving(false);
@@ -136,20 +144,20 @@ function ClientFormPanelEditor({
     },
     onDiscard: () => {
       setDraftAnswers(initialAnswers);
-      setSaveError(null);
+      setSaveFailure(null);
     },
     onFocusField: () => saveButtonRef.current?.focus(),
   });
 
   const updateField = (fieldId: string, value: unknown) => {
     setDraftAnswers((current) => ({ ...current, [fieldId]: value }));
-    setSaveError(null);
+    setSaveFailure(null);
   };
 
   const handleSave = async () => {
     if (disabled || isSaving) return;
     setIsSaving(true);
-    setSaveError(null);
+    setSaveFailure(null);
     try {
       await onSave({
         clientId: client.id,
@@ -158,8 +166,7 @@ function ClientFormPanelEditor({
         submittedPhoneE164: client.primaryPhoneE164 || undefined,
       });
     } catch (error) {
-      const message = error instanceof Error ? error.message : "form_save_failed";
-      setSaveError(message);
+      setSaveFailure(classifyStage6EditorFailure(error, "form_save_failed"));
     } finally {
       setIsSaving(false);
     }
@@ -208,14 +215,14 @@ function ClientFormPanelEditor({
         </fieldset>
       ))}
 
-      {saveError && (
+      {saveFailure && (
         <div
           role="alert"
           aria-live="assertive"
           className="flex items-start gap-2 rounded-card border border-red-200 bg-red-50 p-3 text-sm text-red-800"
         >
           <AlertCircle size={16} className="mt-0.5 shrink-0" />
-          <p>Kayıt başarısız: {saveError}</p>
+          <p>{stage6EditorFailureMessage(saveFailure)}</p>
         </div>
       )}
 

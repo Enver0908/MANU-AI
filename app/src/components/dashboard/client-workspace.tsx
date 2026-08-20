@@ -1,6 +1,6 @@
 "use client";
 
-import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Bot, Download, FileText, MessageSquareText, PhoneCall, Plus, Sparkles, UserX } from "lucide-react";
 import { personas } from "dietitian-ai-assistant-architecture";
 import {
@@ -40,10 +40,16 @@ import {
 } from "@/lib/phase-85-stage-4b-dashboard-routing";
 import { shouldRestoreClientRosterFocus } from "@/lib/phase-85-stage-6-client-selection";
 import { useStage6ClientWorkspace, type Stage6WorkspaceDomain } from "@/lib/use-stage-6-client-workspace";
+import type { Stage6FormRead } from "@/lib/phase-85-stage-6-dashboard-contracts";
 import { formatStage6ClientReferenceShort } from "@/lib/phase-85-stage-6-client-selection";
 import { buildShellHighImpactConfirmMessage } from "@/lib/phase-85-stage-5-shell-contracts";
 import { useShellDirtyRegistration } from "@/lib/use-shell-dirty-registration";
 import type { ShellDirtyEntryState } from "@/lib/phase-85-stage-5-shell-dirty-registry";
+import {
+  classifyStage6EditorFailure,
+  stage6EditorFailureMessage,
+  type Stage6EditorFailure,
+} from "@/lib/phase-85-stage-6-workspace-state";
 import {
   Badge,
   ConfirmButton,
@@ -177,7 +183,7 @@ export function ClientWorkspace({
   onSelect: (clientId: string) => void;
   onCloseWorkspace: () => void;
   onClientTask: (task: ClientWorkspaceTask) => void;
-  onAddClient: () => void;
+  onAddClient: () => Promise<string | null>;
   onNewClientName: (value: string) => void;
   onNewClientChannel: (value: Channel) => void;
   onNewClientHandle: (value: string) => void;
@@ -202,7 +208,7 @@ export function ClientWorkspace({
   onContextUpdateTitle: (value: string) => void;
   onContextUpdateSummary: (value: string) => void;
   onContextUpdateDetails: (value: string) => void;
-  onAddContextUpdate: () => void;
+  onAddContextUpdate: () => Promise<void>;
   state: ManuAppState;
   foodRuleProfile: ClientFoodRuleProfileV2State | null;
   menuPlans: ClientMenuPlanV1State[];
@@ -227,10 +233,51 @@ export function ClientWorkspace({
   const clientTask = resolveClientWorkspaceTask(urlState);
   const domain = selectedClient ? taskDomain(clientTask) : null;
   const workspace = useStage6ClientWorkspace({
+    tenantId: selectedClient?.tenantId ?? null,
     clientId: selectedClient?.id ?? null,
     domain: domain ?? "summary",
     enabled: Boolean(selectedClient && domain),
   });
+  const reloadWorkspace = workspace.reload;
+  const saveFormAndReload = useCallback(
+    async (input: Parameters<typeof onSaveFormResponse>[0]) => {
+      await onSaveFormResponse(input);
+      await reloadWorkspace();
+    },
+    [onSaveFormResponse, reloadWorkspace],
+  );
+  const saveFoodRulesAndReload = useCallback(
+    async (profile: Parameters<typeof onSaveFoodRules>[0]) => {
+      await onSaveFoodRules(profile);
+      await reloadWorkspace();
+    },
+    [onSaveFoodRules, reloadWorkspace],
+  );
+  const createMenuPlanAndReload = useCallback(
+    async (templateType: Parameters<typeof onCreateMenuPlan>[0]) => {
+      await onCreateMenuPlan(templateType);
+      await reloadWorkspace();
+    },
+    [onCreateMenuPlan, reloadWorkspace],
+  );
+  const saveMenuPlanAndReload = useCallback(
+    async (plan: Parameters<typeof onSaveMenuPlan>[0]) => {
+      await onSaveMenuPlan(plan);
+      await reloadWorkspace();
+    },
+    [onSaveMenuPlan, reloadWorkspace],
+  );
+  const activateMenuPlanAndReload = useCallback(
+    async (planId: Parameters<typeof onActivateMenuPlan>[0]) => {
+      await onActivateMenuPlan(planId);
+      await reloadWorkspace();
+    },
+    [onActivateMenuPlan, reloadWorkspace],
+  );
+  const addContextUpdateAndReload = useCallback(async () => {
+    await onAddContextUpdate();
+    await reloadWorkspace();
+  }, [onAddContextUpdate, reloadWorkspace]);
   const previousStageRef = useRef(stage);
   const lastClientIdRef = useRef<string | null>(selectedClient?.id ?? null);
 
@@ -307,6 +354,7 @@ export function ClientWorkspace({
             canManageAiControls={canManageAiControls}
             loadStatus={workspace.status}
             loadError={workspace.error}
+            formRead={workspace.forms}
             onBack={handleBack}
             onClientTask={onClientTask}
             onUpdateClient={onUpdateClient}
@@ -328,7 +376,7 @@ export function ClientWorkspace({
             onContextUpdateTitle={onContextUpdateTitle}
             onContextUpdateSummary={onContextUpdateSummary}
             onContextUpdateDetails={onContextUpdateDetails}
-            onAddContextUpdate={onAddContextUpdate}
+            onAddContextUpdate={addContextUpdateAndReload}
             state={state}
             foodRuleProfile={workspace.nutrition?.profile ?? foodRuleProfile}
             menuPlans={
@@ -339,11 +387,11 @@ export function ClientWorkspace({
                 : menuPlans
             }
             activeMenuPlanId={workspace.menu?.activePlanId ?? activeMenuPlanId}
-            onSaveFoodRules={onSaveFoodRules}
-            onCreateMenuPlan={onCreateMenuPlan}
-            onSaveMenuPlan={onSaveMenuPlan}
-            onActivateMenuPlan={onActivateMenuPlan}
-            onSaveFormResponse={onSaveFormResponse}
+            onSaveFoodRules={saveFoodRulesAndReload}
+            onCreateMenuPlan={createMenuPlanAndReload}
+            onSaveMenuPlan={saveMenuPlanAndReload}
+            onActivateMenuPlan={activateMenuPlanAndReload}
+            onSaveFormResponse={saveFormAndReload}
             aiChatEnabled={aiChatEnabled}
             onEvaluateWithAi={onEvaluateWithAi}
             isEvaluatingWithAi={isEvaluatingWithAi}
@@ -366,6 +414,7 @@ function ClientWorkspaceDetail({
   canManageAiControls = true,
   loadStatus,
   loadError,
+  formRead,
   onBack,
   onClientTask,
   onUpdateClient,
@@ -410,6 +459,7 @@ function ClientWorkspaceDetail({
   canManageAiControls?: boolean;
   loadStatus: string;
   loadError: string | null;
+  formRead: Stage6FormRead | null;
   onBack: () => void;
   onClientTask: (task: ClientWorkspaceTask) => void;
   onUpdateClient: (patch: Partial<ClientRecord>) => Promise<void> | void;
@@ -436,7 +486,7 @@ function ClientWorkspaceDetail({
   onContextUpdateTitle: (value: string) => void;
   onContextUpdateSummary: (value: string) => void;
   onContextUpdateDetails: (value: string) => void;
-  onAddContextUpdate: () => void;
+  onAddContextUpdate: () => Promise<void>;
   state: ManuAppState;
   foodRuleProfile: ClientFoodRuleProfileV2State | null;
   menuPlans: ClientMenuPlanV1State[];
@@ -564,7 +614,9 @@ function ClientWorkspaceDetail({
           <WorkspaceNotice
             title="Çalışma alanı yüklenemedi"
             message={
-              loadError === "capability_denied" || loadError?.includes("403")
+              loadError === "offline"
+                ? "İnternet bağlantısı yok. Bu uygulama çevrimdışı veri açmaz; bağlantı geldiğinde görevi yeniden deneyin."
+                : loadError === "capability_denied" || loadError?.includes("403")
                 ? "Bu danışan görevine yetkiniz yok."
                 : "Kayıt şu anda açılamıyor. Sessiz başarı gösterilmedi."
             }
@@ -614,7 +666,13 @@ function ClientWorkspaceDetail({
           ) : (
             <Suspense fallback={<SkeletonBlock className="h-48 w-full rounded-card" />}>
               {clientTask === "forms" ? (
-                <ClientFormPanel client={client} state={state} uiLanguage={uiLanguage} onSave={onSaveFormResponse} />
+                <ClientFormPanel
+                  client={client}
+                  state={state}
+                  formRead={formRead}
+                  uiLanguage={uiLanguage}
+                  onSave={onSaveFormResponse}
+                />
               ) : null}
               {clientTask === "nutrition" ? (
                 <div className="space-y-4">
@@ -1000,29 +1058,64 @@ function ClientContextUpdatePanel({
   onTitle: (value: string) => void;
   onSummary: (value: string) => void;
   onDetails: (value: string) => void;
-  onAdd: () => void;
+  onAdd: () => Promise<void>;
 }) {
   const addButtonRef = useRef<HTMLButtonElement>(null);
-  const isDirty = Boolean(title.trim() || summary.trim() || details.trim());
-  const dirtyState: ShellDirtyEntryState = isDirty ? "dirty" : "clean";
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveFailure, setSaveFailure] = useState<Stage6EditorFailure | null>(null);
+  const isDirty = Boolean(
+    title.trim() ||
+      summary.trim() ||
+      details.trim() ||
+      occurredAt ||
+      source !== "phone" ||
+      importance !== "important",
+  );
+  const dirtyState: ShellDirtyEntryState = isSaving ? "saving" : saveFailure ? "error" : isDirty ? "dirty" : "clean";
 
   useShellDirtyRegistration({
     id: `client-context:${clientId}`,
     label: "Kritik bilgi",
     state: dirtyState,
-    canSave: Boolean(title.trim() && summary.trim()),
+    canSave: Boolean(title.trim() && summary.trim()) && !isSaving,
     onSave: async () => {
-      if (!title.trim() || !summary.trim()) return false;
-      onAdd();
-      return true;
+      if (!title.trim() || !summary.trim() || isSaving) return false;
+      setIsSaving(true);
+      setSaveFailure(null);
+      try {
+        await onAdd();
+        return true;
+      } catch (error) {
+        setSaveFailure(classifyStage6EditorFailure(error, "context_save_failed"));
+        return false;
+      } finally {
+        setIsSaving(false);
+      }
     },
     onDiscard: () => {
       onTitle("");
       onSummary("");
       onDetails("");
+      onOccurredAt("");
+      onSource("phone");
+      onImportance("important");
+      setSaveFailure(null);
     },
     onFocusField: () => addButtonRef.current?.focus(),
   });
+
+  const handleAdd = async () => {
+    if (!title.trim() || !summary.trim() || isSaving) return;
+    setIsSaving(true);
+    setSaveFailure(null);
+    try {
+      await onAdd();
+    } catch (error) {
+      setSaveFailure(classifyStage6EditorFailure(error, "context_save_failed"));
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
     <section className="rounded-card border border-line bg-surface-muted p-4">
@@ -1072,14 +1165,19 @@ function ClientContextUpdatePanel({
       </div>
       <button
         ref={addButtonRef}
-        onClick={onAdd}
-        disabled={!title.trim() || !summary.trim()}
+        onClick={() => void handleAdd()}
+        disabled={!title.trim() || !summary.trim() || isSaving}
         className="mt-3 inline-flex min-h-11 items-center justify-center gap-2 rounded-control bg-ink px-4 py-2 text-sm font-semibold text-white transition hover:bg-ink-alt disabled:cursor-not-allowed disabled:bg-ink-subtle"
         type="button"
       >
         <Plus size={16} />
-        Add context
+        {isSaving ? "Kaydediliyor..." : "Add context"}
       </button>
+      {saveFailure ? (
+        <p role="alert" aria-live="assertive" className="mt-3 rounded-control border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
+          {stage6EditorFailureMessage(saveFailure)}
+        </p>
+      ) : null}
 
       <div className="mt-4 grid gap-3">
         {updates.length === 0 ? (

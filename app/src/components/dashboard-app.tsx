@@ -44,9 +44,11 @@ import {
 } from "@/components/dashboard/shared";
 import { DASHBOARD_MAIN_ID } from "@/lib/phase-83e6-states-polish";
 import {
+  buildDashboardHref,
   commitDashboardHref,
   currentDashboardHref,
   dashboardSectionToShellDestination,
+  mergeDashboardUrlState,
   parseClientWorkspaceTask,
   resolveLegacyCopilotSectionRedirect,
   resolveMessagingRouteSelection,
@@ -175,10 +177,6 @@ export function DashboardApp({
   const [isReleasingHumanTakeover, setIsReleasingHumanTakeover] = useState(false);
   const [isEvaluatingWithAi, setIsEvaluatingWithAi] = useState(false);
   const [evaluateWithAiError, setEvaluateWithAiError] = useState<string | null>(null);
-  const [workspaceOverride, setWorkspaceOverride] = useState<{
-    clientId: string;
-    clientTask: ClientWorkspaceTask;
-  } | null>(null);
   const [contextUpdateSource, setContextUpdateSource] = useState<ClientContextUpdateSource>("phone");
   const [contextUpdateImportance, setContextUpdateImportance] =
     useState<ClientContextUpdateImportance>("important");
@@ -316,14 +314,7 @@ export function DashboardApp({
     );
   }, [activeClients, search]);
 
-  const workspaceUrlState = useMemo(() => {
-    if (section !== "clients") return urlState;
-    return {
-      ...urlState,
-      clientId: urlState.clientId ?? workspaceOverride?.clientId ?? null,
-      clientTask: urlState.clientTask ?? workspaceOverride?.clientTask ?? null,
-    };
-  }, [section, urlState, workspaceOverride]);
+  const workspaceUrlState = urlState;
 
   const workspaceClient = useMemo(() => {
     if (section !== "clients" || !workspaceUrlState.clientId) return null;
@@ -512,6 +503,18 @@ export function DashboardApp({
     if (!client) return;
     const previousHref = `${window.location.pathname}${window.location.search}`;
     const nextTask = patch.clientTask ?? "summary";
+    const targetSection = patch.section ?? "clients";
+    const targetHref =
+      targetSection === "clients"
+        ? buildStage6ClientWorkspaceHref(urlState, { clientId, clientTask: nextTask })
+        : buildDashboardHref(
+            "/dashboard",
+            mergeDashboardUrlState(urlState, {
+              section: targetSection,
+              clientId,
+              clientTask: null,
+            }),
+          );
     const outcome = await runStage6ClientActivation(
       {
         requestedClientId: clientId,
@@ -519,26 +522,17 @@ export function DashboardApp({
         isSaving: dirtySnapshot.isSaving,
       },
       () =>
-        selectActiveClient({
-          id: client.id,
-          fullName: client.fullName,
-          referenceShort: formatStage6ClientReferenceShort(client.id),
-        }),
-      () =>
-        `/dashboard?section=clients&clientId=${encodeURIComponent(clientId)}${nextTask !== "summary" ? `&clientTask=${nextTask}` : ""}`,
+        selectActiveClient(
+          {
+            id: client.id,
+            fullName: client.fullName,
+            referenceShort: formatStage6ClientReferenceShort(client.id),
+          },
+          { afterHref: targetHref },
+        ),
+      () => targetHref,
     );
     if (outcome.kind !== "activated") return;
-    setWorkspaceOverride({ clientId, clientTask: nextTask });
-    const href = buildStage6ClientWorkspaceHref(urlState, { clientId, clientTask: nextTask });
-    commitDashboardHref(href, "replace");
-    navigateDashboard(
-      {
-        section: patch.section ?? "clients",
-        clientId,
-        clientTask: nextTask,
-      },
-      { replace: true },
-    );
   };
 
   const openCommunicationDestination = async (input: Stage6CommunicationDestinationInput) => {
@@ -574,10 +568,6 @@ export function DashboardApp({
     if (outcome.kind !== "opened") {
       return outcome.kind;
     }
-    if (destination.kind === "clientWorkspace" && destination.linkedClientId) {
-      const nextTask = parseClientWorkspaceTask(destination.urlPatch.clientTask) ?? "summary";
-      setWorkspaceOverride({ clientId: destination.linkedClientId, clientTask: nextTask });
-    }
     if (!outcome.persistClientId) {
       if (!canNavigateAway()) {
         requestHrefNavigation(outcome.href);
@@ -599,13 +589,7 @@ export function DashboardApp({
     const href = `/dashboard?section=clients&clientId=${encodeURIComponent(clientId ?? "")}${
       task !== "summary" ? `&clientTask=${task}` : ""
     }`;
-    if (!canNavigateAway()) {
-      requestHrefNavigation(href);
-      return;
-    }
-    if (clientId) setWorkspaceOverride({ clientId, clientTask: task });
-    commitDashboardHref(href, "replace");
-    navigateDashboard({ section: "clients", clientId, clientTask: task });
+    requestHrefNavigation(href);
   };
 
   const navigateToSection = (nextSection: DashboardSection) => {
@@ -646,7 +630,7 @@ export function DashboardApp({
 
   const addClient = async () => {
     const fullName = newClientName.trim();
-    if (!fullName) return;
+    if (!fullName) return null;
     const nextState = await createClient({
       fullName,
       channel: newClientChannel,
@@ -655,7 +639,12 @@ export function DashboardApp({
       communicationLanguage: newClientLanguage,
     });
     const createdClient = nextState.clients[nextState.clients.length - 1];
-    selectClient(createdClient.id, { section: "clients" });
+    setNewClientName("");
+    setNewClientHandle("");
+    setNewClientPhone("");
+    setNewClientChannel("whatsapp");
+    setNewClientLanguage("tr");
+    return createdClient?.id ?? null;
   };
 
   const runSimulation = async () => {
@@ -963,7 +952,6 @@ export function DashboardApp({
                 onSearch={setSearch}
                 onSelect={(id) => void selectClient(id, { section: "clients", clientTask: "summary" })}
                 onCloseWorkspace={() => {
-                  setWorkspaceOverride(null);
                   requestHrefNavigation("/dashboard?section=clients");
                 }}
                 onClientTask={openClientTask}
