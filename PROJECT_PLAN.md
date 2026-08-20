@@ -1,6 +1,6 @@
 # MANU-AI Project Plan v2
 
-**Current authority (2026-08-20):** Stage 6 Phase 4 verification infrastructure is implemented, but Stage 6 closure is blocked by serious/critical accessibility findings across four client task surfaces and missing post-Stage-6 physical iPhone/Android browser/PWA evidence. All other executed automated closure gates passed. Stage 5 remains closed; production remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_PHASE_4_INTEGRATION_CLOSURE_EVIDENCE.md`.
+**Current authority (2026-08-20):** Stage 6 accessibility remediation is implemented and verified. Programmatic field labels, named removal controls, compliant small-text contrast, and deterministic mobile stage assertions close `S6-P4-A11Y`; desktop/Android-mobile axe passes `12/12`. Stage 6 remains open only for post-remediation physical iPhone/Android browser/PWA evidence. Stage 5 remains closed; production remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_ACCESSIBILITY_REMEDIATION_EVIDENCE.md`.
 
 **Prior R3 checkpoint (2026-08-20):** Stage 6 Phase 1-3 remediation R1-R3 is complete locally. The bounded inbox now has filter/resource ownership, latest-response sequencing, abort, mutation invalidation, and stable-id pagination merge; clean local reset and RLS 56/56 zero-skip preserve tenant/actor security authority. Stage 5 remains `STAGE_5_CLOSED`; production remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_R3_INBOX_CONCURRENCY_SECURITY_CLOSURE_EVIDENCE.md`. Phase 4 had not started at this checkpoint.
 

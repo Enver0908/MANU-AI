@@ -1,6 +1,6 @@
 # Direct 100 Dietitian Completion Plan
 
-**Current active status (2026-08-20):** Stage 6 Phase 4 is verification-complete but closure-blocked by four client-task accessibility surfaces and missing Stage 6 physical-device evidence. Automated bounded-flow, full app, clean RLS, build, release, dependency, shell, and strict local-lab performance gates passed. This does not approve the direct 100-dietitian pilot; production remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_PHASE_4_INTEGRATION_CLOSURE_EVIDENCE.md`.
+**Current active status (2026-08-20):** Stage 6 accessibility remediation is verified and `S6-P4-A11Y` is closed. Stage 6 remains closure-blocked only by new post-remediation physical iPhone/Android browser/PWA evidence and the final closure rerun. This does not approve the direct 100-dietitian pilot; production remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_ACCESSIBILITY_REMEDIATION_EVIDENCE.md`.
 
 **Prior R3 checkpoint (2026-08-20):** Stage 6 Phase 1-3 remediation R1-R3 is complete locally. R3 prevents stale inbox responses and duplicate pagination under concurrent poll/filter/receipt activity; clean local reset and RLS 56/56 zero-skip preserve tenant isolation. This does not approve the direct 100-dietitian pilot, which remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_R3_INBOX_CONCURRENCY_SECURITY_CLOSURE_EVIDENCE.md`. Phase 4 required separate approval at this checkpoint.
 

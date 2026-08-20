@@ -1,6 +1,6 @@
 # MANU-AI Risk Register
 
-Current Phase 85 Stage 6 Phase 4 note, 2026-08-20: closure automation passed bounded-flow, full application, local RLS 56/56 zero-skip, build, release, dependency, Stage 5 shell, and strict performance gates. Stage 6 remains open because forms expose unnamed controls, nutrition exposes unnamed buttons and low contrast, menu/AI controls expose low contrast, and no post-Stage-6 physical iPhone/Android browser/PWA evidence exists. These are explicit closure blockers, not production approval. Evidence: `docs/PHASE_85_STAGE_6_PHASE_4_INTEGRATION_CLOSURE_EVIDENCE.md`.
+Current Phase 85 Stage 6 accessibility note, 2026-08-20: programmatic form labels, named nutrition removal controls, compliant small-text contrast, and deterministic mobile stage assertions close `S6-P4-A11Y`; the authoritative desktop/Android-mobile axe matrix passes `12/12`. Stage 6 remains open only because no post-remediation physical iPhone/Android browser/PWA evidence exists. This is not production approval. Evidence: `docs/PHASE_85_STAGE_6_ACCESSIBILITY_REMEDIATION_EVIDENCE.md`.
 
 ## Risk Scale
 

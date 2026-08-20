@@ -1,8 +1,8 @@
 # Phase 85 Stage 6 Dashboard Core Workflows Action Plan
 
-Date: 2026-08-19
+Date: 2026-08-20
 
-Status: **PHASE 3 COMPLETE; R1-R3 REMEDIATION COMPLETE LOCALLY; PHASE 4 NOT STARTED**
+Status: **PHASE 4 EXECUTED; ACCESSIBILITY REMEDIATION VERIFIED; PHYSICAL-DEVICE GATE OPEN**
 
 Production status: **NO-GO**
 
@@ -20,7 +20,9 @@ Historical post-Phase 3 R2 checkpoint (2026-08-19): workspace reads are keyed by
 
 Historical post-Phase 3 R3 checkpoint (2026-08-20): alerts/notifications inbox requests are resource- and filter-owned, latest-request-wins, abortable, mutation-invalidated, and duplicate-free across pagination. Clean local Supabase reset and RLS 56/56 with zero skipped prove the retained route/persistence isolation boundary. Evidence: `docs/PHASE_85_STAGE_6_R3_INBOX_CONCURRENCY_SECURITY_CLOSURE_EVIDENCE.md`. R1-R3 remediation was complete locally; Phase 4 had not started and required separate approval at this checkpoint.
 
-Current Phase 4 execution authority (2026-08-20, commit `061e221`): automated bounded-flow, concurrency, RLS, build, dependency, shell, and strict local-lab performance gates passed, but Stage 6 is not closed. The desktop/mobile axe gate found blocking accessibility defects in forms, nutrition, menu, and client AI controls, and no post-Stage-6 physical iPhone/Android browser/PWA evidence exists. Evidence: `docs/PHASE_85_STAGE_6_PHASE_4_INTEGRATION_CLOSURE_EVIDENCE.md`.
+Historical Phase 4 closure checkpoint (2026-08-20, commit `061e221`): automated bounded-flow, concurrency, RLS, build, dependency, shell, and strict local-lab performance gates passed, but desktop/mobile axe and physical-device gates blocked closure. Evidence: `docs/PHASE_85_STAGE_6_PHASE_4_INTEGRATION_CLOSURE_EVIDENCE.md`.
+
+Current post-Phase 4 remediation authority (2026-08-20): form labels, nutrition removal controls, and affected contrast tokens are remediated; the desktop/Android-mobile axe matrix passes `12/12`, the final functional workspace matrix passes `23` tests with one desktop-only assertion skipped on mobile, and full app Vitest passes `1558` tests with nine optional skips. `S6-P4-A11Y` is closed. `S6-P4-DEVICE` remains open, so Stage 6 is not closed and production remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_ACCESSIBILITY_REMEDIATION_EVIDENCE.md`.
 
 ## 2. Locked Scope
 

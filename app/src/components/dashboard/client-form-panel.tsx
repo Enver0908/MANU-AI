@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useId, useMemo, useRef, useState } from "react";
 import { AlertCircle, Check, Save } from "lucide-react";
 import { getActiveFormSchema } from "@/lib/client-forms";
 import {
@@ -258,11 +258,12 @@ function ClientFormFieldEditor({
   const promptAccess = field.promptAccess || (field.llmVisibility === "prompt_allowed" ? "prompt_allowed" : "dietitian_only");
   const missing = (field.required || isAutopilotRequiredField(field.id)) && !hasFormFieldValue(value);
   const inputValue = serializeFieldValueForInput(field, value);
+  const labelId = useId();
 
   return (
     <div className="space-y-2" data-testid={`client-form-field-${field.id}`}>
       <div className="flex flex-wrap items-center gap-2">
-        <p className="text-sm font-medium text-ink">
+        <p id={labelId} className="text-sm font-medium text-ink">
           {field.label}
           {field.required ? " *" : ""}
         </p>
@@ -273,6 +274,7 @@ function ClientFormFieldEditor({
 
       {field.type === "textarea" ? (
         <textarea
+          aria-labelledby={labelId}
           value={String(inputValue)}
           disabled={disabled}
           onChange={(event) => onChange(event.target.value)}
@@ -282,12 +284,17 @@ function ClientFormFieldEditor({
       ) : field.type === "select" && field.options?.length ? (
         <SelectInput
           label=""
+          ariaLabelledBy={labelId}
           value={String(inputValue)}
           onChange={onChange}
           options={[["", "Seçin"], ...field.options.map((option) => [option, option] as [string, string])]}
         />
       ) : field.type === "multiselect" && field.options?.length ? (
-        <div className="grid gap-2 rounded-card border border-line bg-surface p-3">
+        <div
+          role="group"
+          aria-labelledby={labelId}
+          className="grid gap-2 rounded-card border border-line bg-surface p-3"
+        >
           {field.options.map((option) => {
             const selected = Array.isArray(inputValue) ? inputValue.includes(option) : false;
             return (
@@ -313,6 +320,7 @@ function ClientFormFieldEditor({
       ) : field.type === "date" ? (
         <label className="block text-sm font-medium text-ink">
           <input
+            aria-labelledby={labelId}
             type="date"
             value={String(inputValue)}
             disabled={disabled}
@@ -322,6 +330,7 @@ function ClientFormFieldEditor({
         </label>
       ) : field.type === "number" ? (
         <input
+          aria-labelledby={labelId}
           type="number"
           value={String(inputValue)}
           disabled={disabled}
@@ -330,6 +339,7 @@ function ClientFormFieldEditor({
         />
       ) : (
         <input
+          aria-labelledby={labelId}
           type="text"
           value={String(inputValue)}
           disabled={disabled}

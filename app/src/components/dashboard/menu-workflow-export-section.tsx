@@ -64,7 +64,7 @@ export function MenuWorkflowExportSection({
     <div className="rounded-card border border-line bg-surface p-4" data-testid="menu-workflow-export">
       <h5 className="text-sm font-semibold text-ink">{t(uiLanguage, "exportMenuTitle")}</h5>
       {!eligible ? (
-        <p className="mt-2 text-sm text-ink-subtle">
+        <p className="mt-2 text-sm text-ink-muted">
           {!activePlanId
             ? t(uiLanguage, "noActiveMenu")
             : !plan?.exportVisible
@@ -83,7 +83,7 @@ export function MenuWorkflowExportSection({
             {t(uiLanguage, "exportIncludeRecipes")}
           </label>
           <div>
-            <p className="text-xs font-semibold uppercase text-ink-subtle">{t(uiLanguage, "exportPreviewTitle")}</p>
+            <p className="text-xs font-semibold uppercase text-ink-muted">{t(uiLanguage, "exportPreviewTitle")}</p>
             <pre
               className="mt-2 max-h-48 overflow-auto rounded-md border border-line bg-surface-muted p-3 text-xs whitespace-pre-wrap text-ink"
               data-testid="menu-workflow-export-preview"

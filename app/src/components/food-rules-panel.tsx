@@ -241,7 +241,7 @@ export function FoodRulesPanel({
       <div className="rounded-card border border-line bg-surface p-4">
         <label className="block text-sm font-semibold text-ink">Katalog arama</label>
         <div className="mt-2 flex min-h-11 items-center gap-2 rounded-card border border-line px-3 py-2">
-          <Search size={16} className="text-ink-subtle" />
+          <Search size={16} className="text-ink-muted" />
           <input
             value={catalogQuery}
             onChange={(event) => setCatalogQuery(event.target.value)}
@@ -252,12 +252,12 @@ export function FoodRulesPanel({
         </div>
         {catalogQuery.trim() && catalogMatches.length > 0 ? (
           <div className="mt-3 space-y-2 rounded-card border border-line bg-surface-muted p-3">
-            <p className="text-xs font-semibold uppercase tracking-wide text-ink-subtle">Hizli sonuclar</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-ink-muted">Hizli sonuclar</p>
             {catalogMatches.map((match) => (
               <div key={match.id} className="flex flex-wrap items-center justify-between gap-2 rounded-card border border-line bg-surface px-3 py-2">
                 <div className="min-w-0">
                   <p className="text-sm font-medium text-ink">{match.name}</p>
-                  <p className="text-xs text-ink-subtle">{match.path}</p>
+                  <p className="text-xs text-ink-muted">{match.path}</p>
                 </div>
                 <div className="flex gap-2">
                   <button
@@ -419,13 +419,18 @@ function CatalogSelectionList({
               className="inline-flex max-w-full items-center gap-1 rounded-full bg-surface-muted px-2 py-1 text-xs font-medium text-ink"
             >
               <span className="truncate">{located?.food.name || foodId}</span>
-              <button type="button" onClick={() => onRemove(foodId)} className="text-ink-subtle hover:text-ink">
-                <X size={12} />
+              <button
+                type="button"
+                aria-label={`${located?.food.name || foodId} seçimini kaldır`}
+                onClick={() => onRemove(foodId)}
+                className="text-ink-muted hover:text-ink"
+              >
+                <X size={12} aria-hidden="true" />
               </button>
             </span>
           );
         })}
-        {foodIds.length === 0 ? <p className="text-xs text-ink-subtle">No selections yet.</p> : null}
+        {foodIds.length === 0 ? <p className="text-xs text-ink-muted">No selections yet.</p> : null}
       </div>
     </div>
   );
@@ -492,8 +497,13 @@ function TokenListSection({
             className="inline-flex max-w-full items-center gap-1 rounded-full bg-surface-muted px-2 py-1 text-xs font-medium text-ink"
           >
             <span className="truncate">{token}</span>
-            <button type="button" onClick={() => onRemove(token)} className="text-ink-subtle hover:text-ink">
-              <X size={12} />
+            <button
+              type="button"
+              aria-label={`${token} seçimini kaldır`}
+              onClick={() => onRemove(token)}
+              className="text-ink-muted hover:text-ink"
+            >
+              <X size={12} aria-hidden="true" />
             </button>
           </span>
         ))}

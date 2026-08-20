@@ -197,7 +197,7 @@ export function AiAssistantControlPanel({
               </div>
             )}
             {isActivatingAi && (
-              <p className="text-xs font-medium text-ink-subtle">
+              <p className="text-xs font-medium text-ink-muted">
                 Aktivasyon atomik endpoint uzerinden dogrulaniyor.
               </p>
             )}
@@ -297,7 +297,7 @@ export function AiAssistantControlPanel({
                 tone={readiness.ready ? "emerald" : readiness.blocked ? "red" : "amber"}
               />
             </div>
-            <p className="mt-2 text-xs text-ink-subtle">
+            <p className="mt-2 text-xs text-ink-muted">
               Autopilot yalnizca guvenlik, form ve kanal kosullari tamamlandiginda acilir.
             </p>
             {readiness.missingLabels.length > 0 ? (
@@ -380,7 +380,7 @@ export function AiAssistantControlPanel({
       </div>
 
       {uiLanguage !== "tr" && (
-        <p className="text-xs text-ink-subtle">
+        <p className="text-xs text-ink-muted">
           Panel dili {uiLanguage}; AI kontrol etiketleri su an Turkce sabit metin kullanir.
         </p>
       )}

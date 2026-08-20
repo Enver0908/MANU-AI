@@ -173,6 +173,7 @@ test("workspace tasks load bounded resources lazily without broad app-state read
     requests.push({ method: request.method(), path: new URL(request.url()).pathname });
   });
 
+  const workspace = page.getByTestId("client-workspace");
   const back = page.getByTestId("client-workspace-back");
   const mobileStack = await back.isVisible();
   const tasks = [
@@ -182,8 +183,9 @@ test("workspace tasks load bounded resources lazily without broad app-state read
   ];
 
   for (const task of tasks) {
-    if (mobileStack && !(await visibleTestId(page, task.testId).isVisible())) {
-      await back.click();
+    if (mobileStack && (await workspace.getAttribute("data-workspace-stage")) === "task") {
+      await visibleTestId(page, "client-workspace-back").click();
+      await expect(workspace).toHaveAttribute("data-workspace-stage", "hub");
       await expect(page.getByTestId("client-task-hub")).toBeVisible();
     }
     const response = page.waitForResponse(
