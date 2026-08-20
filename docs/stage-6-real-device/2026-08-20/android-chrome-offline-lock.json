@@ -1,0 +1,16 @@
+{
+  "before": {
+    "onLine": true,
+    "url": "http://127.0.0.1:3110/dashboard",
+    "shellBlocker": false
+  },
+  "after": {
+    "onLine": true,
+    "url": "http://127.0.0.1:3110/dashboard",
+    "shellBlocker": true,
+    "authenticatedShell": false,
+    "clientWorkspace": false,
+    "bodyText": "İnternet bağlantısı gerekli\n\nKorumalı içerik çevrimdışıyken açılamaz. Bağlantı gelince yeniden deneyin.\n\nYeniden dene"
+  },
+  "method": "physical_android_wifi_and_data_disabled_plus_browser_offline_event_observed"
+}

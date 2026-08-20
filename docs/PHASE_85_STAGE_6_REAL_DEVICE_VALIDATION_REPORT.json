@@ -1,10 +1,10 @@
 {
   "schemaVersion": "stage6-real-device-validation-v1",
   "evidenceType": "stage_6_real_device",
-  "sourceRevision": "217209dfc023ffc14ac6b568aa3fd26aa244be92",
+  "sourceRevision": "34642e4afbc8e9a54cda2b4ee765196124f1d678",
   "sourceTreeClean": false,
   "packageLockSha256": "8387bfffd51f457d9e1dc09ace889584fbbe8085d2e30d08fd24ba659f0240d9",
-  "generatedAt": "2026-08-20T08:46:17.846Z",
+  "generatedAt": "2026-08-20T13:00:46.480Z",
   "command": "npm run test:stage-6-real-device",
   "environment": {
     "nodeVersion": "v22.16.0",
@@ -33,8 +33,6 @@
   ],
   "blockers": [
     "status_not_approved",
-    "approved_by_missing",
-    "captured_at_invalid",
     "iphoneSafari_status_not_pass",
     "iphoneSafari_not_real_device",
     "iphoneSafari_workflow_walk_incomplete",
@@ -42,21 +40,103 @@
     "iphonePwa_status_not_pass",
     "iphonePwa_not_real_device",
     "iphonePwa_workflow_walk_incomplete",
-    "iphonePwa_artifacts_missing",
-    "androidChrome_status_not_pass",
-    "androidChrome_not_real_device",
-    "androidChrome_workflow_walk_incomplete",
-    "androidChrome_artifacts_missing",
-    "androidPwa_status_not_pass",
-    "androidPwa_not_real_device",
-    "androidPwa_workflow_walk_incomplete",
-    "androidPwa_artifacts_missing"
+    "iphonePwa_artifacts_missing"
   ],
   "details": [],
   "normalizedArtifacts": {
     "iphoneSafari": [],
     "iphonePwa": [],
-    "androidChrome": [],
-    "androidPwa": []
+    "androidChrome": [
+      {
+        "path": "stage-6-real-device/2026-08-20/android-chrome-01-dashboard-home.png",
+        "sha256": "b37fe3efc87faf970c227263db0a47d1b7aa5a561f5e21e7fb4cd2b29215c6dd"
+      },
+      {
+        "path": "stage-6-real-device/2026-08-20/android-chrome-02-first-client-workspace.png",
+        "sha256": "e5204dac1c59f283608cad00f39ced28f441aad0475a0d54cc1d2938434b3429"
+      },
+      {
+        "path": "stage-6-real-device/2026-08-20/android-chrome-03-forms-revision-save.png",
+        "sha256": "ff6992c98c7b3987ad2dafec33d22585b2f19e56b48fc026b8e05776038ce025"
+      },
+      {
+        "path": "stage-6-real-device/2026-08-20/android-chrome-04-nutrition-task.png",
+        "sha256": "9e8e274c782419df30bc9984be537bcd9dfe7467a22f849bf04827bddbd0131c"
+      },
+      {
+        "path": "stage-6-real-device/2026-08-20/android-chrome-05-menu-task.png",
+        "sha256": "7a486578377d8cf2a834d4df2aea634fa25e0cc25dba1e197759608d0e778f0e"
+      },
+      {
+        "path": "stage-6-real-device/2026-08-20/android-chrome-06-ai-controls.png",
+        "sha256": "d1fa4c71b596624ff1deb0cf5c76519b4da6985b4f5184613ec064295fd27cc6"
+      },
+      {
+        "path": "stage-6-real-device/2026-08-20/android-chrome-07-client-scoped-messages.png",
+        "sha256": "5e3b22232da5ac6544bd6b8596753cf8c8e815e544ab7b63af1cb95d1a202d6d"
+      },
+      {
+        "path": "stage-6-real-device/2026-08-20/android-chrome-08-guarded-second-client-switch.png",
+        "sha256": "f563484c4fa5b3ad2e30ac7b13f068f0a2ffaf47f720982908b0076abf6d6634"
+      },
+      {
+        "path": "stage-6-real-device/2026-08-20/android-chrome-09-offline-privacy-lock.png",
+        "sha256": "b0505f3f342b6fa2e8ee37e4988a4f2621160fb427c3485d8f32c3fbb2d8694f"
+      },
+      {
+        "path": "stage-6-real-device/2026-08-20/android-chrome-cdp-walk.json",
+        "sha256": "efeee512f73f03e4f1a54e1fbef79f84362f9fdc7ba6862a156008340804e93c"
+      },
+      {
+        "path": "stage-6-real-device/2026-08-20/android-chrome-offline-lock.json",
+        "sha256": "5399d89f37ecebb7a162c7e54f7981cf8718ebf8792837ba626d678cac5c227d"
+      }
+    ],
+    "androidPwa": [
+      {
+        "path": "stage-6-real-device/2026-08-20/android-pwa-01-dashboard-home.png",
+        "sha256": "7777ec18fbf2afea1846974af7d8b245427e975313877338f2d1f96e8cbb535a"
+      },
+      {
+        "path": "stage-6-real-device/2026-08-20/android-pwa-02-first-client-workspace.png",
+        "sha256": "814bdeda403cd5bd669f29bed0c5122f0431a72d940d66b0eead49f645187762"
+      },
+      {
+        "path": "stage-6-real-device/2026-08-20/android-pwa-03-forms-revision-save.png",
+        "sha256": "af7187e6163a9ebd3f4b6562587a49b4a37576cd58f56a3b5819c4c8158a3d8b"
+      },
+      {
+        "path": "stage-6-real-device/2026-08-20/android-pwa-04-nutrition-task.png",
+        "sha256": "d77f8685bfbf6ed8a3f6201225d8995e8820fa5ceb0b74305221406e1341d739"
+      },
+      {
+        "path": "stage-6-real-device/2026-08-20/android-pwa-05-menu-task.png",
+        "sha256": "f22eed8bff2fbb6594e5847dd7176159cb00700f33e4ce94a2093f0f969ffc22"
+      },
+      {
+        "path": "stage-6-real-device/2026-08-20/android-pwa-06-ai-controls.png",
+        "sha256": "71212e4e332387f40d851d4780404ee95f6824ef0035056b82b7659a138e84fd"
+      },
+      {
+        "path": "stage-6-real-device/2026-08-20/android-pwa-07-client-scoped-messages.png",
+        "sha256": "989fb434fefa05633320dd85811818a0724c47c5f6c1aa3e0a79f926b7cf64e8"
+      },
+      {
+        "path": "stage-6-real-device/2026-08-20/android-pwa-08-guarded-second-client-switch.png",
+        "sha256": "7bc97e1550789d2621bde2d6e298819541eae9f9105936b72a69013e90606e16"
+      },
+      {
+        "path": "stage-6-real-device/2026-08-20/android-pwa-09-offline-privacy-lock.png",
+        "sha256": "35db898cab8de800ba78d6373b1f7f3db63fb3dfbb789c55ca76a916f9ccb77c"
+      },
+      {
+        "path": "stage-6-real-device/2026-08-20/android-pwa-cdp-walk.json",
+        "sha256": "53533b17a5365121a042f502761393377d73dec1eeb8de183e20b2309e69c6c8"
+      },
+      {
+        "path": "stage-6-real-device/2026-08-20/android-pwa-device-offline-foreground.png",
+        "sha256": "295b06b1a7ef26dc8609019f3ac482307ffa63c7c0b635c7ef33c4d8b521812e"
+      }
+    ]
   }
 }
