@@ -8,11 +8,13 @@ Stage 5 status: **STAGE_5_CLOSED**
 
 Production status: **NO-GO**
 
+Current supersession note, 2026-08-21: this file is historical R3 remediation evidence. Its "does not close Stage 6" statement was true for R3 alone and is superseded by the later Stage 6 final closure decision. Stage 6 is now locally `STAGE_6_CLOSED`; the iPhone validation path is explicitly `WAIVED_NOT_EXECUTED`, not PASS; production remains `NO-GO`.
+
 ## Result
 
 The Stage 6 alerts/notifications inbox now rejects responses that no longer belong to the current filter owner, have been superseded by a newer request, or predate an acknowledged notification mutation. Alerts and notifications have independent request gates and abort controllers. Filter changes invalidate and clear only the affected bounded slice. Poll, focus, manual refresh, and pagination requests cannot apply out of order. Paginated items merge by stable identifier and cannot create duplicate rows.
 
-This closes the approved Stage 6 Phase 1-3 remediation sequence R1-R3. It does not close Stage 6 itself or start Phase 4. No UI, API, schema, migration, RLS policy, service-worker, provider/channel, billing, production rollout, or real-data path changed in R3.
+This closed the approved Stage 6 Phase 1-3 remediation sequence R1-R3. It did not close Stage 6 at the R3 checkpoint or start Phase 4. No UI, API, schema, migration, RLS policy, service-worker, provider/channel, billing, production rollout, or real-data path changed in R3.
 
 ## Implementation
 

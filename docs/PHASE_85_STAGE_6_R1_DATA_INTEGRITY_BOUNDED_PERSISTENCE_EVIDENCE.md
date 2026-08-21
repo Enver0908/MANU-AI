@@ -8,6 +8,8 @@ Stage 5 status: **STAGE_5_CLOSED**
 
 Production status: **NO-GO**
 
+Current supersession note, 2026-08-21: this file is historical R1 remediation evidence. Its Phase 4-not-started boundary was true at this checkpoint and is superseded by later Stage 6 Phase 4, remediation, Android real-device evidence, and final closure records. Stage 6 is now locally `STAGE_6_CLOSED`; the iPhone validation path is explicitly `WAIVED_NOT_EXECUTED`, not PASS; production remains `NO-GO`.
+
 ## Result
 
 Stage 6 Supabase-backed dashboard mutations now use a durable tenant/request-scoped idempotency ledger instead of process-local replay state. The ledger reserves each mutation request as `pending`, blocks concurrent duplicate execution with `409 idempotency_request_in_progress`, stores only the bounded mutation response on successful completion, and rejects response payloads that contain a broad `state` field.
@@ -36,7 +38,7 @@ Fallback/local development mode still uses the existing process-local idempotenc
 | `npm run test:rls` | PASS: 1 file / 56 tests / 56 passed / 0 skipped |
 | Secret/sensitive scan over changed R1 paths | PASS with pre-existing `supabase-store.ts` `source_text` field-name matches only; no new secret/raw prompt/health-data value was added |
 | Cross-tenant/idempotency scan over changed R1 paths | PASS for R1 scope: Supabase paths use `runSupabaseStage6IdempotentMutation`; fallback-only process-local idempotency remains in fallback branches |
-| Stale status scan over updated current-authority docs | PASS with expected historical `R-405 remains open` matches below the current-authority blocks |
+| Stale status scan over updated current-authority docs | PASS with expected historical `R-405 was open at that checkpoint` matches below the current-authority blocks |
 
 ## Open Risks
 
@@ -45,4 +47,4 @@ Fallback/local development mode still uses the existing process-local idempotenc
 
 ## Boundary
 
-Stage 6 Phase 4 remains not started. Stage 5 shell responsibilities remain closed and were not redesigned. Production remains `NO-GO`.
+At this historical R1 checkpoint, Stage 6 Phase 4 had not started. Stage 5 shell responsibilities remained closed and were not redesigned. Production remains `NO-GO`.

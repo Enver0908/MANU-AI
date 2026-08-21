@@ -10,11 +10,13 @@ Remaining Stage 6 blocker: `S6-P4-DEVICE`
 
 Production status: `NO-GO`
 
+Current supersession note, 2026-08-21: this file is historical pre-closure evidence for the accessibility remediation checkpoint. Its `NOT_CLOSED` and `S6-P4-DEVICE` wording was true at this checkpoint and is superseded by `docs/PHASE_85_STAGE_6_CLOSURE_DECISION.json`, which closes Stage 6 locally with physical Android evidence and an explicit `WAIVED_NOT_EXECUTED` iPhone validation waiver. The iPhone waiver is not PASS and production remains `NO-GO`.
+
 ## Scope And Decision
 
 This remediation closes the `S6-P4-A11Y` blocker recorded by `docs/PHASE_85_STAGE_6_PHASE_4_INTEGRATION_CLOSURE_EVIDENCE.md`. It changes no API, persistence, tenant, actor, capability, active-client, dirty-state, revision, service-worker, provider/channel, billing, production rollout, or offline-data contract.
 
-Stage 6 remains open. Physical iPhone Safari, installed iPhone PWA, physical Android Chrome, and installed Android PWA evidence must still execute the post-remediation Stage 6 workflow before closure.
+At this historical checkpoint, Stage 6 remained open. Physical iPhone Safari, installed iPhone PWA, physical Android Chrome, and installed Android PWA evidence still had to execute the post-remediation Stage 6 workflow before closure.
 
 ## Implementation
 
@@ -42,7 +44,7 @@ Stage 6 remains open. Physical iPhone Safari, installed iPhone PWA, physical And
 
 The first Playwright attempt before rebuilding `.next` exercised the previous build and reproduced the historical failures. It was stopped and is not counted. The authoritative axe run used the new production build.
 
-`npm run release:verify` is not rerun in this remediation unit. It passed in Phase 4 and must run again at final Stage 6 closure after the physical-device evidence is present; no Stage 6 closure is claimed here.
+`npm run release:verify` was not rerun in this remediation unit. It passed in Phase 4 and was required to run again at final Stage 6 closure after the physical-device evidence decision; no Stage 6 closure was claimed in this checkpoint.
 
 ## Remaining Physical Gate
 

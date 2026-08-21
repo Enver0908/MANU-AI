@@ -6,6 +6,8 @@ Production pilot: NO-GO.
 Clinical production GO: not in scope.
 Deployment: none.
 
+Current supersession note, 2026-08-21: this file is historical Stage 4A planning evidence. The roadmap position below records the intended sequence at the Stage 4A checkpoint; later evidence closed Stage 4B, Stage 4B-2, Stage 4B-3, Stage 4B-4, Stage 4C, Stage 4D, Stage 5, and Stage 6 locally. Stage 7 is not started or authorized by the Stage 6 closure. R-405 is technically resolved locally under the current Stage 5 dependency report, while production remains `NO-GO`.
+
 ## Purpose
 
 Stage 4A defines the code-grounded architecture and execution plan for the dietitian-facing danisan kontrol paneli. The priority is not a cosmetic dashboard pass; it is the quality of the actual service given to the dietitian for each client.
@@ -27,15 +29,15 @@ Stage 4A is one part of the restructured Phase 85 dashboard roadmap:
 2. Stage 2 - Full component system: complete.
 3. Stage 3 - Public/commercial entry surfaces: complete and deployed to the hosted sandbox.
 4. Stage 4A - Danisan Kontrol Paneli Mimari ve Hizmet Akisi Plani: complete.
-5. Stage 4B - Uyari ve Bildirimler: action plan approved; next implementation target.
-6. Stage 4B-2 - Mesajlasma: mandatory after Stage 4B; owns conversation list/detail, unread message state, WhatsApp-like detail, yellow draft workflow, red manual reply, and in-detail AI control.
-7. Stage 4C - Diyetisyen Icin AI Chat: pending until Stage 4B-2 closes.
-8. Stage 4D - Ayarlar / Hesap: pending until Stage 4C closes.
-9. Stage 5 - Dashboard and Mobile PWA Shell: pending until Stage 4D closes.
-10. Stage 6 - Dashboard Core Workflows: pending until Stage 5 closes.
-11. Stage 7 - Visual QA, Polish, Accessibility, and Closure: pending until Stage 6 closes.
+5. Stage 4B - Uyari ve Bildirimler: later closed locally.
+6. Stage 4B-2 - Mesajlasma: later closed locally; owns conversation list/detail, unread message state, WhatsApp-like detail, yellow draft workflow, red manual reply, and in-detail AI control.
+7. Stage 4C - Diyetisyen Icin AI Chat: later closed locally.
+8. Stage 4D - Ayarlar / Hesap: later closed locally.
+9. Stage 5 - Dashboard and Mobile PWA Shell: later closed locally.
+10. Stage 6 - Dashboard Core Workflows: later closed locally with explicit iPhone validation waiver.
+11. Stage 7 - Visual QA, Polish, Accessibility, and Closure: future work; requires separate user-approved plan before implementation.
 
-Stage 4B is now action-planned and approved. Stage 4B implementation and every later stage remain sequential, with explicit user approval at each stage boundary.
+At this historical checkpoint, Stage 4B was action-planned and approved. Later stages remained sequential, with explicit user approval at each stage boundary; later evidence records local closure through Stage 6.
 
 ## Non-Negotiable Boundaries
 
@@ -45,8 +47,8 @@ Stage 4B is now action-planned and approved. Stage 4B implementation and every l
 - Do not enable real WhatsApp, Telegram, Gemini/provider, live billing, monitoring, backup, secret-manager, or real health-data production paths.
 - Keep Stripe in test/sandbox mode.
 - Keep production pilot `NO-GO`.
-- Keep R-405 open.
-- Keep R-406/current local Supabase RLS re-run pending when local Supabase is unavailable.
+- Keep R-405 status governed by the current dependency authority; it is now technically resolved locally.
+- Keep R-406/current local Supabase RLS status governed by the latest zero-skip RLS authority.
 - Use the Phase 85 palette and density direction: warm clinical SaaS, premium but operational, compact, readable, and scannable.
 - Avoid heavy gradients, bright purple, pure black, blob/orb decoration, nested cards, and amateur dashboard composition.
 
@@ -295,7 +297,7 @@ If a hosted sandbox deploy happens:
 - The four required product modules are mapped to current domain models, APIs, and safety rules.
 - Implementation is split into user-approved sub-phases; Stage 4A.1 through Stage 4A.4 are complete; Stage 4A Danisan Kontrol Paneli is closed.
 - Stage 4A.1/4A.2/4A.3/4A.4 changed dashboard client-form, active-nutrition, menu workflow, and AI assistant control UI only; backend form/food-rule/menu/AI patch contracts and clinical safety paths are unchanged.
-- Production pilot remains `NO-GO`; R-405 remains open; R-406 remains pending when local Supabase is unavailable.
+- Production pilot remains `NO-GO`; R-405 was open at that checkpoint; R-406 remains pending when local Supabase is unavailable.
 
 ## Stage 4B Integration Addendum - 2026-07-11
 

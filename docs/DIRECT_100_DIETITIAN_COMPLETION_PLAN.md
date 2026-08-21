@@ -20,15 +20,15 @@
 
 **Document authority rule:** this current-status block and the Stage 4D remediation evidence chain govern active execution. All later dated entries are historical snapshots; their `current`, `next`, `pending`, or `blocked` wording applies only to the recorded checkpoint.
 
-**Historical Stage 4D Faz 2 authority (2026-07-28):** Stage 4C remediation is closed locally at commit `cd3d781` with measured verdict `PASS_LOCAL_STAGE_4C_REMEDIATED`; the Stage 4D handoff is committed at `bc57cfd`. Stage 4D Faz 2 settings foundation is complete (`/dashboard/settings` read-only). Evidence: `docs/PHASE_85_STAGE_4D_PHASE_2_SETTINGS_READ_ONLY_EVIDENCE.md`, `docs/PHASE_85_STAGE_4D_AYARLAR_HESAP_ACTION_PLAN.md`. Active next-step planning is superseded by the Stage 4D remediation evidence above. Production remains `NO-GO`; R-405 remains open.
+**Historical Stage 4D Faz 2 authority (2026-07-28):** Stage 4C remediation is closed locally at commit `cd3d781` with measured verdict `PASS_LOCAL_STAGE_4C_REMEDIATED`; the Stage 4D handoff is committed at `bc57cfd`. Stage 4D Faz 2 settings foundation is complete (`/dashboard/settings` read-only). Evidence: `docs/PHASE_85_STAGE_4D_PHASE_2_SETTINGS_READ_ONLY_EVIDENCE.md`, `docs/PHASE_85_STAGE_4D_AYARLAR_HESAP_ACTION_PLAN.md`. Active next-step planning is superseded by the Stage 4D remediation evidence above. Production remains `NO-GO`; R-405 was open at that checkpoint.
 
-Historical Phase 85 status, 2026-07-22: Stage 4C Diyetisyen Icin AI Chat Faz 1 read gate was complete locally at that checkpoint. Evidence: `docs/PHASE_85_STAGE_4C_PHASE_1_READ_GATE_EVIDENCE.md`. This is superseded by the 2026-07-27 remediation/local closure evidence and is not an active next-step instruction. This does not approve a 100-dietitian production pilot; production remains `NO-GO` and R-405 remains open.
+Historical Phase 85 status, 2026-07-22: Stage 4C Diyetisyen Icin AI Chat Faz 1 read gate was complete locally at that checkpoint. Evidence: `docs/PHASE_85_STAGE_4C_PHASE_1_READ_GATE_EVIDENCE.md`. This is superseded by the 2026-07-27 remediation/local closure evidence and is not an active next-step instruction. This does not approve a 100-dietitian production pilot; production remains `NO-GO` and R-405 was open at that checkpoint.
 Date: 2026-06-05
 
 ## Purpose
 This document is the canonical strategic completion plan after Phase 65. It supersedes the earlier "small ring first" interpretation. The production pilot target is direct launch readiness for 100 dietitians with 50 clients each, for a minimum of 5,000 clients. This document does not approve production launch, close any launch gate, connect WhatsApp, connect Gemini, process real client health data, accept R-405, or activate an official regulation corpus.
 
-Phase 85 Stage 4B-2 local RLS re-closure note (2026-07-13): current local Supabase reset passed and `npm run test:rls` passed 35/35 with 0 skipped. Evidence: `docs/PHASE_85_STAGE_4B_2_RLS_LOCAL_RECLOSURE_EVIDENCE.md`. This updates the local RLS evidence only; direct-pilot remains `NO-GO`, R-405 remains open, external launch gates remain open, and real provider/channel/health-data paths remain disconnected.
+Phase 85 Stage 4B-2 local RLS re-closure note (2026-07-13): current local Supabase reset passed and `npm run test:rls` passed 35/35 with 0 skipped. Evidence: `docs/PHASE_85_STAGE_4B_2_RLS_LOCAL_RECLOSURE_EVIDENCE.md`. This updates the local RLS evidence only; direct-pilot remains `NO-GO`, R-405 was open at that checkpoint, external launch gates remain open, and real provider/channel/health-data paths remain disconnected.
 
 Phase 84I note (2026-07-03): commercial SaaS onboarding remediation is no longer local-only for the product claim path: VPS sandbox generated token-hash fallback verified auth callback session creation, onboarding claim, owner membership/profile creation, dashboard 200, and idempotent repeat claim. Phase 84J later superseded the Phase 84I email-delivery gap with verified Resend custom SMTP and real inbox magic-link dashboard access. This does not change the direct-pilot `NO-GO` status. Current RLS evidence, R-405 closure/acceptance, external approvals, and production launch gates remain required before any production pilot.
 
@@ -44,7 +44,7 @@ Phase 85 Stage 3 implementation/deploy note (2026-07-07): `docs/PHASE_85_STAGE_3
 
 Phase 85 Stage 4A Danisan Kontrol Paneli Mimari ve Hizmet Akisi Plani note (2026-07-08): `docs/PHASE_85_STAGE_4A_DANISAN_KONTROL_PANELI_MIMARI_VE_HIZMET_AKISI_PLANI.md` records the completed code-backed client form, active nutrition plan, menu/export, and AI assistant control dashboard work. This Stage 4A dashboard UI implementation does not change direct-pilot `NO-GO`, external gate status, R-405, R-406, or any real provider/channel/production-data path.
 
-Phase 85 roadmap restructure note (updated 2026-07-13): Phase 85 proceeds as Stage 1, Stage 2, Stage 3, Stage 4A Danisan Kontrol Paneli, Stage 4B Uyari ve Bildirimler, mandatory Stage 4B-2 Mesajlasma, Stage 4B-3 Multimodal Gorsel Guvenligi ve Yanit Orkestrasyonu, Stage 4C Diyetisyen Icin AI Chat, Stage 4D Ayarlar / Hesap, Stage 5 Dashboard and Mobile PWA Shell, Stage 6 Dashboard Core Workflows, and Stage 7 closure.
+Phase 85 roadmap restructure note (updated 2026-08-21): the historical sequence was Stage 1, Stage 2, Stage 3, Stage 4A Danisan Kontrol Paneli, Stage 4B Uyari ve Bildirimler, mandatory Stage 4B-2 Mesajlasma, Stage 4B-3 Multimodal Gorsel Guvenligi ve Yanit Orkestrasyonu, Stage 4C Diyetisyen Icin AI Chat, Stage 4D Ayarlar / Hesap, Stage 5 Dashboard and Mobile PWA Shell, Stage 6 Dashboard Core Workflows, and Stage 7 closure. Stage 1 through Stage 6 are now locally closed under later evidence; Stage 7 is not authorized or started by the Stage 6 closure, and the direct 100-dietitian production pilot remains `NO-GO`.
 
 Phase 85 Interstage Foundation P85-IF-A note (2026-07-10): `docs/PHASE_85_INTERSTAGE_TRUSTED_CLINICAL_COMMUNICATION_MEMORY_PLAN.md` inserts P85-IF between completed Stage 4A and Stage 4B, and `docs/PHASE_85_INTERSTAGE_TRUSTED_CLINICAL_COMMUNICATION_MEMORY_SPEC.md` now locks the canonical provider contract, threat model, state machines, prompt authority, off-channel context-intake rules, and Stage 4B boundary. P85-IF-A is complete and is now followed by completed P85-IF-B data model work. Stage 4B resumes after P85-IF-I. This does not change direct-pilot `NO-GO`, external gate status, R-405, R-406, or any real provider/channel/production-data path.
 
@@ -829,7 +829,7 @@ Goal: consolidate the completed food-rule green capacity track (76C–76O) into 
 Completed:
 - Added `docs/PHASE_76P_CONTINUITY_EVIDENCE_GATE_UPDATE_SPEC.md` with consolidated 76C–76O evidence inventory, gate interpretation, and risk-register narrative updates.
 - Updated continuity docs, pilot readiness evidence pack, gate closure dossier, final readiness summary, clinical taxonomy review packet, and risk register (R-109, R-117, R-310, R-403, R-409, R-412, R-413, R-414).
-- Preserved local prototype mitigated vs production approved distinction; all eight launch gates remain open; R-405 remains open.
+- Preserved local prototype mitigated vs production approved distinction; all eight launch gates remained open, and R-405 was open at that checkpoint. Current R-405 technical status is superseded by the Stage 5 dependency report.
 - Verification: core tests 165/165, app tests 284/284, `npm run release:verify` passed with only documented R-405 findings.
 - No runtime behavior, schema, provider, channel, or gate closure changes.
 - Production pilot remains `NO-GO`.
@@ -947,7 +947,7 @@ Phase 78 result:
 - Re-ran the Phase 22 stable dependency procedure.
 - Stable `next@latest` is `16.2.9` but still bundles nested `postcss@8.4.31`; `eslint-config-next@latest` is `16.2.9`.
 - Production audit still reports only the known moderate R-405 `next`/`postcss` findings and the rejected `next@9.3.3` downgrade.
-- No dependency files were changed, no formal risk acceptance was supplied, R-405 remains open, and production pilot remains `NO-GO`.
+- No dependency files were changed, no formal risk acceptance was supplied, R-405 was open at that checkpoint, and production pilot remains `NO-GO`.
 - Verification passed with `git diff --check`, core tests 225/225, app tests 428 passed and 2 skipped across 73 files, lint with two pre-existing warnings, production build, and only documented R-405 findings.
 
 ## Phase 79: Full 100x50 Synthetic Rehearsal
@@ -1020,7 +1020,7 @@ Done criteria:
 ## Phase 82: Final External Readiness Closure
 Goal: produce the final repo-local fail-closed readiness closure layer after Phase 80 and Phase 81 without launching production traffic.
 
-Phase 82A-82G completed on 2026-06-30 in `docs/PHASE_82_FINAL_EXTERNAL_READINESS_CLOSURE_SPEC.md`. Runtime modules include `phase-82g-verification-refresh.ts`. Baseline final outcome is `NO_GO_EXTERNAL_PREREQUISITES_OPEN`; Phase 82G records `repoLocalClosureComplete: true` with verification `blocked` because current RLS is skipped/pending; targeted Phase 82 tests passed (5 files, 31/31). All eight launch gates remain open; R-405 remains open; R-406 current re-run remains pending. Phase 82 track is closed; production pilot remains `NO-GO`.
+Phase 82A-82G completed on 2026-06-30 in `docs/PHASE_82_FINAL_EXTERNAL_READINESS_CLOSURE_SPEC.md`. Runtime modules include `phase-82g-verification-refresh.ts`. Baseline final outcome is `NO_GO_EXTERNAL_PREREQUISITES_OPEN`; Phase 82G records `repoLocalClosureComplete: true` with verification `blocked` because current RLS is skipped/pending; targeted Phase 82 tests passed (5 files, 31/31). All eight launch gates remain open; R-405 was open at that checkpoint; R-406 current re-run remains pending. Phase 82 track is closed; production pilot remains `NO-GO`.
 
 Done criteria:
 - Final external evidence gap ledger, blocker reconciliation, completion report, and launch activation firewall are implemented.
@@ -1052,7 +1052,7 @@ Phase 83E-6 completed on 2026-07-01. Added loading skeletons, enhanced empty/err
 
 Phase 83E remediation completed on 2026-07-01. Closed the post-83E visual acceptance gaps: unique purchase headings, Turkish dashboard visual-smoke labels, reachable mobile bottom navigation across all eight views, and safety-gate/red-lock visual workflow ordering. Verification passed with visual 6/6, targeted Phase 83 50/50, lint with two pre-existing warnings, full unit 645 passed / 4 skipped, release verify core 225/225 + app 645 passed / 4 skipped, and `git diff --check` with CRLF warnings only. `npm run test:rls` skipped 21/21 because local Supabase was unavailable, so R-406 current re-run remains pending. This historical 83E remediation predates later Phase 83F/G/H and final remediation work.
 
-Phase 83 final remediation completed on 2026-07-01. It aligned current-state continuity docs with Phase 83H/final remediation, removed the misleading mobile-install-only admin revoke path, and clarified that the single subscriber entitlement gates both dashboard APIs and mobile/PWA install access. `/api/commercial/admin/entitlements/revoke` now accepts `{ tenantId }`, rejects `mobileInstallOnly: true`, and records `entitlement_revoked`. Verification passed: targeted Phase 83 64/64, full app suite 665 passed / 4 skipped, visual 16/16, release verify core 225/225 + app 665 passed / 4 skipped. Production pilot remains `NO-GO`; R-405 remains open; R-406 current post-83 local Supabase/RLS re-run remains pending when Supabase is unavailable.
+Phase 83 final remediation completed on 2026-07-01. It aligned current-state continuity docs with Phase 83H/final remediation, removed the misleading mobile-install-only admin revoke path, and clarified that the single subscriber entitlement gates both dashboard APIs and mobile/PWA install access. `/api/commercial/admin/entitlements/revoke` now accepts `{ tenantId }`, rejects `mobileInstallOnly: true`, and records `entitlement_revoked`. Verification passed: targeted Phase 83 64/64, full app suite 665 passed / 4 skipped, visual 16/16, release verify core 225/225 + app 665 passed / 4 skipped. Production pilot remains `NO-GO`; R-405 was open at that checkpoint; R-406 current post-83 local Supabase/RLS re-run remains pending when Supabase is unavailable.
 
 Done criteria (full Phase 83 track):
 - Only approved dietitians can buy; only active subscribers access dashboard and mobile install.
@@ -1145,27 +1145,27 @@ Historical Phase 0 record: the Stage 4B-2 Mesajlasma contract is locked in `docs
 
 ## Stage 4B-2 Phase 1 Direct-Scale Handoff - 2026-07-12
 
-Phase 1 is a pure bounded-domain foundation: assignment-aware permissions, allowlisted DTOs, safe preview/body limits, sequence unread projection, deterministic cursors, and fallback-compatible list/detail windows. It is not direct-pilot scale evidence, persistence/RLS evidence, route evidence, UI evidence, or production authorization. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`. Phase 2 must add durable actor receipts and RLS before any direct-scale messaging rehearsal; production pilot remains `NO-GO` and R-405 remains open.
+Phase 1 is a pure bounded-domain foundation: assignment-aware permissions, allowlisted DTOs, safe preview/body limits, sequence unread projection, deterministic cursors, and fallback-compatible list/detail windows. It is not direct-pilot scale evidence, persistence/RLS evidence, route evidence, UI evidence, or production authorization. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`. Phase 2 must add durable actor receipts and RLS before any direct-scale messaging rehearsal; production pilot remains `NO-GO` and R-405 was open at that checkpoint.
 ## Stage 4B-2 Post-Closure Remediation R0 - 2026-07-12
 
 Direct-scale readiness cannot consume the historical Stage 4B-2 closure as final evidence. Database-bounded messaging reads, server-side assignment authorization, atomic idempotency, zero-skip RLS, and SQL-backed scale rehearsal remain required under `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_ACTION_PLAN.md`.
 ## Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
 
-R1 contract corrections are complete and remain historical evidence; R7 now closes the full local remediation sequence. This does not change pilot readiness: production remains `NO-GO` and R-405 remains open.
+R1 contract corrections are complete and remain historical evidence; R7 now closes the full local remediation sequence. This does not change pilot readiness: production remains `NO-GO` and R-405 was open at that checkpoint.
 
 ## Stage 4B-2 Post-Closure Remediation R2 - 2026-07-12
 
-R2 implementation remains historical evidence within the R7-closed local sequence. It does not close a production gate; production remains `NO-GO` and R-405 remains open.
+R2 implementation remains historical evidence within the R7-closed local sequence. It does not close a production gate; production remains `NO-GO` and R-405 was open at that checkpoint.
 ## Stage 4B-2 Post-Closure Remediation R3 - 2026-07-12
 
-R3 is an implementation correction within the R7-closed local sequence, not a pilot approval. Production remains `NO-GO`, R-405 remains open, and real integrations remain disabled.
+R3 is an implementation correction within the R7-closed local sequence, not a pilot approval. Production remains `NO-GO`, R-405 was open at that checkpoint, and real integrations remain disabled.
 ## Stage 4B-2 Post-Closure Remediation R4 - 2026-07-12
 
-R4 is an implementation correction within the R7-closed local sequence, not a pilot approval. Production remains `NO-GO` and R-405 remains open.
+R4 is an implementation correction within the R7-closed local sequence, not a pilot approval. Production remains `NO-GO` and R-405 was open at that checkpoint.
 ## Stage 4B-2 Post-Closure Remediation R5 - 2026-07-13
 
-R5 is test/scale evidence within the R7-closed local sequence, not a pilot approval. Production remains `NO-GO` and R-405 remains open.
+R5 is test/scale evidence within the R7-closed local sequence, not a pilot approval. Production remains `NO-GO` and R-405 was open at that checkpoint.
 
 ## Stage 4B-2 Post-Closure Remediation R6 - 2026-07-13
 
-R6 is independent verification, not a pilot approval. Its original environment block was resolved by actual RLS and SQL buffer execution; R7 is complete. Production remains `NO-GO`; R-405 remains open. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`.
+R6 is independent verification, not a pilot approval. Its original environment block was resolved by actual RLS and SQL buffer execution; R7 is complete. Production remains `NO-GO`; R-405 was open at that checkpoint. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`.

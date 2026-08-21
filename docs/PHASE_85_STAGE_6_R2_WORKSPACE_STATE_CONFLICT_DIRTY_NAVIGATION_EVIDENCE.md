@@ -8,6 +8,8 @@ Stage 5 status: **STAGE_5_CLOSED**
 
 Production status: **NO-GO**
 
+Current supersession note, 2026-08-21: this file is historical R2 remediation evidence. Its Phase 4-not-started boundary was true at this checkpoint and is superseded by later Stage 6 Phase 4, remediation, Android real-device evidence, and final closure records. Stage 6 is now locally `STAGE_6_CLOSED`; the iPhone validation path is explicitly `WAIVED_NOT_EXECUTED`, not PASS; production remains `NO-GO`.
+
 ## Result
 
 Stage 6 workspace state is now owned by `tenantId:clientId:domain`. A previous tenant, client, or task response cannot remain visible while a new owner loads. The bounded forms response is consumed by the form editor instead of being fetched and then ignored in favor of compatibility state.
@@ -49,4 +51,4 @@ Two final build retries first failed with Windows/OneDrive `EPERM` on the genera
 
 ## Next Boundary
 
-Stage 6 Phase 4 remains not started and requires separate explicit approval. R2 is ready for a separate commit after user approval; push is not authorized.
+At this historical R2 checkpoint, Stage 6 Phase 4 had not started and required separate explicit approval. R2 was ready for a separate commit after user approval; push was not authorized.

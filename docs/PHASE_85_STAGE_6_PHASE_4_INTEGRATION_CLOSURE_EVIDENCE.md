@@ -8,6 +8,8 @@ Stage 6 status: `NOT_CLOSED`
 
 Production status: `NO-GO`
 
+Current supersession note, 2026-08-21: this file is historical Phase 4 fail-closed evidence. Its `NOT_CLOSED`, accessibility blocker, and physical-device blocker wording was true at this checkpoint and is superseded by later accessibility remediation, Android real-device evidence, and `docs/PHASE_85_STAGE_6_CLOSURE_DECISION.json`. Stage 6 is now locally `STAGE_6_CLOSED` with explicit iPhone `WAIVED_NOT_EXECUTED` risk acceptance, not iPhone PASS. Production remains `NO-GO`.
+
 ## Scope And Authority
 
 Phase 4 exercised integration, bounded request behavior, authorization and RLS isolation, concurrency/idempotency regressions, production build, dependency security, Stage 5 shell regression, local-lab performance, desktop/mobile accessibility, and the physical-device evidence gate. It added no runtime feature, API capability, schema, provider/channel egress, billing activation, production rollout, offline mutation, or sensitive-data cache.
@@ -72,4 +74,4 @@ Every physical capture group must record all of these identifiers with synthetic
 
 ## Decision
 
-Phase 4 verification infrastructure and all locally executable non-accessibility gates are implemented. Stage 6 is not closed because required accessibility and physical-device gates are not PASS. No failed, skipped, or environment-blocked requirement is represented as PASS. Production remains `NO-GO`, and no push, merge, deployment, production schema rollout, or integration activation is authorized.
+Phase 4 verification infrastructure and all locally executable non-accessibility gates were implemented. At this historical checkpoint, Stage 6 was not closed because required accessibility and physical-device gates were not PASS. No failed, skipped, or environment-blocked requirement was represented as PASS. Production remains `NO-GO`, and no push, merge, deployment, production schema rollout, or integration activation is authorized.
