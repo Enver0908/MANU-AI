@@ -1,0 +1,56 @@
+{
+  "schemaVersion": "phase-85-stage-6-closure-v1",
+  "decidedAt": "2026-08-21T14:58:08.675Z",
+  "stageStatus": "STAGE_6_CLOSED",
+  "closureQualification": "IPHONE_VALIDATION_WAIVED_NOT_EXECUTED",
+  "productionStatus": "NO-GO",
+  "blockers": [],
+  "passedGates": [
+    "stage_6_phases_0_through_4",
+    "stage_6_remediation_r1_through_r3",
+    "stage_6_accessibility_remediation",
+    "android_chrome_physical_workflow",
+    "android_installed_pwa_physical_workflow",
+    "stage_6_real_device_validator_approved_with_waiver",
+    "release_verify",
+    "production_dependency_audit_zero_vulnerabilities",
+    "stage_5_shell_regression"
+  ],
+  "waivedGates": [
+    {
+      "id": "iphoneSafari",
+      "status": "WAIVED_NOT_EXECUTED",
+      "acceptedBy": "Enver0908",
+      "acceptedAt": "2026-08-21T14:35:27.229Z"
+    },
+    {
+      "id": "iphonePwa",
+      "status": "WAIVED_NOT_EXECUTED",
+      "acceptedBy": "Enver0908",
+      "acceptedAt": "2026-08-21T14:35:27.229Z"
+    }
+  ],
+  "residualRisks": [
+    {
+      "id": "S6-IOS-PHYSICAL-VALIDATION",
+      "status": "accepted_for_local_stage_6_closure",
+      "description": "No post-remediation Stage 6 workflow was executed on physical iPhone Safari or an installed iPhone PWA. iOS-specific layout, safe-area, browser, standalone-PWA, and offline-lock regressions may therefore remain undetected.",
+      "requiredBefore": "Any iOS production pilot, iOS production-readiness claim, or removal of this accepted-risk qualification"
+    }
+  ],
+  "evidence": [
+    "docs/PHASE_85_STAGE_6_FINAL_CLOSURE_EVIDENCE.md",
+    "docs/PHASE_85_STAGE_6_REAL_DEVICE_EVIDENCE_STATUS.json",
+    "docs/PHASE_85_STAGE_6_REAL_DEVICE_VALIDATION_REPORT.json",
+    "docs/PHASE_85_STAGE_6_ACCESSIBILITY_REMEDIATION_EVIDENCE.md",
+    "docs/PHASE_85_STAGE_6_PHASE_4_INTEGRATION_CLOSURE_EVIDENCE.md"
+  ],
+  "invariants": {
+    "iphoneEvidenceClaimedAsPass": false,
+    "stage5Status": "STAGE_5_CLOSED",
+    "productionEgressEnabled": false,
+    "liveBillingEnabled": false,
+    "productionSchemaRolloutAuthorized": false,
+    "realHealthDataAuthorized": false
+  }
+}

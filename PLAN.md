@@ -1,6 +1,6 @@
 # MANU-AI Plan
 
-**Current authority (2026-08-20):** Stage 6 accessibility remediation closes `S6-P4-A11Y`: the desktop/Android-mobile axe matrix passes `12/12`, the functional workspace matrix passes `23` tests with one correctly inapplicable mobile assertion, and full app Vitest passes `1558` tests with nine optional skips. Only the post-remediation physical-device gate remains open. Stage 6 is not closed, Stage 5 remains closed, and production remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_ACCESSIBILITY_REMEDIATION_EVIDENCE.md`.
+**Current authority (2026-08-21):** Stage 6 is locally `STAGE_6_CLOSED`. Android Chrome/PWA physical evidence and final `release:verify` passed. Physical iPhone Safari/PWA was explicitly waived as `WAIVED_NOT_EXECUTED`, not represented as PASS, and remains required before any iOS production pilot/readiness claim. Stage 5 remains closed; production remains `NO-GO`. Authority: `docs/PHASE_85_STAGE_6_CLOSURE_DECISION.json`; evidence: `docs/PHASE_85_STAGE_6_FINAL_CLOSURE_EVIDENCE.md`.
 
 **Prior R3 checkpoint (2026-08-20):** Stage 6 Phase 1-3 remediation R1-R3 is complete locally. R3 prevents stale/out-of-order alert and notification requests from overwriting current filters or acknowledged receipt mutations and deduplicates bounded pagination. Clean local Supabase reset and RLS 56/56 with zero skipped passed. Stage 5 remains `STAGE_5_CLOSED`; production remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_R3_INBOX_CONCURRENCY_SECURITY_CLOSURE_EVIDENCE.md`. Phase 4 required separate approval at this checkpoint.
 

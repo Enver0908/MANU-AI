@@ -1,6 +1,6 @@
 # MANU-AI
 
-**Current authority (2026-08-20):** Stage 6 accessibility remediation is verified. Forms, nutrition, menu, and client AI controls now pass the desktop/Android-mobile axe matrix (`12/12`), and the final functional workspace matrix passes `23` tests with one desktop-only assertion correctly skipped on mobile. `S6-P4-A11Y` is closed; only new post-remediation physical iPhone/Android browser/PWA evidence remains blocking. Stage 5 remains `STAGE_5_CLOSED`; Stage 6 is not closed and production remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_ACCESSIBILITY_REMEDIATION_EVIDENCE.md`.
+**Current authority (2026-08-21):** Stage 6 Dashboard Core Workflows is locally `STAGE_6_CLOSED`. Physical Android Chrome/PWA evidence passed; the owner explicitly accepted the absence of new Stage 6 physical iPhone Safari/PWA evidence, which is recorded as `WAIVED_NOT_EXECUTED` and not PASS. Final `release:verify` passed. The iPhone risk must be closed before any iOS production pilot/readiness claim. Stage 5 remains `STAGE_5_CLOSED`; production remains `NO-GO`. Authority: `docs/PHASE_85_STAGE_6_CLOSURE_DECISION.json`; evidence: `docs/PHASE_85_STAGE_6_FINAL_CLOSURE_EVIDENCE.md`.
 
 MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to help dietitians manage client conversations, draft safe replies, and route clinically sensitive nutrition or health messages to human review.
 

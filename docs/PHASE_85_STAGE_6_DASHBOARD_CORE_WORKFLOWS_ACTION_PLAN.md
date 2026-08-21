@@ -2,13 +2,15 @@
 
 Date: 2026-08-20
 
-Status: **PHASE 4 EXECUTED; ACCESSIBILITY REMEDIATION VERIFIED; PHYSICAL-DEVICE GATE OPEN**
+Status: **STAGE 6 CLOSED WITH EXPLICIT IPHONE VALIDATION WAIVER**
 
 Production status: **NO-GO**
 
 ## 1. Authority And Objective
 
 This document is the canonical execution plan for Stage 6 Dashboard Core Workflows. Stage 5 is closed by `docs/PHASE_85_STAGE_5_CLOSURE_DECISION.json` with `stageStatus=STAGE_5_CLOSED` and zero blockers. Stage 6 consumes the closed Stage 5 shell contracts; it does not reopen shell architecture, production rollout, provider/channel egress, live billing, offline mutation, or real health-data paths.
+
+Final closure authority (2026-08-21): Stage 6 is locally closed by `docs/PHASE_85_STAGE_6_CLOSURE_DECISION.json`. Android Chrome and installed Android PWA physical workflow evidence passed. The owner explicitly accepted the absence of new Stage 6 physical iPhone Safari/PWA execution evidence; those two capture groups are `WAIVED_NOT_EXECUTED`, never `PASS`, and remain required before any iOS production pilot or iOS production-readiness claim. Production remains `NO-GO`.
 
 The primary user is a dietitian. The primary surface is the installed mobile PWA, while the existing productive desktop layout remains supported. Selecting a client means making that client active and opening that client's workspace. Every client switch must pass through the existing central dirty-state guard.
 
@@ -22,7 +24,7 @@ Historical post-Phase 3 R3 checkpoint (2026-08-20): alerts/notifications inbox r
 
 Historical Phase 4 closure checkpoint (2026-08-20, commit `061e221`): automated bounded-flow, concurrency, RLS, build, dependency, shell, and strict local-lab performance gates passed, but desktop/mobile axe and physical-device gates blocked closure. Evidence: `docs/PHASE_85_STAGE_6_PHASE_4_INTEGRATION_CLOSURE_EVIDENCE.md`.
 
-Current post-Phase 4 remediation authority (2026-08-20): form labels, nutrition removal controls, and affected contrast tokens are remediated; the desktop/Android-mobile axe matrix passes `12/12`, the final functional workspace matrix passes `23` tests with one desktop-only assertion skipped on mobile, and full app Vitest passes `1558` tests with nine optional skips. `S6-P4-A11Y` is closed. `S6-P4-DEVICE` remains open, so Stage 6 is not closed and production remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_ACCESSIBILITY_REMEDIATION_EVIDENCE.md`.
+Historical post-Phase 4 remediation checkpoint (2026-08-20): form labels, nutrition removal controls, and affected contrast tokens were remediated; the desktop/Android-mobile axe matrix passed `12/12`, the final functional workspace matrix passed `23` tests with one desktop-only assertion skipped on mobile, and full app Vitest passed `1558` tests with nine optional skips. `S6-P4-A11Y` was closed while `S6-P4-DEVICE` still blocked Stage 6 at that checkpoint. Evidence: `docs/PHASE_85_STAGE_6_ACCESSIBILITY_REMEDIATION_EVIDENCE.md`.
 
 ## 2. Locked Scope
 
@@ -490,7 +492,7 @@ Prove Stage 6 end-to-end without adding features, reconcile documentation, and p
 ### Locked closure method
 
 - Stage 5 shell verification remains a regression gate, not a reopened implementation phase.
-- Physical iPhone Safari and installed PWA plus physical Android Chrome and installed PWA smoke evidence are mandatory.
+- Physical Android Chrome and installed PWA smoke evidence are mandatory. The original iPhone Safari/PWA requirement was superseded for local Stage 6 closure only by the explicit 2026-08-21 owner risk acceptance; it remains mandatory before any iOS production pilot or iOS production-readiness claim.
 - Stage 5 route/performance thresholds are the minimum baseline. Bounded pagination, lazy task loading, stable layout, and no broad post-mutation refetch must be measured.
 - Production status remains `NO-GO`; Stage 6 closure cannot authorize deployment, egress, billing, production schema, or real health data.
 
@@ -550,7 +552,7 @@ Authenticate -> shell bootstrap -> dashboard home -> roster page -> guarded acti
 ### Completion criteria
 
 - All required checks are real PASS; no failed, skipped, or environment-blocked requirement is represented as PASS.
-- Physical iPhone and Android browser/installed-PWA evidence is approved.
+- Physical Android browser/installed-PWA evidence is approved; physical iPhone Safari/PWA is either approved or explicitly recorded as `WAIVED_NOT_EXECUTED` with owner risk acceptance and no false PASS claim.
 - Stage 5 shell contracts and performance baseline remain intact.
 - Stage 6 workflows are bounded, accessible, responsive, tenant-safe, revision-safe, and documented.
 - Canonical documents agree that Stage 5 remains closed and production remains `NO-GO`.

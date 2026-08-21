@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-18T17:00:26.703Z",
+  "generatedAt": "2026-08-21T14:51:28.003Z",
   "productionStatus": "NO-GO",
   "closureStatus": "LOCAL_AUTOMATION_COMPLETE_DEDICATED_GATES_EVALUATED_SEPARATELY",
   "r405": "covered_by_stage5_dependency_security_report",
@@ -7,12 +7,12 @@
   "gates": {
     "production typecheck": {
       "status": "PASS",
-      "durationMs": 19122,
+      "durationMs": 25684,
       "exitCode": 0
     },
     "stage-5 unit/contract tests": {
       "status": "PASS",
-      "durationMs": 26392,
+      "durationMs": 6762,
       "exitCode": 0
     },
     "cleanNextBuildOutput": {
@@ -20,11 +20,11 @@
     },
     "production build": {
       "status": "PASS",
-      "durationMs": 148912,
+      "durationMs": 115186,
       "exitCode": 0
     },
     "bundleBudget": {
-      "currentGzipBytes": 130404,
+      "currentGzipBytes": 130486,
       "baselineGzipBytes": 125698,
       "limitGzipBytes": 138267,
       "withinBudget": true,

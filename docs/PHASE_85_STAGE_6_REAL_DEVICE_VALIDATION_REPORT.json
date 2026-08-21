@@ -1,17 +1,17 @@
 {
   "schemaVersion": "stage6-real-device-validation-v1",
   "evidenceType": "stage_6_real_device",
-  "sourceRevision": "34642e4afbc8e9a54cda2b4ee765196124f1d678",
+  "sourceRevision": "02bc6c5f8a8570834260d2de2e5e21aac2bdcfa8",
   "sourceTreeClean": false,
   "packageLockSha256": "8387bfffd51f457d9e1dc09ace889584fbbe8085d2e30d08fd24ba659f0240d9",
-  "generatedAt": "2026-08-20T13:00:46.480Z",
+  "generatedAt": "2026-08-21T14:58:45.173Z",
   "command": "npm run test:stage-6-real-device",
   "environment": {
     "nodeVersion": "v22.16.0",
     "platform": "win32",
     "architecture": "x64"
   },
-  "status": "BLOCKED",
+  "status": "APPROVED_WITH_WAIVER",
   "productionStatus": "NO-GO",
   "sourceEvidencePath": "C:\\Users\\Dell\\OneDrive\\Masaüstü\\MANU-AI\\docs\\PHASE_85_STAGE_6_REAL_DEVICE_EVIDENCE_STATUS.json",
   "requiredCaptureIds": [
@@ -31,17 +31,24 @@
     "guarded_second_client_switch",
     "offline_privacy_lock"
   ],
-  "blockers": [
-    "status_not_approved",
-    "iphoneSafari_status_not_pass",
-    "iphoneSafari_not_real_device",
-    "iphoneSafari_workflow_walk_incomplete",
-    "iphoneSafari_artifacts_missing",
-    "iphonePwa_status_not_pass",
-    "iphonePwa_not_real_device",
-    "iphonePwa_workflow_walk_incomplete",
-    "iphonePwa_artifacts_missing"
+  "waivedCaptureIds": [
+    "iphoneSafari",
+    "iphonePwa"
   ],
+  "riskAcceptance": {
+    "decision": "ACCEPTED_STAGE_6_CLOSURE_WAIVER",
+    "acceptedBy": "Enver0908",
+    "acceptedAt": "2026-08-21T14:35:27.229Z",
+    "waivedCaptureIds": [
+      "iphoneSafari",
+      "iphonePwa"
+    ],
+    "rationale": "The owner explicitly chose not to produce new Stage 6 iPhone recordings or artifacts and directed that this omission must not block local Stage 6 closure.",
+    "residualRisk": "Stage 6 client workflows have no post-remediation physical iPhone Safari or installed iPhone PWA execution evidence. iOS-specific layout, safe-area, browser, standalone-PWA, and offline-lock regressions may therefore remain undetected.",
+    "productionStatus": "NO-GO",
+    "iosPilotRequirement": "REQUIRED_BEFORE_IOS_PILOT"
+  },
+  "blockers": [],
   "details": [],
   "normalizedArtifacts": {
     "iphoneSafari": [],

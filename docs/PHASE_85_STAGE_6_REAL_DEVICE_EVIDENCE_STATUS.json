@@ -1,10 +1,10 @@
 {
   "schemaVersion": "stage6-real-device-v1",
-  "status": "BLOCKED",
+  "status": "APPROVED_WITH_WAIVER",
   "productionStatus": "NO-GO",
-  "approvedBy": "Enver0908 authorized local Codex Android physical-device capture",
-  "capturedAt": "2026-08-20T13:00:34.814Z",
-  "instructions": "Use synthetic data on physical iPhone Safari, installed iPhone PWA, physical Android Chrome, and installed Android PWA. Record every required workflow step and hash every artifact under docs/stage-6-real-device/. Browser emulation is not accepted.",
+  "approvedBy": "Enver0908 authorized Android evidence and explicitly accepted the unexecuted iPhone Stage 6 validation risk",
+  "capturedAt": "2026-08-21T14:35:27.229Z",
+  "instructions": "Android Chrome and installed Android PWA require complete physical-device workflow evidence and artifact hashes. iPhone Safari and installed iPhone PWA are explicitly waived as not executed; no PASS, device, workflow, or artifact claim is made for them.",
   "requiredCaptureIds": [
     "iphoneSafari",
     "iphonePwa",
@@ -22,7 +22,38 @@
     "guarded_second_client_switch",
     "offline_privacy_lock"
   ],
+  "riskAcceptance": {
+    "decision": "ACCEPTED_STAGE_6_CLOSURE_WAIVER",
+    "acceptedBy": "Enver0908",
+    "acceptedAt": "2026-08-21T14:35:27.229Z",
+    "waivedCaptureIds": [
+      "iphoneSafari",
+      "iphonePwa"
+    ],
+    "rationale": "The owner explicitly chose not to produce new Stage 6 iPhone recordings or artifacts and directed that this omission must not block local Stage 6 closure.",
+    "residualRisk": "Stage 6 client workflows have no post-remediation physical iPhone Safari or installed iPhone PWA execution evidence. iOS-specific layout, safe-area, browser, standalone-PWA, and offline-lock regressions may therefore remain undetected.",
+    "productionStatus": "NO-GO",
+    "iosPilotRequirement": "REQUIRED_BEFORE_IOS_PILOT"
+  },
   "deviceCaptures": {
+    "iphoneSafari": {
+      "status": "WAIVED_NOT_EXECUTED",
+      "executionStatus": "NOT_EXECUTED",
+      "realDevice": false,
+      "emulator": false,
+      "workflowWalk": [],
+      "artifacts": [],
+      "note": "No Stage 6 iPhone Safari recording or artifact was captured. This is a documented owner risk acceptance, not a test PASS."
+    },
+    "iphonePwa": {
+      "status": "WAIVED_NOT_EXECUTED",
+      "executionStatus": "NOT_EXECUTED",
+      "realDevice": false,
+      "emulator": false,
+      "workflowWalk": [],
+      "artifacts": [],
+      "note": "No Stage 6 installed iPhone PWA recording or artifact was captured. This is a documented owner risk acceptance, not a test PASS."
+    },
     "androidChrome": {
       "status": "PASS",
       "realDevice": true,

@@ -1,10 +1,10 @@
 {
   "schemaVersion": "stage5-evidence-v2",
   "evidenceType": "dependency",
-  "sourceRevision": "95fe4583340c0c8003c97999c74a48c338f328d5",
+  "sourceRevision": "02bc6c5f8a8570834260d2de2e5e21aac2bdcfa8",
   "sourceTreeClean": false,
   "packageLockSha256": "8387bfffd51f457d9e1dc09ace889584fbbe8085d2e30d08fd24ba659f0240d9",
-  "generatedAt": "2026-08-20T08:30:39.988Z",
+  "generatedAt": "2026-08-21T14:51:05.879Z",
   "command": "npm run test:stage-5-dependencies",
   "environment": {
     "nodeVersion": "v22.16.0",

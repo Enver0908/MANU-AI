@@ -1,6 +1,6 @@
 # MANU-AI Risk Register
 
-Current Phase 85 Stage 6 accessibility note, 2026-08-20: programmatic form labels, named nutrition removal controls, compliant small-text contrast, and deterministic mobile stage assertions close `S6-P4-A11Y`; the authoritative desktop/Android-mobile axe matrix passes `12/12`. Stage 6 remains open only because no post-remediation physical iPhone/Android browser/PWA evidence exists. This is not production approval. Evidence: `docs/PHASE_85_STAGE_6_ACCESSIBILITY_REMEDIATION_EVIDENCE.md`.
+Current Phase 85 Stage 6 closure note, 2026-08-21: Stage 6 is locally `STAGE_6_CLOSED` after Android Chrome/PWA physical evidence and final `release:verify` passed. `S6-IOS-PHYSICAL-VALIDATION` is accepted for local closure only: physical iPhone Safari/PWA was `WAIVED_NOT_EXECUTED`, never PASS. iOS-specific layout, safe-area, Safari, standalone-PWA, and offline-lock regressions may remain undetected; physical iPhone validation is mandatory before any iOS production pilot/readiness claim. Production remains `NO-GO`. Authority: `docs/PHASE_85_STAGE_6_CLOSURE_DECISION.json`; evidence: `docs/PHASE_85_STAGE_6_FINAL_CLOSURE_EVIDENCE.md`.
 
 ## Risk Scale
 
