@@ -1,0 +1,458 @@
+{
+  "schemaVersion": "phase-85-stage-7-scenario-matrix-v1",
+  "createdAt": "2026-08-22T00:00:00.000Z",
+  "status": "STAGE_7_0_SCOPE_LOCKED",
+  "sourceOfAuthority": "docs/PHASE_85_STAGE_7_VISUAL_QA_POLISH_ACCESSIBILITY_CLOSURE_ACTION_PLAN.md",
+  "stageStatuses": {
+    "stage5": "STAGE_5_CLOSED",
+    "stage6": "STAGE_6_CLOSED",
+    "physicalIphone": "WAIVED_NOT_EXECUTED",
+    "production": "NO-GO"
+  },
+  "testStack": {
+    "next": "16.3.0",
+    "react": "19.2.4",
+    "playwright": "1.60.0",
+    "axeCorePlaywright": "4.12.1",
+    "vitest": "4.1.7"
+  },
+  "roles": [
+    "owner",
+    "admin",
+    "dietitian",
+    "assistant",
+    "auditor"
+  ],
+  "assignmentAccess": [
+    "care_team",
+    "viewer",
+    "none"
+  ],
+  "languages": [
+    {
+      "id": "tr",
+      "coverage": "full"
+    },
+    {
+      "id": "en",
+      "coverage": "critical_smoke"
+    },
+    {
+      "id": "de",
+      "coverage": "critical_smoke_long_string_stress"
+    },
+    {
+      "id": "pt",
+      "coverage": "critical_smoke_long_string_stress"
+    },
+    {
+      "id": "es",
+      "coverage": "critical_smoke"
+    },
+    {
+      "id": "fr",
+      "coverage": "critical_smoke"
+    },
+    {
+      "id": "ar",
+      "coverage": "critical_smoke_rtl"
+    }
+  ],
+  "browserProfiles": [
+    {
+      "id": "desktop-chromium-1440",
+      "browser": "chromium",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "snapshotTier": "core"
+    },
+    {
+      "id": "desktop-chromium-1728",
+      "browser": "chromium",
+      "viewport": {
+        "width": 1728,
+        "height": 1117
+      },
+      "snapshotTier": "core"
+    },
+    {
+      "id": "tablet-chromium-768",
+      "browser": "chromium",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "snapshotTier": "risk_based"
+    },
+    {
+      "id": "android-chromium-390",
+      "browser": "chromium",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "device": "Pixel 5",
+      "snapshotTier": "core"
+    },
+    {
+      "id": "iphone13-webkit-390",
+      "browser": "webkit",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "device": "iPhone 13",
+      "snapshotTier": "risk_based",
+      "physicalEvidenceStatus": "WAIVED_NOT_EXECUTED"
+    },
+    {
+      "id": "ipad-pro-11-webkit",
+      "browser": "webkit",
+      "device": "iPad Pro 11",
+      "snapshotTier": "risk_based"
+    },
+    {
+      "id": "desktop-firefox-1440",
+      "browser": "firefox",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "snapshotTier": "risk_based"
+    },
+    {
+      "id": "reflow-chromium-320",
+      "browser": "chromium",
+      "viewport": {
+        "width": 320,
+        "height": 720
+      },
+      "snapshotTier": "risk_based"
+    },
+    {
+      "id": "mobile-landscape-chromium-844",
+      "browser": "chromium",
+      "viewport": {
+        "width": 844,
+        "height": 390
+      },
+      "snapshotTier": "risk_based"
+    }
+  ],
+  "requiredLayers": [
+    "behavior",
+    "geometry",
+    "full_page_snapshot",
+    "locator_snapshot",
+    "state_snapshot",
+    "aria",
+    "axe",
+    "keyboard",
+    "manual_at",
+    "performance",
+    "bundle",
+    "physical_android"
+  ],
+  "scenarioGroups": [
+    {
+      "id": "public-contact",
+      "surface": "public",
+      "mandatoryStates": [
+        "contact-normal",
+        "contact-invalid",
+        "contact-rate-limit",
+        "contact-error"
+      ],
+      "mandatoryLayers": [
+        "behavior",
+        "geometry",
+        "full_page_snapshot",
+        "axe",
+        "aria",
+        "keyboard"
+      ],
+      "phaseOwner": "7.1"
+    },
+    {
+      "id": "auth-login",
+      "surface": "auth",
+      "mandatoryStates": [
+        "normal",
+        "sent",
+        "invalid",
+        "rate-limit",
+        "error"
+      ],
+      "mandatoryLayers": [
+        "behavior",
+        "geometry",
+        "state_snapshot",
+        "axe",
+        "aria",
+        "keyboard"
+      ],
+      "phaseOwner": "7.1"
+    },
+    {
+      "id": "purchase-claim",
+      "surface": "commercial",
+      "mandatoryStates": [
+        "valid",
+        "invalid",
+        "expired",
+        "consumed",
+        "pending",
+        "cancel",
+        "success"
+      ],
+      "mandatoryLayers": [
+        "behavior",
+        "geometry",
+        "state_snapshot",
+        "axe",
+        "aria",
+        "keyboard"
+      ],
+      "phaseOwner": "7.1"
+    },
+    {
+      "id": "onboarding-install",
+      "surface": "onboarding",
+      "mandatoryStates": [
+        "unauthenticated",
+        "claimable",
+        "incomplete",
+        "duplicate",
+        "already-claimed",
+        "pending",
+        "error",
+        "install-eligible",
+        "install-ineligible",
+        "installed",
+        "non-installable",
+        "revoked"
+      ],
+      "mandatoryLayers": [
+        "behavior",
+        "geometry",
+        "state_snapshot",
+        "axe",
+        "aria",
+        "keyboard"
+      ],
+      "phaseOwner": "7.1"
+    },
+    {
+      "id": "admin",
+      "surface": "admin",
+      "mandatoryStates": [
+        "login",
+        "non-allowlist",
+        "unauthorized",
+        "empty",
+        "dense",
+        "error",
+        "emergency-secondary",
+        "invalid-token",
+        "secure-error"
+      ],
+      "mandatoryLayers": [
+        "behavior",
+        "geometry",
+        "full_page_snapshot",
+        "locator_snapshot",
+        "axe",
+        "aria",
+        "keyboard"
+      ],
+      "phaseOwner": "7.1"
+    },
+    {
+      "id": "dashboard-shell",
+      "surface": "dashboard",
+      "mandatoryStates": [
+        "shell",
+        "overview",
+        "roster",
+        "workspace",
+        "settings",
+        "more",
+        "offline",
+        "update",
+        "session-lock",
+        "dirty-navigation",
+        "active-client"
+      ],
+      "mandatoryLayers": [
+        "behavior",
+        "geometry",
+        "full_page_snapshot",
+        "state_snapshot",
+        "axe",
+        "aria",
+        "keyboard"
+      ],
+      "phaseOwner": "7.1"
+    },
+    {
+      "id": "dashboard-client",
+      "surface": "dashboard",
+      "mandatoryStates": [
+        "forms-empty",
+        "forms-loading",
+        "forms-error",
+        "forms-dirty",
+        "forms-conflict",
+        "nutrition-empty",
+        "nutrition-read-only",
+        "menu-dense",
+        "menu-stale",
+        "context-loading",
+        "ai-controls-error",
+        "offline"
+      ],
+      "mandatoryLayers": [
+        "behavior",
+        "geometry",
+        "locator_snapshot",
+        "state_snapshot",
+        "axe",
+        "aria",
+        "keyboard"
+      ],
+      "phaseOwner": "7.1"
+    },
+    {
+      "id": "communications",
+      "surface": "dashboard",
+      "mandatoryStates": [
+        "messaging-list",
+        "messaging-detail",
+        "alerts",
+        "notifications",
+        "simulator",
+        "general-ai-chat",
+        "voice",
+        "filters",
+        "client-linked-navigation",
+        "stale",
+        "dirty",
+        "offline"
+      ],
+      "mandatoryLayers": [
+        "behavior",
+        "geometry",
+        "locator_snapshot",
+        "state_snapshot",
+        "axe",
+        "aria",
+        "keyboard"
+      ],
+      "phaseOwner": "7.1"
+    },
+    {
+      "id": "accessibility",
+      "surface": "cross-cutting",
+      "mandatoryStates": [
+        "keyboard",
+        "focus",
+        "dialogs",
+        "labels",
+        "live-regions",
+        "reduced-motion",
+        "contrast",
+        "reflow",
+        "nvda",
+        "talkback"
+      ],
+      "mandatoryLayers": [
+        "axe",
+        "aria",
+        "keyboard",
+        "manual_at",
+        "geometry"
+      ],
+      "phaseOwner": "7.4"
+    },
+    {
+      "id": "performance",
+      "surface": "cross-cutting",
+      "mandatoryStates": [
+        "local-lab-route-scope",
+        "p75-lcp",
+        "p75-cls",
+        "p75-tbt",
+        "p75-interaction-proxy",
+        "shell-gzip"
+      ],
+      "mandatoryLayers": [
+        "performance",
+        "bundle"
+      ],
+      "phaseOwner": "7.4"
+    }
+  ],
+  "performanceBudgets": {
+    "p75LcpMsMax": 2500,
+    "p75ClsMax": 0.1,
+    "p75TbtMsMax": 200,
+    "p75InteractionProxyMsMax": 200,
+    "shellGzipMaxMultiplierAgainstStage5Baseline": 1.1,
+    "measurementMode": "local_lab_only"
+  },
+  "artifactPolicy": {
+    "allowedCommitted": [
+      "sanitized_json_summary",
+      "sanitized_markdown_evidence",
+      "selected_representative_screenshot",
+      "hash",
+      "command_summary",
+      "synthetic_finding_record"
+    ],
+    "forbiddenCommitted": [
+      "cookie",
+      "auth_token",
+      "session_token",
+      "raw_request_body",
+      "raw_response_body",
+      "real_email",
+      "real_phone",
+      "real_name",
+      "real_client_identifier",
+      "realistic_health_detail",
+      "payment_detail",
+      "trace_zip",
+      "video",
+      "full_html_dump",
+      "browser_storage_dump",
+      "full_axe_raw_dump"
+    ],
+    "requiredSyntheticIdentifierPatterns": [
+      "example.com",
+      "tenant-stage7-*",
+      "client-stage7-*"
+    ]
+  },
+  "closureRules": {
+    "openP0Allowed": 0,
+    "openP1Allowed": 0,
+    "openP2Allowed": 0,
+    "requiredFindingStatuses": [
+      "resolved",
+      "accepted_p3",
+      "not_reproducible"
+    ],
+    "skippedRequiredChecksCountAsPass": false,
+    "flakyRequiredChecksCountAsPass": false,
+    "timeoutRequiredChecksCountAsPass": false,
+    "physicalAndroidRequired": true,
+    "desktopNvdaRequired": true,
+    "androidTalkBackRequired": true,
+    "physicalIphoneRequired": false,
+    "physicalIphoneClosureStatus": "WAIVED_NOT_EXECUTED",
+    "productionStatus": "NO-GO"
+  },
+  "executableScenarios": []
+}

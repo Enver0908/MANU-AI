@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "phase-85-stage-7-findings-v1",
+  "createdAt": "2026-08-22T00:00:00.000Z",
+  "status": "STAGE_7_0_EMPTY_REGISTER",
+  "sourceOfAuthority": "docs/PHASE_85_STAGE_7_VISUAL_QA_POLISH_ACCESSIBILITY_CLOSURE_ACTION_PLAN.md",
+  "stageStatuses": {
+    "stage5": "STAGE_5_CLOSED",
+    "stage6": "STAGE_6_CLOSED",
+    "physicalIphone": "WAIVED_NOT_EXECUTED",
+    "production": "NO-GO"
+  },
+  "allowedStatuses": [
+    "open",
+    "resolved",
+    "accepted_p3",
+    "not_reproducible"
+  ],
+  "allowedSeverities": [
+    "P0",
+    "P1",
+    "P2",
+    "P3"
+  ],
+  "closureInvariant": {
+    "openP0Allowed": 0,
+    "openP1Allowed": 0,
+    "openP2Allowed": 0,
+    "p3RequiresUserAcceptance": true
+  },
+  "findings": []
+}
