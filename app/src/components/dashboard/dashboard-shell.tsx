@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import Link from "next/link";
 import { LogOut, Maximize2, Minimize2, ShieldCheck } from "lucide-react";
 import {
@@ -26,8 +26,17 @@ function ShellBlocker({
   action?: ReactNode;
   runtime?: string;
 }) {
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!action) return;
+    const focusable = rootRef.current?.querySelector<HTMLElement>("button, a[href]");
+    focusable?.focus();
+  }, [action, runtime]);
+
   return (
     <div
+      ref={rootRef}
       className="flex min-h-dvh items-center justify-center bg-paper px-safe py-10 text-ink"
       role="alert"
       data-testid="shell-blocker"
@@ -225,7 +234,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
   if (focusMode) {
     return (
       <div className="min-h-dvh bg-paper text-ink" data-testid="authenticated-shell">
-        <a href={`#${DASHBOARD_MAIN_ID}`} className="skip-link">
+        <a href={`#${DASHBOARD_MAIN_ID}`} className="skip-link" data-testid="skip-link">
           {t(uiLanguage, "shellSkipToContent")}
         </a>
         {updateBanner}
@@ -249,7 +258,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-dvh bg-paper text-ink" data-testid="authenticated-shell">
-      <a href={`#${DASHBOARD_MAIN_ID}`} className="skip-link">
+      <a href={`#${DASHBOARD_MAIN_ID}`} className="skip-link" data-testid="skip-link">
         {t(uiLanguage, "shellSkipToContent")}
       </a>
       {updateBanner}

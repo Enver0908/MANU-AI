@@ -1,9 +1,11 @@
 "use client";
 
+import { useRef } from "react";
 import type { ShellDirtySnapshot } from "@/lib/phase-85-stage-5-shell-dirty-registry";
 import { buildShellDirtyConfirmMessage } from "@/lib/phase-85-stage-5-shell-dirty-registry";
 import type { SupportedLanguageCode } from "@/lib/languages";
 import { t } from "@/lib/i18n";
+import { useModalFocus } from "@/components/ui/use-modal-focus";
 
 export type ShellNavigationConfirmRequest = {
   title?: string;
@@ -27,13 +29,18 @@ export function ShellDirtyNavigationDialog({
   busy?: boolean;
   uiLanguage?: SupportedLanguageCode;
 }) {
+  const panelRef = useRef<HTMLDivElement>(null);
+  useModalFocus(true, panelRef, request.onStay);
+
   return (
     <div className="fixed inset-0 z-[70] flex items-center justify-center bg-ink/45 px-4" role="presentation">
       <div
+        ref={panelRef}
         role="alertdialog"
         aria-modal="true"
         aria-labelledby="shell-dirty-title"
-        className="w-full max-w-md rounded-card border border-line bg-surface p-4"
+        tabIndex={-1}
+        className="w-full max-w-md rounded-card border border-line bg-surface p-4 outline-none"
         data-testid="shell-dirty-navigation-dialog"
       >
         <h2 id="shell-dirty-title" className="text-sm font-semibold text-ink">

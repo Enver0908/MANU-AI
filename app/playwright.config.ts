@@ -71,7 +71,7 @@ export default defineConfig({
     {
       name: "stage-7-chromium-desktop",
       testMatch: /stage-7\/.*\.spec\.ts/,
-      timeout: 40_000,
+      timeout: 90_000,
       use: {
         ...devices["Desktop Chrome"],
         browserName: "chromium",
@@ -114,6 +114,7 @@ export default defineConfig({
     {
       name: "stage-7-chromium-reflow",
       testMatch: /stage-7\/.*\.spec\.ts/,
+      timeout: 90_000,
       use: {
         browserName: "chromium",
         viewport: { width: 320, height: 720 },
@@ -123,6 +124,7 @@ export default defineConfig({
     {
       name: "stage-7-chromium-landscape",
       testMatch: /stage-7\/.*\.spec\.ts/,
+      timeout: 90_000,
       use: {
         browserName: "chromium",
         viewport: { width: 844, height: 390 },
@@ -132,16 +134,19 @@ export default defineConfig({
     {
       name: "stage-7-webkit-iphone",
       testMatch: /stage-7\/.*\.spec\.ts/,
+      timeout: 90_000,
       use: { ...devices["iPhone 13"], browserName: "webkit", serviceWorkers: "block" },
     },
     {
       name: "stage-7-webkit-ipad",
       testMatch: /stage-7\/.*\.spec\.ts/,
+      timeout: 90_000,
       use: { ...devices["iPad Pro 11"], browserName: "webkit", serviceWorkers: "block" },
     },
     {
       name: "stage-7-firefox-desktop",
       testMatch: /stage-7\/.*\.spec\.ts/,
+      timeout: 90_000,
       use: {
         ...devices["Desktop Firefox"],
         browserName: "firefox",

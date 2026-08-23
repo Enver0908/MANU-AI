@@ -5,7 +5,7 @@ import { PublicNavbar } from "./PublicNavbar";
 export function PublicShell({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col bg-paper">
-      <a href="#main" className="skip-link">
+      <a href="#main" className="skip-link" data-testid="skip-link">
         Ana içeriğe geç
       </a>
       <PublicNavbar />

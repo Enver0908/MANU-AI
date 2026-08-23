@@ -143,6 +143,7 @@ export function ActiveClientControl({ disabled = false }: { disabled?: boolean }
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Ad veya referans"
+            aria-label="Danışan ara"
             className="min-h-11 w-full rounded-control border border-line bg-surface pl-9 pr-3 text-sm text-ink"
             autoComplete="off"
             data-testid="active-client-search"
@@ -158,7 +159,7 @@ export function ActiveClientControl({ disabled = false }: { disabled?: boolean }
         </p>
       ) : null}
       {loading ? <p className="text-sm text-ink-muted">Yükleniyor…</p> : null}
-      <ul id={listboxId} role="listbox" className="divide-y divide-line border-y border-line">
+      <ul id={listboxId} role="listbox" aria-label="Danışan sonuçları" className="divide-y divide-line border-y border-line">
         {items.map((item) => (
           <li key={item.id}>
             <button
@@ -189,7 +190,7 @@ export function ActiveClientControl({ disabled = false }: { disabled?: boolean }
         className="inline-flex min-h-11 max-w-full items-center gap-2 rounded-control border border-line bg-surface px-3 text-left text-sm font-medium text-ink hover:bg-surface-muted disabled:opacity-50"
         aria-haspopup="dialog"
         aria-expanded={open}
-        aria-controls={listboxId}
+        aria-controls={open ? listboxId : undefined}
         disabled={locked}
         onClick={() => setOpen(true)}
         data-testid="active-client-trigger"

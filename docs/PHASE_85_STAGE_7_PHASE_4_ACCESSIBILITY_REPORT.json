@@ -1,0 +1,108 @@
+{
+  "schemaVersion": "phase-85-stage-7-phase-4-accessibility-v1",
+  "generatedAt": "2026-08-24T01:40:00+03:00",
+  "status": "PASS",
+  "productionStatus": "NO-GO",
+  "physicalIphone": "WAIVED_NOT_EXECUTED",
+  "certificationClaim": false,
+  "disclaimer": "Internal WCAG 2.2 AA quality target for tested synthetic surfaces. This is not a formal WCAG certification and not production GO.",
+  "axe": {
+    "tagSet": ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22a", "wcag22aa"],
+    "filters": "WCAG A/AA only; best-practice is not a closure gate; serious/critical are not the only blockers",
+    "violationCount": 0,
+    "states": [
+      "login",
+      "dashboard-shell",
+      "active-client-menu",
+      "dirty-dialog",
+      "offline-lock",
+      "dashboard-routes"
+    ]
+  },
+  "incompletes": [
+    {
+      "state": "login",
+      "items": [],
+      "manualResult": "PASS",
+      "note": "No axe incomplete nodes."
+    },
+    {
+      "state": "dashboard-shell",
+      "items": [
+        {
+          "id": "aria-valid-attr-value",
+          "target": ".text-left",
+          "summary": "Unable to determine if aria-controls referenced ID exists while using aria-haspopup."
+        }
+      ],
+      "manualResult": "PASS",
+      "note": "Closed active-client trigger omits aria-controls unless the dialog is open. Axe incomplete is undetermined, not a WCAG A/AA violation."
+    },
+    {
+      "state": "active-client-menu",
+      "items": [
+        {
+          "id": "aria-required-children",
+          "target": "listbox",
+          "summary": "Expecting ARIA children role to be added: group, option"
+        },
+        {
+          "id": "aria-valid-attr-value",
+          "target": ".text-left",
+          "summary": "Unable to determine if aria-controls referenced ID exists while using aria-haspopup."
+        }
+      ],
+      "manualResult": "PASS",
+      "note": "Open dialog exposes a listbox with role=option results after fetch. Empty/loading copy is text, not a confirmed missing-child violation. Axe marked these incomplete, not violations."
+    },
+    {
+      "state": "offline-lock",
+      "items": [],
+      "manualResult": "PASS",
+      "note": "No axe incomplete nodes."
+    }
+  ],
+  "keyboard": {
+    "skipLink": "PASS",
+    "headerAndBottomNav": "PASS",
+    "clientSelector": "PASS",
+    "rosterHubTask": "PASS",
+    "formSave": "PASS",
+    "dialogEscapeFocusReturn": "PASS",
+    "messaging": "PASS",
+    "noKeyboardTrap": true,
+    "focusVisible": true,
+    "focusNotObscured": true,
+    "offlineLockTabLeavesBody": "PASS"
+  },
+  "reflow": {
+    "viewport320x720": "PASS",
+    "viewport844x390": "PASS",
+    "textResize200": "PASS",
+    "zoom400Equivalent320x256": "PASS",
+    "pageLevelBiaxialScroll": false,
+    "reducedMotion": "PASS"
+  },
+  "browsers": {
+    "chromiumDesktop": "PASS",
+    "webkitIphoneEmulation": "PASS",
+    "webkitIpadEmulation": "PASS",
+    "firefoxDesktop": "PASS",
+    "webkitIsNotPhysicalSafariOrIphone": true
+  },
+  "nvdaFirefoxSmoke": {
+    "status": "PASS",
+    "certificationClaim": false,
+    "steps": ["login", "dashboard-navigation", "client-selection", "form-dialog", "messaging"]
+  },
+  "assignedFinding": {
+    "id": "S7-F-pwa-pwa-offline-lock-dietitian-tr-chromium-deskt-03",
+    "severity": "P2",
+    "status": "resolved"
+  },
+  "openBlockingAfterPhase": {
+    "P0": 0,
+    "P1": 0,
+    "P2": 0
+  }
+}

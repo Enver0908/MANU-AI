@@ -1,0 +1,1471 @@
+{
+  "schemaVersion": "stage5-evidence-v2",
+  "evidenceType": "performance",
+  "sourceRevision": "f3fad44374bcad39ae5be5d884a9f22457fef8ce",
+  "sourceTreeClean": false,
+  "packageLockSha256": "8387bfffd51f457d9e1dc09ace889584fbbe8085d2e30d08fd24ba659f0240d9",
+  "generatedAt": "2026-08-23T22:31:15.219Z",
+  "command": "npm run test:stage-7-lab-perf",
+  "environment": {
+    "nodeVersion": "v22.16.0",
+    "platform": "win32",
+    "architecture": "x64"
+  },
+  "kind": "local_lab_only",
+  "status": "PASS",
+  "productionStatus": "NO-GO",
+  "disclaimer": "Local lab measurement only. This is not field CWV, not real-device evidence, and not a production launch approval.",
+  "runsPerRoute": 10,
+  "strictMode": true,
+  "targets": {
+    "lcpMs": 2500,
+    "cls": 0.1,
+    "tbtMs": 200,
+    "interactionProxyMs": 200
+  },
+  "measurement": {
+    "baseUrl": "http://127.0.0.1:3111",
+    "routeCountRequired": 12,
+    "routeSet": [
+      {
+        "id": "public_home",
+        "path": "/"
+      },
+      {
+        "id": "login",
+        "path": "/login"
+      },
+      {
+        "id": "purchase",
+        "path": "/purchase"
+      },
+      {
+        "id": "app_install",
+        "path": "/app-install"
+      },
+      {
+        "id": "admin",
+        "path": "/admin"
+      },
+      {
+        "id": "dashboard",
+        "path": "/dashboard"
+      },
+      {
+        "id": "clients",
+        "path": "/dashboard?section=clients"
+      },
+      {
+        "id": "messages",
+        "path": "/dashboard?section=messages"
+      },
+      {
+        "id": "alerts",
+        "path": "/dashboard?section=alerts"
+      },
+      {
+        "id": "notifications",
+        "path": "/dashboard?section=notifications"
+      },
+      {
+        "id": "ai_chat",
+        "path": "/dashboard/ai-chat"
+      },
+      {
+        "id": "settings",
+        "path": "/dashboard/settings"
+      }
+    ],
+    "viewport": {
+      "width": 390,
+      "height": 844,
+      "isMobile": true,
+      "hasTouch": true
+    },
+    "waitAfterLoadMs": 1500,
+    "observerTypes": [
+      "largest-contentful-paint",
+      "layout-shift",
+      "longtask"
+    ],
+    "platform": "win32",
+    "browser": {
+      "engine": "chromium",
+      "source": "playwright-chromium",
+      "headless": true,
+      "launchAttempts": [
+        {
+          "name": "playwright-chromium",
+          "status": "PASS"
+        }
+      ]
+    }
+  },
+  "blockers": [],
+  "evidencePath": "C:\\Users\\Dell\\OneDrive\\Masaüstü\\MANU-AI\\docs\\PHASE_85_STAGE_7_PHASE_4_LAB_PERF_REPORT.json",
+  "routes": [
+    {
+      "route": "public_home",
+      "path": "/",
+      "sampleCount": 10,
+      "denseSeeded": false,
+      "runs": [
+        {
+          "lcpMs": 140,
+          "cls": 0,
+          "tbtMs": 30,
+          "interactionProxyMs": 30,
+          "fcpMs": 140,
+          "domContentLoadedMs": 136.30000000447035,
+          "longTaskCount": 1
+        },
+        {
+          "lcpMs": 96,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 96,
+          "domContentLoadedMs": 29.80000000447035,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 128,
+          "cls": 0,
+          "tbtMs": 46,
+          "interactionProxyMs": 46,
+          "fcpMs": 128,
+          "domContentLoadedMs": 36.5,
+          "longTaskCount": 2
+        },
+        {
+          "lcpMs": 188,
+          "cls": 0,
+          "tbtMs": 119,
+          "interactionProxyMs": 119,
+          "fcpMs": 188,
+          "domContentLoadedMs": 183.30000000447035,
+          "longTaskCount": 2
+        },
+        {
+          "lcpMs": 144,
+          "cls": 0,
+          "tbtMs": 52,
+          "interactionProxyMs": 52,
+          "fcpMs": 144,
+          "domContentLoadedMs": 141,
+          "longTaskCount": 2
+        },
+        {
+          "lcpMs": 128,
+          "cls": 0,
+          "tbtMs": 22,
+          "interactionProxyMs": 22,
+          "fcpMs": 128,
+          "domContentLoadedMs": 32.899999998509884,
+          "longTaskCount": 2
+        },
+        {
+          "lcpMs": 168,
+          "cls": 0,
+          "tbtMs": 100,
+          "interactionProxyMs": 100,
+          "fcpMs": 168,
+          "domContentLoadedMs": 164.39999999850988,
+          "longTaskCount": 2
+        },
+        {
+          "lcpMs": 152,
+          "cls": 0,
+          "tbtMs": 60,
+          "interactionProxyMs": 60,
+          "fcpMs": 152,
+          "domContentLoadedMs": 147.10000000149012,
+          "longTaskCount": 2
+        },
+        {
+          "lcpMs": 220,
+          "cls": 0,
+          "tbtMs": 135,
+          "interactionProxyMs": 135,
+          "fcpMs": 220,
+          "domContentLoadedMs": 214.70000000298023,
+          "longTaskCount": 2
+        },
+        {
+          "lcpMs": 164,
+          "cls": 0,
+          "tbtMs": 70,
+          "interactionProxyMs": 70,
+          "fcpMs": 164,
+          "domContentLoadedMs": 36.70000000298023,
+          "longTaskCount": 2
+        }
+      ],
+      "p75": {
+        "lcpMs": 168,
+        "cls": 0,
+        "tbtMs": 100,
+        "interactionProxyMs": 100,
+        "fcpMs": 168
+      },
+      "pass": {
+        "lcp": true,
+        "cls": true,
+        "tbt": true,
+        "interactionProxy": true
+      }
+    },
+    {
+      "route": "login",
+      "path": "/login",
+      "sampleCount": 10,
+      "denseSeeded": false,
+      "runs": [
+        {
+          "lcpMs": 344,
+          "cls": 0,
+          "tbtMs": 50,
+          "interactionProxyMs": 50,
+          "fcpMs": 344,
+          "domContentLoadedMs": 338.79999999701977,
+          "longTaskCount": 2
+        },
+        {
+          "lcpMs": 172,
+          "cls": 0,
+          "tbtMs": 48,
+          "interactionProxyMs": 48,
+          "fcpMs": 172,
+          "domContentLoadedMs": 250.10000000149012,
+          "longTaskCount": 2
+        },
+        {
+          "lcpMs": 144,
+          "cls": 0,
+          "tbtMs": 23,
+          "interactionProxyMs": 23,
+          "fcpMs": 144,
+          "domContentLoadedMs": 131.60000000149012,
+          "longTaskCount": 2
+        },
+        {
+          "lcpMs": 148,
+          "cls": 0,
+          "tbtMs": 65,
+          "interactionProxyMs": 65,
+          "fcpMs": 148,
+          "domContentLoadedMs": 141.5,
+          "longTaskCount": 2
+        },
+        {
+          "lcpMs": 216,
+          "cls": 0,
+          "tbtMs": 118,
+          "interactionProxyMs": 118,
+          "fcpMs": 216,
+          "domContentLoadedMs": 79.10000000149012,
+          "longTaskCount": 2
+        },
+        {
+          "lcpMs": 120,
+          "cls": 0,
+          "tbtMs": 40,
+          "interactionProxyMs": 40,
+          "fcpMs": 120,
+          "domContentLoadedMs": 109.70000000298023,
+          "longTaskCount": 2
+        },
+        {
+          "lcpMs": 132,
+          "cls": 0,
+          "tbtMs": 50,
+          "interactionProxyMs": 50,
+          "fcpMs": 132,
+          "domContentLoadedMs": 125.29999999701977,
+          "longTaskCount": 2
+        },
+        {
+          "lcpMs": 104,
+          "cls": 0,
+          "tbtMs": 29,
+          "interactionProxyMs": 29,
+          "fcpMs": 104,
+          "domContentLoadedMs": 96.19999999552965,
+          "longTaskCount": 1
+        },
+        {
+          "lcpMs": 168,
+          "cls": 0,
+          "tbtMs": 27,
+          "interactionProxyMs": 27,
+          "fcpMs": 168,
+          "domContentLoadedMs": 100.10000000149012,
+          "longTaskCount": 1
+        },
+        {
+          "lcpMs": 132,
+          "cls": 0,
+          "tbtMs": 52,
+          "interactionProxyMs": 52,
+          "fcpMs": 132,
+          "domContentLoadedMs": 125.70000000298023,
+          "longTaskCount": 2
+        }
+      ],
+      "p75": {
+        "lcpMs": 172,
+        "cls": 0,
+        "tbtMs": 52,
+        "interactionProxyMs": 52,
+        "fcpMs": 172
+      },
+      "pass": {
+        "lcp": true,
+        "cls": true,
+        "tbt": true,
+        "interactionProxy": true
+      }
+    },
+    {
+      "route": "purchase",
+      "path": "/purchase",
+      "sampleCount": 10,
+      "denseSeeded": false,
+      "runs": [
+        {
+          "lcpMs": 116,
+          "cls": 0,
+          "tbtMs": 48,
+          "interactionProxyMs": 48,
+          "fcpMs": 116,
+          "domContentLoadedMs": 110.79999999701977,
+          "longTaskCount": 2
+        },
+        {
+          "lcpMs": 116,
+          "cls": 0,
+          "tbtMs": 53,
+          "interactionProxyMs": 53,
+          "fcpMs": 116,
+          "domContentLoadedMs": 110.29999999701977,
+          "longTaskCount": 2
+        },
+        {
+          "lcpMs": 108,
+          "cls": 0,
+          "tbtMs": 33,
+          "interactionProxyMs": 33,
+          "fcpMs": 108,
+          "domContentLoadedMs": 98.20000000298023,
+          "longTaskCount": 2
+        },
+        {
+          "lcpMs": 76,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 76,
+          "domContentLoadedMs": 70.60000000149012,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 84,
+          "cls": 0,
+          "tbtMs": 14,
+          "interactionProxyMs": 14,
+          "fcpMs": 84,
+          "domContentLoadedMs": 30.399999998509884,
+          "longTaskCount": 1
+        },
+        {
+          "lcpMs": 88,
+          "cls": 0,
+          "tbtMs": 17,
+          "interactionProxyMs": 17,
+          "fcpMs": 88,
+          "domContentLoadedMs": 85.69999999552965,
+          "longTaskCount": 1
+        },
+        {
+          "lcpMs": 80,
+          "cls": 0,
+          "tbtMs": 9,
+          "interactionProxyMs": 9,
+          "fcpMs": 80,
+          "domContentLoadedMs": 75.10000000149012,
+          "longTaskCount": 1
+        },
+        {
+          "lcpMs": 112,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 112,
+          "domContentLoadedMs": 25,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 56,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 56,
+          "domContentLoadedMs": 51.5,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 52,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 52,
+          "domContentLoadedMs": 48.900000005960464,
+          "longTaskCount": 0
+        }
+      ],
+      "p75": {
+        "lcpMs": 112,
+        "cls": 0,
+        "tbtMs": 33,
+        "interactionProxyMs": 33,
+        "fcpMs": 112
+      },
+      "pass": {
+        "lcp": true,
+        "cls": true,
+        "tbt": true,
+        "interactionProxy": true
+      }
+    },
+    {
+      "route": "app_install",
+      "path": "/app-install",
+      "sampleCount": 10,
+      "denseSeeded": false,
+      "runs": [
+        {
+          "lcpMs": 412,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 412,
+          "domContentLoadedMs": 407.6000000014901,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 100,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 100,
+          "domContentLoadedMs": 32,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 52,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 52,
+          "domContentLoadedMs": 48.80000000447035,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 64,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 64,
+          "domContentLoadedMs": 29.700000002980232,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 64,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 64,
+          "domContentLoadedMs": 30,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 52,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 52,
+          "domContentLoadedMs": 47.5,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 92,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 92,
+          "domContentLoadedMs": 26.799999997019768,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 48,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 48,
+          "domContentLoadedMs": 45.599999994039536,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 48,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 48,
+          "domContentLoadedMs": 46.19999999552965,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 88,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 88,
+          "domContentLoadedMs": 25.100000001490116,
+          "longTaskCount": 0
+        }
+      ],
+      "p75": {
+        "lcpMs": 92,
+        "cls": 0,
+        "tbtMs": 0,
+        "interactionProxyMs": 0,
+        "fcpMs": 92
+      },
+      "pass": {
+        "lcp": true,
+        "cls": true,
+        "tbt": true,
+        "interactionProxy": true
+      }
+    },
+    {
+      "route": "admin",
+      "path": "/admin",
+      "sampleCount": 10,
+      "denseSeeded": false,
+      "runs": [
+        {
+          "lcpMs": 88,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 88,
+          "domContentLoadedMs": 83.10000000149012,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 68,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 68,
+          "domContentLoadedMs": 26.100000001490116,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 64,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 64,
+          "domContentLoadedMs": 27.899999998509884,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 68,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 68,
+          "domContentLoadedMs": 31.700000002980232,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 68,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 68,
+          "domContentLoadedMs": 25.899999998509884,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 72,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 72,
+          "domContentLoadedMs": 24.399999998509884,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 68,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 68,
+          "domContentLoadedMs": 27.69999999552965,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 60,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 60,
+          "domContentLoadedMs": 56.899999998509884,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 64,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 64,
+          "domContentLoadedMs": 26.099999994039536,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 88,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 88,
+          "domContentLoadedMs": 32.19999999552965,
+          "longTaskCount": 0
+        }
+      ],
+      "p75": {
+        "lcpMs": 72,
+        "cls": 0,
+        "tbtMs": 0,
+        "interactionProxyMs": 0,
+        "fcpMs": 72
+      },
+      "pass": {
+        "lcp": true,
+        "cls": true,
+        "tbt": true,
+        "interactionProxy": true
+      }
+    },
+    {
+      "route": "dashboard",
+      "path": "/dashboard",
+      "sampleCount": 10,
+      "denseSeeded": true,
+      "runs": [
+        {
+          "lcpMs": 60,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 60,
+          "domContentLoadedMs": 55.100000001490116,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 48,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 48,
+          "domContentLoadedMs": 45.5,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 56,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 56,
+          "domContentLoadedMs": 28.299999997019768,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 52,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 52,
+          "domContentLoadedMs": 30.600000001490116,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 48,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 48,
+          "domContentLoadedMs": 26.299999997019768,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 52,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 52,
+          "domContentLoadedMs": 25.5,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 48,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 48,
+          "domContentLoadedMs": 24.69999999552965,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 56,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 56,
+          "domContentLoadedMs": 26.5,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 52,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 52,
+          "domContentLoadedMs": 27.30000000447035,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 56,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 56,
+          "domContentLoadedMs": 27.400000005960464,
+          "longTaskCount": 0
+        }
+      ],
+      "p75": {
+        "lcpMs": 56,
+        "cls": 0,
+        "tbtMs": 0,
+        "interactionProxyMs": 0,
+        "fcpMs": 56
+      },
+      "pass": {
+        "lcp": true,
+        "cls": true,
+        "tbt": true,
+        "interactionProxy": true
+      }
+    },
+    {
+      "route": "clients",
+      "path": "/dashboard?section=clients",
+      "sampleCount": 10,
+      "denseSeeded": true,
+      "runs": [
+        {
+          "lcpMs": 48,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 48,
+          "domContentLoadedMs": 25.899999998509884,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 56,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 56,
+          "domContentLoadedMs": 28.5,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 56,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 56,
+          "domContentLoadedMs": 28.200000002980232,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 56,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 56,
+          "domContentLoadedMs": 28.700000002980232,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 64,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 64,
+          "domContentLoadedMs": 62.69999999552965,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 68,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 68,
+          "domContentLoadedMs": 68.20000000298023,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 52,
+          "cls": 0,
+          "tbtMs": 2,
+          "interactionProxyMs": 2,
+          "fcpMs": 52,
+          "domContentLoadedMs": 47.900000005960464,
+          "longTaskCount": 1
+        },
+        {
+          "lcpMs": 56,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 56,
+          "domContentLoadedMs": 25.69999999552965,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 52,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 52,
+          "domContentLoadedMs": 52.399999998509884,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 48,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 48,
+          "domContentLoadedMs": 28,
+          "longTaskCount": 0
+        }
+      ],
+      "p75": {
+        "lcpMs": 56,
+        "cls": 0,
+        "tbtMs": 0,
+        "interactionProxyMs": 0,
+        "fcpMs": 56
+      },
+      "pass": {
+        "lcp": true,
+        "cls": true,
+        "tbt": true,
+        "interactionProxy": true
+      }
+    },
+    {
+      "route": "messages",
+      "path": "/dashboard?section=messages",
+      "sampleCount": 10,
+      "denseSeeded": true,
+      "runs": [
+        {
+          "lcpMs": 212,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 56,
+          "domContentLoadedMs": 35.20000000298023,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 196,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 48,
+          "domContentLoadedMs": 45.79999999701977,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 200,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 52,
+          "domContentLoadedMs": 29,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 204,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 52,
+          "domContentLoadedMs": 31.400000005960464,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 196,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 56,
+          "domContentLoadedMs": 30.30000000447035,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 200,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 56,
+          "domContentLoadedMs": 28.80000000447035,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 192,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 56,
+          "domContentLoadedMs": 26.200000002980232,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 228,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 56,
+          "domContentLoadedMs": 29.900000005960464,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 248,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 68,
+          "domContentLoadedMs": 67.80000000447035,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 232,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 60,
+          "domContentLoadedMs": 30.399999998509884,
+          "longTaskCount": 1
+        }
+      ],
+      "p75": {
+        "lcpMs": 228,
+        "cls": 0,
+        "tbtMs": 0,
+        "interactionProxyMs": 0,
+        "fcpMs": 56
+      },
+      "pass": {
+        "lcp": true,
+        "cls": true,
+        "tbt": true,
+        "interactionProxy": true
+      }
+    },
+    {
+      "route": "alerts",
+      "path": "/dashboard?section=alerts",
+      "sampleCount": 10,
+      "denseSeeded": true,
+      "runs": [
+        {
+          "lcpMs": 228,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 60,
+          "domContentLoadedMs": 27.200000002980232,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 220,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 56,
+          "domContentLoadedMs": 32.30000000447035,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 280,
+          "cls": 0,
+          "tbtMs": 7,
+          "interactionProxyMs": 7,
+          "fcpMs": 60,
+          "domContentLoadedMs": 28.5,
+          "longTaskCount": 1
+        },
+        {
+          "lcpMs": 240,
+          "cls": 0,
+          "tbtMs": 4,
+          "interactionProxyMs": 4,
+          "fcpMs": 52,
+          "domContentLoadedMs": 52.20000000298023,
+          "longTaskCount": 1
+        },
+        {
+          "lcpMs": 232,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 56,
+          "domContentLoadedMs": 27.700000002980232,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 228,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 52,
+          "domContentLoadedMs": 50.100000001490116,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 256,
+          "cls": 0,
+          "tbtMs": 3,
+          "interactionProxyMs": 3,
+          "fcpMs": 60,
+          "domContentLoadedMs": 30.600000001490116,
+          "longTaskCount": 1
+        },
+        {
+          "lcpMs": 272,
+          "cls": 0,
+          "tbtMs": 4,
+          "interactionProxyMs": 4,
+          "fcpMs": 60,
+          "domContentLoadedMs": 34.79999999701977,
+          "longTaskCount": 1
+        },
+        {
+          "lcpMs": 304,
+          "cls": 0,
+          "tbtMs": 21,
+          "interactionProxyMs": 21,
+          "fcpMs": 60,
+          "domContentLoadedMs": 58.80000000447035,
+          "longTaskCount": 1
+        },
+        {
+          "lcpMs": 296,
+          "cls": 0,
+          "tbtMs": 17,
+          "interactionProxyMs": 17,
+          "fcpMs": 64,
+          "domContentLoadedMs": 61.100000001490116,
+          "longTaskCount": 1
+        }
+      ],
+      "p75": {
+        "lcpMs": 280,
+        "cls": 0,
+        "tbtMs": 7,
+        "interactionProxyMs": 7,
+        "fcpMs": 60
+      },
+      "pass": {
+        "lcp": true,
+        "cls": true,
+        "tbt": true,
+        "interactionProxy": true
+      }
+    },
+    {
+      "route": "notifications",
+      "path": "/dashboard?section=notifications",
+      "sampleCount": 10,
+      "denseSeeded": true,
+      "runs": [
+        {
+          "lcpMs": 292,
+          "cls": 0,
+          "tbtMs": 17,
+          "interactionProxyMs": 17,
+          "fcpMs": 68,
+          "domContentLoadedMs": 32.29999999701977,
+          "longTaskCount": 1
+        },
+        {
+          "lcpMs": 256,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 56,
+          "domContentLoadedMs": 52.30000000447035,
+          "longTaskCount": 1
+        },
+        {
+          "lcpMs": 256,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 60,
+          "domContentLoadedMs": 56.600000001490116,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 220,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 56,
+          "domContentLoadedMs": 29.200000002980232,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 188,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 52,
+          "domContentLoadedMs": 25.399999998509884,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 212,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 56,
+          "domContentLoadedMs": 25.80000000447035,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 216,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 52,
+          "domContentLoadedMs": 28,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 256,
+          "cls": 0,
+          "tbtMs": 7,
+          "interactionProxyMs": 7,
+          "fcpMs": 52,
+          "domContentLoadedMs": 30.399999998509884,
+          "longTaskCount": 1
+        },
+        {
+          "lcpMs": 220,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 52,
+          "domContentLoadedMs": 26,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 212,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 52,
+          "domContentLoadedMs": 49.30000000447035,
+          "longTaskCount": 0
+        }
+      ],
+      "p75": {
+        "lcpMs": 256,
+        "cls": 0,
+        "tbtMs": 0,
+        "interactionProxyMs": 0,
+        "fcpMs": 56
+      },
+      "pass": {
+        "lcp": true,
+        "cls": true,
+        "tbt": true,
+        "interactionProxy": true
+      }
+    },
+    {
+      "route": "ai_chat",
+      "path": "/dashboard/ai-chat",
+      "sampleCount": 10,
+      "denseSeeded": false,
+      "runs": [
+        {
+          "lcpMs": 60,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 60,
+          "domContentLoadedMs": 34,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 52,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 52,
+          "domContentLoadedMs": 52.600000001490116,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 56,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 56,
+          "domContentLoadedMs": 29.600000001490116,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 56,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 56,
+          "domContentLoadedMs": 28.299999997019768,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 56,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 56,
+          "domContentLoadedMs": 27.5,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 52,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 52,
+          "domContentLoadedMs": 49.900000005960464,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 56,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 56,
+          "domContentLoadedMs": 28,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 52,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 52,
+          "domContentLoadedMs": 49.80000000447035,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 64,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 64,
+          "domContentLoadedMs": 31.399999998509884,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 56,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 56,
+          "domContentLoadedMs": 30.399999998509884,
+          "longTaskCount": 0
+        }
+      ],
+      "p75": {
+        "lcpMs": 56,
+        "cls": 0,
+        "tbtMs": 0,
+        "interactionProxyMs": 0,
+        "fcpMs": 56
+      },
+      "pass": {
+        "lcp": true,
+        "cls": true,
+        "tbt": true,
+        "interactionProxy": true
+      }
+    },
+    {
+      "route": "settings",
+      "path": "/dashboard/settings",
+      "sampleCount": 10,
+      "denseSeeded": false,
+      "runs": [
+        {
+          "lcpMs": 164,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 64,
+          "domContentLoadedMs": 63.600000001490116,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 140,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 48,
+          "domContentLoadedMs": 27.30000000447035,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 144,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 48,
+          "domContentLoadedMs": 26.30000000447035,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 140,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 48,
+          "domContentLoadedMs": 25.400000005960464,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 148,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 56,
+          "domContentLoadedMs": 25.5,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 148,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 56,
+          "domContentLoadedMs": 27.80000000447035,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 148,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 52,
+          "domContentLoadedMs": 26.600000001490116,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 144,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 52,
+          "domContentLoadedMs": 27.19999999552965,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 144,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 56,
+          "domContentLoadedMs": 28.799999997019768,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 152,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 52,
+          "domContentLoadedMs": 27.399999998509884,
+          "longTaskCount": 0
+        }
+      ],
+      "p75": {
+        "lcpMs": 148,
+        "cls": 0,
+        "tbtMs": 0,
+        "interactionProxyMs": 0,
+        "fcpMs": 56
+      },
+      "pass": {
+        "lcp": true,
+        "cls": true,
+        "tbt": true,
+        "interactionProxy": true
+      }
+    }
+  ],
+  "bundleBudget": {
+    "currentGzipBytes": 130486,
+    "baselineGzipBytes": 125698,
+    "limitGzipBytes": 138267,
+    "withinBudget": true,
+    "files": [
+      {
+        "file": "static/chunks/webpack-67f5b37e6f68c753.js",
+        "gzipBytes": 1829
+      },
+      {
+        "file": "static/chunks/4bd1b696-93bf506b236d6248.js",
+        "gzipBytes": 63300
+      },
+      {
+        "file": "static/chunks/3794-379fc0ccc8776933.js",
+        "gzipBytes": 65133
+      },
+      {
+        "file": "static/chunks/main-app-56ca81e02b4e7ebc.js",
+        "gzipBytes": 224
+      }
+    ],
+    "shellGzipMaxMultiplierAgainstStage5Baseline": 1.1
+  },
+  "summary": {
+    "routeCount": 12,
+    "failedRouteIds": [],
+    "allTargetsMet": true,
+    "bundleWithinBudget": true
+  }
+}

@@ -25,7 +25,7 @@ export function SiriusaiMarketingPage() {
 
   return (
     <div className="min-h-screen bg-surface-muted text-ink">
-      <a href="#main" className="skip-link">
+      <a href="#main" className="skip-link" data-testid="skip-link">
         Ana içeriğe geç
       </a>
 

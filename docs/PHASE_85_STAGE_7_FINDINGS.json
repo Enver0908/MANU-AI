@@ -1,7 +1,7 @@
 {
   "schemaVersion": "phase-85-stage-7-findings-v2",
-  "generatedAt": "2026-08-22T06:00:00.000Z",
-  "status": "STAGE_7_3_DASHBOARD_PWA_REMEDIATION",
+  "generatedAt": "2026-08-24T01:40:00.000Z",
+  "status": "STAGE_7_4_A11Y_BROWSER_PERF",
   "sourceOfAuthority": "docs/PHASE_85_STAGE_7_VISUAL_QA_POLISH_ACCESSIBILITY_CLOSURE_ACTION_PLAN.md",
   "clock": "2026-08-22T09:00:00+03:00",
   "timezone": "Europe/Istanbul",
@@ -26,7 +26,7 @@
   "counts": {
     "P0": 0,
     "P1": 0,
-    "P2": 1,
+    "P2": 0,
     "P3": 0
   },
   "findings": [
@@ -81,13 +81,21 @@
         "Open /dashboard",
         "Press Tab"
       ],
-      "evidenceRefs": [],
-      "rootCause": "Keyboard focus did not enter an interactive control.",
+      "evidenceRefs": [
+        "docs/PHASE_85_STAGE_7_PHASE_4_A11Y_BROWSER_PERF_EVIDENCE.md",
+        "docs/PHASE_85_STAGE_7_PHASE_4_ACCESSIBILITY_REPORT.json",
+        "app/tests/visual/stage-7/stage-7-phase-7-4.spec.ts"
+      ],
+      "rootCause": "Offline lock unmounted focused chrome and did not move focus onto the retry control.",
       "remediationPhase": "7.4",
       "id": "S7-F-pwa-pwa-offline-lock-dietitian-tr-chromium-deskt-03",
       "fingerprint": "82fb35b3ea5f35dc79c52c6cdfa6e9329dcc3639b69696506fa232745b674c07",
-      "status": "open",
-      "resolutionEvidence": []
+      "status": "resolved",
+      "resolutionEvidence": [
+        "docs/PHASE_85_STAGE_7_PHASE_4_A11Y_BROWSER_PERF_EVIDENCE.md",
+        "docs/PHASE_85_STAGE_7_PHASE_4_ACCESSIBILITY_REPORT.json",
+        "app/tests/visual/stage-7/stage-7-phase-7-4.spec.ts"
+      ]
     },
     {
       "category": "accessibility",
