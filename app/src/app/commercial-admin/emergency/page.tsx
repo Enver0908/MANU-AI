@@ -13,13 +13,13 @@ export const metadata: Metadata = {
 
 export default function CommercialAdminEmergencyPage() {
   return (
-    <main className="min-h-screen bg-stone-50 px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mx-auto mb-6 max-w-6xl rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
+    <main className="min-h-screen bg-paper px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto mb-6 max-w-6xl rounded-md border border-line bg-surface-muted px-4 py-3 text-sm text-ink-muted">
         <div className="flex items-start gap-2">
           <AlertTriangle size={16} className="mt-0.5 shrink-0" aria-hidden />
           <p>
             Bu acil durum token panelidir. Normal operasyonlar için{" "}
-            <Link href="/admin" className="font-medium underline-offset-2 hover:underline">
+            <Link href="/admin" className="font-medium underline underline-offset-2">
               /admin
             </Link>{" "}
             üzerinden Supabase oturumu ile giriş yapın.

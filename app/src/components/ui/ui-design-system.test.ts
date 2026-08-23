@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { cn } from "./cn";
 import {
@@ -40,7 +42,21 @@ describe("phase 85 design system foundation tokens", () => {
     expect(primaryMd).toContain("rounded-control");
     expect(primaryMd).toContain("min-h-11");
     expect(buttonClasses("secondary")).toContain("border-line");
-    expect(buttonClasses("danger")).toContain("text-red-700");
+    expect(buttonClasses("danger")).toContain("text-destructive");
+    expect(buttonClasses("danger")).not.toContain("text-red-700");
+  });
+
+  it("associates field hint or error for aria-describedby", async () => {
+    const { buildFieldDescribedBy } = await import("./field");
+    expect(
+      buildFieldDescribedBy({ error: true, hint: true, errorId: "e", hintId: "h" }),
+    ).toBe("e");
+    expect(
+      buildFieldDescribedBy({ error: false, hint: true, errorId: "e", hintId: "h" }),
+    ).toBe("h");
+    expect(
+      buildFieldDescribedBy({ error: false, hint: false, errorId: "e", hintId: "h" }),
+    ).toBeUndefined();
   });
 
   it("maps generic UI tones to the approved editorial palette", () => {
@@ -88,5 +104,14 @@ describe("phase 85 design system foundation tokens", () => {
     const genericTones: Tone[] = ["plum", "sage", "warm", "emerald", "amber", "red", "stone"];
     expect(genericTones).not.toContain("green" as Tone);
     expect(genericTones).not.toContain("yellow" as Tone);
+  });
+
+  it("keeps skip-link on the primary-foreground token and does not clip overflow on the document", () => {
+    const css = readFileSync(join(process.cwd(), "src/app/globals.css"), "utf8");
+    expect(css).toContain(".skip-link");
+    expect(css).toContain("color: var(--primary-foreground)");
+    expect(css).not.toMatch(/html\s*,\s*body\s*\{[^}]*overflow-x:\s*hidden/);
+    expect(css).toContain(".free-text");
+    expect(css).toContain(".command-label");
   });
 });

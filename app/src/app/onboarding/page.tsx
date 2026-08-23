@@ -70,7 +70,7 @@ export default async function OnboardingPage({ searchParams }: OnboardingPagePro
   return (
     <CommercialShell>
       <div className="flex flex-1 items-start justify-center px-4 py-16 sm:py-24">
-        <div className="w-full max-w-md">
+        <div className="w-full min-w-0 max-w-md">
           <div className="mb-8">
             <p className="mb-2 text-xs font-semibold uppercase text-primary">Onboarding</p>
             <h1 className="mb-2 font-display text-2xl font-bold text-off-black">
@@ -115,7 +115,7 @@ export default async function OnboardingPage({ searchParams }: OnboardingPagePro
 
           <p className="mt-6 text-center text-xs text-muted-foreground">
             Giriş sayfasına dönmek için{" "}
-            <Link href="/login" className="text-primary hover:underline">
+            <Link href="/login" className="text-primary underline underline-offset-2">
               müşteri girişi
             </Link>
             .

@@ -44,7 +44,7 @@ export default function PurchaseCancelPage() {
           <div className="mt-6 rounded-md border border-border bg-muted/30 px-4 py-3">
             <p className="text-xs leading-relaxed text-muted-foreground">
               Ödemenizden ücret alındığını düşünüyorsanız hemen{" "}
-              <Link href="/#iletisim" className="text-primary hover:underline">
+              <Link href="/#iletisim" className="text-primary underline underline-offset-2">
                 iletişime geçin
               </Link>
               . Sandbox modunda gerçek bir işlem gerçekleşmemiştir.

@@ -36,11 +36,11 @@ export function SegmentedControl({
             aria-checked={active}
             onClick={() => onValueChange(option.value)}
             className={cn(
-              "min-h-9 rounded-control px-3 text-sm font-medium transition",
+              "min-h-9 min-w-0 rounded-control px-3 text-sm font-medium transition",
               active ? "bg-surface text-primary shadow-[0_1px_2px_rgba(23,20,18,0.08)]" : "text-ink-muted hover:bg-surface-sunken hover:text-ink",
             )}
           >
-            {option.label}
+            <span className="command-label">{option.label}</span>
           </button>
         );
       })}

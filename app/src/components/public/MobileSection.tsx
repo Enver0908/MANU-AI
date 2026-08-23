@@ -73,7 +73,7 @@ export function MobileSection() {
                   </div>
                   <div className="mx-4 mb-4 mt-2 rounded-md border border-border bg-muted/40 px-3 py-1.5">
                     <span className="text-[10px] text-muted-foreground">
-                      Durum: <span className="font-semibold text-sage">Aktif abone</span>
+                      Durum: <span className="font-semibold text-foreground">Aktif abone</span>
                     </span>
                   </div>
                 </div>

@@ -65,16 +65,16 @@ export function AdminLoginForm(props: { initialError?: string | null }) {
   if (submitState === "success") {
     return (
       <div className="space-y-4" role="status">
-        <div className="flex items-start gap-3 rounded-control border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-950">
+        <div className="flex items-start gap-3 rounded-control border border-sage/30 bg-sage/10 px-4 py-3 text-sm text-ink">
           <CheckCircle2 size={18} className="mt-0.5 shrink-0" aria-hidden />
           <p>
             Yönetim giriş bağlantısı gönderildi. E-postanızdaki bağlantıya tıklayarak admin paneline
             erişebilirsiniz.
           </p>
         </div>
-        <p className="text-xs text-ink-subtle">
+        <p className="text-xs text-ink-muted">
           Bağlantı gelmediyse spam klasörünü kontrol edin veya{" "}
-          <a href={contactMailto} className="font-medium text-emerald-900 underline-offset-2 hover:underline">
+          <a href={contactMailto} className="font-medium text-primary underline underline-offset-2">
             {SIRIUSAI_PUBLIC_CONTACT_EMAIL}
           </a>{" "}
           ile iletişime geçin.
@@ -89,7 +89,7 @@ export function AdminLoginForm(props: { initialError?: string | null }) {
         {PUBLIC_MARKETING_COPY.brand} ticari operasyon paneli yalnızca allowlist&apos;teki yönetici
         e-postaları için açılır.
       </p>
-      <Field label="Yönetici e-posta" htmlFor="admin-login-email">
+      <Field label="Yönetici e-posta" htmlFor="admin-login-email" error={formError} required>
         <TextInput
           id="admin-login-email"
           type="email"
@@ -100,15 +100,10 @@ export function AdminLoginForm(props: { initialError?: string | null }) {
           required
         />
       </Field>
-      {formError ? (
-        <p className="text-sm text-red-700" role="alert">
-          {formError}
-        </p>
-      ) : null}
       <Button type="submit" disabled={busy || !email.trim()} fullWidth icon={busy ? Mail : Send}>
         {busy ? "Gönderiliyor…" : "Giriş bağlantısı gönder"}
       </Button>
-      <p className="flex items-start gap-2 text-xs text-ink-subtle">
+      <p className="flex items-start gap-2 text-xs text-ink-muted">
         <Shield size={14} className="mt-0.5 shrink-0" aria-hidden />
         Production pilot hâlâ NO-GO. Bu panel invite, lead ve abonelik operasyonları içindir.
       </p>

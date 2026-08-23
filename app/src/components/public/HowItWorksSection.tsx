@@ -48,7 +48,7 @@ export function HowItWorksSection() {
                 <div className="flex h-10 w-10 items-center justify-center rounded-md bg-primary/10">
                   <Icon size={18} className="text-primary" />
                 </div>
-                <span className="text-2xl font-bold text-border">{step}</span>
+                <span className="text-2xl font-bold text-muted-foreground">{step}</span>
               </div>
               <div>
                 <h3 className="mb-1.5 font-semibold text-foreground">{title}</h3>

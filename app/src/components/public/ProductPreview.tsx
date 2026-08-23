@@ -25,22 +25,19 @@ const STATUS_PILLS = [
     icon: ShieldCheck,
     label: "Risk ayrımı",
     value: "Düşük",
-    color: "text-risk-low",
-    bg: "bg-risk-low/10",
+    riskDot: true,
   },
   {
     icon: UserCheck,
     label: "Diyetisyen onayı",
     value: "Onaylandı",
-    color: "text-sage",
-    bg: "bg-sage/10",
+    riskDot: false,
   },
   {
     icon: CheckCircle,
     label: "Erişim",
     value: "Davetli",
-    color: "text-primary",
-    bg: "bg-primary/10",
+    riskDot: false,
   },
 ];
 
@@ -51,9 +48,9 @@ export function ProductPreview() {
       aria-label="SiriusAI ürün önizlemesi"
     >
       <div className="flex items-center gap-1.5 border-b border-border bg-muted/30 px-4 py-2.5">
-        <div className="h-2.5 w-2.5 rounded-full bg-risk-high/60" />
-        <div className="h-2.5 w-2.5 rounded-full bg-risk-medium/60" />
-        <div className="h-2.5 w-2.5 rounded-full bg-risk-low/60" />
+        <div className="h-2.5 w-2.5 rounded-full bg-line-strong" />
+        <div className="h-2.5 w-2.5 rounded-full bg-ink-subtle" />
+        <div className="h-2.5 w-2.5 rounded-full bg-muted-foreground/50" />
         <span className="ml-2 text-xs text-muted-foreground">siriusai · çalışma alanı</span>
       </div>
 
@@ -65,14 +62,14 @@ export function ProductPreview() {
           >
             {message.role === "ai" ? (
               <div className="mb-0.5 flex items-center gap-1.5">
-                <span className="text-[10px] font-semibold uppercase text-muted-foreground">AI Taslak</span>
-                <Clock size={10} className="text-muted-foreground" />
+                <span className="text-xs font-semibold uppercase text-muted-foreground">AI Taslak</span>
+                <Clock size={10} className="text-muted-foreground" aria-hidden />
               </div>
             ) : null}
             {message.role === "dietitian" ? (
               <div className="mb-0.5 flex items-center gap-1.5">
-                <span className="text-[10px] font-semibold uppercase text-sage">Diyetisyen</span>
-                {message.approved ? <CheckCircle size={10} className="text-sage" /> : null}
+                <span className="text-xs font-semibold uppercase text-foreground">Diyetisyen</span>
+                {message.approved ? <CheckCircle size={10} className="text-primary" aria-hidden /> : null}
               </div>
             ) : null}
             <div
@@ -86,17 +83,27 @@ export function ProductPreview() {
             >
               {message.text}
             </div>
-            <span className="text-[10px] text-muted-foreground">{message.time}</span>
+            <span className="text-xs text-muted-foreground">{message.time}</span>
           </div>
         ))}
       </div>
 
       <div className="flex flex-wrap gap-2 border-t border-border px-4 py-3">
-        {STATUS_PILLS.map(({ icon: Icon, label, value, color, bg }) => (
-          <div key={label} className={`inline-flex items-center gap-1.5 rounded-full ${bg} px-2.5 py-1 text-[10px] font-medium ${color}`}>
-            <Icon size={10} />
+        {STATUS_PILLS.map(({ icon: Icon, label, value, riskDot }) => (
+          <div
+            key={label}
+            className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/40 px-2.5 py-1 text-xs font-medium text-foreground"
+          >
+            <Icon size={10} className="text-primary" aria-hidden />
             <span className="text-muted-foreground">{label}:</span>
-            <span>{value}</span>
+            {riskDot ? (
+              <span className="inline-flex items-center gap-1">
+                <span className="h-2 w-2 rounded-full bg-risk-low" aria-hidden />
+                <span>{value}</span>
+              </span>
+            ) : (
+              <span>{value}</span>
+            )}
           </div>
         ))}
       </div>

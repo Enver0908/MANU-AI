@@ -87,11 +87,11 @@ export function ContactLeadForm() {
   if (submitState === "success") {
     return (
       <div className="space-y-4" role="status">
-        <div className="flex items-start gap-3 rounded-control border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-950">
+        <div className="flex items-start gap-3 rounded-control border border-sage/30 bg-sage/10 px-4 py-3 text-sm text-ink">
           <CheckCircle2 size={18} className="mt-0.5 shrink-0" aria-hidden />
           <p>Talebiniz alındı. Ekibimiz en kısa sürede dönüş yapacaktır.</p>
         </div>
-        <a href={contactMailto} className="inline-flex items-center gap-2 text-sm text-emerald-900 underline-offset-2 hover:underline">
+        <a href={contactMailto} className="inline-flex items-center gap-2 text-sm text-primary underline underline-offset-2">
           <Mail size={16} aria-hidden />
           Acil durumda doğrudan e-posta gönderin
         </a>
@@ -101,7 +101,7 @@ export function ContactLeadForm() {
 
   return (
     <form className="space-y-4" onSubmit={onSubmit} noValidate>
-      <Field label="Ad soyad" htmlFor="contact-lead-name">
+      <Field label="Ad soyad" htmlFor="contact-lead-name" error={formError} required>
         <TextInput
           id="contact-lead-name"
           value={contactName}
@@ -135,7 +135,7 @@ export function ContactLeadForm() {
           onChange={(event) => setMessage(event.target.value)}
           rows={4}
           required
-          className="min-h-[120px] w-full rounded-control border border-line bg-surface px-3 py-2 text-sm text-ink shadow-sm outline-none transition focus-visible:border-emerald-700 focus-visible:ring-2 focus-visible:ring-emerald-200"
+          className="min-h-[120px] w-full min-w-0 rounded-control border border-line bg-surface px-3 py-2 text-sm text-ink shadow-sm outline-none transition focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/15"
         />
       </Field>
       <div className="hidden" aria-hidden>
@@ -148,15 +148,10 @@ export function ContactLeadForm() {
           onChange={(event) => setCompanyWebsite(event.target.value)}
         />
       </div>
-      {formError ? (
-        <p className="text-sm text-rose-800" role="alert">
-          {formError}
-        </p>
-      ) : null}
       {submitState === "unavailable" ? (
         <p className="text-sm text-amber-950" role="status">
           Çevrimiçi form şu an kullanılamıyor. Lütfen{" "}
-          <a href={contactMailto} className="font-medium underline-offset-2 hover:underline">
+          <a href={contactMailto} className="font-medium underline underline-offset-2">
             {SIRIUSAI_PUBLIC_CONTACT_EMAIL}
           </a>{" "}
           adresine yazın.

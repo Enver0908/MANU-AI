@@ -49,7 +49,7 @@ export function EmptyState({
         </span>
       ) : null}
       <h3 className="text-sm font-semibold text-ink">{title}</h3>
-      {message ? <p className="mt-1 max-w-sm text-sm leading-6 text-ink-muted">{message}</p> : null}
+      {message ? <p className="free-text mt-1 max-w-sm text-sm leading-6 text-ink-muted">{message}</p> : null}
       {action ? <div className="mt-4">{action}</div> : null}
     </div>
   );

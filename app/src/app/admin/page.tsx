@@ -68,7 +68,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
 
           <p className="mt-6 text-center text-xs text-muted-foreground">
             Acil durum token girişi yalnızca{" "}
-            <Link href="/commercial-admin/emergency" className="text-primary underline-offset-2 hover:underline">
+            <Link href="/commercial-admin/emergency" className="text-primary underline underline-offset-2">
               /commercial-admin/emergency
             </Link>{" "}
             üzerinden kullanılmalıdır.

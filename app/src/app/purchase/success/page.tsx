@@ -74,7 +74,7 @@ export default async function PurchaseSuccessPage({ searchParams }: PurchaseSucc
               Zaten giriş yaptıysanız{" "}
               <Link
                 href={sessionId ? `/onboarding?session_id=${encodeURIComponent(sessionId)}` : "/onboarding"}
-                className="text-primary hover:underline"
+                className="text-primary underline underline-offset-2"
               >
                 onboarding ekranına geçin
               </Link>

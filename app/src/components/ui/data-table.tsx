@@ -34,7 +34,7 @@ export function DataTable<Row>({
               <th
                 key={column.key}
                 className={cn(
-                  "px-3 py-2 text-xs font-semibold text-ink-subtle",
+                  "min-w-0 px-3 py-2 text-xs font-semibold text-ink-subtle",
                   column.align === "right" && "text-right",
                 )}
               >
@@ -56,7 +56,7 @@ export function DataTable<Row>({
                 {columns.map((column) => (
                   <td
                     key={column.key}
-                    className={cn("px-3 py-2 text-ink", column.align === "right" && "text-right")}
+                    className={cn("min-w-0 px-3 py-2 text-ink", column.align === "right" && "text-right")}
                   >
                     {column.render(row)}
                   </td>

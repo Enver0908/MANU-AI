@@ -77,8 +77,8 @@ export function AppSidebar({
                 active ? "bg-primary text-white" : "text-ink-muted hover:bg-surface-muted hover:text-ink",
               )}
             >
-              <Icon size={18} />
-              <span className="flex-1 text-left">{item.label}</span>
+              <Icon size={18} className="shrink-0" />
+              <span className="command-label flex-1 text-left">{item.label}</span>
               {item.badge ? (
                 <span className="rounded-full bg-warm/15 px-1.5 text-xs font-medium text-warm">
                   {item.badge}
@@ -118,8 +118,8 @@ export function AppBottomNav({ navItems, activeId }: { navItems: AppShellNavItem
               active ? "text-primary" : "text-ink-muted",
             )}
           >
-            <Icon size={20} />
-            <span className="truncate px-1">{item.label}</span>
+            <Icon size={20} className="shrink-0" />
+            <span className="command-label px-1">{item.label}</span>
           </button>
         );
       })}

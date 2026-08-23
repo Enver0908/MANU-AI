@@ -20,9 +20,9 @@ export function CommercialInstallBlockedState({
               <div className="rounded-md bg-warm/15 p-2 text-warm">
                 <LockKeyhole size={22} />
               </div>
-              <div>
+              <div className="min-w-0">
                 <h1 className="text-lg font-semibold text-foreground">{title}</h1>
-                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{description}</p>
+                <p className="free-text mt-1 text-sm leading-relaxed text-muted-foreground">{description}</p>
               </div>
             </div>
             {blockingReasons && blockingReasons.length > 0 ? (

@@ -16,7 +16,7 @@ export {
 export { Button, type ButtonProps } from "./button";
 export { Badge, OriginBadge, RiskBadge, type BadgeProps } from "./badge";
 export { Card, CardHeader, CardBody } from "./card";
-export { Field, TextInput, TextArea, SelectInput, LabelledInput } from "./field";
+export { Field, TextInput, TextArea, SelectInput, LabelledInput, buildFieldDescribedBy } from "./field";
 export { Tabs, type TabItem } from "./tabs";
 export { SegmentedControl, type SegmentedOption } from "./segmented-control";
 export { Dialog } from "./dialog";

@@ -122,7 +122,7 @@ export function CustomerLoginForm(props: { initialError?: string | null; nextPat
         </p>
         <p className="text-xs text-muted-foreground">
           E-postayı göremiyorsanız spam klasörünü kontrol edin veya{" "}
-          <a href={contactMailto} className="font-medium text-primary underline-offset-2 hover:underline">
+          <a href={contactMailto} className="font-medium text-primary underline underline-offset-2">
             {SIRIUSAI_PUBLIC_CONTACT_EMAIL}
           </a>{" "}
           adresine yazın.
@@ -183,7 +183,9 @@ export function CustomerLoginForm(props: { initialError?: string | null; nextPat
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             autoComplete="email"
-            className="rounded-md border border-input bg-background px-3 py-2.5 text-sm placeholder:text-muted-foreground transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            aria-invalid={formError ? true : undefined}
+            aria-describedby={formError ? "customer-login-error" : undefined}
+            className="min-w-0 rounded-md border border-input bg-background px-3 py-2.5 text-sm placeholder:text-muted-foreground transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             placeholder="kayitli@email.com"
             required
           />
@@ -199,18 +201,21 @@ export function CustomerLoginForm(props: { initialError?: string | null; nextPat
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               autoComplete="current-password"
-              className="rounded-md border border-input bg-background px-3 py-2.5 text-sm placeholder:text-muted-foreground transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              aria-invalid={formError ? true : undefined}
+              aria-describedby={formError ? "customer-login-error" : undefined}
+              className="min-w-0 rounded-md border border-input bg-background px-3 py-2.5 text-sm placeholder:text-muted-foreground transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               required
             />
           </div>
         ) : null}
         {formError ? (
           <div
-            className="flex items-start gap-2 rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2.5"
+            id="customer-login-error"
+            className="flex min-w-0 items-start gap-2 rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2.5"
             role="alert"
           >
             <AlertCircle size={14} className="mt-0.5 shrink-0 text-destructive" aria-hidden />
-            <p className="text-xs leading-relaxed text-destructive">{formError}</p>
+            <p className="free-text text-xs leading-relaxed text-destructive">{formError}</p>
           </div>
         ) : null}
         <button
@@ -230,7 +235,7 @@ export function CustomerLoginForm(props: { initialError?: string | null; nextPat
         </button>
         <p className="text-center text-xs text-muted-foreground">
           Hesabınız yok mu?{" "}
-          <Link href="/#iletisim" className="text-primary hover:underline">
+          <Link href="/#iletisim" className="text-primary underline underline-offset-2">
             Erişim talep edin
           </Link>
         </p>

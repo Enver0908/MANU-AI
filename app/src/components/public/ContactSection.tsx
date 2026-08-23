@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { AlertCircle, CheckCircle, Loader2 } from "lucide-react";
+import { Field, TextArea, TextInput } from "@/components/ui";
 
 type FormState = "idle" | "loading" | "success" | "error" | "unavailable";
 
@@ -106,75 +107,64 @@ export function ContactSection() {
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4 rounded-lg border border-border bg-surface p-6" noValidate>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor="contactName" className="text-xs font-semibold text-foreground">
-                  Ad Soyad <span className="text-destructive">*</span>
-                </label>
-                <input
-                  id="contactName"
+          <form
+            id="contact"
+            onSubmit={handleSubmit}
+            className="flex min-w-0 flex-col gap-4 rounded-lg border border-border bg-surface p-6"
+            noValidate
+            aria-busy={state === "loading"}
+          >
+            <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
+              <Field label="Ad Soyad" htmlFor="contact-lead-name" required>
+                <TextInput
+                  id="contact-lead-name"
                   name="contactName"
                   type="text"
                   required
                   autoComplete="name"
-                  className="rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   placeholder="Dr. Ayşe Kaya"
                 />
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor="email" className="text-xs font-semibold text-foreground">
-                  E-posta <span className="text-destructive">*</span>
-                </label>
-                <input
-                  id="email"
+              </Field>
+              <Field label="E-posta" htmlFor="contact-lead-email" required>
+                <TextInput
+                  id="contact-lead-email"
                   name="email"
                   type="email"
                   required
                   autoComplete="email"
-                  className="rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   placeholder="ayse@klinik.com"
                 />
-              </div>
+              </Field>
             </div>
 
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor="clinicName" className="text-xs font-semibold text-foreground">
-                Klinik adı <span className="text-destructive">*</span>
-              </label>
-              <input
-                id="clinicName"
-                name="clinicName"
-                type="text"
-                required
-                className="rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                placeholder="Sağlık Kliniği"
-              />
-            </div>
+            <Field label="Klinik adı" htmlFor="contact-lead-clinic" required>
+              <TextInput id="contact-lead-clinic" name="clinicName" type="text" required placeholder="Sağlık Kliniği" />
+            </Field>
 
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor="message" className="text-xs font-semibold text-foreground">
-                Mesaj <span className="text-destructive">*</span>
-              </label>
-              <textarea
-                id="message"
+            <Field label="Mesaj" htmlFor="contact-lead-message" required>
+              <TextArea
+                id="contact-lead-message"
                 name="message"
                 required
                 rows={4}
-                className="resize-none rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="resize-none"
                 placeholder="Kliniğiniz ve kullanım amacınız hakkında kısaca bilgi verin..."
               />
-            </div>
+            </Field>
 
             <div className="hidden" aria-hidden>
-              <label htmlFor="companyWebsite">Website</label>
-              <input id="companyWebsite" name="companyWebsite" tabIndex={-1} autoComplete="off" />
+              <label htmlFor="contact-lead-website">Website</label>
+              <input id="contact-lead-website" name="companyWebsite" tabIndex={-1} autoComplete="off" />
             </div>
 
             {(state === "error" || state === "unavailable") ? (
-              <div className="flex items-start gap-2 rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2.5">
-                <AlertCircle size={14} className="mt-0.5 shrink-0 text-destructive" />
-                <p className="text-xs leading-relaxed text-destructive">
+              <div
+                className="flex min-w-0 items-start gap-2 rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2.5"
+                role="alert"
+                aria-live="polite"
+              >
+                <AlertCircle size={14} className="mt-0.5 shrink-0 text-destructive" aria-hidden />
+                <p className="free-text text-xs leading-relaxed text-destructive">
                   {state === "unavailable"
                     ? "Çevrimiçi form şu an kullanılamıyor. Lütfen e-posta ile ulaşın."
                     : errorMsg}

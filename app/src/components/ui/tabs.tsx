@@ -46,8 +46,8 @@ export function Tabs({
                 : "border-transparent text-ink-muted hover:text-ink",
             )}
           >
-            {Icon ? <Icon size={16} /> : null}
-            {item.label}
+            {Icon ? <Icon size={16} className="shrink-0" /> : null}
+            <span className="command-label">{item.label}</span>
             {item.badge ? (
               <span className="rounded-full border border-line bg-surface-muted px-1.5 text-xs font-medium text-ink-muted">
                 {item.badge}

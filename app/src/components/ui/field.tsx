@@ -1,8 +1,29 @@
-import { forwardRef, useId, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes, type TextareaHTMLAttributes } from "react";
+import {
+  cloneElement,
+  forwardRef,
+  isValidElement,
+  useId,
+  type InputHTMLAttributes,
+  type ReactElement,
+  type ReactNode,
+  type SelectHTMLAttributes,
+  type TextareaHTMLAttributes,
+} from "react";
 import { cn } from "./cn";
 
 const CONTROL_BASE =
-  "w-full rounded-control border border-line bg-surface px-3 py-2 text-sm text-ink shadow-[0_1px_0_rgba(23,20,18,0.04)] outline-none transition placeholder:text-ink-subtle focus:border-primary focus:ring-2 focus:ring-primary/15 disabled:cursor-not-allowed disabled:bg-surface-muted";
+  "w-full min-w-0 rounded-control border border-line bg-surface px-3 py-2 text-sm text-ink shadow-[0_1px_0_rgba(23,20,18,0.04)] outline-none transition placeholder:text-ink-subtle focus:border-primary focus:ring-2 focus:ring-primary/15 disabled:cursor-not-allowed disabled:bg-surface-muted";
+
+export function buildFieldDescribedBy(args: {
+  error?: boolean;
+  hint?: boolean;
+  errorId: string;
+  hintId: string;
+}): string | undefined {
+  if (args.error) return args.errorId;
+  if (args.hint) return args.hintId;
+  return undefined;
+}
 
 export function Field({
   label,
@@ -21,17 +42,40 @@ export function Field({
   children: ReactNode;
   className?: string;
 }) {
+  const uid = useId();
+  const hintId = `${uid}-hint`;
+  const errorId = `${uid}-error`;
+  const describedBy = buildFieldDescribedBy({
+    error: Boolean(error),
+    hint: Boolean(hint),
+    errorId,
+    hintId,
+  });
+
+  const control = isValidElement(children)
+    ? cloneElement(children as ReactElement<Record<string, unknown>>, {
+        id: (children.props as { id?: string }).id ?? htmlFor,
+        "aria-invalid": error ? true : undefined,
+        "aria-describedby": describedBy,
+        "aria-required": required || undefined,
+      })
+    : children;
+
   return (
-    <div className={cn("flex flex-col gap-1.5", className)}>
+    <div className={cn("flex min-w-0 flex-col gap-1.5", className)}>
       <label htmlFor={htmlFor} className="text-xs font-semibold text-ink-muted">
         {label}
         {required ? <span className="ml-0.5 text-warm">*</span> : null}
       </label>
-      {children}
+      <div className="min-w-0">{control}</div>
       {error ? (
-        <p className="text-xs font-medium text-red-700">{error}</p>
+        <p id={errorId} className="text-xs font-medium text-destructive" role="alert">
+          {error}
+        </p>
       ) : hint ? (
-        <p className="text-xs text-ink-subtle">{hint}</p>
+        <p id={hintId} className="text-xs text-ink-muted">
+          {hint}
+        </p>
       ) : null}
     </div>
   );

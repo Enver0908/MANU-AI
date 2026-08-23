@@ -17,7 +17,7 @@ export function PublicFooter() {
             <p className="max-w-xs leading-relaxed">
               Bu platform production pilot aşamasında değildir. Klinik üretim kullanımı ayrı onaylara bağlıdır.
             </p>
-            <a href={`mailto:${SIRIUSAI_PUBLIC_CONTACT_EMAIL}`} className="mt-1 text-primary hover:underline">
+            <a href={`mailto:${SIRIUSAI_PUBLIC_CONTACT_EMAIL}`} className="mt-1 text-primary underline underline-offset-2">
               {SIRIUSAI_PUBLIC_CONTACT_EMAIL}
             </a>
           </div>

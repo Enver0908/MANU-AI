@@ -18,7 +18,7 @@ export function CommercialShell({ children }: { children: ReactNode }) {
           </Link>
         </div>
       </header>
-      <main className="flex flex-1 flex-col">{children}</main>
+      <main className="flex min-w-0 flex-1 flex-col">{children}</main>
       <footer className="border-t border-border">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
           <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} SiriusAI</p>

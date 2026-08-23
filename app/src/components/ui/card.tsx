@@ -31,9 +31,9 @@ export function CardHeader({
             <Icon size={18} />
           </span>
         ) : null}
-        <div>
+        <div className="min-w-0">
           <h3 className="text-sm font-semibold text-ink">{title}</h3>
-          {description ? <p className="mt-0.5 text-xs text-ink-muted">{description}</p> : null}
+          {description ? <p className="free-text mt-0.5 text-xs text-ink-muted">{description}</p> : null}
         </div>
       </div>
       {actions ? <div className="flex shrink-0 items-center gap-2">{actions}</div> : null}

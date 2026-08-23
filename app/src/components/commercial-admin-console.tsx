@@ -453,12 +453,12 @@ export function CommercialAdminConsole(props: {
               />
             </Field>
             {error ? (
-              <p className="text-sm text-red-700" role="alert">
+              <p className="text-sm text-destructive" role="alert">
                 {error}
               </p>
             ) : null}
             {healthSummary ? (
-              <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+              <p className="rounded-lg border border-line bg-surface-muted px-3 py-2 text-sm text-ink-muted">
                 {healthSummary}
               </p>
             ) : null}
@@ -472,7 +472,7 @@ export function CommercialAdminConsole(props: {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-6xl flex-col gap-6">
+    <div className="mx-auto flex w-full min-w-0 max-w-6xl flex-col gap-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold text-stone-900">Ticari yönetim</h1>
@@ -672,7 +672,7 @@ export function CommercialAdminConsole(props: {
               </Button>
             </form>
             {createdInvite ? (
-              <div className="mt-4 rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900" role="status">
+              <div className="mt-4 rounded-lg border border-sage/30 bg-sage/10 p-4 text-sm text-ink" role="status">
                 <p className="font-medium">Davet oluşturuldu</p>
                 <p className="mt-2 break-all">
                   E-posta: <span className="font-mono">{createdInvite.invite.normalizedEmail}</span>
@@ -753,7 +753,7 @@ export function CommercialAdminConsole(props: {
                   <div className="mt-3 space-y-2">
                     {canAdminRevokeAppAccess(subscription.entitlementStatus) ? (
                       pendingRevokeTenantId === subscription.tenantId ? (
-                        <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-950">
+                        <div className="rounded-lg border border-line bg-surface-muted p-3 text-sm text-ink">
                           <p className="font-medium">Erişimi kapat</p>
                           <p className="mt-1">
                             Dashboard ve mobil/PWA erişimi entitlement üzerinden kapanır. Stripe aboneliği

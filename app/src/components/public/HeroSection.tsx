@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ChevronDown } from "lucide-react";
 
 export function HeroSection() {
   return (
@@ -36,6 +37,14 @@ export function HeroSection() {
           <p className="text-xs text-muted-foreground">
             Davet kodunuz yoksa iletişim formu ile erişim talebinde bulunun.
           </p>
+
+          <a
+            href="#workspace-preview"
+            className="mt-2 inline-flex min-h-11 items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <ChevronDown size={16} aria-hidden />
+            Çalışma alanına bak
+          </a>
         </div>
       </div>
     </section>

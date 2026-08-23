@@ -12,6 +12,7 @@
     "test:stage-7": "vitest run tests/visual/stage-7 --exclude **/*.spec.ts --no-file-parallelism --maxWorkers=1",
     "audit:stage-7": "node scripts/audit-stage-7.mjs",
     "verify:stage-7": "node scripts/verify-stage-7.mjs",
+    "verify:stage-7:7.2": "node scripts/verify-stage-7.mjs --phase=7.2",
     "test:rls": "vitest run src/lib/supabase-rls.integration.test.ts",
     "test:visual": "npm run build && playwright test",
     "test:stage-5-dependencies": "node scripts/verify-stage-5-dependencies.mjs",

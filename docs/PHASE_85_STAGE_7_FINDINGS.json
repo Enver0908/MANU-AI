@@ -1,7 +1,7 @@
 {
   "schemaVersion": "phase-85-stage-7-findings-v2",
   "generatedAt": "2026-08-22T06:00:00.000Z",
-  "status": "STAGE_7_1_BASELINE_RECORDED",
+  "status": "STAGE_7_2_PUBLIC_SHARED_REMEDIATION",
   "sourceOfAuthority": "docs/PHASE_85_STAGE_7_VISUAL_QA_POLISH_ACCESSIBILITY_CLOSURE_ACTION_PLAN.md",
   "clock": "2026-08-22T09:00:00+03:00",
   "timezone": "Europe/Istanbul",
@@ -52,8 +52,8 @@
       "evidenceRefs": [
         "axe:document-title"
       ],
-      "rootCause": "Automated accessibility baseline failure.",
-      "remediationPhase": "7.2",
+      "rootCause": "PWA offline-lock reload with service worker blocked leaves Chromium's interstitial document, which has no lang or title. Product layout already sets lang=tr and a non-empty title. Closing this requires an in-app offline lock that keeps the product document (Stage 7.3 PWA/dashboard).",
+      "remediationPhase": "7.3",
       "id": "S7-F-pwa-pwa-offline-lock-dietitian-tr-chromium-deskt-01",
       "fingerprint": "4955646ad972abbbacf74c9c85063bd7b35d401829043a6dd6b6195c39d0fe79",
       "status": "open",
@@ -108,8 +108,8 @@
       "evidenceRefs": [
         "axe:html-has-lang"
       ],
-      "rootCause": "Automated accessibility baseline failure.",
-      "remediationPhase": "7.2",
+      "rootCause": "PWA offline-lock reload with service worker blocked leaves Chromium's interstitial document, which has no lang or title. Product layout already sets lang=tr and a non-empty title. Closing this requires an in-app offline lock that keeps the product document (Stage 7.3 PWA/dashboard).",
+      "remediationPhase": "7.3",
       "id": "S7-F-pwa-pwa-offline-lock-dietitian-tr-chromium-deskt-02",
       "fingerprint": "890f13d42c9c11bd5ef17496ed297a11953cd11a996b68405b2e3bc070ca8b5c",
       "status": "open",
