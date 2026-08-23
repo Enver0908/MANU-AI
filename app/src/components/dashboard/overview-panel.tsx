@@ -39,9 +39,9 @@ export function OverviewPanel({
   return (
     <div className="space-y-5">
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1.4fr)_minmax(320px,0.8fr)]">
-        <section className="rounded-card border border-line bg-surface p-4">
-          <h3 className="text-lg font-semibold text-ink">Günlük iş girişi</h3>
-          <p className="mt-1 text-sm text-ink-muted">
+        <section className="min-w-0 rounded-card border border-line bg-surface p-4" data-testid="overview-daily-work">
+          <h3 className="text-lg font-semibold text-ink break-words">Günlük iş girişi</h3>
+          <p className="mt-1 min-w-0 break-words text-sm text-ink-muted">
             Aktif danışan, bekleyen kuyruklar ve doğrudan görevler. Raporlama vitrini yoktur.
           </p>
           <div className="mt-4 grid gap-2 sm:grid-cols-3">
@@ -75,8 +75,8 @@ export function OverviewPanel({
           </div>
         </section>
 
-        <section className="rounded-card border border-line bg-surface p-4">
-          <h3 className="text-lg font-semibold text-ink">Aktif danışan</h3>
+        <section className="min-w-0 rounded-card border border-line bg-surface p-4" data-testid="overview-active-client">
+          <h3 className="text-lg font-semibold text-ink break-words">Aktif danışan</h3>
           {selectedClient ? (
             <div className="mt-4 space-y-3">
               <ClientSummary client={selectedClient} compact />

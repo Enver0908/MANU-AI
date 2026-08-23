@@ -19,16 +19,19 @@ function ShellBlocker({
   title,
   message,
   action,
+  runtime,
 }: {
   title: string;
   message: string;
   action?: ReactNode;
+  runtime?: string;
 }) {
   return (
     <div
       className="flex min-h-dvh items-center justify-center bg-paper px-safe py-10 text-ink"
       role="alert"
       data-testid="shell-blocker"
+      data-shell-runtime={runtime}
     >
       <div className="w-full max-w-md border border-line bg-surface p-6">
         <h1 className="text-xl font-semibold">{title}</h1>
@@ -58,10 +61,11 @@ function renderRuntimeBlocker(
     case "offline":
       return (
         <ShellBlocker
+          runtime="offline"
           title={t(uiLanguage, "shellOfflineTitle")}
           message={t(uiLanguage, "shellOfflineMessage")}
           action={
-            <button type="button" className={primaryButton} onClick={onRetry}>
+            <button type="button" className={primaryButton} data-testid="shell-retry" onClick={onRetry}>
               {t(uiLanguage, "shellRetry")}
             </button>
           }

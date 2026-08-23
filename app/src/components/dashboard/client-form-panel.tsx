@@ -173,7 +173,7 @@ function ClientFormPanelEditor({
   };
 
   return (
-    <div className="space-y-4" data-testid="client-form-panel">
+    <div className="space-y-4 pb-24 min-[768px]:pb-8" data-testid="client-form-panel">
       <div className="rounded-card border border-line bg-surface-muted p-4">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
           <div>
@@ -226,7 +226,7 @@ function ClientFormPanelEditor({
         </div>
       )}
 
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="sticky z-20 mt-2 flex flex-wrap items-center gap-3 border-t border-line bg-surface py-3 max-[767px]:bottom-[calc(4rem+env(safe-area-inset-bottom,0px))] min-[768px]:bottom-0">
         <button
           ref={saveButtonRef}
           type="button"

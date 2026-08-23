@@ -1,7 +1,7 @@
 {
   "schemaVersion": "phase-85-stage-7-findings-v2",
   "generatedAt": "2026-08-22T06:00:00.000Z",
-  "status": "STAGE_7_2_PUBLIC_SHARED_REMEDIATION",
+  "status": "STAGE_7_3_DASHBOARD_PWA_REMEDIATION",
   "sourceOfAuthority": "docs/PHASE_85_STAGE_7_VISUAL_QA_POLISH_ACCESSIBILITY_CLOSURE_ACTION_PLAN.md",
   "clock": "2026-08-22T09:00:00+03:00",
   "timezone": "Europe/Istanbul",
@@ -25,7 +25,7 @@
   ],
   "counts": {
     "P0": 0,
-    "P1": 2,
+    "P1": 0,
     "P2": 1,
     "P3": 0
   },
@@ -56,8 +56,11 @@
       "remediationPhase": "7.3",
       "id": "S7-F-pwa-pwa-offline-lock-dietitian-tr-chromium-deskt-01",
       "fingerprint": "4955646ad972abbbacf74c9c85063bd7b35d401829043a6dd6b6195c39d0fe79",
-      "status": "open",
-      "resolutionEvidence": []
+      "status": "resolved",
+      "resolutionEvidence": [
+        "docs/PHASE_85_STAGE_7_PHASE_3_DASHBOARD_PWA_REMEDIATION_EVIDENCE.md",
+        "app/tests/visual/stage-7/stage-7-phase-7-3.spec.ts"
+      ]
     },
     {
       "category": "accessibility",
@@ -112,8 +115,11 @@
       "remediationPhase": "7.3",
       "id": "S7-F-pwa-pwa-offline-lock-dietitian-tr-chromium-deskt-02",
       "fingerprint": "890f13d42c9c11bd5ef17496ed297a11953cd11a996b68405b2e3bc070ca8b5c",
-      "status": "open",
-      "resolutionEvidence": []
+      "status": "resolved",
+      "resolutionEvidence": [
+        "docs/PHASE_85_STAGE_7_PHASE_3_DASHBOARD_PWA_REMEDIATION_EVIDENCE.md",
+        "app/tests/visual/stage-7/stage-7-phase-7-3.spec.ts"
+      ]
     }
   ]
 }

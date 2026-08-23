@@ -162,6 +162,12 @@ export function AiAssistantControlPanel({
             )}
           </div>
         </div>
+        <ul className="mt-3 space-y-1 text-sm text-ink" data-testid="ai-control-state-signals">
+          <li>Hazırlık: {summary.safetyComplete && summary.blockerCount === 0 ? "Hazır" : "Hazır değil"}</li>
+          <li>Devralma: {client.humanTakeoverLocked ? "İnsan kontrolünde" : "Asistan kontrolünde"}</li>
+          <li>Düzenleme: {canManageAiControls && !disabled ? "Düzenlenebilir" : "Salt okunur"}</li>
+          <li>Revizyon: {takeoverMismatch || controlFailure ? "Eski veya uyumsuz" : "Güncel"}</li>
+        </ul>
       </div>
 
       <div className="grid gap-4 xl:grid-cols-2">

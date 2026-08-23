@@ -66,7 +66,7 @@ function ShellNavLink({
       <>
         <Icon size={18} aria-hidden="true" />
         <span className="flex min-w-0 flex-1 items-center justify-between gap-2">
-          <span className="truncate">{item.label}</span>
+          <span className="command-label">{item.label}</span>
           <NavBadge count={item.badgeCount} />
         </span>
       </>
@@ -80,7 +80,7 @@ function ShellNavLink({
             </span>
           ) : null}
         </span>
-        <span className="max-w-full truncate px-0.5" title={item.label}>
+        <span className="command-label max-w-full px-0.5" title={item.label}>
           {item.shortLabel}
         </span>
       </>
@@ -94,7 +94,7 @@ function ShellNavLink({
             </span>
           ) : null}
         </span>
-        <span className="max-w-full text-center leading-tight break-words">{item.label}</span>
+        <span className="command-label max-w-full text-center leading-tight">{item.label}</span>
       </>
     );
 

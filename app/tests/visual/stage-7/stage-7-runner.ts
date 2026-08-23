@@ -90,8 +90,16 @@ async function driveState(page: Page, scenario: Stage7Scenario) {
   }
 
   if (scenario.state === "shell-offline" || scenario.state === "pwa-offline-lock") {
+    await page
+      .getByTestId("authenticated-shell")
+      .or(page.getByTestId("shell-blocker"))
+      .waitFor({ timeout: 15_000 })
+      .catch(() => undefined);
     await page.context().setOffline(true);
-    await page.reload({ waitUntil: "domcontentloaded" }).catch(() => undefined);
+    await page.evaluate(() => {
+      window.dispatchEvent(new Event("offline"));
+    });
+    await page.getByTestId("shell-blocker").waitFor({ state: "visible", timeout: 8_000 }).catch(() => undefined);
   }
 
   if (scenario.state === "clients-active-switch") {
