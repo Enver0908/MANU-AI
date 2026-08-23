@@ -1,7 +1,7 @@
 {
   "schemaVersion": "phase-85-stage-7-scenario-matrix-v1",
   "createdAt": "2026-08-22T00:00:00.000Z",
-  "status": "STAGE_7_0_SCOPE_LOCKED",
+  "status": "STAGE_7_1_EXECUTABLE_CATALOG",
   "sourceOfAuthority": "docs/PHASE_85_STAGE_7_VISUAL_QA_POLISH_ACCESSIBILITY_CLOSURE_ACTION_PLAN.md",
   "stageStatuses": {
     "stage5": "STAGE_5_CLOSED",
@@ -454,5 +454,4800 @@
     "physicalIphoneClosureStatus": "WAIVED_NOT_EXECUTED",
     "productionStatus": "NO-GO"
   },
-  "executableScenarios": []
+  "executableScenarios": [
+    {
+      "id": "public.contact-empty.dietitian.tr.chromium-desktop",
+      "surface": "public",
+      "route": "/#contact",
+      "state": "contact-empty",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "public-default",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "public.contact-invalid.dietitian.tr.chromium-desktop",
+      "surface": "public",
+      "route": "/#contact",
+      "state": "contact-invalid",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "public-default",
+      "requiredAssertions": [
+        "validation-message",
+        "geometry"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "public.contact-submitting.dietitian.tr.chromium-desktop",
+      "surface": "public",
+      "route": "/#contact",
+      "state": "contact-submitting",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "public-default",
+      "requiredAssertions": [
+        "busy-state"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "public.contact-success.dietitian.tr.chromium-desktop",
+      "surface": "public",
+      "route": "/#contact",
+      "state": "contact-success",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "public-default",
+      "requiredAssertions": [
+        "success-status"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "public.contact-error.dietitian.tr.chromium-desktop",
+      "surface": "public",
+      "route": "/#contact",
+      "state": "contact-error",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "public-default",
+      "requiredAssertions": [
+        "error-status"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "auth.login-idle.dietitian.tr.chromium-desktop",
+      "surface": "auth",
+      "route": "/login",
+      "state": "login-idle",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "public-default",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "auth.login-sent.dietitian.tr.chromium-desktop",
+      "surface": "auth",
+      "route": "/login",
+      "state": "login-sent",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "auth-sent",
+      "requiredAssertions": [
+        "success-status"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "auth.login-invalid.dietitian.tr.chromium-desktop",
+      "surface": "auth",
+      "route": "/login",
+      "state": "login-invalid",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "auth-invalid",
+      "requiredAssertions": [
+        "validation-message"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "auth.login-rate-limited.dietitian.tr.chromium-desktop",
+      "surface": "auth",
+      "route": "/login",
+      "state": "login-rate-limited",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "auth-rate-limited",
+      "requiredAssertions": [
+        "error-status"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "auth.login-service-error.dietitian.tr.chromium-desktop",
+      "surface": "auth",
+      "route": "/login",
+      "state": "login-service-error",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "auth-service-error",
+      "requiredAssertions": [
+        "error-status"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "purchase.purchase-valid.dietitian.tr.chromium-desktop",
+      "surface": "purchase",
+      "route": "/purchase",
+      "state": "purchase-valid",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "purchase-valid",
+      "requiredAssertions": [
+        "eligible-cta"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "purchase.purchase-invalid.dietitian.tr.chromium-desktop",
+      "surface": "purchase",
+      "route": "/purchase",
+      "state": "purchase-invalid",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "purchase-invalid",
+      "requiredAssertions": [
+        "error-status"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "purchase.purchase-expired.dietitian.tr.chromium-desktop",
+      "surface": "purchase",
+      "route": "/purchase",
+      "state": "purchase-expired",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "purchase-expired",
+      "requiredAssertions": [
+        "error-status"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "purchase.purchase-consumed.dietitian.tr.chromium-desktop",
+      "surface": "purchase",
+      "route": "/purchase",
+      "state": "purchase-consumed",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "purchase-consumed",
+      "requiredAssertions": [
+        "error-status"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "purchase.purchase-pending.dietitian.tr.chromium-desktop",
+      "surface": "purchase",
+      "route": "/purchase",
+      "state": "purchase-pending",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "purchase-pending",
+      "requiredAssertions": [
+        "pending-status"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "purchase.purchase-cancelled.dietitian.tr.chromium-desktop",
+      "surface": "purchase",
+      "route": "/purchase/cancel",
+      "state": "purchase-cancelled",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "public-default",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "purchase.purchase-success.dietitian.tr.chromium-desktop",
+      "surface": "purchase",
+      "route": "/purchase/success?session_id=cs_test_stage7_0001",
+      "state": "purchase-success",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "public-default",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "onboarding.onboarding-unauthenticated.dietitian.tr.chromium-desktop",
+      "surface": "onboarding",
+      "route": "/onboarding",
+      "state": "onboarding-unauthenticated",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "public-default",
+      "requiredAssertions": [
+        "login-redirect-or-gate"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "onboarding.onboarding-claimable.dietitian.tr.chromium-desktop",
+      "surface": "onboarding",
+      "route": "/onboarding?session_id=cs_test_stage7_0001",
+      "state": "onboarding-claimable",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "onboarding-claimable",
+      "requiredAssertions": [
+        "claim-cta"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "onboarding.onboarding-incomplete.dietitian.tr.chromium-desktop",
+      "surface": "onboarding",
+      "route": "/onboarding?session_id=cs_test_stage7_0001",
+      "state": "onboarding-incomplete",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "onboarding-incomplete",
+      "requiredAssertions": [
+        "incomplete-status"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "onboarding.onboarding-duplicate.dietitian.tr.chromium-desktop",
+      "surface": "onboarding",
+      "route": "/onboarding?session_id=cs_test_stage7_0001",
+      "state": "onboarding-duplicate",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "onboarding-duplicate",
+      "requiredAssertions": [
+        "error-status"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "onboarding.onboarding-already-claimed.dietitian.tr.chromium-desktop",
+      "surface": "onboarding",
+      "route": "/onboarding?session_id=cs_test_stage7_0001",
+      "state": "onboarding-already-claimed",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "onboarding-already-claimed",
+      "requiredAssertions": [
+        "already-claimed"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "onboarding.onboarding-pending.dietitian.tr.chromium-desktop",
+      "surface": "onboarding",
+      "route": "/onboarding?session_id=cs_test_stage7_0001",
+      "state": "onboarding-pending",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "onboarding-pending",
+      "requiredAssertions": [
+        "pending-status"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "onboarding.onboarding-error.dietitian.tr.chromium-desktop",
+      "surface": "onboarding",
+      "route": "/onboarding?session_id=cs_test_stage7_0001",
+      "state": "onboarding-error",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "onboarding-error",
+      "requiredAssertions": [
+        "error-status"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "install.install-eligible.dietitian.tr.chromium-desktop",
+      "surface": "install",
+      "route": "/app-install",
+      "state": "install-eligible",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "install-eligible",
+      "requiredAssertions": [
+        "install-guidance"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "install.install-ineligible.dietitian.tr.chromium-desktop",
+      "surface": "install",
+      "route": "/app-install",
+      "state": "install-ineligible",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "install-ineligible",
+      "requiredAssertions": [
+        "blocked-status"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "install.install-installed.dietitian.tr.chromium-desktop",
+      "surface": "install",
+      "route": "/app-install",
+      "state": "install-installed",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "install-installed",
+      "requiredAssertions": [
+        "installed-or-settings"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "install.install-non-installable.dietitian.tr.chromium-desktop",
+      "surface": "install",
+      "route": "/app-install",
+      "state": "install-non-installable",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "install-non-installable",
+      "requiredAssertions": [
+        "blocked-status"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "install.install-revoked.dietitian.tr.chromium-desktop",
+      "surface": "install",
+      "route": "/app-install",
+      "state": "install-revoked",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "install-revoked",
+      "requiredAssertions": [
+        "blocked-status"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "admin.admin-login.dietitian.tr.chromium-desktop",
+      "surface": "admin",
+      "route": "/admin",
+      "state": "admin-login",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "public-default",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "admin.admin-non-allowlisted.dietitian.tr.chromium-desktop",
+      "surface": "admin",
+      "route": "/admin?error=admin_access_denied",
+      "state": "admin-non-allowlisted",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "admin-non-allowlisted",
+      "requiredAssertions": [
+        "error-status"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "admin.admin-unauthorized.dietitian.tr.chromium-desktop",
+      "surface": "admin",
+      "route": "/admin",
+      "state": "admin-unauthorized",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "admin-unauthorized",
+      "requiredAssertions": [
+        "error-status"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "admin.admin-empty.dietitian.tr.chromium-desktop",
+      "surface": "admin",
+      "route": "/admin",
+      "state": "admin-empty",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "admin-empty",
+      "requiredAssertions": [
+        "empty-state"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "admin.admin-dense.dietitian.tr.chromium-desktop",
+      "surface": "admin",
+      "route": "/admin",
+      "state": "admin-dense",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "admin-dense",
+      "requiredAssertions": [
+        "dense-table",
+        "geometry"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "admin.admin-error.dietitian.tr.chromium-desktop",
+      "surface": "admin",
+      "route": "/admin",
+      "state": "admin-error",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "admin-error",
+      "requiredAssertions": [
+        "error-status"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "emergency-admin.emergency-secondary-visible.dietitian.tr.chromium-desktop",
+      "surface": "emergency-admin",
+      "route": "/commercial-admin/emergency",
+      "state": "emergency-secondary-visible",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "public-default",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "emergency-admin.emergency-invalid-token.dietitian.tr.chromium-desktop",
+      "surface": "emergency-admin",
+      "route": "/commercial-admin/emergency",
+      "state": "emergency-invalid-token",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "admin-unauthorized",
+      "requiredAssertions": [
+        "error-status"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "emergency-admin.emergency-secure-failure.dietitian.tr.chromium-desktop",
+      "surface": "emergency-admin",
+      "route": "/commercial-admin/emergency",
+      "state": "emergency-secure-failure",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "admin-error",
+      "requiredAssertions": [
+        "error-status"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-shell.shell-bootstrap.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-shell",
+      "route": "/dashboard",
+      "state": "shell-bootstrap",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": true
+    },
+    {
+      "id": "dashboard-shell.shell-no-active-client.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-shell",
+      "route": "/dashboard",
+      "state": "shell-no-active-client",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-empty",
+      "requiredAssertions": [
+        "empty-or-prompt"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-shell.shell-offline.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-shell",
+      "route": "/dashboard",
+      "state": "shell-offline",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "offline-blocker"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-shell.shell-session-expired.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-shell",
+      "route": "/dashboard",
+      "state": "shell-session-expired",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-error",
+      "requiredAssertions": [
+        "session-gate"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-shell.shell-update-ready.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-shell",
+      "route": "/dashboard",
+      "state": "shell-update-ready",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "update-banner-or-note"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-shell.shell-dirty-guard.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-shell",
+      "route": "/dashboard",
+      "state": "shell-dirty-guard",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "dirty-dialog"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-overview.overview-no-active-client.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-overview",
+      "route": "/dashboard?section=overview",
+      "state": "overview-no-active-client",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-empty",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-overview.overview-empty-queues.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-overview",
+      "route": "/dashboard?section=overview",
+      "state": "overview-empty-queues",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-empty",
+      "requiredAssertions": [
+        "empty-state"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-overview.overview-dense-queues.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-overview",
+      "route": "/dashboard?section=overview",
+      "state": "overview-dense-queues",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "dense-list",
+        "geometry"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-clients.clients-empty.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-clients",
+      "route": "/dashboard?section=clients",
+      "state": "clients-empty",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-empty",
+      "requiredAssertions": [
+        "empty-state"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-clients.clients-dense.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-clients",
+      "route": "/dashboard?section=clients",
+      "state": "clients-dense",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "dense-list",
+        "geometry"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-clients.clients-inaccessible-deeplink.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-clients",
+      "route": "/dashboard?section=clients&clientId=client-stage7-missing",
+      "state": "clients-inaccessible-deeplink",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-forbidden",
+      "requiredAssertions": [
+        "forbidden-or-missing"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-clients.clients-active-switch.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-clients",
+      "route": "/dashboard?section=clients",
+      "state": "clients-active-switch",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "active-client"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-forms.forms-loading.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-forms",
+      "route": "/dashboard?section=clients&clientId=client-stage7-001&clientTask=forms",
+      "state": "forms-loading",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "loading-state"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-forms.forms-dirty.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-forms",
+      "route": "/dashboard?section=clients&clientId=client-stage7-001&clientTask=forms",
+      "state": "forms-dirty",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "dirty-state"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-forms.forms-validation.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-forms",
+      "route": "/dashboard?section=clients&clientId=client-stage7-001&clientTask=forms",
+      "state": "forms-validation",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "validation-message"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-forms.forms-save.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-forms",
+      "route": "/dashboard?section=clients&clientId=client-stage7-001&clientTask=forms",
+      "state": "forms-save",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "save-ack"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-forms.forms-error.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-forms",
+      "route": "/dashboard?section=clients&clientId=client-stage7-001&clientTask=forms",
+      "state": "forms-error",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-error",
+      "requiredAssertions": [
+        "error-status"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-forms.forms-revision-conflict.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-forms",
+      "route": "/dashboard?section=clients&clientId=client-stage7-001&clientTask=forms",
+      "state": "forms-revision-conflict",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-conflict",
+      "requiredAssertions": [
+        "conflict-status"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-nutrition.nutrition-search.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-nutrition",
+      "route": "/dashboard?section=clients&clientId=client-stage7-001&clientTask=food_rules",
+      "state": "nutrition-search",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "search-field"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-nutrition.nutrition-dense-catalog.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-nutrition",
+      "route": "/dashboard?section=clients&clientId=client-stage7-001&clientTask=food_rules",
+      "state": "nutrition-dense-catalog",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "dense-list",
+        "geometry"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-nutrition.nutrition-allow-forbid-conflict.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-nutrition",
+      "route": "/dashboard?section=clients&clientId=client-stage7-001&clientTask=food_rules",
+      "state": "nutrition-allow-forbid-conflict",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-conflict",
+      "requiredAssertions": [
+        "conflict-status"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-nutrition.nutrition-save-error.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-nutrition",
+      "route": "/dashboard?section=clients&clientId=client-stage7-001&clientTask=food_rules",
+      "state": "nutrition-save-error",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-error",
+      "requiredAssertions": [
+        "error-status"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-menu.menu-draft.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-menu",
+      "route": "/dashboard?section=clients&clientId=client-stage7-001&clientTask=menu",
+      "state": "menu-draft",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "draft-state"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-menu.menu-active.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-menu",
+      "route": "/dashboard?section=clients&clientId=client-stage7-001&clientTask=menu",
+      "state": "menu-active",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "active-state"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-menu.menu-archive.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-menu",
+      "route": "/dashboard?section=clients&clientId=client-stage7-001&clientTask=menu",
+      "state": "menu-archive",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "archive-or-list"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-menu.menu-conflict.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-menu",
+      "route": "/dashboard?section=clients&clientId=client-stage7-001&clientTask=menu",
+      "state": "menu-conflict",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-conflict",
+      "requiredAssertions": [
+        "conflict-status"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-menu.menu-export-eligible.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-menu",
+      "route": "/dashboard?section=clients&clientId=client-stage7-001&clientTask=menu",
+      "state": "menu-export-eligible",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "export-enabled"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-menu.menu-export-ineligible.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-menu",
+      "route": "/dashboard?section=clients&clientId=client-stage7-001&clientTask=menu",
+      "state": "menu-export-ineligible",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-empty",
+      "requiredAssertions": [
+        "export-disabled"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-menu.menu-dirty.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-menu",
+      "route": "/dashboard?section=clients&clientId=client-stage7-001&clientTask=menu",
+      "state": "menu-dirty",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "dirty-state"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-ai.ai-inactive.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-ai",
+      "route": "/dashboard?section=clients&clientId=client-stage7-001&clientTask=ai_assistant",
+      "state": "ai-inactive",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-empty",
+      "requiredAssertions": [
+        "inactive-state"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-ai.ai-active.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-ai",
+      "route": "/dashboard?section=clients&clientId=client-stage7-001&clientTask=ai_assistant",
+      "state": "ai-active",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "active-state"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-ai.ai-blocker.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-ai",
+      "route": "/dashboard?section=clients&clientId=client-stage7-001&clientTask=ai_assistant",
+      "state": "ai-blocker",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-error",
+      "requiredAssertions": [
+        "blocker-status"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-ai.ai-takeover.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-ai",
+      "route": "/dashboard?section=clients&clientId=client-stage7-001&clientTask=ai_assistant",
+      "state": "ai-takeover",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "takeover-status"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-ai.ai-readonly.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-ai",
+      "route": "/dashboard?section=clients&clientId=client-stage7-001&clientTask=ai_assistant",
+      "state": "ai-readonly",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-forbidden",
+      "requiredAssertions": [
+        "readonly-or-hidden"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-ai.ai-stale-revision.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-ai",
+      "route": "/dashboard?section=clients&clientId=client-stage7-001&clientTask=ai_assistant",
+      "state": "ai-stale-revision",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-conflict",
+      "requiredAssertions": [
+        "stale-status"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-messaging.messaging-empty.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-messaging",
+      "route": "/dashboard?section=messages",
+      "state": "messaging-empty",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-empty",
+      "requiredAssertions": [
+        "empty-state"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-messaging.messaging-dense.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-messaging",
+      "route": "/dashboard?section=messages",
+      "state": "messaging-dense",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "dense-list",
+        "geometry"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-messaging.messaging-unread.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-messaging",
+      "route": "/dashboard?section=messages",
+      "state": "messaging-unread",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "unread-marker"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-messaging.messaging-text.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-messaging",
+      "route": "/dashboard?section=messages",
+      "state": "messaging-text",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "message-body"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-messaging.messaging-image.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-messaging",
+      "route": "/dashboard?section=messages",
+      "state": "messaging-image",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "media-containment"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-messaging.messaging-audio.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-messaging",
+      "route": "/dashboard?section=messages",
+      "state": "messaging-audio",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "media-containment"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-messaging.messaging-yellow.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-messaging",
+      "route": "/dashboard?section=messages",
+      "state": "messaging-yellow",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "risk-yellow"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-messaging.messaging-red.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-messaging",
+      "route": "/dashboard?section=messages",
+      "state": "messaging-red",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "risk-red"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-messaging.messaging-manual.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-messaging",
+      "route": "/dashboard?section=messages",
+      "state": "messaging-manual",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "manual-state"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-messaging.messaging-pagination.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-messaging",
+      "route": "/dashboard?section=messages",
+      "state": "messaging-pagination",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "pagination"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-messaging.messaging-delivery-error.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-messaging",
+      "route": "/dashboard?section=messages",
+      "state": "messaging-delivery-error",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-error",
+      "requiredAssertions": [
+        "error-status"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-messaging.messaging-inaccessible.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-messaging",
+      "route": "/dashboard?section=messages&conversationId=missing",
+      "state": "messaging-inaccessible",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-forbidden",
+      "requiredAssertions": [
+        "forbidden-or-missing"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-alerts.alerts-empty.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-alerts",
+      "route": "/dashboard?section=alerts",
+      "state": "alerts-empty",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-empty",
+      "requiredAssertions": [
+        "empty-state"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-alerts.alerts-dense.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-alerts",
+      "route": "/dashboard?section=alerts",
+      "state": "alerts-dense",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "dense-list"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-alerts.alerts-filters.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-alerts",
+      "route": "/dashboard?section=alerts",
+      "state": "alerts-filters",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "filters"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-alerts.alerts-pagination.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-alerts",
+      "route": "/dashboard?section=alerts",
+      "state": "alerts-pagination",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "pagination"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-alerts.alerts-mutation-pending.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-alerts",
+      "route": "/dashboard?section=alerts",
+      "state": "alerts-mutation-pending",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "pending-status"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-alerts.alerts-mutation-error.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-alerts",
+      "route": "/dashboard?section=alerts",
+      "state": "alerts-mutation-error",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-error",
+      "requiredAssertions": [
+        "error-status"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-alerts.alerts-stale.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-alerts",
+      "route": "/dashboard?section=notifications",
+      "state": "alerts-stale",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-conflict",
+      "requiredAssertions": [
+        "stale-status"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-simulator.simulator-normal.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-simulator",
+      "route": "/dashboard?section=simulator",
+      "state": "simulator-normal",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-simulator.simulator-empty.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-simulator",
+      "route": "/dashboard?section=simulator",
+      "state": "simulator-empty",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-empty",
+      "requiredAssertions": [
+        "empty-state"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-simulator.simulator-error.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-simulator",
+      "route": "/dashboard?section=simulator",
+      "state": "simulator-error",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-error",
+      "requiredAssertions": [
+        "error-status"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-simulator.simulator-long-content.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-simulator",
+      "route": "/dashboard?section=simulator",
+      "state": "simulator-long-content",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "geometry"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-simulator.simulator-restricted-role.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-simulator",
+      "route": "/dashboard?section=simulator",
+      "state": "simulator-restricted-role",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-forbidden",
+      "requiredAssertions": [
+        "readonly-or-hidden"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-ai-chat.ai-chat-normal.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-ai-chat",
+      "route": "/dashboard/ai-chat",
+      "state": "ai-chat-normal",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-ai-chat.ai-chat-empty.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-ai-chat",
+      "route": "/dashboard/ai-chat",
+      "state": "ai-chat-empty",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-empty",
+      "requiredAssertions": [
+        "empty-state"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-ai-chat.ai-chat-error.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-ai-chat",
+      "route": "/dashboard/ai-chat",
+      "state": "ai-chat-error",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-error",
+      "requiredAssertions": [
+        "error-status"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-ai-chat.ai-chat-long-content.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-ai-chat",
+      "route": "/dashboard/ai-chat",
+      "state": "ai-chat-long-content",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "geometry"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-ai-chat.ai-chat-restricted-role.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-ai-chat",
+      "route": "/dashboard/ai-chat",
+      "state": "ai-chat-restricted-role",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-forbidden",
+      "requiredAssertions": [
+        "readonly-or-hidden"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-voice.voice-normal.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-voice",
+      "route": "/dashboard?section=voice",
+      "state": "voice-normal",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-voice.voice-empty.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-voice",
+      "route": "/dashboard?section=voice",
+      "state": "voice-empty",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-empty",
+      "requiredAssertions": [
+        "empty-state"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-voice.voice-error.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-voice",
+      "route": "/dashboard?section=voice",
+      "state": "voice-error",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-error",
+      "requiredAssertions": [
+        "error-status"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-voice.voice-long-content.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-voice",
+      "route": "/dashboard?section=voice",
+      "state": "voice-long-content",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "geometry"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-voice.voice-restricted-role.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-voice",
+      "route": "/dashboard?section=voice",
+      "state": "voice-restricted-role",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-forbidden",
+      "requiredAssertions": [
+        "readonly-or-hidden"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-forms-library.forms-library-normal.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-forms-library",
+      "route": "/dashboard?section=forms",
+      "state": "forms-library-normal",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-forms-library.forms-library-empty.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-forms-library",
+      "route": "/dashboard?section=forms",
+      "state": "forms-library-empty",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-empty",
+      "requiredAssertions": [
+        "empty-state"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-forms-library.forms-library-error.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-forms-library",
+      "route": "/dashboard?section=forms",
+      "state": "forms-library-error",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-error",
+      "requiredAssertions": [
+        "error-status"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-forms-library.forms-library-long-content.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-forms-library",
+      "route": "/dashboard?section=forms",
+      "state": "forms-library-long-content",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "geometry"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-forms-library.forms-library-restricted-role.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-forms-library",
+      "route": "/dashboard?section=forms",
+      "state": "forms-library-restricted-role",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-forbidden",
+      "requiredAssertions": [
+        "readonly-or-hidden"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-settings.settings-normal.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-settings",
+      "route": "/dashboard/settings",
+      "state": "settings-normal",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-settings.settings-empty.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-settings",
+      "route": "/dashboard/settings",
+      "state": "settings-empty",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-empty",
+      "requiredAssertions": [
+        "empty-or-defaults"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-settings.settings-error.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-settings",
+      "route": "/dashboard/settings",
+      "state": "settings-error",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-error",
+      "requiredAssertions": [
+        "error-status"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-settings.settings-long-content.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-settings",
+      "route": "/dashboard/settings",
+      "state": "settings-long-content",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "geometry"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-settings.settings-restricted-role.dietitian.tr.chromium-desktop",
+      "surface": "dashboard-settings",
+      "route": "/dashboard/settings",
+      "state": "settings-restricted-role",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-forbidden",
+      "requiredAssertions": [
+        "readonly-or-hidden"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "pwa.pwa-installed-shell.dietitian.tr.chromium-desktop",
+      "surface": "pwa",
+      "route": "/dashboard",
+      "state": "pwa-installed-shell",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_enabled",
+      "fixtureId": "pwa-fallback",
+      "requiredAssertions": [
+        "pwa-shell"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "pwa.pwa-offline-lock.dietitian.tr.chromium-desktop",
+      "surface": "pwa",
+      "route": "/dashboard",
+      "state": "pwa-offline-lock",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_enabled",
+      "fixtureId": "pwa-fallback",
+      "requiredAssertions": [
+        "offline-blocker"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "pwa.pwa-update.dietitian.tr.chromium-desktop",
+      "surface": "pwa",
+      "route": "/dashboard",
+      "state": "pwa-update",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_enabled",
+      "fixtureId": "pwa-fallback",
+      "requiredAssertions": [
+        "update-banner-or-note"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "public.contact-empty.owner.en.chromium-android",
+      "surface": "public",
+      "route": "/#contact",
+      "state": "contact-empty",
+      "tenantRole": "owner",
+      "assignmentAccess": "care_team",
+      "locale": "en",
+      "browserTier": "chromium-android",
+      "viewportTier": "android-390",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "public-default",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "auth.login-idle.owner.de.webkit-iphone",
+      "surface": "auth",
+      "route": "/login",
+      "state": "login-idle",
+      "tenantRole": "owner",
+      "assignmentAccess": "care_team",
+      "locale": "de",
+      "browserTier": "webkit-iphone",
+      "viewportTier": "iphone-390",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "public-default",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "purchase.purchase-valid.owner.pt.firefox-desktop",
+      "surface": "purchase",
+      "route": "/purchase",
+      "state": "purchase-valid",
+      "tenantRole": "owner",
+      "assignmentAccess": "care_team",
+      "locale": "pt",
+      "browserTier": "firefox-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "purchase-valid",
+      "requiredAssertions": [
+        "eligible-cta"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "admin.admin-login.owner.es.chromium-reflow-320",
+      "surface": "admin",
+      "route": "/admin",
+      "state": "admin-login",
+      "tenantRole": "owner",
+      "assignmentAccess": "care_team",
+      "locale": "es",
+      "browserTier": "chromium-reflow-320",
+      "viewportTier": "reflow-320",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "public-default",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-shell.shell-bootstrap.owner.fr.chromium-android",
+      "surface": "dashboard-shell",
+      "route": "/dashboard",
+      "state": "shell-bootstrap",
+      "tenantRole": "owner",
+      "assignmentAccess": "care_team",
+      "locale": "fr",
+      "browserTier": "chromium-android",
+      "viewportTier": "android-390",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": true
+    },
+    {
+      "id": "dashboard-clients.clients-dense.owner.ar.chromium-android",
+      "surface": "dashboard-clients",
+      "route": "/dashboard?section=clients",
+      "state": "clients-dense",
+      "tenantRole": "owner",
+      "assignmentAccess": "care_team",
+      "locale": "ar",
+      "browserTier": "chromium-android",
+      "viewportTier": "android-390",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "dense-list",
+        "geometry"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-messaging.messaging-dense.owner.en.webkit-iphone",
+      "surface": "dashboard-messaging",
+      "route": "/dashboard?section=messages",
+      "state": "messaging-dense",
+      "tenantRole": "owner",
+      "assignmentAccess": "care_team",
+      "locale": "en",
+      "browserTier": "webkit-iphone",
+      "viewportTier": "iphone-390",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "dense-list",
+        "geometry"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-ai-chat.ai-chat-normal.owner.en.firefox-desktop",
+      "surface": "dashboard-ai-chat",
+      "route": "/dashboard/ai-chat",
+      "state": "ai-chat-normal",
+      "tenantRole": "owner",
+      "assignmentAccess": "care_team",
+      "locale": "en",
+      "browserTier": "firefox-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-settings.settings-normal.owner.en.chromium-reflow-320",
+      "surface": "dashboard-settings",
+      "route": "/dashboard/settings",
+      "state": "settings-normal",
+      "tenantRole": "owner",
+      "assignmentAccess": "care_team",
+      "locale": "en",
+      "browserTier": "chromium-reflow-320",
+      "viewportTier": "reflow-320",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "pwa.pwa-installed-shell.admin.en.chromium-android",
+      "surface": "pwa",
+      "route": "/dashboard",
+      "state": "pwa-installed-shell",
+      "tenantRole": "admin",
+      "assignmentAccess": "care_team",
+      "locale": "en",
+      "browserTier": "chromium-android",
+      "viewportTier": "android-390",
+      "pwaMode": "service_worker_enabled",
+      "fixtureId": "pwa-fallback",
+      "requiredAssertions": [
+        "pwa-shell"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "public.contact-empty.admin.de.chromium-android",
+      "surface": "public",
+      "route": "/#contact",
+      "state": "contact-empty",
+      "tenantRole": "admin",
+      "assignmentAccess": "care_team",
+      "locale": "de",
+      "browserTier": "chromium-android",
+      "viewportTier": "android-390",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "public-default",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "auth.login-idle.admin.pt.chromium-android",
+      "surface": "auth",
+      "route": "/login",
+      "state": "login-idle",
+      "tenantRole": "admin",
+      "assignmentAccess": "care_team",
+      "locale": "pt",
+      "browserTier": "chromium-android",
+      "viewportTier": "android-390",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "public-default",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "purchase.purchase-valid.admin.es.chromium-android",
+      "surface": "purchase",
+      "route": "/purchase",
+      "state": "purchase-valid",
+      "tenantRole": "admin",
+      "assignmentAccess": "care_team",
+      "locale": "es",
+      "browserTier": "chromium-android",
+      "viewportTier": "android-390",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "purchase-valid",
+      "requiredAssertions": [
+        "eligible-cta"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "admin.admin-login.admin.fr.chromium-android",
+      "surface": "admin",
+      "route": "/admin",
+      "state": "admin-login",
+      "tenantRole": "admin",
+      "assignmentAccess": "care_team",
+      "locale": "fr",
+      "browserTier": "chromium-android",
+      "viewportTier": "android-390",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "public-default",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-shell.shell-bootstrap.admin.ar.chromium-android",
+      "surface": "dashboard-shell",
+      "route": "/dashboard",
+      "state": "shell-bootstrap",
+      "tenantRole": "admin",
+      "assignmentAccess": "care_team",
+      "locale": "ar",
+      "browserTier": "chromium-android",
+      "viewportTier": "android-390",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": true
+    },
+    {
+      "id": "dashboard-clients.clients-dense.assistant.en.chromium-android",
+      "surface": "dashboard-clients",
+      "route": "/dashboard?section=clients",
+      "state": "clients-dense",
+      "tenantRole": "assistant",
+      "assignmentAccess": "care_team",
+      "locale": "en",
+      "browserTier": "chromium-android",
+      "viewportTier": "android-390",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "dense-list",
+        "geometry"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-messaging.messaging-dense.assistant.de.chromium-android",
+      "surface": "dashboard-messaging",
+      "route": "/dashboard?section=messages",
+      "state": "messaging-dense",
+      "tenantRole": "assistant",
+      "assignmentAccess": "care_team",
+      "locale": "de",
+      "browserTier": "chromium-android",
+      "viewportTier": "android-390",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "dense-list",
+        "geometry"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-ai-chat.ai-chat-normal.assistant.pt.chromium-android",
+      "surface": "dashboard-ai-chat",
+      "route": "/dashboard/ai-chat",
+      "state": "ai-chat-normal",
+      "tenantRole": "assistant",
+      "assignmentAccess": "care_team",
+      "locale": "pt",
+      "browserTier": "chromium-android",
+      "viewportTier": "android-390",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-settings.settings-normal.assistant.es.chromium-android",
+      "surface": "dashboard-settings",
+      "route": "/dashboard/settings",
+      "state": "settings-normal",
+      "tenantRole": "assistant",
+      "assignmentAccess": "care_team",
+      "locale": "es",
+      "browserTier": "chromium-android",
+      "viewportTier": "android-390",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "pwa.pwa-installed-shell.assistant.fr.chromium-android",
+      "surface": "pwa",
+      "route": "/dashboard",
+      "state": "pwa-installed-shell",
+      "tenantRole": "assistant",
+      "assignmentAccess": "care_team",
+      "locale": "fr",
+      "browserTier": "chromium-android",
+      "viewportTier": "android-390",
+      "pwaMode": "service_worker_enabled",
+      "fixtureId": "pwa-fallback",
+      "requiredAssertions": [
+        "pwa-shell"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "public.contact-empty.assistant.ar.chromium-android",
+      "surface": "public",
+      "route": "/#contact",
+      "state": "contact-empty",
+      "tenantRole": "assistant",
+      "assignmentAccess": "care_team",
+      "locale": "ar",
+      "browserTier": "chromium-android",
+      "viewportTier": "android-390",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "public-default",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "auth.login-idle.auditor.en.chromium-android",
+      "surface": "auth",
+      "route": "/login",
+      "state": "login-idle",
+      "tenantRole": "auditor",
+      "assignmentAccess": "viewer",
+      "locale": "en",
+      "browserTier": "chromium-android",
+      "viewportTier": "android-390",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "public-default",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "purchase.purchase-valid.auditor.de.chromium-android",
+      "surface": "purchase",
+      "route": "/purchase",
+      "state": "purchase-valid",
+      "tenantRole": "auditor",
+      "assignmentAccess": "viewer",
+      "locale": "de",
+      "browserTier": "chromium-android",
+      "viewportTier": "android-390",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "purchase-valid",
+      "requiredAssertions": [
+        "eligible-cta"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "admin.admin-login.auditor.pt.chromium-android",
+      "surface": "admin",
+      "route": "/admin",
+      "state": "admin-login",
+      "tenantRole": "auditor",
+      "assignmentAccess": "viewer",
+      "locale": "pt",
+      "browserTier": "chromium-android",
+      "viewportTier": "android-390",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "public-default",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-shell.shell-bootstrap.auditor.es.chromium-android",
+      "surface": "dashboard-shell",
+      "route": "/dashboard",
+      "state": "shell-bootstrap",
+      "tenantRole": "auditor",
+      "assignmentAccess": "viewer",
+      "locale": "es",
+      "browserTier": "chromium-android",
+      "viewportTier": "android-390",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": true
+    },
+    {
+      "id": "dashboard-clients.clients-dense.auditor.fr.chromium-android",
+      "surface": "dashboard-clients",
+      "route": "/dashboard?section=clients",
+      "state": "clients-dense",
+      "tenantRole": "auditor",
+      "assignmentAccess": "viewer",
+      "locale": "fr",
+      "browserTier": "chromium-android",
+      "viewportTier": "android-390",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "dense-list",
+        "geometry"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-messaging.messaging-dense.auditor.ar.chromium-android",
+      "surface": "dashboard-messaging",
+      "route": "/dashboard?section=messages",
+      "state": "messaging-dense",
+      "tenantRole": "auditor",
+      "assignmentAccess": "viewer",
+      "locale": "ar",
+      "browserTier": "chromium-android",
+      "viewportTier": "android-390",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "dense-list",
+        "geometry"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-ai-chat.ai-chat-normal.admin.en.webkit-iphone",
+      "surface": "dashboard-ai-chat",
+      "route": "/dashboard/ai-chat",
+      "state": "ai-chat-normal",
+      "tenantRole": "admin",
+      "assignmentAccess": "care_team",
+      "locale": "en",
+      "browserTier": "webkit-iphone",
+      "viewportTier": "iphone-390",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-settings.settings-normal.admin.en.firefox-desktop",
+      "surface": "dashboard-settings",
+      "route": "/dashboard/settings",
+      "state": "settings-normal",
+      "tenantRole": "admin",
+      "assignmentAccess": "care_team",
+      "locale": "en",
+      "browserTier": "firefox-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "pwa.pwa-installed-shell.admin.en.chromium-reflow-320",
+      "surface": "pwa",
+      "route": "/dashboard",
+      "state": "pwa-installed-shell",
+      "tenantRole": "admin",
+      "assignmentAccess": "care_team",
+      "locale": "en",
+      "browserTier": "chromium-reflow-320",
+      "viewportTier": "reflow-320",
+      "pwaMode": "service_worker_enabled",
+      "fixtureId": "pwa-fallback",
+      "requiredAssertions": [
+        "pwa-shell"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "public.contact-empty.assistant.en.webkit-iphone",
+      "surface": "public",
+      "route": "/#contact",
+      "state": "contact-empty",
+      "tenantRole": "assistant",
+      "assignmentAccess": "care_team",
+      "locale": "en",
+      "browserTier": "webkit-iphone",
+      "viewportTier": "iphone-390",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "public-default",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "auth.login-idle.assistant.en.firefox-desktop",
+      "surface": "auth",
+      "route": "/login",
+      "state": "login-idle",
+      "tenantRole": "assistant",
+      "assignmentAccess": "care_team",
+      "locale": "en",
+      "browserTier": "firefox-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "public-default",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "purchase.purchase-valid.assistant.en.chromium-reflow-320",
+      "surface": "purchase",
+      "route": "/purchase",
+      "state": "purchase-valid",
+      "tenantRole": "assistant",
+      "assignmentAccess": "care_team",
+      "locale": "en",
+      "browserTier": "chromium-reflow-320",
+      "viewportTier": "reflow-320",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "purchase-valid",
+      "requiredAssertions": [
+        "eligible-cta"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "admin.admin-login.auditor.en.webkit-iphone",
+      "surface": "admin",
+      "route": "/admin",
+      "state": "admin-login",
+      "tenantRole": "auditor",
+      "assignmentAccess": "viewer",
+      "locale": "en",
+      "browserTier": "webkit-iphone",
+      "viewportTier": "iphone-390",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "public-default",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-shell.shell-bootstrap.auditor.en.firefox-desktop",
+      "surface": "dashboard-shell",
+      "route": "/dashboard",
+      "state": "shell-bootstrap",
+      "tenantRole": "auditor",
+      "assignmentAccess": "viewer",
+      "locale": "en",
+      "browserTier": "firefox-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": true
+    },
+    {
+      "id": "dashboard-clients.clients-dense.auditor.en.chromium-reflow-320",
+      "surface": "dashboard-clients",
+      "route": "/dashboard?section=clients",
+      "state": "clients-dense",
+      "tenantRole": "auditor",
+      "assignmentAccess": "viewer",
+      "locale": "en",
+      "browserTier": "chromium-reflow-320",
+      "viewportTier": "reflow-320",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "dense-list",
+        "geometry"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-messaging.messaging-dense.owner.de.firefox-desktop",
+      "surface": "dashboard-messaging",
+      "route": "/dashboard?section=messages",
+      "state": "messaging-dense",
+      "tenantRole": "owner",
+      "assignmentAccess": "care_team",
+      "locale": "de",
+      "browserTier": "firefox-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "dense-list",
+        "geometry"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-ai-chat.ai-chat-normal.owner.de.chromium-reflow-320",
+      "surface": "dashboard-ai-chat",
+      "route": "/dashboard/ai-chat",
+      "state": "ai-chat-normal",
+      "tenantRole": "owner",
+      "assignmentAccess": "care_team",
+      "locale": "de",
+      "browserTier": "chromium-reflow-320",
+      "viewportTier": "reflow-320",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-settings.settings-normal.owner.pt.webkit-iphone",
+      "surface": "dashboard-settings",
+      "route": "/dashboard/settings",
+      "state": "settings-normal",
+      "tenantRole": "owner",
+      "assignmentAccess": "care_team",
+      "locale": "pt",
+      "browserTier": "webkit-iphone",
+      "viewportTier": "iphone-390",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "pwa.pwa-installed-shell.owner.pt.chromium-reflow-320",
+      "surface": "pwa",
+      "route": "/dashboard",
+      "state": "pwa-installed-shell",
+      "tenantRole": "owner",
+      "assignmentAccess": "care_team",
+      "locale": "pt",
+      "browserTier": "chromium-reflow-320",
+      "viewportTier": "reflow-320",
+      "pwaMode": "service_worker_enabled",
+      "fixtureId": "pwa-fallback",
+      "requiredAssertions": [
+        "pwa-shell"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "public.contact-empty.owner.es.webkit-iphone",
+      "surface": "public",
+      "route": "/#contact",
+      "state": "contact-empty",
+      "tenantRole": "owner",
+      "assignmentAccess": "care_team",
+      "locale": "es",
+      "browserTier": "webkit-iphone",
+      "viewportTier": "iphone-390",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "public-default",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "auth.login-idle.owner.es.firefox-desktop",
+      "surface": "auth",
+      "route": "/login",
+      "state": "login-idle",
+      "tenantRole": "owner",
+      "assignmentAccess": "care_team",
+      "locale": "es",
+      "browserTier": "firefox-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "public-default",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "purchase.purchase-valid.owner.fr.webkit-iphone",
+      "surface": "purchase",
+      "route": "/purchase",
+      "state": "purchase-valid",
+      "tenantRole": "owner",
+      "assignmentAccess": "care_team",
+      "locale": "fr",
+      "browserTier": "webkit-iphone",
+      "viewportTier": "iphone-390",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "purchase-valid",
+      "requiredAssertions": [
+        "eligible-cta"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "admin.admin-login.owner.fr.firefox-desktop",
+      "surface": "admin",
+      "route": "/admin",
+      "state": "admin-login",
+      "tenantRole": "owner",
+      "assignmentAccess": "care_team",
+      "locale": "fr",
+      "browserTier": "firefox-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "public-default",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-shell.shell-bootstrap.owner.fr.chromium-reflow-320",
+      "surface": "dashboard-shell",
+      "route": "/dashboard",
+      "state": "shell-bootstrap",
+      "tenantRole": "owner",
+      "assignmentAccess": "care_team",
+      "locale": "fr",
+      "browserTier": "chromium-reflow-320",
+      "viewportTier": "reflow-320",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": true
+    },
+    {
+      "id": "dashboard-clients.clients-dense.owner.ar.webkit-iphone",
+      "surface": "dashboard-clients",
+      "route": "/dashboard?section=clients",
+      "state": "clients-dense",
+      "tenantRole": "owner",
+      "assignmentAccess": "care_team",
+      "locale": "ar",
+      "browserTier": "webkit-iphone",
+      "viewportTier": "iphone-390",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "dense-list",
+        "geometry"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-messaging.messaging-dense.owner.ar.firefox-desktop",
+      "surface": "dashboard-messaging",
+      "route": "/dashboard?section=messages",
+      "state": "messaging-dense",
+      "tenantRole": "owner",
+      "assignmentAccess": "care_team",
+      "locale": "ar",
+      "browserTier": "firefox-desktop",
+      "viewportTier": "desktop-1440",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "dense-list",
+        "geometry"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-ai-chat.ai-chat-normal.owner.ar.chromium-reflow-320",
+      "surface": "dashboard-ai-chat",
+      "route": "/dashboard/ai-chat",
+      "state": "ai-chat-normal",
+      "tenantRole": "owner",
+      "assignmentAccess": "care_team",
+      "locale": "ar",
+      "browserTier": "chromium-reflow-320",
+      "viewportTier": "reflow-320",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "public.contact-empty.dietitian.tr.chromium-desktop-xl",
+      "surface": "public",
+      "route": "/#contact",
+      "state": "contact-empty",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop-xl",
+      "viewportTier": "desktop-1728",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "public-default",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "auth.login-idle.dietitian.tr.chromium-desktop-xl",
+      "surface": "auth",
+      "route": "/login",
+      "state": "login-idle",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop-xl",
+      "viewportTier": "desktop-1728",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "public-default",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "purchase.purchase-valid.dietitian.tr.chromium-desktop-xl",
+      "surface": "purchase",
+      "route": "/purchase",
+      "state": "purchase-valid",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop-xl",
+      "viewportTier": "desktop-1728",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "purchase-valid",
+      "requiredAssertions": [
+        "eligible-cta"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "admin.admin-login.dietitian.tr.chromium-desktop-xl",
+      "surface": "admin",
+      "route": "/admin",
+      "state": "admin-login",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop-xl",
+      "viewportTier": "desktop-1728",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "public-default",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-shell.shell-bootstrap.dietitian.tr.chromium-desktop-xl",
+      "surface": "dashboard-shell",
+      "route": "/dashboard",
+      "state": "shell-bootstrap",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop-xl",
+      "viewportTier": "desktop-1728",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": true
+    },
+    {
+      "id": "dashboard-clients.clients-dense.dietitian.tr.chromium-desktop-xl",
+      "surface": "dashboard-clients",
+      "route": "/dashboard?section=clients",
+      "state": "clients-dense",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop-xl",
+      "viewportTier": "desktop-1728",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "dense-list",
+        "geometry"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-messaging.messaging-dense.dietitian.tr.chromium-desktop-xl",
+      "surface": "dashboard-messaging",
+      "route": "/dashboard?section=messages",
+      "state": "messaging-dense",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop-xl",
+      "viewportTier": "desktop-1728",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "dense-list",
+        "geometry"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-ai-chat.ai-chat-normal.dietitian.tr.chromium-desktop-xl",
+      "surface": "dashboard-ai-chat",
+      "route": "/dashboard/ai-chat",
+      "state": "ai-chat-normal",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-desktop-xl",
+      "viewportTier": "desktop-1728",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "public.contact-empty.dietitian.tr.chromium-tablet",
+      "surface": "public",
+      "route": "/#contact",
+      "state": "contact-empty",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-tablet",
+      "viewportTier": "tablet-768",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "public-default",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "auth.login-idle.dietitian.tr.chromium-tablet",
+      "surface": "auth",
+      "route": "/login",
+      "state": "login-idle",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-tablet",
+      "viewportTier": "tablet-768",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "public-default",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "purchase.purchase-valid.dietitian.tr.chromium-tablet",
+      "surface": "purchase",
+      "route": "/purchase",
+      "state": "purchase-valid",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-tablet",
+      "viewportTier": "tablet-768",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "purchase-valid",
+      "requiredAssertions": [
+        "eligible-cta"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "admin.admin-login.dietitian.tr.chromium-tablet",
+      "surface": "admin",
+      "route": "/admin",
+      "state": "admin-login",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-tablet",
+      "viewportTier": "tablet-768",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "public-default",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-shell.shell-bootstrap.dietitian.tr.chromium-tablet",
+      "surface": "dashboard-shell",
+      "route": "/dashboard",
+      "state": "shell-bootstrap",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-tablet",
+      "viewportTier": "tablet-768",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": true
+    },
+    {
+      "id": "dashboard-clients.clients-dense.dietitian.tr.chromium-tablet",
+      "surface": "dashboard-clients",
+      "route": "/dashboard?section=clients",
+      "state": "clients-dense",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-tablet",
+      "viewportTier": "tablet-768",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "dense-list",
+        "geometry"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-messaging.messaging-dense.dietitian.tr.chromium-tablet",
+      "surface": "dashboard-messaging",
+      "route": "/dashboard?section=messages",
+      "state": "messaging-dense",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-tablet",
+      "viewportTier": "tablet-768",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "dense-list",
+        "geometry"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-ai-chat.ai-chat-normal.dietitian.tr.chromium-tablet",
+      "surface": "dashboard-ai-chat",
+      "route": "/dashboard/ai-chat",
+      "state": "ai-chat-normal",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-tablet",
+      "viewportTier": "tablet-768",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "public.contact-empty.dietitian.tr.chromium-mobile-landscape",
+      "surface": "public",
+      "route": "/#contact",
+      "state": "contact-empty",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-mobile-landscape",
+      "viewportTier": "mobile-landscape",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "public-default",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "auth.login-idle.dietitian.tr.chromium-mobile-landscape",
+      "surface": "auth",
+      "route": "/login",
+      "state": "login-idle",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-mobile-landscape",
+      "viewportTier": "mobile-landscape",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "public-default",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "purchase.purchase-valid.dietitian.tr.chromium-mobile-landscape",
+      "surface": "purchase",
+      "route": "/purchase",
+      "state": "purchase-valid",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-mobile-landscape",
+      "viewportTier": "mobile-landscape",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "purchase-valid",
+      "requiredAssertions": [
+        "eligible-cta"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "admin.admin-login.dietitian.tr.chromium-mobile-landscape",
+      "surface": "admin",
+      "route": "/admin",
+      "state": "admin-login",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-mobile-landscape",
+      "viewportTier": "mobile-landscape",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "public-default",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-shell.shell-bootstrap.dietitian.tr.chromium-mobile-landscape",
+      "surface": "dashboard-shell",
+      "route": "/dashboard",
+      "state": "shell-bootstrap",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-mobile-landscape",
+      "viewportTier": "mobile-landscape",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": true
+    },
+    {
+      "id": "dashboard-clients.clients-dense.dietitian.tr.chromium-mobile-landscape",
+      "surface": "dashboard-clients",
+      "route": "/dashboard?section=clients",
+      "state": "clients-dense",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-mobile-landscape",
+      "viewportTier": "mobile-landscape",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "dense-list",
+        "geometry"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-messaging.messaging-dense.dietitian.tr.chromium-mobile-landscape",
+      "surface": "dashboard-messaging",
+      "route": "/dashboard?section=messages",
+      "state": "messaging-dense",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-mobile-landscape",
+      "viewportTier": "mobile-landscape",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "dense-list",
+        "geometry"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-ai-chat.ai-chat-normal.dietitian.tr.chromium-mobile-landscape",
+      "surface": "dashboard-ai-chat",
+      "route": "/dashboard/ai-chat",
+      "state": "ai-chat-normal",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-mobile-landscape",
+      "viewportTier": "mobile-landscape",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "public.contact-empty.dietitian.tr.webkit-ipad",
+      "surface": "public",
+      "route": "/#contact",
+      "state": "contact-empty",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "webkit-ipad",
+      "viewportTier": "ipad-pro-11",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "public-default",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "auth.login-idle.dietitian.tr.webkit-ipad",
+      "surface": "auth",
+      "route": "/login",
+      "state": "login-idle",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "webkit-ipad",
+      "viewportTier": "ipad-pro-11",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "public-default",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "purchase.purchase-valid.dietitian.tr.webkit-ipad",
+      "surface": "purchase",
+      "route": "/purchase",
+      "state": "purchase-valid",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "webkit-ipad",
+      "viewportTier": "ipad-pro-11",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "purchase-valid",
+      "requiredAssertions": [
+        "eligible-cta"
+      ],
+      "snapshotKind": "state",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "admin.admin-login.dietitian.tr.webkit-ipad",
+      "surface": "admin",
+      "route": "/admin",
+      "state": "admin-login",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "webkit-ipad",
+      "viewportTier": "ipad-pro-11",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "public-default",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-shell.shell-bootstrap.dietitian.tr.webkit-ipad",
+      "surface": "dashboard-shell",
+      "route": "/dashboard",
+      "state": "shell-bootstrap",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "webkit-ipad",
+      "viewportTier": "ipad-pro-11",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": true
+    },
+    {
+      "id": "dashboard-clients.clients-dense.dietitian.tr.webkit-ipad",
+      "surface": "dashboard-clients",
+      "route": "/dashboard?section=clients",
+      "state": "clients-dense",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "webkit-ipad",
+      "viewportTier": "ipad-pro-11",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "dense-list",
+        "geometry"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-messaging.messaging-dense.dietitian.tr.webkit-ipad",
+      "surface": "dashboard-messaging",
+      "route": "/dashboard?section=messages",
+      "state": "messaging-dense",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "webkit-ipad",
+      "viewportTier": "ipad-pro-11",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "dense-list",
+        "geometry"
+      ],
+      "snapshotKind": "locator",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "dashboard-ai-chat.ai-chat-normal.dietitian.tr.webkit-ipad",
+      "surface": "dashboard-ai-chat",
+      "route": "/dashboard/ai-chat",
+      "state": "ai-chat-normal",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "webkit-ipad",
+      "viewportTier": "ipad-pro-11",
+      "pwaMode": "service_worker_blocked",
+      "fixtureId": "dashboard-dense",
+      "requiredAssertions": [
+        "visible-root",
+        "geometry",
+        "axe-a-aa"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    },
+    {
+      "id": "pwa.pwa-installed-shell.dietitian.tr.chromium-android",
+      "surface": "pwa",
+      "route": "/dashboard",
+      "state": "pwa-installed-shell",
+      "tenantRole": "dietitian",
+      "assignmentAccess": "care_team",
+      "locale": "tr",
+      "browserTier": "chromium-android",
+      "viewportTier": "android-390",
+      "pwaMode": "service_worker_enabled",
+      "fixtureId": "pwa-fallback",
+      "requiredAssertions": [
+        "pwa-shell"
+      ],
+      "snapshotKind": "page",
+      "accessibilityChecks": [
+        "axe-wcag-a-aa",
+        "keyboard-tab",
+        "aria-roles"
+      ],
+      "performanceEligible": false
+    }
+  ]
 }

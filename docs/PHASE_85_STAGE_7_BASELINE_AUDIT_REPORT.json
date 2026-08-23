@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "phase-85-stage-7-baseline-audit-v1",
+  "generatedAt": "2026-08-22T06:00:00.000Z",
+  "status": "RECORDED",
+  "productionStatus": "NO-GO",
+  "physicalIphone": "WAIVED_NOT_EXECUTED",
+  "findingCount": 3,
+  "counts": {
+    "P0": 0,
+    "P1": 2,
+    "P2": 1,
+    "P3": 0
+  },
+  "artifactDir": "app/test-results/stage-7"
+}
