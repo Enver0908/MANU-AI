@@ -1,0 +1,250 @@
+{
+  "schemaVersion": "1.0.0",
+  "contractId": "cursor-hook-bom-compatibility-hotfix-v1",
+  "requirements": [
+    {
+      "requirementId": "CHBOM-001",
+      "allowedCreatePaths": [],
+      "allowedModifyPaths": [
+        ".cursor/hooks/governance-guard.mjs"
+      ],
+      "protectedPaths": [
+        ".execution-governance/policy/governance-policy.json",
+        ".execution-governance/schemas/**",
+        ".execution-governance/templates/**",
+        ".github/workflows/execution-governance.yml",
+        "tools/execution-governance/governance-cli.mjs",
+        "AGENTS.md",
+        "app/**",
+        "dietitian-ai-assistant/**"
+      ],
+      "forbiddenPaths": [
+        "package.json",
+        "app/package.json",
+        "app/package-lock.json",
+        "app/supabase/migrations/**"
+      ],
+      "allowedCommands": [
+        {
+          "cwd": ".",
+          "executable": "node",
+          "args": [
+            "tools/execution-governance/red-team-harness.mjs"
+          ],
+          "timeoutSeconds": 120,
+          "networkPolicy": "FORBIDDEN",
+          "artifactPolicy": "May create ignored runtime artifacts under .execution-governance/runtime only."
+        }
+      ],
+      "forbiddenCommands": [
+        "git push",
+        "git merge",
+        "deploy",
+        "dependency install/update",
+        "destructive git reset/checkout",
+        "supabase db push/reset"
+      ],
+      "allowedDependencies": [],
+      "forbiddenDependencyChanges": true,
+      "allowedSchemaChanges": [],
+      "allowedNetworkOrExternalEffects": [],
+      "generatedArtifactPolicy": "Runtime artifacts under .execution-governance/runtime are ignored and must not be committed.",
+      "documentationReconciliation": [],
+      "maximumChangeScope": "Only .cursor/hooks/governance-guard.mjs may change for parser implementation."
+    },
+    {
+      "requirementId": "CHBOM-002",
+      "allowedCreatePaths": [],
+      "allowedModifyPaths": [
+        ".cursor/hooks/governance-guard.mjs"
+      ],
+      "protectedPaths": [
+        ".execution-governance/policy/governance-policy.json",
+        ".execution-governance/schemas/**",
+        ".execution-governance/templates/**",
+        ".github/workflows/execution-governance.yml",
+        "tools/execution-governance/governance-cli.mjs",
+        "AGENTS.md",
+        "app/**",
+        "dietitian-ai-assistant/**"
+      ],
+      "forbiddenPaths": [
+        "package.json",
+        "app/package.json",
+        "app/package-lock.json",
+        "app/supabase/migrations/**"
+      ],
+      "allowedCommands": [
+        {
+          "cwd": ".",
+          "executable": "node",
+          "args": [
+            "tools/execution-governance/red-team-harness.mjs"
+          ],
+          "timeoutSeconds": 120,
+          "networkPolicy": "FORBIDDEN",
+          "artifactPolicy": "May create ignored runtime artifacts under .execution-governance/runtime only."
+        }
+      ],
+      "forbiddenCommands": [
+        "git push",
+        "git merge",
+        "deploy",
+        "dependency install/update",
+        "destructive git reset/checkout",
+        "supabase db push/reset"
+      ],
+      "allowedDependencies": [],
+      "forbiddenDependencyChanges": true,
+      "allowedSchemaChanges": [],
+      "allowedNetworkOrExternalEffects": [],
+      "generatedArtifactPolicy": "Runtime artifacts under .execution-governance/runtime are ignored and must not be committed.",
+      "documentationReconciliation": [],
+      "maximumChangeScope": "Only .cursor/hooks/governance-guard.mjs may change for active-scope BOM parsing."
+    },
+    {
+      "requirementId": "CHBOM-003",
+      "allowedCreatePaths": [],
+      "allowedModifyPaths": [
+        "tools/execution-governance/red-team-harness.mjs"
+      ],
+      "protectedPaths": [
+        ".execution-governance/policy/governance-policy.json",
+        ".execution-governance/schemas/**",
+        ".execution-governance/templates/**",
+        ".github/workflows/execution-governance.yml",
+        "tools/execution-governance/governance-cli.mjs",
+        "AGENTS.md",
+        "app/**",
+        "dietitian-ai-assistant/**"
+      ],
+      "forbiddenPaths": [
+        "package.json",
+        "app/package.json",
+        "app/package-lock.json",
+        "app/supabase/migrations/**"
+      ],
+      "allowedCommands": [
+        {
+          "cwd": ".",
+          "executable": "node",
+          "args": [
+            "tools/execution-governance/red-team-harness.mjs"
+          ],
+          "timeoutSeconds": 120,
+          "networkPolicy": "FORBIDDEN",
+          "artifactPolicy": "May create ignored runtime artifacts under .execution-governance/runtime only."
+        },
+        {
+          "cwd": ".",
+          "executable": "node",
+          "args": [
+            "tools/execution-governance/governance-cli.mjs",
+            "doctor"
+          ],
+          "timeoutSeconds": 60,
+          "networkPolicy": "FORBIDDEN",
+          "artifactPolicy": "No retained artifact."
+        },
+        {
+          "cwd": ".",
+          "executable": "node",
+          "args": [
+            "tools/execution-governance/governance-cli.mjs",
+            "validate"
+          ],
+          "timeoutSeconds": 60,
+          "networkPolicy": "FORBIDDEN",
+          "artifactPolicy": "No retained artifact."
+        }
+      ],
+      "forbiddenCommands": [
+        "git push",
+        "git merge",
+        "deploy",
+        "dependency install/update",
+        "destructive git reset/checkout",
+        "supabase db push/reset"
+      ],
+      "allowedDependencies": [],
+      "forbiddenDependencyChanges": true,
+      "allowedSchemaChanges": [],
+      "allowedNetworkOrExternalEffects": [],
+      "generatedArtifactPolicy": "Runtime artifacts under .execution-governance/runtime are ignored and must not be committed.",
+      "documentationReconciliation": [],
+      "maximumChangeScope": "Only tools/execution-governance/red-team-harness.mjs may change for BOM regression coverage."
+    },
+    {
+      "requirementId": "CHBOM-004",
+      "allowedCreatePaths": [
+        "docs/execution-governance/CURSOR_HOOK_BOM_COMPATIBILITY_HOTFIX_EVIDENCE.md"
+      ],
+      "allowedModifyPaths": [
+        "docs/RISK_REGISTER.md",
+        "HANDOFF_FOR_NEXT_CODEX.md",
+        ".execution-governance/plans/cursor-hook-bom-compatibility-hotfix-v1/lifecycle-record.json",
+        ".execution-governance/plans/cursor-hook-bom-compatibility-hotfix-v1/implementation-report.json"
+      ],
+      "protectedPaths": [
+        ".execution-governance/policy/governance-policy.json",
+        ".execution-governance/schemas/**",
+        ".execution-governance/templates/**",
+        ".github/workflows/execution-governance.yml",
+        "tools/execution-governance/governance-cli.mjs",
+        "AGENTS.md",
+        "app/**",
+        "dietitian-ai-assistant/**"
+      ],
+      "forbiddenPaths": [
+        "package.json",
+        "app/package.json",
+        "app/package-lock.json",
+        "app/supabase/migrations/**"
+      ],
+      "allowedCommands": [
+        {
+          "cwd": ".",
+          "executable": "git",
+          "args": [
+            "diff",
+            "--check"
+          ],
+          "timeoutSeconds": 60,
+          "networkPolicy": "FORBIDDEN",
+          "artifactPolicy": "No retained artifact."
+        },
+        {
+          "cwd": ".",
+          "executable": "git",
+          "args": [
+            "status",
+            "--short",
+            "--branch"
+          ],
+          "timeoutSeconds": 30,
+          "networkPolicy": "FORBIDDEN",
+          "artifactPolicy": "No retained artifact."
+        }
+      ],
+      "forbiddenCommands": [
+        "git push",
+        "git merge",
+        "deploy",
+        "dependency install/update",
+        "destructive git reset/checkout",
+        "supabase db push/reset"
+      ],
+      "allowedDependencies": [],
+      "forbiddenDependencyChanges": true,
+      "allowedSchemaChanges": [],
+      "allowedNetworkOrExternalEffects": [],
+      "generatedArtifactPolicy": "Runtime artifacts under .execution-governance/runtime are ignored and must not be committed.",
+      "documentationReconciliation": [
+        "docs/execution-governance/CURSOR_HOOK_BOM_COMPATIBILITY_HOTFIX_EVIDENCE.md",
+        "docs/RISK_REGISTER.md",
+        "HANDOFF_FOR_NEXT_CODEX.md"
+      ],
+      "maximumChangeScope": "Only named governance evidence and continuity files may change for documentation reconciliation."
+    }
+  ]
+}

@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "1.0.0",
+  "contractId": "cursor-hook-bom-compatibility-hotfix-v1",
+  "planVersion": "1.0.0",
+  "planTitle": "Cursor Hook BOM Compatibility Hotfix",
+  "authoritySources": [
+    "User approval on 2026-08-25",
+    "AGENTS.md",
+    "docs/execution-governance/EXECUTION_ASSURANCE_PROTOCOL.md",
+    "docs/execution-governance/LIFECYCLE_AND_OPTIONAL_REVIEW_FLOW.md",
+    "docs/execution-governance/MANU_AI_PLAN_IMPLEMENTATION_ASSURANCE_INTEGRATION_PLAN.md",
+    "docs/execution-governance/PHASE_3_CODEX_CURSOR_ADAPTERS_EVIDENCE.md",
+    "docs/execution-governance/PHASE_6_RED_TEAM_PILOT_CLOSURE_EVIDENCE.md"
+  ],
+  "roleBindings": {
+    "requirementAuthority": "user and named authority documents",
+    "planner": "Codex",
+    "implementer": "Codex after separate plan-lock commit",
+    "automaticVerifier": "governance-cli and red-team-harness",
+    "independentReviewer": "NOT_REQUESTED unless user explicitly requests review",
+    "manualReviewer": "user-approved human reviewer when required",
+    "finalAcceptanceAuthority": "user"
+  },
+  "status": {
+    "plan_state": "READY_FOR_IMPLEMENTATION",
+    "implementation_state": "NOT_STARTED",
+    "executor_checks": "NOT_RUN",
+    "independent_review": "NOT_REQUESTED",
+    "user_acceptance": "PENDING"
+  },
+  "requirements": [
+    {
+      "requirementId": "CHBOM-001",
+      "authoritySource": "User-approved Cursor hook compatibility hotfix scope",
+      "classification": "IN_SCOPE",
+      "observableRequirement": "The Cursor governance guard accepts valid hook JSON payloads whose first character is U+FEFF, while malformed JSON still fails closed.",
+      "dependencies": [],
+      "status": {
+        "plan_state": "READY_FOR_IMPLEMENTATION",
+        "implementation_state": "NOT_STARTED",
+        "executor_checks": "NOT_RUN",
+        "independent_review": "NOT_REQUESTED",
+        "user_acceptance": "PENDING"
+      }
+    },
+    {
+      "requirementId": "CHBOM-002",
+      "authoritySource": "User-approved Cursor hook compatibility hotfix scope",
+      "classification": "IN_SCOPE",
+      "observableRequirement": "The Cursor governance guard parses a BOM-prefixed active scope file and still enforces allowed, protected, and outside-scope mutation boundaries.",
+      "dependencies": [
+        "CHBOM-001"
+      ],
+      "status": {
+        "plan_state": "READY_FOR_IMPLEMENTATION",
+        "implementation_state": "NOT_STARTED",
+        "executor_checks": "NOT_RUN",
+        "independent_review": "NOT_REQUESTED",
+        "user_acceptance": "PENDING"
+      }
+    },
+    {
+      "requirementId": "CHBOM-003",
+      "authoritySource": "User-approved Cursor hook compatibility hotfix scope",
+      "classification": "IN_SCOPE",
+      "observableRequirement": "The red-team harness contains BOM regression scenarios for allowed reads/mutations, active-scope enforcement, and negative controls for unsafe shell, secret reads, product writes, and malformed payloads.",
+      "dependencies": [
+        "CHBOM-001",
+        "CHBOM-002"
+      ],
+      "status": {
+        "plan_state": "READY_FOR_IMPLEMENTATION",
+        "implementation_state": "NOT_STARTED",
+        "executor_checks": "NOT_RUN",
+        "independent_review": "NOT_REQUESTED",
+        "user_acceptance": "PENDING"
+      }
+    },
+    {
+      "requirementId": "CHBOM-004",
+      "authoritySource": "User-approved Cursor hook compatibility hotfix scope",
+      "classification": "IN_SCOPE",
+      "observableRequirement": "Governance documentation records the hotfix evidence, confirms no product/runtime scope changed, and tracks the mitigated Cursor BOM compatibility risk.",
+      "dependencies": [
+        "CHBOM-003"
+      ],
+      "status": {
+        "plan_state": "READY_FOR_IMPLEMENTATION",
+        "implementation_state": "NOT_STARTED",
+        "executor_checks": "NOT_RUN",
+        "independent_review": "NOT_REQUESTED",
+        "user_acceptance": "PENDING"
+      }
+    }
+  ]
+}

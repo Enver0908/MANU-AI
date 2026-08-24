@@ -1,0 +1,260 @@
+{
+  "schemaVersion": "1.0.0",
+  "contractId": "cursor-hook-bom-compatibility-hotfix-v1",
+  "acceptanceRecords": [
+    {
+      "requirementId": "CHBOM-001",
+      "authoritySource": "User-approved Cursor hook compatibility hotfix scope",
+      "observableRequirement": "BOM-prefixed valid hook stdin JSON parses, while malformed JSON still fails closed.",
+      "oracleType": "AUTOMATED",
+      "oracleOwner": "governance red-team harness",
+      "oracleLocation": "tools/execution-governance/red-team-harness.mjs",
+      "protectionMechanism": "Committed local red-team harness plus governance postflight run-record freshness checks.",
+      "exactEvidenceCommand": "node tools/execution-governance/red-team-harness.mjs",
+      "exactEvidenceCommandSpec": {
+        "cwd": ".",
+        "executable": "node",
+        "args": [
+          "tools/execution-governance/red-team-harness.mjs"
+        ],
+        "timeoutSeconds": 120,
+        "networkPolicy": "FORBIDDEN",
+        "artifactPolicy": "May create ignored runtime artifacts under .execution-governance/runtime only."
+      },
+      "preconditions": [
+        "Plan lock commit exists before implementation starts.",
+        "No product code, migration, package manifest, lockfile, deploy, push, or Supabase remote command is in scope."
+      ],
+      "expectedExitCode": 0,
+      "requiredAssertions": [
+        "A BOM-prefixed valid preToolUse payload for a governance bootstrap path exits 0.",
+        "A BOM-prefixed safe shell payload exits 0.",
+        "A malformed payload exits 2 and emits a fail-closed deny decision."
+      ],
+      "requiredScenarioMatrix": [
+        "BOM stdin valid allow",
+        "BOM stdin safe shell allow",
+        "malformed stdin deny"
+      ],
+      "negativeControls": [
+        "Malformed JSON remains denied with exit code 2."
+      ],
+      "expectedTestIds": [
+        "CHBOM-001-BOM-STDIN-ALLOW",
+        "CHBOM-001-BOM-SAFE-SHELL-ALLOW",
+        "CHBOM-001-MALFORMED-DENY"
+      ],
+      "expectedTestCountOrInventory": "Red-team harness includes at least three CHBOM-001 BOM/malformed parser scenarios.",
+      "artifactType": "run-record and console output",
+      "artifactLocation": ".execution-governance/runtime/run-records and command stdout",
+      "artifactRetentionPolicy": "Runtime artifacts are ignored and must not be committed.",
+      "artifactPrivacyPolicy": "No secrets, PHI, raw prompts, raw health data, or real user data.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": [
+        "Local repository checkout",
+        "Node.js available",
+        "No network required"
+      ],
+      "independentVerifier": "NOT_REQUESTED unless user explicitly requests review",
+      "passRule": "PASS only when the red-team command exits 0 and the matching governance run-record is fresh and bound to current HEAD.",
+      "failRule": "FAIL when the command exits nonzero or required parser scenarios are missing.",
+      "blockedRule": "BLOCKED when Node.js or the local harness cannot run.",
+      "forbiddenEquivalences": [
+        "Evidence prose is not PASS",
+        "Skipped check is not PASS",
+        "Old artifact is not fresh evidence",
+        "Implementer summary is not independent review"
+      ]
+    },
+    {
+      "requirementId": "CHBOM-002",
+      "authoritySource": "User-approved Cursor hook compatibility hotfix scope",
+      "observableRequirement": "BOM-prefixed active scope JSON parses and active-scope allow/protected/outside-path enforcement remains intact.",
+      "oracleType": "AUTOMATED",
+      "oracleOwner": "governance red-team harness",
+      "oracleLocation": "tools/execution-governance/red-team-harness.mjs",
+      "protectionMechanism": "Committed local red-team harness plus governance postflight run-record freshness checks.",
+      "exactEvidenceCommand": "node tools/execution-governance/red-team-harness.mjs",
+      "exactEvidenceCommandSpec": {
+        "cwd": ".",
+        "executable": "node",
+        "args": [
+          "tools/execution-governance/red-team-harness.mjs"
+        ],
+        "timeoutSeconds": 120,
+        "networkPolicy": "FORBIDDEN",
+        "artifactPolicy": "May create ignored runtime artifacts under .execution-governance/runtime only."
+      },
+      "preconditions": [
+        "Plan lock commit exists before implementation starts."
+      ],
+      "expectedExitCode": 0,
+      "requiredAssertions": [
+        "BOM-prefixed active scope allows a listed governance path.",
+        "BOM-prefixed active scope denies a protected path.",
+        "BOM-prefixed active scope denies an outside-scope product path."
+      ],
+      "requiredScenarioMatrix": [
+        "BOM active scope allowed path",
+        "BOM active scope protected path deny",
+        "BOM active scope outside path deny"
+      ],
+      "negativeControls": [
+        "Protected and outside-scope paths remain denied after active scope parsing succeeds."
+      ],
+      "expectedTestIds": [
+        "CHBOM-002-BOM-ACTIVE-SCOPE-ALLOW",
+        "CHBOM-002-BOM-ACTIVE-SCOPE-PROTECTED-DENY",
+        "CHBOM-002-BOM-ACTIVE-SCOPE-OUTSIDE-DENY"
+      ],
+      "expectedTestCountOrInventory": "Red-team harness includes at least three CHBOM-002 active-scope BOM scenarios.",
+      "artifactType": "run-record and console output",
+      "artifactLocation": ".execution-governance/runtime/run-records and command stdout",
+      "artifactRetentionPolicy": "Runtime artifacts are ignored and must not be committed.",
+      "artifactPrivacyPolicy": "No secrets, PHI, raw prompts, raw health data, or real user data.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": [
+        "Local repository checkout",
+        "Node.js available",
+        "No network required"
+      ],
+      "independentVerifier": "NOT_REQUESTED unless user explicitly requests review",
+      "passRule": "PASS only when the red-team command exits 0 and the matching governance run-record is fresh and bound to current HEAD.",
+      "failRule": "FAIL when active scope scenarios do not pass or boundaries are weakened.",
+      "blockedRule": "BLOCKED when Node.js or the local harness cannot run.",
+      "forbiddenEquivalences": [
+        "Evidence prose is not PASS",
+        "Skipped check is not PASS",
+        "Old artifact is not fresh evidence",
+        "Implementer summary is not independent review"
+      ]
+    },
+    {
+      "requirementId": "CHBOM-003",
+      "authoritySource": "User-approved Cursor hook compatibility hotfix scope",
+      "observableRequirement": "BOM red-team coverage includes negative controls for unsafe shell, secret read, and product write denial.",
+      "oracleType": "AUTOMATED",
+      "oracleOwner": "governance red-team harness",
+      "oracleLocation": "tools/execution-governance/red-team-harness.mjs",
+      "protectionMechanism": "Committed local red-team harness plus governance postflight run-record freshness checks.",
+      "exactEvidenceCommand": "node tools/execution-governance/red-team-harness.mjs",
+      "exactEvidenceCommandSpec": {
+        "cwd": ".",
+        "executable": "node",
+        "args": [
+          "tools/execution-governance/red-team-harness.mjs"
+        ],
+        "timeoutSeconds": 120,
+        "networkPolicy": "FORBIDDEN",
+        "artifactPolicy": "May create ignored runtime artifacts under .execution-governance/runtime only."
+      },
+      "preconditions": [
+        "Plan lock commit exists before implementation starts."
+      ],
+      "expectedExitCode": 0,
+      "requiredAssertions": [
+        "BOM-prefixed secret read remains denied.",
+        "BOM-prefixed unsafe shell remains denied.",
+        "BOM-prefixed product write without active scope remains denied."
+      ],
+      "requiredScenarioMatrix": [
+        "BOM secret read deny",
+        "BOM unsafe shell deny",
+        "BOM product write deny"
+      ],
+      "negativeControls": [
+        "The BOM parser must not turn denied hook actions into allowed actions."
+      ],
+      "expectedTestIds": [
+        "CHBOM-003-BOM-SECRET-READ-DENY",
+        "CHBOM-003-BOM-UNSAFE-SHELL-DENY",
+        "CHBOM-003-BOM-PRODUCT-WRITE-DENY"
+      ],
+      "expectedTestCountOrInventory": "Red-team harness includes at least three CHBOM-003 BOM denial scenarios.",
+      "artifactType": "run-record and console output",
+      "artifactLocation": ".execution-governance/runtime/run-records and command stdout",
+      "artifactRetentionPolicy": "Runtime artifacts are ignored and must not be committed.",
+      "artifactPrivacyPolicy": "No secrets, PHI, raw prompts, raw health data, or real user data.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": [
+        "Local repository checkout",
+        "Node.js available",
+        "No network required"
+      ],
+      "independentVerifier": "NOT_REQUESTED unless user explicitly requests review",
+      "passRule": "PASS only when the red-team command exits 0 and the matching governance run-record is fresh and bound to current HEAD.",
+      "failRule": "FAIL when a negative control is missing or any denied BOM scenario is allowed.",
+      "blockedRule": "BLOCKED when Node.js or the local harness cannot run.",
+      "forbiddenEquivalences": [
+        "Evidence prose is not PASS",
+        "Skipped check is not PASS",
+        "Old artifact is not fresh evidence",
+        "Implementer summary is not independent review"
+      ]
+    },
+    {
+      "requirementId": "CHBOM-004",
+      "authoritySource": "User-approved Cursor hook compatibility hotfix scope",
+      "observableRequirement": "Governance doctor, validation, whitespace checks, and documentation evidence confirm the hotfix did not broaden product or production scope.",
+      "oracleType": "AUTOMATED",
+      "oracleOwner": "governance CLI and Git",
+      "oracleLocation": "tools/execution-governance/governance-cli.mjs and git",
+      "protectionMechanism": "Committed local governance CLI and git diff checks.",
+      "exactEvidenceCommand": "node tools/execution-governance/governance-cli.mjs doctor",
+      "exactEvidenceCommandSpec": {
+        "cwd": ".",
+        "executable": "node",
+        "args": [
+          "tools/execution-governance/governance-cli.mjs",
+          "doctor"
+        ],
+        "timeoutSeconds": 60,
+        "networkPolicy": "FORBIDDEN",
+        "artifactPolicy": "No retained artifact."
+      },
+      "preconditions": [
+        "Plan lock commit exists before implementation starts."
+      ],
+      "expectedExitCode": 0,
+      "requiredAssertions": [
+        "Governance doctor exits 0.",
+        "Governance JSON still parses.",
+        "No production or product runtime authority changes are made."
+      ],
+      "requiredScenarioMatrix": [
+        "governance doctor"
+      ],
+      "negativeControls": [
+        "No package manifest, lockfile, migration, product runtime file, push, deploy, or Supabase remote command is permitted by this plan."
+      ],
+      "expectedTestIds": [
+        "CHBOM-004-GOVERNANCE-DOCTOR"
+      ],
+      "expectedTestCountOrInventory": "One CHBOM-004 governance doctor command plus manual report of validate, red-team, diff-check, and status commands.",
+      "artifactType": "run-record and command output",
+      "artifactLocation": ".execution-governance/runtime/run-records and command stdout",
+      "artifactRetentionPolicy": "Runtime artifacts are ignored and must not be committed.",
+      "artifactPrivacyPolicy": "No secrets, PHI, raw prompts, raw health data, or real user data.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": [
+        "Local repository checkout",
+        "Node.js available",
+        "No network required"
+      ],
+      "independentVerifier": "NOT_REQUESTED unless user explicitly requests review",
+      "passRule": "PASS only when governance doctor exits 0 and postflight accepts fresh run-records for all automated requirements.",
+      "failRule": "FAIL when governance doctor exits nonzero or documentation contradicts current authority.",
+      "blockedRule": "BLOCKED when Node.js or the local governance CLI cannot run.",
+      "forbiddenEquivalences": [
+        "Evidence prose is not PASS",
+        "Skipped check is not PASS",
+        "Old artifact is not fresh evidence",
+        "Implementer summary is not independent review"
+      ]
+    }
+  ]
+}

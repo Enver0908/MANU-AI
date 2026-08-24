@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "1.0.0",
+  "contractId": "cursor-hook-bom-compatibility-hotfix-v1",
+  "phaseId": "CHBOM-PHASE-1",
+  "implementer": "Codex after separate plan-lock commit",
+  "implementationState": "NOT_STARTED",
+  "changedFiles": [],
+  "commandsRun": [],
+  "artifacts": [],
+  "scopeChangeRequests": [],
+  "verifierChangeRequests": [],
+  "waivers": [],
+  "independentReview": "NOT_REQUESTED",
+  "residualRisks": [
+    "Implementation has not started. Cursor BOM compatibility remains unresolved until this plan is locked, committed, implemented, and verified."
+  ]
+}
