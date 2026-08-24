@@ -1,0 +1,164 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://manu-ai.local/execution-governance/scope.schema.json",
+  "title": "Execution Governance Scope Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "contractId",
+    "requirements"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "contractId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "requirements": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requirementId",
+          "allowedCreatePaths",
+          "allowedModifyPaths",
+          "protectedPaths",
+          "forbiddenPaths",
+          "allowedCommands",
+          "forbiddenCommands",
+          "allowedDependencies",
+          "forbiddenDependencyChanges",
+          "allowedSchemaChanges",
+          "allowedNetworkOrExternalEffects",
+          "generatedArtifactPolicy",
+          "documentationReconciliation",
+          "maximumChangeScope"
+        ],
+        "properties": {
+          "requirementId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "allowedCreatePaths": {
+            "$ref": "#/definitions/pathList"
+          },
+          "allowedModifyPaths": {
+            "$ref": "#/definitions/pathList"
+          },
+          "protectedPaths": {
+            "$ref": "#/definitions/pathList"
+          },
+          "forbiddenPaths": {
+            "$ref": "#/definitions/pathList"
+          },
+          "allowedCommands": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/command"
+            }
+          },
+          "forbiddenCommands": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "allowedDependencies": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "forbiddenDependencyChanges": {
+            "type": "boolean"
+          },
+          "allowedSchemaChanges": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "allowedNetworkOrExternalEffects": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "generatedArtifactPolicy": {
+            "type": "string",
+            "minLength": 1
+          },
+          "documentationReconciliation": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "maximumChangeScope": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "pathList": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "command": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cwd",
+        "executable",
+        "args",
+        "timeoutSeconds",
+        "networkPolicy",
+        "artifactPolicy"
+      ],
+      "properties": {
+        "cwd": {
+          "type": "string",
+          "minLength": 1
+        },
+        "executable": {
+          "type": "string",
+          "minLength": 1
+        },
+        "args": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "timeoutSeconds": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "networkPolicy": {
+          "type": "string",
+          "enum": [
+            "FORBIDDEN",
+            "LOCAL_ONLY",
+            "EXPLICITLY_ALLOWED"
+          ]
+        },
+        "artifactPolicy": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

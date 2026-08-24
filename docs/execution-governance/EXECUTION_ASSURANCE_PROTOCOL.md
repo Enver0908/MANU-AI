@@ -1,0 +1,182 @@
+# Execution Assurance Protocol
+
+Version: 1.0.0
+
+Status: PHASE_1_CORE_PROTOCOL_STATUS_MODEL_IMPLEMENTED_UNVERIFIED
+
+Authority: `docs/execution-governance/MANU_AI_PLAN_IMPLEMENTATION_ASSURANCE_INTEGRATION_PLAN.md`
+
+## 1. Purpose
+
+This protocol defines the model-independent loop for planning, implementing, verifying, optionally reviewing, and accepting work in MANU-AI. It applies to Codex, Cursor, another LLM, or a human implementer whenever a plan is locked under `.execution-governance/`.
+
+The protocol does not change product runtime behavior. It defines how future work is authorized and evaluated.
+
+## 2. Role Separation
+
+Requirement authority:
+
+- The user and explicitly named authority documents.
+- Owns product decisions, waivers, scope expansion, and final acceptance.
+
+Planner:
+
+- Produces the plan, requirement ledger, scope manifest, acceptance manifest, and lock proposal.
+- May later implement the plan, but cannot independently review its own implementation.
+
+Implementer:
+
+- Applies only requirements whose dependencies are satisfied.
+- Works only inside the allowed scope manifest.
+- Runs required executor checks.
+- May report `IMPLEMENTED_UNVERIFIED` or `EXECUTOR_VERIFIED`.
+- Cannot assign independent `PASS`, cannot waive requirements, and cannot broaden scope.
+
+Automatic verifier:
+
+- Runs protected deterministic checks once Phase 2 and later phases install them.
+- Reads machine manifests instead of trusting evidence prose.
+- May assign automated `PASS`, `FAIL`, or `BLOCKED` only for checks it actually executed.
+
+Independent reviewer:
+
+- Has no authority to modify the implementation being reviewed.
+- Starts only when the user explicitly requests review.
+- If the reviewer fixes findings, the reviewer becomes an implementer for those changes.
+
+Manual reviewer:
+
+- A named human role authorized by the plan or user for manual product, clinical, visual, accessibility, device, legal, or operational judgment.
+
+Final acceptance authority:
+
+- The user.
+- May accept, reject, or explicitly waive a requirement with a versioned waiver record.
+
+## 3. State Axes
+
+The system keeps five independent state axes. A `PASS` on one axis does not imply `PASS` on another.
+
+Plan state:
+
+- `PLAN_DRAFT`: plan is being prepared and cannot be implemented.
+- `PLAN_BLOCKED`: a decision or prerequisite is missing.
+- `VERIFIER_SETUP_REQUIRED`: implementation cannot start because required protected verifier surfaces do not exist.
+- `READY_FOR_IMPLEMENTATION`: plan is complete, but not locked by commit.
+- `LOCKED_FOR_IMPLEMENTATION`: plan hash and lock files are committed as a separate plan-lock commit.
+
+Implementation state:
+
+- `NOT_STARTED`: no implementation work has begun.
+- `IN_PROGRESS`: implementation work is active.
+- `IMPLEMENTED_UNVERIFIED`: implementer reports changes complete, but required executor checks are incomplete or not passing.
+- `BLOCKED`: implementation cannot proceed without a decision or external condition.
+- `FAIL`: implementation was checked and did not meet the contract.
+- `EXECUTOR_VERIFIED`: implementer ran required executor checks and they passed for the recorded scope.
+
+Executor checks:
+
+- `NOT_RUN`: required command or manual executor check was not attempted.
+- `PASS`: command/check ran and met its expected assertions.
+- `FAIL`: command/check ran and failed.
+- `BLOCKED`: command/check could not run because of environment or missing prerequisite.
+- `SKIPPED_WITH_REASON`: skip was explicitly authorized by the plan or user and cannot be treated as PASS.
+
+Independent review:
+
+- `NOT_REQUESTED`: the user has not requested independent review.
+- `REQUESTED`: the user explicitly requested independent review.
+- `IN_PROGRESS`: reviewer is inspecting without modifying implementation.
+- `PASS`: authorized reviewer or protected oracle found no blocking findings for its scope.
+- `FAIL`: authorized reviewer found blocking findings.
+- `BLOCKED`: review could not be completed.
+
+User acceptance:
+
+- `PENDING`: user has not accepted, rejected, or waived.
+- `ACCEPTED`: user accepted the implementation or phase.
+- `REJECTED`: user rejected the implementation or phase.
+- `WAIVED_BY_USER`: user accepted an explicitly recorded waiver.
+
+## 4. Review Rule
+
+Independent review is optional. The system must not ask whether to run independent review after a phase.
+
+If the user does not explicitly request review:
+
+- `independent_review` remains `NOT_REQUESTED`.
+- The implementation can still be committed when executor checks and user acceptance allow it.
+- No text may imply independent review happened.
+
+If the user asks `review`, `audit`, `plan compliance review`, or equivalent:
+
+- Review scope defaults to full plan compliance for the current phase.
+- If the user says `only corrected items`, review scope is limited to corrected requirements, their dependencies, shared verifier surfaces, and required regression checks.
+
+## 5. Scope Change Rule
+
+An implementer must stop before making any change outside the active `scope.json`.
+
+The implementer must create a scope change request record containing:
+
+- `request_id`
+- `reason`
+- `affected_requirement_ids`
+- `requested_create_paths`
+- `requested_modify_paths`
+- `requested_commands`
+- `architecture_impact`
+- `security_privacy_impact`
+- `required_tests`
+- `rollback_impact`
+- `plan_version_change`
+
+No scope expansion is valid until the user approves it and the plan lock is regenerated.
+
+## 6. Waiver Rule
+
+A waiver is valid only when recorded in a waiver record and approved by the user.
+
+A waiver must state:
+
+- Requirement ID
+- Original requirement
+- Waived scope
+- Reason
+- Authority
+- Date
+- Expiration or permanence
+- Residual risk
+- Replacement verification, if any
+
+Absence of evidence is never a waiver.
+
+## 7. Evidence Rule
+
+Evidence prose is not acceptance authority. Evidence documents may summarize results, but the authority for automated checks is the command result or protected verifier artifact named by the acceptance manifest.
+
+Invalid equivalences:
+
+- File exists is not behavior proven.
+- Build passes is not scenario correctness.
+- Screenshot exists is not visual comparison.
+- Report says PASS is not protected oracle PASS.
+- Old artifact is not a fresh run.
+- Local PASS is not clean CI PASS.
+- Skipped check is not PASS.
+- Implementer summary is not independent review.
+
+## 8. Machine Authority Files
+
+Every locked plan must include:
+
+- `contract.json`: identity, authority, requirement ledger, states, and role bindings.
+- `scope.json`: exact allowed and protected change surfaces.
+- `acceptance.json`: exact automated/manual/hybrid acceptance records.
+- `lock.json`: hashes, base commit/tree, protected manifest, artifact freshness policy, and commit binding.
+
+Markdown files are explanatory. JSON files are the machine authority.
+
+## 9. Phase 1 Boundary
+
+Phase 1 installs this protocol, schemas, and templates only. It does not install enforcement hooks, verifier CLI commands, or CI. Until later phases complete, the protocol is authoritative but not technically enforced.

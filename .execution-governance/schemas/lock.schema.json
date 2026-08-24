@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://manu-ai.local/execution-governance/lock.schema.json",
+  "title": "Execution Governance Lock",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "contractId",
+    "planHash",
+    "contractHash",
+    "scopeHash",
+    "acceptanceHash",
+    "baseCommit",
+    "baseTree",
+    "lockCommit",
+    "protectedManifest",
+    "artifactFreshnessPolicy"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "contractId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "planHash": {
+      "type": "string",
+      "minLength": 1
+    },
+    "contractHash": {
+      "type": "string",
+      "minLength": 1
+    },
+    "scopeHash": {
+      "type": "string",
+      "minLength": 1
+    },
+    "acceptanceHash": {
+      "type": "string",
+      "minLength": 1
+    },
+    "baseCommit": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "baseTree": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "lockCommit": {
+      "type": "string"
+    },
+    "protectedManifest": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "sha256"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        }
+      }
+    },
+    "artifactFreshnessPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requiresCommitSha",
+        "requiresRunId",
+        "requiresTimestamp",
+        "rejectsPreLockArtifacts"
+      ],
+      "properties": {
+        "requiresCommitSha": {
+          "type": "boolean"
+        },
+        "requiresRunId": {
+          "type": "boolean"
+        },
+        "requiresTimestamp": {
+          "type": "boolean"
+        },
+        "rejectsPreLockArtifacts": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

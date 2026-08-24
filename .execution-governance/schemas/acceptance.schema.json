@@ -1,0 +1,187 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://manu-ai.local/execution-governance/acceptance.schema.json",
+  "title": "Execution Governance Acceptance Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "contractId",
+    "acceptanceRecords"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "contractId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "acceptanceRecords": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requirementId",
+          "authoritySource",
+          "observableRequirement",
+          "oracleType",
+          "oracleOwner",
+          "oracleLocation",
+          "protectionMechanism",
+          "exactEvidenceCommand",
+          "preconditions",
+          "expectedExitCode",
+          "requiredAssertions",
+          "requiredScenarioMatrix",
+          "negativeControls",
+          "expectedTestIds",
+          "expectedTestCountOrInventory",
+          "artifactType",
+          "artifactLocation",
+          "artifactRetentionPolicy",
+          "artifactPrivacyPolicy",
+          "commitShaBinding",
+          "runIdAndTimestampBinding",
+          "cleanEnvironmentRequirements",
+          "independentVerifier",
+          "passRule",
+          "failRule",
+          "blockedRule",
+          "forbiddenEquivalences"
+        ],
+        "properties": {
+          "requirementId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "authoritySource": {
+            "type": "string",
+            "minLength": 1
+          },
+          "observableRequirement": {
+            "type": "string",
+            "minLength": 1
+          },
+          "oracleType": {
+            "type": "string",
+            "enum": [
+              "AUTOMATED",
+              "MANUAL",
+              "HYBRID",
+              "PROPOSED_NOT_INSTALLED"
+            ]
+          },
+          "oracleOwner": {
+            "type": "string",
+            "minLength": 1
+          },
+          "oracleLocation": {
+            "type": "string",
+            "minLength": 1
+          },
+          "protectionMechanism": {
+            "type": "string",
+            "minLength": 1
+          },
+          "exactEvidenceCommand": {
+            "type": "string"
+          },
+          "preconditions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "expectedExitCode": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "requiredAssertions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "requiredScenarioMatrix": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "negativeControls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "expectedTestIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "expectedTestCountOrInventory": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifactType": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifactLocation": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifactRetentionPolicy": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifactPrivacyPolicy": {
+            "type": "string",
+            "minLength": 1
+          },
+          "commitShaBinding": {
+            "type": "string",
+            "minLength": 1
+          },
+          "runIdAndTimestampBinding": {
+            "type": "string",
+            "minLength": 1
+          },
+          "cleanEnvironmentRequirements": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "independentVerifier": {
+            "type": "string",
+            "minLength": 1
+          },
+          "passRule": {
+            "type": "string",
+            "minLength": 1
+          },
+          "failRule": {
+            "type": "string",
+            "minLength": 1
+          },
+          "blockedRule": {
+            "type": "string",
+            "minLength": 1
+          },
+          "forbiddenEquivalences": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

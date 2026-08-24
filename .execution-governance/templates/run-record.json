@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "1.0.0",
+  "contractId": "replace-with-contract-id",
+  "runId": "replace-with-run-id",
+  "timestamp": "2026-08-24T00:00:00Z",
+  "commitSha": "0000000000000000000000000000000000000000",
+  "actor": "replace-with-actor",
+  "command": {
+    "cwd": ".",
+    "executable": "replace-with-executable",
+    "args": []
+  },
+  "exitCode": 0,
+  "result": "NOT_RUN"
+}

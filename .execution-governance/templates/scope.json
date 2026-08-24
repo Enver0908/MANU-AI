@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "1.0.0",
+  "contractId": "replace-with-contract-id",
+  "requirements": [
+    {
+      "requirementId": "REQ-001",
+      "allowedCreatePaths": [],
+      "allowedModifyPaths": [],
+      "protectedPaths": [],
+      "forbiddenPaths": [],
+      "allowedCommands": [],
+      "forbiddenCommands": [
+        "push",
+        "merge",
+        "deploy",
+        "dependency install/update unless explicitly allowed",
+        "destructive git reset/checkout"
+      ],
+      "allowedDependencies": [],
+      "forbiddenDependencyChanges": true,
+      "allowedSchemaChanges": [],
+      "allowedNetworkOrExternalEffects": [],
+      "generatedArtifactPolicy": "No generated artifact may be accepted unless bound to current commit and run timestamp.",
+      "documentationReconciliation": [],
+      "maximumChangeScope": "Only files listed in allowedCreatePaths and allowedModifyPaths."
+    }
+  ]
+}

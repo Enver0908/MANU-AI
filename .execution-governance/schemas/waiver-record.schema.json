@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://manu-ai.local/execution-governance/waiver-record.schema.json",
+  "title": "Execution Governance Waiver Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "contractId",
+    "waiverId",
+    "requirementId",
+    "originalRequirement",
+    "waivedScope",
+    "reason",
+    "approvedBy",
+    "approvalDate",
+    "expiration",
+    "residualRisk",
+    "replacementVerification"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "contractId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "waiverId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "requirementId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "originalRequirement": {
+      "type": "string",
+      "minLength": 1
+    },
+    "waivedScope": {
+      "type": "string",
+      "minLength": 1
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1
+    },
+    "approvedBy": {
+      "type": "string",
+      "const": "user"
+    },
+    "approvalDate": {
+      "type": "string",
+      "format": "date"
+    },
+    "expiration": {
+      "type": "string",
+      "minLength": 1
+    },
+    "residualRisk": {
+      "type": "string",
+      "minLength": 1
+    },
+    "replacementVerification": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

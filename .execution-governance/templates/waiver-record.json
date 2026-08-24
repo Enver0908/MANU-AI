@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "1.0.0",
+  "contractId": "replace-with-contract-id",
+  "waiverId": "replace-with-waiver-id",
+  "requirementId": "REQ-001",
+  "originalRequirement": "replace-with-original-requirement",
+  "waivedScope": "replace-with-waived-scope",
+  "reason": "replace-with-user-approved-reason",
+  "approvedBy": "user",
+  "approvalDate": "2026-08-24",
+  "expiration": "replace-with-expiration-or-permanent",
+  "residualRisk": "replace-with-residual-risk",
+  "replacementVerification": "replace-with-replacement-verification-or-none"
+}

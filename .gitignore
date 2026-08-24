@@ -41,3 +41,6 @@ pnpm-debug.log*
 Thumbs.db
 *.tsbuildinfo
 *.pem
+
+# Execution governance runtime artifacts
+.execution-governance/runtime/

@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://manu-ai.local/execution-governance/review-record.schema.json",
+  "title": "Execution Governance Review Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "contractId",
+    "reviewId",
+    "requestedByUser",
+    "reviewer",
+    "reviewScope",
+    "reviewerMayModifyImplementation",
+    "result"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "contractId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "reviewId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "requestedByUser": {
+      "type": "boolean",
+      "const": true
+    },
+    "reviewer": {
+      "type": "string",
+      "minLength": 1
+    },
+    "reviewScope": {
+      "type": "string",
+      "enum": [
+        "FULL_PLAN_COMPLIANCE",
+        "TARGETED_CORRECTED_ITEMS"
+      ]
+    },
+    "reviewerMayModifyImplementation": {
+      "type": "boolean",
+      "const": false
+    },
+    "result": {
+      "$ref": "status-model.schema.json#/definitions/independent_review"
+    }
+  }
+}

@@ -2,7 +2,7 @@
 
 Date: 2026-08-24
 
-Status: PHASE_0_AUTHORITY_AND_BASELINE_LOCK_IMPLEMENTED_UNVERIFIED
+Status: PHASE_1_CORE_PROTOCOL_STATUS_MODEL_IMPLEMENTED_UNVERIFIED
 
 Repository authority baseline:
 
@@ -148,6 +148,8 @@ Completion criteria:
 ### Phase 1 - Core Protocol And Status Model
 
 Create the portable protocol, role separation, status model, JSON schemas, templates, and waiver/review records. The protocol must preserve the rule that optional independent review is never auto-requested.
+
+Phase 1 local implementation status, 2026-08-24: implemented-unverified. Added `docs/execution-governance/EXECUTION_ASSURANCE_PROTOCOL.md`, machine-readable schemas under `.execution-governance/schemas/`, templates under `.execution-governance/templates/`, and governance policy under `.execution-governance/policy/governance-policy.json`. No CLI, hook, CI, product code, schema, migration, dependency, or production gate change is included in Phase 1.
 
 ### Phase 2 - Governance CLI And Deterministic Verifier
 
