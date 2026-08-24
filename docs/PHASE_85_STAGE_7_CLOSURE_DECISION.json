@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "phase-85-stage-7-closure-decision-v1",
+  "generatedAt": "2026-08-24T15:03:00+03:00",
+  "status": "STAGE_7_CLOSED",
+  "stage": "Phase 85 Stage 7",
+  "phase": "7.5",
+  "sourceOfAuthority": "docs/PHASE_85_STAGE_7_VISUAL_QA_POLISH_ACCESSIBILITY_CLOSURE_ACTION_PLAN.md",
+  "finalClosureEvidence": "docs/PHASE_85_STAGE_7_FINAL_CLOSURE_EVIDENCE.md",
+  "realDeviceValidationReport": "docs/PHASE_85_STAGE_7_REAL_DEVICE_VALIDATION_REPORT.json",
+  "productionStatus": "NO-GO",
+  "physicalIphone": "WAIVED_NOT_EXECUTED",
+  "stage7Status": "STAGE_7_CLOSED",
+  "phase85FrontendRedesignStatus": "PHASE_85_FRONTEND_REDESIGN_CLOSED_LOCAL_WITH_IOS_WAIVER",
+  "decision": {
+    "closureAllowed": true,
+    "closureGrantedBecause": [
+      "two_consecutive_verify_stage_7_runs_passed",
+      "physical_android_chrome_pass",
+      "installed_android_pwa_pass",
+      "android_talkback_pass",
+      "stage_7_real_device_verifier_passed",
+      "release_verify_passed",
+      "privacy_scan_completed"
+    ],
+    "automationStatus": "PASS_TWO_CONSECUTIVE_VERIFY_STAGE_7_RUNS_AND_RELEASE_VERIFY_PASS",
+    "realDeviceStatus": "APPROVED_WITH_WAIVER",
+    "realDeviceBlockers": [],
+    "nextExecutableStep": "COMMIT_STAGE_7_5_CLOSURE_AFTER_USER_APPROVAL"
+  },
+  "automationRuns": [
+    {
+      "command": "npm run verify:stage-7",
+      "result": "PASS",
+      "openBlocking": 0,
+      "sequence": 1
+    },
+    {
+      "command": "npm run verify:stage-7",
+      "result": "PASS",
+      "openBlocking": 0,
+      "sequence": 2
+    }
+  ],
+  "releaseVerify": {
+    "command": "npm run release:verify",
+    "result": "PASS",
+    "summary": "core package tests passed; app lint passed with 70 existing warnings and 0 errors; app typecheck passed; app unit tests passed 1560 with 9 skipped across 261 files; production build passed; Stage 5 dependency and shell verifies passed; production dependency audit passed with zero vulnerabilities."
+  },
+  "nonClaims": [
+    "Physical iPhone Safari/PWA remains WAIVED_NOT_EXECUTED, not PASS.",
+    "Production remains NO-GO.",
+    "This closure does not authorize push, merge, PR, deploy, production gate change, provider/channel egress, live billing, production schema rollout, or real-data processing."
+  ],
+  "realDevice": {
+    "command": "npm run test:stage-7-real-device",
+    "result": "APPROVED_WITH_WAIVER",
+    "blockers": [],
+    "androidChrome": "PASS",
+    "androidPwa": "PASS",
+    "androidTalkBack": "PASS",
+    "iphoneSafari": "WAIVED_NOT_EXECUTED",
+    "iphonePwa": "WAIVED_NOT_EXECUTED"
+  }
+}

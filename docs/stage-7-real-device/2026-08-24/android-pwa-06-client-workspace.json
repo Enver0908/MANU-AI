@@ -1,0 +1,11 @@
+{
+  "step": "client_workspace",
+  "requestedUrl": "http://127.0.0.1:3110/dashboard?section=clients&clientId=client-mert",
+  "finalUrl": "http://127.0.0.1:3110/dashboard?section=clients&clientId=client-mert",
+  "title": "SiriusAI",
+  "viewport": null,
+  "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+  "standalone": false,
+  "serviceWorkerController": false,
+  "bodyText": "İçeriğe atla\n\nSİRİUSAI\n\nMANU-AI Demo Clinic\n\nOperasyon paneli\nDanışan seç\nPanel dili\nTurkish\nEnglish\nGerman\nFrench\nSpanish\nPortuguese\nCzech\nDemoyu sıfırla\nDanışan listesine dön\n\nAKTİF DANIŞAN\n\nMert Kaya\n\nGenel bakış · whatsapp · +905551110001 · tr\n\nactive\nautopilot\nready\nMesajlar\nAI ile değerlendir\nRemove client\nGenel bakış\nKişisel form\nAktif beslenme plani\n1\nMenu\n!\nAI Asistan Kontrolu\nKritik bilgi\nDışarı aktar\n\nAI Asistan ozeti\n\nDengeli Koç · active · autopilot\n\nAktivasyon penceresi acik\nGuvenlik tamam\nAutopilot hazir\nAI Asistan Kontrolu ac\n\nStatus\n\nAI Asistan Kontrolu\nOK\nAktif beslenme plani\n1 uyumsuzluk\nMenu\nAktif menü yok\nKritik bilgi\n0 active\nAna Sayfa\nDanisanlar\nMesajlar\nUyarilar\nDiger"
+}

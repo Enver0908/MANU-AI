@@ -1,0 +1,11 @@
+{
+  "step": "public_contact",
+  "requestedUrl": "http://127.0.0.1:3110/#iletisim",
+  "finalUrl": "http://127.0.0.1:3110/#iletisim",
+  "title": "SiriusAI | Diyetisyenler için denetimli mesajlaşma asistanı",
+  "viewport": null,
+  "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+  "standalone": false,
+  "serviceWorkerController": false,
+  "bodyText": "Ana içeriğe geç\nSiriusAI\nDavetli klinik erişim\nSiriusAI\n\nDiyetisyen-danışan iletişimi için davetli klinik çalışma alanı.\n\nİletişime geç\nDavet koduyla başla\n\nDavet kodunuz yoksa iletişim formu ile erişim talebinde bulunun.\n\nÇalışma alanına bak\n\nÇALIŞMA ALANI\n\nSiriusAI çalışma alanı\n\nDiyetisyen onaylı, AI destekli iletişim akışını ön izleyin. Her mesaj risk sınıflamasından geçer; uzman onayı olmadan danışana ulaşmaz.\n\nAI taslak hazırlar, diyetisyen onaylar\nOtomatik risk sınıflaması\nYalnızca davetli erişim\nsiriusai · çalışma alanı\nBugün çok yorgunum, hiçbir şey yemek istemedim.\n14:23\nAI TASLAK\nTaslak hazırlanıyor...\n14:23\nDİYETİSYEN\nAnladım, bu zor bir gün gibi görünüyor. Hafif bir şeyler deneyelim mi?\n14:25\nRisk ayrımı:\nDüşük\nDiyetisyen onayı:\nOnaylandı\nErişim:\nDavetli\n\nSÜREÇ\n\nNasıl çalışır?\n\nSiriusAI self-serve bir platform değildir. Erişim, ekip değerlendirmesi ve davet kodu ile açılır.\n\n01\nTalep bırak\n\nİletişim formu aracılığıyla klinik bilgilerinizi ve kullanım amacınızı ekibimizle paylaşın.\n\n02\nEkip değerlendirir\n\nEkibimiz talebinizi inceler, klinik uygunluğu ve pilot koşulları değerlendirir.\n\n03\nDavet kodu oluşturulur\n\nOnaylanan talepler için size özel davet kodu e-posta ile iletilir.\n\n04\nÇalışma alanı bağlanır\n\nDavet kodunuzla ödeme ve hesap bağlama adımlarını tamamlayın, çalışma alanınıza erişin.\n\nGÜVENLİK\n\nGüvenli, denetimli, izole\n\nKlinik iletişim çalışma alanı; AI, güvenlik ve veri yönetimi prensipleri üzerine inşa edilmiştir.\n\nDenetimli AI\n\nYapay zeka taslak üretir;"
+}

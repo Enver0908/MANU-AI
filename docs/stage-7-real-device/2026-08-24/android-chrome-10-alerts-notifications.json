@@ -1,0 +1,11 @@
+{
+  "step": "alerts_or_notifications",
+  "requestedUrl": "http://127.0.0.1:3110/dashboard?section=alerts",
+  "finalUrl": "http://127.0.0.1:3110/dashboard?section=alerts",
+  "title": "SiriusAI",
+  "viewport": null,
+  "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+  "standalone": false,
+  "serviceWorkerController": false,
+  "bodyText": "İçeriğe atla\n\nSİRİUSAI\n\nMANU-AI Demo Clinic\n\nOperasyon paneli\nDanışan seç\nPanel dili\nTurkish\nEnglish\nGerman\nFrench\nSpanish\nPortuguese\nCzech\nDemoyu sıfırla\nUyarılar\n\nAktif kırmızı ve sarı klinik uyarıları bounded API üzerinden listeler.\n\nYenile\nUyarı ara\n\nUyarı şiddeti\n\nTümü (0)\nKırmızı (0)\nSarı (0)\n\nAktif uyarı yok\n\nKırmızı veya sarı kilitli danışan olmadığında liste boş kalır.\n\nFiltrelenmiş kayıt: 0 · Son yenileme: 24.08.2026 13:46:35\n\nAna Sayfa\nDanisanlar\nMesajlar\nUyarilar\nDiger"
+}

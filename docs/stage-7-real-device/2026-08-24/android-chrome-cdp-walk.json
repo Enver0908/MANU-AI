@@ -1,0 +1,42 @@
+{
+  "workflow": [
+    "public_contact",
+    "login",
+    "purchase_valid",
+    "install_guidance",
+    "dashboard_shell",
+    "client_workspace",
+    "forms_dirty_or_save",
+    "nutrition_or_menu",
+    "messaging",
+    "alerts_or_notifications",
+    "settings_or_more",
+    "offline_privacy_lock"
+  ],
+  "baseUrl": "http://127.0.0.1:3110",
+  "cdpUrl": "http://127.0.0.1:9222",
+  "capturedAt": "2026-08-24T11:46:40.673Z",
+  "checks": {
+    "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+    "viewport": {
+      "width": 384,
+      "height": 695,
+      "devicePixelRatio": 2.8125
+    },
+    "standalone": false
+  },
+  "offlinePrivacyLock": {
+    "protectedContentUnmounted": true,
+    "noClientNamesVisible": true,
+    "artifacts": [
+      {
+        "path": "stage-7-real-device/2026-08-24/android-chrome-12-offline-privacy-lock.png",
+        "sha256": "e71084a1559f34db6447510cf5c20fbef742af8f71452d3ee5db0f0670ae9e25"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-chrome-12-offline-privacy-lock.json",
+        "sha256": "3761f628204378820e9a0eac58db91fab46d2a053b1fb795dd95afb39dc2483b"
+      }
+    ]
+  }
+}

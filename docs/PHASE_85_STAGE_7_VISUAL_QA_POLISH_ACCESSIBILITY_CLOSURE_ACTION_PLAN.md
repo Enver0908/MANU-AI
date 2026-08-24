@@ -2,7 +2,7 @@
 
 Date: 2026-08-22
 
-Status: **STAGE_7R_5_HARD_GATE_EVIDENCE_RECLOSED_VALIDATED_COMMIT_PENDING**
+Status: **STAGE_7_CLOSED**
 
 Stage 5 status: **STAGE_5_CLOSED**
 
@@ -16,7 +16,7 @@ Production status: **NO-GO**
 
 This document is the canonical execution plan for Stage 7. Stage 7 closes Phase 85 frontend quality only after a full audit, deterministic remediation, accessibility validation, browser/PWA verification, and final closure evidence.
 
-**Stage 7R supersession update, 2026-08-24:** Stage 7.1, Stage 7.2, Stage 7.3, and Stage 7.4 were implemented and then reviewed against this plan. The review found that all four phases are only partially implemented for the technical intent of this plan. Their evidence is preserved as historical evidence but is superseded for Stage 7 closure by `docs/PHASE_85_STAGE_7R_SUPERSESSION_DECISION.json`, `docs/PHASE_85_STAGE_7R_FINDING_LOCK.json`, and `docs/PHASE_85_STAGE_7R_PHASE_0_AUTHORITY_FINDING_LOCK_EVIDENCE.md`. Stage 7 is not closed, Stage 7.5 is not started, and Stage 7 now requires the Stage 7R remediation sequence before Stage 7.5 can begin.
+**Stage 7R supersession update, 2026-08-24:** Stage 7.1, Stage 7.2, Stage 7.3, and Stage 7.4 were implemented and then reviewed against this plan. The review found that all four phases are only partially implemented for the technical intent of this plan. Their evidence is preserved as historical evidence but is superseded for Stage 7 closure by `docs/PHASE_85_STAGE_7R_SUPERSESSION_DECISION.json`, `docs/PHASE_85_STAGE_7R_FINDING_LOCK.json`, and `docs/PHASE_85_STAGE_7R_PHASE_0_AUTHORITY_FINDING_LOCK_EVIDENCE.md`. Stage 7 is locally STAGE_7_CLOSED, Stage 7.5 is complete, and Stage 7 now requires the Stage 7R remediation sequence before Stage 7.5 can begin.
 
 Stage 7 consumes the closed Stage 5 shell contracts and the closed Stage 6 dashboard workflow contracts. Stage 7 does not reopen backend security, API authorization, RLS, migrations, AI/provider orchestration, real channel egress, live billing, production deployment, or real health-data paths.
 
@@ -690,7 +690,7 @@ Reconciled findings + scenario matrix + remediated frontend -> hard verification
 
 - Stage 7.4 evidence exists.
 - `verify:stage-7` has at least one clean run.
-- Stage 7.5 is not started without separate approval.
+- Stage 7.5 was started only after separate approval and is now locally closed.
 
 ## 13. Phase 7.5 - Final Evidence And Closure Decision
 

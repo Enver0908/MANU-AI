@@ -1,0 +1,421 @@
+{
+  "schemaVersion": "stage7-real-device-validation-v1",
+  "evidenceType": "stage_7_real_device",
+  "sourceRevision": "87a12418ba601a4e6148578c055e6311ba906c61",
+  "sourceTreeClean": false,
+  "packageLockSha256": "8387bfffd51f457d9e1dc09ace889584fbbe8085d2e30d08fd24ba659f0240d9",
+  "generatedAt": "2026-08-24T12:25:25.096Z",
+  "command": "npm run test:stage-7-real-device",
+  "environment": {
+    "nodeVersion": "v22.16.0",
+    "platform": "win32",
+    "architecture": "x64"
+  },
+  "status": "APPROVED_WITH_WAIVER",
+  "productionStatus": "NO-GO",
+  "sourceEvidencePath": "C:\\Users\\Dell\\OneDrive\\Masaüstü\\MANU-AI\\docs\\PHASE_85_STAGE_7_REAL_DEVICE_EVIDENCE_STATUS.json",
+  "validationReportPath": "C:\\Users\\Dell\\OneDrive\\Masaüstü\\MANU-AI\\docs\\PHASE_85_STAGE_7_REAL_DEVICE_VALIDATION_REPORT.json",
+  "requiredCaptureIds": [
+    "androidChrome",
+    "androidPwa",
+    "androidTalkBack",
+    "iphoneSafari",
+    "iphonePwa"
+  ],
+  "requiredAndroidSteps": [
+    "public_contact",
+    "login",
+    "purchase_valid",
+    "install_guidance",
+    "dashboard_shell",
+    "client_workspace",
+    "forms_dirty_or_save",
+    "nutrition_or_menu",
+    "messaging",
+    "alerts_or_notifications",
+    "settings_or_more",
+    "offline_privacy_lock"
+  ],
+  "requiredTalkBackSteps": [
+    "launch",
+    "landmarks",
+    "skip_or_primary_navigation",
+    "purchase_or_login_form",
+    "dashboard_shell",
+    "client_workspace",
+    "messaging",
+    "offline_privacy_lock"
+  ],
+  "waivedCaptureIds": [
+    "iphoneSafari",
+    "iphonePwa"
+  ],
+  "blockers": [],
+  "details": [],
+  "normalizedArtifacts": {
+    "androidChrome": [
+      {
+        "path": "stage-7-real-device/2026-08-24/android-chrome-01-home.png",
+        "sha256": "72c65572a34926e32df7e417638ef7fd59ea800722787f81f993d261fc27181b"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-chrome-01-public-contact.json",
+        "sha256": "0c7ef3d708f41b17cf41ba06ae157a0e84b8ba798d72bec4428f245a613c7f03"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-chrome-01-public-contact.png",
+        "sha256": "4306d20ca91037a58458d7012cd8e519e1d57e5977465633c081772e1bcee705"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-chrome-02-login.json",
+        "sha256": "d335958a495f53a5ef612594e7d159be292c009c9f4511358f31c6c924958e39"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-chrome-02-login.png",
+        "sha256": "006f70fc7b55229d4194f1a94248014d8f99420328a57e848aaf8471524750a5"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-chrome-03-purchase-valid.json",
+        "sha256": "1836a39d52248f31ee0cea2f34c5c9cdd731973d640484aae352c846683fe229"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-chrome-03-purchase-valid.png",
+        "sha256": "5d2a096133cc725d2891f3b71aa407c8feeb3d17725338f14ab4080246ad3b4d"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-chrome-04-install-guidance.json",
+        "sha256": "016ad6c8f291aa5738cee59f2c9eabe7c4d7b6de93fa67a4e919fa9a0c1883de"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-chrome-04-install-guidance.png",
+        "sha256": "d6313529d9f0a830207a0c636d99a344752cd0e727b05275a2e59a1d2fa10530"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-chrome-05-dashboard-shell.json",
+        "sha256": "f795ff77e940fa2a4e96a9d748a1eb3a8d6b39b9975053567382ccc024f62882"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-chrome-05-dashboard-shell.png",
+        "sha256": "309d52e0da706e9e808172d9cf930a7ac0e2999d64241c901942293b7d85ebe5"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-chrome-06-client-workspace.json",
+        "sha256": "85c3055d63ecd78e75b7819404984e315afd59dae008c7c657f2b8522019e7e2"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-chrome-06-client-workspace.png",
+        "sha256": "6bfd2a5e152eb0bced24fa1570a426f9903b7bf79d6c82e925111a7fb21a2aa6"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-chrome-07-forms.json",
+        "sha256": "9332c676645164f12ccc7c61ee3c50d51012a338b8da6a81cb5ee07a338ac164"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-chrome-07-forms.png",
+        "sha256": "4f3a05e9e27b6fb74d1ead236531e2ecc3fab91e101a9514169cd5db7ba9a493"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-chrome-08-nutrition-menu.json",
+        "sha256": "3b63b886f0ef28e040ad8ee99e1fa8b2e340a9c95e03eb7bd09b199f7fb39cda"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-chrome-08-nutrition-menu.png",
+        "sha256": "309d52e0da706e9e808172d9cf930a7ac0e2999d64241c901942293b7d85ebe5"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-chrome-09-messaging.json",
+        "sha256": "8c65cd21b4fa7486b9458eb40ac2a6737d817c80b4e0186c1bd1c06fbbcf3f47"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-chrome-09-messaging.png",
+        "sha256": "129e9686ac99c4c3b2bd146102d30ec1d21bfc0fcf07f8893579f4ed9eb5539f"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-chrome-10-alerts-notifications.json",
+        "sha256": "ec2c7e1eaa5c186a2ced536d64638fa88cdf3205046bfdab91bc2f5fd8c623fa"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-chrome-10-alerts-notifications.png",
+        "sha256": "6218c485a9aef8a5e774a3ee9f1c48e31fb570755e6a18eb95602f9b27c9a98f"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-chrome-11-settings-more.json",
+        "sha256": "1a97a3100be9c06c7b60fd3a0ad761744334ff896a51ff4dccb8a19ff06195d0"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-chrome-11-settings-more.png",
+        "sha256": "a7106767be5cbc24b01a957f4c35705411bb283871fb0414523fda80ff7f8b0b"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-chrome-12-offline-privacy-lock.json",
+        "sha256": "3761f628204378820e9a0eac58db91fab46d2a053b1fb795dd95afb39dc2483b"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-chrome-12-offline-privacy-lock.png",
+        "sha256": "e71084a1559f34db6447510cf5c20fbef742af8f71452d3ee5db0f0670ae9e25"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-chrome-cdp-walk.json",
+        "sha256": "08c1de51124ba259e058ab4f0f71ac5b989c1e57268e4b0ef925d667a18442c8"
+      }
+    ],
+    "androidPwa": [
+      {
+        "path": "stage-7-real-device/2026-08-24/android-pwa-01-launch.png",
+        "sha256": "12022b292171bf1177cf57921d68a1b610d200781e07545a028b11afe9d80778"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-pwa-01-public-contact.json",
+        "sha256": "0c7ef3d708f41b17cf41ba06ae157a0e84b8ba798d72bec4428f245a613c7f03"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-pwa-01-public-contact.png",
+        "sha256": "4dde9784ba6eb705b4feee8e907b571c864cdc48c8e79680e30ba0eb36db7e8d"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-pwa-02-login.json",
+        "sha256": "d335958a495f53a5ef612594e7d159be292c009c9f4511358f31c6c924958e39"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-pwa-02-login.png",
+        "sha256": "bf567c29517049e1d1757df9f29f66a6760117f0497f955d5650eb5fbef817df"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-pwa-03-purchase-valid.json",
+        "sha256": "1836a39d52248f31ee0cea2f34c5c9cdd731973d640484aae352c846683fe229"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-pwa-03-purchase-valid.png",
+        "sha256": "4dde9784ba6eb705b4feee8e907b571c864cdc48c8e79680e30ba0eb36db7e8d"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-pwa-04-install-guidance.json",
+        "sha256": "016ad6c8f291aa5738cee59f2c9eabe7c4d7b6de93fa67a4e919fa9a0c1883de"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-pwa-04-install-guidance.png",
+        "sha256": "b7905b14fd39f8539f4d7276449703d4006de950377a679eee05bc81dc294005"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-pwa-05-dashboard-shell.json",
+        "sha256": "f795ff77e940fa2a4e96a9d748a1eb3a8d6b39b9975053567382ccc024f62882"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-pwa-05-dashboard-shell.png",
+        "sha256": "b7905b14fd39f8539f4d7276449703d4006de950377a679eee05bc81dc294005"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-pwa-06-client-workspace.json",
+        "sha256": "85c3055d63ecd78e75b7819404984e315afd59dae008c7c657f2b8522019e7e2"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-pwa-06-client-workspace.png",
+        "sha256": "70afd4a2ee46745e2d668114190d2a1d88f2e9e38c6daa639923d554481c2ac8"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-pwa-07-forms.json",
+        "sha256": "9332c676645164f12ccc7c61ee3c50d51012a338b8da6a81cb5ee07a338ac164"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-pwa-07-forms.png",
+        "sha256": "70afd4a2ee46745e2d668114190d2a1d88f2e9e38c6daa639923d554481c2ac8"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-pwa-08-nutrition-menu.json",
+        "sha256": "3b63b886f0ef28e040ad8ee99e1fa8b2e340a9c95e03eb7bd09b199f7fb39cda"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-pwa-08-nutrition-menu.png",
+        "sha256": "b7905b14fd39f8539f4d7276449703d4006de950377a679eee05bc81dc294005"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-pwa-09-messaging.json",
+        "sha256": "9906009781b6d1628f75cf399c3692fa39e5a097505d74f690af934831964086"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-pwa-09-messaging.png",
+        "sha256": "b75c9856a881f2c704a11f037013a90c19fcbec8f7e5cd6217cdbfd7955e37b4"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-pwa-10-alerts-notifications.json",
+        "sha256": "317cb23e414101c6dfc3bfeda3e609a5050b924d251e79033bf1410d8049ce35"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-pwa-10-alerts-notifications.png",
+        "sha256": "424ac6274045e4da9c537d16a74e8f7bd4710f20c43cce69808cc65d401f62f5"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-pwa-11-settings-more.json",
+        "sha256": "1a97a3100be9c06c7b60fd3a0ad761744334ff896a51ff4dccb8a19ff06195d0"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-pwa-11-settings-more.png",
+        "sha256": "738f785a7248a9b0f3cc9e5e0e28179e209832c69f3b7fc730b08944a1b0661b"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-pwa-12-offline-privacy-lock.json",
+        "sha256": "3761f628204378820e9a0eac58db91fab46d2a053b1fb795dd95afb39dc2483b"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-pwa-12-offline-privacy-lock.png",
+        "sha256": "b360b24f4ae9a7b65c489f6c6e3edcbad44572d953451e69b6fc0a89a729cd51"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-pwa-cdp-walk.json",
+        "sha256": "f527d57659b98f3891a2c219e1d6632f506b7d22d605f12bf6d85455865a57e3"
+      }
+    ],
+    "androidTalkBack": [
+      {
+        "path": "stage-7-real-device/2026-08-24/android-talkback-00-permission.png",
+        "sha256": "745b4603a331972b455183f1d72dfaba4325607b0c516951256b18a6e064f024"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-talkback-00-permission.uiautomator.xml",
+        "sha256": "28a9226b8e67906a1e45a6314222cb54e16aeb2ee8ddb6d3a19f2b2bfa7087aa"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-talkback-00-welcome.png",
+        "sha256": "7c1293e946b19e7eeee7ef130d98d4485683d9573bc7d8a7ff805cd5eefacad4"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-talkback-00-welcome.uiautomator.xml",
+        "sha256": "ccded22e881f7f3f8518101281d47c0fb620bd87006a483051a1c3b4eee5122d"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-talkback-01-launch.accessibility.txt",
+        "sha256": "2cb9d805aa64a7e981664c9fd1c67eac3fd82e9ecac549ca49a287a600c370db"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-talkback-01-launch.json",
+        "sha256": "3a8c416236cacaac3c9b23f20fb17fd50510819455070f1481c657a3b4e4cf8f"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-talkback-01-launch.png",
+        "sha256": "c67bb2f15d5d6a30f388a4bc9c898a94808fb64d500957977595fd1cec5aa1da"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-talkback-01-launch.uiautomator.xml",
+        "sha256": "874178900ec278a4097b575ac5fc27b95e320d533ecd6bbba7f479c38583e7e3"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-talkback-02-landmarks.accessibility.txt",
+        "sha256": "3b9f82756656a00986dce333b3a4b46470ea86c4661f9a4c42970b320b3f8542"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-talkback-02-landmarks.json",
+        "sha256": "e0007b788b23ca37eb8bb498141a66df0701a2e288b3ed1ec5fa2e6b9d62740b"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-talkback-02-landmarks.png",
+        "sha256": "a592169716991f9fb0dd747f3abc4cef411268c33704504a5c6fe43fdba8077a"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-talkback-02-landmarks.uiautomator.xml",
+        "sha256": "31cd3c9d416b292ab8a08f4adf859fbbe3cb81a681cf40df0bb560160b244c21"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-talkback-03-navigation.accessibility.txt",
+        "sha256": "b4ce9bbd51e0d25b18278509c21013ce1a2bc2a12e9c8afb7a52f66a7aa80303"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-talkback-03-navigation.json",
+        "sha256": "f447a19a3be3ff239700b6517f63db62de1d790404df68a4f1f383937034e91c"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-talkback-03-navigation.png",
+        "sha256": "40b1a860d839a95cb1a883784489f2c60c503d79aa765c6a3a832fa63adfa34b"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-talkback-03-navigation.uiautomator.xml",
+        "sha256": "31cd3c9d416b292ab8a08f4adf859fbbe3cb81a681cf40df0bb560160b244c21"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-talkback-04-purchase-form.accessibility.txt",
+        "sha256": "f1ab46ad8a86126c31a5f228800452eabf56b2e8a80d2a46ee53345732d2dfeb"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-talkback-04-purchase-form.json",
+        "sha256": "0657359a2ac1d91cd81c148e6fd7a718acdae11d0c6d730b9509e5398fdc2c7e"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-talkback-04-purchase-form.png",
+        "sha256": "ded7b60b023854a87cbcac438af838d27c9e9de99c2573af73397619bde27ee9"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-talkback-04-purchase-form.uiautomator.xml",
+        "sha256": "31cd3c9d416b292ab8a08f4adf859fbbe3cb81a681cf40df0bb560160b244c21"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-talkback-05-dashboard-shell.accessibility.txt",
+        "sha256": "63426981515fb9a413f7adc49135ee05d9d7313c082655b1f19cfaf454fb0a4a"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-talkback-05-dashboard-shell.json",
+        "sha256": "607b370582b3282d730cf97c10c7379385f64e17bd52a9f730db5c7898b6f8a1"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-talkback-05-dashboard-shell.png",
+        "sha256": "cfac5b2845131d401ded4a1d84f61e2387961a4742c7d9c1950bc5820f66bbd5"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-talkback-05-dashboard-shell.uiautomator.xml",
+        "sha256": "31cd3c9d416b292ab8a08f4adf859fbbe3cb81a681cf40df0bb560160b244c21"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-talkback-06-client-workspace.accessibility.txt",
+        "sha256": "db5b9c33558ed3657099d1026b3d02b0a010d27ea37ca5e0e268f50a4cedd67a"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-talkback-06-client-workspace.json",
+        "sha256": "41b21e86ae06697540e9f3eabaf49620b1998e98b623857dbba73f1f37f7ac25"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-talkback-06-client-workspace.png",
+        "sha256": "e31ccba6cc8719a8bceeb5eb19d8e58c914f73d69268413ae0cd3b8cef55ae70"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-talkback-06-client-workspace.uiautomator.xml",
+        "sha256": "31cd3c9d416b292ab8a08f4adf859fbbe3cb81a681cf40df0bb560160b244c21"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-talkback-07-messaging.accessibility.txt",
+        "sha256": "1d3ca8c6276a8d4a44c6be809587145f217bf2469f22357e4194e3b45ef7b9a8"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-talkback-07-messaging.json",
+        "sha256": "8b31df7630c2cbc6da5fd76d3c3a76e86d870b99c53d99eca507add7f1a5da29"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-talkback-07-messaging.png",
+        "sha256": "fd7a8668db6c47bff4dc8a5f4170c6d0475bd24e02c1c1d7e92b2ea5c5655922"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-talkback-07-messaging.uiautomator.xml",
+        "sha256": "31cd3c9d416b292ab8a08f4adf859fbbe3cb81a681cf40df0bb560160b244c21"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-talkback-08-offline-privacy-lock.accessibility.txt",
+        "sha256": "801def78a86a51d123b627175e78fe605970fe2a514eaf6c59f6f72722b0e09c"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-talkback-08-offline-privacy-lock.json",
+        "sha256": "22c6051340511cc324e8d0b7a8eeb54e085cafbd06f601d90360b6ec808327ac"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-talkback-08-offline-privacy-lock.png",
+        "sha256": "8e2ba0c2cf9419c86f9d8fc78cb2451aab9c5b5c537a930f314cc64657efd80c"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-talkback-08-offline-privacy-lock.uiautomator.xml",
+        "sha256": "31cd3c9d416b292ab8a08f4adf859fbbe3cb81a681cf40df0bb560160b244c21"
+      },
+      {
+        "path": "stage-7-real-device/2026-08-24/android-talkback-accessibility-walk.json",
+        "sha256": "5933a901843bfa4a6a146fab11139e59f2e4089f3f8697f8246022ae5789e679"
+      }
+    ],
+    "iphoneSafari": [],
+    "iphonePwa": []
+  }
+}

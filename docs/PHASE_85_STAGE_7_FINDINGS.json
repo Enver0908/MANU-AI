@@ -1,7 +1,7 @@
 {
   "schemaVersion": "phase-85-stage-7-findings-v2",
-  "generatedAt": "2026-08-24T09:00:00+03:00",
-  "status": "STAGE_7R_5_HARD_GATE_EVIDENCE_RECLOSED_VALIDATED_COMMIT_PENDING",
+  "generatedAt": "2026-08-24T15:03:00+03:00",
+  "status": "STAGE_7_CLOSED",
   "sourceOfAuthority": "docs/PHASE_85_STAGE_7_VISUAL_QA_POLISH_ACCESSIBILITY_CLOSURE_ACTION_PLAN.md",
   "clock": "2026-08-22T09:00:00+03:00",
   "timezone": "Europe/Istanbul",
@@ -40,5 +40,39 @@
       "npm run build",
       "npm run typecheck"
     ]
+  },
+  "stage7_5": {
+    "status": "STAGE_7_CLOSED",
+    "closureAllowed": true,
+    "blockers": [],
+    "automationRuns": [
+      {
+        "command": "npm run verify:stage-7",
+        "result": "PASS",
+        "openBlocking": 0,
+        "sequence": 1
+      },
+      {
+        "command": "npm run verify:stage-7",
+        "result": "PASS",
+        "openBlocking": 0,
+        "sequence": 2
+      }
+    ],
+    "releaseVerify": {
+      "command": "npm run release:verify",
+      "result": "PASS",
+      "summary": "core package tests passed; app lint passed with 70 existing warnings and 0 errors; app typecheck passed; app unit tests passed 1560 with 9 skipped across 261 files; production build passed; Stage 5 dependency and shell verifies passed; production dependency audit passed with zero vulnerabilities."
+    },
+    "realDevice": {
+      "command": "npm run test:stage-7-real-device",
+      "result": "APPROVED_WITH_WAIVER",
+      "blockers": []
+    },
+    "physicalAndroidChrome": "PASS",
+    "physicalAndroidPwa": "PASS",
+    "androidTalkBack": "PASS",
+    "physicalIphone": "WAIVED_NOT_EXECUTED",
+    "productionStatus": "NO-GO"
   }
 }
