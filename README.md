@@ -8,7 +8,9 @@
 
 **Governance Phase 1 (2026-08-24):** Core protocol and status model are committed as `e6a2a8b`. Authority protocol: `docs/execution-governance/EXECUTION_ASSURANCE_PROTOCOL.md`; schemas/templates: `.execution-governance/`. Phase 1 adds no product runtime, migration, dependency, hook, CI, push, deploy, or production gate change.
 
-**Governance Phase 2 (2026-08-24):** Dependency-free CLI is implemented-unverified locally at `tools/execution-governance/governance-cli.mjs`. It provides `doctor`, `validate`, `lock`, `preflight`, `scope-check`, `run-checks`, `postflight`, and `close`; command execution uses `spawn` with `shell: false`. Phase 2 adds no Cursor hook, root `AGENTS.md`, CI workflow, product runtime, dependency, or production gate change.
+**Governance Phase 2 (2026-08-24):** Dependency-free CLI is committed as `e4de06a` at `tools/execution-governance/governance-cli.mjs`. It provides `doctor`, `validate`, `lock`, `preflight`, `scope-check`, `run-checks`, `postflight`, and `close`; command execution uses `spawn` with `shell: false`. Phase 2 adds no Cursor hook, root `AGENTS.md`, CI workflow, product runtime, dependency, or production gate change.
+
+**Governance Phase 3 (2026-08-24):** Codex/Cursor adapters are implemented-unverified locally. Root `AGENTS.md`, `.cursor/rules/execution-governance.mdc`, `.cursor/hooks.json`, and `.cursor/hooks/governance-guard.mjs` add project instructions and fail-closed Cursor guards. Phase 3 adds no GitHub Actions workflow, product runtime, dependency, migration, or production gate change.
 
 MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to help dietitians manage client conversations, draft safe replies, and route clinically sensitive nutrition or health messages to human review.
 

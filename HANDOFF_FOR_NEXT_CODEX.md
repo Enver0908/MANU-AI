@@ -6,7 +6,9 @@
 
 **Latest governance Phase 1 status (2026-08-24):** Core protocol and status model are committed as `e6a2a8b`. New authority protocol: `docs/execution-governance/EXECUTION_ASSURANCE_PROTOCOL.md`; schemas/templates: `.execution-governance/`. Phase 1 intentionally did not install verifier CLI, Cursor hooks, root `AGENTS.md`, GitHub Actions, or product runtime changes.
 
-**Latest governance Phase 2 status (2026-08-24):** Dependency-free CLI is implemented-unverified locally at `tools/execution-governance/governance-cli.mjs`. Commands: `doctor`, `validate`, `lock`, `preflight`, `scope-check`, `run-checks`, `postflight`, and `close`. Acceptance commands must use `exactEvidenceCommandSpec`; `run-checks` uses `spawn` with `shell: false`. Next governance step after Phase 2 commit is Phase 3: Codex and Cursor adapters.
+**Latest governance Phase 2 status (2026-08-24):** Dependency-free CLI is committed as `e4de06a` at `tools/execution-governance/governance-cli.mjs`. Commands: `doctor`, `validate`, `lock`, `preflight`, `scope-check`, `run-checks`, `postflight`, and `close`. Acceptance commands must use `exactEvidenceCommandSpec`; `run-checks` uses `spawn` with `shell: false`.
+
+**Latest governance Phase 3 status (2026-08-24):** Codex and Cursor adapters are implemented-unverified locally. Root `AGENTS.md`, `.cursor/rules/execution-governance.mdc`, `.cursor/hooks.json`, and `.cursor/hooks/governance-guard.mjs` are present. Next governance step after Phase 3 commit is Phase 4: lifecycle and optional review flow.
 
 **Current authority (2026-08-21):** Stage 6 is locally `STAGE_6_CLOSED`. Android Chrome/PWA physical evidence and final `release:verify` passed. Do not claim iPhone PASS: Stage 6 physical iPhone Safari/PWA was explicitly accepted as `WAIVED_NOT_EXECUTED` and remains required before any iOS production pilot/readiness claim. Authority: `docs/PHASE_85_STAGE_6_CLOSURE_DECISION.json`; evidence: `docs/PHASE_85_STAGE_6_FINAL_CLOSURE_EVIDENCE.md`. Stage 5 remains closed and production remains `NO-GO`.
 

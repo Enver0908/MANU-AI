@@ -2,7 +2,7 @@
 
 Date: 2026-08-24
 
-Status: PHASE_2_GOVERNANCE_CLI_DETERMINISTIC_VERIFIER_IMPLEMENTED_UNVERIFIED
+Status: PHASE_3_CODEX_CURSOR_ADAPTERS_IMPLEMENTED_UNVERIFIED
 
 Repository authority baseline:
 
@@ -155,11 +155,13 @@ Phase 1 local implementation status, 2026-08-24: committed as `e6a2a8b`. Added `
 
 Build a dependency-free Node.js CLI under `tools/execution-governance/` with `doctor`, `validate`, `lock`, `preflight`, `scope-check`, `run-checks`, `postflight`, and `close`. Commands must use `spawn` with `shell: false`, normalized repository-relative paths, and explicit exit code handling.
 
-Phase 2 local implementation status, 2026-08-24: implemented-unverified. Added `tools/execution-governance/governance-cli.mjs` with the required command surface. Acceptance command execution uses `exactEvidenceCommandSpec` objects and `spawn` with `shell: false`; shell-expression executables are rejected. Runtime run records are written only under ignored `.execution-governance/runtime/`.
+Phase 2 local implementation status, 2026-08-24: committed as `e4de06a`. Added `tools/execution-governance/governance-cli.mjs` with the required command surface. Acceptance command execution uses `exactEvidenceCommandSpec` objects and `spawn` with `shell: false`; shell-expression executables are rejected. Runtime run records are written only under ignored `.execution-governance/runtime/`.
 
 ### Phase 3 - Codex And Cursor Adapters
 
 Add root `AGENTS.md`, Cursor project rules, and fail-closed Cursor hooks. Hooks must block forbidden writes, unsafe shell commands, protected path edits, unauthorized dependency changes, and secret reads when an active locked plan does not allow them.
+
+Phase 3 local implementation status, 2026-08-24: implemented-unverified. Added root `AGENTS.md`, `.cursor/rules/execution-governance.mdc`, `.cursor/hooks.json`, and `.cursor/hooks/governance-guard.mjs`. The Cursor guard blocks product writes without an active locked scope, blocks secret-like reads, blocks unsafe shell commands, and enforces active `scope.json` allow/protected path lists when present.
 
 ### Phase 4 - Lifecycle And Optional Review Flow
 

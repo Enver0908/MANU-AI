@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "hooks": {
+    "preToolUse": [
+      {
+        "command": "node .cursor/hooks/governance-guard.mjs preToolUse",
+        "matcher": "Write|Edit|MultiEdit|Delete|StrReplace|CreateFile|Move|Rename",
+        "failClosed": true,
+        "timeout": 5
+      }
+    ],
+    "beforeShellExecution": [
+      {
+        "command": "node .cursor/hooks/governance-guard.mjs beforeShellExecution",
+        "failClosed": true,
+        "timeout": 5
+      }
+    ],
+    "beforeReadFile": [
+      {
+        "command": "node .cursor/hooks/governance-guard.mjs beforeReadFile",
+        "failClosed": true,
+        "timeout": 5
+      }
+    ],
+    "afterFileEdit": [
+      {
+        "command": "node .cursor/hooks/governance-guard.mjs afterFileEdit",
+        "failClosed": true,
+        "timeout": 5
+      }
+    ]
+  }
+}
