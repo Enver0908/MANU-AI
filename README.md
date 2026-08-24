@@ -12,7 +12,9 @@
 
 **Governance Phase 3 (2026-08-24):** Codex/Cursor adapters are committed as `36268c7`. Root `AGENTS.md`, `.cursor/rules/execution-governance.mdc`, `.cursor/hooks.json`, and `.cursor/hooks/governance-guard.mjs` add project instructions and fail-closed Cursor guards. Phase 3 adds no GitHub Actions workflow, product runtime, dependency, migration, or production gate change.
 
-**Governance Phase 4 (2026-08-24):** Planning, implementation, and optional review lifecycle records are implemented-unverified locally. Flow authority: `docs/execution-governance/LIFECYCLE_AND_OPTIONAL_REVIEW_FLOW.md`. No-review remains `independent_review: NOT_REQUESTED` and creates no review record. Phase 4 adds no GitHub Actions workflow, product runtime, dependency, migration, or production gate change.
+**Governance Phase 4 (2026-08-24):** Planning, implementation, and optional review lifecycle records are committed as `dfd7318`. Flow authority: `docs/execution-governance/LIFECYCLE_AND_OPTIONAL_REVIEW_FLOW.md`. No-review remains `independent_review: NOT_REQUESTED` and creates no review record. Phase 4 adds no GitHub Actions workflow, product runtime, dependency, migration, or production gate change.
+
+**Governance Phase 5 (2026-08-24):** Clean CI layer is implemented-unverified locally. Workflow: `.github/workflows/execution-governance.yml`; documentation: `docs/execution-governance/CLEAN_CI_VERIFICATION_LAYER.md`. The workflow is read-only (`contents: read`), uses `pull_request`/`workflow_dispatch`, avoids `pull_request_target`, does not install dependencies, and does not use secrets or deployment behavior. Push/branch protection/default-branch changes remain separate explicit user actions.
 
 MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to help dietitians manage client conversations, draft safe replies, and route clinically sensitive nutrition or health messages to human review.
 

@@ -29,6 +29,7 @@ These repository instructions apply to Codex-compatible agents working from the 
 - Do not broaden allowed files, commands, dependencies, schemas, or network effects beyond the active plan contract.
 - If the active plan does not allow a change, stop and create a scope-change request before editing.
 - Use `node tools/execution-governance/governance-cli.mjs doctor` and `validate` when touching governance files.
+- Treat `.github/workflows/execution-governance.yml` as the read-only clean CI layer. Do not add write permissions, secrets, deployment, package install/update, `pull_request_target`, branch protection, or production-gate behavior without explicit user-approved scope.
 - For product app changes, run the tests required by the active plan. Do not count skipped, blocked, stale, or unrun checks as PASS.
 - Do not commit runtime artifacts under `.execution-governance/runtime/`.
 

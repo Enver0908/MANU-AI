@@ -12,7 +12,9 @@
 
 **Governance Phase 3 (2026-08-24):** Codex/Cursor adapters are committed as `36268c7`. Root `AGENTS.md` defines Codex project instructions, and Cursor project rules/hooks add fail-closed local guards for writes, reads, and shell commands.
 
-**Governance Phase 4 (2026-08-24):** Lifecycle and optional review flow are implemented-unverified locally. It adds machine-shaped records for lifecycle events, implementation reports, scope-change requests, verifier-change requests, and the no-review path.
+**Governance Phase 4 (2026-08-24):** Lifecycle and optional review flow are committed as `dfd7318`. It adds machine-shaped records for lifecycle events, implementation reports, scope-change requests, verifier-change requests, and the no-review path.
+
+**Governance Phase 5 (2026-08-24):** Clean CI layer is implemented-unverified locally. It adds a read-only GitHub Actions workflow for governance CLI validation and workflow hardening checks. Remote execution requires a later push; branch protection and default-branch changes are not part of this phase.
 
 **Prior R3 checkpoint (2026-08-20):** Stage 6 Phase 1-3 remediation R1-R3 is complete locally. The bounded inbox now has filter/resource ownership, latest-response sequencing, abort, mutation invalidation, and stable-id pagination merge; clean local reset and RLS 56/56 zero-skip preserve tenant/actor security authority. Stage 5 remains `STAGE_5_CLOSED`; production remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_R3_INBOX_CONCURRENCY_SECURITY_CLOSURE_EVIDENCE.md`. Phase 4 had not started at this checkpoint.
 

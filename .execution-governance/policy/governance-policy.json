@@ -36,6 +36,24 @@
     "defaultIndependentReview": "NOT_REQUESTED",
     "reviewRecordCreatedWhenNotRequested": false
   },
+  "phase5CiSurfaces": {
+    "workflow": ".github/workflows/execution-governance.yml",
+    "documentation": "docs/execution-governance/CLEAN_CI_VERIFICATION_LAYER.md",
+    "events": [
+      "pull_request",
+      "workflow_dispatch"
+    ],
+    "forbiddenEvents": [
+      "pull_request_target"
+    ],
+    "permissions": {
+      "contents": "read"
+    },
+    "nodeVersion": "22",
+    "installsDependencies": false,
+    "usesSecrets": false,
+    "allowsProductionEffects": false
+  },
   "futureEnforcementSurfaces": {
     "cli": "tools/execution-governance/",
     "codexInstructions": "AGENTS.md",

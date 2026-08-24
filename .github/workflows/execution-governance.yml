@@ -1,0 +1,105 @@
+name: Execution Governance
+
+on:
+  pull_request:
+    branches:
+      - "**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: execution-governance-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  governance:
+    name: Governance verifier
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      MANU_CI_NO_PRODUCTION_EFFECTS: "true"
+    steps:
+      - name: Checkout clean workspace
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Confirm read-only governance boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${MANU_CI_NO_PRODUCTION_EFFECTS}" = "true"
+          test -f tools/execution-governance/governance-cli.mjs
+          node --version
+          git status --short
+
+      - name: Validate governance JSON and CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          node tools/execution-governance/governance-cli.mjs doctor
+          node tools/execution-governance/governance-cli.mjs validate
+          node tools/execution-governance/governance-cli.mjs validate --plan-dir .execution-governance/templates
+
+      - name: Verify workflow hardening
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const fs = require('fs');
+          const workflow = fs.readFileSync('.github/workflows/execution-governance.yml', 'utf8');
+          const required = [
+            'permissions:\n  contents: read',
+            'workflow_dispatch:',
+            'pull_request:',
+            'persist-credentials: false',
+            'node-version: "22"'
+          ];
+          for (const needle of required) {
+            if (!workflow.includes(needle)) {
+              throw new Error(`missing workflow hardening marker: ${needle}`);
+            }
+          }
+          const forbidden = [
+            new RegExp('pull_request' + '_target:'),
+            new RegExp('contents:\\s*' + 'write'),
+            new RegExp('deployments:\\s*' + 'write'),
+            new RegExp('secrets' + '\\.'),
+            new RegExp('\\bnpm\\s+(' + 'install|i|update|audit\\s+fix' + ')\\b'),
+            new RegExp('\\bpnpm\\s+(' + 'install|update|add|remove' + ')\\b'),
+            new RegExp('\\byarn\\s+(' + 'install|add|remove|upgrade' + ')\\b'),
+            new RegExp('\\bgit\\s+' + 'push\\b'),
+            new RegExp('\\bvercel\\s+' + 'deploy\\b'),
+            new RegExp('\\bnetlify\\s+' + 'deploy\\b'),
+            new RegExp('\\bfirebase\\s+' + 'deploy\\b')
+          ];
+          for (const pattern of forbidden) {
+            if (pattern.test(workflow)) {
+              throw new Error(`forbidden workflow pattern found: ${pattern}`);
+            }
+          }
+          console.log('WORKFLOW_HARDENING_OK');
+          NODE
+
+      - name: Verify Git diff hygiene
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --check
+
+      - name: Verify no runtime artifacts are tracked
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git ls-files '.execution-governance/runtime/**' | grep -q .; then
+            echo "Tracked governance runtime artifact found"
+            exit 1
+          fi

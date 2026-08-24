@@ -12,7 +12,9 @@
 
 **Completed governance adapter step (2026-08-24):** Phase 3 Codex/Cursor adapters are committed as `36268c7`. It did not add GitHub Actions, product runtime changes, package dependencies, migrations, or production gate changes.
 
-**Active next governance step after Phase 4 commit (2026-08-24):** Phase 4 lifecycle and optional review flow are implemented-unverified locally. The next governance phase is Phase 5: clean CI verification. Phase 5 must not change product runtime, package dependencies, migrations, deployment, production gates, or default branch settings.
+**Completed governance lifecycle step (2026-08-24):** Phase 4 lifecycle and optional review flow are committed as `dfd7318`. It did not change product runtime, package dependencies, migrations, deployment, production gates, or default branch settings.
+
+**Active next governance step after Phase 5 commit (2026-08-24):** Phase 5 clean CI layer is implemented-unverified locally. The next governance phase is Phase 6: red-team, pilot, and documentation reconciliation. Phase 6 must not change product runtime, package dependencies, migrations, deployment, production gates, branch protection, default branch settings, or remote repository state without separate explicit user command.
 
 **Prior R3 checkpoint (2026-08-20):** Stage 6 Phase 1-3 remediation R1-R3 is complete locally. Inbox request ownership, sequencing, abort, mutation invalidation, and stable-id pagination close the remaining communication concurrency gap; clean local reset and RLS 56/56 zero-skip supply the security evidence. Stage 5 remains closed and production remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_R3_INBOX_CONCURRENCY_SECURITY_CLOSURE_EVIDENCE.md`. Phase 4 was the next eligible unit at this checkpoint.
 

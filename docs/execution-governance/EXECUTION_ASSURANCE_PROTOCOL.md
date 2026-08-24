@@ -2,7 +2,7 @@
 
 Version: 1.0.0
 
-Status: PHASE_4_LIFECYCLE_OPTIONAL_REVIEW_IMPLEMENTED_UNVERIFIED
+Status: PHASE_5_CLEAN_CI_LAYER_IMPLEMENTED_UNVERIFIED
 
 Authority: `docs/execution-governance/MANU_AI_PLAN_IMPLEMENTATION_ASSURANCE_INTEGRATION_PLAN.md`
 
@@ -197,3 +197,18 @@ Required tracked records when applicable:
 The no-review path creates no review record and keeps `independent_review: NOT_REQUESTED`.
 
 See `docs/execution-governance/LIFECYCLE_AND_OPTIONAL_REVIEW_FLOW.md` for the full flow.
+
+## 11. Clean CI Layer
+
+The clean CI layer is defined in `docs/execution-governance/CLEAN_CI_VERIFICATION_LAYER.md` and `.github/workflows/execution-governance.yml`.
+
+The workflow is read-only:
+
+- `permissions: contents: read`
+- `pull_request` and `workflow_dispatch` only
+- no `pull_request_target`
+- no dependency installation
+- no secrets
+- no deploy, push, merge, PR, production gate, provider/channel egress, live billing, production schema rollout, or real-data processing
+
+CI output is an automated executor check only. It does not replace user acceptance and does not create independent review unless the user explicitly requested review through the lifecycle protocol.
