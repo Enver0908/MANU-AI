@@ -86,7 +86,7 @@ function guardFileMutation(payload) {
 function loadActiveScope() {
   const scopePath = path.join(ACTIVE_PLAN_DIR, 'scope.json');
   if (!existsSync(scopePath)) return null;
-  const scope = JSON.parse(readFileSync(scopePath, 'utf8'));
+  const scope = parseJsonText(readFileSync(scopePath, 'utf8'));
   const allowed = new Set();
   const protectedPaths = new Set();
   for (const requirement of scope.requirements || []) {
@@ -196,11 +196,16 @@ function readStdinJson() {
     process.stdin.on('end', () => {
       if (!input.trim()) return resolve({});
       try {
-        resolve(JSON.parse(input));
+        resolve(parseJsonText(input));
       } catch (error) {
         reject(new Error(`invalid JSON payload: ${error.message}`));
       }
     });
     process.stdin.on('error', reject);
   });
+}
+
+function parseJsonText(value) {
+  const text = String(value);
+  return JSON.parse(text.charCodeAt(0) === 0xfeff ? text.slice(1) : text);
 }

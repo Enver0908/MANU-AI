@@ -24,10 +24,33 @@ try {
     assertIncludes(result.stdout, '"permission":"allow"');
   });
 
+  scenario('CHBOM-001-BOM-STDIN-ALLOW hook allows BOM-prefixed governance bootstrap payload', () => {
+    const result = runHook('preToolUse', { file_path: 'docs/execution-governance/CHBOM_ALLOWED.md' }, { bom: true });
+    assertExit(result, 0);
+    assertIncludes(result.stdout, '"permission":"allow"');
+  });
+
+  scenario('CHBOM-001-BOM-SAFE-SHELL-ALLOW hook allows BOM-prefixed safe shell payload', () => {
+    const result = runHook('beforeShellExecution', { command: 'git status --short' }, { bom: true });
+    assertExit(result, 0);
+    assertIncludes(result.stdout, '"permission":"allow"');
+  });
+
   scenario('hook fails closed on malformed payload', () => {
     const result = spawnSync(process.execPath, ['.cursor/hooks/governance-guard.mjs', 'preToolUse'], {
       cwd: repoRoot,
       input: '{',
+      encoding: 'utf8',
+      shell: false
+    });
+    assertExit(result, 2);
+    assertIncludes(result.stdout, 'governance guard failed closed');
+  });
+
+  scenario('CHBOM-001-MALFORMED-DENY hook still fails closed on malformed payload', () => {
+    const result = spawnSync(process.execPath, ['.cursor/hooks/governance-guard.mjs', 'preToolUse'], {
+      cwd: repoRoot,
+      input: '\uFEFF{',
       encoding: 'utf8',
       shell: false
     });
@@ -41,12 +64,30 @@ try {
     assertIncludes(result.stdout, 'Reading secret-like path is blocked');
   });
 
+  scenario('CHBOM-003-BOM-SECRET-READ-DENY hook denies BOM-prefixed secret-like reads', () => {
+    const result = runHook('beforeReadFile', { file_path: '.env' }, { bom: true });
+    assertExit(result, 2);
+    assertIncludes(result.stdout, 'Reading secret-like path is blocked');
+  });
+
   scenario('hook denies unsafe shell commands and allows safe status command', () => {
     const denied = runHook('beforeShellExecution', { command: 'git push origin main' });
     assertExit(denied, 2);
     assertIncludes(denied.stdout, 'Shell command blocked');
     const allowed = runHook('beforeShellExecution', { command: 'git status --short' });
     assertExit(allowed, 0);
+  });
+
+  scenario('CHBOM-003-BOM-UNSAFE-SHELL-DENY hook denies BOM-prefixed unsafe shell commands', () => {
+    const denied = runHook('beforeShellExecution', { command: 'git push origin main' }, { bom: true });
+    assertExit(denied, 2);
+    assertIncludes(denied.stdout, 'Shell command blocked');
+  });
+
+  scenario('CHBOM-003-BOM-PRODUCT-WRITE-DENY hook denies BOM-prefixed product write without active scope', () => {
+    const result = runHook('preToolUse', { file_path: 'app/src/app/page.tsx' }, { bom: true });
+    assertExit(result, 2);
+    assertIncludes(result.stdout, 'Product or broad repository writes are blocked');
   });
 
   scenario('hook enforces active scope allow and protected lists', () => {
@@ -73,6 +114,30 @@ try {
     const outside = runHook('preToolUse', { file_path: 'app/src/app/page.tsx' });
     assertExit(outside, 2);
     rmSync(activeRoot, { recursive: true, force: true });
+  });
+
+  scenario('CHBOM-002-BOM-ACTIVE-SCOPE-ALLOW hook parses BOM-prefixed active scope and allows listed path', () => {
+    withBomActiveScope(() => {
+      const allowed = runHook('preToolUse', { file_path: 'docs/execution-governance/bom-allowed-smoke.md' }, { bom: true });
+      assertExit(allowed, 0);
+      assertIncludes(allowed.stdout, '"permission":"allow"');
+    });
+  });
+
+  scenario('CHBOM-002-BOM-ACTIVE-SCOPE-PROTECTED-DENY hook parses BOM-prefixed active scope and denies protected path', () => {
+    withBomActiveScope(() => {
+      const protectedPath = runHook('preToolUse', { file_path: 'PLAN.md' }, { bom: true });
+      assertExit(protectedPath, 2);
+      assertIncludes(protectedPath.stdout, 'outside active governance scope');
+    });
+  });
+
+  scenario('CHBOM-002-BOM-ACTIVE-SCOPE-OUTSIDE-DENY hook parses BOM-prefixed active scope and denies outside path', () => {
+    withBomActiveScope(() => {
+      const outside = runHook('preToolUse', { file_path: 'app/src/app/page.tsx' }, { bom: true });
+      assertExit(outside, 2);
+      assertIncludes(outside.stdout, 'outside active governance scope');
+    });
   });
 
   scenario('validate rejects shell-wrapper executable specs', () => {
@@ -132,14 +197,20 @@ try {
   });
 
   scenario('scope-check rejects forbidden diff outside manifest', () => {
-    const planDir = createPlanFixture('forbidden-diff', {
-      commandSpec: passCommandSpec(),
-      allowedPaths: []
-    });
-    runCliOk(['lock', '--plan-dir', rel(planDir), '--out', `${rel(planDir)}/lock.json`, '--write', '--allow-dirty']);
-    const result = runCli(['scope-check', '--plan-dir', rel(planDir)]);
-    assertExit(result, 1);
-    assertIncludes(result.stderr, 'not in allowedCreatePaths/allowedModifyPaths');
+    const smokePath = 'docs/execution-governance/phase6-forbidden-diff-smoke.md';
+    writeFileSync(path.join(repoRoot, smokePath), 'forbidden diff smoke\n', 'utf8');
+    try {
+      const planDir = createPlanFixture('forbidden-diff', {
+        commandSpec: passCommandSpec(),
+        allowedPaths: []
+      });
+      runCliOk(['lock', '--plan-dir', rel(planDir), '--out', `${rel(planDir)}/lock.json`, '--write', '--allow-dirty']);
+      const result = runCli(['scope-check', '--plan-dir', rel(planDir)]);
+      assertExit(result, 1);
+      assertIncludes(result.stderr, 'not in allowedCreatePaths/allowedModifyPaths');
+    } finally {
+      rmSync(path.join(repoRoot, smokePath), { force: true });
+    }
   });
 
   scenario('postflight rejects changed test skip/only markers', () => {
@@ -356,10 +427,10 @@ function runCliOk(args) {
   return result;
 }
 
-function runHook(event, payload) {
+function runHook(event, payload, options = {}) {
   return spawnSync(process.execPath, ['.cursor/hooks/governance-guard.mjs', event], {
     cwd: repoRoot,
-    input: JSON.stringify(payload),
+    input: `${options.bom ? '\uFEFF' : ''}${JSON.stringify(payload)}`,
     encoding: 'utf8',
     shell: false
   });
@@ -375,6 +446,33 @@ function run(command, args) {
 
 function writeJson(file, value) {
   writeFileSync(file, `${JSON.stringify(value, null, 2)}\n`, 'utf8');
+}
+
+function writeJsonWithBom(file, value) {
+  writeFileSync(file, `\uFEFF${JSON.stringify(value, null, 2)}\n`, 'utf8');
+}
+
+function withBomActiveScope(fn) {
+  rmSync(activeRoot, { recursive: true, force: true });
+  mkdirSync(activeRoot, { recursive: true });
+  writeJsonWithBom(path.join(activeRoot, 'scope.json'), {
+    schemaVersion: '1.0.0',
+    contractId: 'chbom-active-scope-smoke',
+    requirements: [
+      {
+        requirementId: 'CHBOM-ACTIVE-SCOPE',
+        allowedCreatePaths: ['docs/execution-governance/bom-allowed-smoke.md'],
+        allowedModifyPaths: ['docs/execution-governance/bom-allowed-smoke.md'],
+        protectedPaths: ['PLAN.md'],
+        forbiddenPaths: ['app/src/app/page.tsx']
+      }
+    ]
+  });
+  try {
+    fn();
+  } finally {
+    rmSync(activeRoot, { recursive: true, force: true });
+  }
 }
 
 function assertExit(result, expected) {

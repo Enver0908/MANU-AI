@@ -4,9 +4,9 @@
   "planDirectory": ".execution-governance/plans/cursor-hook-bom-compatibility-hotfix-v1",
   "currentPhase": "CHBOM-PHASE-1",
   "status": {
-    "plan_state": "READY_FOR_IMPLEMENTATION",
-    "implementation_state": "NOT_STARTED",
-    "executor_checks": "NOT_RUN",
+    "plan_state": "LOCKED_FOR_IMPLEMENTATION",
+    "implementation_state": "IMPLEMENTED_UNVERIFIED",
+    "executor_checks": "BLOCKED",
     "independent_review": "NOT_REQUESTED",
     "user_acceptance": "PENDING"
   },
@@ -17,6 +17,27 @@
       "actor": "Codex",
       "eventType": "PLAN_DRAFTED",
       "summary": "Drafted Cursor Hook BOM Compatibility Hotfix plan package after user approval to fix the Cursor BOM hook payload failure without broadening governance boundaries."
+    },
+    {
+      "eventId": "CHBOM-EVENT-002",
+      "timestamp": "2026-08-25T00:00:00.000Z",
+      "actor": "Codex",
+      "eventType": "PLAN_LOCKED",
+      "summary": "Committed the plan-lock package as de50be8 governance: lock cursor hook bom compatibility hotfix."
+    },
+    {
+      "eventId": "CHBOM-EVENT-003",
+      "timestamp": "2026-08-25T00:00:00.000Z",
+      "actor": "Codex",
+      "eventType": "IMPLEMENTATION_STARTED",
+      "summary": "Started the approved hotfix scope after user command, with product, migration, dependency, deployment, Supabase remote, VPS, and production-gate surfaces out of scope."
+    },
+    {
+      "eventId": "CHBOM-EVENT-004",
+      "timestamp": "2026-08-25T00:00:00.000Z",
+      "actor": "Codex",
+      "eventType": "EXECUTOR_CHECK_RECORDED",
+      "summary": "Red-team harness passed 24/24, governance run-checks passed, doctor passed, validate passed, scope-check passed, and git diff --check passed; postflight remains blocked by the existing lock baseCommit self-reference behavior."
     }
   ],
   "independentReviewPolicy": {
