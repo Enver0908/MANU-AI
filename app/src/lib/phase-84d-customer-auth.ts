@@ -101,7 +101,7 @@ function readErrorText(error: unknown): string {
 
 export function isTransientMagicLinkSendFailure(error: unknown) {
   const text = readErrorText(error);
-  if (/\b(429|500|502|503|504)\b/.test(text)) return true;
+  if (/\b(500|502|503|504)\b/.test(text)) return true;
   return /fetch failed|ENOTFOUND|EAI_AGAIN|ETIMEDOUT|ECONNRESET|ECONNREFUSED|UND_ERR|network/i.test(text);
 }
 

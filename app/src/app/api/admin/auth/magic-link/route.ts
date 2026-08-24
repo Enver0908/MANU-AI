@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
   );
 
   if (error) {
-    const status = error.status === 503 ? 503 : 500;
+    const status = error.status === 429 || error.status === 503 ? error.status : 500;
     return NextResponse.json({ error: "magic_link_send_failed" }, { status });
   }
 

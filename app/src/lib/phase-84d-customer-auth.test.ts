@@ -92,6 +92,7 @@ describe("phase 84d customer auth", () => {
     expect(isTransientMagicLinkSendFailure(new Error("fetch failed getaddrinfo ENOTFOUND example.supabase.co"))).toBe(
       true,
     );
+    expect(isTransientMagicLinkSendFailure({ status: 429, message: "over_email_send_rate_limit" })).toBe(false);
     expect(isTransientMagicLinkSendFailure({ status: 503, message: "service unavailable" })).toBe(true);
     expect(isTransientMagicLinkSendFailure({ status: 400, message: "redirect URL not allowed" })).toBe(false);
   });
