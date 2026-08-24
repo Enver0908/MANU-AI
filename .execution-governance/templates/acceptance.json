@@ -11,6 +11,7 @@
       "oracleLocation": "replace-with-oracle-location",
       "protectionMechanism": "PROPOSED_NOT_INSTALLED until verifier setup exists",
       "exactEvidenceCommand": "",
+      "exactEvidenceCommandSpec": null,
       "preconditions": [],
       "expectedExitCode": 0,
       "requiredAssertions": [],

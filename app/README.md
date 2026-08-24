@@ -6,7 +6,9 @@
 
 **Plan-implementation assurance integration (2026-08-24):** Phase 0 is committed as `6318fca` and begins a repository-level governance loop for future plans. Phase 1 adds protocol/schema/template surfaces outside app runtime. These phases do not change app runtime behavior, package scripts, dependencies, Supabase assets, Stage 7 closure, or production `NO-GO`. Canonical plan: `../docs/execution-governance/MANU_AI_PLAN_IMPLEMENTATION_ASSURANCE_INTEGRATION_PLAN.md`.
 
-**Governance Phase 1 (2026-08-24):** Core protocol, status model, schemas, and templates are implemented-unverified outside app runtime. No app source, package script, dependency, Supabase asset, API, UI, or production gate changed.
+**Governance Phase 1 (2026-08-24):** Core protocol, status model, schemas, and templates are committed as `e6a2a8b` outside app runtime. No app source, package script, dependency, Supabase asset, API, UI, or production gate changed.
+
+**Governance Phase 2 (2026-08-24):** Governance CLI is implemented-unverified outside app runtime. No app source, package script, dependency, Supabase asset, API, UI, or production gate changed.
 
 **Prior R3 checkpoint (2026-08-20):** Stage 6 Phase 1-3 remediation R1-R3 is complete locally. The alerts/notifications inbox rejects stale filter/poll responses, invalidates pre-mutation reads, aborts superseded requests, and deduplicates paginated rows. Clean local Supabase reset and RLS 56/56 with zero skipped passed. Stage 5 remains `STAGE_5_CLOSED`; production remains `NO-GO`. Evidence: `../docs/PHASE_85_STAGE_6_R3_INBOX_CONCURRENCY_SECURITY_CLOSURE_EVIDENCE.md`. Phase 4 had not started at this checkpoint.
 

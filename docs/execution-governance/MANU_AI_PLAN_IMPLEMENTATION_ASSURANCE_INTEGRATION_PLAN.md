@@ -2,7 +2,7 @@
 
 Date: 2026-08-24
 
-Status: PHASE_1_CORE_PROTOCOL_STATUS_MODEL_IMPLEMENTED_UNVERIFIED
+Status: PHASE_2_GOVERNANCE_CLI_DETERMINISTIC_VERIFIER_IMPLEMENTED_UNVERIFIED
 
 Repository authority baseline:
 
@@ -149,11 +149,13 @@ Completion criteria:
 
 Create the portable protocol, role separation, status model, JSON schemas, templates, and waiver/review records. The protocol must preserve the rule that optional independent review is never auto-requested.
 
-Phase 1 local implementation status, 2026-08-24: implemented-unverified. Added `docs/execution-governance/EXECUTION_ASSURANCE_PROTOCOL.md`, machine-readable schemas under `.execution-governance/schemas/`, templates under `.execution-governance/templates/`, and governance policy under `.execution-governance/policy/governance-policy.json`. No CLI, hook, CI, product code, schema, migration, dependency, or production gate change is included in Phase 1.
+Phase 1 local implementation status, 2026-08-24: committed as `e6a2a8b`. Added `docs/execution-governance/EXECUTION_ASSURANCE_PROTOCOL.md`, machine-readable schemas under `.execution-governance/schemas/`, templates under `.execution-governance/templates/`, and governance policy under `.execution-governance/policy/governance-policy.json`. No CLI, hook, CI, product code, schema, migration, dependency, or production gate change is included in Phase 1.
 
 ### Phase 2 - Governance CLI And Deterministic Verifier
 
 Build a dependency-free Node.js CLI under `tools/execution-governance/` with `doctor`, `validate`, `lock`, `preflight`, `scope-check`, `run-checks`, `postflight`, and `close`. Commands must use `spawn` with `shell: false`, normalized repository-relative paths, and explicit exit code handling.
+
+Phase 2 local implementation status, 2026-08-24: implemented-unverified. Added `tools/execution-governance/governance-cli.mjs` with the required command surface. Acceptance command execution uses `exactEvidenceCommandSpec` objects and `spawn` with `shell: false`; shell-expression executables are rejected. Runtime run records are written only under ignored `.execution-governance/runtime/`.
 
 ### Phase 3 - Codex And Cursor Adapters
 

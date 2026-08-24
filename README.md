@@ -6,7 +6,9 @@
 
 **Plan-implementation assurance integration (2026-08-24):** Phase 0 is committed as `6318fca`, establishing the baseline for a model-independent governance loop that locks approved plans, constrains allowed change surfaces, separates executor checks from optional user-requested independent review, and keeps user acceptance separate from implementation status. Canonical plan: `docs/execution-governance/MANU_AI_PLAN_IMPLEMENTATION_ASSURANCE_INTEGRATION_PLAN.md`; Phase 0 evidence: `docs/execution-governance/PHASE_0_AUTHORITY_AND_BASELINE_LOCK_EVIDENCE.md`. This governance work does not alter Stage 7 closure or production `NO-GO`.
 
-**Governance Phase 1 (2026-08-24):** Core protocol and status model are implemented-unverified locally. Authority protocol: `docs/execution-governance/EXECUTION_ASSURANCE_PROTOCOL.md`; schemas/templates: `.execution-governance/`. Phase 1 adds no product runtime, migration, dependency, hook, CI, push, deploy, or production gate change.
+**Governance Phase 1 (2026-08-24):** Core protocol and status model are committed as `e6a2a8b`. Authority protocol: `docs/execution-governance/EXECUTION_ASSURANCE_PROTOCOL.md`; schemas/templates: `.execution-governance/`. Phase 1 adds no product runtime, migration, dependency, hook, CI, push, deploy, or production gate change.
+
+**Governance Phase 2 (2026-08-24):** Dependency-free CLI is implemented-unverified locally at `tools/execution-governance/governance-cli.mjs`. It provides `doctor`, `validate`, `lock`, `preflight`, `scope-check`, `run-checks`, `postflight`, and `close`; command execution uses `spawn` with `shell: false`. Phase 2 adds no Cursor hook, root `AGENTS.md`, CI workflow, product runtime, dependency, or production gate change.
 
 MANU-AI is a supervised AI messaging assistant for dietitians. It is designed to help dietitians manage client conversations, draft safe replies, and route clinically sensitive nutrition or health messages to human review.
 

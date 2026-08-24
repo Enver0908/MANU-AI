@@ -6,7 +6,9 @@
 
 **Plan-implementation assurance integration (2026-08-24):** Phase 0 is committed as `6318fca`. It records the repository baseline, persists `docs/execution-governance/MANU_AI_PLAN_IMPLEMENTATION_ASSURANCE_INTEGRATION_PLAN.md`, and starts a model-independent plan lock / scope manifest / optional independent-review workflow. Product runtime, schemas, dependencies, production gates, and Stage 7 closure status were unchanged by Phase 0.
 
-**Governance Phase 1 (2026-08-24):** Core protocol and status model are implemented-unverified locally. It adds role separation, independent-review rules, waiver rules, status axes, JSON schemas, and templates. The next governance phase is Phase 2: dependency-free verifier CLI. Product runtime and production `NO-GO` are unchanged.
+**Governance Phase 1 (2026-08-24):** Core protocol and status model are committed as `e6a2a8b`. It adds role separation, independent-review rules, waiver rules, status axes, JSON schemas, and templates. Product runtime and production `NO-GO` are unchanged.
+
+**Governance Phase 2 (2026-08-24):** Dependency-free verifier CLI is implemented-unverified locally. The next governance phase is Phase 3: Codex and Cursor adapters. Product runtime, dependencies, schemas, production gates, and Stage 7 closure remain unchanged.
 
 **Prior R3 checkpoint (2026-08-20):** Stage 6 Phase 1-3 remediation R1-R3 is complete locally. R3 prevents stale/out-of-order alert and notification requests from overwriting current filters or acknowledged receipt mutations and deduplicates bounded pagination. Clean local Supabase reset and RLS 56/56 with zero skipped passed. Stage 5 remains `STAGE_5_CLOSED`; production remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_R3_INBOX_CONCURRENCY_SECURITY_CLOSURE_EVIDENCE.md`. Phase 4 required separate approval at this checkpoint.
 

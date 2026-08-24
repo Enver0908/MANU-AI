@@ -6,7 +6,9 @@
 
 **Completed governance baseline (2026-08-24):** Plan-implementation assurance Phase 0 is committed as `6318fca`. It persists `docs/execution-governance/MANU_AI_PLAN_IMPLEMENTATION_ASSURANCE_INTEGRATION_PLAN.md`, records the start baseline, and reconciles current authority wording. This does not reopen Stage 7 and does not change production `NO-GO`.
 
-**Active next governance step after Phase 1 commit (2026-08-24):** Phase 1 core protocol and status model are implemented-unverified locally. The next governance phase is Phase 2: build the dependency-free verifier CLI with `doctor`, `validate`, `lock`, `preflight`, `scope-check`, `run-checks`, `postflight`, and `close`. Phase 2 must not install Cursor hooks, root `AGENTS.md`, CI, product runtime changes, or production gate changes.
+**Completed governance protocol step (2026-08-24):** Phase 1 core protocol and status model are committed as `e6a2a8b`. It did not install Cursor hooks, root `AGENTS.md`, CI, product runtime changes, or production gate changes.
+
+**Active next governance step after Phase 2 commit (2026-08-24):** Phase 2 CLI is implemented-unverified locally. The next governance phase is Phase 3: add root Codex instructions and Cursor project rules/hooks. Phase 3 must not add GitHub Actions, product runtime changes, package dependencies, migrations, or production gate changes.
 
 **Prior R3 checkpoint (2026-08-20):** Stage 6 Phase 1-3 remediation R1-R3 is complete locally. Inbox request ownership, sequencing, abort, mutation invalidation, and stable-id pagination close the remaining communication concurrency gap; clean local reset and RLS 56/56 zero-skip supply the security evidence. Stage 5 remains closed and production remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_R3_INBOX_CONCURRENCY_SECURITY_CLOSURE_EVIDENCE.md`. Phase 4 was the next eligible unit at this checkpoint.
 

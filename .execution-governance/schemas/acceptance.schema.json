@@ -33,6 +33,7 @@
           "oracleLocation",
           "protectionMechanism",
           "exactEvidenceCommand",
+          "exactEvidenceCommandSpec",
           "preconditions",
           "expectedExitCode",
           "requiredAssertions",
@@ -89,6 +90,53 @@
           },
           "exactEvidenceCommand": {
             "type": "string"
+          },
+          "exactEvidenceCommandSpec": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": false,
+            "required": [
+              "cwd",
+              "executable",
+              "args",
+              "timeoutSeconds",
+              "networkPolicy",
+              "artifactPolicy"
+            ],
+            "properties": {
+              "cwd": {
+                "type": "string",
+                "minLength": 1
+              },
+              "executable": {
+                "type": "string",
+                "minLength": 1
+              },
+              "args": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "timeoutSeconds": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "networkPolicy": {
+                "type": "string",
+                "enum": [
+                  "FORBIDDEN",
+                  "LOCAL_ONLY",
+                  "EXPLICITLY_ALLOWED"
+                ]
+              },
+              "artifactPolicy": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
           },
           "preconditions": {
             "type": "array",

@@ -6,7 +6,9 @@
 
 **Plan-implementation assurance integration (2026-08-24):** Phase 0 is committed as `6318fca` and started the governance system that will make future implementation plans lockable and machine-checkable across Codex, Cursor, or another implementer. Phase 1 now separates `plan_state`, `implementation_state`, `executor_checks`, `independent_review`, and `user_acceptance`; independent review remains user-triggered only. Canonical plan: `docs/execution-governance/MANU_AI_PLAN_IMPLEMENTATION_ASSURANCE_INTEGRATION_PLAN.md`.
 
-**Governance Phase 1 (2026-08-24):** The core protocol, state model, schemas, and templates are implemented-unverified locally. The system now has a documented machine-contract shape for future plan locks, but technical enforcement waits for later CLI, adapter, and CI phases.
+**Governance Phase 1 (2026-08-24):** The core protocol, state model, schemas, and templates are committed as `e6a2a8b`. The system now has a documented machine-contract shape for future plan locks, and Phase 2 adds the local CLI surface; adapter and CI enforcement remain later phases.
+
+**Governance Phase 2 (2026-08-24):** The deterministic CLI command surface is implemented-unverified locally under `tools/execution-governance/`. It can parse governance JSON, compute locks, check scope, run structured acceptance commands without shell execution, and perform preflight/postflight/close checks. Cursor/Codex adapters and CI remain later phases.
 
 **Prior R3 checkpoint (2026-08-20):** Stage 6 Phase 1-3 remediation R1-R3 is complete locally. The bounded inbox now has filter/resource ownership, latest-response sequencing, abort, mutation invalidation, and stable-id pagination merge; clean local reset and RLS 56/56 zero-skip preserve tenant/actor security authority. Stage 5 remains `STAGE_5_CLOSED`; production remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_R3_INBOX_CONCURRENCY_SECURITY_CLOSURE_EVIDENCE.md`. Phase 4 had not started at this checkpoint.
 
