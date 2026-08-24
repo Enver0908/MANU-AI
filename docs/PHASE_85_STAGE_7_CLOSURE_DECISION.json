@@ -25,7 +25,7 @@
     "automationStatus": "PASS_TWO_CONSECUTIVE_VERIFY_STAGE_7_RUNS_AND_RELEASE_VERIFY_PASS",
     "realDeviceStatus": "APPROVED_WITH_WAIVER",
     "realDeviceBlockers": [],
-    "nextExecutableStep": "COMMIT_STAGE_7_5_CLOSURE_AFTER_USER_APPROVAL"
+    "nextExecutableStep": "AWAIT_USER_APPROVED_NEXT_SCOPE"
   },
   "automationRuns": [
     {

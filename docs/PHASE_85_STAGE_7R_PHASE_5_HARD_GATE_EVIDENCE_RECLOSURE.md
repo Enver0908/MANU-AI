@@ -2,11 +2,13 @@
 
 Date: 2026-08-24
 
-Status: STAGE_7R_5_HARD_GATE_EVIDENCE_RECLOSED_VALIDATED_COMMIT_PENDING
+Status: STAGE_7R_5_HARD_GATE_EVIDENCE_RECLOSED_VALIDATED_COMMITTED
 
 Production: NO-GO
 
 Physical iPhone: WAIVED_NOT_EXECUTED
+
+Current supersession note, 2026-08-24: this file is historical Stage 7R.5 evidence. Its Stage 7-not-closed and Stage 7.5-not-started boundaries were true before the final Stage 7.5 run and are superseded by `docs/PHASE_85_STAGE_7_CLOSURE_DECISION.json`. Current Stage 7 status is locally `STAGE_7_CLOSED`; production remains `NO-GO`; physical iPhone remains `WAIVED_NOT_EXECUTED`, not PASS.
 
 ## Scope
 
@@ -47,10 +49,10 @@ Stage 7R.5 closes the remaining Stage 7R hard-gate and evidence-reclosure findin
 - `npm run verify:stage-7:7.4`: PASS.
 - `npm run verify:stage-7:closure`: command added; constituent commands above were executed individually in this Stage 7R.5 run.
 
-## Non-Claims
+## Historical Non-Claims At This Checkpoint
 
-- Stage 7 is not closed until user approval and commit are completed and a separate Stage 7 closure decision is made.
-- Stage 7.5 is not started.
+- Stage 7 was not closed at this checkpoint; this is superseded by the final Stage 7.5 closure decision.
+- Stage 7.5 had not started at this checkpoint; this is superseded by the final Stage 7.5 closure decision.
 - Playwright WebKit iPhone/iPad evidence is not physical iPhone Safari/PWA evidence.
 - Physical iPhone Safari/PWA remains `WAIVED_NOT_EXECUTED`, not PASS.
 - NVDA smoke is not formal WCAG certification.

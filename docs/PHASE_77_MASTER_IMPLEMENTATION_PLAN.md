@@ -4,6 +4,8 @@ Date: 2026-06-10
 Status: Canonical detailed implementation plan for the manual source authority rebaseline.
 Production pilot: NO-GO.
 
+Current supersession note, 2026-08-24: this file is historical Phase 77 planning evidence. Its R-405, next-step, and open-input wording describes the 2026-06-10 checkpoint only and is superseded for current technical status by later Stage 5, Stage 6, and Stage 7 closure evidence. R-405 is technically resolved locally under `docs/PHASE_85_STAGE_5_DEPENDENCY_SECURITY_REPORT.json`; production remains `NO-GO`; real provider/channel and real-data paths remain closed.
+
 ## Purpose
 
 This document is the detailed execution plan for the MANU-AI product rebaseline requested after the Phase 76 food-rule track. It expands the shorter Phase 77A roadmap/spec into a full implementation plan.
@@ -795,7 +797,7 @@ The following risk families must be tracked through Phase 77:
 - Turkish PDF rendering fails;
 - deprecated proposal history is accidentally treated as source authority;
 - RLS/export/redaction misses new models;
-- R-405 remains unresolved.
+- At this 2026-06-10 checkpoint, R-405 remained unresolved; current local status is technically resolved under the Stage 5 dependency report.
 
 ## Open Product Inputs Needed From User
 

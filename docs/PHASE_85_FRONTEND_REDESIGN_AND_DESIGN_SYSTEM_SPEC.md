@@ -8,11 +8,11 @@ Historical Stage 4D remediation UI checkpoint, 2026-07-28: remediation Faz 1 add
 
 Historical Phase 85 checkpoint, 2026-07-28: Stage 4C remediation remains closed at `cd3d781`; Stage 4D historical closure evidence remains `PASS_LOCAL_STAGE_4D_CLOSED`, but post-closure remediation is active with Faz 1 and Faz 2 implemented locally. At this checkpoint, next was separately approved remediation Faz 3; production remained `NO-GO`.
 
-Date: 2026-07-07
-Status: Stage 1 design foundation, Stage 2 shared component system, Stage 3 public/commercial entry integration, and Stage 4A Danisan Kontrol Paneli complete; Stage 3 is deployed to the hosted sandbox at `https://siriusai.store`. P85-IF-A through P85-IF-I are complete. **Stage 4B Uyari ve Bildirimler is complete (2026-07-12).** Evidence: `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_EVIDENCE.md`. **Stage 4B-2 Mesajlasma is complete locally (2026-07-13).** **Next:** Stage 4B-3 Multimodal Gorsel Guvenligi ve Yanit Orkestrasyonu.
+Historical baseline date: 2026-07-07
+Historical baseline status: Stage 1 design foundation, Stage 2 shared component system, Stage 3 public/commercial entry integration, and Stage 4A Danisan Kontrol Paneli complete; Stage 3 is deployed to the hosted sandbox at `https://siriusai.store`. P85-IF-A through P85-IF-I are complete. **Stage 4B Uyari ve Bildirimler is complete (2026-07-12).** Evidence: `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_EVIDENCE.md`. **Stage 4B-2 Mesajlasma is complete locally (2026-07-13).** The "next Stage 4B-3" wording was true only at this historical checkpoint and is superseded by later Stage 4B-3 through Stage 7 closure evidence.
 Production pilot: NO-GO.
 Clinical production GO: not in scope for Phase 85.
-R-405: Open unless technically remediated through the Phase 22 procedure or formally accepted by external engineering/security approval.
+R-405 historical checkpoint status: open at the 2026-07-07 baseline; current local status is technically resolved under the Stage 5 dependency report.
 R-406: Phase 50/52 local baseline mitigated; current R6 local Supabase/RLS evidence passed 28/28 on 2026-07-11.
 
 ## Goal
@@ -343,7 +343,7 @@ Requires user approval before implementation.
 
 Goal: redesign high-use dashboard panels without changing clinical logic.
 
-Current Stage 6 note, 2026-08-19: Faz 1–3 (bounded client contracts, dashboard home + client workspace, and communication/operational queues) are implemented locally. Phase 4 closure is not started. Evidence: `docs/PHASE_85_STAGE_6_PHASE_3_COMMUNICATION_OPERATIONS_EVIDENCE.md`. Production remains `NO-GO`.
+Historical Stage 6 note, 2026-08-19: Faz 1-3 (bounded client contracts, dashboard home + client workspace, and communication/operational queues) were implemented locally and Phase 4 closure had not started at that checkpoint. This is superseded by later Stage 6 closure and Stage 7 closure evidence. Production remains `NO-GO`.
 
 Expected scope:
 

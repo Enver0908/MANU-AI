@@ -1,10 +1,10 @@
 {
   "schemaVersion": "stage7-real-device-validation-v1",
   "evidenceType": "stage_7_real_device",
-  "sourceRevision": "87a12418ba601a4e6148578c055e6311ba906c61",
+  "sourceRevision": "d0aad98afd857666e9535cf8212fefdf9a2548eb",
   "sourceTreeClean": false,
   "packageLockSha256": "8387bfffd51f457d9e1dc09ace889584fbbe8085d2e30d08fd24ba659f0240d9",
-  "generatedAt": "2026-08-24T12:25:25.096Z",
+  "generatedAt": "2026-08-24T12:32:57.472Z",
   "command": "npm run test:stage-7-real-device",
   "environment": {
     "nodeVersion": "v22.16.0",

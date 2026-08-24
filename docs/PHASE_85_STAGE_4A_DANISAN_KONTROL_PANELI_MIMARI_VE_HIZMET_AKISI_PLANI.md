@@ -6,7 +6,7 @@ Production pilot: NO-GO.
 Clinical production GO: not in scope.
 Deployment: none.
 
-Current supersession note, 2026-08-21: this file is historical Stage 4A planning evidence. The roadmap position below records the intended sequence at the Stage 4A checkpoint; later evidence closed Stage 4B, Stage 4B-2, Stage 4B-3, Stage 4B-4, Stage 4C, Stage 4D, Stage 5, and Stage 6 locally. Stage 7 is not started or authorized by the Stage 6 closure. R-405 is technically resolved locally under the current Stage 5 dependency report, while production remains `NO-GO`.
+Current supersession note, 2026-08-24: this file is historical Stage 4A planning evidence. The roadmap position below records the intended sequence at the Stage 4A checkpoint; later evidence closed Stage 4B, Stage 4B-2, Stage 4B-3, Stage 4B-4, Stage 4C, Stage 4D, Stage 5, Stage 6, and Stage 7 locally. Stage 7 closure is governed by `docs/PHASE_85_STAGE_7_CLOSURE_DECISION.json`. R-405 is technically resolved locally under the current Stage 5 dependency report, while production remains `NO-GO`.
 
 ## Purpose
 

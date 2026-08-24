@@ -4,6 +4,8 @@ Date: 2026-08-24
 
 Status: **STAGE_7R_4_DASHBOARD_PWA_REMEDIATION_VALIDATED_VISUAL_REVIEW_PENDING**
 
+Current supersession note, 2026-08-24: this file is historical Stage 7R.4 evidence. Its remaining hard-gate and later-phase-not-started boundaries were true at this checkpoint and are superseded by Stage 7R.5 and the final Stage 7.5 closure decision. Current Stage 7 authority is `docs/PHASE_85_STAGE_7_CLOSURE_DECISION.json`; Stage 7 is locally `STAGE_7_CLOSED`; production remains `NO-GO`; physical iPhone remains `WAIVED_NOT_EXECUTED`, not PASS.
+
 Stage 5: **STAGE_5_CLOSED**
 
 Stage 6: **STAGE_6_CLOSED**
@@ -79,11 +81,11 @@ Stage 7R lock impact:
 
 - No S7R lock item is newly marked resolved by this phase because the remaining lock items are assigned to visual approval or Stage 7R.5 hard-gate/AT/performance/build-readiness work.
 
-## Non-Claims
+## Historical Non-Claims At This Checkpoint
 
-- Stage 7 is not closed.
-- Stage 7.5 is not started.
-- Stage 7R.5 is not started.
+- Stage 7 was not closed at this checkpoint; this is superseded by the final Stage 7.5 closure decision.
+- Stage 7.5 had not started at this checkpoint; this is superseded by the final Stage 7.5 closure decision.
+- Stage 7R.5 had not started at this checkpoint; this is superseded by later Stage 7R.5 evidence.
 - Physical iPhone Safari/PWA remains `WAIVED_NOT_EXECUTED`, not PASS.
 - Production remains `NO-GO`.
 - WebKit iPhone/iPad Playwright results are browser automation/emulation coverage, not physical iPhone evidence.

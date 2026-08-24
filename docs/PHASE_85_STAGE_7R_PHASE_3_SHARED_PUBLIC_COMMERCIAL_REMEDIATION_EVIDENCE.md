@@ -4,6 +4,8 @@ Date: 2026-08-24
 
 Status: **STAGE_7R_3_SHARED_PUBLIC_REMEDIATION_VALIDATED_VISUAL_REVIEW_PENDING**
 
+Current supersession note, 2026-08-24: this file is historical Stage 7R.3 evidence. Its open-finding and later-phase-not-started boundaries were true at this checkpoint and are superseded by Stage 7R.4, Stage 7R.5, and the final Stage 7.5 closure decision. Current Stage 7 authority is `docs/PHASE_85_STAGE_7_CLOSURE_DECISION.json`; Stage 7 is locally `STAGE_7_CLOSED`; production remains `NO-GO`; physical iPhone remains `WAIVED_NOT_EXECUTED`, not PASS.
+
 Stage 5: **STAGE_5_CLOSED**
 
 Stage 6: **STAGE_6_CLOSED**
@@ -99,17 +101,17 @@ Resolved:
 
 - `S7R-F-009`: runtime focus and ARIA fixes need trusted validation.
 
-Still open:
+Still open at this checkpoint:
 
 - `S7R-F-004`: committed/user-approved visual comparison baseline remains outside this implementation.
 - `S7R-F-010`: representative visual approval remains pending.
 - `S7R-F-002`, `S7R-F-006`, `S7R-F-007`, `S7R-F-008`, `S7R-F-011`, `S7R-F-012`, `S7R-F-013`, and `S7R-F-015` remain assigned to later Stage 7R closure work.
 
-## Non-Claims
+## Historical Non-Claims At This Checkpoint
 
-- Stage 7 is not closed.
-- Stage 7.5 is not started.
-- Stage 7R.4 is not started.
+- Stage 7 was not closed at this checkpoint; this is superseded by the final Stage 7.5 closure decision.
+- Stage 7.5 had not started at this checkpoint; this is superseded by the final Stage 7.5 closure decision.
+- Stage 7R.4 had not started at this checkpoint; this is superseded by later Stage 7R.4 evidence.
 - Physical iPhone Safari/PWA remains `WAIVED_NOT_EXECUTED`, not PASS.
 - Production remains `NO-GO`.
 - WebKit iPhone/iPad Playwright results are browser emulation, not physical iPhone evidence.

@@ -1,7 +1,7 @@
 {
   "schemaVersion": "phase-85-stage-7r-supersession-decision-v1",
   "generatedAt": "2026-08-24T09:00:00+03:00",
-  "status": "STAGE_7R_5_HARD_GATE_EVIDENCE_RECLOSED_VALIDATED_COMMIT_PENDING",
+  "status": "STAGE_7R_5_HARD_GATE_EVIDENCE_RECLOSED_VALIDATED_COMMITTED",
   "stage": "Phase 85 Stage 7R",
   "phase": "7R.0",
   "sourceOfAuthority": "docs/PHASE_85_STAGE_7_VISUAL_QA_POLISH_ACCESSIBILITY_CLOSURE_ACTION_PLAN.md",
@@ -14,11 +14,11 @@
   "stage6": "STAGE_6_CLOSED",
   "decision": {
     "stage7OriginalPhase7_1Through7_4Status": "SUPERSEDED_FOR_STAGE_7_CLOSURE",
-    "stage7ClosureStatus": "REMEDIATION_REQUIRED_BEFORE_STAGE_7_5",
-    "stage7RStatus": "HARD_GATE_EVIDENCE_RECLOSED_VALIDATED_COMMIT_PENDING",
+    "stage7ClosureStatus": "SUPERSEDED_BY_STAGE_7_5_CLOSURE",
+    "stage7RStatus": "HARD_GATE_EVIDENCE_RECLOSED_VALIDATED_COMMITTED",
     "oldEvidencePolicy": "PRESERVE_DO_NOT_REWRITE",
     "runtimeChangesFrom7_2Through7_4": "PROVISIONAL_UNTIL_TRUSTED_REBASELINE",
-    "nextExecutablePhase": "7R.5_VISUAL_REVIEW_AND_COMMIT"
+    "nextExecutablePhase": "AWAIT_USER_APPROVED_NEXT_SCOPE"
   },
   "phaseProgress": {
     "7R.0": "complete",
@@ -26,7 +26,7 @@
     "7R.2": "trusted_baseline_recorded",
     "7R.3": "implemented_validated_committed",
     "7R.4": "implemented_validated_committed",
-    "7R.5": "implemented_validated_commit_pending"
+    "7R.5": "implemented_validated_committed"
   },
   "authorityOrderForStage7Closure": [
     "Current Git state, committed code, and uncommitted worktree evidence",
@@ -59,9 +59,9 @@
       "supersededForClosureBecause": "The gate did not run the complete test/build/performance/visual closure chain, NVDA output was not verified, TalkBack preparation was absent, and skipped/teardown behavior was not hard-gated."
     }
   ],
-  "nonClaims": [
-    "Stage 7 is not closed until user approval and commit are completed and Stage 7 closure is explicitly declared.",
-    "Stage 7.5 is not started.",
+  "historicalNonClaimsBeforeStage7_5": [
+    "At the Stage 7R.0 through Stage 7R.5 checkpoints, Stage 7 closure was not yet declared; this is superseded by docs/PHASE_85_STAGE_7_CLOSURE_DECISION.json.",
+    "At the Stage 7R.0 through Stage 7R.5 checkpoints, Stage 7.5 was not yet complete; this is superseded by docs/PHASE_85_STAGE_7_CLOSURE_DECISION.json.",
     "Physical iPhone Safari/PWA remains WAIVED_NOT_EXECUTED, not PASS.",
     "Playwright WebKit evidence is not physical iPhone Safari/PWA evidence.",
     "NVDA smoke remains a local smoke evidence artifact, not formal WCAG certification.",

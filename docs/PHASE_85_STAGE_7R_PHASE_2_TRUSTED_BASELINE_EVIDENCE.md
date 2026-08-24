@@ -4,6 +4,8 @@ Date: 2026-08-24
 
 Status: **STAGE_7R_2_TRUSTED_BASELINE_RECORDED_VISUAL_APPROVAL_PENDING**
 
+Current supersession note, 2026-08-24: this file is historical Stage 7R.2 evidence. Its open-finding and Stage 7-not-closed boundaries were true at this checkpoint and are superseded by Stage 7R.3, Stage 7R.4, Stage 7R.5, and the final Stage 7.5 closure decision. Current Stage 7 authority is `docs/PHASE_85_STAGE_7_CLOSURE_DECISION.json`; Stage 7 is locally `STAGE_7_CLOSED`; production remains `NO-GO`; physical iPhone remains `WAIVED_NOT_EXECUTED`, not PASS.
+
 Stage 5: **STAGE_5_CLOSED**
 
 Stage 6: **STAGE_6_CLOSED**
@@ -86,7 +88,7 @@ The manifest status is **AWAITING_USER_VISUAL_APPROVAL**. This manifest is not a
 
 No visual-approval locked finding is resolved in this phase until the user approves the representative visual set.
 
-## Still Open
+## Still Open At This Checkpoint
 
 - `S7R-F-004`: visual QA still needs user-approved baseline.
 - `S7R-F-010`: representative visual approval remains missing.
@@ -94,10 +96,10 @@ No visual-approval locked finding is resolved in this phase until the user appro
 - `S7R-F-006`: full committed/generated artifact privacy scanning remains open.
 - `S7R-F-009`: runtime focus and ARIA remediation remains Stage 7R.3.
 
-## Non-Claims
+## Historical Non-Claims At This Checkpoint
 
-- Stage 7 is not closed.
-- Stage 7.5 is not started.
+- Stage 7 was not closed at this checkpoint; this is superseded by the final Stage 7.5 closure decision.
+- Stage 7.5 had not started at this checkpoint; this is superseded by the final Stage 7.5 closure decision.
 - Visual approval is not granted by this evidence.
 - WebKit iPhone emulation is not physical iPhone Safari/PWA PASS.
 - Production remains NO-GO.
