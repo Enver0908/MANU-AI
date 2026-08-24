@@ -2,7 +2,7 @@
 
 Date: 2026-08-24
 
-Status: PHASE_6_RED_TEAM_PILOT_CLOSURE_IMPLEMENTED_UNVERIFIED
+Status: PHASE_6_RED_TEAM_PILOT_CLOSURE_COMMITTED_LOCAL
 
 Repository authority baseline:
 
@@ -173,11 +173,11 @@ Phase 4 local implementation status, 2026-08-24: committed as `dfd7318`. Added l
 
 Add a read-only GitHub Actions workflow for clean checkout verification. It must verify plan hash, protected manifest integrity, test inventory, allowed diff, artifact freshness, and executor check results without using evidence Markdown as acceptance authority. Remote activation, branch protection, push, and default branch changes require separate explicit user commands.
 
-Phase 5 local implementation status, 2026-08-24: implemented-unverified. Added `.github/workflows/execution-governance.yml` as a read-only clean CI workflow and `docs/execution-governance/CLEAN_CI_VERIFICATION_LAYER.md`. The workflow runs governance `doctor`, `validate`, template validation, hardening checks, diff hygiene, and tracked-runtime-artifact checks. It does not use `pull_request_target`, secrets, dependency installation, deployment, push, merge, PR creation, branch protection, or production gate changes.
+Phase 5 local implementation status, 2026-08-24: committed as `d6cbf0d`. Added `.github/workflows/execution-governance.yml` as a read-only clean CI workflow and `docs/execution-governance/CLEAN_CI_VERIFICATION_LAYER.md`. The workflow runs governance `doctor`, `validate`, template validation, hardening checks, diff hygiene, and tracked-runtime-artifact checks. It does not use `pull_request_target`, secrets, dependency installation, deployment, push, merge, PR creation, branch protection, or production gate changes. Remote execution still requires a separate push and GitHub Actions run.
 
 ### Phase 6 - Red-Team, Pilot, And Documentation Reconciliation
 
-Phase 6 local implementation status, 2026-08-24: implemented-unverified. Added `tools/execution-governance/red-team-harness.mjs`, extended governance `postflight` to reject stale automated run-records and changed test skip/only markers, added the red-team harness to `.github/workflows/execution-governance.yml`, and reconciled the governance continuity documents. The harness exercises synthetic tamper, stale artifact, forbidden diff, skip/only, shell-wrapper, hook-crash, no-review, full-review, targeted-review, workflow-hardening, and runtime-artifact scenarios. It uses ignored synthetic runtime fixtures only and does not change product runtime, dependencies, migrations, provider/channel egress, live billing, production schema rollout, production gates, deployment, branch protection, default branch, push, PR, merge, or real health-data paths.
+Phase 6 local implementation status, 2026-08-24: committed as `81b78f4`. Added `tools/execution-governance/red-team-harness.mjs`, extended governance `postflight` to reject stale automated run-records and changed test skip/only markers, added the red-team harness to `.github/workflows/execution-governance.yml`, and reconciled the governance continuity documents. The harness exercises synthetic tamper, stale artifact, forbidden diff, skip/only, shell-wrapper, hook-crash, no-review, full-review, targeted-review, workflow-hardening, and runtime-artifact scenarios. It uses ignored synthetic runtime fixtures only and does not change product runtime, dependencies, migrations, provider/channel egress, live billing, production schema rollout, production gates, deployment, branch protection, default branch, push, PR, merge, or real health-data paths. Remote CI evidence still requires a separate push and GitHub Actions run.
 
 ## Current Known Constraints
 

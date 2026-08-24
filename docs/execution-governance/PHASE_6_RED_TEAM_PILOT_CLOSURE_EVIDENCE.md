@@ -2,7 +2,7 @@
 
 Date: 2026-08-24
 
-Status: PHASE_6_RED_TEAM_PILOT_CLOSURE_IMPLEMENTED_UNVERIFIED
+Status: PHASE_6_RED_TEAM_PILOT_CLOSURE_COMMITTED_LOCAL
 
 ## Scope
 
@@ -123,10 +123,10 @@ rg -n "(sk_live_[A-Za-z0-9]{16,}|whsec_[A-Za-z0-9]{16,}|AKIA[0-9A-Z]{16}|-----BE
 Result: PASS, exit code `1`, meaning no token/key-pattern match was found.
 
 ```text
-rg -n "Active next governance step after Phase 5|next governance step after Phase 5|Phase 6 must not change product runtime|PHASE_5_CLEAN_CI_LAYER_IMPLEMENTED_UNVERIFIED" README.md PLAN.md PROJECT_PLAN.md HANDOFF_FOR_NEXT_CODEX.md app/README.md docs/NEXT_PHASE_EXECUTION_PLAN.md docs/RISK_REGISTER.md docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md docs/execution-governance
+rg -n "Active next governance step after Phase 5|next governance step after Phase 5|Phase 6 must not change product runtime|PHASE_5_CLEAN_CI_LAYER_IMPLEMENTED_UNVERIFIED|PHASE_6_RED_TEAM_PILOT_CLOSURE_IMPLEMENTED_UNVERIFIED" README.md PLAN.md PROJECT_PLAN.md HANDOFF_FOR_NEXT_CODEX.md app/README.md docs/NEXT_PHASE_EXECUTION_PLAN.md docs/RISK_REGISTER.md docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md docs/execution-governance
 ```
 
-Result: PASS_WITH_HISTORICAL_MATCH, exit code `0`. The only match is `docs/execution-governance/PHASE_5_CLEAN_CI_LAYER_EVIDENCE.md`, which is the historical Phase 5 evidence record. No active Phase 5 next-step instruction remains in continuity docs.
+Result before commit: PASS_WITH_HISTORICAL_MATCH, exit code `0`. The only match was the then-current historical Phase 5 evidence record. After commit `81b78f4`, Phase 5 and Phase 6 evidence statuses were reconciled to `COMMITTED_LOCAL`, and no active Phase 5 next-step instruction remains in continuity docs.
 
 ```text
 git status --short --branch
@@ -134,8 +134,8 @@ git status --short --branch
 
 Result: PASS, exit code `0`.
 
-Status showed branch `codex/stage-4c-remediation...origin/codex/stage-4c-remediation [ahead 51]` with only Phase 6 governance/doc changes pending.
+Status before the Phase 6 commit showed branch `codex/stage-4c-remediation...origin/codex/stage-4c-remediation [ahead 51]` with only Phase 6 governance/doc changes pending.
 
 ## Residual Status
 
-Phase 6 is `IMPLEMENTED_UNVERIFIED` until the user accepts and commits it. The local red-team harness passed, but remote GitHub Actions evidence does not exist because push and workflow execution were not requested.
+Phase 6 was committed after user approval as `81b78f4 feat: add governance red-team closure harness`. The local red-team harness passed, but remote GitHub Actions evidence does not exist because push and workflow execution were not requested.
