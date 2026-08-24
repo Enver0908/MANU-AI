@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "1.0.0",
+  "contractId": "replace-with-contract-id",
+  "requestId": "replace-with-request-id",
+  "reason": "replace-with-reason-before-changing-verifier",
+  "affectedRequirementIds": [],
+  "requestedAcceptanceChanges": [],
+  "protectionImpact": "replace-with-protection-impact",
+  "negativeControls": [],
+  "requiredReview": "USER_DECISION_REQUIRED",
+  "planVersionChange": "requires new plan version and lock hash",
+  "status": "REQUESTED"
+}

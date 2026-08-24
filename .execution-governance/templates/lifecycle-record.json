@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "1.0.0",
+  "contractId": "replace-with-contract-id",
+  "planDirectory": ".execution-governance/plans/replace-with-plan-id",
+  "currentPhase": "replace-with-phase-id",
+  "status": {
+    "plan_state": "LOCKED_FOR_IMPLEMENTATION",
+    "implementation_state": "NOT_STARTED",
+    "executor_checks": "NOT_RUN",
+    "independent_review": "NOT_REQUESTED",
+    "user_acceptance": "PENDING"
+  },
+  "events": [],
+  "independentReviewPolicy": {
+    "defaultState": "NOT_REQUESTED",
+    "requiresExplicitUserRequest": true,
+    "createReviewRecordWhenNotRequested": false,
+    "reviewerMayModifyImplementation": false
+  }
+}

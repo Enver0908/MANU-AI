@@ -22,3 +22,5 @@ Rules:
 - Independent review is user-triggered only. Do not ask whether to review; record `NOT_REQUESTED` when the user has not requested it.
 - You may report `IMPLEMENTED_UNVERIFIED` or executor check results. You may not claim independent review PASS for your own implementation.
 - If you need scope expansion, stop before editing and create a scope-change request.
+- If you need verifier or acceptance changes, stop before editing and create a verifier-change request.
+- Do not create a review record when independent review was not requested by the user.

@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://manu-ai.local/execution-governance/scope-change-request.schema.json",
+  "title": "Execution Governance Scope Change Request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "contractId",
+    "requestId",
+    "reason",
+    "affectedRequirementIds",
+    "requestedCreatePaths",
+    "requestedModifyPaths",
+    "requestedCommands",
+    "architectureImpact",
+    "securityPrivacyImpact",
+    "requiredTests",
+    "rollbackImpact",
+    "planVersionChange",
+    "status"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "contractId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "requestId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1
+    },
+    "affectedRequirementIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "requestedCreatePaths": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "requestedModifyPaths": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "requestedCommands": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "architectureImpact": {
+      "type": "string",
+      "minLength": 1
+    },
+    "securityPrivacyImpact": {
+      "type": "string",
+      "minLength": 1
+    },
+    "requiredTests": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "rollbackImpact": {
+      "type": "string",
+      "minLength": 1
+    },
+    "planVersionChange": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "REQUESTED",
+        "APPROVED_BY_USER",
+        "REJECTED_BY_USER",
+        "SUPERSEDED"
+      ]
+    }
+  }
+}

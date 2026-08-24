@@ -27,6 +27,15 @@
     "schemas": ".execution-governance/schemas/",
     "templates": ".execution-governance/templates/"
   },
+  "phase4LifecycleSurfaces": {
+    "flow": "docs/execution-governance/LIFECYCLE_AND_OPTIONAL_REVIEW_FLOW.md",
+    "lifecycleRecordSchema": ".execution-governance/schemas/lifecycle-record.schema.json",
+    "implementationReportSchema": ".execution-governance/schemas/implementation-report.schema.json",
+    "scopeChangeRequestSchema": ".execution-governance/schemas/scope-change-request.schema.json",
+    "verifierChangeRequestSchema": ".execution-governance/schemas/verifier-change-request.schema.json",
+    "defaultIndependentReview": "NOT_REQUESTED",
+    "reviewRecordCreatedWhenNotRequested": false
+  },
   "futureEnforcementSurfaces": {
     "cli": "tools/execution-governance/",
     "codexInstructions": "AGENTS.md",

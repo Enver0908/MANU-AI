@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "1.0.0",
+  "contractId": "replace-with-contract-id",
+  "requestId": "replace-with-request-id",
+  "reason": "replace-with-reason-before-editing",
+  "affectedRequirementIds": [],
+  "requestedCreatePaths": [],
+  "requestedModifyPaths": [],
+  "requestedCommands": [],
+  "architectureImpact": "replace-with-architecture-impact",
+  "securityPrivacyImpact": "replace-with-security-privacy-impact",
+  "requiredTests": [],
+  "rollbackImpact": "replace-with-rollback-impact",
+  "planVersionChange": "requires new plan version and lock hash",
+  "status": "REQUESTED"
+}

@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://manu-ai.local/execution-governance/implementation-report.schema.json",
+  "title": "Execution Governance Implementation Report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "contractId",
+    "phaseId",
+    "implementer",
+    "implementationState",
+    "changedFiles",
+    "commandsRun",
+    "artifacts",
+    "scopeChangeRequests",
+    "verifierChangeRequests",
+    "waivers",
+    "independentReview",
+    "residualRisks"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "contractId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "phaseId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "implementer": {
+      "type": "string",
+      "minLength": 1
+    },
+    "implementationState": {
+      "$ref": "status-model.schema.json#/definitions/implementation_state"
+    },
+    "changedFiles": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "commandsRun": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "command",
+          "exitCode",
+          "result"
+        ],
+        "properties": {
+          "command": {
+            "type": "string",
+            "minLength": 1
+          },
+          "exitCode": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "result": {
+            "$ref": "status-model.schema.json#/definitions/executor_checks"
+          },
+          "artifactPath": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "scopeChangeRequests": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "verifierChangeRequests": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "waivers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "independentReview": {
+      "$ref": "status-model.schema.json#/definitions/independent_review"
+    },
+    "residualRisks": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

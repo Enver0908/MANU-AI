@@ -2,7 +2,7 @@
 
 Version: 1.0.0
 
-Status: PHASE_1_CORE_PROTOCOL_STATUS_MODEL_IMPLEMENTED_UNVERIFIED
+Status: PHASE_4_LIFECYCLE_OPTIONAL_REVIEW_IMPLEMENTED_UNVERIFIED
 
 Authority: `docs/execution-governance/MANU_AI_PLAN_IMPLEMENTATION_ASSURANCE_INTEGRATION_PLAN.md`
 
@@ -180,3 +180,20 @@ Markdown files are explanatory. JSON files are the machine authority.
 ## 9. Phase 1 Boundary
 
 Phase 1 installs this protocol, schemas, and templates only. It does not install enforcement hooks, verifier CLI commands, or CI. Until later phases complete, the protocol is authoritative but not technically enforced.
+
+## 10. Lifecycle Records
+
+Governed plans use lifecycle records to prevent state axes from collapsing into one another.
+
+Required tracked records when applicable:
+
+- `lifecycle-record.json`: current phase, status axes, events, and independent review policy.
+- `implementation-report.json`: implementer-reported changed files, commands, artifacts, skipped or blocked checks, and residual risks.
+- `scope-change-request.json`: required before any scope expansion.
+- `verifier-change-request.json`: required before acceptance or verifier behavior changes.
+- `review-record.json`: created only when the user explicitly requests independent review.
+- `waiver-record.json`: created only when the user explicitly approves a waiver.
+
+The no-review path creates no review record and keeps `independent_review: NOT_REQUESTED`.
+
+See `docs/execution-governance/LIFECYCLE_AND_OPTIONAL_REVIEW_FLOW.md` for the full flow.

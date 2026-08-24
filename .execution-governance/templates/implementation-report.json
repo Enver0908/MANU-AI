@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "1.0.0",
+  "contractId": "replace-with-contract-id",
+  "phaseId": "replace-with-phase-id",
+  "implementer": "replace-with-implementer",
+  "implementationState": "IMPLEMENTED_UNVERIFIED",
+  "changedFiles": [],
+  "commandsRun": [],
+  "artifacts": [],
+  "scopeChangeRequests": [],
+  "verifierChangeRequests": [],
+  "waivers": [],
+  "independentReview": "NOT_REQUESTED",
+  "residualRisks": []
+}

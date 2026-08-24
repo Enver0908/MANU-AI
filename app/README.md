@@ -12,6 +12,8 @@
 
 **Governance Phase 3 (2026-08-24):** Codex/Cursor adapters are implemented-unverified outside app runtime. No app source, package script, dependency, Supabase asset, API, UI, or production gate changed.
 
+**Governance Phase 4 (2026-08-24):** Lifecycle and optional review flow are implemented-unverified outside app runtime. No app source, package script, dependency, Supabase asset, API, UI, or production gate changed.
+
 **Prior R3 checkpoint (2026-08-20):** Stage 6 Phase 1-3 remediation R1-R3 is complete locally. The alerts/notifications inbox rejects stale filter/poll responses, invalidates pre-mutation reads, aborts superseded requests, and deduplicates paginated rows. Clean local Supabase reset and RLS 56/56 with zero skipped passed. Stage 5 remains `STAGE_5_CLOSED`; production remains `NO-GO`. Evidence: `../docs/PHASE_85_STAGE_6_R3_INBOX_CONCURRENCY_SECURITY_CLOSURE_EVIDENCE.md`. Phase 4 had not started at this checkpoint.
 
 **Historical Stage 6 checkpoint (2026-08-19):** Stage 6 R2 workspace-state remediation is complete locally. Workspace state uses tenant/client/domain ownership, URL is the sole viewed target, bounded form reads drive the editor, and client workflow saves/conflicts are centrally dirty-guarded. Stage 5 remains `STAGE_5_CLOSED`; production remains `NO-GO`. Evidence: `../docs/PHASE_85_STAGE_6_R2_WORKSPACE_STATE_CONFLICT_DIRTY_NAVIGATION_EVIDENCE.md`. At this checkpoint, Phase 4 had not started.

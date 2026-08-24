@@ -8,7 +8,9 @@
 
 **Latest governance Phase 2 status (2026-08-24):** Dependency-free CLI is committed as `e4de06a` at `tools/execution-governance/governance-cli.mjs`. Commands: `doctor`, `validate`, `lock`, `preflight`, `scope-check`, `run-checks`, `postflight`, and `close`. Acceptance commands must use `exactEvidenceCommandSpec`; `run-checks` uses `spawn` with `shell: false`.
 
-**Latest governance Phase 3 status (2026-08-24):** Codex and Cursor adapters are implemented-unverified locally. Root `AGENTS.md`, `.cursor/rules/execution-governance.mdc`, `.cursor/hooks.json`, and `.cursor/hooks/governance-guard.mjs` are present. Next governance step after Phase 3 commit is Phase 4: lifecycle and optional review flow.
+**Latest governance Phase 3 status (2026-08-24):** Codex and Cursor adapters are committed as `36268c7`. Root `AGENTS.md`, `.cursor/rules/execution-governance.mdc`, `.cursor/hooks.json`, and `.cursor/hooks/governance-guard.mjs` are present.
+
+**Latest governance Phase 4 status (2026-08-24):** Lifecycle and optional review flow are implemented-unverified locally. New flow document: `docs/execution-governance/LIFECYCLE_AND_OPTIONAL_REVIEW_FLOW.md`. New schemas/templates cover lifecycle records, implementation reports, scope-change requests, and verifier-change requests. Next governance step after Phase 4 commit is Phase 5: clean CI verification.
 
 **Current authority (2026-08-21):** Stage 6 is locally `STAGE_6_CLOSED`. Android Chrome/PWA physical evidence and final `release:verify` passed. Do not claim iPhone PASS: Stage 6 physical iPhone Safari/PWA was explicitly accepted as `WAIVED_NOT_EXECUTED` and remains required before any iOS production pilot/readiness claim. Authority: `docs/PHASE_85_STAGE_6_CLOSURE_DECISION.json`; evidence: `docs/PHASE_85_STAGE_6_FINAL_CLOSURE_EVIDENCE.md`. Stage 5 remains closed and production remains `NO-GO`.
 

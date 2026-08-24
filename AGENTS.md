@@ -18,6 +18,10 @@ These repository instructions apply to Codex-compatible agents working from the 
 - Independent review starts only when the user explicitly requests it. If not requested, record `independent_review: NOT_REQUESTED`; do not ask whether to start review.
 - An implementer may report executor verification, but cannot claim independent review PASS for its own work.
 - If a reviewer fixes findings, that actor becomes an implementer for those changes.
+- Use lifecycle records from `docs/execution-governance/LIFECYCLE_AND_OPTIONAL_REVIEW_FLOW.md` when a governed plan is active.
+- Do not create a review record unless the user explicitly requested independent review.
+- Create a scope-change request before editing outside the active scope.
+- Create a verifier-change request before changing acceptance or verifier behavior.
 
 ## Implementation Discipline
 

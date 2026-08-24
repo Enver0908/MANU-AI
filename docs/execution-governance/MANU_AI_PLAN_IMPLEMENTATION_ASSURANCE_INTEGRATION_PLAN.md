@@ -2,7 +2,7 @@
 
 Date: 2026-08-24
 
-Status: PHASE_3_CODEX_CURSOR_ADAPTERS_IMPLEMENTED_UNVERIFIED
+Status: PHASE_4_LIFECYCLE_OPTIONAL_REVIEW_IMPLEMENTED_UNVERIFIED
 
 Repository authority baseline:
 
@@ -161,11 +161,13 @@ Phase 2 local implementation status, 2026-08-24: committed as `e4de06a`. Added `
 
 Add root `AGENTS.md`, Cursor project rules, and fail-closed Cursor hooks. Hooks must block forbidden writes, unsafe shell commands, protected path edits, unauthorized dependency changes, and secret reads when an active locked plan does not allow them.
 
-Phase 3 local implementation status, 2026-08-24: implemented-unverified. Added root `AGENTS.md`, `.cursor/rules/execution-governance.mdc`, `.cursor/hooks.json`, and `.cursor/hooks/governance-guard.mjs`. The Cursor guard blocks product writes without an active locked scope, blocks secret-like reads, blocks unsafe shell commands, and enforces active `scope.json` allow/protected path lists when present.
+Phase 3 local implementation status, 2026-08-24: committed as `36268c7`. Added root `AGENTS.md`, `.cursor/rules/execution-governance.mdc`, `.cursor/hooks.json`, and `.cursor/hooks/governance-guard.mjs`. The Cursor guard blocks product writes without an active locked scope, blocks secret-like reads, blocks unsafe shell commands, and enforces active `scope.json` allow/protected path lists when present.
 
 ### Phase 4 - Lifecycle And Optional Review Flow
 
 Implement plan lifecycle records and optional review handoff. The no-review path must remain valid as `independent_review: NOT_REQUESTED`; the system must not prompt for review unless the user explicitly asks for it.
+
+Phase 4 local implementation status, 2026-08-24: implemented-unverified. Added lifecycle and optional review flow documentation, lifecycle/implementation/scope-change/verifier-change schemas, and matching templates. The no-review path creates no review record and keeps `independent_review: NOT_REQUESTED`.
 
 ### Phase 5 - Clean CI Verification
 

@@ -10,7 +10,9 @@
 
 **Completed governance CLI step (2026-08-24):** Phase 2 CLI is committed as `e4de06a`. It did not add Cursor hooks, root `AGENTS.md`, CI, product runtime changes, package dependencies, migrations, or production gate changes.
 
-**Active next governance step after Phase 3 commit (2026-08-24):** Phase 3 Codex/Cursor adapters are implemented-unverified locally. The next governance phase is Phase 4: lifecycle records and optional review handoff. Phase 4 must not add GitHub Actions, product runtime changes, package dependencies, migrations, or production gate changes.
+**Completed governance adapter step (2026-08-24):** Phase 3 Codex/Cursor adapters are committed as `36268c7`. It did not add GitHub Actions, product runtime changes, package dependencies, migrations, or production gate changes.
+
+**Active next governance step after Phase 4 commit (2026-08-24):** Phase 4 lifecycle and optional review flow are implemented-unverified locally. The next governance phase is Phase 5: clean CI verification. Phase 5 must not change product runtime, package dependencies, migrations, deployment, production gates, or default branch settings.
 
 **Prior R3 checkpoint (2026-08-20):** Stage 6 Phase 1-3 remediation R1-R3 is complete locally. Inbox request ownership, sequencing, abort, mutation invalidation, and stable-id pagination close the remaining communication concurrency gap; clean local reset and RLS 56/56 zero-skip supply the security evidence. Stage 5 remains closed and production remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_R3_INBOX_CONCURRENCY_SECURITY_CLOSURE_EVIDENCE.md`. Phase 4 was the next eligible unit at this checkpoint.
 

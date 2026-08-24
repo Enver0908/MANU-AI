@@ -10,7 +10,9 @@
 
 **Governance Phase 2 (2026-08-24):** Dependency-free verifier CLI is committed as `e4de06a`. Product runtime, dependencies, schemas, production gates, and Stage 7 closure remain unchanged.
 
-**Governance Phase 3 (2026-08-24):** Codex and Cursor adapters are implemented-unverified locally. The next governance phase is Phase 4: lifecycle and optional review flow. Product runtime, dependencies, migrations, production gates, and Stage 7 closure remain unchanged.
+**Governance Phase 3 (2026-08-24):** Codex and Cursor adapters are committed as `36268c7`. Product runtime, dependencies, migrations, production gates, and Stage 7 closure remain unchanged.
+
+**Governance Phase 4 (2026-08-24):** Lifecycle and optional review flow are implemented-unverified locally. The next governance phase is Phase 5: clean CI verification. Product runtime, dependencies, migrations, production gates, and Stage 7 closure remain unchanged.
 
 **Prior R3 checkpoint (2026-08-20):** Stage 6 Phase 1-3 remediation R1-R3 is complete locally. R3 prevents stale/out-of-order alert and notification requests from overwriting current filters or acknowledged receipt mutations and deduplicates bounded pagination. Clean local Supabase reset and RLS 56/56 with zero skipped passed. Stage 5 remains `STAGE_5_CLOSED`; production remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_R3_INBOX_CONCURRENCY_SECURITY_CLOSURE_EVIDENCE.md`. Phase 4 required separate approval at this checkpoint.
 
