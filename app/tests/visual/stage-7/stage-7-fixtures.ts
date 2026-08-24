@@ -38,6 +38,7 @@ export const STAGE7_CONVERSATIONS = STAGE7_CLIENTS.slice(0, 12).map((client, ind
 
 export type Stage7FixtureProfile =
   | "public-default"
+  | "public-error"
   | "auth-sent"
   | "auth-invalid"
   | "auth-rate-limited"

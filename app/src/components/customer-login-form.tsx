@@ -3,10 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { AlertCircle, Loader2, MailCheck } from "lucide-react";
-import {
-  SIRIUSAI_PUBLIC_CONTACT_EMAIL,
-  buildContactMailtoUrl,
-} from "@/lib/phase-84b-public-website";
+import { buildContactMailtoUrl } from "@/lib/phase-84b-public-website";
 import { isLikelyEmail } from "@/lib/phase-83e2-purchase-ux";
 
 type LoginMode = "magic_link" | "password";
@@ -49,11 +46,11 @@ export function CustomerLoginForm(props: { initialError?: string | null; nextPat
       if (!response.ok || !payload.sent) {
         if (response.status === 429) {
           setSubmitState("error");
-          setFormError("Çok fazla deneme. Lütfen biraz bekleyin.");
+          setFormError("Hata: Çok fazla deneme. Lütfen biraz bekleyin.");
           return;
         }
         setSubmitState("error");
-        setFormError("İşlem tamamlanamadı. Geçerli bir e-posta kullanın ve tekrar deneyin.");
+        setFormError("Hata: İşlem tamamlanamadı. Geçerli bir e-posta kullanın ve tekrar deneyin.");
         return;
       }
 
@@ -61,7 +58,7 @@ export function CustomerLoginForm(props: { initialError?: string | null; nextPat
       setEmail("");
     } catch {
       setSubmitState("error");
-      setFormError("Bağlantı hatası. Lütfen tekrar deneyin.");
+      setFormError("Hata: Bağlantı hatası. Lütfen tekrar deneyin.");
     }
   }
 
@@ -122,10 +119,10 @@ export function CustomerLoginForm(props: { initialError?: string | null; nextPat
         </p>
         <p className="text-xs text-muted-foreground">
           E-postayı göremiyorsanız spam klasörünü kontrol edin veya{" "}
-          <a href={contactMailto} className="font-medium text-primary underline underline-offset-2">
-            {SIRIUSAI_PUBLIC_CONTACT_EMAIL}
+          <a href={contactMailto} className="inline-flex min-h-6 items-center font-medium text-primary underline underline-offset-2">
+            destek ekibine yazın
           </a>{" "}
-          adresine yazın.
+          .
         </p>
       </div>
     );
@@ -235,7 +232,7 @@ export function CustomerLoginForm(props: { initialError?: string | null; nextPat
         </button>
         <p className="text-center text-xs text-muted-foreground">
           Hesabınız yok mu?{" "}
-          <Link href="/#iletisim" className="text-primary underline underline-offset-2">
+          <Link href="/#iletisim" className="inline-flex min-h-6 items-center text-primary underline underline-offset-2">
             Erişim talep edin
           </Link>
         </p>

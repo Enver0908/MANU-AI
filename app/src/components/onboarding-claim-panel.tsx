@@ -106,7 +106,7 @@ export function OnboardingClaimPanel(props: { sessionId?: string | null }) {
     return (
       <div className="flex items-start gap-2 rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2.5">
         <AlertCircle size={14} className="mt-0.5 shrink-0 text-destructive" />
-        <p className="text-xs leading-relaxed text-destructive">{describeOnboardingBlockingReason(error)}</p>
+        <p className="text-xs leading-relaxed text-destructive">Hata: {describeOnboardingBlockingReason(error)}</p>
       </div>
     );
   }
@@ -153,7 +153,7 @@ export function OnboardingClaimPanel(props: { sessionId?: string | null }) {
     <div className="flex items-start gap-2 rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2.5">
       <AlertCircle size={14} className="mt-0.5 shrink-0 text-destructive" />
       <p className="text-xs leading-relaxed text-destructive">
-        {describeOnboardingBlockingReason(status?.blockingReasons?.[0] ?? "onboarding_claim_blocked")}
+        Hata veya bekleyen durum: {describeOnboardingBlockingReason(status?.blockingReasons?.[0] ?? "onboarding_claim_blocked")}
       </p>
     </div>
   );

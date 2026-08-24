@@ -66,7 +66,7 @@ export function ContactSection() {
             </div>
           </div>
           <h2 id="contact-heading" className="mb-3 font-display text-2xl font-bold text-off-black">
-            Talebiniz alındı
+            Talebiniz başarıyla alındı
           </h2>
           <p className="leading-relaxed text-muted-foreground">
             Ekibimiz talebinizi inceleyecek ve en kısa sürede size ulaşacak. Davet kodu oluşturulduğunda e-posta
@@ -166,8 +166,8 @@ export function ContactSection() {
                 <AlertCircle size={14} className="mt-0.5 shrink-0 text-destructive" aria-hidden />
                 <p className="free-text text-xs leading-relaxed text-destructive">
                   {state === "unavailable"
-                    ? "Çevrimiçi form şu an kullanılamıyor. Lütfen e-posta ile ulaşın."
-                    : errorMsg}
+                    ? "Hata: Çevrimiçi form şu an kullanılamıyor. Lütfen e-posta ile ulaşın."
+                    : `Hata: ${errorMsg}`}
                 </p>
               </div>
             ) : null}

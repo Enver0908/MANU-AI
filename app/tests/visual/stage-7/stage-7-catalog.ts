@@ -31,7 +31,7 @@ const CORE_SEEDS: ScenarioSeed[] = [
   { surface: "public", route: "/#contact", state: "contact-invalid", fixtureId: "public-default", snapshotKind: "state", requiredAssertions: ["validation-message", "geometry"] },
   { surface: "public", route: "/#contact", state: "contact-submitting", fixtureId: "public-default", snapshotKind: "state", requiredAssertions: ["busy-state"] },
   { surface: "public", route: "/#contact", state: "contact-success", fixtureId: "public-default", snapshotKind: "state", requiredAssertions: ["success-status"] },
-  { surface: "public", route: "/#contact", state: "contact-error", fixtureId: "public-default", snapshotKind: "state", requiredAssertions: ["error-status"] },
+  { surface: "public", route: "/#contact", state: "contact-error", fixtureId: "public-error", snapshotKind: "state", requiredAssertions: ["error-status"] },
   { surface: "auth", route: "/login", state: "login-idle", fixtureId: "public-default", snapshotKind: "page", requiredAssertions: DEFAULT_ASSERTIONS, critical: true },
   { surface: "auth", route: "/login", state: "login-sent", fixtureId: "auth-sent", snapshotKind: "state", requiredAssertions: ["success-status"] },
   { surface: "auth", route: "/login", state: "login-invalid", fixtureId: "auth-invalid", snapshotKind: "state", requiredAssertions: ["validation-message"] },
@@ -266,4 +266,3 @@ export function listMandatoryStates(): string[] {
 }
 
 export { CORE_SEEDS, BROWSER_VIEWPORTS };
-

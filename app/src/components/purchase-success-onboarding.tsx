@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { AlertCircle, CheckCircle, Loader2, Mail, Send } from "lucide-react";
 import { isLikelyEmail } from "@/lib/phase-83e2-purchase-ux";
-import { SIRIUSAI_PUBLIC_CONTACT_EMAIL, buildContactMailtoUrl } from "@/lib/phase-84b-public-website";
+import { buildContactMailtoUrl } from "@/lib/phase-84b-public-website";
 
 type SubmitState = "idle" | "submitting" | "success" | "error";
 
@@ -168,7 +168,7 @@ export function PurchaseSuccessOnboarding(props: { sessionId?: string | null }) 
           Destek
         </a>
       </div>
-      <p className="text-xs text-muted-foreground">{SIRIUSAI_PUBLIC_CONTACT_EMAIL}</p>
+      <p className="text-xs text-muted-foreground">Destek ekibi ödeme ve onboarding durumunu kontrol edebilir.</p>
     </form>
   );
 }

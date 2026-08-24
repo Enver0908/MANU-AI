@@ -13,6 +13,9 @@ import {
 import { describeCommercialBlockingReason } from "@/lib/phase-84g-subscription-operations";
 
 function mapPurchaseBlockingReason(reason: string) {
+  if (reason.toLowerCase().includes("pending")) {
+    return "İnceleniyor; lütfen bekleyin veya destek ile iletişime geçin.";
+  }
   const purchaseCopy = describePurchaseBlockingReason(reason);
   if (purchaseCopy !== "Erişim için uygunluk doğrulanamadı.") {
     return purchaseCopy;
@@ -221,7 +224,7 @@ function GateResult({ gate }: { gate: Exclude<PurchaseGateView, { kind: "eligibl
         <div className="flex items-start gap-2">
           <AlertCircle size={15} className="mt-0.5 shrink-0 text-destructive" />
           <div className="flex flex-col gap-2">
-            <p className="text-sm font-semibold text-destructive">Erişim doğrulanamadı</p>
+            <p className="text-sm font-semibold text-destructive">Hata: Erişim doğrulanamadı</p>
             {reasons.length > 0 ? (
               <ul className="flex flex-col gap-1">
                 {reasons.map((reason) => (
@@ -248,8 +251,8 @@ function GateResult({ gate }: { gate: Exclude<PurchaseGateView, { kind: "eligibl
         <AlertCircle size={15} className="mt-0.5 shrink-0 text-destructive" />
         <p className="text-xs leading-relaxed text-muted-foreground">
           {gate.kind === "not_configured"
-            ? "Ticari erişim bu kurulumda yapılandırılmamış. Erişim talebi için ekiple iletişime geçin."
-            : gate.message}
+            ? "Hata: Ticari erişim bu kurulumda yapılandırılmamış. Erişim talebi için ekiple iletişime geçin."
+            : `Hata: ${gate.message}`}
         </p>
       </div>
     </div>

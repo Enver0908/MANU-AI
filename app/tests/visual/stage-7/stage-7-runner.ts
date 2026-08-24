@@ -75,13 +75,13 @@ async function driveState(page: Page, scenario: Stage7Scenario) {
     await page.locator("#contact").scrollIntoViewIfNeeded(action).catch(() => undefined);
     if (scenario.state === "contact-invalid") {
       await page.locator("#contact-lead-name").fill(" ", action);
-      await page.getByRole("button", { name: /Talebi gönder/i }).click(action).catch(() => undefined);
+      await page.getByRole("button", { name: /Talep gönder|Talebi gönder/i }).click(action).catch(() => undefined);
     }
     if (scenario.state === "contact-success" || scenario.state === "contact-submitting" || scenario.state === "contact-error") {
       await page.locator("#contact-lead-name").fill("Stage7 Dietitian", action);
       await page.locator("#contact-lead-email").fill(STAGE7_SYNTHETIC.dietitianEmail, action);
       await page.locator("#contact-lead-message").fill(STAGE7_SYNTHETIC.multilineNote, action);
-      await page.getByRole("button", { name: /Talebi gönder/i }).click(action).catch(() => undefined);
+      await page.getByRole("button", { name: /Talep gönder|Talebi gönder/i }).click(action).catch(() => undefined);
     }
   }
 

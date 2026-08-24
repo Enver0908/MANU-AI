@@ -19,7 +19,7 @@ export function PublicNavbar() {
       <nav className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6" aria-label="Ana gezinti">
         <Link
           href="/"
-          className="text-lg font-semibold tracking-tight text-off-black transition-colors hover:text-primary"
+          className="inline-flex min-h-11 items-center text-lg font-semibold tracking-tight text-off-black transition-colors hover:text-primary"
           aria-label="SiriusAI ana sayfa"
         >
           SiriusAI
@@ -28,7 +28,7 @@ export function PublicNavbar() {
         <ul className="hidden items-center gap-6 text-sm font-medium text-muted-foreground md:flex">
           {NAV_LINKS.map(({ label, href }) => (
             <li key={href}>
-              <Link href={href} className="transition-colors hover:text-foreground">
+              <Link href={href} className="inline-flex min-h-11 items-center transition-colors hover:text-foreground">
                 {label}
               </Link>
             </li>
@@ -38,13 +38,13 @@ export function PublicNavbar() {
         <div className="hidden items-center gap-3 md:flex">
           <Link
             href="/login"
-            className="px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+            className="inline-flex min-h-11 items-center px-3 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
           >
             Giriş yap
           </Link>
           <Link
             href="/purchase"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-1.5 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="inline-flex min-h-11 items-center justify-center rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             Davet koduyla başla
           </Link>

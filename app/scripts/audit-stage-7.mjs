@@ -53,7 +53,13 @@ const PROJECTS = [
 
 const stableArtifactDir = join(appRoot, ".stage-7r-baseline-artifacts");
 const stage7rGeneratedAt = "2026-08-24T09:00:00+03:00";
-const stage7rEvidencePath = join(docsRoot, "PHASE_85_STAGE_7R_PHASE_2_TRUSTED_BASELINE_RUN_EVIDENCE.md");
+const auditStatus = process.env.STAGE7_AUDIT_STATUS ?? "STAGE_7R_BASELINE_RECORDED";
+const auditReportTitle = process.env.STAGE7_AUDIT_REPORT_TITLE ?? "Phase 85 Stage 7R Baseline Audit Report";
+const auditEvidenceTitle = process.env.STAGE7_AUDIT_EVIDENCE_TITLE ?? "Phase 85 Stage 7R Baseline Run Evidence";
+const auditEvidenceSummary =
+  process.env.STAGE7_AUDIT_EVIDENCE_SUMMARY ??
+  "Stage 7R reran the deterministic audit harness across the Stage 7 project matrix and recorded the current finding inventory.";
+const stage7rEvidencePath = join(docsRoot, "PHASE_85_STAGE_7R_BASELINE_RUN_EVIDENCE.md");
 const projectSummaries = [];
 const allFindings = [];
 
@@ -101,7 +107,7 @@ for (const finding of findings) {
 const findingsDoc = {
   schemaVersion: "phase-85-stage-7-findings-v2",
   generatedAt: stage7rGeneratedAt,
-  status: "STAGE_7R_2_TRUSTED_BASELINE_RECORDED",
+  status: auditStatus,
   sourceOfAuthority: "docs/PHASE_85_STAGE_7_VISUAL_QA_POLISH_ACCESSIBILITY_CLOSURE_ACTION_PLAN.md",
   clock: "2026-08-22T09:00:00+03:00",
   timezone: "Europe/Istanbul",
@@ -120,7 +126,7 @@ writeJson(findingsPath, findingsDoc);
 const report = {
   schemaVersion: "phase-85-stage-7-baseline-audit-v1",
   generatedAt: stage7rGeneratedAt,
-  status: "STAGE_7R_2_TRUSTED_BASELINE_RECORDED",
+  status: auditStatus,
   productionStatus: "NO-GO",
   physicalIphone: "WAIVED_NOT_EXECUTED",
   findingCount: findings.length,
@@ -131,9 +137,9 @@ const report = {
 };
 writeJson(auditReportJsonPath, report);
 
-const markdown = `# Phase 85 Stage 7R.2 Trusted Baseline Rerun Report
+const markdown = `# ${auditReportTitle}
 
-Status: STAGE_7R_2_TRUSTED_BASELINE_RECORDED
+Status: ${auditStatus}
 
 Production: NO-GO
 
@@ -150,11 +156,11 @@ No UI remediation is included in this phase.
 assertPrivacy(markdown, auditReportMdPath);
 writeFileSync(auditReportMdPath, markdown);
 
-const evidence = `# Phase 85 Stage 7R.2 Trusted Baseline Rerun Evidence
+const evidence = `# ${auditEvidenceTitle}
 
 Date: 2026-08-24
 
-Status: STAGE_7R_2_TRUSTED_BASELINE_RECORDED_VISUAL_APPROVAL_PENDING
+Status: ${auditStatus}
 
 Stage 5: STAGE_5_CLOSED
 
@@ -166,7 +172,7 @@ Production: NO-GO
 
 ## Result
 
-Stage 7R.2 reran the rebuilt deterministic audit harness across the Stage 7 project matrix and recorded the trusted baseline finding inventory. Application UI, CSS, API, migrations, RLS, and service-worker files were not changed.
+${auditEvidenceSummary}
 
 ## Commands
 

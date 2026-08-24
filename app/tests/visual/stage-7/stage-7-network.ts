@@ -47,6 +47,7 @@ function appStatePayload(profile: Stage7FixtureProfile): unknown {
 function payloadFor(profile: Stage7FixtureProfile, path: string): unknown | null {
   if (path.includes("/api/contact/leads")) {
     if (profile === "public-default") return { accepted: true };
+    if (profile === "public-error") return { error: "contact_failed" };
     return { error: "contact_failed" };
   }
   if (path.includes("/api/auth/")) {
@@ -63,6 +64,7 @@ function payloadFor(profile: Stage7FixtureProfile, path: string): unknown | null
     if (profile === "purchase-pending") return { eligible: false, blockingReasons: ["pending review"] };
   }
   if (path.includes("/api/commercial/onboarding/status")) {
+    if (profile === "public-default") return { checkoutSessionRecognized: true, entitlementStatus: "active" };
     if (profile === "onboarding-claimable") return { authenticated: true, claimable: true, alreadyClaimed: false };
     if (profile === "onboarding-incomplete") return { authenticated: true, claimable: false, blockingReasons: ["profile_incomplete"] };
     if (profile === "onboarding-duplicate") return { authenticated: true, claimable: false, alreadyClaimed: false, blockingReasons: ["duplicate_claim"] };

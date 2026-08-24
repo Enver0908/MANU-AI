@@ -561,7 +561,7 @@
       "browserTier": "chromium-desktop",
       "viewportTier": "desktop-1440",
       "pwaMode": "service_worker_blocked",
-      "fixtureId": "public-default",
+      "fixtureId": "public-error",
       "requiredAssertions": [
         "error-status"
       ],

@@ -5,7 +5,6 @@ import { CheckCircle2, Mail, Send, Shield } from "lucide-react";
 import { Button, Field, TextInput } from "@/components/ui";
 import {
   PUBLIC_MARKETING_COPY,
-  SIRIUSAI_PUBLIC_CONTACT_EMAIL,
   buildContactMailtoUrl,
 } from "@/lib/phase-84b-public-website";
 import { isLikelyEmail } from "@/lib/phase-83e2-purchase-ux";
@@ -74,10 +73,10 @@ export function AdminLoginForm(props: { initialError?: string | null }) {
         </div>
         <p className="text-xs text-ink-muted">
           Bağlantı gelmediyse spam klasörünü kontrol edin veya{" "}
-          <a href={contactMailto} className="font-medium text-primary underline underline-offset-2">
-            {SIRIUSAI_PUBLIC_CONTACT_EMAIL}
+          <a href={contactMailto} className="inline-flex min-h-6 items-center font-medium text-primary underline underline-offset-2">
+            destek ekibine yazın
           </a>{" "}
-          ile iletişime geçin.
+          .
         </p>
       </div>
     );

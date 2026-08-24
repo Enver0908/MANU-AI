@@ -125,10 +125,15 @@ textarea:focus-visible,
   left: 1rem;
   top: 1rem;
   z-index: 60;
+  display: inline-flex;
+  min-height: 44px;
+  min-width: 44px;
+  align-items: center;
+  justify-content: center;
   border-radius: var(--radius-control);
   background: var(--primary);
   color: var(--primary-foreground);
-  padding: 0.5rem 0.75rem;
+  padding: 0.5rem 1rem;
   font-size: 0.875rem;
   font-weight: 600;
   transform: translateY(-200%);
