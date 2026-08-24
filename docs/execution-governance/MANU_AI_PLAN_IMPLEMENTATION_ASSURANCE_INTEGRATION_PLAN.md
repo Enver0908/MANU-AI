@@ -2,7 +2,7 @@
 
 Date: 2026-08-24
 
-Status: PHASE_5_CLEAN_CI_LAYER_IMPLEMENTED_UNVERIFIED
+Status: PHASE_6_RED_TEAM_PILOT_CLOSURE_IMPLEMENTED_UNVERIFIED
 
 Repository authority baseline:
 
@@ -177,7 +177,7 @@ Phase 5 local implementation status, 2026-08-24: implemented-unverified. Added `
 
 ### Phase 6 - Red-Team, Pilot, And Documentation Reconciliation
 
-Exercise the governance system with synthetic tamper, stale artifact, forbidden diff, skip/only, shell-wrapper, hook-crash, no-review, full-review, and targeted-review scenarios. Reconcile the continuity docs based on real results only.
+Phase 6 local implementation status, 2026-08-24: implemented-unverified. Added `tools/execution-governance/red-team-harness.mjs`, extended governance `postflight` to reject stale automated run-records and changed test skip/only markers, added the red-team harness to `.github/workflows/execution-governance.yml`, and reconciled the governance continuity documents. The harness exercises synthetic tamper, stale artifact, forbidden diff, skip/only, shell-wrapper, hook-crash, no-review, full-review, targeted-review, workflow-hardening, and runtime-artifact scenarios. It uses ignored synthetic runtime fixtures only and does not change product runtime, dependencies, migrations, provider/channel egress, live billing, production schema rollout, production gates, deployment, branch protection, default branch, push, PR, merge, or real health-data paths.
 
 ## Current Known Constraints
 

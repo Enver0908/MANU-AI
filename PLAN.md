@@ -14,7 +14,9 @@
 
 **Governance Phase 4 (2026-08-24):** Lifecycle and optional review flow are committed as `dfd7318`. Product runtime, dependencies, migrations, production gates, and Stage 7 closure remain unchanged.
 
-**Governance Phase 5 (2026-08-24):** Clean CI verification layer is implemented-unverified locally. The next governance phase is Phase 6: red-team, pilot, and documentation reconciliation. Product runtime, dependencies, migrations, production gates, branch protection, push, deploy, and Stage 7 closure remain unchanged.
+**Governance Phase 5 (2026-08-24):** Clean CI verification layer is committed as `d6cbf0d`. Product runtime, dependencies, migrations, production gates, branch protection, push, deploy, and Stage 7 closure remain unchanged.
+
+**Governance Phase 6 (2026-08-24):** Red-team, pilot, and documentation closure is implemented-unverified locally. `tools/execution-governance/red-team-harness.mjs` now exercises the governance system against synthetic tamper, stale artifact, forbidden diff, skip/only, shell-wrapper, hook-crash, no-review, full-review, targeted-review, workflow-hardening, and runtime-artifact scenarios. Governance `postflight` now rejects stale automated run-records and changed test skip/only markers. Product runtime, dependencies, migrations, production gates, branch protection, push, deploy, and Stage 7 closure remain unchanged.
 
 **Prior R3 checkpoint (2026-08-20):** Stage 6 Phase 1-3 remediation R1-R3 is complete locally. R3 prevents stale/out-of-order alert and notification requests from overwriting current filters or acknowledged receipt mutations and deduplicates bounded pagination. Clean local Supabase reset and RLS 56/56 with zero skipped passed. Stage 5 remains `STAGE_5_CLOSED`; production remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_R3_INBOX_CONCURRENCY_SECURITY_CLOSURE_EVIDENCE.md`. Phase 4 required separate approval at this checkpoint.
 

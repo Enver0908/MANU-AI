@@ -14,7 +14,9 @@
 
 **Governance Phase 4 (2026-08-24):** Lifecycle and optional review flow are implemented-unverified outside app runtime. No app source, package script, dependency, Supabase asset, API, UI, or production gate changed.
 
-**Governance Phase 5 (2026-08-24):** Clean CI layer is implemented-unverified outside app runtime. No app source, package script, dependency, Supabase asset, API, UI, or production gate changed.
+**Governance Phase 5 (2026-08-24):** Clean CI layer is committed as `d6cbf0d` outside app runtime. No app source, package script, dependency, Supabase asset, API, UI, or production gate changed.
+
+**Governance Phase 6 (2026-08-24):** Red-team, pilot, and documentation closure is implemented-unverified outside app runtime. It adds `../tools/execution-governance/red-team-harness.mjs`, governance postflight hardening, and documentation/evidence under `../docs/execution-governance/`. No app source, package script, dependency, Supabase asset, API, UI, or production gate changed.
 
 **Prior R3 checkpoint (2026-08-20):** Stage 6 Phase 1-3 remediation R1-R3 is complete locally. The alerts/notifications inbox rejects stale filter/poll responses, invalidates pre-mutation reads, aborts superseded requests, and deduplicates paginated rows. Clean local Supabase reset and RLS 56/56 with zero skipped passed. Stage 5 remains `STAGE_5_CLOSED`; production remains `NO-GO`. Evidence: `../docs/PHASE_85_STAGE_6_R3_INBOX_CONCURRENCY_SECURITY_CLOSURE_EVIDENCE.md`. Phase 4 had not started at this checkpoint.
 

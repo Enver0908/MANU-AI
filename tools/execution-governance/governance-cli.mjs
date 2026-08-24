@@ -258,6 +258,7 @@ function postflight({ repoRoot, options }) {
   failures.push(...verifyLock(repoRoot, planDir));
   const scopeExit = scopeCheck({ repoRoot, options });
   if (scopeExit !== STATUS_OK) failures.push('scope-check failed');
+  failures.push(...verifyRunRecordFreshness(repoRoot, planDir));
   const changed = getChangedPaths(repoRoot);
   for (const file of changed) {
     if (/(package-lock\.json|pnpm-lock\.yaml|yarn\.lock|package\.json)$/i.test(file)) {
@@ -266,6 +267,7 @@ function postflight({ repoRoot, options }) {
     if (/^app\/supabase\/migrations\//i.test(file)) {
       failures.push(`migration surface changed: ${file}`);
     }
+    failures.push(...scanChangedTestFileForSkipOnly(repoRoot, file));
   }
   if (failures.length) {
     for (const failure of failures) console.error(`FAIL ${failure}`);
@@ -273,6 +275,59 @@ function postflight({ repoRoot, options }) {
   }
   console.log('PASS postflight');
   return STATUS_OK;
+}
+
+function verifyRunRecordFreshness(repoRoot, planDir) {
+  const acceptance = readJson(path.join(planDir, 'acceptance.json'));
+  const automatedRecords = (acceptance.acceptanceRecords || [])
+    .filter((record) => ['AUTOMATED', 'HYBRID'].includes(record.oracleType));
+  if (automatedRecords.length === 0) return [];
+  const contractId = acceptance.contractId;
+  const currentCommit = gitText(repoRoot, ['rev-parse', 'HEAD']);
+  const records = listRunRecords(repoRoot)
+    .flatMap((value) => Array.isArray(value.records) ? value.records : [])
+    .filter((record) => record.contractId === contractId);
+  const failures = [];
+  for (const acceptanceRecord of automatedRecords) {
+    const matching = records.filter((record) => record.requirementId === acceptanceRecord.requirementId);
+    if (matching.length === 0) {
+      failures.push(`missing run-record for automated requirement ${acceptanceRecord.requirementId}`);
+      continue;
+    }
+    const freshPass = matching.some((record) => record.result === 'PASS' && record.commitSha === currentCommit && isIsoTimestamp(record.timestamp));
+    if (!freshPass) {
+      failures.push(`no fresh PASS run-record bound to HEAD for automated requirement ${acceptanceRecord.requirementId}`);
+    }
+  }
+  return failures;
+}
+
+function listRunRecords(repoRoot) {
+  const runRecordDir = joinRepo(repoRoot, '.execution-governance/runtime/run-records');
+  if (!existsSync(runRecordDir)) return [];
+  return readdirSync(runRecordDir)
+    .filter((name) => name.endsWith('.json'))
+    .map((name) => path.join(runRecordDir, name))
+    .map((file) => readJson(file));
+}
+
+function isIsoTimestamp(value) {
+  return typeof value === 'string' && !Number.isNaN(Date.parse(value));
+}
+
+function scanChangedTestFileForSkipOnly(repoRoot, relPath) {
+  if (!/\.(test|spec)\.[cm]?[jt]sx?$/i.test(relPath)) return [];
+  const file = joinRepo(repoRoot, relPath);
+  if (!existsSync(file)) return [];
+  const text = readFileSync(file, 'utf8');
+  const forbidden = [
+    /\b(?:test|it|describe)\.only\s*\(/,
+    /\b(?:test|it|describe)\.skip\s*\(/,
+    /\bskip\s*:\s*true\b/
+  ];
+  return forbidden
+    .filter((pattern) => pattern.test(text))
+    .map((pattern) => `changed test file ${relPath} contains forbidden skip/only marker ${pattern}`);
 }
 
 function close(context) {

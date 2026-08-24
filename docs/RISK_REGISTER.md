@@ -4,6 +4,8 @@
 
 Current Phase 85 Stage 6 closure note, 2026-08-21: Stage 6 is locally `STAGE_6_CLOSED` after Android Chrome/PWA physical evidence and final `release:verify` passed. `S6-IOS-PHYSICAL-VALIDATION` is accepted for local closure only: physical iPhone Safari/PWA was `WAIVED_NOT_EXECUTED`, never PASS. iOS-specific layout, safe-area, Safari, standalone-PWA, and offline-lock regressions may remain undetected; physical iPhone validation is mandatory before any iOS production pilot/readiness claim. Production remains `NO-GO`. Authority: `docs/PHASE_85_STAGE_6_CLOSURE_DECISION.json`; evidence: `docs/PHASE_85_STAGE_6_FINAL_CLOSURE_EVIDENCE.md`.
 
+Current governance assurance note, 2026-08-24: Phase 6 red-team, pilot, and documentation closure is implemented-unverified locally. The governance verifier now has synthetic anti-gaming coverage for hook denial, active scope, shell-wrapper acceptance specs, locked-plan tamper, stale automated run-records, forbidden diffs, skip/only markers, optional no-review close, full/targeted review boundaries, workflow hardening, and runtime artifact tracking. This mitigates plan-implementation drift risk for future phases but is governance-only; it does not close production launch gates or authorize product runtime, dependency, migration, provider/channel, billing, deploy, branch protection, push, or real-data changes.
+
 ## Risk Scale
 
 - Severity: `low`, `medium`, `high`, `critical`

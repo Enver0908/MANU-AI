@@ -89,6 +89,12 @@ jobs:
           console.log('WORKFLOW_HARDENING_OK');
           NODE
 
+      - name: Run governance red-team harness
+        shell: bash
+        run: |
+          set -euo pipefail
+          node tools/execution-governance/red-team-harness.mjs
+
       - name: Verify Git diff hygiene
         shell: bash
         run: |

@@ -2,7 +2,7 @@
 
 Version: 1.0.0
 
-Status: PHASE_5_CLEAN_CI_LAYER_IMPLEMENTED_UNVERIFIED
+Status: PHASE_6_RED_TEAM_PILOT_CLOSURE_IMPLEMENTED_UNVERIFIED
 
 Authority:
 
@@ -56,6 +56,7 @@ The workflow runs:
 - `node tools/execution-governance/governance-cli.mjs validate`
 - `node tools/execution-governance/governance-cli.mjs validate --plan-dir .execution-governance/templates`
 - Workflow hardening marker check
+- `node tools/execution-governance/red-team-harness.mjs`
 - `git diff --check`
 - Tracked runtime artifact check for `.execution-governance/runtime/**`
 
@@ -65,6 +66,12 @@ Adding this workflow defines the clean CI layer in the repository. It does not p
 
 Remote execution starts only after the branch containing this workflow is pushed or the workflow is otherwise available on GitHub. Push remains a separate explicit user command.
 
-## 6. Phase 5 Boundary
+## 6. Phase 6 Red-Team Boundary
+
+Phase 6 extends the workflow with the dependency-free red-team harness in `tools/execution-governance/red-team-harness.mjs`. The harness exercises synthetic hook denials, active scope enforcement, shell-wrapper rejection, locked-plan tamper rejection, stale run-record rejection, forbidden diff rejection, skip/only rejection, positive no-review close, full-review template boundaries, targeted-review schema boundaries, workflow hardening, and tracked runtime artifact checks.
+
+The red-team harness uses synthetic ignored runtime fixtures only. It does not install dependencies, run product code, create production artifacts, read secrets, push, merge, deploy, alter branch protection, change production gates, connect provider/channel egress, perform live billing, roll out production schema, or process real health data.
+
+## 7. Phase 5 Boundary
 
 Phase 5 installs the clean CI workflow and documentation only. It does not add product runtime behavior, dependencies, migrations, production schema rollout, provider/channel egress, live billing, deployment, branch protection, or production readiness changes.

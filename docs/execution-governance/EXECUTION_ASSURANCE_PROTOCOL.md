@@ -2,7 +2,7 @@
 
 Version: 1.0.0
 
-Status: PHASE_5_CLEAN_CI_LAYER_IMPLEMENTED_UNVERIFIED
+Status: PHASE_6_RED_TEAM_PILOT_CLOSURE_IMPLEMENTED_UNVERIFIED
 
 Authority: `docs/execution-governance/MANU_AI_PLAN_IMPLEMENTATION_ASSURANCE_INTEGRATION_PLAN.md`
 
@@ -212,3 +212,28 @@ The workflow is read-only:
 - no deploy, push, merge, PR, production gate, provider/channel egress, live billing, production schema rollout, or real-data processing
 
 CI output is an automated executor check only. It does not replace user acceptance and does not create independent review unless the user explicitly requested review through the lifecycle protocol.
+
+## 12. Red-Team And Pilot Closure
+
+The Phase 6 red-team harness is `tools/execution-governance/red-team-harness.mjs`.
+
+The harness is a dependency-free executor verification surface for the governance system itself. It must cover:
+
+- Cursor hook denial for product writes without an active locked scope.
+- Governance bootstrap write allowance without an active locked scope.
+- Fail-closed hook behavior for malformed hook payloads.
+- Secret-like read denial.
+- Unsafe shell denial and safe status command allowance.
+- Active scope allow/protected/outside-path enforcement.
+- Shell-wrapper executable rejection in acceptance manifests.
+- Locked plan hash tamper rejection.
+- Stale run-record artifact rejection.
+- Forbidden diff rejection.
+- Changed test skip/only marker rejection.
+- Positive synthetic pilot close with `independent_review: NOT_REQUESTED`.
+- Full-plan review template boundaries.
+- Targeted corrected-item review schema boundaries.
+- Clean CI workflow hardening.
+- Runtime artifact non-tracking.
+
+Postflight must reject automated requirements that lack a fresh `PASS` run-record bound to the current `HEAD`. Postflight must also reject changed test/spec files that introduce `.only`, `.skip`, or `skip: true` markers. Evidence Markdown remains non-authoritative.
