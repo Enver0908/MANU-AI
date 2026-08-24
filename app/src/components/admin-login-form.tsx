@@ -50,7 +50,9 @@ export function AdminLoginForm(props: { initialError?: string | null }) {
       if (!response.ok || !payload.sent) {
         setSubmitState("error");
         setFormError(
-          response.status === 503
+          response.status === 429
+            ? "Çok fazla giriş bağlantısı istendi. Lütfen bir dakika bekleyip tekrar deneyin."
+            : response.status === 503
             ? "Giriş sağlayıcısına geçici olarak ulaşılamıyor. Biraz sonra tekrar deneyin."
             : "Giriş bağlantısı gönderilemedi. Lütfen tekrar deneyin.",
         );
