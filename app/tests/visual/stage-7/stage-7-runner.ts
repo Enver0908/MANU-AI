@@ -376,6 +376,9 @@ export async function runStage7Scenario(page: Page, scenario: Stage7Scenario, te
     });
   }
 
+  await page.context().unroute("**/*").catch(() => undefined);
+  await page.close({ runBeforeUnload: false }).catch(() => undefined);
+
   mkdirSync(STAGE7_ARTIFACT_DIR, { recursive: true });
   writeFileSync(join(STAGE7_ARTIFACT_DIR, `${scenario.id}.findings.json`), JSON.stringify(findings, null, 2));
   expect(Array.isArray(findings)).toBe(true);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { AlertCircle, CheckCircle, ExternalLink, KeyRound, Loader2 } from "lucide-react";
 import {
@@ -26,6 +26,7 @@ function mapPurchaseBlockingReason(reason: string) {
 type Phase = "idle" | "checking" | "starting_checkout";
 
 export function PurchaseFlow() {
+  const checkoutButtonRef = useRef<HTMLButtonElement | null>(null);
   const [email, setEmail] = useState("");
   const [inviteToken, setInviteToken] = useState("");
   const [phase, setPhase] = useState<Phase>("idle");
@@ -34,6 +35,12 @@ export function PurchaseFlow() {
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
   const busy = phase !== "idle";
+
+  useEffect(() => {
+    if (gate?.kind === "eligible") {
+      checkoutButtonRef.current?.focus();
+    }
+  }, [gate]);
 
   async function onCheckEligibility(event: React.FormEvent) {
     event.preventDefault();
@@ -120,6 +127,7 @@ export function PurchaseFlow() {
           ) : null}
 
           <button
+            ref={checkoutButtonRef}
             type="button"
             onClick={onStartCheckout}
             disabled={busy}

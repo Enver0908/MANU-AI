@@ -2,7 +2,7 @@
 
 Date: 2026-08-24
 
-Status: STAGE_7R_4_DASHBOARD_PWA_REMEDIATION_BASELINE_RECORDED
+Status: STAGE_7R_5_HARD_GATE_EVIDENCE_RECLOSED_VALIDATED_COMMIT_PENDING
 
 Stage 5: STAGE_5_CLOSED
 
@@ -14,13 +14,13 @@ Production: NO-GO
 
 ## Result
 
-Stage 7R reran the deterministic audit harness across the Stage 7 project matrix after Stage 7R.4 dashboard/PWA remediation. The run recorded one remaining P2 finding, assigned to `remediationPhase: "7.4"`.
+Stage 7R.5 reran the deterministic audit harness across the Stage 7 project matrix after hard-gate remediation and recorded zero findings.
 
 ## Commands
 
 - `npm run test:stage-7`
 - `npm run audit:stage-7`
-- representative visual approval manifest generation
+- `npm run verify:stage-7:7.4`
 
 ## Artifacts
 
@@ -28,4 +28,5 @@ Stage 7R reran the deterministic audit harness across the Stage 7 project matrix
 - `docs/PHASE_85_STAGE_7_FINDINGS.json`
 - `docs/PHASE_85_STAGE_7_BASELINE_AUDIT_REPORT.json`
 - `docs/PHASE_85_STAGE_7_BASELINE_AUDIT_REPORT.md`
-- `docs/PHASE_85_STAGE_7R_VISUAL_APPROVAL_MANIFEST.json`
+- `app/.stage-7r-baseline-artifacts`
+- `docs/PHASE_85_STAGE_7R_PHASE_5_HARD_GATE_EVIDENCE_RECLOSURE.md`

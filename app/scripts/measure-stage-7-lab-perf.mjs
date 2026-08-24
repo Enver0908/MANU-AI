@@ -199,6 +199,26 @@ async function measureRoute(browser, route) {
     }
     await page.goto(`${BASE_URL}${route.path}`, { waitUntil: "domcontentloaded", timeout: 60_000 });
     await page.waitForLoadState("load", { timeout: 30_000 }).catch(() => undefined);
+    const interactionStartedAt = Date.now();
+    const firstControl = page
+      .locator("a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled])")
+      .first();
+    const hasInteractionTarget = (await firstControl.count().catch(() => 0)) > 0;
+    const interactionTarget = hasInteractionTarget
+      ? await firstControl
+          .evaluate((element) => {
+            const tag = element.tagName.toLowerCase();
+            const testId = element.getAttribute("data-testid");
+            const role = element.getAttribute("role");
+            return [tag, testId ? `testid:${testId}` : null, role ? `role:${role}` : null].filter(Boolean).join(" ");
+          })
+          .catch(() => "none")
+      : "none";
+    if (interactionTarget !== "none") {
+      await firstControl.focus({ timeout: 3_000 }).catch(() => undefined);
+      await firstControl.click({ timeout: 3_000, trial: true }).catch(() => undefined);
+    }
+    const fixedInteractionMs = Date.now() - interactionStartedAt;
     const metrics = await page.evaluate(async () => {
       await new Promise((resolve) => setTimeout(resolve, 1_500));
       const nav = performance.getEntriesByType("navigation")[0];
@@ -216,6 +236,9 @@ async function measureRoute(browser, route) {
         longTaskCount: window.__stage7Perf?.longTaskCount ?? 0,
       };
     });
+    metrics.interactionProxyMs = Math.max(metrics.interactionProxyMs, fixedInteractionMs);
+    metrics.fixedInteractionMs = fixedInteractionMs;
+    metrics.interactionTarget = interactionTarget;
     samples.push(metrics);
     await context.close();
   }
@@ -278,6 +301,7 @@ function baseReport(status, blockers = []) {
       viewport: { width: 390, height: 844, isMobile: true, hasTouch: true },
       waitAfterLoadMs: 1500,
       observerTypes: ["largest-contentful-paint", "layout-shift", "longtask"],
+      interactionProtocol: "focus_first_enabled_control_then_trial_click",
       platform: process.platform,
     },
     blockers,

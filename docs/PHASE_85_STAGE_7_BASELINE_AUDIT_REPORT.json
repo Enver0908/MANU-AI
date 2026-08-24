@@ -1,14 +1,14 @@
 {
   "schemaVersion": "phase-85-stage-7-baseline-audit-v1",
   "generatedAt": "2026-08-24T09:00:00+03:00",
-  "status": "STAGE_7R_4_DASHBOARD_PWA_REMEDIATION_BASELINE_RECORDED",
+  "status": "STAGE_7R_5_HARD_GATE_EVIDENCE_RECLOSED_VALIDATED_COMMIT_PENDING",
   "productionStatus": "NO-GO",
   "physicalIphone": "WAIVED_NOT_EXECUTED",
-  "findingCount": 1,
+  "findingCount": 0,
   "counts": {
     "P0": 0,
     "P1": 0,
-    "P2": 1,
+    "P2": 0,
     "P3": 0
   },
   "artifactDir": "app/test-results/stage-7",
@@ -51,7 +51,7 @@
     },
     {
       "project": "stage-7-webkit-ipad",
-      "findingCount": 1,
+      "findingCount": 0,
       "screenshotCount": 8
     },
     {
@@ -64,5 +64,13 @@
       "findingCount": 0,
       "screenshotCount": 8
     }
-  ]
+  ],
+  "stage7R5": {
+    "result": "Full deterministic Stage 7 audit completed with zero findings across all required projects.",
+    "evidence": "docs/PHASE_85_STAGE_7R_PHASE_5_HARD_GATE_EVIDENCE_RECLOSURE.md",
+    "validation": [
+      "npm run audit:stage-7",
+      "npm run verify:stage-7:7.4"
+    ]
+  }
 }

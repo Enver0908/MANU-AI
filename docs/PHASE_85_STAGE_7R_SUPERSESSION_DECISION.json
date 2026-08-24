@@ -1,7 +1,7 @@
 {
   "schemaVersion": "phase-85-stage-7r-supersession-decision-v1",
   "generatedAt": "2026-08-24T09:00:00+03:00",
-  "status": "STAGE_7R_4_DASHBOARD_PWA_REMEDIATION_VALIDATED_VISUAL_REVIEW_PENDING",
+  "status": "STAGE_7R_5_HARD_GATE_EVIDENCE_RECLOSED_VALIDATED_COMMIT_PENDING",
   "stage": "Phase 85 Stage 7R",
   "phase": "7R.0",
   "sourceOfAuthority": "docs/PHASE_85_STAGE_7_VISUAL_QA_POLISH_ACCESSIBILITY_CLOSURE_ACTION_PLAN.md",
@@ -15,18 +15,18 @@
   "decision": {
     "stage7OriginalPhase7_1Through7_4Status": "SUPERSEDED_FOR_STAGE_7_CLOSURE",
     "stage7ClosureStatus": "REMEDIATION_REQUIRED_BEFORE_STAGE_7_5",
-    "stage7RStatus": "DASHBOARD_PWA_REMEDIATION_VALIDATED_VISUAL_REVIEW_PENDING",
+    "stage7RStatus": "HARD_GATE_EVIDENCE_RECLOSED_VALIDATED_COMMIT_PENDING",
     "oldEvidencePolicy": "PRESERVE_DO_NOT_REWRITE",
     "runtimeChangesFrom7_2Through7_4": "PROVISIONAL_UNTIL_TRUSTED_REBASELINE",
-    "nextExecutablePhase": "7R.4_VISUAL_REVIEW_AND_COMMIT"
+    "nextExecutablePhase": "7R.5_VISUAL_REVIEW_AND_COMMIT"
   },
   "phaseProgress": {
     "7R.0": "complete",
     "7R.1": "complete",
     "7R.2": "trusted_baseline_recorded",
     "7R.3": "implemented_validated_committed",
-    "7R.4": "implemented_validated_visual_review_pending",
-    "7R.5": "not_started"
+    "7R.4": "implemented_validated_committed",
+    "7R.5": "implemented_validated_commit_pending"
   },
   "authorityOrderForStage7Closure": [
     "Current Git state, committed code, and uncommitted worktree evidence",
@@ -60,10 +60,12 @@
     }
   ],
   "nonClaims": [
-    "Stage 7 is not closed.",
+    "Stage 7 is not closed until user approval and commit are completed and Stage 7 closure is explicitly declared.",
     "Stage 7.5 is not started.",
-    "The Stage 7R.0 decision does not modify runtime code, APIs, migrations, RLS, service-worker policy, dependencies, production gates, or deployment state.",
     "Physical iPhone Safari/PWA remains WAIVED_NOT_EXECUTED, not PASS.",
+    "Playwright WebKit evidence is not physical iPhone Safari/PWA evidence.",
+    "NVDA smoke remains a local smoke evidence artifact, not formal WCAG certification.",
+    "Android TalkBack and physical Android Stage 7.5 validation are not executed in Stage 7R.5.",
     "Production remains NO-GO."
   ]
 }

@@ -1,4 +1,4 @@
-import { mkdirSync, readFileSync, readdirSync, writeFileSync, existsSync } from "node:fs";
+import { mkdirSync, readFileSync, readdirSync, statSync, writeFileSync, existsSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createHash } from "node:crypto";
@@ -13,6 +13,7 @@ export const matrixPath = join(docsRoot, "PHASE_85_STAGE_7_SCENARIO_MATRIX.json"
 export const auditReportJsonPath = join(docsRoot, "PHASE_85_STAGE_7_BASELINE_AUDIT_REPORT.json");
 export const auditReportMdPath = join(docsRoot, "PHASE_85_STAGE_7_BASELINE_AUDIT_REPORT.md");
 export const auditEvidencePath = join(docsRoot, "PHASE_85_STAGE_7_PHASE_1_BASELINE_AUDIT_EVIDENCE.md");
+export const stableArtifactDir = join(appRoot, ".stage-7r-baseline-artifacts");
 
 export function repoRelative(filePath) {
   return relative(repoRoot, filePath).replace(/\\/g, "/");
@@ -39,6 +40,28 @@ export function assertPrivacy(text, label) {
   if (hits.length) {
     throw new Error(`Stage 7 privacy scan failed for ${label}`);
   }
+}
+
+export function assertPrivacyForTextArtifacts(root, extensions = new Set([".json", ".md", ".txt", ".html"])) {
+  if (!existsSync(root)) return [];
+  const scanned = [];
+  const visit = (dir) => {
+    for (const name of readdirSync(dir)) {
+      const path = join(dir, name);
+      const stat = statSync(path);
+      if (stat.isDirectory()) {
+        visit(path);
+        continue;
+      }
+      const lower = name.toLowerCase();
+      const extension = lower.includes(".") ? lower.slice(lower.lastIndexOf(".")) : "";
+      if (!extensions.has(extension)) continue;
+      assertPrivacy(readFileSync(path, "utf8"), path);
+      scanned.push(path);
+    }
+  };
+  visit(root);
+  return scanned;
 }
 
 export function collectFindingFiles(dir = artifactDir) {

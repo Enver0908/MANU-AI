@@ -16,6 +16,7 @@
     "verify:stage-7:7.2": "node scripts/verify-stage-7.mjs --phase=7.2",
     "verify:stage-7:7.3": "node scripts/verify-stage-7.mjs --phase=7.3",
     "verify:stage-7:7.4": "node scripts/verify-stage-7.mjs --phase=7.4",
+    "verify:stage-7:closure": "node scripts/verify-stage-7.mjs --closure",
     "test:stage-7-lab-perf": "node scripts/measure-stage-7-lab-perf.mjs",
     "test:rls": "vitest run src/lib/supabase-rls.integration.test.ts",
     "test:visual": "npm run build && playwright test",

@@ -1,7 +1,7 @@
 {
   "schemaVersion": "phase-85-stage-7-findings-v2",
   "generatedAt": "2026-08-24T09:00:00+03:00",
-  "status": "STAGE_7R_4_DASHBOARD_PWA_REMEDIATION_BASELINE_RECORDED",
+  "status": "STAGE_7R_5_HARD_GATE_EVIDENCE_RECLOSED_VALIDATED_COMMIT_PENDING",
   "sourceOfAuthority": "docs/PHASE_85_STAGE_7_VISUAL_QA_POLISH_ACCESSIBILITY_CLOSURE_ACTION_PLAN.md",
   "clock": "2026-08-22T09:00:00+03:00",
   "timezone": "Europe/Istanbul",
@@ -26,36 +26,19 @@
   "counts": {
     "P0": 0,
     "P1": 0,
-    "P2": 1,
+    "P2": 0,
     "P3": 0
   },
-  "findings": [
-    {
-      "category": "accessibility",
-      "severity": "P2",
-      "surface": "purchase",
-      "scenarioId": "purchase.purchase-valid.dietitian.tr.webkit-ipad",
-      "role": "dietitian",
-      "locale": "tr",
-      "browser": "webkit-ipad",
-      "viewport": "ipad-pro-11",
-      "wcagCriteria": [
-        "2.1.1",
-        "2.4.7"
-      ],
-      "expected": "Tab moves focus to a visible interactive control.",
-      "actual": "Focus remained on BODY",
-      "reproductionSteps": [
-        "Open /purchase",
-        "Press Tab"
-      ],
-      "evidenceRefs": [],
-      "rootCause": "Keyboard focus did not enter an interactive control.",
-      "remediationPhase": "7.4",
-      "id": "S7-F-purchase-purchase-valid-dietitian-tr-webkit-ipad-01",
-      "fingerprint": "2a55dfaafa33a201742c9423afdc910bca65f4d2d6def57b9851f4cd7f4b4639",
-      "status": "open",
-      "resolutionEvidence": []
-    }
-  ]
+  "findings": [],
+  "stage7R5": {
+    "result": "No open Stage 7 findings remain after Stage 7R.5 hard-gate remediation.",
+    "evidence": "docs/PHASE_85_STAGE_7R_PHASE_5_HARD_GATE_EVIDENCE_RECLOSURE.md",
+    "validation": [
+      "npm run audit:stage-7",
+      "npm run test:stage-7-lab-perf",
+      "npm run verify:stage-7:7.4",
+      "npm run build",
+      "npm run typecheck"
+    ]
+  }
 }
