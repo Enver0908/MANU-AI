@@ -1,7 +1,7 @@
 {
   "schemaVersion": "phase-85-stage-7r-supersession-decision-v1",
   "generatedAt": "2026-08-24T09:00:00+03:00",
-  "status": "STAGE_7R_3_SHARED_PUBLIC_REMEDIATION_VALIDATED_VISUAL_REVIEW_PENDING",
+  "status": "STAGE_7R_4_DASHBOARD_PWA_REMEDIATION_VALIDATED_VISUAL_REVIEW_PENDING",
   "stage": "Phase 85 Stage 7R",
   "phase": "7R.0",
   "sourceOfAuthority": "docs/PHASE_85_STAGE_7_VISUAL_QA_POLISH_ACCESSIBILITY_CLOSURE_ACTION_PLAN.md",
@@ -15,17 +15,17 @@
   "decision": {
     "stage7OriginalPhase7_1Through7_4Status": "SUPERSEDED_FOR_STAGE_7_CLOSURE",
     "stage7ClosureStatus": "REMEDIATION_REQUIRED_BEFORE_STAGE_7_5",
-    "stage7RStatus": "SHARED_PUBLIC_COMMERCIAL_REMEDIATION_VALIDATED_VISUAL_REVIEW_PENDING",
+    "stage7RStatus": "DASHBOARD_PWA_REMEDIATION_VALIDATED_VISUAL_REVIEW_PENDING",
     "oldEvidencePolicy": "PRESERVE_DO_NOT_REWRITE",
     "runtimeChangesFrom7_2Through7_4": "PROVISIONAL_UNTIL_TRUSTED_REBASELINE",
-    "nextExecutablePhase": "7R.3_VISUAL_REVIEW_AND_COMMIT"
+    "nextExecutablePhase": "7R.4_VISUAL_REVIEW_AND_COMMIT"
   },
   "phaseProgress": {
     "7R.0": "complete",
     "7R.1": "complete",
     "7R.2": "trusted_baseline_recorded",
-    "7R.3": "implemented_validated_visual_review_pending",
-    "7R.4": "not_started",
+    "7R.3": "implemented_validated_committed",
+    "7R.4": "implemented_validated_visual_review_pending",
     "7R.5": "not_started"
   },
   "authorityOrderForStage7Closure": [

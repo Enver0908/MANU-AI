@@ -1,11 +1,24 @@
 import { headers } from "next/headers";
 
-export async function readStage7ScenarioState(): Promise<string | null> {
+export type Stage7ScenarioHeader = {
+  id: string;
+  surface: string;
+  state: string;
+};
+
+export async function readStage7ScenarioHeader(): Promise<Stage7ScenarioHeader | null> {
   const headerStore = await headers();
   const scenarioId = headerStore.get("x-manu-stage7-scenario")?.trim() ?? "";
   if (!scenarioId) {
     return null;
   }
-  const [, state] = scenarioId.split(".");
-  return state || null;
+  const [surface, state] = scenarioId.split(".");
+  if (!surface || !state) {
+    return null;
+  }
+  return { id: scenarioId, surface, state };
+}
+
+export async function readStage7ScenarioState(): Promise<string | null> {
+  return (await readStage7ScenarioHeader())?.state ?? null;
 }
