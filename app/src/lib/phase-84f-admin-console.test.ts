@@ -52,6 +52,13 @@ describe("phase 84f admin console", () => {
         NEXT_PUBLIC_APP_URL: "https://siriusai.store",
       }),
     ).toBe("https://admin.example.com");
+    expect(
+      buildAdminAuthCallbackUrlWithNext("/admin", {
+        MANU_ADMIN_APP_URL: "https://siriusai.store/",
+        NEXT_PUBLIC_APP_URL: "https://siriusai.store",
+        MANU_ADMIN_HOST: "admin.siriusai.store",
+      }),
+    ).toBe("https://admin.siriusai.store/auth/callback?next=%2Fadmin");
   });
 
   it("rewrites admin host paths to /admin", () => {

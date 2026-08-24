@@ -32,7 +32,25 @@ export function resolveAdminHost(env: Record<string, string | undefined> = proce
 export function resolveAdminAppBaseUrl(env: Record<string, string | undefined> = process.env) {
   const configured = env.MANU_ADMIN_APP_URL?.trim();
   if (configured) {
-    return configured.replace(/\/$/, "");
+    const normalizedConfigured = configured.replace(/\/$/, "");
+    const normalizedPublicUrl = env.NEXT_PUBLIC_APP_URL?.trim().replace(/\/$/, "");
+    if (normalizedPublicUrl) {
+      try {
+        const configuredUrl = new URL(normalizedConfigured);
+        const publicUrl = new URL(normalizedPublicUrl);
+        const configuredIsLocalhost =
+          configuredUrl.hostname === "localhost" ||
+          configuredUrl.hostname === "127.0.0.1" ||
+          configuredUrl.hostname === "::1";
+        if (configuredIsLocalhost || configuredUrl.hostname !== publicUrl.hostname) {
+          return normalizedConfigured;
+        }
+      } catch {
+        return normalizedConfigured;
+      }
+    } else {
+      return normalizedConfigured;
+    }
   }
   const publicAppUrl = env.NEXT_PUBLIC_APP_URL?.trim();
   const normalizedPublicUrl = publicAppUrl?.replace(/\/$/, "");
