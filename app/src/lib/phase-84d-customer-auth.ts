@@ -15,6 +15,8 @@ export const MAGIC_LINK_RATE_LIMIT = {
   windowMs: 60_000,
 } as const;
 
+export const MAGIC_LINK_SEND_RETRY_DELAYS_MS = [250, 750, 1500] as const;
+
 export type CustomerAuthRedirectTarget =
   | "/login"
   | "/dashboard"
@@ -29,6 +31,17 @@ export type CustomerSessionFacts = {
   entitlementStatus: import("./phase-83b-commercial-entitlement-model").CommercialEntitlementStatus | null;
   hasClaimablePaidWorkspace: boolean;
 };
+
+export type MagicLinkSendResult = {
+  error?: {
+    code?: string;
+    message?: string;
+    name?: string;
+    status?: number;
+  } | null;
+};
+
+export type MagicLinkSendAttempt = () => Promise<MagicLinkSendResult>;
 
 export function resolveAppBaseUrl(env: Record<string, string | undefined> = process.env) {
   const configured = env.NEXT_PUBLIC_APP_URL?.trim();
@@ -62,6 +75,69 @@ export function validateMagicLinkRequest(input: { email?: string }) {
     valid: validation.valid,
     normalizedEmail,
     blockingReasons: validation.valid ? [] : ["email_invalid"],
+  };
+}
+
+function readErrorText(error: unknown): string {
+  if (!error) return "";
+  if (typeof error === "string") return error;
+  if (error instanceof Error) {
+    return `${error.name} ${error.message} ${readErrorText(error.cause)}`.trim();
+  }
+  if (typeof error === "object") {
+    const record = error as Record<string, unknown>;
+    return [
+      record.name,
+      record.code,
+      record.status,
+      record.message,
+      readErrorText(record.cause),
+    ]
+      .filter(Boolean)
+      .join(" ");
+  }
+  return String(error);
+}
+
+export function isTransientMagicLinkSendFailure(error: unknown) {
+  const text = readErrorText(error);
+  if (/\b(429|500|502|503|504)\b/.test(text)) return true;
+  return /fetch failed|ENOTFOUND|EAI_AGAIN|ETIMEDOUT|ECONNRESET|ECONNREFUSED|UND_ERR|network/i.test(text);
+}
+
+function sleep(ms: number) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
+export async function sendMagicLinkWithRetry(send: MagicLinkSendAttempt) {
+  let lastTransientError: unknown = null;
+
+  for (let attempt = 0; attempt <= MAGIC_LINK_SEND_RETRY_DELAYS_MS.length; attempt += 1) {
+    try {
+      const result = await send();
+      if (!result.error) return result;
+      if (!isTransientMagicLinkSendFailure(result.error)) return result;
+      lastTransientError = result.error;
+    } catch (error) {
+      if (!isTransientMagicLinkSendFailure(error)) {
+        throw error;
+      }
+      lastTransientError = error;
+    }
+
+    const retryDelay = MAGIC_LINK_SEND_RETRY_DELAYS_MS[attempt];
+    if (retryDelay === undefined) break;
+    await sleep(retryDelay);
+  }
+
+  return {
+    error: {
+      code: "auth_provider_unavailable",
+      message: readErrorText(lastTransientError) || "auth provider unavailable",
+      status: 503,
+    },
   };
 }
 

@@ -49,7 +49,11 @@ export function AdminLoginForm(props: { initialError?: string | null }) {
 
       if (!response.ok || !payload.sent) {
         setSubmitState("error");
-        setFormError("Giriş bağlantısı gönderilemedi. Lütfen tekrar deneyin.");
+        setFormError(
+          response.status === 503
+            ? "Giriş sağlayıcısına geçici olarak ulaşılamıyor. Biraz sonra tekrar deneyin."
+            : "Giriş bağlantısı gönderilemedi. Lütfen tekrar deneyin.",
+        );
         return;
       }
 

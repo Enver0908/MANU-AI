@@ -2,7 +2,9 @@ import { describe, expect, it } from "vitest";
 import {
   buildAuthCallbackUrl,
   deriveCustomerAuthRedirect,
+  isTransientMagicLinkSendFailure,
   sanitizePostAuthRedirectPath,
+  sendMagicLinkWithRetry,
   summarizePhase84dCustomerAuth,
   validateMagicLinkRequest,
 } from "./phase-84d-customer-auth";
@@ -84,5 +86,27 @@ describe("phase 84d customer auth", () => {
     expect(summarizePhase84dCustomerAuth({ NEXT_PUBLIC_APP_URL: "https://siriusai.store" }).callbackUrl).toBe(
       "https://siriusai.store/auth/callback",
     );
+  });
+
+  it("classifies transient provider and DNS failures for magic-link retry", () => {
+    expect(isTransientMagicLinkSendFailure(new Error("fetch failed getaddrinfo ENOTFOUND example.supabase.co"))).toBe(
+      true,
+    );
+    expect(isTransientMagicLinkSendFailure({ status: 503, message: "service unavailable" })).toBe(true);
+    expect(isTransientMagicLinkSendFailure({ status: 400, message: "redirect URL not allowed" })).toBe(false);
+  });
+
+  it("retries transient magic-link send failures before succeeding", async () => {
+    let attempts = 0;
+    const result = await sendMagicLinkWithRetry(async () => {
+      attempts += 1;
+      if (attempts === 1) {
+        throw new Error("fetch failed getaddrinfo ENOTFOUND pxyjocahjutcojltcalj.supabase.co");
+      }
+      return { error: null };
+    });
+
+    expect(result.error).toBeFalsy();
+    expect(attempts).toBe(2);
   });
 });

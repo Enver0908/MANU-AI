@@ -6,6 +6,7 @@ import {
   buildAuthCallbackUrlWithNext,
   MAGIC_LINK_RATE_LIMIT,
   sanitizePostAuthRedirectPath,
+  sendMagicLinkWithRetry,
   validateMagicLinkRequest,
 } from "@/lib/phase-84d-customer-auth";
 import { genericMagicLinkAcceptedResponse } from "@/lib/phase-85-stage-4d-account-security";
@@ -61,13 +62,20 @@ export async function POST(request: NextRequest) {
     },
   });
 
-  await supabase.auth.signInWithOtp({
-    email: validation.normalizedEmail,
-    options: {
-      shouldCreateUser: false,
-      emailRedirectTo: buildAuthCallbackUrlWithNext(body.next),
-    },
-  });
+  const { error } = await sendMagicLinkWithRetry(() =>
+    supabase.auth.signInWithOtp({
+      email: validation.normalizedEmail,
+      options: {
+        shouldCreateUser: false,
+        emailRedirectTo: buildAuthCallbackUrlWithNext(body.next),
+      },
+    }),
+  );
+
+  if (error) {
+    const status = error.status === 503 ? 503 : 500;
+    return NextResponse.json({ error: "magic_link_send_failed" }, { status });
+  }
 
   const checkoutSessionId = body.checkoutSessionId?.trim() || null;
   const { getSupabaseAdminClient } = await import("@/lib/supabase");

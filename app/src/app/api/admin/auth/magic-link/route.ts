@@ -1,7 +1,11 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { AppDomainError } from "@/lib/app-errors";
 import { getSupabaseConfig } from "@/lib/supabase";
-import { MAGIC_LINK_RATE_LIMIT, validateMagicLinkRequest } from "@/lib/phase-84d-customer-auth";
+import {
+  MAGIC_LINK_RATE_LIMIT,
+  sendMagicLinkWithRetry,
+  validateMagicLinkRequest,
+} from "@/lib/phase-84d-customer-auth";
 import {
   buildAdminAuthCallbackUrlWithNext,
   evaluateAdminAllowlistAccess,
@@ -73,15 +77,18 @@ export async function POST(request: NextRequest) {
     },
   });
 
-  const { error } = await supabase.auth.signInWithOtp({
-    email: validation.normalizedEmail,
-    options: {
-      emailRedirectTo: buildAdminAuthCallbackUrlWithNext("/admin"),
-    },
-  });
+  const { error } = await sendMagicLinkWithRetry(() =>
+    supabase.auth.signInWithOtp({
+      email: validation.normalizedEmail,
+      options: {
+        emailRedirectTo: buildAdminAuthCallbackUrlWithNext("/admin"),
+      },
+    }),
+  );
 
   if (error) {
-    return NextResponse.json({ error: "magic_link_send_failed" }, { status: 500 });
+    const status = error.status === 503 ? 503 : 500;
+    return NextResponse.json({ error: "magic_link_send_failed" }, { status });
   }
 
   return NextResponse.json({
