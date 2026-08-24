@@ -7,10 +7,64 @@ export const STAGE7_FINDING_STATUSES = [
   "not_reproducible",
 ] as const;
 export const STAGE7_ROLES = ["owner", "admin", "dietitian", "assistant", "auditor"] as const;
-export const STAGE7_ASSIGNMENT_ACCESS = ["care_team", "viewer"] as const;
+export const STAGE7_ASSIGNMENT_ACCESS = ["care_team", "viewer", "none"] as const;
 export const STAGE7_LOCALES = ["tr", "en", "de", "pt", "es", "fr", "ar"] as const;
 export const STAGE7_PWA_MODES = ["service_worker_blocked", "service_worker_enabled"] as const;
 export const STAGE7_SNAPSHOT_KINDS = ["page", "locator", "state", "none"] as const;
+export const STAGE7_REQUIRED_ASSERTIONS = [
+  "active-client",
+  "active-state",
+  "already-claimed",
+  "archive-or-list",
+  "axe-a-aa",
+  "blocked-status",
+  "blocker-status",
+  "busy-state",
+  "claim-cta",
+  "conflict-status",
+  "dense-list",
+  "dense-table",
+  "dirty-dialog",
+  "dirty-state",
+  "draft-state",
+  "eligible-cta",
+  "empty-or-defaults",
+  "empty-or-prompt",
+  "empty-state",
+  "error-status",
+  "export-disabled",
+  "export-enabled",
+  "filters",
+  "forbidden-or-missing",
+  "geometry",
+  "inactive-state",
+  "incomplete-status",
+  "install-guidance",
+  "installed-or-settings",
+  "loading-state",
+  "login-redirect-or-gate",
+  "manual-state",
+  "media-containment",
+  "message-body",
+  "offline-blocker",
+  "pagination",
+  "pending-status",
+  "pwa-shell",
+  "readonly-or-hidden",
+  "risk-red",
+  "risk-yellow",
+  "save-ack",
+  "search-field",
+  "session-gate",
+  "stale-status",
+  "success-status",
+  "takeover-status",
+  "unread-marker",
+  "update-banner-or-note",
+  "validation-message",
+  "visible-root",
+] as const;
+export const STAGE7_ACCESSIBILITY_CHECKS = ["aria-roles", "axe-wcag-a-aa", "keyboard-tab"] as const;
 export const STAGE7_BROWSER_TIERS = [
   "chromium-desktop",
   "chromium-desktop-xl",
@@ -42,6 +96,8 @@ export type Stage7PwaMode = (typeof STAGE7_PWA_MODES)[number];
 export type Stage7SnapshotKind = (typeof STAGE7_SNAPSHOT_KINDS)[number];
 export type Stage7BrowserTier = (typeof STAGE7_BROWSER_TIERS)[number];
 export type Stage7ViewportTier = (typeof STAGE7_VIEWPORT_TIERS)[number];
+export type Stage7RequiredAssertion = (typeof STAGE7_REQUIRED_ASSERTIONS)[number];
+export type Stage7AccessibilityCheck = (typeof STAGE7_ACCESSIBILITY_CHECKS)[number];
 
 export type Stage7Scenario = {
   id: string;
@@ -55,9 +111,9 @@ export type Stage7Scenario = {
   viewportTier: Stage7ViewportTier;
   pwaMode: Stage7PwaMode;
   fixtureId: string;
-  requiredAssertions: string[];
+  requiredAssertions: Stage7RequiredAssertion[];
   snapshotKind: Stage7SnapshotKind;
-  accessibilityChecks: string[];
+  accessibilityChecks: Stage7AccessibilityCheck[];
   performanceEligible: boolean;
 };
 
@@ -140,9 +196,13 @@ export function parseStage7Scenario(input: unknown): Stage7Scenario {
     viewportTier: assertIncluded(value.viewportTier, STAGE7_VIEWPORT_TIERS, "viewportTier"),
     pwaMode: assertIncluded(value.pwaMode, STAGE7_PWA_MODES, "pwaMode"),
     fixtureId: value.fixtureId as string,
-    requiredAssertions: value.requiredAssertions as string[],
+    requiredAssertions: (value.requiredAssertions as unknown[]).map((item) =>
+      assertIncluded(item, STAGE7_REQUIRED_ASSERTIONS, "requiredAssertions"),
+    ),
     snapshotKind: assertIncluded(value.snapshotKind, STAGE7_SNAPSHOT_KINDS, "snapshotKind"),
-    accessibilityChecks: value.accessibilityChecks as string[],
+    accessibilityChecks: (value.accessibilityChecks as unknown[]).map((item) =>
+      assertIncluded(item, STAGE7_ACCESSIBILITY_CHECKS, "accessibilityChecks"),
+    ),
     performanceEligible: value.performanceEligible as boolean,
   };
 }

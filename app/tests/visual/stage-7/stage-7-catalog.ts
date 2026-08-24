@@ -3,6 +3,7 @@ import {
   type Stage7BrowserTier,
   type Stage7Locale,
   type Stage7PwaMode,
+  type Stage7RequiredAssertion,
   type Stage7Role,
   type Stage7Scenario,
   type Stage7SnapshotKind,
@@ -16,14 +17,14 @@ type ScenarioSeed = {
   state: string;
   fixtureId: string;
   snapshotKind: Stage7SnapshotKind;
-  requiredAssertions: string[];
+  requiredAssertions: Stage7RequiredAssertion[];
   accessibilityChecks?: string[];
   performanceEligible?: boolean;
   critical?: boolean;
 };
 
-const DEFAULT_ASSERTIONS = ["visible-root", "geometry", "axe-a-aa"];
-const DEFAULT_A11Y = ["axe-wcag-a-aa", "keyboard-tab", "aria-roles"];
+const DEFAULT_ASSERTIONS: Stage7RequiredAssertion[] = ["visible-root", "geometry", "axe-a-aa"];
+const DEFAULT_A11Y = ["axe-wcag-a-aa", "keyboard-tab", "aria-roles"] as const;
 
 const CORE_SEEDS: ScenarioSeed[] = [
   { surface: "public", route: "/#contact", state: "contact-empty", fixtureId: "public-default", snapshotKind: "page", requiredAssertions: DEFAULT_ASSERTIONS, critical: true },
@@ -172,13 +173,22 @@ function makeScenario(seed: ScenarioSeed, overlay: {
   pwaMode?: Stage7PwaMode;
 }): Stage7Scenario {
   const viewport = BROWSER_VIEWPORTS[overlay.browserTier];
+  const assignmentAccess =
+    overlay.tenantRole === "auditor" ||
+    seed.fixtureId === "dashboard-forbidden" ||
+    seed.state.includes("restricted") ||
+    seed.state.includes("inaccessible")
+      ? "none"
+      : overlay.tenantRole === "assistant"
+        ? "viewer"
+        : "care_team";
   return parseStage7Scenario({
     id: scenarioId([seed.surface, seed.state, overlay.tenantRole, overlay.locale, overlay.browserTier]),
     surface: seed.surface,
     route: seed.route,
     state: seed.state,
     tenantRole: overlay.tenantRole,
-    assignmentAccess: overlay.tenantRole === "auditor" ? "viewer" : "care_team",
+    assignmentAccess,
     locale: overlay.locale,
     browserTier: overlay.browserTier,
     viewportTier: viewport.viewportTier,
@@ -186,7 +196,7 @@ function makeScenario(seed: ScenarioSeed, overlay: {
     fixtureId: seed.fixtureId,
     requiredAssertions: seed.requiredAssertions,
     snapshotKind: seed.snapshotKind,
-    accessibilityChecks: seed.accessibilityChecks ?? DEFAULT_A11Y,
+    accessibilityChecks: seed.accessibilityChecks ?? [...DEFAULT_A11Y],
     performanceEligible: Boolean(seed.performanceEligible),
   });
 }
@@ -256,5 +266,4 @@ export function listMandatoryStates(): string[] {
 }
 
 export { CORE_SEEDS, BROWSER_VIEWPORTS };
-
 

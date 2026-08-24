@@ -1,15 +1,68 @@
 {
   "schemaVersion": "phase-85-stage-7-baseline-audit-v1",
-  "generatedAt": "2026-08-22T06:00:00.000Z",
-  "status": "RECORDED",
+  "generatedAt": "2026-08-24T09:00:00+03:00",
+  "status": "STAGE_7R_2_TRUSTED_BASELINE_RECORDED",
   "productionStatus": "NO-GO",
   "physicalIphone": "WAIVED_NOT_EXECUTED",
-  "findingCount": 3,
+  "findingCount": 512,
   "counts": {
     "P0": 0,
-    "P1": 2,
-    "P2": 1,
+    "P1": 155,
+    "P2": 357,
     "P3": 0
   },
-  "artifactDir": "app/test-results/stage-7"
+  "artifactDir": "app/test-results/stage-7",
+  "stableArtifactDir": "app/.stage-7r-baseline-artifacts",
+  "projects": [
+    {
+      "project": "stage-7-chromium-desktop",
+      "findingCount": 390,
+      "screenshotCount": 116
+    },
+    {
+      "project": "stage-7-chromium-desktop-xl",
+      "findingCount": 30,
+      "screenshotCount": 7
+    },
+    {
+      "project": "stage-7-chromium-tablet",
+      "findingCount": 30,
+      "screenshotCount": 7
+    },
+    {
+      "project": "stage-7-chromium-android",
+      "findingCount": 80,
+      "screenshotCount": 20
+    },
+    {
+      "project": "stage-7-chromium-reflow",
+      "findingCount": 26,
+      "screenshotCount": 8
+    },
+    {
+      "project": "stage-7-chromium-landscape",
+      "findingCount": 30,
+      "screenshotCount": 7
+    },
+    {
+      "project": "stage-7-webkit-iphone",
+      "findingCount": 40,
+      "screenshotCount": 8
+    },
+    {
+      "project": "stage-7-webkit-ipad",
+      "findingCount": 29,
+      "screenshotCount": 7
+    },
+    {
+      "project": "stage-7-firefox-desktop",
+      "findingCount": 29,
+      "screenshotCount": 8
+    },
+    {
+      "project": "stage-7-pwa",
+      "findingCount": 17,
+      "screenshotCount": 8
+    }
+  ]
 }

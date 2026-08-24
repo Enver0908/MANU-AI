@@ -2,7 +2,7 @@
 
 Date: 2026-08-22
 
-Status: **STAGE 7.0 DOCUMENTATION AND SCOPE LOCK COMPLETE**
+Status: **STAGE_7R_2_TRUSTED_BASELINE_RECORDED_VISUAL_APPROVAL_PENDING**
 
 Stage 5 status: **STAGE_5_CLOSED**
 
@@ -16,6 +16,8 @@ Production status: **NO-GO**
 
 This document is the canonical execution plan for Stage 7. Stage 7 closes Phase 85 frontend quality only after a full audit, deterministic remediation, accessibility validation, browser/PWA verification, and final closure evidence.
 
+**Stage 7R supersession update, 2026-08-24:** Stage 7.1, Stage 7.2, Stage 7.3, and Stage 7.4 were implemented and then reviewed against this plan. The review found that all four phases are only partially implemented for the technical intent of this plan. Their evidence is preserved as historical evidence but is superseded for Stage 7 closure by `docs/PHASE_85_STAGE_7R_SUPERSESSION_DECISION.json`, `docs/PHASE_85_STAGE_7R_FINDING_LOCK.json`, and `docs/PHASE_85_STAGE_7R_PHASE_0_AUTHORITY_FINDING_LOCK_EVIDENCE.md`. Stage 7 is not closed, Stage 7.5 is not started, and Stage 7 now requires the Stage 7R remediation sequence before Stage 7.5 can begin.
+
 Stage 7 consumes the closed Stage 5 shell contracts and the closed Stage 6 dashboard workflow contracts. Stage 7 does not reopen backend security, API authorization, RLS, migrations, AI/provider orchestration, real channel egress, live billing, production deployment, or real health-data paths.
 
 The objective is to prove that the full frontend surface is visually coherent, responsive, accessible, browser-compatible, privacy-safe, and stable across representative public, commercial, auth, onboarding, admin, dashboard, and PWA workflows.
@@ -28,6 +30,17 @@ Stage 7 has six phases:
 4. Stage 7.3: dashboard and installed-PWA remediation.
 5. Stage 7.4: accessibility, browser, responsive, performance, and bundle closure.
 6. Stage 7.5: final evidence, physical Android/TalkBack validation, two clean runs, and closure decision.
+
+Stage 7R remediation has six phases:
+
+1. Stage 7R.0: correction authority and finding lock.
+2. Stage 7R.1: deterministic harness rebuild.
+3. Stage 7R.2: trusted baseline rerun and user-approved visual baseline.
+4. Stage 7R.3: shared, public, commercial, accessibility, and primitive remediation.
+5. Stage 7R.4: dashboard and PWA remediation.
+6. Stage 7R.5: real hard gate, evidence reconciliation, and reclosure readiness.
+
+Stage 7.5 cannot start until Stage 7R.1 through Stage 7R.5 have resolved or user-approved reclassified every P0, P1, and P2 locked in `docs/PHASE_85_STAGE_7R_FINDING_LOCK.json`.
 
 Each phase requires separate user approval before it starts. Each remediation phase requires representative before/after visual approval before any visual baseline update is committed. Stage 7.1 findings must be approved before Stage 7.2 remediation begins.
 

@@ -1,14 +1,15 @@
 #!/usr/bin/env node
 import { spawnSync } from "node:child_process";
-import { writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 import {
   appRoot,
   artifactDir,
   assertPrivacy,
-  auditEvidencePath,
   auditReportJsonPath,
   auditReportMdPath,
   collectFindingFiles,
+  docsRoot,
   findingsPath,
   matrixPath,
   mergeByFingerprint,
@@ -50,6 +51,16 @@ const PROJECTS = [
   "stage-7-pwa",
 ];
 
+const stableArtifactDir = join(appRoot, ".stage-7r-baseline-artifacts");
+const stage7rGeneratedAt = "2026-08-24T09:00:00+03:00";
+const stage7rEvidencePath = join(docsRoot, "PHASE_85_STAGE_7R_PHASE_2_TRUSTED_BASELINE_RUN_EVIDENCE.md");
+const projectSummaries = [];
+const allFindings = [];
+
+rmSync(artifactDir, { recursive: true, force: true });
+rmSync(stableArtifactDir, { recursive: true, force: true });
+mkdirSync(stableArtifactDir, { recursive: true });
+
 run("stage-7 contract tests", npm(), ["run", "test:stage-7"]);
 
 for (const project of PROJECTS) {
@@ -64,9 +75,24 @@ for (const project of PROJECTS) {
     ],
     { STAGE7_PROJECT_NAME: project },
   );
+  const projectFindings = collectFindingFiles(artifactDir);
+  allFindings.push(...projectFindings);
+  const projectArtifactDir = join(stableArtifactDir, project);
+  mkdirSync(projectArtifactDir, { recursive: true });
+  const screenshotNames = existsSync(artifactDir)
+    ? readdirSync(artifactDir).filter((name) => name.endsWith(".png"))
+    : [];
+  for (const name of screenshotNames) {
+    copyFileSync(join(artifactDir, name), join(projectArtifactDir, name));
+  }
+  projectSummaries.push({
+    project,
+    findingCount: projectFindings.length,
+    screenshotCount: screenshotNames.length,
+  });
 }
 
-const findings = mergeByFingerprint(collectFindingFiles(artifactDir));
+const findings = mergeByFingerprint(allFindings);
 const bySeverity = { P0: 0, P1: 0, P2: 0, P3: 0 };
 for (const finding of findings) {
   bySeverity[finding.severity] = (bySeverity[finding.severity] ?? 0) + 1;
@@ -74,8 +100,8 @@ for (const finding of findings) {
 
 const findingsDoc = {
   schemaVersion: "phase-85-stage-7-findings-v2",
-  generatedAt: "2026-08-22T06:00:00.000Z",
-  status: "STAGE_7_1_BASELINE_RECORDED",
+  generatedAt: stage7rGeneratedAt,
+  status: "STAGE_7R_2_TRUSTED_BASELINE_RECORDED",
   sourceOfAuthority: "docs/PHASE_85_STAGE_7_VISUAL_QA_POLISH_ACCESSIBILITY_CLOSURE_ACTION_PLAN.md",
   clock: "2026-08-22T09:00:00+03:00",
   timezone: "Europe/Istanbul",
@@ -93,19 +119,21 @@ writeJson(findingsPath, findingsDoc);
 
 const report = {
   schemaVersion: "phase-85-stage-7-baseline-audit-v1",
-  generatedAt: "2026-08-22T06:00:00.000Z",
-  status: "RECORDED",
+  generatedAt: stage7rGeneratedAt,
+  status: "STAGE_7R_2_TRUSTED_BASELINE_RECORDED",
   productionStatus: "NO-GO",
   physicalIphone: "WAIVED_NOT_EXECUTED",
   findingCount: findings.length,
   counts: bySeverity,
   artifactDir: "app/test-results/stage-7",
+  stableArtifactDir: "app/.stage-7r-baseline-artifacts",
+  projects: projectSummaries,
 };
 writeJson(auditReportJsonPath, report);
 
-const markdown = `# Phase 85 Stage 7.1 Baseline Audit Report
+const markdown = `# Phase 85 Stage 7R.2 Trusted Baseline Rerun Report
 
-Status: RECORDED
+Status: STAGE_7R_2_TRUSTED_BASELINE_RECORDED
 
 Production: NO-GO
 
@@ -115,18 +143,18 @@ Clock: 2026-08-22T09:00:00+03:00 Europe/Istanbul
 
 Findings: ${findings.length} (P0 ${bySeverity.P0}, P1 ${bySeverity.P1}, P2 ${bySeverity.P2}, P3 ${bySeverity.P3})
 
-\`audit:stage-7\` records product findings and fails only on harness, network, fixture, or privacy errors.
+\`audit:stage-7\` records product findings and fails on harness, network, fixture, or privacy errors.
 
 No UI remediation is included in this phase.
 `;
 assertPrivacy(markdown, auditReportMdPath);
 writeFileSync(auditReportMdPath, markdown);
 
-const evidence = `# Phase 85 Stage 7.1 Baseline Audit Evidence
+const evidence = `# Phase 85 Stage 7R.2 Trusted Baseline Rerun Evidence
 
-Date: 2026-08-22
+Date: 2026-08-24
 
-Status: STAGE_7_1_COMPLETE_BASELINE_RECORDED
+Status: STAGE_7R_2_TRUSTED_BASELINE_RECORDED_VISUAL_APPROVAL_PENDING
 
 Stage 5: STAGE_5_CLOSED
 
@@ -138,13 +166,13 @@ Production: NO-GO
 
 ## Result
 
-Stage 7.1 installed the deterministic audit harness, expanded the scenario matrix, and recorded the baseline finding inventory. Application UI, CSS, API, and service-worker files were not changed.
+Stage 7R.2 reran the rebuilt deterministic audit harness across the Stage 7 project matrix and recorded the trusted baseline finding inventory. Application UI, CSS, API, migrations, RLS, and service-worker files were not changed.
 
 ## Commands
 
 - \`npm run test:stage-7\`
 - \`npm run audit:stage-7\`
-- \`npm run verify:stage-7 -- --self-test\`
+- representative visual approval manifest generation
 
 ## Artifacts
 
@@ -152,8 +180,9 @@ Stage 7.1 installed the deterministic audit harness, expanded the scenario matri
 - \`${repoRelative(findingsPath)}\`
 - \`${repoRelative(auditReportJsonPath)}\`
 - \`${repoRelative(auditReportMdPath)}\`
+- \`docs/PHASE_85_STAGE_7R_VISUAL_APPROVAL_MANIFEST.json\`
 `;
-assertPrivacy(evidence, auditEvidencePath);
-writeFileSync(auditEvidencePath, evidence);
+assertPrivacy(evidence, stage7rEvidencePath);
+writeFileSync(stage7rEvidencePath, evidence);
 
 console.log(`[audit:stage-7] recorded ${findings.length} findings`);

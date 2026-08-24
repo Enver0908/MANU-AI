@@ -1,8 +1,8 @@
-import { readFileSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { buildStage7Scenarios, listMandatoryStates } from "./stage-7-catalog";
+import { assertKnownStage7Assertions, runStage7RequiredAssertion } from "./stage-7-assertions";
 import { computeFindingFingerprint, mergeFindingsByFingerprint, stripVolatileFields } from "./stage-7-fingerprint";
+import { resolveStage7ApiFixture } from "./stage-7-network";
 import { pairwiseCombinations } from "./stage-7-pairwise";
 import { assertArtifactPrivacy, scanArtifactPrivacy } from "./stage-7-redaction";
 import {
@@ -33,11 +33,22 @@ describe("stage-7 contracts", () => {
       );
       expect(hasErrorOrEmpty && hasBaseline).toBe(true);
     }
-    const matrixPath = join(process.cwd(), "..", "docs", "PHASE_85_STAGE_7_SCENARIO_MATRIX.json");
-    const matrix = JSON.parse(readFileSync(matrixPath, "utf8"));
-    matrix.status = "STAGE_7_1_EXECUTABLE_CATALOG";
-    matrix.executableScenarios = scenarios;
-    writeFileSync(matrixPath, `${JSON.stringify(matrix, null, 2)}\n`);
+  });
+
+  it("executes only typed required assertions and covers assignmentAccess none", () => {
+    const scenarios = buildStage7Scenarios();
+    const assignmentValues = new Set(scenarios.map((scenario) => scenario.assignmentAccess));
+    expect(assignmentValues.has("none")).toBe(true);
+    for (const scenario of scenarios) {
+      expect(() => assertKnownStage7Assertions(scenario)).not.toThrow();
+    }
+    expect(typeof runStage7RequiredAssertion).toBe("function");
+    expect(() =>
+      parseStage7Scenario({
+        ...scenarios[0],
+        requiredAssertions: ["visible-root", "unknown-assertion"],
+      }),
+    ).toThrow(/requiredAssertions/);
   });
 
   it("keeps finding fingerprints stable after volatile field stripping", () => {
@@ -76,6 +87,11 @@ describe("stage-7 contracts", () => {
     expect(scanArtifactPrivacy("dietitian.stage7@example.com +15555550100")).toEqual([]);
     expect(scanArtifactPrivacy("Authorization: Bearer abc.def.ghi")).not.toHaveLength(0);
     expect(() => assertArtifactPrivacy("user@gmail.com", "fixture")).toThrow();
+  });
+
+  it("fails closed for uncataloged local API fixtures", () => {
+    expect(resolveStage7ApiFixture("dashboard-dense", "/api/app-state")).not.toBeNull();
+    expect(resolveStage7ApiFixture("dashboard-dense", "/api/stage7-unknown")).toBeNull();
   });
 
   it("covers pairwise combinations without cartesian explosion", () => {

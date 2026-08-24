@@ -1,10 +1,10 @@
 import { expect, type Page, type TestInfo } from "@playwright/test";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { assertKnownStage7Assertions, runStage7RequiredAssertion } from "./stage-7-assertions";
 import { collectStage7AxeViolations, axeSeverity } from "./stage-7-axe";
 import { STAGE7_CLOCK, STAGE7_SYNTHETIC, type Stage7FixtureProfile } from "./stage-7-fixtures";
 import { computeFindingFingerprint } from "./stage-7-fingerprint";
-import { collectStage7GeometryFailures } from "./stage-7-geometry";
 import { installStage7NetworkGuard, type Stage7NetworkSession } from "./stage-7-network";
 import { scanArtifactPrivacy, redactArtifactText } from "./stage-7-redaction";
 import type { Stage7Finding, Stage7Scenario } from "./stage-7-schema";
@@ -23,13 +23,26 @@ function remediationPhaseFor(surface: string): Stage7Finding["remediationPhase"]
 export async function prepareStage7Page(page: Page, scenario: Stage7Scenario): Promise<Stage7NetworkSession> {
   page.setDefaultTimeout(8_000);
   page.setDefaultNavigationTimeout(15_000);
-  await page.context().addInitScript(() => {
+  assertKnownStage7Assertions(scenario);
+  await page.context().addInitScript(({ stage7Scenario, stage7Clock }) => {
     try {
       localStorage.clear();
       sessionStorage.clear();
+      localStorage.setItem("manu.stage7.scenario", JSON.stringify(stage7Scenario));
+      localStorage.setItem("manu.stage7.role", stage7Scenario.tenantRole);
+      localStorage.setItem("manu.stage7.assignmentAccess", stage7Scenario.assignmentAccess);
+      localStorage.setItem("manu.stage7.locale", stage7Scenario.locale);
+      localStorage.setItem("manu.stage7.clock", stage7Clock);
+      sessionStorage.setItem("manu.stage7.activeClientId", "client-stage7-001");
     } catch {
       /* ignore */
     }
+  }, { stage7Scenario: scenario, stage7Clock: STAGE7_CLOCK });
+  await page.context().setExtraHTTPHeaders({
+    "x-manu-stage7-scenario": scenario.id,
+    "x-manu-stage7-role": scenario.tenantRole,
+    "x-manu-stage7-assignment-access": scenario.assignmentAccess,
+    "x-manu-stage7-locale": scenario.locale,
   });
   await page.emulateMedia({ colorScheme: "light", reducedMotion: "reduce" });
   return installStage7NetworkGuard(page.context(), {
@@ -54,9 +67,6 @@ async function waitForVisualReady(page: Page) {
 }
 
 async function driveState(page: Page, scenario: Stage7Scenario) {
-  if (scenario.route.startsWith("/dashboard") || scenario.route.startsWith("/app-install")) {
-    await page.request.post("/api/app-state").catch(() => undefined);
-  }
   await page.goto(scenario.route, { waitUntil: "domcontentloaded", timeout: 20_000 });
   await page.waitForTimeout(150);
 
@@ -150,6 +160,12 @@ export async function runStage7Scenario(page: Page, scenario: Stage7Scenario, te
     if (network.escapedExternal.length > 0) {
       throw new Error(`unexpected external request ${network.escapedExternal[0]}`);
     }
+    if (network.blockedExternal.length > 0) {
+      throw new Error(`Stage7 harness: blocked external request ${network.blockedExternal[0]}`);
+    }
+    if (network.unhandledLocalApi.length > 0) {
+      throw new Error(`Stage7 harness: unhandled local API ${network.unhandledLocalApi[0]}`);
+    }
     for (const url of network.blockedExternal.slice(0, 5)) {
       record({
         category: "network",
@@ -215,25 +231,50 @@ export async function runStage7Scenario(page: Page, scenario: Stage7Scenario, te
       testInfo.attachments.push({ name: "stage-7-snapshot", contentType: "image/png", path: shotPath });
     }
 
-    const geometry = await collectStage7GeometryFailures(page);
-    for (const failure of geometry) {
-      record({
-        category: "geometry",
-        severity: failure.code === "horizontal-overflow" ? "P1" : "P2",
+    for (const assertion of scenario.requiredAssertions) {
+      const assertionFailures = await runStage7RequiredAssertion(page, scenario, assertion);
+      for (const failure of assertionFailures) {
+        record({
+          category: failure.category,
+          severity: failure.severity,
+          surface: scenario.surface,
+          scenarioId: scenario.id,
+          role: scenario.tenantRole,
+          locale: scenario.locale,
+          browser: scenario.browserTier,
+          viewport: scenario.viewportTier,
+          wcagCriteria: failure.wcagCriteria,
+          expected: failure.expected,
+          actual: failure.actual,
+          reproductionSteps: [`Open ${scenario.route}`, `Apply state ${scenario.state}`, `Run assertion ${assertion}`],
+          evidenceRefs: failure.evidenceRefs,
+          rootCause: failure.rootCause,
+          remediationPhase: remediationPhaseFor(scenario.surface),
+        });
+      }
+    }
+
+    if (scenario.accessibilityChecks.includes("aria-roles")) {
+      const landmarkCount = await page.locator("main, [role='main'], nav, [role='navigation'], header, [role='banner']").count();
+      if (landmarkCount === 0) {
+        record({
+          category: "accessibility",
+          severity: "P2",
         surface: scenario.surface,
         scenarioId: scenario.id,
         role: scenario.tenantRole,
         locale: scenario.locale,
         browser: scenario.browserTier,
         viewport: scenario.viewportTier,
-        wcagCriteria: failure.code === "touch-target" ? ["2.5.5"] : ["1.4.10"],
-        expected: "Layout stays within the viewport, with visible 44x44 targets and unclipped text.",
-        actual: `${failure.code}: ${failure.detail}`,
-        reproductionSteps: [`Open ${scenario.route}`, `Apply state ${scenario.state}`, "Inspect geometry metrics"],
-        evidenceRefs: [`test-results/stage-7/${scenario.id}.png`],
-        rootCause: "Baseline visual/geometry defect recorded before remediation.",
-        remediationPhase: remediationPhaseFor(scenario.surface),
-      });
+          wcagCriteria: ["1.3.1"],
+          expected: "Scenario exposes at least one semantic landmark for assistive technology navigation.",
+          actual: "No main, navigation, or banner landmark was found.",
+          reproductionSteps: [`Open ${scenario.route}`, "Inspect ARIA landmarks"],
+          evidenceRefs: [],
+          rootCause: "Rendered scenario lacks expected landmark semantics.",
+          remediationPhase: remediationPhaseFor(scenario.surface),
+        });
+      }
     }
 
     const runAxe =
@@ -309,7 +350,11 @@ export async function runStage7Scenario(page: Page, scenario: Stage7Scenario, te
     }
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    if (message.includes("Stage7 privacy scan") || message.includes("unexpected external request")) {
+    if (
+      message.includes("Stage7 privacy scan") ||
+      message.includes("unexpected external request") ||
+      message.includes("Stage7 harness:")
+    ) {
       throw error;
     }
     record({

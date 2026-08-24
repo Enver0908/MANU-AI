@@ -1,0 +1,111 @@
+{
+  "schemaVersion": "phase-85-stage-7r-visual-approval-manifest-v1",
+  "generatedAt": "2026-08-24T09:00:00+03:00",
+  "status": "AWAITING_USER_VISUAL_APPROVAL",
+  "productionStatus": "NO-GO",
+  "physicalIphone": "WAIVED_NOT_EXECUTED",
+  "sourceAuditReport": "docs/PHASE_85_STAGE_7_BASELINE_AUDIT_REPORT.json",
+  "sourceFindings": "docs/PHASE_85_STAGE_7_FINDINGS.json",
+  "stableArtifactDir": "app/.stage-7r-baseline-artifacts",
+  "totalScreenshots": 196,
+  "representedProjects": [
+    "stage-7-chromium-desktop",
+    "stage-7-chromium-android",
+    "stage-7-chromium-reflow",
+    "stage-7-firefox-desktop",
+    "stage-7-webkit-ipad",
+    "stage-7-webkit-iphone",
+    "stage-7-pwa"
+  ],
+  "baselineFindingCount": 512,
+  "baselineCounts": {
+    "P0": 0,
+    "P1": 155,
+    "P2": 357,
+    "P3": 0
+  },
+  "representativeScreenshots": [
+    {
+      "label": "landing desktop",
+      "path": "app/.stage-7r-baseline-artifacts/stage-7-chromium-desktop/public.contact-empty.dietitian.tr.chromium-desktop.png",
+      "sha256": "bb45d89038ed61656cc578d2e36f9203b2bfbb1761d1923f8804c9e13e841a03",
+      "width": 1440,
+      "height": 3677
+    },
+    {
+      "label": "login desktop",
+      "path": "app/.stage-7r-baseline-artifacts/stage-7-chromium-desktop/auth.login-idle.dietitian.tr.chromium-desktop.png",
+      "sha256": "357937fb75b4c173ffece23932b8db914c42a0c29b2ec037fd6004b991e23212",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "label": "dashboard shell desktop",
+      "path": "app/.stage-7r-baseline-artifacts/stage-7-chromium-desktop/dashboard-shell.shell-bootstrap.dietitian.tr.chromium-desktop.png",
+      "sha256": "5ed461629c308df3961db929b25cc46799c9fe870bfecf47a2094a8a9ae7fb23",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "label": "pwa offline desktop mocked",
+      "path": "app/.stage-7r-baseline-artifacts/stage-7-chromium-desktop/pwa.pwa-offline-lock.dietitian.tr.chromium-desktop.png",
+      "sha256": "5ed461629c308df3961db929b25cc46799c9fe870bfecf47a2094a8a9ae7fb23",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "label": "clients android",
+      "path": "app/.stage-7r-baseline-artifacts/stage-7-chromium-android/dashboard-clients.clients-dense.assistant.en.chromium-android.png",
+      "sha256": "79d2981d697a71040f24361e3e9dda0e80352bb0825cf9f1ec947294d73c9683",
+      "width": 1073,
+      "height": 2321
+    },
+    {
+      "label": "ai chat reflow rtl",
+      "path": "app/.stage-7r-baseline-artifacts/stage-7-chromium-reflow/dashboard-ai-chat.ai-chat-normal.owner.ar.chromium-reflow-320.png",
+      "sha256": "a8ddf9c7acf2f8485357c1a289bdfc32aff863dee26ad2e5b0a432314f5f449c",
+      "width": 320,
+      "height": 720
+    },
+    {
+      "label": "settings firefox",
+      "path": "app/.stage-7r-baseline-artifacts/stage-7-firefox-desktop/dashboard-settings.settings-normal.admin.en.firefox-desktop.png",
+      "sha256": "86039770eb4cfda5c6001767b2fbed12b5696fa7bd0433b8ec843b39bced0567",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "label": "messaging webkit ipad",
+      "path": "app/.stage-7r-baseline-artifacts/stage-7-webkit-ipad/dashboard-messaging.messaging-dense.dietitian.tr.webkit-ipad.png",
+      "sha256": "5eeab80f3a7b8a9c15e6923175944bb9b1c16921cd079391c11c136357616bb4",
+      "width": 1668,
+      "height": 2388
+    },
+    {
+      "label": "admin webkit iphone emulation",
+      "path": "app/.stage-7r-baseline-artifacts/stage-7-webkit-iphone/admin.admin-login.auditor.en.webkit-iphone.png",
+      "sha256": "5b08c1434249f78af732e2b5943533f599ebcc293855609425b1a04d4a326b81",
+      "width": 2940,
+      "height": 5007
+    },
+    {
+      "label": "pwa offline service-worker-enabled",
+      "path": "app/.stage-7r-baseline-artifacts/stage-7-pwa/pwa.pwa-offline-lock.dietitian.tr.chromium-desktop.png",
+      "sha256": "79d2981d697a71040f24361e3e9dda0e80352bb0825cf9f1ec947294d73c9683",
+      "width": 1073,
+      "height": 2321
+    }
+  ],
+  "approvalRequiredBefore": [
+    "Marking S7R-F-004 resolved",
+    "Marking S7R-F-010 resolved",
+    "Committing representative visual baselines as closure evidence",
+    "Starting Stage 7.5 closure"
+  ],
+  "nonClaims": [
+    "This manifest is not visual approval.",
+    "This manifest is not Stage 7 closure.",
+    "WebKit emulation is not physical iPhone evidence.",
+    "Production remains NO-GO."
+  ]
+}

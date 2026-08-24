@@ -1,0 +1,271 @@
+{
+  "schemaVersion": "phase-85-stage-7r-finding-lock-v1",
+  "generatedAt": "2026-08-24T09:00:00+03:00",
+  "status": "STAGE_7R_FINDINGS_LOCKED_FOR_REMEDIATION",
+  "sourceOfAuthority": "docs/PHASE_85_STAGE_7R_SUPERSESSION_DECISION.json",
+  "productionStatus": "NO-GO",
+  "physicalIphone": "WAIVED_NOT_EXECUTED",
+  "totalCounts": {
+    "P0": 2,
+    "P1": 8,
+    "P2": 5,
+    "P3": 0
+  },
+  "openCounts": {
+    "P0": 1,
+    "P1": 6,
+    "P2": 4,
+    "P3": 0
+  },
+  "resolvedCounts": {
+    "P0": 1,
+    "P1": 2,
+    "P2": 1,
+    "P3": 0
+  },
+  "closureRule": "Stage 7 cannot proceed to Stage 7.5 until every P0, P1, and P2 in this lock is resolved by Stage 7R evidence or explicitly reclassified by user-approved evidence.",
+  "findings": [
+    {
+      "id": "S7R-F-001",
+      "severity": "P0",
+      "status": "resolved",
+      "title": "Required scenario assertions are declared but not executed",
+      "affectedPhases": ["7.1", "7.2", "7.3", "7.4"],
+      "evidence": [
+        "app/tests/visual/stage-7/stage-7-runner.ts",
+        "app/tests/visual/stage-7/stage-7-catalog.ts",
+        "docs/PHASE_85_STAGE_7_SCENARIO_MATRIX.json"
+      ],
+      "technicalIntentGap": "The Stage 7 plan requires behavior, geometry, snapshot, ARIA, axe, keyboard, state, performance, bundle, manual AT, and physical Android layers to be enforced per scenario. The current runner mostly opens pages and applies generic checks, so metadata cannot prove scenario acceptance.",
+      "requiredResolutionPhase": "7R.1",
+      "resolutionEvidence": [
+        "docs/PHASE_85_STAGE_7R_PHASE_1_HARNESS_REBUILD_EVIDENCE.md",
+        "app/tests/visual/stage-7/stage-7-schema.ts",
+        "app/tests/visual/stage-7/stage-7-assertions.ts",
+        "app/tests/visual/stage-7/stage-7-runner.ts",
+        "app/tests/visual/stage-7/stage-7-contracts.test.ts",
+        "docs/PHASE_85_STAGE_7_SCENARIO_MATRIX.json"
+      ]
+    },
+    {
+      "id": "S7R-F-002",
+      "severity": "P0",
+      "status": "open",
+      "title": "Stage 7 verify gate is not a hard closure gate",
+      "affectedPhases": ["7.1", "7.2", "7.3", "7.4"],
+      "evidence": [
+        "app/scripts/verify-stage-7.mjs",
+        "app/package.json",
+        "docs/PHASE_85_STAGE_7_PHASE_4_A11Y_BROWSER_PERF_EVIDENCE.md"
+      ],
+      "technicalIntentGap": "The gate reads existing reports/findings but does not orchestrate Playwright, Vitest, build, typecheck, lint, performance, privacy, regression, skip, retry, and freshness checks as hard prerequisites.",
+      "requiredResolutionPhase": "7R.5"
+    },
+    {
+      "id": "S7R-F-003",
+      "severity": "P1",
+      "status": "resolved",
+      "title": "Role, locale, and assignment access are metadata instead of executed state",
+      "affectedPhases": ["7.1", "7.3"],
+      "evidence": [
+        "app/tests/visual/stage-7/stage-7-schema.ts",
+        "app/tests/visual/stage-7/stage-7-runner.ts",
+        "docs/PHASE_85_STAGE_7_SCENARIO_MATRIX.json"
+      ],
+      "technicalIntentGap": "The matrix includes owner/admin/dietitian/assistant/auditor, multiple locales, and assignment states including none, but the harness does not consistently inject those states into authenticated browser context and one schema path cannot express assignmentAccess none.",
+      "requiredResolutionPhase": "7R.1",
+      "resolutionEvidence": [
+        "docs/PHASE_85_STAGE_7R_PHASE_1_HARNESS_REBUILD_EVIDENCE.md",
+        "app/tests/visual/stage-7/stage-7-schema.ts",
+        "app/tests/visual/stage-7/stage-7-catalog.ts",
+        "app/tests/visual/stage-7/stage-7-runner.ts",
+        "app/tests/visual/stage-7/stage-7-contracts.test.ts"
+      ]
+    },
+    {
+      "id": "S7R-F-004",
+      "severity": "P1",
+      "status": "open",
+      "title": "Visual QA has no trusted screenshot comparison baseline",
+      "affectedPhases": ["7.1", "7.2", "7.3"],
+      "evidence": [
+        "app/tests/visual/stage-7/stage-7-runner.ts",
+        "docs/PHASE_85_STAGE_7_PHASE_2_PUBLIC_SHARED_REMEDIATION_EVIDENCE.md",
+        "docs/PHASE_85_STAGE_7_PHASE_3_DASHBOARD_PWA_REMEDIATION_EVIDENCE.md"
+      ],
+      "technicalIntentGap": "The plan requires representative before/after approval and committed baselines before closure. Current evidence records that snapshot baselines were not refreshed, and raw screenshots are not equivalent to asserted visual comparisons.",
+      "requiredResolutionPhase": "7R.2"
+    },
+    {
+      "id": "S7R-F-005",
+      "severity": "P1",
+      "status": "resolved",
+      "title": "Deterministic network fixture boundary is incomplete",
+      "affectedPhases": ["7.1", "7.3", "7.4"],
+      "evidence": [
+        "app/tests/visual/stage-7/stage-7-network.ts",
+        "app/tests/visual/stage-7/stage-7-runner.ts",
+        "app/scripts/measure-stage-7-lab-perf.mjs"
+      ],
+      "technicalIntentGap": "The plan requires route-level deterministic fulfillment and fail-closed network behavior. Current unmatched local APIs can fall through, external request handling is not a hard harness failure, and page.request app-state mutation bypasses browser route interception.",
+      "requiredResolutionPhase": "7R.1",
+      "resolutionEvidence": [
+        "docs/PHASE_85_STAGE_7R_PHASE_1_HARNESS_REBUILD_EVIDENCE.md",
+        "app/tests/visual/stage-7/stage-7-network.ts",
+        "app/tests/visual/stage-7/stage-7-runner.ts",
+        "app/tests/visual/stage-7/stage-7-contracts.test.ts"
+      ]
+    },
+    {
+      "id": "S7R-F-006",
+      "severity": "P1",
+      "status": "open",
+      "title": "Privacy artifact scanning is incomplete",
+      "affectedPhases": ["7.1", "7.4"],
+      "evidence": [
+        "app/tests/visual/stage-7/stage-7-redaction.ts",
+        "app/tests/visual/stage-7/stage-7-runner.ts",
+        "docs/PHASE_85_STAGE_7_PHASE_4_A11Y_BROWSER_PERF_EVIDENCE.md"
+      ],
+      "technicalIntentGap": "The plan forbids cookies, tokens, raw request bodies, realistic health content, and sensitive data in evidence. Current scanning is body-text/regex oriented and does not comprehensively scan all committed or generated Stage 7 artifacts.",
+      "requiredResolutionPhase": "7R.1"
+    },
+    {
+      "id": "S7R-F-007",
+      "severity": "P1",
+      "status": "open",
+      "title": "NVDA smoke cannot prove spoken assistive-technology output",
+      "affectedPhases": ["7.4"],
+      "evidence": [
+        "app/scripts/run-stage-7-nvda-smoke.mjs",
+        "docs/PHASE_85_STAGE_7_PHASE_4_NVDA_SMOKE.json",
+        "docs/PHASE_85_STAGE_7_PHASE_4_A11Y_BROWSER_PERF_EVIDENCE.md"
+      ],
+      "technicalIntentGap": "The plan includes manual AT validation. Current automation can check whether NVDA is running and drive Playwright, but it does not verify expected versus heard speech output.",
+      "requiredResolutionPhase": "7R.5"
+    },
+    {
+      "id": "S7R-F-008",
+      "severity": "P1",
+      "status": "open",
+      "title": "Stage 7.4 skipped and teardown states are not hard-gated",
+      "affectedPhases": ["7.4"],
+      "evidence": [
+        "docs/PHASE_85_STAGE_7_PHASE_4_A11Y_BROWSER_PERF_EVIDENCE.md",
+        "app/tests/visual/stage-7/stage-7-phase-7-4.spec.ts"
+      ],
+      "technicalIntentGap": "The plan says skipped, flaky, timed-out, blocked, or manually ignored automated checks cannot count as pass. Stage 7.4 evidence reports 32 skipped by project filter and a WebKit worker teardown hang without a gate that validates required versus expected skip.",
+      "requiredResolutionPhase": "7R.5"
+    },
+    {
+      "id": "S7R-F-009",
+      "severity": "P1",
+      "status": "open",
+      "title": "Runtime focus and ARIA fixes need trusted validation",
+      "affectedPhases": ["7.2", "7.3", "7.4"],
+      "evidence": [
+        "app/src/components/ui/dialog.tsx",
+        "app/src/components/ui/sheet.tsx",
+        "app/src/components/ui/field.tsx",
+        "app/src/components/dashboard/active-client-selector.tsx"
+      ],
+      "technicalIntentGap": "Review identified possible static title-id collisions, described-by overwrite, unstable modal focus dependencies, and active-client popover focus management gaps that can create keyboard, screen-reader, or maintainability regressions.",
+      "requiredResolutionPhase": "7R.3"
+    },
+    {
+      "id": "S7R-F-010",
+      "severity": "P1",
+      "status": "open",
+      "title": "Representative visual approval remains missing",
+      "affectedPhases": ["7.2", "7.3"],
+      "evidence": [
+        "docs/PHASE_85_STAGE_7_PHASE_2_PUBLIC_SHARED_REMEDIATION_EVIDENCE.md",
+        "docs/PHASE_85_STAGE_7_PHASE_3_DASHBOARD_PWA_REMEDIATION_EVIDENCE.md"
+      ],
+      "technicalIntentGap": "Both remediation evidence files state that representative visuals still need review and that baselines must not update until approved. Closure cannot rely on unapproved visual changes.",
+      "requiredResolutionPhase": "7R.2"
+    },
+    {
+      "id": "S7R-F-011",
+      "severity": "P2",
+      "status": "open",
+      "title": "Performance evidence does not measure the intended dashboard interaction path",
+      "affectedPhases": ["7.4"],
+      "evidence": [
+        "app/scripts/measure-stage-7-lab-perf.mjs",
+        "docs/PHASE_85_STAGE_7_PHASE_4_LAB_PERF_REPORT.json",
+        "docs/PHASE_85_STAGE_7_PHASE_4_A11Y_BROWSER_PERF_EVIDENCE.md"
+      ],
+      "technicalIntentGap": "The interaction proxy is equivalent to long-task total and no fixed interaction is performed. Route chunk measurement also needs to distinguish Stage 5 shell gzip compatibility from actual dashboard route chunks.",
+      "requiredResolutionPhase": "7R.5"
+    },
+    {
+      "id": "S7R-F-012",
+      "severity": "P2",
+      "status": "open",
+      "title": "Stage 7 evidence freshness and source revision are not reliable",
+      "affectedPhases": ["7.4"],
+      "evidence": [
+        "docs/PHASE_85_STAGE_7_PHASE_4_LAB_PERF_REPORT.json",
+        "docs/PHASE_85_STAGE_7_PHASE_4_A11Y_BROWSER_PERF_EVIDENCE.md"
+      ],
+      "technicalIntentGap": "The performance report source revision and dirty-tree status were not aligned with a clean post-remediation source state, so final closure cannot rely on it.",
+      "requiredResolutionPhase": "7R.5"
+    },
+    {
+      "id": "S7R-F-013",
+      "severity": "P2",
+      "status": "open",
+      "title": "TalkBack and physical Android closure preparation is absent",
+      "affectedPhases": ["7.4", "7.5"],
+      "evidence": [
+        "docs/PHASE_85_STAGE_7_VISUAL_QA_POLISH_ACCESSIBILITY_CLOSURE_ACTION_PLAN.md",
+        "docs/PHASE_85_STAGE_7_PHASE_4_A11Y_BROWSER_PERF_EVIDENCE.md"
+      ],
+      "technicalIntentGap": "Stage 7 includes Android TalkBack critical smoke and Stage 7.5 physical Android validation. Stage 7.4 evidence does not provide a prepared TalkBack checklist/artifact.",
+      "requiredResolutionPhase": "7R.5"
+    },
+    {
+      "id": "S7R-F-014",
+      "severity": "P2",
+      "status": "resolved",
+      "title": "Continuity documents contain stale Stage 7 not-started wording",
+      "affectedPhases": ["7.1", "7.2", "7.3", "7.4"],
+      "evidence": [
+        "README.md",
+        "PLAN.md",
+        "PROJECT_PLAN.md",
+        "HANDOFF_FOR_NEXT_CODEX.md",
+        "docs/NEXT_PHASE_EXECUTION_PLAN.md",
+        "docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md"
+      ],
+      "technicalIntentGap": "New chats can misread Stage 7 as unstarted instead of partially attempted and superseded by Stage 7R remediation.",
+      "requiredResolutionPhase": "7R.0",
+      "resolutionEvidence": [
+        "docs/PHASE_85_STAGE_7R_PHASE_0_AUTHORITY_FINDING_LOCK_EVIDENCE.md",
+        "README.md",
+        "PLAN.md",
+        "PROJECT_PLAN.md",
+        "HANDOFF_FOR_NEXT_CODEX.md",
+        "app/README.md",
+        "docs/NEXT_PHASE_EXECUTION_PLAN.md",
+        "docs/DIRECT_100_DIETITIAN_COMPLETION_PLAN.md",
+        "docs/RISK_REGISTER.md"
+      ]
+    },
+    {
+      "id": "S7R-F-015",
+      "severity": "P2",
+      "status": "open",
+      "title": "Build verification can be blocked by the active user Next server",
+      "affectedPhases": ["7.4"],
+      "evidence": [
+        "local review build attempt",
+        "app/scripts/release-verify.mjs",
+        "app/package.json"
+      ],
+      "technicalIntentGap": "A local Next server can lock .next and make build verification fail with EPERM. Stage 7R needs an isolated Stage 7 build directory for verification without changing default runtime behavior.",
+      "requiredResolutionPhase": "7R.5"
+    }
+  ]
+}

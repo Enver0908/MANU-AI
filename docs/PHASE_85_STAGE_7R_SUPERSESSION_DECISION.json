@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "phase-85-stage-7r-supersession-decision-v1",
+  "generatedAt": "2026-08-24T09:00:00+03:00",
+  "status": "STAGE_7R_2_TRUSTED_BASELINE_RECORDED_VISUAL_APPROVAL_PENDING",
+  "stage": "Phase 85 Stage 7R",
+  "phase": "7R.0",
+  "sourceOfAuthority": "docs/PHASE_85_STAGE_7_VISUAL_QA_POLISH_ACCESSIBILITY_CLOSURE_ACTION_PLAN.md",
+  "evidence": "docs/PHASE_85_STAGE_7R_PHASE_0_AUTHORITY_FINDING_LOCK_EVIDENCE.md",
+  "branch": "codex/stage-4c-remediation",
+  "headAtEntry": "7a8ed7a883fc6ad14bd7303c0ad87fb2171d7608",
+  "productionStatus": "NO-GO",
+  "physicalIphone": "WAIVED_NOT_EXECUTED",
+  "stage5": "STAGE_5_CLOSED",
+  "stage6": "STAGE_6_CLOSED",
+  "decision": {
+    "stage7OriginalPhase7_1Through7_4Status": "SUPERSEDED_FOR_STAGE_7_CLOSURE",
+    "stage7ClosureStatus": "REMEDIATION_REQUIRED_BEFORE_STAGE_7_5",
+    "stage7RStatus": "TRUSTED_BASELINE_RECORDED_VISUAL_APPROVAL_PENDING",
+    "oldEvidencePolicy": "PRESERVE_DO_NOT_REWRITE",
+    "runtimeChangesFrom7_2Through7_4": "PROVISIONAL_UNTIL_TRUSTED_REBASELINE",
+    "nextExecutablePhase": "7R.2_VISUAL_APPROVAL"
+  },
+  "phaseProgress": {
+    "7R.0": "complete",
+    "7R.1": "complete",
+    "7R.2": "trusted_baseline_recorded_visual_approval_pending",
+    "7R.3": "not_started",
+    "7R.4": "not_started",
+    "7R.5": "not_started"
+  },
+  "authorityOrderForStage7Closure": [
+    "Current Git state, committed code, and uncommitted worktree evidence",
+    "docs/PHASE_85_STAGE_7R_SUPERSESSION_DECISION.json",
+    "docs/PHASE_85_STAGE_7R_PHASE_0_AUTHORITY_FINDING_LOCK_EVIDENCE.md",
+    "docs/PHASE_85_STAGE_7R_FINDING_LOCK.json",
+    "docs/PHASE_85_STAGE_7_VISUAL_QA_POLISH_ACCESSIBILITY_CLOSURE_ACTION_PLAN.md",
+    "docs/PHASE_85_STAGE_7_PHASE_4_A11Y_BROWSER_PERF_EVIDENCE.md",
+    "docs/PHASE_85_STAGE_7_PHASE_3_DASHBOARD_PWA_REMEDIATION_EVIDENCE.md",
+    "docs/PHASE_85_STAGE_7_PHASE_2_PUBLIC_SHARED_REMEDIATION_EVIDENCE.md",
+    "docs/PHASE_85_STAGE_7_PHASE_1_BASELINE_AUDIT_EVIDENCE.md",
+    "docs/PHASE_85_STAGE_7_FINDINGS.json",
+    "docs/PHASE_85_STAGE_7_SCENARIO_MATRIX.json"
+  ],
+  "supersededClosureClaims": [
+    {
+      "file": "docs/PHASE_85_STAGE_7_PHASE_1_BASELINE_AUDIT_EVIDENCE.md",
+      "supersededForClosureBecause": "The baseline harness did not execute the full required assertion contract and cannot support Stage 7 closure."
+    },
+    {
+      "file": "docs/PHASE_85_STAGE_7_PHASE_2_PUBLIC_SHARED_REMEDIATION_EVIDENCE.md",
+      "supersededForClosureBecause": "Representative visual approval and snapshot refresh were explicitly not completed, and the phase gate was scoped to the existing findings register rather than a trusted full rerun."
+    },
+    {
+      "file": "docs/PHASE_85_STAGE_7_PHASE_3_DASHBOARD_PWA_REMEDIATION_EVIDENCE.md",
+      "supersededForClosureBecause": "Representative visual approval and snapshot refresh were explicitly not completed, role and assignment execution remained incomplete, and dashboard/PWA scenarios need trusted rebaseline."
+    },
+    {
+      "file": "docs/PHASE_85_STAGE_7_PHASE_4_A11Y_BROWSER_PERF_EVIDENCE.md",
+      "supersededForClosureBecause": "The gate did not run the complete test/build/performance/visual closure chain, NVDA output was not verified, TalkBack preparation was absent, and skipped/teardown behavior was not hard-gated."
+    }
+  ],
+  "nonClaims": [
+    "Stage 7 is not closed.",
+    "Stage 7.5 is not started.",
+    "The Stage 7R.0 decision does not modify runtime code, APIs, migrations, RLS, service-worker policy, dependencies, production gates, or deployment state.",
+    "Physical iPhone Safari/PWA remains WAIVED_NOT_EXECUTED, not PASS.",
+    "Production remains NO-GO."
+  ]
+}
