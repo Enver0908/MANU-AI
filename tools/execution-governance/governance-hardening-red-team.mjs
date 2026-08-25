@@ -19,9 +19,9 @@ const activation = {
   allowImplementationHead: true,
   scope: {
     allowedCreatePaths: ['docs/GOVERNANCE_HARDENING_PHASE_0_EVIDENCE.md'],
-    allowedModifyPaths: [],
-    protectedPaths: ['tools/execution-governance/secure-cursor-guard.mjs'],
-    forbiddenPaths: ['app/package.json'],
+    allowedModifyPaths: ['docs/allowed/**/*.md'],
+    protectedPaths: ['tools/execution-governance/secure-cursor-guard.mjs', 'app/**'],
+    forbiddenPaths: ['app/package.json', '.github/workflows/**'],
     allowedCommands: [
       { cwd: '.', executable: 'git', args: ['status', '--short', '--branch'], networkPolicy: 'FORBIDDEN' }
     ],
@@ -44,6 +44,24 @@ const cases = [
     event: 'preToolUse',
     payload: { tool_name: 'Write', tool_input: { file_path: 'docs/GOVERNANCE_HARDENING_PHASE_0_EVIDENCE.md' } },
     expect: 0
+  },
+  {
+    id: 'allow-glob-in-scope-write',
+    event: 'preToolUse',
+    payload: { tool_name: 'Edit', tool_input: { file_path: 'docs/allowed/nested/note.md' } },
+    expect: 0
+  },
+  {
+    id: 'deny-protected-glob-write',
+    event: 'preToolUse',
+    payload: { tool_name: 'Write', tool_input: { file_path: 'app/src/protected.ts' } },
+    expect: 2
+  },
+  {
+    id: 'deny-forbidden-glob-write',
+    event: 'preToolUse',
+    payload: { tool_name: 'Write', tool_input: { file_path: '.github/workflows/deploy.yml' } },
+    expect: 2
   },
   {
     id: 'deny-node-e-shell-write',

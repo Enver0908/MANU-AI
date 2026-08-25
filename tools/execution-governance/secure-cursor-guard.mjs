@@ -141,10 +141,10 @@ function assertActivationIntegrity(activation) {
 
 function isAllowedPath(rel, scope) {
   const allowed = new Set([...(scope?.allowedCreatePaths || []), ...(scope?.allowedModifyPaths || [])].map(normalizeRel));
-  const protectedPaths = new Set((scope?.protectedPaths || []).map(normalizeRel));
-  const forbidden = new Set((scope?.forbiddenPaths || []).map(normalizeRel));
-  if (protectedPaths.has(rel) || forbidden.has(rel)) return false;
-  return allowed.has(rel);
+  const protectedPaths = (scope?.protectedPaths || []).map(normalizeRel);
+  const forbidden = (scope?.forbiddenPaths || []).map(normalizeRel);
+  if (matchesAny(rel, protectedPaths) || matchesAny(rel, forbidden)) return false;
+  return allowed.has(rel) || matchesAny(rel, [...allowed].filter((item) => item.includes('*')));
 }
 
 function normalizeToolName(value) {
@@ -211,6 +211,37 @@ function normalizeRepoPath(value) {
 
 function normalizeRel(value) {
   return String(value).replace(/\\/g, '/').replace(/^\.\//, '');
+}
+
+function matchesAny(rel, patterns) {
+  return patterns.some((pattern) => pathPatternMatches(pattern, rel));
+}
+
+function pathPatternMatches(pattern, rel) {
+  const normalizedPattern = normalizeRel(pattern);
+  const normalizedRel = normalizeRel(rel);
+  if (!normalizedPattern.includes('*')) return normalizedPattern === normalizedRel;
+  const patternSegments = normalizedPattern.split('/');
+  const relSegments = normalizedRel.split('/');
+  return matchSegments(patternSegments, relSegments);
+}
+
+function matchSegments(patternSegments, relSegments) {
+  if (patternSegments.length === 0) return relSegments.length === 0;
+  const [head, ...tail] = patternSegments;
+  if (head === '**') {
+    return matchSegments(tail, relSegments)
+      || (relSegments.length > 0 && matchSegments(patternSegments, relSegments.slice(1)));
+  }
+  if (relSegments.length === 0) return false;
+  if (!segmentMatches(head, relSegments[0])) return false;
+  return matchSegments(tail, relSegments.slice(1));
+}
+
+function segmentMatches(pattern, value) {
+  if (!pattern.includes('*')) return pattern === value;
+  const escaped = pattern.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '[^/]*');
+  return new RegExp(`^${escaped}$`).test(value);
 }
 
 function normalizeFsPath(value) {
