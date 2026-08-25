@@ -2,9 +2,9 @@
   "schemaVersion": "1.0.0",
   "governanceFormatVersion": "2.0.0",
   "contractId": "hosted-sandbox-remediation-v1-1",
-  "planVersion": "1.1.0",
+  "planVersion": "1.1.1",
   "planTitle": "Hosted Sandbox Remediation v1.1",
-  "currentPhaseId": "PHASE-0",
+  "currentPhaseId": "PHASE-1",
   "phases": [
     {
       "phaseId": "PHASE-0",
@@ -50,7 +50,8 @@
     "docs/execution-governance/LIFECYCLE_AND_OPTIONAL_REVIEW_FLOW.md",
     "docs/PHASE_85_STAGE_7_CLOSURE_DECISION.json",
     "docs/PHASE_85_STAGE_7_FINAL_CLOSURE_EVIDENCE.md",
-    "current Git state at 9cb6028"
+    "current Git state at 9cb6028",
+    "User-approved scope-change request HSR11-PHASE-1-SCOPE-CHANGE-001"
   ],
   "roleBindings": {
     "requirementAuthority": "user and named authority documents",

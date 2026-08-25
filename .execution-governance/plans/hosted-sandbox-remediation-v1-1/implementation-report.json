@@ -119,12 +119,20 @@
       "purpose": "ignored governance run-record for setup package acceptance"
     }
   ],
-  "scopeChangeRequests": [],
+  "scopeChangeRequests": [
+    {
+      "requestId": "HSR11-PHASE-1-SCOPE-CHANGE-001",
+      "status": "APPROVED_BY_USER",
+      "path": ".execution-governance/plans/hosted-sandbox-remediation-v1-1/scope-change-request-phase-1.json",
+      "detail": "Approved to align PHASE-1 allowed paths with current repo files before implementation starts."
+    }
+  ],
   "verifierChangeRequests": [],
   "waivers": [],
   "independentReview": "NOT_REQUESTED",
   "residualRisks": [
     "Product remediation Phases 1 through 6 have not started.",
+    "PHASE-1 scope has been relocked for current repository paths; product implementation still has not started.",
     "GitHub, Supabase, VPS, and live-site external effects require separate explicit user authorization.",
     "Production remains NO-GO and iPhone Safari/PWA remains WAIVED_NOT_EXECUTED."
   ]

@@ -13,7 +13,7 @@ const sourceBroker = path.join(repoRoot, 'tools', 'execution-governance', 'curso
 const targetBroker = path.join(externalRoot, 'cursor-session-broker.mjs');
 const sourceSession = path.join(repoRoot, 'tools', 'execution-governance', 'cursor-session.mjs');
 const targetLauncher = path.join(externalRoot, 'MANU-AI Cursor Session.ps1');
-const desktopShortcut = path.join(process.env.USERPROFILE || externalRoot, 'Desktop', 'MANU-AI Cursor.lnk');
+const desktopShortcut = path.join(resolveDesktopDirectory(), 'MANU-AI Cursor.lnk');
 const activationPath = path.join(externalRoot, 'activation.json');
 const cursorHooksPath = path.join(cursorSystemRoot, 'hooks.json');
 
@@ -103,6 +103,28 @@ $shortcut.Save()`;
     shell: false
   });
   if (result.status !== 0) fail(`desktop shortcut creation failed: ${result.stderr || result.stdout}`);
+}
+
+function resolveDesktopDirectory() {
+  const repoParent = path.dirname(repoRoot);
+  if (/^(desktop|masaüstü|masaustu)$/i.test(path.basename(repoParent)) && existsSync(repoParent)) {
+    return repoParent;
+  }
+  if (process.platform === 'win32') {
+    const result = spawnSync('powershell', [
+      '-NoProfile',
+      '-Command',
+      '[Environment]::GetFolderPath("Desktop")'
+    ], {
+      encoding: 'utf8',
+      shell: false
+    });
+    const desktop = result.stdout?.trim();
+    if (result.status === 0 && desktop && existsSync(desktop)) return desktop;
+  }
+  const fallback = path.join(process.env.USERPROFILE || externalRoot, 'Desktop');
+  if (existsSync(fallback)) return fallback;
+  return externalRoot;
 }
 
 function cursorSessionLauncher() {

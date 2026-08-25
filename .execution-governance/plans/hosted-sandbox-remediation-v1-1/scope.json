@@ -86,10 +86,11 @@
         "app/tests/commercial-auth-browser-boundary.test.ts"
       ],
       "allowedModifyPaths": [
-        "app/src/components/admin/admin-login-form.tsx",
+        "app/src/components/admin-login-form.tsx",
         "app/src/lib/phase-84d-customer-auth.ts",
+        "app/src/lib/phase-84d-customer-auth.test.ts",
         "app/src/lib/phase-83b-commercial-entitlement-model.ts",
-        "app/tests/commercial-auth.test.ts"
+        "app/src/lib/phase-83b-commercial-entitlement-model.test.ts"
       ],
       "protectedPaths": [
         "app/package.json",
@@ -147,8 +148,9 @@
       ],
       "allowedModifyPaths": [
         "app/src/lib/use-manu-state.ts",
-        "app/src/lib/app-request-error.ts",
-        "app/src/lib/api-client.ts"
+        "app/src/lib/app-errors.ts",
+        "app/src/lib/hosted-sandbox-runtime-fixes.test.ts",
+        "app/src/app/api/api-errors.test.ts"
       ],
       "protectedPaths": [
         "app/package.json",
@@ -180,7 +182,12 @@
         "app/tests/supabase-rsc-readonly-client.test.ts"
       ],
       "allowedModifyPaths": [
-        "app/src/lib/supabase-server.ts",
+        "app/src/lib/supabase.ts",
+        "app/src/lib/dashboard-server-auth.ts",
+        "app/src/lib/settings-server-read.ts",
+        "app/src/lib/auth-context.ts",
+        "app/src/lib/commercial-admin-access.ts",
+        "app/src/lib/commercial-install-access.ts",
         "app/src/app/**/page.tsx",
         "app/src/app/**/layout.tsx"
       ],
@@ -216,6 +223,9 @@
       "allowedModifyPaths": [
         "app/src/lib/demo-fixture-access.ts",
         "app/src/lib/rate-limit.ts",
+        "app/src/lib/commercial-public-rate-limit.ts",
+        "app/src/lib/phase-83g-entitlement-hardening.ts",
+        "app/src/lib/phase-85-stage-4d-auth-server.ts",
         "app/src/app/api/**/route.ts"
       ],
       "protectedPaths": [

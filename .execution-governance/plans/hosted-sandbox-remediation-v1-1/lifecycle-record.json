@@ -2,7 +2,7 @@
   "schemaVersion": "1.0.0",
   "contractId": "hosted-sandbox-remediation-v1-1",
   "planDirectory": ".execution-governance/plans/hosted-sandbox-remediation-v1-1",
-  "currentPhase": "PHASE-0",
+  "currentPhase": "PHASE-1",
   "status": {
     "plan_state": "LOCKED_FOR_IMPLEMENTATION",
     "implementation_state": "NOT_STARTED",
@@ -16,6 +16,18 @@
       "actor": "Codex",
       "event": "PHASE_0_PLAN_PACKAGE_CREATED",
       "detail": "Hosted Sandbox Remediation v1.1 main package created as decision-complete governance format 2.0.0 authority. Product implementation remains not started."
+    },
+    {
+      "timestamp": "2026-08-25T16:00:00.000Z",
+      "actor": "User",
+      "event": "SCOPE_CHANGE_APPROVED",
+      "detail": "User approved HSR11-PHASE-1-SCOPE-CHANGE-001 to align PHASE-1 file scope with the current repository map before implementation."
+    },
+    {
+      "timestamp": "2026-08-25T16:00:00.000Z",
+      "actor": "Codex",
+      "event": "PHASE_1_SCOPE_RELOCKED",
+      "detail": "PHASE-1 scope updated and package relocked without product code, migration, dependency, workflow, production, or external-system changes."
     }
   ],
   "independentReviewPolicy": {

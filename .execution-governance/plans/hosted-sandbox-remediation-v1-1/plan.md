@@ -1,6 +1,6 @@
 # Hosted Sandbox Remediation v1.1
 
-Plan version: 1.1.0
+Plan version: 1.1.1
 
 Plan state: LOCKED_FOR_IMPLEMENTATION
 
@@ -19,6 +19,7 @@ Independent review default: NOT_REQUESTED
 - `docs/execution-governance/LIFECYCLE_AND_OPTIONAL_REVIEW_FLOW.md`
 - Stage 5, Stage 6, and Stage 7 local closure authority documents.
 - Current Git state on `codex/stage-4c-remediation` at Phase 0 start.
+- User-approved scope-change request `HSR11-PHASE-1-SCOPE-CHANGE-001`.
 
 ## Problem Statement
 
@@ -219,7 +220,7 @@ Remove the production build blocker and close runtime auth boundary defects befo
 
 ## Phase PHASE-1 Scope
 
-Edit only the Phase 1 files listed in `scope.json`: commercial auth modules, admin/customer login form imports, request error modules, Supabase server client helpers, RSC page/layout imports that directly use those helpers, trusted proxy parser, demo fixture access, rate limit identity, and targeted tests.
+Edit only the Phase 1 files listed in `scope.json`: commercial auth modules, admin/customer login form imports, request error modules, Supabase server client helpers, RSC page/layout imports that directly use those helpers, trusted proxy parser, demo fixture access, rate limit identity, and targeted tests. Version 1.1.1 incorporates approved request `HSR11-PHASE-1-SCOPE-CHANGE-001` to align these file boundaries with the current repository map before implementation starts.
 
 ## Phase PHASE-1 Ordered Steps
 
