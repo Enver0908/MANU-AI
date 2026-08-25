@@ -14,6 +14,7 @@ const targetBroker = path.join(externalRoot, 'cursor-session-broker.mjs');
 const sourceSession = path.join(repoRoot, 'tools', 'execution-governance', 'cursor-session.mjs');
 const sourceResolver = path.join(repoRoot, 'tools', 'execution-governance', 'cursor-plan-resolver.mjs');
 const sourceSkill = path.join(repoRoot, '.cursor', 'skills', 'manu-governed-execution', 'SKILL.md');
+const sourceWorkspaceSettings = path.join(repoRoot, '.vscode', 'settings.json');
 const targetLauncher = path.join(externalRoot, 'MANU-AI Cursor Session.ps1');
 const desktopShortcut = path.join(resolveDesktopDirectory(), 'MANU-AI Cursor.lnk');
 const activationPath = path.join(externalRoot, 'activation.json');
@@ -52,6 +53,7 @@ function verifyInstall() {
   checks.push(check('source guard exists', existsSync(sourceGuard), sourceGuard));
   checks.push(check('source resolver exists', existsSync(sourceResolver), sourceResolver));
   checks.push(check('workspace governed execution skill exists', existsSync(sourceSkill), sourceSkill));
+  checks.push(check('workspace settings disable Cursor inline completion', hasCursorInlineCompletionDisabled(sourceWorkspaceSettings), sourceWorkspaceSettings));
   if (existsSync(sourceSkill)) {
     checks.push(check('workspace governed execution skill has Cursor frontmatter', hasSkillFrontmatter(sourceSkill), sourceSkill));
   }
@@ -197,6 +199,13 @@ function hasSkillFrontmatter(filePath) {
   const match = text.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n/);
   if (!match) return false;
   return /^name:\s*\S+/m.test(match[1]) && /^description:\s*\S+/m.test(match[1]);
+}
+
+function hasCursorInlineCompletionDisabled(filePath) {
+  if (!existsSync(filePath)) return false;
+  const settings = JSON.parse(readFileSync(filePath, 'utf8'));
+  return settings['editor.inlineSuggest.enabled'] === false
+    && settings['cursor.completions.enabled'] === false;
 }
 
 function inactiveActivation() {

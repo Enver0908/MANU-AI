@@ -6,7 +6,7 @@ import { existsSync, lstatSync, readFileSync, realpathSync } from 'node:fs';
 import path from 'node:path';
 
 const EVENT = process.argv[2] || 'unknown';
-const REPO_ROOT = findRepoRoot(process.env.CURSOR_PROJECT_DIR || process.cwd());
+const FALLBACK_REPO_ROOT = findRepoRoot(process.env.CURSOR_PROJECT_DIR || process.cwd());
 const EXTERNAL_ROOT = process.env.MANU_GOVERNANCE_TEST_MODE === '1'
   ? process.env.MANU_GOVERNANCE_ROOT
   : 'C:\\ProgramData\\MANU-AI-Governance';
@@ -33,23 +33,29 @@ function decide(event, payload) {
   return deny(`Unhandled Cursor hook event: ${event}`);
 }
 
-function guardWorkspaceOpen() {
+function guardWorkspaceOpen(payload = {}) {
+  if (!hasProtectedContext(payload)) {
+    return allow('no protected MANU-AI workspace target detected');
+  }
   const activation = loadActivation();
   if (activation?.status === 'ACTIVE_SIGNED_SCOPE') {
     try {
       assertActiveActivation(activation);
       return allow('active signed scope remains valid');
     } catch {
-      return writeDiscoveryActivation('workspace opened with stale active scope');
+      return allow('protected workspace observed with stale active scope; protected effects remain fail-closed until activation');
     }
   }
-  return writeDiscoveryActivation('workspace opened in discovery read-only mode');
+  return allow('protected workspace observed; protected effects remain fail-closed until activation');
 }
 
 function guardPrompt(payload) {
   const prompt = String(payload.prompt || payload.text || payload.message || payload.user_message || '');
   if (!/\b(bu plan[ıi] uygula|plani uygula|planı uygula|apply this plan|apply the plan)\b/i.test(prompt)) {
     return allow('prompt has no governed execution intent');
+  }
+  if (!hasProtectedContext(payload)) {
+    return allow('governed execution phrase ignored because no protected MANU-AI workspace target was detected');
   }
   const activation = runAutoActivation(prompt);
   if (activation.status !== 0) {
@@ -79,8 +85,9 @@ function auditAfterFileEdit(payload) {
 }
 
 function guardRead(payload) {
+  const repoRoot = protectedRepoRoot(payload);
   for (const item of extractPaths(payload)) {
-    const rel = normalizeRepoPath(item);
+    const rel = normalizeRepoPath(item, repoRoot);
     if (isSecretPath(rel)) {
       return deny(`Reading secret-like path is blocked: ${rel}`);
     }
@@ -92,11 +99,21 @@ function guardShell(payload) {
   const activation = loadActivation();
   const command = extractCommand(payload);
   if (!command) return deny('Shell payload has no command.');
+  const repoRoot = protectedRepoRoot(payload);
+  if (!isProtectedShell(command, payload, repoRoot)) {
+    return allow('shell command does not target protected MANU-AI state');
+  }
   const parsed = parseCommand(command);
   if (!parsed) return deny(`Shell command could not be parsed safely: ${command}`);
-  const cwd = normalizeRepoPath(payload.cwd || payload.tool_input?.cwd || process.cwd());
+  const cwd = normalizeRepoPath(payload.cwd || payload.tool_input?.cwd || process.cwd(), repoRoot);
   if (activation?.status === 'DISCOVERY_READ_ONLY') {
     return guardDiscoveryShell(command, parsed, cwd, activation);
+  }
+  if (!activation || activation.status !== 'ACTIVE_SIGNED_SCOPE') {
+    if (isSafeProtectedReadOnlyShell(command, parsed)) {
+      return allow('safe protected read-only shell command allowed without activation');
+    }
+    return deny(`Protected MANU-AI shell effect requires active signed scope: ${command}`);
   }
   assertActiveActivation(activation);
   const allowed = activation?.scope?.allowedCommands || [];
@@ -112,6 +129,9 @@ function guardShell(payload) {
 
 function guardMcp(payload) {
   const activation = loadActivation();
+  if (!hasProtectedContext(payload)) {
+    return allow('MCP tool does not target protected MANU-AI state');
+  }
   assertActiveActivation(activation);
   const toolName = String(payload.tool_name || payload.name || payload.server_tool_name || '');
   const allowed = activation?.scope?.allowedMcpTools || [];
@@ -125,6 +145,9 @@ function guardMcp(payload) {
 
 function guardTask(payload) {
   const activation = loadActivation();
+  if (!hasProtectedContext(payload)) {
+    return allow('subagent/task does not target protected MANU-AI state');
+  }
   assertActiveActivation(activation);
   if (activation?.scope?.allowSubagents === true) {
     return allow('subagent tool allowed by active signed scope');
@@ -134,25 +157,25 @@ function guardTask(payload) {
 
 function guardFileMutation(payload, toolName) {
   const paths = extractPaths(payload);
-  if (paths.length === 0) return deny(`Mutating tool has no file path: ${toolName}`);
+  if (paths.length === 0) {
+    return hasProtectedContext(payload)
+      ? deny(`Mutating tool has no file path: ${toolName}`)
+      : allow('mutating tool has no protected MANU-AI target');
+  }
   const activation = loadActivation();
+  const repoRoot = protectedRepoRoot(payload);
   for (const item of paths) {
-    const rel = normalizeRepoPath(item);
+    if (!isPathInsideProtectedRoot(item, repoRoot)) continue;
+    const rel = normalizeRepoPath(item, repoRoot);
     if (isSecretPath(rel)) return deny(`Secret-like file mutation is blocked: ${rel}`);
     if (isGitPath(rel)) return deny(`Git internals are never mutable through Cursor hooks: ${rel}`);
     if (!activation) return deny(`No external governance activation found. Mutation blocked: ${rel}`);
     if (activation.status !== 'ACTIVE_SIGNED_SCOPE') return deny(`Activation status does not allow mutation: ${activation.status || 'missing'}`);
-    if (!isAllowedMutationPath(rel, item, activation.scope)) {
+    if (!isAllowedMutationPath(rel, item, activation.scope, repoRoot)) {
       return deny(`Path is outside active signed governance scope: ${rel}`);
     }
   }
   return allow('file mutation allowed by active signed scope');
-}
-
-function loadVerifiedActivation() {
-  const activation = loadActivation();
-  assertActiveActivation(activation);
-  return activation;
 }
 
 function assertActiveActivation(activation) {
@@ -163,11 +186,11 @@ function assertActiveActivation(activation) {
 
 function loadActivation() {
   if (!existsSync(ACTIVATION_FILE)) return null;
-  const activation = parseJsonText(readFileSync(ACTIVATION_FILE, 'utf8'));
-  if (activation.repoRoot && normalizeFsPath(activation.repoRoot) !== normalizeFsPath(REPO_ROOT)) {
-    throw new Error(`activation repoRoot mismatch: ${activation.repoRoot}`);
+  try {
+    return parseJsonText(readFileSync(ACTIVATION_FILE, 'utf8'));
+  } catch {
+    return { schemaVersion: '1.0.0', status: 'MALFORMED_FAIL_CLOSED' };
   }
-  return activation;
 }
 
 function assertActivationIntegrity(activation) {
@@ -179,12 +202,13 @@ function assertActivationIntegrity(activation) {
   if (!activation.lockCommit || !/^[0-9a-f]{40}$/i.test(activation.lockCommit)) {
     throw new Error('activation lockCommit is missing or invalid');
   }
-  const head = gitText(['rev-parse', 'HEAD']);
+  const repoRoot = protectedRepoRootFromActivation(activation);
+  const head = gitText(['rev-parse', 'HEAD'], repoRoot);
   if (activation.lockCommit !== head) {
     if (activation.allowImplementationHead !== true) {
       throw new Error(`activation lockCommit ${activation.lockCommit} does not match HEAD ${head}`);
     }
-    if (!isAncestorCommit(activation.lockCommit, head)) {
+    if (!isAncestorCommit(activation.lockCommit, head, repoRoot)) {
       throw new Error(`activation lockCommit ${activation.lockCommit} is not an ancestor of HEAD ${head}`);
     }
   }
@@ -205,13 +229,13 @@ function guardDiscoveryShell(command, parsed, cwd, activation) {
   return allow('shell command allowed by discovery read-only scope');
 }
 
-function isAllowedMutationPath(rel, originalPath, scope) {
+function isAllowedMutationPath(rel, originalPath, scope, repoRoot) {
   const createAllowed = new Set((scope?.allowedCreatePaths || []).map(normalizeRel));
   const modifyAllowed = new Set((scope?.allowedModifyPaths || []).map(normalizeRel));
   const protectedPaths = (scope?.protectedPaths || []).map(normalizeRel);
   const forbidden = (scope?.forbiddenPaths || []).map(normalizeRel);
   if (matchesAny(rel, protectedPaths) || matchesAny(rel, forbidden)) return false;
-  const absolute = path.isAbsolute(originalPath) ? originalPath : path.resolve(REPO_ROOT, originalPath);
+  const absolute = path.isAbsolute(originalPath) ? originalPath : path.resolve(repoRoot, originalPath);
   return existsSync(absolute) ? modifyAllowed.has(rel) : createAllowed.has(rel);
 }
 
@@ -263,20 +287,20 @@ function extractPaths(value, result = []) {
   return [...new Set(result)];
 }
 
-function normalizeRepoPath(value) {
-  const absolute = path.isAbsolute(value) ? value : path.resolve(REPO_ROOT, value);
-  const rel = path.relative(REPO_ROOT, absolute);
+function normalizeRepoPath(value, repoRoot = protectedRepoRoot()) {
+  const absolute = path.isAbsolute(value) ? value : path.resolve(repoRoot, value);
+  const rel = path.relative(repoRoot, absolute);
   if (rel.startsWith('..') || path.isAbsolute(rel)) return normalizeRel(value);
   if (existsSync(absolute)) {
     const stat = lstatSync(absolute);
     if (stat.isSymbolicLink()) throw new Error(`symlink path is not accepted: ${rel}`);
     const real = realpathSync.native(absolute);
-    const realRel = path.relative(realpathSync.native(REPO_ROOT), real);
+    const realRel = path.relative(realpathSync.native(repoRoot), real);
     if (realRel.startsWith('..') || path.isAbsolute(realRel)) throw new Error(`path escapes repo through realpath: ${rel}`);
   } else {
     const parent = path.resolve(dirname(absolute));
     if (existsSync(parent)) {
-      const realParentRel = path.relative(realpathSync.native(REPO_ROOT), realpathSync.native(parent));
+      const realParentRel = path.relative(realpathSync.native(repoRoot), realpathSync.native(parent));
       if (realParentRel.startsWith('..') || path.isAbsolute(realParentRel)) {
         throw new Error(`new path parent escapes repo through realpath: ${rel}`);
       }
@@ -287,6 +311,112 @@ function normalizeRepoPath(value) {
 
 function normalizeRel(value) {
   return String(value).replace(/\\/g, '/').replace(/^\.\//, '');
+}
+
+function protectedRepoRoot(payload = {}) {
+  const activation = loadActivation();
+  if (activation?.repoRoot) return path.resolve(activation.repoRoot);
+  for (const candidate of candidateRoots(payload)) {
+    const resolved = path.resolve(candidate);
+    if (existsSync(path.join(resolved, '.git')) && path.basename(resolved).toLowerCase() === 'manu-ai') {
+      return resolved;
+    }
+  }
+  return FALLBACK_REPO_ROOT;
+}
+
+function protectedRepoRootFromActivation(activation) {
+  return path.resolve(activation?.repoRoot || FALLBACK_REPO_ROOT);
+}
+
+function candidateRoots(payload = {}) {
+  const roots = [];
+  const workspaceRoots = payload.workspace_roots || payload.workspaceRoots || payload.workspaceFolders || [];
+  if (Array.isArray(workspaceRoots)) {
+    for (const item of workspaceRoots) {
+      if (typeof item === 'string') roots.push(item);
+      if (item && typeof item === 'object' && typeof item.path === 'string') roots.push(item.path);
+      if (item && typeof item === 'object' && typeof item.uri === 'string') roots.push(item.uri);
+    }
+  }
+  for (const item of [payload.cwd, payload.tool_input?.cwd, process.env.CURSOR_PROJECT_DIR]) {
+    if (typeof item === 'string' && item.trim()) roots.push(item);
+  }
+  return roots.map(fileUriToPath).filter(Boolean);
+}
+
+function hasProtectedContext(payload = {}) {
+  const repoRoot = protectedRepoRoot(payload);
+  for (const root of candidateRoots(payload)) {
+    if (isInsidePath(root, repoRoot)) return true;
+  }
+  for (const item of extractPaths(payload)) {
+    if (isPathInsideProtectedRoot(item, repoRoot)) return true;
+  }
+  const command = extractCommand(payload);
+  return command ? commandTargetsProtectedRoot(command, repoRoot) : false;
+}
+
+function isProtectedShell(command, payload, repoRoot) {
+  const cwd = payload.cwd || payload.tool_input?.cwd || process.cwd();
+  return isInsidePath(fileUriToPath(cwd), repoRoot) || commandTargetsProtectedRoot(command, repoRoot);
+}
+
+function commandTargetsProtectedRoot(command, repoRoot) {
+  const normalizedCommand = String(command).replace(/\//g, '\\').toLowerCase();
+  const normalizedRoot = normalizeFsPath(repoRoot);
+  const slashRoot = normalizedRoot.replace(/\\/g, '/');
+  const lowerCommand = String(command).toLowerCase();
+  if (normalizedCommand.includes(normalizedRoot) || lowerCommand.includes(slashRoot)) return true;
+  return /\bgit\s+-c\b/i.test(command) && /manu-ai/i.test(command);
+}
+
+function isSafeProtectedReadOnlyShell(command, parsed) {
+  if (commandMentionsNetwork(command)) return false;
+  const exe = normalizeExe(parsed.executable);
+  const args = parsed.args || [];
+  if (exe === 'git') {
+    const joined = args.join(' ');
+    return /^(branch --show-current|status --short --branch|log -10 --oneline --decorate|rev-parse HEAD|remote -v)$/.test(joined);
+  }
+  if (exe === 'rg') return !args.some((item) => /(^-|=)(replace|files-with-matches)/i.test(item));
+  if (exe === 'node') {
+    const joined = args.join(' ').replace(/\\/g, '/');
+    return /^tools\/execution-governance\/governance-cli\.mjs (doctor|validate|cursor-session --session auto-preflight)/.test(joined);
+  }
+  return false;
+}
+
+function isPathInsideProtectedRoot(value, repoRoot) {
+  const target = fileUriToPath(value);
+  if (!target) return false;
+  const absolute = path.isAbsolute(target) ? target : path.resolve(repoRoot, target);
+  return isInsidePath(absolute, repoRoot);
+}
+
+function isInsidePath(value, root) {
+  if (!value || !root) return false;
+  const target = normalizeFsPath(value);
+  const normalizedRoot = normalizeFsPath(root);
+  return target === normalizedRoot || target.startsWith(`${normalizedRoot}\\`) || target.startsWith(`${normalizedRoot}/`);
+}
+
+function fileUriToPath(value) {
+  const text = String(value || '');
+  if (!text) return '';
+  if (/^file:\/\//i.test(text)) {
+    try {
+      return decodeURIComponent(new URL(text).pathname).replace(/^\/([A-Za-z]:)/, '$1');
+    } catch {
+      return text;
+    }
+  }
+  return text;
+}
+
+function mcpMayMutate(payload) {
+  const toolName = String(payload.tool_name || payload.name || payload.server_tool_name || '');
+  return /(write|edit|delete|move|rename|create|apply|commit|push|deploy|supabase|billing|stripe|provider|egress)/i.test(toolName);
 }
 
 function matchesAny(rel, patterns) {
@@ -341,15 +471,15 @@ function sha256Json(value) {
   return createHash('sha256').update(JSON.stringify(value)).digest('hex');
 }
 
-function gitText(args) {
-  const result = spawnSync('git', args, { cwd: REPO_ROOT, encoding: 'utf8', shell: false });
+function gitText(args, repoRoot = protectedRepoRoot()) {
+  const result = spawnSync('git', args, { cwd: repoRoot, encoding: 'utf8', shell: false });
   if (result.status !== 0) throw new Error(`git ${args.join(' ')} failed: ${result.stderr}`);
   return result.stdout.trim();
 }
 
-function isAncestorCommit(ancestor, descendant) {
+function isAncestorCommit(ancestor, descendant, repoRoot = protectedRepoRoot()) {
   const result = spawnSync('git', ['merge-base', '--is-ancestor', ancestor, descendant], {
-    cwd: REPO_ROOT,
+    cwd: repoRoot,
     encoding: 'utf8',
     shell: false
   });
@@ -365,13 +495,14 @@ function deny(message) {
 }
 
 function writeDiscoveryActivation(reason) {
+  const repoRoot = protectedRepoRoot();
   const result = spawnSync(process.execPath, [
     'tools/execution-governance/cursor-session-broker.mjs',
     '--discovery',
     '--repo',
-    REPO_ROOT
+    repoRoot
   ], {
-    cwd: REPO_ROOT,
+    cwd: repoRoot,
     encoding: 'utf8',
     shell: false,
     windowsHide: true
@@ -383,13 +514,14 @@ function writeDiscoveryActivation(reason) {
 }
 
 function runAutoActivation(prompt) {
+  const repoRoot = protectedRepoRoot();
   return spawnSync(process.execPath, [
     'tools/execution-governance/cursor-session.mjs',
     'auto-activate',
     '--prompt',
     prompt
   ], {
-    cwd: REPO_ROOT,
+    cwd: repoRoot,
     encoding: 'utf8',
     shell: false,
     windowsHide: true,

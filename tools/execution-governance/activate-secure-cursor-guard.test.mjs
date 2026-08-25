@@ -105,6 +105,60 @@ test('discovery read-only allows safe read and denies mutation or secret read', 
   }
 });
 
+test('inactive guard allows ordinary prompts and empty non-MANU sessions', () => {
+  const root = mkdtempSync(path.join(tmpdir(), 'manu-gov-inactive-'));
+  const outside = mkdtempSync(path.join(tmpdir(), 'manu-gov-outside-'));
+  try {
+    writeFileSync(path.join(root, 'activation.json'), `${JSON.stringify(inactiveActivation(), null, 2)}\n`, 'utf8');
+
+    const prompt = runGuard(root, 'beforeSubmitPrompt', { prompt: 'merhaba', workspace_roots: [] }, { cwd: outside });
+    assert.equal(prompt.status, 0, prompt.stdout);
+    assert.equal(JSON.parse(prompt.stdout).permission, 'allow');
+
+    const session = runGuard(root, 'sessionStart', { workspace_roots: [] }, { cwd: outside });
+    assert.equal(session.status, 0, session.stdout);
+    assert.equal(JSON.parse(session.stdout).permission, 'allow');
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+    rmSync(outside, { recursive: true, force: true });
+  }
+});
+
+test('inactive guard allows outside shell but protects explicit MANU targets', () => {
+  const root = mkdtempSync(path.join(tmpdir(), 'manu-gov-targeted-'));
+  const outside = mkdtempSync(path.join(tmpdir(), 'manu-gov-outside-'));
+  try {
+    writeFileSync(path.join(root, 'activation.json'), `${JSON.stringify(inactiveActivation(), null, 2)}\n`, 'utf8');
+
+    const outsideShell = runGuard(root, 'beforeShellExecution', {
+      command: 'echo hello | more',
+      cwd: outside,
+      workspace_roots: [outside]
+    }, { cwd: outside });
+    assert.equal(outsideShell.status, 0, outsideShell.stdout);
+    assert.equal(JSON.parse(outsideShell.stdout).permission, 'allow');
+
+    const protectedShell = runGuard(root, 'beforeShellExecution', {
+      command: 'git status --short --branch',
+      cwd: repoRoot,
+      workspace_roots: [repoRoot]
+    }, { cwd: outside });
+    assert.equal(protectedShell.status, 0, protectedShell.stdout);
+    assert.match(JSON.parse(protectedShell.stdout).user_message, /safe protected read-only shell/);
+
+    const protectedWrite = runGuard(root, 'preToolUse', {
+      tool_name: 'edit_file',
+      tool_input: { path: path.join(repoRoot, 'AGENTS.md') },
+      workspace_roots: [outside]
+    }, { cwd: outside });
+    assert.notEqual(protectedWrite.status, 0);
+    assert.match(JSON.parse(protectedWrite.stdout).user_message, /requires active signed scope|does not allow mutation|No external governance activation/);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+    rmSync(outside, { recursive: true, force: true });
+  }
+});
+
 function run(root, args) {
   return spawnSync('node', [script, ...args], {
     cwd: repoRoot,
@@ -114,14 +168,35 @@ function run(root, args) {
   });
 }
 
-function runGuard(root, event, payload) {
+function runGuard(root, event, payload, options = {}) {
   return spawnSync('node', [guardScript, event], {
-    cwd: repoRoot,
+    cwd: options.cwd || repoRoot,
     encoding: 'utf8',
     shell: false,
     input: JSON.stringify(payload),
     env: { ...process.env, MANU_GOVERNANCE_ROOT: root, MANU_GOVERNANCE_TEST_MODE: '1' }
   });
+}
+
+function inactiveActivation() {
+  return {
+    schemaVersion: '1.0.0',
+    status: 'INACTIVE_FAIL_CLOSED',
+    repoRoot,
+    contractId: '',
+    phaseId: '',
+    lockCommit: '',
+    scopeHash: '',
+    scope: {
+      allowedCreatePaths: [],
+      allowedModifyPaths: [],
+      protectedPaths: [],
+      forbiddenPaths: [],
+      allowedCommands: [],
+      allowedMcpTools: [],
+      allowSubagents: false
+    }
+  };
 }
 
 function discoveryActivation() {

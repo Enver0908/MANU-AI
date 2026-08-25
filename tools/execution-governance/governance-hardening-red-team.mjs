@@ -9,6 +9,7 @@ const guardPath = path.join(repoRoot, 'tools', 'execution-governance', 'secure-c
 const tempRoot = path.join(repoRoot, '.execution-governance', 'runtime', 'governance-hardening-red-team');
 const cursorSystemRoot = path.join(tempRoot, 'cursor-system');
 const desktopRoot = path.join(tempRoot, 'desktop');
+const outsideRoot = process.env.TEMP || process.env.TMP || 'C:\\Windows\\Temp';
 rmSync(tempRoot, { recursive: true, force: true });
 mkdirSync(tempRoot, { recursive: true });
 mkdirSync(cursorSystemRoot, { recursive: true });
@@ -59,7 +60,58 @@ const discoveryActivation = {
   }
 };
 
+const inactiveActivation = {
+  schemaVersion: '1.0.0',
+  status: 'INACTIVE_FAIL_CLOSED',
+  repoRoot,
+  contractId: '',
+  phaseId: '',
+  lockCommit: '',
+  scopeHash: '',
+  scope: {
+    allowedCreatePaths: [],
+    allowedModifyPaths: [],
+    protectedPaths: [],
+    forbiddenPaths: [],
+    allowedCommands: [],
+    allowedMcpTools: [],
+    allowSubagents: false
+  }
+};
+
 const cases = [
+  {
+    id: 'allow-ordinary-prompt-without-activation',
+    event: 'beforeSubmitPrompt',
+    payload: { prompt: 'merhaba', workspace_roots: [] },
+    activationOverride: inactiveActivation,
+    enterpriseCwd: true,
+    expect: 0
+  },
+  {
+    id: 'allow-empty-workspace-session-without-activation',
+    event: 'sessionStart',
+    payload: { workspace_roots: [] },
+    activationOverride: inactiveActivation,
+    enterpriseCwd: true,
+    expect: 0
+  },
+  {
+    id: 'allow-outside-workspace-shell-without-activation',
+    event: 'beforeShellExecution',
+    payload: { command: 'echo hello | more', cwd: outsideRoot, workspace_roots: [outsideRoot] },
+    activationOverride: inactiveActivation,
+    enterpriseCwd: true,
+    expect: 0
+  },
+  {
+    id: 'deny-protected-write-without-activation',
+    event: 'preToolUse',
+    payload: { tool_name: 'Write', tool_input: { file_path: path.join(repoRoot, 'AGENTS.md') }, workspace_roots: [tempRoot] },
+    activationOverride: inactiveActivation,
+    enterpriseCwd: true,
+    expect: 2
+  },
   {
     id: 'deny-out-of-scope-write',
     event: 'preToolUse',
@@ -113,7 +165,7 @@ const cases = [
     expect: 0
   },
   {
-    id: 'deny-tampered-shell-activation',
+    id: 'allow-safe-read-only-shell-without-activation',
     event: 'beforeShellExecution',
     payload: { command: 'git status --short --branch', cwd: '.' },
     activationOverride: {
@@ -136,7 +188,7 @@ const cases = [
         allowSubagents: false
       }
     },
-    expect: 2
+    expect: 0
   },
   {
     id: 'deny-non-ancestor-implementation-head',
