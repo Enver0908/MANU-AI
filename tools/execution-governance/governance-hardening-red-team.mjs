@@ -104,6 +104,17 @@ const cases = [
     expect: 2
   },
   {
+    id: 'deny-non-ancestor-implementation-head',
+    event: 'beforeShellExecution',
+    payload: { command: 'git status --short --branch', cwd: '.' },
+    activationOverride: {
+      ...activation,
+      lockCommit: 'ffffffffffffffffffffffffffffffffffffffff',
+      allowImplementationHead: true
+    },
+    expect: 2
+  },
+  {
     id: 'deny-mcp-unknown',
     event: 'preToolUse',
     payload: { tool_name: 'MCP:filesystem.write_file', tool_input: { path: 'docs/GOVERNANCE_HARDENING_PHASE_0_EVIDENCE.md' } },

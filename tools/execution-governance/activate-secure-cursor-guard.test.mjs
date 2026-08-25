@@ -45,6 +45,23 @@ test('activation rejects unknown phase ids', () => {
   }
 });
 
+test('activation rejects implementation head when lock commit is not an ancestor', () => {
+  const root = mkdtempSync(path.join(tmpdir(), 'manu-gov-activate-'));
+  const planDir = makePlanFixture();
+  try {
+    const lockPath = path.join(repoRoot, planDir, 'lock.json');
+    const lock = JSON.parse(readFileSync(lockPath, 'utf8'));
+    lock.lockCommit = 'ffffffffffffffffffffffffffffffffffffffff';
+    writeFileSync(lockPath, `${JSON.stringify(lock, null, 2)}\n`, 'utf8');
+    const result = run(root, ['--plan-dir', planDir, '--phase-id', 'phase-1', '--allow-implementation-head']);
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /not an ancestor/);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+    rmSync(path.join(repoRoot, planDir), { recursive: true, force: true });
+  }
+});
+
 test('activation apply and deactivate write explicit external fail-closed state', () => {
   const root = mkdtempSync(path.join(tmpdir(), 'manu-gov-activate-'));
   const planDir = makePlanFixture();

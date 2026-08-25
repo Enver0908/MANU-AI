@@ -1,0 +1,332 @@
+{
+  "schemaVersion": "1.0.0",
+  "contractId": "cursor-governance-ux-automation-v1",
+  "acceptanceRecords": [
+    {
+      "requirementId": "CGUX-001",
+      "phaseId": "CGUX-PHASE-1",
+      "authoritySource": "plan.md",
+      "observableRequirement": "Implementation-head activation is ancestry-aware in activation and guard tests.",
+      "oracleType": "AUTOMATED",
+      "oracleOwner": "node:test activate-secure-cursor-guard",
+      "oracleLocation": "tools/execution-governance/activate-secure-cursor-guard.test.mjs",
+      "protectionMechanism": "Tracked test file plus guard red-team.",
+      "exactEvidenceCommand": "node --test tools/execution-governance/activate-secure-cursor-guard.test.mjs",
+      "exactEvidenceCommandSpec": {
+        "cwd": ".",
+        "executable": "node",
+        "args": [
+          "--test",
+          "tools/execution-governance/activate-secure-cursor-guard.test.mjs"
+        ],
+        "timeoutSeconds": 120,
+        "networkPolicy": "FORBIDDEN",
+        "artifactPolicy": "stdout/stderr only"
+      },
+      "preconditions": [
+        "implementation files are present"
+      ],
+      "expectedExitCode": 0,
+      "requiredAssertions": [
+        "non-ancestor implementation head activation fails",
+        "selected phase activation still passes"
+      ],
+      "requiredScenarioMatrix": [
+        "valid selected phase",
+        "unknown phase",
+        "non-ancestor lock commit"
+      ],
+      "negativeControls": [
+        "bogus lock commit fails even with allowImplementationHead"
+      ],
+      "expectedTestIds": [
+        "activation rejects implementation head when lock commit is not an ancestor"
+      ],
+      "expectedTestCountOrInventory": "activation test file covers dry-run, unknown phase, apply/deactivate, and non-ancestor rejection",
+      "artifactType": "command output",
+      "artifactLocation": "stdout/stderr",
+      "artifactRetentionPolicy": "summarized in evidence",
+      "artifactPrivacyPolicy": "No secrets, PHI, raw prompts, raw health data, or real user data.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": [
+        "no network required"
+      ],
+      "independentVerifier": "NOT_REQUESTED unless user explicitly requests review",
+      "passRule": "PASS only when command exits 0.",
+      "failRule": "FAIL when command exits non-zero.",
+      "blockedRule": "BLOCKED when Node cannot run.",
+      "forbiddenEquivalences": [
+        "Dry-run output alone is not PASS"
+      ]
+    },
+    {
+      "requirementId": "CGUX-002",
+      "phaseId": "CGUX-PHASE-1",
+      "authoritySource": "plan.md",
+      "observableRequirement": "Cursor session status is exposed through governance CLI.",
+      "oracleType": "AUTOMATED",
+      "oracleOwner": "node:test cursor-session",
+      "oracleLocation": "tools/execution-governance/cursor-session.test.mjs",
+      "protectionMechanism": "Tracked test file.",
+      "exactEvidenceCommand": "node --test tools/execution-governance/cursor-session.test.mjs",
+      "exactEvidenceCommandSpec": {
+        "cwd": ".",
+        "executable": "node",
+        "args": [
+          "--test",
+          "tools/execution-governance/cursor-session.test.mjs"
+        ],
+        "timeoutSeconds": 120,
+        "networkPolicy": "FORBIDDEN",
+        "artifactPolicy": "stdout/stderr only"
+      },
+      "preconditions": [],
+      "expectedExitCode": 0,
+      "requiredAssertions": [
+        "governance CLI exposes cursor-session status"
+      ],
+      "requiredScenarioMatrix": [
+        "status command"
+      ],
+      "negativeControls": [],
+      "expectedTestIds": [
+        "governance CLI exposes cursor-session status surface"
+      ],
+      "expectedTestCountOrInventory": "cursor-session test file contains status and broker coverage",
+      "artifactType": "command output",
+      "artifactLocation": "stdout/stderr",
+      "artifactRetentionPolicy": "summarized in evidence",
+      "artifactPrivacyPolicy": "No sensitive data.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": [
+        "no network required"
+      ],
+      "independentVerifier": "NOT_REQUESTED unless user explicitly requests review",
+      "passRule": "PASS only when command exits 0.",
+      "failRule": "FAIL when command exits non-zero.",
+      "blockedRule": "BLOCKED when Node cannot run.",
+      "forbiddenEquivalences": [
+        "Manual status inspection is not PASS"
+      ]
+    },
+    {
+      "requirementId": "CGUX-003",
+      "phaseId": "CGUX-PHASE-1",
+      "authoritySource": "plan.md",
+      "observableRequirement": "Broker writes only selected locked phase activation in a temporary governance root.",
+      "oracleType": "AUTOMATED",
+      "oracleOwner": "node:test cursor-session",
+      "oracleLocation": "tools/execution-governance/cursor-session.test.mjs",
+      "protectionMechanism": "Tracked test file with temporary ProgramData substitute.",
+      "exactEvidenceCommand": "node --test tools/execution-governance/cursor-session.test.mjs",
+      "exactEvidenceCommandSpec": {
+        "cwd": ".",
+        "executable": "node",
+        "args": [
+          "--test",
+          "tools/execution-governance/cursor-session.test.mjs"
+        ],
+        "timeoutSeconds": 120,
+        "networkPolicy": "FORBIDDEN",
+        "artifactPolicy": "stdout/stderr only"
+      },
+      "preconditions": [],
+      "expectedExitCode": 0,
+      "requiredAssertions": [
+        "broker output excludes other phase create paths"
+      ],
+      "requiredScenarioMatrix": [
+        "selected phase",
+        "other phase omitted"
+      ],
+      "negativeControls": [
+        "phase two path is absent from phase one activation"
+      ],
+      "expectedTestIds": [
+        "cursor session broker writes only the selected locked phase activation"
+      ],
+      "expectedTestCountOrInventory": "broker fixture uses two phase records",
+      "artifactType": "command output",
+      "artifactLocation": "stdout/stderr",
+      "artifactRetentionPolicy": "summarized in evidence",
+      "artifactPrivacyPolicy": "No sensitive data.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": [
+        "no network required"
+      ],
+      "independentVerifier": "NOT_REQUESTED unless user explicitly requests review",
+      "passRule": "PASS only when command exits 0.",
+      "failRule": "FAIL when command exits non-zero.",
+      "blockedRule": "BLOCKED when Node cannot run.",
+      "forbiddenEquivalences": [
+        "Broker file existence is not PASS"
+      ]
+    },
+    {
+      "requirementId": "CGUX-004",
+      "phaseId": "CGUX-PHASE-1",
+      "authoritySource": "plan.md",
+      "observableRequirement": "Installer dry-run recognizes guard, broker, launcher, and desktop shortcut packaging paths.",
+      "oracleType": "AUTOMATED",
+      "oracleOwner": "install-secure-cursor-guard",
+      "oracleLocation": "tools/execution-governance/install-secure-cursor-guard.mjs",
+      "protectionMechanism": "Dependency-free installer dry-run.",
+      "exactEvidenceCommand": "node tools/execution-governance/install-secure-cursor-guard.mjs --dry-run",
+      "exactEvidenceCommandSpec": {
+        "cwd": ".",
+        "executable": "node",
+        "args": [
+          "tools/execution-governance/install-secure-cursor-guard.mjs",
+          "--dry-run"
+        ],
+        "timeoutSeconds": 60,
+        "networkPolicy": "FORBIDDEN",
+        "artifactPolicy": "stdout/stderr only"
+      },
+      "preconditions": [],
+      "expectedExitCode": 0,
+      "requiredAssertions": [
+        "dry-run report exits 0",
+        "dry-run report includes desktop shortcut check"
+      ],
+      "requiredScenarioMatrix": [
+        "installer dry-run"
+      ],
+      "negativeControls": [],
+      "expectedTestIds": [
+        "installer-dry-run"
+      ],
+      "expectedTestCountOrInventory": "single installer dry-run",
+      "artifactType": "command output",
+      "artifactLocation": "stdout/stderr",
+      "artifactRetentionPolicy": "summarized in evidence",
+      "artifactPrivacyPolicy": "No sensitive data.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": [
+        "no network required"
+      ],
+      "independentVerifier": "NOT_REQUESTED unless user explicitly requests review",
+      "passRule": "PASS only when command exits 0.",
+      "failRule": "FAIL when command exits non-zero.",
+      "blockedRule": "BLOCKED when Node cannot run.",
+      "forbiddenEquivalences": [
+        "Installed ProgramData state is not implied by dry-run"
+      ]
+    },
+    {
+      "requirementId": "CGUX-005",
+      "phaseId": "CGUX-PHASE-1",
+      "authoritySource": "plan.md",
+      "observableRequirement": "Red-team covers non-ancestor implementation-head denial.",
+      "oracleType": "AUTOMATED",
+      "oracleOwner": "governance-hardening-red-team",
+      "oracleLocation": "tools/execution-governance/governance-hardening-red-team.mjs",
+      "protectionMechanism": "Tracked red-team harness.",
+      "exactEvidenceCommand": "node tools/execution-governance/governance-hardening-red-team.mjs",
+      "exactEvidenceCommandSpec": {
+        "cwd": ".",
+        "executable": "node",
+        "args": [
+          "tools/execution-governance/governance-hardening-red-team.mjs"
+        ],
+        "timeoutSeconds": 120,
+        "networkPolicy": "FORBIDDEN",
+        "artifactPolicy": "stdout/stderr only"
+      },
+      "preconditions": [],
+      "expectedExitCode": 0,
+      "requiredAssertions": [
+        "red-team status PASS"
+      ],
+      "requiredScenarioMatrix": [
+        "active scope allow",
+        "inactive denial",
+        "non-ancestor denial"
+      ],
+      "negativeControls": [
+        "deny-non-ancestor-implementation-head"
+      ],
+      "expectedTestIds": [
+        "deny-non-ancestor-implementation-head"
+      ],
+      "expectedTestCountOrInventory": "red-team result contains new denial case",
+      "artifactType": "command output",
+      "artifactLocation": "stdout/stderr",
+      "artifactRetentionPolicy": "summarized in evidence",
+      "artifactPrivacyPolicy": "No sensitive data.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": [
+        "no network required"
+      ],
+      "independentVerifier": "NOT_REQUESTED unless user explicitly requests review",
+      "passRule": "PASS only when command exits 0.",
+      "failRule": "FAIL when command exits non-zero.",
+      "blockedRule": "BLOCKED when Node cannot run.",
+      "forbiddenEquivalences": [
+        "Partial red-team is not PASS"
+      ]
+    },
+    {
+      "requirementId": "CGUX-006",
+      "phaseId": "CGUX-PHASE-1",
+      "authoritySource": "plan.md",
+      "observableRequirement": "Plan package validates after implementation evidence is recorded.",
+      "oracleType": "AUTOMATED",
+      "oracleOwner": "governance-cli validate",
+      "oracleLocation": "tools/execution-governance/governance-cli.mjs",
+      "protectionMechanism": "Tracked governance validator.",
+      "exactEvidenceCommand": "node tools/execution-governance/governance-cli.mjs validate --plan-dir .execution-governance/plans/cursor-governance-ux-automation-v1 --phase-id CGUX-PHASE-1",
+      "exactEvidenceCommandSpec": {
+        "cwd": ".",
+        "executable": "node",
+        "args": [
+          "tools/execution-governance/governance-cli.mjs",
+          "validate",
+          "--plan-dir",
+          ".execution-governance/plans/cursor-governance-ux-automation-v1",
+          "--phase-id",
+          "CGUX-PHASE-1"
+        ],
+        "timeoutSeconds": 60,
+        "networkPolicy": "FORBIDDEN",
+        "artifactPolicy": "stdout/stderr only"
+      },
+      "preconditions": [
+        "plan lock hashes match"
+      ],
+      "expectedExitCode": 0,
+      "requiredAssertions": [
+        "plan package validates"
+      ],
+      "requiredScenarioMatrix": [
+        "final plan package"
+      ],
+      "negativeControls": [],
+      "expectedTestIds": [
+        "final-plan-validation"
+      ],
+      "expectedTestCountOrInventory": "single final validation",
+      "artifactType": "command output",
+      "artifactLocation": "stdout/stderr",
+      "artifactRetentionPolicy": "summarized in evidence",
+      "artifactPrivacyPolicy": "No sensitive data.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": [
+        "no network required"
+      ],
+      "independentVerifier": "NOT_REQUESTED unless user explicitly requests review",
+      "passRule": "PASS only when command exits 0.",
+      "failRule": "FAIL when command exits non-zero.",
+      "blockedRule": "BLOCKED when Node cannot run.",
+      "forbiddenEquivalences": [
+        "Evidence prose is not PASS"
+      ]
+    }
+  ]
+}

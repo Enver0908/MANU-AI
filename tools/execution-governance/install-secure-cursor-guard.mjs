@@ -9,6 +9,11 @@ const externalRoot = process.env.MANU_GOVERNANCE_ROOT || 'C:\\ProgramData\\MANU-
 const cursorSystemRoot = process.env.MANU_CURSOR_SYSTEM_ROOT || 'C:\\ProgramData\\Cursor';
 const sourceGuard = path.join(repoRoot, 'tools', 'execution-governance', 'secure-cursor-guard.mjs');
 const targetGuard = path.join(externalRoot, 'secure-cursor-guard.mjs');
+const sourceBroker = path.join(repoRoot, 'tools', 'execution-governance', 'cursor-session-broker.mjs');
+const targetBroker = path.join(externalRoot, 'cursor-session-broker.mjs');
+const sourceSession = path.join(repoRoot, 'tools', 'execution-governance', 'cursor-session.mjs');
+const targetLauncher = path.join(externalRoot, 'MANU-AI Cursor Session.ps1');
+const desktopShortcut = path.join(process.env.USERPROFILE || externalRoot, 'Desktop', 'MANU-AI Cursor.lnk');
 const activationPath = path.join(externalRoot, 'activation.json');
 const cursorHooksPath = path.join(cursorSystemRoot, 'hooks.json');
 
@@ -17,11 +22,16 @@ const dryRun = args.has('--dry-run');
 const verifyOnly = args.has('--verify');
 
 if (!existsSync(sourceGuard)) fail(`source guard missing: ${sourceGuard}`);
+if (!existsSync(sourceBroker)) fail(`source broker missing: ${sourceBroker}`);
+if (!existsSync(sourceSession)) fail(`source session script missing: ${sourceSession}`);
 
 if (!verifyOnly && !dryRun) {
   mkdirSync(externalRoot, { recursive: true });
   mkdirSync(cursorSystemRoot, { recursive: true });
   copyFileSync(sourceGuard, targetGuard);
+  copyFileSync(sourceBroker, targetBroker);
+  writeFileSync(targetLauncher, cursorSessionLauncher(), 'utf8');
+  createDesktopShortcut();
   writeFileSync(cursorHooksPath, `${JSON.stringify(systemHooksConfig(targetGuard, process.execPath), null, 2)}\n`, 'utf8');
   if (!existsSync(activationPath)) {
     writeFileSync(activationPath, `${JSON.stringify(inactiveActivation(), null, 2)}\n`, 'utf8');
@@ -39,8 +49,14 @@ function verifyInstall() {
   checks.push(check('source guard exists', existsSync(sourceGuard), sourceGuard));
   checks.push(check('external root exists', dryRun || existsSync(externalRoot), externalRoot));
   checks.push(check('target guard exists', dryRun || existsSync(targetGuard), targetGuard));
+  checks.push(check('target broker exists', dryRun || existsSync(targetBroker), targetBroker));
+  checks.push(check('cursor session launcher exists', dryRun || existsSync(targetLauncher), targetLauncher));
+  checks.push(check('desktop shortcut exists', dryRun || existsSync(desktopShortcut), desktopShortcut));
   if (!dryRun && existsSync(sourceGuard) && existsSync(targetGuard)) {
     checks.push(check('target guard SHA matches source', fileSha256(targetGuard) === fileSha256(sourceGuard), targetGuard));
+  }
+  if (!dryRun && existsSync(sourceBroker) && existsSync(targetBroker)) {
+    checks.push(check('target broker SHA matches source', fileSha256(targetBroker) === fileSha256(sourceBroker), targetBroker));
   }
   checks.push(check('system hooks exists', dryRun || existsSync(cursorHooksPath), cursorHooksPath));
   if (!dryRun && existsSync(cursorHooksPath)) {
@@ -68,6 +84,43 @@ function verifyInstall() {
     verifyOnly,
     checks
   };
+}
+
+function createDesktopShortcut() {
+  if (process.platform !== 'win32') return;
+  const escapedShortcut = desktopShortcut.replace(/'/g, "''");
+  const escapedLauncher = targetLauncher.replace(/'/g, "''");
+  const escapedExternalRoot = externalRoot.replace(/'/g, "''");
+  const ps = `$shell = New-Object -ComObject WScript.Shell
+$shortcut = $shell.CreateShortcut('${escapedShortcut}')
+$shortcut.TargetPath = 'powershell.exe'
+$shortcut.Arguments = '-NoProfile -ExecutionPolicy Bypass -File "${escapedLauncher}"'
+$shortcut.WorkingDirectory = '${escapedExternalRoot}'
+$shortcut.IconLocation = 'powershell.exe,0'
+$shortcut.Save()`;
+  const result = spawnSync('powershell', ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-Command', ps], {
+    encoding: 'utf8',
+    shell: false
+  });
+  if (result.status !== 0) fail(`desktop shortcut creation failed: ${result.stderr || result.stdout}`);
+}
+
+function cursorSessionLauncher() {
+  const escapedRepo = repoRoot.replace(/'/g, "''");
+  const escapedNode = process.execPath.replace(/'/g, "''");
+  const escapedSession = sourceSession.replace(/'/g, "''");
+  return `$ErrorActionPreference = 'Stop'
+$repo = '${escapedRepo}'
+$node = '${escapedNode}'
+$session = '${escapedSession}'
+Set-Location -LiteralPath $repo
+& $node $session status --repo $repo
+Write-Host ''
+Write-Host 'Activate a phase with:'
+Write-Host "  & '$node' '$session' open --repo '$repo' --plan-dir '.execution-governance/plans/hosted-sandbox-remediation-v1-1' --phase-id PHASE-1 --elevate"
+Write-Host ''
+Read-Host 'Press Enter to close'
+`;
 }
 
 function hasExactHookEvents(hooks) {

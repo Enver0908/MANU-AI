@@ -1,0 +1,136 @@
+{
+  "schemaVersion": "1.0.0",
+  "governanceFormatVersion": "2.0.0",
+  "contractId": "cursor-governance-ux-automation-v1",
+  "planVersion": "1.0.0",
+  "planTitle": "Cursor Governance UX Automation Plan",
+  "currentPhaseId": "CGUX-PHASE-1",
+  "phases": [
+    {
+      "phaseId": "CGUX-PHASE-1",
+      "title": "Cursor Governance UX Automation",
+      "status": "LOCKED_FOR_IMPLEMENTATION"
+    }
+  ],
+  "authoritySources": [
+    "User instruction to apply the Cursor governance UX automation plan",
+    "AGENTS.md",
+    "docs/execution-governance/EXECUTION_ASSURANCE_PROTOCOL.md",
+    "docs/execution-governance/DECISION_COMPLETE_PLAN_AUTHORING_STANDARD.md",
+    "current Git state"
+  ],
+  "roleBindings": {
+    "requirementAuthority": "user and named authority documents",
+    "planner": "Codex",
+    "implementer": "Codex",
+    "automaticVerifier": "execution-governance CLI and node:test",
+    "independentReviewer": "NOT_REQUESTED unless user explicitly requests review",
+    "manualReviewer": "user-approved human reviewer when required",
+    "finalAcceptanceAuthority": "user"
+  },
+  "status": {
+    "plan_state": "LOCKED_FOR_IMPLEMENTATION",
+    "implementation_state": "EXECUTOR_VERIFIED",
+    "executor_checks": "PASS",
+    "independent_review": "NOT_REQUESTED",
+    "user_acceptance": "PENDING"
+  },
+  "requirements": [
+    {
+      "requirementId": "CGUX-001",
+      "authoritySource": "plan.md",
+      "classification": "IN_SCOPE",
+      "observableRequirement": "Implementation-head activation is ancestry-aware in CLI activation, CLI preflight/postflight, and the Cursor guard.",
+      "dependencies": [],
+      "status": {
+        "plan_state": "LOCKED_FOR_IMPLEMENTATION",
+        "implementation_state": "EXECUTOR_VERIFIED",
+        "executor_checks": "PASS",
+        "independent_review": "NOT_REQUESTED",
+        "user_acceptance": "PENDING"
+      }
+    },
+    {
+      "requirementId": "CGUX-002",
+      "authoritySource": "plan.md",
+      "classification": "IN_SCOPE",
+      "observableRequirement": "A user-facing Cursor session command reports status, validates a selected phase, detects scope defects, and can call activation or deactivation.",
+      "dependencies": [
+        "CGUX-001"
+      ],
+      "status": {
+        "plan_state": "LOCKED_FOR_IMPLEMENTATION",
+        "implementation_state": "EXECUTOR_VERIFIED",
+        "executor_checks": "PASS",
+        "independent_review": "NOT_REQUESTED",
+        "user_acceptance": "PENDING"
+      }
+    },
+    {
+      "requirementId": "CGUX-003",
+      "authoritySource": "plan.md",
+      "classification": "IN_SCOPE",
+      "observableRequirement": "An activation broker validates hashes, phase, safe paths, command specs, current HEAD, and lock ancestry before writing activation state.",
+      "dependencies": [
+        "CGUX-001"
+      ],
+      "status": {
+        "plan_state": "LOCKED_FOR_IMPLEMENTATION",
+        "implementation_state": "EXECUTOR_VERIFIED",
+        "executor_checks": "PASS",
+        "independent_review": "NOT_REQUESTED",
+        "user_acceptance": "PENDING"
+      }
+    },
+    {
+      "requirementId": "CGUX-004",
+      "authoritySource": "plan.md",
+      "classification": "IN_SCOPE",
+      "observableRequirement": "The secure Cursor guard installer packages the broker, launcher, and desktop shortcut while preserving the ProgramData guard trust root.",
+      "dependencies": [
+        "CGUX-003"
+      ],
+      "status": {
+        "plan_state": "LOCKED_FOR_IMPLEMENTATION",
+        "implementation_state": "EXECUTOR_VERIFIED",
+        "executor_checks": "PASS",
+        "independent_review": "NOT_REQUESTED",
+        "user_acceptance": "PENDING"
+      }
+    },
+    {
+      "requirementId": "CGUX-005",
+      "authoritySource": "plan.md",
+      "classification": "IN_SCOPE",
+      "observableRequirement": "Automated tests and red-team cases cover session status, selected phase activation, and non-ancestor denial.",
+      "dependencies": [
+        "CGUX-001",
+        "CGUX-002",
+        "CGUX-003"
+      ],
+      "status": {
+        "plan_state": "LOCKED_FOR_IMPLEMENTATION",
+        "implementation_state": "EXECUTOR_VERIFIED",
+        "executor_checks": "PASS",
+        "independent_review": "NOT_REQUESTED",
+        "user_acceptance": "PENDING"
+      }
+    },
+    {
+      "requirementId": "CGUX-006",
+      "authoritySource": "plan.md",
+      "classification": "IN_SCOPE",
+      "observableRequirement": "Evidence and lifecycle records show exact command outcomes, remaining installation notes, and unchanged production boundaries.",
+      "dependencies": [
+        "CGUX-005"
+      ],
+      "status": {
+        "plan_state": "LOCKED_FOR_IMPLEMENTATION",
+        "implementation_state": "EXECUTOR_VERIFIED",
+        "executor_checks": "PASS",
+        "independent_review": "NOT_REQUESTED",
+        "user_acceptance": "PENDING"
+      }
+    }
+  ]
+}

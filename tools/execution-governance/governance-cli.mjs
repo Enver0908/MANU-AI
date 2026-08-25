@@ -21,7 +21,8 @@ const COMMANDS = new Set([
   'run-checks',
   'postflight',
   'close',
-  'activate-cursor'
+  'activate-cursor',
+  'cursor-session'
 ]);
 
 const STATUS_OK = 0;
@@ -52,6 +53,7 @@ function main() {
   if (command === 'postflight') return postflight(context);
   if (command === 'close') return close(context);
   if (command === 'activate-cursor') return activateCursor(context);
+  if (command === 'cursor-session') return cursorSession(context);
   return STATUS_FAIL;
 }
 
@@ -74,6 +76,8 @@ Commands:
   close        Close only when postflight passes and independent review state is valid.
   activate-cursor
               Render or apply external Cursor activation for a locked plan.
+  cursor-session
+              Run user-friendly Cursor phase status, preflight, activation, or launch automation.
 
 Options:
   --repo <path>          Repository root. Defaults to cwd or discovered Git root.
@@ -87,6 +91,8 @@ Options:
   --phase-id <id>       Phase identifier for activate-cursor.
   --allow-implementation-head
                         Allow implementation commits after the lock commit.
+  --session <command>   cursor-session action: list, status, preflight, activate, deactivate, or open.
+  --elevate             cursor-session uses the installed elevated broker.
 `);
 }
 
@@ -94,7 +100,7 @@ function parseOptions(args) {
   const options = {};
   for (let i = 0; i < args.length; i += 1) {
     const arg = args[i];
-    if (['--write', '--allow-dirty', '--apply', '--deactivate', '--allow-implementation-head', '--all-plans'].includes(arg)) {
+    if (['--write', '--allow-dirty', '--apply', '--deactivate', '--allow-implementation-head', '--all-plans', '--elevate'].includes(arg)) {
       options[arg.slice(2)] = true;
       continue;
     }
@@ -248,7 +254,9 @@ function preflight({ repoRoot, options }) {
   const planDir = requirePlanDir(repoRoot, options);
   strictPackage(repoRoot, planDir, options, 'preflight');
   if (!options['allow-dirty']) assertCleanWorktree(repoRoot);
-  const failures = verifyLock(repoRoot, planDir);
+  const failures = verifyLock(repoRoot, planDir, {
+    allowImplementationHead: options['allow-implementation-head'] === true
+  });
   if (failures.length) {
     for (const failure of failures) console.error(`FAIL ${failure}`);
     return STATUS_FAIL;
@@ -332,7 +340,9 @@ function postflight({ repoRoot, options }) {
   } catch (error) {
     failures.push(error.message);
   }
-  failures.push(...verifyLock(repoRoot, planDir));
+  failures.push(...verifyLock(repoRoot, planDir, {
+    allowImplementationHead: options['allow-implementation-head'] === true
+  }));
   const scopeExit = scopeCheck({ repoRoot, options });
   if (scopeExit !== STATUS_OK) failures.push('scope-check failed');
   failures.push(...verifyRunRecordFreshness(repoRoot, planDir));
@@ -462,6 +472,26 @@ function activateCursor({ repoRoot, options }) {
   return result.status ?? STATUS_FAIL;
 }
 
+function cursorSession({ repoRoot, options }) {
+  const script = joinRepo(repoRoot, 'tools/execution-governance/cursor-session.mjs');
+  if (!existsSync(script)) fail(`Missing Cursor session script: ${relative(repoRoot, script)}`, STATUS_FAIL);
+  const sessionCommand = options.session || options.action || 'status';
+  const args = [script, sessionCommand, '--repo', repoRoot];
+  if (options['plan-dir']) args.push('--plan-dir', options['plan-dir']);
+  if (options['phase-id']) args.push('--phase-id', options['phase-id']);
+  if (options.elevate) args.push('--elevate');
+  const result = spawnSync(process.execPath, args, {
+    cwd: repoRoot,
+    encoding: 'utf8',
+    shell: false,
+    windowsHide: true,
+    env: { ...process.env }
+  });
+  if (result.stdout) process.stdout.write(result.stdout);
+  if (result.stderr) process.stderr.write(result.stderr);
+  return result.status ?? STATUS_FAIL;
+}
+
 function strictPackage(repoRoot, planDir, options, mode) {
   try {
     return strictValidatePlanPackageOrThrow({
@@ -533,7 +563,7 @@ function validateCommandSpec(spec, label, errors) {
   }
 }
 
-function verifyLock(repoRoot, planDir) {
+function verifyLock(repoRoot, planDir, options = {}) {
   const failures = [];
   const lockPath = path.join(planDir, 'lock.json');
   if (!existsSync(lockPath)) return [`Missing lock file: ${relative(repoRoot, lockPath)}`];
@@ -548,7 +578,13 @@ function verifyLock(repoRoot, planDir) {
     if (lockValue[key] !== value) failures.push(`${key} mismatch`);
   }
   const head = gitText(repoRoot, ['rev-parse', 'HEAD']);
-  if (lockValue.baseCommit && lockValue.baseCommit !== head) failures.push(`baseCommit ${lockValue.baseCommit} does not match HEAD ${head}`);
+  if (lockValue.baseCommit && lockValue.baseCommit !== head) {
+    if (!options.allowImplementationHead) {
+      failures.push(`baseCommit ${lockValue.baseCommit} does not match HEAD ${head}`);
+    } else if (!isAncestorCommit(repoRoot, lockValue.baseCommit, head)) {
+      failures.push(`baseCommit ${lockValue.baseCommit} is not an ancestor of HEAD ${head}`);
+    }
+  }
   for (const item of lockValue.protectedManifest || []) {
     const target = resolveInsideRepo(repoRoot, item.path);
     if (!existsSync(target)) {
@@ -558,6 +594,11 @@ function verifyLock(repoRoot, planDir) {
     if (sha256File(target) !== item.sha256) failures.push(`protected file hash mismatch: ${item.path}`);
   }
   return failures;
+}
+
+function isAncestorCommit(repoRoot, ancestor, descendant) {
+  const result = runGit(repoRoot, ['merge-base', '--is-ancestor', ancestor, descendant]);
+  return result.ok;
 }
 
 function buildProtectedManifest(repoRoot) {

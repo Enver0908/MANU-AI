@@ -138,8 +138,13 @@ function assertActivationIntegrity(activation) {
     throw new Error('activation lockCommit is missing or invalid');
   }
   const head = gitText(['rev-parse', 'HEAD']);
-  if (activation.lockCommit !== head && activation.allowImplementationHead !== true) {
-    throw new Error(`activation lockCommit ${activation.lockCommit} does not match HEAD ${head}`);
+  if (activation.lockCommit !== head) {
+    if (activation.allowImplementationHead !== true) {
+      throw new Error(`activation lockCommit ${activation.lockCommit} does not match HEAD ${head}`);
+    }
+    if (!isAncestorCommit(activation.lockCommit, head)) {
+      throw new Error(`activation lockCommit ${activation.lockCommit} is not an ancestor of HEAD ${head}`);
+    }
   }
   if (activation.scopeHash !== sha256Json(activation.scope)) {
     throw new Error('activation scopeHash mismatch');
@@ -276,6 +281,15 @@ function gitText(args) {
   const result = spawnSync('git', args, { cwd: REPO_ROOT, encoding: 'utf8', shell: false });
   if (result.status !== 0) throw new Error(`git ${args.join(' ')} failed: ${result.stderr}`);
   return result.stdout.trim();
+}
+
+function isAncestorCommit(ancestor, descendant) {
+  const result = spawnSync('git', ['merge-base', '--is-ancestor', ancestor, descendant], {
+    cwd: REPO_ROOT,
+    encoding: 'utf8',
+    shell: false
+  });
+  return result.status === 0;
 }
 
 function allow(reason) {

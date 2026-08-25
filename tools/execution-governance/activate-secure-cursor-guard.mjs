@@ -77,6 +77,15 @@ function assertLock(directory, lock) {
   }
   const lockCommit = lock.lockCommit || lock.baseCommit;
   if (!/^[0-9a-f]{40}$/i.test(lockCommit || '')) fail('lockCommit/baseCommit is missing or invalid');
+  const head = gitText(['rev-parse', 'HEAD']);
+  if (lockCommit !== head) {
+    if (options.allowImplementationHead !== true) {
+      fail(`lockCommit/baseCommit ${lockCommit} does not match HEAD ${head}`);
+    }
+    if (!isAncestorCommit(lockCommit, head)) {
+      fail(`lockCommit/baseCommit ${lockCommit} is not an ancestor of HEAD ${head}`);
+    }
+  }
 }
 
 function flattenScope(scope) {
@@ -174,6 +183,21 @@ function parseArgs(args) {
 
 function readJson(file) {
   return JSON.parse(readFileSync(file, 'utf8'));
+}
+
+function gitText(args) {
+  const result = spawnSync('git', args, { cwd: repoRoot, encoding: 'utf8', shell: false });
+  if (result.status !== 0) fail(`git ${args.join(' ')} failed: ${result.stderr || result.stdout}`);
+  return result.stdout.trim();
+}
+
+function isAncestorCommit(ancestor, descendant) {
+  const result = spawnSync('git', ['merge-base', '--is-ancestor', ancestor, descendant], {
+    cwd: repoRoot,
+    encoding: 'utf8',
+    shell: false
+  });
+  return result.status === 0;
 }
 
 function sha256Json(value) {
