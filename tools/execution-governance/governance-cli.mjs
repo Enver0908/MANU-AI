@@ -13,7 +13,8 @@ const COMMANDS = new Set([
   'scope-check',
   'run-checks',
   'postflight',
-  'close'
+  'close',
+  'activate-cursor'
 ]);
 
 const STATUS_OK = 0;
@@ -42,6 +43,7 @@ function main() {
   if (command === 'run-checks') return runChecks(context);
   if (command === 'postflight') return postflight(context);
   if (command === 'close') return close(context);
+  if (command === 'activate-cursor') return activateCursor(context);
   return STATUS_FAIL;
 }
 
@@ -60,6 +62,8 @@ Commands:
   run-checks   Run acceptance commands with spawn and shell:false.
   postflight   Run scope, lock, run-record, freshness, and forbidden-pattern checks.
   close        Close only when postflight passes and independent review state is valid.
+  activate-cursor
+              Render or apply external Cursor activation for a locked plan.
 
 Options:
   --repo <path>          Repository root. Defaults to cwd or discovered Git root.
@@ -67,6 +71,11 @@ Options:
   --out <path>          Output path for generated lock.json.
   --write               Allow lock command to write --out.
   --allow-dirty         Allow dirty worktree for lock/preflight when explicitly needed.
+  --apply               activate-cursor writes ProgramData activation.json.
+  --deactivate          activate-cursor writes fail-closed inactive state.
+  --phase-id <id>       Phase identifier for activate-cursor.
+  --allow-implementation-head
+                        Allow implementation commits after the lock commit.
 `);
 }
 
@@ -74,7 +83,7 @@ function parseOptions(args) {
   const options = {};
   for (let i = 0; i < args.length; i += 1) {
     const arg = args[i];
-    if (arg === '--write' || arg === '--allow-dirty') {
+    if (['--write', '--allow-dirty', '--apply', '--deactivate', '--allow-implementation-head'].includes(arg)) {
       options[arg.slice(2)] = true;
       continue;
     }
@@ -347,6 +356,27 @@ function close(context) {
   }
   console.log('PASS close');
   return STATUS_OK;
+}
+
+function activateCursor({ repoRoot, options }) {
+  if (!options['plan-dir']) fail('--plan-dir is required for activate-cursor', STATUS_FAIL);
+  const script = joinRepo(repoRoot, 'tools/execution-governance/activate-secure-cursor-guard.mjs');
+  if (!existsSync(script)) fail(`Missing activation script: ${relative(repoRoot, script)}`, STATUS_FAIL);
+  const args = [script, '--plan-dir', options['plan-dir']];
+  if (options.apply) args.push('--apply');
+  if (options.deactivate) args.push('--deactivate');
+  if (options['phase-id']) args.push('--phase-id', options['phase-id']);
+  if (options['allow-implementation-head']) args.push('--allow-implementation-head');
+  const result = spawnSync(process.execPath, args, {
+    cwd: repoRoot,
+    encoding: 'utf8',
+    shell: false,
+    windowsHide: true,
+    env: { ...process.env }
+  });
+  if (result.stdout) process.stdout.write(result.stdout);
+  if (result.stderr) process.stderr.write(result.stderr);
+  return result.status ?? STATUS_FAIL;
 }
 
 function check(name, ok, detail) {
