@@ -1,0 +1,93 @@
+{
+  "schemaVersion": "1.0.0",
+  "contractId": "hosted-sandbox-remediation-v1-1-verifier-setup",
+  "requirements": [
+    {
+      "requirementId": "HSR11-SETUP-001",
+      "phaseId": "PHASE-0",
+      "allowedCreatePaths": [
+        ".execution-governance/plans/hosted-sandbox-remediation-v1-1-verifier-setup/plan.md",
+        ".execution-governance/plans/hosted-sandbox-remediation-v1-1-verifier-setup/contract.json",
+        ".execution-governance/plans/hosted-sandbox-remediation-v1-1-verifier-setup/scope.json",
+        ".execution-governance/plans/hosted-sandbox-remediation-v1-1-verifier-setup/acceptance.json",
+        ".execution-governance/plans/hosted-sandbox-remediation-v1-1-verifier-setup/lock.json",
+        ".execution-governance/plans/hosted-sandbox-remediation-v1-1/lifecycle-record.json",
+        ".execution-governance/plans/hosted-sandbox-remediation-v1-1/implementation-report.json",
+        ".execution-governance/plans/hosted-sandbox-remediation-v1-1/plan.md",
+        ".execution-governance/plans/hosted-sandbox-remediation-v1-1/contract.json",
+        ".execution-governance/plans/hosted-sandbox-remediation-v1-1/scope.json",
+        ".execution-governance/plans/hosted-sandbox-remediation-v1-1/acceptance.json",
+        ".execution-governance/plans/hosted-sandbox-remediation-v1-1/lock.json",
+        "tools/hosted-sandbox/verify-hosted-sandbox-remediation-v1-1.mjs",
+        "docs/HOSTED_SANDBOX_REMEDIATION_V1_1_PHASE_0_EVIDENCE.md"
+      ],
+      "allowedModifyPaths": [],
+      "protectedPaths": [
+        "app/**",
+        "dietitian-ai-assistant/**",
+        ".github/workflows/**",
+        ".execution-governance/schemas/**",
+        ".execution-governance/templates/**",
+        "tools/execution-governance/**",
+        "docs/PILOT_READINESS_EVIDENCE_PACK.md",
+        "docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md",
+        "docs/PRODUCTION_PILOT_FINAL_READINESS_CLOSURE_SUMMARY.md"
+      ],
+      "forbiddenPaths": [
+        ".execution-governance/runtime/**",
+        "app/package.json",
+        "app/package-lock.json",
+        "app/supabase/migrations/**",
+        "app/src/**"
+      ],
+      "allowedCommands": [
+        {
+          "cwd": ".",
+          "executable": "node",
+          "args": [
+            "tools/execution-governance/governance-cli.mjs",
+            "validate",
+            "--plan-dir",
+            ".execution-governance/plans/hosted-sandbox-remediation-v1-1-verifier-setup"
+          ],
+          "timeoutSeconds": 60,
+          "networkPolicy": "FORBIDDEN",
+          "artifactPolicy": "stdout/stderr only"
+        },
+        {
+          "cwd": ".",
+          "executable": "node",
+          "args": [
+            "tools/hosted-sandbox/verify-hosted-sandbox-remediation-v1-1.mjs",
+            "--phase",
+            "PHASE-0"
+          ],
+          "timeoutSeconds": 60,
+          "networkPolicy": "FORBIDDEN",
+          "artifactPolicy": "stdout/stderr only"
+        }
+      ],
+      "forbiddenCommands": [
+        "push",
+        "merge",
+        "deploy",
+        "dependency install/update",
+        "destructive git reset/checkout",
+        "Supabase migration apply",
+        "VPS mutation",
+        "production gate mutation"
+      ],
+      "allowedDependencies": [],
+      "forbiddenDependencyChanges": true,
+      "allowedSchemaChanges": [],
+      "allowedNetworkOrExternalEffects": [],
+      "allowedMcpTools": [],
+      "allowSubagents": false,
+      "generatedArtifactPolicy": "Runtime run-records under .execution-governance/runtime are allowed only as ignored local verification artifacts and must not be committed.",
+      "documentationReconciliation": [
+        "docs/HOSTED_SANDBOX_REMEDIATION_V1_1_PHASE_0_EVIDENCE.md"
+      ],
+      "maximumChangeScope": "Only the listed new governance plan files, verifier script, and Phase 0 evidence file may be created."
+    }
+  ]
+}

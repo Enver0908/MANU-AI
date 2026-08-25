@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "1.0.0",
+  "governanceFormatVersion": "2.0.0",
+  "contractId": "hosted-sandbox-remediation-v1-1-verifier-setup",
+  "planVersion": "1.0.0",
+  "planTitle": "Hosted Sandbox Remediation v1.1 Verifier Setup",
+  "currentPhaseId": "PHASE-0",
+  "phases": [
+    {
+      "phaseId": "PHASE-0",
+      "title": "Decision-Complete Package, Verifier, And Plan Lock",
+      "status": "LOCKED_FOR_IMPLEMENTATION"
+    }
+  ],
+  "authoritySources": [
+    "User instruction in current Codex task",
+    "AGENTS.md",
+    "docs/execution-governance/EXECUTION_ASSURANCE_PROTOCOL.md",
+    "docs/execution-governance/DECISION_COMPLETE_PLAN_AUTHORING_STANDARD.md",
+    "docs/execution-governance/LIFECYCLE_AND_OPTIONAL_REVIEW_FLOW.md",
+    "current Git state at 9cb6028"
+  ],
+  "roleBindings": {
+    "requirementAuthority": "user and named authority documents",
+    "planner": "Codex",
+    "implementer": "Codex",
+    "automaticVerifier": "governance CLI plus tools/hosted-sandbox/verify-hosted-sandbox-remediation-v1-1.mjs",
+    "independentReviewer": "NOT_REQUESTED unless user explicitly requests review",
+    "manualReviewer": "user-approved human reviewer when required",
+    "finalAcceptanceAuthority": "user"
+  },
+  "status": {
+    "plan_state": "LOCKED_FOR_IMPLEMENTATION",
+    "implementation_state": "EXECUTOR_VERIFIED",
+    "executor_checks": "PASS",
+    "independent_review": "NOT_REQUESTED",
+    "user_acceptance": "PENDING"
+  },
+  "requirements": [
+    {
+      "requirementId": "HSR11-SETUP-001",
+      "authoritySource": "Hosted Sandbox Remediation v1.1 Phase 0 user approval",
+      "classification": "IN_SCOPE",
+      "observableRequirement": "Create the decision-complete main remediation plan package, setup plan package, protected verifier script, and Phase 0 evidence without touching product runtime, migrations, dependency manifests, GitHub workflows, VPS, Supabase, or production gates.",
+      "dependencies": [],
+      "status": {
+        "plan_state": "LOCKED_FOR_IMPLEMENTATION",
+        "implementation_state": "EXECUTOR_VERIFIED",
+        "executor_checks": "PASS",
+        "independent_review": "NOT_REQUESTED",
+        "user_acceptance": "PENDING"
+      }
+    }
+  ]
+}

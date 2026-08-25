@@ -1,0 +1,268 @@
+{
+  "schemaVersion": "1.0.0",
+  "governanceFormatVersion": "2.0.0",
+  "contractId": "hosted-sandbox-remediation-v1-1",
+  "planVersion": "1.1.0",
+  "planTitle": "Hosted Sandbox Remediation v1.1",
+  "currentPhaseId": "PHASE-0",
+  "phases": [
+    {
+      "phaseId": "PHASE-0",
+      "title": "Decision-Complete Package, Verifier, And Plan Lock",
+      "status": "LOCKED_FOR_IMPLEMENTATION"
+    },
+    {
+      "phaseId": "PHASE-1",
+      "title": "Runtime Auth, Request Identity, Browser-Safe Commercial Modules, And Trusted Proxy Boundary",
+      "status": "LOCKED_FOR_IMPLEMENTATION"
+    },
+    {
+      "phaseId": "PHASE-2",
+      "title": "Tenant Isolation Inventory And Transactional Demo Cleanup",
+      "status": "LOCKED_FOR_IMPLEMENTATION"
+    },
+    {
+      "phaseId": "PHASE-3",
+      "title": "RLS Default Privileges, Encrypted Backup, And Isolated Restore Drill",
+      "status": "LOCKED_FOR_IMPLEMENTATION"
+    },
+    {
+      "phaseId": "PHASE-4",
+      "title": "Deterministic Release Identity, Service Worker Artifact Binding, And Local Quality Gate",
+      "status": "LOCKED_FOR_IMPLEMENTATION"
+    },
+    {
+      "phaseId": "PHASE-5",
+      "title": "GitHub CI, Migration Workflow, Artifact Provenance, Atomic VPS Deploy, Rollback, And Edge Headers",
+      "status": "LOCKED_FOR_IMPLEMENTATION"
+    },
+    {
+      "phaseId": "PHASE-6",
+      "title": "Real Hosted Activation, Contamination Zero, Live Auth Smoke, Android PWA Validation, And Final Evidence",
+      "status": "LOCKED_FOR_IMPLEMENTATION"
+    }
+  ],
+  "authoritySources": [
+    "User request for Hosted Sandbox Remediation v1.1",
+    "AGENTS.md",
+    "docs/execution-governance/EXECUTION_ASSURANCE_PROTOCOL.md",
+    "docs/execution-governance/DECISION_COMPLETE_PLAN_AUTHORING_STANDARD.md",
+    "docs/execution-governance/LIFECYCLE_AND_OPTIONAL_REVIEW_FLOW.md",
+    "docs/PHASE_85_STAGE_7_CLOSURE_DECISION.json",
+    "docs/PHASE_85_STAGE_7_FINAL_CLOSURE_EVIDENCE.md",
+    "current Git state at 9cb6028"
+  ],
+  "roleBindings": {
+    "requirementAuthority": "user and named authority documents",
+    "planner": "Codex",
+    "implementer": "Codex or phase-activated Cursor behind the enterprise guard",
+    "automaticVerifier": "governance CLI, hosted sandbox verifier, app tests, RLS tests, build, release verification, Playwright, GitHub Actions, and live smoke commands named by acceptance records",
+    "independentReviewer": "NOT_REQUESTED unless user explicitly requests review",
+    "manualReviewer": "user-approved human reviewer when required",
+    "finalAcceptanceAuthority": "user"
+  },
+  "status": {
+    "plan_state": "LOCKED_FOR_IMPLEMENTATION",
+    "implementation_state": "NOT_STARTED",
+    "executor_checks": "NOT_RUN",
+    "independent_review": "NOT_REQUESTED",
+    "user_acceptance": "PENDING"
+  },
+  "requirements": [
+    {
+      "requirementId": "HSR11-000",
+      "authoritySource": "PHASE-0 plan package",
+      "classification": "IN_SCOPE",
+      "observableRequirement": "The v1.1 plan package is decision-complete, phase-scoped, hash-locked, and has a Phase 0 verifier; product implementation has not started.",
+      "dependencies": [],
+      "status": {
+        "plan_state": "LOCKED_FOR_IMPLEMENTATION",
+        "implementation_state": "EXECUTOR_VERIFIED",
+        "executor_checks": "PASS",
+        "independent_review": "NOT_REQUESTED",
+        "user_acceptance": "PENDING"
+      }
+    },
+    {
+      "requirementId": "HSR11-101",
+      "authoritySource": "Hosted sandbox defect analysis item 5",
+      "classification": "IN_SCOPE",
+      "observableRequirement": "Browser client imports no Node-only crypto module; commercial auth token hashing is isolated to server-only modules.",
+      "dependencies": [
+        "HSR11-000"
+      ],
+      "status": {
+        "plan_state": "LOCKED_FOR_IMPLEMENTATION",
+        "implementation_state": "NOT_STARTED",
+        "executor_checks": "NOT_RUN",
+        "independent_review": "NOT_REQUESTED",
+        "user_acceptance": "PENDING"
+      }
+    },
+    {
+      "requirementId": "HSR11-102",
+      "authoritySource": "Hosted sandbox defect analysis item 2",
+      "classification": "IN_SCOPE",
+      "observableRequirement": "API requestId values propagate into AppRequestError and client error hydration paths.",
+      "dependencies": [
+        "HSR11-000"
+      ],
+      "status": {
+        "plan_state": "LOCKED_FOR_IMPLEMENTATION",
+        "implementation_state": "NOT_STARTED",
+        "executor_checks": "NOT_RUN",
+        "independent_review": "NOT_REQUESTED",
+        "user_acceptance": "PENDING"
+      }
+    },
+    {
+      "requirementId": "HSR11-103",
+      "authoritySource": "Hosted sandbox defect analysis item 2",
+      "classification": "IN_SCOPE",
+      "observableRequirement": "RSC Supabase read clients do not mutate cookies; writable cookie clients remain limited to route handlers and middleware.",
+      "dependencies": [
+        "HSR11-000"
+      ],
+      "status": {
+        "plan_state": "LOCKED_FOR_IMPLEMENTATION",
+        "implementation_state": "NOT_STARTED",
+        "executor_checks": "NOT_RUN",
+        "independent_review": "NOT_REQUESTED",
+        "user_acceptance": "PENDING"
+      }
+    },
+    {
+      "requirementId": "HSR11-104",
+      "authoritySource": "Hosted sandbox defect analysis item 4",
+      "classification": "IN_SCOPE",
+      "observableRequirement": "Forwarded host and client IP trust only configured proxy hops; untrusted x-forwarded-host and x-forwarded-for values are ignored.",
+      "dependencies": [
+        "HSR11-000"
+      ],
+      "status": {
+        "plan_state": "LOCKED_FOR_IMPLEMENTATION",
+        "implementation_state": "NOT_STARTED",
+        "executor_checks": "NOT_RUN",
+        "independent_review": "NOT_REQUESTED",
+        "user_acceptance": "PENDING"
+      }
+    },
+    {
+      "requirementId": "HSR11-201",
+      "authoritySource": "Hosted sandbox defect analysis item 6",
+      "classification": "IN_SCOPE",
+      "observableRequirement": "Hosted sandbox cleanup runs through a single audited transaction or RPC with table inventory fingerprint validation, dry-run counts, apply counts, and zero residual demo rows.",
+      "dependencies": [
+        "HSR11-101",
+        "HSR11-102",
+        "HSR11-103",
+        "HSR11-104"
+      ],
+      "status": {
+        "plan_state": "LOCKED_FOR_IMPLEMENTATION",
+        "implementation_state": "NOT_STARTED",
+        "executor_checks": "NOT_RUN",
+        "independent_review": "NOT_REQUESTED",
+        "user_acceptance": "PENDING"
+      }
+    },
+    {
+      "requirementId": "HSR11-301",
+      "authoritySource": "Hosted sandbox defect analysis items 7 and 9",
+      "classification": "IN_SCOPE",
+      "observableRequirement": "RLS helper functions and default privileges revoke public and anon execute access and cross-tenant RLS tests run with zero unauthorized access.",
+      "dependencies": [
+        "HSR11-201"
+      ],
+      "status": {
+        "plan_state": "LOCKED_FOR_IMPLEMENTATION",
+        "implementation_state": "NOT_STARTED",
+        "executor_checks": "NOT_RUN",
+        "independent_review": "NOT_REQUESTED",
+        "user_acceptance": "PENDING"
+      }
+    },
+    {
+      "requirementId": "HSR11-302",
+      "authoritySource": "Hosted sandbox defect analysis items 8 and 9",
+      "classification": "IN_SCOPE",
+      "observableRequirement": "Hosted Supabase backup and restore tooling never exposes DB passwords in process arguments, deletes plaintext dump files in finally blocks, verifies source and target project refs, and requires explicit restore approval independent from backup age identity.",
+      "dependencies": [
+        "HSR11-301"
+      ],
+      "status": {
+        "plan_state": "LOCKED_FOR_IMPLEMENTATION",
+        "implementation_state": "NOT_STARTED",
+        "executor_checks": "NOT_RUN",
+        "independent_review": "NOT_REQUESTED",
+        "user_acceptance": "PENDING"
+      }
+    },
+    {
+      "requirementId": "HSR11-401",
+      "authoritySource": "Hosted sandbox defect analysis item 10",
+      "classification": "IN_SCOPE",
+      "observableRequirement": "ReleaseIdentity is deterministic, centralized, and build-bound; building the app does not modify tracked source files including app/public/sw.js.",
+      "dependencies": [
+        "HSR11-301",
+        "HSR11-302"
+      ],
+      "status": {
+        "plan_state": "LOCKED_FOR_IMPLEMENTATION",
+        "implementation_state": "NOT_STARTED",
+        "executor_checks": "NOT_RUN",
+        "independent_review": "NOT_REQUESTED",
+        "user_acceptance": "PENDING"
+      }
+    },
+    {
+      "requirementId": "HSR11-501",
+      "authoritySource": "Hosted sandbox defect analysis items 11, 12, 13, and 14",
+      "classification": "IN_SCOPE",
+      "observableRequirement": "GitHub workflows produce provenance-bound standalone artifacts, apply migrations only after fingerprint checks, and deploy to VPS by atomic release directory plus symlink switch with verified rollback.",
+      "dependencies": [
+        "HSR11-401"
+      ],
+      "status": {
+        "plan_state": "LOCKED_FOR_IMPLEMENTATION",
+        "implementation_state": "NOT_STARTED",
+        "executor_checks": "NOT_RUN",
+        "independent_review": "NOT_REQUESTED",
+        "user_acceptance": "PENDING"
+      }
+    },
+    {
+      "requirementId": "HSR11-502",
+      "authoritySource": "Hosted sandbox defect analysis item 8",
+      "classification": "IN_SCOPE",
+      "observableRequirement": "Production edge headers disable X-Powered-By, prevent one-year caching of primary HTML, and use a bounded CSP without production unsafe-eval or wildcard HTTPS and WSS sources.",
+      "dependencies": [
+        "HSR11-501"
+      ],
+      "status": {
+        "plan_state": "LOCKED_FOR_IMPLEMENTATION",
+        "implementation_state": "NOT_STARTED",
+        "executor_checks": "NOT_RUN",
+        "independent_review": "NOT_REQUESTED",
+        "user_acceptance": "PENDING"
+      }
+    },
+    {
+      "requirementId": "HSR11-601",
+      "authoritySource": "Hosted sandbox defect analysis items 15, 16, and 17",
+      "classification": "IN_SCOPE",
+      "observableRequirement": "Hosted activation executes real backup, migration, cleanup, artifact deploy, release-aware smoke, live admin/customer auth smoke, Android Chrome/PWA/TalkBack validation, and contamination-zero checks; simulated, blocked, skipped, or stale checks fail apply mode.",
+      "dependencies": [
+        "HSR11-501",
+        "HSR11-502"
+      ],
+      "status": {
+        "plan_state": "LOCKED_FOR_IMPLEMENTATION",
+        "implementation_state": "NOT_STARTED",
+        "executor_checks": "NOT_RUN",
+        "independent_review": "NOT_REQUESTED",
+        "user_acceptance": "PENDING"
+      }
+    }
+  ]
+}

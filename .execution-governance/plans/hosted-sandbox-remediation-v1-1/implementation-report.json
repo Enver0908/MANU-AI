@@ -1,0 +1,131 @@
+{
+  "schemaVersion": "1.0.0",
+  "contractId": "hosted-sandbox-remediation-v1-1",
+  "phaseId": "PHASE-0",
+  "implementer": "Codex",
+  "implementationState": "EXECUTOR_VERIFIED",
+  "changedFiles": [
+    ".execution-governance/plans/hosted-sandbox-remediation-v1-1-verifier-setup/plan.md",
+    ".execution-governance/plans/hosted-sandbox-remediation-v1-1-verifier-setup/contract.json",
+    ".execution-governance/plans/hosted-sandbox-remediation-v1-1-verifier-setup/scope.json",
+    ".execution-governance/plans/hosted-sandbox-remediation-v1-1-verifier-setup/acceptance.json",
+    ".execution-governance/plans/hosted-sandbox-remediation-v1-1-verifier-setup/lock.json",
+    ".execution-governance/plans/hosted-sandbox-remediation-v1-1/plan.md",
+    ".execution-governance/plans/hosted-sandbox-remediation-v1-1/contract.json",
+    ".execution-governance/plans/hosted-sandbox-remediation-v1-1/scope.json",
+    ".execution-governance/plans/hosted-sandbox-remediation-v1-1/acceptance.json",
+    ".execution-governance/plans/hosted-sandbox-remediation-v1-1/lock.json",
+    ".execution-governance/plans/hosted-sandbox-remediation-v1-1/lifecycle-record.json",
+    ".execution-governance/plans/hosted-sandbox-remediation-v1-1/implementation-report.json",
+    "tools/hosted-sandbox/verify-hosted-sandbox-remediation-v1-1.mjs",
+    "docs/HOSTED_SANDBOX_REMEDIATION_V1_1_PHASE_0_EVIDENCE.md"
+  ],
+  "commandsRun": [
+    {
+      "command": "git branch --show-current",
+      "exitCode": 0,
+      "result": "PASS",
+      "detail": "codex/stage-4c-remediation"
+    },
+    {
+      "command": "git status --short --branch",
+      "exitCode": 0,
+      "result": "PASS",
+      "detail": "clean before edits; ahead 18"
+    },
+    {
+      "command": "node tools/execution-governance/governance-cli.mjs doctor",
+      "exitCode": 0,
+      "result": "PASS",
+      "detail": "doctor passed"
+    },
+    {
+      "command": "node tools/execution-governance/governance-cli.mjs validate",
+      "exitCode": 0,
+      "result": "PASS",
+      "detail": "baseline governance JSON validation passed"
+    },
+    {
+      "command": "node tools/execution-governance/governance-cli.mjs lock --plan-dir .execution-governance/plans/hosted-sandbox-remediation-v1-1-verifier-setup --write --allow-dirty",
+      "exitCode": 0,
+      "result": "PASS",
+      "detail": "setup lock.json generated"
+    },
+    {
+      "command": "node tools/execution-governance/governance-cli.mjs lock --plan-dir .execution-governance/plans/hosted-sandbox-remediation-v1-1 --write --allow-dirty",
+      "exitCode": 0,
+      "result": "PASS",
+      "detail": "main lock.json generated"
+    },
+    {
+      "command": "node tools/execution-governance/governance-cli.mjs validate --plan-dir .execution-governance/plans/hosted-sandbox-remediation-v1-1-verifier-setup",
+      "exitCode": 0,
+      "result": "PASS",
+      "detail": "setup package validates"
+    },
+    {
+      "command": "node tools/execution-governance/governance-cli.mjs validate --plan-dir .execution-governance/plans/hosted-sandbox-remediation-v1-1",
+      "exitCode": 0,
+      "result": "PASS",
+      "detail": "main package validates"
+    },
+    {
+      "command": "node tools/hosted-sandbox/verify-hosted-sandbox-remediation-v1-1.mjs --phase PHASE-0",
+      "exitCode": 0,
+      "result": "PASS",
+      "detail": "Phase 0 package verifier passed"
+    },
+    {
+      "command": "node tools/execution-governance/governance-cli.mjs run-checks --plan-dir .execution-governance/plans/hosted-sandbox-remediation-v1-1-verifier-setup --phase-id PHASE-0",
+      "exitCode": 0,
+      "result": "PASS",
+      "detail": "fresh runtime run-record produced"
+    },
+    {
+      "command": "node tools/execution-governance/governance-cli.mjs postflight --plan-dir .execution-governance/plans/hosted-sandbox-remediation-v1-1-verifier-setup --phase-id PHASE-0 --allow-dirty",
+      "exitCode": 0,
+      "result": "PASS",
+      "detail": "scope, lock, run-record, and forbidden-pattern checks passed"
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0,
+      "result": "PASS",
+      "detail": "no whitespace errors"
+    },
+    {
+      "command": "node tools/execution-governance/governance-hardening-red-team.mjs",
+      "exitCode": 0,
+      "result": "PASS",
+      "detail": "enterprise guard hardening red-team status PASS"
+    },
+    {
+      "command": "rg secret-like-token-patterns <phase-0-files>",
+      "exitCode": 1,
+      "result": "PASS",
+      "detail": "ripgrep returned no matches; exit 1 is expected for no secret-like matches"
+    },
+    {
+      "command": "node tools/execution-governance/governance-cli.mjs close --plan-dir .execution-governance/plans/hosted-sandbox-remediation-v1-1-verifier-setup --phase-id PHASE-0 --allow-dirty",
+      "exitCode": 0,
+      "result": "PASS",
+      "detail": "setup package close passed with independent_review NOT_REQUESTED"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": ".execution-governance/runtime/run-records/run-2026-08-25T14-34-25-930Z-27160.json",
+      "tracked": false,
+      "purpose": "ignored governance run-record for setup package acceptance"
+    }
+  ],
+  "scopeChangeRequests": [],
+  "verifierChangeRequests": [],
+  "waivers": [],
+  "independentReview": "NOT_REQUESTED",
+  "residualRisks": [
+    "Product remediation Phases 1 through 6 have not started.",
+    "GitHub, Supabase, VPS, and live-site external effects require separate explicit user authorization.",
+    "Production remains NO-GO and iPhone Safari/PWA remains WAIVED_NOT_EXECUTED."
+  ]
+}

@@ -1,0 +1,604 @@
+{
+  "schemaVersion": "1.0.0",
+  "contractId": "hosted-sandbox-remediation-v1-1",
+  "requirements": [
+    {
+      "requirementId": "HSR11-000",
+      "phaseId": "PHASE-0",
+      "allowedCreatePaths": [
+        ".execution-governance/plans/hosted-sandbox-remediation-v1-1-verifier-setup/plan.md",
+        ".execution-governance/plans/hosted-sandbox-remediation-v1-1-verifier-setup/contract.json",
+        ".execution-governance/plans/hosted-sandbox-remediation-v1-1-verifier-setup/scope.json",
+        ".execution-governance/plans/hosted-sandbox-remediation-v1-1-verifier-setup/acceptance.json",
+        ".execution-governance/plans/hosted-sandbox-remediation-v1-1-verifier-setup/lock.json",
+        ".execution-governance/plans/hosted-sandbox-remediation-v1-1/plan.md",
+        ".execution-governance/plans/hosted-sandbox-remediation-v1-1/contract.json",
+        ".execution-governance/plans/hosted-sandbox-remediation-v1-1/scope.json",
+        ".execution-governance/plans/hosted-sandbox-remediation-v1-1/acceptance.json",
+        ".execution-governance/plans/hosted-sandbox-remediation-v1-1/lock.json",
+        ".execution-governance/plans/hosted-sandbox-remediation-v1-1/lifecycle-record.json",
+        ".execution-governance/plans/hosted-sandbox-remediation-v1-1/implementation-report.json",
+        "tools/hosted-sandbox/verify-hosted-sandbox-remediation-v1-1.mjs",
+        "docs/HOSTED_SANDBOX_REMEDIATION_V1_1_PHASE_0_EVIDENCE.md"
+      ],
+      "allowedModifyPaths": [],
+      "protectedPaths": [
+        "app/**",
+        "dietitian-ai-assistant/**",
+        ".github/workflows/**",
+        ".execution-governance/schemas/**",
+        ".execution-governance/templates/**",
+        "tools/execution-governance/**",
+        "docs/PILOT_READINESS_EVIDENCE_PACK.md",
+        "docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md",
+        "docs/PRODUCTION_PILOT_FINAL_READINESS_CLOSURE_SUMMARY.md"
+      ],
+      "forbiddenPaths": [
+        ".execution-governance/runtime/**",
+        "app/package.json",
+        "app/package-lock.json",
+        "app/supabase/migrations/**",
+        "app/src/**",
+        ".github/workflows/**"
+      ],
+      "allowedCommands": [
+        {
+          "cwd": ".",
+          "executable": "node",
+          "args": [
+            "tools/hosted-sandbox/verify-hosted-sandbox-remediation-v1-1.mjs",
+            "--phase",
+            "PHASE-0"
+          ],
+          "timeoutSeconds": 60,
+          "networkPolicy": "FORBIDDEN",
+          "artifactPolicy": "stdout/stderr only"
+        }
+      ],
+      "forbiddenCommands": [
+        "push",
+        "merge",
+        "deploy",
+        "dependency install/update",
+        "destructive git reset/checkout",
+        "Supabase migration apply",
+        "VPS mutation",
+        "production gate mutation"
+      ],
+      "allowedDependencies": [],
+      "forbiddenDependencyChanges": true,
+      "allowedSchemaChanges": [],
+      "allowedNetworkOrExternalEffects": [],
+      "allowedMcpTools": [],
+      "allowSubagents": false,
+      "generatedArtifactPolicy": "Runtime run-records remain ignored and untracked; Phase 0 creates only source governance artifacts.",
+      "documentationReconciliation": [
+        "docs/HOSTED_SANDBOX_REMEDIATION_V1_1_PHASE_0_EVIDENCE.md"
+      ],
+      "maximumChangeScope": "Only new v1.1 governance package files, the v1.1 verifier, and Phase 0 evidence."
+    },
+    {
+      "requirementId": "HSR11-101",
+      "phaseId": "PHASE-1",
+      "allowedCreatePaths": [
+        "app/src/lib/commercial-email.ts",
+        "app/src/lib/phase-83b-commercial-entitlement-model.server.ts",
+        "app/tests/commercial-auth-browser-boundary.test.ts"
+      ],
+      "allowedModifyPaths": [
+        "app/src/components/admin/admin-login-form.tsx",
+        "app/src/lib/phase-84d-customer-auth.ts",
+        "app/src/lib/phase-83b-commercial-entitlement-model.ts",
+        "app/tests/commercial-auth.test.ts"
+      ],
+      "protectedPaths": [
+        "app/package.json",
+        "app/package-lock.json",
+        "app/supabase/migrations/**",
+        ".github/workflows/**"
+      ],
+      "forbiddenPaths": [
+        ".execution-governance/runtime/**"
+      ],
+      "allowedCommands": [
+        {
+          "cwd": "app",
+          "executable": "npm",
+          "args": [
+            "run",
+            "typecheck"
+          ],
+          "timeoutSeconds": 180,
+          "networkPolicy": "FORBIDDEN",
+          "artifactPolicy": "stdout/stderr only"
+        },
+        {
+          "cwd": "app",
+          "executable": "npm",
+          "args": [
+            "run",
+            "build"
+          ],
+          "timeoutSeconds": 300,
+          "networkPolicy": "FORBIDDEN",
+          "artifactPolicy": "stdout/stderr only"
+        }
+      ],
+      "forbiddenCommands": [
+        "push",
+        "deploy",
+        "dependency install/update"
+      ],
+      "allowedDependencies": [],
+      "forbiddenDependencyChanges": true,
+      "allowedSchemaChanges": [],
+      "allowedNetworkOrExternalEffects": [],
+      "allowedMcpTools": [],
+      "allowSubagents": false,
+      "generatedArtifactPolicy": "Build artifacts may be generated locally and must not be committed.",
+      "documentationReconciliation": [],
+      "maximumChangeScope": "Commercial auth module split and direct tests only."
+    },
+    {
+      "requirementId": "HSR11-102",
+      "phaseId": "PHASE-1",
+      "allowedCreatePaths": [
+        "app/tests/request-id-error-propagation.test.ts"
+      ],
+      "allowedModifyPaths": [
+        "app/src/lib/use-manu-state.ts",
+        "app/src/lib/app-request-error.ts",
+        "app/src/lib/api-client.ts"
+      ],
+      "protectedPaths": [
+        "app/package.json",
+        "app/supabase/migrations/**"
+      ],
+      "forbiddenPaths": [
+        ".execution-governance/runtime/**"
+      ],
+      "allowedCommands": [],
+      "forbiddenCommands": [
+        "push",
+        "deploy"
+      ],
+      "allowedDependencies": [],
+      "forbiddenDependencyChanges": true,
+      "allowedSchemaChanges": [],
+      "allowedNetworkOrExternalEffects": [],
+      "allowedMcpTools": [],
+      "allowSubagents": false,
+      "generatedArtifactPolicy": "No tracked generated artifacts.",
+      "documentationReconciliation": [],
+      "maximumChangeScope": "RequestId error propagation only."
+    },
+    {
+      "requirementId": "HSR11-103",
+      "phaseId": "PHASE-1",
+      "allowedCreatePaths": [
+        "app/src/lib/supabase-server-readonly.ts",
+        "app/tests/supabase-rsc-readonly-client.test.ts"
+      ],
+      "allowedModifyPaths": [
+        "app/src/lib/supabase-server.ts",
+        "app/src/app/**/page.tsx",
+        "app/src/app/**/layout.tsx"
+      ],
+      "protectedPaths": [
+        "app/package.json",
+        "app/supabase/migrations/**"
+      ],
+      "forbiddenPaths": [
+        ".execution-governance/runtime/**"
+      ],
+      "allowedCommands": [],
+      "forbiddenCommands": [
+        "push",
+        "deploy"
+      ],
+      "allowedDependencies": [],
+      "forbiddenDependencyChanges": true,
+      "allowedSchemaChanges": [],
+      "allowedNetworkOrExternalEffects": [],
+      "allowedMcpTools": [],
+      "allowSubagents": false,
+      "generatedArtifactPolicy": "No tracked generated artifacts.",
+      "documentationReconciliation": [],
+      "maximumChangeScope": "RSC Supabase client read-only boundary only."
+    },
+    {
+      "requirementId": "HSR11-104",
+      "phaseId": "PHASE-1",
+      "allowedCreatePaths": [
+        "app/src/lib/trusted-proxy.ts",
+        "app/tests/trusted-proxy-boundary.test.ts"
+      ],
+      "allowedModifyPaths": [
+        "app/src/lib/demo-fixture-access.ts",
+        "app/src/lib/rate-limit.ts",
+        "app/src/app/api/**/route.ts"
+      ],
+      "protectedPaths": [
+        "app/package.json",
+        "app/supabase/migrations/**"
+      ],
+      "forbiddenPaths": [
+        ".execution-governance/runtime/**"
+      ],
+      "allowedCommands": [],
+      "forbiddenCommands": [
+        "push",
+        "deploy"
+      ],
+      "allowedDependencies": [],
+      "forbiddenDependencyChanges": true,
+      "allowedSchemaChanges": [],
+      "allowedNetworkOrExternalEffects": [],
+      "allowedMcpTools": [],
+      "allowSubagents": false,
+      "generatedArtifactPolicy": "No tracked generated artifacts.",
+      "documentationReconciliation": [],
+      "maximumChangeScope": "Trusted proxy host and IP parsing only."
+    },
+    {
+      "requirementId": "HSR11-201",
+      "phaseId": "PHASE-2",
+      "allowedCreatePaths": [
+        "app/supabase/migrations/20260825130000_hosted_sandbox_demo_cleanup_rpc.sql",
+        "app/scripts/verify-hosted-sandbox-demo-inventory.mjs",
+        "app/tests/hosted-sandbox-demo-cleanup-rpc.test.ts"
+      ],
+      "allowedModifyPaths": [
+        "app/scripts/hosted-sandbox-demo-cleanup.mjs",
+        "tools/hosted-sandbox/run-verifier.mjs",
+        "tools/hosted-sandbox/hosted-sandbox-verifier.test.mjs"
+      ],
+      "protectedPaths": [
+        "app/package.json",
+        "app/package-lock.json",
+        ".github/workflows/**"
+      ],
+      "forbiddenPaths": [
+        ".execution-governance/runtime/**"
+      ],
+      "allowedCommands": [
+        {
+          "cwd": "app",
+          "executable": "npm",
+          "args": [
+            "run",
+            "test:rls"
+          ],
+          "timeoutSeconds": 600,
+          "networkPolicy": "LOCAL_ONLY",
+          "artifactPolicy": "stdout/stderr only"
+        }
+      ],
+      "forbiddenCommands": [
+        "push",
+        "deploy"
+      ],
+      "allowedDependencies": [],
+      "forbiddenDependencyChanges": true,
+      "allowedSchemaChanges": [
+        "one Supabase migration creating cleanup_hosted_sandbox_demo_tenant RPC and grants"
+      ],
+      "allowedNetworkOrExternalEffects": [
+        "local Supabase reset and local RLS test database only"
+      ],
+      "allowedMcpTools": [],
+      "allowSubagents": false,
+      "generatedArtifactPolicy": "Local database artifacts are not committed.",
+      "documentationReconciliation": [],
+      "maximumChangeScope": "Hosted sandbox demo cleanup RPC and verifier integration only."
+    },
+    {
+      "requirementId": "HSR11-301",
+      "phaseId": "PHASE-3",
+      "allowedCreatePaths": [
+        "app/supabase/migrations/20260825140000_rls_default_privileges_hardening.sql",
+        "app/scripts/verify-rls-helper-inventory.mjs",
+        "app/tests/rls-default-privileges.test.ts"
+      ],
+      "allowedModifyPaths": [
+        "app/tests/rls/**/*.test.ts",
+        "app/scripts/test-rls.mjs"
+      ],
+      "protectedPaths": [
+        "app/package.json",
+        ".github/workflows/**"
+      ],
+      "forbiddenPaths": [
+        ".execution-governance/runtime/**"
+      ],
+      "allowedCommands": [
+        {
+          "cwd": "app",
+          "executable": "npm",
+          "args": [
+            "run",
+            "test:rls"
+          ],
+          "timeoutSeconds": 600,
+          "networkPolicy": "LOCAL_ONLY",
+          "artifactPolicy": "stdout/stderr only"
+        }
+      ],
+      "forbiddenCommands": [
+        "push",
+        "deploy"
+      ],
+      "allowedDependencies": [],
+      "forbiddenDependencyChanges": true,
+      "allowedSchemaChanges": [
+        "default privilege revoke and explicit execute grants for RLS helper functions"
+      ],
+      "allowedNetworkOrExternalEffects": [
+        "local Supabase reset and local RLS test database only"
+      ],
+      "allowedMcpTools": [],
+      "allowSubagents": false,
+      "generatedArtifactPolicy": "Local database artifacts are not committed.",
+      "documentationReconciliation": [],
+      "maximumChangeScope": "RLS default privilege hardening only."
+    },
+    {
+      "requirementId": "HSR11-302",
+      "phaseId": "PHASE-3",
+      "allowedCreatePaths": [
+        "tools/hosted-sandbox/restore-drill.test.mjs"
+      ],
+      "allowedModifyPaths": [
+        "tools/hosted-sandbox/backup-hosted-supabase.mjs",
+        "tools/hosted-sandbox/restore-hosted-supabase.mjs",
+        "tools/hosted-sandbox/lib/backup-manifest.mjs",
+        "tools/hosted-sandbox/hosted-sandbox-backup.test.mjs"
+      ],
+      "protectedPaths": [
+        "app/package.json",
+        "app/supabase/migrations/**",
+        ".github/workflows/**"
+      ],
+      "forbiddenPaths": [
+        ".execution-governance/runtime/**"
+      ],
+      "allowedCommands": [
+        {
+          "cwd": ".",
+          "executable": "node",
+          "args": [
+            "--test",
+            "tools/hosted-sandbox/hosted-sandbox-backup.test.mjs",
+            "tools/hosted-sandbox/restore-drill.test.mjs"
+          ],
+          "timeoutSeconds": 180,
+          "networkPolicy": "FORBIDDEN",
+          "artifactPolicy": "stdout/stderr only"
+        }
+      ],
+      "forbiddenCommands": [
+        "push",
+        "deploy",
+        "plaintext backup retention"
+      ],
+      "allowedDependencies": [],
+      "forbiddenDependencyChanges": true,
+      "allowedSchemaChanges": [],
+      "allowedNetworkOrExternalEffects": [],
+      "allowedMcpTools": [],
+      "allowSubagents": false,
+      "generatedArtifactPolicy": "Temporary encrypted backup drill artifacts must be deleted by test cleanup.",
+      "documentationReconciliation": [],
+      "maximumChangeScope": "Hosted sandbox backup and restore tooling only."
+    },
+    {
+      "requirementId": "HSR11-401",
+      "phaseId": "PHASE-4",
+      "allowedCreatePaths": [
+        "app/src/lib/release-identity.ts",
+        "app/scripts/generate-service-worker-artifact.mjs",
+        "app/tests/release-identity-determinism.test.ts"
+      ],
+      "allowedModifyPaths": [
+        "app/next.config.ts",
+        "app/public/sw.js",
+        "app/scripts/release-verify.mjs",
+        "tools/hosted-sandbox/deploy/build-release-artifact.mjs",
+        "tools/hosted-sandbox/deploy/lib/artifact-manifest.mjs",
+        "tools/hosted-sandbox/deploy/hosted-sandbox-deploy.test.mjs"
+      ],
+      "protectedPaths": [
+        "app/package.json",
+        "app/package-lock.json",
+        "app/supabase/migrations/**",
+        ".github/workflows/**"
+      ],
+      "forbiddenPaths": [
+        ".execution-governance/runtime/**"
+      ],
+      "allowedCommands": [
+        {
+          "cwd": "app",
+          "executable": "npm",
+          "args": [
+            "run",
+            "release:verify"
+          ],
+          "timeoutSeconds": 600,
+          "networkPolicy": "FORBIDDEN",
+          "artifactPolicy": "stdout/stderr only"
+        }
+      ],
+      "forbiddenCommands": [
+        "push",
+        "deploy"
+      ],
+      "allowedDependencies": [],
+      "forbiddenDependencyChanges": true,
+      "allowedSchemaChanges": [],
+      "allowedNetworkOrExternalEffects": [],
+      "allowedMcpTools": [],
+      "allowSubagents": false,
+      "generatedArtifactPolicy": "Generated service worker artifact is build output and is not written over tracked source.",
+      "documentationReconciliation": [],
+      "maximumChangeScope": "Release identity and generated service worker artifact binding only."
+    },
+    {
+      "requirementId": "HSR11-501",
+      "phaseId": "PHASE-5",
+      "allowedCreatePaths": [
+        ".github/workflows/hosted-sandbox-product-ci.yml",
+        ".github/workflows/hosted-sandbox-migration.yml",
+        ".github/workflows/hosted-sandbox-deploy.yml"
+      ],
+      "allowedModifyPaths": [
+        "tools/hosted-sandbox/deploy/build-release-artifact.mjs",
+        "tools/hosted-sandbox/deploy/deploy-hosted-release.mjs",
+        "tools/hosted-sandbox/deploy/install-workflows.mjs",
+        "tools/hosted-sandbox/deploy/run-smoke-check.mjs",
+        "tools/hosted-sandbox/deploy/verify-workflow-hardening.mjs",
+        "tools/hosted-sandbox/deploy/workflow-templates/hosted-sandbox-product-ci.yml",
+        "tools/hosted-sandbox/deploy/workflow-templates/hosted-sandbox-migration.yml",
+        "tools/hosted-sandbox/deploy/workflow-templates/hosted-sandbox-deploy.yml",
+        "tools/hosted-sandbox/deploy/hosted-sandbox-deploy.test.mjs"
+      ],
+      "protectedPaths": [
+        "app/package.json",
+        "app/package-lock.json"
+      ],
+      "forbiddenPaths": [
+        ".execution-governance/runtime/**"
+      ],
+      "allowedCommands": [
+        {
+          "cwd": ".",
+          "executable": "node",
+          "args": [
+            "--test",
+            "tools/hosted-sandbox/deploy/hosted-sandbox-deploy.test.mjs"
+          ],
+          "timeoutSeconds": 180,
+          "networkPolicy": "FORBIDDEN",
+          "artifactPolicy": "stdout/stderr only"
+        }
+      ],
+      "forbiddenCommands": [
+        "push without separate explicit user command",
+        "deploy without separate explicit user command",
+        "migration apply without separate explicit user command"
+      ],
+      "allowedDependencies": [],
+      "forbiddenDependencyChanges": true,
+      "allowedSchemaChanges": [],
+      "allowedNetworkOrExternalEffects": [
+        "none during local implementation; GitHub, Supabase, and VPS effects require separate explicit user command"
+      ],
+      "allowedMcpTools": [],
+      "allowSubagents": false,
+      "generatedArtifactPolicy": "Artifacts must include manifest SHA and provenance and remain uncommitted unless workflow source files are intentionally tracked.",
+      "documentationReconciliation": [],
+      "maximumChangeScope": "Hosted sandbox workflows, artifact, migration workflow, deploy, rollback, and smoke tooling only."
+    },
+    {
+      "requirementId": "HSR11-502",
+      "phaseId": "PHASE-5",
+      "allowedCreatePaths": [],
+      "allowedModifyPaths": [
+        "tools/hosted-sandbox/deploy/nginx/hosted-sandbox.conf.template",
+        "tools/hosted-sandbox/deploy/verify-nginx-template.mjs",
+        "tools/hosted-sandbox/deploy/hosted-sandbox-deploy.test.mjs"
+      ],
+      "protectedPaths": [
+        "app/package.json",
+        "app/package-lock.json"
+      ],
+      "forbiddenPaths": [
+        ".execution-governance/runtime/**"
+      ],
+      "allowedCommands": [
+        {
+          "cwd": ".",
+          "executable": "node",
+          "args": [
+            "tools/hosted-sandbox/deploy/verify-nginx-template.mjs"
+          ],
+          "timeoutSeconds": 60,
+          "networkPolicy": "FORBIDDEN",
+          "artifactPolicy": "stdout/stderr only"
+        }
+      ],
+      "forbiddenCommands": [
+        "push without separate explicit user command",
+        "deploy without separate explicit user command"
+      ],
+      "allowedDependencies": [],
+      "forbiddenDependencyChanges": true,
+      "allowedSchemaChanges": [],
+      "allowedNetworkOrExternalEffects": [
+        "none during local implementation; Nginx reload requires separate explicit user command"
+      ],
+      "allowedMcpTools": [],
+      "allowSubagents": false,
+      "generatedArtifactPolicy": "No tracked generated artifacts.",
+      "documentationReconciliation": [],
+      "maximumChangeScope": "Nginx security header template and template verifier only."
+    },
+    {
+      "requirementId": "HSR11-601",
+      "phaseId": "PHASE-6",
+      "allowedCreatePaths": [
+        "docs/HOSTED_SANDBOX_REMEDIATION_V1_1_FINAL_ACTIVATION_EVIDENCE.md"
+      ],
+      "allowedModifyPaths": [
+        "tools/hosted-sandbox/activation/run-hosted-activation.mjs",
+        "tools/hosted-sandbox/activation/lib/activation-contract.mjs",
+        "tools/hosted-sandbox/activation/hosted-activation.test.mjs",
+        "tools/hosted-sandbox/run-verifier.mjs",
+        "HANDOFF_FOR_NEXT_CODEX.md",
+        "docs/RISK_REGISTER.md"
+      ],
+      "protectedPaths": [
+        "app/package.json",
+        "app/package-lock.json",
+        "app/supabase/migrations/**"
+      ],
+      "forbiddenPaths": [
+        ".execution-governance/runtime/**"
+      ],
+      "allowedCommands": [
+        {
+          "cwd": ".",
+          "executable": "node",
+          "args": [
+            "--test",
+            "tools/hosted-sandbox/activation/hosted-activation.test.mjs"
+          ],
+          "timeoutSeconds": 180,
+          "networkPolicy": "FORBIDDEN",
+          "artifactPolicy": "stdout/stderr only"
+        }
+      ],
+      "forbiddenCommands": [
+        "production GO claim",
+        "iPhone PASS claim without physical iPhone evidence",
+        "live billing activation",
+        "provider/channel egress activation"
+      ],
+      "allowedDependencies": [],
+      "forbiddenDependencyChanges": true,
+      "allowedSchemaChanges": [],
+      "allowedNetworkOrExternalEffects": [
+        "real hosted activation, GitHub push, Supabase migration, VPS deploy, and live smoke require separate explicit user command before execution"
+      ],
+      "allowedMcpTools": [],
+      "allowSubagents": false,
+      "generatedArtifactPolicy": "Activation runtime artifacts must be bound to release SHA, run ID, timestamp, and environment and must not include secrets or real health data.",
+      "documentationReconciliation": [
+        "docs/HOSTED_SANDBOX_REMEDIATION_V1_1_FINAL_ACTIVATION_EVIDENCE.md",
+        "HANDOFF_FOR_NEXT_CODEX.md",
+        "docs/RISK_REGISTER.md"
+      ],
+      "maximumChangeScope": "Activation orchestration, evidence, and continuity reconciliation only."
+    }
+  ]
+}

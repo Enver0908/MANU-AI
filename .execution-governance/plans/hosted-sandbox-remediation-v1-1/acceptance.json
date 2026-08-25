@@ -1,0 +1,744 @@
+{
+  "schemaVersion": "1.0.0",
+  "contractId": "hosted-sandbox-remediation-v1-1",
+  "acceptanceRecords": [
+    {
+      "requirementId": "HSR11-000",
+      "phaseId": "PHASE-0",
+      "authoritySource": "Phase 0 plan.md",
+      "observableRequirement": "The main v1.1 plan package validates, is hash-locked, has a Phase 0 verifier, and records implementation as not started for product remediation.",
+      "oracleType": "MANUAL",
+      "oracleOwner": "Codex executor plus user acceptance",
+      "oracleLocation": ".execution-governance/plans/hosted-sandbox-remediation-v1-1",
+      "protectionMechanism": "Setup package automated postflight validates this main package before commit.",
+      "exactEvidenceCommand": "node tools/hosted-sandbox/verify-hosted-sandbox-remediation-v1-1.mjs --phase PHASE-0",
+      "exactEvidenceCommandSpec": {
+        "cwd": ".",
+        "executable": "node",
+        "args": [
+          "tools/hosted-sandbox/verify-hosted-sandbox-remediation-v1-1.mjs",
+          "--phase",
+          "PHASE-0"
+        ],
+        "timeoutSeconds": 60,
+        "networkPolicy": "FORBIDDEN",
+        "artifactPolicy": "stdout/stderr only"
+      },
+      "preconditions": [
+        "setup package lock exists",
+        "main package lock exists"
+      ],
+      "expectedExitCode": 0,
+      "requiredAssertions": [
+        "setup package verifies main package coverage and hashes",
+        "product implementation state remains NOT_STARTED"
+      ],
+      "requiredScenarioMatrix": [
+        "package validation",
+        "lock integrity",
+        "scope boundary"
+      ],
+      "negativeControls": [
+        "hash mismatch fails",
+        "missing phase fails"
+      ],
+      "expectedTestIds": [
+        "phase-0-package-integrity"
+      ],
+      "expectedTestCountOrInventory": "one package verifier command",
+      "artifactType": "setup package run-record",
+      "artifactLocation": ".execution-governance/runtime/run-records",
+      "artifactRetentionPolicy": "runtime artifact is ignored; tracked evidence summarizes command outcomes",
+      "artifactPrivacyPolicy": "No secrets, PHI, raw prompts, raw health data, or real user data.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": [
+        "no network"
+      ],
+      "independentVerifier": "NOT_REQUESTED unless user explicitly requests review",
+      "passRule": "PASS only when setup package automated verifier and postflight pass.",
+      "failRule": "FAIL on validation error, lock mismatch, or protected file change.",
+      "blockedRule": "BLOCKED when Node or Git is unavailable.",
+      "forbiddenEquivalences": [
+        "Markdown plan alone is not PASS",
+        "Uncommitted lock without validation is not PASS"
+      ]
+    },
+    {
+      "requirementId": "HSR11-101",
+      "phaseId": "PHASE-1",
+      "authoritySource": "Hosted sandbox defect analysis item 5",
+      "observableRequirement": "Client bundle contains no import path from admin/customer client components to node:crypto.",
+      "oracleType": "MANUAL",
+      "oracleOwner": "Phase 1 executor",
+      "oracleLocation": "app build and commercial auth tests",
+      "protectionMechanism": "Phase 1 scope-check plus build and targeted tests.",
+      "exactEvidenceCommand": "npm run build",
+      "exactEvidenceCommandSpec": {
+        "cwd": "app",
+        "executable": "npm",
+        "args": [
+          "run",
+          "build"
+        ],
+        "timeoutSeconds": 300,
+        "networkPolicy": "FORBIDDEN",
+        "artifactPolicy": "stdout/stderr only"
+      },
+      "preconditions": [
+        "Phase 1 active lock is verified"
+      ],
+      "expectedExitCode": 0,
+      "requiredAssertions": [
+        "build succeeds",
+        "commercial auth tests prove browser-safe import boundary"
+      ],
+      "requiredScenarioMatrix": [
+        "admin login client",
+        "customer login client",
+        "server token hashing"
+      ],
+      "negativeControls": [
+        "node:crypto import from client module fails"
+      ],
+      "expectedTestIds": [
+        "commercial-auth-browser-boundary"
+      ],
+      "expectedTestCountOrInventory": "targeted commercial auth and build assertions",
+      "artifactType": "command output",
+      "artifactLocation": "stdout/stderr",
+      "artifactRetentionPolicy": "summarized in implementation report",
+      "artifactPrivacyPolicy": "No secrets or real user data.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": [
+        "local app dependencies already installed"
+      ],
+      "independentVerifier": "NOT_REQUESTED unless requested",
+      "passRule": "PASS only when build and targeted tests exit 0.",
+      "failRule": "FAIL on build error or client crypto import.",
+      "blockedRule": "BLOCKED when dependencies are unavailable.",
+      "forbiddenEquivalences": [
+        "Typecheck alone is not build PASS"
+      ]
+    },
+    {
+      "requirementId": "HSR11-102",
+      "phaseId": "PHASE-1",
+      "authoritySource": "Hosted sandbox defect analysis item 2",
+      "observableRequirement": "API requestId is preserved in thrown AppRequestError instances and rendered error hydration state.",
+      "oracleType": "MANUAL",
+      "oracleOwner": "Phase 1 executor",
+      "oracleLocation": "app/tests/request-id-error-propagation.test.ts",
+      "protectionMechanism": "Targeted unit test plus typecheck.",
+      "exactEvidenceCommand": "npm run typecheck",
+      "exactEvidenceCommandSpec": {
+        "cwd": "app",
+        "executable": "npm",
+        "args": [
+          "run",
+          "typecheck"
+        ],
+        "timeoutSeconds": 180,
+        "networkPolicy": "FORBIDDEN",
+        "artifactPolicy": "stdout/stderr only"
+      },
+      "preconditions": [
+        "Phase 1 active lock is verified"
+      ],
+      "expectedExitCode": 0,
+      "requiredAssertions": [
+        "requestId field is present on AppRequestError",
+        "hydrateRequestId receives API response value"
+      ],
+      "requiredScenarioMatrix": [
+        "JSON API error",
+        "network failure without requestId"
+      ],
+      "negativeControls": [
+        "missing requestId in API response keeps field undefined"
+      ],
+      "expectedTestIds": [
+        "request-id-error-propagation"
+      ],
+      "expectedTestCountOrInventory": "targeted requestId tests plus typecheck",
+      "artifactType": "command output",
+      "artifactLocation": "stdout/stderr",
+      "artifactRetentionPolicy": "summarized in implementation report",
+      "artifactPrivacyPolicy": "No secrets.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": [],
+      "independentVerifier": "NOT_REQUESTED unless requested",
+      "passRule": "PASS only when targeted test and typecheck exit 0.",
+      "failRule": "FAIL when requestId is dropped.",
+      "blockedRule": "BLOCKED when local dependencies are unavailable.",
+      "forbiddenEquivalences": [
+        "Console logging requestId is not propagation"
+      ]
+    },
+    {
+      "requirementId": "HSR11-103",
+      "phaseId": "PHASE-1",
+      "authoritySource": "Hosted sandbox defect analysis item 2",
+      "observableRequirement": "RSC read clients never call cookie set, remove, or setAll during server component rendering.",
+      "oracleType": "MANUAL",
+      "oracleOwner": "Phase 1 executor",
+      "oracleLocation": "app/tests/supabase-rsc-readonly-client.test.ts",
+      "protectionMechanism": "Targeted unit test and static search.",
+      "exactEvidenceCommand": "npm run typecheck",
+      "exactEvidenceCommandSpec": {
+        "cwd": "app",
+        "executable": "npm",
+        "args": [
+          "run",
+          "typecheck"
+        ],
+        "timeoutSeconds": 180,
+        "networkPolicy": "FORBIDDEN",
+        "artifactPolicy": "stdout/stderr only"
+      },
+      "preconditions": [
+        "Phase 1 active lock is verified"
+      ],
+      "expectedExitCode": 0,
+      "requiredAssertions": [
+        "read-only client ignores cookie mutation attempts",
+        "writable client remains route-only"
+      ],
+      "requiredScenarioMatrix": [
+        "server component read",
+        "route handler write"
+      ],
+      "negativeControls": [
+        "RSC setAll attempt fails test"
+      ],
+      "expectedTestIds": [
+        "supabase-rsc-readonly-client"
+      ],
+      "expectedTestCountOrInventory": "targeted RSC client test plus typecheck",
+      "artifactType": "command output",
+      "artifactLocation": "stdout/stderr",
+      "artifactRetentionPolicy": "summarized in implementation report",
+      "artifactPrivacyPolicy": "No secrets.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": [],
+      "independentVerifier": "NOT_REQUESTED unless requested",
+      "passRule": "PASS only when tests and typecheck exit 0.",
+      "failRule": "FAIL when server component path mutates cookies.",
+      "blockedRule": "BLOCKED when dependencies are unavailable.",
+      "forbiddenEquivalences": [
+        "No runtime error in one page is not full boundary proof"
+      ]
+    },
+    {
+      "requirementId": "HSR11-104",
+      "phaseId": "PHASE-1",
+      "authoritySource": "Hosted sandbox defect analysis item 4",
+      "observableRequirement": "Untrusted forwarded host and forwarded IP headers cannot select demo access, callback origin, or rate-limit identity.",
+      "oracleType": "MANUAL",
+      "oracleOwner": "Phase 1 executor",
+      "oracleLocation": "app/tests/trusted-proxy-boundary.test.ts",
+      "protectionMechanism": "Targeted tests over trusted proxy parser.",
+      "exactEvidenceCommand": "npm run typecheck",
+      "exactEvidenceCommandSpec": {
+        "cwd": "app",
+        "executable": "npm",
+        "args": [
+          "run",
+          "typecheck"
+        ],
+        "timeoutSeconds": 180,
+        "networkPolicy": "FORBIDDEN",
+        "artifactPolicy": "stdout/stderr only"
+      },
+      "preconditions": [
+        "Phase 1 active lock is verified"
+      ],
+      "expectedExitCode": 0,
+      "requiredAssertions": [
+        "trusted proxy allowlist required",
+        "untrusted x-forwarded-host ignored",
+        "untrusted x-forwarded-for ignored"
+      ],
+      "requiredScenarioMatrix": [
+        "direct request",
+        "trusted proxy request",
+        "spoofed proxy header"
+      ],
+      "negativeControls": [
+        "spoofed host does not grant demo access"
+      ],
+      "expectedTestIds": [
+        "trusted-proxy-boundary"
+      ],
+      "expectedTestCountOrInventory": "targeted proxy parser tests plus typecheck",
+      "artifactType": "command output",
+      "artifactLocation": "stdout/stderr",
+      "artifactRetentionPolicy": "summarized in implementation report",
+      "artifactPrivacyPolicy": "No IP addresses from real users.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": [],
+      "independentVerifier": "NOT_REQUESTED unless requested",
+      "passRule": "PASS only when spoofing negative controls fail closed.",
+      "failRule": "FAIL when raw forwarded headers are trusted without proxy proof.",
+      "blockedRule": "BLOCKED when dependencies are unavailable.",
+      "forbiddenEquivalences": [
+        "Header normalization alone is not trust"
+      ]
+    },
+    {
+      "requirementId": "HSR11-201",
+      "phaseId": "PHASE-2",
+      "authoritySource": "Hosted sandbox defect analysis item 6",
+      "observableRequirement": "Cleanup is atomic, inventory-bound, dry-run auditable, apply auditable, and leaves zero demo rows in all declared tenant-owned tables.",
+      "oracleType": "MANUAL",
+      "oracleOwner": "Phase 2 executor",
+      "oracleLocation": "app/scripts/verify-hosted-sandbox-demo-inventory.mjs",
+      "protectionMechanism": "Local Supabase reset, RLS test, and cleanup verifier.",
+      "exactEvidenceCommand": "npm run test:rls",
+      "exactEvidenceCommandSpec": {
+        "cwd": "app",
+        "executable": "npm",
+        "args": [
+          "run",
+          "test:rls"
+        ],
+        "timeoutSeconds": 600,
+        "networkPolicy": "LOCAL_ONLY",
+        "artifactPolicy": "stdout/stderr only"
+      },
+      "preconditions": [
+        "local Supabase can reset from tracked migrations"
+      ],
+      "expectedExitCode": 0,
+      "requiredAssertions": [
+        "RPC runs in one transaction",
+        "inventory fingerprint mismatch aborts",
+        "dry-run does not delete",
+        "apply deletes expected rows",
+        "post-apply count is zero"
+      ],
+      "requiredScenarioMatrix": [
+        "matching inventory dry-run",
+        "matching inventory apply",
+        "schema drift negative control",
+        "unauthorized caller negative control"
+      ],
+      "negativeControls": [
+        "missing table in expected inventory fails",
+        "non-service role cannot execute RPC"
+      ],
+      "expectedTestIds": [
+        "hosted-sandbox-demo-cleanup-rpc"
+      ],
+      "expectedTestCountOrInventory": "RLS and cleanup tests with zero skip",
+      "artifactType": "command output",
+      "artifactLocation": "stdout/stderr",
+      "artifactRetentionPolicy": "summarized in implementation report",
+      "artifactPrivacyPolicy": "fixtures only, no real user data.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": [
+        "local Supabase only"
+      ],
+      "independentVerifier": "NOT_REQUESTED unless requested",
+      "passRule": "PASS only when local RLS and cleanup tests exit 0 with zero skip.",
+      "failRule": "FAIL on partial delete, schema drift acceptance, or unauthorized execution.",
+      "blockedRule": "BLOCKED when local Supabase is unavailable.",
+      "forbiddenEquivalences": [
+        "Sequential REST delete is not atomic cleanup"
+      ]
+    },
+    {
+      "requirementId": "HSR11-301",
+      "phaseId": "PHASE-3",
+      "authoritySource": "Hosted sandbox defect analysis item 7",
+      "observableRequirement": "Default function privileges and explicit grants prevent public or anon execution of RLS helper functions.",
+      "oracleType": "MANUAL",
+      "oracleOwner": "Phase 3 executor",
+      "oracleLocation": "app/scripts/verify-rls-helper-inventory.mjs",
+      "protectionMechanism": "Local database introspection and RLS tests.",
+      "exactEvidenceCommand": "npm run test:rls",
+      "exactEvidenceCommandSpec": {
+        "cwd": "app",
+        "executable": "npm",
+        "args": [
+          "run",
+          "test:rls"
+        ],
+        "timeoutSeconds": 600,
+        "networkPolicy": "LOCAL_ONLY",
+        "artifactPolicy": "stdout/stderr only"
+      },
+      "preconditions": [
+        "Phase 2 migration passes local reset"
+      ],
+      "expectedExitCode": 0,
+      "requiredAssertions": [
+        "ALTER DEFAULT PRIVILEGES revoke is present",
+        "PUBLIC and anon execute are revoked",
+        "intended authenticated and service roles keep exact grants",
+        "cross-tenant tests run with zero skip"
+      ],
+      "requiredScenarioMatrix": [
+        "anon helper execution denied",
+        "public execution denied",
+        "authorized role execution allowed",
+        "cross-tenant access denied"
+      ],
+      "negativeControls": [
+        "helper with public execute fails verifier"
+      ],
+      "expectedTestIds": [
+        "rls-default-privileges"
+      ],
+      "expectedTestCountOrInventory": "RLS tests with zero skip",
+      "artifactType": "command output",
+      "artifactLocation": "stdout/stderr",
+      "artifactRetentionPolicy": "summarized in implementation report",
+      "artifactPrivacyPolicy": "fixtures only.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": [
+        "local Supabase only"
+      ],
+      "independentVerifier": "NOT_REQUESTED unless requested",
+      "passRule": "PASS only when RLS tests and privilege inventory exit 0.",
+      "failRule": "FAIL on skipped RLS tests or unauthorized helper execute.",
+      "blockedRule": "BLOCKED when local Supabase is unavailable.",
+      "forbiddenEquivalences": [
+        "Migration text presence is not DB privilege proof"
+      ]
+    },
+    {
+      "requirementId": "HSR11-302",
+      "phaseId": "PHASE-3",
+      "authoritySource": "Hosted sandbox defect analysis items 8 and 9",
+      "observableRequirement": "Backup and restore tooling keeps plaintext ephemeral, avoids password command arguments, validates source and target project refs, and requires explicit restore approval.",
+      "oracleType": "MANUAL",
+      "oracleOwner": "Phase 3 executor",
+      "oracleLocation": "tools/hosted-sandbox/hosted-sandbox-backup.test.mjs",
+      "protectionMechanism": "Node tests with process argument and cleanup assertions.",
+      "exactEvidenceCommand": "node --test tools/hosted-sandbox/hosted-sandbox-backup.test.mjs tools/hosted-sandbox/restore-drill.test.mjs",
+      "exactEvidenceCommandSpec": {
+        "cwd": ".",
+        "executable": "node",
+        "args": [
+          "--test",
+          "tools/hosted-sandbox/hosted-sandbox-backup.test.mjs",
+          "tools/hosted-sandbox/restore-drill.test.mjs"
+        ],
+        "timeoutSeconds": 180,
+        "networkPolicy": "FORBIDDEN",
+        "artifactPolicy": "stdout/stderr only"
+      },
+      "preconditions": [
+        "No live DB credentials are read"
+      ],
+      "expectedExitCode": 0,
+      "requiredAssertions": [
+        "PGPASSWORD or equivalent env channel is used instead of URL argument password",
+        "plaintext dump removed in finally",
+        "restore approval file required",
+        "target project ref differs from source project ref"
+      ],
+      "requiredScenarioMatrix": [
+        "backup success cleanup",
+        "backup failure cleanup",
+        "restore approval missing",
+        "same project restore negative"
+      ],
+      "negativeControls": [
+        "password in argv fails",
+        "plaintext dump after failure fails"
+      ],
+      "expectedTestIds": [
+        "hosted-sandbox-backup-security",
+        "restore-drill-safety"
+      ],
+      "expectedTestCountOrInventory": "backup and restore drill test inventory",
+      "artifactType": "command output",
+      "artifactLocation": "stdout/stderr",
+      "artifactRetentionPolicy": "temporary files deleted by tests",
+      "artifactPrivacyPolicy": "synthetic credentials only.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": [
+        "no network"
+      ],
+      "independentVerifier": "NOT_REQUESTED unless requested",
+      "passRule": "PASS only when backup and restore tests exit 0.",
+      "failRule": "FAIL on leaked password argument or retained plaintext.",
+      "blockedRule": "BLOCKED when Node is unavailable.",
+      "forbiddenEquivalences": [
+        "Encrypted output alone is not cleanup proof"
+      ]
+    },
+    {
+      "requirementId": "HSR11-401",
+      "phaseId": "PHASE-4",
+      "authoritySource": "Hosted sandbox defect analysis item 10",
+      "observableRequirement": "Build output has deterministic ReleaseIdentity and app/public/sw.js remains unchanged by build or release verification.",
+      "oracleType": "MANUAL",
+      "oracleOwner": "Phase 4 executor",
+      "oracleLocation": "app/scripts/release-verify.mjs",
+      "protectionMechanism": "Release verifier, build, Playwright, and git status checks.",
+      "exactEvidenceCommand": "npm run release:verify",
+      "exactEvidenceCommandSpec": {
+        "cwd": "app",
+        "executable": "npm",
+        "args": [
+          "run",
+          "release:verify"
+        ],
+        "timeoutSeconds": 600,
+        "networkPolicy": "FORBIDDEN",
+        "artifactPolicy": "stdout/stderr only"
+      },
+      "preconditions": [
+        "Phase 3 executor checks passed"
+      ],
+      "expectedExitCode": 0,
+      "requiredAssertions": [
+        "ReleaseIdentity fields match commit and migration fingerprint",
+        "builtAt is deterministic from explicit build input",
+        "service worker generated artifact uses release identity",
+        "tracked service worker source is not rewritten"
+      ],
+      "requiredScenarioMatrix": [
+        "two builds same inputs",
+        "changed commit SHA",
+        "changed migration fingerprint",
+        "service worker stale identity negative"
+      ],
+      "negativeControls": [
+        "new Date based identity fails determinism test"
+      ],
+      "expectedTestIds": [
+        "release-identity-determinism"
+      ],
+      "expectedTestCountOrInventory": "release verify plus visual/accessibility regression inventory",
+      "artifactType": "command output and local build artifacts",
+      "artifactLocation": "stdout/stderr and ignored build directories",
+      "artifactRetentionPolicy": "build artifacts untracked",
+      "artifactPrivacyPolicy": "No secrets.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": [
+        "local browser test dependencies installed"
+      ],
+      "independentVerifier": "NOT_REQUESTED unless requested",
+      "passRule": "PASS only when release:verify, build, visual, accessibility, and required regression checks exit 0.",
+      "failRule": "FAIL on stale SW identity, tracked source mutation, build failure, or visual/accessibility failure.",
+      "blockedRule": "BLOCKED when local browser dependencies are unavailable.",
+      "forbiddenEquivalences": [
+        "Release ID file alone is not artifact identity"
+      ]
+    },
+    {
+      "requirementId": "HSR11-501",
+      "phaseId": "PHASE-5",
+      "authoritySource": "Hosted sandbox defect analysis items 11, 12, and 13",
+      "observableRequirement": "CI, migration, artifact, deploy, smoke, and rollback tooling use real release artifacts and fail when deployment is only simulated.",
+      "oracleType": "MANUAL",
+      "oracleOwner": "Phase 5 executor",
+      "oracleLocation": "tools/hosted-sandbox/deploy/hosted-sandbox-deploy.test.mjs",
+      "protectionMechanism": "Node deploy tests, workflow verifier, and separate user-authorized external dry run.",
+      "exactEvidenceCommand": "node --test tools/hosted-sandbox/deploy/hosted-sandbox-deploy.test.mjs",
+      "exactEvidenceCommandSpec": {
+        "cwd": ".",
+        "executable": "node",
+        "args": [
+          "--test",
+          "tools/hosted-sandbox/deploy/hosted-sandbox-deploy.test.mjs"
+        ],
+        "timeoutSeconds": 180,
+        "networkPolicy": "FORBIDDEN",
+        "artifactPolicy": "stdout/stderr only"
+      },
+      "preconditions": [
+        "Phase 4 release verifier passes"
+      ],
+      "expectedExitCode": 0,
+      "requiredAssertions": [
+        "standalone artifact contains Next server, static assets, public assets, manifest, PM2 config, and SHA",
+        "migration workflow applies migration only after fingerprint match",
+        "deploy extracts to /opt/manu-ai/releases/<commitSha>",
+        "current symlink switch is atomic",
+        "PM2 reload happens after candidate smoke",
+        "rollback selects previous verified release",
+        "smoke requires 200 response, expected JSON, and release SHA"
+      ],
+      "requiredScenarioMatrix": [
+        "artifact build",
+        "fingerprint mismatch",
+        "candidate smoke failure",
+        "rollback after failed deploy",
+        "first deploy without previous release"
+      ],
+      "negativeControls": [
+        "RELEASE_ID.txt-only deploy fails",
+        "401 smoke fails",
+        "simulated deploy fails apply mode"
+      ],
+      "expectedTestIds": [
+        "hosted-sandbox-atomic-deploy",
+        "hosted-sandbox-migration-workflow"
+      ],
+      "expectedTestCountOrInventory": "deploy and workflow test inventory",
+      "artifactType": "command output and local synthetic deploy fixture",
+      "artifactLocation": "stdout/stderr and ignored temp directories",
+      "artifactRetentionPolicy": "local synthetic artifacts removed by tests",
+      "artifactPrivacyPolicy": "synthetic values only.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": [
+        "no external effect without separate user command"
+      ],
+      "independentVerifier": "NOT_REQUESTED unless requested",
+      "passRule": "PASS locally when tests exit 0; external apply PASS requires separate user-authorized GitHub and VPS evidence.",
+      "failRule": "FAIL on simulated deploy, missing artifact, bad smoke, or rollback gap.",
+      "blockedRule": "BLOCKED when external credentials are required but not separately authorized.",
+      "forbiddenEquivalences": [
+        "Dry-run deploy is not hosted deploy PASS"
+      ]
+    },
+    {
+      "requirementId": "HSR11-502",
+      "phaseId": "PHASE-5",
+      "authoritySource": "Hosted sandbox defect analysis item 14",
+      "observableRequirement": "Nginx template applies inherited security headers to every served location and production CSP excludes unsafe-eval and unbounded https or wss sources.",
+      "oracleType": "MANUAL",
+      "oracleOwner": "Phase 5 executor",
+      "oracleLocation": "tools/hosted-sandbox/deploy/verify-nginx-template.mjs",
+      "protectionMechanism": "Static template verifier plus live curl evidence after separate external authorization.",
+      "exactEvidenceCommand": "node tools/hosted-sandbox/deploy/verify-nginx-template.mjs",
+      "exactEvidenceCommandSpec": {
+        "cwd": ".",
+        "executable": "node",
+        "args": [
+          "tools/hosted-sandbox/deploy/verify-nginx-template.mjs"
+        ],
+        "timeoutSeconds": 60,
+        "networkPolicy": "FORBIDDEN",
+        "artifactPolicy": "stdout/stderr only"
+      },
+      "preconditions": [
+        "Phase 5 Nginx template edits are complete"
+      ],
+      "expectedExitCode": 0,
+      "requiredAssertions": [
+        "X-Powered-By is disabled",
+        "primary HTML uses no-store or short private cache",
+        "immutable cache applies only hashed static assets",
+        "CSP omits unsafe-eval in production",
+        "CSP omits broad https and wss wildcards"
+      ],
+      "requiredScenarioMatrix": [
+        "root HTML",
+        "dashboard HTML",
+        "Next static asset",
+        "API route"
+      ],
+      "negativeControls": [
+        "unsafe-eval fails verifier",
+        "s-maxage=31536000 for HTML fails verifier"
+      ],
+      "expectedTestIds": [
+        "nginx-security-template"
+      ],
+      "expectedTestCountOrInventory": "static template verifier plus live curl after authorization",
+      "artifactType": "command output",
+      "artifactLocation": "stdout/stderr",
+      "artifactRetentionPolicy": "summarized in implementation report",
+      "artifactPrivacyPolicy": "No secrets.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": [
+        "no network for template verification"
+      ],
+      "independentVerifier": "NOT_REQUESTED unless requested",
+      "passRule": "PASS locally when template verifier exits 0; hosted PASS requires separate live curl evidence.",
+      "failRule": "FAIL on unsafe CSP, missing inherited headers, exposed X-Powered-By, or long HTML cache.",
+      "blockedRule": "BLOCKED when live site check lacks separate authorization.",
+      "forbiddenEquivalences": [
+        "Template PASS is not live header PASS"
+      ]
+    },
+    {
+      "requirementId": "HSR11-601",
+      "phaseId": "PHASE-6",
+      "authoritySource": "Hosted sandbox defect analysis items 15, 16, and 17",
+      "observableRequirement": "Activation apply mode performs real hosted sequence with zero simulated, blocked, skipped, stale, or release-mismatched PASS claims, while iPhone remains waiver only.",
+      "oracleType": "MANUAL",
+      "oracleOwner": "Phase 6 executor",
+      "oracleLocation": "tools/hosted-sandbox/activation/run-hosted-activation.mjs",
+      "protectionMechanism": "Activation tests plus separate user-authorized external execution evidence.",
+      "exactEvidenceCommand": "node --test tools/hosted-sandbox/activation/hosted-activation.test.mjs",
+      "exactEvidenceCommandSpec": {
+        "cwd": ".",
+        "executable": "node",
+        "args": [
+          "--test",
+          "tools/hosted-sandbox/activation/hosted-activation.test.mjs"
+        ],
+        "timeoutSeconds": 180,
+        "networkPolicy": "FORBIDDEN",
+        "artifactPolicy": "stdout/stderr only"
+      },
+      "preconditions": [
+        "Phase 5 executor checks pass",
+        "separate user command authorizes GitHub push, Supabase migration, VPS deploy, and live smoke"
+      ],
+      "expectedExitCode": 0,
+      "requiredAssertions": [
+        "maintenance flag engages before mutation",
+        "backup age, hash, and project ref verify before migration",
+        "migration applies before cleanup",
+        "cleanup proves contamination zero",
+        "artifact deploy precedes release-aware smoke",
+        "admin and customer auth callbacks land on correct host",
+        "Android Chrome, installed PWA, and TalkBack evidence are recorded",
+        "iPhone Safari/PWA remains WAIVED_NOT_EXECUTED unless physical evidence is supplied"
+      ],
+      "requiredScenarioMatrix": [
+        "dry-run readiness",
+        "apply happy path",
+        "blocked backup",
+        "skipped smoke",
+        "release SHA mismatch",
+        "maintenance cleanup after failure"
+      ],
+      "negativeControls": [
+        "SIMULATED step in apply mode fails",
+        "BLOCKED step in apply mode fails",
+        "SKIPPED step in apply mode fails",
+        "stale artifact fails"
+      ],
+      "expectedTestIds": [
+        "hosted-activation-apply-contract"
+      ],
+      "expectedTestCountOrInventory": "activation tests plus live evidence after separate authorization",
+      "artifactType": "command output, activation evidence, live smoke evidence",
+      "artifactLocation": "stdout/stderr and docs/HOSTED_SANDBOX_REMEDIATION_V1_1_FINAL_ACTIVATION_EVIDENCE.md",
+      "artifactRetentionPolicy": "tracked evidence contains no secrets; runtime logs remain untracked",
+      "artifactPrivacyPolicy": "No secrets, no PHI, no real health data, no raw prompts.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": [
+        "external systems separately authorized"
+      ],
+      "independentVerifier": "NOT_REQUESTED unless requested",
+      "passRule": "PASS only when local tests and separately authorized live activation evidence pass with matching release SHA.",
+      "failRule": "FAIL on any simulated, blocked, skipped, stale, release-mismatched, or contamination-positive step.",
+      "blockedRule": "BLOCKED when external authorization or credentials are unavailable.",
+      "forbiddenEquivalences": [
+        "Dry-run is not activation PASS",
+        "Android PASS is not iPhone PASS"
+      ]
+    }
+  ]
+}
