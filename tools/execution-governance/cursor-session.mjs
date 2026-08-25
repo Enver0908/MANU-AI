@@ -70,7 +70,9 @@ function preflightReport({ requirePhase }) {
     planDir,
     ...(phaseId ? ['--phase-id', phaseId] : [])
   ]));
-  checks.push(runCheck('red-team', 'node', ['tools/execution-governance/governance-hardening-red-team.mjs']));
+  if (process.env.MANU_GOVERNANCE_SKIP_RED_TEAM !== '1') {
+    checks.push(runCheck('red-team', 'node', ['tools/execution-governance/governance-hardening-red-team.mjs']));
+  }
   if (requirePhase && !phaseId) {
     checks.push({ name: 'phase id', status: 'CHANGE_REQUEST_REQUIRED', exitCode: 2, detail: '--phase-id is required' });
   } else if (phaseId) {
@@ -101,7 +103,7 @@ function autoPreflight() {
   if (resolved.status !== 'PASS') return resolved;
   const checks = [];
   checks.push(runCheck('git status', 'git', ['status', '--short', '--branch']));
-  checks.push(runCheck('installer dry-run', 'node', ['tools/execution-governance/install-secure-cursor-guard.mjs', '--dry-run']));
+  checks.push(runCheck('install verify', 'node', ['tools/execution-governance/install-secure-cursor-guard.mjs', '--verify']));
   checks.push(runCheck('doctor', 'node', ['tools/execution-governance/governance-cli.mjs', 'doctor']));
   checks.push(runCheck('validate', 'node', ['tools/execution-governance/governance-cli.mjs', 'validate']));
   checks.push(runCheck('validate selected plan', 'node', [
@@ -112,7 +114,9 @@ function autoPreflight() {
     '--phase-id',
     resolved.phaseId
   ]));
-  checks.push(runCheck('red-team', 'node', ['tools/execution-governance/governance-hardening-red-team.mjs']));
+  if (process.env.MANU_GOVERNANCE_SKIP_RED_TEAM !== '1') {
+    checks.push(runCheck('red-team', 'node', ['tools/execution-governance/governance-hardening-red-team.mjs']));
+  }
   checks.push(scopeExistenceCheckFor(resolved.planDir, resolved.phaseId));
   checks.push(runCheck('activation dry-run', 'node', [
     'tools/execution-governance/governance-cli.mjs',

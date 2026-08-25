@@ -40,8 +40,8 @@ test('rejects unlocked plans before selecting a phase', () => {
 });
 
 test('rejects ambiguous locked plans when no plan hint is provided', () => {
-  const first = makePlanFixture('resolver-ambiguous-a');
-  const second = makePlanFixture('resolver-ambiguous-b');
+  const first = makePlanFixture('resolver-ambiguous-a', { underPlans: true });
+  const second = makePlanFixture('resolver-ambiguous-b', { underPlans: true });
   try {
     const result = resolveGovernedExecution({
       repoRoot,
@@ -72,7 +72,9 @@ test('does not derive scope authority from prompt text', () => {
 });
 
 function makePlanFixture(name, options = {}) {
-  const relDir = `.execution-governance/runtime/${name}-${process.pid}-${Date.now()}`;
+  const relDir = options.underPlans
+    ? `.execution-governance/plans/${name}-${process.pid}-${Date.now()}`
+    : `.execution-governance/runtime/${name}-${process.pid}-${Date.now()}`;
   const dir = path.join(repoRoot, relDir);
   mkdirSync(dir, { recursive: true });
   const contract = makeContract(name, options);

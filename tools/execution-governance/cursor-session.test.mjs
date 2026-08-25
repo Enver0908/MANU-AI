@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { strict as assert } from 'node:assert';
 import { createHash } from 'node:crypto';
-import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { copyFileSync, mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
@@ -65,37 +65,111 @@ test('installer dry-run reports broker launcher and desktop shortcut checks', ()
 });
 
 test('cursor session auto-preflight resolves the locked zero-command plan without a phase id', () => {
-  const result = spawnSync('node', [cli, 'cursor-session', '--session', 'auto-preflight', '--plan-dir', '.execution-governance/plans/cursor-zero-command-governed-execution-v1'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-    shell: false
-  });
-  assert.equal(result.status, 0, result.stderr);
-  const report = JSON.parse(result.stdout);
-  assert.equal(report.status, 'READY');
-  assert.equal(report.resolved.phaseId, 'CZC-PHASE-1');
+  const externalRoot = mkdtempSync(path.join(tmpdir(), 'manu-cursor-auto-'));
+  const cursorSystemRoot = mkdtempSync(path.join(tmpdir(), 'manu-cursor-system-'));
+  const desktopRoot = mkdtempSync(path.join(tmpdir(), 'manu-cursor-desktop-'));
+  const planDir = makePlanFixture();
+  installGuardFixture(externalRoot, cursorSystemRoot, desktopRoot);
+  try {
+    const rerun = spawnSync('node', [cli, 'cursor-session', '--session', 'auto-preflight', '--plan-dir', planDir], {
+      cwd: repoRoot,
+      encoding: 'utf8',
+      shell: false,
+      env: testEnv(externalRoot, cursorSystemRoot, desktopRoot)
+    });
+    assert.equal(rerun.status, 0, rerun.stderr);
+    const report = JSON.parse(rerun.stdout);
+    assert.equal(report.status, 'READY');
+    assert.equal(report.resolved.phaseId, 'CGUX-TEST-1');
+  } finally {
+    rmSync(externalRoot, { recursive: true, force: true });
+    rmSync(cursorSystemRoot, { recursive: true, force: true });
+    rmSync(desktopRoot, { recursive: true, force: true });
+    rmSync(path.join(repoRoot, planDir), { recursive: true, force: true });
+  }
 });
 
 test('cursor session auto-activate writes the resolved phase activation without a phase id', () => {
   const externalRoot = mkdtempSync(path.join(tmpdir(), 'manu-cursor-auto-'));
+  const cursorSystemRoot = mkdtempSync(path.join(tmpdir(), 'manu-cursor-system-'));
+  const desktopRoot = mkdtempSync(path.join(tmpdir(), 'manu-cursor-desktop-'));
+  const planDir = makePlanFixture();
+  installGuardFixture(externalRoot, cursorSystemRoot, desktopRoot);
   try {
-    const result = spawnSync('node', [cli, 'cursor-session', '--session', 'auto-activate', '--plan-dir', '.execution-governance/plans/cursor-zero-command-governed-execution-v1'], {
+    const result = spawnSync('node', [cli, 'cursor-session', '--session', 'auto-activate', '--plan-dir', planDir], {
       cwd: repoRoot,
       encoding: 'utf8',
       shell: false,
-      env: { ...process.env, MANU_GOVERNANCE_ROOT: externalRoot }
+      env: testEnv(externalRoot, cursorSystemRoot, desktopRoot)
     });
     assert.equal(result.status, 0, result.stderr);
     const report = JSON.parse(result.stdout);
     assert.equal(report.status, 'PASS');
-    assert.equal(report.resolved.phaseId, 'CZC-PHASE-1');
+    assert.equal(report.resolved.phaseId, 'CGUX-TEST-1');
     const activation = JSON.parse(readFileSync(path.join(externalRoot, 'activation.json'), 'utf8'));
     assert.equal(activation.status, 'ACTIVE_SIGNED_SCOPE');
-    assert.equal(activation.phaseId, 'CZC-PHASE-1');
+    assert.equal(activation.phaseId, 'CGUX-TEST-1');
   } finally {
     rmSync(externalRoot, { recursive: true, force: true });
+    rmSync(cursorSystemRoot, { recursive: true, force: true });
+    rmSync(desktopRoot, { recursive: true, force: true });
+    rmSync(path.join(repoRoot, planDir), { recursive: true, force: true });
   }
 });
+
+function installGuardFixture(externalRoot, cursorSystemRoot, desktopRoot) {
+  mkdirSync(externalRoot, { recursive: true });
+  mkdirSync(cursorSystemRoot, { recursive: true });
+  mkdirSync(desktopRoot, { recursive: true });
+  const sourceGuard = path.join(repoRoot, 'tools', 'execution-governance', 'secure-cursor-guard.mjs');
+  const sourceBroker = path.join(repoRoot, 'tools', 'execution-governance', 'cursor-session-broker.mjs');
+  copyFileSync(sourceGuard, path.join(externalRoot, 'secure-cursor-guard.mjs'));
+  copyFileSync(sourceBroker, path.join(externalRoot, 'cursor-session-broker.mjs'));
+  writeFileSync(path.join(externalRoot, 'MANU-AI Cursor Session.ps1'), 'Write-Host test\n', 'utf8');
+  writeFileSync(path.join(desktopRoot, 'MANU-AI Cursor.lnk'), 'test\n', 'utf8');
+  const command = `"${process.execPath}" "${path.join(externalRoot, 'secure-cursor-guard.mjs')}"`;
+  writeFileSync(path.join(cursorSystemRoot, 'hooks.json'), `${JSON.stringify({
+    version: 1,
+    hooks: {
+      workspaceOpen: [{ command: `${command} workspaceOpen`, failClosed: true, timeout: 5 }],
+      sessionStart: [{ command: `${command} sessionStart`, failClosed: true, timeout: 5 }],
+      preToolUse: [{ command: `${command} preToolUse`, failClosed: true, timeout: 5 }],
+      beforeSubmitPrompt: [{ command: `${command} beforeSubmitPrompt`, failClosed: true, timeout: 5 }],
+      beforeShellExecution: [{ command: `${command} beforeShellExecution`, failClosed: true, timeout: 5 }],
+      beforeMCPExecution: [{ command: `${command} beforeMCPExecution`, failClosed: true, timeout: 5 }],
+      beforeReadFile: [{ command: `${command} beforeReadFile`, failClosed: true, timeout: 5 }],
+      afterFileEdit: [{ command: `${command} afterFileEdit`, failClosed: true, timeout: 5 }]
+    }
+  }, null, 2)}\n`, 'utf8');
+  writeFileSync(path.join(externalRoot, 'activation.json'), `${JSON.stringify({
+    schemaVersion: '1.0.0',
+    status: 'INACTIVE_FAIL_CLOSED',
+    repoRoot,
+    contractId: '',
+    phaseId: '',
+    lockCommit: '',
+    scopeHash: '',
+    scope: {
+      allowedCreatePaths: [],
+      allowedModifyPaths: [],
+      protectedPaths: [],
+      forbiddenPaths: [],
+      allowedCommands: [],
+      allowedMcpTools: [],
+      allowSubagents: false
+    }
+  }, null, 2)}\n`, 'utf8');
+}
+
+function testEnv(externalRoot, cursorSystemRoot, desktopRoot) {
+  return {
+    ...process.env,
+    MANU_GOVERNANCE_ROOT: externalRoot,
+    MANU_CURSOR_SYSTEM_ROOT: cursorSystemRoot,
+    MANU_GOVERNANCE_DESKTOP_DIR: desktopRoot,
+    MANU_GOVERNANCE_TEST_MODE: '1'
+  };
+}
 
 function runBroker(externalRoot, args) {
   return spawnSync('node', [broker, ...args], {

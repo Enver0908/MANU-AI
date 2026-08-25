@@ -33,6 +33,14 @@
       "eventType": "EXECUTOR_CHECK_RECORDED",
       "summary": "Acceptance run-checks passed for CZC-PHASE-1.",
       "recordPath": ".execution-governance/runtime/run-records/run-2026-08-25T16-56-59-013Z-2184.json"
+    },
+    {
+      "eventId": "CZC-EVENT-004",
+      "timestamp": "2026-08-25T22:15:28.513Z",
+      "actor": "Codex",
+      "eventType": "HARDENING_REMEDIATION_REPORTED",
+      "summary": "Hardened zero-command Cursor activation, exact writable scope enforcement, resolver phase/dependency selection, full red-team harness compatibility, and HSR Phase 1 exact activation scope reconciliation.",
+      "recordPath": ".execution-governance/plans/cursor-zero-command-governed-execution-v1/implementation-report.json"
     }
   ],
   "independentReviewPolicy": {

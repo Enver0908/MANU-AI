@@ -52,6 +52,9 @@ function verifyInstall() {
   checks.push(check('source guard exists', existsSync(sourceGuard), sourceGuard));
   checks.push(check('source resolver exists', existsSync(sourceResolver), sourceResolver));
   checks.push(check('workspace governed execution skill exists', existsSync(sourceSkill), sourceSkill));
+  if (existsSync(sourceSkill)) {
+    checks.push(check('workspace governed execution skill has Cursor frontmatter', hasSkillFrontmatter(sourceSkill), sourceSkill));
+  }
   checks.push(check('external root exists', dryRun || existsSync(externalRoot), externalRoot));
   checks.push(check('target guard exists', dryRun || existsSync(targetGuard), targetGuard));
   checks.push(check('target broker exists', dryRun || existsSync(targetBroker), targetBroker));
@@ -73,7 +76,7 @@ function verifyInstall() {
   if (!dryRun && existsSync(activationPath)) {
     checks.push(check('activation file has valid fail-closed or active state shape', hasValidActivationShape(JSON.parse(readFileSync(activationPath, 'utf8'))), activationPath));
   }
-  if (!dryRun && process.platform === 'win32') {
+  if (!dryRun && process.platform === 'win32' && process.env.MANU_GOVERNANCE_TEST_MODE !== '1') {
     checks.push(check('external ACL excludes broad writable Users ACE', !hasBroadWriteAce(externalRoot), externalRoot));
     checks.push(check('cursor system ACL excludes broad writable Users ACE', !hasBroadWriteAce(cursorSystemRoot), cursorSystemRoot));
     checks.push(check('external owner is admin-controlled', isAdminControlledOwner(externalRoot), ownerOf(externalRoot)));
@@ -111,6 +114,9 @@ $shortcut.Save()`;
 }
 
 function resolveDesktopDirectory() {
+  if (process.env.MANU_GOVERNANCE_DESKTOP_DIR && existsSync(process.env.MANU_GOVERNANCE_DESKTOP_DIR)) {
+    return process.env.MANU_GOVERNANCE_DESKTOP_DIR;
+  }
   const repoParent = path.dirname(repoRoot);
   if (/^(desktop|masaüstü|masaustu)$/i.test(path.basename(repoParent)) && existsSync(repoParent)) {
     return repoParent;
@@ -151,7 +157,7 @@ Read-Host 'Press Enter to close'
 }
 
 function hasExactHookEvents(hooks) {
-  const expected = ['afterFileEdit', 'beforeMCPExecution', 'beforeReadFile', 'beforeShellExecution', 'beforeSubmitPrompt', 'preToolUse'];
+  const expected = ['afterFileEdit', 'beforeMCPExecution', 'beforeReadFile', 'beforeShellExecution', 'beforeSubmitPrompt', 'preToolUse', 'sessionStart', 'workspaceOpen'];
   const actual = Object.keys(hooks.hooks || {}).sort();
   if (JSON.stringify(actual) !== JSON.stringify(expected)) return false;
   return expected.every((event) => Array.isArray(hooks.hooks[event])
@@ -174,6 +180,8 @@ function systemHooksConfig(guardPath, nodePath) {
   return {
     version: 1,
     hooks: {
+      workspaceOpen: [{ command: `${command} workspaceOpen`, failClosed: true, timeout: 5 }],
+      sessionStart: [{ command: `${command} sessionStart`, failClosed: true, timeout: 5 }],
       preToolUse: [{ command: `${command} preToolUse`, failClosed: true, timeout: 5 }],
       beforeSubmitPrompt: [{ command: `${command} beforeSubmitPrompt`, failClosed: true, timeout: 5 }],
       beforeShellExecution: [{ command: `${command} beforeShellExecution`, failClosed: true, timeout: 5 }],
@@ -182,6 +190,13 @@ function systemHooksConfig(guardPath, nodePath) {
       afterFileEdit: [{ command: `${command} afterFileEdit`, failClosed: true, timeout: 5 }]
     }
   };
+}
+
+function hasSkillFrontmatter(filePath) {
+  const text = readFileSync(filePath, 'utf8');
+  const match = text.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n/);
+  if (!match) return false;
+  return /^name:\s*\S+/m.test(match[1]) && /^description:\s*\S+/m.test(match[1]);
 }
 
 function inactiveActivation() {

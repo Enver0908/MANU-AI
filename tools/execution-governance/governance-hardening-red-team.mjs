@@ -1,14 +1,19 @@
 #!/usr/bin/env node
 import { spawnSync } from 'node:child_process';
-import { writeFileSync, mkdirSync, rmSync } from 'node:fs';
+import { copyFileSync, writeFileSync, mkdirSync, rmSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const guardPath = path.join(repoRoot, 'tools', 'execution-governance', 'secure-cursor-guard.mjs');
 const tempRoot = path.join(repoRoot, '.execution-governance', 'runtime', 'governance-hardening-red-team');
+const cursorSystemRoot = path.join(tempRoot, 'cursor-system');
+const desktopRoot = path.join(tempRoot, 'desktop');
 rmSync(tempRoot, { recursive: true, force: true });
 mkdirSync(tempRoot, { recursive: true });
+mkdirSync(cursorSystemRoot, { recursive: true });
+mkdirSync(desktopRoot, { recursive: true });
+installGuardFixture();
 
 const activation = {
   schemaVersion: '1.0.0',
@@ -20,7 +25,7 @@ const activation = {
   allowImplementationHead: true,
   scope: {
     allowedCreatePaths: ['docs/GOVERNANCE_HARDENING_PHASE_0_EVIDENCE.md'],
-    allowedModifyPaths: ['docs/allowed/**/*.md'],
+    allowedModifyPaths: [],
     protectedPaths: ['tools/execution-governance/secure-cursor-guard.mjs', 'app/**'],
     forbiddenPaths: ['app/package.json', '.github/workflows/**'],
     allowedCommands: [
@@ -68,10 +73,19 @@ const cases = [
     expect: 0
   },
   {
-    id: 'allow-glob-in-scope-write',
+    id: 'allow-exact-create-in-scope-write',
     event: 'preToolUse',
     payload: { tool_name: 'Edit', tool_input: { file_path: 'docs/allowed/nested/note.md' } },
-    expect: 0
+    activationOverride: {
+      ...activation,
+      scope: {
+        ...activation.scope,
+        allowedCreatePaths: ['docs/allowed/nested/note.md'],
+        allowedModifyPaths: []
+      }
+    },
+    expect: 0,
+    refreshScopeHash: true
   },
   {
     id: 'deny-protected-glob-write',
@@ -175,7 +189,7 @@ const cases = [
     expect: 2
   },
   {
-    id: 'allow-governed-execution-prompt-intent',
+    id: 'allow-governed-execution-prompt-when-scope-is-exact',
     event: 'beforeSubmitPrompt',
     payload: { prompt: 'Bu planı uygula ve sadece kilitli scope ile ilerle.' },
     activationOverride: discoveryActivation,
@@ -195,9 +209,13 @@ process.stdout.write(`${JSON.stringify({ schemaVersion: '1.0.0', status, results
 process.exit(status === 'PASS' ? 0 : 1);
 
 function runCase(testCase) {
+  const activeActivation = testCase.activationOverride || activation;
+  if (testCase.refreshScopeHash) {
+    activeActivation.scopeHash = sha256Json(activeActivation.scope);
+  }
   writeFileSync(
     path.join(tempRoot, 'activation.json'),
-    `${JSON.stringify(testCase.activationOverride || activation, null, 2)}\n`,
+    `${JSON.stringify(activeActivation, null, 2)}\n`,
     'utf8'
   );
   const input = testCase.raw ?? JSON.stringify(testCase.payload);
@@ -210,7 +228,9 @@ function runCase(testCase) {
       ...process.env,
       CURSOR_PROJECT_DIR: repoRoot,
       MANU_GOVERNANCE_TEST_MODE: '1',
-      MANU_GOVERNANCE_ROOT: tempRoot
+      MANU_GOVERNANCE_ROOT: tempRoot,
+      MANU_CURSOR_SYSTEM_ROOT: cursorSystemRoot,
+      MANU_GOVERNANCE_DESKTOP_DIR: desktopRoot
     }
   });
   return {
@@ -221,6 +241,27 @@ function runCase(testCase) {
     stdout: safeJson(result.stdout),
     stderr: result.stderr.trim()
   };
+}
+
+function installGuardFixture() {
+  copyFileSync(guardPath, path.join(tempRoot, 'secure-cursor-guard.mjs'));
+  copyFileSync(path.join(repoRoot, 'tools', 'execution-governance', 'cursor-session-broker.mjs'), path.join(tempRoot, 'cursor-session-broker.mjs'));
+  writeFileSync(path.join(tempRoot, 'MANU-AI Cursor Session.ps1'), 'Write-Host test\n', 'utf8');
+  writeFileSync(path.join(desktopRoot, 'MANU-AI Cursor.lnk'), 'test\n', 'utf8');
+  const command = `"${process.execPath}" "${path.join(tempRoot, 'secure-cursor-guard.mjs')}"`;
+  writeFileSync(path.join(cursorSystemRoot, 'hooks.json'), `${JSON.stringify({
+    version: 1,
+    hooks: {
+      workspaceOpen: [{ command: `${command} workspaceOpen`, failClosed: true, timeout: 5 }],
+      sessionStart: [{ command: `${command} sessionStart`, failClosed: true, timeout: 5 }],
+      preToolUse: [{ command: `${command} preToolUse`, failClosed: true, timeout: 5 }],
+      beforeSubmitPrompt: [{ command: `${command} beforeSubmitPrompt`, failClosed: true, timeout: 5 }],
+      beforeShellExecution: [{ command: `${command} beforeShellExecution`, failClosed: true, timeout: 5 }],
+      beforeMCPExecution: [{ command: `${command} beforeMCPExecution`, failClosed: true, timeout: 5 }],
+      beforeReadFile: [{ command: `${command} beforeReadFile`, failClosed: true, timeout: 5 }],
+      afterFileEdit: [{ command: `${command} afterFileEdit`, failClosed: true, timeout: 5 }]
+    }
+  }, null, 2)}\n`, 'utf8');
 }
 
 function safeJson(value) {

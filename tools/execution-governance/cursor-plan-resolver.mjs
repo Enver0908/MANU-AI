@@ -97,6 +97,7 @@ function selectPlan(repoRoot, options) {
 
 function selectNextPhase(repoRoot, planDir) {
   const contract = readJson(path.join(repoRoot, planDir, 'contract.json'));
+  const scope = readJson(path.join(repoRoot, planDir, 'scope.json'));
   const lifecyclePath = path.join(repoRoot, planDir, 'lifecycle-record.json');
   const lifecycle = existsSync(lifecyclePath) ? readJson(lifecyclePath) : null;
   const phases = contract.phases || [];
@@ -104,15 +105,14 @@ function selectNextPhase(repoRoot, planDir) {
   const ordered = currentPhase
     ? [...phases.filter((item) => item.phaseId === currentPhase), ...phases.filter((item) => item.phaseId !== currentPhase)]
     : phases;
-  const candidate = ordered.find((phase) => isRunnablePhase(contract, lifecycle, phase.phaseId));
+  const candidate = ordered.find((phase) => isRunnablePhase(contract, lifecycle, scope, phase.phaseId));
   if (!candidate) {
     return blocked('NO_RUNNABLE_PHASE', `No runnable phase was found for ${planDir}.`, {
       contractId: contract.contractId,
       checks: [{ name: 'next runnable phase', status: 'BLOCKED', detail: 'all phases completed or unavailable' }]
     });
   }
-  const hasScope = readJson(path.join(repoRoot, planDir, 'scope.json')).requirements
-    ?.some((item) => item.phaseId === candidate.phaseId);
+  const hasScope = scope.requirements?.some((item) => item.phaseId === candidate.phaseId);
   if (!hasScope) {
     return blocked('PHASE_SCOPE_MISSING', `Selected phase has no scope records: ${candidate.phaseId}`, {
       contractId: contract.contractId,
@@ -132,17 +132,25 @@ function selectNextPhase(repoRoot, planDir) {
   };
 }
 
-function isRunnablePhase(contract, lifecycle, phaseId) {
+function isRunnablePhase(contract, lifecycle, scope, phaseId) {
   const phase = (contract.phases || []).find((item) => item.phaseId === phaseId);
   if (!phase || phase.status !== 'LOCKED_FOR_IMPLEMENTATION') return false;
   if (lifecycle?.currentPhase && lifecycle.currentPhase === phaseId) {
     return !TERMINAL_IMPLEMENTATION_STATES.has(lifecycle.status?.implementation_state);
   }
   const requirements = (contract.requirements || []).filter((item) => item.status && item.requirementId);
-  const phaseRequirements = requirements.filter((requirement) => {
-    return true;
-  });
-  return phaseRequirements.some((requirement) => !TERMINAL_IMPLEMENTATION_STATES.has(requirement.status?.implementation_state));
+  const phaseRequirementIds = new Set((scope.requirements || [])
+    .filter((item) => item.phaseId === phaseId)
+    .map((item) => item.requirementId));
+  const phaseRequirements = requirements.filter((requirement) => phaseRequirementIds.has(requirement.requirementId));
+  if (phaseRequirements.length === 0) return false;
+  const byId = new Map(requirements.map((requirement) => [requirement.requirementId, requirement]));
+  const dependenciesSatisfied = phaseRequirements.every((requirement) => (requirement.dependencies || []).every((dependencyId) => {
+    const dependency = byId.get(dependencyId);
+    return dependency && TERMINAL_IMPLEMENTATION_STATES.has(dependency.status?.implementation_state);
+  }));
+  return dependenciesSatisfied
+    && phaseRequirements.some((requirement) => !TERMINAL_IMPLEMENTATION_STATES.has(requirement.status?.implementation_state));
 }
 
 function listLockedRunnablePlans(repoRoot) {

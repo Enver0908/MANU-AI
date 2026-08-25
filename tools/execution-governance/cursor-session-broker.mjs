@@ -72,6 +72,7 @@ function buildActivation(value) {
     fail(`phase ${phaseId} has no writable activation scope`);
   }
   sortScope(selectedScope);
+  assertExactWritableScope(selectedScope);
   return {
     schemaVersion: '1.0.0',
     status: 'ACTIVE_SIGNED_SCOPE',
@@ -80,6 +81,9 @@ function buildActivation(value) {
     phaseId,
     lockCommit: lock.lockCommit || lock.baseCommit,
     allowImplementationHead: value.allowImplementationHead === true,
+    requestNonce: value.requestNonce || createHash('sha256').update(`${Date.now()}:${process.pid}:${repoRoot}:${phaseId}`).digest('hex').slice(0, 32),
+    activatedAt: new Date().toISOString(),
+    expiresAt: new Date(Date.now() + 8 * 60 * 60 * 1000).toISOString(),
     scopeHash: sha256Json(selectedScope),
     scope: selectedScope
   };
@@ -260,6 +264,14 @@ function appendCommands(target, values) {
     if (!seen.has(key)) {
       target.push(item);
       seen.add(key);
+    }
+  }
+}
+
+function assertExactWritableScope(scope) {
+  for (const key of ['allowedCreatePaths', 'allowedModifyPaths']) {
+    for (const item of scope[key] || []) {
+      if (item.includes('*')) fail(`writable activation scope must be exact, not globbed: ${item}`);
     }
   }
 }

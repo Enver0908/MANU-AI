@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { spawnSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, rmSync, writeFileSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 
@@ -11,29 +12,32 @@ const scenarios = [];
 try {
   rmSync(runtimeRoot, { recursive: true, force: true });
   mkdirSync(runtimeRoot, { recursive: true });
+  writeActivation(inactiveActivation());
 
   scenario('hook denies product write without active scope', () => {
     const result = runHook('preToolUse', { file_path: 'app/src/app/page.tsx' });
     assertExit(result, 2);
-    assertIncludes(result.stdout, 'Product or broad repository writes are blocked');
+    assertIncludes(result.stdout, 'Activation status does not allow mutation');
   });
 
-  scenario('hook allows governance bootstrap write without active scope', () => {
+  scenario('hook denies governance bootstrap write without active scope', () => {
     const result = runHook('preToolUse', { file_path: 'docs/execution-governance/PHASE_6_RED_TEAM_PILOT_CLOSURE_EVIDENCE.md' });
-    assertExit(result, 0);
-    assertIncludes(result.stdout, '"permission":"allow"');
+    assertExit(result, 2);
+    assertIncludes(result.stdout, 'Activation status does not allow mutation');
   });
 
-  scenario('CHBOM-001-BOM-STDIN-ALLOW hook allows BOM-prefixed governance bootstrap payload', () => {
+  scenario('CHBOM-001-BOM-STDIN-DENY hook denies BOM-prefixed governance bootstrap payload without active scope', () => {
     const result = runHook('preToolUse', { file_path: 'docs/execution-governance/CHBOM_ALLOWED.md' }, { bom: true });
-    assertExit(result, 0);
-    assertIncludes(result.stdout, '"permission":"allow"');
+    assertExit(result, 2);
+    assertIncludes(result.stdout, 'Activation status does not allow mutation');
   });
 
   scenario('CHBOM-001-BOM-SAFE-SHELL-ALLOW hook allows BOM-prefixed safe shell payload', () => {
+    writeActivation(discoveryActivation());
     const result = runHook('beforeShellExecution', { command: 'git status --short' }, { bom: true });
     assertExit(result, 0);
     assertIncludes(result.stdout, '"permission":"allow"');
+    writeActivation(inactiveActivation());
   });
 
   scenario('hook fails closed on malformed payload', () => {
@@ -44,7 +48,7 @@ try {
       shell: false
     });
     assertExit(result, 2);
-    assertIncludes(result.stdout, 'governance guard failed closed');
+    assertIncludes(result.stdout, 'fail-closed');
   });
 
   scenario('CHBOM-001-MALFORMED-DENY hook still fails closed on malformed payload', () => {
@@ -55,7 +59,7 @@ try {
       shell: false
     });
     assertExit(result, 2);
-    assertIncludes(result.stdout, 'governance guard failed closed');
+    assertIncludes(result.stdout, 'fail-closed');
   });
 
   scenario('hook denies secret-like reads', () => {
@@ -73,47 +77,40 @@ try {
   scenario('hook denies unsafe shell commands and allows safe status command', () => {
     const denied = runHook('beforeShellExecution', { command: 'git push origin main' });
     assertExit(denied, 2);
-    assertIncludes(denied.stdout, 'Shell command blocked');
+    assertIncludes(denied.stdout, 'activation status is not active');
+    writeActivation(discoveryActivation());
     const allowed = runHook('beforeShellExecution', { command: 'git status --short' });
     assertExit(allowed, 0);
+    writeActivation(inactiveActivation());
   });
 
   scenario('CHBOM-003-BOM-UNSAFE-SHELL-DENY hook denies BOM-prefixed unsafe shell commands', () => {
     const denied = runHook('beforeShellExecution', { command: 'git push origin main' }, { bom: true });
     assertExit(denied, 2);
-    assertIncludes(denied.stdout, 'Shell command blocked');
+    assertIncludes(denied.stdout, 'activation status is not active');
   });
 
   scenario('CHBOM-003-BOM-PRODUCT-WRITE-DENY hook denies BOM-prefixed product write without active scope', () => {
     const result = runHook('preToolUse', { file_path: 'app/src/app/page.tsx' }, { bom: true });
     assertExit(result, 2);
-    assertIncludes(result.stdout, 'Product or broad repository writes are blocked');
+    assertIncludes(result.stdout, 'Activation status does not allow mutation');
   });
 
   scenario('hook enforces active scope allow and protected lists', () => {
-    rmSync(activeRoot, { recursive: true, force: true });
-    mkdirSync(activeRoot, { recursive: true });
-    writeJson(path.join(activeRoot, 'scope.json'), {
-      schemaVersion: '1.0.0',
-      contractId: 'phase6-active-scope-smoke',
-      requirements: [
-        {
-          requirementId: 'PHASE6-ACTIVE-SCOPE',
-          allowedCreatePaths: ['docs/execution-governance/allowed-smoke.md'],
-          allowedModifyPaths: ['docs/execution-governance/allowed-smoke.md'],
-          protectedPaths: ['PLAN.md'],
-          forbiddenPaths: ['app/src/app/page.tsx']
-        }
-      ]
-    });
+    writeActivation(activeActivation({
+      allowedCreatePaths: ['docs/execution-governance/allowed-smoke.md'],
+      allowedModifyPaths: [],
+      protectedPaths: ['PLAN.md'],
+      forbiddenPaths: ['app/src/app/page.tsx']
+    }));
     const allowed = runHook('preToolUse', { file_path: 'docs/execution-governance/allowed-smoke.md' });
     assertExit(allowed, 0);
     const protectedPath = runHook('preToolUse', { file_path: 'PLAN.md' });
     assertExit(protectedPath, 2);
-    assertIncludes(protectedPath.stdout, 'outside active governance scope');
+    assertIncludes(protectedPath.stdout, 'outside active signed governance scope');
     const outside = runHook('preToolUse', { file_path: 'app/src/app/page.tsx' });
     assertExit(outside, 2);
-    rmSync(activeRoot, { recursive: true, force: true });
+    writeActivation(inactiveActivation());
   });
 
   scenario('CHBOM-002-BOM-ACTIVE-SCOPE-ALLOW hook parses BOM-prefixed active scope and allows listed path', () => {
@@ -128,7 +125,7 @@ try {
     withBomActiveScope(() => {
       const protectedPath = runHook('preToolUse', { file_path: 'PLAN.md' }, { bom: true });
       assertExit(protectedPath, 2);
-      assertIncludes(protectedPath.stdout, 'outside active governance scope');
+      assertIncludes(protectedPath.stdout, 'outside active signed governance scope');
     });
   });
 
@@ -136,7 +133,7 @@ try {
     withBomActiveScope(() => {
       const outside = runHook('preToolUse', { file_path: 'app/src/app/page.tsx' }, { bom: true });
       assertExit(outside, 2);
-      assertIncludes(outside.stdout, 'outside active governance scope');
+      assertIncludes(outside.stdout, 'outside active signed governance scope');
     });
   });
 
@@ -146,7 +143,9 @@ try {
         cwd: '.',
         executable: 'node; echo bad',
         args: [],
-        timeoutSeconds: 5
+        timeoutSeconds: 5,
+        networkPolicy: 'FORBIDDEN',
+        artifactPolicy: 'stdout/stderr only'
       }
     });
     const result = runCli(['validate', '--plan-dir', rel(planDir)]);
@@ -355,10 +354,22 @@ function createPlanFixture(name, options) {
     requirements: [
       {
         requirementId: 'PHASE6-REQ-001',
+        phaseId: 'PHASE6-PILOT',
         allowedCreatePaths: allowedPaths,
         allowedModifyPaths: allowedPaths,
         protectedPaths: ['.git/config'],
-        forbiddenPaths: ['app/src/app/page.tsx']
+        forbiddenPaths: ['app/src/app/page.tsx'],
+        allowedCommands: [],
+        forbiddenCommands: [],
+        allowedDependencies: [],
+        forbiddenDependencyChanges: true,
+        allowedSchemaChanges: [],
+        allowedNetworkOrExternalEffects: [],
+        allowedMcpTools: [],
+        allowSubagents: false,
+        generatedArtifactPolicy: 'runtime only',
+        documentationReconciliation: [],
+        maximumChangeScope: 'phase6 synthetic fixture'
       }
     ]
   });
@@ -406,7 +417,9 @@ function passCommandSpec() {
     cwd: '.',
     executable: process.execPath,
     args: ['-e', "console.log('PHASE6_PASS_COMMAND_OK')"],
-    timeoutSeconds: 5
+    timeoutSeconds: 5,
+    networkPolicy: 'FORBIDDEN',
+    artifactPolicy: 'stdout/stderr only'
   };
 }
 
@@ -428,11 +441,17 @@ function runCliOk(args) {
 }
 
 function runHook(event, payload, options = {}) {
-  return spawnSync(process.execPath, ['.cursor/hooks/governance-guard.mjs', event], {
+  return spawnSync(process.execPath, ['tools/execution-governance/secure-cursor-guard.mjs', event], {
     cwd: repoRoot,
-    input: `${options.bom ? '\uFEFF' : ''}${JSON.stringify(payload)}`,
+    input: `${options.bom ? '\uFEFF' : ''}${JSON.stringify(cursorPayload(event, payload))}`,
     encoding: 'utf8',
-    shell: false
+    shell: false,
+    env: {
+      ...process.env,
+      CURSOR_PROJECT_DIR: repoRoot,
+      MANU_GOVERNANCE_TEST_MODE: '1',
+      MANU_GOVERNANCE_ROOT: runtimeRoot
+    }
   });
 }
 
@@ -453,26 +472,101 @@ function writeJsonWithBom(file, value) {
 }
 
 function withBomActiveScope(fn) {
-  rmSync(activeRoot, { recursive: true, force: true });
-  mkdirSync(activeRoot, { recursive: true });
-  writeJsonWithBom(path.join(activeRoot, 'scope.json'), {
-    schemaVersion: '1.0.0',
-    contractId: 'chbom-active-scope-smoke',
-    requirements: [
-      {
-        requirementId: 'CHBOM-ACTIVE-SCOPE',
-        allowedCreatePaths: ['docs/execution-governance/bom-allowed-smoke.md'],
-        allowedModifyPaths: ['docs/execution-governance/bom-allowed-smoke.md'],
-        protectedPaths: ['PLAN.md'],
-        forbiddenPaths: ['app/src/app/page.tsx']
-      }
-    ]
-  });
+  writeJsonWithBom(path.join(runtimeRoot, 'activation.json'), activeActivation({
+    allowedCreatePaths: ['docs/execution-governance/bom-allowed-smoke.md'],
+    allowedModifyPaths: [],
+    protectedPaths: ['PLAN.md'],
+    forbiddenPaths: ['app/src/app/page.tsx']
+  }));
   try {
     fn();
   } finally {
-    rmSync(activeRoot, { recursive: true, force: true });
+    writeActivation(inactiveActivation());
   }
+}
+
+function cursorPayload(event, payload) {
+  if (event === 'preToolUse' && !payload.tool_name) {
+    return { tool_name: 'Write', tool_input: payload };
+  }
+  return payload;
+}
+
+function writeActivation(value) {
+  writeJson(path.join(runtimeRoot, 'activation.json'), value);
+}
+
+function inactiveActivation() {
+  return {
+    schemaVersion: '1.0.0',
+    status: 'INACTIVE_FAIL_CLOSED',
+    repoRoot,
+    contractId: '',
+    phaseId: '',
+    lockCommit: '',
+    scopeHash: '',
+    scope: emptyScope()
+  };
+}
+
+function discoveryActivation() {
+  return {
+    schemaVersion: '1.0.0',
+    status: 'DISCOVERY_READ_ONLY',
+    repoRoot,
+    contractId: '',
+    phaseId: '',
+    lockCommit: '',
+    scopeHash: '',
+    scope: {
+      ...emptyScope(),
+      allowedCommands: [
+        { cwd: '.', executable: 'git', args: ['status', '--short'], timeoutSeconds: 60, networkPolicy: 'FORBIDDEN', artifactPolicy: 'stdout/stderr only' }
+      ]
+    }
+  };
+}
+
+function activeActivation(scope) {
+  const fullScope = {
+    ...emptyScope(),
+    allowedCreatePaths: scope.allowedCreatePaths || [],
+    allowedModifyPaths: scope.allowedModifyPaths || [],
+    protectedPaths: scope.protectedPaths || [],
+    forbiddenPaths: scope.forbiddenPaths || []
+  };
+  return {
+    schemaVersion: '1.0.0',
+    status: 'ACTIVE_SIGNED_SCOPE',
+    repoRoot,
+    contractId: 'phase6-active-scope-smoke',
+    phaseId: 'PHASE6-PILOT',
+    lockCommit: gitHead(),
+    allowImplementationHead: true,
+    expiresAt: new Date(Date.now() + 60_000).toISOString(),
+    scopeHash: sha256Json(fullScope),
+    scope: fullScope
+  };
+}
+
+function emptyScope() {
+  return {
+    allowedCreatePaths: [],
+    allowedModifyPaths: [],
+    protectedPaths: [],
+    forbiddenPaths: [],
+    allowedCommands: [],
+    allowedMcpTools: [],
+    allowSubagents: false
+  };
+}
+
+function gitHead() {
+  return run('git', ['rev-parse', 'HEAD']).stdout.trim();
+}
+
+function sha256Json(value) {
+  return createHash('sha256').update(JSON.stringify(value)).digest('hex');
 }
 
 function assertExit(result, expected) {

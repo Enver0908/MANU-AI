@@ -87,10 +87,15 @@
       ],
       "allowedModifyPaths": [
         "app/src/components/admin-login-form.tsx",
-        "app/src/lib/phase-84d-customer-auth.ts",
-        "app/src/lib/phase-84d-customer-auth.test.ts",
+        "app/src/components/customer-login-form.tsx",
+        "app/src/lib/commercial-billing-store.ts",
+        "app/src/lib/phase-83b-commercial-entitlement-model.test.ts",
         "app/src/lib/phase-83b-commercial-entitlement-model.ts",
-        "app/src/lib/phase-83b-commercial-entitlement-model.test.ts"
+        "app/src/lib/phase-83f-commercial-admin.test.ts",
+        "app/src/lib/phase-83f-commercial-admin.ts",
+        "app/src/lib/phase-84d-customer-auth.test.ts",
+        "app/src/lib/phase-84d-customer-auth.ts",
+        "app/src/lib/supabase-rls.integration.test.ts"
       ],
       "protectedPaths": [
         "app/package.json",
@@ -102,6 +107,22 @@
         ".execution-governance/runtime/**"
       ],
       "allowedCommands": [
+        {
+          "cwd": "app",
+          "executable": "npm",
+          "args": [
+            "run",
+            "test",
+            "--",
+            "--run",
+            "src/lib/phase-84d-customer-auth.test.ts",
+            "src/lib/phase-83b-commercial-entitlement-model.test.ts",
+            "tests/commercial-auth-browser-boundary.test.ts"
+          ],
+          "timeoutSeconds": 180,
+          "networkPolicy": "FORBIDDEN",
+          "artifactPolicy": "stdout/stderr only"
+        },
         {
           "cwd": "app",
           "executable": "npm",
@@ -159,7 +180,35 @@
       "forbiddenPaths": [
         ".execution-governance/runtime/**"
       ],
-      "allowedCommands": [],
+      "allowedCommands": [
+        {
+          "cwd": "app",
+          "executable": "npm",
+          "args": [
+            "run",
+            "test",
+            "--",
+            "--run",
+            "src/lib/hosted-sandbox-runtime-fixes.test.ts",
+            "src/app/api/api-errors.test.ts",
+            "tests/request-id-error-propagation.test.ts"
+          ],
+          "timeoutSeconds": 180,
+          "networkPolicy": "FORBIDDEN",
+          "artifactPolicy": "stdout/stderr only"
+        },
+        {
+          "cwd": "app",
+          "executable": "npm",
+          "args": [
+            "run",
+            "typecheck"
+          ],
+          "timeoutSeconds": 180,
+          "networkPolicy": "FORBIDDEN",
+          "artifactPolicy": "stdout/stderr only"
+        }
+      ],
       "forbiddenCommands": [
         "push",
         "deploy"
@@ -182,14 +231,21 @@
         "app/tests/supabase-rsc-readonly-client.test.ts"
       ],
       "allowedModifyPaths": [
-        "app/src/lib/supabase.ts",
-        "app/src/lib/dashboard-server-auth.ts",
-        "app/src/lib/settings-server-read.ts",
-        "app/src/lib/auth-context.ts",
+        "app/src/app/account/recovery/page.tsx",
+        "app/src/app/admin/page.tsx",
+        "app/src/app/app-install/page.tsx",
+        "app/src/app/dashboard/ai-chat/[chatId]/page.tsx",
+        "app/src/app/dashboard/ai-chat/page.tsx",
+        "app/src/app/dashboard/layout.tsx",
+        "app/src/app/dashboard/more/page.tsx",
+        "app/src/app/dashboard/page.tsx",
+        "app/src/app/dashboard/settings/page.tsx",
+        "app/src/app/onboarding/page.tsx",
         "app/src/lib/commercial-admin-access.ts",
         "app/src/lib/commercial-install-access.ts",
-        "app/src/app/**/page.tsx",
-        "app/src/app/**/layout.tsx"
+        "app/src/lib/dashboard-server-auth.ts",
+        "app/src/lib/settings-server-read.ts",
+        "app/src/lib/supabase.ts"
       ],
       "protectedPaths": [
         "app/package.json",
@@ -198,7 +254,33 @@
       "forbiddenPaths": [
         ".execution-governance/runtime/**"
       ],
-      "allowedCommands": [],
+      "allowedCommands": [
+        {
+          "cwd": "app",
+          "executable": "npm",
+          "args": [
+            "run",
+            "test",
+            "--",
+            "--run",
+            "tests/supabase-rsc-readonly-client.test.ts"
+          ],
+          "timeoutSeconds": 180,
+          "networkPolicy": "FORBIDDEN",
+          "artifactPolicy": "stdout/stderr only"
+        },
+        {
+          "cwd": "app",
+          "executable": "npm",
+          "args": [
+            "run",
+            "typecheck"
+          ],
+          "timeoutSeconds": 180,
+          "networkPolicy": "FORBIDDEN",
+          "artifactPolicy": "stdout/stderr only"
+        }
+      ],
       "forbiddenCommands": [
         "push",
         "deploy"
@@ -221,12 +303,22 @@
         "app/tests/trusted-proxy-boundary.test.ts"
       ],
       "allowedModifyPaths": [
-        "app/src/lib/demo-fixture-access.ts",
-        "app/src/lib/rate-limit.ts",
+        "app/src/app/api/admin/auth/magic-link/route.ts",
+        "app/src/app/api/auth/email-change/route.ts",
+        "app/src/app/api/auth/magic-link/route.ts",
+        "app/src/app/api/auth/password-login/route.ts",
+        "app/src/app/api/auth/password-reset/route.ts",
+        "app/src/app/api/auth/password/route.ts",
+        "app/src/app/api/auth/reauthenticate/route.ts",
+        "app/src/app/api/demo-login/route.ts",
         "app/src/lib/commercial-public-rate-limit.ts",
+        "app/src/lib/demo-fixture-access.ts",
+        "app/src/lib/hosted-sandbox-tenant-isolation.test.ts",
+        "app/src/lib/phase-83g-entitlement-hardening.test.ts",
         "app/src/lib/phase-83g-entitlement-hardening.ts",
+        "app/src/lib/phase-85-stage-4d-auth-server.test.ts",
         "app/src/lib/phase-85-stage-4d-auth-server.ts",
-        "app/src/app/api/**/route.ts"
+        "app/src/lib/rate-limit.ts"
       ],
       "protectedPaths": [
         "app/package.json",
@@ -235,7 +327,36 @@
       "forbiddenPaths": [
         ".execution-governance/runtime/**"
       ],
-      "allowedCommands": [],
+      "allowedCommands": [
+        {
+          "cwd": "app",
+          "executable": "npm",
+          "args": [
+            "run",
+            "test",
+            "--",
+            "--run",
+            "src/lib/hosted-sandbox-tenant-isolation.test.ts",
+            "src/lib/phase-83g-entitlement-hardening.test.ts",
+            "src/lib/phase-85-stage-4d-auth-server.test.ts",
+            "tests/trusted-proxy-boundary.test.ts"
+          ],
+          "timeoutSeconds": 180,
+          "networkPolicy": "FORBIDDEN",
+          "artifactPolicy": "stdout/stderr only"
+        },
+        {
+          "cwd": "app",
+          "executable": "npm",
+          "args": [
+            "run",
+            "typecheck"
+          ],
+          "timeoutSeconds": 180,
+          "networkPolicy": "FORBIDDEN",
+          "artifactPolicy": "stdout/stderr only"
+        }
+      ],
       "forbiddenCommands": [
         "push",
         "deploy"

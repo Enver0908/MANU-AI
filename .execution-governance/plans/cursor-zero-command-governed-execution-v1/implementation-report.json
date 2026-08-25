@@ -5,10 +5,13 @@
   "implementer": "Codex or Cursor under the active signed scope",
   "implementationState": "EXECUTOR_VERIFIED",
   "changedFiles": [
-    "AGENTS.md",
     ".cursor/skills/manu-governed-execution/SKILL.md",
-    ".execution-governance/plans/cursor-zero-command-governed-execution-v1/lifecycle-record.json",
     ".execution-governance/plans/cursor-zero-command-governed-execution-v1/implementation-report.json",
+    ".execution-governance/plans/cursor-zero-command-governed-execution-v1/lifecycle-record.json",
+    ".execution-governance/plans/hosted-sandbox-remediation-v1-1/lock.json",
+    ".execution-governance/plans/hosted-sandbox-remediation-v1-1/scope-change-request-phase-1-exact-activation.json",
+    ".execution-governance/plans/hosted-sandbox-remediation-v1-1/scope.json",
+    "AGENTS.md",
     "docs/execution-governance/CURSOR_ZERO_COMMAND_GOVERNED_EXECUTION_EVIDENCE.md",
     "tools/execution-governance/activate-secure-cursor-guard.test.mjs",
     "tools/execution-governance/cursor-plan-resolver.mjs",
@@ -19,26 +22,23 @@
     "tools/execution-governance/governance-cli.mjs",
     "tools/execution-governance/governance-hardening-red-team.mjs",
     "tools/execution-governance/install-secure-cursor-guard.mjs",
+    "tools/execution-governance/lib/plan-package-validator.mjs",
+    "tools/execution-governance/red-team-harness.mjs",
     "tools/execution-governance/secure-cursor-guard.mjs"
   ],
   "commandsRun": [
     {
-      "command": "node tools/execution-governance/governance-cli.mjs preflight --plan-dir .execution-governance/plans/cursor-zero-command-governed-execution-v1 --phase-id CZC-PHASE-1 --allow-implementation-head",
+      "command": "node tools/execution-governance/governance-cli.mjs doctor",
       "exitCode": 0,
       "result": "PASS"
     },
     {
-      "command": "node --test tools/execution-governance/cursor-plan-resolver.test.mjs",
+      "command": "node tools/execution-governance/governance-cli.mjs validate",
       "exitCode": 0,
       "result": "PASS"
     },
     {
-      "command": "node --test tools/execution-governance/cursor-session.test.mjs",
-      "exitCode": 0,
-      "result": "PASS"
-    },
-    {
-      "command": "node --test tools/execution-governance/activate-secure-cursor-guard.test.mjs",
+      "command": "node --test tools/execution-governance/cursor-plan-resolver.test.mjs tools/execution-governance/cursor-session.test.mjs tools/execution-governance/activate-secure-cursor-guard.test.mjs",
       "exitCode": 0,
       "result": "PASS"
     },
@@ -48,28 +48,22 @@
       "result": "PASS"
     },
     {
-      "command": "node tools/execution-governance/install-secure-cursor-guard.mjs --dry-run",
+      "command": "node tools/execution-governance/red-team-harness.mjs",
       "exitCode": 0,
       "result": "PASS"
-    },
-    {
-      "command": "node tools/execution-governance/governance-cli.mjs doctor",
-      "exitCode": 0,
-      "result": "PASS"
-    },
-    {
-      "command": "node tools/execution-governance/governance-cli.mjs validate --plan-dir .execution-governance/plans/cursor-zero-command-governed-execution-v1 --phase-id CZC-PHASE-1",
-      "exitCode": 0,
-      "result": "PASS"
-    },
-    {
-      "command": "node tools/execution-governance/governance-cli.mjs run-checks --plan-dir .execution-governance/plans/cursor-zero-command-governed-execution-v1 --phase-id CZC-PHASE-1",
-      "exitCode": 0,
-      "result": "PASS",
-      "artifactPath": ".execution-governance/runtime/run-records/run-2026-08-25T16-56-59-013Z-2184.json"
     },
     {
       "command": "node tools/execution-governance/governance-cli.mjs validate --all-plans",
+      "exitCode": 0,
+      "result": "PASS"
+    },
+    {
+      "command": "node tools/execution-governance/governance-cli.mjs validate --plan-dir .execution-governance/plans/hosted-sandbox-remediation-v1-1 --phase-id PHASE-1",
+      "exitCode": 0,
+      "result": "PASS"
+    },
+    {
+      "command": "node tools/execution-governance/governance-cli.mjs activate-cursor --plan-dir .execution-governance/plans/hosted-sandbox-remediation-v1-1 --phase-id PHASE-1 --allow-implementation-head",
       "exitCode": 0,
       "result": "PASS"
     },
@@ -79,26 +73,30 @@
       "result": "PASS"
     },
     {
-      "command": "node tools/execution-governance/governance-cli.mjs scope-check --plan-dir .execution-governance/plans/cursor-zero-command-governed-execution-v1 --phase-id CZC-PHASE-1",
-      "exitCode": 0,
-      "result": "PASS"
+      "command": "node tools/execution-governance/install-secure-cursor-guard.mjs",
+      "exitCode": 1,
+      "result": "BLOCKED_EPUBLISHED_ADMIN_REQUIRED"
     },
     {
-      "command": "node tools/execution-governance/governance-cli.mjs postflight --plan-dir .execution-governance/plans/cursor-zero-command-governed-execution-v1 --phase-id CZC-PHASE-1 --allow-implementation-head",
-      "exitCode": 0,
-      "result": "PASS"
+      "command": "node tools/execution-governance/install-secure-cursor-guard.mjs --verify",
+      "exitCode": 1,
+      "result": "BLOCKED_STALE_PROGRAMDATA_INSTALL"
     }
   ],
   "artifacts": [
+    ".execution-governance/plans/hosted-sandbox-remediation-v1-1/scope-change-request-phase-1-exact-activation.json",
     ".execution-governance/runtime/run-records/run-2026-08-25T16-56-59-013Z-2184.json",
     "docs/execution-governance/CURSOR_ZERO_COMMAND_GOVERNED_EXECUTION_EVIDENCE.md"
   ],
-  "scopeChangeRequests": [],
+  "scopeChangeRequests": [
+    "HSR11-PHASE-1-SCOPE-CHANGE-002"
+  ],
   "verifierChangeRequests": [],
   "waivers": [],
   "independentReview": "NOT_REQUESTED",
   "residualRisks": [
-    "ProgramData enterprise guard installation still requires the user to run the installer after commit so Cursor loads the updated beforeSubmitPrompt hook and resolver-aware launcher.",
+    "ProgramData enterprise guard installation is still stale because the non-elevated installer failed with EPERM while copying secure-cursor-guard.mjs. Cursor desktop will not get the new zero-command behavior until the installer is run elevated once.",
+    "HSR Phase 1 product implementation was not started; this change only narrows Phase 1 activation scope and governance behavior.",
     "Independent review remains NOT_REQUESTED."
   ]
 }

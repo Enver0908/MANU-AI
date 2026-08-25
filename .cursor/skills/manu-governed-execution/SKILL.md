@@ -1,3 +1,8 @@
+---
+name: manu-governed-execution
+description: Resolve and activate locked MANU-AI governed implementation plans when the user asks Cursor to apply a plan.
+---
+
 # MANU-AI Governed Execution
 
 Use this skill when the user asks Cursor to apply a MANU-AI governed implementation plan, including Turkish prompts such as `Bu planı uygula`, `Planı uygula`, or `Devam et`.

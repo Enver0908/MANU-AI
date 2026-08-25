@@ -220,9 +220,28 @@ function validateCrossFileCoverage(pkg, phaseId, errors) {
       if (!record.phaseId) errors.push(`${pkg.relPlanDir}: acceptance record ${record.requirementId} missing phaseId`);
     }
   }
+  for (const record of pkg.scope.requirements || []) {
+    for (const command of record.allowedCommands || []) {
+      validateCommandSpec(command, `${pkg.relPlanDir}/scope.json:${record.requirementId}`, errors);
+    }
+  }
+  for (const record of pkg.acceptance.acceptanceRecords || []) {
+    if (record.exactEvidenceCommandSpec) {
+      validateCommandSpec(record.exactEvidenceCommandSpec, `${pkg.relPlanDir}/acceptance.json:${record.requirementId}`, errors);
+    }
+  }
   if (phaseId) {
     const phaseScopeIds = (pkg.scope.requirements || []).filter((item) => item.phaseId === phaseId).map((item) => item.requirementId);
     if (phaseScopeIds.length === 0) errors.push(`${pkg.relPlanDir}: phase ${phaseId} has no scope records`);
+  }
+}
+
+function validateCommandSpec(spec, label, errors) {
+  if (typeof spec.cwd !== 'string' || !spec.cwd) errors.push(`${label}: command cwd is required`);
+  if (typeof spec.executable !== 'string' || !spec.executable) errors.push(`${label}: command executable is required`);
+  if (!Array.isArray(spec.args)) errors.push(`${label}: command args must be an array`);
+  if (/[;&|<>]/.test(spec.executable || '')) {
+    errors.push(`${label}: executable must be a single binary name/path, not a shell expression`);
   }
 }
 

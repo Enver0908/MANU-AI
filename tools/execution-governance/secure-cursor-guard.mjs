@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
+import { dirname } from 'node:path';
 import { existsSync, lstatSync, readFileSync, realpathSync } from 'node:fs';
 import path from 'node:path';
 
@@ -22,6 +23,7 @@ try {
 }
 
 function decide(event, payload) {
+  if (event === 'workspaceOpen' || event === 'sessionStart') return guardWorkspaceOpen(payload);
   if (event === 'beforeSubmitPrompt') return guardPrompt(payload);
   if (event === 'beforeReadFile') return guardRead(payload);
   if (event === 'beforeShellExecution') return guardShell(payload);
@@ -31,15 +33,29 @@ function decide(event, payload) {
   return deny(`Unhandled Cursor hook event: ${event}`);
 }
 
+function guardWorkspaceOpen() {
+  const activation = loadActivation();
+  if (activation?.status === 'ACTIVE_SIGNED_SCOPE') {
+    try {
+      assertActiveActivation(activation);
+      return allow('active signed scope remains valid');
+    } catch {
+      return writeDiscoveryActivation('workspace opened with stale active scope');
+    }
+  }
+  return writeDiscoveryActivation('workspace opened in discovery read-only mode');
+}
+
 function guardPrompt(payload) {
   const prompt = String(payload.prompt || payload.text || payload.message || payload.user_message || '');
   if (!/\b(bu plan[ıi] uygula|plani uygula|planı uygula|apply this plan|apply the plan)\b/i.test(prompt)) {
     return allow('prompt has no governed execution intent');
   }
-  return {
-    permission: 'allow',
-    user_message: 'MANU-AI governed execution intent detected. Resolve plan and phase through cursor-session auto-preflight; prompt text is not scope authority.'
-  };
+  const activation = runAutoActivation(prompt);
+  if (activation.status !== 0) {
+    return deny(`MANU-AI governed execution intent detected, but activation failed: ${summarize(activation.stdout, activation.stderr)}`);
+  }
+  return allow('MANU-AI governed execution activated from locked machine plan. Prompt text was used only as intent/plan hint, not scope authority.');
 }
 
 function guardPreToolUse(payload) {
@@ -126,7 +142,7 @@ function guardFileMutation(payload, toolName) {
     if (isGitPath(rel)) return deny(`Git internals are never mutable through Cursor hooks: ${rel}`);
     if (!activation) return deny(`No external governance activation found. Mutation blocked: ${rel}`);
     if (activation.status !== 'ACTIVE_SIGNED_SCOPE') return deny(`Activation status does not allow mutation: ${activation.status || 'missing'}`);
-    if (!isAllowedPath(rel, activation.scope)) {
+    if (!isAllowedMutationPath(rel, item, activation.scope)) {
       return deny(`Path is outside active signed governance scope: ${rel}`);
     }
   }
@@ -157,6 +173,9 @@ function loadActivation() {
 function assertActivationIntegrity(activation) {
   if (activation.schemaVersion !== '1.0.0') throw new Error('activation schemaVersion mismatch');
   if (!activation.contractId || !activation.phaseId) throw new Error('activation identity missing');
+  if (activation.expiresAt && Date.parse(activation.expiresAt) <= Date.now()) {
+    throw new Error('activation lease expired');
+  }
   if (!activation.lockCommit || !/^[0-9a-f]{40}$/i.test(activation.lockCommit)) {
     throw new Error('activation lockCommit is missing or invalid');
   }
@@ -186,12 +205,14 @@ function guardDiscoveryShell(command, parsed, cwd, activation) {
   return allow('shell command allowed by discovery read-only scope');
 }
 
-function isAllowedPath(rel, scope) {
-  const allowed = new Set([...(scope?.allowedCreatePaths || []), ...(scope?.allowedModifyPaths || [])].map(normalizeRel));
+function isAllowedMutationPath(rel, originalPath, scope) {
+  const createAllowed = new Set((scope?.allowedCreatePaths || []).map(normalizeRel));
+  const modifyAllowed = new Set((scope?.allowedModifyPaths || []).map(normalizeRel));
   const protectedPaths = (scope?.protectedPaths || []).map(normalizeRel);
   const forbidden = (scope?.forbiddenPaths || []).map(normalizeRel);
   if (matchesAny(rel, protectedPaths) || matchesAny(rel, forbidden)) return false;
-  return allowed.has(rel) || matchesAny(rel, [...allowed].filter((item) => item.includes('*')));
+  const absolute = path.isAbsolute(originalPath) ? originalPath : path.resolve(REPO_ROOT, originalPath);
+  return existsSync(absolute) ? modifyAllowed.has(rel) : createAllowed.has(rel);
 }
 
 function normalizeToolName(value) {
@@ -252,6 +273,14 @@ function normalizeRepoPath(value) {
     const real = realpathSync.native(absolute);
     const realRel = path.relative(realpathSync.native(REPO_ROOT), real);
     if (realRel.startsWith('..') || path.isAbsolute(realRel)) throw new Error(`path escapes repo through realpath: ${rel}`);
+  } else {
+    const parent = path.resolve(dirname(absolute));
+    if (existsSync(parent)) {
+      const realParentRel = path.relative(realpathSync.native(REPO_ROOT), realpathSync.native(parent));
+      if (realParentRel.startsWith('..') || path.isAbsolute(realParentRel)) {
+        throw new Error(`new path parent escapes repo through realpath: ${rel}`);
+      }
+    }
   }
   return normalizeRel(rel);
 }
@@ -328,11 +357,49 @@ function isAncestorCommit(ancestor, descendant) {
 }
 
 function allow(reason) {
-  return { permission: 'allow', user_message: reason };
+  return { permission: 'allow', continue: true, user_message: reason };
 }
 
 function deny(message) {
-  return { permission: 'deny', user_message: message };
+  return { permission: 'deny', continue: false, user_message: message };
+}
+
+function writeDiscoveryActivation(reason) {
+  const result = spawnSync(process.execPath, [
+    'tools/execution-governance/cursor-session-broker.mjs',
+    '--discovery',
+    '--repo',
+    REPO_ROOT
+  ], {
+    cwd: REPO_ROOT,
+    encoding: 'utf8',
+    shell: false,
+    windowsHide: true
+  });
+  if (result.status !== 0) {
+    return deny(`Discovery activation failed: ${summarize(result.stdout, result.stderr)}`);
+  }
+  return allow(reason);
+}
+
+function runAutoActivation(prompt) {
+  return spawnSync(process.execPath, [
+    'tools/execution-governance/cursor-session.mjs',
+    'auto-activate',
+    '--prompt',
+    prompt
+  ], {
+    cwd: REPO_ROOT,
+    encoding: 'utf8',
+    shell: false,
+    windowsHide: true,
+    env: { ...process.env, MANU_GOVERNANCE_SKIP_RED_TEAM: '1' }
+  });
+}
+
+function summarize(stdout, stderr) {
+  const text = `${stdout || ''}\n${stderr || ''}`.trim();
+  return text.length > 800 ? `${text.slice(0, 800)}...` : text || 'no detail';
 }
 
 function findRepoRoot(start) {
