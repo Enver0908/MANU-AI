@@ -1,4 +1,4 @@
-import { NextResponse, type NextRequest } from "next/server";
+﻿import { NextResponse, type NextRequest } from "next/server";
 import { createSupabaseServerClient, isSupabaseConfigured } from "./lib/supabase";
 import {
   isAdminHost,
@@ -6,12 +6,17 @@ import {
   shouldRewriteAdminHostPath,
 } from "./lib/phase-84f-admin-console";
 import { resolveAppBaseUrl } from "./lib/phase-84d-customer-auth";
+import { applyHostedSandboxSecurityHeaders } from "./lib/hosted-sandbox-security-headers";
 import {
   isAuthenticatedMutationMethod,
   isClientUpdateRequired,
   resolveAuthenticatedMutationPolicy,
   SIRIUSAI_CLIENT_VERSION_HEADER,
 } from "./lib/phase-85-stage-5-shell-pwa";
+
+function withHostedSandboxSecurityHeaders(response: NextResponse) {
+  return applyHostedSandboxSecurityHeaders(response);
+}
 
 function enforceClientVersionForAuthenticatedMutation(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
@@ -48,7 +53,7 @@ export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
   const versionBlock = enforceClientVersionForAuthenticatedMutation(request);
-  if (versionBlock) return versionBlock;
+  if (versionBlock) return withHostedSandboxSecurityHeaders(versionBlock);
 
   if (isAdminHost(hostname) && shouldRewriteAdminHostPath(pathname)) {
     const url = request.nextUrl.clone();
@@ -76,18 +81,18 @@ export async function proxy(request: NextRequest) {
         await supabase.auth.getUser();
       }
 
-      return response;
+      return withHostedSandboxSecurityHeaders(response);
     }
 
-    return NextResponse.rewrite(url);
+    return withHostedSandboxSecurityHeaders(NextResponse.rewrite(url));
   }
 
   if (pathname === "/commercial-admin" || pathname === "/commercial-admin/") {
-    return NextResponse.redirect(new URL("/admin", request.url));
+    return withHostedSandboxSecurityHeaders(NextResponse.redirect(new URL("/admin", request.url)));
   }
 
   if (!pathname.startsWith("/dashboard")) {
-    return NextResponse.next();
+    return withHostedSandboxSecurityHeaders(NextResponse.next());
   }
 
   if (isSupabaseConfigured()) {
@@ -117,20 +122,20 @@ export async function proxy(request: NextRequest) {
     if (!user) {
       const loginUrl = new URL("/login", resolveAppBaseUrl());
       loginUrl.searchParams.set("next", `${request.nextUrl.pathname}${request.nextUrl.search}`);
-      return NextResponse.redirect(loginUrl);
+      return withHostedSandboxSecurityHeaders(NextResponse.redirect(loginUrl));
     }
 
-    return response;
+    return withHostedSandboxSecurityHeaders(response);
   }
 
   const isLocalDev = hostname === "localhost" || hostname === "127.0.0.1";
   const isDemoActive = request.cookies.get("manu_ai_demo_session")?.value === "active";
 
   if (!isLocalDev && !isDemoActive) {
-    return NextResponse.redirect(new URL("/", resolveAppBaseUrl()));
+    return withHostedSandboxSecurityHeaders(NextResponse.redirect(new URL("/", resolveAppBaseUrl())));
   }
 
-  return NextResponse.next();
+  return withHostedSandboxSecurityHeaders(NextResponse.next());
 }
 
 export const config = {

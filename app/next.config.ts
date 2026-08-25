@@ -85,6 +85,23 @@ const shouldSyncSw = process.env.NODE_ENV === "production" || process.argv.some(
 const swCacheVersion = syncServiceWorkerCacheVersion(repoRoot, identity.releaseId, shouldSyncSw);
 
 const nextConfig: NextConfig = {
+  poweredByHeader: false,
+  async headers() {
+    return [
+      {
+        source: "/sw.js",
+        headers: [{ key: "Cache-Control", value: "no-cache" }],
+      },
+      {
+        source: "/manifest.webmanifest",
+        headers: [{ key: "Cache-Control", value: "no-cache" }],
+      },
+      {
+        source: "/_next/static/:path*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+      },
+    ];
+  },
   transpilePackages: ["dietitian-ai-assistant-architecture"],
   experimental: {
     externalDir: true,

@@ -1,71 +1,89 @@
 {
-    "verifierChangeRequests":  [
-
-                               ],
-    "waivers":  [
-                    {
-                        "requirementId":  "HS-VERIFY-002",
-                        "reason":  "Full Playwright requires production build; build fails on pre-existing node:crypto webpack issue.",
-                        "waiverId":  "HS-FAZ-4-PLAYWRIGHT-BLOCKED"
-                    },
-                    {
-                        "requirementId":  "HS-VERIFY-001",
-                        "reason":  "release:verify includes production build gate.",
-                        "waiverId":  "HS-FAZ-4-RELEASE-VERIFY-BLOCKED"
-                    }
-                ],
-    "residualRisks":  [
-                          "Full Playwright and release:verify blocked on build.",
-                          "Production remains NO-GO."
-                      ],
-    "artifacts":  [
-                      "docs/execution-governance/HOSTED_SANDBOX_PHASE_4_RELEASE_IDENTITY_EVIDENCE.md"
-                  ],
-    "changedFiles":  [
-                         "app/scripts/lib/release-identity.mjs",
-                         "app/src/lib/release-identity.ts",
-                         "app/src/lib/hosted-sandbox-release-identity.test.ts",
-                         "app/next.config.ts",
-                         "app/src/lib/phase-85-stage-5-shell-contracts.ts",
-                         "app/src/lib/phase-85-stage-5-shell-contracts.test.ts",
-                         "app/src/lib/phase-85-stage-5-shell-store.ts",
-                         "app/src/lib/phase-85-stage-5-shell-pwa.ts",
-                         "app/src/lib/phase-85-stage-5-shell-pwa.test.ts",
-                         "app/src/app/layout.tsx",
-                         "app/public/sw.js",
-                         "app/scripts/release-verify.mjs",
-                         "app/scripts/verify-stage-5-shell.mjs",
-                         "app/tests/visual/stage-7/stage-7-network.ts",
-                         "docs/execution-governance/HOSTED_SANDBOX_PHASE_4_RELEASE_IDENTITY_EVIDENCE.md",
-                         ".execution-governance/plans/hosted-sandbox-environment-assurance-v1/lifecycle-record.json",
-                         ".execution-governance/plans/hosted-sandbox-environment-assurance-v1/implementation-report.json",
-                         ".execution-governance/plans/hosted-sandbox-environment-assurance-v1/acceptance.json",
-                         "HANDOFF_FOR_NEXT_CODEX.md"
-                     ],
-    "commandsRun":  [
-                        {
-                            "exitCode":  0,
-                            "command":  "cd app \u0026\u0026 npx vitest run (Faz 4 oracle files)",
-                            "result":  "PASS 22/22"
-                        },
-                        {
-                            "exitCode":  0,
-                            "command":  "cd app \u0026\u0026 npm run typecheck",
-                            "result":  "PASS"
-                        },
-                        {
-                            "exitCode":  0,
-                            "command":  "release identity gate",
-                            "result":  "PASS hs-0256ec38b415-48f0979f062a"
-                        }
-                    ],
-    "scopeChangeRequests":  [
-
-                            ],
-    "implementationState":  "IMPLEMENTED_UNVERIFIED",
-    "contractId":  "hosted-sandbox-environment-assurance-v1",
-    "independentReview":  "NOT_REQUESTED",
-    "schemaVersion":  "1.0.0",
-    "phaseId":  "HS-FAZ-4",
-    "implementer":  "Cursor Composer"
+  "verifierChangeRequests": [],
+  "waivers": [
+    {
+      "requirementId": "HS-VERIFY-002",
+      "reason": "Full Playwright requires production build; build fails on pre-existing node:crypto webpack issue.",
+      "waiverId": "HS-FAZ-4-PLAYWRIGHT-BLOCKED"
+    },
+    {
+      "requirementId": "HS-VERIFY-001",
+      "reason": "release:verify includes production build gate.",
+      "waiverId": "HS-FAZ-4-RELEASE-VERIFY-BLOCKED"
+    }
+  ],
+  "residualRisks": [
+    "Full Playwright and release:verify blocked on build.",
+    "Production remains NO-GO."
+  ],
+  "artifacts": [
+    "docs/execution-governance/HOSTED_SANDBOX_PHASE_4_RELEASE_IDENTITY_EVIDENCE.md",
+    "docs/execution-governance/HOSTED_SANDBOX_PHASE_5_CI_DEPLOY_NETWORK_EVIDENCE.md"
+  ],
+  "changedFiles": [
+    ".execution-governance/plans/hosted-sandbox-environment-assurance-v1/acceptance.json",
+    ".execution-governance/plans/hosted-sandbox-environment-assurance-v1/implementation-report.json",
+    ".execution-governance/plans/hosted-sandbox-environment-assurance-v1/lifecycle-record.json",
+    ".github/workflows/hosted-sandbox-deploy.yml",
+    ".github/workflows/hosted-sandbox-migration.yml",
+    ".github/workflows/hosted-sandbox-product-ci.yml",
+    "HANDOFF_FOR_NEXT_CODEX.md",
+    "app/next.config.ts",
+    "app/public/sw.js",
+    "app/scripts/lib/release-identity.mjs",
+    "app/scripts/release-verify.mjs",
+    "app/scripts/verify-stage-5-shell.mjs",
+    "app/src/app/layout.tsx",
+    "app/src/lib/hosted-sandbox-release-identity.test.ts",
+    "app/src/lib/hosted-sandbox-security-headers.test.ts",
+    "app/src/lib/hosted-sandbox-security-headers.ts",
+    "app/src/lib/phase-85-stage-5-shell-contracts.test.ts",
+    "app/src/lib/phase-85-stage-5-shell-contracts.ts",
+    "app/src/lib/phase-85-stage-5-shell-pwa.test.ts",
+    "app/src/lib/phase-85-stage-5-shell-pwa.ts",
+    "app/src/lib/phase-85-stage-5-shell-store.ts",
+    "app/src/lib/release-identity.ts",
+    "app/src/proxy.ts",
+    "app/tests/visual/stage-7/stage-7-network.ts",
+    "docs/execution-governance/HOSTED_SANDBOX_PHASE_4_RELEASE_IDENTITY_EVIDENCE.md",
+    "docs/execution-governance/HOSTED_SANDBOX_PHASE_5_CI_DEPLOY_NETWORK_EVIDENCE.md",
+    "tools/hosted-sandbox/deploy/build-release-artifact.mjs",
+    "tools/hosted-sandbox/deploy/deploy-hosted-release.mjs",
+    "tools/hosted-sandbox/deploy/hosted-sandbox-deploy.test.mjs",
+    "tools/hosted-sandbox/deploy/install-workflows.mjs",
+    "tools/hosted-sandbox/deploy/run-smoke-check.mjs",
+    "tools/hosted-sandbox/deploy/verify-workflow-hardening.mjs",
+    "tools/hosted-sandbox/deploy/workflow-templates/hosted-sandbox-deploy.yml",
+    "tools/hosted-sandbox/deploy/workflow-templates/hosted-sandbox-migration.yml",
+    "tools/hosted-sandbox/deploy/workflow-templates/hosted-sandbox-product-ci.yml"
+  ],
+  "commandsRun": [
+    {
+      "command": "node --test tools/hosted-sandbox/deploy/hosted-sandbox-deploy.test.mjs",
+      "exitCode": 0,
+      "result": "PASS 6/6"
+    },
+    {
+      "command": "cd app && npx vitest run src/lib/hosted-sandbox-security-headers.test.ts",
+      "exitCode": 0,
+      "result": "PASS 1/1"
+    },
+    {
+      "command": "node tools/hosted-sandbox/deploy/verify-workflow-hardening.mjs",
+      "exitCode": 0,
+      "result": "PASS"
+    },
+    {
+      "command": "node tools/hosted-sandbox/deploy/build-release-artifact.mjs --manifest-only",
+      "exitCode": 0,
+      "result": "PASS"
+    }
+  ],
+  "scopeChangeRequests": [],
+  "implementationState": "IMPLEMENTED_UNVERIFIED",
+  "contractId": "hosted-sandbox-environment-assurance-v1",
+  "independentReview": "NOT_REQUESTED",
+  "schemaVersion": "1.0.0",
+  "phaseId": "HS-FAZ-5",
+  "implementer": "Cursor Composer"
 }

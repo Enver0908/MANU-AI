@@ -1,0 +1,67 @@
+name: Hosted Sandbox Product CI
+
+on:
+  pull_request:
+    branches: ["**"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hosted-sandbox-product-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  product-ci:
+    name: Product CI and artifact manifest
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      MANU_CI_NO_PRODUCTION_EFFECTS: "true"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+
+      - name: Install app dependencies
+        working-directory: app
+        run: npm ci
+
+      - name: Lint and typecheck
+        working-directory: app
+        run: |
+          npm run lint
+          npm run typecheck
+
+      - name: Hosted sandbox oracle tests
+        working-directory: app
+        run: |
+          npx vitest run src/lib/hosted-sandbox-release-identity.test.ts src/lib/hosted-sandbox-security-headers.test.ts
+
+      - name: Deploy machinery tests
+        run: node --test tools/hosted-sandbox/deploy/hosted-sandbox-deploy.test.mjs
+
+      - name: Install hosted sandbox workflows
+        run: node tools/hosted-sandbox/deploy/install-workflows.mjs
+
+      - name: Verify workflow hardening
+        run: node tools/hosted-sandbox/deploy/verify-workflow-hardening.mjs
+
+      - name: Verify nginx template
+        run: node tools/hosted-sandbox/deploy/verify-nginx-template.mjs
+
+      - name: Build release manifest
+        run: node tools/hosted-sandbox/deploy/build-release-artifact.mjs --manifest-only
+
+      - name: Hosted sandbox verifier
+        run: node app/scripts/verify-hosted-sandbox-contracts.mjs

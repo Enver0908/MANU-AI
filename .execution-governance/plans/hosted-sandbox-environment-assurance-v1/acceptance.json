@@ -369,6 +369,178 @@
       "forbiddenEquivalences": [
         "Evidence prose is not PASS"
       ]
+    },
+    {
+      "oracleType": "AUTOMATED",
+      "protectionMechanism": "Committed deploy oracle scripts and workflow templates.",
+      "expectedExitCode": 0,
+      "artifactType": "test output",
+      "artifactLocation": "local stdout",
+      "artifactRetentionPolicy": "Ephemeral.",
+      "artifactPrivacyPolicy": "No secrets or PHI.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": [
+        "Local checkout",
+        "Node.js"
+      ],
+      "independentVerifier": "NOT_REQUESTED unless user explicitly requests review",
+      "forbiddenEquivalences": [
+        "Evidence prose is not PASS"
+      ],
+      "requirementId": "HS-DEPLOY-001",
+      "authoritySource": "Hosted Sandbox plan Faz 5",
+      "observableRequirement": "Product CI workflow templates and hardening verifier exist.",
+      "oracleOwner": "hosted-sandbox deploy tests",
+      "oracleLocation": "tools/hosted-sandbox/deploy/hosted-sandbox-deploy.test.mjs",
+      "exactEvidenceCommand": "node --test tools/hosted-sandbox/deploy/hosted-sandbox-deploy.test.mjs",
+      "exactEvidenceCommandSpec": {
+        "cwd": ".",
+        "executable": "node",
+        "args": [
+          "--test",
+          "tools/hosted-sandbox/deploy/hosted-sandbox-deploy.test.mjs"
+        ],
+        "timeoutSeconds": 120,
+        "networkPolicy": "FORBIDDEN",
+        "artifactPolicy": "Runtime deploy sim only."
+      },
+      "preconditions": [
+        "Faz 5 workflow templates installed."
+      ],
+      "requiredAssertions": [
+        "Workflow hardening PASS for templates and .github/workflows copies."
+      ],
+      "requiredScenarioMatrix": [
+        "workflow hardening"
+      ],
+      "negativeControls": [
+        "Forbidden workflow patterns fail hardening."
+      ],
+      "expectedTestIds": [
+        "HS-DEPLOY-001-WORKFLOW"
+      ],
+      "expectedTestCountOrInventory": "Deploy test suite workflow hardening case.",
+      "passRule": "PASS when oracle exits 0.",
+      "failRule": "FAIL when hardening fails.",
+      "blockedRule": "BLOCKED when node test cannot run."
+    },
+    {
+      "oracleType": "AUTOMATED",
+      "protectionMechanism": "Committed deploy oracle scripts and workflow templates.",
+      "expectedExitCode": 0,
+      "artifactType": "test output",
+      "artifactLocation": "local stdout",
+      "artifactRetentionPolicy": "Ephemeral.",
+      "artifactPrivacyPolicy": "No secrets or PHI.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": [
+        "Local checkout",
+        "Node.js"
+      ],
+      "independentVerifier": "NOT_REQUESTED unless user explicitly requests review",
+      "forbiddenEquivalences": [
+        "Evidence prose is not PASS"
+      ],
+      "requirementId": "HS-DEPLOY-002",
+      "authoritySource": "Hosted Sandbox plan Faz 5",
+      "observableRequirement": "Atomic deploy dry-run and rollback smoke gate are enforced.",
+      "oracleOwner": "hosted-sandbox deploy tests",
+      "oracleLocation": "tools/hosted-sandbox/deploy/hosted-sandbox-deploy.test.mjs",
+      "exactEvidenceCommand": "node --test tools/hosted-sandbox/deploy/hosted-sandbox-deploy.test.mjs",
+      "exactEvidenceCommandSpec": {
+        "cwd": ".",
+        "executable": "node",
+        "args": [
+          "--test",
+          "tools/hosted-sandbox/deploy/hosted-sandbox-deploy.test.mjs"
+        ],
+        "timeoutSeconds": 120,
+        "networkPolicy": "FORBIDDEN",
+        "artifactPolicy": "Runtime deploy sim only."
+      },
+      "preconditions": [
+        "deploy-hosted-release.mjs present."
+      ],
+      "requiredAssertions": [
+        "Fingerprint mismatch blocks deploy.",
+        "Dry-run deploy PASS.",
+        "Smoke failure rolls back."
+      ],
+      "requiredScenarioMatrix": [
+        "fingerprint gate",
+        "dry-run",
+        "rollback"
+      ],
+      "negativeControls": [
+        "Forbidden deploy env flags fail closed."
+      ],
+      "expectedTestIds": [
+        "HS-DEPLOY-002-DEPLOY"
+      ],
+      "expectedTestCountOrInventory": "Deploy test suite deploy cases.",
+      "passRule": "PASS when oracle exits 0.",
+      "failRule": "FAIL when deploy gates regress.",
+      "blockedRule": "BLOCKED when node test cannot run."
+    },
+    {
+      "oracleType": "AUTOMATED",
+      "protectionMechanism": "Committed deploy oracle scripts and workflow templates.",
+      "expectedExitCode": 0,
+      "artifactType": "test output",
+      "artifactLocation": "local stdout",
+      "artifactRetentionPolicy": "Ephemeral.",
+      "artifactPrivacyPolicy": "No secrets or PHI.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": [
+        "Local checkout",
+        "Node.js"
+      ],
+      "independentVerifier": "NOT_REQUESTED unless user explicitly requests review",
+      "forbiddenEquivalences": [
+        "Evidence prose is not PASS"
+      ],
+      "requirementId": "HS-DEPLOY-003",
+      "authoritySource": "Hosted Sandbox plan Faz 5",
+      "observableRequirement": "Security headers and cache policies are applied in app and nginx template.",
+      "oracleOwner": "hosted-sandbox security header tests",
+      "oracleLocation": "app/src/lib/hosted-sandbox-security-headers.test.ts",
+      "exactEvidenceCommand": "cd app && npx vitest run src/lib/hosted-sandbox-security-headers.test.ts && node tools/hosted-sandbox/deploy/verify-nginx-template.mjs",
+      "exactEvidenceCommandSpec": {
+        "cwd": "app",
+        "executable": "npx",
+        "args": [
+          "vitest",
+          "run",
+          "src/lib/hosted-sandbox-security-headers.test.ts"
+        ],
+        "timeoutSeconds": 120,
+        "networkPolicy": "FORBIDDEN",
+        "artifactPolicy": "No runtime artifacts required."
+      },
+      "preconditions": [
+        "proxy.ts and next.config.ts patched."
+      ],
+      "requiredAssertions": [
+        "Security header bundle applied.",
+        "Nginx template verify PASS."
+      ],
+      "requiredScenarioMatrix": [
+        "security headers",
+        "nginx template"
+      ],
+      "negativeControls": [
+        "Missing CSP or HSTS fails tests or verifier."
+      ],
+      "expectedTestIds": [
+        "HS-DEPLOY-003-HEADERS"
+      ],
+      "expectedTestCountOrInventory": "One vitest file plus nginx verifier.",
+      "passRule": "PASS when both commands exit 0.",
+      "failRule": "FAIL when headers or nginx template regress.",
+      "blockedRule": "BLOCKED when vitest cannot run."
     }
   ]
 }

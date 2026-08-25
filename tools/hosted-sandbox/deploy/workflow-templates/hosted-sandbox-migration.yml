@@ -1,0 +1,47 @@
+name: Hosted Sandbox Migration
+
+on:
+  workflow_dispatch:
+    inputs:
+      commit_sha:
+        description: Optional commit SHA to fingerprint (defaults to checkout HEAD)
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hosted-sandbox-migration
+  cancel-in-progress: false
+
+jobs:
+  migration-gate:
+    name: Migration fingerprint manifest
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: hosted-sandbox-migration
+    env:
+      MANU_CI_NO_PRODUCTION_EFFECTS: "true"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          ref: ${{ inputs.commit_sha || github.sha }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Build migration fingerprint manifest
+        run: node tools/hosted-sandbox/deploy/build-release-artifact.mjs --manifest-only
+
+      - name: Upload migration fingerprint manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: hosted-sandbox-migration-manifest
+          path: .execution-governance/runtime/hosted-sandbox/artifacts/**/release-manifest.json
+          if-no-files-found: error
