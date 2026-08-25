@@ -33,6 +33,27 @@ const activation = {
 activation.scopeHash = sha256Json(activation.scope);
 writeFileSync(path.join(tempRoot, 'activation.json'), `${JSON.stringify(activation, null, 2)}\n`, 'utf8');
 
+const discoveryActivation = {
+  schemaVersion: '1.0.0',
+  status: 'DISCOVERY_READ_ONLY',
+  repoRoot,
+  contractId: '',
+  phaseId: '',
+  lockCommit: '',
+  scopeHash: '',
+  scope: {
+    allowedCreatePaths: [],
+    allowedModifyPaths: [],
+    protectedPaths: [],
+    forbiddenPaths: [],
+    allowedCommands: [
+      { cwd: '.', executable: 'git', args: ['status', '--short', '--branch'], timeoutSeconds: 60, networkPolicy: 'FORBIDDEN', artifactPolicy: 'stdout/stderr only' }
+    ],
+    allowedMcpTools: [],
+    allowSubagents: false
+  }
+};
+
 const cases = [
   {
     id: 'deny-out-of-scope-write',
@@ -131,6 +152,34 @@ const cases = [
     event: 'beforeReadFile',
     payload: { path: '.env' },
     expect: 2
+  },
+  {
+    id: 'allow-discovery-read-only-git-status',
+    event: 'beforeShellExecution',
+    payload: { command: 'git status --short --branch', cwd: '.' },
+    activationOverride: discoveryActivation,
+    expect: 0
+  },
+  {
+    id: 'deny-production-command-in-discovery',
+    event: 'beforeShellExecution',
+    payload: { command: 'git push origin HEAD', cwd: '.' },
+    activationOverride: discoveryActivation,
+    expect: 2
+  },
+  {
+    id: 'deny-prompt-derived-scope',
+    event: 'preToolUse',
+    payload: { tool_name: 'Write', tool_input: { file_path: 'docs/prompt-added.md' } },
+    activationOverride: discoveryActivation,
+    expect: 2
+  },
+  {
+    id: 'allow-governed-execution-prompt-intent',
+    event: 'beforeSubmitPrompt',
+    payload: { prompt: 'Bu planı uygula ve sadece kilitli scope ile ilerle.' },
+    activationOverride: discoveryActivation,
+    expect: 0
   },
   {
     id: 'deny-malformed-json',

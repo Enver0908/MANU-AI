@@ -9,6 +9,12 @@ const activationPath = path.join(externalRoot, 'activation.json');
 const request = parseRequest(process.argv.slice(2));
 
 try {
+  if (request.action === 'discovery') {
+    const discovery = discoveryReadOnlyActivation(request.repoRoot);
+    writeActivation(discovery);
+    emit({ status: 'PASS', action: 'discovery', activationPath });
+  }
+
   if (request.action === 'deactivate') {
     const inactive = inactiveActivation(request.repoRoot);
     writeActivation(inactive);
@@ -91,6 +97,10 @@ function parseRequest(args) {
       parsed.action = 'deactivate';
       continue;
     }
+    if (arg === '--discovery') {
+      parsed.action = 'discovery';
+      continue;
+    }
     if (arg === '--allow-implementation-head') {
       parsed.allowImplementationHead = true;
       continue;
@@ -107,9 +117,13 @@ function parseRequest(args) {
       parsed.phaseId = args[++i];
       continue;
     }
+    if (arg === '--request-nonce') {
+      parsed.requestNonce = args[++i];
+      continue;
+    }
     fail(`unknown argument: ${arg}`);
   }
-  if (!parsed.action) fail('missing --activate or --deactivate');
+  if (!parsed.action) fail('missing --activate, --deactivate, or --discovery');
   parsed.repoRoot = requireString(parsed.repoRoot, 'repoRoot');
   return parsed;
 }
@@ -168,6 +182,51 @@ function inactiveActivation(repoRoot) {
       allowSubagents: false
     }
   };
+}
+
+function discoveryReadOnlyActivation(repoRoot) {
+  return {
+    schemaVersion: '1.0.0',
+    status: 'DISCOVERY_READ_ONLY',
+    repoRoot,
+    contractId: '',
+    phaseId: '',
+    lockCommit: '',
+    scopeHash: '',
+    scope: {
+      allowedCreatePaths: [],
+      allowedModifyPaths: [],
+      protectedPaths: [],
+      forbiddenPaths: [
+        '.env',
+        '.env.*',
+        '**/*.pem',
+        '**/*.key'
+      ],
+      allowedCommands: discoveryCommands(),
+      allowedMcpTools: [],
+      allowSubagents: false
+    }
+  };
+}
+
+function discoveryCommands() {
+  return [
+    ['git', ['branch', '--show-current']],
+    ['git', ['status', '--short', '--branch']],
+    ['git', ['log', '-10', '--oneline', '--decorate']],
+    ['git', ['rev-parse', 'HEAD']],
+    ['node', ['tools/execution-governance/governance-cli.mjs', 'doctor']],
+    ['node', ['tools/execution-governance/governance-cli.mjs', 'validate']],
+    ['node', ['tools/execution-governance/governance-cli.mjs', 'cursor-session', '--session', 'auto-preflight']]
+  ].map(([executable, args]) => ({
+    cwd: '.',
+    executable,
+    args,
+    timeoutSeconds: 60,
+    networkPolicy: 'FORBIDDEN',
+    artifactPolicy: 'stdout/stderr only'
+  }));
 }
 
 function resolveExistingDirectory(input, label) {

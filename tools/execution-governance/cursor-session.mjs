@@ -2,16 +2,17 @@
 import { spawnSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
+import { resolveGovernedExecution } from './cursor-plan-resolver.mjs';
 
-const COMMANDS = new Set(['list', 'status', 'preflight', 'activate', 'deactivate', 'open']);
+const COMMANDS = new Set(['list', 'status', 'preflight', 'activate', 'deactivate', 'discovery', 'open', 'auto-preflight', 'auto-activate', 'auto-open']);
 const args = parseArgs(process.argv.slice(2));
 const repoRoot = resolveRepoRoot(args.repo);
 const command = args.command || 'status';
 const externalRoot = process.env.MANU_GOVERNANCE_ROOT || 'C:\\ProgramData\\MANU-AI-Governance';
 const activationPath = path.join(externalRoot, 'activation.json');
 const defaultPlanDir = '.execution-governance/plans/hosted-sandbox-remediation-v1-1';
-const planDir = args['plan-dir'] || defaultPlanDir;
-const phaseId = args['phase-id'] || '';
+let planDir = args['plan-dir'] || defaultPlanDir;
+let phaseId = args['phase-id'] || '';
 
 if (!COMMANDS.has(command)) {
   fail(`Unknown cursor-session command: ${command}`);
@@ -22,7 +23,11 @@ if (command === 'status') emit(statusReport());
 if (command === 'preflight') emit(preflightReport({ requirePhase: true }));
 if (command === 'activate') emit(activate());
 if (command === 'deactivate') emit(deactivate());
+if (command === 'discovery') emit(discovery());
 if (command === 'open') emit(openCursor());
+if (command === 'auto-preflight') emit(autoPreflight());
+if (command === 'auto-activate') emit(autoActivate());
+if (command === 'auto-open') emit(autoOpenCursor());
 
 function listPlans() {
   const plansRoot = path.join(repoRoot, '.execution-governance', 'plans');
@@ -86,6 +91,94 @@ function preflightReport({ requirePhase }) {
   return { status: outcome, repoRoot, planDir, phaseId, checks };
 }
 
+function autoPreflight() {
+  const resolved = resolveGovernedExecution({
+    repoRoot,
+    planDir: args['plan-dir'] || '',
+    prompt: args.prompt || '',
+    requireIntent: false
+  });
+  if (resolved.status !== 'PASS') return resolved;
+  const checks = [];
+  checks.push(runCheck('git status', 'git', ['status', '--short', '--branch']));
+  checks.push(runCheck('installer dry-run', 'node', ['tools/execution-governance/install-secure-cursor-guard.mjs', '--dry-run']));
+  checks.push(runCheck('doctor', 'node', ['tools/execution-governance/governance-cli.mjs', 'doctor']));
+  checks.push(runCheck('validate', 'node', ['tools/execution-governance/governance-cli.mjs', 'validate']));
+  checks.push(runCheck('validate selected plan', 'node', [
+    'tools/execution-governance/governance-cli.mjs',
+    'validate',
+    '--plan-dir',
+    resolved.planDir,
+    '--phase-id',
+    resolved.phaseId
+  ]));
+  checks.push(runCheck('red-team', 'node', ['tools/execution-governance/governance-hardening-red-team.mjs']));
+  checks.push(scopeExistenceCheckFor(resolved.planDir, resolved.phaseId));
+  checks.push(runCheck('activation dry-run', 'node', [
+    'tools/execution-governance/governance-cli.mjs',
+    'activate-cursor',
+    '--plan-dir',
+    resolved.planDir,
+    '--phase-id',
+    resolved.phaseId,
+    '--allow-implementation-head'
+  ]));
+  const outcome = checks.some((item) => item.status === 'CHANGE_REQUEST_REQUIRED')
+    ? 'CHANGE_REQUEST_REQUIRED'
+    : checks.every((item) => item.status === 'PASS') ? 'READY' : 'BLOCKED';
+  return { status: outcome, repoRoot, planDir: resolved.planDir, phaseId: resolved.phaseId, checks, resolved };
+}
+
+function autoActivate() {
+  const preflight = autoPreflight();
+  if (preflight.status !== 'READY') return preflight;
+  const resolved = preflight.resolved;
+  const previousPlanDir = planDir;
+  const previousPhaseId = phaseId;
+  planDir = resolved.planDir;
+  phaseId = resolved.phaseId;
+  try {
+    const broker = args.elevate ? runElevatedBroker('--activate') : runBroker('--activate');
+    if (broker.status !== 0) {
+      return {
+        status: 'BLOCKED',
+        repoRoot,
+        planDir,
+        phaseId,
+        reason: broker.stderr.trim() || broker.stdout.trim() || 'broker activation failed',
+        preflight,
+        resolved
+      };
+    }
+    return {
+      status: 'PASS',
+      repoRoot,
+      planDir,
+      phaseId,
+      broker: parseJsonOrText(broker.stdout),
+      preflight,
+      resolved
+    };
+  } finally {
+    planDir = previousPlanDir;
+    phaseId = previousPhaseId;
+  }
+}
+
+function autoOpenCursor() {
+  const activation = autoActivate();
+  if (activation.status !== 'PASS') return activation;
+  const cursor = findCursorCommand();
+  if (!cursor) return { status: 'BLOCKED', reason: 'Cursor command was not found on PATH.', activation };
+  const result = spawnSync(cursor, [repoRoot], { cwd: repoRoot, encoding: 'utf8', shell: false, windowsHide: true });
+  return {
+    status: result.status === 0 || result.status === null ? 'PASS' : 'BLOCKED',
+    cursor,
+    activation,
+    detail: result.stderr || result.stdout || 'Cursor launch requested.'
+  };
+}
+
 function activate() {
   const preflight = preflightReport({ requirePhase: true });
   if (preflight.status !== 'READY') return preflight;
@@ -120,6 +213,16 @@ function deactivate() {
   };
 }
 
+function discovery() {
+  const broker = args.elevate ? runElevatedBroker('--discovery') : runBroker('--discovery');
+  return {
+    status: broker.status === 0 ? 'PASS' : 'BLOCKED',
+    repoRoot,
+    activationPath,
+    broker: parseJsonOrText(broker.stdout || broker.stderr)
+  };
+}
+
 function openCursor() {
   const activation = activate();
   if (activation.status !== 'PASS') return activation;
@@ -135,11 +238,15 @@ function openCursor() {
 }
 
 function scopeExistenceCheck() {
-  const scopePath = path.join(repoRoot, ...normalizeRel(planDir).split('/'), 'scope.json');
-  const scope = JSON.parse(readFileSync(scopePath, 'utf8'));
+  return scopeExistenceCheckFor(planDir, phaseId);
+}
+
+function scopeExistenceCheckFor(targetPlanDir, targetPhaseId) {
+  const selectedScopePath = path.join(repoRoot, ...normalizeRel(targetPlanDir).split('/'), 'scope.json');
+  const scope = JSON.parse(readFileSync(selectedScopePath, 'utf8'));
   const missing = [];
   for (const requirement of scope.requirements || []) {
-    if (requirement.phaseId !== phaseId) continue;
+    if (requirement.phaseId !== targetPhaseId) continue;
     for (const rel of requirement.allowedModifyPaths || []) {
       if (!rel.includes('*') && !existsSync(path.join(repoRoot, ...normalizeRel(rel).split('/')))) missing.push(rel);
     }

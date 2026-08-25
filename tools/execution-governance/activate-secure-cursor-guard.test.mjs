@@ -9,6 +9,7 @@ import { spawnSync } from 'node:child_process';
 
 const repoRoot = git('rev-parse', '--show-toplevel');
 const script = path.join(repoRoot, 'tools', 'execution-governance', 'activate-secure-cursor-guard.mjs');
+const guardScript = path.join(repoRoot, 'tools', 'execution-governance', 'secure-cursor-guard.mjs');
 
 test('activation dry-run flattens locked plan scope without writing external state', () => {
   const root = mkdtempSync(path.join(tmpdir(), 'manu-gov-activate-'));
@@ -81,6 +82,29 @@ test('activation apply and deactivate write explicit external fail-closed state'
   }
 });
 
+test('discovery read-only allows safe read and denies mutation or secret read', () => {
+  const root = mkdtempSync(path.join(tmpdir(), 'manu-gov-discovery-'));
+  try {
+    writeFileSync(path.join(root, 'activation.json'), `${JSON.stringify(discoveryActivation(), null, 2)}\n`, 'utf8');
+    const safeRead = runGuard(root, 'beforeReadFile', { path: 'AGENTS.md' });
+    assert.equal(safeRead.status, 0, safeRead.stdout);
+    assert.equal(JSON.parse(safeRead.stdout).permission, 'allow');
+
+    const secretRead = runGuard(root, 'beforeReadFile', { path: '.env' });
+    assert.notEqual(secretRead.status, 0);
+    assert.equal(JSON.parse(secretRead.stdout).permission, 'deny');
+
+    const mutation = runGuard(root, 'preToolUse', {
+      tool_name: 'edit_file',
+      tool_input: { path: 'AGENTS.md' }
+    });
+    assert.notEqual(mutation.status, 0);
+    assert.match(JSON.parse(mutation.stdout).user_message, /does not allow mutation/);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
 function run(root, args) {
   return spawnSync('node', [script, ...args], {
     cwd: repoRoot,
@@ -88,6 +112,37 @@ function run(root, args) {
     shell: false,
     env: { ...process.env, MANU_GOVERNANCE_ROOT: root }
   });
+}
+
+function runGuard(root, event, payload) {
+  return spawnSync('node', [guardScript, event], {
+    cwd: repoRoot,
+    encoding: 'utf8',
+    shell: false,
+    input: JSON.stringify(payload),
+    env: { ...process.env, MANU_GOVERNANCE_ROOT: root, MANU_GOVERNANCE_TEST_MODE: '1' }
+  });
+}
+
+function discoveryActivation() {
+  return {
+    schemaVersion: '1.0.0',
+    status: 'DISCOVERY_READ_ONLY',
+    repoRoot,
+    contractId: '',
+    phaseId: '',
+    lockCommit: '',
+    scopeHash: '',
+    scope: {
+      allowedCreatePaths: [],
+      allowedModifyPaths: [],
+      protectedPaths: [],
+      forbiddenPaths: [],
+      allowedCommands: [],
+      allowedMcpTools: [],
+      allowSubagents: false
+    }
+  };
 }
 
 function git(...args) {

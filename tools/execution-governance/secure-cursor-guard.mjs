@@ -22,12 +22,24 @@ try {
 }
 
 function decide(event, payload) {
+  if (event === 'beforeSubmitPrompt') return guardPrompt(payload);
   if (event === 'beforeReadFile') return guardRead(payload);
   if (event === 'beforeShellExecution') return guardShell(payload);
   if (event === 'beforeMCPExecution') return guardMcp(payload);
   if (event === 'preToolUse') return guardPreToolUse(payload);
   if (event === 'afterFileEdit') return auditAfterFileEdit(payload);
   return deny(`Unhandled Cursor hook event: ${event}`);
+}
+
+function guardPrompt(payload) {
+  const prompt = String(payload.prompt || payload.text || payload.message || payload.user_message || '');
+  if (!/\b(bu plan[ıi] uygula|plani uygula|planı uygula|apply this plan|apply the plan)\b/i.test(prompt)) {
+    return allow('prompt has no governed execution intent');
+  }
+  return {
+    permission: 'allow',
+    user_message: 'MANU-AI governed execution intent detected. Resolve plan and phase through cursor-session auto-preflight; prompt text is not scope authority.'
+  };
 }
 
 function guardPreToolUse(payload) {
@@ -61,12 +73,16 @@ function guardRead(payload) {
 }
 
 function guardShell(payload) {
-  const activation = loadVerifiedActivation();
+  const activation = loadActivation();
   const command = extractCommand(payload);
   if (!command) return deny('Shell payload has no command.');
   const parsed = parseCommand(command);
   if (!parsed) return deny(`Shell command could not be parsed safely: ${command}`);
   const cwd = normalizeRepoPath(payload.cwd || payload.tool_input?.cwd || process.cwd());
+  if (activation?.status === 'DISCOVERY_READ_ONLY') {
+    return guardDiscoveryShell(command, parsed, cwd, activation);
+  }
+  assertActiveActivation(activation);
   const allowed = activation?.scope?.allowedCommands || [];
   const match = allowed.find((item) => commandSpecMatches(item, parsed, cwd));
   if (!match) {
@@ -79,7 +95,8 @@ function guardShell(payload) {
 }
 
 function guardMcp(payload) {
-  const activation = loadVerifiedActivation();
+  const activation = loadActivation();
+  assertActiveActivation(activation);
   const toolName = String(payload.tool_name || payload.name || payload.server_tool_name || '');
   const allowed = activation?.scope?.allowedMcpTools || [];
   if (!allowed.includes(toolName)) {
@@ -91,7 +108,8 @@ function guardMcp(payload) {
 }
 
 function guardTask(payload) {
-  const activation = loadVerifiedActivation();
+  const activation = loadActivation();
+  assertActiveActivation(activation);
   if (activation?.scope?.allowSubagents === true) {
     return allow('subagent tool allowed by active signed scope');
   }
@@ -107,6 +125,7 @@ function guardFileMutation(payload, toolName) {
     if (isSecretPath(rel)) return deny(`Secret-like file mutation is blocked: ${rel}`);
     if (isGitPath(rel)) return deny(`Git internals are never mutable through Cursor hooks: ${rel}`);
     if (!activation) return deny(`No external governance activation found. Mutation blocked: ${rel}`);
+    if (activation.status !== 'ACTIVE_SIGNED_SCOPE') return deny(`Activation status does not allow mutation: ${activation.status || 'missing'}`);
     if (!isAllowedPath(rel, activation.scope)) {
       return deny(`Path is outside active signed governance scope: ${rel}`);
     }
@@ -116,9 +135,14 @@ function guardFileMutation(payload, toolName) {
 
 function loadVerifiedActivation() {
   const activation = loadActivation();
-  if (!activation) throw new Error('activation file is missing');
-  assertActivationIntegrity(activation);
+  assertActiveActivation(activation);
   return activation;
+}
+
+function assertActiveActivation(activation) {
+  if (!activation) throw new Error('activation file is missing');
+  if (activation.status !== 'ACTIVE_SIGNED_SCOPE') throw new Error(`activation status is not active: ${activation.status || 'missing'}`);
+  assertActivationIntegrity(activation);
 }
 
 function loadActivation() {
@@ -132,7 +156,6 @@ function loadActivation() {
 
 function assertActivationIntegrity(activation) {
   if (activation.schemaVersion !== '1.0.0') throw new Error('activation schemaVersion mismatch');
-  if (activation.status !== 'ACTIVE_SIGNED_SCOPE') throw new Error(`activation status is not active: ${activation.status || 'missing'}`);
   if (!activation.contractId || !activation.phaseId) throw new Error('activation identity missing');
   if (!activation.lockCommit || !/^[0-9a-f]{40}$/i.test(activation.lockCommit)) {
     throw new Error('activation lockCommit is missing or invalid');
@@ -149,6 +172,18 @@ function assertActivationIntegrity(activation) {
   if (activation.scopeHash !== sha256Json(activation.scope)) {
     throw new Error('activation scopeHash mismatch');
   }
+}
+
+function guardDiscoveryShell(command, parsed, cwd, activation) {
+  if (commandMentionsNetwork(command)) {
+    return deny(`Network-capable command is blocked in discovery read-only mode: ${command}`);
+  }
+  const allowed = activation?.scope?.allowedCommands || [];
+  const match = allowed.find((item) => commandSpecMatches(item, parsed, cwd));
+  if (!match) {
+    return deny(`Shell command is outside discovery read-only scope: ${command}`);
+  }
+  return allow('shell command allowed by discovery read-only scope');
 }
 
 function isAllowedPath(rel, scope) {

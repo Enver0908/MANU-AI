@@ -77,7 +77,7 @@ Commands:
   activate-cursor
               Render or apply external Cursor activation for a locked plan.
   cursor-session
-              Run user-friendly Cursor phase status, preflight, activation, or launch automation.
+              Run user-friendly Cursor status, manual phase, or automatic governed execution automation.
 
 Options:
   --repo <path>          Repository root. Defaults to cwd or discovered Git root.
@@ -91,7 +91,8 @@ Options:
   --phase-id <id>       Phase identifier for activate-cursor.
   --allow-implementation-head
                         Allow implementation commits after the lock commit.
-  --session <command>   cursor-session action: list, status, preflight, activate, deactivate, or open.
+  --session <command>   cursor-session action: list, status, preflight, activate, deactivate, discovery, open, auto-preflight, auto-activate, or auto-open.
+  --prompt <text>       Optional Cursor prompt text for automatic governed execution intent.
   --elevate             cursor-session uses the installed elevated broker.
 `);
 }
@@ -479,6 +480,7 @@ function cursorSession({ repoRoot, options }) {
   const args = [script, sessionCommand, '--repo', repoRoot];
   if (options['plan-dir']) args.push('--plan-dir', options['plan-dir']);
   if (options['phase-id']) args.push('--phase-id', options['phase-id']);
+  if (options.prompt) args.push('--prompt', options.prompt);
   if (options.elevate) args.push('--elevate');
   const result = spawnSync(process.execPath, args, {
     cwd: repoRoot,

@@ -64,6 +64,39 @@ test('installer dry-run reports broker launcher and desktop shortcut checks', ()
   assert.ok(names.has('desktop shortcut exists'));
 });
 
+test('cursor session auto-preflight resolves the locked zero-command plan without a phase id', () => {
+  const result = spawnSync('node', [cli, 'cursor-session', '--session', 'auto-preflight', '--plan-dir', '.execution-governance/plans/cursor-zero-command-governed-execution-v1'], {
+    cwd: repoRoot,
+    encoding: 'utf8',
+    shell: false
+  });
+  assert.equal(result.status, 0, result.stderr);
+  const report = JSON.parse(result.stdout);
+  assert.equal(report.status, 'READY');
+  assert.equal(report.resolved.phaseId, 'CZC-PHASE-1');
+});
+
+test('cursor session auto-activate writes the resolved phase activation without a phase id', () => {
+  const externalRoot = mkdtempSync(path.join(tmpdir(), 'manu-cursor-auto-'));
+  try {
+    const result = spawnSync('node', [cli, 'cursor-session', '--session', 'auto-activate', '--plan-dir', '.execution-governance/plans/cursor-zero-command-governed-execution-v1'], {
+      cwd: repoRoot,
+      encoding: 'utf8',
+      shell: false,
+      env: { ...process.env, MANU_GOVERNANCE_ROOT: externalRoot }
+    });
+    assert.equal(result.status, 0, result.stderr);
+    const report = JSON.parse(result.stdout);
+    assert.equal(report.status, 'PASS');
+    assert.equal(report.resolved.phaseId, 'CZC-PHASE-1');
+    const activation = JSON.parse(readFileSync(path.join(externalRoot, 'activation.json'), 'utf8'));
+    assert.equal(activation.status, 'ACTIVE_SIGNED_SCOPE');
+    assert.equal(activation.phaseId, 'CZC-PHASE-1');
+  } finally {
+    rmSync(externalRoot, { recursive: true, force: true });
+  }
+});
+
 function runBroker(externalRoot, args) {
   return spawnSync('node', [broker, ...args], {
     cwd: repoRoot,

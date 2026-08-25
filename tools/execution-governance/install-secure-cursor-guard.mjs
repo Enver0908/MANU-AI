@@ -12,6 +12,8 @@ const targetGuard = path.join(externalRoot, 'secure-cursor-guard.mjs');
 const sourceBroker = path.join(repoRoot, 'tools', 'execution-governance', 'cursor-session-broker.mjs');
 const targetBroker = path.join(externalRoot, 'cursor-session-broker.mjs');
 const sourceSession = path.join(repoRoot, 'tools', 'execution-governance', 'cursor-session.mjs');
+const sourceResolver = path.join(repoRoot, 'tools', 'execution-governance', 'cursor-plan-resolver.mjs');
+const sourceSkill = path.join(repoRoot, '.cursor', 'skills', 'manu-governed-execution', 'SKILL.md');
 const targetLauncher = path.join(externalRoot, 'MANU-AI Cursor Session.ps1');
 const desktopShortcut = path.join(resolveDesktopDirectory(), 'MANU-AI Cursor.lnk');
 const activationPath = path.join(externalRoot, 'activation.json');
@@ -24,6 +26,7 @@ const verifyOnly = args.has('--verify');
 if (!existsSync(sourceGuard)) fail(`source guard missing: ${sourceGuard}`);
 if (!existsSync(sourceBroker)) fail(`source broker missing: ${sourceBroker}`);
 if (!existsSync(sourceSession)) fail(`source session script missing: ${sourceSession}`);
+if (!existsSync(sourceResolver)) fail(`source resolver missing: ${sourceResolver}`);
 
 if (!verifyOnly && !dryRun) {
   mkdirSync(externalRoot, { recursive: true });
@@ -47,6 +50,8 @@ process.exit(report.status === 'PASS' ? 0 : 1);
 function verifyInstall() {
   const checks = [];
   checks.push(check('source guard exists', existsSync(sourceGuard), sourceGuard));
+  checks.push(check('source resolver exists', existsSync(sourceResolver), sourceResolver));
+  checks.push(check('workspace governed execution skill exists', existsSync(sourceSkill), sourceSkill));
   checks.push(check('external root exists', dryRun || existsSync(externalRoot), externalRoot));
   checks.push(check('target guard exists', dryRun || existsSync(targetGuard), targetGuard));
   checks.push(check('target broker exists', dryRun || existsSync(targetBroker), targetBroker));
@@ -138,15 +143,15 @@ $session = '${escapedSession}'
 Set-Location -LiteralPath $repo
 & $node $session status --repo $repo
 Write-Host ''
-Write-Host 'Activate a phase with:'
-Write-Host "  & '$node' '$session' open --repo '$repo' --plan-dir '.execution-governance/plans/hosted-sandbox-remediation-v1-1' --phase-id PHASE-1 --elevate"
+Write-Host 'Cursor is ready for MANU-AI governed execution.'
+Write-Host 'Open Cursor normally and say: Bu planı uygula'
 Write-Host ''
 Read-Host 'Press Enter to close'
 `;
 }
 
 function hasExactHookEvents(hooks) {
-  const expected = ['afterFileEdit', 'beforeMCPExecution', 'beforeReadFile', 'beforeShellExecution', 'preToolUse'];
+  const expected = ['afterFileEdit', 'beforeMCPExecution', 'beforeReadFile', 'beforeShellExecution', 'beforeSubmitPrompt', 'preToolUse'];
   const actual = Object.keys(hooks.hooks || {}).sort();
   if (JSON.stringify(actual) !== JSON.stringify(expected)) return false;
   return expected.every((event) => Array.isArray(hooks.hooks[event])
@@ -157,7 +162,7 @@ function hasExactHookEvents(hooks) {
 
 function hasValidActivationShape(activation) {
   if (activation.schemaVersion !== '1.0.0') return false;
-  if (!['INACTIVE_FAIL_CLOSED', 'ACTIVE_SIGNED_SCOPE'].includes(activation.status)) return false;
+  if (!['INACTIVE_FAIL_CLOSED', 'DISCOVERY_READ_ONLY', 'ACTIVE_SIGNED_SCOPE'].includes(activation.status)) return false;
   if (!activation.scope || typeof activation.scope !== 'object') return false;
   const arrayFields = ['allowedCreatePaths', 'allowedModifyPaths', 'protectedPaths', 'forbiddenPaths', 'allowedCommands', 'allowedMcpTools'];
   return arrayFields.every((field) => Array.isArray(activation.scope[field]))
@@ -170,6 +175,7 @@ function systemHooksConfig(guardPath, nodePath) {
     version: 1,
     hooks: {
       preToolUse: [{ command: `${command} preToolUse`, failClosed: true, timeout: 5 }],
+      beforeSubmitPrompt: [{ command: `${command} beforeSubmitPrompt`, failClosed: true, timeout: 5 }],
       beforeShellExecution: [{ command: `${command} beforeShellExecution`, failClosed: true, timeout: 5 }],
       beforeMCPExecution: [{ command: `${command} beforeMCPExecution`, failClosed: true, timeout: 5 }],
       beforeReadFile: [{ command: `${command} beforeReadFile`, failClosed: true, timeout: 5 }],
