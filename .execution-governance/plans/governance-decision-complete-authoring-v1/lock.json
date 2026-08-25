@@ -1,12 +1,12 @@
 {
   "schemaVersion": "1.0.0",
   "contractId": "governance-decision-complete-authoring-v1",
-  "planHash": "d39fb7d2c62d9a045ffe3153ab227abd2033d4284241f7381d1f71cfd82eef2b",
-  "contractHash": "2cba138aa97a15b7106c882f49d4ec9b07694544bbd5cdb6630f9a74395cd7c6",
-  "scopeHash": "c43c5ded6e38ea3b5ccc4ca047f09f03bbbd6751fd199662cce2cf17839c9f1f",
+  "planHash": "e438aa0a7d9fadd9c1e75981be0a8f9146644fa48b2f73aad48631a73f996b93",
+  "contractHash": "f2831a6ba7c0ae4e07b1677dcb7ebe4a0a37dda7aa083fcbce7dd900871fff1b",
+  "scopeHash": "d99f2844f911d88cc3b11847fb144a5f0f9f5c04e2eb5b1ab0a6dab22bffccf6",
   "acceptanceHash": "90a35b101d315a160ae1b37248fce5843b6af5488e5234402f06dd24c6d8eaf3",
-  "baseCommit": "f93a52f2800ecce1a9a3696da51bfefe18e3d588",
-  "baseTree": "329997993c895d4ac694270ef97f5cb0a9ea1179",
+  "baseCommit": "bd3e9b987544a74b8ff4eceb1fcbd6a70da6d033",
+  "baseTree": "e585601b47076761060001bbee58362b44d52566",
   "lockCommit": "",
   "protectedManifest": [
     {
@@ -15,15 +15,15 @@
     },
     {
       "path": "docs/execution-governance/EXECUTION_ASSURANCE_PROTOCOL.md",
-      "sha256": "5b1b2aded150f421e2f2b79a8502ee1ab083f1ac5c5c5ed5fb7e4e9372b44eb7"
+      "sha256": "8b6f0f60ae90341790e0939195199c1699464756d8405598be82c8a06718f70b"
     },
     {
       "path": ".execution-governance/schemas/acceptance.schema.json",
-      "sha256": "38d17a9a5eb00cf27781d41b4dc75d72b48a7e8f144b06029b49e8e66be96630"
+      "sha256": "94432604b522c0def3ac543b400f3a0849d8cf85c8f929d1ea3c301ec5e9fa6a"
     },
     {
       "path": ".execution-governance/schemas/contract.schema.json",
-      "sha256": "126c831987c8b7a81b8b8340a7824712ef45ad8d53a159c2d18675ca16e0cdd4"
+      "sha256": "2163bc3a638aa0a79f0a241b9504f7f8ebb52f700f5b73320fe3fd776f3dcd66"
     },
     {
       "path": ".execution-governance/schemas/implementation-report.schema.json",
@@ -51,7 +51,7 @@
     },
     {
       "path": ".execution-governance/schemas/scope.schema.json",
-      "sha256": "3f46c65097666367690935a0b0fb83af5ddf1586a26d09f7b23c9e4df4f1720e"
+      "sha256": "4766c87736c8cb76c68369c357a5f17e561c94509864a8861f83395c560faf73"
     },
     {
       "path": ".execution-governance/schemas/status-model.schema.json",

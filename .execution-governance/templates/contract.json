@@ -1,8 +1,17 @@
 {
   "schemaVersion": "1.0.0",
+  "governanceFormatVersion": "2.0.0",
   "contractId": "replace-with-contract-id",
   "planVersion": "0.0.0",
   "planTitle": "replace-with-plan-title",
+  "currentPhaseId": "PHASE-ID",
+  "phases": [
+    {
+      "phaseId": "PHASE-ID",
+      "title": "replace-with-phase-title",
+      "status": "PLAN_DRAFT"
+    }
+  ],
   "authoritySources": [
     "replace-with-authority-source"
   ],

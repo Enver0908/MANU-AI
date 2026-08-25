@@ -31,14 +31,15 @@ Runtime records may be generated under ignored `.execution-governance/runtime/`.
 ## 3. Planning Flow
 
 1. Planner reads the authority documents and current Git state.
-2. Planner creates `plan.md`, `contract.json`, `scope.json`, and `acceptance.json`.
-3. If a protected verifier is missing for a required automated oracle, plan state is `VERIFIER_SETUP_REQUIRED`.
-4. If a user decision is missing, plan state is `PLAN_BLOCKED`.
-5. If the plan is complete and implementation can start after lock, plan state is `READY_FOR_IMPLEMENTATION`.
-6. User approves the plan.
-7. Planner or authorized operator runs the lock step and creates `lock.json`.
-8. Plan-lock commit is created separately.
-9. After the plan-lock commit, plan state is `LOCKED_FOR_IMPLEMENTATION`.
+2. Planner creates a decision-complete `plan.md`, `contract.json`, `scope.json`, and `acceptance.json`.
+3. Planner runs strict plan-package validation. The package must fail if required files are missing, in-scope requirements lack matching scope or acceptance records, executable phases lack required sections, vague implementation directives remain, or phase scope is not explicit.
+4. If a protected verifier is missing for a required automated oracle, plan state is `VERIFIER_SETUP_REQUIRED`.
+5. If a user decision is missing, plan state is `PLAN_BLOCKED`.
+6. If the plan is complete and implementation can start after lock, plan state is `READY_FOR_IMPLEMENTATION`.
+7. User approves the plan.
+8. Planner or authorized operator runs the lock step and creates `lock.json`.
+9. Plan-lock commit is created separately.
+10. After the plan-lock commit, plan state is `LOCKED_FOR_IMPLEMENTATION`.
 
 Implementation cannot start before the separate plan-lock commit.
 

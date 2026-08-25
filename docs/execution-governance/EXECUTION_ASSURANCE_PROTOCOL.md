@@ -177,6 +177,10 @@ Every locked plan must include:
 
 Markdown files are explanatory. JSON files are the machine authority.
 
+For new governed implementation plans, `plan.md` is also the canonical human technical authority and must be decision-complete before lock or activation. Decision-complete authoring is defined in `docs/execution-governance/DECISION_COMPLETE_PLAN_AUTHORING_STANDARD.md`: every executable phase must include concrete scope, out-of-scope boundaries, prerequisites, affected files, architecture decisions, rejected alternatives, data/API contracts, ordered steps, data/control flow, dependencies, state transitions, error cases, security/privacy boundaries, accessibility/localization impact, migration/rollback behavior, exact tests, acceptance oracles, and stop/completion criteria. A compact checklist can guide local execution, but it is not a lockable governed implementation plan.
+
+New plan packages should use `governanceFormatVersion: "2.0.0"` in `contract.json`. Each in-scope requirement must have matching records in `contract.json`, `scope.json`, `acceptance.json`, and a `GOV-REQ` anchor in `plan.md`. Each scope and acceptance record must be phase-scoped before Cursor activation.
+
 ## 9. Phase 1 Boundary
 
 Phase 1 installs this protocol, schemas, and templates only. It does not install enforcement hooks, verifier CLI commands, or CI. Until later phases complete, the protocol is authoritative but not technically enforced.

@@ -4,6 +4,7 @@
   "acceptanceRecords": [
     {
       "requirementId": "REQ-001",
+      "phaseId": "PHASE-ID",
       "authoritySource": "replace-with-authority-source",
       "observableRequirement": "replace-with-observable-requirement",
       "oracleType": "PROPOSED_NOT_INSTALLED",

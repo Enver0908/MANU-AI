@@ -13,9 +13,12 @@ These repository instructions apply to Codex-compatible agents working from the 
 
 - Read `docs/execution-governance/EXECUTION_ASSURANCE_PROTOCOL.md` before planning or implementing governed work.
 - Use `docs/execution-governance/MANU_AI_PLAN_IMPLEMENTATION_ASSURANCE_INTEGRATION_PLAN.md` as the current governance integration plan.
+- A governed implementation plan must be decision-complete before lock or activation. Follow `docs/execution-governance/DECISION_COMPLETE_PLAN_AUTHORING_STANDARD.md`; do not treat a brief execution checklist, Markdown summary, or compact phase list as a lockable governed plan.
+- New governed implementation plans must keep detailed `plan.md` as the canonical human technical authority and JSON files as machine authority. Every in-scope requirement needs matching contract, phase-scoped scope, acceptance, and `GOV-REQ` plan anchors.
 - Approved implementation plans require a separate plan-lock commit before implementation starts.
 - Cursor work must remain behind the admin-owned enterprise guard installed under `C:\ProgramData\Cursor\hooks.json` and `C:\ProgramData\MANU-AI-Governance\secure-cursor-guard.mjs`. Repo-local `.cursor` hooks are compatibility adapters only; they are not the trust root.
 - Cursor implementation is allowed only after a locked plan is converted into external activation with `node tools/execution-governance/governance-cli.mjs activate-cursor --plan-dir <plan-dir> --phase-id <phase-id> --allow-implementation-head --apply`. Without this activation, Cursor must remain `INACTIVE_FAIL_CLOSED`.
+- Cursor activation must be phase-specific. The active external scope must contain only the selected phase's allowed files, commands, MCP tools, and subagent policy.
 - Before asking Cursor to implement a phase, verify the external guard with `node tools/execution-governance/install-secure-cursor-guard.mjs --verify` and run `node tools/execution-governance/governance-hardening-red-team.mjs`.
 - Keep `plan_state`, `implementation_state`, `executor_checks`, `independent_review`, and `user_acceptance` separate.
 - Independent review starts only when the user explicitly requests it. If not requested, record `independent_review: NOT_REQUESTED`; do not ask whether to start review.

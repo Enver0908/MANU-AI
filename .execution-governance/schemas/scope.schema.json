@@ -45,6 +45,10 @@
             "type": "string",
             "minLength": 1
           },
+          "phaseId": {
+            "type": "string",
+            "minLength": 1
+          },
           "allowedCreatePaths": {
             "$ref": "#/definitions/pathList"
           },
@@ -89,6 +93,15 @@
             "items": {
               "type": "string"
             }
+          },
+          "allowedMcpTools": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "allowSubagents": {
+            "type": "boolean"
           },
           "generatedArtifactPolicy": {
             "type": "string",

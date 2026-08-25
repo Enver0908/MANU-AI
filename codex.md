@@ -51,11 +51,13 @@ Transform tasks into verifiable goals:
 - "Fix the bug" → "Write a test that reproduces it, then make it pass"
 - "Refactor X" → "Ensure tests pass before and after"
 
-For multi-step tasks, state a brief plan:
+For ordinary multi-step coding tasks, state a brief execution plan:
 1. [Step] → verify: [check]
 2. [Step] → verify: [check]
 3. [Step] → verify: [check]
 Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
+
+For governed implementation work under `.execution-governance/`, a brief plan is not enough. Write a decision-complete governed implementation plan that follows `docs/execution-governance/DECISION_COMPLETE_PLAN_AUTHORING_STANDARD.md`: exact requirement IDs, allowed/protected files, phase-scoped scope, acceptance oracles, APIs/data contracts, error cases, security/privacy boundaries, rollback, and stop criteria. Do not leave implementation decisions to the next model.
 
 ---
 

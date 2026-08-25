@@ -59,6 +59,10 @@
             "type": "string",
             "minLength": 1
           },
+          "phaseId": {
+            "type": "string",
+            "minLength": 1
+          },
           "authoritySource": {
             "type": "string",
             "minLength": 1

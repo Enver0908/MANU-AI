@@ -14,6 +14,8 @@ Before implementation, read:
 Rules:
 
 - Work only inside the active plan scope.
+- A governed implementation plan must be decision-complete before lock or activation. A brief checklist, high-level phase list, or prose-only approval is not enough.
+- Use `docs/execution-governance/DECISION_COMPLETE_PLAN_AUTHORING_STANDARD.md` and require matching `contract.json`, phase-scoped `scope.json`, `acceptance.json`, and `plan.md` anchors.
 - Do not reinterpret, narrow, or broaden plan requirements.
 - If no active locked plan exists, product writes are blocked. Read-only exploration and governance-file work are allowed.
 - Do not change product code, migrations, package manifests, lockfiles, verifier scripts, fixtures, baselines, CI, hooks, or production gates unless the active plan explicitly allows it.

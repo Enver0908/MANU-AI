@@ -4,10 +4,17 @@ import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import {
+  listPlanDirectories,
+  selectPhaseScope,
+  strictValidatePlanPackageOrThrow,
+  validatePlanPackage
+} from './lib/plan-package-validator.mjs';
 
 const COMMANDS = new Set([
   'doctor',
   'validate',
+  'validate-template',
   'lock',
   'preflight',
   'scope-check',
@@ -37,6 +44,7 @@ function main() {
 
   if (command === 'doctor') return doctor(context);
   if (command === 'validate') return validate(context);
+  if (command === 'validate-template') return validateTemplate(context);
   if (command === 'lock') return lock(context);
   if (command === 'preflight') return preflight(context);
   if (command === 'scope-check') return scopeCheck(context);
@@ -55,7 +63,9 @@ Usage:
 
 Commands:
   doctor       Check repository, Git, Node, policy, schemas, and templates.
-  validate     Parse and structurally validate governance JSON files.
+  validate     Parse and structurally validate governance JSON files and plan packages.
+  validate-template
+               Validate governance templates as a template package.
   lock         Compute plan/contract/scope/acceptance hashes and optional lock file.
   preflight    Verify clean state, lock hashes, base commit/tree, and protected files.
   scope-check  Verify changed paths are allowed by scope.json.
@@ -71,6 +81,7 @@ Options:
   --out <path>          Output path for generated lock.json.
   --write               Allow lock command to write --out.
   --allow-dirty         Allow dirty worktree for lock/preflight when explicitly needed.
+  --all-plans           Validate every plan package and enforce legacy disposition.
   --apply               activate-cursor writes ProgramData activation.json.
   --deactivate          activate-cursor writes fail-closed inactive state.
   --phase-id <id>       Phase identifier for activate-cursor.
@@ -83,7 +94,7 @@ function parseOptions(args) {
   const options = {};
   for (let i = 0; i < args.length; i += 1) {
     const arg = args[i];
-    if (['--write', '--allow-dirty', '--apply', '--deactivate', '--allow-implementation-head'].includes(arg)) {
+    if (['--write', '--allow-dirty', '--apply', '--deactivate', '--allow-implementation-head', '--all-plans'].includes(arg)) {
       options[arg.slice(2)] = true;
       continue;
     }
@@ -124,16 +135,20 @@ function doctor({ repoRoot }) {
 }
 
 function validate({ repoRoot, options }) {
+  if (options['all-plans']) return validateAllPlans({ repoRoot });
+  if (options['plan-dir']) {
+    return emitPlanPackageValidation(validatePlanPackage({
+      repoRoot,
+      planDir: options['plan-dir'],
+      phaseId: options['phase-id'] || null,
+      mode: 'validate'
+    }));
+  }
   const errors = [];
   const files = [];
-  const planDir = options['plan-dir'] ? resolveInsideRepo(repoRoot, options['plan-dir']) : null;
-  if (planDir) {
-    files.push(...requiredPlanFiles(planDir));
-  } else {
-    files.push(...listJsonFiles(joinRepo(repoRoot, '.execution-governance/policy')));
-    files.push(...listJsonFiles(joinRepo(repoRoot, '.execution-governance/schemas')));
-    files.push(...listJsonFiles(joinRepo(repoRoot, '.execution-governance/templates')));
-  }
+  files.push(...listJsonFiles(joinRepo(repoRoot, '.execution-governance/policy')));
+  files.push(...listJsonFiles(joinRepo(repoRoot, '.execution-governance/schemas')));
+  files.push(...listJsonFiles(joinRepo(repoRoot, '.execution-governance/templates')));
   for (const file of files) {
     try {
       const value = readJson(file);
@@ -150,8 +165,44 @@ function validate({ repoRoot, options }) {
   return STATUS_OK;
 }
 
+function validateTemplate({ repoRoot }) {
+  return emitPlanPackageValidation(validatePlanPackage({
+    repoRoot,
+    planDir: '.execution-governance/templates',
+    mode: 'validate-template'
+  }));
+}
+
+function validateAllPlans({ repoRoot }) {
+  const results = listPlanDirectories(repoRoot).map((planDir) => validatePlanPackage({
+    repoRoot,
+    planDir,
+    mode: 'validate-all'
+  }));
+  const warnings = results.flatMap((result) => result.warnings || []);
+  const errors = results.flatMap((result) => result.errors || []);
+  for (const warning of warnings) console.warn(`WARN ${warning}`);
+  if (errors.length) {
+    for (const error of errors) console.error(`FAIL ${error}`);
+    return STATUS_FAIL;
+  }
+  console.log(`PASS validate-all ${results.length} plan package(s)`);
+  return STATUS_OK;
+}
+
+function emitPlanPackageValidation(result) {
+  for (const warning of result.warnings || []) console.warn(`WARN ${warning}`);
+  if (!result.ok) {
+    for (const error of result.errors) console.error(`FAIL ${error}`);
+    return STATUS_FAIL;
+  }
+  console.log(`PASS validate ${result.packageInfo.planDir}`);
+  return STATUS_OK;
+}
+
 function lock({ repoRoot, options }) {
   const planDir = requirePlanDir(repoRoot, options);
+  strictPackage(repoRoot, planDir, options, 'lock');
   const planPath = path.join(planDir, 'plan.md');
   const contractPath = path.join(planDir, 'contract.json');
   const scopePath = path.join(planDir, 'scope.json');
@@ -195,6 +246,7 @@ function lock({ repoRoot, options }) {
 
 function preflight({ repoRoot, options }) {
   const planDir = requirePlanDir(repoRoot, options);
+  strictPackage(repoRoot, planDir, options, 'preflight');
   if (!options['allow-dirty']) assertCleanWorktree(repoRoot);
   const failures = verifyLock(repoRoot, planDir);
   if (failures.length) {
@@ -207,7 +259,9 @@ function preflight({ repoRoot, options }) {
 
 function scopeCheck({ repoRoot, options }) {
   const planDir = requirePlanDir(repoRoot, options);
-  const scope = readJson(path.join(planDir, 'scope.json'));
+  strictPackage(repoRoot, planDir, options, 'scope-check');
+  const rawScope = readJson(path.join(planDir, 'scope.json'));
+  const scope = options['phase-id'] ? selectPhaseScope(rawScope, options['phase-id']) : rawScope;
   const allowed = new Set();
   const protectedPaths = new Set();
   for (const requirement of scope.requirements || []) {
@@ -231,11 +285,15 @@ function scopeCheck({ repoRoot, options }) {
 
 async function runChecks({ repoRoot, options }) {
   const planDir = requirePlanDir(repoRoot, options);
+  strictPackage(repoRoot, planDir, options, 'run-checks');
   const acceptance = readJson(path.join(planDir, 'acceptance.json'));
+  const acceptanceRecords = options['phase-id']
+    ? (acceptance.acceptanceRecords || []).filter((record) => record.phaseId === options['phase-id'])
+    : (acceptance.acceptanceRecords || []);
   const records = [];
   let hasFailure = false;
   let hasBlocked = false;
-  for (const record of acceptance.acceptanceRecords || []) {
+  for (const record of acceptanceRecords) {
     if (record.oracleType === 'MANUAL' || record.oracleType === 'PROPOSED_NOT_INSTALLED') {
       hasBlocked = true;
       records.push(runRecord(repoRoot, acceptance.contractId, record, null, 'BLOCKED', 'No automated command installed for this oracle.'));
@@ -264,6 +322,16 @@ async function runChecks({ repoRoot, options }) {
 function postflight({ repoRoot, options }) {
   const planDir = requirePlanDir(repoRoot, options);
   const failures = [];
+  try {
+    strictValidatePlanPackageOrThrow({
+      repoRoot,
+      planDir,
+      phaseId: options['phase-id'] || null,
+      mode: 'postflight'
+    });
+  } catch (error) {
+    failures.push(error.message);
+  }
   failures.push(...verifyLock(repoRoot, planDir));
   const scopeExit = scopeCheck({ repoRoot, options });
   if (scopeExit !== STATUS_OK) failures.push('scope-check failed');
@@ -341,6 +409,17 @@ function scanChangedTestFileForSkipOnly(repoRoot, relPath) {
 
 function close(context) {
   const planDir = requirePlanDir(context.repoRoot, context.options);
+  try {
+    strictValidatePlanPackageOrThrow({
+      repoRoot: context.repoRoot,
+      planDir,
+      phaseId: context.options['phase-id'] || null,
+      mode: 'close'
+    });
+  } catch (error) {
+    console.error(error.message);
+    return STATUS_FAIL;
+  }
   const contract = readJson(path.join(planDir, 'contract.json'));
   const postflightStatus = postflight(context);
   if (postflightStatus !== STATUS_OK) return postflightStatus;
@@ -360,6 +439,10 @@ function close(context) {
 
 function activateCursor({ repoRoot, options }) {
   if (!options['plan-dir']) fail('--plan-dir is required for activate-cursor', STATUS_FAIL);
+  if (!options.deactivate && !options['phase-id']) fail('--phase-id is required for activate-cursor', STATUS_FAIL);
+  if (!options.deactivate) {
+    strictPackage(repoRoot, resolveInsideRepo(repoRoot, options['plan-dir']), options, 'activate');
+  }
   const script = joinRepo(repoRoot, 'tools/execution-governance/activate-secure-cursor-guard.mjs');
   if (!existsSync(script)) fail(`Missing activation script: ${relative(repoRoot, script)}`, STATUS_FAIL);
   const args = [script, '--plan-dir', options['plan-dir']];
@@ -377,6 +460,19 @@ function activateCursor({ repoRoot, options }) {
   if (result.stdout) process.stdout.write(result.stdout);
   if (result.stderr) process.stderr.write(result.stderr);
   return result.status ?? STATUS_FAIL;
+}
+
+function strictPackage(repoRoot, planDir, options, mode) {
+  try {
+    return strictValidatePlanPackageOrThrow({
+      repoRoot,
+      planDir,
+      phaseId: options['phase-id'] || null,
+      mode
+    });
+  } catch (error) {
+    fail(error.message, STATUS_FAIL);
+  }
 }
 
 function check(name, ok, detail) {
@@ -483,7 +579,9 @@ function getChangedPaths(repoRoot) {
   const tracked = gitText(repoRoot, ['diff', '--name-only']).split(/\r?\n/).filter(Boolean);
   const staged = gitText(repoRoot, ['diff', '--cached', '--name-only']).split(/\r?\n/).filter(Boolean);
   const untracked = gitText(repoRoot, ['ls-files', '--others', '--exclude-standard']).split(/\r?\n/).filter(Boolean);
-  return [...new Set([...tracked, ...staged, ...untracked].map(normalizeRel))].sort();
+  return [...new Set([...tracked, ...staged, ...untracked].map(normalizeRel))]
+    .filter((item) => !item.startsWith('.execution-governance/runtime/'))
+    .sort();
 }
 
 function assertCleanWorktree(repoRoot) {

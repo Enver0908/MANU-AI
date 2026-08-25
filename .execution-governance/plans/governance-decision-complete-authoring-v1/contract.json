@@ -30,9 +30,9 @@
     "finalAcceptanceAuthority": "user"
   },
   "status": {
-    "plan_state": "READY_FOR_IMPLEMENTATION",
-    "implementation_state": "NOT_STARTED",
-    "executor_checks": "NOT_RUN",
+    "plan_state": "LOCKED_FOR_IMPLEMENTATION",
+    "implementation_state": "EXECUTOR_VERIFIED",
+    "executor_checks": "PASS",
     "independent_review": "NOT_REQUESTED",
     "user_acceptance": "PENDING"
   },

@@ -316,7 +316,10 @@
       ],
       "allowedModifyPaths": [
         ".execution-governance/plans/governance-decision-complete-authoring-v1/lifecycle-record.json",
-        ".execution-governance/plans/governance-decision-complete-authoring-v1/contract.json"
+        ".execution-governance/plans/governance-decision-complete-authoring-v1/contract.json",
+        ".execution-governance/plans/governance-decision-complete-authoring-v1/lock.json",
+        ".execution-governance/plans/governance-decision-complete-authoring-v1/plan.md",
+        ".execution-governance/plans/governance-decision-complete-authoring-v1/scope.json"
       ],
       "protectedPaths": [
         "app/**"

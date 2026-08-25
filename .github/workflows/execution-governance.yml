@@ -47,7 +47,7 @@ jobs:
           set -euo pipefail
           node tools/execution-governance/governance-cli.mjs doctor
           node tools/execution-governance/governance-cli.mjs validate
-          node tools/execution-governance/governance-cli.mjs validate --plan-dir .execution-governance/templates
+          node tools/execution-governance/governance-cli.mjs validate-template
 
       - name: Verify workflow hardening
         shell: bash

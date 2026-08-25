@@ -4,6 +4,7 @@
   "requirements": [
     {
       "requirementId": "REQ-001",
+      "phaseId": "PHASE-ID",
       "allowedCreatePaths": [],
       "allowedModifyPaths": [],
       "protectedPaths": [],
@@ -20,6 +21,8 @@
       "forbiddenDependencyChanges": true,
       "allowedSchemaChanges": [],
       "allowedNetworkOrExternalEffects": [],
+      "allowedMcpTools": [],
+      "allowSubagents": false,
       "generatedArtifactPolicy": "No generated artifact may be accepted unless bound to current commit and run timestamp.",
       "documentationReconciliation": [],
       "maximumChangeScope": "Only files listed in allowedCreatePaths and allowedModifyPaths."

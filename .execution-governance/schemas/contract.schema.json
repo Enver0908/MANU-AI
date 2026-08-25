@@ -19,6 +19,13 @@
       "type": "string",
       "const": "1.0.0"
     },
+    "governanceFormatVersion": {
+      "type": "string",
+      "enum": [
+        "1.0.0",
+        "2.0.0"
+      ]
+    },
     "contractId": {
       "type": "string",
       "minLength": 1
@@ -30,6 +37,36 @@
     "planTitle": {
       "type": "string",
       "minLength": 1
+    },
+    "currentPhaseId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "phases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "phaseId",
+          "title",
+          "status"
+        ],
+        "properties": {
+          "phaseId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
     },
     "authoritySources": {
       "type": "array",

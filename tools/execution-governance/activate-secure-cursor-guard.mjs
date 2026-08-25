@@ -4,6 +4,11 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
+import {
+  flattenScope as flattenSelectedScope,
+  selectPhaseScope,
+  strictValidatePlanPackageOrThrow
+} from './lib/plan-package-validator.mjs';
 
 const repoRoot = findRepoRoot(process.cwd());
 const externalRoot = process.env.MANU_GOVERNANCE_ROOT || 'C:\\ProgramData\\MANU-AI-Governance';
@@ -29,11 +34,24 @@ if (apply) writeActivation(activation);
 emit({ status: 'PASS', mode: apply ? 'APPLIED' : 'DRY_RUN', activationPath, activation });
 
 function buildActivation(directory) {
+  if (!options.phaseId) fail('--phase-id is required for activation');
+  try {
+    strictValidatePlanPackageOrThrow({
+      repoRoot,
+      planDir: directory,
+      phaseId: options.phaseId,
+      mode: 'activate'
+    });
+  } catch (error) {
+    fail(error.message);
+  }
   const contract = readJson(path.join(directory, 'contract.json'));
   const scope = readJson(path.join(directory, 'scope.json'));
   const lock = readJson(path.join(directory, 'lock.json'));
   assertLock(directory, lock);
-  const flattenedScope = flattenScope(scope);
+  const selectedScope = selectPhaseScope(scope, options.phaseId);
+  const flattenedScope = flattenSelectedScope(selectedScope);
+  if (selectedScope.requirements.length === 0) fail(`phase has no activation scope: ${options.phaseId}`);
   return {
     schemaVersion: '1.0.0',
     status: 'ACTIVE_SIGNED_SCOPE',

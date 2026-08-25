@@ -82,6 +82,8 @@ Only a protected automatic oracle or explicitly authorized manual reviewer may a
 
 The governance system uses documentation as the human-readable contract and JSON as the machine authority.
 
+2026-08-25 authoring hardening update: new governed implementation plans must be decision-complete before lock or activation. The authoring standard is `docs/execution-governance/DECISION_COMPLETE_PLAN_AUTHORING_STANDARD.md`. This corrects the gap where compact plans could satisfy file/hash/scope mechanics while still leaving architecture, data flow, security, verifier, and phase execution decisions to the implementer.
+
 Planned surfaces:
 
 - Root `AGENTS.md`: concise repo-wide rules for Codex-compatible agents.
