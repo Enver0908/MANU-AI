@@ -4,7 +4,7 @@ import { existsSync } from 'node:fs';
 import path from 'node:path';
 
 const event = process.argv[2] || 'unknown';
-const repoRoot = findRepoRoot(process.cwd());
+const repoRoot = findRepoRoot(process.env.CURSOR_PROJECT_DIR || process.cwd());
 const repoGuard = path.join(repoRoot, 'tools', 'execution-governance', 'secure-cursor-guard.mjs');
 const externalGuard = process.env.MANU_GOVERNANCE_GUARD || 'C:\\ProgramData\\MANU-AI-Governance\\secure-cursor-guard.mjs';
 const guard = existsSync(externalGuard) ? externalGuard : repoGuard;

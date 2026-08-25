@@ -47,6 +47,10 @@ function verifyInstall() {
     const hooks = JSON.parse(readFileSync(cursorHooksPath, 'utf8'));
     checks.push(check('system hook uses external guard', JSON.stringify(hooks).includes(targetGuard.replace(/\\/g, '\\\\')) || JSON.stringify(hooks).includes(targetGuard), cursorHooksPath));
     checks.push(check('system hook pins Node executable', JSON.stringify(hooks).includes(process.execPath.replace(/\\/g, '\\\\')) || JSON.stringify(hooks).includes(process.execPath), process.execPath));
+    checks.push(check('system hooks contain exact governed event set', hasExactHookEvents(hooks), cursorHooksPath));
+  }
+  if (!dryRun && existsSync(activationPath)) {
+    checks.push(check('activation file has valid fail-closed or active state shape', hasValidActivationShape(JSON.parse(readFileSync(activationPath, 'utf8'))), activationPath));
   }
   if (!dryRun && process.platform === 'win32') {
     checks.push(check('external ACL excludes broad writable Users ACE', !hasBroadWriteAce(externalRoot), externalRoot));
@@ -64,6 +68,25 @@ function verifyInstall() {
     verifyOnly,
     checks
   };
+}
+
+function hasExactHookEvents(hooks) {
+  const expected = ['afterFileEdit', 'beforeMCPExecution', 'beforeReadFile', 'beforeShellExecution', 'preToolUse'];
+  const actual = Object.keys(hooks.hooks || {}).sort();
+  if (JSON.stringify(actual) !== JSON.stringify(expected)) return false;
+  return expected.every((event) => Array.isArray(hooks.hooks[event])
+    && hooks.hooks[event].length === 1
+    && hooks.hooks[event][0].failClosed === true
+    && hooks.hooks[event][0].timeout === 5);
+}
+
+function hasValidActivationShape(activation) {
+  if (activation.schemaVersion !== '1.0.0') return false;
+  if (!['INACTIVE_FAIL_CLOSED', 'ACTIVE_SIGNED_SCOPE'].includes(activation.status)) return false;
+  if (!activation.scope || typeof activation.scope !== 'object') return false;
+  const arrayFields = ['allowedCreatePaths', 'allowedModifyPaths', 'protectedPaths', 'forbiddenPaths', 'allowedCommands', 'allowedMcpTools'];
+  return arrayFields.every((field) => Array.isArray(activation.scope[field]))
+    && typeof activation.scope.allowSubagents === 'boolean';
 }
 
 function systemHooksConfig(guardPath, nodePath) {
