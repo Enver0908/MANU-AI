@@ -1,33 +1,19 @@
 {
   "schemaVersion": "1.0.0",
   "contractId": "hosted-sandbox-environment-assurance-v1",
-  "phaseId": "HS-FAZ-2",
+  "phaseId": "HS-FAZ-3",
   "implementer": "Cursor Composer",
   "implementationState": "IMPLEMENTED_UNVERIFIED",
   "changedFiles": [
-    "app/src/lib/app-errors.ts",
-    "app/src/lib/use-manu-state.ts",
-    "app/src/proxy.ts",
-    "app/src/lib/auth-context.ts",
-    "app/src/lib/phase-84d-customer-auth.ts",
-    "app/src/lib/phase-84d-customer-auth.test.ts",
-    "app/src/lib/phase-85-stage-5-shell-api.ts",
-    "app/src/lib/phase-85-stage-5-shell-api.test.ts",
-    "app/src/lib/phase-85-stage-6-api.ts",
-    "app/src/app/api/app-state/route.ts",
-    "app/src/app/api/auth/magic-link/route.ts",
-    "app/src/app/api/admin/auth/magic-link/route.ts",
-    "app/src/components/dashboard/dashboard-navigation.tsx",
-    "app/src/lib/phase-85-stage-5-shell-navigation.ts",
-    "app/src/components/customer-login-form.tsx",
-    "app/src/components/admin-login-form.tsx",
-    "app/src/components/settings/settings-page-client.tsx",
-    "app/src/components/dashboard-app.tsx",
-    "app/src/components/dashboard/state-primitives.tsx",
-    "app/src/lib/phase-85-stage-5-shell-authenticated-mutation.ts",
-    "app/src/lib/phase-85-stage-5-shell-authenticated-mutation.test.ts",
-    "app/src/lib/hosted-sandbox-runtime-fixes.test.ts",
-    "docs/execution-governance/HOSTED_SANDBOX_PHASE_2_RUNTIME_FIXES_EVIDENCE.md",
+    "app/supabase/migrations/20260825120000_hosted_sandbox_faz3_security_rls_backup.sql",
+    "app/src/lib/supabase-rls.integration.test.ts",
+    "app/src/lib/hosted-sandbox-security.test.ts",
+    "tools/hosted-sandbox/backup-hosted-supabase.mjs",
+    "tools/hosted-sandbox/restore-hosted-supabase.mjs",
+    "tools/hosted-sandbox/lib/backup-manifest.mjs",
+    "tools/hosted-sandbox/hosted-sandbox-backup.test.mjs",
+    "docs/BACKUP_RESTORE_RUNBOOK.md",
+    "docs/execution-governance/HOSTED_SANDBOX_PHASE_3_SECURITY_RLS_BACKUP_EVIDENCE.md",
     ".execution-governance/plans/hosted-sandbox-environment-assurance-v1/lifecycle-record.json",
     ".execution-governance/plans/hosted-sandbox-environment-assurance-v1/implementation-report.json",
     ".execution-governance/plans/hosted-sandbox-environment-assurance-v1/acceptance.json",
@@ -35,21 +21,37 @@
   ],
   "commandsRun": [
     {
-      "command": "cd app && npx vitest run src/lib/hosted-sandbox-runtime-fixes.test.ts src/lib/phase-84d-customer-auth.test.ts src/lib/phase-85-stage-5-shell-api.test.ts src/lib/phase-85-stage-5-shell-authenticated-mutation.test.ts src/lib/auth-context.test.ts src/lib/phase-85-stage-5-shell-navigation.test.ts",
+      "command": "node --test tools/hosted-sandbox/hosted-sandbox-backup.test.mjs",
       "exitCode": 0,
-      "result": "PASS 44/44"
+      "result": "PASS 4/4"
+    },
+    {
+      "command": "cd app && npx vitest run src/lib/hosted-sandbox-security.test.ts",
+      "exitCode": 0,
+      "result": "PASS 2/2"
     }
   ],
   "artifacts": [
-    "docs/execution-governance/HOSTED_SANDBOX_PHASE_2_RUNTIME_FIXES_EVIDENCE.md"
+    "docs/execution-governance/HOSTED_SANDBOX_PHASE_3_SECURITY_RLS_BACKUP_EVIDENCE.md"
   ],
   "scopeChangeRequests": [],
   "verifierChangeRequests": [],
-  "waivers": [],
+  "waivers": [
+    {
+      "waiverId": "HS-FAZ-3-RLS-BLOCKED",
+      "reason": "npm run test:rls requires local Supabase or MANU_ALLOW_REMOTE_RLS_TESTS; not available in this executor run.",
+      "requirementId": "HS-SEC-001"
+    },
+    {
+      "waiverId": "HS-FAZ-3-RESTORE-DRILL-BLOCKED",
+      "reason": "Live pg_dump/age restore drill requires operator tooling and explicit approval; not executed remotely.",
+      "requirementId": "HS-SEC-002"
+    }
+  ],
   "independentReview": "NOT_REQUESTED",
   "residualRisks": [
-    "Full Playwright and release verification were not rerun in this executor pass.",
-    "Faz 3 Supabase security/RLS work is not started.",
+    "Paid PITR and leaked-password protection remain disabled.",
+    "Remote migration, backup upload, and restore drill not executed.",
     "Production remains NO-GO."
   ]
 }

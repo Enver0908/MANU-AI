@@ -79,6 +79,87 @@
       "failRule": "FAIL when hosted paths still seed demo data or membership/demo gates regress.",
       "blockedRule": "BLOCKED when npm test cannot run.",
       "forbiddenEquivalences": ["Evidence prose is not PASS", "Skipped check is not PASS", "Old artifact is not fresh evidence", "Implementer summary is not independent review"]
+    },
+    {
+      "requirementId": "HS-SEC-001",
+      "authoritySource": "Hosted Sandbox plan Faz 3",
+      "observableRequirement": "PUBLIC/anon default function EXECUTE is revoked for RLS helpers and dietitian_belongs_to_tenant checks auth.uid() membership.",
+      "oracleType": "AUTOMATED",
+      "oracleOwner": "hosted-sandbox security migration tests",
+      "oracleLocation": "app/src/lib/hosted-sandbox-security.test.ts",
+      "protectionMechanism": "Append-only migration plus committed migration oracle tests.",
+      "exactEvidenceCommand": "cd app && npx vitest run src/lib/hosted-sandbox-security.test.ts && cd .. && npm run test:rls",
+      "exactEvidenceCommandSpec": {
+        "cwd": "app",
+        "executable": "npm",
+        "args": ["run", "test:rls"],
+        "timeoutSeconds": 900,
+        "networkPolicy": "FORBIDDEN",
+        "artifactPolicy": "No runtime artifacts required."
+      },
+      "preconditions": ["Faz 3 migration is present.", "Local Supabase or approved remote RLS target is available for integration tests."],
+      "expectedExitCode": 0,
+      "requiredAssertions": [
+        "Migration binds dietitian_belongs_to_tenant to auth.uid() membership.",
+        "RLS helper grants revoke PUBLIC/anon EXECUTE.",
+        "Cross-tenant dietitian spoof insert is rejected when RLS suite runs."
+      ],
+      "requiredScenarioMatrix": ["migration oracle", "RLS integration when available"],
+      "negativeControls": ["PUBLIC execute on dietitian_belongs_to_tenant fails the oracle."],
+      "expectedTestIds": ["HS-SEC-001-MIGRATION", "HS-SEC-001-RLS"],
+      "expectedTestCountOrInventory": "Security migration vitest plus full RLS integration suite when Docker/local Supabase is available.",
+      "artifactType": "test output",
+      "artifactLocation": "local vitest stdout",
+      "artifactRetentionPolicy": "Test output is ephemeral; evidence markdown records command results.",
+      "artifactPrivacyPolicy": "No secrets, PHI, raw prompts, raw health data, or real user data.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": ["Local repository checkout", "Node.js available", "Local Supabase for full RLS PASS"],
+      "independentVerifier": "NOT_REQUESTED unless user explicitly requests review",
+      "passRule": "PASS when migration oracle exits 0 and RLS suite exits 0 with zero skips.",
+      "failRule": "FAIL when helper grants or membership binding regress.",
+      "blockedRule": "BLOCKED when RLS integration cannot run.",
+      "forbiddenEquivalences": ["Evidence prose is not PASS", "Skipped check is not PASS", "Old artifact is not fresh evidence", "Implementer summary is not independent review"]
+    },
+    {
+      "requirementId": "HS-SEC-002",
+      "authoritySource": "Hosted Sandbox plan Faz 3",
+      "observableRequirement": "Encrypted logical backup tooling and manifest validation exist without paid PITR.",
+      "oracleType": "AUTOMATED",
+      "oracleOwner": "hosted-sandbox backup tests",
+      "oracleLocation": "tools/hosted-sandbox/hosted-sandbox-backup.test.mjs",
+      "protectionMechanism": "Committed backup/restore scripts with manifest hash gates.",
+      "exactEvidenceCommand": "node --test tools/hosted-sandbox/hosted-sandbox-backup.test.mjs",
+      "exactEvidenceCommandSpec": {
+        "cwd": ".",
+        "executable": "node",
+        "args": ["--test", "tools/hosted-sandbox/hosted-sandbox-backup.test.mjs"],
+        "timeoutSeconds": 120,
+        "networkPolicy": "FORBIDDEN",
+        "artifactPolicy": "No backup artifacts committed."
+      },
+      "preconditions": ["Faz 3 backup scripts are present."],
+      "expectedExitCode": 0,
+      "requiredAssertions": [
+        "Backup manifest schema and hash validation pass.",
+        "Remote backup requires explicit approval env flags."
+      ],
+      "requiredScenarioMatrix": ["manifest validation", "approval gates"],
+      "negativeControls": ["Hash mismatch fails restore validation."],
+      "expectedTestIds": ["HS-SEC-002-BACKUP-ORACLE"],
+      "expectedTestCountOrInventory": "Four node tests for backup manifest and approval gates.",
+      "artifactType": "test output",
+      "artifactLocation": "local node test stdout",
+      "artifactRetentionPolicy": "Test output is ephemeral; evidence markdown records command results.",
+      "artifactPrivacyPolicy": "No secrets, PHI, raw prompts, raw health data, or real user data.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": ["Local repository checkout", "Node.js available"],
+      "independentVerifier": "NOT_REQUESTED unless user explicitly requests review",
+      "passRule": "PASS when backup oracle exits 0.",
+      "failRule": "FAIL when manifest or approval gates regress.",
+      "blockedRule": "BLOCKED when node test cannot run.",
+      "forbiddenEquivalences": ["Evidence prose is not PASS", "Skipped check is not PASS", "Old artifact is not fresh evidence", "Implementer summary is not independent review"]
     }
   ]
 }

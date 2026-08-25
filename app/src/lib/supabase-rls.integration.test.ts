@@ -366,6 +366,15 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
 
     expect(activationInsert.error?.message).toMatch(/row-level security|violates foreign key/i);
 
+    const spoofedDietitianInsert = await member.from("clients").insert({
+      tenant_id: TEST_TENANT_ID,
+      dietitian_id: OTHER_DIETITIAN_ID,
+      full_name: "Blocked Other Dietitian",
+      selected_persona_id: "balanced_coach",
+    });
+
+    expect(spoofedDietitianInsert.error?.message).toMatch(/row-level security/i);
+
     const notificationUpdate = await member
       .from("notifications")
       .update({ read: true })

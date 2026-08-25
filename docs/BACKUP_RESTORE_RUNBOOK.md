@@ -4,6 +4,36 @@
 
 Draft for external review. This does not approve production pilot launch.
 
+## Hosted Sandbox Free-Tier Backup (Faz 3)
+
+Supabase Free tier remains in use. Paid PITR and leaked-password protection stay disabled; production remains `NO-GO`.
+
+### Policy
+
+- RPO: 24 hours (daily backup)
+- RTO target: 4 hours
+- Retention: 14 daily copies + 8 weekly copies
+- Encryption: `age` with operator-controlled public key only in VPS/env; private key never stored in repo, GitHub, or evidence
+- Upload: user-controlled `rclone` to OneDrive after local manifest verification
+- Remote backup requires `MANU_HOSTED_SANDBOX_BACKUP_APPROVED=true`
+- Remote restore requires `MANU_HOSTED_SANDBOX_RESTORE_APPROVED=true` or an explicit age identity file path
+
+### Commands
+
+```bash
+# Inventory only (no dump)
+node tools/hosted-sandbox/backup-hosted-supabase.mjs --dry-run
+
+# Local isolated backup (requires pg_dump, age, MANU_HOSTED_SANDBOX_BACKUP_AGE_PUBLIC_KEY)
+node tools/hosted-sandbox/backup-hosted-supabase.mjs --apply --output-dir=.execution-governance/runtime/hosted-sandbox/backups
+
+# Restore drill into isolated database only
+node tools/hosted-sandbox/restore-hosted-supabase.mjs --dry-run --manifest=path/to/backup.age.manifest.json
+node tools/hosted-sandbox/restore-hosted-supabase.mjs --apply --manifest=path/to/backup.age.manifest.json
+```
+
+Never commit raw `.dump`, `.age`, or decrypted artifacts. Evidence records command exit codes and manifest hashes only.
+
 ## Required Policy Decisions
 
 - Backup provider and region.
