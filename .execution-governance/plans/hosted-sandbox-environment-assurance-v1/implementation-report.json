@@ -1,57 +1,71 @@
 {
-  "schemaVersion": "1.0.0",
-  "contractId": "hosted-sandbox-environment-assurance-v1",
-  "phaseId": "HS-FAZ-3",
-  "implementer": "Cursor Composer",
-  "implementationState": "IMPLEMENTED_UNVERIFIED",
-  "changedFiles": [
-    "app/supabase/migrations/20260825120000_hosted_sandbox_faz3_security_rls_backup.sql",
-    "app/src/lib/supabase-rls.integration.test.ts",
-    "app/src/lib/hosted-sandbox-security.test.ts",
-    "tools/hosted-sandbox/backup-hosted-supabase.mjs",
-    "tools/hosted-sandbox/restore-hosted-supabase.mjs",
-    "tools/hosted-sandbox/lib/backup-manifest.mjs",
-    "tools/hosted-sandbox/hosted-sandbox-backup.test.mjs",
-    "docs/BACKUP_RESTORE_RUNBOOK.md",
-    "docs/execution-governance/HOSTED_SANDBOX_PHASE_3_SECURITY_RLS_BACKUP_EVIDENCE.md",
-    ".execution-governance/plans/hosted-sandbox-environment-assurance-v1/lifecycle-record.json",
-    ".execution-governance/plans/hosted-sandbox-environment-assurance-v1/implementation-report.json",
-    ".execution-governance/plans/hosted-sandbox-environment-assurance-v1/acceptance.json",
-    "HANDOFF_FOR_NEXT_CODEX.md"
-  ],
-  "commandsRun": [
-    {
-      "command": "node --test tools/hosted-sandbox/hosted-sandbox-backup.test.mjs",
-      "exitCode": 0,
-      "result": "PASS 4/4"
-    },
-    {
-      "command": "cd app && npx vitest run src/lib/hosted-sandbox-security.test.ts",
-      "exitCode": 0,
-      "result": "PASS 2/2"
-    }
-  ],
-  "artifacts": [
-    "docs/execution-governance/HOSTED_SANDBOX_PHASE_3_SECURITY_RLS_BACKUP_EVIDENCE.md"
-  ],
-  "scopeChangeRequests": [],
-  "verifierChangeRequests": [],
-  "waivers": [
-    {
-      "waiverId": "HS-FAZ-3-RLS-BLOCKED",
-      "reason": "npm run test:rls requires local Supabase or MANU_ALLOW_REMOTE_RLS_TESTS; not available in this executor run.",
-      "requirementId": "HS-SEC-001"
-    },
-    {
-      "waiverId": "HS-FAZ-3-RESTORE-DRILL-BLOCKED",
-      "reason": "Live pg_dump/age restore drill requires operator tooling and explicit approval; not executed remotely.",
-      "requirementId": "HS-SEC-002"
-    }
-  ],
-  "independentReview": "NOT_REQUESTED",
-  "residualRisks": [
-    "Paid PITR and leaked-password protection remain disabled.",
-    "Remote migration, backup upload, and restore drill not executed.",
-    "Production remains NO-GO."
-  ]
+    "verifierChangeRequests":  [
+
+                               ],
+    "waivers":  [
+                    {
+                        "requirementId":  "HS-VERIFY-002",
+                        "reason":  "Full Playwright requires production build; build fails on pre-existing node:crypto webpack issue.",
+                        "waiverId":  "HS-FAZ-4-PLAYWRIGHT-BLOCKED"
+                    },
+                    {
+                        "requirementId":  "HS-VERIFY-001",
+                        "reason":  "release:verify includes production build gate.",
+                        "waiverId":  "HS-FAZ-4-RELEASE-VERIFY-BLOCKED"
+                    }
+                ],
+    "residualRisks":  [
+                          "Full Playwright and release:verify blocked on build.",
+                          "Production remains NO-GO."
+                      ],
+    "artifacts":  [
+                      "docs/execution-governance/HOSTED_SANDBOX_PHASE_4_RELEASE_IDENTITY_EVIDENCE.md"
+                  ],
+    "changedFiles":  [
+                         "app/scripts/lib/release-identity.mjs",
+                         "app/src/lib/release-identity.ts",
+                         "app/src/lib/hosted-sandbox-release-identity.test.ts",
+                         "app/next.config.ts",
+                         "app/src/lib/phase-85-stage-5-shell-contracts.ts",
+                         "app/src/lib/phase-85-stage-5-shell-contracts.test.ts",
+                         "app/src/lib/phase-85-stage-5-shell-store.ts",
+                         "app/src/lib/phase-85-stage-5-shell-pwa.ts",
+                         "app/src/lib/phase-85-stage-5-shell-pwa.test.ts",
+                         "app/src/app/layout.tsx",
+                         "app/public/sw.js",
+                         "app/scripts/release-verify.mjs",
+                         "app/scripts/verify-stage-5-shell.mjs",
+                         "app/tests/visual/stage-7/stage-7-network.ts",
+                         "docs/execution-governance/HOSTED_SANDBOX_PHASE_4_RELEASE_IDENTITY_EVIDENCE.md",
+                         ".execution-governance/plans/hosted-sandbox-environment-assurance-v1/lifecycle-record.json",
+                         ".execution-governance/plans/hosted-sandbox-environment-assurance-v1/implementation-report.json",
+                         ".execution-governance/plans/hosted-sandbox-environment-assurance-v1/acceptance.json",
+                         "HANDOFF_FOR_NEXT_CODEX.md"
+                     ],
+    "commandsRun":  [
+                        {
+                            "exitCode":  0,
+                            "command":  "cd app \u0026\u0026 npx vitest run (Faz 4 oracle files)",
+                            "result":  "PASS 22/22"
+                        },
+                        {
+                            "exitCode":  0,
+                            "command":  "cd app \u0026\u0026 npm run typecheck",
+                            "result":  "PASS"
+                        },
+                        {
+                            "exitCode":  0,
+                            "command":  "release identity gate",
+                            "result":  "PASS hs-0256ec38b415-48f0979f062a"
+                        }
+                    ],
+    "scopeChangeRequests":  [
+
+                            ],
+    "implementationState":  "IMPLEMENTED_UNVERIFIED",
+    "contractId":  "hosted-sandbox-environment-assurance-v1",
+    "independentReview":  "NOT_REQUESTED",
+    "schemaVersion":  "1.0.0",
+    "phaseId":  "HS-FAZ-4",
+    "implementer":  "Cursor Composer"
 }

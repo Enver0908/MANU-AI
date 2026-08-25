@@ -1,5 +1,28 @@
 import { rmSync } from "node:fs";
 import { spawnWithTimeoutSync } from "./lib/spawn-with-timeout.mjs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+import {
+  assertProductionReleaseIdentity,
+  assertServiceWorkerCacheMatchesRelease,
+  buildReleaseIdentity,
+} from "./lib/release-identity.mjs";
+
+const __releaseVerifyDir = dirname(fileURLToPath(import.meta.url));
+const releaseVerifyRepoRoot = join(__releaseVerifyDir, "..", "..");
+
+function assertReleaseIdentityGate() {
+  console.log("\n[release:verify] release identity gate");
+  const identity = buildReleaseIdentity({
+    repoRoot: releaseVerifyRepoRoot,
+    env: { ...process.env, NODE_ENV: "production" },
+  });
+  assertProductionReleaseIdentity(identity, { ...process.env, NODE_ENV: "production" });
+  assertServiceWorkerCacheMatchesRelease(releaseVerifyRepoRoot, identity.releaseId);
+  console.log(
+    "Release identity bound: " + identity.releaseId + " @ " + identity.commitSha.slice(0, 12) + " fingerprint " + identity.migrationFingerprint.slice(0, 12),
+  );
+}
 
 const isolatedUnitTestEnv = {
   MANU_DEV_FALLBACK_STORE: "true",
@@ -25,6 +48,8 @@ const checks = [
   { label: "stage-5 dependency security verify", command: "npm", args: ["run", "test:stage-5-dependencies"] },
   { label: "stage-5 shell verify", command: "npm", args: ["run", "test:stage-5-shell"] },
 ];
+
+assertReleaseIdentityGate();
 
 for (const check of checks) {
   run(check);

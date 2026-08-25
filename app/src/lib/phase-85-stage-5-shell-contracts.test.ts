@@ -181,10 +181,13 @@ describe("phase-85-stage-5-shell-contracts", () => {
     expect(collectForbiddenShellResponseKeys(fixture)).toEqual([]);
   });
 
-  it("resolves shell version contract from env defaults", () => {
-    const version = resolveShellVersion("0.0.0-stage5");
+  it("resolves shell version contract with release identity", () => {
+    const version = resolveShellVersion("0.0.0-dev-local");
     expect(version.updateRequired).toBe(false);
     expect(version.contractVersion).toBe(PHASE_85_STAGE_5_SHELL_CONTRACT_VERSION);
+    expect(version.releaseIdentity.releaseId).toBeTruthy();
+    expect(version.releaseIdentity.commitSha).toMatch(/^[a-f0-9]{40}$/);
+    expect(version.releaseIdentity.migrationFingerprint).toMatch(/^[a-f0-9]{64}$/);
   });
 
   it("uses no-store cache headers for shell API responses", () => {

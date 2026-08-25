@@ -14,17 +14,32 @@
       "exactEvidenceCommandSpec": {
         "cwd": ".",
         "executable": "node",
-        "args": ["app/scripts/verify-hosted-sandbox-contracts.mjs"],
+        "args": [
+          "app/scripts/verify-hosted-sandbox-contracts.mjs"
+        ],
         "timeoutSeconds": 60,
         "networkPolicy": "FORBIDDEN",
         "artifactPolicy": "May create ignored runtime artifacts under .execution-governance/runtime only."
       },
-      "preconditions": ["Verifier-setup package is present.", "Migration directory exists."],
+      "preconditions": [
+        "Verifier-setup package is present.",
+        "Migration directory exists."
+      ],
       "expectedExitCode": 0,
-      "requiredAssertions": ["Verifier exits 0.", "Commit SHA and migration fingerprint are bound in the artifact."],
-      "requiredScenarioMatrix": ["live identity", "negative controls"],
-      "negativeControls": ["Wrong SHA, missing migrations, demo tenant fixture, and unauthorized diff fail closed."],
-      "expectedTestIds": ["HS-GOV-003-VERIFIER-PASS"],
+      "requiredAssertions": [
+        "Verifier exits 0.",
+        "Commit SHA and migration fingerprint are bound in the artifact."
+      ],
+      "requiredScenarioMatrix": [
+        "live identity",
+        "negative controls"
+      ],
+      "negativeControls": [
+        "Wrong SHA, missing migrations, demo tenant fixture, and unauthorized diff fail closed."
+      ],
+      "expectedTestIds": [
+        "HS-GOV-003-VERIFIER-PASS"
+      ],
       "expectedTestCountOrInventory": "One hosted-sandbox verifier command.",
       "artifactType": "runtime JSON artifact",
       "artifactLocation": ".execution-governance/runtime/hosted-sandbox",
@@ -32,12 +47,22 @@
       "artifactPrivacyPolicy": "No secrets, PHI, raw prompts, raw health data, or real user data.",
       "commitShaBinding": "required",
       "runIdAndTimestampBinding": "required",
-      "cleanEnvironmentRequirements": ["Local repository checkout", "Node.js available", "Git available", "No network required"],
+      "cleanEnvironmentRequirements": [
+        "Local repository checkout",
+        "Node.js available",
+        "Git available",
+        "No network required"
+      ],
       "independentVerifier": "NOT_REQUESTED unless user explicitly requests review",
       "passRule": "PASS only when the verifier exits 0.",
       "failRule": "FAIL when identity or negative-control checks fail.",
       "blockedRule": "BLOCKED when Git or Node.js cannot run.",
-      "forbiddenEquivalences": ["Evidence prose is not PASS", "Skipped check is not PASS", "Old artifact is not fresh evidence", "Implementer summary is not independent review"]
+      "forbiddenEquivalences": [
+        "Evidence prose is not PASS",
+        "Skipped check is not PASS",
+        "Old artifact is not fresh evidence",
+        "Implementer summary is not independent review"
+      ]
     },
     {
       "requirementId": "HS-TENANT-001",
@@ -51,21 +76,39 @@
       "exactEvidenceCommandSpec": {
         "cwd": "app",
         "executable": "npm",
-        "args": ["test", "--", "src/lib/hosted-sandbox-tenant-isolation.test.ts", "src/lib/auth-context.test.ts", "src/lib/phase-84b-public-website.test.ts"],
+        "args": [
+          "test",
+          "--",
+          "src/lib/hosted-sandbox-tenant-isolation.test.ts",
+          "src/lib/auth-context.test.ts",
+          "src/lib/phase-84b-public-website.test.ts"
+        ],
         "timeoutSeconds": 300,
         "networkPolicy": "FORBIDDEN",
         "artifactPolicy": "No runtime artifacts required."
       },
-      "preconditions": ["Faz 1 implementation is present.", "Node.js and app dependencies are available."],
+      "preconditions": [
+        "Faz 1 implementation is present.",
+        "Node.js and app dependencies are available."
+      ],
       "expectedExitCode": 0,
       "requiredAssertions": [
         "No hosted supabase-store read/mutation path calls ensureDemoData().",
         "resolveUniqueTenantMembership returns 409 for multiple memberships.",
         "Demo login is blocked off localhost and outside development."
       ],
-      "requiredScenarioMatrix": ["hosted read without demo seed", "multi membership 409", "demo route hosted closed", "cleanup dry-run gates"],
-      "negativeControls": ["A remaining ensureDemoData call on a hosted path fails the oracle."],
-      "expectedTestIds": ["HS-TENANT-001-NO-DEMO-SEED"],
+      "requiredScenarioMatrix": [
+        "hosted read without demo seed",
+        "multi membership 409",
+        "demo route hosted closed",
+        "cleanup dry-run gates"
+      ],
+      "negativeControls": [
+        "A remaining ensureDemoData call on a hosted path fails the oracle."
+      ],
+      "expectedTestIds": [
+        "HS-TENANT-001-NO-DEMO-SEED"
+      ],
       "expectedTestCountOrInventory": "Three targeted Vitest files for Faz 1 tenant isolation.",
       "artifactType": "test output",
       "artifactLocation": "local vitest stdout",
@@ -73,12 +116,21 @@
       "artifactPrivacyPolicy": "No secrets, PHI, raw prompts, raw health data, or real user data.",
       "commitShaBinding": "required",
       "runIdAndTimestampBinding": "required",
-      "cleanEnvironmentRequirements": ["Local repository checkout", "Node.js available", "app dependencies installed"],
+      "cleanEnvironmentRequirements": [
+        "Local repository checkout",
+        "Node.js available",
+        "app dependencies installed"
+      ],
       "independentVerifier": "NOT_REQUESTED unless user explicitly requests review",
       "passRule": "PASS only when the oracle command exits 0.",
       "failRule": "FAIL when hosted paths still seed demo data or membership/demo gates regress.",
       "blockedRule": "BLOCKED when npm test cannot run.",
-      "forbiddenEquivalences": ["Evidence prose is not PASS", "Skipped check is not PASS", "Old artifact is not fresh evidence", "Implementer summary is not independent review"]
+      "forbiddenEquivalences": [
+        "Evidence prose is not PASS",
+        "Skipped check is not PASS",
+        "Old artifact is not fresh evidence",
+        "Implementer summary is not independent review"
+      ]
     },
     {
       "requirementId": "HS-SEC-001",
@@ -92,21 +144,35 @@
       "exactEvidenceCommandSpec": {
         "cwd": "app",
         "executable": "npm",
-        "args": ["run", "test:rls"],
+        "args": [
+          "run",
+          "test:rls"
+        ],
         "timeoutSeconds": 900,
         "networkPolicy": "FORBIDDEN",
         "artifactPolicy": "No runtime artifacts required."
       },
-      "preconditions": ["Faz 3 migration is present.", "Local Supabase or approved remote RLS target is available for integration tests."],
+      "preconditions": [
+        "Faz 3 migration is present.",
+        "Local Supabase or approved remote RLS target is available for integration tests."
+      ],
       "expectedExitCode": 0,
       "requiredAssertions": [
         "Migration binds dietitian_belongs_to_tenant to auth.uid() membership.",
         "RLS helper grants revoke PUBLIC/anon EXECUTE.",
         "Cross-tenant dietitian spoof insert is rejected when RLS suite runs."
       ],
-      "requiredScenarioMatrix": ["migration oracle", "RLS integration when available"],
-      "negativeControls": ["PUBLIC execute on dietitian_belongs_to_tenant fails the oracle."],
-      "expectedTestIds": ["HS-SEC-001-MIGRATION", "HS-SEC-001-RLS"],
+      "requiredScenarioMatrix": [
+        "migration oracle",
+        "RLS integration when available"
+      ],
+      "negativeControls": [
+        "PUBLIC execute on dietitian_belongs_to_tenant fails the oracle."
+      ],
+      "expectedTestIds": [
+        "HS-SEC-001-MIGRATION",
+        "HS-SEC-001-RLS"
+      ],
       "expectedTestCountOrInventory": "Security migration vitest plus full RLS integration suite when Docker/local Supabase is available.",
       "artifactType": "test output",
       "artifactLocation": "local vitest stdout",
@@ -114,12 +180,21 @@
       "artifactPrivacyPolicy": "No secrets, PHI, raw prompts, raw health data, or real user data.",
       "commitShaBinding": "required",
       "runIdAndTimestampBinding": "required",
-      "cleanEnvironmentRequirements": ["Local repository checkout", "Node.js available", "Local Supabase for full RLS PASS"],
+      "cleanEnvironmentRequirements": [
+        "Local repository checkout",
+        "Node.js available",
+        "Local Supabase for full RLS PASS"
+      ],
       "independentVerifier": "NOT_REQUESTED unless user explicitly requests review",
       "passRule": "PASS when migration oracle exits 0 and RLS suite exits 0 with zero skips.",
       "failRule": "FAIL when helper grants or membership binding regress.",
       "blockedRule": "BLOCKED when RLS integration cannot run.",
-      "forbiddenEquivalences": ["Evidence prose is not PASS", "Skipped check is not PASS", "Old artifact is not fresh evidence", "Implementer summary is not independent review"]
+      "forbiddenEquivalences": [
+        "Evidence prose is not PASS",
+        "Skipped check is not PASS",
+        "Old artifact is not fresh evidence",
+        "Implementer summary is not independent review"
+      ]
     },
     {
       "requirementId": "HS-SEC-002",
@@ -133,20 +208,32 @@
       "exactEvidenceCommandSpec": {
         "cwd": ".",
         "executable": "node",
-        "args": ["--test", "tools/hosted-sandbox/hosted-sandbox-backup.test.mjs"],
+        "args": [
+          "--test",
+          "tools/hosted-sandbox/hosted-sandbox-backup.test.mjs"
+        ],
         "timeoutSeconds": 120,
         "networkPolicy": "FORBIDDEN",
         "artifactPolicy": "No backup artifacts committed."
       },
-      "preconditions": ["Faz 3 backup scripts are present."],
+      "preconditions": [
+        "Faz 3 backup scripts are present."
+      ],
       "expectedExitCode": 0,
       "requiredAssertions": [
         "Backup manifest schema and hash validation pass.",
         "Remote backup requires explicit approval env flags."
       ],
-      "requiredScenarioMatrix": ["manifest validation", "approval gates"],
-      "negativeControls": ["Hash mismatch fails restore validation."],
-      "expectedTestIds": ["HS-SEC-002-BACKUP-ORACLE"],
+      "requiredScenarioMatrix": [
+        "manifest validation",
+        "approval gates"
+      ],
+      "negativeControls": [
+        "Hash mismatch fails restore validation."
+      ],
+      "expectedTestIds": [
+        "HS-SEC-002-BACKUP-ORACLE"
+      ],
       "expectedTestCountOrInventory": "Four node tests for backup manifest and approval gates.",
       "artifactType": "test output",
       "artifactLocation": "local node test stdout",
@@ -154,12 +241,134 @@
       "artifactPrivacyPolicy": "No secrets, PHI, raw prompts, raw health data, or real user data.",
       "commitShaBinding": "required",
       "runIdAndTimestampBinding": "required",
-      "cleanEnvironmentRequirements": ["Local repository checkout", "Node.js available"],
+      "cleanEnvironmentRequirements": [
+        "Local repository checkout",
+        "Node.js available"
+      ],
       "independentVerifier": "NOT_REQUESTED unless user explicitly requests review",
       "passRule": "PASS when backup oracle exits 0.",
       "failRule": "FAIL when manifest or approval gates regress.",
       "blockedRule": "BLOCKED when node test cannot run.",
-      "forbiddenEquivalences": ["Evidence prose is not PASS", "Skipped check is not PASS", "Old artifact is not fresh evidence", "Implementer summary is not independent review"]
+      "forbiddenEquivalences": [
+        "Evidence prose is not PASS",
+        "Skipped check is not PASS",
+        "Old artifact is not fresh evidence",
+        "Implementer summary is not independent review"
+      ]
+    },
+    {
+      "requirementId": "HS-VERIFY-001",
+      "authoritySource": "Hosted Sandbox plan Faz 4",
+      "observableRequirement": "ReleaseIdentity is produced at build time and exposed by /api/shell/version.",
+      "oracleType": "AUTOMATED",
+      "oracleOwner": "hosted-sandbox release identity tests",
+      "oracleLocation": "app/src/lib/hosted-sandbox-release-identity.test.ts",
+      "protectionMechanism": "Committed release identity oracles.",
+      "exactEvidenceCommand": "cd app && npx vitest run src/lib/hosted-sandbox-release-identity.test.ts src/lib/phase-85-stage-5-shell-contracts.test.ts",
+      "exactEvidenceCommandSpec": {
+        "cwd": "app",
+        "executable": "npx",
+        "args": [
+          "vitest",
+          "run",
+          "src/lib/hosted-sandbox-release-identity.test.ts",
+          "src/lib/phase-85-stage-5-shell-contracts.test.ts"
+        ],
+        "timeoutSeconds": 300,
+        "networkPolicy": "FORBIDDEN",
+        "artifactPolicy": "No runtime artifacts required."
+      },
+      "preconditions": [
+        "Faz 4 implementation present."
+      ],
+      "expectedExitCode": 0,
+      "requiredAssertions": [
+        "ReleaseIdentity fields present on shell version contract.",
+        "Build identity matches HEAD SHA and migration fingerprint."
+      ],
+      "requiredScenarioMatrix": [
+        "release identity positive",
+        "hosted fallback negative"
+      ],
+      "negativeControls": [
+        "Missing identity on hosted config fails."
+      ],
+      "expectedTestIds": [
+        "HS-VERIFY-001-RELEASE-IDENTITY"
+      ],
+      "expectedTestCountOrInventory": "Two targeted Vitest files.",
+      "artifactType": "test output",
+      "artifactLocation": "local vitest stdout",
+      "artifactRetentionPolicy": "Ephemeral.",
+      "artifactPrivacyPolicy": "No secrets or PHI.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": [
+        "Local checkout",
+        "Node.js"
+      ],
+      "independentVerifier": "NOT_REQUESTED unless user explicitly requests review",
+      "passRule": "PASS when oracle exits 0.",
+      "failRule": "FAIL when identity contract regresses.",
+      "blockedRule": "BLOCKED when vitest cannot run.",
+      "forbiddenEquivalences": [
+        "Evidence prose is not PASS"
+      ]
+    },
+    {
+      "requirementId": "HS-VERIFY-003",
+      "authoritySource": "Hosted Sandbox plan Faz 4",
+      "observableRequirement": "Hosted fallback 0.0.0-stage5 is forbidden.",
+      "oracleType": "AUTOMATED",
+      "oracleOwner": "hosted-sandbox release identity tests",
+      "oracleLocation": "app/src/lib/hosted-sandbox-release-identity.test.ts",
+      "protectionMechanism": "Committed negative oracle.",
+      "exactEvidenceCommand": "cd app && npx vitest run src/lib/hosted-sandbox-release-identity.test.ts",
+      "exactEvidenceCommandSpec": {
+        "cwd": "app",
+        "executable": "npx",
+        "args": [
+          "vitest",
+          "run",
+          "src/lib/hosted-sandbox-release-identity.test.ts"
+        ],
+        "timeoutSeconds": 120,
+        "networkPolicy": "FORBIDDEN",
+        "artifactPolicy": "No runtime artifacts required."
+      },
+      "preconditions": [
+        "Faz 4 implementation present."
+      ],
+      "expectedExitCode": 0,
+      "requiredAssertions": [
+        "assertHostedFallbackForbidden throws for 0.0.0-stage5 with Supabase URL."
+      ],
+      "requiredScenarioMatrix": [
+        "hosted fallback forbidden"
+      ],
+      "negativeControls": [
+        "Allowing stage5 on hosted fails."
+      ],
+      "expectedTestIds": [
+        "HS-VERIFY-003-FORBID-STAGE5"
+      ],
+      "expectedTestCountOrInventory": "One vitest file.",
+      "artifactType": "test output",
+      "artifactLocation": "local vitest stdout",
+      "artifactRetentionPolicy": "Ephemeral.",
+      "artifactPrivacyPolicy": "No secrets or PHI.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": [
+        "Local checkout"
+      ],
+      "independentVerifier": "NOT_REQUESTED unless user explicitly requests review",
+      "passRule": "PASS when oracle exits 0.",
+      "failRule": "FAIL when fallback allowed.",
+      "blockedRule": "BLOCKED when vitest cannot run.",
+      "forbiddenEquivalences": [
+        "Evidence prose is not PASS"
+      ]
     }
   ]
 }

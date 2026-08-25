@@ -31,6 +31,7 @@ const UNIT_TESTS = [
   "src/lib/phase-85-stage-5-shell-navigation.test.ts",
   "src/lib/phase-85-stage-5-shell-preference-coordinator.test.ts",
   "src/lib/phase-85-stage-5-shell-contracts.test.ts",
+  "src/lib/hosted-sandbox-release-identity.test.ts",
   "src/lib/i18n.test.ts",
 ];
 

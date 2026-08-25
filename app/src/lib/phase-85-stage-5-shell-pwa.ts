@@ -8,13 +8,17 @@ import {
   resolveShellDeploymentVersion,
   resolveShellMinClientVersion,
 } from "./phase-85-stage-5-shell-contracts";
+import {
+  resolveClientCompatibilityVersion,
+  resolveShellSwCacheVersion,
+} from "./release-identity";
 
 export const PHASE_85_STAGE_5_SHELL_PWA_VERSION = "p85-stage-5-shell-pwa-v1";
 
 export const SIRIUSAI_CLIENT_VERSION_HEADER = "x-siriusai-client-version";
 export const SIRIUSAI_MUTATION_KIND_HEADER = "x-siriusai-mutation-kind";
 
-export const SHELL_SW_CACHE_VERSION = "stage5-remediation-v3";
+export const SHELL_SW_CACHE_VERSION = resolveShellSwCacheVersion();
 export const SHELL_STATIC_CACHE_NAME = `siriusai-static-${SHELL_SW_CACHE_VERSION}`;
 export const SHELL_ASSET_CACHE_NAME = `siriusai-assets-${SHELL_SW_CACHE_VERSION}`;
 export const SHELL_LEGACY_CACHE_PREFIX = "manu-ai-shell-";
@@ -96,12 +100,7 @@ export function listAllowedShellCacheNames() {
 }
 
 export function resolveClientBuildVersion(env: NodeJS.ProcessEnv = process.env) {
-  return (
-    env.NEXT_PUBLIC_SIRIUSAI_APP_VERSION?.trim() ||
-    env.SIRIUSAI_APP_DEPLOYMENT_VERSION?.trim() ||
-    resolveShellDeploymentVersion(env) ||
-    "0.0.0-stage5"
-  );
+  return resolveClientCompatibilityVersion(env);
 }
 
 export function isClientUpdateRequired(

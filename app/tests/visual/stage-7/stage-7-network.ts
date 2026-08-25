@@ -89,7 +89,21 @@ function payloadFor(profile: Stage7FixtureProfile, path: string): unknown | null
     return { clients: STAGE7_CLIENTS };
   }
   if (path.includes("/api/shell/version")) {
-    return { version: "stage7", updateAvailable: false };
+    return {
+      contractVersion: "p85-stage-5-shell-v1",
+      deploymentVersion: "0.0.0-stage7-fixture",
+      minClientVersion: "0.0.0-stage7-fixture",
+      clientVersion: "0.0.0-stage7-fixture",
+      updateRequired: false,
+      releaseIdentity: {
+        releaseId: "stage7-fixture",
+        commitSha: "0000000000000000000000000000000000000000",
+        builtAt: "2026-01-01T00:00:00.000Z",
+        environment: "test",
+        migrationFingerprint: "0000000000000000000000000000000000000000000000000000000000000000",
+        compatibilityVersion: "0.0.0-stage7-fixture",
+      },
+    };
   }
   if (path.includes("/api/shell/preferences")) {
     return { compactMode: true, locale: "tr" };

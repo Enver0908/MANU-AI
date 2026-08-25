@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { PwaRuntime } from "@/components/pwa-runtime";
-import { resolveClientBuildVersion } from "@/lib/phase-85-stage-5-shell-pwa";
+import { resolveClientCompatibilityVersion } from "@/lib/release-identity";
 import "./globals.css";
 
-const appVersion = resolveClientBuildVersion();
+const appVersion = resolveClientCompatibilityVersion();
 
 export const metadata: Metadata = {
   title: "SiriusAI",

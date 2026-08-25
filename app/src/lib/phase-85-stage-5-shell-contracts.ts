@@ -1,6 +1,10 @@
 import type { AppCapability } from "./app-capability-contracts";
 import { hasCapability } from "./app-capability-contracts";
 import { isAiChatUiEnabled } from "./phase-85-stage-4b-dashboard-routing";
+import {
+  resolveDeploymentCompatibilityVersion,
+  type ReleaseIdentity,
+} from "./release-identity";
 import type { AiMode, PermissionState, TenantRole } from "./types";
 
 export const PHASE_85_STAGE_5_SHELL_CONTRACT_VERSION = "p85-stage-5-shell-v1";
@@ -145,6 +149,7 @@ export type ShellVersionDto = {
   minClientVersion: string;
   clientVersion: string;
   updateRequired: boolean;
+  releaseIdentity: ReleaseIdentity;
 };
 
 export type ShellSessionActivityDto = {
@@ -329,15 +334,15 @@ export function compareShellVersions(left: string, right: string) {
 }
 
 export function resolveShellDeploymentVersion(env: NodeJS.ProcessEnv = process.env) {
-  return env.SIRIUSAI_APP_DEPLOYMENT_VERSION?.trim() || "0.0.0-stage5";
+  return resolveDeploymentCompatibilityVersion(env);
 }
 
 export function resolveShellMinClientVersion(env: NodeJS.ProcessEnv = process.env) {
-  return (
-    env.SIRIUSAI_SHELL_MIN_CLIENT_VERSION?.trim() ||
-    env.NEXT_PUBLIC_SIRIUSAI_APP_VERSION?.trim() ||
-    "0.0.0-stage5"
-  );
+  const explicitMin = env.SIRIUSAI_SHELL_MIN_CLIENT_VERSION?.trim();
+  if (explicitMin) {
+    return explicitMin;
+  }
+  return resolveDeploymentCompatibilityVersion(env);
 }
 
 export function resolveShellCapabilities(role: TenantRole) {

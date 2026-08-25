@@ -29,6 +29,7 @@ import {
   type ShellRiskLevel,
   type ShellVersionDto,
 } from "./phase-85-stage-5-shell-contracts";
+import { resolveReleaseIdentity } from "./release-identity";
 import type { AiMode, PermissionState } from "./types";
 
 type ShellBootstrapRpcRow = {
@@ -333,12 +334,14 @@ export async function updateShellPreferences(
 export function resolveShellVersion(clientVersion: string): ShellVersionDto {
   const minClientVersion = resolveShellMinClientVersion();
   const deploymentVersion = resolveShellDeploymentVersion();
+  const releaseIdentity = resolveReleaseIdentity();
   return {
     contractVersion: PHASE_85_STAGE_5_SHELL_CONTRACT_VERSION,
     deploymentVersion,
     minClientVersion,
     clientVersion,
     updateRequired: compareShellVersions(clientVersion, minClientVersion) < 0,
+    releaseIdentity,
   };
 }
 

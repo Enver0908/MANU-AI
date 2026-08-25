@@ -14,6 +14,7 @@ import {
   shouldServiceWorkerCachePath,
   SHELL_LEGACY_CACHE_PREFIX,
   SHELL_STATIC_CACHE_MAX_ENTRIES,
+  SHELL_SW_CACHE_VERSION,
 } from "./phase-85-stage-5-shell-pwa";
 import { reduceShellProviderState, createInitialShellProviderState, createFallbackShellBootstrap } from "./phase-85-stage-5-shell-provider-state";
 
@@ -41,11 +42,15 @@ describe("phase-85-stage-5-shell-pwa", () => {
 
   it("deletes legacy manu-ai-shell caches and keeps siriusai allowlist", () => {
     expect(isLegacyShellCacheName(`${SHELL_LEGACY_CACHE_PREFIX}v2`)).toBe(true);
-    expect(listAllowedShellCacheNames()).toEqual([
-      "siriusai-static-stage5-remediation-v3",
-      "siriusai-assets-stage5-remediation-v3",
-    ]);
     const swSource = readFileSync(join(process.cwd(), "public", "sw.js"), "utf8");
+    const swMatch = swSource.match(/const SW_CACHE_VERSION = "([^"]+)"/);
+    const swVersion = swMatch?.[1] ?? SHELL_SW_CACHE_VERSION;
+    expect(listAllowedShellCacheNames()).toEqual([
+      "siriusai-static-" + SHELL_SW_CACHE_VERSION,
+      "siriusai-assets-" + SHELL_SW_CACHE_VERSION,
+    ]);
+    expect(swVersion).toBeTruthy();
+    expect(swVersion).not.toBe("stage5-remediation-v3");
     expect(swSource).toContain(SHELL_LEGACY_CACHE_PREFIX);
     expect(swSource).toContain("SKIP_WAITING");
     expect(swSource).toContain("STATIC_CACHE_MAX_ENTRIES = 100");
