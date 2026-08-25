@@ -1,3 +1,11 @@
+import { NextResponse } from "next/server";
+
+export const API_NO_STORE_HEADERS = {
+  "Cache-Control": "no-store",
+} as const;
+
+export const MAGIC_LINK_RETRY_AFTER_SECONDS = 60;
+
 export class AppDomainError extends Error {
   status: 400 | 403 | 404 | 409 | 429;
 
@@ -24,9 +32,37 @@ export class AppRequestError extends Error {
   }
 }
 
+export function createApiRequestId() {
+  return crypto.randomUUID();
+}
+
+export function apiErrorBody(error: string, requestId = createApiRequestId()) {
+  return { error, requestId };
+}
+
+export function apiErrorResponse(error: string, status: number, requestId = createApiRequestId()) {
+  return NextResponse.json(apiErrorBody(error, requestId), {
+    status,
+    headers: API_NO_STORE_HEADERS,
+  });
+}
+
+export function rateLimitErrorResponse(requestId = createApiRequestId()) {
+  return NextResponse.json(apiErrorBody("rate_limit_exceeded", requestId), {
+    status: 429,
+    headers: {
+      ...API_NO_STORE_HEADERS,
+      "Retry-After": String(MAGIC_LINK_RETRY_AFTER_SECONDS),
+    },
+  });
+}
+
 export function domainErrorResponse(error: unknown) {
   if (error instanceof AppDomainError) {
-    return Response.json({ error: error.message }, { status: error.status });
+    if (error.status === 429) {
+      return rateLimitErrorResponse();
+    }
+    return apiErrorResponse(error.message, error.status);
   }
 
   throw error;

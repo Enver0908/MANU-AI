@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { AppDomainError } from "@/lib/app-errors";
+import { AppDomainError, apiErrorResponse, createApiRequestId, rateLimitErrorResponse } from "@/lib/app-errors";
 import { insertCommercialOnboardingEvent } from "@/lib/commercial-onboarding-store";
 import { getSupabaseConfig } from "@/lib/supabase";
 import {
@@ -21,23 +21,24 @@ type MagicLinkBody = {
 };
 
 export async function POST(request: NextRequest) {
+  const requestId = createApiRequestId();
   const config = getSupabaseConfig();
   if (!config) {
-    return NextResponse.json({ error: "auth_not_configured" }, { status: 503 });
+    return apiErrorResponse("auth_not_configured", 503, requestId);
   }
 
   let body: MagicLinkBody;
   try {
     body = (await request.json()) as MagicLinkBody;
   } catch {
-    return NextResponse.json({ error: "invalid_json" }, { status: 400 });
+    return apiErrorResponse("invalid_json", 400, requestId);
   }
 
   const validation = validateMagicLinkRequest(body);
   if (!validation.valid) {
     return NextResponse.json(
-      { error: "validation_failed", blockingReasons: validation.blockingReasons },
-      { status: 400 },
+      { error: "validation_failed", requestId, blockingReasons: validation.blockingReasons },
+      { status: 400, headers: { "Cache-Control": "no-store" } },
     );
   }
 
@@ -50,7 +51,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     if (error instanceof AppDomainError && error.status === 429) {
-      return NextResponse.json({ error: "rate_limit_exceeded" }, { status: 429 });
+      return rateLimitErrorResponse(requestId);
     }
     throw error;
   }
@@ -73,8 +74,11 @@ export async function POST(request: NextRequest) {
   );
 
   if (error) {
-    const status = error.status === 429 || error.status === 503 ? error.status : 500;
-    return NextResponse.json({ error: "magic_link_send_failed" }, { status });
+    if (error.status === 429) {
+      return rateLimitErrorResponse(requestId);
+    }
+    const status = error.status === 503 ? 503 : 500;
+    return apiErrorResponse("magic_link_send_failed", status, requestId);
   }
 
   const checkoutSessionId = body.checkoutSessionId?.trim() || null;
@@ -91,8 +95,12 @@ export async function POST(request: NextRequest) {
     }).catch(() => undefined);
   }
 
-  return NextResponse.json({
-    ...genericMagicLinkAcceptedResponse(),
-    sent: true,
-  });
+  return NextResponse.json(
+    {
+      ...genericMagicLinkAcceptedResponse(),
+      sent: true,
+      requestId,
+    },
+    { headers: { "Cache-Control": "no-store" } },
+  );
 }

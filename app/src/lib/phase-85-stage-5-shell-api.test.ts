@@ -13,18 +13,27 @@ describe("phase-85-stage-5-shell-api", () => {
   it("returns stable shell error payloads", async () => {
     const response = shellErrorResponse(new ShellApiError(503, "shell_bootstrap_unavailable"));
     expect(response.status).toBe(503);
-    await expect(response.json()).resolves.toEqual({ error: "shell_bootstrap_unavailable" });
+    await expect(response.json()).resolves.toMatchObject({
+      error: "shell_bootstrap_unavailable",
+      requestId: expect.any(String),
+    });
     expect(response.headers.get("Cache-Control")).toBe("no-store");
   });
 
   it("maps auth and domain errors to no-store JSON responses", async () => {
     const authResponse = shellErrorResponse(new AppAuthError(403, "entitlement_inactive"));
     expect(authResponse.status).toBe(403);
-    await expect(authResponse.json()).resolves.toEqual({ error: "entitlement_inactive" });
+    await expect(authResponse.json()).resolves.toMatchObject({
+      error: "entitlement_inactive",
+      requestId: expect.any(String),
+    });
 
     const domainResponse = shellErrorResponse(new AppDomainError(429, "rate_limit_exceeded"));
     expect(domainResponse.status).toBe(429);
-    await expect(domainResponse.json()).resolves.toEqual({ error: "rate_limit_exceeded" });
+    await expect(domainResponse.json()).resolves.toMatchObject({
+      error: "rate_limit_exceeded",
+      requestId: expect.any(String),
+    });
   });
 
   it("sets no-store headers on successful shell JSON responses", async () => {

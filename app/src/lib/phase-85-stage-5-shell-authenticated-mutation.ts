@@ -66,6 +66,10 @@ export async function authenticatedMutationFetch(
   input: RequestInfo | URL,
   init?: RequestInit & { mutationKind?: ShellMutationKind },
 ) {
+  if (typeof navigator !== "undefined" && navigator.onLine === false) {
+    throw new AppRequestError(0, "offline_mutation_rejected");
+  }
+
   const { mutationKind, ...requestInit } = init ?? {};
   const headers = buildAuthenticatedMutationHeaders(requestInit.headers, {
     mutationKind: mutationKind ?? "other",

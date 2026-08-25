@@ -53,6 +53,32 @@ export async function proxy(request: NextRequest) {
   if (isAdminHost(hostname) && shouldRewriteAdminHostPath(pathname)) {
     const url = request.nextUrl.clone();
     url.pathname = resolveAdminHostInternalPath(pathname);
+
+    if (isSupabaseConfigured()) {
+      let response = NextResponse.rewrite(url);
+      const supabase = createSupabaseServerClient({
+        getAll: () => request.cookies.getAll(),
+        setAll: (cookiesToSet, headers) => {
+          cookiesToSet.forEach(({ name, value }) => {
+            request.cookies.set(name, value);
+          });
+          response = NextResponse.rewrite(url);
+          cookiesToSet.forEach(({ name, value, options }) => {
+            response.cookies.set(name, value, options);
+          });
+          Object.entries(headers).forEach(([key, value]) => {
+            response.headers.set(key, value);
+          });
+        },
+      });
+
+      if (supabase) {
+        await supabase.auth.getUser();
+      }
+
+      return response;
+    }
+
     return NextResponse.rewrite(url);
   }
 

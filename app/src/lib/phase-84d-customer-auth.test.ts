@@ -3,6 +3,7 @@ import {
   buildAuthCallbackUrl,
   deriveCustomerAuthRedirect,
   isTransientMagicLinkSendFailure,
+  MAGIC_LINK_RATE_LIMIT,
   sanitizePostAuthRedirectPath,
   sendMagicLinkWithRetry,
   summarizePhase84dCustomerAuth,
@@ -81,6 +82,8 @@ describe("phase 84d customer auth", () => {
 
   it("rejects unsafe post-auth redirect paths", () => {
     expect(sanitizePostAuthRedirectPath("/dashboard")).toBe("/dashboard");
+    expect(sanitizePostAuthRedirectPath("/settings/profile")).toBe("/settings/profile");
+    expect(sanitizePostAuthRedirectPath("/evil")).toBeNull();
     expect(sanitizePostAuthRedirectPath("//evil.example")).toBeNull();
     expect(sanitizePostAuthRedirectPath("/api/auth/magic-link")).toBeNull();
     expect(summarizePhase84dCustomerAuth({ NEXT_PUBLIC_APP_URL: "https://siriusai.store" }).callbackUrl).toBe(

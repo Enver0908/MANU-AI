@@ -94,6 +94,9 @@ export function DashboardApp({
     state,
     hydrated,
     authError,
+    hydrateError,
+    hydrateRequestId,
+    retryHydrate,
     createClient,
     updateClient,
     removeClient,
@@ -477,6 +480,18 @@ export function DashboardApp({
 
   if (!hydrated) {
     return <DashboardLoadingSkeleton />;
+  }
+
+  if (hydrateError) {
+    return (
+      <ErrorState
+        title="Panel verisi yüklenemedi"
+        message="Sunucudan uygulama durumu alınamadı. Demo veriye geçilmedi; oturumu yenileyin veya tekrar deneyin."
+        detail={`Hata: ${hydrateError}${hydrateRequestId ? ` (requestId: ${hydrateRequestId})` : ""}`}
+        onAction={() => void retryHydrate()}
+        actionLabel="Tekrar dene"
+      />
+    );
   }
 
   if (authError) {

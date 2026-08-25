@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { AppAuthError, authErrorResponse } from "./auth-context";
-import { AppDomainError, domainErrorResponse } from "./app-errors";
+import { AppDomainError, apiErrorBody, createApiRequestId, domainErrorResponse } from "./app-errors";
 import {
   STAGE_6_API_CACHE_CONTROL,
   Stage6ContractError,
@@ -25,7 +25,10 @@ export function stage6ErrorResponse(error: unknown, sourceType?: Stage6RevisionS
     });
   }
   if (mapped instanceof AppAuthError) {
-    return authErrorResponse(mapped);
+    return NextResponse.json(apiErrorBody(mapped.message, createApiRequestId()), {
+      status: mapped.status,
+      headers: { "Cache-Control": STAGE_6_API_CACHE_CONTROL },
+    });
   }
   if (mapped instanceof AppDomainError) {
     return domainErrorResponse(mapped);

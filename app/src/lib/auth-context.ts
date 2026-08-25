@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { apiErrorBody, API_NO_STORE_HEADERS, createApiRequestId } from "./app-errors";
 import { assertActiveCommercialEntitlement } from "./commercial-entitlement-access";
 import {
   assertShellSessionActivity,
@@ -167,7 +168,10 @@ export function resolveUniqueTenantMembership(
 
 export function authErrorResponse(error: unknown) {
   if (error instanceof AppAuthError) {
-    return NextResponse.json({ error: error.message }, { status: error.status });
+    return NextResponse.json(apiErrorBody(error.message, createApiRequestId()), {
+      status: error.status,
+      headers: API_NO_STORE_HEADERS,
+    });
   }
 
   throw error;

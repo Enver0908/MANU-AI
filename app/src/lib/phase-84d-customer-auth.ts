@@ -11,9 +11,18 @@ import { deriveDashboardAccessGate } from "./phase-83e3-app-shell";
 export const PHASE_84D_VERSION = "phase84d-customer-auth-v1";
 
 export const MAGIC_LINK_RATE_LIMIT = {
-  limit: 6,
+  limit: 1,
   windowMs: 60_000,
 } as const;
+
+export const POST_AUTH_REDIRECT_ALLOWLIST_PREFIXES = [
+  "/dashboard",
+  "/onboarding",
+  "/settings",
+  "/install",
+  "/ai-chat",
+  "/more",
+] as const;
 
 export const MAGIC_LINK_SEND_RETRY_DELAYS_MS = [250, 750, 1500] as const;
 
@@ -173,7 +182,23 @@ export function sanitizePostAuthRedirectPath(nextPath?: string | null) {
   if (candidate.startsWith("/api/") || candidate.startsWith("/auth/callback")) {
     return null;
   }
-  return candidate;
+  const allowed = POST_AUTH_REDIRECT_ALLOWLIST_PREFIXES.some(
+    (prefix) =>
+      candidate === prefix ||
+      candidate.startsWith(`${prefix}/`) ||
+      candidate.startsWith(`${prefix}?`),
+  );
+  return allowed ? candidate : null;
+}
+
+export function parseRetryAfterSeconds(response: Response, fallback = MAGIC_LINK_RATE_LIMIT.windowMs / 1000) {
+  const header = response.headers.get("Retry-After");
+  if (!header) return fallback;
+  const seconds = Number(header);
+  if (Number.isFinite(seconds) && seconds > 0) {
+    return Math.ceil(seconds);
+  }
+  return fallback;
 }
 
 export function assertAllowedAuthBaseUrl(baseUrl: string) {

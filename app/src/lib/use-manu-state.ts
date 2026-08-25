@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { AppRequestError } from "./app-errors";
 import { authenticatedMutationFetch } from "./phase-85-stage-5-shell-authenticated-mutation";
+import { getSupabaseStatus } from "./supabase";
 import { getActiveFormSchema } from "./client-forms";
 import {
   mergeStage6MutationIntoAppState,
@@ -35,6 +36,9 @@ export function useManuState() {
   const [state, setState] = useState<ManuAppState>(() => createInitialState());
   const [hydrated, setHydrated] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
+  const [hydrateError, setHydrateError] = useState<string | null>(null);
+  const [hydrateRequestId, setHydrateRequestId] = useState<string | null>(null);
+  const usesHostedStore = getSupabaseStatus() === "configured";
 
   const requestJson = useCallback(async (url: string, init?: RequestInit & { mutationKind?: "save" | "other" }) => {
     const method = (init?.method ?? "GET").toUpperCase();
@@ -107,8 +111,24 @@ export function useManuState() {
   const replaceFromApi = useCallback(async (url: string, init?: RequestInit) => {
     const nextState = (await requestJson(url, init)) as ManuAppState;
     setState(nextState);
+    setHydrateError(null);
+    setHydrateRequestId(null);
     return nextState;
   }, [requestJson]);
+
+  const retryHydrate = useCallback(async () => {
+    setHydrateError(null);
+    setHydrateRequestId(null);
+    try {
+      await replaceFromApi("/api/app-state");
+    } catch (error) {
+      if (usesHostedStore) {
+        setHydrateError(error instanceof AppRequestError ? error.code : "app_state_load_failed");
+      } else {
+        setState(createInitialState());
+      }
+    }
+  }, [replaceFromApi, usesHostedStore]);
 
   const mergeStage6MutationFromApi = useCallback(
     async (url: string, expectedClientId: string, init?: RequestInit) => {
@@ -160,20 +180,30 @@ export function useManuState() {
   useEffect(() => {
     const timeout = window.setTimeout(() => {
       replaceFromApi("/api/app-state")
-        .catch(() => setState(createInitialState()))
+        .catch((error) => {
+          if (usesHostedStore) {
+            setHydrateError(error instanceof AppRequestError ? error.code : "app_state_load_failed");
+            return;
+          }
+          setState(createInitialState());
+        })
         .finally(() => {
           setHydrated(true);
         });
     }, 0);
 
     return () => window.clearTimeout(timeout);
-  }, [replaceFromApi]);
+  }, [replaceFromApi, usesHostedStore]);
 
   return useMemo(
     () => ({
       state,
       hydrated,
       authError,
+      hydrateError,
+      hydrateRequestId,
+      retryHydrate,
+      usesHostedStore,
       mergeConversationDetailIntoState,
       mergeConversationMutationIntoState,
       createClient: (input: {
@@ -591,6 +621,10 @@ export function useManuState() {
     }),
     [
       authError,
+      hydrateError,
+      hydrateRequestId,
+      retryHydrate,
+      usesHostedStore,
       conversationMutationFromApi,
       hydrated,
       mergeConversationDetailIntoState,

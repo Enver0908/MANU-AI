@@ -14,7 +14,9 @@ import {
 } from "@/lib/phase-85-stage-5-shell-navigation";
 import type { SupportedLanguageCode } from "@/lib/languages";
 import type { TenantRole } from "@/lib/types";
+import Link from "next/link";
 import { Bell } from "lucide-react";
+import { useShellProvider } from "@/components/dashboard/shell-provider";
 
 export type ShellNavBadges = { alerts: number; notifications: number; messages: number };
 
@@ -50,14 +52,13 @@ function ShellNavLink({
   active,
   layout,
   navigationLocked = false,
-  onNavigateDestination,
 }: {
   item: ShellNavVisualItem;
   active: boolean;
   layout: "wide" | "rail" | "compact";
   navigationLocked?: boolean;
-  onNavigateDestination: (destinationId: ShellNavVisualItem["destinationId"]) => void;
 }) {
+  const { requestHrefNavigation } = useShellProvider();
   const enabled = item.enabled && !navigationLocked;
   const Icon = item.icon;
   const className = navClass(active, enabled, layout);
@@ -111,16 +112,19 @@ function ShellNavLink({
   }
 
   return (
-    <button
-      type="button"
+    <Link
+      href={item.href}
       className={className}
       aria-current={active ? "page" : undefined}
       aria-label={item.label}
       title={layout === "rail" ? item.label : undefined}
-      onClick={() => onNavigateDestination(item.destinationId)}
+      onClick={(event) => {
+        event.preventDefault();
+        requestHrefNavigation(item.href);
+      }}
     >
       {content}
-    </button>
+    </Link>
   );
 }
 
@@ -155,7 +159,6 @@ export function DashboardWideSidebarNav({
           active={item.navKey === activeNavKey}
           layout="wide"
           navigationLocked={navigationLocked}
-          onNavigateDestination={onNavigateDestination}
         />
       ))}
     </nav>
@@ -193,7 +196,6 @@ export function DashboardMediumRailNav({
           active={item.navKey === activeNavKey}
           layout="rail"
           navigationLocked={navigationLocked}
-          onNavigateDestination={onNavigateDestination}
         />
       ))}
     </nav>
@@ -231,7 +233,6 @@ export function DashboardCompactBottomNav({
           active={item.navKey === activeNavKey}
           layout="compact"
           navigationLocked={navigationLocked}
-          onNavigateDestination={onNavigateDestination}
         />
       ))}
     </nav>

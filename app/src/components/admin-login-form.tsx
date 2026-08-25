@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CheckCircle2, Mail, Send, Shield } from "lucide-react";
 import { Button, Field, TextInput } from "@/components/ui";
 import {
   PUBLIC_MARKETING_COPY,
   buildContactMailtoUrl,
 } from "@/lib/phase-84b-public-website";
+import { parseRetryAfterSeconds } from "@/lib/phase-84d-customer-auth";
 import { isLikelyEmail } from "@/lib/phase-83e2-purchase-ux";
 
 type SubmitState = "idle" | "submitting" | "success" | "error";
@@ -15,9 +16,22 @@ export function AdminLoginForm(props: { initialError?: string | null }) {
   const [email, setEmail] = useState("");
   const [formError, setFormError] = useState<string | null>(props.initialError ?? null);
   const [submitState, setSubmitState] = useState<SubmitState>("idle");
+  const [cooldownSeconds, setCooldownSeconds] = useState(0);
 
   const contactMailto = buildContactMailtoUrl("SiriusAI yönetim girişi");
-  const busy = submitState === "submitting";
+  const busy = submitState === "submitting" || cooldownSeconds > 0;
+
+  useEffect(() => {
+    if (cooldownSeconds <= 0) return;
+    const timer = window.setInterval(() => {
+      setCooldownSeconds((current) => (current <= 1 ? 0 : current - 1));
+    }, 1000);
+    return () => window.clearInterval(timer);
+  }, [cooldownSeconds]);
+
+  function beginCooldown(seconds: number) {
+    setCooldownSeconds(Math.max(1, Math.ceil(seconds)));
+  }
 
   async function onSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -48,11 +62,16 @@ export function AdminLoginForm(props: { initialError?: string | null }) {
       }
 
       if (!response.ok || !payload.sent) {
+        if (response.status === 429) {
+          const retryAfter = parseRetryAfterSeconds(response);
+          beginCooldown(retryAfter);
+          setSubmitState("error");
+          setFormError(`Çok fazla giriş bağlantısı istendi. ${retryAfter} saniye sonra tekrar deneyin.`);
+          return;
+        }
         setSubmitState("error");
         setFormError(
-          response.status === 429
-            ? "Çok fazla giriş bağlantısı istendi. Lütfen bir dakika bekleyip tekrar deneyin."
-            : response.status === 503
+          response.status === 503
             ? "Giriş sağlayıcısına geçici olarak ulaşılamıyor. Biraz sonra tekrar deneyin."
             : "Giriş bağlantısı gönderilemedi. Lütfen tekrar deneyin.",
         );

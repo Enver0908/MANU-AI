@@ -93,13 +93,17 @@ export function SettingsPageClient({
               ariaLabel={t(uiLanguage, "settingsNavSections")}
             />
           </div>
-          <ul className="hidden space-y-1 lg:block">
+          <ul className="hidden space-y-1 lg:block" role="tablist" aria-label={t(uiLanguage, "settingsNavSections")}>
             {SETTINGS_TABS.map((tab) => {
               const active = tab === activeTab;
               return (
-                <li key={tab}>
+                <li key={tab} role="presentation">
                   <button
                     type="button"
+                    role="tab"
+                    id={`settings-tab-${tab}`}
+                    aria-selected={active}
+                    aria-controls={`settings-panel-${tab}`}
                     onClick={() => onTabChange(tab)}
                     className={`inline-flex min-h-11 w-full items-center rounded-lg px-3 text-left text-sm font-medium transition ${
                       active
@@ -117,7 +121,7 @@ export function SettingsPageClient({
           </ul>
         </nav>
 
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0 flex-1" role="tabpanel" id={`settings-panel-${activeTab}`} aria-labelledby={`settings-tab-${activeTab}`}>
           <SettingsActiveSection tab={activeTab} model={model} uiLanguage={uiLanguage} />
         </div>
       </div>

@@ -68,6 +68,7 @@ describe("auth context error handling", () => {
     expect(response!.status).toBe(401);
     const body = await response!.json();
     expect(body.error).toBe("unauthenticated");
+    expect(body.requestId).toEqual(expect.any(String));
   });
 
   it("authErrorResponse returns JSON for 403 membership error", async () => {

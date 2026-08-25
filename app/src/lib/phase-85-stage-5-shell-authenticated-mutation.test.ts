@@ -41,4 +41,18 @@ describe("phase-85-stage-5-shell-authenticated-mutation", () => {
     expect(headers.has("content-type")).toBe(false);
     expect(headers.get(SIRIUSAI_CLIENT_VERSION_HEADER)).toBeTruthy();
   });
+
+  it("rejects offline mutations before fetch", async () => {
+    const previousOnline = Object.getOwnPropertyDescriptor(navigator, "onLine");
+    Object.defineProperty(navigator, "onLine", { configurable: true, get: () => false });
+    try {
+      await expect(
+        authenticatedMutationFetch("/api/app-state", { method: "POST", mutationKind: "other" }),
+      ).rejects.toMatchObject({ code: "offline_mutation_rejected" });
+    } finally {
+      if (previousOnline) {
+        Object.defineProperty(navigator, "onLine", previousOnline);
+      }
+    }
+  });
 });

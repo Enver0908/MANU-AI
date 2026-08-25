@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { AppDomainError } from "@/lib/app-errors";
+import { AppDomainError, apiErrorResponse, createApiRequestId, rateLimitErrorResponse } from "@/lib/app-errors";
 import { getSupabaseConfig } from "@/lib/supabase";
 import {
   MAGIC_LINK_RATE_LIMIT,
@@ -11,6 +11,7 @@ import {
   evaluateAdminAllowlistAccess,
   resolveAdminEmailAllowlist,
 } from "@/lib/phase-84f-admin-console";
+import { resolveAuthRouteIpKey } from "@/lib/phase-85-stage-4d-auth-server";
 import { assertRateLimit } from "@/lib/rate-limit";
 import { createClient } from "@supabase/supabase-js";
 
@@ -18,30 +19,25 @@ type AdminMagicLinkBody = {
   email?: string;
 };
 
-function resolveRateLimitKey(request: NextRequest, email: string) {
-  const forwarded = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
-  const ip = forwarded || request.headers.get("x-real-ip") || "anonymous";
-  return `${ip}:${email}`;
-}
-
 export async function POST(request: NextRequest) {
+  const requestId = createApiRequestId();
   const config = getSupabaseConfig();
   if (!config) {
-    return NextResponse.json({ error: "auth_not_configured" }, { status: 503 });
+    return apiErrorResponse("auth_not_configured", 503, requestId);
   }
 
   let body: AdminMagicLinkBody;
   try {
     body = (await request.json()) as AdminMagicLinkBody;
   } catch {
-    return NextResponse.json({ error: "invalid_json" }, { status: 400 });
+    return apiErrorResponse("invalid_json", 400, requestId);
   }
 
   const validation = validateMagicLinkRequest(body);
   if (!validation.valid) {
     return NextResponse.json(
-      { error: "validation_failed", blockingReasons: validation.blockingReasons },
-      { status: 400 },
+      { error: "validation_failed", requestId, blockingReasons: validation.blockingReasons },
+      { status: 400, headers: { "Cache-Control": "no-store" } },
     );
   }
 
@@ -51,21 +47,21 @@ export async function POST(request: NextRequest) {
   );
   if (!allowlist.allowed) {
     return NextResponse.json(
-      { error: "admin_access_denied", blockingReasons: allowlist.blockingReasons },
-      { status: 403 },
+      { error: "admin_access_denied", requestId, blockingReasons: allowlist.blockingReasons },
+      { status: 403, headers: { "Cache-Control": "no-store" } },
     );
   }
 
   try {
     await assertRateLimit({
-      key: resolveRateLimitKey(request, validation.normalizedEmail),
+      key: resolveAuthRouteIpKey(request, validation.normalizedEmail),
       scope: "auth_magic_link",
       limit: MAGIC_LINK_RATE_LIMIT.limit,
       windowMs: MAGIC_LINK_RATE_LIMIT.windowMs,
     });
   } catch (error) {
     if (error instanceof AppDomainError && error.status === 429) {
-      return NextResponse.json({ error: "rate_limit_exceeded" }, { status: 429 });
+      return rateLimitErrorResponse(requestId);
     }
     throw error;
   }
@@ -87,12 +83,19 @@ export async function POST(request: NextRequest) {
   );
 
   if (error) {
-    const status = error.status === 429 || error.status === 503 ? error.status : 500;
-    return NextResponse.json({ error: "magic_link_send_failed" }, { status });
+    if (error.status === 429) {
+      return rateLimitErrorResponse(requestId);
+    }
+    const status = error.status === 503 ? 503 : 500;
+    return apiErrorResponse("magic_link_send_failed", status, requestId);
   }
 
-  return NextResponse.json({
-    sent: true,
-    normalizedEmail: validation.normalizedEmail,
-  });
+  return NextResponse.json(
+    {
+      sent: true,
+      normalizedEmail: validation.normalizedEmail,
+      requestId,
+    },
+    { headers: { "Cache-Control": "no-store" } },
+  );
 }

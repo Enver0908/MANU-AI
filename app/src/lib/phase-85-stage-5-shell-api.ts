@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { AppAuthError } from "./auth-context";
-import { AppDomainError } from "./app-errors";
+import { AppDomainError, apiErrorBody, createApiRequestId } from "./app-errors";
 import {
   SHELL_BOOTSTRAP_MAX_PAYLOAD_BYTES,
   ShellApiError,
@@ -20,20 +20,20 @@ export function shellJsonResponse<T>(body: T, status = 200) {
 
 export function shellErrorResponse(error: unknown) {
   if (error instanceof ShellApiError) {
-    return shellJsonResponse({ error: error.message }, error.status);
+    return shellJsonResponse(apiErrorBody(error.message, createApiRequestId()), error.status);
   }
 
   if (error instanceof AppAuthError) {
-    return shellJsonResponse({ error: error.message }, error.status);
+    return shellJsonResponse(apiErrorBody(error.message, createApiRequestId()), error.status);
   }
 
   if (error instanceof AppDomainError) {
-    return shellJsonResponse({ error: error.message }, error.status);
+    return shellJsonResponse(apiErrorBody(error.message, createApiRequestId()), error.status);
   }
 
-  const requestId = crypto.randomUUID();
-  console.error("stage5_shell_api_unhandled_error", { requestId, error });
-  return shellJsonResponse({ error: "shell_service_unavailable", requestId }, 503);
+  const requestId = createApiRequestId();
+  console.error("stage5_shell_api_unhandled_error", { requestId });
+  return shellJsonResponse(apiErrorBody("shell_service_unavailable", requestId), 503);
 }
 
 export function shellBoundedJsonResponse<T>(body: T, options?: { maxBytes?: number }) {

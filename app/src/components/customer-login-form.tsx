@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { AlertCircle, Loader2, MailCheck } from "lucide-react";
 import { buildContactMailtoUrl } from "@/lib/phase-84b-public-website";
+import { MAGIC_LINK_RATE_LIMIT, parseRetryAfterSeconds } from "@/lib/phase-84d-customer-auth";
 import { isLikelyEmail } from "@/lib/phase-83e2-purchase-ux";
 
 type LoginMode = "magic_link" | "password";
@@ -15,9 +16,22 @@ export function CustomerLoginForm(props: { initialError?: string | null; nextPat
   const [password, setPassword] = useState("");
   const [formError, setFormError] = useState<string | null>(props.initialError ?? null);
   const [submitState, setSubmitState] = useState<SubmitState>("idle");
+  const [cooldownSeconds, setCooldownSeconds] = useState(0);
 
   const contactMailto = useMemo(() => buildContactMailtoUrl("SiriusAI müşteri girişi"), []);
-  const busy = submitState === "submitting";
+  const busy = submitState === "submitting" || cooldownSeconds > 0;
+
+  useEffect(() => {
+    if (cooldownSeconds <= 0) return;
+    const timer = window.setInterval(() => {
+      setCooldownSeconds((current) => (current <= 1 ? 0 : current - 1));
+    }, 1000);
+    return () => window.clearInterval(timer);
+  }, [cooldownSeconds]);
+
+  function beginCooldown(seconds: number) {
+    setCooldownSeconds(Math.max(1, Math.ceil(seconds)));
+  }
 
   async function onSubmitMagicLink(event: React.FormEvent) {
     event.preventDefault();
@@ -45,8 +59,10 @@ export function CustomerLoginForm(props: { initialError?: string | null; nextPat
 
       if (!response.ok || !payload.sent) {
         if (response.status === 429) {
+          const retryAfter = parseRetryAfterSeconds(response);
+          beginCooldown(retryAfter);
           setSubmitState("error");
-          setFormError("Hata: Çok fazla deneme. Lütfen biraz bekleyin.");
+          setFormError(`Hata: Çok fazla deneme. ${retryAfter} saniye sonra tekrar deneyin.`);
           return;
         }
         setSubmitState("error");

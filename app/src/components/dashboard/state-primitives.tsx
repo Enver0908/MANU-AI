@@ -80,12 +80,16 @@ export function ErrorState({
   detail,
   recoveryHref = "/",
   recoveryLabel = "Yeniden giriş yap",
+  onAction,
+  actionLabel,
 }: {
   title: string;
   message: string;
   detail?: string;
   recoveryHref?: string;
   recoveryLabel?: string;
+  onAction?: () => void;
+  actionLabel?: string;
 }) {
   return (
     <main className="flex min-h-screen items-center justify-center bg-surface-muted px-safe py-8 text-ink">
@@ -110,6 +114,11 @@ export function ErrorState({
               <LogIn size={17} />
               {recoveryLabel}
             </Link>
+            {onAction ? (
+              <button type="button" className={`${buttonClasses("secondary", "md")} w-full`} onClick={onAction}>
+                {actionLabel ?? "Tekrar dene"}
+              </button>
+            ) : null}
           </CardBody>
         </Card>
       </div>
