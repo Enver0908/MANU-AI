@@ -12,6 +12,7 @@ mkdirSync(tempRoot, { recursive: true });
 
 const activation = {
   schemaVersion: '1.0.0',
+  status: 'ACTIVE_SIGNED_SCOPE',
   repoRoot,
   contractId: 'governance-hardening-v1',
   phaseId: 'phase-6',
@@ -77,6 +78,32 @@ const cases = [
     expect: 0
   },
   {
+    id: 'deny-tampered-shell-activation',
+    event: 'beforeShellExecution',
+    payload: { command: 'git status --short --branch', cwd: '.' },
+    activationOverride: {
+      schemaVersion: '1.0.0',
+      status: 'INACTIVE_FAIL_CLOSED',
+      repoRoot,
+      contractId: '',
+      phaseId: '',
+      lockCommit: '',
+      scopeHash: '',
+      scope: {
+        allowedCreatePaths: [],
+        allowedModifyPaths: [],
+        protectedPaths: [],
+        forbiddenPaths: [],
+        allowedCommands: [
+          { cwd: '.', executable: 'git', args: ['status', '--short', '--branch'], networkPolicy: 'FORBIDDEN' }
+        ],
+        allowedMcpTools: [],
+        allowSubagents: false
+      }
+    },
+    expect: 2
+  },
+  {
     id: 'deny-mcp-unknown',
     event: 'preToolUse',
     payload: { tool_name: 'MCP:filesystem.write_file', tool_input: { path: 'docs/GOVERNANCE_HARDENING_PHASE_0_EVIDENCE.md' } },
@@ -108,6 +135,11 @@ process.stdout.write(`${JSON.stringify({ schemaVersion: '1.0.0', status, results
 process.exit(status === 'PASS' ? 0 : 1);
 
 function runCase(testCase) {
+  writeFileSync(
+    path.join(tempRoot, 'activation.json'),
+    `${JSON.stringify(testCase.activationOverride || activation, null, 2)}\n`,
+    'utf8'
+  );
   const input = testCase.raw ?? JSON.stringify(testCase.payload);
   const result = spawnSync('node', [guardPath, testCase.event], {
     cwd: testCase.enterpriseCwd ? 'C:\\ProgramData\\Cursor' : repoRoot,

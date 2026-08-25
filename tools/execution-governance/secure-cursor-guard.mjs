@@ -61,7 +61,7 @@ function guardRead(payload) {
 }
 
 function guardShell(payload) {
-  const activation = loadActivation();
+  const activation = loadVerifiedActivation();
   const command = extractCommand(payload);
   if (!command) return deny('Shell payload has no command.');
   const parsed = parseCommand(command);
@@ -79,7 +79,7 @@ function guardShell(payload) {
 }
 
 function guardMcp(payload) {
-  const activation = loadActivation();
+  const activation = loadVerifiedActivation();
   const toolName = String(payload.tool_name || payload.name || payload.server_tool_name || '');
   const allowed = activation?.scope?.allowedMcpTools || [];
   if (!allowed.includes(toolName)) {
@@ -91,7 +91,7 @@ function guardMcp(payload) {
 }
 
 function guardTask(payload) {
-  const activation = loadActivation();
+  const activation = loadVerifiedActivation();
   if (activation?.scope?.allowSubagents === true) {
     return allow('subagent tool allowed by active signed scope');
   }
@@ -107,12 +107,18 @@ function guardFileMutation(payload, toolName) {
     if (isSecretPath(rel)) return deny(`Secret-like file mutation is blocked: ${rel}`);
     if (isGitPath(rel)) return deny(`Git internals are never mutable through Cursor hooks: ${rel}`);
     if (!activation) return deny(`No external governance activation found. Mutation blocked: ${rel}`);
-    assertActivationIntegrity(activation);
     if (!isAllowedPath(rel, activation.scope)) {
       return deny(`Path is outside active signed governance scope: ${rel}`);
     }
   }
   return allow('file mutation allowed by active signed scope');
+}
+
+function loadVerifiedActivation() {
+  const activation = loadActivation();
+  if (!activation) throw new Error('activation file is missing');
+  assertActivationIntegrity(activation);
+  return activation;
 }
 
 function loadActivation() {
@@ -126,6 +132,7 @@ function loadActivation() {
 
 function assertActivationIntegrity(activation) {
   if (activation.schemaVersion !== '1.0.0') throw new Error('activation schemaVersion mismatch');
+  if (activation.status !== 'ACTIVE_SIGNED_SCOPE') throw new Error(`activation status is not active: ${activation.status || 'missing'}`);
   if (!activation.contractId || !activation.phaseId) throw new Error('activation identity missing');
   if (!activation.lockCommit || !/^[0-9a-f]{40}$/i.test(activation.lockCommit)) {
     throw new Error('activation lockCommit is missing or invalid');
