@@ -4,7 +4,6 @@
     "preToolUse": [
       {
         "command": "node .cursor/hooks/governance-guard.mjs preToolUse",
-        "matcher": "Write|Edit|MultiEdit|Delete|StrReplace|CreateFile|Move|Rename",
         "failClosed": true,
         "timeout": 5
       }
@@ -12,6 +11,13 @@
     "beforeShellExecution": [
       {
         "command": "node .cursor/hooks/governance-guard.mjs beforeShellExecution",
+        "failClosed": true,
+        "timeout": 5
+      }
+    ],
+    "beforeMCPExecution": [
+      {
+        "command": "node .cursor/hooks/governance-guard.mjs beforeMCPExecution",
         "failClosed": true,
         "timeout": 5
       }

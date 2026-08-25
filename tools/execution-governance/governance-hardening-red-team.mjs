@@ -1,0 +1,138 @@
+#!/usr/bin/env node
+import { spawnSync } from 'node:child_process';
+import { writeFileSync, mkdirSync, rmSync } from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
+const guardPath = path.join(repoRoot, 'tools', 'execution-governance', 'secure-cursor-guard.mjs');
+const tempRoot = path.join(repoRoot, '.execution-governance', 'runtime', 'governance-hardening-red-team');
+rmSync(tempRoot, { recursive: true, force: true });
+mkdirSync(tempRoot, { recursive: true });
+
+const activation = {
+  schemaVersion: '1.0.0',
+  repoRoot,
+  contractId: 'governance-hardening-v1',
+  phaseId: 'phase-6',
+  lockCommit: git('rev-parse', 'HEAD'),
+  allowImplementationHead: true,
+  scope: {
+    allowedCreatePaths: ['docs/GOVERNANCE_HARDENING_PHASE_0_EVIDENCE.md'],
+    allowedModifyPaths: [],
+    protectedPaths: ['tools/execution-governance/secure-cursor-guard.mjs'],
+    forbiddenPaths: ['app/package.json'],
+    allowedCommands: [
+      { cwd: '.', executable: 'git', args: ['status', '--short', '--branch'], networkPolicy: 'FORBIDDEN' }
+    ],
+    allowedMcpTools: [],
+    allowSubagents: false
+  }
+};
+activation.scopeHash = sha256Json(activation.scope);
+writeFileSync(path.join(tempRoot, 'activation.json'), `${JSON.stringify(activation, null, 2)}\n`, 'utf8');
+
+const cases = [
+  {
+    id: 'deny-out-of-scope-write',
+    event: 'preToolUse',
+    payload: { tool_name: 'Write', tool_input: { file_path: 'app/src/proxy.ts' } },
+    expect: 2
+  },
+  {
+    id: 'allow-in-scope-write',
+    event: 'preToolUse',
+    payload: { tool_name: 'Write', tool_input: { file_path: 'docs/GOVERNANCE_HARDENING_PHASE_0_EVIDENCE.md' } },
+    expect: 0
+  },
+  {
+    id: 'deny-node-e-shell-write',
+    event: 'beforeShellExecution',
+    payload: { command: "node -e require('fs').writeFileSync('app/src/out.ts','x')" },
+    expect: 2
+  },
+  {
+    id: 'allow-exact-git-status',
+    event: 'beforeShellExecution',
+    payload: { command: 'git status --short --branch', cwd: '.' },
+    enterpriseCwd: true,
+    expect: 0
+  },
+  {
+    id: 'deny-mcp-unknown',
+    event: 'preToolUse',
+    payload: { tool_name: 'MCP:filesystem.write_file', tool_input: { path: 'docs/GOVERNANCE_HARDENING_PHASE_0_EVIDENCE.md' } },
+    expect: 2
+  },
+  {
+    id: 'deny-subagent',
+    event: 'preToolUse',
+    payload: { tool_name: 'Task', tool_input: {} },
+    expect: 2
+  },
+  {
+    id: 'deny-secret-read',
+    event: 'beforeReadFile',
+    payload: { path: '.env' },
+    expect: 2
+  },
+  {
+    id: 'deny-malformed-json',
+    event: 'preToolUse',
+    raw: '{',
+    expect: 2
+  }
+];
+
+const results = cases.map(runCase);
+const status = results.every((item) => item.pass) ? 'PASS' : 'FAIL';
+process.stdout.write(`${JSON.stringify({ schemaVersion: '1.0.0', status, results }, null, 2)}\n`);
+process.exit(status === 'PASS' ? 0 : 1);
+
+function runCase(testCase) {
+  const input = testCase.raw ?? JSON.stringify(testCase.payload);
+  const result = spawnSync('node', [guardPath, testCase.event], {
+    cwd: testCase.enterpriseCwd ? 'C:\\ProgramData\\Cursor' : repoRoot,
+    input,
+    encoding: 'utf8',
+    shell: false,
+    env: {
+      ...process.env,
+      CURSOR_PROJECT_DIR: repoRoot,
+      MANU_GOVERNANCE_TEST_MODE: '1',
+      MANU_GOVERNANCE_ROOT: tempRoot
+    }
+  });
+  return {
+    id: testCase.id,
+    expectedExitCode: testCase.expect,
+    actualExitCode: result.status,
+    pass: result.status === testCase.expect,
+    stdout: safeJson(result.stdout),
+    stderr: result.stderr.trim()
+  };
+}
+
+function safeJson(value) {
+  try {
+    return JSON.parse(value);
+  } catch {
+    return value.trim();
+  }
+}
+
+function git(...args) {
+  const result = spawnSync('git', args, { cwd: repoRoot, encoding: 'utf8', shell: false });
+  if (result.status !== 0) throw new Error(result.stderr);
+  return result.stdout.trim();
+}
+
+function sha256Json(value) {
+  const result = spawnSync('node', ['-e', "const {createHash}=require('crypto');let s='';process.stdin.on('data',c=>s+=c);process.stdin.on('end',()=>console.log(createHash('sha256').update(s).digest('hex')))"], {
+    input: JSON.stringify(value),
+    encoding: 'utf8',
+    shell: false
+  });
+  if (result.status !== 0) throw new Error(result.stderr);
+  return result.stdout.trim();
+}
