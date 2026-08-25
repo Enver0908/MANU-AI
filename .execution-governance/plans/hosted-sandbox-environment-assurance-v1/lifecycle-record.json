@@ -2,7 +2,7 @@
   "schemaVersion": "1.0.0",
   "contractId": "hosted-sandbox-environment-assurance-v1",
   "planDirectory": ".execution-governance/plans/hosted-sandbox-environment-assurance-v1",
-  "currentPhase": "HS-FAZ-5",
+  "currentPhase": "HS-FAZ-6",
   "status": {
     "plan_state": "READY_FOR_IMPLEMENTATION",
     "implementation_state": "IMPLEMENTED_UNVERIFIED",
@@ -59,6 +59,13 @@
       "actor": "Cursor Composer",
       "eventType": "IMPLEMENTATION_RECORDED",
       "summary": "Faz 5 CI/deploy workflow templates, atomic deploy machinery, security headers, and executor checks implemented locally."
+    },
+    {
+      "eventId": "HS-ENV-EVT-008",
+      "timestamp": "2026-08-25T12:50:00.000Z",
+      "actor": "Cursor Composer",
+      "eventType": "IMPLEMENTATION_RECORDED",
+      "summary": "Faz 6 activation orchestrator, maintenance gate, and local acceptance oracles implemented; remote apply and live E2E remain user-command gated."
     }
   ],
   "independentReviewPolicy": {

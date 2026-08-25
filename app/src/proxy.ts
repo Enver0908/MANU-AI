@@ -1,4 +1,4 @@
-﻿import { NextResponse, type NextRequest } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { createSupabaseServerClient, isSupabaseConfigured } from "./lib/supabase";
 import {
   isAdminHost,
@@ -16,6 +16,19 @@ import {
 
 function withHostedSandboxSecurityHeaders(response: NextResponse) {
   return applyHostedSandboxSecurityHeaders(response);
+}
+function enforceMaintenanceMode(request: NextRequest) {
+  if (process.env.MANU_MAINTENANCE_MODE !== "true") return null;
+  const pathname = request.nextUrl.pathname;
+  if (pathname === "/api/shell/version") return null;
+  const body =
+    pathname.startsWith("/api/")
+      ? { error: "maintenance_mode" }
+      : "Service is temporarily unavailable for maintenance.";
+  return NextResponse.json(body, {
+    status: 503,
+    headers: { "Cache-Control": "no-store" },
+  });
 }
 
 function enforceClientVersionForAuthenticatedMutation(request: NextRequest) {
@@ -51,6 +64,9 @@ function enforceClientVersionForAuthenticatedMutation(request: NextRequest) {
 export async function proxy(request: NextRequest) {
   const hostname = request.nextUrl.hostname;
   const pathname = request.nextUrl.pathname;
+
+  const maintenanceBlock = enforceMaintenanceMode(request);
+  if (maintenanceBlock) return withHostedSandboxSecurityHeaders(maintenanceBlock);
 
   const versionBlock = enforceClientVersionForAuthenticatedMutation(request);
   if (versionBlock) return withHostedSandboxSecurityHeaders(versionBlock);

@@ -541,6 +541,185 @@
       "passRule": "PASS when both commands exit 0.",
       "failRule": "FAIL when headers or nginx template regress.",
       "blockedRule": "BLOCKED when vitest cannot run."
+    },
+    {
+      "oracleType": "AUTOMATED",
+      "protectionMechanism": "Committed activation oracle scripts.",
+      "expectedExitCode": 0,
+      "artifactType": "runtime JSON artifact",
+      "artifactLocation": ".execution-governance/runtime/hosted-sandbox/activation",
+      "artifactRetentionPolicy": "Runtime artifacts are ignored and must not be committed.",
+      "artifactPrivacyPolicy": "No secrets, PHI, raw prompts, raw health data, or real user data.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": [
+        "Local repository checkout",
+        "Node.js available"
+      ],
+      "independentVerifier": "NOT_REQUESTED unless user explicitly requests review",
+      "forbiddenEquivalences": [
+        "Evidence prose is not PASS",
+        "Skipped check is not PASS",
+        "Old artifact is not fresh evidence",
+        "Implementer summary is not independent review"
+      ],
+      "requirementId": "HS-ACCEPT-001",
+      "authoritySource": "Hosted Sandbox plan Faz 6",
+      "observableRequirement": "Controlled activation orchestrator completes dry-run with fingerprint-bound manifest and deploy gates.",
+      "oracleOwner": "hosted-sandbox activation tests",
+      "oracleLocation": "tools/hosted-sandbox/activation/hosted-activation.test.mjs",
+      "exactEvidenceCommand": "node --test tools/hosted-sandbox/activation/hosted-activation.test.mjs && node tools/hosted-sandbox/activation/run-hosted-activation.mjs",
+      "exactEvidenceCommandSpec": {
+        "cwd": ".",
+        "executable": "node",
+        "args": [
+          "--test",
+          "tools/hosted-sandbox/activation/hosted-activation.test.mjs"
+        ],
+        "timeoutSeconds": 180,
+        "networkPolicy": "FORBIDDEN",
+        "artifactPolicy": "Activation report under runtime only."
+      },
+      "preconditions": [
+        "Faz 5 deploy machinery present."
+      ],
+      "requiredAssertions": [
+        "Dry-run activation exits PASS.",
+        "All ACTIVATION_STEPS recorded.",
+        "iOS physical device status WAIVED_NOT_EXECUTED."
+      ],
+      "requiredScenarioMatrix": [
+        "dry-run sequence",
+        "approval gates"
+      ],
+      "negativeControls": [
+        "Apply without approval flags fails closed."
+      ],
+      "expectedTestIds": [
+        "HS-ACCEPT-001-DRY-RUN"
+      ],
+      "expectedTestCountOrInventory": "Three node tests plus CLI dry-run.",
+      "passRule": "PASS when oracle exits 0 and dry-run CLI exits 0.",
+      "failRule": "FAIL when activation sequence or approval gates regress.",
+      "blockedRule": "BLOCKED when node test cannot run."
+    },
+    {
+      "oracleType": "AUTOMATED",
+      "protectionMechanism": "Committed activation oracle scripts.",
+      "expectedExitCode": 0,
+      "artifactType": "runtime JSON artifact",
+      "artifactLocation": ".execution-governance/runtime/hosted-sandbox/activation",
+      "artifactRetentionPolicy": "Runtime artifacts are ignored and must not be committed.",
+      "artifactPrivacyPolicy": "No secrets, PHI, raw prompts, raw health data, or real user data.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": [
+        "Local repository checkout",
+        "Node.js available"
+      ],
+      "independentVerifier": "NOT_REQUESTED unless user explicitly requests review",
+      "forbiddenEquivalences": [
+        "Evidence prose is not PASS",
+        "Skipped check is not PASS",
+        "Old artifact is not fresh evidence",
+        "Implementer summary is not independent review"
+      ],
+      "requirementId": "HS-ACCEPT-002",
+      "authoritySource": "Hosted Sandbox plan Faz 6",
+      "observableRequirement": "Demo tenant cleanup dry-run is wired into activation; hosted apply requires explicit cleanup approval.",
+      "oracleOwner": "hosted-sandbox demo cleanup script",
+      "oracleLocation": "app/scripts/hosted-sandbox-demo-cleanup.mjs",
+      "exactEvidenceCommand": "node --test tools/hosted-sandbox/activation/hosted-activation.test.mjs",
+      "exactEvidenceCommandSpec": {
+        "cwd": ".",
+        "executable": "node",
+        "args": [
+          "--test",
+          "tools/hosted-sandbox/activation/hosted-activation.test.mjs"
+        ],
+        "timeoutSeconds": 120,
+        "networkPolicy": "FORBIDDEN",
+        "artifactPolicy": "No remote cleanup apply without approvals."
+      },
+      "preconditions": [
+        "Demo cleanup script present."
+      ],
+      "requiredAssertions": [
+        "Activation dry-run records demo cleanup step.",
+        "Cleanup apply requires MANU_HOSTED_ACTIVATION_CLEANUP_APPLY_APPROVED."
+      ],
+      "requiredScenarioMatrix": [
+        "cleanup dry-run wiring",
+        "cleanup apply gate"
+      ],
+      "negativeControls": [
+        "Cleanup apply without approval fails."
+      ],
+      "expectedTestIds": [
+        "HS-ACCEPT-002-CLEANUP-GATE"
+      ],
+      "expectedTestCountOrInventory": "Activation approval gate tests.",
+      "passRule": "PASS when local oracle exits 0.",
+      "failRule": "FAIL when cleanup gates regress.",
+      "blockedRule": "BLOCKED when hosted Supabase credentials missing for live inventory check."
+    },
+    {
+      "oracleType": "AUTOMATED",
+      "protectionMechanism": "Committed activation oracle scripts.",
+      "expectedExitCode": 0,
+      "artifactType": "runtime JSON artifact",
+      "artifactLocation": ".execution-governance/runtime/hosted-sandbox/activation",
+      "artifactRetentionPolicy": "Runtime artifacts are ignored and must not be committed.",
+      "artifactPrivacyPolicy": "No secrets, PHI, raw prompts, raw health data, or real user data.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": [
+        "Local repository checkout",
+        "Node.js available"
+      ],
+      "independentVerifier": "NOT_REQUESTED unless user explicitly requests review",
+      "forbiddenEquivalences": [
+        "Evidence prose is not PASS",
+        "Skipped check is not PASS",
+        "Old artifact is not fresh evidence",
+        "Implementer summary is not independent review"
+      ],
+      "requirementId": "HS-ACCEPT-003",
+      "authoritySource": "Hosted Sandbox plan Faz 6",
+      "observableRequirement": "Physical iPhone Safari/PWA remains WAIVED_NOT_EXECUTED; never counted as PASS or iOS readiness.",
+      "oracleOwner": "hosted-sandbox activation contract",
+      "oracleLocation": "tools/hosted-sandbox/activation/lib/activation-contract.mjs",
+      "exactEvidenceCommand": "node --test tools/hosted-sandbox/activation/hosted-activation.test.mjs",
+      "exactEvidenceCommandSpec": {
+        "cwd": ".",
+        "executable": "node",
+        "args": [
+          "--test",
+          "tools/hosted-sandbox/activation/hosted-activation.test.mjs"
+        ],
+        "timeoutSeconds": 120,
+        "networkPolicy": "FORBIDDEN",
+        "artifactPolicy": "No device artifacts."
+      },
+      "preconditions": [
+        "Activation contract present."
+      ],
+      "requiredAssertions": [
+        "iosPhysicalDevice field is WAIVED_NOT_EXECUTED in activation report."
+      ],
+      "requiredScenarioMatrix": [
+        "iphone waiver constant"
+      ],
+      "negativeControls": [
+        "PASS or iOS readiness claims forbidden without physical device evidence."
+      ],
+      "expectedTestIds": [
+        "HS-ACCEPT-003-IPHONE-WAIVED"
+      ],
+      "expectedTestCountOrInventory": "Activation iPhone waiver test.",
+      "passRule": "PASS when waiver constant enforced in oracle.",
+      "failRule": "FAIL if iPhone marked PASS without physical execution.",
+      "blockedRule": "BLOCKED when oracle cannot run."
     }
   ]
 }

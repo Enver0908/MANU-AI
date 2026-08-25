@@ -10,6 +10,16 @@
       "requirementId": "HS-VERIFY-001",
       "reason": "release:verify includes production build gate.",
       "waiverId": "HS-FAZ-4-RELEASE-VERIFY-BLOCKED"
+    },
+    {
+      "requirementId": "HS-ACCEPT-001",
+      "reason": "Remote migration, deploy apply, backup upload, and live E2E session checks require explicit user command and hosted secrets.",
+      "waiverId": "HS-FAZ-6-REMOTE-ACTIVATION-NOT_EXECUTED"
+    },
+    {
+      "requirementId": "HS-ACCEPT-003",
+      "reason": "Physical iPhone Safari/PWA not available; WAIVED_NOT_EXECUTED.",
+      "waiverId": "HS-FAZ-6-IPHONE-WAIVED"
     }
   ],
   "residualRisks": [
@@ -18,7 +28,8 @@
   ],
   "artifacts": [
     "docs/execution-governance/HOSTED_SANDBOX_PHASE_4_RELEASE_IDENTITY_EVIDENCE.md",
-    "docs/execution-governance/HOSTED_SANDBOX_PHASE_5_CI_DEPLOY_NETWORK_EVIDENCE.md"
+    "docs/execution-governance/HOSTED_SANDBOX_PHASE_5_CI_DEPLOY_NETWORK_EVIDENCE.md",
+    "docs/execution-governance/HOSTED_SANDBOX_PHASE_6_ACTIVATION_EVIDENCE.md"
   ],
   "changedFiles": [
     ".execution-governance/plans/hosted-sandbox-environment-assurance-v1/acceptance.json",
@@ -55,7 +66,11 @@
     "tools/hosted-sandbox/deploy/verify-workflow-hardening.mjs",
     "tools/hosted-sandbox/deploy/workflow-templates/hosted-sandbox-deploy.yml",
     "tools/hosted-sandbox/deploy/workflow-templates/hosted-sandbox-migration.yml",
-    "tools/hosted-sandbox/deploy/workflow-templates/hosted-sandbox-product-ci.yml"
+    "tools/hosted-sandbox/deploy/workflow-templates/hosted-sandbox-product-ci.yml",
+    "tools/hosted-sandbox/activation/lib/activation-contract.mjs",
+    "tools/hosted-sandbox/activation/run-hosted-activation.mjs",
+    "tools/hosted-sandbox/activation/hosted-activation.test.mjs",
+    "docs/execution-governance/HOSTED_SANDBOX_PHASE_6_ACTIVATION_EVIDENCE.md"
   ],
   "commandsRun": [
     {
@@ -77,6 +92,16 @@
       "command": "node tools/hosted-sandbox/deploy/build-release-artifact.mjs --manifest-only",
       "exitCode": 0,
       "result": "PASS"
+    },
+    {
+      "command": "node --test tools/hosted-sandbox/activation/hosted-activation.test.mjs",
+      "exitCode": 0,
+      "result": "PASS 3/3"
+    },
+    {
+      "command": "node tools/hosted-sandbox/activation/run-hosted-activation.mjs",
+      "exitCode": 0,
+      "result": "PASS dry-run"
     }
   ],
   "scopeChangeRequests": [],
@@ -84,6 +109,6 @@
   "contractId": "hosted-sandbox-environment-assurance-v1",
   "independentReview": "NOT_REQUESTED",
   "schemaVersion": "1.0.0",
-  "phaseId": "HS-FAZ-5",
+  "phaseId": "HS-FAZ-6",
   "implementer": "Cursor Composer"
 }
