@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "1.0.0",
+  "contractId": "governance-decision-complete-authoring-v1",
+  "currentPhaseId": "GOV-DCPA-1",
+  "status": {
+    "plan_state": "READY_FOR_IMPLEMENTATION",
+    "implementation_state": "NOT_STARTED",
+    "executor_checks": "NOT_RUN",
+    "independent_review": "NOT_REQUESTED",
+    "user_acceptance": "PENDING"
+  },
+  "events": [
+    {
+      "timestamp": "2026-08-25T00:00:00.000Z",
+      "actor": "Codex",
+      "event": "PLAN_PACKAGE_CREATED",
+      "detail": "Single-phase decision-complete governance authoring plan package created from user-approved plan."
+    }
+  ],
+  "independentReviewPolicy": "NOT_REQUESTED unless user explicitly requests review"
+}

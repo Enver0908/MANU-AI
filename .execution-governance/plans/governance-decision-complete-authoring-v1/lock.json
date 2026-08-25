@@ -1,0 +1,75 @@
+{
+  "schemaVersion": "1.0.0",
+  "contractId": "governance-decision-complete-authoring-v1",
+  "planHash": "d39fb7d2c62d9a045ffe3153ab227abd2033d4284241f7381d1f71cfd82eef2b",
+  "contractHash": "2cba138aa97a15b7106c882f49d4ec9b07694544bbd5cdb6630f9a74395cd7c6",
+  "scopeHash": "c43c5ded6e38ea3b5ccc4ca047f09f03bbbd6751fd199662cce2cf17839c9f1f",
+  "acceptanceHash": "90a35b101d315a160ae1b37248fce5843b6af5488e5234402f06dd24c6d8eaf3",
+  "baseCommit": "f93a52f2800ecce1a9a3696da51bfefe18e3d588",
+  "baseTree": "329997993c895d4ac694270ef97f5cb0a9ea1179",
+  "lockCommit": "",
+  "protectedManifest": [
+    {
+      "path": ".execution-governance/policy/governance-policy.json",
+      "sha256": "38196299166e5f95cd9f350102a92369c79495ec9416d35b84ea510cbd177676"
+    },
+    {
+      "path": "docs/execution-governance/EXECUTION_ASSURANCE_PROTOCOL.md",
+      "sha256": "5b1b2aded150f421e2f2b79a8502ee1ab083f1ac5c5c5ed5fb7e4e9372b44eb7"
+    },
+    {
+      "path": ".execution-governance/schemas/acceptance.schema.json",
+      "sha256": "38d17a9a5eb00cf27781d41b4dc75d72b48a7e8f144b06029b49e8e66be96630"
+    },
+    {
+      "path": ".execution-governance/schemas/contract.schema.json",
+      "sha256": "126c831987c8b7a81b8b8340a7824712ef45ad8d53a159c2d18675ca16e0cdd4"
+    },
+    {
+      "path": ".execution-governance/schemas/implementation-report.schema.json",
+      "sha256": "7e8859b56375e2fa72fbabc1baae9a4ca10aedc31dc20c5acb26c5e05f5888f9"
+    },
+    {
+      "path": ".execution-governance/schemas/lifecycle-record.schema.json",
+      "sha256": "16e94331b1be1b38cf5dec9f3ab0d148e792f5e60351442905e4055184426b23"
+    },
+    {
+      "path": ".execution-governance/schemas/lock.schema.json",
+      "sha256": "95603a41d9f623737f4465b12fd4c5a356e63336fa217c6e94c8afcbcd8489ec"
+    },
+    {
+      "path": ".execution-governance/schemas/review-record.schema.json",
+      "sha256": "c2b71cd60b6c22627afed8172eedbe4f3a99d4b96ff6997a614b0e52bf61b7d5"
+    },
+    {
+      "path": ".execution-governance/schemas/run-record.schema.json",
+      "sha256": "1ec2f5e6ed2b2d2d43ad0fc64d972b5d473fa1f1c81ca8431a31f947ba6bb70d"
+    },
+    {
+      "path": ".execution-governance/schemas/scope-change-request.schema.json",
+      "sha256": "763531fb653c21c3a9b068ef790b7277af51cc5bcce01077955bb5dabb39ff83"
+    },
+    {
+      "path": ".execution-governance/schemas/scope.schema.json",
+      "sha256": "3f46c65097666367690935a0b0fb83af5ddf1586a26d09f7b23c9e4df4f1720e"
+    },
+    {
+      "path": ".execution-governance/schemas/status-model.schema.json",
+      "sha256": "dad2f1c04c4ca9fb0fb9325dba7b7097ede7d94fec4b68e4fcd7a8b8cc27982c"
+    },
+    {
+      "path": ".execution-governance/schemas/verifier-change-request.schema.json",
+      "sha256": "00873d26d17aa3d13e4002025c97af610c73d30c142444c1a6b510af9c629501"
+    },
+    {
+      "path": ".execution-governance/schemas/waiver-record.schema.json",
+      "sha256": "737af715de8c500ad800207cee8be51564e70c7d96ab60964ac01d9824d85dcc"
+    }
+  ],
+  "artifactFreshnessPolicy": {
+    "requiresCommitSha": true,
+    "requiresRunId": true,
+    "requiresTimestamp": true,
+    "rejectsPreLockArtifacts": true
+  }
+}
