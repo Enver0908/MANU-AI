@@ -1,0 +1,154 @@
+{
+  "schemaVersion": "1.0.0",
+  "governanceFormatVersion": "2.0.0",
+  "contractId": "cursor-zero-command-governed-execution-v1",
+  "planVersion": "1.0.0",
+  "planTitle": "Cursor Zero-Command Governed Execution Plan",
+  "currentPhaseId": "CZC-PHASE-1",
+  "phases": [
+    {
+      "phaseId": "CZC-PHASE-1",
+      "title": "Cursor Zero-Command Governed Execution",
+      "status": "LOCKED_FOR_IMPLEMENTATION"
+    }
+  ],
+  "authoritySources": [
+    "User instruction to apply zero-command Cursor governed execution",
+    "AGENTS.md",
+    "docs/execution-governance/EXECUTION_ASSURANCE_PROTOCOL.md",
+    "docs/execution-governance/DECISION_COMPLETE_PLAN_AUTHORING_STANDARD.md",
+    "current Git state"
+  ],
+  "roleBindings": {
+    "requirementAuthority": "user and named authority documents",
+    "planner": "Codex",
+    "implementer": "Codex or Cursor under the active signed scope",
+    "automaticVerifier": "execution-governance CLI, node:test, and governance red-team",
+    "independentReviewer": "NOT_REQUESTED unless user explicitly requests review",
+    "manualReviewer": "user-approved human reviewer when required",
+    "finalAcceptanceAuthority": "user"
+  },
+  "status": {
+    "plan_state": "LOCKED_FOR_IMPLEMENTATION",
+    "implementation_state": "NOT_STARTED",
+    "executor_checks": "NOT_RUN",
+    "independent_review": "NOT_REQUESTED",
+    "user_acceptance": "PENDING"
+  },
+  "requirements": [
+    {
+      "requirementId": "CZC-001",
+      "authoritySource": "plan.md",
+      "classification": "IN_SCOPE",
+      "observableRequirement": "Governance authority text permits user plan-level execution intent while preserving phase-specific locked technical activation.",
+      "dependencies": [],
+      "status": {
+        "plan_state": "LOCKED_FOR_IMPLEMENTATION",
+        "implementation_state": "NOT_STARTED",
+        "executor_checks": "NOT_RUN",
+        "independent_review": "NOT_REQUESTED",
+        "user_acceptance": "PENDING"
+      }
+    },
+    {
+      "requirementId": "CZC-002",
+      "authoritySource": "plan.md",
+      "classification": "IN_SCOPE",
+      "observableRequirement": "A resolver maps governed execution intent to exactly one locked plan and one next runnable phase without using prompt text as scope authority.",
+      "dependencies": [
+        "CZC-001"
+      ],
+      "status": {
+        "plan_state": "LOCKED_FOR_IMPLEMENTATION",
+        "implementation_state": "NOT_STARTED",
+        "executor_checks": "NOT_RUN",
+        "independent_review": "NOT_REQUESTED",
+        "user_acceptance": "PENDING"
+      }
+    },
+    {
+      "requirementId": "CZC-003",
+      "authoritySource": "plan.md",
+      "classification": "IN_SCOPE",
+      "observableRequirement": "Cursor session commands run automatic preflight, activation, and open flows without user-supplied phase IDs.",
+      "dependencies": [
+        "CZC-002"
+      ],
+      "status": {
+        "plan_state": "LOCKED_FOR_IMPLEMENTATION",
+        "implementation_state": "NOT_STARTED",
+        "executor_checks": "NOT_RUN",
+        "independent_review": "NOT_REQUESTED",
+        "user_acceptance": "PENDING"
+      }
+    },
+    {
+      "requirementId": "CZC-004",
+      "authoritySource": "plan.md",
+      "classification": "IN_SCOPE",
+      "observableRequirement": "Guard and broker support discovery read-only mode and active signed phase scope without weakening secret, write, shell, MCP, subagent, or production denials.",
+      "dependencies": [
+        "CZC-002"
+      ],
+      "status": {
+        "plan_state": "LOCKED_FOR_IMPLEMENTATION",
+        "implementation_state": "NOT_STARTED",
+        "executor_checks": "NOT_RUN",
+        "independent_review": "NOT_REQUESTED",
+        "user_acceptance": "PENDING"
+      }
+    },
+    {
+      "requirementId": "CZC-005",
+      "authoritySource": "plan.md",
+      "classification": "IN_SCOPE",
+      "observableRequirement": "Installer and Cursor skill packaging expose the natural Cursor workflow `Bu planı uygula`.",
+      "dependencies": [
+        "CZC-003",
+        "CZC-004"
+      ],
+      "status": {
+        "plan_state": "LOCKED_FOR_IMPLEMENTATION",
+        "implementation_state": "NOT_STARTED",
+        "executor_checks": "NOT_RUN",
+        "independent_review": "NOT_REQUESTED",
+        "user_acceptance": "PENDING"
+      }
+    },
+    {
+      "requirementId": "CZC-006",
+      "authoritySource": "plan.md",
+      "classification": "IN_SCOPE",
+      "observableRequirement": "Automated tests and red-team coverage verify automatic resolution, denial cases, discovery mode, and prompt-scope non-authority.",
+      "dependencies": [
+        "CZC-002",
+        "CZC-003",
+        "CZC-004",
+        "CZC-005"
+      ],
+      "status": {
+        "plan_state": "LOCKED_FOR_IMPLEMENTATION",
+        "implementation_state": "NOT_STARTED",
+        "executor_checks": "NOT_RUN",
+        "independent_review": "NOT_REQUESTED",
+        "user_acceptance": "PENDING"
+      }
+    },
+    {
+      "requirementId": "CZC-007",
+      "authoritySource": "plan.md",
+      "classification": "IN_SCOPE",
+      "observableRequirement": "Lifecycle, implementation report, and evidence records contain exact command outcomes and unchanged production boundaries.",
+      "dependencies": [
+        "CZC-006"
+      ],
+      "status": {
+        "plan_state": "LOCKED_FOR_IMPLEMENTATION",
+        "implementation_state": "NOT_STARTED",
+        "executor_checks": "NOT_RUN",
+        "independent_review": "NOT_REQUESTED",
+        "user_acceptance": "PENDING"
+      }
+    }
+  ]
+}

@@ -1,0 +1,376 @@
+{
+  "schemaVersion": "1.0.0",
+  "contractId": "cursor-zero-command-governed-execution-v1",
+  "requirements": [
+    {
+      "requirementId": "CZC-001",
+      "phaseId": "CZC-PHASE-1",
+      "allowedCreatePaths": [],
+      "allowedModifyPaths": [
+        "AGENTS.md",
+        "docs/execution-governance/EXECUTION_ASSURANCE_PROTOCOL.md"
+      ],
+      "protectedPaths": [
+        "app/**",
+        "dietitian-ai-assistant/**"
+      ],
+      "forbiddenPaths": [
+        ".execution-governance/runtime/**"
+      ],
+      "allowedCommands": [],
+      "forbiddenCommands": [
+        "push",
+        "merge",
+        "deploy",
+        "dependency install/update unless explicitly allowed",
+        "destructive git reset/checkout"
+      ],
+      "allowedDependencies": [],
+      "forbiddenDependencyChanges": true,
+      "allowedSchemaChanges": [],
+      "allowedNetworkOrExternalEffects": [],
+      "allowedMcpTools": [],
+      "allowSubagents": false,
+      "generatedArtifactPolicy": "No tracked runtime artifacts.",
+      "documentationReconciliation": [
+        "AGENTS.md",
+        "docs/execution-governance/EXECUTION_ASSURANCE_PROTOCOL.md"
+      ],
+      "maximumChangeScope": "Governance authority wording for zero-command Cursor execution only."
+    },
+    {
+      "requirementId": "CZC-002",
+      "phaseId": "CZC-PHASE-1",
+      "allowedCreatePaths": [
+        "tools/execution-governance/cursor-plan-resolver.mjs"
+      ],
+      "allowedModifyPaths": [
+        "tools/execution-governance/governance-cli.mjs"
+      ],
+      "protectedPaths": [
+        "app/**",
+        "dietitian-ai-assistant/**"
+      ],
+      "forbiddenPaths": [
+        ".execution-governance/runtime/**"
+      ],
+      "allowedCommands": [],
+      "forbiddenCommands": [
+        "push",
+        "merge",
+        "deploy",
+        "dependency install/update unless explicitly allowed",
+        "destructive git reset/checkout"
+      ],
+      "allowedDependencies": [],
+      "forbiddenDependencyChanges": true,
+      "allowedSchemaChanges": [],
+      "allowedNetworkOrExternalEffects": [],
+      "allowedMcpTools": [],
+      "allowSubagents": false,
+      "generatedArtifactPolicy": "No tracked runtime artifacts.",
+      "documentationReconciliation": [],
+      "maximumChangeScope": "Locked plan and next phase resolver only."
+    },
+    {
+      "requirementId": "CZC-003",
+      "phaseId": "CZC-PHASE-1",
+      "allowedCreatePaths": [],
+      "allowedModifyPaths": [
+        "tools/execution-governance/cursor-session.mjs",
+        "tools/execution-governance/cursor-session-broker.mjs"
+      ],
+      "protectedPaths": [
+        "app/**",
+        "dietitian-ai-assistant/**"
+      ],
+      "forbiddenPaths": [
+        ".execution-governance/runtime/**"
+      ],
+      "allowedCommands": [
+        {
+          "cwd": ".",
+          "executable": "node",
+          "args": [
+            "tools/execution-governance/governance-cli.mjs",
+            "cursor-session",
+            "--session",
+            "auto-preflight"
+          ],
+          "timeoutSeconds": 60,
+          "networkPolicy": "FORBIDDEN",
+          "artifactPolicy": "stdout/stderr only"
+        }
+      ],
+      "forbiddenCommands": [
+        "push",
+        "merge",
+        "deploy",
+        "dependency install/update unless explicitly allowed",
+        "destructive git reset/checkout"
+      ],
+      "allowedDependencies": [],
+      "forbiddenDependencyChanges": true,
+      "allowedSchemaChanges": [],
+      "allowedNetworkOrExternalEffects": [],
+      "allowedMcpTools": [],
+      "allowSubagents": false,
+      "generatedArtifactPolicy": "No tracked runtime artifacts.",
+      "documentationReconciliation": [],
+      "maximumChangeScope": "Cursor session automatic commands and broker request validation only."
+    },
+    {
+      "requirementId": "CZC-004",
+      "phaseId": "CZC-PHASE-1",
+      "allowedCreatePaths": [],
+      "allowedModifyPaths": [
+        "tools/execution-governance/secure-cursor-guard.mjs",
+        "tools/execution-governance/cursor-session-broker.mjs"
+      ],
+      "protectedPaths": [
+        "app/**",
+        "dietitian-ai-assistant/**"
+      ],
+      "forbiddenPaths": [
+        ".execution-governance/runtime/**"
+      ],
+      "allowedCommands": [],
+      "forbiddenCommands": [
+        "push",
+        "merge",
+        "deploy",
+        "dependency install/update unless explicitly allowed",
+        "destructive git reset/checkout"
+      ],
+      "allowedDependencies": [],
+      "forbiddenDependencyChanges": true,
+      "allowedSchemaChanges": [],
+      "allowedNetworkOrExternalEffects": [
+        "ProgramData activation writes only through the broker when invoked by explicit user intent inside Cursor."
+      ],
+      "allowedMcpTools": [],
+      "allowSubagents": false,
+      "generatedArtifactPolicy": "No tracked runtime artifacts.",
+      "documentationReconciliation": [],
+      "maximumChangeScope": "Discovery read-only and active signed scope enforcement only."
+    },
+    {
+      "requirementId": "CZC-005",
+      "phaseId": "CZC-PHASE-1",
+      "allowedCreatePaths": [
+        ".cursor/skills/manu-governed-execution/SKILL.md"
+      ],
+      "allowedModifyPaths": [
+        "tools/execution-governance/install-secure-cursor-guard.mjs"
+      ],
+      "protectedPaths": [
+        "app/**",
+        "dietitian-ai-assistant/**"
+      ],
+      "forbiddenPaths": [
+        ".execution-governance/runtime/**"
+      ],
+      "allowedCommands": [
+        {
+          "cwd": ".",
+          "executable": "node",
+          "args": [
+            "tools/execution-governance/install-secure-cursor-guard.mjs",
+            "--dry-run"
+          ],
+          "timeoutSeconds": 60,
+          "networkPolicy": "FORBIDDEN",
+          "artifactPolicy": "stdout/stderr only"
+        }
+      ],
+      "forbiddenCommands": [
+        "push",
+        "merge",
+        "deploy",
+        "dependency install/update unless explicitly allowed",
+        "destructive git reset/checkout"
+      ],
+      "allowedDependencies": [],
+      "forbiddenDependencyChanges": true,
+      "allowedSchemaChanges": [],
+      "allowedNetworkOrExternalEffects": [
+        "ProgramData installer update and Cursor skill packaging only when explicitly executed by the user or executor."
+      ],
+      "allowedMcpTools": [],
+      "allowSubagents": false,
+      "generatedArtifactPolicy": "No tracked runtime artifacts.",
+      "documentationReconciliation": [],
+      "maximumChangeScope": "Installer and Cursor skill packaging only."
+    },
+    {
+      "requirementId": "CZC-006",
+      "phaseId": "CZC-PHASE-1",
+      "allowedCreatePaths": [
+        "tools/execution-governance/cursor-plan-resolver.test.mjs"
+      ],
+      "allowedModifyPaths": [
+        "tools/execution-governance/cursor-session.test.mjs",
+        "tools/execution-governance/activate-secure-cursor-guard.test.mjs",
+        "tools/execution-governance/governance-hardening-red-team.mjs"
+      ],
+      "protectedPaths": [
+        "app/**",
+        "dietitian-ai-assistant/**"
+      ],
+      "forbiddenPaths": [
+        ".execution-governance/runtime/**"
+      ],
+      "allowedCommands": [
+        {
+          "cwd": ".",
+          "executable": "node",
+          "args": [
+            "--test",
+            "tools/execution-governance/cursor-plan-resolver.test.mjs"
+          ],
+          "timeoutSeconds": 120,
+          "networkPolicy": "FORBIDDEN",
+          "artifactPolicy": "stdout/stderr only"
+        },
+        {
+          "cwd": ".",
+          "executable": "node",
+          "args": [
+            "--test",
+            "tools/execution-governance/cursor-session.test.mjs"
+          ],
+          "timeoutSeconds": 120,
+          "networkPolicy": "FORBIDDEN",
+          "artifactPolicy": "stdout/stderr only"
+        },
+        {
+          "cwd": ".",
+          "executable": "node",
+          "args": [
+            "--test",
+            "tools/execution-governance/activate-secure-cursor-guard.test.mjs"
+          ],
+          "timeoutSeconds": 120,
+          "networkPolicy": "FORBIDDEN",
+          "artifactPolicy": "stdout/stderr only"
+        },
+        {
+          "cwd": ".",
+          "executable": "node",
+          "args": [
+            "tools/execution-governance/governance-hardening-red-team.mjs"
+          ],
+          "timeoutSeconds": 120,
+          "networkPolicy": "FORBIDDEN",
+          "artifactPolicy": "stdout/stderr only"
+        }
+      ],
+      "forbiddenCommands": [
+        "push",
+        "merge",
+        "deploy",
+        "dependency install/update unless explicitly allowed",
+        "destructive git reset/checkout"
+      ],
+      "allowedDependencies": [],
+      "forbiddenDependencyChanges": true,
+      "allowedSchemaChanges": [],
+      "allowedNetworkOrExternalEffects": [],
+      "allowedMcpTools": [],
+      "allowSubagents": false,
+      "generatedArtifactPolicy": "No tracked runtime artifacts.",
+      "documentationReconciliation": [],
+      "maximumChangeScope": "Resolver, session, guard, and red-team tests only."
+    },
+    {
+      "requirementId": "CZC-007",
+      "phaseId": "CZC-PHASE-1",
+      "allowedCreatePaths": [
+        "docs/execution-governance/CURSOR_ZERO_COMMAND_GOVERNED_EXECUTION_EVIDENCE.md"
+      ],
+      "allowedModifyPaths": [
+        ".execution-governance/plans/cursor-zero-command-governed-execution-v1/lifecycle-record.json",
+        ".execution-governance/plans/cursor-zero-command-governed-execution-v1/implementation-report.json"
+      ],
+      "protectedPaths": [
+        "app/**",
+        "dietitian-ai-assistant/**",
+        "docs/PILOT_READINESS_EVIDENCE_PACK.md",
+        "docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md",
+        "docs/PRODUCTION_PILOT_FINAL_READINESS_CLOSURE_SUMMARY.md"
+      ],
+      "forbiddenPaths": [
+        ".execution-governance/runtime/**"
+      ],
+      "allowedCommands": [
+        {
+          "cwd": ".",
+          "executable": "node",
+          "args": [
+            "tools/execution-governance/governance-cli.mjs",
+            "doctor"
+          ],
+          "timeoutSeconds": 60,
+          "networkPolicy": "FORBIDDEN",
+          "artifactPolicy": "stdout/stderr only"
+        },
+        {
+          "cwd": ".",
+          "executable": "node",
+          "args": [
+            "tools/execution-governance/governance-cli.mjs",
+            "validate"
+          ],
+          "timeoutSeconds": 60,
+          "networkPolicy": "FORBIDDEN",
+          "artifactPolicy": "stdout/stderr only"
+        },
+        {
+          "cwd": ".",
+          "executable": "node",
+          "args": [
+            "tools/execution-governance/governance-cli.mjs",
+            "validate",
+            "--all-plans"
+          ],
+          "timeoutSeconds": 60,
+          "networkPolicy": "FORBIDDEN",
+          "artifactPolicy": "stdout/stderr only"
+        },
+        {
+          "cwd": ".",
+          "executable": "node",
+          "args": [
+            "tools/execution-governance/governance-cli.mjs",
+            "validate",
+            "--plan-dir",
+            ".execution-governance/plans/cursor-zero-command-governed-execution-v1",
+            "--phase-id",
+            "CZC-PHASE-1"
+          ],
+          "timeoutSeconds": 60,
+          "networkPolicy": "FORBIDDEN",
+          "artifactPolicy": "stdout/stderr only"
+        }
+      ],
+      "forbiddenCommands": [
+        "push",
+        "merge",
+        "deploy",
+        "dependency install/update unless explicitly allowed",
+        "destructive git reset/checkout"
+      ],
+      "allowedDependencies": [],
+      "forbiddenDependencyChanges": true,
+      "allowedSchemaChanges": [],
+      "allowedNetworkOrExternalEffects": [],
+      "allowedMcpTools": [],
+      "allowSubagents": false,
+      "generatedArtifactPolicy": "Evidence is tracked source; runtime records stay ignored.",
+      "documentationReconciliation": [
+        "docs/execution-governance/CURSOR_ZERO_COMMAND_GOVERNED_EXECUTION_EVIDENCE.md"
+      ],
+      "maximumChangeScope": "Lifecycle, implementation report, and evidence only."
+    }
+  ]
+}

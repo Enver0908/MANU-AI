@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "1.0.0",
+  "contractId": "cursor-zero-command-governed-execution-v1",
+  "phaseId": "CZC-PHASE-1",
+  "implementer": "Codex or Cursor under the active signed scope",
+  "implementationState": "NOT_STARTED",
+  "changedFiles": [],
+  "commandsRun": [],
+  "artifacts": [],
+  "scopeChangeRequests": [],
+  "verifierChangeRequests": [],
+  "waivers": [],
+  "independentReview": "NOT_REQUESTED",
+  "residualRisks": [
+    "Implementation has not started; plan-lock commit is required before governance tooling changes begin."
+  ]
+}

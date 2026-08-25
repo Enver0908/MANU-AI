@@ -1,0 +1,445 @@
+{
+  "schemaVersion": "1.0.0",
+  "contractId": "cursor-zero-command-governed-execution-v1",
+  "acceptanceRecords": [
+    {
+      "requirementId": "CZC-001",
+      "phaseId": "CZC-PHASE-1",
+      "authoritySource": "plan.md",
+      "observableRequirement": "Governance authority text permits user plan-level execution intent while preserving phase-specific locked technical activation.",
+      "oracleType": "AUTOMATED",
+      "oracleOwner": "governance-cli validate",
+      "oracleLocation": "tools/execution-governance/governance-cli.mjs",
+      "protectionMechanism": "Tracked governance validator and exact diff scope.",
+      "exactEvidenceCommand": "node tools/execution-governance/governance-cli.mjs validate --plan-dir .execution-governance/plans/cursor-zero-command-governed-execution-v1 --phase-id CZC-PHASE-1",
+      "exactEvidenceCommandSpec": {
+        "cwd": ".",
+        "executable": "node",
+        "args": [
+          "tools/execution-governance/governance-cli.mjs",
+          "validate",
+          "--plan-dir",
+          ".execution-governance/plans/cursor-zero-command-governed-execution-v1",
+          "--phase-id",
+          "CZC-PHASE-1"
+        ],
+        "timeoutSeconds": 60,
+        "networkPolicy": "FORBIDDEN",
+        "artifactPolicy": "stdout/stderr only"
+      },
+      "preconditions": [
+        "plan package exists"
+      ],
+      "expectedExitCode": 0,
+      "requiredAssertions": [
+        "plan package validates",
+        "requirement anchors exist"
+      ],
+      "requiredScenarioMatrix": [
+        "selected plan validation"
+      ],
+      "negativeControls": [
+        "missing requirement anchor fails validation"
+      ],
+      "expectedTestIds": [
+        "selected-plan-validation"
+      ],
+      "expectedTestCountOrInventory": "one selected plan validation",
+      "artifactType": "command output",
+      "artifactLocation": "stdout/stderr",
+      "artifactRetentionPolicy": "summarized in evidence",
+      "artifactPrivacyPolicy": "No secrets, PHI, raw prompts, raw health data, or real user data.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": [
+        "no network required"
+      ],
+      "independentVerifier": "NOT_REQUESTED unless user explicitly requests review",
+      "passRule": "PASS only when command exits 0.",
+      "failRule": "FAIL when command exits non-zero.",
+      "blockedRule": "BLOCKED when Node cannot run.",
+      "forbiddenEquivalences": [
+        "Evidence prose is not PASS",
+        "Skipped check is not PASS",
+        "Old artifact is not fresh evidence",
+        "Implementer summary is not independent review"
+      ]
+    },
+    {
+      "requirementId": "CZC-002",
+      "phaseId": "CZC-PHASE-1",
+      "authoritySource": "plan.md",
+      "observableRequirement": "A resolver maps governed execution intent to exactly one locked plan and one next runnable phase without using prompt text as scope authority.",
+      "oracleType": "AUTOMATED",
+      "oracleOwner": "node:test cursor-plan-resolver",
+      "oracleLocation": "tools/execution-governance/cursor-plan-resolver.test.mjs",
+      "protectionMechanism": "Tracked node:test file with temporary plan fixtures.",
+      "exactEvidenceCommand": "node --test tools/execution-governance/cursor-plan-resolver.test.mjs",
+      "exactEvidenceCommandSpec": {
+        "cwd": ".",
+        "executable": "node",
+        "args": [
+          "--test",
+          "tools/execution-governance/cursor-plan-resolver.test.mjs"
+        ],
+        "timeoutSeconds": 120,
+        "networkPolicy": "FORBIDDEN",
+        "artifactPolicy": "stdout/stderr only"
+      },
+      "preconditions": [
+        "resolver implementation exists"
+      ],
+      "expectedExitCode": 0,
+      "requiredAssertions": [
+        "single locked plan resolves",
+        "next runnable phase resolves",
+        "ambiguous plans are denied",
+        "unlocked plans are denied",
+        "prompt text cannot add scope"
+      ],
+      "requiredScenarioMatrix": [
+        "single plan",
+        "multiple plans",
+        "unlocked plan",
+        "completed phase",
+        "prompt asks for extra file"
+      ],
+      "negativeControls": [
+        "prompt-derived allowed path is absent from resolver output"
+      ],
+      "expectedTestIds": [
+        "resolves single locked next phase",
+        "rejects ambiguous locked plans",
+        "rejects unlocked plan",
+        "does not derive scope from prompt"
+      ],
+      "expectedTestCountOrInventory": "resolver tests cover positive, ambiguity, unlocked, completed, and prompt-scope denial cases",
+      "artifactType": "command output",
+      "artifactLocation": "stdout/stderr",
+      "artifactRetentionPolicy": "summarized in evidence",
+      "artifactPrivacyPolicy": "No sensitive data.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": [
+        "no network required"
+      ],
+      "independentVerifier": "NOT_REQUESTED unless user explicitly requests review",
+      "passRule": "PASS only when command exits 0.",
+      "failRule": "FAIL when command exits non-zero.",
+      "blockedRule": "BLOCKED when Node cannot run.",
+      "forbiddenEquivalences": [
+        "Resolver file existence is not PASS"
+      ]
+    },
+    {
+      "requirementId": "CZC-003",
+      "phaseId": "CZC-PHASE-1",
+      "authoritySource": "plan.md",
+      "observableRequirement": "Cursor session commands run automatic preflight, activation, and open flows without user-supplied phase IDs.",
+      "oracleType": "AUTOMATED",
+      "oracleOwner": "node:test cursor-session",
+      "oracleLocation": "tools/execution-governance/cursor-session.test.mjs",
+      "protectionMechanism": "Tracked node:test file with temporary ProgramData substitute.",
+      "exactEvidenceCommand": "node --test tools/execution-governance/cursor-session.test.mjs",
+      "exactEvidenceCommandSpec": {
+        "cwd": ".",
+        "executable": "node",
+        "args": [
+          "--test",
+          "tools/execution-governance/cursor-session.test.mjs"
+        ],
+        "timeoutSeconds": 120,
+        "networkPolicy": "FORBIDDEN",
+        "artifactPolicy": "stdout/stderr only"
+      },
+      "preconditions": [
+        "cursor session implementation exists"
+      ],
+      "expectedExitCode": 0,
+      "requiredAssertions": [
+        "auto-preflight returns selected plan and phase",
+        "auto-activate writes selected phase activation",
+        "manual phase ID is not required for automatic flow"
+      ],
+      "requiredScenarioMatrix": [
+        "auto-preflight",
+        "auto-activate",
+        "existing status command"
+      ],
+      "negativeControls": [
+        "auto flow rejects ambiguity before broker write"
+      ],
+      "expectedTestIds": [
+        "cursor session auto-preflight resolves next phase",
+        "cursor session auto-activate writes selected phase"
+      ],
+      "expectedTestCountOrInventory": "cursor-session tests cover existing status and automatic flows",
+      "artifactType": "command output",
+      "artifactLocation": "stdout/stderr",
+      "artifactRetentionPolicy": "summarized in evidence",
+      "artifactPrivacyPolicy": "No sensitive data.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": [
+        "no network required"
+      ],
+      "independentVerifier": "NOT_REQUESTED unless user explicitly requests review",
+      "passRule": "PASS only when command exits 0.",
+      "failRule": "FAIL when command exits non-zero.",
+      "blockedRule": "BLOCKED when Node cannot run.",
+      "forbiddenEquivalences": [
+        "Manual activation success is not automatic-flow PASS"
+      ]
+    },
+    {
+      "requirementId": "CZC-004",
+      "phaseId": "CZC-PHASE-1",
+      "authoritySource": "plan.md",
+      "observableRequirement": "Guard and broker support discovery read-only mode and active signed phase scope without weakening secret, write, shell, MCP, subagent, or production denials.",
+      "oracleType": "AUTOMATED",
+      "oracleOwner": "node:test activate-secure-cursor-guard",
+      "oracleLocation": "tools/execution-governance/activate-secure-cursor-guard.test.mjs",
+      "protectionMechanism": "Tracked guard tests and red-team harness.",
+      "exactEvidenceCommand": "node --test tools/execution-governance/activate-secure-cursor-guard.test.mjs",
+      "exactEvidenceCommandSpec": {
+        "cwd": ".",
+        "executable": "node",
+        "args": [
+          "--test",
+          "tools/execution-governance/activate-secure-cursor-guard.test.mjs"
+        ],
+        "timeoutSeconds": 120,
+        "networkPolicy": "FORBIDDEN",
+        "artifactPolicy": "stdout/stderr only"
+      },
+      "preconditions": [
+        "guard implementation exists"
+      ],
+      "expectedExitCode": 0,
+      "requiredAssertions": [
+        "discovery read-only allows safe reads",
+        "discovery read-only denies writes",
+        "discovery read-only denies secret reads",
+        "active signed scope behavior remains intact"
+      ],
+      "requiredScenarioMatrix": [
+        "inactive",
+        "discovery read-only",
+        "active signed scope",
+        "secret path",
+        "production command"
+      ],
+      "negativeControls": [
+        "write in discovery mode is denied",
+        "secret read in discovery mode is denied",
+        "production command is denied"
+      ],
+      "expectedTestIds": [
+        "discovery read-only allows safe read",
+        "discovery read-only denies mutation",
+        "discovery read-only denies secret read"
+      ],
+      "expectedTestCountOrInventory": "guard tests cover discovery mode and existing active scope cases",
+      "artifactType": "command output",
+      "artifactLocation": "stdout/stderr",
+      "artifactRetentionPolicy": "summarized in evidence",
+      "artifactPrivacyPolicy": "No sensitive data.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": [
+        "no network required"
+      ],
+      "independentVerifier": "NOT_REQUESTED unless user explicitly requests review",
+      "passRule": "PASS only when command exits 0.",
+      "failRule": "FAIL when command exits non-zero.",
+      "blockedRule": "BLOCKED when Node cannot run.",
+      "forbiddenEquivalences": [
+        "Read allowance is not write allowance"
+      ]
+    },
+    {
+      "requirementId": "CZC-005",
+      "phaseId": "CZC-PHASE-1",
+      "authoritySource": "plan.md",
+      "observableRequirement": "Installer and Cursor skill packaging expose the natural Cursor workflow `Bu planı uygula`.",
+      "oracleType": "AUTOMATED",
+      "oracleOwner": "install-secure-cursor-guard",
+      "oracleLocation": "tools/execution-governance/install-secure-cursor-guard.mjs",
+      "protectionMechanism": "Dependency-free installer dry-run and tracked skill file.",
+      "exactEvidenceCommand": "node tools/execution-governance/install-secure-cursor-guard.mjs --dry-run",
+      "exactEvidenceCommandSpec": {
+        "cwd": ".",
+        "executable": "node",
+        "args": [
+          "tools/execution-governance/install-secure-cursor-guard.mjs",
+          "--dry-run"
+        ],
+        "timeoutSeconds": 60,
+        "networkPolicy": "FORBIDDEN",
+        "artifactPolicy": "stdout/stderr only"
+      },
+      "preconditions": [
+        "installer source exists",
+        "skill file exists"
+      ],
+      "expectedExitCode": 0,
+      "requiredAssertions": [
+        "installer dry-run exits 0",
+        "installer recognizes resolver and skill packaging",
+        "skill routes governed execution intent to automatic flow"
+      ],
+      "requiredScenarioMatrix": [
+        "installer dry-run",
+        "skill presence"
+      ],
+      "negativeControls": [
+        "installer does not require phase ID in user-facing workflow text"
+      ],
+      "expectedTestIds": [
+        "installer dry-run zero-command packaging"
+      ],
+      "expectedTestCountOrInventory": "one installer dry-run plus test assertions for skill text",
+      "artifactType": "command output",
+      "artifactLocation": "stdout/stderr",
+      "artifactRetentionPolicy": "summarized in evidence",
+      "artifactPrivacyPolicy": "No sensitive data.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": [
+        "no network required"
+      ],
+      "independentVerifier": "NOT_REQUESTED unless user explicitly requests review",
+      "passRule": "PASS only when command exits 0.",
+      "failRule": "FAIL when command exits non-zero.",
+      "blockedRule": "BLOCKED when Node cannot run.",
+      "forbiddenEquivalences": [
+        "Shortcut existence alone is not zero-command workflow PASS"
+      ]
+    },
+    {
+      "requirementId": "CZC-006",
+      "phaseId": "CZC-PHASE-1",
+      "authoritySource": "plan.md",
+      "observableRequirement": "Automated tests and red-team coverage verify automatic resolution, denial cases, discovery mode, and prompt-scope non-authority.",
+      "oracleType": "AUTOMATED",
+      "oracleOwner": "governance-hardening-red-team",
+      "oracleLocation": "tools/execution-governance/governance-hardening-red-team.mjs",
+      "protectionMechanism": "Tracked governance red-team harness.",
+      "exactEvidenceCommand": "node tools/execution-governance/governance-hardening-red-team.mjs",
+      "exactEvidenceCommandSpec": {
+        "cwd": ".",
+        "executable": "node",
+        "args": [
+          "tools/execution-governance/governance-hardening-red-team.mjs"
+        ],
+        "timeoutSeconds": 120,
+        "networkPolicy": "FORBIDDEN",
+        "artifactPolicy": "stdout/stderr only"
+      },
+      "preconditions": [
+        "red-team implementation exists"
+      ],
+      "expectedExitCode": 0,
+      "requiredAssertions": [
+        "red-team status PASS",
+        "automatic resolver denial cases are covered",
+        "discovery read-only denial cases are covered"
+      ],
+      "requiredScenarioMatrix": [
+        "inactive denial",
+        "discovery read-only",
+        "active scope allow",
+        "ambiguous plan denial",
+        "prompt-scope denial"
+      ],
+      "negativeControls": [
+        "prompt-derived scope cannot pass red-team",
+        "production command remains blocked"
+      ],
+      "expectedTestIds": [
+        "deny-prompt-derived-scope",
+        "deny-ambiguous-auto-plan",
+        "deny-production-command-in-discovery"
+      ],
+      "expectedTestCountOrInventory": "red-team result contains zero-command denial and discovery cases",
+      "artifactType": "command output",
+      "artifactLocation": "stdout/stderr",
+      "artifactRetentionPolicy": "summarized in evidence",
+      "artifactPrivacyPolicy": "No sensitive data.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": [
+        "no network required"
+      ],
+      "independentVerifier": "NOT_REQUESTED unless user explicitly requests review",
+      "passRule": "PASS only when command exits 0.",
+      "failRule": "FAIL when command exits non-zero.",
+      "blockedRule": "BLOCKED when Node cannot run.",
+      "forbiddenEquivalences": [
+        "Partial red-team is not PASS"
+      ]
+    },
+    {
+      "requirementId": "CZC-007",
+      "phaseId": "CZC-PHASE-1",
+      "authoritySource": "plan.md",
+      "observableRequirement": "Lifecycle, implementation report, and evidence records contain exact command outcomes and unchanged production boundaries.",
+      "oracleType": "AUTOMATED",
+      "oracleOwner": "governance-cli validate all plans",
+      "oracleLocation": "tools/execution-governance/governance-cli.mjs",
+      "protectionMechanism": "Tracked governance validator plus implementation report schema.",
+      "exactEvidenceCommand": "node tools/execution-governance/governance-cli.mjs validate --all-plans",
+      "exactEvidenceCommandSpec": {
+        "cwd": ".",
+        "executable": "node",
+        "args": [
+          "tools/execution-governance/governance-cli.mjs",
+          "validate",
+          "--all-plans"
+        ],
+        "timeoutSeconds": 60,
+        "networkPolicy": "FORBIDDEN",
+        "artifactPolicy": "stdout/stderr only"
+      },
+      "preconditions": [
+        "implementation records exist"
+      ],
+      "expectedExitCode": 0,
+      "requiredAssertions": [
+        "all plans validate",
+        "implementation report records command outcomes",
+        "production boundaries remain unchanged"
+      ],
+      "requiredScenarioMatrix": [
+        "all plan validation",
+        "final evidence review"
+      ],
+      "negativeControls": [
+        "evidence prose alone is not PASS"
+      ],
+      "expectedTestIds": [
+        "all-plan-validation"
+      ],
+      "expectedTestCountOrInventory": "one all-plan validation plus recorded command table",
+      "artifactType": "command output",
+      "artifactLocation": "stdout/stderr",
+      "artifactRetentionPolicy": "summarized in evidence",
+      "artifactPrivacyPolicy": "No sensitive data.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": [
+        "no network required"
+      ],
+      "independentVerifier": "NOT_REQUESTED unless user explicitly requests review",
+      "passRule": "PASS only when command exits 0 and records are current.",
+      "failRule": "FAIL when command exits non-zero or required records contradict the command results.",
+      "blockedRule": "BLOCKED when Node cannot run or records cannot be updated inside scope.",
+      "forbiddenEquivalences": [
+        "Evidence prose is not PASS",
+        "Skipped check is not PASS",
+        "Old artifact is not fresh evidence",
+        "Implementer summary is not independent review"
+      ]
+    }
+  ]
+}

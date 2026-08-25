@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "1.0.0",
+  "contractId": "cursor-zero-command-governed-execution-v1",
+  "planDirectory": ".execution-governance/plans/cursor-zero-command-governed-execution-v1",
+  "currentPhase": "CZC-PHASE-1",
+  "status": {
+    "plan_state": "LOCKED_FOR_IMPLEMENTATION",
+    "implementation_state": "NOT_STARTED",
+    "executor_checks": "NOT_RUN",
+    "independent_review": "NOT_REQUESTED",
+    "user_acceptance": "PENDING"
+  },
+  "events": [
+    {
+      "eventId": "CZC-EVENT-001",
+      "timestamp": "2026-08-25T00:00:00Z",
+      "actor": "Codex",
+      "eventType": "PLAN_DRAFTED",
+      "summary": "Drafted the zero-command Cursor governed execution plan package for user approval and plan-lock commit."
+    }
+  ],
+  "independentReviewPolicy": {
+    "defaultState": "NOT_REQUESTED",
+    "requiresExplicitUserRequest": true,
+    "createReviewRecordWhenNotRequested": false,
+    "reviewerMayModifyImplementation": false
+  }
+}
