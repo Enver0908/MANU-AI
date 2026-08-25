@@ -1,0 +1,379 @@
+{
+  "schemaVersion": "1.0.0",
+  "contractId": "cursor-protected-effect-governance-v1",
+  "acceptanceRecords": [
+    {
+      "requirementId": "CPEG-001",
+      "phaseId": "CPEG-PHASE-1",
+      "authoritySource": "plan.md",
+      "observableRequirement": "Ordinary Cursor prompts, empty workspaces, non-MANU workspaces, and safe non-secret reads are allowed without active activation.",
+      "oracleType": "AUTOMATED",
+      "oracleOwner": "node:test activate-secure-cursor-guard",
+      "oracleLocation": "tools/execution-governance/activate-secure-cursor-guard.test.mjs",
+      "protectionMechanism": "Tracked tests execute guard decisions with temporary activation roots.",
+      "exactEvidenceCommand": "node --test tools/execution-governance/activate-secure-cursor-guard.test.mjs",
+      "exactEvidenceCommandSpec": {
+        "cwd": ".",
+        "executable": "node",
+        "args": [
+          "--test",
+          "tools/execution-governance/activate-secure-cursor-guard.test.mjs"
+        ],
+        "timeoutSeconds": 120,
+        "networkPolicy": "FORBIDDEN",
+        "artifactPolicy": "stdout/stderr only"
+      },
+      "preconditions": [
+        "guard implementation exists"
+      ],
+      "expectedExitCode": 0,
+      "requiredAssertions": [
+        "ordinary prompt is allowed when inactive",
+        "empty workspace lifecycle event is allowed",
+        "outside workspace shell is allowed",
+        "safe read is allowed"
+      ],
+      "requiredScenarioMatrix": [
+        "inactive ordinary prompt",
+        "empty workspace",
+        "outside workspace",
+        "safe read"
+      ],
+      "negativeControls": [
+        "secret read remains denied"
+      ],
+      "expectedTestIds": [
+        "ordinary prompt allowed",
+        "empty workspace allowed",
+        "outside workspace shell allowed"
+      ],
+      "expectedTestCountOrInventory": "guard tests cover normal freedom and secret denial",
+      "artifactType": "command output",
+      "artifactLocation": "stdout/stderr",
+      "artifactRetentionPolicy": "summarized in evidence",
+      "artifactPrivacyPolicy": "No secrets, raw prompts, PHI, raw health data, or real user data.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": [
+        "no network required"
+      ],
+      "independentVerifier": "NOT_REQUESTED unless user explicitly requests review",
+      "passRule": "PASS only when command exits 0.",
+      "failRule": "FAIL when command exits non-zero.",
+      "blockedRule": "BLOCKED when Node cannot run.",
+      "forbiddenEquivalences": [
+        "Skipped check is not PASS",
+        "Old artifact is not fresh evidence"
+      ]
+    },
+    {
+      "requirementId": "CPEG-002",
+      "phaseId": "CPEG-PHASE-1",
+      "authoritySource": "plan.md",
+      "observableRequirement": "Protected MANU-AI local mutations and explicit protected shell/MCP/subagent effects are denied unless active signed scope permits the exact target.",
+      "oracleType": "AUTOMATED",
+      "oracleOwner": "governance-hardening-red-team",
+      "oracleLocation": "tools/execution-governance/governance-hardening-red-team.mjs",
+      "protectionMechanism": "Tracked red-team harness exercises protected effects.",
+      "exactEvidenceCommand": "node tools/execution-governance/governance-hardening-red-team.mjs",
+      "exactEvidenceCommandSpec": {
+        "cwd": ".",
+        "executable": "node",
+        "args": [
+          "tools/execution-governance/governance-hardening-red-team.mjs"
+        ],
+        "timeoutSeconds": 120,
+        "networkPolicy": "FORBIDDEN",
+        "artifactPolicy": "stdout/stderr only"
+      },
+      "preconditions": [
+        "red-team implementation exists"
+      ],
+      "expectedExitCode": 0,
+      "requiredAssertions": [
+        "protected write without activation is denied",
+        "exact active-scope write is allowed",
+        "out-of-scope protected write is denied",
+        "protected git -C shell effect is denied without active scope"
+      ],
+      "requiredScenarioMatrix": [
+        "inactive protected write",
+        "active exact write",
+        "active out-of-scope write",
+        "protected shell target"
+      ],
+      "negativeControls": [
+        "prompt-derived scope cannot authorize writes"
+      ],
+      "expectedTestIds": [
+        "deny-protected-write-without-activation",
+        "allow-in-scope-write",
+        "deny-git-c-protected-target"
+      ],
+      "expectedTestCountOrInventory": "red-team result contains protected-effect denial and allow cases",
+      "artifactType": "command output",
+      "artifactLocation": "stdout/stderr",
+      "artifactRetentionPolicy": "summarized in evidence",
+      "artifactPrivacyPolicy": "No sensitive data.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": [
+        "no network required"
+      ],
+      "independentVerifier": "NOT_REQUESTED unless user explicitly requests review",
+      "passRule": "PASS only when command exits 0.",
+      "failRule": "FAIL when command exits non-zero.",
+      "blockedRule": "BLOCKED when Node cannot run.",
+      "forbiddenEquivalences": [
+        "Partial red-team is not PASS"
+      ]
+    },
+    {
+      "requirementId": "CPEG-003",
+      "phaseId": "CPEG-PHASE-1",
+      "authoritySource": "plan.md",
+      "observableRequirement": "Enterprise hook root resolution uses payload roots/targets and activation records, not ProgramData process.cwd() as repo authority.",
+      "oracleType": "AUTOMATED",
+      "oracleOwner": "node:test activate-secure-cursor-guard",
+      "oracleLocation": "tools/execution-governance/activate-secure-cursor-guard.test.mjs",
+      "protectionMechanism": "Tracked tests run guard from ProgramData-like cwd.",
+      "exactEvidenceCommand": "node --test tools/execution-governance/activate-secure-cursor-guard.test.mjs",
+      "exactEvidenceCommandSpec": {
+        "cwd": ".",
+        "executable": "node",
+        "args": [
+          "--test",
+          "tools/execution-governance/activate-secure-cursor-guard.test.mjs"
+        ],
+        "timeoutSeconds": 120,
+        "networkPolicy": "FORBIDDEN",
+        "artifactPolicy": "stdout/stderr only"
+      },
+      "preconditions": [
+        "guard implementation exists"
+      ],
+      "expectedExitCode": 0,
+      "requiredAssertions": [
+        "ProgramData cwd does not become repo authority",
+        "workspace_roots empty does not cause activation mismatch denial",
+        "explicit MANU target is still protected"
+      ],
+      "requiredScenarioMatrix": [
+        "enterprise cwd",
+        "empty workspace",
+        "explicit protected path"
+      ],
+      "negativeControls": [
+        "activation repoRoot mismatch cannot block unrelated empty session"
+      ],
+      "expectedTestIds": [
+        "enterprise cwd empty workspace allowed",
+        "explicit protected target denied"
+      ],
+      "expectedTestCountOrInventory": "guard tests cover ProgramData cwd and protected target resolution",
+      "artifactType": "command output",
+      "artifactLocation": "stdout/stderr",
+      "artifactRetentionPolicy": "summarized in evidence",
+      "artifactPrivacyPolicy": "No sensitive data.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": [
+        "no network required"
+      ],
+      "independentVerifier": "NOT_REQUESTED unless user explicitly requests review",
+      "passRule": "PASS only when command exits 0.",
+      "failRule": "FAIL when command exits non-zero.",
+      "blockedRule": "BLOCKED when Node cannot run.",
+      "forbiddenEquivalences": [
+        "Manual inspection is not PASS"
+      ]
+    },
+    {
+      "requirementId": "CPEG-004",
+      "phaseId": "CPEG-PHASE-1",
+      "authoritySource": "plan.md",
+      "observableRequirement": "Installer verification and workspace configuration support the protected-effect model and disable Cursor Tab-style inline writes inside MANU-AI.",
+      "oracleType": "AUTOMATED",
+      "oracleOwner": "install-secure-cursor-guard",
+      "oracleLocation": "tools/execution-governance/install-secure-cursor-guard.mjs",
+      "protectionMechanism": "Installer dry-run/verify and tracked workspace settings.",
+      "exactEvidenceCommand": "node tools/execution-governance/install-secure-cursor-guard.mjs --dry-run",
+      "exactEvidenceCommandSpec": {
+        "cwd": ".",
+        "executable": "node",
+        "args": [
+          "tools/execution-governance/install-secure-cursor-guard.mjs",
+          "--dry-run"
+        ],
+        "timeoutSeconds": 60,
+        "networkPolicy": "FORBIDDEN",
+        "artifactPolicy": "stdout/stderr only"
+      },
+      "preconditions": [
+        "installer source exists",
+        ".vscode/settings.json exists"
+      ],
+      "expectedExitCode": 0,
+      "requiredAssertions": [
+        "installer dry-run exits 0",
+        "installer recognizes updated protected-effect event set",
+        "workspace settings disable inline completions"
+      ],
+      "requiredScenarioMatrix": [
+        "installer dry-run",
+        "settings presence"
+      ],
+      "negativeControls": [
+        "post-edit hooks are not the only guard boundary"
+      ],
+      "expectedTestIds": [
+        "installer dry-run protected-effect model",
+        "workspace tab disabled"
+      ],
+      "expectedTestCountOrInventory": "installer dry-run and test assertion for settings",
+      "artifactType": "command output",
+      "artifactLocation": "stdout/stderr",
+      "artifactRetentionPolicy": "summarized in evidence",
+      "artifactPrivacyPolicy": "No sensitive data.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": [
+        "no network required"
+      ],
+      "independentVerifier": "NOT_REQUESTED unless user explicitly requests review",
+      "passRule": "PASS only when command exits 0 and settings assertions pass.",
+      "failRule": "FAIL when command exits non-zero.",
+      "blockedRule": "BLOCKED when Node cannot run.",
+      "forbiddenEquivalences": [
+        "Installed old guard is not PASS"
+      ]
+    },
+    {
+      "requirementId": "CPEG-005",
+      "phaseId": "CPEG-PHASE-1",
+      "authoritySource": "plan.md",
+      "observableRequirement": "Red-team and unit tests cover normal freedom, protected denial, active-scope allowance, cross-workspace targeting, secret denial, and production-effect denial.",
+      "oracleType": "AUTOMATED",
+      "oracleOwner": "governance-hardening-red-team",
+      "oracleLocation": "tools/execution-governance/governance-hardening-red-team.mjs",
+      "protectionMechanism": "Tracked red-team harness.",
+      "exactEvidenceCommand": "node tools/execution-governance/governance-hardening-red-team.mjs",
+      "exactEvidenceCommandSpec": {
+        "cwd": ".",
+        "executable": "node",
+        "args": [
+          "tools/execution-governance/governance-hardening-red-team.mjs"
+        ],
+        "timeoutSeconds": 120,
+        "networkPolicy": "FORBIDDEN",
+        "artifactPolicy": "stdout/stderr only"
+      },
+      "preconditions": [
+        "red-team implementation exists"
+      ],
+      "expectedExitCode": 0,
+      "requiredAssertions": [
+        "red-team status PASS",
+        "normal non-protected operations pass",
+        "protected effects remain denied",
+        "active exact scope remains allowed"
+      ],
+      "requiredScenarioMatrix": [
+        "ordinary prompt",
+        "outside workspace",
+        "protected write",
+        "active exact scope",
+        "secret read",
+        "production command"
+      ],
+      "negativeControls": [
+        "production command remains blocked"
+      ],
+      "expectedTestIds": [
+        "allow-ordinary-prompt",
+        "allow-outside-workspace-shell",
+        "deny-protected-write-without-activation",
+        "deny-production-command-in-discovery"
+      ],
+      "expectedTestCountOrInventory": "red-team contains at least normal freedom, protected denial, active allow, secret, and production cases",
+      "artifactType": "command output",
+      "artifactLocation": "stdout/stderr",
+      "artifactRetentionPolicy": "summarized in evidence",
+      "artifactPrivacyPolicy": "No sensitive data.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": [
+        "no network required"
+      ],
+      "independentVerifier": "NOT_REQUESTED unless user explicitly requests review",
+      "passRule": "PASS only when command exits 0.",
+      "failRule": "FAIL when command exits non-zero.",
+      "blockedRule": "BLOCKED when Node cannot run.",
+      "forbiddenEquivalences": [
+        "Partial red-team is not PASS"
+      ]
+    },
+    {
+      "requirementId": "CPEG-006",
+      "phaseId": "CPEG-PHASE-1",
+      "authoritySource": "plan.md",
+      "observableRequirement": "Lifecycle, implementation report, and evidence record exact command outcomes and unchanged production boundaries.",
+      "oracleType": "AUTOMATED",
+      "oracleOwner": "governance-cli validate all plans",
+      "oracleLocation": "tools/execution-governance/governance-cli.mjs",
+      "protectionMechanism": "Tracked governance validator plus implementation report.",
+      "exactEvidenceCommand": "node tools/execution-governance/governance-cli.mjs validate --all-plans",
+      "exactEvidenceCommandSpec": {
+        "cwd": ".",
+        "executable": "node",
+        "args": [
+          "tools/execution-governance/governance-cli.mjs",
+          "validate",
+          "--all-plans"
+        ],
+        "timeoutSeconds": 60,
+        "networkPolicy": "FORBIDDEN",
+        "artifactPolicy": "stdout/stderr only"
+      },
+      "preconditions": [
+        "implementation records exist"
+      ],
+      "expectedExitCode": 0,
+      "requiredAssertions": [
+        "all plans validate",
+        "implementation report records command outcomes",
+        "production boundaries remain unchanged"
+      ],
+      "requiredScenarioMatrix": [
+        "all plan validation",
+        "final evidence review"
+      ],
+      "negativeControls": [
+        "evidence prose alone is not PASS"
+      ],
+      "expectedTestIds": [
+        "all-plan-validation"
+      ],
+      "expectedTestCountOrInventory": "one all-plan validation plus recorded command table",
+      "artifactType": "command output",
+      "artifactLocation": "stdout/stderr",
+      "artifactRetentionPolicy": "summarized in evidence",
+      "artifactPrivacyPolicy": "No sensitive data.",
+      "commitShaBinding": "required",
+      "runIdAndTimestampBinding": "required",
+      "cleanEnvironmentRequirements": [
+        "no network required"
+      ],
+      "independentVerifier": "NOT_REQUESTED unless user explicitly requests review",
+      "passRule": "PASS only when command exits 0 and records are current.",
+      "failRule": "FAIL when command exits non-zero or required records contradict command results.",
+      "blockedRule": "BLOCKED when Node cannot run or records cannot be updated inside scope.",
+      "forbiddenEquivalences": [
+        "Evidence prose is not PASS",
+        "Skipped check is not PASS",
+        "Old artifact is not fresh evidence",
+        "Implementer summary is not independent review"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,138 @@
+{
+  "schemaVersion": "1.0.0",
+  "governanceFormatVersion": "2.0.0",
+  "contractId": "cursor-protected-effect-governance-v1",
+  "planVersion": "1.0.0",
+  "planTitle": "Cursor Protected Effect Governance Plan",
+  "currentPhaseId": "CPEG-PHASE-1",
+  "phases": [
+    {
+      "phaseId": "CPEG-PHASE-1",
+      "title": "Protected Effect Governance",
+      "status": "LOCKED_FOR_IMPLEMENTATION"
+    }
+  ],
+  "authoritySources": [
+    "User instruction to make Cursor governance user-friendly while protecting MANU-AI changes",
+    "AGENTS.md",
+    "docs/execution-governance/EXECUTION_ASSURANCE_PROTOCOL.md",
+    "docs/execution-governance/DECISION_COMPLETE_PLAN_AUTHORING_STANDARD.md",
+    "current Git state"
+  ],
+  "roleBindings": {
+    "requirementAuthority": "user and named authority documents",
+    "planner": "Codex",
+    "implementer": "Codex or Cursor under active signed scope",
+    "automaticVerifier": "execution-governance CLI, node:test, installer verify, and governance red-team",
+    "independentReviewer": "NOT_REQUESTED unless user explicitly requests review",
+    "manualReviewer": "user-approved human reviewer when required",
+    "finalAcceptanceAuthority": "user"
+  },
+  "status": {
+    "plan_state": "LOCKED_FOR_IMPLEMENTATION",
+    "implementation_state": "NOT_STARTED",
+    "executor_checks": "NOT_RUN",
+    "independent_review": "NOT_REQUESTED",
+    "user_acceptance": "PENDING"
+  },
+  "requirements": [
+    {
+      "requirementId": "CPEG-001",
+      "authoritySource": "plan.md",
+      "classification": "IN_SCOPE",
+      "observableRequirement": "Ordinary Cursor prompts, empty workspaces, non-MANU workspaces, and safe non-secret reads are allowed without active activation.",
+      "dependencies": [],
+      "status": {
+        "plan_state": "LOCKED_FOR_IMPLEMENTATION",
+        "implementation_state": "NOT_STARTED",
+        "executor_checks": "NOT_RUN",
+        "independent_review": "NOT_REQUESTED",
+        "user_acceptance": "PENDING"
+      }
+    },
+    {
+      "requirementId": "CPEG-002",
+      "authoritySource": "plan.md",
+      "classification": "IN_SCOPE",
+      "observableRequirement": "Protected MANU-AI local mutations and explicit protected shell/MCP/subagent effects are denied unless active signed scope permits the exact target.",
+      "dependencies": [
+        "CPEG-001"
+      ],
+      "status": {
+        "plan_state": "LOCKED_FOR_IMPLEMENTATION",
+        "implementation_state": "NOT_STARTED",
+        "executor_checks": "NOT_RUN",
+        "independent_review": "NOT_REQUESTED",
+        "user_acceptance": "PENDING"
+      }
+    },
+    {
+      "requirementId": "CPEG-003",
+      "authoritySource": "plan.md",
+      "classification": "IN_SCOPE",
+      "observableRequirement": "Enterprise hook root resolution uses payload roots/targets and activation records, not ProgramData process.cwd() as repo authority.",
+      "dependencies": [
+        "CPEG-001",
+        "CPEG-002"
+      ],
+      "status": {
+        "plan_state": "LOCKED_FOR_IMPLEMENTATION",
+        "implementation_state": "NOT_STARTED",
+        "executor_checks": "NOT_RUN",
+        "independent_review": "NOT_REQUESTED",
+        "user_acceptance": "PENDING"
+      }
+    },
+    {
+      "requirementId": "CPEG-004",
+      "authoritySource": "plan.md",
+      "classification": "IN_SCOPE",
+      "observableRequirement": "Installer verification and workspace configuration support the protected-effect model and disable Cursor Tab-style inline writes inside MANU-AI.",
+      "dependencies": [
+        "CPEG-003"
+      ],
+      "status": {
+        "plan_state": "LOCKED_FOR_IMPLEMENTATION",
+        "implementation_state": "NOT_STARTED",
+        "executor_checks": "NOT_RUN",
+        "independent_review": "NOT_REQUESTED",
+        "user_acceptance": "PENDING"
+      }
+    },
+    {
+      "requirementId": "CPEG-005",
+      "authoritySource": "plan.md",
+      "classification": "IN_SCOPE",
+      "observableRequirement": "Red-team and unit tests cover normal freedom, protected denial, active-scope allowance, cross-workspace targeting, secret denial, and production-effect denial.",
+      "dependencies": [
+        "CPEG-001",
+        "CPEG-002",
+        "CPEG-003",
+        "CPEG-004"
+      ],
+      "status": {
+        "plan_state": "LOCKED_FOR_IMPLEMENTATION",
+        "implementation_state": "NOT_STARTED",
+        "executor_checks": "NOT_RUN",
+        "independent_review": "NOT_REQUESTED",
+        "user_acceptance": "PENDING"
+      }
+    },
+    {
+      "requirementId": "CPEG-006",
+      "authoritySource": "plan.md",
+      "classification": "IN_SCOPE",
+      "observableRequirement": "Lifecycle, implementation report, and evidence record exact command outcomes and unchanged production boundaries.",
+      "dependencies": [
+        "CPEG-005"
+      ],
+      "status": {
+        "plan_state": "LOCKED_FOR_IMPLEMENTATION",
+        "implementation_state": "NOT_STARTED",
+        "executor_checks": "NOT_RUN",
+        "independent_review": "NOT_REQUESTED",
+        "user_acceptance": "PENDING"
+      }
+    }
+  ]
+}

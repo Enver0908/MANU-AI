@@ -1,0 +1,316 @@
+{
+  "schemaVersion": "1.0.0",
+  "contractId": "cursor-protected-effect-governance-v1",
+  "requirements": [
+    {
+      "requirementId": "CPEG-001",
+      "phaseId": "CPEG-PHASE-1",
+      "allowedCreatePaths": [],
+      "allowedModifyPaths": [
+        "tools/execution-governance/secure-cursor-guard.mjs",
+        "tools/execution-governance/activate-secure-cursor-guard.test.mjs",
+        "tools/execution-governance/governance-hardening-red-team.mjs"
+      ],
+      "protectedPaths": [
+        "app/**",
+        "dietitian-ai-assistant/**"
+      ],
+      "forbiddenPaths": [
+        ".execution-governance/runtime/**",
+        ".env",
+        ".env.*",
+        "**/*.pem",
+        "**/*.key"
+      ],
+      "allowedCommands": [],
+      "forbiddenCommands": [
+        "push",
+        "merge",
+        "deploy",
+        "dependency install/update unless explicitly allowed",
+        "destructive git reset/checkout"
+      ],
+      "allowedDependencies": [],
+      "forbiddenDependencyChanges": true,
+      "allowedSchemaChanges": [],
+      "allowedNetworkOrExternalEffects": [],
+      "allowedMcpTools": [],
+      "allowSubagents": false,
+      "generatedArtifactPolicy": "No tracked runtime artifacts.",
+      "documentationReconciliation": [],
+      "maximumChangeScope": "Guard normal-prompt, outside-workspace, and safe-read allowance only."
+    },
+    {
+      "requirementId": "CPEG-002",
+      "phaseId": "CPEG-PHASE-1",
+      "allowedCreatePaths": [],
+      "allowedModifyPaths": [
+        "tools/execution-governance/secure-cursor-guard.mjs",
+        "tools/execution-governance/activate-secure-cursor-guard.test.mjs",
+        "tools/execution-governance/governance-hardening-red-team.mjs"
+      ],
+      "protectedPaths": [
+        "app/**",
+        "dietitian-ai-assistant/**"
+      ],
+      "forbiddenPaths": [
+        ".execution-governance/runtime/**"
+      ],
+      "allowedCommands": [],
+      "forbiddenCommands": [
+        "push",
+        "merge",
+        "deploy",
+        "dependency install/update unless explicitly allowed",
+        "destructive git reset/checkout"
+      ],
+      "allowedDependencies": [],
+      "forbiddenDependencyChanges": true,
+      "allowedSchemaChanges": [],
+      "allowedNetworkOrExternalEffects": [],
+      "allowedMcpTools": [],
+      "allowSubagents": false,
+      "generatedArtifactPolicy": "No tracked runtime artifacts.",
+      "documentationReconciliation": [],
+      "maximumChangeScope": "Protected-effect denials and exact active-scope allowance only."
+    },
+    {
+      "requirementId": "CPEG-003",
+      "phaseId": "CPEG-PHASE-1",
+      "allowedCreatePaths": [],
+      "allowedModifyPaths": [
+        "tools/execution-governance/secure-cursor-guard.mjs",
+        "tools/execution-governance/activate-secure-cursor-guard.test.mjs",
+        "tools/execution-governance/governance-hardening-red-team.mjs"
+      ],
+      "protectedPaths": [
+        "app/**",
+        "dietitian-ai-assistant/**"
+      ],
+      "forbiddenPaths": [
+        ".execution-governance/runtime/**"
+      ],
+      "allowedCommands": [],
+      "forbiddenCommands": [
+        "push",
+        "merge",
+        "deploy",
+        "dependency install/update unless explicitly allowed",
+        "destructive git reset/checkout"
+      ],
+      "allowedDependencies": [],
+      "forbiddenDependencyChanges": true,
+      "allowedSchemaChanges": [],
+      "allowedNetworkOrExternalEffects": [],
+      "allowedMcpTools": [],
+      "allowSubagents": false,
+      "generatedArtifactPolicy": "No tracked runtime artifacts.",
+      "documentationReconciliation": [],
+      "maximumChangeScope": "Protected root resolution and ProgramData cwd bug fix only."
+    },
+    {
+      "requirementId": "CPEG-004",
+      "phaseId": "CPEG-PHASE-1",
+      "allowedCreatePaths": [
+        ".vscode/settings.json"
+      ],
+      "allowedModifyPaths": [
+        "tools/execution-governance/install-secure-cursor-guard.mjs"
+      ],
+      "protectedPaths": [
+        "app/**",
+        "dietitian-ai-assistant/**"
+      ],
+      "forbiddenPaths": [
+        ".execution-governance/runtime/**"
+      ],
+      "allowedCommands": [
+        {
+          "cwd": ".",
+          "executable": "node",
+          "args": [
+            "tools/execution-governance/install-secure-cursor-guard.mjs",
+            "--dry-run"
+          ],
+          "timeoutSeconds": 60,
+          "networkPolicy": "FORBIDDEN",
+          "artifactPolicy": "stdout/stderr only"
+        },
+        {
+          "cwd": ".",
+          "executable": "node",
+          "args": [
+            "tools/execution-governance/install-secure-cursor-guard.mjs",
+            "--verify"
+          ],
+          "timeoutSeconds": 60,
+          "networkPolicy": "FORBIDDEN",
+          "artifactPolicy": "stdout/stderr only"
+        }
+      ],
+      "forbiddenCommands": [
+        "push",
+        "merge",
+        "deploy",
+        "dependency install/update unless explicitly allowed",
+        "destructive git reset/checkout"
+      ],
+      "allowedDependencies": [],
+      "forbiddenDependencyChanges": true,
+      "allowedSchemaChanges": [],
+      "allowedNetworkOrExternalEffects": [
+        "ProgramData installer update only through the existing installer when explicitly run."
+      ],
+      "allowedMcpTools": [],
+      "allowSubagents": false,
+      "generatedArtifactPolicy": "No tracked runtime artifacts.",
+      "documentationReconciliation": [],
+      "maximumChangeScope": "Installer verification and MANU workspace settings only."
+    },
+    {
+      "requirementId": "CPEG-005",
+      "phaseId": "CPEG-PHASE-1",
+      "allowedCreatePaths": [],
+      "allowedModifyPaths": [
+        "tools/execution-governance/activate-secure-cursor-guard.test.mjs",
+        "tools/execution-governance/governance-hardening-red-team.mjs"
+      ],
+      "protectedPaths": [
+        "app/**",
+        "dietitian-ai-assistant/**"
+      ],
+      "forbiddenPaths": [
+        ".execution-governance/runtime/**"
+      ],
+      "allowedCommands": [
+        {
+          "cwd": ".",
+          "executable": "node",
+          "args": [
+            "--test",
+            "tools/execution-governance/activate-secure-cursor-guard.test.mjs"
+          ],
+          "timeoutSeconds": 120,
+          "networkPolicy": "FORBIDDEN",
+          "artifactPolicy": "stdout/stderr only"
+        },
+        {
+          "cwd": ".",
+          "executable": "node",
+          "args": [
+            "tools/execution-governance/governance-hardening-red-team.mjs"
+          ],
+          "timeoutSeconds": 120,
+          "networkPolicy": "FORBIDDEN",
+          "artifactPolicy": "stdout/stderr only"
+        }
+      ],
+      "forbiddenCommands": [
+        "push",
+        "merge",
+        "deploy",
+        "dependency install/update unless explicitly allowed",
+        "destructive git reset/checkout"
+      ],
+      "allowedDependencies": [],
+      "forbiddenDependencyChanges": true,
+      "allowedSchemaChanges": [],
+      "allowedNetworkOrExternalEffects": [],
+      "allowedMcpTools": [],
+      "allowSubagents": false,
+      "generatedArtifactPolicy": "No tracked runtime artifacts.",
+      "documentationReconciliation": [],
+      "maximumChangeScope": "Guard unit tests and red-team cases only."
+    },
+    {
+      "requirementId": "CPEG-006",
+      "phaseId": "CPEG-PHASE-1",
+      "allowedCreatePaths": [
+        "docs/execution-governance/CURSOR_PROTECTED_EFFECT_GOVERNANCE_EVIDENCE.md"
+      ],
+      "allowedModifyPaths": [
+        ".execution-governance/plans/cursor-protected-effect-governance-v1/lifecycle-record.json",
+        ".execution-governance/plans/cursor-protected-effect-governance-v1/implementation-report.json"
+      ],
+      "protectedPaths": [
+        "app/**",
+        "dietitian-ai-assistant/**",
+        "docs/PILOT_READINESS_EVIDENCE_PACK.md",
+        "docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md",
+        "docs/PRODUCTION_PILOT_FINAL_READINESS_CLOSURE_SUMMARY.md"
+      ],
+      "forbiddenPaths": [
+        ".execution-governance/runtime/**"
+      ],
+      "allowedCommands": [
+        {
+          "cwd": ".",
+          "executable": "node",
+          "args": [
+            "tools/execution-governance/governance-cli.mjs",
+            "doctor"
+          ],
+          "timeoutSeconds": 60,
+          "networkPolicy": "FORBIDDEN",
+          "artifactPolicy": "stdout/stderr only"
+        },
+        {
+          "cwd": ".",
+          "executable": "node",
+          "args": [
+            "tools/execution-governance/governance-cli.mjs",
+            "validate"
+          ],
+          "timeoutSeconds": 60,
+          "networkPolicy": "FORBIDDEN",
+          "artifactPolicy": "stdout/stderr only"
+        },
+        {
+          "cwd": ".",
+          "executable": "node",
+          "args": [
+            "tools/execution-governance/governance-cli.mjs",
+            "validate",
+            "--all-plans"
+          ],
+          "timeoutSeconds": 60,
+          "networkPolicy": "FORBIDDEN",
+          "artifactPolicy": "stdout/stderr only"
+        },
+        {
+          "cwd": ".",
+          "executable": "node",
+          "args": [
+            "tools/execution-governance/governance-cli.mjs",
+            "validate",
+            "--plan-dir",
+            ".execution-governance/plans/cursor-protected-effect-governance-v1",
+            "--phase-id",
+            "CPEG-PHASE-1"
+          ],
+          "timeoutSeconds": 60,
+          "networkPolicy": "FORBIDDEN",
+          "artifactPolicy": "stdout/stderr only"
+        }
+      ],
+      "forbiddenCommands": [
+        "push",
+        "merge",
+        "deploy",
+        "dependency install/update unless explicitly allowed",
+        "destructive git reset/checkout"
+      ],
+      "allowedDependencies": [],
+      "forbiddenDependencyChanges": true,
+      "allowedSchemaChanges": [],
+      "allowedNetworkOrExternalEffects": [],
+      "allowedMcpTools": [],
+      "allowSubagents": false,
+      "generatedArtifactPolicy": "Evidence is tracked source; runtime records stay ignored.",
+      "documentationReconciliation": [
+        "docs/execution-governance/CURSOR_PROTECTED_EFFECT_GOVERNANCE_EVIDENCE.md"
+      ],
+      "maximumChangeScope": "Lifecycle, implementation report, and evidence only."
+    }
+  ]
+}

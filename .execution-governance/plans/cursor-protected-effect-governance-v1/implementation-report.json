@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "1.0.0",
+  "contractId": "cursor-protected-effect-governance-v1",
+  "phaseId": "CPEG-PHASE-1",
+  "implementationState": "NOT_STARTED",
+  "executorChecks": "NOT_RUN",
+  "independentReview": "NOT_REQUESTED",
+  "changedFiles": [],
+  "commands": [],
+  "artifacts": [],
+  "skippedOrBlockedChecks": [],
+  "residualRisks": [
+    "Implementation has not started."
+  ],
+  "productionImpact": "None. Production remains NO-GO."
+}
