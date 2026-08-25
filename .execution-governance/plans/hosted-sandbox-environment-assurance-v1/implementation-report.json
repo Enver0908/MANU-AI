@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "1.0.0",
+  "contractId": "hosted-sandbox-environment-assurance-v1",
+  "phaseId": "HS-FAZ-0",
+  "implementer": "Cursor Grok",
+  "implementationState": "NOT_STARTED",
+  "changedFiles": [
+    ".execution-governance/plans/hosted-sandbox-environment-assurance-v1/plan.md",
+    ".execution-governance/plans/hosted-sandbox-environment-assurance-v1/contract.json",
+    ".execution-governance/plans/hosted-sandbox-environment-assurance-v1/scope.json",
+    ".execution-governance/plans/hosted-sandbox-environment-assurance-v1/acceptance.json",
+    ".execution-governance/plans/hosted-sandbox-environment-assurance-v1/lock.json",
+    ".execution-governance/plans/hosted-sandbox-environment-assurance-v1/lifecycle-record.json",
+    ".execution-governance/plans/hosted-sandbox-environment-assurance-v1/implementation-report.json"
+  ],
+  "commandsRun": [
+    {
+      "command": "node tools/execution-governance/governance-cli.mjs validate --plan-dir .execution-governance/plans/hosted-sandbox-environment-assurance-v1",
+      "exitCode": 0,
+      "result": "PASS"
+    },
+    {
+      "command": "node app/scripts/verify-hosted-sandbox-contracts.mjs",
+      "exitCode": 0,
+      "result": "PASS"
+    }
+  ],
+  "artifacts": [
+    "docs/execution-governance/HOSTED_SANDBOX_PHASE_0_VERIFIER_SETUP_EVIDENCE.md"
+  ],
+  "scopeChangeRequests": [],
+  "verifierChangeRequests": [],
+  "waivers": [],
+  "independentReview": "NOT_REQUESTED",
+  "residualRisks": [
+    "Product phases remain NOT_STARTED pending lock commit and an explicit Faz 1 command.",
+    "Later-phase oracles remain PROPOSED_NOT_INSTALLED.",
+    "Production remains NO-GO."
+  ]
+}
