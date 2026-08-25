@@ -1,40 +1,49 @@
 {
   "schemaVersion": "1.0.0",
   "contractId": "hosted-sandbox-environment-assurance-v1",
-  "phaseId": "HS-FAZ-0",
-  "implementer": "Cursor Grok",
-  "implementationState": "NOT_STARTED",
+  "phaseId": "HS-FAZ-1",
+  "implementer": "Cursor Composer",
+  "implementationState": "IMPLEMENTED_UNVERIFIED",
   "changedFiles": [
-    ".execution-governance/plans/hosted-sandbox-environment-assurance-v1/plan.md",
-    ".execution-governance/plans/hosted-sandbox-environment-assurance-v1/contract.json",
-    ".execution-governance/plans/hosted-sandbox-environment-assurance-v1/scope.json",
-    ".execution-governance/plans/hosted-sandbox-environment-assurance-v1/acceptance.json",
-    ".execution-governance/plans/hosted-sandbox-environment-assurance-v1/lock.json",
+    "app/src/lib/demo-fixture-access.ts",
+    "app/src/lib/auth-context.ts",
+    "app/src/lib/auth-context.test.ts",
+    "app/src/lib/supabase-store.ts",
+    "app/src/lib/phase-84b-public-website.ts",
+    "app/src/lib/phase-84b-public-website.test.ts",
+    "app/src/app/api/demo-login/route.ts",
+    "app/scripts/hosted-sandbox-demo-cleanup.mjs",
+    "app/src/lib/hosted-sandbox-tenant-isolation.test.ts",
+    "docs/execution-governance/HOSTED_SANDBOX_PHASE_1_TENANT_ISOLATION_EVIDENCE.md",
     ".execution-governance/plans/hosted-sandbox-environment-assurance-v1/lifecycle-record.json",
-    ".execution-governance/plans/hosted-sandbox-environment-assurance-v1/implementation-report.json"
+    ".execution-governance/plans/hosted-sandbox-environment-assurance-v1/implementation-report.json",
+    ".execution-governance/plans/hosted-sandbox-environment-assurance-v1/acceptance.json",
+    "HANDOFF_FOR_NEXT_CODEX.md"
   ],
   "commandsRun": [
     {
-      "command": "node tools/execution-governance/governance-cli.mjs validate --plan-dir .execution-governance/plans/hosted-sandbox-environment-assurance-v1",
+      "command": "cd app && npx vitest run src/lib/hosted-sandbox-tenant-isolation.test.ts src/lib/auth-context.test.ts src/lib/phase-84b-public-website.test.ts",
       "exitCode": 0,
-      "result": "PASS"
-    },
-    {
-      "command": "node app/scripts/verify-hosted-sandbox-contracts.mjs",
-      "exitCode": 0,
-      "result": "PASS"
+      "result": "PASS 30/30"
     }
   ],
   "artifacts": [
-    "docs/execution-governance/HOSTED_SANDBOX_PHASE_0_VERIFIER_SETUP_EVIDENCE.md"
+    "docs/execution-governance/HOSTED_SANDBOX_PHASE_1_TENANT_ISOLATION_EVIDENCE.md"
   ],
   "scopeChangeRequests": [],
   "verifierChangeRequests": [],
-  "waivers": [],
+  "waivers": [
+    {
+      "waiverId": "HS-FAZ-1-RLS-BLOCKED",
+      "reason": "test:rls requires Docker/local Supabase; not available in this executor run.",
+      "requirementId": "HS-TENANT-001"
+    }
+  ],
   "independentReview": "NOT_REQUESTED",
   "residualRisks": [
-    "Product phases remain NOT_STARTED pending lock commit and an explicit Faz 1 command.",
-    "Later-phase oracles remain PROPOSED_NOT_INSTALLED.",
+    "Remote demo cleanup has not been executed.",
+    "RLS integration oracle may remain BLOCKED without Docker/local Supabase.",
+    "Faz 2 dashboard/API fallback remediation is not started.",
     "Production remains NO-GO."
   ]
 }

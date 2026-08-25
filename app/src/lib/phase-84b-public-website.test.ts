@@ -18,8 +18,13 @@ describe("phase 84b public website", () => {
     );
   });
 
-  it("gates public demo login behind MANU_ALLOW_PUBLIC_DEMO_LOGIN", () => {
-    expect(isPublicDemoLoginEnabled({ MANU_ALLOW_PUBLIC_DEMO_LOGIN: "true" })).toBe(true);
+  it("gates public demo login behind development mode and MANU_ALLOW_PUBLIC_DEMO_LOGIN", () => {
+    expect(
+      isPublicDemoLoginEnabled({ NODE_ENV: "development", MANU_ALLOW_PUBLIC_DEMO_LOGIN: "true" }),
+    ).toBe(true);
+    expect(
+      isPublicDemoLoginEnabled({ NODE_ENV: "production", MANU_ALLOW_PUBLIC_DEMO_LOGIN: "true" }),
+    ).toBe(false);
     expect(isPublicDemoLoginEnabled({ MANU_ALLOW_PUBLIC_DEMO_LOGIN: "false" })).toBe(false);
     expect(isPublicDemoLoginEnabled({})).toBe(false);
   });

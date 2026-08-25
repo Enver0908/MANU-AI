@@ -2,10 +2,10 @@
   "schemaVersion": "1.0.0",
   "contractId": "hosted-sandbox-environment-assurance-v1",
   "planDirectory": ".execution-governance/plans/hosted-sandbox-environment-assurance-v1",
-  "currentPhase": "HS-FAZ-0",
+  "currentPhase": "HS-FAZ-1",
   "status": {
     "plan_state": "READY_FOR_IMPLEMENTATION",
-    "implementation_state": "NOT_STARTED",
+    "implementation_state": "IMPLEMENTED_UNVERIFIED",
     "executor_checks": "PASS",
     "independent_review": "NOT_REQUESTED",
     "user_acceptance": "PENDING"
@@ -24,6 +24,13 @@
       "actor": "Cursor Grok",
       "eventType": "EXECUTOR_CHECK_RECORDED",
       "summary": "Protected verifier PASS moved this plan out of VERIFIER_SETUP_REQUIRED into READY_FOR_IMPLEMENTATION. Product implementation remains NOT_STARTED."
+    },
+    {
+      "eventId": "HS-ENV-EVT-003",
+      "timestamp": "2026-08-25T07:15:00.000Z",
+      "actor": "Cursor Composer",
+      "eventType": "IMPLEMENTATION_RECORDED",
+      "summary": "Faz 1 tenant isolation and demo fixture separation implemented locally. Executor checks pending; remote cleanup not executed."
     }
   ],
   "independentReviewPolicy": {

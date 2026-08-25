@@ -30,9 +30,9 @@ export type ResolveAccountTenantContextOptions = {
 };
 
 export class AppAuthError extends Error {
-  status: 400 | 401 | 403;
+  status: 400 | 401 | 403 | 409;
 
-  constructor(status: 400 | 401 | 403, message: string) {
+  constructor(status: 400 | 401 | 403 | 409, message: string) {
     super(message);
     this.name = "AppAuthError";
     this.status = status;
@@ -88,26 +88,22 @@ export async function resolveAccountTenantContext(
     throw new AppAuthError(401, "unauthenticated");
   }
 
-  const membership = await supabase
+  const memberships = await supabase
     .from("tenant_memberships")
     .select("tenant_id, role")
     .eq("user_id", user.id)
-    .order("created_at", { ascending: true })
-    .limit(1)
-    .maybeSingle();
+    .order("created_at", { ascending: true });
 
-  if (membership.error) {
-    throw membership.error;
+  if (memberships.error) {
+    throw memberships.error;
   }
 
-  if (!membership.data) {
-    throw new AppAuthError(403, "no_tenant_membership");
-  }
+  const membership = resolveUniqueTenantMembership(memberships.data ?? []);
 
   const dietitian = await supabase
     .from("dietitians")
     .select("id")
-    .eq("tenant_id", membership.data.tenant_id)
+    .eq("tenant_id", membership.tenant_id)
     .eq("auth_user_id", user.id)
     .maybeSingle();
 
@@ -134,10 +130,10 @@ export async function resolveAccountTenantContext(
     : await assertShellSessionActivity(supabase);
 
   const context = {
-    tenantId: membership.data.tenant_id,
+    tenantId: membership.tenant_id,
     dietitianId: dietitian.data.id,
     userId: user.id,
-    role: membership.data.role as TenantRole,
+    role: membership.role as TenantRole,
     sessionId: sessionActivity.sessionId || verifiedSessionId,
     supabase,
   };
@@ -155,6 +151,18 @@ export function requireCapability(context: AppTenantContext, capability: AppCapa
     }
     throw new AppAuthError(403, `rbac_forbidden_${capability}`);
   }
+}
+
+export function resolveUniqueTenantMembership(
+  rows: Array<{ tenant_id: string; role: string }>,
+): { tenant_id: string; role: string } {
+  if (rows.length === 0) {
+    throw new AppAuthError(403, "no_tenant_membership");
+  }
+  if (rows.length > 1) {
+    throw new AppAuthError(409, "account_context_ambiguous");
+  }
+  return rows[0];
 }
 
 export function authErrorResponse(error: unknown) {

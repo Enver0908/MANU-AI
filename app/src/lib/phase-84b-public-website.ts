@@ -11,7 +11,7 @@ export const SIRIUSAI_PUBLIC_CONTACT_EMAIL = "olkuenver@gmail.com";
 export function isPublicDemoLoginEnabled(
   env: Record<string, string | undefined> = process.env,
 ): boolean {
-  return env.MANU_ALLOW_PUBLIC_DEMO_LOGIN === "true";
+  return env.NODE_ENV === "development" && env.MANU_ALLOW_PUBLIC_DEMO_LOGIN === "true";
 }
 
 export function buildContactMailtoUrl(subject = "SiriusAI erişim talebi"): string {

@@ -3,6 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { getSupabaseAdminClient } from "./supabase";
 import { createPlaceholderScopeRules } from "./scope-corpus";
 import { createInitialState } from "./seed-data";
+import { isLocalDemoFixtureEnabled } from "./demo-fixture-access";
 import { isSafetyChecklistComplete, normalizeSafetyChecklist } from "./safety-checklist";
 import {
   anonymizeClientInState,
@@ -847,7 +848,6 @@ export function isSupabaseStoreConfigured() {
 
 export async function loadSupabaseState(context = demoTenantContext()) {
   const supabase = requireSupabase();
-  await ensureDemoData(supabase, context.userId);
 
   const [
     tenantResult,
@@ -1206,7 +1206,6 @@ export async function loadSupabaseWindowedDashboardPayload(
   options: Parameters<typeof buildPhase79WindowedDashboardPayload>[1] = {},
 ): Promise<Phase79WindowedDashboardPayload> {
   const supabase = requireSupabase();
-  await ensureDemoData(supabase, context.userId);
 
   const clientQueryLimit = WINDOWED_READ_DEFAULTS.clientListMaxPageSize;
   const handoffQueryLimit = WINDOWED_READ_DEFAULTS.handoffMaxPageSize;
@@ -1396,7 +1395,6 @@ async function loadSupabaseClientOperationState(
   } = {},
 ) {
   const supabase = requireSupabase();
-  await ensureDemoData(supabase, context.userId);
 
   const [
     tenantResult,
@@ -1680,7 +1678,6 @@ async function loadSupabaseClientOperationState(
 
 async function loadSupabaseHandoffOperationState(handoffId: string, context: AppTenantContext) {
   const supabase = requireSupabase();
-  await ensureDemoData(supabase, context.userId);
 
   const handoffResult = await supabase
     .from("handoff_cases")
@@ -1714,7 +1711,6 @@ async function loadSupabaseHandoffOperationState(handoffId: string, context: App
 
 async function loadSupabaseDraftOperationState(messageId: string, context: AppTenantContext) {
   const supabase = requireSupabase();
-  await ensureDemoData(supabase, context.userId);
 
   const messageResult = await supabase
     .from("messages")
@@ -1952,13 +1948,14 @@ function getVisibleClientIds(
 export async function resetSupabaseState(context = demoTenantContext()) {
   const supabase = requireSupabase();
   await deleteDemoData(supabase, context.tenantId);
-  await ensureDemoData(supabase, context.userId);
+  if (shouldSeedLocalDemoFixture(context)) {
+    await ensureDemoData(supabase, context.userId);
+  }
   return loadSupabaseState(context);
 }
 
 async function loadSupabaseClientCreateContext(context: AppTenantContext) {
   const supabase = requireSupabase();
-  await ensureDemoData(supabase, context.userId);
 
   const [tenantResult, dietitianResult, clientsResult, channelsResult, assignmentsResult] = await Promise.all([
     supabase.from("tenants").select("*").eq("id", context.tenantId).single(),
@@ -3902,6 +3899,10 @@ export async function runSupabaseInternalCopilotMessage(body: string, context = 
 
 export async function ensureSupabaseDemoDataForUser(userId: string) {
   await ensureDemoData(requireSupabase(), userId);
+}
+
+function shouldSeedLocalDemoFixture(context: AppTenantContext): boolean {
+  return isLocalDemoFixtureEnabled() && context.tenantId === DEMO_TENANT_UUID;
 }
 
 async function loadSupabaseStateWithLastSimulation(next: ManuAppState, context: AppTenantContext) {
