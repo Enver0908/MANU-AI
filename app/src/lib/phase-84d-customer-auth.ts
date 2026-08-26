@@ -2,10 +2,7 @@
  * Phase 84D customer auth foundation: magic-link validation and safe redirect logic.
  */
 
-import {
-  normalizeCommercialEmail,
-  validateNormalizedCommercialEmail,
-} from "./phase-83b-commercial-entitlement-model";
+import { normalizeCommercialEmail, validateNormalizedCommercialEmail } from "./commercial-email";
 import { deriveDashboardAccessGate } from "./phase-83e3-app-shell";
 
 export const PHASE_84D_VERSION = "phase84d-customer-auth-v1";

@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
-import { createSupabaseServerClient, isSupabaseConfigured } from "./supabase";
+import { isSupabaseConfigured } from "./supabase";
+import { createSupabaseServerReadOnlyClient } from "./supabase-server-readonly";
 import { isSupabaseStoreConfigured } from "./supabase-store";
 import {
   evaluateMobileInstallCenterAccess,
@@ -26,13 +27,8 @@ export async function resolveMobileInstallAccess(): Promise<MobileInstallAccessS
   }
 
   const cookieStore = await cookies();
-  const supabase = createSupabaseServerClient({
+  const supabase = createSupabaseServerReadOnlyClient({
     getAll: () => cookieStore.getAll(),
-    setAll: (cookiesToSet) => {
-      cookiesToSet.forEach(({ name, value, options }) => {
-        cookieStore.set(name, value, options);
-      });
-    },
   });
 
   if (!supabase) {

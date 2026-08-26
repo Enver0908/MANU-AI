@@ -2,6 +2,7 @@ import type { NextRequest } from "next/server";
 import { cookies } from "next/headers";
 import { readCommercialAdminTokenFromRequest } from "./commercial-admin-request";
 import { createSupabaseServerClient, isSupabaseConfigured } from "./supabase";
+import { createSupabaseServerReadOnlyClient } from "./supabase-server-readonly";
 import { evaluateCommercialAdminGate } from "./phase-83f-commercial-admin";
 import {
   evaluateAdminAllowlistAccess,
@@ -95,13 +96,8 @@ export async function resolveAdminSessionEmail() {
   }
 
   const cookieStore = await cookies();
-  const supabase = createSupabaseServerClient({
+  const supabase = createSupabaseServerReadOnlyClient({
     getAll: () => cookieStore.getAll(),
-    setAll: (cookiesToSet) => {
-      cookiesToSet.forEach(({ name, value, options }) => {
-        cookieStore.set(name, value, options);
-      });
-    },
   });
 
   if (!supabase) {

@@ -3,7 +3,8 @@ import { redirect } from "next/navigation";
 import { AccountRecoveryForm } from "@/components/account-recovery-form";
 import { CommercialShell } from "@/components/public/CommercialShell";
 import { PUBLIC_MARKETING_COPY } from "@/lib/phase-84b-public-website";
-import { createSupabaseServerClient, isSupabaseConfigured } from "@/lib/supabase";
+import { isSupabaseConfigured } from "@/lib/supabase";
+import { createSupabaseServerReadOnlyClient } from "@/lib/supabase-server-readonly";
 import { cookies } from "next/headers";
 
 export const metadata: Metadata = {
@@ -17,13 +18,8 @@ export default async function AccountRecoveryPage() {
   }
 
   const cookieStore = await cookies();
-  const supabase = createSupabaseServerClient({
+  const supabase = createSupabaseServerReadOnlyClient({
     getAll: () => cookieStore.getAll(),
-    setAll: (cookiesToSet) => {
-      cookiesToSet.forEach(({ name, value, options }) => {
-        cookieStore.set(name, value, options);
-      });
-    },
   });
 
   const {

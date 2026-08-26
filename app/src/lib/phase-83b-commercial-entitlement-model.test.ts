@@ -1,15 +1,17 @@
 import { describe, expect, it } from "vitest";
 import {
-  buildCommercialInviteRecord,
   evaluateCommercialDashboardAccess,
   evaluateCommercialMobileInstallAccess,
-  hashCommercialInviteToken,
-  matchesCommercialInviteToken,
   normalizeCommercialEmail,
   summarizePhase83bCommercialEntitlementModel,
   transitionCommercialEntitlement,
   validateNormalizedCommercialEmail,
 } from "./phase-83b-commercial-entitlement-model";
+import {
+  buildCommercialInviteRecord,
+  hashCommercialInviteToken,
+  matchesCommercialInviteToken,
+} from "./phase-83b-commercial-entitlement-model.server";
 
 const PEPPER = "test-pepper-16chars";
 const NOW = "2026-07-01T12:00:00.000Z";

@@ -14,10 +14,16 @@ describe("phase-85-stage-4d auth server", () => {
     delete process.env.MANU_TRUST_PROXY_HEADERS;
   });
 
-  it("does not trust proxy IP headers unless explicitly configured", () => {
+  it("does not trust proxy IP headers unless proxy header trust and the sentinel are present", () => {
     expect(
       resolveAuthRouteIpKey(
-        { headers: headers({ "x-forwarded-for": "203.0.113.10", "x-real-ip": "203.0.113.11" }) },
+        {
+          headers: headers({
+            "x-forwarded-for": "203.0.113.10",
+            "x-real-ip": "10.0.0.1",
+            "x-manu-trusted-proxy": "nginx",
+          }),
+        },
         "user-1",
       ),
     ).toBe("anonymous:user-1");
@@ -25,9 +31,22 @@ describe("phase-85-stage-4d auth server", () => {
     process.env.MANU_TRUST_PROXY_HEADERS = "true";
     expect(
       resolveAuthRouteIpKey(
-        { headers: headers({ "x-forwarded-for": "203.0.113.10, 10.0.0.1" }) },
+        {
+          headers: headers({
+            "x-forwarded-for": "203.0.113.10, 10.0.0.1",
+            "x-real-ip": "10.0.0.1",
+            "x-manu-trusted-proxy": "nginx",
+          }),
+        },
         "user-1",
       ),
     ).toBe("203.0.113.10:user-1");
+
+    expect(
+      resolveAuthRouteIpKey(
+        { headers: headers({ "x-forwarded-for": "127.0.0.1", "x-real-ip": "10.0.0.1" }) },
+        "user-1",
+      ),
+    ).toBe("anonymous:user-1");
   });
 });

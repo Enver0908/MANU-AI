@@ -19,16 +19,18 @@ export class AppDomainError extends Error {
 export class AppRequestError extends Error {
   status: number;
   code: string;
+  requestId?: string;
   field?: string;
   revision?: number;
 
-  constructor(status: number, code: string, field?: string, revision?: number) {
+  constructor(status: number, code: string, field?: string, revision?: number, requestId?: string) {
     super(code);
     this.name = "AppRequestError";
     this.status = status;
     this.code = code;
     this.field = field;
     this.revision = revision;
+    this.requestId = requestId;
   }
 }
 

@@ -13,7 +13,7 @@ import {
   validateCommercialAdminInviteCreate,
   validateCommercialAdminEntitlementRevokeRequest,
 } from "./phase-83f-commercial-admin";
-import { buildCommercialInviteRecord } from "./phase-83b-commercial-entitlement-model";
+import { buildCommercialInviteRecord } from "./phase-83b-commercial-entitlement-model.server";
 
 const ADMIN_TOKEN = "test-commercial-admin-token-32chars-min";
 const PEPPER = "test-pepper-16chars";

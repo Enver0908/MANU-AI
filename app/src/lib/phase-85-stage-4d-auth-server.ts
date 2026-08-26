@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { createSupabaseServerClient } from "./supabase";
+import { headersFromGetter, resolveTrustedClientIp } from "./trusted-proxy";
 
 type AuthCookieMutation = {
   name: string;
@@ -35,11 +36,7 @@ export async function createMutableSupabaseServerClient() {
 }
 
 export function resolveAuthRouteIpKey(request: { headers: { get(name: string): string | null } }, suffix: string) {
-  const trustProxyHeaders = process.env.MANU_TRUST_PROXY_HEADERS === "true";
-  const forwarded = trustProxyHeaders
-    ? request.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
-    : null;
-  const realIp = trustProxyHeaders ? request.headers.get("x-real-ip")?.trim() : null;
-  const ip = forwarded || realIp || "anonymous";
-  return `${ip}:${suffix}`;
+  const headers = headersFromGetter((name) => request.headers.get(name));
+  const decision = resolveTrustedClientIp(headers);
+  return `${decision.clientIp}:${suffix}`;
 }

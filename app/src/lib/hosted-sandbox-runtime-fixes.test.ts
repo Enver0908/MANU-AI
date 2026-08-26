@@ -3,6 +3,7 @@ import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import {
   apiErrorBody,
+  AppRequestError,
   MAGIC_LINK_RETRY_AFTER_SECONDS,
   rateLimitErrorResponse,
 } from "./app-errors";
@@ -26,6 +27,8 @@ describe("hosted sandbox runtime fixes", () => {
     expect(response.headers.get("Retry-After")).toBe(String(MAGIC_LINK_RETRY_AFTER_SECONDS));
     const payload = await response.json();
     expect(payload).toEqual({ error: "rate_limit_exceeded", requestId: "req-429" });
+    const requestError = new AppRequestError(409, "app_state_load_failed", undefined, undefined, "req-123");
+    expect(requestError.requestId).toBe("req-123");
   });
 
   it("aligns magic-link app limit to one request per minute", () => {

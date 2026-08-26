@@ -7,11 +7,10 @@ import {
   type CommercialInvite,
   type CommercialInviteStatus,
   type TenantEntitlement,
-  hashCommercialInviteToken,
-  matchesCommercialInviteToken,
   normalizeCommercialEmail,
   transitionCommercialEntitlement,
 } from "./phase-83b-commercial-entitlement-model";
+import { hashCommercialInviteToken, matchesCommercialInviteToken } from "./phase-83b-commercial-entitlement-model.server";
 
 export type CommercialInviteRow = {
   id: string;

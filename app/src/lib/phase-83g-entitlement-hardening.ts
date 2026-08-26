@@ -1,4 +1,5 @@
 import type { NextRequest } from "next/server";
+import { headersFromGetter, resolveTrustedClientIp } from "./trusted-proxy";
 import {
   COMMERCIAL_ENTITLEMENT_STATUSES,
   type CommercialEntitlementStatus,
@@ -111,8 +112,8 @@ export function deriveCommercialEntitlementErrorCode(
 }
 
 export function resolveCommercialPublicRateLimitKey(request: NextRequest, email?: string) {
-  const forwarded = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
-  const ip = forwarded || request.headers.get("x-real-ip") || "anonymous";
+  const decision = resolveTrustedClientIp(headersFromGetter((name) => request.headers.get(name)));
+  const ip = decision.clientIp;
   const normalizedEmail = email ? email.trim().toLowerCase() : "";
   return normalizedEmail ? `${ip}:${normalizedEmail}` : ip;
 }

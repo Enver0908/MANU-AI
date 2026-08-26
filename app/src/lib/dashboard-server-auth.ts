@@ -4,7 +4,8 @@ import { resolveCustomerSessionFacts } from "@/lib/customer-auth-session";
 import { loadTenantEntitlementByTenantId } from "@/lib/commercial-billing-store";
 import { deriveCustomerAuthRedirect } from "@/lib/phase-84d-customer-auth";
 import type { CommercialEntitlementStatus } from "@/lib/phase-83b-commercial-entitlement-model";
-import { createSupabaseServerClient, getSupabaseAdminClient, isSupabaseConfigured } from "@/lib/supabase";
+import { getSupabaseAdminClient, isSupabaseConfigured } from "@/lib/supabase";
+import { createSupabaseServerReadOnlyClient } from "@/lib/supabase-server-readonly";
 import { isSupabaseStoreConfigured } from "@/lib/supabase-store";
 import { normalizeLanguageCode, type SupportedLanguageCode } from "@/lib/languages";
 
@@ -32,13 +33,8 @@ export async function resolveDashboardAuth(): Promise<DashboardAuthState> {
   }
 
   const cookieStore = await cookies();
-  const supabase = createSupabaseServerClient({
+  const supabase = createSupabaseServerReadOnlyClient({
     getAll: () => cookieStore.getAll(),
-    setAll: (cookiesToSet) => {
-      cookiesToSet.forEach(({ name, value, options }) => {
-        cookieStore.set(name, value, options);
-      });
-    },
   });
 
   if (!supabase) {

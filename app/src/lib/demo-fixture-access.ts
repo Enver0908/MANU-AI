@@ -1,3 +1,5 @@
+import { resolveTrustedHost } from "./trusted-proxy";
+
 /**
  * Local-only demo fixture gates. Hosted Supabase paths must not seed demo data.
  */
@@ -26,8 +28,10 @@ export function isLocalDemoLoginAllowed(
   return isLocalhostHostname(hostname);
 }
 
-export function resolveRequestHostname(headers: Headers): string {
-  const forwarded = headers.get("x-forwarded-host");
-  const host = forwarded || headers.get("host") || "";
-  return host.split(":")[0].trim();
+export function resolveRequestHostname(
+  headers: Headers,
+  env: NodeJS.ProcessEnv | Record<string, string | undefined> = process.env,
+): string {
+  const directHost = headers.get("host") || "";
+  return resolveTrustedHost(headers, directHost, env).host;
 }

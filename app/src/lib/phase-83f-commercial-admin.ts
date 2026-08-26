@@ -5,11 +5,11 @@ import type {
   CommercialInviteStatus,
 } from "./phase-83b-commercial-entitlement-model";
 import {
-  buildCommercialInviteRecord,
   normalizeCommercialEmail,
   transitionCommercialEntitlement,
   validateNormalizedCommercialEmail,
 } from "./phase-83b-commercial-entitlement-model";
+import { buildCommercialInviteRecord } from "./phase-83b-commercial-entitlement-model.server";
 
 export const PHASE_83F_VERSION = "phase83-commercial-admin-v1";
 

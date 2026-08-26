@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { assertRateLimit, resetRateLimits } from "./rate-limit";
-import { hashCommercialInviteToken } from "./phase-83b-commercial-entitlement-model";
+import { hashCommercialInviteToken } from "./phase-83b-commercial-entitlement-model.server";
 import {
   addSupabaseClientContextUpdate,
   activateSupabaseClientAi,

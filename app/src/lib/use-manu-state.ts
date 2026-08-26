@@ -32,6 +32,35 @@ import type {
   VoiceSampleStatus,
 } from "./types";
 
+function parseApiErrorPayload(body: unknown): {
+  code?: string;
+  field?: string;
+  revision?: number;
+  requestId?: string;
+} {
+  if (!body || typeof body !== "object") {
+    return {};
+  }
+  const record = body as Record<string, unknown>;
+  const requestId = typeof record.requestId === "string" ? record.requestId.trim() : "";
+  return {
+    code: typeof record.error === "string" ? record.error : undefined,
+    field: typeof record.field === "string" ? record.field : undefined,
+    revision: typeof record.revision === "number" ? record.revision : undefined,
+    requestId: requestId.length > 0 ? requestId : undefined,
+  };
+}
+
+function hydrateFromError(error: unknown, setHydrateError: (value: string | null) => void, setHydrateRequestId: (value: string | null) => void) {
+  if (error instanceof AppRequestError) {
+    setHydrateError(error.code);
+    setHydrateRequestId(error.requestId ?? null);
+    return;
+  }
+  setHydrateError("app_state_load_failed");
+  setHydrateRequestId(null);
+}
+
 export function useManuState() {
   const [state, setState] = useState<ManuAppState>(() => createInitialState());
   const [hydrated, setHydrated] = useState(false);
@@ -61,25 +90,32 @@ export function useManuState() {
       let code = `request_failed_${response.status}`;
       let field: string | undefined;
       let revision: number | undefined;
+      let requestId: string | undefined;
       if (response.status === 401 || response.status === 403) {
         try {
           const body = await response.json();
-          setAuthError(body.error || `auth_error_${response.status}`);
-          code = body.error || code;
+          const parsed = parseApiErrorPayload(body);
+          setAuthError(parsed.code || `auth_error_${response.status}`);
+          code = parsed.code || code;
+          field = parsed.field;
+          revision = parsed.revision;
+          requestId = parsed.requestId;
         } catch {
           setAuthError(`auth_error_${response.status}`);
         }
       } else {
         try {
           const body = await response.json();
-          if (body.error) code = body.error;
-          if (typeof body.field === "string") field = body.field;
-          if (typeof body.revision === "number") revision = body.revision;
+          const parsed = parseApiErrorPayload(body);
+          if (parsed.code) code = parsed.code;
+          field = parsed.field;
+          revision = parsed.revision;
+          requestId = parsed.requestId;
         } catch {
           // ignore parse errors
         }
       }
-      throw new AppRequestError(response.status, code, field, revision);
+      throw new AppRequestError(response.status, code, field, revision, requestId);
     }
 
     setAuthError(null);
@@ -123,7 +159,7 @@ export function useManuState() {
       await replaceFromApi("/api/app-state");
     } catch (error) {
       if (usesHostedStore) {
-        setHydrateError(error instanceof AppRequestError ? error.code : "app_state_load_failed");
+        hydrateFromError(error, setHydrateError, setHydrateRequestId);
       } else {
         setState(createInitialState());
       }
@@ -182,7 +218,7 @@ export function useManuState() {
       replaceFromApi("/api/app-state")
         .catch((error) => {
           if (usesHostedStore) {
-            setHydrateError(error instanceof AppRequestError ? error.code : "app_state_load_failed");
+            hydrateFromError(error, setHydrateError, setHydrateRequestId);
             return;
           }
           setState(createInitialState());
@@ -293,18 +329,20 @@ export function useManuState() {
 
         if (!response.ok) {
           let code = `request_failed_${response.status}`;
+          let requestId: string | undefined;
           try {
-            const body = await response.json();
-            if (body.error) code = body.error;
+            const parsed = parseApiErrorPayload(await response.json());
+            if (parsed.code) code = parsed.code;
+            requestId = parsed.requestId;
           } catch {
             // ignore parse errors
           }
-          throw new AppRequestError(response.status, code);
+          throw new AppRequestError(response.status, code, undefined, undefined, requestId);
         }
 
-        const nextState = (await response.json()) as ManuAppState;
-        setState(nextState);
-        return nextState;
+        const nextVisualState = (await response.json()) as ManuAppState;
+        setState(nextVisualState);
+        return nextVisualState;
       },
       runVoiceSimulation: async (input: {
         clientId: string;
@@ -338,13 +376,15 @@ export function useManuState() {
 
         if (!response.ok) {
           let code = `request_failed_${response.status}`;
+          let requestId: string | undefined;
           try {
-            const body = await response.json();
-            if (body.error) code = body.error;
+            const parsed = parseApiErrorPayload(await response.json());
+            if (parsed.code) code = parsed.code;
+            requestId = parsed.requestId;
           } catch {
             // ignore parse errors
           }
-          throw new AppRequestError(response.status, code);
+          throw new AppRequestError(response.status, code, undefined, undefined, requestId);
         }
 
         const nextState = (await response.json()) as ManuAppState;

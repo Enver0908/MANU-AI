@@ -72,11 +72,19 @@ describe("hosted sandbox tenant isolation", () => {
     ).toBe(false);
   });
 
-  it("recognizes localhost hostnames and forwarded host headers", () => {
+  it("recognizes localhost hostnames and ignores untrusted forwarded hosts", () => {
     expect(isLocalhostHostname("127.0.0.1")).toBe(true);
     expect(isLocalhostHostname("sandbox.manu.ai")).toBe(false);
     expect(resolveRequestHostname(new Headers({ host: "localhost:3000" }))).toBe("localhost");
-    expect(resolveRequestHostname(new Headers({ "x-forwarded-host": "127.0.0.1:3000" }))).toBe("127.0.0.1");
+    expect(resolveRequestHostname(new Headers({ "x-forwarded-host": "127.0.0.1:3000" }))).toBe("");
+    expect(
+      resolveRequestHostname(
+        new Headers({
+          host: "sandbox.manu.ai",
+          "x-forwarded-host": "localhost",
+        }),
+      ),
+    ).toBe("sandbox.manu.ai");
   });
 
   it("keeps hosted Supabase read paths off ensureDemoData", () => {

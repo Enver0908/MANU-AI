@@ -12,7 +12,8 @@ import {
 } from "@/lib/phase-84b-public-website";
 import { deriveCustomerAuthRedirect } from "@/lib/phase-84d-customer-auth";
 import { loadClaimableCheckoutSessionForEmail } from "@/lib/commercial-onboarding-store";
-import { createSupabaseServerClient, getSupabaseAdminClient, isSupabaseConfigured } from "@/lib/supabase";
+import { getSupabaseAdminClient, isSupabaseConfigured } from "@/lib/supabase";
+import { createSupabaseServerReadOnlyClient } from "@/lib/supabase-server-readonly";
 import { readStage7ScenarioState } from "@/lib/stage-7-request";
 
 export const metadata: Metadata = {
@@ -67,13 +68,8 @@ export default async function OnboardingPage({ searchParams }: OnboardingPagePro
   }
 
   const cookieStore = await cookies();
-  const supabase = createSupabaseServerClient({
+  const supabase = createSupabaseServerReadOnlyClient({
     getAll: () => cookieStore.getAll(),
-    setAll: (cookiesToSet) => {
-      cookiesToSet.forEach(({ name, value, options }) => {
-        cookieStore.set(name, value, options);
-      });
-    },
   });
 
   if (!supabase) {
