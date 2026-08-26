@@ -16,23 +16,43 @@ Supabase Free tier remains in use. Paid PITR and leaked-password protection stay
 - Encryption: `age` with operator-controlled public key only in VPS/env; private key never stored in repo, GitHub, or evidence
 - Upload: user-controlled `rclone` to OneDrive after local manifest verification
 - Remote backup requires `MANU_HOSTED_SANDBOX_BACKUP_APPROVED=true`
-- Remote restore requires `MANU_HOSTED_SANDBOX_RESTORE_APPROVED=true` or an explicit age identity file path
+- Remote restore apply requires an explicit age identity file and a restore approval JSON file
+- `pg_dump` and `pg_restore` must receive connection secrets through `PGHOST`, `PGPORT`, `PGDATABASE`, `PGUSER`, and `PGPASSWORD` child-process environment only; database URLs must not be passed as process arguments
+- Raw `.dump` and decrypted restore files are temporary artifacts and must be deleted by the script in `finally` cleanup
 
 ### Commands
 
 ```bash
 # Inventory only (no dump)
-node tools/hosted-sandbox/backup-hosted-supabase.mjs --dry-run
+node app/scripts/backup-hosted-supabase.mjs --dry-run
 
 # Local isolated backup (requires pg_dump, age, MANU_HOSTED_SANDBOX_BACKUP_AGE_PUBLIC_KEY)
-node tools/hosted-sandbox/backup-hosted-supabase.mjs --apply --output-dir=.manu-runtime/hosted-sandbox/backups
+node app/scripts/backup-hosted-supabase.mjs --apply --output-dir=.manu-runtime/hosted-sandbox/backups
 
 # Restore drill into isolated database only
-node tools/hosted-sandbox/restore-hosted-supabase.mjs --dry-run --manifest=path/to/backup.age.manifest.json
-node tools/hosted-sandbox/restore-hosted-supabase.mjs --apply --manifest=path/to/backup.age.manifest.json
+node app/scripts/restore-hosted-supabase.mjs --dry-run --manifest=path/to/backup.age.manifest.json
+node app/scripts/restore-hosted-supabase.mjs --apply --manifest=path/to/backup.age.manifest.json --approval=path/to/restore-approval.json
 ```
 
 Never commit raw `.dump`, `.age`, or decrypted artifacts. Evidence records command exit codes and manifest hashes only.
+
+### Restore Approval JSON
+
+Restore apply must use a JSON file with this exact contract:
+
+```json
+{
+  "schemaVersion": "1.0.0",
+  "sourceProjectRef": "source-supabase-ref",
+  "targetProjectRef": "isolated-target-ref",
+  "backupSha256": "64-char-sha256-of-encrypted-backup",
+  "approvedAt": "2026-08-26T00:00:00.000Z",
+  "expiresAt": "2026-08-27T00:00:00.000Z",
+  "operatorConfirmation": "RESTORE_TO_ISOLATED_TARGET"
+}
+```
+
+The restore script rejects missing approval, expired approval, source/target ref equality, target ref mismatch, backup hash mismatch, and any confirmation value other than `RESTORE_TO_ISOLATED_TARGET`.
 
 ## Required Policy Decisions
 
