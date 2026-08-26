@@ -8,6 +8,8 @@ import {
   resolveRequestHostname,
 } from "./demo-fixture-access";
 import {
+  callCleanupRpc,
+  CLEANUP_INVENTORY_MANIFEST,
   DEMO_CLEANUP_TABLES,
   DEMO_TENANT_UUID,
   extractProjectRef,
@@ -15,6 +17,7 @@ import {
   isLocalSupabaseUrl,
   parseCleanupArgs,
   validateBackupManifest,
+  validateCleanupInventoryManifest,
 } from "../../scripts/hosted-sandbox-demo-cleanup.mjs";
 
 const storeSource = readFileSync(fileURLToPath(new URL("./supabase-store.ts", import.meta.url)), "utf8");
@@ -145,8 +148,73 @@ describe("hosted sandbox tenant isolation", () => {
 
   it("defines the fixed demo tenant inventory tables", () => {
     expect(DEMO_TENANT_UUID).toBe("00000000-0000-4000-8000-000000000001");
+    expect(CLEANUP_INVENTORY_MANIFEST.schemaVersion).toBe(1);
+    expect(CLEANUP_INVENTORY_MANIFEST.tenantId).toBe(DEMO_TENANT_UUID);
+    expect(DEMO_CLEANUP_TABLES.some((entry) => entry.table === "ai_chat_messages")).toBe(true);
+    expect(DEMO_CLEANUP_TABLES.some((entry) => entry.table === "media_assets")).toBe(true);
+    expect(DEMO_CLEANUP_TABLES.some((entry) => entry.table === "billing_customers")).toBe(true);
     expect(DEMO_CLEANUP_TABLES.some((entry) => entry.table === "tenant_entitlements")).toBe(true);
     expect(DEMO_CLEANUP_TABLES.at(-1)).toEqual({ table: "tenants", column: "id" });
+  });
+
+  it("rejects incomplete or unsafe cleanup inventory manifests", () => {
+    expect(() => validateCleanupInventoryManifest({ schemaVersion: 1, tenantId: DEMO_TENANT_UUID, tables: [] })).toThrow(
+      "cleanup_inventory_manifest_tables_missing",
+    );
+    expect(() =>
+      validateCleanupInventoryManifest({
+        schemaVersion: 1,
+        tenantId: DEMO_TENANT_UUID,
+        tables: [
+          { table: "tenant_entitlements", column: "tenant_id" },
+          { table: "unsafe-name", column: "tenant_id" },
+          { table: "tenants", column: "id" },
+        ],
+      }),
+    ).toThrow("cleanup_inventory_manifest_identifier_invalid");
+    expect(() =>
+      validateCleanupInventoryManifest({
+        schemaVersion: 1,
+        tenantId: DEMO_TENANT_UUID,
+        tables: [{ table: "tenant_entitlements", column: "tenant_id" }],
+      }),
+    ).toThrow("cleanup_inventory_manifest_tenants_must_be_last");
+  });
+
+  it("delegates cleanup apply to the transactional database RPC", async () => {
+    const calls: Array<{ name: string; args: Record<string, unknown> }> = [];
+    const admin = {
+      async rpc(name: string, args: Record<string, unknown>) {
+        calls.push({ name, args });
+        return {
+          data: {
+            mode: "apply",
+            tenantId: DEMO_TENANT_UUID,
+            inventory: [{ table: "tenants", column: "id", count: 1 }],
+            totalRows: 1,
+            deleted: true,
+            postInventory: [{ table: "tenants", column: "id", count: 0 }],
+            postTotalRows: 0,
+          },
+          error: null,
+        };
+      },
+    };
+
+    const result = await callCleanupRpc(admin, {
+      apply: true,
+      cleanupInventory: CLEANUP_INVENTORY_MANIFEST.tables,
+    });
+
+    expect(result.mode).toBe("apply");
+    expect(result.postTotalRows).toBe(0);
+    expect(calls).toHaveLength(1);
+    expect(calls[0]?.name).toBe("cleanup_hosted_sandbox_demo_tenant");
+    expect(calls[0]?.args).toMatchObject({
+      p_tenant_id: DEMO_TENANT_UUID,
+      p_apply: true,
+    });
+    expect(calls[0]?.args.p_expected_inventory).toEqual(CLEANUP_INVENTORY_MANIFEST.tables);
   });
 
   it("requires backup manifest fields before apply", () => {

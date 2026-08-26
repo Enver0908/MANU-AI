@@ -6,50 +6,12 @@ import { createClient } from "@supabase/supabase-js";
 
 export const DEMO_TENANT_UUID = "00000000-0000-4000-8000-000000000001";
 export const DEMO_EMAIL = "demo@manu.local";
+export const DEFAULT_CLEANUP_INVENTORY_PATH = fileURLToPath(
+  new URL("./hosted-sandbox-demo-cleanup-inventory.json", import.meta.url),
+);
 
-export const DEMO_CLEANUP_TABLES = [
-  { table: "processed_inbound_events", column: "tenant_id" },
-  { table: "channel_adapter_rollback_controls", column: "tenant_id" },
-  { table: "client_food_rule_profiles", column: "tenant_id" },
-  { table: "client_menu_plans", column: "tenant_id" },
-  { table: "client_context_updates", column: "tenant_id" },
-  { table: "client_form_responses", column: "tenant_id" },
-  { table: "client_form_schemas", column: "tenant_id" },
-  { table: "dietitian_form_responses", column: "tenant_id" },
-  { table: "dietitian_form_schemas", column: "tenant_id" },
-  { table: "dietitian_voice_samples", column: "tenant_id" },
-  { table: "internal_copilot_messages", column: "tenant_id" },
-  { table: "internal_copilot_tool_calls", column: "tenant_id" },
-  { table: "data_requests", column: "tenant_id" },
-  { table: "notification_receipts", column: "tenant_id" },
-  { table: "conversation_read_receipts", column: "tenant_id" },
-  { table: "notifications", column: "tenant_id" },
-  { table: "channel_deliveries", column: "tenant_id" },
-  { table: "context_intake_proposals", column: "tenant_id" },
-  { table: "risk_activity_events", column: "tenant_id" },
-  { table: "human_control_sessions", column: "tenant_id" },
-  { table: "channel_message_revisions", column: "tenant_id" },
-  { table: "channel_events", column: "tenant_id" },
-  { table: "channel_actor_bindings", column: "tenant_id" },
-  { table: "channel_account_bindings", column: "tenant_id" },
-  { table: "inbound_quarantines", column: "tenant_id" },
-  { table: "audit_events", column: "tenant_id" },
-  { table: "handoff_cases", column: "tenant_id" },
-  { table: "messages", column: "tenant_id" },
-  { table: "ai_decisions", column: "tenant_id" },
-  { table: "risk_assessments", column: "tenant_id" },
-  { table: "conversation_memories", column: "tenant_id" },
-  { table: "conversations", column: "tenant_id" },
-  { table: "client_channels", column: "tenant_id" },
-  { table: "client_ai_status_events", column: "tenant_id" },
-  { table: "client_assignments", column: "tenant_id" },
-  { table: "clients", column: "tenant_id" },
-  { table: "dietitian_voice_profiles", column: "tenant_id" },
-  { table: "dietitians", column: "tenant_id" },
-  { table: "tenant_memberships", column: "tenant_id" },
-  { table: "tenant_entitlements", column: "tenant_id" },
-  { table: "tenants", column: "id" },
-];
+export const CLEANUP_INVENTORY_MANIFEST = readCleanupInventoryManifest();
+export const DEMO_CLEANUP_TABLES = CLEANUP_INVENTORY_MANIFEST.tables;
 
 export function parseCleanupArgs(argv = process.argv.slice(2)) {
   const apply = argv.includes("--apply");
@@ -69,6 +31,51 @@ export function isLocalSupabaseUrl(supabaseUrl) {
 
 export function hashInventory(inventory) {
   return createHash("sha256").update(JSON.stringify(inventory)).digest("hex");
+}
+
+export function readCleanupInventoryManifest(manifestPath = DEFAULT_CLEANUP_INVENTORY_PATH) {
+  const raw = readFileSync(manifestPath, "utf8");
+  return validateCleanupInventoryManifest(JSON.parse(raw));
+}
+
+export function validateCleanupInventoryManifest(manifest) {
+  if (!manifest || typeof manifest !== "object") {
+    throw new Error("cleanup_inventory_manifest_invalid");
+  }
+  if (manifest.schemaVersion !== 1) {
+    throw new Error("cleanup_inventory_manifest_schema_unsupported");
+  }
+  if (manifest.tenantId !== DEMO_TENANT_UUID) {
+    throw new Error("cleanup_inventory_manifest_tenant_mismatch");
+  }
+  if (!Array.isArray(manifest.tables) || manifest.tables.length === 0) {
+    throw new Error("cleanup_inventory_manifest_tables_missing");
+  }
+
+  const seen = new Set();
+  const tables = manifest.tables.map((entry) => {
+    const table = typeof entry?.table === "string" ? entry.table.trim() : "";
+    const column = typeof entry?.column === "string" ? entry.column.trim() : "";
+    if (!/^[a-z][a-z0-9_]*$/.test(table) || !/^[a-z][a-z0-9_]*$/.test(column)) {
+      throw new Error("cleanup_inventory_manifest_identifier_invalid");
+    }
+    const key = `${table}.${column}`;
+    if (seen.has(key)) {
+      throw new Error("cleanup_inventory_manifest_duplicate");
+    }
+    seen.add(key);
+    return { table, column };
+  });
+
+  if (!tables.some((entry) => entry.table === "tenant_entitlements" && entry.column === "tenant_id")) {
+    throw new Error("cleanup_inventory_manifest_entitlements_missing");
+  }
+  const last = tables.at(-1);
+  if (last?.table !== "tenants" || last?.column !== "id") {
+    throw new Error("cleanup_inventory_manifest_tenants_must_be_last");
+  }
+
+  return { schemaVersion: 1, tenantId: DEMO_TENANT_UUID, tables };
 }
 
 export function readBackupManifest(manifestPath) {
@@ -101,6 +108,38 @@ export async function buildDemoInventory(admin, tenantId = DEMO_TENANT_UUID) {
     inventory.push({ table: entry.table, count });
   }
   return inventory;
+}
+
+export function normalizeCleanupRpcResult(data) {
+  if (!data || typeof data !== "object") {
+    throw new Error("cleanup_rpc_result_invalid");
+  }
+  const inventory = Array.isArray(data.inventory) ? data.inventory : [];
+  const totalRows = Number(data.totalRows ?? 0);
+  if (!Number.isFinite(totalRows) || totalRows < 0) {
+    throw new Error("cleanup_rpc_total_invalid");
+  }
+  return {
+    mode: data.mode === "apply" ? "apply" : "dry-run",
+    tenantId: typeof data.tenantId === "string" ? data.tenantId : DEMO_TENANT_UUID,
+    inventory,
+    totalRows,
+    deleted: data.deleted === true,
+    postInventory: Array.isArray(data.postInventory) ? data.postInventory : undefined,
+    postTotalRows: data.postTotalRows === undefined ? undefined : Number(data.postTotalRows),
+  };
+}
+
+export async function callCleanupRpc(admin, { apply, cleanupInventory }) {
+  const { data, error } = await admin.rpc("cleanup_hosted_sandbox_demo_tenant", {
+    p_tenant_id: DEMO_TENANT_UUID,
+    p_expected_inventory: cleanupInventory,
+    p_apply: apply,
+  });
+  if (error) {
+    throw new Error(`cleanup_rpc_failed:${error.message}`);
+  }
+  return normalizeCleanupRpcResult(data);
 }
 
 export async function auditDemoMembershipUsers(admin, tenantId = DEMO_TENANT_UUID) {
@@ -175,6 +214,7 @@ export async function runDemoCleanup(options = {}) {
   const { dryRun, apply } = parseCleanupArgs(options.argv ?? []);
   const requestId = options.requestId ?? randomUUID();
   const { url, serviceRoleKey, projectRef } = validateCleanupEnvironment(env);
+  const cleanupManifest = readCleanupInventoryManifest(env.MANU_HOSTED_SANDBOX_CLEANUP_INVENTORY ?? DEFAULT_CLEANUP_INVENTORY_PATH);
 
   if (apply) {
     const manifestPath = env.MANU_HOSTED_SANDBOX_BACKUP_MANIFEST;
@@ -187,9 +227,11 @@ export async function runDemoCleanup(options = {}) {
     }
   }
 
-  const admin = createClient(url, serviceRoleKey, {
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
+  const admin =
+    options.admin ??
+    createClient(url, serviceRoleKey, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
 
   const unexpectedUsers = await auditDemoMembershipUsers(admin);
   if (unexpectedUsers.length > 0) {
@@ -201,9 +243,13 @@ export async function runDemoCleanup(options = {}) {
     throw new Error("cross_tenant_memberships");
   }
 
-  const inventory = await buildDemoInventory(admin);
+  const cleanupResult = await callCleanupRpc(admin, {
+    apply,
+    cleanupInventory: cleanupManifest.tables,
+  });
+  const inventory = cleanupResult.inventory;
   const inventoryHash = hashInventory(inventory);
-  const totalRows = inventory.reduce((sum, row) => sum + row.count, 0);
+  const totalRows = cleanupResult.totalRows;
 
   if (dryRun && !apply) {
     return {
@@ -221,15 +267,8 @@ export async function runDemoCleanup(options = {}) {
     throw new Error("apply_flag_required");
   }
 
-  for (const entry of DEMO_CLEANUP_TABLES) {
-    const { error } = await admin.from(entry.table).delete().eq(entry.column, DEMO_TENANT_UUID);
-    if (error) {
-      throw new Error(`delete_failed:${entry.table}:${error.message}`);
-    }
-  }
-
-  const postInventory = await buildDemoInventory(admin);
-  const postTotalRows = postInventory.reduce((sum, row) => sum + row.count, 0);
+  const postInventory = cleanupResult.postInventory ?? [];
+  const postTotalRows = cleanupResult.postTotalRows ?? 0;
   if (postTotalRows !== 0) {
     throw new Error("cleanup_incomplete");
   }
