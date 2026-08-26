@@ -4,7 +4,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   assertProductionReleaseIdentity,
-  assertServiceWorkerCacheMatchesRelease,
+  assertServiceWorkerSourceUsesPlaceholder,
   buildReleaseIdentity,
 } from "./lib/release-identity.mjs";
 
@@ -18,7 +18,7 @@ function assertReleaseIdentityGate() {
     env: { ...process.env, NODE_ENV: "production" },
   });
   assertProductionReleaseIdentity(identity, { ...process.env, NODE_ENV: "production" });
-  assertServiceWorkerCacheMatchesRelease(releaseVerifyRepoRoot, identity.releaseId);
+  assertServiceWorkerSourceUsesPlaceholder(releaseVerifyRepoRoot);
   console.log(
     "Release identity bound: " + identity.releaseId + " @ " + identity.commitSha.slice(0, 12) + " fingerprint " + identity.migrationFingerprint.slice(0, 12),
   );
@@ -45,10 +45,12 @@ const checks = [
     timeoutMs: 2_400_000,
   },
   { label: "production build", command: "npm", args: ["run", "build"], before: cleanNextBuildOutput },
+  { label: "release artifact", command: "npm", args: ["run", "release:artifact"] },
   { label: "stage-5 dependency security verify", command: "npm", args: ["run", "test:stage-5-dependencies"] },
   { label: "stage-5 shell verify", command: "npm", args: ["run", "test:stage-5-shell"] },
 ];
 
+cleanReleaseArtifactOutput();
 assertReleaseIdentityGate();
 
 for (const check of checks) {
@@ -82,6 +84,10 @@ function run({ label, command, args, cwd, env, before, timeoutMs }) {
 function cleanNextBuildOutput() {
   // Windows + OneDrive can throw ENOTEMPTY when another build still holds .next open.
   rmSync(".next", { force: true, recursive: true, maxRetries: 10, retryDelay: 500 });
+}
+
+function cleanReleaseArtifactOutput() {
+  rmSync(".manu-runtime/release-artifacts", { force: true, recursive: true, maxRetries: 10, retryDelay: 500 });
 }
 
 function runDependencyAuditGate() {

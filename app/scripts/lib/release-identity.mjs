@@ -1,11 +1,12 @@
 import { createHash } from "node:crypto";
-import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 
 export const FORBIDDEN_HOSTED_FALLBACK_VERSION = "0.0.0-stage5";
 export const DEV_LOCAL_COMPATIBILITY_VERSION = "0.0.0-dev-local";
 export const DEV_LOCAL_RELEASE_ID = "dev-local";
+export const SW_CACHE_VERSION_PLACEHOLDER = "__MANU_RELEASE_CACHE_VERSION__";
 
 const ZERO_SHA = "0000000000000000000000000000000000000000";
 const ZERO_FINGERPRINT = "0000000000000000000000000000000000000000000000000000000000000000";
@@ -40,6 +41,19 @@ export function readHeadSha(repoRoot, env = process.env) {
     throw new Error(`HEAD SHA is not a 40-character hex digest: ${sha}`);
   }
   return sha;
+}
+
+export function readHeadBuiltAt(repoRoot) {
+  const result = spawnSync("git", ["show", "-s", "--format=%cI", "HEAD"], {
+    cwd: repoRoot,
+    encoding: "utf8",
+    shell: false,
+  });
+  if (result.status !== 0) {
+    throw new Error(`git show HEAD commit time failed: ${result.stderr || result.stdout}`);
+  }
+  const builtAt = String(result.stdout || "").trim();
+  return normalizeIsoDateTime(builtAt, "HEAD commit time");
 }
 
 export function fingerprintMigrations(repoRoot, migrationsDir = "app/supabase/migrations") {
@@ -89,6 +103,18 @@ export function sanitizeReleaseIdForCache(releaseId) {
   return String(releaseId).replace(/[^a-zA-Z0-9_-]/g, "-").slice(0, 64);
 }
 
+export function assertIsoDateTime(value, label = "builtAt") {
+  normalizeIsoDateTime(value, label);
+}
+
+export function normalizeIsoDateTime(value, label = "builtAt") {
+  const timestamp = Date.parse(value);
+  if (!Number.isFinite(timestamp)) {
+    throw new Error(`${label} must be an ISO-8601 timestamp`);
+  }
+  return new Date(timestamp).toISOString();
+}
+
 export function buildReleaseIdentity({ repoRoot, env = process.env } = {}) {
   if (!repoRoot) {
     throw new Error("repoRoot is required to build release identity");
@@ -116,7 +142,8 @@ export function buildReleaseIdentity({ repoRoot, env = process.env } = {}) {
     migrationFingerprint = ZERO_FINGERPRINT;
   }
 
-  const builtAt = String(env.MANU_RELEASE_BUILT_AT ?? "").trim() || new Date().toISOString();
+  const explicitBuiltAt = String(env.MANU_RELEASE_BUILT_AT ?? "").trim();
+  const builtAt = normalizeIsoDateTime(explicitBuiltAt || readHeadBuiltAt(repoRoot));
   const environment =
     String(env.MANU_RELEASE_ENVIRONMENT ?? "").trim() ||
     (isProduction ? "production" : "development");
@@ -157,16 +184,11 @@ export function syncServiceWorkerCacheVersion(repoRoot, releaseId, { write = fal
   const cacheVersion = sanitizeReleaseIdForCache(releaseId);
   const swPath = path.join(repoRoot, "app", "public", "sw.js");
   const current = readServiceWorkerCacheVersion(swPath);
-  if (current !== cacheVersion && write) {
-    const content = readFileSync(swPath, "utf8");
-    const updated = content.replace(
-      /const SW_CACHE_VERSION = "[^"]+";/,
-      `const SW_CACHE_VERSION = "${cacheVersion}";`,
-    );
-    if (!updated.includes(`const SW_CACHE_VERSION = "${cacheVersion}";`)) {
-      throw new Error("failed to update SW_CACHE_VERSION in public/sw.js");
-    }
-    writeFileSync(swPath, updated, "utf8");
+  if (write) {
+    throw new Error("tracked public/sw.js is immutable; render the release cache version into an artifact copy");
+  }
+  if (current !== SW_CACHE_VERSION_PLACEHOLDER && current !== cacheVersion) {
+    throw new Error(`service worker source has unexpected cache version: ${current || "<missing>"}`);
   }
   return cacheVersion;
 }
@@ -178,4 +200,31 @@ export function assertServiceWorkerCacheMatchesRelease(repoRoot, releaseId) {
   if (actual !== expected) {
     throw new Error(`service worker cache version ${actual} does not match release id ${expected}`);
   }
+}
+
+export function assertServiceWorkerSourceUsesPlaceholder(repoRoot) {
+  const swPath = path.join(repoRoot, "app", "public", "sw.js");
+  const actual = readServiceWorkerCacheVersion(swPath);
+  if (actual !== SW_CACHE_VERSION_PLACEHOLDER) {
+    throw new Error(
+      `tracked public/sw.js must use ${SW_CACHE_VERSION_PLACEHOLDER}; found ${actual || "<missing>"}`,
+    );
+  }
+}
+
+export function renderServiceWorkerForRelease(source, releaseId) {
+  const cacheVersion = sanitizeReleaseIdForCache(releaseId);
+  if (!source.includes(`"${SW_CACHE_VERSION_PLACEHOLDER}"`)) {
+    throw new Error(`service worker source is missing ${SW_CACHE_VERSION_PLACEHOLDER}`);
+  }
+  const rendered = source.replaceAll(SW_CACHE_VERSION_PLACEHOLDER, cacheVersion);
+  if (readServiceWorkerCacheVersionFromSource(rendered) !== cacheVersion) {
+    throw new Error("failed to render service worker release cache version");
+  }
+  return rendered;
+}
+
+export function readServiceWorkerCacheVersionFromSource(source) {
+  const match = String(source).match(/const SW_CACHE_VERSION = "([^"]+)"/);
+  return match?.[1] ?? "";
 }

@@ -1,4 +1,4 @@
-const SW_CACHE_VERSION = "hs-0256ec38b415-48f0979f062a";
+const SW_CACHE_VERSION = "__MANU_RELEASE_CACHE_VERSION__";
 const STATIC_CACHE = `siriusai-static-${SW_CACHE_VERSION}`;
 const ASSET_CACHE = `siriusai-assets-${SW_CACHE_VERSION}`;
 const LEGACY_CACHE_PREFIX = "manu-ai-shell-";

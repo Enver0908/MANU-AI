@@ -19,6 +19,7 @@ export const POST_AUTH_REDIRECT_ALLOWLIST_PREFIXES = [
   "/install",
   "/ai-chat",
   "/more",
+  "/admin",
 ] as const;
 
 export const MAGIC_LINK_SEND_RETRY_DELAYS_MS = [250, 750, 1500] as const;

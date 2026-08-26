@@ -9,13 +9,19 @@ import {
   resolveReleaseIdentity,
   resolveShellSwCacheVersion,
 } from "./release-identity";
-import { buildReleaseIdentity, syncServiceWorkerCacheVersion } from "../../scripts/lib/release-identity.mjs";
+import {
+  SW_CACHE_VERSION_PLACEHOLDER,
+  buildReleaseIdentity,
+  renderServiceWorkerForRelease,
+  syncServiceWorkerCacheVersion,
+} from "../../scripts/lib/release-identity.mjs";
 
 describe("hosted-sandbox release identity", () => {
   it("builds release identity from HEAD and migration fingerprint", () => {
     const identity = buildReleaseIdentity({ repoRoot: join(process.cwd(), "..") });
     expect(identity.releaseId).toMatch(/^hs-[a-f0-9]{12}-[a-f0-9]{12}$/);
     expect(identity.commitSha).toMatch(/^[a-f0-9]{40}$/);
+    expect(identity.builtAt).toMatch(/^\d{4}-\d{2}-\d{2}T/);
     expect(identity.migrationFingerprint).toMatch(/^[a-f0-9]{64}$/);
     expect(identity.compatibilityVersion).not.toBe(FORBIDDEN_HOSTED_FALLBACK_VERSION);
   });
@@ -36,12 +42,14 @@ describe("hosted-sandbox release identity", () => {
     expect(version.releaseIdentity.releaseId).toBe(resolveReleaseIdentity().releaseId);
   });
 
-  it("derives service worker cache names from release id", () => {
+  it("keeps tracked service worker stable and renders release cache names for artifacts", () => {
     const env = { MANU_SW_CACHE_VERSION: "hs-test-release-id" } as NodeJS.ProcessEnv;
     expect(resolveShellSwCacheVersion(env)).toBe("hs-test-release-id");
     const swSource = readFileSync(join(process.cwd(), "public", "sw.js"), "utf8");
     const match = swSource.match(/const SW_CACHE_VERSION = "([^"]+)"/);
-    expect(match?.[1]).toBeTruthy();
+    expect(match?.[1]).toBe(SW_CACHE_VERSION_PLACEHOLDER);
+    const rendered = renderServiceWorkerForRelease(swSource, "hs-test-release-id");
+    expect(rendered).toContain('const SW_CACHE_VERSION = "hs-test-release-id";');
     const synced = syncServiceWorkerCacheVersion(join(process.cwd(), ".."), "hs-test-release-id", { write: false });
     expect(synced).toBe("hs-test-release-id");
   });
