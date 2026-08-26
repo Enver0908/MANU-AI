@@ -19,28 +19,28 @@ import { findRepoRoot, runHostedSandboxVerifier } from "./run-verifier.mjs";
 
 const repoRoot = findRepoRoot(path.dirname(fileURLToPath(import.meta.url)));
 
-test("HS-GOV-VS-003 wrong SHA fails closed", () => {
+test("HS-VS-003 wrong SHA fails closed", () => {
   const result = evaluateShaBinding("a".repeat(40), "b".repeat(40));
   assert.equal(result.ok, false);
 });
 
-test("HS-GOV-VS-003 missing migration set fails closed", () => {
+test("HS-VS-003 missing migration set fails closed", () => {
   const tempRoot = mkdtempSync(path.join(os.tmpdir(), "hs-test-mig-"));
   mkdirSync(path.join(tempRoot, "app", "supabase", "migrations"), { recursive: true });
   assert.throws(() => fingerprintMigrations(tempRoot), /empty|missing/);
 });
 
-test("HS-GOV-VS-003 demo tenant fixture fails closed", () => {
+test("HS-VS-003 demo tenant fixture fails closed", () => {
   const result = evaluateDemoTenantSource(`id ${DEMO_TENANT_UUID}`);
   assert.equal(result.ok, false);
 });
 
-test("HS-GOV-VS-003 unauthorized diff fails closed", () => {
+test("HS-VS-003 unauthorized diff fails closed", () => {
   const result = evaluateUnauthorizedDiff(["app/package.json"], ["docs/example.md"]);
   assert.equal(result.ok, false);
 });
 
-test("HS-GOV-VS-003 negative control suite fails closed as a group", () => {
+test("HS-VS-003 negative control suite fails closed as a group", () => {
   const result = runNegativeControls(repoRoot);
   assert.equal(result.wrongSha, "FAIL_CLOSED");
   assert.equal(result.missingMigration, "FAIL_CLOSED");
@@ -48,7 +48,7 @@ test("HS-GOV-VS-003 negative control suite fails closed as a group", () => {
   assert.equal(result.unauthorizedDiff, "FAIL_CLOSED");
 });
 
-test("HS-GOV-VS-002 live verifier binds SHA and migration fingerprint", () => {
+test("HS-VS-002 live verifier binds SHA and migration fingerprint", () => {
   const { artifact } = runHostedSandboxVerifier({ repoRoot });
   assert.equal(artifact.result, "PASS");
   assert.match(artifact.commitSha, /^[a-f0-9]{40}$/);

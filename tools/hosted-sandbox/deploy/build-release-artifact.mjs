@@ -41,8 +41,7 @@ const manifest = buildArtifactManifest({
 
 const outDir = path.join(
   repoRoot,
-  ".execution-governance",
-  "runtime",
+  ".manu-runtime",
   "hosted-sandbox",
   "artifacts",
   identity.commitSha,

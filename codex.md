@@ -57,7 +57,7 @@ For ordinary multi-step coding tasks, state a brief execution plan:
 3. [Step] → verify: [check]
 Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
 
-For governed implementation work under `.execution-governance/`, a brief plan is not enough. Write a decision-complete governed implementation plan that follows `docs/execution-governance/DECISION_COMPLETE_PLAN_AUTHORING_STANDARD.md`: exact requirement IDs, allowed/protected files, phase-scoped scope, acceptance oracles, APIs/data contracts, error cases, security/privacy boundaries, rollback, and stop criteria. Do not leave implementation decisions to the next model.
+For Phase 85-style implementation work, keep planning explicit but lightweight: a clear Markdown action plan or spec, scoped phases, acceptance checks, evidence notes, and user approval before major execution or closure.
 
 ---
 
@@ -70,7 +70,7 @@ These guidelines are working if: fewer unnecessary changes in diffs, fewer rewri
 -Write a PRD/tech spec before implementing any new feature or change.
 -Map edge cases in detail and add them either to this file or to separate spec files.
 -Prefer JSONL format for datasets (especially for fine-tuning).
--After every successful implementation phase, reconcile only the documentation whose authority, next-action guidance, risk posture, production gate status, or handoff instructions actually changed. For ordinary product phases this usually includes the phase spec/evidence and, when affected, `HANDOFF_FOR_NEXT_CODEX.md`, `PLAN.md`, `docs/NEXT_PHASE_EXECUTION_PLAN.md`, `README.md`, `PROJECT_PLAN.md`, `app/README.md`, and `docs/RISK_REGISTER.md`. Update pilot evidence/gate docs (`docs/PILOT_READINESS_EVIDENCE_PACK.md`, `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md`, `docs/PRODUCTION_PILOT_FINAL_READINESS_CLOSURE_SUMMARY.md`, relevant review packets) only when production readiness, launch gates, external approvals, or pilot evidence actually changed. When an active plan-implementation assurance contract exists under `docs/execution-governance/`, follow its allowed documentation surface and do not broaden the diff just to restate historical evidence.
+-After every successful implementation phase, reconcile only the documentation whose authority, next-action guidance, risk posture, production gate status, or handoff instructions actually changed. For ordinary product phases this usually includes the phase spec/evidence and, when affected, `HANDOFF_FOR_NEXT_CODEX.md`, `PLAN.md`, `docs/NEXT_PHASE_EXECUTION_PLAN.md`, `README.md`, `PROJECT_PLAN.md`, `app/README.md`, and `docs/RISK_REGISTER.md`. Update pilot evidence/gate docs (`docs/PILOT_READINESS_EVIDENCE_PACK.md`, `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md`, `docs/PRODUCTION_PILOT_FINAL_READINESS_CLOSURE_SUMMARY.md`, relevant review packets) only when production readiness, launch gates, external approvals, or pilot evidence actually changed.
 
 ##  6.
 

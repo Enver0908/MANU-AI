@@ -25,7 +25,7 @@ Supabase Free tier remains in use. Paid PITR and leaked-password protection stay
 node tools/hosted-sandbox/backup-hosted-supabase.mjs --dry-run
 
 # Local isolated backup (requires pg_dump, age, MANU_HOSTED_SANDBOX_BACKUP_AGE_PUBLIC_KEY)
-node tools/hosted-sandbox/backup-hosted-supabase.mjs --apply --output-dir=.execution-governance/runtime/hosted-sandbox/backups
+node tools/hosted-sandbox/backup-hosted-supabase.mjs --apply --output-dir=.manu-runtime/hosted-sandbox/backups
 
 # Restore drill into isolated database only
 node tools/hosted-sandbox/restore-hosted-supabase.mjs --dry-run --manifest=path/to/backup.age.manifest.json

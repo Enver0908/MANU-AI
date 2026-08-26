@@ -14,7 +14,7 @@ import { runSmokeCheck } from "./run-smoke-check.mjs";
 const repoRoot = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..", "..");
 const args = new Set(process.argv.slice(2));
 const dryRun = !args.has("--apply");
-const simRoot = path.join(repoRoot, ".execution-governance", "runtime", "hosted-sandbox", "deploy-sim");
+const simRoot = path.join(repoRoot, ".manu-runtime", "hosted-sandbox", "deploy-sim");
 const workRoot = process.env.MANU_DEPLOY_WORK_ROOT
   ? path.resolve(process.env.MANU_DEPLOY_WORK_ROOT)
   : dryRun

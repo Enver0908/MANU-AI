@@ -4,19 +4,7 @@
 
 **Current authority (2026-08-24):** Stage 6 is locally `STAGE_6_CLOSED`. Android Chrome/PWA physical evidence and final `release:verify` passed. Physical iPhone Safari/PWA was explicitly waived as `WAIVED_NOT_EXECUTED`, not represented as PASS, and remains required before any iOS production pilot/readiness claim. Stage 7.1 through Stage 7.4 are superseded for Stage 7 closure. Stage 7R.0 through Stage 7R.5 are complete locally; Stage 7R.5 hard gate and evidence reclosure passed `audit:stage-7`, `test:stage-7-lab-perf`, and `verify:stage-7:7.4`, and Stage 7.5 final closure is the current Stage 7 authority. Stage 7 is locally STAGE_7_CLOSED. Stage 5 remains closed; production remains `NO-GO`. Stage 7R authority: `docs/PHASE_85_STAGE_7R_SUPERSESSION_DECISION.json`; finding lock: `docs/PHASE_85_STAGE_7R_FINDING_LOCK.json`.
 
-**Plan-implementation assurance integration (2026-08-24):** Phase 0 is committed as `6318fca`. It records the repository baseline, persists `docs/execution-governance/MANU_AI_PLAN_IMPLEMENTATION_ASSURANCE_INTEGRATION_PLAN.md`, and starts a model-independent plan lock / scope manifest / optional independent-review workflow. Product runtime, schemas, dependencies, production gates, and Stage 7 closure status were unchanged by Phase 0.
-
-**Governance Phase 1 (2026-08-24):** Core protocol and status model are committed as `e6a2a8b`. It adds role separation, independent-review rules, waiver rules, status axes, JSON schemas, and templates. Product runtime and production `NO-GO` are unchanged.
-
-**Governance Phase 2 (2026-08-24):** Dependency-free verifier CLI is committed as `e4de06a`. Product runtime, dependencies, schemas, production gates, and Stage 7 closure remain unchanged.
-
-**Governance Phase 3 (2026-08-24):** Codex and Cursor adapters are committed as `36268c7`. Product runtime, dependencies, migrations, production gates, and Stage 7 closure remain unchanged.
-
-**Governance Phase 4 (2026-08-24):** Lifecycle and optional review flow are committed as `dfd7318`. Product runtime, dependencies, migrations, production gates, and Stage 7 closure remain unchanged.
-
-**Governance Phase 5 (2026-08-24):** Clean CI verification layer is committed as `d6cbf0d`. Product runtime, dependencies, migrations, production gates, branch protection, push, deploy, and Stage 7 closure remain unchanged.
-
-**Governance Phase 6 (2026-08-24):** Red-team, pilot, and documentation closure is committed as `81b78f4`. `tools/execution-governance/red-team-harness.mjs` now exercises the governance system against synthetic tamper, stale artifact, forbidden diff, skip/only, shell-wrapper, hook-crash, no-review, full-review, targeted-review, workflow-hardening, and runtime-artifact scenarios. Governance `postflight` now rejects stale automated run-records and changed test skip/only markers. Product runtime, dependencies, migrations, production gates, branch protection, push, deploy, and Stage 7 closure remain unchanged. Remote CI evidence still requires a separate push and GitHub Actions run.
+**Planning authority restored (2026-08-26):** MANU-AI planning is back to the Phase 85 Stage 5/6/7 style: Markdown action plans, phase evidence, targeted verification, explicit user approval, and normal Git review. The later machine-lock governance system and Cursor-specific project restrictions have been removed from the repo. Product runtime, Stage 5/6/7 closure records, iPhone waiver status, and production `NO-GO` remain unchanged.
 
 **Prior R3 checkpoint (2026-08-20):** Stage 6 Phase 1-3 remediation R1-R3 is complete locally. R3 prevents stale/out-of-order alert and notification requests from overwriting current filters or acknowledged receipt mutations and deduplicates bounded pagination. Clean local Supabase reset and RLS 56/56 with zero skipped passed. Stage 5 remains `STAGE_5_CLOSED`; production remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_R3_INBOX_CONCURRENCY_SECURITY_CLOSURE_EVIDENCE.md`. Phase 4 required separate approval at this checkpoint.
 

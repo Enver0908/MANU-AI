@@ -43,5 +43,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: hosted-sandbox-migration-manifest
-          path: .execution-governance/runtime/hosted-sandbox/artifacts/**/release-manifest.json
+          path: .manu-runtime/hosted-sandbox/artifacts/**/release-manifest.json
           if-no-files-found: error

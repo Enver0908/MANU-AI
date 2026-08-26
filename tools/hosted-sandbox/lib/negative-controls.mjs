@@ -6,9 +6,7 @@ import { DEMO_TENANT_UUID, fingerprintMigrations, sha256Buffer } from "./identit
 const FORBIDDEN_DIFF_PATHS = new Set([
   "package.json",
   "app/package.json",
-  "app/package-lock.json",
-  ".github/workflows/execution-governance.yml",
-  "tools/execution-governance/governance-cli.mjs"
+  "app/package-lock.json"
 ]);
 
 export function evaluateShaBinding(actualSha, expectedSha) {
@@ -57,8 +55,8 @@ export function runNegativeControls(repoRoot) {
   if (demo.ok) failures.push("demo tenant control did not fail");
 
   const unauthorized = evaluateUnauthorizedDiff(
-    ["app/package.json", "docs/execution-governance/allowed.md"],
-    ["docs/execution-governance/allowed.md"]
+    ["app/package.json", "docs/hosted-sandbox/allowed.md"],
+    ["docs/hosted-sandbox/allowed.md"]
   );
   if (unauthorized.ok) failures.push("unauthorized diff control did not fail");
 

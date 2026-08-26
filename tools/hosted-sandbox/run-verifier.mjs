@@ -29,7 +29,7 @@ export function runHostedSandboxVerifier(options = {}) {
     negativeControls,
     result: "PASS"
   };
-  const outputDir = path.join(repoRoot, ".execution-governance", "runtime", "hosted-sandbox");
+  const outputDir = path.join(repoRoot, ".manu-runtime", "hosted-sandbox");
   mkdirSync(outputDir, { recursive: true });
   const artifactPath = path.join(outputDir, `${runId}.json`);
   writeFileSync(artifactPath, `${JSON.stringify(artifact, null, 2)}\n`, "utf8");

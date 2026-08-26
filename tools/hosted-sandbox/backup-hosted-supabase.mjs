@@ -18,7 +18,7 @@ export function isLocalDatabaseUrl(databaseUrl) {
 export function parseBackupArgs(argv = process.argv.slice(2)) {
   const apply = argv.includes("--apply");
   const dryRun = argv.includes("--dry-run") || !apply;
-  const outputDir = argv.find((arg) => arg.startsWith("--output-dir="))?.split("=")[1] ?? ".execution-governance/runtime/hosted-sandbox/backups";
+  const outputDir = argv.find((arg) => arg.startsWith("--output-dir="))?.split("=")[1] ?? ".manu-runtime/hosted-sandbox/backups";
   return { dryRun, apply, outputDir };
 }
 

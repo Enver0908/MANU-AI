@@ -5,24 +5,10 @@ import { spawnSync } from "node:child_process";
 
 export const DEMO_TENANT_UUID = "00000000-0000-4000-8000-000000000001";
 
-export const REQUIRED_PLAN_FILES = ["plan.md", "contract.json", "scope.json", "acceptance.json"];
-
-export const REQUIRED_PLAN_DIRECTORIES = [
-  ".execution-governance/plans/hosted-sandbox-verifier-setup-v1",
-  ".execution-governance/plans/hosted-sandbox-environment-assurance-v1"
-];
-
 export const REQUIRED_API_CONTRACT_FILES = [
   "app/src/app/api/app-state/route.ts",
   "app/src/app/api/clients/route.ts",
   "app/src/app/api/demo-login/route.ts"
-];
-
-export const PROTECTED_GOVERNANCE_FILES = [
-  "tools/execution-governance/governance-cli.mjs",
-  "tools/execution-governance/red-team-harness.mjs",
-  ".github/workflows/execution-governance.yml",
-  ".execution-governance/policy/governance-policy.json"
 ];
 
 export function sha256Buffer(buffer) {
@@ -83,22 +69,10 @@ export function assertFilesExist(repoRoot, relativePaths, label) {
   }
 }
 
-export function assertPlanPackages(repoRoot) {
-  for (const directory of REQUIRED_PLAN_DIRECTORIES) {
-    assertFilesExist(
-      repoRoot,
-      REQUIRED_PLAN_FILES.map((name) => `${directory}/${name}`),
-      `plan package ${directory}`
-    );
-  }
-}
-
 export function collectLiveIdentity(repoRoot) {
   const commitSha = readHeadSha(repoRoot);
   const migrations = fingerprintMigrations(repoRoot);
-  assertPlanPackages(repoRoot);
   assertFilesExist(repoRoot, REQUIRED_API_CONTRACT_FILES, "API contract");
-  assertFilesExist(repoRoot, PROTECTED_GOVERNANCE_FILES, "protected governance");
   return {
     commitSha,
     migrations: {
@@ -106,7 +80,6 @@ export function collectLiveIdentity(repoRoot) {
       count: migrations.count,
       fingerprint: migrations.fingerprint
     },
-    apiContractFiles: REQUIRED_API_CONTRACT_FILES,
-    planDirectories: REQUIRED_PLAN_DIRECTORIES
+    apiContractFiles: REQUIRED_API_CONTRACT_FILES
   };
 }

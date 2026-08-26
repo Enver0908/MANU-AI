@@ -4,21 +4,7 @@
 
 **Current authority (2026-08-24):** Stage 6 is locally `STAGE_6_CLOSED`. Android Chrome/PWA physical evidence and final `release:verify` passed. New physical iPhone Safari/PWA evidence was explicitly waived as `WAIVED_NOT_EXECUTED`; it is not a PASS and must be completed before any iOS production pilot/readiness claim. Stage 7.1 through Stage 7.4 are superseded for Stage 7 closure. Stage 7R.0 through Stage 7R.5 are complete locally; Stage 7R.5 hard gate and evidence reclosure passed `audit:stage-7`, `test:stage-7-lab-perf`, and `verify:stage-7:7.4`, and Stage 7.5 final closure is the current Stage 7 authority. Stage 7 is locally STAGE_7_CLOSED. Stage 5 remains closed and production remains `NO-GO`. Authority: `docs/PHASE_85_STAGE_7R_SUPERSESSION_DECISION.json`; finding lock: `docs/PHASE_85_STAGE_7R_FINDING_LOCK.json`.
 
-**Completed governance baseline (2026-08-24):** Plan-implementation assurance Phase 0 is committed as `6318fca`. It persists `docs/execution-governance/MANU_AI_PLAN_IMPLEMENTATION_ASSURANCE_INTEGRATION_PLAN.md`, records the start baseline, and reconciles current authority wording. This does not reopen Stage 7 and does not change production `NO-GO`.
-
-**Completed governance protocol step (2026-08-24):** Phase 1 core protocol and status model are committed as `e6a2a8b`. It did not install Cursor hooks, root `AGENTS.md`, CI, product runtime changes, or production gate changes.
-
-**Completed governance CLI step (2026-08-24):** Phase 2 CLI is committed as `e4de06a`. It did not add Cursor hooks, root `AGENTS.md`, CI, product runtime changes, package dependencies, migrations, or production gate changes.
-
-**Completed governance adapter step (2026-08-24):** Phase 3 Codex/Cursor adapters are committed as `36268c7`. It did not add GitHub Actions, product runtime changes, package dependencies, migrations, or production gate changes.
-
-**Completed governance lifecycle step (2026-08-24):** Phase 4 lifecycle and optional review flow are committed as `dfd7318`. It did not change product runtime, package dependencies, migrations, deployment, production gates, or default branch settings.
-
-**Completed governance clean CI step (2026-08-24):** Phase 5 clean CI layer is committed as `d6cbf0d`. It must not be treated as remote CI evidence until pushed and run in GitHub Actions.
-
-**Current governance status after Phase 6 commit (2026-08-24):** Phase 6 red-team, pilot, and documentation reconciliation is committed as `81b78f4`. The new deterministic harness is `tools/execution-governance/red-team-harness.mjs`, with evidence in `docs/execution-governance/PHASE_6_RED_TEAM_PILOT_CLOSURE_EVIDENCE.md`. It validates synthetic hook, scope, shell-wrapper, tamper, stale artifact, forbidden diff, skip/only, no-review, full-review, targeted-review, workflow-hardening, and runtime-artifact scenarios. Product runtime, package dependencies, migrations, deployment, production gates, branch protection, default branch settings, and remote repository state remain unchanged without separate explicit user command. Remote CI evidence still requires a separate push and GitHub Actions run.
-
-**Current worktree consistency audit (2026-08-24):** `docs/execution-governance/WORKTREE_CONSISTENCY_AUDIT_2026_08_24.md` records the post-Phase 6 consistency pass across active authority docs, historical evidence boundaries, governance statuses, production `NO-GO`, iPhone waiver, repo layout, runtime artifacts, and secret-pattern scans. Product runtime and production readiness remain unchanged.
+**Planning authority restored (2026-08-26):** MANU-AI planning is back to the Phase 85 Stage 5/6/7 style: Markdown action plans, phase evidence, targeted verification, explicit user approval, and normal Git review. The later machine-lock governance system and Cursor-specific project restrictions have been removed from the repo. Product runtime, Stage 5/6/7 closure records, iPhone waiver status, and production `NO-GO` remain unchanged.
 
 **Prior R3 checkpoint (2026-08-20):** Stage 6 Phase 1-3 remediation R1-R3 is complete locally. Inbox request ownership, sequencing, abort, mutation invalidation, and stable-id pagination close the remaining communication concurrency gap; clean local reset and RLS 56/56 zero-skip supply the security evidence. Stage 5 remains closed and production remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_R3_INBOX_CONCURRENCY_SECURITY_CLOSURE_EVIDENCE.md`. Phase 4 was the next eligible unit at this checkpoint.
 

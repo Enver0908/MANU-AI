@@ -15,7 +15,7 @@ import {
 } from "./lib/activation-contract.mjs";
 
 const repoRoot = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..", "..");
-const runtimeDir = path.join(repoRoot, ".execution-governance", "runtime", "hosted-sandbox", "activation");
+const runtimeDir = path.join(repoRoot, ".manu-runtime", "hosted-sandbox", "activation");
 const maintenanceFlag = path.join(runtimeDir, "maintenance-mode.flag");
 
 function runNodeScript(scriptRel, args = [], env = process.env) {
@@ -62,7 +62,7 @@ export async function runHostedActivation(options = {}) {
   report.commitSha = identity.commitSha;
   report.migrationFingerprint = identity.migrationFingerprint;
 
-  const backupManifestDir = path.join(repoRoot, ".execution-governance", "runtime", "hosted-sandbox", "backups");
+  const backupManifestDir = path.join(repoRoot, ".manu-runtime", "hosted-sandbox", "backups");
   const hasBackupManifest = existsSync(backupManifestDir);
   if (apply && !isApprovalEnabled(env, ACTIVATION_APPROVAL_KEYS.backup)) {
     throw new Error("backup approval missing");
