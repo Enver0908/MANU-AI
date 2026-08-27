@@ -7,7 +7,8 @@ export async function runSmokeCheck(baseUrl, options = {}) {
     throw new Error("smoke check forced fail for test");
   }
   const url = String(baseUrl ?? "http://127.0.0.1:3000").replace(/\/$/, "");
-  const paths = options.paths ?? ["/api/shell/version", "/login"];
+  const expectedIdentity = options.expectedIdentity ?? null;
+  const paths = options.paths ?? (expectedIdentity ? ["/api/health/release"] : ["/api/health/release", "/login"]);
   const failures = [];
   for (const pathname of paths) {
     try {
@@ -16,8 +17,17 @@ export async function runSmokeCheck(baseUrl, options = {}) {
         headers: { Accept: "application/json, text/html" },
         redirect: "manual",
       });
-      if (response.status >= 500) {
+      if (response.status !== 200) {
         failures.push(pathname + " status " + response.status);
+        continue;
+      }
+      if (pathname === "/api/health/release" && expectedIdentity) {
+        const payload = await response.json();
+        for (const key of ["releaseId", "commitSha", "migrationFingerprint", "compatibilityVersion"]) {
+          if (payload[key] !== expectedIdentity[key]) {
+            failures.push(pathname + " " + key + " mismatch");
+          }
+        }
       }
     } catch (error) {
       failures.push(pathname + " error " + (error instanceof Error ? error.message : String(error)));

@@ -18,13 +18,13 @@ test("backup manifest validates schema and hashes", () => {
   writeFileSync(encryptedPath, "encrypted-bytes");
   const manifestPath = path.join(dir, "manifest.json");
   const manifest = buildBackupManifest({
-    projectRef: "local-dev",
+    sourceProjectRef: "local-dev",
     encryptedPath,
     backupSha256: sha256File(encryptedPath),
   });
   writeFileSync(manifestPath, JSON.stringify(manifest));
   const loaded = readBackupManifest(manifestPath);
-  assert.equal(loaded.projectRef, "local-dev");
+  assert.equal(loaded.sourceProjectRef, "local-dev");
   assert.equal(loaded.backupSha256, sha256File(encryptedPath));
 });
 
@@ -46,7 +46,7 @@ test("restore dry-run validates manifest hash before apply", () => {
   writeFileSync(encryptedPath, "restore-me");
   const manifestPath = path.join(dir, "manifest.json");
   const manifest = buildBackupManifest({
-    projectRef: "local-dev",
+    sourceProjectRef: "local-dev",
     encryptedPath,
     backupSha256: sha256File(encryptedPath),
   });
@@ -59,5 +59,5 @@ test("restore dry-run validates manifest hash before apply", () => {
 });
 
 test("rejects incomplete backup manifest payloads", () => {
-  assert.throws(() => validateBackupManifest({ projectRef: "x" }), /backup_manifest_incomplete/);
+  assert.throws(() => validateBackupManifest({ sourceProjectRef: "x" }), /backup_manifest_schema_mismatch/);
 });

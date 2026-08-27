@@ -91,7 +91,7 @@ export function runHostedBackup(options = {}) {
 
   const backupSha256 = sha256File(encryptedPath);
   const manifest = buildBackupManifest({
-    projectRef,
+    sourceProjectRef: projectRef,
     encryptedPath,
     backupSha256,
   });

@@ -30,7 +30,6 @@ function writeManifest(dir, encryptedContent = "encrypted-bytes") {
     sourceProjectRef: "source-ref",
     encryptedPath,
     backupSha256: sha256File(encryptedPath),
-    createdAt: "2026-08-26T00:00:00.000Z",
   });
   const manifestPath = path.join(dir, "backup.dump.age.manifest.json");
   writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, "utf8");

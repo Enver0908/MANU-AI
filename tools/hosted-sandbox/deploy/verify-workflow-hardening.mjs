@@ -31,6 +31,12 @@ function validateWorkflowDir(dir) {
   const deploy = readFileSync(path.join(dir, "hosted-sandbox-deploy.yml"), "utf8");
   const productCi = readFileSync(path.join(dir, "hosted-sandbox-product-ci.yml"), "utf8");
   if (!migration.includes("environment:")) throw new Error("migration workflow missing environment gate in " + dir);
+  if (!migration.includes("supabase db push --linked --include-all")) {
+    throw new Error("migration workflow missing linked migration apply in " + dir);
+  }
+  if (!migration.includes("SUPABASE_ACCESS_TOKEN")) {
+    throw new Error("migration workflow missing Supabase token environment in " + dir);
+  }
   if (!deploy.includes("environment:")) throw new Error("deploy workflow missing environment gate in " + dir);
   if (!deploy.includes('MANU_RELEASE_ARTIFACT_REQUIRED: "true"')) {
     throw new Error("deploy workflow missing required release artifact gate in " + dir);

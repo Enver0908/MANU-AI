@@ -22,22 +22,31 @@ server {
   proxy_set_header X-Real-IP $remote_addr;
   proxy_set_header X-Forwarded-Proto $scheme;
 
+  location = /api/health/release {
+    proxy_pass http://127.0.0.1:3000;
+    add_header Cache-Control "no-store" always;
+  }
+
   location /_next/static/ {
+    if (-f /opt/manu-ai/maintenance.flag) { return 503; }
     proxy_pass http://127.0.0.1:3000;
     add_header Cache-Control "public, max-age=31536000, immutable" always;
   }
 
   location = /sw.js {
+    if (-f /opt/manu-ai/maintenance.flag) { return 503; }
     proxy_pass http://127.0.0.1:3000;
     add_header Cache-Control "no-cache" always;
   }
 
   location = /manifest.webmanifest {
+    if (-f /opt/manu-ai/maintenance.flag) { return 503; }
     proxy_pass http://127.0.0.1:3000;
     add_header Cache-Control "no-cache" always;
   }
 
   location / {
+    if (-f /opt/manu-ai/maintenance.flag) { return 503; }
     proxy_pass http://127.0.0.1:3000;
     add_header Cache-Control "no-store, no-cache, must-revalidate" always;
   }

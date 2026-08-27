@@ -2,9 +2,8 @@ module.exports = {
   apps: [
     {
       name: "manu-ai-hosted-sandbox",
-      cwd: "/opt/manu-ai/current/app",
-      script: "node_modules/next/dist/bin/next",
-      args: "start -p 3000",
+      cwd: `${process.env.MANU_DEPLOY_ROOT || "/opt/manu-ai"}/current/app`,
+      script: "server.js",
       instances: 1,
       exec_mode: "fork",
       autorestart: true,

@@ -7,6 +7,11 @@ on:
         description: Optional commit SHA to fingerprint (defaults to checkout HEAD)
         required: false
         type: string
+      apply:
+        description: Apply migrations to the linked hosted sandbox project
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -23,6 +28,8 @@ jobs:
     environment: hosted-sandbox-migration
     env:
       MANU_CI_NO_PRODUCTION_EFFECTS: "true"
+      MANU_HOSTED_SANDBOX_PROJECT_REF: ${{ secrets.MANU_HOSTED_SANDBOX_PROJECT_REF }}
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -36,8 +43,33 @@ jobs:
         with:
           node-version: "22"
 
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
       - name: Build migration fingerprint manifest
         run: node tools/hosted-sandbox/deploy/build-release-artifact.mjs --manifest-only
+
+      - name: Verify hosted sandbox project ref
+        if: ${{ inputs.apply }}
+        shell: bash
+        run: |
+          test -n "$MANU_HOSTED_SANDBOX_PROJECT_REF"
+          test -n "$SUPABASE_ACCESS_TOKEN"
+          case "$MANU_HOSTED_SANDBOX_PROJECT_REF" in
+            *[!a-z0-9-]*|"") exit 1 ;;
+          esac
+
+      - name: Link hosted sandbox project
+        if: ${{ inputs.apply }}
+        working-directory: app
+        run: supabase link --project-ref "$MANU_HOSTED_SANDBOX_PROJECT_REF"
+
+      - name: Apply hosted sandbox migrations
+        if: ${{ inputs.apply }}
+        working-directory: app
+        run: supabase db push --linked --include-all
 
       - name: Upload migration fingerprint manifest
         uses: actions/upload-artifact@v4

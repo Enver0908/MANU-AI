@@ -1,6 +1,20 @@
 #!/usr/bin/env node
-import { existsSync, mkdirSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
+import {
+  existsSync,
+  lstatSync,
+  mkdirSync,
+  readlinkSync,
+  readFileSync,
+  readdirSync,
+  renameSync,
+  rmSync,
+  statSync,
+  symlinkSync,
+  writeFileSync,
+} from "node:fs";
+import { createHash } from "node:crypto";
 import path from "node:path";
+import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { buildReleaseIdentity } from "../../../app/scripts/lib/release-identity.mjs";
 import {
@@ -42,6 +56,88 @@ function activateRelease(rootDir, commitSha) {
   return releaseDir;
 }
 
+function readCurrentReleasePointer(rootDir) {
+  const pointer = currentPointerPath(rootDir);
+  if (!existsSync(pointer)) {
+    return "";
+  }
+  if (useTextPointer) {
+    return readFileSync(pointer, "utf8").trim();
+  }
+  const stat = lstatSync(pointer);
+  if (!stat.isSymbolicLink()) {
+    return "";
+  }
+  return path.basename(readlinkSync(pointer));
+}
+
+function runChecked(command, args, options = {}) {
+  const result = spawnSync(command, args, { encoding: "utf8", shell: false, ...options });
+  if (result.status !== 0) {
+    throw new Error(command + " failed: " + (result.stderr || result.stdout || "unknown error").trim());
+  }
+  return result;
+}
+
+function sha256File(filePath) {
+  return createHash("sha256").update(readFileSync(filePath)).digest("hex");
+}
+
+function verifyExtractedPackage(appDir, identity) {
+  const manifestPath = path.join(appDir, "release-manifest.json");
+  if (!existsSync(manifestPath)) {
+    throw new Error("extracted release manifest missing");
+  }
+  const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
+  if (manifest.releaseId !== identity.releaseId || manifest.commitSha !== identity.commitSha) {
+    throw new Error("extracted release manifest identity mismatch");
+  }
+  if (manifest.migrationFingerprint !== identity.migrationFingerprint) {
+    throw new Error("extracted release manifest migration fingerprint mismatch");
+  }
+  if (!existsSync(path.join(appDir, "server.js"))) {
+    throw new Error("extracted standalone server.js missing");
+  }
+  for (const file of manifest.files ?? []) {
+    const relativePath = String(file.path ?? "");
+    if (!relativePath || path.isAbsolute(relativePath) || relativePath.split(/[\\/]/).includes("..")) {
+      throw new Error("extracted release manifest path invalid");
+    }
+    const absolute = path.join(appDir, ...relativePath.split("/"));
+    if (!existsSync(absolute) || sha256File(absolute) !== file.sha256) {
+      throw new Error("extracted release file hash mismatch: " + relativePath);
+    }
+  }
+}
+
+function extractReleaseArchive(rootDir, commitSha, manifest, identity) {
+  const releaseDir = path.join(rootDir, "releases", commitSha);
+  const tempReleaseDir = path.join(rootDir, "releases", "." + commitSha + ".tmp-" + process.pid);
+  rmSync(tempReleaseDir, { recursive: true, force: true });
+  mkdirSync(path.join(tempReleaseDir, "app"), { recursive: true });
+  runChecked("tar", ["-xzf", manifest.releaseArtifact.archivePath, "-C", path.join(tempReleaseDir, "app")]);
+  verifyExtractedPackage(path.join(tempReleaseDir, "app"), identity);
+  writeFileSync(path.join(tempReleaseDir, "RELEASE_ID.txt"), identity.releaseId + "\n", "utf8");
+  writeFileSync(path.join(tempReleaseDir, "RELEASE_MANIFEST.txt"), manifest.releaseArtifact.manifestPath + "\n", "utf8");
+  writeFileSync(
+    path.join(tempReleaseDir, "RELEASE_ARTIFACT_SHA256.txt"),
+    manifest.releaseArtifact.archiveSha256 + "\n",
+    "utf8",
+  );
+  rmSync(releaseDir, { recursive: true, force: true });
+  renameSync(tempReleaseDir, releaseDir);
+  return releaseDir;
+}
+
+function restartPm2(rootDir) {
+  if (process.env.MANU_DEPLOY_SKIP_PM2 === "true") {
+    return;
+  }
+  runChecked("pm2", ["startOrReload", path.join(repoRoot, "tools", "hosted-sandbox", "deploy", "pm2.ecosystem.config.cjs"), "--update-env"], {
+    env: { ...process.env, MANU_DEPLOY_ROOT: rootDir },
+  });
+}
+
 function defaultManifestPath(commitSha) {
   return path.join(
     repoRoot,
@@ -62,7 +158,16 @@ function readReleaseManifest(identity) {
     }
     return { manifestPath, manifest: null };
   }
-  const manifest = assertReleaseArtifactManifest(JSON.parse(readFileSync(manifestPath, "utf8")), {
+  const parsed = JSON.parse(readFileSync(manifestPath, "utf8"));
+  const artifactDir = String(process.env.MANU_RELEASE_ARTIFACT_DIR ?? "").trim();
+  if (artifactDir && parsed.releaseArtifact) {
+    parsed.releaseArtifact = {
+      ...parsed.releaseArtifact,
+      archivePath: path.join(artifactDir, path.basename(parsed.releaseArtifact.archivePath)),
+      archiveSha256Path: path.join(artifactDir, path.basename(parsed.releaseArtifact.archiveSha256Path)),
+    };
+  }
+  const manifest = assertReleaseArtifactManifest(parsed, {
     requireArchive: !dryRun || process.env.MANU_RELEASE_ARTIFACT_REQUIRED === "true",
   });
   if (manifest.commitSha !== identity.commitSha) {
@@ -92,23 +197,17 @@ if (!dryRun) {
 const releaseDir = path.join(workRoot, "releases", identity.commitSha);
 const previousPointer = path.join(workRoot, "previous-release.txt");
 
-mkdirSync(releaseDir, { recursive: true });
-writeFileSync(path.join(releaseDir, "RELEASE_ID.txt"), identity.releaseId + "\n", "utf8");
-if (artifactManifest.manifest) {
+mkdirSync(path.join(workRoot, "releases"), { recursive: true });
+if (artifactManifest.manifest?.releaseArtifact) {
+  extractReleaseArchive(workRoot, identity.commitSha, artifactManifest.manifest, identity);
+} else {
+  mkdirSync(releaseDir, { recursive: true });
+  writeFileSync(path.join(releaseDir, "RELEASE_ID.txt"), identity.releaseId + "\n", "utf8");
   writeFileSync(path.join(releaseDir, "RELEASE_MANIFEST.txt"), artifactManifest.manifestPath + "\n", "utf8");
-  if (artifactManifest.manifest.releaseArtifact?.archiveSha256) {
-    writeFileSync(
-      path.join(releaseDir, "RELEASE_ARTIFACT_SHA256.txt"),
-      artifactManifest.manifest.releaseArtifact.archiveSha256 + "\n",
-      "utf8",
-    );
-  }
 }
 
 let previous = "";
-if (existsSync(previousPointer)) {
-  previous = readFileSync(previousPointer, "utf8").trim();
-}
+previous = readCurrentReleasePointer(workRoot);
 
 activateRelease(workRoot, identity.commitSha);
 
@@ -117,7 +216,8 @@ try {
   if (dryRun) {
     smokeOk = true;
   } else {
-    await runSmokeCheck(process.env.MANU_SMOKE_BASE_URL);
+    restartPm2(workRoot);
+    await runSmokeCheck(process.env.MANU_SMOKE_BASE_URL, { expectedIdentity: identity });
   }
 } catch {
   smokeOk = false;
@@ -136,7 +236,9 @@ if (!smokeOk) {
   throw new Error("deploy smoke failed");
 }
 
-writeFileSync(previousPointer, identity.commitSha + "\n", "utf8");
+if (previous && previous !== identity.commitSha) {
+  writeFileSync(previousPointer, previous + "\n", "utf8");
+}
 process.stdout.write(JSON.stringify({
   result: "PASS",
   mode: dryRun ? "dry-run" : "apply",

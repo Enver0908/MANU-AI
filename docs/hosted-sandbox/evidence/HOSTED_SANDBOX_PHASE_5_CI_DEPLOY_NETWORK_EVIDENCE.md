@@ -1,40 +1,50 @@
 # Hosted Sandbox Phase 5 - CI, Deploy, and Network Evidence
 
-**Phase:** HS-FAZ-5  
+**Phase:** HS-FAZ-5
 **Date:** 2026-08-27
-**Independent review:** NOT_REQUESTED  
+**Independent review:** NOT_REQUESTED
 **Production:** NO-GO
 
 ## Scope
 
 - HS-DEPLOY-001: Product CI workflow templates, install script, and hardening verifier.
-- HS-DEPLOY-002: Migration/deploy workflow templates, atomic deploy dry-run, rollback smoke gate.
-- HS-DEPLOY-003: Nginx template, Next/proxy security headers, cache policy headers.
-- HS-DEPLOY-004: Deploy preparation is bound to the real release archive manifest (`.tar.gz` + external SHA-256) created by the app release artifact builder.
-- HS-DEPLOY-005: Activation apply preparation requires the archive manifest before the deploy switch can proceed; dry-run remains local and no remote apply is performed.
+- HS-DEPLOY-002: Migration workflow now has a GitHub environment-gated linked Supabase migration apply path.
+- HS-DEPLOY-003: Nginx template preserves hosted security headers and adds a fail-closed maintenance flag while keeping `/api/health/release` available.
+- HS-DEPLOY-004: Deploy preparation is bound to a real `.tar.gz` release archive manifest and recomputes archive SHA-256 before activation.
+- HS-DEPLOY-005: Deploy apply extracts the archive to `releases/<commitSha>/app`, verifies the inner release manifest file hashes, switches the current pointer, runs exact release smoke, and rolls back to the previous pointer on smoke failure.
+- HS-DEPLOY-006: A local SSH operator wrapper exists for remote apply and requires explicit approval, strict known_hosts, and the pinned host key fingerprint.
 
 ## Executor checks
 
 | Command | Result |
 | --- | --- |
-| `node --test tools/hosted-sandbox/deploy/hosted-sandbox-deploy.test.mjs` | PASS |
-| `cd app && npx vitest run src/lib/hosted-sandbox-security-headers.test.ts` | PASS |
+| `node --test tools/hosted-sandbox/deploy/hosted-sandbox-deploy.test.mjs` | PASS 8/8 as part of hosted Node run |
 | `node tools/hosted-sandbox/deploy/verify-workflow-hardening.mjs` | PASS |
-| `node tools/hosted-sandbox/deploy/build-release-artifact.mjs --manifest-only` | PASS |
-| `node tools/hosted-sandbox/deploy/build-release-artifact.mjs` | PASS |
 | `node tools/hosted-sandbox/deploy/verify-nginx-template.mjs` | PASS |
-| `node --test tools/hosted-sandbox/activation/hosted-activation.test.mjs` | PASS |
-| `node tools/hosted-sandbox/activation/run-hosted-activation.mjs` | PASS dry-run |
-| `cd app && npx vitest run src/lib/hosted-sandbox-security-headers.test.ts src/lib/hosted-sandbox-release-identity.test.ts --no-file-parallelism --maxWorkers=1` | PASS |
+| `node --test tools/hosted-sandbox/activation/hosted-activation.test.mjs` | PASS 3/3 |
+| `node --test tools/hosted-sandbox/hosted-sandbox-backup.test.mjs app/scripts/hosted-sandbox-backup-restore.test.mjs` | PASS 12/12 combined |
+| `cd app && npx vitest run src/lib/hosted-sandbox-tenant-isolation.test.ts src/lib/hosted-sandbox-security.test.ts src/lib/hosted-sandbox-release-identity.test.ts --no-file-parallelism --maxWorkers=1` | PASS 20/20 |
 | `cd app && npm run typecheck` | PASS |
-| `cd app && npm run lint` | PASS with existing 77 warnings |
+| `cd app && npm run lint` | PASS, 77 existing warnings, 0 errors |
+| `cd app && npm run build` | PASS |
+| `cd app && npm run release:verify` | PASS |
+
+## Remote/runtime checks
+
+| Check | Result |
+| --- | --- |
+| `docker info --format '{{.ServerVersion}}'` | BLOCKED: Docker Desktop Linux engine pipe not available |
+| `where.exe supabase` | BLOCKED: Supabase CLI not found on PATH |
+| `where.exe pg_dump` | BLOCKED: PostgreSQL client tooling not found on PATH |
+| `where.exe age` | BLOCKED: age encryption CLI not found on PATH |
+| Hosted migration apply | NOT_RUN: requires Supabase CLI, linked project secrets, and separate user approval |
+| Real hosted backup/restore drill | NOT_RUN: requires `pg_dump`, `age`, hosted DB URL, age keys, isolated restore target, and separate user approval |
+| Hosted cleanup apply | NOT_RUN: requires verified backup manifest and separate user approval |
+| Remote VPS deploy/rollback rehearsal | NOT_RUN: requires SSH known_hosts pin, host/user env, built artifact, and separate user approval |
 
 ## Notes
 
-- Workflow templates live under `tools/hosted-sandbox/deploy/workflow-templates/` and are copied into `.github/workflows/` by `install-workflows.mjs`.
-- Product CI now runs a production build and creates the hosted release archive manifest. The deploy workflow requires `MANU_RELEASE_ARTIFACT_REQUIRED=true`, builds the archive manifest before deploy dry-run, and the deploy script records the archive SHA-256 beside the release pointer.
-- The hosted deploy manifest records `mode: "archive"` only when the app release artifact builder has created the real archive and `.tar.gz.sha256` sidecar.
-- The Nginx verifier compares the template CSP to `app/src/lib/hosted-sandbox-security-headers.ts` and checks forwarded host/IP headers used by the trusted-proxy boundary.
-- Activation apply preparation passes the release artifact manifest path into the deploy switch and requires archive metadata in apply mode. Local dry-run still uses `manifest-only`.
-- Remote GitHub environment approvals, SSH apply, and VPS activation remain user-command gated.
-- Forbidden production/provider/channel/billing deploy flags are rejected by deploy contract checks.
+- Deploy smoke now requires HTTP 200 and exact `/api/health/release` identity match for release ID, commit SHA, migration fingerprint, and compatibility version.
+- PM2 is configured to run the Next standalone `server.js` from the active release app directory.
+- The deploy workflow remains a dry-run artifact gate. Real remote apply is intentionally local-operator gated.
+- Remote apply, hosted cleanup apply, and hosted migration apply are not claimed as PASS in this local evidence.

@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createClient } from "@supabase/supabase-js";
+import { readBackupManifest } from "./lib/hosted-sandbox-backup-manifest.mjs";
 
 export const DEMO_TENANT_UUID = "00000000-0000-4000-8000-000000000001";
 export const DEMO_EMAIL = "demo@manu.local";
@@ -76,21 +77,6 @@ export function validateCleanupInventoryManifest(manifest) {
   }
 
   return { schemaVersion: 1, tenantId: DEMO_TENANT_UUID, tables };
-}
-
-export function readBackupManifest(manifestPath) {
-  const raw = readFileSync(manifestPath, "utf8");
-  return validateBackupManifest(JSON.parse(raw));
-}
-
-export function validateBackupManifest(manifest) {
-  if (!manifest || typeof manifest !== "object") {
-    throw new Error("backup_manifest_invalid");
-  }
-  if (!manifest.projectRef || !manifest.backupSha256) {
-    throw new Error("backup_manifest_incomplete");
-  }
-  return manifest;
 }
 
 export async function countRows(admin, table, column, tenantId) {
@@ -185,6 +171,63 @@ export async function auditCrossTenantMemberships(admin, tenantId = DEMO_TENANT_
   return crossTenantUsers;
 }
 
+export async function findDemoAuthUsers(admin, tenantId = DEMO_TENANT_UUID) {
+  const memberships = await admin.from("tenant_memberships").select("user_id").eq("tenant_id", tenantId);
+  if (memberships.error) {
+    throw new Error(`membership_audit_failed:${memberships.error.message}`);
+  }
+
+  const users = [];
+  for (const membership of memberships.data ?? []) {
+    const user = await admin.auth.admin.getUserById(membership.user_id);
+    if (user.error) {
+      throw new Error(`auth_user_lookup_failed:${membership.user_id}`);
+    }
+    if (user.data.user?.email === DEMO_EMAIL) {
+      users.push({ id: membership.user_id, email: DEMO_EMAIL });
+    }
+  }
+  return users;
+}
+
+export async function findDemoStorageObjects(admin, tenantId = DEMO_TENANT_UUID) {
+  const storage = admin.schema("storage");
+  const { data, error } = await storage
+    .from("objects")
+    .select("bucket_id,name")
+    .ilike("name", `%${tenantId}%`);
+  if (error) {
+    if (/schema|relation|permission/i.test(error.message)) {
+      return [];
+    }
+    throw new Error(`storage_inventory_failed:${error.message}`);
+  }
+  return (data ?? []).map((row) => ({ bucketId: row.bucket_id, name: row.name }));
+}
+
+export async function deleteDemoStorageObjects(admin, objects) {
+  const byBucket = new Map();
+  for (const object of objects) {
+    if (!byBucket.has(object.bucketId)) byBucket.set(object.bucketId, []);
+    byBucket.get(object.bucketId).push(object.name);
+  }
+  for (const [bucketId, names] of byBucket) {
+    const { error } = await admin.storage.from(bucketId).remove(names);
+    if (error) {
+      throw new Error(`storage_delete_failed:${bucketId}:${error.message}`);
+    }
+  }
+}
+
+export async function deleteDemoAuthUsers(admin, users) {
+  for (const user of users) {
+    const { error } = await admin.auth.admin.deleteUser(user.id);
+    if (error) {
+      throw new Error(`auth_user_delete_failed:${user.id}`);
+    }
+  }
+}
+
 export function validateCleanupEnvironment(env = process.env) {
   const url = env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceRoleKey = env.SUPABASE_SERVICE_ROLE_KEY;
@@ -221,10 +264,7 @@ export async function runDemoCleanup(options = {}) {
     if (!manifestPath) {
       throw new Error("backup_manifest_missing");
     }
-    const manifest = readBackupManifest(path.resolve(manifestPath));
-    if (manifest.projectRef !== projectRef) {
-      throw new Error("backup_manifest_project_ref_mismatch");
-    }
+    readBackupManifest(path.resolve(manifestPath), { expectedProjectRef: projectRef });
   }
 
   const admin =
@@ -242,6 +282,8 @@ export async function runDemoCleanup(options = {}) {
   if (crossTenantUsers.length > 0) {
     throw new Error("cross_tenant_memberships");
   }
+  const demoAuthUsers = await findDemoAuthUsers(admin);
+  const demoStorageObjects = await findDemoStorageObjects(admin);
 
   const cleanupResult = await callCleanupRpc(admin, {
     apply,
@@ -259,6 +301,8 @@ export async function runDemoCleanup(options = {}) {
       inventory,
       inventoryHash,
       totalRows,
+      demoAuthUserCount: demoAuthUsers.length,
+      demoStorageObjectCount: demoStorageObjects.length,
       deleted: false,
     };
   }
@@ -272,6 +316,8 @@ export async function runDemoCleanup(options = {}) {
   if (postTotalRows !== 0) {
     throw new Error("cleanup_incomplete");
   }
+  await deleteDemoStorageObjects(admin, demoStorageObjects);
+  await deleteDemoAuthUsers(admin, demoAuthUsers);
 
   return {
     mode: "apply",
@@ -280,6 +326,8 @@ export async function runDemoCleanup(options = {}) {
     inventory,
     inventoryHash,
     totalRows,
+    demoAuthUserCount: demoAuthUsers.length,
+    demoStorageObjectCount: demoStorageObjects.length,
     deleted: true,
     postInventory,
     postTotalRows,
@@ -293,6 +341,8 @@ function logCleanupResult(result) {
     `projectRef=${result.projectRef}`,
     `inventoryHash=${result.inventoryHash}`,
     `totalRows=${result.totalRows}`,
+    `demoAuthUserCount=${result.demoAuthUserCount ?? 0}`,
+    `demoStorageObjectCount=${result.demoStorageObjectCount ?? 0}`,
   ];
   for (const row of result.inventory) {
     if (row.count > 0) {

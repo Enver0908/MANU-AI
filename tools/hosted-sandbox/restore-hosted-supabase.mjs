@@ -15,7 +15,9 @@ export function validateRestoreEnvironment(env = process.env, manifestPath) {
   if (!manifestPath) {
     throw new Error("backup_manifest_missing");
   }
-  const manifest = readBackupManifest(path.resolve(manifestPath));
+  const manifest = readBackupManifest(path.resolve(manifestPath), {
+    expectedProjectRef: env.MANU_HOSTED_SANDBOX_PROJECT_REF,
+  });
   const databaseUrl = env.MANU_HOSTED_SANDBOX_RESTORE_DATABASE_URL;
   if (!databaseUrl) {
     throw new Error("restore_database_url_missing");
@@ -27,10 +29,6 @@ export function validateRestoreEnvironment(env = process.env, manifestPath) {
   const encryptedSha256 = sha256File(manifest.encryptedPath);
   if (encryptedSha256 !== manifest.backupSha256) {
     throw new Error("backup_hash_mismatch");
-  }
-  const expectedProjectRef = env.MANU_HOSTED_SANDBOX_PROJECT_REF;
-  if (expectedProjectRef && expectedProjectRef !== manifest.projectRef) {
-    throw new Error("backup_manifest_project_ref_mismatch");
   }
   return { manifest, databaseUrl, ageIdentityFile };
 }
@@ -45,7 +43,7 @@ export function runHostedRestore(options = {}) {
     return {
       mode: "dry-run",
       requestId,
-      projectRef: manifest.projectRef,
+      sourceProjectRef: manifest.sourceProjectRef,
       encryptedPath: manifest.encryptedPath,
       backupSha256: manifest.backupSha256,
       restored: false,
@@ -77,7 +75,7 @@ export function runHostedRestore(options = {}) {
   return {
     mode: "apply",
     requestId,
-    projectRef: manifest.projectRef,
+    sourceProjectRef: manifest.sourceProjectRef,
     encryptedPath: manifest.encryptedPath,
     backupSha256: manifest.backupSha256,
     restored: true,
@@ -94,7 +92,7 @@ if (invokedDirectly) {
       `${[
         `requestId=${result.requestId}`,
         `mode=${result.mode}`,
-        `projectRef=${result.projectRef}`,
+        `sourceProjectRef=${result.sourceProjectRef}`,
         `backupSha256=${result.backupSha256}`,
         `restored=${result.restored}`,
       ].join("\n")}\n`,

@@ -16,9 +16,9 @@ import {
   hashInventory,
   isLocalSupabaseUrl,
   parseCleanupArgs,
-  validateBackupManifest,
   validateCleanupInventoryManifest,
 } from "../../scripts/hosted-sandbox-demo-cleanup.mjs";
+import { validateBackupManifest } from "../../scripts/lib/hosted-sandbox-backup-manifest.mjs";
 
 const storeSource = readFileSync(fileURLToPath(new URL("./supabase-store.ts", import.meta.url)), "utf8");
 
@@ -218,13 +218,19 @@ describe("hosted sandbox tenant isolation", () => {
   });
 
   it("requires backup manifest fields before apply", () => {
-    expect(() => validateBackupManifest({ projectRef: "local-dev" })).toThrow("backup_manifest_incomplete");
+    expect(() => validateBackupManifest({ sourceProjectRef: "local-dev" })).toThrow("backup_manifest_schema_mismatch");
     expect(validateBackupManifest({
-      projectRef: "local-dev",
+      schemaVersion: "2.0.0",
+      sourceProjectRef: "local-dev",
       backupSha256: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      encryptedPath: "backup.age",
+      createdAt: new Date().toISOString(),
     })).toEqual({
-      projectRef: "local-dev",
+      schemaVersion: "2.0.0",
+      sourceProjectRef: "local-dev",
       backupSha256: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      encryptedPath: "backup.age",
+      createdAt: expect.any(String),
     });
   });
 });

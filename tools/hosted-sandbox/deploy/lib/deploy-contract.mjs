@@ -1,4 +1,7 @@
-export const RELEASES_ROOT = "/opt/manu-ai/releases";
+import { createHash } from "node:crypto";
+import { existsSync, readFileSync } from "node:fs";
+
+export const RELEASES_ROOT = "/opt/manu-ai";
 export const CURRENT_SYMLINK = "/opt/manu-ai/current";
 
 export const FORBIDDEN_DEPLOY_ENV_KEYS = [
@@ -19,7 +22,6 @@ export const FORBIDDEN_WORKFLOW_PATTERNS = [
   /\bMANU_ENABLE_PROVIDER_EGRESS\b/,
   /\bMANU_ENABLE_CHANNEL_EGRESS\b/,
   /\bMANU_ENABLE_LIVE_BILLING\b/,
-  /\bsupabase\s+db\s+push\b/i,
   /\bvercel\s+deploy\b/i,
 ];
 
@@ -84,6 +86,13 @@ export function assertReleaseArtifactManifest(manifest, { requireArchive = false
     }
     if (!String(artifact.archiveSha256Path ?? "").endsWith(".tar.gz.sha256")) {
       throw new Error("release artifact sha256 path must end with .tar.gz.sha256");
+    }
+    if (!existsSync(artifact.archivePath)) {
+      throw new Error("release artifact archive is missing");
+    }
+    const actualArchiveSha256 = createHash("sha256").update(readFileSync(artifact.archivePath)).digest("hex");
+    if (actualArchiveSha256 !== String(artifact.archiveSha256).toLowerCase()) {
+      throw new Error("release artifact archive sha256 mismatch");
     }
   }
   return manifest;

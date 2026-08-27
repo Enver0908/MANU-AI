@@ -4,6 +4,7 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { buildReleaseIdentity } from "../../../app/scripts/lib/release-identity.mjs";
+import { readBackupManifest, sha256File } from "../lib/backup-manifest.mjs";
 import { assertDeployEnvironmentSafe } from "../deploy/lib/deploy-contract.mjs";
 import {
   ACTIVATION_STEPS,
@@ -16,7 +17,11 @@ import {
 
 const repoRoot = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..", "..");
 const runtimeDir = path.join(repoRoot, ".manu-runtime", "hosted-sandbox", "activation");
-const maintenanceFlag = path.join(runtimeDir, "maintenance-mode.flag");
+
+function resolveMaintenanceFlag(env) {
+  const root = String(env.MANU_DEPLOY_WORK_ROOT ?? "").trim() || "/opt/manu-ai";
+  return path.join(root, "maintenance.flag");
+}
 
 function runNodeScript(scriptRel, args = [], env = process.env) {
   const scriptPath = path.join(repoRoot, scriptRel);
@@ -49,8 +54,10 @@ export async function runHostedActivation(options = {}) {
   assertCleanupApplyApproval(env, applyCleanup);
 
   mkdirSync(runtimeDir, { recursive: true });
+  const maintenanceFlag = resolveMaintenanceFlag(env);
 
   if (apply) {
+    mkdirSync(path.dirname(maintenanceFlag), { recursive: true });
     writeFileSync(maintenanceFlag, new Date().toISOString() + "\n", "utf8");
     report.steps.maintenance_on = "APPLIED";
   } else {
@@ -62,12 +69,28 @@ export async function runHostedActivation(options = {}) {
   report.commitSha = identity.commitSha;
   report.migrationFingerprint = identity.migrationFingerprint;
 
-  const backupManifestDir = path.join(repoRoot, ".manu-runtime", "hosted-sandbox", "backups");
-  const hasBackupManifest = existsSync(backupManifestDir);
   if (apply && !isApprovalEnabled(env, ACTIVATION_APPROVAL_KEYS.backup)) {
     throw new Error("backup approval missing");
   }
-  report.steps.backup_freshness = hasBackupManifest ? "MANIFEST_PRESENT" : apply ? "BLOCKED_NO_MANIFEST" : "SIMULATED";
+  const backupManifestPath = String(env.MANU_HOSTED_SANDBOX_BACKUP_MANIFEST ?? "").trim();
+  if (backupManifestPath) {
+    const manifest = readBackupManifest(path.resolve(backupManifestPath), {
+      expectedProjectRef: env.MANU_HOSTED_SANDBOX_PROJECT_REF,
+    });
+    if (sha256File(manifest.encryptedPath) !== manifest.backupSha256) {
+      throw new Error("backup_hash_mismatch");
+    }
+    report.steps.backup_freshness = "PASS";
+    report.backupManifest = {
+      sourceProjectRef: manifest.sourceProjectRef,
+      createdAt: manifest.createdAt,
+      backupSha256: manifest.backupSha256,
+    };
+  } else if (apply) {
+    throw new Error("backup_manifest_missing");
+  } else {
+    report.steps.backup_freshness = "SIMULATED";
+  }
 
   const manifestOutput = runNodeScript(
     "tools/hosted-sandbox/deploy/build-release-artifact.mjs",

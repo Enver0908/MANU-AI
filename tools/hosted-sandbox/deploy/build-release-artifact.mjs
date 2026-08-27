@@ -24,6 +24,7 @@ const artifactSources = [
   "tools/hosted-sandbox/deploy/workflow-templates/hosted-sandbox-migration.yml",
   "tools/hosted-sandbox/deploy/workflow-templates/hosted-sandbox-deploy.yml",
   "tools/hosted-sandbox/deploy/deploy-hosted-release.mjs",
+  "tools/hosted-sandbox/deploy/apply-hosted-release.mjs",
   "tools/hosted-sandbox/deploy/pm2.ecosystem.config.cjs",
   "tools/hosted-sandbox/deploy/nginx/hosted-sandbox.conf.template",
 ];
