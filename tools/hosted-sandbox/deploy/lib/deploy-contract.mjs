@@ -53,3 +53,38 @@ export function assertSshHostKeyPin(pin) {
   }
   return normalized;
 }
+
+export function assertReleaseArtifactManifest(manifest, { requireArchive = false } = {}) {
+  if (!manifest || typeof manifest !== "object") {
+    throw new Error("release artifact manifest is required");
+  }
+  if (!/^[a-f0-9]{40}$/.test(String(manifest.commitSha ?? ""))) {
+    throw new Error("release artifact manifest commit SHA is invalid");
+  }
+  if (!/^[a-f0-9]{64}$/.test(String(manifest.migrationFingerprint ?? ""))) {
+    throw new Error("release artifact manifest migration fingerprint is invalid");
+  }
+  if (!String(manifest.releaseId ?? "").startsWith("hs-")) {
+    throw new Error("release artifact manifest release id is invalid");
+  }
+  const mode = String(manifest.mode ?? "manifest-only");
+  if (mode !== "manifest-only" && mode !== "archive") {
+    throw new Error("release artifact manifest mode is invalid");
+  }
+  const artifact = manifest.releaseArtifact ?? null;
+  if (requireArchive || mode === "archive") {
+    if (!artifact) {
+      throw new Error("release artifact metadata is required");
+    }
+    if (!/^[a-f0-9]{64}$/.test(String(artifact.archiveSha256 ?? ""))) {
+      throw new Error("release artifact archive sha256 is invalid");
+    }
+    if (!String(artifact.archivePath ?? "").endsWith(".tar.gz")) {
+      throw new Error("release artifact archive path must end with .tar.gz");
+    }
+    if (!String(artifact.archiveSha256Path ?? "").endsWith(".tar.gz.sha256")) {
+      throw new Error("release artifact sha256 path must end with .tar.gz.sha256");
+    }
+  }
+  return manifest;
+}

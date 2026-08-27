@@ -3,6 +3,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildReleaseIdentity } from "../../../app/scripts/lib/release-identity.mjs";
+import { buildReleaseArtifact } from "../../../app/scripts/build-release-artifact.mjs";
 import { assertDeployEnvironmentSafe } from "./lib/deploy-contract.mjs";
 import { buildArtifactManifest, collectArtifactEntries } from "./lib/artifact-manifest.mjs";
 
@@ -16,6 +17,7 @@ const identity = buildReleaseIdentity({ repoRoot, env: process.env });
 const artifactSources = [
   "app/next.config.ts",
   "app/public/sw.js",
+  "app/scripts/build-release-artifact.mjs",
   "app/scripts/lib/release-identity.mjs",
   "app/src/lib/hosted-sandbox-security-headers.ts",
   "tools/hosted-sandbox/deploy/workflow-templates/hosted-sandbox-product-ci.yml",
@@ -30,12 +32,24 @@ if (!manifestOnly) {
   artifactSources.push("app/package.json");
 }
 
+const releaseArtifact = manifestOnly
+  ? null
+  : buildReleaseArtifact({
+      appRoot: path.join(repoRoot, "app"),
+      repoRoot,
+      env: { ...process.env, NODE_ENV: "production" },
+      identity,
+    });
+
 const entries = collectArtifactEntries(repoRoot, artifactSources);
 const manifest = buildArtifactManifest({
   commitSha: identity.commitSha,
   migrationFingerprint: identity.migrationFingerprint,
   releaseId: identity.releaseId,
   compatibilityVersion: identity.compatibilityVersion,
+  builtAt: identity.builtAt,
+  mode: manifestOnly ? "manifest-only" : "archive",
+  releaseArtifact,
   entries,
 });
 
@@ -49,4 +63,11 @@ const outDir = path.join(
 mkdirSync(outDir, { recursive: true });
 const manifestPath = path.join(outDir, "release-manifest.json");
 writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + "\n", "utf8");
-process.stdout.write(JSON.stringify({ result: "PASS", manifestPath, releaseId: identity.releaseId }, null, 2) + "\n");
+process.stdout.write(JSON.stringify({
+  result: "PASS",
+  mode: manifest.mode,
+  manifestPath,
+  releaseId: identity.releaseId,
+  archivePath: releaseArtifact?.archivePath ?? null,
+  archiveSha256: releaseArtifact?.archiveSha256 ?? null,
+}, null, 2) + "\n");

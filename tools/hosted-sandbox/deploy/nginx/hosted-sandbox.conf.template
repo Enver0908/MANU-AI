@@ -16,6 +16,11 @@ server {
   add_header Content-Security-Policy "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https: wss:; worker-src 'self' blob:;" always;
 
   proxy_hide_header X-Powered-By;
+  proxy_set_header Host $host;
+  proxy_set_header X-Forwarded-Host $host;
+  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+  proxy_set_header X-Real-IP $remote_addr;
+  proxy_set_header X-Forwarded-Proto $scheme;
 
   location /_next/static/ {
     proxy_pass http://127.0.0.1:3000;
@@ -35,8 +40,5 @@ server {
   location / {
     proxy_pass http://127.0.0.1:3000;
     add_header Cache-Control "no-store, no-cache, must-revalidate" always;
-    proxy_set_header Host $host;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Proto $scheme;
   }
 }

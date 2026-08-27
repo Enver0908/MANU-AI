@@ -29,8 +29,21 @@ function validateWorkflowDir(dir) {
   }
   const migration = readFileSync(path.join(dir, "hosted-sandbox-migration.yml"), "utf8");
   const deploy = readFileSync(path.join(dir, "hosted-sandbox-deploy.yml"), "utf8");
+  const productCi = readFileSync(path.join(dir, "hosted-sandbox-product-ci.yml"), "utf8");
   if (!migration.includes("environment:")) throw new Error("migration workflow missing environment gate in " + dir);
   if (!deploy.includes("environment:")) throw new Error("deploy workflow missing environment gate in " + dir);
+  if (!deploy.includes('MANU_RELEASE_ARTIFACT_REQUIRED: "true"')) {
+    throw new Error("deploy workflow missing required release artifact gate in " + dir);
+  }
+  if (!deploy.includes("node tools/hosted-sandbox/deploy/build-release-artifact.mjs")) {
+    throw new Error("deploy workflow missing archive artifact build in " + dir);
+  }
+  if (!productCi.includes("npm run build")) {
+    throw new Error("product CI missing production build in " + dir);
+  }
+  if (!productCi.includes("node tools/hosted-sandbox/deploy/build-release-artifact.mjs")) {
+    throw new Error("product CI missing hosted release archive build in " + dir);
+  }
   return targets;
 }
 

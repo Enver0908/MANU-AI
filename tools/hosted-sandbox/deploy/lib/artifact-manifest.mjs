@@ -30,13 +30,25 @@ export function collectArtifactEntries(repoRoot, relativePaths) {
 }
 
 export function buildArtifactManifest(input) {
+  const mode = input.mode ?? "manifest-only";
+  if (!["manifest-only", "archive"].includes(mode)) {
+    throw new Error("artifact manifest mode is invalid");
+  }
+  const releaseArtifact = input.releaseArtifact
+    ? normalizeReleaseArtifact(input.releaseArtifact)
+    : null;
+  if (mode === "archive" && !releaseArtifact) {
+    throw new Error("archive mode requires release artifact metadata");
+  }
   const manifest = {
     schemaVersion: "1.0.0",
+    mode,
     commitSha: input.commitSha,
     migrationFingerprint: input.migrationFingerprint,
     releaseId: input.releaseId,
     compatibilityVersion: input.compatibilityVersion,
     builtAt: input.builtAt ?? new Date().toISOString(),
+    releaseArtifact,
     entries: input.entries,
     manifestSha256: "",
   };
@@ -47,8 +59,32 @@ export function buildArtifactManifest(input) {
     releaseId: manifest.releaseId,
     compatibilityVersion: manifest.compatibilityVersion,
     builtAt: manifest.builtAt,
+    mode: manifest.mode,
+    releaseArtifact: manifest.releaseArtifact,
     entries: manifest.entries,
   });
   manifest.manifestSha256 = sha256Buffer(Buffer.from(body, "utf8"));
   return manifest;
+}
+
+function normalizeReleaseArtifact(artifact) {
+  const archivePath = String(artifact.archivePath ?? "").trim();
+  const archiveSha256Path = String(artifact.archiveSha256Path ?? "").trim();
+  const manifestPath = String(artifact.manifestPath ?? "").trim();
+  const archiveSha256 = String(artifact.archiveSha256 ?? "").trim().toLowerCase();
+  if (!archivePath || !archiveSha256Path || !manifestPath) {
+    throw new Error("release artifact paths are required");
+  }
+  if (!/^[a-f0-9]{64}$/.test(archiveSha256)) {
+    throw new Error("release artifact sha256 must be a 64-character hex digest");
+  }
+  return {
+    cacheVersion: String(artifact.cacheVersion ?? "").trim(),
+    packageRoot: String(artifact.packageRoot ?? "").trim(),
+    manifestPath,
+    archivePath,
+    archiveSha256Path,
+    archiveSha256,
+    fileCount: Number(artifact.fileCount ?? 0),
+  };
 }

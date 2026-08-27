@@ -16,7 +16,7 @@ jobs:
   product-ci:
     name: Product CI and artifact manifest
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     env:
       MANU_CI_NO_PRODUCTION_EFFECTS: "true"
     steps:
@@ -48,6 +48,13 @@ jobs:
         run: |
           npx vitest run src/lib/hosted-sandbox-release-identity.test.ts src/lib/hosted-sandbox-security-headers.test.ts
 
+      - name: Production build
+        working-directory: app
+        run: npm run build
+
+      - name: Build hosted release archive
+        run: node tools/hosted-sandbox/deploy/build-release-artifact.mjs
+
       - name: Deploy machinery tests
         run: node --test tools/hosted-sandbox/deploy/hosted-sandbox-deploy.test.mjs
 
@@ -59,9 +66,6 @@ jobs:
 
       - name: Verify nginx template
         run: node tools/hosted-sandbox/deploy/verify-nginx-template.mjs
-
-      - name: Build release manifest
-        run: node tools/hosted-sandbox/deploy/build-release-artifact.mjs --manifest-only
 
       - name: Hosted sandbox verifier
         run: node app/scripts/verify-hosted-sandbox-contracts.mjs

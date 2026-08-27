@@ -6,6 +6,7 @@ import { buildReleaseIdentity } from "../../../app/scripts/lib/release-identity.
 import {
   assertDeployEnvironmentSafe,
   assertMigrationFingerprintMatch,
+  assertReleaseArtifactManifest,
   assertSshHostKeyPin,
   RELEASES_ROOT,
 } from "./lib/deploy-contract.mjs";
@@ -41,11 +42,45 @@ function activateRelease(rootDir, commitSha) {
   return releaseDir;
 }
 
+function defaultManifestPath(commitSha) {
+  return path.join(
+    repoRoot,
+    ".manu-runtime",
+    "hosted-sandbox",
+    "artifacts",
+    commitSha,
+    "release-manifest.json",
+  );
+}
+
+function readReleaseManifest(identity) {
+  const configured = String(process.env.MANU_RELEASE_ARTIFACT_MANIFEST ?? "").trim();
+  const manifestPath = configured ? path.resolve(configured) : defaultManifestPath(identity.commitSha);
+  if (!existsSync(manifestPath)) {
+    if (!dryRun || process.env.MANU_RELEASE_ARTIFACT_REQUIRED === "true") {
+      throw new Error("release artifact manifest missing: " + manifestPath);
+    }
+    return { manifestPath, manifest: null };
+  }
+  const manifest = assertReleaseArtifactManifest(JSON.parse(readFileSync(manifestPath, "utf8")), {
+    requireArchive: !dryRun || process.env.MANU_RELEASE_ARTIFACT_REQUIRED === "true",
+  });
+  if (manifest.commitSha !== identity.commitSha) {
+    throw new Error("release artifact manifest commit mismatch");
+  }
+  assertMigrationFingerprintMatch(identity.migrationFingerprint, manifest.migrationFingerprint);
+  if (manifest.releaseId !== identity.releaseId) {
+    throw new Error("release artifact manifest release id mismatch");
+  }
+  return { manifestPath, manifest };
+}
+
 assertDeployEnvironmentSafe(process.env);
 
 const identity = buildReleaseIdentity({ repoRoot, env: process.env });
 const expectedFingerprint = String(process.env.MANU_EXPECTED_MIGRATION_FINGERPRINT ?? identity.migrationFingerprint);
 assertMigrationFingerprintMatch(expectedFingerprint, identity.migrationFingerprint);
+const artifactManifest = readReleaseManifest(identity);
 
 if (!dryRun) {
   assertSshHostKeyPin(process.env.MANU_SSH_HOST_KEY_PIN);
@@ -59,6 +94,16 @@ const previousPointer = path.join(workRoot, "previous-release.txt");
 
 mkdirSync(releaseDir, { recursive: true });
 writeFileSync(path.join(releaseDir, "RELEASE_ID.txt"), identity.releaseId + "\n", "utf8");
+if (artifactManifest.manifest) {
+  writeFileSync(path.join(releaseDir, "RELEASE_MANIFEST.txt"), artifactManifest.manifestPath + "\n", "utf8");
+  if (artifactManifest.manifest.releaseArtifact?.archiveSha256) {
+    writeFileSync(
+      path.join(releaseDir, "RELEASE_ARTIFACT_SHA256.txt"),
+      artifactManifest.manifest.releaseArtifact.archiveSha256 + "\n",
+      "utf8",
+    );
+  }
+}
 
 let previous = "";
 if (existsSync(previousPointer)) {
@@ -99,4 +144,7 @@ process.stdout.write(JSON.stringify({
   currentLink: currentPointerPath(workRoot),
   releaseId: identity.releaseId,
   commitSha: identity.commitSha,
+  artifactManifestPath: artifactManifest.manifestPath,
+  artifactMode: artifactManifest.manifest?.mode ?? "not-present",
+  artifactSha256: artifactManifest.manifest?.releaseArtifact?.archiveSha256 ?? null,
 }, null, 2) + "\n");

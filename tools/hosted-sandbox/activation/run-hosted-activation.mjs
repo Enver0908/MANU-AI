@@ -69,7 +69,11 @@ export async function runHostedActivation(options = {}) {
   }
   report.steps.backup_freshness = hasBackupManifest ? "MANIFEST_PRESENT" : apply ? "BLOCKED_NO_MANIFEST" : "SIMULATED";
 
-  const manifestOutput = runNodeScript("tools/hosted-sandbox/deploy/build-release-artifact.mjs", ["--manifest-only"], env);
+  const manifestOutput = runNodeScript(
+    "tools/hosted-sandbox/deploy/build-release-artifact.mjs",
+    apply ? [] : ["--manifest-only"],
+    env,
+  );
   const manifestSummary = JSON.parse(manifestOutput);
   report.steps.release_manifest = "PASS";
   report.manifestSummary = manifestSummary;
@@ -107,6 +111,8 @@ export async function runHostedActivation(options = {}) {
       ...env,
       MANU_DEPLOY_TEXT_POINTER: env.MANU_DEPLOY_TEXT_POINTER ?? "true",
       MANU_EXPECTED_MIGRATION_FINGERPRINT: identity.migrationFingerprint,
+      MANU_RELEASE_ARTIFACT_REQUIRED: apply ? "true" : (env.MANU_RELEASE_ARTIFACT_REQUIRED ?? ""),
+      MANU_RELEASE_ARTIFACT_MANIFEST: manifestPath,
     },
   );
   report.steps.deploy_switch = apply ? "APPLIED" : "DRY_RUN_PASS";
