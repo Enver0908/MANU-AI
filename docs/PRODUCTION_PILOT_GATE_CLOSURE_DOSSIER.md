@@ -4,9 +4,11 @@
 
 **Current authority (2026-08-21):** Stage 6 is locally `STAGE_6_CLOSED` by `docs/PHASE_85_STAGE_6_CLOSURE_DECISION.json` with Android physical evidence and explicit iPhone `WAIVED_NOT_EXECUTED` risk acceptance. Stage 5 is closed locally and R-405 is `technically_resolved` by the current dependency evidence. This does not close the production-pilot gate: production remains `NO-GO`, and external approval, operations, rollout, real-integration prerequisites, and future iOS production-pilot physical validation remain independently required. Authority: `docs/PHASE_85_STAGE_6_CLOSURE_DECISION.json`, `docs/PHASE_85_STAGE_5_CLOSURE_DECISION.json`, `docs/PHASE_85_STAGE_5_DEPENDENCY_SECURITY_REPORT.json`, and `docs/RISK_REGISTER.md`.
 
-**Historical interpretation rule:** every older `Stage 6 not closed`, `Stage 5 unstarted/blocked`, or `R-405 open` statement below records its dated checkpoint and is superseded for current technical status by the authority above. It remains valid evidence that production was and still is `NO-GO`; local technical resolution is not production approval.
+**Current Hosted Sandbox technical-debt authority (2026-08-28):** Hosted Sandbox technical debt is `TECHNICAL_DEBT_CLOSED` by `docs/hosted-sandbox/evidence/HOSTED_SANDBOX_TECHNICAL_DEBT_CLOSURE_EVIDENCE.md`, including remote migration apply, backup/encryption, isolated restore, cleanup apply, manual remote deploy, exact public smoke, and rollback evidence. This does not close any production-pilot gate.
 
-Phase 85 Stage 4D remediation reclosure update, 2026-07-29: Faz 1 Profile and Tenant/Account Foundation, Faz 2 Auth/Billing/PWA Hardening, the pre-Faz 3 RLS repair, and Faz 3 evidence reconciliation are reclosed and committed locally at `e369e1b`, with evidence in `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_1_ACCOUNT_FOUNDATION_EVIDENCE.md`, `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_2_SECURITY_BILLING_PWA_EVIDENCE.md`, and `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_3_RECLOSURE_EVIDENCE.md`. The branch has not been pushed and Stage 5 is unstarted. No production gate is closed by this result; clean local RLS passed 53/53 with 0 skipped, production remains `NO-GO`, R-405 was open at that checkpoint, and real integration paths remain closed.
+**Historical interpretation rule:** every older `Stage 6 not closed`, `Stage 5 unstarted/blocked`, `R-405 open`, `remote not run`, or old `next` statement below records its dated checkpoint and is superseded for current technical status by the authority above. It remains valid evidence that production was and still is `NO-GO`; local technical resolution is not production approval.
+
+Phase 85 Stage 4D remediation reclosure update, 2026-07-29: Faz 1 Profile and Tenant/Account Foundation, Faz 2 Auth/Billing/PWA Hardening, the pre-Faz 3 RLS repair, and Faz 3 evidence reconciliation were reclosed and committed locally at `e369e1b`, with evidence in `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_1_ACCOUNT_FOUNDATION_EVIDENCE.md`, `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_2_SECURITY_BILLING_PWA_EVIDENCE.md`, and `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_3_RECLOSURE_EVIDENCE.md`. Stage 5 later closed locally and R-405 is now technically resolved by the Stage 5 dependency report. No production gate is closed by this result; clean local RLS passed 53/53 with 0 skipped at that checkpoint, production remains `NO-GO`, and real integration paths remain closed.
 
 Document authority rule: the 2026-08-21 authority block governs current gate interpretation. Dated phase entries below are historical snapshots; their status wording applies only to their checkpoint.
 
@@ -84,11 +86,11 @@ Use `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` to record sanitized reference
 - Latest local release verification: `npm run release:verify` passed on 2026-06-30 after Phase 81F/81G remediation, with core tests 225/225, app tests 564 passed and 4 skipped across 89 files, production build, and only documented R-405 findings. Phase 81 also passed targeted Phase 81 tests (6 files, 46 tests), lint with two pre-existing warnings, production build, and `npm run rehearse:production-scale:79g`.
 - Latest production-scale rehearsal evidence: `npm run rehearse:production-scale:79g` passed on 2026-06-29. Expanded AI quality passed 5,000 cases with hard-zero counters at 0; full mock channel replay passed; Phase 79 production-scale acceptance tests passed; release verification passed.
 - Latest Phase 77AA-77AI remediation verification on 2026-06-28: targeted mock-channel tests, `supabase-store` unit tests, lint, diff check, and `npm run rehearse:channel:replay` passed after rollback persistence, timestamp guard, type alignment, full replay isolation, and Supabase channel-delivery DSAR cleanup. This is implementation evidence only and does not close a launch gate.
-- Latest Phase 78 dependency/R-405 recheck on 2026-06-29: stable `next@latest` is `16.2.9` but still bundles nested `postcss@8.4.31`; `eslint-config-next@latest` is `16.2.9`; production audit still reports only the known moderate R-405 findings and the rejected `next@9.3.3` downgrade. No dependency files changed, no risk acceptance was supplied, and `dependency_audit_clearance` remains open.
-- Latest Phase 80G R-405 closure-evidence hardening on 2026-06-30: technical R-405 closure now requires safe stable patch path, dependency update evidence, and clean production audit; unknown production audit findings block closure; formal R-405 acceptance requires complete external acceptance metadata. No dependency files changed, no formal acceptance artifact was supplied, and `dependency_audit_clearance` remains open.
+- Historical Phase 78 dependency/R-405 recheck on 2026-06-29: stable `next@latest` was `16.2.9` but still bundled nested `postcss@8.4.31`; `eslint-config-next@latest` was `16.2.9`; production audit still reported only the known moderate R-405 findings and the rejected `next@9.3.3` downgrade. No dependency files changed, no risk acceptance was supplied, and `dependency_audit_clearance` remained open at that checkpoint.
+- Historical Phase 80G R-405 closure-evidence hardening on 2026-06-30: technical R-405 closure required safe stable patch path, dependency update evidence, and clean production audit; unknown production audit findings blocked closure; formal R-405 acceptance required complete external acceptance metadata. No dependency files changed, no formal acceptance artifact was supplied, and `dependency_audit_clearance` remained open at that checkpoint. Current R-405 technical status is superseded by the Stage 5 dependency report, while external `dependency_audit_clearance` remains open.
 - Verification result: targeted Phase 81 tests passed with 6 files and 46 tests; `git diff --check` passed; `npm run lint` passed with two pre-existing warnings; `npm run test:rls` skipped 20/20 because local Supabase was unavailable; `npm run build` passed; `npm run release:verify` passed with core tests 225/225, app tests 564 passed and 4 skipped across 89 files, production build, and only documented R-405 findings; `npm run rehearse:production-scale:79g` passed.
 - Dependency audit result: only known R-405 findings, `next:postcss` and `postcss:GHSA-qx2v-qp2m-jg93`.
-- R-405 status: open production launch blocker; Phase 78 rechecked metadata on 2026-06-29 and stable `next@latest` is 16.2.9 but still bundles `postcss@8.4.31`, so no safe stable Next.js/PostCSS patch path is available.
+- R-405 status at this checkpoint: open production launch blocker; Phase 78 rechecked metadata on 2026-06-29 and stable `next@latest` was 16.2.9 but still bundled `postcss@8.4.31`, so no safe stable Next.js/PostCSS patch path was available. Current R-405 technical status is governed by the later Stage 5 dependency report.
 - R-405 remediation spec: `PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`.
 - RLS evidence status: expanded `npm run test:rls` coverage exists, including Phase 47 `inbound_quarantines`, Phase 51 transactional RPC checks, Phase 52 rate-limit/atomicity checks, Phase 76N lifecycle/RPC scope, Phase 77AA-77AI channel tables, Phase 79 current evidence manifest, and Phase 80E current re-run evidence. On 2026-06-02, Docker Desktop/local Supabase was started, the Phase 50 migration was applied with `npx supabase db reset --local`, and `npm run test:rls` passed against local Supabase with 1 file and 19/19 tests. R-406 Phase 50/52 baseline remains mitigated; current post-76N/77AA-77AI/79/80 re-run is pending when local Supabase is unavailable.
 - External approval intake: `PRODUCTION_PILOT_EXTERNAL_APPROVAL_INTAKE.md` was added during Completion Roadmap Phase 4. No external approval artifacts have been supplied yet.
@@ -184,7 +186,7 @@ Recorded on 2026-06-30 from `app/src/lib/phase-80c-launch-gate-evidence-evaluati
 | Evidence records evaluated | `0` |
 | Approved gates | none |
 | Open gates | all eight canonical production-pilot gates |
-| R-405 status in report | `open` |
+| R-405 status in report | `open_at_phase_80_checkpoint` |
 | R-406 current status in report | `pending` |
 | `productionPilotDecision` | `NO-GO` |
 
@@ -203,9 +205,9 @@ Recorded on 2026-06-30 from `app/src/lib/phase-80d-r405-closure-evaluation.ts`:
 | Dependency files changed | `false` |
 | Formal acceptance artifact | not supplied |
 | `dependency_audit_clearance` | open |
-| R-405 status | `open` |
+| R-405 status | `open_at_phase_80_checkpoint` |
 
-Phase 22 recheck confirmed no safe stable Next.js/PostCSS patch path and no formal external risk acceptance artifact. R-405 and `dependency_audit_clearance` remain open.
+Phase 22 recheck confirmed no safe stable Next.js/PostCSS patch path and no formal external risk acceptance artifact at that checkpoint. Current R-405 technical status is governed by the later Stage 5 dependency report; external `dependency_audit_clearance` remains open.
 
 ## Phase 80E Current RLS Evidence Re-run
 
@@ -237,10 +239,10 @@ Recorded on 2026-06-30 from `app/src/lib/phase-80f-final-readiness-decision.ts`:
 | `phase81StartEligible` | `false` |
 | Approved gates | none |
 | Open gates | all eight canonical production-pilot gates |
-| R-405 status | `open` |
+| R-405 status | `technically_resolved_later_by_stage_5` |
 | R-406 current status | `pending` |
 
-Phase 80 does not start production traffic. Phase 81 may begin only after external gates close, R-405 is technically resolved or formally accepted, and current RLS evidence passes.
+Phase 80 does not start production traffic. Phase 81 may begin only after external gates close, external dependency-audit clearance is recorded, and current RLS evidence passes. R-405 is technically resolved under the later Stage 5 dependency report.
 
 ## Gate Closure Matrix
 
@@ -340,7 +342,7 @@ Historical Phase 0 snapshot: `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md
 Historical Phase 1 snapshot: domain/DTO/authorization projection evidence was complete before receipt persistence, routes, UI, and mutations. Those items subsequently closed locally through R7. Evidence: `docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`. This is not an active handoff; production pilot remains `NO-GO` and R-405 was open at that checkpoint.
 ## Stage 4B-2 Post-Closure Remediation R0 - 2026-07-12
 
-The Stage 4B-2 historical closure does not close production gates. Remediation R1-R7, current zero-skip RLS evidence, R-405 status, and all external launch prerequisites remain required. Production pilot remains `NO-GO`.
+The Stage 4B-2 historical closure does not close production gates. Remediation R1-R7, current zero-skip RLS evidence, dependency-audit gate status, and all external launch prerequisites remain required. Production pilot remains `NO-GO`.
 ## Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
 
 R1 corrected only the application domain/DTO/permission projection contract. It is not a pilot gate closure, does not open production paths, and leaves R-405 and all R2-R7 gates open. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R1_EVIDENCE.md`.

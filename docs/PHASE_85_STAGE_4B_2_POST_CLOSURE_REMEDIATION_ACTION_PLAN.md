@@ -6,15 +6,15 @@ Baseline branch: `codex/phase-85-interstage-clinical-memory`
 Baseline commit: `3d67ba5 Close Phase 85 Stage 4B-2 with canonical spec, closure evidence, and continuity updates.`
 R0 baseline commit: `f66c4cc Lock Stage 4B-2 post-closure remediation R0`.
 
-Production pilot remains **NO-GO**. R-405 remains open. Real WhatsApp, Telegram, Gemini, external LLM, live billing, monitoring, backup, secret-manager, and real health-data paths remain disabled.
+Production pilot remains **NO-GO**. R-405 was open at this historical checkpoint and is technically resolved under the later Stage 5 dependency report. Real WhatsApp, Telegram, Gemini, external LLM, live billing, monitoring, backup, secret-manager, and real health-data paths remain disabled.
 
 ## 1. Purpose and closure decision
 
 The Stage 4B-2 audit found that the implementation is substantial but is not yet a complete implementation of the locked technical intent. This remediation track is the controlled work item for closing those findings. The prior closure evidence remains historical implementation evidence; it does not authorize Stage 4C while the remediation gates below are open.
 
-Stage 4C was blocked until remediation R0-R6 verification was green and the R7 evidence closure was completed separately. R0-R7 are now closed locally; Stage 4B-3 is the next authorized Phase 85 unit before Stage 4C.
+Stage 4C was blocked until remediation R0-R6 verification was green and the R7 evidence closure was completed separately. R0-R7 are now closed locally; Stage 4B-3 was the next authorized Phase 85 unit before Stage 4C and later closed.
 
-R1 through R5 implementation units are complete. R6 was re-closed on 2026-07-13 with local Supabase reset, RLS 35/35 with zero skips, and executed SQL buffer evidence for the bounded list/detail projection RPCs. R7 canonical closure is complete. The separate Supabase advisory for RLS-disabled `conversation_mutation_idempotency` and `personas` was closed locally by `20260713030000_phase_85_stage_4b2_security_advisory_rls_hardening.sql`; evidence is `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`. Production pilot remains `NO-GO`, R-405 remains open, and real integration paths remain closed.
+R1 through R5 implementation units are complete. R6 was re-closed on 2026-07-13 with local Supabase reset, RLS 35/35 with zero skips, and executed SQL buffer evidence for the bounded list/detail projection RPCs. R7 canonical closure is complete. The separate Supabase advisory for RLS-disabled `conversation_mutation_idempotency` and `personas` was closed locally by `20260713030000_phase_85_stage_4b2_security_advisory_rls_hardening.sql`; evidence is `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`. Production pilot remains `NO-GO`, R-405 was open at that checkpoint and is technically resolved under the later Stage 5 dependency report, and real integration paths remain closed.
 
 ## 2. Locked findings
 
@@ -81,7 +81,7 @@ R3 implementation evidence is `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION
 
 R4 corrected the client lifecycle around the bounded messaging APIs. Explicit `conversationId` URLs now remain loadable when the legacy conversation/message cache is incomplete; only locally contradictory client/conversation links fail closed, while the bounded detail API validates old anchors. The hook now consumes actor-scoped `unreadConversationCount` and `unreadMessageCount` for navigation and panel badges, and its filter callback dependency is stable. Messaging uses a `md` split layout so the 768px tablet has list/detail panes while mobile keeps drill-down navigation. A detail DTO without a legacy client renders transcript-only with all mutation controls hidden, preventing a synthetic client record and sensitive state expansion.
 
-R4 implementation evidence is `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R4_EVIDENCE.md`. Targeted routing/integration/detail tests, production build, lint, and four-viewport visual messaging tests passed. The full app command timed out in the OneDrive workspace and is not claimed as pass; RLS remains environment-blocked. R5 owns the remaining security, lifecycle, scale, replay, accessibility, full-regression, and RLS evidence.
+R4 implementation evidence is `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R4_EVIDENCE.md`. Targeted routing/integration/detail tests, production build, lint, and four-viewport visual messaging tests passed. The full app command timed out in the OneDrive workspace and is not claimed as pass; RLS remained environment-blocked at this checkpoint. R5 owned the remaining security, lifecycle, scale, replay, accessibility, full-regression, and RLS evidence, and later R7/advisory evidence supplied zero-skip closure.
 
 ## 10. R5 completion record - 2026-07-13
 
@@ -99,4 +99,4 @@ Historical R6 checkpoint: the report was correctly `BLOCKED`, not pass, because 
 
 The historical R6 blocked report above was subsequently superseded by real local environment evidence: database reset passed, the complete RLS role matrix passed 35/35 with zero skips, and PostgreSQL `EXPLAIN (ANALYZE, BUFFERS)` executed for both bounded v2 projection-source RPCs. Combined with R2 limit-before-aggregation SQL and R5 10k scale evidence, the R6 prerequisite is green without converting a skipped check into a pass.
 
-R7 reconciled the canonical documents, marked R-4B2-01 through R-4B2-10 mitigated in the local prototype, and created `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. R0-R7 are complete locally. The next authorized Phase 85 unit is Stage 4C, which must begin with its own plan and affected-file review. Production pilot remains `NO-GO`; R-405 remains open; no real provider/channel, billing, monitoring, backup, secret-manager, or health-data path is enabled.
+R7 reconciled the canonical documents, marked R-4B2-01 through R-4B2-10 mitigated in the local prototype, and created `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. R0-R7 are complete locally. Stage 4C was the later authorized unit and has since closed locally. Production pilot remains `NO-GO`; R-405 was open at that checkpoint and is technically resolved under the later Stage 5 dependency report; no real provider/channel, billing, monitoring, backup, secret-manager, or health-data path is enabled.

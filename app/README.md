@@ -6,6 +6,8 @@
 
 **Planning authority restored (2026-08-26):** MANU-AI planning is back to the Phase 85 Stage 5/6/7 style: Markdown action plans, phase evidence, targeted verification, explicit user approval, and normal Git review. The later machine-lock governance system and Cursor-specific project restrictions have been removed from the repo. App runtime, package scripts, dependencies, Supabase assets, Stage 5/6/7 closure records, iPhone waiver status, and production `NO-GO` remain unchanged.
 
+**Current Hosted Sandbox technical-debt authority (2026-08-28):** Hosted Sandbox technical debt is `TECHNICAL_DEBT_CLOSED` by `../docs/hosted-sandbox/evidence/HOSTED_SANDBOX_TECHNICAL_DEBT_CLOSURE_EVIDENCE.md`, including remote migration apply, backup/encryption, isolated restore, cleanup apply, manual remote deploy, exact public smoke, and rollback evidence. This does not approve production readiness, provider/channel egress, live billing, production schema rollout, or real-data processing.
+
 **Prior R3 checkpoint (2026-08-20):** Stage 6 Phase 1-3 remediation R1-R3 is complete locally. The alerts/notifications inbox rejects stale filter/poll responses, invalidates pre-mutation reads, aborts superseded requests, and deduplicates paginated rows. Clean local Supabase reset and RLS 56/56 with zero skipped passed. Stage 5 remains `STAGE_5_CLOSED`; production remains `NO-GO`. Evidence: `../docs/PHASE_85_STAGE_6_R3_INBOX_CONCURRENCY_SECURITY_CLOSURE_EVIDENCE.md`. Phase 4 had not started at this checkpoint.
 
 **Historical Stage 6 checkpoint (2026-08-19):** Stage 6 R2 workspace-state remediation is complete locally. Workspace state uses tenant/client/domain ownership, URL is the sole viewed target, bounded form reads drive the editor, and client workflow saves/conflicts are centrally dirty-guarded. Stage 5 remains `STAGE_5_CLOSED`; production remains `NO-GO`. Evidence: `../docs/PHASE_85_STAGE_6_R2_WORKSPACE_STATE_CONFLICT_DIRTY_NAVIGATION_EVIDENCE.md`. At this checkpoint, Phase 4 had not started.
@@ -20,7 +22,7 @@
 
 **Stage 5 baseline authority (2026-08-18):** Stage 5 is closed with verdict `STAGE_5_CLOSED` in `../docs/PHASE_85_STAGE_5_CLOSURE_DECISION.json`. Physical iOS/Android PWA validation is approved, Stage 5 RLS is zero-skip, and R-405 is `technically_resolved` in the current dependency report. Production remains independently `NO-GO`; no production launch or real integration path is authorized. The local branch has not been pushed.
 
-**Document authority rule:** the 2026-08-21 Stage 6 closure decision governs current Stage 6 status, and the 2026-08-18 closure artifacts govern current Stage 5 and R-405 technical status. Dated entries below are historical snapshots; their `current`, `next`, `pending`, `blocked`, `Stage 6 not closed`, `Stage 5 unstarted`, or `R-405 open` wording applies only to the recorded checkpoint. Production `NO-GO` remains current until separate launch gates close.
+**Document authority rule:** the 2026-08-28 Hosted Sandbox technical-debt closure evidence governs current Hosted Sandbox status, the 2026-08-24 Stage 7 closure decision governs current Stage 7 status, the 2026-08-21 Stage 6 closure decision governs current Stage 6 status, and the 2026-08-18 closure artifacts govern current Stage 5 and R-405 technical status. Dated entries below are historical snapshots; their `current`, `next`, `pending`, `blocked`, `remote not run`, `Stage 6 not closed`, `Stage 5 unstarted`, or `R-405 open` wording applies only to the recorded checkpoint. Production `NO-GO` remains current until separate launch gates close.
 
 **Repository layout:** run application commands from this directory using `package.json`. Supabase configuration and migrations live in `supabase/` relative to this directory. There is intentionally no root package manifest, root Supabase directory, or centralized `src/hooks/` directory.
 
@@ -516,7 +518,7 @@ Stage 4B-2 Mesajlaşma is complete. Runtime spec: `../docs/PHASE_85_STAGE_4B_2_M
 
 ## Stage 4B-2 Phase 0 App Contract - 2026-07-12
 
-Historical Phase 0 record: the Stage 4B-2 documentation lock is recorded in `../docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md` and `../docs/PHASE_85_STAGE_4B_2_PHASE_0_DOCUMENTATION_EVIDENCE.md`. Phases 1-11 and remediation R0-R7 subsequently closed. This is not an active handoff; the current next unit is Stage 4B-3 and production pilot remains `NO-GO`.
+Historical Phase 0 record: the Stage 4B-2 documentation lock is recorded in `../docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md` and `../docs/PHASE_85_STAGE_4B_2_PHASE_0_DOCUMENTATION_EVIDENCE.md`. Phases 1-11 and remediation R0-R7 subsequently closed. This is not an active handoff; Stage 4B-3 was the next unit at that checkpoint and later closed. Production pilot remains `NO-GO`.
 
 ## Stage 4B App Contract — complete 2026-07-12
 

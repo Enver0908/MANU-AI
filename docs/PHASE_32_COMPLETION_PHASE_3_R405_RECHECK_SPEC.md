@@ -53,7 +53,7 @@ Results:
 
 No dependency files were changed.
 
-R-405 remains an open production launch blocker because the only accepted technical remediation path is not available: stable `next@latest` does not yet bundle `postcss >= 8.5.10`.
+R-405 remained an open production launch blocker at this historical checkpoint because the only accepted technical remediation path was not available: stable `next@latest` did not yet bundle `postcss >= 8.5.10`. Current R-405 technical status is governed by the later Stage 5 dependency report.
 
 ## Edge Cases
 

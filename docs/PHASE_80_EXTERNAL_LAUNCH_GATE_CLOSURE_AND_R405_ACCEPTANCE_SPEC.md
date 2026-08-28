@@ -104,7 +104,7 @@ Exit criteria:
 - Formal acceptance evaluated only through complete `dependency_audit_clearance` evidence.
 - Targeted Phase 80D tests pass.
 
-Status: complete on 2026-06-30. Phase 22 recheck: stable `next@latest` `16.2.9` still bundles nested `postcss@8.4.31`; production audit still reports only known R-405 findings; no dependency files changed; no formal acceptance artifact supplied; R-405 remains open; `dependency_audit_clearance` remains open.
+Status: complete on 2026-06-30. Phase 22 recheck: stable `next@latest` `16.2.9` still bundled nested `postcss@8.4.31`; production audit reported only known R-405 findings; no dependency files changed; no formal acceptance artifact supplied; R-405 and `dependency_audit_clearance` remained open at that checkpoint. Current R-405 technical status is governed by the later Stage 5 dependency report; external `dependency_audit_clearance` remains open.
 
 ### Phase 80E — Current RLS Evidence Re-run
 
@@ -143,7 +143,7 @@ Exit criteria:
 - Formal R-405 acceptance requires complete external acceptance details: owner, rationale, compensating controls, accepted finding keys, approval date, review/expiry timing, and sanitized artifact reference.
 - Targeted Phase 80D/80F regression tests pass.
 
-Status: complete on 2026-06-30. Hardened `phase-80d-r405-closure-evaluation.ts` and Phase 80F tests. Targeted Phase 80 tests passed (4 files, 29 tests). No dependency files changed; no formal R-405 acceptance artifact was supplied; R-405 remains open; production pilot remains `NO-GO`.
+Status: complete on 2026-06-30. Hardened `phase-80d-r405-closure-evaluation.ts` and Phase 80F tests. Targeted Phase 80 tests passed (4 files, 29 tests). No dependency files changed; no formal R-405 acceptance artifact was supplied; R-405 remained open at that checkpoint; production pilot remained `NO-GO`. Current R-405 technical status is governed by the later Stage 5 dependency report.
 
 ## Non-Goals
 
@@ -303,7 +303,7 @@ Verified on 2026-06-30:
 - Final aggregate outcome: `NO_GO_MISSING_ARTIFACTS`.
 - `productionPilotDecision`: `NO-GO`; `productionPilotGo`: `false`; `phase81StartEligible`: `false`.
 - Updated gate dossier, final readiness summary, pilot evidence pack, and continuity docs.
-- Production pilot remains `NO-GO`; Phase 81 cannot start.
+- Production pilot remained `NO-GO`; Phase 81 could not start at this historical checkpoint.
 
 ## Phase 80G Verification
 
@@ -321,12 +321,12 @@ Observed results:
 - `npm run lint` passed with two pre-existing warnings.
 - `npm run build` passed.
 - `npm run release:verify` passed with core tests 225/225, app tests 518 passed and 4 skipped across 83 files, production build, and only documented R-405 findings.
-- `npm run rehearse:production-scale:79g` passed; production pilot remains `NO-GO`; R-405 remains open.
+- `npm run rehearse:production-scale:79g` passed; production pilot remained `NO-GO`; R-405 remained open at that checkpoint.
 - Technical R-405 closure now fails closed when nested PostCSS remains vulnerable, even if a remediation flag is supplied.
 - Unknown production audit findings block R-405 closure.
 - Formal R-405 acceptance now requires complete external acceptance details beyond the dependency gate evidence record.
 - No dependency files were changed.
-- R-405 remains open; `dependency_audit_clearance` remains open; production pilot remains `NO-GO`.
+- R-405 and `dependency_audit_clearance` remained open at that checkpoint; production pilot remained `NO-GO`. Current R-405 technical status is governed by the later Stage 5 dependency report; external `dependency_audit_clearance` remains open.
 
 ## Phase 80E Verification
 
@@ -361,7 +361,7 @@ Observed results:
 - No dependency files were changed.
 - Added `app/src/lib/phase-80d-r405-closure-evaluation.ts`; targeted Phase 80D tests passed (7/7).
 - No formal external R-405 risk acceptance artifact was supplied.
-- R-405 remains open; `dependency_audit_clearance` remains open.
+- R-405 and `dependency_audit_clearance` remained open at that checkpoint. Current R-405 technical status is governed by the later Stage 5 dependency report; external `dependency_audit_clearance` remains open.
 
 ## Phase 80C Verification
 
@@ -395,6 +395,6 @@ Verified on 2026-06-30:
 - Final outcome: `NO_GO_MISSING_ARTIFACTS`.
 - `productionPilotDecision`: `NO-GO`; `phase81StartEligible`: `false`.
 - All eight launch gates remain open.
-- R-405 remains open; R-406 current re-run remains pending.
+- R-405 and R-406 current re-run remained open/pending at that checkpoint. Current R-405 technical status is governed by the later Stage 5 dependency report.
 - Production pilot remains `NO-GO`.
 - Next phase: Phase 81 direct production pilot GO evaluation only when external gates close, R-405 resolves or is formally accepted, and current RLS evidence passes.

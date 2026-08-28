@@ -2,7 +2,9 @@
 
 **Current Phase 85 Stage 7 authority (2026-08-24):** Stage 7 is locally STAGE_7_CLOSED after two clean npm run verify:stage-7 runs, physical Android Chrome PASS, installed Android PWA PASS, Android TalkBack PASS, npm run test:stage-7-real-device APPROVED_WITH_WAIVER, and final npm run release:verify PASS. iPhone Safari/PWA remains WAIVED_NOT_EXECUTED, not PASS, and is required before any iOS production pilot/readiness claim. Production remains NO-GO; this local frontend closure does not authorize push, merge, PR, deploy, production gate change, provider/channel egress, live billing, production schema rollout, or real-data processing. Authority: docs/PHASE_85_STAGE_7_CLOSURE_DECISION.json; evidence: docs/PHASE_85_STAGE_7_FINAL_CLOSURE_EVIDENCE.md and docs/PHASE_85_STAGE_7_REAL_DEVICE_VALIDATION_REPORT.json.
 
-Current Stage 6 accessibility note, 2026-08-20: schema-driven form controls now expose programmatic labels, icon-only nutrition removal actions expose item-specific accessible names, and failing small explanatory text on nutrition, menu export, and client AI controls uses the existing `text-ink-muted` token. The canonical desktop/Android-mobile axe matrix passes `12/12`. No shell layout, design-token definition, data contract, or workflow behavior changed. Evidence: `docs/PHASE_85_STAGE_6_ACCESSIBILITY_REMEDIATION_EVIDENCE.md`.
+**Current Hosted Sandbox technical-debt authority (2026-08-28):** Hosted Sandbox technical debt is `TECHNICAL_DEBT_CLOSED` by `docs/hosted-sandbox/evidence/HOSTED_SANDBOX_TECHNICAL_DEBT_CLOSURE_EVIDENCE.md`, including remote migration apply, backup/encryption, isolated restore, cleanup apply, manual remote deploy, exact public smoke, and rollback evidence. This does not authorize production readiness, provider/channel egress, live billing, production schema rollout, or real-data processing.
+
+Historical Stage 6 accessibility note, 2026-08-20: schema-driven form controls now expose programmatic labels, icon-only nutrition removal actions expose item-specific accessible names, and failing small explanatory text on nutrition, menu export, and client AI controls uses the existing `text-ink-muted` token. The canonical desktop/Android-mobile axe matrix passes `12/12`. No shell layout, design-token definition, data contract, or workflow behavior changed. Evidence: `docs/PHASE_85_STAGE_6_ACCESSIBILITY_REMEDIATION_EVIDENCE.md`.
 
 Historical Stage 4D remediation UI checkpoint, 2026-07-28: remediation Faz 1 adds `timezone` to the existing Settings profile form and switches profile save to canonical `/api/account/profile`; remediation Faz 2 adds the minimal `/account/billing` payment-recovery surface and ties Settings billing actions to `billing.portalState`. These are minimal account/billing hardening surfaces, not a dashboard shell redesign. Evidence: `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_1_ACCOUNT_FOUNDATION_EVIDENCE.md` and `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_2_SECURITY_BILLING_PWA_EVIDENCE.md`.
 
@@ -64,19 +66,19 @@ Status: **complete locally (2026-07-13)**. Mandatory after Stage 4B; owns conver
 
 ## Stage 4B-3 - Multimodal Gorsel Guvenligi ve Yanit Orkestrasyonu
 
-Status: **current**. Mandatory after Stage 4B-2 and before Stage 4C; owns visual media admission, deterministic local vision observation, 120-second bundle correlation, multimodal risk/source/autopilot integration, private media lifecycle, review/correction UI, and closure evidence. Canonical plan: `docs/PHASE_85_STAGE_4B_3_MULTIMODAL_GORSEL_GUVENLIGI_VE_YANIT_ORK_PLAN.md`.
+Status: **complete locally; historical stage**. Stage 4B-3 completed before Stage 4C and is superseded for current execution by later Stage 4B-4, Stage 4C, Stage 4D, Stage 5, Stage 6, and Stage 7 closure evidence. Its ownership remains visual media admission, deterministic local vision observation, 120-second bundle correlation, multimodal risk/source/autopilot integration, private media lifecycle, review/correction UI, and closure evidence. Canonical plan: `docs/PHASE_85_STAGE_4B_3_MULTIMODAL_GORSEL_GUVENLIGI_VE_YANIT_ORK_PLAN.md`.
 
 ## Stage 4C - Diyetisyen Icin AI Chat
 
-Status: pending. Blocked until Stage 4B-3 Multimodal Gorsel Guvenligi ve Yanit Orkestrasyonu closes.
+Status: **complete locally; historical stage**. Stage 4C implementation and remediation are closed locally and superseded for current execution by Stage 4D, Stage 5, Stage 6, and Stage 7 closure evidence.
 
-Stage 4C must define the dietitian-facing AI chat experience without weakening internal copilot safety, data isolation, prompt visibility, clinical boundaries, provider gates, or real-provider disablement. No Stage 4C runtime work is approved until its action plan is created and explicitly approved.
+Stage 4C defines the dietitian-facing AI chat experience without weakening internal copilot safety, data isolation, prompt visibility, clinical boundaries, provider gates, or real-provider disablement. Historical action-plan approval and implementation evidence should not be read as approval for real provider egress or production readiness.
 
 ## Stage 4D - Ayarlar / Hesap
 
-Status: **post-closure remediation active; Faz 1 and Faz 2 implemented locally (2026-07-28)**.
+Status: **complete locally; historical stage**. Stage 4D closure and post-closure remediation are superseded for current execution by Stage 5, Stage 6, and Stage 7 closure evidence.
 
-Stage 4D delivered `/dashboard/settings` with profile mutation, account security flows, owner/admin billing portal entry, and PWA install in Settings > Application. Post-closure remediation now adds account-context identity security, signed recovery flow evidence, durable global auth rate limits, payment-recovery billing access, and PWA audit hardening. Canonical action plan: `docs/PHASE_85_STAGE_4D_AYARLAR_HESAP_ACTION_PLAN.md`; remediation evidence: `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_1_ACCOUNT_FOUNDATION_EVIDENCE.md` and `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_2_SECURITY_BILLING_PWA_EVIDENCE.md`. Next Phase 85 unit: remediation Faz 3 (separate approval).
+Stage 4D delivered `/dashboard/settings` with profile mutation, account security flows, owner/admin billing portal entry, and PWA install in Settings > Application. Post-closure remediation added account-context identity security, signed recovery flow evidence, durable global auth rate limits, payment-recovery billing access, and PWA audit hardening. Canonical action plan: `docs/PHASE_85_STAGE_4D_AYARLAR_HESAP_ACTION_PLAN.md`; remediation evidence: `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_1_ACCOUNT_FOUNDATION_EVIDENCE.md`, `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_2_SECURITY_BILLING_PWA_EVIDENCE.md`, and `docs/PHASE_85_STAGE_4D_REMEDIATION_PHASE_3_RECLOSURE_EVIDENCE.md`.
 
 ## Scope Lock
 
@@ -380,15 +382,15 @@ Phase 85 can close only when:
 - Visual QA does not show overlapping text, broken mobile nav, unreadable contrast, or amateur decorative patterns.
 - Production pilot remains `NO-GO`.
 
-## Current Next Step
+## Historical Next Step
 
-Stage 4B Uyari ve Bildirimler and mandatory Stage 4B-2 Mesajlasma are complete locally. Stage 4B-2 remediation R0-R7 and advisory RLS hardening are also closed locally. The current next Phase 85 unit is Stage 4B-3, beginning with its own Phase 1 implementation after the Phase 0 documentation lock.
+At this 2026-07-11/2026-07-12 checkpoint, Stage 4B Uyari ve Bildirimler and mandatory Stage 4B-2 Mesajlasma were complete locally. Stage 4B-2 remediation R0-R7 and advisory RLS hardening later closed locally. The next Phase 85 unit at that checkpoint was Stage 4B-3, beginning with its own Phase 1 implementation after the Phase 0 documentation lock. This is no longer the active next step; current execution is governed by the Stage 7 and Hosted Sandbox authority blocks above.
 
 ## P85-IF Interstage Baseline For Stage 4B - 2026-07-11
 
 Before Stage 4B implementation, P85-IF R1-R6 remediation has been post-closure audited and fixed. The stable notification/alert inputs now include tenant-safe message provenance, target-panel structured-update resolution, deterministic activation race protection, and runtime export leak enforcement. Evidence: `docs/PHASE_85_IF_REMEDIATION_POST_CLOSURE_AUDIT_EVIDENCE.md`.
 
-Stage 4B implementation may proceed only through the approved action plan on top of these contracts. It must not reopen real providers/channels, live billing, monitoring, backup, secret-manager, or real health-data paths. Production pilot remains `NO-GO`; R-405 remains open.
+Stage 4B implementation proceeded through the approved action plan on top of these contracts. It must not reopen real providers/channels, live billing, monitoring, backup, secret-manager, or real health-data paths. Production pilot remains `NO-GO`; R-405 was open at this historical checkpoint and is now technically resolved under the Stage 5 dependency report.
 
 ## Stage 4A Post-P85-IF Compatibility Remediation - 2026-07-11
 
@@ -408,14 +410,14 @@ The Stage 4B frontend evidence was refreshed after implementation audit. Alerts 
 
 ## Stage 4B-2 Phase 0 Documentation Lock - 2026-07-12
 
-Historical Phase 0 contract: the Mesajlasma action plan is locked in `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md`. Its list-first/detail-second UI, tablet/desktop split layout, mobile drill-down, thin rows, per-actor unread state, bounded transcript pagination, yellow reviewed-manual controls, red manual-reply controls, and in-detail AI boundaries are now implemented and closed through R7. This paragraph is not an active handoff; Stage 4B-3 is next.
+Historical Phase 0 contract: the Mesajlasma action plan is locked in `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_ACTION_PLAN.md`. Its list-first/detail-second UI, tablet/desktop split layout, mobile drill-down, thin rows, per-actor unread state, bounded transcript pagination, yellow reviewed-manual controls, red manual-reply controls, and in-detail AI boundaries are now implemented and closed through R7. This paragraph is not an active handoff; Stage 4B-3 was next at that checkpoint and later closed.
 
 ## Stage 4B-2 Phase 1 Domain/DTO/Authorization Handoff - 2026-07-12
 
 Historical Phase 1 record: bounded list/detail/mutation DTO contracts and actor-aware permission flags were established in `docs/PHASE_85_STAGE_4B_2_PHASE_1_DOMAIN_DTO_AUTHORIZATION_EVIDENCE.md`. Routing, polling, receipt persistence, visual states, mutations, and R0-R7 remediation subsequently closed. This paragraph is not an active handoff.
 ## Stage 4B-2 Post-Closure Remediation R0 - 2026-07-12
 
-Historical remediation record: R4 owned the tablet split-layout, unread aggregate, deep-link, anchor, 320px, focus, and sensitive-rendering corrections. R4-R7 are now closed; the current next unit is Stage 4B-3.
+Historical remediation record: R4 owned the tablet split-layout, unread aggregate, deep-link, anchor, 320px, focus, and sensitive-rendering corrections. R4-R7 are now closed; Stage 4B-3 was the next unit at that checkpoint and later closed.
 ## Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
 
 R1 updates the messaging consumer contract to split AI activation/configuration permissions and expose complete visible-scope unread aggregates. No visual layout, navigation, provider, or production-pilot behavior is authorized by this remediation unit. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R1_EVIDENCE.md`.

@@ -1,6 +1,6 @@
 # Phase 85 Stage 4B - Uyari ve Bildirimler Eylem Plani
 
-Current downstream status, 2026-07-13: Stage 4B-2 remediation R0-R7, the separate security advisory RLS hardening, and continuity/routing reconciliation are complete locally without changing Stage 4B alert/notification ownership. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`, `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`, and `docs/PHASE_85_STAGE_4B_2_CONTINUITY_AND_ROUTING_RECONCILIATION_EVIDENCE.md`. Stage 4B-3 is next; production remains `NO-GO`, R-405 remains open.
+Historical downstream status, 2026-07-13: Stage 4B-2 remediation R0-R7, the separate security advisory RLS hardening, and continuity/routing reconciliation were complete locally without changing Stage 4B alert/notification ownership. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`, `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`, and `docs/PHASE_85_STAGE_4B_2_CONTINUITY_AND_ROUTING_RECONCILIATION_EVIDENCE.md`. Stage 4B-3 was next at that checkpoint and later closed; production remains `NO-GO`; R-405 is technically resolved under the later Stage 5 dependency report.
 
 Date: 2026-07-11
 Status: implementation and post-closure remediation complete; historical Docker block superseded by complete-chain 35/35 and advisory-hardening 36/36 local RLS evidence
@@ -47,7 +47,7 @@ No new major-phase name may be introduced for this work; all naming remains unde
 - No overview cards or overview alert/notification bands are added.
 - No browser tab is opened. All destinations are in-app dashboard sections in the same browser tab.
 - No real WhatsApp, Telegram, Gemini/provider, live billing, monitoring, backup, secret manager, or real health-data path is enabled.
-- Production pilot remains `NO-GO`; R-405 remains open.
+- Production pilot remains `NO-GO`; R-405 was open at this historical checkpoint and is technically resolved under the later Stage 5 dependency report.
 - The Phase 84 hosted-sandbox document is not changed unless a deployment occurs.
 
 ## 4. Locked Product Decisions
@@ -517,7 +517,7 @@ Stage 4B is complete only when all of the following are true:
 - Mobile Uyarilar is beside Gorusme; no overlap/overflow exists.
 - Stage 4B-2 implementation has not leaked into Stage 4B.
 - Full verification and evidence pass.
-- Production remains `NO-GO`, R-405 remains open, real integration paths remain disabled, and the worktree is clean.
+- Production remains `NO-GO`, R-405 was open at this historical checkpoint and is technically resolved under the later Stage 5 dependency report, real integration paths remain disabled, and the worktree is clean.
 
 ## Phase 0 Execution Record - 2026-07-11
 
@@ -536,7 +536,7 @@ Historical Phase 1 checkpoint: the pure domain/DTO/authorization projection foun
 
 The original local closure evidence was re-audited before handoff. The remediation added bounded actor-aware Supabase v2 RPCs, persistent dietitian-form SLA inputs, fail-closed target linkage, client-specific draft lifecycle producers, atomic unsupported-media receipt gating, assistant/auditor UI restrictions, route error-boundary hardening, and screenshot/keyboard/accessibility assertions. Full core/app, scale, replay, release, build, lint, and visual verification passed. The current RLS suite has 33 skipped tests because Docker Desktop is unavailable; those tests are explicitly not counted as pass. Detailed evidence: `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md` and runtime contract: `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_SPEC.md`.
 
-Historical checkpoint: Stage 4B-2 Mesajlasma was next at this point. It subsequently closed through R7 and advisory hardening. Stage 4C is current. Production pilot remains `NO-GO`; R-405 remains open; real provider/channel/health-data paths remain disabled.
+Historical checkpoint: Stage 4B-2 Mesajlasma was next at this point. It subsequently closed through R7 and advisory hardening, and later stages through Stage 7 also closed locally. Production pilot remains `NO-GO`; R-405 was open at this checkpoint and is technically resolved under the later Stage 5 dependency report; real provider/channel/health-data paths remain disabled.
 
 ## Stage 4B-2 Consumer Documentation Lock - 2026-07-12
 
@@ -545,7 +545,7 @@ The complete Stage 4B-2 action plan is now `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_
 Stage 4B-2 consumes Stage 4B alert/notification targets but owns the conversation list, unread message receipts, bounded transcript detail, yellow reviewed-manual workflow, red manual reply workflow, and in-detail AI control. Assistant access is explicitly assigned-conversation read-only with own message receipt mutation; viewer assignment is read-only; auditor has no conversation visibility. This consumer lock adds no Stage 4B runtime work and does not change the Stage 4B no-alert-table, red-precedence, safe-list-DTO, notification-lifecycle, or production `NO-GO` decisions.
 ## Stage 4B-2 Post-Closure Remediation R0 - 2026-07-12
 
-Stage 4B-2 consumed this track without changing Stage 4B alert/notification ownership. Its remediation R0-R7 is complete locally; Stage 4B-3 is next.
+Stage 4B-2 consumed this track without changing Stage 4B alert/notification ownership. Its remediation R0-R7 is complete locally; Stage 4B-3 was next at that checkpoint and later closed.
 
 ## Stage 4B-2 Post-Closure Remediation R1 - 2026-07-12
 
@@ -566,4 +566,4 @@ Historical R5 checkpoint: messaging replay, accessibility, lifecycle/export, sca
 
 ## Stage 4B-2 Post-Closure Remediation R6 - 2026-07-13
 
-R6 changed no Stage 4B alert/notification ownership. Its original environment block was resolved by zero-skip RLS and SQL buffer execution recorded in R7. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`; Stage 4B-3 is next.
+R6 changed no Stage 4B alert/notification ownership. Its original environment block was resolved by zero-skip RLS and SQL buffer execution recorded in R7. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`; Stage 4B-3 was next at that checkpoint and later closed.

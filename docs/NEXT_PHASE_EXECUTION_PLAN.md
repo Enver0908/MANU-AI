@@ -6,6 +6,8 @@
 
 **Planning authority restored (2026-08-26):** MANU-AI planning is back to the Phase 85 Stage 5/6/7 style: Markdown action plans, phase evidence, targeted verification, explicit user approval, and normal Git review. The later machine-lock governance system and Cursor-specific project restrictions have been removed from the repo. Product runtime, Stage 5/6/7 closure records, iPhone waiver status, and production `NO-GO` remain unchanged.
 
+**Current Hosted Sandbox technical-debt authority (2026-08-28):** Hosted Sandbox technical debt is `TECHNICAL_DEBT_CLOSED` by `docs/hosted-sandbox/evidence/HOSTED_SANDBOX_TECHNICAL_DEBT_CLOSURE_EVIDENCE.md`, including remote migration apply, backup/encryption, isolated restore, cleanup apply, manual remote deploy, exact public smoke, and rollback evidence. This does not approve production readiness, provider/channel egress, live billing, production schema rollout, or real-data processing.
+
 **Prior R3 checkpoint (2026-08-20):** Stage 6 Phase 1-3 remediation R1-R3 is complete locally. Inbox request ownership, sequencing, abort, mutation invalidation, and stable-id pagination close the remaining communication concurrency gap; clean local reset and RLS 56/56 zero-skip supply the security evidence. Stage 5 remains closed and production remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_R3_INBOX_CONCURRENCY_SECURITY_CLOSURE_EVIDENCE.md`. Phase 4 was the next eligible unit at this checkpoint.
 
 **Historical Stage 6 checkpoint (2026-08-19):** Stage 6 R2 workspace-state remediation is complete locally. Stale workspace ownership, duplicate viewed-client state, unawaited dirty saves, incomplete draft detection, and silent menu-plan switching are closed in the local implementation. Stage 5 remains closed; production remains `NO-GO`. Evidence: `docs/PHASE_85_STAGE_6_R2_WORKSPACE_STATE_CONFLICT_DIRTY_NAVIGATION_EVIDENCE.md`. At this checkpoint, Phase 4 had not started and required separate approval.
@@ -110,7 +112,7 @@ Phase 79 override: Phase 79A-79I completed production-scale hardening, full 100x
 
 Phase 77AA-77AI remediation note, 2026-06-28: review findings for the mock/gated WhatsApp adapter track were closed. Supabase rollback controls are now persisted and loaded, malformed numeric WhatsApp timestamps fail closed without throwing, mock delivery policy types are aligned, full 100x50 channel replay is isolated to `npm run rehearse:channel:replay`, and Supabase channel delivery records are removed during client anonymization/removal.
 
-Phase 78 dependency/R-405 note, 2026-06-29: `docs/PHASE_78_DEPENDENCY_R405_CLOSURE_SPEC.md` records the latest no-patch closure. R-405 and `dependency_audit_clearance` remain open; production pilot remains `NO-GO`.
+Historical Phase 78 dependency/R-405 note, 2026-06-29: `docs/PHASE_78_DEPENDENCY_R405_CLOSURE_SPEC.md` records the no-patch closure at that checkpoint. R-405 and `dependency_audit_clearance` were open then; production pilot remained `NO-GO`. Current R-405 technical status is superseded by the Stage 5 dependency report, while external `dependency_audit_clearance` remains open.
 
 Phase 79 production-scale closure note, 2026-06-29: `docs/PHASE_79_PRODUCTION_SCALE_HARDENING_AND_FULL_100X50_REHEARSAL_SPEC.md` records Phase 79A-79I completion. Runtime hardening covers `/api/app-state?view=windowed`, fail-closed notification windows, scoped client create/patch responses, bounded internal copilot, lifecycle redaction evidence, current RLS evidence status, unified rehearsal metrics, and continuity/risk/gate closure. It does not connect real WhatsApp/Gemini/provider paths, close gates, process real client health data, or resolve R-405.
 
@@ -134,8 +136,8 @@ Next implementation order:
 
 1. Plan and implement Phase 85 Stage 4C Diyetisyen Icin AI Chat. Stage 4B-2 Mesajlasma is complete; evidence in `docs/PHASE_85_STAGE_4B_2_CLOSURE_EVIDENCE.md`.
 2. Treat the Stage 4C, Stage 4D, Stage 5 dashboard/PWA shell, and Stage 6 dashboard workflow sequence as historical and locally closed under their later evidence. Stage 7.1 through Stage 7.4 were attempted but are superseded for closure by Stage 7R.0; Stage 7R remediation and Stage 7.5 are complete, and Stage 7 is locally closed.
-3. External launch-gate / R-405 / current RLS closure prerequisites remain required for production readiness. Phase 83A-83H, Phase 84A-84J, and Phase 85 do not approve production pilot launch.
-4. External launch-gate closure, R-405 technical resolution or formal acceptance, and current RLS evidence pass before Phase 82 can reach `READY_FOR_EXTERNAL_CONTROLLED_LAUNCH_AUTHORIZATION` (unchanged clinical readiness track).
+3. External launch-gate, dependency-audit clearance, and current RLS closure prerequisites remain required for production readiness. Phase 83A-83H, Phase 84A-84J, and Phase 85 do not approve production pilot launch.
+4. External launch-gate closure, external dependency-audit clearance, and current RLS evidence pass before Phase 82 can reach `READY_FOR_EXTERNAL_CONTROLLED_LAUNCH_AUTHORIZATION` (unchanged clinical readiness track). R-405 is technically resolved under the later Stage 5 dependency report.
 3. No further repo-local Phase 82 sub-phases remain; Phase 82 track closed on 2026-06-30.
 
 ## Phase 78: Dependency And R-405 Closure - Completed 2026-06-29
@@ -149,13 +151,13 @@ Status:
 - Rechecked stable `eslint-config-next@latest`: `16.2.9`.
 - Rechecked production audit: only the known moderate R-405 `next`/`postcss` findings remain, with the rejected `next@9.3.3` downgrade.
 - No dependency files were changed.
-- R-405 and `dependency_audit_clearance` remain open.
+- R-405 and `dependency_audit_clearance` were open at this checkpoint. Current R-405 technical status is governed by the later Stage 5 dependency report, while external `dependency_audit_clearance` remains open.
 - Production pilot remains `NO-GO`.
 - Verification passed with `git diff --check`, core tests 225/225, app tests 428 passed and 2 skipped across 73 files, lint with two pre-existing warnings, production build, and only documented R-405 findings.
 
 Next:
 
-- Phase 81 direct production pilot GO evaluation only when all external gates close, R-405 resolves or is formally accepted, and current RLS evidence passes.
+- Phase 81 direct production pilot GO evaluation only when all external gates close, external dependency-audit clearance is recorded, and current RLS evidence passes. R-405 is technically resolved under the later Stage 5 dependency report.
 
 ## Phase 79: Production-Scale Hardening And Full 100x50 Rehearsal - Completed 2026-06-29
 
@@ -206,7 +208,7 @@ Status:
 - Final outcome: `NO_GO_MISSING_ARTIFACTS`.
 - `productionPilotDecision`: `NO-GO`; `productionPilotGo`: `false`; `phase81StartEligible`: `false`.
 - Updated gate dossier, final readiness summary, pilot evidence pack, and continuity docs.
-- Production pilot remains `NO-GO`; Phase 81 cannot start.
+- Production pilot remains `NO-GO`; Phase 81 could not start at this historical checkpoint.
 
 Next:
 
@@ -1926,7 +1928,7 @@ Status:
 
 - Added `docs/PHASE_22_R405_DEPENDENCY_REMEDIATION_SPEC.md`.
 - 2026-05-31 check: `next@latest` is `16.2.6` with `postcss@8.4.31`; `eslint-config-next@latest` is `16.2.6`; `next@canary` remains rejected for pilot baseline.
-- No dependency files were changed; R-405 remains an open production launch blocker.
+- No dependency files were changed; R-405 remained an open production launch blocker at this historical checkpoint. Current R-405 technical status is governed by the later Stage 5 dependency report, while external dependency-audit clearance remains open.
 
 ## Phase 23: AI Context And Memory Architecture - Completed 2026-05-30
 

@@ -1,11 +1,11 @@
 # Phase 85 Interstage Foundation - Trusted Clinical Communication And Memory Spec
 
-Current downstream status, 2026-07-13: Stage 4B-2 remediation R0-R7, the separate security advisory RLS hardening, and continuity/routing reconciliation are complete locally and add no new clinical, source, provider, channel, or lifecycle authority. Stage 4B-3 Multimodal Gorsel Guvenligi ve Yanit Orkestrasyonu is inserted before Stage 4C and must not weaken P85-IF provenance, transcript, human-control, or lifecycle authority. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`, `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`, `docs/PHASE_85_STAGE_4B_2_CONTINUITY_AND_ROUTING_RECONCILIATION_EVIDENCE.md`, and `docs/PHASE_85_STAGE_4B_3_PHASE_0_DOCUMENTATION_EVIDENCE.md`. Stage 4B-3 is next; production remains `NO-GO` and R-405 remains open.
+Historical downstream status, 2026-07-13: Stage 4B-2 remediation R0-R7, the separate security advisory RLS hardening, and continuity/routing reconciliation were complete locally and added no new clinical, source, provider, channel, or lifecycle authority. Stage 4B-3 Multimodal Gorsel Guvenligi ve Yanit Orkestrasyonu was inserted before Stage 4C and had to preserve P85-IF provenance, transcript, human-control, and lifecycle authority. Evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`, `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`, `docs/PHASE_85_STAGE_4B_2_CONTINUITY_AND_ROUTING_RECONCILIATION_EVIDENCE.md`, and `docs/PHASE_85_STAGE_4B_3_PHASE_0_DOCUMENTATION_EVIDENCE.md`. Stage 4B-3 was next at that checkpoint and later closed; production remains `NO-GO`; R-405 is technically resolved under the later Stage 5 dependency report.
 
 Date: 2026-07-10
 Canonical code: `P85-IF`
 Track: `P85-IF-A`, `P85-IF-B`, and `P85-IF-C`
-Status: P85-IF-A through P85-IF-I and the P85-IF post-closure audit are complete. Downstream Stage 4B and Stage 4B-2 are complete locally; Stage 4B-3 is next.
+Status: P85-IF-A through P85-IF-I and the P85-IF post-closure audit are complete. Downstream Stage 4B through Stage 7 are now complete locally under later evidence.
 Placement: Phase 85 Stage 4A complete -> P85-IF -> Phase 85 Stage 4B (complete 2026-07-12) -> Stage 4B-2 Mesajlasma (complete 2026-07-13) -> Stage 4B-3 Multimodal Gorsel Guvenligi ve Yanit Orkestrasyonu.
 Production pilot: `NO-GO`.
 Deployment: none.
@@ -35,7 +35,7 @@ The following boundaries are fixed for all P85-IF tracks:
 - P85-IF owns data/API semantics and minimal evidence visibility. Stage 4B owns the full alert/notification product experience.
 - Real WhatsApp, Telegram, Gemini/provider, live billing, monitoring, backup, secret manager, and real health-data paths remain disconnected.
 - Production pilot remains `NO-GO`.
-- R-405 remains open unless independently remediated or externally accepted through the existing R-405 procedure.
+- R-405 was open at this historical checkpoint unless independently remediated or externally accepted through the existing R-405 procedure. It is technically resolved under the later Stage 5 dependency report.
 - R-406 current local Supabase/RLS evidence was refreshed by the P85-IF post-closure audit on 2026-07-11 with local `npm run test:rls` passing 30/30; production pilot remains blocked by other open gates.
 
 R5 operational access remediation: trust-binding, actor-binding, channel-event, event-only revision, and inbound-quarantine inspection details must not travel through common app-state. Owner/admin inspection is served only by `GET /api/operational-foundation` behind `read_operational_foundation`, and select RLS for operational trust/quarantine tables is owner/admin only. Dietitians retain message provenance, human-control, risk activity, and context-intake workflow visibility without direct operational payload-digest/trust-root inspection.
