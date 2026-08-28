@@ -20,6 +20,8 @@
 | `node --test tools/hosted-sandbox/hosted-sandbox-backup.test.mjs app/scripts/hosted-sandbox-backup-restore.test.mjs` | PASS 12/12 |
 | `cd app && npx vitest run src/lib/hosted-sandbox-tenant-isolation.test.ts src/lib/hosted-sandbox-security.test.ts src/lib/hosted-sandbox-release-identity.test.ts --no-file-parallelism --maxWorkers=1` | PASS 20/20 |
 | `cd app && npm run release:verify` | PASS |
+| `cd app && npx supabase db reset` | PASS |
+| `cd app && npm run test:rls` with local Supabase env and local demo fixture flag | PASS 56/56, 0 skipped |
 
 ## Activation sequence
 
@@ -38,7 +40,7 @@ Apply mode now requires:
 
 ## Remote waivers and blockers
 
-- Docker reset and zero-skip RLS were not run because Docker Desktop Linux engine is not available on this host.
+- Docker reset and zero-skip RLS were run locally and passed.
 - Hosted migration apply, real backup/restore, cleanup apply, VPS deploy, and rollback rehearsal were not run because required CLIs/secrets/remote approvals are not present in this local session.
 - Physical iPhone Safari/PWA remains WAIVED_NOT_EXECUTED, not PASS.
 

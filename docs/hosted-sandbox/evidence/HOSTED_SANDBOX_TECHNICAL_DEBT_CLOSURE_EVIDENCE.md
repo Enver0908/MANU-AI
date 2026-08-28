@@ -1,15 +1,15 @@
 # Hosted Sandbox Technical Debt Closure Evidence
 
 **Date:** 2026-08-27
-**Status:** LOCAL_IMPLEMENTATION_CLOSED_REMOTE_EXECUTION_BLOCKED
+**Status:** LOCAL_IMPLEMENTATION_AND_LOCAL_RLS_CLOSED_REMOTE_EXECUTION_BLOCKED
 **Production:** NO-GO
 **Independent review:** NOT_REQUESTED
 
 ## Summary
 
-The Hosted Sandbox technical-debt implementation plan is complete locally for code, contracts, tests, build, artifact, deploy preparation, cleanup preparation, and activation preparation. The old Hosted Sandbox Remediation v1.1 governance plan is superseded and is not required for continued project work.
+The Hosted Sandbox technical-debt implementation plan is complete locally for code, contracts, tests, build, artifact, deploy preparation, cleanup preparation, activation preparation, clean Supabase reset, and zero-skip RLS. The old Hosted Sandbox Remediation v1.1 governance plan is superseded and is not required for continued project work.
 
-Remote execution is not claimed as complete because this session does not have Docker daemon access, Supabase CLI, PostgreSQL client tools, age encryption CLI, hosted secrets, SSH pinned known_hosts, or explicit remote apply approvals.
+Remote hosted execution is not claimed as complete because this session does not have PostgreSQL client tools, age encryption CLI, hosted secrets, SSH pinned known_hosts, or explicit remote apply approvals.
 
 ## Closed local findings
 
@@ -37,18 +37,20 @@ Remote execution is not claimed as complete because this session does not have D
 | `cd app && npm run release:artifact` | PASS |
 | `cd app && npm run test:release-artifact` | PASS 1/1 |
 | `cd app && npm run release:verify` | PASS |
+| `cd app && npx supabase db reset` | PASS; clean local Supabase reset completed |
+| `cd app && npm run test:rls` with local Supabase env and local demo fixture flag | PASS 56/56, 0 skipped |
 
 ## Blocked remote execution
 
 | Required action | Status |
 | --- | --- |
-| Docker clean Supabase reset and zero-skip RLS | BLOCKED: Docker daemon unavailable |
+| Docker clean Supabase reset and zero-skip RLS | PASS: local reset and RLS 56/56 with 0 skipped |
 | Real hosted backup hash/freshness validation | BLOCKED: `pg_dump` and `age` unavailable; hosted DB/env approvals not present |
-| Isolated restore drill | BLOCKED: Docker/restore target/tooling unavailable |
+| Isolated restore drill | BLOCKED: restore target/tooling unavailable |
 | Hosted cleanup apply | BLOCKED: requires real backup manifest and explicit approval |
 | Hosted migration apply | BLOCKED: Supabase CLI/secrets/approval unavailable |
 | Exact remote release smoke and rollback rehearsal | BLOCKED: SSH known_hosts pin, remote env, and explicit approval unavailable |
 
 ## Final boundary
 
-The project can continue from local product-development work without reintroducing the old Hosted Sandbox Remediation v1.1 governance plan. Before claiming hosted runtime closure or production readiness, the blocked remote execution rows above must be run for real and recorded as PASS. Production remains NO-GO, provider/channel egress remains disabled, live billing remains disabled, production schema rollout remains disabled, and physical iPhone Safari/PWA remains WAIVED_NOT_EXECUTED.
+The project can continue from local product-development work without reintroducing the old Hosted Sandbox Remediation v1.1 governance plan. Before claiming hosted runtime closure or production readiness, the remaining blocked remote execution rows above must be run for real and recorded as PASS. Production remains NO-GO, provider/channel egress remains disabled, live billing remains disabled, production schema rollout remains disabled, and physical iPhone Safari/PWA remains WAIVED_NOT_EXECUTED.

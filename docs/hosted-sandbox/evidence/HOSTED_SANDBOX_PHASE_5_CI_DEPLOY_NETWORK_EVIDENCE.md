@@ -33,10 +33,13 @@
 
 | Check | Result |
 | --- | --- |
-| `docker info --format '{{.ServerVersion}}'` | BLOCKED: Docker Desktop Linux engine pipe not available |
-| `where.exe supabase` | BLOCKED: Supabase CLI not found on PATH |
+| `docker info --format '{{.ServerVersion}}'` | PASS: Docker daemon available, version 29.1.2 |
+| `cd app && npx supabase --version` | PASS: Supabase CLI 2.101.0 via app dev dependency |
 | `where.exe pg_dump` | BLOCKED: PostgreSQL client tooling not found on PATH |
+| `where.exe pg_restore` | BLOCKED: PostgreSQL client tooling not found on PATH |
 | `where.exe age` | BLOCKED: age encryption CLI not found on PATH |
+| `cd app && npx supabase db reset` | PASS: clean local Supabase reset |
+| `cd app && npm run test:rls` with local Supabase env and local demo fixture flag | PASS 56/56, 0 skipped |
 | Hosted migration apply | NOT_RUN: requires Supabase CLI, linked project secrets, and separate user approval |
 | Real hosted backup/restore drill | NOT_RUN: requires `pg_dump`, `age`, hosted DB URL, age keys, isolated restore target, and separate user approval |
 | Hosted cleanup apply | NOT_RUN: requires verified backup manifest and separate user approval |
