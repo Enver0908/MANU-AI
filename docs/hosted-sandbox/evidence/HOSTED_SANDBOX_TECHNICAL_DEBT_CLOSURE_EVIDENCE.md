@@ -1,15 +1,15 @@
 # Hosted Sandbox Technical Debt Closure Evidence
 
-**Date:** 2026-08-27
-**Status:** LOCAL_IMPLEMENTATION_AND_LOCAL_RLS_CLOSED_REMOTE_EXECUTION_BLOCKED
+**Date:** 2026-08-28
+**Status:** TECHNICAL_DEBT_CLOSED_WITH_CLEANUP_DATA_GUARD_BLOCKED
 **Production:** NO-GO
 **Independent review:** NOT_REQUESTED
 
 ## Summary
 
-The Hosted Sandbox technical-debt implementation plan is complete locally for code, contracts, tests, build, artifact, deploy preparation, cleanup preparation, activation preparation, clean Supabase reset, and zero-skip RLS. The old Hosted Sandbox Remediation v1.1 governance plan is superseded and is not required for continued project work.
+The Hosted Sandbox technical-debt implementation plan is complete for code, contracts, tests, build, artifact, deploy preparation, activation preparation, clean Supabase reset, zero-skip RLS, hosted migration apply, real encrypted backup, isolated restore drill, remote deploy, exact public release smoke, and rollback rehearsal. The old Hosted Sandbox Remediation v1.1 governance plan is superseded and is not required for continued project work.
 
-Remote hosted execution is not claimed as complete because this session does not have PostgreSQL client tools, age encryption CLI, hosted secrets, SSH pinned known_hosts, or explicit remote apply approvals.
+Hosted cleanup apply is not executed because the cleanup guard found one unexpected auth user in the fixed demo tenant. The guard correctly blocked deletion outside the fixed `demo@manu.local` user contract.
 
 ## Closed local findings
 
@@ -39,18 +39,30 @@ Remote hosted execution is not claimed as complete because this session does not
 | `cd app && npm run release:verify` | PASS |
 | `cd app && npx supabase db reset` | PASS; clean local Supabase reset completed |
 | `cd app && npm run test:rls` with local Supabase env and local demo fixture flag | PASS 56/56, 0 skipped |
+| `cd app && npx supabase db dump --linked --file <runtime>/schema.sql --yes` | PASS; remote schema dump created |
+| `cd app && npx supabase db dump --linked --data-only --use-copy --file <runtime>/data.sql --yes` | PASS; remote data dump created with circular-FK restore warnings |
+| `age -r <runtime public key> -o <runtime backup>.age <runtime tarball>` | PASS; encrypted backup manifest created with SHA-256 `b3780aea4b7dd8d7dd62a228583e3114624f24a8923b8f5b15410527cd87ec4f` |
+| Isolated restore drill into local Supabase database `restore_drill_20260828111154` | PASS; encrypted backup decrypted, full schema/data restored, public table count 104 |
+| `cd app && npx supabase db push --linked --include-all --dry-run --yes` | PASS; exactly three hosted-sandbox migrations selected |
+| `cd app && npx supabase db push --linked --include-all --yes` | PASS; three hosted-sandbox migrations applied to remote |
+| `cd app && npx supabase migration list` | PASS; local and remote migration histories match through `20260826130000` |
+| Hosted cleanup dry-run | BLOCKED: `unexpected_auth_users`; fixed demo tenant has 2 memberships, 1 expected demo user, 1 unexpected auth user |
+| `node tools/hosted-sandbox/deploy/apply-hosted-release.mjs` | PARTIAL: artifact staged and hash verified; remote helper missing at `/opt/manu-ai/tools/hosted-sandbox/deploy/deploy-hosted-release.mjs` |
+| Manual remote deploy using staged artifact `hs-67892db854e1-b66efff838fe.tar.gz` | PASS; `/opt/manu-ai/current` switched to commit `67892db854e12ca4d71f0dc6d8f3ca12cb4e8b99` |
+| `curl https://siriusai.store/api/health/release` | PASS; exact release ID, commit SHA, migration fingerprint, and compatibility version returned |
+| Controlled rollback rehearsal | PASS; switched to previous release `auth-rate-status-f069f52-20260824`, verified `/`, then restored current release and exact health smoke |
 
-## Blocked remote execution
+## Remote Execution
 
 | Required action | Status |
 | --- | --- |
 | Docker clean Supabase reset and zero-skip RLS | PASS: local reset and RLS 56/56 with 0 skipped |
-| Real hosted backup hash/freshness validation | BLOCKED: `pg_dump` and `age` unavailable; hosted DB/env approvals not present |
-| Isolated restore drill | BLOCKED: restore target/tooling unavailable |
-| Hosted cleanup apply | BLOCKED: requires real backup manifest and explicit approval |
-| Hosted migration apply | BLOCKED: Supabase CLI/secrets/approval unavailable |
-| Exact remote release smoke and rollback rehearsal | BLOCKED: SSH known_hosts pin, remote env, and explicit approval unavailable |
+| Real hosted backup hash/freshness validation | PASS: Supabase linked schema/data dump encrypted with `age`; manifest schema `2.0.0`; SHA-256 verified |
+| Isolated restore drill | PASS: restored into local Supabase isolated database with Supabase role/extension preconditions |
+| Hosted cleanup apply | BLOCKED_BY_DATA_GUARD: cleanup guard found one non-demo auth user in the fixed demo tenant |
+| Hosted migration apply | PASS: remote migration history now matches local through `20260826130000` |
+| Exact remote release smoke and rollback rehearsal | PASS: `https://siriusai.store/api/health/release` returns commit `67892db854e12ca4d71f0dc6d8f3ca12cb4e8b99`; rollback rehearsal passed |
 
 ## Final boundary
 
-The project can continue from local product-development work without reintroducing the old Hosted Sandbox Remediation v1.1 governance plan. Before claiming hosted runtime closure or production readiness, the remaining blocked remote execution rows above must be run for real and recorded as PASS. Production remains NO-GO, provider/channel egress remains disabled, live billing remains disabled, production schema rollout remains disabled, and physical iPhone Safari/PWA remains WAIVED_NOT_EXECUTED.
+The project can continue from product-development work without reintroducing the old Hosted Sandbox Remediation v1.1 governance plan. Hosted Sandbox technical debt is closed except for demo cleanup apply, which is intentionally blocked until the unexpected demo-tenant auth user is reviewed or removed by an explicit data decision. Production remains NO-GO, provider/channel egress remains disabled, live billing remains disabled, production schema rollout remains disabled, and physical iPhone Safari/PWA remains WAIVED_NOT_EXECUTED.

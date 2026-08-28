@@ -1,6 +1,6 @@
 # Hosted Sandbox Phase 3 Security RLS Backup Evidence
 
-Date: 2026-08-25
+Date: 2026-08-28
 
 Contract: `hosted-sandbox-environment-assurance-v1`
 
@@ -14,7 +14,7 @@ Production: `NO-GO`
 
 Faz 3 added an append-only migration binding `dietitian_belongs_to_tenant` to `auth.uid()` membership, revoked PUBLIC/anon EXECUTE from core RLS helper functions, introduced age-encrypted backup/restore tooling with manifest hashing, and updated `BACKUP_RESTORE_RUNBOOK.md` for Supabase Free retention without paid PITR.
 
-Remote backup, remote restore drill, and remote migration were not executed.
+Remote backup, remote restore drill, and remote migration were executed on 2026-08-28 after local tooling and linked Supabase access were verified.
 
 ## Commands
 
@@ -22,10 +22,16 @@ Remote backup, remote restore drill, and remote migration were not executed.
 | --- | --- | --- |
 | `node --test tools/hosted-sandbox/hosted-sandbox-backup.test.mjs` | 0 | PASS 4/4 |
 | `cd app && npx vitest run src/lib/hosted-sandbox-security.test.ts` | 0 | PASS 2/2 |
-| `cd app && npm run test:rls` | 1 | BLOCKED without local Supabase (`MANU_ALLOW_REMOTE_RLS_TESTS` not set) |
+| `cd app && npx supabase db reset` | 0 | PASS: clean local Supabase reset |
+| `cd app && npm run test:rls` with local Supabase env and local demo fixture flag | 0 | PASS 56/56, 0 skipped |
+| `cd app && npx supabase db dump --linked --file <runtime>/schema.sql --yes` | 0 | PASS: remote schema dump created |
+| `cd app && npx supabase db dump --linked --data-only --use-copy --file <runtime>/data.sql --yes` | 0 | PASS: remote data dump created; pg_dump reported circular-FK restore warnings |
+| `age -r <runtime public key> -o <runtime backup>.age <runtime tarball>` | 0 | PASS: encrypted backup manifest created; SHA-256 `b3780aea4b7dd8d7dd62a228583e3114624f24a8923b8f5b15410527cd87ec4f` |
+| Isolated restore drill into local Supabase database `restore_drill_20260828111154` | 0 | PASS: encrypted backup decrypted, full schema/data restored, public table count 104 |
+| `cd app && npx supabase db push --linked --include-all --yes` | 0 | PASS: three hosted-sandbox migrations applied to remote |
 
 ## Residual
 
-- Live pg_dump/age backup and isolated restore drill await operator tooling and explicit approval env flags.
+- Hosted cleanup apply remains blocked by the cleanup guard because the fixed demo tenant has one unexpected non-demo auth user.
 - Leaked-password protection and PITR remain disabled (paid); documented residual risk.
 - Production remains `NO-GO`.

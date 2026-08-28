@@ -1,7 +1,7 @@
 # Hosted Sandbox Phase 5 - CI, Deploy, and Network Evidence
 
 **Phase:** HS-FAZ-5
-**Date:** 2026-08-27
+**Date:** 2026-08-28
 **Independent review:** NOT_REQUESTED
 **Production:** NO-GO
 
@@ -37,17 +37,19 @@
 | `cd app && npx supabase --version` | PASS: Supabase CLI 2.101.0 via app dev dependency |
 | `where.exe pg_dump` | BLOCKED: PostgreSQL client tooling not found on PATH |
 | `where.exe pg_restore` | BLOCKED: PostgreSQL client tooling not found on PATH |
-| `where.exe age` | BLOCKED: age encryption CLI not found on PATH |
+| `winget install --id FiloSottile.age --exact --accept-package-agreements --accept-source-agreements --disable-interactivity` | PASS: `age` 1.3.1 installed; current shell used full executable path |
+| Docker Postgres client check | PASS: `public.ecr.aws/supabase/postgres:17.6.1.143` provides `pg_dump`, `pg_restore`, and `psql` 17.6 |
 | `cd app && npx supabase db reset` | PASS: clean local Supabase reset |
 | `cd app && npm run test:rls` with local Supabase env and local demo fixture flag | PASS 56/56, 0 skipped |
-| Hosted migration apply | NOT_RUN: requires Supabase CLI, linked project secrets, and separate user approval |
-| Real hosted backup/restore drill | NOT_RUN: requires `pg_dump`, `age`, hosted DB URL, age keys, isolated restore target, and separate user approval |
-| Hosted cleanup apply | NOT_RUN: requires verified backup manifest and separate user approval |
-| Remote VPS deploy/rollback rehearsal | NOT_RUN: requires SSH known_hosts pin, host/user env, built artifact, and separate user approval |
+| Hosted migration apply | PASS: `npx supabase db push --linked --include-all --yes` applied `20260825120000`, `20260826120000`, and `20260826130000`; follow-up migration list matched local/remote |
+| Real hosted backup/restore drill | PASS: linked Supabase schema/data dump encrypted with `age`; isolated local Supabase restore passed with public table count 104 |
+| Hosted cleanup apply | BLOCKED_BY_DATA_GUARD: dry-run failed with `unexpected_auth_users`; fixed demo tenant has 2 memberships, 1 expected demo user, 1 unexpected auth user |
+| Remote VPS deploy/rollback rehearsal | PASS: staged artifact hash verified, current switched to commit `67892db854e12ca4d71f0dc6d8f3ca12cb4e8b99`, public exact release smoke passed, controlled rollback rehearsal passed and restored the current release |
 
 ## Notes
 
 - Deploy smoke now requires HTTP 200 and exact `/api/health/release` identity match for release ID, commit SHA, migration fingerprint, and compatibility version.
 - PM2 is configured to run the Next standalone `server.js` from the active release app directory.
-- The deploy workflow remains a dry-run artifact gate. Real remote apply is intentionally local-operator gated.
-- Remote apply, hosted cleanup apply, and hosted migration apply are not claimed as PASS in this local evidence.
+- The first remote wrapper attempt staged the artifact and verified its hash, then failed because the existing VPS layout does not contain `/opt/manu-ai/tools/hosted-sandbox/deploy/deploy-hosted-release.mjs`.
+- The remote release was applied manually from the staged artifact using the same archive SHA-256, release-manifest identity, current pointer, PM2 standalone `server.js`, exact `/api/health/release` smoke, and rollback checks.
+- Hosted cleanup apply is not claimed as PASS because the cleanup guard correctly blocked deletion when a non-demo auth user was found in the fixed demo tenant.
