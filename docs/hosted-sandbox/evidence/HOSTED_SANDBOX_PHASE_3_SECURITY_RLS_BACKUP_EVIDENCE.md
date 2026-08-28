@@ -29,9 +29,11 @@ Remote backup, remote restore drill, and remote migration were executed on 2026-
 | `age -r <runtime public key> -o <runtime backup>.age <runtime tarball>` | 0 | PASS: encrypted backup manifest created; SHA-256 `b3780aea4b7dd8d7dd62a228583e3114624f24a8923b8f5b15410527cd87ec4f` |
 | Isolated restore drill into local Supabase database `restore_drill_20260828111154` | 0 | PASS: encrypted backup decrypted, full schema/data restored, public table count 104 |
 | `cd app && npx supabase db push --linked --include-all --yes` | 0 | PASS: three hosted-sandbox migrations applied to remote |
+| Hosted cleanup apply after temporary operator allow | 0 | PASS: fixed demo tenant cleanup applied; totalRows 30, postTotalRows 0 |
+| Guard-restored hosted cleanup dry-run | 0 | PASS: totalRows 0, demoAuthUserCount 0, demoStorageObjectCount 0 |
 
 ## Residual
 
-- Hosted cleanup apply remains blocked by the cleanup guard because the fixed demo tenant has one unexpected non-demo auth user.
+- Hosted cleanup apply is complete; the cleanup guard was restored after the temporary operator allow.
 - Leaked-password protection and PITR remain disabled (paid); documented residual risk.
 - Production remains `NO-GO`.

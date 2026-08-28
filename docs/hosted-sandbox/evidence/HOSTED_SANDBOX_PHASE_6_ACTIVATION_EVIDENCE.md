@@ -27,7 +27,9 @@
 | Manual VPS standalone deploy from staged artifact | PASS: current release switched to `67892db854e12ca4d71f0dc6d8f3ca12cb4e8b99`; PM2 runs `server.js` |
 | `curl https://siriusai.store/api/health/release` | PASS: exact release ID, commit SHA, migration fingerprint, and compatibility version returned |
 | Controlled rollback rehearsal | PASS: switched to previous release, verified `/`, restored current release, and re-verified exact release health |
-| Hosted cleanup dry-run | BLOCKED_BY_DATA_GUARD: `unexpected_auth_users`; fixed demo tenant has 2 memberships, 1 expected demo user, 1 unexpected auth user |
+| Hosted cleanup dry-run | BLOCKED_BY_DATA_GUARD initially: `unexpected_auth_users`; fixed demo tenant had 2 memberships, 1 expected demo user, 1 unexpected auth user |
+| Hosted cleanup apply after temporary operator allow | PASS: fixed demo tenant cleanup applied; totalRows 30, postTotalRows 0, demoAuthUserCount 1, demoStorageObjectCount 0 |
+| Guard-restored hosted cleanup dry-run | PASS: totalRows 0, demoAuthUserCount 0, demoStorageObjectCount 0 |
 
 ## Activation sequence
 
@@ -51,9 +53,9 @@ Apply mode now requires:
 - Real hosted backup was produced from linked Supabase schema/data dumps, encrypted with `age`, and verified by SHA-256 manifest.
 - Isolated restore drill passed in a local Supabase database after Supabase role/extension preconditions were created.
 - VPS deploy and rollback rehearsal passed using the staged release artifact and exact release health smoke.
-- Hosted cleanup apply was not run because the cleanup guard found one unexpected non-demo auth user in the fixed demo tenant.
+- Hosted cleanup apply passed after a temporary operator allow for the fixed demo tenant cleanup; the cleanup guard was restored and a follow-up dry-run reports zero rows.
 - Physical iPhone Safari/PWA remains WAIVED_NOT_EXECUTED, not PASS.
 
 ## Boundary
 
-This evidence closes the activation/deploy preparation debt and records the real hosted migration, backup, restore, deploy, smoke, and rollback results. It does not claim cleanup apply PASS because the data guard blocked deletion outside the fixed demo user contract. It does not claim production readiness. Production remains NO-GO.
+This evidence closes the activation/deploy preparation debt and records the real hosted migration, backup, restore, cleanup, deploy, smoke, and rollback results. It does not claim production readiness. Production remains NO-GO.

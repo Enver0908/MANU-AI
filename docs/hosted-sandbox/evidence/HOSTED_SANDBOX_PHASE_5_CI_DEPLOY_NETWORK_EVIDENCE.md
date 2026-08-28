@@ -43,7 +43,7 @@
 | `cd app && npm run test:rls` with local Supabase env and local demo fixture flag | PASS 56/56, 0 skipped |
 | Hosted migration apply | PASS: `npx supabase db push --linked --include-all --yes` applied `20260825120000`, `20260826120000`, and `20260826130000`; follow-up migration list matched local/remote |
 | Real hosted backup/restore drill | PASS: linked Supabase schema/data dump encrypted with `age`; isolated local Supabase restore passed with public table count 104 |
-| Hosted cleanup apply | BLOCKED_BY_DATA_GUARD: dry-run failed with `unexpected_auth_users`; fixed demo tenant has 2 memberships, 1 expected demo user, 1 unexpected auth user |
+| Hosted cleanup apply | PASS: fixed demo tenant cleanup applied after temporary operator allow; guard-restored dry-run reports totalRows 0, demoAuthUserCount 0, demoStorageObjectCount 0 |
 | Remote VPS deploy/rollback rehearsal | PASS: staged artifact hash verified, current switched to commit `67892db854e12ca4d71f0dc6d8f3ca12cb4e8b99`, public exact release smoke passed, controlled rollback rehearsal passed and restored the current release |
 
 ## Notes
@@ -52,4 +52,4 @@
 - PM2 is configured to run the Next standalone `server.js` from the active release app directory.
 - The first remote wrapper attempt staged the artifact and verified its hash, then failed because the existing VPS layout does not contain `/opt/manu-ai/tools/hosted-sandbox/deploy/deploy-hosted-release.mjs`.
 - The remote release was applied manually from the staged artifact using the same archive SHA-256, release-manifest identity, current pointer, PM2 standalone `server.js`, exact `/api/health/release` smoke, and rollback checks.
-- Hosted cleanup apply is not claimed as PASS because the cleanup guard correctly blocked deletion when a non-demo auth user was found in the fixed demo tenant.
+- Hosted cleanup apply initially blocked when a non-demo auth user was found in the fixed demo tenant. The operator temporarily allowed fixed-demo-tenant row cleanup while preserving auth deletion only for `demo@manu.local`; the guard was restored after cleanup.

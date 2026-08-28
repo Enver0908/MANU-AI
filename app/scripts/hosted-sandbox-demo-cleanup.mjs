@@ -254,7 +254,7 @@ export function validateCleanupEnvironment(env = process.env) {
 
 export async function runDemoCleanup(options = {}) {
   const env = options.env ?? process.env;
-  const { dryRun, apply } = parseCleanupArgs(options.argv ?? []);
+  const { dryRun, apply } = parseCleanupArgs(options.argv ?? process.argv.slice(2));
   const requestId = options.requestId ?? randomUUID();
   const { url, serviceRoleKey, projectRef } = validateCleanupEnvironment(env);
   const cleanupManifest = readCleanupInventoryManifest(env.MANU_HOSTED_SANDBOX_CLEANUP_INVENTORY ?? DEFAULT_CLEANUP_INVENTORY_PATH);
