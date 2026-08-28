@@ -9,6 +9,14 @@
   "realDeviceValidationReport": "docs/PHASE_85_STAGE_7_REAL_DEVICE_VALIDATION_REPORT.json",
   "productionStatus": "NO-GO",
   "physicalIphone": "WAIVED_NOT_EXECUTED",
+  "ownerIphoneWaiverPolicy": {
+    "status": "OWNER_PERMANENT_WAIVER_ACCEPTED",
+    "acceptedBy": "Enver0908",
+    "acceptedAt": "2026-08-28",
+    "futurePhysicalIphoneValidationRequired": false,
+    "authority": "docs/OWNER_IOS_VALIDATION_WAIVER_DECISION.md",
+    "interpretation": "Physical iPhone Safari/PWA remains WAIVED_NOT_EXECUTED, not PASS; future readiness or pilot language must disclose the waiver and accepted residual iOS risk."
+  },
   "stage7Status": "STAGE_7_CLOSED",
   "phase85FrontendRedesignStatus": "PHASE_85_FRONTEND_REDESIGN_CLOSED_LOCAL_WITH_IOS_WAIVER",
   "decision": {
@@ -47,7 +55,7 @@
     "summary": "core package tests passed; app lint passed with 70 existing warnings and 0 errors; app typecheck passed; app unit tests passed 1560 with 9 skipped across 261 files; production build passed; Stage 5 dependency and shell verifies passed; production dependency audit passed with zero vulnerabilities."
   },
   "nonClaims": [
-    "Physical iPhone Safari/PWA remains WAIVED_NOT_EXECUTED, not PASS.",
+    "Physical iPhone Safari/PWA remains WAIVED_NOT_EXECUTED, not PASS, under the 2026-08-28 permanent owner waiver.",
     "Production remains NO-GO.",
     "This closure does not authorize push, merge, PR, deploy, production gate change, provider/channel egress, live billing, production schema rollout, or real-data processing."
   ],
@@ -59,6 +67,7 @@
     "androidPwa": "PASS",
     "androidTalkBack": "PASS",
     "iphoneSafari": "WAIVED_NOT_EXECUTED",
-    "iphonePwa": "WAIVED_NOT_EXECUTED"
+    "iphonePwa": "WAIVED_NOT_EXECUTED",
+    "futurePhysicalIphoneValidationRequired": false
   }
 }

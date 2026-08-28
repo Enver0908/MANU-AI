@@ -62,7 +62,7 @@
   "historicalNonClaimsBeforeStage7_5": [
     "At the Stage 7R.0 through Stage 7R.5 checkpoints, Stage 7 closure was not yet declared; this is superseded by docs/PHASE_85_STAGE_7_CLOSURE_DECISION.json.",
     "At the Stage 7R.0 through Stage 7R.5 checkpoints, Stage 7.5 was not yet complete; this is superseded by docs/PHASE_85_STAGE_7_CLOSURE_DECISION.json.",
-    "Physical iPhone Safari/PWA remains WAIVED_NOT_EXECUTED, not PASS.",
+    "Physical iPhone Safari/PWA remains WAIVED_NOT_EXECUTED, not PASS, under the 2026-08-28 permanent owner waiver.",
     "Playwright WebKit evidence is not physical iPhone Safari/PWA evidence.",
     "NVDA smoke remains a local smoke evidence artifact, not formal WCAG certification.",
     "Android TalkBack and physical Android Stage 7.5 validation are not executed in Stage 7R.5.",

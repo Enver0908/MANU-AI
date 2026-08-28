@@ -68,4 +68,4 @@ Hosted cleanup apply initially stopped because the cleanup guard found one unexp
 
 ## Final boundary
 
-The project can continue from product-development work without reintroducing the old Hosted Sandbox Remediation v1.1 governance plan. Hosted Sandbox technical debt is closed. Production remains NO-GO, provider/channel egress remains disabled, live billing remains disabled, production schema rollout remains disabled, and physical iPhone Safari/PWA remains WAIVED_NOT_EXECUTED.
+The project can continue from product-development work without reintroducing the old Hosted Sandbox Remediation v1.1 governance plan. Hosted Sandbox technical debt is closed. Production remains NO-GO, provider/channel egress remains disabled, live billing remains disabled, production schema rollout remains disabled, and physical iPhone Safari/PWA remains WAIVED_NOT_EXECUTED under the permanent owner waiver recorded in `docs/OWNER_IOS_VALIDATION_WAIVER_DECISION.md`.

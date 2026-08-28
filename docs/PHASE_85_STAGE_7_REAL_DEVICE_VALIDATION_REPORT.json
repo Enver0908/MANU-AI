@@ -50,6 +50,14 @@
     "iphoneSafari",
     "iphonePwa"
   ],
+  "ownerIphoneWaiverPolicy": {
+    "status": "OWNER_PERMANENT_WAIVER_ACCEPTED",
+    "acceptedBy": "Enver0908",
+    "acceptedAt": "2026-08-28",
+    "futurePhysicalIphoneValidationRequired": false,
+    "authority": "docs/OWNER_IOS_VALIDATION_WAIVER_DECISION.md",
+    "interpretation": "Physical iPhone Safari/PWA remains WAIVED_NOT_EXECUTED, not PASS; future readiness or pilot language must disclose the waiver and accepted residual iOS risk."
+  },
   "blockers": [],
   "details": [],
   "normalizedArtifacts": {

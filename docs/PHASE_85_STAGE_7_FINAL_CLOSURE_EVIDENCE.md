@@ -48,6 +48,8 @@ Android TalkBack: PASS.
 
 iPhone Safari/PWA: WAIVED_NOT_EXECUTED, not PASS.
 
+Owner iOS waiver update, 2026-08-28: the owner permanently waived future physical iPhone Safari/PWA validation for this roadmap and future phases. Future readiness or pilot language must disclose the waiver and residual iOS risk instead of requiring or claiming iPhone PASS.
+
 Canonical validation:
 
 - `docs/PHASE_85_STAGE_7_REAL_DEVICE_EVIDENCE_STATUS.json`
@@ -56,6 +58,6 @@ Canonical validation:
 
 ## Non-Claims
 
-- Physical iPhone Safari/PWA remains `WAIVED_NOT_EXECUTED`, not PASS.
+- Physical iPhone Safari/PWA remains `WAIVED_NOT_EXECUTED`, not PASS, under the 2026-08-28 permanent owner waiver.
 - Production remains `NO-GO`.
 - No push, merge, PR, deploy, production gate change, provider/channel egress, live billing, production schema rollout, or real-data processing is authorized by this evidence.

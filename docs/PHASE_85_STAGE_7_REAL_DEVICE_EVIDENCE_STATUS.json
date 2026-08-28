@@ -13,9 +13,9 @@
   },
   "status": "APPROVED_WITH_WAIVER",
   "productionStatus": "NO-GO",
-  "approvedBy": "Enver0908 authorized physical Android Stage 7.5 validation on connected SM-S721B and retained the iPhone waiver",
+  "approvedBy": "Enver0908 authorized physical Android Stage 7.5 validation on connected SM-S721B, retained the iPhone waiver, and permanently waived future physical iPhone validation on 2026-08-28",
   "capturedAt": "2026-08-24T12:02:23.559Z",
-  "instructions": "Physical Android Chrome, installed Android PWA, and Android TalkBack evidence were captured on the connected Samsung SM-S721B. Browser emulation is not used. iPhone Safari/PWA remain WAIVED_NOT_EXECUTED and are not PASS.",
+  "instructions": "Physical Android Chrome, installed Android PWA, and Android TalkBack evidence were captured on the connected Samsung SM-S721B. Browser emulation is not used. iPhone Safari/PWA remain WAIVED_NOT_EXECUTED and are not PASS; future physical iPhone validation is permanently owner-waived for this roadmap.",
   "requiredCaptureIds": [
     "androidChrome",
     "androidPwa",
@@ -55,10 +55,13 @@
       "iphoneSafari",
       "iphonePwa"
     ],
-    "rationale": "The owner previously directed that iPhone Safari/PWA validation would not be executed for local Stage 7 closure. Android Chrome, installed Android PWA, and Android TalkBack were executed on physical Android.",
+    "rationale": "The owner previously directed that iPhone Safari/PWA validation would not be executed for local Stage 7 closure and on 2026-08-28 permanently waived future physical iPhone validation for this roadmap. Android Chrome, installed Android PWA, and Android TalkBack were executed on physical Android.",
     "residualRisk": "Stage 7 has no physical iPhone Safari or installed iPhone PWA execution evidence. iOS-specific layout, safe-area, browser, standalone-PWA, and assistive-technology regressions may remain undetected.",
     "productionStatus": "NO-GO",
-    "iosPilotRequirement": "REQUIRED_BEFORE_IOS_PILOT"
+    "iosPilotRequirement": "OWNER_PERMANENT_WAIVER_NO_FUTURE_PHYSICAL_IPHONE_VALIDATION",
+    "futurePhysicalIphoneValidationRequired": false,
+    "permanentWaiverAcceptedAt": "2026-08-28",
+    "authority": "docs/OWNER_IOS_VALIDATION_WAIVER_DECISION.md"
   },
   "deviceCaptures": {
     "androidChrome": {

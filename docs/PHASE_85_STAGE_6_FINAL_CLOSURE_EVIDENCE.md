@@ -16,7 +16,7 @@ Stage 6 Dashboard Core Workflows is closed locally. Phases 0-4, remediation R1-R
 
 The owner explicitly directed that no new Stage 6 iPhone recording or artifact will be produced and accepted the resulting residual risk for local Stage 6 closure. Physical iPhone Safari and installed iPhone PWA are recorded as `WAIVED_NOT_EXECUTED`, not `PASS`. No iPhone device, workflow, or artifact evidence is claimed.
 
-This waiver does not authorize an iOS production pilot or any production-readiness claim. Physical iPhone Safari and installed-PWA validation remains required before either of those decisions. Production remains independently `NO-GO`.
+This waiver does not authorize an iOS production pilot or any production-readiness claim. On 2026-08-28, the owner permanently waived future physical iPhone Safari and installed-PWA validation for this roadmap and future phases. Future readiness or pilot language must disclose `WAIVED_NOT_EXECUTED` and the accepted residual iOS risk instead of requiring or claiming iPhone PASS. Production remains independently `NO-GO`.
 
 ## Verification
 
@@ -41,7 +41,7 @@ This waiver does not authorize an iOS production pilot or any production-readine
 
 ## Residual Risk
 
-`S6-IOS-PHYSICAL-VALIDATION` is accepted for local Stage 6 closure only. Because the post-remediation Stage 6 workflow was not executed on a physical iPhone, iOS-specific layout, safe-area, Safari, standalone-PWA, and offline-lock regressions may remain undetected. The risk must be reopened and physically validated before an iOS production pilot or iOS production-readiness claim.
+`S6-IOS-PHYSICAL-VALIDATION` is accepted by the owner for the current roadmap and future phases. Because the post-remediation Stage 6 workflow was not executed on a physical iPhone, iOS-specific layout, safe-area, Safari, standalone-PWA, and offline-lock regressions may remain undetected. The risk must remain disclosed in future readiness or pilot language and must not be reopened as a mandatory gate unless the owner explicitly reverses the 2026-08-28 waiver.
 
 ## Scope Guard
 

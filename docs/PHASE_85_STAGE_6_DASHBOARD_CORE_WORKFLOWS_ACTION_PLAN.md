@@ -10,7 +10,7 @@ Production status: **NO-GO**
 
 This document is the canonical execution plan for Stage 6 Dashboard Core Workflows. Stage 5 is closed by `docs/PHASE_85_STAGE_5_CLOSURE_DECISION.json` with `stageStatus=STAGE_5_CLOSED` and zero blockers. Stage 6 consumes the closed Stage 5 shell contracts; it does not reopen shell architecture, production rollout, provider/channel egress, live billing, offline mutation, or real health-data paths.
 
-Final closure authority (2026-08-21): Stage 6 is locally closed by `docs/PHASE_85_STAGE_6_CLOSURE_DECISION.json`. Android Chrome and installed Android PWA physical workflow evidence passed. The owner explicitly accepted the absence of new Stage 6 physical iPhone Safari/PWA execution evidence; those two capture groups are `WAIVED_NOT_EXECUTED`, never `PASS`, and remain required before any iOS production pilot or iOS production-readiness claim. Production remains `NO-GO`.
+Final closure authority (2026-08-21, iOS waiver updated 2026-08-28): Stage 6 is locally closed by `docs/PHASE_85_STAGE_6_CLOSURE_DECISION.json`. Android Chrome and installed Android PWA physical workflow evidence passed. The owner explicitly accepted the absence of new Stage 6 physical iPhone Safari/PWA execution evidence; those two capture groups are `WAIVED_NOT_EXECUTED`, never `PASS`. The owner permanently waived future physical iPhone validation for this roadmap, so future readiness or pilot language must disclose the waiver and residual iOS risk instead of requiring or claiming iPhone PASS. Production remains `NO-GO`.
 
 The primary user is a dietitian. The primary surface is the installed mobile PWA, while the existing productive desktop layout remains supported. Selecting a client means making that client active and opening that client's workspace. Every client switch must pass through the existing central dirty-state guard.
 
@@ -492,7 +492,7 @@ Prove Stage 6 end-to-end without adding features, reconcile documentation, and p
 ### Locked closure method
 
 - Stage 5 shell verification remains a regression gate, not a reopened implementation phase.
-- Physical Android Chrome and installed PWA smoke evidence are mandatory. The original iPhone Safari/PWA requirement was superseded for local Stage 6 closure only by the explicit 2026-08-21 owner risk acceptance; it remains mandatory before any iOS production pilot or iOS production-readiness claim.
+- Physical Android Chrome and installed PWA smoke evidence are mandatory. The original iPhone Safari/PWA requirement was superseded by the explicit 2026-08-21 owner risk acceptance and the 2026-08-28 permanent owner waiver. iPhone remains `WAIVED_NOT_EXECUTED`, never PASS; future readiness or pilot language must disclose the waiver and accepted residual iOS risk.
 - Stage 5 route/performance thresholds are the minimum baseline. Bounded pagination, lazy task loading, stable layout, and no broad post-mutation refetch must be measured.
 - Production status remains `NO-GO`; Stage 6 closure cannot authorize deployment, egress, billing, production schema, or real health data.
 

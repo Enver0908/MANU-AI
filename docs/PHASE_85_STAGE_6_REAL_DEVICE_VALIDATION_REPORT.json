@@ -43,10 +43,13 @@
       "iphoneSafari",
       "iphonePwa"
     ],
-    "rationale": "The owner explicitly chose not to produce new Stage 6 iPhone recordings or artifacts and directed that this omission must not block local Stage 6 closure.",
+    "rationale": "The owner explicitly chose not to produce new Stage 6 iPhone recordings or artifacts, directed that this omission must not block local Stage 6 closure, and on 2026-08-28 permanently waived future physical iPhone validation for this roadmap.",
     "residualRisk": "Stage 6 client workflows have no post-remediation physical iPhone Safari or installed iPhone PWA execution evidence. iOS-specific layout, safe-area, browser, standalone-PWA, and offline-lock regressions may therefore remain undetected.",
     "productionStatus": "NO-GO",
-    "iosPilotRequirement": "REQUIRED_BEFORE_IOS_PILOT"
+    "iosPilotRequirement": "OWNER_PERMANENT_WAIVER_NO_FUTURE_PHYSICAL_IPHONE_VALIDATION",
+    "futurePhysicalIphoneValidationRequired": false,
+    "permanentWaiverAcceptedAt": "2026-08-28",
+    "authority": "docs/OWNER_IOS_VALIDATION_WAIVER_DECISION.md"
   },
   "blockers": [],
   "details": [],
