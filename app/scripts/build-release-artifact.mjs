@@ -25,6 +25,54 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const appRoot = join(__dirname, "..");
 const repoRoot = join(appRoot, "..");
 
+const PRODUCTION_STAGE_1_PHASE_5_OPERATIONS_SCHEMA =
+  "production-readiness-stage-1-phase-5-worker-release-v1";
+
+const PRODUCTION_STAGE_1_PHASE_5_WORKERS = [
+  {
+    id: "media-stage4b3",
+    command: "npm run worker:media:stage4b3",
+    onceCommand: "npm run worker:media:stage4b3:once",
+    purpose: "Sanitized visual media analysis queue.",
+    requiredEnv: ["NEXT_PUBLIC_SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"],
+  },
+  {
+    id: "media-lifecycle",
+    command: "npm run worker:media:lifecycle",
+    onceCommand: "npm run worker:media:lifecycle:once",
+    purpose: "Visual media retention and object cleanup queue.",
+    requiredEnv: ["NEXT_PUBLIC_SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"],
+  },
+  {
+    id: "audio-stage4b4",
+    command: "npm run worker:audio:stage4b4",
+    onceCommand: "npm run worker:audio:stage4b4:once",
+    purpose: "Audio admission, transcription, and transcript bridge supervisor.",
+    requiredEnv: ["NEXT_PUBLIC_SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"],
+  },
+  {
+    id: "audio-lifecycle-stage4b4",
+    command: "npm run worker:audio:lifecycle:stage4b4",
+    onceCommand: "npm run worker:audio:lifecycle:stage4b4:once",
+    purpose: "Audio retention and object cleanup queue.",
+    requiredEnv: ["NEXT_PUBLIC_SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"],
+  },
+  {
+    id: "ai-chat-stage4c",
+    command: "npm run worker:ai-chat:stage4c",
+    onceCommand: "npm run worker:ai-chat:stage4c:once",
+    purpose: "AI Chat generation, attachment scan/parse, and deletion queues.",
+    requiredEnv: ["NEXT_PUBLIC_SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"],
+  },
+  {
+    id: "ai-chat-lifecycle-stage4c",
+    command: "npm run worker:ai-chat:lifecycle:stage4c",
+    onceCommand: "npm run worker:ai-chat:lifecycle:stage4c:once",
+    purpose: "AI Chat lifecycle retention and purge queue.",
+    requiredEnv: ["NEXT_PUBLIC_SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"],
+  },
+];
+
 export function buildReleaseArtifact({
   appRoot: inputAppRoot = appRoot,
   repoRoot: inputRepoRoot = repoRoot,
@@ -74,6 +122,19 @@ export function buildReleaseArtifact({
       source: "public/sw.js",
       cacheVersion,
       renderedInArtifactOnly: true,
+    },
+    operations: {
+      schemaVersion: PRODUCTION_STAGE_1_PHASE_5_OPERATIONS_SCHEMA,
+      productionPilotGo: false,
+      workerCommands: PRODUCTION_STAGE_1_PHASE_5_WORKERS,
+      requiredBeforeProductionStart: [
+        "release package verification",
+        "production GO approval",
+        "approved incident runbook",
+        "assigned rollback owner",
+        "production Supabase URL and service role key",
+        "demo/mock flags disabled",
+      ],
     },
     files: collectFiles(packageRoot, manifestPath),
   };

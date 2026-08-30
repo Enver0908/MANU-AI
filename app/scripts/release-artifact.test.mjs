@@ -47,5 +47,11 @@ test("buildReleaseArtifact stages standalone output and renders SW only in the a
   const manifest = JSON.parse(readFileSync(result.manifestPath, "utf8"));
   assert.equal(manifest.nextOutput, "standalone");
   assert.equal(manifest.serviceWorker.renderedInArtifactOnly, true);
+  assert.equal(manifest.operations.productionPilotGo, false);
+  assert.equal(
+    manifest.operations.workerCommands.some((worker) => worker.onceCommand === "npm run worker:ai-chat:stage4c:once"),
+    true,
+  );
+  assert.equal(manifest.operations.requiredBeforeProductionStart.includes("production GO approval"), true);
   assert.equal(manifest.files.some((file) => file.path === "release-manifest.json"), true);
 });
