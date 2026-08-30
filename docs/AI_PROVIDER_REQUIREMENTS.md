@@ -4,6 +4,8 @@
 
 MANU-AI uses only deterministic local/mock provider behavior. No real Gemini or external LLM provider is connected.
 
+Production Readiness Stage 1 Phase 4 adds fail-closed real AI adapter contracts for Gemini text, vision/OCR, and transcription readiness. These contracts do not enable live transport. Any real provider call still requires production readiness boundary approval, server-authoritative launch gates, vendor-risk approval, clinical safety approval, privacy/legal approval, provider training disablement, retention disablement or bounded retention, provider-native token counting, safety settings, server-built context, tenant entitlement, tenant permission, and file safety evidence when media or documents are involved.
+
 Phase 26 internal copilot is also local/mock only. It may read already-visible tenant-scoped app state through curated read-only tools, but it does not send copilot questions, tool results, source refs, client records, or message history to an external provider.
 
 Phase 27 dietitian context updates are local/mock prompt context only. They can enter bounded PromptContext for simulator/mock provider behavior, but real provider egress for these records remains blocked until legal/privacy, clinical, provider, and data-minimization review.
@@ -35,6 +37,8 @@ Before any real Gemini or external LLM integration:
 - Provider input must be allowlist-built and runtime-guarded before any provider call.
 - Provider input segment types must remain allowlisted; unknown segment types, overlong segments, extra keys, raw prompts, capsules, raw message collections, and red-risk payloads must fail closed.
 - Raw prompts, full context capsules, channel identifiers, health profiles, clinical notes, message collections, memory objects, and secrets must not be passed as provider input.
+- Provider-bound images must be sanitized derivatives only; provider-bound audio must use accepted transcripts only; provider-bound documents must use deterministic or reviewed extraction derivatives only.
+- Provider-bound attachments require malware scan pass evidence before `provider_egress_eligible=true`.
 - Internal copilot provider egress must have its own allowlist, source-ref policy, tool-result minimization policy, and legal/vendor/security review before any real provider is used.
 - Dietitian context update egress must have explicit provider allowlist, retention, logging, and clinical safety approval before real provider use.
 

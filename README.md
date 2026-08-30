@@ -8,7 +8,7 @@ The product is designed around a strict principle: AI may assist the dietitian, 
 
 As of 2026-08-30:
 
-- Production Readiness Stage 1 Phase 1-3 are locally complete for their recorded scopes.
+- Production Readiness Stage 1 Phase 1-4 are locally complete for their recorded scopes.
 - Stage 5, Stage 6, and Stage 7 are closed locally for their recorded scopes.
 - Hosted Sandbox technical debt is closed by evidence under `docs/hosted-sandbox/evidence/`.
 - Production remains `NO-GO`.
@@ -19,6 +19,7 @@ As of 2026-08-30:
 Canonical current authorities:
 
 - `docs/OWNER_IOS_VALIDATION_WAIVER_DECISION.md`
+- `docs/PRODUCTION_READINESS_STAGE_1_PHASE_4_EVIDENCE.md`
 - `docs/PRODUCTION_READINESS_STAGE_1_PHASE_3_EVIDENCE.md`
 - `docs/PRODUCTION_READINESS_STAGE_1_PHASE_2_EVIDENCE.md`
 - `docs/PRODUCTION_READINESS_STAGE_1_PHASE_1_EVIDENCE.md`
