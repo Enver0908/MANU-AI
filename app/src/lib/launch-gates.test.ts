@@ -3,6 +3,7 @@ import {
   PRODUCTION_PILOT_LAUNCH_GATES,
   evaluateProductionPilotLaunchGateEvidence,
   evaluateProductionPilotLaunchGates,
+  resolveProductionPilotLaunchGatesForScope,
   type LaunchGateDefinition,
   type LaunchGateEvidenceRecord,
 } from "./launch-gates";
@@ -45,6 +46,37 @@ describe("production pilot launch gates", () => {
     expect(
       PRODUCTION_PILOT_LAUNCH_GATES.find((gate) => gate.id === "clinical_taxonomy_approval")?.requiredEvidence,
     ).toContain("approved official regulation PDF corpus version");
+  });
+
+  it("keeps Telegram required in the default historical launch gate scope", () => {
+    expect(
+      PRODUCTION_PILOT_LAUNCH_GATES.find((gate) => gate.id === "channel_policy_review")?.requiredEvidence,
+    ).toContain("Telegram privacy and bot policy review");
+    expect(
+      resolveProductionPilotLaunchGatesForScope()
+        .find((gate) => gate.id === "channel_policy_review")
+        ?.requiredEvidence,
+    ).toContain("Telegram privacy and bot policy review");
+  });
+
+  it("scopes Telegram out of the Turkey-first WhatsApp launch without closing the channel gate", () => {
+    const scopedGates = resolveProductionPilotLaunchGatesForScope({
+      channels: { whatsapp: true, telegram: false },
+    });
+    const channelGate = scopedGates.find((gate) => gate.id === "channel_policy_review");
+
+    expect(channelGate?.label).toBe("WhatsApp policy review");
+    expect(channelGate?.requiredEvidence).toContain("WhatsApp healthcare feasibility review");
+    expect(channelGate?.requiredEvidence).not.toContain("Telegram privacy and bot policy review");
+
+    const evidence = scopedGates.map((gate) => buildEvidenceRecord(gate));
+    const evaluation = evaluateProductionPilotLaunchGateEvidence(evidence, {
+      now: "2026-06-04T12:00:00.000Z",
+      scope: { channels: { whatsapp: true, telegram: false } },
+    });
+
+    expect(evaluation.blocked).toBe(false);
+    expect(evaluation.approvedGateIds).toEqual(scopedGates.map((gate) => gate.id));
   });
 
   it("blocks structured launch gate closure by default", () => {

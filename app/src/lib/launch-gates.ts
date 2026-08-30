@@ -18,6 +18,13 @@ export type LaunchGateDefinition = {
 
 export type LaunchGateEvidenceStatus = "approved" | "conditional" | "rejected" | "draft";
 
+export type ProductionPilotLaunchGateScope = {
+  channels?: {
+    whatsapp?: boolean;
+    telegram?: boolean;
+  };
+};
+
 export type LaunchGateEvidenceRecord = {
   gateId: string;
   artifactTitle?: string;
@@ -141,12 +148,36 @@ export const PRODUCTION_PILOT_LAUNCH_GATES: LaunchGateDefinition[] = [
   },
 ];
 
-export function evaluateProductionPilotLaunchGates(approvedGateIds: string[] = []): LaunchGateEvaluation {
-  const knownGateIds = new Set(PRODUCTION_PILOT_LAUNCH_GATES.map((gate) => gate.id));
+export function resolveProductionPilotLaunchGatesForScope(
+  scope: ProductionPilotLaunchGateScope = {},
+): LaunchGateDefinition[] {
+  const telegramEnabled = scope.channels?.telegram !== false;
+
+  return PRODUCTION_PILOT_LAUNCH_GATES.map((gate) => {
+    if (gate.id !== "channel_policy_review" || telegramEnabled) {
+      return gate;
+    }
+
+    return {
+      ...gate,
+      label: "WhatsApp policy review",
+      requiredEvidence: gate.requiredEvidence.filter(
+        (item) => item !== "Telegram privacy and bot policy review",
+      ),
+    };
+  });
+}
+
+export function evaluateProductionPilotLaunchGates(
+  approvedGateIds: string[] = [],
+  scope: ProductionPilotLaunchGateScope = {},
+): LaunchGateEvaluation {
+  const gateDefinitions = resolveProductionPilotLaunchGatesForScope(scope);
+  const knownGateIds = new Set(gateDefinitions.map((gate) => gate.id));
   const approvedKnownGateIds = new Set(
     approvedGateIds.filter((gateId): gateId is LaunchGateId => knownGateIds.has(gateId as LaunchGateId)),
   );
-  const openGateIds = PRODUCTION_PILOT_LAUNCH_GATES.map((gate) => gate.id).filter(
+  const openGateIds = gateDefinitions.map((gate) => gate.id).filter(
     (gateId) => !approvedKnownGateIds.has(gateId),
   );
 
@@ -160,17 +191,18 @@ export function evaluateProductionPilotLaunchGates(approvedGateIds: string[] = [
 
 export function evaluateProductionPilotLaunchGateEvidence(
   evidenceRecords: LaunchGateEvidenceRecord[] = [],
-  options: { now?: string } = {},
+  options: { now?: string; scope?: ProductionPilotLaunchGateScope } = {},
 ): LaunchGateEvidenceEvaluation {
   const now = options.now ? new Date(options.now) : new Date();
-  const knownGateIds = new Set(PRODUCTION_PILOT_LAUNCH_GATES.map((gate) => gate.id));
+  const gateDefinitions = resolveProductionPilotLaunchGatesForScope(options.scope);
+  const knownGateIds = new Set(gateDefinitions.map((gate) => gate.id));
   const ignoredEvidenceGateIds = unique(
     evidenceRecords
       .map((record) => record.gateId)
       .filter((gateId) => !knownGateIds.has(gateId as LaunchGateId)),
   );
 
-  const gateResults = PRODUCTION_PILOT_LAUNCH_GATES.map((gate): LaunchGateEvidenceGateResult => {
+  const gateResults = gateDefinitions.map((gate): LaunchGateEvidenceGateResult => {
     const requiredEvidence = new Set(gate.requiredEvidence);
     const recordsForGate = evidenceRecords.filter((record) => record.gateId === gate.id);
     const coveredEvidence = new Set<string>();
