@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "production-readiness-stage-1-phase-6-handoff-v1",
+  "date": "2026-08-30",
+  "branch": "codex/production-readiness-stage-1",
+  "planName": "Birinci Asama: Canli Hesaplari Beklemeden Teknik Hazirlik",
+  "localTechnicalPreparationComplete": true,
+  "ownerHandoffReady": true,
+  "productionPilotGo": false,
+  "productionDecision": "NO-GO",
+  "iphoneSafariPwaStatus": "WAIVED_NOT_EXECUTED",
+  "liveActionsExecuted": [],
+  "phaseEvidence": [
+    "docs/PRODUCTION_READINESS_STAGE_1_PHASE_1_EVIDENCE.md",
+    "docs/PRODUCTION_READINESS_STAGE_1_PHASE_2_EVIDENCE.md",
+    "docs/PRODUCTION_READINESS_STAGE_1_PHASE_3_EVIDENCE.md",
+    "docs/PRODUCTION_READINESS_STAGE_1_PHASE_4_EVIDENCE.md",
+    "docs/PRODUCTION_READINESS_STAGE_1_PHASE_5_EVIDENCE.md",
+    "docs/PRODUCTION_READINESS_STAGE_1_PHASE_6_EVIDENCE.md"
+  ],
+  "ownerActionsRequired": [
+    "meta_whatsapp_business",
+    "gemini_ai_provider",
+    "production_secrets",
+    "production_supabase_and_migrations",
+    "manual_transfer_operations",
+    "incident_monitoring_and_rollback",
+    "explicit_production_release_approval"
+  ],
+  "codexActionsAfterOwnerCompletion": [
+    "apply_remote_migrations",
+    "configure_production_env",
+    "deploy_verified_release",
+    "run_production_smoke_checks",
+    "enable_real_webhooks_and_workers",
+    "write_final_go_no_go_report"
+  ],
+  "mustNotClaim": [
+    "production GO",
+    "iPhone Safari/PWA PASS",
+    "live provider or channel execution",
+    "production schema rollout",
+    "real client health-data processing"
+  ]
+}

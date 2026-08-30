@@ -8,7 +8,8 @@ The product is designed around a strict principle: AI may assist the dietitian, 
 
 As of 2026-08-30:
 
-- Production Readiness Stage 1 Phase 1-5 are locally complete for their recorded scopes.
+- Production Readiness Stage 1 Phase 1-6 are locally complete for their recorded scopes.
+- Stage 1 owner handoff is ready locally; owner-side account, approval, secret, production-environment, and release-approval actions remain open.
 - Stage 5, Stage 6, and Stage 7 are closed locally for their recorded scopes.
 - Hosted Sandbox technical debt is closed by evidence under `docs/hosted-sandbox/evidence/`.
 - Production remains `NO-GO`.
@@ -19,6 +20,9 @@ As of 2026-08-30:
 Canonical current authorities:
 
 - `docs/OWNER_IOS_VALIDATION_WAIVER_DECISION.md`
+- `docs/PRODUCTION_READINESS_STAGE_1_PHASE_6_EVIDENCE.md`
+- `docs/PRODUCTION_READINESS_STAGE_1_OWNER_HANDOFF.md`
+- `docs/PRODUCTION_READINESS_STAGE_1_FINAL_DECISION.json`
 - `docs/PRODUCTION_READINESS_STAGE_1_PHASE_5_EVIDENCE.md`
 - `docs/PRODUCTION_READINESS_STAGE_1_PHASE_5_OPERATIONS_RUNBOOK.md`
 - `docs/PRODUCTION_READINESS_STAGE_1_PHASE_4_EVIDENCE.md`
@@ -130,7 +134,7 @@ Production is currently blocked by independent launch gates. Local closure evide
 - Real health-data processing.
 - Removing accepted-risk qualifications from iOS coverage.
 
-Production readiness requires explicit owner approval and current evidence for the relevant operational gates.
+Production readiness requires explicit owner approval and current evidence for the relevant operational gates. The active Stage 1 owner blockers are Meta/WhatsApp Business approval, Gemini/provider approval, production secrets, production Supabase and remote migration approval, manual bank-transfer operations approval, incident/monitoring/rollback ownership, and exact release approval.
 
 ## Evidence Discipline
 
