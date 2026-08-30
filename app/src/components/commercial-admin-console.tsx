@@ -1,7 +1,17 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { AlertTriangle, KeyRound, MessageSquare, RefreshCw, ScrollText, Shield, UserPlus, UserX } from "lucide-react";
+import {
+  AlertTriangle,
+  Banknote,
+  KeyRound,
+  MessageSquare,
+  RefreshCw,
+  ScrollText,
+  Shield,
+  UserPlus,
+  UserX,
+} from "lucide-react";
 import { Button, Card, CardBody, CardHeader, Field, TextInput } from "@/components/ui";
 import type {
   CommercialAdminAuditListItem,
@@ -122,6 +132,11 @@ export function CommercialAdminConsole(props: {
   const [createTenantName, setCreateTenantName] = useState("");
   const [createInviteToken, setCreateInviteToken] = useState("");
   const [createExpiresAt, setCreateExpiresAt] = useState("");
+  const [manualInviteId, setManualInviteId] = useState("");
+  const [manualAction, setManualAction] = useState<"activate" | "renew">("activate");
+  const [manualPaymentReference, setManualPaymentReference] = useState("");
+  const [manualPaidThrough, setManualPaidThrough] = useState("");
+  const [manualRequestId, setManualRequestId] = useState("");
 
   const activeToken = isSessionMode ? null : sessionToken;
   const canOperate = isSessionMode || Boolean(activeToken);
@@ -282,6 +297,42 @@ export function CommercialAdminConsole(props: {
       await loadOperations(activeToken);
     } catch (createError) {
       setError(createError instanceof Error ? createError.message : "invite_create_failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function onApplyManualEntitlement(event: React.FormEvent) {
+    event.preventDefault();
+    if (!canOperate) {
+      return;
+    }
+    setError(null);
+    setBusy(true);
+    try {
+      const response = await authenticatedMutationFetch("/api/commercial/admin/manual-entitlements", {
+        method: "POST",
+        mutationKind: "other",
+        headers: requestHeaders(),
+        body: JSON.stringify({
+          action: manualAction,
+          inviteId: manualInviteId.trim(),
+          paymentReference: manualPaymentReference.trim(),
+          paidThrough: manualPaidThrough.trim(),
+          requestId: manualRequestId.trim() || `manual-${crypto.randomUUID()}`,
+        }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(payload.error ?? "manual_entitlement_failed");
+      }
+      setManualInviteId("");
+      setManualPaymentReference("");
+      setManualPaidThrough("");
+      setManualRequestId("");
+      await loadOperations(activeToken);
+    } catch (manualError) {
+      setError(manualError instanceof Error ? manualError.message : "manual_entitlement_failed");
     } finally {
       setBusy(false);
     }
@@ -685,6 +736,80 @@ export function CommercialAdminConsole(props: {
           </CardBody>
         </Card>
 
+        {isSessionMode ? (
+          <Card>
+            <CardHeader
+              title="Havale ile erişim"
+              description="Stripe'sız aktivasyon veya yenileme. Ödeme belgesi depolanmaz."
+              icon={Banknote}
+            />
+            <CardBody>
+              <form className="space-y-4" onSubmit={onApplyManualEntitlement}>
+                <Field label="Davet" htmlFor="manual-entitlement-invite">
+                  <select
+                    id="manual-entitlement-invite"
+                    className="min-h-11 w-full rounded-md border border-border bg-white px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    value={manualInviteId}
+                    onChange={(event) => setManualInviteId(event.target.value)}
+                    required
+                  >
+                    <option value="">Davet seç</option>
+                    {invites.map((invite) => (
+                      <option key={invite.id} value={invite.id}>
+                        {invite.normalizedEmail} · {invite.status}
+                      </option>
+                    ))}
+                  </select>
+                </Field>
+                <Field label="İşlem" htmlFor="manual-entitlement-action">
+                  <select
+                    id="manual-entitlement-action"
+                    className="min-h-11 w-full rounded-md border border-border bg-white px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    value={manualAction}
+                    onChange={(event) => setManualAction(event.target.value === "renew" ? "renew" : "activate")}
+                  >
+                    <option value="activate">Aktive et</option>
+                    <option value="renew">Yenile</option>
+                  </select>
+                </Field>
+                <Field label="Ödeme referansı" htmlFor="manual-payment-reference">
+                  <TextInput
+                    id="manual-payment-reference"
+                    value={manualPaymentReference}
+                    onChange={(event) => setManualPaymentReference(event.target.value)}
+                    placeholder="BANK-2026-0001"
+                    required
+                  />
+                </Field>
+                <Field label="Erişim bitişi" htmlFor="manual-paid-through">
+                  <TextInput
+                    id="manual-paid-through"
+                    type="datetime-local"
+                    value={manualPaidThrough}
+                    onChange={(event) => setManualPaidThrough(event.target.value)}
+                    required
+                  />
+                </Field>
+                <Field label="İstek id (opsiyonel)" htmlFor="manual-request-id">
+                  <TextInput
+                    id="manual-request-id"
+                    value={manualRequestId}
+                    onChange={(event) => setManualRequestId(event.target.value)}
+                    placeholder="Boş bırakılırsa otomatik üretilir"
+                  />
+                </Field>
+                <Button
+                  type="submit"
+                  disabled={busy || !manualInviteId || !manualPaymentReference.trim() || !manualPaidThrough}
+                  icon={Banknote}
+                >
+                  Havale erişimini uygula
+                </Button>
+              </form>
+            </CardBody>
+          </Card>
+        ) : null}
+
         <Card>
           <CardHeader title="Davet listesi" description="Hash/token depolanmaz; yalnızca operasyon metadata." icon={Shield} />
           <CardBody className="space-y-3">
@@ -743,6 +868,10 @@ export function CommercialAdminConsole(props: {
                   <p className="text-xs text-stone-500">
                     Uygulama erişimi: {describeEntitlementStatusLabel(subscription.entitlementStatus)} ·
                     Davet: {subscription.inviteStatus ?? "—"}
+                  </p>
+                  <p className="text-xs text-stone-500">
+                    Ödeme: {subscription.billingMethod ?? "—"} · Bitiş: {formatTimestamp(subscription.paidThrough)} ·
+                    Revizyon: {subscription.revision ?? "—"}
                   </p>
                   <p className="text-xs text-stone-500">
                     Stripe müşteri: {subscription.stripeCustomerId ?? "—"}

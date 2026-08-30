@@ -18,6 +18,10 @@ export const COMMERCIAL_ENTITLEMENT_STATUSES = [
 
 export type CommercialEntitlementStatus = (typeof COMMERCIAL_ENTITLEMENT_STATUSES)[number];
 
+export const COMMERCIAL_BILLING_METHODS = ["stripe", "manual_transfer"] as const;
+
+export type CommercialBillingMethod = (typeof COMMERCIAL_BILLING_METHODS)[number];
+
 export const COMMERCIAL_INVITE_STATUSES = ["active", "revoked", "consumed"] as const;
 
 export type CommercialInviteStatus = (typeof COMMERCIAL_INVITE_STATUSES)[number];
@@ -44,6 +48,9 @@ export type TenantEntitlement = {
   tenantId: string;
   commercialInviteId: string | null;
   status: CommercialEntitlementStatus;
+  billingMethod: CommercialBillingMethod;
+  paidThrough: string | null;
+  revision: number;
   stripeCustomerId: string | null;
   stripeSubscriptionId: string | null;
   checkoutSessionId: string | null;
@@ -95,6 +102,9 @@ export type CommercialDashboardAccessInput = {
   hasTenantMembership: boolean;
   hasDietitianProfile: boolean;
   entitlementStatus: CommercialEntitlementStatus | null;
+  billingMethod?: CommercialBillingMethod | null;
+  paidThrough?: string | null;
+  now?: string;
 };
 
 export type CommercialDashboardAccessResult = {
@@ -166,11 +176,54 @@ export function evaluateCommercialDashboardAccess(
   } else if (!DASHBOARD_ACCESS_ENTITLEMENT_STATUSES.includes(input.entitlementStatus)) {
     blockingReasons.push(`entitlement status must be active (current: ${input.entitlementStatus})`);
   }
+  const expiry = evaluateCommercialEntitlementExpiry({
+    entitlementStatus: input.entitlementStatus,
+    billingMethod: input.billingMethod ?? null,
+    paidThrough: input.paidThrough ?? null,
+    now: input.now,
+  });
+  blockingReasons.push(...expiry.blockingReasons);
 
   return {
     allowed: blockingReasons.length === 0,
     blockingReasons,
   };
+}
+
+export function evaluateCommercialEntitlementExpiry(input: {
+  entitlementStatus: CommercialEntitlementStatus | null;
+  billingMethod?: CommercialBillingMethod | null;
+  paidThrough?: string | null;
+  now?: string;
+}) {
+  const blockingReasons: string[] = [];
+
+  if (input.entitlementStatus !== "active") {
+    return { activeNow: false, blockingReasons };
+  }
+
+  if (input.billingMethod !== "manual_transfer") {
+    return { activeNow: true, blockingReasons };
+  }
+
+  if (!input.paidThrough) {
+    blockingReasons.push("manual transfer entitlement requires paidThrough");
+    return { activeNow: false, blockingReasons };
+  }
+
+  const paidThroughMs = new Date(input.paidThrough).getTime();
+  if (Number.isNaN(paidThroughMs)) {
+    blockingReasons.push("manual transfer paidThrough is invalid");
+    return { activeNow: false, blockingReasons };
+  }
+
+  const nowMs = input.now ? new Date(input.now).getTime() : Date.now();
+  if (Number.isNaN(nowMs) || nowMs >= paidThroughMs) {
+    blockingReasons.push("manual transfer entitlement has expired");
+    return { activeNow: false, blockingReasons };
+  }
+
+  return { activeNow: true, blockingReasons };
 }
 
 export function evaluateCommercialMobileInstallAccess(input: {
@@ -195,6 +248,7 @@ export function summarizePhase83bCommercialEntitlementModel() {
   return {
     phase83bVersion: PHASE_83B_VERSION,
     entitlementStatuses: [...COMMERCIAL_ENTITLEMENT_STATUSES],
+    billingMethods: [...COMMERCIAL_BILLING_METHODS],
     dashboardAccessStatuses: [...DASHBOARD_ACCESS_ENTITLEMENT_STATUSES],
     tables: [
       "commercial_invites",

@@ -121,6 +121,25 @@ export async function loadCommercialInviteByCheckoutSessionId(
   };
 }
 
+export async function loadCommercialInviteByManualInviteId(
+  admin: SupabaseClient,
+  inviteId: string,
+) {
+  const invite = await loadCommercialInviteById(admin, inviteId);
+  if (!invite) {
+    return null;
+  }
+
+  return {
+    id: invite.id,
+    normalizedEmail: invite.normalizedEmail,
+    status: invite.status,
+    tenantId: invite.tenantId,
+    tenantSeedMetadata: invite.tenantSeedMetadata,
+    checkoutSessionId: invite.checkoutSessionId ?? null,
+  };
+}
+
 export async function loadTenantOwnerUserId(admin: SupabaseClient, tenantId: string) {
   const { data, error } = await admin
     .from("tenant_memberships")
@@ -177,7 +196,7 @@ export async function claimCommercialOnboardingWorkspace(
     userId: string;
     normalizedEmail: string;
     commercialInviteId: string;
-    checkoutSessionId: string;
+    checkoutSessionId?: string | null;
     tenantSeedMetadata?: Record<string, unknown>;
     now?: string;
   },
@@ -251,7 +270,7 @@ export async function claimCommercialOnboardingWorkspace(
     authUserId: input.userId,
     commercialInviteId: input.commercialInviteId,
     tenantId: input.tenantId,
-    checkoutSessionId: input.checkoutSessionId,
+    checkoutSessionId: input.checkoutSessionId ?? null,
     payloadSummary: {
       idempotent: (claimState.hasMembershipOnTenant && finalClaimState.hasDietitianProfileOnTenant)
         || recoveredDuplicateDietitianProfile,

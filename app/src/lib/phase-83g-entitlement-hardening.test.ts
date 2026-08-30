@@ -80,6 +80,23 @@ describe("phase 83g entitlement hardening", () => {
     ).toBe("entitlement_revoked");
   });
 
+  it("blocks active manual transfer entitlements after paidThrough", () => {
+    const result = evaluateCommercialEntitlementApiAccess({
+      isAuthenticated: true,
+      hasTenantMembership: true,
+      hasDietitianProfile: true,
+      entitlementStatus: "active",
+      billingMethod: "manual_transfer",
+      paidThrough: "2026-07-01T00:00:00.000Z",
+      now: "2026-07-01T00:00:00.000Z",
+      enforcementEnabled: true,
+    });
+
+    expect(result.allowed).toBe(false);
+    expect(result.errorCode).toBe("entitlement_expired");
+    expect(result.blockingReasons).toContain("manual transfer entitlement has expired");
+  });
+
   it("builds public rate-limit keys from trusted IP identity only", () => {
     const untrusted = {
       headers: {
@@ -143,6 +160,17 @@ describe("phase 83g entitlement hardening", () => {
         enforcementEnabled: false,
       }),
     ).toBe(false);
+
+    expect(
+      shouldTreatAuthStateAsStaleForPwa({
+        status: "authenticated",
+        entitlementStatus: "active",
+        billingMethod: "manual_transfer",
+        paidThrough: "2026-07-01T00:00:00.000Z",
+        now: "2026-07-01T00:00:00.000Z",
+        enforcementEnabled: true,
+      }),
+    ).toBe(true);
   });
 
   it("documents network-only API cache policy for service worker hardening", () => {

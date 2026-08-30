@@ -4,15 +4,17 @@ import {
   isCommercialBillingStoreConfigured,
   loadTenantEntitlementByTenantId,
 } from "@/lib/commercial-billing-store";
+import { evaluateCommercialEntitlementExpiry } from "@/lib/phase-83b-commercial-entitlement-model";
 import {
   loadCommercialInviteByCheckoutSessionId,
+  loadCommercialInviteByManualInviteId,
   loadTenantOwnerUserId,
   loadUserTenantClaimState,
 } from "@/lib/commercial-onboarding-store";
 import { createSupabaseServerClient, getSupabaseAdminClient, isSupabaseConfigured } from "@/lib/supabase";
 import {
   evaluateOnboardingClaim,
-  validateOnboardingSessionId,
+  validateOnboardingClaimReference,
 } from "@/lib/phase-84e-customer-onboarding";
 
 async function resolveAuthenticatedUser() {
@@ -46,12 +48,13 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "commercial_billing_not_configured" }, { status: 503 });
   }
 
-  const sessionValidation = validateOnboardingSessionId(
-    request.nextUrl.searchParams.get("session_id"),
-  );
-  if (!sessionValidation.valid) {
+  const referenceValidation = validateOnboardingClaimReference({
+    sessionId: request.nextUrl.searchParams.get("session_id"),
+    inviteId: request.nextUrl.searchParams.get("invite_id"),
+  });
+  if (!referenceValidation.valid || !referenceValidation.reference) {
     return NextResponse.json(
-      { error: "validation_failed", blockingReasons: sessionValidation.blockingReasons },
+      { error: "validation_failed", blockingReasons: referenceValidation.blockingReasons },
       { status: 400 },
     );
   }
@@ -61,17 +64,28 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "commercial_billing_not_configured" }, { status: 503 });
   }
 
-  const invite = await loadCommercialInviteByCheckoutSessionId(admin, sessionValidation.sessionId);
+  const claimReference = referenceValidation.reference;
+  const invite =
+    claimReference.kind === "checkout_session"
+      ? await loadCommercialInviteByCheckoutSessionId(admin, claimReference.sessionId)
+      : await loadCommercialInviteByManualInviteId(admin, claimReference.inviteId);
   const entitlement = invite?.tenantId
     ? await loadTenantEntitlementByTenantId(admin, invite.tenantId)
     : null;
 
   const user = await resolveAuthenticatedUser();
+  const entitlementActiveNow =
+    entitlement?.status === "active" &&
+    evaluateCommercialEntitlementExpiry({
+      entitlementStatus: entitlement.status,
+      billingMethod: entitlement.billingMethod,
+      paidThrough: entitlement.paidThrough,
+    }).activeNow;
   if (!user) {
     return NextResponse.json({
       authenticated: false,
       checkoutSessionRecognized: Boolean(
-        invite && invite.status === "consumed" && entitlement?.status === "active" && invite.tenantId,
+        invite && invite.status === "consumed" && entitlementActiveNow && invite.tenantId,
       ),
       requiresAuthentication: true,
     });
@@ -89,7 +103,7 @@ export async function GET(request: NextRequest) {
     : null;
 
   const evaluation = evaluateOnboardingClaim({
-    sessionId: sessionValidation.sessionId,
+    sessionId: claimReference.sessionId ?? claimReference.inviteId,
     isAuthenticated: true,
     userId: user.id,
     userEmail: user.email ?? null,
@@ -103,6 +117,8 @@ export async function GET(request: NextRequest) {
         }
       : null,
     entitlementStatus: entitlement?.status ?? null,
+    billingMethod: entitlement?.billingMethod ?? null,
+    paidThrough: entitlement?.paidThrough ?? null,
     existingOwnerUserId,
     hasMembershipOnTenant: claimState.hasMembershipOnTenant,
     hasDietitianProfileOnTenant: claimState.hasDietitianProfileOnTenant,
@@ -111,7 +127,8 @@ export async function GET(request: NextRequest) {
 
   return NextResponse.json({
     authenticated: true,
-    sessionId: sessionValidation.sessionId,
+    sessionId: claimReference.sessionId,
+    inviteId: claimReference.inviteId,
     claimable: evaluation.claimable,
     alreadyClaimed: evaluation.alreadyClaimed,
     blockingReasons: evaluation.blockingReasons,

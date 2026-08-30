@@ -4,8 +4,10 @@
 
 import {
   normalizeCommercialEmail,
+  type CommercialBillingMethod,
   type CommercialEntitlementStatus,
   type CommercialInviteStatus,
+  evaluateCommercialEntitlementExpiry,
 } from "./phase-83b-commercial-entitlement-model";
 
 export const PHASE_84E_VERSION = "phase84e-customer-onboarding-v1";
@@ -35,6 +37,10 @@ export type OnboardingClaimEvaluation = {
   normalizedInviteEmail: string | null;
 };
 
+export type OnboardingClaimReference =
+  | { kind: "checkout_session"; sessionId: string; inviteId: null }
+  | { kind: "manual_invite"; sessionId: null; inviteId: string };
+
 export function validateOnboardingSessionId(sessionId?: string | null) {
   const value = sessionId?.trim() ?? "";
   const blockingReasons: string[] = [];
@@ -46,6 +52,46 @@ export function validateOnboardingSessionId(sessionId?: string | null) {
   return {
     valid: blockingReasons.length === 0,
     sessionId: value,
+    blockingReasons,
+  };
+}
+
+export function validateOnboardingClaimReference(input: {
+  sessionId?: string | null;
+  inviteId?: string | null;
+}) {
+  const sessionId = input.sessionId?.trim() ?? "";
+  const inviteId = input.inviteId?.trim() ?? "";
+  const blockingReasons: string[] = [];
+
+  if (sessionId && inviteId) {
+    blockingReasons.push("claim_reference_ambiguous");
+  }
+  if (!sessionId && !inviteId) {
+    blockingReasons.push("claim_reference_required");
+  }
+
+  if (sessionId) {
+    const sessionValidation = validateOnboardingSessionId(sessionId);
+    blockingReasons.push(...sessionValidation.blockingReasons);
+    return {
+      valid: blockingReasons.length === 0,
+      reference: blockingReasons.length === 0
+        ? ({ kind: "checkout_session", sessionId: sessionValidation.sessionId, inviteId: null } as const)
+        : null,
+      blockingReasons,
+    };
+  }
+
+  if (inviteId.length > 0 && inviteId.length < 8) {
+    blockingReasons.push("invite_id_invalid");
+  }
+
+  return {
+    valid: blockingReasons.length === 0,
+    reference: blockingReasons.length === 0
+      ? ({ kind: "manual_invite", sessionId: null, inviteId } as const)
+      : null,
     blockingReasons,
   };
 }
@@ -72,6 +118,9 @@ export function evaluateOnboardingClaim(input: {
   userEmail: string | null;
   invite: OnboardingInviteSnapshot | null;
   entitlementStatus: CommercialEntitlementStatus | null;
+  billingMethod?: CommercialBillingMethod | null;
+  paidThrough?: string | null;
+  now?: string;
   existingOwnerUserId: string | null;
   hasMembershipOnTenant: boolean;
   hasDietitianProfileOnTenant: boolean;
@@ -96,6 +145,15 @@ export function evaluateOnboardingClaim(input: {
 
   if (input.entitlementStatus !== "active") {
     blockingReasons.push("entitlement_not_active");
+  }
+  const expiry = evaluateCommercialEntitlementExpiry({
+    entitlementStatus: input.entitlementStatus,
+    billingMethod: input.billingMethod ?? null,
+    paidThrough: input.paidThrough ?? null,
+    now: input.now,
+  });
+  if (!expiry.activeNow && expiry.blockingReasons.length > 0) {
+    blockingReasons.push("entitlement_expired");
   }
 
   const normalizedInviteEmail = input.invite?.normalizedEmail ?? null;

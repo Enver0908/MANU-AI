@@ -2,6 +2,7 @@ import type { NextRequest } from "next/server";
 import { headersFromGetter, resolveTrustedClientIp } from "./trusted-proxy";
 import {
   COMMERCIAL_ENTITLEMENT_STATUSES,
+  type CommercialBillingMethod,
   type CommercialEntitlementStatus,
   evaluateCommercialDashboardAccess,
 } from "./phase-83b-commercial-entitlement-model";
@@ -26,7 +27,10 @@ export type CommercialEntitlementApiAccessInput = {
   hasTenantMembership: boolean;
   hasDietitianProfile: boolean;
   entitlementStatus: CommercialEntitlementStatus | null;
+  billingMethod?: CommercialBillingMethod | null;
+  paidThrough?: string | null;
   enforcementEnabled: boolean;
+  now?: string;
 };
 
 export type CommercialEntitlementApiAccessResult = {
@@ -62,6 +66,9 @@ export function evaluateCommercialEntitlementApiAccess(
     hasTenantMembership: input.hasTenantMembership,
     hasDietitianProfile: input.hasDietitianProfile,
     entitlementStatus: input.entitlementStatus,
+    billingMethod: input.billingMethod ?? null,
+    paidThrough: input.paidThrough ?? null,
+    now: input.now,
   });
 
   if (access.allowed) {
@@ -104,6 +111,9 @@ export function deriveCommercialEntitlementErrorCode(
   }
   if (entitlementStatus === "invited") {
     return "entitlement_invite_only";
+  }
+  if (blockingReasons.some((reason) => reason.includes("manual transfer entitlement has expired"))) {
+    return "entitlement_expired";
   }
   if (blockingReasons.some((reason) => reason.includes("entitlement status must be active"))) {
     return "entitlement_inactive";

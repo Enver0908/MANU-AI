@@ -1,5 +1,6 @@
 import type {
   BillingEventLedgerEntry,
+  CommercialBillingMethod,
   CommercialEntitlementStatus,
   CommercialInvite,
   CommercialInviteStatus,
@@ -21,6 +22,8 @@ export const COMMERCIAL_ADMIN_AUDIT_EVENT_TYPES = [
   "stripe_subscription_canceled",
   "lead_status_updated",
   "admin_operation_blocked",
+  "manual_entitlement_activated",
+  "manual_entitlement_renewed",
 ] as const;
 
 export type CommercialAdminAuditEventType = (typeof COMMERCIAL_ADMIN_AUDIT_EVENT_TYPES)[number];
@@ -58,9 +61,34 @@ export type CommercialAdminSubscriptionSummary = {
   inviteId: string | null;
   inviteStatus: CommercialInviteStatus | null;
   entitlementStatus: CommercialEntitlementStatus | null;
+  billingMethod: CommercialBillingMethod | null;
+  paidThrough: string | null;
+  revision: number | null;
   stripeCustomerId: string | null;
   stripeSubscriptionId: string | null;
   statusChangedAt: string | null;
+};
+
+export type CommercialAdminManualEntitlementAction = "activate" | "renew";
+
+export type CommercialAdminManualEntitlementRequestInput = {
+  action?: string | null;
+  inviteId?: string | null;
+  paymentReference?: string | null;
+  paidThrough?: string | null;
+  requestId?: string | null;
+  expectedRevision?: number | null;
+};
+
+export type CommercialAdminManualEntitlementRequestValidation = {
+  valid: boolean;
+  action: CommercialAdminManualEntitlementAction | null;
+  inviteId: string | null;
+  paymentReference: string | null;
+  paidThrough: string | null;
+  requestId: string | null;
+  expectedRevision: number | null;
+  blockingReasons: string[];
 };
 
 export type CommercialAdminLedgerListItem = {
@@ -391,6 +419,117 @@ export function validateCommercialAdminEntitlementRevokeRequest(
   };
 }
 
+export function validateCommercialAdminManualEntitlementRequest(
+  input: CommercialAdminManualEntitlementRequestInput,
+  options: { now?: string } = {},
+): CommercialAdminManualEntitlementRequestValidation {
+  const blockingReasons: string[] = [];
+  const action = input.action === "activate" || input.action === "renew" ? input.action : null;
+  const inviteId = input.inviteId?.trim() ?? "";
+  const paymentReference = input.paymentReference?.trim() ?? "";
+  const paidThrough = input.paidThrough?.trim() ?? "";
+  const requestId = input.requestId?.trim() ?? "";
+  const expectedRevision = input.expectedRevision ?? null;
+
+  if (!action) blockingReasons.push("manual_entitlement_action_invalid");
+  if (!inviteId) blockingReasons.push("invite_id_required");
+  if (!paymentReference) {
+    blockingReasons.push("payment_reference_required");
+  } else if (paymentReference.length < 6 || paymentReference.length > 120) {
+    blockingReasons.push("payment_reference_length_invalid");
+  }
+  if (!requestId) {
+    blockingReasons.push("request_id_required");
+  } else if (requestId.length < 8 || requestId.length > 120) {
+    blockingReasons.push("request_id_length_invalid");
+  }
+
+  const paidThroughMs = paidThrough ? new Date(paidThrough).getTime() : Number.NaN;
+  const nowMs = options.now ? new Date(options.now).getTime() : Date.now();
+  if (!paidThrough) {
+    blockingReasons.push("paid_through_required");
+  } else if (Number.isNaN(paidThroughMs)) {
+    blockingReasons.push("paid_through_invalid");
+  } else if (!Number.isNaN(nowMs) && paidThroughMs <= nowMs) {
+    blockingReasons.push("paid_through_must_be_future");
+  }
+
+  if (
+    expectedRevision !== null &&
+    (!Number.isInteger(expectedRevision) || expectedRevision < 0)
+  ) {
+    blockingReasons.push("expected_revision_invalid");
+  }
+
+  return {
+    valid: blockingReasons.length === 0,
+    action,
+    inviteId: inviteId || null,
+    paymentReference: paymentReference || null,
+    paidThrough: paidThrough || null,
+    requestId: requestId || null,
+    expectedRevision,
+    blockingReasons,
+  };
+}
+
+export function deriveCommercialAdminManualEntitlementPlan(input: {
+  action: CommercialAdminManualEntitlementAction;
+  inviteStatus: CommercialInviteStatus;
+  inviteTenantId: string | null;
+  entitlementStatus: CommercialEntitlementStatus | null;
+  currentPaidThrough?: string | null;
+  requestedPaidThrough: string;
+}) {
+  const blockingReasons: string[] = [];
+  const currentPaidThroughMs = input.currentPaidThrough
+    ? new Date(input.currentPaidThrough).getTime()
+    : Number.NaN;
+  const requestedPaidThroughMs = new Date(input.requestedPaidThrough).getTime();
+
+  if (input.inviteStatus === "revoked") {
+    blockingReasons.push("invite_revoked");
+  }
+
+  if (input.entitlementStatus === "revoked") {
+    blockingReasons.push("revoked_entitlement_cannot_be_reactivated_manually");
+  }
+
+  if (input.action === "activate") {
+    if (input.inviteStatus !== "active" && input.inviteStatus !== "consumed") {
+      blockingReasons.push(`invite_status_invalid_for_manual_activation:${input.inviteStatus}`);
+    }
+    if (
+      input.entitlementStatus &&
+      input.entitlementStatus !== "invited" &&
+      input.entitlementStatus !== "checkout_started"
+    ) {
+      blockingReasons.push(`entitlement_status_invalid_for_manual_activation:${input.entitlementStatus}`);
+    }
+  }
+
+  if (input.action === "renew") {
+    if (!input.inviteTenantId) {
+      blockingReasons.push("tenant_not_provisioned");
+    }
+    if (input.entitlementStatus !== "active" && input.entitlementStatus !== "past_due") {
+      blockingReasons.push(
+        `entitlement_status_invalid_for_manual_renewal:${input.entitlementStatus ?? "missing"}`,
+      );
+    }
+    if (!Number.isNaN(currentPaidThroughMs) && requestedPaidThroughMs <= currentPaidThroughMs) {
+      blockingReasons.push("paid_through_must_advance");
+    }
+  }
+
+  return {
+    allowed: blockingReasons.length === 0,
+    nextStatus: "active" as const,
+    shouldConsumeInvite: input.action === "activate",
+    blockingReasons,
+  };
+}
+
 export function sanitizeCommercialInviteForAdmin(
   invite: CommercialInvite & {
     checkoutSessionId?: string | null;
@@ -438,6 +577,7 @@ export function summarizePhase83fCommercialAdmin() {
       "commercial_admin_audit_events",
       "commercial_leads",
       "commercial_onboarding_events",
+      "manual_entitlement_operations",
     ],
     healthEndpoint: "/api/commercial/admin/health",
     productionPilotGo: false,

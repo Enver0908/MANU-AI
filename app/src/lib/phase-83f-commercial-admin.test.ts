@@ -5,6 +5,7 @@ import {
   classifyCommercialAdminStoreError,
   deriveCommercialAdminEntitlementRevokePlan,
   deriveCommercialAdminInviteRevokePlan,
+  deriveCommercialAdminManualEntitlementPlan,
   evaluateCommercialAdminGate,
   resolveCommercialAdminStoreEnv,
   sanitizeBillingLedgerEntryForAdmin,
@@ -12,6 +13,7 @@ import {
   summarizePhase83fCommercialAdmin,
   validateCommercialAdminInviteCreate,
   validateCommercialAdminEntitlementRevokeRequest,
+  validateCommercialAdminManualEntitlementRequest,
 } from "./phase-83f-commercial-admin";
 import { buildCommercialInviteRecord } from "./phase-83b-commercial-entitlement-model.server";
 
@@ -132,6 +134,80 @@ describe("phase 83f commercial admin", () => {
     });
   });
 
+  it("validates manual bank-transfer entitlement requests", () => {
+    const validation = validateCommercialAdminManualEntitlementRequest(
+      {
+        action: "activate",
+        inviteId: "invite-123",
+        paymentReference: "BANK-2026-0001",
+        paidThrough: "2026-08-01T00:00:00.000Z",
+        requestId: "manual-req-1",
+        expectedRevision: null,
+      },
+      { now: "2026-07-01T00:00:00.000Z" },
+    );
+
+    expect(validation.valid).toBe(true);
+    expect(validation.action).toBe("activate");
+
+    expect(
+      validateCommercialAdminManualEntitlementRequest(
+        {
+          action: "activate",
+          inviteId: "invite-123",
+          paymentReference: "BANK-2026-0001",
+          paidThrough: "2026-07-01T00:00:00.000Z",
+          requestId: "manual-req-1",
+        },
+        { now: "2026-07-01T00:00:00.000Z" },
+      ).blockingReasons,
+    ).toContain("paid_through_must_be_future");
+  });
+
+  it("derives manual activate and renewal plans without reactivating revoked entitlements", () => {
+    expect(
+      deriveCommercialAdminManualEntitlementPlan({
+        action: "activate",
+        inviteStatus: "active",
+        inviteTenantId: null,
+        entitlementStatus: null,
+        requestedPaidThrough: "2026-08-01T00:00:00.000Z",
+      }).allowed,
+    ).toBe(true);
+
+    expect(
+      deriveCommercialAdminManualEntitlementPlan({
+        action: "renew",
+        inviteStatus: "consumed",
+        inviteTenantId: "tenant-1",
+        entitlementStatus: "active",
+        currentPaidThrough: "2026-08-01T00:00:00.000Z",
+        requestedPaidThrough: "2026-09-01T00:00:00.000Z",
+      }).allowed,
+    ).toBe(true);
+
+    expect(
+      deriveCommercialAdminManualEntitlementPlan({
+        action: "renew",
+        inviteStatus: "consumed",
+        inviteTenantId: "tenant-1",
+        entitlementStatus: "active",
+        currentPaidThrough: "2026-08-01T00:00:00.000Z",
+        requestedPaidThrough: "2026-08-01T00:00:00.000Z",
+      }).blockingReasons,
+    ).toContain("paid_through_must_advance");
+
+    expect(
+      deriveCommercialAdminManualEntitlementPlan({
+        action: "activate",
+        inviteStatus: "consumed",
+        inviteTenantId: "tenant-1",
+        entitlementStatus: "revoked",
+        requestedPaidThrough: "2026-08-01T00:00:00.000Z",
+      }).blockingReasons,
+    ).toContain("revoked_entitlement_cannot_be_reactivated_manually");
+  });
+
   it("diagnoses commercial admin Supabase store configuration", () => {
     expect(
       resolveCommercialAdminStoreEnv({
@@ -244,6 +320,8 @@ describe("phase 83f commercial admin", () => {
     const summary = summarizePhase83fCommercialAdmin();
     expect(summary.auditEventTypes).toContain("invite_created");
     expect(summary.auditEventTypes).toContain("ledger_inspected");
+    expect(summary.auditEventTypes).toContain("manual_entitlement_activated");
+    expect(summary.serviceRoleOnlyTables).toContain("manual_entitlement_operations");
     expect(summary.auditEventTypes).not.toContain("mobile_install_entitlement_revoked");
     expect(summary.productionPilotGo).toBe(false);
     expect(summary.gateEnvFlags).toEqual([

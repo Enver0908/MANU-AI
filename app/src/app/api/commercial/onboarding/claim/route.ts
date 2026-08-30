@@ -8,17 +8,19 @@ import {
   claimCommercialOnboardingWorkspace,
   insertCommercialOnboardingEvent,
   loadCommercialInviteByCheckoutSessionId,
+  loadCommercialInviteByManualInviteId,
   loadTenantOwnerUserId,
   loadUserTenantClaimState,
 } from "@/lib/commercial-onboarding-store";
 import { createSupabaseServerClient, getSupabaseAdminClient, isSupabaseConfigured } from "@/lib/supabase";
 import {
   evaluateOnboardingClaim,
-  validateOnboardingSessionId,
+  validateOnboardingClaimReference,
 } from "@/lib/phase-84e-customer-onboarding";
 
 type ClaimBody = {
   sessionId?: string;
+  inviteId?: string;
 };
 
 export async function POST(request: NextRequest) {
@@ -33,10 +35,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "invalid_json" }, { status: 400 });
   }
 
-  const sessionValidation = validateOnboardingSessionId(body.sessionId);
-  if (!sessionValidation.valid) {
+  const referenceValidation = validateOnboardingClaimReference(body);
+  if (!referenceValidation.valid || !referenceValidation.reference) {
     return NextResponse.json(
-      { error: "validation_failed", blockingReasons: sessionValidation.blockingReasons },
+      { error: "validation_failed", blockingReasons: referenceValidation.blockingReasons },
       { status: 400 },
     );
   }
@@ -68,7 +70,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "commercial_billing_not_configured" }, { status: 503 });
   }
 
-  const invite = await loadCommercialInviteByCheckoutSessionId(admin, sessionValidation.sessionId);
+  const claimReference = referenceValidation.reference;
+  const invite =
+    claimReference.kind === "checkout_session"
+      ? await loadCommercialInviteByCheckoutSessionId(admin, claimReference.sessionId)
+      : await loadCommercialInviteByManualInviteId(admin, claimReference.inviteId);
   const entitlement = invite?.tenantId
     ? await loadTenantEntitlementByTenantId(admin, invite.tenantId)
     : null;
@@ -84,7 +90,7 @@ export async function POST(request: NextRequest) {
     : null;
 
   const evaluation = evaluateOnboardingClaim({
-    sessionId: sessionValidation.sessionId,
+    sessionId: claimReference.sessionId ?? claimReference.inviteId,
     isAuthenticated: true,
     userId: user.id,
     userEmail: user.email,
@@ -98,6 +104,8 @@ export async function POST(request: NextRequest) {
         }
       : null,
     entitlementStatus: entitlement?.status ?? null,
+    billingMethod: entitlement?.billingMethod ?? null,
+    paidThrough: entitlement?.paidThrough ?? null,
     existingOwnerUserId,
     hasMembershipOnTenant: claimState.hasMembershipOnTenant,
     hasDietitianProfileOnTenant: claimState.hasDietitianProfileOnTenant,
@@ -111,7 +119,7 @@ export async function POST(request: NextRequest) {
       authUserId: user.id,
       commercialInviteId: evaluation.commercialInviteId,
       tenantId: evaluation.tenantId,
-      checkoutSessionId: sessionValidation.sessionId,
+      checkoutSessionId: claimReference.sessionId,
       payloadSummary: { blockingReasons: evaluation.blockingReasons },
     }).catch(() => undefined);
 
@@ -139,7 +147,7 @@ export async function POST(request: NextRequest) {
       userId: user.id,
       normalizedEmail: invite!.normalizedEmail,
       commercialInviteId: invite!.id,
-      checkoutSessionId: sessionValidation.sessionId,
+      checkoutSessionId: claimReference.sessionId,
       tenantSeedMetadata: invite!.tenantSeedMetadata,
     });
 
@@ -157,7 +165,7 @@ export async function POST(request: NextRequest) {
       authUserId: user.id,
       commercialInviteId: evaluation.commercialInviteId,
       tenantId: evaluation.tenantId,
-      checkoutSessionId: sessionValidation.sessionId,
+      checkoutSessionId: claimReference.sessionId,
       payloadSummary: { error: message },
     }).catch(() => undefined);
 

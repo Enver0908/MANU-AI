@@ -90,6 +90,51 @@ export async function evaluateCommercialAdminAccess(
   };
 }
 
+export async function evaluateCommercialAdminAllowlistSessionAccess(
+  request: NextRequest,
+  env: NodeJS.ProcessEnv = process.env,
+): Promise<CommercialAdminAccessResult> {
+  if (!isSupabaseConfigured()) {
+    return {
+      allowed: false,
+      mode: null,
+      actorSummary: null,
+      blockingReasons: ["supabase_auth_not_configured"],
+    };
+  }
+
+  const cookieStore = await cookies();
+  const supabase = createSupabaseServerClient({
+    getAll: () => cookieStore.getAll(),
+    setAll: (cookiesToSet) => {
+      cookiesToSet.forEach(({ name, value, options }) => {
+        cookieStore.set(name, value, options);
+      });
+    },
+  });
+
+  if (!supabase) {
+    return {
+      allowed: false,
+      mode: null,
+      actorSummary: null,
+      blockingReasons: ["supabase_auth_not_configured"],
+    };
+  }
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const allowlist = evaluateAdminAllowlistAccess(user?.email, resolveAdminEmailAllowlist(env));
+  return {
+    allowed: allowlist.allowed,
+    mode: allowlist.allowed ? "supabase_allowlist" : null,
+    actorSummary: allowlist.allowed ? allowlist.normalizedEmail : null,
+    blockingReasons: allowlist.blockingReasons,
+  };
+}
+
 export async function resolveAdminSessionEmail() {
   if (!isSupabaseConfigured()) {
     return null;

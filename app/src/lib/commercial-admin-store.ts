@@ -10,6 +10,7 @@ import type {
   CommercialAdminAuditEventType,
   CommercialAdminInviteListItem,
   CommercialAdminLedgerListItem,
+  CommercialAdminManualEntitlementAction,
   CommercialAdminSubscriptionSummary,
 } from "./phase-83f-commercial-admin";
 import {
@@ -19,6 +20,7 @@ import {
   sanitizeBillingLedgerEntryForAdmin,
   sanitizeCommercialInviteForAdmin,
   validateCommercialAdminInviteCreate,
+  validateCommercialAdminManualEntitlementRequest,
 } from "./phase-83f-commercial-admin";
 import { deriveStripeSubscriptionCancelPlan } from "./phase-84g-subscription-operations";
 
@@ -29,6 +31,21 @@ export type CommercialAdminAuditRow = {
   target_invite_id: string | null;
   target_tenant_id: string | null;
   payload_summary: Record<string, unknown>;
+  created_at: string;
+};
+
+export type ManualEntitlementOperationRow = {
+  id: string;
+  request_id: string;
+  request_hash: string;
+  action: CommercialAdminManualEntitlementAction;
+  commercial_invite_id: string;
+  tenant_id: string;
+  payment_reference: string;
+  paid_through: string;
+  resulting_entitlement_status: string;
+  resulting_revision: number;
+  actor_summary: string;
   created_at: string;
 };
 
@@ -78,6 +95,45 @@ export async function insertCommercialAdminAuditEvent(
   if (error) {
     throw error;
   }
+}
+
+export async function loadManualEntitlementOperationByRequestId(
+  admin: SupabaseClient,
+  requestId: string,
+) {
+  const { data, error } = await admin
+    .from("manual_entitlement_operations")
+    .select("*")
+    .eq("request_id", requestId)
+    .maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+
+  return data ? (data as ManualEntitlementOperationRow) : null;
+}
+
+export async function digestManualEntitlementRequest(input: {
+  action: CommercialAdminManualEntitlementAction;
+  inviteId: string;
+  paymentReference: string;
+  paidThrough: string;
+  requestId: string;
+  expectedRevision: number | null;
+}) {
+  const payload = JSON.stringify({
+    action: input.action,
+    inviteId: input.inviteId,
+    paymentReference: input.paymentReference,
+    paidThrough: input.paidThrough,
+    requestId: input.requestId,
+    expectedRevision: input.expectedRevision,
+  });
+  const hashBuffer = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(payload));
+  return Array.from(new Uint8Array(hashBuffer))
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
 }
 
 export async function createCommercialAdminInvite(
@@ -257,6 +313,67 @@ export async function revokeCommercialAdminEntitlement(
   };
 }
 
+export async function applyCommercialAdminManualEntitlement(
+  admin: SupabaseClient,
+  input: {
+    action: CommercialAdminManualEntitlementAction;
+    inviteId: string;
+    paymentReference: string;
+    paidThrough: string;
+    requestId: string;
+    expectedRevision?: number | null;
+    actorSummary?: string;
+    now?: string;
+  },
+) {
+  const now = input.now ?? new Date().toISOString();
+  const validation = validateCommercialAdminManualEntitlementRequest(input, { now });
+  if (
+    !validation.valid ||
+    !validation.action ||
+    !validation.inviteId ||
+    !validation.paymentReference ||
+    !validation.paidThrough ||
+    !validation.requestId
+  ) {
+    throw new Error(validation.blockingReasons[0] ?? "manual_entitlement_validation_failed");
+  }
+
+  const requestHash = await digestManualEntitlementRequest({
+    action: validation.action,
+    inviteId: validation.inviteId,
+    paymentReference: validation.paymentReference,
+    paidThrough: validation.paidThrough,
+    requestId: validation.requestId,
+    expectedRevision: validation.expectedRevision,
+  });
+  const { data, error } = await admin.rpc("apply_manual_entitlement_operation", {
+    p_action: validation.action,
+    p_invite_id: validation.inviteId,
+    p_payment_reference: validation.paymentReference,
+    p_paid_through: validation.paidThrough,
+    p_request_id: validation.requestId,
+    p_request_hash: requestHash,
+    p_expected_revision: validation.expectedRevision,
+    p_actor_summary: input.actorSummary ?? "commercial_admin",
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  const result = (data ?? {}) as Record<string, unknown>;
+  return {
+    applied: result.applied === true,
+    idempotent: result.idempotent === true,
+    tenantId: String(result.tenantId ?? ""),
+    inviteId: String(result.inviteId ?? validation.inviteId),
+    entitlementStatus: String(result.entitlementStatus ?? "active"),
+    paidThrough: String(result.paidThrough ?? validation.paidThrough),
+    revision: Number(result.revision ?? 0),
+  };
+}
+
 export async function cancelCommercialAdminStripeSubscription(
   admin: SupabaseClient,
   input: {
@@ -406,7 +523,7 @@ export async function listCommercialAdminSubscriptionSummaries(admin: SupabaseCl
   const { data: entitlements, error: entitlementError } = await admin
     .from("tenant_entitlements")
     .select(
-      "tenant_id, status, commercial_invite_id, stripe_customer_id, stripe_subscription_id, status_changed_at",
+      "tenant_id, status, commercial_invite_id, billing_method, paid_through, revision, stripe_customer_id, stripe_subscription_id, status_changed_at",
     )
     .order("updated_at", { ascending: false });
 
@@ -466,6 +583,9 @@ export async function listCommercialAdminSubscriptionSummaries(admin: SupabaseCl
       inviteId: row.commercial_invite_id,
       inviteStatus: invite?.status ?? null,
       entitlementStatus: row.status,
+      billingMethod: row.billing_method ?? "stripe",
+      paidThrough: row.paid_through ?? null,
+      revision: row.revision ?? 0,
       stripeCustomerId: row.stripe_customer_id,
       stripeSubscriptionId: row.stripe_subscription_id,
       statusChangedAt: row.status_changed_at,
