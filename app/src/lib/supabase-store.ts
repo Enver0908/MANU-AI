@@ -824,6 +824,11 @@ type DbChannelDelivery = {
   channel: ChannelDeliveryRecord["channel"];
   direction: ChannelDeliveryRecord["direction"];
   mock_provider_message_id: string;
+  real_provider_message_id?: string | null;
+  execution_state?: ChannelDeliveryRecord["executionState"] | null;
+  retry_count?: number | null;
+  next_retry_at?: string | null;
+  provider_error_category?: ChannelDeliveryRecord["providerErrorCategory"] | null;
   delivery_status: ChannelDeliveryRecord["deliveryStatus"];
   failure_code: string | null;
   created_at: string;
@@ -4665,6 +4670,11 @@ function serializeChannelDeliveryForRpc(delivery: ChannelDeliveryRecord) {
     channel: delivery.channel,
     direction: delivery.direction,
     mockProviderMessageId: delivery.mockProviderMessageId,
+    realProviderMessageId: delivery.realProviderMessageId ?? null,
+    executionState: delivery.executionState ?? delivery.deliveryStatus,
+    retryCount: delivery.retryCount ?? 0,
+    nextRetryAt: delivery.nextRetryAt ?? null,
+    providerErrorCategory: delivery.providerErrorCategory ?? null,
     deliveryStatus: delivery.deliveryStatus,
     failureCode: delivery.failureCode,
     createdAt: delivery.createdAt,
@@ -6179,6 +6189,11 @@ function mapChannelDelivery(delivery: DbChannelDelivery): ChannelDeliveryRecord 
     channel: delivery.channel,
     direction: delivery.direction,
     mockProviderMessageId: delivery.mock_provider_message_id,
+    realProviderMessageId: delivery.real_provider_message_id ?? null,
+    executionState: delivery.execution_state ?? delivery.delivery_status,
+    retryCount: delivery.retry_count ?? 0,
+    nextRetryAt: delivery.next_retry_at ?? null,
+    providerErrorCategory: delivery.provider_error_category ?? null,
     deliveryStatus: delivery.delivery_status,
     failureCode: delivery.failure_code,
     createdAt: delivery.created_at,

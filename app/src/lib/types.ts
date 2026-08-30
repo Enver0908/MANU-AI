@@ -800,7 +800,7 @@ export type ContextIntakeProposalRecord = {
   expiresAt: string | null;
 };
 
-export type ChannelDeliveryStatus = "sent" | "delivered" | "failed";
+export type ChannelDeliveryStatus = "accepted" | "sent" | "delivered" | "read" | "failed" | "unknown";
 
 export type ChannelDeliveryRecord = {
   id: string;
@@ -811,6 +811,11 @@ export type ChannelDeliveryRecord = {
   channel: Channel;
   direction: "outbound";
   mockProviderMessageId: string;
+  realProviderMessageId?: string | null;
+  executionState?: "queued" | "sending" | ChannelDeliveryStatus;
+  retryCount?: number;
+  nextRetryAt?: string | null;
+  providerErrorCategory?: "definite_temporary" | "definite_permanent" | "ambiguous_network" | null;
   deliveryStatus: ChannelDeliveryStatus;
   failureCode: string | null;
   createdAt: string;
