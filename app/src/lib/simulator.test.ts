@@ -23,7 +23,7 @@ describe("local inbound simulator", () => {
 
     expect(next.lastSimulation?.action).toBe("sent");
     expect(next.lastSimulation?.risk).toBe("green");
-    expect(next.lastSimulation?.model).toBe("gemini-1.5-flash");
+    expect(next.lastSimulation?.model).toBe("glm-5.3-flash");
     expect(next.messages.some((message) => message.origin === "ai_generated" && message.status === "sent")).toBe(true);
     expect(next.riskAssessments).toHaveLength(2);
     expect(next.riskAssessments.at(-1)?.level).toBe("green");
@@ -228,7 +228,7 @@ describe("local inbound simulator", () => {
     expect(overBudget.aiDecisions.at(-1)?.providerStatus).toBe("not_called");
   });
 
-  it("routes yellow messages to approval drafts on gemini-3", async () => {
+  it("routes yellow messages to approval drafts on glm-5.3-flash", async () => {
     const state = createInitialState();
     const next = await runInboundSimulation(state, {
       clientId: "client-elif",
@@ -239,7 +239,7 @@ describe("local inbound simulator", () => {
 
     expect(next.lastSimulation?.action).toBe("draft_for_approval");
     expect(next.lastSimulation?.risk).toBe("yellow");
-    expect(next.lastSimulation?.model).toBe("gemini-3");
+    expect(next.lastSimulation?.model).toBe("glm-5.3-flash");
     expect(next.messages.some((message) => message.origin === "ai_generated" && message.status === "draft")).toBe(true);
     expect(sentGeneratedCount(next)).toBe(sentGeneratedCount(state));
     expect(next.clients.find((client) => client.id === "client-elif")).toMatchObject({
@@ -260,7 +260,7 @@ describe("local inbound simulator", () => {
 
     expect(next.lastSimulation?.action).toBe("draft_for_approval");
     expect(next.lastSimulation?.risk).toBe("yellow");
-    expect(next.lastSimulation?.model).toBe("gemini-3");
+    expect(next.lastSimulation?.model).toBe("glm-5.3-flash");
     expect(next.riskAssessments.at(-1)?.reasons).toContain("prompt_injection_attempt");
     expect(next.messages).toHaveLength(state.messages.length + 2);
     expect(next.messages.at(-1)).toMatchObject({ origin: "ai_generated", status: "draft" });
@@ -297,7 +297,7 @@ describe("local inbound simulator", () => {
 
     expect(next.lastSimulation?.action).toBe("draft_for_approval");
     expect(next.lastSimulation?.risk).toBe("yellow");
-    expect(next.lastSimulation?.model).toBe("gemini-3");
+    expect(next.lastSimulation?.model).toBe("glm-5.3-flash");
     expect(next.riskAssessments.at(-1)?.level).toBe("yellow");
     expect(next.riskAssessments.at(-1)?.classifierVersion).toContain("clinical-safety-second-layer-v0.2.0");
     expect(next.riskAssessments.at(-1)?.reasons).toContain(
@@ -357,7 +357,7 @@ describe("local inbound simulator", () => {
 
     expect(third.lastSimulation?.action).toBe("draft_for_approval");
     expect(third.lastSimulation?.risk).toBe("yellow");
-    expect(third.lastSimulation?.model).toBe("gemini-3");
+    expect(third.lastSimulation?.model).toBe("glm-5.3-flash");
     expect(third.riskAssessments.at(-1)?.level).toBe("yellow");
     expect(third.riskAssessments.at(-1)?.reasons).toContain("cumulative_meal_restriction_pattern");
   });
@@ -459,7 +459,7 @@ describe("local inbound simulator", () => {
     expect(next.handoffCases.length).toBeGreaterThan(state.handoffCases.length);
     expect(next.notifications.some((item) => item.kind === "safe_reply_unavailable")).toBe(true);
     expect(next.notifications.some((item) => item.type.startsWith("handoff_"))).toBe(false);
-    expect(next.aiDecisions.at(-1)?.model).toBe("gemini-1.5-flash");
+    expect(next.aiDecisions.at(-1)?.model).toBe("glm-5.3-flash");
     expect(next.aiDecisions.at(-1)?.providerAttempted).toBe(true);
     expect(next.aiDecisions.at(-1)?.providerStatus).toBe("failed");
     expect(next.aiDecisions.at(-1)?.providerErrorCode).toBe("provider_timeout");

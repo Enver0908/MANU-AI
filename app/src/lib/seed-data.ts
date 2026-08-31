@@ -235,7 +235,7 @@ export function createInitialState(): ManuAppState {
         aiStatus: "active",
         personaId: "balanced_coach",
         risk: "green",
-        model: "gemini-1.5-flash",
+        model: "glm-5.3-flash",
         promptVersion: "manu-prompt-v0.1.0",
         providerAttempted: true,
         providerId: "mock-local-provider-v0",

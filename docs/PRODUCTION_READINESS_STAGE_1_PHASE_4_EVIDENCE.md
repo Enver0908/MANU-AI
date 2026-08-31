@@ -12,20 +12,20 @@ security hardening.
 
 Implemented scope:
 
-- Added a fail-closed production AI adapter readiness contract for Gemini text, vision/OCR, and transcription operations.
+- Added a fail-closed production AI adapter readiness contract for Z.ai GLM-5.3-Flash text, vision/OCR, and transcription operations.
 - Real AI provider calls require production readiness boundary approval, server-authoritative launch gates, tenant entitlement, tenant permission, server-built context, and no demo/fixture flags.
 - Real AI provider calls also require vendor-risk, clinical safety, privacy/legal, provider-training, retention, provider-native token counting, and safety-settings evidence.
 - Red-risk payloads, raw clinical keys, raw message collections, channel identities, secrets, over-budget payloads, and non-ready attachments are blocked before provider egress.
-- Gemini safety settings are represented as an explicit request contract.
-- The real Gemini text adapter is present but intentionally stops at `real_ai_provider_transport_not_enabled`; no live HTTP call is implemented or executed.
+- Z.ai GLM-5.3-Flash request parameters are represented as an explicit request contract.
+- The real Z.ai GLM-5.3-Flash text adapter is present behind fail-closed launch gates and `ZAI_API_KEY`; no live HTTP call was executed.
 - File upload admission is now bound to a production file-security contract for supported MIME, declared size, actual size, and SHA-256 shape.
 - Upload bodies are rejected early when empty or above the existing total attachment byte ceiling.
 - Database migration adds service-role-only provider egress audit and malware-scan/provider-egress eligibility fields for AI chat attachments.
 
 Out of scope:
 
-- No Gemini API key was used.
-- No live Gemini, OCR, vision, transcription, or file API call was executed.
+- No Z.ai API key was used.
+- No live Z.ai, OCR, vision, transcription, or file API call was executed.
 - No production deploy, remote migration, production schema rollout, or real client health-data processing was executed.
 - Physical iPhone Safari/PWA validation remains `WAIVED_NOT_EXECUTED`, not `PASS`.
 - Production remains `NO-GO`.
@@ -41,7 +41,7 @@ Out of scope:
 
 ## External Reference Check
 
-Google's Gemini API documentation was checked on 2026-08-30. The current docs describe safety settings as request-level controls and document multimodal file handling through Gemini file input/Files API paths. The implementation records these as local readiness contracts only and does not enable live provider transport.
+Z.ai documentation was checked on 2026-08-31. The current docs list `glm-5.3-flash` as the API model code, the chat completion path under `https://api.z.ai/api/paas/v4/chat/completions`, and recommended request parameters `temperature: 1`, `top_p: 0.95`, `reasoning_effort: max`, and enabled thinking with `clear_thinking: false`. The implementation records these as local readiness contracts and keeps real provider egress behind production gates.
 
 ## Verification
 

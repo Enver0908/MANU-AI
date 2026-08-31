@@ -3,12 +3,13 @@ import { PHASE_72_PERMISSION_GRAPH_VERSION } from "./phase-72-permission-graph";
 import { PHASE_74_POLICY_VERSION } from "./phase-74-data-lifecycle-policy";
 import type { RiskLevel } from "./types";
 
-export const PHASE_75_GEMINI_PROVIDER_PACK_VERSION = "phase-75-gemini-provider-pack-v1";
+export const PHASE_75_ZAI_PROVIDER_PACK_VERSION = "phase-75-zai-glm-provider-pack-v1";
 
-export const PHASE_75_GREEN_MODEL_ID = "gemini-1.5-flash";
-export const PHASE_75_YELLOW_MODEL_ID = "gemini-3";
+export const PHASE_75_GLM_5_3_FLASH_MODEL_ID = "glm-5.3-flash";
+export const PHASE_75_GREEN_MODEL_ID = PHASE_75_GLM_5_3_FLASH_MODEL_ID;
+export const PHASE_75_YELLOW_MODEL_ID = PHASE_75_GLM_5_3_FLASH_MODEL_ID;
 export const PHASE_75_TARGET_PROVIDER_SURFACE =
-  "google_cloud_vertex_ai_gemini_enterprise_agent_platform_paid";
+  "zai_direct_api_paid_account_glm_5_3_flash";
 
 export type Phase75ApprovalStatus = "draft";
 
@@ -20,18 +21,17 @@ export type Phase75ProviderRoutingBand =
   | "yellow_internal_draft";
 
 export type Phase75ForbiddenSurfaceId =
-  | "consumer_gemini_app"
-  | "free_google_ai_studio"
-  | "unpaid_gemini_api"
-  | "gemini_api_without_billing"
-  | "personal_google_account"
-  | "grounding_google_search"
-  | "grounding_google_maps"
-  | "gemini_live_session"
-  | "file_image_audio_pdf_input"
+  | "consumer_chat_app"
+  | "unpaid_zai_quota"
+  | "zai_api_without_billing_or_quota"
+  | "personal_account_workflow"
+  | "provider_web_search"
+  | "provider_external_tools"
+  | "provider_file_storage"
+  | "file_image_audio_pdf_input_without_app_sanitization"
   | "model_tuning_client_data"
-  | "pre_ga_health_models"
-  | "third_party_model_garden_health";
+  | "non_glm_5_3_flash_model"
+  | "third_party_router_health_data";
 
 export type Phase75ProviderRoutingInput = {
   riskLevel: RiskLevel;
@@ -54,7 +54,7 @@ export type Phase75ProviderRoutingEvaluation = {
   modelId: string | null;
   providerAttemptAllowed: boolean;
   clientFacingSendAllowed: boolean;
-  realGeminiEgressAllowed: boolean;
+  realZaiEgressAllowed: boolean;
   blockingReasons: string[];
 };
 
@@ -74,24 +74,24 @@ const DRAFT: Phase75ApprovalStatus = "draft";
 
 export const PHASE_75_OFFICIAL_PROVIDER_SOURCES: Phase75ProviderSourceRef[] = [
   {
-    sourceFamily: "Gemini API Additional Terms",
-    sourceUrl: "https://ai.google.dev/gemini-api/terms",
+    sourceFamily: "Z.ai GLM-5.3-Flash model documentation",
+    sourceUrl: "https://docs.z.ai/guides/vlm/glm-5.3-flash",
   },
   {
-    sourceFamily: "Google Cloud Service Specific Terms",
-    sourceUrl: "https://cloud.google.com/terms/service-terms",
+    sourceFamily: "Z.ai Chat Completion API",
+    sourceUrl: "https://docs.z.ai/api-reference/llm/chat-completion",
   },
   {
-    sourceFamily: "Vertex AI zero data retention",
-    sourceUrl: "https://cloud.google.com/vertex-ai/generative-ai/docs/vertex-ai-zero-data-retention",
+    sourceFamily: "Z.ai API introduction",
+    sourceUrl: "https://docs.z.ai/api-reference/introduction",
   },
   {
-    sourceFamily: "Gemini Enterprise Agent Platform data residency",
-    sourceUrl: "https://cloud.google.com/vertex-ai/generative-ai/docs/learn/data-residency",
+    sourceFamily: "Z.ai privacy policy",
+    sourceUrl: "https://docs.z.ai/legal-agreement/privacy-policy",
   },
   {
-    sourceFamily: "Google Cloud HIPAA compliance guide",
-    sourceUrl: "https://cloud.google.com/security/compliance/hipaa",
+    sourceFamily: "Z.ai terms of use",
+    sourceUrl: "https://docs.z.ai/legal-agreement/terms-of-use",
   },
 ];
 
@@ -100,18 +100,17 @@ export const PHASE_75_FORBIDDEN_PROVIDER_SURFACES: Array<{
   label: string;
   approvalStatus: Phase75ApprovalStatus;
 }> = [
-  { id: "consumer_gemini_app", label: "Consumer Gemini app", approvalStatus: DRAFT },
-  { id: "free_google_ai_studio", label: "Free Google AI Studio", approvalStatus: DRAFT },
-  { id: "unpaid_gemini_api", label: "Unpaid Gemini API quota", approvalStatus: DRAFT },
-  { id: "gemini_api_without_billing", label: "Gemini API without active Cloud Billing", approvalStatus: DRAFT },
-  { id: "personal_google_account", label: "Personal Google account / consumer workflow", approvalStatus: DRAFT },
-  { id: "grounding_google_search", label: "Grounding with Google Search", approvalStatus: DRAFT },
-  { id: "grounding_google_maps", label: "Grounding with Google Maps", approvalStatus: DRAFT },
-  { id: "gemini_live_session", label: "Gemini Live API session resumption", approvalStatus: DRAFT },
-  { id: "file_image_audio_pdf_input", label: "File/image/audio/PDF interpretation", approvalStatus: DRAFT },
+  { id: "consumer_chat_app", label: "Consumer chat app or manual copy/paste workflow", approvalStatus: DRAFT },
+  { id: "unpaid_zai_quota", label: "Unpaid Z.ai API quota", approvalStatus: DRAFT },
+  { id: "zai_api_without_billing_or_quota", label: "Z.ai API without active paid billing/quota", approvalStatus: DRAFT },
+  { id: "personal_account_workflow", label: "Personal account workflow for client health data", approvalStatus: DRAFT },
+  { id: "provider_web_search", label: "Provider-native web search", approvalStatus: DRAFT },
+  { id: "provider_external_tools", label: "Provider-native external tool execution", approvalStatus: DRAFT },
+  { id: "provider_file_storage", label: "Provider file storage outside app-controlled sanitized payloads", approvalStatus: DRAFT },
+  { id: "file_image_audio_pdf_input_without_app_sanitization", label: "File/image/audio/PDF input without app sanitization and review gates", approvalStatus: DRAFT },
   { id: "model_tuning_client_data", label: "Model tuning/fine-tuning with client data", approvalStatus: DRAFT },
-  { id: "pre_ga_health_models", label: "Pre-GA models with health data", approvalStatus: DRAFT },
-  { id: "third_party_model_garden_health", label: "Third-party models through model garden for health data", approvalStatus: DRAFT },
+  { id: "non_glm_5_3_flash_model", label: "Any LLM model other than GLM-5.3-Flash", approvalStatus: DRAFT },
+  { id: "third_party_router_health_data", label: "Third-party router/proxy for health-data LLM calls", approvalStatus: DRAFT },
 ];
 
 export const PHASE_75_TRAINING_LOGGING_RETENTION_POLICY = {
@@ -121,7 +120,8 @@ export const PHASE_75_TRAINING_LOGGING_RETENTION_POLICY = {
   providerMetadataRetentionMonths: 12,
   rawPromptCompletionRetention: 0,
   unpaidApiHealthData: "forbidden",
-  groundingSearchMaps: "disabled",
+  providerWebSearchTools: "disabled",
+  reasoningContentAppLogging: "discarded",
 } as const;
 
 export const PHASE_75_HEALTH_ELIGIBILITY_STATUS = "conditional_yes_after_contractual_consent_and_gates" as const;
@@ -129,16 +129,16 @@ export const PHASE_75_HEALTH_ELIGIBILITY_STATUS = "conditional_yes_after_contrac
 export const PHASE_75_HEALTH_ELIGIBILITY_CHECKLIST: Phase75HealthEligibilityChecklistItem[] = [
   { id: "legal_privacy_approval", label: "Legal/privacy approval artifact signed", required: true, approvalStatus: DRAFT },
   { id: "provider_vendor_approval", label: "Provider/vendor approval artifact signed", required: true, approvalStatus: DRAFT },
-  { id: "google_cloud_dpa_reviewed", label: "Google Cloud contract/DPA terms reviewed", required: true, approvalStatus: DRAFT },
-  { id: "healthcare_restrictions_memo", label: "Health data use case aligned with Google healthcare restrictions", required: true, approvalStatus: DRAFT },
+  { id: "zai_dpa_reviewed", label: "Z.ai contract/DPA terms reviewed", required: true, approvalStatus: DRAFT },
+  { id: "healthcare_restrictions_memo", label: "Health data use case aligned with Z.ai provider restrictions", required: true, approvalStatus: DRAFT },
   { id: "medical_device_classification", label: "Not medical advice/device or clearance memo approved", required: true, approvalStatus: DRAFT },
   { id: "prompt_allowlist_locked", label: "PromptContext allowlist locked via Phase 70/72", required: true, approvalStatus: DRAFT },
   { id: "red_no_provider", label: "Red provider call impossible", required: true, approvalStatus: DRAFT },
   { id: "yellow_no_client_send", label: "Yellow provider internal-only; no client-facing auto-send", required: true, approvalStatus: DRAFT },
   { id: "green_source_backed", label: "Green calls source-backed and send-guarded", required: true, approvalStatus: DRAFT },
-  { id: "paid_surface_only", label: "Paid Google Cloud surface only", required: true, approvalStatus: DRAFT },
+  { id: "paid_surface_only", label: "Paid Z.ai direct API surface only", required: true, approvalStatus: DRAFT },
   { id: "no_tuning", label: "No model tuning/fine-tuning", required: true, approvalStatus: DRAFT },
-  { id: "no_grounding_files", label: "No grounding/search/maps/live/files", required: true, approvalStatus: DRAFT },
+  { id: "no_provider_tools_files", label: "No provider tools/search/file storage outside app-gated payloads", required: true, approvalStatus: DRAFT },
   { id: "data_residency_approved", label: "Data residency/region and transfer decision approved", required: true, approvalStatus: DRAFT },
   { id: "abuse_monitoring_decision", label: "Abuse monitoring / zero retention decision approved", required: true, approvalStatus: DRAFT },
 ];
@@ -197,8 +197,8 @@ export const PHASE_75_FORBIDDEN_PROMPT_CONTEXT_FIELDS = [
 ] as const;
 
 export const PHASE_75_REQUIRED_GATE_EVIDENCE = [
-  "gemini_provider_terms_reviewed",
-  "google_cloud_paid_surface_selected",
+  "zai_provider_terms_reviewed",
+  "zai_paid_direct_api_surface_selected",
   "dpa_data_processor_terms_reviewed",
   "health_data_eligibility_memo",
   "medical_device_cds_classification_memo",
@@ -265,10 +265,10 @@ export function isPhase75HealthEligibilitySatisfied(
   return legalApproved && providerApproved;
 }
 
-export function isPhase75RealGeminiEgressAllowed(
+export function isPhase75RealZaiEgressAllowed(
   launchGateEvidence: LaunchGateEvidenceRecord[] = [],
 ): boolean {
-  if (process.env.MANU_ALLOW_REAL_GEMINI !== "true") {
+  if (process.env.MANU_ALLOW_REAL_ZAI !== "true") {
     return false;
   }
 
@@ -284,18 +284,18 @@ function buildPhase75RoutingEvaluation(
   blockingReasons: string[],
 ): Phase75ProviderRoutingEvaluation {
   return {
-    packVersion: PHASE_75_GEMINI_PROVIDER_PACK_VERSION,
+    packVersion: PHASE_75_ZAI_PROVIDER_PACK_VERSION,
     approvalStatus: DRAFT,
     routingBand,
     modelId,
     providerAttemptAllowed,
     clientFacingSendAllowed,
-    realGeminiEgressAllowed: isPhase75RealGeminiEgressAllowed(input.launchGateEvidence ?? []),
+    realZaiEgressAllowed: isPhase75RealZaiEgressAllowed(input.launchGateEvidence ?? []),
     blockingReasons: [...new Set(blockingReasons)],
   };
 }
 
-export function evaluatePhase75GeminiProviderRouting(
+export function evaluatePhase75ZaiProviderRouting(
   input: Phase75ProviderRoutingInput,
 ): Phase75ProviderRoutingEvaluation {
   const blockingReasons: string[] = [];
@@ -366,12 +366,12 @@ export function evaluatePhase75GeminiProviderRouting(
   );
 }
 
-export function buildPhase75GeminiProviderLaunchGateEvidence(): LaunchGateEvidenceRecord[] {
+export function buildPhase75ZaiProviderLaunchGateEvidence(): LaunchGateEvidenceRecord[] {
   return [
     {
       gateId: "provider_vendor_review",
-      artifactTitle: "Phase 75 Gemini provider decision pack",
-      artifactRef: PHASE_75_GEMINI_PROVIDER_PACK_VERSION,
+      artifactTitle: "Phase 75 Z.ai GLM-5.3-Flash provider decision pack",
+      artifactRef: PHASE_75_ZAI_PROVIDER_PACK_VERSION,
       approvalStatus: "draft",
       coveredEvidence: [
         "provider requirements",
@@ -387,7 +387,7 @@ export function buildPhase75GeminiProviderLaunchGateEvidence(): LaunchGateEviden
     {
       gateId: "legal_privacy_review",
       artifactTitle: "Phase 75 health-data eligibility and cross-border transfer memo",
-      artifactRef: PHASE_75_GEMINI_PROVIDER_PACK_VERSION,
+      artifactRef: PHASE_75_ZAI_PROVIDER_PACK_VERSION,
       approvalStatus: "draft",
       coveredEvidence: [
         "legal basis matrix",

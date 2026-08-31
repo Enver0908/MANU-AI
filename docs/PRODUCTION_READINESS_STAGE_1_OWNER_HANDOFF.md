@@ -30,7 +30,7 @@ This accepted residual iOS risk must stay visible in future readiness language.
 - Phase 3: Real WhatsApp webhook challenge, HMAC verification, durable ingress,
   encrypted credential/storage contracts, and real delivery metadata are ready
   behind production gates.
-- Phase 4: Real AI adapter, Gemini readiness, vision/OCR/transcription gating,
+- Phase 4: Real AI adapter, Z.ai GLM-5.3-Flash readiness, vision/OCR/transcription gating,
   file admission, malware-scan/provider-egress eligibility, and provider audit
   contracts are ready behind production gates.
 - Phase 5: Worker commands, one-shot validation commands, release manifest
@@ -44,7 +44,7 @@ This accepted residual iOS risk must stay visible in future readiness language.
 - Meta/WhatsApp: create or confirm Meta Business, WhatsApp Business Account,
   phone number, app secret, verify token, webhook URL target after deployment,
   template/policy approvals, opt-in language, and opt-out handling.
-- Gemini/AI provider: create or confirm provider account, approved model,
+- Z.ai/AI provider: create or confirm Z.ai account, approved `glm-5.3-flash` model,
   production API key source, vendor-risk approval, privacy/legal approval,
   clinical safety approval, training-disabled posture, and retention-disabled or
   bounded-retention posture.

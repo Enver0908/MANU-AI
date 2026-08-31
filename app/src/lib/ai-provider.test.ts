@@ -94,13 +94,13 @@ describe("mock AI provider", () => {
       buildSafeProviderMetadata({
         providerId: MOCK_PROVIDER_ID,
         promptVersion: PROMPT_VERSION,
-        model: "gemini-1.5-flash",
+        model: "glm-5.3-flash",
         status: "ok",
       }),
     ).toEqual({
       providerId: MOCK_PROVIDER_ID,
       promptVersion: PROMPT_VERSION,
-      model: "gemini-1.5-flash",
+      model: "glm-5.3-flash",
       status: "ok",
       errorCode: null,
     });

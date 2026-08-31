@@ -322,7 +322,7 @@ export const PHASE_72_LEGAL_PRIVACY_ROUTING_MAP: Phase72ArtifactEntry[] = [
   entry("unknown_identity", "Unknown/ambiguous identity", "quarantine", [SOURCE_KVKK], "Quarantine; AI/provider yok."),
   entry("group_message", "Group message", "quarantine", [SOURCE_REMOTE_HEALTH], "Quarantine; client context yok."),
   entry("legal_privacy_approval_missing", "Legal/privacy approval yok", "handoff_no_send", [SOURCE_KVKK], "Production health data processing yok."),
-  entry("provider_vendor_approval_missing", "Provider/vendor approval yok", "handoff_no_send", [SOURCE_KVKK], "Real Gemini egress yok."),
+  entry("provider_vendor_approval_missing", "Provider/vendor approval yok", "handoff_no_send", [SOURCE_KVKK], "Real Z.ai GLM-5.3-Flash egress yok."),
   entry("whatsapp_policy_approval_missing", "WhatsApp policy approval yok", "handoff_no_send", [SOURCE_REMOTE_HEALTH], "Real WhatsApp traffic yok."),
   entry("sensitive_data_consent_revoked", "Sensitive data consent revoked", "handoff_no_send", [SOURCE_KVKK], "Automation ve provider path kapali."),
   entry("dsar_deletion_request", "DSAR/deletion/anonymization talebi", "internal_only", [SOURCE_KVKK, SOURCE_HEALTH_DATA_REG], "Draft/send/provider path kapali."),

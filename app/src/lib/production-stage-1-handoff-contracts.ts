@@ -16,7 +16,7 @@ export type ProductionStage1OwnerActionStatus = "OWNER_PENDING" | "OWNER_COMPLET
 export type ProductionStage1OwnerAction = {
   id:
     | "meta_whatsapp_business"
-    | "gemini_ai_provider"
+    | "zai_glm_ai_provider"
     | "production_secrets"
     | "production_supabase_and_migrations"
     | "manual_transfer_operations"
@@ -102,8 +102,8 @@ export const PRODUCTION_STAGE_1_OWNER_ACTIONS_REQUIRED: ProductionStage1OwnerAct
     status: "OWNER_PENDING",
   },
   {
-    id: "gemini_ai_provider",
-    label: "Gemini/provider account, vendor risk, privacy/legal, clinical safety, and retention/training approvals.",
+    id: "zai_glm_ai_provider",
+    label: "Z.ai GLM-5.3-Flash provider account, vendor risk, privacy/legal, clinical safety, and retention/training approvals.",
     requiredBefore: "production_go",
     status: "OWNER_PENDING",
   },
@@ -207,7 +207,7 @@ export function findProductionStage1HandoffContradictions(claims: string[]) {
     if (/production(?:\s+pilot)?\s+go\s*(?:is|:|=)?\s*(true|approved|granted|ready)/.test(normalized)) {
       findings.push("production_go_must_remain_false_until_final_owner_gate");
     }
-    if (/live\s+(provider|channel|whatsapp|gemini|ai).{0,80}(executed|enabled|approved|ready)/.test(normalized)) {
+    if (/live\s+(provider|channel|whatsapp|zai|glm|ai).{0,80}(executed|enabled|approved|ready)/.test(normalized)) {
       findings.push("live_provider_or_channel_work_must_not_be_claimed_executed");
     }
 

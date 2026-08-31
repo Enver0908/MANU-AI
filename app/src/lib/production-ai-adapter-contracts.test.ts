@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
-  buildGeminiSafetySettingsContract,
+  buildZaiGlmFlashRequestContract,
   evaluateProductionAiAdapterReadiness,
   evaluateProductionAiPayloadSafety,
 } from "./production-ai-adapter-contracts";
@@ -20,7 +20,7 @@ const safeBoundary = {
   env: {
     NODE_ENV: "production",
     MANU_APP_ENV: "production",
-    MANU_ALLOW_REAL_GEMINI: "true",
+    MANU_ALLOW_REAL_ZAI: "true",
   },
   approvedGateIdsSource: "server_authority" as const,
   approvedGateIds: [
@@ -43,9 +43,9 @@ const safeBoundary = {
 describe("production AI adapter contracts", () => {
   it("blocks real provider calls when external approvals are missing even if env flags are present", () => {
     const decision = evaluateProductionAiAdapterReadiness({
-      provider: "gemini",
+      provider: "zai",
       operation: "ai_text_generate",
-      model: "gemini-3.7-flash",
+      model: "glm-5.3-flash",
       approvalState: { ...allApprovals, clinicalSafetyApproved: false },
       boundary: safeBoundary,
       payloadSafety: {
@@ -62,9 +62,9 @@ describe("production AI adapter contracts", () => {
 
   it("allows readiness only when launch gates, approvals, model, and payload safety all pass", () => {
     const decision = evaluateProductionAiAdapterReadiness({
-      provider: "gemini",
+      provider: "zai",
       operation: "ai_text_generate",
-      model: "gemini-3.7-flash",
+      model: "glm-5.3-flash",
       approvalState: allApprovals,
       boundary: safeBoundary,
       payloadSafety: {
@@ -100,12 +100,19 @@ describe("production AI adapter contracts", () => {
     expect(safety.blockingReasons).toContain("provider-bound files require malware scan pass evidence");
   });
 
-  it("builds a conservative Gemini safety settings contract", () => {
-    expect(buildGeminiSafetySettingsContract()).toEqual([
-      { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
-      { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
-      { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
-      { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
-    ]);
+  it("builds the Z.ai GLM-5.3-Flash request contract", () => {
+    expect(buildZaiGlmFlashRequestContract()).toMatchObject({
+      baseUrl: "https://api.z.ai/api/paas/v4",
+      path: "/chat/completions",
+      provider: "zai",
+      model: "glm-5.3-flash",
+      parameters: {
+        temperature: 1,
+        top_p: 0.95,
+        reasoning_effort: "max",
+        thinking: { type: "enabled", clear_thinking: false },
+      },
+      reasoningContentPolicy: "discard_before_app_logging",
+    });
   });
 });

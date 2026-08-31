@@ -16,6 +16,7 @@ As of 2026-08-30:
 - Physical iPhone Safari/PWA validation is permanently owner-waived for the current roadmap and future phases. It remains `WAIVED_NOT_EXECUTED`, not `PASS`; future readiness or pilot language must disclose the waiver and accepted residual iOS risk.
 - Android Chrome, installed Android PWA, and Android TalkBack evidence are recorded for Stage 7 closure.
 - R-405 is technically resolved locally; external dependency and operational launch gates remain independent production constraints.
+- Active LLM provider decision: all previous Gemini LLM usage is rebaselined to direct Z.ai `GLM-5.3-Flash` (`glm-5.3-flash`). The product architecture, green/yellow/red safety model, RAG/context injection, WhatsApp-first scope, and fail-closed production gates remain unchanged.
 
 Canonical current authorities:
 
@@ -134,7 +135,7 @@ Production is currently blocked by independent launch gates. Local closure evide
 - Real health-data processing.
 - Removing accepted-risk qualifications from iOS coverage.
 
-Production readiness requires explicit owner approval and current evidence for the relevant operational gates. The active Stage 1 owner blockers are Meta/WhatsApp Business approval, Gemini/provider approval, production secrets, production Supabase and remote migration approval, manual bank-transfer operations approval, incident/monitoring/rollback ownership, and exact release approval.
+Production readiness requires explicit owner approval and current evidence for the relevant operational gates. The active Stage 1 owner blockers are Meta/WhatsApp Business approval, Z.ai GLM-5.3-Flash provider approval, production secrets, production Supabase and remote migration approval, manual bank-transfer operations approval, incident/monitoring/rollback ownership, and exact release approval.
 
 ## Evidence Discipline
 

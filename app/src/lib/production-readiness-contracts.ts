@@ -41,7 +41,7 @@ export const PRODUCTION_READINESS_ERROR_CATEGORIES = [
 export type ProductionReadinessEnvironmentProfile = "local" | "hosted_sandbox" | "production";
 export type ProductionReadinessOperationId = (typeof PRODUCTION_READINESS_OPERATIONS)[number];
 export type ProductionReadinessErrorCategory = (typeof PRODUCTION_READINESS_ERROR_CATEGORIES)[number];
-export type ProductionReadinessProvider = "gemini" | "whatsapp" | "telegram" | "vision" | "ocr" | "transcription";
+export type ProductionReadinessProvider = "zai" | "whatsapp" | "telegram" | "vision" | "ocr" | "transcription";
 export type ProductionReadinessAuthoritySource = "server_authority" | "client_supplied" | "none";
 export type ProductionReadinessContextAuthority = "server" | "client";
 
@@ -74,7 +74,7 @@ export type ProductionReadinessBoundaryDecision = {
 };
 
 const REAL_EGRESS_FLAGS_BY_PROVIDER: Record<ProductionReadinessProvider, string[]> = {
-  gemini: ["MANU_ALLOW_REAL_GEMINI", "AI_CHAT_REAL_PROVIDER_ENABLED"],
+  zai: ["MANU_ALLOW_REAL_ZAI", "AI_CHAT_REAL_PROVIDER_ENABLED"],
   whatsapp: ["MANU_ALLOW_REAL_WHATSAPP"],
   telegram: ["MANU_ALLOW_REAL_TELEGRAM"],
   vision: ["MANU_ALLOW_REAL_VISION_EGRESS"],

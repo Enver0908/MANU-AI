@@ -1,6 +1,10 @@
 import { AppRequestError } from "./app-errors";
 import {
-  buildGeminiSafetySettingsContract,
+  PRODUCTION_AI_GLM_5_3_FLASH_MODEL,
+  PRODUCTION_AI_ZAI_BASE_URL,
+  PRODUCTION_AI_ZAI_CHAT_COMPLETIONS_PATH,
+  PRODUCTION_AI_ZAI_REQUEST_PARAMETERS,
+  buildZaiGlmFlashRequestContract,
   evaluateProductionAiAdapterReadiness,
   type ProductionAiAdapterApprovalState,
   type ProductionAiAdapterReadinessInput,
@@ -16,17 +20,17 @@ export type ProductionAiAdapterRequest = {
 };
 
 export type ProductionAiAdapterResponse = {
-  provider: "gemini";
+  provider: "zai";
   model: string;
   text: string;
-  safetySettings: ReturnType<typeof buildGeminiSafetySettingsContract>;
+  requestContract: ReturnType<typeof buildZaiGlmFlashRequestContract>;
 };
 
-export async function generateWithRealGeminiTextAdapter(
+export async function generateWithRealZaiGlmFlashTextAdapter(
   request: ProductionAiAdapterRequest,
 ): Promise<ProductionAiAdapterResponse> {
   const readiness = evaluateProductionAiAdapterReadiness({
-    provider: "gemini",
+    provider: "zai",
     operation: "ai_text_generate",
     model: request.model,
     approvalState: request.approvalState,
@@ -38,12 +42,44 @@ export async function generateWithRealGeminiTextAdapter(
     throw new AppRequestError(403, "real_ai_provider_blocked");
   }
 
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = process.env.ZAI_API_KEY;
   if (!apiKey) {
     throw new AppRequestError(503, "real_ai_provider_not_configured");
   }
 
-  // The live HTTP call remains intentionally unimplemented until the production
-  // GO decision supplies a current provider SDK/version and audited request logger.
-  throw new AppRequestError(503, "real_ai_provider_transport_not_enabled");
+  const model = request.model || PRODUCTION_AI_GLM_5_3_FLASH_MODEL;
+  const response = await fetch(`${PRODUCTION_AI_ZAI_BASE_URL}${PRODUCTION_AI_ZAI_CHAT_COMPLETIONS_PATH}`, {
+    method: "POST",
+    headers: {
+      authorization: `Bearer ${apiKey}`,
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      model,
+      messages: [{ role: "user", content: request.prompt }],
+      ...PRODUCTION_AI_ZAI_REQUEST_PARAMETERS,
+    }),
+  });
+
+  if (response.status === 429) {
+    throw new AppRequestError(429, "real_ai_provider_rate_limited");
+  }
+  if (!response.ok) {
+    throw new AppRequestError(response.status >= 500 ? 503 : 502, "real_ai_provider_failed");
+  }
+
+  const body = (await response.json()) as {
+    choices?: Array<{ message?: { content?: string; reasoning_content?: string } }>;
+  };
+  const text = body.choices?.[0]?.message?.content;
+  if (!text?.trim()) {
+    throw new AppRequestError(502, "real_ai_provider_invalid_output");
+  }
+
+  return {
+    provider: "zai",
+    model,
+    text,
+    requestContract: buildZaiGlmFlashRequestContract(),
+  };
 }

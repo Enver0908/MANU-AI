@@ -1,6 +1,6 @@
 # MANU-AI Production Pilot Provider Vendor Review Packet
 
-**Current status interpretation (2026-08-18):** R-405 is `technically_resolved` locally; any older R-405 prerequisite below is historical. This packet's provider/vendor approval gate remains open, and production remains `NO-GO`. Local dependency remediation does not authorize provider egress.
+**Current status interpretation (2026-08-31):** R-405 is `technically_resolved` locally; any older R-405 prerequisite below is historical. This packet's provider/vendor approval gate remains open, production remains `NO-GO`, and the active LLM target is direct Z.ai `GLM-5.3-Flash` (`glm-5.3-flash`). Local dependency remediation and provider rebaseline work do not authorize provider egress.
 
 Date: 2026-05-31
 
@@ -8,15 +8,15 @@ Date: 2026-05-31
 
 This packet prepares the `provider_vendor_review` launch gate for external vendor, legal, and security review.
 
-It does not approve real Gemini or external LLM use.
+It does not approve real Z.ai GLM-5.3-Flash or other external LLM use.
 
-No real WhatsApp, Telegram, Gemini, external LLM provider, email, push, monitoring, analytics, secret manager, or real client health data is connected.
+No real WhatsApp, Telegram, Z.ai, external LLM provider, email, push, monitoring, analytics, secret manager, or real client health data is connected.
 
 The `provider_vendor_review` launch gate remains open until acceptable external approval evidence is supplied.
 
 ## Review Objective
 
-External reviewers must decide whether an approved model provider may receive health-related client context during a supervised production pilot, and under which retention, logging, training-use, region, access-control, audit, and incident conditions.
+External reviewers must decide whether direct Z.ai GLM-5.3-Flash may receive health-related client context during a supervised production pilot, and under which retention, logging, training-use, region, access-control, audit, and incident conditions.
 
 The default answer remains no real provider egress.
 
@@ -31,7 +31,8 @@ The default answer remains no real provider egress.
 | `PHASE_26_INTERNAL_COPILOT_SPEC.md` | Documents local/mock-only internal copilot behavior and separate provider-egress requirement. |
 | `PHASE_27_DIETITIAN_CONTEXT_UPDATE_SPEC.md` | Documents dietitian-entered Critical Context and its separate provider-egress approval requirement. |
 | `PHASE_28_AI_SECURITY_REMEDIATION_SPEC.md` | Documents provider-attempt semantics, source metadata, send-time draft revalidation, and provider segment allowlist enforcement. |
-| `app/src/lib/ai-provider.ts` | Current implementation: deterministic local/mock provider only, guarded provider input, no real SDK or credentials. |
+| `app/src/lib/production-ai-adapters.ts` | Current real-provider adapter boundary: Z.ai GLM-5.3-Flash transport behind production gates and `ZAI_API_KEY`; no live call is approved or executed by this packet. |
+| `app/src/lib/phase-75-zai-provider-gate.ts` | Active Z.ai provider gate, approved model id, forbidden surfaces, and launch-gate evidence requirements. |
 
 Internal evidence supports review, but it is not a vendor approval artifact.
 
@@ -50,7 +51,7 @@ The approval artifact must explicitly cover:
 - Region, residency, cross-border transfer, and subprocessor posture.
 - Provider support access, administrative access, and access review expectations.
 - Incident, breach, and security notification obligations.
-- Approved model ids and version change process.
+- Approved model id `glm-5.3-flash` and version change process.
 - Red/yellow/green routing acceptance, including no provider calls for red-risk flows.
 - Provider failure behavior: safe no-send or dietitian review.
 - Internal copilot provider-egress decision.
@@ -60,9 +61,9 @@ The approval artifact must explicitly cover:
 
 ## Current Technical Controls
 
-- Real provider egress is absent.
-- The current provider path is deterministic local/mock only.
-- No provider API key, SDK, environment variable, or real model endpoint is required.
+- Real provider egress is blocked by default.
+- The active real provider path is Z.ai GLM-5.3-Flash behind production gates.
+- `ZAI_API_KEY`, `MANU_ALLOW_REAL_ZAI=true`, `AI_CHAT_REAL_PROVIDER_ENABLED=true`, and external approvals are required before any real call.
 - No-call paths are auditable with `providerAttempted=false`, `providerStatus=not_called`, `providerId=null`, and `model=null`.
 - Actual local/mock attempts are auditable with provider id, model, prompt version, provider status, and provider error metadata.
 - Provider input is built from allowlisted PromptContext segments.

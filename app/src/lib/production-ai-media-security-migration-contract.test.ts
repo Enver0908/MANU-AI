@@ -12,6 +12,16 @@ const migrationSource = readFileSync(
   "utf8",
 );
 
+const zaiRebaselineMigrationSource = readFileSync(
+  fileURLToPath(
+    new URL(
+      "../../supabase/migrations/20260831090000_zai_glm_provider_rebaseline.sql",
+      import.meta.url,
+    ),
+  ),
+  "utf8",
+);
+
 describe("production AI and media security migration contract", () => {
   it("adds a service-role-only AI provider egress audit ledger without raw prompts", () => {
     expect(migrationSource).toContain("create table if not exists ai_provider_egress_audit");
@@ -29,5 +39,11 @@ describe("production AI and media security migration contract", () => {
     expect(migrationSource).toContain("add column if not exists malware_scan_status");
     expect(migrationSource).toContain("add column if not exists provider_egress_eligible");
     expect(migrationSource).toContain("provider_egress_eligible = false or malware_scan_status = 'passed'");
+  });
+
+  it("rebaselines the active LLM provider to Z.ai while preserving historical Gemini audit readability", () => {
+    expect(zaiRebaselineMigrationSource).toContain("provider in ('zai', 'gemini', 'vision', 'ocr', 'transcription')");
+    expect(zaiRebaselineMigrationSource).toContain("new application code writes provider = 'zai'");
+    expect(zaiRebaselineMigrationSource).toContain("does not enable real AI provider egress");
   });
 });

@@ -70,11 +70,11 @@ describe("production readiness stage 1 phase 1 contracts", () => {
     const decision = evaluateProductionReadinessBoundary({
       env: {
         MANU_APP_ENV: "production",
-        MANU_ALLOW_REAL_GEMINI: "true",
+        MANU_ALLOW_REAL_ZAI: "true",
         MANU_DEV_FALLBACK_STORE: "true",
         AI_CHAT_DETERMINISTIC_MODE: "true",
       },
-      provider: "gemini",
+      provider: "zai",
       operation: "ai_text_generate",
       approvedGateIds: TURKEY_FIRST_GATE_IDS,
       approvedGateIdsSource: "server_authority",

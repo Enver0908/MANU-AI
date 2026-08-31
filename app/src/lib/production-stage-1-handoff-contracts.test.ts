@@ -45,7 +45,7 @@ describe("production stage 1 phase 6 handoff contracts", () => {
 
     expect(ownerActionIds).toEqual([
       "meta_whatsapp_business",
-      "gemini_ai_provider",
+      "zai_glm_ai_provider",
       "production_secrets",
       "production_supabase_and_migrations",
       "manual_transfer_operations",

@@ -4,13 +4,13 @@ import {
   PHASE_75_GREEN_MODEL_ID,
   PHASE_75_REQUIRED_GATE_EVIDENCE,
   PHASE_75_YELLOW_MODEL_ID,
-  buildPhase75GeminiProviderLaunchGateEvidence,
-  evaluatePhase75GeminiProviderRouting,
+  buildPhase75ZaiProviderLaunchGateEvidence,
+  evaluatePhase75ZaiProviderRouting,
   evaluatePhase75PromptContextFieldEligibility,
   evaluatePhase75ProviderPackReadiness,
   isPhase75HealthEligibilitySatisfied,
-  isPhase75RealGeminiEgressAllowed,
-} from "./phase-75-gemini-provider-gate";
+  isPhase75RealZaiEgressAllowed,
+} from "./phase-75-zai-provider-gate";
 
 const approvedGates = [
   {
@@ -31,14 +31,14 @@ const approvedGates = [
   },
 ];
 
-describe("phase 75 gemini provider gate", () => {
+describe("phase 75 Z.ai GLM-5.3-Flash provider gate", () => {
   afterEach(() => {
-    delete process.env.MANU_ALLOW_REAL_GEMINI;
+    delete process.env.MANU_ALLOW_REAL_ZAI;
   });
 
   it("captures forbidden surfaces, gate evidence, and draft launch-gate artifacts", () => {
     const readiness = evaluatePhase75ProviderPackReadiness();
-    const evidence = buildPhase75GeminiProviderLaunchGateEvidence();
+    const evidence = buildPhase75ZaiProviderLaunchGateEvidence();
 
     expect(readiness.status).toBe("pass");
     expect(PHASE_75_FORBIDDEN_PROVIDER_SURFACES.length).toBeGreaterThanOrEqual(10);
@@ -62,7 +62,7 @@ describe("phase 75 gemini provider gate", () => {
   });
 
   it("never routes red risk to a provider", () => {
-    const evaluation = evaluatePhase75GeminiProviderRouting({
+    const evaluation = evaluatePhase75ZaiProviderRouting({
       riskLevel: "red",
       clientAiMode: "autopilot",
       clientAiActive: true,
@@ -82,7 +82,7 @@ describe("phase 75 gemini provider gate", () => {
   });
 
   it("routes yellow to internal draft only without client send", () => {
-    const evaluation = evaluatePhase75GeminiProviderRouting({
+    const evaluation = evaluatePhase75ZaiProviderRouting({
       riskLevel: "yellow",
       clientAiMode: "autopilot",
       clientAiActive: true,
@@ -103,7 +103,7 @@ describe("phase 75 gemini provider gate", () => {
   });
 
   it("blocks green provider attempts without source-backed answerability", () => {
-    const evaluation = evaluatePhase75GeminiProviderRouting({
+    const evaluation = evaluatePhase75ZaiProviderRouting({
       riskLevel: "green",
       clientAiMode: "autopilot",
       clientAiActive: true,
@@ -122,7 +122,7 @@ describe("phase 75 gemini provider gate", () => {
   });
 
   it("routes qualified green autopilot to flash send candidate", () => {
-    const evaluation = evaluatePhase75GeminiProviderRouting({
+    const evaluation = evaluatePhase75ZaiProviderRouting({
       riskLevel: "green",
       clientAiMode: "autopilot",
       clientAiActive: true,
@@ -141,12 +141,12 @@ describe("phase 75 gemini provider gate", () => {
     expect(evaluation.clientFacingSendAllowed).toBe(true);
   });
 
-  it("keeps real gemini egress blocked without env flag and approved gates", () => {
-    expect(isPhase75RealGeminiEgressAllowed()).toBe(false);
+  it("keeps real Z.ai egress blocked without env flag and approved gates", () => {
+    expect(isPhase75RealZaiEgressAllowed()).toBe(false);
     expect(isPhase75HealthEligibilitySatisfied(approvedGates)).toBe(true);
 
-    process.env.MANU_ALLOW_REAL_GEMINI = "true";
-    expect(isPhase75RealGeminiEgressAllowed(approvedGates)).toBe(true);
-    expect(isPhase75RealGeminiEgressAllowed()).toBe(false);
+    process.env.MANU_ALLOW_REAL_ZAI = "true";
+    expect(isPhase75RealZaiEgressAllowed(approvedGates)).toBe(true);
+    expect(isPhase75RealZaiEgressAllowed()).toBe(false);
   });
 });

@@ -7,27 +7,29 @@ import {
 import type { AiChatAttachmentStatus, AiChatRiskLevel } from "./phase-85-stage-4c-contracts";
 
 export const PRODUCTION_AI_ADAPTER_CONTRACT_VERSION =
-  "production-readiness-stage-1-phase-4-ai-adapters-v1";
+  "production-readiness-stage-1-phase-4-ai-adapters-v2-zai-glm-5-3-flash";
 
-export const PRODUCTION_AI_SUPPORTED_PROVIDER = "gemini" as const;
+export const PRODUCTION_AI_SUPPORTED_PROVIDER = "zai" as const;
 
-export const PRODUCTION_AI_ALLOWED_TEXT_MODELS = [
-  "gemini-3.7-flash",
-  "gemini-3.5-flash",
-  "gemini-flash-latest",
-] as const;
+export const PRODUCTION_AI_GLM_5_3_FLASH_MODEL = "glm-5.3-flash" as const;
 
-export const PRODUCTION_AI_ALLOWED_MULTIMODAL_MODELS = [
-  "gemini-3.7-flash",
-  "gemini-3.5-flash",
-] as const;
+export const PRODUCTION_AI_ALLOWED_TEXT_MODELS = [PRODUCTION_AI_GLM_5_3_FLASH_MODEL] as const;
 
-export const PRODUCTION_AI_REQUIRED_SAFETY_CATEGORIES = [
-  "HARM_CATEGORY_HARASSMENT",
-  "HARM_CATEGORY_HATE_SPEECH",
-  "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-  "HARM_CATEGORY_DANGEROUS_CONTENT",
-] as const;
+export const PRODUCTION_AI_ALLOWED_MULTIMODAL_MODELS = [PRODUCTION_AI_GLM_5_3_FLASH_MODEL] as const;
+
+export const PRODUCTION_AI_ZAI_BASE_URL = "https://api.z.ai/api/paas/v4" as const;
+
+export const PRODUCTION_AI_ZAI_CHAT_COMPLETIONS_PATH = "/chat/completions" as const;
+
+export const PRODUCTION_AI_ZAI_REQUEST_PARAMETERS = {
+  temperature: 1,
+  top_p: 0.95,
+  reasoning_effort: "max",
+  thinking: {
+    type: "enabled",
+    clear_thinking: false,
+  },
+} as const;
 
 export const PRODUCTION_AI_FORBIDDEN_PAYLOAD_KEYS = [
   "rawPrompt",
@@ -78,7 +80,7 @@ export type ProductionAiPayloadSafetyDecision = {
 };
 
 export type ProductionAiAdapterReadinessInput = {
-  provider: Extract<ProductionReadinessProvider, "gemini" | "vision" | "ocr" | "transcription">;
+  provider: Extract<ProductionReadinessProvider, "zai" | "vision" | "ocr" | "transcription">;
   operation: ProductionAiOperation;
   model: string;
   approvalState: ProductionAiAdapterApprovalState;
@@ -170,11 +172,24 @@ export function evaluateProductionAiAdapterReadiness(
   };
 }
 
-export function buildGeminiSafetySettingsContract() {
-  return PRODUCTION_AI_REQUIRED_SAFETY_CATEGORIES.map((category) => ({
-    category,
-    threshold: "BLOCK_MEDIUM_AND_ABOVE",
-  }));
+export function buildZaiGlmFlashRequestContract() {
+  return {
+    baseUrl: PRODUCTION_AI_ZAI_BASE_URL,
+    path: PRODUCTION_AI_ZAI_CHAT_COMPLETIONS_PATH,
+    provider: PRODUCTION_AI_SUPPORTED_PROVIDER,
+    model: PRODUCTION_AI_GLM_5_3_FLASH_MODEL,
+    parameters: PRODUCTION_AI_ZAI_REQUEST_PARAMETERS,
+    disabledProviderFeatures: [
+      "web_search",
+      "external_tools",
+      "provider_file_storage",
+      "model_training",
+      "fine_tuning_with_client_data",
+      "raw_prompt_logging",
+      "raw_completion_logging",
+    ],
+    reasoningContentPolicy: "discard_before_app_logging",
+  } as const;
 }
 
 function isModelAllowed(operation: ProductionAiOperation, model: string) {
