@@ -15,14 +15,14 @@ function visibleTestId(page: Page, testId: string) {
 
 test("public landing and purchase intro render without app data", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: "SiriusAI", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "AIya", exact: true })).toBeVisible();
   const mobileMenuButton = page.getByRole("button", { name: /Menüyü aç/i });
   if (await mobileMenuButton.isVisible()) {
     await mobileMenuButton.click();
   }
   await expect(page.getByRole("link", { name: "Giriş yap" })).toBeVisible();
   await expect(page.getByRole("link", { name: "İletişime geç" }).first()).toBeVisible();
-  await expect(page.getByLabel("SiriusAI ürün önizlemesi")).toBeVisible();
+  await expect(page.getByLabel("AIya ürün önizlemesi")).toBeVisible();
   await expect(page.getByRole("link", { name: "Davet koduyla başla" }).first()).toBeVisible();
 
   await page.getByRole("link", { name: "Davet koduyla başla" }).first().click();
@@ -188,11 +188,7 @@ test("dashboard core views render in fallback mode", async ({ page }) => {
     .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth))
     .toBe(true);
 
-  await page
-    .locator('[data-testid="shell-wide-nav"], [data-testid="shell-medium-rail"], [data-testid="shell-compact-bottom-nav"]')
-    .getByRole("button", { name: "Bildirimler" })
-    .filter({ visible: true })
-    .click();
+  await visibleShellNavButton(page, "Bildirimler").click();
   await expect(page.getByTestId("notifications-panel")).toBeVisible();
   await expect(page.getByTestId("notifications-panel")).toHaveScreenshot("stage4b-notifications-panel.png", {
     animations: "disabled",

@@ -114,3 +114,24 @@ https://admin.aiyaworkspace.com/admin status=200 legacy=<none>
 ```
 
 The official hosted apply wrapper completed without manual fallback. This does not change production `NO-GO` and does not prove the Supabase Auth sender display name. Sender proof remains owner-external evidence.
+
+## 2026-09-02 Launch Evidence Preflight Addendum
+
+Faz 5 verified that local active visual coverage no longer expects the retired
+`SiriusAI` brand on current dashboard, public, customer login, or admin login
+surfaces.
+
+Verification:
+
+```text
+npx playwright test dashboard.visual.spec.ts commercial-saas.visual.spec.ts --project=desktop
+PASS: 9/9
+
+rg -n "SiriusAI|MANU-AI|AI-ya|siriusai\.store" app/src app/public app/tests/visual -g '!**/node_modules/**'
+app/src/lib/brand.ts:15 Historical evidence documents can mention MANU-AI, SiriusAI, and siriusai.store as past-state records.
+```
+
+The only remaining active code/test hit is the explicit allowed
+compatibility/historical-evidence note in `app/src/lib/brand.ts`. This addendum
+does not change production `NO-GO` and does not prove the Supabase Auth sender
+display name.

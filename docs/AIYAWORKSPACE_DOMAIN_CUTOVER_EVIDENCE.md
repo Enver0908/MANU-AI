@@ -181,3 +181,37 @@ https://admin.siriusai.store/ status=410
 DNS/TLS remain valid for `aiyaworkspace.com` and `admin.aiyaworkspace.com`; the certificate SAN includes `admin.aiyaworkspace.com`, `aiyaworkspace.com`, and `www.aiyaworkspace.com`.
 
 Supabase Auth sender display name was not changed or proven in this repeatability phase. The historical sender record above remains owner-external evidence until Supabase/Resend or inbox evidence proves the active sender is `AIya <no-reply@auth.aiyaworkspace.com>`.
+
+## 2026-09-02 Launch Evidence Preflight Addendum
+
+Read-only live smoke still verifies the current hosted AIya runtime identity and
+primary route behavior:
+
+```text
+https://aiyaworkspace.com/api/health/release 200
+releaseId hs-4c7bbea8ba21-2c32cf194421
+commitSha 4c7bbea8ba21fb84b51843eac9fff2e9ff8fecf9
+compatibilityVersion 0.0.0+4c7bbea
+
+https://aiyaworkspace.com/ 200
+https://aiyaworkspace.com/login 200
+https://aiyaworkspace.com/purchase 200
+https://aiyaworkspace.com/app-install 307
+https://aiyaworkspace.com/manifest.webmanifest 200
+https://admin.aiyaworkspace.com/admin 200
+https://siriusai.store/ 410
+https://www.siriusai.store/ 410
+https://admin.siriusai.store/ 410
+
+manifest name=AIya
+manifest short_name=AIya
+manifest start_url=/dashboard
+manifest display=standalone
+manifest first_icon=/icons/aiya-180.png
+```
+
+Supabase Auth sender display name was not changed or proven in this preflight
+phase. Public DNS, TLS, route, and manifest checks cannot prove that external
+email sender display name. The next external proof must come from Supabase/Resend
+panel evidence or a controlled inbox message showing
+`AIya <no-reply@auth.aiyaworkspace.com>`.

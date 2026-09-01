@@ -7,10 +7,10 @@ export async function bootstrapDashboard(page: Page) {
 }
 
 export function visibleShellNavButton(page: Page, name: string | RegExp) {
-  return page
-    .locator('[data-testid="shell-wide-nav"], [data-testid="shell-medium-rail"], [data-testid="shell-compact-bottom-nav"]')
-    .getByRole("button", { name })
-    .filter({ visible: true });
+  const shellNav = page.locator(
+    '[data-testid="shell-wide-nav"], [data-testid="shell-medium-rail"], [data-testid="shell-compact-bottom-nav"]',
+  );
+  return shellNav.getByRole("button", { name }).or(shellNav.getByRole("link", { name })).filter({ visible: true });
 }
 
 export async function openVisibleShellNavOrHref(page: Page, name: string | RegExp, href: string) {

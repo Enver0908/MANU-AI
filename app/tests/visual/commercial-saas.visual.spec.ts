@@ -2,14 +2,14 @@ import { expect, test } from "@playwright/test";
 
 test("customer login page renders magic-link form", async ({ page }) => {
   await page.goto("/login");
-  await expect(page.getByRole("heading", { name: "SiriusAI müşteri girişi" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "AIya müşteri girişi" })).toBeVisible();
   await expect(page.getByLabel("E-posta adresi")).toBeVisible();
   await expect(page.getByRole("button", { name: /Giriş bağlantısı gönder/i })).toBeVisible();
 });
 
 test("admin login page renders allowlist guidance", async ({ page }) => {
   await page.goto("/admin");
-  await expect(page.getByRole("heading", { name: "SiriusAI yönetim girişi" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "AIya yönetim girişi" })).toBeVisible();
   await expect(page.getByLabel("Yönetici e-posta")).toBeVisible();
   await expect(page.getByRole("link", { name: /commercial-admin\/emergency/i })).toBeVisible();
 });
