@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
@@ -36,6 +36,53 @@ function shellQuote(value) {
   return "'" + String(value).replaceAll("'", "'\"'\"'") + "'";
 }
 
+function listFiles(root, prefix = "") {
+  const files = [];
+  for (const entry of readdirSync(path.join(root, prefix), { withFileTypes: true })) {
+    const relative = path.join(prefix, entry.name);
+    if (entry.isDirectory()) {
+      files.push(...listFiles(root, relative));
+      continue;
+    }
+    if (entry.isFile()) {
+      files.push(relative);
+    }
+  }
+  return files;
+}
+
+function remoteDirname(filePath) {
+  return path.posix.dirname(filePath.replaceAll("\\", "/"));
+}
+
+function deployRuntimeFiles() {
+  const files = [
+    "app/scripts/lib/release-identity.mjs",
+    "tools/hosted-sandbox/deploy/deploy-hosted-release.mjs",
+    "tools/hosted-sandbox/deploy/pm2.ecosystem.config.cjs",
+    "tools/hosted-sandbox/deploy/run-smoke-check.mjs",
+    "tools/hosted-sandbox/deploy/lib/deploy-contract.mjs",
+  ];
+  for (const migration of listFiles(path.join(repoRoot, "app", "supabase", "migrations"))) {
+    files.push(path.posix.join("app/supabase/migrations", migration.replaceAll("\\", "/")));
+  }
+  return files;
+}
+
+function uploadDeployRuntime({ sshBase, remote, remoteRuntime }) {
+  const files = deployRuntimeFiles();
+  const directories = new Set(files.map(remoteDirname));
+  runChecked("ssh", [
+    ...sshBase,
+    remote,
+    ["rm -rf " + shellQuote(remoteRuntime), "mkdir -p " + [...directories].map((dir) => shellQuote(remoteRuntime + "/" + dir)).join(" ")].join(" && "),
+  ]);
+  for (const file of files) {
+    const localPath = path.join(repoRoot, ...file.split("/"));
+    runChecked("scp", [...sshBase, localPath, `${remote}:${remoteRuntime}/${file}`]);
+  }
+}
+
 export function runHostedReleaseApply(options = {}) {
   const env = options.env ?? process.env;
   const manifestPath = path.resolve(requiredEnv(env, "MANU_RELEASE_ARTIFACT_MANIFEST"));
@@ -65,8 +112,10 @@ export function runHostedReleaseApply(options = {}) {
   assertKnownHostPin({ knownHostsFile, expectedPin });
 
   const remoteStage = `${remoteRoot}/staging/${manifest.commitSha}`;
+  const remoteRuntime = `${remoteStage}/deploy-runtime`;
   runChecked("ssh", [...sshBase, remote, "mkdir -p " + shellQuote(remoteStage)]);
   runChecked("scp", [...sshBase, manifest.releaseArtifact.archivePath, manifestPath, `${remote}:${remoteStage}/`]);
+  uploadDeployRuntime({ sshBase, remote, remoteRuntime });
   runChecked(
     "ssh",
     [
@@ -84,7 +133,7 @@ export function runHostedReleaseApply(options = {}) {
       ...sshBase,
       remote,
       [
-        "cd " + shellQuote(remoteRoot),
+        "cd " + shellQuote(remoteRuntime),
         "MANU_HOSTED_DEPLOY_APPROVED=true " +
           "MANU_RELEASE_ARTIFACT_MANIFEST=" +
           shellQuote(remoteStage + "/" + path.basename(manifestPath)) +

@@ -110,6 +110,37 @@ function verifyExtractedPackage(appDir, identity) {
   }
 }
 
+function readJsonIfPresent(filePath) {
+  if (!existsSync(filePath)) {
+    return null;
+  }
+  return JSON.parse(readFileSync(filePath, "utf8"));
+}
+
+function ensureLinuxSharpRuntime(appDir) {
+  if (process.env.MANU_DEPLOY_SKIP_LINUX_OPTIONAL_DEPS === "true" || process.platform !== "linux") {
+    return { checked: false, installed: false, reason: "not-linux-or-disabled" };
+  }
+  const sharpPackagePath = path.join(appDir, "node_modules", "sharp", "package.json");
+  const sharpPackage = readJsonIfPresent(sharpPackagePath);
+  if (!sharpPackage) {
+    return { checked: true, installed: false, reason: "sharp-not-present" };
+  }
+  const optionalDependencies = sharpPackage.optionalDependencies ?? {};
+  const requiredPackages = [
+    "@img/sharp-linux-x64",
+    "@img/sharp-libvips-linux-x64",
+  ].filter((packageName) => optionalDependencies[packageName]);
+  const missing = requiredPackages.filter((packageName) => !existsSync(path.join(appDir, "node_modules", ...packageName.split("/"), "package.json")));
+  if (missing.length === 0) {
+    return { checked: true, installed: false, reason: "already-present" };
+  }
+  const specs = missing.map((packageName) => packageName + "@" + optionalDependencies[packageName]);
+  runChecked("npm", ["install", "--omit=dev", "--no-audit", "--no-fund", ...specs], { cwd: appDir });
+  runChecked(process.execPath, ["-e", "require('sharp')"], { cwd: appDir });
+  return { checked: true, installed: true, reason: "installed", packages: missing };
+}
+
 function extractReleaseArchive(rootDir, commitSha, manifest, identity) {
   const releaseDir = path.join(rootDir, "releases", commitSha);
   const tempReleaseDir = path.join(rootDir, "releases", "." + commitSha + ".tmp-" + process.pid);
@@ -206,6 +237,8 @@ if (artifactManifest.manifest?.releaseArtifact) {
   writeFileSync(path.join(releaseDir, "RELEASE_MANIFEST.txt"), artifactManifest.manifestPath + "\n", "utf8");
 }
 
+const linuxRuntime = ensureLinuxSharpRuntime(path.join(releaseDir, "app"));
+
 let previous = "";
 previous = readCurrentReleasePointer(workRoot);
 
@@ -249,4 +282,5 @@ process.stdout.write(JSON.stringify({
   artifactManifestPath: artifactManifest.manifestPath,
   artifactMode: artifactManifest.manifest?.mode ?? "not-present",
   artifactSha256: artifactManifest.manifest?.releaseArtifact?.archiveSha256 ?? null,
+  linuxRuntime,
 }, null, 2) + "\n");

@@ -2,11 +2,13 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
+import { createServer } from "node:http";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
 import { buildReleaseIdentity } from "../../../app/scripts/lib/release-identity.mjs";
+import { runSmokeCheck } from "./run-smoke-check.mjs";
 import {
   assertDeployEnvironmentSafe,
   assertMigrationFingerprintMatch,
@@ -73,6 +75,22 @@ function writeOuterManifest(workRoot, identity) {
     "utf8",
   );
   return { manifestPath, releaseArtifact };
+}
+
+function withServer(handler, run) {
+  const server = createServer(handler);
+  return new Promise((resolve, reject) => {
+    server.listen(0, "127.0.0.1", async () => {
+      const address = server.address();
+      try {
+        resolve(await run(`http://127.0.0.1:${address.port}`));
+      } catch (error) {
+        reject(error);
+      } finally {
+        server.close();
+      }
+    });
+  });
 }
 
 test("forbidden deploy flags fail closed", () => {
@@ -189,4 +207,57 @@ test("workflow hardening passes", () => {
   assert.equal(install.status, 0, install.stderr || install.stdout);
   const result = runNode(path.join(path.dirname(fileURLToPath(import.meta.url)), "verify-workflow-hardening.mjs"));
   assert.equal(result.status, 0, result.stderr || result.stdout);
+});
+
+test("live smoke contract checks AIya surfaces and fail-closed auth routes", async () => {
+  const identity = buildReleaseIdentity({ repoRoot, env: process.env });
+  await withServer((request, response) => {
+    if (request.url === "/api/health/release") {
+      response.writeHead(200, { "content-type": "application/json" });
+      response.end(JSON.stringify(identity));
+      return;
+    }
+    if (request.url === "/manifest.webmanifest") {
+      response.writeHead(200, { "content-type": "application/manifest+json" });
+      response.end(JSON.stringify({ name: "AIya", short_name: "AIya" }));
+      return;
+    }
+    if (request.url === "/api/app-state" || request.url === "/api/clients") {
+      response.writeHead(401);
+      response.end("");
+      return;
+    }
+    response.writeHead(200, { "content-type": "text/html" });
+    response.end("<html><title>AIya</title><body>AIya</body></html>");
+  }, async (baseUrl) => {
+    const result = await runSmokeCheck(baseUrl, { expectedIdentity: identity });
+    assert.equal(result.ok, true);
+    assert.equal(result.checked, 8);
+  });
+});
+
+test("live smoke contract rejects legacy brand leakage", async () => {
+  const identity = buildReleaseIdentity({ repoRoot, env: process.env });
+  await assert.rejects(
+    withServer((request, response) => {
+      if (request.url === "/api/health/release") {
+        response.writeHead(200, { "content-type": "application/json" });
+        response.end(JSON.stringify(identity));
+        return;
+      }
+      if (request.url === "/manifest.webmanifest") {
+        response.writeHead(200, { "content-type": "application/manifest+json" });
+        response.end(JSON.stringify({ name: "AIya", short_name: "AIya" }));
+        return;
+      }
+      if (request.url === "/api/app-state" || request.url === "/api/clients") {
+        response.writeHead(401);
+        response.end("");
+        return;
+      }
+      response.writeHead(200, { "content-type": "text/html" });
+      response.end("<html><body>SiriusAI</body></html>");
+    }, (baseUrl) => runSmokeCheck(baseUrl, { expectedIdentity: identity })),
+    /legacy brand present/,
+  );
 });
