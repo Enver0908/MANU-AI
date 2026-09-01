@@ -256,6 +256,7 @@ previous = readCurrentReleasePointer(workRoot);
 activateRelease(workRoot, identity.commitSha);
 
 let smokeOk = true;
+let smokeError = "";
 try {
   if (dryRun) {
     smokeOk = true;
@@ -263,8 +264,9 @@ try {
     restartPm2(workRoot);
     await runSmokeCheck(process.env.MANU_SMOKE_BASE_URL, { expectedIdentity: identity });
   }
-} catch {
+} catch (error) {
   smokeOk = false;
+  smokeError = error instanceof Error ? error.message : String(error);
 }
 
 if (!smokeOk && previous) {
@@ -272,13 +274,13 @@ if (!smokeOk && previous) {
   if (existsSync(rollbackDir)) {
     activateRelease(workRoot, previous);
     restartPm2(workRoot);
-    throw new Error("deploy smoke failed; rolled back to " + previous);
+    throw new Error("deploy smoke failed" + (smokeError ? ": " + smokeError : "") + "; rolled back to " + previous);
   }
-  throw new Error("deploy smoke failed; rollback target missing");
+  throw new Error("deploy smoke failed" + (smokeError ? ": " + smokeError : "") + "; rollback target missing");
 }
 
 if (!smokeOk) {
-  throw new Error("deploy smoke failed");
+  throw new Error("deploy smoke failed" + (smokeError ? ": " + smokeError : ""));
 }
 
 if (previous && previous !== identity.commitSha) {
