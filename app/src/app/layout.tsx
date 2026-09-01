@@ -6,9 +6,13 @@ import "./globals.css";
 const appVersion = resolveClientCompatibilityVersion();
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://aiyaworkspace.com"),
   title: "SiriusAI",
   description: "SiriusAI supervised dietitian messaging assistant",
   applicationName: "SiriusAI",
+  alternates: {
+    canonical: "/",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",

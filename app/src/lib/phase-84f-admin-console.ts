@@ -9,7 +9,7 @@ export const PHASE_84F_VERSION = "phase84f-admin-console-v1";
 
 export const DEFAULT_ADMIN_ALLOWLIST_EMAIL = "olkuenver@gmail.com";
 
-export const DEFAULT_ADMIN_HOST = "admin.siriusai.store";
+export const DEFAULT_ADMIN_HOST = "admin.aiyaworkspace.com";
 
 export type AdminAllowlistEvaluation = {
   allowed: boolean;

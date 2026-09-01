@@ -18,8 +18,8 @@ describe("phase 84d customer auth", () => {
 
   it("builds callback url from NEXT_PUBLIC_APP_URL", () => {
     expect(
-      buildAuthCallbackUrl(undefined, { NEXT_PUBLIC_APP_URL: "https://siriusai.store/" }),
-    ).toBe("https://siriusai.store/auth/callback");
+      buildAuthCallbackUrl(undefined, { NEXT_PUBLIC_APP_URL: "https://aiyaworkspace.com/" }),
+    ).toBe("https://aiyaworkspace.com/auth/callback");
     expect(
       buildAuthCallbackUrl(undefined, { NEXT_PUBLIC_APP_URL: "http://localhost:3000/" }),
     ).toBe("http://localhost:3000/auth/callback");
@@ -86,8 +86,8 @@ describe("phase 84d customer auth", () => {
     expect(sanitizePostAuthRedirectPath("/evil")).toBeNull();
     expect(sanitizePostAuthRedirectPath("//evil.example")).toBeNull();
     expect(sanitizePostAuthRedirectPath("/api/auth/magic-link")).toBeNull();
-    expect(summarizePhase84dCustomerAuth({ NEXT_PUBLIC_APP_URL: "https://siriusai.store" }).callbackUrl).toBe(
-      "https://siriusai.store/auth/callback",
+    expect(summarizePhase84dCustomerAuth({ NEXT_PUBLIC_APP_URL: "https://aiyaworkspace.com" }).callbackUrl).toBe(
+      "https://aiyaworkspace.com/auth/callback",
     );
   });
 

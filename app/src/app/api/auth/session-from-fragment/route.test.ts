@@ -19,7 +19,7 @@ vi.mock("@/lib/supabase", () => ({
 }));
 
 function request(body: unknown) {
-  return new NextRequest("https://siriusai.store/api/auth/session-from-fragment", {
+  return new NextRequest("https://aiyaworkspace.com/api/auth/session-from-fragment", {
     method: "POST",
     body: JSON.stringify(body),
     headers: { "content-type": "application/json" },

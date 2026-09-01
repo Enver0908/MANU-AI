@@ -8,13 +8,13 @@ import {
 } from "./phase-84b-public-website";
 
 describe("phase 84b public website", () => {
-  it("uses the locked SiriusAI contact email", () => {
-    expect(SIRIUSAI_PUBLIC_CONTACT_EMAIL).toBe("olkuenver@gmail.com");
+  it("uses the public business contact email", () => {
+    expect(SIRIUSAI_PUBLIC_CONTACT_EMAIL).toBe("contact@aiyaworkspace.com");
   });
 
   it("builds a mailto url with encoded subject", () => {
     expect(buildContactMailtoUrl("SiriusAI erişim talebi")).toBe(
-      "mailto:olkuenver@gmail.com?subject=SiriusAI+eri%C5%9Fim+talebi",
+      "mailto:contact@aiyaworkspace.com?subject=SiriusAI+eri%C5%9Fim+talebi",
     );
   });
 

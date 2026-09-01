@@ -5,8 +5,8 @@
 
 export const PHASE_84B_VERSION = "phase84-public-website-v1";
 
-/** Locked Phase 84 contact email until domain mailbox is configured. */
-export const SIRIUSAI_PUBLIC_CONTACT_EMAIL = "olkuenver@gmail.com";
+/** Public business inbox for access and demo requests. */
+export const SIRIUSAI_PUBLIC_CONTACT_EMAIL = "contact@aiyaworkspace.com";
 
 export function isPublicDemoLoginEnabled(
   env: Record<string, string | undefined> = process.env,

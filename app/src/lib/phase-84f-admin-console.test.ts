@@ -29,36 +29,36 @@ describe("phase 84f admin console", () => {
   });
 
   it("detects admin hostnames", () => {
-    expect(isAdminHost("admin.siriusai.store")).toBe(true);
-    expect(isAdminHost("siriusai.store")).toBe(false);
+    expect(isAdminHost("admin.aiyaworkspace.com")).toBe(true);
+    expect(isAdminHost("aiyaworkspace.com")).toBe(false);
   });
 
   it("builds admin auth callback from the admin app url contract", () => {
     expect(
       buildAdminAuthCallbackUrlWithNext("/admin", {
-        NEXT_PUBLIC_APP_URL: "https://siriusai.store",
-        MANU_ADMIN_HOST: "admin.siriusai.store",
+        NEXT_PUBLIC_APP_URL: "https://aiyaworkspace.com",
+        MANU_ADMIN_HOST: "admin.aiyaworkspace.com",
       }),
-    ).toBe("https://admin.siriusai.store/auth/callback?next=%2Fadmin");
+    ).toBe("https://admin.aiyaworkspace.com/auth/callback?next=%2Fadmin");
     expect(
       buildAdminAuthCallbackUrlWithNext("/admin", {
         NEXT_PUBLIC_APP_URL: "http://127.0.0.1:3000",
-        MANU_ADMIN_HOST: "admin.siriusai.store",
+        MANU_ADMIN_HOST: "admin.aiyaworkspace.com",
       }),
     ).toBe("http://127.0.0.1:3000/auth/callback?next=%2Fadmin");
     expect(
       resolveAdminAppBaseUrl({
         MANU_ADMIN_APP_URL: "https://admin.example.com/",
-        NEXT_PUBLIC_APP_URL: "https://siriusai.store",
+        NEXT_PUBLIC_APP_URL: "https://aiyaworkspace.com",
       }),
     ).toBe("https://admin.example.com");
     expect(
       buildAdminAuthCallbackUrlWithNext("/admin", {
-        MANU_ADMIN_APP_URL: "https://siriusai.store/",
-        NEXT_PUBLIC_APP_URL: "https://siriusai.store",
-        MANU_ADMIN_HOST: "admin.siriusai.store",
+        MANU_ADMIN_APP_URL: "https://aiyaworkspace.com/",
+        NEXT_PUBLIC_APP_URL: "https://aiyaworkspace.com",
+        MANU_ADMIN_HOST: "admin.aiyaworkspace.com",
       }),
-    ).toBe("https://admin.siriusai.store/auth/callback?next=%2Fadmin");
+    ).toBe("https://admin.aiyaworkspace.com/auth/callback?next=%2Fadmin");
   });
 
   it("rewrites admin host paths to /admin", () => {

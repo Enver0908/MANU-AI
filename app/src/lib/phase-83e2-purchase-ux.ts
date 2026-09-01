@@ -8,7 +8,7 @@
  * rendering: an ambiguous or error response must never surface as "eligible".
  */
 
-export const PURCHASE_CONTACT_EMAIL = "olkuenver@gmail.com";
+export const PURCHASE_CONTACT_EMAIL = "contact@aiyaworkspace.com";
 
 /**
  * Lightweight client-side email shape check. The server remains the source of

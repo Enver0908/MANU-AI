@@ -9,6 +9,7 @@ The product is designed around a strict principle: AI may assist the dietitian, 
 As of 2026-08-30:
 
 - Production Readiness Stage 1 Phase 1-6 are locally complete for their recorded scopes.
+- Domain cutover implementation is prepared for `aiyaworkspace.com`: public/customer app `https://aiyaworkspace.com`, admin app `https://admin.aiyaworkspace.com`, and business contact inbox `contact@aiyaworkspace.com`. The old `siriusai.store` domain is not planned for long-term redirect retention because there is no real customer traffic on it.
 - Stage 1 owner handoff is ready locally; owner-side account, approval, secret, production-environment, and release-approval actions remain open.
 - Stage 5, Stage 6, and Stage 7 are closed locally for their recorded scopes.
 - Hosted Sandbox technical debt is closed by evidence under `docs/hosted-sandbox/evidence/`.
@@ -21,6 +22,7 @@ As of 2026-08-30:
 Canonical current authorities:
 
 - `docs/OWNER_IOS_VALIDATION_WAIVER_DECISION.md`
+- `docs/AIYAWORKSPACE_DOMAIN_CUTOVER_RUNBOOK.md`
 - `docs/PRODUCTION_READINESS_STAGE_1_PHASE_6_EVIDENCE.md`
 - `docs/PRODUCTION_READINESS_STAGE_1_OWNER_HANDOFF.md`
 - `docs/PRODUCTION_READINESS_STAGE_1_FINAL_DECISION.json`
@@ -136,6 +138,8 @@ Production is currently blocked by independent launch gates. Local closure evide
 - Removing accepted-risk qualifications from iOS coverage.
 
 Production readiness requires explicit owner approval and current evidence for the relevant operational gates. The active Stage 1 owner blockers are Meta/WhatsApp Business approval, Z.ai GLM-5.3-Flash provider approval, production secrets, production Supabase and remote migration approval, manual bank-transfer operations approval, incident/monitoring/rollback ownership, and exact release approval.
+
+The domain cutover does not by itself approve production launch. It only moves the hosted commercial entry surfaces and related operational URLs from the old sandbox domain to `aiyaworkspace.com`.
 
 ## Evidence Discipline
 

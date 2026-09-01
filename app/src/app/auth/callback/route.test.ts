@@ -29,9 +29,9 @@ vi.mock("@/lib/customer-auth-session", () => ({
 describe("auth callback route", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    process.env.NEXT_PUBLIC_APP_URL = "https://siriusai.store";
-    process.env.MANU_ADMIN_HOST = "admin.siriusai.store";
-    process.env.MANU_ADMIN_APP_URL = "https://admin.siriusai.store";
+    process.env.NEXT_PUBLIC_APP_URL = "https://aiyaworkspace.com";
+    process.env.MANU_ADMIN_HOST = "admin.aiyaworkspace.com";
+    process.env.MANU_ADMIN_APP_URL = "https://admin.aiyaworkspace.com";
     mocks.isSupabaseConfigured.mockReturnValue(true);
     mocks.getSupabaseConfig.mockReturnValue({
       url: "https://project.supabase.co",
@@ -61,9 +61,9 @@ describe("auth callback route", () => {
     }));
 
     const { GET } = await import("./route");
-    const response = await GET(new NextRequest("https://siriusai.store/auth/callback?code=abc"));
+    const response = await GET(new NextRequest("https://aiyaworkspace.com/auth/callback?code=abc"));
 
-    expect(response.headers.get("location")).toBe("https://siriusai.store/dashboard");
+    expect(response.headers.get("location")).toBe("https://aiyaworkspace.com/dashboard");
     expect(response.headers.get("set-cookie")).toContain("sb-session=token");
     expect(response.headers.get("x-supabase-auth")).toBe("exchanged");
   });
@@ -85,11 +85,11 @@ describe("auth callback route", () => {
     const { GET } = await import("./route");
     const response = await GET(
       new NextRequest(
-        "https://siriusai.store/auth/callback?token_hash=hash&type=magiclink&next=/onboarding",
+        "https://aiyaworkspace.com/auth/callback?token_hash=hash&type=magiclink&next=/onboarding",
       ),
     );
 
-    expect(response.headers.get("location")).toBe("https://siriusai.store/onboarding");
+    expect(response.headers.get("location")).toBe("https://aiyaworkspace.com/onboarding");
     expect(response.headers.get("set-cookie")).toContain("sb-session=otp-token");
     expect(response.headers.get("x-supabase-auth")).toBe("verified");
   });
@@ -105,11 +105,11 @@ describe("auth callback route", () => {
     const { GET } = await import("./route");
     const response = await GET(
       new NextRequest(
-        "https://siriusai.store/auth/callback?token_hash=hash&type=sms&next=/onboarding",
+        "https://aiyaworkspace.com/auth/callback?token_hash=hash&type=sms&next=/onboarding",
       ),
     );
 
-    expect(response.headers.get("location")).toBe("https://siriusai.store/login?error=auth_callback_failed");
+    expect(response.headers.get("location")).toBe("https://aiyaworkspace.com/login?error=auth_callback_failed");
     expect(response.headers.get("set-cookie")).toBeNull();
   });
 
@@ -124,7 +124,7 @@ describe("auth callback route", () => {
     const { GET } = await import("./route");
     const response = await GET(
       new NextRequest(
-        "https://siriusai.store/auth/callback?next=/onboarding%3Fsession_id%3Dcs_test_123",
+        "https://aiyaworkspace.com/auth/callback?next=/onboarding%3Fsession_id%3Dcs_test_123",
       ),
     );
     const body = await response.text();
@@ -133,16 +133,16 @@ describe("auth callback route", () => {
     expect(response.headers.get("content-type")).toContain("text/html");
     expect(body).toContain("/api/auth/session-from-fragment");
     expect(body).toContain("access_token");
-    expect(body).toContain("https://siriusai.store/onboarding?session_id=cs_test_123");
+    expect(body).toContain("https://aiyaworkspace.com/onboarding?session_id=cs_test_123");
   });
 
   it("redirects callback errors without setting a success session", async () => {
     const { GET } = await import("./route");
     const response = await GET(
-      new NextRequest("https://siriusai.store/auth/callback?error=access_denied&next=/admin"),
+      new NextRequest("https://aiyaworkspace.com/auth/callback?error=access_denied&next=/admin"),
     );
 
-    expect(response.headers.get("location")).toBe("https://admin.siriusai.store/admin?error=auth_callback_failed");
+    expect(response.headers.get("location")).toBe("https://admin.aiyaworkspace.com/admin?error=auth_callback_failed");
     expect(response.headers.get("set-cookie")).toBeNull();
     expect(mocks.createSupabaseServerClient).not.toHaveBeenCalled();
   });
