@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-27T16:43:43.691Z",
+  "generatedAt": "2026-09-01T15:49:23.991Z",
   "productionStatus": "NO-GO",
   "closureStatus": "LOCAL_AUTOMATION_COMPLETE_DEDICATED_GATES_EVALUATED_SEPARATELY",
   "r405": "covered_by_stage5_dependency_security_report",
@@ -7,12 +7,12 @@
   "gates": {
     "production typecheck": {
       "status": "PASS",
-      "durationMs": 23238,
+      "durationMs": 26599,
       "exitCode": 0
     },
     "stage-5 unit/contract tests": {
       "status": "PASS",
-      "durationMs": 4871,
+      "durationMs": 4528,
       "exitCode": 0
     },
     "cleanNextBuildOutput": {
@@ -20,7 +20,7 @@
     },
     "production build": {
       "status": "PASS",
-      "durationMs": 119628,
+      "durationMs": 154739,
       "exitCode": 0
     },
     "bundleBudget": {
