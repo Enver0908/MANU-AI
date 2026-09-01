@@ -68,3 +68,32 @@ documented compatibility aliases:
 ```bash
 rg -n "SiriusAI|MANU-AI|AI-ya|ai-ya|siriusai\.store|olkuenver@gmail\.com" app/src app/public --glob '!**/*.png' --glob '!**/*.ico'
 ```
+
+## 2026-09-01 Hosted Runtime Addendum
+
+The hosted VPS now serves AIya release `hs-82ee37250765-2c32cf194421` at commit `82ee3725076566304e9e0308632b2efe9d3b1deb`.
+
+Live checked surfaces:
+
+```text
+https://aiyaworkspace.com/ status=200 hasAIya=True legacy=<none>
+https://aiyaworkspace.com/login status=200 hasAIya=True legacy=<none>
+https://aiyaworkspace.com/purchase status=200 hasAIya=True legacy=<none>
+https://aiyaworkspace.com/app-install status=200 hasAIya=True legacy=<none>
+https://aiyaworkspace.com/manifest.webmanifest status=200 hasAIya=True legacy=<none>
+```
+
+Live manifest:
+
+```json
+{
+  "name": "AIya",
+  "short_name": "AIya",
+  "start_url": "/dashboard",
+  "scope": "/",
+  "display": "standalone",
+  "iconCount": 6
+}
+```
+
+This hosted runtime validation does not change production `NO-GO` and does not prove the Supabase Auth sender display name. Sender proof remains owner-external evidence.

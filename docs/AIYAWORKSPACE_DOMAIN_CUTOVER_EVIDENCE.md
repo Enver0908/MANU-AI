@@ -90,3 +90,58 @@ Stripe:
 - Legacy HTTP/HTTPS requests now return `410 Gone`.
 - No PWA transfer bridge is required or implemented.
 - The old domain does not need renewal for product continuity unless the owner later chooses brand protection.
+
+## 2026-09-01 AIya Hosted Redeploy Addendum
+
+This addendum updates the live hosted release identity after the AIya brand deploy/smoke phase. It does not rewrite the historical cutover baseline above.
+
+Current release health:
+
+```json
+{
+  "status": "ok",
+  "releaseId": "hs-82ee37250765-2c32cf194421",
+  "commitSha": "82ee3725076566304e9e0308632b2efe9d3b1deb",
+  "migrationFingerprint": "2c32cf1944215123cd9a90999c906a5e49b7e3c6f1d145a3805afb4d929d78bd",
+  "compatibilityVersion": "0.0.0+82ee372"
+}
+```
+
+Live route smoke:
+
+```text
+https://aiyaworkspace.com/api/health/release status=200
+https://aiyaworkspace.com/ status=200
+https://aiyaworkspace.com/login status=200
+https://aiyaworkspace.com/purchase status=200
+https://aiyaworkspace.com/app-install status=200
+https://aiyaworkspace.com/manifest.webmanifest status=200
+https://aiyaworkspace.com/api/app-state status=401
+https://aiyaworkspace.com/api/clients status=401
+https://admin.aiyaworkspace.com/admin status=200
+```
+
+Live manifest now reports:
+
+```json
+{
+  "name": "AIya",
+  "short_name": "AIya",
+  "start_url": "/dashboard",
+  "scope": "/",
+  "display": "standalone",
+  "iconCount": 6
+}
+```
+
+Active public/app-install/manifest scan found `AIya` and no active `SiriusAI`, `MANU-AI`, or `AI-ya` hits on the checked surfaces.
+
+Legacy-domain validation remains:
+
+```text
+https://siriusai.store/ status=410
+https://www.siriusai.store/ status=410
+https://admin.siriusai.store/ status=410
+```
+
+Supabase Auth sender display name was not changed or proven in this redeploy phase. The historical sender record above remains owner-external evidence until Supabase/Resend or inbox evidence proves the active sender is `AIya <no-reply@auth.aiyaworkspace.com>`.

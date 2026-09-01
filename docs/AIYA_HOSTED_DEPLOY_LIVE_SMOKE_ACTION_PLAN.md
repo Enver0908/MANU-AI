@@ -2,19 +2,21 @@
 
 Date: 2026-09-01
 Branch: `codex/production-readiness-stage-1`
-Deploy candidate HEAD: `dbad6dbb9dcadc42e140c5e4a448653420acbed9`
-Status: `PHASE_3_REMOTE_APPLY_BLOCKED_ENV_MISSING`
+Deployed HEAD: `82ee3725076566304e9e0308632b2efe9d3b1deb`
+Status: `PHASE_3_HOSTED_AIYA_REDEPLOY_SMOKE_COMPLETE_WITH_ARTIFACT_PORTABILITY_DEBT`
 
 ## Purpose
 
-Deploy the verified AIya release artifact to the hosted VPS and prove live brand/runtime parity, while preserving production `NO-GO` and all real provider/channel/billing/worker gates.
+Deploy the verified AIya release to the hosted VPS and prove live brand/runtime parity, while preserving production `NO-GO` and all real provider/channel/billing/worker gates.
 
 ## In Scope
 
 - Build and verify a hosted release artifact for the current commit.
 - Validate deploy archive extraction and file hashes with local dry-run.
-- Apply the hosted release only through the existing deploy wrapper when all required SSH/deploy environment values are present.
-- After apply, smoke release identity, public/admin routes, PWA manifest, legacy brand scan, `/app-install`, app-state routes, DNS/TLS, and old-domain `410`.
+- Stage the release artifact on the VPS through strict SSH host checking.
+- Apply the hosted release with rollback protection.
+- Smoke release identity, public/admin routes, PWA manifest, legacy brand scan, `/app-install`, app-state routes, DNS, and old-domain `410`.
+- Record any deploy-tooling or artifact-portability debt found during the live apply.
 
 ## Out of Scope
 
@@ -23,42 +25,28 @@ Deploy the verified AIya release artifact to the hosted VPS and prove live brand
 - Production `GO`, live provider/channel egress, live billing, production worker start, or real health-data processing.
 - iPhone Safari/PWA PASS; status remains `WAIVED_NOT_EXECUTED`.
 
-## Required Remote Apply Inputs
+## Completed Scope
 
-The remote apply cannot run until the operator environment provides these values:
+- Hosted release artifact was rebuilt for AIya public/admin origins.
+- Local deploy dry-run passed for the rebuilt artifact.
+- Official remote apply wrapper reached SSH/staging but was blocked by the pre-existing missing remote helper.
+- Manual guarded remote apply deployed `82ee3725076566304e9e0308632b2efe9d3b1deb` as `hs-82ee37250765-2c32cf194421`.
+- Remote runtime env was restored from the secure repo-local operator env, with live public/admin URL overrides.
+- Linux `sharp` optional runtime packages were installed in the live release after the Windows-built artifact omitted Linux optional dependencies.
+- Live smoke passed for release identity, primary public/admin routes, PWA manifest, active brand scan, controlled unauthenticated API responses, and legacy-domain `410`.
 
-- `MANU_HOSTED_DEPLOY_HOST`
-- `MANU_HOSTED_DEPLOY_USER`
-- `MANU_SSH_KNOWN_HOSTS_FILE`
-- `MANU_SSH_HOST_KEY_PIN`
-- `MANU_HOSTED_DEPLOY_APPROVED=true`
-- `MANU_SMOKE_BASE_URL=https://aiyaworkspace.com`
-- `MANU_RELEASE_ARTIFACT_MANIFEST=<hosted artifact manifest path>`
+## Remaining Work
 
-Secret values and private key material must never be written to evidence or terminal output. Only presence/absence may be recorded.
+- Fix the hosted artifact pipeline so Windows-built release archives include Linux runtime optional dependencies, or produce hosted artifacts in a Linux build environment. The current live release was repaired post-extract on the VPS.
+- Install or ship the current remote deploy helper under `/opt/manu-ai/tools/hosted-sandbox/deploy/deploy-hosted-release.mjs` so `apply-hosted-release.mjs` can complete without the manual fallback.
+- Obtain owner-external evidence for the Supabase Auth sender display name. The latest direct repo/domain evidence still cannot prove whether the sender has changed from the historical `SiriusAI <no-reply@auth.aiyaworkspace.com>` record.
 
-## Apply Command Shape
+## Completion Criteria
 
-After the required inputs are present:
-
-```text
-node tools/hosted-sandbox/deploy/apply-hosted-release.mjs
-```
-
-The wrapper must stage the archive, verify archive SHA-256 on the VPS, invoke the remote deploy helper, restart PM2 through the existing ecosystem config, and run release identity smoke. On smoke failure, the remote helper must roll back to the previous release pointer.
-
-## Live Smoke After Apply
-
-Required checks:
-
-- `/api/health/release` reports the deployed commit and release id.
-- `/`, `/login`, `/purchase`, `/app-install`, admin `/admin`, and admin `/login` do not return `500`.
-- `/manifest.webmanifest` reports `AIya` and `aiya-*` icon paths.
-- Live public/admin/manifest scan has no active `SiriusAI`, `MANU-AI`, or `AI-ya` hits.
-- `/api/app-state` and `/api/clients` return controlled auth responses, not `500`.
-- `siriusai.store` HTTP and HTTPS remain `410`.
-- DNS/TLS remains valid for `aiyaworkspace.com`, `www.aiyaworkspace.com`, and `admin.aiyaworkspace.com`.
-
-## Current Block
-
-Remote apply is blocked in this local session because the required deploy/SSH environment values are missing. Local build, artifact generation, deploy tooling tests, and archive dry-run extraction pass.
+- `/api/health/release` reports commit `82ee3725076566304e9e0308632b2efe9d3b1deb`.
+- `/`, `/login`, `/purchase`, `/app-install`, `/manifest.webmanifest`, and admin `/admin` return non-500 responses.
+- `/api/app-state` and `/api/clients` return controlled `401` for unauthenticated requests, not `500`.
+- Live manifest reports `AIya`.
+- Active public/app-install/manifest scan has no `SiriusAI`, `MANU-AI`, or `AI-ya` hits.
+- `siriusai.store`, `www.siriusai.store`, and `admin.siriusai.store` remain `410 Gone`.
+- Production remains `NO-GO`.
