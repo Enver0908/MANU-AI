@@ -154,6 +154,7 @@ export function runHostedReleaseApply(options = {}) {
           shellEnvAssignment("MANU_RELEASE_BUILT_AT", manifest.builtAt),
           shellEnvAssignment("MANU_RELEASE_COMPATIBILITY_VERSION", manifest.compatibilityVersion),
           shellEnvAssignment("MANU_SMOKE_BASE_URL", env.MANU_SMOKE_BASE_URL ?? "https://aiyaworkspace.com"),
+          shellEnvAssignment("MANU_SSH_HOST_KEY_PIN", expectedPin),
           "node tools/hosted-sandbox/deploy/deploy-hosted-release.mjs --apply",
         ].join(" "),
       ].join(" && "),
