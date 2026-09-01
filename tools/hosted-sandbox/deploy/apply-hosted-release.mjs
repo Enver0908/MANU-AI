@@ -36,6 +36,14 @@ function shellQuote(value) {
   return "'" + String(value).replaceAll("'", "'\"'\"'") + "'";
 }
 
+function shellEnvAssignment(key, value) {
+  const normalizedKey = String(key);
+  if (!/^[A-Z0-9_]+$/.test(normalizedKey)) {
+    throw new Error("invalid shell environment key: " + normalizedKey);
+  }
+  return normalizedKey + "=" + shellQuote(value);
+}
+
 function listFiles(root, prefix = "") {
   const files = [];
   for (const entry of readdirSync(path.join(root, prefix), { withFileTypes: true })) {
@@ -134,12 +142,20 @@ export function runHostedReleaseApply(options = {}) {
       remote,
       [
         "cd " + shellQuote(remoteRuntime),
-        "MANU_HOSTED_DEPLOY_APPROVED=true " +
-          "MANU_RELEASE_ARTIFACT_MANIFEST=" +
-          shellQuote(remoteStage + "/" + path.basename(manifestPath)) +
-          " MANU_RELEASE_ARTIFACT_DIR=" +
-          shellQuote(remoteStage) +
-          " node tools/hosted-sandbox/deploy/deploy-hosted-release.mjs --apply",
+        "set -a",
+        "[ ! -f " + shellQuote(remoteRoot + "/shared/runtime.env") + " ] || . " + shellQuote(remoteRoot + "/shared/runtime.env"),
+        "set +a",
+        [
+          shellEnvAssignment("MANU_HOSTED_DEPLOY_APPROVED", "true"),
+          shellEnvAssignment("MANU_RELEASE_ARTIFACT_MANIFEST", remoteStage + "/" + path.basename(manifestPath)),
+          shellEnvAssignment("MANU_RELEASE_ARTIFACT_DIR", remoteStage),
+          shellEnvAssignment("MANU_RELEASE_ID", manifest.releaseId),
+          shellEnvAssignment("MANU_RELEASE_COMMIT_SHA", manifest.commitSha),
+          shellEnvAssignment("MANU_RELEASE_BUILT_AT", manifest.builtAt),
+          shellEnvAssignment("MANU_RELEASE_COMPATIBILITY_VERSION", manifest.compatibilityVersion),
+          shellEnvAssignment("MANU_SMOKE_BASE_URL", env.MANU_SMOKE_BASE_URL ?? "https://aiyaworkspace.com"),
+          "node tools/hosted-sandbox/deploy/deploy-hosted-release.mjs --apply",
+        ].join(" "),
       ].join(" && "),
     ],
   );
