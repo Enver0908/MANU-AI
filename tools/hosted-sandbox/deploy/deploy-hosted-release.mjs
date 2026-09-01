@@ -169,7 +169,8 @@ function restartPm2(rootDir) {
     return;
   }
   spawnSync("pm2", ["delete", "manu-ai-hosted-sandbox"], { encoding: "utf8", shell: false });
-  runChecked("pm2", ["startOrReload", path.join(repoRoot, "tools", "hosted-sandbox", "deploy", "pm2.ecosystem.config.cjs"), "--update-env"], {
+  spawnSync("pm2", ["delete", "manu-ai"], { encoding: "utf8", shell: false });
+  runChecked("pm2", ["start", path.join(repoRoot, "tools", "hosted-sandbox", "deploy", "pm2.ecosystem.config.cjs"), "--update-env"], {
     env: {
       ...process.env,
       NODE_ENV: "production",

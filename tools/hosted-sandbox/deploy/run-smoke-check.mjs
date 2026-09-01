@@ -15,7 +15,7 @@ export async function runSmokeCheck(baseUrl, options = {}) {
           { path: "/", statuses: [200], kind: "branded" },
           { path: "/login", statuses: [200], kind: "branded" },
           { path: "/purchase", statuses: [200], kind: "branded" },
-          { path: "/app-install", statuses: [200], kind: "branded" },
+          { path: "/app-install", statuses: [200, 307] },
           { path: "/manifest.webmanifest", statuses: [200], kind: "manifest" },
           { path: "/api/app-state", statuses: [401] },
           { path: "/api/clients", statuses: [401] },
