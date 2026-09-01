@@ -169,7 +169,14 @@ function restartPm2(rootDir) {
     return;
   }
   runChecked("pm2", ["startOrReload", path.join(repoRoot, "tools", "hosted-sandbox", "deploy", "pm2.ecosystem.config.cjs"), "--update-env"], {
-    env: { ...process.env, MANU_DEPLOY_ROOT: rootDir },
+    env: {
+      ...process.env,
+      NODE_ENV: "production",
+      HOSTNAME: process.env.HOSTNAME || "127.0.0.1",
+      PORT: process.env.PORT || "3001",
+      MANU_CI_NO_PRODUCTION_EFFECTS: "true",
+      MANU_DEPLOY_ROOT: rootDir,
+    },
   });
 }
 
@@ -264,6 +271,7 @@ if (!smokeOk && previous) {
   const rollbackDir = path.join(workRoot, "releases", previous);
   if (existsSync(rollbackDir)) {
     activateRelease(workRoot, previous);
+    restartPm2(workRoot);
     throw new Error("deploy smoke failed; rolled back to " + previous);
   }
   throw new Error("deploy smoke failed; rollback target missing");
