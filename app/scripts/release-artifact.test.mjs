@@ -53,5 +53,6 @@ test("buildReleaseArtifact stages standalone output and renders SW only in the a
     true,
   );
   assert.equal(manifest.operations.requiredBeforeProductionStart.includes("production GO approval"), true);
-  assert.equal(manifest.files.some((file) => file.path === "release-manifest.json"), true);
+  assert.equal(manifest.files.some((file) => file.path === "release-manifest.json"), false);
+  assert.equal(manifest.files.some((file) => file.path === "server.js"), true);
 });

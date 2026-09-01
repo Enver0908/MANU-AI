@@ -139,7 +139,7 @@ export function buildReleaseArtifact({
     files: collectFiles(packageRoot, manifestPath),
   };
   writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
-  manifest.files = collectFiles(packageRoot);
+  manifest.files = collectFiles(packageRoot, manifestPath);
   writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
 
   const archivePath = join(outputRoot, `${cacheVersion}.tar.gz`);

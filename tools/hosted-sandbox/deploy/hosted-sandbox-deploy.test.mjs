@@ -113,7 +113,14 @@ test("release artifact manifest validation fails closed", () => {
 });
 
 test("dry-run atomic deploy passes", () => {
-  const result = runNode(deployScript, []);
+  const workRoot = path.join(os.tmpdir(), "manu-hosted-sandbox-dry-run-test");
+  rmSync(workRoot, { recursive: true, force: true });
+  mkdirSync(workRoot, { recursive: true });
+  const result = runNode(deployScript, [], {
+    MANU_DEPLOY_WORK_ROOT: workRoot,
+    MANU_DEPLOY_TEXT_POINTER: "true",
+    MANU_RELEASE_ARTIFACT_MANIFEST: path.join(workRoot, "missing-release-manifest.json"),
+  });
   assert.equal(result.status, 0, result.stderr || result.stdout);
   const payload = JSON.parse(result.stdout.trim());
   assert.equal(payload.result, "PASS");
