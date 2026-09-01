@@ -22,8 +22,26 @@ export async function runSmokeCheck(baseUrl, options = {}) {
         ]
       : [{ path: "/api/health/release", statuses: [200], kind: "release" }, { path: "/login", statuses: [200] }]
   );
+  const attempts = Number(options.attempts ?? process.env.MANU_SMOKE_ATTEMPTS ?? 8);
+  const retryDelayMs = Number(options.retryDelayMs ?? process.env.MANU_SMOKE_RETRY_DELAY_MS ?? 5000);
   const failures = [];
-  for (const entry of paths) {
+
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    failures.length = 0;
+    for (const entry of paths) {
+      await checkPath({ url, entry, expectedIdentity, failures });
+    }
+    if (failures.length === 0) {
+      return { ok: true, checked: paths.length, attempts: attempt };
+    }
+    if (attempt < attempts) {
+      await new Promise((resolve) => setTimeout(resolve, retryDelayMs));
+    }
+  }
+  throw new Error("smoke check failed: " + failures.join("; "));
+}
+
+async function checkPath({ url, entry, expectedIdentity, failures }) {
     const pathname = typeof entry === "string" ? entry : entry.path;
     const statuses = typeof entry === "string" ? [200] : entry.statuses;
     const kind = typeof entry === "string" ? "" : entry.kind;
@@ -35,7 +53,7 @@ export async function runSmokeCheck(baseUrl, options = {}) {
       });
       if (!statuses.includes(response.status)) {
         failures.push(pathname + " status " + response.status);
-        continue;
+        return;
       }
       if (pathname === "/api/health/release" && expectedIdentity) {
         const payload = await response.json();
@@ -63,11 +81,6 @@ export async function runSmokeCheck(baseUrl, options = {}) {
     } catch (error) {
       failures.push(pathname + " error " + (error instanceof Error ? error.message : String(error)));
     }
-  }
-  if (failures.length) {
-    throw new Error("smoke check failed: " + failures.join("; "));
-  }
-  return { ok: true, checked: paths.length };
 }
 
 const isMain = process.argv[1]

@@ -230,9 +230,10 @@ test("live smoke contract checks AIya surfaces and fail-closed auth routes", asy
     response.writeHead(200, { "content-type": "text/html" });
     response.end("<html><title>AIya</title><body>AIya</body></html>");
   }, async (baseUrl) => {
-    const result = await runSmokeCheck(baseUrl, { expectedIdentity: identity });
+    const result = await runSmokeCheck(baseUrl, { expectedIdentity: identity, attempts: 1, retryDelayMs: 0 });
     assert.equal(result.ok, true);
     assert.equal(result.checked, 8);
+    assert.equal(result.attempts, 1);
   });
 });
 
@@ -257,7 +258,7 @@ test("live smoke contract rejects legacy brand leakage", async () => {
       }
       response.writeHead(200, { "content-type": "text/html" });
       response.end("<html><body>SiriusAI</body></html>");
-    }, (baseUrl) => runSmokeCheck(baseUrl, { expectedIdentity: identity })),
+    }, (baseUrl) => runSmokeCheck(baseUrl, { expectedIdentity: identity, attempts: 1, retryDelayMs: 0 })),
     /legacy brand present/,
   );
 });

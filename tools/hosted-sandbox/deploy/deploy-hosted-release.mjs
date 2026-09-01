@@ -168,6 +168,7 @@ function restartPm2(rootDir) {
   if (process.env.MANU_DEPLOY_SKIP_PM2 === "true") {
     return;
   }
+  spawnSync("pm2", ["delete", "manu-ai-hosted-sandbox"], { encoding: "utf8", shell: false });
   runChecked("pm2", ["startOrReload", path.join(repoRoot, "tools", "hosted-sandbox", "deploy", "pm2.ecosystem.config.cjs"), "--update-env"], {
     env: {
       ...process.env,
