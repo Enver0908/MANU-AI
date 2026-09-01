@@ -164,7 +164,33 @@ function extractReleaseArchive(rootDir, commitSha, manifest, identity) {
   return releaseDir;
 }
 
-function restartPm2(rootDir) {
+function releaseIdentityEnv(identity) {
+  return {
+    MANU_RELEASE_ID: identity.releaseId,
+    MANU_RELEASE_COMMIT_SHA: identity.commitSha,
+    MANU_RELEASE_BUILT_AT: identity.builtAt,
+    MANU_RELEASE_ENVIRONMENT: identity.environment,
+    MANU_RELEASE_MIGRATION_FINGERPRINT: identity.migrationFingerprint,
+    MANU_RELEASE_COMPATIBILITY_VERSION: identity.compatibilityVersion,
+  };
+}
+
+function readReleaseIdentityFromReleaseDir(releaseDir) {
+  const manifest = readJsonIfPresent(path.join(releaseDir, "app", "release-manifest.json"));
+  if (!manifest) {
+    return null;
+  }
+  return {
+    releaseId: manifest.releaseId,
+    commitSha: manifest.commitSha,
+    builtAt: manifest.builtAt,
+    environment: manifest.environment,
+    migrationFingerprint: manifest.migrationFingerprint,
+    compatibilityVersion: manifest.compatibilityVersion,
+  };
+}
+
+function restartPm2(rootDir, restartIdentity) {
   if (process.env.MANU_DEPLOY_SKIP_PM2 === "true") {
     return;
   }
@@ -177,6 +203,7 @@ function restartPm2(rootDir) {
       HOSTNAME: process.env.HOSTNAME || "127.0.0.1",
       PORT: process.env.PORT || "3001",
       MANU_CI_NO_PRODUCTION_EFFECTS: "true",
+      ...releaseIdentityEnv(restartIdentity),
       MANU_DEPLOY_ROOT: rootDir,
     },
   });
@@ -263,7 +290,7 @@ try {
   if (dryRun) {
     smokeOk = true;
   } else {
-    restartPm2(workRoot);
+    restartPm2(workRoot, identity);
     await runSmokeCheck(process.env.MANU_SMOKE_BASE_URL, { expectedIdentity: identity });
   }
 } catch (error) {
@@ -275,7 +302,7 @@ if (!smokeOk && previous) {
   const rollbackDir = path.join(workRoot, "releases", previous);
   if (existsSync(rollbackDir)) {
     activateRelease(workRoot, previous);
-    restartPm2(workRoot);
+    restartPm2(workRoot, readReleaseIdentityFromReleaseDir(rollbackDir) ?? identity);
     throw new Error("deploy smoke failed" + (smokeError ? ": " + smokeError : "") + "; rolled back to " + previous);
   }
   throw new Error("deploy smoke failed" + (smokeError ? ": " + smokeError : "") + "; rollback target missing");

@@ -170,6 +170,8 @@ export function runHostedReleaseApply(options = {}) {
           shellEnvAssignment("MANU_RELEASE_ID", manifest.releaseId),
           shellEnvAssignment("MANU_RELEASE_COMMIT_SHA", manifest.commitSha),
           shellEnvAssignment("MANU_RELEASE_BUILT_AT", manifest.builtAt),
+          shellEnvAssignment("MANU_RELEASE_ENVIRONMENT", "hosted-sandbox"),
+          shellEnvAssignment("MANU_RELEASE_MIGRATION_FINGERPRINT", manifest.migrationFingerprint),
           shellEnvAssignment("MANU_RELEASE_COMPATIBILITY_VERSION", manifest.compatibilityVersion),
           shellEnvAssignment("MANU_SMOKE_BASE_URL", env.MANU_SMOKE_BASE_URL ?? "https://aiyaworkspace.com"),
           shellEnvAssignment("MANU_SSH_HOST_KEY_PIN", expectedPin),
