@@ -13,7 +13,12 @@ const manifestOnly = args.has("--manifest-only");
 
 assertDeployEnvironmentSafe(process.env);
 
-const identity = buildReleaseIdentity({ repoRoot, env: process.env });
+const hostedReleaseEnv = {
+  ...process.env,
+  NODE_ENV: "production",
+  MANU_RELEASE_ENVIRONMENT: process.env.MANU_RELEASE_ENVIRONMENT || "hosted-sandbox",
+};
+const identity = buildReleaseIdentity({ repoRoot, env: hostedReleaseEnv });
 const artifactSources = [
   "app/next.config.ts",
   "app/public/sw.js",
@@ -38,7 +43,7 @@ const releaseArtifact = manifestOnly
   : buildReleaseArtifact({
       appRoot: path.join(repoRoot, "app"),
       repoRoot,
-      env: { ...process.env, NODE_ENV: "production" },
+      env: hostedReleaseEnv,
       identity,
     });
 
