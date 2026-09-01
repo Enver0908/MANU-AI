@@ -21,9 +21,11 @@ owner-side launch blocker.
 Launch evidence preflight update, 2026-09-02: stale visual brand assertions,
 current shell-nav visual helper drift, and development-tooling dependency audit
 findings are closed locally in `docs/AIYA_LAUNCH_EVIDENCE_PREFLIGHT_EVIDENCE.md`.
-Supabase Auth sender display-name proof and GitHub remote traceability for the
-live/evidence commits remain open owner/repository publication items. This does
-not change the production `NO-GO` status or any owner-side launch blocker.
+Follow-up work corrected and proved the Supabase Auth sender as
+`AIya <no-reply@auth.aiyaworkspace.com>` in
+`docs/AIYA_SUPABASE_AUTH_SENDER_CORRECTION_EVIDENCE.md`, and pushed the evidence
+branch to origin so the live commit is remotely traceable. This does not change
+the production `NO-GO` status or any remaining owner-side launch blocker.
 
 ## Current Decision
 

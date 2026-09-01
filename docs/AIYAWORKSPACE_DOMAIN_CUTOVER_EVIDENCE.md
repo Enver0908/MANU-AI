@@ -215,3 +215,51 @@ phase. Public DNS, TLS, route, and manifest checks cannot prove that external
 email sender display name. The next external proof must come from Supabase/Resend
 panel evidence or a controlled inbox message showing
 `AIya <no-reply@auth.aiyaworkspace.com>`.
+
+## 2026-09-02 Supabase Auth Sender Correction Addendum
+
+Supabase Auth sender display name is now corrected and proven at the Management
+API config level.
+
+Before:
+
+```text
+projectRef=pxyjocahjutcojltcalj
+site_url=https://aiyaworkspace.com
+smtp_admin_email=no-reply@auth.aiyaworkspace.com
+smtp_sender_name=SiriusAI
+external_email_enabled=true
+mailer_autoconfirm=false
+```
+
+Change applied:
+
+```text
+PATCH /v1/projects/pxyjocahjutcojltcalj/config/auth
+smtp_sender_name=AIya
+```
+
+After:
+
+```text
+projectRef=pxyjocahjutcojltcalj
+site_url=https://aiyaworkspace.com
+smtp_admin_email=no-reply@auth.aiyaworkspace.com
+smtp_sender_name=AIya
+external_email_enabled=true
+mailer_autoconfirm=false
+```
+
+Hosted send-path smoke:
+
+```text
+POST https://aiyaworkspace.com/api/auth/magic-link
+email=contact@aiyaworkspace.com
+sent=true
+hasRequestId=true
+```
+
+No SMTP password, SMTP username, SMTP host, SMTP port, sender email, site URL,
+redirect URL, email template, Resend, DNS, Stripe, WhatsApp, Z.ai, remote
+migration, deploy, production worker, live provider egress, live billing, or real
+health-data path was changed. Production remains `NO-GO`.

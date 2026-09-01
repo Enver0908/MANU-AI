@@ -135,3 +135,21 @@ The only remaining active code/test hit is the explicit allowed
 compatibility/historical-evidence note in `app/src/lib/brand.ts`. This addendum
 does not change production `NO-GO` and does not prove the Supabase Auth sender
 display name.
+
+## 2026-09-02 Supabase Auth Sender Correction Addendum
+
+The hosted Supabase Auth custom SMTP sender display name is now corrected from
+`SiriusAI` to `AIya` in project `pxyjocahjutcojltcalj`.
+
+Verified non-sensitive Management API config after the patch:
+
+```text
+site_url=https://aiyaworkspace.com
+smtp_admin_email=no-reply@auth.aiyaworkspace.com
+smtp_sender_name=AIya
+external_email_enabled=true
+mailer_autoconfirm=false
+```
+
+The active auth sender is now `AIya <no-reply@auth.aiyaworkspace.com>`. This
+does not change production `NO-GO`.

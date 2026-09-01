@@ -140,3 +140,18 @@ production traceability or PR review.
 Next correct phase: resolve owner/external launch evidence in the smallest
 possible unit, starting with Supabase Auth sender display-name proof or
 controlled sender correction.
+
+## 2026-09-02 Follow-Up Closure Addendum
+
+The two non-code findings listed above were closed after explicit owner
+approval:
+
+- `codex/production-readiness-stage-1` was pushed to origin at
+  `a35c3e167b22d42a57d51d4614567906293b7b03`, and the live VPS commit
+  `4c7bbea8ba21fb84b51843eac9fff2e9ff8fecf9` is contained in that remote
+  branch.
+- Supabase Auth sender display name was corrected and Management-API-proven as
+  `AIya`; sender email remains `no-reply@auth.aiyaworkspace.com`.
+
+Evidence: `docs/AIYA_SUPABASE_AUTH_SENDER_CORRECTION_EVIDENCE.md`.
+Production remains `NO-GO`.

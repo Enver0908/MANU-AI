@@ -46,7 +46,7 @@ v=DMARC1; p=none; rua=mailto:contact@aiyaworkspace.com; fo=1; adkim=s; aspf=s; p
 Resend must use a dedicated sending subdomain for Supabase Auth SMTP:
 
 - Sending domain: `auth.aiyaworkspace.com`
-- Supabase Auth sender: `SiriusAI <no-reply@auth.aiyaworkspace.com>`
+- Supabase Auth sender: `AIya <no-reply@auth.aiyaworkspace.com>`
 
 ## External App Settings
 
