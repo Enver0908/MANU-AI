@@ -1,8 +1,9 @@
 #!/usr/bin/env node
-import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync } from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
+import { tmpdir } from "node:os";
 import { assertReleaseArtifactManifest, assertSshHostKeyPin } from "./lib/deploy-contract.mjs";
 
 const repoRoot = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..", "..");
@@ -80,15 +81,32 @@ function deployRuntimeFiles() {
 function uploadDeployRuntime({ sshBase, remote, remoteRuntime }) {
   const files = deployRuntimeFiles();
   const directories = new Set(files.map(remoteDirname));
+  const tempRoot = mkdtempSync(path.join(tmpdir(), "manu-deploy-runtime-"));
+  const archivePath = path.join(tempRoot, "deploy-runtime.tar.gz");
+  const packageRoot = path.join(tempRoot, "package");
+  mkdirSync(packageRoot, { recursive: true });
+  try {
+    for (const file of files) {
+      const localPath = path.join(repoRoot, ...file.split("/"));
+      const targetPath = path.join(packageRoot, ...file.split("/"));
+      mkdirSync(path.dirname(targetPath), { recursive: true });
+      cpSync(localPath, targetPath);
+    }
+    runChecked("tar", ["-czf", archivePath, "-C", packageRoot, "."]);
+    runChecked("scp", [...sshBase, archivePath, `${remote}:${remoteRuntime}.tar.gz`]);
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true });
+  }
   runChecked("ssh", [
     ...sshBase,
     remote,
-    ["rm -rf " + shellQuote(remoteRuntime), "mkdir -p " + [...directories].map((dir) => shellQuote(remoteRuntime + "/" + dir)).join(" ")].join(" && "),
+    [
+      "rm -rf " + shellQuote(remoteRuntime),
+      "mkdir -p " + shellQuote(remoteRuntime) + " " + [...directories].map((dir) => shellQuote(remoteRuntime + "/" + dir)).join(" "),
+      "tar -xzf " + shellQuote(remoteRuntime + ".tar.gz") + " -C " + shellQuote(remoteRuntime),
+      "rm -f " + shellQuote(remoteRuntime + ".tar.gz"),
+    ].join(" && "),
   ]);
-  for (const file of files) {
-    const localPath = path.join(repoRoot, ...file.split("/"));
-    runChecked("scp", [...sshBase, localPath, `${remote}:${remoteRuntime}/${file}`]);
-  }
 }
 
 export function runHostedReleaseApply(options = {}) {
