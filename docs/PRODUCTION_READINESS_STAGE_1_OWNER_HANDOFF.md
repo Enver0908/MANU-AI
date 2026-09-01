@@ -12,6 +12,12 @@ public/customer domain is `https://aiyaworkspace.com`; admin domain is
 use `contact@aiyaworkspace.com`. This brand update does not change the
 production `NO-GO` status or any owner-side launch blocker.
 
+Hosted runtime update, 2026-09-02: the hosted VPS serves release
+`hs-4c7bbea8ba21-2c32cf194421` at commit
+`4c7bbea8ba21fb84b51843eac9fff2e9ff8fecf9` through the repeatable hosted
+apply path. This does not change the production `NO-GO` status or any
+owner-side launch blocker.
+
 ## Current Decision
 
 The local technical preparation package is complete for Phase 1-6. Production

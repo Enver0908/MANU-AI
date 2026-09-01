@@ -3,7 +3,9 @@
 Date: 2026-09-01
 Branch: `codex/production-readiness-stage-1`
 Deployed HEAD: `82ee3725076566304e9e0308632b2efe9d3b1deb`
-Status: `PHASE_3_HOSTED_AIYA_REDEPLOY_SMOKE_COMPLETE_WITH_ARTIFACT_PORTABILITY_DEBT`
+Status: `PHASE_3_HOSTED_AIYA_REDEPLOY_SMOKE_COMPLETE_SUPERSEDED_BY_PHASE_4_REPEATABILITY`
+
+Superseded by: `docs/AIYA_HOSTED_DEPLOY_REPEATABILITY_ACTION_PLAN.md`
 
 ## Purpose
 
@@ -37,8 +39,7 @@ Deploy the verified AIya release to the hosted VPS and prove live brand/runtime 
 
 ## Remaining Work
 
-- Fix the hosted artifact pipeline so Windows-built release archives include Linux runtime optional dependencies, or produce hosted artifacts in a Linux build environment. The current live release was repaired post-extract on the VPS.
-- Install or ship the current remote deploy helper under `/opt/manu-ai/tools/hosted-sandbox/deploy/deploy-hosted-release.mjs` so `apply-hosted-release.mjs` can complete without the manual fallback.
+- Superseded/closed by Phase 4: the official hosted apply wrapper now stages the deploy helper runtime itself, and the remote helper installs and verifies required Linux `sharp` optional runtime packages in the release app when needed.
 - Obtain owner-external evidence for the Supabase Auth sender display name. The latest direct repo/domain evidence still cannot prove whether the sender has changed from the historical `SiriusAI <no-reply@auth.aiyaworkspace.com>` record.
 
 ## Completion Criteria

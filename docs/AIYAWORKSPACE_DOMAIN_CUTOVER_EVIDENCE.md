@@ -145,3 +145,39 @@ https://admin.siriusai.store/ status=410
 ```
 
 Supabase Auth sender display name was not changed or proven in this redeploy phase. The historical sender record above remains owner-external evidence until Supabase/Resend or inbox evidence proves the active sender is `AIya <no-reply@auth.aiyaworkspace.com>`.
+
+## 2026-09-02 Hosted Repeatability Addendum
+
+This addendum updates the live hosted release identity after the repeatable hosted deploy phase. It does not rewrite the historical cutover baseline above.
+
+Current release health:
+
+```json
+{
+  "status": "ok",
+  "releaseId": "hs-4c7bbea8ba21-2c32cf194421",
+  "commitSha": "4c7bbea8ba21fb84b51843eac9fff2e9ff8fecf9",
+  "migrationFingerprint": "2c32cf1944215123cd9a90999c906a5e49b7e3c6f1d145a3805afb4d929d78bd",
+  "compatibilityVersion": "0.0.0+4c7bbea"
+}
+```
+
+Live route smoke:
+
+```text
+https://aiyaworkspace.com/ status=200
+https://aiyaworkspace.com/login status=200
+https://aiyaworkspace.com/purchase status=200
+https://aiyaworkspace.com/app-install status=307
+https://aiyaworkspace.com/manifest.webmanifest status=200
+https://admin.aiyaworkspace.com/admin status=200
+https://aiyaworkspace.com/api/app-state status=401
+https://aiyaworkspace.com/api/clients status=401
+https://siriusai.store/ status=410
+https://www.siriusai.store/ status=410
+https://admin.siriusai.store/ status=410
+```
+
+DNS/TLS remain valid for `aiyaworkspace.com` and `admin.aiyaworkspace.com`; the certificate SAN includes `admin.aiyaworkspace.com`, `aiyaworkspace.com`, and `www.aiyaworkspace.com`.
+
+Supabase Auth sender display name was not changed or proven in this repeatability phase. The historical sender record above remains owner-external evidence until Supabase/Resend or inbox evidence proves the active sender is `AIya <no-reply@auth.aiyaworkspace.com>`.

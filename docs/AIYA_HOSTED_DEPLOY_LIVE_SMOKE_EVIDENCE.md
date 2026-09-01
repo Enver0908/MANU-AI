@@ -3,7 +3,9 @@
 Date: 2026-09-01
 Branch: `codex/production-readiness-stage-1`
 Deployed HEAD: `82ee3725076566304e9e0308632b2efe9d3b1deb`
-Status: `PHASE_3_HOSTED_AIYA_REDEPLOY_SMOKE_COMPLETE_WITH_ARTIFACT_PORTABILITY_DEBT`
+Status: `PHASE_3_HOSTED_AIYA_REDEPLOY_SMOKE_COMPLETE_SUPERSEDED_BY_PHASE_4_REPEATABILITY`
+
+Superseded by: `docs/AIYA_HOSTED_DEPLOY_REPEATABILITY_EVIDENCE.md`
 
 ## Boundary
 
@@ -269,3 +271,9 @@ Run a narrow follow-up phase to make the hosted artifact/deploy path fully repea
 - Rebuild, dry-run, and perform a no-regression hosted redeploy smoke.
 
 Do not change production `NO-GO` unless a later independent launch-gate phase explicitly does so.
+
+## 2026-09-02 Supersession Note
+
+Phase 4 closed the two Phase 3 hosted deploy repeatability findings. The current live release is now `hs-4c7bbea8ba21-2c32cf194421` at commit `4c7bbea8ba21fb84b51843eac9fff2e9ff8fecf9`, deployed through the official `apply-hosted-release.mjs` wrapper without manual fallback. The wrapper stages the deploy helper runtime, and the remote helper completes and verifies Linux `sharp` optional runtime packages inside `/opt/manu-ai/current/app`.
+
+Current authority: `docs/AIYA_HOSTED_DEPLOY_REPEATABILITY_EVIDENCE.md`.

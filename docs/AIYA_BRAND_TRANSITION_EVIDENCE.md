@@ -97,3 +97,20 @@ Live manifest:
 ```
 
 This hosted runtime validation does not change production `NO-GO` and does not prove the Supabase Auth sender display name. Sender proof remains owner-external evidence.
+
+## 2026-09-02 Hosted Repeatability Addendum
+
+The hosted VPS now serves AIya release `hs-4c7bbea8ba21-2c32cf194421` at commit `4c7bbea8ba21fb84b51843eac9fff2e9ff8fecf9`.
+
+Live checked surfaces:
+
+```text
+https://aiyaworkspace.com/ status=200 legacy=<none>
+https://aiyaworkspace.com/login status=200 legacy=<none>
+https://aiyaworkspace.com/purchase status=200 legacy=<none>
+https://aiyaworkspace.com/app-install status=307 legacy=<none>
+https://aiyaworkspace.com/manifest.webmanifest status=200 legacy=<none>
+https://admin.aiyaworkspace.com/admin status=200 legacy=<none>
+```
+
+The official hosted apply wrapper completed without manual fallback. This does not change production `NO-GO` and does not prove the Supabase Auth sender display name. Sender proof remains owner-external evidence.

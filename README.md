@@ -9,7 +9,7 @@ The product is designed around a strict principle: AI may assist the dietitian, 
 As of 2026-09-01:
 
 - Active product brand: `AIya`. The permanent public/customer domain is `https://aiyaworkspace.com`, the admin domain is `https://admin.aiyaworkspace.com`, and the business contact inbox is `contact@aiyaworkspace.com`.
-- Hosted VPS runtime now serves commit `82ee3725076566304e9e0308632b2efe9d3b1deb` as release `hs-82ee37250765-2c32cf194421`; live public/admin routes, PWA manifest, `/app-install`, unauthenticated API fail-closed `401`, and old-domain `410` smoke passed. Repeatable deploy helper and Linux optional dependency artifact portability remain technical follow-up work.
+- Hosted VPS runtime now serves commit `4c7bbea8ba21fb84b51843eac9fff2e9ff8fecf9` as release `hs-4c7bbea8ba21-2c32cf194421`; official hosted apply, PM2 restart, Linux `sharp` runtime completion, live public/admin routes, PWA manifest, unauthenticated API fail-closed `401`, and old-domain `410` smoke passed. Evidence: `docs/AIYA_HOSTED_DEPLOY_REPEATABILITY_EVIDENCE.md`.
 - Legacy visible names `MANU-AI`, `SiriusAI`, and `AI-ya` are retired from active product surfaces. Historical evidence can still mention them as past-state records.
 - Compatibility names remain unchanged where they are operational contracts: `MANU_*` environment variables, `x-siriusai-*` headers, `siriusai` service-worker cache names, existing server paths/process names, migrations, persisted IDs, and historical evidence files.
 - Production Readiness Stage 1 Phase 1-6 are locally complete for their recorded scopes.
@@ -27,6 +27,7 @@ Canonical current authorities:
 
 - `docs/OWNER_IOS_VALIDATION_WAIVER_DECISION.md`
 - `docs/AIYA_BRAND_TRANSITION_EVIDENCE.md`
+- `docs/AIYA_HOSTED_DEPLOY_REPEATABILITY_EVIDENCE.md`
 - `docs/AIYAWORKSPACE_DOMAIN_CUTOVER_RUNBOOK.md`
 - `docs/PRODUCTION_READINESS_STAGE_1_PHASE_6_EVIDENCE.md`
 - `docs/PRODUCTION_READINESS_STAGE_1_OWNER_HANDOFF.md`
