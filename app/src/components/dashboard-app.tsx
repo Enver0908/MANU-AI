@@ -30,7 +30,7 @@ import {
   type ClientMenuPlanV1State,
 } from "@/lib/phase-77f-client-menu-plan";
 import { getActiveFormSchema } from "@/lib/client-forms";
-import { useManuState } from "@/lib/use-manu-state";
+import { useAiyaState } from "@/lib/use-aiya-state";
 import { type SupportedLanguageCode } from "@/lib/languages";
 import { t } from "@/lib/i18n";
 import type { CommercialEntitlementStatus } from "@/lib/phase-83b-commercial-entitlement-model";
@@ -125,7 +125,7 @@ export function DashboardApp({
     addClientContextUpdate,
     mergeConversationDetailIntoState,
     mergeConversationMutationIntoState,
-  } = useManuState();
+  } = useAiyaState();
   const router = useRouter();
   const {
     setHeaderSlots,

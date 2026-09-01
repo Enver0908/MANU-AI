@@ -14,7 +14,7 @@ import type {
   AiChatScopeType,
 } from "./phase-85-stage-4c-contracts";
 
-// Independent from `useManuState`/internal-copilot state per Stage 4C Faz 4
+// Independent from `useAiyaState`/internal-copilot state per Stage 4C Faz 4
 // architecture decisions: AI Chat owns its own bounded request/response cycle.
 
 async function requestAiChatJson<T>(url: string, init?: RequestInit): Promise<T> {

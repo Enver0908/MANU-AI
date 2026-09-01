@@ -4,10 +4,11 @@
 
 import { normalizeCommercialEmail } from "./phase-83b-commercial-entitlement-model";
 import { buildAuthCallbackUrlWithNext, resolveAppBaseUrl } from "./phase-84d-customer-auth";
+import { AIYA_PUBLIC_CONTACT_EMAIL } from "./brand";
 
 export const PHASE_84F_VERSION = "phase84f-admin-console-v1";
 
-export const DEFAULT_ADMIN_ALLOWLIST_EMAIL = "olkuenver@gmail.com";
+export const DEFAULT_ADMIN_ALLOWLIST_EMAIL = AIYA_PUBLIC_CONTACT_EMAIL;
 
 export const DEFAULT_ADMIN_HOST = "admin.aiyaworkspace.com";
 

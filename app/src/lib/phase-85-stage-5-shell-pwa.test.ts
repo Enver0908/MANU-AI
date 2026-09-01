@@ -33,6 +33,9 @@ describe("phase-85-stage-5-shell-pwa", () => {
     expect(classifyShellServiceWorkerRequest({ pathname: "/manifest.webmanifest" })).toBe(
       "stale_while_revalidate_asset",
     );
+    expect(classifyShellServiceWorkerRequest({ pathname: "/icons/aiya-192.png" })).toBe(
+      "stale_while_revalidate_asset",
+    );
     expect(classifyShellServiceWorkerRequest({ pathname: "/icons/siriusai-192.png" })).toBe(
       "stale_while_revalidate_asset",
     );

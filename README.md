@@ -1,13 +1,16 @@
-# MANU-AI
+# AIya
 
-MANU-AI is a supervised AI SaaS platform for dietitians. It combines a multi-tenant clinical workspace, source-bound AI assistance, mobile-first PWA workflows, and guarded messaging operations for professional nutrition care teams.
+AIya is a supervised AI SaaS platform for dietitians. It combines a multi-tenant clinical workspace, source-bound AI assistance, mobile-first PWA workflows, and guarded messaging operations for professional nutrition care teams.
 
 The product is designed around a strict principle: AI may assist the dietitian, but it does not replace clinical judgment, approve high-risk guidance autonomously, or bypass tenant, consent, billing, or production-readiness controls.
 
 ## Current Status
 
-As of 2026-08-30:
+As of 2026-09-01:
 
+- Active product brand: `AIya`. The permanent public/customer domain is `https://aiyaworkspace.com`, the admin domain is `https://admin.aiyaworkspace.com`, and the business contact inbox is `contact@aiyaworkspace.com`.
+- Legacy visible names `MANU-AI`, `SiriusAI`, and `AI-ya` are retired from active product surfaces. Historical evidence can still mention them as past-state records.
+- Compatibility names remain unchanged where they are operational contracts: `MANU_*` environment variables, `x-siriusai-*` headers, `siriusai` service-worker cache names, existing server paths/process names, migrations, persisted IDs, and historical evidence files.
 - Production Readiness Stage 1 Phase 1-6 are locally complete for their recorded scopes.
 - Domain cutover implementation is prepared for `aiyaworkspace.com`: public/customer app `https://aiyaworkspace.com`, admin app `https://admin.aiyaworkspace.com`, and business contact inbox `contact@aiyaworkspace.com`. The old `siriusai.store` domain is not planned for long-term redirect retention because there is no real customer traffic on it.
 - Stage 1 owner handoff is ready locally; owner-side account, approval, secret, production-environment, and release-approval actions remain open.
@@ -22,6 +25,7 @@ As of 2026-08-30:
 Canonical current authorities:
 
 - `docs/OWNER_IOS_VALIDATION_WAIVER_DECISION.md`
+- `docs/AIYA_BRAND_TRANSITION_EVIDENCE.md`
 - `docs/AIYAWORKSPACE_DOMAIN_CUTOVER_RUNBOOK.md`
 - `docs/PRODUCTION_READINESS_STAGE_1_PHASE_6_EVIDENCE.md`
 - `docs/PRODUCTION_READINESS_STAGE_1_OWNER_HANDOFF.md`
@@ -41,7 +45,7 @@ Canonical current authorities:
 
 ## Product Scope
 
-MANU-AI supports dietitian-led operations across:
+AIya supports dietitian-led operations across:
 
 - Tenant-scoped onboarding, authentication, authorization, and role boundaries.
 - Client workspaces for nutrition tasks, forms, menu planning, messaging, alerts, and dashboard operations.
@@ -143,7 +147,7 @@ The domain cutover does not by itself approve production launch. It only moves t
 
 ## Evidence Discipline
 
-MANU-AI uses evidence-first delivery. Closure claims are only valid when backed by dated artifacts, verification commands, and explicit scope guards. Historical plans remain in the repository for traceability, but current authority is controlled by the latest handoff, risk register, closure decisions, and owner waiver records.
+AIya uses evidence-first delivery. Closure claims are only valid when backed by dated artifacts, verification commands, and explicit scope guards. Historical plans remain in the repository for traceability, but current authority is controlled by the latest handoff, risk register, closure decisions, and owner waiver records.
 
 When updating the project:
 

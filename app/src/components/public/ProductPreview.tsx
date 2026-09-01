@@ -1,4 +1,5 @@
 import { CheckCircle, Clock, ShieldCheck, UserCheck } from "lucide-react";
+import { AIYA_BRAND_SLUG, AIYA_BRAND_NAME } from "@/lib/brand";
 
 const MESSAGES = [
   {
@@ -45,13 +46,13 @@ export function ProductPreview() {
   return (
     <div
       className="w-full max-w-sm overflow-hidden rounded-lg border border-border bg-surface shadow-lg"
-      aria-label="SiriusAI ürün önizlemesi"
+      aria-label={`${AIYA_BRAND_NAME} ürün önizlemesi`}
     >
       <div className="flex items-center gap-1.5 border-b border-border bg-muted/30 px-4 py-2.5">
         <div className="h-2.5 w-2.5 rounded-full bg-line-strong" />
         <div className="h-2.5 w-2.5 rounded-full bg-ink-subtle" />
         <div className="h-2.5 w-2.5 rounded-full bg-muted-foreground/50" />
-        <span className="ml-2 text-xs text-muted-foreground">siriusai · çalışma alanı</span>
+        <span className="ml-2 text-xs text-muted-foreground">{AIYA_BRAND_SLUG} · çalışma alanı</span>
       </div>
 
       <div className="flex flex-col gap-3 p-4">

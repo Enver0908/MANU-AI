@@ -1,8 +1,9 @@
 import { CommercialShell } from "@/components/public/CommercialShell";
 import { PurchaseFlow } from "@/components/purchase-flow";
+import { AIYA_BRAND_NAME } from "@/lib/brand";
 
 export const metadata = {
-  title: "Davet koduyla başla · SiriusAI",
+  title: `Davet koduyla başla · ${AIYA_BRAND_NAME}`,
 };
 
 export default function PurchasePage() {

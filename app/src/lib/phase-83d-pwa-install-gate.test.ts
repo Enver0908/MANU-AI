@@ -25,6 +25,7 @@ describe("phase 83d pwa install gate", () => {
     expect(shouldServiceWorkerCachePath("/")).toBe(false);
     expect(shouldServiceWorkerCachePath("/manifest.webmanifest")).toBe(true);
     expect(shouldServiceWorkerCachePath("/_next/static/chunks/main.js")).toBe(true);
+    expect(shouldServiceWorkerCachePath("/icons/aiya-192.png")).toBe(true);
     expect(shouldServiceWorkerCachePath("/icons/siriusai-192.png")).toBe(true);
     expect(shouldServiceWorkerCachePath("/clients")).toBe(false);
   });

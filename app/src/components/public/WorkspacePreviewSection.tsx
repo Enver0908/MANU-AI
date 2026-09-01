@@ -1,4 +1,5 @@
 import { Check } from "lucide-react";
+import { AIYA_BRAND_NAME } from "@/lib/brand";
 import { ProductPreview } from "./ProductPreview";
 
 const BULLETS = [
@@ -15,7 +16,7 @@ export function WorkspacePreviewSection() {
           <div className="min-w-0 flex-1">
             <p className="mb-2 text-xs font-semibold uppercase text-primary">Çalışma alanı</p>
             <h2 id="workspace-preview-heading" className="font-display text-2xl font-bold leading-snug text-off-black">
-              SiriusAI çalışma alanı
+              {AIYA_BRAND_NAME} çalışma alanı
             </h2>
             <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground">
               Diyetisyen onaylı, AI destekli iletişim akışını ön izleyin. Her mesaj risk sınıflamasından geçer; uzman

@@ -10,6 +10,7 @@ import {
   validateCommercialAdminInviteCreate,
 } from "./phase-83f-commercial-admin";
 import { PUBLIC_MARKETING_COPY } from "./phase-84b-public-website";
+import { AIYA_PUBLIC_CONTACT_EMAIL } from "./brand";
 import { validateCommercialLeadCreate, validateCommercialLeadStatusUpdate } from "./phase-84c-contact-leads";
 import {
   deriveCustomerAuthRedirect,
@@ -232,7 +233,7 @@ export function evaluatePhase84hQaScenario(scenario: Phase84hQaScenario): Phase8
       break;
     }
     case "admin_allowlist_blocks": {
-      const allowed = evaluateAdminAllowlistAccess("olkuenver@gmail.com");
+      const allowed = evaluateAdminAllowlistAccess(AIYA_PUBLIC_CONTACT_EMAIL);
       const denied = evaluateAdminAllowlistAccess("intruder@example.com");
       if (!allowed.allowed) {
         blockingReasons.push("default_admin_email_not_allowlisted");

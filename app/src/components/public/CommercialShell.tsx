@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { AIYA_BRAND_NAME } from "@/lib/brand";
 
 export function CommercialShell({ children }: { children: ReactNode }) {
   return (
@@ -9,9 +10,9 @@ export function CommercialShell({ children }: { children: ReactNode }) {
           <Link
             href="/"
             className="text-sm font-semibold tracking-tight text-off-black transition-colors hover:text-primary"
-            aria-label="SiriusAI ana sayfaya dön"
+            aria-label={`${AIYA_BRAND_NAME} ana sayfaya dön`}
           >
-            SiriusAI
+            {AIYA_BRAND_NAME}
           </Link>
           <Link href="/#iletisim" className="text-xs text-muted-foreground transition-colors hover:text-foreground">
             Yardım için iletişim
@@ -21,7 +22,7 @@ export function CommercialShell({ children }: { children: ReactNode }) {
       <main className="flex min-w-0 flex-1 flex-col">{children}</main>
       <footer className="border-t border-border">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
-          <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} SiriusAI</p>
+          <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} {AIYA_BRAND_NAME}</p>
           <p className="text-xs text-muted-foreground">
             Production pilot: <span className="font-medium text-destructive">NO-GO</span>
           </p>

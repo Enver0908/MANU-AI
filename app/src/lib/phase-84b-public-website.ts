@@ -1,12 +1,15 @@
 /**
- * Phase 84B professional SiriusAI public marketing website: copy, contact,
+ * Phase 84B professional AIya public marketing website: copy, contact,
  * and env-gated demo entry. No auth, billing, or lead-storage logic here.
  */
+
+import { AIYA_BRAND_NAME, AIYA_PUBLIC_CONTACT_EMAIL } from "./brand";
 
 export const PHASE_84B_VERSION = "phase84-public-website-v1";
 
 /** Public business inbox for access and demo requests. */
-export const SIRIUSAI_PUBLIC_CONTACT_EMAIL = "contact@aiyaworkspace.com";
+export const SIRIUSAI_PUBLIC_CONTACT_EMAIL = AIYA_PUBLIC_CONTACT_EMAIL;
+export const AIYA_MARKETING_CONTACT_EMAIL = AIYA_PUBLIC_CONTACT_EMAIL;
 
 export function isPublicDemoLoginEnabled(
   env: Record<string, string | undefined> = process.env,
@@ -14,25 +17,25 @@ export function isPublicDemoLoginEnabled(
   return env.NODE_ENV === "development" && env.MANU_ALLOW_PUBLIC_DEMO_LOGIN === "true";
 }
 
-export function buildContactMailtoUrl(subject = "SiriusAI erişim talebi"): string {
+export function buildContactMailtoUrl(subject = `${AIYA_BRAND_NAME} erişim talebi`): string {
   const params = new URLSearchParams({
     subject,
   });
-  return `mailto:${SIRIUSAI_PUBLIC_CONTACT_EMAIL}?${params.toString()}`;
+  return `mailto:${AIYA_MARKETING_CONTACT_EMAIL}?${params.toString()}`;
 }
 
 export const PUBLIC_MARKETING_COPY = {
-  brand: "SiriusAI",
+  brand: AIYA_BRAND_NAME,
   tagline: "Diyetisyenler için denetimli mesajlaşma asistanı",
   heroTitle: "Danışan mesajlarını güvenle yönetin, klinik kontrol sizde kalsın",
   heroSubtitle:
-    "SiriusAI rutin danışan iletişimini hızlandırır; riskli beslenme ve sağlık mesajlarını diyetisyen onayına yükseltir. Web paneli ve kurulabilir mobil PWA aynı güvenli yüzeyi paylaşır.",
+    "AIya rutin danışan iletişimini hızlandırır; riskli beslenme ve sağlık mesajlarını diyetisyen onayına yükseltir. Web paneli ve kurulabilir mobil PWA aynı güvenli yüzeyi paylaşır.",
   loginLabel: "Giriş yap",
   purchaseLabel: "Satın al",
   contactCta: "Bizimle iletişime geçin",
   contactSectionTitle: "Erişim ve demo talebi",
   contactSectionBody:
-    "SiriusAI erişimi davetlidir. Henüz müşteri değilseniz ekibimizle iletişime geçin; uygunluk ve onboarding sürecini birlikte planlayalım.",
+    "AIya erişimi davetlidir. Henüz müşteri değilseniz ekibimizle iletişime geçin; uygunluk ve onboarding sürecini birlikte planlayalım.",
   contactFormNote:
     "Formu doldurarak erişim talebi bırakabilir veya doğrudan e-posta ile ulaşabilirsiniz.",
   demoPageTitle: "Yerel demo girişi",
@@ -41,7 +44,7 @@ export const PUBLIC_MARKETING_COPY = {
   demoButton: "Demo panelini aç",
   loginTitle: "Müşteri girişi",
   loginBody:
-    "Kayıtlı SiriusAI müşterileri e-posta adreslerine gönderilen tek kullanımlık giriş bağlantısı ile oturum açar.",
+    "Kayıtlı AIya müşterileri e-posta adreslerine gönderilen tek kullanımlık giriş bağlantısı ile oturum açar.",
   onboardingTitle: "Çalışma alanınızı bağlayın",
   onboardingBody:
     "Ödemeniz doğrulandıysa bir sonraki adımda çalışma alanınızı bu hesaba bağlayabileceksiniz. Şimdilik destek ekibimiz süreci tamamlamanıza yardımcı olabilir.",
@@ -96,7 +99,7 @@ export const PUBLIC_MARKETING_SECTIONS = [
   {
     id: "governance",
     title: "Klinik yönetişim sınırları",
-    body: "SiriusAI otonom bir diyetisyen değildir. Ürün, denetimli iletişim desteği olarak konumlanır; üretim pilotu ve dış onaylar ayrı kapılara tabidir.",
+    body: "AIya otonom bir diyetisyen değildir. Ürün, denetimli iletişim desteği olarak konumlanır; üretim pilotu ve dış onaylar ayrı kapılara tabidir.",
     bullets: [
       "Danışana giden metinlerde AI kimliği açıklanmaz",
       "Tenant izolasyonu ve denetim kayıtları",

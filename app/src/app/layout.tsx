@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { PwaRuntime } from "@/components/pwa-runtime";
+import { AIYA_BRAND_NAME, AIYA_PRODUCT_DESCRIPTION } from "@/lib/brand";
 import { resolveClientCompatibilityVersion } from "@/lib/release-identity";
 import "./globals.css";
 
@@ -7,16 +8,16 @@ const appVersion = resolveClientCompatibilityVersion();
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://aiyaworkspace.com"),
-  title: "SiriusAI",
-  description: "SiriusAI supervised dietitian messaging assistant",
-  applicationName: "SiriusAI",
+  title: AIYA_BRAND_NAME,
+  description: AIYA_PRODUCT_DESCRIPTION,
+  applicationName: AIYA_BRAND_NAME,
   alternates: {
     canonical: "/",
   },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "SiriusAI",
+    title: AIYA_BRAND_NAME,
   },
   manifest: "/manifest.webmanifest",
   other: {

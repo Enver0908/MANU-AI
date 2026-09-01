@@ -14,7 +14,7 @@ const navigationSource = readFileSync(
   fileURLToPath(new URL("../components/dashboard/dashboard-navigation.tsx", import.meta.url)),
   "utf8",
 );
-const useManuStateSource = readFileSync(fileURLToPath(new URL("./use-manu-state.ts", import.meta.url)), "utf8");
+const useAiyaStateSource = readFileSync(fileURLToPath(new URL("./use-aiya-state.ts", import.meta.url)), "utf8");
 
 describe("hosted sandbox runtime fixes", () => {
   it("binds API errors to requestId with no-store headers", async () => {
@@ -49,9 +49,9 @@ describe("hosted sandbox runtime fixes", () => {
   });
 
   it("does not fall back to demo seed when hosted store hydration fails", () => {
-    expect(useManuStateSource).toContain("usesHostedStore");
-    expect(useManuStateSource).toContain("setHydrateError");
-    expect(useManuStateSource).not.toMatch(
+    expect(useAiyaStateSource).toContain("usesHostedStore");
+    expect(useAiyaStateSource).toContain("setHydrateError");
+    expect(useAiyaStateSource).not.toMatch(
       /\.catch\(\(\) => setState\(createInitialState\(\)\)\)/,
     );
   });

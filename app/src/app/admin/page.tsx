@@ -5,6 +5,7 @@ import { AdminLoginForm } from "@/components/admin-login-form";
 import { CommercialAdminConsole } from "@/components/commercial-admin-console";
 import { CommercialShell } from "@/components/public/CommercialShell";
 import { resolveAdminSessionEmail } from "@/lib/commercial-admin-access";
+import { AIYA_BRAND_NAME } from "@/lib/brand";
 import { PUBLIC_MARKETING_COPY } from "@/lib/phase-84b-public-website";
 import { isSupabaseConfigured } from "@/lib/supabase";
 import { readStage7ScenarioState } from "@/lib/stage-7-request";
@@ -56,7 +57,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
         <div className="w-full max-w-sm">
           <div className="mb-8 text-center">
             <p className="mb-2 text-xs font-semibold uppercase text-primary">Yönetim</p>
-            <h1 className="mb-2 font-display text-2xl font-bold text-off-black">SiriusAI yönetim girişi</h1>
+            <h1 className="mb-2 font-display text-2xl font-bold text-off-black">{AIYA_BRAND_NAME} yönetim girişi</h1>
             <p className="text-sm leading-relaxed text-muted-foreground">
               Bu yüzey yalnızca allowlist&apos;teki operasyon/admin e-postaları için açılır.
             </p>

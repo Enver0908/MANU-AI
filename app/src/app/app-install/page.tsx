@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { CheckCircle, Download, Settings } from "lucide-react";
 import { CommercialShell } from "@/components/public/CommercialShell";
 import { CommercialInstallBlockedState } from "@/components/commercial-install-blocked-state";
+import { AIYA_BRAND_NAME } from "@/lib/brand";
 import { resolveMobileInstallAccess } from "@/lib/commercial-install-access";
 import { readStage7ScenarioState } from "@/lib/stage-7-request";
 
@@ -96,7 +97,7 @@ export default async function AppInstallPage() {
   return (
     <CommercialInstallBlockedState
       title="Mobil kurulum için erişim yok"
-      description="SiriusAI mobil uygulamasını yalnızca aktif aboneler kurabilir."
+      description={`${AIYA_BRAND_NAME} mobil uygulamasını yalnızca aktif aboneler kurabilir.`}
       blockingReasons={access.blockingReasons}
     />
   );

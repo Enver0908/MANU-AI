@@ -1,4 +1,5 @@
 import { Bell, CheckCircle, RefreshCcw, Search, ShieldCheck, Smartphone } from "lucide-react";
+import { AIYA_BRAND_NAME } from "@/lib/brand";
 import { DASHBOARD_MAIN_ID } from "@/lib/phase-83e6-states-polish";
 
 const buttonClass =
@@ -23,7 +24,7 @@ export function Stage7DashboardState({ state }: { state: string }) {
       <header className="border-b border-line bg-surface px-safe py-3" role="banner" data-testid="shell-header">
         <div className="mx-auto flex max-w-6xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
-            <p className="text-xs font-semibold uppercase text-primary">SiriusAI Stage 7</p>
+            <p className="text-xs font-semibold uppercase text-primary">{AIYA_BRAND_NAME} Stage 7</p>
             <h1 className="text-2xl font-semibold text-ink">Dashboard ve PWA dogrulama paneli</h1>
             <p className="text-sm text-ink-muted">Synthetic senaryo: {state}</p>
           </div>

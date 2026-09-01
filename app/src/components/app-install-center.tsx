@@ -2,6 +2,7 @@
 
 import { Download, Share, Smartphone, SquarePlus } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { AIYA_BRAND_NAME } from "@/lib/brand";
 import {
   buildPwaRuntimeEnvironment,
   type MobileInstallAuditEventType,
@@ -99,7 +100,7 @@ export function AppInstallCenter({ displayName }: AppInstallCenterProps) {
           <div>
             <h2 className="text-lg font-semibold text-foreground">Mobil uygulama kurulu</h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              SiriusAI zaten ana ekran uygulaması olarak çalışıyor, {displayName}.
+              {AIYA_BRAND_NAME} zaten ana ekran uygulaması olarak çalışıyor, {displayName}.
             </p>
           </div>
         </div>
@@ -146,7 +147,7 @@ export function AppInstallCenter({ displayName }: AppInstallCenterProps) {
         <ol className="mt-4 list-decimal space-y-2 pl-5 text-sm leading-6 text-muted-foreground">
           <li>Safari alt çubuktaki Paylaş simgesine dokunun.</li>
           <li>Ana Ekrana Ekle veya Web Uygulaması Olarak Aç seçeneğini seçin.</li>
-          <li>SiriusAI kısayolunu onaylayın; uygulama /dashboard ile açılır.</li>
+          <li>{AIYA_BRAND_NAME} kısayolunu onaylayın; uygulama /dashboard ile açılır.</li>
         </ol>
       </div>
     );
@@ -161,7 +162,7 @@ export function AppInstallCenter({ displayName }: AppInstallCenterProps) {
         <div>
           <h2 className="text-lg font-semibold text-foreground">Mobil uygulamayı indir</h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Güvenli SiriusAI PWA kurulumu. Klinik veriler önbelleğe alınmaz.
+            Güvenli {AIYA_BRAND_NAME} PWA kurulumu. Klinik veriler önbelleğe alınmaz.
           </p>
         </div>
       </div>

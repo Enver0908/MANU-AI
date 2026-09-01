@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
+import { AIYA_BRAND_NAME } from "@/lib/brand";
 
 export function HeroSection() {
   return (
@@ -12,7 +13,7 @@ export function HeroSection() {
           </div>
 
           <h1 id="hero-heading" className="font-display text-4xl font-bold leading-tight text-off-black sm:text-5xl">
-            SiriusAI
+            {AIYA_BRAND_NAME}
           </h1>
 
           <p className="max-w-sm text-base leading-relaxed text-muted-foreground">

@@ -54,7 +54,7 @@ function useDebouncedValue<T>(value: T, delayMs: number): T {
 
 /**
  * ChatGPT-like AI Chat workspace shell (Faz 4). Independent of
- * `useManuState`/internal-copilot state; the active chat URL is the source
+ * `useAiyaState`/internal-copilot state; the active chat URL is the source
  * of truth and drives every fetch below.
  */
 export function AiChatWorkspace({

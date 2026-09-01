@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { AlertCircle, Loader2, MailCheck } from "lucide-react";
+import { AIYA_BRAND_NAME } from "@/lib/brand";
 import { buildContactMailtoUrl } from "@/lib/phase-84b-public-website";
 import { MAGIC_LINK_RATE_LIMIT, parseRetryAfterSeconds } from "@/lib/phase-84d-customer-auth";
 import { isLikelyEmail } from "@/lib/phase-83e2-purchase-ux";
@@ -18,7 +19,7 @@ export function CustomerLoginForm(props: { initialError?: string | null; nextPat
   const [submitState, setSubmitState] = useState<SubmitState>("idle");
   const [cooldownSeconds, setCooldownSeconds] = useState(0);
 
-  const contactMailto = useMemo(() => buildContactMailtoUrl("SiriusAI müşteri girişi"), []);
+  const contactMailto = useMemo(() => buildContactMailtoUrl(`${AIYA_BRAND_NAME} müşteri girişi`), []);
   const busy = submitState === "submitting" || cooldownSeconds > 0;
 
   useEffect(() => {

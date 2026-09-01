@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { XCircle } from "lucide-react";
 import { CommercialShell } from "@/components/public/CommercialShell";
+import { AIYA_BRAND_NAME } from "@/lib/brand";
 
 export const metadata = {
-  title: "Ödeme tamamlanmadı · SiriusAI",
+  title: `Ödeme tamamlanmadı · ${AIYA_BRAND_NAME}`,
 };
 
 export default function PurchaseCancelPage() {

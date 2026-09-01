@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { cookies } from "next/headers";
+import { AIYA_BRAND_NAME } from "@/lib/brand";
 import { resolveCustomerSessionFacts } from "@/lib/customer-auth-session";
 import {
   deriveCustomerAuthRedirect,
@@ -62,7 +63,7 @@ function renderFragmentSessionBridge(nextPath: string | null, authErrorBase: str
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SiriusAI authentication</title>
+  <title>${AIYA_BRAND_NAME} authentication</title>
 </head>
 <body>
   <script>

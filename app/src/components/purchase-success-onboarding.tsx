@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { AlertCircle, CheckCircle, Loader2, Mail, Send } from "lucide-react";
+import { AIYA_BRAND_NAME } from "@/lib/brand";
 import { isLikelyEmail } from "@/lib/phase-83e2-purchase-ux";
 import { buildContactMailtoUrl } from "@/lib/phase-84b-public-website";
 
@@ -16,7 +17,7 @@ export function PurchaseSuccessOnboarding(props: { sessionId?: string | null }) 
 
   const sessionId = props.sessionId?.trim() || null;
   const nextPath = sessionId ? `/onboarding?session_id=${encodeURIComponent(sessionId)}` : "/onboarding";
-  const contactMailto = useMemo(() => buildContactMailtoUrl("SiriusAI ödeme sonrası onboarding"), []);
+  const contactMailto = useMemo(() => buildContactMailtoUrl(`${AIYA_BRAND_NAME} ödeme sonrası onboarding`), []);
   const busy = submitState === "submitting";
 
   useEffect(() => {

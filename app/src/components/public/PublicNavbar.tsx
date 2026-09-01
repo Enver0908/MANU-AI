@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
+import { AIYA_BRAND_NAME } from "@/lib/brand";
 
 const NAV_LINKS = [
   { label: "Nasıl çalışır", href: "/#nasil-calisir" },
@@ -20,9 +21,9 @@ export function PublicNavbar() {
         <Link
           href="/"
           className="inline-flex min-h-11 items-center text-lg font-semibold tracking-tight text-off-black transition-colors hover:text-primary"
-          aria-label="SiriusAI ana sayfa"
+          aria-label={`${AIYA_BRAND_NAME} ana sayfa`}
         >
-          SiriusAI
+          {AIYA_BRAND_NAME}
         </Link>
 
         <ul className="hidden items-center gap-6 text-sm font-medium text-muted-foreground md:flex">

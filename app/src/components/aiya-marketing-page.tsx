@@ -14,12 +14,12 @@ import { ContactLeadForm } from "@/components/contact-lead-form";
 import {
   PUBLIC_MARKETING_COPY,
   PUBLIC_MARKETING_SECTIONS,
-  SIRIUSAI_PUBLIC_CONTACT_EMAIL,
+  AIYA_MARKETING_CONTACT_EMAIL,
   buildContactMailtoUrl,
   isPublicDemoLoginEnabled,
 } from "@/lib/phase-84b-public-website";
 
-export function SiriusaiMarketingPage() {
+export function AiyaMarketingPage() {
   const demoEnabled = isPublicDemoLoginEnabled();
   const contactMailto = buildContactMailtoUrl();
 
@@ -131,7 +131,7 @@ export function SiriusaiMarketingPage() {
                       href={contactMailto}
                       className="mt-1 inline-flex items-center gap-2 text-emerald-900 underline-offset-2 hover:underline"
                     >
-                      {SIRIUSAI_PUBLIC_CONTACT_EMAIL}
+                      {AIYA_MARKETING_CONTACT_EMAIL}
                       <ArrowRight size={14} aria-hidden />
                     </a>
                   </div>
@@ -156,7 +156,7 @@ function ProductMockPanel() {
     <div
       className="rounded-card border border-line bg-surface p-4 shadow-sm"
       aria-hidden
-      data-testid="siriusai-product-mock"
+      data-testid="aiya-product-mock"
     >
       <div className="flex items-center justify-between gap-2 border-b border-line pb-3">
         <span className="inline-flex items-center gap-2 text-sm font-semibold text-ink">

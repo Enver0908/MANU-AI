@@ -4,7 +4,7 @@ import { useState } from "react";
 import { CheckCircle2, Mail, Send } from "lucide-react";
 import { Button, Field, TextInput } from "@/components/ui";
 import {
-  SIRIUSAI_PUBLIC_CONTACT_EMAIL,
+  AIYA_MARKETING_CONTACT_EMAIL,
   buildContactMailtoUrl,
 } from "@/lib/phase-84b-public-website";
 import { isLikelyEmail } from "@/lib/phase-83e2-purchase-ux";
@@ -152,7 +152,7 @@ export function ContactLeadForm() {
         <p className="text-sm text-amber-950" role="status">
           Çevrimiçi form şu an kullanılamıyor. Lütfen{" "}
           <a href={contactMailto} className="font-medium underline underline-offset-2">
-            {SIRIUSAI_PUBLIC_CONTACT_EMAIL}
+            {AIYA_MARKETING_CONTACT_EMAIL}
           </a>{" "}
           adresine yazın.
         </p>

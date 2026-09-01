@@ -22,7 +22,7 @@ describe("phase 84f admin console", () => {
   });
 
   it("allows only allowlisted admin emails", () => {
-    expect(evaluateAdminAllowlistAccess("olkuenver@gmail.com").allowed).toBe(true);
+    expect(evaluateAdminAllowlistAccess(DEFAULT_ADMIN_ALLOWLIST_EMAIL).allowed).toBe(true);
     expect(evaluateAdminAllowlistAccess("other@example.com").blockingReasons).toContain(
       "admin_email_not_allowlisted",
     );

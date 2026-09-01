@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { LogIn, ShieldAlert, type LucideIcon } from "lucide-react";
 import { buttonClasses, Card, CardBody } from "@/components/ui";
 import { cn } from "@/components/ui/cn";
+import { AIYA_BRAND_NAME } from "@/lib/brand";
 import { SKELETON_BLOCK_CLASS } from "@/lib/phase-83e6-states-polish";
 
 export function SkeletonBlock({ className }: { className?: string }) {
@@ -17,7 +18,7 @@ export function DashboardLoadingSkeleton() {
     <div
       className="min-h-screen bg-surface-muted text-ink"
       aria-busy="true"
-      aria-label="Loading SiriusAI workspace"
+      aria-label={`Loading ${AIYA_BRAND_NAME} workspace`}
       data-testid="dashboard-loading-skeleton"
     >
       <div className="flex min-h-screen flex-col lg:flex-row">

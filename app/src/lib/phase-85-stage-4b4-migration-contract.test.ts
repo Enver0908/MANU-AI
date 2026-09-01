@@ -83,6 +83,10 @@ const stage4B4Tables = [
   "audio_transcript_correction_idempotency",
 ] as const;
 
+function normalizeSqlNewlines(sql: string) {
+  return sql.replace(/\r\n/g, "\n");
+}
+
 describe("P85 Stage 4B-4 remediation R1 contracts migration", () => {
   it("adds transcription lineage columns, constraints, and validation RPCs", () => {
     expect(remediationContractsMigration).toContain("add column if not exists origin text");
@@ -203,7 +207,7 @@ describe("P85 Stage 4B-4 Phase 9 lifecycle signature transition", () => {
     expect(audioLifecycleSignatureTransitionMigration).toContain(
       "drop function if exists p85_stage_4b3_redact_client_media_metadata",
     );
-    expect(audioLifecycleSignatureTransitionMigration).toContain("uuid,\n  uuid,\n  timestamptz");
+    expect(normalizeSqlNewlines(audioLifecycleSignatureTransitionMigration)).toContain("uuid,\n  uuid,\n  timestamptz");
     expect(audioLifecycleSignatureTransitionMigration).not.toContain("cascade");
     expect(audioLifecycleMigration).toContain("transcriptions_updated integer");
     expect(audioLifecycleMigration).toContain("transcript_corrections_updated integer");

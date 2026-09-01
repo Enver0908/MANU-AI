@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { CommercialShell } from "@/components/public/CommercialShell";
 import { CustomerLoginForm } from "@/components/customer-login-form";
+import { AIYA_BRAND_NAME } from "@/lib/brand";
 import { PUBLIC_MARKETING_COPY } from "@/lib/phase-84b-public-website";
 
 export const metadata: Metadata = {
@@ -34,7 +35,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
         <div className="w-full max-w-sm">
           <div className="mb-8 text-center">
             <p className="mb-2 text-xs font-semibold uppercase text-primary">Müşteri girişi</p>
-            <h1 className="mb-2 font-display text-2xl font-bold text-off-black">SiriusAI müşteri girişi</h1>
+            <h1 className="mb-2 font-display text-2xl font-bold text-off-black">{AIYA_BRAND_NAME} müşteri girişi</h1>
             <p className="text-sm leading-relaxed text-muted-foreground">
               Varsayılan giriş e-posta bağlantısıdır; parola ile giriş ikincil seçenektir.
             </p>
@@ -44,7 +45,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 
           <div className="mt-6 rounded-md border border-border bg-muted/30 px-4 py-3">
             <p className="text-xs leading-relaxed text-muted-foreground">
-              Bu giriş yalnızca kayıtlı ve onaylı SiriusAI müşterilerine yöneliktir. Erişiminiz yoksa iletişim formu
+              Bu giriş yalnızca kayıtlı ve onaylı {AIYA_BRAND_NAME} müşterilerine yöneliktir. Erişiminiz yoksa iletişim formu
               ile talep bırakın.
             </p>
           </div>

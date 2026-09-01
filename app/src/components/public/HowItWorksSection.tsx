@@ -1,4 +1,5 @@
 import { KeyRound, Link2, MessageSquare, Search } from "lucide-react";
+import { AIYA_BRAND_NAME } from "@/lib/brand";
 
 const STEPS = [
   {
@@ -37,7 +38,7 @@ export function HowItWorksSection() {
             Nasıl çalışır?
           </h2>
           <p className="mt-3 leading-relaxed text-muted-foreground">
-            SiriusAI self-serve bir platform değildir. Erişim, ekip değerlendirmesi ve davet kodu ile açılır.
+            {AIYA_BRAND_NAME} self-serve bir platform değildir. Erişim, ekip değerlendirmesi ve davet kodu ile açılır.
           </p>
         </div>
 

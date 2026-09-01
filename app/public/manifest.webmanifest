@@ -1,7 +1,7 @@
 {
-  "name": "SiriusAI",
-  "short_name": "SiriusAI",
-  "description": "SiriusAI supervised dietitian messaging assistant.",
+  "name": "AIya",
+  "short_name": "AIya",
+  "description": "AIya supervised dietitian messaging assistant.",
   "start_url": "/dashboard",
   "scope": "/",
   "display": "standalone",
@@ -9,31 +9,31 @@
   "theme_color": "#612E82",
   "icons": [
     {
-      "src": "/icons/siriusai-180.png",
+      "src": "/icons/aiya-180.png",
       "sizes": "180x180",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/icons/siriusai-192.png",
+      "src": "/icons/aiya-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/icons/siriusai-512.png",
+      "src": "/icons/aiya-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/icons/siriusai-192-maskable.png",
+      "src": "/icons/aiya-192-maskable.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "/icons/siriusai-512-maskable.png",
+      "src": "/icons/aiya-512-maskable.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

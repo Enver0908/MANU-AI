@@ -8,7 +8,9 @@
  * rendering: an ambiguous or error response must never surface as "eligible".
  */
 
-export const PURCHASE_CONTACT_EMAIL = "contact@aiyaworkspace.com";
+import { AIYA_BRAND_NAME, AIYA_PUBLIC_CONTACT_EMAIL } from "./brand";
+
+export const PURCHASE_CONTACT_EMAIL = AIYA_PUBLIC_CONTACT_EMAIL;
 
 /**
  * Lightweight client-side email shape check. The server remains the source of
@@ -117,7 +119,7 @@ export function describePurchaseBlockingReason(reason: string): string {
 }
 
 export const PURCHASE_COPY = {
-  eyebrow: "SiriusAI",
+  eyebrow: AIYA_BRAND_NAME,
   landingTitle: "Diyetisyenler için denetimli yapay zekâ mesajlaşma asistanı",
   landingSubtitle:
     "Danışan mesajlarını güvenle yönetin: yapay zekâ taslakları hazırlar, riskli sağlık/beslenme mesajları diyetisyen onayına yükseltilir. Web ve kurulabilir mobil PWA aynı güvenli yüzeyi paylaşır.",

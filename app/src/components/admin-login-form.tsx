@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { CheckCircle2, Mail, Send, Shield } from "lucide-react";
 import { Button, Field, TextInput } from "@/components/ui";
+import { AIYA_BRAND_NAME } from "@/lib/brand";
 import {
   PUBLIC_MARKETING_COPY,
   buildContactMailtoUrl,
@@ -18,7 +19,7 @@ export function AdminLoginForm(props: { initialError?: string | null }) {
   const [submitState, setSubmitState] = useState<SubmitState>("idle");
   const [cooldownSeconds, setCooldownSeconds] = useState(0);
 
-  const contactMailto = buildContactMailtoUrl("SiriusAI yönetim girişi");
+  const contactMailto = buildContactMailtoUrl(`${AIYA_BRAND_NAME} yönetim girişi`);
   const busy = submitState === "submitting" || cooldownSeconds > 0;
 
   useEffect(() => {

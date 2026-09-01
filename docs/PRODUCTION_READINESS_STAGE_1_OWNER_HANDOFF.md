@@ -6,6 +6,12 @@ Status: `OWNER_HANDOFF_READY_LOCAL_ONLY`
 
 Plan: **Birinci Asama: Canli Hesaplari Beklemeden Teknik Hazirlik**
 
+Active brand update, 2026-09-01: the visible product brand is now `AIya`;
+public/customer domain is `https://aiyaworkspace.com`; admin domain is
+`https://admin.aiyaworkspace.com`; business contact and default admin allowlist
+use `contact@aiyaworkspace.com`. This brand update does not change the
+production `NO-GO` status or any owner-side launch blocker.
+
 ## Current Decision
 
 The local technical preparation package is complete for Phase 1-6. Production

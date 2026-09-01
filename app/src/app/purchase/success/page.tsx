@@ -2,9 +2,10 @@ import Link from "next/link";
 import { ArrowRight, CheckCircle, MailCheck } from "lucide-react";
 import { CommercialShell } from "@/components/public/CommercialShell";
 import { PurchaseSuccessOnboarding } from "@/components/purchase-success-onboarding";
+import { AIYA_BRAND_NAME } from "@/lib/brand";
 
 export const metadata = {
-  title: "Ödeme doğrulandı · SiriusAI",
+  title: `Ödeme doğrulandı · ${AIYA_BRAND_NAME}`,
 };
 
 type PurchaseSuccessPageProps = {

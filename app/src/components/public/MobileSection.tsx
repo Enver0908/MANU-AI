@@ -1,4 +1,5 @@
 import { Bell, Lock, Smartphone, WifiOff } from "lucide-react";
+import { AIYA_BRAND_NAME } from "@/lib/brand";
 
 const FEATURES = [
   {
@@ -29,7 +30,7 @@ export function MobileSection() {
               PWA — Aboneye özel kurulum
             </h2>
             <p className="mb-8 leading-relaxed text-muted-foreground">
-              SiriusAI mobil erişimi; public bir uygulama değil, aktif abonelik sahibi diyetisyenler için sunulan gated
+              {AIYA_BRAND_NAME} mobil erişimi; public bir uygulama değil, aktif abonelik sahibi diyetisyenler için sunulan gated
               bir avantajdır.
             </p>
 
@@ -64,7 +65,7 @@ export function MobileSection() {
                     </div>
                   </div>
                   <div className="border-b border-border px-4 py-3">
-                    <p className="text-xs font-semibold text-off-black">SiriusAI</p>
+                    <p className="text-xs font-semibold text-off-black">{AIYA_BRAND_NAME}</p>
                     <p className="text-[10px] text-muted-foreground">Klinik çalışma alanı</p>
                   </div>
                   <div className="mx-4 mb-1 mt-3 flex items-center gap-2 rounded-md bg-primary/10 px-3 py-2">

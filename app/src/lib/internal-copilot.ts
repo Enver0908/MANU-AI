@@ -1,4 +1,5 @@
 import { AppDomainError } from "./app-errors";
+import { AIYA_BRAND_NAME } from "./brand";
 import type {
   AiDecisionRecord,
   ClientRecord,
@@ -137,7 +138,7 @@ export function runInternalCopilotTools(
   if (resolved.status === "not_found") {
     return {
       toolCalls: [resolveCall],
-      answerBody: "Bu isimle eslesen gorunur bir musteri MANU-AI kayitlarinda bulunamadi.",
+      answerBody: `Bu isimle eslesen gorunur bir musteri ${AIYA_BRAND_NAME} kayitlarinda bulunamadi.`,
       sourceRefs: [],
       safetyStatus: "not_found",
     };
@@ -175,7 +176,7 @@ export function generateMockInternalCopilotAnswer(input: {
   if (sourceRefs.length === 0) {
     return {
       toolCalls: input.toolCalls,
-      answerBody: "Bu konuda MANU-AI kayitlarinda kaynaklanabilir veri bulamadim.",
+      answerBody: `Bu konuda ${AIYA_BRAND_NAME} kayitlarinda kaynaklanabilir veri bulamadim.`,
       sourceRefs: [],
       safetyStatus: "no_sources",
     };
@@ -358,7 +359,7 @@ function answerForIntent(
   }
 
   if (intent === "diet_plan") {
-    return `${client.fullName} icin MANU-AI kayitlarindaki diyet plani: ${summaries.join(" ")}`;
+    return `${client.fullName} icin ${AIYA_BRAND_NAME} kayitlarindaki diyet plani: ${summaries.join(" ")}`;
   }
 
   if (intent === "recent_messages") {

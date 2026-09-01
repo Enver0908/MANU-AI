@@ -5,6 +5,7 @@ import { cookies } from "next/headers";
 import { AlertCircle, Mail } from "lucide-react";
 import { CommercialShell } from "@/components/public/CommercialShell";
 import { OnboardingClaimPanel } from "@/components/onboarding-claim-panel";
+import { AIYA_BRAND_NAME } from "@/lib/brand";
 import { resolveCustomerSessionFacts } from "@/lib/customer-auth-session";
 import {
   PUBLIC_MARKETING_COPY,
@@ -127,7 +128,7 @@ export default async function OnboardingPage({ searchParams }: OnboardingPagePro
             )}
 
             <a
-              href={buildContactMailtoUrl("SiriusAI onboarding desteği")}
+              href={buildContactMailtoUrl(`${AIYA_BRAND_NAME} onboarding desteği`)}
               className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-border bg-muted/40 px-4 text-sm font-medium text-foreground transition-colors hover:bg-muted"
             >
               <Mail size={16} />

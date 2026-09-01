@@ -11,6 +11,7 @@ import {
 } from "@/components/dashboard/dashboard-navigation";
 import { ActiveClientControl } from "@/components/dashboard/active-client-control";
 import { useShellProvider } from "@/components/dashboard/shell-provider";
+import { AIYA_BRAND_NAME } from "@/lib/brand";
 import { DASHBOARD_MAIN_ID } from "@/lib/phase-83e6-states-polish";
 import { t } from "@/lib/i18n";
 import type { SupportedLanguageCode } from "@/lib/languages";
@@ -269,8 +270,8 @@ export function DashboardShell({ children }: { children: ReactNode }) {
           data-testid="shell-medium-aside"
         >
           <div className="flex min-h-16 items-center justify-center border-b border-line px-1">
-            <span className="text-sm font-semibold text-primary" aria-label="SiriusAI">
-              S
+            <span className="text-sm font-semibold text-primary" aria-label={AIYA_BRAND_NAME}>
+              A
             </span>
           </div>
           <DashboardMediumRailNav
@@ -291,7 +292,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
         >
           <div className="flex items-start justify-between gap-3 border-b border-line px-5 py-4">
             <div className="min-w-0">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">SiriusAI</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">{AIYA_BRAND_NAME}</p>
               <h1 className="mt-1 text-xl font-semibold text-ink">Diyetisyen konsolu</h1>
               <p className="mt-1 truncate text-sm text-ink-muted">{bootstrap.displayName}</p>
             </div>
@@ -341,7 +342,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
             <div className="flex w-full flex-col gap-3 py-3 sm:px-2 xl:flex-row xl:items-center xl:justify-between min-[1200px]:py-2">
               <div className="min-w-0">
                 <div className="min-[768px]:hidden">
-                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">SiriusAI</p>
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">{AIYA_BRAND_NAME}</p>
                 </div>
                 {headerSlots.title}
                 {headerSlots.description}
