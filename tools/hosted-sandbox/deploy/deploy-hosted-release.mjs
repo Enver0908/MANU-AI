@@ -83,6 +83,10 @@ function sha256File(filePath) {
   return createHash("sha256").update(readFileSync(filePath)).digest("hex");
 }
 
+function artifactBasename(filePath) {
+  return String(filePath).split(/[\\/]/).pop();
+}
+
 function verifyExtractedPackage(appDir, identity) {
   const manifestPath = path.join(appDir, "release-manifest.json");
   if (!existsSync(manifestPath)) {
@@ -194,8 +198,8 @@ function readReleaseManifest(identity) {
   if (artifactDir && parsed.releaseArtifact) {
     parsed.releaseArtifact = {
       ...parsed.releaseArtifact,
-      archivePath: path.join(artifactDir, path.basename(parsed.releaseArtifact.archivePath)),
-      archiveSha256Path: path.join(artifactDir, path.basename(parsed.releaseArtifact.archiveSha256Path)),
+      archivePath: path.join(artifactDir, artifactBasename(parsed.releaseArtifact.archivePath)),
+      archiveSha256Path: path.join(artifactDir, artifactBasename(parsed.releaseArtifact.archiveSha256Path)),
     };
   }
   const manifest = assertReleaseArtifactManifest(parsed, {
