@@ -1,6 +1,6 @@
 # aiyaworkspace.com Domain Cutover Runbook
 
-Status: implementation runbook for the current committed release baseline.
+Status: completed cutover runbook for the current committed release baseline.
 
 Canonical production origin:
 
@@ -64,7 +64,7 @@ Stripe test-mode webhook:
 - Endpoint URL: `https://aiyaworkspace.com/api/commercial/webhook`
 - Events remain unchanged:
   - `checkout.session.completed`
-  - `invoice.payment_succeeded`
+  - `invoice.paid`
   - `invoice.payment_failed`
   - `customer.subscription.updated`
   - `customer.subscription.deleted`
@@ -85,6 +85,11 @@ Nginx must serve:
 The admin host must keep the existing host-rewrite behavior to `/admin`.
 
 After DNS points to the VPS and certificate issuance succeeds, issue a Let's Encrypt certificate covering all three new hosts.
+
+Active certificate policy after cutover:
+
+- New hosts use the dedicated `aiyaworkspace.com` Let's Encrypt certificate.
+- Legacy `siriusai.store` certificate may remain only to serve the temporary HTTPS `410 Gone` shutdown response while the old domain still resolves to the VPS.
 
 ## Validation
 
@@ -110,6 +115,12 @@ After all validation checks pass:
 - Return `410 Gone` or a plain shutdown response for the legacy hosts.
 - Do not renew `siriusai.store` unless the owner later chooses to keep it for brand protection.
 - Do not build a PWA transfer bridge.
+
+Completion status, 2026-09-01:
+
+- Legacy hosts have been removed from the active application server block.
+- Legacy HTTP/HTTPS requests now return `410 Gone`.
+- New hosts remain served by the application server block.
 
 Rollback before legacy shutdown:
 
