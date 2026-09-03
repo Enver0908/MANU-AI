@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   DEFAULT_ADMIN_ALLOWLIST_EMAIL,
   buildAdminAuthCallbackUrlWithNext,
+  buildAdminCustomerSetupPath,
   evaluateAdminAllowlistAccess,
   isAdminHost,
   resolveAdminAppBaseUrl,
@@ -72,5 +73,10 @@ describe("phase 84f admin console", () => {
     expect(resolveAdminHostInternalPath("/leads")).toBe("/admin");
     expect(resolveAdminHostInternalPath("/admin/leads")).toBe("/admin/leads");
     expect(JSON.stringify(summarizePhase84fAdminConsole())).toContain("/admin");
+  });
+
+  it("builds the customer setup onboarding path without exposing tokens", () => {
+    expect(buildAdminCustomerSetupPath("invite-123")).toBe("/onboarding?invite_id=invite-123");
+    expect(buildAdminCustomerSetupPath("invite 123")).toBe("/onboarding?invite_id=invite%20123");
   });
 });

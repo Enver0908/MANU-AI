@@ -144,6 +144,15 @@ describe("phase 83b commercial entitlement model", () => {
         isAuthenticated: true,
         hasTenantMembership: true,
         hasDietitianProfile: true,
+        entitlementStatus: "revoked",
+      }).allowed,
+    ).toBe(false);
+
+    expect(
+      evaluateCommercialDashboardAccess({
+        isAuthenticated: true,
+        hasTenantMembership: true,
+        hasDietitianProfile: true,
         entitlementStatus: "active",
       }).allowed,
     ).toBe(true);

@@ -8,6 +8,7 @@ import {
   MessageSquare,
   RefreshCw,
   ScrollText,
+  Search,
   Shield,
   UserPlus,
   UserX,
@@ -18,6 +19,7 @@ import type {
   CommercialOnboardingAuditListItem,
 } from "@/lib/commercial-admin-store";
 import type {
+  CommercialAdminCustomerListItem,
   CommercialAdminInviteListItem,
   CommercialAdminLedgerListItem,
   CommercialAdminSubscriptionSummary,
@@ -36,8 +38,10 @@ type AdminView = "blocked" | "login" | "console";
 type CommercialAdminConsoleVariant = "session" | "token";
 
 type CreatedInviteResult = {
-  invite: CommercialAdminInviteListItem;
-  inviteToken: string;
+  inviteId: string;
+  email: string;
+  created?: boolean;
+  resent?: boolean;
 };
 
 type CommercialAdminHealthPayload = {
@@ -119,6 +123,8 @@ export function CommercialAdminConsole(props: {
   const [healthSummary, setHealthSummary] = useState<string | null>(null);
   const [healthPayload, setHealthPayload] = useState<CommercialAdminHealthPayload | null>(null);
   const [invites, setInvites] = useState<CommercialAdminInviteListItem[]>([]);
+  const [customers, setCustomers] = useState<CommercialAdminCustomerListItem[]>([]);
+  const [customerSearch, setCustomerSearch] = useState("");
   const [subscriptions, setSubscriptions] = useState<CommercialAdminSubscriptionSummary[]>([]);
   const [ledger, setLedger] = useState<CommercialAdminLedgerListItem[]>([]);
   const [leads, setLeads] = useState<CommercialLeadListItem[]>([]);
@@ -127,13 +133,15 @@ export function CommercialAdminConsole(props: {
   const [createdInvite, setCreatedInvite] = useState<CreatedInviteResult | null>(null);
   const [pendingRevokeTenantId, setPendingRevokeTenantId] = useState<string | null>(null);
   const [pendingCancelTenantId, setPendingCancelTenantId] = useState<string | null>(null);
+  const [pendingRenewEmail, setPendingRenewEmail] = useState<string | null>(null);
+  const [renewPaidThrough, setRenewPaidThrough] = useState("");
 
   const [createEmail, setCreateEmail] = useState("");
   const [createTenantName, setCreateTenantName] = useState("");
-  const [createInviteToken, setCreateInviteToken] = useState("");
+  const [createPaidThrough, setCreatePaidThrough] = useState("");
   const [createExpiresAt, setCreateExpiresAt] = useState("");
   const [manualInviteId, setManualInviteId] = useState("");
-  const [manualAction, setManualAction] = useState<"activate" | "renew">("activate");
+  const [manualAction, setManualAction] = useState<"activate" | "renew" | "reactivate">("activate");
   const [manualPaymentReference, setManualPaymentReference] = useState("");
   const [manualPaidThrough, setManualPaidThrough] = useState("");
   const [manualRequestId, setManualRequestId] = useState("");
@@ -157,7 +165,12 @@ export function CommercialAdminConsole(props: {
     async (token?: string | null) => {
       const headers = buildAdminHeaders(token);
       const [inviteRes, subscriptionRes, ledgerRes, leadsRes, auditRes, healthRes] = await Promise.all([
-        fetch("/api/commercial/admin/invites", { headers }),
+        fetch(
+          customerSearch.trim()
+            ? `/api/commercial/admin/invites?email=${encodeURIComponent(customerSearch.trim())}`
+            : "/api/commercial/admin/invites",
+          { headers },
+        ),
         fetch("/api/commercial/admin/subscriptions", { headers }),
         fetch("/api/commercial/admin/ledger?limit=25", { headers }),
         fetch("/api/commercial/admin/leads?limit=50", { headers }),
@@ -193,13 +206,14 @@ export function CommercialAdminConsole(props: {
       }
 
       setInvites(invitePayload.invites ?? []);
+      setCustomers(invitePayload.customers ?? []);
       setSubscriptions(subscriptionPayload.subscriptions ?? []);
       setLedger(ledgerPayload.entries ?? []);
       setLeads(leadsPayload.leads ?? []);
       setAdminAudit(auditPayload.adminAudit ?? []);
       setOnboardingAudit(auditPayload.onboardingAudit ?? []);
     },
-    [],
+    [customerSearch],
   );
 
   useEffect(() => {
@@ -267,22 +281,26 @@ export function CommercialAdminConsole(props: {
 
   async function onCreateInvite(event: React.FormEvent) {
     event.preventDefault();
-    if (!canOperate) {
+    if (!canOperate || !isSessionMode) {
       return;
     }
     setError(null);
     setBusy(true);
     setCreatedInvite(null);
     try {
+      const paidThrough = createPaidThrough.trim()
+        ? new Date(createPaidThrough).toISOString()
+        : "";
       const response = await authenticatedMutationFetch("/api/commercial/admin/invites", {
         method: "POST",
         mutationKind: "other",
         headers: requestHeaders(),
         body: JSON.stringify({
+          command: "invite_customer",
           email: createEmail.trim(),
           tenantName: createTenantName.trim() || undefined,
-          inviteToken: createInviteToken.trim() || undefined,
-          expiresAt: createExpiresAt.trim() || null,
+          paidThrough,
+          expiresAt: createExpiresAt.trim() ? new Date(createExpiresAt).toISOString() : null,
         }),
       });
       const payload = await response.json().catch(() => ({}));
@@ -292,7 +310,7 @@ export function CommercialAdminConsole(props: {
       setCreatedInvite(payload as CreatedInviteResult);
       setCreateEmail("");
       setCreateTenantName("");
-      setCreateInviteToken("");
+      setCreatePaidThrough("");
       setCreateExpiresAt("");
       await loadOperations(activeToken);
     } catch (createError) {
@@ -318,8 +336,12 @@ export function CommercialAdminConsole(props: {
           action: manualAction,
           inviteId: manualInviteId.trim(),
           paymentReference: manualPaymentReference.trim(),
-          paidThrough: manualPaidThrough.trim(),
+          paidThrough: manualPaidThrough.trim() ? new Date(manualPaidThrough).toISOString() : "",
           requestId: manualRequestId.trim() || `manual-${crypto.randomUUID()}`,
+          expectedRevision:
+            customers.find((customer) => customer.inviteId === manualInviteId)?.revision ??
+            subscriptions.find((subscription) => subscription.inviteId === manualInviteId)?.revision ??
+            null,
         }),
       });
       const payload = await response.json().catch(() => ({}));
@@ -339,7 +361,7 @@ export function CommercialAdminConsole(props: {
   }
 
   async function onRevokeInvite(inviteId: string) {
-    if (!canOperate) {
+    if (!canOperate || !isSessionMode) {
       return;
     }
     setError(null);
@@ -363,8 +385,8 @@ export function CommercialAdminConsole(props: {
     }
   }
 
-  async function onRevokeEntitlement(tenantId: string, confirmed = false) {
-    if (!canOperate) {
+  async function onRevokeEntitlement(tenantId: string, expectedRevision: number, confirmed = false) {
+    if (!canOperate || !isSessionMode) {
       return;
     }
     if (!confirmed) {
@@ -380,7 +402,7 @@ export function CommercialAdminConsole(props: {
         method: "POST",
         mutationKind: "other",
         headers: requestHeaders(),
-        body: JSON.stringify({ tenantId }),
+        body: JSON.stringify({ tenantId, expectedRevision }),
       });
       const payload = await response.json().catch(() => ({}));
       if (!response.ok) {
@@ -391,6 +413,77 @@ export function CommercialAdminConsole(props: {
       await loadOperations(activeToken);
     } catch (revokeError) {
       setError(revokeError instanceof Error ? revokeError.message : "entitlement_revoke_failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function onRenewOrReactivate(customer: CommercialAdminCustomerListItem, confirmed = false) {
+    if (!canOperate || !isSessionMode || !customer.inviteId || !customer.tenantId) {
+      return;
+    }
+    if (!confirmed) {
+      setPendingRenewEmail(customer.email);
+      setRenewPaidThrough("");
+      return;
+    }
+    const paidThrough = renewPaidThrough.trim() ? new Date(renewPaidThrough).toISOString() : "";
+    if (!paidThrough) {
+      setError("paid_through_required");
+      return;
+    }
+    setPendingRenewEmail(null);
+    setError(null);
+    setBusy(true);
+    try {
+      const response = await authenticatedMutationFetch("/api/commercial/admin/manual-entitlements", {
+        method: "POST",
+        mutationKind: "other",
+        headers: requestHeaders(),
+        body: JSON.stringify({
+          action: customer.primaryAction === "reactivate" ? "reactivate" : "renew",
+          inviteId: customer.inviteId,
+          paymentReference: `${customer.primaryAction === "reactivate" ? "admin-reactivate" : "admin-renew"}-${customer.inviteId}`,
+          paidThrough,
+          requestId: `${customer.primaryAction === "reactivate" ? "admin-reactivate-req" : "admin-renew-req"}-${customer.inviteId}-${crypto.randomUUID()}`,
+          expectedRevision: customer.revision,
+        }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(payload.error ?? "manual_entitlement_failed");
+      }
+      setRenewPaidThrough("");
+      await loadOperations(activeToken);
+    } catch (renewError) {
+      setError(renewError instanceof Error ? renewError.message : "manual_entitlement_failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function onSendPasswordRecovery(email: string) {
+    if (!canOperate || !isSessionMode) {
+      return;
+    }
+    setError(null);
+    setBusy(true);
+    try {
+      const response = await authenticatedMutationFetch("/api/commercial/admin/invites", {
+        method: "POST",
+        mutationKind: "other",
+        headers: requestHeaders(),
+        body: JSON.stringify({
+          command: "send_password_recovery",
+          email,
+        }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(payload.error ?? "password_recovery_failed");
+      }
+    } catch (recoveryError) {
+      setError(recoveryError instanceof Error ? recoveryError.message : "password_recovery_failed");
     } finally {
       setBusy(false);
     }
@@ -528,7 +621,8 @@ export function CommercialAdminConsole(props: {
         <div>
           <h1 className="text-2xl font-semibold text-stone-900">Ticari yönetim</h1>
           <p className="mt-1 text-sm text-stone-600">
-            Invite yönetimi, abonelik durumu, billing ledger inceleme ve mobil kurulum erişimi iptali.
+            Müşteri listesi, e-posta araması, davet, erişim kapatma ve yenileme. Stripe kayıtları ayrı kalıntı
+            olarak görünür.
           </p>
           {isSessionMode && props.sessionEmail ? (
             <p className="mt-1 text-xs text-stone-500">Oturum: {props.sessionEmail}</p>
@@ -551,6 +645,7 @@ export function CommercialAdminConsole(props: {
               onClick={() => {
                 setSessionToken(null);
                 setInvites([]);
+                setCustomers([]);
                 setSubscriptions([]);
                 setLedger([]);
                 setLeads([]);
@@ -615,6 +710,163 @@ export function CommercialAdminConsole(props: {
           </CardBody>
         </Card>
       </div>
+
+      <Card>
+        <CardHeader
+          title="Müşteriler"
+          description="E-posta ile arayın. Her satırda tek bağlamsal işlem vardır. Duplicate davet oluşturulmaz."
+          icon={Search}
+        />
+        <CardBody className="space-y-4">
+          <form
+            className="flex flex-wrap items-end gap-3"
+            onSubmit={(event) => {
+              event.preventDefault();
+              void onRefresh();
+            }}
+          >
+            <div className="min-w-56 flex-1">
+              <Field label="E-posta ara" htmlFor="customer-search-email">
+                <TextInput
+                  id="customer-search-email"
+                  type="search"
+                  value={customerSearch}
+                  onChange={(event) => setCustomerSearch(event.target.value)}
+                  placeholder="musteri@ornek.com"
+                />
+              </Field>
+            </div>
+            <Button type="submit" variant="secondary" icon={Search} disabled={busy}>
+              Ara
+            </Button>
+          </form>
+          {customers.length === 0 ? (
+            <p className="text-sm text-stone-600">Müşteri kaydı yok.</p>
+          ) : (
+            customers.map((customer) => (
+              <div
+                key={`${customer.email}-${customer.tenantId ?? customer.inviteId ?? "none"}`}
+                className="rounded-lg border border-stone-200 p-3"
+              >
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium text-stone-900">{customer.email}</p>
+                    <p className="text-xs text-stone-500">
+                      Workspace: {customer.tenantName ?? "—"} · Erişim: {customer.accessLabel}
+                    </p>
+                    <p className="text-xs text-stone-500">
+                      Bitiş: {formatTimestamp(customer.paidThrough)} · Revision: {customer.revision ?? "—"}
+                    </p>
+                    {customer.ambiguousTenantMatch ? (
+                      <p className="mt-1 text-xs text-stone-600">
+                        Birden fazla çalışma alanı bulundu. Otomatik işlem yapılmaz.
+                      </p>
+                    ) : null}
+                  </div>
+                  {isSessionMode ? (
+                    <div className="flex flex-wrap gap-2">
+                      {customer.primaryAction === "revoke" && customer.tenantId && customer.revision !== null ? (
+                        pendingRevokeTenantId === customer.tenantId ? (
+                          <div className="rounded-lg border border-line bg-surface-muted p-3 text-sm text-ink">
+                            <p className="font-medium">Erişimi kapat</p>
+                            <p className="mt-1">
+                              Auth hesabı ve sağlık verisi silinmez. Dashboard ve API erişimi kapanır.
+                            </p>
+                            <div className="mt-3 flex flex-wrap gap-2">
+                              <Button
+                                size="sm"
+                                variant="danger"
+                                disabled={busy}
+                                onClick={() =>
+                                  void onRevokeEntitlement(customer.tenantId ?? "", customer.revision ?? 0, true)
+                                }
+                              >
+                                Erişimi kapat
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                disabled={busy}
+                                onClick={() => setPendingRevokeTenantId(null)}
+                              >
+                                Vazgeç
+                              </Button>
+                            </div>
+                          </div>
+                        ) : (
+                          <Button
+                            size="sm"
+                            variant="danger"
+                            disabled={busy}
+                            onClick={() =>
+                              void onRevokeEntitlement(customer.tenantId ?? "", customer.revision ?? 0)
+                            }
+                          >
+                            Erişimi kapat
+                          </Button>
+                        )
+                      ) : null}
+                      {(customer.primaryAction === "renew" || customer.primaryAction === "reactivate") &&
+                      customer.inviteId ? (
+                        pendingRenewEmail === customer.email ? (
+                          <form
+                            className="space-y-2 rounded-lg border border-line bg-surface-muted p-3"
+                            onSubmit={(event) => {
+                              event.preventDefault();
+                              void onRenewOrReactivate(customer, true);
+                            }}
+                          >
+                            <p className="font-medium">Erişimi yenile</p>
+                            <Field label="Erişim bitişi" htmlFor={`renew-paid-through-${customer.email}`}>
+                              <TextInput
+                                id={`renew-paid-through-${customer.email}`}
+                                type="datetime-local"
+                                value={renewPaidThrough}
+                                onChange={(event) => setRenewPaidThrough(event.target.value)}
+                                required
+                              />
+                            </Field>
+                            <div className="flex flex-wrap gap-2">
+                              <Button type="submit" size="sm" disabled={busy || !renewPaidThrough}>
+                                Erişimi yenile
+                              </Button>
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="ghost"
+                                disabled={busy}
+                                onClick={() => setPendingRenewEmail(null)}
+                              >
+                                Vazgeç
+                              </Button>
+                            </div>
+                          </form>
+                        ) : (
+                          <Button
+                            size="sm"
+                            disabled={busy}
+                            onClick={() => void onRenewOrReactivate(customer)}
+                          >
+                            Erişimi yenile
+                          </Button>
+                        )
+                      ) : null}
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        disabled={busy}
+                        onClick={() => void onSendPasswordRecovery(customer.email)}
+                      >
+                        Şifre sıfırlama bağlantısı gönder
+                      </Button>
+                    </div>
+                  ) : null}
+                </div>
+              </div>
+            ))
+          )}
+        </CardBody>
+      </Card>
 
       <Card>
         <CardHeader
@@ -683,7 +935,7 @@ export function CommercialAdminConsole(props: {
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
-          <CardHeader title="Yeni davet oluştur" description="Token yalnızca oluşturma anında gösterilir." icon={UserPlus} />
+          <CardHeader title="Müşteri davet et" description="Yeni müşteriye tek kurulum e-postası gönderilir. Duplicate hesap oluşturulmaz." icon={UserPlus} />
           <CardBody>
             <form className="space-y-4" onSubmit={onCreateInvite}>
               <Field label="E-posta" htmlFor="create-invite-email">
@@ -702,12 +954,13 @@ export function CommercialAdminConsole(props: {
                   onChange={(event) => setCreateTenantName(event.target.value)}
                 />
               </Field>
-              <Field label="Davet kodu (opsiyonel)" htmlFor="create-invite-token">
+              <Field label="Erişim bitişi" htmlFor="create-invite-paid-through">
                 <TextInput
-                  id="create-invite-token"
-                  value={createInviteToken}
-                  onChange={(event) => setCreateInviteToken(event.target.value)}
-                  placeholder="Boş bırakılırsa otomatik üretilir"
+                  id="create-invite-paid-through"
+                  type="datetime-local"
+                  value={createPaidThrough}
+                  onChange={(event) => setCreatePaidThrough(event.target.value)}
+                  required
                 />
               </Field>
               <Field label="Son geçerlilik (opsiyonel)" htmlFor="create-invite-expires">
@@ -718,18 +971,21 @@ export function CommercialAdminConsole(props: {
                   onChange={(event) => setCreateExpiresAt(event.target.value)}
                 />
               </Field>
-              <Button type="submit" disabled={busy || !createEmail.trim()} icon={UserPlus}>
-                Davet oluştur
+              <Button
+                type="submit"
+                disabled={busy || !isSessionMode || !createEmail.trim() || !createPaidThrough}
+                icon={UserPlus}
+              >
+                Müşteri davet et
               </Button>
             </form>
             {createdInvite ? (
               <div className="mt-4 rounded-lg border border-sage/30 bg-sage/10 p-4 text-sm text-ink" role="status">
-                <p className="font-medium">Davet oluşturuldu</p>
-                <p className="mt-2 break-all">
-                  E-posta: <span className="font-mono">{createdInvite.invite.normalizedEmail}</span>
+                <p className="font-medium">
+                  {createdInvite.resent ? "Kurulum e-postası yeniden gönderildi" : "Kurulum daveti gönderildi"}
                 </p>
-                <p className="mt-1 break-all">
-                  Davet kodu: <span className="font-mono">{createdInvite.inviteToken}</span>
+                <p className="mt-2 break-all">
+                  E-posta: <span className="font-mono">{createdInvite.email}</span>
                 </p>
               </div>
             ) : null}
@@ -766,10 +1022,16 @@ export function CommercialAdminConsole(props: {
                     id="manual-entitlement-action"
                     className="min-h-11 w-full rounded-md border border-border bg-white px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
                     value={manualAction}
-                    onChange={(event) => setManualAction(event.target.value === "renew" ? "renew" : "activate")}
+                    onChange={(event) => {
+                      const value = event.target.value;
+                      setManualAction(
+                        value === "renew" ? "renew" : value === "reactivate" ? "reactivate" : "activate",
+                      );
+                    }}
                   >
                     <option value="activate">Aktive et</option>
                     <option value="renew">Yenile</option>
+                    <option value="reactivate">Yeniden aç</option>
                   </select>
                 </Field>
                 <Field label="Ödeme referansı" htmlFor="manual-payment-reference">
@@ -830,7 +1092,7 @@ export function CommercialAdminConsole(props: {
                         </p>
                       ) : null}
                     </div>
-                    {invite.status === "active" ? (
+                    {invite.status === "active" && isSessionMode ? (
                       <Button
                         size="sm"
                         variant="danger"
@@ -880,7 +1142,7 @@ export function CommercialAdminConsole(props: {
                     Stripe abonelik: {subscription.stripeSubscriptionId ?? "—"}
                   </p>
                   <div className="mt-3 space-y-2">
-                    {canAdminRevokeAppAccess(subscription.entitlementStatus) ? (
+                    {isSessionMode && canAdminRevokeAppAccess(subscription.entitlementStatus) ? (
                       pendingRevokeTenantId === subscription.tenantId ? (
                         <div className="rounded-lg border border-line bg-surface-muted p-3 text-sm text-ink">
                           <p className="font-medium">Erişimi kapat</p>
@@ -893,7 +1155,13 @@ export function CommercialAdminConsole(props: {
                               size="sm"
                               variant="danger"
                               disabled={busy}
-                              onClick={() => void onRevokeEntitlement(subscription.tenantId, true)}
+                              onClick={() =>
+                                void onRevokeEntitlement(
+                                  subscription.tenantId,
+                                  subscription.revision ?? 0,
+                                  true,
+                                )
+                              }
                             >
                               Erişimi kapat
                             </Button>
@@ -912,7 +1180,9 @@ export function CommercialAdminConsole(props: {
                           size="sm"
                           variant="danger"
                           disabled={busy}
-                          onClick={() => void onRevokeEntitlement(subscription.tenantId)}
+                          onClick={() =>
+                            void onRevokeEntitlement(subscription.tenantId, subscription.revision ?? 0)
+                          }
                         >
                           Erişimi kapat
                         </Button>

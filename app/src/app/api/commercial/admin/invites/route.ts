@@ -1,18 +1,29 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { evaluateCommercialAdminAccess } from "@/lib/commercial-admin-access";
 import {
-  createCommercialAdminInvite,
+  evaluateCommercialAdminAccess,
+  evaluateCommercialAdminAllowlistSessionAccess,
+} from "@/lib/commercial-admin-access";
+import {
+  inviteCommercialAdminCustomer,
   isCommercialAdminStoreConfigured,
+  listCommercialAdminCustomers,
   listCommercialAdminInvites,
+  requestCommercialAdminPasswordRecovery,
   revokeCommercialAdminInvite,
 } from "@/lib/commercial-admin-store";
+import {
+  isCommercialAdminSameOriginRequest,
+} from "@/lib/phase-83f-commercial-admin";
 import { getSupabaseAdminClient } from "@/lib/supabase";
 
-type CreateInviteBody = {
+type InviteMutationBody = {
+  command?: string;
   email?: string;
-  inviteToken?: string;
   tenantName?: string;
+  paidThrough?: string | null;
   expiresAt?: string | null;
+  inviteToken?: string;
+  sendPasswordRecovery?: boolean;
 };
 
 function adminUnauthorized(blockingReasons: string[]) {
@@ -24,6 +35,13 @@ function adminUnauthorized(blockingReasons: string[]) {
 
 function adminUnavailable() {
   return NextResponse.json({ error: "commercial_admin_not_configured" }, { status: 503 });
+}
+
+function originForbidden() {
+  return NextResponse.json(
+    { error: "origin_mismatch", blockingReasons: ["same_origin_required"] },
+    { status: 403 },
+  );
 }
 
 export async function GET(request: NextRequest) {
@@ -41,22 +59,35 @@ export async function GET(request: NextRequest) {
   }
 
   const limit = Number(request.nextUrl.searchParams.get("limit") ?? "50");
-  const invites = await listCommercialAdminInvites(admin, { limit: Number.isFinite(limit) ? limit : 50 });
-  return NextResponse.json({ invites });
+  const email = request.nextUrl.searchParams.get("email");
+  const safeLimit = Number.isFinite(limit) ? limit : 50;
+  const [invites, customers] = await Promise.all([
+    listCommercialAdminInvites(admin, { limit: safeLimit }),
+    listCommercialAdminCustomers(admin, { email, limit: safeLimit }),
+  ]);
+  return NextResponse.json({ invites, customers });
 }
 
 export async function POST(request: NextRequest) {
-  const access = await evaluateCommercialAdminAccess(request);
+  const access = await evaluateCommercialAdminAllowlistSessionAccess(request);
   if (!access.allowed) {
     return adminUnauthorized(access.blockingReasons);
+  }
+  if (
+    !isCommercialAdminSameOriginRequest({
+      origin: request.headers.get("origin"),
+      host: request.headers.get("host"),
+    })
+  ) {
+    return originForbidden();
   }
   if (!isCommercialAdminStoreConfigured()) {
     return adminUnavailable();
   }
 
-  let body: CreateInviteBody;
+  let body: InviteMutationBody;
   try {
-    body = (await request.json()) as CreateInviteBody;
+    body = (await request.json()) as InviteMutationBody;
   } catch {
     return NextResponse.json({ error: "invalid_json" }, { status: 400 });
   }
@@ -70,29 +101,59 @@ export async function POST(request: NextRequest) {
     return adminUnavailable();
   }
 
+  const command =
+    body.command === "send_password_recovery" || body.sendPasswordRecovery === true
+      ? "send_password_recovery"
+      : "invite_customer";
+
   try {
-    const created = await createCommercialAdminInvite(admin, {
+    if (command === "send_password_recovery") {
+      const result = await requestCommercialAdminPasswordRecovery(admin, {
+        email: body.email,
+        actorSummary: access.actorSummary ?? undefined,
+      });
+      return NextResponse.json(result);
+    }
+
+    const created = await inviteCommercialAdminCustomer(admin, {
       email: body.email,
-      inviteToken: body.inviteToken,
       tenantName: body.tenantName,
+      paidThrough: body.paidThrough ?? null,
       expiresAt: body.expiresAt ?? null,
       actorSummary: access.actorSummary ?? undefined,
     });
 
     return NextResponse.json({
-      invite: created.invite,
-      inviteToken: created.inviteToken,
+      created: created.created,
+      resent: created.resent,
+      inviteId: created.inviteId,
+      email: created.email,
+      paidThrough: created.paidThrough,
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "invite_create_failed";
-    return NextResponse.json({ error: message }, { status: 400 });
+    const status =
+      message.includes("conflict") || message === "ambiguous_tenant_match"
+        ? 409
+        : message.includes("existing_") || message.includes("duplicate") || message.includes("open_invite")
+          ? 409
+          : 400;
+    return NextResponse.json({ error: message }, { status });
   }
 }
 
 export async function PATCH(request: NextRequest) {
-  const access = await evaluateCommercialAdminAccess(request);
+  const access = await evaluateCommercialAdminAllowlistSessionAccess(request);
   if (!access.allowed) {
     return adminUnauthorized(access.blockingReasons);
+  }
+  if (
+    !isCommercialAdminSameOriginRequest({
+      origin: request.headers.get("origin"),
+      host: request.headers.get("host"),
+    })
+  ) {
+    return originForbidden();
   }
   if (!isCommercialAdminStoreConfigured()) {
     return adminUnavailable();

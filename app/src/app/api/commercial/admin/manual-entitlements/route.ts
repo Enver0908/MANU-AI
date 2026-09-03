@@ -5,7 +5,7 @@ import {
   isCommercialAdminStoreConfigured,
   recordCommercialAdminOperationBlocked,
 } from "@/lib/commercial-admin-store";
-import { validateCommercialAdminManualEntitlementRequest } from "@/lib/phase-83f-commercial-admin";
+import { validateCommercialAdminManualEntitlementRequest, isCommercialAdminSameOriginRequest } from "@/lib/phase-83f-commercial-admin";
 import { getSupabaseAdminClient } from "@/lib/supabase";
 
 type ManualEntitlementBody = {
@@ -29,16 +29,10 @@ function adminUnavailable() {
 }
 
 function isSameOriginRequest(request: NextRequest) {
-  const origin = request.headers.get("origin");
-  if (!origin) return true;
-  const host = request.headers.get("host");
-  if (!host) return false;
-
-  try {
-    return new URL(origin).host === host;
-  } catch {
-    return false;
-  }
+  return isCommercialAdminSameOriginRequest({
+    origin: request.headers.get("origin"),
+    host: request.headers.get("host"),
+  });
 }
 
 export async function POST(request: NextRequest) {

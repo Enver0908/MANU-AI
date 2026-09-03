@@ -245,7 +245,10 @@ export function evaluatePhase84hQaScenario(scenario: Phase84hQaScenario): Phase8
     }
     case "admin_operations_contracts": {
       const invite = validateCommercialAdminInviteCreate({ email: "invite@example.com" });
-      const revoke = validateCommercialAdminEntitlementRevokeRequest({ tenantId: "tenant-1" });
+      const revoke = validateCommercialAdminEntitlementRevokeRequest({
+        tenantId: "tenant-1",
+        expectedRevision: 0,
+      });
       const lead = validateCommercialLeadStatusUpdate({ leadId: "lead-1", status: "contacted" });
       const cancel = validateStripeSubscriptionCancelRequest({ tenantId: "tenant-1" });
       const revokePlan = deriveCommercialAdminEntitlementRevokePlan({ entitlementStatus: "active" });

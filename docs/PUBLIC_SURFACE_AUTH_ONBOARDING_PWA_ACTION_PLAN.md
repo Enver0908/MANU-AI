@@ -419,33 +419,46 @@ Admin session is allowlist-checked. Admin APIs use service-role storage only aft
 
 ### Steps
 
-P4.1 Inventory admin capabilities:
+User-authoritative execution uses PLAN (7) `P4.1`–`P4.11`:
+
+P4.1 Inventory admin list, invite, manual entitlement, revoke, and audit chain:
 Read current admin console, admin APIs, and commercial-admin store to identify existing invite, revoke, subscriptions, ledger, and manual entitlement flows.
 
-P4.2 Define list DTO:
-Expose only customer email, tenant name, invite status, entitlement status, billing method, paid-through, created/updated dates, and safe action availability flags. Do not expose raw Stripe payloads, webhook bodies, or secrets.
+P4.2 Simplify the admin panel around the customer list and email search:
+Expose only customer email, tenant name, access label, paid-through, revision, and one contextual primary action. Do not expose raw Stripe payloads, webhook bodies, or secrets.
 
-P4.3 Add reactivation migration:
-Create append-only SQL that permits a safe `reactivate` manual entitlement operation through `apply_manual_entitlement_operation`, preserving revision checks and audit trail.
+P4.3 Block duplicate create when an auth user, open invite, or tenant already exists for that email:
+Normalize email, search existing matches, and refuse a second invite/account/tenant row.
 
-P4.4 Extend server validation:
-Extend action union from `activate|renew` to include `reactivate` only where current status is `revoked`, `expired`, or `past_due` and `paidThrough` is future when required.
+P4.4 Present new-customer invite as one command using existing secure backends in sequence:
+Create the commercial invite, provision through the existing manual `activate` RPC when needed, then send the setup email. Email failure is not shown as success; retry must not insert a duplicate invite row.
 
-P4.5 Update admin UI:
-Add simple customer table/search and action controls. Revoke must require confirmation. Reactivate/renew must collect paid-through date when manual entitlement requires it.
+P4.5 Add an append-only reactivation migration:
+Create `20260903100000_commercial_entitlement_reactivation.sql` so `apply_manual_entitlement_operation` accepts atomic `reactivate` while preserving revision checks, request-hash idempotency, and service-role-only execute.
 
-P4.6 Preserve Stripe remnants:
-Keep subscription routes/components; label them as Stripe-connected records only if already visible. Do not delete or disable Stripe paths.
+P4.6 Extend type, validator, request hash, RPC, and audit contracts for `reactivate`:
+Widen `activate|renew` to include `reactivate` only for `revoked` entitlements with a future `paidThrough`.
 
-P4.7 Test entitlement enforcement:
-Verify revoked user gets blocked on dashboard/app-install, active/reactivated user gets access, and cross-tenant/admin authorization stays denied.
+P4.7 Wire “Erişimi kapat” to the existing revoke endpoint with explicit confirmation and expected revision:
+Do not delete the auth user or health data. Stale revision returns `409`.
+
+P4.8 Run “Erişimi yenile” on the existing tenant without creating a new account:
+`reactivate` for revoked, `renew` for expired/past_due. Data is not copied.
+
+P4.9 Keep password recovery separate from entitlement actions:
+Optional “Şifre sıfırlama bağlantısı gönder” uses a distinct command and audit event, not the entitlement POST.
+
+P4.10 Verify no diff on Stripe subscription and purchase routes:
+Keep subscription GET/cancel and purchase/checkout paths unchanged.
+
+P4.11 Complete cross-tenant and unauthorized-admin tests, then evidence:
+Verify revoked users are blocked on dashboard/app-install, allowlist/same-origin mutations fail closed, and Stripe remnants remain.
 
 ### Tests
 
-- `npm test -- phase-83f-commercial-admin phase-84f-admin-console manual-entitlements`
-- `npm test -- phase-83b-commercial-entitlement-model phase-83g-entitlement-hardening`
-- `npm run test:rls` when local Supabase is available
-- Visual tests for admin console
+- `npx vitest run` for phase-83f, phase-84f, manual-entitlements, reactivation migration contract, request-hash, commercial-admin-access, phase-83b, phase-83g, phase-84h
+- `npm run test:rls` when local Supabase is available; environment-blocked is not PASS
+- Visual tests for admin/login commercial surfaces (`tests/visual/commercial-saas.visual.spec.ts --project=desktop`)
 - `npm run typecheck`
 - `npm run lint`
 - `npm run build`
@@ -457,6 +470,10 @@ Verify revoked user gets blocked on dashboard/app-install, active/reactivated us
 - Admin can revoke and reactivate/renew access locally.
 - Data is preserved while access is revoked.
 - Stripe is untouched.
+
+### Phase 4 Closure (2026-09-04)
+
+Status: `PHASE_4_CLOSED_LOCAL_ONLY`. User-authoritative execution used PLAN (7) `P4.1`–`P4.11`; every step is `IMPLEMENTED_AND_INSPECTED`. Admin `/admin` session console lists customers by email, invites a new customer as one command, closes access with confirmation and expected revision, and renews/reactivates the same tenant. Stripe subscription/purchase routes have no Phase 4 diff. The local reactivation SQL file was not applied remotely. Next eligible unit is Phase 5 only after explicit user approval. Production remains `NO-GO`.
 
 ## Phase 5 - Public Website, CTA, Brand, Domain, and Metadata Polish
 

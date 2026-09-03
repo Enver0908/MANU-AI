@@ -113,6 +113,10 @@ export function resolveAdminHostInternalPath(pathname: string) {
   return pathname.startsWith("/admin") ? pathname : "/admin";
 }
 
+export function buildAdminCustomerSetupPath(inviteId: string) {
+  return `/onboarding?invite_id=${encodeURIComponent(inviteId)}`;
+}
+
 export function summarizePhase84fAdminConsole(env: Record<string, string | undefined> = process.env) {
   return {
     phase84fVersion: PHASE_84F_VERSION,

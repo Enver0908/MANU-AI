@@ -6,6 +6,7 @@ import type {
   CommercialInviteStatus,
 } from "./phase-83b-commercial-entitlement-model";
 import {
+  evaluateCommercialEntitlementExpiry,
   normalizeCommercialEmail,
   transitionCommercialEntitlement,
   validateNormalizedCommercialEmail,
@@ -24,6 +25,8 @@ export const COMMERCIAL_ADMIN_AUDIT_EVENT_TYPES = [
   "admin_operation_blocked",
   "manual_entitlement_activated",
   "manual_entitlement_renewed",
+  "manual_entitlement_reactivated",
+  "password_recovery_requested",
 ] as const;
 
 export type CommercialAdminAuditEventType = (typeof COMMERCIAL_ADMIN_AUDIT_EVENT_TYPES)[number];
@@ -38,6 +41,96 @@ export type CommercialAdminGateInput = {
 
 export type CommercialAdminGateResult = {
   allowed: boolean;
+  blockingReasons: string[];
+};
+
+export type CommercialAdminCustomerAccessLabel =
+  | "Aktif"
+  | "Süresi dolmuş"
+  | "Erişim kapalı"
+  | "Kurulum bekliyor";
+
+export type CommercialAdminCustomerAccessState = "active" | "expired" | "revoked" | "setup_pending";
+
+export type CommercialAdminCustomerPrimaryAction = "revoke" | "renew" | "reactivate" | null;
+
+export type CommercialAdminCustomerListItem = {
+  email: string;
+  tenantName: string | null;
+  tenantId: string | null;
+  inviteId: string | null;
+  inviteStatus: CommercialInviteStatus | null;
+  entitlementStatus: CommercialEntitlementStatus | null;
+  billingMethod: CommercialBillingMethod | null;
+  accessLabel: CommercialAdminCustomerAccessLabel;
+  accessState: CommercialAdminCustomerAccessState;
+  paidThrough: string | null;
+  revision: number | null;
+  primaryAction: CommercialAdminCustomerPrimaryAction;
+  ambiguousTenantMatch: boolean;
+  createdAt: string | null;
+  updatedAt: string | null;
+};
+
+export type CommercialAdminCustomerMatchInput = {
+  normalizedEmail: string;
+  tenantIds: string[];
+  latestInvite: {
+    id: string;
+    status: CommercialInviteStatus;
+    tenantId: string | null;
+    tenantName: string | null;
+    createdAt: string;
+    updatedAt: string;
+  } | null;
+  latestEntitlement: {
+    tenantId: string;
+    status: CommercialEntitlementStatus;
+    billingMethod: CommercialBillingMethod | null;
+    paidThrough: string | null;
+    revision: number | null;
+    inviteId: string | null;
+  } | null;
+  hasOwnerMembership?: boolean;
+  now?: string;
+};
+
+export type CommercialAdminInviteDuplicateInput = {
+  normalizedEmail: string;
+  tenantIds: string[];
+  authUserId: string | null;
+  openInvite: {
+    id: string;
+    status: CommercialInviteStatus;
+    tenantId: string | null;
+  } | null;
+  latestEntitlementStatus: CommercialEntitlementStatus | null;
+  hasOwnerMembership?: boolean;
+};
+
+export type CommercialAdminInviteDuplicateDecision = {
+  canCreateInvite: boolean;
+  shouldResendSetupEmail: boolean;
+  shouldResumeProvisioning: boolean;
+  blockingReasons: string[];
+  existingInviteId: string | null;
+  existingTenantId: string | null;
+  ambiguousTenantMatch: boolean;
+};
+
+export type CommercialAdminInviteCustomerCommandInput = {
+  email?: string | null;
+  tenantName?: string | null;
+  paidThrough?: string | null;
+  expiresAt?: string | null;
+};
+
+export type CommercialAdminInviteCustomerCommandValidation = {
+  valid: boolean;
+  normalizedEmail: string;
+  tenantName: string | null;
+  paidThrough: string | null;
+  expiresAt: string | null;
   blockingReasons: string[];
 };
 
@@ -69,7 +162,7 @@ export type CommercialAdminSubscriptionSummary = {
   statusChangedAt: string | null;
 };
 
-export type CommercialAdminManualEntitlementAction = "activate" | "renew";
+export type CommercialAdminManualEntitlementAction = "activate" | "renew" | "reactivate";
 
 export type CommercialAdminManualEntitlementRequestInput = {
   action?: string | null;
@@ -104,6 +197,7 @@ export type CommercialAdminInviteCreateInput = {
   email: string;
   inviteToken?: string;
   tenantName?: string;
+  paidThrough?: string | null;
   expiresAt?: string | null;
 };
 
@@ -125,11 +219,13 @@ export type CommercialAdminInviteRevokePlan = {
 export type CommercialAdminEntitlementRevokeRequestInput = {
   tenantId?: string | null;
   mobileInstallOnly?: boolean | null;
+  expectedRevision?: number | null;
 };
 
 export type CommercialAdminEntitlementRevokeRequestValidation = {
   valid: boolean;
   tenantId: string | null;
+  expectedRevision: number | null;
   blockingReasons: string[];
 };
 
@@ -308,6 +404,9 @@ export function validateCommercialAdminInviteCreate(
   if (input.tenantName?.trim()) {
     tenantSeedMetadata.tenantName = input.tenantName.trim();
   }
+  if (input.paidThrough?.trim()) {
+    tenantSeedMetadata.paidThrough = input.paidThrough.trim();
+  }
 
   return {
     valid: blockingReasons.length === 0,
@@ -403,9 +502,16 @@ export function validateCommercialAdminEntitlementRevokeRequest(
 ): CommercialAdminEntitlementRevokeRequestValidation {
   const tenantId = input.tenantId?.trim() ?? "";
   const blockingReasons: string[] = [];
+  const expectedRevision = input.expectedRevision ?? null;
 
   if (!tenantId) {
     blockingReasons.push("tenant_id_required");
+  }
+
+  if (expectedRevision === null) {
+    blockingReasons.push("expected_revision_required");
+  } else if (!Number.isInteger(expectedRevision) || expectedRevision < 0) {
+    blockingReasons.push("expected_revision_invalid");
   }
 
   if (input.mobileInstallOnly === true) {
@@ -415,6 +521,7 @@ export function validateCommercialAdminEntitlementRevokeRequest(
   return {
     valid: blockingReasons.length === 0,
     tenantId: tenantId || null,
+    expectedRevision,
     blockingReasons,
   };
 }
@@ -424,7 +531,10 @@ export function validateCommercialAdminManualEntitlementRequest(
   options: { now?: string } = {},
 ): CommercialAdminManualEntitlementRequestValidation {
   const blockingReasons: string[] = [];
-  const action = input.action === "activate" || input.action === "renew" ? input.action : null;
+  const action =
+    input.action === "activate" || input.action === "renew" || input.action === "reactivate"
+      ? input.action
+      : null;
   const inviteId = input.inviteId?.trim() ?? "";
   const paymentReference = input.paymentReference?.trim() ?? "";
   const paidThrough = input.paidThrough?.trim() ?? "";
@@ -491,7 +601,7 @@ export function deriveCommercialAdminManualEntitlementPlan(input: {
     blockingReasons.push("invite_revoked");
   }
 
-  if (input.entitlementStatus === "revoked") {
+  if (input.entitlementStatus === "revoked" && input.action !== "reactivate") {
     blockingReasons.push("revoked_entitlement_cannot_be_reactivated_manually");
   }
 
@@ -519,6 +629,17 @@ export function deriveCommercialAdminManualEntitlementPlan(input: {
     }
     if (!Number.isNaN(currentPaidThroughMs) && requestedPaidThroughMs <= currentPaidThroughMs) {
       blockingReasons.push("paid_through_must_advance");
+    }
+  }
+
+  if (input.action === "reactivate") {
+    if (!input.inviteTenantId) {
+      blockingReasons.push("tenant_not_provisioned");
+    }
+    if (input.entitlementStatus !== "revoked") {
+      blockingReasons.push(
+        `entitlement_status_invalid_for_manual_reactivation:${input.entitlementStatus ?? "missing"}`,
+      );
     }
   }
 
@@ -562,6 +683,204 @@ export function sanitizeBillingLedgerEntryForAdmin(
     tenantId: entry.tenantId,
     processedAt: entry.processedAt,
     payloadSummary: entry.payloadSummary ?? {},
+  };
+}
+
+export function isCommercialAdminSameOriginRequest(input: {
+  origin?: string | null;
+  host?: string | null;
+}) {
+  const origin = input.origin?.trim() ?? "";
+  if (!origin) {
+    return true;
+  }
+  const host = input.host?.trim() ?? "";
+  if (!host) {
+    return false;
+  }
+  try {
+    return new URL(origin).host === host;
+  } catch {
+    return false;
+  }
+}
+
+export function validateCommercialAdminInviteCustomerCommand(
+  input: CommercialAdminInviteCustomerCommandInput,
+  options: { now?: string } = {},
+): CommercialAdminInviteCustomerCommandValidation {
+  const normalizedEmail = normalizeCommercialEmail(input.email ?? "");
+  const emailValidation = validateNormalizedCommercialEmail(normalizedEmail);
+  const blockingReasons = [...emailValidation.blockingReasons];
+  const paidThrough = input.paidThrough?.trim() ?? "";
+  const expiresAt = input.expiresAt?.trim() || null;
+  const nowMs = options.now ? new Date(options.now).getTime() : Date.now();
+  const paidThroughMs = paidThrough ? new Date(paidThrough).getTime() : Number.NaN;
+
+  if (!paidThrough) {
+    blockingReasons.push("paid_through_required");
+  } else if (Number.isNaN(paidThroughMs)) {
+    blockingReasons.push("paid_through_invalid");
+  } else if (!Number.isNaN(nowMs) && paidThroughMs <= nowMs) {
+    blockingReasons.push("paid_through_must_be_future");
+  }
+
+  if (expiresAt) {
+    const expiresMs = new Date(expiresAt).getTime();
+    if (Number.isNaN(expiresMs)) {
+      blockingReasons.push("expiresAt must be a valid ISO timestamp");
+    }
+  }
+
+  return {
+    valid: blockingReasons.length === 0,
+    normalizedEmail,
+    tenantName: input.tenantName?.trim() || null,
+    paidThrough: paidThrough || null,
+    expiresAt,
+    blockingReasons,
+  };
+}
+
+export function evaluateCommercialAdminInviteDuplicate(
+  input: CommercialAdminInviteDuplicateInput,
+): CommercialAdminInviteDuplicateDecision {
+  const uniqueTenantIds = [...new Set(input.tenantIds.filter(Boolean))];
+  const ambiguousTenantMatch = uniqueTenantIds.length > 1;
+  const existingTenantId = uniqueTenantIds.length === 1 ? uniqueTenantIds[0] : null;
+  const existingInviteId = input.openInvite?.id ?? null;
+  const blockingReasons: string[] = [];
+
+  if (ambiguousTenantMatch) {
+    blockingReasons.push("ambiguous_tenant_match");
+    return {
+      canCreateInvite: false,
+      shouldResendSetupEmail: false,
+      shouldResumeProvisioning: false,
+      blockingReasons,
+      existingInviteId,
+      existingTenantId: null,
+      ambiguousTenantMatch,
+    };
+  }
+
+  const hasOpenInvite = input.openInvite?.status === "active";
+  const hasTenant = Boolean(existingTenantId);
+  const hasAuthUser = Boolean(input.authUserId);
+  const setupPending =
+    Boolean(existingInviteId || hasTenant) &&
+    input.latestEntitlementStatus !== "revoked" &&
+    input.hasOwnerMembership !== true &&
+    (input.latestEntitlementStatus === null ||
+      input.latestEntitlementStatus === "invited" ||
+      input.latestEntitlementStatus === "checkout_started" ||
+      input.latestEntitlementStatus === "active");
+
+  if (hasTenant || hasAuthUser || hasOpenInvite || existingInviteId) {
+    if (input.latestEntitlementStatus === "revoked") {
+      blockingReasons.push("existing_customer_use_reactivate");
+    } else if (input.latestEntitlementStatus === "past_due") {
+      blockingReasons.push("existing_customer_use_renew");
+    } else if (hasTenant && input.hasOwnerMembership === true && input.latestEntitlementStatus === "active") {
+      blockingReasons.push("existing_account");
+    } else if (hasAuthUser && !existingInviteId && !hasTenant) {
+      blockingReasons.push("existing_auth_user");
+    } else if (hasOpenInvite || setupPending) {
+      blockingReasons.push("open_invite_exists");
+    } else {
+      blockingReasons.push("duplicate_customer_match");
+    }
+
+    const shouldResendSetupEmail =
+      !ambiguousTenantMatch &&
+      input.latestEntitlementStatus !== "revoked" &&
+      blockingReasons.includes("open_invite_exists");
+    const shouldResumeProvisioning =
+      shouldResendSetupEmail && Boolean(existingInviteId) && !hasTenant;
+
+    return {
+      canCreateInvite: false,
+      shouldResendSetupEmail,
+      shouldResumeProvisioning,
+      blockingReasons,
+      existingInviteId,
+      existingTenantId,
+      ambiguousTenantMatch,
+    };
+  }
+
+  return {
+    canCreateInvite: true,
+    shouldResendSetupEmail: false,
+    shouldResumeProvisioning: false,
+    blockingReasons: [],
+    existingInviteId: null,
+    existingTenantId: null,
+    ambiguousTenantMatch: false,
+  };
+}
+
+export function projectCommercialAdminCustomer(
+  input: CommercialAdminCustomerMatchInput,
+): CommercialAdminCustomerListItem {
+  const uniqueTenantIds = [...new Set(input.tenantIds.filter(Boolean))];
+  const ambiguousTenantMatch = uniqueTenantIds.length > 1;
+  const tenantId = uniqueTenantIds.length === 1 ? uniqueTenantIds[0] : null;
+  const invite = input.latestInvite;
+  const entitlement = input.latestEntitlement;
+  const hasOwnerMembership = input.hasOwnerMembership === true;
+  let accessState: CommercialAdminCustomerAccessState = "setup_pending";
+  let accessLabel: CommercialAdminCustomerAccessLabel = "Kurulum bekliyor";
+  let primaryAction: CommercialAdminCustomerPrimaryAction = null;
+
+  if (!ambiguousTenantMatch && entitlement?.status === "revoked") {
+    accessState = "revoked";
+    accessLabel = "Erişim kapalı";
+    primaryAction = "reactivate";
+  } else if (!ambiguousTenantMatch && entitlement) {
+    const expiry = evaluateCommercialEntitlementExpiry({
+      entitlementStatus: entitlement.status,
+      billingMethod: entitlement.billingMethod,
+      paidThrough: entitlement.paidThrough,
+      now: input.now,
+    });
+    if (
+      (entitlement.status === "active" || entitlement.status === "past_due") &&
+      !expiry.activeNow
+    ) {
+      accessState = "expired";
+      accessLabel = "Süresi dolmuş";
+      primaryAction = "renew";
+    } else if (entitlement.status === "active" && expiry.activeNow && hasOwnerMembership) {
+      accessState = "active";
+      accessLabel = "Aktif";
+      primaryAction = "revoke";
+    } else {
+      accessState = "setup_pending";
+      accessLabel = "Kurulum bekliyor";
+    }
+  }
+
+  if (ambiguousTenantMatch) {
+    primaryAction = null;
+  }
+
+  return {
+    email: input.normalizedEmail,
+    tenantName: invite?.tenantName ?? null,
+    tenantId: entitlement?.tenantId ?? tenantId,
+    inviteId: entitlement?.inviteId ?? invite?.id ?? null,
+    inviteStatus: invite?.status ?? null,
+    entitlementStatus: entitlement?.status ?? null,
+    billingMethod: entitlement?.billingMethod ?? null,
+    accessLabel,
+    accessState,
+    paidThrough: entitlement?.paidThrough ?? null,
+    revision: entitlement?.revision ?? null,
+    primaryAction,
+    ambiguousTenantMatch,
+    createdAt: invite?.createdAt ?? null,
+    updatedAt: invite?.updatedAt ?? null,
   };
 }
 

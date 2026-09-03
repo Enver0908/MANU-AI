@@ -1,24 +1,39 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { evaluateCommercialAdminAccess } from "@/lib/commercial-admin-access";
+import { evaluateCommercialAdminAllowlistSessionAccess } from "@/lib/commercial-admin-access";
 import {
   isCommercialAdminStoreConfigured,
   recordCommercialAdminOperationBlocked,
   revokeCommercialAdminEntitlement,
 } from "@/lib/commercial-admin-store";
-import { validateCommercialAdminEntitlementRevokeRequest } from "@/lib/phase-83f-commercial-admin";
+import {
+  isCommercialAdminSameOriginRequest,
+  validateCommercialAdminEntitlementRevokeRequest,
+} from "@/lib/phase-83f-commercial-admin";
 import { getSupabaseAdminClient } from "@/lib/supabase";
 
 type RevokeEntitlementBody = {
   tenantId?: string;
   mobileInstallOnly?: boolean;
+  expectedRevision?: number | null;
 };
 
 export async function POST(request: NextRequest) {
-  const access = await evaluateCommercialAdminAccess(request);
+  const access = await evaluateCommercialAdminAllowlistSessionAccess(request);
   if (!access.allowed) {
     return NextResponse.json(
       { error: "commercial_admin_unauthorized", blockingReasons: access.blockingReasons },
       { status: 401 },
+    );
+  }
+  if (
+    !isCommercialAdminSameOriginRequest({
+      origin: request.headers.get("origin"),
+      host: request.headers.get("host"),
+    })
+  ) {
+    return NextResponse.json(
+      { error: "origin_mismatch", blockingReasons: ["same_origin_required"] },
+      { status: 403 },
     );
   }
   if (!isCommercialAdminStoreConfigured()) {
@@ -33,7 +48,7 @@ export async function POST(request: NextRequest) {
   }
 
   const validation = validateCommercialAdminEntitlementRevokeRequest(body);
-  if (!validation.valid) {
+  if (!validation.valid || validation.tenantId === null || validation.expectedRevision === null) {
     return NextResponse.json(
       { error: validation.blockingReasons[0], blockingReasons: validation.blockingReasons },
       { status: 400 },
@@ -47,7 +62,8 @@ export async function POST(request: NextRequest) {
 
   try {
     const result = await revokeCommercialAdminEntitlement(admin, {
-      tenantId: validation.tenantId ?? "",
+      tenantId: validation.tenantId,
+      expectedRevision: validation.expectedRevision,
       actorSummary: access.actorSummary ?? undefined,
     });
     return NextResponse.json(result);
@@ -59,7 +75,12 @@ export async function POST(request: NextRequest) {
       targetTenantId: validation.tenantId,
       actorSummary: access.actorSummary ?? undefined,
     }).catch(() => undefined);
-    const status = message.includes("not found") ? 404 : 400;
+    const status =
+      message.includes("not found")
+        ? 404
+        : message.includes("conflict")
+          ? 409
+          : 400;
     return NextResponse.json({ error: message }, { status });
   }
 }
