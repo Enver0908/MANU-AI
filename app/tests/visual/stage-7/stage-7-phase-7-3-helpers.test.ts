@@ -17,7 +17,6 @@ const STAGE_7_3_SURFACES = [
   "dashboard-ai",
   "dashboard-messaging",
   "dashboard-alerts",
-  "dashboard-simulator",
   "dashboard-ai-chat",
   "dashboard-voice",
   "dashboard-forms-library",

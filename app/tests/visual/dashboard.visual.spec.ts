@@ -5,6 +5,10 @@ import {
   openMessagingSection,
   openVisibleShellNavOrHref,
   visibleShellNavButton,
+  bootstrapDashboard,
+  assertRemovedProductionChrome,
+  seedInboundSimulation,
+  reloadAuthenticatedShell,
 } from "./messaging-visual-helpers";
 
 test.describe.configure({ timeout: 120_000 });
@@ -35,10 +39,9 @@ test("public landing and purchase intro render without app data", async ({ page 
 });
 
 test("dashboard core views render in fallback mode", async ({ page }) => {
-  await page.request.post("/api/app-state");
-  await page.goto("/dashboard");
-  await expect(page.getByRole("heading", { name: "Operasyon paneli" })).toBeVisible();
-  await expect(page.getByText("Yerel güvenli mod")).toBeAttached();
+  await bootstrapDashboard(page);
+  await assertRemovedProductionChrome(page);
+  await expect(page.getByTestId("shell-header-bell")).toBeVisible();
 
   await visibleShellNavButton(page, /Danışanlar|Danisanlar/).click();
   await page.getByTestId("client-roster-item").filter({ hasText: "Mert Kaya" }).click();
@@ -80,31 +83,26 @@ test("dashboard core views render in fallback mode", async ({ page }) => {
     await expect(page.getByTestId("alerts-panel")).toBeVisible();
     await openVisibleShellNavOrHref(page, /Bildirimler/, "/dashboard?section=notifications");
     await expect(page.getByTestId("notifications-panel")).toBeVisible();
+    await openVisibleShellNavOrHref(page, /Diğer|Diger/, "/dashboard/more");
+    await expect(page.getByTestId("more-item-logout")).toBeVisible();
+    await expect(page.getByTestId("more-item-settings")).toBeVisible();
     await expect
       .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth))
       .toBe(true);
     return;
   }
 
-  await openVisibleShellNavOrHref(page, /Simülatör|Simulator/, "/dashboard?section=simulator");
-  await expect(page.getByRole("heading", { name: "Gelen mesaj simülatörü" })).toBeVisible();
-  const simulatorSection = page
-    .getByRole("heading", { name: "Gelen mesaj simülatörü" })
-    .locator("xpath=ancestor::section[1]");
-  const runInboundButton = page.getByRole("button", { name: "Gelen akışı çalıştır" });
-  await expect(runInboundButton).toBeVisible();
-  const runInboundBox = await runInboundButton.boundingBox();
-  expect(runInboundBox?.height ?? 0).toBeGreaterThanOrEqual(44);
-
-  await simulatorSection.getByRole("combobox").selectOption({ label: "Elif Demir" });
-  await simulatorSection.getByLabel("İstek anahtarı").fill(`visual-yellow-${Date.now()}`);
-  await simulatorSection.getByLabel("Gelen mesaj").fill("D vitamini takviyesi kullanayim mi?");
-  await page.getByRole("button", { name: "Gelen akışı çalıştır" }).click();
-  await expect(page.getByText("draft_for_approval")).toBeVisible();
+  await expect(page.getByTestId("shell-logout")).toBeVisible();
+  await seedInboundSimulation(page, {
+    clientId: "client-elif",
+    body: "D vitamini takviyesi kullanayim mi?",
+    idempotencyKey: `visual-yellow-${Date.now()}`,
+  });
+  await reloadAuthenticatedShell(page);
 
   await openMessagingSection(page);
   await openConversation(page, "conversation-client-elif", "client-elif");
-  await expect(page.getByTestId("conversation-yellow-draft-review")).toBeVisible();
+  await expect(page.getByTestId("conversation-yellow-draft-review")).toBeVisible({ timeout: 20_000 });
   await expect(page.getByRole("button", { name: "İncelenmiş manuel yanıtı gönder" })).toBeVisible();
 
   await conversationComposerInput(page).fill(
@@ -124,38 +122,34 @@ test("dashboard core views render in fallback mode", async ({ page }) => {
   if (dietPlanEditable) {
     await dietPlanReviewed.click();
     await expect(dietPlanReviewed).not.toBeChecked();
-  }
-
-  await openVisibleShellNavOrHref(page, /Simülatör|Simulator/, "/dashboard?section=simulator");
-  if (dietPlanEditable) {
-    await simulatorSection.getByRole("combobox").selectOption({ label: "Mert Kaya" });
-    await simulatorSection.getByLabel("İstek anahtarı").fill(`visual-safety-${Date.now()}`);
-    await simulatorSection.getByLabel("Gelen mesaj").fill("Bugun kahvaltida ne yiyebilirim?");
-    await page.getByRole("button", { name: "Gelen akışı çalıştır" }).click();
-    await expect(page.getByText("mandatory_safety_fields_missing")).toBeVisible();
-
+    await seedInboundSimulation(page, {
+      clientId: "client-mert",
+      body: "Bugun kahvaltida ne yiyebilirim?",
+      idempotencyKey: `visual-safety-${Date.now()}`,
+    });
     await visibleShellNavButton(page, /Danışanlar|Danisanlar/).click();
     await page.getByTestId("client-roster-item").filter({ hasText: "Mert Kaya" }).click();
     await visibleTestId(page, "tab-tab_ai_assistant").click();
     await dietPlanReviewed.click();
     await expect(dietPlanReviewed).toBeChecked();
-    await openVisibleShellNavOrHref(page, /Simülatör|Simulator/, "/dashboard?section=simulator");
   }
-  await simulatorSection.getByRole("combobox").selectOption({ label: "Mert Kaya" });
-  await simulatorSection.getByLabel("İstek anahtarı").fill(`visual-red-${Date.now()}`);
-  await simulatorSection.getByLabel("Gelen mesaj").fill("Alerjiden nefes alamiyorum, bogazim sisti.");
-  await page.getByRole("button", { name: "Gelen akışı çalıştır" }).click();
-  await expect(page.getByText("handoff").first()).toBeVisible();
 
-  await simulatorSection.getByRole("combobox").selectOption({ label: "Elif Demir" });
-  await simulatorSection.getByLabel("İstek anahtarı").fill(`visual-notification-first-${Date.now()}`);
-  await simulatorSection.getByLabel("Gelen mesaj").fill("Yeni taslak bildirimini hazirla.");
-  await page.getByRole("button", { name: "Gelen akışı çalıştır" }).click();
-  await expect(page.getByText("draft_for_approval")).toBeVisible();
-  await simulatorSection.getByLabel("İstek anahtarı").fill(`visual-notification-second-${Date.now()}`);
-  await simulatorSection.getByLabel("Gelen mesaj").fill("Ayni taslagi yeniden degerlendir.");
-  await page.getByRole("button", { name: "Gelen akışı çalıştır" }).click();
-  await expect(page.getByText("draft_for_approval")).toBeVisible();
+  await seedInboundSimulation(page, {
+    clientId: "client-mert",
+    body: "Alerjiden nefes alamiyorum, bogazim sisti.",
+    idempotencyKey: `visual-red-${Date.now()}`,
+  });
+  await seedInboundSimulation(page, {
+    clientId: "client-elif",
+    body: "Yeni taslak bildirimini hazirla.",
+    idempotencyKey: `visual-notification-first-${Date.now()}`,
+  });
+  await seedInboundSimulation(page, {
+    clientId: "client-elif",
+    body: "Ayni taslagi yeniden degerlendir.",
+    idempotencyKey: `visual-notification-second-${Date.now()}`,
+  });
+  await reloadAuthenticatedShell(page);
 
   await visibleShellNavButton(page, /Uyarılar|Uyarilar/).click();
   await expect(page.getByTestId("alerts-panel")).toBeVisible();
@@ -228,6 +222,16 @@ test("dashboard core views render in fallback mode", async ({ page }) => {
       .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth))
       .toBe(true);
   }
+});
+
+test("retired simulator query section redirects to dashboard home", async ({ page }) => {
+  await page.request.post("/api/app-state");
+  await page.goto("/dashboard?section=simulator");
+  await expect(page).toHaveURL(/\/dashboard\/?$/);
+  await expect(page.getByRole("heading", { name: "Günlük iş girişi" })).toBeVisible();
+  await expect(page.getByTestId("visual-simulator-panel")).toHaveCount(0);
+  await expect(page.getByTestId("voice-simulator-panel")).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "Gelen mesaj simülatörü" })).toHaveCount(0);
 });
 
 test("purchase success and cancel pages render without app data", async ({ page }) => {

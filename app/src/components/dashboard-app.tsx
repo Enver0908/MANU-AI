@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { RefreshCcw } from "lucide-react";
 import type {
   Channel,
   ClientContextUpdateImportance,
@@ -17,7 +16,6 @@ import { useStage4B2Messaging } from "@/lib/use-stage-4b2-messaging";
 import { AppRequestError } from "@/lib/app-errors";
 import { createAiChatConversation, generateAiChatRequestId } from "@/lib/use-ai-chat";
 import type { ClinicalAlertListItem, SystemNotificationListItem } from "@/lib/phase-85-stage-4b-contracts";
-import type { OperationalFoundationInspectionDto } from "@/lib/phase-85-if-h-operational-visibility";
 import {
   getClientFoodRuleProfileV2Record,
   getClientFoodRuleProfileV2State,
@@ -35,12 +33,9 @@ import { type SupportedLanguageCode } from "@/lib/languages";
 import { t } from "@/lib/i18n";
 import type { CommercialEntitlementStatus } from "@/lib/phase-83b-commercial-entitlement-model";
 import {
-  SelectInput,
   fromDateTimeLocal,
-  languageOptions,
   parseAnswerLines,
   parseSchemaFields,
-  scenarioMessages,
 } from "@/components/dashboard/shared";
 import { DASHBOARD_MAIN_ID } from "@/lib/phase-83e6-states-polish";
 import {
@@ -50,7 +45,7 @@ import {
   dashboardSectionToShellDestination,
   mergeDashboardUrlState,
   parseClientWorkspaceTask,
-  resolveLegacyCopilotSectionRedirect,
+  resolveRetiredDashboardSectionRedirect,
   resolveMessagingRouteSelection,
   resolveStage6CommunicationDestination,
   type ClientWorkspaceTask,
@@ -75,7 +70,6 @@ import { ShellHomeLauncher } from "@/components/dashboard/shell-home-launcher";
 import { ClientWorkspace } from "@/components/dashboard/client-workspace";
 import { ConversationPanel } from "@/components/dashboard/conversation-panel";
 import { MessagingPanel } from "@/components/dashboard/messaging-panel";
-import { SimulatorPanel } from "@/components/dashboard/simulator-panel";
 import { VoicePanel } from "@/components/dashboard/voice-panel";
 import { FormsPanel } from "@/components/dashboard/forms-panel";
 import { useMobileKeyboardScroll } from "@/components/dashboard/mobile-ergonomics";
@@ -102,15 +96,11 @@ export function DashboardApp({
     removeClient,
     releaseHumanTakeover,
     activateClientAi,
-    runSimulation: runSimulationRequest,
-    runVisualSimulation: runVisualSimulationRequest,
-    runVoiceSimulation: runVoiceSimulationRequest,
     sendManualReply: sendManualReplyRequest,
     approveDraft,
     editAndSendDraft,
     dismissDraft,
     reviewSendManualFromDraft,
-    resetState,
     addVoiceSamples,
     updateVoiceSampleStatus,
     generateVoiceProfile,
@@ -121,7 +111,6 @@ export function DashboardApp({
     createMenuPlan,
     saveMenuPlan,
     activateMenuPlan,
-    updateDietitianPreferences,
     addClientContextUpdate,
     mergeConversationDetailIntoState,
     mergeConversationMutationIntoState,
@@ -139,33 +128,12 @@ export function DashboardApp({
     navigateToDestination,
     dirtySnapshot,
   } = useShellProvider();
-  const { urlState, section, navigateDashboard, openSection } = useDashboardUrl();
+  const { urlState, section, navigateDashboard } = useDashboardUrl();
   const stage4bInbox = useStage4BInbox(urlState);
-  const [operationalFoundation, setOperationalFoundation] =
-    useState<OperationalFoundationInspectionDto | null>(null);
   const [search, setSearch] = useState("");
   const [manualReply, setManualReply] = useState("");
   const [isSendingManualReply, setIsSendingManualReply] = useState(false);
   const [messagingListScrollTop, setMessagingListScrollTop] = useState<number | null>(null);
-  const [simBody, setSimBody] = useState(scenarioMessages[0].body);
-  const [simKey, setSimKey] = useState("local-1");
-  const [visualKey, setVisualKey] = useState("vis-local-1");
-  const [visualCaption, setVisualCaption] = useState("");
-  const [visualBurst, setVisualBurst] = useState("Bu öğünü yedim\nTeşekkürler");
-  const [visualFixtureSceneId, setVisualFixtureSceneId] =
-    useState<import("@/lib/phase-85-stage-4b3-vision-fixture-manifest").Stage4B3VisionFixtureSceneId>("meal_plate");
-  const [visualImageFile, setVisualImageFile] = useState<File | null>(null);
-  const [visualFlushSilence, setVisualFlushSilence] = useState(true);
-  const [voiceKey, setVoiceKey] = useState("voice-local-1");
-  const [voiceBurst, setVoiceBurst] = useState("Bu öğünü yedim\nTeşekkürler");
-  const [voiceFixtureId, setVoiceFixtureId] =
-    useState<import("@/lib/phase-85-stage-4b4-audio-fixture-resolver").Stage4B4VoiceFixtureId>("golden_voice_note");
-  const [voiceTranscriptionSceneId, setVoiceTranscriptionSceneId] =
-    useState<import("@/lib/phase-85-stage-4b4-transcription-fixture-manifest").Stage4B4TranscriptionFixtureSceneId>("meal_update_tr");
-  const [voiceFlushSilence, setVoiceFlushSilence] = useState(true);
-  const [isSimulating, setIsSimulating] = useState(false);
-  const [isVisualSimulating, setIsVisualSimulating] = useState(false);
-  const [isVoiceSimulating, setIsVoiceSimulating] = useState(false);
   const [newClientName, setNewClientName] = useState("");
   const [newClientChannel, setNewClientChannel] = useState<Channel>("whatsapp");
   const [newClientHandle, setNewClientHandle] = useState("");
@@ -254,8 +222,8 @@ export function DashboardApp({
   };
 
   useEffect(() => {
-    const legacyRedirect = resolveLegacyCopilotSectionRedirect(section);
-    if (legacyRedirect) router.replace(legacyRedirect);
+    const retiredRedirect = resolveRetiredDashboardSectionRedirect(section);
+    if (retiredRedirect) router.replace(retiredRedirect);
   }, [router, section]);
 
   useEffect(() => {
@@ -410,73 +378,21 @@ export function DashboardApp({
   const uiLanguage = state.dietitian.uiLanguage || "tr";
   const canManageAiControls =
     !authInfo || (authInfo.role !== "assistant" && authInfo.role !== "auditor");
-  const showOperationalInspection = authInfo?.role === "owner" || authInfo?.role === "admin";
-
-  useEffect(() => {
-    if (!showOperationalInspection) return;
-
-    let cancelled = false;
-    fetch("/api/operational-foundation")
-      .then((response) => (response.ok ? response.json() : null))
-      .then((payload: OperationalFoundationInspectionDto | null) => {
-        if (!cancelled) setOperationalFoundation(payload);
-      })
-      .catch(() => {
-        if (!cancelled) setOperationalFoundation(null);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [showOperationalInspection, state.channelDeliveries.length, state.handoffCases.length]);
 
   useEffect(() => {
     setHeaderSlots({
-      title: (
-        <div>
-          <p className="text-sm text-stone-500">{state.tenant.name}</p>
-          <h1 className="text-2xl font-semibold">Operasyon paneli</h1>
-        </div>
-      ),
-      actions: (
-        <>
-          <div className="w-44">
-            <SelectInput
-              label={t(uiLanguage, "dashboardLanguage")}
-              value={uiLanguage}
-              onChange={(value) => updateDietitianPreferences({ uiLanguage: value as SupportedLanguageCode })}
-              options={languageOptions}
-            />
-          </div>
-          {!canManageAiControls ? (
-            <span
-              className="inline-flex items-center rounded-lg border border-stone-200 bg-stone-50 px-3 py-2 text-sm font-medium text-stone-700"
-              data-testid="dashboard-read-only-role-label"
-              role="status"
-            >
-              {t(uiLanguage, "shellReadOnlyAssistantAuditor")}
-            </span>
-          ) : null}
-          <button
-            onClick={resetState}
-            className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm font-medium text-stone-700 transition hover:bg-stone-100"
-            type="button"
-          >
-            <RefreshCcw size={16} />
-            Demoyu sıfırla
-          </button>
-        </>
-      ),
+      actions: !canManageAiControls ? (
+        <span
+          className="inline-flex items-center rounded-lg border border-stone-200 bg-stone-50 px-3 py-2 text-sm font-medium text-stone-700"
+          data-testid="dashboard-read-only-role-label"
+          role="status"
+        >
+          {t(uiLanguage, "shellReadOnlyAssistantAuditor")}
+        </span>
+      ) : undefined,
     });
     return () => setHeaderSlots({});
-  }, [
-    canManageAiControls,
-    resetState,
-    setHeaderSlots,
-    state.tenant.name,
-    uiLanguage,
-    updateDietitianPreferences,
-  ]);
+  }, [canManageAiControls, setHeaderSlots, uiLanguage]);
 
   if (!hydrated) {
     return <DashboardLoadingSkeleton />;
@@ -607,10 +523,6 @@ export function DashboardApp({
     requestHrefNavigation(href);
   };
 
-  const navigateToSection = (nextSection: DashboardSection) => {
-    openSection(nextSection, resolvedClientId ? { clientId: resolvedClientId } : {});
-  };
-
   const setSelectedClientAiPassive = async (clientId: string) => {
     return updateClient(clientId, { aiStatus: "passive" });
   };
@@ -660,66 +572,6 @@ export function DashboardApp({
     setNewClientChannel("whatsapp");
     setNewClientLanguage("tr");
     return createdClient?.id ?? null;
-  };
-
-  const runSimulation = async () => {
-    if (!selectedClient || isSimulating || isVisualSimulating || isVoiceSimulating) return;
-    setIsSimulating(true);
-    try {
-      await runSimulationRequest({
-        clientId: selectedClient.id,
-        body: simBody,
-        idempotencyKey: simKey,
-      });
-      navigateToSection("simulator");
-    } finally {
-      setIsSimulating(false);
-    }
-  };
-
-  const runVisualSimulation = async () => {
-    if (!selectedClient || isSimulating || isVisualSimulating || isVoiceSimulating) return;
-    setIsVisualSimulating(true);
-    try {
-      await runVisualSimulationRequest({
-        clientId: selectedClient.id,
-        idempotencyKey: visualKey,
-        fixtureSceneId: visualImageFile ? undefined : visualFixtureSceneId,
-        caption: visualCaption.trim() || undefined,
-        burstMessages: visualBurst
-          .split(/\r?\n/)
-          .map((line) => line.trim())
-          .filter(Boolean),
-        flushSilence: visualFlushSilence,
-        imageFile: visualImageFile,
-      });
-      setVisualKey(`vis-sim-${Date.now()}`);
-      navigateToSection("simulator");
-    } finally {
-      setIsVisualSimulating(false);
-    }
-  };
-
-  const runVoiceSimulation = async () => {
-    if (!selectedClient || isSimulating || isVisualSimulating || isVoiceSimulating) return;
-    setIsVoiceSimulating(true);
-    try {
-      await runVoiceSimulationRequest({
-        clientId: selectedClient.id,
-        idempotencyKey: voiceKey,
-        fixtureId: voiceFixtureId,
-        transcriptionSceneId: voiceTranscriptionSceneId,
-        burstMessages: voiceBurst
-          .split(/\r?\n/)
-          .map((line) => line.trim())
-          .filter(Boolean),
-        flushSilence: voiceFlushSilence,
-      });
-      setVoiceKey(`voice-sim-${Date.now()}`);
-      navigateToSection("simulator");
-    } finally {
-      setIsVoiceSimulating(false);
-    }
   };
 
   const sendManualReply = async () => {
@@ -895,7 +747,7 @@ export function DashboardApp({
     setContextUpdateSummary("");
     setContextUpdateDetails("");
   };
-  const viewsWithMobileStickyActions: DashboardSection[] = ["messages", "simulator"];
+  const viewsWithMobileStickyActions: DashboardSection[] = ["messages"];
   const mainMobilePadding = viewsWithMobileStickyActions.includes(section)
     ? "lg:pb-5"
     : "pb-mobile-nav lg:pb-5";
@@ -921,10 +773,6 @@ export function DashboardApp({
                 ) : null}
                 <OverviewPanel
                   selectedClient={selectedClient}
-                  state={state}
-                  uiLanguage={uiLanguage}
-                  showInspectionDetails={showOperationalInspection}
-                  operationalFoundation={showOperationalInspection ? operationalFoundation : null}
                   pendingMessageCount={
                     bootstrap?.homeActions.find((action) => action.id === "messages")?.count ??
                     stage4bMessaging.unreadMessageCount
@@ -1096,7 +944,6 @@ export function DashboardApp({
                       onReviewSendManualFromDraft={(messageId, body) =>
                         runConversationMutation(() => reviewSendManualFromDraft(messageId, body))
                       }
-                      onOpenSimulator={() => navigateToSection("simulator")}
                       onOpenClientWorkspace={() =>
                         void openCommunicationDestination({
                           section: "clients",
@@ -1124,55 +971,6 @@ export function DashboardApp({
                     </div>
                   ) : null
                 }
-              />
-            )}
-
-            {section === "simulator" && !selectedClient ? (
-              <EmptyState
-                title="Danışan seçilmedi"
-                message="Simülatör için önce aktif danışanı seçin. Otomatik seçim yapılmaz."
-              />
-            ) : null}
-
-            {section === "simulator" && selectedClient && (
-              <SimulatorPanel
-                state={state}
-                selectedClient={selectedClient}
-                clients={activeClients}
-                simBody={simBody}
-                simKey={simKey}
-                visualKey={visualKey}
-                visualCaption={visualCaption}
-                visualBurst={visualBurst}
-                visualFixtureSceneId={visualFixtureSceneId}
-                visualImageFile={visualImageFile}
-                visualFlushSilence={visualFlushSilence}
-                voiceKey={voiceKey}
-                voiceBurst={voiceBurst}
-                voiceFixtureId={voiceFixtureId}
-                voiceTranscriptionSceneId={voiceTranscriptionSceneId}
-                voiceFlushSilence={voiceFlushSilence}
-                isSimulating={isSimulating}
-                isVisualSimulating={isVisualSimulating}
-                isVoiceSimulating={isVoiceSimulating}
-                onSelectClient={(clientId) => selectClient(clientId, { section: "simulator" })}
-                onSimBody={setSimBody}
-                onSimKey={setSimKey}
-                onVisualKey={setVisualKey}
-                onVisualCaption={setVisualCaption}
-                onVisualBurst={setVisualBurst}
-                onVisualFixtureSceneId={setVisualFixtureSceneId}
-                onVisualImageFile={setVisualImageFile}
-                onVisualFlushSilence={setVisualFlushSilence}
-                onVoiceKey={setVoiceKey}
-                onVoiceBurst={setVoiceBurst}
-                onVoiceFixtureId={setVoiceFixtureId}
-                onVoiceTranscriptionSceneId={setVoiceTranscriptionSceneId}
-                onVoiceFlushSilence={setVoiceFlushSilence}
-                onRun={runSimulation}
-                onRunVisual={runVisualSimulation}
-                onRunVoice={runVoiceSimulation}
-                onOpenConversation={() => navigateToSection("messages")}
               />
             )}
 

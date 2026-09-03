@@ -49,6 +49,16 @@ export function resolveLegacyCopilotSectionRedirect(section: DashboardSection): 
   return section === "copilot" ? AI_CHAT_ROOT_PATH : null;
 }
 
+/**
+ * Retired production-surface query sections. Simulator has no dedicated route
+ * file; `?section=simulator` must not render and is replaced with `/dashboard`.
+ */
+export function resolveRetiredDashboardSectionRedirect(section: DashboardSection): string | null {
+  if (section === "copilot") return AI_CHAT_ROOT_PATH;
+  if (section === "simulator") return DASHBOARD_ROOT_PATH;
+  return null;
+}
+
 export type ClientWorkspaceSection = "summary" | "forms" | "nutrition" | "menu" | "ai";
 export type ClientWorkspaceTask = ClientWorkspaceSection | "context" | "export";
 export type ClientWorkspaceStage = "list" | "hub" | "task";

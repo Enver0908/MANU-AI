@@ -93,6 +93,13 @@ describe("phase-85-stage-5-shell-navigation", () => {
       "client_tools",
       "account",
     ]);
+    expect(dietitian.some((section) => section.items.some((item) => item.id === "simulator"))).toBe(
+      false,
+    );
+    expect(dietitian.find((section) => section.id === "account")?.items.map((item) => item.id)).toEqual([
+      "settings",
+      "logout",
+    ]);
     const aiChat = dietitian[0]?.items.find((item) => item.id === "ai_chat");
     expect(aiChat).toMatchObject({ enabled: false, disabledReason: "feature_disabled" });
 
@@ -124,11 +131,18 @@ describe("phase-85-stage-5-shell-navigation", () => {
       uiLanguage: "en",
       navigation: nav([{ id: "ai_chat" }, { id: "simulator" }, { id: "voice" }, { id: "forms" }, { id: "notifications" }, { id: "settings" }]),
     });
-    expect(owner.some((section) => section.id === "admin")).toBe(true);
-    expect(owner.find((section) => section.id === "admin")?.items[0]).toMatchObject({
-      id: "operational_foundation",
-      label: "Operational foundation",
-      href: "/dashboard?section=overview&inspection=operational",
+    expect(owner.some((section) => section.id === "admin")).toBe(false);
+    expect(owner.some((section) => section.items.some((item) => item.id === "simulator"))).toBe(false);
+    expect(owner.some((section) => section.items.some((item) => item.id === "operational_foundation"))).toBe(
+      false,
+    );
+    expect(owner.find((section) => section.id === "account")?.items.map((item) => item.id)).toEqual([
+      "settings",
+      "logout",
+    ]);
+    expect(owner.find((section) => section.id === "account")?.items.find((item) => item.id === "logout")).toMatchObject({
+      destinationId: "logout",
+      label: "Sign out",
     });
   });
 
@@ -158,6 +172,40 @@ describe("phase-85-stage-5-shell-navigation", () => {
       "more",
       "settings",
     ]);
+    expect(items.some((item) => item.destinationId === "simulator")).toBe(false);
+  });
+
+  it("keeps the wide sidebar free of simulator and operational-foundation destinations", () => {
+    const items = resolveWideSidebarNavItems({
+      role: "dietitian",
+      badges: { alerts: 0, messages: 0, notifications: 0 },
+      navigation: nav([
+        { id: "home" },
+        { id: "clients" },
+        { id: "messages" },
+        { id: "alerts" },
+        { id: "notifications" },
+        { id: "simulator" },
+        { id: "voice" },
+        { id: "forms" },
+        { id: "ai_chat" },
+        { id: "more" },
+        { id: "settings" },
+      ]),
+    });
+    expect(items.map((item) => item.destinationId)).toEqual([
+      "home",
+      "clients",
+      "messages",
+      "alerts",
+      "notifications",
+      "voice",
+      "forms",
+      "ai_chat",
+      "more",
+      "settings",
+    ]);
+    expect(items.some((item) => item.destinationId === "simulator")).toBe(false);
   });
 
   it("keeps medium rail short labels visible and includes more", () => {

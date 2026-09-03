@@ -17,6 +17,7 @@ import {
   resolveAlertsBadgeCount,
   resolveDashboardSection,
   resolveLegacyCopilotSectionRedirect,
+  resolveRetiredDashboardSectionRedirect,
   resolveMessagingRouteSelection,
   resolveMessagingUnreadBadgeCount,
   resolveStage6CommunicationDestination,
@@ -249,6 +250,13 @@ describe("phase-85-stage-4b dashboard routing", () => {
       expect(resolveLegacyCopilotSectionRedirect("copilot")).toBe(AI_CHAT_ROOT_PATH);
       expect(resolveLegacyCopilotSectionRedirect("overview")).toBeNull();
       expect(resolveLegacyCopilotSectionRedirect("messages")).toBeNull();
+    });
+
+    it("redirects retired ?section=simulator to the dashboard root and keeps copilot on AI Chat", () => {
+      expect(resolveRetiredDashboardSectionRedirect("simulator")).toBe("/dashboard");
+      expect(resolveRetiredDashboardSectionRedirect("copilot")).toBe(AI_CHAT_ROOT_PATH);
+      expect(resolveRetiredDashboardSectionRedirect("overview")).toBeNull();
+      expect(resolveRetiredDashboardSectionRedirect("messages")).toBeNull();
     });
   });
 

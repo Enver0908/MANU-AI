@@ -2,14 +2,13 @@
 
 import { useEffect, useRef, type ReactNode } from "react";
 import Link from "next/link";
-import { LogOut, Maximize2, Minimize2, ShieldCheck } from "lucide-react";
+import { LogOut, Maximize2, Minimize2 } from "lucide-react";
 import {
   DashboardCompactBottomNav,
   DashboardHeaderBell,
   DashboardMediumRailNav,
   DashboardWideSidebarNav,
 } from "@/components/dashboard/dashboard-navigation";
-import { ActiveClientControl } from "@/components/dashboard/active-client-control";
 import { useShellProvider } from "@/components/dashboard/shell-provider";
 import { AIYA_BRAND_NAME } from "@/lib/brand";
 import { DASHBOARD_MAIN_ID } from "@/lib/phase-83e6-states-polish";
@@ -146,7 +145,6 @@ export function DashboardShell({ children }: { children: ReactNode }) {
     navigateToDestination,
     setFocusMode,
     refreshBootstrap,
-    showActiveClientControl,
     updateWaiting,
     updateRequired,
     applyWaitingServiceWorkerUpdate,
@@ -234,7 +232,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
 
   if (focusMode) {
     return (
-      <div className="min-h-dvh bg-paper text-ink" data-testid="authenticated-shell">
+      <div className="min-h-dvh min-w-0 overflow-x-clip bg-paper text-ink" data-testid="authenticated-shell">
         <a href={`#${DASHBOARD_MAIN_ID}`} className="skip-link" data-testid="skip-link">
           {t(uiLanguage, "shellSkipToContent")}
         </a>
@@ -258,7 +256,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="min-h-dvh bg-paper text-ink" data-testid="authenticated-shell">
+    <div className="min-h-dvh min-w-0 overflow-x-clip bg-paper text-ink" data-testid="authenticated-shell">
       <a href={`#${DASHBOARD_MAIN_ID}`} className="skip-link" data-testid="skip-link">
         {t(uiLanguage, "shellSkipToContent")}
       </a>
@@ -320,16 +318,6 @@ export function DashboardShell({ children }: { children: ReactNode }) {
               onNavigateDestination={navigateToDestination}
             />
           </div>
-
-          <div className="border-t border-line px-5 py-4">
-            <div className="flex items-center gap-2 text-sm font-semibold text-ink">
-              <ShieldCheck size={18} className="text-sage" />
-              {t(uiLanguage, "shellLocalSafeMode")}
-            </div>
-            <p className="mt-2 text-sm leading-6 text-ink-muted">
-              {t(uiLanguage, "shellLocalSafeModeHint")}
-            </p>
-          </div>
         </aside>
 
         <main
@@ -339,18 +327,13 @@ export function DashboardShell({ children }: { children: ReactNode }) {
             className="sticky top-0 z-30 flex min-h-16 items-center border-b border-line bg-surface px-safe pt-safe min-[1200px]:min-h-14"
             data-testid="shell-header"
           >
-            <div className="flex w-full flex-col gap-3 py-3 sm:px-2 xl:flex-row xl:items-center xl:justify-between min-[1200px]:py-2">
+            <div className="flex w-full min-w-0 max-w-full flex-col gap-3 py-3 sm:px-2 xl:flex-row xl:items-center xl:justify-between min-[1200px]:py-2">
               <div className="min-w-0">
                 <div className="min-[768px]:hidden">
                   <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">{AIYA_BRAND_NAME}</p>
                 </div>
                 {headerSlots.title}
                 {headerSlots.description}
-                {showActiveClientControl ? (
-                  <div className="mt-2" data-testid="shell-active-client">
-                    <ActiveClientControl disabled={navigationLocked} />
-                  </div>
-                ) : null}
               </div>
               <div className="flex flex-wrap items-center gap-2">
                 <DashboardHeaderBell

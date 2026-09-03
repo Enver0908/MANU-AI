@@ -34,7 +34,7 @@ async function openWorkspace(page: Page) {
 test("dashboard home and client roster are WCAG 2.2 AA blocking-violation clean", async ({ page }) => {
   await page.request.post("/api/app-state");
   await page.goto("/dashboard");
-  await expect(page.getByRole("heading", { name: "Operasyon paneli" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Günlük iş girişi" })).toBeVisible();
   await assertAxeClean(page, "dashboard home");
 
   await page.goto("/dashboard?section=clients");

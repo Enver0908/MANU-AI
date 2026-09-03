@@ -1,8 +1,10 @@
 # AIya Public Surface, Auth, Onboarding, Admin and PWA Action Plan
 
-Status: `PHASE_0_BASELINE_LOCKED_LOCAL_ONLY`
+Status: `PHASE_1_CLOSED_LOCAL_ONLY`
 Created: 2026-09-03
 Authority: This plan governs the next local implementation track for AIya public surface, customer auth/onboarding, admin customer lifecycle, dashboard production cleanup, and PWA polish. It does not approve production launch.
+Phase 1 evidence: `docs/PUBLIC_SURFACE_AUTH_ONBOARDING_PWA_PHASE_1_DASHBOARD_PRODUCTION_SURFACE_EVIDENCE.md`
+Next eligible unit: Phase 2 only after explicit user approval. Production remains `NO-GO`.
 
 ## Non-Negotiable Gates
 
@@ -197,6 +199,10 @@ Run desktop and mobile Playwright visual checks for dashboard home, clients, mes
 - Core dashboard workflows remain reachable.
 - No tenant/auth/provider/billing behavior changed.
 - All required checks pass or any blocker is recorded without closing the phase.
+
+### Phase 1 Closure (2026-09-03)
+
+Status: `PHASE_1_CLOSED_LOCAL_ONLY`. User-authoritative execution used PLAN (7) `P1.1`–`P1.9`; every step is `IMPLEMENTED_AND_INSPECTED`. Visible dietitian dashboard simulator, operational-header, demo-reset, top language selector, top client picker, local-safe-mode copy, and operational-foundation counters are gone from the render tree. Backend simulator/quarantine/trust APIs remain. Unused panel files remain on disk until Phase 7. Next eligible unit is Phase 2 only after explicit user approval. Production remains `NO-GO`.
 
 ## Phase 2 - Two-Hour Secure Session Continuity
 

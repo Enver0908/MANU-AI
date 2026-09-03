@@ -55,7 +55,6 @@ export function ConversationPanel({
   onEditAndSendDraft,
   onDismissDraft,
   onReviewSendManualFromDraft,
-  onOpenSimulator,
   onOpenClientWorkspace,
   onLoadOlder,
   onLoadNewer,
@@ -93,7 +92,6 @@ export function ConversationPanel({
   onEditAndSendDraft: (messageId: string, body: string) => Promise<ManuAppState>;
   onDismissDraft: (messageId: string) => Promise<ManuAppState>;
   onReviewSendManualFromDraft: (messageId: string, body: string) => Promise<ManuAppState>;
-  onOpenSimulator: () => void;
   onOpenClientWorkspace?: () => void;
   onLoadOlder: () => void;
   onLoadNewer: () => void;
@@ -195,7 +193,6 @@ export function ConversationPanel({
       <ConversationHeader
         conversation={conversation}
         uiLanguage={uiLanguage}
-        onOpenSimulator={onOpenSimulator}
         onOpenClientWorkspace={onOpenClientWorkspace}
       />
 

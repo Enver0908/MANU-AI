@@ -4,6 +4,7 @@ import {
   openConversation,
   openMessagingSection,
   openVisibleShellNavOrHref,
+  bootstrapDashboard,
 } from "./messaging-visual-helpers";
 
 test.describe.configure({ timeout: 120_000 });
@@ -13,9 +14,7 @@ function visibleTestId(page: Page, testId: string) {
 }
 
 async function openDashboard(page: Page) {
-  await page.request.post("/api/app-state");
-  await page.goto("/dashboard");
-  await expect(page.getByRole("heading", { name: "Operasyon paneli" })).toBeVisible();
+  await bootstrapDashboard(page);
 }
 
 async function assertNoHorizontalPageScroll(page: Page) {

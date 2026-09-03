@@ -54,11 +54,11 @@ export type ShellNavVisualItem = {
   disabledReason?: string;
 };
 
-export type MoreMenuSectionId = "ai_tools" | "client_tools" | "account" | "admin";
+export type MoreMenuSectionId = "ai_tools" | "client_tools" | "account";
 
 export type MoreMenuItem = {
   id: string;
-  destinationId: ShellDestinationId | "operational_foundation";
+  destinationId: ShellDestinationId | "logout";
   label: string;
   href: string;
   enabled: boolean;
@@ -106,8 +106,7 @@ type ShellNavigationMessageKey =
   | "shellMoreSectionAiTools"
   | "shellMoreSectionClientTools"
   | "shellMoreSectionAccount"
-  | "shellMoreSectionAdmin"
-  | "shellMoreOperationalFoundation";
+  | "shellMoreLogout";
 
 const SHELL_NAVIGATION_MESSAGES: Record<SupportedLanguageCode, Record<ShellNavigationMessageKey, string>> = {
   tr: {
@@ -136,8 +135,7 @@ const SHELL_NAVIGATION_MESSAGES: Record<SupportedLanguageCode, Record<ShellNavig
     shellMoreSectionAiTools: "AI ve is araclari",
     shellMoreSectionClientTools: "Danisan araclari",
     shellMoreSectionAccount: "Hesap ve uygulama",
-    shellMoreSectionAdmin: "Owner / admin yonetimi",
-    shellMoreOperationalFoundation: "Operasyon temeli",
+    shellMoreLogout: "Oturumu kapat",
   },
   en: {
     shellNavHome: "Home",
@@ -165,8 +163,7 @@ const SHELL_NAVIGATION_MESSAGES: Record<SupportedLanguageCode, Record<ShellNavig
     shellMoreSectionAiTools: "AI and work tools",
     shellMoreSectionClientTools: "Client tools",
     shellMoreSectionAccount: "Account and app",
-    shellMoreSectionAdmin: "Owner / admin management",
-    shellMoreOperationalFoundation: "Operational foundation",
+    shellMoreLogout: "Sign out",
   },
   de: {
     shellNavHome: "Startseite",
@@ -194,8 +191,7 @@ const SHELL_NAVIGATION_MESSAGES: Record<SupportedLanguageCode, Record<ShellNavig
     shellMoreSectionAiTools: "AI- und Arbeitswerkzeuge",
     shellMoreSectionClientTools: "Klientenwerkzeuge",
     shellMoreSectionAccount: "Konto und App",
-    shellMoreSectionAdmin: "Owner-/Admin-Verwaltung",
-    shellMoreOperationalFoundation: "Operative Grundlage",
+    shellMoreLogout: "Abmelden",
   },
   fr: {
     shellNavHome: "Accueil",
@@ -223,8 +219,7 @@ const SHELL_NAVIGATION_MESSAGES: Record<SupportedLanguageCode, Record<ShellNavig
     shellMoreSectionAiTools: "Outils AI et travail",
     shellMoreSectionClientTools: "Outils client",
     shellMoreSectionAccount: "Compte et application",
-    shellMoreSectionAdmin: "Gestion owner / admin",
-    shellMoreOperationalFoundation: "Fondation operationnelle",
+    shellMoreLogout: "Se deconnecter",
   },
   es: {
     shellNavHome: "Inicio",
@@ -252,8 +247,7 @@ const SHELL_NAVIGATION_MESSAGES: Record<SupportedLanguageCode, Record<ShellNavig
     shellMoreSectionAiTools: "Herramientas AI y trabajo",
     shellMoreSectionClientTools: "Herramientas de cliente",
     shellMoreSectionAccount: "Cuenta y app",
-    shellMoreSectionAdmin: "Gestion owner / admin",
-    shellMoreOperationalFoundation: "Base operativa",
+    shellMoreLogout: "Cerrar sesion",
   },
   pt: {
     shellNavHome: "Inicio",
@@ -281,8 +275,7 @@ const SHELL_NAVIGATION_MESSAGES: Record<SupportedLanguageCode, Record<ShellNavig
     shellMoreSectionAiTools: "Ferramentas AI e trabalho",
     shellMoreSectionClientTools: "Ferramentas de cliente",
     shellMoreSectionAccount: "Conta e app",
-    shellMoreSectionAdmin: "Gestao owner / admin",
-    shellMoreOperationalFoundation: "Fundacao operacional",
+    shellMoreLogout: "Terminar sessao",
   },
   cs: {
     shellNavHome: "Domu",
@@ -310,8 +303,7 @@ const SHELL_NAVIGATION_MESSAGES: Record<SupportedLanguageCode, Record<ShellNavig
     shellMoreSectionAiTools: "AI a pracovni nastroje",
     shellMoreSectionClientTools: "Klientske nastroje",
     shellMoreSectionAccount: "Ucet a aplikace",
-    shellMoreSectionAdmin: "Sprava owner / admin",
-    shellMoreOperationalFoundation: "Operacni zaklad",
+    shellMoreLogout: "Odhlasit se",
   },
 };
 
@@ -416,7 +408,6 @@ const WIDE_SIDEBAR_ORDER: ShellDestinationId[] = [
   "messages",
   "alerts",
   "notifications",
-  "simulator",
   "voice",
   "forms",
   "ai_chat",
@@ -545,9 +536,6 @@ export function resolveMoreMenuSections(input: {
 }): MoreMenuSection[] {
   const navigation = navigationEnabledMap(input.navigation);
   const uiLanguage = input.uiLanguage ?? "tr";
-  const canReadOps =
-    hasCapability(input.role, "read_operational_foundation") ||
-    (input.capabilities?.includes("read_operational_foundation") ?? false);
 
   const aiItems: MoreMenuItem[] = [];
   const aiChat = navigation.get("ai_chat");
@@ -559,17 +547,15 @@ export function resolveMoreMenuSections(input: {
     enabled: Boolean(input.aiChatEnabled && aiChat?.enabled !== false),
     disabledReason: !input.aiChatEnabled ? "feature_disabled" : aiChat?.disabledReason,
   });
-  for (const id of ["simulator", "voice"] as const) {
-    const projected = navigation.get(id);
-    pushMoreItem(aiItems, {
-      id,
-      destinationId: id,
-      label: navMessage(uiLanguage, DESTINATION_META[id].labelKey),
-      href: hrefForDestination(id),
-      enabled: projected?.enabled !== false,
-      disabledReason: projected?.disabledReason,
-    });
-  }
+  const voice = navigation.get("voice");
+  pushMoreItem(aiItems, {
+    id: "voice",
+    destinationId: "voice",
+    label: navMessage(uiLanguage, DESTINATION_META.voice.labelKey),
+    href: hrefForDestination("voice"),
+    enabled: voice?.enabled !== false,
+    disabledReason: voice?.disabledReason,
+  });
 
   const clientItems: MoreMenuItem[] = [];
   for (const id of ["forms", "notifications"] as const) {
@@ -593,28 +579,19 @@ export function resolveMoreMenuSections(input: {
     enabled: navigation.get("settings")?.enabled !== false,
     disabledReason: navigation.get("settings")?.disabledReason,
   });
+  pushMoreItem(accountItems, {
+    id: "logout",
+    destinationId: "logout",
+    label: navMessage(uiLanguage, "shellMoreLogout"),
+    href: "/api/demo-logout",
+    enabled: true,
+  });
 
   const sections: MoreMenuSection[] = [
     { id: "ai_tools", title: navMessage(uiLanguage, "shellMoreSectionAiTools"), items: aiItems },
     { id: "client_tools", title: navMessage(uiLanguage, "shellMoreSectionClientTools"), items: clientItems },
     { id: "account", title: navMessage(uiLanguage, "shellMoreSectionAccount"), items: accountItems },
   ];
-
-  if ((input.role === "owner" || input.role === "admin") && canReadOps) {
-    sections.push({
-      id: "admin",
-      title: navMessage(uiLanguage, "shellMoreSectionAdmin"),
-      items: [
-        {
-          id: "operational_foundation",
-          destinationId: "operational_foundation",
-          label: navMessage(uiLanguage, "shellMoreOperationalFoundation"),
-          href: "/dashboard?section=overview&inspection=operational",
-          enabled: true,
-        },
-      ],
-    });
-  }
 
   return sections.filter((section) => section.items.length > 0);
 }

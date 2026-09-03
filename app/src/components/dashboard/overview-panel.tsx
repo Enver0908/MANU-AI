@@ -4,17 +4,11 @@ import {
   MessageSquareText,
   UserRound,
 } from "lucide-react";
-import type { ClientRecord, ManuAppState, SupportedLanguageCode } from "@/lib/types";
-import type { OperationalFoundationInspectionDto } from "@/lib/phase-85-if-h-operational-visibility";
+import type { ClientRecord } from "@/lib/types";
 import { ClientSummary, EmptyState } from "./shared";
-import { OperationalFoundationPanel } from "./operational-foundation-panel";
 
 export function OverviewPanel({
   selectedClient,
-  state,
-  uiLanguage,
-  showInspectionDetails,
-  operationalFoundation,
   pendingMessageCount,
   pendingAlertCount,
   pendingNotificationCount,
@@ -24,10 +18,6 @@ export function OverviewPanel({
   onOpenNotifications,
 }: {
   selectedClient?: ClientRecord;
-  state: ManuAppState;
-  uiLanguage: SupportedLanguageCode;
-  showInspectionDetails: boolean;
-  operationalFoundation?: OperationalFoundationInspectionDto | null;
   pendingMessageCount: number;
   pendingAlertCount: number;
   pendingNotificationCount: number;
@@ -94,15 +84,6 @@ export function OverviewPanel({
           )}
         </section>
       </div>
-
-      <section className="rounded-card border border-line bg-surface p-4">
-        <OperationalFoundationPanel
-          state={state}
-          uiLanguage={uiLanguage}
-          showInspectionDetails={showInspectionDetails}
-          inspection={operationalFoundation}
-        />
-      </section>
     </div>
   );
 }

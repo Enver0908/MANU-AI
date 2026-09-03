@@ -20,7 +20,7 @@ export function MorePageClient({
   aiChatEnabled: boolean;
   role: TenantRole;
 }) {
-  const { setHeaderSlots, bootstrap, navigateToDestination, requestHrefNavigation } = useShellProvider();
+  const { setHeaderSlots, bootstrap, navigateToDestination, requestHrefNavigation, requestLogout } = useShellProvider();
 
   useEffect(() => {
     setHeaderSlots({
@@ -82,11 +82,22 @@ export function MorePageClient({
                   );
                 }
 
-                if (
-                  item.destinationId === "ai_chat" ||
-                  item.destinationId === "settings" ||
-                  item.destinationId === "operational_foundation"
-                ) {
+                if (item.destinationId === "logout") {
+                  return (
+                    <li key={item.id}>
+                      <button
+                        type="button"
+                        className={`${className} text-left text-ink hover:bg-surface-muted`}
+                        data-testid="more-item-logout"
+                        onClick={() => requestLogout()}
+                      >
+                        {item.label}
+                      </button>
+                    </li>
+                  );
+                }
+
+                if (item.destinationId === "ai_chat" || item.destinationId === "settings") {
                   return (
                     <li key={item.id}>
                       <button
@@ -108,9 +119,8 @@ export function MorePageClient({
                       className={`${className} text-left text-ink hover:bg-surface-muted`}
                       data-testid={`more-item-${item.id}`}
                       onClick={() => {
-                        if (item.destinationId !== "operational_foundation") {
-                          navigateToDestination(item.destinationId);
-                        }
+                        if (item.destinationId === "logout") return;
+                        navigateToDestination(item.destinationId);
                       }}
                     >
                       {item.label}

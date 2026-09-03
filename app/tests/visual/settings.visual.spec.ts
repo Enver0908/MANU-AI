@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
+import { openVisibleShellNavOrHref } from "./messaging-visual-helpers";
 
 test.describe.configure({ timeout: 120_000 });
 
@@ -15,16 +16,23 @@ async function isCompactViewport(page: Page) {
 test("settings nav is a real route link on desktop and mobile", async ({ page }) => {
   await bootstrapSettings(page);
   await page.goto("/dashboard");
-  await expect(page.getByRole("heading", { name: "Operasyon paneli" })).toBeVisible();
+  await expect(page.getByTestId("authenticated-shell")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Günlük iş girişi" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Operasyon paneli" })).toHaveCount(0);
 
   const settingsLink = page.getByRole("link", { name: "Ayarlar" }).first();
-  await expect(settingsLink).toBeVisible();
-  await expect(settingsLink).toHaveAttribute("href", "/dashboard/settings");
-
-  await settingsLink.click();
+  if (await settingsLink.isVisible()) {
+    await expect(settingsLink).toHaveAttribute("href", "/dashboard/settings");
+    await settingsLink.click();
+  } else {
+    await openVisibleShellNavOrHref(page, /Diğer|Diger/, "/dashboard/more");
+    await expect(page.getByTestId("more-item-settings")).toBeVisible();
+    await page.getByTestId("more-item-settings").click();
+  }
   await expect(page).toHaveURL(/\/dashboard\/settings$/);
   await expect(page.getByTestId("settings-page")).toBeVisible();
   await expect(page.getByTestId("settings-fallback-banner")).toBeVisible();
+  await expect(page.getByText("Arayüz dili")).toBeVisible();
 });
 
 test("invalid settings tab deep-links fall back to profile", async ({ page }) => {

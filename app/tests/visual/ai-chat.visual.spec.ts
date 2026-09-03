@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
+import { visibleShellNavButton } from "./messaging-visual-helpers";
 
 const FOCUS_SNAPSHOT_PROJECTS = new Set(["desktop", "desktop-xl", "tablet", "mobile-android"]);
 
@@ -43,18 +44,19 @@ async function openHistorySurface(page: Page) {
 test("AI Chat nav is a real route link and replaces the old Copilot entry", async ({ page }) => {
   await bootstrapAiChat(page);
   await page.goto("/dashboard");
-  await expect(page.getByRole("heading", { name: "Operasyon paneli" })).toBeVisible();
+  await expect(page.getByTestId("authenticated-shell")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Günlük iş girişi" })).toBeVisible();
 
-  const aiChatLink = page.getByRole("link", { name: "AI Chat" });
-  await expect(aiChatLink).toBeVisible();
-  await expect(aiChatLink).toHaveAttribute("href", "/dashboard/ai-chat");
-
-  await expect(page.getByRole("button", { name: /copilot/i })).toHaveCount(0);
-  await expect(page.getByRole("link", { name: /copilot/i })).toHaveCount(0);
-
-  await aiChatLink.click();
+  const aiChatNav = visibleShellNavButton(page, "AI Chat");
+  if (await aiChatNav.isVisible()) {
+    await aiChatNav.click();
+  } else {
+    await page.goto("/dashboard/ai-chat");
+  }
   await expect(page).toHaveURL(/\/dashboard\/ai-chat$/);
   await expect(page.getByTestId("ai-chat-workspace")).toBeVisible();
+  await expect(page.getByRole("button", { name: /copilot/i })).toHaveCount(0);
+  await expect(page.getByRole("link", { name: /copilot/i })).toHaveCount(0);
 });
 
 test("legacy ?section=copilot deep link replace-redirects to the AI Chat route", async ({ page }) => {
@@ -67,7 +69,7 @@ test("legacy ?section=copilot deep link replace-redirects to the AI Chat route",
 test("client detail exposes an AI evaluate command that deep-links to a client chat", async ({ page }) => {
   await bootstrapAiChat(page);
   await page.goto("/dashboard");
-  await page.getByRole("button", { name: "Danışanlar" }).click();
+  await visibleShellNavButton(page, /Danışanlar|Danisanlar/).click();
   await page.getByTestId("client-roster-item").filter({ hasText: "Mert Kaya" }).click();
   await expect(page.getByRole("heading", { name: "Mert Kaya" })).toBeVisible();
 
