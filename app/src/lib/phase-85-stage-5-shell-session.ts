@@ -1,9 +1,19 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { AppAuthError } from "./auth-context";
+export {
+  isShellSessionInactivityLocked,
+  resolveSharedShellSessionIdleClock,
+  resolveShellForegroundSessionAction,
+  resolveShellSessionActivityHttpFailure,
+  SHELL_SESSION_INACTIVITY_MS,
+  SHELL_SESSION_INACTIVITY_SQL_INTERVAL,
+  SHELL_SESSION_LOGIN_HREF,
+  SHELL_SESSION_TOUCH_COOLDOWN_MS,
+  shouldWriteShellSessionActivityTouch,
+  type ShellServerSessionCheck,
+} from "./phase-85-stage-5-shell-session-policy";
 
 export const PHASE_85_STAGE_5_SHELL_SESSION_VERSION = "p85-stage-5-shell-session-v1";
-export const SHELL_SESSION_INACTIVITY_MS = 15 * 60_000;
-export const SHELL_SESSION_TOUCH_COOLDOWN_MS = 60_000;
 
 export type ShellSessionActivityResult = {
   sessionId: string;

@@ -1,10 +1,10 @@
 # AIya Public Surface, Auth, Onboarding, Admin and PWA Action Plan
 
-Status: `PHASE_1_CLOSED_LOCAL_ONLY`
+Status: `PHASE_2_CLOSED_LOCAL_ONLY`
 Created: 2026-09-03
 Authority: This plan governs the next local implementation track for AIya public surface, customer auth/onboarding, admin customer lifecycle, dashboard production cleanup, and PWA polish. It does not approve production launch.
-Phase 1 evidence: `docs/PUBLIC_SURFACE_AUTH_ONBOARDING_PWA_PHASE_1_DASHBOARD_PRODUCTION_SURFACE_EVIDENCE.md`
-Next eligible unit: Phase 2 only after explicit user approval. Production remains `NO-GO`.
+Phase 2 evidence: `docs/PUBLIC_SURFACE_AUTH_ONBOARDING_PWA_PHASE_2_TWO_HOUR_SESSION_EVIDENCE.md`
+Next eligible unit: Phase 3 only after explicit user approval. Production remains `NO-GO`.
 
 ## Non-Negotiable Gates
 
@@ -278,6 +278,10 @@ Verify offline lock still unmounts protected content and expired entitlement sti
 - Inactivity at or beyond two hours requires re-authentication.
 - Direct user access to session tables remains denied.
 - No external Supabase Auth setting was changed.
+
+### Phase 2 Closure (2026-09-03)
+
+Status: `PHASE_2_CLOSED_LOCAL_ONLY`. User-authoritative execution used PLAN (7) `P2.1`–`P2.9`; every step is `IMPLEMENTED_AND_INSPECTED`. Authenticated web/PWA idle timeout is two hours, server-authoritative, with a one-minute write cooldown. Hidden tabs do not keepalive. Foreground return verifies the server before any activity touch. Idle expiry clears shell state and redirects to `/login?next=/dashboard`. The append-only local migration is not applied to production. Next eligible unit is Phase 3 only after explicit user approval. Production remains `NO-GO`.
 
 ## Phase 3 - Password-First Login and Invite Setup Onboarding
 

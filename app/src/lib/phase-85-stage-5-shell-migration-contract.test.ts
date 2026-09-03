@@ -1,6 +1,10 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
+import {
+  SHELL_SESSION_INACTIVITY_MS,
+  SHELL_SESSION_INACTIVITY_SQL_INTERVAL,
+} from "./phase-85-stage-5-shell-session";
 
 const migrationPath = join(
   process.cwd(),
@@ -53,5 +57,30 @@ describe("phase-85-stage-5-shell migration contract", () => {
     expect(remediationSql).toContain("clients_stage5_shell_full_name_trgm_idx");
     expect(remediationSql).toContain("conversations_stage5_shell_tenant_client_created_idx");
     expect(remediationSql).toContain("messages_stage5_shell_unread_idx");
+  });
+});
+
+describe("public surface two-hour session idle migration contract", () => {
+  const phase2Sql = readFileSync(
+    join(process.cwd(), "supabase/migrations/20260903090000_public_surface_session_idle_timeout.sql"),
+    "utf8",
+  );
+
+  it("uses the same two-hour value as the TypeScript session contract", () => {
+    expect(SHELL_SESSION_INACTIVITY_MS).toBe(7_200_000);
+    expect(phase2Sql).toContain(SHELL_SESSION_INACTIVITY_SQL_INTERVAL);
+    expect(phase2Sql).toContain("p85_stage_5_session_inactivity_window");
+    expect(phase2Sql).toContain("p85_stage_5_record_session_activity_v2");
+    expect(phase2Sql).toContain("p85_stage_5_assert_session_activity_v1");
+    expect(phase2Sql).toContain("p85_stage_5_touch_session_activity_v1");
+    expect(phase2Sql).toContain("p85_stage_5_load_shell_bootstrap_v1");
+    expect(phase2Sql).not.toContain("interval '15 minutes'");
+    expect(phase2Sql).toContain("interval '1 minute'");
+    expect(phase2Sql).toContain(
+      "revoke all on function p85_stage_5_session_inactivity_window() from public, anon, authenticated",
+    );
+    expect(phase2Sql).toContain(
+      "grant execute on function p85_stage_5_record_session_activity_v2(text) to authenticated, service_role",
+    );
   });
 });

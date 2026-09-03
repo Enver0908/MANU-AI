@@ -97,6 +97,9 @@ describe("stage 5 shell provider reducer", () => {
       id: "ai_chat",
       enabled: true,
     });
+    const expiresAt = new Date(enabled.sessionExpiresAt).getTime();
+    expect(expiresAt - Date.now()).toBeGreaterThan(7_100_000);
+    expect(expiresAt - Date.now()).toBeLessThanOrEqual(7_200_000);
   });
 
   it("ignores stale bootstrap success and failure", () => {
@@ -129,6 +132,9 @@ describe("stage 5 shell provider reducer", () => {
 
   it("maps http failures to runtime states", () => {
     expect(mapShellBootstrapHttpFailure({ status: 401, errorCode: "session_inactive" })).toBe(
+      "session_locked",
+    );
+    expect(mapShellBootstrapHttpFailure({ status: 401, errorCode: "unauthenticated" })).toBe(
       "session_locked",
     );
     expect(mapShellBootstrapHttpFailure({ status: 403, errorCode: "entitlement_inactive" })).toBe(

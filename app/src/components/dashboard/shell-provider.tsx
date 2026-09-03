@@ -68,6 +68,13 @@ import {
 import { ShellDirtyNavigationDialog } from "@/components/dashboard/shell-dirty-navigation-dialog";
 import { ShellWebVitalsReporter } from "@/components/dashboard/shell-web-vitals-reporter";
 import { ShellPreferenceCoordinator } from "@/lib/phase-85-stage-5-shell-preference-coordinator";
+import {
+  resolveShellForegroundSessionAction,
+  resolveShellSessionActivityHttpFailure,
+  shouldWriteShellSessionActivityTouch,
+  SHELL_SESSION_LOGIN_HREF,
+  type ShellServerSessionCheck,
+} from "@/lib/phase-85-stage-5-shell-session-policy";
 
 export type ShellHeaderSlots = {
   title?: ReactNode;
@@ -209,6 +216,8 @@ export function ShellProvider({
   const currentBrowserHrefRef = useRef("");
   const bootstrapRef = useRef(state.bootstrap);
   bootstrapRef.current = state.bootstrap;
+  const runtimeRef = useRef(state.runtime);
+  runtimeRef.current = state.runtime;
   const [dirtySnapshot, setDirtySnapshot] = useReducer(
     (_prev: ShellDirtySnapshot, next: ShellDirtySnapshot) => next,
     shellDirtyRegistry.snapshot(),
@@ -242,7 +251,7 @@ export function ShellProvider({
   }
 
   const runBootstrap = useCallback(
-    (reason: "mount" | "route" | "foreground" | "explicit") => {
+    async (reason: "mount" | "route" | "foreground" | "explicit"): Promise<ShellServerSessionCheck> => {
       void reason;
       if (mode === "fallback") {
         const sequence = sequenceRef.current + 1;
@@ -260,7 +269,7 @@ export function ShellProvider({
                   aiChatEnabled: fallbackAiChatEnabled,
                 }),
         });
-        return;
+        return "active";
       }
 
       abortRef.current?.abort();
@@ -273,47 +282,62 @@ export function ShellProvider({
       // General AI Chat must not bind global client context into the request.
       const bootstrapClientId = shellDestination === "ai_chat" ? null : urlState.clientId;
 
-      void fetchShellBootstrap(bootstrapClientId, controller.signal)
-        .then((bootstrap) => {
-          bootstrapRetryRef.current = 0;
-          const nextBootstrap =
-            shellDestination === "ai_chat"
-              ? { ...bootstrap, activeClient: null }
-              : bootstrap;
-          dispatch({ type: "bootstrap_succeeded", sequence, bootstrap: nextBootstrap });
-        })
-        .catch((error: unknown) => {
-          if (controller.signal.aborted) return;
-          const status =
-            typeof error === "object" && error && "status" in error
-              ? Number((error as { status?: number }).status ?? 503)
-              : 503;
-          const errorCode =
-            typeof error === "object" && error && "errorCode" in error
-              ? String((error as { errorCode?: string }).errorCode ?? "shell_bootstrap_unavailable")
-              : error instanceof Error
-                ? error.message
-                : "shell_bootstrap_unavailable";
-          const offline =
-            typeof navigator !== "undefined" && navigator.onLine === false
-              ? true
-              : error instanceof TypeError;
-          // navigator.onLine can be true while network still fails — one short retry then unavailable.
-          if (!offline && bootstrapRetryRef.current < 1 && status >= 500) {
-            bootstrapRetryRef.current += 1;
-            window.setTimeout(() => runBootstrap("explicit"), 400);
-            return;
-          }
-          bootstrapRetryRef.current = 0;
-          dispatch({
-            type: "bootstrap_failed",
-            sequence,
-            runtime: mapShellBootstrapHttpFailure({ status, errorCode, offline }),
-            error: errorCode,
+      try {
+        const bootstrap = await fetchShellBootstrap(bootstrapClientId, controller.signal);
+        bootstrapRetryRef.current = 0;
+        const nextBootstrap =
+          shellDestination === "ai_chat" ? { ...bootstrap, activeClient: null } : bootstrap;
+        dispatch({ type: "bootstrap_succeeded", sequence, bootstrap: nextBootstrap });
+        return "active";
+      } catch (error: unknown) {
+        if (controller.signal.aborted) return "failed";
+        const status =
+          typeof error === "object" && error && "status" in error
+            ? Number((error as { status?: number }).status ?? 503)
+            : 503;
+        const errorCode =
+          typeof error === "object" && error && "errorCode" in error
+            ? String((error as { errorCode?: string }).errorCode ?? "shell_bootstrap_unavailable")
+            : error instanceof Error
+              ? error.message
+              : "shell_bootstrap_unavailable";
+        const offline =
+          typeof navigator !== "undefined" && navigator.onLine === false
+            ? true
+            : error instanceof TypeError;
+        // navigator.onLine can be true while network still fails — one short retry then unavailable.
+        if (!offline && bootstrapRetryRef.current < 1 && status >= 500) {
+          bootstrapRetryRef.current += 1;
+          await new Promise((resolve) => {
+            window.setTimeout(resolve, 400);
           });
+          return runBootstrap("explicit");
+        }
+        bootstrapRetryRef.current = 0;
+        const runtime = mapShellBootstrapHttpFailure({ status, errorCode, offline });
+        dispatch({
+          type: "bootstrap_failed",
+          sequence,
+          runtime,
+          error: errorCode,
         });
+        if (runtime === "session_locked") {
+          shellDestinationViewStateRegistry.clear();
+          router.replace(SHELL_SESSION_LOGIN_HREF);
+          return "locked";
+        }
+        return "failed";
+      }
     },
-    [fallbackAiChatEnabled, fallbackDisplayName, fallbackUiLanguage, mode, shellDestination, urlState.clientId],
+    [
+      fallbackAiChatEnabled,
+      fallbackDisplayName,
+      fallbackUiLanguage,
+      mode,
+      router,
+      shellDestination,
+      urlState.clientId,
+    ],
   );
 
   useEffect(() => {
@@ -338,13 +362,23 @@ export function ShellProvider({
   }, [pathname, searchKey, runBootstrap]);
 
   const touchSessionActivity = useCallback(async () => {
-    if (typeof document !== "undefined" && document.visibilityState !== "visible") return;
-    if (typeof navigator !== "undefined" && navigator.onLine === false) return;
-    if (state.runtime === "offline" || state.runtime === "session_locked") return;
-    if (!activityPendingRef.current) return;
-
+    const visibilityState =
+      typeof document !== "undefined" ? document.visibilityState : "hidden";
+    const online = typeof navigator === "undefined" || navigator.onLine !== false;
     const now = Date.now();
-    if (now - lastActivitySentAtRef.current < SHELL_ACTIVITY_MIN_INTERVAL_MS) return;
+    if (
+      !shouldWriteShellSessionActivityTouch({
+        visibilityState,
+        online,
+        runtime: runtimeRef.current,
+        activityPending: activityPendingRef.current,
+        nowMs: now,
+        lastActivitySentAtMs: lastActivitySentAtRef.current,
+        cooldownMs: SHELL_ACTIVITY_MIN_INTERVAL_MS,
+      })
+    ) {
+      return;
+    }
 
     activityPendingRef.current = false;
     lastActivitySentAtRef.current = now;
@@ -363,17 +397,57 @@ export function ShellProvider({
         },
         body: "{}",
       });
-      if (response.status === 401) {
-        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
-        if (payload?.error === "session_inactive") {
-          shellDestinationViewStateRegistry.clear();
-          dispatch({ type: "session_locked", error: "session_inactive" });
-        }
+      if (response.ok) return;
+      const failure = resolveShellSessionActivityHttpFailure({
+        status: response.status,
+        offline: typeof navigator !== "undefined" && navigator.onLine === false,
+      });
+      if (failure === "lock_and_redirect") {
+        shellDestinationViewStateRegistry.clear();
+        dispatch({ type: "session_locked", error: "session_inactive" });
+        router.replace(SHELL_SESSION_LOGIN_HREF);
+        return;
       }
+      if (failure === "entitlement_blocked") {
+        shellDestinationViewStateRegistry.clear();
+        dispatch({
+          type: "bootstrap_failed",
+          sequence: sequenceRef.current,
+          runtime: "entitlement_blocked",
+          error: "entitlement_inactive",
+        });
+        return;
+      }
+      if (failure === "offline") {
+        shellDestinationViewStateRegistry.clear();
+        dispatch({ type: "go_offline" });
+        return;
+      }
+      shellDestinationViewStateRegistry.clear();
+      dispatch({
+        type: "bootstrap_failed",
+        sequence: sequenceRef.current,
+        runtime: "service_unavailable",
+        error: "session_activity_failed",
+      });
     } catch {
-      // Heartbeat failures do not surface stale clinical data.
+      const failure = resolveShellSessionActivityHttpFailure({
+        status: null,
+        offline: typeof navigator !== "undefined" && navigator.onLine === false,
+      });
+      shellDestinationViewStateRegistry.clear();
+      if (failure === "offline") {
+        dispatch({ type: "go_offline" });
+        return;
+      }
+      dispatch({
+        type: "bootstrap_failed",
+        sequence: sequenceRef.current,
+        runtime: "service_unavailable",
+        error: "session_activity_failed",
+      });
     }
-  }, [state.runtime]);
+  }, [router]);
   const markActivity = useCallback(() => {
     activityPendingRef.current = true;
     void touchSessionActivity();
@@ -382,11 +456,20 @@ export function ShellProvider({
   useEffect(() => {
     const onVisibility = () => {
       if (document.visibilityState !== "visible") return;
-      // Bootstrap/session validation before heartbeat.
-      runBootstrap("foreground");
-      window.setTimeout(() => {
-        void touchSessionActivity();
-      }, 0);
+      void runBootstrap("foreground").then((serverSession) => {
+        if (document.visibilityState !== "visible") return;
+        const action = resolveShellForegroundSessionAction({
+          visibilityState: document.visibilityState,
+          serverSession,
+        });
+        if (action.lockAndRedirect || action.failClosed) {
+          return;
+        }
+        if (action.touchActivity) {
+          activityPendingRef.current = true;
+          void touchSessionActivity();
+        }
+      });
     };
     document.addEventListener("visibilitychange", onVisibility);
     return () => document.removeEventListener("visibilitychange", onVisibility);

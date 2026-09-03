@@ -1,5 +1,6 @@
 import type { ShellBootstrapDto, ShellRuntimeState } from "./phase-85-stage-5-shell-contracts";
 import { PHASE_85_STAGE_5_SHELL_CONTRACT_VERSION } from "./phase-85-stage-5-shell-contracts";
+import { SHELL_SESSION_INACTIVITY_MS } from "./phase-85-stage-5-shell-session-policy";
 
 export const PHASE_85_STAGE_5_SHELL_PROVIDER_VERSION = "p85-stage-5-shell-provider-v1";
 
@@ -91,7 +92,7 @@ export function createFallbackShellBootstrap(input?: {
       destinationState: {},
     },
     warnings: [],
-    sessionExpiresAt: new Date(Date.now() + 15 * 60_000).toISOString(),
+    sessionExpiresAt: new Date(Date.now() + SHELL_SESSION_INACTIVITY_MS).toISOString(),
   };
 }
 
@@ -186,7 +187,7 @@ export function mapShellBootstrapHttpFailure(input: {
   offline?: boolean;
 }): Exclude<ShellRuntimeState, "booting" | "ready"> {
   if (input.offline) return "offline";
-  if (input.status === 401 && input.errorCode === "session_inactive") {
+  if (input.status === 401) {
     return "session_locked";
   }
   if (input.status === 403) {

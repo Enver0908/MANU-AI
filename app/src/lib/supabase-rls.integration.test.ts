@@ -20,6 +20,7 @@ import {
   runSupabaseSimulation,
   saveSupabaseFormResponse,
 } from "./supabase-store";
+import { SHELL_SESSION_INACTIVITY_MS } from "./phase-85-stage-5-shell-session";
 
 loadEnvLocal();
 
@@ -2866,7 +2867,7 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
 
     await admin
       .from("app_session_activity")
-      .update({ last_interactive_at: new Date(Date.now() - 14 * 60_000).toISOString() })
+      .update({ last_interactive_at: new Date(Date.now() - (SHELL_SESSION_INACTIVITY_MS - 60_000)).toISOString() })
       .eq("session_id", sessionId);
 
     const assertBeforeLock = await owner.rpc("p85_stage_5_record_session_activity_v2", {
@@ -2876,7 +2877,7 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
 
     await admin
       .from("app_session_activity")
-      .update({ last_interactive_at: new Date(Date.now() - 15 * 60_000).toISOString() })
+      .update({ last_interactive_at: new Date(Date.now() - SHELL_SESSION_INACTIVITY_MS).toISOString() })
       .eq("session_id", sessionId);
 
     const assertLocked = await owner.rpc("p85_stage_5_record_session_activity_v2", {
