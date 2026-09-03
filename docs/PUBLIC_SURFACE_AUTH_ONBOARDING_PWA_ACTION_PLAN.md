@@ -1,10 +1,11 @@
 # AIya Public Surface, Auth, Onboarding, Admin and PWA Action Plan
 
-Status: `PHASE_2_CLOSED_LOCAL_ONLY`
+Status: `PHASE_3_CLOSED_LOCAL_ONLY`
 Created: 2026-09-03
 Authority: This plan governs the next local implementation track for AIya public surface, customer auth/onboarding, admin customer lifecycle, dashboard production cleanup, and PWA polish. It does not approve production launch.
 Phase 2 evidence: `docs/PUBLIC_SURFACE_AUTH_ONBOARDING_PWA_PHASE_2_TWO_HOUR_SESSION_EVIDENCE.md`
-Next eligible unit: Phase 3 only after explicit user approval. Production remains `NO-GO`.
+Phase 3 evidence: `docs/PUBLIC_SURFACE_AUTH_ONBOARDING_PWA_PHASE_3_PASSWORD_ONBOARDING_EVIDENCE.md`
+Next eligible unit: Phase 4 only after explicit user approval. Production remains `NO-GO`.
 
 ## Non-Negotiable Gates
 
@@ -371,6 +372,10 @@ Cover password login, fallback magic link, invite setup, duplicate claim, alread
 - Invite onboarding creates/claims access using fixed invited email.
 - Magic link remains fallback.
 - No self-serve registration is opened.
+
+### Phase 3 Closure (2026-09-04)
+
+Status: `PHASE_3_CLOSED_LOCAL_ONLY`. User-authoritative execution used PLAN (7) `P3.1`–`P3.10`; every step is `IMPLEMENTED_AND_INSPECTED`. Daily customer login is password-first with magic link as an explicit secondary/recovery option. Invite onboarding reads `session_id` or `invite_id`, shows invited email read-only from the status API, sets the password on the authenticated Supabase user, then calls the existing idempotent claim endpoint. Post-auth redirects allow `/app-install` and reject `/install`. Open signup was not added. Next eligible unit is Phase 4 only after explicit user approval. Production remains `NO-GO`.
 
 ## Phase 4 - Admin Customer Activation and Access Lifecycle
 

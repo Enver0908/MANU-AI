@@ -4,6 +4,13 @@ import {
   validateNormalizedCommercialEmail,
 } from "./phase-83b-commercial-entitlement-model";
 import { buildAuthCallbackUrlWithNext } from "./phase-84d-customer-auth";
+import { AccountSecurityValidationError } from "./phase-85-stage-4d-password-policy";
+
+export {
+  AccountSecurityValidationError,
+  validatePassword,
+  validatePasswordPair,
+} from "./phase-85-stage-4d-password-policy";
 
 export const PHASE_85_STAGE_4D_ACCOUNT_SECURITY_VERSION = "p85-stage-4d-account-security-v1";
 export const ACCOUNT_RECOVERY_FLOW_COOKIE_NAME = "manu_account_recovery_flow";
@@ -33,21 +40,6 @@ export const ACCOUNT_SECURITY_RATE_LIMITS = {
   emailChange: { scope: "auth_email_change" as const, limit: 4, windowMs: 60_000 },
 };
 
-const PASSWORD_COMPLEXITY =
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9])[A-Za-z\d\S]{12,128}$/;
-
-const CONTROL_CHAR_PATTERN = /[\u0000-\u001F\u007F]/;
-
-export class AccountSecurityValidationError extends Error {
-  code: string;
-
-  constructor(code: string) {
-    super(code);
-    this.name = "AccountSecurityValidationError";
-    this.code = code;
-  }
-}
-
 export function isAccountSecurityEventType(value: string): value is AccountSecurityEventType {
   return (ACCOUNT_SECURITY_EVENT_TYPES as readonly string[]).includes(value);
 }
@@ -59,31 +51,6 @@ export function validateAccountEmail(value: unknown): string {
     throw new AccountSecurityValidationError("invalid_email");
   }
   return normalized;
-}
-
-export function validatePassword(value: unknown): string {
-  if (typeof value !== "string") {
-    throw new AccountSecurityValidationError("invalid_password");
-  }
-  const trimmed = value.trim();
-  if (trimmed.length < 12 || trimmed.length > 128) {
-    throw new AccountSecurityValidationError("invalid_password");
-  }
-  if (CONTROL_CHAR_PATTERN.test(trimmed)) {
-    throw new AccountSecurityValidationError("invalid_password");
-  }
-  if (!PASSWORD_COMPLEXITY.test(trimmed)) {
-    throw new AccountSecurityValidationError("weak_password");
-  }
-  return trimmed;
-}
-
-export function validatePasswordPair(password: unknown, passwordConfirmation: unknown): string {
-  const normalizedPassword = validatePassword(password);
-  if (typeof passwordConfirmation !== "string" || passwordConfirmation.trim() !== normalizedPassword) {
-    throw new AccountSecurityValidationError("password_mismatch");
-  }
-  return normalizedPassword;
 }
 
 export function validateNonce(value: unknown): string {

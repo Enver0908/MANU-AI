@@ -16,7 +16,7 @@ export const POST_AUTH_REDIRECT_ALLOWLIST_PREFIXES = [
   "/dashboard",
   "/onboarding",
   "/settings",
-  "/install",
+  "/app-install",
   "/ai-chat",
   "/more",
   "/admin",

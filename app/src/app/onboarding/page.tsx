@@ -12,6 +12,10 @@ import {
   buildContactMailtoUrl,
 } from "@/lib/phase-84b-public-website";
 import { deriveCustomerAuthRedirect } from "@/lib/phase-84d-customer-auth";
+import {
+  buildOnboardingPathFromReference,
+  validateOnboardingClaimReference,
+} from "@/lib/phase-84e-customer-onboarding";
 import { loadClaimableCheckoutSessionForEmail } from "@/lib/commercial-onboarding-store";
 import { getSupabaseAdminClient, isSupabaseConfigured } from "@/lib/supabase";
 import { createSupabaseServerReadOnlyClient } from "@/lib/supabase-server-readonly";
@@ -23,7 +27,7 @@ export const metadata: Metadata = {
 };
 
 type OnboardingPageProps = {
-  searchParams: Promise<{ state?: string; session_id?: string }>;
+  searchParams: Promise<{ state?: string; session_id?: string; invite_id?: string }>;
 };
 
 export default async function OnboardingPage({ searchParams }: OnboardingPageProps) {
@@ -43,7 +47,7 @@ export default async function OnboardingPage({ searchParams }: OnboardingPagePro
               <p className="text-sm leading-relaxed text-muted-foreground">
                 {stage7State === "onboarding-unauthenticated"
                   ? "Devam etmek için müşteri girişi yapın."
-                  : "Ödeme doğrulandıysa çalışma alanınızı bu hesaba bağlayabilirsiniz."}
+                  : `${AIYA_BRAND_NAME} hesabınızı davet e-postasıyla oluşturun.`}
               </p>
             </div>
             <div className="flex flex-col gap-5 rounded-lg border border-border bg-surface p-6">
@@ -78,10 +82,15 @@ export default async function OnboardingPage({ searchParams }: OnboardingPagePro
   }
 
   const facts = await resolveCustomerSessionFacts(supabase);
+  const claimReference = validateOnboardingClaimReference({
+    sessionId: params.session_id,
+    inviteId: params.invite_id,
+  });
   if (!facts.isAuthenticated) {
-    const loginUrl = params.session_id
-      ? `/login?next=${encodeURIComponent(`/onboarding?session_id=${params.session_id}`)}`
-      : "/login";
+    const loginUrl =
+      claimReference.valid && claimReference.reference
+        ? `/login?next=${encodeURIComponent(buildOnboardingPathFromReference(claimReference.reference))}`
+        : "/login";
     redirect(loginUrl);
   }
 
@@ -92,7 +101,8 @@ export default async function OnboardingPage({ searchParams }: OnboardingPagePro
 
   const supportView = params.state === "support" || redirectTarget.endsWith("state=support");
   let sessionId = params.session_id ?? null;
-  if (!sessionId && facts.normalizedEmail) {
+  const inviteId = params.invite_id ?? null;
+  if (!sessionId && !inviteId && facts.normalizedEmail) {
     const admin = getSupabaseAdminClient();
     if (admin) {
       sessionId = (await loadClaimableCheckoutSessionForEmail(admin, facts.normalizedEmail)) ?? null;
@@ -106,18 +116,18 @@ export default async function OnboardingPage({ searchParams }: OnboardingPagePro
           <div className="mb-8">
             <p className="mb-2 text-xs font-semibold uppercase text-primary">Onboarding</p>
             <h1 className="mb-2 font-display text-2xl font-bold text-off-black">
-              {supportView ? "Erişim desteği gerekli" : "Çalışma alanını bağlayın"}
+              {supportView ? "Erişim desteği gerekli" : "Hesabınızı oluşturun"}
             </h1>
             <p className="text-sm leading-relaxed text-muted-foreground">
               {supportView
                 ? "Oturumunuz açık ancak bağlanacak aktif bir çalışma alanı bulunamadı."
-                : "Ödemeniz doğrulandıysa çalışma alanınızı bu hesaba bağlayabilirsiniz."}
+                : `Davet e-postanızla ${AIYA_BRAND_NAME} hesabınızı oluşturun. Şifrenizi belirledikten sonra çalışma alanınız bağlanır.`}
             </p>
           </div>
 
           <div className="flex flex-col gap-5 rounded-lg border border-border bg-surface p-6">
             {!supportView ? (
-              <OnboardingClaimPanel sessionId={sessionId} />
+              <OnboardingClaimPanel sessionId={sessionId} inviteId={inviteId} />
             ) : (
               <div className="flex items-start gap-2 rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2.5">
                 <AlertCircle size={14} className="mt-0.5 shrink-0 text-destructive" aria-hidden />

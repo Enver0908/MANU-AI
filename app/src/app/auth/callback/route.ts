@@ -63,7 +63,7 @@ function renderFragmentSessionBridge(nextPath: string | null, authErrorBase: str
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>${AIYA_BRAND_NAME} authentication</title>
+  <title>${AIYA_BRAND_NAME} giriş doğrulaması</title>
 </head>
 <body>
   <script>

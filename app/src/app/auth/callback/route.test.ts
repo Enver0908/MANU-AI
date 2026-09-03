@@ -68,6 +68,33 @@ describe("auth callback route", () => {
     expect(response.headers.get("x-supabase-auth")).toBe("exchanged");
   });
 
+  it("verifies token-hash invite setup links and preserves Supabase session cookies", async () => {
+    mocks.createSupabaseServerClient.mockImplementation(({ setAll }) => ({
+      auth: {
+        exchangeCodeForSession: vi.fn(),
+        verifyOtp: vi.fn(async () => {
+          setAll(
+            [{ name: "sb-session", value: "invite-token", options: { path: "/", httpOnly: true } }],
+            { "x-supabase-auth": "verified" },
+          );
+          return { error: null };
+        }),
+      },
+    }));
+
+    const { GET } = await import("./route");
+    const response = await GET(
+      new NextRequest(
+        "https://aiyaworkspace.com/auth/callback?token_hash=hash&type=invite&next=/onboarding%3Finvite_id%3Dinvite-123",
+      ),
+    );
+
+    expect(response.headers.get("location")).toBe(
+      "https://aiyaworkspace.com/onboarding?invite_id=invite-123",
+    );
+    expect(response.headers.get("set-cookie")).toContain("sb-session=invite-token");
+  });
+
   it("verifies token-hash magic links and preserves Supabase session cookies", async () => {
     mocks.createSupabaseServerClient.mockImplementation(({ setAll }) => ({
       auth: {

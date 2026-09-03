@@ -17,12 +17,20 @@ import {
   verifyAccountRecoveryFlowCookie,
 } from "@/lib/phase-85-stage-4d-account-security";
 import { assertRateLimit } from "@/lib/rate-limit";
-import { isSupabaseConfigured } from "@/lib/supabase";
+import { isSupabaseConfigured, getSupabaseAdminClient } from "@/lib/supabase";
+import { isCommercialBillingStoreConfigured } from "@/lib/commercial-billing-store";
+import { loadOnboardingClaimEvaluation } from "@/lib/commercial-onboarding-store";
+import {
+  canSetOnboardingPassword,
+  validateOnboardingClaimReference,
+} from "@/lib/phase-84e-customer-onboarding";
 
 type PasswordBody = {
   password?: string;
   passwordConfirmation?: string;
   nonce?: string;
+  sessionId?: string;
+  inviteId?: string;
 };
 
 export async function POST(request: NextRequest) {
@@ -86,9 +94,41 @@ export async function POST(request: NextRequest) {
     value: recoveryCookieValue,
     authUserId: user.id,
   });
-  if (!hasNonce && !hasRecoveryFlowCookie) {
+  const onboardingReference = validateOnboardingClaimReference({
+    sessionId: body.sessionId,
+    inviteId: body.inviteId,
+  });
+  const isOnboardingPasswordSetup = !hasNonce && !hasRecoveryFlowCookie && onboardingReference.valid;
+
+  if (!hasNonce && !hasRecoveryFlowCookie && !isOnboardingPasswordSetup) {
     return NextResponse.json({ error: "invalid_or_expired_nonce" }, { status: 401 });
   }
+
+  if (isOnboardingPasswordSetup) {
+    if (!isCommercialBillingStoreConfigured()) {
+      return NextResponse.json({ error: "commercial_billing_not_configured" }, { status: 503 });
+    }
+    const admin = getSupabaseAdminClient();
+    if (!admin || !onboardingReference.reference) {
+      return NextResponse.json({ error: "commercial_billing_not_configured" }, { status: 503 });
+    }
+    const { evaluation } = await loadOnboardingClaimEvaluation(admin, {
+      reference: onboardingReference.reference,
+      userId: user.id,
+      userEmail: user.email ?? null,
+      isAuthenticated: true,
+    });
+    if (!canSetOnboardingPassword(evaluation)) {
+      return NextResponse.json(
+        {
+          error: evaluation.alreadyClaimed ? "invalid_or_expired_nonce" : "onboarding_password_blocked",
+          blockingReasons: evaluation.blockingReasons,
+        },
+        { status: evaluation.alreadyClaimed ? 401 : 403 },
+      );
+    }
+  }
+
   const updatePayload = hasNonce
     ? { password, nonce: validateNonce(body.nonce) }
     : { password };
@@ -100,10 +140,10 @@ export async function POST(request: NextRequest) {
       tenantId: tenantContext?.tenantId,
       authUserId: user.id,
       dietitianId: tenantContext?.dietitianId,
-      eventType: hasNonce ? "password_updated" : "recovery_password_set",
+      eventType: hasNonce || isOnboardingPasswordSetup ? "password_updated" : "recovery_password_set",
       outcome: "failure",
       idempotencyKey: buildAccountSecurityIdempotencyKey(
-        hasNonce ? "password_updated" : "recovery_password_set",
+        hasNonce || isOnboardingPasswordSetup ? "password_updated" : "recovery_password_set",
         user.id,
       ),
       metadata: { providerCode: code },
@@ -116,10 +156,10 @@ export async function POST(request: NextRequest) {
     tenantId: tenantContext?.tenantId,
     authUserId: user.id,
     dietitianId: tenantContext?.dietitianId,
-    eventType: hasNonce ? "password_updated" : "recovery_password_set",
+    eventType: hasNonce || isOnboardingPasswordSetup ? "password_updated" : "recovery_password_set",
     outcome: "success",
     idempotencyKey: buildAccountSecurityIdempotencyKey(
-      hasNonce ? "password_updated" : "recovery_password_set",
+      hasNonce || isOnboardingPasswordSetup ? "password_updated" : "recovery_password_set",
       user.id,
     ),
   });

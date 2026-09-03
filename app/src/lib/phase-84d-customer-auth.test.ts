@@ -1,3 +1,6 @@
+import { existsSync, readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import {
   buildAuthCallbackUrl,
@@ -83,6 +86,11 @@ describe("phase 84d customer auth", () => {
   it("rejects unsafe post-auth redirect paths", () => {
     expect(sanitizePostAuthRedirectPath("/dashboard")).toBe("/dashboard");
     expect(sanitizePostAuthRedirectPath("/settings/profile")).toBe("/settings/profile");
+    expect(sanitizePostAuthRedirectPath("/app-install")).toBe("/app-install");
+    expect(sanitizePostAuthRedirectPath("/app-install?source=pwa")).toBe("/app-install?source=pwa");
+    expect(sanitizePostAuthRedirectPath("/install")).toBeNull();
+    expect(sanitizePostAuthRedirectPath("/signup")).toBeNull();
+    expect(sanitizePostAuthRedirectPath("/register")).toBeNull();
     expect(sanitizePostAuthRedirectPath("/evil")).toBeNull();
     expect(sanitizePostAuthRedirectPath("//evil.example")).toBeNull();
     expect(sanitizePostAuthRedirectPath("/api/auth/magic-link")).toBeNull();
@@ -112,5 +120,20 @@ describe("phase 84d customer auth", () => {
 
     expect(result.error).toBeFalsy();
     expect(attempts).toBe(2);
+  });
+});
+
+describe("public surface has no open signup", () => {
+  const appSrc = join(dirname(fileURLToPath(import.meta.url)), "..");
+
+  it("does not expose signup or register routes or self-serve registration UI", () => {
+    expect(existsSync(join(appSrc, "app", "signup", "page.tsx"))).toBe(false);
+    expect(existsSync(join(appSrc, "app", "register", "page.tsx"))).toBe(false);
+    const loginSource = readFileSync(join(appSrc, "components", "customer-login-form.tsx"), "utf8");
+    expect(loginSource).not.toMatch(/\/signup|\/register|ücretsiz kayıt|hesap oluşturun/i);
+    expect(loginSource).toContain("Giriş yap");
+    expect(loginSource).toContain("Giriş bağlantısı gönder");
+    expect(loginSource).toContain("Şifremi unuttum");
+    expect(loginSource).toContain('useState<LoginMode>("password")');
   });
 });

@@ -51,8 +51,11 @@ describe("commercial auth browser boundary", () => {
     const customerGraph = collectImportedModules(
       fileURLToPath(new URL("../src/components/customer-login-form.tsx", import.meta.url)),
     );
+    const onboardingGraph = collectImportedModules(
+      fileURLToPath(new URL("../src/components/onboarding-claim-panel.tsx", import.meta.url)),
+    );
 
-    for (const filePath of [...adminGraph, ...customerGraph]) {
+    for (const filePath of [...adminGraph, ...customerGraph, ...onboardingGraph]) {
       const source = readFileSync(filePath, "utf8");
       expect(source, filePath).not.toMatch(/from ["']node:crypto["']|from ["']crypto["']/);
     }

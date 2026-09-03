@@ -1,19 +1,11 @@
 import { cookies } from "next/headers";
 import { NextResponse, type NextRequest } from "next/server";
-import {
-  isCommercialBillingStoreConfigured,
-  loadTenantEntitlementByTenantId,
-} from "@/lib/commercial-billing-store";
+import { isCommercialBillingStoreConfigured } from "@/lib/commercial-billing-store";
 import { evaluateCommercialEntitlementExpiry } from "@/lib/phase-83b-commercial-entitlement-model";
-import {
-  loadCommercialInviteByCheckoutSessionId,
-  loadCommercialInviteByManualInviteId,
-  loadTenantOwnerUserId,
-  loadUserTenantClaimState,
-} from "@/lib/commercial-onboarding-store";
+import { loadOnboardingClaimEvaluation } from "@/lib/commercial-onboarding-store";
 import { createSupabaseServerClient, getSupabaseAdminClient, isSupabaseConfigured } from "@/lib/supabase";
 import {
-  evaluateOnboardingClaim,
+  selectInvitedEmailForStatus,
   validateOnboardingClaimReference,
 } from "@/lib/phase-84e-customer-onboarding";
 
@@ -64,16 +56,14 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "commercial_billing_not_configured" }, { status: 503 });
   }
 
-  const claimReference = referenceValidation.reference;
-  const invite =
-    claimReference.kind === "checkout_session"
-      ? await loadCommercialInviteByCheckoutSessionId(admin, claimReference.sessionId)
-      : await loadCommercialInviteByManualInviteId(admin, claimReference.inviteId);
-  const entitlement = invite?.tenantId
-    ? await loadTenantEntitlementByTenantId(admin, invite.tenantId)
-    : null;
-
   const user = await resolveAuthenticatedUser();
+  const { invite, entitlement, evaluation } = await loadOnboardingClaimEvaluation(admin, {
+    reference: referenceValidation.reference,
+    userId: user?.id ?? null,
+    userEmail: user?.email ?? null,
+    isAuthenticated: Boolean(user),
+  });
+
   const entitlementActiveNow =
     entitlement?.status === "active" &&
     evaluateCommercialEntitlementExpiry({
@@ -91,44 +81,15 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  const claimState = invite?.tenantId
-    ? await loadUserTenantClaimState(admin, { tenantId: invite.tenantId, userId: user.id })
-    : {
-        hasMembershipOnTenant: false,
-        hasDietitianProfileOnTenant: false,
-        dietitianTenantId: null,
-      };
-  const existingOwnerUserId = invite?.tenantId
-    ? await loadTenantOwnerUserId(admin, invite.tenantId)
-    : null;
-
-  const evaluation = evaluateOnboardingClaim({
-    sessionId: claimReference.sessionId ?? claimReference.inviteId,
-    isAuthenticated: true,
-    userId: user.id,
-    userEmail: user.email ?? null,
-    invite: invite
-      ? {
-          id: invite.id,
-          normalizedEmail: invite.normalizedEmail,
-          status: invite.status,
-          tenantId: invite.tenantId,
-          tenantSeedMetadata: invite.tenantSeedMetadata,
-        }
-      : null,
-    entitlementStatus: entitlement?.status ?? null,
-    billingMethod: entitlement?.billingMethod ?? null,
-    paidThrough: entitlement?.paidThrough ?? null,
-    existingOwnerUserId,
-    hasMembershipOnTenant: claimState.hasMembershipOnTenant,
-    hasDietitianProfileOnTenant: claimState.hasDietitianProfileOnTenant,
-    dietitianTenantId: claimState.dietitianTenantId,
-  });
-
   return NextResponse.json({
     authenticated: true,
-    sessionId: claimReference.sessionId,
-    inviteId: claimReference.inviteId,
+    sessionId: referenceValidation.reference.sessionId,
+    inviteId: referenceValidation.reference.inviteId,
+    invitedEmail: selectInvitedEmailForStatus({
+      isAuthenticated: true,
+      userEmail: user.email ?? null,
+      inviteEmail: invite?.normalizedEmail ?? null,
+    }),
     claimable: evaluation.claimable,
     alreadyClaimed: evaluation.alreadyClaimed,
     blockingReasons: evaluation.blockingReasons,

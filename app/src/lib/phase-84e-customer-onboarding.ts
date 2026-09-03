@@ -26,6 +26,7 @@ export type OnboardingInviteSnapshot = {
   status: CommercialInviteStatus;
   tenantId: string | null;
   tenantSeedMetadata: Record<string, unknown>;
+  expiresAt?: string | null;
 };
 
 export type OnboardingClaimEvaluation = {
@@ -135,11 +136,21 @@ export function evaluateOnboardingClaim(input: {
   if (!input.invite) {
     blockingReasons.push("checkout_session_not_found");
   } else {
-    if (input.invite.status !== "consumed") {
+    if (input.invite.status === "revoked") {
+      blockingReasons.push("invite_revoked");
+    } else if (input.invite.status !== "consumed") {
       blockingReasons.push("invite_not_consumed");
     }
     if (!input.invite.tenantId) {
       blockingReasons.push("tenant_not_provisioned");
+    }
+    const expiresAt = input.invite.expiresAt;
+    if (expiresAt) {
+      const nowMs = Date.parse(input.now ?? new Date().toISOString());
+      const expiresMs = Date.parse(expiresAt);
+      if (Number.isFinite(nowMs) && Number.isFinite(expiresMs) && nowMs >= expiresMs) {
+        blockingReasons.push("invite_expired");
+      }
     }
   }
 
@@ -192,6 +203,31 @@ export function evaluateOnboardingClaim(input: {
     commercialInviteId: input.invite?.id ?? null,
     normalizedInviteEmail,
   };
+}
+
+export function selectInvitedEmailForStatus(input: {
+  isAuthenticated: boolean;
+  userEmail: string | null;
+  inviteEmail: string | null;
+}) {
+  if (!input.isAuthenticated || !input.userEmail || !input.inviteEmail) {
+    return null;
+  }
+  if (normalizeCommercialEmail(input.userEmail) !== input.inviteEmail) {
+    return null;
+  }
+  return input.inviteEmail;
+}
+
+export function canSetOnboardingPassword(evaluation: OnboardingClaimEvaluation) {
+  return evaluation.claimable && !evaluation.alreadyClaimed && evaluation.blockingReasons.length === 0;
+}
+
+export function buildOnboardingPathFromReference(reference: OnboardingClaimReference) {
+  if (reference.kind === "checkout_session") {
+    return `/onboarding?session_id=${encodeURIComponent(reference.sessionId)}`;
+  }
+  return `/onboarding?invite_id=${encodeURIComponent(reference.inviteId)}`;
 }
 
 export function summarizePhase84eCustomerOnboarding() {

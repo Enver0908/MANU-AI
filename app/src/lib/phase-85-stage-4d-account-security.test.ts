@@ -17,10 +17,12 @@ describe("phase-85-stage-4d account security", () => {
     expect(validateAccountEmail("user@example.com")).toBe("user@example.com");
     expect(validatePassword("Aa1!abcdefgh")).toBe("Aa1!abcdefgh");
     expect(validatePasswordPair("Aa1!abcdefgh", "Aa1!abcdefgh")).toBe("Aa1!abcdefgh");
+    expect(validatePassword(`${"Aa1!abcdefgh"}${"x".repeat(116)}`).length).toBe(128);
   });
 
   it("rejects weak or mismatched passwords", () => {
     expect(() => validatePassword("short")).toThrow(AccountSecurityValidationError);
+    expect(() => validatePassword(`${"Aa1!abcdefgh"}${"x".repeat(117)}`)).toThrow(AccountSecurityValidationError);
     expect(() => validatePasswordPair("Aa1!abcdefgh", "Aa1!abcdefghx")).toThrow(
       AccountSecurityValidationError,
     );

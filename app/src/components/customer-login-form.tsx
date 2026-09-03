@@ -5,18 +5,20 @@ import Link from "next/link";
 import { AlertCircle, Loader2, MailCheck } from "lucide-react";
 import { AIYA_BRAND_NAME } from "@/lib/brand";
 import { buildContactMailtoUrl } from "@/lib/phase-84b-public-website";
-import { MAGIC_LINK_RATE_LIMIT, parseRetryAfterSeconds } from "@/lib/phase-84d-customer-auth";
+import { parseRetryAfterSeconds } from "@/lib/phase-84d-customer-auth";
 import { isLikelyEmail } from "@/lib/phase-83e2-purchase-ux";
 
-type LoginMode = "magic_link" | "password";
+type LoginMode = "password" | "magic_link";
 type SubmitState = "idle" | "submitting" | "success" | "error";
+type SuccessKind = "magic_link" | "recovery";
 
 export function CustomerLoginForm(props: { initialError?: string | null; nextPath?: string | null }) {
-  const [mode, setMode] = useState<LoginMode>("magic_link");
+  const [mode, setMode] = useState<LoginMode>("password");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [formError, setFormError] = useState<string | null>(props.initialError ?? null);
   const [submitState, setSubmitState] = useState<SubmitState>("idle");
+  const [successKind, setSuccessKind] = useState<SuccessKind>("magic_link");
   const [cooldownSeconds, setCooldownSeconds] = useState(0);
 
   const contactMailto = useMemo(() => buildContactMailtoUrl(`${AIYA_BRAND_NAME} müşteri girişi`), []);
@@ -32,6 +34,18 @@ export function CustomerLoginForm(props: { initialError?: string | null; nextPat
 
   function beginCooldown(seconds: number) {
     setCooldownSeconds(Math.max(1, Math.ceil(seconds)));
+  }
+
+  function switchToMagicLink() {
+    setMode("magic_link");
+    setFormError(null);
+    setSubmitState("idle");
+  }
+
+  function switchToPassword() {
+    setMode("password");
+    setFormError(null);
+    setSubmitState("idle");
   }
 
   async function onSubmitMagicLink(event: React.FormEvent) {
@@ -71,6 +85,7 @@ export function CustomerLoginForm(props: { initialError?: string | null; nextPat
         return;
       }
 
+      setSuccessKind("magic_link");
       setSubmitState("success");
       setEmail("");
     } catch {
@@ -110,6 +125,13 @@ export function CustomerLoginForm(props: { initialError?: string | null; nextPat
       };
 
       if (!response.ok || !payload.authenticated) {
+        if (response.status === 429) {
+          const retryAfter = parseRetryAfterSeconds(response);
+          beginCooldown(retryAfter);
+          setSubmitState("error");
+          setFormError(`Hata: Çok fazla deneme. ${retryAfter} saniye sonra tekrar deneyin.`);
+          return;
+        }
         setSubmitState("error");
         setFormError("E-posta veya parola hatalı.");
         return;
@@ -122,7 +144,48 @@ export function CustomerLoginForm(props: { initialError?: string | null; nextPat
     }
   }
 
-  if (submitState === "success" && mode === "magic_link") {
+  async function onForgotPassword() {
+    setFormError(null);
+    if (!isLikelyEmail(email)) {
+      setFormError("Geçerli bir e-posta girin.");
+      return;
+    }
+
+    setSubmitState("submitting");
+    try {
+      const response = await fetch("/api/auth/password-reset", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const payload = (await response.json().catch(() => ({}))) as {
+        accepted?: boolean;
+        error?: string;
+      };
+
+      if (response.status === 429) {
+        const retryAfter = parseRetryAfterSeconds(response);
+        beginCooldown(retryAfter);
+        setSubmitState("error");
+        setFormError(`Hata: Çok fazla deneme. ${retryAfter} saniye sonra tekrar deneyin.`);
+        return;
+      }
+
+      if (!response.ok || !payload.accepted) {
+        setSubmitState("error");
+        setFormError("Hata: İşlem tamamlanamadı. Geçerli bir e-posta kullanın ve tekrar deneyin.");
+        return;
+      }
+
+      setSuccessKind("recovery");
+      setSubmitState("success");
+    } catch {
+      setSubmitState("error");
+      setFormError("Hata: Bağlantı hatası. Lütfen tekrar deneyin.");
+    }
+  }
+
+  if (submitState === "success") {
     return (
       <div className="rounded-lg border border-border bg-surface p-6 text-center" role="status">
         <div className="mb-4 flex justify-center">
@@ -132,7 +195,9 @@ export function CustomerLoginForm(props: { initialError?: string | null; nextPat
         </div>
         <h2 className="mb-2 font-semibold text-foreground">Bağlantı gönderildi</h2>
         <p className="mb-1 text-sm leading-relaxed text-muted-foreground">
-          Hesap varsa giriş bağlantısı e-posta adresinize gönderildi.
+          {successKind === "recovery"
+            ? "Hesap varsa parola sıfırlama bağlantısı e-posta adresinize gönderildi."
+            : "Hesap varsa giriş bağlantısı e-posta adresinize gönderildi."}
         </p>
         <p className="text-xs text-muted-foreground">
           E-postayı göremiyorsanız spam klasörünü kontrol edin veya{" "}
@@ -147,41 +212,6 @@ export function CustomerLoginForm(props: { initialError?: string | null; nextPat
 
   return (
     <div className="rounded-lg border border-border bg-surface p-6">
-      <div className="mb-4 flex gap-2" role="tablist" aria-label="Giriş yöntemi">
-        <button
-          type="button"
-          role="tab"
-          aria-selected={mode === "magic_link"}
-          className={`min-h-11 flex-1 rounded-md px-3 text-sm font-semibold transition ${
-            mode === "magic_link" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-          }`}
-          onClick={() => {
-            setMode("magic_link");
-            setFormError(null);
-            setSubmitState("idle");
-          }}
-          data-testid="login-mode-magic-link"
-        >
-          E-posta bağlantısı
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={mode === "password"}
-          className={`min-h-11 flex-1 rounded-md px-3 text-sm font-semibold transition ${
-            mode === "password" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-          }`}
-          onClick={() => {
-            setMode("password");
-            setFormError(null);
-            setSubmitState("idle");
-          }}
-          data-testid="login-mode-password"
-        >
-          Parola
-        </button>
-      </div>
-
       <form
         className="flex flex-col gap-4"
         onSubmit={mode === "magic_link" ? onSubmitMagicLink : onSubmitPassword}
@@ -207,7 +237,7 @@ export function CustomerLoginForm(props: { initialError?: string | null; nextPat
         {mode === "password" ? (
           <div className="flex flex-col gap-1.5">
             <label htmlFor="customer-login-password" className="text-xs font-semibold text-foreground">
-              Parola
+              Şifre
             </label>
             <input
               id="customer-login-password"
@@ -234,7 +264,7 @@ export function CustomerLoginForm(props: { initialError?: string | null; nextPat
         ) : null}
         <button
           type="submit"
-          disabled={busy || !email.trim() || (mode === "password" && !password)}
+          disabled={busy || !email.trim()}
           className="inline-flex items-center justify-center gap-2 rounded-md bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           data-testid="customer-login-submit"
         >
@@ -245,8 +275,38 @@ export function CustomerLoginForm(props: { initialError?: string | null; nextPat
               : "Giriş yapılıyor..."
             : mode === "magic_link"
               ? "Giriş bağlantısı gönder"
-              : "Parola ile giriş"}
+              : "Giriş yap"}
         </button>
+        {mode === "password" ? (
+          <div className="flex flex-col gap-2">
+            <button
+              type="button"
+              className="inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-muted/40 px-4 text-sm font-medium text-foreground transition-colors hover:bg-muted"
+              onClick={switchToMagicLink}
+              data-testid="login-mode-magic-link"
+            >
+              Giriş bağlantısı gönder
+            </button>
+            <button
+              type="button"
+              className="inline-flex min-h-11 items-center justify-center text-sm font-medium text-primary underline underline-offset-2"
+              onClick={() => void onForgotPassword()}
+              disabled={busy}
+              data-testid="login-forgot-password"
+            >
+              Şifremi unuttum
+            </button>
+          </div>
+        ) : (
+          <button
+            type="button"
+            className="inline-flex min-h-11 items-center justify-center text-sm font-medium text-primary underline underline-offset-2"
+            onClick={switchToPassword}
+            data-testid="login-mode-password"
+          >
+            E-posta ve şifreyle giriş
+          </button>
+        )}
         <p className="text-center text-xs text-muted-foreground">
           Hesabınız yok mu?{" "}
           <Link href="/#iletisim" className="inline-flex min-h-6 items-center text-primary underline underline-offset-2">

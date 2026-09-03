@@ -90,6 +90,9 @@ async function driveState(page: Page, scenario: Stage7Scenario) {
       scenario.state === "login-invalid" ? "not-an-email" : STAGE7_SYNTHETIC.dietitianEmail,
       action,
     );
+    if (scenario.state === "login-sent" || scenario.state === "login-rate-limited" || scenario.state === "login-service-error") {
+      await page.getByTestId("login-mode-magic-link").click(action).catch(() => undefined);
+    }
     await page.getByTestId("customer-login-submit").click(action).catch(() => undefined);
   }
 

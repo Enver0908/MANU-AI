@@ -35,9 +35,10 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
         <div className="w-full max-w-sm">
           <div className="mb-8 text-center">
             <p className="mb-2 text-xs font-semibold uppercase text-primary">Müşteri girişi</p>
-            <h1 className="mb-2 font-display text-2xl font-bold text-off-black">{AIYA_BRAND_NAME} müşteri girişi</h1>
+            <h1 className="mb-2 font-display text-2xl font-bold text-off-black">E-posta ve şifreyle giriş</h1>
             <p className="text-sm leading-relaxed text-muted-foreground">
-              Varsayılan giriş e-posta bağlantısıdır; parola ile giriş ikincil seçenektir.
+              Kayıtlı {AIYA_BRAND_NAME} müşterileri e-posta ve şifreyle giriş yapar. Giriş bağlantısı isteğe bağlı yedek
+              yöntemdir.
             </p>
           </div>
 

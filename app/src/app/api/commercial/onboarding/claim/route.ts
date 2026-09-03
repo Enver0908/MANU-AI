@@ -1,22 +1,13 @@
 import { cookies } from "next/headers";
 import { NextResponse, type NextRequest } from "next/server";
-import {
-  isCommercialBillingStoreConfigured,
-  loadTenantEntitlementByTenantId,
-} from "@/lib/commercial-billing-store";
+import { isCommercialBillingStoreConfigured } from "@/lib/commercial-billing-store";
 import {
   claimCommercialOnboardingWorkspace,
   insertCommercialOnboardingEvent,
-  loadCommercialInviteByCheckoutSessionId,
-  loadCommercialInviteByManualInviteId,
-  loadTenantOwnerUserId,
-  loadUserTenantClaimState,
+  loadOnboardingClaimEvaluation,
 } from "@/lib/commercial-onboarding-store";
 import { createSupabaseServerClient, getSupabaseAdminClient, isSupabaseConfigured } from "@/lib/supabase";
-import {
-  evaluateOnboardingClaim,
-  validateOnboardingClaimReference,
-} from "@/lib/phase-84e-customer-onboarding";
+import { validateOnboardingClaimReference } from "@/lib/phase-84e-customer-onboarding";
 
 type ClaimBody = {
   sessionId?: string;
@@ -71,45 +62,11 @@ export async function POST(request: NextRequest) {
   }
 
   const claimReference = referenceValidation.reference;
-  const invite =
-    claimReference.kind === "checkout_session"
-      ? await loadCommercialInviteByCheckoutSessionId(admin, claimReference.sessionId)
-      : await loadCommercialInviteByManualInviteId(admin, claimReference.inviteId);
-  const entitlement = invite?.tenantId
-    ? await loadTenantEntitlementByTenantId(admin, invite.tenantId)
-    : null;
-  const claimState = invite?.tenantId
-    ? await loadUserTenantClaimState(admin, { tenantId: invite.tenantId, userId: user.id })
-    : {
-        hasMembershipOnTenant: false,
-        hasDietitianProfileOnTenant: false,
-        dietitianTenantId: null,
-      };
-  const existingOwnerUserId = invite?.tenantId
-    ? await loadTenantOwnerUserId(admin, invite.tenantId)
-    : null;
-
-  const evaluation = evaluateOnboardingClaim({
-    sessionId: claimReference.sessionId ?? claimReference.inviteId,
-    isAuthenticated: true,
+  const { invite, evaluation } = await loadOnboardingClaimEvaluation(admin, {
+    reference: claimReference,
     userId: user.id,
     userEmail: user.email,
-    invite: invite
-      ? {
-          id: invite.id,
-          normalizedEmail: invite.normalizedEmail,
-          status: invite.status,
-          tenantId: invite.tenantId,
-          tenantSeedMetadata: invite.tenantSeedMetadata,
-        }
-      : null,
-    entitlementStatus: entitlement?.status ?? null,
-    billingMethod: entitlement?.billingMethod ?? null,
-    paidThrough: entitlement?.paidThrough ?? null,
-    existingOwnerUserId,
-    hasMembershipOnTenant: claimState.hasMembershipOnTenant,
-    hasDietitianProfileOnTenant: claimState.hasDietitianProfileOnTenant,
-    dietitianTenantId: claimState.dietitianTenantId,
+    isAuthenticated: true,
   });
 
   if (!evaluation.claimable) {

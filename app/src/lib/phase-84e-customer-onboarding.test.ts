@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
+  buildOnboardingPathFromReference,
+  canSetOnboardingPassword,
   deriveDefaultDietitianDisplayName,
   evaluateOnboardingClaim,
+  selectInvitedEmailForStatus,
   summarizePhase84eCustomerOnboarding,
   validateOnboardingClaimReference,
   validateOnboardingSessionId,
@@ -158,6 +161,64 @@ describe("phase 84e customer onboarding", () => {
     expect(JSON.stringify(summarizePhase84eCustomerOnboarding())).toContain(
       "/api/commercial/onboarding/claim",
     );
+  });
+
+  it("blocks revoked, expired, and email-mismatched invites without leaking invited email", () => {
+    expect(
+      evaluateOnboardingClaim({
+        ...claimFixture(),
+        invite: { ...claimFixture().invite, status: "revoked" },
+      }).blockingReasons,
+    ).toContain("invite_revoked");
+
+    expect(
+      evaluateOnboardingClaim({
+        ...claimFixture(),
+        invite: { ...claimFixture().invite, expiresAt: "2026-06-01T00:00:00.000Z" },
+        now: "2026-07-01T00:00:00.000Z",
+      }).blockingReasons,
+    ).toContain("invite_expired");
+
+    expect(
+      selectInvitedEmailForStatus({
+        isAuthenticated: false,
+        userEmail: "owner@example.com",
+        inviteEmail: "owner@example.com",
+      }),
+    ).toBeNull();
+    expect(
+      selectInvitedEmailForStatus({
+        isAuthenticated: true,
+        userEmail: "other@example.com",
+        inviteEmail: "owner@example.com",
+      }),
+    ).toBeNull();
+    expect(
+      selectInvitedEmailForStatus({
+        isAuthenticated: true,
+        userEmail: "Owner@example.com",
+        inviteEmail: "owner@example.com",
+      }),
+    ).toBe("owner@example.com");
+    expect(
+      buildOnboardingPathFromReference({
+        kind: "manual_invite",
+        sessionId: null,
+        inviteId: "invite-123",
+      }),
+    ).toBe("/onboarding?invite_id=invite-123");
+    expect(canSetOnboardingPassword(evaluateOnboardingClaim(claimFixture()))).toBe(true);
+    expect(
+      canSetOnboardingPassword(
+        evaluateOnboardingClaim({
+          ...claimFixture(),
+          hasMembershipOnTenant: true,
+          hasDietitianProfileOnTenant: true,
+          dietitianTenantId: "tenant-1",
+          existingOwnerUserId: "user-1",
+        }),
+      ),
+    ).toBe(false);
   });
 });
 

@@ -55,6 +55,9 @@ describe("phase 84g subscription operations", () => {
     expect(describeEntitlementStatusLabel("revoked")).toContain("kapatıldı");
     expect(describeEntitlementStatusLabel("canceled")).toContain("Stripe");
     expect(describeOnboardingBlockingReason("entitlement_not_active")).toContain("aktif değil");
+    expect(describeOnboardingBlockingReason("invite_expired")).toContain("süresi doldu");
+    expect(describeOnboardingBlockingReason("invite_revoked")).toContain("kapatıldı");
+    expect(describeOnboardingBlockingReason("authenticated_email_mismatch")).toContain("davet e-postasıyla");
     expect(describeCommercialBlockingReason("invite status must be active (current: consumed)")).toContain(
       "kullanılmış",
     );

@@ -1,8 +1,8 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { loadCommercialInviteById, loadTenantEntitlementByTenantId, type CommercialInviteRow } from "./commercial-billing-store";
 import { normalizeCommercialEmail } from "./phase-83b-commercial-entitlement-model";
-import type { CommercialOnboardingEventType } from "./phase-84e-customer-onboarding";
-import { deriveDefaultDietitianDisplayName } from "./phase-84e-customer-onboarding";
+import type { CommercialOnboardingEventType, OnboardingClaimReference } from "./phase-84e-customer-onboarding";
+import { deriveDefaultDietitianDisplayName, evaluateOnboardingClaim } from "./phase-84e-customer-onboarding";
 
 function isUniqueConstraintError(error: { code?: string; message?: string } | null | undefined) {
   return error?.code === "23505" || /duplicate key value violates unique constraint/i.test(error?.message ?? "");
@@ -16,6 +16,7 @@ function mapInviteRow(row: CommercialInviteRow) {
     tenantId: row.tenant_id,
     tenantSeedMetadata: row.tenant_seed_metadata ?? {},
     checkoutSessionId: row.checkout_session_id,
+    expiresAt: row.expires_at,
   };
 }
 
@@ -118,6 +119,7 @@ export async function loadCommercialInviteByCheckoutSessionId(
     tenantId: invite.tenantId ?? entitlementRow.tenant_id,
     tenantSeedMetadata: invite.tenantSeedMetadata,
     checkoutSessionId,
+    expiresAt: invite.expiresAt,
   };
 }
 
@@ -137,6 +139,7 @@ export async function loadCommercialInviteByManualInviteId(
     tenantId: invite.tenantId,
     tenantSeedMetadata: invite.tenantSeedMetadata,
     checkoutSessionId: invite.checkoutSessionId ?? null,
+    expiresAt: invite.expiresAt,
   };
 }
 
@@ -186,6 +189,65 @@ export async function loadUserTenantClaimState(
     hasMembershipOnTenant: Boolean(membership),
     hasDietitianProfileOnTenant: Boolean(dietitian && dietitian.tenant_id === input.tenantId),
     dietitianTenantId: dietitian?.tenant_id ?? null,
+  };
+}
+
+export async function loadOnboardingClaimEvaluation(
+  admin: SupabaseClient,
+  input: {
+    reference: OnboardingClaimReference;
+    userId: string | null;
+    userEmail: string | null;
+    isAuthenticated: boolean;
+    now?: string;
+  },
+) {
+  const invite =
+    input.reference.kind === "checkout_session"
+      ? await loadCommercialInviteByCheckoutSessionId(admin, input.reference.sessionId)
+      : await loadCommercialInviteByManualInviteId(admin, input.reference.inviteId);
+  const entitlement = invite?.tenantId
+    ? await loadTenantEntitlementByTenantId(admin, invite.tenantId)
+    : null;
+  const claimState =
+    invite?.tenantId && input.userId
+      ? await loadUserTenantClaimState(admin, { tenantId: invite.tenantId, userId: input.userId })
+      : {
+          hasMembershipOnTenant: false,
+          hasDietitianProfileOnTenant: false,
+          dietitianTenantId: null,
+        };
+  const existingOwnerUserId = invite?.tenantId
+    ? await loadTenantOwnerUserId(admin, invite.tenantId)
+    : null;
+
+  return {
+    invite,
+    entitlement,
+    evaluation: evaluateOnboardingClaim({
+      sessionId: input.reference.sessionId ?? input.reference.inviteId,
+      isAuthenticated: input.isAuthenticated,
+      userId: input.userId,
+      userEmail: input.userEmail,
+      invite: invite
+        ? {
+            id: invite.id,
+            normalizedEmail: invite.normalizedEmail,
+            status: invite.status,
+            tenantId: invite.tenantId,
+            tenantSeedMetadata: invite.tenantSeedMetadata,
+            expiresAt: invite.expiresAt,
+          }
+        : null,
+      entitlementStatus: entitlement?.status ?? null,
+      billingMethod: entitlement?.billingMethod ?? null,
+      paidThrough: entitlement?.paidThrough ?? null,
+      now: input.now,
+      existingOwnerUserId,
+      hasMembershipOnTenant: claimState.hasMembershipOnTenant,
+      hasDietitianProfileOnTenant: claimState.hasDietitianProfileOnTenant,
+      dietitianTenantId: claimState.dietitianTenantId,
+    }),
   };
 }
 

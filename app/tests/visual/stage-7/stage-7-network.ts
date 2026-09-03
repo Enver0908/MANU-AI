@@ -65,7 +65,14 @@ function payloadFor(profile: Stage7FixtureProfile, path: string): unknown | null
   }
   if (path.includes("/api/commercial/onboarding/status")) {
     if (profile === "public-default") return { checkoutSessionRecognized: true, entitlementStatus: "active" };
-    if (profile === "onboarding-claimable") return { authenticated: true, claimable: true, alreadyClaimed: false };
+    if (profile === "onboarding-claimable") {
+      return {
+        authenticated: true,
+        claimable: true,
+        alreadyClaimed: false,
+        invitedEmail: STAGE7_SYNTHETIC.dietitianEmail,
+      };
+    }
     if (profile === "onboarding-incomplete") return { authenticated: true, claimable: false, blockingReasons: ["profile_incomplete"] };
     if (profile === "onboarding-duplicate") return { authenticated: true, claimable: false, alreadyClaimed: false, blockingReasons: ["duplicate_claim"] };
     if (profile === "onboarding-already-claimed") return { authenticated: true, claimable: false, alreadyClaimed: true };

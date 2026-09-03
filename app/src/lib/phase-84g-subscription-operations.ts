@@ -119,7 +119,7 @@ export function describeOnboardingBlockingReason(reason: string) {
     return "Abonelik aktif değil. Ödeme gecikmesi, iptal veya erişim kapatma olabilir.";
   }
   if (normalized.includes("authenticated_email_mismatch")) {
-    return "Oturum e-postası ödeme davetiyle eşleşmiyor. Ödeme sırasında kullandığınız e-posta ile giriş yapın.";
+    return "Oturum e-postası davet e-postasıyla eşleşmiyor. Davet edilen e-posta ile giriş yapın.";
   }
   if (normalized.includes("tenant_already_claimed")) {
     return "Bu çalışma alanı başka bir hesaba bağlı.";
@@ -127,7 +127,10 @@ export function describeOnboardingBlockingReason(reason: string) {
   if (normalized.includes("dietitian_profile_bound_elsewhere")) {
     return "Profiliniz farklı bir çalışma alanına bağlı. Destek ile iletişime geçin.";
   }
-  if (normalized.includes("revoked")) {
+  if (normalized.includes("invite_expired") || normalized.includes("entitlement_expired")) {
+    return "Davet veya erişim süresi doldu. Hesap oluşturulamaz.";
+  }
+  if (normalized.includes("invite_revoked") || normalized.includes("revoked")) {
     return "Erişiminiz yönetim tarafından kapatıldı.";
   }
   if (normalized.includes("canceled")) {
