@@ -92,9 +92,12 @@ app/src/lib/brand.ts:15 Historical evidence documents can mention MANU-AI, Siriu
 The only remaining hit is the explicit allowed compatibility/historical-evidence
 note in `app/src/lib/brand.ts`.
 
-## Sender And Traceability Findings
+## Sender And Traceability Findings At Phase 5 Close
 
-Supabase Auth sender display name remains:
+This section records the status at the original Phase 5 close. The two findings
+below are superseded by the follow-up closure addendum later in this document.
+
+Supabase Auth sender display name was unproven at the original Phase 5 close:
 
 ```text
 OWNER_EXTERNAL_EVIDENCE_REQUIRED
@@ -108,7 +111,7 @@ panel proof or controlled inbox evidence showing:
 AIya <no-reply@auth.aiyaworkspace.com>
 ```
 
-Remote branch containment remains unresolved:
+Remote branch containment was unresolved at the original Phase 5 close:
 
 ```text
 git branch -r --contains 4c7bbea8ba21fb84b51843eac9fff2e9ff8fecf9
@@ -122,9 +125,9 @@ git ls-remote origin refs/heads/codex/production-readiness-stage-1 refs/heads/co
 26579dc4f3337925730229aa1c487fd309fb2851 refs/heads/codex/aiyaworkspace-domain-cutover
 ```
 
-The live VPS code commit is therefore not yet published on a remote branch.
-This does not break the running hosted sandbox, but it must be resolved before
-production traceability or PR review.
+At the original Phase 5 close, the live VPS code commit was not yet published on
+a remote branch. This did not break the running hosted sandbox, but it still had
+to be resolved before production traceability or PR review.
 
 ## Result
 
@@ -134,12 +137,14 @@ production traceability or PR review.
 - Full dev dependency audit: clean after safe lockfile remediation.
 - Live hosted AIya runtime: stable on the previously deployed `4c7bbea` code
   release.
-- Supabase Auth sender display name: still owner-external evidence.
-- GitHub release traceability: still requires push/PR publication.
+- Supabase Auth sender display name: still owner-external evidence at the
+  original Phase 5 close.
+- GitHub release traceability: still required push/PR publication at the
+  original Phase 5 close.
 
-Next correct phase: resolve owner/external launch evidence in the smallest
+The then-correct next phase was owner/external launch evidence in the smallest
 possible unit, starting with Supabase Auth sender display-name proof or
-controlled sender correction.
+controlled sender correction. That follow-up is now recorded below.
 
 ## 2026-09-02 Follow-Up Closure Addendum
 

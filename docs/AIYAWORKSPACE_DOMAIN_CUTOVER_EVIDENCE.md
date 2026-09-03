@@ -66,7 +66,9 @@ Supabase Auth:
   - `https://admin.aiyaworkspace.com/auth/callback`
   - `https://admin.aiyaworkspace.com/auth/callback?next=%2Fadmin`
 - Custom SMTP remains enabled through Resend.
-- Sender changed to `SiriusAI <no-reply@auth.aiyaworkspace.com>`.
+- Historical sender at this original cutover baseline:
+  `SiriusAI <no-reply@auth.aiyaworkspace.com>`. This is superseded by the
+  2026-09-02 Supabase Auth Sender Correction Addendum below.
 
 Resend:
 
@@ -144,7 +146,9 @@ https://www.siriusai.store/ status=410
 https://admin.siriusai.store/ status=410
 ```
 
-Supabase Auth sender display name was not changed or proven in this redeploy phase. The historical sender record above remains owner-external evidence until Supabase/Resend or inbox evidence proves the active sender is `AIya <no-reply@auth.aiyaworkspace.com>`.
+Supabase Auth sender display name was not changed or proven in this redeploy
+phase. That sender-proof gap is superseded by the 2026-09-02 Supabase Auth
+Sender Correction Addendum below.
 
 ## 2026-09-02 Hosted Repeatability Addendum
 
@@ -180,7 +184,9 @@ https://admin.siriusai.store/ status=410
 
 DNS/TLS remain valid for `aiyaworkspace.com` and `admin.aiyaworkspace.com`; the certificate SAN includes `admin.aiyaworkspace.com`, `aiyaworkspace.com`, and `www.aiyaworkspace.com`.
 
-Supabase Auth sender display name was not changed or proven in this repeatability phase. The historical sender record above remains owner-external evidence until Supabase/Resend or inbox evidence proves the active sender is `AIya <no-reply@auth.aiyaworkspace.com>`.
+Supabase Auth sender display name was not changed or proven in this repeatability
+phase. That sender-proof gap is superseded by the 2026-09-02 Supabase Auth
+Sender Correction Addendum below.
 
 ## 2026-09-02 Launch Evidence Preflight Addendum
 

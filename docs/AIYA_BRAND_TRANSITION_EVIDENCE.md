@@ -96,7 +96,9 @@ Live manifest:
 }
 ```
 
-This hosted runtime validation does not change production `NO-GO` and does not prove the Supabase Auth sender display name. Sender proof remains owner-external evidence.
+This hosted runtime validation did not change production `NO-GO` and did not
+prove the Supabase Auth sender display name at that time. The sender-proof gap
+is superseded by the 2026-09-02 Supabase Auth Sender Correction Addendum below.
 
 ## 2026-09-02 Hosted Repeatability Addendum
 
@@ -113,7 +115,10 @@ https://aiyaworkspace.com/manifest.webmanifest status=200 legacy=<none>
 https://admin.aiyaworkspace.com/admin status=200 legacy=<none>
 ```
 
-The official hosted apply wrapper completed without manual fallback. This does not change production `NO-GO` and does not prove the Supabase Auth sender display name. Sender proof remains owner-external evidence.
+The official hosted apply wrapper completed without manual fallback. This did
+not change production `NO-GO` and did not prove the Supabase Auth sender display
+name at that time. The sender-proof gap is superseded by the 2026-09-02 Supabase
+Auth Sender Correction Addendum below.
 
 ## 2026-09-02 Launch Evidence Preflight Addendum
 
