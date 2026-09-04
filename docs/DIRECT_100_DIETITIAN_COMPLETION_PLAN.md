@@ -1,5 +1,7 @@
 # Direct 100 Dietitian Completion Plan
 
+**Current public surface/auth/onboarding/PWA local closure (2026-09-04):** Phase 7 is locally complete in `docs/PUBLIC_SURFACE_AUTH_ONBOARDING_PWA_PHASE_7_FINAL_EVIDENCE.md`. This does not approve the direct 100-dietitian pilot. Production remains `NO-GO`.
+
 **Current AIya sender and publication status (2026-09-02):** Supabase Auth sender correction is complete in `docs/AIYA_SUPABASE_AUTH_SENDER_CORRECTION_EVIDENCE.md`: project `pxyjocahjutcojltcalj` now has `smtp_sender_name=AIya` and `smtp_admin_email=no-reply@auth.aiyaworkspace.com`, so the active sender is `AIya <no-reply@auth.aiyaworkspace.com>`. The phase-5 evidence commit was pushed to `origin/codex/production-readiness-stage-1` at `a35c3e167b22d42a57d51d4614567906293b7b03`, and the live VPS commit is contained in that remote branch. This does not approve the direct 100-dietitian pilot, close production launch gates, connect providers/channels, enable live billing, roll out production schema, or process real health data. Production remains `NO-GO`.
 
 **Current AIya launch evidence preflight status (2026-09-02):** Phase 5 is complete in `docs/AIYA_LAUNCH_EVIDENCE_PREFLIGHT_EVIDENCE.md`. Stale visual brand assertions, current shell-nav visual helper drift, and development-tooling dependency audit findings are closed locally. Production remains `NO-GO`.

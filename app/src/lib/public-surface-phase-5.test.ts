@@ -22,8 +22,6 @@ const PUBLIC_RUNTIME_FILES = [
   "components/public/HowItWorksSection.tsx",
   "components/public/SecuritySection.tsx",
   "components/public/MobileSection.tsx",
-  "components/aiya-marketing-page.tsx",
-  "components/contact-lead-form.tsx",
   "components/customer-login-form.tsx",
   "components/admin-login-form.tsx",
   "components/purchase-flow.tsx",
@@ -103,9 +101,9 @@ describe("P5.3/P5.4 public CTA hierarchy", () => {
 
     const navbar = readRuntime("components/public/PublicNavbar.tsx");
     const hero = readRuntime("components/public/HeroSection.tsx");
-    const marketing = readRuntime("components/aiya-marketing-page.tsx");
+    const contact = readRuntime("components/public/ContactSection.tsx");
 
-    for (const source of [navbar, hero, marketing]) {
+    for (const source of [navbar, hero, contact]) {
       expect(source).not.toContain("Davet koduyla başla");
       expect(source).not.toContain('href="/purchase"');
     }
@@ -113,8 +111,7 @@ describe("P5.3/P5.4 public CTA hierarchy", () => {
     expect(navbar).toContain("Giriş yap");
     expect(hero).toContain("Bize ulaşın");
     expect(hero).toContain("Giriş yap");
-    expect(marketing).toContain("PUBLIC_MARKETING_COPY.contactCta");
-    expect(marketing).toContain("PUBLIC_MARKETING_COPY.loginLabel");
+    expect(contact).toContain("PUBLIC_CONTACT_COPY");
 
     const purchasePage = readRuntime("app/purchase/page.tsx");
     expect(purchasePage).toContain("PurchaseFlow");

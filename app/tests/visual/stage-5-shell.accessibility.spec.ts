@@ -25,7 +25,7 @@ async function assertNoHorizontalPageScroll(page: Page) {
 async function assertPrimaryTouchTargets(page: Page) {
   const undersized = await page.evaluate(() => {
     const selectors = [
-      '[data-testid="shell-compact-bottom-nav"] button',
+      '[data-testid="shell-compact-bottom-nav"] a, [data-testid="shell-compact-bottom-nav"] button',
       '[data-testid="shell-header-bell"]',
       '[data-testid="shell-logout"]',
       '[data-testid="active-client-trigger"]',
@@ -81,9 +81,9 @@ test("keyboard reaches skip link, compact nav, and client control without losing
 
   const bottomNav = page.getByTestId("shell-compact-bottom-nav");
   if (await bottomNav.isVisible()) {
-    const firstNavButton = bottomNav.locator("button").first();
-    await firstNavButton.focus();
-    await expect(firstNavButton).toBeFocused();
+    const firstNavControl = bottomNav.locator("a, button").first();
+    await firstNavControl.focus();
+    await expect(firstNavControl).toBeFocused();
   }
 });
 

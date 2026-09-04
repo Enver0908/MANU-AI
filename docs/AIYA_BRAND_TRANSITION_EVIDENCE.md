@@ -1,5 +1,7 @@
 # AIya Brand Transition Evidence
 
+**Current public surface/auth/onboarding/PWA local closure (2026-09-04):** Phase 7 did not change the active AIya brand, canonical origins, compatibility names, or this historical record. Evidence: `docs/PUBLIC_SURFACE_AUTH_ONBOARDING_PWA_PHASE_7_FINAL_EVIDENCE.md`. Production remains `NO-GO`.
+
 Date: 2026-09-01
 
 Branch: `codex/aiya-brand-transition`

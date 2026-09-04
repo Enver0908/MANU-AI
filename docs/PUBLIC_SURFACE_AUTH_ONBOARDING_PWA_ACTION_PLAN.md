@@ -203,7 +203,7 @@ Run desktop and mobile Playwright visual checks for dashboard home, clients, mes
 
 ### Phase 1 Closure (2026-09-03)
 
-Status: `PHASE_1_CLOSED_LOCAL_ONLY`. User-authoritative execution used PLAN (7) `P1.1`–`P1.9`; every step is `IMPLEMENTED_AND_INSPECTED`. Visible dietitian dashboard simulator, operational-header, demo-reset, top language selector, top client picker, local-safe-mode copy, and operational-foundation counters are gone from the render tree. Backend simulator/quarantine/trust APIs remain. Unused panel files remain on disk until Phase 7. Next eligible unit is Phase 2 only after explicit user approval. Production remains `NO-GO`.
+Status: `PHASE_1_CLOSED_LOCAL_ONLY`. User-authoritative execution used PLAN (7) `P1.1`–`P1.9`; every step is `IMPLEMENTED_AND_INSPECTED`. Visible dietitian dashboard simulator, operational-header, demo-reset, top language selector, top client picker, local-safe-mode copy, and operational-foundation counters are gone from the render tree. Backend simulator/quarantine/trust APIs remain. Unused panel files remained on disk until Phase 7, which later deleted them after import-graph proof. Next eligible unit at this checkpoint was Phase 2 only after explicit user approval. Production remains `NO-GO`.
 
 ## Phase 2 - Two-Hour Secure Session Continuity
 
@@ -688,7 +688,8 @@ Close the local public/auth/onboarding/admin/PWA polish track with integrated ve
 
 ### Affected Files
 
-- `docs/PUBLIC_SURFACE_AUTH_ONBOARDING_PWA_PHASE_7_CLOSURE_EVIDENCE.md`
+- `docs/PUBLIC_SURFACE_AUTH_ONBOARDING_PWA_PHASE_7_FINAL_EVIDENCE.md`
+- Unused frontend files proven unreachable after Phases 1–6
 - `HANDOFF_FOR_NEXT_CODEX.md`
 - `docs/NEXT_PHASE_EXECUTION_PLAN.md`
 - `docs/RISK_REGISTER.md`
@@ -702,40 +703,59 @@ Close the local public/auth/onboarding/admin/PWA polish track with integrated ve
 
 ### Steps
 
-P7.1 Confirm all prior phase evidence:
-Each Phase 1-6 evidence file must exist and show every step completed exactly as written or the track cannot close.
+User-authoritative execution uses PLAN (7) `P7.1`–`P7.12`.
 
-P7.2 Run integrated checks:
-Execute full targeted and broad checks required by changed areas.
+P7.1 Produce the unused frontend import graph and route accessibility report.
 
-P7.3 Run stale-surface scans:
-Scan active app source/public assets for retired visible brand/domain and removed internal UI text. Separate allowed compatibility and historical hits from real active-surface findings.
+P7.2 Remove only proven-unused UI files. Keep backend simulator, operational-foundation, Stripe, and compatibility names.
 
-P7.4 Run security scans:
-Scan changed files for secrets, raw health data, raw prompts, API keys, SMTP credentials, and real user data.
+P7.3 Reconcile old snapshots/fixtures with the active surface. Keep absence assertions for removed chrome.
 
-P7.5 Reconcile docs:
-Update only documents whose current authority, risk, product state, or next step changed.
+P7.4 Scan active runtime for retired brand/domain and demo text. Separate compatibility and historical hits.
 
-P7.6 Record final local closure:
-Evidence must state production remains `NO-GO` and list still-blocking owner gates.
+P7.5 Scan cross-tenant, cross-account, service-role, and RLS boundaries. Record environment-blocked RLS honestly.
+
+P7.6 Verify the unified public → contact → admin invite → onboarding → password login → dashboard → revoke → reactivate contracts.
+
+P7.7 Verify PWA install, two-hour background session, offline privacy-lock, and logout.
+
+P7.8 Run the full unit/integration/visual/accessibility/build/release matrix required by PLAN (7).
+
+P7.9 Bind every PLAN (7) requirement to real diff and test evidence.
+
+P7.10 Reconcile README, roadmap, risk, handoff, and AIya documents with the real final local state.
+
+P7.11 Record that the live release is unchanged and production gates stay closed.
+
+P7.12 Complete the pre-commit diff, secret, stale-doc, and worktree review.
 
 ### Tests
 
-- `npm test` or approved broad targeted equivalent depending on changed scope.
+- Targeted unit and integration tests for auth, admin lifecycle, PWA, and leftover-file contracts.
+- `npm test`
 - `npm run typecheck`
 - `npm run lint`
 - `npm run build`
+- Playwright visual tests for public/auth/PWA/dashboard surfaces.
+- Playwright accessibility tests for overflow, 44px, skip-link, and offline lock.
 - PWA/service-worker tests.
-- Visual/accessibility tests for changed user surfaces.
-- `npm run release:verify` if release packaging was affected.
+- `npm run release:verify`
+- `npm run test:rls` (record skip/environment-blocked honestly)
 - `git diff --check`
+- Secret/sensitive-data scan
+- Cross-tenant/cross-account scan
+- Stale document and handoff contradiction scan
 - `git status --short --branch`
 
 ### Completion Criteria
 
-- Phase 1-6 implementation evidence is complete.
-- Integrated verification passes without skipped/simulated closure.
-- Documentation is reconciled.
+- Every `P0.*`–`P7.*` step is applied and inspected.
+- Every requirement is bound to a real code or document diff.
+- Required tests PASS; skipped/environment-blocked checks are disclosed.
+- Stripe, WhatsApp, Z.ai, and production gates are unchanged.
+- Live release remains separate and unchanged.
 - Production remains `NO-GO`.
-- User is asked for commit approval only after local closure evidence is complete.
+
+### Phase 7 Closure (2026-09-04)
+
+Status: `PHASE_7_CLOSED_LOCAL_ONLY`. User-authoritative execution used PLAN (7) `P7.1`–`P7.12`; every step is `IMPLEMENTED_AND_INSPECTED`. Evidence: `docs/PUBLIC_SURFACE_AUTH_ONBOARDING_PWA_PHASE_7_FINAL_EVIDENCE.md`. This local track is complete. Next eligible work is production-owner gates only after explicit user approval. Production remains `NO-GO`.

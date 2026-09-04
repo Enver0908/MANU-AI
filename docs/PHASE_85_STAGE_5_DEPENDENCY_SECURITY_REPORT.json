@@ -1,10 +1,10 @@
 {
   "schemaVersion": "stage5-evidence-v2",
   "evidenceType": "dependency",
-  "sourceRevision": "2b33cc661b17ae171547ad23fe1b19328ea261db",
-  "sourceTreeClean": true,
-  "packageLockSha256": "8387bfffd51f457d9e1dc09ace889584fbbe8085d2e30d08fd24ba659f0240d9",
-  "generatedAt": "2026-09-01T15:49:19.609Z",
+  "sourceRevision": "2d4278a28946a84e87ebde1f9644cc1ac42edc45",
+  "sourceTreeClean": false,
+  "packageLockSha256": "49d81fae945590d3cfc4463d311ab70b280a3bd1462fa550ed869f190c6a9cfd",
+  "generatedAt": "2026-09-04T10:32:52.004Z",
   "command": "npm run test:stage-5-dependencies",
   "environment": {
     "nodeVersion": "v22.16.0",

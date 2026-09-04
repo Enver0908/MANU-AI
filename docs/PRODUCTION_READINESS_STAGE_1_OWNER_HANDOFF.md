@@ -27,6 +27,10 @@ Follow-up work corrected and proved the Supabase Auth sender as
 branch to origin so the live commit is remotely traceable. This does not change
 the production `NO-GO` status or any remaining owner-side launch blocker.
 
+Public-surface/auth/onboarding/PWA local polish, 2026-09-04: Phases 0-7 are
+locally closed in `docs/PUBLIC_SURFACE_AUTH_ONBOARDING_PWA_PHASE_7_FINAL_EVIDENCE.md`.
+This does not change owner-side launch blockers or production `NO-GO`.
+
 ## Current Decision
 
 The local technical preparation package is complete for Phase 1-6. Production
