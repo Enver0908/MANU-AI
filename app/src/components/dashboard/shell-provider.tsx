@@ -362,6 +362,8 @@ export function ShellProvider({
   }, [pathname, searchKey, runBootstrap]);
 
   const touchSessionActivity = useCallback(async () => {
+    // Fallback store has no server session; a 503 must not wipe the shell.
+    if (mode === "fallback") return;
     const visibilityState =
       typeof document !== "undefined" ? document.visibilityState : "hidden";
     const online = typeof navigator === "undefined" || navigator.onLine !== false;
@@ -447,7 +449,7 @@ export function ShellProvider({
         error: "session_activity_failed",
       });
     }
-  }, [router]);
+  }, [mode, router]);
   const markActivity = useCallback(() => {
     activityPendingRef.current = true;
     void touchSessionActivity();

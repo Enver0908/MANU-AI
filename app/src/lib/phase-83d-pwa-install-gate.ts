@@ -55,7 +55,13 @@ export function shouldServiceWorkerCachePath(pathname: string) {
     pathname === "/dashboard" ||
     pathname.startsWith("/dashboard/") ||
     pathname === "/app-install" ||
-    pathname.startsWith("/app-install/")
+    pathname.startsWith("/app-install/") ||
+    pathname === "/login" ||
+    pathname.startsWith("/login/") ||
+    pathname === "/onboarding" ||
+    pathname.startsWith("/onboarding/") ||
+    pathname === "/auth/callback" ||
+    pathname.startsWith("/auth/callback")
   ) {
     return false;
   }

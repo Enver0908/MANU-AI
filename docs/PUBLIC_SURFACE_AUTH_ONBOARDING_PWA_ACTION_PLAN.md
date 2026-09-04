@@ -610,27 +610,40 @@ PWA shell can bootstrap only through authenticated online APIs. Service worker m
 
 ### Steps
 
-P6.1 Read service worker and PWA contracts:
-Inspect manifest, service worker, PWA runtime, install gate, and PWA session files.
+User-authoritative execution uses PLAN (7) `P6.1`–`P6.10`.
 
-P6.2 Validate compatibility names:
-Keep existing `siriusai-*` cache names and `manu-ai-shell-*` cleanup prefix if they are compatibility contracts.
+P6.1 Re-extract manifest, service worker, and install-route wiring.
 
-P6.3 Update visible PWA text:
-Ensure install page and browser metadata use AIya and do not imply offline health-data use.
+P6.2 Verify auth redirects use only `/app-install`.
 
-P6.4 Verify protected route policy:
-Confirm protected API responses are network-only/fail-closed and offline blocker unmounts protected content.
+P6.3 Verify manifest AIya name, start URL, scope, display, and icons.
 
-P6.5 Responsive inspection:
-Run desktop, tablet, Android mobile, and PWA-mode visual tests for public, login, app-install, dashboard shell, clients, messages, alerts, settings, and offline lock.
+P6.4 Lock service-worker network-only policy for API, auth, and navigation responses.
+
+P6.5 Verify offline privacy-lock on foreground and reopen.
+
+P6.6 Verify Phase 1 removed dashboard chrome is absent from the installed PWA surface.
+
+P6.7 Verify the two-hour session policy in PWA background/foreground.
+
+P6.8 Verify Phase 3 password login and invite onboarding on mobile.
+
+P6.9 Inspect 360px mobile, tablet, and desktop overflow, overlap, and focus order.
+
+P6.10 Produce Android Chrome, installed-Android-PWA, and TalkBack evidence for this version.
 
 ### Tests
 
-- `npm test -- phase-83d-pwa-install-gate phase-83g-pwa-session phase-85-stage-5-shell-pwa`
-- Stage-7 PWA/offline visual/accessibility tests.
-- Manifest scan.
-- Service worker privacy scan.
+- Manifest schema and icon tests.
+- Service worker network-only tests.
+- Offline privacy-lock.
+- Cache content inspection.
+- PWA install gate tests.
+- Android Chrome (Chromium Pixel 5 emulation).
+- Installed Android PWA (standalone display-mode).
+- Android TalkBack remains `WAIVED_NOT_EXECUTED`.
+- Playwright mobile/tablet/desktop visual.
+- Accessibility overflow, 44px, and focus-order checks.
 - `npm run typecheck`
 - `npm run lint`
 - `npm run build`
@@ -638,9 +651,18 @@ Run desktop, tablet, Android mobile, and PWA-mode visual tests for public, login
 
 ### Completion Criteria
 
-- PWA visible brand/domain is AIya/aiyaworkspace.
-- Offline protected content remains unavailable.
-- Mobile/tablet/desktop layouts have no blocking overlap or unusable controls.
+- PWA is installable under the AIya identity.
+- Auth and dashboard stay network-only.
+- Offline health data is not shown or edited.
+- Web and PWA session behavior match.
+- Local Android Chrome and installed-PWA checks PASS.
+- iPhone result remains `WAIVED_NOT_EXECUTED` only.
+- TalkBack remains `WAIVED_NOT_EXECUTED` and is not recorded as PASS.
+- Every `P6.*` step and required test is completed.
+
+### Phase 6 Closure (2026-09-04)
+
+Status: `PHASE_6_CLOSED_LOCAL_ONLY`. User-authoritative execution used PLAN (7) `P6.1`–`P6.10`; every step is `IMPLEMENTED_AND_INSPECTED`. Evidence: `docs/PUBLIC_SURFACE_AUTH_ONBOARDING_PWA_PHASE_6_PWA_INSTALL_RESPONSIVE_A11Y_EVIDENCE.md`. Next eligible unit is Phase 7 only after explicit user approval. Production remains `NO-GO`.
 
 ## Phase 7 - Integrated Local Closure and Evidence Reconciliation
 

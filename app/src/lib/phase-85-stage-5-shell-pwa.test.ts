@@ -23,9 +23,10 @@ describe("phase-85-stage-5-shell-pwa", () => {
     expect(classifyShellServiceWorkerRequest({ pathname: "/dashboard", mode: "navigate" })).toBe(
       "network_only",
     );
-    expect(classifyShellServiceWorkerRequest({ pathname: "/dashboard", mode: "cors" })).toBe(
+    expect(classifyShellServiceWorkerRequest({ pathname: "/onboarding", mode: "navigate" })).toBe(
       "network_only",
     );
+    expect(classifyShellServiceWorkerRequest({ pathname: "/auth/callback" })).toBe("network_only");
     expect(classifyShellServiceWorkerRequest({ pathname: "/api/app-state" })).toBe("network_only");
     expect(classifyShellServiceWorkerRequest({ pathname: "/_next/static/chunks/main.js" })).toBe(
       "cache_first_static",

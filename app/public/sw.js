@@ -22,7 +22,11 @@ function classifyRequest(request) {
     pathname === "/app-install" ||
     pathname.startsWith("/app-install/") ||
     pathname === "/login" ||
-    pathname.startsWith("/login/")
+    pathname.startsWith("/login/") ||
+    pathname === "/onboarding" ||
+    pathname.startsWith("/onboarding/") ||
+    pathname === "/auth/callback" ||
+    pathname.startsWith("/auth/callback")
   ) {
     return "network_only";
   }

@@ -177,9 +177,18 @@ export function AppInstallCenter({ displayName }: AppInstallCenterProps) {
           Mobil uygulamayı indir
         </button>
       ) : (
-        <p className="mt-4 rounded-md border border-border bg-muted/30 px-4 py-3 text-sm text-muted-foreground">
-          Kurulum istemi bu tarayıcıda henüz hazır değil. Chrome veya Edge kullanın ya da daha sonra tekrar deneyin.
-        </p>
+        <div
+          className="mt-4 rounded-md border border-border bg-muted/30 px-4 py-3 text-sm text-muted-foreground"
+          data-testid="install-center-manual-android-guide"
+        >
+          <p>Kurulum istemi bu tarayıcıda hazır değilse Android Chrome menüsünden manuel ekleyin:</p>
+          <ol className="mt-2 list-decimal space-y-1 pl-5">
+            <li>Chrome sağ üst menüsünü açın.</li>
+            <li>Ana ekrana ekle veya Uygulamayı yükle seçeneğine dokunun.</li>
+            <li>{AIYA_BRAND_NAME} kısayolunu onaylayın; uygulama /dashboard ile açılır.</li>
+          </ol>
+          <p className="mt-2">Klinik veriler cihazda önbelleğe alınmaz. Çevrimdışı sağlık verisi gösterilmez veya düzenlenmez.</p>
+        </div>
       )}
 
       {installOutcome === "accepted" ? (

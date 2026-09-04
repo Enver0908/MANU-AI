@@ -22,6 +22,8 @@ describe("phase 83d pwa install gate", () => {
   it("allows static asset caching only — never dashboard HTML or API", () => {
     expect(shouldServiceWorkerCachePath("/dashboard")).toBe(false);
     expect(shouldServiceWorkerCachePath("/app-install")).toBe(false);
+    expect(shouldServiceWorkerCachePath("/login")).toBe(false);
+    expect(shouldServiceWorkerCachePath("/onboarding")).toBe(false);
     expect(shouldServiceWorkerCachePath("/")).toBe(false);
     expect(shouldServiceWorkerCachePath("/manifest.webmanifest")).toBe(true);
     expect(shouldServiceWorkerCachePath("/_next/static/chunks/main.js")).toBe(true);
