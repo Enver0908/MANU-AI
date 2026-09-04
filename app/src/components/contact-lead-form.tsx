@@ -5,6 +5,7 @@ import { CheckCircle2, Mail, Send } from "lucide-react";
 import { Button, Field, TextInput } from "@/components/ui";
 import {
   AIYA_MARKETING_CONTACT_EMAIL,
+  PUBLIC_CONTACT_COPY,
   buildContactMailtoUrl,
 } from "@/lib/phase-84b-public-website";
 import { isLikelyEmail } from "@/lib/phase-83e2-purchase-ux";
@@ -89,7 +90,7 @@ export function ContactLeadForm() {
       <div className="space-y-4" role="status">
         <div className="flex items-start gap-3 rounded-control border border-sage/30 bg-sage/10 px-4 py-3 text-sm text-ink">
           <CheckCircle2 size={18} className="mt-0.5 shrink-0" aria-hidden />
-          <p>Talebiniz alındı. Ekibimiz en kısa sürede dönüş yapacaktır.</p>
+          <p>{PUBLIC_CONTACT_COPY.successBody}</p>
         </div>
         <a href={contactMailto} className="inline-flex items-center gap-2 text-sm text-primary underline underline-offset-2">
           <Mail size={16} aria-hidden />

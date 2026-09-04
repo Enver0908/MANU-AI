@@ -78,11 +78,11 @@ export function evaluatePhase84hQaScenario(scenario: Phase84hQaScenario): Phase8
       if (PUBLIC_MARKETING_COPY.loginLabel !== "Giriş yap") {
         blockingReasons.push("login_cta_label_missing");
       }
-      if (PUBLIC_MARKETING_COPY.purchaseLabel !== "Satın al") {
-        blockingReasons.push("purchase_cta_label_missing");
-      }
-      if (PUBLIC_MARKETING_COPY.contactCta !== "Bizimle iletişime geçin") {
+      if (PUBLIC_MARKETING_COPY.contactCta !== "Bize ulaşın") {
         blockingReasons.push("contact_cta_label_missing");
+      }
+      if (PUBLIC_MARKETING_COPY.purchaseLabel !== "Satın al") {
+        blockingReasons.push("purchase_route_label_missing");
       }
       break;
     }

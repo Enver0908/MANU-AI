@@ -23,9 +23,9 @@ export function CommercialShell({ children }: { children: ReactNode }) {
       <footer className="border-t border-border">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
           <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} {AIYA_BRAND_NAME}</p>
-          <p className="text-xs text-muted-foreground">
-            Production pilot: <span className="font-medium text-destructive">NO-GO</span>
-          </p>
+          <Link href="/#iletisim" className="text-xs text-muted-foreground transition-colors hover:text-foreground">
+            Bize ulaşın
+          </Link>
         </div>
       </footer>
     </div>

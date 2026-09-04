@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { XCircle } from "lucide-react";
 import { CommercialShell } from "@/components/public/CommercialShell";
-import { AIYA_BRAND_NAME } from "@/lib/brand";
+import { AIYA_BRAND_NAME, buildCustomerSurfaceMetadata } from "@/lib/brand";
 
-export const metadata = {
+export const metadata = buildCustomerSurfaceMetadata({
+  path: "/purchase/cancel",
   title: `Ödeme tamamlanmadı · ${AIYA_BRAND_NAME}`,
-};
+  description: "Ödeme işlemi tamamlanmadı. Davet bilgileriniz geçerliyse işlemi tekrar deneyebilirsiniz.",
+});
 
 export default function PurchaseCancelPage() {
   return (
@@ -21,7 +23,7 @@ export default function PurchaseCancelPage() {
             <p className="mb-2 text-xs font-semibold uppercase text-muted-foreground">İşlem tamamlanmadı</p>
             <h1 className="mb-2 font-display text-2xl font-bold text-off-black">Ödeme tamamlanmadı</h1>
             <p className="text-sm leading-relaxed text-muted-foreground">
-              Ödeme işlemi iptal edildi veya tamamlanamadı. Davet kodunuz hâlâ geçerliyse istediğiniz zaman tekrar
+              Ödeme işlemi iptal edildi veya tamamlanamadı. Davet bilgileriniz hâlâ geçerliyse istediğiniz zaman tekrar
               deneyebilirsiniz.
             </p>
           </div>
@@ -48,7 +50,7 @@ export default function PurchaseCancelPage() {
               <Link href="/#iletisim" className="text-primary underline underline-offset-2">
                 iletişime geçin
               </Link>
-              . Sandbox modunda gerçek bir işlem gerçekleşmemiştir.
+              .
             </p>
           </div>
         </div>

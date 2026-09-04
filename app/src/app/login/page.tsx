@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import { CommercialShell } from "@/components/public/CommercialShell";
 import { CustomerLoginForm } from "@/components/customer-login-form";
-import { AIYA_BRAND_NAME } from "@/lib/brand";
+import { AIYA_BRAND_NAME, buildCustomerSurfaceMetadata } from "@/lib/brand";
 import { PUBLIC_MARKETING_COPY } from "@/lib/phase-84b-public-website";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildCustomerSurfaceMetadata({
+  path: "/login",
   title: `Giriş | ${PUBLIC_MARKETING_COPY.brand}`,
   description: PUBLIC_MARKETING_COPY.loginBody,
-};
+});
 
 type LoginPageProps = {
   searchParams: Promise<{ error?: string; next?: string }>;

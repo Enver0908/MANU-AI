@@ -3,14 +3,16 @@ import { redirect } from "next/navigation";
 import { AccountRecoveryForm } from "@/components/account-recovery-form";
 import { CommercialShell } from "@/components/public/CommercialShell";
 import { PUBLIC_MARKETING_COPY } from "@/lib/phase-84b-public-website";
+import { buildCustomerSurfaceMetadata } from "@/lib/brand";
 import { isSupabaseConfigured } from "@/lib/supabase";
 import { createSupabaseServerReadOnlyClient } from "@/lib/supabase-server-readonly";
 import { cookies } from "next/headers";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildCustomerSurfaceMetadata({
+  path: "/account/recovery",
   title: `Parola kurtarma | ${PUBLIC_MARKETING_COPY.brand}`,
   description: "Yeni parolanızı belirleyin.",
-};
+});
 
 export default async function AccountRecoveryPage() {
   if (!isSupabaseConfigured()) {

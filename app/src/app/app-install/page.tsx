@@ -2,9 +2,15 @@ import { redirect } from "next/navigation";
 import { CheckCircle, Download, Settings } from "lucide-react";
 import { CommercialShell } from "@/components/public/CommercialShell";
 import { CommercialInstallBlockedState } from "@/components/commercial-install-blocked-state";
-import { AIYA_BRAND_NAME } from "@/lib/brand";
+import { AIYA_BRAND_NAME, buildCustomerSurfaceMetadata } from "@/lib/brand";
 import { resolveMobileInstallAccess } from "@/lib/commercial-install-access";
 import { readStage7ScenarioState } from "@/lib/stage-7-request";
+
+export const metadata = buildCustomerSurfaceMetadata({
+  path: "/app-install",
+  title: `Mobil kurulum | ${AIYA_BRAND_NAME}`,
+  description: `${AIYA_BRAND_NAME} mobil uygulamasını yalnızca aktif aboneler kurabilir.`,
+});
 
 export default async function AppInstallPage() {
   const stage7State = await readStage7ScenarioState();

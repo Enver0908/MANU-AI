@@ -23,8 +23,8 @@ const ITEMS = [
   },
   {
     icon: KeyRound,
-    title: "Davet ve yetki mantığı",
-    desc: "Erişim yalnızca geçerli davet kodu ve onaylı e-posta ile mümkündür.",
+    title: "Davetli erişim",
+    desc: "Erişim yalnızca ekip onayı ve kurulum bağlantısı ile açılır.",
   },
   {
     icon: ShieldCheck,

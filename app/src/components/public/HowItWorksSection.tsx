@@ -12,19 +12,19 @@ const STEPS = [
     icon: Search,
     step: "02",
     title: "Ekip değerlendirir",
-    desc: "Ekibimiz talebinizi inceler, klinik uygunluğu ve pilot koşulları değerlendirir.",
+    desc: "Ekibimiz talebinizi inceler ve klinik uygunluğu değerlendirir.",
   },
   {
     icon: KeyRound,
     step: "03",
-    title: "Davet kodu oluşturulur",
-    desc: "Onaylanan talepler için size özel davet kodu e-posta ile iletilir.",
+    title: "Kurulum bağlantısı gönderilir",
+    desc: "Onaylanan talepler için kurulum bağlantısı e-posta ile iletilir.",
   },
   {
     icon: Link2,
     step: "04",
     title: "Çalışma alanı bağlanır",
-    desc: "Davet kodunuzla ödeme ve hesap bağlama adımlarını tamamlayın, çalışma alanınıza erişin.",
+    desc: "Kurulum bağlantısıyla hesabınızı oluşturun ve çalışma alanınıza erişin.",
   },
 ] as const;
 
@@ -38,7 +38,7 @@ export function HowItWorksSection() {
             Nasıl çalışır?
           </h2>
           <p className="mt-3 leading-relaxed text-muted-foreground">
-            {AIYA_BRAND_NAME} self-serve bir platform değildir. Erişim, ekip değerlendirmesi ve davet kodu ile açılır.
+            {AIYA_BRAND_NAME} self-serve bir platform değildir. Erişim, ekip değerlendirmesi ve kurulum bağlantısı ile açılır.
           </p>
         </div>
 

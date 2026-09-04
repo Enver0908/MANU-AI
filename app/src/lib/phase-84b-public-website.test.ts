@@ -33,6 +33,9 @@ describe("phase 84b public website", () => {
     const ids = PUBLIC_MARKETING_SECTIONS.map((section) => section.id);
     expect(ids).toEqual(["value", "safety", "workflow", "mobile", "governance", "onboarding"]);
     expect(PUBLIC_MARKETING_COPY.brand).toBe("AIya");
-    expect(PUBLIC_MARKETING_COPY.contactCta).toBe("Bizimle iletişime geçin");
+    expect(PUBLIC_MARKETING_COPY.contactCta).toBe("Bize ulaşın");
+    expect(PUBLIC_MARKETING_COPY.loginLabel).toBe("Giriş yap");
+    expect(PUBLIC_MARKETING_COPY.footerNote).not.toMatch(/NO-GO/i);
+    expect(PUBLIC_MARKETING_COPY.loginBody).toContain("e-posta ve şifre");
   });
 });

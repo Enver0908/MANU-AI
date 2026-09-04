@@ -5,15 +5,16 @@ import { AdminLoginForm } from "@/components/admin-login-form";
 import { CommercialAdminConsole } from "@/components/commercial-admin-console";
 import { CommercialShell } from "@/components/public/CommercialShell";
 import { resolveAdminSessionEmail } from "@/lib/commercial-admin-access";
-import { AIYA_BRAND_NAME } from "@/lib/brand";
+import { AIYA_BRAND_NAME, buildAdminSurfaceMetadata } from "@/lib/brand";
 import { PUBLIC_MARKETING_COPY } from "@/lib/phase-84b-public-website";
 import { isSupabaseConfigured } from "@/lib/supabase";
 import { readStage7ScenarioState } from "@/lib/stage-7-request";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildAdminSurfaceMetadata({
+  path: "/admin",
   title: `Yönetim | ${PUBLIC_MARKETING_COPY.brand}`,
   description: "Ticari operasyon paneli: lead, davet, abonelik ve billing ledger.",
-};
+});
 
 type AdminPageProps = {
   searchParams: Promise<{ error?: string }>;

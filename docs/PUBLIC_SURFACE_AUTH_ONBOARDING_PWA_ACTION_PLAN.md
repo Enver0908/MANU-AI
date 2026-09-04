@@ -519,28 +519,38 @@ No protected data flow changes. Public lead/contact path remains public and rate
 
 ### Steps
 
-P5.1 Scan active public surfaces:
-Search app source and public assets for retired visible brands/domains and invite-first CTA text.
+User-authoritative execution uses PLAN (7) `P5.1`–`P5.10`.
 
-P5.2 Update CTA hierarchy:
-Use contact as primary public CTA and login as secondary CTA. Remove public direct invite-code start links from navbar and hero.
+P5.1 Classify old brand, domain, and internal copy in active runtime.
 
-P5.3 Keep purchase route controlled:
-Do not delete `/purchase`; update page copy so it does not invite unmanaged self-serve use unless the route is reached intentionally.
+P5.2 Allowlist technical compatibility names and separate them from visible mismatches.
 
-P5.4 Update metadata:
-Align title, description, canonical, open graph, Apple metadata, and manifest-visible copy with AIya and aiyaworkspace.
+P5.3 Simplify public navigation and CTAs around “Bize ulaşın” and “Giriş yap”.
 
-P5.5 Remove internal launch language:
-Remove visible sandbox/demo/no-go/internal readiness words from public surfaces. Keep evidence docs unchanged.
+P5.4 Remove public “Davet koduyla başla” links; keep the `/purchase` route.
 
-P5.6 Update visual tests:
-Assert AIya, contact/login CTA, absence of retired visible brand/domain, and controlled purchase behavior.
+P5.5 Align contact success/error copy with review and setup-link onboarding.
+
+P5.6 Remove `NO-GO`, sandbox, simulator, and internal pilot terminology from public footer/content.
+
+P5.7 Define route-specific metadata for login, admin login, purchase, onboarding, and app-install.
+
+P5.8 Verify canonical, Open Graph URL, title, and description per route and domain.
+
+P5.9 Replace visible `MANU Tenant ...` fallback with `AIya Workspace` or the real tenant name.
+
+P5.10 Verify desktop/mobile CTA hierarchy, overflow, and readability.
 
 ### Tests
 
-- Public/commercial visual tests.
-- Brand scan over active runtime source and public manifest.
+- Active-surface old brand/domain scan.
+- CTA route tests.
+- Contact success/error copy tests.
+- Metadata and canonical tests.
+- Login vs admin login.
+- `/purchase` direct-access regression.
+- Playwright desktop/mobile visual.
+- Accessibility overflow/touch-target checks.
 - `npm run typecheck`
 - `npm run lint`
 - `npm run build`
@@ -549,8 +559,15 @@ Assert AIya, contact/login CTA, absence of retired visible brand/domain, and con
 ### Completion Criteria
 
 - Public site presents AIya as a corporate product.
-- Public CTAs match current sales-assisted flow.
+- Public CTAs match the current sales-assisted flow.
+- `/purchase` and Stripe infrastructure remain.
+- Route metadata and canonical values are domain-correct.
+- Internal production/sandbox copy is not user-visible on public/auth surfaces.
 - No active visible retired brand/domain remains except approved compatibility names.
+
+### Phase 5 Closure (2026-09-04)
+
+Status: `PHASE_5_CLOSED_LOCAL_ONLY`. User-authoritative execution used PLAN (7) `P5.1`–`P5.10`; every step is `IMPLEMENTED_AND_INSPECTED`. Evidence: `docs/PUBLIC_SURFACE_AUTH_ONBOARDING_PWA_PHASE_5_PUBLIC_SITE_CTA_BRAND_METADATA_EVIDENCE.md`. Public primary CTA is “Bize ulaşın”; existing-customer CTA is “Giriş yap”; public “Davet koduyla başla” links are removed; `/purchase` remains for direct URL/Stripe remnant use. Route metadata uses `https://aiyaworkspace.com` for customer routes and `https://admin.aiyaworkspace.com` for admin login. Visible tenant fallback is `AIya Workspace`. The append-only SQL file was not applied remotely. Next eligible unit is Phase 6 only after explicit user approval. Production remains `NO-GO`.
 
 ## Phase 6 - PWA Install, Manifest, Network-Only, and Responsive Polish
 

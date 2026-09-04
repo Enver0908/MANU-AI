@@ -14,24 +14,21 @@ export function PublicFooter() {
           </div>
 
           <div className="flex flex-col gap-2 text-xs text-muted-foreground">
-            <p className="mb-1 text-xs font-semibold uppercase text-foreground">Durum</p>
+            <p className="mb-1 text-xs font-semibold uppercase text-foreground">İletişim</p>
             <p className="max-w-xs leading-relaxed">
-              Bu platform production pilot aşamasında değildir. Klinik üretim kullanımı ayrı onaylara bağlıdır.
+              Erişim ekip değerlendirmesi ile açılır. Taleplerinizi iletişim formu veya e-posta ile iletebilirsiniz.
             </p>
             <a
               href={`mailto:${AIYA_MARKETING_CONTACT_EMAIL}`}
-              className="mt-1 inline-flex min-h-6 items-center text-primary underline underline-offset-2"
+              className="mt-1 inline-flex min-h-11 items-center text-primary underline underline-offset-2"
             >
-              E-posta ile ulaşın
+              {AIYA_MARKETING_CONTACT_EMAIL}
             </a>
           </div>
         </div>
 
-        <div className="mt-8 flex flex-col gap-2 border-t border-border pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-8 border-t border-border pt-6 text-xs text-muted-foreground">
           <p>© {new Date().getFullYear()} {AIYA_BRAND_NAME}. Tüm hakları saklıdır.</p>
-          <p>
-            Production pilot: <span className="font-medium text-destructive">NO-GO</span>
-          </p>
         </div>
       </div>
     </footer>

@@ -5,7 +5,7 @@ import { cookies } from "next/headers";
 import { AlertCircle, Mail } from "lucide-react";
 import { CommercialShell } from "@/components/public/CommercialShell";
 import { OnboardingClaimPanel } from "@/components/onboarding-claim-panel";
-import { AIYA_BRAND_NAME } from "@/lib/brand";
+import { AIYA_BRAND_NAME, buildCustomerSurfaceMetadata } from "@/lib/brand";
 import { resolveCustomerSessionFacts } from "@/lib/customer-auth-session";
 import {
   PUBLIC_MARKETING_COPY,
@@ -21,10 +21,11 @@ import { getSupabaseAdminClient, isSupabaseConfigured } from "@/lib/supabase";
 import { createSupabaseServerReadOnlyClient } from "@/lib/supabase-server-readonly";
 import { readStage7ScenarioState } from "@/lib/stage-7-request";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildCustomerSurfaceMetadata({
+  path: "/onboarding",
   title: `Onboarding | ${PUBLIC_MARKETING_COPY.brand}`,
   description: PUBLIC_MARKETING_COPY.onboardingBody,
-};
+});
 
 type OnboardingPageProps = {
   searchParams: Promise<{ state?: string; session_id?: string; invite_id?: string }>;

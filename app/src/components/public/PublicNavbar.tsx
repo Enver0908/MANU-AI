@@ -44,10 +44,10 @@ export function PublicNavbar() {
             Giriş yap
           </Link>
           <Link
-            href="/purchase"
+            href="/#iletisim"
             className="inline-flex min-h-11 items-center justify-center rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
-            Davet koduyla başla
+            Bize ulaşın
           </Link>
         </div>
 
@@ -87,11 +87,11 @@ export function PublicNavbar() {
             </li>
             <li className="mt-1">
               <Link
-                href="/purchase"
+                href="/#iletisim"
                 className="flex min-h-[44px] items-center justify-center rounded-md bg-primary px-4 py-2.5 text-center text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover"
                 onClick={() => setOpen(false)}
               >
-                Davet koduyla başla
+                Bize ulaşın
               </Link>
             </li>
           </ul>

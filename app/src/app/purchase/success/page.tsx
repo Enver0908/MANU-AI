@@ -2,11 +2,13 @@ import Link from "next/link";
 import { ArrowRight, CheckCircle, MailCheck } from "lucide-react";
 import { CommercialShell } from "@/components/public/CommercialShell";
 import { PurchaseSuccessOnboarding } from "@/components/purchase-success-onboarding";
-import { AIYA_BRAND_NAME } from "@/lib/brand";
+import { AIYA_BRAND_NAME, buildCustomerSurfaceMetadata } from "@/lib/brand";
 
-export const metadata = {
+export const metadata = buildCustomerSurfaceMetadata({
+  path: "/purchase/success",
   title: `Ödeme doğrulandı · ${AIYA_BRAND_NAME}`,
-};
+  description: "Ödemeniz işlendi. Kurulum e-postasıyla hesabınızı bağlayın.",
+});
 
 type PurchaseSuccessPageProps = {
   searchParams: Promise<{ session_id?: string }>;
@@ -15,7 +17,7 @@ type PurchaseSuccessPageProps = {
 const STEPS = [
   {
     icon: MailCheck,
-    title: "Magic-link e-postanızı açın",
+    title: "Kurulum e-postanızı açın",
     desc: "Kayıtlı e-posta adresinize hesap bağlama bağlantısı gönderilecek.",
   },
   {

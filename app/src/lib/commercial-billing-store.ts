@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { resolveVisibleTenantDisplayName } from "./brand";
 import { getSupabaseAdminClient } from "./supabase";
 import {
   type BillingCustomer,
@@ -272,11 +273,11 @@ export async function provisionTenantForCommercialInvite(
     return input.invite.tenantId;
   }
 
-  const tenantName =
-    typeof input.invite.tenantSeedMetadata.tenantName === "string" &&
-    input.invite.tenantSeedMetadata.tenantName.trim()
-      ? input.invite.tenantSeedMetadata.tenantName.trim()
-      : `MANU Tenant ${input.invite.normalizedEmail}`;
+  const tenantName = resolveVisibleTenantDisplayName(
+    typeof input.invite.tenantSeedMetadata.tenantName === "string"
+      ? input.invite.tenantSeedMetadata.tenantName
+      : null,
+  );
 
   const tenantId = crypto.randomUUID();
   const { error: tenantError } = await admin.from("tenants").insert({

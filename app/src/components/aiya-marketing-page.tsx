@@ -6,7 +6,6 @@ import {
   Mail,
   MessageSquare,
   ShieldCheck,
-  ShoppingCart,
   Smartphone,
 } from "lucide-react";
 import { buttonClasses, Card, CardBody, CardHeader } from "@/components/ui";
@@ -38,10 +37,9 @@ export function AiyaMarketingPage() {
             <Link href="/login" className={buttonClasses("ghost", "sm")}>
               {PUBLIC_MARKETING_COPY.loginLabel}
             </Link>
-            <Link href="/purchase" className={buttonClasses("secondary", "sm")}>
-              <ShoppingCart size={15} />
-              {PUBLIC_MARKETING_COPY.purchaseLabel}
-            </Link>
+            <a href="#contact" className={buttonClasses("primary", "sm")}>
+              {PUBLIC_MARKETING_COPY.contactCta}
+            </a>
           </nav>
         </div>
       </header>
@@ -64,9 +62,8 @@ export function AiyaMarketingPage() {
                   <Mail size={18} />
                   {PUBLIC_MARKETING_COPY.contactCta}
                 </a>
-                <Link href="/purchase" className={buttonClasses("secondary", "lg")}>
-                  <ShoppingCart size={18} />
-                  {PUBLIC_MARKETING_COPY.purchaseLabel}
+                <Link href="/login" className={buttonClasses("secondary", "lg")}>
+                  {PUBLIC_MARKETING_COPY.loginLabel}
                 </Link>
               </div>
               {demoEnabled ? (

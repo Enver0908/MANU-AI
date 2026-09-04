@@ -24,13 +24,14 @@ test("public landing and purchase intro render without app data", async ({ page 
   if (await mobileMenuButton.isVisible()) {
     await mobileMenuButton.click();
   }
-  await expect(page.getByRole("link", { name: "Giriş yap" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "İletişime geç" }).first()).toBeVisible();
+  await expect(page.getByRole("link", { name: "Giriş yap" }).first()).toBeVisible();
+  await expect(page.getByRole("link", { name: "Bize ulaşın" }).first()).toBeVisible();
   await expect(page.getByLabel("AIya ürün önizlemesi")).toBeVisible();
-  await expect(page.getByRole("link", { name: "Davet koduyla başla" }).first()).toBeVisible();
+  await expect(page.getByRole("link", { name: "Davet koduyla başla" })).toHaveCount(0);
+  await expect(page.getByText("NO-GO")).toHaveCount(0);
 
-  await page.getByRole("link", { name: "Davet koduyla başla" }).first().click();
-  await expect(page.getByRole("heading", { name: "Davet koduyla başla", level: 1, exact: true })).toBeVisible();
+  await page.goto("/purchase");
+  await expect(page.getByRole("heading", { name: "Davetli erişimi doğrulayın", level: 1, exact: true })).toBeVisible();
   await expect(page.getByLabel("Onaylı e-posta adresiniz")).toBeVisible();
   await expect(page.getByLabel("Davet kodu")).toBeVisible();
   await expect

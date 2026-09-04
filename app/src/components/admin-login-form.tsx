@@ -130,7 +130,7 @@ export function AdminLoginForm(props: { initialError?: string | null }) {
       </Button>
       <p className="flex items-start gap-2 text-xs text-ink-muted">
         <Shield size={14} className="mt-0.5 shrink-0" aria-hidden />
-        Production pilot hâlâ NO-GO. Bu panel invite, lead ve abonelik operasyonları içindir.
+        Bu panel invite, lead ve abonelik operasyonları içindir.
       </p>
     </form>
   );

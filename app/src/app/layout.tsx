@@ -11,9 +11,6 @@ export const metadata: Metadata = {
   title: AIYA_BRAND_NAME,
   description: AIYA_PRODUCT_DESCRIPTION,
   applicationName: AIYA_BRAND_NAME,
-  alternates: {
-    canonical: "/",
-  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",

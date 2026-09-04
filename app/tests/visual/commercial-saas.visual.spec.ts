@@ -31,6 +31,8 @@ test("marketing contact form renders on landing", async ({ page }) => {
   await expect(page.getByLabel("Ad soyad")).toBeVisible();
   await expect(page.getByLabel("E-posta")).toBeVisible();
   await expect(page.getByLabel("Mesaj")).toBeVisible();
+  await expect(page.getByText("Onay sonrası kurulum bağlantısı e-posta ile gelir")).toBeVisible();
+  await expect(page.getByText(/davet kodu/i)).toHaveCount(0);
 });
 
 test("onboarding route fails closed without configured auth", async ({ page }) => {
