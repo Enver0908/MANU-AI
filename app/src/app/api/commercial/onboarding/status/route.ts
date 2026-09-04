@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { NextResponse, type NextRequest } from "next/server";
 import { isCommercialBillingStoreConfigured } from "@/lib/commercial-billing-store";
 import { evaluateCommercialEntitlementExpiry } from "@/lib/phase-83b-commercial-entitlement-model";
-import { loadOnboardingClaimEvaluation } from "@/lib/commercial-onboarding-store";
+import { loadOnboardingClaimEvaluation, loadOnboardingClaimPendingState } from "@/lib/commercial-onboarding-store";
 import { createSupabaseServerClient, getSupabaseAdminClient, isSupabaseConfigured } from "@/lib/supabase";
 import {
   selectInvitedEmailForStatus,
@@ -81,6 +81,13 @@ export async function GET(request: NextRequest) {
     });
   }
 
+  const claimPending = await loadOnboardingClaimPendingState(admin, {
+    authUserId: user.id,
+    commercialInviteId: evaluation.commercialInviteId,
+    claimable: evaluation.claimable,
+    alreadyClaimed: evaluation.alreadyClaimed,
+  });
+
   return NextResponse.json({
     authenticated: true,
     sessionId: referenceValidation.reference.sessionId,
@@ -92,6 +99,8 @@ export async function GET(request: NextRequest) {
     }),
     claimable: evaluation.claimable,
     alreadyClaimed: evaluation.alreadyClaimed,
+    passwordReady: claimPending,
+    claimPending,
     blockingReasons: evaluation.blockingReasons,
     tenantId: evaluation.tenantId,
   });

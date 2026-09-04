@@ -1,5 +1,7 @@
 # Public Surface/Auth/Onboarding/PWA Phase 4 Evidence
 
+Current authority (2026-09-04): historical Phase 4 PASS is superseded for current closure by Faz 8. Production remains `NO-GO`.
+
 Date: 2026-09-04
 Phase: `4 - Admin Customer Activation and Access Lifecycle`
 Authority: `c:\Users\Dell\Downloads\PLAN (7).md` Faz 4 (`P4.1`–`P4.11`)

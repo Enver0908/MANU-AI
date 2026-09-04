@@ -84,3 +84,22 @@ describe("public surface two-hour session idle migration contract", () => {
     );
   });
 });
+
+describe("public surface Faz 8 session service-role contract", () => {
+  const faz8Sql = readFileSync(
+    join(process.cwd(), "supabase/migrations/20260904180000_public_surface_faz8_session_service_role.sql"),
+    "utf8",
+  );
+
+  it("revokes authenticated execute on v2 and grants v3 to service_role only", () => {
+    expect(faz8Sql).toContain("p85_stage_5_record_session_activity_v3");
+    expect(faz8Sql).toContain(
+      "revoke all on function p85_stage_5_record_session_activity_v2(text) from public, anon, authenticated",
+    );
+    expect(faz8Sql).toContain(
+      "grant execute on function p85_stage_5_record_session_activity_v3(text, uuid, uuid, uuid, uuid) to service_role",
+    );
+    expect(faz8Sql).toContain("perform p85_stage_5_assert_session_activity_v1()");
+    expect(faz8Sql).not.toContain("p85_stage_5_record_session_activity_v2('assert')");
+  });
+});

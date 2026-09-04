@@ -125,6 +125,7 @@ export function CommercialAdminConsole(props: {
   const [invites, setInvites] = useState<CommercialAdminInviteListItem[]>([]);
   const [customers, setCustomers] = useState<CommercialAdminCustomerListItem[]>([]);
   const [customerSearch, setCustomerSearch] = useState("");
+  const [appliedCustomerSearch, setAppliedCustomerSearch] = useState("");
   const [subscriptions, setSubscriptions] = useState<CommercialAdminSubscriptionSummary[]>([]);
   const [ledger, setLedger] = useState<CommercialAdminLedgerListItem[]>([]);
   const [leads, setLeads] = useState<CommercialLeadListItem[]>([]);
@@ -161,60 +162,65 @@ export function CommercialAdminConsole(props: {
     return summarizeAdminHealth(payload);
   }, []);
 
-  const loadOperations = useCallback(
-    async (token?: string | null) => {
-      const headers = buildAdminHeaders(token);
-      const [inviteRes, subscriptionRes, ledgerRes, leadsRes, auditRes, healthRes] = await Promise.all([
-        fetch(
-          customerSearch.trim()
-            ? `/api/commercial/admin/invites?email=${encodeURIComponent(customerSearch.trim())}`
-            : "/api/commercial/admin/invites",
-          { headers },
-        ),
-        fetch("/api/commercial/admin/subscriptions", { headers }),
-        fetch("/api/commercial/admin/ledger?limit=25", { headers }),
-        fetch("/api/commercial/admin/leads?limit=50", { headers }),
-        fetch("/api/commercial/admin/audit?limit=50", { headers }),
-        fetch("/api/commercial/admin/health", { headers }),
-      ]);
+  const loadCustomers = useCallback(async (token: string | null | undefined, email: string) => {
+    const headers = buildAdminHeaders(token);
+    const inviteRes = await fetch(
+      email.trim()
+        ? `/api/commercial/admin/invites?email=${encodeURIComponent(email.trim())}`
+        : "/api/commercial/admin/invites",
+      { headers },
+    );
+    const invitePayload = await inviteRes.json().catch(() => ({}));
+    if (!inviteRes.ok) {
+      throw new Error(
+        invitePayload.blockingReasons?.[0] ?? invitePayload.error ?? "commercial_admin_load_failed",
+      );
+    }
+    setInvites(invitePayload.invites ?? []);
+    setCustomers(invitePayload.customers ?? []);
+  }, []);
 
-      const invitePayload = await inviteRes.json().catch(() => ({}));
-      const subscriptionPayload = await subscriptionRes.json().catch(() => ({}));
-      const ledgerPayload = await ledgerRes.json().catch(() => ({}));
-      const leadsPayload = await leadsRes.json().catch(() => ({}));
-      const auditPayload = await auditRes.json().catch(() => ({}));
-      const healthJson = (await healthRes.json().catch(() => null)) as CommercialAdminHealthPayload | null;
-      setHealthPayload(healthJson);
+  const loadOperations = useCallback(async (token?: string | null, customerEmail = "") => {
+    const headers = buildAdminHeaders(token);
+    const [subscriptionRes, ledgerRes, leadsRes, auditRes, healthRes] = await Promise.all([
+      fetch("/api/commercial/admin/subscriptions", { headers }),
+      fetch("/api/commercial/admin/ledger?limit=25", { headers }),
+      fetch("/api/commercial/admin/leads?limit=50", { headers }),
+      fetch("/api/commercial/admin/audit?limit=50", { headers }),
+      fetch("/api/commercial/admin/health", { headers }),
+    ]);
 
-      if (!inviteRes.ok || !subscriptionRes.ok || !ledgerRes.ok || !leadsRes.ok || !auditRes.ok) {
-        const blockingReasons = [
-          ...(invitePayload.blockingReasons ?? []),
-          ...(subscriptionPayload.blockingReasons ?? []),
-          ...(ledgerPayload.blockingReasons ?? []),
-          ...(leadsPayload.blockingReasons ?? []),
-          ...(auditPayload.blockingReasons ?? []),
-        ];
-        throw new Error(
-          blockingReasons[0] ??
-            invitePayload.error ??
-            subscriptionPayload.error ??
-            ledgerPayload.error ??
-            leadsPayload.error ??
-            auditPayload.error ??
-            "commercial_admin_load_failed",
-        );
-      }
+    const subscriptionPayload = await subscriptionRes.json().catch(() => ({}));
+    const ledgerPayload = await ledgerRes.json().catch(() => ({}));
+    const leadsPayload = await leadsRes.json().catch(() => ({}));
+    const auditPayload = await auditRes.json().catch(() => ({}));
+    const healthJson = (await healthRes.json().catch(() => null)) as CommercialAdminHealthPayload | null;
+    setHealthPayload(healthJson);
 
-      setInvites(invitePayload.invites ?? []);
-      setCustomers(invitePayload.customers ?? []);
-      setSubscriptions(subscriptionPayload.subscriptions ?? []);
-      setLedger(ledgerPayload.entries ?? []);
-      setLeads(leadsPayload.leads ?? []);
-      setAdminAudit(auditPayload.adminAudit ?? []);
-      setOnboardingAudit(auditPayload.onboardingAudit ?? []);
-    },
-    [customerSearch],
-  );
+    if (!subscriptionRes.ok || !ledgerRes.ok || !leadsRes.ok || !auditRes.ok) {
+      const blockingReasons = [
+        ...(subscriptionPayload.blockingReasons ?? []),
+        ...(ledgerPayload.blockingReasons ?? []),
+        ...(leadsPayload.blockingReasons ?? []),
+        ...(auditPayload.blockingReasons ?? []),
+      ];
+      throw new Error(
+        blockingReasons[0] ??
+          subscriptionPayload.error ??
+          ledgerPayload.error ??
+          leadsPayload.error ??
+          auditPayload.error ??
+          "commercial_admin_load_failed",
+      );
+    }
+
+    setSubscriptions(subscriptionPayload.subscriptions ?? []);
+    setLedger(ledgerPayload.entries ?? []);
+    setLeads(leadsPayload.leads ?? []);
+    setAdminAudit(auditPayload.adminAudit ?? []);
+    setOnboardingAudit(auditPayload.onboardingAudit ?? []);
+    await loadCustomers(token, customerEmail);
+  }, [loadCustomers]);
 
   useEffect(() => {
     if (!isSessionMode || !props.sessionEmail) {
@@ -270,7 +276,7 @@ export function CommercialAdminConsole(props: {
     setHealthSummary(null);
     setBusy(true);
     try {
-      await loadOperations(activeToken);
+      await loadOperations(activeToken, appliedCustomerSearch);
     } catch (loadError) {
       setError(loadError instanceof Error ? loadError.message : "commercial_admin_refresh_failed");
       setHealthSummary(await loadHealthSummary(activeToken).catch(() => "commercial_admin_health_unavailable"));
@@ -312,7 +318,7 @@ export function CommercialAdminConsole(props: {
       setCreateTenantName("");
       setCreatePaidThrough("");
       setCreateExpiresAt("");
-      await loadOperations(activeToken);
+      await loadOperations(activeToken, appliedCustomerSearch);
     } catch (createError) {
       setError(createError instanceof Error ? createError.message : "invite_create_failed");
     } finally {
@@ -352,7 +358,7 @@ export function CommercialAdminConsole(props: {
       setManualPaymentReference("");
       setManualPaidThrough("");
       setManualRequestId("");
-      await loadOperations(activeToken);
+      await loadOperations(activeToken, appliedCustomerSearch);
     } catch (manualError) {
       setError(manualError instanceof Error ? manualError.message : "manual_entitlement_failed");
     } finally {
@@ -377,7 +383,7 @@ export function CommercialAdminConsole(props: {
       if (!response.ok) {
         throw new Error(payload.error ?? "invite_revoke_failed");
       }
-      await loadOperations(activeToken);
+      await loadOperations(activeToken, appliedCustomerSearch);
     } catch (revokeError) {
       setError(revokeError instanceof Error ? revokeError.message : "invite_revoke_failed");
     } finally {
@@ -410,7 +416,7 @@ export function CommercialAdminConsole(props: {
           describeCommercialBlockingReason(payload.error ?? payload.blockingReasons?.[0] ?? "entitlement_revoke_failed"),
         );
       }
-      await loadOperations(activeToken);
+      await loadOperations(activeToken, appliedCustomerSearch);
     } catch (revokeError) {
       setError(revokeError instanceof Error ? revokeError.message : "entitlement_revoke_failed");
     } finally {
@@ -454,7 +460,7 @@ export function CommercialAdminConsole(props: {
         throw new Error(payload.error ?? "manual_entitlement_failed");
       }
       setRenewPaidThrough("");
-      await loadOperations(activeToken);
+      await loadOperations(activeToken, appliedCustomerSearch);
     } catch (renewError) {
       setError(renewError instanceof Error ? renewError.message : "manual_entitlement_failed");
     } finally {
@@ -514,7 +520,7 @@ export function CommercialAdminConsole(props: {
           describeCommercialBlockingReason(payload.error ?? payload.blockingReasons?.[0] ?? "stripe_subscription_cancel_failed"),
         );
       }
-      await loadOperations(activeToken);
+      await loadOperations(activeToken, appliedCustomerSearch);
     } catch (cancelError) {
       setError(cancelError instanceof Error ? cancelError.message : "stripe_subscription_cancel_failed");
     } finally {
@@ -539,7 +545,7 @@ export function CommercialAdminConsole(props: {
       if (!response.ok) {
         throw new Error(payload.error ?? "lead_update_failed");
       }
-      await loadOperations(activeToken);
+      await loadOperations(activeToken, appliedCustomerSearch);
     } catch (updateError) {
       setError(updateError instanceof Error ? updateError.message : "lead_update_failed");
     } finally {
@@ -722,7 +728,15 @@ export function CommercialAdminConsole(props: {
             className="flex flex-wrap items-end gap-3"
             onSubmit={(event) => {
               event.preventDefault();
-              void onRefresh();
+              const nextSearch = customerSearch.trim();
+              setAppliedCustomerSearch(nextSearch);
+              setError(null);
+              setBusy(true);
+              void loadCustomers(isSessionMode ? null : activeToken, nextSearch)
+                .catch((loadError) => {
+                  setError(loadError instanceof Error ? loadError.message : "commercial_admin_load_failed");
+                })
+                .finally(() => setBusy(false));
             }}
           >
             <div className="min-w-56 flex-1">

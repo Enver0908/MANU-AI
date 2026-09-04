@@ -73,27 +73,8 @@ function addAssertion(assertions, blockers, code, passed, details = {}) {
   if (!passed) blockers.push(code);
 }
 
-function hasAuditMetadata(payload) {
-  return payload && typeof payload === "object" && payload.metadata && typeof payload.metadata.vulnerabilities === "object";
-}
-
 function captureProductionAudit(npm) {
-  let last = null;
-  for (let attempt = 1; attempt <= 5; attempt += 1) {
-    last = runCapture(npm, ["audit", "--omit=dev", "--json"], { timeoutMs: 300_000 });
-    try {
-      const parsed = parseJsonOutput(last, "production_dependency_audit");
-      if (hasAuditMetadata(parsed)) {
-        return last;
-      }
-    } catch {
-      // Registry 503/HTML/partial JSON is retried; a completed audit payload is not.
-    }
-    if (attempt < 5) {
-      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 15_000);
-    }
-  }
-  return last;
+  return runCapture(npm, ["audit", "--omit=dev", "--json"], { timeoutMs: 300_000 });
 }
 
 const header = buildStage5EvidenceHeader("dependency", "npm run test:stage-5-dependencies");

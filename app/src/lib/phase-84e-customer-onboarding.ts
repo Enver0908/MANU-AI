@@ -16,6 +16,7 @@ export const COMMERCIAL_ONBOARDING_EVENT_TYPES = [
   "magic_link_requested",
   "claim_completed",
   "claim_blocked",
+  "claim_pending",
 ] as const;
 
 export type CommercialOnboardingEventType = (typeof COMMERCIAL_ONBOARDING_EVENT_TYPES)[number];
@@ -221,6 +222,23 @@ export function selectInvitedEmailForStatus(input: {
 
 export function canSetOnboardingPassword(evaluation: OnboardingClaimEvaluation) {
   return evaluation.claimable && !evaluation.alreadyClaimed && evaluation.blockingReasons.length === 0;
+}
+
+export function deriveOnboardingClaimPending(input: {
+  claimable: boolean;
+  alreadyClaimed: boolean;
+  events: Array<{ eventType: string; createdAt?: string }>;
+}) {
+  if (!input.claimable || input.alreadyClaimed) {
+    return false;
+  }
+  const ordered = [...input.events].sort((left, right) =>
+    String(right.createdAt ?? "").localeCompare(String(left.createdAt ?? "")),
+  );
+  const latest = ordered.find(
+    (event) => event.eventType === "claim_pending" || event.eventType === "claim_completed",
+  );
+  return latest?.eventType === "claim_pending";
 }
 
 export function buildOnboardingPathFromReference(reference: OnboardingClaimReference) {

@@ -8,7 +8,7 @@ The product is designed around a strict principle: AI may assist the dietitian, 
 
 As of 2026-09-04:
 
-- Local public surface, auth, onboarding, admin lifecycle, dashboard production chrome, and PWA polish is closed in `docs/PUBLIC_SURFACE_AUTH_ONBOARDING_PWA_PHASE_7_FINAL_EVIDENCE.md`. This does not authorize production.
+- Local public surface, auth, onboarding, admin lifecycle, dashboard production chrome, and PWA polish is in Faz 8 reclosure (`docs/PUBLIC_SURFACE_AUTH_ONBOARDING_PWA_ACTION_PLAN.md`). This does not authorize production.
 - Active product brand: `AIya`. The permanent public/customer domain is `https://aiyaworkspace.com`, the admin domain is `https://admin.aiyaworkspace.com`, and the business contact inbox is `contact@aiyaworkspace.com`.
 - Hosted VPS runtime still serves commit `4c7bbea8ba21fb84b51843eac9fff2e9ff8fecf9` as release `hs-4c7bbea8ba21-2c32cf194421`. Local HEAD is ahead of that live release; deploy was not executed.
 - Legacy visible names `MANU-AI`, `SiriusAI`, and `AI-ya` are retired from active product surfaces. Historical evidence can still mention them as past-state records.

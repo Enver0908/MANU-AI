@@ -79,28 +79,47 @@ export function extractShellSessionRpcCode(error: { message?: string | null }) {
   return SESSION_RPC_ERROR_CODES.find((code) => message.includes(code)) ?? null;
 }
 
-export async function assertShellSessionActivity(
-  supabase: SupabaseClient,
+export type ShellSessionActorRef = {
+  sessionId: string;
+  authUserId: string;
+  tenantId: string;
+  dietitianId: string;
+};
+
+async function recordShellSessionActivity(
+  admin: SupabaseClient,
+  actor: ShellSessionActorRef,
+  mode: "assert" | "touch",
 ): Promise<ShellSessionActivityResult> {
-  const { data, error } = await supabase.rpc("p85_stage_5_record_session_activity_v2", {
-    p_mode: "assert",
+  const { data, error } = await admin.rpc("p85_stage_5_record_session_activity_v3", {
+    p_mode: mode,
+    p_session_id: actor.sessionId,
+    p_auth_user_id: actor.authUserId,
+    p_tenant_id: actor.tenantId,
+    p_dietitian_id: actor.dietitianId,
   });
   if (error) {
     mapShellSessionRpcError(error);
   }
-  return toShellSessionActivityResult(data);
+  const result = toShellSessionActivityResult(data);
+  return {
+    ...result,
+    sessionId: result.sessionId || actor.sessionId,
+  };
+}
+
+export async function assertShellSessionActivity(
+  admin: SupabaseClient,
+  actor: ShellSessionActorRef,
+): Promise<ShellSessionActivityResult> {
+  return recordShellSessionActivity(admin, actor, "assert");
 }
 
 export async function touchShellSessionActivity(
-  supabase: SupabaseClient,
+  admin: SupabaseClient,
+  actor: ShellSessionActorRef,
 ): Promise<ShellSessionActivityResult> {
-  const { data, error } = await supabase.rpc("p85_stage_5_record_session_activity_v2", {
-    p_mode: "touch",
-  });
-  if (error) {
-    mapShellSessionRpcError(error);
-  }
-  return toShellSessionActivityResult(data);
+  return recordShellSessionActivity(admin, actor, "touch");
 }
 
 function toShellSessionActivityResult(data: unknown): ShellSessionActivityResult {

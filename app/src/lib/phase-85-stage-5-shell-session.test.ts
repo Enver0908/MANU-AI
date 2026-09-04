@@ -171,7 +171,7 @@ describe("phase-85-stage-5-shell-session", () => {
     ).toThrow(new AppAuthError(400, "forbidden_client_identity_field"));
   });
 
-  it("uses v2 record RPC and maps locked data results after the database write returns", async () => {
+  it("uses v3 service-role record RPC and maps locked data results after the database write returns", async () => {
     const calls: Array<{ name: string; args: Record<string, unknown> }> = [];
     const supabase = {
       rpc: async (name: string, args: Record<string, unknown>) => {
@@ -188,17 +188,41 @@ describe("phase-85-stage-5-shell-session", () => {
         };
       },
     };
+    const actor = {
+      sessionId: "00000000-0000-4000-8000-000000000001",
+      authUserId: "user-1",
+      tenantId: "tenant-1",
+      dietitianId: "dietitian-1",
+    };
 
-    await expect(assertShellSessionActivity(supabase as never)).resolves.toMatchObject({
+    await expect(assertShellSessionActivity(supabase as never, actor)).resolves.toMatchObject({
       locked: false,
       sessionId: "00000000-0000-4000-8000-000000000001",
     });
-    await expect(touchShellSessionActivity(supabase as never)).rejects.toThrow(
+    await expect(touchShellSessionActivity(supabase as never, actor)).rejects.toThrow(
       new AppAuthError(401, "session_inactive"),
     );
     expect(calls).toEqual([
-      { name: "p85_stage_5_record_session_activity_v2", args: { p_mode: "assert" } },
-      { name: "p85_stage_5_record_session_activity_v2", args: { p_mode: "touch" } },
+      {
+        name: "p85_stage_5_record_session_activity_v3",
+        args: {
+          p_mode: "assert",
+          p_session_id: actor.sessionId,
+          p_auth_user_id: actor.authUserId,
+          p_tenant_id: actor.tenantId,
+          p_dietitian_id: actor.dietitianId,
+        },
+      },
+      {
+        name: "p85_stage_5_record_session_activity_v3",
+        args: {
+          p_mode: "touch",
+          p_session_id: actor.sessionId,
+          p_auth_user_id: actor.authUserId,
+          p_tenant_id: actor.tenantId,
+          p_dietitian_id: actor.dietitianId,
+        },
+      },
     ]);
   });
 });

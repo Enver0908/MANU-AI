@@ -16,6 +16,8 @@ type OnboardingStatus = {
   claimable?: boolean;
   alreadyClaimed?: boolean;
   blockingReasons?: string[];
+  passwordReady?: boolean;
+  claimPending?: boolean;
 };
 
 export function OnboardingClaimPanel(props: { sessionId?: string | null; inviteId?: string | null }) {
@@ -25,41 +27,43 @@ export function OnboardingClaimPanel(props: { sessionId?: string | null; inviteI
   const [busy, setBusy] = useState(false);
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
-  const [passwordReady, setPasswordReady] = useState(false);
   const sessionId = props.sessionId?.trim() || null;
   const inviteId = props.inviteId?.trim() || null;
   const ambiguousReference = Boolean(sessionId && inviteId);
   const claimReference = !ambiguousReference && (sessionId || inviteId);
+  const passwordReady = Boolean(status?.passwordReady || status?.claimPending);
+
+  async function refreshStatus() {
+    if (ambiguousReference || !claimReference) {
+      return null;
+    }
+    const query = sessionId
+      ? `session_id=${encodeURIComponent(sessionId)}`
+      : `invite_id=${encodeURIComponent(inviteId!)}`;
+    const response = await fetch(`/api/commercial/onboarding/status?${query}`);
+    const payload = (await response.json().catch(() => ({}))) as OnboardingStatus & {
+      error?: string;
+      blockingReasons?: string[];
+    };
+    if (!response.ok) {
+      setError(payload.blockingReasons?.[0] ?? payload.error ?? "onboarding_status_failed");
+      return null;
+    }
+    setStatus(payload);
+    return payload;
+  }
 
   useEffect(() => {
     if (ambiguousReference || !claimReference) {
       return;
     }
 
-    const query = sessionId
-      ? `session_id=${encodeURIComponent(sessionId)}`
-      : `invite_id=${encodeURIComponent(inviteId!)}`;
-
     let cancelled = false;
-    void fetch(`/api/commercial/onboarding/status?${query}`)
-      .then(async (response) => {
-        const payload = (await response.json().catch(() => ({}))) as OnboardingStatus & {
-          error?: string;
-          blockingReasons?: string[];
-        };
-        if (!cancelled) {
-          if (!response.ok) {
-            setError(payload.blockingReasons?.[0] ?? payload.error ?? "onboarding_status_failed");
-            return;
-          }
-          setStatus(payload);
-        }
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setError("onboarding_status_failed");
-        }
-      });
+    void refreshStatus().catch(() => {
+      if (!cancelled) {
+        setError("onboarding_status_failed");
+      }
+    });
 
     return () => {
       cancelled = true;
@@ -130,7 +134,7 @@ export function OnboardingClaimPanel(props: { sessionId?: string | null; inviteI
           );
           return;
         }
-        setPasswordReady(true);
+        await refreshStatus();
       }
 
       await claimWorkspace();

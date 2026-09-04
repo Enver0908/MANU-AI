@@ -18,7 +18,6 @@ import {
   buildCommercialAdminInviteRecord,
   deriveCommercialAdminEntitlementRevokePlan,
   deriveCommercialAdminInviteRevokePlan,
-  evaluateCommercialAdminInviteDuplicate,
   projectCommercialAdminCustomer,
   sanitizeBillingLedgerEntryForAdmin,
   sanitizeCommercialInviteForAdmin,
@@ -150,6 +149,34 @@ export type CommercialAdminSetupEmailAdapter = {
   sendPasswordRecoveryEmail?: (input: { email: string; redirectTo: string }) => Promise<void>;
 };
 
+export const COMMERCIAL_ADMIN_AUTH_USER_PAGE_SIZE = 200;
+export const COMMERCIAL_ADMIN_AUTH_USER_MAX_PAGES = 50;
+
+export async function lookupCommercialAdminAuthUserIdByEmail(
+  admin: SupabaseClient,
+  email: string,
+) {
+  const normalized = normalizeCommercialEmail(email);
+  for (let page = 1; page <= COMMERCIAL_ADMIN_AUTH_USER_MAX_PAGES; page += 1) {
+    const { data, error } = await admin.auth.admin.listUsers({
+      page,
+      perPage: COMMERCIAL_ADMIN_AUTH_USER_PAGE_SIZE,
+    });
+    if (error) {
+      throw error;
+    }
+    const users = data.users ?? [];
+    const match = users.find((entry) => normalizeCommercialEmail(entry.email ?? "") === normalized);
+    if (match) {
+      return match.id;
+    }
+    if (users.length < COMMERCIAL_ADMIN_AUTH_USER_PAGE_SIZE) {
+      return null;
+    }
+  }
+  return null;
+}
+
 export function createDefaultCommercialAdminSetupEmailAdapter(
   admin: SupabaseClient,
 ): CommercialAdminSetupEmailAdapter {
@@ -178,15 +205,7 @@ export function createDefaultCommercialAdminSetupEmailAdapter(
       }
     },
     async lookupAuthUserIdByEmail(email) {
-      const normalized = normalizeCommercialEmail(email);
-      const { data, error } = await admin.auth.admin.listUsers({ page: 1, perPage: 200 });
-      if (error) {
-        throw error;
-      }
-      const user = (data.users ?? []).find(
-        (entry) => normalizeCommercialEmail(entry.email ?? "") === normalized,
-      );
-      return user?.id ?? null;
+      return lookupCommercialAdminAuthUserIdByEmail(admin, email);
     },
     async sendPasswordRecoveryEmail(input) {
       const { error } = await admin.auth.resetPasswordForEmail(input.email, {
@@ -307,59 +326,78 @@ async function lookupCommercialAdminCustomerMatch(admin: SupabaseClient, email: 
   };
 }
 
+type CommercialAdminCustomerProjectionRow = {
+  normalizedEmail?: string;
+  tenantIds?: string[] | null;
+  latestInvite?: {
+    id?: string;
+    status?: string;
+    tenantId?: string | null;
+    tenantName?: string | null;
+    tenantSeedMetadata?: Record<string, unknown>;
+    createdAt?: string;
+    updatedAt?: string;
+  } | null;
+  latestEntitlement?: {
+    tenantId?: string;
+    status?: string;
+    billingMethod?: string;
+    paidThrough?: string | null;
+    revision?: number;
+    inviteId?: string | null;
+  } | null;
+  hasOwnerMembership?: boolean;
+};
+
 export async function listCommercialAdminCustomers(
   admin: SupabaseClient,
   input?: { email?: string | null; limit?: number; now?: string },
 ) {
   const limit = Math.min(Math.max(input?.limit ?? 50, 1), 200);
   const emailFilter = input?.email?.trim() ? normalizeCommercialEmail(input.email) : "";
-  let inviteQuery = admin
-    .from("commercial_invites")
-    .select("id, normalized_email, status, tenant_id, tenant_seed_metadata, created_at, updated_at, tenants(name)")
-    .order("created_at", { ascending: false })
-    .limit(limit);
-
-  if (emailFilter) {
-    inviteQuery = inviteQuery.ilike("normalized_email", `%${emailFilter}%`);
+  const { data, error } = await admin.rpc("commercial_admin_list_customers_v1", {
+    p_email_filter: emailFilter || null,
+    p_limit: limit,
+  });
+  if (error) {
+    throw error;
   }
 
-  const { data: invites, error: inviteError } = await inviteQuery;
-  if (inviteError) {
-    throw inviteError;
-  }
-
-  const emails = new Set((invites ?? []).map((row) => row.normalized_email as string));
-  if (emailFilter) {
-    const { data: billingMatches, error: billingError } = await admin
-      .from("billing_customers")
-      .select("normalized_email")
-      .ilike("normalized_email", `%${emailFilter}%`)
-      .limit(limit);
-    if (billingError) {
-      throw billingError;
-    }
-    for (const row of billingMatches ?? []) {
-      emails.add(row.normalized_email as string);
-    }
-  }
-
-  const customers: CommercialAdminCustomerListItem[] = [];
-
-  for (const email of emails) {
-    const match = await lookupCommercialAdminCustomerMatch(admin, email);
-    customers.push(
-      projectCommercialAdminCustomer({
-        normalizedEmail: match.normalizedEmail,
-        tenantIds: match.tenantIds,
-        latestInvite: match.latestInvite,
-        latestEntitlement: match.latestEntitlement,
-        hasOwnerMembership: match.hasOwnerMembership,
-        now: input?.now,
-      }),
-    );
-  }
-
-  return customers;
+  const rows = Array.isArray(data) ? (data as CommercialAdminCustomerProjectionRow[]) : [];
+  return rows.map((row) =>
+    projectCommercialAdminCustomer({
+      normalizedEmail: String(row.normalizedEmail ?? ""),
+      tenantIds: (row.tenantIds ?? []).filter((value): value is string => Boolean(value)),
+      latestInvite: row.latestInvite?.id
+        ? {
+            id: String(row.latestInvite.id),
+            status: (row.latestInvite.status ?? "active") as NonNullable<
+              CommercialAdminCustomerListItem["inviteStatus"]
+            >,
+            tenantId: row.latestInvite.tenantId ?? null,
+            tenantName: row.latestInvite.tenantName ?? null,
+            createdAt: String(row.latestInvite.createdAt ?? ""),
+            updatedAt: String(row.latestInvite.updatedAt ?? ""),
+          }
+        : null,
+      latestEntitlement: row.latestEntitlement?.tenantId
+        ? {
+            tenantId: String(row.latestEntitlement.tenantId),
+            status: row.latestEntitlement.status as NonNullable<
+              CommercialAdminCustomerListItem["entitlementStatus"]
+            >,
+            billingMethod: row.latestEntitlement.billingMethod as NonNullable<
+              CommercialAdminCustomerListItem["billingMethod"]
+            >,
+            paidThrough: row.latestEntitlement.paidThrough ?? null,
+            revision: row.latestEntitlement.revision ?? 0,
+            inviteId: row.latestEntitlement.inviteId ?? null,
+          }
+        : null,
+      hasOwnerMembership: row.hasOwnerMembership === true,
+      now: input?.now,
+    }),
+  );
 }
 
 export async function inviteCommercialAdminCustomer(
@@ -374,68 +412,49 @@ export async function inviteCommercialAdminCustomer(
     setupEmail?: CommercialAdminSetupEmailAdapter;
   },
 ) {
-  const now = input.now ?? new Date().toISOString();
-  const validation = validateCommercialAdminInviteCustomerCommand(input, { now });
+  const validation = validateCommercialAdminInviteCustomerCommand(input, { now: input.now });
   if (!validation.valid || !validation.paidThrough) {
     throw new Error(validation.blockingReasons[0] ?? "invalid_invite_customer_command");
   }
 
   const setupEmail = input.setupEmail ?? createDefaultCommercialAdminSetupEmailAdapter(admin);
-  const match = await lookupCommercialAdminCustomerMatch(admin, validation.normalizedEmail);
   const authUserId = setupEmail.lookupAuthUserIdByEmail
     ? await setupEmail.lookupAuthUserIdByEmail(validation.normalizedEmail)
-    : null;
-  const duplicate = evaluateCommercialAdminInviteDuplicate({
-    normalizedEmail: match.normalizedEmail,
-    tenantIds: match.tenantIds,
-    authUserId,
-    openInvite: match.openInvite,
-    latestEntitlementStatus: match.latestEntitlement?.status ?? null,
-    hasOwnerMembership: match.hasOwnerMembership,
+    : await lookupCommercialAdminAuthUserIdByEmail(admin, validation.normalizedEmail);
+
+  const { data, error } = await admin.rpc("commercial_admin_invite_customer_v1", {
+    p_normalized_email: validation.normalizedEmail,
+    p_tenant_name: validation.tenantName ?? null,
+    p_paid_through: validation.paidThrough,
+    p_expires_at: validation.expiresAt ?? null,
+    p_actor_summary: input.actorSummary ?? "commercial_admin",
+    p_auth_user_id: authUserId,
   });
-
-  if (duplicate.ambiguousTenantMatch) {
-    throw new Error("ambiguous_tenant_match");
+  if (error) {
+    const message = error.message ?? "invite_customer_failed";
+    if (message.includes("ambiguous_tenant_match")) {
+      throw new Error("ambiguous_tenant_match");
+    }
+    throw new Error(message);
   }
 
-  if (!duplicate.canCreateInvite && !duplicate.shouldResendSetupEmail && !duplicate.shouldResumeProvisioning) {
-    throw new Error(duplicate.blockingReasons[0] ?? "duplicate_customer_match");
+  const result = (data ?? {}) as {
+    status?: string;
+    created?: boolean;
+    resent?: boolean;
+    inviteId?: string | null;
+    email?: string;
+    paidThrough?: string;
+    blockingReason?: string | null;
+  };
+
+  if (result.status === "blocked" || !result.inviteId) {
+    throw new Error(result.blockingReason ?? "duplicate_customer_match");
   }
 
-  let inviteId = duplicate.existingInviteId;
-  let created = false;
-
-  if (duplicate.canCreateInvite) {
-    const createdInvite = await createCommercialAdminInvite(admin, {
-      email: validation.normalizedEmail,
-      tenantName: validation.tenantName ?? undefined,
-      paidThrough: validation.paidThrough,
-      expiresAt: validation.expiresAt,
-      actorSummary: input.actorSummary,
-      now,
-    });
-    inviteId = createdInvite.invite.id;
-    created = true;
-  }
-
-  if (!inviteId) {
-    throw new Error("invite_not_found");
-  }
-
+  const inviteId = result.inviteId;
+  const created = result.created === true;
   const redirectTo = buildAuthCallbackUrlWithNext(buildAdminCustomerSetupPath(inviteId));
-
-  if (duplicate.canCreateInvite || duplicate.shouldResumeProvisioning) {
-    await applyCommercialAdminManualEntitlement(admin, {
-      action: "activate",
-      inviteId,
-      paymentReference: `admin-setup-${inviteId}`,
-      paidThrough: validation.paidThrough,
-      requestId: `admin-setup-req-${inviteId}`,
-      expectedRevision: null,
-      actorSummary: input.actorSummary,
-      now,
-    });
-  }
 
   try {
     await setupEmail.sendSetupEmail({
@@ -443,8 +462,8 @@ export async function inviteCommercialAdminCustomer(
       inviteId,
       redirectTo,
     });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "setup_email_failed";
+  } catch (sendError) {
+    const message = sendError instanceof Error ? sendError.message : "setup_email_failed";
     throw new Error(message === "setup_email_failed" ? message : "setup_email_failed");
   }
 

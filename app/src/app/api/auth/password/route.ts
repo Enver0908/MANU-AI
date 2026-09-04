@@ -19,7 +19,7 @@ import {
 import { assertRateLimit } from "@/lib/rate-limit";
 import { isSupabaseConfigured, getSupabaseAdminClient } from "@/lib/supabase";
 import { isCommercialBillingStoreConfigured } from "@/lib/commercial-billing-store";
-import { loadOnboardingClaimEvaluation } from "@/lib/commercial-onboarding-store";
+import { loadOnboardingClaimEvaluation, insertCommercialOnboardingEvent } from "@/lib/commercial-onboarding-store";
 import {
   canSetOnboardingPassword,
   validateOnboardingClaimReference,
@@ -99,6 +99,11 @@ export async function POST(request: NextRequest) {
     inviteId: body.inviteId,
   });
   const isOnboardingPasswordSetup = !hasNonce && !hasRecoveryFlowCookie && onboardingReference.valid;
+  let onboardingClaimContext: {
+    inviteId: string | null;
+    tenantId: string | null;
+    email: string;
+  } | null = null;
 
   if (!hasNonce && !hasRecoveryFlowCookie && !isOnboardingPasswordSetup) {
     return NextResponse.json({ error: "invalid_or_expired_nonce" }, { status: 401 });
@@ -127,6 +132,11 @@ export async function POST(request: NextRequest) {
         { status: evaluation.alreadyClaimed ? 401 : 403 },
       );
     }
+    onboardingClaimContext = {
+      inviteId: evaluation.commercialInviteId,
+      tenantId: evaluation.tenantId,
+      email: user.email ?? "",
+    };
   }
 
   const updatePayload = hasNonce
@@ -163,6 +173,22 @@ export async function POST(request: NextRequest) {
       user.id,
     ),
   });
+
+  if (isOnboardingPasswordSetup && onboardingClaimContext) {
+    const admin = getSupabaseAdminClient();
+    if (!admin) {
+      return NextResponse.json({ error: "commercial_billing_not_configured" }, { status: 503 });
+    }
+    await insertCommercialOnboardingEvent(admin, {
+      eventType: "claim_pending",
+      normalizedEmail: onboardingClaimContext.email || user.email || "",
+      authUserId: user.id,
+      commercialInviteId: onboardingClaimContext.inviteId,
+      tenantId: onboardingClaimContext.tenantId,
+      checkoutSessionId: onboardingReference.reference?.sessionId ?? null,
+      payloadSummary: { passwordReady: true },
+    });
+  }
 
   const response = NextResponse.json({
     updated: true,

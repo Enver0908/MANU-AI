@@ -135,7 +135,6 @@ export function DashboardWideSidebarNav({
   role,
   uiLanguage,
   navigationLocked = false,
-  onNavigateDestination,
 }: {
   activeNavKey: DashboardNavKey;
   badges?: ShellNavBadges;
@@ -143,7 +142,6 @@ export function DashboardWideSidebarNav({
   role: TenantRole;
   uiLanguage?: SupportedLanguageCode;
   navigationLocked?: boolean;
-  onNavigateDestination: (destinationId: ShellNavVisualItem["destinationId"]) => void;
 }) {
   const items = resolveWideSidebarNavItems({ navigation, badges, role, uiLanguage });
   return (
@@ -172,7 +170,6 @@ export function DashboardMediumRailNav({
   role,
   uiLanguage,
   navigationLocked = false,
-  onNavigateDestination,
 }: {
   activeNavKey: DashboardNavKey;
   badges?: ShellNavBadges;
@@ -180,7 +177,6 @@ export function DashboardMediumRailNav({
   role: TenantRole;
   uiLanguage?: SupportedLanguageCode;
   navigationLocked?: boolean;
-  onNavigateDestination: (destinationId: ShellNavVisualItem["destinationId"]) => void;
 }) {
   const items = resolveMediumRailNavItems({ navigation, badges, role, uiLanguage });
   return (
@@ -209,7 +205,6 @@ export function DashboardCompactBottomNav({
   role,
   uiLanguage,
   navigationLocked = false,
-  onNavigateDestination,
 }: {
   activeNavKey: DashboardNavKey;
   badges?: ShellNavBadges;
@@ -217,7 +212,6 @@ export function DashboardCompactBottomNav({
   role: TenantRole;
   uiLanguage?: SupportedLanguageCode;
   navigationLocked?: boolean;
-  onNavigateDestination: (destinationId: ShellNavVisualItem["destinationId"]) => void;
 }) {
   const items = resolveCompactBottomNavItems({ navigation, badges, role, uiLanguage });
   return (

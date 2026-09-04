@@ -1,5 +1,7 @@
 # Public Surface/Auth/Onboarding/PWA Phase 6 Evidence
 
+Current authority (2026-09-04): historical Phase 6 PASS is superseded for current closure by Faz 8. Playwright Android is not physical TalkBack proof. Production remains `NO-GO`.
+
 Date: 2026-09-04
 Phase: `6 - PWA, App-Install, Responsive, and Accessibility`
 Authority: `c:\Users\Dell\Downloads\PLAN (7).md` Faz 6 (`P6.1`–`P6.10`)

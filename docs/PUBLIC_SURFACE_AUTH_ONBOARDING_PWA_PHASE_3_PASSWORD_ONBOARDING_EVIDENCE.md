@@ -1,5 +1,7 @@
 # Public Surface/Auth/Onboarding/PWA Phase 3 Evidence
 
+Current authority (2026-09-04): historical Phase 3 PASS is superseded for current closure by Faz 8. Production remains `NO-GO`.
+
 Date: 2026-09-04
 Phase: `3 - Password-First Login and Invite Setup Onboarding`
 Authority: `c:\Users\Dell\Downloads\PLAN (7).md` Faz 3 (`P3.1`–`P3.10`)

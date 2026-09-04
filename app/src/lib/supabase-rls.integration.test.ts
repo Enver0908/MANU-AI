@@ -20,7 +20,7 @@ import {
   runSupabaseSimulation,
   saveSupabaseFormResponse,
 } from "./supabase-store";
-import { SHELL_SESSION_INACTIVITY_MS } from "./phase-85-stage-5-shell-session";
+import { SHELL_SESSION_INACTIVITY_MS, readVerifiedSessionIdFromAccessToken } from "./phase-85-stage-5-shell-session";
 
 loadEnvLocal();
 
@@ -2845,46 +2845,64 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
 
   it("enforces Stage 5 session inactivity lock and touch cooldown through RPCs", async () => {
     const owner = await signIn("rls-member@manu.local");
-    const assertInitial = await owner.rpc("p85_stage_5_record_session_activity_v2", {
-      p_mode: "assert",
+    const deniedDirectV2 = await owner.rpc("p85_stage_5_record_session_activity_v2", {
+      p_mode: "touch",
     });
-    expect(assertInitial.error).toBeNull();
-    expect(assertInitial.data).toEqual(
+    expect(deniedDirectV2.error).not.toBeNull();
+
+    const assertInitial = await recordSessionActivityV3(admin, owner, {
+      authUserId: memberUserId,
+      tenantId: TEST_TENANT_ID,
+      dietitianId: TEST_DIETITIAN_ID,
+      mode: "assert",
+    });
+    expect(assertInitial.result.error).toBeNull();
+    expect(assertInitial.result.data).toEqual(
       expect.objectContaining({
         status: "active",
         locked: false,
-        sessionId: expect.any(String),
+        sessionId: assertInitial.sessionId,
       }),
     );
 
-    const sessionId = assertInitial.data.sessionId as string;
+    const sessionId = assertInitial.sessionId;
 
-    const touchWithinCooldown = await owner.rpc("p85_stage_5_record_session_activity_v2", {
-      p_mode: "touch",
+    const touchWithinCooldown = await recordSessionActivityV3(admin, owner, {
+      authUserId: memberUserId,
+      tenantId: TEST_TENANT_ID,
+      dietitianId: TEST_DIETITIAN_ID,
+      mode: "touch",
     });
-    expect(touchWithinCooldown.error).toBeNull();
-    expect(touchWithinCooldown.data?.touched).toBe(false);
+    expect(touchWithinCooldown.result.error).toBeNull();
+    expect(touchWithinCooldown.result.data?.touched).toBe(false);
 
     await admin
       .from("app_session_activity")
       .update({ last_interactive_at: new Date(Date.now() - (SHELL_SESSION_INACTIVITY_MS - 60_000)).toISOString() })
       .eq("session_id", sessionId);
 
-    const assertBeforeLock = await owner.rpc("p85_stage_5_record_session_activity_v2", {
-      p_mode: "assert",
+    const assertBeforeLock = await recordSessionActivityV3(admin, owner, {
+      authUserId: memberUserId,
+      tenantId: TEST_TENANT_ID,
+      dietitianId: TEST_DIETITIAN_ID,
+      mode: "assert",
     });
-    expect(assertBeforeLock.error).toBeNull();
+    expect(assertBeforeLock.result.error).toBeNull();
+    expect(assertBeforeLock.result.data?.locked).toBe(false);
 
     await admin
       .from("app_session_activity")
       .update({ last_interactive_at: new Date(Date.now() - SHELL_SESSION_INACTIVITY_MS).toISOString() })
       .eq("session_id", sessionId);
 
-    const assertLocked = await owner.rpc("p85_stage_5_record_session_activity_v2", {
-      p_mode: "assert",
+    const assertLocked = await recordSessionActivityV3(admin, owner, {
+      authUserId: memberUserId,
+      tenantId: TEST_TENANT_ID,
+      dietitianId: TEST_DIETITIAN_ID,
+      mode: "assert",
     });
-    expect(assertLocked.error).toBeNull();
-    expect(assertLocked.data).toEqual(
+    expect(assertLocked.result.error).toBeNull();
+    expect(assertLocked.result.data).toEqual(
       expect.objectContaining({
         status: "locked",
         locked: true,
@@ -2892,11 +2910,14 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
       }),
     );
 
-    const touchLocked = await owner.rpc("p85_stage_5_record_session_activity_v2", {
-      p_mode: "touch",
+    const touchLocked = await recordSessionActivityV3(admin, owner, {
+      authUserId: memberUserId,
+      tenantId: TEST_TENANT_ID,
+      dietitianId: TEST_DIETITIAN_ID,
+      mode: "touch",
     });
-    expect(touchLocked.error).toBeNull();
-    expect(touchLocked.data?.status).toBe("locked");
+    expect(touchLocked.result.error).toBeNull();
+    expect(touchLocked.result.data?.status).toBe("locked");
 
     const lockedRow = await admin
       .from("app_session_activity")
@@ -2916,6 +2937,12 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
 
   it("updates shell preferences with revision control and client access checks", async () => {
     const owner = await signIn("rls-member@manu.local");
+    const session = await recordSessionActivityV3(admin, owner, {
+      authUserId: memberUserId,
+      tenantId: TEST_TENANT_ID,
+      dietitianId: TEST_DIETITIAN_ID,
+    });
+    expect(session.result.error).toBeNull();
 
     const create = await owner.rpc("p85_stage_5_update_shell_preferences_v2", {
       p_expected_revision: 0,
@@ -2950,6 +2977,12 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     expect(assignClient.data?.activeClientId).toBe(TEST_CLIENT_ID);
 
     const outsider = await signIn("rls-other-tenant@manu.local");
+    const outsiderSession = await recordSessionActivityV3(admin, outsider, {
+      authUserId: otherTenantUserId,
+      tenantId: OTHER_TENANT_ID,
+      dietitianId: OTHER_DIETITIAN_ID,
+    });
+    expect(outsiderSession.result.error).toBeNull();
     const crossTenantClient = await outsider.rpc("p85_stage_5_update_shell_preferences_v2", {
       p_expected_revision: 0,
       p_request_id: "stage5-shell-pref-cross-01",
@@ -3035,6 +3068,35 @@ async function signIn(email: string) {
   const result = await client.auth.signInWithPassword({ email, password: PASSWORD });
   if (result.error) throw result.error;
   return client;
+}
+
+async function recordSessionActivityV3(
+  adminClient: SupabaseClient,
+  owner: SupabaseClient,
+  input: {
+    authUserId: string;
+    tenantId: string;
+    dietitianId: string;
+    mode?: "assert" | "touch";
+  },
+) {
+  const {
+    data: { session },
+  } = await owner.auth.getSession();
+  const sessionId = readVerifiedSessionIdFromAccessToken(session?.access_token);
+  if (!sessionId) {
+    throw new Error("session_claim_missing");
+  }
+  return {
+    sessionId,
+    result: await adminClient.rpc("p85_stage_5_record_session_activity_v3", {
+      p_mode: input.mode ?? "assert",
+      p_session_id: sessionId,
+      p_auth_user_id: input.authUserId,
+      p_tenant_id: input.tenantId,
+      p_dietitian_id: input.dietitianId,
+    }),
+  };
 }
 
 async function seedTenants(

@@ -73,7 +73,7 @@ export function createFallbackShellBootstrap(input?: {
       { id: "messages", enabled: true },
       { id: "alerts", enabled: true },
       { id: "notifications", enabled: true },
-      { id: "simulator", enabled: true },
+      { id: "simulator", enabled: false, disabledReason: "feature_disabled" },
       { id: "voice", enabled: true },
       { id: "forms", enabled: true },
       input?.aiChatEnabled

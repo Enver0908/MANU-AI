@@ -1,5 +1,7 @@
 # Public Surface/Auth/Onboarding/PWA Phase 5 Evidence
 
+Current authority (2026-09-04): historical Phase 5 PASS is superseded for current closure by Faz 8. Production remains `NO-GO`.
+
 Date: 2026-09-04
 Phase: `5 - Public Site, CTA, Brand, and Metadata`
 Authority: `c:\Users\Dell\Downloads\PLAN (7).md` Faz 5 (`P5.1`–`P5.10`)

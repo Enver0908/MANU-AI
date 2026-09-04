@@ -279,7 +279,6 @@ export function DashboardShell({ children }: { children: ReactNode }) {
             role={bootstrap.role}
             uiLanguage={uiLanguage}
             navigationLocked={navigationLocked}
-            onNavigateDestination={navigateToDestination}
           />
         </aside>
 
@@ -315,7 +314,6 @@ export function DashboardShell({ children }: { children: ReactNode }) {
               role={bootstrap.role}
               uiLanguage={uiLanguage}
               navigationLocked={navigationLocked}
-              onNavigateDestination={navigateToDestination}
             />
           </div>
         </aside>
@@ -371,7 +369,6 @@ export function DashboardShell({ children }: { children: ReactNode }) {
           role={bootstrap.role}
           uiLanguage={uiLanguage}
           navigationLocked={navigationLocked}
-          onNavigateDestination={navigateToDestination}
         />
       )}
     </div>

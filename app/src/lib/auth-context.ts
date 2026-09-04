@@ -8,7 +8,7 @@ import {
   readVerifiedSessionIdFromAccessToken,
   touchShellSessionActivity,
 } from "./phase-85-stage-5-shell-session";
-import { createSupabaseServerClient, isSupabaseConfigured } from "./supabase";
+import { createSupabaseServerClient, getSupabaseAdminClient, isSupabaseConfigured } from "./supabase";
 import type { TenantRole } from "./types";
 import { hasCapability, type AppCapability } from "./app-capability-contracts";
 
@@ -52,11 +52,11 @@ export async function resolveAppTenantContext(): Promise<AppTenantContext> {
 }
 
 /**
- * Activity-endpoint resolver only. Records interactive session touch but cannot unlock
- * an already locked session.
+ * Activity-endpoint resolver. Verifies the session without extending it; the
+ * activity route then performs the service-role touch after entitlement and rate limit.
  */
 export async function resolveAccountTenantContextForSessionActivity(): Promise<AccountTenantContext> {
-  return resolveAccountTenantContext({ recordSessionActivity: true });
+  return resolveAccountTenantContext({ recordSessionActivity: false });
 }
 
 export async function resolveAccountTenantContext(
@@ -126,9 +126,20 @@ export async function resolveAccountTenantContext(
     throw new AppAuthError(401, "session_claim_missing");
   }
 
+  const admin = getSupabaseAdminClient();
+  if (!admin) {
+    throw new AppAuthError(401, "supabase_not_configured");
+  }
+
+  const actor = {
+    sessionId: verifiedSessionId,
+    authUserId: user.id,
+    tenantId: membership.tenant_id,
+    dietitianId: dietitian.data.id,
+  };
   const sessionActivity = options.recordSessionActivity
-    ? await touchShellSessionActivity(supabase)
-    : await assertShellSessionActivity(supabase);
+    ? await touchShellSessionActivity(admin, actor)
+    : await assertShellSessionActivity(admin, actor);
 
   const context = {
     tenantId: membership.tenant_id,

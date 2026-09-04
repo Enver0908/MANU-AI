@@ -1,4 +1,5 @@
 import { existsSync, readFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import {
@@ -51,6 +52,11 @@ function readSrc(relativePath: string) {
 
 describe("P7.1 unused frontend import graph", () => {
   it("reports only proven-unused UI files as removed and keeps live panels imported", () => {
+    const result = spawnSync(process.execPath, ["scripts/analyze-frontend-import-graph.mjs"], {
+      cwd: appRoot,
+      encoding: "utf8",
+    });
+    expect(result.status, result.stderr || result.stdout).toBe(0);
     for (const relativePath of REMOVED_UNUSED_UI_FILES) {
       expect(existsSync(path.join(srcRoot, relativePath)), relativePath).toBe(false);
     }

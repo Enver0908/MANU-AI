@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { spawnSync } from "node:child_process";
 import { resolveShellVersion } from "./phase-85-stage-5-shell-store";
 import {
   FORBIDDEN_HOSTED_FALLBACK_VERSION,
@@ -21,6 +22,11 @@ describe("hosted-sandbox release identity", () => {
     const identity = buildReleaseIdentity({ repoRoot: join(process.cwd(), "..") });
     expect(identity.releaseId).toMatch(/^hs-[a-f0-9]{12}-[a-f0-9]{12}$/);
     expect(identity.commitSha).toMatch(/^[a-f0-9]{40}$/);
+    const head = spawnSync("git", ["rev-parse", "HEAD"], {
+      cwd: join(process.cwd(), ".."),
+      encoding: "utf8",
+    });
+    expect(identity.commitSha).toBe(String(head.stdout).trim());
     expect(identity.builtAt).toMatch(/^\d{4}-\d{2}-\d{2}T/);
     expect(identity.migrationFingerprint).toMatch(/^[a-f0-9]{64}$/);
     expect(identity.compatibilityVersion).not.toBe(FORBIDDEN_HOSTED_FALLBACK_VERSION);

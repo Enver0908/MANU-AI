@@ -3,6 +3,7 @@ import {
   buildOnboardingPathFromReference,
   canSetOnboardingPassword,
   deriveDefaultDietitianDisplayName,
+  deriveOnboardingClaimPending,
   evaluateOnboardingClaim,
   selectInvitedEmailForStatus,
   summarizePhase84eCustomerOnboarding,
@@ -218,6 +219,36 @@ describe("phase 84e customer onboarding", () => {
           existingOwnerUserId: "user-1",
         }),
       ),
+    ).toBe(false);
+  });
+
+  it("derives claim-pending recovery from durable events without a later claim_completed", () => {
+    expect(
+      deriveOnboardingClaimPending({
+        claimable: true,
+        alreadyClaimed: false,
+        events: [
+          { eventType: "claim_pending", createdAt: "2026-09-04T10:00:00.000Z" },
+          { eventType: "magic_link_requested", createdAt: "2026-09-04T09:00:00.000Z" },
+        ],
+      }),
+    ).toBe(true);
+    expect(
+      deriveOnboardingClaimPending({
+        claimable: true,
+        alreadyClaimed: false,
+        events: [
+          { eventType: "claim_completed", createdAt: "2026-09-04T11:00:00.000Z" },
+          { eventType: "claim_pending", createdAt: "2026-09-04T10:00:00.000Z" },
+        ],
+      }),
+    ).toBe(false);
+    expect(
+      deriveOnboardingClaimPending({
+        claimable: false,
+        alreadyClaimed: false,
+        events: [{ eventType: "claim_pending", createdAt: "2026-09-04T10:00:00.000Z" }],
+      }),
     ).toBe(false);
   });
 });

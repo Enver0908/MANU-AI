@@ -1,5 +1,7 @@
 # Public Surface/Auth/Onboarding/PWA Phase 1 Evidence
 
+Current authority (2026-09-04): historical Phase 1 PASS is superseded for current closure by Faz 8. Production remains `NO-GO`.
+
 Date: 2026-09-03
 Phase: `1 - Dashboard Production Surface Cleanup`
 Authority: `c:\Users\Dell\Downloads\PLAN (7).md` Faz 1 (`P1.1`–`P1.9`)

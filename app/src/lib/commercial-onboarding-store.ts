@@ -2,7 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { loadCommercialInviteById, loadTenantEntitlementByTenantId, type CommercialInviteRow } from "./commercial-billing-store";
 import { normalizeCommercialEmail } from "./phase-83b-commercial-entitlement-model";
 import type { CommercialOnboardingEventType, OnboardingClaimReference } from "./phase-84e-customer-onboarding";
-import { deriveDefaultDietitianDisplayName, evaluateOnboardingClaim } from "./phase-84e-customer-onboarding";
+import { deriveDefaultDietitianDisplayName, deriveOnboardingClaimPending, evaluateOnboardingClaim } from "./phase-84e-customer-onboarding";
 
 function isUniqueConstraintError(error: { code?: string; message?: string } | null | undefined) {
   return error?.code === "23505" || /duplicate key value violates unique constraint/i.test(error?.message ?? "");
@@ -48,6 +48,42 @@ export async function insertCommercialOnboardingEvent(
   if (error) {
     throw error;
   }
+}
+
+export async function loadOnboardingClaimPendingState(
+  admin: SupabaseClient,
+  input: {
+    authUserId: string;
+    commercialInviteId: string | null;
+    claimable: boolean;
+    alreadyClaimed: boolean;
+  },
+) {
+  if (!input.commercialInviteId || !input.claimable || input.alreadyClaimed) {
+    return false;
+  }
+
+  const { data, error } = await admin
+    .from("commercial_onboarding_events")
+    .select("event_type, created_at")
+    .eq("auth_user_id", input.authUserId)
+    .eq("commercial_invite_id", input.commercialInviteId)
+    .in("event_type", ["claim_pending", "claim_completed"])
+    .order("created_at", { ascending: false })
+    .limit(5);
+
+  if (error) {
+    throw error;
+  }
+
+  return deriveOnboardingClaimPending({
+    claimable: input.claimable,
+    alreadyClaimed: input.alreadyClaimed,
+    events: (data ?? []).map((row) => ({
+      eventType: String(row.event_type),
+      createdAt: String(row.created_at ?? ""),
+    })),
+  });
 }
 
 export async function loadClaimableCheckoutSessionForEmail(admin: SupabaseClient, email: string) {

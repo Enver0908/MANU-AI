@@ -1,5 +1,7 @@
 # Public Surface/Auth/Onboarding/PWA Phase 0 Baseline Evidence
 
+Current authority (2026-09-04): historical Phase 0 documentation PASS is superseded for current closure by Faz 8 (`docs/PUBLIC_SURFACE_AUTH_ONBOARDING_PWA_ACTION_PLAN.md`, requirement matrix). Production remains `NO-GO`.
+
 Date: 2026-09-03
 Phase: `0 - Plan Lock and Baseline Documentation`
 Verdict: `PASS_LOCAL_DOCUMENTATION_ONLY`

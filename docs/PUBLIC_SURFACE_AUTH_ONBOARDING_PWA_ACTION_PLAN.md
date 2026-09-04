@@ -1,11 +1,29 @@
 # AIya Public Surface, Auth, Onboarding, Admin and PWA Action Plan
 
-Status: `PHASE_3_CLOSED_LOCAL_ONLY`
+Status: `FAZ_8_RECLOSURE_IN_PROGRESS`
 Created: 2026-09-03
-Authority: This plan governs the next local implementation track for AIya public surface, customer auth/onboarding, admin customer lifecycle, dashboard production cleanup, and PWA polish. It does not approve production launch.
-Phase 2 evidence: `docs/PUBLIC_SURFACE_AUTH_ONBOARDING_PWA_PHASE_2_TWO_HOUR_SESSION_EVIDENCE.md`
-Phase 3 evidence: `docs/PUBLIC_SURFACE_AUTH_ONBOARDING_PWA_PHASE_3_PASSWORD_ONBOARDING_EVIDENCE.md`
-Next eligible unit: Phase 4 only after explicit user approval. Production remains `NO-GO`.
+Updated: 2026-09-04
+Authority: User-authoritative source is `C:\Users\Dell\Downloads\PLAN (7).md`. This file is the single in-repo canonical plan. Requirement IDs live in `docs/PUBLIC_SURFACE_AUTH_ONBOARDING_PWA_REQUIREMENT_MATRIX.md`.
+Phase 0–7 historical evidence remains; those PASS verdicts are superseded for current closure until Faz 8 recloses them. Production remains `NO-GO`.
+Next eligible unit: complete Faz 8 (`F8.1`–`F8.8`) locally. No deploy, push, remote migration, Stripe live billing, WhatsApp, Z.ai, DNS, or production gate change.
+
+## PLAN (7) canonical step register
+
+P0.1 Branch, HEAD, upstream, worktree, remote branch ve `git diff --check` sonuçlarını yeniden doğrula.
+P0.2 Gereksinimleri `SESSION`, `AUTH`, `ADMIN`, `DASHBOARD`, `PUBLIC`, `PWA`, `GOVERNANCE` gruplarına ayır ve her birine değişmez kimlik ata.
+P0.3 Bu sekiz fazı kanonik action plan dosyasına eksiksiz ekle.
+P0.4 Her faz için sıralı adım tablosu, test kapısı ve kapanış kontrol listesi oluştur.
+P0.5 Local/canlı release farkını ve hiçbir deploy yapılmayacağını baseline evidence içine kaydet.
+P0.6 `NEXT_PHASE_EXECUTION_PLAN` ve handoff içindeki aktif sonraki adımı Faz 1 olarak uzlaştır.
+P0.7 Risk register’da yalnızca bu kapsamla gerçekten ilişkili açık risklerin plan referanslarını uzlaştır.
+P0.8 Belge bağlantıları, commit kimlikleri ve plan çelişkileri için son inceleme yap.
+P1.1–P1.9 Dashboard üretim yüzeyi sadeleştirmesi (PLAN (7) Faz 1).
+P2.1–P2.9 İki saatlik güvenli oturum (PLAN (7) Faz 2).
+P3.1–P3.10 Şifre öncelikli giriş ve davet onboarding (PLAN (7) Faz 3).
+P4.1–P4.11 Admin müşteri yaşam döngüsü (PLAN (7) Faz 4).
+P5.1–P5.10 Public site, CTA, marka ve metadata (PLAN (7) Faz 5).
+P6.1–P6.10 PWA, kurulum, responsive ve erişilebilirlik (PLAN (7) Faz 6).
+P7.1–P7.12 Kullanılmayan frontend temizliği ve birleşik yerel kapanış (PLAN (7) Faz 7).
 
 ## Non-Negotiable Gates
 
@@ -758,4 +776,30 @@ P7.12 Complete the pre-commit diff, secret, stale-doc, and worktree review.
 
 ### Phase 7 Closure (2026-09-04)
 
-Status: `PHASE_7_CLOSED_LOCAL_ONLY`. User-authoritative execution used PLAN (7) `P7.1`–`P7.12`; every step is `IMPLEMENTED_AND_INSPECTED`. Evidence: `docs/PUBLIC_SURFACE_AUTH_ONBOARDING_PWA_PHASE_7_FINAL_EVIDENCE.md`. This local track is complete. Next eligible work is production-owner gates only after explicit user approval. Production remains `NO-GO`.
+Status: `PHASE_7_CLOSED_LOCAL_ONLY` historically. Superseded for current closure by Faz 8. Evidence: `docs/PUBLIC_SURFACE_AUTH_ONBOARDING_PWA_PHASE_7_FINAL_EVIDENCE.md`. Production remains `NO-GO`.
+
+## Phase 8 - Bütünleşik Reclosure ve Bulguların Kapatılması
+
+Status: `FAZ_8_RECLOSURE_IN_PROGRESS`. Closes only when local Supabase RLS is zero-skip, physical Android Chrome/A2HS/TalkBack evidence is bound to this revision, and the full verification matrix is real PASS. Otherwise the phase stays `BLOCKED`.
+
+### Steps
+
+F8.1 Canonical plan + requirement matrix (`SESSION-*` … `GOVERNANCE-*`).
+F8.2 Service-role-only session writes; persistent lock; authenticated RPC denial.
+F8.3 Auth-user pagination, bulk customer projection, submit-only search, atomic invite.
+F8.4 Onboarding `claim_pending` recovery after reload.
+F8.5 Dashboard leftover cleanup + real import graph.
+F8.6 Fail-closed dependency audit; lockfile patches in-scope; release identity is HEAD.
+F8.7 New physical Android Chrome, installed PWA, and TalkBack captures. iPhone remains `WAIVED_NOT_EXECUTED`.
+F8.8 Implementation commit, clean-tree RLS/device/matrix, evidence commit, final clean-HEAD `release:verify`.
+
+### Completion Criteria
+
+- Requirement matrix is unique and covers P0.1–P7.12 plus F8.1–F8.8.
+- Direct authenticated session touch is denied; timeout lock/audit persist.
+- Auth user 201+ is found; customer list is not N+1; search does not reload six endpoints; concurrent invite does not create duplicate tenants.
+- Claim failure reload is durable and idempotent.
+- Import graph PASS; simulator leftover disabled.
+- Local Supabase reset + RLS zero skip PASS.
+- New revision physical Android triple PASS.
+- Final clean HEAD release verification PASS; live release unchanged; no deploy/push; production `NO-GO`.
