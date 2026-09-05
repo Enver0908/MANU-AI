@@ -1,0 +1,112 @@
+ACCESSIBILITY MANAGER (dumpsys accessibility)
+
+currentUserId=0
+hasMagnificationConnection=true
+Magnifier on display#0
+    MagnificationConfig[mode: 1, activated: false, scale: 1.0, centerX: 540.0, centerY: 1102.5] 
+    Magnification region=SkRegion((0,0,1080,2205))
+    IdOfLastServiceToMagnify=-1
+    SupportWindowMagnification=true
+    WindowMagnificationConnectionState=CONNECTED
+User state[
+     attributes:{id=0, mIsTapDurationEnabled=false, mIsTouchBlockingEnabled=false, mIsStickyKeysEnabled=false, mIsBounceKeysEnabled=false, mIsSlowKeysEnabled=false, mIsAutoActionEnabled=false, mIsCornerActionEnabled=false, mIsAMEnabled=false, autoActionEnabled=false, cornerActionEnabled=false, AmEnabled=false, touchExplorationEnabled=false, serviceHandlesDoubleTap=false, requestMultiFingerGestures=false, requestTwoFingerPassthrough=false, sendMotionEventsEnabledfalse, displayMagnificationEnabled=false, autoclickEnabled=false, nonInteractiveUiTimeout=0, interactiveUiTimeout=10000, installedServiceCount=7, magnificationModes={0=2}, magnificationCapabilities=3, audioDescriptionByDefaultEnabled=false, magnificationCursorFollowingMode=0, magnificationFollowTypingEnabled=true, magnificationFollowKeyboardEnabled=false, alwaysOnMagnificationEnabled=true}
+     button mode: 0
+     shortcut key:{[]}
+     button:{[]}
+     direct access:{[]}
+     button target:{null}
+     gesture:{[]}
+     qs shortcut targets:{[]}
+     a11y tiles in QS panel:[]
+
+     installed services: {
+      0 : com.google.android.apps.accessibility.voiceaccess/.JustSpeakService  (A11yTool)
+      1 : com.microsoft.appmanager/com.microsoft.mmx.screenmirroringsrc.accessibility.ScreenMirroringAccessibilityService
+      2 : com.samsung.accessibility/.assistantmenu.serviceframework.AssistantMenuService  (A11yTool)
+      3 : com.samsung.accessibility/.universalswitch.UniversalSwitchService  (A11yTool)
+      4 : com.samsung.android.accessibility.talkback/com.samsung.android.marvin.talkback.TalkBackService  (A11yTool)
+      5 : com.openai.chatgpt/com.openai.feature.conversations.screencontext.ConversationScreenAccessibilityService
+      6 : com.zaz.translate/com.talpa.overlay.service.AccessService
+     }
+     Bound services:{Service[label=TalkBack, id=com.samsung.android.accessibility.talkback/com.samsung.android.marvin.talkback.TalkBackService, isDefault=true, requestTouchExplorationMode=false, requestFilterKeyEvents=true, retrieveInteractiveWindows=true, captureFingerprintGestures=false, requestAccessibilityButton=false, receivedAccessibilityButtonCallbackSinceBind=false, lastAccessibilityButtonCallbackState=false, fetchFlags=768, nonInteractiveUiTimeout=0, interactiveUiTimeout=10000, feedbackType[FEEDBACK_SPOKEN, FEEDBACK_HAPTIC, FEEDBACK_AUDIBLE], capabilities=251, eventTypes=TYPES_ALL_MASK, notificationTimeout=0, requestA11yBtn=false]}
+     Enabled services:{{com.samsung.android.accessibility.talkback/com.samsung.android.marvin.talkback.TalkBackService}}
+     Binding services:{}
+     Crashed services:{}
+     Client list info:{
+          Client list callbacks: 11
+          Client list killed: false
+          Client list broadcasts count: -1
+          Registered clients:{
+[com.google.android.as][com.free.vpn.super.hotspot.open][com.google.android.googlequicksearchbox][com.android.chrome][com.google.android.googlequicksearchbox][com.google.android.as][org.chromium.webapk.afb5fefd715bedce7_v2][com.samsung.android.accessibility.talkback][com.facebook.katana][com.netflix.mediaclient][com.google.android.gm]}]
+  AccessibilityInputFilter:{A11yInputFilter Info : 
+Enabled features of Display [0] = [MagnificationKeyHandler,KeyboardInterceptor,MotionEventInjector,MagnificationGesture]
+mEnabledFeatures : 0x00000034
+  }]
+
+User state[
+     attributes:{id=150, mIsTapDurationEnabled=false, mIsTouchBlockingEnabled=false, mIsStickyKeysEnabled=false, mIsBounceKeysEnabled=false, mIsSlowKeysEnabled=false, mIsAutoActionEnabled=false, mIsCornerActionEnabled=false, mIsAMEnabled=false, autoActionEnabled=false, cornerActionEnabled=false, AmEnabled=false, touchExplorationEnabled=false, serviceHandlesDoubleTap=false, requestMultiFingerGestures=false, requestTwoFingerPassthrough=false, sendMotionEventsEnabledfalse, displayMagnificationEnabled=false, autoclickEnabled=false, nonInteractiveUiTimeout=0, interactiveUiTimeout=0, installedServiceCount=0, magnificationModes={}, magnificationCapabilities=3, audioDescriptionByDefaultEnabled=false, magnificationCursorFollowingMode=0, magnificationFollowTypingEnabled=true, magnificationFollowKeyboardEnabled=false, alwaysOnMagnificationEnabled=false}
+     button mode: 0
+     shortcut key:{[]}
+     button:{[]}
+     direct access:{[]}
+     button target:{null}
+     gesture:{[]}
+     qs shortcut targets:{[]}
+     a11y tiles in QS panel:[]
+
+     installed services: {
+     }
+     Bound services:{}
+     Enabled services:{}
+     Binding services:{}
+     Crashed services:{}
+     Client list info:{
+          Client list callbacks: 0
+          Client list killed: false
+          Client list broadcasts count: -1
+          Registered clients:{
+}]
+  AccessibilityInputFilter:{A11yInputFilter Info : 
+Enabled features of Display [0] = [MagnificationKeyHandler,KeyboardInterceptor,MotionEventInjector,MagnificationGesture]
+mEnabledFeatures : 0x00000034
+  }]
+
+Global Info [ Top focused display Id = 0
+     Active Window Id = 313
+     Top Focused Window Id = 313
+     Accessibility Focused Window Id = -1 ]
+
+Global Info [ Top focused display Id = 0
+     Active Window Id = 313
+     Top Focused Window Id = 313
+     Accessibility Focused Window Id = -1 ]
+Display[0] : 
+A11yWindow[AccessibilityWindowInfo[title=Navigasyon çubuğu, displayId=0, id=295, taskId=-1, type=TYPE_SYSTEM, layer=3, region=SkRegion((0,2205,1080,2340)), bounds=Rect(0, 2205 - 1080, 2340), focused=false, active=false, pictureInPicture=false, transitionTime=237703098, hasParent=false, isAnchored=false, hasChildren=false]]
+WindowInfo[WindowInfo[title=Navigasyon çubuğu, displayId=0, taskId=-1, type=2019, layer=0, token=android.os.BinderProxy@e1b5c3b, region=SkRegion((0,2205,1080,2340)), bounds=Rect(0, 2205 - 1080, 2340), parent=null, focused=false, children=null, accessibility anchor=9223372034707292159, pictureInPicture=false, watchOutsideTouch=true, mTransformMatrix=Matrix{[1.0, 0.0, 0.0][0.0, 1.0, 2205.0][0.0, 0.0, 1.0]}, mMagnificationSpec=<scale:1.0,offsetX:0.0,offsetY:0.0>, locales=[tr_TR]]]
+,
+A11yWindow[AccessibilityWindowInfo[title=null, displayId=0, id=287, taskId=-1, type=TYPE_SYSTEM, layer=2, region=SkRegion((1033,854,1080,1201)), bounds=Rect(1033, 854 - 1080, 1201), focused=false, active=false, pictureInPicture=false, transitionTime=237703098, hasParent=false, isAnchored=false, hasChildren=false]]
+WindowInfo[WindowInfo[title=null, displayId=0, taskId=-1, type=2226, layer=1, token=android.os.BinderProxy@f4e68b5, region=SkRegion((1033,854,1080,1201)), bounds=Rect(1033, 854 - 1080, 1201), parent=null, focused=false, children=null, accessibility anchor=9223372034707292159, pictureInPicture=false, watchOutsideTouch=false, mTransformMatrix=Matrix{[1.0, 0.0, 1000.0][0.0, 1.0, 854.0][0.0, 0.0, 1.0]}, mMagnificationSpec=<scale:1.0,offsetX:0.0,offsetY:0.0>, locales=[tr_TR]]]
+,
+A11yWindow[AccessibilityWindowInfo[title=null, displayId=0, id=289, taskId=-1, type=TYPE_SYSTEM, layer=1, region=SkRegion((0,0,1080,92)), bounds=Rect(0, 0 - 1080, 92), focused=false, active=false, pictureInPicture=false, transitionTime=237703098, hasParent=false, isAnchored=false, hasChildren=false]]
+WindowInfo[WindowInfo[title=null, displayId=0, taskId=-1, type=2000, layer=2, token=android.os.BinderProxy@87e0301, region=SkRegion((0,0,1080,92)), bounds=Rect(0, 0 - 1080, 92), parent=null, focused=false, children=null, accessibility anchor=9223372034707292159, pictureInPicture=false, watchOutsideTouch=false, mTransformMatrix=Matrix{[1.0, 0.0, -0.0][0.0, 1.0, -0.0][0.0, 0.0, 1.0]}, mMagnificationSpec=<scale:1.0,offsetX:0.0,offsetY:0.0>, locales=[tr_TR]]]
+,
+A11yWindow[AccessibilityWindowInfo[title=AIya, displayId=0, id=313, taskId=11217, type=TYPE_APPLICATION, layer=0, region=SkRegion((0,0,1080,2340)), bounds=Rect(0, 0 - 1080, 2340), focused=true, active=true, pictureInPicture=false, transitionTime=237703098, hasParent=false, isAnchored=false, hasChildren=false]]
+WindowInfo[WindowInfo[title=AIya, displayId=0, taskId=11217, type=1, layer=3, token=android.os.BinderProxy@5ae119c, region=SkRegion((0,0,1080,2340)), bounds=Rect(0, 0 - 1080, 2340), parent=null, focused=true, children=null, accessibility anchor=9223372034707292159, pictureInPicture=false, watchOutsideTouch=false, mTransformMatrix=Matrix{[1.0, 0.0, -0.0][0.0, 1.0, -0.0][0.0, 0.0, 1.0]}, mMagnificationSpec=<scale:1.0,offsetX:0.0,offsetY:0.0>, locales=[tr_TR]]]
+
+
+Window attributes:[{281=AccessibilityWindowAttributes{mAccessibilityWindowTitle=One UI Ana EkranımLocales=[tr_TR]}, 282=AccessibilityWindowAttributes{mAccessibilityWindowTitle=nullmLocales=[tr_TR]}, 283=AccessibilityWindowAttributes{mAccessibilityWindowTitle=Geliştirici seçeneklerimLocales=[tr_TR]}, 284=AccessibilityWindowAttributes{mAccessibilityWindowTitle=PostamLocales=[tr_TR]}, 285=AccessibilityWindowAttributes{mAccessibilityWindowTitle=nullmLocales=[tr_TR]}, 286=AccessibilityWindowAttributes{mAccessibilityWindowTitle=nullmLocales=[tr_TR]}, 287=AccessibilityWindowAttributes{mAccessibilityWindowTitle=nullmLocales=[tr_TR]}, 288=AccessibilityWindowAttributes{mAccessibilityWindowTitle=AyarlarmLocales=[tr_TR]}, 289=AccessibilityWindowAttributes{mAccessibilityWindowTitle=nullmLocales=[tr_TR]}, 290=AccessibilityWindowAttributes{mAccessibilityWindowTitle=One UI Ana EkranımLocales=[tr_TR]}, 291=AccessibilityWindowAttributes{mAccessibilityWindowTitle=Son uygulamalarmLocales=[tr_TR]}, 292=AccessibilityWindowAttributes{mAccessibilityWindowTitle=nullmLocales=[tr_TR]}, 293=AccessibilityWindowAttributes{mAccessibilityWindowTitle=nullmLocales=[tr_TR]}, 294=AccessibilityWindowAttributes{mAccessibilityWindowTitle=nullmLocales=[tr_TR]}, 295=AccessibilityWindowAttributes{mAccessibilityWindowTitle=Navigasyon çubuğumLocales=[tr_TR]}, 296=AccessibilityWindowAttributes{mAccessibilityWindowTitle=nullmLocales=[tr_TR]}, 297=AccessibilityWindowAttributes{mAccessibilityWindowTitle=nullmLocales=[tr_TR]}, 298=AccessibilityWindowAttributes{mAccessibilityWindowTitle=Samsung KlavyemLocales=[tr_TR]}, 299=AccessibilityWindowAttributes{mAccessibilityWindowTitle=NotesmLocales=[tr_TR]}, 312=AccessibilityWindowAttributes{mAccessibilityWindowTitle=AIyamLocales=[tr_TR]}, 313=AccessibilityWindowAttributes{mAccessibilityWindowTitle=AIyamLocales=[tr_TR]}}]
+A11yInputFilter Info : 
+Enabled features of Display [0] = [MagnificationKeyHandler,KeyboardInterceptor,MotionEventInjector,MagnificationGesture]
+mEnabledFeatures : 0x00000034Global client list info:{
+    Client list callbacks: 13
+    Client list killed: false
+    Client list broadcasts count: -1
+    Registered clients:{
+[com.android.mms.service, com.samsung.android.app.telephonyui, com.android.stk, com.android.ons, com.sec.phone, com.samsung.android.incallui, com.samsung.android.cidmanager, com.sec.android.RilServiceModeApp, com.samsung.crane, com.android.providers.telephony, com.android.stk2, com.samsung.sec.android.application.csc, com.samsung.android.callbgprovider, com.android.phone][com.android.vending][com.samsung.android.smartsuggestions][com.google.android.ext.services][com.samsung.android.app.routines, com.samsung.android.app.aodservice, com.android.systemui][com.android.server.telecom, com.sec.imsservice, com.sec.cpagent, com.sec.app.RilErrorNotifier, com.sec.android.soagent, com.sec.sve, com.samsung.android.app.omcagent, com.samsung.android.fmm, com.sec.android.app.quicktool, com.samsung.android.app.esimkeystring, com.sec.android.app.parser, com.samsung.android.photoremasterservice, com.samsung.android.providers.factory, com.samsung.android.smartswitchassistant, com.sem.factoryapp, com.android.settings, com.sec.automation, com.sec.android.app.personalization, com.samsung.android.globalpostprocmgr, com.samsung.android.forest, com.samsung.unifiedtp, com.samsung.android.aircommandmanager, com.android.location.fused, com.sec.android.iaft, com.sec.android.app.servicemodeapp, com.sec.factory.camera, com.samsung.android.knox.zt.framework, com.sec.android.app.RilPhoneNumberService, com.android.providers.settings, com.android.dynsystem, com.samsung.android.biometrics.app.setting, com.samsung.android.stickercenter, com.sec.android.smartfpsadjuster, com.sec.modem.settings, com.samsung.android.dqagent, com.samsung.android.vtcamerasettings, com.samsung.android.smartface, com.sec.android.diagmonagent, com.sec.epdg, com.samsung.android.ese, com.samsung.android.svcagent, com.samsung.sec.android.teegris.tui_service, com.samsung.android.brightnessbackupservice, com.samsung.android.cameraxservice, com.samsung.slsi.telephony.silentlogging, com.samsung.android.wifi.ai, com.samsung.accessibility, com.sec.facatfunction, com.samsung.android.hdmapp, com.samsung.android.emergency, com.samsung.gpuwatchapp, com.samsung.android.knox.pushmanager, com.samsung.android.provider.filterprovider, com.sec.android.CcInfo, com.samsung.oda.service, com.skms.android.agent, com.samsung.euicc, com.android.keychain, com.samsung.SMT, com.samsung.android.lool, com.samsung.android.knox.mpos, com.samsung.android.da.daagent, com.android.localtransport, com.samsung.android.motionphoto.app, com.sec.usbsettings, com.samsung.android.app.dressroom, com.sec.bcservice, com.sec.imslogger, com.samsung.android.bixby.wakeup, com.sec.android.emergencylauncher, com.samsung.android.camerasdkservice, com.samsung.android.vexfwk.service, com.samsung.sait.sohservice, com.sec.android.app.hwmoduletest, com.sec.android.app.wlantest, com.samsung.android.themecenter, com.samsung.android.bbc.bbcagent, com.android.inputdevices, com.samsung.android.knox.attestation, com.sec.mhs.smarttethering, com.samsung.android.qmdservice, android, com.samsung.aasaservice, com.sec.android.sdhms, com.sec.android.app.factorykeystring, com.samsung.android.mdecservice, com.sec.android.app.SecSetupWizard, com.samsung.android.messageguardsync, com.wssyncmldm][com.sec.android.app.launcher][com.samsung.unifiedtp, com.samsung.android.bixby.wakeup, com.sec.factory.camera, com.sec.facatfunction, com.samsung.aasaservice, com.samsung.SMT, com.samsung.android.lool, com.samsung.android.qmdservice, com.skms.android.agent, com.samsung.sec.android.teegris.tui_service, com.samsung.android.vtcamerasettings, com.samsung.sait.sohservice, com.sec.android.app.personalization, com.samsung.android.camerasdkservice, com.samsung.android.svcagent, com.samsung.android.wifi.ai, com.samsung.android.cameraxservice, com.sec.automation, com.sec.android.app.SecSetupWizard, com.android.server.telecom, com.samsung.android.da.daagent, com.samsung.android.knox.pushmanager, com.samsung.android.mdecservice, com.sec.android.app.RilPhoneNumberService, com.sec.android.app.servicemodeapp, com.samsung.android.globalpostprocmgr, com.sec.epdg, com.samsung.android.knox.zt.framework, com.sec.modem.settings, com.samsung.android.provider.filterprovider, com.sec.app.RilErrorNotifier, com.samsung.android.hdmapp, com.samsung.android.bbc.bbcagent, com.sec.android.emergencylauncher, com.samsung.android.dqagent, com.android.dynsystem, com.sec.android.smartfpsadjuster, com.samsung.gpuwatchapp, com.samsung.android.forest, com.sec.android.soagent, com.sec.imslogger, com.samsung.android.smartswitchassistant, com.sec.android.app.parser, com.sec.bcservice, com.android.keychain, com.samsung.android.motionphoto.app, com.wssyncmldm, com.sec.android.app.hwmoduletest, com.samsung.android.vexfwk.service, com.sec.cpagent, com.sec.usbsettings, com.samsung.android.themecenter, com.android.inputdevices, com.samsung.android.ese, com.samsung.android.knox.mpos, com.samsung.android.photoremasterservice, com.sec.android.iaft, com.samsung.oda.service, com.samsung.android.fmm, com.android.location.fused, com.samsung.android.messageguardsync, com.samsung.accessibility, com.samsung.android.stickercenter, com.samsung.android.biometrics.app.setting, com.samsung.android.brightnessbackupservice, com.samsung.android.app.omcagent, com.sec.android.app.quicktool, com.samsung.android.app.dressroom, com.sem.factoryapp, android, com.sec.sve, com.android.localtransport, com.sec.android.app.factorykeystring, com.samsung.android.app.esimkeystring, com.sec.android.app.wlantest, com.samsung.android.aircommandmanager, com.android.providers.settings, com.sec.android.sdhms, com.samsung.android.knox.attestation, com.sec.imsservice, com.sec.mhs.smarttethering, com.samsung.android.emergency, com.samsung.android.smartface, com.samsung.slsi.telephony.silentlogging, com.android.settings, com.sec.android.CcInfo, com.sec.android.diagmonagent, com.samsung.euicc, com.samsung.android.providers.factory][com.android.phone, com.samsung.android.app.telephonyui, com.android.stk, com.samsung.android.incallui, com.android.providers.telephony, com.android.stk2, com.samsung.sec.android.application.csc, com.android.mms.service, com.sec.android.RilServiceModeApp, com.samsung.android.callbgprovider, com.android.ons, com.samsung.android.cidmanager, com.sec.phone, com.samsung.crane][com.samsung.android.app.notes][com.android.settings.intelligence][com.samsung.android.honeyboard][com.sec.android.daemonapp]
+
+Proxy manager state:
+    Number of proxy connections: 0
+    Registered proxy connections:
+Accessibility Display Listener:
+    SystemUI uid: 10051
+    1 valid display: 0

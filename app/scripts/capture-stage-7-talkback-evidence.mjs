@@ -81,7 +81,7 @@ async function captureStep(page, step, path, stem) {
     accessibilityEnabledSetting: adb(["shell", "settings", "get", "secure", "accessibility_enabled"]).trim(),
     activeTalkBackServiceBound: dumpsys.includes("Service[label=TalkBack"),
     touchExplorationEnabled: dumpsys.includes("touchExplorationEnabled=true"),
-    activeWindowSiriusAI: dumpsys.includes("A11yWindow[AccessibilityWindowInfo[title=SiriusAI"),
+    activeWindowAiya: dumpsys.includes("A11yWindow[AccessibilityWindowInfo[title=AIya"),
     offlineLockVisible:
       step === "offline_privacy_lock" ? (await page.locator("text=İnternet bağlantısı gerekli").count().then(Boolean)) : undefined,
   };
@@ -100,6 +100,15 @@ await ensureTalkBackEnabled();
 
 const browser = await chromium.connectOverCDP(cdpUrl);
 const context = browser.contexts()[0] ?? (await browser.newContext());
+await context.addCookies([
+  {
+    name: "manu_ai_demo_session",
+    value: "active",
+    url: baseUrl,
+    httpOnly: true,
+    sameSite: "Lax",
+  },
+]);
 const page = context.pages()[0] ?? (await context.newPage());
 
 const artifacts = [];

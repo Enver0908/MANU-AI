@@ -1,0 +1,12 @@
+{
+  "step": "messaging",
+  "requestedUrl": "http://127.0.0.1:3111/dashboard?section=messages&clientId=client-mert",
+  "finalUrl": "http://127.0.0.1:3111/dashboard?section=messages&clientId=client-mert",
+  "title": "AIya",
+  "bodyText": "İçeriğe atla\n\nAIYA\n\nMesajlaşma\n\nDanışan konuşmalarını bounded API üzerinden listeler; kişisel okunmamışlar rozetlenir.\n\nYenile\nKonuşma ara\n\nKonuşma durumu\n\nTümü (3)\nOkunmamış (0)\nMert Kaya\n22.05.2026 12:11\nYumurta yerine lor peyniri ve bol yesillik iyi bir secenek olur.\nElif Demir\nDeniz Arslan\n\nFiltrelenmiş kayıt: 3 · Okunmamış: 0 · Son yenileme: 05.09.2026 17:02:20\n\nAna Sayfa\nDanışanlar\nMesajlar\nUyarılar\nDiğer",
+  "talkBackEnabledSetting": "com.samsung.android.accessibility.talkback/com.samsung.android.marvin.talkback.TalkBackService",
+  "accessibilityEnabledSetting": "1",
+  "activeTalkBackServiceBound": true,
+  "touchExplorationEnabled": true,
+  "activeWindowAiya": true
+}

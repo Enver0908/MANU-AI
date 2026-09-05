@@ -5,6 +5,7 @@ import {
   isLocalDemoFixtureEnabled,
   isLocalDemoLoginAllowed,
   isLocalhostHostname,
+  isLocalSupabaseApiUrl,
   resolveRequestHostname,
 } from "./demo-fixture-access";
 import {
@@ -52,6 +53,27 @@ describe("hosted sandbox tenant isolation", () => {
     expect(isLocalDemoFixtureEnabled({ NODE_ENV: "development", MANU_ALLOW_PUBLIC_DEMO_LOGIN: "true" })).toBe(true);
     expect(isLocalDemoFixtureEnabled({ NODE_ENV: "production", MANU_ALLOW_PUBLIC_DEMO_LOGIN: "true" })).toBe(false);
     expect(isLocalDemoFixtureEnabled({ NODE_ENV: "development" })).toBe(false);
+    expect(isLocalSupabaseApiUrl("http://127.0.0.1:54321")).toBe(true);
+    expect(isLocalSupabaseApiUrl("https://abcdef.supabase.co")).toBe(false);
+    expect(
+      isLocalDemoFixtureEnabled({
+        NODE_ENV: "test",
+        NEXT_PUBLIC_SUPABASE_URL: "http://127.0.0.1:54321",
+      }),
+    ).toBe(true);
+    expect(
+      isLocalDemoFixtureEnabled({
+        NODE_ENV: "test",
+        NEXT_PUBLIC_SUPABASE_URL: "https://abcdef.supabase.co",
+        MANU_ALLOW_PUBLIC_DEMO_LOGIN: "true",
+      }),
+    ).toBe(false);
+    expect(
+      isLocalDemoLoginAllowed(
+        { NODE_ENV: "test", NEXT_PUBLIC_SUPABASE_URL: "http://127.0.0.1:54321" },
+        "localhost",
+      ),
+    ).toBe(false);
   });
 
   it("allows demo login only on localhost in development", () => {

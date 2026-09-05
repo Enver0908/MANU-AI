@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AlertCircle, CheckCircle, LayoutDashboard, LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { describeOnboardingBlockingReason } from "@/lib/phase-84g-subscription-operations";
@@ -33,7 +33,7 @@ export function OnboardingClaimPanel(props: { sessionId?: string | null; inviteI
   const claimReference = !ambiguousReference && (sessionId || inviteId);
   const passwordReady = Boolean(status?.passwordReady || status?.claimPending);
 
-  async function refreshStatus() {
+  const refreshStatus = useCallback(async () => {
     if (ambiguousReference || !claimReference) {
       return null;
     }
@@ -51,7 +51,7 @@ export function OnboardingClaimPanel(props: { sessionId?: string | null; inviteI
     }
     setStatus(payload);
     return payload;
-  }
+  }, [ambiguousReference, claimReference, inviteId, sessionId]);
 
   useEffect(() => {
     if (ambiguousReference || !claimReference) {
@@ -68,7 +68,7 @@ export function OnboardingClaimPanel(props: { sessionId?: string | null; inviteI
     return () => {
       cancelled = true;
     };
-  }, [ambiguousReference, claimReference, inviteId, sessionId]);
+  }, [ambiguousReference, claimReference, refreshStatus]);
 
   async function claimWorkspace() {
     const response = await fetch("/api/commercial/onboarding/claim", {

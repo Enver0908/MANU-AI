@@ -1,0 +1,12 @@
+{
+  "step": "skip_or_primary_navigation",
+  "requestedUrl": "http://127.0.0.1:3111/dashboard",
+  "finalUrl": "http://127.0.0.1:3111/dashboard",
+  "title": "AIya",
+  "bodyText": "İçeriğe atla\n\nAIYA\n\nGünlük iş girişi\n\nAktif danışan, bekleyen kuyruklar ve doğrudan görevler. Raporlama vitrini yoktur.\n\nMesajlar\n0\nUyarılar\n0\nBildirimler\n0\nAktif danışan\n\nDanışan seçilmedi\n\nDanışan listesinden bir kayıt seçin.\n\nAna Sayfa\nDanışanlar\nMesajlar\nUyarılar\nDiğer",
+  "talkBackEnabledSetting": "com.samsung.android.accessibility.talkback/com.samsung.android.marvin.talkback.TalkBackService",
+  "accessibilityEnabledSetting": "1",
+  "activeTalkBackServiceBound": true,
+  "touchExplorationEnabled": true,
+  "activeWindowAiya": true
+}

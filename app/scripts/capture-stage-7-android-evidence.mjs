@@ -32,26 +32,34 @@ function sha256(path) {
   return createHash("sha256").update(readFileSync(path)).digest("hex");
 }
 
-async function ensureDemoSession(page) {
-  await page.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded", timeout: 30_000 });
-  await page.evaluate(async () => {
-    await fetch("/api/demo-login", { method: "POST", credentials: "include", redirect: "follow" });
+async function ensureDashboardSession(context, page) {
+  await context.addCookies([
+    {
+      name: "manu_ai_demo_session",
+      value: "active",
+      url: baseUrl,
+      httpOnly: true,
+      sameSite: "Lax",
+    },
+  ]);
+  await page.goto(`${baseUrl}/dashboard`, { waitUntil: "domcontentloaded", timeout: 30_000 });
+  await page.waitForTimeout(1_000);
+  if ((await page.locator('[data-testid="authenticated-shell"]').count()) > 0) return;
+
+  const localLogin = await page.evaluate(async () => {
+    const response = await fetch("/api/demo-login", {
+      method: "POST",
+      credentials: "include",
+      redirect: "manual",
+    });
+    return { ok: response.ok, status: response.status };
   });
   await page.goto(`${baseUrl}/dashboard`, { waitUntil: "domcontentloaded", timeout: 30_000 });
   await page.waitForTimeout(1_000);
-  if ((await page.locator("text=Operasyon paneli").count()) > 0) return;
+  if ((await page.locator('[data-testid="authenticated-shell"]').count()) > 0) return;
 
-  await page.goto(`${baseUrl}/demo`, { waitUntil: "domcontentloaded", timeout: 30_000 });
-  await page.waitForTimeout(500);
-  const form = page.locator('form[action="/api/demo-login"]');
-  if ((await form.count()) === 0) {
-    throw new Error("demo_login_form_missing");
-  }
-  await Promise.all([
-    page.waitForURL(/\/dashboard/, { timeout: 15_000 }),
-    form.locator('button, input[type="submit"]').first().click(),
-  ]);
-  await page.waitForTimeout(1_000);
+  const bodyText = (await page.locator("body").innerText({ timeout: 5_000 })).slice(0, 400);
+  throw new Error(`dashboard_shell_missing_after_local_auth:${localLogin.status}:${bodyText}`);
 }
 
 async function captureSurface(page, step, path, fileName) {
@@ -141,7 +149,7 @@ mkdirSync(captureRoot, { recursive: true });
 const browser = await chromium.connectOverCDP(cdpUrl);
 const context = browser.contexts()[0] ?? (await browser.newContext());
 const page = context.pages()[0] ?? (await context.newPage());
-await ensureDemoSession(page);
+await ensureDashboardSession(context, page);
 
 const artifacts = [];
 const walk = [];

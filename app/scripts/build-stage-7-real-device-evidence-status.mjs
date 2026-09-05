@@ -6,8 +6,17 @@ import { join } from "node:path";
 import { buildStage5EvidenceHeader, docsRoot } from "./lib/stage-5-evidence.mjs";
 
 const captureDate = process.env.STAGE7_REAL_DEVICE_DATE || new Date().toISOString().slice(0, 10);
+const baseUrl = process.env.STAGE7_REAL_DEVICE_BASE_URL || "http://127.0.0.1:3110";
 const captureRoot = join(docsRoot, "stage-7-real-device", captureDate);
 const evidencePath = join(docsRoot, "PHASE_85_STAGE_7_REAL_DEVICE_EVIDENCE_STATUS.json");
+const androidModel = process.env.STAGE7_REAL_DEVICE_ANDROID_MODEL || "SM-S721B";
+const androidSerial = process.env.STAGE7_REAL_DEVICE_ADB_SERIAL || "R5CXA15KGXA";
+const androidOsVersion = process.env.STAGE7_REAL_DEVICE_ANDROID_OS_VERSION || "16 / SDK 36";
+const androidPwaPackageName =
+  process.env.STAGE7_REAL_DEVICE_PWA_PACKAGE || "org.chromium.webapk.afb5fefd715bedce7_v2";
+const androidPwaForegroundActivity =
+  process.env.STAGE7_REAL_DEVICE_PWA_FOREGROUND_ACTIVITY ||
+  "com.android.chrome/org.chromium.chrome.browser.webapps.SameTaskWebApkActivity";
 
 const requiredAndroidSteps = [
   "public_contact",
@@ -71,7 +80,7 @@ const evidence = {
   approvedBy: "Enver0908 authorized physical Android Stage 7.5 validation on connected SM-S721B and retained the iPhone waiver",
   capturedAt,
   instructions:
-    "Physical Android Chrome, installed Android PWA, and Android TalkBack evidence were captured on the connected Samsung SM-S721B. Browser emulation is not used. iPhone Safari/PWA remain WAIVED_NOT_EXECUTED and are not PASS.",
+    `Physical Android Chrome, installed Android PWA, and Android TalkBack evidence were captured on the connected Samsung SM-S721B against ${baseUrl}. Browser emulation is not used. iPhone Safari/PWA remain WAIVED_NOT_EXECUTED and are not PASS.`,
   requiredCaptureIds: ["androidChrome", "androidPwa", "androidTalkBack", "iphoneSafari", "iphonePwa"],
   requiredAndroidSteps,
   requiredTalkBackSteps,
@@ -94,10 +103,10 @@ const evidence = {
       emulator: false,
       device: {
         platform: "Android",
-        model: "SM-S721B",
-        serial: "R5CXA15KGXA",
-        osVersion: "16 / SDK 36",
-        browser: "Chrome on physical Android via ADB reverse tcp:3110 and on-device CDP",
+        model: androidModel,
+        serial: androidSerial,
+        osVersion: androidOsVersion,
+        browser: `Chrome on physical Android via ADB reverse for ${baseUrl} and on-device CDP`,
       },
       workflowWalk: chromeWalk.workflow,
       captureMethod:
@@ -115,12 +124,12 @@ const evidence = {
       emulator: false,
       device: {
         platform: "Android",
-        model: "SM-S721B",
-        serial: "R5CXA15KGXA",
-        osVersion: "16 / SDK 36",
+        model: androidModel,
+        serial: androidSerial,
+        osVersion: androidOsVersion,
         browser: "Installed Android WebAPK/PWA via Chrome",
-        packageName: "org.chromium.webapk.a68003d917cc7e3ee_v2",
-        foregroundActivity: "com.android.chrome/org.chromium.chrome.browser.webapps.SameTaskWebApkActivity",
+        packageName: androidPwaPackageName,
+        foregroundActivity: androidPwaForegroundActivity,
       },
       workflowWalk: pwaWalk.workflow,
       captureMethod:
@@ -139,9 +148,9 @@ const evidence = {
       assistiveTechnology: "TalkBack",
       device: {
         platform: "Android",
-        model: "SM-S721B",
-        serial: "R5CXA15KGXA",
-        osVersion: "16 / SDK 36",
+        model: androidModel,
+        serial: androidSerial,
+        osVersion: androidOsVersion,
         service: "com.samsung.android.accessibility.talkback/com.samsung.android.marvin.talkback.TalkBackService",
       },
       workflowWalk: talkBackWalk.workflow,
