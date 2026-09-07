@@ -140,7 +140,9 @@ function ensureLinuxSharpRuntime(appDir) {
     return { checked: true, installed: false, reason: "already-present" };
   }
   const specs = missing.map((packageName) => packageName + "@" + optionalDependencies[packageName]);
-  runChecked("npm", ["install", "--omit=dev", "--no-audit", "--no-fund", ...specs], { cwd: appDir });
+  runChecked("npm", ["install", "--omit=dev", "--no-audit", "--no-fund", "--legacy-peer-deps", ...specs], {
+    cwd: appDir,
+  });
   runChecked(process.execPath, ["-e", "require('sharp')"], { cwd: appDir });
   return { checked: true, installed: true, reason: "installed", packages: missing };
 }
