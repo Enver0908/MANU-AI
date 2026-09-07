@@ -48,6 +48,10 @@ jobs:
         run: |
           npx vitest run src/lib/hosted-sandbox-release-identity.test.ts src/lib/hosted-sandbox-security-headers.test.ts
 
+      - name: System audit contract tests
+        working-directory: app
+        run: npm run test:audit-system
+
       - name: Production build
         working-directory: app
         run: npm run build
