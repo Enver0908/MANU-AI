@@ -4,7 +4,7 @@ import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button, Field, TextInput } from "@/components/ui";
 
-export function AccountRecoveryForm() {
+export function AccountRecoveryForm({ nextPath = "/dashboard" }: { nextPath?: string }) {
   const router = useRouter();
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
@@ -33,7 +33,7 @@ export function AccountRecoveryForm() {
           return;
         }
         setSuccess(true);
-        router.replace("/dashboard");
+        router.replace(nextPath);
       } catch {
         setError("Parola kaydedilemedi. Bağlantı süresi dolmuş olabilir; yeni sıfırlama isteyin.");
       } finally {

@@ -1,10 +1,16 @@
 import { cookies } from "next/headers";
 import { NextResponse, type NextRequest } from "next/server";
 import { createSupabaseServerClient, isSupabaseConfigured } from "@/lib/supabase";
+import {
+  ACCOUNT_RECOVERY_FLOW_COOKIE_NAME,
+  ACCOUNT_RECOVERY_FLOW_TTL_SECONDS,
+  buildAccountRecoveryFlowCookieValue,
+} from "@/lib/phase-85-stage-4d-account-security";
 
 type FragmentSessionBody = {
   accessToken?: string;
   refreshToken?: string;
+  flowType?: string;
 };
 
 function isUsableAccessToken(value: unknown): value is string {
@@ -58,6 +64,24 @@ export async function POST(request: NextRequest) {
   }
 
   const response = NextResponse.json({ authenticated: true });
+  if (body.flowType === "recovery") {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user) {
+      response.cookies.set(
+        ACCOUNT_RECOVERY_FLOW_COOKIE_NAME,
+        buildAccountRecoveryFlowCookieValue({ authUserId: user.id }),
+        {
+          httpOnly: true,
+          sameSite: "lax",
+          secure: request.nextUrl.protocol === "https:",
+          path: "/",
+          maxAge: ACCOUNT_RECOVERY_FLOW_TTL_SECONDS,
+        },
+      );
+    }
+  }
   authCookiesToSet.forEach(({ name, value, options }) => {
     response.cookies.set(name, value, options);
   });

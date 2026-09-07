@@ -163,6 +163,28 @@ describe("auth callback route", () => {
     expect(body).toContain("https://aiyaworkspace.com/onboarding?session_id=cs_test_123");
   });
 
+  it("renders a recovery-aware fragment bridge for implicit password reset callbacks", async () => {
+    mocks.createSupabaseServerClient.mockReturnValue({
+      auth: {
+        exchangeCodeForSession: vi.fn(),
+        verifyOtp: vi.fn(),
+      },
+    });
+
+    const { GET } = await import("./route");
+    const response = await GET(
+      new NextRequest(
+        "https://aiyaworkspace.com/auth/callback?next=/account/recovery%3Fnext%3D%2Fadmin",
+      ),
+    );
+    const body = await response.text();
+
+    expect(response.status).toBe(200);
+    expect(body).toContain("flowType");
+    expect(body).toContain("https://aiyaworkspace.com/account/recovery?next=/admin");
+    expect(body).toContain('flowType === "recovery"');
+  });
+
   it("redirects callback errors without setting a success session", async () => {
     const { GET } = await import("./route");
     const response = await GET(
