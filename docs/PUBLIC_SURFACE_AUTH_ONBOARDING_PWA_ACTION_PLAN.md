@@ -1,11 +1,11 @@
 # AIya Public Surface, Auth, Onboarding, Admin and PWA Action Plan
 
-Status: `FAZ_8_RECLOSURE_IN_PROGRESS`
+Status: `FAZ_8_CLOSED_LOCAL_CLEAN_HEAD`
 Created: 2026-09-03
-Updated: 2026-09-04
+Updated: 2026-09-07
 Authority: User-authoritative source is `C:\Users\Dell\Downloads\PLAN (7).md`. This file is the single in-repo canonical plan. Requirement IDs live in `docs/PUBLIC_SURFACE_AUTH_ONBOARDING_PWA_REQUIREMENT_MATRIX.md`.
-Phase 0–7 historical evidence remains; those PASS verdicts are superseded for current closure until Faz 8 recloses them. Production remains `NO-GO`.
-Next eligible unit: complete Faz 8 (`F8.1`–`F8.8`) locally. No deploy, push, remote migration, Stripe live billing, WhatsApp, Z.ai, DNS, or production gate change.
+Phase 0–7 historical evidence remains. Faz 8 is now reclosed locally against clean-HEAD verification evidence in `docs/PUBLIC_SURFACE_AUTH_ONBOARDING_PWA_PHASE_8_CLEAN_HEAD_EVIDENCE.md`. Production remains `NO-GO`.
+Next eligible unit: owner-approved production/external gate execution planning only. No deploy, push, remote migration, Stripe live billing, WhatsApp, Z.ai, DNS, or production gate change is authorized by this local closure.
 
 ## PLAN (7) canonical step register
 
@@ -41,12 +41,12 @@ P7.1–P7.12 Kullanılmayan frontend temizliği ve birleşik yerel kapanış (PL
 ## Current Baseline
 
 - Local branch: `codex/production-readiness-stage-1`
-- Local HEAD: `931bb5a1fea749f5fb607e3fd346d4bf3ad38fdc`
+- Local HEAD: `3593ec98a883cfd302177ec9efc99a9426769592`
 - Upstream branch: `origin/codex/production-readiness-stage-1`
-- Remote branch HEAD: `931bb5a1fea749f5fb607e3fd346d4bf3ad38fdc`
+- Remote branch HEAD: `3593ec98a883cfd302177ec9efc99a9426769592`
 - Live VPS release commit: `4c7bbea8ba21fb84b51843eac9fff2e9ff8fecf9`
 - Live release ID: `hs-4c7bbea8ba21-2c32cf194421`
-- Local HEAD is ahead of the live release by documentation/evidence commits. This is expected and does not authorize deploy.
+- Local HEAD is 14 commits ahead of the live release. This is expected and does not authorize deploy.
 
 ## Locked Product Decisions
 
@@ -780,7 +780,7 @@ Status: `PHASE_7_CLOSED_LOCAL_ONLY` historically. Superseded for current closure
 
 ## Phase 8 - Bütünleşik Reclosure ve Bulguların Kapatılması
 
-Status: `FAZ_8_RECLOSURE_IN_PROGRESS`. Closes only when local Supabase RLS is zero-skip, physical Android Chrome/A2HS/TalkBack evidence is bound to this revision, and the full verification matrix is real PASS. Otherwise the phase stays `BLOCKED`.
+Status: `FAZ_8_CLOSED_LOCAL_CLEAN_HEAD`. Closed on 2026-09-07 after local Supabase RLS zero-skip PASS, Android Chrome/PWA/TalkBack evidence validation at HEAD, full local verification, release identity binding, and live read-only smoke. iPhone remains `WAIVED_NOT_EXECUTED`, not PASS.
 
 ### Steps
 
@@ -803,3 +803,7 @@ F8.8 Implementation commit, clean-tree RLS/device/matrix, evidence commit, final
 - Local Supabase reset + RLS zero skip PASS.
 - New revision physical Android triple PASS.
 - Final clean HEAD release verification PASS; live release unchanged; no deploy/push; production `NO-GO`.
+
+### Phase 8 Closure (2026-09-07)
+
+Status: `FAZ_8_CLOSED_LOCAL_CLEAN_HEAD`. Evidence: `docs/PUBLIC_SURFACE_AUTH_ONBOARDING_PWA_PHASE_8_CLEAN_HEAD_EVIDENCE.md`. Verification passed at HEAD `3593ec98a883cfd302177ec9efc99a9426769592`: Faz 8 targeted tests 7/7, frontend import graph 512 files, local Supabase RLS 56/56 with 0 skipped, typecheck, lint with 0 errors and 73 warnings, full app suite 1707 passed / 9 skipped, standalone production build, and `npm run release:verify` with release identity `hs-3593ec98a883-6819c61375b8`. Android Chrome, Android PWA, and Android TalkBack evidence validate as `APPROVED_WITH_WAIVER`; iPhone Safari/PWA remains `WAIVED_NOT_EXECUTED`, not PASS. Live VPS remains `4c7bbea8ba21fb84b51843eac9fff2e9ff8fecf9`; no deploy/push/remote migration/provider/channel/live billing/production gate change was executed. Production remains `NO-GO`.

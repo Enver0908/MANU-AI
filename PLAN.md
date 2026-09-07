@@ -1,6 +1,6 @@
 # MANU-AI Plan
 
-**Current public surface/auth/onboarding/PWA local closure (2026-09-04):** Phase 7 is locally complete in `docs/PUBLIC_SURFACE_AUTH_ONBOARDING_PWA_PHASE_7_FINAL_EVIDENCE.md`. This local polish track does not change production `NO-GO`, live VPS release `4c7bbea8ba21fb84b51843eac9fff2e9ff8fecf9`, WhatsApp, Z.ai, live billing, or owner launch gates.
+**Current public surface/auth/onboarding/PWA local closure (2026-09-07):** Faz 8 clean-HEAD reclosure is locally complete in `docs/PUBLIC_SURFACE_AUTH_ONBOARDING_PWA_PHASE_8_CLEAN_HEAD_EVIDENCE.md` at HEAD `3593ec98a883cfd302177ec9efc99a9426769592`. This local polish track does not change production `NO-GO`, live VPS release `4c7bbea8ba21fb84b51843eac9fff2e9ff8fecf9`, WhatsApp, Z.ai, live billing, or owner launch gates.
 
 **Current AIya hosted runtime status (2026-09-02):** The hosted VPS now serves commit `4c7bbea8ba21fb84b51843eac9fff2e9ff8fecf9` as release `hs-4c7bbea8ba21-2c32cf194421`. Official hosted apply now passes without manual fallback: the helper runtime is staged by the wrapper, PM2 runs a single `manu-ai` process, Linux `sharp` runtime packages are completed and verified in the release app, live public/admin routes pass, unauthenticated app-state APIs fail closed with `401`, and legacy domains return `410`. This does not change production `NO-GO`; owner/external launch gates remain open. Evidence: `docs/AIYA_HOSTED_DEPLOY_REPEATABILITY_EVIDENCE.md`.
 

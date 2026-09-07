@@ -137,7 +137,7 @@ describe("Faz 8 authority documents", () => {
     );
     expect(ids.length).toBeGreaterThan(10);
     expect(new Set(ids).size).toBe(ids.length);
-    expect(plan).toMatch(/^Status: `FAZ_8_RECLOSURE_IN_PROGRESS`/m);
+    expect(plan).toMatch(/^Status: `FAZ_8_CLOSED_LOCAL_CLEAN_HEAD`/m);
     expect(plan.split(/\r?\n/, 8).join("\n")).not.toContain("PHASE_3_CLOSED_LOCAL_ONLY");
     expect(plan).toContain("P0.2 Gereksinimleri `SESSION`, `AUTH`, `ADMIN`, `DASHBOARD`, `PUBLIC`, `PWA`, `GOVERNANCE`");
     for (const step of [
