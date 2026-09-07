@@ -71,6 +71,7 @@ function deployRuntimeFiles() {
     "tools/hosted-sandbox/deploy/pm2.ecosystem.config.cjs",
     "tools/hosted-sandbox/deploy/run-smoke-check.mjs",
     "tools/hosted-sandbox/deploy/lib/deploy-contract.mjs",
+    "tools/hosted-sandbox/deploy/lib/supabase-schema-contract.mjs",
   ];
   for (const migration of listFiles(path.join(repoRoot, "app", "supabase", "migrations"))) {
     files.push(path.posix.join("app/supabase/migrations", migration.replaceAll("\\", "/")));
