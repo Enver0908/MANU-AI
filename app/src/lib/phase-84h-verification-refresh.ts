@@ -10,6 +10,7 @@ import {
   validateCommercialAdminInviteCreate,
 } from "./phase-83f-commercial-admin";
 import { PUBLIC_MARKETING_COPY } from "./phase-84b-public-website";
+import { AIYA_PUBLIC_CONTACT_EMAIL } from "./brand";
 import { validateCommercialLeadCreate, validateCommercialLeadStatusUpdate } from "./phase-84c-contact-leads";
 import {
   deriveCustomerAuthRedirect,
@@ -77,11 +78,11 @@ export function evaluatePhase84hQaScenario(scenario: Phase84hQaScenario): Phase8
       if (PUBLIC_MARKETING_COPY.loginLabel !== "Giriş yap") {
         blockingReasons.push("login_cta_label_missing");
       }
-      if (PUBLIC_MARKETING_COPY.purchaseLabel !== "Satın al") {
-        blockingReasons.push("purchase_cta_label_missing");
-      }
-      if (PUBLIC_MARKETING_COPY.contactCta !== "Bizimle iletişime geçin") {
+      if (PUBLIC_MARKETING_COPY.contactCta !== "Bize ulaşın") {
         blockingReasons.push("contact_cta_label_missing");
+      }
+      if (PUBLIC_MARKETING_COPY.purchaseLabel !== "Satın al") {
+        blockingReasons.push("purchase_route_label_missing");
       }
       break;
     }
@@ -232,7 +233,7 @@ export function evaluatePhase84hQaScenario(scenario: Phase84hQaScenario): Phase8
       break;
     }
     case "admin_allowlist_blocks": {
-      const allowed = evaluateAdminAllowlistAccess("olkuenver@gmail.com");
+      const allowed = evaluateAdminAllowlistAccess(AIYA_PUBLIC_CONTACT_EMAIL);
       const denied = evaluateAdminAllowlistAccess("intruder@example.com");
       if (!allowed.allowed) {
         blockingReasons.push("default_admin_email_not_allowlisted");
@@ -244,7 +245,10 @@ export function evaluatePhase84hQaScenario(scenario: Phase84hQaScenario): Phase8
     }
     case "admin_operations_contracts": {
       const invite = validateCommercialAdminInviteCreate({ email: "invite@example.com" });
-      const revoke = validateCommercialAdminEntitlementRevokeRequest({ tenantId: "tenant-1" });
+      const revoke = validateCommercialAdminEntitlementRevokeRequest({
+        tenantId: "tenant-1",
+        expectedRevision: 0,
+      });
       const lead = validateCommercialLeadStatusUpdate({ leadId: "lead-1", status: "contacted" });
       const cancel = validateStripeSubscriptionCancelRequest({ tenantId: "tenant-1" });
       const revokePlan = deriveCommercialAdminEntitlementRevokePlan({ entitlementStatus: "active" });

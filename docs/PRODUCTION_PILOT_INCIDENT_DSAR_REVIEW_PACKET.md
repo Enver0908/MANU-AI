@@ -1,5 +1,7 @@
 # MANU-AI Production Pilot Incident And DSAR Review Packet
 
+**Current status interpretation (2026-08-18):** R-405 is `technically_resolved` locally; any older R-405 prerequisite below is historical. This packet's incident/DSAR approval gate remains open, and production remains `NO-GO`. Local dependency remediation does not provide operational or privacy acceptance.
+
 Date: 2026-05-31
 
 ## Status
@@ -91,4 +93,3 @@ Record only sanitized artifact references in `PRODUCTION_PILOT_EXTERNAL_APPROVAL
 ## Non-Approval Statement
 
 This packet does not approve production pilot launch, real health-data processing, production incident response, production DSAR/deletion operations, real provider calls, real channel messaging, external monitoring, or secret manager use.
-

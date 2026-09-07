@@ -23,6 +23,8 @@ export async function assertActiveCommercialEntitlement(tenantId: string) {
     hasTenantMembership: true,
     hasDietitianProfile: true,
     entitlementStatus: entitlement?.status ?? null,
+    billingMethod: entitlement?.billingMethod ?? null,
+    paidThrough: entitlement?.paidThrough ?? null,
     enforcementEnabled: true,
   });
 

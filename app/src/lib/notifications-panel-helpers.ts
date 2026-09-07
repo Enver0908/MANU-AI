@@ -17,8 +17,14 @@ import type {
   NotificationCategory,
   NotificationKind,
   NotificationPriority,
+  Stage4BNotificationMutationResponse,
+  Stage4BNotificationReadAllResponse,
   SystemNotificationListItem,
 } from "./phase-85-stage-4b-contracts";
+import {
+  getDefaultDashboardUrlState,
+  resolveStage6CommunicationDestination,
+} from "./phase-85-stage-4b-dashboard-routing";
 import type { NotificationListStatus } from "./phase-85-stage-4b-api";
 import { canMutateStage4BNotificationReceipt } from "./phase-85-stage-4b-notifications";
 import type { DashboardMessageKey } from "./i18n";
@@ -129,13 +135,45 @@ export function canNavigateToNotificationTarget(
   notification: SystemNotificationListItem,
   activeClientIds: ReadonlySet<string>,
 ) {
-  if (notification.target.section === "messages") {
-    return Boolean(notification.clientId?.trim() && activeClientIds.has(notification.clientId));
-  }
-  if (notification.clientId?.trim()) {
-    return activeClientIds.has(notification.clientId);
-  }
-  return notification.target.section === "clients";
+  const destination = resolveStage6CommunicationDestination(
+    getDefaultDashboardUrlState(),
+    {
+      section: notification.target.section,
+      clientId: notification.clientId ?? notification.target.clientId,
+      conversationId: notification.target.conversationId ?? notification.conversationId,
+      messageId: notification.target.messageId ?? notification.messageId,
+      source: "notification",
+      sourceId: notification.id,
+      clientTask: notification.target.section === "ai-control" ? "ai" : "summary",
+    },
+    { knownClientIds: activeClientIds },
+  );
+  return !destination.inaccessible;
+}
+
+export function mergeStage4BNotificationMutationIntoItems(
+  items: SystemNotificationListItem[],
+  mutation: Stage4BNotificationMutationResponse,
+) {
+  return items.map((item) =>
+    item.id === mutation.notificationId
+      ? {
+          ...item,
+          readAt: mutation.readAt,
+          acknowledgedAt: mutation.acknowledgedAt,
+          resolvedAt: mutation.resolvedAt ?? item.resolvedAt,
+        }
+      : item,
+  );
+}
+
+export function applyStage4BNotificationReadAllToItems(
+  items: SystemNotificationListItem[],
+  mutation: Stage4BNotificationReadAllResponse,
+  readAt: string,
+) {
+  if (mutation.markedReadCount <= 0) return items;
+  return items.map((item) => (item.readAt ? item : { ...item, readAt }));
 }
 
 export function shouldShowUnsupportedMediaReviewComplete(notification: SystemNotificationListItem) {

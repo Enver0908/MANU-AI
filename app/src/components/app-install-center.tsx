@@ -2,6 +2,7 @@
 
 import { Download, Share, Smartphone, SquarePlus } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { AIYA_BRAND_NAME } from "@/lib/brand";
 import {
   buildPwaRuntimeEnvironment,
   type MobileInstallAuditEventType,
@@ -20,10 +21,7 @@ async function recordInstallAudit(eventType: MobileInstallAuditEventType) {
   await fetch("/api/commercial/mobile-install-audit", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      eventType,
-      userAgentSummary: navigator.userAgent.slice(0, 240),
-    }),
+    body: JSON.stringify({ eventType }),
   }).catch(() => undefined);
 }
 
@@ -67,6 +65,11 @@ export function AppInstallCenter({ displayName }: AppInstallCenterProps) {
       return;
     }
 
+    if (!window.navigator.onLine) {
+      void recordInstallAudit("offline_banner_shown");
+      return;
+    }
+
     await deferredPrompt.prompt();
     const choice = await deferredPrompt.userChoice;
     setInstallOutcome(choice.outcome);
@@ -97,7 +100,31 @@ export function AppInstallCenter({ displayName }: AppInstallCenterProps) {
           <div>
             <h2 className="text-lg font-semibold text-foreground">Mobil uygulama kurulu</h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              SiriusAI zaten ana ekran uygulaması olarak çalışıyor, {displayName}.
+              {AIYA_BRAND_NAME} zaten ana ekran uygulaması olarak çalışıyor, {displayName}.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (runtime.isInAppBrowser) {
+    return (
+      <div
+        className="rounded-lg border border-border bg-surface p-5"
+        role="region"
+        aria-label="Uygulama içi tarayıcı kurulum rehberi"
+        data-testid="install-center-in-app-browser-guide"
+      >
+        <div className="flex items-center gap-3">
+          <div className="rounded-md bg-primary/10 p-2 text-primary">
+            <Share size={22} />
+          </div>
+          <div>
+            <h2 className="text-lg font-semibold text-foreground">Tarayıcıda açın</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Kurulum için bu sayfayı Safari (iOS) veya Chrome (Android) içinde açın. Uygulama içi
+              tarayıcılar PWA kurulumunu desteklemeyebilir.
             </p>
           </div>
         </div>
@@ -120,7 +147,7 @@ export function AppInstallCenter({ displayName }: AppInstallCenterProps) {
         <ol className="mt-4 list-decimal space-y-2 pl-5 text-sm leading-6 text-muted-foreground">
           <li>Safari alt çubuktaki Paylaş simgesine dokunun.</li>
           <li>Ana Ekrana Ekle veya Web Uygulaması Olarak Aç seçeneğini seçin.</li>
-          <li>SiriusAI kısayolunu onaylayın; uygulama /dashboard ile açılır.</li>
+          <li>{AIYA_BRAND_NAME} kısayolunu onaylayın; uygulama /dashboard ile açılır.</li>
         </ol>
       </div>
     );
@@ -135,7 +162,7 @@ export function AppInstallCenter({ displayName }: AppInstallCenterProps) {
         <div>
           <h2 className="text-lg font-semibold text-foreground">Mobil uygulamayı indir</h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Güvenli SiriusAI PWA kurulumu. Klinik veriler önbelleğe alınmaz.
+            Güvenli {AIYA_BRAND_NAME} PWA kurulumu. Klinik veriler önbelleğe alınmaz.
           </p>
         </div>
       </div>
@@ -150,9 +177,18 @@ export function AppInstallCenter({ displayName }: AppInstallCenterProps) {
           Mobil uygulamayı indir
         </button>
       ) : (
-        <p className="mt-4 rounded-md border border-border bg-muted/30 px-4 py-3 text-sm text-muted-foreground">
-          Kurulum istemi bu tarayıcıda henüz hazır değil. Chrome veya Edge kullanın ya da daha sonra tekrar deneyin.
-        </p>
+        <div
+          className="mt-4 rounded-md border border-border bg-muted/30 px-4 py-3 text-sm text-muted-foreground"
+          data-testid="install-center-manual-android-guide"
+        >
+          <p>Kurulum istemi bu tarayıcıda hazır değilse Android Chrome menüsünden manuel ekleyin:</p>
+          <ol className="mt-2 list-decimal space-y-1 pl-5">
+            <li>Chrome sağ üst menüsünü açın.</li>
+            <li>Ana ekrana ekle veya Uygulamayı yükle seçeneğine dokunun.</li>
+            <li>{AIYA_BRAND_NAME} kısayolunu onaylayın; uygulama /dashboard ile açılır.</li>
+          </ol>
+          <p className="mt-2">Klinik veriler cihazda önbelleğe alınmaz. Çevrimdışı sağlık verisi gösterilmez veya düzenlenmez.</p>
+        </div>
       )}
 
       {installOutcome === "accepted" ? (

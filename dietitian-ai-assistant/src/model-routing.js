@@ -1,6 +1,6 @@
 export const MODEL_ROUTING = {
-  green: "gemini-1.5-flash",
-  yellow: "gemini-3",
+  green: "glm-5.3-flash",
+  yellow: "glm-5.3-flash",
   red: null,
 };
 
@@ -11,4 +11,3 @@ export function selectModelForRisk(riskLevel) {
 
   return MODEL_ROUTING[riskLevel];
 }
-

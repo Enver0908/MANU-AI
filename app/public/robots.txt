@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Allow: /login
+Allow: /purchase
+Allow: /app-install
+Disallow: /admin
+Disallow: /commercial-admin
+Disallow: /dashboard
+Disallow: /onboarding
+Disallow: /api
+
+Sitemap: https://aiyaworkspace.com/sitemap.xml

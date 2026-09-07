@@ -1,0 +1,76 @@
+{
+  "schemaVersion": "phase-85-stage-7-baseline-audit-v1",
+  "generatedAt": "2026-08-24T09:00:00+03:00",
+  "status": "STAGE_7R_5_HARD_GATE_EVIDENCE_RECLOSED_VALIDATED_COMMIT_PENDING",
+  "productionStatus": "NO-GO",
+  "physicalIphone": "WAIVED_NOT_EXECUTED",
+  "findingCount": 0,
+  "counts": {
+    "P0": 0,
+    "P1": 0,
+    "P2": 0,
+    "P3": 0
+  },
+  "artifactDir": "app/test-results/stage-7",
+  "stableArtifactDir": "app/.stage-7r-baseline-artifacts",
+  "projects": [
+    {
+      "project": "stage-7-chromium-desktop",
+      "findingCount": 0,
+      "screenshotCount": 121
+    },
+    {
+      "project": "stage-7-chromium-desktop-xl",
+      "findingCount": 0,
+      "screenshotCount": 8
+    },
+    {
+      "project": "stage-7-chromium-tablet",
+      "findingCount": 0,
+      "screenshotCount": 8
+    },
+    {
+      "project": "stage-7-chromium-android",
+      "findingCount": 0,
+      "screenshotCount": 22
+    },
+    {
+      "project": "stage-7-chromium-reflow",
+      "findingCount": 0,
+      "screenshotCount": 9
+    },
+    {
+      "project": "stage-7-chromium-landscape",
+      "findingCount": 0,
+      "screenshotCount": 8
+    },
+    {
+      "project": "stage-7-webkit-iphone",
+      "findingCount": 0,
+      "screenshotCount": 9
+    },
+    {
+      "project": "stage-7-webkit-ipad",
+      "findingCount": 0,
+      "screenshotCount": 8
+    },
+    {
+      "project": "stage-7-firefox-desktop",
+      "findingCount": 0,
+      "screenshotCount": 9
+    },
+    {
+      "project": "stage-7-pwa",
+      "findingCount": 0,
+      "screenshotCount": 8
+    }
+  ],
+  "stage7R5": {
+    "result": "Full deterministic Stage 7 audit completed with zero findings across all required projects.",
+    "evidence": "docs/PHASE_85_STAGE_7R_PHASE_5_HARD_GATE_EVIDENCE_RECLOSURE.md",
+    "validation": [
+      "npm run audit:stage-7",
+      "npm run verify:stage-7:7.4"
+    ]
+  }
+}

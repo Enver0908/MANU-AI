@@ -1,0 +1,43 @@
+{
+  "workflow": [
+    "public_contact",
+    "login",
+    "purchase_valid",
+    "install_guidance",
+    "dashboard_shell",
+    "client_workspace",
+    "forms_dirty_or_save",
+    "nutrition_or_menu",
+    "messaging",
+    "alerts_or_notifications",
+    "settings_or_more",
+    "offline_privacy_lock"
+  ],
+  "baseUrl": "http://127.0.0.1:3111",
+  "cdpUrl": "http://127.0.0.1:9222",
+  "capturePrefix": "android-pwa",
+  "capturedAt": "2026-09-05T13:53:52.138Z",
+  "checks": {
+    "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+    "viewport": {
+      "width": 384,
+      "height": 696,
+      "devicePixelRatio": 2.8125
+    },
+    "standalone": false
+  },
+  "offlinePrivacyLock": {
+    "protectedContentUnmounted": true,
+    "noClientNamesVisible": true,
+    "artifacts": [
+      {
+        "path": "stage-7-real-device/2026-09-05/android-pwa-12-offline-privacy-lock.png",
+        "sha256": "f00585c81e59825e15d1e0c910cbe32fbec0ea5c1d9ec5dc201e5295105f3f05"
+      },
+      {
+        "path": "stage-7-real-device/2026-09-05/android-pwa-12-offline-privacy-lock.json",
+        "sha256": "91ce5e1460fd5ba4e73a1e3266e581bea41e0c2dd32b6c7e60658521e4fb4b33"
+      }
+    ]
+  }
+}

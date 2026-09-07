@@ -1,13 +1,25 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { AlertTriangle, KeyRound, MessageSquare, RefreshCw, ScrollText, Shield, UserPlus, UserX } from "lucide-react";
+import {
+  AlertTriangle,
+  Banknote,
+  KeyRound,
+  MessageSquare,
+  RefreshCw,
+  ScrollText,
+  Search,
+  Shield,
+  UserPlus,
+  UserX,
+} from "lucide-react";
 import { Button, Card, CardBody, CardHeader, Field, TextInput } from "@/components/ui";
 import type {
   CommercialAdminAuditListItem,
   CommercialOnboardingAuditListItem,
 } from "@/lib/commercial-admin-store";
 import type {
+  CommercialAdminCustomerListItem,
   CommercialAdminInviteListItem,
   CommercialAdminLedgerListItem,
   CommercialAdminSubscriptionSummary,
@@ -19,14 +31,17 @@ import {
   describeCommercialBlockingReason,
   describeEntitlementStatusLabel,
 } from "@/lib/phase-84g-subscription-operations";
+import { authenticatedMutationFetch } from "@/lib/phase-85-stage-5-shell-authenticated-mutation";
 
 type AdminView = "blocked" | "login" | "console";
 
 type CommercialAdminConsoleVariant = "session" | "token";
 
 type CreatedInviteResult = {
-  invite: CommercialAdminInviteListItem;
-  inviteToken: string;
+  inviteId: string;
+  email: string;
+  created?: boolean;
+  resent?: boolean;
 };
 
 type CommercialAdminHealthPayload = {
@@ -108,6 +123,9 @@ export function CommercialAdminConsole(props: {
   const [healthSummary, setHealthSummary] = useState<string | null>(null);
   const [healthPayload, setHealthPayload] = useState<CommercialAdminHealthPayload | null>(null);
   const [invites, setInvites] = useState<CommercialAdminInviteListItem[]>([]);
+  const [customers, setCustomers] = useState<CommercialAdminCustomerListItem[]>([]);
+  const [customerSearch, setCustomerSearch] = useState("");
+  const [appliedCustomerSearch, setAppliedCustomerSearch] = useState("");
   const [subscriptions, setSubscriptions] = useState<CommercialAdminSubscriptionSummary[]>([]);
   const [ledger, setLedger] = useState<CommercialAdminLedgerListItem[]>([]);
   const [leads, setLeads] = useState<CommercialLeadListItem[]>([]);
@@ -116,11 +134,18 @@ export function CommercialAdminConsole(props: {
   const [createdInvite, setCreatedInvite] = useState<CreatedInviteResult | null>(null);
   const [pendingRevokeTenantId, setPendingRevokeTenantId] = useState<string | null>(null);
   const [pendingCancelTenantId, setPendingCancelTenantId] = useState<string | null>(null);
+  const [pendingRenewEmail, setPendingRenewEmail] = useState<string | null>(null);
+  const [renewPaidThrough, setRenewPaidThrough] = useState("");
 
   const [createEmail, setCreateEmail] = useState("");
   const [createTenantName, setCreateTenantName] = useState("");
-  const [createInviteToken, setCreateInviteToken] = useState("");
+  const [createPaidThrough, setCreatePaidThrough] = useState("");
   const [createExpiresAt, setCreateExpiresAt] = useState("");
+  const [manualInviteId, setManualInviteId] = useState("");
+  const [manualAction, setManualAction] = useState<"activate" | "renew" | "reactivate">("activate");
+  const [manualPaymentReference, setManualPaymentReference] = useState("");
+  const [manualPaidThrough, setManualPaidThrough] = useState("");
+  const [manualRequestId, setManualRequestId] = useState("");
 
   const activeToken = isSessionMode ? null : sessionToken;
   const canOperate = isSessionMode || Boolean(activeToken);
@@ -137,54 +162,65 @@ export function CommercialAdminConsole(props: {
     return summarizeAdminHealth(payload);
   }, []);
 
-  const loadOperations = useCallback(
-    async (token?: string | null) => {
-      const headers = buildAdminHeaders(token);
-      const [inviteRes, subscriptionRes, ledgerRes, leadsRes, auditRes, healthRes] = await Promise.all([
-        fetch("/api/commercial/admin/invites", { headers }),
-        fetch("/api/commercial/admin/subscriptions", { headers }),
-        fetch("/api/commercial/admin/ledger?limit=25", { headers }),
-        fetch("/api/commercial/admin/leads?limit=50", { headers }),
-        fetch("/api/commercial/admin/audit?limit=50", { headers }),
-        fetch("/api/commercial/admin/health", { headers }),
-      ]);
+  const loadCustomers = useCallback(async (token: string | null | undefined, email: string) => {
+    const headers = buildAdminHeaders(token);
+    const inviteRes = await fetch(
+      email.trim()
+        ? `/api/commercial/admin/invites?email=${encodeURIComponent(email.trim())}`
+        : "/api/commercial/admin/invites",
+      { headers },
+    );
+    const invitePayload = await inviteRes.json().catch(() => ({}));
+    if (!inviteRes.ok) {
+      throw new Error(
+        invitePayload.blockingReasons?.[0] ?? invitePayload.error ?? "commercial_admin_load_failed",
+      );
+    }
+    setInvites(invitePayload.invites ?? []);
+    setCustomers(invitePayload.customers ?? []);
+  }, []);
 
-      const invitePayload = await inviteRes.json().catch(() => ({}));
-      const subscriptionPayload = await subscriptionRes.json().catch(() => ({}));
-      const ledgerPayload = await ledgerRes.json().catch(() => ({}));
-      const leadsPayload = await leadsRes.json().catch(() => ({}));
-      const auditPayload = await auditRes.json().catch(() => ({}));
-      const healthJson = (await healthRes.json().catch(() => null)) as CommercialAdminHealthPayload | null;
-      setHealthPayload(healthJson);
+  const loadOperations = useCallback(async (token?: string | null, customerEmail = "") => {
+    const headers = buildAdminHeaders(token);
+    const [subscriptionRes, ledgerRes, leadsRes, auditRes, healthRes] = await Promise.all([
+      fetch("/api/commercial/admin/subscriptions", { headers }),
+      fetch("/api/commercial/admin/ledger?limit=25", { headers }),
+      fetch("/api/commercial/admin/leads?limit=50", { headers }),
+      fetch("/api/commercial/admin/audit?limit=50", { headers }),
+      fetch("/api/commercial/admin/health", { headers }),
+    ]);
 
-      if (!inviteRes.ok || !subscriptionRes.ok || !ledgerRes.ok || !leadsRes.ok || !auditRes.ok) {
-        const blockingReasons = [
-          ...(invitePayload.blockingReasons ?? []),
-          ...(subscriptionPayload.blockingReasons ?? []),
-          ...(ledgerPayload.blockingReasons ?? []),
-          ...(leadsPayload.blockingReasons ?? []),
-          ...(auditPayload.blockingReasons ?? []),
-        ];
-        throw new Error(
-          blockingReasons[0] ??
-            invitePayload.error ??
-            subscriptionPayload.error ??
-            ledgerPayload.error ??
-            leadsPayload.error ??
-            auditPayload.error ??
-            "commercial_admin_load_failed",
-        );
-      }
+    const subscriptionPayload = await subscriptionRes.json().catch(() => ({}));
+    const ledgerPayload = await ledgerRes.json().catch(() => ({}));
+    const leadsPayload = await leadsRes.json().catch(() => ({}));
+    const auditPayload = await auditRes.json().catch(() => ({}));
+    const healthJson = (await healthRes.json().catch(() => null)) as CommercialAdminHealthPayload | null;
+    setHealthPayload(healthJson);
 
-      setInvites(invitePayload.invites ?? []);
-      setSubscriptions(subscriptionPayload.subscriptions ?? []);
-      setLedger(ledgerPayload.entries ?? []);
-      setLeads(leadsPayload.leads ?? []);
-      setAdminAudit(auditPayload.adminAudit ?? []);
-      setOnboardingAudit(auditPayload.onboardingAudit ?? []);
-    },
-    [],
-  );
+    if (!subscriptionRes.ok || !ledgerRes.ok || !leadsRes.ok || !auditRes.ok) {
+      const blockingReasons = [
+        ...(subscriptionPayload.blockingReasons ?? []),
+        ...(ledgerPayload.blockingReasons ?? []),
+        ...(leadsPayload.blockingReasons ?? []),
+        ...(auditPayload.blockingReasons ?? []),
+      ];
+      throw new Error(
+        blockingReasons[0] ??
+          subscriptionPayload.error ??
+          ledgerPayload.error ??
+          leadsPayload.error ??
+          auditPayload.error ??
+          "commercial_admin_load_failed",
+      );
+    }
+
+    setSubscriptions(subscriptionPayload.subscriptions ?? []);
+    setLedger(ledgerPayload.entries ?? []);
+    setLeads(leadsPayload.leads ?? []);
+    setAdminAudit(auditPayload.adminAudit ?? []);
+    setOnboardingAudit(auditPayload.onboardingAudit ?? []);
+    await loadCustomers(token, customerEmail);
+  }, [loadCustomers]);
 
   useEffect(() => {
     if (!isSessionMode || !props.sessionEmail) {
@@ -192,7 +228,6 @@ export function CommercialAdminConsole(props: {
     }
     let cancelled = false;
     // Session console hydrates operation data after allowlist auth on mount.
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- setState runs only inside async promise handlers
     void loadOperations()
       .catch((loadError) => {
         if (cancelled) {
@@ -241,7 +276,7 @@ export function CommercialAdminConsole(props: {
     setHealthSummary(null);
     setBusy(true);
     try {
-      await loadOperations(activeToken);
+      await loadOperations(activeToken, appliedCustomerSearch);
     } catch (loadError) {
       setError(loadError instanceof Error ? loadError.message : "commercial_admin_refresh_failed");
       setHealthSummary(await loadHealthSummary(activeToken).catch(() => "commercial_admin_health_unavailable"));
@@ -252,21 +287,26 @@ export function CommercialAdminConsole(props: {
 
   async function onCreateInvite(event: React.FormEvent) {
     event.preventDefault();
-    if (!canOperate) {
+    if (!canOperate || !isSessionMode) {
       return;
     }
     setError(null);
     setBusy(true);
     setCreatedInvite(null);
     try {
-      const response = await fetch("/api/commercial/admin/invites", {
+      const paidThrough = createPaidThrough.trim()
+        ? new Date(createPaidThrough).toISOString()
+        : "";
+      const response = await authenticatedMutationFetch("/api/commercial/admin/invites", {
         method: "POST",
+        mutationKind: "other",
         headers: requestHeaders(),
         body: JSON.stringify({
+          command: "invite_customer",
           email: createEmail.trim(),
           tenantName: createTenantName.trim() || undefined,
-          inviteToken: createInviteToken.trim() || undefined,
-          expiresAt: createExpiresAt.trim() || null,
+          paidThrough,
+          expiresAt: createExpiresAt.trim() ? new Date(createExpiresAt).toISOString() : null,
         }),
       });
       const payload = await response.json().catch(() => ({}));
@@ -276,9 +316,9 @@ export function CommercialAdminConsole(props: {
       setCreatedInvite(payload as CreatedInviteResult);
       setCreateEmail("");
       setCreateTenantName("");
-      setCreateInviteToken("");
+      setCreatePaidThrough("");
       setCreateExpiresAt("");
-      await loadOperations(activeToken);
+      await loadOperations(activeToken, appliedCustomerSearch);
     } catch (createError) {
       setError(createError instanceof Error ? createError.message : "invite_create_failed");
     } finally {
@@ -286,15 +326,56 @@ export function CommercialAdminConsole(props: {
     }
   }
 
-  async function onRevokeInvite(inviteId: string) {
+  async function onApplyManualEntitlement(event: React.FormEvent) {
+    event.preventDefault();
     if (!canOperate) {
       return;
     }
     setError(null);
     setBusy(true);
     try {
-      const response = await fetch("/api/commercial/admin/invites", {
+      const response = await authenticatedMutationFetch("/api/commercial/admin/manual-entitlements", {
+        method: "POST",
+        mutationKind: "other",
+        headers: requestHeaders(),
+        body: JSON.stringify({
+          action: manualAction,
+          inviteId: manualInviteId.trim(),
+          paymentReference: manualPaymentReference.trim(),
+          paidThrough: manualPaidThrough.trim() ? new Date(manualPaidThrough).toISOString() : "",
+          requestId: manualRequestId.trim() || `manual-${crypto.randomUUID()}`,
+          expectedRevision:
+            customers.find((customer) => customer.inviteId === manualInviteId)?.revision ??
+            subscriptions.find((subscription) => subscription.inviteId === manualInviteId)?.revision ??
+            null,
+        }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(payload.error ?? "manual_entitlement_failed");
+      }
+      setManualInviteId("");
+      setManualPaymentReference("");
+      setManualPaidThrough("");
+      setManualRequestId("");
+      await loadOperations(activeToken, appliedCustomerSearch);
+    } catch (manualError) {
+      setError(manualError instanceof Error ? manualError.message : "manual_entitlement_failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function onRevokeInvite(inviteId: string) {
+    if (!canOperate || !isSessionMode) {
+      return;
+    }
+    setError(null);
+    setBusy(true);
+    try {
+      const response = await authenticatedMutationFetch("/api/commercial/admin/invites", {
         method: "PATCH",
+        mutationKind: "other",
         headers: requestHeaders(),
         body: JSON.stringify({ inviteId }),
       });
@@ -302,7 +383,7 @@ export function CommercialAdminConsole(props: {
       if (!response.ok) {
         throw new Error(payload.error ?? "invite_revoke_failed");
       }
-      await loadOperations(activeToken);
+      await loadOperations(activeToken, appliedCustomerSearch);
     } catch (revokeError) {
       setError(revokeError instanceof Error ? revokeError.message : "invite_revoke_failed");
     } finally {
@@ -310,8 +391,8 @@ export function CommercialAdminConsole(props: {
     }
   }
 
-  async function onRevokeEntitlement(tenantId: string, confirmed = false) {
-    if (!canOperate) {
+  async function onRevokeEntitlement(tenantId: string, expectedRevision: number, confirmed = false) {
+    if (!canOperate || !isSessionMode) {
       return;
     }
     if (!confirmed) {
@@ -323,10 +404,11 @@ export function CommercialAdminConsole(props: {
     setError(null);
     setBusy(true);
     try {
-      const response = await fetch("/api/commercial/admin/entitlements/revoke", {
+      const response = await authenticatedMutationFetch("/api/commercial/admin/entitlements/revoke", {
         method: "POST",
+        mutationKind: "other",
         headers: requestHeaders(),
-        body: JSON.stringify({ tenantId }),
+        body: JSON.stringify({ tenantId, expectedRevision }),
       });
       const payload = await response.json().catch(() => ({}));
       if (!response.ok) {
@@ -334,9 +416,80 @@ export function CommercialAdminConsole(props: {
           describeCommercialBlockingReason(payload.error ?? payload.blockingReasons?.[0] ?? "entitlement_revoke_failed"),
         );
       }
-      await loadOperations(activeToken);
+      await loadOperations(activeToken, appliedCustomerSearch);
     } catch (revokeError) {
       setError(revokeError instanceof Error ? revokeError.message : "entitlement_revoke_failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function onRenewOrReactivate(customer: CommercialAdminCustomerListItem, confirmed = false) {
+    if (!canOperate || !isSessionMode || !customer.inviteId || !customer.tenantId) {
+      return;
+    }
+    if (!confirmed) {
+      setPendingRenewEmail(customer.email);
+      setRenewPaidThrough("");
+      return;
+    }
+    const paidThrough = renewPaidThrough.trim() ? new Date(renewPaidThrough).toISOString() : "";
+    if (!paidThrough) {
+      setError("paid_through_required");
+      return;
+    }
+    setPendingRenewEmail(null);
+    setError(null);
+    setBusy(true);
+    try {
+      const response = await authenticatedMutationFetch("/api/commercial/admin/manual-entitlements", {
+        method: "POST",
+        mutationKind: "other",
+        headers: requestHeaders(),
+        body: JSON.stringify({
+          action: customer.primaryAction === "reactivate" ? "reactivate" : "renew",
+          inviteId: customer.inviteId,
+          paymentReference: `${customer.primaryAction === "reactivate" ? "admin-reactivate" : "admin-renew"}-${customer.inviteId}`,
+          paidThrough,
+          requestId: `${customer.primaryAction === "reactivate" ? "admin-reactivate-req" : "admin-renew-req"}-${customer.inviteId}-${crypto.randomUUID()}`,
+          expectedRevision: customer.revision,
+        }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(payload.error ?? "manual_entitlement_failed");
+      }
+      setRenewPaidThrough("");
+      await loadOperations(activeToken, appliedCustomerSearch);
+    } catch (renewError) {
+      setError(renewError instanceof Error ? renewError.message : "manual_entitlement_failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function onSendPasswordRecovery(email: string) {
+    if (!canOperate || !isSessionMode) {
+      return;
+    }
+    setError(null);
+    setBusy(true);
+    try {
+      const response = await authenticatedMutationFetch("/api/commercial/admin/invites", {
+        method: "POST",
+        mutationKind: "other",
+        headers: requestHeaders(),
+        body: JSON.stringify({
+          command: "send_password_recovery",
+          email,
+        }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(payload.error ?? "password_recovery_failed");
+      }
+    } catch (recoveryError) {
+      setError(recoveryError instanceof Error ? recoveryError.message : "password_recovery_failed");
     } finally {
       setBusy(false);
     }
@@ -355,8 +508,9 @@ export function CommercialAdminConsole(props: {
     setError(null);
     setBusy(true);
     try {
-      const response = await fetch("/api/commercial/admin/subscriptions/cancel", {
+      const response = await authenticatedMutationFetch("/api/commercial/admin/subscriptions/cancel", {
         method: "POST",
+        mutationKind: "other",
         headers: requestHeaders(),
         body: JSON.stringify({ tenantId }),
       });
@@ -366,7 +520,7 @@ export function CommercialAdminConsole(props: {
           describeCommercialBlockingReason(payload.error ?? payload.blockingReasons?.[0] ?? "stripe_subscription_cancel_failed"),
         );
       }
-      await loadOperations(activeToken);
+      await loadOperations(activeToken, appliedCustomerSearch);
     } catch (cancelError) {
       setError(cancelError instanceof Error ? cancelError.message : "stripe_subscription_cancel_failed");
     } finally {
@@ -381,8 +535,9 @@ export function CommercialAdminConsole(props: {
     setError(null);
     setBusy(true);
     try {
-      const response = await fetch("/api/commercial/admin/leads", {
+      const response = await authenticatedMutationFetch("/api/commercial/admin/leads", {
         method: "PATCH",
+        mutationKind: "other",
         headers: requestHeaders(),
         body: JSON.stringify({ leadId, status }),
       });
@@ -390,7 +545,7 @@ export function CommercialAdminConsole(props: {
       if (!response.ok) {
         throw new Error(payload.error ?? "lead_update_failed");
       }
-      await loadOperations(activeToken);
+      await loadOperations(activeToken, appliedCustomerSearch);
     } catch (updateError) {
       setError(updateError instanceof Error ? updateError.message : "lead_update_failed");
     } finally {
@@ -448,12 +603,12 @@ export function CommercialAdminConsole(props: {
               />
             </Field>
             {error ? (
-              <p className="text-sm text-red-700" role="alert">
+              <p className="text-sm text-destructive" role="alert">
                 {error}
               </p>
             ) : null}
             {healthSummary ? (
-              <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+              <p className="rounded-lg border border-line bg-surface-muted px-3 py-2 text-sm text-ink-muted">
                 {healthSummary}
               </p>
             ) : null}
@@ -467,12 +622,13 @@ export function CommercialAdminConsole(props: {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-6xl flex-col gap-6">
+    <div className="mx-auto flex w-full min-w-0 max-w-6xl flex-col gap-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold text-stone-900">Ticari yönetim</h1>
           <p className="mt-1 text-sm text-stone-600">
-            Invite yönetimi, abonelik durumu, billing ledger inceleme ve mobil kurulum erişimi iptali.
+            Müşteri listesi, e-posta araması, davet, erişim kapatma ve yenileme. Stripe kayıtları ayrı kalıntı
+            olarak görünür.
           </p>
           {isSessionMode && props.sessionEmail ? (
             <p className="mt-1 text-xs text-stone-500">Oturum: {props.sessionEmail}</p>
@@ -495,6 +651,7 @@ export function CommercialAdminConsole(props: {
               onClick={() => {
                 setSessionToken(null);
                 setInvites([]);
+                setCustomers([]);
                 setSubscriptions([]);
                 setLedger([]);
                 setLeads([]);
@@ -559,6 +716,171 @@ export function CommercialAdminConsole(props: {
           </CardBody>
         </Card>
       </div>
+
+      <Card>
+        <CardHeader
+          title="Müşteriler"
+          description="E-posta ile arayın. Her satırda tek bağlamsal işlem vardır. Duplicate davet oluşturulmaz."
+          icon={Search}
+        />
+        <CardBody className="space-y-4">
+          <form
+            className="flex flex-wrap items-end gap-3"
+            onSubmit={(event) => {
+              event.preventDefault();
+              const nextSearch = customerSearch.trim();
+              setAppliedCustomerSearch(nextSearch);
+              setError(null);
+              setBusy(true);
+              void loadCustomers(isSessionMode ? null : activeToken, nextSearch)
+                .catch((loadError) => {
+                  setError(loadError instanceof Error ? loadError.message : "commercial_admin_load_failed");
+                })
+                .finally(() => setBusy(false));
+            }}
+          >
+            <div className="min-w-56 flex-1">
+              <Field label="E-posta ara" htmlFor="customer-search-email">
+                <TextInput
+                  id="customer-search-email"
+                  type="search"
+                  value={customerSearch}
+                  onChange={(event) => setCustomerSearch(event.target.value)}
+                  placeholder="musteri@ornek.com"
+                />
+              </Field>
+            </div>
+            <Button type="submit" variant="secondary" icon={Search} disabled={busy}>
+              Ara
+            </Button>
+          </form>
+          {customers.length === 0 ? (
+            <p className="text-sm text-stone-600">Müşteri kaydı yok.</p>
+          ) : (
+            customers.map((customer) => (
+              <div
+                key={`${customer.email}-${customer.tenantId ?? customer.inviteId ?? "none"}`}
+                className="rounded-lg border border-stone-200 p-3"
+              >
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium text-stone-900">{customer.email}</p>
+                    <p className="text-xs text-stone-500">
+                      Workspace: {customer.tenantName ?? "—"} · Erişim: {customer.accessLabel}
+                    </p>
+                    <p className="text-xs text-stone-500">
+                      Bitiş: {formatTimestamp(customer.paidThrough)} · Revision: {customer.revision ?? "—"}
+                    </p>
+                    {customer.ambiguousTenantMatch ? (
+                      <p className="mt-1 text-xs text-stone-600">
+                        Birden fazla çalışma alanı bulundu. Otomatik işlem yapılmaz.
+                      </p>
+                    ) : null}
+                  </div>
+                  {isSessionMode ? (
+                    <div className="flex flex-wrap gap-2">
+                      {customer.primaryAction === "revoke" && customer.tenantId && customer.revision !== null ? (
+                        pendingRevokeTenantId === customer.tenantId ? (
+                          <div className="rounded-lg border border-line bg-surface-muted p-3 text-sm text-ink">
+                            <p className="font-medium">Erişimi kapat</p>
+                            <p className="mt-1">
+                              Auth hesabı ve sağlık verisi silinmez. Dashboard ve API erişimi kapanır.
+                            </p>
+                            <div className="mt-3 flex flex-wrap gap-2">
+                              <Button
+                                size="sm"
+                                variant="danger"
+                                disabled={busy}
+                                onClick={() =>
+                                  void onRevokeEntitlement(customer.tenantId ?? "", customer.revision ?? 0, true)
+                                }
+                              >
+                                Erişimi kapat
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                disabled={busy}
+                                onClick={() => setPendingRevokeTenantId(null)}
+                              >
+                                Vazgeç
+                              </Button>
+                            </div>
+                          </div>
+                        ) : (
+                          <Button
+                            size="sm"
+                            variant="danger"
+                            disabled={busy}
+                            onClick={() =>
+                              void onRevokeEntitlement(customer.tenantId ?? "", customer.revision ?? 0)
+                            }
+                          >
+                            Erişimi kapat
+                          </Button>
+                        )
+                      ) : null}
+                      {(customer.primaryAction === "renew" || customer.primaryAction === "reactivate") &&
+                      customer.inviteId ? (
+                        pendingRenewEmail === customer.email ? (
+                          <form
+                            className="space-y-2 rounded-lg border border-line bg-surface-muted p-3"
+                            onSubmit={(event) => {
+                              event.preventDefault();
+                              void onRenewOrReactivate(customer, true);
+                            }}
+                          >
+                            <p className="font-medium">Erişimi yenile</p>
+                            <Field label="Erişim bitişi" htmlFor={`renew-paid-through-${customer.email}`}>
+                              <TextInput
+                                id={`renew-paid-through-${customer.email}`}
+                                type="datetime-local"
+                                value={renewPaidThrough}
+                                onChange={(event) => setRenewPaidThrough(event.target.value)}
+                                required
+                              />
+                            </Field>
+                            <div className="flex flex-wrap gap-2">
+                              <Button type="submit" size="sm" disabled={busy || !renewPaidThrough}>
+                                Erişimi yenile
+                              </Button>
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="ghost"
+                                disabled={busy}
+                                onClick={() => setPendingRenewEmail(null)}
+                              >
+                                Vazgeç
+                              </Button>
+                            </div>
+                          </form>
+                        ) : (
+                          <Button
+                            size="sm"
+                            disabled={busy}
+                            onClick={() => void onRenewOrReactivate(customer)}
+                          >
+                            Erişimi yenile
+                          </Button>
+                        )
+                      ) : null}
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        disabled={busy}
+                        onClick={() => void onSendPasswordRecovery(customer.email)}
+                      >
+                        Şifre sıfırlama bağlantısı gönder
+                      </Button>
+                    </div>
+                  ) : null}
+                </div>
+              </div>
+            ))
+          )}
+        </CardBody>
+      </Card>
 
       <Card>
         <CardHeader
@@ -627,7 +949,7 @@ export function CommercialAdminConsole(props: {
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
-          <CardHeader title="Yeni davet oluştur" description="Token yalnızca oluşturma anında gösterilir." icon={UserPlus} />
+          <CardHeader title="Müşteri davet et" description="Yeni müşteriye tek kurulum e-postası gönderilir. Duplicate hesap oluşturulmaz." icon={UserPlus} />
           <CardBody>
             <form className="space-y-4" onSubmit={onCreateInvite}>
               <Field label="E-posta" htmlFor="create-invite-email">
@@ -646,12 +968,13 @@ export function CommercialAdminConsole(props: {
                   onChange={(event) => setCreateTenantName(event.target.value)}
                 />
               </Field>
-              <Field label="Davet kodu (opsiyonel)" htmlFor="create-invite-token">
+              <Field label="Erişim bitişi" htmlFor="create-invite-paid-through">
                 <TextInput
-                  id="create-invite-token"
-                  value={createInviteToken}
-                  onChange={(event) => setCreateInviteToken(event.target.value)}
-                  placeholder="Boş bırakılırsa otomatik üretilir"
+                  id="create-invite-paid-through"
+                  type="datetime-local"
+                  value={createPaidThrough}
+                  onChange={(event) => setCreatePaidThrough(event.target.value)}
+                  required
                 />
               </Field>
               <Field label="Son geçerlilik (opsiyonel)" htmlFor="create-invite-expires">
@@ -662,23 +985,106 @@ export function CommercialAdminConsole(props: {
                   onChange={(event) => setCreateExpiresAt(event.target.value)}
                 />
               </Field>
-              <Button type="submit" disabled={busy || !createEmail.trim()} icon={UserPlus}>
-                Davet oluştur
+              <Button
+                type="submit"
+                disabled={busy || !isSessionMode || !createEmail.trim() || !createPaidThrough}
+                icon={UserPlus}
+              >
+                Müşteri davet et
               </Button>
             </form>
             {createdInvite ? (
-              <div className="mt-4 rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900" role="status">
-                <p className="font-medium">Davet oluşturuldu</p>
-                <p className="mt-2 break-all">
-                  E-posta: <span className="font-mono">{createdInvite.invite.normalizedEmail}</span>
+              <div className="mt-4 rounded-lg border border-sage/30 bg-sage/10 p-4 text-sm text-ink" role="status">
+                <p className="font-medium">
+                  {createdInvite.resent ? "Kurulum e-postası yeniden gönderildi" : "Kurulum daveti gönderildi"}
                 </p>
-                <p className="mt-1 break-all">
-                  Davet kodu: <span className="font-mono">{createdInvite.inviteToken}</span>
+                <p className="mt-2 break-all">
+                  E-posta: <span className="font-mono">{createdInvite.email}</span>
                 </p>
               </div>
             ) : null}
           </CardBody>
         </Card>
+
+        {isSessionMode ? (
+          <Card>
+            <CardHeader
+              title="Havale ile erişim"
+              description="Stripe'sız aktivasyon veya yenileme. Ödeme belgesi depolanmaz."
+              icon={Banknote}
+            />
+            <CardBody>
+              <form className="space-y-4" onSubmit={onApplyManualEntitlement}>
+                <Field label="Davet" htmlFor="manual-entitlement-invite">
+                  <select
+                    id="manual-entitlement-invite"
+                    className="min-h-11 w-full rounded-md border border-border bg-white px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    value={manualInviteId}
+                    onChange={(event) => setManualInviteId(event.target.value)}
+                    required
+                  >
+                    <option value="">Davet seç</option>
+                    {invites.map((invite) => (
+                      <option key={invite.id} value={invite.id}>
+                        {invite.normalizedEmail} · {invite.status}
+                      </option>
+                    ))}
+                  </select>
+                </Field>
+                <Field label="İşlem" htmlFor="manual-entitlement-action">
+                  <select
+                    id="manual-entitlement-action"
+                    className="min-h-11 w-full rounded-md border border-border bg-white px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    value={manualAction}
+                    onChange={(event) => {
+                      const value = event.target.value;
+                      setManualAction(
+                        value === "renew" ? "renew" : value === "reactivate" ? "reactivate" : "activate",
+                      );
+                    }}
+                  >
+                    <option value="activate">Aktive et</option>
+                    <option value="renew">Yenile</option>
+                    <option value="reactivate">Yeniden aç</option>
+                  </select>
+                </Field>
+                <Field label="Ödeme referansı" htmlFor="manual-payment-reference">
+                  <TextInput
+                    id="manual-payment-reference"
+                    value={manualPaymentReference}
+                    onChange={(event) => setManualPaymentReference(event.target.value)}
+                    placeholder="BANK-2026-0001"
+                    required
+                  />
+                </Field>
+                <Field label="Erişim bitişi" htmlFor="manual-paid-through">
+                  <TextInput
+                    id="manual-paid-through"
+                    type="datetime-local"
+                    value={manualPaidThrough}
+                    onChange={(event) => setManualPaidThrough(event.target.value)}
+                    required
+                  />
+                </Field>
+                <Field label="İstek id (opsiyonel)" htmlFor="manual-request-id">
+                  <TextInput
+                    id="manual-request-id"
+                    value={manualRequestId}
+                    onChange={(event) => setManualRequestId(event.target.value)}
+                    placeholder="Boş bırakılırsa otomatik üretilir"
+                  />
+                </Field>
+                <Button
+                  type="submit"
+                  disabled={busy || !manualInviteId || !manualPaymentReference.trim() || !manualPaidThrough}
+                  icon={Banknote}
+                >
+                  Havale erişimini uygula
+                </Button>
+              </form>
+            </CardBody>
+          </Card>
+        ) : null}
 
         <Card>
           <CardHeader title="Davet listesi" description="Hash/token depolanmaz; yalnızca operasyon metadata." icon={Shield} />
@@ -700,7 +1106,7 @@ export function CommercialAdminConsole(props: {
                         </p>
                       ) : null}
                     </div>
-                    {invite.status === "active" ? (
+                    {invite.status === "active" && isSessionMode ? (
                       <Button
                         size="sm"
                         variant="danger"
@@ -740,15 +1146,19 @@ export function CommercialAdminConsole(props: {
                     Davet: {subscription.inviteStatus ?? "—"}
                   </p>
                   <p className="text-xs text-stone-500">
+                    Ödeme: {subscription.billingMethod ?? "—"} · Bitiş: {formatTimestamp(subscription.paidThrough)} ·
+                    Revizyon: {subscription.revision ?? "—"}
+                  </p>
+                  <p className="text-xs text-stone-500">
                     Stripe müşteri: {subscription.stripeCustomerId ?? "—"}
                   </p>
                   <p className="text-xs text-stone-500">
                     Stripe abonelik: {subscription.stripeSubscriptionId ?? "—"}
                   </p>
                   <div className="mt-3 space-y-2">
-                    {canAdminRevokeAppAccess(subscription.entitlementStatus) ? (
+                    {isSessionMode && canAdminRevokeAppAccess(subscription.entitlementStatus) ? (
                       pendingRevokeTenantId === subscription.tenantId ? (
-                        <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-950">
+                        <div className="rounded-lg border border-line bg-surface-muted p-3 text-sm text-ink">
                           <p className="font-medium">Erişimi kapat</p>
                           <p className="mt-1">
                             Dashboard ve mobil/PWA erişimi entitlement üzerinden kapanır. Stripe aboneliği
@@ -759,7 +1169,13 @@ export function CommercialAdminConsole(props: {
                               size="sm"
                               variant="danger"
                               disabled={busy}
-                              onClick={() => void onRevokeEntitlement(subscription.tenantId, true)}
+                              onClick={() =>
+                                void onRevokeEntitlement(
+                                  subscription.tenantId,
+                                  subscription.revision ?? 0,
+                                  true,
+                                )
+                              }
                             >
                               Erişimi kapat
                             </Button>
@@ -778,7 +1194,9 @@ export function CommercialAdminConsole(props: {
                           size="sm"
                           variant="danger"
                           disabled={busy}
-                          onClick={() => void onRevokeEntitlement(subscription.tenantId)}
+                          onClick={() =>
+                            void onRevokeEntitlement(subscription.tenantId, subscription.revision ?? 0)
+                          }
                         >
                           Erişimi kapat
                         </Button>

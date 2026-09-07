@@ -22,9 +22,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       className={cn(buttonClasses(variant, size), fullWidth && "w-full", className)}
       {...rest}
     >
-      {Icon && iconPosition === "start" ? <Icon size={iconSize} /> : null}
-      {children}
-      {Icon && iconPosition === "end" ? <Icon size={iconSize} /> : null}
+      {Icon && iconPosition === "start" ? <Icon size={iconSize} className="shrink-0" /> : null}
+      {children ? <span className="command-label">{children}</span> : null}
+      {Icon && iconPosition === "end" ? <Icon size={iconSize} className="shrink-0" /> : null}
     </button>
   );
 });

@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { API_NO_STORE_HEADERS } from "@/lib/app-errors";
 import { getFallbackState, resetFallbackState } from "@/lib/app-state-store";
 import { authErrorResponse, requireCapability, resolveAppTenantContext } from "@/lib/auth-context";
 import { buildPhase79WindowedDashboardPayload } from "@/lib/phase-79b-windowed-read-contracts";
@@ -38,9 +39,13 @@ export async function GET(request: NextRequest) {
       const tenantContext = await resolveAppTenantContext();
       requireCapability(tenantContext, "read_app_state");
       if (view === "windowed") {
-        return NextResponse.json(await loadSupabaseWindowedDashboardPayload(tenantContext, windowedOptions(request)));
+        return NextResponse.json(await loadSupabaseWindowedDashboardPayload(tenantContext, windowedOptions(request)), {
+          headers: API_NO_STORE_HEADERS,
+        });
       }
-      return NextResponse.json(await loadSupabaseState(tenantContext));
+      return NextResponse.json(await loadSupabaseState(tenantContext), {
+        headers: API_NO_STORE_HEADERS,
+      });
     } catch (error) {
       return authErrorResponse(error);
     }
@@ -58,7 +63,9 @@ export async function POST() {
     try {
       const tenantContext = await resolveAppTenantContext();
       requireCapability(tenantContext, "reset_app_state");
-      return NextResponse.json(await resetSupabaseState(tenantContext));
+      return NextResponse.json(await resetSupabaseState(tenantContext), {
+        headers: API_NO_STORE_HEADERS,
+      });
     } catch (error) {
       return authErrorResponse(error);
     }

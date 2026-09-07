@@ -2080,6 +2080,7 @@ declare
   v_orphan_cutoff timestamptz := v_now - interval '24 hours';
   v_expired_events integer := 0;
   v_orphan_attachments integer := 0;
+  v_recent_orphan_attachments integer := 0;
   v_requeued_jobs integer := 0;
 begin
   if auth.role() <> 'service_role' then
@@ -2123,7 +2124,8 @@ begin
         and c.id = a.conversation_id
         and p85_stage_4c_has_active_legal_hold_v1(c.tenant_id, c.client_id)
     );
-  get diagnostics v_orphan_attachments = v_orphan_attachments + row_count;
+  get diagnostics v_recent_orphan_attachments = row_count;
+  v_orphan_attachments := v_orphan_attachments + v_recent_orphan_attachments;
 
   update ai_chat_deletion_jobs j
   set status = 'queued',

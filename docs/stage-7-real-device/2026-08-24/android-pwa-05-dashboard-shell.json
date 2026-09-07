@@ -1,0 +1,11 @@
+{
+  "step": "dashboard_shell",
+  "requestedUrl": "http://127.0.0.1:3110/dashboard",
+  "finalUrl": "http://127.0.0.1:3110/dashboard",
+  "title": "SiriusAI",
+  "viewport": null,
+  "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+  "standalone": false,
+  "serviceWorkerController": false,
+  "bodyText": "İçeriğe atla\n\nSİRİUSAI\n\nMANU-AI Demo Clinic\n\nOperasyon paneli\nDanışan seç\nPanel dili\nTurkish\nEnglish\nGerman\nFrench\nSpanish\nPortuguese\nCzech\nDemoyu sıfırla\nGünlük iş girişi\n\nAktif danışan, bekleyen kuyruklar ve doğrudan görevler. Raporlama vitrini yoktur.\n\nMesajlar\n0\nUyarılar\n0\nBildirimler\n0\nAktif danışan\n\nDanışan seçilmedi\n\nDanışan listesinden bir kayıt seçin.\n\nOperasyonel temel görünürlük\n\nGüven bağlantıları ve karantina denetimi (özet sayaçlar).\n\nSağlıklı\nKanal güven özeti\n\nKarantina\n\n0\n\nAktif hesap bağlantısı\n\n0\n\nİptal edilmiş bağlantı\n\n0\n\nAktif aktör bağlantısı\n\n0\n\nTeslimat hataları\n0\nKapı engelleri\n0\nYinelenen yok sayıldı\n0\nVazgeçme\n0\nGeri alma kapsamları\n0\n\nBağlantı ve karantina detayları yalnızca sahip/yönetici görünümünde.\n\nAna Sayfa\nDanisanlar\nMesajlar\nUyarilar\nDiger"
+}

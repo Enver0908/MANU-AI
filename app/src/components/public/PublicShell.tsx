@@ -5,11 +5,11 @@ import { PublicNavbar } from "./PublicNavbar";
 export function PublicShell({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col bg-paper">
-      <a href="#main" className="skip-link">
+      <a href="#main" className="skip-link" data-testid="skip-link">
         Ana içeriğe geç
       </a>
       <PublicNavbar />
-      <main id="main" className="flex-1">
+      <main id="main" className="min-w-0 flex-1">
         {children}
       </main>
       <PublicFooter />

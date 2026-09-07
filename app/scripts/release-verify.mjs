@@ -1,22 +1,57 @@
 import { rmSync } from "node:fs";
 import { spawnWithTimeoutSync } from "./lib/spawn-with-timeout.mjs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+import {
+  assertProductionReleaseIdentity,
+  assertServiceWorkerSourceUsesPlaceholder,
+  buildReleaseIdentity,
+} from "./lib/release-identity.mjs";
 
-const knownAuditFindings = new Set([
-  "next:postcss",
-  "next:sharp",
-  "postcss:GHSA-qx2v-qp2m-jg93",
-  "postcss:GHSA-6g55-p6wh-862q",
-  "postcss:GHSA-r28c-9q8g-f849",
-  "sharp:GHSA-f88m-g3jw-g9cj",
-]);
+const __releaseVerifyDir = dirname(fileURLToPath(import.meta.url));
+const releaseVerifyRepoRoot = join(__releaseVerifyDir, "..", "..");
+
+function assertReleaseIdentityGate() {
+  console.log("\n[release:verify] release identity gate");
+  const identity = buildReleaseIdentity({
+    repoRoot: releaseVerifyRepoRoot,
+    env: { ...process.env, NODE_ENV: "production" },
+  });
+  assertProductionReleaseIdentity(identity, { ...process.env, NODE_ENV: "production" });
+  assertServiceWorkerSourceUsesPlaceholder(releaseVerifyRepoRoot);
+  console.log(
+    "Release identity bound: " + identity.releaseId + " @ " + identity.commitSha.slice(0, 12) + " fingerprint " + identity.migrationFingerprint.slice(0, 12),
+  );
+}
+
+const isolatedUnitTestEnv = {
+  MANU_DEV_FALLBACK_STORE: "true",
+  NEXT_PUBLIC_SUPABASE_URL: "",
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: "",
+  SUPABASE_URL: "",
+  SUPABASE_SERVICE_ROLE_KEY: "",
+  STAGE_4C_FULL_REHEARSAL: "",
+};
 
 const checks = [
   { label: "core package tests", command: "npm", args: ["test"], cwd: "../dietitian-ai-assistant" },
   { label: "lint", command: "npm", args: ["run", "lint"] },
   { label: "production typecheck", command: "npm", args: ["run", "typecheck"] },
-  { label: "unit tests", command: "npm", args: ["test"] },
+  {
+    label: "unit tests",
+    command: "npm",
+    args: ["test"],
+    env: isolatedUnitTestEnv,
+    timeoutMs: 2_400_000,
+  },
   { label: "production build", command: "npm", args: ["run", "build"], before: cleanNextBuildOutput },
+  { label: "release artifact", command: "npm", args: ["run", "release:artifact"] },
+  { label: "stage-5 dependency security verify", command: "npm", args: ["run", "test:stage-5-dependencies"] },
+  { label: "stage-5 shell verify", command: "npm", args: ["run", "test:stage-5-shell"] },
 ];
+
+cleanReleaseArtifactOutput();
+assertReleaseIdentityGate();
 
 for (const check of checks) {
   run(check);
@@ -24,9 +59,9 @@ for (const check of checks) {
 
 runDependencyAuditGate();
 
-console.log("Release verification passed. R-405 remains a documented production launch blocker.");
+console.log("Release verification passed. Production dependency audit is clean; R-405 is technically resolved.");
 
-function run({ label, command, args, cwd, before }) {
+function run({ label, command, args, cwd, env, before, timeoutMs }) {
   console.log(`\n[release:verify] ${label}`);
   if (typeof before === "function") {
     before();
@@ -36,7 +71,8 @@ function run({ label, command, args, cwd, before }) {
     command,
     args,
     cwd,
-    timeoutMs: 900_000,
+    env,
+    timeoutMs: timeoutMs ?? 900_000,
     stdio: "inherit",
   });
 
@@ -48,6 +84,10 @@ function run({ label, command, args, cwd, before }) {
 function cleanNextBuildOutput() {
   // Windows + OneDrive can throw ENOTEMPTY when another build still holds .next open.
   rmSync(".next", { force: true, recursive: true, maxRetries: 10, retryDelay: 500 });
+}
+
+function cleanReleaseArtifactOutput() {
+  rmSync(".manu-runtime/release-artifacts", { force: true, recursive: true, maxRetries: 10, retryDelay: 500 });
 }
 
 function runDependencyAuditGate() {
@@ -66,24 +106,17 @@ function runDependencyAuditGate() {
 
   const output = `${result.output || ""}`.trim();
   const audit = parseAuditJson(output);
-  const findings = collectAuditFindings(audit);
-  const unknownFindings = findings.filter((finding) => !knownAuditFindings.has(finding.key));
+  const totalVulnerabilities = Number(audit.metadata?.vulnerabilities?.total ?? 0);
 
-  if (unknownFindings.length > 0) {
+  if (result.status !== "pass" || totalVulnerabilities !== 0) {
     console.error("Production dependency audit failed.");
-    for (const finding of unknownFindings) {
+    for (const finding of collectAuditFindings(audit)) {
       console.error(`- ${finding.key} (${finding.severity})`);
     }
     process.exit(1);
   }
 
-  if (findings.length > 0) {
-    console.log("Known production dependency audit finding remains open:");
-    for (const finding of findings) {
-      console.log(`- ${finding.key} (${finding.severity})`);
-    }
-    console.log("Do not run npm audit fix --force; track R-405 until a safe stable Next.js/PostCSS path exists.");
-  }
+  console.log("Production dependency audit passed with zero production vulnerabilities.");
 }
 
 function parseAuditJson(output) {

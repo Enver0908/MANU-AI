@@ -1,26 +1,18 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { apiErrorBody, API_NO_STORE_HEADERS, createApiRequestId } from "./app-errors";
 import { assertActiveCommercialEntitlement } from "./commercial-entitlement-access";
-import { createSupabaseServerClient, isSupabaseConfigured } from "./supabase";
+import {
+  assertShellSessionActivity,
+  readVerifiedSessionIdFromAccessToken,
+  touchShellSessionActivity,
+} from "./phase-85-stage-5-shell-session";
+import { createSupabaseServerClient, getSupabaseAdminClient, isSupabaseConfigured } from "./supabase";
 import type { TenantRole } from "./types";
+import { hasCapability, type AppCapability } from "./app-capability-contracts";
 
-export type AppCapability =
-  | "read_app_state"
-  | "reset_app_state"
-  | "create_client"
-  | "update_client"
-  | "simulate_inbound"
-  | "manual_reply"
-  | "draft_review"
-  | "handoff_update"
-  | "notification_update"
-  | "export_client"
-  | "anonymize_client"
-  | "release_takeover"
-  | "internal_copilot_chat"
-  | "dietitian_ai_chat"
-  | "read_operational_foundation"
-  | "revoke_tenant_channel_bindings";
+export { hasCapability, type AppCapability } from "./app-capability-contracts";
 
 export type AppTenantContext = {
   tenantId: string;
@@ -29,10 +21,19 @@ export type AppTenantContext = {
   role: TenantRole;
 };
 
-export class AppAuthError extends Error {
-  status: 401 | 403;
+export type AccountTenantContext = AppTenantContext & {
+  supabase: SupabaseClient;
+  sessionId: string;
+};
 
-  constructor(status: 401 | 403, message: string) {
+export type ResolveAccountTenantContextOptions = {
+  recordSessionActivity?: boolean;
+};
+
+export class AppAuthError extends Error {
+  status: 400 | 401 | 403 | 409;
+
+  constructor(status: 400 | 401 | 403 | 409, message: string) {
     super(message);
     this.name = "AppAuthError";
     this.status = status;
@@ -40,6 +41,27 @@ export class AppAuthError extends Error {
 }
 
 export async function resolveAppTenantContext(): Promise<AppTenantContext> {
+  const accountContext = await resolveAccountTenantContext();
+  await assertActiveCommercialEntitlement(accountContext.tenantId);
+  return {
+    tenantId: accountContext.tenantId,
+    dietitianId: accountContext.dietitianId,
+    userId: accountContext.userId,
+    role: accountContext.role,
+  };
+}
+
+/**
+ * Activity-endpoint resolver. Verifies the session without extending it; the
+ * activity route then performs the service-role touch after entitlement and rate limit.
+ */
+export async function resolveAccountTenantContextForSessionActivity(): Promise<AccountTenantContext> {
+  return resolveAccountTenantContext({ recordSessionActivity: false });
+}
+
+export async function resolveAccountTenantContext(
+  options: ResolveAccountTenantContextOptions = {},
+): Promise<AccountTenantContext> {
   if (!isSupabaseConfigured()) {
     throw new AppAuthError(401, "supabase_not_configured");
   }
@@ -67,26 +89,22 @@ export async function resolveAppTenantContext(): Promise<AppTenantContext> {
     throw new AppAuthError(401, "unauthenticated");
   }
 
-  const membership = await supabase
+  const memberships = await supabase
     .from("tenant_memberships")
     .select("tenant_id, role")
     .eq("user_id", user.id)
-    .order("created_at", { ascending: true })
-    .limit(1)
-    .maybeSingle();
+    .order("created_at", { ascending: true });
 
-  if (membership.error) {
-    throw membership.error;
+  if (memberships.error) {
+    throw memberships.error;
   }
 
-  if (!membership.data) {
-    throw new AppAuthError(403, "no_tenant_membership");
-  }
+  const membership = resolveUniqueTenantMembership(memberships.data ?? []);
 
   const dietitian = await supabase
     .from("dietitians")
     .select("id")
-    .eq("tenant_id", membership.data.tenant_id)
+    .eq("tenant_id", membership.tenant_id)
     .eq("auth_user_id", user.id)
     .maybeSingle();
 
@@ -98,14 +116,39 @@ export async function resolveAppTenantContext(): Promise<AppTenantContext> {
     throw new AppAuthError(403, "no_dietitian_profile");
   }
 
+  const {
+    data: { session },
+    error: sessionError,
+  } = await supabase.auth.getSession();
+
+  const verifiedSessionId = readVerifiedSessionIdFromAccessToken(session?.access_token);
+  if (sessionError || !verifiedSessionId) {
+    throw new AppAuthError(401, "session_claim_missing");
+  }
+
+  const admin = getSupabaseAdminClient();
+  if (!admin) {
+    throw new AppAuthError(401, "supabase_not_configured");
+  }
+
+  const actor = {
+    sessionId: verifiedSessionId,
+    authUserId: user.id,
+    tenantId: membership.tenant_id,
+    dietitianId: dietitian.data.id,
+  };
+  const sessionActivity = options.recordSessionActivity
+    ? await touchShellSessionActivity(admin, actor)
+    : await assertShellSessionActivity(admin, actor);
+
   const context = {
-    tenantId: membership.data.tenant_id,
+    tenantId: membership.tenant_id,
     dietitianId: dietitian.data.id,
     userId: user.id,
-    role: membership.data.role as TenantRole,
+    role: membership.role as TenantRole,
+    sessionId: sessionActivity.sessionId || verifiedSessionId,
+    supabase,
   };
-
-  await assertActiveCommercialEntitlement(context.tenantId);
 
   return context;
 }
@@ -122,29 +165,24 @@ export function requireCapability(context: AppTenantContext, capability: AppCapa
   }
 }
 
-export function hasCapability(role: TenantRole, capability: AppCapability) {
-  if (capability === "read_operational_foundation" || capability === "revoke_tenant_channel_bindings") {
-    return role === "owner" || role === "admin";
+export function resolveUniqueTenantMembership(
+  rows: Array<{ tenant_id: string; role: string }>,
+): { tenant_id: string; role: string } {
+  if (rows.length === 0) {
+    throw new AppAuthError(403, "no_tenant_membership");
   }
-
-  if (capability === "dietitian_ai_chat") {
-    return role === "owner" || role === "admin" || role === "dietitian";
+  if (rows.length > 1) {
+    throw new AppAuthError(409, "account_context_ambiguous");
   }
-
-  if (role === "owner" || role === "admin" || role === "dietitian") {
-    return true;
-  }
-
-  if (role === "assistant" || role === "auditor") {
-    return capability === "read_app_state";
-  }
-
-  return false;
+  return rows[0];
 }
 
 export function authErrorResponse(error: unknown) {
   if (error instanceof AppAuthError) {
-    return NextResponse.json({ error: error.message }, { status: error.status });
+    return NextResponse.json(apiErrorBody(error.message, createApiRequestId()), {
+      status: error.status,
+      headers: API_NO_STORE_HEADERS,
+    });
   }
 
   throw error;

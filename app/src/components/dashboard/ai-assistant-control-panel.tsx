@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef, useState } from "react";
 import { AlertTriangle, Bot, ShieldCheck } from "lucide-react";
 import { personas } from "dietitian-ai-assistant-architecture";
 import {
@@ -19,16 +20,14 @@ import {
 } from "@/lib/safety-checklist";
 import type { AiMode, AiStatus, ClientRecord, ManuAppState, SafetyChecklist } from "@/lib/types";
 import type { SupportedLanguageCode } from "@/lib/languages";
+import { Badge, ConfirmButton, DateTimeInput, SegmentedControl, SelectInput, ToggleRow, fromDateTimeLocal, toDateTimeLocal } from "./shared";
+import { useShellDirtyRegistration } from "@/lib/use-shell-dirty-registration";
+import type { ShellDirtyEntryState } from "@/lib/phase-85-stage-5-shell-dirty-registry";
 import {
-  Badge,
-  ConfirmButton,
-  DateTimeInput,
-  SegmentedControl,
-  SelectInput,
-  ToggleRow,
-  fromDateTimeLocal,
-  toDateTimeLocal,
-} from "./shared";
+  classifyStage6EditorFailure,
+  stage6EditorFailureMessage,
+  type Stage6EditorFailure,
+} from "@/lib/phase-85-stage-6-workspace-state";
 
 export function AiAssistantControlPanel({
   client,
@@ -67,21 +66,53 @@ export function AiAssistantControlPanel({
     .filter((session) => session.clientId === client.id && session.status === "active")
     .sort((a, b) => new Date(b.openedAt).getTime() - new Date(a.openedAt).getTime())[0];
   const takeoverMismatch = client.humanTakeoverLocked !== Boolean(activeHumanControlSession);
+  const panelRef = useRef<HTMLElement>(null);
+  const [isControlMutationPending, setIsControlMutationPending] = useState(false);
+  const [controlFailure, setControlFailure] = useState<Stage6EditorFailure | null>(null);
+  const dirtyState: ShellDirtyEntryState =
+    isActivatingAi || isReleasingHumanTakeover || isControlMutationPending
+      ? "saving"
+      : controlFailure
+        ? "error"
+        : "clean";
+
+  useShellDirtyRegistration({
+    id: `client-ai:${client.id}`,
+    label: "AI asistan kontrolü",
+    state: dirtyState,
+    canSave: false,
+    onSave: async () => false,
+    onDiscard: () => setControlFailure(null),
+    onFocusField: () => panelRef.current?.querySelector<HTMLElement>("button, [href], input, select, textarea")?.focus(),
+  });
+
+  const runControlMutation = async (operation: () => Promise<unknown> | unknown) => {
+    if (isControlMutationPending || isActivatingAi || isReleasingHumanTakeover) return;
+    setIsControlMutationPending(true);
+    setControlFailure(null);
+    try {
+      await operation();
+    } catch (error) {
+      setControlFailure(classifyStage6EditorFailure(error, "ai_control_update_failed"));
+    } finally {
+      setIsControlMutationPending(false);
+    }
+  };
 
   const updateAiStatus = (value: AiStatus) => {
     if (value === "active") {
-      void onActivateAi(client.id, client.aiMode === "autopilot" ? "autopilot" : "copilot");
+      void runControlMutation(() => onActivateAi(client.id, client.aiMode === "autopilot" ? "autopilot" : "copilot"));
       return;
     }
-    void onUpdateClient({ aiStatus: "passive" });
+    void runControlMutation(() => onUpdateClient({ aiStatus: "passive" }));
   };
 
   const updateHumanTakeover = (checked: boolean) => {
     if (checked) {
-      void onUpdateClient({ humanTakeoverLocked: true });
+      void runControlMutation(() => onUpdateClient({ humanTakeoverLocked: true }));
       return;
     }
-    void onReleaseHumanTakeover(client.id);
+    void runControlMutation(() => onReleaseHumanTakeover(client.id));
   };
 
   const updateSafetyChecklist = (key: keyof SafetyChecklist, checked: boolean) => {
@@ -89,26 +120,33 @@ export function AiAssistantControlPanel({
       ...normalizeSafetyChecklist(client.safetyChecklist),
       [key]: checked,
     };
-    onUpdateClient({
-      safetyChecklist: nextChecklist,
-      mandatorySafetyComplete: isSafetyChecklistComplete({ ...client, safetyChecklist: nextChecklist }),
-    });
+    void runControlMutation(() =>
+      onUpdateClient({
+        safetyChecklist: nextChecklist,
+        mandatorySafetyComplete: isSafetyChecklistComplete({ ...client, safetyChecklist: nextChecklist }),
+      }),
+    );
   };
 
   const activateAiFromRedLock = () => {
-    void onActivateAi(client.id, client.aiMode === "autopilot" ? "autopilot" : "copilot");
+    void runControlMutation(() => onActivateAi(client.id, client.aiMode === "autopilot" ? "autopilot" : "copilot"));
   };
 
   return (
-    <section className="space-y-4" data-testid="ai-assistant-control-panel">
-      <div className="rounded-lg border border-stone-200 bg-stone-50 p-4">
+    <section ref={panelRef} className="space-y-4" data-testid="ai-assistant-control-panel">
+      {controlFailure ? (
+        <p role="alert" aria-live="assertive" className="rounded-control border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
+          {stage6EditorFailureMessage(controlFailure)}
+        </p>
+      ) : null}
+      <div className="rounded-card border border-line bg-surface-muted p-4">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <div className="flex items-center gap-2">
-              <Bot size={18} className="text-stone-700" />
-              <h4 className="text-sm font-semibold text-stone-900">AI Asistan Kontrolu</h4>
+              <Bot size={18} className="text-ink" />
+              <h4 className="text-sm font-semibold text-ink">AI Asistan Kontrolu</h4>
             </div>
-            <p className="mt-1 text-sm text-stone-600">
+            <p className="mt-1 text-sm text-ink-muted">
               {selectedPersona?.label || client.selectedPersonaId} · {AI_STATUS_LABELS_TR[client.aiStatus]} ·{" "}
               {AI_MODE_LABELS_TR[client.aiMode]}
             </p>
@@ -124,14 +162,20 @@ export function AiAssistantControlPanel({
             )}
           </div>
         </div>
+        <ul className="mt-3 space-y-1 text-sm text-ink" data-testid="ai-control-state-signals">
+          <li>Hazırlık: {summary.safetyComplete && summary.blockerCount === 0 ? "Hazır" : "Hazır değil"}</li>
+          <li>Devralma: {client.humanTakeoverLocked ? "İnsan kontrolünde" : "Asistan kontrolünde"}</li>
+          <li>Düzenleme: {canManageAiControls && !disabled ? "Düzenlenebilir" : "Salt okunur"}</li>
+          <li>Revizyon: {takeoverMismatch || controlFailure ? "Eski veya uyumsuz" : "Güncel"}</li>
+        </ul>
       </div>
 
       <div className="grid gap-4 xl:grid-cols-2">
-        <div className="rounded-lg border border-stone-200 bg-white p-4">
-          <p className="px-1 text-sm font-semibold text-stone-800">Durum ve mod</p>
+        <div className="rounded-card border border-line bg-surface p-4">
+          <p className="px-1 text-sm font-semibold text-ink">Durum ve mod</p>
           <div className="mt-3 space-y-4" data-testid="ai-activation-controls">
             {redLocked && client.aiStatus !== "active" ? (
-              <div className="space-y-3 rounded-lg border border-red-200 bg-red-50 p-3">
+              <div className="space-y-3 rounded-card border border-red-200 bg-red-50 p-3">
                 <p className="text-sm leading-6 text-red-900">
                   Kirmizi risk kilidi aktif. AI aktivasyonu kirmizi uyaruyi atomik olarak kapatir; mod ve konfigurasyon
                   alanlari kilitli kalir.
@@ -141,8 +185,8 @@ export function AiAssistantControlPanel({
                   confirmLabel={RED_LOCK_ATOMIC_ACTIVATION_CTA_TR}
                   onConfirm={activateAiFromRedLock}
                   disabled={activationDisabled}
-                  className="inline-flex min-h-11 w-full items-center justify-center rounded-lg bg-emerald-950 px-3 py-2 text-sm font-semibold text-white transition hover:bg-emerald-900 disabled:cursor-not-allowed disabled:opacity-60"
-                  confirmClassName="inline-flex min-h-11 w-full items-center justify-center rounded-lg bg-emerald-800 px-3 py-2 text-sm font-semibold text-white transition hover:bg-emerald-900"
+                  className="inline-flex min-h-11 w-full items-center justify-center rounded-card bg-primary px-3 py-2 text-sm font-semibold text-white transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
+                  confirmClassName="inline-flex min-h-11 w-full items-center justify-center rounded-card bg-primary px-3 py-2 text-sm font-semibold text-white transition hover:bg-primary-hover"
                 />
               </div>
             ) : (
@@ -159,13 +203,13 @@ export function AiAssistantControlPanel({
               </div>
             )}
             {isActivatingAi && (
-              <p className="text-xs font-medium text-stone-500">
+              <p className="text-xs font-medium text-ink-muted">
                 Aktivasyon atomik endpoint uzerinden dogrulaniyor.
               </p>
             )}
           </div>
 
-          <fieldset className="mt-4 space-y-4 border-0 p-0" disabled={configurationDisabled}>
+          <fieldset className="mt-4 space-y-4 border-0 p-0" disabled={configurationDisabled || isControlMutationPending}>
             <SegmentedControl
               label="AI modu"
               value={client.aiMode}
@@ -175,12 +219,12 @@ export function AiAssistantControlPanel({
                 ["manual", AI_MODE_LABELS_TR.manual],
                 ["paused", AI_MODE_LABELS_TR.paused],
               ]}
-              onChange={(value) => onUpdateClient({ aiMode: value as AiMode })}
+              onChange={(value) => void runControlMutation(() => onUpdateClient({ aiMode: value as AiMode }))}
             />
             <SelectInput
               label="Persona"
               value={client.selectedPersonaId}
-              onChange={(value) => onUpdateClient({ selectedPersonaId: value })}
+              onChange={(value) => void runControlMutation(() => onUpdateClient({ selectedPersonaId: value }))}
               options={personas.map((persona) => [persona.id, persona.label])}
             />
             <ToggleRow
@@ -193,23 +237,23 @@ export function AiAssistantControlPanel({
                 label={isReleasingHumanTakeover ? "Devralma cozuluyor" : "Devralmayi cozumle"}
                 confirmLabel="Devralmayi cozumle"
                 onConfirm={() => {
-                  void onReleaseHumanTakeover(client.id);
+                  void runControlMutation(() => onReleaseHumanTakeover(client.id));
                 }}
-                disabled={isReleasingHumanTakeover || configurationDisabled}
-                className="inline-flex min-h-11 items-center justify-center rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm font-semibold text-amber-900 transition hover:bg-amber-50 disabled:cursor-not-allowed disabled:opacity-60"
-                confirmClassName="inline-flex min-h-11 items-center justify-center rounded-lg bg-amber-700 px-3 py-2 text-sm font-semibold text-white transition hover:bg-amber-800"
+                disabled={isReleasingHumanTakeover || isControlMutationPending || configurationDisabled}
+                className="inline-flex min-h-11 items-center justify-center rounded-card border border-amber-200 bg-surface px-3 py-2 text-sm font-semibold text-amber-900 transition hover:bg-amber-50 disabled:cursor-not-allowed disabled:opacity-60"
+                confirmClassName="inline-flex min-h-11 items-center justify-center rounded-card bg-amber-700 px-3 py-2 text-sm font-semibold text-white transition hover:bg-amber-800"
               />
             )}
             <div className="grid gap-3 md:grid-cols-2">
               <DateTimeInput
                 label="Aktif baslangic"
                 value={toDateTimeLocal(client.aiActiveFrom)}
-                onChange={(value) => onUpdateClient({ aiActiveFrom: fromDateTimeLocal(value) })}
+                onChange={(value) => void runControlMutation(() => onUpdateClient({ aiActiveFrom: fromDateTimeLocal(value) }))}
               />
               <DateTimeInput
                 label="Aktif bitis"
                 value={toDateTimeLocal(client.aiActiveUntil)}
-                onChange={(value) => onUpdateClient({ aiActiveUntil: fromDateTimeLocal(value) })}
+                onChange={(value) => void runControlMutation(() => onUpdateClient({ aiActiveUntil: fromDateTimeLocal(value) }))}
               />
             </div>
           </fieldset>
@@ -217,13 +261,13 @@ export function AiAssistantControlPanel({
 
         <div className="space-y-4">
           <fieldset
-            className="rounded-lg border border-stone-200 bg-white p-4"
-            disabled={configurationDisabled}
+            className="rounded-card border border-line bg-surface p-4"
+            disabled={configurationDisabled || isControlMutationPending}
           >
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
-                <ShieldCheck size={16} className="text-stone-700" />
-                <p className="text-sm font-semibold text-stone-800">Guvenlik kontrol listesi</p>
+                <ShieldCheck size={16} className="text-ink" />
+                <p className="text-sm font-semibold text-ink">Guvenlik kontrol listesi</p>
               </div>
               <Badge
                 label={client.mandatorySafetyComplete ? "Tamam" : "Eksik"}
@@ -243,11 +287,11 @@ export function AiAssistantControlPanel({
           </fieldset>
 
           <div
-            className="rounded-lg border border-stone-200 bg-white p-4"
+            className="rounded-card border border-line bg-surface p-4"
             data-testid="ai-autopilot-readiness-gate"
           >
             <div className="flex items-center justify-between gap-3">
-              <p className="text-sm font-semibold text-stone-800">Autopilot hazirlik kapisi</p>
+              <p className="text-sm font-semibold text-ink">Autopilot hazirlik kapisi</p>
               <Badge
                 label={
                   readiness.ready
@@ -259,38 +303,38 @@ export function AiAssistantControlPanel({
                 tone={readiness.ready ? "emerald" : readiness.blocked ? "red" : "amber"}
               />
             </div>
-            <p className="mt-2 text-xs text-stone-500">
+            <p className="mt-2 text-xs text-ink-muted">
               Autopilot yalnizca guvenlik, form ve kanal kosullari tamamlandiginda acilir.
             </p>
             {readiness.missingLabels.length > 0 ? (
-              <ul className="mt-3 space-y-1 text-sm text-stone-700">
+              <ul className="mt-3 space-y-1 text-sm text-ink">
                 {readiness.missingLabels.map((label) => (
-                  <li key={label} className="rounded-md bg-stone-50 px-2 py-1">
+                  <li key={label} className="rounded-md bg-surface-muted px-2 py-1">
                     {label}
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="mt-3 text-sm text-emerald-700">Tum autopilot kosullari saglandi.</p>
+              <p className="mt-3 text-sm text-primary">Tum autopilot kosullari saglandi.</p>
             )}
           </div>
         </div>
       </div>
 
       <div className="grid gap-4 xl:grid-cols-2">
-        <div className="rounded-lg border border-stone-200 bg-white p-4" data-testid="ai-lock-status">
-          <p className="text-sm font-semibold text-stone-800">Kilit durumu</p>
+        <div className="rounded-card border border-line bg-surface p-4" data-testid="ai-lock-status">
+          <p className="text-sm font-semibold text-ink">Kilit durumu</p>
           <div className="mt-3 space-y-2 text-sm">
-            <div className="flex items-center justify-between gap-3 rounded-md bg-stone-50 px-3 py-2">
-              <span className="text-stone-600">Kirmizi risk kilidi</span>
+            <div className="flex items-center justify-between gap-3 rounded-md bg-surface-muted px-3 py-2">
+              <span className="text-ink-muted">Kirmizi risk kilidi</span>
               <Badge label={summary.redLockActive ? "Aktif" : "Yok"} tone={summary.redLockActive ? "red" : "emerald"} />
             </div>
-            <div className="flex items-center justify-between gap-3 rounded-md bg-stone-50 px-3 py-2">
-              <span className="text-stone-600">Sari risk bekleme</span>
+            <div className="flex items-center justify-between gap-3 rounded-md bg-surface-muted px-3 py-2">
+              <span className="text-ink-muted">Sari risk bekleme</span>
               <Badge label={summary.yellowHoldActive ? "Aktif" : "Yok"} tone={summary.yellowHoldActive ? "amber" : "emerald"} />
             </div>
-            <div className="flex items-center justify-between gap-3 rounded-md bg-stone-50 px-3 py-2">
-              <span className="text-stone-600">Diyetisyen devralma</span>
+            <div className="flex items-center justify-between gap-3 rounded-md bg-surface-muted px-3 py-2">
+              <span className="text-ink-muted">Diyetisyen devralma</span>
               <Badge
                 label={takeoverMismatch ? "Kontrol gerekli" : summary.humanTakeoverLocked ? "Kilitli" : "Acik"}
                 tone={takeoverMismatch ? "red" : summary.humanTakeoverLocked ? "amber" : "emerald"}
@@ -317,13 +361,13 @@ export function AiAssistantControlPanel({
           )}
         </div>
 
-        <div className="rounded-lg border border-stone-200 bg-white p-4" data-testid="ai-preflight-blockers">
+        <div className="rounded-card border border-line bg-surface p-4" data-testid="ai-preflight-blockers">
           <div className="flex items-center gap-2">
-            <AlertTriangle size={16} className="text-stone-700" />
-            <p className="text-sm font-semibold text-stone-800">Preflight engelleri</p>
+            <AlertTriangle size={16} className="text-ink" />
+            <p className="text-sm font-semibold text-ink">Preflight engelleri</p>
           </div>
           {blockers.length === 0 ? (
-            <p className="mt-3 text-sm text-emerald-700">Simdi acik preflight engeli yok.</p>
+            <p className="mt-3 text-sm text-primary">Simdi acik preflight engeli yok.</p>
           ) : (
             <ul className="mt-3 space-y-2">
               {blockers.map((blocker) => (
@@ -342,7 +386,7 @@ export function AiAssistantControlPanel({
       </div>
 
       {uiLanguage !== "tr" && (
-        <p className="text-xs text-stone-500">
+        <p className="text-xs text-ink-muted">
           Panel dili {uiLanguage}; AI kontrol etiketleri su an Turkce sabit metin kullanir.
         </p>
       )}

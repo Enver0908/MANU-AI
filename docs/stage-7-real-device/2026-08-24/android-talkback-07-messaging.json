@@ -1,0 +1,12 @@
+{
+  "step": "messaging",
+  "requestedUrl": "http://127.0.0.1:3110/dashboard?section=messages&clientId=client-mert",
+  "finalUrl": "http://127.0.0.1:3110/dashboard?section=messages&clientId=client-mert",
+  "title": "SiriusAI",
+  "bodyText": "İçeriğe atla\n\nSİRİUSAI\n\nMANU-AI Demo Clinic\n\nOperasyon paneli\nDanışan seç\nPanel dili\nTurkish\nEnglish\nGerman\nFrench\nSpanish\nPortuguese\nCzech\nDemoyu sıfırla\nMesajlaşma\n\nDanışan konuşmalarını bounded API üzerinden listeler; kişisel okunmamışlar rozetlenir.\n\nYenile\nKonuşma ara\n\nKonuşma durumu\n\nTümü (3)\nOkunmamış (0)\nMert Kaya\n22.05.2026 12:11\nYumurta yerine lor peyniri ve bol yesillik iyi bir secenek olur.\nElif Demir\nDeniz Arslan\n\nFiltrelenmiş kayıt: 3 · Okunmamış: 0 · Son yenileme: 24.08.2026 14:00:55\n\nAna Sayfa\nDanisanlar\nMesajlar\nUyarilar\nDiger",
+  "talkBackEnabledSetting": "com.samsung.android.accessibility.talkback/com.samsung.android.marvin.talkback.TalkBackService",
+  "accessibilityEnabledSetting": "1",
+  "activeTalkBackServiceBound": true,
+  "touchExplorationEnabled": true,
+  "activeWindowSiriusAI": false
+}

@@ -1,4 +1,5 @@
 import { SAFETY_CLASSIFIER_VERSION } from "dietitian-ai-assistant-architecture";
+import { AIYA_BRAND_NAME } from "./brand";
 import { createPlaceholderScopeRules } from "./scope-corpus";
 import type { ClientRecord, ConversationRecord, ManuAppState, MessageRecord } from "./types";
 import { createDefaultChannelAdapterRollbackControls } from "./channel-adapter-rollback";
@@ -202,7 +203,7 @@ export function createInitialState(): ManuAppState {
   return {
     tenant: {
       id: DEMO_TENANT_ID,
-      name: "MANU-AI Demo Clinic",
+      name: `${AIYA_BRAND_NAME} Demo Clinic`,
     },
     dietitian: {
       id: DEMO_DIETITIAN_ID,
@@ -235,7 +236,7 @@ export function createInitialState(): ManuAppState {
         aiStatus: "active",
         personaId: "balanced_coach",
         risk: "green",
-        model: "gemini-1.5-flash",
+        model: "glm-5.3-flash",
         promptVersion: "manu-prompt-v0.1.0",
         providerAttempted: true,
         providerId: "mock-local-provider-v0",

@@ -1,0 +1,11 @@
+{
+  "step": "public_contact",
+  "requestedUrl": "http://127.0.0.1:3111/#iletisim",
+  "finalUrl": "http://127.0.0.1:3111/#iletisim",
+  "title": "AIya | Diyetisyenler için denetimli mesajlaşma asistanı",
+  "viewport": null,
+  "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+  "standalone": false,
+  "serviceWorkerController": false,
+  "bodyText": "Ana içeriğe geç\nAIya\nDavetli klinik erişim\nAIya\n\nDiyetisyen-danışan iletişimi için davetli klinik çalışma alanı.\n\nBize ulaşın\nGiriş yap\n\nHenüz müşteri değilseniz iletişim formu ile bize ulaşın.\n\nÇalışma alanına bak\n\nÇALIŞMA ALANI\n\nAIya çalışma alanı\n\nDiyetisyen onaylı, AI destekli iletişim akışını ön izleyin. Her mesaj risk sınıflamasından geçer; uzman onayı olmadan danışana ulaşmaz.\n\nAI taslak hazırlar, diyetisyen onaylar\nOtomatik risk sınıflaması\nYalnızca davetli erişim\naiya · çalışma alanı\nBugün çok yorgunum, hiçbir şey yemek istemedim.\n14:23\nAI TASLAK\nTaslak hazırlanıyor...\n14:23\nDİYETİSYEN\nAnladım, bu zor bir gün gibi görünüyor. Hafif bir şeyler deneyelim mi?\n14:25\nRisk ayrımı:\nDüşük\nDiyetisyen onayı:\nOnaylandı\nErişim:\nDavetli\n\nSÜREÇ\n\nNasıl çalışır?\n\nAIya self-serve bir platform değildir. Erişim, ekip değerlendirmesi ve kurulum bağlantısı ile açılır.\n\n01\nTalep bırak\n\nİletişim formu aracılığıyla klinik bilgilerinizi ve kullanım amacınızı ekibimizle paylaşın.\n\n02\nEkip değerlendirir\n\nEkibimiz talebinizi inceler ve klinik uygunluğu değerlendirir.\n\n03\nKurulum bağlantısı gönderilir\n\nOnaylanan talepler için kurulum bağlantısı e-posta ile iletilir.\n\n04\nÇalışma alanı bağlanır\n\nKurulum bağlantısıyla hesabınızı oluşturun ve çalışma alanınıza erişin.\n\nGÜVENLİK\n\nGüvenli, denetimli, izole\n\nKlinik iletişim çalışma alanı; AI, güvenlik ve veri yönetimi prensipleri üzerine inşa edilmiştir.\n\nDenetimli AI\n\nYapay zeka taslak üretir; her mesaj diyetisyen onayı olmadan danışana ulaşmaz.\n\nRisk "
+}

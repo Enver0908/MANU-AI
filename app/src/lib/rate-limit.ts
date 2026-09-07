@@ -19,14 +19,32 @@ export type RateLimitScope =
   | "commercial_invite_status"
   | "commercial_checkout_create"
   | "commercial_contact_leads"
+  | "commercial_mobile_install_audit"
   | "auth_magic_link"
-  | "dietitian_ai_chat";
+  | "auth_password_login"
+  | "auth_password_reset"
+  | "auth_reauthenticate"
+  | "auth_password_update"
+  | "auth_email_change"
+  | "dietitian_ai_chat"
+  | "shell_bootstrap"
+  | "shell_preferences"
+  | "shell_session_activity"
+  | "shell_client_search";
 
 const IN_MEMORY_ONLY_RATE_LIMIT_SCOPES = new Set<RateLimitScope>([
+]);
+
+const GLOBAL_RATE_LIMIT_SCOPES = new Set<RateLimitScope>([
   "commercial_invite_status",
   "commercial_checkout_create",
   "commercial_contact_leads",
   "auth_magic_link",
+  "auth_password_login",
+  "auth_password_reset",
+  "auth_reauthenticate",
+  "auth_password_update",
+  "auth_email_change",
 ]);
 
 type RateLimitRpcResponse = {
@@ -61,14 +79,28 @@ function buckets() {
 
 export async function assertRateLimit({ key, scope, tenantId, limit, windowMs }: RateLimitInput) {
   const supabase =
-    tenantId &&
     process.env.MANU_DEV_FALLBACK_STORE !== "true" &&
-    !IN_MEMORY_ONLY_RATE_LIMIT_SCOPES.has(scope)
+    !IN_MEMORY_ONLY_RATE_LIMIT_SCOPES.has(scope) &&
+    (tenantId || GLOBAL_RATE_LIMIT_SCOPES.has(scope))
       ? rateLimitRpcClientForTests || getSupabaseAdminClient()
       : null;
   if (supabase && tenantId) {
     const { data, error } = await supabase.rpc("consume_rate_limit", {
       p_tenant_id: tenantId,
+      p_scope: scope,
+      p_key_hash: hashRateLimitKey(key),
+      p_limit: limit,
+      p_window_seconds: Math.ceil(windowMs / 1000),
+    });
+    if (error) throw error;
+    const decision = data as RateLimitRpcResponse | null;
+    if (decision?.allowed === false) {
+      throw new AppDomainError(429, "rate_limit_exceeded");
+    }
+    return;
+  }
+  if (supabase && GLOBAL_RATE_LIMIT_SCOPES.has(scope)) {
+    const { data, error } = await supabase.rpc("consume_global_rate_limit", {
       p_scope: scope,
       p_key_hash: hashRateLimitKey(key),
       p_limit: limit,
@@ -115,8 +147,13 @@ export const RATE_LIMITS = {
   draftReview: { scope: "draft_review", limit: 40, windowMs: 60_000 },
   internalCopilot: { scope: "internal_copilot", limit: 20, windowMs: 60_000 },
   dietitianAiChat: { scope: "dietitian_ai_chat", limit: 60, windowMs: 60_000 },
+  shellBootstrap: { scope: "shell_bootstrap", limit: 60, windowMs: 60_000 },
+  shellPreferences: { scope: "shell_preferences", limit: 30, windowMs: 60_000 },
+  shellSessionActivity: { scope: "shell_session_activity", limit: 12, windowMs: 60_000 },
+  shellClientSearch: { scope: "shell_client_search", limit: 30, windowMs: 60_000 },
   commercialInviteStatus: { scope: "commercial_invite_status", limit: 12, windowMs: 60_000 },
   commercialCheckoutCreate: { scope: "commercial_checkout_create", limit: 6, windowMs: 60_000 },
+  commercialMobileInstallAudit: { scope: "commercial_mobile_install_audit", limit: 20, windowMs: 60_000 },
 } as const;
 
 function hashRateLimitKey(key: string) {

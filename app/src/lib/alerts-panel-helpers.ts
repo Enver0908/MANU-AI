@@ -124,6 +124,8 @@ export function resolveAlertEmptyStateKeys(
   return { titleKey: "noAlertsYet", messageKey: "noAlertsYetHint" };
 }
 
-export function canNavigateToAlertTarget(alert: ClinicalAlertListItem) {
-  return Boolean(alert.clientId?.trim());
+export function canNavigateToAlertTarget(alert: ClinicalAlertListItem, knownClientIds?: ReadonlySet<string>) {
+  if (!alert.clientId?.trim() || !alert.conversationId?.trim()) return false;
+  if (knownClientIds && !knownClientIds.has(alert.clientId)) return false;
+  return true;
 }

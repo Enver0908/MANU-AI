@@ -1,3 +1,4 @@
+import { AIYA_BRAND_NAME } from "./brand";
 import type { ClientFormFieldDefinition, ClientFormResponseRecord, DietitianFormResponseRecord } from "./types";
 import {
   buildPhase70ClientFormSchema,
@@ -130,7 +131,7 @@ export function buildPhase70DietitianDemoAnswers() {
     professional_title: "Diyetisyen",
     credential_id: "demo-credential-001",
     credential_jurisdiction: "Turkiye",
-    clinic_name: "MANU-AI Demo Clinic",
+    clinic_name: `${AIYA_BRAND_NAME} Demo Clinic`,
     supported_client_languages: ["TR"],
     default_communication_language: "TR",
     default_persona: "Dengeli Koc",

@@ -22,6 +22,7 @@ import {
 } from "./phase-85-stage-4b2-messaging-scheduler";
 import { fetchWithInflightDedupe } from "./phase-85-stage-4b-inbox-scheduler";
 import { mergeConversationDetailResponseIntoAppState } from "./phase-85-stage-4b2-state-merge";
+import { authenticatedMutationFetch } from "./phase-85-stage-5-shell-authenticated-mutation";
 import type { ManuAppState } from "./types";
 
 export type Stage4B2MessagingSnapshot = {
@@ -54,14 +55,26 @@ type UseStage4B2MessagingOptions = {
 };
 
 async function requestJson<T>(url: string, init?: RequestInit, signal?: AbortSignal) {
-  const response = await fetch(url, {
-    ...init,
-    signal,
-    headers: {
-      "content-type": "application/json",
-      ...init?.headers,
-    },
-  });
+  const method = (init?.method ?? "GET").toUpperCase();
+  const isMutation = method === "POST" || method === "PUT" || method === "PATCH" || method === "DELETE";
+  const response = isMutation
+    ? await authenticatedMutationFetch(url, {
+        ...init,
+        signal,
+        mutationKind: "other",
+        headers: {
+          "content-type": "application/json",
+          ...init?.headers,
+        },
+      })
+    : await fetch(url, {
+        ...init,
+        signal,
+        headers: {
+          "content-type": "application/json",
+          ...init?.headers,
+        },
+      });
   if (!response.ok) {
     let code = `request_failed_${response.status}`;
     try {

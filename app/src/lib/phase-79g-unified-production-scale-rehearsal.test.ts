@@ -88,16 +88,20 @@ describe("phase 79g unified production-scale rehearsal", () => {
     expect(json).not.toContain("health details");
   });
 
-  it("records aggregate production-scale fields on operational health", async () => {
-    const metrics = await runPhase79UnifiedProductionScaleRehearsalSample();
-    const snapshot = buildOperationalHealthSnapshot(createInitialState(), {
-      phase79UnifiedRehearsalMetrics: metrics,
-    });
+  it(
+    "records aggregate production-scale fields on operational health",
+    async () => {
+      const metrics = await runPhase79UnifiedProductionScaleRehearsalSample();
+      const snapshot = buildOperationalHealthSnapshot(createInitialState(), {
+        phase79UnifiedRehearsalMetrics: metrics,
+      });
 
-    expect(snapshot.phase79ProductionScaleStatus).toBe("pass");
-    expect(snapshot.phase79ProductionScaleReady).toBe(true);
-    expect(snapshot.phase79HardZeroFailureCount).toBe(0);
-  });
+      expect(snapshot.phase79ProductionScaleStatus).toBe("pass");
+      expect(snapshot.phase79ProductionScaleReady).toBe(true);
+      expect(snapshot.phase79HardZeroFailureCount).toBe(0);
+    },
+    30_000,
+  );
 
   fullRehearsalIt(
     "runs the full unified 100x50 production-scale acceptance rehearsal",

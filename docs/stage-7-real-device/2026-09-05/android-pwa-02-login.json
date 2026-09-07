@@ -1,0 +1,11 @@
+{
+  "step": "login",
+  "requestedUrl": "http://127.0.0.1:3111/login",
+  "finalUrl": "http://127.0.0.1:3111/login",
+  "title": "Giriş | AIya",
+  "viewport": null,
+  "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+  "standalone": false,
+  "serviceWorkerController": false,
+  "bodyText": "AIya\nYardım için iletişim\n\nMÜŞTERİ GİRİŞİ\n\nE-posta ve şifreyle giriş\n\nKayıtlı AIya müşterileri e-posta ve şifreyle giriş yapar. Giriş bağlantısı isteğe bağlı yedek yöntemdir.\n\nE-posta adresi\nŞifre\nGiriş yap\nGiriş bağlantısı gönder\nŞifremi unuttum\n\nHesabınız yok mu? Erişim talep edin\n\nBu giriş yalnızca kayıtlı ve onaylı AIya müşterilerine yöneliktir. Erişiminiz yoksa iletişim formu ile talep bırakın.\n\n© 2026 AIya\n\nBize ulaşın"
+}

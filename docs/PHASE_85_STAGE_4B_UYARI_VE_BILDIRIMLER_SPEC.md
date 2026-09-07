@@ -1,7 +1,7 @@
 # Phase 85 Stage 4B - Uyari ve Bildirimler Runtime Specification
 
 Date: 2026-07-12
-Status: implemented; conditional closure pending current RLS re-run
+Status: implemented and locally closed; historical conditional RLS wording is superseded by later Stage 4B-2 R7 zero-skip RLS and advisory-hardening evidence
 Canonical plan: `docs/PHASE_85_STAGE_4B_UYARI_VE_BILDIRIMLER_ACTION_PLAN.md`
 Implementation evidence: `docs/PHASE_85_STAGE_4B_POST_CLOSURE_REMEDIATION_EVIDENCE.md`
 
@@ -12,7 +12,7 @@ Stage 4B owns two separate dashboard views:
 - **Uyarilar:** active clinical-operational projections from `yellowRiskHold` and `redRiskLock`.
 - **Bildirimler:** structured system events with actor-scoped receipt state.
 
-Stage 4B does not add an `alerts` table, does not expose raw message or health content, and does not implement the conversation inbox. Stage 4B-2 owns the conversation list/detail and the final messaging workflow; it is complete as of 2026-07-13 after R7 and advisory hardening. Stage 4B-3 is next.
+Stage 4B does not add an `alerts` table, does not expose raw message or health content, and does not implement the conversation inbox. Stage 4B-2 owns the conversation list/detail and the final messaging workflow; it is complete as of 2026-07-13 after R7 and advisory hardening. Stage 4B-3 was next at that checkpoint and later closed.
 
 ## 2. Alert contract
 
@@ -68,7 +68,7 @@ The same rules are enforced in fallback code, API routes, actor-aware RPCs, and 
 
 ## 7. Verification boundary
 
-The local code, fallback behavior, mock channel behavior, production-scale rehearsal, build, lint, release verification, and visual snapshots are verified. The current RLS suite is not claimed as passed because Docker Desktop's Supabase engine is unavailable. No provider, live channel, live billing, monitoring, backup, secret-manager, or real health-data path is opened by this specification.
+The local code, fallback behavior, mock channel behavior, production-scale rehearsal, build, lint, release verification, and visual snapshots are verified. The RLS suite at this historical checkpoint was not claimed as passed because Docker Desktop's Supabase engine was unavailable; later Stage 4B-2 R7/advisory evidence supplied zero-skip RLS closure. No provider, live channel, live billing, monitoring, backup, secret-manager, or real health-data path is opened by this specification.
 
 ## Stage 4B-2 Consumer Closure - 2026-07-12
 

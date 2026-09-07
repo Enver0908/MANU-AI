@@ -3,6 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { getSupabaseAdminClient } from "./supabase";
 import { createPlaceholderScopeRules } from "./scope-corpus";
 import { createInitialState } from "./seed-data";
+import { isLocalDemoFixtureEnabled } from "./demo-fixture-access";
 import { isSafetyChecklistComplete, normalizeSafetyChecklist } from "./safety-checklist";
 import {
   anonymizeClientInState,
@@ -12,6 +13,15 @@ import {
   type ClientScopedExport,
 } from "./data-governance";
 import { assertAiChatClientExportHasNoLeaks } from "./phase-85-stage-4c-lifecycle";
+import {
+  mapOwnProfileRpcError,
+  mapOwnProfileRpcResult,
+  type OwnProfileChangedField,
+  OwnProfileValidationError,
+  validateDisplayName,
+  validateTimezone,
+  validateUiLanguage,
+} from "./phase-85-stage-4d-own-profile";
 import { supabaseBuildClientScopedExportSlice } from "./phase-85-stage-4c-supabase-lifecycle";
 import { buildInMemoryAiChatClientExportSlice } from "./phase-85-stage-4c-store";
 import { sanitizeClientScopedExportForClientFacing } from "./phase-77v-copilot-quality-workflow";
@@ -38,6 +48,21 @@ import {
   type Phase79ScopedClientCreateResponse,
   type Phase79ScopedClientPatchResponse,
 } from "./phase-79c-scoped-client-mutation";
+import {
+  projectAiControl,
+  projectContextCreate,
+  projectFoodRuleSave,
+  projectFormSave,
+  projectMenuMutation,
+  projectStage6ContextUpdates,
+  projectStage6Forms,
+  projectStage6Roster,
+  projectStage6Workspace,
+} from "./phase-85-stage-6-client-workspace";
+import type {
+  ClientScopedMutationResponse,
+  Stage6MutationKind,
+} from "./phase-85-stage-6-dashboard-contracts";
 import {
   buildPhase79WindowedDashboardPayload,
   WINDOWED_READ_DEFAULTS,
@@ -799,6 +824,11 @@ type DbChannelDelivery = {
   channel: ChannelDeliveryRecord["channel"];
   direction: ChannelDeliveryRecord["direction"];
   mock_provider_message_id: string;
+  real_provider_message_id?: string | null;
+  execution_state?: ChannelDeliveryRecord["executionState"] | null;
+  retry_count?: number | null;
+  next_retry_at?: string | null;
+  provider_error_category?: ChannelDeliveryRecord["providerErrorCategory"] | null;
   delivery_status: ChannelDeliveryRecord["deliveryStatus"];
   failure_code: string | null;
   created_at: string;
@@ -823,7 +853,6 @@ export function isSupabaseStoreConfigured() {
 
 export async function loadSupabaseState(context = demoTenantContext()) {
   const supabase = requireSupabase();
-  await ensureDemoData(supabase, context.userId);
 
   const [
     tenantResult,
@@ -1182,7 +1211,6 @@ export async function loadSupabaseWindowedDashboardPayload(
   options: Parameters<typeof buildPhase79WindowedDashboardPayload>[1] = {},
 ): Promise<Phase79WindowedDashboardPayload> {
   const supabase = requireSupabase();
-  await ensureDemoData(supabase, context.userId);
 
   const clientQueryLimit = WINDOWED_READ_DEFAULTS.clientListMaxPageSize;
   const handoffQueryLimit = WINDOWED_READ_DEFAULTS.handoffMaxPageSize;
@@ -1372,7 +1400,6 @@ async function loadSupabaseClientOperationState(
   } = {},
 ) {
   const supabase = requireSupabase();
-  await ensureDemoData(supabase, context.userId);
 
   const [
     tenantResult,
@@ -1656,7 +1683,6 @@ async function loadSupabaseClientOperationState(
 
 async function loadSupabaseHandoffOperationState(handoffId: string, context: AppTenantContext) {
   const supabase = requireSupabase();
-  await ensureDemoData(supabase, context.userId);
 
   const handoffResult = await supabase
     .from("handoff_cases")
@@ -1690,7 +1716,6 @@ async function loadSupabaseHandoffOperationState(handoffId: string, context: App
 
 async function loadSupabaseDraftOperationState(messageId: string, context: AppTenantContext) {
   const supabase = requireSupabase();
-  await ensureDemoData(supabase, context.userId);
 
   const messageResult = await supabase
     .from("messages")
@@ -1928,13 +1953,14 @@ function getVisibleClientIds(
 export async function resetSupabaseState(context = demoTenantContext()) {
   const supabase = requireSupabase();
   await deleteDemoData(supabase, context.tenantId);
-  await ensureDemoData(supabase, context.userId);
+  if (shouldSeedLocalDemoFixture(context)) {
+    await ensureDemoData(supabase, context.userId);
+  }
   return loadSupabaseState(context);
 }
 
 async function loadSupabaseClientCreateContext(context: AppTenantContext) {
   const supabase = requireSupabase();
-  await ensureDemoData(supabase, context.userId);
 
   const [tenantResult, dietitianResult, clientsResult, channelsResult, assignmentsResult] = await Promise.all([
     supabase.from("tenants").select("*").eq("id", context.tenantId).single(),
@@ -2037,6 +2063,147 @@ async function loadSupabaseClientPatchContext(clientId: string, context: AppTena
   );
 
   return { validationState, beforeClient };
+}
+
+export async function loadSupabaseStage6ClientState(clientId: string, context = demoTenantContext()) {
+  return loadSupabaseClientOperationState(clientId, context);
+}
+
+export async function listSupabaseStage6Roster(
+  context = demoTenantContext(),
+  query: { query: string; cursor: string | null; limit: number },
+) {
+  const state = await loadSupabaseClientCreateContext(context);
+  return projectStage6Roster(state, query);
+}
+
+export async function loadSupabaseStage6Workspace(clientId: string, context = demoTenantContext()) {
+  const state = await loadSupabaseClientOperationState(clientId, context);
+  return { state, summary: projectStage6Workspace(state, clientId, context) };
+}
+
+export async function loadSupabaseStage6Forms(clientId: string, context = demoTenantContext()) {
+  const state = await loadSupabaseClientOperationState(clientId, context);
+  return projectStage6Forms(state, clientId);
+}
+
+export async function loadSupabaseStage6ContextUpdates(
+  clientId: string,
+  context = demoTenantContext(),
+  query: { cursor: string | null; limit: number },
+) {
+  const state = await loadSupabaseClientOperationState(clientId, context);
+  return projectStage6ContextUpdates(state, clientId, query);
+}
+
+export async function runSupabaseStage6IdempotentMutation<T>(
+  context: AppTenantContext,
+  requestId: string,
+  expectedKind: Stage6MutationKind,
+  operation: () => Promise<ClientScopedMutationResponse<T>>,
+): Promise<ClientScopedMutationResponse<T>> {
+  const cached = await getSupabaseStage6MutationIdempotency<T>(context.tenantId, requestId, expectedKind);
+  if (cached) return cached;
+  const reservedReplay = await reserveSupabaseStage6MutationIdempotency<T>(context.tenantId, requestId, expectedKind);
+  if (reservedReplay) return reservedReplay;
+
+  let response: ClientScopedMutationResponse<T>;
+  try {
+    response = await operation();
+    if (response.kind !== expectedKind) {
+      throw new Error("stage_6_mutation_kind_mismatch");
+    }
+    if (response.requestId !== requestId) {
+      throw new Error("stage_6_request_id_mismatch");
+    }
+  } catch (error) {
+    await clearPendingSupabaseStage6MutationIdempotency(context.tenantId, requestId);
+    throw error;
+  }
+  await rememberSupabaseStage6MutationIdempotency(context.tenantId, requestId, response);
+  return response;
+}
+
+async function getSupabaseStage6MutationIdempotency<T>(
+  tenantId: string,
+  requestId: string,
+  expectedKind: Stage6MutationKind,
+): Promise<ClientScopedMutationResponse<T> | null> {
+  const { data, error } = await requireSupabase()
+    .from("stage_6_mutation_idempotency")
+    .select("mutation_kind, status, response_json")
+    .eq("tenant_id", tenantId)
+    .eq("request_id", requestId)
+    .maybeSingle();
+  if (error) throwControlledRpcError(error);
+  if (!data) return null;
+  if (data.mutation_kind !== expectedKind) {
+    throw new AppDomainError(409, "idempotency_key_conflict");
+  }
+  if (data.status !== "complete") {
+    throw new AppDomainError(409, "idempotency_request_in_progress");
+  }
+  const response = data.response_json as ClientScopedMutationResponse<T>;
+  if (!response || typeof response !== "object" || response.kind !== expectedKind || "state" in response) {
+    throw new Error("stage_6_idempotency_response_invalid");
+  }
+  return response;
+}
+
+async function reserveSupabaseStage6MutationIdempotency<T>(
+  tenantId: string,
+  requestId: string,
+  expectedKind: Stage6MutationKind,
+): Promise<ClientScopedMutationResponse<T> | null> {
+  const { error } = await requireSupabase().from("stage_6_mutation_idempotency").insert({
+    tenant_id: tenantId,
+    request_id: requestId,
+    mutation_kind: expectedKind,
+    status: "pending",
+  });
+  if (!error) return null;
+  if (typeof error === "object" && error && "code" in error && error.code === "23505") {
+    const cached = await getSupabaseStage6MutationIdempotency<T>(tenantId, requestId, expectedKind);
+    if (cached) return cached;
+  }
+  throwControlledRpcError(error);
+  throw error instanceof Error ? error : new Error(JSON.stringify(error));
+}
+
+async function clearPendingSupabaseStage6MutationIdempotency(tenantId: string, requestId: string) {
+  await checked(
+    requireSupabase()
+      .from("stage_6_mutation_idempotency")
+      .delete()
+      .eq("tenant_id", tenantId)
+      .eq("request_id", requestId)
+      .eq("status", "pending"),
+  );
+}
+
+async function rememberSupabaseStage6MutationIdempotency<T>(
+  tenantId: string,
+  requestId: string,
+  response: ClientScopedMutationResponse<T>,
+) {
+  await checked(
+    requireSupabase()
+      .from("stage_6_mutation_idempotency")
+      .update({
+        status: "complete",
+        mutation_kind: response.kind,
+        client_id: response.clientId,
+        response_json: response,
+        completed_at: new Date().toISOString(),
+      })
+      .eq("tenant_id", tenantId)
+      .eq("request_id", requestId)
+      .eq("status", "pending"),
+  );
+  const cached = await getSupabaseStage6MutationIdempotency(tenantId, requestId, response.kind);
+  if (!cached || cached.clientId !== response.clientId) {
+    throw new Error("stage_6_idempotency_commit_failed");
+  }
 }
 
 export async function createSupabaseClientRecord(
@@ -2377,7 +2544,11 @@ export async function dismissSupabaseDraftMessage(messageId: string, context = d
   return loadSupabaseState(context);
 }
 
-export async function releaseSupabaseHumanTakeover(clientId: string, context = demoTenantContext()) {
+export async function releaseSupabaseHumanTakeover(
+  clientId: string,
+  context = demoTenantContext(),
+  requestId: string | null = null,
+) {
   const state = await loadSupabaseClientOperationState(clientId, context);
   const next = releaseHumanTakeoverInState(state, clientId);
   const client = next.clients.find((item) => item.id === clientId);
@@ -2394,13 +2565,14 @@ export async function releaseSupabaseHumanTakeover(clientId: string, context = d
     await insertAudit(supabase, audit);
   }
 
-  return loadSupabaseState(context);
+  return projectAiControl(next, clientId, "client_release_takeover", requestId);
 }
 
 export async function activateSupabaseClientAi(
   clientId: string,
   input: ControlledAiActivationInput,
   context = demoTenantContext(),
+  requestId: string | null = null,
 ) {
   assertControlledActivationInput(input);
   const supabase = requireSupabase();
@@ -2416,7 +2588,8 @@ export async function activateSupabaseClientAi(
     throwControlledRpcError(error);
   }
 
-  return loadSupabaseState(context);
+  const next = await loadSupabaseClientOperationState(clientId, context);
+  return projectAiControl(next, clientId, "client_ai_activate", requestId);
 }
 
 function assertControlledActivationInput(input: ControlledAiActivationInput) {
@@ -3290,13 +3463,14 @@ export async function publishSupabaseFormSchema(schemaId: string, context = demo
 export async function saveSupabaseFormResponse(
   input: { clientId: string; schemaId: string; answers: Record<string, unknown>; submittedPhoneE164?: unknown },
   context = demoTenantContext(),
+  requestId: string | null = null,
 ) {
   const before = await loadSupabaseClientOperationState(input.clientId, context, {
     requiredFormSchemaId: input.schemaId,
   });
   const next = saveFormResponseInState(before, input);
   await commitStateDeltaRpc(requireSupabase(), "commit_form_response", before, next);
-  return loadSupabaseState(context);
+  return projectFormSave(next, input.clientId, input.schemaId, requestId);
 }
 
 export async function loadSupabaseClientFoodRuleProfile(clientId: string, context = demoTenantContext()) {
@@ -3307,6 +3481,7 @@ export async function saveSupabaseClientFoodRuleProfile(
   clientId: string,
   input: SaveClientFoodRuleProfileV2Input,
   context = demoTenantContext(),
+  requestId: string | null = null,
 ) {
   const before = await loadSupabaseClientOperationState(clientId, context);
   const next = saveClientFoodRuleProfileV2InState(before, clientId, input);
@@ -3315,7 +3490,7 @@ export async function saveSupabaseClientFoodRuleProfile(
   const supabase = requireSupabase();
   await upsertClientFoodRuleProfile(supabase, profile);
   await commitStateDeltaRpc(supabase, "commit_form_response", before, next);
-  return loadSupabaseState(context);
+  return projectFoodRuleSave(next, clientId, requestId);
 }
 
 export async function listSupabaseClientMenuPlans(clientId: string, context = demoTenantContext()) {
@@ -3342,6 +3517,7 @@ export async function createSupabaseClientMenuPlan(
   clientId: string,
   input: CreateClientMenuPlanV1Input,
   context = demoTenantContext(),
+  requestId: string | null = null,
 ) {
   const before = await loadSupabaseClientOperationState(clientId, context);
   const next = createMenuPlanInState(before, clientId, input);
@@ -3351,7 +3527,7 @@ export async function createSupabaseClientMenuPlan(
   );
   if (created) await upsertClientMenuPlan(supabase, created);
   await persistNewAudits(supabase, before, next);
-  return loadSupabaseState(context);
+  return projectMenuMutation(next, clientId, "client_menu_create", requestId);
 }
 
 export async function saveSupabaseClientMenuPlan(
@@ -3359,49 +3535,104 @@ export async function saveSupabaseClientMenuPlan(
   planId: string,
   input: SaveClientMenuPlanV1Input,
   context = demoTenantContext(),
+  requestId: string | null = null,
 ) {
   const before = await loadSupabaseClientOperationState(clientId, context);
   const next = saveMenuPlanInState(before, clientId, planId, input);
   const supabase = requireSupabase();
   await persistClientMenuPlanDelta(supabase, before, next, clientId);
-  return loadSupabaseState(context);
+  return projectMenuMutation(next, clientId, "client_menu_save", requestId);
 }
 
 export async function activateSupabaseClientMenuPlan(
   clientId: string,
   planId: string,
   context = demoTenantContext(),
+  requestId: string | null = null,
+  expectedPlanRevision?: number,
 ) {
   const before = await loadSupabaseClientOperationState(clientId, context);
+  if (expectedPlanRevision != null) {
+    const existing = before.clientMenuPlans.find((plan) => plan.id === planId && plan.clientId === clientId);
+    if (existing && existing.revision !== expectedPlanRevision) {
+      throw new AppDomainError(409, "profile_stale_recreate_required");
+    }
+  }
   const next = activateMenuPlanInState(before, clientId, planId);
   const supabase = requireSupabase();
   await persistClientMenuPlanDelta(supabase, before, next, clientId);
-  return loadSupabaseState(context);
+  return projectMenuMutation(next, clientId, "client_menu_activate", requestId);
 }
 
 export async function updateSupabaseDietitianPreferences(
   input: { uiLanguage?: unknown },
   context = demoTenantContext(),
 ) {
-  await checked(
-    requireSupabase()
-      .from("dietitians")
-      .update({ ui_language: normalizeLanguageCode(input.uiLanguage) })
-      .eq("tenant_id", context.tenantId)
-      .eq("id", context.dietitianId),
+  if (input.uiLanguage === undefined) {
+    return loadSupabaseState(context);
+  }
+  const result = await updateSupabaseOwnProfile(
+    { uiLanguage: validateUiLanguage(normalizeLanguageCode(input.uiLanguage)) },
+    context,
   );
-  return loadSupabaseState(context);
+  const state = await loadSupabaseState(context);
+  return {
+    ...state,
+    dietitian: {
+      ...state.dietitian,
+      displayName: result.profile.displayName,
+      uiLanguage: result.profile.uiLanguage,
+    },
+  };
+}
+
+export async function updateSupabaseOwnProfile(
+  input: { displayName?: string; uiLanguage?: SupportedLanguageCode; timezone?: string },
+  _context = demoTenantContext(),
+  rpcClient?: SupabaseClient,
+): Promise<{
+  profile: { displayName: string; uiLanguage: SupportedLanguageCode; timezone: string };
+  changedFields: OwnProfileChangedField[];
+}> {
+  const rpcArgs: { p_display_name?: string; p_ui_language?: string; p_timezone?: string } = {};
+  if (input.displayName !== undefined) {
+    rpcArgs.p_display_name = validateDisplayName(input.displayName);
+  }
+  if (input.uiLanguage !== undefined) {
+    rpcArgs.p_ui_language = validateUiLanguage(input.uiLanguage);
+  }
+  if (input.timezone !== undefined) {
+    rpcArgs.p_timezone = validateTimezone(input.timezone);
+  }
+
+  if (!rpcArgs.p_display_name && !rpcArgs.p_ui_language && !rpcArgs.p_timezone) {
+    throw new OwnProfileValidationError("profile_patch_empty");
+  }
+
+  void _context;
+  const supabase = rpcClient ?? requireSupabase();
+  const { data, error } = await supabase.rpc("p85_stage4d_update_own_profile_v2", rpcArgs);
+  if (error) {
+    throw new Error(mapOwnProfileRpcError(error.message));
+  }
+
+  return mapOwnProfileRpcResult(data);
 }
 
 export async function addSupabaseClientContextUpdate(
   clientId: string,
   input: CreateClientContextUpdateInput,
   context = demoTenantContext(),
+  requestId: string | null = null,
 ) {
   const before = await loadSupabaseClientOperationState(clientId, context);
   const next = addClientContextUpdateInState(before, clientId, input);
   await commitStateDeltaRpc(requireSupabase(), "commit_client_context_update", before, next);
-  return loadSupabaseState(context);
+  const created = next.clientContextUpdates.find(
+    (item) => item.clientId === clientId && !before.clientContextUpdates.some((existing) => existing.id === item.id),
+  );
+  if (!created) throw new AppDomainError(404, "client_context_update_not_found");
+  return projectContextCreate(next, clientId, created, requestId);
 }
 
 export async function createSupabaseClientUpdateProposal(
@@ -3673,6 +3904,10 @@ export async function runSupabaseInternalCopilotMessage(body: string, context = 
 
 export async function ensureSupabaseDemoDataForUser(userId: string) {
   await ensureDemoData(requireSupabase(), userId);
+}
+
+function shouldSeedLocalDemoFixture(context: AppTenantContext): boolean {
+  return isLocalDemoFixtureEnabled() && context.tenantId === DEMO_TENANT_UUID;
 }
 
 async function loadSupabaseStateWithLastSimulation(next: ManuAppState, context: AppTenantContext) {
@@ -4435,6 +4670,11 @@ function serializeChannelDeliveryForRpc(delivery: ChannelDeliveryRecord) {
     channel: delivery.channel,
     direction: delivery.direction,
     mockProviderMessageId: delivery.mockProviderMessageId,
+    realProviderMessageId: delivery.realProviderMessageId ?? null,
+    executionState: delivery.executionState ?? delivery.deliveryStatus,
+    retryCount: delivery.retryCount ?? 0,
+    nextRetryAt: delivery.nextRetryAt ?? null,
+    providerErrorCategory: delivery.providerErrorCategory ?? null,
     deliveryStatus: delivery.deliveryStatus,
     failureCode: delivery.failureCode,
     createdAt: delivery.createdAt,
@@ -5949,6 +6189,11 @@ function mapChannelDelivery(delivery: DbChannelDelivery): ChannelDeliveryRecord 
     channel: delivery.channel,
     direction: delivery.direction,
     mockProviderMessageId: delivery.mock_provider_message_id,
+    realProviderMessageId: delivery.real_provider_message_id ?? null,
+    executionState: delivery.execution_state ?? delivery.delivery_status,
+    retryCount: delivery.retry_count ?? 0,
+    nextRetryAt: delivery.next_retry_at ?? null,
+    providerErrorCategory: delivery.provider_error_category ?? null,
     deliveryStatus: delivery.delivery_status,
     failureCode: delivery.failure_code,
     createdAt: delivery.created_at,

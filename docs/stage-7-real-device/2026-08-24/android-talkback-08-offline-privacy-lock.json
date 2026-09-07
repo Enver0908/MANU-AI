@@ -1,0 +1,13 @@
+{
+  "step": "offline_privacy_lock",
+  "requestedUrl": "http://127.0.0.1:3110/dashboard",
+  "finalUrl": "http://127.0.0.1:3110/dashboard",
+  "title": "SiriusAI",
+  "bodyText": "İnternet bağlantısı gerekli\n\nKorumalı içerik çevrimdışıyken açılamaz. Bağlantı gelince yeniden deneyin.\n\nYeniden dene",
+  "talkBackEnabledSetting": "com.samsung.android.accessibility.talkback/com.samsung.android.marvin.talkback.TalkBackService",
+  "accessibilityEnabledSetting": "1",
+  "activeTalkBackServiceBound": true,
+  "touchExplorationEnabled": true,
+  "activeWindowSiriusAI": false,
+  "offlineLockVisible": true
+}

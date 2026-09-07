@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { AlertCircle, CheckCircle, ExternalLink, KeyRound, Loader2 } from "lucide-react";
 import {
@@ -13,6 +13,9 @@ import {
 import { describeCommercialBlockingReason } from "@/lib/phase-84g-subscription-operations";
 
 function mapPurchaseBlockingReason(reason: string) {
+  if (reason.toLowerCase().includes("pending")) {
+    return "İnceleniyor; lütfen bekleyin veya destek ile iletişime geçin.";
+  }
   const purchaseCopy = describePurchaseBlockingReason(reason);
   if (purchaseCopy !== "Erişim için uygunluk doğrulanamadı.") {
     return purchaseCopy;
@@ -23,6 +26,7 @@ function mapPurchaseBlockingReason(reason: string) {
 type Phase = "idle" | "checking" | "starting_checkout";
 
 export function PurchaseFlow() {
+  const checkoutButtonRef = useRef<HTMLButtonElement | null>(null);
   const [email, setEmail] = useState("");
   const [inviteToken, setInviteToken] = useState("");
   const [phase, setPhase] = useState<Phase>("idle");
@@ -31,6 +35,12 @@ export function PurchaseFlow() {
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
   const busy = phase !== "idle";
+
+  useEffect(() => {
+    if (gate?.kind === "eligible") {
+      checkoutButtonRef.current?.focus();
+    }
+  }, [gate]);
 
   async function onCheckEligibility(event: React.FormEvent) {
     event.preventDefault();
@@ -117,6 +127,7 @@ export function PurchaseFlow() {
           ) : null}
 
           <button
+            ref={checkoutButtonRef}
             type="button"
             onClick={onStartCheckout}
             disabled={busy}
@@ -150,10 +161,12 @@ export function PurchaseFlow() {
             type="email"
             inputMode="email"
             autoComplete="email"
-            className="rounded-md border border-input bg-background px-3 py-2.5 text-sm placeholder:text-muted-foreground transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="min-w-0 rounded-md border border-input bg-background px-3 py-2.5 text-sm placeholder:text-muted-foreground transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             placeholder="kayitli@email.com"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
+            aria-invalid={formError ? true : undefined}
+            aria-describedby={formError ? "purchase-form-error" : undefined}
             required
           />
         </div>
@@ -167,19 +180,25 @@ export function PurchaseFlow() {
             <input
               id="purchase-token"
               autoComplete="one-time-code"
-              className="w-full rounded-md border border-input bg-background py-2.5 pl-9 pr-3 font-mono text-sm placeholder:font-sans placeholder:text-muted-foreground transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="w-full min-w-0 rounded-md border border-input bg-background py-2.5 pl-9 pr-3 font-mono text-sm placeholder:font-sans placeholder:text-muted-foreground transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               placeholder="XXXX-XXXX"
               value={inviteToken}
               onChange={(event) => setInviteToken(event.target.value)}
+              aria-invalid={formError ? true : undefined}
+              aria-describedby={formError ? "purchase-form-error" : undefined}
               required
             />
           </div>
         </div>
 
         {formError ? (
-          <div className="flex items-start gap-2 rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2.5" role="alert">
+          <div
+            id="purchase-form-error"
+            className="flex min-w-0 items-start gap-2 rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2.5"
+            role="alert"
+          >
             <AlertCircle size={14} className="mt-0.5 shrink-0 text-destructive" />
-            <p className="text-xs leading-relaxed text-destructive">{formError}</p>
+            <p className="free-text text-xs leading-relaxed text-destructive">{formError}</p>
           </div>
         ) : null}
 
@@ -194,7 +213,7 @@ export function PurchaseFlow() {
 
         <p className="text-center text-xs text-muted-foreground">
           Davet kodunuz yok mu?{" "}
-          <Link href="/#iletisim" className="text-primary hover:underline">
+          <Link href="/#iletisim" className="text-primary underline underline-offset-2">
             Erişim talep edin
           </Link>
         </p>
@@ -213,7 +232,7 @@ function GateResult({ gate }: { gate: Exclude<PurchaseGateView, { kind: "eligibl
         <div className="flex items-start gap-2">
           <AlertCircle size={15} className="mt-0.5 shrink-0 text-destructive" />
           <div className="flex flex-col gap-2">
-            <p className="text-sm font-semibold text-destructive">Erişim doğrulanamadı</p>
+            <p className="text-sm font-semibold text-destructive">Hata: Erişim doğrulanamadı</p>
             {reasons.length > 0 ? (
               <ul className="flex flex-col gap-1">
                 {reasons.map((reason) => (
@@ -225,7 +244,7 @@ function GateResult({ gate }: { gate: Exclude<PurchaseGateView, { kind: "eligibl
             ) : (
               <p className="text-xs text-muted-foreground">Kaydınız satın almaya uygun değil.</p>
             )}
-            <Link href="/#iletisim" className="text-xs text-primary hover:underline">
+            <Link href="/#iletisim" className="text-xs text-primary underline underline-offset-2">
               Erişim talep et
             </Link>
           </div>
@@ -240,8 +259,8 @@ function GateResult({ gate }: { gate: Exclude<PurchaseGateView, { kind: "eligibl
         <AlertCircle size={15} className="mt-0.5 shrink-0 text-destructive" />
         <p className="text-xs leading-relaxed text-muted-foreground">
           {gate.kind === "not_configured"
-            ? "Ticari erişim bu kurulumda yapılandırılmamış. Erişim talebi için ekiple iletişime geçin."
-            : gate.message}
+            ? "Hata: Ticari erişim bu kurulumda yapılandırılmamış. Erişim talebi için ekiple iletişime geçin."
+            : `Hata: ${gate.message}`}
         </p>
       </div>
     </div>

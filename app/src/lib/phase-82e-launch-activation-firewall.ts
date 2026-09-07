@@ -8,7 +8,7 @@ import {
 export const PHASE_82E_VERSION = "phase82-launch-activation-firewall-v1";
 
 export type Phase82LaunchActivationEgressAttempt = {
-  allowRealGeminiFlag?: string;
+  allowRealZaiFlag?: string;
   allowRealWhatsappFlag?: string;
   allowRealTelegramFlag?: string;
 };
@@ -45,7 +45,7 @@ export type Phase82LaunchActivationFirewallReport = {
 
 function egressFlagsRequested(egressAttempt?: Phase82LaunchActivationEgressAttempt) {
   return (
-    egressAttempt?.allowRealGeminiFlag === "true" ||
+    egressAttempt?.allowRealZaiFlag === "true" ||
     egressAttempt?.allowRealWhatsappFlag === "true" ||
     egressAttempt?.allowRealTelegramFlag === "true"
   );
@@ -59,7 +59,7 @@ export function evaluatePhase82LaunchActivationFirewallAssertions(input: {
   const { completionReport } = input;
   const launchAuthorizationApproved = input.launchAuthorizationApproved === true;
   const preflight = evaluatePhase81dEnvironmentPreflight({
-    allowRealGeminiFlag: input.egressAttempt?.allowRealGeminiFlag,
+    allowRealZaiFlag: input.egressAttempt?.allowRealZaiFlag,
     allowRealWhatsappFlag: input.egressAttempt?.allowRealWhatsappFlag,
     allowRealTelegramFlag: input.egressAttempt?.allowRealTelegramFlag,
     approvedGateIds: completionReport.approvedGateIds,
@@ -146,7 +146,7 @@ function evaluateEgressCannotBypassGates(input: {
       return false;
     }
     if (
-      input.preflightChecks.realGeminiEgressAllowed ||
+      input.preflightChecks.realZaiEgressAllowed ||
       input.preflightChecks.realWhatsappEgressAllowed ||
       input.preflightChecks.realTelegramEgressAllowed
     ) {
@@ -209,7 +209,7 @@ export function buildPhase82EligibleSyntheticLaunchActivationFirewallReport(opti
   return buildPhase82LaunchActivationFirewallReport({
     completionReport: buildPhase82EligibleSyntheticFinalCompletionReport({ now }),
     egressAttempt: {
-      allowRealGeminiFlag: "true",
+      allowRealZaiFlag: "true",
       allowRealWhatsappFlag: "true",
       allowRealTelegramFlag: "true",
     },

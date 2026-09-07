@@ -3,6 +3,8 @@
 Date: 2026-07-14
 Status: **complete locally**
 
+Current supersession note, 2026-08-21: this file is historical Stage 4B-4 Phase 0 documentation evidence. The "current" and "blocked" handoff wording below was true on 2026-07-14 and is superseded by later Stage 4B-4 R9, Stage 4C, Stage 4D, Stage 5, and Stage 6 closure evidence. Production remains `NO-GO`; R-405 is technically resolved locally under the current Stage 5 dependency report.
+
 ## Scope
 
 Phase 0 inserted `Stage 4B-4 - Sesli Mesaj Guvenligi ve Transkripsiyon Orkestrasyonu` as the current mandatory stage between completed Stage 4B-3 post-closure remediation R0-R9 and Stage 4C.
@@ -40,7 +42,7 @@ This plan locks the following non-negotiable boundaries:
 - Low-confidence, wrong-language, uncertain, overlong, unsupported, corrupt, pending, or failed transcription routes to dietitian review.
 - No emotion, prosody, speaker identity, accent, age, or credibility inference.
 - Production remains `NO-GO`.
-- R-405 remains open.
+- R-405 was open at that checkpoint.
 - Real provider/channel/health-data paths remain disabled.
 
 ## Handoff Updates
@@ -71,9 +73,9 @@ The risk register was updated with Stage 4B-4 voice risks:
 - R-460: transcript correction conflicts leave stale drafts sendable.
 - R-461: audio processing scale causes memory, queue, or cost regressions.
 
-## Current Handoff
+## Historical Handoff
 
-Current execution order:
+Execution order at this historical checkpoint:
 
 1. Stage 4B-2 Mesajlasma: complete locally.
 2. Stage 4B-3 Multimodal Gorsel Guvenligi ve Yanit Orkestrasyonu post-closure remediation R0-R9: complete locally.
@@ -90,7 +92,7 @@ Required Phase 0 verification:
   - Stage 4B-4 is current.
   - Stage 4C is blocked.
   - Production remains `NO-GO`.
-  - R-405 remains open.
+  - R-405 was open at that checkpoint.
   - Real provider/channel/health-data paths remain disabled.
 
 ## Completion

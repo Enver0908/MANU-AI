@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import { createSupabaseServerClient } from "@/lib/supabase";
+import { insertAccountSecurityEvent } from "@/lib/account-security-store";
+import { createMutableSupabaseServerClient } from "@/lib/phase-85-stage-4d-auth-server";
+import { buildAccountSecurityIdempotencyKey } from "@/lib/phase-85-stage-4d-account-security";
 import { isSupabaseStoreConfigured } from "@/lib/supabase-store";
 
 export async function POST() {
@@ -12,20 +13,30 @@ export async function POST() {
   });
 
   if (isSupabaseStoreConfigured()) {
-    const cookieStore = await cookies();
-    const supabase = createSupabaseServerClient({
-      getAll: () => cookieStore.getAll(),
-      setAll: (cookiesToSet, headers) => {
-        cookiesToSet.forEach(({ name, value, options }) => {
-          response.cookies.set(name, value, options);
-        });
-        Object.entries(headers).forEach(([key, value]) => {
-          response.headers.set(key, value);
-        });
-      },
-    });
+    const { supabase, applyAuthMutations, cookieStore } = await createMutableSupabaseServerClient();
+    const {
+      data: { user },
+    } = await supabase?.auth.getUser() ?? { data: { user: null } };
 
-    await supabase?.auth.signOut();
+    if (supabase) {
+      await supabase.auth.signOut({ scope: "local" });
+    }
+
+    if (user) {
+      await insertAccountSecurityEvent({
+        authUserId: user.id,
+        eventType: "logout_local",
+        outcome: "success",
+        idempotencyKey: buildAccountSecurityIdempotencyKey("logout_local", user.id),
+      }).catch(() => undefined);
+    }
+
+    applyAuthMutations(response);
+    cookieStore.getAll().forEach((cookie) => {
+      if (cookie.name.startsWith("sb-") || cookie.name === "manu_ai_demo_session") {
+        response.cookies.set(cookie.name, "", { path: "/", maxAge: 0 });
+      }
+    });
   }
 
   response.cookies.set("manu_ai_demo_session", "", {

@@ -1,59 +1,134 @@
-const CACHE_NAME = "manu-ai-shell-v2";
-const SHELL_PATHS = ["/", "/dashboard", "/app-install"];
-const STATIC_PREFIXES = ["/_next/static/", "/icon.svg", "/manifest.webmanifest"];
+const SW_CACHE_VERSION = "__MANU_RELEASE_CACHE_VERSION__";
+const STATIC_CACHE = `siriusai-static-${SW_CACHE_VERSION}`;
+const ASSET_CACHE = `siriusai-assets-${SW_CACHE_VERSION}`;
+const LEGACY_CACHE_PREFIX = "manu-ai-shell-";
+const ALLOWED_CACHES = new Set([STATIC_CACHE, ASSET_CACHE]);
+const STATIC_CACHE_MAX_ENTRIES = 100;
 
-function shouldCachePath(pathname) {
-  if (!pathname || pathname.startsWith("/api/")) {
-    return false;
+function classifyRequest(request) {
+  const method = request.method.toUpperCase();
+  if (method !== "GET") return "network_only";
+
+  const url = new URL(request.url);
+  const pathname = url.pathname;
+
+  if (pathname.startsWith("/api/")) return "network_only";
+  if (request.mode === "navigate") return "network_only";
+
+  if (
+    pathname === "/" ||
+    pathname === "/dashboard" ||
+    pathname.startsWith("/dashboard/") ||
+    pathname === "/app-install" ||
+    pathname.startsWith("/app-install/") ||
+    pathname === "/login" ||
+    pathname.startsWith("/login/") ||
+    pathname === "/onboarding" ||
+    pathname.startsWith("/onboarding/") ||
+    pathname === "/auth/callback" ||
+    pathname.startsWith("/auth/callback")
+  ) {
+    return "network_only";
   }
-  if (SHELL_PATHS.includes(pathname)) {
-    return true;
+
+  if (pathname.startsWith("/_next/static/")) return "cache_first_static";
+
+  if (
+    pathname === "/manifest.webmanifest" ||
+    pathname === "/icon.svg" ||
+    pathname.startsWith("/icons/")
+  ) {
+    return "stale_while_revalidate_asset";
   }
-  return STATIC_PREFIXES.some((prefix) => pathname.startsWith(prefix));
+
+  return "network_only";
+}
+
+async function networkOnly(request) {
+  return fetch(request);
+}
+
+async function cacheFirst(cacheName, request) {
+  const cache = await caches.open(cacheName);
+  const cached = await cache.match(request);
+  if (cached) return cached;
+
+  const response = await fetch(request);
+  if (response && response.status === 200 && response.type !== "opaque") {
+    await cache.put(request, response.clone());
+    await trimCache(cacheName, STATIC_CACHE_MAX_ENTRIES);
+  }
+  return response;
+}
+
+async function trimCache(cacheName, maxEntries) {
+  const cache = await caches.open(cacheName);
+  const keys = await cache.keys();
+  if (keys.length <= maxEntries) return;
+  await Promise.all(keys.slice(0, keys.length - maxEntries).map((key) => cache.delete(key)));
+}
+
+async function staleWhileRevalidate(cacheName, request) {
+  const cache = await caches.open(cacheName);
+  const cached = await cache.match(request);
+  const networkPromise = fetch(request)
+    .then((response) => {
+      if (response && response.status === 200 && response.type !== "opaque") {
+        cache.put(request, response.clone());
+      }
+      return response;
+    })
+    .catch(() => cached);
+
+  return cached || networkPromise;
 }
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches
-      .open(CACHE_NAME)
+      .open(ASSET_CACHE)
       .then((cache) => cache.addAll(["/manifest.webmanifest", "/icon.svg"]))
-      .then(() => self.skipWaiting()),
+      // Do not skipWaiting here — waiting worker activates only after SKIP_WAITING.
+      .then(() => undefined),
   );
 });
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches
-      .keys()
-      .then((keys) => Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))))
-      .then(() => self.clients.claim()),
+    caches.keys().then((keys) =>
+      Promise.all(
+        keys.map((key) => {
+          if (ALLOWED_CACHES.has(key)) return undefined;
+          if (key.startsWith(LEGACY_CACHE_PREFIX) || !ALLOWED_CACHES.has(key)) {
+            return caches.delete(key);
+          }
+          return undefined;
+        }),
+      ),
+    ).then(() => self.clients.claim()),
   );
 });
 
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
+});
+
 self.addEventListener("fetch", (event) => {
-  if (event.request.method !== "GET") {
+  const klass = classifyRequest(event.request);
+
+  if (klass === "network_only") {
+    event.respondWith(networkOnly(event.request));
     return;
   }
 
-  const url = new URL(event.request.url);
-  if (!shouldCachePath(url.pathname)) {
-    event.respondWith(fetch(event.request));
+  if (klass === "cache_first_static") {
+    event.respondWith(cacheFirst(STATIC_CACHE, event.request));
     return;
   }
 
-  event.respondWith(
-    caches.match(event.request).then((cached) => {
-      if (cached) {
-        return cached;
-      }
-      return fetch(event.request).then((response) => {
-        if (!response || response.status !== 200 || response.type === "opaque") {
-          return response;
-        }
-        const copy = response.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
-        return response;
-      });
-    }),
-  );
+  if (klass === "stale_while_revalidate_asset") {
+    event.respondWith(staleWhileRevalidate(ASSET_CACHE, event.request));
+  }
 });

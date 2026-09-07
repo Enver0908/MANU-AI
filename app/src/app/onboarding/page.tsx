@@ -5,40 +5,77 @@ import { cookies } from "next/headers";
 import { AlertCircle, Mail } from "lucide-react";
 import { CommercialShell } from "@/components/public/CommercialShell";
 import { OnboardingClaimPanel } from "@/components/onboarding-claim-panel";
+import { AIYA_BRAND_NAME, buildCustomerSurfaceMetadata } from "@/lib/brand";
 import { resolveCustomerSessionFacts } from "@/lib/customer-auth-session";
 import {
   PUBLIC_MARKETING_COPY,
-  SIRIUSAI_PUBLIC_CONTACT_EMAIL,
   buildContactMailtoUrl,
 } from "@/lib/phase-84b-public-website";
 import { deriveCustomerAuthRedirect } from "@/lib/phase-84d-customer-auth";
+import {
+  buildOnboardingPathFromReference,
+  validateOnboardingClaimReference,
+} from "@/lib/phase-84e-customer-onboarding";
 import { loadClaimableCheckoutSessionForEmail } from "@/lib/commercial-onboarding-store";
-import { createSupabaseServerClient, getSupabaseAdminClient, isSupabaseConfigured } from "@/lib/supabase";
+import { getSupabaseAdminClient, isSupabaseConfigured } from "@/lib/supabase";
+import { createSupabaseServerReadOnlyClient } from "@/lib/supabase-server-readonly";
+import { readStage7ScenarioState } from "@/lib/stage-7-request";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildCustomerSurfaceMetadata({
+  path: "/onboarding",
   title: `Onboarding | ${PUBLIC_MARKETING_COPY.brand}`,
   description: PUBLIC_MARKETING_COPY.onboardingBody,
-};
+});
 
 type OnboardingPageProps = {
-  searchParams: Promise<{ state?: string; session_id?: string }>;
+  searchParams: Promise<{ state?: string; session_id?: string; invite_id?: string }>;
 };
 
 export default async function OnboardingPage({ searchParams }: OnboardingPageProps) {
   const params = await searchParams;
+  const stage7State = await readStage7ScenarioState();
+
+  if (stage7State?.startsWith("onboarding-")) {
+    return (
+      <CommercialShell>
+        <div className="flex flex-1 items-start justify-center px-4 py-16 sm:py-24">
+          <div className="w-full min-w-0 max-w-md">
+            <div className="mb-8">
+              <p className="mb-2 text-xs font-semibold uppercase text-primary">Onboarding</p>
+              <h1 className="mb-2 font-display text-2xl font-bold text-off-black">
+                {stage7State === "onboarding-unauthenticated" ? "Giriş gerekli" : "Çalışma alanını bağlayın"}
+              </h1>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                {stage7State === "onboarding-unauthenticated"
+                  ? "Devam etmek için müşteri girişi yapın."
+                  : `${AIYA_BRAND_NAME} hesabınızı davet e-postasıyla oluşturun.`}
+              </p>
+            </div>
+            <div className="flex flex-col gap-5 rounded-lg border border-border bg-surface p-6">
+              {stage7State === "onboarding-unauthenticated" ? (
+                <Link
+                  href="/login"
+                  className="inline-flex min-h-11 items-center justify-center rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  Müşteri girişi
+                </Link>
+              ) : (
+                <OnboardingClaimPanel sessionId={params.session_id ?? "cs_test_stage7_0001"} />
+              )}
+            </div>
+          </div>
+        </div>
+      </CommercialShell>
+    );
+  }
 
   if (!isSupabaseConfigured()) {
     redirect("/login?error=auth_not_configured");
   }
 
   const cookieStore = await cookies();
-  const supabase = createSupabaseServerClient({
+  const supabase = createSupabaseServerReadOnlyClient({
     getAll: () => cookieStore.getAll(),
-    setAll: (cookiesToSet) => {
-      cookiesToSet.forEach(({ name, value, options }) => {
-        cookieStore.set(name, value, options);
-      });
-    },
   });
 
   if (!supabase) {
@@ -46,10 +83,15 @@ export default async function OnboardingPage({ searchParams }: OnboardingPagePro
   }
 
   const facts = await resolveCustomerSessionFacts(supabase);
+  const claimReference = validateOnboardingClaimReference({
+    sessionId: params.session_id,
+    inviteId: params.invite_id,
+  });
   if (!facts.isAuthenticated) {
-    const loginUrl = params.session_id
-      ? `/login?next=${encodeURIComponent(`/onboarding?session_id=${params.session_id}`)}`
-      : "/login";
+    const loginUrl =
+      claimReference.valid && claimReference.reference
+        ? `/login?next=${encodeURIComponent(buildOnboardingPathFromReference(claimReference.reference))}`
+        : "/login";
     redirect(loginUrl);
   }
 
@@ -60,7 +102,8 @@ export default async function OnboardingPage({ searchParams }: OnboardingPagePro
 
   const supportView = params.state === "support" || redirectTarget.endsWith("state=support");
   let sessionId = params.session_id ?? null;
-  if (!sessionId && facts.normalizedEmail) {
+  const inviteId = params.invite_id ?? null;
+  if (!sessionId && !inviteId && facts.normalizedEmail) {
     const admin = getSupabaseAdminClient();
     if (admin) {
       sessionId = (await loadClaimableCheckoutSessionForEmail(admin, facts.normalizedEmail)) ?? null;
@@ -70,22 +113,22 @@ export default async function OnboardingPage({ searchParams }: OnboardingPagePro
   return (
     <CommercialShell>
       <div className="flex flex-1 items-start justify-center px-4 py-16 sm:py-24">
-        <div className="w-full max-w-md">
+        <div className="w-full min-w-0 max-w-md">
           <div className="mb-8">
             <p className="mb-2 text-xs font-semibold uppercase text-primary">Onboarding</p>
             <h1 className="mb-2 font-display text-2xl font-bold text-off-black">
-              {supportView ? "Erişim desteği gerekli" : "Çalışma alanını bağlayın"}
+              {supportView ? "Erişim desteği gerekli" : "Hesabınızı oluşturun"}
             </h1>
             <p className="text-sm leading-relaxed text-muted-foreground">
               {supportView
                 ? "Oturumunuz açık ancak bağlanacak aktif bir çalışma alanı bulunamadı."
-                : "Ödemeniz doğrulandıysa çalışma alanınızı bu hesaba bağlayabilirsiniz."}
+                : `Davet e-postanızla ${AIYA_BRAND_NAME} hesabınızı oluşturun. Şifrenizi belirledikten sonra çalışma alanınız bağlanır.`}
             </p>
           </div>
 
           <div className="flex flex-col gap-5 rounded-lg border border-border bg-surface p-6">
             {!supportView ? (
-              <OnboardingClaimPanel sessionId={sessionId} />
+              <OnboardingClaimPanel sessionId={sessionId} inviteId={inviteId} />
             ) : (
               <div className="flex items-start gap-2 rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2.5">
                 <AlertCircle size={14} className="mt-0.5 shrink-0 text-destructive" aria-hidden />
@@ -96,13 +139,13 @@ export default async function OnboardingPage({ searchParams }: OnboardingPagePro
             )}
 
             <a
-              href={buildContactMailtoUrl("SiriusAI onboarding desteği")}
+              href={buildContactMailtoUrl(`${AIYA_BRAND_NAME} onboarding desteği`)}
               className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-border bg-muted/40 px-4 text-sm font-medium text-foreground transition-colors hover:bg-muted"
             >
               <Mail size={16} />
               Destek al
             </a>
-            <p className="text-xs text-muted-foreground">{SIRIUSAI_PUBLIC_CONTACT_EMAIL}</p>
+            <p className="text-xs text-muted-foreground">Destek ekibi davet, ödeme ve çalışma alanı durumunu kontrol edebilir.</p>
             <form action="/api/demo-logout" method="post">
               <button
                 type="submit"
@@ -115,7 +158,7 @@ export default async function OnboardingPage({ searchParams }: OnboardingPagePro
 
           <p className="mt-6 text-center text-xs text-muted-foreground">
             Giriş sayfasına dönmek için{" "}
-            <Link href="/login" className="text-primary hover:underline">
+            <Link href="/login" className="text-primary underline underline-offset-2">
               müşteri girişi
             </Link>
             .

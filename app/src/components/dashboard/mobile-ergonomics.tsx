@@ -19,6 +19,17 @@ function isFormField(target: EventTarget | null): target is HTMLInputElement | H
   );
 }
 
+function syncKeyboardInset() {
+  if (typeof window === "undefined") return;
+  const viewport = window.visualViewport;
+  if (!viewport || !isMobileViewport()) {
+    document.documentElement.style.setProperty("--keyboard-inset", "0px");
+    return;
+  }
+  const inset = Math.max(0, window.innerHeight - viewport.height - viewport.offsetTop);
+  document.documentElement.style.setProperty("--keyboard-inset", `${Math.round(inset)}px`);
+}
+
 /**
  * Scroll focused form fields into view when the on-screen keyboard opens on mobile.
  * Attach to the dashboard main content container; no-op on desktop widths.
@@ -33,6 +44,7 @@ export function useMobileKeyboardScroll(containerRef?: RefObject<HTMLElement | n
 
     const onFocusIn = (event: Event) => {
       if (!isMobileViewport() || !isFormField(event.target)) return;
+      syncKeyboardInset();
       scrollFieldIntoView(event.target);
     };
 
@@ -41,6 +53,7 @@ export function useMobileKeyboardScroll(containerRef?: RefObject<HTMLElement | n
 
     const viewport = window.visualViewport;
     const onViewportResize = () => {
+      syncKeyboardInset();
       if (!isMobileViewport()) return;
       const active = document.activeElement;
       if (isFormField(active)) {
@@ -48,12 +61,39 @@ export function useMobileKeyboardScroll(containerRef?: RefObject<HTMLElement | n
       }
     };
     viewport?.addEventListener("resize", onViewportResize);
+    viewport?.addEventListener("scroll", onViewportResize);
+    window.addEventListener("resize", syncKeyboardInset);
+    syncKeyboardInset();
 
     return () => {
       root.removeEventListener("focusin", onFocusIn);
       viewport?.removeEventListener("resize", onViewportResize);
+      viewport?.removeEventListener("scroll", onViewportResize);
+      window.removeEventListener("resize", syncKeyboardInset);
+      document.documentElement.style.setProperty("--keyboard-inset", "0px");
     };
   }, [containerRef]);
+}
+
+/**
+ * Keeps sticky action bars / composers above the compact bottom nav and the
+ * on-screen keyboard via Visual Viewport + CSS `--keyboard-inset`.
+ */
+export function useShellKeyboardInset() {
+  useEffect(() => {
+    const viewport = window.visualViewport;
+    const onChange = () => syncKeyboardInset();
+    viewport?.addEventListener("resize", onChange);
+    viewport?.addEventListener("scroll", onChange);
+    window.addEventListener("resize", onChange);
+    syncKeyboardInset();
+    return () => {
+      viewport?.removeEventListener("resize", onChange);
+      viewport?.removeEventListener("scroll", onChange);
+      window.removeEventListener("resize", onChange);
+      document.documentElement.style.setProperty("--keyboard-inset", "0px");
+    };
+  }, []);
 }
 
 /**
@@ -67,6 +107,7 @@ export function MobileStickyActionBar({
   children: ReactNode;
   className?: string;
 }) {
+  useShellKeyboardInset();
   return (
     <div
       className={cn(

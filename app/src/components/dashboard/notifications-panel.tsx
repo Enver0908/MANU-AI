@@ -3,7 +3,11 @@
 import { useMemo, useState } from "react";
 import { RefreshCcw } from "lucide-react";
 import type { AppTenantContext } from "@/lib/auth-context";
-import type { SystemNotificationListItem } from "@/lib/phase-85-stage-4b-contracts";
+import type {
+  Stage4BNotificationMutationResponse,
+  Stage4BNotificationReadAllResponse,
+  SystemNotificationListItem,
+} from "@/lib/phase-85-stage-4b-contracts";
 import type { DashboardUrlState } from "@/lib/phase-85-stage-4b-dashboard-routing";
 import {
   buildNotificationStatusSegmentLabel,
@@ -42,7 +46,8 @@ export function NotificationsPanel({
   onRefresh,
   onLoadMore,
   onOpenNotificationTarget,
-  onMutationComplete,
+  onReceiptMutated,
+  onReadAllMutated,
 }: {
   uiLanguage: SupportedLanguageCode;
   filters: DashboardUrlState;
@@ -60,7 +65,8 @@ export function NotificationsPanel({
   onRefresh: () => void;
   onLoadMore: () => void;
   onOpenNotificationTarget: (notification: SystemNotificationListItem) => void;
-  onMutationComplete: () => void;
+  onReceiptMutated: (payload: Stage4BNotificationMutationResponse) => void;
+  onReadAllMutated: (payload: Stage4BNotificationReadAllResponse) => void;
 }) {
   const [targetError, setTargetError] = useState<string | null>(null);
   const [mutationError, setMutationError] = useState<string | null>(null);
@@ -114,8 +120,8 @@ export function NotificationsPanel({
 
     if (canMutateReceipts && !notification.readAt) {
       try {
-        await markStage4BNotificationRead(notification.id);
-        onMutationComplete();
+        const payload = await markStage4BNotificationRead(notification.id);
+        onReceiptMutated(payload);
       } catch (readError) {
         setMutationError(readError instanceof Error ? readError.message : t(uiLanguage, "notificationReadFailed"));
         return;
@@ -130,8 +136,8 @@ export function NotificationsPanel({
     setMutationError(null);
     setAcknowledgingId(notification.id);
     try {
-      await acknowledgeStage4BNotification(notification.id);
-      onMutationComplete();
+        const payload = await acknowledgeStage4BNotification(notification.id);
+        onReceiptMutated(payload);
     } catch (ackError) {
       setMutationError(ackError instanceof Error ? ackError.message : t(uiLanguage, "notificationAcknowledgeFailed"));
     } finally {
@@ -144,8 +150,8 @@ export function NotificationsPanel({
     setMutationError(null);
     setCompletingReviewId(notification.id);
     try {
-      await completeStage4BUnsupportedMediaReview(notification.id);
-      onMutationComplete();
+        const payload = await completeStage4BUnsupportedMediaReview(notification.id);
+        onReceiptMutated(payload);
     } catch (completeError) {
       setMutationError(
         completeError instanceof Error ? completeError.message : t(uiLanguage, "notificationCompleteReviewFailed"),
@@ -160,8 +166,8 @@ export function NotificationsPanel({
     setMutationError(null);
     setIsMarkingAllRead(true);
     try {
-      await markAllStage4BNotificationsRead();
-      onMutationComplete();
+        const payload = await markAllStage4BNotificationsRead();
+        onReadAllMutated(payload);
     } catch (markAllError) {
       setMutationError(markAllError instanceof Error ? markAllError.message : t(uiLanguage, "notificationMarkAllReadFailed"));
     } finally {

@@ -19,7 +19,7 @@ describe("mock channel adapters", () => {
     });
 
     expect(next.lastSimulation?.action).toBe("sent");
-    expect(next.lastSimulation?.model).toBe("gemini-1.5-flash");
+    expect(next.lastSimulation?.model).toBe("glm-5.3-flash");
     expect(next.messages.some((message) => message.sourceMessageId && message.origin === "ai_generated")).toBe(true);
   });
 
@@ -34,7 +34,7 @@ describe("mock channel adapters", () => {
 
     expect(next.lastSimulation?.action).toBe("draft_for_approval");
     expect(next.lastSimulation?.risk).toBe("yellow");
-    expect(next.lastSimulation?.model).toBe("gemini-3");
+    expect(next.lastSimulation?.model).toBe("glm-5.3-flash");
   });
 
   it("quarantines unknown channel identities before messages or decisions are created", async () => {

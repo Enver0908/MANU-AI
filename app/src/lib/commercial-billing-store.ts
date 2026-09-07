@@ -1,17 +1,18 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { resolveVisibleTenantDisplayName } from "./brand";
 import { getSupabaseAdminClient } from "./supabase";
 import {
   type BillingCustomer,
   type BillingEventLedgerEntry,
+  type CommercialBillingMethod,
   type CommercialEntitlementStatus,
   type CommercialInvite,
   type CommercialInviteStatus,
   type TenantEntitlement,
-  hashCommercialInviteToken,
-  matchesCommercialInviteToken,
   normalizeCommercialEmail,
   transitionCommercialEntitlement,
 } from "./phase-83b-commercial-entitlement-model";
+import { hashCommercialInviteToken, matchesCommercialInviteToken } from "./phase-83b-commercial-entitlement-model.server";
 
 export type CommercialInviteRow = {
   id: string;
@@ -33,6 +34,9 @@ export type TenantEntitlementRow = {
   tenant_id: string;
   commercial_invite_id: string | null;
   status: CommercialEntitlementStatus;
+  billing_method?: CommercialBillingMethod | null;
+  paid_through?: string | null;
+  revision?: number | null;
   stripe_customer_id: string | null;
   stripe_subscription_id: string | null;
   checkout_session_id: string | null;
@@ -67,6 +71,9 @@ function mapEntitlement(row: TenantEntitlementRow): TenantEntitlement {
     tenantId: row.tenant_id,
     commercialInviteId: row.commercial_invite_id,
     status: row.status,
+    billingMethod: row.billing_method ?? "stripe",
+    paidThrough: row.paid_through ?? null,
+    revision: row.revision ?? 0,
     stripeCustomerId: row.stripe_customer_id,
     stripeSubscriptionId: row.stripe_subscription_id,
     checkoutSessionId: row.checkout_session_id,
@@ -266,11 +273,11 @@ export async function provisionTenantForCommercialInvite(
     return input.invite.tenantId;
   }
 
-  const tenantName =
-    typeof input.invite.tenantSeedMetadata.tenantName === "string" &&
-    input.invite.tenantSeedMetadata.tenantName.trim()
-      ? input.invite.tenantSeedMetadata.tenantName.trim()
-      : `MANU Tenant ${input.invite.normalizedEmail}`;
+  const tenantName = resolveVisibleTenantDisplayName(
+    typeof input.invite.tenantSeedMetadata.tenantName === "string"
+      ? input.invite.tenantSeedMetadata.tenantName
+      : null,
+  );
 
   const tenantId = crypto.randomUUID();
   const { error: tenantError } = await admin.from("tenants").insert({
@@ -306,6 +313,9 @@ export async function applyCommercialEntitlementStatus(
     stripeCustomerId?: string | null;
     stripeSubscriptionId?: string | null;
     checkoutSessionId?: string | null;
+    billingMethod?: CommercialBillingMethod;
+    paidThrough?: string | null;
+    expectedRevision?: number | null;
     now?: string;
   },
 ) {
@@ -314,11 +324,23 @@ export async function applyCommercialEntitlementStatus(
   const currentStatus = existing?.status ?? input.fromStatus ?? "invited";
 
   if (existing) {
+    if (
+      input.expectedRevision !== undefined &&
+      input.expectedRevision !== null &&
+      existing.revision !== input.expectedRevision
+    ) {
+      throw new Error("entitlement_revision_conflict");
+    }
+
     const transition = transitionCommercialEntitlement({
       fromStatus: currentStatus,
       toStatus: input.toStatus,
     });
-    if (!transition.allowed && currentStatus !== input.toStatus) {
+    const manualActivationAllowed =
+      input.billingMethod === "manual_transfer" &&
+      input.toStatus === "active" &&
+      (currentStatus === "invited" || currentStatus === "checkout_started");
+    if (!transition.allowed && currentStatus !== input.toStatus && !manualActivationAllowed) {
       throw new Error(transition.blockingReasons[0] ?? "entitlement_transition_blocked");
     }
 
@@ -330,6 +352,10 @@ export async function applyCommercialEntitlementStatus(
         stripe_customer_id: input.stripeCustomerId ?? existing.stripeCustomerId,
         stripe_subscription_id: input.stripeSubscriptionId ?? existing.stripeSubscriptionId,
         checkout_session_id: input.checkoutSessionId ?? existing.checkoutSessionId,
+        billing_method: input.billingMethod ?? existing.billingMethod,
+        paid_through:
+          input.paidThrough !== undefined ? input.paidThrough : existing.paidThrough,
+        revision: existing.revision + 1,
         status_changed_at: now,
         updated_at: now,
       })
@@ -348,6 +374,9 @@ export async function applyCommercialEntitlementStatus(
     stripe_customer_id: input.stripeCustomerId ?? null,
     stripe_subscription_id: input.stripeSubscriptionId ?? null,
     checkout_session_id: input.checkoutSessionId ?? null,
+    billing_method: input.billingMethod ?? "stripe",
+    paid_through: input.paidThrough ?? null,
+    revision: 0,
     status_changed_at: now,
     created_at: now,
     updated_at: now,

@@ -1,0 +1,12 @@
+{
+  "step": "purchase_or_login_form",
+  "requestedUrl": "http://127.0.0.1:3110/purchase",
+  "finalUrl": "http://127.0.0.1:3110/purchase",
+  "title": "Davet koduyla başla · SiriusAI",
+  "bodyText": "SiriusAI\nYardım için iletişim\n\nDAVETLİ ERİŞİM\n\nDavet koduyla başla\n\nEkibimizin size ilettiği davet kodu ve onaylı e-posta adresinizle erişiminizi doğrulayın.\n\nOnaylı e-posta adresiniz *\nDavet kodu *\nErişimi doğrula\n\nDavet kodunuz yok mu? Erişim talep edin\n\nBu sayfa self-serve satın alma değildir. Erişim yalnızca ekip değerlendirmesi ve davet kodu ile açılır. Ödeme sandbox modundadır.\n\n© 2026 SiriusAI\n\nProduction pilot: NO-GO",
+  "talkBackEnabledSetting": "com.samsung.android.accessibility.talkback/com.samsung.android.marvin.talkback.TalkBackService",
+  "accessibilityEnabledSetting": "1",
+  "activeTalkBackServiceBound": true,
+  "touchExplorationEnabled": true,
+  "activeWindowSiriusAI": false
+}

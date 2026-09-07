@@ -1,0 +1,11 @@
+{
+  "step": "purchase_valid",
+  "requestedUrl": "http://127.0.0.1:3111/purchase",
+  "finalUrl": "http://127.0.0.1:3111/purchase",
+  "title": "Davetli erişim | AIya",
+  "viewport": null,
+  "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+  "standalone": false,
+  "serviceWorkerController": false,
+  "bodyText": "AIya\nYardım için iletişim\n\nDAVETLİ ERİŞİM\n\nDavetli erişimi doğrulayın\n\nEkibimizin size ilettiği davet kodu ve onaylı e-posta adresinizle erişiminizi doğrulayın.\n\nOnaylı e-posta adresiniz *\nDavet kodu *\nErişimi doğrula\n\nDavet kodunuz yok mu? Erişim talep edin\n\nBu sayfa self-serve satın alma değildir. Erişim yalnızca ekip değerlendirmesi ve iletilen davet bilgileri ile açılır.\n\n© 2026 AIya\n\nBize ulaşın"
+}

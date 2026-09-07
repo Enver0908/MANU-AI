@@ -47,7 +47,7 @@ Results:
 
 No dependency files are changed in this phase because the accepted stable remediation path is not available.
 
-R-405 remains an open production launch blocker until one of these happens:
+At this historical checkpoint, R-405 remained an open production launch blocker until one of these happened:
 
 - A stable Next.js release bundles `postcss >= 8.5.10`, then `next` and `eslint-config-next` are updated together and production audit is clean.
 - External engineering/security approval formally accepts R-405 risk for the production pilot.
@@ -55,7 +55,7 @@ R-405 remains an open production launch blocker until one of these happens:
 ## Edge Cases
 
 - A passing `npm run release:verify` result does not resolve R-405 because the release gate currently allowlists only the known R-405 findings.
-- `npm audit --omit=dev --json` returning exit code 1 is expected while R-405 remains open.
+- At this historical checkpoint, `npm audit --omit=dev --json` returning exit code 1 was expected while R-405 remained open.
 - Canary Next.js may contain a patched PostCSS path but remains rejected as pilot baseline.
 - `npm audit fix --force` remains rejected because it proposes an incompatible major downgrade.
 - R-406 remains separate and still requires passing local Supabase RLS evidence.

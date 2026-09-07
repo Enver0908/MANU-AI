@@ -3,16 +3,73 @@ import { expect, type Page } from "@playwright/test";
 export async function bootstrapDashboard(page: Page) {
   await page.request.post("/api/app-state");
   await page.goto("/dashboard");
-  await expect(page.getByRole("heading", { name: "Operasyon paneli" })).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByTestId("authenticated-shell")).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByRole("heading", { name: "Günlük iş girişi" })).toBeVisible({ timeout: 30_000 });
+}
+
+export async function assertRemovedProductionChrome(page: Page) {
+  await expect(page.getByRole("heading", { name: "Operasyon paneli" })).toHaveCount(0);
+  await expect(page.getByText("Yerel güvenli mod")).toHaveCount(0);
+  await expect(page.getByText("Yalnızca simülatör", { exact: false })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Demoyu sıfırla" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: /^Simülatör$|^Simulator$/ })).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "Gelen mesaj simülatörü" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Gelen mesajı simüle et" })).toHaveCount(0);
+  await expect(page.getByTestId("operational-foundation-panel")).toHaveCount(0);
+  await expect(page.getByTestId("visual-simulator-panel")).toHaveCount(0);
+  await expect(page.getByTestId("voice-simulator-panel")).toHaveCount(0);
+  await expect(page.getByLabel("Panel dili")).toHaveCount(0);
+}
+
+export async function seedInboundSimulation(
+  page: Page,
+  input: { clientId: string; body: string; idempotencyKey?: string },
+) {
+  const clientVersion = await page.evaluate(() => {
+    const content = document.querySelector('meta[name="siriusai-app-version"]')?.getAttribute("content")?.trim();
+    return content || "0.0.0-dev-local";
+  });
+  const response = await page.request.post("/api/simulator", {
+    headers: {
+      "content-type": "application/json",
+      "x-siriusai-client-version": clientVersion,
+      "x-siriusai-mutation-kind": "other",
+    },
+    data: {
+      clientId: input.clientId,
+      body: input.body,
+      idempotencyKey: input.idempotencyKey ?? `visual-${input.clientId}-${Date.now()}`,
+    },
+  });
+  expect(response.ok(), await response.text()).toBeTruthy();
+}
+
+export async function reloadAuthenticatedShell(page: Page) {
+  await page.reload();
+  await expect(page.getByTestId("authenticated-shell")).toBeVisible({ timeout: 30_000 });
+}
+
+export function visibleShellNavButton(page: Page, name: string | RegExp) {
+  const shellNav = page.locator(
+    '[data-testid="shell-wide-nav"], [data-testid="shell-medium-rail"], [data-testid="shell-compact-bottom-nav"]',
+  );
+  return shellNav.getByRole("button", { name }).or(shellNav.getByRole("link", { name })).filter({ visible: true });
+}
+
+export async function openVisibleShellNavOrHref(page: Page, name: string | RegExp, href: string) {
+  const button = visibleShellNavButton(page, name);
+  if (await button.isVisible()) {
+    await button.click();
+    return;
+  }
+  await page.evaluate((nextHref) => {
+    window.history.pushState(window.history.state, "", nextHref);
+    window.dispatchEvent(new Event("manu:dashboard-href-change"));
+  }, href);
 }
 
 export async function openMessagingSection(page: Page) {
-  const messagingNav = page.getByRole("button", { name: "Mesajlaşma" });
-  if ((await messagingNav.count()) > 1) {
-    await messagingNav.last().click();
-  } else {
-    await messagingNav.click();
-  }
+  await visibleShellNavButton(page, /Mesajlaşma|Mesajlar/).click();
   await expect(page.getByTestId("messaging-panel")).toBeVisible({ timeout: 30_000 });
   await expect
     .poll(async () => {

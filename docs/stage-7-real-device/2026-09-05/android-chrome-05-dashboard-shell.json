@@ -1,0 +1,11 @@
+{
+  "step": "dashboard_shell",
+  "requestedUrl": "http://127.0.0.1:3111/dashboard",
+  "finalUrl": "http://127.0.0.1:3111/dashboard",
+  "title": "AIya",
+  "viewport": null,
+  "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+  "standalone": false,
+  "serviceWorkerController": false,
+  "bodyText": "İçeriğe atla\n\nAIYA\n\nGünlük iş girişi\n\nAktif danışan, bekleyen kuyruklar ve doğrudan görevler. Raporlama vitrini yoktur.\n\nMesajlar\n0\nUyarılar\n0\nBildirimler\n0\nAktif danışan\n\nDanışan seçilmedi\n\nDanışan listesinden bir kayıt seçin.\n\nAna Sayfa\nDanışanlar\nMesajlar\nUyarılar\nDiğer"
+}

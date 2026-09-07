@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { AppAuthError, authErrorResponse, hasCapability, requireCapability, type AppTenantContext } from "./auth-context";
+import {
+  AppAuthError,
+  authErrorResponse,
+  hasCapability,
+  requireCapability,
+  resolveUniqueTenantMembership,
+  type AppTenantContext,
+} from "./auth-context";
 
 describe("auth context error handling", () => {
   it("AppAuthError captures 401 status and error code", () => {
@@ -24,6 +31,35 @@ describe("auth context error handling", () => {
     expect(error.message).toBe("no_dietitian_profile");
   });
 
+  it("AppAuthError captures 409 status for ambiguous membership", () => {
+    const error = new AppAuthError(409, "account_context_ambiguous");
+
+    expect(error.status).toBe(409);
+    expect(error.message).toBe("account_context_ambiguous");
+  });
+
+  it("resolveUniqueTenantMembership rejects zero memberships with 403", () => {
+    expect(() => resolveUniqueTenantMembership([])).toThrow(
+      new AppAuthError(403, "no_tenant_membership"),
+    );
+  });
+
+  it("resolveUniqueTenantMembership rejects multiple memberships with 409", () => {
+    expect(() =>
+      resolveUniqueTenantMembership([
+        { tenant_id: "tenant-a", role: "owner" },
+        { tenant_id: "tenant-b", role: "owner" },
+      ]),
+    ).toThrow(new AppAuthError(409, "account_context_ambiguous"));
+  });
+
+  it("resolveUniqueTenantMembership returns the sole membership", () => {
+    expect(resolveUniqueTenantMembership([{ tenant_id: "tenant-a", role: "dietitian" }])).toEqual({
+      tenant_id: "tenant-a",
+      role: "dietitian",
+    });
+  });
+
   it("authErrorResponse returns JSON for AppAuthError with correct status", async () => {
     const error = new AppAuthError(401, "unauthenticated");
     const response = authErrorResponse(error);
@@ -32,6 +68,7 @@ describe("auth context error handling", () => {
     expect(response!.status).toBe(401);
     const body = await response!.json();
     expect(body.error).toBe("unauthenticated");
+    expect(body.requestId).toEqual(expect.any(String));
   });
 
   it("authErrorResponse returns JSON for 403 membership error", async () => {
@@ -79,6 +116,7 @@ describe("auth context error handling", () => {
       dietitianId: "dietitian-demo",
       userId: "user-demo",
       role: "assistant",
+      sessionId: "00000000-0000-4000-8000-000000000901",
     };
 
     expect(() => requireCapability(context, "create_client")).toThrow(
@@ -92,6 +130,7 @@ describe("auth context error handling", () => {
       dietitianId: "dietitian-demo",
       userId: "user-demo",
       role: "assistant",
+      sessionId: "00000000-0000-4000-8000-000000000901",
     };
 
     expect(() => requireCapability(context, "internal_copilot_chat")).toThrow(
@@ -105,10 +144,21 @@ describe("auth context error handling", () => {
       dietitianId: "dietitian-demo",
       userId: "user-demo",
       role: "assistant",
+      sessionId: "00000000-0000-4000-8000-000000000901",
     };
 
     expect(() => requireCapability(context, "dietitian_ai_chat")).toThrow(
       new AppAuthError(403, "dietitian_ai_chat_forbidden"),
     );
+  });
+
+  it("allows clinical account roles to update their own profile only", () => {
+    for (const role of ["owner", "admin", "dietitian"] as const) {
+      expect(hasCapability(role, "update_own_profile")).toBe(true);
+    }
+    expect(hasCapability("assistant", "update_own_profile")).toBe(false);
+    expect(hasCapability("auditor", "update_own_profile")).toBe(false);
+    expect(hasCapability("assistant", "update_client")).toBe(false);
+    expect(hasCapability("auditor", "manual_reply")).toBe(false);
   });
 });

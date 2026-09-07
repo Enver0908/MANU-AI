@@ -55,7 +55,7 @@ export type Phase77ahWhatsappAdapterEvidenceClosure = {
   channelPolicyGateOpen: boolean;
   openLaunchGateCount: number;
   realWhatsAppConnected: false;
-  realGeminiConnected: false;
+  realZaiConnected: false;
   channelReplayStatus: "pass" | "fail";
   channelReplayVersion: string;
   duplicateClientSendCount: number;
@@ -112,7 +112,7 @@ export async function evaluatePhase77ahWhatsappAdapterEvidenceClosure(): Promise
     channelPolicyGateOpen: launchGates.openGateIds.includes("channel_policy_review"),
     openLaunchGateCount: launchGates.openGateIds.length,
     realWhatsAppConnected: false,
-    realGeminiConnected: false,
+    realZaiConnected: false,
     channelReplayStatus: channelReplay.status,
     channelReplayVersion: channelReplay.rehearsalVersion,
     duplicateClientSendCount: channelReplay.duplicateClientSendCount,
@@ -142,7 +142,7 @@ export function buildPhase77ahWhatsappAdapterEvidencePackMetrics(
     channel_policy_gate_open: closure.channelPolicyGateOpen,
     open_launch_gate_count: closure.openLaunchGateCount,
     real_whatsapp_connected: closure.realWhatsAppConnected,
-    real_gemini_connected: closure.realGeminiConnected,
+    real_zai_connected: closure.realZaiConnected,
     channel_replay_status: closure.channelReplayStatus,
     channel_replay_version: closure.channelReplayVersion,
     duplicate_client_send_count: closure.duplicateClientSendCount,

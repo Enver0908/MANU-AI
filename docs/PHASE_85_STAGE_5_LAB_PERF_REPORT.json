@@ -1,0 +1,634 @@
+{
+  "schemaVersion": "stage5-evidence-v2",
+  "evidenceType": "performance",
+  "sourceRevision": "3d03112db649148b4acaadcd2eea4a2caf93f62d",
+  "sourceTreeClean": false,
+  "packageLockSha256": "80ae808aad5ddb681a2a5b32fd5a4f71340772ac29ce1fd549156977302fa8c5",
+  "generatedAt": "2026-08-04T13:42:54.002Z",
+  "command": "npm run test:stage-5-lab-perf",
+  "environment": {
+    "nodeVersion": "v22.16.0",
+    "platform": "win32",
+    "architecture": "x64"
+  },
+  "kind": "local_lab_only",
+  "status": "PASS",
+  "productionStatus": "NO-GO",
+  "disclaimer": "Local lab measurement only. This is not field Core Web Vitals, not real-device evidence, and not a production launch approval.",
+  "runsPerRoute": 10,
+  "strictMode": false,
+  "targets": {
+    "lcpMs": 2500,
+    "interactionProxyMs": 200,
+    "cls": 0.1,
+    "tbtMs": 200
+  },
+  "measurement": {
+    "baseUrl": "http://127.0.0.1:3110",
+    "routeCountRequired": 5,
+    "routeSet": [
+      {
+        "id": "home",
+        "path": "/dashboard"
+      },
+      {
+        "id": "clients",
+        "path": "/dashboard?section=clients"
+      },
+      {
+        "id": "messages",
+        "path": "/dashboard?section=messages"
+      },
+      {
+        "id": "ai_chat",
+        "path": "/dashboard/ai-chat"
+      },
+      {
+        "id": "settings",
+        "path": "/dashboard/settings"
+      }
+    ],
+    "viewport": {
+      "width": 390,
+      "height": 844,
+      "isMobile": true,
+      "hasTouch": true
+    },
+    "waitAfterLoadMs": 1500,
+    "observerTypes": [
+      "largest-contentful-paint",
+      "layout-shift",
+      "longtask"
+    ],
+    "browser": {
+      "engine": "chromium",
+      "source": "playwright-chromium",
+      "headless": true,
+      "launchAttempts": [
+        {
+          "name": "playwright-chromium",
+          "status": "PASS"
+        }
+      ]
+    }
+  },
+  "blockers": [],
+  "evidencePath": "C:\\Users\\Dell\\OneDrive\\Masaüstü\\MANU-AI\\docs\\PHASE_85_STAGE_5_LAB_PERF_REPORT.json",
+  "routes": [
+    {
+      "route": "home",
+      "path": "/dashboard",
+      "sampleCount": 10,
+      "runs": [
+        {
+          "lcpMs": 940,
+          "cls": 0,
+          "tbtMs": 5,
+          "interactionProxyMs": 5,
+          "fcpMs": 940,
+          "domContentLoadedMs": 906.7999999970198,
+          "longTaskCount": 1
+        },
+        {
+          "lcpMs": 84,
+          "cls": 0,
+          "tbtMs": 29,
+          "interactionProxyMs": 29,
+          "fcpMs": 84,
+          "domContentLoadedMs": 80.20000000298023,
+          "longTaskCount": 1
+        },
+        {
+          "lcpMs": 76,
+          "cls": 0,
+          "tbtMs": 12,
+          "interactionProxyMs": 12,
+          "fcpMs": 76,
+          "domContentLoadedMs": 65.5,
+          "longTaskCount": 1
+        },
+        {
+          "lcpMs": 92,
+          "cls": 0,
+          "tbtMs": 23,
+          "interactionProxyMs": 23,
+          "fcpMs": 92,
+          "domContentLoadedMs": 89.6000000089407,
+          "longTaskCount": 1
+        },
+        {
+          "lcpMs": 76,
+          "cls": 0,
+          "tbtMs": 46,
+          "interactionProxyMs": 46,
+          "fcpMs": 76,
+          "domContentLoadedMs": 72.59999999403954,
+          "longTaskCount": 1
+        },
+        {
+          "lcpMs": 56,
+          "cls": 0,
+          "tbtMs": 1,
+          "interactionProxyMs": 1,
+          "fcpMs": 56,
+          "domContentLoadedMs": 33.30000001192093,
+          "longTaskCount": 1
+        },
+        {
+          "lcpMs": 84,
+          "cls": 0,
+          "tbtMs": 5,
+          "interactionProxyMs": 5,
+          "fcpMs": 84,
+          "domContentLoadedMs": 35.900000005960464,
+          "longTaskCount": 1
+        },
+        {
+          "lcpMs": 76,
+          "cls": 0,
+          "tbtMs": 46,
+          "interactionProxyMs": 46,
+          "fcpMs": 76,
+          "domContentLoadedMs": 72,
+          "longTaskCount": 1
+        },
+        {
+          "lcpMs": 68,
+          "cls": 0,
+          "tbtMs": 3,
+          "interactionProxyMs": 3,
+          "fcpMs": 68,
+          "domContentLoadedMs": 62.099999994039536,
+          "longTaskCount": 1
+        },
+        {
+          "lcpMs": 72,
+          "cls": 0,
+          "tbtMs": 9,
+          "interactionProxyMs": 9,
+          "fcpMs": 72,
+          "domContentLoadedMs": 37.79999999701977,
+          "longTaskCount": 1
+        }
+      ],
+      "p75": {
+        "lcpMs": 84,
+        "cls": 0,
+        "tbtMs": 29,
+        "interactionProxyMs": 29,
+        "fcpMs": 84
+      },
+      "pass": {
+        "lcp": true,
+        "cls": true,
+        "tbt": true,
+        "interactionProxy": true
+      }
+    },
+    {
+      "route": "clients",
+      "path": "/dashboard?section=clients",
+      "sampleCount": 10,
+      "runs": [
+        {
+          "lcpMs": 60,
+          "cls": 0,
+          "tbtMs": 17,
+          "interactionProxyMs": 17,
+          "fcpMs": 60,
+          "domContentLoadedMs": 58.19999998807907,
+          "longTaskCount": 1
+        },
+        {
+          "lcpMs": 56,
+          "cls": 0,
+          "tbtMs": 6,
+          "interactionProxyMs": 6,
+          "fcpMs": 56,
+          "domContentLoadedMs": 30.600000008940697,
+          "longTaskCount": 1
+        },
+        {
+          "lcpMs": 60,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 60,
+          "domContentLoadedMs": 32,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 48,
+          "cls": 0,
+          "tbtMs": 18,
+          "interactionProxyMs": 18,
+          "fcpMs": 48,
+          "domContentLoadedMs": 46.20000000298023,
+          "longTaskCount": 1
+        },
+        {
+          "lcpMs": 60,
+          "cls": 0,
+          "tbtMs": 10,
+          "interactionProxyMs": 10,
+          "fcpMs": 60,
+          "domContentLoadedMs": 33.599999994039536,
+          "longTaskCount": 1
+        },
+        {
+          "lcpMs": 84,
+          "cls": 0,
+          "tbtMs": 13,
+          "interactionProxyMs": 13,
+          "fcpMs": 84,
+          "domContentLoadedMs": 40.69999998807907,
+          "longTaskCount": 1
+        },
+        {
+          "lcpMs": 56,
+          "cls": 0,
+          "tbtMs": 5,
+          "interactionProxyMs": 5,
+          "fcpMs": 56,
+          "domContentLoadedMs": 31.899999991059303,
+          "longTaskCount": 1
+        },
+        {
+          "lcpMs": 52,
+          "cls": 0,
+          "tbtMs": 4,
+          "interactionProxyMs": 4,
+          "fcpMs": 52,
+          "domContentLoadedMs": 30,
+          "longTaskCount": 1
+        },
+        {
+          "lcpMs": 56,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 56,
+          "domContentLoadedMs": 27.799999997019768,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 60,
+          "cls": 0,
+          "tbtMs": 22,
+          "interactionProxyMs": 22,
+          "fcpMs": 60,
+          "domContentLoadedMs": 58.79999999701977,
+          "longTaskCount": 1
+        }
+      ],
+      "p75": {
+        "lcpMs": 60,
+        "cls": 0,
+        "tbtMs": 17,
+        "interactionProxyMs": 17,
+        "fcpMs": 60
+      },
+      "pass": {
+        "lcp": true,
+        "cls": true,
+        "tbt": true,
+        "interactionProxy": true
+      }
+    },
+    {
+      "route": "messages",
+      "path": "/dashboard?section=messages",
+      "sampleCount": 10,
+      "runs": [
+        {
+          "lcpMs": 244,
+          "cls": 0,
+          "tbtMs": 6,
+          "interactionProxyMs": 6,
+          "fcpMs": 56,
+          "domContentLoadedMs": 51.79999999701977,
+          "longTaskCount": 1
+        },
+        {
+          "lcpMs": 220,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 48,
+          "domContentLoadedMs": 29,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 252,
+          "cls": 0,
+          "tbtMs": 3,
+          "interactionProxyMs": 3,
+          "fcpMs": 56,
+          "domContentLoadedMs": 53.70000000298023,
+          "longTaskCount": 1
+        },
+        {
+          "lcpMs": 220,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 52,
+          "domContentLoadedMs": 29.799999997019768,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 240,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 52,
+          "domContentLoadedMs": 30.599999994039536,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 232,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 56,
+          "domContentLoadedMs": 50.1000000089407,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 216,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 48,
+          "domContentLoadedMs": 47.3999999910593,
+          "longTaskCount": 1
+        },
+        {
+          "lcpMs": 284,
+          "cls": 0,
+          "tbtMs": 4,
+          "interactionProxyMs": 4,
+          "fcpMs": 60,
+          "domContentLoadedMs": 57.5,
+          "longTaskCount": 1
+        },
+        {
+          "lcpMs": 236,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 64,
+          "domContentLoadedMs": 33.3999999910593,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 204,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 52,
+          "domContentLoadedMs": 28.799999997019768,
+          "longTaskCount": 0
+        }
+      ],
+      "p75": {
+        "lcpMs": 244,
+        "cls": 0,
+        "tbtMs": 3,
+        "interactionProxyMs": 3,
+        "fcpMs": 56
+      },
+      "pass": {
+        "lcp": true,
+        "cls": true,
+        "tbt": true,
+        "interactionProxy": true
+      }
+    },
+    {
+      "route": "ai_chat",
+      "path": "/dashboard/ai-chat",
+      "sampleCount": 10,
+      "runs": [
+        {
+          "lcpMs": 76,
+          "cls": 0,
+          "tbtMs": 25,
+          "interactionProxyMs": 25,
+          "fcpMs": 76,
+          "domContentLoadedMs": 72.8999999910593,
+          "longTaskCount": 1
+        },
+        {
+          "lcpMs": 68,
+          "cls": 0,
+          "tbtMs": 24,
+          "interactionProxyMs": 24,
+          "fcpMs": 68,
+          "domContentLoadedMs": 63.30000001192093,
+          "longTaskCount": 1
+        },
+        {
+          "lcpMs": 64,
+          "cls": 0,
+          "tbtMs": 1,
+          "interactionProxyMs": 1,
+          "fcpMs": 64,
+          "domContentLoadedMs": 31.599999994039536,
+          "longTaskCount": 1
+        },
+        {
+          "lcpMs": 56,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 56,
+          "domContentLoadedMs": 28.299999997019768,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 72,
+          "cls": 0,
+          "tbtMs": 14,
+          "interactionProxyMs": 14,
+          "fcpMs": 72,
+          "domContentLoadedMs": 70.5,
+          "longTaskCount": 1
+        },
+        {
+          "lcpMs": 56,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 56,
+          "domContentLoadedMs": 27.30000001192093,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 68,
+          "cls": 0,
+          "tbtMs": 30,
+          "interactionProxyMs": 30,
+          "fcpMs": 68,
+          "domContentLoadedMs": 58.79999999701977,
+          "longTaskCount": 1
+        },
+        {
+          "lcpMs": 68,
+          "cls": 0,
+          "tbtMs": 20,
+          "interactionProxyMs": 20,
+          "fcpMs": 68,
+          "domContentLoadedMs": 40.6000000089407,
+          "longTaskCount": 1
+        },
+        {
+          "lcpMs": 52,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 52,
+          "domContentLoadedMs": 29.80000001192093,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 60,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 60,
+          "domContentLoadedMs": 31,
+          "longTaskCount": 0
+        }
+      ],
+      "p75": {
+        "lcpMs": 68,
+        "cls": 0,
+        "tbtMs": 24,
+        "interactionProxyMs": 24,
+        "fcpMs": 68
+      },
+      "pass": {
+        "lcp": true,
+        "cls": true,
+        "tbt": true,
+        "interactionProxy": true
+      }
+    },
+    {
+      "route": "settings",
+      "path": "/dashboard/settings",
+      "sampleCount": 10,
+      "runs": [
+        {
+          "lcpMs": 176,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 68,
+          "domContentLoadedMs": 66.80000001192093,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 156,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 60,
+          "domContentLoadedMs": 32.29999999701977,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 184,
+          "cls": 0,
+          "tbtMs": 7,
+          "interactionProxyMs": 7,
+          "fcpMs": 56,
+          "domContentLoadedMs": 27.5,
+          "longTaskCount": 1
+        },
+        {
+          "lcpMs": 148,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 52,
+          "domContentLoadedMs": 28.799999997019768,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 144,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 52,
+          "domContentLoadedMs": 27.200000002980232,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 144,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 52,
+          "domContentLoadedMs": 26.299999997019768,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 140,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 52,
+          "domContentLoadedMs": 27,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 132,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 44,
+          "domContentLoadedMs": 25.30000001192093,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 144,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 44,
+          "domContentLoadedMs": 26.099999994039536,
+          "longTaskCount": 0
+        },
+        {
+          "lcpMs": 156,
+          "cls": 0,
+          "tbtMs": 0,
+          "interactionProxyMs": 0,
+          "fcpMs": 56,
+          "domContentLoadedMs": 27.5,
+          "longTaskCount": 0
+        }
+      ],
+      "p75": {
+        "lcpMs": 156,
+        "cls": 0,
+        "tbtMs": 0,
+        "interactionProxyMs": 0,
+        "fcpMs": 56
+      },
+      "pass": {
+        "lcp": true,
+        "cls": true,
+        "tbt": true,
+        "interactionProxy": true
+      }
+    }
+  ],
+  "summary": {
+    "routeCount": 5,
+    "failedRouteIds": [],
+    "allTargetsMet": true
+  }
+}

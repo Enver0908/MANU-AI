@@ -1,24 +1,17 @@
 import { cookies } from "next/headers";
 import { NextResponse, type NextRequest } from "next/server";
-import {
-  isCommercialBillingStoreConfigured,
-  loadTenantEntitlementByTenantId,
-} from "@/lib/commercial-billing-store";
+import { isCommercialBillingStoreConfigured } from "@/lib/commercial-billing-store";
 import {
   claimCommercialOnboardingWorkspace,
   insertCommercialOnboardingEvent,
-  loadCommercialInviteByCheckoutSessionId,
-  loadTenantOwnerUserId,
-  loadUserTenantClaimState,
+  loadOnboardingClaimEvaluation,
 } from "@/lib/commercial-onboarding-store";
 import { createSupabaseServerClient, getSupabaseAdminClient, isSupabaseConfigured } from "@/lib/supabase";
-import {
-  evaluateOnboardingClaim,
-  validateOnboardingSessionId,
-} from "@/lib/phase-84e-customer-onboarding";
+import { validateOnboardingClaimReference } from "@/lib/phase-84e-customer-onboarding";
 
 type ClaimBody = {
   sessionId?: string;
+  inviteId?: string;
 };
 
 export async function POST(request: NextRequest) {
@@ -33,10 +26,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "invalid_json" }, { status: 400 });
   }
 
-  const sessionValidation = validateOnboardingSessionId(body.sessionId);
-  if (!sessionValidation.valid) {
+  const referenceValidation = validateOnboardingClaimReference(body);
+  if (!referenceValidation.valid || !referenceValidation.reference) {
     return NextResponse.json(
-      { error: "validation_failed", blockingReasons: sessionValidation.blockingReasons },
+      { error: "validation_failed", blockingReasons: referenceValidation.blockingReasons },
       { status: 400 },
     );
   }
@@ -68,40 +61,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "commercial_billing_not_configured" }, { status: 503 });
   }
 
-  const invite = await loadCommercialInviteByCheckoutSessionId(admin, sessionValidation.sessionId);
-  const entitlement = invite?.tenantId
-    ? await loadTenantEntitlementByTenantId(admin, invite.tenantId)
-    : null;
-  const claimState = invite?.tenantId
-    ? await loadUserTenantClaimState(admin, { tenantId: invite.tenantId, userId: user.id })
-    : {
-        hasMembershipOnTenant: false,
-        hasDietitianProfileOnTenant: false,
-        dietitianTenantId: null,
-      };
-  const existingOwnerUserId = invite?.tenantId
-    ? await loadTenantOwnerUserId(admin, invite.tenantId)
-    : null;
-
-  const evaluation = evaluateOnboardingClaim({
-    sessionId: sessionValidation.sessionId,
-    isAuthenticated: true,
+  const claimReference = referenceValidation.reference;
+  const { invite, evaluation } = await loadOnboardingClaimEvaluation(admin, {
+    reference: claimReference,
     userId: user.id,
     userEmail: user.email,
-    invite: invite
-      ? {
-          id: invite.id,
-          normalizedEmail: invite.normalizedEmail,
-          status: invite.status,
-          tenantId: invite.tenantId,
-          tenantSeedMetadata: invite.tenantSeedMetadata,
-        }
-      : null,
-    entitlementStatus: entitlement?.status ?? null,
-    existingOwnerUserId,
-    hasMembershipOnTenant: claimState.hasMembershipOnTenant,
-    hasDietitianProfileOnTenant: claimState.hasDietitianProfileOnTenant,
-    dietitianTenantId: claimState.dietitianTenantId,
+    isAuthenticated: true,
   });
 
   if (!evaluation.claimable) {
@@ -111,7 +76,7 @@ export async function POST(request: NextRequest) {
       authUserId: user.id,
       commercialInviteId: evaluation.commercialInviteId,
       tenantId: evaluation.tenantId,
-      checkoutSessionId: sessionValidation.sessionId,
+      checkoutSessionId: claimReference.sessionId,
       payloadSummary: { blockingReasons: evaluation.blockingReasons },
     }).catch(() => undefined);
 
@@ -139,7 +104,7 @@ export async function POST(request: NextRequest) {
       userId: user.id,
       normalizedEmail: invite!.normalizedEmail,
       commercialInviteId: invite!.id,
-      checkoutSessionId: sessionValidation.sessionId,
+      checkoutSessionId: claimReference.sessionId,
       tenantSeedMetadata: invite!.tenantSeedMetadata,
     });
 
@@ -157,7 +122,7 @@ export async function POST(request: NextRequest) {
       authUserId: user.id,
       commercialInviteId: evaluation.commercialInviteId,
       tenantId: evaluation.tenantId,
-      checkoutSessionId: sessionValidation.sessionId,
+      checkoutSessionId: claimReference.sessionId,
       payloadSummary: { error: message },
     }).catch(() => undefined);
 

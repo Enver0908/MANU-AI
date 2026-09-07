@@ -25,6 +25,9 @@ import { AiChatComposer } from "./ai-chat-composer";
 import { AiChatContextPanelContent } from "./ai-chat-context-drawer";
 import { AiChatAttachmentReview } from "./ai-chat-attachment-review";
 import { AiChatRiskBanner } from "./ai-chat-risk-banner";
+import { useShellDirtyRegistration } from "@/lib/use-shell-dirty-registration";
+import type { ShellDirtyEntryState } from "@/lib/phase-85-stage-5-shell-dirty-registry";
+import { authenticatedMutationFetch } from "@/lib/phase-85-stage-5-shell-authenticated-mutation";
 
 const COMPACT_BREAKPOINT_PX = 1024;
 
@@ -51,7 +54,7 @@ function useDebouncedValue<T>(value: T, delayMs: number): T {
 
 /**
  * ChatGPT-like AI Chat workspace shell (Faz 4). Independent of
- * `useManuState`/internal-copilot state; the active chat URL is the source
+ * `useAiyaState`/internal-copilot state; the active chat URL is the source
  * of truth and drives every fetch below.
  */
 export function AiChatWorkspace({
@@ -61,6 +64,7 @@ export function AiChatWorkspace({
   onNavigateToChat,
   onNavigateToRoot,
   onToggleFocusMode,
+  onScopedClientChange,
 }: {
   uiLanguage: SupportedLanguageCode;
   activeChatId: string | null;
@@ -68,6 +72,9 @@ export function AiChatWorkspace({
   onNavigateToChat: (chatId: string) => void;
   onNavigateToRoot: () => void;
   onToggleFocusMode: () => void;
+  onScopedClientChange?: (
+    client: { id: string; fullName: string; referenceShort: string } | null,
+  ) => void;
 }) {
   const isCompactViewport = useIsCompactViewport();
   const useOverlayChrome = focusMode || isCompactViewport;
@@ -95,6 +102,43 @@ export function AiChatWorkspace({
   const [attachments, setAttachments] = useState<AiChatAttachmentDto[]>([]);
   const [reviewAttachment, setReviewAttachment] = useState<AiChatAttachmentDto | null>(null);
   const [pendingDeleteChatId, setPendingDeleteChatId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const detail = conversation.detail;
+    if (!onScopedClientChange) return;
+    if (detail?.scopeType === "client" && detail.clientId) {
+      onScopedClientChange({
+        id: detail.clientId,
+        fullName: detail.clientFullName || detail.clientReferenceShort || detail.clientId,
+        referenceShort: detail.clientReferenceShort || detail.clientId.slice(0, 8),
+      });
+      return;
+    }
+    onScopedClientChange(null);
+  }, [
+    conversation.detail,
+    conversation.detail?.clientFullName,
+    conversation.detail?.clientId,
+    conversation.detail?.clientReferenceShort,
+    conversation.detail?.scopeType,
+    onScopedClientChange,
+  ]);
+
+  useShellDirtyRegistration({
+    id: "ai-chat-message-edit",
+    label: "AI mesaj düzenleme",
+    state: (editingMessage ? "dirty" : "clean") as ShellDirtyEntryState,
+    canSave: false,
+    onDiscard: () => setEditingMessage(null),
+  });
+
+  useShellDirtyRegistration({
+    id: "ai-chat-attachment-review",
+    label: "AI Chat ek incelemesi",
+    state: (reviewAttachment ? "dirty" : "clean") as ShellDirtyEntryState,
+    canSave: false,
+    onDiscard: () => setReviewAttachment(null),
+  });
 
   useEffect(() => {
     if (!activeChatId) return;
@@ -139,10 +183,11 @@ export function AiChatWorkspace({
 
   const handleSaveAttachmentCorrection = useCallback(
     async (attachmentId: string, derivativeId: string, correctedText: string) => {
-      const response = await fetch(
+      const response = await authenticatedMutationFetch(
         `/api/ai-chat/attachments/${encodeURIComponent(attachmentId)}/derivatives/${encodeURIComponent(derivativeId)}`,
         {
           method: "PATCH",
+          mutationKind: "other",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({ requestId: generateAiChatRequestId(), correctedText }),
         },
@@ -163,10 +208,11 @@ export function AiChatWorkspace({
       previewAccepted: boolean;
     }) => {
       if (!conversation.detail?.clientId) return;
-      const response = await fetch(
+      const response = await authenticatedMutationFetch(
         `/api/ai-chat/attachments/${encodeURIComponent(input.attachmentId)}/commit-to-client-record`,
         {
           method: "POST",
+          mutationKind: "other",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({
             requestId: generateAiChatRequestId(),
@@ -244,8 +290,9 @@ export function AiChatWorkspace({
   };
 
   const handleRemoveAttachment = useCallback(async (attachmentId: string) => {
-    const response = await fetch(`/api/ai-chat/attachments/${encodeURIComponent(attachmentId)}`, {
+    const response = await authenticatedMutationFetch(`/api/ai-chat/attachments/${encodeURIComponent(attachmentId)}`, {
       method: "DELETE",
+      mutationKind: "other",
     });
     if (!response.ok) return;
     setAttachments((current) => current.filter((item) => item.id !== attachmentId));

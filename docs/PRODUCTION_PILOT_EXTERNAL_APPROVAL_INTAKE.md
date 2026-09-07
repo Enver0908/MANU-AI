@@ -1,5 +1,7 @@
 # MANU-AI Production Pilot External Approval Intake
 
+**Current status interpretation (2026-08-18):** R-405 is `technically_resolved` locally; any older R-405 prerequisite below is historical. External approvals recorded by this intake remain independently required, and production remains `NO-GO`.
+
 Date: 2026-06-30
 
 Phase: 80B external artifact intake and sanitization

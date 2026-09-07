@@ -6,23 +6,109 @@ import {
   shouldRewriteAdminHostPath,
 } from "./lib/phase-84f-admin-console";
 import { resolveAppBaseUrl } from "./lib/phase-84d-customer-auth";
+import { applyHostedSandboxSecurityHeaders } from "./lib/hosted-sandbox-security-headers";
+import {
+  isAuthenticatedMutationMethod,
+  isClientUpdateRequired,
+  resolveAuthenticatedMutationPolicy,
+  SIRIUSAI_CLIENT_VERSION_HEADER,
+} from "./lib/phase-85-stage-5-shell-pwa";
+
+function withHostedSandboxSecurityHeaders(response: NextResponse) {
+  return applyHostedSandboxSecurityHeaders(response);
+}
+function enforceMaintenanceMode(request: NextRequest) {
+  if (process.env.MANU_MAINTENANCE_MODE !== "true") return null;
+  const pathname = request.nextUrl.pathname;
+  if (pathname === "/api/shell/version") return null;
+  const body =
+    pathname.startsWith("/api/")
+      ? { error: "maintenance_mode" }
+      : "Service is temporarily unavailable for maintenance.";
+  return NextResponse.json(body, {
+    status: 503,
+    headers: { "Cache-Control": "no-store" },
+  });
+}
+
+function enforceClientVersionForAuthenticatedMutation(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+  if (!pathname.startsWith("/api/")) return null;
+  if (!isAuthenticatedMutationMethod(request.method)) return null;
+  const policy = resolveAuthenticatedMutationPolicy(pathname, request.method);
+  if (policy === "public_exempt" || policy === "session_exempt") return null;
+
+  const clientVersion = request.headers.get(SIRIUSAI_CLIENT_VERSION_HEADER);
+  if (!clientVersion) {
+    return NextResponse.json(
+      { error: "client_version_required" },
+      {
+        status: 428,
+        headers: { "Cache-Control": "no-store" },
+      },
+    );
+  }
+  if (isClientUpdateRequired(clientVersion)) {
+    if (policy === "save_allowed_when_outdated") return null;
+    return NextResponse.json(
+      { error: "client_update_required" },
+      {
+        status: 409,
+        headers: { "Cache-Control": "no-store" },
+      },
+    );
+  }
+  return null;
+}
 
 export async function proxy(request: NextRequest) {
   const hostname = request.nextUrl.hostname;
   const pathname = request.nextUrl.pathname;
 
+  const maintenanceBlock = enforceMaintenanceMode(request);
+  if (maintenanceBlock) return withHostedSandboxSecurityHeaders(maintenanceBlock);
+
+  const versionBlock = enforceClientVersionForAuthenticatedMutation(request);
+  if (versionBlock) return withHostedSandboxSecurityHeaders(versionBlock);
+
   if (isAdminHost(hostname) && shouldRewriteAdminHostPath(pathname)) {
     const url = request.nextUrl.clone();
     url.pathname = resolveAdminHostInternalPath(pathname);
-    return NextResponse.rewrite(url);
+
+    if (isSupabaseConfigured()) {
+      let response = NextResponse.rewrite(url);
+      const supabase = createSupabaseServerClient({
+        getAll: () => request.cookies.getAll(),
+        setAll: (cookiesToSet, headers) => {
+          cookiesToSet.forEach(({ name, value }) => {
+            request.cookies.set(name, value);
+          });
+          response = NextResponse.rewrite(url);
+          cookiesToSet.forEach(({ name, value, options }) => {
+            response.cookies.set(name, value, options);
+          });
+          Object.entries(headers).forEach(([key, value]) => {
+            response.headers.set(key, value);
+          });
+        },
+      });
+
+      if (supabase) {
+        await supabase.auth.getUser();
+      }
+
+      return withHostedSandboxSecurityHeaders(response);
+    }
+
+    return withHostedSandboxSecurityHeaders(NextResponse.rewrite(url));
   }
 
   if (pathname === "/commercial-admin" || pathname === "/commercial-admin/") {
-    return NextResponse.redirect(new URL("/admin", request.url));
+    return withHostedSandboxSecurityHeaders(NextResponse.redirect(new URL("/admin", request.url)));
   }
 
   if (!pathname.startsWith("/dashboard")) {
-    return NextResponse.next();
+    return withHostedSandboxSecurityHeaders(NextResponse.next());
   }
 
   if (isSupabaseConfigured()) {
@@ -52,20 +138,20 @@ export async function proxy(request: NextRequest) {
     if (!user) {
       const loginUrl = new URL("/login", resolveAppBaseUrl());
       loginUrl.searchParams.set("next", `${request.nextUrl.pathname}${request.nextUrl.search}`);
-      return NextResponse.redirect(loginUrl);
+      return withHostedSandboxSecurityHeaders(NextResponse.redirect(loginUrl));
     }
 
-    return response;
+    return withHostedSandboxSecurityHeaders(response);
   }
 
   const isLocalDev = hostname === "localhost" || hostname === "127.0.0.1";
   const isDemoActive = request.cookies.get("manu_ai_demo_session")?.value === "active";
 
   if (!isLocalDev && !isDemoActive) {
-    return NextResponse.redirect(new URL("/", resolveAppBaseUrl()));
+    return withHostedSandboxSecurityHeaders(NextResponse.redirect(new URL("/", resolveAppBaseUrl())));
   }
 
-  return NextResponse.next();
+  return withHostedSandboxSecurityHeaders(NextResponse.next());
 }
 
 export const config = {
@@ -73,6 +159,7 @@ export const config = {
     "/dashboard/:path*",
     "/admin/:path*",
     "/commercial-admin/:path*",
-    "/((?!api|_next|auth|favicon.ico|manifest.webmanifest|sw.js|icons).*)",
+    "/api/:path*",
+    "/((?!_next|auth|favicon.ico|manifest.webmanifest|sw.js|icons).*)",
   ],
 };

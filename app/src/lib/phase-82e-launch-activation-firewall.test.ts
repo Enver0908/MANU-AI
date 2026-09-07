@@ -33,7 +33,7 @@ describe("phase 82e launch activation firewall", () => {
     const report = buildPhase82BaselineLaunchActivationFirewallReport({
       now: NOW,
       egressAttempt: {
-        allowRealGeminiFlag: "true",
+        allowRealZaiFlag: "true",
         allowRealWhatsappFlag: "true",
         allowRealTelegramFlag: "true",
       },

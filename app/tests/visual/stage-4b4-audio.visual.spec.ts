@@ -17,11 +17,13 @@ for (const viewport of [
     await assertNoHorizontalOverflow(page);
   });
 
-  test(`voice simulator panel renders without overflow on ${viewport.name}`, async ({ page }) => {
+  test(`retired voice simulator surface is not reachable on ${viewport.name}`, async ({ page }) => {
     await page.setViewportSize({ width: viewport.width, height: viewport.height });
     await bootstrapDashboard(page);
     await page.goto("/dashboard?section=simulator");
-    await expect(page.getByTestId("voice-simulator-panel")).toBeVisible();
+    await expect(page).toHaveURL(/\/dashboard\/?$/);
+    await expect(page.getByTestId("voice-simulator-panel")).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: "Günlük iş girişi" })).toBeVisible();
     await assertNoHorizontalOverflow(page);
   });
 }

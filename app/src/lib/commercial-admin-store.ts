@@ -8,19 +8,28 @@ import {
 import { getSupabaseAdminClient } from "./supabase";
 import type {
   CommercialAdminAuditEventType,
+  CommercialAdminCustomerListItem,
   CommercialAdminInviteListItem,
   CommercialAdminLedgerListItem,
+  CommercialAdminManualEntitlementAction,
   CommercialAdminSubscriptionSummary,
 } from "./phase-83f-commercial-admin";
 import {
   buildCommercialAdminInviteRecord,
   deriveCommercialAdminEntitlementRevokePlan,
   deriveCommercialAdminInviteRevokePlan,
+  projectCommercialAdminCustomer,
   sanitizeBillingLedgerEntryForAdmin,
   sanitizeCommercialInviteForAdmin,
   validateCommercialAdminInviteCreate,
+  validateCommercialAdminInviteCustomerCommand,
+  validateCommercialAdminManualEntitlementRequest,
 } from "./phase-83f-commercial-admin";
 import { deriveStripeSubscriptionCancelPlan } from "./phase-84g-subscription-operations";
+import { buildAuthCallbackUrlWithNext } from "./phase-84d-customer-auth";
+import { buildAdminCustomerSetupPath } from "./phase-84f-admin-console";
+import { buildAccountRecoveryCallbackUrl } from "./phase-85-stage-4d-account-security";
+import { normalizeCommercialEmail } from "./phase-83b-commercial-entitlement-model";
 
 export type CommercialAdminAuditRow = {
   id: string;
@@ -29,6 +38,21 @@ export type CommercialAdminAuditRow = {
   target_invite_id: string | null;
   target_tenant_id: string | null;
   payload_summary: Record<string, unknown>;
+  created_at: string;
+};
+
+export type ManualEntitlementOperationRow = {
+  id: string;
+  request_id: string;
+  request_hash: string;
+  action: CommercialAdminManualEntitlementAction;
+  commercial_invite_id: string;
+  tenant_id: string;
+  payment_reference: string;
+  paid_through: string;
+  resulting_entitlement_status: string;
+  resulting_revision: number;
+  actor_summary: string;
   created_at: string;
 };
 
@@ -80,12 +104,433 @@ export async function insertCommercialAdminAuditEvent(
   }
 }
 
+export async function loadManualEntitlementOperationByRequestId(
+  admin: SupabaseClient,
+  requestId: string,
+) {
+  const { data, error } = await admin
+    .from("manual_entitlement_operations")
+    .select("*")
+    .eq("request_id", requestId)
+    .maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+
+  return data ? (data as ManualEntitlementOperationRow) : null;
+}
+
+export async function digestManualEntitlementRequest(input: {
+  action: CommercialAdminManualEntitlementAction;
+  inviteId: string;
+  paymentReference: string;
+  paidThrough: string;
+  requestId: string;
+  expectedRevision: number | null;
+}) {
+  const payload = JSON.stringify({
+    action: input.action,
+    inviteId: input.inviteId,
+    paymentReference: input.paymentReference,
+    paidThrough: input.paidThrough,
+    requestId: input.requestId,
+    expectedRevision: input.expectedRevision,
+  });
+  const hashBuffer = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(payload));
+  return Array.from(new Uint8Array(hashBuffer))
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+export type CommercialAdminSetupEmailAdapter = {
+  sendSetupEmail: (input: { email: string; inviteId: string; redirectTo: string }) => Promise<void>;
+  lookupAuthUserIdByEmail?: (email: string) => Promise<string | null>;
+  sendPasswordRecoveryEmail?: (input: { email: string; redirectTo: string }) => Promise<void>;
+};
+
+export const COMMERCIAL_ADMIN_AUTH_USER_PAGE_SIZE = 200;
+export const COMMERCIAL_ADMIN_AUTH_USER_MAX_PAGES = 50;
+
+export async function lookupCommercialAdminAuthUserIdByEmail(
+  admin: SupabaseClient,
+  email: string,
+) {
+  const normalized = normalizeCommercialEmail(email);
+  for (let page = 1; page <= COMMERCIAL_ADMIN_AUTH_USER_MAX_PAGES; page += 1) {
+    const { data, error } = await admin.auth.admin.listUsers({
+      page,
+      perPage: COMMERCIAL_ADMIN_AUTH_USER_PAGE_SIZE,
+    });
+    if (error) {
+      throw error;
+    }
+    const users = data.users ?? [];
+    const match = users.find((entry) => normalizeCommercialEmail(entry.email ?? "") === normalized);
+    if (match) {
+      return match.id;
+    }
+    if (users.length < COMMERCIAL_ADMIN_AUTH_USER_PAGE_SIZE) {
+      return null;
+    }
+  }
+  return null;
+}
+
+export function createDefaultCommercialAdminSetupEmailAdapter(
+  admin: SupabaseClient,
+): CommercialAdminSetupEmailAdapter {
+  return {
+    async sendSetupEmail(input) {
+      const { error } = await admin.auth.admin.inviteUserByEmail(input.email, {
+        redirectTo: input.redirectTo,
+        data: { commercial_invite_id: input.inviteId },
+      });
+      if (!error) {
+        return;
+      }
+      const message = error.message ?? "setup_email_failed";
+      if (!/already|registered|exists/i.test(message)) {
+        throw new Error(message);
+      }
+      const { error: otpError } = await admin.auth.signInWithOtp({
+        email: input.email,
+        options: {
+          emailRedirectTo: input.redirectTo,
+          shouldCreateUser: false,
+        },
+      });
+      if (otpError) {
+        throw new Error(otpError.message || "setup_email_failed");
+      }
+    },
+    async lookupAuthUserIdByEmail(email) {
+      return lookupCommercialAdminAuthUserIdByEmail(admin, email);
+    },
+    async sendPasswordRecoveryEmail(input) {
+      const { error } = await admin.auth.resetPasswordForEmail(input.email, {
+        redirectTo: input.redirectTo,
+      });
+      if (error) {
+        throw new Error(error.message || "password_recovery_failed");
+      }
+    },
+  };
+}
+
+async function lookupCommercialAdminCustomerMatch(admin: SupabaseClient, email: string) {
+  const normalizedEmail = normalizeCommercialEmail(email);
+  const [{ data: invites, error: inviteError }, { data: billingCustomers, error: billingError }] =
+    await Promise.all([
+      admin
+        .from("commercial_invites")
+        .select("id, status, tenant_id, tenant_seed_metadata, created_at, updated_at, tenants(name)")
+        .eq("normalized_email", normalizedEmail)
+        .order("created_at", { ascending: false }),
+      admin.from("billing_customers").select("tenant_id, normalized_email").eq("normalized_email", normalizedEmail),
+    ]);
+
+  if (inviteError) {
+    throw inviteError;
+  }
+  if (billingError) {
+    throw billingError;
+  }
+
+  const inviteRows = invites ?? [];
+  const tenantIds = [
+    ...new Set(
+      [
+        ...inviteRows.map((row) => row.tenant_id as string | null),
+        ...(billingCustomers ?? []).map((row) => row.tenant_id as string | null),
+      ].filter((value): value is string => Boolean(value)),
+    ),
+  ];
+
+  const entitlements =
+    tenantIds.length > 0
+      ? await admin
+          .from("tenant_entitlements")
+          .select("tenant_id, status, billing_method, paid_through, revision, commercial_invite_id")
+          .in("tenant_id", tenantIds)
+          .order("updated_at", { ascending: false })
+      : { data: [], error: null };
+
+  if (entitlements.error) {
+    throw entitlements.error;
+  }
+
+  const memberships =
+    tenantIds.length > 0
+      ? await admin
+          .from("tenant_memberships")
+          .select("tenant_id, role")
+          .in("tenant_id", tenantIds)
+          .eq("role", "owner")
+      : { data: [], error: null };
+
+  if (memberships.error) {
+    throw memberships.error;
+  }
+
+  const latestInviteRow = inviteRows.find((row) => row.status !== "revoked") ?? inviteRows[0] ?? null;
+  const latestEntitlement = (entitlements.data ?? [])[0] ?? null;
+  const openInvite = inviteRows.find((row) => row.status === "active") ?? null;
+
+  return {
+    normalizedEmail,
+    tenantIds,
+    openInvite: openInvite
+      ? {
+          id: openInvite.id as string,
+          status: openInvite.status as "active" | "revoked" | "consumed",
+          tenantId: (openInvite.tenant_id as string | null) ?? null,
+        }
+      : latestInviteRow && latestInviteRow.status !== "revoked"
+        ? {
+            id: latestInviteRow.id as string,
+            status: latestInviteRow.status as "active" | "revoked" | "consumed",
+            tenantId: (latestInviteRow.tenant_id as string | null) ?? null,
+          }
+        : null,
+    latestInvite: latestInviteRow
+      ? {
+          id: latestInviteRow.id as string,
+          status: latestInviteRow.status as "active" | "revoked" | "consumed",
+          tenantId: (latestInviteRow.tenant_id as string | null) ?? null,
+          tenantName:
+            (latestInviteRow.tenants as { name?: string } | null)?.name ??
+            ((latestInviteRow.tenant_seed_metadata as Record<string, unknown> | null)?.tenantName as
+              | string
+              | undefined) ??
+            null,
+          createdAt: latestInviteRow.created_at as string,
+          updatedAt: latestInviteRow.updated_at as string,
+          paidThrough:
+            ((latestInviteRow.tenant_seed_metadata as Record<string, unknown> | null)?.paidThrough as
+              | string
+              | undefined) ?? null,
+        }
+      : null,
+    latestEntitlement: latestEntitlement
+      ? {
+          tenantId: latestEntitlement.tenant_id as string,
+          status: latestEntitlement.status,
+          billingMethod: latestEntitlement.billing_method,
+          paidThrough: latestEntitlement.paid_through ?? null,
+          revision: latestEntitlement.revision ?? 0,
+          inviteId: latestEntitlement.commercial_invite_id ?? null,
+        }
+      : null,
+    hasOwnerMembership: (memberships.data ?? []).length > 0,
+  };
+}
+
+type CommercialAdminCustomerProjectionRow = {
+  normalizedEmail?: string;
+  tenantIds?: string[] | null;
+  latestInvite?: {
+    id?: string;
+    status?: string;
+    tenantId?: string | null;
+    tenantName?: string | null;
+    tenantSeedMetadata?: Record<string, unknown>;
+    createdAt?: string;
+    updatedAt?: string;
+  } | null;
+  latestEntitlement?: {
+    tenantId?: string;
+    status?: string;
+    billingMethod?: string;
+    paidThrough?: string | null;
+    revision?: number;
+    inviteId?: string | null;
+  } | null;
+  hasOwnerMembership?: boolean;
+};
+
+export async function listCommercialAdminCustomers(
+  admin: SupabaseClient,
+  input?: { email?: string | null; limit?: number; now?: string },
+) {
+  const limit = Math.min(Math.max(input?.limit ?? 50, 1), 200);
+  const emailFilter = input?.email?.trim() ? normalizeCommercialEmail(input.email) : "";
+  const { data, error } = await admin.rpc("commercial_admin_list_customers_v1", {
+    p_email_filter: emailFilter || null,
+    p_limit: limit,
+  });
+  if (error) {
+    throw error;
+  }
+
+  const rows = Array.isArray(data) ? (data as CommercialAdminCustomerProjectionRow[]) : [];
+  return rows.map((row) =>
+    projectCommercialAdminCustomer({
+      normalizedEmail: String(row.normalizedEmail ?? ""),
+      tenantIds: (row.tenantIds ?? []).filter((value): value is string => Boolean(value)),
+      latestInvite: row.latestInvite?.id
+        ? {
+            id: String(row.latestInvite.id),
+            status: (row.latestInvite.status ?? "active") as NonNullable<
+              CommercialAdminCustomerListItem["inviteStatus"]
+            >,
+            tenantId: row.latestInvite.tenantId ?? null,
+            tenantName: row.latestInvite.tenantName ?? null,
+            createdAt: String(row.latestInvite.createdAt ?? ""),
+            updatedAt: String(row.latestInvite.updatedAt ?? ""),
+          }
+        : null,
+      latestEntitlement: row.latestEntitlement?.tenantId
+        ? {
+            tenantId: String(row.latestEntitlement.tenantId),
+            status: row.latestEntitlement.status as NonNullable<
+              CommercialAdminCustomerListItem["entitlementStatus"]
+            >,
+            billingMethod: row.latestEntitlement.billingMethod as NonNullable<
+              CommercialAdminCustomerListItem["billingMethod"]
+            >,
+            paidThrough: row.latestEntitlement.paidThrough ?? null,
+            revision: row.latestEntitlement.revision ?? 0,
+            inviteId: row.latestEntitlement.inviteId ?? null,
+          }
+        : null,
+      hasOwnerMembership: row.hasOwnerMembership === true,
+      now: input?.now,
+    }),
+  );
+}
+
+export async function inviteCommercialAdminCustomer(
+  admin: SupabaseClient,
+  input: {
+    email: string;
+    tenantName?: string | null;
+    paidThrough?: string | null;
+    expiresAt?: string | null;
+    actorSummary?: string;
+    now?: string;
+    setupEmail?: CommercialAdminSetupEmailAdapter;
+  },
+) {
+  const validation = validateCommercialAdminInviteCustomerCommand(input, { now: input.now });
+  if (!validation.valid || !validation.paidThrough) {
+    throw new Error(validation.blockingReasons[0] ?? "invalid_invite_customer_command");
+  }
+
+  const setupEmail = input.setupEmail ?? createDefaultCommercialAdminSetupEmailAdapter(admin);
+  const authUserId = setupEmail.lookupAuthUserIdByEmail
+    ? await setupEmail.lookupAuthUserIdByEmail(validation.normalizedEmail)
+    : await lookupCommercialAdminAuthUserIdByEmail(admin, validation.normalizedEmail);
+
+  const { data, error } = await admin.rpc("commercial_admin_invite_customer_v1", {
+    p_normalized_email: validation.normalizedEmail,
+    p_tenant_name: validation.tenantName ?? null,
+    p_paid_through: validation.paidThrough,
+    p_expires_at: validation.expiresAt ?? null,
+    p_actor_summary: input.actorSummary ?? "commercial_admin",
+    p_auth_user_id: authUserId,
+  });
+  if (error) {
+    const message = error.message ?? "invite_customer_failed";
+    if (message.includes("ambiguous_tenant_match")) {
+      throw new Error("ambiguous_tenant_match");
+    }
+    throw new Error(message);
+  }
+
+  const result = (data ?? {}) as {
+    status?: string;
+    created?: boolean;
+    resent?: boolean;
+    inviteId?: string | null;
+    email?: string;
+    paidThrough?: string;
+    blockingReason?: string | null;
+  };
+
+  if (result.status === "blocked" || !result.inviteId) {
+    throw new Error(result.blockingReason ?? "duplicate_customer_match");
+  }
+
+  const inviteId = result.inviteId;
+  const created = result.created === true;
+  const redirectTo = buildAuthCallbackUrlWithNext(buildAdminCustomerSetupPath(inviteId));
+
+  try {
+    await setupEmail.sendSetupEmail({
+      email: validation.normalizedEmail,
+      inviteId,
+      redirectTo,
+    });
+  } catch (sendError) {
+    const message = sendError instanceof Error ? sendError.message : "setup_email_failed";
+    throw new Error(message === "setup_email_failed" ? message : "setup_email_failed");
+  }
+
+  return {
+    created,
+    resent: !created,
+    inviteId,
+    email: validation.normalizedEmail,
+    paidThrough: validation.paidThrough,
+  };
+}
+
+export async function requestCommercialAdminPasswordRecovery(
+  admin: SupabaseClient,
+  input: {
+    email: string;
+    actorSummary?: string;
+    now?: string;
+    setupEmail?: CommercialAdminSetupEmailAdapter;
+  },
+) {
+  const normalizedEmail = normalizeCommercialEmail(input.email);
+  const emailValidation = validateCommercialAdminInviteCreate({ email: normalizedEmail });
+  if (!emailValidation.valid) {
+    throw new Error(emailValidation.blockingReasons[0] ?? "email_invalid");
+  }
+
+  const match = await lookupCommercialAdminCustomerMatch(admin, normalizedEmail);
+  if (match.tenantIds.length > 1) {
+    throw new Error("ambiguous_tenant_match");
+  }
+
+  const setupEmail = input.setupEmail ?? createDefaultCommercialAdminSetupEmailAdapter(admin);
+  if (!setupEmail.sendPasswordRecoveryEmail) {
+    throw new Error("password_recovery_unavailable");
+  }
+
+  await setupEmail.sendPasswordRecoveryEmail({
+    email: normalizedEmail,
+    redirectTo: buildAccountRecoveryCallbackUrl(),
+  });
+
+  await insertCommercialAdminAuditEvent(admin, {
+    eventType: "password_recovery_requested",
+    actorSummary: input.actorSummary,
+    targetInviteId: match.latestInvite?.id ?? null,
+    targetTenantId: match.latestEntitlement?.tenantId ?? match.tenantIds[0] ?? null,
+    payloadSummary: {
+      normalizedEmail,
+      copiedClientData: false,
+    },
+    now: input.now,
+  });
+
+  return {
+    accepted: true,
+    email: normalizedEmail,
+  };
+}
+
 export async function createCommercialAdminInvite(
   admin: SupabaseClient,
   input: {
     email: string;
     inviteToken?: string;
     tenantName?: string;
+    paidThrough?: string | null;
     expiresAt?: string | null;
     actorSummary?: string;
     now?: string;
@@ -218,6 +663,7 @@ export async function revokeCommercialAdminEntitlement(
   admin: SupabaseClient,
   input: {
     tenantId: string;
+    expectedRevision: number;
     actorSummary?: string;
     now?: string;
   },
@@ -237,6 +683,7 @@ export async function revokeCommercialAdminEntitlement(
     commercialInviteId: entitlement?.commercialInviteId ?? null,
     fromStatus: entitlement?.status ?? null,
     toStatus: "revoked",
+    expectedRevision: input.expectedRevision,
     now,
   });
 
@@ -254,6 +701,67 @@ export async function revokeCommercialAdminEntitlement(
   return {
     tenantId: input.tenantId,
     previousStatus: entitlement?.status ?? null,
+  };
+}
+
+export async function applyCommercialAdminManualEntitlement(
+  admin: SupabaseClient,
+  input: {
+    action: CommercialAdminManualEntitlementAction;
+    inviteId: string;
+    paymentReference: string;
+    paidThrough: string;
+    requestId: string;
+    expectedRevision?: number | null;
+    actorSummary?: string;
+    now?: string;
+  },
+) {
+  const now = input.now ?? new Date().toISOString();
+  const validation = validateCommercialAdminManualEntitlementRequest(input, { now });
+  if (
+    !validation.valid ||
+    !validation.action ||
+    !validation.inviteId ||
+    !validation.paymentReference ||
+    !validation.paidThrough ||
+    !validation.requestId
+  ) {
+    throw new Error(validation.blockingReasons[0] ?? "manual_entitlement_validation_failed");
+  }
+
+  const requestHash = await digestManualEntitlementRequest({
+    action: validation.action,
+    inviteId: validation.inviteId,
+    paymentReference: validation.paymentReference,
+    paidThrough: validation.paidThrough,
+    requestId: validation.requestId,
+    expectedRevision: validation.expectedRevision,
+  });
+  const { data, error } = await admin.rpc("apply_manual_entitlement_operation", {
+    p_action: validation.action,
+    p_invite_id: validation.inviteId,
+    p_payment_reference: validation.paymentReference,
+    p_paid_through: validation.paidThrough,
+    p_request_id: validation.requestId,
+    p_request_hash: requestHash,
+    p_expected_revision: validation.expectedRevision,
+    p_actor_summary: input.actorSummary ?? "commercial_admin",
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  const result = (data ?? {}) as Record<string, unknown>;
+  return {
+    applied: result.applied === true,
+    idempotent: result.idempotent === true,
+    tenantId: String(result.tenantId ?? ""),
+    inviteId: String(result.inviteId ?? validation.inviteId),
+    entitlementStatus: String(result.entitlementStatus ?? "active"),
+    paidThrough: String(result.paidThrough ?? validation.paidThrough),
+    revision: Number(result.revision ?? 0),
   };
 }
 
@@ -406,7 +914,7 @@ export async function listCommercialAdminSubscriptionSummaries(admin: SupabaseCl
   const { data: entitlements, error: entitlementError } = await admin
     .from("tenant_entitlements")
     .select(
-      "tenant_id, status, commercial_invite_id, stripe_customer_id, stripe_subscription_id, status_changed_at",
+      "tenant_id, status, commercial_invite_id, billing_method, paid_through, revision, stripe_customer_id, stripe_subscription_id, status_changed_at",
     )
     .order("updated_at", { ascending: false });
 
@@ -466,6 +974,9 @@ export async function listCommercialAdminSubscriptionSummaries(admin: SupabaseCl
       inviteId: row.commercial_invite_id,
       inviteStatus: invite?.status ?? null,
       entitlementStatus: row.status,
+      billingMethod: row.billing_method ?? "stripe",
+      paidThrough: row.paid_through ?? null,
+      revision: row.revision ?? 0,
       stripeCustomerId: row.stripe_customer_id,
       stripeSubscriptionId: row.stripe_subscription_id,
       statusChangedAt: row.status_changed_at,

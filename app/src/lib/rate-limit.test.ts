@@ -70,4 +70,25 @@ describe("rate-limit", () => {
       }),
     ).rejects.toThrow(new AppDomainError(429, "rate_limit_exceeded"));
   });
+
+  it("uses durable global RPC buckets for auth scopes without tenant context", async () => {
+    const calls: Array<{ name: string; args: Record<string, unknown> }> = [];
+    setRateLimitRpcClientForTests({
+      rpc: async (name, args) => {
+        calls.push({ name, args });
+        return { data: { allowed: true }, error: null };
+      },
+    });
+
+    await assertRateLimit({
+      key: "anonymous:user@example.com",
+      scope: "auth_password_reset",
+      limit: 2,
+      windowMs: 60_000,
+    });
+
+    expect(calls[0].name).toBe("consume_global_rate_limit");
+    expect(calls[0].args.p_key_hash).not.toBe("anonymous:user@example.com");
+    expect(String(calls[0].args.p_key_hash)).toHaveLength(64);
+  });
 });

@@ -1,36 +1,51 @@
-import { NextResponse } from "next/server";
 import {
   assertClientExistsInState,
   getFallbackState,
   releaseHumanTakeoverInState,
   saveFallbackState,
 } from "@/lib/app-state-store";
-import { domainErrorResponse } from "@/lib/app-errors";
-import { authErrorResponse, requireCapability, resolveAppTenantContext } from "@/lib/auth-context";
-import { isSupabaseStoreConfigured, releaseSupabaseHumanTakeover } from "@/lib/supabase-store";
+import { requireCapability, resolveAppTenantContext } from "@/lib/auth-context";
+import {
+  isSupabaseStoreConfigured,
+  releaseSupabaseHumanTakeover,
+  runSupabaseStage6IdempotentMutation,
+} from "@/lib/supabase-store";
+import {
+  idempotencyLookup,
+  idempotencyRemember,
+  parseReleaseTakeoverEnvelope,
+  Stage6ContractError,
+} from "@/lib/phase-85-stage-6-dashboard-contracts";
+import { projectAiControl } from "@/lib/phase-85-stage-6-client-workspace";
+import { stage6ErrorResponse, stage6JsonResponse } from "@/lib/phase-85-stage-6-api";
 
-export async function POST(_request: Request, context: { params: Promise<{ id: string }> }) {
-  const { id } = await context.params;
+export async function POST(request: Request, context: { params: Promise<{ id: string }> }) {
+  try {
+    const { id } = await context.params;
+    const envelope = parseReleaseTakeoverEnvelope(await request.json().catch(() => ({})));
 
-  if (isSupabaseStoreConfigured()) {
-    try {
+    if (isSupabaseStoreConfigured()) {
       const tenantContext = await resolveAppTenantContext();
       requireCapability(tenantContext, "release_takeover");
-      return NextResponse.json(await releaseSupabaseHumanTakeover(id, tenantContext));
-    } catch (error) {
-      try {
-        return authErrorResponse(error);
-      } catch (authError) {
-        return domainErrorResponse(authError);
+      if (!envelope.requestId) {
+        throw new Stage6ContractError(400, "request_id_required");
       }
+      return stage6JsonResponse(
+        await runSupabaseStage6IdempotentMutation(tenantContext, envelope.requestId, "client_release_takeover", () =>
+          releaseSupabaseHumanTakeover(id, tenantContext, envelope.requestId),
+        ),
+      );
     }
-  }
 
-  try {
+    const cached = idempotencyLookup("fallback", envelope.requestId);
+    if (cached) return stage6JsonResponse(cached);
     const state = getFallbackState();
     assertClientExistsInState(state, id);
-    return NextResponse.json(saveFallbackState(releaseHumanTakeoverInState(state, id)));
+    const next = saveFallbackState(releaseHumanTakeoverInState(state, id));
+    const result = projectAiControl(next, id, "client_release_takeover", envelope.requestId);
+    idempotencyRemember("fallback", envelope.requestId, result);
+    return stage6JsonResponse(result);
   } catch (error) {
-    return domainErrorResponse(error);
+    return stage6ErrorResponse(error);
   }
 }

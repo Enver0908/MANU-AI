@@ -2,15 +2,6 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  CreditCard,
-  LogOut,
-  RefreshCcw,
-  ShieldCheck,
-  Smartphone,
-  UserRound,
-} from "lucide-react";
-import { getSupabaseStatus } from "@/lib/supabase";
 import type {
   Channel,
   ClientContextUpdateImportance,
@@ -25,7 +16,6 @@ import { useStage4B2Messaging } from "@/lib/use-stage-4b2-messaging";
 import { AppRequestError } from "@/lib/app-errors";
 import { createAiChatConversation, generateAiChatRequestId } from "@/lib/use-ai-chat";
 import type { ClinicalAlertListItem, SystemNotificationListItem } from "@/lib/phase-85-stage-4b-contracts";
-import type { OperationalFoundationInspectionDto } from "@/lib/phase-85-if-h-operational-visibility";
 import {
   getClientFoodRuleProfileV2Record,
   getClientFoodRuleProfileV2State,
@@ -38,53 +28,56 @@ import {
   type ClientMenuPlanV1State,
 } from "@/lib/phase-77f-client-menu-plan";
 import { getActiveFormSchema } from "@/lib/client-forms";
-import { useManuState } from "@/lib/use-manu-state";
+import { useAiyaState } from "@/lib/use-aiya-state";
 import { type SupportedLanguageCode } from "@/lib/languages";
 import { t } from "@/lib/i18n";
-import {
-  describeInstallState,
-  describeSubscriptionStatus,
-} from "@/lib/phase-83e3-app-shell";
 import type { CommercialEntitlementStatus } from "@/lib/phase-83b-commercial-entitlement-model";
 import {
-  SelectInput,
-  StatusPill,
   fromDateTimeLocal,
-  languageOptions,
   parseAnswerLines,
   parseSchemaFields,
-  scenarioMessages,
-  type ClientDetailTab,
 } from "@/components/dashboard/shared";
 import { DASHBOARD_MAIN_ID } from "@/lib/phase-83e6-states-polish";
-import type { DashboardSection } from "@/lib/phase-85-stage-4b-dashboard-routing";
 import {
-  resolveLegacyCopilotSectionRedirect,
+  buildDashboardHref,
+  commitDashboardHref,
+  currentDashboardHref,
+  dashboardSectionToShellDestination,
+  mergeDashboardUrlState,
+  parseClientWorkspaceTask,
+  resolveRetiredDashboardSectionRedirect,
   resolveMessagingRouteSelection,
+  resolveStage6CommunicationDestination,
+  type ClientWorkspaceTask,
+  type DashboardSection,
+  type Stage6CommunicationDestinationInput,
 } from "@/lib/phase-85-stage-4b-dashboard-routing";
 import {
-  buildClinicalAlertMessagingNavigationPatch,
-  buildSystemNotificationNavigationAction,
+  buildStage6ClientWorkspaceHref,
+  formatStage6ClientReferenceShort,
+  runStage6ClientActivation,
+  runStage6CommunicationOpen,
+} from "@/lib/phase-85-stage-6-client-selection";
+import {
   refreshStage4B2OperationalSurfaces,
   resolveMessagingTargetValidity,
 } from "@/lib/phase-85-stage-4b2-messaging-integration";
-import { DashboardHeaderBell } from "@/components/dashboard/dashboard-navigation";
-import { DashboardShell } from "@/components/dashboard/dashboard-shell";
+import { useShellProvider } from "@/components/dashboard/shell-provider";
 import { AlertsPanel } from "@/components/dashboard/alerts-panel";
 import { NotificationsPanel } from "@/components/dashboard/notifications-panel";
 import { OverviewPanel } from "@/components/dashboard/overview-panel";
-import { ClientsPanel } from "@/components/dashboard/clients-panel";
+import { ShellHomeLauncher } from "@/components/dashboard/shell-home-launcher";
+import { ClientWorkspace } from "@/components/dashboard/client-workspace";
 import { ConversationPanel } from "@/components/dashboard/conversation-panel";
 import { MessagingPanel } from "@/components/dashboard/messaging-panel";
-import { SimulatorPanel } from "@/components/dashboard/simulator-panel";
 import { VoicePanel } from "@/components/dashboard/voice-panel";
 import { FormsPanel } from "@/components/dashboard/forms-panel";
 import { useMobileKeyboardScroll } from "@/components/dashboard/mobile-ergonomics";
-import { DashboardLoadingSkeleton, ErrorState } from "@/components/dashboard/state-primitives";
+import { DashboardLoadingSkeleton, EmptyState, ErrorState } from "@/components/dashboard/state-primitives";
+import { resolveEffectiveShellActiveClientId } from "@/lib/phase-85-stage-5-shell-contracts";
 
 export function DashboardApp({
   authInfo,
-  commercialInfo,
   aiChatEnabled = false,
 }: {
   authInfo?: { displayName: string; role: string };
@@ -95,20 +88,19 @@ export function DashboardApp({
     state,
     hydrated,
     authError,
+    hydrateError,
+    hydrateRequestId,
+    retryHydrate,
     createClient,
     updateClient,
     removeClient,
     releaseHumanTakeover,
     activateClientAi,
-    runSimulation: runSimulationRequest,
-    runVisualSimulation: runVisualSimulationRequest,
-    runVoiceSimulation: runVoiceSimulationRequest,
     sendManualReply: sendManualReplyRequest,
     approveDraft,
     editAndSendDraft,
     dismissDraft,
     reviewSendManualFromDraft,
-    resetState,
     addVoiceSamples,
     updateVoiceSampleStatus,
     generateVoiceProfile,
@@ -119,38 +111,29 @@ export function DashboardApp({
     createMenuPlan,
     saveMenuPlan,
     activateMenuPlan,
-    updateDietitianPreferences,
     addClientContextUpdate,
     mergeConversationDetailIntoState,
     mergeConversationMutationIntoState,
-  } = useManuState();
+  } = useAiyaState();
   const router = useRouter();
-  const { urlState, section, navigateDashboard, openSection } = useDashboardUrl();
+  const {
+    setHeaderSlots,
+    bootstrap,
+    effectiveActiveClientId,
+    saveDestinationViewState,
+    restoreDestinationViewState,
+    selectActiveClient,
+    canNavigateAway,
+    requestHrefNavigation,
+    navigateToDestination,
+    dirtySnapshot,
+  } = useShellProvider();
+  const { urlState, section, navigateDashboard } = useDashboardUrl();
   const stage4bInbox = useStage4BInbox(urlState);
-  const [operationalFoundation, setOperationalFoundation] =
-    useState<OperationalFoundationInspectionDto | null>(null);
-  const [clientDetailTab, setClientDetailTab] = useState<ClientDetailTab>("tab_overview");
   const [search, setSearch] = useState("");
   const [manualReply, setManualReply] = useState("");
-  const [simBody, setSimBody] = useState(scenarioMessages[0].body);
-  const [simKey, setSimKey] = useState("local-1");
-  const [visualKey, setVisualKey] = useState("vis-local-1");
-  const [visualCaption, setVisualCaption] = useState("");
-  const [visualBurst, setVisualBurst] = useState("Bu öğünü yedim\nTeşekkürler");
-  const [visualFixtureSceneId, setVisualFixtureSceneId] =
-    useState<import("@/lib/phase-85-stage-4b3-vision-fixture-manifest").Stage4B3VisionFixtureSceneId>("meal_plate");
-  const [visualImageFile, setVisualImageFile] = useState<File | null>(null);
-  const [visualFlushSilence, setVisualFlushSilence] = useState(true);
-  const [voiceKey, setVoiceKey] = useState("voice-local-1");
-  const [voiceBurst, setVoiceBurst] = useState("Bu öğünü yedim\nTeşekkürler");
-  const [voiceFixtureId, setVoiceFixtureId] =
-    useState<import("@/lib/phase-85-stage-4b4-audio-fixture-resolver").Stage4B4VoiceFixtureId>("golden_voice_note");
-  const [voiceTranscriptionSceneId, setVoiceTranscriptionSceneId] =
-    useState<import("@/lib/phase-85-stage-4b4-transcription-fixture-manifest").Stage4B4TranscriptionFixtureSceneId>("meal_update_tr");
-  const [voiceFlushSilence, setVoiceFlushSilence] = useState(true);
-  const [isSimulating, setIsSimulating] = useState(false);
-  const [isVisualSimulating, setIsVisualSimulating] = useState(false);
-  const [isVoiceSimulating, setIsVoiceSimulating] = useState(false);
+  const [isSendingManualReply, setIsSendingManualReply] = useState(false);
+  const [messagingListScrollTop, setMessagingListScrollTop] = useState<number | null>(null);
   const [newClientName, setNewClientName] = useState("");
   const [newClientChannel, setNewClientChannel] = useState<Channel>("whatsapp");
   const [newClientHandle, setNewClientHandle] = useState("");
@@ -239,8 +222,8 @@ export function DashboardApp({
   };
 
   useEffect(() => {
-    const legacyRedirect = resolveLegacyCopilotSectionRedirect(section);
-    if (legacyRedirect) router.replace(legacyRedirect);
+    const retiredRedirect = resolveRetiredDashboardSectionRedirect(section);
+    if (retiredRedirect) router.replace(retiredRedirect);
   }, [router, section]);
 
   useEffect(() => {
@@ -267,14 +250,23 @@ export function DashboardApp({
     if (section === "messages" && messagingRoute.clientId) {
       return messagingRoute.clientId;
     }
-    if (urlState.clientId && activeClients.some((client) => client.id === urlState.clientId)) {
-      return urlState.clientId;
+    const candidate = resolveEffectiveShellActiveClientId({
+      urlClientId: urlState.clientId,
+      preferenceClientId: bootstrap?.preferences.activeClientId ?? effectiveActiveClientId,
+    });
+    if (candidate && activeClients.some((client) => client.id === candidate)) {
+      return candidate;
     }
-    if (section === "clients" || section === "simulator" || section === "forms") {
-      return activeClients[0]?.id ?? null;
-    }
+    // Never auto-select the first listed client when context is missing/invalid.
     return null;
-  }, [activeClients, messagingRoute.clientId, section, urlState.clientId]);
+  }, [
+    activeClients,
+    bootstrap?.preferences.activeClientId,
+    effectiveActiveClientId,
+    messagingRoute.clientId,
+    section,
+    urlState.clientId,
+  ]);
 
   const selectedClient = useMemo(() => {
     if (!resolvedClientId) return undefined;
@@ -293,49 +285,129 @@ export function DashboardApp({
     );
   }, [activeClients, search]);
 
-  const selectedContextUpdates = useMemo(() => {
-    if (!selectedClient) return [];
-    return state.clientContextUpdates
-      .filter((update) => update.clientId === selectedClient.id)
-      .sort((a, b) => new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime());
-  }, [selectedClient, state.clientContextUpdates]);
+  const workspaceUrlState = urlState;
 
-  const metrics = useMemo(() => {
-    const pendingDrafts = state.messages.filter((message) => message.status === "draft").length;
-    const urgentHandoffs = state.handoffCases.filter((handoff) => handoff.status === "open").length;
-    const aiSent = state.messages.filter((message) => message.origin === "ai_generated" && message.status === "sent").length;
-    const passive = activeClients.filter((client) => client.aiStatus === "passive").length;
-    return { pendingDrafts, urgentHandoffs, aiSent, passive };
-  }, [activeClients, state]);
+  const workspaceClient = useMemo(() => {
+    if (section !== "clients" || !workspaceUrlState.clientId) return null;
+    return activeClients.find((client) => client.id === workspaceUrlState.clientId) ?? null;
+  }, [activeClients, section, workspaceUrlState.clientId]);
+
+  const selectedContextUpdates = useMemo(() => {
+    const client = workspaceClient ?? selectedClient;
+    if (!client) return [];
+    return state.clientContextUpdates
+      .filter((update) => update.clientId === client.id)
+      .sort((a, b) => new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime());
+  }, [selectedClient, state.clientContextUpdates, workspaceClient]);
 
   const mainContentRef = useRef<HTMLDivElement>(null);
   useMobileKeyboardScroll(mainContentRef);
+  const previousSectionRef = useRef(section);
+
+  useEffect(() => {
+    const previous = previousSectionRef.current;
+    if (previous !== section) {
+      const previousDestination = dashboardSectionToShellDestination(previous);
+      if (previous === "clients") {
+        saveDestinationViewState(previousDestination, {
+          search,
+          tab: urlState.clientTask ?? "summary",
+          windowScrollY: window.scrollY,
+        });
+      }
+      if (previous === "messages") {
+        const list = document.querySelector("[data-testid='messaging-list-scroll']");
+        saveDestinationViewState(previousDestination, {
+          search: urlState.conversationQuery,
+          filter: urlState.conversationStatus,
+          scrollTop: list instanceof HTMLElement ? list.scrollTop : messagingListScrollTop ?? undefined,
+        });
+      }
+      const nextDestination = dashboardSectionToShellDestination(section);
+      const snapshot = restoreDestinationViewState(nextDestination);
+      if (section === "clients" && snapshot) {
+        if (typeof snapshot.search === "string") setSearch(snapshot.search);
+        const restoredTask = parseClientWorkspaceTask(typeof snapshot.tab === "string" ? snapshot.tab : null);
+        if (restoredTask && !urlState.clientTask) {
+          navigateDashboard({ clientTask: restoredTask }, { replace: true });
+        }
+        const windowScrollY =
+          typeof snapshot.windowScrollY === "number" ? snapshot.windowScrollY : snapshot.scrollTop;
+        if (typeof windowScrollY === "number") {
+          requestAnimationFrame(() => {
+            window.scrollTo({ top: windowScrollY, behavior: "auto" });
+          });
+        }
+      }
+      if (section === "messages" && snapshot && typeof snapshot.scrollTop === "number") {
+        setMessagingListScrollTop(snapshot.scrollTop);
+      }
+      previousSectionRef.current = section;
+    }
+  }, [
+    restoreDestinationViewState,
+    saveDestinationViewState,
+    search,
+    section,
+    urlState.clientTask,
+    urlState.conversationQuery,
+    urlState.conversationStatus,
+    messagingListScrollTop,
+    navigateDashboard,
+  ]);
+  useEffect(() => {
+    return () => {
+      if (section === "clients") {
+        saveDestinationViewState("clients", {
+          search,
+          tab: urlState.clientTask ?? "summary",
+          windowScrollY: window.scrollY,
+        });
+      }
+      if (section === "messages") {
+        const list = document.querySelector("[data-testid='messaging-list-scroll']");
+        saveDestinationViewState("messages", {
+          search: urlState.conversationQuery,
+          filter: urlState.conversationStatus,
+          scrollTop: list instanceof HTMLElement ? list.scrollTop : messagingListScrollTop ?? undefined,
+        });
+      }
+    };
+  }, [saveDestinationViewState, search, section, urlState.clientTask, urlState.conversationQuery, urlState.conversationStatus, messagingListScrollTop]);
 
   const uiLanguage = state.dietitian.uiLanguage || "tr";
   const canManageAiControls =
     !authInfo || (authInfo.role !== "assistant" && authInfo.role !== "auditor");
-  const showOperationalInspection = authInfo?.role === "owner" || authInfo?.role === "admin";
 
   useEffect(() => {
-    if (!showOperationalInspection) return;
-
-    let cancelled = false;
-    fetch("/api/operational-foundation")
-      .then((response) => (response.ok ? response.json() : null))
-      .then((payload: OperationalFoundationInspectionDto | null) => {
-        if (!cancelled) setOperationalFoundation(payload);
-      })
-      .catch(() => {
-        if (!cancelled) setOperationalFoundation(null);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [showOperationalInspection, state.channelDeliveries.length, state.handoffCases.length]);
+    setHeaderSlots({
+      actions: !canManageAiControls ? (
+        <span
+          className="inline-flex items-center rounded-lg border border-stone-200 bg-stone-50 px-3 py-2 text-sm font-medium text-stone-700"
+          data-testid="dashboard-read-only-role-label"
+          role="status"
+        >
+          {t(uiLanguage, "shellReadOnlyAssistantAuditor")}
+        </span>
+      ) : undefined,
+    });
+    return () => setHeaderSlots({});
+  }, [canManageAiControls, setHeaderSlots, uiLanguage]);
 
   if (!hydrated) {
     return <DashboardLoadingSkeleton />;
+  }
+
+  if (hydrateError) {
+    return (
+      <ErrorState
+        title="Panel verisi yüklenemedi"
+        message="Sunucudan uygulama durumu alınamadı. Demo veriye geçilmedi; oturumu yenileyin veya tekrar deneyin."
+        detail={`Hata: ${hydrateError}${hydrateRequestId ? ` (requestId: ${hydrateRequestId})` : ""}`}
+        onAction={() => void retryHydrate()}
+        actionLabel="Tekrar dene"
+      />
+    );
   }
 
   if (authError) {
@@ -349,24 +421,106 @@ export function DashboardApp({
   }
 
   const updateSelectedClient = async (patch: Partial<ClientRecord>) => {
-    if (!selectedClient) return;
-    await updateClient(selectedClient.id, patch);
+    const client = workspaceClient ?? selectedClient;
+    if (!client) return;
+    await updateClient(client.id, patch);
   };
 
-  const selectClient = (clientId: string, patch: { section?: DashboardSection; clientDetailTab?: ClientDetailTab } = {}) => {
-    navigateDashboard({
-      section: patch.section ?? section,
-      clientId,
-    });
-    if (patch.clientDetailTab) {
-      setClientDetailTab(patch.clientDetailTab);
-    } else if ((patch.section ?? section) === "clients") {
-      setClientDetailTab("tab_overview");
+  const selectClient = async (
+    clientId: string,
+    patch: { section?: DashboardSection; clientTask?: ClientWorkspaceTask } = {},
+  ) => {
+    const client = activeClients.find((item) => item.id === clientId);
+    if (!client) return;
+    const previousHref = `${window.location.pathname}${window.location.search}`;
+    const nextTask = patch.clientTask ?? "summary";
+    const targetSection = patch.section ?? "clients";
+    const targetHref =
+      targetSection === "clients"
+        ? buildStage6ClientWorkspaceHref(urlState, { clientId, clientTask: nextTask })
+        : buildDashboardHref(
+            "/dashboard",
+            mergeDashboardUrlState(urlState, {
+              section: targetSection,
+              clientId,
+              clientTask: null,
+            }),
+          );
+    const outcome = await runStage6ClientActivation(
+      {
+        requestedClientId: clientId,
+        previousHref,
+        isSaving: dirtySnapshot.isSaving,
+      },
+      () =>
+        selectActiveClient(
+          {
+            id: client.id,
+            fullName: client.fullName,
+            referenceShort: formatStage6ClientReferenceShort(client.id),
+          },
+          { afterHref: targetHref },
+        ),
+      () => targetHref,
+    );
+    if (outcome.kind !== "activated") return;
+  };
+
+  const openCommunicationDestination = async (input: Stage6CommunicationDestinationInput) => {
+    const knownClientIds = new Set(activeClients.map((item) => item.id));
+    const destination = resolveStage6CommunicationDestination(urlState, input, { knownClientIds });
+    const previousHref = currentDashboardHref();
+    const persistClient =
+      destination.requiresActiveClient && destination.linkedClientId
+        ? activeClients.find((item) => item.id === destination.linkedClientId)
+        : undefined;
+    const outcome = await runStage6CommunicationOpen(
+      {
+        destination,
+        previousHref,
+        isSaving: dirtySnapshot.isSaving,
+        currentActiveClientId: effectiveActiveClientId,
+      },
+      async () => {
+        if (!persistClient) return false;
+        return selectActiveClient(
+          {
+            id: persistClient.id,
+            fullName: persistClient.fullName,
+            referenceShort: formatStage6ClientReferenceShort(persistClient.id),
+          },
+          { afterHref: destination.href },
+        );
+      },
+    );
+    if (outcome.kind === "inaccessible") {
+      return "inaccessible" as const;
     }
+    if (outcome.kind !== "opened") {
+      return outcome.kind;
+    }
+    if (!outcome.persistClientId) {
+      if (!canNavigateAway()) {
+        requestHrefNavigation(outcome.href);
+        return "opened" as const;
+      }
+      if (destination.kind === "settings" || destination.kind === "aiChat") {
+        requestHrefNavigation(destination.href);
+        return "opened" as const;
+      }
+      commitDashboardHref(destination.href, "push");
+      navigateDashboard(destination.urlPatch);
+    }
+    return "opened" as const;
   };
 
-  const navigateToSection = (nextSection: DashboardSection) => {
-    openSection(nextSection, resolvedClientId ? { clientId: resolvedClientId } : {});
+  const openClientTask = (task: ClientWorkspaceTask) => {
+    if (dirtySnapshot.isSaving) return;
+    const clientId = workspaceUrlState.clientId;
+    const href = `/dashboard?section=clients&clientId=${encodeURIComponent(clientId ?? "")}${
+      task !== "summary" ? `&clientTask=${task}` : ""
+    }`;
+    requestHrefNavigation(href);
   };
 
   const setSelectedClientAiPassive = async (clientId: string) => {
@@ -374,12 +528,11 @@ export function DashboardApp({
   };
 
   const removeSelectedClient = async () => {
-    if (!selectedClient) return;
-    const nextState = await removeClient(selectedClient.id);
-    const nextActiveClient = nextState.clients.find((client) => client.lifecycleStatus !== "removed_anonymized");
-    if (nextActiveClient) {
-      selectClient(nextActiveClient.id, { section: "clients" });
-    }
+    const client = workspaceClient ?? selectedClient;
+    if (!client) return;
+    await removeClient(client.id);
+    // Keep unbound after removal — never silently select the next list item.
+    navigateDashboard({ section: "clients", clientId: null });
   };
 
   // Fail-closed: a failed create must surface an explicit error, never a
@@ -404,7 +557,7 @@ export function DashboardApp({
 
   const addClient = async () => {
     const fullName = newClientName.trim();
-    if (!fullName) return;
+    if (!fullName) return null;
     const nextState = await createClient({
       fullName,
       channel: newClientChannel,
@@ -413,73 +566,19 @@ export function DashboardApp({
       communicationLanguage: newClientLanguage,
     });
     const createdClient = nextState.clients[nextState.clients.length - 1];
-    selectClient(createdClient.id, { section: "clients" });
-  };
-
-  const runSimulation = async () => {
-    if (!selectedClient || isSimulating || isVisualSimulating || isVoiceSimulating) return;
-    setIsSimulating(true);
-    try {
-      await runSimulationRequest({
-        clientId: selectedClient.id,
-        body: simBody,
-        idempotencyKey: simKey,
-      });
-      navigateToSection("simulator");
-    } finally {
-      setIsSimulating(false);
-    }
-  };
-
-  const runVisualSimulation = async () => {
-    if (!selectedClient || isSimulating || isVisualSimulating || isVoiceSimulating) return;
-    setIsVisualSimulating(true);
-    try {
-      await runVisualSimulationRequest({
-        clientId: selectedClient.id,
-        idempotencyKey: visualKey,
-        fixtureSceneId: visualImageFile ? undefined : visualFixtureSceneId,
-        caption: visualCaption.trim() || undefined,
-        burstMessages: visualBurst
-          .split(/\r?\n/)
-          .map((line) => line.trim())
-          .filter(Boolean),
-        flushSilence: visualFlushSilence,
-        imageFile: visualImageFile,
-      });
-      setVisualKey(`vis-sim-${Date.now()}`);
-      navigateToSection("simulator");
-    } finally {
-      setIsVisualSimulating(false);
-    }
-  };
-
-  const runVoiceSimulation = async () => {
-    if (!selectedClient || isSimulating || isVisualSimulating || isVoiceSimulating) return;
-    setIsVoiceSimulating(true);
-    try {
-      await runVoiceSimulationRequest({
-        clientId: selectedClient.id,
-        idempotencyKey: voiceKey,
-        fixtureId: voiceFixtureId,
-        transcriptionSceneId: voiceTranscriptionSceneId,
-        burstMessages: voiceBurst
-          .split(/\r?\n/)
-          .map((line) => line.trim())
-          .filter(Boolean),
-        flushSilence: voiceFlushSilence,
-      });
-      setVoiceKey(`voice-sim-${Date.now()}`);
-      navigateToSection("simulator");
-    } finally {
-      setIsVoiceSimulating(false);
-    }
+    setNewClientName("");
+    setNewClientHandle("");
+    setNewClientPhone("");
+    setNewClientChannel("whatsapp");
+    setNewClientLanguage("tr");
+    return createdClient?.id ?? null;
   };
 
   const sendManualReply = async () => {
-    if (!selectedClient || !manualReply.trim()) return;
+    if (!selectedClient || !manualReply.trim() || isSendingManualReply) return;
     const body = manualReply;
     const aiChatDraftTransferId = stage4bMessaging.detail?.pendingAiChatDraftTransfer?.transferId;
+    setIsSendingManualReply(true);
     try {
       await sendManualReplyRequest({ clientId: selectedClient.id, body, aiChatDraftTransferId });
       setManualReply("");
@@ -490,6 +589,8 @@ export function DashboardApp({
         return;
       }
       throw error;
+    } finally {
+      setIsSendingManualReply(false);
     }
   };
 
@@ -537,21 +638,25 @@ export function DashboardApp({
   };
 
   const openAlertTarget = (alert: ClinicalAlertListItem) => {
-    const patch = buildClinicalAlertMessagingNavigationPatch(alert);
-    if (!patch) return;
-    navigateDashboard(patch);
+    void openCommunicationDestination({
+      section: "messages",
+      clientId: alert.clientId,
+      conversationId: alert.conversationId,
+      messageId: alert.sourceMessageId,
+      source: "alert",
+      sourceId: alert.id,
+    });
   };
 
   const openNotificationTarget = (notification: SystemNotificationListItem) => {
-    const action = buildSystemNotificationNavigationAction(notification);
-    if (!action) return;
-    if (action.type === "dashboard") {
-      navigateDashboard(action.patch);
-      return;
-    }
-    selectClient(action.clientId, {
-      section: "clients",
-      clientDetailTab: action.clientDetailTab,
+    void openCommunicationDestination({
+      section: notification.target.section,
+      clientId: notification.clientId ?? notification.target.clientId,
+      conversationId: notification.target.conversationId ?? notification.conversationId,
+      messageId: notification.target.messageId ?? notification.messageId,
+      source: "notification",
+      sourceId: notification.id,
+      clientTask: notification.target.section === "ai-control" ? "ai" : "summary",
     });
   };
 
@@ -590,40 +695,47 @@ export function DashboardApp({
   };
 
   const saveSelectedFoodRules = async (profile: Omit<ClientFoodRuleProfileV2State, "conflicts">) => {
-    if (!selectedClient) return;
+    const client = workspaceClient ?? selectedClient;
+    if (!client) return;
     const { revision, ...profileBody } = profile;
-    await saveClientFoodRuleProfile(selectedClient.id, {
+    await saveClientFoodRuleProfile(client.id, {
       revision,
       profile: profileBody,
     });
   };
 
-  const menuPlansForSelectedClient = selectedClient
-    ? listClientMenuPlanV1Records(state, selectedClient.id).map((plan) =>
-        menuPlanV1RecordToState(plan, getClientFoodRuleProfileV2Record(state, selectedClient.id)),
+  const menuPlansForSelectedClient = (workspaceClient ?? selectedClient)
+    ? listClientMenuPlanV1Records(state, (workspaceClient ?? selectedClient)!.id).map((plan) =>
+        menuPlanV1RecordToState(plan, getClientFoodRuleProfileV2Record(state, (workspaceClient ?? selectedClient)!.id)),
       )
     : [];
-  const activeMenuPlanId = selectedClient ? getActiveClientMenuPlanV1Record(state, selectedClient.id)?.id || null : null;
+  const activeMenuPlanId = (workspaceClient ?? selectedClient)
+    ? getActiveClientMenuPlanV1Record(state, (workspaceClient ?? selectedClient)!.id)?.id || null
+    : null;
 
   const createSelectedMenuPlan = async (templateType: Phase77FMenuPlanTemplateType) => {
-    if (!selectedClient) return;
-    await createMenuPlan(selectedClient.id, { templateType });
+    const client = workspaceClient ?? selectedClient;
+    if (!client) return;
+    await createMenuPlan(client.id, { templateType });
   };
 
   const saveSelectedMenuPlan = async (plan: Omit<ClientMenuPlanV1State, "conflicts">) => {
-    if (!selectedClient) return;
+    const client = workspaceClient ?? selectedClient;
+    if (!client) return;
     const { revision, id, ...planBody } = plan;
-    await saveMenuPlan(selectedClient.id, id, { revision, plan: planBody });
+    await saveMenuPlan(client.id, id, { revision, plan: planBody });
   };
 
   const activateSelectedMenuPlan = async (planId: string) => {
-    if (!selectedClient) return;
-    await activateMenuPlan(selectedClient.id, planId);
+    const client = workspaceClient ?? selectedClient;
+    if (!client) return;
+    await activateMenuPlan(client.id, planId);
   };
 
   const addSelectedContextUpdate = async () => {
-    if (!selectedClient) return;
-    await addClientContextUpdate(selectedClient.id, {
+    const client = workspaceClient ?? selectedClient;
+    if (!client) return;
+    await addClientContextUpdate(client.id, {
       source: contextUpdateSource,
       occurredAt: contextUpdateOccurredAt ? fromDateTimeLocal(contextUpdateOccurredAt) : null,
       title: contextUpdateTitle,
@@ -635,98 +747,13 @@ export function DashboardApp({
     setContextUpdateSummary("");
     setContextUpdateDetails("");
   };
-
-  const viewsWithMobileStickyActions: DashboardSection[] = ["messages", "simulator"];
+  const viewsWithMobileStickyActions: DashboardSection[] = ["messages"];
   const mainMobilePadding = viewsWithMobileStickyActions.includes(section)
     ? "lg:pb-5"
     : "pb-mobile-nav lg:pb-5";
 
   return (
-    <DashboardShell
-      activeNavKey={section}
-      uiLanguage={uiLanguage}
-      badges={{
-        alerts: stage4bInbox.alertsBadgeCount,
-        notifications: stage4bInbox.notificationsBadgeCount,
-        messages: stage4bMessaging.messagingBadgeCount,
-      }}
-      aiChatEnabled={aiChatEnabled}
-      onNavigateSection={navigateToSection}
-    >
-      <header className="border-b border-stone-200 bg-white px-safe py-4 pt-safe sm:px-6 lg:pt-4">
-            <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-              <div>
-                <p className="text-sm text-stone-500">{state.tenant.name}</p>
-                <h1 className="text-2xl font-semibold">Operasyon paneli</h1>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <div className="w-44">
-                  <SelectInput
-                    label={t(uiLanguage, "dashboardLanguage")}
-                    value={uiLanguage}
-                    onChange={(value) => updateDietitianPreferences({ uiLanguage: value as SupportedLanguageCode })}
-                    options={languageOptions}
-                  />
-                </div>
-                {authInfo && (
-                  <span className="inline-flex items-center gap-2 rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm font-medium text-stone-700">
-                    <UserRound size={16} className="text-emerald-800" />
-                    {authInfo.displayName}
-                    <span className="rounded bg-stone-100 px-1.5 py-0.5 text-xs font-semibold uppercase text-stone-500">
-                      {authInfo.role}
-                    </span>
-                  </span>
-                )}
-                {commercialInfo ? (
-                  <>
-                    <StatusPill
-                      icon={CreditCard}
-                      label={describeSubscriptionStatus(commercialInfo.subscriptionStatus).label}
-                      tone={describeSubscriptionStatus(commercialInfo.subscriptionStatus).tone}
-                    />
-                    <StatusPill
-                      icon={Smartphone}
-                      label={describeInstallState(commercialInfo.installReady).label}
-                      tone={describeInstallState(commercialInfo.installReady).tone}
-                    />
-                  </>
-                ) : (
-                  <StatusPill icon={Smartphone} label="PWA hazır" tone="emerald" />
-                )}
-                <StatusPill
-                  icon={ShieldCheck}
-                  label={getSupabaseStatus() === "configured" ? "Supabase yapılandırıldı" : "Yerel veri"}
-                  tone="amber"
-                />
-                <DashboardHeaderBell
-                  unreadCount={stage4bInbox.notificationsBadgeCount}
-                  onOpenNotifications={() => navigateToSection("notifications")}
-                />
-
-                <button
-                  onClick={resetState}
-                  className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm font-medium text-stone-700 transition hover:bg-stone-100"
-                  type="button"
-                >
-                  <RefreshCcw size={16} />
-                  Demoyu sıfırla
-                </button>
-
-                {commercialInfo ? (
-                  <form action="/api/demo-logout" method="post">
-                    <button
-                      type="submit"
-                      className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm font-medium text-stone-700 transition hover:bg-stone-100"
-                    >
-                      <LogOut size={16} />
-                      Oturumu kapat
-                    </button>
-                  </form>
-                ) : null}
-              </div>
-            </div>
-          </header>
-
+    <>
           <div
             ref={mainContentRef}
             id={DASHBOARD_MAIN_ID}
@@ -734,22 +761,49 @@ export function DashboardApp({
             className={`min-w-0 flex-1 px-safe py-5 sm:px-6 ${mainMobilePadding}`}
           >
             {section === "overview" && (
-              <OverviewPanel
-                metrics={metrics}
-                selectedClient={selectedClient}
-                state={state}
-                uiLanguage={uiLanguage}
-                showInspectionDetails={showOperationalInspection}
-                operationalFoundation={showOperationalInspection ? operationalFoundation : null}
-                onOpenSimulator={() => navigateToSection("simulator")}
-                onOpenClients={() => navigateToSection("clients")}
-              />
+              <div className="space-y-4">
+                {bootstrap?.homeActions ? (
+                  <div className="min-[1200px]:order-none" data-testid="shell-home-launcher-wrap">
+                    <ShellHomeLauncher
+                      actions={bootstrap.homeActions}
+                      clientId={resolvedClientId}
+                      layout="stack"
+                    />
+                  </div>
+                ) : null}
+                <OverviewPanel
+                  selectedClient={selectedClient}
+                  pendingMessageCount={
+                    bootstrap?.homeActions.find((action) => action.id === "messages")?.count ??
+                    stage4bMessaging.unreadMessageCount
+                  }
+                  pendingAlertCount={
+                    bootstrap?.homeActions.find((action) => action.id === "alerts")?.count ??
+                    stage4bInbox.alertsBadgeCount
+                  }
+                  pendingNotificationCount={
+                    bootstrap?.homeActions.find((action) => action.id === "notifications")?.count ??
+                    stage4bInbox.notificationsBadgeCount
+                  }
+                  onOpenClients={() => {
+                    if (resolvedClientId) {
+                      void selectClient(resolvedClientId, { section: "clients", clientTask: "summary" });
+                      return;
+                    }
+                    navigateToDestination("clients");
+                  }}
+                  onOpenMessages={() => navigateToDestination("messages")}
+                  onOpenAlerts={() => navigateToDestination("alerts")}
+                  onOpenNotifications={() => navigateToDestination("notifications")}
+                />
+              </div>
             )}
 
-            {section === "clients" && selectedClient && (
-              <ClientsPanel
+            {section === "clients" && (
+              <ClientWorkspace
+                urlState={workspaceUrlState}
                 clients={filteredClients}
-                selectedClient={selectedClient}
+                selectedClient={workspaceClient}
                 search={search}
                 newClientName={newClientName}
                 newClientChannel={newClientChannel}
@@ -759,7 +813,11 @@ export function DashboardApp({
                 uiLanguage={uiLanguage}
                 canManageAiControls={canManageAiControls}
                 onSearch={setSearch}
-                onSelect={(id) => selectClient(id, { section: "clients", clientDetailTab: "tab_overview" })}
+                onSelect={(id) => void selectClient(id, { section: "clients", clientTask: "summary" })}
+                onCloseWorkspace={() => {
+                  requestHrefNavigation("/dashboard?section=clients");
+                }}
+                onClientTask={openClientTask}
                 onAddClient={addClient}
                 onNewClientName={setNewClientName}
                 onNewClientChannel={setNewClientChannel}
@@ -786,10 +844,12 @@ export function DashboardApp({
                 onContextUpdateSummary={setContextUpdateSummary}
                 onContextUpdateDetails={setContextUpdateDetails}
                 onAddContextUpdate={addSelectedContextUpdate}
-                clientDetailTab={clientDetailTab}
-                onClientDetailTab={setClientDetailTab}
                 state={state}
-                foodRuleProfile={getClientFoodRuleProfileV2State(state, selectedClient.id)}
+                foodRuleProfile={
+                  (workspaceClient ?? selectedClient)
+                    ? getClientFoodRuleProfileV2State(state, (workspaceClient ?? selectedClient)!.id)
+                    : null
+                }
                 menuPlans={menuPlansForSelectedClient}
                 activeMenuPlanId={activeMenuPlanId}
                 onSaveFoodRules={saveSelectedFoodRules}
@@ -801,6 +861,13 @@ export function DashboardApp({
                 onEvaluateWithAi={evaluateClientWithAi}
                 isEvaluatingWithAi={isEvaluatingWithAi}
                 evaluateWithAiError={evaluateWithAiError}
+                onOpenMessages={(clientId) =>
+                  void openCommunicationDestination({
+                    section: "messages",
+                    clientId,
+                    conversationId: state.conversations.find((item) => item.clientId === clientId)?.id ?? null,
+                  })
+                }
               />
             )}
 
@@ -823,20 +890,29 @@ export function DashboardApp({
                 onFiltersChange={(patch) => navigateDashboard(patch)}
                 onRefreshList={() => void stage4bMessaging.refreshList({ resetBackoff: true })}
                 onLoadMore={() => void stage4bMessaging.loadMoreList()}
-                onSelectConversation={(item) =>
-                  navigateDashboard({
+                onSelectConversation={(item) => {
+                  const list = document.querySelector("[data-testid='messaging-list-scroll']");
+                  if (list instanceof HTMLElement) {
+                    setMessagingListScrollTop(list.scrollTop);
+                    saveDestinationViewState("messages", {
+                      search: urlState.conversationQuery,
+                      filter: urlState.conversationStatus,
+                      scrollTop: list.scrollTop,
+                    });
+                  }
+                  void openCommunicationDestination({
                     section: "messages",
                     conversationId: item.id,
                     clientId: item.clientId,
-                    messageId: null,
-                  })
-                }
+                  });
+                }}
                 onBackToList={() =>
                   navigateDashboard({
                     conversationId: null,
                     messageId: null,
                   })
                 }
+                restoreListScrollTop={messagingListScrollTop}
                 detailUnavailable={Boolean(
                   messagingRoute.conversationId && !messagingTargetValidity.valid,
                 )}
@@ -855,6 +931,7 @@ export function DashboardApp({
                       manualReply={manualReply}
                       onManualReply={setManualReply}
                       onSendManualReply={sendManualReply}
+                      isSendingManualReply={isSendingManualReply}
                       pendingAiChatDraftTransfer={stage4bMessaging.detail?.pendingAiChatDraftTransfer ?? null}
                       onActivateAi={activateSelectedClientAi}
                       onSetAiPassive={setSelectedClientAiPassive}
@@ -867,7 +944,13 @@ export function DashboardApp({
                       onReviewSendManualFromDraft={(messageId, body) =>
                         runConversationMutation(() => reviewSendManualFromDraft(messageId, body))
                       }
-                      onOpenSimulator={() => navigateToSection("simulator")}
+                      onOpenClientWorkspace={() =>
+                        void openCommunicationDestination({
+                          section: "clients",
+                          clientId: selectedClient?.id ?? messagingRoute.clientId,
+                          clientTask: "summary",
+                        })
+                      }
                       onLoadOlder={() => void stage4bMessaging.loadOlderMessages()}
                       onLoadNewer={() => void stage4bMessaging.loadNewerMessages()}
                       onRetryDetail={() => void stage4bMessaging.refreshDetail({ resetBackoff: true })}
@@ -888,48 +971,6 @@ export function DashboardApp({
                     </div>
                   ) : null
                 }
-              />
-            )}
-
-            {section === "simulator" && selectedClient && (
-              <SimulatorPanel
-                state={state}
-                selectedClient={selectedClient}
-                clients={activeClients}
-                simBody={simBody}
-                simKey={simKey}
-                visualKey={visualKey}
-                visualCaption={visualCaption}
-                visualBurst={visualBurst}
-                visualFixtureSceneId={visualFixtureSceneId}
-                visualImageFile={visualImageFile}
-                visualFlushSilence={visualFlushSilence}
-                voiceKey={voiceKey}
-                voiceBurst={voiceBurst}
-                voiceFixtureId={voiceFixtureId}
-                voiceTranscriptionSceneId={voiceTranscriptionSceneId}
-                voiceFlushSilence={voiceFlushSilence}
-                isSimulating={isSimulating}
-                isVisualSimulating={isVisualSimulating}
-                isVoiceSimulating={isVoiceSimulating}
-                onSelectClient={(clientId) => selectClient(clientId, { section: "simulator" })}
-                onSimBody={setSimBody}
-                onSimKey={setSimKey}
-                onVisualKey={setVisualKey}
-                onVisualCaption={setVisualCaption}
-                onVisualBurst={setVisualBurst}
-                onVisualFixtureSceneId={setVisualFixtureSceneId}
-                onVisualImageFile={setVisualImageFile}
-                onVisualFlushSilence={setVisualFlushSilence}
-                onVoiceKey={setVoiceKey}
-                onVoiceBurst={setVoiceBurst}
-                onVoiceFixtureId={setVoiceFixtureId}
-                onVoiceTranscriptionSceneId={setVoiceTranscriptionSceneId}
-                onVoiceFlushSilence={setVoiceFlushSilence}
-                onRun={runSimulation}
-                onRunVisual={runVisualSimulation}
-                onRunVoice={runVoiceSimulation}
-                onOpenConversation={() => navigateToSection("messages")}
               />
             )}
 
@@ -970,7 +1011,8 @@ export function DashboardApp({
                 onRefresh={() => void stage4bInbox.refresh({ resetBackoff: true })}
                 onLoadMore={() => void stage4bInbox.loadMoreNotifications()}
                 onOpenNotificationTarget={openNotificationTarget}
-                onMutationComplete={() => refreshStage4B2Surfaces({ anchorMessageId: urlState.messageId })}
+                onReceiptMutated={(payload) => stage4bInbox.applyNotificationMutation(payload)}
+                onReadAllMutated={(payload) => stage4bInbox.applyNotificationReadAll(payload)}
               />
             )}
 
@@ -984,6 +1026,13 @@ export function DashboardApp({
                 onGenerateProfile={generateVoiceProfile}
               />
             )}
+
+            {section === "forms" && !selectedClient ? (
+              <EmptyState
+                title="Danışan seçilmedi"
+                message="Formlar için önce aktif danışanı seçin. Otomatik seçim yapılmaz."
+              />
+            ) : null}
 
             {section === "forms" && selectedClient && (
               <FormsPanel
@@ -1004,6 +1053,6 @@ export function DashboardApp({
               />
             )}
           </div>
-    </DashboardShell>
+    </>
   );
 }

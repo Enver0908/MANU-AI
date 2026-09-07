@@ -4,12 +4,13 @@
 
 import { normalizeCommercialEmail } from "./phase-83b-commercial-entitlement-model";
 import { buildAuthCallbackUrlWithNext, resolveAppBaseUrl } from "./phase-84d-customer-auth";
+import { AIYA_PUBLIC_CONTACT_EMAIL } from "./brand";
 
 export const PHASE_84F_VERSION = "phase84f-admin-console-v1";
 
-export const DEFAULT_ADMIN_ALLOWLIST_EMAIL = "olkuenver@gmail.com";
+export const DEFAULT_ADMIN_ALLOWLIST_EMAIL = AIYA_PUBLIC_CONTACT_EMAIL;
 
-export const DEFAULT_ADMIN_HOST = "admin.siriusai.store";
+export const DEFAULT_ADMIN_HOST = "admin.aiyaworkspace.com";
 
 export type AdminAllowlistEvaluation = {
   allowed: boolean;
@@ -32,7 +33,25 @@ export function resolveAdminHost(env: Record<string, string | undefined> = proce
 export function resolveAdminAppBaseUrl(env: Record<string, string | undefined> = process.env) {
   const configured = env.MANU_ADMIN_APP_URL?.trim();
   if (configured) {
-    return configured.replace(/\/$/, "");
+    const normalizedConfigured = configured.replace(/\/$/, "");
+    const normalizedPublicUrl = env.NEXT_PUBLIC_APP_URL?.trim().replace(/\/$/, "");
+    if (normalizedPublicUrl) {
+      try {
+        const configuredUrl = new URL(normalizedConfigured);
+        const publicUrl = new URL(normalizedPublicUrl);
+        const configuredIsLocalhost =
+          configuredUrl.hostname === "localhost" ||
+          configuredUrl.hostname === "127.0.0.1" ||
+          configuredUrl.hostname === "::1";
+        if (configuredIsLocalhost || configuredUrl.hostname !== publicUrl.hostname) {
+          return normalizedConfigured;
+        }
+      } catch {
+        return normalizedConfigured;
+      }
+    } else {
+      return normalizedConfigured;
+    }
   }
   const publicAppUrl = env.NEXT_PUBLIC_APP_URL?.trim();
   const normalizedPublicUrl = publicAppUrl?.replace(/\/$/, "");
@@ -92,6 +111,10 @@ export function shouldRewriteAdminHostPath(pathname: string) {
 
 export function resolveAdminHostInternalPath(pathname: string) {
   return pathname.startsWith("/admin") ? pathname : "/admin";
+}
+
+export function buildAdminCustomerSetupPath(inviteId: string) {
+  return `/onboarding?invite_id=${encodeURIComponent(inviteId)}`;
 }
 
 export function summarizePhase84fAdminConsole(env: Record<string, string | undefined> = process.env) {

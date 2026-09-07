@@ -2,10 +2,13 @@ import Link from "next/link";
 import { ArrowRight, CheckCircle, MailCheck } from "lucide-react";
 import { CommercialShell } from "@/components/public/CommercialShell";
 import { PurchaseSuccessOnboarding } from "@/components/purchase-success-onboarding";
+import { AIYA_BRAND_NAME, buildCustomerSurfaceMetadata } from "@/lib/brand";
 
-export const metadata = {
-  title: "Ödeme doğrulandı · SiriusAI",
-};
+export const metadata = buildCustomerSurfaceMetadata({
+  path: "/purchase/success",
+  title: `Ödeme doğrulandı · ${AIYA_BRAND_NAME}`,
+  description: "Ödemeniz işlendi. Kurulum e-postasıyla hesabınızı bağlayın.",
+});
 
 type PurchaseSuccessPageProps = {
   searchParams: Promise<{ session_id?: string }>;
@@ -14,7 +17,7 @@ type PurchaseSuccessPageProps = {
 const STEPS = [
   {
     icon: MailCheck,
-    title: "Magic-link e-postanızı açın",
+    title: "Kurulum e-postanızı açın",
     desc: "Kayıtlı e-posta adresinize hesap bağlama bağlantısı gönderilecek.",
   },
   {
@@ -74,7 +77,7 @@ export default async function PurchaseSuccessPage({ searchParams }: PurchaseSucc
               Zaten giriş yaptıysanız{" "}
               <Link
                 href={sessionId ? `/onboarding?session_id=${encodeURIComponent(sessionId)}` : "/onboarding"}
-                className="text-primary hover:underline"
+                className="text-primary underline underline-offset-2"
               >
                 onboarding ekranına geçin
               </Link>

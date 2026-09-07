@@ -1,0 +1,37 @@
+{
+  "kind": "manual_nvda_firefox_smoke",
+  "status": "PASS",
+  "productionStatus": "NO-GO",
+  "certificationClaim": false,
+  "nvdaPath": "C:\\Program Files\\NVDA\\nvda.exe",
+  "nvdaPresent": true,
+  "nvdaRunningBefore": true,
+  "platform": "win32",
+  "steps": [
+    {
+      "id": "login",
+      "status": "PASS",
+      "title": "Giriş | SiriusAI"
+    },
+    {
+      "id": "dashboard-navigation",
+      "status": "PASS"
+    },
+    {
+      "id": "client-selection",
+      "status": "PASS"
+    },
+    {
+      "id": "form-dialog",
+      "status": "PASS"
+    },
+    {
+      "id": "messaging",
+      "status": "PASS"
+    }
+  ],
+  "evidencePath": "C:\\Users\\Dell\\OneDrive\\Masaüstü\\MANU-AI\\docs\\PHASE_85_STAGE_7_PHASE_4_NVDA_SMOKE.json",
+  "nvdaRunning": true,
+  "nvdaRunningAfter": true,
+  "disclaimer": "NVDA+Firefox critical smoke on synthetic routes. This is not WCAG certification and not production GO."
+}

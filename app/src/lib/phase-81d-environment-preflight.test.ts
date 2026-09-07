@@ -18,7 +18,7 @@ describe("phase 81d environment preflight", () => {
     expect(report.preflightStatus).toBe("blocked");
     expect(report.goReadyBlocked).toBe(true);
     expect(report.checks.allLaunchGatesApproved).toBe(false);
-    expect(report.checks.realGeminiEgressAllowed).toBe(false);
+    expect(report.checks.realZaiEgressAllowed).toBe(false);
     expect(report.blockingReasons.some((reason) => reason.includes("missing approved launch gate"))).toBe(
       true,
     );
@@ -37,16 +37,16 @@ describe("phase 81d environment preflight", () => {
     expect(report.checks.opsGatesApproved).toBe(true);
     expect(report.checks.webhookApprovedExternalEvidence).toBe(true);
     expect(report.checks.conservativeClientAiPosture).toBe(true);
-    expect(report.checks.realGeminiEgressAllowed).toBe(true);
+    expect(report.checks.realZaiEgressAllowed).toBe(true);
     expect(report.checks.realWhatsappEgressAllowed).toBe(true);
     expect(report.productionPilotGoReady).toBe(false);
     expect(report.productionPilotStarted).toBe(false);
   });
 
-  it("does not allow MANU_ALLOW_REAL_GEMINI to bypass missing gate evidence", () => {
+  it("does not allow MANU_ALLOW_REAL_ZAI to bypass missing gate evidence", () => {
     const evaluation = evaluatePhase81dEnvironmentPreflight({
       productionEnvIdentity: "production",
-      allowRealGeminiFlag: "true",
+      allowRealZaiFlag: "true",
       approvedGateIds: [],
       launchAuthorizationApproved: false,
       webhookApprovedExternalEvidence: false,
@@ -54,9 +54,9 @@ describe("phase 81d environment preflight", () => {
       globalAutopilotEnablement: false,
     });
 
-    expect(evaluation.checks.realGeminiEgressAllowed).toBe(false);
+    expect(evaluation.checks.realZaiEgressAllowed).toBe(false);
     expect(evaluation.blockingReasons).toContain(
-      "MANU_ALLOW_REAL_GEMINI cannot bypass missing Phase 75/provider launch gate evidence",
+      "MANU_ALLOW_REAL_ZAI cannot bypass missing Phase 75/provider launch gate evidence",
     );
   });
 

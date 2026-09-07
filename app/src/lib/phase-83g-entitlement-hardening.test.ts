@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import {
   COMMERCIAL_ENTITLEMENT_BLOCKED_API_STATUSES,
   evaluateCommercialEntitlementApiAccess,
@@ -10,6 +10,10 @@ import {
 } from "./phase-83g-entitlement-hardening";
 
 describe("phase 83g entitlement hardening", () => {
+  afterEach(() => {
+    delete process.env.MANU_TRUST_PROXY_HEADERS;
+  });
+
   it("skips API entitlement enforcement in dev fallback mode", () => {
     expect(
       isCommercialEntitlementEnforcementEnabled({
@@ -76,8 +80,25 @@ describe("phase 83g entitlement hardening", () => {
     ).toBe("entitlement_revoked");
   });
 
-  it("builds public rate-limit keys from ip and normalized email", () => {
-    const request = {
+  it("blocks active manual transfer entitlements after paidThrough", () => {
+    const result = evaluateCommercialEntitlementApiAccess({
+      isAuthenticated: true,
+      hasTenantMembership: true,
+      hasDietitianProfile: true,
+      entitlementStatus: "active",
+      billingMethod: "manual_transfer",
+      paidThrough: "2026-07-01T00:00:00.000Z",
+      now: "2026-07-01T00:00:00.000Z",
+      enforcementEnabled: true,
+    });
+
+    expect(result.allowed).toBe(false);
+    expect(result.errorCode).toBe("entitlement_expired");
+    expect(result.blockingReasons).toContain("manual transfer entitlement has expired");
+  });
+
+  it("builds public rate-limit keys from trusted IP identity only", () => {
+    const untrusted = {
       headers: {
         get(name: string) {
           if (name === "x-forwarded-for") return "203.0.113.10, 198.51.100.2";
@@ -86,9 +107,33 @@ describe("phase 83g entitlement hardening", () => {
       },
     } as unknown as import("next/server").NextRequest;
 
-    expect(resolveCommercialPublicRateLimitKey(request, " Dietitian@Example.COM ")).toBe(
-      "203.0.113.10:dietitian@example.com",
+    expect(resolveCommercialPublicRateLimitKey(untrusted, " Dietitian@Example.COM ")).toBe(
+      "anonymous:dietitian@example.com",
     );
+
+    const previousTrust = process.env.MANU_TRUST_PROXY_HEADERS;
+    process.env.MANU_TRUST_PROXY_HEADERS = "true";
+    try {
+      const trusted = {
+        headers: {
+          get(name: string) {
+            if (name === "x-forwarded-for") return "203.0.113.10, 10.0.0.1";
+            if (name === "x-real-ip") return "10.0.0.1";
+            if (name === "x-manu-trusted-proxy") return "nginx";
+            return null;
+          },
+        },
+      } as unknown as import("next/server").NextRequest;
+      expect(resolveCommercialPublicRateLimitKey(trusted, " Dietitian@Example.COM ")).toBe(
+        "203.0.113.10:dietitian@example.com",
+      );
+    } finally {
+      if (previousTrust === undefined) {
+        delete process.env.MANU_TRUST_PROXY_HEADERS;
+      } else {
+        process.env.MANU_TRUST_PROXY_HEADERS = previousTrust;
+      }
+    }
   });
 
   it("treats inactive entitlement as stale for installed PWA session checks", () => {
@@ -115,6 +160,17 @@ describe("phase 83g entitlement hardening", () => {
         enforcementEnabled: false,
       }),
     ).toBe(false);
+
+    expect(
+      shouldTreatAuthStateAsStaleForPwa({
+        status: "authenticated",
+        entitlementStatus: "active",
+        billingMethod: "manual_transfer",
+        paidThrough: "2026-07-01T00:00:00.000Z",
+        now: "2026-07-01T00:00:00.000Z",
+        enforcementEnabled: true,
+      }),
+    ).toBe(true);
   });
 
   it("documents network-only API cache policy for service worker hardening", () => {

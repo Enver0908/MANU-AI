@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { useEffect, useRef } from "react";
 import { ArrowLeft, RefreshCcw } from "lucide-react";
 import type { ConversationInboxItem } from "@/lib/phase-85-stage-4b2-contracts";
 import type { ConversationListStatus } from "@/lib/phase-85-stage-4b2-contracts";
@@ -39,6 +40,7 @@ export function MessagingPanel({
   onBackToList,
   detail,
   detailUnavailable,
+  restoreListScrollTop = null,
 }: {
   uiLanguage: SupportedLanguageCode;
   filters: Pick<DashboardUrlState, "conversationStatus" | "conversationQuery">;
@@ -61,6 +63,7 @@ export function MessagingPanel({
   onBackToList: () => void;
   detail: ReactNode;
   detailUnavailable?: boolean;
+  restoreListScrollTop?: number | null;
 }) {
   const statusLabels: Record<ConversationListStatus, string> = {
     all: t(uiLanguage, "filterAll"),
@@ -80,6 +83,15 @@ export function MessagingPanel({
   const showEmpty = !showInitialLoading && !showInitialError && items.length === 0;
   const showListOnMobile = !selectedConversationId;
   const showDetailOnMobile = Boolean(selectedConversationId);
+  const listScrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (selectedConversationId) return;
+    if (restoreListScrollTop == null) return;
+    const node = listScrollRef.current;
+    if (!node) return;
+    node.scrollTop = restoreListScrollTop;
+  }, [restoreListScrollTop, selectedConversationId, items.length]);
 
   const listPane = (
     <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
@@ -122,7 +134,11 @@ export function MessagingPanel({
         </div>
       ) : null}
 
-      <div className="mt-3 min-h-0 flex-1 overflow-y-auto overflow-x-hidden">
+      <div
+        ref={listScrollRef}
+        data-testid="messaging-list-scroll"
+        className="mt-3 min-h-0 flex-1 overflow-y-auto overflow-x-hidden"
+      >
         {showInitialError ? (
           <div className="rounded-lg border border-red-200 bg-red-50 p-4" role="alert">
             <p className="text-sm font-semibold text-red-950">{t(uiLanguage, "inboxRefreshError")}</p>
@@ -201,10 +217,12 @@ export function MessagingPanel({
       ) : null}
 
       {detailUnavailable ? (
-        <EmptyState
-          title={t(uiLanguage, "messagesTargetMissing")}
-          message={t(uiLanguage, "messagesTargetMissingHint")}
-        />
+        <div data-testid="messaging-target-unavailable">
+          <EmptyState
+            title={t(uiLanguage, "messagesTargetMissing")}
+            message={t(uiLanguage, "messagesTargetMissingHint")}
+          />
+        </div>
       ) : selectedConversationId && isDetailRefreshing && !detail ? (
         <div className="rounded-lg border border-stone-200 bg-white p-6 text-sm text-stone-600" aria-busy="true">
           {t(uiLanguage, "refreshInbox")}

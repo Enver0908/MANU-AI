@@ -1,15 +1,19 @@
 import { expect, test } from "@playwright/test";
 
-test("customer login page renders magic-link form", async ({ page }) => {
+test("customer login page renders password-first form", async ({ page }) => {
   await page.goto("/login");
-  await expect(page.getByRole("heading", { name: "SiriusAI müşteri girişi" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "E-posta ve şifreyle giriş" })).toBeVisible();
   await expect(page.getByLabel("E-posta adresi")).toBeVisible();
-  await expect(page.getByRole("button", { name: /Giriş bağlantısı gönder/i })).toBeVisible();
+  await expect(page.getByLabel("Şifre")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Giriş yap" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Giriş bağlantısı gönder" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Şifremi unuttum" })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Kayıt ol|Hesap oluştur|Üye ol/i })).toHaveCount(0);
 });
 
 test("admin login page renders allowlist guidance", async ({ page }) => {
   await page.goto("/admin");
-  await expect(page.getByRole("heading", { name: "SiriusAI yönetim girişi" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "AIya yönetim girişi" })).toBeVisible();
   await expect(page.getByLabel("Yönetici e-posta")).toBeVisible();
   await expect(page.getByRole("link", { name: /commercial-admin\/emergency/i })).toBeVisible();
 });
@@ -27,6 +31,8 @@ test("marketing contact form renders on landing", async ({ page }) => {
   await expect(page.getByLabel("Ad soyad")).toBeVisible();
   await expect(page.getByLabel("E-posta")).toBeVisible();
   await expect(page.getByLabel("Mesaj")).toBeVisible();
+  await expect(page.getByText("Onay sonrası kurulum bağlantısı e-posta ile gelir")).toBeVisible();
+  await expect(page.getByText(/davet kodu/i)).toHaveCount(0);
 });
 
 test("onboarding route fails closed without configured auth", async ({ page }) => {

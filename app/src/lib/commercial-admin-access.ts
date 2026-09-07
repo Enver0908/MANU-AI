@@ -2,6 +2,7 @@ import type { NextRequest } from "next/server";
 import { cookies } from "next/headers";
 import { readCommercialAdminTokenFromRequest } from "./commercial-admin-request";
 import { createSupabaseServerClient, isSupabaseConfigured } from "./supabase";
+import { createSupabaseServerReadOnlyClient } from "./supabase-server-readonly";
 import { evaluateCommercialAdminGate } from "./phase-83f-commercial-admin";
 import {
   evaluateAdminAllowlistAccess,
@@ -89,9 +90,17 @@ export async function evaluateCommercialAdminAccess(
   };
 }
 
-export async function resolveAdminSessionEmail() {
+export async function evaluateCommercialAdminAllowlistSessionAccess(
+  request: NextRequest,
+  env: NodeJS.ProcessEnv = process.env,
+): Promise<CommercialAdminAccessResult> {
   if (!isSupabaseConfigured()) {
-    return null;
+    return {
+      allowed: false,
+      mode: null,
+      actorSummary: null,
+      blockingReasons: ["supabase_auth_not_configured"],
+    };
   }
 
   const cookieStore = await cookies();
@@ -102,6 +111,38 @@ export async function resolveAdminSessionEmail() {
         cookieStore.set(name, value, options);
       });
     },
+  });
+
+  if (!supabase) {
+    return {
+      allowed: false,
+      mode: null,
+      actorSummary: null,
+      blockingReasons: ["supabase_auth_not_configured"],
+    };
+  }
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const allowlist = evaluateAdminAllowlistAccess(user?.email, resolveAdminEmailAllowlist(env));
+  return {
+    allowed: allowlist.allowed,
+    mode: allowlist.allowed ? "supabase_allowlist" : null,
+    actorSummary: allowlist.allowed ? allowlist.normalizedEmail : null,
+    blockingReasons: allowlist.blockingReasons,
+  };
+}
+
+export async function resolveAdminSessionEmail() {
+  if (!isSupabaseConfigured()) {
+    return null;
+  }
+
+  const cookieStore = await cookies();
+  const supabase = createSupabaseServerReadOnlyClient({
+    getAll: () => cookieStore.getAll(),
   });
 
   if (!supabase) {

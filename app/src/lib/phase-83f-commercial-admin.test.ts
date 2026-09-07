@@ -5,15 +5,21 @@ import {
   classifyCommercialAdminStoreError,
   deriveCommercialAdminEntitlementRevokePlan,
   deriveCommercialAdminInviteRevokePlan,
+  deriveCommercialAdminManualEntitlementPlan,
   evaluateCommercialAdminGate,
+  evaluateCommercialAdminInviteDuplicate,
+  isCommercialAdminSameOriginRequest,
+  projectCommercialAdminCustomer,
   resolveCommercialAdminStoreEnv,
   sanitizeBillingLedgerEntryForAdmin,
   sanitizeCommercialInviteForAdmin,
   summarizePhase83fCommercialAdmin,
   validateCommercialAdminInviteCreate,
+  validateCommercialAdminInviteCustomerCommand,
   validateCommercialAdminEntitlementRevokeRequest,
+  validateCommercialAdminManualEntitlementRequest,
 } from "./phase-83f-commercial-admin";
-import { buildCommercialInviteRecord } from "./phase-83b-commercial-entitlement-model";
+import { buildCommercialInviteRecord } from "./phase-83b-commercial-entitlement-model.server";
 
 const ADMIN_TOKEN = "test-commercial-admin-token-32chars-min";
 const PEPPER = "test-pepper-16chars";
@@ -124,12 +130,104 @@ describe("phase 83f commercial admin", () => {
     expect(
       validateCommercialAdminEntitlementRevokeRequest({
         tenantId: "tenant-1",
+        expectedRevision: 2,
       }),
     ).toEqual({
       valid: true,
       tenantId: "tenant-1",
+      expectedRevision: 2,
       blockingReasons: [],
     });
+
+    expect(
+      validateCommercialAdminEntitlementRevokeRequest({
+        tenantId: "tenant-1",
+      }).blockingReasons,
+    ).toContain("expected_revision_required");
+  });
+
+  it("validates manual bank-transfer entitlement requests", () => {
+    const validation = validateCommercialAdminManualEntitlementRequest(
+      {
+        action: "activate",
+        inviteId: "invite-123",
+        paymentReference: "BANK-2026-0001",
+        paidThrough: "2026-08-01T00:00:00.000Z",
+        requestId: "manual-req-1",
+        expectedRevision: null,
+      },
+      { now: "2026-07-01T00:00:00.000Z" },
+    );
+
+    expect(validation.valid).toBe(true);
+    expect(validation.action).toBe("activate");
+
+    expect(
+      validateCommercialAdminManualEntitlementRequest(
+        {
+          action: "activate",
+          inviteId: "invite-123",
+          paymentReference: "BANK-2026-0001",
+          paidThrough: "2026-07-01T00:00:00.000Z",
+          requestId: "manual-req-1",
+        },
+        { now: "2026-07-01T00:00:00.000Z" },
+      ).blockingReasons,
+    ).toContain("paid_through_must_be_future");
+  });
+
+  it("derives manual activate and renewal plans without reactivating revoked entitlements", () => {
+    expect(
+      deriveCommercialAdminManualEntitlementPlan({
+        action: "activate",
+        inviteStatus: "active",
+        inviteTenantId: null,
+        entitlementStatus: null,
+        requestedPaidThrough: "2026-08-01T00:00:00.000Z",
+      }).allowed,
+    ).toBe(true);
+
+    expect(
+      deriveCommercialAdminManualEntitlementPlan({
+        action: "renew",
+        inviteStatus: "consumed",
+        inviteTenantId: "tenant-1",
+        entitlementStatus: "active",
+        currentPaidThrough: "2026-08-01T00:00:00.000Z",
+        requestedPaidThrough: "2026-09-01T00:00:00.000Z",
+      }).allowed,
+    ).toBe(true);
+
+    expect(
+      deriveCommercialAdminManualEntitlementPlan({
+        action: "renew",
+        inviteStatus: "consumed",
+        inviteTenantId: "tenant-1",
+        entitlementStatus: "active",
+        currentPaidThrough: "2026-08-01T00:00:00.000Z",
+        requestedPaidThrough: "2026-08-01T00:00:00.000Z",
+      }).blockingReasons,
+    ).toContain("paid_through_must_advance");
+
+    expect(
+      deriveCommercialAdminManualEntitlementPlan({
+        action: "activate",
+        inviteStatus: "consumed",
+        inviteTenantId: "tenant-1",
+        entitlementStatus: "revoked",
+        requestedPaidThrough: "2026-08-01T00:00:00.000Z",
+      }).blockingReasons,
+    ).toContain("revoked_entitlement_cannot_be_reactivated_manually");
+
+    expect(
+      deriveCommercialAdminManualEntitlementPlan({
+        action: "reactivate",
+        inviteStatus: "consumed",
+        inviteTenantId: "tenant-1",
+        entitlementStatus: "revoked",
+        requestedPaidThrough: "2026-08-01T00:00:00.000Z",
+      }).allowed,
+    ).toBe(true);
   });
 
   it("diagnoses commercial admin Supabase store configuration", () => {
@@ -244,11 +342,220 @@ describe("phase 83f commercial admin", () => {
     const summary = summarizePhase83fCommercialAdmin();
     expect(summary.auditEventTypes).toContain("invite_created");
     expect(summary.auditEventTypes).toContain("ledger_inspected");
+    expect(summary.auditEventTypes).toContain("manual_entitlement_activated");
+    expect(summary.auditEventTypes).toContain("manual_entitlement_reactivated");
+    expect(summary.auditEventTypes).toContain("password_recovery_requested");
+    expect(summary.serviceRoleOnlyTables).toContain("manual_entitlement_operations");
     expect(summary.auditEventTypes).not.toContain("mobile_install_entitlement_revoked");
     expect(summary.productionPilotGo).toBe(false);
     expect(summary.gateEnvFlags).toEqual([
       "MANU_ALLOW_COMMERCIAL_ADMIN",
       "MANU_COMMERCIAL_ADMIN_TOKEN",
     ]);
+  });
+
+  it("projects customer access labels and blocks ambiguous tenant matches", () => {
+    const active = projectCommercialAdminCustomer({
+      normalizedEmail: "clinic@example.com",
+      tenantIds: ["tenant-1"],
+      hasOwnerMembership: true,
+      latestInvite: {
+        id: "invite-1",
+        status: "consumed",
+        tenantId: "tenant-1",
+        tenantName: "Demo Clinic",
+        createdAt: NOW,
+        updatedAt: NOW,
+      },
+      latestEntitlement: {
+        tenantId: "tenant-1",
+        status: "active",
+        billingMethod: "manual_transfer",
+        paidThrough: "2026-08-01T00:00:00.000Z",
+        revision: 3,
+        inviteId: "invite-1",
+      },
+      now: NOW,
+    });
+    expect(active.accessLabel).toBe("Aktif");
+    expect(active.primaryAction).toBe("revoke");
+
+    const expired = projectCommercialAdminCustomer({
+      normalizedEmail: "clinic@example.com",
+      tenantIds: ["tenant-1"],
+      hasOwnerMembership: true,
+      latestInvite: {
+        id: "invite-1",
+        status: "consumed",
+        tenantId: "tenant-1",
+        tenantName: "Demo Clinic",
+        createdAt: NOW,
+        updatedAt: NOW,
+      },
+      latestEntitlement: {
+        tenantId: "tenant-1",
+        status: "active",
+        billingMethod: "manual_transfer",
+        paidThrough: "2026-06-01T00:00:00.000Z",
+        revision: 3,
+        inviteId: "invite-1",
+      },
+      now: NOW,
+    });
+    expect(expired.accessLabel).toBe("Süresi dolmuş");
+    expect(expired.primaryAction).toBe("renew");
+
+    const revoked = projectCommercialAdminCustomer({
+      normalizedEmail: "clinic@example.com",
+      tenantIds: ["tenant-1"],
+      hasOwnerMembership: true,
+      latestInvite: {
+        id: "invite-1",
+        status: "consumed",
+        tenantId: "tenant-1",
+        tenantName: "Demo Clinic",
+        createdAt: NOW,
+        updatedAt: NOW,
+      },
+      latestEntitlement: {
+        tenantId: "tenant-1",
+        status: "revoked",
+        billingMethod: "manual_transfer",
+        paidThrough: "2026-08-01T00:00:00.000Z",
+        revision: 4,
+        inviteId: "invite-1",
+      },
+      now: NOW,
+    });
+    expect(revoked.accessLabel).toBe("Erişim kapalı");
+    expect(revoked.primaryAction).toBe("reactivate");
+
+    const pending = projectCommercialAdminCustomer({
+      normalizedEmail: "new@example.com",
+      tenantIds: [],
+      hasOwnerMembership: false,
+      latestInvite: {
+        id: "invite-2",
+        status: "active",
+        tenantId: null,
+        tenantName: null,
+        createdAt: NOW,
+        updatedAt: NOW,
+      },
+      latestEntitlement: null,
+      now: NOW,
+    });
+    expect(pending.accessLabel).toBe("Kurulum bekliyor");
+    expect(pending.primaryAction).toBeNull();
+
+    const ambiguous = projectCommercialAdminCustomer({
+      normalizedEmail: "multi@example.com",
+      tenantIds: ["tenant-a", "tenant-b"],
+      hasOwnerMembership: true,
+      latestInvite: null,
+      latestEntitlement: {
+        tenantId: "tenant-a",
+        status: "revoked",
+        billingMethod: "manual_transfer",
+        paidThrough: "2026-08-01T00:00:00.000Z",
+        revision: 1,
+        inviteId: "invite-a",
+      },
+      now: NOW,
+    });
+    expect(ambiguous.ambiguousTenantMatch).toBe(true);
+    expect(ambiguous.primaryAction).toBeNull();
+  });
+
+  it("blocks duplicate invites and resumes setup email without creating a second row", () => {
+    expect(
+      evaluateCommercialAdminInviteDuplicate({
+        normalizedEmail: "clinic@example.com",
+        tenantIds: [],
+        authUserId: null,
+        openInvite: null,
+        latestEntitlementStatus: null,
+      }).canCreateInvite,
+    ).toBe(true);
+
+    const openInvite = evaluateCommercialAdminInviteDuplicate({
+      normalizedEmail: "clinic@example.com",
+      tenantIds: [],
+      authUserId: null,
+      openInvite: { id: "invite-1", status: "active", tenantId: null },
+      latestEntitlementStatus: null,
+    });
+    expect(openInvite.canCreateInvite).toBe(false);
+    expect(openInvite.shouldResendSetupEmail).toBe(true);
+    expect(openInvite.blockingReasons).toContain("open_invite_exists");
+
+    expect(
+      evaluateCommercialAdminInviteDuplicate({
+        normalizedEmail: "clinic@example.com",
+        tenantIds: ["tenant-1"],
+        authUserId: "auth-1",
+        openInvite: { id: "invite-1", status: "consumed", tenantId: "tenant-1" },
+        latestEntitlementStatus: "revoked",
+        hasOwnerMembership: true,
+      }).blockingReasons,
+    ).toContain("existing_customer_use_reactivate");
+
+    expect(
+      evaluateCommercialAdminInviteDuplicate({
+        normalizedEmail: "clinic@example.com",
+        tenantIds: ["tenant-a", "tenant-b"],
+        authUserId: "auth-1",
+        openInvite: null,
+        latestEntitlementStatus: "active",
+      }).blockingReasons,
+    ).toContain("ambiguous_tenant_match");
+  });
+
+  it("requires a future paid-through date for the single invite-customer command", () => {
+    expect(
+      validateCommercialAdminInviteCustomerCommand(
+        { email: "clinic@example.com", paidThrough: "2026-08-01T00:00:00.000Z" },
+        { now: NOW },
+      ).valid,
+    ).toBe(true);
+    expect(
+      validateCommercialAdminInviteCustomerCommand(
+        { email: "clinic@example.com" },
+        { now: NOW },
+      ).blockingReasons,
+    ).toContain("paid_through_required");
+  });
+
+  it("accepts reactivate in the manual entitlement validator and request hash payload", () => {
+    const validation = validateCommercialAdminManualEntitlementRequest(
+      {
+        action: "reactivate",
+        inviteId: "invite-123",
+        paymentReference: "ADMIN-REACTIVATE-1",
+        paidThrough: "2026-09-01T00:00:00.000Z",
+        requestId: "reactivate-req-1",
+        expectedRevision: 4,
+      },
+      { now: NOW },
+    );
+    expect(validation.valid).toBe(true);
+    expect(validation.action).toBe("reactivate");
+    expect(validation.expectedRevision).toBe(4);
+  });
+
+  it("requires same-origin host matching for admin mutations", () => {
+    expect(isCommercialAdminSameOriginRequest({ origin: null, host: "admin.example.com" })).toBe(true);
+    expect(
+      isCommercialAdminSameOriginRequest({
+        origin: "https://admin.example.com",
+        host: "admin.example.com",
+      }),
+    ).toBe(true);
+    expect(
+      isCommercialAdminSameOriginRequest({
+        origin: "https://evil.example",
+        host: "admin.example.com",
+      }),
+    ).toBe(false);
   });
 });

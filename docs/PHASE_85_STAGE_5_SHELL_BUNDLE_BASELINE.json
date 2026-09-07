@@ -1,0 +1,5 @@
+{
+  "lockedAt": "2026-08-03T16:22:25.747Z",
+  "note": "Faz 1 published no gzip baseline; Faz 9 locks the first local production-build measurement.",
+  "shellEntryGzipBytes": 125698
+}

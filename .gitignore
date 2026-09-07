@@ -41,3 +41,6 @@ pnpm-debug.log*
 Thumbs.db
 *.tsbuildinfo
 *.pem
+
+# Local generated runtime artifacts
+.manu-runtime/

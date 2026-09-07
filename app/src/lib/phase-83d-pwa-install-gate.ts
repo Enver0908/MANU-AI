@@ -12,10 +12,21 @@ export const MOBILE_INSTALL_AUDIT_EVENT_TYPES = [
 ] as const;
 
 export type MobileInstallAuditEventType = (typeof MOBILE_INSTALL_AUDIT_EVENT_TYPES)[number];
+export type MobileInstallBlockedReasonCode =
+  | "unauthenticated"
+  | "membership_required"
+  | "profile_required"
+  | "entitlement_required"
+  | "entitlement_inactive";
 
-export const SERVICE_WORKER_SHELL_PATHS = ["/", "/dashboard", "/app-install"] as const;
+export const SERVICE_WORKER_SHELL_PATHS = [] as const;
 
-export const SERVICE_WORKER_STATIC_ASSET_PREFIXES = ["/_next/static/", "/icon.svg", "/manifest.webmanifest"] as const;
+export const SERVICE_WORKER_STATIC_ASSET_PREFIXES = [
+  "/_next/static/",
+  "/icon.svg",
+  "/icons/",
+  "/manifest.webmanifest",
+] as const;
 
 export type MobileInstallCenterAccessInput = {
   isAuthenticated: boolean;
@@ -29,6 +40,7 @@ export type PwaRuntimeEnvironment = {
   isInstalled: boolean;
   isOnline: boolean;
   isIosSafari: boolean;
+  isInAppBrowser: boolean;
   supportsBeforeInstallPrompt: boolean;
 };
 
@@ -37,8 +49,21 @@ export function shouldServiceWorkerCachePath(pathname: string) {
     return false;
   }
 
-  if ((SERVICE_WORKER_SHELL_PATHS as readonly string[]).includes(pathname)) {
-    return true;
+  // Stage 5 Faz 7: navigation / dashboard HTML is network-only for privacy.
+  if (
+    pathname === "/" ||
+    pathname === "/dashboard" ||
+    pathname.startsWith("/dashboard/") ||
+    pathname === "/app-install" ||
+    pathname.startsWith("/app-install/") ||
+    pathname === "/login" ||
+    pathname.startsWith("/login/") ||
+    pathname === "/onboarding" ||
+    pathname.startsWith("/onboarding/") ||
+    pathname === "/auth/callback" ||
+    pathname.startsWith("/auth/callback")
+  ) {
+    return false;
   }
 
   return SERVICE_WORKER_STATIC_ASSET_PREFIXES.some((prefix) => pathname.startsWith(prefix));
@@ -50,29 +75,38 @@ export function isMobileInstallAuditEventType(value: string): value is MobileIns
 
 export function sanitizeMobileInstallUserAgentSummary(userAgent: string) {
   const trimmed = userAgent.trim().slice(0, 240);
-  return trimmed.replace(/\+90\d{10}/g, "[redacted-phone]");
+  return trimmed
+    .replace(/\+?\d[\d\s().-]{7,}\d/g, "[redacted-phone]")
+    .replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, "[redacted-email]");
 }
 
 export function evaluateMobileInstallCenterAccess(input: MobileInstallCenterAccessInput) {
   const blockingReasons: string[] = [];
+  const blockingReasonCodes: MobileInstallBlockedReasonCode[] = [];
   if (!input.isAuthenticated) {
     blockingReasons.push("authentication required");
+    blockingReasonCodes.push("unauthenticated");
   }
   if (!input.hasTenantMembership) {
     blockingReasons.push("tenant membership required");
+    blockingReasonCodes.push("membership_required");
   }
   if (!input.hasDietitianProfile) {
     blockingReasons.push("dietitian profile required");
+    blockingReasonCodes.push("profile_required");
   }
   if (!input.entitlementStatus) {
     blockingReasons.push("entitlement record required");
+    blockingReasonCodes.push("entitlement_required");
   } else if (input.entitlementStatus !== "active") {
     blockingReasons.push(`entitlement status must be active (current: ${input.entitlementStatus})`);
+    blockingReasonCodes.push("entitlement_inactive");
   }
 
   return {
     allowed: blockingReasons.length === 0,
     blockingReasons,
+    blockingReasonCodes: [...new Set(blockingReasonCodes)],
   };
 }
 
@@ -100,6 +134,14 @@ export function detectIosSafariUserAgent(userAgent: string) {
   return isIos && isSafari;
 }
 
+/** Detect common in-app browsers that cannot complete PWA install. */
+export function detectInAppBrowserUserAgent(userAgent: string) {
+  const ua = userAgent.toLowerCase();
+  return /fbav|fban|fb_iab|instagram|line\/|twitter|linkedinapp|wv\)|; wv|micromessenger|tiktok|snapchat|pinterest/.test(
+    ua,
+  );
+}
+
 export function buildPwaRuntimeEnvironment(input: {
   userAgent: string;
   displayMode?: string | null;
@@ -117,6 +159,7 @@ export function buildPwaRuntimeEnvironment(input: {
     isInstalled: installed.isInstalled,
     isOnline: input.isOnline ?? true,
     isIosSafari: detectIosSafariUserAgent(input.userAgent),
+    isInAppBrowser: detectInAppBrowserUserAgent(input.userAgent),
     supportsBeforeInstallPrompt: input.supportsBeforeInstallPrompt ?? false,
   };
 }
@@ -127,6 +170,7 @@ export function summarizePhase83dPwaInstallGate() {
     installRoute: "/app-install",
     manifestStartUrl: "/dashboard",
     serviceWorkerShellPaths: [...SERVICE_WORKER_SHELL_PATHS],
+    navigationCachePolicy: "network_only",
     apiCachePolicy: "network_only",
     auditEventTypes: [...MOBILE_INSTALL_AUDIT_EVENT_TYPES],
   };

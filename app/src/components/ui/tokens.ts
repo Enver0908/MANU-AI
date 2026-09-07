@@ -38,15 +38,15 @@ export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
 export type ButtonSize = "sm" | "md" | "lg";
 
 const BUTTON_BASE =
-  "inline-flex items-center justify-center gap-2 rounded-control font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/25 focus-visible:ring-offset-1 focus-visible:ring-offset-surface disabled:cursor-not-allowed disabled:opacity-60";
+  "inline-flex min-w-0 items-center justify-center gap-2 whitespace-normal rounded-control font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/25 focus-visible:ring-offset-1 focus-visible:ring-offset-surface disabled:cursor-not-allowed disabled:opacity-60";
 
 const BUTTON_VARIANT: Record<ButtonVariant, string> = {
   primary: "bg-primary text-white hover:bg-primary-hover",
   secondary: "border border-line bg-surface text-ink hover:bg-surface-sunken",
   ghost: "text-ink-muted hover:bg-surface-muted hover:text-ink",
-  // Destructive affordance for operational actions (delete/remove). This is not
-  // a clinical message-risk color; message risk uses MESSAGE_RISK below.
-  danger: "border border-red-200 bg-surface text-red-700 hover:bg-red-50",
+  // Operational destructive affordance. Uses the semantic destructive token,
+  // not clinical message-risk red from MESSAGE_RISK.
+  danger: "border border-destructive/30 bg-surface text-destructive hover:bg-destructive/10",
 };
 
 const BUTTON_SIZE: Record<ButtonSize, string> = {
@@ -73,7 +73,7 @@ const BADGE_TONE: Record<Tone, string> = {
   warm: "border-warm/25 bg-warm/10 text-warm",
   emerald: "border-sage/25 bg-sage/10 text-sage",
   amber: "border-warm/25 bg-warm/10 text-warm",
-  red: "bg-red-100 text-red-950 border-red-200",
+  red: "border-destructive/30 bg-destructive/10 text-destructive",
   stone: "border-line bg-surface-muted text-ink-muted",
 };
 
@@ -88,7 +88,7 @@ export function iconToneClass(tone: Tone = "stone"): string {
     warm: "text-warm",
     emerald: "text-sage",
     amber: "text-warm",
-    red: "text-red-700",
+    red: "text-destructive",
     stone: "text-ink-subtle",
   };
   return map[tone];

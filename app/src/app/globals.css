@@ -25,7 +25,7 @@
   --muted-foreground: oklch(0.52 0.01 280);
   --accent: oklch(0.93 0.018 75);
   --accent-foreground: oklch(0.25 0.03 75);
-  --destructive: oklch(0.577 0.245 27.325);
+  --destructive: oklch(0.47 0.18 27);
   --border: oklch(0.88 0.008 85);
   --input: oklch(0.92 0.005 85);
   --ring: oklch(0.41 0.14 310);
@@ -37,6 +37,9 @@
   --risk-high: oklch(0.60 0.20 27);
   --risk-medium: oklch(0.72 0.18 85);
   --risk-low: oklch(0.58 0.12 155);
+  --font-geist-sans: Arial, Helvetica, sans-serif;
+  --font-geist-mono: "Courier New", Consolas, monospace;
+  --font-fraunces: Georgia, "Times New Roman", serif;
 }
 
 @theme inline {
@@ -122,10 +125,15 @@ textarea:focus-visible,
   left: 1rem;
   top: 1rem;
   z-index: 60;
+  display: inline-flex;
+  min-height: 44px;
+  min-width: 44px;
+  align-items: center;
+  justify-content: center;
   border-radius: var(--radius-control);
   background: var(--primary);
-  color: #ffffff;
-  padding: 0.5rem 0.75rem;
+  color: var(--primary-foreground);
+  padding: 0.5rem 1rem;
   font-size: 0.875rem;
   font-weight: 600;
   transform: translateY(-200%);
@@ -147,32 +155,44 @@ textarea:focus-visible,
   padding-right: max(1rem, env(safe-area-inset-right));
 }
 
-/* Phase 83E-5: mobile chrome spacing above the fixed bottom nav + sticky action bars. */
+/* Phase 83E-5 / Stage 5 Faz 8: mobile chrome above bottom nav + keyboard inset.
+ * `--keyboard-inset` is maintained by visualViewport listeners in mobile-ergonomics.
+ * Stage 5 Faz 5 compact bottom nav is 64px tall below 768px.
+ */
 .bottom-above-nav {
-  bottom: calc(3.5rem + env(safe-area-inset-bottom, 0px));
+  bottom: calc(4rem + env(safe-area-inset-bottom, 0px) + var(--keyboard-inset, 0px));
 }
 
 .pb-mobile-nav {
-  padding-bottom: calc(3.5rem + env(safe-area-inset-bottom, 0px));
+  padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
+}
+
+.pb-shell-compact-nav {
+  padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
 }
 
 .pb-mobile-nav-actions {
-  padding-bottom: calc(7rem + env(safe-area-inset-bottom, 0px));
+  padding-bottom: calc(7.5rem + env(safe-area-inset-bottom, 0px));
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 768px) {
   .pb-mobile-nav,
-  .pb-mobile-nav-actions {
+  .pb-mobile-nav-actions,
+  .pb-shell-compact-nav {
     padding-bottom: 0;
+  }
+
+  .bottom-above-nav {
+    bottom: 0;
   }
 }
 
 /* Keep focused fields visible above the mobile bottom nav + sticky action bars. */
-@media (max-width: 1023px) {
+@media (max-width: 767px) {
   input,
   textarea,
   select {
-    scroll-margin-bottom: calc(7rem + env(safe-area-inset-bottom, 0px));
+    scroll-margin-bottom: calc(7.5rem + env(safe-area-inset-bottom, 0px));
   }
 }
 
@@ -180,7 +200,6 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
-  overflow-x: hidden;
 }
 
 .font-display {
@@ -191,8 +210,16 @@ body {
   box-sizing: border-box;
 }
 
-html {
-  overflow-x: hidden;
+.free-text {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.command-label {
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 button,
@@ -205,4 +232,15 @@ textarea {
 ::selection {
   background: var(--surface-sunken);
   color: var(--primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

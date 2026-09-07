@@ -72,9 +72,9 @@ test("green autopilot sends guarded reply", async () => {
 
   assert.equal(result.action, "sent");
   assert.equal(result.risk, "green");
-  assert.equal(result.model, "gemini-1.5-flash");
+  assert.equal(result.model, "glm-5.3-flash");
   assert.equal(result.providerAttempted, true);
-  assert.deepEqual(models, ["gemini-1.5-flash"]);
+  assert.deepEqual(models, ["glm-5.3-flash"]);
   assert.equal(sent.length, 1);
   assert.equal(result.contextManifest?.answerability?.decision, "source_backed_green");
   assert.ok(result.contextManifest?.answerability?.sourceCategories.includes("active_diet_plan"));
@@ -529,13 +529,13 @@ test("copilot mode drafts green messages for approval with flash model", async (
   );
 
   assert.equal(result.action, "draft_for_approval");
-  assert.equal(result.model, "gemini-1.5-flash");
+  assert.equal(result.model, "glm-5.3-flash");
   assert.equal(result.providerAttempted, true);
-  assert.deepEqual(models, ["gemini-1.5-flash"]);
+  assert.deepEqual(models, ["glm-5.3-flash"]);
   assert.equal(drafts.length, 1);
 });
 
-test("yellow risk uses gemini 3 for approval draft", async () => {
+test("yellow risk uses glm-5.3-flash for approval draft", async () => {
   const drafts = [];
   const models = [];
 
@@ -555,9 +555,9 @@ test("yellow risk uses gemini 3 for approval draft", async () => {
 
   assert.equal(result.risk, "yellow");
   assert.equal(result.action, "draft_for_approval");
-  assert.equal(result.model, "gemini-3");
+  assert.equal(result.model, "glm-5.3-flash");
   assert.equal(result.providerAttempted, true);
-  assert.deepEqual(models, ["gemini-3"]);
+  assert.deepEqual(models, ["glm-5.3-flash"]);
   assert.equal(drafts.length, 1);
   assert.equal(result.contextManifest?.greenIntent?.decision, "not_applicable_non_green");
   assert.equal(result.contextManifest?.greenIntent?.allowed, true);
@@ -586,10 +586,10 @@ test("clinical safety second layer escalates ambiguous green messages to approva
 
   assert.equal(result.risk, "yellow");
   assert.equal(result.action, "draft_for_approval");
-  assert.equal(result.model, "gemini-3");
+  assert.equal(result.model, "glm-5.3-flash");
   assert.equal(result.providerAttempted, true);
   assert.ok(result.reasons.includes("second_layer_ambiguous_clinical_reference"));
-  assert.deepEqual(models, ["gemini-3"]);
+  assert.deepEqual(models, ["glm-5.3-flash"]);
   assert.equal(drafts.length, 1);
   assert.equal(sent.length, 0);
 });
@@ -698,7 +698,7 @@ test("unexpected provider error returns handoff without client send", async () =
   assert.equal(result.providerAttempted, true);
   assert.equal(result.providerStatus, "failed");
   assert.equal(result.providerErrorCode, "provider_error");
-  assert.equal(result.model, "gemini-1.5-flash");
+  assert.equal(result.model, "glm-5.3-flash");
   assert.equal(result.draft, null);
   assert.equal(sent.length, 0);
   assert.equal(handoffs.length, 1);

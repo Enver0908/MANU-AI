@@ -1,34 +1,25 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Geist, Geist_Mono } from "next/font/google";
 import { PwaRuntime } from "@/components/pwa-runtime";
+import { AIYA_BRAND_NAME, AIYA_PRODUCT_DESCRIPTION } from "@/lib/brand";
+import { resolveClientCompatibilityVersion } from "@/lib/release-identity";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-const frauncesDisplay = Fraunces({
-  variable: "--font-fraunces",
-  subsets: ["latin", "latin-ext"],
-  axes: ["SOFT", "WONK", "opsz"],
-});
+const appVersion = resolveClientCompatibilityVersion();
 
 export const metadata: Metadata = {
-  title: "SiriusAI",
-  description: "SiriusAI supervised dietitian messaging assistant",
-  applicationName: "SiriusAI",
+  metadataBase: new URL("https://aiyaworkspace.com"),
+  title: AIYA_BRAND_NAME,
+  description: AIYA_PRODUCT_DESCRIPTION,
+  applicationName: AIYA_BRAND_NAME,
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "SiriusAI",
+    title: AIYA_BRAND_NAME,
   },
   manifest: "/manifest.webmanifest",
+  other: {
+    "siriusai-app-version": appVersion,
+  },
 };
 
 export const viewport: Viewport = {
@@ -48,10 +39,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="tr"
-      className={`${geistSans.variable} ${geistMono.variable} ${frauncesDisplay.variable} h-full antialiased`}
-    >
+    <html lang="tr" className="h-full antialiased">
+      <head>
+        <meta name="siriusai-app-version" content={appVersion} />
+      </head>
       <body className="min-h-full">
         {devServiceWorkerCleanupScript ? (
           <script dangerouslySetInnerHTML={{ __html: devServiceWorkerCleanupScript }} />

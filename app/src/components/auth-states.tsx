@@ -10,6 +10,7 @@ import {
   UserRoundX,
 } from "lucide-react";
 import { buttonClasses, Card, CardBody, type IconType, type Tone } from "@/components/ui";
+import { AIYA_BRAND_NAME } from "@/lib/brand";
 import { PURCHASE_CONTACT_EMAIL } from "@/lib/phase-83e2-purchase-ux";
 import type { DashboardAccessGate } from "@/lib/phase-83e3-app-shell";
 
@@ -92,7 +93,7 @@ export function NoMembershipState() {
       icon={ShieldAlert}
       tone="amber"
       title="Çalışma alanı erişimi yok"
-      description="Hesabınız herhangi bir MANU-AI çalışma alanına bağlı değil."
+      description={`Hesabınız herhangi bir ${AIYA_BRAND_NAME} çalışma alanına bağlı değil.`}
       actions={<ContactLink />}
     >
       Panele erişebilmeniz için bir çalışma alanı yöneticisinin hesabınızı bir kiracıya eklemesi
@@ -133,7 +134,7 @@ export function NoInviteState() {
         </>
       }
     >
-      MANU-AI davetle erişilir. Onaylı e-posta ve davet kodunuzla satın alma akışını başlatabilir
+      {AIYA_BRAND_NAME} davetle erişilir. Onaylı e-posta ve davet kodunuzla satın alma akışını başlatabilir
       veya erişim için ekiple iletişime geçebilirsiniz.
     </GatedStateScreen>
   );
@@ -188,7 +189,7 @@ export function RevokedAccessState() {
       icon={ShieldX}
       tone="red"
       title="Erişim iptal edildi"
-      description="Bu hesabın MANU-AI erişimi iptal edilmiş."
+      description={`Bu hesabın ${AIYA_BRAND_NAME} erişimi iptal edilmiş.`}
       actions={<ContactLink />}
     >
       Korumalı ekranlara ve verilere erişim kapatıldı. Bunun bir hata olduğunu düşünüyorsanız

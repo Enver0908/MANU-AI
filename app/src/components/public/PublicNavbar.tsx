@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
+import { AIYA_BRAND_NAME } from "@/lib/brand";
 
 const NAV_LINKS = [
   { label: "Nasıl çalışır", href: "/#nasil-calisir" },
@@ -19,16 +20,16 @@ export function PublicNavbar() {
       <nav className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6" aria-label="Ana gezinti">
         <Link
           href="/"
-          className="text-lg font-semibold tracking-tight text-off-black transition-colors hover:text-primary"
-          aria-label="SiriusAI ana sayfa"
+          className="inline-flex min-h-11 items-center text-lg font-semibold tracking-tight text-off-black transition-colors hover:text-primary"
+          aria-label={`${AIYA_BRAND_NAME} ana sayfa`}
         >
-          SiriusAI
+          {AIYA_BRAND_NAME}
         </Link>
 
         <ul className="hidden items-center gap-6 text-sm font-medium text-muted-foreground md:flex">
           {NAV_LINKS.map(({ label, href }) => (
             <li key={href}>
-              <Link href={href} className="transition-colors hover:text-foreground">
+              <Link href={href} className="inline-flex min-h-11 items-center transition-colors hover:text-foreground">
                 {label}
               </Link>
             </li>
@@ -38,15 +39,15 @@ export function PublicNavbar() {
         <div className="hidden items-center gap-3 md:flex">
           <Link
             href="/login"
-            className="px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+            className="inline-flex min-h-11 items-center px-3 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
           >
             Giriş yap
           </Link>
           <Link
-            href="/purchase"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-1.5 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            href="/#iletisim"
+            className="inline-flex min-h-11 items-center justify-center rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
-            Davet koduyla başla
+            Bize ulaşın
           </Link>
         </div>
 
@@ -86,11 +87,11 @@ export function PublicNavbar() {
             </li>
             <li className="mt-1">
               <Link
-                href="/purchase"
+                href="/#iletisim"
                 className="flex min-h-[44px] items-center justify-center rounded-md bg-primary px-4 py-2.5 text-center text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover"
                 onClick={() => setOpen(false)}
               >
-                Davet koduyla başla
+                Bize ulaşın
               </Link>
             </li>
           </ul>

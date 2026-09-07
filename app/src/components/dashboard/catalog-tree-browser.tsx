@@ -42,7 +42,7 @@ export function CatalogTreeBrowser({
   };
 
   if (tree.length === 0) {
-    return <p className="text-sm text-stone-500">Katalog aramasina uygun sonuc yok.</p>;
+    return <p className="text-sm text-ink-subtle">Katalog aramasina uygun sonuc yok.</p>;
   }
 
   return (
@@ -51,12 +51,12 @@ export function CatalogTreeBrowser({
         const mainExpanded = expandedMains[main.id] ?? Boolean(query.trim());
         const mainSide = resolveCatalogMainSide(profile, main.id);
         return (
-          <div key={main.id} className="rounded-lg border border-stone-200 bg-white">
+          <div key={main.id} className="rounded-card border border-line bg-surface">
             <div className="flex flex-wrap items-center gap-2 px-3 py-2">
               <button
                 type="button"
                 onClick={() => toggleMain(main.id)}
-                className="inline-flex min-h-11 items-center gap-1 text-sm font-semibold text-stone-900"
+                className="inline-flex min-h-11 items-center gap-1 text-sm font-semibold text-ink"
               >
                 {mainExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
                 {main.name}
@@ -65,17 +65,17 @@ export function CatalogTreeBrowser({
             </div>
 
             {mainExpanded ? (
-              <div className="space-y-2 border-t border-stone-100 px-3 py-2">
+              <div className="space-y-2 border-t border-line px-3 py-2">
                 {subcategories.map(({ subcategory, foods }) => {
                   const subExpanded = expandedSubs[subcategory.id] ?? Boolean(query.trim());
                   const subSide = resolveCatalogSubSide(profile, subcategory.id, main.id);
                   return (
-                    <div key={subcategory.id} className="rounded-md border border-stone-100 bg-stone-50/70">
+                    <div key={subcategory.id} className="rounded-md border border-line bg-surface-muted/70">
                       <div className="flex flex-wrap items-center gap-2 px-3 py-2">
                         <button
                           type="button"
                           onClick={() => toggleSub(subcategory.id)}
-                          className="inline-flex min-h-11 items-center gap-1 text-sm font-medium text-stone-800"
+                          className="inline-flex min-h-11 items-center gap-1 text-sm font-medium text-ink"
                         >
                           {subExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
                           {subcategory.name}
@@ -89,16 +89,16 @@ export function CatalogTreeBrowser({
                       </div>
 
                       {subExpanded ? (
-                        <div className="space-y-1 border-t border-stone-100 px-3 py-2">
+                        <div className="space-y-1 border-t border-line px-3 py-2">
                           {foods.map((food) => {
                             const foodSide = resolveCatalogFoodSide(profile, food.id);
                             return (
                               <div
                                 key={food.id}
-                                className="flex flex-wrap items-center justify-between gap-2 rounded-md bg-white px-2 py-1.5"
+                                className="flex flex-wrap items-center justify-between gap-2 rounded-md bg-surface px-2 py-1.5"
                                 data-testid={`catalog-food-row-${food.id}`}
                               >
-                                <span className="min-w-0 text-sm text-stone-700">{food.name}</span>
+                                <span className="min-w-0 text-sm text-ink">{food.name}</span>
                                 <SelectionToggle
                                   side={foodSide}
                                   disabled={disabled}
@@ -148,8 +148,8 @@ function SelectionToggle({
         onClick={() => onSelect(side === "allowed" ? "none" : "allowed")}
         className={`rounded-md border font-semibold transition ${buttonClass} ${
           side === "allowed"
-            ? "border-emerald-300 bg-emerald-100 text-emerald-950"
-            : "border-stone-200 bg-white text-stone-600 hover:bg-stone-50"
+            ? "border-primary/40 bg-primary/15 text-ink"
+            : "border-line bg-surface text-ink-muted hover:bg-surface-muted"
         }`}
       >
         Izinli
@@ -161,7 +161,7 @@ function SelectionToggle({
         className={`rounded-md border font-semibold transition ${buttonClass} ${
           side === "forbidden"
             ? "border-red-300 bg-red-100 text-red-950"
-            : "border-stone-200 bg-white text-stone-600 hover:bg-stone-50"
+            : "border-line bg-surface text-ink-muted hover:bg-surface-muted"
         }`}
       >
         Yasak

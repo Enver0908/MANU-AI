@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest";
 import type { SystemNotificationListItem } from "./phase-85-stage-4b-contracts";
 import {
+  applyStage4BNotificationReadAllToItems,
   buildNotificationStatusSegmentLabel,
   canActorMutateNotificationReceipts,
   canNavigateToNotificationTarget,
+  mergeStage4BNotificationMutationIntoItems,
   resolveNotificationEmptyStateKeys,
   resolveNotificationReceiptStatus,
   shouldShowUnsupportedMediaReviewComplete,
@@ -65,6 +67,15 @@ describe("notifications-panel-helpers", () => {
     expect(canNavigateToNotificationTarget(buildNotification({ clientId: "missing" }), new Set(["client-1"]))).toBe(
       false,
     );
+    expect(
+      canNavigateToNotificationTarget(
+        buildNotification({
+          clientId: null,
+          target: { section: "clients", clientId: "" },
+        }),
+        new Set(["client-1"]),
+      ),
+    ).toBe(true);
   });
 
   it("tracks receipt status and unsupported media review gate", () => {
@@ -83,5 +94,25 @@ describe("notifications-panel-helpers", () => {
     expect(shouldShowUnsupportedMediaReviewComplete(buildNotification({ resolvedAt: "2026-07-12T10:03:00.000Z" }))).toBe(
       false,
     );
+  });
+
+  it("merges bounded notification receipt mutations into the list slice", () => {
+    const items = [buildNotification()];
+    const merged = mergeStage4BNotificationMutationIntoItems(items, {
+      version: "test",
+      generatedAt: "2026-08-19T12:00:00.000Z",
+      notificationId: "notification-1",
+      readAt: "2026-08-19T12:00:00.000Z",
+      acknowledgedAt: null,
+      target: items[0]!.target,
+      counts: { active: 1, unread: 0, history: 0 },
+    });
+    expect(merged[0]?.readAt).toBe("2026-08-19T12:00:00.000Z");
+    expect(applyStage4BNotificationReadAllToItems(items, {
+      version: "test",
+      generatedAt: "2026-08-19T12:01:00.000Z",
+      markedReadCount: 1,
+      counts: { active: 1, unread: 0, history: 1 },
+    }, "2026-08-19T12:01:00.000Z")[0]?.readAt).toBe("2026-08-19T12:01:00.000Z");
   });
 });

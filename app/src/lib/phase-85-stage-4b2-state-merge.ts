@@ -128,7 +128,7 @@ export function mergeConversationMutationResponseIntoAppState(
 }
 
 export function shouldRefreshAppStateAfterConversationMutation(
-  operation: ConversationMutationResponse["operation"],
+  _operation: ConversationMutationResponse["operation"],
 ) {
-  return operation === "manual_reply" || operation === "draft_review";
+  return false;
 }

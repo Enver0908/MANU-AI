@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { assertMockProviderInputPolicy, buildMockProviderInput } from "./ai-provider";
-import { evaluatePhase75PromptContextFieldEligibility } from "./phase-75-gemini-provider-gate";
+import { evaluatePhase75PromptContextFieldEligibility } from "./phase-75-zai-provider-gate";
 import { createInitialState } from "./seed-data";
 import { runInboundSimulation } from "./simulator";
 

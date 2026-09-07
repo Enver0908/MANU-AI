@@ -16,7 +16,7 @@ This phase does not approve production pilot launch, close any launch gate, conn
 - Pilot evidence updates: `docs/PILOT_READINESS_EVIDENCE_PACK.md`, `docs/PRODUCTION_PILOT_GATE_CLOSURE_DOSSIER.md`, `docs/PRODUCTION_PILOT_FINAL_READINESS_CLOSURE_SUMMARY.md`.
 - Risk register updates for R-109, R-117, R-310, R-403, R-409, R-412, R-413, and R-414 (product ingredient source uncertainty).
 - Clinical taxonomy review packet food-rule track evidence table.
-- Evidence wording: preserve **local prototype mitigated** vs **production approved** distinction; all eight launch gates remain open; R-405 remains open.
+- Evidence wording at this checkpoint: preserve **local prototype mitigated** vs **production approved** distinction; all eight launch gates remain open; R-405 was open at this checkpoint. Current R-405 technical status is superseded by the later Stage 5 dependency report.
 
 ## Non-Goals
 

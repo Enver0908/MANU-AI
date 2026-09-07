@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { cookies } from "next/headers";
+import { AIYA_BRAND_NAME } from "@/lib/brand";
 import { resolveCustomerSessionFacts } from "@/lib/customer-auth-session";
 import {
   deriveCustomerAuthRedirect,
@@ -7,6 +8,11 @@ import {
   sanitizePostAuthRedirectPath,
 } from "@/lib/phase-84d-customer-auth";
 import { resolveAdminAppBaseUrl } from "@/lib/phase-84f-admin-console";
+import {
+  ACCOUNT_RECOVERY_FLOW_COOKIE_NAME,
+  ACCOUNT_RECOVERY_FLOW_TTL_SECONDS,
+  buildAccountRecoveryFlowCookieValue,
+} from "@/lib/phase-85-stage-4d-account-security";
 import { createSupabaseServerClient, getSupabaseConfig, isSupabaseConfigured } from "@/lib/supabase";
 
 type AuthCookieMutation = {
@@ -57,7 +63,7 @@ function renderFragmentSessionBridge(nextPath: string | null, authErrorBase: str
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SiriusAI authentication</title>
+  <title>${AIYA_BRAND_NAME} giriş doğrulaması</title>
 </head>
 <body>
   <script>
@@ -142,6 +148,7 @@ export async function GET(request: NextRequest) {
 
   const tokenHash = request.nextUrl.searchParams.get("token_hash");
   const otpType = request.nextUrl.searchParams.get("type");
+  const isRecoveryFlow = otpType === "recovery";
   if (!code && tokenHash && otpType) {
     if (!SUPPORTED_EMAIL_OTP_TYPES.has(otpType)) {
       return NextResponse.redirect(buildExternalRedirectUrl(`${authErrorBase}?error=auth_callback_failed`, authErrorBase));
@@ -161,7 +168,29 @@ export async function GET(request: NextRequest) {
   }
 
   const facts = await resolveCustomerSessionFacts(supabase);
-  const destination = requestedNext ?? deriveCustomerAuthRedirect(facts);
-  const response = NextResponse.redirect(buildExternalRedirectUrl(destination, authErrorBase));
+  let destination = requestedNext ?? deriveCustomerAuthRedirect(facts);
+  if (isRecoveryFlow) {
+    destination = "/account/recovery";
+  }
+  const destinationUrl = buildExternalRedirectUrl(destination, authErrorBase);
+  const response = NextResponse.redirect(destinationUrl);
+  if (isRecoveryFlow) {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user) {
+      response.cookies.set(
+        ACCOUNT_RECOVERY_FLOW_COOKIE_NAME,
+        buildAccountRecoveryFlowCookieValue({ authUserId: user.id }),
+        {
+          httpOnly: true,
+          sameSite: "lax",
+          secure: destinationUrl.protocol === "https:",
+          path: "/",
+          maxAge: ACCOUNT_RECOVERY_FLOW_TTL_SECONDS,
+        },
+      );
+    }
+  }
   return applyAuthSessionMutations(response, authCookiesToSet, authHeadersToSet);
 }

@@ -2,6 +2,8 @@
 
 import { useState, type FormEvent } from "react";
 import { AlertCircle, CheckCircle, Loader2 } from "lucide-react";
+import { Field, TextArea, TextInput } from "@/components/ui";
+import { PUBLIC_CONTACT_COPY } from "@/lib/phase-84b-public-website";
 
 type FormState = "idle" | "loading" | "success" | "error" | "unavailable";
 
@@ -42,7 +44,7 @@ export function ContactSection() {
 
       const payload = (await response.json().catch(() => ({}))) as { accepted?: boolean };
       if (!response.ok || !payload.accepted) {
-        setErrorMsg("Talep gönderilemedi. Lütfen tekrar deneyin veya e-posta ile ulaşın.");
+        setErrorMsg(PUBLIC_CONTACT_COPY.errorRetry);
         setState("error");
         return;
       }
@@ -50,7 +52,7 @@ export function ContactSection() {
       setState("success");
       form.reset();
     } catch {
-      setErrorMsg("Bir hata oluştu. Lütfen tekrar deneyin veya e-posta ile ulaşın.");
+      setErrorMsg(PUBLIC_CONTACT_COPY.errorGeneric);
       setState("error");
     }
   }
@@ -65,11 +67,10 @@ export function ContactSection() {
             </div>
           </div>
           <h2 id="contact-heading" className="mb-3 font-display text-2xl font-bold text-off-black">
-            Talebiniz alındı
+            {PUBLIC_CONTACT_COPY.successTitle}
           </h2>
           <p className="leading-relaxed text-muted-foreground">
-            Ekibimiz talebinizi inceleyecek ve en kısa sürede size ulaşacak. Davet kodu oluşturulduğunda e-posta
-            adresinize bildirim gönderilecek.
+            {PUBLIC_CONTACT_COPY.successBody}
           </p>
         </div>
       </section>
@@ -83,16 +84,15 @@ export function ContactSection() {
           <div>
             <p className="mb-3 text-xs font-semibold uppercase text-primary">İletişim</p>
             <h2 id="contact-heading" className="mb-4 font-display text-3xl font-bold text-off-black">
-              Erişim talebi bırakın
+              {PUBLIC_CONTACT_COPY.heading}
             </h2>
             <p className="mb-6 leading-relaxed text-muted-foreground">
-              Henüz davet kodunuz yoksa formu doldurun. Ekibimiz klinik uygunluğunuzu değerlendirip size özel davet
-              kodu oluşturacak.
+              {PUBLIC_CONTACT_COPY.processIntro}
             </p>
             <div className="rounded-lg border border-border bg-surface p-5">
               <p className="mb-1 text-sm font-semibold text-foreground">Süreç nasıl işler?</p>
               <ol className="mt-3 flex list-none flex-col gap-2 text-sm text-muted-foreground">
-                {["Formu gönderin", "Ekibimiz 1-3 iş günü içinde ulaşır", "Onay sonrası davet kodu e-posta ile gelir"].map(
+                {PUBLIC_CONTACT_COPY.processSteps.map(
                   (step, index) => (
                     <li key={step} className="flex items-start gap-2">
                       <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[10px] font-bold text-primary">
@@ -106,78 +106,65 @@ export function ContactSection() {
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4 rounded-lg border border-border bg-surface p-6" noValidate>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor="contactName" className="text-xs font-semibold text-foreground">
-                  Ad Soyad <span className="text-destructive">*</span>
-                </label>
-                <input
-                  id="contactName"
+          <form
+            id="contact"
+            onSubmit={handleSubmit}
+            className="flex min-w-0 flex-col gap-4 rounded-lg border border-border bg-surface p-6"
+            noValidate
+            aria-busy={state === "loading"}
+          >
+            <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
+              <Field label="Ad Soyad" htmlFor="contact-lead-name" required>
+                <TextInput
+                  id="contact-lead-name"
                   name="contactName"
                   type="text"
                   required
                   autoComplete="name"
-                  className="rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   placeholder="Dr. Ayşe Kaya"
                 />
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor="email" className="text-xs font-semibold text-foreground">
-                  E-posta <span className="text-destructive">*</span>
-                </label>
-                <input
-                  id="email"
+              </Field>
+              <Field label="E-posta" htmlFor="contact-lead-email" required>
+                <TextInput
+                  id="contact-lead-email"
                   name="email"
                   type="email"
                   required
                   autoComplete="email"
-                  className="rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   placeholder="ayse@klinik.com"
                 />
-              </div>
+              </Field>
             </div>
 
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor="clinicName" className="text-xs font-semibold text-foreground">
-                Klinik adı <span className="text-destructive">*</span>
-              </label>
-              <input
-                id="clinicName"
-                name="clinicName"
-                type="text"
-                required
-                className="rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                placeholder="Sağlık Kliniği"
-              />
-            </div>
+            <Field label="Klinik adı" htmlFor="contact-lead-clinic" required>
+              <TextInput id="contact-lead-clinic" name="clinicName" type="text" required placeholder="Sağlık Kliniği" />
+            </Field>
 
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor="message" className="text-xs font-semibold text-foreground">
-                Mesaj <span className="text-destructive">*</span>
-              </label>
-              <textarea
-                id="message"
+            <Field label="Mesaj" htmlFor="contact-lead-message" required>
+              <TextArea
+                id="contact-lead-message"
                 name="message"
                 required
                 rows={4}
-                className="resize-none rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="resize-none"
                 placeholder="Kliniğiniz ve kullanım amacınız hakkında kısaca bilgi verin..."
               />
-            </div>
+            </Field>
 
             <div className="hidden" aria-hidden>
-              <label htmlFor="companyWebsite">Website</label>
-              <input id="companyWebsite" name="companyWebsite" tabIndex={-1} autoComplete="off" />
+              <label htmlFor="contact-lead-website">Website</label>
+              <input id="contact-lead-website" name="companyWebsite" tabIndex={-1} autoComplete="off" />
             </div>
 
             {(state === "error" || state === "unavailable") ? (
-              <div className="flex items-start gap-2 rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2.5">
-                <AlertCircle size={14} className="mt-0.5 shrink-0 text-destructive" />
-                <p className="text-xs leading-relaxed text-destructive">
-                  {state === "unavailable"
-                    ? "Çevrimiçi form şu an kullanılamıyor. Lütfen e-posta ile ulaşın."
-                    : errorMsg}
+              <div
+                className="flex min-w-0 items-start gap-2 rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2.5"
+                role="alert"
+                aria-live="polite"
+              >
+                <AlertCircle size={14} className="mt-0.5 shrink-0 text-destructive" aria-hidden />
+                <p className="free-text text-xs leading-relaxed text-destructive">
+                  {state === "unavailable" ? PUBLIC_CONTACT_COPY.unavailable : `Hata: ${errorMsg}`}
                 </p>
               </div>
             ) : null}
@@ -192,7 +179,7 @@ export function ContactSection() {
             </button>
 
             <p className="text-xs text-muted-foreground">
-              Formu göndererek pilot program koşullarının ekip tarafından değerlendirileceğini kabul etmiş olursunuz.
+              {PUBLIC_CONTACT_COPY.consentNote}
             </p>
           </form>
         </div>

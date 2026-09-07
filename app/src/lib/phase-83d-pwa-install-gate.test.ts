@@ -19,11 +19,16 @@ describe("phase 83d pwa install gate", () => {
     expect(shouldServiceWorkerCachePath("/api/clients/123/export")).toBe(false);
   });
 
-  it("allows shell and static asset caching only", () => {
-    expect(shouldServiceWorkerCachePath("/dashboard")).toBe(true);
-    expect(shouldServiceWorkerCachePath("/app-install")).toBe(true);
+  it("allows static asset caching only — never dashboard HTML or API", () => {
+    expect(shouldServiceWorkerCachePath("/dashboard")).toBe(false);
+    expect(shouldServiceWorkerCachePath("/app-install")).toBe(false);
+    expect(shouldServiceWorkerCachePath("/login")).toBe(false);
+    expect(shouldServiceWorkerCachePath("/onboarding")).toBe(false);
+    expect(shouldServiceWorkerCachePath("/")).toBe(false);
     expect(shouldServiceWorkerCachePath("/manifest.webmanifest")).toBe(true);
     expect(shouldServiceWorkerCachePath("/_next/static/chunks/main.js")).toBe(true);
+    expect(shouldServiceWorkerCachePath("/icons/aiya-192.png")).toBe(true);
+    expect(shouldServiceWorkerCachePath("/icons/siriusai-192.png")).toBe(true);
     expect(shouldServiceWorkerCachePath("/clients")).toBe(false);
   });
 
@@ -78,8 +83,15 @@ describe("phase 83d pwa install gate", () => {
     });
 
     expect(env.isIosSafari).toBe(false);
+    expect(env.isInAppBrowser).toBe(false);
     expect(env.supportsBeforeInstallPrompt).toBe(true);
     expect(env.isInstalled).toBe(false);
+
+    const inApp = buildPwaRuntimeEnvironment({
+      userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) Instagram 300.0.0",
+      displayMode: "browser",
+    });
+    expect(inApp.isInAppBrowser).toBe(true);
   });
 
   it("validates audit event types and sanitizes user agent summaries", () => {
@@ -95,9 +107,13 @@ describe("phase 83d pwa install gate", () => {
     expect(summary.apiCachePolicy).toBe("network_only");
   });
 
-  it("keeps public service worker on network-only for API routes", () => {
+  it("keeps public service worker on network-only for API and navigation", () => {
     const swSource = readFileSync(join(process.cwd(), "public", "sw.js"), "utf8");
     expect(swSource).toContain('pathname.startsWith("/api/")');
+    expect(swSource).toContain('request.mode === "navigate"');
+    expect(swSource).toContain('LEGACY_CACHE_PREFIX = "manu-ai-shell-"');
+    expect(swSource).toContain('SKIP_WAITING');
     expect(swSource).not.toContain('cache.addAll(["/", "/dashboard"');
+    expect(swSource).not.toContain("manu-ai-shell-v2");
   });
 });

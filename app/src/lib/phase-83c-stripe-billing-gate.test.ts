@@ -133,15 +133,16 @@ describe("phase 83c stripe billing gate", () => {
     expect(mapStripeSubscriptionStatusToEntitlement("canceled")).toBe("canceled");
   });
 
-  it("requires active entitlement and stripe customer for billing portal access", () => {
-    const blocked = evaluateBillingPortalAccess({
+  it("allows active or past-due entitlement with stripe customer for billing portal access", () => {
+    const recovery = evaluateBillingPortalAccess({
       isAuthenticated: true,
       hasTenantMembership: true,
       hasDietitianProfile: true,
       entitlementStatus: "past_due",
       stripeCustomerId: "cus_test_1",
+      role: "owner",
     });
-    expect(blocked.allowed).toBe(false);
+    expect(recovery.allowed).toBe(true);
 
     const allowed = evaluateBillingPortalAccess({
       isAuthenticated: true,
@@ -149,8 +150,38 @@ describe("phase 83c stripe billing gate", () => {
       hasDietitianProfile: true,
       entitlementStatus: "active",
       stripeCustomerId: "cus_test_1",
+      role: "owner",
     });
     expect(allowed.allowed).toBe(true);
+  });
+
+  it("blocks billing portal for non-owner/admin roles", () => {
+    for (const role of ["dietitian", "assistant", "auditor"] as const) {
+      const result = evaluateBillingPortalAccess({
+        isAuthenticated: true,
+        hasTenantMembership: true,
+        hasDietitianProfile: true,
+        entitlementStatus: "active",
+        stripeCustomerId: "cus_test_1",
+        role,
+      });
+      expect(result.allowed).toBe(false);
+      expect(result.blockingReasons).toContain("billing_portal_role_forbidden");
+    }
+  });
+
+  it("allows owner and admin roles when entitlement and stripe customer are valid", () => {
+    for (const role of ["owner", "admin"] as const) {
+      const result = evaluateBillingPortalAccess({
+        isAuthenticated: true,
+        hasTenantMembership: true,
+        hasDietitianProfile: true,
+        entitlementStatus: "active",
+        stripeCustomerId: "cus_test_1",
+        role,
+      });
+      expect(result.allowed).toBe(true);
+    }
   });
 
   it("summarizes sandbox-only billing gate without secrets", () => {

@@ -1,9 +1,6 @@
 import Stripe from "stripe";
 import type { CommercialEntitlementStatus } from "./phase-83b-commercial-entitlement-model";
-import {
-  evaluateCommercialDashboardAccess,
-  transitionCommercialEntitlement,
-} from "./phase-83b-commercial-entitlement-model";
+import { transitionCommercialEntitlement } from "./phase-83b-commercial-entitlement-model";
 
 export const PHASE_83C_VERSION = "phase83-stripe-billing-gate-v1";
 
@@ -463,15 +460,25 @@ export function evaluateBillingPortalAccess(input: {
   hasDietitianProfile: boolean;
   entitlementStatus: CommercialEntitlementStatus | null;
   stripeCustomerId: string | null;
+  role?: string | null;
 }) {
-  const dashboard = evaluateCommercialDashboardAccess({
-    isAuthenticated: input.isAuthenticated,
-    hasTenantMembership: input.hasTenantMembership,
-    hasDietitianProfile: input.hasDietitianProfile,
-    entitlementStatus: input.entitlementStatus,
-  });
+  if (input.role != null && input.role !== "owner" && input.role !== "admin") {
+    return { allowed: false, blockingReasons: ["billing_portal_role_forbidden"] };
+  }
 
-  const blockingReasons = [...dashboard.blockingReasons];
+  const blockingReasons: string[] = [];
+  if (!input.isAuthenticated) {
+    blockingReasons.push("authentication required");
+  }
+  if (!input.hasTenantMembership) {
+    blockingReasons.push("tenant membership required");
+  }
+  if (!input.hasDietitianProfile) {
+    blockingReasons.push("dietitian profile required");
+  }
+  if (input.entitlementStatus !== "active" && input.entitlementStatus !== "past_due") {
+    blockingReasons.push("billing portal requires active or past due entitlement");
+  }
   if (!input.stripeCustomerId) {
     blockingReasons.push("stripe customer mapping required");
   }

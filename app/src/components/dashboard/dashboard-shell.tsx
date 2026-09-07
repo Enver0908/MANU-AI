@@ -1,109 +1,384 @@
 "use client";
 
-import type { ReactNode } from "react";
-import { LogOut, ShieldCheck } from "lucide-react";
+import { useEffect, useRef, type ReactNode } from "react";
+import Link from "next/link";
+import { LogOut, Maximize2, Minimize2 } from "lucide-react";
+import {
+  DashboardCompactBottomNav,
+  DashboardHeaderBell,
+  DashboardMediumRailNav,
+  DashboardWideSidebarNav,
+} from "@/components/dashboard/dashboard-navigation";
+import { useShellProvider } from "@/components/dashboard/shell-provider";
+import { AIYA_BRAND_NAME } from "@/lib/brand";
 import { DASHBOARD_MAIN_ID } from "@/lib/phase-83e6-states-polish";
-import type { DashboardNavKey, DashboardSection } from "@/lib/phase-85-stage-4b-dashboard-routing";
+import { t } from "@/lib/i18n";
 import type { SupportedLanguageCode } from "@/lib/languages";
-import { DashboardMobileNav, DashboardSidebarNav } from "@/components/dashboard/dashboard-navigation";
 
-export type DashboardShellBadges = { alerts: number; notifications: number; messages: number };
+function ShellBlocker({
+  title,
+  message,
+  action,
+  runtime,
+}: {
+  title: string;
+  message: string;
+  action?: ReactNode;
+  runtime?: string;
+}) {
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!action) return;
+    const focusable = rootRef.current?.querySelector<HTMLElement>("button, a[href]");
+    focusable?.focus();
+  }, [action, runtime]);
+
+  return (
+    <div
+      ref={rootRef}
+      className="flex min-h-dvh items-center justify-center bg-paper px-safe py-10 text-ink"
+      role="alert"
+      data-testid="shell-blocker"
+      data-shell-runtime={runtime}
+    >
+      <div className="w-full max-w-md border border-line bg-surface p-6">
+        <h1 className="text-xl font-semibold">{title}</h1>
+        <p className="mt-2 text-sm leading-6 text-ink-muted">{message}</p>
+        {action ? <div className="mt-4">{action}</div> : null}
+      </div>
+    </div>
+  );
+}
+
+function renderRuntimeBlocker(
+  runtime: string,
+  lastError: string | null,
+  onRetry: () => void,
+  uiLanguage: SupportedLanguageCode,
+) {
+  const primaryButton =
+    "inline-flex min-h-11 items-center rounded-control bg-primary px-4 text-sm font-medium text-white";
+  switch (runtime) {
+    case "booting":
+      return (
+        <ShellBlocker
+          title={t(uiLanguage, "shellBootingTitle")}
+          message={t(uiLanguage, "shellBootingMessage")}
+        />
+      );
+    case "offline":
+      return (
+        <ShellBlocker
+          runtime="offline"
+          title={t(uiLanguage, "shellOfflineTitle")}
+          message={t(uiLanguage, "shellOfflineMessage")}
+          action={
+            <button type="button" className={primaryButton} data-testid="shell-retry" onClick={onRetry}>
+              {t(uiLanguage, "shellRetry")}
+            </button>
+          }
+        />
+      );
+    case "session_locked":
+      return (
+        <ShellBlocker
+          title={t(uiLanguage, "shellSessionLockedTitle")}
+          message={t(uiLanguage, "shellSessionLockedMessage")}
+          action={
+            <Link href="/login?next=/dashboard" className={primaryButton}>
+              {t(uiLanguage, "shellReLogin")}
+            </Link>
+          }
+        />
+      );
+    case "entitlement_blocked":
+      return (
+        <ShellBlocker
+          title={t(uiLanguage, "shellEntitlementBlockedTitle")}
+          message={t(uiLanguage, "shellEntitlementBlockedMessage")}
+          action={
+            <Link href="/pricing" className={primaryButton}>
+              {t(uiLanguage, "shellCheckSubscription")}
+            </Link>
+          }
+        />
+      );
+    case "update_required":
+      return (
+        <ShellBlocker
+          title={t(uiLanguage, "shellUpdateRequiredTitle")}
+          message={t(uiLanguage, "shellUpdateRequiredMessage")}
+          action={
+            <button type="button" className={primaryButton} onClick={() => window.location.reload()}>
+              {t(uiLanguage, "shellReload")}
+            </button>
+          }
+        />
+      );
+    case "service_unavailable":
+    default:
+      return (
+        <ShellBlocker
+          title={t(uiLanguage, "shellUnavailableTitle")}
+          message={lastError ? `Durum: ${lastError}` : t(uiLanguage, "shellUnavailableMessage")}
+          action={
+            <button type="button" className={primaryButton} onClick={onRetry}>
+              {t(uiLanguage, "shellRetry")}
+            </button>
+          }
+        />
+      );
+  }
+}
 
 /**
- * Shared dashboard chrome (skip-link, nav aside, mobile nav) extracted from
- * the former monolithic `DashboardApp` so the classic dashboard and the AI
- * Chat workspace (Faz 4) render identical navigation without duplicating it.
- *
- * The caller owns its own header/content markup (including the
- * `#${DASHBOARD_MAIN_ID}` skip-link target) as `children`; this component
- * only owns the surrounding nav chrome. `focusMode` hides that chrome
- * entirely for a full-screen workspace (AI Chat focus mode).
+ * Canonical authenticated dashboard chrome with compact / medium / wide layouts.
  */
-export function DashboardShell({
-  activeNavKey,
-  uiLanguage,
-  badges,
-  aiChatEnabled = false,
-  onNavigateSection,
-  focusMode = false,
-  children,
-}: {
-  activeNavKey: DashboardNavKey;
-  uiLanguage: SupportedLanguageCode;
-  badges?: DashboardShellBadges;
-  aiChatEnabled?: boolean;
-  onNavigateSection: (section: DashboardSection) => void;
-  focusMode?: boolean;
-  children: ReactNode;
-}) {
+export function DashboardShell({ children }: { children: ReactNode }) {
+  const {
+    runtime,
+    bootstrap,
+    focusMode,
+    activeDestination,
+    headerSlots,
+    navigateToDestination,
+    setFocusMode,
+    refreshBootstrap,
+    updateWaiting,
+    updateRequired,
+    applyWaitingServiceWorkerUpdate,
+    dismissOptionalUpdate,
+    canNavigateAway,
+    requestLogout,
+    dirtySnapshot,
+    hideCompactNavigation,
+    uiLanguage,
+    lastError,
+  } = useShellProviderWithLastError();
+
+  const navigationLocked = dirtySnapshot.isSaving;
+  const hardBlockRuntime =
+    runtime === "booting" ||
+    runtime === "offline" ||
+    runtime === "session_locked" ||
+    runtime === "entitlement_blocked" ||
+    runtime === "service_unavailable";
+
+  if (hardBlockRuntime) {
+    return renderRuntimeBlocker(runtime, lastError, refreshBootstrap, uiLanguage);
+  }
+
+  if (!bootstrap) {
+    return renderRuntimeBlocker(
+      runtime === "update_required" ? "update_required" : "booting",
+      lastError,
+      refreshBootstrap,
+      uiLanguage,
+    );
+  }
+
+  const badges = {
+    alerts: bootstrap.badgeCounts.alerts,
+    notifications: bootstrap.badgeCounts.notifications,
+    messages: bootstrap.badgeCounts.messages,
+  };
+
+  const updateBanner =
+    updateRequired || updateWaiting ? (
+      <div
+        className="border-b border-line bg-surface-muted px-safe py-2 text-sm text-ink"
+        role="status"
+        data-testid={updateRequired ? "shell-update-required-banner" : "shell-update-waiting-banner"}
+      >
+        <div className="mx-auto flex max-w-6xl flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <p>
+            {updateRequired
+              ? t(uiLanguage, "shellUpdateRequiredBanner")
+              : t(uiLanguage, "shellUpdateWaitingBanner")}
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {updateRequired ? (
+              <button
+                type="button"
+                className="inline-flex min-h-11 items-center rounded-control bg-primary px-3 text-sm font-medium text-white"
+                onClick={() => window.location.reload()}
+              >
+                {t(uiLanguage, "shellUpdateNow")}
+              </button>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  className="inline-flex min-h-11 items-center rounded-control border border-line px-3 text-sm"
+                  onClick={dismissOptionalUpdate}
+                >
+                  {t(uiLanguage, "shellUpdateLater")}
+                </button>
+                <button
+                  type="button"
+                  className="inline-flex min-h-11 items-center rounded-control bg-primary px-3 text-sm font-medium text-white disabled:opacity-50"
+                  disabled={!canNavigateAway()}
+                  onClick={applyWaitingServiceWorkerUpdate}
+                >
+                  {t(uiLanguage, "shellUpdateApply")}
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    ) : null;
+
   if (focusMode) {
     return (
-      <div className="min-h-screen bg-[#f7f5ef] text-stone-950">
-        <a href={`#${DASHBOARD_MAIN_ID}`} className="skip-link">
-          İçeriğe atla
+      <div className="min-h-dvh min-w-0 overflow-x-clip bg-paper text-ink" data-testid="authenticated-shell">
+        <a href={`#${DASHBOARD_MAIN_ID}`} className="skip-link" data-testid="skip-link">
+          {t(uiLanguage, "shellSkipToContent")}
         </a>
+        {updateBanner}
+        <div className="sticky top-0 z-40 flex min-h-11 items-center justify-between gap-3 border-b border-line bg-surface px-safe py-2">
+          <p className="text-sm font-medium text-ink">{t(uiLanguage, "shellFocusMode")}</p>
+          <button
+            type="button"
+            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-control border border-line bg-surface text-ink disabled:opacity-50"
+            aria-label={t(uiLanguage, "shellFocusExit")}
+            data-testid="shell-exit-focus"
+            disabled={navigationLocked}
+            onClick={() => setFocusMode(false)}
+          >
+            <Minimize2 size={18} />
+          </button>
+        </div>
         {children}
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#f7f5ef] text-stone-950">
-      <a href={`#${DASHBOARD_MAIN_ID}`} className="skip-link">
-        İçeriğe atla
+    <div className="min-h-dvh min-w-0 overflow-x-clip bg-paper text-ink" data-testid="authenticated-shell">
+      <a href={`#${DASHBOARD_MAIN_ID}`} className="skip-link" data-testid="skip-link">
+        {t(uiLanguage, "shellSkipToContent")}
       </a>
-      <div className="flex min-h-screen flex-col lg:flex-row">
+      {updateBanner}
+      <div className="flex min-h-dvh flex-col min-[768px]:flex-row">
         <aside
-          className="border-b border-stone-200 bg-white px-safe lg:w-72 lg:border-b-0 lg:border-r lg:px-0"
-          aria-label="Ana navigasyon"
+          className="hidden w-20 shrink-0 flex-col border-r border-line bg-surface min-[768px]:flex min-[1200px]:hidden"
+          aria-label="Orta genişlik navigasyon"
+          data-testid="shell-medium-aside"
         >
-          <div className="flex items-center justify-between gap-3 px-5 py-4 lg:block">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-700">MANU-AI</p>
-              <h1 className="mt-1 text-xl font-semibold">Diyetisyen konsolu</h1>
+          <div className="flex min-h-16 items-center justify-center border-b border-line px-1">
+            <span className="text-sm font-semibold text-primary" aria-label={AIYA_BRAND_NAME}>
+              A
+            </span>
+          </div>
+          <DashboardMediumRailNav
+            activeNavKey={activeDestination}
+            badges={badges}
+            navigation={bootstrap.navigation}
+            role={bootstrap.role}
+            uiLanguage={uiLanguage}
+            navigationLocked={navigationLocked}
+          />
+        </aside>
+
+        <aside
+          className="hidden w-72 shrink-0 flex-col border-r border-line bg-surface min-[1200px]:flex"
+          aria-label="Ana navigasyon"
+          data-testid="shell-sidebar"
+        >
+          <div className="flex items-start justify-between gap-3 border-b border-line px-5 py-4">
+            <div className="min-w-0">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">{AIYA_BRAND_NAME}</p>
+              <h1 className="mt-1 text-xl font-semibold text-ink">Diyetisyen konsolu</h1>
+              <p className="mt-1 truncate text-sm text-ink-muted">{bootstrap.displayName}</p>
             </div>
-            <form action="/api/demo-logout" method="post">
-              <button
-                className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-stone-200 bg-white text-stone-600 transition hover:bg-stone-100"
-                title="Demo oturumunu kapat"
-                aria-label="Demo oturumunu kapat"
-              >
-                <LogOut size={18} />
-              </button>
-            </form>
+            <button
+              type="button"
+              className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-control border border-line bg-surface text-ink-muted transition hover:bg-surface-muted disabled:opacity-50"
+              title={t(uiLanguage, "shellLogout")}
+              aria-label={t(uiLanguage, "shellLogout")}
+              data-testid="shell-logout"
+              disabled={navigationLocked}
+              onClick={requestLogout}
+            >
+              <LogOut size={18} />
+            </button>
           </div>
 
-          <DashboardSidebarNav
-            activeNavKey={activeNavKey}
-            uiLanguage={uiLanguage}
-            badges={badges}
-            aiChatEnabled={aiChatEnabled}
-            onNavigate={onNavigateSection}
-          />
-
-          <div className="hidden px-5 py-5 lg:block">
-            <div className="rounded-lg border border-stone-200 bg-stone-50 p-4">
-              <div className="flex items-center gap-2 text-sm font-semibold">
-                <ShieldCheck size={18} className="text-emerald-700" />
-                Yerel güvenli mod
-              </div>
-              <p className="mt-2 text-sm leading-6 text-stone-600">
-                Yalnızca simülatör. WhatsApp, Telegram veya canlı sağlık verisi sağlayıcısı bağlı değil.
-              </p>
-            </div>
+          <div className="min-h-0 flex-1 overflow-y-auto py-3">
+            <DashboardWideSidebarNav
+              activeNavKey={activeDestination}
+              badges={badges}
+              navigation={bootstrap.navigation}
+              role={bootstrap.role}
+              uiLanguage={uiLanguage}
+              navigationLocked={navigationLocked}
+            />
           </div>
         </aside>
 
-        <main className="flex min-w-0 flex-1 flex-col">{children}</main>
+        <main
+          className={`flex min-w-0 flex-1 flex-col ${hideCompactNavigation ? "" : "pb-shell-compact-nav"}`}
+        >
+          <header
+            className="sticky top-0 z-30 flex min-h-16 items-center border-b border-line bg-surface px-safe pt-safe min-[1200px]:min-h-14"
+            data-testid="shell-header"
+          >
+            <div className="flex w-full min-w-0 max-w-full flex-col gap-3 py-3 sm:px-2 xl:flex-row xl:items-center xl:justify-between min-[1200px]:py-2">
+              <div className="min-w-0">
+                <div className="min-[768px]:hidden">
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">{AIYA_BRAND_NAME}</p>
+                </div>
+                {headerSlots.title}
+                {headerSlots.description}
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                <DashboardHeaderBell
+                  unreadCount={badges.notifications}
+                  onOpenNotifications={() => {
+                    if (navigationLocked) return;
+                    navigateToDestination("notifications");
+                  }}
+                />
+                {headerSlots.actions}
+                {activeDestination === "ai_chat" ? (
+                  <button
+                    type="button"
+                    className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-control border border-line bg-surface text-ink disabled:opacity-50"
+                    aria-label={t(uiLanguage, "shellFocusEnter")}
+                    data-testid="shell-enter-focus"
+                    disabled={navigationLocked}
+                    onClick={() => setFocusMode(true)}
+                  >
+                    <Maximize2 size={18} />
+                  </button>
+                ) : null}
+              </div>
+            </div>
+          </header>
+          {children}
+        </main>
       </div>
 
-      <DashboardMobileNav
-        activeNavKey={activeNavKey}
-        uiLanguage={uiLanguage}
-        badges={badges}
-        aiChatEnabled={aiChatEnabled}
-        onNavigate={onNavigateSection}
-      />
+      {hideCompactNavigation ? null : (
+        <DashboardCompactBottomNav
+          activeNavKey={activeDestination}
+          badges={badges}
+          navigation={bootstrap.navigation}
+          role={bootstrap.role}
+          uiLanguage={uiLanguage}
+          navigationLocked={navigationLocked}
+        />
+      )}
     </div>
   );
 }
+
+function useShellProviderWithLastError() {
+  const value = useShellProvider();
+  return { ...value, lastError: value.state.lastError };
+}
+
+/** @deprecated Prefer DashboardShell via AuthenticatedShellBoundary; kept for transitional imports. */
+export type DashboardShellBadges = { alerts: number; notifications: number; messages: number };

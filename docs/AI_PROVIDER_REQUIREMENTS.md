@@ -2,7 +2,9 @@
 
 ## Current Status
 
-MANU-AI uses only deterministic local/mock provider behavior. No real Gemini or external LLM provider is connected.
+MANU-AI uses deterministic local/mock provider behavior by default. The only active real LLM target is direct Z.ai `GLM-5.3-Flash` with API model code `glm-5.3-flash`; no real Z.ai or other external LLM provider is connected.
+
+Production Readiness Stage 1 Phase 4 adds fail-closed real AI adapter contracts for Z.ai GLM-5.3-Flash text, vision/OCR, and transcription readiness. Any real provider call still requires production readiness boundary approval, server-authoritative launch gates, vendor-risk approval, clinical safety approval, privacy/legal approval, provider training disablement, retention disablement or bounded retention, provider-native token counting, server-built context, tenant entitlement, tenant permission, and file safety evidence when media or documents are involved.
 
 Phase 26 internal copilot is also local/mock only. It may read already-visible tenant-scoped app state through curated read-only tools, but it does not send copilot questions, tool results, source refs, client records, or message history to an external provider.
 
@@ -16,9 +18,9 @@ Phase 36 adds `PRODUCTION_PILOT_PROVIDER_VENDOR_REVIEW_PACKET.md` for external v
 
 Phase 59 documents that the local/mock `estimateTokens()` heuristic (`characters / 3`) in `context-compiler.js` is acceptable only for the current prototype.
 
-Before any real Gemini or external LLM integration:
+Before any real Z.ai GLM-5.3-Flash integration:
 
-- Use provider-native token counting (for example Gemini `countTokens` or an approved provider-specific equivalent).
+- Use Z.ai/provider-native token counting or an approved provider-specific equivalent.
 - Reconcile prompt budget, reserve, and segment truncation against real tokenizer output for Turkish and other supported languages.
 - Do not treat local character-based estimates as production approval evidence.
 
@@ -35,9 +37,11 @@ Before any real Gemini or external LLM integration:
 - Provider input must be allowlist-built and runtime-guarded before any provider call.
 - Provider input segment types must remain allowlisted; unknown segment types, overlong segments, extra keys, raw prompts, capsules, raw message collections, and red-risk payloads must fail closed.
 - Raw prompts, full context capsules, channel identifiers, health profiles, clinical notes, message collections, memory objects, and secrets must not be passed as provider input.
+- Provider-bound images must be sanitized derivatives only; provider-bound audio must use accepted transcripts only; provider-bound documents must use deterministic or reviewed extraction derivatives only.
+- Provider-bound attachments require malware scan pass evidence before `provider_egress_eligible=true`.
 - Internal copilot provider egress must have its own allowlist, source-ref policy, tool-result minimization policy, and legal/vendor/security review before any real provider is used.
 - Dietitian context update egress must have explicit provider allowlist, retention, logging, and clinical safety approval before real provider use.
 
 ## Launch Gate
 
-Real Gemini or other LLM provider use with health data is blocked until vendor-risk, legal/privacy, and clinical safety reviews are complete. This includes any future attempt to connect the Phase 26 internal copilot or Phase 27 dietitian context updates to a real provider.
+Real Z.ai GLM-5.3-Flash use with health data is blocked until vendor-risk, legal/privacy, and clinical safety reviews are complete. Any other LLM provider is out of active scope unless the owner explicitly reopens the provider decision. This includes any future attempt to connect the Phase 26 internal copilot or Phase 27 dietitian context updates to a real provider.

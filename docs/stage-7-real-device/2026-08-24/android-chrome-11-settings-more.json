@@ -1,0 +1,11 @@
+{
+  "step": "settings_or_more",
+  "requestedUrl": "http://127.0.0.1:3110/dashboard/more",
+  "finalUrl": "http://127.0.0.1:3110/dashboard/more",
+  "title": "SiriusAI",
+  "viewport": null,
+  "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+  "standalone": false,
+  "serviceWorkerController": false,
+  "bodyText": "İçeriğe atla\n\nSİRİUSAI\n\nDiğer\n\nAI araçları, danışan yardımcıları, hesap ve yönetim kısayolları.\n\nAI VE İS ARACLARİ\nAI Chat\nSimulator\nSes\nDANİSAN ARACLARİ\nFormlar\nBildirimler\nHESAP VE UYGULAMA\nAyarlar\nAna Sayfa\nDanisanlar\nMesajlar\nUyarilar\nDiger"
+}

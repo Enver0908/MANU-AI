@@ -1,5 +1,11 @@
 import { defineConfig, devices } from "@playwright/test";
 
+/**
+ * Stage 5 Faz 9 browser matrix:
+ * - Existing Chromium projects keep visual snapshot compatibility.
+ * - `mobile-ios` is Chromium iOS *emulation* — not real Safari.
+ * - Real WebKit (mobile/tablet) and Firefox (desktop) run Stage 5 shell a11y/responsive suites only.
+ */
 export default defineConfig({
   testDir: "./tests/visual",
   timeout: 30_000,
@@ -10,6 +16,12 @@ export default defineConfig({
   use: {
     baseURL: "http://127.0.0.1:3100",
     trace: "on-first-retry",
+    locale: "tr-TR",
+    timezoneId: "Europe/Istanbul",
+    colorScheme: "light",
+    reducedMotion: "reduce",
+    actionTimeout: 8_000,
+    navigationTimeout: 15_000,
   },
   webServer: {
     command: "npx next start --port 3100",
@@ -25,9 +37,6 @@ export default defineConfig({
       NEXT_PUBLIC_SUPABASE_URL: "",
       NEXT_PUBLIC_SUPABASE_ANON_KEY: "",
       SUPABASE_SERVICE_ROLE_KEY: "",
-      // AI Chat routes are force-dynamic, so this server-only flag (and the
-      // in-memory store fallback) are re-evaluated per request by
-      // `next start` without requiring a rebuild.
       AI_CHAT_UI_ENABLED: "true",
       AI_CHAT_DETERMINISTIC_MODE: "true",
     },
@@ -35,23 +44,140 @@ export default defineConfig({
   projects: [
     {
       name: "desktop",
+      testIgnore: /stage-7\//,
       use: { ...devices["Desktop Chrome"], browserName: "chromium", viewport: { width: 1440, height: 900 } },
     },
     {
       name: "desktop-xl",
+      testIgnore: /stage-7\//,
       use: { ...devices["Desktop Chrome"], browserName: "chromium", viewport: { width: 1728, height: 1117 } },
     },
     {
       name: "tablet",
+      testIgnore: /stage-7\//,
       use: { ...devices["Desktop Chrome"], browserName: "chromium", viewport: { width: 768, height: 1024 } },
     },
     {
       name: "mobile-android",
+      testIgnore: /stage-7\//,
       use: { ...devices["Pixel 5"], browserName: "chromium", viewport: { width: 390, height: 844 } },
     },
     {
+      // Chromium device emulation of iPhone — not a real Safari/WebKit proof.
       name: "mobile-ios",
+      testIgnore: /stage-7\//,
       use: { ...devices["iPhone 13"], browserName: "chromium", viewport: { width: 390, height: 844 } },
+    },
+    {
+      name: "stage-7-chromium-desktop",
+      testMatch: /stage-7\/.*\.spec\.ts/,
+      timeout: 90_000,
+      use: {
+        ...devices["Desktop Chrome"],
+        browserName: "chromium",
+        viewport: { width: 1440, height: 900 },
+        serviceWorkers: "block",
+        actionTimeout: 8_000,
+        navigationTimeout: 15_000,
+      },
+    },
+    {
+      name: "stage-7-chromium-desktop-xl",
+      testMatch: /stage-7\/.*\.spec\.ts/,
+      use: {
+        ...devices["Desktop Chrome"],
+        browserName: "chromium",
+        viewport: { width: 1728, height: 1117 },
+        serviceWorkers: "block",
+      },
+    },
+    {
+      name: "stage-7-chromium-tablet",
+      testMatch: /stage-7\/.*\.spec\.ts/,
+      use: {
+        ...devices["Desktop Chrome"],
+        browserName: "chromium",
+        viewport: { width: 768, height: 1024 },
+        serviceWorkers: "block",
+      },
+    },
+    {
+      name: "stage-7-chromium-android",
+      testMatch: /stage-7\/.*\.spec\.ts/,
+      use: {
+        ...devices["Pixel 5"],
+        browserName: "chromium",
+        viewport: { width: 390, height: 844 },
+        serviceWorkers: "block",
+      },
+    },
+    {
+      name: "stage-7-chromium-reflow",
+      testMatch: /stage-7\/.*\.spec\.ts/,
+      timeout: 90_000,
+      use: {
+        browserName: "chromium",
+        viewport: { width: 320, height: 720 },
+        serviceWorkers: "block",
+      },
+    },
+    {
+      name: "stage-7-chromium-landscape",
+      testMatch: /stage-7\/.*\.spec\.ts/,
+      timeout: 90_000,
+      use: {
+        browserName: "chromium",
+        viewport: { width: 844, height: 390 },
+        serviceWorkers: "block",
+      },
+    },
+    {
+      name: "stage-7-webkit-iphone",
+      testMatch: /stage-7\/.*\.spec\.ts/,
+      timeout: 90_000,
+      use: { ...devices["iPhone 13"], browserName: "webkit", serviceWorkers: "block" },
+    },
+    {
+      name: "stage-7-webkit-ipad",
+      testMatch: /stage-7\/.*\.spec\.ts/,
+      timeout: 90_000,
+      use: { ...devices["iPad Pro 11"], browserName: "webkit", serviceWorkers: "block" },
+    },
+    {
+      name: "stage-7-firefox-desktop",
+      testMatch: /stage-7\/.*\.spec\.ts/,
+      timeout: 90_000,
+      use: {
+        ...devices["Desktop Firefox"],
+        browserName: "firefox",
+        viewport: { width: 1440, height: 900 },
+        serviceWorkers: "block",
+      },
+    },
+    {
+      name: "stage-7-pwa",
+      testMatch: /stage-7\/.*\.spec\.ts/,
+      use: {
+        ...devices["Pixel 5"],
+        browserName: "chromium",
+        viewport: { width: 390, height: 844 },
+        serviceWorkers: "allow",
+      },
+    },
+    {
+      name: "webkit-mobile",
+      testMatch: /stage-5-shell\.(accessibility|responsive)\.spec\.ts/,
+      use: { ...devices["iPhone 13"], browserName: "webkit" },
+    },
+    {
+      name: "webkit-tablet",
+      testMatch: /stage-5-shell\.(accessibility|responsive)\.spec\.ts/,
+      use: { ...devices["iPad Pro 11"], browserName: "webkit" },
+    },
+    {
+      name: "firefox-desktop",
+      testMatch: /stage-5-shell\.(accessibility|responsive)\.spec\.ts/,
+      use: { ...devices["Desktop Firefox"], browserName: "firefox", viewport: { width: 1440, height: 900 } },
     },
   ],
 });

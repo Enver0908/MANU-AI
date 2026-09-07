@@ -1,0 +1,28 @@
+{
+  "workflow": [
+    "dashboard_home",
+    "first_client_workspace",
+    "forms_revision_save",
+    "nutrition_task",
+    "menu_task",
+    "ai_controls",
+    "client_scoped_messages",
+    "guarded_second_client_switch",
+    "offline_privacy_lock"
+  ],
+  "checks": {
+    "url": "http://127.0.0.1:3110/dashboard?section=clients&clientId=client-mert",
+    "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+    "standalone": true,
+    "viewport": {
+      "width": 384,
+      "height": 751,
+      "devicePixelRatio": 2.8125
+    },
+    "shellBlocker": true,
+    "authenticatedShell": false,
+    "clientWorkspace": false,
+    "serviceWorkerController": false,
+    "bodyText": "İnternet bağlantısı gerekli\n\nKorumalı içerik çevrimdışıyken açılamaz. Bağlantı gelince yeniden deneyin.\n\nYeniden dene"
+  }
+}

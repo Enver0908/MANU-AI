@@ -1,5 +1,6 @@
 import { AppRequestError } from "./app-errors";
 import { AI_CHAT_CLIENT_RECORD_CATEGORIES } from "./phase-85-stage-4c-contracts";
+import { evaluateProductionFileUploadAdmission } from "./production-file-security-contracts";
 
 const UUID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -19,6 +20,15 @@ export function parseAttachmentCreateBody(body: unknown) {
   }
   if (!UUID_PATTERN.test(conversationId) || !SHA256_PATTERN.test(contentSha256)) {
     throw new AppRequestError(400, "ai_chat_invalid_body");
+  }
+  const admission = evaluateProductionFileUploadAdmission({
+    declaredMimeType: mimeType,
+    declaredByteSize: byteSize,
+    actualByteSize: byteSize,
+    contentSha256,
+  });
+  if (!admission.ok) {
+    throw new AppRequestError(400, `ai_chat_attachment_${admission.code}`);
   }
   return { requestId, conversationId, fileName, mimeType, byteSize, contentSha256 };
 }

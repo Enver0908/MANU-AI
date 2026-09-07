@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { assertRateLimit, resetRateLimits } from "./rate-limit";
-import { hashCommercialInviteToken } from "./phase-83b-commercial-entitlement-model";
+import { hashCommercialInviteToken } from "./phase-83b-commercial-entitlement-model.server";
 import {
   addSupabaseClientContextUpdate,
   activateSupabaseClientAi,
@@ -20,6 +20,7 @@ import {
   runSupabaseSimulation,
   saveSupabaseFormResponse,
 } from "./supabase-store";
+import { SHELL_SESSION_INACTIVITY_MS, readVerifiedSessionIdFromAccessToken } from "./phase-85-stage-5-shell-session";
 
 loadEnvLocal();
 
@@ -146,6 +147,7 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
   let admin: SupabaseClient;
   let memberUserId = "";
   let outsiderUserId = "";
+  let otherTenantUserId = "";
   let assistantUserId = "";
   let viewerUserId = "";
   let careTeamUserId = "";
@@ -162,6 +164,7 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     await cleanup(admin);
     memberUserId = await ensureUser(admin, "rls-member@manu.local");
     outsiderUserId = await ensureUser(admin, "rls-outsider@manu.local");
+    otherTenantUserId = await ensureUser(admin, "rls-other-tenant@manu.local");
     assistantUserId = await ensureUser(admin, "rls-assistant@manu.local");
     viewerUserId = await ensureUser(admin, "rls-viewer@manu.local");
     careTeamUserId = await ensureUser(admin, "rls-care-team@manu.local");
@@ -169,24 +172,26 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     await seedTenants(admin, {
       memberUserId,
       outsiderUserId,
+      otherTenantUserId,
       assistantUserId,
       viewerUserId,
       careTeamUserId,
       auditorUserId,
     });
-  });
+  }, 45_000);
 
   afterAll(async () => {
     if (admin) {
       await cleanup(admin);
       if (memberUserId) await admin.auth.admin.deleteUser(memberUserId);
       if (outsiderUserId) await admin.auth.admin.deleteUser(outsiderUserId);
+      if (otherTenantUserId) await admin.auth.admin.deleteUser(otherTenantUserId);
       if (assistantUserId) await admin.auth.admin.deleteUser(assistantUserId);
       if (viewerUserId) await admin.auth.admin.deleteUser(viewerUserId);
       if (careTeamUserId) await admin.auth.admin.deleteUser(careTeamUserId);
       if (auditorUserId) await admin.auth.admin.deleteUser(auditorUserId);
     }
-  });
+  }, 45_000);
 
   it("allows a tenant member to read only their tenant rows", async () => {
     const member = await signIn("rls-member@manu.local");
@@ -361,6 +366,15 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     });
 
     expect(activationInsert.error?.message).toMatch(/row-level security|violates foreign key/i);
+
+    const spoofedDietitianInsert = await member.from("clients").insert({
+      tenant_id: TEST_TENANT_ID,
+      dietitian_id: OTHER_DIETITIAN_ID,
+      full_name: "Blocked Other Dietitian",
+      selected_persona_id: "balanced_coach",
+    });
+
+    expect(spoofedDietitianInsert.error?.message).toMatch(/row-level security/i);
 
     const notificationUpdate = await member
       .from("notifications")
@@ -662,10 +676,55 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
       tenant_id: TEST_TENANT_ID,
       dietitian_id: TEST_DIETITIAN_ID,
       auth_user_id: memberUserId,
-      event_type: "install_prompt_shown",
+      event_type: "install_accepted",
       user_agent_summary: "vitest",
     });
     expect(ownAuditInsert.error).toBeNull();
+
+    const duplicateDailyAuditInsert = await member.from("mobile_install_audit_events").insert({
+      id: "00000000-0000-4000-8000-000000001004",
+      tenant_id: TEST_TENANT_ID,
+      dietitian_id: TEST_DIETITIAN_ID,
+      auth_user_id: memberUserId,
+      event_type: "install_accepted",
+      user_agent_summary: "vitest-duplicate",
+    });
+    expect(duplicateDailyAuditInsert.error?.message).toMatch(/duplicate key|unique/i);
+
+    const duplicateDailyAuditUpsert = await member.from("mobile_install_audit_events").upsert(
+      {
+        id: "00000000-0000-4000-8000-000000001005",
+        tenant_id: TEST_TENANT_ID,
+        dietitian_id: TEST_DIETITIAN_ID,
+        auth_user_id: memberUserId,
+        event_type: "install_accepted",
+        event_day: new Date().toISOString().slice(0, 10),
+        user_agent_summary: "vitest-duplicate-upsert",
+      },
+      {
+        onConflict: "tenant_id,dietitian_id,auth_user_id,event_type,event_day",
+        ignoreDuplicates: true,
+      },
+    );
+    expect(duplicateDailyAuditUpsert.error).toBeNull();
+
+    const mismatchedDietitianAuditInsert = await member.from("mobile_install_audit_events").insert({
+      tenant_id: TEST_TENANT_ID,
+      dietitian_id: CARE_TEAM_DIETITIAN_ID,
+      auth_user_id: memberUserId,
+      event_type: "ios_instructions_viewed",
+      user_agent_summary: "vitest-mismatched-dietitian",
+    });
+    expect(mismatchedDietitianAuditInsert.error?.message).toMatch(/row-level security/i);
+
+    const mismatchedAuthAuditInsert = await member.from("mobile_install_audit_events").insert({
+      tenant_id: TEST_TENANT_ID,
+      dietitian_id: TEST_DIETITIAN_ID,
+      auth_user_id: careTeamUserId,
+      event_type: "ios_instructions_viewed",
+      user_agent_summary: "vitest-mismatched-auth",
+    });
+    expect(mismatchedAuthAuditInsert.error?.message).toMatch(/row-level security/i);
 
     const crossTenantAuditInsert = await member.from("mobile_install_audit_events").insert({
       tenant_id: OTHER_TENANT_ID,
@@ -837,6 +896,88 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     expect(differentScope.data).toMatchObject({ allowed: true, count: 1, scope: "draft_review" });
     expect(differentTenant.data).toMatchObject({ allowed: true, count: 1, scope: "manual_reply" });
     expect(differentKey.data).toMatchObject({ allowed: true, count: 1, scope: "manual_reply" });
+  });
+
+  it("keeps global rate-limit buckets service-role only and isolated by scope and key", async () => {
+    const member = await signIn("rls-member@manu.local");
+    const anon = createClient(supabaseUrl!, anonKey!, {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+      },
+    });
+    const keyHash = `cccccccccccccccccccccccccccccccc-${Date.now()}`;
+    const otherKeyHash = `dddddddddddddddddddddddddddddddd-${Date.now()}`;
+    const now = new Date().toISOString();
+
+    const first = await admin.rpc("consume_global_rate_limit", {
+      p_scope: "auth_password_reset",
+      p_key_hash: keyHash,
+      p_limit: 2,
+      p_window_seconds: 60,
+      p_now: now,
+    });
+    const second = await admin.rpc("consume_global_rate_limit", {
+      p_scope: "auth_password_reset",
+      p_key_hash: keyHash,
+      p_limit: 2,
+      p_window_seconds: 60,
+      p_now: now,
+    });
+    const denied = await admin.rpc("consume_global_rate_limit", {
+      p_scope: "auth_password_reset",
+      p_key_hash: keyHash,
+      p_limit: 2,
+      p_window_seconds: 60,
+      p_now: now,
+    });
+    const differentScope = await admin.rpc("consume_global_rate_limit", {
+      p_scope: "auth_email_change",
+      p_key_hash: keyHash,
+      p_limit: 2,
+      p_window_seconds: 60,
+      p_now: now,
+    });
+    const differentKey = await admin.rpc("consume_global_rate_limit", {
+      p_scope: "auth_password_reset",
+      p_key_hash: otherKeyHash,
+      p_limit: 2,
+      p_window_seconds: 60,
+      p_now: now,
+    });
+
+    expect(first.error).toBeNull();
+    expect(second.error).toBeNull();
+    expect(denied.error).toBeNull();
+    expect(differentScope.error).toBeNull();
+    expect(differentKey.error).toBeNull();
+    expect(first.data).toMatchObject({ allowed: true, count: 1, scope: "auth_password_reset" });
+    expect(second.data).toMatchObject({ allowed: true, count: 2, scope: "auth_password_reset" });
+    expect(denied.data).toMatchObject({ allowed: false, count: 3, scope: "auth_password_reset" });
+    expect(differentScope.data).toMatchObject({ allowed: true, count: 1, scope: "auth_email_change" });
+    expect(differentKey.data).toMatchObject({ allowed: true, count: 1, scope: "auth_password_reset" });
+
+    const memberRead = await member.from("global_rate_limit_buckets").select("scope");
+    expect(memberRead.error?.message).toMatch(/permission denied|row-level security/i);
+
+    const anonRead = await anon.from("global_rate_limit_buckets").select("scope");
+    expect(anonRead.error?.message).toMatch(/permission denied|row-level security/i);
+
+    const memberRpc = await member.rpc("consume_global_rate_limit", {
+      p_scope: "auth_password_reset",
+      p_key_hash: `eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee-${Date.now()}`,
+      p_limit: 1,
+      p_window_seconds: 60,
+      p_now: now,
+    });
+    expect(memberRpc.error?.message).toMatch(/permission denied/i);
+
+    const tenantBucketRead = await admin
+      .from("rate_limit_buckets")
+      .select("scope, key_hash")
+      .eq("key_hash", keyHash);
+    expect(tenantBucketRead.error).toBeNull();
+    expect(tenantBucketRead.data).toHaveLength(0);
   });
 
   it("maps Supabase rate-limit denials to controlled 429 errors", async () => {
@@ -1330,12 +1471,9 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
       expectedConversationRevision: inactiveConversation.revision,
       expectedClientContextRevision: inactiveClient.contextRevision,
     });
-    const activatedClient = activated.clients.find((item) => item.id === client.id)!;
-    const activatedConversation = activated.conversations.find((item) => item.clientId === client.id)!;
-
-    expect(activatedClient.aiStatus).toBe("active");
-    expect(activatedClient.aiMode).toBe("copilot");
-    expect(activatedConversation.revision).toBe(conversation.revision + 1);
+    expect(activated.payload.client.aiStatus).toBe("active");
+    expect(activated.payload.client.aiMode).toBe("copilot");
+    expect(activated.payload.conversation?.revision).toBe(conversation.revision + 1);
 
     await expect(
       activateSupabaseClientAi(client.id, {
@@ -2126,7 +2264,7 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     const bucket = await admin.storage.getBucket("p85-stage-4b3-media");
     expect(bucket.error).toBeNull();
     expect(bucket.data?.public).toBe(false);
-  });
+  }, 30000);
 
   it("claims Stage 4B-3 worker leases through service-role RPCs only", async () => {
     const member = await signIn("rls-member@manu.local");
@@ -2285,7 +2423,7 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     const bucket = await admin.storage.getBucket("p85-stage-4b4-audio");
     expect(bucket.error).toBeNull();
     expect(bucket.data?.public).toBe(false);
-  });
+  }, 30000);
 
   it("claims Stage 4B-4 audio worker leases through service-role RPCs only", async () => {
     const member = await signIn("rls-member@manu.local");
@@ -2421,6 +2559,47 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     expect(providerEgress.data).toHaveLength(0);
   });
 
+  it("denies anon and authenticated direct access to Stage 4C operational tables", async () => {
+    const member = await signIn("rls-member@manu.local");
+    const anonymous = createClient(supabaseUrl!, anonKey!, {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+      },
+    });
+    const operationalTables = [
+      "ai_chat_jobs",
+      "ai_chat_deletion_jobs",
+      "ai_chat_deletion_ledger",
+      "ai_chat_legal_holds",
+    ] as const;
+
+    for (const table of operationalTables) {
+      const anonymousRead = await anonymous.from(table).select("id").limit(1);
+      expect(anonymousRead.error?.message).toMatch(/permission denied/i);
+
+      const memberRead = await member.from(table).select("id").limit(1);
+      expect(memberRead.error?.message).toMatch(/permission denied/i);
+
+      const memberInsert = await member.from(table).insert({});
+      expect(memberInsert.error?.message).toMatch(/permission denied/i);
+    }
+  });
+
+  it("preserves service-role access to Stage 4C operational tables", async () => {
+    const operationalTables = [
+      "ai_chat_jobs",
+      "ai_chat_deletion_jobs",
+      "ai_chat_deletion_ledger",
+      "ai_chat_legal_holds",
+    ] as const;
+
+    for (const table of operationalTables) {
+      const serviceRoleRead = await admin.from(table).select("id").limit(1);
+      expect(serviceRoleRead.error).toBeNull();
+    }
+  });
+
   it("blocks general-scope client source rows and immutable conversation scope updates", async () => {
     const generalSourceInsert = await admin.from("ai_chat_source_refs").insert({
       tenant_id: TEST_TENANT_ID,
@@ -2464,6 +2643,368 @@ maybeDescribe("Supabase RLS tenant isolation", () => {
     expect(afterRevocation.error).toBeNull();
     expect(afterRevocation.data).toHaveLength(0);
   });
+
+  it("updates own profile through Stage 4D v2 RPC with idempotent minimized audit metadata and role boundaries", async () => {
+    const owner = await signIn("rls-member@manu.local");
+    const assistant = await signIn("rls-assistant@manu.local");
+    const auditor = await signIn("rls-auditor@manu.local");
+    const outsider = await signIn("rls-outsider@manu.local");
+
+    const beforeAudit = await admin
+      .from("audit_events")
+      .select("id", { count: "exact", head: true })
+      .eq("tenant_id", TEST_TENANT_ID)
+      .eq("event_type", "stage_4d_own_profile_updated");
+
+    const ownerUpdate = await owner.rpc("p85_stage4d_update_own_profile_v2", {
+      p_display_name: "RLS Owner Profile",
+      p_ui_language: "en",
+      p_timezone: "Europe/London",
+    });
+    expect(ownerUpdate.error).toBeNull();
+    expect(ownerUpdate.data?.profile?.displayName).toBe("RLS Owner Profile");
+    expect(ownerUpdate.data?.profile?.timezone).toBe("Europe/London");
+    expect(ownerUpdate.data?.changedFields).toEqual(expect.arrayContaining(["displayName", "uiLanguage", "timezone"]));
+
+    const ownerDietitian = await admin
+      .from("dietitians")
+      .select("display_name, ui_language, timezone")
+      .eq("id", TEST_DIETITIAN_ID)
+      .single();
+    expect(ownerDietitian.data?.display_name).toBe("RLS Owner Profile");
+    expect(ownerDietitian.data?.ui_language).toBe("en");
+    expect(ownerDietitian.data?.timezone).toBe("Europe/London");
+
+    const ownerAudit = await admin
+      .from("audit_events")
+      .select("metadata")
+      .eq("tenant_id", TEST_TENANT_ID)
+      .eq("event_type", "stage_4d_own_profile_updated")
+      .eq("entity_id", TEST_DIETITIAN_ID)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .single();
+    expect(ownerAudit.error).toBeNull();
+    expect(ownerAudit.data?.metadata).toEqual(
+      expect.objectContaining({ minimized: true, changedFields: expect.any(Array) }),
+    );
+    expect(JSON.stringify(ownerAudit.data?.metadata)).not.toMatch(/RLS Owner Profile|Europe\/London/);
+
+    const idempotent = await owner.rpc("p85_stage4d_update_own_profile_v2", {
+      p_display_name: "RLS Owner Profile",
+      p_ui_language: "en",
+      p_timezone: "Europe/London",
+    });
+    expect(idempotent.error).toBeNull();
+    expect(idempotent.data?.changedFields).toEqual([]);
+
+    const afterIdempotentAudit = await admin
+      .from("audit_events")
+      .select("id", { count: "exact", head: true })
+      .eq("tenant_id", TEST_TENANT_ID)
+      .eq("event_type", "stage_4d_own_profile_updated");
+    expect(afterIdempotentAudit.count).toBe((beforeAudit.count ?? 0) + 1);
+
+    const assistantUpdate = await assistant.rpc("p85_stage4d_update_own_profile_v2", {
+      p_display_name: "RLS Assistant Updated",
+    });
+    expect(assistantUpdate.error?.message).toMatch(/rbac_forbidden_update_own_profile/i);
+    const assistantProfile = await admin
+      .from("dietitians")
+      .select("display_name")
+      .eq("id", ASSISTANT_DIETITIAN_ID)
+      .single();
+    expect(assistantProfile.data?.display_name).toBe("RLS Assistant Staff");
+
+    const auditorUpdate = await auditor.rpc("p85_stage4d_update_own_profile_v2", {
+      p_ui_language: "de",
+    });
+    expect(auditorUpdate.error?.message).toMatch(/rbac_forbidden_update_own_profile/i);
+
+    const outsiderRpc = await outsider.rpc("p85_stage4d_update_own_profile_v2", {
+      p_display_name: "Outsider Hack",
+    });
+    expect(outsiderRpc.error).not.toBeNull();
+
+    const crossTenant = await signIn("rls-other-tenant@manu.local");
+    const crossAttempt = await crossTenant.rpc("p85_stage4d_update_own_profile_v2", {
+      p_display_name: "Cross Tenant Profile",
+    });
+    expect(crossAttempt.error).toBeNull();
+    const testDietitian = await admin
+      .from("dietitians")
+      .select("display_name")
+      .eq("id", TEST_DIETITIAN_ID)
+      .single();
+    expect(testDietitian.data?.display_name).toBe("RLS Owner Profile");
+
+    const invalidLang = await owner.rpc("p85_stage4d_update_own_profile_v2", {
+      p_ui_language: "xx",
+    });
+    expect(invalidLang.error).not.toBeNull();
+
+    const invalidTimezone = await owner.rpc("p85_stage4d_update_own_profile_v2", {
+      p_timezone: "Not/AZone",
+    });
+    expect(invalidTimezone.error?.message).toMatch(/invalid_timezone/i);
+
+    const directUpdate = await owner
+      .from("dietitians")
+      .update({ display_name: "Direct Table Hack" })
+      .eq("id", TEST_DIETITIAN_ID);
+    expect(directUpdate.error).not.toBeNull();
+  }, 30000);
+
+  it("protects Stage 4D account workspace mutations with owner/admin RBAC and expected revision", async () => {
+    const owner = await signIn("rls-member@manu.local");
+    const assistant = await signIn("rls-assistant@manu.local");
+
+    const before = await admin
+      .from("tenants")
+      .select("name, settings_revision")
+      .eq("id", TEST_TENANT_ID)
+      .single();
+    expect(before.error).toBeNull();
+
+    const assistantAttempt = await assistant.rpc("p85_stage4d_update_account_workspace", {
+      p_name: "Assistant Workspace Hack",
+      p_expected_settings_revision: before.data?.settings_revision ?? 0,
+    });
+    expect(assistantAttempt.error?.message).toMatch(/rbac_forbidden_manage_account_settings/i);
+
+    const staleAttempt = await owner.rpc("p85_stage4d_update_account_workspace", {
+      p_name: "RLS Workspace Name",
+      p_expected_settings_revision: (before.data?.settings_revision ?? 0) + 1,
+    });
+    expect(staleAttempt.error?.message).toMatch(/settings_revision_conflict/i);
+
+    const ownerUpdate = await owner.rpc("p85_stage4d_update_account_workspace", {
+      p_name: "RLS Workspace Name",
+      p_expected_settings_revision: before.data?.settings_revision ?? 0,
+    });
+    expect(ownerUpdate.error).toBeNull();
+    expect(ownerUpdate.data).toEqual(
+      expect.objectContaining({
+        name: "RLS Workspace Name",
+        settingsRevision: (before.data?.settings_revision ?? 0) + 1,
+        role: "owner",
+        membershipActive: true,
+      }),
+    );
+
+    const tenant = await admin
+      .from("tenants")
+      .select("name, settings_revision")
+      .eq("id", TEST_TENANT_ID)
+      .single();
+    expect(tenant.data?.name).toBe("RLS Workspace Name");
+    expect(tenant.data?.settings_revision).toBe((before.data?.settings_revision ?? 0) + 1);
+
+    const members = await owner.rpc("p85_stage4d_read_account_members");
+    expect(members.error).toBeNull();
+    expect(members.data).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ role: "owner", membershipActive: true }),
+      ]),
+    );
+    expect(JSON.stringify(members.data)).not.toMatch(/00000000-|rls-member@manu.local/);
+
+    const assistantMembers = await assistant.rpc("p85_stage4d_read_account_members");
+    expect(assistantMembers.error?.message).toMatch(/rbac_forbidden_read_account_members/i);
+  }, 30000);
+
+  it("blocks direct authenticated writes to account_security_events", async () => {
+    const member = await signIn("rls-member@manu.local");
+    const insert = await member.from("account_security_events").insert({
+      auth_user_id: memberUserId,
+      event_type: "password_login",
+      outcome: "success",
+      idempotency_key: "blocked-direct-insert-test",
+    });
+    expect(insert.error).not.toBeNull();
+  }, 30000);
+
+  it("blocks direct authenticated access to Stage 5 shell foundation tables", async () => {
+    const member = await signIn("rls-member@manu.local");
+
+    const sessionSelect = await member.from("app_session_activity").select("session_id").limit(1);
+    expect(sessionSelect.error).not.toBeNull();
+
+    const preferenceSelect = await member.from("app_user_shell_preferences").select("tenant_id").limit(1);
+    expect(preferenceSelect.error).not.toBeNull();
+
+    const sessionInsert = await member.from("app_session_activity").insert({
+      session_id: "00000000-0000-4000-8000-000000009901",
+      tenant_id: TEST_TENANT_ID,
+      auth_user_id: memberUserId,
+      dietitian_id: TEST_DIETITIAN_ID,
+      last_interactive_at: new Date().toISOString(),
+    });
+    expect(sessionInsert.error).not.toBeNull();
+  }, 30000);
+
+  it("enforces Stage 5 session inactivity lock and touch cooldown through RPCs", async () => {
+    const owner = await signIn("rls-member@manu.local");
+    const deniedDirectV2 = await owner.rpc("p85_stage_5_record_session_activity_v2", {
+      p_mode: "touch",
+    });
+    expect(deniedDirectV2.error).not.toBeNull();
+
+    const assertInitial = await recordSessionActivityV3(admin, owner, {
+      authUserId: memberUserId,
+      tenantId: TEST_TENANT_ID,
+      dietitianId: TEST_DIETITIAN_ID,
+      mode: "assert",
+    });
+    expect(assertInitial.result.error).toBeNull();
+    expect(assertInitial.result.data).toEqual(
+      expect.objectContaining({
+        status: "active",
+        locked: false,
+        sessionId: assertInitial.sessionId,
+      }),
+    );
+
+    const sessionId = assertInitial.sessionId;
+
+    const touchWithinCooldown = await recordSessionActivityV3(admin, owner, {
+      authUserId: memberUserId,
+      tenantId: TEST_TENANT_ID,
+      dietitianId: TEST_DIETITIAN_ID,
+      mode: "touch",
+    });
+    expect(touchWithinCooldown.result.error).toBeNull();
+    expect(touchWithinCooldown.result.data?.touched).toBe(false);
+
+    await admin
+      .from("app_session_activity")
+      .update({ last_interactive_at: new Date(Date.now() - (SHELL_SESSION_INACTIVITY_MS - 60_000)).toISOString() })
+      .eq("session_id", sessionId);
+
+    const assertBeforeLock = await recordSessionActivityV3(admin, owner, {
+      authUserId: memberUserId,
+      tenantId: TEST_TENANT_ID,
+      dietitianId: TEST_DIETITIAN_ID,
+      mode: "assert",
+    });
+    expect(assertBeforeLock.result.error).toBeNull();
+    expect(assertBeforeLock.result.data?.locked).toBe(false);
+
+    await admin
+      .from("app_session_activity")
+      .update({ last_interactive_at: new Date(Date.now() - SHELL_SESSION_INACTIVITY_MS).toISOString() })
+      .eq("session_id", sessionId);
+
+    const assertLocked = await recordSessionActivityV3(admin, owner, {
+      authUserId: memberUserId,
+      tenantId: TEST_TENANT_ID,
+      dietitianId: TEST_DIETITIAN_ID,
+      mode: "assert",
+    });
+    expect(assertLocked.result.error).toBeNull();
+    expect(assertLocked.result.data).toEqual(
+      expect.objectContaining({
+        status: "locked",
+        locked: true,
+        lockedAt: expect.any(String),
+      }),
+    );
+
+    const touchLocked = await recordSessionActivityV3(admin, owner, {
+      authUserId: memberUserId,
+      tenantId: TEST_TENANT_ID,
+      dietitianId: TEST_DIETITIAN_ID,
+      mode: "touch",
+    });
+    expect(touchLocked.result.error).toBeNull();
+    expect(touchLocked.result.data?.status).toBe("locked");
+
+    const lockedRow = await admin
+      .from("app_session_activity")
+      .select("locked_at")
+      .eq("session_id", sessionId)
+      .single();
+    expect(lockedRow.data?.locked_at).not.toBeNull();
+
+    const securityEvents = await admin
+      .from("account_security_events")
+      .select("event_type")
+      .eq("auth_user_id", memberUserId)
+      .in("event_type", ["session_started", "session_locked"]);
+    expect(securityEvents.error).toBeNull();
+    expect(securityEvents.data?.some((row) => row.event_type === "session_locked")).toBe(true);
+  }, 30000);
+
+  it("updates shell preferences with revision control and client access checks", async () => {
+    const owner = await signIn("rls-member@manu.local");
+    const session = await recordSessionActivityV3(admin, owner, {
+      authUserId: memberUserId,
+      tenantId: TEST_TENANT_ID,
+      dietitianId: TEST_DIETITIAN_ID,
+    });
+    expect(session.result.error).toBeNull();
+
+    const create = await owner.rpc("p85_stage_5_update_shell_preferences_v2", {
+      p_expected_revision: 0,
+      p_request_id: "stage5-shell-pref-create-01",
+      p_last_destination_id: "home",
+      p_destination_state: {},
+    });
+    expect(create.error).toBeNull();
+    expect(create.data).toEqual(
+      expect.objectContaining({
+        revision: 1,
+        lastDestinationId: "home",
+      }),
+    );
+
+    const replay = await owner.rpc("p85_stage_5_update_shell_preferences_v2", {
+      p_expected_revision: 0,
+      p_request_id: "stage5-shell-pref-create-01",
+      p_last_destination_id: "home",
+      p_destination_state: {},
+    });
+    expect(replay.error).toBeNull();
+    expect(replay.data?.idempotentReplay).toBe(true);
+    expect(replay.data?.revision).toBe(1);
+
+    const assignClient = await owner.rpc("p85_stage_5_update_shell_preferences_v2", {
+      p_expected_revision: 1,
+      p_request_id: "stage5-shell-pref-client-01",
+      p_active_client_id: TEST_CLIENT_ID,
+    });
+    expect(assignClient.error).toBeNull();
+    expect(assignClient.data?.activeClientId).toBe(TEST_CLIENT_ID);
+
+    const outsider = await signIn("rls-other-tenant@manu.local");
+    const outsiderSession = await recordSessionActivityV3(admin, outsider, {
+      authUserId: otherTenantUserId,
+      tenantId: OTHER_TENANT_ID,
+      dietitianId: OTHER_DIETITIAN_ID,
+    });
+    expect(outsiderSession.result.error).toBeNull();
+    const crossTenantClient = await outsider.rpc("p85_stage_5_update_shell_preferences_v2", {
+      p_expected_revision: 0,
+      p_request_id: "stage5-shell-pref-cross-01",
+      p_active_client_id: TEST_CLIENT_ID,
+    });
+    expect(crossTenantClient.error?.message).toMatch(/client_context_unavailable/i);
+
+    const clearLastDestination = await owner.rpc("p85_stage_5_update_shell_preferences_v2", {
+      p_expected_revision: 2,
+      p_request_id: "stage5-shell-pref-clear-01",
+      p_clear_last_destination: true,
+    });
+    expect(clearLastDestination.error).toBeNull();
+    expect(clearLastDestination.data?.lastDestinationId).toBeNull();
+
+    const nonEmptyDestinationState = await owner.rpc("p85_stage_5_update_shell_preferences_v2", {
+      p_expected_revision: 3,
+      p_request_id: "stage5-shell-pref-state-01",
+      p_destination_state: { section: "overview" },
+    });
+    expect(nonEmptyDestinationState.error?.message).toMatch(/invalid_destination_state/i);
+  }, 30000);
 });
 
 function loadEnvLocal() {
@@ -2481,23 +3022,40 @@ function loadEnvLocal() {
 }
 
 async function ensureUser(admin: SupabaseClient, email: string) {
-  const listed = await admin.auth.admin.listUsers();
+  const listed = await withAuthRetry(() => admin.auth.admin.listUsers());
   if (listed.error) throw listed.error;
 
   const existing = listed.data.users.find((user) => user.email === email);
   if (existing) {
-    const updated = await admin.auth.admin.updateUserById(existing.id, { password: PASSWORD });
+    const updated = await withAuthRetry(() => admin.auth.admin.updateUserById(existing.id, { password: PASSWORD }));
     if (updated.error) throw updated.error;
     return updated.data.user.id;
   }
 
-  const created = await admin.auth.admin.createUser({
-    email,
-    password: PASSWORD,
-    email_confirm: true,
-  });
+  const created = await withAuthRetry(() =>
+    admin.auth.admin.createUser({
+      email,
+      password: PASSWORD,
+      email_confirm: true,
+    }),
+  );
   if (created.error) throw created.error;
   return created.data.user.id;
+}
+
+async function withAuthRetry<T>(operation: () => Promise<T>) {
+  let lastError: unknown;
+
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    try {
+      return await operation();
+    } catch (error) {
+      lastError = error;
+      await new Promise((resolve) => setTimeout(resolve, 250 * (attempt + 1)));
+    }
+  }
+
+  throw lastError;
 }
 
 async function signIn(email: string) {
@@ -2512,11 +3070,41 @@ async function signIn(email: string) {
   return client;
 }
 
+async function recordSessionActivityV3(
+  adminClient: SupabaseClient,
+  owner: SupabaseClient,
+  input: {
+    authUserId: string;
+    tenantId: string;
+    dietitianId: string;
+    mode?: "assert" | "touch";
+  },
+) {
+  const {
+    data: { session },
+  } = await owner.auth.getSession();
+  const sessionId = readVerifiedSessionIdFromAccessToken(session?.access_token);
+  if (!sessionId) {
+    throw new Error("session_claim_missing");
+  }
+  return {
+    sessionId,
+    result: await adminClient.rpc("p85_stage_5_record_session_activity_v3", {
+      p_mode: input.mode ?? "assert",
+      p_session_id: sessionId,
+      p_auth_user_id: input.authUserId,
+      p_tenant_id: input.tenantId,
+      p_dietitian_id: input.dietitianId,
+    }),
+  };
+}
+
 async function seedTenants(
   admin: SupabaseClient,
   users: {
     memberUserId: string;
     outsiderUserId: string;
+    otherTenantUserId: string;
     assistantUserId: string;
     viewerUserId: string;
     careTeamUserId: string;
@@ -2551,6 +3139,11 @@ async function seedTenants(
         tenant_id: TEST_TENANT_ID,
         user_id: users.auditorUserId,
         role: "auditor",
+      },
+      {
+        tenant_id: OTHER_TENANT_ID,
+        user_id: users.otherTenantUserId,
+        role: "owner",
       },
     ]),
   );
@@ -2590,7 +3183,7 @@ async function seedTenants(
         id: OTHER_DIETITIAN_ID,
         tenant_id: OTHER_TENANT_ID,
         display_name: "RLS Other Tenant Dietitian",
-        auth_user_id: users.outsiderUserId,
+        auth_user_id: users.otherTenantUserId,
       },
     ]),
   );
@@ -2716,7 +3309,7 @@ async function seedTenants(
         persona_id: "balanced_coach",
         risk: "green",
         action: "sent",
-        model: "gemini-1.5-flash",
+        model: "glm-5.3-flash",
         prompt_version: "prompt-v1",
         provider_attempted: true,
         provider_id: "mock-provider-v1",
@@ -2733,7 +3326,7 @@ async function seedTenants(
         persona_id: "balanced_coach",
         risk: "green",
         action: "sent",
-        model: "gemini-1.5-flash",
+        model: "glm-5.3-flash",
         prompt_version: "prompt-v1",
         provider_attempted: true,
         provider_id: "mock-provider-v1",
@@ -3501,7 +4094,7 @@ async function seedTenants(
       {
         id: OTHER_AI_CHAT_GENERAL_CONVERSATION_ID,
         tenant_id: OTHER_TENANT_ID,
-        created_by_user_id: users.outsiderUserId,
+        created_by_user_id: users.otherTenantUserId,
         created_by_dietitian_id: OTHER_DIETITIAN_ID,
         scope_type: "general",
         title: "Hidden general chat",
@@ -3614,6 +4207,14 @@ async function seedTenants(
 }
 
 async function cleanup(admin: SupabaseClient) {
+  await admin.from("global_rate_limit_buckets").delete().neq("key_hash", "__never__");
+  await admin
+    .from("mobile_install_audit_event_duplicate_archive")
+    .delete()
+    .in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("account_security_events").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("app_user_shell_preferences").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
+  await admin.from("app_session_activity").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("processed_inbound_events").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("ai_chat_message_versions").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);
   await admin.from("ai_chat_messages").delete().in("tenant_id", [TEST_TENANT_ID, OTHER_TENANT_ID]);

@@ -1,15 +1,18 @@
 import { describe, expect, it } from "vitest";
 import {
-  buildCommercialInviteRecord,
   evaluateCommercialDashboardAccess,
+  evaluateCommercialEntitlementExpiry,
   evaluateCommercialMobileInstallAccess,
-  hashCommercialInviteToken,
-  matchesCommercialInviteToken,
   normalizeCommercialEmail,
   summarizePhase83bCommercialEntitlementModel,
   transitionCommercialEntitlement,
   validateNormalizedCommercialEmail,
 } from "./phase-83b-commercial-entitlement-model";
+import {
+  buildCommercialInviteRecord,
+  hashCommercialInviteToken,
+  matchesCommercialInviteToken,
+} from "./phase-83b-commercial-entitlement-model.server";
 
 const PEPPER = "test-pepper-16chars";
 const NOW = "2026-07-01T12:00:00.000Z";
@@ -141,8 +144,49 @@ describe("phase 83b commercial entitlement model", () => {
         isAuthenticated: true,
         hasTenantMembership: true,
         hasDietitianProfile: true,
+        entitlementStatus: "revoked",
+      }).allowed,
+    ).toBe(false);
+
+    expect(
+      evaluateCommercialDashboardAccess({
+        isAuthenticated: true,
+        hasTenantMembership: true,
+        hasDietitianProfile: true,
         entitlementStatus: "active",
       }).allowed,
+    ).toBe(true);
+  });
+
+  it("requires future paidThrough for active manual transfer entitlement access", () => {
+    expect(
+      evaluateCommercialEntitlementExpiry({
+        entitlementStatus: "active",
+        billingMethod: "manual_transfer",
+        paidThrough: "2026-08-01T00:00:00.000Z",
+        now: "2026-07-01T00:00:00.000Z",
+      }).activeNow,
+    ).toBe(true);
+
+    const expired = evaluateCommercialDashboardAccess({
+      isAuthenticated: true,
+      hasTenantMembership: true,
+      hasDietitianProfile: true,
+      entitlementStatus: "active",
+      billingMethod: "manual_transfer",
+      paidThrough: "2026-07-01T00:00:00.000Z",
+      now: "2026-07-01T00:00:00.000Z",
+    });
+    expect(expired.allowed).toBe(false);
+    expect(expired.blockingReasons).toContain("manual transfer entitlement has expired");
+
+    expect(
+      evaluateCommercialEntitlementExpiry({
+        entitlementStatus: "active",
+        billingMethod: "stripe",
+        paidThrough: null,
+        now: "2026-07-01T00:00:00.000Z",
+      }).activeNow,
     ).toBe(true);
   });
 
@@ -178,6 +222,7 @@ describe("phase 83b commercial entitlement model", () => {
     const summary = summarizePhase83bCommercialEntitlementModel();
     expect(summary.tables).toContain("commercial_invites");
     expect(summary.tables).toContain("tenant_entitlements");
+    expect(summary.billingMethods).toEqual(["stripe", "manual_transfer"]);
     expect(summary.serviceRoleOnlyTables).toContain("commercial_invites");
     expect(summary.inviteTokenStorage).toBe("sha256_pepper_hash_only");
   });

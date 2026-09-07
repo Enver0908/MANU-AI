@@ -1,8 +1,14 @@
+import { existsSync, readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import {
   buildAuthCallbackUrl,
   deriveCustomerAuthRedirect,
+  isTransientMagicLinkSendFailure,
+  MAGIC_LINK_RATE_LIMIT,
   sanitizePostAuthRedirectPath,
+  sendMagicLinkWithRetry,
   summarizePhase84dCustomerAuth,
   validateMagicLinkRequest,
 } from "./phase-84d-customer-auth";
@@ -15,8 +21,14 @@ describe("phase 84d customer auth", () => {
 
   it("builds callback url from NEXT_PUBLIC_APP_URL", () => {
     expect(
-      buildAuthCallbackUrl(undefined, { NEXT_PUBLIC_APP_URL: "https://siriusai.store/" }),
-    ).toBe("https://siriusai.store/auth/callback");
+      buildAuthCallbackUrl(undefined, { NEXT_PUBLIC_APP_URL: "https://aiyaworkspace.com/" }),
+    ).toBe("https://aiyaworkspace.com/auth/callback");
+    expect(
+      buildAuthCallbackUrl(undefined, { NEXT_PUBLIC_APP_URL: "http://localhost:3000/" }),
+    ).toBe("http://localhost:3000/auth/callback");
+    expect(() =>
+      buildAuthCallbackUrl(undefined, { NEXT_PUBLIC_APP_URL: "http://evil.example/" }),
+    ).toThrow("unsafe_auth_redirect_base_url");
   });
 
   it("redirects unauthenticated users to login", () => {
@@ -73,10 +85,55 @@ describe("phase 84d customer auth", () => {
 
   it("rejects unsafe post-auth redirect paths", () => {
     expect(sanitizePostAuthRedirectPath("/dashboard")).toBe("/dashboard");
+    expect(sanitizePostAuthRedirectPath("/settings/profile")).toBe("/settings/profile");
+    expect(sanitizePostAuthRedirectPath("/app-install")).toBe("/app-install");
+    expect(sanitizePostAuthRedirectPath("/app-install?source=pwa")).toBe("/app-install?source=pwa");
+    expect(sanitizePostAuthRedirectPath("/install")).toBeNull();
+    expect(sanitizePostAuthRedirectPath("/signup")).toBeNull();
+    expect(sanitizePostAuthRedirectPath("/register")).toBeNull();
+    expect(sanitizePostAuthRedirectPath("/evil")).toBeNull();
     expect(sanitizePostAuthRedirectPath("//evil.example")).toBeNull();
     expect(sanitizePostAuthRedirectPath("/api/auth/magic-link")).toBeNull();
-    expect(summarizePhase84dCustomerAuth({ NEXT_PUBLIC_APP_URL: "https://siriusai.store" }).callbackUrl).toBe(
-      "https://siriusai.store/auth/callback",
+    expect(summarizePhase84dCustomerAuth({ NEXT_PUBLIC_APP_URL: "https://aiyaworkspace.com" }).callbackUrl).toBe(
+      "https://aiyaworkspace.com/auth/callback",
     );
+  });
+
+  it("classifies transient provider and DNS failures for magic-link retry", () => {
+    expect(isTransientMagicLinkSendFailure(new Error("fetch failed getaddrinfo ENOTFOUND example.supabase.co"))).toBe(
+      true,
+    );
+    expect(isTransientMagicLinkSendFailure({ status: 429, message: "over_email_send_rate_limit" })).toBe(false);
+    expect(isTransientMagicLinkSendFailure({ status: 503, message: "service unavailable" })).toBe(true);
+    expect(isTransientMagicLinkSendFailure({ status: 400, message: "redirect URL not allowed" })).toBe(false);
+  });
+
+  it("retries transient magic-link send failures before succeeding", async () => {
+    let attempts = 0;
+    const result = await sendMagicLinkWithRetry(async () => {
+      attempts += 1;
+      if (attempts === 1) {
+        throw new Error("fetch failed getaddrinfo ENOTFOUND pxyjocahjutcojltcalj.supabase.co");
+      }
+      return { error: null };
+    });
+
+    expect(result.error).toBeFalsy();
+    expect(attempts).toBe(2);
+  });
+});
+
+describe("public surface has no open signup", () => {
+  const appSrc = join(dirname(fileURLToPath(import.meta.url)), "..");
+
+  it("does not expose signup or register routes or self-serve registration UI", () => {
+    expect(existsSync(join(appSrc, "app", "signup", "page.tsx"))).toBe(false);
+    expect(existsSync(join(appSrc, "app", "register", "page.tsx"))).toBe(false);
+    const loginSource = readFileSync(join(appSrc, "components", "customer-login-form.tsx"), "utf8");
+    expect(loginSource).not.toMatch(/\/signup|\/register|ücretsiz kayıt|hesap oluşturun/i);
+    expect(loginSource).toContain("Giriş yap");
+    expect(loginSource).toContain("Giriş bağlantısı gönder");
+    expect(loginSource).toContain("Şifremi unuttum");
+    expect(loginSource).toContain('useState<LoginMode>("password")');
   });
 });

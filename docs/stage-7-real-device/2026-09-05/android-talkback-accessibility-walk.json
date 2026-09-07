@@ -1,0 +1,18 @@
+{
+  "workflow": [
+    "launch",
+    "landmarks",
+    "skip_or_primary_navigation",
+    "purchase_or_login_form",
+    "dashboard_shell",
+    "client_workspace",
+    "messaging",
+    "offline_privacy_lock"
+  ],
+  "capturedAt": "2026-09-05T15:02:29.046Z",
+  "baseUrl": "http://127.0.0.1:3111",
+  "cdpUrl": "http://127.0.0.1:9222",
+  "serial": "R5CXA15KGXA",
+  "assistiveTechnology": "TalkBack",
+  "service": "com.samsung.android.accessibility.talkback/com.samsung.android.marvin.talkback.TalkBackService"
+}

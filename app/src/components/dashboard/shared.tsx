@@ -504,11 +504,13 @@ export function SelectInput({
   value,
   onChange,
   options,
+  ariaLabelledBy,
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
   options: Array<[string, string]>;
+  ariaLabelledBy?: string;
 }) {
   return (
     <label className="block text-sm font-medium text-stone-700">
@@ -516,6 +518,7 @@ export function SelectInput({
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
+        aria-labelledby={ariaLabelledBy}
         className={MOBILE_FIELD_CLASS}
       >
         {options.map(([optionValue, optionLabel]) => (

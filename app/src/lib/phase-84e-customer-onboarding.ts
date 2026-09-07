@@ -4,8 +4,10 @@
 
 import {
   normalizeCommercialEmail,
+  type CommercialBillingMethod,
   type CommercialEntitlementStatus,
   type CommercialInviteStatus,
+  evaluateCommercialEntitlementExpiry,
 } from "./phase-83b-commercial-entitlement-model";
 
 export const PHASE_84E_VERSION = "phase84e-customer-onboarding-v1";
@@ -14,6 +16,7 @@ export const COMMERCIAL_ONBOARDING_EVENT_TYPES = [
   "magic_link_requested",
   "claim_completed",
   "claim_blocked",
+  "claim_pending",
 ] as const;
 
 export type CommercialOnboardingEventType = (typeof COMMERCIAL_ONBOARDING_EVENT_TYPES)[number];
@@ -24,6 +27,7 @@ export type OnboardingInviteSnapshot = {
   status: CommercialInviteStatus;
   tenantId: string | null;
   tenantSeedMetadata: Record<string, unknown>;
+  expiresAt?: string | null;
 };
 
 export type OnboardingClaimEvaluation = {
@@ -34,6 +38,10 @@ export type OnboardingClaimEvaluation = {
   commercialInviteId: string | null;
   normalizedInviteEmail: string | null;
 };
+
+export type OnboardingClaimReference =
+  | { kind: "checkout_session"; sessionId: string; inviteId: null }
+  | { kind: "manual_invite"; sessionId: null; inviteId: string };
 
 export function validateOnboardingSessionId(sessionId?: string | null) {
   const value = sessionId?.trim() ?? "";
@@ -46,6 +54,46 @@ export function validateOnboardingSessionId(sessionId?: string | null) {
   return {
     valid: blockingReasons.length === 0,
     sessionId: value,
+    blockingReasons,
+  };
+}
+
+export function validateOnboardingClaimReference(input: {
+  sessionId?: string | null;
+  inviteId?: string | null;
+}) {
+  const sessionId = input.sessionId?.trim() ?? "";
+  const inviteId = input.inviteId?.trim() ?? "";
+  const blockingReasons: string[] = [];
+
+  if (sessionId && inviteId) {
+    blockingReasons.push("claim_reference_ambiguous");
+  }
+  if (!sessionId && !inviteId) {
+    blockingReasons.push("claim_reference_required");
+  }
+
+  if (sessionId) {
+    const sessionValidation = validateOnboardingSessionId(sessionId);
+    blockingReasons.push(...sessionValidation.blockingReasons);
+    return {
+      valid: blockingReasons.length === 0,
+      reference: blockingReasons.length === 0
+        ? ({ kind: "checkout_session", sessionId: sessionValidation.sessionId, inviteId: null } as const)
+        : null,
+      blockingReasons,
+    };
+  }
+
+  if (inviteId.length > 0 && inviteId.length < 8) {
+    blockingReasons.push("invite_id_invalid");
+  }
+
+  return {
+    valid: blockingReasons.length === 0,
+    reference: blockingReasons.length === 0
+      ? ({ kind: "manual_invite", sessionId: null, inviteId } as const)
+      : null,
     blockingReasons,
   };
 }
@@ -72,6 +120,9 @@ export function evaluateOnboardingClaim(input: {
   userEmail: string | null;
   invite: OnboardingInviteSnapshot | null;
   entitlementStatus: CommercialEntitlementStatus | null;
+  billingMethod?: CommercialBillingMethod | null;
+  paidThrough?: string | null;
+  now?: string;
   existingOwnerUserId: string | null;
   hasMembershipOnTenant: boolean;
   hasDietitianProfileOnTenant: boolean;
@@ -86,16 +137,35 @@ export function evaluateOnboardingClaim(input: {
   if (!input.invite) {
     blockingReasons.push("checkout_session_not_found");
   } else {
-    if (input.invite.status !== "consumed") {
+    if (input.invite.status === "revoked") {
+      blockingReasons.push("invite_revoked");
+    } else if (input.invite.status !== "consumed") {
       blockingReasons.push("invite_not_consumed");
     }
     if (!input.invite.tenantId) {
       blockingReasons.push("tenant_not_provisioned");
     }
+    const expiresAt = input.invite.expiresAt;
+    if (expiresAt) {
+      const nowMs = Date.parse(input.now ?? new Date().toISOString());
+      const expiresMs = Date.parse(expiresAt);
+      if (Number.isFinite(nowMs) && Number.isFinite(expiresMs) && nowMs >= expiresMs) {
+        blockingReasons.push("invite_expired");
+      }
+    }
   }
 
   if (input.entitlementStatus !== "active") {
     blockingReasons.push("entitlement_not_active");
+  }
+  const expiry = evaluateCommercialEntitlementExpiry({
+    entitlementStatus: input.entitlementStatus,
+    billingMethod: input.billingMethod ?? null,
+    paidThrough: input.paidThrough ?? null,
+    now: input.now,
+  });
+  if (!expiry.activeNow && expiry.blockingReasons.length > 0) {
+    blockingReasons.push("entitlement_expired");
   }
 
   const normalizedInviteEmail = input.invite?.normalizedEmail ?? null;
@@ -134,6 +204,48 @@ export function evaluateOnboardingClaim(input: {
     commercialInviteId: input.invite?.id ?? null,
     normalizedInviteEmail,
   };
+}
+
+export function selectInvitedEmailForStatus(input: {
+  isAuthenticated: boolean;
+  userEmail: string | null;
+  inviteEmail: string | null;
+}) {
+  if (!input.isAuthenticated || !input.userEmail || !input.inviteEmail) {
+    return null;
+  }
+  if (normalizeCommercialEmail(input.userEmail) !== input.inviteEmail) {
+    return null;
+  }
+  return input.inviteEmail;
+}
+
+export function canSetOnboardingPassword(evaluation: OnboardingClaimEvaluation) {
+  return evaluation.claimable && !evaluation.alreadyClaimed && evaluation.blockingReasons.length === 0;
+}
+
+export function deriveOnboardingClaimPending(input: {
+  claimable: boolean;
+  alreadyClaimed: boolean;
+  events: Array<{ eventType: string; createdAt?: string }>;
+}) {
+  if (!input.claimable || input.alreadyClaimed) {
+    return false;
+  }
+  const ordered = [...input.events].sort((left, right) =>
+    String(right.createdAt ?? "").localeCompare(String(left.createdAt ?? "")),
+  );
+  const latest = ordered.find(
+    (event) => event.eventType === "claim_pending" || event.eventType === "claim_completed",
+  );
+  return latest?.eventType === "claim_pending";
+}
+
+export function buildOnboardingPathFromReference(reference: OnboardingClaimReference) {
+  if (reference.kind === "checkout_session") {
+    return `/onboarding?session_id=${encodeURIComponent(reference.sessionId)}`;
+  }
+  return `/onboarding?invite_id=${encodeURIComponent(reference.inviteId)}`;
 }
 
 export function summarizePhase84eCustomerOnboarding() {

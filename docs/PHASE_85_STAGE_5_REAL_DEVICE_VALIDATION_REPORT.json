@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "stage5-evidence-v2",
+  "evidenceType": "real_device",
+  "sourceRevision": "3d03112db649148b4acaadcd2eea4a2caf93f62d",
+  "sourceTreeClean": false,
+  "packageLockSha256": "80ae808aad5ddb681a2a5b32fd5a4f71340772ac29ce1fd549156977302fa8c5",
+  "generatedAt": "2026-08-18T17:03:49.624Z",
+  "command": "npm run test:stage-5-real-device",
+  "environment": {
+    "nodeVersion": "v22.16.0",
+    "platform": "win32",
+    "architecture": "x64"
+  },
+  "status": "APPROVED",
+  "productionStatus": "NO-GO",
+  "requiredCaptures": {
+    "iphoneSafari": true,
+    "iphonePwa": true,
+    "androidChrome": true,
+    "androidPwa": true,
+    "offlinePrivacyLock": true
+  },
+  "blockers": [],
+  "details": [],
+  "expectedCaptureIds": [
+    "iphoneSafari",
+    "iphonePwa",
+    "androidChrome",
+    "androidPwa",
+    "offlinePrivacyLock"
+  ],
+  "expectedRouteWalk": [
+    "/dashboard",
+    "/dashboard?section=clients",
+    "/dashboard?section=messages",
+    "/dashboard/ai-chat",
+    "/dashboard/settings"
+  ],
+  "sourceEvidencePath": "C:\\Users\\Dell\\OneDrive\\Masaüstü\\MANU-AI\\docs\\PHASE_85_STAGE_5_REAL_DEVICE_EVIDENCE_STATUS.json",
+  "validationReportPath": "C:\\Users\\Dell\\OneDrive\\Masaüstü\\MANU-AI\\docs\\PHASE_85_STAGE_5_REAL_DEVICE_VALIDATION_REPORT.json"
+}

@@ -21,7 +21,7 @@ describe("phase 77ah whatsapp adapter evidence closure", () => {
     expect(closure.channelPolicyGateOpen).toBe(true);
     expect(closure.openLaunchGateCount).toBe(8);
     expect(closure.realWhatsAppConnected).toBe(false);
-    expect(closure.realGeminiConnected).toBe(false);
+    expect(closure.realZaiConnected).toBe(false);
     expect(closure.duplicateClientSendCount).toBe(0);
     expect(closure.unknownIdentityProviderCallCount).toBe(0);
     expect(closure.yellowRedClientSendCount).toBe(0);

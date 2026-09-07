@@ -1,7 +1,11 @@
 import { afterEach, describe, expect, it } from "vitest";
 import {
   AI_CHAT_ROOT_PATH,
+  SETTINGS_ROOT_PATH,
   buildDashboardHref,
+  commitDashboardHref,
+  currentDashboardHref,
+  subscribeDashboardHrefChange,
   buildStage4BAlertsRequestQuery,
   buildStage4BNotificationsRequestQuery,
   buildStage4B2ConversationsRequestQuery,
@@ -13,8 +17,10 @@ import {
   resolveAlertsBadgeCount,
   resolveDashboardSection,
   resolveLegacyCopilotSectionRedirect,
+  resolveRetiredDashboardSectionRedirect,
   resolveMessagingRouteSelection,
   resolveMessagingUnreadBadgeCount,
+  resolveStage6CommunicationDestination,
   serializeDashboardSearchParams,
 } from "./phase-85-stage-4b-dashboard-routing";
 
@@ -46,6 +52,18 @@ describe("phase-85-stage-4b dashboard routing", () => {
     expect(serialized.get("notificationQuery")).toBe("menu");
   });
 
+  it("parses client workspace tasks and omits summary from the query string", () => {
+    const parsed = parseDashboardSearchParams(
+      new URLSearchParams("section=clients&clientId=client-mert&clientTask=forms"),
+    );
+    expect(parsed.clientTask).toBe("forms");
+    const summary = parseDashboardSearchParams(
+      new URLSearchParams("section=clients&clientId=client-mert&tab=tab_overview"),
+    );
+    expect(summary.clientTask).toBe("summary");
+    expect(serializeDashboardSearchParams({ ...summary, clientTask: "summary" }).get("clientTask")).toBeNull();
+  });
+
   it("preserves message deep-link params", () => {
     const parsed = parseDashboardSearchParams(
       new URLSearchParams(
@@ -64,6 +82,16 @@ describe("phase-85-stage-4b dashboard routing", () => {
     expect(href).toContain("section=messages");
     expect(href).toContain("clientId=client-mert");
     expect(href).toContain("source=alert");
+  });
+
+  it("builds a client workspace href that keeps clientId on the clients section", () => {
+    const href = buildDashboardHref(
+      "/dashboard",
+      mergeDashboardUrlState(parseDashboardSearchParams(new URLSearchParams("section=clients")), {
+        clientId: "client-mert",
+      }),
+    );
+    expect(href).toBe("/dashboard?section=clients&clientId=client-mert");
   });
 
   it("parses notification message deep-link source", () => {
@@ -143,7 +171,7 @@ describe("phase-85-stage-4b dashboard routing", () => {
     expect(query.get("query")).toBe("elif");
   });
 
-  it("canonicalizes legacy clientId routes to conversationId", () => {
+  it("keeps a client-only messages URL on the list instead of auto-opening a thread", () => {
     const conversations = [
       { id: "conversation-client-mert", clientId: "client-mert" },
       { id: "conversation-client-elif", clientId: "client-elif" },
@@ -155,9 +183,9 @@ describe("phase-85-stage-4b dashboard routing", () => {
       active,
     );
     expect(fromClient).toMatchObject({
-      conversationId: "conversation-client-mert",
-      canonicalConversationId: "conversation-client-mert",
-      needsCanonicalization: true,
+      conversationId: null,
+      clientId: "client-mert",
+      needsCanonicalization: false,
     });
 
     const fromConversation = resolveMessagingRouteSelection(
@@ -223,5 +251,113 @@ describe("phase-85-stage-4b dashboard routing", () => {
       expect(resolveLegacyCopilotSectionRedirect("overview")).toBeNull();
       expect(resolveLegacyCopilotSectionRedirect("messages")).toBeNull();
     });
+
+    it("redirects retired ?section=simulator to the dashboard root and keeps copilot on AI Chat", () => {
+      expect(resolveRetiredDashboardSectionRedirect("simulator")).toBe("/dashboard");
+      expect(resolveRetiredDashboardSectionRedirect("copilot")).toBe(AI_CHAT_ROOT_PATH);
+      expect(resolveRetiredDashboardSectionRedirect("overview")).toBeNull();
+      expect(resolveRetiredDashboardSectionRedirect("messages")).toBeNull();
+    });
+  });
+
+  it("exposes the Stage 4D settings route path for real-link navigation", () => {
+    expect(SETTINGS_ROOT_PATH).toBe("/dashboard/settings");
+  });
+
+  it("notifies subscribers when a same-page dashboard href is committed", () => {
+    const originalWindow = globalThis.window;
+    const listeners = new Map<string, Set<() => void>>();
+    const location = { pathname: "/dashboard", search: "" };
+    const fakeWindow = {
+      location,
+      history: {
+        state: null,
+        pushState(_state: unknown, _title: string, href: string) {
+          const url = new URL(href, "http://localhost");
+          location.pathname = url.pathname;
+          location.search = url.search;
+        },
+        replaceState(_state: unknown, _title: string, href: string) {
+          const url = new URL(href, "http://localhost");
+          location.pathname = url.pathname;
+          location.search = url.search;
+        },
+      },
+      addEventListener(type: string, listener: () => void) {
+        const set = listeners.get(type) ?? new Set();
+        set.add(listener);
+        listeners.set(type, set);
+      },
+      removeEventListener(type: string, listener: () => void) {
+        listeners.get(type)?.delete(listener);
+      },
+      dispatchEvent(event: Event) {
+        listeners.get(event.type)?.forEach((listener) => listener());
+        return true;
+      },
+    };
+    Object.defineProperty(globalThis, "window", { configurable: true, value: fakeWindow });
+
+    try {
+      const hrefs: string[] = [];
+      const unsubscribe = subscribeDashboardHrefChange(() => hrefs.push(currentDashboardHref()));
+      commitDashboardHref("/dashboard?section=messages", "push");
+      expect(hrefs).toEqual(["/dashboard?section=messages"]);
+      unsubscribe();
+    } finally {
+      if (originalWindow === undefined) {
+        Reflect.deleteProperty(globalThis, "window");
+      } else {
+        Object.defineProperty(globalThis, "window", { configurable: true, value: originalWindow });
+      }
+    }
+  });
+
+  it("resolves typed communication destinations without inventing a client", () => {
+    const current = parseDashboardSearchParams(new URLSearchParams("section=alerts&clientId=client-mert"));
+    const conversation = resolveStage6CommunicationDestination(current, {
+      section: "messages",
+      clientId: "client-elif",
+      conversationId: "conversation-client-elif",
+      messageId: "message-1",
+      source: "alert",
+    });
+    expect(conversation).toMatchObject({
+      kind: "conversation",
+      linkedClientId: "client-elif",
+      requiresActiveClient: true,
+      inaccessible: false,
+    });
+    expect(conversation.href).toContain("section=messages");
+    expect(conversation.href).toContain("conversationId=conversation-client-elif");
+
+    const workspace = resolveStage6CommunicationDestination(current, {
+      section: "ai-control",
+      clientId: "client-elif",
+    });
+    expect(workspace.kind).toBe("clientWorkspace");
+    expect(workspace.urlPatch.clientTask).toBe("ai");
+
+    const settings = resolveStage6CommunicationDestination(current, { section: "settings" });
+    expect(settings).toMatchObject({ kind: "settings", requiresActiveClient: false, linkedClientId: null });
+    expect(settings.href).toBe("/dashboard/settings");
+
+    const aiChat = resolveStage6CommunicationDestination(current, { kindHint: "ai_chat" });
+    expect(aiChat).toMatchObject({ kind: "aiChat", requiresActiveClient: false, linkedClientId: null });
+    expect(aiChat.href).toBe("/dashboard/ai-chat");
+
+    const fallback = resolveStage6CommunicationDestination(current, { section: "clients" });
+    expect(fallback.kind).toBe("fallback");
+    expect(fallback.linkedClientId).toBeNull();
+    expect(fallback.inaccessible).toBe(false);
+    expect(fallback.href).not.toContain("client-elif");
+
+    const removed = resolveStage6CommunicationDestination(
+      current,
+      { section: "messages", clientId: "gone", conversationId: "conversation-gone" },
+      { knownClientIds: new Set(["client-mert"]) },
+    );
+    expect(removed.inaccessible).toBe(true);
+    expect(removed.linkedClientId).toBeNull();
   });
 });

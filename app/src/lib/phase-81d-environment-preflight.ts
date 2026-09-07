@@ -14,7 +14,7 @@ const PHASE_81D_OPS_GATE_IDS: LaunchGateId[] = [
 export type Phase81EnvironmentPreflightInput = {
   productionEnvIdentity?: string;
   secretValuesExposed?: boolean;
-  allowRealGeminiFlag?: string;
+  allowRealZaiFlag?: string;
   allowRealWhatsappFlag?: string;
   allowRealTelegramFlag?: string;
   approvedGateIds?: LaunchGateId[];
@@ -33,7 +33,7 @@ export type Phase81EnvironmentPreflightChecks = {
   webhookApprovedExternalEvidence: boolean;
   globalRollbackControlDeclared: boolean;
   conservativeClientAiPosture: boolean;
-  realGeminiEgressAllowed: boolean;
+  realZaiEgressAllowed: boolean;
   realWhatsappEgressAllowed: boolean;
   realTelegramEgressAllowed: boolean;
 };
@@ -56,11 +56,11 @@ function hasApprovedGate(approvedGateIds: LaunchGateId[], gateId: LaunchGateId) 
   return approvedGateIds.includes(gateId);
 }
 
-function resolveRealGeminiEgressAllowed(input: {
-  allowRealGeminiFlag?: string;
+function resolveRealZaiEgressAllowed(input: {
+  allowRealZaiFlag?: string;
   approvedGateIds: LaunchGateId[];
 }) {
-  if (input.allowRealGeminiFlag !== "true") {
+  if (input.allowRealZaiFlag !== "true") {
     return false;
   }
   return (
@@ -148,8 +148,8 @@ export function evaluatePhase81dEnvironmentPreflight(input: Phase81EnvironmentPr
     blockingReasons.push("global autopilot enablement is not allowed for production preflight");
   }
 
-  const realGeminiEgressAllowed = resolveRealGeminiEgressAllowed({
-    allowRealGeminiFlag: input.allowRealGeminiFlag,
+  const realZaiEgressAllowed = resolveRealZaiEgressAllowed({
+    allowRealZaiFlag: input.allowRealZaiFlag,
     approvedGateIds,
   });
   const realWhatsappEgressAllowed = resolveRealWhatsappEgressAllowed({
@@ -163,9 +163,9 @@ export function evaluatePhase81dEnvironmentPreflight(input: Phase81EnvironmentPr
     launchAuthorizationApproved,
   });
 
-  if (input.allowRealGeminiFlag === "true" && !realGeminiEgressAllowed) {
+  if (input.allowRealZaiFlag === "true" && !realZaiEgressAllowed) {
     blockingReasons.push(
-      "MANU_ALLOW_REAL_GEMINI cannot bypass missing Phase 75/provider launch gate evidence",
+      "MANU_ALLOW_REAL_ZAI cannot bypass missing Phase 75/provider launch gate evidence",
     );
   }
   if (input.allowRealWhatsappFlag === "true" && !realWhatsappEgressAllowed) {
@@ -193,7 +193,7 @@ export function evaluatePhase81dEnvironmentPreflight(input: Phase81EnvironmentPr
       webhookApprovedExternalEvidence,
       globalRollbackControlDeclared,
       conservativeClientAiPosture,
-      realGeminiEgressAllowed,
+      realZaiEgressAllowed,
       realWhatsappEgressAllowed,
       realTelegramEgressAllowed,
     },
@@ -225,7 +225,7 @@ export function buildPhase81dBaselineEnvironmentPreflightInput(): Phase81Environ
   return {
     productionEnvIdentity: undefined,
     secretValuesExposed: false,
-    allowRealGeminiFlag: undefined,
+    allowRealZaiFlag: undefined,
     allowRealWhatsappFlag: undefined,
     allowRealTelegramFlag: undefined,
     approvedGateIds: [],
@@ -249,7 +249,7 @@ export function buildCompletePhase81dEnvironmentPreflightInput(
   return {
     productionEnvIdentity: "production",
     secretValuesExposed: false,
-    allowRealGeminiFlag: "true",
+    allowRealZaiFlag: "true",
     allowRealWhatsappFlag: "true",
     allowRealTelegramFlag: undefined,
     approvedGateIds: PRODUCTION_PILOT_LAUNCH_GATES.map((gate) => gate.id),

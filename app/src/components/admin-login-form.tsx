@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CheckCircle2, Mail, Send, Shield } from "lucide-react";
 import { Button, Field, TextInput } from "@/components/ui";
+import { AIYA_BRAND_NAME } from "@/lib/brand";
 import {
   PUBLIC_MARKETING_COPY,
-  SIRIUSAI_PUBLIC_CONTACT_EMAIL,
   buildContactMailtoUrl,
 } from "@/lib/phase-84b-public-website";
+import { parseRetryAfterSeconds } from "@/lib/phase-84d-customer-auth";
 import { isLikelyEmail } from "@/lib/phase-83e2-purchase-ux";
 
 type SubmitState = "idle" | "submitting" | "success" | "error";
@@ -16,9 +17,22 @@ export function AdminLoginForm(props: { initialError?: string | null }) {
   const [email, setEmail] = useState("");
   const [formError, setFormError] = useState<string | null>(props.initialError ?? null);
   const [submitState, setSubmitState] = useState<SubmitState>("idle");
+  const [cooldownSeconds, setCooldownSeconds] = useState(0);
 
-  const contactMailto = buildContactMailtoUrl("SiriusAI yönetim girişi");
-  const busy = submitState === "submitting";
+  const contactMailto = buildContactMailtoUrl(`${AIYA_BRAND_NAME} yönetim girişi`);
+  const busy = submitState === "submitting" || cooldownSeconds > 0;
+
+  useEffect(() => {
+    if (cooldownSeconds <= 0) return;
+    const timer = window.setInterval(() => {
+      setCooldownSeconds((current) => (current <= 1 ? 0 : current - 1));
+    }, 1000);
+    return () => window.clearInterval(timer);
+  }, [cooldownSeconds]);
+
+  function beginCooldown(seconds: number) {
+    setCooldownSeconds(Math.max(1, Math.ceil(seconds)));
+  }
 
   async function onSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -49,8 +63,19 @@ export function AdminLoginForm(props: { initialError?: string | null }) {
       }
 
       if (!response.ok || !payload.sent) {
+        if (response.status === 429) {
+          const retryAfter = parseRetryAfterSeconds(response);
+          beginCooldown(retryAfter);
+          setSubmitState("error");
+          setFormError(`Çok fazla giriş bağlantısı istendi. ${retryAfter} saniye sonra tekrar deneyin.`);
+          return;
+        }
         setSubmitState("error");
-        setFormError("Giriş bağlantısı gönderilemedi. Lütfen tekrar deneyin.");
+        setFormError(
+          response.status === 503
+            ? "Giriş sağlayıcısına geçici olarak ulaşılamıyor. Biraz sonra tekrar deneyin."
+            : "Giriş bağlantısı gönderilemedi. Lütfen tekrar deneyin.",
+        );
         return;
       }
 
@@ -65,19 +90,19 @@ export function AdminLoginForm(props: { initialError?: string | null }) {
   if (submitState === "success") {
     return (
       <div className="space-y-4" role="status">
-        <div className="flex items-start gap-3 rounded-control border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-950">
+        <div className="flex items-start gap-3 rounded-control border border-sage/30 bg-sage/10 px-4 py-3 text-sm text-ink">
           <CheckCircle2 size={18} className="mt-0.5 shrink-0" aria-hidden />
           <p>
             Yönetim giriş bağlantısı gönderildi. E-postanızdaki bağlantıya tıklayarak admin paneline
             erişebilirsiniz.
           </p>
         </div>
-        <p className="text-xs text-ink-subtle">
+        <p className="text-xs text-ink-muted">
           Bağlantı gelmediyse spam klasörünü kontrol edin veya{" "}
-          <a href={contactMailto} className="font-medium text-emerald-900 underline-offset-2 hover:underline">
-            {SIRIUSAI_PUBLIC_CONTACT_EMAIL}
+          <a href={contactMailto} className="inline-flex min-h-6 items-center font-medium text-primary underline underline-offset-2">
+            destek ekibine yazın
           </a>{" "}
-          ile iletişime geçin.
+          .
         </p>
       </div>
     );
@@ -89,7 +114,7 @@ export function AdminLoginForm(props: { initialError?: string | null }) {
         {PUBLIC_MARKETING_COPY.brand} ticari operasyon paneli yalnızca allowlist&apos;teki yönetici
         e-postaları için açılır.
       </p>
-      <Field label="Yönetici e-posta" htmlFor="admin-login-email">
+      <Field label="Yönetici e-posta" htmlFor="admin-login-email" error={formError} required>
         <TextInput
           id="admin-login-email"
           type="email"
@@ -100,17 +125,12 @@ export function AdminLoginForm(props: { initialError?: string | null }) {
           required
         />
       </Field>
-      {formError ? (
-        <p className="text-sm text-red-700" role="alert">
-          {formError}
-        </p>
-      ) : null}
       <Button type="submit" disabled={busy || !email.trim()} fullWidth icon={busy ? Mail : Send}>
         {busy ? "Gönderiliyor…" : "Giriş bağlantısı gönder"}
       </Button>
-      <p className="flex items-start gap-2 text-xs text-ink-subtle">
+      <p className="flex items-start gap-2 text-xs text-ink-muted">
         <Shield size={14} className="mt-0.5 shrink-0" aria-hidden />
-        Production pilot hâlâ NO-GO. Bu panel invite, lead ve abonelik operasyonları içindir.
+        Bu panel invite, lead ve abonelik operasyonları içindir.
       </p>
     </form>
   );

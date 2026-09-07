@@ -1,0 +1,11 @@
+{
+  "step": "forms_dirty_or_save",
+  "requestedUrl": "http://127.0.0.1:3110/dashboard?section=forms&clientId=client-mert",
+  "finalUrl": "http://127.0.0.1:3110/dashboard?section=forms&clientId=client-mert",
+  "title": "SiriusAI",
+  "viewport": null,
+  "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+  "standalone": false,
+  "serviceWorkerController": false,
+  "bodyText": "İçeriğe atla\n\nSİRİUSAI\n\nMANU-AI Demo Clinic\n\nOperasyon paneli\nDanışan seç\nPanel dili\nTurkish\nEnglish\nGerman\nFrench\nSpanish\nPortuguese\nCzech\nDemoyu sıfırla\nDinamik form şemaları\nŞema başlığı\nForm dili\nTurkish\nEnglish\nGerman\nFrench\nSpanish\nPortuguese\nCzech\nAlanlar\nŞema oluştur\n\nPhase 77C client personal form v2\n\nv1 · 68 alan · tr\n\npublished\nMert Kaya form yanıtı\n\nPhase 77C client personal form v2 v1 · tr\n\nBesin kuralları ve menü planı artık danışan detay sekmelerinden yönetilir.\n\nDiğer form yanıtları (anahtar: değer)\nYanıtı kaydet\n{\n  \"first_name\": \"Mert\",\n  \"last_name\": \"Kaya\",\n  \"date_of_birth\": \"1994-05-22\",\n  \"adult_status\": \"Adult\",\n  \"email\": \"mert.kaya@example.test\",\n  \"mobile_phone_e164\": \"+905551110001\",\n  \"whatsapp_phone_e164\": \"+905551110001\",\n  \"gender\": \"Erkek\",\n  \"communication_language\": \"TR\",\n  \"timezone\": \"Europe/Istanbul\",\n  \"channel_permission_state\": \"ready\",\n  \"sensitive_data_consent_status\": \"approved\",\n  \"form_prompt_visibility_ack\": \"Evet\",\n  \"emergency_contact_policy_ack\": \"Evet\",\n  \"current_weight_kg\": 84,\n  \"height_cm\": 178,\n  \"primary_goal\": \"Fat loss with steady meal adherence\",\n  \"general_flexibility_score\": \"Orta esnek\",\n  \"goal_flexibility_score\": \"Kisitli\",\n  \"diagnosed_condition_flag\": \"Hayir\",\n  \"medication_or_insulin_flag\": \"Hayir\",\n  \"supplement_flag\": \"Hayir\",\n  \"pregnancy_or_breastfeeding_flag\": \"Hayir\",\n  \"eating_disorder_risk_flag\": \"Hayir\",\n  \"nutrition_history\": \"Breakfast, lunch, dinner and one planned snack.\",\n  \"daily_meal_count\": \""
+}

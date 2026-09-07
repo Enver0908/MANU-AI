@@ -1,7 +1,9 @@
 "use client";
 
 import { AlertTriangle, Check, Plus, Search, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
+import { useShellDirtyRegistration } from "@/lib/use-shell-dirty-registration";
+import type { ShellDirtyEntryState } from "@/lib/phase-85-stage-5-shell-dirty-registry";
 import {
   hasHardFoodRuleConflicts,
   summarizeCatalogSelections,
@@ -22,8 +24,14 @@ import {
 } from "@/lib/phase-77e-client-food-rule-profile";
 import type { Phase77EFlexibilityLevel } from "@/lib/types";
 import { CatalogTreeBrowser } from "@/components/dashboard/catalog-tree-browser";
+import {
+  classifyStage6EditorFailure,
+  stage6EditorFailureMessage,
+  type Stage6EditorFailure,
+} from "@/lib/phase-85-stage-6-workspace-state";
 
 type FoodRulesPanelProps = {
+  clientId?: string;
   clientName: string;
   contextRevision: number;
   initialProfile: ClientFoodRuleProfileV2State;
@@ -53,6 +61,7 @@ const GOAL_LABELS: Record<(typeof PHASE_77E_GOAL_KEYS)[number], string> = {
 };
 
 export function FoodRulesPanel({
+  clientId,
   clientName,
   contextRevision,
   initialProfile,
@@ -63,11 +72,46 @@ export function FoodRulesPanel({
   const [catalogQuery, setCatalogQuery] = useState("");
   const [draftItem, setDraftItem] = useState({ allowed: "", forbidden: "" });
   const [isSaving, setIsSaving] = useState(false);
+  const [saveFailure, setSaveFailure] = useState<Stage6EditorFailure | null>(null);
+  const saveButtonRef = useRef<HTMLButtonElement>(null);
 
   const catalogMatches = useMemo(() => searchPhase77DCatalogFoods(catalogQuery, 12), [catalogQuery]);
   const conflicts = useMemo(() => detectClientFoodRuleProfileConflicts(profile), [profile]);
   const catalogSummary = useMemo(() => summarizeCatalogSelections(profile), [profile]);
   const saveBlocked = hasHardFoodRuleConflicts(conflicts);
+  const profileIsDirty = JSON.stringify(profile) !== JSON.stringify(initialProfile);
+  const hasPendingTokenDraft = Boolean(draftItem.allowed.trim() || draftItem.forbidden.trim());
+  const isDirty = profileIsDirty || hasPendingTokenDraft;
+  const dirtyState: ShellDirtyEntryState = isSaving ? "saving" : saveFailure ? "error" : isDirty ? "dirty" : "clean";
+
+  useShellDirtyRegistration({
+    id: `client-nutrition:${clientId || clientName}`,
+    label: "Aktif beslenme planı",
+    state: dirtyState,
+    canSave: profileIsDirty && !hasPendingTokenDraft && !disabled && !saveBlocked,
+    onSave: async () => {
+      if (disabled || isSaving || saveBlocked || !profileIsDirty || hasPendingTokenDraft) return false;
+      setIsSaving(true);
+      setSaveFailure(null);
+      try {
+        const { conflicts: _conflicts, ...payload } = profile;
+        void _conflicts;
+        await onSave(payload);
+        return true;
+      } catch (error) {
+        setSaveFailure(classifyStage6EditorFailure(error, "nutrition_save_failed"));
+        return false;
+      } finally {
+        setIsSaving(false);
+      }
+    },
+    onDiscard: () => {
+      setProfile(initialProfile);
+      setDraftItem({ allowed: "", forbidden: "" });
+      setSaveFailure(null);
+    },
+    onFocusField: () => saveButtonRef.current?.focus(),
+  });
 
   const update = (patch: Partial<ClientFoodRuleProfileV2State>) => {
     setProfile((current) => ({ ...current, ...patch }));
@@ -118,12 +162,15 @@ export function FoodRulesPanel({
   };
 
   const save = async () => {
-    if (disabled || isSaving || saveBlocked) return;
+    if (disabled || isSaving || saveBlocked || !profileIsDirty || hasPendingTokenDraft) return;
     setIsSaving(true);
+    setSaveFailure(null);
     try {
-      const { conflicts, ...payload } = profile;
-      void conflicts;
+      const { conflicts: _conflicts, ...payload } = profile;
+      void _conflicts;
       await onSave(payload);
+    } catch (error) {
+      setSaveFailure(classifyStage6EditorFailure(error, "nutrition_save_failed"));
     } finally {
       setIsSaving(false);
     }
@@ -131,19 +178,20 @@ export function FoodRulesPanel({
 
   return (
     <section className="space-y-4" data-testid="active-nutrition-plan-panel">
-      <div className="rounded-lg border border-stone-200 bg-stone-50 p-4">
+      <div className="rounded-card border border-line bg-surface-muted p-4">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h4 className="text-sm font-semibold text-stone-900">Aktif Beslenme Plani</h4>
-            <p className="mt-1 text-sm text-stone-600">
+            <h4 className="text-sm font-semibold text-ink">Aktif Beslenme Plani</h4>
+            <p className="mt-1 text-sm text-ink-muted">
               {clientName} · revizyon {profile.revision} · baglam {contextRevision}
             </p>
           </div>
           <button
+            ref={saveButtonRef}
             type="button"
             onClick={save}
-            disabled={disabled || isSaving || saveBlocked}
-            className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-emerald-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-900 disabled:cursor-not-allowed disabled:opacity-60"
+            disabled={disabled || isSaving || saveBlocked || !profileIsDirty || hasPendingTokenDraft}
+            className="inline-flex min-h-11 items-center gap-2 rounded-control bg-ink px-4 py-2 text-sm font-semibold text-white transition hover:bg-ink-alt disabled:cursor-not-allowed disabled:opacity-60"
             data-testid="active-nutrition-plan-save"
           >
             <Check size={16} />
@@ -157,12 +205,17 @@ export function FoodRulesPanel({
           <SummaryBadge label={`Yasak alt kat. ${catalogSummary.forbiddenSubs}`} tone="forbidden" />
           <SummaryBadge label={`Katalog ${catalogSummary.totalFoods} besin`} tone="neutral" />
         </div>
-        <p className="mt-3 text-sm leading-6 text-stone-600">
+        <p className="mt-3 text-sm leading-6 text-ink-muted">
           Ana kategori, alt kategori ve besin duzeyinde izinli/yasak secimleri yapin. Hizli erisim icin arama kullanin.
         </p>
+        {saveFailure ? (
+          <p role="alert" aria-live="assertive" className="mt-3 rounded-card border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
+            {stage6EditorFailureMessage(saveFailure)}
+          </p>
+        ) : null}
       </div>
 
-      <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-950">
+      <div className="rounded-card border border-amber-200 bg-amber-50 p-3 text-sm text-amber-950">
         <p className="inline-flex items-start gap-2">
           <AlertTriangle size={16} className="mt-0.5 shrink-0" />
           {FOOD_RULE_DASHBOARD_WARNINGS.clinicalReview}
@@ -170,7 +223,7 @@ export function FoodRulesPanel({
       </div>
 
       {conflicts.length > 0 ? (
-        <div className="space-y-2 rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-950">
+        <div className="space-y-2 rounded-card border border-rose-200 bg-rose-50 p-3 text-sm text-rose-950">
           {conflicts.map((conflict) => (
             <p key={`${conflict.code}-${conflict.message}`} className="inline-flex items-start gap-2">
               <AlertTriangle size={16} className="mt-0.5 shrink-0" />
@@ -185,10 +238,10 @@ export function FoodRulesPanel({
         </div>
       ) : null}
 
-      <div className="rounded-lg border border-stone-200 bg-white p-4">
-        <label className="block text-sm font-semibold text-stone-900">Katalog arama</label>
-        <div className="mt-2 flex min-h-11 items-center gap-2 rounded-lg border border-stone-200 px-3 py-2">
-          <Search size={16} className="text-stone-400" />
+      <div className="rounded-card border border-line bg-surface p-4">
+        <label className="block text-sm font-semibold text-ink">Katalog arama</label>
+        <div className="mt-2 flex min-h-11 items-center gap-2 rounded-card border border-line px-3 py-2">
+          <Search size={16} className="text-ink-muted" />
           <input
             value={catalogQuery}
             onChange={(event) => setCatalogQuery(event.target.value)}
@@ -198,26 +251,26 @@ export function FoodRulesPanel({
           />
         </div>
         {catalogQuery.trim() && catalogMatches.length > 0 ? (
-          <div className="mt-3 space-y-2 rounded-lg border border-stone-100 bg-stone-50 p-3">
-            <p className="text-xs font-semibold uppercase tracking-wide text-stone-500">Hizli sonuclar</p>
+          <div className="mt-3 space-y-2 rounded-card border border-line bg-surface-muted p-3">
+            <p className="text-xs font-semibold uppercase tracking-wide text-ink-muted">Hizli sonuclar</p>
             {catalogMatches.map((match) => (
-              <div key={match.id} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-stone-200 bg-white px-3 py-2">
+              <div key={match.id} className="flex flex-wrap items-center justify-between gap-2 rounded-card border border-line bg-surface px-3 py-2">
                 <div className="min-w-0">
-                  <p className="text-sm font-medium text-stone-900">{match.name}</p>
-                  <p className="text-xs text-stone-500">{match.path}</p>
+                  <p className="text-sm font-medium text-ink">{match.name}</p>
+                  <p className="text-xs text-ink-muted">{match.path}</p>
                 </div>
                 <div className="flex gap-2">
                   <button
                     type="button"
                     onClick={() => addCatalogFood(match.id, "allowed")}
-                    className="min-h-11 rounded-lg border border-emerald-200 px-2 py-1 text-xs font-semibold text-emerald-900"
+                    className="min-h-11 rounded-card border border-primary/30 px-2 py-1 text-xs font-semibold text-primary"
                   >
                     Izinli
                   </button>
                   <button
                     type="button"
                     onClick={() => addCatalogFood(match.id, "forbidden")}
-                    className="min-h-11 rounded-lg border border-rose-200 px-2 py-1 text-xs font-semibold text-rose-900"
+                    className="min-h-11 rounded-card border border-rose-200 px-2 py-1 text-xs font-semibold text-rose-900"
                   >
                     Yasak
                   </button>
@@ -338,10 +391,10 @@ function SummaryBadge({
 }) {
   const classes =
     tone === "allowed"
-      ? "border-emerald-200 bg-emerald-50 text-emerald-900"
+      ? "border-primary/30 bg-primary/10 text-ink"
       : tone === "forbidden"
         ? "border-red-200 bg-red-50 text-red-900"
-        : "border-stone-200 bg-white text-stone-700";
+        : "border-line bg-surface text-ink";
   return <span className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold ${classes}`}>{label}</span>;
 }
 
@@ -355,24 +408,29 @@ function CatalogSelectionList({
   onRemove: (foodId: string) => void;
 }) {
   return (
-    <div className="rounded-lg border border-stone-200 bg-white p-3">
-      <p className="text-sm font-semibold text-stone-900">{title}</p>
+    <div className="rounded-card border border-line bg-surface p-3">
+      <p className="text-sm font-semibold text-ink">{title}</p>
       <div className="mt-3 flex flex-wrap gap-2">
         {foodIds.map((foodId) => {
           const located = getPhase77DFoodById(foodId);
           return (
             <span
               key={foodId}
-              className="inline-flex max-w-full items-center gap-1 rounded-full bg-stone-100 px-2 py-1 text-xs font-medium text-stone-800"
+              className="inline-flex max-w-full items-center gap-1 rounded-full bg-surface-muted px-2 py-1 text-xs font-medium text-ink"
             >
               <span className="truncate">{located?.food.name || foodId}</span>
-              <button type="button" onClick={() => onRemove(foodId)} className="text-stone-500 hover:text-stone-900">
-                <X size={12} />
+              <button
+                type="button"
+                aria-label={`${located?.food.name || foodId} seçimini kaldır`}
+                onClick={() => onRemove(foodId)}
+                className="text-ink-muted hover:text-ink"
+              >
+                <X size={12} aria-hidden="true" />
               </button>
             </span>
           );
         })}
-        {foodIds.length === 0 ? <p className="text-xs text-stone-500">No selections yet.</p> : null}
+        {foodIds.length === 0 ? <p className="text-xs text-ink-muted">No selections yet.</p> : null}
       </div>
     </div>
   );
@@ -396,8 +454,8 @@ function FlexibilityGrid({
   className?: string;
 }) {
   return (
-    <div className={`rounded-lg border border-stone-200 bg-white p-3 ${className}`}>
-      <p className="text-sm font-semibold text-stone-900">{title}</p>
+    <div className={`rounded-card border border-line bg-surface p-3 ${className}`}>
+      <p className="text-sm font-semibold text-ink">{title}</p>
       <div className="mt-3 grid gap-3 md:grid-cols-2">
         {keys.map((key) => (
           <SelectField
@@ -430,17 +488,22 @@ function TokenListSection({
   onRemove: (token: string) => void;
 }) {
   return (
-    <div className="rounded-lg border border-stone-200 bg-white p-3">
-      <p className="text-sm font-semibold text-stone-900">{title}</p>
+    <div className="rounded-card border border-line bg-surface p-3">
+      <p className="text-sm font-semibold text-ink">{title}</p>
       <div className="mt-3 flex flex-wrap gap-2">
         {tokens.map((token) => (
           <span
             key={token}
-            className="inline-flex max-w-full items-center gap-1 rounded-full bg-stone-100 px-2 py-1 text-xs font-medium text-stone-800"
+            className="inline-flex max-w-full items-center gap-1 rounded-full bg-surface-muted px-2 py-1 text-xs font-medium text-ink"
           >
             <span className="truncate">{token}</span>
-            <button type="button" onClick={() => onRemove(token)} className="text-stone-500 hover:text-stone-900">
-              <X size={12} />
+            <button
+              type="button"
+              aria-label={`${token} seçimini kaldır`}
+              onClick={() => onRemove(token)}
+              className="text-ink-muted hover:text-ink"
+            >
+              <X size={12} aria-hidden="true" />
             </button>
           </span>
         ))}
@@ -450,12 +513,12 @@ function TokenListSection({
           value={draftValue}
           onChange={(event) => onDraftChange(event.target.value)}
           placeholder="Add item"
-          className="min-w-0 flex-1 rounded-lg border border-stone-200 px-3 py-2 text-sm outline-none focus:border-emerald-800 focus:ring-2 focus:ring-emerald-100"
+          className="min-w-0 flex-1 rounded-card border border-line px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
         />
         <button
           type="button"
           onClick={onAdd}
-          className="inline-flex items-center justify-center gap-2 rounded-lg border border-stone-200 px-3 py-2 text-sm font-semibold text-stone-800"
+          className="inline-flex items-center justify-center gap-2 rounded-card border border-line px-3 py-2 text-sm font-semibold text-ink"
         >
           <Plus size={14} />
           Add
@@ -479,16 +542,16 @@ function CheckboxGroupSection({
   className?: string;
 }) {
   return (
-    <div className={`rounded-lg border border-stone-200 bg-white p-3 ${className}`}>
-      <p className="text-sm font-semibold text-stone-900">{title}</p>
+    <div className={`rounded-card border border-line bg-surface p-3 ${className}`}>
+      <p className="text-sm font-semibold text-ink">{title}</p>
       <div className="mt-3 grid gap-2 sm:grid-cols-2">
         {options.map((option) => (
-          <label key={option} className="flex items-center gap-2 rounded-lg border border-stone-100 px-2 py-2 text-sm text-stone-700">
+          <label key={option} className="flex items-center gap-2 rounded-card border border-line px-2 py-2 text-sm text-ink">
             <input
               type="checkbox"
               checked={selected.includes(option)}
               onChange={() => onToggle(option)}
-              className="h-4 w-4 rounded border-stone-300 text-emerald-900"
+              className="h-4 w-4 rounded border-line-strong text-primary"
             />
             <span className="min-w-0 break-words">{option}</span>
           </label>
@@ -512,12 +575,12 @@ function SelectField({
   onChange: (value: Phase77EFlexibilityLevel) => void;
 }) {
   return (
-    <label className="block text-sm font-medium text-stone-700">
+    <label className="block text-sm font-medium text-ink">
       <span>{label}</span>
       <select
         value={value}
         onChange={(event) => onChange(event.target.value as Phase77EFlexibilityLevel)}
-        className="mt-1 w-full rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm text-stone-950 outline-none focus:border-emerald-800 focus:ring-2 focus:ring-emerald-100"
+        className="mt-1 w-full rounded-card border border-line bg-surface px-3 py-2 text-sm text-ink outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
       >
         {options.map((option) => (
           <option key={option} value={option}>
@@ -543,13 +606,13 @@ function TextareaField({
   className?: string;
 }) {
   return (
-    <label className={`block text-sm font-medium text-stone-700 ${className}`}>
+    <label className={`block text-sm font-medium text-ink ${className}`}>
       <span>{label}</span>
       <textarea
         value={value}
         onChange={(event) => onChange(event.target.value)}
         rows={rows}
-        className="mt-1 w-full resize-y rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm leading-6 text-stone-950 outline-none focus:border-emerald-800 focus:ring-2 focus:ring-emerald-100"
+        className="mt-1 w-full resize-y rounded-card border border-line bg-surface px-3 py-2 text-sm leading-6 text-ink outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
       />
     </label>
   );

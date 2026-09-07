@@ -13,6 +13,7 @@ export function ConversationComposer({
   onSend,
   disabled,
   hint,
+  sending,
 }: {
   uiLanguage: SupportedLanguageCode;
   value: string;
@@ -20,6 +21,7 @@ export function ConversationComposer({
   onSend: () => void;
   disabled?: boolean;
   hint?: string;
+  sending?: boolean;
 }) {
   return (
     <>
@@ -33,12 +35,12 @@ export function ConversationComposer({
         />
         <button
           onClick={onSend}
-          disabled={disabled || !value.trim()}
+          disabled={disabled || sending || !value.trim()}
           className="mt-3 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-stone-950 px-3 py-2 text-sm font-semibold text-white transition hover:bg-stone-800 disabled:cursor-not-allowed disabled:opacity-60"
           type="button"
         >
           <Send size={16} aria-hidden="true" />
-          {t(uiLanguage, "conversationSendManualReply")}
+          {sending ? t(uiLanguage, "conversationSendingManualReply") : t(uiLanguage, "conversationSendManualReply")}
         </button>
       </div>
 
@@ -53,12 +55,12 @@ export function ConversationComposer({
           />
           <button
             onClick={onSend}
-            disabled={disabled || !value.trim()}
+            disabled={disabled || sending || !value.trim()}
             className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-stone-950 px-3 py-2 text-sm font-semibold text-white transition hover:bg-stone-800 disabled:cursor-not-allowed disabled:opacity-60"
             type="button"
           >
             <Send size={16} aria-hidden="true" />
-            {t(uiLanguage, "conversationSendManualReply")}
+            {sending ? t(uiLanguage, "conversationSendingManualReply") : t(uiLanguage, "conversationSendManualReply")}
           </button>
         </div>
       </MobileStickyActionBar>

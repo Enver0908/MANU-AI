@@ -1,14 +1,14 @@
 # Phase 85 Stage 4B-2 - Mesajlasma Eylem Plani
 
-Current status, 2026-07-13: implementation and post-closure remediation R0-R7 are complete locally. R7 evidence supersedes older active-remediation handoffs in this historical execution plan: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. Stage 4B-3 is next before Stage 4C; production remains `NO-GO`, R-405 remains open.
+Historical status, 2026-07-13: implementation and post-closure remediation R0-R7 were complete locally. R7 evidence superseded older active-remediation handoffs in this historical execution plan: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. Stage 4B-3 was next before Stage 4C at that checkpoint and later closed; production remains `NO-GO`; R-405 is technically resolved under the later Stage 5 dependency report.
 
-Status: **implementation Phases 0-11 and post-closure remediation R0-R7 complete locally; advisory hardening complete.** Runtime spec: `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`. Current closure authority: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`. **Next authorized work:** Stage 4B-3 Phase 1 after the Phase 0 documentation lock.
+Status: **implementation Phases 0-11 and post-closure remediation R0-R7 complete locally; advisory hardening complete; historical stage.** Runtime spec: `docs/PHASE_85_STAGE_4B_2_MESAJLASMA_SPEC.md`. Closure authority for this stage: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md` and `docs/PHASE_85_STAGE_4B_2_SECURITY_ADVISORY_RLS_HARDENING_EVIDENCE.md`. Later Stage 4B-3 through Stage 7 work is locally closed under subsequent evidence.
 
 Baseline branch: `codex/phase-85-interstage-clinical-memory`
 
 Baseline commit: `f4d949d Remediate Phase 85 Stage 4B closure findings`
 
-Production pilot remains `NO-GO`. R-405 remains open. Real WhatsApp, Telegram, Gemini, external LLM, live billing, monitoring, backup, secret manager, and real health-data paths remain disabled.
+Production pilot remains `NO-GO`. R-405 was open at this historical checkpoint and is technically resolved under the later Stage 5 dependency report. Real WhatsApp, Telegram, Gemini, external LLM, live billing, monitoring, backup, secret manager, and real health-data paths remain disabled.
 
 ## 1. Purpose
 
@@ -354,7 +354,7 @@ Phase 4 verification passed the dedicated 5-test read API file, Phase 3/1 regres
 
 **Affected components/files:** README, PLAN, PROJECT_PLAN, HANDOFF, app README, frontend/P85-IF/next/direct/pilot/gate/risk documents, Stage 4B-2 evidence files.
 
-**Architecture decisions:** production pilot remains `NO-GO`; R-405 remains open; no hosted-sandbox document changes without deploy. The Stage 4C prerequisite was satisfied when the evidence pack, R0-R7 remediation, and advisory hardening closed locally.
+**Architecture decisions:** production pilot remains `NO-GO`; R-405 was open at this historical checkpoint and is technically resolved under the later Stage 5 dependency report; no hosted-sandbox document changes without deploy. The Stage 4C prerequisite was satisfied when the evidence pack, R0-R7 remediation, and advisory hardening closed locally.
 
 **Steps/technical method/data flow/dependencies:** update exact verification counts, API/schema/role contracts, open blockers and next-stage lock; commit once after all checks; verify final worktree clean.
 
@@ -388,4 +388,4 @@ The separate remediation plan now records R5 complete for application-level test
 
 ## Post-closure remediation R6 verification record - 2026-07-13
 
-The separate remediation plan records the historical R6 environment block and its actual re-closure through RLS 35/35 plus executed SQL buffer evidence. R7 is complete; evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. Stage 4B-3 is next.
+The separate remediation plan records the historical R6 environment block and its actual re-closure through RLS 35/35 plus executed SQL buffer evidence. R7 is complete; evidence: `docs/PHASE_85_STAGE_4B_2_POST_CLOSURE_REMEDIATION_PHASE_R7_EVIDENCE.md`. Stage 4B-3 was next at that checkpoint and later closed.

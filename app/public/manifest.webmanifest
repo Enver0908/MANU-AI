@@ -1,19 +1,48 @@
 {
-  "name": "MANU-AI",
-  "short_name": "MANU-AI",
-  "description": "Dietitian operations console for the MANU-AI local prototype.",
+  "name": "AIya",
+  "short_name": "AIya",
+  "description": "AIya supervised dietitian messaging assistant.",
   "start_url": "/dashboard",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#f7f5ef",
-  "theme_color": "#064e3b",
-  "orientation": "portrait-primary",
+  "background_color": "#FBFAF8",
+  "theme_color": "#612E82",
   "icons": [
+    {
+      "src": "/icons/aiya-180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/aiya-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/aiya-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/aiya-192-maskable.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/aiya-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
     {
       "src": "/icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "purpose": "any"
     }
   ]
 }
