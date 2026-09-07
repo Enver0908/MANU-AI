@@ -12,6 +12,8 @@
     "test:stage-7": "vitest run tests/visual/stage-7 --exclude **/*.spec.ts --exclude **/stage-7-generate-matrix.test.ts --no-file-parallelism --maxWorkers=1",
     "generate:stage-7-matrix": "vitest run tests/visual/stage-7/stage-7-generate-matrix.test.ts --no-file-parallelism --maxWorkers=1",
     "audit:stage-7": "node scripts/audit-stage-7.mjs",
+    "audit:system": "node scripts/system-audit.mjs",
+    "test:audit-system": "node --test scripts/system-audit.test.mjs",
     "verify:stage-7": "node scripts/verify-stage-7.mjs",
     "verify:stage-7:7.2": "node scripts/verify-stage-7.mjs --phase=7.2",
     "verify:stage-7:7.3": "node scripts/verify-stage-7.mjs --phase=7.3",

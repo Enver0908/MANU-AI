@@ -48,6 +48,7 @@ const checks = [
   { label: "release artifact", command: "npm", args: ["run", "release:artifact"] },
   { label: "stage-5 dependency security verify", command: "npm", args: ["run", "test:stage-5-dependencies"] },
   { label: "stage-5 shell verify", command: "npm", args: ["run", "test:stage-5-shell"] },
+  { label: "system audit contract tests", command: "npm", args: ["run", "test:audit-system"] },
 ];
 
 cleanReleaseArtifactOutput();
