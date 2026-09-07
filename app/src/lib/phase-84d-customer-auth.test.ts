@@ -86,6 +86,7 @@ describe("phase 84d customer auth", () => {
   it("rejects unsafe post-auth redirect paths", () => {
     expect(sanitizePostAuthRedirectPath("/dashboard")).toBe("/dashboard");
     expect(sanitizePostAuthRedirectPath("/settings/profile")).toBe("/settings/profile");
+    expect(sanitizePostAuthRedirectPath("/account/recovery?next=/admin")).toBe("/account/recovery?next=/admin");
     expect(sanitizePostAuthRedirectPath("/app-install")).toBe("/app-install");
     expect(sanitizePostAuthRedirectPath("/app-install?source=pwa")).toBe("/app-install?source=pwa");
     expect(sanitizePostAuthRedirectPath("/install")).toBeNull();

@@ -6,11 +6,11 @@ import { resolveAuthRouteIpKey } from "@/lib/phase-85-stage-4d-auth-server";
 import {
   ACCOUNT_SECURITY_RATE_LIMITS,
   AccountSecurityValidationError,
-  buildAccountRecoveryCallbackUrl,
   buildAccountSecurityIdempotencyKey,
   genericMagicLinkAcceptedResponse,
   validateAccountEmail,
 } from "@/lib/phase-85-stage-4d-account-security";
+import { buildAuthCallbackUrlWithNext } from "@/lib/phase-84d-customer-auth";
 import {
   evaluateAdminAllowlistAccess,
   resolveAdminEmailAllowlist,
@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
   });
 
   await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: buildAccountRecoveryCallbackUrl(),
+    redirectTo: buildAuthCallbackUrlWithNext("/account/recovery?next=/admin"),
   });
 
   await insertAccountSecurityEvent({

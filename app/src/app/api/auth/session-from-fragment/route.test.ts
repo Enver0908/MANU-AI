@@ -60,6 +60,37 @@ describe("session-from-fragment route", () => {
     expect(response.headers.get("x-supabase-auth")).toBe("fragment");
   });
 
+  it("sets a bounded recovery cookie for implicit password reset fragments", async () => {
+    mocks.createSupabaseServerClient.mockImplementation(({ setAll }) => ({
+      auth: {
+        setSession: vi.fn(async () => {
+          setAll(
+            [{ name: "sb-session", value: "token", options: { path: "/", httpOnly: true } }],
+            {},
+          );
+          return { error: null };
+        }),
+        getUser: vi.fn(async () => ({
+          data: { user: { id: "auth-user-1" } },
+        })),
+      },
+    }));
+
+    const { POST } = await import("./route");
+    const response = await POST(
+      request({
+        accessToken: "access-token-value-long-enough",
+        refreshToken: "short-ok",
+        flowType: "recovery",
+      }),
+    );
+    const body = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(body).toEqual({ authenticated: true });
+    expect(response.headers.get("set-cookie")).toContain("manu_account_recovery_flow=");
+  });
+
   it("rejects missing or short access tokens", async () => {
     const { POST } = await import("./route");
     const response = await POST(

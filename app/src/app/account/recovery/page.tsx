@@ -4,6 +4,7 @@ import { AccountRecoveryForm } from "@/components/account-recovery-form";
 import { CommercialShell } from "@/components/public/CommercialShell";
 import { PUBLIC_MARKETING_COPY } from "@/lib/phase-84b-public-website";
 import { buildCustomerSurfaceMetadata } from "@/lib/brand";
+import { sanitizePostAuthRedirectPath } from "@/lib/phase-84d-customer-auth";
 import { isSupabaseConfigured } from "@/lib/supabase";
 import { createSupabaseServerReadOnlyClient } from "@/lib/supabase-server-readonly";
 import { cookies } from "next/headers";
@@ -14,7 +15,14 @@ export const metadata: Metadata = buildCustomerSurfaceMetadata({
   description: "Yeni parolanızı belirleyin.",
 });
 
-export default async function AccountRecoveryPage() {
+type AccountRecoveryPageProps = {
+  searchParams: Promise<{ next?: string }>;
+};
+
+export default async function AccountRecoveryPage({ searchParams }: AccountRecoveryPageProps) {
+  const params = await searchParams;
+  const nextPath = sanitizePostAuthRedirectPath(params.next) ?? "/dashboard";
+
   if (!isSupabaseConfigured()) {
     redirect("/login?error=auth_not_configured");
   }
@@ -44,7 +52,7 @@ export default async function AccountRecoveryPage() {
             </p>
           </div>
           <div className="rounded-lg border border-border bg-surface p-6">
-            <AccountRecoveryForm />
+            <AccountRecoveryForm nextPath={nextPath} />
           </div>
         </div>
       </div>

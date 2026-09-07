@@ -58,6 +58,7 @@ function renderFragmentSessionBridge(nextPath: string | null, authErrorBase: str
     authErrorBase,
   ).toString();
   const destination = buildExternalRedirectUrl(nextPath ?? "/dashboard", authErrorBase).toString();
+  const recoveryDestination = buildExternalRedirectUrl("/account/recovery?next=/admin", authErrorBase).toString();
   const body = `<!doctype html>
 <html lang="en">
 <head>
@@ -70,10 +71,12 @@ function renderFragmentSessionBridge(nextPath: string | null, authErrorBase: str
     (async () => {
       const fallbackUrl = ${JSON.stringify(fallbackUrl)};
       const destination = ${JSON.stringify(destination)};
+      const recoveryDestination = ${JSON.stringify(recoveryDestination)};
       const supabaseUrl = ${JSON.stringify(config?.url ?? "")};
       const hash = new URLSearchParams(window.location.hash.replace(/^#/, ""));
       const accessToken = hash.get("access_token");
       const refreshToken = hash.get("refresh_token");
+      const flowType = hash.get("type");
       if (!accessToken || !refreshToken || !supabaseUrl) {
         window.location.replace(fallbackUrl);
         return;
@@ -82,7 +85,7 @@ function renderFragmentSessionBridge(nextPath: string | null, authErrorBase: str
         const response = await fetch("/api/auth/session-from-fragment", {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ accessToken, refreshToken }),
+          body: JSON.stringify({ accessToken, refreshToken, flowType }),
           credentials: "same-origin"
         });
         if (!response.ok) {
@@ -90,7 +93,7 @@ function renderFragmentSessionBridge(nextPath: string | null, authErrorBase: str
           return;
         }
         window.history.replaceState(null, "", window.location.pathname + window.location.search);
-        window.location.replace(destination);
+        window.location.replace(flowType === "recovery" ? recoveryDestination : destination);
       } catch {
         window.location.replace(fallbackUrl);
       }
@@ -170,7 +173,7 @@ export async function GET(request: NextRequest) {
   const facts = await resolveCustomerSessionFacts(supabase);
   let destination = requestedNext ?? deriveCustomerAuthRedirect(facts);
   if (isRecoveryFlow) {
-    destination = "/account/recovery";
+    destination = requestedNext?.startsWith("/account/recovery") ? requestedNext : "/account/recovery";
   }
   const destinationUrl = buildExternalRedirectUrl(destination, authErrorBase);
   const response = NextResponse.redirect(destinationUrl);

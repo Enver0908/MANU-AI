@@ -40,6 +40,7 @@ describe("admin password-reset route", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.stubEnv("MANU_ADMIN_EMAIL_ALLOWLIST", "olkuenver@gmail.com,contact@aiyaworkspace.com");
+    vi.stubEnv("NEXT_PUBLIC_APP_URL", "https://aiyaworkspace.com");
     mocks.getSupabaseConfig.mockReturnValue({
       url: "https://project.supabase.co",
       anonKey: "anon",
@@ -62,7 +63,9 @@ describe("admin password-reset route", () => {
     expect(body.accepted).toBe(true);
     expect(resetPasswordForEmail).toHaveBeenCalledWith(
       "contact@aiyaworkspace.com",
-      expect.objectContaining({ redirectTo: expect.stringContaining("/auth/callback") }),
+      expect.objectContaining({
+        redirectTo: "https://aiyaworkspace.com/auth/callback?next=%2Faccount%2Frecovery%3Fnext%3D%2Fadmin",
+      }),
     );
   });
 
