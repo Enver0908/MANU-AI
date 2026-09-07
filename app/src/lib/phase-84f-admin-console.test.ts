@@ -14,7 +14,7 @@ import {
 
 describe("phase 84f admin console", () => {
   it("parses the default admin allowlist", () => {
-    expect(resolveAdminEmailAllowlist({})).toEqual([DEFAULT_ADMIN_ALLOWLIST_EMAIL]);
+    expect(resolveAdminEmailAllowlist({})).toEqual(["olkuenver@gmail.com", DEFAULT_ADMIN_ALLOWLIST_EMAIL]);
     expect(
       resolveAdminEmailAllowlist({
         MANU_ADMIN_EMAIL_ALLOWLIST: " Admin@Example.com , ops@example.com ",
@@ -24,6 +24,7 @@ describe("phase 84f admin console", () => {
 
   it("allows only allowlisted admin emails", () => {
     expect(evaluateAdminAllowlistAccess(DEFAULT_ADMIN_ALLOWLIST_EMAIL).allowed).toBe(true);
+    expect(evaluateAdminAllowlistAccess("olkuenver@gmail.com").allowed).toBe(true);
     expect(evaluateAdminAllowlistAccess("other@example.com").blockingReasons).toContain(
       "admin_email_not_allowlisted",
     );

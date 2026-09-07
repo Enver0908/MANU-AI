@@ -9,6 +9,11 @@ import { AIYA_PUBLIC_CONTACT_EMAIL } from "./brand";
 export const PHASE_84F_VERSION = "phase84f-admin-console-v1";
 
 export const DEFAULT_ADMIN_ALLOWLIST_EMAIL = AIYA_PUBLIC_CONTACT_EMAIL;
+export const OWNER_ADMIN_ALLOWLIST_EMAIL = "olkuenver@gmail.com";
+export const DEFAULT_ADMIN_ALLOWLIST_EMAILS = [
+  OWNER_ADMIN_ALLOWLIST_EMAIL,
+  DEFAULT_ADMIN_ALLOWLIST_EMAIL,
+] as const;
 
 export const DEFAULT_ADMIN_HOST = "admin.aiyaworkspace.com";
 
@@ -19,7 +24,7 @@ export type AdminAllowlistEvaluation = {
 };
 
 export function resolveAdminEmailAllowlist(env: Record<string, string | undefined> = process.env) {
-  const raw = env.MANU_ADMIN_EMAIL_ALLOWLIST?.trim() || DEFAULT_ADMIN_ALLOWLIST_EMAIL;
+  const raw = env.MANU_ADMIN_EMAIL_ALLOWLIST?.trim() || DEFAULT_ADMIN_ALLOWLIST_EMAILS.join(",");
   return raw
     .split(",")
     .map((entry) => normalizeCommercialEmail(entry))
