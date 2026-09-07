@@ -25,6 +25,7 @@ import {
   RELEASES_ROOT,
 } from "./lib/deploy-contract.mjs";
 import { runSmokeCheck } from "./run-smoke-check.mjs";
+import { verifyHostedSupabaseSchemaContract } from "./lib/supabase-schema-contract.mjs";
 
 const repoRoot = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..", "..");
 const args = new Set(process.argv.slice(2));
@@ -281,6 +282,11 @@ if (artifactManifest.manifest?.releaseArtifact) {
 
 const linuxRuntime = ensureLinuxSharpRuntime(path.join(releaseDir, "app"));
 
+const schemaContract =
+  !dryRun && process.env.MANU_DEPLOY_SKIP_PM2 !== "true"
+    ? await verifyHostedSupabaseSchemaContract()
+    : { checked: [] };
+
 let previous = "";
 previous = readCurrentReleasePointer(workRoot);
 
@@ -328,4 +334,5 @@ process.stdout.write(JSON.stringify({
   artifactMode: artifactManifest.manifest?.mode ?? "not-present",
   artifactSha256: artifactManifest.manifest?.releaseArtifact?.archiveSha256 ?? null,
   linuxRuntime,
+  schemaContract,
 }, null, 2) + "\n");

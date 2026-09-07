@@ -14,6 +14,7 @@ import {
   assertMigrationFingerprintMatch,
   assertReleaseArtifactManifest,
 } from "./lib/deploy-contract.mjs";
+import { verifyHostedSupabaseSchemaContract } from "./lib/supabase-schema-contract.mjs";
 
 const repoRoot = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..", "..");
 const deployScript = path.join(path.dirname(fileURLToPath(import.meta.url)), "deploy-hosted-release.mjs");
@@ -110,6 +111,27 @@ test("fingerprint mismatch blocks deploy", () => {
   });
   assert.notEqual(bad.status, 0);
   assert.match(bad.stderr + bad.stdout, /migration fingerprint mismatch blocks deploy/);
+});
+
+test("hosted schema contract accepts the required RPC and blocks schema drift", async () => {
+  const env = {
+    NEXT_PUBLIC_SUPABASE_URL: "https://example.supabase.co",
+    SUPABASE_SERVICE_ROLE_KEY: "test-service-role",
+  };
+  const verified = await verifyHostedSupabaseSchemaContract({
+    env,
+    fetchImpl: async () => new Response(JSON.stringify({ message: "session_claim_missing" }), { status: 400 }),
+  });
+  assert.deepEqual(verified.checked, ["p85_stage_5_record_session_activity_v3"]);
+
+  await assert.rejects(
+    verifyHostedSupabaseSchemaContract({
+      env,
+      fetchImpl: async () =>
+        new Response(JSON.stringify({ code: "PGRST202", message: "function not found" }), { status: 404 }),
+    }),
+    /hosted Supabase schema contract missing p85_stage_5_record_session_activity_v3: PGRST202/,
+  );
 });
 
 test("release artifact manifest validation fails closed", () => {

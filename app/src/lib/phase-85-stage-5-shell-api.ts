@@ -32,7 +32,14 @@ export function shellErrorResponse(error: unknown) {
   }
 
   const requestId = createApiRequestId();
-  console.error("stage5_shell_api_unhandled_error", { requestId });
+  const diagnostic =
+    typeof error === "object" && error
+      ? {
+          errorName: "name" in error ? String(error.name).slice(0, 80) : "unknown",
+          errorCode: "code" in error ? String(error.code).slice(0, 80) : "unknown",
+        }
+      : { errorName: typeof error, errorCode: "unknown" };
+  console.error("stage5_shell_api_unhandled_error", { requestId, ...diagnostic });
   return shellJsonResponse(apiErrorBody("shell_service_unavailable", requestId), 503);
 }
 
