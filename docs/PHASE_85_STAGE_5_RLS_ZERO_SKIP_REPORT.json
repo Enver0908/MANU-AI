@@ -1,10 +1,10 @@
 {
   "schemaVersion": "stage5-evidence-v2",
   "evidenceType": "rls",
-  "sourceRevision": "f21f83c3776e87f2e4f7077f22da55e03adfd005",
-  "sourceTreeClean": false,
+  "sourceRevision": "d61847b196cf9792dcd456ad7854d152941bed1f",
+  "sourceTreeClean": true,
   "packageLockSha256": "49d81fae945590d3cfc4463d311ab70b280a3bd1462fa550ed869f190c6a9cfd",
-  "generatedAt": "2026-09-07T16:26:35.457Z",
+  "generatedAt": "2026-09-07T16:45:11.578Z",
   "command": "npm run test:stage-5-rls",
   "environment": {
     "nodeVersion": "v22.16.0",
