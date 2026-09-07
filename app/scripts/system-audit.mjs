@@ -216,7 +216,7 @@ async function fetchJson(fetchImpl, url, options = {}) {
   return { response, body };
 }
 
-export async function checkRuntimeSurface(baseUrl, fetchImpl = fetch) {
+export async function checkRuntimeSurface(baseUrl, fetchImpl = fetch, expectedCommitSha = "") {
   const normalized = String(baseUrl ?? "").trim().replace(/\/$/, "");
   if (!normalized) return result("runtime_surface", "BLOCKED", "A runtime base URL is required for surface verification.");
   const checks = [
@@ -234,8 +234,12 @@ export async function checkRuntimeSurface(baseUrl, fetchImpl = fetch) {
       const { response, body } = await fetchJson(fetchImpl, `${normalized}${check.path}`, { redirect: "manual" });
       observations.push({ path: check.path, status: response.status, expected: check.expected, kind: check.kind });
       if (response.status !== check.expected) failures.push(`${check.kind}:${response.status}`);
-      if (check.kind === "health" && (!body?.releaseId || !/^[a-f0-9]{40}$/.test(String(body.commitSha ?? "")))) {
-        failures.push("health_release_identity_missing");
+      if (check.kind === "health") {
+        if (!body?.releaseId || !/^[a-f0-9]{40}$/.test(String(body.commitSha ?? ""))) {
+          failures.push("health_release_identity_missing");
+        } else if (expectedCommitSha && body.commitSha !== expectedCommitSha) {
+          failures.push("runtime_commit_mismatch");
+        }
       }
     } catch (error) {
       failures.push(`${check.kind}:request_failed`);
@@ -246,7 +250,7 @@ export async function checkRuntimeSurface(baseUrl, fetchImpl = fetch) {
     "runtime_surface",
     failures.length ? "FAIL" : "PASS",
     failures.length ? "Runtime surface checks failed." : "Public, admin and unauthenticated API boundaries behaved as expected.",
-    { baseUrl: normalized, observations, failures },
+    { baseUrl: normalized, expectedCommitSha: expectedCommitSha || null, observations, failures },
   );
 }
 
@@ -277,7 +281,7 @@ export async function runSystemAudit(options = {}) {
     checks.push(checkLinkedMigrationAlignment(options));
   }
   if (args.profile === "live-readonly" || args.baseUrl || env.MANU_AUDIT_BASE_URL) {
-    checks.push(await checkRuntimeSurface(args.baseUrl || env.MANU_AUDIT_BASE_URL, options.fetchImpl ?? fetch));
+    checks.push(await checkRuntimeSurface(args.baseUrl || env.MANU_AUDIT_BASE_URL, options.fetchImpl ?? fetch, identity.commitSha));
   } else {
     checks.push(result("runtime_surface", "NOT_APPLICABLE", "Runtime URL was not supplied for the local static audit."));
   }

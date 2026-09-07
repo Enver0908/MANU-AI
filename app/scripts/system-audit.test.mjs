@@ -57,7 +57,7 @@ test("runtime audit requires controlled unauthenticated responses", async () => 
     const path = new URL(url).pathname;
     const entry = responses.get(path);
     return new Response(JSON.stringify(entry.body), { status: entry.status });
-  });
+  }, "a".repeat(40));
   assert.equal(result.status, "FAIL");
   assert.match(result.details.failures.join(","), /unauthenticated_clients:200/);
 });
