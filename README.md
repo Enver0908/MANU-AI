@@ -10,7 +10,7 @@ As of 2026-09-07:
 
 - Local public surface, auth, onboarding, admin lifecycle, dashboard production chrome, and PWA polish Faz 8 clean-HEAD reclosure is complete (`docs/PUBLIC_SURFACE_AUTH_ONBOARDING_PWA_PHASE_8_CLEAN_HEAD_EVIDENCE.md`). This does not authorize production.
 - Active product brand: `AIya`. The permanent public/customer domain is `https://aiyaworkspace.com`, the admin domain is `https://admin.aiyaworkspace.com`, and the business contact inbox is `contact@aiyaworkspace.com`.
-- Hosted VPS runtime serves commit `f21f83c3776e87f2e4f7077f22da55e03adfd005` as release `hs-f21f83c3776e-b55ed4ff550f`; the live health endpoint and admin/dashboard smoke checks passed. Production remains `NO-GO`.
+- Hosted VPS runtime is verified through the release health endpoint at `https://aiyaworkspace.com/api/health/release`; the live health endpoint and admin/dashboard smoke checks passed. Production remains `NO-GO`.
 - Legacy visible names `MANU-AI`, `SiriusAI`, and `AI-ya` are retired from active product surfaces. Historical evidence can still mention them as past-state records.
 - Compatibility names remain unchanged where they are operational contracts: `MANU_*` environment variables, `x-siriusai-*` headers, `siriusai` service-worker cache names, existing server paths/process names, migrations, persisted IDs, and historical evidence files.
 - Production Readiness Stage 1 Phase 1-6 are locally complete for their recorded scopes.
