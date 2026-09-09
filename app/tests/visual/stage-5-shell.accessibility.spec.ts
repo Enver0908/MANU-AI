@@ -29,6 +29,7 @@ async function assertPrimaryTouchTargets(page: Page) {
       '[data-testid="shell-header-bell"]',
       '[data-testid="shell-logout"]',
       '[data-testid="active-client-trigger"]',
+      '[data-testid="overview-work-areas"] button',
     ];
     const bad: string[] = [];
     for (const selector of selectors) {

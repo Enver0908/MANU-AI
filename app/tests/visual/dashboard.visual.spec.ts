@@ -17,6 +17,20 @@ function visibleTestId(page: Page, testId: string) {
   return page.locator(`[data-testid="${testId}"]:visible`);
 }
 
+async function returnToDashboardHome(page: Page) {
+  await visibleShellNavButton(page, /Ana Sayfa|Home/i).click();
+  await expect(page.getByRole("heading", { name: "Günlük iş girişi" })).toBeVisible();
+}
+
+async function openHomeWithActiveClient(page: Page) {
+  await bootstrapDashboard(page);
+  await visibleShellNavButton(page, /Danışanlar|Danisanlar/).click();
+  await page.getByTestId("client-roster-item").filter({ hasText: "Mert Kaya" }).click();
+  await expect(page.getByRole("heading", { name: "Mert Kaya" })).toBeVisible();
+  await returnToDashboardHome(page);
+  await expect(page.getByTestId("overview-work-areas")).toBeVisible();
+}
+
 test("public landing and purchase intro render without app data", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { name: "AIya", exact: true })).toBeVisible();
@@ -223,6 +237,108 @@ test("dashboard core views render in fallback mode", async ({ page }) => {
       .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth))
       .toBe(true);
   }
+});
+
+test("dashboard work areas route through the active client and AI Chat guards", async ({ page }) => {
+  await openHomeWithActiveClient(page);
+
+  const workAreas = page.getByTestId("overview-work-areas");
+  await expect(workAreas.getByRole("button")).toHaveCount(4);
+  for (const testId of [
+    "overview-work-area-forms",
+    "overview-work-area-nutrition",
+    "overview-work-area-menu",
+    "overview-work-area-ai-chat",
+  ]) {
+    await expect(page.getByTestId(testId)).toBeEnabled();
+  }
+
+  const clientTasks = [
+    {
+      testId: "overview-work-area-forms",
+      task: "forms",
+      path: "/api/clients/client-mert/forms",
+      panel: "client-form-panel",
+    },
+    {
+      testId: "overview-work-area-nutrition",
+      task: "nutrition",
+      path: "/api/clients/client-mert/food-rule-profile",
+      panel: "active-nutrition-plan-panel",
+    },
+    {
+      testId: "overview-work-area-menu",
+      task: "menu",
+      path: "/api/clients/client-mert/menu-plans",
+      panel: "menu-workflow-panel",
+    },
+  ] as const;
+  const requests: Array<{ method: string; path: string }> = [];
+  page.on("request", (request) => {
+    requests.push({ method: request.method(), path: new URL(request.url()).pathname });
+  });
+
+  for (const clientTask of clientTasks) {
+    const requestsBefore = requests.length;
+    const taskResponse = page.waitForResponse(
+      (response) =>
+        response.request().method() === "GET" && new URL(response.url()).pathname === clientTask.path,
+    );
+    await page.getByTestId(clientTask.testId).click();
+    await expect(page).toHaveURL(
+      new RegExp(`section=clients.*clientId=client-mert.*clientTask=${clientTask.task}`),
+    );
+    await taskResponse;
+    await expect(page.getByTestId(clientTask.panel)).toBeVisible();
+
+    // The task click must stay on the bounded Stage 6 resource path.
+    const taskRequests = requests.slice(requestsBefore);
+    expect(taskRequests).toContainEqual({ method: "GET", path: clientTask.path });
+    expect(taskRequests).not.toContainEqual({ method: "GET", path: "/api/app-state" });
+    await expect
+      .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth))
+      .toBe(true);
+    await returnToDashboardHome(page);
+    await expect(page.getByTestId("overview-work-areas")).toBeVisible();
+  }
+
+  await page.getByTestId("overview-work-area-ai-chat").click();
+  await expect(page).toHaveURL(/\/dashboard\/ai-chat$/);
+  expect(page.url()).not.toMatch(/clientId=/);
+  await expect(page.getByTestId("ai-chat-workspace")).toBeVisible();
+});
+
+test("dashboard work areas stay guarded when the client context is invalid", async ({ page }) => {
+  await bootstrapDashboard(page);
+  await page.goto("/dashboard?clientId=missing-client");
+  await expect(page.getByTestId("overview-work-areas")).toBeVisible();
+
+  for (const testId of [
+    "overview-work-area-forms",
+    "overview-work-area-nutrition",
+    "overview-work-area-menu",
+  ]) {
+    await expect(page.getByTestId(testId)).toBeDisabled();
+    await expect(page.getByTestId(testId)).toContainText("Aktif danışan gerekli");
+  }
+  await expect(page).toHaveURL(/clientId=missing-client/);
+});
+
+test("dashboard work area shortcuts remain keyboard-operable", async ({ page }) => {
+  await openHomeWithActiveClient(page);
+  const shortcut = page.getByTestId("overview-work-area-forms");
+  await shortcut.focus();
+  await expect(shortcut).toBeFocused();
+
+  const taskResponse = page.waitForResponse(
+    (response) =>
+      response.request().method() === "GET" &&
+      new URL(response.url()).pathname === "/api/clients/client-mert/forms",
+  );
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(/section=clients.*clientId=client-mert.*clientTask=forms/);
+  await taskResponse;
+  await expect(page.getByTestId("client-form-panel")).toBeVisible();
 });
 
 test("retired simulator query section redirects to dashboard home", async ({ page }) => {

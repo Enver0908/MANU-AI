@@ -36,6 +36,14 @@ test("home shows active client and queue entries without invented KPIs", async (
   await openDashboard(page);
   await expect(page.getByRole("heading", { name: "Günlük iş girişi" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Aktif danışan" })).toBeVisible();
+  const workAreas = page.getByTestId("overview-work-areas");
+  await expect(workAreas).toBeVisible();
+  await expect(workAreas.getByRole("button")).toHaveCount(4);
+  for (const shortcut of await workAreas.getByRole("button").all()) {
+    const box = await shortcut.boundingBox();
+    expect(box?.width ?? 0).toBeGreaterThan(0);
+    expect(box?.height ?? 0).toBeGreaterThanOrEqual(64);
+  }
   await expect(page.getByText("AI gönderimleri")).toHaveCount(0);
   await assertNoHorizontalPageScroll(page);
 });
@@ -82,6 +90,10 @@ test("client list, hub, and tasks stay usable without horizontal overflow", asyn
 test("narrow 320px client hub does not overflow", async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 720 });
   await openDashboard(page);
+  const workAreas = page.getByTestId("overview-work-areas");
+  await expect(workAreas).toBeVisible();
+  await expect(workAreas.getByRole("button")).toHaveCount(4);
+  await assertNoHorizontalPageScroll(page);
   await openMertWorkspace(page);
   await expect(page.locator('[data-testid="client-task-hub"]:visible, [data-testid="client-detail-tabs"]:visible')).toBeVisible();
   await assertNoHorizontalPageScroll(page);
