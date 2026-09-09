@@ -130,8 +130,8 @@ Mode is stored per client, not globally per dietitian. This allows one dietitian
 
 Model selection is deterministic and tied to risk level:
 
-- `green`: use `gemini-1.5-flash` for low-latency routine replies
-- `yellow`: use `gemini-3` for review-required drafts
+- `green`: use `glm-5.3-flash` for low-latency routine replies
+- `yellow`: use `glm-5.3-flash` for review-required drafts
 - `red`: do not call an LLM
 
 Model routing is a fixed safety rule based only on the risk classifier output.
