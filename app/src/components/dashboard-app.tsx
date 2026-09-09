@@ -65,7 +65,11 @@ import {
 import { useShellProvider } from "@/components/dashboard/shell-provider";
 import { AlertsPanel } from "@/components/dashboard/alerts-panel";
 import { NotificationsPanel } from "@/components/dashboard/notifications-panel";
-import { OverviewPanel } from "@/components/dashboard/overview-panel";
+import {
+  OverviewPanel,
+  type OverviewAiChatAvailability,
+  type OverviewClientWorkAreaAvailability,
+} from "@/components/dashboard/overview-panel";
 import { ShellHomeLauncher } from "@/components/dashboard/shell-home-launcher";
 import { ClientWorkspace } from "@/components/dashboard/client-workspace";
 import { ConversationPanel } from "@/components/dashboard/conversation-panel";
@@ -378,6 +382,27 @@ export function DashboardApp({
   const uiLanguage = state.dietitian.uiLanguage || "tr";
   const canManageAiControls =
     !authInfo || (authInfo.role !== "assistant" && authInfo.role !== "auditor");
+
+  const overviewClientWorkAreaAvailability: OverviewClientWorkAreaAvailability = selectedClient
+    ? { state: "enabled", clientName: selectedClient.fullName }
+    : { state: "disabled", reason: "client_required" };
+
+  const aiChatNavigation = bootstrap?.navigation.find((item) => item.id === "ai_chat");
+  const overviewAiChatAvailability: OverviewAiChatAvailability = !aiChatEnabled
+    ? { state: "disabled", reason: "feature_disabled" }
+    : !aiChatNavigation
+      ? { state: "disabled", reason: "access_unverified" }
+      : aiChatNavigation.enabled
+        ? { state: "enabled" }
+        : {
+            state: "disabled",
+            reason:
+              aiChatNavigation.disabledReason === "feature_disabled"
+                ? "feature_disabled"
+                : aiChatNavigation.disabledReason?.startsWith("rbac_forbidden_")
+                  ? "role_forbidden"
+                  : "access_unverified",
+          };
 
   useEffect(() => {
     setHeaderSlots({
@@ -785,6 +810,8 @@ export function DashboardApp({
                     bootstrap?.homeActions.find((action) => action.id === "notifications")?.count ??
                     stage4bInbox.notificationsBadgeCount
                   }
+                  clientWorkAreaAvailability={overviewClientWorkAreaAvailability}
+                  aiChatAvailability={overviewAiChatAvailability}
                   onOpenClients={() => {
                     if (resolvedClientId) {
                       void selectClient(resolvedClientId, { section: "clients", clientTask: "summary" });
@@ -795,6 +822,16 @@ export function DashboardApp({
                   onOpenMessages={() => navigateToDestination("messages")}
                   onOpenAlerts={() => navigateToDestination("alerts")}
                   onOpenNotifications={() => navigateToDestination("notifications")}
+                  onOpenClientTask={(task) => {
+                    if (!selectedClient) return;
+                    requestHrefNavigation(
+                      buildStage6ClientWorkspaceHref(urlState, {
+                        clientId: selectedClient.id,
+                        clientTask: task,
+                      }),
+                    );
+                  }}
+                  onOpenAiChat={() => navigateToDestination("ai_chat")}
                 />
               </div>
             )}

@@ -1,30 +1,118 @@
 "use client";
 
+import type { ReactNode } from "react";
 import {
+  ClipboardList,
+  FileText,
   MessageSquareText,
   UserRound,
+  Utensils,
 } from "lucide-react";
 import type { ClientRecord } from "@/lib/types";
 import { ClientSummary, EmptyState } from "./shared";
+
+export type OverviewClientWorkAreaAvailability =
+  | { state: "enabled"; clientName: string }
+  | { state: "disabled"; reason: "client_required" };
+
+export type OverviewAiChatAvailability =
+  | { state: "enabled" }
+  | { state: "disabled"; reason: "feature_disabled" | "role_forbidden" | "access_unverified" };
+
+type ClientTaskShortcut = "forms" | "nutrition" | "menu";
+
+function getShortcutStatus(
+  availability: OverviewClientWorkAreaAvailability | OverviewAiChatAvailability,
+) {
+  if (availability.state === "enabled") {
+    return "clientName" in availability ? `${availability.clientName} için aç` : "Kullanıma hazır";
+  }
+
+  switch (availability.reason) {
+    case "client_required":
+      return "Aktif danışan gerekli";
+    case "feature_disabled":
+      return "GO doğrulamasına kadar kapalı";
+    case "role_forbidden":
+      return "Bu rol için erişim yok";
+    case "access_unverified":
+      return "Erişim doğrulanamadı";
+  }
+}
+
+function WorkAreaShortcut({
+  testId,
+  label,
+  icon,
+  availability,
+  onOpen,
+}: {
+  testId: string;
+  label: string;
+  icon: ReactNode;
+  availability: OverviewClientWorkAreaAvailability | OverviewAiChatAvailability;
+  onOpen: () => void;
+}) {
+  const disabled = availability.state === "disabled";
+  const statusId = `${testId}-status`;
+
+  return (
+    <button
+      type="button"
+      onClick={onOpen}
+      disabled={disabled}
+      aria-describedby={statusId}
+      data-testid={testId}
+      className={`flex min-h-16 min-w-0 items-center gap-3 rounded-control border px-3 py-2 text-left transition ${
+        disabled
+          ? "cursor-not-allowed border-line bg-surface-muted text-ink-muted"
+          : "border-line bg-surface text-ink hover:bg-surface-muted"
+      }`}
+    >
+      <span
+        aria-hidden="true"
+        className={`inline-flex size-9 shrink-0 items-center justify-center rounded-control ${
+          disabled ? "bg-surface text-ink-muted" : "bg-primary/10 text-primary"
+        }`}
+      >
+        {icon}
+      </span>
+      <span className="min-w-0">
+        <span className="block break-words text-sm font-semibold">{label}</span>
+        <span id={statusId} className="mt-0.5 block break-words text-xs text-ink-muted">
+          {getShortcutStatus(availability)}
+        </span>
+      </span>
+    </button>
+  );
+}
 
 export function OverviewPanel({
   selectedClient,
   pendingMessageCount,
   pendingAlertCount,
   pendingNotificationCount,
+  clientWorkAreaAvailability,
+  aiChatAvailability,
   onOpenClients,
   onOpenMessages,
   onOpenAlerts,
   onOpenNotifications,
+  onOpenClientTask,
+  onOpenAiChat,
 }: {
   selectedClient?: ClientRecord;
   pendingMessageCount: number;
   pendingAlertCount: number;
   pendingNotificationCount: number;
+  clientWorkAreaAvailability: OverviewClientWorkAreaAvailability;
+  aiChatAvailability: OverviewAiChatAvailability;
   onOpenClients: () => void;
   onOpenMessages: () => void;
   onOpenAlerts: () => void;
   onOpenNotifications: () => void;
+  onOpenClientTask: (task: ClientTaskShortcut) => void;
+  onOpenAiChat: () => void;
 }) {
   return (
     <div className="space-y-5">
@@ -84,6 +172,40 @@ export function OverviewPanel({
           )}
         </section>
       </div>
+
+      <section className="min-w-0 rounded-card border border-line bg-surface p-4" data-testid="overview-work-areas">
+        <h3 className="text-lg font-semibold text-ink break-words">Çalışma alanları</h3>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <WorkAreaShortcut
+            testId="overview-work-area-forms"
+            label="Danışan formu"
+            icon={<FileText size={18} />}
+            availability={clientWorkAreaAvailability}
+            onOpen={() => onOpenClientTask("forms")}
+          />
+          <WorkAreaShortcut
+            testId="overview-work-area-nutrition"
+            label="Beslenme planı"
+            icon={<ClipboardList size={18} />}
+            availability={clientWorkAreaAvailability}
+            onOpen={() => onOpenClientTask("nutrition")}
+          />
+          <WorkAreaShortcut
+            testId="overview-work-area-menu"
+            label="Menü planı"
+            icon={<Utensils size={18} />}
+            availability={clientWorkAreaAvailability}
+            onOpen={() => onOpenClientTask("menu")}
+          />
+          <WorkAreaShortcut
+            testId="overview-work-area-ai-chat"
+            label="AI Chat"
+            icon={<MessageSquareText size={18} />}
+            availability={aiChatAvailability}
+            onOpen={onOpenAiChat}
+          />
+        </div>
+      </section>
     </div>
   );
 }
