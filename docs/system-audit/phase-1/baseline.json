@@ -1,0 +1,106 @@
+{
+  "schemaVersion": "aiya-system-audit-baseline-v1",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "capturedAt": "2026-09-07T21:19:38.458Z",
+  "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+  "phaseEntryObservation": {
+    "schemaVersion": "aiya-system-audit-phase-entry-v1",
+    "observedAt": "2026-09-07T21:09:50.9013352Z",
+    "branch": "codex/production-readiness-stage-1",
+    "head": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+    "workingTree": "clean",
+    "observationMethod": "read-only git status, branch, and HEAD inspection immediately before Phase 1 implementation"
+  },
+  "currentGitSnapshot": {
+    "branch": "codex/production-readiness-stage-1",
+    "head": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+    "headCommitAt": "2026-09-07T19:50:37+03:00",
+    "workingTreeStatus": "M app/package.json\n?? docs/system-audit/\n?? tools/system-audit/",
+    "upstream": "origin/codex/production-readiness-stage-1",
+    "remotes": [
+      "origin\t[remote-redacted] (fetch)",
+      "origin\t[remote-redacted] (push)"
+    ]
+  },
+  "authorityDocuments": [
+    {
+      "path": "README.md",
+      "exists": true,
+      "contentSha256": "b748e82b0c40021f32042a65aff143af380936afdceebcbd6b99522b5bea1740"
+    },
+    {
+      "path": "HANDOFF_FOR_NEXT_CODEX.md",
+      "exists": true,
+      "contentSha256": "419570a9ecfd738e8e430a84e564e62e271eb48c3d05ed6ca7bc88596c63bd3f"
+    },
+    {
+      "path": "docs/PRODUCTION_READINESS_STAGE_1_FINAL_DECISION.json",
+      "exists": true,
+      "contentSha256": "78c6576855d954cd17042dd050403c7552dad435ed798391dcf5ddf6701e4daf"
+    },
+    {
+      "path": "docs/PRODUCTION_READINESS_STAGE_1_OWNER_HANDOFF.md",
+      "exists": true,
+      "contentSha256": "03708b8756ad87b2d96647d9762a89e64351945a3dc174156263d96b28c75d3d"
+    },
+    {
+      "path": "docs/RISK_REGISTER.md",
+      "exists": true,
+      "contentSha256": "d509a53497370f5b53d27fdc93ad6150aab56699199510b3d798c548d4c56f4a"
+    },
+    {
+      "path": "docs/OWNER_IOS_VALIDATION_WAIVER_DECISION.md",
+      "exists": true,
+      "contentSha256": "01e08487ddce10bd6c5e4c816bbed83d8c2d31465bfc55b752c0796341bdb843"
+    }
+  ],
+  "authorityPrecedence": [
+    "user_decision",
+    "current_product_contract",
+    "api_data_contract",
+    "historical_evidence"
+  ],
+  "conflictPolicy": "conflicts remain explicit findings and do not get silently resolved in Phase 1",
+  "historicalConflicts": [
+    {
+      "type": "authority_document_live_commit_drift",
+      "path": "HANDOFF_FOR_NEXT_CODEX.md",
+      "line": 25,
+      "claimedCommit": "4c7bbea8ba21fb84b51843eac9fff2e9ff8fecf9",
+      "currentSourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+      "classification": "document_claim_requires_runtime_reconciliation",
+      "verificationScenario": "phase-1.1.authority-conflict-review"
+    },
+    {
+      "type": "authority_document_live_commit_drift",
+      "path": "HANDOFF_FOR_NEXT_CODEX.md",
+      "line": 61,
+      "claimedCommit": "c62bcdd85bd5056269b8a7fd65bea9d6fb1cbc26",
+      "currentSourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+      "classification": "document_claim_requires_runtime_reconciliation",
+      "verificationScenario": "phase-1.1.authority-conflict-review"
+    },
+    {
+      "type": "authority_document_live_commit_drift",
+      "path": "docs/RISK_REGISTER.md",
+      "line": 3,
+      "claimedCommit": "3593ec98a883cfd302177ec9efc99a9426769592",
+      "currentSourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+      "classification": "document_claim_requires_runtime_reconciliation",
+      "verificationScenario": "phase-1.1.authority-conflict-review"
+    }
+  ],
+  "conflictScan": {
+    "scannedDocuments": [
+      "README.md",
+      "HANDOFF_FOR_NEXT_CODEX.md",
+      "docs/PRODUCTION_READINESS_STAGE_1_FINAL_DECISION.json",
+      "docs/PRODUCTION_READINESS_STAGE_1_OWNER_HANDOFF.md",
+      "docs/RISK_REGISTER.md",
+      "docs/OWNER_IOS_VALIDATION_WAIVER_DECISION.md"
+    ],
+    "rule": "explicit live/hosted commit claims are compared with the phase-entry source commit; historical labels are retained as findings until runtime evidence reconciles them",
+    "unresolvedCount": 3
+  }
+}

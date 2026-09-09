@@ -1,0 +1,113 @@
+{
+  "schemaVersion": "aiya-system-audit-stage-evidence-v1",
+  "runId": "phase-5-5.2-20260908082704094",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-5",
+  "stageId": "5.2",
+  "title": "Customer, admin, session ve onboarding kullanici akislarini dogrula",
+  "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+  "verifiedAt": "2026-09-08T08:27:04.094Z",
+  "status": "VERIFIED",
+  "operations": [
+    {
+      "order": 1,
+      "description": "Customer login formunun password, magic-link ve password reset submitlerinin ilgili route ve payload ile birebir eslestigini kontrol et.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-5/auth-user-flow-matrix.json"
+      ]
+    },
+    {
+      "order": 2,
+      "description": "Admin login formunun password, magic-link ve reset akisini allowlist route gate'iyle eslestir; allowlist disi email icin 403 sozlesmesini kontrol et.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-5/auth-user-flow-matrix.json"
+      ]
+    },
+    {
+      "order": 3,
+      "description": "Auth callback code ve fragment yollarinda session exchange, user lookup, redirect sanitization ve dashboard/onboarding hedeflerini kontrol et.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-5/auth-user-flow-matrix.json"
+      ]
+    },
+    {
+      "order": 4,
+      "description": "Dashboard server auth'in unauthenticated, no membership, no dietitian ve inactive entitlement dallarini expected redirect/gate ile karsilastir.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-5/auth-user-flow-matrix.json"
+      ]
+    },
+    {
+      "order": 5,
+      "description": "Onboarding status, password creation ve claim endpointlerini session_id/invite_id ambiguity, expired/claimed/missing reference ve success redirect ile kontrol et.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-5/auth-user-flow-matrix.json"
+      ]
+    },
+    {
+      "order": 6,
+      "description": "Logout, recovery ve auth-not-configured davranislarinin hassas veri sizdirmadan stable error/redirect verdigini kontrol et.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-5/auth-user-flow-matrix.json"
+      ]
+    },
+    {
+      "order": 7,
+      "description": "Demo/fallback gate'inin local-only oldugunu source ve environment matrix ile kanitla.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-5/auth-user-flow-matrix.json"
+      ]
+    },
+    {
+      "order": 8,
+      "description": "Auth ve onboarding hedef test gruplarini calistir; her akisin browser ile 5.4 yerel backend smoke adimina hazir oldugunu kaydet.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-5/auth-user-flow-matrix.json"
+      ]
+    }
+  ],
+  "outputFiles": [
+    {
+      "path": "docs/system-audit/phase-5/auth-user-flow-matrix.json",
+      "sha256": "6aea256cfaa647252852dc4b5987eaedd3b3d3502c4fb20d598a32c81b47428a"
+    }
+  ],
+  "verification": {
+    "rules": [
+      "all auth forms map to live route handlers",
+      "all fail-closed branches are explicit",
+      "allowlist and redirect checks PASS",
+      "targeted auth/onboarding suites PASS"
+    ],
+    "result": "PASS",
+    "outputDigest": "6aea256cfaa647252852dc4b5987eaedd3b3d3502c4fb20d598a32c81b47428a",
+    "testResults": [
+      {
+        "name": "phase-5-auth-user-flows",
+        "status": "PASS",
+        "exitCode": 0,
+        "timedOut": false,
+        "fileCount": 8,
+        "summary": {
+          "passedFiles": 8,
+          "failedFiles": 0,
+          "passedTests": 45,
+          "failedTests": 0,
+          "skippedTests": 0
+        },
+        "failure": null
+      }
+    ]
+  },
+  "blockers": [],
+  "evidenceDigest": "cb02708989136cee28eb0c23c8e81cb66e6943ec697c04d4dd3ac023bab1b1f6"
+}

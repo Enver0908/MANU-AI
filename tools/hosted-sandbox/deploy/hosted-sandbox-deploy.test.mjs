@@ -14,7 +14,7 @@ import {
   assertMigrationFingerprintMatch,
   assertReleaseArtifactManifest,
 } from "./lib/deploy-contract.mjs";
-import { verifyHostedSupabaseSchemaContract } from "./lib/supabase-schema-contract.mjs";
+import { REQUIRED_RPC_PROBES, verifyHostedSupabaseSchemaContract } from "./lib/supabase-schema-contract.mjs";
 
 const repoRoot = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..", "..");
 const deployScript = path.join(path.dirname(fileURLToPath(import.meta.url)), "deploy-hosted-release.mjs");
@@ -113,24 +113,40 @@ test("fingerprint mismatch blocks deploy", () => {
   assert.match(bad.stderr + bad.stdout, /migration fingerprint mismatch blocks deploy/);
 });
 
-test("hosted schema contract accepts the required RPC and blocks schema drift", async () => {
+function schemaContractFixtureFetch(url, init) {
+  const name = String(url).split("/").pop();
+  const probe = REQUIRED_RPC_PROBES.find((candidate) => candidate.name === name);
+  const anonymous = init.headers.apikey === "test-anon";
+  const expected = anonymous ? probe.anonymous : probe.service;
+  const status = expected.status ?? (expected.error ? 400 : 200);
+  const payload = expected.array ? [] : expected.error ? { message: expected.error, code: "P0001" } : {};
+  return Promise.resolve(new Response(JSON.stringify(payload), { status }));
+}
+
+test("hosted schema contract checks signatures, service behavior and anonymous privilege boundaries", async () => {
   const env = {
     NEXT_PUBLIC_SUPABASE_URL: "https://example.supabase.co",
     SUPABASE_SERVICE_ROLE_KEY: "test-service-role",
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: "test-anon",
   };
   const verified = await verifyHostedSupabaseSchemaContract({
     env,
-    fetchImpl: async () => new Response(JSON.stringify({ message: "session_claim_missing" }), { status: 400 }),
+    fetchImpl: schemaContractFixtureFetch,
   });
-  assert.deepEqual(verified.checked, ["p85_stage_5_record_session_activity_v3"]);
+  assert.deepEqual(verified.checked, REQUIRED_RPC_PROBES.map((probe) => probe.name));
+  assert.equal(verified.matrix.every((probe) => probe.service.status === "PASS" && probe.anonymous.status === "PASS"), true);
 
   await assert.rejects(
     verifyHostedSupabaseSchemaContract({
       env,
-      fetchImpl: async () =>
-        new Response(JSON.stringify({ code: "PGRST202", message: "function not found" }), { status: 404 }),
+      fetchImpl: async (url, init) => {
+        if (String(url).endsWith("/p85_stage_5_record_session_activity_v3") && init.headers.apikey === "test-service-role") {
+          return new Response(JSON.stringify({ code: "PGRST202", message: "function not found" }), { status: 404 });
+        }
+        return schemaContractFixtureFetch(url, init);
+      },
     }),
-    /hosted Supabase schema contract missing p85_stage_5_record_session_activity_v3: PGRST202/,
+    /hosted Supabase schema contract missing p85_stage_5_record_session_activity_v3: contract_probe_failed/,
   );
 });
 

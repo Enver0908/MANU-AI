@@ -1,0 +1,79 @@
+{
+  "schemaVersion": "aiya-system-audit-stage-evidence-v1",
+  "runId": "phase-2-2.1-20260907225041576",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-2",
+  "stageId": "2.1",
+  "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+  "status": "VERIFIED",
+  "operations": [
+    {
+      "order": 1,
+      "description": "Phase 1 kapanis kanitini ve guncel kaynak commitini dogrula.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-2/catalog-reconciliation.json"
+      ]
+    },
+    {
+      "order": 2,
+      "description": "Yerel migration dosya setini, object tanimlarini ve imza/privilege beklentilerini cikar.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-2/catalog-reconciliation.json"
+      ]
+    },
+    {
+      "order": 3,
+      "description": "Linked Supabase migration gecmisini salt-okunur olarak al ve yerel setle karsilastir.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-2/catalog-reconciliation.json"
+      ]
+    },
+    {
+      "order": 4,
+      "description": "pg_catalog ve information_schema dumpini public semasi icin almaya calis; ham dumpi sadece ignored runtime altinda tut.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-2/catalog-reconciliation.json"
+      ]
+    },
+    {
+      "order": 5,
+      "description": "Gercek katalogdan tablo, kolon, constraint, index, view, trigger, RPC imzasi/govdesi/owner/grant, RLS policy ve storage kanitlarini cikar.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-2/catalog-reconciliation.json"
+      ]
+    },
+    {
+      "order": 6,
+      "description": "Migration beklentisi ile gercek katalog arasindaki farklari kaydet; tam katalog alinmadan asamayi VERIFIED yapma.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-2/catalog-reconciliation.json"
+      ]
+    }
+  ],
+  "outputFiles": [
+    {
+      "path": "docs/system-audit/phase-2/catalog-reconciliation.json",
+      "sha256": "39188c3f2bc9fa6d921e4017cd2dbb784d82389b9ecae4b419461364122e684c"
+    }
+  ],
+  "verification": {
+    "rules": [
+      "Phase 1 state CLOSED ve closure kaniti digest-gecerli olmali.",
+      "Linked migration satirlari okunabilir ve local/remote history farki sifir olmali.",
+      "Gercek public katalog dumpi alinabilir olmali; Docker/DB erisim hatasi PASS sayilmaz.",
+      "RPC salt-okunur probe'lari beklenen imza davranisini ve servis-rolu privilege sinirini vermeli.",
+      "Ham dump veya environment secret degeri docs kanitina yazilmamali."
+    ],
+    "result": "PASS",
+    "outputDigest": "39188c3f2bc9fa6d921e4017cd2dbb784d82389b9ecae4b419461364122e684c"
+  },
+  "blockers": [],
+  "evidenceDigest": "097876692dcf62253ab77d05fbed9855a718625c4e89302834edf20abb063731"
+}

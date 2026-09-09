@@ -1,0 +1,71 @@
+{
+  "schemaVersion": "aiya-system-audit-stage-evidence-v1",
+  "runId": "phase-1-1.3-20260907211943738",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-1",
+  "stageId": "1.3",
+  "title": "Sistem envanterini ve bağlantıları çıkar",
+  "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+  "verifiedAt": "2026-09-07T21:19:43.738Z",
+  "operations": [
+    {
+      "order": 1,
+      "description": "Route dosyalarını TypeScript/JavaScript syntax tree üzerinden çıkar.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-1/system-inventory.json",
+        "docs/system-audit/phase-1/coverage-matrix.json"
+      ]
+    },
+    {
+      "order": 2,
+      "description": "Supabase table/RPC/storage çağrılarını ve fetch dış çağrılarını kaynak konumuyla kaydet.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-1/system-inventory.json",
+        "docs/system-audit/phase-1/coverage-matrix.json"
+      ]
+    },
+    {
+      "order": 3,
+      "description": "Ortam değişkeni referanslarını değerleri kaydetmeden çıkar.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-1/system-inventory.json",
+        "docs/system-audit/phase-1/coverage-matrix.json"
+      ]
+    },
+    {
+      "order": 4,
+      "description": "Worker girişlerini, çözülemeyen dinamik hedefleri ve her kaydın bağlı doğrulama senaryosunu üret.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-1/system-inventory.json",
+        "docs/system-audit/phase-1/coverage-matrix.json"
+      ]
+    }
+  ],
+  "outputFiles": [
+    {
+      "path": "docs/system-audit/phase-1/system-inventory.json",
+      "sha256": "929a90fd64a0ab6a255e0210aa56329a0b35c975ee9057d07647d67731668811"
+    },
+    {
+      "path": "docs/system-audit/phase-1/coverage-matrix.json",
+      "sha256": "d714dad694dc9363ef89de0b3cd568e7572853a461b023dc546c036980d7dd7e"
+    }
+  ],
+  "verification": {
+    "rules": [
+      "Inventory yalnızca izin verilen kaynak köklerini taramalı.",
+      "Her bağlantı kaydı kaynak, satır, hedef/işlem ve verificationScenario taşımalı.",
+      "Coverage matrix inventory kayıtlarının tamamını tam bir kez kapsamalı.",
+      "Dinamik hedefler unresolvedReferences içinde açıkça görünmeli; gizlenmemeli."
+    ],
+    "result": "PASS",
+    "outputDigest": "864bf34bb6edd9c417d958126ff5a834788c921e15da2a4498f300c2983f231a"
+  },
+  "status": "VERIFIED",
+  "evidenceDigest": "20cb8360e3ee351529ae0ee895958c9234e0afd0cafd44bb0867689a95d98ffd"
+}

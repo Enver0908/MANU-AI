@@ -1,0 +1,97 @@
+{
+  "schemaVersion": "aiya-system-audit-stage-evidence-v1",
+  "runId": "phase-4-4.4-20260907235756722",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-4",
+  "stageId": "4.4",
+  "title": "Media/audio admission, transport, provider ve retention baglantilarini dogrula",
+  "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+  "verifiedAt": "2026-09-07T23:57:56.722Z",
+  "status": "VERIFIED",
+  "operations": [
+    {
+      "order": 1,
+      "description": "Image/audio admission MIME, size, extension/canonical form, content hash ve tenant-bound metadata kontrollerini dogrula.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-4/media-contract-matrix.json"
+      ]
+    },
+    {
+      "order": 2,
+      "description": "Sanitized storage object key, content download ve bounded range/stream davranisini dogrula.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-4/media-contract-matrix.json"
+      ]
+    },
+    {
+      "order": 3,
+      "description": "Vision/transcription provider gate'lerinin mock-only audit kosusunda ve explicit real-egress kapisi arkasinda oldugunu dogrula.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-4/media-contract-matrix.json"
+      ]
+    },
+    {
+      "order": 4,
+      "description": "Durable media/transcription worker claim, lease renewal, provider deadline, retry ve terminal review/failed outcome'larini dogrula.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-4/media-contract-matrix.json"
+      ]
+    },
+    {
+      "order": 5,
+      "description": "Observation/transcript validation, source authority, quality gate ve human review etiketlerini dogrula.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-4/media-contract-matrix.json"
+      ]
+    },
+    {
+      "order": 6,
+      "description": "Media/audio lifecycle retention, revoke, purge ve object-delete release yolunu idempotent olarak dogrula.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-4/media-contract-matrix.json"
+      ]
+    }
+  ],
+  "outputFiles": [
+    {
+      "path": "docs/system-audit/phase-4/media-contract-matrix.json",
+      "sha256": "b381e611a6404ac380585168e6ed77265657bbb16fa842804abd8336254229cb"
+    }
+  ],
+  "verification": {
+    "rules": [
+      "media and audio static checks PASS",
+      "real media/AI egress disabled",
+      "all selected Stage 4B3/4B4 tests PASS",
+      "no raw health-media leakage blocker"
+    ],
+    "result": "PASS",
+    "outputDigest": "b381e611a6404ac380585168e6ed77265657bbb16fa842804abd8336254229cb",
+    "testResults": [
+      {
+        "name": "phase-4-media-contracts",
+        "status": "PASS",
+        "exitCode": 0,
+        "timedOut": false,
+        "fileCount": 52,
+        "summary": {
+          "passedFiles": 52,
+          "failedFiles": 0,
+          "passedTests": 309,
+          "failedTests": 0,
+          "skippedTests": 0
+        },
+        "failure": null
+      }
+    ]
+  },
+  "blockers": [],
+  "evidenceDigest": "01041d7d1daf1081bc64d9441c40d6a1df40e36ef885f20975f716b5ea8c7d60"
+}

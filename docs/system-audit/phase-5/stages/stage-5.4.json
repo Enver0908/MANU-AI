@@ -1,0 +1,254 @@
+{
+  "schemaVersion": "aiya-system-audit-stage-evidence-v1",
+  "runId": "phase-5-5.4-20260908083313080",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-5",
+  "stageId": "5.4",
+  "title": "Fallback kapali yerel Supabase ile tarayici kullanici akisini kanitla",
+  "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+  "verifiedAt": "2026-09-08T08:33:13.080Z",
+  "status": "VERIFIED",
+  "operations": [
+    {
+      "order": 1,
+      "description": "Docker ve Supabase CLI preflight'ini calistir; local API URL, anon key ve service role key varligini secret yazmadan kontrol et.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-5/real-backend-browser-smoke.json"
+      ]
+    },
+    {
+      "order": 2,
+      "description": "Local Supabase'i baslat ve migration reset yap; reset veya status local-only kosulunu saglamazsa dur ve blocker yaz.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-5/real-backend-browser-smoke.json"
+      ]
+    },
+    {
+      "order": 3,
+      "description": "Local development-only seeder'i gecici olarak baslat; /api/demo-login icin 303 ve /dashboard seed sonucunu kontrol et, sonra seeder processini kapat.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-5/real-backend-browser-smoke.json"
+      ]
+    },
+    {
+      "order": 4,
+      "description": "Seeder kapandiktan sonra ayni local Supabase URL/key env'leriyle production build'i calistir; build basarisizsa standalone server ve browser adimlarini calistirma.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-5/real-backend-browser-smoke.json"
+      ]
+    },
+    {
+      "order": 5,
+      "description": "Local env ile uretilen Next standalone production server'i fallback false, real provider false ve release identity env'leriyle baslat; production /api/demo-login isteginin 403 fail-closed oldugunu ve /api/auth/password-login ile gercek Supabase session cookie alindigini kontrol et.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-5/real-backend-browser-smoke.json"
+      ]
+    },
+    {
+      "order": 6,
+      "description": "Ayni browser session ile /api/shell/bootstrap, /api/app-state?view=windowed, /dashboard/settings, /dashboard/more ve /dashboard/ai-chat read akislarini kontrol et; ayri admin session ile admin password login ve /admin console oturumunu kontrol et.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-5/real-backend-browser-smoke.json"
+      ]
+    },
+    {
+      "order": 7,
+      "description": "Unauthenticated yeni context'te /dashboard'in /login?next=/dashboard'e yonlendigini ve demo login'in localhost disi hostta 403 oldugunu kontrol et.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-5/real-backend-browser-smoke.json"
+      ]
+    },
+    {
+      "order": 8,
+      "description": "Next ve local Supabase processlerini temiz kapat; secret-free smoke output ve endpoint status digest'ini kaydet.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-5/real-backend-browser-smoke.json"
+      ]
+    }
+  ],
+  "outputFiles": [
+    {
+      "path": "docs/system-audit/phase-5/real-backend-browser-smoke.json",
+      "sha256": "09cb04543a4641386df3e12c342eee32f8ddff87e61da83c83b788b6bcdda5b9"
+    }
+  ],
+  "verification": {
+    "rules": [
+      "local-only target verified",
+      "fallback false verified in server environment",
+      "authenticated browser workflow PASS",
+      "unauthenticated fail-closed workflow PASS",
+      "cleanup PASS"
+    ],
+    "result": "PASS",
+    "outputDigest": "09cb04543a4641386df3e12c342eee32f8ddff87e61da83c83b788b6bcdda5b9",
+    "testResults": [
+      {
+        "name": "phase-5-production-typecheck",
+        "status": "PASS",
+        "exitCode": 0,
+        "timedOut": false,
+        "failure": null
+      },
+      {
+        "name": "phase-5-real-backend-browser-smoke",
+        "status": "PASS",
+        "exitCode": 0,
+        "timedOut": false,
+        "smoke": {
+          "schemaVersion": "aiya-system-audit-phase-5-real-backend-browser-smoke-result-v1",
+          "status": "PASS",
+          "production": false,
+          "linkedSupabase": false,
+          "localOnly": true,
+          "target": {
+            "kind": "local_supabase",
+            "apiUrl": "http://127.0.0.1:54321",
+            "projectId": "manu-ai-local"
+          },
+          "environmentAssertions": {
+            "fallbackStore": false,
+            "demoFlag": "local-development-only",
+            "realWhatsAppEgress": false,
+            "realAiProviderEgress": false,
+            "rawMediaTransfer": false
+          },
+          "steps": {
+            "supabaseCli": {
+              "status": "PASS",
+              "exitCode": 0,
+              "version": "2.101.0"
+            },
+            "docker": {
+              "status": "PASS",
+              "exitCode": 0
+            },
+            "supabaseStart": {
+              "status": "PASS",
+              "exitCode": 0
+            },
+            "supabaseStatus": {
+              "status": "PASS",
+              "exitCode": 0,
+              "localOnly": true,
+              "credentialsPresent": true
+            },
+            "supabaseReset": {
+              "status": "PASS",
+              "exitCode": 0
+            },
+            "localFixtureSeed": {
+              "status": "PASS",
+              "httpStatus": 303,
+              "location": "/dashboard"
+            },
+            "seedServerCleanup": {
+              "status": "PASS",
+              "exitCode": 0
+            },
+            "productionBuild": {
+              "status": "PASS",
+              "exitCode": 0,
+              "timedOut": false
+            },
+            "releaseIdentity": {
+              "status": "PASS",
+              "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+              "compatibilityVersion": "0.0.0+1c97560",
+              "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25"
+            },
+            "nextServer": {
+              "status": "PASS",
+              "httpStatus": 200,
+              "fallbackStore": false,
+              "serverKind": "next-standalone",
+              "standaloneAssets": {
+                "staticCopied": true,
+                "publicCopied": true
+              }
+            },
+            "productionDemoGate": {
+              "status": "PASS",
+              "httpStatus": 403
+            },
+            "customerPasswordLogin": {
+              "status": "PASS",
+              "httpStatus": 200,
+              "authenticated": true,
+              "error": null,
+              "serverAliveAfterRequest": true
+            },
+            "authenticatedReadFlow": {
+              "status": "PASS",
+              "routeChecks": {
+                "dashboardShell": true,
+                "bootstrap": true,
+                "appStateWindowed": true,
+                "settings": true,
+                "more": true,
+                "aiChat": true
+              },
+              "routes": {
+                "dashboard": {
+                  "httpStatus": 200,
+                  "path": "/dashboard"
+                },
+                "settings": {
+                  "httpStatus": 200,
+                  "shell": true
+                },
+                "more": {
+                  "httpStatus": 200,
+                  "shell": true
+                },
+                "aiChat": {
+                  "httpStatus": 200,
+                  "workspace": true
+                }
+              }
+            },
+            "adminPasswordLogin": {
+              "status": "PASS",
+              "httpStatus": 200,
+              "authenticated": true,
+              "consoleVisible": true,
+              "error": null,
+              "serverAliveAfterRequest": true
+            },
+            "beforeAnonymous": {
+              "serverAlive": true,
+              "exitCode": null
+            },
+            "unauthenticatedRedirect": {
+              "status": "PASS",
+              "httpStatus": 307,
+              "location": "http://127.0.0.1:3000/login?next=%2Fdashboard"
+            },
+            "nextServerCleanup": {
+              "status": "PASS",
+              "exitCode": 0
+            },
+            "supabaseCleanup": {
+              "status": "PASS",
+              "exitCode": 0
+            }
+          },
+          "blockers": [],
+          "outputTail": "i-chat/clients ├ ƒ /api/ai-chat/conversations ├ ƒ /api/ai-chat/conversations/[chatId] ├ ƒ /api/ai-chat/conversations/[chatId]/attachments ├ ƒ /api/ai-chat/conversations/[chatId]/branches ├ ƒ /api/ai-chat/conversations/[chatId]/branches/[branchId]/activate ├ ƒ /api/ai-chat/conversations/[chatId]/messages ├ ƒ /api/ai-chat/messages/[messageId] ├ ƒ /api/ai-chat/messages/[messageId]/regenerate ├ ƒ /api/ai-chat/runs/[runId]/create-handoff ├ ƒ /api/ai-chat/runs/[runId]/events ├ ƒ /api/ai-chat/runs/[runId]/risk ├ ƒ /api/ai-chat/runs/[runId]/sources ├ ƒ /api/ai-chat/runs/[runId]/stop ├ ƒ /api/ai-chat/runs/[runId]/transfer-draft ├ ƒ /api/alerts ├ ƒ /api/app-state ├ ƒ /api/auth-state ├ ƒ /api/auth/email-change ├ ƒ /api/auth/magic-link ├ ƒ /api/auth/password=[redacted] ├ ƒ /api/auth/password=[redacted] ├ ƒ /api/auth/password=[redacted] ├ ƒ /api/auth/reauthenticate ├ ƒ /api/auth/session-from-fragment ├ ƒ /api/client-form-schemas ├ ƒ /api/client-form-schemas/publish ├ ƒ /api/clients ├ ƒ /api/clients/[id] ├ ƒ /api/clients/[id]/activate-ai ├ ƒ /api/clients/[id]/anonymize ├ ƒ /api/clients/[id]/context-intake/proposals ├ ƒ /api/clients/[id]/context-intake/proposals/[proposalId]/apply ├ ƒ /api/clients/[id]/context-intake/proposals/[proposalId]/confirm ├ ƒ /api/clients/[id]/context-intake/proposals/[proposalId]/recheck ├ ƒ /api/clients/[id]/context-intake/proposals/[proposalId]/reject ├ ƒ /api/clients/[id]/context-updates ├ ƒ /api/clients/[id]/export ├ ƒ /api/clients/[id]/food-rule-profile ├ ƒ /api/clients/[id]/forms ├ ƒ /api/clients/[id]/forms/[schemaId] ├ ƒ /api/clients/[id]/menu-plans ├ ƒ /api/clients/[id]/menu-plans/[planId] ├ ƒ /api/clients/[id]/menu-plans/[planId]/activate ├ ƒ /api/clients/[id]/menu-plans/export ├ ƒ /api/clients/[id]/release-takeover ├ ƒ /api/clients/[id]/remove ├ ƒ /api/clients/[id]/update-proposals ├ ƒ /api/clients/[id]/update-proposals/[proposalId]/apply ├ ƒ /api/clients/[id]/update-proposals/[proposalId]/reject ├ ƒ /api/clients/forms ├ ƒ /api/commercial/admin/audit ├ ƒ /api/commercial/admin/entitlements/revoke ├ ƒ /api/commercial/admin/health ├ ƒ /api/commercial/admin/invites ├ ƒ /api/commercial/admin/leads ├ ƒ /api/commercial/admin/ledger ├ ƒ /api/commercial/admin/manual-entitlements ├ ƒ /api/commercial/admin/subscriptions ├ ƒ /api/commercial/admin/subscriptions/cancel ├ ƒ /api/commercial/billing-portal ├ ƒ /api/commercial/checkout ├ ƒ /api/commercial/invite-status ├ ƒ /api/commercial/mobile-install-audit ├ ƒ /api/commercial/onboarding/claim ├ ƒ /api/commercial/onboarding/status ├ ƒ /api/commercial/webhook ├ ƒ /api/contact/leads ├ ƒ /api/context-intake/proposals ├ ƒ /api/conversations ├ ƒ /api/conversations/[id]/media/[assetId] ├ ƒ /api/conversations/[id]/messages ├ ƒ /api/conversations/[id]/read ├ ƒ /api/conversations/[id]/visual-corrections ├ ƒ /api/conversations/[id]/voice-transcript-corrections ├ ƒ /api/demo-login ├ ƒ /api/demo-logout ├ ƒ /api/dietitian/preferences ├ ƒ /api/dietitian/voice/generate ├ ƒ /api/dietitian/voice/samples ├ ƒ /api/handoffs/[id]/dismiss ├ ƒ /api/handoffs/[id]/resolve ├ ƒ /api/handoffs/[id]/resolve-and-reactivate ├ ƒ /api/health/release ├ ƒ /api/internal-copilot/messages ├ ƒ /api/messages/drafts/[id] ├ ƒ /api/messages/manual ├ ƒ /api/notifications ├ ƒ /api/notifications/[id]/acknowledge ├ ƒ /api/notifications/[id]/complete-review ├ ƒ /api/notifications/[id]/read ├ ƒ /api/notifications/[id]/resolve-structured-update ├ ƒ /api/notifications/read-all ├ ƒ /api/operational-foundation ├ ƒ /api/operational-foundation/revoke-channel-bindings ├ ƒ /api/session/activity ├ ƒ /api/shell/bootstrap ├ ƒ /api/shell/clients ├ ƒ /api/shell/preferences ├ ƒ /api/shell/version ├ ƒ /api/simulator ├ ƒ /api/simulator/visual ├ ƒ /api/simulator/voice ├ ƒ /api/whatsapp/webhook ├ ƒ /app-install ├ ƒ /auth/callback ├ ○ /commercial-admin ├ ƒ /commercial-admin/emergency ├ ƒ /dashboard ├ ƒ /dashboard/ai-chat ├ ƒ /dashboard/ai-chat/[chatId] ├ ƒ /dashboard/more ├ ƒ /dashboard/settings ├ ƒ /demo ├ ƒ /login ├ ƒ /onboarding ├ ○ /purchase ├ ○ /purchase/cancel └ ƒ /purchase/success ƒ Proxy (Middleware) ○ (Static) prerendered as static content ƒ (Dynamic) server-rendered on demand Warning: Custom Cache-Control headers detected for the following routes: - /_next/static/:path* Setting a custom Cache-Control header can break Next.js development behavior. ▲ Next.js 16.3.0 - Local: http://127.0.0.1:3120 - Network: http://127.0.0.1:3120 ✓ Ready in 0ms ✓ Running next.config took 12ms ▲ Next.js 16.3.0 - Local: http://127.0.0.1:3120 - Network: http://127.0.0.1:3120 ✓ Ready in 0ms ✓ Running next.config took 12ms ▲ Next.js 16.3.0 - Local: http://127.0.0.1:3120 - Network: http://127.0.0.1:3120 ✓ Ready in 0ms ✓ Running next.config took 12ms Stopping containers... Stopped supabase local development setup. A new version of Supabase CLI is available: v2.117.0 (currently installed v2.101.0) We recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli"
+        },
+        "failure": null
+      }
+    ]
+  },
+  "blockers": [],
+  "evidenceDigest": "229dc44895c7c42ea17a32ecd6e87cc439064eb036e7729689061ba836279d0d"
+}

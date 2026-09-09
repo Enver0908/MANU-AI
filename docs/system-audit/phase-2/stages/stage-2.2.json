@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "aiya-system-audit-stage-evidence-v1",
+  "runId": "phase-2-2.2-20260907225046209",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-2",
+  "stageId": "2.2",
+  "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+  "status": "VERIFIED",
+  "operations": [
+    {
+      "order": 1,
+      "description": "Her catalog farkini MISSING, DEFINITION_MISMATCH, PRIVILEGE_MISMATCH, HISTORY_MISMATCH veya INTENTIONALLY_DEFERRED olarak siniflandir.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-2/schema-diff-classification.json"
+      ]
+    },
+    {
+      "order": 2,
+      "description": "INTENTIONALLY_DEFERRED kaydini yalnizca aktif kodun nesneyi kullanmadigi kanitlandiginda kabul et.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-2/schema-diff-classification.json"
+      ]
+    },
+    {
+      "order": 3,
+      "description": "RPC, grant, tenant membership/profile/entitlement foreign key ve uniqueness sapmalarini blocker olarak isaretle.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-2/schema-diff-classification.json"
+      ]
+    },
+    {
+      "order": 4,
+      "description": "Her blocker icin migration dosyasi, bagimlilik sirasi, geri alma etkisi ve test senaryosu yaz.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-2/schema-diff-classification.json"
+      ]
+    }
+  ],
+  "outputFiles": [
+    {
+      "path": "docs/system-audit/phase-2/schema-diff-classification.json",
+      "sha256": "6d94ded4dfcce62e59c00a589bb47a0e59138798a88f71188491c2a62760a4ab"
+    }
+  ],
+  "verification": {
+    "rules": [
+      "Her fark tam olarak bir sinifa sahip olmali ve kaynak kaniti tasimali.",
+      "Aktif kodun cagirdigi eksik RPC veya yanlis grant INTENTIONALLY_DEFERRED olamaz.",
+      "Duzeltme sirasi dependency graph ile tutarli olmali.",
+      "Duzeltme listesi ham secret veya kisi verisi icermemeli."
+    ],
+    "result": "PASS",
+    "outputDigest": "6d94ded4dfcce62e59c00a589bb47a0e59138798a88f71188491c2a62760a4ab"
+  },
+  "blockers": [],
+  "evidenceDigest": "091770f573f72325bbd4daa81147ed66dfddcb4476b2c902f19336b841dd5bdc"
+}

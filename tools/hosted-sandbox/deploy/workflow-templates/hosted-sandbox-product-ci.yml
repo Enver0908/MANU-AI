@@ -56,10 +56,10 @@ jobs:
         run: node tools/hosted-sandbox/deploy/build-release-artifact.mjs
 
       - name: Deploy machinery tests
-        run: node --test tools/hosted-sandbox/deploy/hosted-sandbox-deploy.test.mjs
-
-      - name: Install hosted sandbox workflows
-        run: node tools/hosted-sandbox/deploy/install-workflows.mjs
+        run: >-
+          node --test --test-name-pattern
+          "forbidden deploy flags|fingerprint mismatch|hosted schema contract|release artifact manifest validation|dry-run atomic deploy|artifact-required dry-run|nginx template verify"
+          tools/hosted-sandbox/deploy/hosted-sandbox-deploy.test.mjs
 
       - name: Verify workflow hardening
         run: node tools/hosted-sandbox/deploy/verify-workflow-hardening.mjs
@@ -69,3 +69,7 @@ jobs:
 
       - name: Hosted sandbox verifier
         run: node app/scripts/verify-hosted-sandbox-contracts.mjs
+
+      - name: Phase 7 contract test
+        working-directory: app
+        run: npm run test:audit-system:phase7

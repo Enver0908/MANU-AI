@@ -1,0 +1,501 @@
+{
+  "schemaVersion": "aiya-system-audit-phase-plan-manifest-v1",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-5",
+  "title": "Gercek Backend ile Frontend ve Kullanici Akislari",
+  "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+  "createdAt": "2026-09-08T08:26:41.493Z",
+  "precondition": {
+    "ok": true,
+    "reason": null,
+    "stateDigest": "c6335a166205a1cd6123228a85259aefc35cbbf2e8fb72f37c1def8215cc0be7",
+    "closureDigest": "f01415610baa07e64b041796140c34cf85c935684142eb0b1905234856c77596",
+    "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+    "stageFailures": []
+  },
+  "stageOrder": [
+    "5.1",
+    "5.2",
+    "5.3",
+    "5.4",
+    "5.5"
+  ],
+  "stages": [
+    {
+      "id": "5.1",
+      "title": "Frontend, backend ve API veri sozlesmelerini birebir eslestir",
+      "prerequisiteStageIds": [
+        "phase-4-closed"
+      ],
+      "requiredOutputFiles": [
+        "frontend-backend-contract-matrix.json"
+      ],
+      "objective": "Kullaniciya acik tum frontend yuzeylerinin kullandigi API yollarini, route dosyalarini, response/error/cache sozlesmelerini ve server-client sinirini tek bir secret-free matrisle kanitlamak.",
+      "scope": "app/src/app/**/page.tsx, app/src/app/api/**/route.ts, app/src/components/**, app/src/lib/use-aiya-state.ts, app/src/lib/use-ai-chat.ts, app/src/lib/use-stage-4b*.ts ve Phase 5 shell kaynaklari.",
+      "prerequisites": [
+        "Phase 4 state CLOSED",
+        "Phase 4 closure nextPhase=phase-5 ve nextPhaseUnlocked=true",
+        "Phase 4 output/evidence digestleri gecerli",
+        "Git HEAD okunabilir"
+      ],
+      "affectedComponents": [
+        "public pages",
+        "customer and admin auth forms",
+        "onboarding client",
+        "dashboard shell",
+        "dashboard state client",
+        "AI Chat client",
+        "messaging client",
+        "Next route handlers"
+      ],
+      "affectedFiles": [
+        "app/src/app/**/page.tsx",
+        "app/src/app/api/**/route.ts",
+        "app/src/components/customer-login-form.tsx",
+        "app/src/components/admin-login-form.tsx",
+        "app/src/components/onboarding-claim-panel.tsx",
+        "app/src/components/dashboard/shell-provider.tsx",
+        "app/src/lib/use-aiya-state.ts",
+        "app/src/lib/use-ai-chat.ts"
+      ],
+      "architectureDecisions": [
+        "Frontend browser kodu yalnizca public API route'larini cagirir; Supabase service-role anahtari veya admin client browser bundle'ina giremez.",
+        "Dinamik URL segmentleri [id] ve ${value} ayni canonical route kalibina normalize edilerek eslestirilir.",
+        "Read response'lari no-store ve stable JSON error/requestId sozlesmesini; mutation response'lari authenticatedMutationFetch veya explicit auth form akisini kullanir.",
+        "Server page auth ve entitlement gate'leri browser state hydration'dan once calisir; fallback yalnizca acik local/dev kosulunda kabul edilir."
+      ],
+      "operations": [
+        "Tum page.tsx ve route.ts dosyalarini say, public/protected/admin/onboarding/dashboard kategorilerine ayir ve source digestlerini kaydet.",
+        "Client component ve hook kaynaklarindan literal/template /api path kullanimlarini cikar; her path'i canonical route handler ile eslestir.",
+        "Eslestirilemeyen endpoint, route olmayan frontend call veya route olmayan client fetch kalirsa blocker olarak yaz.",
+        "App state, shell bootstrap, auth, admin, onboarding, messaging ve AI Chat response tiplerinin frontend tuketimiyle uyumunu marker scan ile kontrol et.",
+        "Tum protected mutation noktalarinda requestId, expectedRevision veya authenticated mutation header sozlesmesini kontrol et; istisnalari auth/form endpointleri olarak acikca siniflandir.",
+        "Client bundle'a service-role, admin client, private provider key veya server-only import sizmasini source scan ile reddet.",
+        "no-store, structured JSON error ve redirect/stream istisnalarini route bazinda kaydet.",
+        "Matrix ve operation evidence dosyasini source commit ile immutable digest'le yaz."
+      ],
+      "technicalMethods": [
+        "canonical route normalization",
+        "controlled source-marker scan",
+        "page/route inventory",
+        "client/server boundary scan",
+        "SHA-256 source digest",
+        "secret-free JSON matrix"
+      ],
+      "dataFlow": "page/component/hook -> browser fetch/form -> Next route handler -> auth/tenant context -> Supabase/store -> bounded JSON/redirect/SSE response -> frontend state merge.",
+      "dependencies": [
+        "Phase 4 closure evidence",
+        "Next App Router route tree",
+        "auth and tenant context",
+        "shell and AI Chat contracts"
+      ],
+      "errorAndBoundaryCases": [
+        "dynamic route normalization failure",
+        "missing route handler",
+        "stale frontend endpoint",
+        "HTML response where JSON is required",
+        "missing no-store header",
+        "server-only import in client source",
+        "template path false positive"
+      ],
+      "tests": [
+        "phase-5 contract unit test",
+        "phase-85-stage-5-shell-api.test.ts",
+        "phase-85-stage-5-shell-contracts.test.ts",
+        "request-id-error-propagation.test.ts",
+        "app-state and auth route contract tests"
+      ],
+      "verificationCriteria": [
+        "page and API inventories are complete",
+        "all extracted frontend API paths map to route handlers",
+        "boundary and response checks have zero blockers",
+        "targeted contract suites PASS"
+      ],
+      "completionCriteria": "frontend-backend-contract-matrix.json status PASS, every listed operation PASS and stage evidence VERIFIED olmadan 5.2 acilmaz."
+    },
+    {
+      "id": "5.2",
+      "title": "Customer, admin, session ve onboarding kullanici akislarini dogrula",
+      "prerequisiteStageIds": [
+        "5.1"
+      ],
+      "requiredOutputFiles": [
+        "auth-user-flow-matrix.json"
+      ],
+      "objective": "Password, magic-link, recovery, admin allowlist, callback, dashboard redirect ve onboarding claim akisini gercek route sozlesmesiyle fail-closed olarak kanitlamak.",
+      "scope": "app/src/app/login, app/src/app/admin, app/src/app/onboarding, app/src/app/auth/callback, auth/admin API route'lari, customer/admin form componentleri ve session/allowlist kaynaklari.",
+      "prerequisites": [
+        "5.1 VERIFIED",
+        "frontend-backend matrix digest gecerli",
+        "Phase 3 auth/tenant closure evidence gecerli"
+      ],
+      "affectedComponents": [
+        "customer login",
+        "admin login",
+        "magic-link callback",
+        "password recovery",
+        "onboarding claim",
+        "dashboard auth redirect",
+        "admin allowlist gate",
+        "logout"
+      ],
+      "affectedFiles": [
+        "app/src/app/login/page.tsx",
+        "app/src/app/admin/page.tsx",
+        "app/src/app/onboarding/page.tsx",
+        "app/src/app/auth/callback/route.ts",
+        "app/src/components/customer-login-form.tsx",
+        "app/src/components/admin-login-form.tsx",
+        "app/src/components/onboarding-claim-panel.tsx",
+        "app/src/app/api/auth/**/route.ts",
+        "app/src/app/api/admin/auth/**/route.ts",
+        "app/src/app/api/commercial/onboarding/**/route.ts",
+        "app/src/lib/dashboard-server-auth.ts",
+        "app/src/lib/commercial-admin-access.ts"
+      ],
+      "architectureDecisions": [
+        "Customer ve admin password login ayni Supabase session cookie exchange desenini kullanir; admin password/magic-link girisi allowlist kontrolunu auth provider cagrisindan once yapar.",
+        "Dashboard membership/profile/entitlement eksikligi login bypass degil, explicit onboarding/support/blocked gate sonucudur.",
+        "Magic-link callback code/fragment exchange sonrasi hedef sadece allowlisted internal path'e yonlendirilir.",
+        "Demo login sadece NODE_ENV=development, localhost/127.0.0.1 ve acik flag ile calisir; hosted/production ortaminda 403 fail-closed olur."
+      ],
+      "operations": [
+        "Customer login formunun password, magic-link ve password reset submitlerinin ilgili route ve payload ile birebir eslestigini kontrol et.",
+        "Admin login formunun password, magic-link ve reset akisini allowlist route gate'iyle eslestir; allowlist disi email icin 403 sozlesmesini kontrol et.",
+        "Auth callback code ve fragment yollarinda session exchange, user lookup, redirect sanitization ve dashboard/onboarding hedeflerini kontrol et.",
+        "Dashboard server auth'in unauthenticated, no membership, no dietitian ve inactive entitlement dallarini expected redirect/gate ile karsilastir.",
+        "Onboarding status, password creation ve claim endpointlerini session_id/invite_id ambiguity, expired/claimed/missing reference ve success redirect ile kontrol et.",
+        "Logout, recovery ve auth-not-configured davranislarinin hassas veri sizdirmadan stable error/redirect verdigini kontrol et.",
+        "Demo/fallback gate'inin local-only oldugunu source ve environment matrix ile kanitla.",
+        "Auth ve onboarding hedef test gruplarini calistir; her akisin browser ile 5.4 yerel backend smoke adimina hazir oldugunu kaydet."
+      ],
+      "technicalMethods": [
+        "route/form contract scan",
+        "redirect allowlist inspection",
+        "auth error normalization",
+        "local-only demo gate assertion",
+        "targeted Vitest"
+      ],
+      "dataFlow": "login form -> auth route -> Supabase password/OAuth OTP -> httpOnly session cookie -> server auth facts -> membership/profile/entitlement -> dashboard or onboarding/support gate.",
+      "dependencies": [
+        "5.1 route matrix",
+        "Supabase auth configuration",
+        "admin email allowlist",
+        "tenant membership and entitlement tables",
+        "onboarding claim APIs"
+      ],
+      "errorAndBoundaryCases": [
+        "invalid credentials",
+        "rate limit",
+        "unconfigured auth",
+        "expired callback",
+        "unsafe next path",
+        "allowlist denial",
+        "missing tenant",
+        "already claimed checkout",
+        "ambiguous references",
+        "local demo access from non-local host"
+      ],
+      "tests": [
+        "commercial auth route tests",
+        "customer auth/session tests",
+        "admin console/allowlist tests",
+        "customer onboarding tests",
+        "auth callback route tests",
+        "public auth Playwright suite"
+      ],
+      "verificationCriteria": [
+        "all auth forms map to live route handlers",
+        "all fail-closed branches are explicit",
+        "allowlist and redirect checks PASS",
+        "targeted auth/onboarding suites PASS"
+      ],
+      "completionCriteria": "auth-user-flow-matrix.json status PASS, all operations PASS and stage evidence VERIFIED olmadan 5.3 acilmaz."
+    },
+    {
+      "id": "5.3",
+      "title": "Authenticated dashboard shell ve workflow sozlesmesini kapat",
+      "prerequisiteStageIds": [
+        "5.2"
+      ],
+      "requiredOutputFiles": [
+        "authenticated-shell-matrix.json"
+      ],
+      "objective": "Authenticated shell bootstrap, navigation/deep-link, active client context, settings/more, dirty navigation, session activity ve frontend state hydration akisini tek workflow sozlesmesinde dogrulamak.",
+      "scope": "shell-provider, authenticated shell boundary, dashboard-app, use-aiya-state, shell API routes, settings/more pages, dashboard routing ve Phase 85 Stage 5 shell contract kaynaklari.",
+      "prerequisites": [
+        "5.2 VERIFIED",
+        "auth flow matrix digest gecerli",
+        "Phase 3 tenant/security closure evidence gecerli"
+      ],
+      "affectedComponents": [
+        "authenticated shell",
+        "navigation",
+        "active client selector",
+        "dashboard state hydration",
+        "settings",
+        "more",
+        "dirty registry",
+        "session activity",
+        "PWA mutation headers"
+      ],
+      "affectedFiles": [
+        "app/src/components/dashboard/shell-provider.tsx",
+        "app/src/components/dashboard/authenticated-shell-boundary.tsx",
+        "app/src/components/dashboard-app.tsx",
+        "app/src/lib/use-aiya-state.ts",
+        "app/src/lib/phase-85-stage-5-shell-*.ts",
+        "app/src/app/api/shell/**/route.ts",
+        "app/src/app/api/app-state/route.ts",
+        "app/src/app/dashboard/settings/page.tsx",
+        "app/src/app/dashboard/more/page.tsx"
+      ],
+      "architectureDecisions": [
+        "Live shell bootstrap basarili session ve tenant context olmadan ready state'e gecmez; fallback shell yalnizca local/dev contract test yoludur.",
+        "Active client seciminde URL > persisted shell preference > unbound onceligi korunur; klinik context eksikken ilk client otomatik secilmez.",
+        "Mutations no-store, client version/mutation kind ve request/revision bilgisiyle gonderilir; FormData content-type browser tarafindan belirlenir.",
+        "Dirty registry ve session inactivity guard'i navigation/logout oncesi calisir; server activity failure access'i fail-closed kilitler."
+      ],
+      "operations": [
+        "ShellProvider bootstrap request, retry, no-store headers, session state ve error runtime mapping'ini route contract ile eslestir.",
+        "Dashboard navigation hedeflerini overview/clients/messages/alerts/notifications/AI Chat/settings/more icin canonical path/query ve legacy redirect ile kontrol et.",
+        "Active client URL/preference precedence, invalid client fail-closed state ve high-impact confirmation mesajlarini kontrol et.",
+        "useAiyaState hydration ve mutation endpointlerini response merge, auth error, revision conflict ve retry davranisiyla kontrol et.",
+        "Settings, more, messaging ve AI Chat route'larinin ayni authenticated shell/session gate'ine baglandigini kontrol et.",
+        "Dirty navigation, logout, offline mutation rejection, service-worker update ve session inactivity guardlarini hedef testlerle kontrol et.",
+        "Shell API rate limit, no-store, bounded payload ve forbidden response key kontrollerini yeniden calistir.",
+        "Responsive/accessibility shell testlerinin Phase 5 yuzeyleriyle sinirli oldugunu ve Stage 6 testlerinin bu faza alinmadigini kaydet."
+      ],
+      "technicalMethods": [
+        "state reducer contract tests",
+        "URL/deep-link matrix",
+        "auth mutation header inspection",
+        "bounded JSON checks",
+        "accessibility and responsive Playwright"
+      ],
+      "dataFlow": "authenticated layout -> shell bootstrap -> navigation/preferences/session activity -> app-state windowed read -> dashboard state merge -> client/messaging/AI mutations -> bounded response -> UI update.",
+      "dependencies": [
+        "5.2 auth matrix",
+        "shell migration and API contracts",
+        "app-state/store contract",
+        "browser viewport projects"
+      ],
+      "errorAndBoundaryCases": [
+        "bootstrap 401/403/503",
+        "offline",
+        "stale revision",
+        "invalid active client",
+        "dirty navigation",
+        "session inactivity",
+        "payload oversize",
+        "service worker waiting update",
+        "missing AI feature flag"
+      ],
+      "tests": [
+        "all phase-85-stage-5-shell contract/session/navigation/active-client/mutation/provider tests",
+        "dashboard visual",
+        "settings visual",
+        "messaging accessibility",
+        "AI Chat shell accessibility/responsive"
+      ],
+      "verificationCriteria": [
+        "shell matrix has zero blockers",
+        "all shell contract suites PASS",
+        "deep links and session fail-closed checks PASS",
+        "no Stage 6-only test is included"
+      ],
+      "completionCriteria": "authenticated-shell-matrix.json status PASS, all operations PASS and stage evidence VERIFIED olmadan 5.4 acilmaz."
+    },
+    {
+      "id": "5.4",
+      "title": "Fallback kapali yerel Supabase ile tarayici kullanici akisini kanitla",
+      "prerequisiteStageIds": [
+        "5.3"
+      ],
+      "requiredOutputFiles": [
+        "real-backend-browser-smoke.json"
+      ],
+      "objective": "Production build ile baslatilan Next uygulamasini local Supabase auth/store'a baglayarak fallback kapali login, dashboard bootstrap, app-state, settings/more ve AI Chat giris akisini tarayici seviyesinde gercek backend ile calistirmak.",
+      "scope": "local Supabase only, local migration reset, development-only demo fixture seeder, Next standalone production server, password login, browser cookie/session flow ve read-only authenticated smoke endpoints.",
+      "prerequisites": [
+        "5.3 VERIFIED",
+        "Docker daemon ve Supabase CLI calisir durumda",
+        "local Supabase API URL 127.0.0.1/localhost:54321 olmali",
+        "production build PASS",
+        "real provider egress flags false"
+      ],
+      "affectedComponents": [
+        "local Supabase auth",
+        "local tenant/store seed",
+        "Next production server",
+        "browser session cookie",
+        "dashboard shell",
+        "app-state read",
+        "settings/more pages",
+        "AI Chat read surface"
+      ],
+      "affectedFiles": [
+        "app/supabase/config.toml",
+        "app/supabase/migrations/**",
+        "app/src/app/api/demo-login/route.ts",
+        "app/src/app/api/auth/password-login/route.ts",
+        "app/src/app/api/admin/auth/password-login/route.ts",
+        "app/src/lib/supabase-store.ts",
+        "app/src/app/dashboard/**",
+        "app/src/app/api/shell/bootstrap/route.ts",
+        "app/src/app/api/app-state/route.ts",
+        "app/src/app/api/ai-chat/conversations/route.ts",
+        "tools/system-audit/phase-5/real-backend-smoke.mjs"
+      ],
+      "architectureDecisions": [
+        "Smoke sadece local Supabase ve local Next portunda calisir; linked/hosted/production Supabase'a baglanmak blocker'dir.",
+        "MANU_DEV_FALLBACK_STORE=false zorunludur; demo account sadece local development harness icin kullanilir ve hosted production kaniti sayilmaz.",
+        "Smoke write yuzeyi demo fixture seed ve session login ile sinirlidir; AI/WhatsApp/Stripe/provider egress kapali kalir.",
+        "Tarayici once session cookie alir, sonra dashboard shell ve API read akislarini ayni cookie jar ile dogrular; HTML login fallback'i PASS sayilmaz."
+      ],
+      "operations": [
+        "Docker ve Supabase CLI preflight'ini calistir; local API URL, anon key ve service role key varligini secret yazmadan kontrol et.",
+        "Local Supabase'i baslat ve migration reset yap; reset veya status local-only kosulunu saglamazsa dur ve blocker yaz.",
+        "Local development-only seeder'i gecici olarak baslat; /api/demo-login icin 303 ve /dashboard seed sonucunu kontrol et, sonra seeder processini kapat.",
+        "Seeder kapandiktan sonra ayni local Supabase URL/key env'leriyle production build'i calistir; build basarisizsa standalone server ve browser adimlarini calistirma.",
+        "Local env ile uretilen Next standalone production server'i fallback false, real provider false ve release identity env'leriyle baslat; production /api/demo-login isteginin 403 fail-closed oldugunu ve /api/auth/password-login ile gercek Supabase session cookie alindigini kontrol et.",
+        "Ayni browser session ile /api/shell/bootstrap, /api/app-state?view=windowed, /dashboard/settings, /dashboard/more ve /dashboard/ai-chat read akislarini kontrol et; ayri admin session ile admin password login ve /admin console oturumunu kontrol et.",
+        "Unauthenticated yeni context'te /dashboard'in /login?next=/dashboard'e yonlendigini ve demo login'in localhost disi hostta 403 oldugunu kontrol et.",
+        "Next ve local Supabase processlerini temiz kapat; secret-free smoke output ve endpoint status digest'ini kaydet."
+      ],
+      "technicalMethods": [
+        "child-process env isolation",
+        "local Supabase reset/status",
+        "production Next server",
+        "Playwright cookie jar",
+        "request + DOM assertions",
+        "secret redaction"
+      ],
+      "dataFlow": "local migration reset -> demo auth/user/tenant seed -> Supabase password session -> httpOnly cookie -> Next server auth -> shell/app-state/store reads -> browser route rendering.",
+      "dependencies": [
+        "Docker Desktop",
+        "Supabase CLI",
+        "local migrations",
+        "Next production build",
+        "Playwright chromium",
+        "demo fixture seed"
+      ],
+      "errorAndBoundaryCases": [
+        "Docker unavailable",
+        "stale local container",
+        "migration reset failure",
+        "missing credentials",
+        "build failure",
+        "cookie not set",
+        "fallback accidentally enabled",
+        "remote URL detected",
+        "401/403/5xx API",
+        "orphan server process"
+      ],
+      "tests": [
+        "local production server browser smoke",
+        "unauthenticated redirect assertion",
+        "local-only demo gate assertion",
+        "shell bootstrap/app-state response assertions"
+      ],
+      "verificationCriteria": [
+        "local-only target verified",
+        "fallback false verified in server environment",
+        "authenticated browser workflow PASS",
+        "unauthenticated fail-closed workflow PASS",
+        "cleanup PASS"
+      ],
+      "completionCriteria": "real-backend-browser-smoke.json status PASS, every operation PASS and stage evidence VERIFIED olmadan 5.5 acilmaz."
+    },
+    {
+      "id": "5.5",
+      "title": "Frontend-backend kullanici akisi final kapanisini yap",
+      "prerequisiteStageIds": [
+        "5.1",
+        "5.2",
+        "5.3",
+        "5.4"
+      ],
+      "requiredOutputFiles": [
+        "frontend-backend-user-flow-closure.json"
+      ],
+      "objective": "Bes faz adiminin tum output/evidence digestlerini, typecheck/build/final contract ve browser smoke sonuclarini tekrar dogrulayarak Phase 5'i kapatmak ve Phase 6 kilidini acmak.",
+      "scope": "Phase 5 state, five stage evidence files, four stage matrices plus browser smoke output, final targeted tests and mutation boundary.",
+      "prerequisites": [
+        "5.1-5.4 VERIFIED",
+        "tum Phase 5 output/evidence digestleri gecerli",
+        "Phase 5 production/remote mutation boundary kapali"
+      ],
+      "affectedComponents": [
+        "audit state machine",
+        "phase closure evidence",
+        "next phase gate"
+      ],
+      "affectedFiles": [
+        "docs/system-audit/phase-5/*",
+        ".manu-runtime/system-audit/phase-5/*",
+        "tools/system-audit/phase-5/*"
+      ],
+      "architectureDecisions": [
+        "Phase 5 sadece her stage operation'i PASS, output/evidence digestleri gecerli, final tests PASS ve local-only mutation boundary kapali ise CLOSED olur.",
+        "Bu faz production deployment, linked Supabase verification, real provider egress, dependency/performance audit veya Stage 6 workflow implementasyonu degildir.",
+        "Closure output nextPhase=phase-6 ve nextPhaseUnlocked=true yazar; Phase 6 uygulamasi bu komutun kapsami degildir."
+      ],
+      "operations": [
+        "5.1-5.4 state, output ve evidence digestlerini yeniden hesapla; stale veya eksik dosyada kapanisi bloke et.",
+        "Frontend/backend contract, auth flow, shell ve real backend smoke statuslarinin PASS oldugunu kontrol et.",
+        "Final production typecheck, Phase 5 contract test ve frontend/backend selected Playwright suitesini tekrar calistir.",
+        "Production, linked Supabase, real WhatsApp, real AI provider, Stripe live, raw media transfer ve remote demo mutation flaglerini false olarak assert et.",
+        "Tum operation verification satirlarini PASS yap; blocker varsa CLOSED state veya next-phase unlock yazma.",
+        "Closure output, phase state ve nextPhase gate'ini source commit ile digest'le."
+      ],
+      "technicalMethods": [
+        "SHA-256 digest reconciliation",
+        "final Vitest/Playwright runs",
+        "mutation boundary assertion",
+        "strict state-machine closure"
+      ],
+      "dataFlow": "stage matrices/evidence + browser smoke -> digest reconciliation -> final tests -> boundary assertion -> closure output -> Phase 5 CLOSED -> Phase 6 unlocked.",
+      "dependencies": [
+        "5.1-5.4 output/evidence",
+        "Phase 4 closure",
+        "local browser smoke",
+        "production typecheck/build"
+      ],
+      "errorAndBoundaryCases": [
+        "stale evidence",
+        "missing output",
+        "failed final test",
+        "remote URL",
+        "real egress flag",
+        "fallback enabled in real smoke",
+        "incomplete operation list",
+        "closure write failure"
+      ],
+      "tests": [
+        "phase-5 node:test contract suite",
+        "production typecheck",
+        "selected auth/shell/AI Chat Playwright suites",
+        "real-backend smoke result validation"
+      ],
+      "verificationCriteria": [
+        "all five stages VERIFIED",
+        "all output/evidence digests valid",
+        "final tests PASS",
+        "mutation boundary all false",
+        "closure next phase unlocked"
+      ],
+      "completionCriteria": "Phase 5 CLOSED, phase-5-closure.json status CLOSED, nextPhase=phase-6 ve nextPhaseUnlocked=true; bu komut Phase 6'ya gecmez."
+    }
+  ],
+  "outputPolicy": "secret-free-docs-and-runtime-only-redacted-test-summaries",
+  "mutationPolicy": {
+    "production": false,
+    "linkedSupabase": false,
+    "realWhatsAppEgress": false,
+    "realAiProviderEgress": false,
+    "stripeLive": false,
+    "rawMediaTransfer": false
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "schemaVersion": "aiya-system-audit-stage-evidence-v1",
+  "runId": "phase-4-4.3-20260907235516388",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-4",
+  "stageId": "4.3",
+  "title": "AI provider, prompt context ve run orchestration guvenligini kapat",
+  "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+  "verifiedAt": "2026-09-07T23:55:16.388Z",
+  "status": "VERIFIED",
+  "operations": [
+    {
+      "order": 1,
+      "description": "Provider input segment allowlist, segment count/length limitleri ve raw prompt/capsule reddini dogrula.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-4/ai-contract-matrix.json"
+      ]
+    },
+    {
+      "order": 2,
+      "description": "Red/yellow/green risk kararlarini ve source-backed answerability kosullarini statik ve test kanitiyla dogrula.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-4/ai-contract-matrix.json"
+      ]
+    },
+    {
+      "order": 3,
+      "description": "Z.ai GLM-5.3-Flash direct paid API gate'ini, real provider flag'ini ve forbidden surface listesini kontrol et.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-4/ai-contract-matrix.json"
+      ]
+    },
+    {
+      "order": 4,
+      "description": "Provider timeout, retry/error normalization, abort/deadline ve lease heartbeat akislarini dogrula.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-4/ai-contract-matrix.json"
+      ]
+    },
+    {
+      "order": 5,
+      "description": "Source claim validation, insufficient/conflicting evidence ve medical safety terminal outcome'larini dogrula.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-4/ai-contract-matrix.json"
+      ]
+    },
+    {
+      "order": 6,
+      "description": "AI job idempotency/lease completion-failure ve run event sequence/realtime catch-up davranisini dogrula.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-4/ai-contract-matrix.json"
+      ]
+    }
+  ],
+  "outputFiles": [
+    {
+      "path": "docs/system-audit/phase-4/ai-contract-matrix.json",
+      "sha256": "439e8497e9480a821d337efd6da7cda2c6b1557941e69b766cfbebf0342b61ab"
+    }
+  ],
+  "verification": {
+    "rules": [
+      "provider boundary blockers sifir",
+      "red risk provider call yok",
+      "raw prompt/completion retention zero contracti mevcut",
+      "targeted AI suite PASS"
+    ],
+    "result": "PASS",
+    "outputDigest": "439e8497e9480a821d337efd6da7cda2c6b1557941e69b766cfbebf0342b61ab",
+    "testResults": [
+      {
+        "name": "phase-4-ai-contracts",
+        "status": "PASS",
+        "exitCode": 0,
+        "timedOut": false,
+        "fileCount": 10,
+        "summary": {
+          "passedFiles": 10,
+          "failedFiles": 0,
+          "passedTests": 70,
+          "failedTests": 0,
+          "skippedTests": 0
+        },
+        "failure": null
+      }
+    ]
+  },
+  "blockers": [],
+  "evidenceDigest": "596bedc7c2d3c0bf48a56a978a35be6665be2b5521878839070d5d922c6816b4"
+}

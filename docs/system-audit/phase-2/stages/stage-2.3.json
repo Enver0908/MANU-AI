@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "aiya-system-audit-stage-evidence-v1",
+  "runId": "phase-2-2.3-20260907225552858",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-2",
+  "stageId": "2.3",
+  "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+  "status": "VERIFIED",
+  "operations": [
+    {
+      "order": 1,
+      "description": "Tum migrationlari temiz izole veritabaninda bastan uygula ve temiz kurulum sonucunu kaydet.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-2/isolated-reconciliation.json"
+      ]
+    },
+    {
+      "order": 2,
+      "description": "Gercek semanin izole kopyasini sentetik kayitlarla yukselterek upgrade yolunu calistir.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-2/isolated-reconciliation.json"
+      ]
+    },
+    {
+      "order": 3,
+      "description": "Yalnizca yeni forward-only migration ile farklari dependency order sirasinda uygula; eski migration dosyasini degistirme.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-2/isolated-reconciliation.json"
+      ]
+    },
+    {
+      "order": 4,
+      "description": "Her migration icin transaction/lock/timeout/idempotency davranisini ve once/sonra kayit sayisini kaydet.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-2/isolated-reconciliation.json"
+      ]
+    },
+    {
+      "order": 5,
+      "description": "Kesinti sonrasi yeniden calistirma ve yarim migration recovery senaryosunu calistir.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-2/isolated-reconciliation.json"
+      ]
+    }
+  ],
+  "outputFiles": [
+    {
+      "path": "docs/system-audit/phase-2/isolated-reconciliation.json",
+      "sha256": "1de443e68036bab1bfcb842eeb3bad36e187d2d6154e6bc5eb52ce5ba2d1ae94"
+    }
+  ],
+  "verification": {
+    "rules": [
+      "Hicbir linked veya production Supabase hedefinde yazma islemi yapilmamali.",
+      "Temiz kurulum, upgrade, repair ve interrupted migration senaryolarinin tamami PASS olmali.",
+      "Data loss, tenant cross-read, foreign-key ihlali, duplicate unique key veya idempotency ihlali sifir olmali.",
+      "Uygulanan correction migrationlari forward-only ve digest ile izlenebilir olmali."
+    ],
+    "result": "PASS",
+    "outputDigest": "1de443e68036bab1bfcb842eeb3bad36e187d2d6154e6bc5eb52ce5ba2d1ae94"
+  },
+  "blockers": [],
+  "evidenceDigest": "142fda7f9ebf9af0935059e0b54d277b61d19c47cecb73064e4c2044625be803"
+}

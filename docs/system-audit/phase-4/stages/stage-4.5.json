@@ -1,0 +1,89 @@
+{
+  "schemaVersion": "aiya-system-audit-stage-evidence-v1",
+  "runId": "phase-4-4.5-20260907235942364",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-4",
+  "stageId": "4.5",
+  "title": "Worker-messaging-AI-media birlesik kapanisini ve Phase 5 kilidini yap",
+  "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+  "verifiedAt": "2026-09-07T23:59:42.364Z",
+  "status": "VERIFIED",
+  "operations": [
+    {
+      "order": 1,
+      "description": "4.1-4.4 state, matrix ve evidence digestlerini yeniden hesapla; stale dosyayi blocker yap.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-4/worker-messaging-ai-media-closure.json"
+      ]
+    },
+    {
+      "order": 2,
+      "description": "Final worker release, messaging, provider security, media security ve lifecycle closure suite'lerini tek final kosusunda calistir.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-4/worker-messaging-ai-media-closure.json"
+      ]
+    },
+    {
+      "order": 3,
+      "description": "Production/linked Supabase/real provider egress boundary'sinin mutation-free oldugunu kanitla.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-4/worker-messaging-ai-media-closure.json"
+      ]
+    },
+    {
+      "order": 4,
+      "description": "Tum stage operation durumlarini PASS olarak kaydet; blocker varsa closure yazma ve Phase 5 kilidini acma.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-4/worker-messaging-ai-media-closure.json"
+      ]
+    },
+    {
+      "order": 5,
+      "description": "worker-messaging-ai-media-closure.json, phase-4-closure.json ve CLOSED state'i source commit ile yaz.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-4/worker-messaging-ai-media-closure.json"
+      ]
+    }
+  ],
+  "outputFiles": [
+    {
+      "path": "docs/system-audit/phase-4/worker-messaging-ai-media-closure.json",
+      "sha256": "09ba858c9a604bfb937b506bfa68373b8f2a4031cfd8106bd093d4208f459b2f"
+    }
+  ],
+  "verification": {
+    "rules": [
+      "all five stages VERIFIED",
+      "all digests valid",
+      "final tests PASS",
+      "mutation boundary production=false linkedSupabase=false realEgress=false"
+    ],
+    "result": "PASS",
+    "outputDigest": "09ba858c9a604bfb937b506bfa68373b8f2a4031cfd8106bd093d4208f459b2f",
+    "testResults": [
+      {
+        "name": "phase-4-final-contracts",
+        "status": "PASS",
+        "exitCode": 0,
+        "timedOut": false,
+        "fileCount": 6,
+        "summary": {
+          "passedFiles": 6,
+          "failedFiles": 0,
+          "passedTests": 40,
+          "failedTests": 0,
+          "skippedTests": 0
+        },
+        "failure": null
+      }
+    ]
+  },
+  "blockers": [],
+  "evidenceDigest": "2922254f0f6b038e947fbf8ef30ccabfb6616a5d7d5d04c8eb51d4654b6743cc"
+}

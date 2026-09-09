@@ -1,0 +1,349 @@
+{
+  "schemaVersion": "aiya-system-audit-phase-6-closure-evidence-v1",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-6",
+  "status": "PASS",
+  "generatedAt": "2026-09-08T12:35:38.347Z",
+  "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+  "checks": [
+    {
+      "id": "technical_stages_verified",
+      "description": "6.1 through 6.4 are VERIFIED",
+      "pass": true
+    },
+    {
+      "id": "stage_digests_valid",
+      "description": "all prior stage output/evidence digests match",
+      "pass": true,
+      "details": []
+    },
+    {
+      "id": "source_commit_consistent",
+      "description": "all stage evidence uses current source commit",
+      "pass": true
+    },
+    {
+      "id": "phase6_contract_tests",
+      "description": "Phase 6 contract test PASS",
+      "pass": true
+    },
+    {
+      "id": "reliability_recovery_tests",
+      "description": "final reliability and recovery tests PASS",
+      "pass": true
+    },
+    {
+      "id": "typecheck",
+      "description": "production TypeScript typecheck PASS",
+      "pass": true
+    },
+    {
+      "id": "no_blockers",
+      "description": "no final test or boundary blocker remains",
+      "pass": true
+    },
+    {
+      "id": "mutation_boundary_closed",
+      "description": "remote/provider mutation flags are disabled",
+      "pass": true
+    }
+  ],
+  "finalTestResults": [
+    {
+      "name": "phase-6-contract",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "failure": null
+    },
+    {
+      "name": "final-reliability",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "fileCount": 7,
+      "summary": {
+        "passedFiles": 7,
+        "failedFiles": 0,
+        "passedTests": 30,
+        "failedTests": 0,
+        "skippedTests": 0
+      },
+      "failure": null
+    },
+    {
+      "name": "final-recovery",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "failure": null
+    },
+    {
+      "name": "typecheck",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "failure": null
+    }
+  ],
+  "blockers": [],
+  "closureRule": "all four technical stages VERIFIED, all digests valid, final tests/typecheck PASS and mutation boundary closed",
+  "nextPhase": "phase-7",
+  "nextPhaseUnlocked": true,
+  "operationResults": [
+    {
+      "order": 1,
+      "description": "6.1-6.4 stage state'lerinin VERIFIED oldugunu sirayla dogrula.",
+      "id": "technical_stages_verified",
+      "status": "PASS",
+      "details": [
+        {
+          "name": "phase-6-contract",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "failure": null
+        },
+        {
+          "name": "final-reliability",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "fileCount": 7,
+          "summary": {
+            "passedFiles": 7,
+            "failedFiles": 0,
+            "passedTests": 30,
+            "failedTests": 0,
+            "skippedTests": 0
+          },
+          "failure": null
+        },
+        {
+          "name": "final-recovery",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "failure": null
+        },
+        {
+          "name": "typecheck",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "failure": null
+        }
+      ]
+    },
+    {
+      "order": 2,
+      "description": "Her stage output ve evidence SHA-256 digest'ini yeniden hesapla.",
+      "id": "stage_digests_valid",
+      "status": "PASS",
+      "details": []
+    },
+    {
+      "order": 3,
+      "description": "Phase 6 plan manifesti, source commit ve mutation policy tutarliligini kontrol et.",
+      "id": "manifest_source_and_boundary",
+      "status": "PASS",
+      "details": [
+        {
+          "id": "source_commit_consistent",
+          "description": "all stage evidence uses current source commit",
+          "pass": true
+        },
+        {
+          "id": "mutation_boundary_closed",
+          "description": "remote/provider mutation flags are disabled",
+          "pass": true
+        }
+      ]
+    },
+    {
+      "order": 4,
+      "description": "Phase 6 contract testini calistir.",
+      "id": "phase6_contract_tests",
+      "status": "PASS",
+      "details": [
+        {
+          "name": "phase-6-contract",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "failure": null
+        },
+        {
+          "name": "final-reliability",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "fileCount": 7,
+          "summary": {
+            "passedFiles": 7,
+            "failedFiles": 0,
+            "passedTests": 30,
+            "failedTests": 0,
+            "skippedTests": 0
+          },
+          "failure": null
+        },
+        {
+          "name": "final-recovery",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "failure": null
+        },
+        {
+          "name": "typecheck",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "failure": null
+        }
+      ]
+    },
+    {
+      "order": 5,
+      "description": "Final targeted reliability/recovery test grubunu tekrar calistir.",
+      "id": "reliability_recovery_tests",
+      "status": "PASS",
+      "details": [
+        {
+          "name": "phase-6-contract",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "failure": null
+        },
+        {
+          "name": "final-reliability",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "fileCount": 7,
+          "summary": {
+            "passedFiles": 7,
+            "failedFiles": 0,
+            "passedTests": 30,
+            "failedTests": 0,
+            "skippedTests": 0
+          },
+          "failure": null
+        },
+        {
+          "name": "final-recovery",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "failure": null
+        },
+        {
+          "name": "typecheck",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "failure": null
+        }
+      ]
+    },
+    {
+      "order": 6,
+      "description": "Typecheck'i remote/provider egress kapali ortamda calistir.",
+      "id": "typecheck",
+      "status": "PASS",
+      "details": [
+        {
+          "name": "phase-6-contract",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "failure": null
+        },
+        {
+          "name": "final-reliability",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "fileCount": 7,
+          "summary": {
+            "passedFiles": 7,
+            "failedFiles": 0,
+            "passedTests": 30,
+            "failedTests": 0,
+            "skippedTests": 0
+          },
+          "failure": null
+        },
+        {
+          "name": "final-recovery",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "failure": null
+        },
+        {
+          "name": "typecheck",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "failure": null
+        }
+      ]
+    },
+    {
+      "order": 7,
+      "description": "Tum blocker listelerini ve operation status'lerini sifirla; herhangi bir hata varsa kapanisi BLOCKED yap.",
+      "id": "no_blockers",
+      "status": "PASS",
+      "details": [
+        {
+          "name": "phase-6-contract",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "failure": null
+        },
+        {
+          "name": "final-reliability",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "fileCount": 7,
+          "summary": {
+            "passedFiles": 7,
+            "failedFiles": 0,
+            "passedTests": 30,
+            "failedTests": 0,
+            "skippedTests": 0
+          },
+          "failure": null
+        },
+        {
+          "name": "final-recovery",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "failure": null
+        },
+        {
+          "name": "typecheck",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "failure": null
+        }
+      ]
+    },
+    {
+      "order": 8,
+      "description": "Closure evidence, phase closure ve nextPhaseUnlocked kayitlarini digest'leyerek yaz.",
+      "id": "closure_write",
+      "status": "PASS",
+      "details": "closure file is written only after operations 1-7 pass"
+    }
+  ],
+  "closureDigest": "5639fcb890b13b16d84eb78d19bad8839c45c20fd17060db849ba6d2fefb71a0"
+}

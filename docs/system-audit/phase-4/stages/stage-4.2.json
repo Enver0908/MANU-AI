@@ -1,0 +1,97 @@
+{
+  "schemaVersion": "aiya-system-audit-stage-evidence-v1",
+  "runId": "phase-4-4.2-20260907235440616",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-4",
+  "stageId": "4.2",
+  "title": "Mesajlasma, webhook, ledger ve teslimat sozlesmelerini dogrula",
+  "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+  "verifiedAt": "2026-09-07T23:54:40.616Z",
+  "status": "VERIFIED",
+  "operations": [
+    {
+      "order": 1,
+      "description": "WhatsApp challenge ve HMAC signature kontrollerini raw body seviyesinde dogrula.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-4/messaging-contract-matrix.json"
+      ]
+    },
+    {
+      "order": 2,
+      "description": "WhatsApp/cloud payload normalization ile canonical event schema ve provider account selector eslesmesini dogrula.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-4/messaging-contract-matrix.json"
+      ]
+    },
+    {
+      "order": 3,
+      "description": "Event ledger provider event id/idempotency key, duplicate suppression ve processed/replay kararlarini dogrula.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-4/messaging-contract-matrix.json"
+      ]
+    },
+    {
+      "order": 4,
+      "description": "Tenant/channel identity routing, unknown/ambiguous quarantine ve empty/malformed payload fail-closed davranisini dogrula.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-4/messaging-contract-matrix.json"
+      ]
+    },
+    {
+      "order": 5,
+      "description": "Outbound receipt state monotonicligi, temporary/permanent/ambiguous failure ayrimi ve retry budgetini dogrula.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-4/messaging-contract-matrix.json"
+      ]
+    },
+    {
+      "order": 6,
+      "description": "Mock ve real channel contract gate'lerinin birbirinden ayrildigini, testlerde real egress bulunmadigini kanitla.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-4/messaging-contract-matrix.json"
+      ]
+    }
+  ],
+  "outputFiles": [
+    {
+      "path": "docs/system-audit/phase-4/messaging-contract-matrix.json",
+      "sha256": "72572e01a44f7f9628654cd7a37b83710f76a691ea0fd336ccf125b9c539b8b0"
+    }
+  ],
+  "verification": {
+    "rules": [
+      "all ingress and delivery checks PASS",
+      "real egress is not enabled",
+      "targeted messaging suite PASS",
+      "no duplicate side-effect blocker"
+    ],
+    "result": "PASS",
+    "outputDigest": "72572e01a44f7f9628654cd7a37b83710f76a691ea0fd336ccf125b9c539b8b0",
+    "testResults": [
+      {
+        "name": "phase-4-messaging-contracts",
+        "status": "PASS",
+        "exitCode": 0,
+        "timedOut": false,
+        "fileCount": 14,
+        "summary": {
+          "passedFiles": 14,
+          "failedFiles": 0,
+          "passedTests": 101,
+          "failedTests": 0,
+          "skippedTests": 0
+        },
+        "failure": null
+      }
+    ]
+  },
+  "blockers": [],
+  "evidenceDigest": "b12e094e02535e3304cc3c4cb07151e16e09f027bf5e5897eae4540c63114c90"
+}

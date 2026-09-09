@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "aiya-system-audit-stage-evidence-v1",
+  "runId": "phase-1-1.4-20260907211945302",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-1",
+  "stageId": "1.4",
+  "title": "Ortamları ve kapsam dağılımını sabitle",
+  "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+  "verifiedAt": "2026-09-07T21:19:45.302Z",
+  "operations": [
+    {
+      "order": 1,
+      "description": "Local, hosted_sandbox ve production profillerini aynı şemayla kaydet.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-1/environment-map.json"
+      ]
+    },
+    {
+      "order": 2,
+      "description": "Environment key varlığını değerleri kaydetmeden raporla.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-1/environment-map.json"
+      ]
+    },
+    {
+      "order": 3,
+      "description": "Canlı public/admin release health endpointlerini salt okunur kontrol et.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-1/environment-map.json"
+      ]
+    },
+    {
+      "order": 4,
+      "description": "Servis komutlarını, worker girişlerini, GitHub workflowlarını ve hedef faz bağlantılarını eşleştir.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-1/environment-map.json"
+      ]
+    }
+  ],
+  "outputFiles": [
+    {
+      "path": "docs/system-audit/phase-1/environment-map.json",
+      "sha256": "eaf8cc8ca4fe1cc9513503e55bd54546b7152529cc1d142a8fd39549fd9f5d96"
+    }
+  ],
+  "verification": {
+    "rules": [
+      "Üç profil de mevcut olmalı; production NO-GO durumu korunmalı.",
+      "Secret değerleri, tokenlar ve cookie içerikleri çıktıda bulunmamalı.",
+      "Hosted release sonucu HTTP durumu ve release kimliğiyle kaydedilmeli.",
+      "Her environment/servis kaydı bir verificationScenario taşımalı."
+    ],
+    "result": "PASS",
+    "outputDigest": "09bf47bcd9b89d38ddc3af66d7c994a32fbb16a6bbde26d9def965cf4c61aedd"
+  },
+  "status": "VERIFIED",
+  "evidenceDigest": "f781267b7d7cd5714af26a17c190751c2e10762009883d79c69c908c07f93127"
+}

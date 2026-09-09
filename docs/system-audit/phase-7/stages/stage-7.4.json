@@ -1,0 +1,599 @@
+{
+  "schemaVersion": "aiya-system-audit-stage-evidence-v1",
+  "runId": "phase-7-7.4-20260908132903035",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-7",
+  "stageId": "7.4",
+  "title": "Nihai teknik kapanis ve yayin kararinin kilitlenmesi",
+  "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+  "verifiedAt": "2026-09-08T13:29:03.035Z",
+  "status": "VERIFIED",
+  "operations": [
+    {
+      "order": 1,
+      "description": "Read 7.1, 7.2 and 7.3 states; stop if any stage is not VERIFIED.",
+      "id": "technical_stages_verified",
+      "status": "PASS",
+      "details": []
+    },
+    {
+      "order": 2,
+      "description": "Recompute every prior output and evidence SHA-256 digest and compare them to the state.",
+      "id": "stage_digests_valid",
+      "status": "PASS",
+      "details": []
+    },
+    {
+      "order": 3,
+      "description": "Reconcile source commit, current identity, working-tree state and phase plan manifest.",
+      "id": "source_identity_reconciled",
+      "status": "PASS",
+      "details": {
+        "targetSourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+        "identityCommitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+        "planManifestSourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606"
+      }
+    },
+    {
+      "order": 4,
+      "description": "Run the final Phase 7 contract test and require PASS.",
+      "id": "phase7_contract_test",
+      "status": "PASS",
+      "details": {
+        "name": "phase-7-contract-final",
+        "command": "C:\\Program Files\\nodejs\\node.exe --test tools/system-audit/phase-7/phase-7.test.mjs",
+        "status": "PASS",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationMs": 889,
+        "outputTail": null
+      }
+    },
+    {
+      "order": 5,
+      "description": "Require release-gate command summary and artifact identity to remain PASS and consistent.",
+      "id": "release_gate_consistent",
+      "status": "PASS",
+      "details": {
+        "status": "PASS",
+        "identity": {
+          "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+          "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+          "builtAt": "2026-09-07T16:50:37.000Z",
+          "environment": "hosted-sandbox",
+          "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25",
+          "compatibilityVersion": "0.0.0+1c97560"
+        },
+        "commandResults": [
+          {
+            "name": "lint",
+            "command": "npm.cmd run lint",
+            "status": "PASS",
+            "exitCode": 0,
+            "timedOut": false,
+            "durationMs": 41960,
+            "outputTail": null,
+            "workingDirectory": "app"
+          },
+          {
+            "name": "production-typecheck",
+            "command": "npm.cmd run typecheck",
+            "status": "PASS",
+            "exitCode": 0,
+            "timedOut": false,
+            "durationMs": 19571,
+            "outputTail": null,
+            "workingDirectory": "app"
+          },
+          {
+            "name": "hosted-oracle-tests",
+            "command": "npm.cmd exec -- vitest run src/lib/hosted-sandbox-release-identity.test.ts src/lib/hosted-sandbox-security-headers.test.ts --no-file-parallelism --maxWorkers=1 --reporter=default",
+            "status": "PASS",
+            "exitCode": 0,
+            "timedOut": false,
+            "durationMs": 15246,
+            "outputTail": null,
+            "workingDirectory": "app"
+          },
+          {
+            "name": "production-build",
+            "command": "npm.cmd run build",
+            "status": "PASS",
+            "exitCode": 0,
+            "timedOut": false,
+            "durationMs": 105630,
+            "outputTail": null,
+            "workingDirectory": "app"
+          },
+          {
+            "name": "build-hosted-release-artifact",
+            "command": "C:\\Program Files\\nodejs\\node.exe tools/hosted-sandbox/deploy/build-release-artifact.mjs",
+            "status": "PASS",
+            "exitCode": 0,
+            "timedOut": false,
+            "durationMs": 59198,
+            "outputTail": null
+          },
+          {
+            "name": "filtered-deploy-machinery-tests",
+            "command": "C:\\Program Files\\nodejs\\node.exe --test --test-name-pattern=forbidden deploy flags|fingerprint mismatch|hosted schema contract|release artifact manifest validation|dry-run atomic deploy|artifact-required dry-run|nginx template verify tools/hosted-sandbox/deploy/hosted-sandbox-deploy.test.mjs",
+            "status": "PASS",
+            "exitCode": 0,
+            "timedOut": false,
+            "durationMs": 858,
+            "outputTail": null,
+            "filter": "forbidden deploy flags|fingerprint mismatch|hosted schema contract|release artifact manifest validation|dry-run atomic deploy|artifact-required dry-run|nginx template verify"
+          },
+          {
+            "name": "workflow-hardening-verifier",
+            "command": "C:\\Program Files\\nodejs\\node.exe tools/hosted-sandbox/deploy/verify-workflow-hardening.mjs",
+            "status": "PASS",
+            "exitCode": 0,
+            "timedOut": false,
+            "durationMs": 75,
+            "outputTail": null
+          },
+          {
+            "name": "nginx-template-verifier",
+            "command": "C:\\Program Files\\nodejs\\node.exe tools/hosted-sandbox/deploy/verify-nginx-template.mjs",
+            "status": "PASS",
+            "exitCode": 0,
+            "timedOut": false,
+            "durationMs": 79,
+            "outputTail": null
+          },
+          {
+            "name": "hosted-sandbox-contract-verifier",
+            "command": "C:\\Program Files\\nodejs\\node.exe app/scripts/verify-hosted-sandbox-contracts.mjs",
+            "status": "PASS",
+            "exitCode": 0,
+            "timedOut": false,
+            "durationMs": 203,
+            "outputTail": null
+          },
+          {
+            "name": "smoke-dry-run",
+            "command": "C:\\Program Files\\nodejs\\node.exe tools/hosted-sandbox/deploy/run-smoke-check.mjs --dry-run",
+            "status": "PASS",
+            "exitCode": 0,
+            "timedOut": false,
+            "durationMs": 76,
+            "outputTail": null
+          },
+          {
+            "name": "atomic-deploy-dry-run",
+            "command": "C:\\Program Files\\nodejs\\node.exe deploy-hosted-release.mjs --dry-run",
+            "status": "PASS",
+            "exitCode": 0,
+            "timedOut": false,
+            "durationMs": 50095,
+            "outputTail": null,
+            "isolatedTempRoot": true,
+            "cleanup": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "order": 6,
+      "description": "Require productionDecision NO-GO, ownerActionsRequired non-empty, liveActionsExecuted empty and mustNotClaim intact.",
+      "id": "production_decision_preserved",
+      "status": "PASS",
+      "details": {
+        "exists": true,
+        "source": {
+          "source": "docs/PRODUCTION_READINESS_STAGE_1_FINAL_DECISION.json",
+          "exists": true,
+          "bytes": 1544,
+          "sha256": "78c6576855d954cd17042dd050403c7552dad435ed798391dcf5ddf6701e4daf"
+        },
+        "productionDecision": "NO-GO",
+        "ownerActionsRequired": [
+          "meta_whatsapp_business",
+          "zai_glm_ai_provider",
+          "production_secrets",
+          "production_supabase_and_migrations",
+          "manual_transfer_operations",
+          "incident_monitoring_and_rollback",
+          "explicit_production_release_approval"
+        ],
+        "liveActionsExecuted": [],
+        "mustNotClaim": [
+          "production GO",
+          "iPhone Safari/PWA PASS",
+          "live provider or channel execution",
+          "production schema rollout",
+          "real client health-data processing"
+        ],
+        "codexActionsAfterOwnerCompletion": [
+          "apply_remote_migrations",
+          "configure_production_env",
+          "deploy_verified_release",
+          "run_production_smoke_checks",
+          "enable_real_webhooks_and_workers",
+          "write_final_go_no_go_report"
+        ]
+      }
+    },
+    {
+      "order": 7,
+      "description": "Require every mutation-policy flag to remain closed and record deferred release blockers without converting them into fabricated passes.",
+      "id": "mutation_boundary_and_blockers",
+      "status": "PASS",
+      "details": {
+        "mutationPolicy": {
+          "MANU_PRODUCTION_PILOT_STARTED": {
+            "enabled": false
+          },
+          "MANU_ENABLE_PROVIDER_EGRESS": {
+            "enabled": false
+          },
+          "MANU_ENABLE_CHANNEL_EGRESS": {
+            "enabled": false
+          },
+          "MANU_ENABLE_LIVE_BILLING": {
+            "enabled": false
+          },
+          "MANU_ENABLE_PRODUCTION_SCHEMA": {
+            "enabled": false
+          },
+          "MANU_ALLOW_REAL_ZAI": {
+            "enabled": false
+          },
+          "MANU_WHATSAPP_REAL_WEBHOOK_ENABLED": {
+            "enabled": false
+          },
+          "MANU_MEDIA_REAL_PROVIDER_ENABLED": {
+            "enabled": false
+          },
+          "MANU_ALLOW_REMOTE_RLS_TESTS": {
+            "enabled": false
+          },
+          "MANU_HOSTED_SANDBOX_BACKUP_APPROVED": {
+            "enabled": false
+          },
+          "MANU_HOSTED_SANDBOX_RESTORE_APPROVED": {
+            "enabled": false
+          },
+          "MANU_HOSTED_ACTIVATION_APPROVED": {
+            "enabled": false
+          }
+        },
+        "deferredBlockers": [
+          {
+            "code": "dirty_working_tree",
+            "ownerControlled": true,
+            "details": [
+              ".github/workflows/hosted-sandbox-deploy.yml",
+              ".github/workflows/hosted-sandbox-product-ci.yml",
+              "app/package.json",
+              "app/tests/request-id-error-propagation.test.ts",
+              "tools/hosted-sandbox/deploy/hosted-sandbox-deploy.test.mjs",
+              "tools/hosted-sandbox/deploy/lib/supabase-schema-contract.mjs",
+              "tools/hosted-sandbox/deploy/workflow-templates/hosted-sandbox-deploy.yml",
+              "tools/hosted-sandbox/deploy/workflow-templates/hosted-sandbox-product-ci.yml",
+              "docs/system-audit/phase-1/baseline.json",
+              "docs/system-audit/phase-1/coverage-matrix.json",
+              "docs/system-audit/phase-1/environment-map.json",
+              "docs/system-audit/phase-1/phase-1-closure.json",
+              "docs/system-audit/phase-1/phase-entry.json",
+              "docs/system-audit/phase-1/plan-manifest.json",
+              "docs/system-audit/phase-1/stages/stage-1.1.json",
+              "docs/system-audit/phase-1/stages/stage-1.2.json",
+              "docs/system-audit/phase-1/stages/stage-1.3.json",
+              "docs/system-audit/phase-1/stages/stage-1.4.json",
+              "docs/system-audit/phase-1/system-inventory.json",
+              "docs/system-audit/phase-2/catalog-reconciliation.json",
+              "docs/system-audit/phase-2/isolated-reconciliation.json",
+              "docs/system-audit/phase-2/phase-2-closure.json",
+              "docs/system-audit/phase-2/phase-entry.json",
+              "docs/system-audit/phase-2/plan-manifest.json",
+              "docs/system-audit/phase-2/schema-contract-matrix.json",
+              "docs/system-audit/phase-2/schema-diff-classification.json",
+              "docs/system-audit/phase-2/stages/stage-2.1.json",
+              "docs/system-audit/phase-2/stages/stage-2.2.json",
+              "docs/system-audit/phase-2/stages/stage-2.3.json",
+              "docs/system-audit/phase-2/stages/stage-2.4.json",
+              "docs/system-audit/phase-3/api-contract-matrix.json",
+              "docs/system-audit/phase-3/backend-security-closure.json",
+              "docs/system-audit/phase-3/identity-contract-matrix.json",
+              "docs/system-audit/phase-3/phase-3-closure.json",
+              "docs/system-audit/phase-3/plan-manifest.json",
+              "docs/system-audit/phase-3/stages/stage-3.1.json",
+              "docs/system-audit/phase-3/stages/stage-3.2.json",
+              "docs/system-audit/phase-3/stages/stage-3.3.json",
+              "docs/system-audit/phase-3/stages/stage-3.4.json",
+              "docs/system-audit/phase-3/tenant-security-matrix.json",
+              "docs/system-audit/phase-4/ai-contract-matrix.json",
+              "docs/system-audit/phase-4/media-contract-matrix.json",
+              "docs/system-audit/phase-4/messaging-contract-matrix.json",
+              "docs/system-audit/phase-4/phase-4-closure.json",
+              "docs/system-audit/phase-4/plan-manifest.json",
+              "docs/system-audit/phase-4/stages/stage-4.1.json",
+              "docs/system-audit/phase-4/stages/stage-4.2.json",
+              "docs/system-audit/phase-4/stages/stage-4.3.json",
+              "docs/system-audit/phase-4/stages/stage-4.4.json",
+              "docs/system-audit/phase-4/stages/stage-4.5.json",
+              "docs/system-audit/phase-4/worker-contract-matrix.json",
+              "docs/system-audit/phase-4/worker-messaging-ai-media-closure.json",
+              "docs/system-audit/phase-5/auth-user-flow-matrix.json",
+              "docs/system-audit/phase-5/authenticated-shell-matrix.json",
+              "docs/system-audit/phase-5/frontend-backend-contract-matrix.json",
+              "docs/system-audit/phase-5/frontend-backend-user-flow-closure.json",
+              "docs/system-audit/phase-5/phase-5-closure.json",
+              "docs/system-audit/phase-5/plan-manifest.json",
+              "docs/system-audit/phase-5/real-backend-browser-smoke.json",
+              "docs/system-audit/phase-5/stages/stage-5.1.json",
+              "docs/system-audit/phase-5/stages/stage-5.2.json",
+              "docs/system-audit/phase-5/stages/stage-5.3.json",
+              "docs/system-audit/phase-5/stages/stage-5.4.json",
+              "docs/system-audit/phase-5/stages/stage-5.5.json",
+              "docs/system-audit/phase-6/failure-injection-matrix.json",
+              "docs/system-audit/phase-6/load-capacity-matrix.json",
+              "docs/system-audit/phase-6/observability-contract-matrix.json",
+              "docs/system-audit/phase-6/phase-6-closure-evidence.json",
+              "docs/system-audit/phase-6/phase-6-closure.json",
+              "docs/system-audit/phase-6/plan-manifest.json",
+              "docs/system-audit/phase-6/recovery-operations-matrix.json",
+              "docs/system-audit/phase-6/stages/stage-6.1.json",
+              "docs/system-audit/phase-6/stages/stage-6.2.json",
+              "docs/system-audit/phase-6/stages/stage-6.3.json",
+              "docs/system-audit/phase-6/stages/stage-6.4.json",
+              "docs/system-audit/phase-6/stages/stage-6.5.json",
+              "docs/system-audit/phase-7/ci-release-gate-matrix.json",
+              "docs/system-audit/phase-7/plan-manifest.json",
+              "docs/system-audit/phase-7/release-gate-matrix.json",
+              "docs/system-audit/phase-7/stages/stage-7.1.json",
+              "docs/system-audit/phase-7/stages/stage-7.2.json",
+              "docs/system-audit/phase-7/stages/stage-7.3.json",
+              "docs/system-audit/phase-7/target-environment-reconciliation-matrix.json",
+              "tools/system-audit/cli.mjs",
+              "tools/system-audit/lib/audit-contract.mjs",
+              "tools/system-audit/lib/audit-plan.mjs",
+              "tools/system-audit/lib/environment.mjs",
+              "tools/system-audit/lib/git.mjs",
+              "tools/system-audit/lib/inventory.mjs",
+              "tools/system-audit/phase-2/cli.mjs",
+              "tools/system-audit/phase-2/phase-2-contract.mjs",
+              "tools/system-audit/phase-2/phase-2-plan.mjs",
+              "tools/system-audit/phase-2/phase-2.test.mjs",
+              "tools/system-audit/phase-3/cli.mjs",
+              "tools/system-audit/phase-3/phase-3-contract.mjs",
+              "tools/system-audit/phase-3/phase-3-plan.mjs",
+              "tools/system-audit/phase-3/phase-3.test.mjs",
+              "tools/system-audit/phase-4/cli.mjs",
+              "tools/system-audit/phase-4/phase-4-contract.mjs",
+              "tools/system-audit/phase-4/phase-4-plan.mjs",
+              "tools/system-audit/phase-4/phase-4.test.mjs",
+              "tools/system-audit/phase-5/cli.mjs",
+              "tools/system-audit/phase-5/phase-5-contract.mjs",
+              "tools/system-audit/phase-5/phase-5-plan.mjs",
+              "tools/system-audit/phase-5/phase-5.test.mjs",
+              "tools/system-audit/phase-5/real-backend-smoke.mjs",
+              "tools/system-audit/phase-6/cli.mjs",
+              "tools/system-audit/phase-6/phase-6-contract.mjs",
+              "tools/system-audit/phase-6/phase-6-plan.mjs",
+              "tools/system-audit/phase-6/phase-6.test.mjs",
+              "tools/system-audit/phase-7/cli.mjs",
+              "tools/system-audit/phase-7/phase-7-contract.mjs",
+              "tools/system-audit/phase-7/phase-7-plan.mjs",
+              "tools/system-audit/phase-7/phase-7.test.mjs",
+              "tools/system-audit/system-audit.test.mjs"
+            ]
+          },
+          {
+            "code": "owner_actions_required",
+            "ownerControlled": true,
+            "details": [
+              "meta_whatsapp_business",
+              "zai_glm_ai_provider",
+              "production_secrets",
+              "production_supabase_and_migrations",
+              "manual_transfer_operations",
+              "incident_monitoring_and_rollback",
+              "explicit_production_release_approval"
+            ]
+          },
+          {
+            "code": "target_probe_not_run_by_policy",
+            "ownerControlled": true,
+            "details": "current production evidence requires separate authorized target operation"
+          },
+          {
+            "code": "explicit_production_release_approval_required",
+            "ownerControlled": true,
+            "details": "productionDecision=NO-GO"
+          }
+        ]
+      }
+    },
+    {
+      "order": 8,
+      "description": "Write phase-7 closure evidence, state and closure record; mark CLOSED only after operations 1-7 pass and set nextPhaseUnlocked to false.",
+      "id": "closure_write",
+      "status": "PASS",
+      "details": "closure files are written after operations 1-7"
+    }
+  ],
+  "outputFiles": [
+    {
+      "path": "docs/system-audit/phase-7/phase-7-closure-evidence.json",
+      "sha256": "bc6ad0953cfe5c0529f9c5b407f869ad51023626a68e87e31a3d7689177052ba"
+    },
+    {
+      "path": "docs/system-audit/phase-7/phase-7-closure.json",
+      "sha256": "aad5c304cdb90ff9a4a88886a845500fea6f829f683d1d6439b53437a97c4167"
+    }
+  ],
+  "verification": {
+    "rules": [
+      "all previous stages VERIFIED",
+      "all digests valid",
+      "final tests PASS",
+      "production decision is truthful NO-GO where required",
+      "no live action executed",
+      "closure state is CLOSED and next phase remains locked"
+    ],
+    "result": "PASS",
+    "outputDigest": "bc6ad0953cfe5c0529f9c5b407f869ad51023626a68e87e31a3d7689177052ba",
+    "testResults": [
+      {
+        "name": "phase-7-contract-final",
+        "command": "C:\\Program Files\\nodejs\\node.exe --test tools/system-audit/phase-7/phase-7.test.mjs",
+        "status": "PASS",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationMs": 889,
+        "outputTail": null
+      }
+    ]
+  },
+  "blockers": [
+    {
+      "code": "dirty_working_tree",
+      "ownerControlled": true,
+      "details": [
+        ".github/workflows/hosted-sandbox-deploy.yml",
+        ".github/workflows/hosted-sandbox-product-ci.yml",
+        "app/package.json",
+        "app/tests/request-id-error-propagation.test.ts",
+        "tools/hosted-sandbox/deploy/hosted-sandbox-deploy.test.mjs",
+        "tools/hosted-sandbox/deploy/lib/supabase-schema-contract.mjs",
+        "tools/hosted-sandbox/deploy/workflow-templates/hosted-sandbox-deploy.yml",
+        "tools/hosted-sandbox/deploy/workflow-templates/hosted-sandbox-product-ci.yml",
+        "docs/system-audit/phase-1/baseline.json",
+        "docs/system-audit/phase-1/coverage-matrix.json",
+        "docs/system-audit/phase-1/environment-map.json",
+        "docs/system-audit/phase-1/phase-1-closure.json",
+        "docs/system-audit/phase-1/phase-entry.json",
+        "docs/system-audit/phase-1/plan-manifest.json",
+        "docs/system-audit/phase-1/stages/stage-1.1.json",
+        "docs/system-audit/phase-1/stages/stage-1.2.json",
+        "docs/system-audit/phase-1/stages/stage-1.3.json",
+        "docs/system-audit/phase-1/stages/stage-1.4.json",
+        "docs/system-audit/phase-1/system-inventory.json",
+        "docs/system-audit/phase-2/catalog-reconciliation.json",
+        "docs/system-audit/phase-2/isolated-reconciliation.json",
+        "docs/system-audit/phase-2/phase-2-closure.json",
+        "docs/system-audit/phase-2/phase-entry.json",
+        "docs/system-audit/phase-2/plan-manifest.json",
+        "docs/system-audit/phase-2/schema-contract-matrix.json",
+        "docs/system-audit/phase-2/schema-diff-classification.json",
+        "docs/system-audit/phase-2/stages/stage-2.1.json",
+        "docs/system-audit/phase-2/stages/stage-2.2.json",
+        "docs/system-audit/phase-2/stages/stage-2.3.json",
+        "docs/system-audit/phase-2/stages/stage-2.4.json",
+        "docs/system-audit/phase-3/api-contract-matrix.json",
+        "docs/system-audit/phase-3/backend-security-closure.json",
+        "docs/system-audit/phase-3/identity-contract-matrix.json",
+        "docs/system-audit/phase-3/phase-3-closure.json",
+        "docs/system-audit/phase-3/plan-manifest.json",
+        "docs/system-audit/phase-3/stages/stage-3.1.json",
+        "docs/system-audit/phase-3/stages/stage-3.2.json",
+        "docs/system-audit/phase-3/stages/stage-3.3.json",
+        "docs/system-audit/phase-3/stages/stage-3.4.json",
+        "docs/system-audit/phase-3/tenant-security-matrix.json",
+        "docs/system-audit/phase-4/ai-contract-matrix.json",
+        "docs/system-audit/phase-4/media-contract-matrix.json",
+        "docs/system-audit/phase-4/messaging-contract-matrix.json",
+        "docs/system-audit/phase-4/phase-4-closure.json",
+        "docs/system-audit/phase-4/plan-manifest.json",
+        "docs/system-audit/phase-4/stages/stage-4.1.json",
+        "docs/system-audit/phase-4/stages/stage-4.2.json",
+        "docs/system-audit/phase-4/stages/stage-4.3.json",
+        "docs/system-audit/phase-4/stages/stage-4.4.json",
+        "docs/system-audit/phase-4/stages/stage-4.5.json",
+        "docs/system-audit/phase-4/worker-contract-matrix.json",
+        "docs/system-audit/phase-4/worker-messaging-ai-media-closure.json",
+        "docs/system-audit/phase-5/auth-user-flow-matrix.json",
+        "docs/system-audit/phase-5/authenticated-shell-matrix.json",
+        "docs/system-audit/phase-5/frontend-backend-contract-matrix.json",
+        "docs/system-audit/phase-5/frontend-backend-user-flow-closure.json",
+        "docs/system-audit/phase-5/phase-5-closure.json",
+        "docs/system-audit/phase-5/plan-manifest.json",
+        "docs/system-audit/phase-5/real-backend-browser-smoke.json",
+        "docs/system-audit/phase-5/stages/stage-5.1.json",
+        "docs/system-audit/phase-5/stages/stage-5.2.json",
+        "docs/system-audit/phase-5/stages/stage-5.3.json",
+        "docs/system-audit/phase-5/stages/stage-5.4.json",
+        "docs/system-audit/phase-5/stages/stage-5.5.json",
+        "docs/system-audit/phase-6/failure-injection-matrix.json",
+        "docs/system-audit/phase-6/load-capacity-matrix.json",
+        "docs/system-audit/phase-6/observability-contract-matrix.json",
+        "docs/system-audit/phase-6/phase-6-closure-evidence.json",
+        "docs/system-audit/phase-6/phase-6-closure.json",
+        "docs/system-audit/phase-6/plan-manifest.json",
+        "docs/system-audit/phase-6/recovery-operations-matrix.json",
+        "docs/system-audit/phase-6/stages/stage-6.1.json",
+        "docs/system-audit/phase-6/stages/stage-6.2.json",
+        "docs/system-audit/phase-6/stages/stage-6.3.json",
+        "docs/system-audit/phase-6/stages/stage-6.4.json",
+        "docs/system-audit/phase-6/stages/stage-6.5.json",
+        "docs/system-audit/phase-7/ci-release-gate-matrix.json",
+        "docs/system-audit/phase-7/plan-manifest.json",
+        "docs/system-audit/phase-7/release-gate-matrix.json",
+        "docs/system-audit/phase-7/stages/stage-7.1.json",
+        "docs/system-audit/phase-7/stages/stage-7.2.json",
+        "docs/system-audit/phase-7/stages/stage-7.3.json",
+        "docs/system-audit/phase-7/target-environment-reconciliation-matrix.json",
+        "tools/system-audit/cli.mjs",
+        "tools/system-audit/lib/audit-contract.mjs",
+        "tools/system-audit/lib/audit-plan.mjs",
+        "tools/system-audit/lib/environment.mjs",
+        "tools/system-audit/lib/git.mjs",
+        "tools/system-audit/lib/inventory.mjs",
+        "tools/system-audit/phase-2/cli.mjs",
+        "tools/system-audit/phase-2/phase-2-contract.mjs",
+        "tools/system-audit/phase-2/phase-2-plan.mjs",
+        "tools/system-audit/phase-2/phase-2.test.mjs",
+        "tools/system-audit/phase-3/cli.mjs",
+        "tools/system-audit/phase-3/phase-3-contract.mjs",
+        "tools/system-audit/phase-3/phase-3-plan.mjs",
+        "tools/system-audit/phase-3/phase-3.test.mjs",
+        "tools/system-audit/phase-4/cli.mjs",
+        "tools/system-audit/phase-4/phase-4-contract.mjs",
+        "tools/system-audit/phase-4/phase-4-plan.mjs",
+        "tools/system-audit/phase-4/phase-4.test.mjs",
+        "tools/system-audit/phase-5/cli.mjs",
+        "tools/system-audit/phase-5/phase-5-contract.mjs",
+        "tools/system-audit/phase-5/phase-5-plan.mjs",
+        "tools/system-audit/phase-5/phase-5.test.mjs",
+        "tools/system-audit/phase-5/real-backend-smoke.mjs",
+        "tools/system-audit/phase-6/cli.mjs",
+        "tools/system-audit/phase-6/phase-6-contract.mjs",
+        "tools/system-audit/phase-6/phase-6-plan.mjs",
+        "tools/system-audit/phase-6/phase-6.test.mjs",
+        "tools/system-audit/phase-7/cli.mjs",
+        "tools/system-audit/phase-7/phase-7-contract.mjs",
+        "tools/system-audit/phase-7/phase-7-plan.mjs",
+        "tools/system-audit/phase-7/phase-7.test.mjs",
+        "tools/system-audit/system-audit.test.mjs"
+      ]
+    },
+    {
+      "code": "owner_actions_required",
+      "ownerControlled": true,
+      "details": [
+        "meta_whatsapp_business",
+        "zai_glm_ai_provider",
+        "production_secrets",
+        "production_supabase_and_migrations",
+        "manual_transfer_operations",
+        "incident_monitoring_and_rollback",
+        "explicit_production_release_approval"
+      ]
+    },
+    {
+      "code": "target_probe_not_run_by_policy",
+      "ownerControlled": true,
+      "details": "current production evidence requires separate authorized target operation"
+    },
+    {
+      "code": "explicit_production_release_approval_required",
+      "ownerControlled": true,
+      "details": "productionDecision=NO-GO"
+    }
+  ],
+  "evidenceDigest": "0c12fa8aae3eb6b85faadd95f2c7997a81b3acb2b5eaba5f331ac4a015613684"
+}

@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "aiya-system-audit-stage-evidence-v1",
+  "runId": "phase-2-2.4-20260907225721014",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-2",
+  "stageId": "2.4",
+  "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+  "status": "VERIFIED",
+  "operations": [
+    {
+      "order": 1,
+      "description": "Publish kapsamindaki zorunlu RPC, signature, return/error behavior ve privilege beklentilerini manifestte tanimla.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-2/schema-contract-matrix.json"
+      ]
+    },
+    {
+      "order": 2,
+      "description": "Deploy preflight icinde servis-rolu basari/alan hatasi probe'larini ve anon privilege-denied probe'larini calistir.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-2/schema-contract-matrix.json"
+      ]
+    },
+    {
+      "order": 3,
+      "description": "Missing helper, incorrect grant, wrong signature ve eski release uyumsuzlugunu deploy blocker yap.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-2/schema-contract-matrix.json"
+      ]
+    },
+    {
+      "order": 4,
+      "description": "Eski release ile yeni release arasinda schema compatibility matrix ve rollback incompatibility kaydi uret.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-2/schema-contract-matrix.json"
+      ]
+    }
+  ],
+  "outputFiles": [
+    {
+      "path": "docs/system-audit/phase-2/schema-contract-matrix.json",
+      "sha256": "f42f5d9b4080b0dafaa83e178def36887fd5241fcdb4508ed56634a66a07ae9a"
+    }
+  ],
+  "verification": {
+    "rules": [
+      "Her zorunlu nesne icin imza, davranis ve privilege kaniti bulunmali.",
+      "Beklenmeyen 2xx, PGRST202 veya permission drift PASS sayilmamali.",
+      "Eski release rollback karari acik bir compatibility sonucuna dayanmali.",
+      "Preflight contract testi local fixture ve remote read-only fixture ile PASS olmali."
+    ],
+    "result": "PASS",
+    "outputDigest": "f42f5d9b4080b0dafaa83e178def36887fd5241fcdb4508ed56634a66a07ae9a"
+  },
+  "blockers": [],
+  "evidenceDigest": "1455d6ecfacd1dbcc40cbe27c4aac82ea2fd90a38a3431434e00d865b5188e1b"
+}

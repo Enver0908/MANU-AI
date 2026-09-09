@@ -1,0 +1,156 @@
+{
+  "schemaVersion": "aiya-system-audit-stage-evidence-v1",
+  "runId": "phase-6-6.4-20260908123505818",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-6",
+  "stageId": "6.4",
+  "title": "Backup, restore, worker ve rollback kurtarma kanitini kapat",
+  "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+  "verifiedAt": "2026-09-08T12:35:05.818Z",
+  "status": "VERIFIED",
+  "operations": [
+    {
+      "order": 1,
+      "description": "6.3 VERIFIED precondition'ini ve digest zincirini dogrula.",
+      "id": "phase_precondition",
+      "status": "PASS",
+      "details": "6.3 closure and digest were checked by the CLI"
+    },
+    {
+      "order": 2,
+      "description": "Backup/restore kaynaklarinin mevcut oldugunu; backup scriptinin default dry-run ve remote approval gate'ini kontrol et.",
+      "id": "recovery_sources_and_backup_gate",
+      "status": "PASS",
+      "details": []
+    },
+    {
+      "order": 3,
+      "description": "Encryption, SHA-256 manifest, database URL secret redaction ve gecici dump cleanup'i kontrol et.",
+      "id": "encrypted_hash_manifest",
+      "status": "PASS",
+      "details": [
+        "app/scripts/backup-hosted-supabase.mjs",
+        "app/scripts/restore-hosted-supabase.mjs",
+        "app/scripts/lib/hosted-sandbox-backup-manifest.mjs",
+        "app/scripts/hosted-sandbox-backup-restore.test.mjs",
+        "docs/BACKUP_RESTORE_RUNBOOK.md"
+      ]
+    },
+    {
+      "order": 4,
+      "description": "Restore hash, source-target isolation, approval schema, confirmation ve expiry kontrollerini kontrol et.",
+      "id": "restore_isolated_approval",
+      "status": "PASS",
+      "details": [
+        "app/scripts/restore-hosted-supabase.mjs",
+        "app/scripts/lib/hosted-sandbox-backup-manifest.mjs",
+        "app/scripts/hosted-sandbox-backup-restore.test.mjs",
+        "docs/BACKUP_RESTORE_RUNBOOK.md"
+      ]
+    },
+    {
+      "order": 5,
+      "description": "Worker long-running/one-shot komutlarini, required env ve production readiness blocker'larini runbook ile karsilastir.",
+      "id": "worker_one_shot_and_gates",
+      "status": "PASS",
+      "details": [
+        "app/src/lib/production-worker-release-contracts.ts",
+        "docs/PRODUCTION_READINESS_STAGE_1_PHASE_5_OPERATIONS_RUNBOOK.md"
+      ]
+    },
+    {
+      "order": 6,
+      "description": "Incident/backup restore/rollback runbook'larinin production NO-GO ve evidence kayit adimlarini kontrol et.",
+      "id": "rollback_runbook_and_no_go",
+      "status": "PASS",
+      "details": [
+        "app/scripts/lib/hosted-sandbox-backup-manifest.mjs",
+        "app/src/lib/production-worker-release-contracts.ts",
+        "docs/BACKUP_RESTORE_RUNBOOK.md",
+        "docs/PRODUCTION_READINESS_STAGE_1_PHASE_5_OPERATIONS_RUNBOOK.md"
+      ]
+    },
+    {
+      "order": 7,
+      "description": "Recovery matrix inputlarini, remote restore boundary'sini ve runbook evidence final listesini kontrol et.",
+      "id": "recovery_boundary_closed",
+      "status": "PASS",
+      "details": null
+    },
+    {
+      "order": 8,
+      "description": "Backup/restore, manifest ve worker release test grubunu remote apply yapmadan calistir; PASS ise matrix ve operation evidence dosyasini source commit/digest ile yaz.",
+      "id": "recovery_tests",
+      "status": "PASS",
+      "details": [
+        {
+          "name": "phase-6-backup-restore",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "failure": null
+        },
+        {
+          "name": "phase-6-worker-recovery",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "fileCount": 1,
+          "summary": {
+            "passedFiles": 1,
+            "failedFiles": 0,
+            "passedTests": 3,
+            "failedTests": 0,
+            "skippedTests": 0
+          },
+          "failure": null
+        }
+      ]
+    }
+  ],
+  "outputFiles": [
+    {
+      "path": "docs/system-audit/phase-6/recovery-operations-matrix.json",
+      "sha256": "e04fb63cda916777552d7cfe7909c2a7dfa46bae43407e22eaa19cb12445d1e0"
+    }
+  ],
+  "verification": {
+    "rules": [
+      "backup/restore gates are fail-closed",
+      "secrets stay out of process args/output",
+      "isolated restore approval is mandatory",
+      "worker rollback operations are explicit",
+      "remote apply is not executed",
+      "targeted recovery tests pass"
+    ],
+    "result": "PASS",
+    "outputDigest": "e04fb63cda916777552d7cfe7909c2a7dfa46bae43407e22eaa19cb12445d1e0",
+    "testResults": [
+      {
+        "name": "phase-6-backup-restore",
+        "status": "PASS",
+        "exitCode": 0,
+        "timedOut": false,
+        "failure": null
+      },
+      {
+        "name": "phase-6-worker-recovery",
+        "status": "PASS",
+        "exitCode": 0,
+        "timedOut": false,
+        "fileCount": 1,
+        "summary": {
+          "passedFiles": 1,
+          "failedFiles": 0,
+          "passedTests": 3,
+          "failedTests": 0,
+          "skippedTests": 0
+        },
+        "failure": null
+      }
+    ]
+  },
+  "blockers": [],
+  "evidenceDigest": "d59d51ccab5c2aee9104db5d6340bbc8daf080bba7aa10fe1e4a3dcea8aa9fba"
+}

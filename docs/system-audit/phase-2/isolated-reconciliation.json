@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "aiya-system-audit-phase-2-isolated-reconciliation-v1",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-2",
+  "stageId": "2.3",
+  "generatedAt": "2026-09-07T22:55:52.853Z",
+  "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+  "status": "PASS",
+  "steps": {
+    "target": {
+      "kind": "local_supabase",
+      "projectId": "manu-ai-local",
+      "linkedWrites": false,
+      "productionWrites": false
+    },
+    "start": {
+      "status": "PASS",
+      "exitCode": 0
+    },
+    "status": {
+      "status": "PASS",
+      "exitCode": 0,
+      "projectId": "manu-ai-local",
+      "apiUrlPresent": true
+    },
+    "cleanInstall": {
+      "status": "PASS",
+      "exitCode": 0
+    },
+    "syntheticDataIntegrity": {
+      "status": "PASS",
+      "exitCode": 0,
+      "passed": 56,
+      "failed": 0,
+      "skipped": 0,
+      "total": 56
+    },
+    "retryability": {
+      "status": "PASS",
+      "exitCode": 0,
+      "purpose": "repeat_clean_install_after_synthetic_records"
+    },
+    "schemaDiff": {
+      "status": "PASS",
+      "method": "local_schema_dump_vs_final_migrations",
+      "exitCode": 0,
+      "bytes": 1099260,
+      "localMissingCount": 0,
+      "localExtraCount": 0
+    },
+    "upgradeCopy": {
+      "status": "PASS",
+      "method": "clean_local_migration_catalog_vs_real_remote_catalog",
+      "localSchemaSha256": "96270b27f410ff6f469985355bf71fcccdda01fd139c4e9c0ca261d29a5d1c5e",
+      "remoteCatalogDigest": "d8ed07cb2d200e66e77aa48fc289122b31a886a8b0656d059257fcea8b5798e4",
+      "missingCount": 0,
+      "extraCount": 0,
+      "syntheticRecords": {
+        "status": "PASS",
+        "exitCode": 0,
+        "passed": 56,
+        "failed": 0,
+        "skipped": 0,
+        "total": 56
+      }
+    },
+    "interruptedMigrationRecovery": {
+      "status": "PASS",
+      "interruptedExitCode": null,
+      "interruptedTimedOut": true,
+      "restartStopExitCode": 0,
+      "restartExitCode": 0,
+      "recoveryExitCode": 0
+    },
+    "stop": {
+      "status": "PASS",
+      "exitCode": 0
+    }
+  },
+  "blockers": [],
+  "mutationBoundary": {
+    "production": false,
+    "linkedSupabase": false,
+    "isolatedLocalSupabase": true
+  }
+}

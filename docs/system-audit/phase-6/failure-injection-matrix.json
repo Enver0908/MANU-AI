@@ -1,0 +1,317 @@
+{
+  "schemaVersion": "aiya-system-audit-phase-6-failure-injection-matrix-v1",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-6",
+  "status": "PASS",
+  "generatedAt": "2026-09-08T12:34:40.272Z",
+  "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+  "interpretation": "Failure injection is deterministic and test-bound; no destructive process kill or remote dependency outage is executed.",
+  "checks": [
+    {
+      "id": "worker_sources_and_lifecycle",
+      "description": "worker sources and claim/lease/retry/terminal lifecycle",
+      "pass": true,
+      "evidence": [
+        "app/src/lib/phase-85-stage-4b3-durable-media-worker.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-audio-worker.ts",
+        "app/src/lib/phase-85-stage-4c-run-service.ts",
+        "app/src/lib/app-errors.ts",
+        "app/src/lib/phase-79g-unified-production-scale-rehearsal.ts",
+        "app/tests/request-id-error-propagation.test.ts"
+      ],
+      "missing": []
+    },
+    {
+      "id": "ai_failure_outcome",
+      "description": "AI run abort/failure and retryable event outcome",
+      "pass": true,
+      "evidence": [
+        "app/src/lib/phase-85-stage-4b4-durable-audio-worker.ts",
+        "app/src/lib/phase-85-stage-4c-run-service.ts"
+      ]
+    },
+    {
+      "id": "rate_limit_fail_closed",
+      "description": "rate limit RPC, 429 and Retry-After contract",
+      "pass": true,
+      "evidence": [
+        "app/src/lib/phase-85-stage-4b3-durable-media-worker.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-audio-worker.ts",
+        "app/src/lib/rate-limit.ts",
+        "app/src/lib/app-errors.ts"
+      ]
+    },
+    {
+      "id": "idempotency_duplicate_guard",
+      "description": "idempotency, duplicate, revision or lease-token guard",
+      "pass": true,
+      "evidence": [
+        "app/src/lib/phase-85-stage-4b3-durable-media-worker.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-audio-worker.ts",
+        "app/src/lib/phase-85-stage-4c-run-service.ts",
+        "app/src/lib/app-errors.ts",
+        "app/src/lib/phase-79g-unified-production-scale-rehearsal.ts",
+        "app/tests/request-id-error-propagation.test.ts"
+      ]
+    },
+    {
+      "id": "request_id_structured_error",
+      "description": "requestId and structured no-store API error",
+      "pass": true,
+      "evidence": [
+        "app/src/lib/phase-85-stage-4b4-durable-audio-worker.ts",
+        "app/src/lib/phase-85-stage-4c-run-service.ts",
+        "app/src/lib/app-errors.ts",
+        "app/tests/request-id-error-propagation.test.ts"
+      ]
+    },
+    {
+      "id": "failure_boundary_closed",
+      "description": "remote/provider failure injection boundary remains closed",
+      "pass": true
+    },
+    {
+      "id": "deterministic_failure_tests",
+      "description": "targeted deterministic failure test result",
+      "pass": true,
+      "deferred": true
+    }
+  ],
+  "operationChecks": [
+    {
+      "id": "phase_precondition",
+      "pass": true,
+      "details": "6.1 closure and digest were checked by the CLI"
+    },
+    {
+      "id": "worker_sources_and_lifecycle",
+      "pass": true,
+      "details": []
+    },
+    {
+      "id": "ai_failure_outcome",
+      "pass": true,
+      "details": [
+        "app/src/lib/phase-85-stage-4b4-durable-audio-worker.ts",
+        "app/src/lib/phase-85-stage-4c-run-service.ts"
+      ]
+    },
+    {
+      "id": "rate_limit_fail_closed",
+      "pass": true,
+      "details": [
+        "app/src/lib/phase-85-stage-4b3-durable-media-worker.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-audio-worker.ts",
+        "app/src/lib/rate-limit.ts",
+        "app/src/lib/app-errors.ts"
+      ]
+    },
+    {
+      "id": "idempotency_duplicate_guard",
+      "pass": true,
+      "details": [
+        "app/src/lib/phase-85-stage-4b3-durable-media-worker.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-audio-worker.ts",
+        "app/src/lib/phase-85-stage-4c-run-service.ts",
+        "app/src/lib/app-errors.ts",
+        "app/src/lib/phase-79g-unified-production-scale-rehearsal.ts",
+        "app/tests/request-id-error-propagation.test.ts"
+      ]
+    },
+    {
+      "id": "request_id_structured_error",
+      "pass": true,
+      "details": [
+        "app/src/lib/phase-85-stage-4b4-durable-audio-worker.ts",
+        "app/src/lib/phase-85-stage-4c-run-service.ts",
+        "app/src/lib/app-errors.ts",
+        "app/tests/request-id-error-propagation.test.ts"
+      ]
+    },
+    {
+      "id": "failure_boundary_closed",
+      "pass": true,
+      "details": null
+    },
+    {
+      "id": "deterministic_failure_tests",
+      "pass": true,
+      "details": [
+        {
+          "name": "phase-6-failure-injection",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "fileCount": 5,
+          "summary": {
+            "passedFiles": 5,
+            "failedFiles": 0,
+            "passedTests": 21,
+            "failedTests": 0,
+            "skippedTests": 0
+          },
+          "failure": null
+        }
+      ]
+    }
+  ],
+  "blockers": [],
+  "sourceFiles": [
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-durable-media-worker.ts",
+      "exists": true,
+      "bytes": 9086,
+      "sha256": "56779ff417adc02822d4183d7467650d6b4e1ed3994f790cf430cc71c00acc8a"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-durable-audio-worker.ts",
+      "exists": true,
+      "bytes": 10805,
+      "sha256": "7afab1252d48c82c42be758fc46e0270d8ecf503c2b61777cf883bd079ddc795"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4c-run-service.ts",
+      "exists": true,
+      "bytes": 46269,
+      "sha256": "c414ca915c39bc7e70183194b5d2680023a625e984168ed064583c4fb45734bd"
+    },
+    {
+      "source": "app/src/lib/rate-limit.ts",
+      "exists": true,
+      "bytes": 5145,
+      "sha256": "5102265569bdae84788107a79cbf167b0dc70ba7fdb73f388e7caf71d8c12c9f"
+    },
+    {
+      "source": "app/src/lib/app-errors.ts",
+      "exists": true,
+      "bytes": 1801,
+      "sha256": "a768be692b3c06ebcb69767834d1faeab43c540a06deb5e9fd4fcf1f5adc98bd"
+    },
+    {
+      "source": "app/src/lib/phase-79g-unified-production-scale-rehearsal.ts",
+      "exists": true,
+      "bytes": 14017,
+      "sha256": "05fe40defd37fc0f9f0dfbf92b0d273fc48d43e5cf77aa65237deecc706657c7"
+    },
+    {
+      "source": "app/tests/request-id-error-propagation.test.ts",
+      "exists": true,
+      "bytes": 2391,
+      "sha256": "383bc87f2b031107c07ab98a7669624200c11c377acb4c4c041bf0fe81702d78"
+    }
+  ],
+  "matrixDigest": "7e5ac7fb06b97a74d8ea80f9d18f1743e201b2d9c797d38abc3ad52477041628",
+  "testResults": [
+    {
+      "name": "phase-6-failure-injection",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "fileCount": 5,
+      "summary": {
+        "passedFiles": 5,
+        "failedFiles": 0,
+        "passedTests": 21,
+        "failedTests": 0,
+        "skippedTests": 0
+      },
+      "failure": null
+    }
+  ],
+  "testsWereAllowed": true,
+  "operationResults": [
+    {
+      "order": 1,
+      "description": "6.1 VERIFIED precondition'ini ve source/evidence digestlerini dogrula.",
+      "id": "phase_precondition",
+      "status": "PASS",
+      "details": "6.1 closure and digest were checked by the CLI"
+    },
+    {
+      "order": 2,
+      "description": "Media ve audio worker kaynaklarinin mevcut oldugunu ve claim, lease renewal, timeout, retry, release ve terminal failure yollarini cikart.",
+      "id": "worker_sources_and_lifecycle",
+      "status": "PASS",
+      "details": []
+    },
+    {
+      "order": 3,
+      "description": "AI run service kaynaklarinda timeout, abort, run.failed, retryable ve stale-context kapanislarini kontrol et.",
+      "id": "ai_failure_outcome",
+      "status": "PASS",
+      "details": [
+        "app/src/lib/phase-85-stage-4b4-durable-audio-worker.ts",
+        "app/src/lib/phase-85-stage-4c-run-service.ts"
+      ]
+    },
+    {
+      "order": 4,
+      "description": "Rate-limit RPC, 429 response, Retry-After ve fail-closed hata yolunu kontrol et.",
+      "id": "rate_limit_fail_closed",
+      "status": "PASS",
+      "details": [
+        "app/src/lib/phase-85-stage-4b3-durable-media-worker.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-audio-worker.ts",
+        "app/src/lib/rate-limit.ts",
+        "app/src/lib/app-errors.ts"
+      ]
+    },
+    {
+      "order": 5,
+      "description": "Duplicate/idempotency, revision veya lease token guard'larini tenant scope ile birlikte kontrol et.",
+      "id": "idempotency_duplicate_guard",
+      "status": "PASS",
+      "details": [
+        "app/src/lib/phase-85-stage-4b3-durable-media-worker.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-audio-worker.ts",
+        "app/src/lib/phase-85-stage-4c-run-service.ts",
+        "app/src/lib/app-errors.ts",
+        "app/src/lib/phase-79g-unified-production-scale-rehearsal.ts",
+        "app/tests/request-id-error-propagation.test.ts"
+      ]
+    },
+    {
+      "order": 6,
+      "description": "Request-id ve structured error propagation testlerini calistir; PII/secret leakage olmamasini kontrol et.",
+      "id": "request_id_structured_error",
+      "status": "PASS",
+      "details": [
+        "app/src/lib/phase-85-stage-4b4-durable-audio-worker.ts",
+        "app/src/lib/phase-85-stage-4c-run-service.ts",
+        "app/src/lib/app-errors.ts",
+        "app/tests/request-id-error-propagation.test.ts"
+      ]
+    },
+    {
+      "order": 7,
+      "description": "Failure matrix inputlarini, remote/provider boundary'sini ve final blocker listesini kontrol et.",
+      "id": "failure_boundary_closed",
+      "status": "PASS",
+      "details": null
+    },
+    {
+      "order": 8,
+      "description": "Deterministic worker, AI ve rate-limit test grubunu calistir; PASS ise matrix ve operation evidence dosyasini source commit/digest ile yaz.",
+      "id": "deterministic_failure_tests",
+      "status": "PASS",
+      "details": [
+        {
+          "name": "phase-6-failure-injection",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "fileCount": 5,
+          "summary": {
+            "passedFiles": 5,
+            "failedFiles": 0,
+            "passedTests": 21,
+            "failedTests": 0,
+            "skippedTests": 0
+          },
+          "failure": null
+        }
+      ]
+    }
+  ]
+}

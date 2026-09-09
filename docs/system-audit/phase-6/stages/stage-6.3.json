@@ -1,0 +1,136 @@
+{
+  "schemaVersion": "aiya-system-audit-stage-evidence-v1",
+  "runId": "phase-6-6.3-20260908123502287",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-6",
+  "stageId": "6.3",
+  "title": "Gozlemlenebilirlik, health ve alarm sinyali sozlesmesini kapat",
+  "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+  "verifiedAt": "2026-09-08T12:35:02.287Z",
+  "status": "VERIFIED",
+  "operations": [
+    {
+      "order": 1,
+      "description": "6.2 VERIFIED precondition'ini ve digest zincirini dogrula.",
+      "id": "phase_precondition",
+      "status": "PASS",
+      "details": "6.2 closure and digest were checked by the CLI"
+    },
+    {
+      "order": 2,
+      "description": "Release health ve commercial admin health route kaynaklarinin mevcut oldugunu; status, timeout, no-store ve dependency failure davranisini kontrol et.",
+      "id": "health_sources_and_contract",
+      "status": "PASS",
+      "details": []
+    },
+    {
+      "order": 3,
+      "description": "Operational health snapshot alanlarini aggregate-only ve launch-blocking sinyallerle eslestir.",
+      "id": "aggregate_snapshot",
+      "status": "PASS",
+      "details": [
+        "app/src/lib/operational-health.ts",
+        "app/src/lib/operational-health.test.ts"
+      ]
+    },
+    {
+      "order": 4,
+      "description": "Shell metric sink sanitize/allowlist ve raw URL/clientId reddini kontrol et.",
+      "id": "metric_privacy_allowlist",
+      "status": "PASS",
+      "details": [
+        "app/src/lib/operational-health.test.ts",
+        "app/src/lib/phase-85-stage-5-shell-metric-sink.ts",
+        "app/src/lib/phase-85-stage-5-shell-metric-sink.test.ts",
+        "app/src/lib/channel-adapter-rollback.ts"
+      ]
+    },
+    {
+      "order": 5,
+      "description": "Channel adapter health counters ve rollback scope'larinin audit/fail-closed davranisini kontrol et.",
+      "id": "adapter_rollback_signal",
+      "status": "PASS",
+      "details": [
+        "app/src/lib/operational-health.ts",
+        "app/src/lib/channel-adapter-health.ts",
+        "app/src/lib/channel-adapter-rollback.ts"
+      ]
+    },
+    {
+      "order": 6,
+      "description": "Worker release manifest, one-shot command ve production readiness blocker'larini kontrol et.",
+      "id": "worker_operator_blockers",
+      "status": "PASS",
+      "details": [
+        "app/src/lib/production-worker-release-contracts.ts"
+      ]
+    },
+    {
+      "order": 7,
+      "description": "Observability matrix inputlarini, remote/provider boundary'sini ve final blocker listesini kontrol et.",
+      "id": "observability_boundary_closed",
+      "status": "PASS",
+      "details": null
+    },
+    {
+      "order": 8,
+      "description": "Health, metric, rollback, worker ve privacy test grubunu calistir; PASS ise matrix ve operation evidence dosyasini source commit/digest ile yaz.",
+      "id": "observability_tests",
+      "status": "PASS",
+      "details": [
+        {
+          "name": "phase-6-observability",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "fileCount": 4,
+          "summary": {
+            "passedFiles": 4,
+            "failedFiles": 0,
+            "passedTests": 16,
+            "failedTests": 0,
+            "skippedTests": 0
+          },
+          "failure": null
+        }
+      ]
+    }
+  ],
+  "outputFiles": [
+    {
+      "path": "docs/system-audit/phase-6/observability-contract-matrix.json",
+      "sha256": "dcdce3dbb69ef99cf171fdfcad42cfad4640588812ed82d3e6d9148dc3578cc1"
+    }
+  ],
+  "verification": {
+    "rules": [
+      "health routes are no-store and bounded",
+      "aggregate snapshot has privacy guards",
+      "metric sanitizer rejects raw identifiers",
+      "rollback and worker blockers are explicit",
+      "targeted observability tests pass"
+    ],
+    "result": "PASS",
+    "outputDigest": "dcdce3dbb69ef99cf171fdfcad42cfad4640588812ed82d3e6d9148dc3578cc1",
+    "testResults": [
+      {
+        "name": "phase-6-observability",
+        "status": "PASS",
+        "exitCode": 0,
+        "timedOut": false,
+        "fileCount": 4,
+        "summary": {
+          "passedFiles": 4,
+          "failedFiles": 0,
+          "passedTests": 16,
+          "failedTests": 0,
+          "skippedTests": 0
+        },
+        "failure": null
+      }
+    ]
+  },
+  "blockers": [],
+  "evidenceDigest": "ae015604ff783d53ff2d4701b054b1250b49f1697292a7ec254c1d2b4a9095fd"
+}

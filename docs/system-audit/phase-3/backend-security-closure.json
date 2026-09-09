@@ -1,0 +1,111 @@
+{
+  "schemaVersion": "aiya-system-audit-phase-3-backend-security-closure-v1",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-3",
+  "generatedAt": "2026-09-07T23:31:07.881Z",
+  "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+  "status": "PASS",
+  "digestChecks": [
+    {
+      "stageId": "3.1",
+      "file": "api-contract-matrix.json",
+      "status": "PASS"
+    },
+    {
+      "stageId": "3.1",
+      "file": "docs/system-audit/phase-3/stages/stage-3.1.json",
+      "status": "PASS"
+    },
+    {
+      "stageId": "3.2",
+      "file": "identity-contract-matrix.json",
+      "status": "PASS"
+    },
+    {
+      "stageId": "3.2",
+      "file": "docs/system-audit/phase-3/stages/stage-3.2.json",
+      "status": "PASS"
+    },
+    {
+      "stageId": "3.3",
+      "file": "tenant-security-matrix.json",
+      "status": "PASS"
+    },
+    {
+      "stageId": "3.3",
+      "file": "docs/system-audit/phase-3/stages/stage-3.3.json",
+      "status": "PASS"
+    }
+  ],
+  "finalTests": [
+    {
+      "name": "api-errors",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "summary": {
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0
+      },
+      "output": "RUN v4.1.7 C:/Users/Dell/OneDrive/Masaüstü/MANU-AI/app ✓ src/app/api/api-errors.test.ts (12 tests) 204ms Test Files 1 passed (1) Tests 12 passed (12) Start at 02:30:25 Duration 5.64s (transform 3.29s, setup 0ms, import 5.08s, tests 204ms, environment 1ms) (!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite: - ESM syntax in a file loaded as CommonJS (vitest.config.ts:1:1). Use a `.mjs` extension or set `\"type\": \"module\"` in the closest package.json Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning."
+    },
+    {
+      "name": "auth-context",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "summary": {
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0
+      },
+      "output": "RUN v4.1.7 C:/Users/Dell/OneDrive/Masaüstü/MANU-AI/app ✓ src/lib/auth-context.test.ts (16 tests) 31ms Test Files 1 passed (1) Tests 16 passed (16) Start at 02:30:39 Duration 881ms (transform 256ms, setup 0ms, import 568ms, tests 31ms, environment 0ms) (!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite: - ESM syntax in a file loaded as CommonJS (vitest.config.ts:1:1). Use a `.mjs` extension or set `\"type\": \"module\"` in the closest package.json Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning."
+    },
+    {
+      "name": "admin-access",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "summary": {
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0
+      },
+      "output": "RUN v4.1.7 C:/Users/Dell/OneDrive/Masaüstü/MANU-AI/app ✓ src/lib/commercial-admin-access.test.ts (3 tests) 7ms Test Files 1 passed (1) Tests 3 passed (3) Start at 02:30:49 Duration 456ms (transform 127ms, setup 0ms, import 184ms, tests 7ms, environment 0ms) (!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite: - ESM syntax in a file loaded as CommonJS (vitest.config.ts:1:1). Use a `.mjs` extension or set `\"type\": \"module\"` in the closest package.json Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning."
+    },
+    {
+      "name": "hosted-sandbox-tenant-isolation",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "summary": {
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0
+      },
+      "output": "RUN v4.1.7 C:/Users/Dell/OneDrive/Masaüstü/MANU-AI/app ✓ src/lib/hosted-sandbox-tenant-isolation.test.ts (12 tests) 39ms Test Files 1 passed (1) Tests 12 passed (12) Start at 02:30:58 Duration 484ms (transform 84ms, setup 0ms, import 198ms, tests 39ms, environment 0ms) (!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite: - ESM syntax in a file loaded as CommonJS (vitest.config.ts:1:1). Use a `.mjs` extension or set `\"type\": \"module\"` in the closest package.json Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning."
+    },
+    {
+      "name": "request-id-error-contract",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "summary": {
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0
+      },
+      "output": "RUN v4.1.7 C:/Users/Dell/OneDrive/Masaüstü/MANU-AI/app ✓ tests/request-id-error-propagation.test.ts (3 tests) 6ms Test Files 1 passed (1) Tests 3 passed (3) Start at 02:31:07 Duration 408ms (transform 47ms, setup 0ms, import 154ms, tests 6ms, environment 0ms) (!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite: - ESM syntax in a file loaded as CommonJS (vitest.config.ts:1:1). Use a `.mjs` extension or set `\"type\": \"module\"` in the closest package.json Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning."
+    }
+  ],
+  "blockers": [],
+  "mutationBoundary": {
+    "production": false,
+    "linkedSupabase": false,
+    "localFixtureOnly": true
+  },
+  "closureRule": "all four stages VERIFIED, all required outputs/evidence digest-valid, final backend/security tests PASS",
+  "closureDigest": "634437b67a4976e9a5b499afffa26f3ffc7b7c3ab6ed52a1973d83481a55c65c"
+}

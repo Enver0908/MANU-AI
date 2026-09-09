@@ -1,173 +1,217 @@
 # AIya
 
-AIya is a supervised AI SaaS platform for dietitians. It combines a multi-tenant clinical workspace, source-bound AI assistance, mobile-first PWA workflows, and guarded messaging operations for professional nutrition care teams.
+### An AI-assisted workspace for dietitians and nutrition care teams
 
-The product is designed around a strict principle: AI may assist the dietitian, but it does not replace clinical judgment, approve high-risk guidance autonomously, or bypass tenant, consent, billing, or production-readiness controls.
+AIya brings client records, nutrition plans, conversations, and AI assistance into one professional workspace. It helps dietitians maintain continuity between consultations, prepare context-aware responses, and identify conversations that need personal attention.
 
-## Current Status
+The dietitian stays in control of care. AI assistance operates within each client's context, the practitioner's communication preferences, and explicit safety and approval rules.
 
-As of 2026-09-07:
+[Website](https://aiyaworkspace.com) · [Architecture](#architecture) · [Local development](#local-development) · [Documentation](#documentation)
 
-- Local public surface, auth, onboarding, admin lifecycle, dashboard production chrome, and PWA polish Faz 8 clean-HEAD reclosure is complete (`docs/PUBLIC_SURFACE_AUTH_ONBOARDING_PWA_PHASE_8_CLEAN_HEAD_EVIDENCE.md`). This does not authorize production.
-- Active product brand: `AIya`. The permanent public/customer domain is `https://aiyaworkspace.com`, the admin domain is `https://admin.aiyaworkspace.com`, and the business contact inbox is `contact@aiyaworkspace.com`.
-- Hosted VPS runtime is verified through the release health endpoint at `https://aiyaworkspace.com/api/health/release`; the live health endpoint and admin/dashboard smoke checks passed. Production remains `NO-GO`.
-- Legacy visible names `MANU-AI`, `SiriusAI`, and `AI-ya` are retired from active product surfaces. Historical evidence can still mention them as past-state records.
-- Compatibility names remain unchanged where they are operational contracts: `MANU_*` environment variables, `x-siriusai-*` headers, `siriusai` service-worker cache names, existing server paths/process names, migrations, persisted IDs, and historical evidence files.
-- Production Readiness Stage 1 Phase 1-6 are locally complete for their recorded scopes.
-- Domain cutover implementation is prepared for `aiyaworkspace.com`: public/customer app `https://aiyaworkspace.com`, admin app `https://admin.aiyaworkspace.com`, and business contact inbox `contact@aiyaworkspace.com`. The old `siriusai.store` domain is not planned for long-term redirect retention because there is no real customer traffic on it.
-- Stage 1 owner handoff is ready locally; owner-side account, approval, secret, production-environment, and release-approval actions remain open.
-- Stage 5, Stage 6, and Stage 7 are closed locally for their recorded scopes.
-- Hosted Sandbox technical debt is closed by evidence under `docs/hosted-sandbox/evidence/`.
-- Production remains `NO-GO`.
-- Physical iPhone Safari/PWA validation is permanently owner-waived for the current roadmap and future phases. It remains `WAIVED_NOT_EXECUTED`, not `PASS`; future readiness or pilot language must disclose the waiver and accepted residual iOS risk.
-- Android Chrome, installed Android PWA, and Android TalkBack evidence are recorded for Stage 7 closure.
-- R-405 is technically resolved locally; external dependency and operational launch gates remain independent production constraints.
-- Active LLM provider decision: all previous Gemini LLM usage is rebaselined to direct Z.ai `GLM-5.3-Flash` (`glm-5.3-flash`). The product architecture, green/yellow/red safety model, RAG/context injection, WhatsApp-first scope, and fail-closed production gates remain unchanged.
+## The Product
 
-Canonical current authorities:
+Nutrition care extends beyond an appointment: clients ask questions, share meals, send voice messages, and need guidance grounded in their individual plan. AIya connects these interactions to the dietitian's workspace so that client context and professional oversight remain part of the conversation.
 
-- `docs/PUBLIC_SURFACE_AUTH_ONBOARDING_PWA_PHASE_7_FINAL_EVIDENCE.md`
-- `docs/PUBLIC_SURFACE_AUTH_ONBOARDING_PWA_PHASE_8_CLEAN_HEAD_EVIDENCE.md`
-- `docs/OWNER_IOS_VALIDATION_WAIVER_DECISION.md`
-- `docs/AIYA_BRAND_TRANSITION_EVIDENCE.md`
-- `docs/AIYA_HOSTED_DEPLOY_REPEATABILITY_EVIDENCE.md`
-- `docs/AIYAWORKSPACE_DOMAIN_CUTOVER_RUNBOOK.md`
-- `docs/PRODUCTION_READINESS_STAGE_1_PHASE_6_EVIDENCE.md`
-- `docs/PRODUCTION_READINESS_STAGE_1_OWNER_HANDOFF.md`
-- `docs/PRODUCTION_READINESS_STAGE_1_FINAL_DECISION.json`
-- `docs/PRODUCTION_READINESS_STAGE_1_PHASE_5_EVIDENCE.md`
-- `docs/PRODUCTION_READINESS_STAGE_1_PHASE_5_OPERATIONS_RUNBOOK.md`
-- `docs/PRODUCTION_READINESS_STAGE_1_PHASE_4_EVIDENCE.md`
-- `docs/PRODUCTION_READINESS_STAGE_1_PHASE_3_EVIDENCE.md`
-- `docs/PRODUCTION_READINESS_STAGE_1_PHASE_2_EVIDENCE.md`
-- `docs/PRODUCTION_READINESS_STAGE_1_PHASE_1_EVIDENCE.md`
-- `docs/hosted-sandbox/evidence/HOSTED_SANDBOX_TECHNICAL_DEBT_CLOSURE_EVIDENCE.md`
-- `docs/PHASE_85_STAGE_7_CLOSURE_DECISION.json`
-- `docs/PHASE_85_STAGE_7_FINAL_CLOSURE_EVIDENCE.md`
-- `docs/PHASE_85_STAGE_6_CLOSURE_DECISION.json`
-- `docs/RISK_REGISTER.md`
-- `HANDOFF_FOR_NEXT_CODEX.md`
+| Capability | What it supports |
+| --- | --- |
+| Client management | Client profiles, assignments, nutrition forms, food rules, menu plans, and structured context updates. |
+| Conversation workspace | Conversation lists, message history, unread tracking, manual replies, drafts, and human takeover. |
+| Professional AI assistant | Context-aware drafting, source-backed answers, conversation memory, and internal AI Chat with source and risk inspection. |
+| Communication profiles | Persona selection and dietitian voice preferences that shape language, empathy, uncertainty, and response boundaries. |
+| Media workflows | Queued image analysis, audio transcription, correction workflows, and retention/deletion processing. |
+| Alerts and notifications | Review queues for risk, handoff, and structured-update events, linked to the relevant client context. |
+| Mobile workspace | Responsive web access and an installable PWA with release-aware updates and privacy-conscious caching. |
+| Business administration | Customer invitations, onboarding, workspace access, entitlement management, and commercial audit records. |
 
-## Product Scope
+These capabilities describe the repository's implementation scope. Live integration availability depends on environment configuration and release approval; see [Release status](#release-status).
 
-AIya supports dietitian-led operations across:
+## How AI Assistance Works
 
-- Tenant-scoped onboarding, authentication, authorization, and role boundaries.
-- Client workspaces for nutrition tasks, forms, menu planning, messaging, alerts, and dashboard operations.
-- AI-assisted clinical drafting with explicit answerability, source grounding, risk classification, and dietitian review.
-- Mobile PWA workflows with offline privacy-lock behavior and device evidence records.
-- Evidence-driven production gates for security, RLS, dependency health, release identity, backups, rollback, and operational readiness.
+1. **Establish context.** Resolve the tenant, practitioner, client, conversation, and current access and activation state.
+2. **Prepare the request.** Combine permitted client context, conversation memory, relevant knowledge, and the selected communication profile.
+3. **Evaluate safety.** Apply risk classification, scope restrictions, and answerability checks before choosing an action.
+4. **Generate or escalate.** Produce an eligible response or review draft, or hand the conversation over to the dietitian.
+5. **Validate the result.** Apply response-quality and safety checks before making the output available to the delivery workflow.
+
+The conversation engine uses three risk levels:
+
+| Risk level | Intended behavior |
+| --- | --- |
+| Green | Eligible low-risk assistance. Automatic delivery additionally requires an enabled operating mode and applicable delivery controls. |
+| Yellow | Draft for professional approval. |
+| Red | Human handoff; the red-risk conversation path does not call the LLM. |
+
+Personas govern tone, vocabulary, empathy, and how uncertainty is expressed. They do not override clinical safety, tenant access, or human-control rules. AIya supports professional judgment; it is not an autonomous diagnosis or prescribing system.
 
 ## Architecture
 
-The repository is organized as a product application plus a reusable clinical AI architecture package.
+AIya combines a Next.js application with a reusable JavaScript AI orchestration package. Server-side services coordinate authentication, domain operations, persistence, and asynchronous work. Supabase supplies authentication and PostgreSQL; SQL migrations define database contracts, row-level security policies, and RPC functions.
 
-```text
-.
-|-- app/                       Next.js application, Supabase integration, PWA, UI, tests
-|-- dietitian-ai-assistant/    Clinical AI orchestration and risk-boundary package
-|-- docs/                      Product plans, evidence packs, risk register, runbooks
-|-- tools/                     Hosted sandbox, backup, release, and operational utilities
-|-- PLAN.md                    Current execution plan
-|-- PROJECT_PLAN.md            Broader project continuity plan
-|-- HANDOFF_FOR_NEXT_CODEX.md  Current authority and handoff summary
+```mermaid
+flowchart TD
+    Practitioner[Dietitian web app / PWA] --> App[Next.js UI and server APIs]
+    Admin[Commercial administration] --> App
+    Channel[Messaging channel] --> Ingress[Webhook ingress and validation]
+    Ingress --> Services[Application services]
+    App --> Services
+    Services --> Auth[Supabase Auth]
+    Services --> DB[(PostgreSQL: tenant data, RLS, RPCs, queues)]
+    DB --> Workers[Background workers]
+    Workers --> AI[Context, retrieval, safety and AI orchestration]
+    AI --> Provider[Configured model provider]
+    AI --> Review[Draft / handoff / eligible response]
+    Review --> DB
+    DB --> Delivery[Guarded delivery workflow]
+    Delivery --> Channel
 ```
 
-Core application stack:
+The diagram describes component responsibilities. Provider and channel connections require separately configured live integrations.
 
-- Next.js 16, React 19, TypeScript, Tailwind CSS.
-- Supabase for authentication, Postgres, RLS, migrations, and tenant isolation.
-- Vitest, Playwright, axe, TypeScript production checking, ESLint, and release verification scripts.
-- Stripe integration boundaries for billing readiness.
-- Clinical AI orchestration package exported from `dietitian-ai-assistant/`.
+### Technology Stack
 
-## Safety Model
+| Layer | Implementation |
+| --- | --- |
+| Application | Next.js 16 App Router, React 19, TypeScript |
+| Interface | Tailwind CSS, Lucide icons, responsive layouts, PWA service worker |
+| Identity and data | Supabase Auth, PostgreSQL, row-level security, versioned SQL migrations |
+| AI orchestration | Local `dietitian-ai-assistant` package plus application-side retrieval, context, and provider services |
+| Background processing | Node.js worker entry points for media, audio, AI Chat, and lifecycle operations |
+| Verification | Vitest, Node.js tests, Playwright, axe accessibility checks, ESLint, production TypeScript checks |
+| Deployment | Next.js standalone artifacts, release manifests, Nginx templates, PM2, GitHub Actions |
 
-The clinical safety model is intentionally conservative:
+### Integration Boundaries
 
-- Every AI response path is bounded by risk classification and answerability rules.
-- High-risk or uncertain outputs are held for dietitian review instead of being released as autonomous advice.
-- Source-bound reasoning and context injection are treated as safety controls, not cosmetic prompt features.
-- Persona behavior is governed as a full interaction contract: tone, uncertainty, empathy, boundaries, escalation, and language behavior must stay consistent with clinical safety.
-- Production use with real health data is not authorized until independent production gates are closed.
+- **Messaging:** WhatsApp-first application integration with webhook and delivery controls. The core package separates channel adapters from conversation logic. Telegram-oriented core support does not establish an active production Telegram service.
+- **AI providers:** Provider calls use explicit configuration and runtime gates. The current provider direction is direct Z.ai integration; historical package documentation retains older model references.
+- **Commercial operations:** Invitations and manual entitlement operations sit alongside Stripe checkout, webhook, and billing-portal paths. Live payment processing requires separate configuration and approval.
 
-## Multi-Tenant Boundary
+## Security and Data Boundaries
 
-Tenant isolation is a first-class architecture constraint. Application behavior, Supabase policies, helper functions, client workspaces, messaging records, and evidence gates are designed so one tenant cannot read, mutate, infer, or reuse another tenant's data.
+Tenant identity is part of the application and database contracts. Server-side authorization, row-level security policies, and scoped RPCs govern access to client records and operational data. Commercial administration has separate authorization boundaries.
 
-Relevant evidence and runbooks live in:
+The implementation includes:
 
-- `docs/RISK_REGISTER.md`
-- `docs/DATA_INVENTORY.md`
-- `docs/BACKUP_RESTORE_RUNBOOK.md`
-- `docs/hosted-sandbox/evidence/`
-- `app/supabase/migrations/`
+- Session validation and activity controls for authenticated workflows.
+- Revision checks and idempotency handling for supported mutations and message-processing paths.
+- Queue claim, lease, retry, and terminal-state handling for background work.
+- Human takeover and risk locks controlling when AI may act on a conversation.
+- Media access, retention, deletion, and correction workflows.
+- PWA caching rules that keep authenticated navigation and API responses network-only.
+
+The PWA is not an offline copy of the client database. Static assets can be cached; sensitive workflows depend on authenticated backend access.
+
+These are engineering controls, not a regulatory certification. Data handling and recovery procedures are documented in the [data inventory](docs/DATA_INVENTORY.md) and [backup and restore runbook](docs/BACKUP_RESTORE_RUNBOOK.md).
+
+## Repository Structure
+
+```text
+app/
+  src/app/                 Product pages and server API routes
+  src/components/          UI components
+  src/lib/                 Application services and domain contracts
+  supabase/                Database configuration and SQL migrations
+  scripts/                 Workers, verification, and release tooling
+  tests/                   Browser and integration-oriented tests
+  public/                  Static assets, manifest, and service worker
+dietitian-ai-assistant/
+  src/                     AI orchestration, personas, context, and safety
+  tests/                   Core tests and clinical evaluation fixtures
+tools/                     Deployment, backup, and system audit utilities
+docs/                      Technical specifications, runbooks, and evidence
+```
+
+The application consumes `dietitian-ai-assistant` as a local package. Keep both directories together. Run application npm commands from `app/`; the repository root is not the primary npm workspace.
 
 ## Local Development
 
-Install and run the app from the `app/` workspace:
+### Prerequisites
+
+- Git and Node.js 22 with npm, matching the CI runtime.
+- Docker for local Supabase services when exercising database-backed workflows.
+- A checkout containing both `app/` and `dietitian-ai-assistant/`.
+
+### Install and Configure
+
+From the repository root:
 
 ```bash
 cd app
-npm install
+npm ci
+```
+
+Create `app/.env.local` from the tracked [environment template](app/.env.local.example) if it does not already exist. Preserve existing configuration. The template includes placeholders and development settings; it is not a production configuration.
+
+For a local Supabase instance, run from `app/` with Docker running:
+
+```bash
+npx supabase start
+npx supabase migration up --local
+npx supabase status
+```
+
+Use the local instance's URL and keys to configure `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and `SUPABASE_SERVICE_ROLE_KEY`. Keep the service-role key server-side. Do not commit `.env.local` or copy credentials into logs or documentation.
+
+Set `NEXT_PUBLIC_APP_URL` to the local origin you use, and register its `/auth/callback` URL in Supabase Auth's redirect configuration. Password and email-link login require configured authentication; commercial administration also requires a reachable, migrated database and authorized admin configuration.
+
+The template's `MANU_DEV_FALLBACK_STORE` option supports demo workflows. It does not replace Supabase for commercial administration or validate database isolation. Keep real provider and payment integrations disabled for ordinary local development.
+
+### Start the Application
+
+```bash
 npm run dev
 ```
 
-Common verification commands:
+Open [localhost:3000](http://localhost:3000), or the port reported by Next.js. Use the same origin consistently in application and authentication configuration.
+
+### Verify Changes
+
+From `app/`:
 
 ```bash
-cd app
 npm run lint
 npm run typecheck
 npm test
-npm run test:rls
-npm run verify:stage-7
-npm run release:verify
+npm run build
 ```
 
-Run the clinical AI package tests:
+Run the AI package's core tests separately:
 
 ```bash
-cd dietitian-ai-assistant
+cd ../dietitian-ai-assistant
 npm test
 ```
 
-The root of the repository does not define the primary npm workspace. Use `app/` for the product application and `dietitian-ai-assistant/` for the AI architecture package.
+Database policy checks use `npm run test:rls` from `app/` and require their local database prerequisites. Browser checks use `npm run test:visual` and require Playwright browsers and the configured test environment.
 
-## Production Readiness
+The default application test command excludes the Supabase RLS integration suite. A passing unit suite therefore does not establish database isolation or deployment readiness.
 
-Production is currently blocked by independent launch gates. Local closure evidence must not be interpreted as authorization for:
+## Releases and Operations
 
-- Production launch or production pilot.
-- Provider/channel egress.
-- WhatsApp, Telegram, or other live channel delivery.
-- Live billing.
-- Production schema rollout.
-- Real health-data processing.
-- Removing accepted-risk qualifications from iOS coverage.
+The application builds as a Next.js standalone package. Release tooling binds a commit SHA, migration fingerprint, release ID, compatibility version, and archive checksum into manifests. The `/api/health/release` route exposes identity fields for comparison with the intended deployment.
 
-Production readiness requires explicit owner approval and current evidence for the relevant operational gates. The active Stage 1 owner blockers are Meta/WhatsApp Business approval, Z.ai GLM-5.3-Flash provider approval, production secrets, production Supabase and remote migration approval, manual bank-transfer operations approval, incident/monitoring/rollback ownership, and exact release approval.
+Workflow definitions and deployment tooling live in [.github/workflows](.github/workflows) and [tools/hosted-sandbox/deploy](tools/hosted-sandbox/deploy). Worker processes have separate entry points and operating requirements; building the web application does not start them.
 
-The domain cutover does not by itself approve production launch. It only moves the hosted commercial entry surfaces and related operational URLs from the old sandbox domain to `aiyaworkspace.com`.
+### Release Status
 
-## Evidence Discipline
+AIya is in pre-launch development. The recorded production decision remains **NO-GO** pending owner-controlled integration, environment, operational, and release-approval requirements. Local tests, audit closure, and dry-run artifacts do not establish that a live environment runs the same code or that external integrations are enabled.
 
-AIya uses evidence-first delivery. Closure claims are only valid when backed by dated artifacts, verification commands, and explicit scope guards. Historical plans remain in the repository for traceability, but current authority is controlled by the latest handoff, risk register, closure decisions, and owner waiver records.
+Physical iPhone Safari/PWA validation is recorded as **WAIVED_NOT_EXECUTED**, with accepted residual iOS risk. See the [release decision](docs/PRODUCTION_READINESS_STAGE_1_FINAL_DECISION.json), [owner handoff](docs/PRODUCTION_READINESS_STAGE_1_OWNER_HANDOFF.md), and [device validation decision](docs/OWNER_IOS_VALIDATION_WAIVER_DECISION.md) for recorded scope and outstanding requirements.
 
-When updating the project:
+## Documentation
 
-- Preserve production `NO-GO` unless the owner explicitly authorizes a production gate change.
-- Preserve iPhone as `WAIVED_NOT_EXECUTED`, not `PASS`.
-- Do not introduce provider egress, live billing, production schema changes, or real-data paths without a dedicated approved scope.
-- Keep documentation and evidence language aligned with the current authority files.
+| Resource | Purpose |
+| --- | --- |
+| [Data inventory](docs/DATA_INVENTORY.md) | Data categories and handling boundaries |
+| [Backup and restore runbook](docs/BACKUP_RESTORE_RUNBOOK.md) | Recovery procedures and verification |
+| [Worker and release operations](docs/PRODUCTION_READINESS_STAGE_1_PHASE_5_OPERATIONS_RUNBOOK.md) | Worker startup and release operations |
+| [Risk register](docs/RISK_REGISTER.md) | Recorded risks and mitigations |
+| [Technical documentation](docs/) | Specifications, decisions, and historical evidence |
+| [Maintainer handoff](HANDOFF_FOR_NEXT_CODEX.md) | Development continuity and execution context |
 
-## Maintainer Notes
+Historical implementation names such as `MANU_*` environment variables and `siriusai` cache identifiers remain in compatibility contracts. The product name is **AIya**.
 
-This repository is operated as a gated product workspace. Each implementation phase should leave behind:
+## Contact
 
-- A focused code change.
-- Matching evidence or decision records.
-- Targeted verification output.
-- A clean git status before handoff whenever practical.
+Product inquiries: [contact@aiyaworkspace.com](mailto:contact@aiyaworkspace.com)
 
-For the latest handoff context, start with `HANDOFF_FOR_NEXT_CODEX.md`.
+No open-source license is currently included at the repository root. Contact the maintainer for permission to use or redistribute the code.

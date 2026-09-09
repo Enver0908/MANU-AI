@@ -1,0 +1,347 @@
+{
+  "schemaVersion": "aiya-system-audit-phase-4-messaging-contract-matrix-v1",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-4",
+  "status": "PASS",
+  "generatedAt": "2026-09-07T23:54:40.606Z",
+  "checks": [
+    {
+      "id": "signature_and_challenge",
+      "description": "raw webhook signature and challenge gate",
+      "pass": true,
+      "evidence": [
+        "app/src/app/api/whatsapp/webhook/route.ts",
+        "app/src/lib/whatsapp-real-contracts.ts"
+      ]
+    },
+    {
+      "id": "payload_normalization",
+      "description": "canonical event payload normalization",
+      "pass": true,
+      "evidence": [
+        "app/src/app/api/whatsapp/webhook/route.ts",
+        "app/src/lib/whatsapp-real-contracts.ts",
+        "app/src/lib/whatsapp-cloud-payload-normalizer.ts",
+        "app/src/lib/phase-85-if-c-channel-event-normalizer.ts",
+        "app/src/lib/phase-85-if-c-channel-event-ledger.ts"
+      ]
+    },
+    {
+      "id": "ledger_idempotency",
+      "description": "provider event ledger and duplicate suppression",
+      "pass": true,
+      "evidence": [
+        "app/src/app/api/whatsapp/webhook/route.ts",
+        "app/src/app/api/commercial/webhook/route.ts",
+        "app/src/lib/whatsapp-real-store.ts",
+        "app/src/lib/whatsapp-cloud-payload-normalizer.ts",
+        "app/src/lib/phase-85-if-c-channel-event-normalizer.ts",
+        "app/src/lib/phase-85-if-c-channel-event-ledger.ts",
+        "app/src/lib/channel-adapters.ts",
+        "app/src/lib/channel-mock-delivery-ledger.ts"
+      ]
+    },
+    {
+      "id": "tenant_routing",
+      "description": "tenant/account routing and identity resolution",
+      "pass": true,
+      "evidence": [
+        "app/src/app/api/commercial/webhook/route.ts",
+        "app/src/lib/phase-85-if-c-channel-event-ledger.ts",
+        "app/src/lib/phase-85-if-c-channel-event-routing.ts",
+        "app/src/lib/channel-adapters.ts",
+        "app/src/lib/channel-mock-delivery-ledger.ts"
+      ]
+    },
+    {
+      "id": "quarantine",
+      "description": "unknown or ambiguous identity quarantine",
+      "pass": true,
+      "evidence": [
+        "app/src/app/api/whatsapp/webhook/route.ts",
+        "app/src/lib/whatsapp-real-contracts.ts",
+        "app/src/lib/whatsapp-real-store.ts",
+        "app/src/lib/whatsapp-cloud-payload-normalizer.ts",
+        "app/src/lib/phase-85-if-c-channel-event-normalizer.ts",
+        "app/src/lib/phase-85-if-c-channel-event-ledger.ts",
+        "app/src/lib/phase-85-if-c-channel-event-routing.ts",
+        "app/src/lib/phase-85-stage-4b2-messaging-integration.ts",
+        "app/src/lib/channel-adapters.ts"
+      ]
+    },
+    {
+      "id": "delivery_receipt",
+      "description": "receipt state and delivery transitions",
+      "pass": true,
+      "evidence": [
+        "app/src/app/api/whatsapp/webhook/route.ts",
+        "app/src/lib/whatsapp-real-contracts.ts",
+        "app/src/lib/whatsapp-real-store.ts",
+        "app/src/lib/whatsapp-cloud-payload-normalizer.ts",
+        "app/src/lib/phase-85-if-c-channel-event-normalizer.ts",
+        "app/src/lib/phase-85-if-c-channel-event-ledger.ts",
+        "app/src/lib/phase-85-if-c-channel-event-routing.ts",
+        "app/src/lib/phase-85-stage-4b2-messaging-integration.ts",
+        "app/src/lib/channel-adapters.ts",
+        "app/src/lib/channel-mock-delivery-ledger.ts"
+      ]
+    },
+    {
+      "id": "retry_policy",
+      "description": "temporary/permanent/ambiguous retry policy",
+      "pass": true,
+      "evidence": [
+        "app/src/lib/whatsapp-real-contracts.ts",
+        "app/src/lib/phase-85-if-c-channel-event-ledger.ts",
+        "app/src/lib/channel-mock-delivery-ledger.ts"
+      ]
+    },
+    {
+      "id": "real_egress_gate",
+      "description": "explicit real WhatsApp egress gate",
+      "pass": true,
+      "evidence": [
+        "app/src/app/api/whatsapp/webhook/route.ts",
+        "app/src/lib/whatsapp-real-contracts.ts"
+      ]
+    },
+    {
+      "id": "route_contracts",
+      "pass": true
+    },
+    {
+      "id": "external_egress_guarded",
+      "pass": true,
+      "externalCallCount": 0
+    },
+    {
+      "id": "real_egress_disabled_for_audit",
+      "pass": true
+    }
+  ],
+  "routeChecks": [
+    {
+      "source": "app/src/app/api/whatsapp/webhook/route.ts",
+      "signatureOrProviderGate": true,
+      "structuredResponse": true,
+      "pass": true
+    },
+    {
+      "source": "app/src/app/api/commercial/webhook/route.ts",
+      "signatureOrProviderGate": true,
+      "structuredResponse": true,
+      "pass": true
+    }
+  ],
+  "externalEgress": {
+    "callCount": 0,
+    "enabledForAudit": false
+  },
+  "sourceFiles": [
+    {
+      "source": "app/src/app/api/whatsapp/webhook/route.ts",
+      "exists": true,
+      "bytes": 4265,
+      "sha256": "83c77872a175db5f64e114babf374ce82a4f0bec2359c168d501eaf2a7e273f0"
+    },
+    {
+      "source": "app/src/app/api/commercial/webhook/route.ts",
+      "exists": true,
+      "bytes": 2212,
+      "sha256": "feea6a989d32ad33fba896bc8a511f9d4835b54a7c325390209a16694c66d1d7"
+    },
+    {
+      "source": "app/src/lib/whatsapp-real-contracts.ts",
+      "exists": true,
+      "bytes": 6063,
+      "sha256": "00c6a4e4f5704e3173dbee6868f7f93b8e25ad4376f115ced0f3c98cfa534e9a"
+    },
+    {
+      "source": "app/src/lib/whatsapp-real-store.ts",
+      "exists": true,
+      "bytes": 4680,
+      "sha256": "a718c04d1c9278b724f9f2578b308a5797eb513fceaab26c09a00a2e5b5dd02d"
+    },
+    {
+      "source": "app/src/lib/whatsapp-cloud-payload-normalizer.ts",
+      "exists": true,
+      "bytes": 5421,
+      "sha256": "eabe105e28623c80ef8f7229ac5958957c1d07306e309399f51e4000b0474dc1"
+    },
+    {
+      "source": "app/src/lib/phase-85-if-c-channel-event-normalizer.ts",
+      "exists": true,
+      "bytes": 21473,
+      "sha256": "cfe9bb387fac5d4cf381640c3db68e314f2cbbc99459c48e51fe5aaaecc81648"
+    },
+    {
+      "source": "app/src/lib/phase-85-if-c-channel-event-ledger.ts",
+      "exists": true,
+      "bytes": 24893,
+      "sha256": "7bcb2195c3de20c49f95bdce8a5b934dcadc6219ed3d59b123e88b9e908d9a8a"
+    },
+    {
+      "source": "app/src/lib/phase-85-if-c-channel-event-routing.ts",
+      "exists": true,
+      "bytes": 14904,
+      "sha256": "0c288fc37c08bf80260b3b12766682c574552f4a207e592793094755077c579f"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b2-messaging-integration.ts",
+      "exists": true,
+      "bytes": 6236,
+      "sha256": "4350abc5b985cbe15155e441d726ce824d7696cbbee695fb5cee055ff2126a4e"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b2-receipt-lifecycle.ts",
+      "exists": false,
+      "bytes": 0,
+      "sha256": null
+    },
+    {
+      "source": "app/src/lib/channel-adapters.ts",
+      "exists": true,
+      "bytes": 8531,
+      "sha256": "15fb2d3249016651168e405c8bb9471706b066b1eb952e2cb5df14c7aa065b73"
+    },
+    {
+      "source": "app/src/lib/channel-mock-delivery-ledger.ts",
+      "exists": true,
+      "bytes": 2822,
+      "sha256": "e8a8bc180a5ceffa7abb3976070816d17b169b5732cb63deeb8689a325cbdb48"
+    }
+  ],
+  "blockers": [],
+  "matrixDigest": "c8d91b005cf24b8a8a4837f2881a310ea7c0b971412493206db1929d5272f91e",
+  "testResults": [
+    {
+      "name": "phase-4-messaging-contracts",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "fileCount": 14,
+      "summary": {
+        "passedFiles": 14,
+        "failedFiles": 0,
+        "passedTests": 101,
+        "failedTests": 0,
+        "skippedTests": 0
+      },
+      "failure": null
+    }
+  ],
+  "operationVerification": [
+    {
+      "order": 1,
+      "description": "WhatsApp challenge ve HMAC signature kontrollerini raw body seviyesinde dogrula.",
+      "status": "PASS",
+      "evidence": {
+        "id": "signature_and_challenge",
+        "description": "raw webhook signature and challenge gate",
+        "pass": true,
+        "evidence": [
+          "app/src/app/api/whatsapp/webhook/route.ts",
+          "app/src/lib/whatsapp-real-contracts.ts"
+        ]
+      }
+    },
+    {
+      "order": 2,
+      "description": "WhatsApp/cloud payload normalization ile canonical event schema ve provider account selector eslesmesini dogrula.",
+      "status": "PASS",
+      "evidence": {
+        "id": "payload_normalization",
+        "description": "canonical event payload normalization",
+        "pass": true,
+        "evidence": [
+          "app/src/app/api/whatsapp/webhook/route.ts",
+          "app/src/lib/whatsapp-real-contracts.ts",
+          "app/src/lib/whatsapp-cloud-payload-normalizer.ts",
+          "app/src/lib/phase-85-if-c-channel-event-normalizer.ts",
+          "app/src/lib/phase-85-if-c-channel-event-ledger.ts"
+        ]
+      }
+    },
+    {
+      "order": 3,
+      "description": "Event ledger provider event id/idempotency key, duplicate suppression ve processed/replay kararlarini dogrula.",
+      "status": "PASS",
+      "evidence": {
+        "id": "ledger_idempotency",
+        "description": "provider event ledger and duplicate suppression",
+        "pass": true,
+        "evidence": [
+          "app/src/app/api/whatsapp/webhook/route.ts",
+          "app/src/app/api/commercial/webhook/route.ts",
+          "app/src/lib/whatsapp-real-store.ts",
+          "app/src/lib/whatsapp-cloud-payload-normalizer.ts",
+          "app/src/lib/phase-85-if-c-channel-event-normalizer.ts",
+          "app/src/lib/phase-85-if-c-channel-event-ledger.ts",
+          "app/src/lib/channel-adapters.ts",
+          "app/src/lib/channel-mock-delivery-ledger.ts"
+        ]
+      }
+    },
+    {
+      "order": 4,
+      "description": "Tenant/channel identity routing, unknown/ambiguous quarantine ve empty/malformed payload fail-closed davranisini dogrula.",
+      "status": "PASS",
+      "evidence": {
+        "id": "tenant_routing",
+        "description": "tenant/account routing and identity resolution",
+        "pass": true,
+        "evidence": [
+          "app/src/app/api/commercial/webhook/route.ts",
+          "app/src/lib/phase-85-if-c-channel-event-ledger.ts",
+          "app/src/lib/phase-85-if-c-channel-event-routing.ts",
+          "app/src/lib/channel-adapters.ts",
+          "app/src/lib/channel-mock-delivery-ledger.ts"
+        ]
+      }
+    },
+    {
+      "order": 5,
+      "description": "Outbound receipt state monotonicligi, temporary/permanent/ambiguous failure ayrimi ve retry budgetini dogrula.",
+      "status": "PASS",
+      "evidence": {
+        "id": "quarantine",
+        "description": "unknown or ambiguous identity quarantine",
+        "pass": true,
+        "evidence": [
+          "app/src/app/api/whatsapp/webhook/route.ts",
+          "app/src/lib/whatsapp-real-contracts.ts",
+          "app/src/lib/whatsapp-real-store.ts",
+          "app/src/lib/whatsapp-cloud-payload-normalizer.ts",
+          "app/src/lib/phase-85-if-c-channel-event-normalizer.ts",
+          "app/src/lib/phase-85-if-c-channel-event-ledger.ts",
+          "app/src/lib/phase-85-if-c-channel-event-routing.ts",
+          "app/src/lib/phase-85-stage-4b2-messaging-integration.ts",
+          "app/src/lib/channel-adapters.ts"
+        ]
+      }
+    },
+    {
+      "order": 6,
+      "description": "Mock ve real channel contract gate'lerinin birbirinden ayrildigini, testlerde real egress bulunmadigini kanitla.",
+      "status": "PASS",
+      "evidence": {
+        "id": "delivery_receipt",
+        "description": "receipt state and delivery transitions",
+        "pass": true,
+        "evidence": [
+          "app/src/app/api/whatsapp/webhook/route.ts",
+          "app/src/lib/whatsapp-real-contracts.ts",
+          "app/src/lib/whatsapp-real-store.ts",
+          "app/src/lib/whatsapp-cloud-payload-normalizer.ts",
+          "app/src/lib/phase-85-if-c-channel-event-normalizer.ts",
+          "app/src/lib/phase-85-if-c-channel-event-ledger.ts",
+          "app/src/lib/phase-85-if-c-channel-event-routing.ts",
+          "app/src/lib/phase-85-stage-4b2-messaging-integration.ts",
+          "app/src/lib/channel-adapters.ts",
+          "app/src/lib/channel-mock-delivery-ledger.ts"
+        ]
+      }
+    }
+  ]
+}

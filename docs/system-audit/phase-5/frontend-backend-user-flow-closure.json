@@ -1,0 +1,150 @@
+{
+  "schemaVersion": "aiya-system-audit-phase-5-frontend-backend-user-flow-closure-v1",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-5",
+  "generatedAt": "2026-09-08T08:34:19.534Z",
+  "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+  "status": "PASS",
+  "digestChecks": [
+    {
+      "stageId": "5.1",
+      "file": "docs/system-audit/phase-5/frontend-backend-contract-matrix.json",
+      "status": "PASS"
+    },
+    {
+      "stageId": "5.1",
+      "file": "docs/system-audit/phase-5/stages/stage-5.1.json",
+      "status": "PASS"
+    },
+    {
+      "stageId": "5.2",
+      "file": "docs/system-audit/phase-5/auth-user-flow-matrix.json",
+      "status": "PASS"
+    },
+    {
+      "stageId": "5.2",
+      "file": "docs/system-audit/phase-5/stages/stage-5.2.json",
+      "status": "PASS"
+    },
+    {
+      "stageId": "5.3",
+      "file": "docs/system-audit/phase-5/authenticated-shell-matrix.json",
+      "status": "PASS"
+    },
+    {
+      "stageId": "5.3",
+      "file": "docs/system-audit/phase-5/stages/stage-5.3.json",
+      "status": "PASS"
+    },
+    {
+      "stageId": "5.4",
+      "file": "docs/system-audit/phase-5/real-backend-browser-smoke.json",
+      "status": "PASS"
+    },
+    {
+      "stageId": "5.4",
+      "file": "docs/system-audit/phase-5/stages/stage-5.4.json",
+      "status": "PASS"
+    }
+  ],
+  "finalTests": [
+    {
+      "name": "phase-5-final-contracts",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "failure": null
+    },
+    {
+      "name": "phase-5-final-typecheck",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "failure": null
+    },
+    {
+      "name": "phase-5-public-and-auth-browser",
+      "status": "PASS",
+      "exitCode": 0,
+      "fileCount": 2,
+      "summary": {
+        "passed": 8,
+        "failed": 0
+      },
+      "failure": null
+    },
+    {
+      "name": "phase-5-authenticated-shell-browser",
+      "status": "PASS",
+      "exitCode": 0,
+      "fileCount": 6,
+      "summary": {
+        "passed": 24,
+        "failed": 0
+      },
+      "failure": null
+    }
+  ],
+  "mutationBoundary": {
+    "production": false,
+    "linkedSupabase": false,
+    "realWhatsAppEgress": false,
+    "realAiProviderEgress": false,
+    "stripeLive": false,
+    "rawMediaTransfer": false
+  },
+  "operationVerification": [
+    {
+      "order": 1,
+      "description": "5.1-5.4 state, output ve evidence digestlerini yeniden hesapla; stale veya eksik dosyada kapanisi bloke et.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-5/frontend-backend-user-flow-closure.json"
+      ]
+    },
+    {
+      "order": 2,
+      "description": "Frontend/backend contract, auth flow, shell ve real backend smoke statuslarinin PASS oldugunu kontrol et.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-5/frontend-backend-user-flow-closure.json"
+      ]
+    },
+    {
+      "order": 3,
+      "description": "Final production typecheck, Phase 5 contract test ve frontend/backend selected Playwright suitesini tekrar calistir.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-5/frontend-backend-user-flow-closure.json"
+      ]
+    },
+    {
+      "order": 4,
+      "description": "Production, linked Supabase, real WhatsApp, real AI provider, Stripe live, raw media transfer ve remote demo mutation flaglerini false olarak assert et.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-5/frontend-backend-user-flow-closure.json"
+      ]
+    },
+    {
+      "order": 5,
+      "description": "Tum operation verification satirlarini PASS yap; blocker varsa CLOSED state veya next-phase unlock yazma.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-5/frontend-backend-user-flow-closure.json"
+      ]
+    },
+    {
+      "order": 6,
+      "description": "Closure output, phase state ve nextPhase gate'ini source commit ile digest'le.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-5/frontend-backend-user-flow-closure.json"
+      ]
+    }
+  ],
+  "blockers": [],
+  "closureRule": "all five stages VERIFIED, all required output/evidence digests valid, final typecheck/contract/browser tests PASS and mutation boundary closed",
+  "closureDigest": "be7feead93a2d8f615c298302b38f44037144eecc52e722cbe34ede399fe4617"
+}

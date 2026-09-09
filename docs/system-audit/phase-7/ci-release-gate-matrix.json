@@ -1,0 +1,746 @@
+{
+  "schemaVersion": "aiya-system-audit-phase-7-ci-release-gate-matrix-v1",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-7",
+  "stageId": "7.1",
+  "status": "PASS",
+  "generatedAt": "2026-09-08T13:24:07.648Z",
+  "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+  "interpretation": "PASS means local workflow and release-gate contracts agree. It is not production GO evidence.",
+  "workflowRecords": [
+    {
+      "name": "hosted-sandbox-product-ci.yml",
+      "checkedIn": {
+        "source": ".github/workflows/hosted-sandbox-product-ci.yml",
+        "exists": true,
+        "bytes": 2151,
+        "sha256": "6acd1475e7a525f9cfda44f0d51f322033dde0cc8e39984b92c8007f32fcacb7"
+      },
+      "template": {
+        "source": "tools/hosted-sandbox/deploy/workflow-templates/hosted-sandbox-product-ci.yml",
+        "exists": true,
+        "bytes": 2151,
+        "sha256": "6acd1475e7a525f9cfda44f0d51f322033dde0cc8e39984b92c8007f32fcacb7"
+      },
+      "byteIdentical": true,
+      "forbiddenPatterns": []
+    },
+    {
+      "name": "hosted-sandbox-migration.yml",
+      "checkedIn": {
+        "source": ".github/workflows/hosted-sandbox-migration.yml",
+        "exists": true,
+        "bytes": 2337,
+        "sha256": "79759dc66c58407044c48b8e1af62d07c7eb085ff52b75e620443c73ea526cf9"
+      },
+      "template": {
+        "source": "tools/hosted-sandbox/deploy/workflow-templates/hosted-sandbox-migration.yml",
+        "exists": true,
+        "bytes": 2337,
+        "sha256": "79759dc66c58407044c48b8e1af62d07c7eb085ff52b75e620443c73ea526cf9"
+      },
+      "byteIdentical": true,
+      "forbiddenPatterns": []
+    },
+    {
+      "name": "hosted-sandbox-deploy.yml",
+      "checkedIn": {
+        "source": ".github/workflows/hosted-sandbox-deploy.yml",
+        "exists": true,
+        "bytes": 1688,
+        "sha256": "074d6e9883b8cb4ef8cc8f2108026eb44e9556fce9233b4b6e7af8cb59a9ee0f"
+      },
+      "template": {
+        "source": "tools/hosted-sandbox/deploy/workflow-templates/hosted-sandbox-deploy.yml",
+        "exists": true,
+        "bytes": 1688,
+        "sha256": "074d6e9883b8cb4ef8cc8f2108026eb44e9556fce9233b4b6e7af8cb59a9ee0f"
+      },
+      "byteIdentical": true,
+      "forbiddenPatterns": []
+    }
+  ],
+  "hardeningChecks": [
+    {
+      "id": "checkedIn_hosted-sandbox-product-ci.yml_permissions",
+      "description": "checkedIn hosted-sandbox-product-ci.yml uses read-only repository permissions",
+      "pass": true
+    },
+    {
+      "id": "checkedIn_hosted-sandbox-product-ci.yml_runtime_contract",
+      "description": "checkedIn hosted-sandbox-product-ci.yml pins checkout/node, timeout, concurrency and production guard",
+      "pass": true
+    },
+    {
+      "id": "checkedIn_hosted-sandbox-product-ci.yml_forbidden_patterns",
+      "description": "checkedIn hosted-sandbox-product-ci.yml contains no forbidden workflow patterns",
+      "pass": true
+    },
+    {
+      "id": "template_hosted-sandbox-product-ci.yml_permissions",
+      "description": "template hosted-sandbox-product-ci.yml uses read-only repository permissions",
+      "pass": true
+    },
+    {
+      "id": "template_hosted-sandbox-product-ci.yml_runtime_contract",
+      "description": "template hosted-sandbox-product-ci.yml pins checkout/node, timeout, concurrency and production guard",
+      "pass": true
+    },
+    {
+      "id": "template_hosted-sandbox-product-ci.yml_forbidden_patterns",
+      "description": "template hosted-sandbox-product-ci.yml contains no forbidden workflow patterns",
+      "pass": true
+    },
+    {
+      "id": "checkedIn_hosted-sandbox-migration.yml_permissions",
+      "description": "checkedIn hosted-sandbox-migration.yml uses read-only repository permissions",
+      "pass": true
+    },
+    {
+      "id": "checkedIn_hosted-sandbox-migration.yml_runtime_contract",
+      "description": "checkedIn hosted-sandbox-migration.yml pins checkout/node, timeout, concurrency and production guard",
+      "pass": true
+    },
+    {
+      "id": "checkedIn_hosted-sandbox-migration.yml_forbidden_patterns",
+      "description": "checkedIn hosted-sandbox-migration.yml contains no forbidden workflow patterns",
+      "pass": true
+    },
+    {
+      "id": "template_hosted-sandbox-migration.yml_permissions",
+      "description": "template hosted-sandbox-migration.yml uses read-only repository permissions",
+      "pass": true
+    },
+    {
+      "id": "template_hosted-sandbox-migration.yml_runtime_contract",
+      "description": "template hosted-sandbox-migration.yml pins checkout/node, timeout, concurrency and production guard",
+      "pass": true
+    },
+    {
+      "id": "template_hosted-sandbox-migration.yml_forbidden_patterns",
+      "description": "template hosted-sandbox-migration.yml contains no forbidden workflow patterns",
+      "pass": true
+    },
+    {
+      "id": "checkedIn_hosted-sandbox-deploy.yml_permissions",
+      "description": "checkedIn hosted-sandbox-deploy.yml uses read-only repository permissions",
+      "pass": true
+    },
+    {
+      "id": "checkedIn_hosted-sandbox-deploy.yml_runtime_contract",
+      "description": "checkedIn hosted-sandbox-deploy.yml pins checkout/node, timeout, concurrency and production guard",
+      "pass": true
+    },
+    {
+      "id": "checkedIn_hosted-sandbox-deploy.yml_forbidden_patterns",
+      "description": "checkedIn hosted-sandbox-deploy.yml contains no forbidden workflow patterns",
+      "pass": true
+    },
+    {
+      "id": "template_hosted-sandbox-deploy.yml_permissions",
+      "description": "template hosted-sandbox-deploy.yml uses read-only repository permissions",
+      "pass": true
+    },
+    {
+      "id": "template_hosted-sandbox-deploy.yml_runtime_contract",
+      "description": "template hosted-sandbox-deploy.yml pins checkout/node, timeout, concurrency and production guard",
+      "pass": true
+    },
+    {
+      "id": "template_hosted-sandbox-deploy.yml_forbidden_patterns",
+      "description": "template hosted-sandbox-deploy.yml contains no forbidden workflow patterns",
+      "pass": true
+    }
+  ],
+  "sourceFiles": [
+    {
+      "source": ".github/workflows/hosted-sandbox-product-ci.yml",
+      "exists": true,
+      "bytes": 2151,
+      "sha256": "6acd1475e7a525f9cfda44f0d51f322033dde0cc8e39984b92c8007f32fcacb7"
+    },
+    {
+      "source": "tools/hosted-sandbox/deploy/workflow-templates/hosted-sandbox-product-ci.yml",
+      "exists": true,
+      "bytes": 2151,
+      "sha256": "6acd1475e7a525f9cfda44f0d51f322033dde0cc8e39984b92c8007f32fcacb7"
+    },
+    {
+      "source": ".github/workflows/hosted-sandbox-migration.yml",
+      "exists": true,
+      "bytes": 2337,
+      "sha256": "79759dc66c58407044c48b8e1af62d07c7eb085ff52b75e620443c73ea526cf9"
+    },
+    {
+      "source": "tools/hosted-sandbox/deploy/workflow-templates/hosted-sandbox-migration.yml",
+      "exists": true,
+      "bytes": 2337,
+      "sha256": "79759dc66c58407044c48b8e1af62d07c7eb085ff52b75e620443c73ea526cf9"
+    },
+    {
+      "source": ".github/workflows/hosted-sandbox-deploy.yml",
+      "exists": true,
+      "bytes": 1688,
+      "sha256": "074d6e9883b8cb4ef8cc8f2108026eb44e9556fce9233b4b6e7af8cb59a9ee0f"
+    },
+    {
+      "source": "tools/hosted-sandbox/deploy/workflow-templates/hosted-sandbox-deploy.yml",
+      "exists": true,
+      "bytes": 1688,
+      "sha256": "074d6e9883b8cb4ef8cc8f2108026eb44e9556fce9233b4b6e7af8cb59a9ee0f"
+    }
+  ],
+  "checks": [
+    {
+      "id": "phase6_transition_gate",
+      "description": "Phase 6 is CLOSED and unlocks Phase 7",
+      "pass": true,
+      "details": []
+    },
+    {
+      "id": "workflow_inventory",
+      "description": "three checked-in workflows and three templates exist",
+      "pass": true,
+      "details": []
+    },
+    {
+      "id": "workflow_hardening",
+      "description": "permissions, pins, timeout, concurrency and production guard are present",
+      "pass": true,
+      "details": []
+    },
+    {
+      "id": "product_ci_gate_order",
+      "description": "product CI gates are present in the required order",
+      "pass": true,
+      "details": {
+        "pass": true,
+        "actual": {
+          "pass": true,
+          "positions": {
+            "npm run lint": 897,
+            "npm run typecheck": 920,
+            "npx vitest run src/lib/hosted-sandbox-release-identity.test.ts": 1037,
+            "npm run build": 1224,
+            "node tools/hosted-sandbox/deploy/build-release-artifact.mjs": 1295,
+            "node --test --test-name-pattern": 1419,
+            "node tools/hosted-sandbox/deploy/verify-workflow-hardening.mjs": 1760,
+            "node tools/hosted-sandbox/deploy/verify-nginx-template.mjs": 1873,
+            "node app/scripts/verify-hosted-sandbox-contracts.mjs": 1984,
+            "npm run test:audit-system:phase7": 2118
+          }
+        },
+        "template": {
+          "pass": true,
+          "positions": {
+            "npm run lint": 897,
+            "npm run typecheck": 920,
+            "npx vitest run src/lib/hosted-sandbox-release-identity.test.ts": 1037,
+            "npm run build": 1224,
+            "node tools/hosted-sandbox/deploy/build-release-artifact.mjs": 1295,
+            "node --test --test-name-pattern": 1419,
+            "node tools/hosted-sandbox/deploy/verify-workflow-hardening.mjs": 1760,
+            "node tools/hosted-sandbox/deploy/verify-nginx-template.mjs": 1873,
+            "node app/scripts/verify-hosted-sandbox-contracts.mjs": 1984,
+            "npm run test:audit-system:phase7": 2118
+          }
+        },
+        "markers": [
+          "npm run lint",
+          "npm run typecheck",
+          "npx vitest run src/lib/hosted-sandbox-release-identity.test.ts",
+          "npm run build",
+          "node tools/hosted-sandbox/deploy/build-release-artifact.mjs",
+          "node --test --test-name-pattern",
+          "node tools/hosted-sandbox/deploy/verify-workflow-hardening.mjs",
+          "node tools/hosted-sandbox/deploy/verify-nginx-template.mjs",
+          "node app/scripts/verify-hosted-sandbox-contracts.mjs",
+          "npm run test:audit-system:phase7"
+        ]
+      }
+    },
+    {
+      "id": "migration_apply_gate",
+      "description": "migration apply is manual, protected and false by default",
+      "pass": true,
+      "details": {
+        "pass": true,
+        "fileCount": 2
+      }
+    },
+    {
+      "id": "deploy_artifact_gate",
+      "description": "deploy is environment-protected, fingerprint-bound and dry-run by default",
+      "pass": true,
+      "details": {
+        "pass": true,
+        "fileCount": 2
+      }
+    },
+    {
+      "id": "workflow_template_match",
+      "description": "checked-in workflows are byte-identical to templates",
+      "pass": true,
+      "details": [
+        {
+          "name": "hosted-sandbox-product-ci.yml",
+          "checkedIn": {
+            "source": ".github/workflows/hosted-sandbox-product-ci.yml",
+            "exists": true,
+            "bytes": 2151,
+            "sha256": "6acd1475e7a525f9cfda44f0d51f322033dde0cc8e39984b92c8007f32fcacb7"
+          },
+          "template": {
+            "source": "tools/hosted-sandbox/deploy/workflow-templates/hosted-sandbox-product-ci.yml",
+            "exists": true,
+            "bytes": 2151,
+            "sha256": "6acd1475e7a525f9cfda44f0d51f322033dde0cc8e39984b92c8007f32fcacb7"
+          },
+          "byteIdentical": true,
+          "forbiddenPatterns": []
+        },
+        {
+          "name": "hosted-sandbox-migration.yml",
+          "checkedIn": {
+            "source": ".github/workflows/hosted-sandbox-migration.yml",
+            "exists": true,
+            "bytes": 2337,
+            "sha256": "79759dc66c58407044c48b8e1af62d07c7eb085ff52b75e620443c73ea526cf9"
+          },
+          "template": {
+            "source": "tools/hosted-sandbox/deploy/workflow-templates/hosted-sandbox-migration.yml",
+            "exists": true,
+            "bytes": 2337,
+            "sha256": "79759dc66c58407044c48b8e1af62d07c7eb085ff52b75e620443c73ea526cf9"
+          },
+          "byteIdentical": true,
+          "forbiddenPatterns": []
+        },
+        {
+          "name": "hosted-sandbox-deploy.yml",
+          "checkedIn": {
+            "source": ".github/workflows/hosted-sandbox-deploy.yml",
+            "exists": true,
+            "bytes": 1688,
+            "sha256": "074d6e9883b8cb4ef8cc8f2108026eb44e9556fce9233b4b6e7af8cb59a9ee0f"
+          },
+          "template": {
+            "source": "tools/hosted-sandbox/deploy/workflow-templates/hosted-sandbox-deploy.yml",
+            "exists": true,
+            "bytes": 1688,
+            "sha256": "074d6e9883b8cb4ef8cc8f2108026eb44e9556fce9233b4b6e7af8cb59a9ee0f"
+          },
+          "byteIdentical": true,
+          "forbiddenPatterns": []
+        }
+      ]
+    },
+    {
+      "id": "local_contract_verification",
+      "description": "read-only hardening verifier and Phase 7 contract test pass",
+      "pass": true,
+      "details": {
+        "pass": true,
+        "tests": [
+          {
+            "name": "workflow-hardening-verifier",
+            "command": "C:\\Program Files\\nodejs\\node.exe tools/hosted-sandbox/deploy/verify-workflow-hardening.mjs",
+            "status": "PASS",
+            "exitCode": 0,
+            "timedOut": false,
+            "durationMs": 74,
+            "outputTail": null
+          },
+          {
+            "name": "phase-7-contract",
+            "command": "C:\\Program Files\\nodejs\\node.exe --test tools/system-audit/phase-7/phase-7.test.mjs",
+            "status": "PASS",
+            "exitCode": 0,
+            "timedOut": false,
+            "durationMs": 713,
+            "outputTail": null
+          }
+        ]
+      }
+    }
+  ],
+  "operationChecks": [
+    {
+      "id": "phase6_transition_gate",
+      "description": "Phase 6 is CLOSED and unlocks Phase 7",
+      "pass": true,
+      "details": []
+    },
+    {
+      "id": "workflow_inventory",
+      "description": "three checked-in workflows and three templates exist",
+      "pass": true,
+      "details": []
+    },
+    {
+      "id": "workflow_hardening",
+      "description": "permissions, pins, timeout, concurrency and production guard are present",
+      "pass": true,
+      "details": []
+    },
+    {
+      "id": "product_ci_gate_order",
+      "description": "product CI gates are present in the required order",
+      "pass": true,
+      "details": {
+        "pass": true,
+        "actual": {
+          "pass": true,
+          "positions": {
+            "npm run lint": 897,
+            "npm run typecheck": 920,
+            "npx vitest run src/lib/hosted-sandbox-release-identity.test.ts": 1037,
+            "npm run build": 1224,
+            "node tools/hosted-sandbox/deploy/build-release-artifact.mjs": 1295,
+            "node --test --test-name-pattern": 1419,
+            "node tools/hosted-sandbox/deploy/verify-workflow-hardening.mjs": 1760,
+            "node tools/hosted-sandbox/deploy/verify-nginx-template.mjs": 1873,
+            "node app/scripts/verify-hosted-sandbox-contracts.mjs": 1984,
+            "npm run test:audit-system:phase7": 2118
+          }
+        },
+        "template": {
+          "pass": true,
+          "positions": {
+            "npm run lint": 897,
+            "npm run typecheck": 920,
+            "npx vitest run src/lib/hosted-sandbox-release-identity.test.ts": 1037,
+            "npm run build": 1224,
+            "node tools/hosted-sandbox/deploy/build-release-artifact.mjs": 1295,
+            "node --test --test-name-pattern": 1419,
+            "node tools/hosted-sandbox/deploy/verify-workflow-hardening.mjs": 1760,
+            "node tools/hosted-sandbox/deploy/verify-nginx-template.mjs": 1873,
+            "node app/scripts/verify-hosted-sandbox-contracts.mjs": 1984,
+            "npm run test:audit-system:phase7": 2118
+          }
+        },
+        "markers": [
+          "npm run lint",
+          "npm run typecheck",
+          "npx vitest run src/lib/hosted-sandbox-release-identity.test.ts",
+          "npm run build",
+          "node tools/hosted-sandbox/deploy/build-release-artifact.mjs",
+          "node --test --test-name-pattern",
+          "node tools/hosted-sandbox/deploy/verify-workflow-hardening.mjs",
+          "node tools/hosted-sandbox/deploy/verify-nginx-template.mjs",
+          "node app/scripts/verify-hosted-sandbox-contracts.mjs",
+          "npm run test:audit-system:phase7"
+        ]
+      }
+    },
+    {
+      "id": "migration_apply_gate",
+      "description": "migration apply is manual, protected and false by default",
+      "pass": true,
+      "details": {
+        "pass": true,
+        "fileCount": 2
+      }
+    },
+    {
+      "id": "deploy_artifact_gate",
+      "description": "deploy is environment-protected, fingerprint-bound and dry-run by default",
+      "pass": true,
+      "details": {
+        "pass": true,
+        "fileCount": 2
+      }
+    },
+    {
+      "id": "workflow_template_match",
+      "description": "checked-in workflows are byte-identical to templates",
+      "pass": true,
+      "details": [
+        {
+          "name": "hosted-sandbox-product-ci.yml",
+          "checkedIn": {
+            "source": ".github/workflows/hosted-sandbox-product-ci.yml",
+            "exists": true,
+            "bytes": 2151,
+            "sha256": "6acd1475e7a525f9cfda44f0d51f322033dde0cc8e39984b92c8007f32fcacb7"
+          },
+          "template": {
+            "source": "tools/hosted-sandbox/deploy/workflow-templates/hosted-sandbox-product-ci.yml",
+            "exists": true,
+            "bytes": 2151,
+            "sha256": "6acd1475e7a525f9cfda44f0d51f322033dde0cc8e39984b92c8007f32fcacb7"
+          },
+          "byteIdentical": true,
+          "forbiddenPatterns": []
+        },
+        {
+          "name": "hosted-sandbox-migration.yml",
+          "checkedIn": {
+            "source": ".github/workflows/hosted-sandbox-migration.yml",
+            "exists": true,
+            "bytes": 2337,
+            "sha256": "79759dc66c58407044c48b8e1af62d07c7eb085ff52b75e620443c73ea526cf9"
+          },
+          "template": {
+            "source": "tools/hosted-sandbox/deploy/workflow-templates/hosted-sandbox-migration.yml",
+            "exists": true,
+            "bytes": 2337,
+            "sha256": "79759dc66c58407044c48b8e1af62d07c7eb085ff52b75e620443c73ea526cf9"
+          },
+          "byteIdentical": true,
+          "forbiddenPatterns": []
+        },
+        {
+          "name": "hosted-sandbox-deploy.yml",
+          "checkedIn": {
+            "source": ".github/workflows/hosted-sandbox-deploy.yml",
+            "exists": true,
+            "bytes": 1688,
+            "sha256": "074d6e9883b8cb4ef8cc8f2108026eb44e9556fce9233b4b6e7af8cb59a9ee0f"
+          },
+          "template": {
+            "source": "tools/hosted-sandbox/deploy/workflow-templates/hosted-sandbox-deploy.yml",
+            "exists": true,
+            "bytes": 1688,
+            "sha256": "074d6e9883b8cb4ef8cc8f2108026eb44e9556fce9233b4b6e7af8cb59a9ee0f"
+          },
+          "byteIdentical": true,
+          "forbiddenPatterns": []
+        }
+      ]
+    },
+    {
+      "id": "local_contract_verification",
+      "description": "read-only hardening verifier and Phase 7 contract test pass",
+      "pass": true,
+      "details": {
+        "pass": true,
+        "tests": [
+          {
+            "name": "workflow-hardening-verifier",
+            "command": "C:\\Program Files\\nodejs\\node.exe tools/hosted-sandbox/deploy/verify-workflow-hardening.mjs",
+            "status": "PASS",
+            "exitCode": 0,
+            "timedOut": false,
+            "durationMs": 74,
+            "outputTail": null
+          },
+          {
+            "name": "phase-7-contract",
+            "command": "C:\\Program Files\\nodejs\\node.exe --test tools/system-audit/phase-7/phase-7.test.mjs",
+            "status": "PASS",
+            "exitCode": 0,
+            "timedOut": false,
+            "durationMs": 713,
+            "outputTail": null
+          }
+        ]
+      }
+    }
+  ],
+  "blockers": [],
+  "matrixDigest": "aa1e48ecccba4da7b059d2fb4b4375b62261e08343075bc3376875fcb63751f9",
+  "testResults": [
+    {
+      "name": "workflow-hardening-verifier",
+      "command": "C:\\Program Files\\nodejs\\node.exe tools/hosted-sandbox/deploy/verify-workflow-hardening.mjs",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "durationMs": 74,
+      "outputTail": null
+    },
+    {
+      "name": "phase-7-contract",
+      "command": "C:\\Program Files\\nodejs\\node.exe --test tools/system-audit/phase-7/phase-7.test.mjs",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "durationMs": 713,
+      "outputTail": null
+    }
+  ],
+  "operationResults": [
+    {
+      "order": 1,
+      "description": "Read the Phase 6 closure and current HEAD; stop before the next operation if the transition gate is absent, stale or locked.",
+      "id": "phase6_transition_gate",
+      "status": "PASS",
+      "details": []
+    },
+    {
+      "order": 2,
+      "description": "Enumerate the three checked-in hosted-sandbox workflows and three templates without running the workflow installer or overwriting user changes.",
+      "id": "workflow_inventory",
+      "status": "PASS",
+      "details": []
+    },
+    {
+      "order": 3,
+      "description": "Verify permissions, checkout pinning, Node setup, timeout, concurrency and MANU_CI_NO_PRODUCTION_EFFECTS in every workflow.",
+      "id": "workflow_hardening",
+      "status": "PASS",
+      "details": []
+    },
+    {
+      "order": 4,
+      "description": "Verify product CI contains lint, typecheck, oracle tests, build, artifact, deploy machinery, hardening, nginx, hosted verifier and Phase 7 contract gates in that order.",
+      "id": "product_ci_gate_order",
+      "status": "PASS",
+      "details": {
+        "pass": true,
+        "actual": {
+          "pass": true,
+          "positions": {
+            "npm run lint": 897,
+            "npm run typecheck": 920,
+            "npx vitest run src/lib/hosted-sandbox-release-identity.test.ts": 1037,
+            "npm run build": 1224,
+            "node tools/hosted-sandbox/deploy/build-release-artifact.mjs": 1295,
+            "node --test --test-name-pattern": 1419,
+            "node tools/hosted-sandbox/deploy/verify-workflow-hardening.mjs": 1760,
+            "node tools/hosted-sandbox/deploy/verify-nginx-template.mjs": 1873,
+            "node app/scripts/verify-hosted-sandbox-contracts.mjs": 1984,
+            "npm run test:audit-system:phase7": 2118
+          }
+        },
+        "template": {
+          "pass": true,
+          "positions": {
+            "npm run lint": 897,
+            "npm run typecheck": 920,
+            "npx vitest run src/lib/hosted-sandbox-release-identity.test.ts": 1037,
+            "npm run build": 1224,
+            "node tools/hosted-sandbox/deploy/build-release-artifact.mjs": 1295,
+            "node --test --test-name-pattern": 1419,
+            "node tools/hosted-sandbox/deploy/verify-workflow-hardening.mjs": 1760,
+            "node tools/hosted-sandbox/deploy/verify-nginx-template.mjs": 1873,
+            "node app/scripts/verify-hosted-sandbox-contracts.mjs": 1984,
+            "npm run test:audit-system:phase7": 2118
+          }
+        },
+        "markers": [
+          "npm run lint",
+          "npm run typecheck",
+          "npx vitest run src/lib/hosted-sandbox-release-identity.test.ts",
+          "npm run build",
+          "node tools/hosted-sandbox/deploy/build-release-artifact.mjs",
+          "node --test --test-name-pattern",
+          "node tools/hosted-sandbox/deploy/verify-workflow-hardening.mjs",
+          "node tools/hosted-sandbox/deploy/verify-nginx-template.mjs",
+          "node app/scripts/verify-hosted-sandbox-contracts.mjs",
+          "npm run test:audit-system:phase7"
+        ]
+      }
+    },
+    {
+      "order": 5,
+      "description": "Verify migration apply is manual, default false, protected by environment and token/project-ref checks, and never runs during the local audit.",
+      "id": "migration_apply_gate",
+      "status": "PASS",
+      "details": {
+        "pass": true,
+        "fileCount": 2
+      }
+    },
+    {
+      "order": 6,
+      "description": "Verify deploy is protected by environment, migration fingerprint input, required release artifact and dry-run command; verify forbidden deploy patterns are absent.",
+      "id": "deploy_artifact_gate",
+      "status": "PASS",
+      "details": {
+        "pass": true,
+        "fileCount": 2
+      }
+    },
+    {
+      "order": 7,
+      "description": "Compare every checked-in workflow with its template and record source digests, changed files, dirty-tree state and secret-free blockers.",
+      "id": "workflow_template_match",
+      "status": "PASS",
+      "details": [
+        {
+          "name": "hosted-sandbox-product-ci.yml",
+          "checkedIn": {
+            "source": ".github/workflows/hosted-sandbox-product-ci.yml",
+            "exists": true,
+            "bytes": 2151,
+            "sha256": "6acd1475e7a525f9cfda44f0d51f322033dde0cc8e39984b92c8007f32fcacb7"
+          },
+          "template": {
+            "source": "tools/hosted-sandbox/deploy/workflow-templates/hosted-sandbox-product-ci.yml",
+            "exists": true,
+            "bytes": 2151,
+            "sha256": "6acd1475e7a525f9cfda44f0d51f322033dde0cc8e39984b92c8007f32fcacb7"
+          },
+          "byteIdentical": true,
+          "forbiddenPatterns": []
+        },
+        {
+          "name": "hosted-sandbox-migration.yml",
+          "checkedIn": {
+            "source": ".github/workflows/hosted-sandbox-migration.yml",
+            "exists": true,
+            "bytes": 2337,
+            "sha256": "79759dc66c58407044c48b8e1af62d07c7eb085ff52b75e620443c73ea526cf9"
+          },
+          "template": {
+            "source": "tools/hosted-sandbox/deploy/workflow-templates/hosted-sandbox-migration.yml",
+            "exists": true,
+            "bytes": 2337,
+            "sha256": "79759dc66c58407044c48b8e1af62d07c7eb085ff52b75e620443c73ea526cf9"
+          },
+          "byteIdentical": true,
+          "forbiddenPatterns": []
+        },
+        {
+          "name": "hosted-sandbox-deploy.yml",
+          "checkedIn": {
+            "source": ".github/workflows/hosted-sandbox-deploy.yml",
+            "exists": true,
+            "bytes": 1688,
+            "sha256": "074d6e9883b8cb4ef8cc8f2108026eb44e9556fce9233b4b6e7af8cb59a9ee0f"
+          },
+          "template": {
+            "source": "tools/hosted-sandbox/deploy/workflow-templates/hosted-sandbox-deploy.yml",
+            "exists": true,
+            "bytes": 1688,
+            "sha256": "074d6e9883b8cb4ef8cc8f2108026eb44e9556fce9233b4b6e7af8cb59a9ee0f"
+          },
+          "byteIdentical": true,
+          "forbiddenPatterns": []
+        }
+      ]
+    },
+    {
+      "order": 8,
+      "description": "Run the read-only workflow hardening verifier and Phase 7 contract test; write the matrix and eight ordered operation results only after all earlier operations pass.",
+      "id": "local_contract_verification",
+      "status": "PASS",
+      "details": {
+        "pass": true,
+        "tests": [
+          {
+            "name": "workflow-hardening-verifier",
+            "command": "C:\\Program Files\\nodejs\\node.exe tools/hosted-sandbox/deploy/verify-workflow-hardening.mjs",
+            "status": "PASS",
+            "exitCode": 0,
+            "timedOut": false,
+            "durationMs": 74,
+            "outputTail": null
+          },
+          {
+            "name": "phase-7-contract",
+            "command": "C:\\Program Files\\nodejs\\node.exe --test tools/system-audit/phase-7/phase-7.test.mjs",
+            "status": "PASS",
+            "exitCode": 0,
+            "timedOut": false,
+            "durationMs": 713,
+            "outputTail": null
+          }
+        ]
+      }
+    }
+  ]
+}

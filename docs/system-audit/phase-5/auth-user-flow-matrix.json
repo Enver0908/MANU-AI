@@ -1,0 +1,409 @@
+{
+  "schemaVersion": "aiya-system-audit-phase-5-auth-user-flow-matrix-v1",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-5",
+  "status": "PASS",
+  "generatedAt": "2026-09-08T08:27:04.084Z",
+  "checks": [
+    {
+      "id": "customer_password_login",
+      "description": "customer password form and route",
+      "pass": true,
+      "evidence": [
+        "app/src/app/login/page.tsx",
+        "app/src/components/customer-login-form.tsx"
+      ]
+    },
+    {
+      "id": "customer_magic_link",
+      "description": "customer magic link form and route",
+      "pass": true,
+      "evidence": [
+        "app/src/app/auth/callback/route.ts",
+        "app/src/components/customer-login-form.tsx"
+      ]
+    },
+    {
+      "id": "customer_recovery",
+      "description": "customer password reset",
+      "pass": true,
+      "evidence": [
+        "app/src/components/customer-login-form.tsx"
+      ]
+    },
+    {
+      "id": "admin_password_login",
+      "description": "admin password login and allowlist",
+      "pass": true,
+      "evidence": [
+        "app/src/components/admin-login-form.tsx",
+        "app/src/app/api/admin/auth/password-login/route.ts",
+        "app/src/app/api/admin/auth/magic-link/route.ts",
+        "app/src/app/api/admin/auth/password-reset/route.ts",
+        "app/src/lib/commercial-admin-access.ts"
+      ]
+    },
+    {
+      "id": "admin_magic_link",
+      "description": "admin magic link and callback",
+      "pass": true,
+      "evidence": [
+        "app/src/app/admin/page.tsx",
+        "app/src/components/admin-login-form.tsx",
+        "app/src/app/api/admin/auth/password-login/route.ts",
+        "app/src/app/api/admin/auth/magic-link/route.ts",
+        "app/src/app/api/admin/auth/password-reset/route.ts"
+      ]
+    },
+    {
+      "id": "callback_redirect",
+      "description": "callback session exchange and safe redirect",
+      "pass": true,
+      "evidence": [
+        "app/src/app/onboarding/page.tsx",
+        "app/src/app/auth/callback/route.ts",
+        "app/src/components/customer-login-form.tsx",
+        "app/src/components/onboarding-claim-panel.tsx",
+        "app/src/app/api/auth/password-login/route.ts",
+        "app/src/app/api/auth/magic-link/route.ts",
+        "app/src/app/api/commercial/onboarding/claim/route.ts",
+        "app/src/lib/dashboard-server-auth.ts",
+        "app/src/app/api/demo-login/route.ts"
+      ]
+    },
+    {
+      "id": "dashboard_auth_gate",
+      "description": "dashboard membership/profile/entitlement gate",
+      "pass": true,
+      "evidence": [
+        "app/src/app/onboarding/page.tsx",
+        "app/src/app/auth/callback/route.ts",
+        "app/src/app/api/commercial/onboarding/status/route.ts",
+        "app/src/lib/dashboard-server-auth.ts"
+      ]
+    },
+    {
+      "id": "onboarding_claim_flow",
+      "description": "onboarding status/password/claim flow",
+      "pass": true,
+      "evidence": [
+        "app/src/components/customer-login-form.tsx",
+        "app/src/components/onboarding-claim-panel.tsx"
+      ]
+    },
+    {
+      "id": "auth_error_contract",
+      "description": "auth not configured and invalid credential errors",
+      "pass": true,
+      "evidence": [
+        "app/src/app/login/page.tsx",
+        "app/src/app/admin/page.tsx",
+        "app/src/app/onboarding/page.tsx",
+        "app/src/app/auth/callback/route.ts",
+        "app/src/app/api/auth/password-login/route.ts",
+        "app/src/app/api/auth/magic-link/route.ts",
+        "app/src/app/api/auth/password-reset/route.ts",
+        "app/src/app/api/auth/password/route.ts",
+        "app/src/app/api/admin/auth/password-login/route.ts",
+        "app/src/app/api/admin/auth/magic-link/route.ts",
+        "app/src/app/api/admin/auth/password-reset/route.ts",
+        "app/src/app/api/commercial/onboarding/claim/route.ts",
+        "app/src/lib/commercial-admin-access.ts"
+      ]
+    },
+    {
+      "id": "local_demo_boundary",
+      "description": "local-only demo login boundary",
+      "pass": true,
+      "evidence": [
+        "app/src/lib/demo-fixture-access.ts",
+        "app/src/app/api/demo-login/route.ts"
+      ]
+    },
+    {
+      "id": "required_auth_sources_exist",
+      "pass": true,
+      "missingSources": []
+    }
+  ],
+  "flowOrder": [
+    "customer-password",
+    "customer-magic-link",
+    "callback",
+    "dashboard-gate",
+    "onboarding-claim",
+    "admin-password",
+    "admin-magic-link",
+    "logout-recovery"
+  ],
+  "sourceFiles": [
+    {
+      "source": "app/src/app/login/page.tsx",
+      "exists": true,
+      "bytes": 2427,
+      "sha256": "5d274e8041156132dda4e2ec04645b16546519f9c43258a3c52854bfa00ceb2e"
+    },
+    {
+      "source": "app/src/app/admin/page.tsx",
+      "exists": true,
+      "bytes": 7722,
+      "sha256": "e42a2de465a2b70ea9a72b22c066af39b0b6f868995b78aa971642a0de703c1e"
+    },
+    {
+      "source": "app/src/app/onboarding/page.tsx",
+      "exists": true,
+      "bytes": 7642,
+      "sha256": "f3829ce7f1d033fbea358efdf88a9cb8a552a6bb09180a19f586799047432d27"
+    },
+    {
+      "source": "app/src/app/auth/callback/route.ts",
+      "exists": true,
+      "bytes": 7198,
+      "sha256": "7f65e117c0d8b87613123b31ec8d103cc445b97ba60c0fbf0027a0e196a6e430"
+    },
+    {
+      "source": "app/src/components/customer-login-form.tsx",
+      "exists": true,
+      "bytes": 12195,
+      "sha256": "c7a1722474d25170f94c8762cbf23743c16e4d958a561c80bc31cff074ec6599"
+    },
+    {
+      "source": "app/src/components/admin-login-form.tsx",
+      "exists": true,
+      "bytes": 10738,
+      "sha256": "72058e963888d62583b17abb375c68cb8316d4aeb42c9d08e10a2f2d5ee7640b"
+    },
+    {
+      "source": "app/src/components/onboarding-claim-panel.tsx",
+      "exists": true,
+      "bytes": 11258,
+      "sha256": "0ff9c15e34c04b03a823d2909fec3b68cf12c9b4791e5662bf5132424c334cf7"
+    },
+    {
+      "source": "app/src/app/api/auth/password-login/route.ts",
+      "exists": true,
+      "bytes": 4025,
+      "sha256": "10a7ed39623a3fdaaf3fb5400c113256266ae6aae7042b49cfbb40832e458fe8"
+    },
+    {
+      "source": "app/src/app/api/auth/magic-link/route.ts",
+      "exists": true,
+      "bytes": 3254,
+      "sha256": "6f9631200ce48b25814812e3666d97e1f3784d521bc9f9ba2ec41c8a35c9aa23"
+    },
+    {
+      "source": "app/src/app/api/auth/password-reset/route.ts",
+      "exists": true,
+      "bytes": 3418,
+      "sha256": "04d536e682037af75bc7872f62c00cd89a0a41ebe3a2b6ab68cc2ba8bed02cd1"
+    },
+    {
+      "source": "app/src/app/api/auth/password/route.ts",
+      "exists": true,
+      "bytes": 7377,
+      "sha256": "784e27029713da38b10685bde82340d5c5f2df51431224f89a698820c1887167"
+    },
+    {
+      "source": "app/src/app/api/admin/auth/password-login/route.ts",
+      "exists": true,
+      "bytes": 4153,
+      "sha256": "ce587afa0f3c348f6a172daf833c7e8db7bd6f5f45d3dc858ff265709805faf5"
+    },
+    {
+      "source": "app/src/app/api/admin/auth/magic-link/route.ts",
+      "exists": true,
+      "bytes": 2970,
+      "sha256": "383fe66c89f74b9d760399ee5015bf7f25b0cfc083ff979ccb6696fa50985e18"
+    },
+    {
+      "source": "app/src/app/api/admin/auth/password-reset/route.ts",
+      "exists": true,
+      "bytes": 3122,
+      "sha256": "f42e8c6a697c713e185360e851cea3d3649aef2d8c56b9aa3e6ec1a0cf1f2a0c"
+    },
+    {
+      "source": "app/src/app/api/commercial/onboarding/status/route.ts",
+      "exists": true,
+      "bytes": 3559,
+      "sha256": "7e928a3dec90af9c0a299c9148734e0a32f7e4e8d79d0b7ff22fe139f04c31e5"
+    },
+    {
+      "source": "app/src/app/api/commercial/onboarding/claim/route.ts",
+      "exists": true,
+      "bytes": 4115,
+      "sha256": "4aab8307dfff59faa24e8f557651a469698cce44844acaf29930ae19af586e77"
+    },
+    {
+      "source": "app/src/lib/dashboard-server-auth.ts",
+      "exists": true,
+      "bytes": 3350,
+      "sha256": "142c3aab1d836eeedb38d807c23b42d00a339c40823d8aaa7927666d67a5773f"
+    },
+    {
+      "source": "app/src/lib/commercial-admin-access.ts",
+      "exists": true,
+      "bytes": 4350,
+      "sha256": "417573e33410e08c61b085d7ce805421ac6326135d69bd7f3db3a5d98f5c7e94"
+    },
+    {
+      "source": "app/src/lib/demo-fixture-access.ts",
+      "exists": true,
+      "bytes": 1796,
+      "sha256": "65c550d1ed69d105e4ca09ba5662cb5fcf481387a2ace1262e7002e55f468269"
+    },
+    {
+      "source": "app/src/app/api/demo-login/route.ts",
+      "exists": true,
+      "bytes": 2788,
+      "sha256": "130aa74df2309032e363e06ebca4152163769bedaf1077b6281770559bec70d1"
+    }
+  ],
+  "blockers": [],
+  "matrixDigest": "a1e95c775b3253de8229b43972d439cf06057481596aeda75a4e13e805f51d4b",
+  "testResults": [
+    {
+      "name": "phase-5-auth-user-flows",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "fileCount": 8,
+      "summary": {
+        "passedFiles": 8,
+        "failedFiles": 0,
+        "passedTests": 45,
+        "failedTests": 0,
+        "skippedTests": 0
+      },
+      "failure": null
+    }
+  ],
+  "operationVerification": [
+    {
+      "order": 1,
+      "description": "Customer login formunun password, magic-link ve password reset submitlerinin ilgili route ve payload ile birebir eslestigini kontrol et.",
+      "status": "PASS",
+      "evidence": {
+        "id": "customer_password_login",
+        "description": "customer password form and route",
+        "pass": true,
+        "evidence": [
+          "app/src/app/login/page.tsx",
+          "app/src/components/customer-login-form.tsx"
+        ]
+      }
+    },
+    {
+      "order": 2,
+      "description": "Admin login formunun password, magic-link ve reset akisini allowlist route gate'iyle eslestir; allowlist disi email icin 403 sozlesmesini kontrol et.",
+      "status": "PASS",
+      "evidence": {
+        "id": "customer_magic_link",
+        "description": "customer magic link form and route",
+        "pass": true,
+        "evidence": [
+          "app/src/app/auth/callback/route.ts",
+          "app/src/components/customer-login-form.tsx"
+        ]
+      }
+    },
+    {
+      "order": 3,
+      "description": "Auth callback code ve fragment yollarinda session exchange, user lookup, redirect sanitization ve dashboard/onboarding hedeflerini kontrol et.",
+      "status": "PASS",
+      "evidence": {
+        "id": "customer_recovery",
+        "description": "customer password reset",
+        "pass": true,
+        "evidence": [
+          "app/src/components/customer-login-form.tsx"
+        ]
+      }
+    },
+    {
+      "order": 4,
+      "description": "Dashboard server auth'in unauthenticated, no membership, no dietitian ve inactive entitlement dallarini expected redirect/gate ile karsilastir.",
+      "status": "PASS",
+      "evidence": {
+        "id": "admin_password_login",
+        "description": "admin password login and allowlist",
+        "pass": true,
+        "evidence": [
+          "app/src/components/admin-login-form.tsx",
+          "app/src/app/api/admin/auth/password-login/route.ts",
+          "app/src/app/api/admin/auth/magic-link/route.ts",
+          "app/src/app/api/admin/auth/password-reset/route.ts",
+          "app/src/lib/commercial-admin-access.ts"
+        ]
+      }
+    },
+    {
+      "order": 5,
+      "description": "Onboarding status, password creation ve claim endpointlerini session_id/invite_id ambiguity, expired/claimed/missing reference ve success redirect ile kontrol et.",
+      "status": "PASS",
+      "evidence": {
+        "id": "admin_magic_link",
+        "description": "admin magic link and callback",
+        "pass": true,
+        "evidence": [
+          "app/src/app/admin/page.tsx",
+          "app/src/components/admin-login-form.tsx",
+          "app/src/app/api/admin/auth/password-login/route.ts",
+          "app/src/app/api/admin/auth/magic-link/route.ts",
+          "app/src/app/api/admin/auth/password-reset/route.ts"
+        ]
+      }
+    },
+    {
+      "order": 6,
+      "description": "Logout, recovery ve auth-not-configured davranislarinin hassas veri sizdirmadan stable error/redirect verdigini kontrol et.",
+      "status": "PASS",
+      "evidence": {
+        "id": "callback_redirect",
+        "description": "callback session exchange and safe redirect",
+        "pass": true,
+        "evidence": [
+          "app/src/app/onboarding/page.tsx",
+          "app/src/app/auth/callback/route.ts",
+          "app/src/components/customer-login-form.tsx",
+          "app/src/components/onboarding-claim-panel.tsx",
+          "app/src/app/api/auth/password-login/route.ts",
+          "app/src/app/api/auth/magic-link/route.ts",
+          "app/src/app/api/commercial/onboarding/claim/route.ts",
+          "app/src/lib/dashboard-server-auth.ts",
+          "app/src/app/api/demo-login/route.ts"
+        ]
+      }
+    },
+    {
+      "order": 7,
+      "description": "Demo/fallback gate'inin local-only oldugunu source ve environment matrix ile kanitla.",
+      "status": "PASS",
+      "evidence": {
+        "id": "dashboard_auth_gate",
+        "description": "dashboard membership/profile/entitlement gate",
+        "pass": true,
+        "evidence": [
+          "app/src/app/onboarding/page.tsx",
+          "app/src/app/auth/callback/route.ts",
+          "app/src/app/api/commercial/onboarding/status/route.ts",
+          "app/src/lib/dashboard-server-auth.ts"
+        ]
+      }
+    },
+    {
+      "order": 8,
+      "description": "Auth ve onboarding hedef test gruplarini calistir; her akisin browser ile 5.4 yerel backend smoke adimina hazir oldugunu kaydet.",
+      "status": "PASS",
+      "evidence": {
+        "id": "onboarding_claim_flow",
+        "description": "onboarding status/password/claim flow",
+        "pass": true,
+        "evidence": [
+          "app/src/components/customer-login-form.tsx",
+          "app/src/components/onboarding-claim-panel.tsx"
+        ]
+      }
+    }
+  ]
+}

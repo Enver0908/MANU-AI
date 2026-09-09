@@ -1,0 +1,604 @@
+{
+  "schemaVersion": "aiya-system-audit-phase-4-worker-contract-matrix-v1",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-4",
+  "status": "PASS",
+  "generatedAt": "2026-09-07T23:54:01.622Z",
+  "scanRoot": "app worker entries and durable worker implementations",
+  "releaseWorkers": [
+    {
+      "id": "media-stage4b3",
+      "manifest": {
+        "id": "media-stage4b3",
+        "command": "worker:media:stage4b3",
+        "onceCommand": "worker:media:stage4b3:once"
+      },
+      "packageScripts": {
+        "command": "worker:media:stage4b3",
+        "commandPresent": true,
+        "onceCommand": "worker:media:stage4b3:once",
+        "onceCommandPresent": true
+      },
+      "pass": true
+    },
+    {
+      "id": "media-lifecycle",
+      "manifest": {
+        "id": "media-lifecycle",
+        "command": "worker:media:lifecycle",
+        "onceCommand": "worker:media:lifecycle:once"
+      },
+      "packageScripts": {
+        "command": "worker:media:lifecycle",
+        "commandPresent": true,
+        "onceCommand": "worker:media:lifecycle:once",
+        "onceCommandPresent": true
+      },
+      "pass": true
+    },
+    {
+      "id": "audio-stage4b4",
+      "manifest": {
+        "id": "audio-stage4b4",
+        "command": "worker:audio:stage4b4",
+        "onceCommand": "worker:audio:stage4b4:once"
+      },
+      "packageScripts": {
+        "command": "worker:audio:stage4b4",
+        "commandPresent": true,
+        "onceCommand": "worker:audio:stage4b4:once",
+        "onceCommandPresent": true
+      },
+      "pass": true
+    },
+    {
+      "id": "audio-lifecycle-stage4b4",
+      "manifest": {
+        "id": "audio-lifecycle-stage4b4",
+        "command": "worker:audio:lifecycle:stage4b4",
+        "onceCommand": "worker:audio:lifecycle:stage4b4:once"
+      },
+      "packageScripts": {
+        "command": "worker:audio:lifecycle:stage4b4",
+        "commandPresent": true,
+        "onceCommand": "worker:audio:lifecycle:stage4b4:once",
+        "onceCommandPresent": true
+      },
+      "pass": true
+    },
+    {
+      "id": "ai-chat-stage4c",
+      "manifest": {
+        "id": "ai-chat-stage4c",
+        "command": "worker:ai-chat:stage4c",
+        "onceCommand": "worker:ai-chat:stage4c:once"
+      },
+      "packageScripts": {
+        "command": "worker:ai-chat:stage4c",
+        "commandPresent": true,
+        "onceCommand": "worker:ai-chat:stage4c:once",
+        "onceCommandPresent": true
+      },
+      "pass": true
+    },
+    {
+      "id": "ai-chat-lifecycle-stage4c",
+      "manifest": {
+        "id": "ai-chat-lifecycle-stage4c",
+        "command": "worker:ai-chat:lifecycle:stage4c",
+        "onceCommand": "worker:ai-chat:lifecycle:stage4c:once"
+      },
+      "packageScripts": {
+        "command": "worker:ai-chat:lifecycle:stage4c",
+        "commandPresent": true,
+        "onceCommand": "worker:ai-chat:lifecycle:stage4c:once",
+        "onceCommandPresent": true
+      },
+      "pass": true
+    }
+  ],
+  "wrappers": [
+    {
+      "source": "app/scripts/worker-media-stage4b3.mjs",
+      "checks": {
+        "exists": true,
+        "onceFlag": true,
+        "childProcess": true,
+        "failureExit": true,
+        "intervalOrForwarding": true
+      },
+      "pass": true
+    },
+    {
+      "source": "app/scripts/worker-media-lifecycle-stage4b3.mjs",
+      "checks": {
+        "exists": true,
+        "onceFlag": true,
+        "childProcess": true,
+        "failureExit": true,
+        "intervalOrForwarding": true
+      },
+      "pass": true
+    },
+    {
+      "source": "app/scripts/worker-audio-stage4b4.mjs",
+      "checks": {
+        "exists": true,
+        "onceFlag": true,
+        "childProcess": true,
+        "failureExit": true,
+        "intervalOrForwarding": true
+      },
+      "pass": true
+    },
+    {
+      "source": "app/scripts/worker-audio-stage4b4-lifecycle.mjs",
+      "checks": {
+        "exists": true,
+        "onceFlag": true,
+        "childProcess": true,
+        "failureExit": true,
+        "intervalOrForwarding": true
+      },
+      "pass": true
+    },
+    {
+      "source": "app/scripts/worker-ai-chat-stage4c.mjs",
+      "checks": {
+        "exists": true,
+        "onceFlag": true,
+        "childProcess": true,
+        "failureExit": true,
+        "intervalOrForwarding": true
+      },
+      "pass": true
+    },
+    {
+      "source": "app/scripts/worker-ai-chat-lifecycle-stage4c.mjs",
+      "checks": {
+        "exists": true,
+        "onceFlag": true,
+        "childProcess": true,
+        "failureExit": true,
+        "intervalOrForwarding": true
+      },
+      "pass": true
+    }
+  ],
+  "processingChecks": [
+    {
+      "id": "claim",
+      "description": "processing worker queue claim",
+      "pass": true,
+      "evidence": [
+        "app/src/lib/phase-85-stage-4b3-durable-media-worker.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-audio-worker.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-transcript-bridge-worker.ts",
+        "app/src/lib/phase-85-stage-4c-run-service.ts"
+      ]
+    },
+    {
+      "id": "lease",
+      "description": "lease token or lease renewal",
+      "pass": true,
+      "evidence": [
+        "app/src/lib/phase-85-stage-4b3-durable-media-worker.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-audio-worker.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-transcript-bridge-worker.ts",
+        "app/src/lib/phase-85-stage-4c-run-service.ts"
+      ]
+    },
+    {
+      "id": "completion",
+      "description": "completion or terminal outcome",
+      "pass": true,
+      "evidence": [
+        "app/src/lib/phase-85-stage-4b3-durable-media-worker.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-audio-worker.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-transcript-bridge-worker.ts",
+        "app/src/lib/phase-85-stage-4c-run-service.ts"
+      ]
+    },
+    {
+      "id": "failure",
+      "description": "failure outcome",
+      "pass": true,
+      "evidence": [
+        "app/src/lib/phase-85-stage-4b3-durable-media-worker.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-audio-worker.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-transcript-bridge-worker.ts",
+        "app/src/lib/phase-85-stage-4c-run-service.ts"
+      ]
+    },
+    {
+      "id": "retry",
+      "description": "retry or retryable outcome",
+      "pass": true,
+      "evidence": [
+        "app/src/lib/phase-85-stage-4b3-durable-media-worker.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-audio-worker.ts",
+        "app/src/lib/phase-85-stage-4c-run-service.ts"
+      ]
+    },
+    {
+      "id": "idempotency",
+      "description": "idempotency, revision or duplicate guard",
+      "pass": true,
+      "evidence": [
+        "app/src/lib/phase-85-stage-4b3-durable-media-worker.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-audio-worker.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-transcript-bridge-worker.ts",
+        "app/src/lib/phase-85-stage-4c-run-service.ts"
+      ]
+    }
+  ],
+  "lifecycleChecks": [
+    {
+      "id": "retention",
+      "description": "retention or purge lifecycle",
+      "pass": true,
+      "evidence": [
+        "app/src/lib/phase-85-stage-4b3-media-lifecycle-saga.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-lifecycle.ts",
+        "app/src/lib/phase-85-stage-4c-lifecycle.ts"
+      ]
+    },
+    {
+      "id": "objectOperation",
+      "description": "object deletion or lifecycle operation",
+      "pass": true,
+      "evidence": [
+        "app/src/lib/phase-85-stage-4b3-media-lifecycle-saga.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-lifecycle.ts",
+        "app/src/lib/phase-85-stage-4c-lifecycle.ts"
+      ]
+    },
+    {
+      "id": "lease",
+      "description": "lifecycle operation lease",
+      "pass": true,
+      "evidence": [
+        "app/src/lib/phase-85-stage-4b3-media-lifecycle-saga.ts",
+        "app/src/lib/phase-85-stage-4c-lifecycle.ts"
+      ]
+    },
+    {
+      "id": "audit",
+      "description": "lifecycle audit or privacy review",
+      "pass": true,
+      "evidence": [
+        "app/src/lib/phase-85-stage-4b3-media-lifecycle-saga.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-lifecycle.ts",
+        "app/src/lib/phase-85-stage-4c-lifecycle.ts"
+      ]
+    }
+  ],
+  "cliChecks": [
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-durable-media-worker-cli.ts",
+      "checks": {
+        "exists": true,
+        "workerIdentity": true,
+        "onceMode": true,
+        "failureExit": true,
+        "serverOnlyClient": true
+      },
+      "pass": true
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-media-lifecycle-worker-cli.ts",
+      "checks": {
+        "exists": true,
+        "workerIdentity": true,
+        "onceMode": true,
+        "failureExit": true,
+        "serverOnlyClient": true
+      },
+      "pass": true
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-durable-audio-worker-cli.ts",
+      "checks": {
+        "exists": true,
+        "workerIdentity": true,
+        "onceMode": true,
+        "failureExit": true,
+        "serverOnlyClient": true
+      },
+      "pass": true
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-durable-admission-worker-cli.ts",
+      "checks": {
+        "exists": true,
+        "workerIdentity": true,
+        "onceMode": true,
+        "failureExit": true,
+        "serverOnlyClient": true
+      },
+      "pass": true
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-durable-transcript-bridge-worker-cli.ts",
+      "checks": {
+        "exists": true,
+        "workerIdentity": true,
+        "onceMode": true,
+        "failureExit": true,
+        "serverOnlyClient": true
+      },
+      "pass": true
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-audio-lifecycle-worker-cli.ts",
+      "checks": {
+        "exists": true,
+        "workerIdentity": true,
+        "onceMode": true,
+        "failureExit": true,
+        "serverOnlyClient": true
+      },
+      "pass": true
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4c-run-worker-cli.ts",
+      "checks": {
+        "exists": true,
+        "workerIdentity": true,
+        "onceMode": true,
+        "failureExit": true,
+        "serverOnlyClient": true
+      },
+      "pass": true
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4c-lifecycle-worker-cli.ts",
+      "checks": {
+        "exists": true,
+        "workerIdentity": true,
+        "onceMode": true,
+        "failureExit": true,
+        "serverOnlyClient": true
+      },
+      "pass": true
+    }
+  ],
+  "checks": [
+    {
+      "id": "release_manifest_reconciled",
+      "pass": true
+    },
+    {
+      "id": "wrapper_contracts",
+      "pass": true
+    },
+    {
+      "id": "processing_contracts",
+      "pass": true
+    },
+    {
+      "id": "lifecycle_contracts",
+      "pass": true
+    },
+    {
+      "id": "cli_contracts",
+      "pass": true
+    }
+  ],
+  "blockers": [],
+  "sourceFiles": [
+    {
+      "source": "app/package.json",
+      "exists": true,
+      "bytes": 7899,
+      "sha256": "c66abf39cf7d2f717a90d1fae6f2db4358d69d8ae74c46f089d0e3ae914e95f0"
+    },
+    {
+      "source": "app/scripts/build-release-artifact.mjs",
+      "exists": true,
+      "bytes": 7518,
+      "sha256": "367c494e857ab56c545a716b52f05e05cd045e4fbdefbb8499559d9548e45520"
+    },
+    {
+      "source": "app/scripts/worker-media-stage4b3.mjs",
+      "exists": true,
+      "bytes": 803,
+      "sha256": "ca2cf6a9b1cf2d64d132c01a8c580f007e37752d9ad8e5ba7acdff8e4e006865"
+    },
+    {
+      "source": "app/scripts/worker-media-lifecycle-stage4b3.mjs",
+      "exists": true,
+      "bytes": 812,
+      "sha256": "6bae2c3068aa4153b49230f399fa64f629aa4ef200727f5547e73b1e846c81f6"
+    },
+    {
+      "source": "app/scripts/worker-audio-stage4b4.mjs",
+      "exists": true,
+      "bytes": 565,
+      "sha256": "0f3a7d301a33a4869dd7f6766dda782a8a2df5fcb440b86d664c06925654c911"
+    },
+    {
+      "source": "app/scripts/worker-audio-stage4b4-lifecycle.mjs",
+      "exists": true,
+      "bytes": 812,
+      "sha256": "edd7685296c5427342fa7813d59a6f8814cfba441041974487cc5c621f7519a9"
+    },
+    {
+      "source": "app/scripts/worker-ai-chat-stage4c.mjs",
+      "exists": true,
+      "bytes": 956,
+      "sha256": "3d13bedb1a4345457507861c1272451800c695a0d47bc22d927223db6f3ab8cc"
+    },
+    {
+      "source": "app/scripts/worker-ai-chat-lifecycle-stage4c.mjs",
+      "exists": true,
+      "bytes": 803,
+      "sha256": "ef2c169a05faf10db135379c0f96ecd50b94621e5ccabd64f1ef11d61cc7ace4"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-durable-media-worker.ts",
+      "exists": true,
+      "bytes": 9086,
+      "sha256": "56779ff417adc02822d4183d7467650d6b4e1ed3994f790cf430cc71c00acc8a"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-durable-audio-worker.ts",
+      "exists": true,
+      "bytes": 10805,
+      "sha256": "7afab1252d48c82c42be758fc46e0270d8ecf503c2b61777cf883bd079ddc795"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-durable-transcript-bridge-worker.ts",
+      "exists": true,
+      "bytes": 3949,
+      "sha256": "0da551d6cbd49c7a60f50c555c0e7ef3ab0456c1dc168be62ba0924e75b80235"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4c-run-service.ts",
+      "exists": true,
+      "bytes": 46269,
+      "sha256": "c414ca915c39bc7e70183194b5d2680023a625e984168ed064583c4fb45734bd"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-media-lifecycle-saga.ts",
+      "exists": true,
+      "bytes": 15660,
+      "sha256": "63e186138efd5ff8bbce410e2da9e5d2aa0c88889ae032dbc209c7540bb9ca0a"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-audio-lifecycle.ts",
+      "exists": true,
+      "bytes": 19394,
+      "sha256": "40871f16907494fb72f294f121b2e010e6814af29397df124a5acfefecefa026"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4c-lifecycle.ts",
+      "exists": true,
+      "bytes": 43920,
+      "sha256": "f999ae337eb4213af695c088630d327d42a87a84337f333262cb3320da65c514"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-durable-media-worker-cli.ts",
+      "exists": true,
+      "bytes": 1544,
+      "sha256": "4582f2aebc8e15578e9a5b8c8d9760163dd3cef6edf640b74622602724dce058"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-media-lifecycle-worker-cli.ts",
+      "exists": true,
+      "bytes": 1739,
+      "sha256": "3b5a5d0c3dfd97f37b1dde49c43618e9cf45a5ab4c5288a6fbba4bf9930bf8f0"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-durable-audio-worker-cli.ts",
+      "exists": true,
+      "bytes": 2035,
+      "sha256": "09df70a28e0f69e8faf4d013550f1226ca308183cb1be86e026ff5f37d38b653"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-durable-admission-worker-cli.ts",
+      "exists": true,
+      "bytes": 1595,
+      "sha256": "b9307030f385d32f341af2be09aad49652c85405d05ea097bcede26fc13c508a"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-durable-transcript-bridge-worker-cli.ts",
+      "exists": true,
+      "bytes": 2057,
+      "sha256": "918941d923d1d75268b346b15720e4c34f034fccb705966f5b0c474ad8f85ea9"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-audio-lifecycle-worker-cli.ts",
+      "exists": true,
+      "bytes": 1794,
+      "sha256": "c5d37921801048c01d8d62fe5d0b4aae28ded12496dc104f47e08aca368f44f7"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4c-run-worker-cli.ts",
+      "exists": true,
+      "bytes": 820,
+      "sha256": "d3693453f0e3547986ad3f6638311c45b1238c2f4dbdd99083febc8b84891b28"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4c-lifecycle-worker-cli.ts",
+      "exists": true,
+      "bytes": 1203,
+      "sha256": "3683e33c076683a1600646e986cc8cbd9f263be8f3b29797874fb6c4147f9c3e"
+    }
+  ],
+  "matrixDigest": "4598d15b1a86f2c7e0babb7d9d61a635207e9c119119cd67bbd34b586c69f389",
+  "testResults": [
+    {
+      "name": "phase-4-worker-contracts",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "fileCount": 7,
+      "summary": {
+        "passedFiles": 7,
+        "failedFiles": 0,
+        "passedTests": 23,
+        "failedTests": 0,
+        "skippedTests": 0
+      },
+      "failure": null
+    }
+  ],
+  "operationVerification": [
+    {
+      "order": 1,
+      "description": "Release manifestindeki her worker id, normal command ve --once command'i app/package.json scriptlerine birebir eslestir.",
+      "status": "PASS",
+      "evidence": {
+        "id": "release_manifest_reconciled",
+        "pass": true
+      }
+    },
+    {
+      "order": 2,
+      "description": "Her worker wrapper'inda --once secenegi, kontrollu interval/forwarding ve child failure durumunda non-zero process exit oldugunu dogrula.",
+      "status": "PASS",
+      "evidence": {
+        "id": "wrapper_contracts",
+        "pass": true
+      }
+    },
+    {
+      "order": 3,
+      "description": "Media, audio transcription/bridge ve AI processing worker'larinda claim, lease token, lease renewal, completion/failure ve retry/terminal outcome marker'larini kaynak dosyadan cikar.",
+      "status": "PASS",
+      "evidence": {
+        "id": "processing_contracts",
+        "pass": true
+      }
+    },
+    {
+      "order": 4,
+      "description": "Lifecycle worker'larinda retention/purge/delete ve object operation claim/release yolunu kaynak dosyadan cikar.",
+      "status": "PASS",
+      "evidence": {
+        "id": "lifecycle_contracts",
+        "pass": true
+      }
+    },
+    {
+      "order": 5,
+      "description": "Worker CLI'larinda NEXT_PUBLIC_SUPABASE_URL ve SUPABASE_SERVICE_ROLE_KEY zorunlu env kontrolu ile session persistence kapali istemci ayarini dogrula.",
+      "status": "PASS",
+      "evidence": {
+        "id": "cli_contracts",
+        "pass": true
+      }
+    },
+    {
+      "order": 6,
+      "description": "Worker girisleri, release manifesti ve source digestlerini secret-free matrix icinde kaydet.",
+      "status": "PASS",
+      "evidence": {
+        "id": "targeted_tests",
+        "pass": true
+      }
+    }
+  ]
+}

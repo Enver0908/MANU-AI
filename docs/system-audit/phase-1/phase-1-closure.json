@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "aiya-system-audit-phase-closure-v1",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-1",
+  "status": "CLOSED",
+  "closedAt": "2026-09-07T21:19:46.147Z",
+  "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+  "stageEvidence": [
+    {
+      "stageId": "1.1",
+      "evidencePath": "docs/system-audit/phase-1/stages/stage-1.1.json",
+      "evidenceDigest": "c3c3b1317566d60e51d10bf67ec1e6e5c451b2852f464abd569f5bcdf8adc7e2"
+    },
+    {
+      "stageId": "1.2",
+      "evidencePath": "docs/system-audit/phase-1/stages/stage-1.2.json",
+      "evidenceDigest": "8beb3399439aebdb25313e6bcfa8d1ccc3fa5bf918d8baa2cf5aea7f6d9d98f5"
+    },
+    {
+      "stageId": "1.3",
+      "evidencePath": "docs/system-audit/phase-1/stages/stage-1.3.json",
+      "evidenceDigest": "efc013aa22a44d0e8560bc48730a3e8df465c20709bcc1f682b14ad6a5a0bcc3"
+    },
+    {
+      "stageId": "1.4",
+      "evidencePath": "docs/system-audit/phase-1/stages/stage-1.4.json",
+      "evidenceDigest": "05959cab52416dae7f19412de311ea94d32ac2350a5b2d81b060c7010712e55b"
+    }
+  ],
+  "closureRule": "all four stages VERIFIED, all required outputs present and digest-valid, phase verification PASS",
+  "nextPhase": "phase-2",
+  "nextPhaseUnlocked": true
+}

@@ -1,0 +1,113 @@
+{
+  "schemaVersion": "aiya-system-audit-stage-evidence-v1",
+  "runId": "phase-5-5.3-20260908082719598",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-5",
+  "stageId": "5.3",
+  "title": "Authenticated dashboard shell ve workflow sozlesmesini kapat",
+  "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+  "verifiedAt": "2026-09-08T08:27:19.598Z",
+  "status": "VERIFIED",
+  "operations": [
+    {
+      "order": 1,
+      "description": "ShellProvider bootstrap request, retry, no-store headers, session state ve error runtime mapping'ini route contract ile eslestir.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-5/authenticated-shell-matrix.json"
+      ]
+    },
+    {
+      "order": 2,
+      "description": "Dashboard navigation hedeflerini overview/clients/messages/alerts/notifications/AI Chat/settings/more icin canonical path/query ve legacy redirect ile kontrol et.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-5/authenticated-shell-matrix.json"
+      ]
+    },
+    {
+      "order": 3,
+      "description": "Active client URL/preference precedence, invalid client fail-closed state ve high-impact confirmation mesajlarini kontrol et.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-5/authenticated-shell-matrix.json"
+      ]
+    },
+    {
+      "order": 4,
+      "description": "useAiyaState hydration ve mutation endpointlerini response merge, auth error, revision conflict ve retry davranisiyla kontrol et.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-5/authenticated-shell-matrix.json"
+      ]
+    },
+    {
+      "order": 5,
+      "description": "Settings, more, messaging ve AI Chat route'larinin ayni authenticated shell/session gate'ine baglandigini kontrol et.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-5/authenticated-shell-matrix.json"
+      ]
+    },
+    {
+      "order": 6,
+      "description": "Dirty navigation, logout, offline mutation rejection, service-worker update ve session inactivity guardlarini hedef testlerle kontrol et.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-5/authenticated-shell-matrix.json"
+      ]
+    },
+    {
+      "order": 7,
+      "description": "Shell API rate limit, no-store, bounded payload ve forbidden response key kontrollerini yeniden calistir.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-5/authenticated-shell-matrix.json"
+      ]
+    },
+    {
+      "order": 8,
+      "description": "Responsive/accessibility shell testlerinin Phase 5 yuzeyleriyle sinirli oldugunu ve Stage 6 testlerinin bu faza alinmadigini kaydet.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-5/authenticated-shell-matrix.json"
+      ]
+    }
+  ],
+  "outputFiles": [
+    {
+      "path": "docs/system-audit/phase-5/authenticated-shell-matrix.json",
+      "sha256": "3087605af7c7434281238ab04e204aa9b69d207e6d675b5205e31190c4b365ca"
+    }
+  ],
+  "verification": {
+    "rules": [
+      "shell matrix has zero blockers",
+      "all shell contract suites PASS",
+      "deep links and session fail-closed checks PASS",
+      "no Stage 6-only test is included"
+    ],
+    "result": "PASS",
+    "outputDigest": "3087605af7c7434281238ab04e204aa9b69d207e6d675b5205e31190c4b365ca",
+    "testResults": [
+      {
+        "name": "phase-5-authenticated-shell",
+        "status": "PASS",
+        "exitCode": 0,
+        "timedOut": false,
+        "fileCount": 19,
+        "summary": {
+          "passedFiles": 19,
+          "failedFiles": 0,
+          "passedTests": 114,
+          "failedTests": 0,
+          "skippedTests": 0
+        },
+        "failure": null
+      }
+    ]
+  },
+  "blockers": [],
+  "evidenceDigest": "ed28be3f9271dde72e61a03b8b52bebf5ff8467ec20f0ea2ea77c9d9d9e06ee8"
+}

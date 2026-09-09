@@ -1,0 +1,1114 @@
+{
+  "schemaVersion": "aiya-system-audit-phase-7-release-gate-matrix-v1",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-7",
+  "stageId": "7.3",
+  "status": "PASS",
+  "generatedAt": "2026-09-08T13:29:01.907Z",
+  "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+  "interpretation": "PASS means local release gates, artifact identity and isolated dry-run activation pass. It is not production GO evidence.",
+  "identity": {
+    "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+    "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+    "builtAt": "2026-09-07T16:50:37.000Z",
+    "environment": "hosted-sandbox",
+    "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25",
+    "compatibilityVersion": "0.0.0+1c97560"
+  },
+  "artifact": {
+    "pass": true,
+    "manifestPath": ".manu-runtime/hosted-sandbox/artifacts/1c9756046b01cb1bd224fb601ec9094a7f471606/release-manifest.json",
+    "mode": "archive",
+    "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+    "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25",
+    "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+    "compatibilityVersion": "0.0.0+1c97560",
+    "archiveSha256": "e521c6ea0ca2e3f644a3068e21ef0feedbed36811caed5b88d7bf89c0ad957c5",
+    "archivePath": "app/.manu-runtime/release-artifacts/hs-1c9756046b01-b55ed4ff550f.tar.gz",
+    "reason": null
+  },
+  "commandResults": [
+    {
+      "name": "lint",
+      "command": "npm.cmd run lint",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "durationMs": 41960,
+      "outputTail": null,
+      "workingDirectory": "app"
+    },
+    {
+      "name": "production-typecheck",
+      "command": "npm.cmd run typecheck",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "durationMs": 19571,
+      "outputTail": null,
+      "workingDirectory": "app"
+    },
+    {
+      "name": "hosted-oracle-tests",
+      "command": "npm.cmd exec -- vitest run src/lib/hosted-sandbox-release-identity.test.ts src/lib/hosted-sandbox-security-headers.test.ts --no-file-parallelism --maxWorkers=1 --reporter=default",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "durationMs": 15246,
+      "outputTail": null,
+      "workingDirectory": "app"
+    },
+    {
+      "name": "production-build",
+      "command": "npm.cmd run build",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "durationMs": 105630,
+      "outputTail": null,
+      "workingDirectory": "app"
+    },
+    {
+      "name": "build-hosted-release-artifact",
+      "command": "C:\\Program Files\\nodejs\\node.exe tools/hosted-sandbox/deploy/build-release-artifact.mjs",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "durationMs": 59198,
+      "outputTail": null
+    },
+    {
+      "name": "filtered-deploy-machinery-tests",
+      "command": "C:\\Program Files\\nodejs\\node.exe --test --test-name-pattern=forbidden deploy flags|fingerprint mismatch|hosted schema contract|release artifact manifest validation|dry-run atomic deploy|artifact-required dry-run|nginx template verify tools/hosted-sandbox/deploy/hosted-sandbox-deploy.test.mjs",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "durationMs": 858,
+      "outputTail": null,
+      "filter": "forbidden deploy flags|fingerprint mismatch|hosted schema contract|release artifact manifest validation|dry-run atomic deploy|artifact-required dry-run|nginx template verify"
+    },
+    {
+      "name": "workflow-hardening-verifier",
+      "command": "C:\\Program Files\\nodejs\\node.exe tools/hosted-sandbox/deploy/verify-workflow-hardening.mjs",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "durationMs": 75,
+      "outputTail": null
+    },
+    {
+      "name": "nginx-template-verifier",
+      "command": "C:\\Program Files\\nodejs\\node.exe tools/hosted-sandbox/deploy/verify-nginx-template.mjs",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "durationMs": 79,
+      "outputTail": null
+    },
+    {
+      "name": "hosted-sandbox-contract-verifier",
+      "command": "C:\\Program Files\\nodejs\\node.exe app/scripts/verify-hosted-sandbox-contracts.mjs",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "durationMs": 203,
+      "outputTail": null
+    },
+    {
+      "name": "smoke-dry-run",
+      "command": "C:\\Program Files\\nodejs\\node.exe tools/hosted-sandbox/deploy/run-smoke-check.mjs --dry-run",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "durationMs": 76,
+      "outputTail": null
+    },
+    {
+      "name": "atomic-deploy-dry-run",
+      "command": "C:\\Program Files\\nodejs\\node.exe deploy-hosted-release.mjs --dry-run",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "durationMs": 50095,
+      "outputTail": null,
+      "isolatedTempRoot": true,
+      "cleanup": "PASS"
+    }
+  ],
+  "checks": [
+    {
+      "id": "target_reconciliation_verified",
+      "description": "7.2 target reconciliation is VERIFIED",
+      "pass": true,
+      "details": {
+        "status": "PASS",
+        "matrixDigest": "5904c2e6cf78edd6eff833695eba38f4647effb4b72cf93a281ad50cd5123c36"
+      }
+    },
+    {
+      "id": "local_ci_commands_pass",
+      "description": "lint, typecheck and hosted oracle commands pass",
+      "pass": true,
+      "details": [
+        {
+          "name": "lint",
+          "command": "npm.cmd run lint",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 41960,
+          "outputTail": null,
+          "workingDirectory": "app"
+        },
+        {
+          "name": "production-typecheck",
+          "command": "npm.cmd run typecheck",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 19571,
+          "outputTail": null,
+          "workingDirectory": "app"
+        },
+        {
+          "name": "hosted-oracle-tests",
+          "command": "npm.cmd exec -- vitest run src/lib/hosted-sandbox-release-identity.test.ts src/lib/hosted-sandbox-security-headers.test.ts --no-file-parallelism --maxWorkers=1 --reporter=default",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 15246,
+          "outputTail": null,
+          "workingDirectory": "app"
+        }
+      ]
+    },
+    {
+      "id": "production_build_identity_pass",
+      "description": "production build and service-worker identity boundary pass",
+      "pass": true,
+      "details": {
+        "name": "production-build",
+        "command": "npm.cmd run build",
+        "status": "PASS",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationMs": 105630,
+        "outputTail": null,
+        "workingDirectory": "app",
+        "identityBoundary": {
+          "pass": true,
+          "trackedServiceWorkerPlaceholder": true
+        }
+      }
+    },
+    {
+      "id": "archive_identity_and_hash_pass",
+      "description": "archive manifest identity and SHA-256 pass",
+      "pass": true,
+      "details": {
+        "pass": true,
+        "manifestPath": ".manu-runtime/hosted-sandbox/artifacts/1c9756046b01cb1bd224fb601ec9094a7f471606/release-manifest.json",
+        "mode": "archive",
+        "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+        "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25",
+        "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+        "compatibilityVersion": "0.0.0+1c97560",
+        "archiveSha256": "e521c6ea0ca2e3f644a3068e21ef0feedbed36811caed5b88d7bf89c0ad957c5",
+        "archivePath": "app/.manu-runtime/release-artifacts/hs-1c9756046b01-b55ed4ff550f.tar.gz",
+        "reason": null
+      }
+    },
+    {
+      "id": "deploy_machinery_and_verifiers_pass",
+      "description": "filtered deploy tests, workflow, nginx and hosted verifiers pass",
+      "pass": true,
+      "details": [
+        {
+          "name": "filtered-deploy-machinery-tests",
+          "command": "C:\\Program Files\\nodejs\\node.exe --test --test-name-pattern=forbidden deploy flags|fingerprint mismatch|hosted schema contract|release artifact manifest validation|dry-run atomic deploy|artifact-required dry-run|nginx template verify tools/hosted-sandbox/deploy/hosted-sandbox-deploy.test.mjs",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 858,
+          "outputTail": null,
+          "filter": "forbidden deploy flags|fingerprint mismatch|hosted schema contract|release artifact manifest validation|dry-run atomic deploy|artifact-required dry-run|nginx template verify"
+        },
+        {
+          "name": "workflow-hardening-verifier",
+          "command": "C:\\Program Files\\nodejs\\node.exe tools/hosted-sandbox/deploy/verify-workflow-hardening.mjs",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 75,
+          "outputTail": null
+        },
+        {
+          "name": "nginx-template-verifier",
+          "command": "C:\\Program Files\\nodejs\\node.exe tools/hosted-sandbox/deploy/verify-nginx-template.mjs",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 79,
+          "outputTail": null
+        },
+        {
+          "name": "hosted-sandbox-contract-verifier",
+          "command": "C:\\Program Files\\nodejs\\node.exe app/scripts/verify-hosted-sandbox-contracts.mjs",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 203,
+          "outputTail": null
+        }
+      ]
+    },
+    {
+      "id": "smoke_dry_run_pass",
+      "description": "smoke checker runs in explicit dry-run mode",
+      "pass": true,
+      "details": {
+        "name": "smoke-dry-run",
+        "command": "C:\\Program Files\\nodejs\\node.exe tools/hosted-sandbox/deploy/run-smoke-check.mjs --dry-run",
+        "status": "PASS",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationMs": 76,
+        "outputTail": null
+      }
+    },
+    {
+      "id": "atomic_dry_run_pass",
+      "description": "artifact-required atomic deploy dry-run passes in isolated temp root",
+      "pass": true,
+      "details": {
+        "name": "atomic-deploy-dry-run",
+        "command": "C:\\Program Files\\nodejs\\node.exe deploy-hosted-release.mjs --dry-run",
+        "status": "PASS",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationMs": 50095,
+        "outputTail": null,
+        "isolatedTempRoot": true,
+        "cleanup": "PASS"
+      }
+    },
+    {
+      "id": "all_release_gate_commands_pass",
+      "description": "all recorded release-gate commands pass",
+      "pass": true,
+      "details": [
+        {
+          "name": "lint",
+          "command": "npm.cmd run lint",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 41960,
+          "outputTail": null,
+          "workingDirectory": "app"
+        },
+        {
+          "name": "production-typecheck",
+          "command": "npm.cmd run typecheck",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 19571,
+          "outputTail": null,
+          "workingDirectory": "app"
+        },
+        {
+          "name": "hosted-oracle-tests",
+          "command": "npm.cmd exec -- vitest run src/lib/hosted-sandbox-release-identity.test.ts src/lib/hosted-sandbox-security-headers.test.ts --no-file-parallelism --maxWorkers=1 --reporter=default",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 15246,
+          "outputTail": null,
+          "workingDirectory": "app"
+        },
+        {
+          "name": "production-build",
+          "command": "npm.cmd run build",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 105630,
+          "outputTail": null,
+          "workingDirectory": "app"
+        },
+        {
+          "name": "build-hosted-release-artifact",
+          "command": "C:\\Program Files\\nodejs\\node.exe tools/hosted-sandbox/deploy/build-release-artifact.mjs",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 59198,
+          "outputTail": null
+        },
+        {
+          "name": "filtered-deploy-machinery-tests",
+          "command": "C:\\Program Files\\nodejs\\node.exe --test --test-name-pattern=forbidden deploy flags|fingerprint mismatch|hosted schema contract|release artifact manifest validation|dry-run atomic deploy|artifact-required dry-run|nginx template verify tools/hosted-sandbox/deploy/hosted-sandbox-deploy.test.mjs",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 858,
+          "outputTail": null,
+          "filter": "forbidden deploy flags|fingerprint mismatch|hosted schema contract|release artifact manifest validation|dry-run atomic deploy|artifact-required dry-run|nginx template verify"
+        },
+        {
+          "name": "workflow-hardening-verifier",
+          "command": "C:\\Program Files\\nodejs\\node.exe tools/hosted-sandbox/deploy/verify-workflow-hardening.mjs",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 75,
+          "outputTail": null
+        },
+        {
+          "name": "nginx-template-verifier",
+          "command": "C:\\Program Files\\nodejs\\node.exe tools/hosted-sandbox/deploy/verify-nginx-template.mjs",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 79,
+          "outputTail": null
+        },
+        {
+          "name": "hosted-sandbox-contract-verifier",
+          "command": "C:\\Program Files\\nodejs\\node.exe app/scripts/verify-hosted-sandbox-contracts.mjs",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 203,
+          "outputTail": null
+        },
+        {
+          "name": "smoke-dry-run",
+          "command": "C:\\Program Files\\nodejs\\node.exe tools/hosted-sandbox/deploy/run-smoke-check.mjs --dry-run",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 76,
+          "outputTail": null
+        },
+        {
+          "name": "atomic-deploy-dry-run",
+          "command": "C:\\Program Files\\nodejs\\node.exe deploy-hosted-release.mjs --dry-run",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 50095,
+          "outputTail": null,
+          "isolatedTempRoot": true,
+          "cleanup": "PASS"
+        }
+      ]
+    }
+  ],
+  "operationChecks": [
+    {
+      "id": "target_reconciliation_verified",
+      "description": "7.2 target reconciliation is VERIFIED",
+      "pass": true,
+      "details": {
+        "status": "PASS",
+        "matrixDigest": "5904c2e6cf78edd6eff833695eba38f4647effb4b72cf93a281ad50cd5123c36"
+      }
+    },
+    {
+      "id": "local_ci_commands_pass",
+      "description": "lint, typecheck and hosted oracle commands pass",
+      "pass": true,
+      "details": [
+        {
+          "name": "lint",
+          "command": "npm.cmd run lint",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 41960,
+          "outputTail": null,
+          "workingDirectory": "app"
+        },
+        {
+          "name": "production-typecheck",
+          "command": "npm.cmd run typecheck",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 19571,
+          "outputTail": null,
+          "workingDirectory": "app"
+        },
+        {
+          "name": "hosted-oracle-tests",
+          "command": "npm.cmd exec -- vitest run src/lib/hosted-sandbox-release-identity.test.ts src/lib/hosted-sandbox-security-headers.test.ts --no-file-parallelism --maxWorkers=1 --reporter=default",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 15246,
+          "outputTail": null,
+          "workingDirectory": "app"
+        }
+      ]
+    },
+    {
+      "id": "production_build_identity_pass",
+      "description": "production build and service-worker identity boundary pass",
+      "pass": true,
+      "details": {
+        "name": "production-build",
+        "command": "npm.cmd run build",
+        "status": "PASS",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationMs": 105630,
+        "outputTail": null,
+        "workingDirectory": "app",
+        "identityBoundary": {
+          "pass": true,
+          "trackedServiceWorkerPlaceholder": true
+        }
+      }
+    },
+    {
+      "id": "archive_identity_and_hash_pass",
+      "description": "archive manifest identity and SHA-256 pass",
+      "pass": true,
+      "details": {
+        "pass": true,
+        "manifestPath": ".manu-runtime/hosted-sandbox/artifacts/1c9756046b01cb1bd224fb601ec9094a7f471606/release-manifest.json",
+        "mode": "archive",
+        "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+        "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25",
+        "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+        "compatibilityVersion": "0.0.0+1c97560",
+        "archiveSha256": "e521c6ea0ca2e3f644a3068e21ef0feedbed36811caed5b88d7bf89c0ad957c5",
+        "archivePath": "app/.manu-runtime/release-artifacts/hs-1c9756046b01-b55ed4ff550f.tar.gz",
+        "reason": null
+      }
+    },
+    {
+      "id": "deploy_machinery_and_verifiers_pass",
+      "description": "filtered deploy tests, workflow, nginx and hosted verifiers pass",
+      "pass": true,
+      "details": [
+        {
+          "name": "filtered-deploy-machinery-tests",
+          "command": "C:\\Program Files\\nodejs\\node.exe --test --test-name-pattern=forbidden deploy flags|fingerprint mismatch|hosted schema contract|release artifact manifest validation|dry-run atomic deploy|artifact-required dry-run|nginx template verify tools/hosted-sandbox/deploy/hosted-sandbox-deploy.test.mjs",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 858,
+          "outputTail": null,
+          "filter": "forbidden deploy flags|fingerprint mismatch|hosted schema contract|release artifact manifest validation|dry-run atomic deploy|artifact-required dry-run|nginx template verify"
+        },
+        {
+          "name": "workflow-hardening-verifier",
+          "command": "C:\\Program Files\\nodejs\\node.exe tools/hosted-sandbox/deploy/verify-workflow-hardening.mjs",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 75,
+          "outputTail": null
+        },
+        {
+          "name": "nginx-template-verifier",
+          "command": "C:\\Program Files\\nodejs\\node.exe tools/hosted-sandbox/deploy/verify-nginx-template.mjs",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 79,
+          "outputTail": null
+        },
+        {
+          "name": "hosted-sandbox-contract-verifier",
+          "command": "C:\\Program Files\\nodejs\\node.exe app/scripts/verify-hosted-sandbox-contracts.mjs",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 203,
+          "outputTail": null
+        }
+      ]
+    },
+    {
+      "id": "smoke_dry_run_pass",
+      "description": "smoke checker runs in explicit dry-run mode",
+      "pass": true,
+      "details": {
+        "name": "smoke-dry-run",
+        "command": "C:\\Program Files\\nodejs\\node.exe tools/hosted-sandbox/deploy/run-smoke-check.mjs --dry-run",
+        "status": "PASS",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationMs": 76,
+        "outputTail": null
+      }
+    },
+    {
+      "id": "atomic_dry_run_pass",
+      "description": "artifact-required atomic deploy dry-run passes in isolated temp root",
+      "pass": true,
+      "details": {
+        "name": "atomic-deploy-dry-run",
+        "command": "C:\\Program Files\\nodejs\\node.exe deploy-hosted-release.mjs --dry-run",
+        "status": "PASS",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationMs": 50095,
+        "outputTail": null,
+        "isolatedTempRoot": true,
+        "cleanup": "PASS"
+      }
+    },
+    {
+      "id": "all_release_gate_commands_pass",
+      "description": "all recorded release-gate commands pass",
+      "pass": true,
+      "details": [
+        {
+          "name": "lint",
+          "command": "npm.cmd run lint",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 41960,
+          "outputTail": null,
+          "workingDirectory": "app"
+        },
+        {
+          "name": "production-typecheck",
+          "command": "npm.cmd run typecheck",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 19571,
+          "outputTail": null,
+          "workingDirectory": "app"
+        },
+        {
+          "name": "hosted-oracle-tests",
+          "command": "npm.cmd exec -- vitest run src/lib/hosted-sandbox-release-identity.test.ts src/lib/hosted-sandbox-security-headers.test.ts --no-file-parallelism --maxWorkers=1 --reporter=default",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 15246,
+          "outputTail": null,
+          "workingDirectory": "app"
+        },
+        {
+          "name": "production-build",
+          "command": "npm.cmd run build",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 105630,
+          "outputTail": null,
+          "workingDirectory": "app"
+        },
+        {
+          "name": "build-hosted-release-artifact",
+          "command": "C:\\Program Files\\nodejs\\node.exe tools/hosted-sandbox/deploy/build-release-artifact.mjs",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 59198,
+          "outputTail": null
+        },
+        {
+          "name": "filtered-deploy-machinery-tests",
+          "command": "C:\\Program Files\\nodejs\\node.exe --test --test-name-pattern=forbidden deploy flags|fingerprint mismatch|hosted schema contract|release artifact manifest validation|dry-run atomic deploy|artifact-required dry-run|nginx template verify tools/hosted-sandbox/deploy/hosted-sandbox-deploy.test.mjs",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 858,
+          "outputTail": null,
+          "filter": "forbidden deploy flags|fingerprint mismatch|hosted schema contract|release artifact manifest validation|dry-run atomic deploy|artifact-required dry-run|nginx template verify"
+        },
+        {
+          "name": "workflow-hardening-verifier",
+          "command": "C:\\Program Files\\nodejs\\node.exe tools/hosted-sandbox/deploy/verify-workflow-hardening.mjs",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 75,
+          "outputTail": null
+        },
+        {
+          "name": "nginx-template-verifier",
+          "command": "C:\\Program Files\\nodejs\\node.exe tools/hosted-sandbox/deploy/verify-nginx-template.mjs",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 79,
+          "outputTail": null
+        },
+        {
+          "name": "hosted-sandbox-contract-verifier",
+          "command": "C:\\Program Files\\nodejs\\node.exe app/scripts/verify-hosted-sandbox-contracts.mjs",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 203,
+          "outputTail": null
+        },
+        {
+          "name": "smoke-dry-run",
+          "command": "C:\\Program Files\\nodejs\\node.exe tools/hosted-sandbox/deploy/run-smoke-check.mjs --dry-run",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 76,
+          "outputTail": null
+        },
+        {
+          "name": "atomic-deploy-dry-run",
+          "command": "C:\\Program Files\\nodejs\\node.exe deploy-hosted-release.mjs --dry-run",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 50095,
+          "outputTail": null,
+          "isolatedTempRoot": true,
+          "cleanup": "PASS"
+        }
+      ]
+    }
+  ],
+  "blockers": [],
+  "sourceFiles": [
+    {
+      "source": "tools/hosted-sandbox/deploy/build-release-artifact.mjs",
+      "exists": true,
+      "bytes": 2864,
+      "sha256": "c591b19ea3af7b27a1e6101d8fe35ef44eccd4f2d41365e46bca0195a7553341"
+    },
+    {
+      "source": "tools/hosted-sandbox/deploy/deploy-hosted-release.mjs",
+      "exists": true,
+      "bytes": 12854,
+      "sha256": "df718b96bf155d5ea3f942cc95ed8836593af2dc918a27cc94c2ac7aca035cba"
+    },
+    {
+      "source": "tools/hosted-sandbox/deploy/run-smoke-check.mjs",
+      "exists": true,
+      "bytes": 3914,
+      "sha256": "2cb957a84de48785404910b9f8900123339a1ed92642d4d458fc80ec6ec51d56"
+    },
+    {
+      "source": "tools/hosted-sandbox/deploy/hosted-sandbox-deploy.test.mjs",
+      "exists": true,
+      "bytes": 12704,
+      "sha256": "87620ec77e3ab1c45b8309da56ef8a6b92842afbd0c43d5610331ef5d37e47e5"
+    },
+    {
+      "source": "tools/hosted-sandbox/deploy/verify-workflow-hardening.mjs",
+      "exists": true,
+      "bytes": 2875,
+      "sha256": "035a782fdcd962ed90a9edfbf73ba0979412f1d04253a7f2daa26d4e7f2a8dff"
+    },
+    {
+      "source": "tools/hosted-sandbox/deploy/verify-nginx-template.mjs",
+      "exists": true,
+      "bytes": 1587,
+      "sha256": "bbcce8871c0a0b97229b837c424765f1ba11aa11ae34b65758193195d86b574f"
+    },
+    {
+      "source": "app/scripts/verify-hosted-sandbox-contracts.mjs",
+      "exists": true,
+      "bytes": 723,
+      "sha256": "4f3f6fedd140a59750994cc9c690becbb64b41d3f36176960b80eaab680c5fb0"
+    }
+  ],
+  "matrixDigest": "9b61cb40bd50cca314acd440d4f526a3c625c30ff2c78168b9d1250f230a3fd2",
+  "testResults": [
+    {
+      "name": "lint",
+      "command": "npm.cmd run lint",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "durationMs": 41960,
+      "outputTail": null,
+      "workingDirectory": "app"
+    },
+    {
+      "name": "production-typecheck",
+      "command": "npm.cmd run typecheck",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "durationMs": 19571,
+      "outputTail": null,
+      "workingDirectory": "app"
+    },
+    {
+      "name": "hosted-oracle-tests",
+      "command": "npm.cmd exec -- vitest run src/lib/hosted-sandbox-release-identity.test.ts src/lib/hosted-sandbox-security-headers.test.ts --no-file-parallelism --maxWorkers=1 --reporter=default",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "durationMs": 15246,
+      "outputTail": null,
+      "workingDirectory": "app"
+    },
+    {
+      "name": "production-build",
+      "command": "npm.cmd run build",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "durationMs": 105630,
+      "outputTail": null,
+      "workingDirectory": "app"
+    },
+    {
+      "name": "build-hosted-release-artifact",
+      "command": "C:\\Program Files\\nodejs\\node.exe tools/hosted-sandbox/deploy/build-release-artifact.mjs",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "durationMs": 59198,
+      "outputTail": null
+    },
+    {
+      "name": "filtered-deploy-machinery-tests",
+      "command": "C:\\Program Files\\nodejs\\node.exe --test --test-name-pattern=forbidden deploy flags|fingerprint mismatch|hosted schema contract|release artifact manifest validation|dry-run atomic deploy|artifact-required dry-run|nginx template verify tools/hosted-sandbox/deploy/hosted-sandbox-deploy.test.mjs",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "durationMs": 858,
+      "outputTail": null,
+      "filter": "forbidden deploy flags|fingerprint mismatch|hosted schema contract|release artifact manifest validation|dry-run atomic deploy|artifact-required dry-run|nginx template verify"
+    },
+    {
+      "name": "workflow-hardening-verifier",
+      "command": "C:\\Program Files\\nodejs\\node.exe tools/hosted-sandbox/deploy/verify-workflow-hardening.mjs",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "durationMs": 75,
+      "outputTail": null
+    },
+    {
+      "name": "nginx-template-verifier",
+      "command": "C:\\Program Files\\nodejs\\node.exe tools/hosted-sandbox/deploy/verify-nginx-template.mjs",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "durationMs": 79,
+      "outputTail": null
+    },
+    {
+      "name": "hosted-sandbox-contract-verifier",
+      "command": "C:\\Program Files\\nodejs\\node.exe app/scripts/verify-hosted-sandbox-contracts.mjs",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "durationMs": 203,
+      "outputTail": null
+    },
+    {
+      "name": "smoke-dry-run",
+      "command": "C:\\Program Files\\nodejs\\node.exe tools/hosted-sandbox/deploy/run-smoke-check.mjs --dry-run",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "durationMs": 76,
+      "outputTail": null
+    },
+    {
+      "name": "atomic-deploy-dry-run",
+      "command": "C:\\Program Files\\nodejs\\node.exe deploy-hosted-release.mjs --dry-run",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "durationMs": 50095,
+      "outputTail": null,
+      "isolatedTempRoot": true,
+      "cleanup": "PASS"
+    }
+  ],
+  "operationResults": [
+    {
+      "order": 1,
+      "description": "Read and digest 7.2 evidence and confirm its release identity before starting any build.",
+      "id": "target_reconciliation_verified",
+      "status": "PASS",
+      "details": {
+        "status": "PASS",
+        "matrixDigest": "5904c2e6cf78edd6eff833695eba38f4647effb4b72cf93a281ad50cd5123c36"
+      }
+    },
+    {
+      "order": 2,
+      "description": "Run lint, production typecheck and hosted oracle tests with safe local environment flags.",
+      "id": "local_ci_commands_pass",
+      "status": "PASS",
+      "details": [
+        {
+          "name": "lint",
+          "command": "npm.cmd run lint",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 41960,
+          "outputTail": null,
+          "workingDirectory": "app"
+        },
+        {
+          "name": "production-typecheck",
+          "command": "npm.cmd run typecheck",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 19571,
+          "outputTail": null,
+          "workingDirectory": "app"
+        },
+        {
+          "name": "hosted-oracle-tests",
+          "command": "npm.cmd exec -- vitest run src/lib/hosted-sandbox-release-identity.test.ts src/lib/hosted-sandbox-security-headers.test.ts --no-file-parallelism --maxWorkers=1 --reporter=default",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 15246,
+          "outputTail": null,
+          "workingDirectory": "app"
+        }
+      ]
+    },
+    {
+      "order": 3,
+      "description": "Run the production build and verify the generated service-worker/release identity boundary.",
+      "id": "production_build_identity_pass",
+      "status": "PASS",
+      "details": {
+        "name": "production-build",
+        "command": "npm.cmd run build",
+        "status": "PASS",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationMs": 105630,
+        "outputTail": null,
+        "workingDirectory": "app",
+        "identityBoundary": {
+          "pass": true,
+          "trackedServiceWorkerPlaceholder": true
+        }
+      }
+    },
+    {
+      "order": 4,
+      "description": "Build the hosted release archive and outer manifest, then validate commit, fingerprint, release ID, compatibility version and archive hash.",
+      "id": "archive_identity_and_hash_pass",
+      "status": "PASS",
+      "details": {
+        "pass": true,
+        "manifestPath": ".manu-runtime/hosted-sandbox/artifacts/1c9756046b01cb1bd224fb601ec9094a7f471606/release-manifest.json",
+        "mode": "archive",
+        "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+        "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25",
+        "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+        "compatibilityVersion": "0.0.0+1c97560",
+        "archiveSha256": "e521c6ea0ca2e3f644a3068e21ef0feedbed36811caed5b88d7bf89c0ad957c5",
+        "archivePath": "app/.manu-runtime/release-artifacts/hs-1c9756046b01-b55ed4ff550f.tar.gz",
+        "reason": null
+      }
+    },
+    {
+      "order": 5,
+      "description": "Run deterministic deploy machinery tests, workflow hardening, nginx validation and hosted sandbox contract verification.",
+      "id": "deploy_machinery_and_verifiers_pass",
+      "status": "PASS",
+      "details": [
+        {
+          "name": "filtered-deploy-machinery-tests",
+          "command": "C:\\Program Files\\nodejs\\node.exe --test --test-name-pattern=forbidden deploy flags|fingerprint mismatch|hosted schema contract|release artifact manifest validation|dry-run atomic deploy|artifact-required dry-run|nginx template verify tools/hosted-sandbox/deploy/hosted-sandbox-deploy.test.mjs",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 858,
+          "outputTail": null,
+          "filter": "forbidden deploy flags|fingerprint mismatch|hosted schema contract|release artifact manifest validation|dry-run atomic deploy|artifact-required dry-run|nginx template verify"
+        },
+        {
+          "name": "workflow-hardening-verifier",
+          "command": "C:\\Program Files\\nodejs\\node.exe tools/hosted-sandbox/deploy/verify-workflow-hardening.mjs",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 75,
+          "outputTail": null
+        },
+        {
+          "name": "nginx-template-verifier",
+          "command": "C:\\Program Files\\nodejs\\node.exe tools/hosted-sandbox/deploy/verify-nginx-template.mjs",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 79,
+          "outputTail": null
+        },
+        {
+          "name": "hosted-sandbox-contract-verifier",
+          "command": "C:\\Program Files\\nodejs\\node.exe app/scripts/verify-hosted-sandbox-contracts.mjs",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 203,
+          "outputTail": null
+        }
+      ]
+    },
+    {
+      "order": 6,
+      "description": "Run the smoke checker in explicit dry-run mode; do not provide a live base URL.",
+      "id": "smoke_dry_run_pass",
+      "status": "PASS",
+      "details": {
+        "name": "smoke-dry-run",
+        "command": "C:\\Program Files\\nodejs\\node.exe tools/hosted-sandbox/deploy/run-smoke-check.mjs --dry-run",
+        "status": "PASS",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationMs": 76,
+        "outputTail": null
+      }
+    },
+    {
+      "order": 7,
+      "description": "Run atomic deploy in a unique temporary directory with artifact-required and dry-run flags; remove the temporary directory after capture.",
+      "id": "atomic_dry_run_pass",
+      "status": "PASS",
+      "details": {
+        "name": "atomic-deploy-dry-run",
+        "command": "C:\\Program Files\\nodejs\\node.exe deploy-hosted-release.mjs --dry-run",
+        "status": "PASS",
+        "exitCode": 0,
+        "timedOut": false,
+        "durationMs": 50095,
+        "outputTail": null,
+        "isolatedTempRoot": true,
+        "cleanup": "PASS"
+      }
+    },
+    {
+      "order": 8,
+      "description": "Persist the release-gate matrix, command summaries, artifact digest and eight ordered operation results only when every command is PASS.",
+      "id": "all_release_gate_commands_pass",
+      "status": "PASS",
+      "details": [
+        {
+          "name": "lint",
+          "command": "npm.cmd run lint",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 41960,
+          "outputTail": null,
+          "workingDirectory": "app"
+        },
+        {
+          "name": "production-typecheck",
+          "command": "npm.cmd run typecheck",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 19571,
+          "outputTail": null,
+          "workingDirectory": "app"
+        },
+        {
+          "name": "hosted-oracle-tests",
+          "command": "npm.cmd exec -- vitest run src/lib/hosted-sandbox-release-identity.test.ts src/lib/hosted-sandbox-security-headers.test.ts --no-file-parallelism --maxWorkers=1 --reporter=default",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 15246,
+          "outputTail": null,
+          "workingDirectory": "app"
+        },
+        {
+          "name": "production-build",
+          "command": "npm.cmd run build",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 105630,
+          "outputTail": null,
+          "workingDirectory": "app"
+        },
+        {
+          "name": "build-hosted-release-artifact",
+          "command": "C:\\Program Files\\nodejs\\node.exe tools/hosted-sandbox/deploy/build-release-artifact.mjs",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 59198,
+          "outputTail": null
+        },
+        {
+          "name": "filtered-deploy-machinery-tests",
+          "command": "C:\\Program Files\\nodejs\\node.exe --test --test-name-pattern=forbidden deploy flags|fingerprint mismatch|hosted schema contract|release artifact manifest validation|dry-run atomic deploy|artifact-required dry-run|nginx template verify tools/hosted-sandbox/deploy/hosted-sandbox-deploy.test.mjs",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 858,
+          "outputTail": null,
+          "filter": "forbidden deploy flags|fingerprint mismatch|hosted schema contract|release artifact manifest validation|dry-run atomic deploy|artifact-required dry-run|nginx template verify"
+        },
+        {
+          "name": "workflow-hardening-verifier",
+          "command": "C:\\Program Files\\nodejs\\node.exe tools/hosted-sandbox/deploy/verify-workflow-hardening.mjs",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 75,
+          "outputTail": null
+        },
+        {
+          "name": "nginx-template-verifier",
+          "command": "C:\\Program Files\\nodejs\\node.exe tools/hosted-sandbox/deploy/verify-nginx-template.mjs",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 79,
+          "outputTail": null
+        },
+        {
+          "name": "hosted-sandbox-contract-verifier",
+          "command": "C:\\Program Files\\nodejs\\node.exe app/scripts/verify-hosted-sandbox-contracts.mjs",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 203,
+          "outputTail": null
+        },
+        {
+          "name": "smoke-dry-run",
+          "command": "C:\\Program Files\\nodejs\\node.exe tools/hosted-sandbox/deploy/run-smoke-check.mjs --dry-run",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 76,
+          "outputTail": null
+        },
+        {
+          "name": "atomic-deploy-dry-run",
+          "command": "C:\\Program Files\\nodejs\\node.exe deploy-hosted-release.mjs --dry-run",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "durationMs": 50095,
+          "outputTail": null,
+          "isolatedTempRoot": true,
+          "cleanup": "PASS"
+        }
+      ]
+    }
+  ]
+}

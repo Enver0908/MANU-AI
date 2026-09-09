@@ -1,0 +1,1790 @@
+{
+  "schemaVersion": "aiya-system-audit-phase-4-media-contract-matrix-v1",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-4",
+  "status": "PASS",
+  "generatedAt": "2026-09-07T23:57:56.636Z",
+  "checks": [
+    {
+      "id": "admission_validation",
+      "description": "media/audio admission validation",
+      "pass": true,
+      "evidence": [
+        "app/src/lib/phase-85-stage-4b3-atomic-bundle-decision.ts",
+        "app/src/lib/phase-85-stage-4b3-atomic-decision.test.ts",
+        "app/src/lib/phase-85-stage-4b3-atomic-outcomes.ts",
+        "app/src/lib/phase-85-stage-4b3-atomic-visual-correction.ts",
+        "app/src/lib/phase-85-stage-4b3-bundle-orchestration.test.ts",
+        "app/src/lib/phase-85-stage-4b3-canonical-ingress.test.ts",
+        "app/src/lib/phase-85-stage-4b3-canonical-ingress.ts",
+        "app/src/lib/phase-85-stage-4b3-closure.test.ts",
+        "app/src/lib/phase-85-stage-4b3-closure.ts",
+        "app/src/lib/phase-85-stage-4b3-durable-ingress.test.ts",
+        "app/src/lib/phase-85-stage-4b3-durable-media-admission.ts",
+        "app/src/lib/phase-85-stage-4b3-durable-media-worker.ts",
+        "app/src/lib/phase-85-stage-4b3-fixture-resolver.ts",
+        "app/src/lib/phase-85-stage-4b3-image-admission.test.ts",
+        "app/src/lib/phase-85-stage-4b3-image-admission.ts",
+        "app/src/lib/phase-85-stage-4b3-media-admission.test.ts",
+        "app/src/lib/phase-85-stage-4b3-media-admission.ts",
+        "app/src/lib/phase-85-stage-4b3-media-contracts-v2.test.ts",
+        "app/src/lib/phase-85-stage-4b3-media-contracts.ts",
+        "app/src/lib/phase-85-stage-4b3-media-transport.ts",
+        "app/src/lib/phase-85-stage-4b3-message-bundles.test.ts",
+        "app/src/lib/phase-85-stage-4b3-migration-contract.test.ts",
+        "app/src/lib/phase-85-stage-4b3-multimodal-envelope.ts",
+        "app/src/lib/phase-85-stage-4b3-vision-analysis.test.ts",
+        "app/src/lib/phase-85-stage-4b3-vision-analysis.ts",
+        "app/src/lib/phase-85-stage-4b3-visual-corrections.ts",
+        "app/src/lib/phase-85-stage-4b3-visual-observation-validator.test.ts",
+        "app/src/lib/phase-85-stage-4b3-visual-observation-validator.ts",
+        "app/src/lib/phase-85-stage-4b3-visual-simulator.ts",
+        "app/src/lib/phase-85-stage-4b4-atomic-transcript-correction.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-admission.test.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-admission.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-canonicalizer.test.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-canonicalizer.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-fixture-resolver.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-source-authority.test.ts",
+        "app/src/lib/phase-85-stage-4b4-bounded-audio.test.ts",
+        "app/src/lib/phase-85-stage-4b4-build-dependency-trace.test.ts",
+        "app/src/lib/phase-85-stage-4b4-closure.test.ts",
+        "app/src/lib/phase-85-stage-4b4-closure.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-admission-worker-cli.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-admission-worker.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-pipeline-saga.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-pipeline.test.ts",
+        "app/src/lib/phase-85-stage-4b4-golden-corpus-catalog.ts",
+        "app/src/lib/phase-85-stage-4b4-migration-contract.test.ts",
+        "app/src/lib/phase-85-stage-4b4-ogg-preflight.ts",
+        "app/src/lib/phase-85-stage-4b4-transcript-bridge.test.ts",
+        "app/src/lib/phase-85-stage-4b4-transcript-corrections.test.ts",
+        "app/src/lib/phase-85-stage-4b4-transcription-worker.test.ts",
+        "app/src/lib/phase-85-stage-4b4-voice-bundle-orchestration.test.ts",
+        "app/src/lib/phase-85-stage-4b4-voice-bundle-orchestration.ts",
+        "app/src/lib/phase-85-stage-4b4-voice-contracts.ts",
+        "app/src/lib/phase-85-stage-4b4-voice-simulator.ts"
+      ]
+    },
+    {
+      "id": "content_hash",
+      "description": "content hash authority",
+      "pass": true,
+      "evidence": [
+        "app/src/lib/phase-85-stage-4b3-atomic-decision.test.ts",
+        "app/src/lib/phase-85-stage-4b3-bounded-media-rpc.ts",
+        "app/src/lib/phase-85-stage-4b3-bounded-media.test.ts",
+        "app/src/lib/phase-85-stage-4b3-bundle-orchestration.test.ts",
+        "app/src/lib/phase-85-stage-4b3-canonical-ingress.test.ts",
+        "app/src/lib/phase-85-stage-4b3-canonical-ingress.ts",
+        "app/src/lib/phase-85-stage-4b3-closure.ts",
+        "app/src/lib/phase-85-stage-4b3-durable-ingress.test.ts",
+        "app/src/lib/phase-85-stage-4b3-durable-media-admission.ts",
+        "app/src/lib/phase-85-stage-4b3-durable-media-transport.ts",
+        "app/src/lib/phase-85-stage-4b3-durable-media-worker.ts",
+        "app/src/lib/phase-85-stage-4b3-fixture-resolver.ts",
+        "app/src/lib/phase-85-stage-4b3-image-admission.test.ts",
+        "app/src/lib/phase-85-stage-4b3-image-admission.ts",
+        "app/src/lib/phase-85-stage-4b3-media-admission.test.ts",
+        "app/src/lib/phase-85-stage-4b3-media-admission.ts",
+        "app/src/lib/phase-85-stage-4b3-media-contracts-v2.ts",
+        "app/src/lib/phase-85-stage-4b3-media-contracts.ts",
+        "app/src/lib/phase-85-stage-4b3-media-lifecycle-saga.test.ts",
+        "app/src/lib/phase-85-stage-4b3-media-lifecycle.test.ts",
+        "app/src/lib/phase-85-stage-4b3-media-stream.test.ts",
+        "app/src/lib/phase-85-stage-4b3-media-stream.ts",
+        "app/src/lib/phase-85-stage-4b3-media-transport.ts",
+        "app/src/lib/phase-85-stage-4b3-message-bundles.test.ts",
+        "app/src/lib/phase-85-stage-4b3-mock-vision-provider.test.ts",
+        "app/src/lib/phase-85-stage-4b3-mock-vision-provider.ts",
+        "app/src/lib/phase-85-stage-4b3-multimodal-understanding.test.ts",
+        "app/src/lib/phase-85-stage-4b3-supabase-canonical-ingress.ts",
+        "app/src/lib/phase-85-stage-4b3-supabase-mappers.test.ts",
+        "app/src/lib/phase-85-stage-4b3-supabase-mappers.ts",
+        "app/src/lib/phase-85-stage-4b3-vision-analysis.test.ts",
+        "app/src/lib/phase-85-stage-4b3-vision-analysis.ts",
+        "app/src/lib/phase-85-stage-4b3-vision-fixture-manifest.ts",
+        "app/src/lib/phase-85-stage-4b3-vision-provider.ts",
+        "app/src/lib/phase-85-stage-4b3-visual-simulator.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-admission.test.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-admission.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-canonicalizer.test.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-canonicalizer.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-fixture-resolver.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-lifecycle.test.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-lifecycle.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-source-authority.test.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-transport.ts",
+        "app/src/lib/phase-85-stage-4b4-bounded-audio-rpc.ts",
+        "app/src/lib/phase-85-stage-4b4-closure.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-admission-worker.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-audio-worker.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-pipeline-saga.ts",
+        "app/src/lib/phase-85-stage-4b4-mock-transcription-provider.test.ts",
+        "app/src/lib/phase-85-stage-4b4-mock-transcription-provider.ts",
+        "app/src/lib/phase-85-stage-4b4-transcript-bridge.test.ts",
+        "app/src/lib/phase-85-stage-4b4-transcript-corrections.test.ts",
+        "app/src/lib/phase-85-stage-4b4-transcription-fixture-manifest.ts",
+        "app/src/lib/phase-85-stage-4b4-transcription-provider.test.ts",
+        "app/src/lib/phase-85-stage-4b4-transcription-provider.ts",
+        "app/src/lib/phase-85-stage-4b4-transcription-worker.test.ts",
+        "app/src/lib/phase-85-stage-4b4-transcription-worker.ts",
+        "app/src/lib/phase-85-stage-4b4-voice-bundle-orchestration.test.ts",
+        "app/src/lib/phase-85-stage-4b4-voice-contracts.test.ts",
+        "app/src/lib/phase-85-stage-4b4-voice-contracts.ts",
+        "app/src/lib/phase-85-stage-4b4-voice-simulator.ts"
+      ]
+    },
+    {
+      "id": "sanitized_object_key",
+      "description": "sanitized tenant-bound storage object key",
+      "pass": true,
+      "evidence": [
+        "app/src/lib/phase-85-stage-4b3-atomic-decision.test.ts",
+        "app/src/lib/phase-85-stage-4b3-bounded-media-rpc.ts",
+        "app/src/lib/phase-85-stage-4b3-bounded-media.test.ts",
+        "app/src/lib/phase-85-stage-4b3-bounded-media.ts",
+        "app/src/lib/phase-85-stage-4b3-bundle-orchestration.test.ts",
+        "app/src/lib/phase-85-stage-4b3-canonical-ingress.test.ts",
+        "app/src/lib/phase-85-stage-4b3-canonical-ingress.ts",
+        "app/src/lib/phase-85-stage-4b3-closure.ts",
+        "app/src/lib/phase-85-stage-4b3-durable-ingress.test.ts",
+        "app/src/lib/phase-85-stage-4b3-durable-media-admission.ts",
+        "app/src/lib/phase-85-stage-4b3-durable-media-worker.ts",
+        "app/src/lib/phase-85-stage-4b3-image-admission.test.ts",
+        "app/src/lib/phase-85-stage-4b3-image-admission.ts",
+        "app/src/lib/phase-85-stage-4b3-media-admission.test.ts",
+        "app/src/lib/phase-85-stage-4b3-media-admission.ts",
+        "app/src/lib/phase-85-stage-4b3-media-contracts-v2.ts",
+        "app/src/lib/phase-85-stage-4b3-media-contracts.ts",
+        "app/src/lib/phase-85-stage-4b3-media-lifecycle-saga.test.ts",
+        "app/src/lib/phase-85-stage-4b3-media-lifecycle-saga.ts",
+        "app/src/lib/phase-85-stage-4b3-media-lifecycle.test.ts",
+        "app/src/lib/phase-85-stage-4b3-media-lifecycle.ts",
+        "app/src/lib/phase-85-stage-4b3-media-stream.test.ts",
+        "app/src/lib/phase-85-stage-4b3-migration-contract.test.ts",
+        "app/src/lib/phase-85-stage-4b3-mock-vision-provider.test.ts",
+        "app/src/lib/phase-85-stage-4b3-multimodal-envelope.ts",
+        "app/src/lib/phase-85-stage-4b3-multimodal-understanding.test.ts",
+        "app/src/lib/phase-85-stage-4b3-supabase-canonical-ingress.ts",
+        "app/src/lib/phase-85-stage-4b3-supabase-mappers.test.ts",
+        "app/src/lib/phase-85-stage-4b3-supabase-mappers.ts",
+        "app/src/lib/phase-85-stage-4b3-vision-analysis.test.ts",
+        "app/src/lib/phase-85-stage-4b3-vision-analysis.ts",
+        "app/src/lib/phase-85-stage-4b3-visual-simulator.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-admission.test.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-admission.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-lifecycle-saga.test.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-lifecycle-saga.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-lifecycle.test.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-lifecycle.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-storage.ts",
+        "app/src/lib/phase-85-stage-4b4-bounded-audio-rpc.ts",
+        "app/src/lib/phase-85-stage-4b4-bounded-audio.test.ts",
+        "app/src/lib/phase-85-stage-4b4-closure.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-audio-worker.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-pipeline-saga.ts",
+        "app/src/lib/phase-85-stage-4b4-migration-contract.test.ts",
+        "app/src/lib/phase-85-stage-4b4-transcription-worker.ts",
+        "app/src/lib/phase-85-stage-4b4-voice-bundle-orchestration.test.ts",
+        "app/src/lib/phase-85-stage-4b4-voice-contracts.test.ts",
+        "app/src/lib/phase-85-stage-4b4-voice-contracts.ts"
+      ]
+    },
+    {
+      "id": "bounded_transport",
+      "description": "bounded download or range transport",
+      "pass": true,
+      "evidence": [
+        "app/src/lib/phase-85-stage-4b3-bounded-media-rpc.test.ts",
+        "app/src/lib/phase-85-stage-4b3-bounded-media-rpc.ts",
+        "app/src/lib/phase-85-stage-4b3-bounded-media.test.ts",
+        "app/src/lib/phase-85-stage-4b3-bounded-media.ts",
+        "app/src/lib/phase-85-stage-4b3-bundle-orchestration.ts",
+        "app/src/lib/phase-85-stage-4b3-durable-media-worker.ts",
+        "app/src/lib/phase-85-stage-4b3-image-admission.test.ts",
+        "app/src/lib/phase-85-stage-4b3-image-admission.ts",
+        "app/src/lib/phase-85-stage-4b3-media-contracts-v2.test.ts",
+        "app/src/lib/phase-85-stage-4b3-media-contracts-v2.ts",
+        "app/src/lib/phase-85-stage-4b3-media-contracts.ts",
+        "app/src/lib/phase-85-stage-4b3-media-lifecycle-saga.test.ts",
+        "app/src/lib/phase-85-stage-4b3-media-lifecycle.test.ts",
+        "app/src/lib/phase-85-stage-4b3-media-stream.test.ts",
+        "app/src/lib/phase-85-stage-4b3-media-stream.ts",
+        "app/src/lib/phase-85-stage-4b3-migration-contract.test.ts",
+        "app/src/lib/phase-85-stage-4b3-multimodal-envelope.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-canonicalizer.test.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-canonicalizer.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-lifecycle.test.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-lifecycle.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-storage.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-transport.ts",
+        "app/src/lib/phase-85-stage-4b4-bounded-audio-rpc.test.ts",
+        "app/src/lib/phase-85-stage-4b4-bounded-audio-rpc.ts",
+        "app/src/lib/phase-85-stage-4b4-bounded-audio.test.ts",
+        "app/src/lib/phase-85-stage-4b4-bounded-audio.ts",
+        "app/src/lib/phase-85-stage-4b4-closure.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-admission-worker.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-pipeline-saga.ts",
+        "app/src/lib/phase-85-stage-4b4-media-range.test.ts",
+        "app/src/lib/phase-85-stage-4b4-media-range.ts",
+        "app/src/lib/phase-85-stage-4b4-migration-contract.test.ts",
+        "app/src/lib/phase-85-stage-4b4-ogg-preflight.test.ts",
+        "app/src/lib/phase-85-stage-4b4-transcript-correction-bounded.test.ts",
+        "app/src/lib/phase-85-stage-4b4-voice-contracts.test.ts",
+        "app/src/lib/phase-85-stage-4b4-voice-contracts.ts"
+      ]
+    },
+    {
+      "id": "provider_gate",
+      "description": "vision/transcription provider gate",
+      "pass": true,
+      "evidence": [
+        "app/src/lib/phase-85-stage-4b3-canonical-ingress.ts",
+        "app/src/lib/phase-85-stage-4b3-message-bundles.test.ts",
+        "app/src/lib/phase-85-stage-4b3-mock-vision-provider.test.ts",
+        "app/src/lib/phase-85-stage-4b3-mock-vision-provider.ts",
+        "app/src/lib/phase-85-stage-4b3-provider-gate.test.ts",
+        "app/src/lib/phase-85-stage-4b3-provider-gate.ts",
+        "app/src/lib/phase-85-stage-4b3-vision-analysis.test.ts",
+        "app/src/lib/phase-85-stage-4b3-vision-analysis.ts",
+        "app/src/lib/phase-85-stage-4b3-vision-fixture-manifest.ts",
+        "app/src/lib/phase-85-stage-4b3-vision-provider.ts",
+        "app/src/lib/phase-85-stage-4b4-atomic-transcript-correction.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-admission.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-lifecycle.test.ts",
+        "app/src/lib/phase-85-stage-4b4-bounded-audio-rpc.test.ts",
+        "app/src/lib/phase-85-stage-4b4-bounded-audio-rpc.ts",
+        "app/src/lib/phase-85-stage-4b4-bounded-audio.test.ts",
+        "app/src/lib/phase-85-stage-4b4-closure.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-audio-worker.ts",
+        "app/src/lib/phase-85-stage-4b4-mock-transcription-provider.test.ts",
+        "app/src/lib/phase-85-stage-4b4-mock-transcription-provider.ts",
+        "app/src/lib/phase-85-stage-4b4-provider-gate.test.ts",
+        "app/src/lib/phase-85-stage-4b4-provider-gate.ts",
+        "app/src/lib/phase-85-stage-4b4-supabase-mappers.test.ts",
+        "app/src/lib/phase-85-stage-4b4-supabase-mappers.ts",
+        "app/src/lib/phase-85-stage-4b4-transcript-bridge.test.ts",
+        "app/src/lib/phase-85-stage-4b4-transcript-corrections.test.ts",
+        "app/src/lib/phase-85-stage-4b4-transcription-fixture-manifest.ts",
+        "app/src/lib/phase-85-stage-4b4-transcription-provider.test.ts",
+        "app/src/lib/phase-85-stage-4b4-transcription-provider.ts",
+        "app/src/lib/phase-85-stage-4b4-transcription-worker.test.ts",
+        "app/src/lib/phase-85-stage-4b4-transcription-worker.ts",
+        "app/src/lib/phase-85-stage-4b4-voice-bundle-orchestration.test.ts",
+        "app/src/lib/phase-85-stage-4b4-voice-contracts.ts",
+        "app/src/lib/phase-85-stage-4b4-voice-simulator.test.ts",
+        "app/src/lib/phase-85-stage-4b4-voice-simulator.ts",
+        "app/src/lib/production-ai-media-security-migration-contract.test.ts"
+      ]
+    },
+    {
+      "id": "durable_claim_lease",
+      "description": "durable media/audio claim and lease",
+      "pass": true,
+      "evidence": [
+        "app/src/lib/phase-85-stage-4b3-atomic-bundle-decision.ts",
+        "app/src/lib/phase-85-stage-4b3-atomic-decision.test.ts",
+        "app/src/lib/phase-85-stage-4b3-atomic-visual-correction.ts",
+        "app/src/lib/phase-85-stage-4b3-bounded-media-rpc.ts",
+        "app/src/lib/phase-85-stage-4b3-bounded-media.test.ts",
+        "app/src/lib/phase-85-stage-4b3-bundle-decisions.ts",
+        "app/src/lib/phase-85-stage-4b3-bundle-orchestration.test.ts",
+        "app/src/lib/phase-85-stage-4b3-bundle-worker-outcomes.test.ts",
+        "app/src/lib/phase-85-stage-4b3-canonical-ingress.test.ts",
+        "app/src/lib/phase-85-stage-4b3-closure.ts",
+        "app/src/lib/phase-85-stage-4b3-durable-media-admission.ts",
+        "app/src/lib/phase-85-stage-4b3-durable-media-worker.ts",
+        "app/src/lib/phase-85-stage-4b3-media-admission.ts",
+        "app/src/lib/phase-85-stage-4b3-media-contracts-v2.test.ts",
+        "app/src/lib/phase-85-stage-4b3-media-contracts.ts",
+        "app/src/lib/phase-85-stage-4b3-media-lifecycle-saga.test.ts",
+        "app/src/lib/phase-85-stage-4b3-media-lifecycle-saga.ts",
+        "app/src/lib/phase-85-stage-4b3-media-lifecycle.test.ts",
+        "app/src/lib/phase-85-stage-4b3-media-lifecycle.ts",
+        "app/src/lib/phase-85-stage-4b3-media-worker.ts",
+        "app/src/lib/phase-85-stage-4b3-message-bundles.test.ts",
+        "app/src/lib/phase-85-stage-4b3-message-bundles.ts",
+        "app/src/lib/phase-85-stage-4b3-migration-contract.test.ts",
+        "app/src/lib/phase-85-stage-4b3-multimodal-understanding.test.ts",
+        "app/src/lib/phase-85-stage-4b3-supabase-canonical-ingress.ts",
+        "app/src/lib/phase-85-stage-4b3-supabase-mappers.test.ts",
+        "app/src/lib/phase-85-stage-4b3-supabase-mappers.ts",
+        "app/src/lib/phase-85-stage-4b3-vision-analysis.test.ts",
+        "app/src/lib/phase-85-stage-4b4-atomic-transcript-correction.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-admission.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-lifecycle-saga.test.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-lifecycle-saga.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-lifecycle.test.ts",
+        "app/src/lib/phase-85-stage-4b4-bounded-audio-rpc.ts",
+        "app/src/lib/phase-85-stage-4b4-bounded-audio.test.ts",
+        "app/src/lib/phase-85-stage-4b4-closure.test.ts",
+        "app/src/lib/phase-85-stage-4b4-closure.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-admission-worker.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-audio-worker.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-pipeline-saga.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-transcript-bridge-worker.test.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-transcript-bridge-worker.ts",
+        "app/src/lib/phase-85-stage-4b4-migration-contract.test.ts",
+        "app/src/lib/phase-85-stage-4b4-transcript-bridge-saga.ts",
+        "app/src/lib/phase-85-stage-4b4-transcript-bridge.ts"
+      ]
+    },
+    {
+      "id": "retry_and_quality",
+      "description": "retry, quality and review terminal outcome",
+      "pass": true,
+      "evidence": [
+        "app/src/lib/phase-85-stage-4b3-atomic-bundle-decision.ts",
+        "app/src/lib/phase-85-stage-4b3-atomic-decision.test.ts",
+        "app/src/lib/phase-85-stage-4b3-bounded-media-rpc.test.ts",
+        "app/src/lib/phase-85-stage-4b3-bounded-media-rpc.ts",
+        "app/src/lib/phase-85-stage-4b3-bounded-media.test.ts",
+        "app/src/lib/phase-85-stage-4b3-bounded-media.ts",
+        "app/src/lib/phase-85-stage-4b3-bundle-orchestration.test.ts",
+        "app/src/lib/phase-85-stage-4b3-bundle-orchestration.ts",
+        "app/src/lib/phase-85-stage-4b3-bundle-worker-outcomes.ts",
+        "app/src/lib/phase-85-stage-4b3-closure.ts",
+        "app/src/lib/phase-85-stage-4b3-durable-media-admission.ts",
+        "app/src/lib/phase-85-stage-4b3-durable-media-worker.ts",
+        "app/src/lib/phase-85-stage-4b3-image-admission.ts",
+        "app/src/lib/phase-85-stage-4b3-media-admission.ts",
+        "app/src/lib/phase-85-stage-4b3-media-contracts-v2.test.ts",
+        "app/src/lib/phase-85-stage-4b3-media-contracts-v2.ts",
+        "app/src/lib/phase-85-stage-4b3-media-contracts.test.ts",
+        "app/src/lib/phase-85-stage-4b3-media-contracts.ts",
+        "app/src/lib/phase-85-stage-4b3-media-lifecycle-saga.test.ts",
+        "app/src/lib/phase-85-stage-4b3-media-lifecycle.test.ts",
+        "app/src/lib/phase-85-stage-4b3-media-worker.ts",
+        "app/src/lib/phase-85-stage-4b3-message-bundles.test.ts",
+        "app/src/lib/phase-85-stage-4b3-message-bundles.ts",
+        "app/src/lib/phase-85-stage-4b3-migration-contract.test.ts",
+        "app/src/lib/phase-85-stage-4b3-mock-vision-provider.test.ts",
+        "app/src/lib/phase-85-stage-4b3-mock-vision-provider.ts",
+        "app/src/lib/phase-85-stage-4b3-multimodal-understanding.test.ts",
+        "app/src/lib/phase-85-stage-4b3-supabase-canonical-ingress.ts",
+        "app/src/lib/phase-85-stage-4b3-supabase-mappers.test.ts",
+        "app/src/lib/phase-85-stage-4b3-supabase-mappers.ts",
+        "app/src/lib/phase-85-stage-4b3-vision-analysis.test.ts",
+        "app/src/lib/phase-85-stage-4b3-vision-analysis.ts",
+        "app/src/lib/phase-85-stage-4b3-vision-fixture-manifest.ts",
+        "app/src/lib/phase-85-stage-4b3-vision-provider.ts",
+        "app/src/lib/phase-85-stage-4b3-visual-observation-validator.test.ts",
+        "app/src/lib/phase-85-stage-4b4-atomic-transcript-correction.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-admission.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-lifecycle-saga.test.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-lifecycle-saga.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-lifecycle.test.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-lifecycle.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-source-authority.test.ts",
+        "app/src/lib/phase-85-stage-4b4-bounded-audio-rpc.ts",
+        "app/src/lib/phase-85-stage-4b4-bounded-audio.test.ts",
+        "app/src/lib/phase-85-stage-4b4-closure.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-admission-worker.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-audio-worker.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-pipeline-saga.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-transcript-bridge-worker.test.ts",
+        "app/src/lib/phase-85-stage-4b4-golden-corpus-catalog.ts",
+        "app/src/lib/phase-85-stage-4b4-migration-contract.test.ts",
+        "app/src/lib/phase-85-stage-4b4-mock-transcription-provider.test.ts",
+        "app/src/lib/phase-85-stage-4b4-mock-transcription-provider.ts",
+        "app/src/lib/phase-85-stage-4b4-supabase-mappers.test.ts",
+        "app/src/lib/phase-85-stage-4b4-supabase-mappers.ts",
+        "app/src/lib/phase-85-stage-4b4-transcript-bridge.test.ts",
+        "app/src/lib/phase-85-stage-4b4-transcript-bridge.ts",
+        "app/src/lib/phase-85-stage-4b4-transcript-quality.ts",
+        "app/src/lib/phase-85-stage-4b4-transcription-provider.test.ts",
+        "app/src/lib/phase-85-stage-4b4-transcription-provider.ts",
+        "app/src/lib/phase-85-stage-4b4-transcription-worker.test.ts",
+        "app/src/lib/phase-85-stage-4b4-transcription-worker.ts",
+        "app/src/lib/phase-85-stage-4b4-voice-bundle-orchestration.ts",
+        "app/src/lib/phase-85-stage-4b4-voice-contracts.test.ts",
+        "app/src/lib/phase-85-stage-4b4-voice-contracts.ts",
+        "app/src/lib/phase-85-stage-4b4-voice-review-labels.ts"
+      ]
+    },
+    {
+      "id": "observation_validation",
+      "description": "observation/transcript validation and source authority",
+      "pass": true,
+      "evidence": [
+        "app/src/lib/phase-85-stage-4b3-atomic-decision.test.ts",
+        "app/src/lib/phase-85-stage-4b3-atomic-visual-correction.ts",
+        "app/src/lib/phase-85-stage-4b3-bounded-media-rpc.test.ts",
+        "app/src/lib/phase-85-stage-4b3-bounded-media-rpc.ts",
+        "app/src/lib/phase-85-stage-4b3-bounded-media.test.ts",
+        "app/src/lib/phase-85-stage-4b3-bounded-media.ts",
+        "app/src/lib/phase-85-stage-4b3-bundle-orchestration.test.ts",
+        "app/src/lib/phase-85-stage-4b3-bundle-orchestration.ts",
+        "app/src/lib/phase-85-stage-4b3-bundle-worker-outcomes.ts",
+        "app/src/lib/phase-85-stage-4b3-canonical-ingress.ts",
+        "app/src/lib/phase-85-stage-4b3-closure.ts",
+        "app/src/lib/phase-85-stage-4b3-durable-ingress.test.ts",
+        "app/src/lib/phase-85-stage-4b3-media-admission.ts",
+        "app/src/lib/phase-85-stage-4b3-media-contracts-v2.test.ts",
+        "app/src/lib/phase-85-stage-4b3-media-contracts-v2.ts",
+        "app/src/lib/phase-85-stage-4b3-media-contracts.test.ts",
+        "app/src/lib/phase-85-stage-4b3-media-contracts.ts",
+        "app/src/lib/phase-85-stage-4b3-media-lifecycle-saga.test.ts",
+        "app/src/lib/phase-85-stage-4b3-media-lifecycle-saga.ts",
+        "app/src/lib/phase-85-stage-4b3-media-lifecycle.test.ts",
+        "app/src/lib/phase-85-stage-4b3-media-lifecycle.ts",
+        "app/src/lib/phase-85-stage-4b3-message-bundles.ts",
+        "app/src/lib/phase-85-stage-4b3-migration-contract.test.ts",
+        "app/src/lib/phase-85-stage-4b3-mock-vision-provider.test.ts",
+        "app/src/lib/phase-85-stage-4b3-mock-vision-provider.ts",
+        "app/src/lib/phase-85-stage-4b3-multimodal-envelope.ts",
+        "app/src/lib/phase-85-stage-4b3-multimodal-understanding.test.ts",
+        "app/src/lib/phase-85-stage-4b3-multimodal-understanding.ts",
+        "app/src/lib/phase-85-stage-4b3-supabase-atomic-decisions.ts",
+        "app/src/lib/phase-85-stage-4b3-supabase-canonical-ingress.ts",
+        "app/src/lib/phase-85-stage-4b3-supabase-mappers.test.ts",
+        "app/src/lib/phase-85-stage-4b3-supabase-mappers.ts",
+        "app/src/lib/phase-85-stage-4b3-vision-analysis.test.ts",
+        "app/src/lib/phase-85-stage-4b3-vision-analysis.ts",
+        "app/src/lib/phase-85-stage-4b3-vision-fixture-manifest.ts",
+        "app/src/lib/phase-85-stage-4b3-vision-provider.ts",
+        "app/src/lib/phase-85-stage-4b3-visual-observation-validator.test.ts",
+        "app/src/lib/phase-85-stage-4b3-visual-observation-validator.ts",
+        "app/src/lib/phase-85-stage-4b4-atomic-transcript-correction.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-admission.test.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-admission.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-lifecycle-saga.test.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-lifecycle-saga.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-lifecycle.test.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-lifecycle.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-source-authority.test.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-source-authority.ts",
+        "app/src/lib/phase-85-stage-4b4-bounded-audio-rpc.test.ts",
+        "app/src/lib/phase-85-stage-4b4-bounded-audio-rpc.ts",
+        "app/src/lib/phase-85-stage-4b4-bounded-audio.test.ts",
+        "app/src/lib/phase-85-stage-4b4-bounded-audio.ts",
+        "app/src/lib/phase-85-stage-4b4-bundle-notifications.ts",
+        "app/src/lib/phase-85-stage-4b4-closure.test.ts",
+        "app/src/lib/phase-85-stage-4b4-closure.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-admission-worker.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-audio-worker-cli.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-audio-worker.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-pipeline-saga.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-pipeline.test.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-transcript-bridge-worker-cli.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-transcript-bridge-worker.test.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-transcript-bridge-worker.ts",
+        "app/src/lib/phase-85-stage-4b4-golden-corpus-catalog.ts",
+        "app/src/lib/phase-85-stage-4b4-migration-contract.test.ts",
+        "app/src/lib/phase-85-stage-4b4-mock-transcription-provider.test.ts",
+        "app/src/lib/phase-85-stage-4b4-mock-transcription-provider.ts",
+        "app/src/lib/phase-85-stage-4b4-provider-gate.test.ts",
+        "app/src/lib/phase-85-stage-4b4-provider-gate.ts",
+        "app/src/lib/phase-85-stage-4b4-supabase-mappers.test.ts",
+        "app/src/lib/phase-85-stage-4b4-supabase-mappers.ts",
+        "app/src/lib/phase-85-stage-4b4-transcript-bridge-saga.ts",
+        "app/src/lib/phase-85-stage-4b4-transcript-bridge.test.ts",
+        "app/src/lib/phase-85-stage-4b4-transcript-bridge.ts",
+        "app/src/lib/phase-85-stage-4b4-transcript-correction-bounded.test.ts",
+        "app/src/lib/phase-85-stage-4b4-transcript-correction-bounded.ts",
+        "app/src/lib/phase-85-stage-4b4-transcript-corrections.test.ts",
+        "app/src/lib/phase-85-stage-4b4-transcript-corrections.ts",
+        "app/src/lib/phase-85-stage-4b4-transcript-quality.ts",
+        "app/src/lib/phase-85-stage-4b4-transcription-fixture-manifest.ts",
+        "app/src/lib/phase-85-stage-4b4-transcription-provider.test.ts",
+        "app/src/lib/phase-85-stage-4b4-transcription-provider.ts",
+        "app/src/lib/phase-85-stage-4b4-transcription-worker.test.ts",
+        "app/src/lib/phase-85-stage-4b4-transcription-worker.ts",
+        "app/src/lib/phase-85-stage-4b4-voice-bundle-orchestration.test.ts",
+        "app/src/lib/phase-85-stage-4b4-voice-bundle-orchestration.ts",
+        "app/src/lib/phase-85-stage-4b4-voice-contracts.test.ts",
+        "app/src/lib/phase-85-stage-4b4-voice-contracts.ts",
+        "app/src/lib/phase-85-stage-4b4-voice-review-labels.ts",
+        "app/src/lib/phase-85-stage-4b4-voice-simulator.test.ts",
+        "app/src/lib/phase-85-stage-4b4-voice-simulator.ts",
+        "app/src/lib/production-ai-media-security-migration-contract.test.ts"
+      ]
+    },
+    {
+      "id": "retention_and_delete",
+      "description": "retention revoke purge and object delete",
+      "pass": true,
+      "evidence": [
+        "app/src/lib/phase-85-stage-4b3-atomic-bundle-decision.ts",
+        "app/src/lib/phase-85-stage-4b3-atomic-decision.test.ts",
+        "app/src/lib/phase-85-stage-4b3-atomic-visual-correction.ts",
+        "app/src/lib/phase-85-stage-4b3-bounded-media-rpc.ts",
+        "app/src/lib/phase-85-stage-4b3-bounded-media.test.ts",
+        "app/src/lib/phase-85-stage-4b3-bounded-media.ts",
+        "app/src/lib/phase-85-stage-4b3-bundle-decisions.ts",
+        "app/src/lib/phase-85-stage-4b3-bundle-orchestration.test.ts",
+        "app/src/lib/phase-85-stage-4b3-bundle-worker-outcomes.test.ts",
+        "app/src/lib/phase-85-stage-4b3-canonical-ingress.ts",
+        "app/src/lib/phase-85-stage-4b3-closure.test.ts",
+        "app/src/lib/phase-85-stage-4b3-closure.ts",
+        "app/src/lib/phase-85-stage-4b3-durable-media-admission.ts",
+        "app/src/lib/phase-85-stage-4b3-image-admission.ts",
+        "app/src/lib/phase-85-stage-4b3-media-admission.test.ts",
+        "app/src/lib/phase-85-stage-4b3-media-admission.ts",
+        "app/src/lib/phase-85-stage-4b3-media-contracts-v2.test.ts",
+        "app/src/lib/phase-85-stage-4b3-media-contracts.test.ts",
+        "app/src/lib/phase-85-stage-4b3-media-contracts.ts",
+        "app/src/lib/phase-85-stage-4b3-media-lifecycle-saga.test.ts",
+        "app/src/lib/phase-85-stage-4b3-media-lifecycle-saga.ts",
+        "app/src/lib/phase-85-stage-4b3-media-lifecycle.test.ts",
+        "app/src/lib/phase-85-stage-4b3-media-lifecycle.ts",
+        "app/src/lib/phase-85-stage-4b3-media-storage.ts",
+        "app/src/lib/phase-85-stage-4b3-message-bundles.test.ts",
+        "app/src/lib/phase-85-stage-4b3-message-bundles.ts",
+        "app/src/lib/phase-85-stage-4b3-multimodal-envelope.ts",
+        "app/src/lib/phase-85-stage-4b3-multimodal-understanding.test.ts",
+        "app/src/lib/phase-85-stage-4b3-supabase-canonical-ingress.ts",
+        "app/src/lib/phase-85-stage-4b3-supabase-mappers.ts",
+        "app/src/lib/phase-85-stage-4b3-supabase-media-storage.ts",
+        "app/src/lib/phase-85-stage-4b3-vision-analysis.test.ts",
+        "app/src/lib/phase-85-stage-4b4-atomic-transcript-correction.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-admission.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-lifecycle-saga.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-lifecycle.test.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-lifecycle.ts",
+        "app/src/lib/phase-85-stage-4b4-audio-storage.ts",
+        "app/src/lib/phase-85-stage-4b4-bounded-audio-rpc.ts",
+        "app/src/lib/phase-85-stage-4b4-bounded-audio.test.ts",
+        "app/src/lib/phase-85-stage-4b4-bounded-audio.ts",
+        "app/src/lib/phase-85-stage-4b4-closure.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-admission-worker.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-pipeline-saga.ts",
+        "app/src/lib/phase-85-stage-4b4-migration-contract.test.ts",
+        "app/src/lib/phase-85-stage-4b4-supabase-mappers.ts",
+        "app/src/lib/phase-85-stage-4b4-transcript-bridge.ts",
+        "app/src/lib/phase-85-stage-4b4-voice-contracts.test.ts",
+        "app/src/lib/phase-85-stage-4b4-voice-contracts.ts",
+        "app/src/lib/phase-85-stage-4b4-voice-review-labels.ts"
+      ]
+    },
+    {
+      "id": "real_media_provider_disabled_for_audit",
+      "pass": true
+    },
+    {
+      "id": "external_transport_guarded",
+      "pass": true
+    }
+  ],
+  "mediaSurface": {
+    "sourceCount": 139,
+    "realProviderFlags": [
+      "MANU_ALLOW_REAL_VISION_EGRESS"
+    ],
+    "externalCallCount": 2
+  },
+  "sourceFiles": [
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-atomic-bundle-decision.ts",
+      "exists": true,
+      "bytes": 6901,
+      "sha256": "65ca7f27271d7bc26fb0ecb66027431637bbcc0835fb08dafbd4a8d0eb13cb62"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-atomic-decision.test.ts",
+      "exists": true,
+      "bytes": 12863,
+      "sha256": "aa8fd05bcc8f2d2398a45dd99c5b77c6cb26e0bd7dbed39fdded7843fee2a4d0"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-atomic-outcomes.ts",
+      "exists": true,
+      "bytes": 9037,
+      "sha256": "8628638b9d11ee7bb848863492eae2bb9545144e49f13cbceef313997be44b51"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-atomic-visual-correction.ts",
+      "exists": true,
+      "bytes": 13947,
+      "sha256": "df5bade3e191cc7c1c9e6c135651b33cd33e7492496ba863ca40386a4945adfd"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-bounded-media-rpc.test.ts",
+      "exists": true,
+      "bytes": 6298,
+      "sha256": "0ee8a9cc8d8d7ca3738ec24599cda16f5eba15a8cc3f5e4aba3be4bbf73db7a0"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-bounded-media-rpc.ts",
+      "exists": true,
+      "bytes": 7252,
+      "sha256": "ecf1eb37001841cdb0aeccf7c61eb2631d84106cc87bf8083e45183e17a9fd43"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-bounded-media.test.ts",
+      "exists": true,
+      "bytes": 7551,
+      "sha256": "a2b949d276fe64cc4c2af3dd4597efc994d78c367b550aca6b67b23d98a9ad16"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-bounded-media.ts",
+      "exists": true,
+      "bytes": 14846,
+      "sha256": "159b7351d76495a47faf43a916b94edd663220e920fbc0e08e69d078236e19a0"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-bundle-decisions.ts",
+      "exists": true,
+      "bytes": 3927,
+      "sha256": "3e48dacfc6483a7f33d6dc6cf02a85c6c2cc5c2053eda9a4ba0a84afb3976484"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-bundle-notifications.ts",
+      "exists": true,
+      "bytes": 3568,
+      "sha256": "d5a96ab1a6dad4472855dd9b24cf403627a99b07b4602ad5a9d0f953872b26fe"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-bundle-orchestration.test.ts",
+      "exists": true,
+      "bytes": 12473,
+      "sha256": "e1f087a1e36d421e48dc015c8727600893c2df05a9dd190e217b6ec2a6540ef1"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-bundle-orchestration.ts",
+      "exists": true,
+      "bytes": 14757,
+      "sha256": "0f4d0ac5e9857c047894f55f426ad3a1a6f17703aa49d3432ff8716640c22711"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-bundle-worker-outcomes.test.ts",
+      "exists": true,
+      "bytes": 5125,
+      "sha256": "b122a91c5088503592ae8f639bbce7c8d857e87c8a4bba667ed0c64f71d683fa"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-bundle-worker-outcomes.ts",
+      "exists": true,
+      "bytes": 1961,
+      "sha256": "27cba36378abd1a634b7d9cb76d73259e9e37bb477cf1063827d1299450342c3"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-canonical-ingress.test.ts",
+      "exists": true,
+      "bytes": 8598,
+      "sha256": "2b84a79d0b8798cd6510e37b67180db1b6fd8b4c1cbc31ad12448a5c6d0d2fa8"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-canonical-ingress.ts",
+      "exists": true,
+      "bytes": 19894,
+      "sha256": "57c2d8b938c96cd401927d9596e1b142972b7564e7039eb2fd6a72e7e17aff34"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-closure.test.ts",
+      "exists": true,
+      "bytes": 5344,
+      "sha256": "8d90902385906646ffffaca2e6b75b01fcfc6c994bf5a9c9c349e4f0374fc055"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-closure.ts",
+      "exists": true,
+      "bytes": 27640,
+      "sha256": "fc6c5cdc254a8169935734e3411d08638cc7c547525555e6c5c335ccdfcb9a9c"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-durable-ingress.test.ts",
+      "exists": true,
+      "bytes": 4554,
+      "sha256": "1e6944a5492ca64e9d7c1fc2c26fa5a6b67eab1c9011176b455debed3ce9708e"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-durable-media-admission.ts",
+      "exists": true,
+      "bytes": 5213,
+      "sha256": "faa19d74712e26b55bb37f6219cee84ffdb88c54f9cabc6a7cab1122f91f2f56"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-durable-media-transport.ts",
+      "exists": true,
+      "bytes": 1030,
+      "sha256": "6b5bfeadd91cf00411e4b893d8e7ce1521351ab61559f79a72019592ab4b7a0e"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-durable-media-worker-cli.ts",
+      "exists": true,
+      "bytes": 1544,
+      "sha256": "4582f2aebc8e15578e9a5b8c8d9760163dd3cef6edf640b74622602724dce058"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-durable-media-worker.ts",
+      "exists": true,
+      "bytes": 9086,
+      "sha256": "56779ff417adc02822d4183d7467650d6b4e1ed3994f790cf430cc71c00acc8a"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-fallback-media-registry.ts",
+      "exists": true,
+      "bytes": 477,
+      "sha256": "6c634e854d1b0678a6442b5848fb894e426a73411cf124a0209d32712f033755"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-fallback-media-storage.ts",
+      "exists": true,
+      "bytes": 340,
+      "sha256": "b3dd7251dbe3e449efca855fd1a155e94809a6d1a5f3f644fa1defdad4976e35"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-fixture-resolver.ts",
+      "exists": true,
+      "bytes": 2436,
+      "sha256": "1114c0e93552fe8e7aa02327b7471e312c8040cf884851b72278c49ba32a766e"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-image-admission.test.ts",
+      "exists": true,
+      "bytes": 4036,
+      "sha256": "a925300e89c8c6866f4cfe55b4c15124c41d4b3592b6ada16e25610cb229e069"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-image-admission.ts",
+      "exists": true,
+      "bytes": 7328,
+      "sha256": "ee5d53d5a054edc9ee89d0474068eb7d40e2860de9068f063a1288f092aa717c"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-local-worker-runner.test.ts",
+      "exists": true,
+      "bytes": 587,
+      "sha256": "054117ce5f18be87c50cad4dec47da93aadca0c629519bce59d711c158adb88b"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-media-admission.test.ts",
+      "exists": true,
+      "bytes": 5942,
+      "sha256": "5292a34ce9ba584893193694afd836f0ac02cb65baae927e31ca88cc59e35bcd"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-media-admission.ts",
+      "exists": true,
+      "bytes": 9700,
+      "sha256": "6d2b84fb7ef14d4fcdc45c4c89b2561ea88665f809207ba79875a0edaf5b59fe"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-media-contracts-v2.test.ts",
+      "exists": true,
+      "bytes": 8296,
+      "sha256": "72671ed7c331a6fc4fde3eedf785a2752753ac7a210c114b43150866b215e97a"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-media-contracts-v2.ts",
+      "exists": true,
+      "bytes": 21386,
+      "sha256": "7090a0f0451d01eeed7862778d90d6b67b9c7dc174fd30984cf5d7b3866bf4a7"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-media-contracts.test.ts",
+      "exists": true,
+      "bytes": 6685,
+      "sha256": "ff8d31e8648e070658fa720a3713d175fcda912056e2f0aebc8e1b99cba5034e"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-media-contracts.ts",
+      "exists": true,
+      "bytes": 26256,
+      "sha256": "8d0cc5e334a42db1f221b2342640da530c30dd5b29221aa6d567fc57c61c82a7"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-media-lifecycle-runner.test.ts",
+      "exists": true,
+      "bytes": 448,
+      "sha256": "09670d5f67db8ad4656cd49b677289dcf1aa9acadb8930cd5fefc3cf55edb0d8"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-media-lifecycle-saga.test.ts",
+      "exists": true,
+      "bytes": 11513,
+      "sha256": "afb250aece343f340f67361431de2db20e825d6faf9b3b2d97f6dc93bb44ee51"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-media-lifecycle-saga.ts",
+      "exists": true,
+      "bytes": 15660,
+      "sha256": "63e186138efd5ff8bbce410e2da9e5d2aa0c88889ae032dbc209c7540bb9ca0a"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-media-lifecycle-worker-cli.ts",
+      "exists": true,
+      "bytes": 1739,
+      "sha256": "3b5a5d0c3dfd97f37b1dde49c43618e9cf45a5ab4c5288a6fbba4bf9930bf8f0"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-media-lifecycle.test.ts",
+      "exists": true,
+      "bytes": 9939,
+      "sha256": "876bb13df71e2b2fa0465564a219f9a745b46ac0dcc5f25a796fdf149ebefa01"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-media-lifecycle.ts",
+      "exists": true,
+      "bytes": 16628,
+      "sha256": "afc6762d3a0617b65b3db3acb2c32193e08db429134afa2a6f1f945f2cff93dd"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-media-storage.ts",
+      "exists": true,
+      "bytes": 1013,
+      "sha256": "571e81dae109a433ce06934a719dfbfccf74a28d4ade1b3b15eb48767d95a14a"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-media-stream.test.ts",
+      "exists": true,
+      "bytes": 3888,
+      "sha256": "e632f652f2d1bf0e10d77e8dd7c5ccb036c736651e28b3a2b0c87f5645ae5cf7"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-media-stream.ts",
+      "exists": true,
+      "bytes": 9917,
+      "sha256": "f9e0761b703bf021e7758668d70e77593ee01677d4b705ba1911cd142cbeb5cb"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-media-transport.ts",
+      "exists": true,
+      "bytes": 2318,
+      "sha256": "770f47605ff29d593d46130a629861a5d04b8ca7724c5c4b26539f674cfb124b"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-media-worker.ts",
+      "exists": true,
+      "bytes": 6543,
+      "sha256": "d9f625b639a56838671ccb8844fbc26c764e2d7b3dcfe2dd5c08ec84aa34584f"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-message-bundles.test.ts",
+      "exists": true,
+      "bytes": 15855,
+      "sha256": "9f7a6333358cfef42b1901a55e9e35f2816260aee4bdafe2ff2f74ab5ab48dcf"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-message-bundles.ts",
+      "exists": true,
+      "bytes": 22932,
+      "sha256": "c880431d6712bf4308e974db72edd588651e232057a8f70e51e4939a36277b31"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-migration-contract.test.ts",
+      "exists": true,
+      "bytes": 11392,
+      "sha256": "8a487b9eb0a1fc3726d240eb7d95af150e1c3480205ce8b0f9d3761c2b8649fb"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-mock-vision-provider.test.ts",
+      "exists": true,
+      "bytes": 2509,
+      "sha256": "564987053812fd3f6da1bbf5febeeeff084b7e0248d6276026f3691437c23ab9"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-mock-vision-provider.ts",
+      "exists": true,
+      "bytes": 1912,
+      "sha256": "334f863974927619a6ad2441ca83b149e9c2bfce619a7f0b3253fa355f1bdcc3"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-multimodal-envelope.ts",
+      "exists": true,
+      "bytes": 10401,
+      "sha256": "5288182c4d6e065071122806dbf967187e650d7a78ebb3e31bc8fe4038b6605f"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-multimodal-safety.ts",
+      "exists": true,
+      "bytes": 2456,
+      "sha256": "d68c69c2d5b4b0fb86e6a4366211bea8c1acb488de1e06c7de236088b2ca09d3"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-multimodal-understanding.test.ts",
+      "exists": true,
+      "bytes": 23932,
+      "sha256": "002d659478e03f21ec92cef66d093574c45b9b8f490925ee1f2a832f95ba112a"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-multimodal-understanding.ts",
+      "exists": true,
+      "bytes": 4579,
+      "sha256": "31788406a6f0a7b9b1e5fc501bb5b98a3b85c2a819cda38520541e05126a56eb"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-provider-gate.test.ts",
+      "exists": true,
+      "bytes": 1203,
+      "sha256": "c2ce1e77a46f852682f9aa7d7a794766a5d648232497b931616e3387598cca5f"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-provider-gate.ts",
+      "exists": true,
+      "bytes": 1250,
+      "sha256": "f979f10ed932dbc0249ebf5ff30c76c98cbb4f200e296ef46ed24aec5295b93b"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-supabase-atomic-decisions.ts",
+      "exists": true,
+      "bytes": 1782,
+      "sha256": "8cd46db3661225c3b4b246b5463f420d35bbbd118a2fb38c346ca15e1284ed97"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-supabase-canonical-ingress.ts",
+      "exists": true,
+      "bytes": 12713,
+      "sha256": "88bc19cbafe82664a7270b2e7ea57b7e3518aab9677be8f83791df04d3550f63"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-supabase-mappers.test.ts",
+      "exists": true,
+      "bytes": 5216,
+      "sha256": "8d62dcef62bc2a534a9a02a1ef8f6e606fad7d29c52c037cbe5ffd239feb60ab"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-supabase-mappers.ts",
+      "exists": true,
+      "bytes": 8776,
+      "sha256": "33db930e931e722615a55905f4327f3e812c9f515ef53caa7a721e126a5fa688"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-supabase-media-storage.ts",
+      "exists": true,
+      "bytes": 2044,
+      "sha256": "861a120446fb5f321bda9d75e792bda4036af68f31b06b05ffa49b896c4c4fc0"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-vision-analysis.test.ts",
+      "exists": true,
+      "bytes": 12947,
+      "sha256": "56ae3e61cecb0b9b7c867454346cab8620d5b057eed504a54d2a3630abf1d1da"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-vision-analysis.ts",
+      "exists": true,
+      "bytes": 7168,
+      "sha256": "2a65ac9d485183f0bac06df620c6d0d14dc82b19a5ba8301f7ab033ef713d8d7"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-vision-fixture-manifest.ts",
+      "exists": true,
+      "bytes": 8514,
+      "sha256": "6fff832afe1ee8d16dd1e26c9cf70e9e29a0ca76077f4e75adf96dfcd84a1f99"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-vision-provider.ts",
+      "exists": true,
+      "bytes": 1018,
+      "sha256": "6b5c83f6715b48ee46698bfaa5d6cf6214d1434e6f211888aa18692701b4837d"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-visual-corrections-helpers.ts",
+      "exists": true,
+      "bytes": 408,
+      "sha256": "ddd3397950473a888aac6b5961d371006afad65f080fbc177ea3b179470b5ef7"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-visual-corrections.ts",
+      "exists": true,
+      "bytes": 1455,
+      "sha256": "a1bb88849c614399dd73ff7ecdf378a6f004ad68be8125fcacb6179d7595c4f6"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-visual-observation-validator.test.ts",
+      "exists": true,
+      "bytes": 1916,
+      "sha256": "a599a4c2ccf37df616f20d709632ee496afec5d12fc4f32502c047e0c9c18c11"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-visual-observation-validator.ts",
+      "exists": true,
+      "bytes": 1732,
+      "sha256": "17770f9e7f034128eb0c971321604551fa432412b3b142610c29e3c3256af628"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-visual-review-labels.ts",
+      "exists": true,
+      "bytes": 2680,
+      "sha256": "c46821d094a4c4f164f82e7c5fca16dc79823f9fb85fb2c92976188b5fd7aa24"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b3-visual-simulator.ts",
+      "exists": true,
+      "bytes": 6469,
+      "sha256": "4287666d4e955406d94feb6727a71b53c781d1b08f99d3d7de0c64d36c5445af"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-atomic-transcript-correction.ts",
+      "exists": true,
+      "bytes": 17214,
+      "sha256": "f462ad10309d37c2a7a67f1a413735b8211ac8fdab83d1ff4aa2d57bc934730d"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-audio-admission.test.ts",
+      "exists": true,
+      "bytes": 7628,
+      "sha256": "27d1cc30f1604dd9abf01b807be1dd0492a666d244c6aa322a930a6c37f97588"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-audio-admission.ts",
+      "exists": true,
+      "bytes": 12661,
+      "sha256": "90865d8ea933069ca82d67fa9520ff95088f4805e7569f7c73b7373e36788219"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-audio-canonicalizer.test.ts",
+      "exists": true,
+      "bytes": 3135,
+      "sha256": "6b77dd18be33c59ce37d9f6d3c70174c476f292831d12f14bf8aeef539ac64b5"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-audio-canonicalizer.ts",
+      "exists": true,
+      "bytes": 4397,
+      "sha256": "926f073409cfcf51d86892039a824c82074e8e923cd90a1a8b950da52af92040"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-audio-decode-worker.ts",
+      "exists": true,
+      "bytes": 2513,
+      "sha256": "18d1e7b6c18aa85c1f10f5f190d69d617e71a4f08522d573cb69ebaef9ef99e9"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-audio-fixture-resolver.ts",
+      "exists": true,
+      "bytes": 1938,
+      "sha256": "85e7c3f4f64e84b17ac3369b94833c6298a6f5038842ddb494535afa6e68f441"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-audio-lifecycle-saga.test.ts",
+      "exists": true,
+      "bytes": 5884,
+      "sha256": "7a14bb2a79521e1a1b6ea667db10c0edd9ff3945a256d9b938db5919bb8ea13b"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-audio-lifecycle-saga.ts",
+      "exists": true,
+      "bytes": 15999,
+      "sha256": "898ea3864786bcfebe76bef4f09c7d468a050a8198e830aba31b1c38184bb827"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-audio-lifecycle-worker-cli.ts",
+      "exists": true,
+      "bytes": 1794,
+      "sha256": "c5d37921801048c01d8d62fe5d0b4aae28ded12496dc104f47e08aca368f44f7"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-audio-lifecycle.test.ts",
+      "exists": true,
+      "bytes": 11443,
+      "sha256": "5d481ed28c18ab4bd59db98c2c3d2217c282bb284ab7ee9c3979b1562a188d54"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-audio-lifecycle.ts",
+      "exists": true,
+      "bytes": 19394,
+      "sha256": "40871f16907494fb72f294f121b2e010e6814af29397df124a5acfefecefa026"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-audio-source-authority.test.ts",
+      "exists": true,
+      "bytes": 4310,
+      "sha256": "7ccfb89c24f381c89a6195d28d792a6e9fc17e2e81f48b822d10f2cc54be0ccd"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-audio-source-authority.ts",
+      "exists": true,
+      "bytes": 3147,
+      "sha256": "53fc7bb8c3ed313cf71c914c93e2ae7c7bcfad98d0f35d291c422d3b855c8032"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-audio-storage.ts",
+      "exists": true,
+      "bytes": 6576,
+      "sha256": "07f7cc8a0752ebe686cbfda779f5d8ff6180fd9f8db53ab11e66ce25d4b5bd89"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-audio-transport.ts",
+      "exists": true,
+      "bytes": 1760,
+      "sha256": "e2e84c069ff7d38893444b41582cebd165816712a586e778c529176cab90cd81"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-bounded-audio-rpc.test.ts",
+      "exists": true,
+      "bytes": 4989,
+      "sha256": "b0d12f5690e2376c134c86a87e32a14c31a4e1c0cf473af6574c68d9e74770d3"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-bounded-audio-rpc.ts",
+      "exists": true,
+      "bytes": 7516,
+      "sha256": "08a89eb3cfa9e13b02d04f243afa8d750244dd30c0a8b0dd908e6b3ce5e7d1ce"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-bounded-audio.test.ts",
+      "exists": true,
+      "bytes": 14029,
+      "sha256": "536cb3ff0cfc91f83db79a12d84e1d0e3f6d9356044775b52ad445649a5e9b1f"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-bounded-audio.ts",
+      "exists": true,
+      "bytes": 7435,
+      "sha256": "9ce28f2a5a2ece44076ebd5dda31991a2886689bcf79b227a953b1de4403581c"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-build-dependency-trace.test.ts",
+      "exists": true,
+      "bytes": 1916,
+      "sha256": "cef186b95600cdce040844c044434f784491745cb76d68e9b8f01f51b781f1a5"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-bundle-notifications.ts",
+      "exists": true,
+      "bytes": 1357,
+      "sha256": "cb7a054a99a453e758885371226f3aec3d6794800fa1926dd5d63436c746a5f8"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-closure.test.ts",
+      "exists": true,
+      "bytes": 6928,
+      "sha256": "2b98665b126564ef4aa394ce424eeaba8a6584c57b2e8eef22ff095da172b0b6"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-closure.ts",
+      "exists": true,
+      "bytes": 32193,
+      "sha256": "a899c28fb51b7ded749e13ed3479f799b5d78aec64378855c6ff2bf834e1e65d"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-durable-admission-worker-cli.ts",
+      "exists": true,
+      "bytes": 1595,
+      "sha256": "b9307030f385d32f341af2be09aad49652c85405d05ea097bcede26fc13c508a"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-durable-admission-worker.ts",
+      "exists": true,
+      "bytes": 9525,
+      "sha256": "368a4221da53ca5af89231566d68e66ea8a07db431f86fc36a9810d3a3151ddd"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-durable-audio-worker-cli.ts",
+      "exists": true,
+      "bytes": 2035,
+      "sha256": "09df70a28e0f69e8faf4d013550f1226ca308183cb1be86e026ff5f37d38b653"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-durable-audio-worker.ts",
+      "exists": true,
+      "bytes": 10805,
+      "sha256": "7afab1252d48c82c42be758fc46e0270d8ecf503c2b61777cf883bd079ddc795"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-durable-pipeline-saga.ts",
+      "exists": true,
+      "bytes": 8067,
+      "sha256": "c26668b00045f293ed28f3ab3aa70843aa62bc681c979f0ec6ab1cae7dd238e6"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-durable-pipeline.test.ts",
+      "exists": true,
+      "bytes": 2082,
+      "sha256": "76f91ed25cbec95e4bdb9db2dc11e16da279563ca4f41dd961d67c5163df7708"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-durable-transcript-bridge-worker-cli.ts",
+      "exists": true,
+      "bytes": 2057,
+      "sha256": "918941d923d1d75268b346b15720e4c34f034fccb705966f5b0c474ad8f85ea9"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-durable-transcript-bridge-worker.test.ts",
+      "exists": true,
+      "bytes": 3986,
+      "sha256": "aa42866aaf56fda6badad547d190b683864999a9cba48bf2b259174525fc821e"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-durable-transcript-bridge-worker.ts",
+      "exists": true,
+      "bytes": 3949,
+      "sha256": "0da551d6cbd49c7a60f50c555c0e7ef3ab0456c1dc168be62ba0924e75b80235"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-fallback-audio-storage.ts",
+      "exists": true,
+      "bytes": 340,
+      "sha256": "0ba1aee1f55c9768c1c4ebc32c7064a58370a51fc1702cc2f168a64fb23ba175"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-golden-corpus-catalog.ts",
+      "exists": true,
+      "bytes": 11420,
+      "sha256": "1344e407c42e97d4a25725960cbc78fb4d932ce028b37038d3cd48ea16276872"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-media-range.test.ts",
+      "exists": true,
+      "bytes": 1566,
+      "sha256": "af1dd2ab4e71c6cac089f367237eb52396470272db59094ec6e1c6c9f1a1d296"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-media-range.ts",
+      "exists": true,
+      "bytes": 3282,
+      "sha256": "3fdfe82ab59db6eb67339d2dce3a2b2684d41258dfa50a23db4767db99aafa89"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-migration-contract.test.ts",
+      "exists": true,
+      "bytes": 17948,
+      "sha256": "7085c380b128ffc5c1f16251eb44c1331f1e13cfdc2a0a2b214aeb239004632b"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-mock-transcription-provider.test.ts",
+      "exists": true,
+      "bytes": 3716,
+      "sha256": "1c0de43aab83b24d500eb20ab5c9c293637eafc1fad0989704682d0a877e84cb"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-mock-transcription-provider.ts",
+      "exists": true,
+      "bytes": 2363,
+      "sha256": "2bed3b4400bdd1fe00e99de0c9f6e9cc48f652c37b3700a01f85b9d7c487c397"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-ogg-preflight.test.ts",
+      "exists": true,
+      "bytes": 1548,
+      "sha256": "32d5c4cf0d57cd23dacda454775c779ea2c820c4e56862e37e92487bcf696e1b"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-ogg-preflight.ts",
+      "exists": true,
+      "bytes": 5604,
+      "sha256": "315f413b33ac631d7df40a176997e90dfa635dff205999137c2cdc0ebbc633ed"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-provider-gate.test.ts",
+      "exists": true,
+      "bytes": 2194,
+      "sha256": "262c524a7af27c13953405e270f3c10a2043d390fd249394a38f1e9a457ca8f3"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-provider-gate.ts",
+      "exists": true,
+      "bytes": 1830,
+      "sha256": "eceb55ddd0e8cb08c76214cf11756209d3e34e5bb0fda950b3a4305b3c1a1229"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-supabase-mappers.test.ts",
+      "exists": true,
+      "bytes": 4507,
+      "sha256": "38c9045ee0a6c114116eff8a7a48bcc8435965b259352bde5e6696c00ad4cd4f"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-supabase-mappers.ts",
+      "exists": true,
+      "bytes": 6888,
+      "sha256": "6537e4770607392747529235494951c8f0707d36f1be8600a4ecc4d6b9c06015"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-transcript-bridge-saga.ts",
+      "exists": true,
+      "bytes": 3023,
+      "sha256": "3b4ecb6638dbe13af24b0851023d142148d57b69bb0cec7c2b952fc2ec62b78e"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-transcript-bridge.test.ts",
+      "exists": true,
+      "bytes": 14331,
+      "sha256": "43b3514b9001f7d9efb45b2f78e4a0ae33a1f4357e4c405ce9f532cfa110c147"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-transcript-bridge.ts",
+      "exists": true,
+      "bytes": 11439,
+      "sha256": "0273248af674b8cfb94faf5c7a6f3f90482ab6bb4b800da00a93d167c507cdf8"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-transcript-correction-bounded.test.ts",
+      "exists": true,
+      "bytes": 1070,
+      "sha256": "96aed0ef8d377e9d91608a668bf1befdd52a8da9c89a154466d129073c967fe3"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-transcript-correction-bounded.ts",
+      "exists": true,
+      "bytes": 3667,
+      "sha256": "dea546aa817c33935b0d0c929493e49e2ab3808f7e0baa037788d14a75dcd3f6"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-transcript-corrections.test.ts",
+      "exists": true,
+      "bytes": 14803,
+      "sha256": "07d7a1bdacc66d7dfe7ccfc78fe39b2699b39bea549e898dbfd56312f339d97f"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-transcript-corrections.ts",
+      "exists": true,
+      "bytes": 3729,
+      "sha256": "7acc7f6d355aadaca335b2f2f87c5ec828bec5f2b417356a7dd455d598d1a838"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-transcript-quality.ts",
+      "exists": true,
+      "bytes": 1824,
+      "sha256": "694d267b55d86a4c3fe34d5b258428e72eccafefb2b7c3ae9b750379ec12fc27"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-transcription-fixture-manifest.ts",
+      "exists": true,
+      "bytes": 3915,
+      "sha256": "5c23cb22bc6ce4a2577319d533729d85a9c692f7cbcc45864929f37349af7d2b"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-transcription-provider.test.ts",
+      "exists": true,
+      "bytes": 1736,
+      "sha256": "da1781f57b97cbdf15651174fc3a099eb89be4887caa9851d515e58ff54880e3"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-transcription-provider.ts",
+      "exists": true,
+      "bytes": 3083,
+      "sha256": "d1f5c20e54e74dd9737d1c4bac6923b70284dfe55d74df9b2e54e0a371b4bb87"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-transcription-worker.test.ts",
+      "exists": true,
+      "bytes": 6540,
+      "sha256": "32b5ba3537138f95db51d171b67060bc89c11841b04b06e09a56659339452e04"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-transcription-worker.ts",
+      "exists": true,
+      "bytes": 11530,
+      "sha256": "37d348a32a90e64661b5526e45bf4410dd2c253f3174638ab7ac6f45f981f821"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-voice-bundle-orchestration.test.ts",
+      "exists": true,
+      "bytes": 13614,
+      "sha256": "1a0c8117f41acae64caf40c2c3fcc84cd80868916cec8bb42a4a480af26439bf"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-voice-bundle-orchestration.ts",
+      "exists": true,
+      "bytes": 6887,
+      "sha256": "8ca6e453c7d302fb2e76fdad543beeb961ba45f8e3c017cdfca009f0f830519e"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-voice-contracts.test.ts",
+      "exists": true,
+      "bytes": 15446,
+      "sha256": "265b567c128277c1aceaba66c0ea83ee2a50834b038bb15844ad7351c6fafdb0"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-voice-contracts.ts",
+      "exists": true,
+      "bytes": 34243,
+      "sha256": "1e7df439c6f81c31d3b79c5d9eab7a2f72a3331af61a9d7c8eab3a2475c98b4d"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-voice-review-labels.ts",
+      "exists": true,
+      "bytes": 2977,
+      "sha256": "fe73c477c838a4c1a1689d58a08f9554605a243a522e5ec26fd35be18d5b1859"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-voice-simulator.test.ts",
+      "exists": true,
+      "bytes": 1527,
+      "sha256": "b91af1f62f1055b30e6576aaa5289e1594aadb076ba4fefa0a572014061eebd9"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4b4-voice-simulator.ts",
+      "exists": true,
+      "bytes": 8677,
+      "sha256": "91b710a59a9aaed5aca46fab25e9881782179c984675ccabbff7ff0fc8f5401f"
+    },
+    {
+      "source": "app/src/lib/production-ai-media-security-migration-contract.test.ts",
+      "exists": true,
+      "bytes": 2355,
+      "sha256": "2e2171aa0a892f171268b9311660162ce9dccc17f4500ca110274d84f8ee8c07"
+    }
+  ],
+  "blockers": [],
+  "matrixDigest": "5adf0db226891338eb778ec7a7019c3ac176fd5d78e777f61a525533f7bc7b6d",
+  "testResults": [
+    {
+      "name": "phase-4-media-contracts",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "fileCount": 52,
+      "summary": {
+        "passedFiles": 52,
+        "failedFiles": 0,
+        "passedTests": 309,
+        "failedTests": 0,
+        "skippedTests": 0
+      },
+      "failure": null
+    }
+  ],
+  "operationVerification": [
+    {
+      "order": 1,
+      "description": "Image/audio admission MIME, size, extension/canonical form, content hash ve tenant-bound metadata kontrollerini dogrula.",
+      "status": "PASS",
+      "evidence": {
+        "id": "admission_validation",
+        "description": "media/audio admission validation",
+        "pass": true,
+        "evidence": [
+          "app/src/lib/phase-85-stage-4b3-atomic-bundle-decision.ts",
+          "app/src/lib/phase-85-stage-4b3-atomic-decision.test.ts",
+          "app/src/lib/phase-85-stage-4b3-atomic-outcomes.ts",
+          "app/src/lib/phase-85-stage-4b3-atomic-visual-correction.ts",
+          "app/src/lib/phase-85-stage-4b3-bundle-orchestration.test.ts",
+          "app/src/lib/phase-85-stage-4b3-canonical-ingress.test.ts",
+          "app/src/lib/phase-85-stage-4b3-canonical-ingress.ts",
+          "app/src/lib/phase-85-stage-4b3-closure.test.ts",
+          "app/src/lib/phase-85-stage-4b3-closure.ts",
+          "app/src/lib/phase-85-stage-4b3-durable-ingress.test.ts",
+          "app/src/lib/phase-85-stage-4b3-durable-media-admission.ts",
+          "app/src/lib/phase-85-stage-4b3-durable-media-worker.ts",
+          "app/src/lib/phase-85-stage-4b3-fixture-resolver.ts",
+          "app/src/lib/phase-85-stage-4b3-image-admission.test.ts",
+          "app/src/lib/phase-85-stage-4b3-image-admission.ts",
+          "app/src/lib/phase-85-stage-4b3-media-admission.test.ts",
+          "app/src/lib/phase-85-stage-4b3-media-admission.ts",
+          "app/src/lib/phase-85-stage-4b3-media-contracts-v2.test.ts",
+          "app/src/lib/phase-85-stage-4b3-media-contracts.ts",
+          "app/src/lib/phase-85-stage-4b3-media-transport.ts",
+          "app/src/lib/phase-85-stage-4b3-message-bundles.test.ts",
+          "app/src/lib/phase-85-stage-4b3-migration-contract.test.ts",
+          "app/src/lib/phase-85-stage-4b3-multimodal-envelope.ts",
+          "app/src/lib/phase-85-stage-4b3-vision-analysis.test.ts",
+          "app/src/lib/phase-85-stage-4b3-vision-analysis.ts",
+          "app/src/lib/phase-85-stage-4b3-visual-corrections.ts",
+          "app/src/lib/phase-85-stage-4b3-visual-observation-validator.test.ts",
+          "app/src/lib/phase-85-stage-4b3-visual-observation-validator.ts",
+          "app/src/lib/phase-85-stage-4b3-visual-simulator.ts",
+          "app/src/lib/phase-85-stage-4b4-atomic-transcript-correction.ts",
+          "app/src/lib/phase-85-stage-4b4-audio-admission.test.ts",
+          "app/src/lib/phase-85-stage-4b4-audio-admission.ts",
+          "app/src/lib/phase-85-stage-4b4-audio-canonicalizer.test.ts",
+          "app/src/lib/phase-85-stage-4b4-audio-canonicalizer.ts",
+          "app/src/lib/phase-85-stage-4b4-audio-fixture-resolver.ts",
+          "app/src/lib/phase-85-stage-4b4-audio-source-authority.test.ts",
+          "app/src/lib/phase-85-stage-4b4-bounded-audio.test.ts",
+          "app/src/lib/phase-85-stage-4b4-build-dependency-trace.test.ts",
+          "app/src/lib/phase-85-stage-4b4-closure.test.ts",
+          "app/src/lib/phase-85-stage-4b4-closure.ts",
+          "app/src/lib/phase-85-stage-4b4-durable-admission-worker-cli.ts",
+          "app/src/lib/phase-85-stage-4b4-durable-admission-worker.ts",
+          "app/src/lib/phase-85-stage-4b4-durable-pipeline-saga.ts",
+          "app/src/lib/phase-85-stage-4b4-durable-pipeline.test.ts",
+          "app/src/lib/phase-85-stage-4b4-golden-corpus-catalog.ts",
+          "app/src/lib/phase-85-stage-4b4-migration-contract.test.ts",
+          "app/src/lib/phase-85-stage-4b4-ogg-preflight.ts",
+          "app/src/lib/phase-85-stage-4b4-transcript-bridge.test.ts",
+          "app/src/lib/phase-85-stage-4b4-transcript-corrections.test.ts",
+          "app/src/lib/phase-85-stage-4b4-transcription-worker.test.ts",
+          "app/src/lib/phase-85-stage-4b4-voice-bundle-orchestration.test.ts",
+          "app/src/lib/phase-85-stage-4b4-voice-bundle-orchestration.ts",
+          "app/src/lib/phase-85-stage-4b4-voice-contracts.ts",
+          "app/src/lib/phase-85-stage-4b4-voice-simulator.ts"
+        ]
+      }
+    },
+    {
+      "order": 2,
+      "description": "Sanitized storage object key, content download ve bounded range/stream davranisini dogrula.",
+      "status": "PASS",
+      "evidence": {
+        "id": "content_hash",
+        "description": "content hash authority",
+        "pass": true,
+        "evidence": [
+          "app/src/lib/phase-85-stage-4b3-atomic-decision.test.ts",
+          "app/src/lib/phase-85-stage-4b3-bounded-media-rpc.ts",
+          "app/src/lib/phase-85-stage-4b3-bounded-media.test.ts",
+          "app/src/lib/phase-85-stage-4b3-bundle-orchestration.test.ts",
+          "app/src/lib/phase-85-stage-4b3-canonical-ingress.test.ts",
+          "app/src/lib/phase-85-stage-4b3-canonical-ingress.ts",
+          "app/src/lib/phase-85-stage-4b3-closure.ts",
+          "app/src/lib/phase-85-stage-4b3-durable-ingress.test.ts",
+          "app/src/lib/phase-85-stage-4b3-durable-media-admission.ts",
+          "app/src/lib/phase-85-stage-4b3-durable-media-transport.ts",
+          "app/src/lib/phase-85-stage-4b3-durable-media-worker.ts",
+          "app/src/lib/phase-85-stage-4b3-fixture-resolver.ts",
+          "app/src/lib/phase-85-stage-4b3-image-admission.test.ts",
+          "app/src/lib/phase-85-stage-4b3-image-admission.ts",
+          "app/src/lib/phase-85-stage-4b3-media-admission.test.ts",
+          "app/src/lib/phase-85-stage-4b3-media-admission.ts",
+          "app/src/lib/phase-85-stage-4b3-media-contracts-v2.ts",
+          "app/src/lib/phase-85-stage-4b3-media-contracts.ts",
+          "app/src/lib/phase-85-stage-4b3-media-lifecycle-saga.test.ts",
+          "app/src/lib/phase-85-stage-4b3-media-lifecycle.test.ts",
+          "app/src/lib/phase-85-stage-4b3-media-stream.test.ts",
+          "app/src/lib/phase-85-stage-4b3-media-stream.ts",
+          "app/src/lib/phase-85-stage-4b3-media-transport.ts",
+          "app/src/lib/phase-85-stage-4b3-message-bundles.test.ts",
+          "app/src/lib/phase-85-stage-4b3-mock-vision-provider.test.ts",
+          "app/src/lib/phase-85-stage-4b3-mock-vision-provider.ts",
+          "app/src/lib/phase-85-stage-4b3-multimodal-understanding.test.ts",
+          "app/src/lib/phase-85-stage-4b3-supabase-canonical-ingress.ts",
+          "app/src/lib/phase-85-stage-4b3-supabase-mappers.test.ts",
+          "app/src/lib/phase-85-stage-4b3-supabase-mappers.ts",
+          "app/src/lib/phase-85-stage-4b3-vision-analysis.test.ts",
+          "app/src/lib/phase-85-stage-4b3-vision-analysis.ts",
+          "app/src/lib/phase-85-stage-4b3-vision-fixture-manifest.ts",
+          "app/src/lib/phase-85-stage-4b3-vision-provider.ts",
+          "app/src/lib/phase-85-stage-4b3-visual-simulator.ts",
+          "app/src/lib/phase-85-stage-4b4-audio-admission.test.ts",
+          "app/src/lib/phase-85-stage-4b4-audio-admission.ts",
+          "app/src/lib/phase-85-stage-4b4-audio-canonicalizer.test.ts",
+          "app/src/lib/phase-85-stage-4b4-audio-canonicalizer.ts",
+          "app/src/lib/phase-85-stage-4b4-audio-fixture-resolver.ts",
+          "app/src/lib/phase-85-stage-4b4-audio-lifecycle.test.ts",
+          "app/src/lib/phase-85-stage-4b4-audio-lifecycle.ts",
+          "app/src/lib/phase-85-stage-4b4-audio-source-authority.test.ts",
+          "app/src/lib/phase-85-stage-4b4-audio-transport.ts",
+          "app/src/lib/phase-85-stage-4b4-bounded-audio-rpc.ts",
+          "app/src/lib/phase-85-stage-4b4-closure.ts",
+          "app/src/lib/phase-85-stage-4b4-durable-admission-worker.ts",
+          "app/src/lib/phase-85-stage-4b4-durable-audio-worker.ts",
+          "app/src/lib/phase-85-stage-4b4-durable-pipeline-saga.ts",
+          "app/src/lib/phase-85-stage-4b4-mock-transcription-provider.test.ts",
+          "app/src/lib/phase-85-stage-4b4-mock-transcription-provider.ts",
+          "app/src/lib/phase-85-stage-4b4-transcript-bridge.test.ts",
+          "app/src/lib/phase-85-stage-4b4-transcript-corrections.test.ts",
+          "app/src/lib/phase-85-stage-4b4-transcription-fixture-manifest.ts",
+          "app/src/lib/phase-85-stage-4b4-transcription-provider.test.ts",
+          "app/src/lib/phase-85-stage-4b4-transcription-provider.ts",
+          "app/src/lib/phase-85-stage-4b4-transcription-worker.test.ts",
+          "app/src/lib/phase-85-stage-4b4-transcription-worker.ts",
+          "app/src/lib/phase-85-stage-4b4-voice-bundle-orchestration.test.ts",
+          "app/src/lib/phase-85-stage-4b4-voice-contracts.test.ts",
+          "app/src/lib/phase-85-stage-4b4-voice-contracts.ts",
+          "app/src/lib/phase-85-stage-4b4-voice-simulator.ts"
+        ]
+      }
+    },
+    {
+      "order": 3,
+      "description": "Vision/transcription provider gate'lerinin mock-only audit kosusunda ve explicit real-egress kapisi arkasinda oldugunu dogrula.",
+      "status": "PASS",
+      "evidence": {
+        "id": "sanitized_object_key",
+        "description": "sanitized tenant-bound storage object key",
+        "pass": true,
+        "evidence": [
+          "app/src/lib/phase-85-stage-4b3-atomic-decision.test.ts",
+          "app/src/lib/phase-85-stage-4b3-bounded-media-rpc.ts",
+          "app/src/lib/phase-85-stage-4b3-bounded-media.test.ts",
+          "app/src/lib/phase-85-stage-4b3-bounded-media.ts",
+          "app/src/lib/phase-85-stage-4b3-bundle-orchestration.test.ts",
+          "app/src/lib/phase-85-stage-4b3-canonical-ingress.test.ts",
+          "app/src/lib/phase-85-stage-4b3-canonical-ingress.ts",
+          "app/src/lib/phase-85-stage-4b3-closure.ts",
+          "app/src/lib/phase-85-stage-4b3-durable-ingress.test.ts",
+          "app/src/lib/phase-85-stage-4b3-durable-media-admission.ts",
+          "app/src/lib/phase-85-stage-4b3-durable-media-worker.ts",
+          "app/src/lib/phase-85-stage-4b3-image-admission.test.ts",
+          "app/src/lib/phase-85-stage-4b3-image-admission.ts",
+          "app/src/lib/phase-85-stage-4b3-media-admission.test.ts",
+          "app/src/lib/phase-85-stage-4b3-media-admission.ts",
+          "app/src/lib/phase-85-stage-4b3-media-contracts-v2.ts",
+          "app/src/lib/phase-85-stage-4b3-media-contracts.ts",
+          "app/src/lib/phase-85-stage-4b3-media-lifecycle-saga.test.ts",
+          "app/src/lib/phase-85-stage-4b3-media-lifecycle-saga.ts",
+          "app/src/lib/phase-85-stage-4b3-media-lifecycle.test.ts",
+          "app/src/lib/phase-85-stage-4b3-media-lifecycle.ts",
+          "app/src/lib/phase-85-stage-4b3-media-stream.test.ts",
+          "app/src/lib/phase-85-stage-4b3-migration-contract.test.ts",
+          "app/src/lib/phase-85-stage-4b3-mock-vision-provider.test.ts",
+          "app/src/lib/phase-85-stage-4b3-multimodal-envelope.ts",
+          "app/src/lib/phase-85-stage-4b3-multimodal-understanding.test.ts",
+          "app/src/lib/phase-85-stage-4b3-supabase-canonical-ingress.ts",
+          "app/src/lib/phase-85-stage-4b3-supabase-mappers.test.ts",
+          "app/src/lib/phase-85-stage-4b3-supabase-mappers.ts",
+          "app/src/lib/phase-85-stage-4b3-vision-analysis.test.ts",
+          "app/src/lib/phase-85-stage-4b3-vision-analysis.ts",
+          "app/src/lib/phase-85-stage-4b3-visual-simulator.ts",
+          "app/src/lib/phase-85-stage-4b4-audio-admission.test.ts",
+          "app/src/lib/phase-85-stage-4b4-audio-admission.ts",
+          "app/src/lib/phase-85-stage-4b4-audio-lifecycle-saga.test.ts",
+          "app/src/lib/phase-85-stage-4b4-audio-lifecycle-saga.ts",
+          "app/src/lib/phase-85-stage-4b4-audio-lifecycle.test.ts",
+          "app/src/lib/phase-85-stage-4b4-audio-lifecycle.ts",
+          "app/src/lib/phase-85-stage-4b4-audio-storage.ts",
+          "app/src/lib/phase-85-stage-4b4-bounded-audio-rpc.ts",
+          "app/src/lib/phase-85-stage-4b4-bounded-audio.test.ts",
+          "app/src/lib/phase-85-stage-4b4-closure.ts",
+          "app/src/lib/phase-85-stage-4b4-durable-audio-worker.ts",
+          "app/src/lib/phase-85-stage-4b4-durable-pipeline-saga.ts",
+          "app/src/lib/phase-85-stage-4b4-migration-contract.test.ts",
+          "app/src/lib/phase-85-stage-4b4-transcription-worker.ts",
+          "app/src/lib/phase-85-stage-4b4-voice-bundle-orchestration.test.ts",
+          "app/src/lib/phase-85-stage-4b4-voice-contracts.test.ts",
+          "app/src/lib/phase-85-stage-4b4-voice-contracts.ts"
+        ]
+      }
+    },
+    {
+      "order": 4,
+      "description": "Durable media/transcription worker claim, lease renewal, provider deadline, retry ve terminal review/failed outcome'larini dogrula.",
+      "status": "PASS",
+      "evidence": {
+        "id": "bounded_transport",
+        "description": "bounded download or range transport",
+        "pass": true,
+        "evidence": [
+          "app/src/lib/phase-85-stage-4b3-bounded-media-rpc.test.ts",
+          "app/src/lib/phase-85-stage-4b3-bounded-media-rpc.ts",
+          "app/src/lib/phase-85-stage-4b3-bounded-media.test.ts",
+          "app/src/lib/phase-85-stage-4b3-bounded-media.ts",
+          "app/src/lib/phase-85-stage-4b3-bundle-orchestration.ts",
+          "app/src/lib/phase-85-stage-4b3-durable-media-worker.ts",
+          "app/src/lib/phase-85-stage-4b3-image-admission.test.ts",
+          "app/src/lib/phase-85-stage-4b3-image-admission.ts",
+          "app/src/lib/phase-85-stage-4b3-media-contracts-v2.test.ts",
+          "app/src/lib/phase-85-stage-4b3-media-contracts-v2.ts",
+          "app/src/lib/phase-85-stage-4b3-media-contracts.ts",
+          "app/src/lib/phase-85-stage-4b3-media-lifecycle-saga.test.ts",
+          "app/src/lib/phase-85-stage-4b3-media-lifecycle.test.ts",
+          "app/src/lib/phase-85-stage-4b3-media-stream.test.ts",
+          "app/src/lib/phase-85-stage-4b3-media-stream.ts",
+          "app/src/lib/phase-85-stage-4b3-migration-contract.test.ts",
+          "app/src/lib/phase-85-stage-4b3-multimodal-envelope.ts",
+          "app/src/lib/phase-85-stage-4b4-audio-canonicalizer.test.ts",
+          "app/src/lib/phase-85-stage-4b4-audio-canonicalizer.ts",
+          "app/src/lib/phase-85-stage-4b4-audio-lifecycle.test.ts",
+          "app/src/lib/phase-85-stage-4b4-audio-lifecycle.ts",
+          "app/src/lib/phase-85-stage-4b4-audio-storage.ts",
+          "app/src/lib/phase-85-stage-4b4-audio-transport.ts",
+          "app/src/lib/phase-85-stage-4b4-bounded-audio-rpc.test.ts",
+          "app/src/lib/phase-85-stage-4b4-bounded-audio-rpc.ts",
+          "app/src/lib/phase-85-stage-4b4-bounded-audio.test.ts",
+          "app/src/lib/phase-85-stage-4b4-bounded-audio.ts",
+          "app/src/lib/phase-85-stage-4b4-closure.ts",
+          "app/src/lib/phase-85-stage-4b4-durable-admission-worker.ts",
+          "app/src/lib/phase-85-stage-4b4-durable-pipeline-saga.ts",
+          "app/src/lib/phase-85-stage-4b4-media-range.test.ts",
+          "app/src/lib/phase-85-stage-4b4-media-range.ts",
+          "app/src/lib/phase-85-stage-4b4-migration-contract.test.ts",
+          "app/src/lib/phase-85-stage-4b4-ogg-preflight.test.ts",
+          "app/src/lib/phase-85-stage-4b4-transcript-correction-bounded.test.ts",
+          "app/src/lib/phase-85-stage-4b4-voice-contracts.test.ts",
+          "app/src/lib/phase-85-stage-4b4-voice-contracts.ts"
+        ]
+      }
+    },
+    {
+      "order": 5,
+      "description": "Observation/transcript validation, source authority, quality gate ve human review etiketlerini dogrula.",
+      "status": "PASS",
+      "evidence": {
+        "id": "provider_gate",
+        "description": "vision/transcription provider gate",
+        "pass": true,
+        "evidence": [
+          "app/src/lib/phase-85-stage-4b3-canonical-ingress.ts",
+          "app/src/lib/phase-85-stage-4b3-message-bundles.test.ts",
+          "app/src/lib/phase-85-stage-4b3-mock-vision-provider.test.ts",
+          "app/src/lib/phase-85-stage-4b3-mock-vision-provider.ts",
+          "app/src/lib/phase-85-stage-4b3-provider-gate.test.ts",
+          "app/src/lib/phase-85-stage-4b3-provider-gate.ts",
+          "app/src/lib/phase-85-stage-4b3-vision-analysis.test.ts",
+          "app/src/lib/phase-85-stage-4b3-vision-analysis.ts",
+          "app/src/lib/phase-85-stage-4b3-vision-fixture-manifest.ts",
+          "app/src/lib/phase-85-stage-4b3-vision-provider.ts",
+          "app/src/lib/phase-85-stage-4b4-atomic-transcript-correction.ts",
+          "app/src/lib/phase-85-stage-4b4-audio-admission.ts",
+          "app/src/lib/phase-85-stage-4b4-audio-lifecycle.test.ts",
+          "app/src/lib/phase-85-stage-4b4-bounded-audio-rpc.test.ts",
+          "app/src/lib/phase-85-stage-4b4-bounded-audio-rpc.ts",
+          "app/src/lib/phase-85-stage-4b4-bounded-audio.test.ts",
+          "app/src/lib/phase-85-stage-4b4-closure.ts",
+          "app/src/lib/phase-85-stage-4b4-durable-audio-worker.ts",
+          "app/src/lib/phase-85-stage-4b4-mock-transcription-provider.test.ts",
+          "app/src/lib/phase-85-stage-4b4-mock-transcription-provider.ts",
+          "app/src/lib/phase-85-stage-4b4-provider-gate.test.ts",
+          "app/src/lib/phase-85-stage-4b4-provider-gate.ts",
+          "app/src/lib/phase-85-stage-4b4-supabase-mappers.test.ts",
+          "app/src/lib/phase-85-stage-4b4-supabase-mappers.ts",
+          "app/src/lib/phase-85-stage-4b4-transcript-bridge.test.ts",
+          "app/src/lib/phase-85-stage-4b4-transcript-corrections.test.ts",
+          "app/src/lib/phase-85-stage-4b4-transcription-fixture-manifest.ts",
+          "app/src/lib/phase-85-stage-4b4-transcription-provider.test.ts",
+          "app/src/lib/phase-85-stage-4b4-transcription-provider.ts",
+          "app/src/lib/phase-85-stage-4b4-transcription-worker.test.ts",
+          "app/src/lib/phase-85-stage-4b4-transcription-worker.ts",
+          "app/src/lib/phase-85-stage-4b4-voice-bundle-orchestration.test.ts",
+          "app/src/lib/phase-85-stage-4b4-voice-contracts.ts",
+          "app/src/lib/phase-85-stage-4b4-voice-simulator.test.ts",
+          "app/src/lib/phase-85-stage-4b4-voice-simulator.ts",
+          "app/src/lib/production-ai-media-security-migration-contract.test.ts"
+        ]
+      }
+    },
+    {
+      "order": 6,
+      "description": "Media/audio lifecycle retention, revoke, purge ve object-delete release yolunu idempotent olarak dogrula.",
+      "status": "PASS",
+      "evidence": {
+        "id": "durable_claim_lease",
+        "description": "durable media/audio claim and lease",
+        "pass": true,
+        "evidence": [
+          "app/src/lib/phase-85-stage-4b3-atomic-bundle-decision.ts",
+          "app/src/lib/phase-85-stage-4b3-atomic-decision.test.ts",
+          "app/src/lib/phase-85-stage-4b3-atomic-visual-correction.ts",
+          "app/src/lib/phase-85-stage-4b3-bounded-media-rpc.ts",
+          "app/src/lib/phase-85-stage-4b3-bounded-media.test.ts",
+          "app/src/lib/phase-85-stage-4b3-bundle-decisions.ts",
+          "app/src/lib/phase-85-stage-4b3-bundle-orchestration.test.ts",
+          "app/src/lib/phase-85-stage-4b3-bundle-worker-outcomes.test.ts",
+          "app/src/lib/phase-85-stage-4b3-canonical-ingress.test.ts",
+          "app/src/lib/phase-85-stage-4b3-closure.ts",
+          "app/src/lib/phase-85-stage-4b3-durable-media-admission.ts",
+          "app/src/lib/phase-85-stage-4b3-durable-media-worker.ts",
+          "app/src/lib/phase-85-stage-4b3-media-admission.ts",
+          "app/src/lib/phase-85-stage-4b3-media-contracts-v2.test.ts",
+          "app/src/lib/phase-85-stage-4b3-media-contracts.ts",
+          "app/src/lib/phase-85-stage-4b3-media-lifecycle-saga.test.ts",
+          "app/src/lib/phase-85-stage-4b3-media-lifecycle-saga.ts",
+          "app/src/lib/phase-85-stage-4b3-media-lifecycle.test.ts",
+          "app/src/lib/phase-85-stage-4b3-media-lifecycle.ts",
+          "app/src/lib/phase-85-stage-4b3-media-worker.ts",
+          "app/src/lib/phase-85-stage-4b3-message-bundles.test.ts",
+          "app/src/lib/phase-85-stage-4b3-message-bundles.ts",
+          "app/src/lib/phase-85-stage-4b3-migration-contract.test.ts",
+          "app/src/lib/phase-85-stage-4b3-multimodal-understanding.test.ts",
+          "app/src/lib/phase-85-stage-4b3-supabase-canonical-ingress.ts",
+          "app/src/lib/phase-85-stage-4b3-supabase-mappers.test.ts",
+          "app/src/lib/phase-85-stage-4b3-supabase-mappers.ts",
+          "app/src/lib/phase-85-stage-4b3-vision-analysis.test.ts",
+          "app/src/lib/phase-85-stage-4b4-atomic-transcript-correction.ts",
+          "app/src/lib/phase-85-stage-4b4-audio-admission.ts",
+          "app/src/lib/phase-85-stage-4b4-audio-lifecycle-saga.test.ts",
+          "app/src/lib/phase-85-stage-4b4-audio-lifecycle-saga.ts",
+          "app/src/lib/phase-85-stage-4b4-audio-lifecycle.test.ts",
+          "app/src/lib/phase-85-stage-4b4-bounded-audio-rpc.ts",
+          "app/src/lib/phase-85-stage-4b4-bounded-audio.test.ts",
+          "app/src/lib/phase-85-stage-4b4-closure.test.ts",
+          "app/src/lib/phase-85-stage-4b4-closure.ts",
+          "app/src/lib/phase-85-stage-4b4-durable-admission-worker.ts",
+          "app/src/lib/phase-85-stage-4b4-durable-audio-worker.ts",
+          "app/src/lib/phase-85-stage-4b4-durable-pipeline-saga.ts",
+          "app/src/lib/phase-85-stage-4b4-durable-transcript-bridge-worker.test.ts",
+          "app/src/lib/phase-85-stage-4b4-durable-transcript-bridge-worker.ts",
+          "app/src/lib/phase-85-stage-4b4-migration-contract.test.ts",
+          "app/src/lib/phase-85-stage-4b4-transcript-bridge-saga.ts",
+          "app/src/lib/phase-85-stage-4b4-transcript-bridge.ts"
+        ]
+      }
+    }
+  ]
+}

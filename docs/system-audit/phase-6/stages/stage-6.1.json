@@ -1,0 +1,171 @@
+{
+  "schemaVersion": "aiya-system-audit-stage-evidence-v1",
+  "runId": "phase-6-6.1-20260908123440263",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-6",
+  "stageId": "6.1",
+  "title": "Yuk profili, kapasite ve geri basinc kanitini kapat",
+  "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+  "verifiedAt": "2026-09-08T12:34:40.263Z",
+  "status": "VERIFIED",
+  "operations": [
+    {
+      "order": 1,
+      "description": "Phase 5 closure precondition'ini ve current Git HEAD'i oku; source commit uyumsuzsa dur.",
+      "id": "phase_precondition",
+      "status": "PASS",
+      "details": "Phase 5 closure and current HEAD were checked by the CLI"
+    },
+    {
+      "order": 2,
+      "description": "Stage 5 ve Stage 7 harness kaynaklari ile gereken report dosyalarinin varligini kontrol et.",
+      "id": "required_sources_exist",
+      "status": "PASS",
+      "details": []
+    },
+    {
+      "order": 3,
+      "description": "Local loopback hedeflerini ve performance harness davranisini envantere al.",
+      "id": "local_loopback_harness",
+      "status": "PASS",
+      "details": [
+        "app/scripts/measure-stage-5-lab-perf.mjs",
+        "app/scripts/measure-stage-7-lab-perf.mjs"
+      ]
+    },
+    {
+      "order": 4,
+      "description": "P75 hedeflerini, route sayisini, sample count'i ve strict/non-strict davranisini kaynak koddan cikar.",
+      "id": "explicit_p75_targets",
+      "status": "PASS",
+      "details": [
+        "app/scripts/measure-stage-5-lab-perf.mjs",
+        "app/scripts/measure-stage-7-lab-perf.mjs"
+      ]
+    },
+    {
+      "order": 5,
+      "description": "Phase 79G aggregate workload, hard-zero metrikleri, sample/full ayrimini ve release rehearsal zincirini kontrol et.",
+      "id": "bounded_workload_and_hard_zero",
+      "status": "PASS",
+      "details": [
+        "app/scripts/measure-stage-5-lab-perf.mjs",
+        "app/scripts/measure-stage-7-lab-perf.mjs",
+        "app/scripts/rehearse-production-scale-79g.mjs",
+        "app/src/lib/phase-79g-unified-production-scale-rehearsal.ts",
+        "app/src/lib/phase-79g-unified-production-scale-rehearsal.test.ts"
+      ]
+    },
+    {
+      "order": 6,
+      "description": "Mevcut performance evidence dosyalarini status, productionStatus, target ve sourceRevision alanlariyla karsilastir.",
+      "id": "existing_reports_valid",
+      "status": "PASS",
+      "details": [
+        {
+          "path": "docs/PHASE_85_STAGE_5_LAB_PERF_REPORT.json",
+          "exists": true,
+          "status": "PASS",
+          "productionStatus": "NO-GO",
+          "kind": "local_lab_only",
+          "sourceRevision": "3d03112db649148b4acaadcd2eea4a2caf93f62d",
+          "freshness": "historical",
+          "runsPerRoute": 10,
+          "routeCount": 5,
+          "targets": {
+            "lcpMs": 2500,
+            "interactionProxyMs": 200,
+            "cls": 0.1,
+            "tbtMs": 200
+          },
+          "pass": true
+        },
+        {
+          "path": "docs/PHASE_85_STAGE_7_PHASE_4_LAB_PERF_REPORT.json",
+          "exists": true,
+          "status": "PASS",
+          "productionStatus": "NO-GO",
+          "kind": "local_lab_only",
+          "sourceRevision": "47ffa5af7bfe234b0721dac6e7992eefdff057ed",
+          "freshness": "historical",
+          "runsPerRoute": 10,
+          "routeCount": 12,
+          "targets": {
+            "lcpMs": 2500,
+            "cls": 0.1,
+            "tbtMs": 200,
+            "interactionProxyMs": 200
+          },
+          "pass": true
+        }
+      ]
+    },
+    {
+      "order": 7,
+      "description": "Current audit ortaminda remote Supabase/provider egress ve production mutation bayraklarinin kapali oldugunu; matrix inputlari ile local-only NO-GO final blocker listesini kontrol et.",
+      "id": "remote_mutation_closed",
+      "status": "PASS",
+      "details": null
+    },
+    {
+      "order": 8,
+      "description": "Phase 79G bounded rehearsal testini calistir; PASS ise matrix, operation evidence ve source digestlerini docs/system-audit/phase-6 altinda yaz.",
+      "id": "bounded_rehearsal_test",
+      "status": "PASS",
+      "details": [
+        {
+          "name": "phase-6-load-rehearsal",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "fileCount": 1,
+          "summary": {
+            "passedFiles": 1,
+            "failedFiles": 0,
+            "passedTests": 5,
+            "failedTests": 0,
+            "skippedTests": 0
+          },
+          "failure": null
+        }
+      ]
+    }
+  ],
+  "outputFiles": [
+    {
+      "path": "docs/system-audit/phase-6/load-capacity-matrix.json",
+      "sha256": "0e681080f4a38653809410afc0074f2ca4056af89ab8f367245309e5c1017693"
+    }
+  ],
+  "verification": {
+    "rules": [
+      "all harness sources exist",
+      "targets and workload are explicit",
+      "historical evidence is labelled",
+      "remote mutation boundary is closed",
+      "bounded rehearsal test passes"
+    ],
+    "result": "PASS",
+    "outputDigest": "0e681080f4a38653809410afc0074f2ca4056af89ab8f367245309e5c1017693",
+    "testResults": [
+      {
+        "name": "phase-6-load-rehearsal",
+        "status": "PASS",
+        "exitCode": 0,
+        "timedOut": false,
+        "fileCount": 1,
+        "summary": {
+          "passedFiles": 1,
+          "failedFiles": 0,
+          "passedTests": 5,
+          "failedTests": 0,
+          "skippedTests": 0
+        },
+        "failure": null
+      }
+    ]
+  },
+  "blockers": [],
+  "evidenceDigest": "c6f18d10ed0919167109f0585985fe90b6d902649f47eea5fed2bf99ad961111"
+}

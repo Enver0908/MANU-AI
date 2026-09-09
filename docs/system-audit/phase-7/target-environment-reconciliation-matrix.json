@@ -1,0 +1,1991 @@
+{
+  "schemaVersion": "aiya-system-audit-phase-7-target-environment-reconciliation-matrix-v1",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-7",
+  "stageId": "7.2",
+  "status": "PASS",
+  "generatedAt": "2026-09-08T13:24:08.781Z",
+  "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+  "interpretation": "PASS means release identity, target contract and owner handoff data reconcile locally. Release blockers remain NO-GO evidence.",
+  "identity": {
+    "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+    "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+    "builtAt": "2026-09-07T16:50:37.000Z",
+    "environment": "hosted-sandbox",
+    "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25",
+    "compatibilityVersion": "0.0.0+1c97560"
+  },
+  "migrations": {
+    "directory": "app/supabase/migrations",
+    "count": 125,
+    "fingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25",
+    "files": [
+      "20260522000000_initial_manu_ai_schema.sql",
+      "20260523000000_app_state_schema_fixes.sql",
+      "20260524000000_restore_auxiliary_rls_policies.sql",
+      "20260525000000_risk_assessment_message_uniqueness.sql",
+      "20260525010000_add_opted_out_permission_state.sql",
+      "20260525020000_ai_provider_decision_metadata.sql",
+      "20260525030000_notifications.sql",
+      "20260525040000_client_assignments.sql",
+      "20260525050000_data_requests.sql",
+      "20260530000000_phase_23_context_send_safety.sql",
+      "20260530010000_phase_24_25_voice_forms.sql",
+      "20260530020000_phase_26_internal_copilot.sql",
+      "20260530030000_phase_27_client_context_updates.sql",
+      "20260530040000_ai_security_remediation.sql",
+      "20260531010000_phase_43_multilingual_language_support.sql",
+      "20260601000000_phase_44_red_risk_reactivation_lock.sql",
+      "20260601010000_phase_45_client_removal_lifecycle.sql",
+      "20260601020000_phase_46_inbound_quarantine.sql",
+      "20260602030000_phase_50_production_hardening_foundation.sql",
+      "20260603000000_phase_57_yellow_risk_hold.sql",
+      "20260604000000_phase_61_scope_corpus.sql",
+      "20260608000000_phase_76_dietitian_chat_form_update_proposals.sql",
+      "20260608120000_phase_76n_food_rule_lifecycle_rpc.sql",
+      "20260610120000_phase_77e_client_food_rule_profile.sql",
+      "20260610130000_phase_77f_client_menu_plan.sql",
+      "20260622130000_phase_77ae_channel_delivery_ledger.sql",
+      "20260701120000_phase_83b_commercial_entitlement_model.sql",
+      "20260701130000_phase_83c_commercial_checkout_session.sql",
+      "20260701140000_phase_83f_commercial_admin_audit.sql",
+      "20260702120000_phase_84c_commercial_leads.sql",
+      "20260702140000_phase_84e_commercial_onboarding_events.sql",
+      "20260703120000_phase_84g_commercial_admin_audit_extension.sql",
+      "20260710120000_phase_85_if_b_trust_root_provenance.sql",
+      "20260710140000_phase_85_if_d_external_human_control_reason.sql",
+      "20260710150000_phase_85_if_e_conversation_message_search.sql",
+      "20260710160000_phase_85_if_f_conversation_revision.sql",
+      "20260710170000_phase_85_if_g_context_intake.sql",
+      "20260710180000_phase_85_if_r1_persistence_tenant_integrity.sql",
+      "20260710190000_phase_85_if_r2_search_return_type.sql",
+      "20260710191000_phase_85_if_r2_structured_update_notifications.sql",
+      "20260710200000_phase_85_if_remediation_atomic_activation.sql",
+      "20260710210000_phase_85_if_remediation_client_safe_context_intake.sql",
+      "20260710220000_phase_85_if_remediation_operational_access_boundaries.sql",
+      "20260710230000_phase_85_if_remediation_lifecycle_reclosure.sql",
+      "20260711090000_phase_85_stage_4b_alerts_notifications.sql",
+      "20260711200000_phase_85_if_postclosure_r1_message_tenant_integrity.sql",
+      "20260711201000_phase_85_if_postclosure_r2_structured_resolution.sql",
+      "20260711202000_phase_85_if_postclosure_r3_lock_order.sql",
+      "20260712120000_phase_85_stage_4b_postclosure_remediation.sql",
+      "20260712140000_phase_85_stage_4b2_receipt_persistence_rls.sql",
+      "20260712150000_phase_85_stage_4b2_read_api_projection_rpcs.sql",
+      "20260712160000_phase_85_stage_4b2_mutation_idempotency.sql",
+      "20260712170000_phase_85_stage_4b2_r2_bounded_reads_rls.sql",
+      "20260712180000_phase_85_stage_4b2_r3_atomic_mutations.sql",
+      "20260713024000_phase_85_stage_4b2_rls_local_reclosure.sql",
+      "20260713030000_phase_85_stage_4b2_security_advisory_rls_hardening.sql",
+      "20260713120000_phase_85_stage_4b3_media_foundation.sql",
+      "20260713130000_phase_85_stage_4b3_atomic_bundle_decisions.sql",
+      "20260713140000_phase_85_stage_4b3_bounded_media_reads.sql",
+      "20260713150000_phase_85_stage_4b3_media_lifecycle.sql",
+      "20260714100000_phase_85_stage_4b3_remediation_contract_rls.sql",
+      "20260714110000_phase_85_stage_4b3_durable_media_queue.sql",
+      "20260714120000_phase_85_stage_4b3_canonical_ingress_v2.sql",
+      "20260714130000_phase_85_stage_4b3_bundle_correlation_v2.sql",
+      "20260714150000_phase_85_stage_4b3_atomic_decision_correction.sql",
+      "20260714160000_phase_85_stage_4b3_lifecycle_saga.sql",
+      "20260714170000_phase_85_stage_4b4_audio_foundation.sql",
+      "20260714180000_phase_85_stage_4b4_audio_queue.sql",
+      "20260714190000_phase_85_stage_4b4_canonical_ingress_v3.sql",
+      "20260714195000_phase_85_stage_4b4_audio_lifecycle_signature_transition.sql",
+      "20260714200000_phase_85_stage_4b4_audio_lifecycle_bounded_reads.sql",
+      "20260714210000_phase_85_stage_4b4_atomic_transcription_correction.sql",
+      "20260714220000_phase_85_stage_4b4_bounded_audio_reads.sql",
+      "20260715100000_phase_85_stage_4b4_remediation_contracts.sql",
+      "20260715110000_phase_85_stage_4b4_durable_pipeline.sql",
+      "20260715120000_phase_85_stage_4b4_fail_closed_quality_gate.sql",
+      "20260715130000_phase_85_stage_4b4_transcript_bridge_pipeline.sql",
+      "20260715140000_phase_85_stage_4b4_correction_lineage.sql",
+      "20260715150000_phase_85_stage_4b4_bounded_reads_v2.sql",
+      "20260715160000_phase_85_stage_4b4_lifecycle_workers.sql",
+      "20260722100000_phase_85_stage_4c_domain.sql",
+      "20260722110000_phase_85_stage_4c_rls.sql",
+      "20260722120000_phase_85_stage_4c_bounded_api_rpcs.sql",
+      "20260722130000_phase_85_stage_4c_run_queue_streaming.sql",
+      "20260722140000_phase_85_stage_4c_context_gateway.sql",
+      "20260722150000_phase_85_stage_4c_sources_answerability.sql",
+      "20260722160000_phase_85_stage_4c_multimodal.sql",
+      "20260722170000_phase_85_stage_4c_risk_draft_handoff.sql",
+      "20260722180000_phase_85_stage_4c_lifecycle.sql",
+      "20260725085000_phase_85_stage_4c_pgcrypto_search_path_compatibility.sql",
+      "20260725090000_phase_85_stage_4c_remediation_core_run_rpcs.sql",
+      "20260725100000_phase_85_stage_4c_remediation_context_safety.sql",
+      "20260725110000_phase_85_stage_4c_remediation_multimodal_runtime.sql",
+      "20260725120000_phase_85_stage_4c_remediation_risk_workflow.sql",
+      "20260725130000_phase_85_stage_4c_remediation_lifecycle_export.sql",
+      "20260725140000_phase_85_stage_4c_remediation_event_stream.sql",
+      "20260725150000_phase_85_stage_4c_remediation_scale_indexes.sql",
+      "20260725155000_phase_85_stage_4c_remediation_rls_helper_grants.sql",
+      "20260725160000_phase_85_stage_4c_remediation_db_lint_reclosure.sql",
+      "20260725161000_phase_85_stage_4c_remediation_scale_fixture_reclosure.sql",
+      "20260725162000_phase_85_stage_4c_remediation_scale_explain_reclosure.sql",
+      "20260725163000_phase_85_stage_4c_operational_tables_rls_reclosure.sql",
+      "20260728120000_phase_85_stage_4d_own_profile.sql",
+      "20260728130000_phase_85_stage_4d_account_security_audit.sql",
+      "20260728170000_phase_85_stage_4d_remediation_account_foundation.sql",
+      "20260728180000_phase_85_stage_4d_remediation_security_billing_pwa.sql",
+      "20260728190000_phase_85_stage_4d_pre_faz3_rls_reclosure.sql",
+      "20260802090000_phase_85_stage_5_shell_foundation.sql",
+      "20260802120000_phase_85_stage_5_shell_api_foundation.sql",
+      "20260803090000_phase_85_stage_5_foundation_remediation.sql",
+      "20260819120000_phase_85_stage_6_r1_mutation_idempotency.sql",
+      "20260825120000_hosted_sandbox_faz3_security_rls_backup.sql",
+      "20260826120000_hosted_sandbox_demo_cleanup_rpc.sql",
+      "20260826130000_rls_default_privileges_hardening.sql",
+      "20260830180000_production_readiness_stage_1_phase_2_manual_entitlements.sql",
+      "20260830190000_production_readiness_stage_1_phase_3_whatsapp_real_contracts.sql",
+      "20260830200000_production_readiness_stage_1_phase_4_ai_media_security.sql",
+      "20260831090000_zai_glm_provider_rebaseline.sql",
+      "20260903090000_public_surface_session_idle_timeout.sql",
+      "20260903100000_commercial_entitlement_reactivation.sql",
+      "20260904120000_aiya_workspace_tenant_fallback.sql",
+      "20260904180000_public_surface_faz8_session_service_role.sql",
+      "20260904181000_public_surface_faz8_admin_bulk_invite.sql",
+      "20260904182000_public_surface_faz8_onboarding_claim_pending.sql",
+      "20260907181000_hosted_shell_schema_reconciliation.sql"
+    ]
+  },
+  "targetProbe": {
+    "status": "NOT_RUN_BY_POLICY",
+    "httpCalls": 0,
+    "supabaseCalls": 0,
+    "sshCalls": 0,
+    "providerCalls": 0,
+    "channelCalls": 0,
+    "reason": "local_phase_boundary"
+  },
+  "targetMetadata": {
+    "envProfiles": [
+      {
+        "source": "app/.env.local",
+        "exists": true,
+        "keyCount": 13,
+        "supabase": {
+          "protocol": "https:",
+          "host": "pxyjocahjutcojltcalj.supabase.co",
+          "projectRef": "pxyjocahjutcojltcalj"
+        }
+      },
+      {
+        "source": "app/.env.local.example",
+        "exists": true,
+        "keyCount": 21,
+        "supabase": {
+          "protocol": "http:",
+          "host": "127.0.0.1:54321",
+          "projectRef": "127"
+        }
+      }
+    ],
+    "workflowEnvironments": [
+      "hosted-sandbox-migration",
+      "hosted-sandbox-deploy"
+    ]
+  },
+  "productionDecision": {
+    "exists": true,
+    "source": {
+      "source": "docs/PRODUCTION_READINESS_STAGE_1_FINAL_DECISION.json",
+      "exists": true,
+      "bytes": 1544,
+      "sha256": "78c6576855d954cd17042dd050403c7552dad435ed798391dcf5ddf6701e4daf"
+    },
+    "productionDecision": "NO-GO",
+    "ownerActionsRequired": [
+      "meta_whatsapp_business",
+      "zai_glm_ai_provider",
+      "production_secrets",
+      "production_supabase_and_migrations",
+      "manual_transfer_operations",
+      "incident_monitoring_and_rollback",
+      "explicit_production_release_approval"
+    ],
+    "liveActionsExecuted": [],
+    "mustNotClaim": [
+      "production GO",
+      "iPhone Safari/PWA PASS",
+      "live provider or channel execution",
+      "production schema rollout",
+      "real client health-data processing"
+    ],
+    "codexActionsAfterOwnerCompletion": [
+      "apply_remote_migrations",
+      "configure_production_env",
+      "deploy_verified_release",
+      "run_production_smoke_checks",
+      "enable_real_webhooks_and_workers",
+      "write_final_go_no_go_report"
+    ]
+  },
+  "sourceControl": {
+    "clean": false,
+    "changedPathCount": 115,
+    "changedPaths": [
+      ".github/workflows/hosted-sandbox-deploy.yml",
+      ".github/workflows/hosted-sandbox-product-ci.yml",
+      "app/package.json",
+      "app/tests/request-id-error-propagation.test.ts",
+      "tools/hosted-sandbox/deploy/hosted-sandbox-deploy.test.mjs",
+      "tools/hosted-sandbox/deploy/lib/supabase-schema-contract.mjs",
+      "tools/hosted-sandbox/deploy/workflow-templates/hosted-sandbox-deploy.yml",
+      "tools/hosted-sandbox/deploy/workflow-templates/hosted-sandbox-product-ci.yml",
+      "docs/system-audit/phase-1/baseline.json",
+      "docs/system-audit/phase-1/coverage-matrix.json",
+      "docs/system-audit/phase-1/environment-map.json",
+      "docs/system-audit/phase-1/phase-1-closure.json",
+      "docs/system-audit/phase-1/phase-entry.json",
+      "docs/system-audit/phase-1/plan-manifest.json",
+      "docs/system-audit/phase-1/stages/stage-1.1.json",
+      "docs/system-audit/phase-1/stages/stage-1.2.json",
+      "docs/system-audit/phase-1/stages/stage-1.3.json",
+      "docs/system-audit/phase-1/stages/stage-1.4.json",
+      "docs/system-audit/phase-1/system-inventory.json",
+      "docs/system-audit/phase-2/catalog-reconciliation.json",
+      "docs/system-audit/phase-2/isolated-reconciliation.json",
+      "docs/system-audit/phase-2/phase-2-closure.json",
+      "docs/system-audit/phase-2/phase-entry.json",
+      "docs/system-audit/phase-2/plan-manifest.json",
+      "docs/system-audit/phase-2/schema-contract-matrix.json",
+      "docs/system-audit/phase-2/schema-diff-classification.json",
+      "docs/system-audit/phase-2/stages/stage-2.1.json",
+      "docs/system-audit/phase-2/stages/stage-2.2.json",
+      "docs/system-audit/phase-2/stages/stage-2.3.json",
+      "docs/system-audit/phase-2/stages/stage-2.4.json",
+      "docs/system-audit/phase-3/api-contract-matrix.json",
+      "docs/system-audit/phase-3/backend-security-closure.json",
+      "docs/system-audit/phase-3/identity-contract-matrix.json",
+      "docs/system-audit/phase-3/phase-3-closure.json",
+      "docs/system-audit/phase-3/plan-manifest.json",
+      "docs/system-audit/phase-3/stages/stage-3.1.json",
+      "docs/system-audit/phase-3/stages/stage-3.2.json",
+      "docs/system-audit/phase-3/stages/stage-3.3.json",
+      "docs/system-audit/phase-3/stages/stage-3.4.json",
+      "docs/system-audit/phase-3/tenant-security-matrix.json",
+      "docs/system-audit/phase-4/ai-contract-matrix.json",
+      "docs/system-audit/phase-4/media-contract-matrix.json",
+      "docs/system-audit/phase-4/messaging-contract-matrix.json",
+      "docs/system-audit/phase-4/phase-4-closure.json",
+      "docs/system-audit/phase-4/plan-manifest.json",
+      "docs/system-audit/phase-4/stages/stage-4.1.json",
+      "docs/system-audit/phase-4/stages/stage-4.2.json",
+      "docs/system-audit/phase-4/stages/stage-4.3.json",
+      "docs/system-audit/phase-4/stages/stage-4.4.json",
+      "docs/system-audit/phase-4/stages/stage-4.5.json",
+      "docs/system-audit/phase-4/worker-contract-matrix.json",
+      "docs/system-audit/phase-4/worker-messaging-ai-media-closure.json",
+      "docs/system-audit/phase-5/auth-user-flow-matrix.json",
+      "docs/system-audit/phase-5/authenticated-shell-matrix.json",
+      "docs/system-audit/phase-5/frontend-backend-contract-matrix.json",
+      "docs/system-audit/phase-5/frontend-backend-user-flow-closure.json",
+      "docs/system-audit/phase-5/phase-5-closure.json",
+      "docs/system-audit/phase-5/plan-manifest.json",
+      "docs/system-audit/phase-5/real-backend-browser-smoke.json",
+      "docs/system-audit/phase-5/stages/stage-5.1.json",
+      "docs/system-audit/phase-5/stages/stage-5.2.json",
+      "docs/system-audit/phase-5/stages/stage-5.3.json",
+      "docs/system-audit/phase-5/stages/stage-5.4.json",
+      "docs/system-audit/phase-5/stages/stage-5.5.json",
+      "docs/system-audit/phase-6/failure-injection-matrix.json",
+      "docs/system-audit/phase-6/load-capacity-matrix.json",
+      "docs/system-audit/phase-6/observability-contract-matrix.json",
+      "docs/system-audit/phase-6/phase-6-closure-evidence.json",
+      "docs/system-audit/phase-6/phase-6-closure.json",
+      "docs/system-audit/phase-6/plan-manifest.json",
+      "docs/system-audit/phase-6/recovery-operations-matrix.json",
+      "docs/system-audit/phase-6/stages/stage-6.1.json",
+      "docs/system-audit/phase-6/stages/stage-6.2.json",
+      "docs/system-audit/phase-6/stages/stage-6.3.json",
+      "docs/system-audit/phase-6/stages/stage-6.4.json",
+      "docs/system-audit/phase-6/stages/stage-6.5.json",
+      "docs/system-audit/phase-7/ci-release-gate-matrix.json",
+      "docs/system-audit/phase-7/plan-manifest.json",
+      "docs/system-audit/phase-7/release-gate-matrix.json",
+      "docs/system-audit/phase-7/stages/stage-7.1.json",
+      "docs/system-audit/phase-7/stages/stage-7.2.json",
+      "docs/system-audit/phase-7/stages/stage-7.3.json",
+      "docs/system-audit/phase-7/target-environment-reconciliation-matrix.json",
+      "tools/system-audit/cli.mjs",
+      "tools/system-audit/lib/audit-contract.mjs",
+      "tools/system-audit/lib/audit-plan.mjs",
+      "tools/system-audit/lib/environment.mjs",
+      "tools/system-audit/lib/git.mjs",
+      "tools/system-audit/lib/inventory.mjs",
+      "tools/system-audit/phase-2/cli.mjs",
+      "tools/system-audit/phase-2/phase-2-contract.mjs",
+      "tools/system-audit/phase-2/phase-2-plan.mjs",
+      "tools/system-audit/phase-2/phase-2.test.mjs",
+      "tools/system-audit/phase-3/cli.mjs",
+      "tools/system-audit/phase-3/phase-3-contract.mjs",
+      "tools/system-audit/phase-3/phase-3-plan.mjs",
+      "tools/system-audit/phase-3/phase-3.test.mjs",
+      "tools/system-audit/phase-4/cli.mjs",
+      "tools/system-audit/phase-4/phase-4-contract.mjs",
+      "tools/system-audit/phase-4/phase-4-plan.mjs",
+      "tools/system-audit/phase-4/phase-4.test.mjs",
+      "tools/system-audit/phase-5/cli.mjs",
+      "tools/system-audit/phase-5/phase-5-contract.mjs",
+      "tools/system-audit/phase-5/phase-5-plan.mjs",
+      "tools/system-audit/phase-5/phase-5.test.mjs",
+      "tools/system-audit/phase-5/real-backend-smoke.mjs",
+      "tools/system-audit/phase-6/cli.mjs",
+      "tools/system-audit/phase-6/phase-6-contract.mjs",
+      "tools/system-audit/phase-6/phase-6-plan.mjs",
+      "tools/system-audit/phase-6/phase-6.test.mjs",
+      "tools/system-audit/phase-7/cli.mjs",
+      "tools/system-audit/phase-7/phase-7-contract.mjs",
+      "tools/system-audit/phase-7/phase-7-plan.mjs",
+      "tools/system-audit/phase-7/phase-7.test.mjs",
+      "tools/system-audit/system-audit.test.mjs"
+    ]
+  },
+  "mutationPolicy": {
+    "MANU_PRODUCTION_PILOT_STARTED": {
+      "enabled": false
+    },
+    "MANU_ENABLE_PROVIDER_EGRESS": {
+      "enabled": false
+    },
+    "MANU_ENABLE_CHANNEL_EGRESS": {
+      "enabled": false
+    },
+    "MANU_ENABLE_LIVE_BILLING": {
+      "enabled": false
+    },
+    "MANU_ENABLE_PRODUCTION_SCHEMA": {
+      "enabled": false
+    },
+    "MANU_ALLOW_REAL_ZAI": {
+      "enabled": false
+    },
+    "MANU_WHATSAPP_REAL_WEBHOOK_ENABLED": {
+      "enabled": false
+    },
+    "MANU_MEDIA_REAL_PROVIDER_ENABLED": {
+      "enabled": false
+    },
+    "MANU_ALLOW_REMOTE_RLS_TESTS": {
+      "enabled": false
+    },
+    "MANU_HOSTED_SANDBOX_BACKUP_APPROVED": {
+      "enabled": false
+    },
+    "MANU_HOSTED_SANDBOX_RESTORE_APPROVED": {
+      "enabled": false
+    },
+    "MANU_HOSTED_ACTIVATION_APPROVED": {
+      "enabled": false
+    }
+  },
+  "releaseBlockers": [
+    {
+      "code": "dirty_working_tree",
+      "ownerControlled": true,
+      "details": [
+        ".github/workflows/hosted-sandbox-deploy.yml",
+        ".github/workflows/hosted-sandbox-product-ci.yml",
+        "app/package.json",
+        "app/tests/request-id-error-propagation.test.ts",
+        "tools/hosted-sandbox/deploy/hosted-sandbox-deploy.test.mjs",
+        "tools/hosted-sandbox/deploy/lib/supabase-schema-contract.mjs",
+        "tools/hosted-sandbox/deploy/workflow-templates/hosted-sandbox-deploy.yml",
+        "tools/hosted-sandbox/deploy/workflow-templates/hosted-sandbox-product-ci.yml",
+        "docs/system-audit/phase-1/baseline.json",
+        "docs/system-audit/phase-1/coverage-matrix.json",
+        "docs/system-audit/phase-1/environment-map.json",
+        "docs/system-audit/phase-1/phase-1-closure.json",
+        "docs/system-audit/phase-1/phase-entry.json",
+        "docs/system-audit/phase-1/plan-manifest.json",
+        "docs/system-audit/phase-1/stages/stage-1.1.json",
+        "docs/system-audit/phase-1/stages/stage-1.2.json",
+        "docs/system-audit/phase-1/stages/stage-1.3.json",
+        "docs/system-audit/phase-1/stages/stage-1.4.json",
+        "docs/system-audit/phase-1/system-inventory.json",
+        "docs/system-audit/phase-2/catalog-reconciliation.json",
+        "docs/system-audit/phase-2/isolated-reconciliation.json",
+        "docs/system-audit/phase-2/phase-2-closure.json",
+        "docs/system-audit/phase-2/phase-entry.json",
+        "docs/system-audit/phase-2/plan-manifest.json",
+        "docs/system-audit/phase-2/schema-contract-matrix.json",
+        "docs/system-audit/phase-2/schema-diff-classification.json",
+        "docs/system-audit/phase-2/stages/stage-2.1.json",
+        "docs/system-audit/phase-2/stages/stage-2.2.json",
+        "docs/system-audit/phase-2/stages/stage-2.3.json",
+        "docs/system-audit/phase-2/stages/stage-2.4.json",
+        "docs/system-audit/phase-3/api-contract-matrix.json",
+        "docs/system-audit/phase-3/backend-security-closure.json",
+        "docs/system-audit/phase-3/identity-contract-matrix.json",
+        "docs/system-audit/phase-3/phase-3-closure.json",
+        "docs/system-audit/phase-3/plan-manifest.json",
+        "docs/system-audit/phase-3/stages/stage-3.1.json",
+        "docs/system-audit/phase-3/stages/stage-3.2.json",
+        "docs/system-audit/phase-3/stages/stage-3.3.json",
+        "docs/system-audit/phase-3/stages/stage-3.4.json",
+        "docs/system-audit/phase-3/tenant-security-matrix.json",
+        "docs/system-audit/phase-4/ai-contract-matrix.json",
+        "docs/system-audit/phase-4/media-contract-matrix.json",
+        "docs/system-audit/phase-4/messaging-contract-matrix.json",
+        "docs/system-audit/phase-4/phase-4-closure.json",
+        "docs/system-audit/phase-4/plan-manifest.json",
+        "docs/system-audit/phase-4/stages/stage-4.1.json",
+        "docs/system-audit/phase-4/stages/stage-4.2.json",
+        "docs/system-audit/phase-4/stages/stage-4.3.json",
+        "docs/system-audit/phase-4/stages/stage-4.4.json",
+        "docs/system-audit/phase-4/stages/stage-4.5.json",
+        "docs/system-audit/phase-4/worker-contract-matrix.json",
+        "docs/system-audit/phase-4/worker-messaging-ai-media-closure.json",
+        "docs/system-audit/phase-5/auth-user-flow-matrix.json",
+        "docs/system-audit/phase-5/authenticated-shell-matrix.json",
+        "docs/system-audit/phase-5/frontend-backend-contract-matrix.json",
+        "docs/system-audit/phase-5/frontend-backend-user-flow-closure.json",
+        "docs/system-audit/phase-5/phase-5-closure.json",
+        "docs/system-audit/phase-5/plan-manifest.json",
+        "docs/system-audit/phase-5/real-backend-browser-smoke.json",
+        "docs/system-audit/phase-5/stages/stage-5.1.json",
+        "docs/system-audit/phase-5/stages/stage-5.2.json",
+        "docs/system-audit/phase-5/stages/stage-5.3.json",
+        "docs/system-audit/phase-5/stages/stage-5.4.json",
+        "docs/system-audit/phase-5/stages/stage-5.5.json",
+        "docs/system-audit/phase-6/failure-injection-matrix.json",
+        "docs/system-audit/phase-6/load-capacity-matrix.json",
+        "docs/system-audit/phase-6/observability-contract-matrix.json",
+        "docs/system-audit/phase-6/phase-6-closure-evidence.json",
+        "docs/system-audit/phase-6/phase-6-closure.json",
+        "docs/system-audit/phase-6/plan-manifest.json",
+        "docs/system-audit/phase-6/recovery-operations-matrix.json",
+        "docs/system-audit/phase-6/stages/stage-6.1.json",
+        "docs/system-audit/phase-6/stages/stage-6.2.json",
+        "docs/system-audit/phase-6/stages/stage-6.3.json",
+        "docs/system-audit/phase-6/stages/stage-6.4.json",
+        "docs/system-audit/phase-6/stages/stage-6.5.json",
+        "docs/system-audit/phase-7/ci-release-gate-matrix.json",
+        "docs/system-audit/phase-7/plan-manifest.json",
+        "docs/system-audit/phase-7/release-gate-matrix.json",
+        "docs/system-audit/phase-7/stages/stage-7.1.json",
+        "docs/system-audit/phase-7/stages/stage-7.2.json",
+        "docs/system-audit/phase-7/stages/stage-7.3.json",
+        "docs/system-audit/phase-7/target-environment-reconciliation-matrix.json",
+        "tools/system-audit/cli.mjs",
+        "tools/system-audit/lib/audit-contract.mjs",
+        "tools/system-audit/lib/audit-plan.mjs",
+        "tools/system-audit/lib/environment.mjs",
+        "tools/system-audit/lib/git.mjs",
+        "tools/system-audit/lib/inventory.mjs",
+        "tools/system-audit/phase-2/cli.mjs",
+        "tools/system-audit/phase-2/phase-2-contract.mjs",
+        "tools/system-audit/phase-2/phase-2-plan.mjs",
+        "tools/system-audit/phase-2/phase-2.test.mjs",
+        "tools/system-audit/phase-3/cli.mjs",
+        "tools/system-audit/phase-3/phase-3-contract.mjs",
+        "tools/system-audit/phase-3/phase-3-plan.mjs",
+        "tools/system-audit/phase-3/phase-3.test.mjs",
+        "tools/system-audit/phase-4/cli.mjs",
+        "tools/system-audit/phase-4/phase-4-contract.mjs",
+        "tools/system-audit/phase-4/phase-4-plan.mjs",
+        "tools/system-audit/phase-4/phase-4.test.mjs",
+        "tools/system-audit/phase-5/cli.mjs",
+        "tools/system-audit/phase-5/phase-5-contract.mjs",
+        "tools/system-audit/phase-5/phase-5-plan.mjs",
+        "tools/system-audit/phase-5/phase-5.test.mjs",
+        "tools/system-audit/phase-5/real-backend-smoke.mjs",
+        "tools/system-audit/phase-6/cli.mjs",
+        "tools/system-audit/phase-6/phase-6-contract.mjs",
+        "tools/system-audit/phase-6/phase-6-plan.mjs",
+        "tools/system-audit/phase-6/phase-6.test.mjs",
+        "tools/system-audit/phase-7/cli.mjs",
+        "tools/system-audit/phase-7/phase-7-contract.mjs",
+        "tools/system-audit/phase-7/phase-7-plan.mjs",
+        "tools/system-audit/phase-7/phase-7.test.mjs",
+        "tools/system-audit/system-audit.test.mjs"
+      ]
+    },
+    {
+      "code": "owner_actions_required",
+      "ownerControlled": true,
+      "details": [
+        "meta_whatsapp_business",
+        "zai_glm_ai_provider",
+        "production_secrets",
+        "production_supabase_and_migrations",
+        "manual_transfer_operations",
+        "incident_monitoring_and_rollback",
+        "explicit_production_release_approval"
+      ]
+    },
+    {
+      "code": "target_probe_not_run_by_policy",
+      "ownerControlled": true,
+      "details": "current production evidence requires separate authorized target operation"
+    },
+    {
+      "code": "explicit_production_release_approval_required",
+      "ownerControlled": true,
+      "details": "productionDecision=NO-GO"
+    }
+  ],
+  "checks": [
+    {
+      "id": "ci_release_gate_verified",
+      "description": "7.1 CI release gate evidence is VERIFIED",
+      "pass": true,
+      "details": {
+        "status": "PASS",
+        "matrixDigest": "aa1e48ecccba4da7b059d2fb4b4375b62261e08343075bc3376875fcb63751f9"
+      }
+    },
+    {
+      "id": "release_identity_derived",
+      "description": "release identity and sorted migration fingerprint derive from current HEAD",
+      "pass": true,
+      "details": {
+        "identity": {
+          "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+          "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+          "builtAt": "2026-09-07T16:50:37.000Z",
+          "environment": "hosted-sandbox",
+          "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25",
+          "compatibilityVersion": "0.0.0+1c97560"
+        },
+        "migrations": {
+          "directory": "app/supabase/migrations",
+          "count": 125,
+          "fingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25",
+          "files": [
+            "20260522000000_initial_manu_ai_schema.sql",
+            "20260523000000_app_state_schema_fixes.sql",
+            "20260524000000_restore_auxiliary_rls_policies.sql",
+            "20260525000000_risk_assessment_message_uniqueness.sql",
+            "20260525010000_add_opted_out_permission_state.sql",
+            "20260525020000_ai_provider_decision_metadata.sql",
+            "20260525030000_notifications.sql",
+            "20260525040000_client_assignments.sql",
+            "20260525050000_data_requests.sql",
+            "20260530000000_phase_23_context_send_safety.sql",
+            "20260530010000_phase_24_25_voice_forms.sql",
+            "20260530020000_phase_26_internal_copilot.sql",
+            "20260530030000_phase_27_client_context_updates.sql",
+            "20260530040000_ai_security_remediation.sql",
+            "20260531010000_phase_43_multilingual_language_support.sql",
+            "20260601000000_phase_44_red_risk_reactivation_lock.sql",
+            "20260601010000_phase_45_client_removal_lifecycle.sql",
+            "20260601020000_phase_46_inbound_quarantine.sql",
+            "20260602030000_phase_50_production_hardening_foundation.sql",
+            "20260603000000_phase_57_yellow_risk_hold.sql",
+            "20260604000000_phase_61_scope_corpus.sql",
+            "20260608000000_phase_76_dietitian_chat_form_update_proposals.sql",
+            "20260608120000_phase_76n_food_rule_lifecycle_rpc.sql",
+            "20260610120000_phase_77e_client_food_rule_profile.sql",
+            "20260610130000_phase_77f_client_menu_plan.sql",
+            "20260622130000_phase_77ae_channel_delivery_ledger.sql",
+            "20260701120000_phase_83b_commercial_entitlement_model.sql",
+            "20260701130000_phase_83c_commercial_checkout_session.sql",
+            "20260701140000_phase_83f_commercial_admin_audit.sql",
+            "20260702120000_phase_84c_commercial_leads.sql",
+            "20260702140000_phase_84e_commercial_onboarding_events.sql",
+            "20260703120000_phase_84g_commercial_admin_audit_extension.sql",
+            "20260710120000_phase_85_if_b_trust_root_provenance.sql",
+            "20260710140000_phase_85_if_d_external_human_control_reason.sql",
+            "20260710150000_phase_85_if_e_conversation_message_search.sql",
+            "20260710160000_phase_85_if_f_conversation_revision.sql",
+            "20260710170000_phase_85_if_g_context_intake.sql",
+            "20260710180000_phase_85_if_r1_persistence_tenant_integrity.sql",
+            "20260710190000_phase_85_if_r2_search_return_type.sql",
+            "20260710191000_phase_85_if_r2_structured_update_notifications.sql",
+            "20260710200000_phase_85_if_remediation_atomic_activation.sql",
+            "20260710210000_phase_85_if_remediation_client_safe_context_intake.sql",
+            "20260710220000_phase_85_if_remediation_operational_access_boundaries.sql",
+            "20260710230000_phase_85_if_remediation_lifecycle_reclosure.sql",
+            "20260711090000_phase_85_stage_4b_alerts_notifications.sql",
+            "20260711200000_phase_85_if_postclosure_r1_message_tenant_integrity.sql",
+            "20260711201000_phase_85_if_postclosure_r2_structured_resolution.sql",
+            "20260711202000_phase_85_if_postclosure_r3_lock_order.sql",
+            "20260712120000_phase_85_stage_4b_postclosure_remediation.sql",
+            "20260712140000_phase_85_stage_4b2_receipt_persistence_rls.sql",
+            "20260712150000_phase_85_stage_4b2_read_api_projection_rpcs.sql",
+            "20260712160000_phase_85_stage_4b2_mutation_idempotency.sql",
+            "20260712170000_phase_85_stage_4b2_r2_bounded_reads_rls.sql",
+            "20260712180000_phase_85_stage_4b2_r3_atomic_mutations.sql",
+            "20260713024000_phase_85_stage_4b2_rls_local_reclosure.sql",
+            "20260713030000_phase_85_stage_4b2_security_advisory_rls_hardening.sql",
+            "20260713120000_phase_85_stage_4b3_media_foundation.sql",
+            "20260713130000_phase_85_stage_4b3_atomic_bundle_decisions.sql",
+            "20260713140000_phase_85_stage_4b3_bounded_media_reads.sql",
+            "20260713150000_phase_85_stage_4b3_media_lifecycle.sql",
+            "20260714100000_phase_85_stage_4b3_remediation_contract_rls.sql",
+            "20260714110000_phase_85_stage_4b3_durable_media_queue.sql",
+            "20260714120000_phase_85_stage_4b3_canonical_ingress_v2.sql",
+            "20260714130000_phase_85_stage_4b3_bundle_correlation_v2.sql",
+            "20260714150000_phase_85_stage_4b3_atomic_decision_correction.sql",
+            "20260714160000_phase_85_stage_4b3_lifecycle_saga.sql",
+            "20260714170000_phase_85_stage_4b4_audio_foundation.sql",
+            "20260714180000_phase_85_stage_4b4_audio_queue.sql",
+            "20260714190000_phase_85_stage_4b4_canonical_ingress_v3.sql",
+            "20260714195000_phase_85_stage_4b4_audio_lifecycle_signature_transition.sql",
+            "20260714200000_phase_85_stage_4b4_audio_lifecycle_bounded_reads.sql",
+            "20260714210000_phase_85_stage_4b4_atomic_transcription_correction.sql",
+            "20260714220000_phase_85_stage_4b4_bounded_audio_reads.sql",
+            "20260715100000_phase_85_stage_4b4_remediation_contracts.sql",
+            "20260715110000_phase_85_stage_4b4_durable_pipeline.sql",
+            "20260715120000_phase_85_stage_4b4_fail_closed_quality_gate.sql",
+            "20260715130000_phase_85_stage_4b4_transcript_bridge_pipeline.sql",
+            "20260715140000_phase_85_stage_4b4_correction_lineage.sql",
+            "20260715150000_phase_85_stage_4b4_bounded_reads_v2.sql",
+            "20260715160000_phase_85_stage_4b4_lifecycle_workers.sql",
+            "20260722100000_phase_85_stage_4c_domain.sql",
+            "20260722110000_phase_85_stage_4c_rls.sql",
+            "20260722120000_phase_85_stage_4c_bounded_api_rpcs.sql",
+            "20260722130000_phase_85_stage_4c_run_queue_streaming.sql",
+            "20260722140000_phase_85_stage_4c_context_gateway.sql",
+            "20260722150000_phase_85_stage_4c_sources_answerability.sql",
+            "20260722160000_phase_85_stage_4c_multimodal.sql",
+            "20260722170000_phase_85_stage_4c_risk_draft_handoff.sql",
+            "20260722180000_phase_85_stage_4c_lifecycle.sql",
+            "20260725085000_phase_85_stage_4c_pgcrypto_search_path_compatibility.sql",
+            "20260725090000_phase_85_stage_4c_remediation_core_run_rpcs.sql",
+            "20260725100000_phase_85_stage_4c_remediation_context_safety.sql",
+            "20260725110000_phase_85_stage_4c_remediation_multimodal_runtime.sql",
+            "20260725120000_phase_85_stage_4c_remediation_risk_workflow.sql",
+            "20260725130000_phase_85_stage_4c_remediation_lifecycle_export.sql",
+            "20260725140000_phase_85_stage_4c_remediation_event_stream.sql",
+            "20260725150000_phase_85_stage_4c_remediation_scale_indexes.sql",
+            "20260725155000_phase_85_stage_4c_remediation_rls_helper_grants.sql",
+            "20260725160000_phase_85_stage_4c_remediation_db_lint_reclosure.sql",
+            "20260725161000_phase_85_stage_4c_remediation_scale_fixture_reclosure.sql",
+            "20260725162000_phase_85_stage_4c_remediation_scale_explain_reclosure.sql",
+            "20260725163000_phase_85_stage_4c_operational_tables_rls_reclosure.sql",
+            "20260728120000_phase_85_stage_4d_own_profile.sql",
+            "20260728130000_phase_85_stage_4d_account_security_audit.sql",
+            "20260728170000_phase_85_stage_4d_remediation_account_foundation.sql",
+            "20260728180000_phase_85_stage_4d_remediation_security_billing_pwa.sql",
+            "20260728190000_phase_85_stage_4d_pre_faz3_rls_reclosure.sql",
+            "20260802090000_phase_85_stage_5_shell_foundation.sql",
+            "20260802120000_phase_85_stage_5_shell_api_foundation.sql",
+            "20260803090000_phase_85_stage_5_foundation_remediation.sql",
+            "20260819120000_phase_85_stage_6_r1_mutation_idempotency.sql",
+            "20260825120000_hosted_sandbox_faz3_security_rls_backup.sql",
+            "20260826120000_hosted_sandbox_demo_cleanup_rpc.sql",
+            "20260826130000_rls_default_privileges_hardening.sql",
+            "20260830180000_production_readiness_stage_1_phase_2_manual_entitlements.sql",
+            "20260830190000_production_readiness_stage_1_phase_3_whatsapp_real_contracts.sql",
+            "20260830200000_production_readiness_stage_1_phase_4_ai_media_security.sql",
+            "20260831090000_zai_glm_provider_rebaseline.sql",
+            "20260903090000_public_surface_session_idle_timeout.sql",
+            "20260903100000_commercial_entitlement_reactivation.sql",
+            "20260904120000_aiya_workspace_tenant_fallback.sql",
+            "20260904180000_public_surface_faz8_session_service_role.sql",
+            "20260904181000_public_surface_faz8_admin_bulk_invite.sql",
+            "20260904182000_public_surface_faz8_onboarding_claim_pending.sql",
+            "20260907181000_hosted_shell_schema_reconciliation.sql"
+          ]
+        }
+      }
+    },
+    {
+      "id": "identity_contracts_reconciled",
+      "description": "health, client, service worker and schema/deploy contracts carry release identity fields",
+      "pass": true,
+      "details": {
+        "pass": true,
+        "fields": [
+          "releaseId",
+          "commitSha",
+          "migrationFingerprint",
+          "compatibilityVersion"
+        ],
+        "sources": [
+          {
+            "source": "app/src/app/api/health/release/route.ts",
+            "exists": true,
+            "bytes": 802,
+            "sha256": "87cbd903436a45883211d0d3340191f4969369d2e9a57a97e98f4befa57318a0"
+          },
+          {
+            "source": "app/src/lib/release-identity.ts",
+            "exists": true,
+            "bytes": 3904,
+            "sha256": "7c3993b494d2f9a4757dd844b88fcd66c70cf89e71697caae5fb4c8179d458e4"
+          },
+          {
+            "source": "app/public/sw.js",
+            "exists": true,
+            "bytes": 4016,
+            "sha256": "c0850d9ec5f6fa20264c1f7e284df2829513a7abc0f4c88c85755e2a1c1237ea"
+          },
+          {
+            "source": "tools/hosted-sandbox/deploy/lib/supabase-schema-contract.mjs",
+            "exists": true,
+            "bytes": 7431,
+            "sha256": "ab371587b7dc4cf6d657d878fd2ad8c154b6b5a909829e6dc01316fbe5271dfa"
+          },
+          {
+            "source": "tools/hosted-sandbox/deploy/deploy-hosted-release.mjs",
+            "exists": true,
+            "bytes": 12854,
+            "sha256": "df718b96bf155d5ea3f942cc95ed8836593af2dc918a27cc94c2ac7aca035cba"
+          },
+          {
+            "source": "app/scripts/build-release-artifact.mjs",
+            "exists": true,
+            "bytes": 7518,
+            "sha256": "367c494e857ab56c545a716b52f05e05cd045e4fbdefbb8499559d9548e45520"
+          }
+        ]
+      }
+    },
+    {
+      "id": "workflow_release_binding",
+      "description": "migration and deploy workflows bind commit, fingerprint and artifact",
+      "pass": true,
+      "details": {
+        "pass": true,
+        "migration": {
+          "commitInput": true,
+          "fingerprintArtifact": true
+        },
+        "deploy": {
+          "commitInput": true,
+          "fingerprintInput": true,
+          "artifactRequired": true
+        }
+      }
+    },
+    {
+      "id": "production_decision_preserved",
+      "description": "authoritative production decision remains NO-GO with owner actions and no live actions",
+      "pass": true,
+      "details": {
+        "exists": true,
+        "source": {
+          "source": "docs/PRODUCTION_READINESS_STAGE_1_FINAL_DECISION.json",
+          "exists": true,
+          "bytes": 1544,
+          "sha256": "78c6576855d954cd17042dd050403c7552dad435ed798391dcf5ddf6701e4daf"
+        },
+        "productionDecision": "NO-GO",
+        "ownerActionsRequired": [
+          "meta_whatsapp_business",
+          "zai_glm_ai_provider",
+          "production_secrets",
+          "production_supabase_and_migrations",
+          "manual_transfer_operations",
+          "incident_monitoring_and_rollback",
+          "explicit_production_release_approval"
+        ],
+        "liveActionsExecuted": [],
+        "mustNotClaim": [
+          "production GO",
+          "iPhone Safari/PWA PASS",
+          "live provider or channel execution",
+          "production schema rollout",
+          "real client health-data processing"
+        ],
+        "codexActionsAfterOwnerCompletion": [
+          "apply_remote_migrations",
+          "configure_production_env",
+          "deploy_verified_release",
+          "run_production_smoke_checks",
+          "enable_real_webhooks_and_workers",
+          "write_final_go_no_go_report"
+        ]
+      }
+    },
+    {
+      "id": "target_probe_not_run",
+      "description": "target probe is explicitly NOT_RUN_BY_POLICY and no egress is attempted",
+      "pass": true,
+      "details": {
+        "status": "NOT_RUN_BY_POLICY",
+        "httpCalls": 0,
+        "supabaseCalls": 0,
+        "sshCalls": 0,
+        "providerCalls": 0,
+        "channelCalls": 0,
+        "reason": "local_phase_boundary"
+      }
+    },
+    {
+      "id": "source_and_mutation_inventory",
+      "description": "working-tree state and effective mutation flags are recorded without secret values",
+      "pass": true,
+      "details": {
+        "sourceControl": {
+          "clean": false,
+          "changedPathCount": 115,
+          "changedPaths": [
+            ".github/workflows/hosted-sandbox-deploy.yml",
+            ".github/workflows/hosted-sandbox-product-ci.yml",
+            "app/package.json",
+            "app/tests/request-id-error-propagation.test.ts",
+            "tools/hosted-sandbox/deploy/hosted-sandbox-deploy.test.mjs",
+            "tools/hosted-sandbox/deploy/lib/supabase-schema-contract.mjs",
+            "tools/hosted-sandbox/deploy/workflow-templates/hosted-sandbox-deploy.yml",
+            "tools/hosted-sandbox/deploy/workflow-templates/hosted-sandbox-product-ci.yml",
+            "docs/system-audit/phase-1/baseline.json",
+            "docs/system-audit/phase-1/coverage-matrix.json",
+            "docs/system-audit/phase-1/environment-map.json",
+            "docs/system-audit/phase-1/phase-1-closure.json",
+            "docs/system-audit/phase-1/phase-entry.json",
+            "docs/system-audit/phase-1/plan-manifest.json",
+            "docs/system-audit/phase-1/stages/stage-1.1.json",
+            "docs/system-audit/phase-1/stages/stage-1.2.json",
+            "docs/system-audit/phase-1/stages/stage-1.3.json",
+            "docs/system-audit/phase-1/stages/stage-1.4.json",
+            "docs/system-audit/phase-1/system-inventory.json",
+            "docs/system-audit/phase-2/catalog-reconciliation.json",
+            "docs/system-audit/phase-2/isolated-reconciliation.json",
+            "docs/system-audit/phase-2/phase-2-closure.json",
+            "docs/system-audit/phase-2/phase-entry.json",
+            "docs/system-audit/phase-2/plan-manifest.json",
+            "docs/system-audit/phase-2/schema-contract-matrix.json",
+            "docs/system-audit/phase-2/schema-diff-classification.json",
+            "docs/system-audit/phase-2/stages/stage-2.1.json",
+            "docs/system-audit/phase-2/stages/stage-2.2.json",
+            "docs/system-audit/phase-2/stages/stage-2.3.json",
+            "docs/system-audit/phase-2/stages/stage-2.4.json",
+            "docs/system-audit/phase-3/api-contract-matrix.json",
+            "docs/system-audit/phase-3/backend-security-closure.json",
+            "docs/system-audit/phase-3/identity-contract-matrix.json",
+            "docs/system-audit/phase-3/phase-3-closure.json",
+            "docs/system-audit/phase-3/plan-manifest.json",
+            "docs/system-audit/phase-3/stages/stage-3.1.json",
+            "docs/system-audit/phase-3/stages/stage-3.2.json",
+            "docs/system-audit/phase-3/stages/stage-3.3.json",
+            "docs/system-audit/phase-3/stages/stage-3.4.json",
+            "docs/system-audit/phase-3/tenant-security-matrix.json",
+            "docs/system-audit/phase-4/ai-contract-matrix.json",
+            "docs/system-audit/phase-4/media-contract-matrix.json",
+            "docs/system-audit/phase-4/messaging-contract-matrix.json",
+            "docs/system-audit/phase-4/phase-4-closure.json",
+            "docs/system-audit/phase-4/plan-manifest.json",
+            "docs/system-audit/phase-4/stages/stage-4.1.json",
+            "docs/system-audit/phase-4/stages/stage-4.2.json",
+            "docs/system-audit/phase-4/stages/stage-4.3.json",
+            "docs/system-audit/phase-4/stages/stage-4.4.json",
+            "docs/system-audit/phase-4/stages/stage-4.5.json",
+            "docs/system-audit/phase-4/worker-contract-matrix.json",
+            "docs/system-audit/phase-4/worker-messaging-ai-media-closure.json",
+            "docs/system-audit/phase-5/auth-user-flow-matrix.json",
+            "docs/system-audit/phase-5/authenticated-shell-matrix.json",
+            "docs/system-audit/phase-5/frontend-backend-contract-matrix.json",
+            "docs/system-audit/phase-5/frontend-backend-user-flow-closure.json",
+            "docs/system-audit/phase-5/phase-5-closure.json",
+            "docs/system-audit/phase-5/plan-manifest.json",
+            "docs/system-audit/phase-5/real-backend-browser-smoke.json",
+            "docs/system-audit/phase-5/stages/stage-5.1.json",
+            "docs/system-audit/phase-5/stages/stage-5.2.json",
+            "docs/system-audit/phase-5/stages/stage-5.3.json",
+            "docs/system-audit/phase-5/stages/stage-5.4.json",
+            "docs/system-audit/phase-5/stages/stage-5.5.json",
+            "docs/system-audit/phase-6/failure-injection-matrix.json",
+            "docs/system-audit/phase-6/load-capacity-matrix.json",
+            "docs/system-audit/phase-6/observability-contract-matrix.json",
+            "docs/system-audit/phase-6/phase-6-closure-evidence.json",
+            "docs/system-audit/phase-6/phase-6-closure.json",
+            "docs/system-audit/phase-6/plan-manifest.json",
+            "docs/system-audit/phase-6/recovery-operations-matrix.json",
+            "docs/system-audit/phase-6/stages/stage-6.1.json",
+            "docs/system-audit/phase-6/stages/stage-6.2.json",
+            "docs/system-audit/phase-6/stages/stage-6.3.json",
+            "docs/system-audit/phase-6/stages/stage-6.4.json",
+            "docs/system-audit/phase-6/stages/stage-6.5.json",
+            "docs/system-audit/phase-7/ci-release-gate-matrix.json",
+            "docs/system-audit/phase-7/plan-manifest.json",
+            "docs/system-audit/phase-7/release-gate-matrix.json",
+            "docs/system-audit/phase-7/stages/stage-7.1.json",
+            "docs/system-audit/phase-7/stages/stage-7.2.json",
+            "docs/system-audit/phase-7/stages/stage-7.3.json",
+            "docs/system-audit/phase-7/target-environment-reconciliation-matrix.json",
+            "tools/system-audit/cli.mjs",
+            "tools/system-audit/lib/audit-contract.mjs",
+            "tools/system-audit/lib/audit-plan.mjs",
+            "tools/system-audit/lib/environment.mjs",
+            "tools/system-audit/lib/git.mjs",
+            "tools/system-audit/lib/inventory.mjs",
+            "tools/system-audit/phase-2/cli.mjs",
+            "tools/system-audit/phase-2/phase-2-contract.mjs",
+            "tools/system-audit/phase-2/phase-2-plan.mjs",
+            "tools/system-audit/phase-2/phase-2.test.mjs",
+            "tools/system-audit/phase-3/cli.mjs",
+            "tools/system-audit/phase-3/phase-3-contract.mjs",
+            "tools/system-audit/phase-3/phase-3-plan.mjs",
+            "tools/system-audit/phase-3/phase-3.test.mjs",
+            "tools/system-audit/phase-4/cli.mjs",
+            "tools/system-audit/phase-4/phase-4-contract.mjs",
+            "tools/system-audit/phase-4/phase-4-plan.mjs",
+            "tools/system-audit/phase-4/phase-4.test.mjs",
+            "tools/system-audit/phase-5/cli.mjs",
+            "tools/system-audit/phase-5/phase-5-contract.mjs",
+            "tools/system-audit/phase-5/phase-5-plan.mjs",
+            "tools/system-audit/phase-5/phase-5.test.mjs",
+            "tools/system-audit/phase-5/real-backend-smoke.mjs",
+            "tools/system-audit/phase-6/cli.mjs",
+            "tools/system-audit/phase-6/phase-6-contract.mjs",
+            "tools/system-audit/phase-6/phase-6-plan.mjs",
+            "tools/system-audit/phase-6/phase-6.test.mjs",
+            "tools/system-audit/phase-7/cli.mjs",
+            "tools/system-audit/phase-7/phase-7-contract.mjs",
+            "tools/system-audit/phase-7/phase-7-plan.mjs",
+            "tools/system-audit/phase-7/phase-7.test.mjs",
+            "tools/system-audit/system-audit.test.mjs"
+          ]
+        },
+        "mutationPolicy": {
+          "MANU_PRODUCTION_PILOT_STARTED": {
+            "enabled": false
+          },
+          "MANU_ENABLE_PROVIDER_EGRESS": {
+            "enabled": false
+          },
+          "MANU_ENABLE_CHANNEL_EGRESS": {
+            "enabled": false
+          },
+          "MANU_ENABLE_LIVE_BILLING": {
+            "enabled": false
+          },
+          "MANU_ENABLE_PRODUCTION_SCHEMA": {
+            "enabled": false
+          },
+          "MANU_ALLOW_REAL_ZAI": {
+            "enabled": false
+          },
+          "MANU_WHATSAPP_REAL_WEBHOOK_ENABLED": {
+            "enabled": false
+          },
+          "MANU_MEDIA_REAL_PROVIDER_ENABLED": {
+            "enabled": false
+          },
+          "MANU_ALLOW_REMOTE_RLS_TESTS": {
+            "enabled": false
+          },
+          "MANU_HOSTED_SANDBOX_BACKUP_APPROVED": {
+            "enabled": false
+          },
+          "MANU_HOSTED_SANDBOX_RESTORE_APPROVED": {
+            "enabled": false
+          },
+          "MANU_HOSTED_ACTIVATION_APPROVED": {
+            "enabled": false
+          }
+        }
+      }
+    },
+    {
+      "id": "phase7_contract_verification",
+      "description": "Phase 7 contract test passes after reconciliation",
+      "pass": true,
+      "details": {
+        "pass": true,
+        "tests": [
+          {
+            "name": "phase-7-contract",
+            "command": "C:\\Program Files\\nodejs\\node.exe --test tools/system-audit/phase-7/phase-7.test.mjs",
+            "status": "PASS",
+            "exitCode": 0,
+            "timedOut": false,
+            "durationMs": 748,
+            "outputTail": null
+          }
+        ]
+      }
+    }
+  ],
+  "operationChecks": [
+    {
+      "id": "ci_release_gate_verified",
+      "description": "7.1 CI release gate evidence is VERIFIED",
+      "pass": true,
+      "details": {
+        "status": "PASS",
+        "matrixDigest": "aa1e48ecccba4da7b059d2fb4b4375b62261e08343075bc3376875fcb63751f9"
+      }
+    },
+    {
+      "id": "release_identity_derived",
+      "description": "release identity and sorted migration fingerprint derive from current HEAD",
+      "pass": true,
+      "details": {
+        "identity": {
+          "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+          "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+          "builtAt": "2026-09-07T16:50:37.000Z",
+          "environment": "hosted-sandbox",
+          "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25",
+          "compatibilityVersion": "0.0.0+1c97560"
+        },
+        "migrations": {
+          "directory": "app/supabase/migrations",
+          "count": 125,
+          "fingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25",
+          "files": [
+            "20260522000000_initial_manu_ai_schema.sql",
+            "20260523000000_app_state_schema_fixes.sql",
+            "20260524000000_restore_auxiliary_rls_policies.sql",
+            "20260525000000_risk_assessment_message_uniqueness.sql",
+            "20260525010000_add_opted_out_permission_state.sql",
+            "20260525020000_ai_provider_decision_metadata.sql",
+            "20260525030000_notifications.sql",
+            "20260525040000_client_assignments.sql",
+            "20260525050000_data_requests.sql",
+            "20260530000000_phase_23_context_send_safety.sql",
+            "20260530010000_phase_24_25_voice_forms.sql",
+            "20260530020000_phase_26_internal_copilot.sql",
+            "20260530030000_phase_27_client_context_updates.sql",
+            "20260530040000_ai_security_remediation.sql",
+            "20260531010000_phase_43_multilingual_language_support.sql",
+            "20260601000000_phase_44_red_risk_reactivation_lock.sql",
+            "20260601010000_phase_45_client_removal_lifecycle.sql",
+            "20260601020000_phase_46_inbound_quarantine.sql",
+            "20260602030000_phase_50_production_hardening_foundation.sql",
+            "20260603000000_phase_57_yellow_risk_hold.sql",
+            "20260604000000_phase_61_scope_corpus.sql",
+            "20260608000000_phase_76_dietitian_chat_form_update_proposals.sql",
+            "20260608120000_phase_76n_food_rule_lifecycle_rpc.sql",
+            "20260610120000_phase_77e_client_food_rule_profile.sql",
+            "20260610130000_phase_77f_client_menu_plan.sql",
+            "20260622130000_phase_77ae_channel_delivery_ledger.sql",
+            "20260701120000_phase_83b_commercial_entitlement_model.sql",
+            "20260701130000_phase_83c_commercial_checkout_session.sql",
+            "20260701140000_phase_83f_commercial_admin_audit.sql",
+            "20260702120000_phase_84c_commercial_leads.sql",
+            "20260702140000_phase_84e_commercial_onboarding_events.sql",
+            "20260703120000_phase_84g_commercial_admin_audit_extension.sql",
+            "20260710120000_phase_85_if_b_trust_root_provenance.sql",
+            "20260710140000_phase_85_if_d_external_human_control_reason.sql",
+            "20260710150000_phase_85_if_e_conversation_message_search.sql",
+            "20260710160000_phase_85_if_f_conversation_revision.sql",
+            "20260710170000_phase_85_if_g_context_intake.sql",
+            "20260710180000_phase_85_if_r1_persistence_tenant_integrity.sql",
+            "20260710190000_phase_85_if_r2_search_return_type.sql",
+            "20260710191000_phase_85_if_r2_structured_update_notifications.sql",
+            "20260710200000_phase_85_if_remediation_atomic_activation.sql",
+            "20260710210000_phase_85_if_remediation_client_safe_context_intake.sql",
+            "20260710220000_phase_85_if_remediation_operational_access_boundaries.sql",
+            "20260710230000_phase_85_if_remediation_lifecycle_reclosure.sql",
+            "20260711090000_phase_85_stage_4b_alerts_notifications.sql",
+            "20260711200000_phase_85_if_postclosure_r1_message_tenant_integrity.sql",
+            "20260711201000_phase_85_if_postclosure_r2_structured_resolution.sql",
+            "20260711202000_phase_85_if_postclosure_r3_lock_order.sql",
+            "20260712120000_phase_85_stage_4b_postclosure_remediation.sql",
+            "20260712140000_phase_85_stage_4b2_receipt_persistence_rls.sql",
+            "20260712150000_phase_85_stage_4b2_read_api_projection_rpcs.sql",
+            "20260712160000_phase_85_stage_4b2_mutation_idempotency.sql",
+            "20260712170000_phase_85_stage_4b2_r2_bounded_reads_rls.sql",
+            "20260712180000_phase_85_stage_4b2_r3_atomic_mutations.sql",
+            "20260713024000_phase_85_stage_4b2_rls_local_reclosure.sql",
+            "20260713030000_phase_85_stage_4b2_security_advisory_rls_hardening.sql",
+            "20260713120000_phase_85_stage_4b3_media_foundation.sql",
+            "20260713130000_phase_85_stage_4b3_atomic_bundle_decisions.sql",
+            "20260713140000_phase_85_stage_4b3_bounded_media_reads.sql",
+            "20260713150000_phase_85_stage_4b3_media_lifecycle.sql",
+            "20260714100000_phase_85_stage_4b3_remediation_contract_rls.sql",
+            "20260714110000_phase_85_stage_4b3_durable_media_queue.sql",
+            "20260714120000_phase_85_stage_4b3_canonical_ingress_v2.sql",
+            "20260714130000_phase_85_stage_4b3_bundle_correlation_v2.sql",
+            "20260714150000_phase_85_stage_4b3_atomic_decision_correction.sql",
+            "20260714160000_phase_85_stage_4b3_lifecycle_saga.sql",
+            "20260714170000_phase_85_stage_4b4_audio_foundation.sql",
+            "20260714180000_phase_85_stage_4b4_audio_queue.sql",
+            "20260714190000_phase_85_stage_4b4_canonical_ingress_v3.sql",
+            "20260714195000_phase_85_stage_4b4_audio_lifecycle_signature_transition.sql",
+            "20260714200000_phase_85_stage_4b4_audio_lifecycle_bounded_reads.sql",
+            "20260714210000_phase_85_stage_4b4_atomic_transcription_correction.sql",
+            "20260714220000_phase_85_stage_4b4_bounded_audio_reads.sql",
+            "20260715100000_phase_85_stage_4b4_remediation_contracts.sql",
+            "20260715110000_phase_85_stage_4b4_durable_pipeline.sql",
+            "20260715120000_phase_85_stage_4b4_fail_closed_quality_gate.sql",
+            "20260715130000_phase_85_stage_4b4_transcript_bridge_pipeline.sql",
+            "20260715140000_phase_85_stage_4b4_correction_lineage.sql",
+            "20260715150000_phase_85_stage_4b4_bounded_reads_v2.sql",
+            "20260715160000_phase_85_stage_4b4_lifecycle_workers.sql",
+            "20260722100000_phase_85_stage_4c_domain.sql",
+            "20260722110000_phase_85_stage_4c_rls.sql",
+            "20260722120000_phase_85_stage_4c_bounded_api_rpcs.sql",
+            "20260722130000_phase_85_stage_4c_run_queue_streaming.sql",
+            "20260722140000_phase_85_stage_4c_context_gateway.sql",
+            "20260722150000_phase_85_stage_4c_sources_answerability.sql",
+            "20260722160000_phase_85_stage_4c_multimodal.sql",
+            "20260722170000_phase_85_stage_4c_risk_draft_handoff.sql",
+            "20260722180000_phase_85_stage_4c_lifecycle.sql",
+            "20260725085000_phase_85_stage_4c_pgcrypto_search_path_compatibility.sql",
+            "20260725090000_phase_85_stage_4c_remediation_core_run_rpcs.sql",
+            "20260725100000_phase_85_stage_4c_remediation_context_safety.sql",
+            "20260725110000_phase_85_stage_4c_remediation_multimodal_runtime.sql",
+            "20260725120000_phase_85_stage_4c_remediation_risk_workflow.sql",
+            "20260725130000_phase_85_stage_4c_remediation_lifecycle_export.sql",
+            "20260725140000_phase_85_stage_4c_remediation_event_stream.sql",
+            "20260725150000_phase_85_stage_4c_remediation_scale_indexes.sql",
+            "20260725155000_phase_85_stage_4c_remediation_rls_helper_grants.sql",
+            "20260725160000_phase_85_stage_4c_remediation_db_lint_reclosure.sql",
+            "20260725161000_phase_85_stage_4c_remediation_scale_fixture_reclosure.sql",
+            "20260725162000_phase_85_stage_4c_remediation_scale_explain_reclosure.sql",
+            "20260725163000_phase_85_stage_4c_operational_tables_rls_reclosure.sql",
+            "20260728120000_phase_85_stage_4d_own_profile.sql",
+            "20260728130000_phase_85_stage_4d_account_security_audit.sql",
+            "20260728170000_phase_85_stage_4d_remediation_account_foundation.sql",
+            "20260728180000_phase_85_stage_4d_remediation_security_billing_pwa.sql",
+            "20260728190000_phase_85_stage_4d_pre_faz3_rls_reclosure.sql",
+            "20260802090000_phase_85_stage_5_shell_foundation.sql",
+            "20260802120000_phase_85_stage_5_shell_api_foundation.sql",
+            "20260803090000_phase_85_stage_5_foundation_remediation.sql",
+            "20260819120000_phase_85_stage_6_r1_mutation_idempotency.sql",
+            "20260825120000_hosted_sandbox_faz3_security_rls_backup.sql",
+            "20260826120000_hosted_sandbox_demo_cleanup_rpc.sql",
+            "20260826130000_rls_default_privileges_hardening.sql",
+            "20260830180000_production_readiness_stage_1_phase_2_manual_entitlements.sql",
+            "20260830190000_production_readiness_stage_1_phase_3_whatsapp_real_contracts.sql",
+            "20260830200000_production_readiness_stage_1_phase_4_ai_media_security.sql",
+            "20260831090000_zai_glm_provider_rebaseline.sql",
+            "20260903090000_public_surface_session_idle_timeout.sql",
+            "20260903100000_commercial_entitlement_reactivation.sql",
+            "20260904120000_aiya_workspace_tenant_fallback.sql",
+            "20260904180000_public_surface_faz8_session_service_role.sql",
+            "20260904181000_public_surface_faz8_admin_bulk_invite.sql",
+            "20260904182000_public_surface_faz8_onboarding_claim_pending.sql",
+            "20260907181000_hosted_shell_schema_reconciliation.sql"
+          ]
+        }
+      }
+    },
+    {
+      "id": "identity_contracts_reconciled",
+      "description": "health, client, service worker and schema/deploy contracts carry release identity fields",
+      "pass": true,
+      "details": {
+        "pass": true,
+        "fields": [
+          "releaseId",
+          "commitSha",
+          "migrationFingerprint",
+          "compatibilityVersion"
+        ],
+        "sources": [
+          {
+            "source": "app/src/app/api/health/release/route.ts",
+            "exists": true,
+            "bytes": 802,
+            "sha256": "87cbd903436a45883211d0d3340191f4969369d2e9a57a97e98f4befa57318a0"
+          },
+          {
+            "source": "app/src/lib/release-identity.ts",
+            "exists": true,
+            "bytes": 3904,
+            "sha256": "7c3993b494d2f9a4757dd844b88fcd66c70cf89e71697caae5fb4c8179d458e4"
+          },
+          {
+            "source": "app/public/sw.js",
+            "exists": true,
+            "bytes": 4016,
+            "sha256": "c0850d9ec5f6fa20264c1f7e284df2829513a7abc0f4c88c85755e2a1c1237ea"
+          },
+          {
+            "source": "tools/hosted-sandbox/deploy/lib/supabase-schema-contract.mjs",
+            "exists": true,
+            "bytes": 7431,
+            "sha256": "ab371587b7dc4cf6d657d878fd2ad8c154b6b5a909829e6dc01316fbe5271dfa"
+          },
+          {
+            "source": "tools/hosted-sandbox/deploy/deploy-hosted-release.mjs",
+            "exists": true,
+            "bytes": 12854,
+            "sha256": "df718b96bf155d5ea3f942cc95ed8836593af2dc918a27cc94c2ac7aca035cba"
+          },
+          {
+            "source": "app/scripts/build-release-artifact.mjs",
+            "exists": true,
+            "bytes": 7518,
+            "sha256": "367c494e857ab56c545a716b52f05e05cd045e4fbdefbb8499559d9548e45520"
+          }
+        ]
+      }
+    },
+    {
+      "id": "workflow_release_binding",
+      "description": "migration and deploy workflows bind commit, fingerprint and artifact",
+      "pass": true,
+      "details": {
+        "pass": true,
+        "migration": {
+          "commitInput": true,
+          "fingerprintArtifact": true
+        },
+        "deploy": {
+          "commitInput": true,
+          "fingerprintInput": true,
+          "artifactRequired": true
+        }
+      }
+    },
+    {
+      "id": "production_decision_preserved",
+      "description": "authoritative production decision remains NO-GO with owner actions and no live actions",
+      "pass": true,
+      "details": {
+        "exists": true,
+        "source": {
+          "source": "docs/PRODUCTION_READINESS_STAGE_1_FINAL_DECISION.json",
+          "exists": true,
+          "bytes": 1544,
+          "sha256": "78c6576855d954cd17042dd050403c7552dad435ed798391dcf5ddf6701e4daf"
+        },
+        "productionDecision": "NO-GO",
+        "ownerActionsRequired": [
+          "meta_whatsapp_business",
+          "zai_glm_ai_provider",
+          "production_secrets",
+          "production_supabase_and_migrations",
+          "manual_transfer_operations",
+          "incident_monitoring_and_rollback",
+          "explicit_production_release_approval"
+        ],
+        "liveActionsExecuted": [],
+        "mustNotClaim": [
+          "production GO",
+          "iPhone Safari/PWA PASS",
+          "live provider or channel execution",
+          "production schema rollout",
+          "real client health-data processing"
+        ],
+        "codexActionsAfterOwnerCompletion": [
+          "apply_remote_migrations",
+          "configure_production_env",
+          "deploy_verified_release",
+          "run_production_smoke_checks",
+          "enable_real_webhooks_and_workers",
+          "write_final_go_no_go_report"
+        ]
+      }
+    },
+    {
+      "id": "target_probe_not_run",
+      "description": "target probe is explicitly NOT_RUN_BY_POLICY and no egress is attempted",
+      "pass": true,
+      "details": {
+        "status": "NOT_RUN_BY_POLICY",
+        "httpCalls": 0,
+        "supabaseCalls": 0,
+        "sshCalls": 0,
+        "providerCalls": 0,
+        "channelCalls": 0,
+        "reason": "local_phase_boundary"
+      }
+    },
+    {
+      "id": "source_and_mutation_inventory",
+      "description": "working-tree state and effective mutation flags are recorded without secret values",
+      "pass": true,
+      "details": {
+        "sourceControl": {
+          "clean": false,
+          "changedPathCount": 115,
+          "changedPaths": [
+            ".github/workflows/hosted-sandbox-deploy.yml",
+            ".github/workflows/hosted-sandbox-product-ci.yml",
+            "app/package.json",
+            "app/tests/request-id-error-propagation.test.ts",
+            "tools/hosted-sandbox/deploy/hosted-sandbox-deploy.test.mjs",
+            "tools/hosted-sandbox/deploy/lib/supabase-schema-contract.mjs",
+            "tools/hosted-sandbox/deploy/workflow-templates/hosted-sandbox-deploy.yml",
+            "tools/hosted-sandbox/deploy/workflow-templates/hosted-sandbox-product-ci.yml",
+            "docs/system-audit/phase-1/baseline.json",
+            "docs/system-audit/phase-1/coverage-matrix.json",
+            "docs/system-audit/phase-1/environment-map.json",
+            "docs/system-audit/phase-1/phase-1-closure.json",
+            "docs/system-audit/phase-1/phase-entry.json",
+            "docs/system-audit/phase-1/plan-manifest.json",
+            "docs/system-audit/phase-1/stages/stage-1.1.json",
+            "docs/system-audit/phase-1/stages/stage-1.2.json",
+            "docs/system-audit/phase-1/stages/stage-1.3.json",
+            "docs/system-audit/phase-1/stages/stage-1.4.json",
+            "docs/system-audit/phase-1/system-inventory.json",
+            "docs/system-audit/phase-2/catalog-reconciliation.json",
+            "docs/system-audit/phase-2/isolated-reconciliation.json",
+            "docs/system-audit/phase-2/phase-2-closure.json",
+            "docs/system-audit/phase-2/phase-entry.json",
+            "docs/system-audit/phase-2/plan-manifest.json",
+            "docs/system-audit/phase-2/schema-contract-matrix.json",
+            "docs/system-audit/phase-2/schema-diff-classification.json",
+            "docs/system-audit/phase-2/stages/stage-2.1.json",
+            "docs/system-audit/phase-2/stages/stage-2.2.json",
+            "docs/system-audit/phase-2/stages/stage-2.3.json",
+            "docs/system-audit/phase-2/stages/stage-2.4.json",
+            "docs/system-audit/phase-3/api-contract-matrix.json",
+            "docs/system-audit/phase-3/backend-security-closure.json",
+            "docs/system-audit/phase-3/identity-contract-matrix.json",
+            "docs/system-audit/phase-3/phase-3-closure.json",
+            "docs/system-audit/phase-3/plan-manifest.json",
+            "docs/system-audit/phase-3/stages/stage-3.1.json",
+            "docs/system-audit/phase-3/stages/stage-3.2.json",
+            "docs/system-audit/phase-3/stages/stage-3.3.json",
+            "docs/system-audit/phase-3/stages/stage-3.4.json",
+            "docs/system-audit/phase-3/tenant-security-matrix.json",
+            "docs/system-audit/phase-4/ai-contract-matrix.json",
+            "docs/system-audit/phase-4/media-contract-matrix.json",
+            "docs/system-audit/phase-4/messaging-contract-matrix.json",
+            "docs/system-audit/phase-4/phase-4-closure.json",
+            "docs/system-audit/phase-4/plan-manifest.json",
+            "docs/system-audit/phase-4/stages/stage-4.1.json",
+            "docs/system-audit/phase-4/stages/stage-4.2.json",
+            "docs/system-audit/phase-4/stages/stage-4.3.json",
+            "docs/system-audit/phase-4/stages/stage-4.4.json",
+            "docs/system-audit/phase-4/stages/stage-4.5.json",
+            "docs/system-audit/phase-4/worker-contract-matrix.json",
+            "docs/system-audit/phase-4/worker-messaging-ai-media-closure.json",
+            "docs/system-audit/phase-5/auth-user-flow-matrix.json",
+            "docs/system-audit/phase-5/authenticated-shell-matrix.json",
+            "docs/system-audit/phase-5/frontend-backend-contract-matrix.json",
+            "docs/system-audit/phase-5/frontend-backend-user-flow-closure.json",
+            "docs/system-audit/phase-5/phase-5-closure.json",
+            "docs/system-audit/phase-5/plan-manifest.json",
+            "docs/system-audit/phase-5/real-backend-browser-smoke.json",
+            "docs/system-audit/phase-5/stages/stage-5.1.json",
+            "docs/system-audit/phase-5/stages/stage-5.2.json",
+            "docs/system-audit/phase-5/stages/stage-5.3.json",
+            "docs/system-audit/phase-5/stages/stage-5.4.json",
+            "docs/system-audit/phase-5/stages/stage-5.5.json",
+            "docs/system-audit/phase-6/failure-injection-matrix.json",
+            "docs/system-audit/phase-6/load-capacity-matrix.json",
+            "docs/system-audit/phase-6/observability-contract-matrix.json",
+            "docs/system-audit/phase-6/phase-6-closure-evidence.json",
+            "docs/system-audit/phase-6/phase-6-closure.json",
+            "docs/system-audit/phase-6/plan-manifest.json",
+            "docs/system-audit/phase-6/recovery-operations-matrix.json",
+            "docs/system-audit/phase-6/stages/stage-6.1.json",
+            "docs/system-audit/phase-6/stages/stage-6.2.json",
+            "docs/system-audit/phase-6/stages/stage-6.3.json",
+            "docs/system-audit/phase-6/stages/stage-6.4.json",
+            "docs/system-audit/phase-6/stages/stage-6.5.json",
+            "docs/system-audit/phase-7/ci-release-gate-matrix.json",
+            "docs/system-audit/phase-7/plan-manifest.json",
+            "docs/system-audit/phase-7/release-gate-matrix.json",
+            "docs/system-audit/phase-7/stages/stage-7.1.json",
+            "docs/system-audit/phase-7/stages/stage-7.2.json",
+            "docs/system-audit/phase-7/stages/stage-7.3.json",
+            "docs/system-audit/phase-7/target-environment-reconciliation-matrix.json",
+            "tools/system-audit/cli.mjs",
+            "tools/system-audit/lib/audit-contract.mjs",
+            "tools/system-audit/lib/audit-plan.mjs",
+            "tools/system-audit/lib/environment.mjs",
+            "tools/system-audit/lib/git.mjs",
+            "tools/system-audit/lib/inventory.mjs",
+            "tools/system-audit/phase-2/cli.mjs",
+            "tools/system-audit/phase-2/phase-2-contract.mjs",
+            "tools/system-audit/phase-2/phase-2-plan.mjs",
+            "tools/system-audit/phase-2/phase-2.test.mjs",
+            "tools/system-audit/phase-3/cli.mjs",
+            "tools/system-audit/phase-3/phase-3-contract.mjs",
+            "tools/system-audit/phase-3/phase-3-plan.mjs",
+            "tools/system-audit/phase-3/phase-3.test.mjs",
+            "tools/system-audit/phase-4/cli.mjs",
+            "tools/system-audit/phase-4/phase-4-contract.mjs",
+            "tools/system-audit/phase-4/phase-4-plan.mjs",
+            "tools/system-audit/phase-4/phase-4.test.mjs",
+            "tools/system-audit/phase-5/cli.mjs",
+            "tools/system-audit/phase-5/phase-5-contract.mjs",
+            "tools/system-audit/phase-5/phase-5-plan.mjs",
+            "tools/system-audit/phase-5/phase-5.test.mjs",
+            "tools/system-audit/phase-5/real-backend-smoke.mjs",
+            "tools/system-audit/phase-6/cli.mjs",
+            "tools/system-audit/phase-6/phase-6-contract.mjs",
+            "tools/system-audit/phase-6/phase-6-plan.mjs",
+            "tools/system-audit/phase-6/phase-6.test.mjs",
+            "tools/system-audit/phase-7/cli.mjs",
+            "tools/system-audit/phase-7/phase-7-contract.mjs",
+            "tools/system-audit/phase-7/phase-7-plan.mjs",
+            "tools/system-audit/phase-7/phase-7.test.mjs",
+            "tools/system-audit/system-audit.test.mjs"
+          ]
+        },
+        "mutationPolicy": {
+          "MANU_PRODUCTION_PILOT_STARTED": {
+            "enabled": false
+          },
+          "MANU_ENABLE_PROVIDER_EGRESS": {
+            "enabled": false
+          },
+          "MANU_ENABLE_CHANNEL_EGRESS": {
+            "enabled": false
+          },
+          "MANU_ENABLE_LIVE_BILLING": {
+            "enabled": false
+          },
+          "MANU_ENABLE_PRODUCTION_SCHEMA": {
+            "enabled": false
+          },
+          "MANU_ALLOW_REAL_ZAI": {
+            "enabled": false
+          },
+          "MANU_WHATSAPP_REAL_WEBHOOK_ENABLED": {
+            "enabled": false
+          },
+          "MANU_MEDIA_REAL_PROVIDER_ENABLED": {
+            "enabled": false
+          },
+          "MANU_ALLOW_REMOTE_RLS_TESTS": {
+            "enabled": false
+          },
+          "MANU_HOSTED_SANDBOX_BACKUP_APPROVED": {
+            "enabled": false
+          },
+          "MANU_HOSTED_SANDBOX_RESTORE_APPROVED": {
+            "enabled": false
+          },
+          "MANU_HOSTED_ACTIVATION_APPROVED": {
+            "enabled": false
+          }
+        }
+      }
+    },
+    {
+      "id": "phase7_contract_verification",
+      "description": "Phase 7 contract test passes after reconciliation",
+      "pass": true,
+      "details": {
+        "pass": true,
+        "tests": [
+          {
+            "name": "phase-7-contract",
+            "command": "C:\\Program Files\\nodejs\\node.exe --test tools/system-audit/phase-7/phase-7.test.mjs",
+            "status": "PASS",
+            "exitCode": 0,
+            "timedOut": false,
+            "durationMs": 748,
+            "outputTail": null
+          }
+        ]
+      }
+    }
+  ],
+  "sourceFiles": [
+    {
+      "source": "app/scripts/lib/release-identity.mjs",
+      "exists": true,
+      "bytes": 8130,
+      "sha256": "b50b0ac5c9b70409babbb6f133cc2662388b0e4a688b0764809aadc7f1b589b7"
+    },
+    {
+      "source": "app/src/lib/release-identity.ts",
+      "exists": true,
+      "bytes": 3904,
+      "sha256": "7c3993b494d2f9a4757dd844b88fcd66c70cf89e71697caae5fb4c8179d458e4"
+    },
+    {
+      "source": "app/src/app/api/health/release/route.ts",
+      "exists": true,
+      "bytes": 802,
+      "sha256": "87cbd903436a45883211d0d3340191f4969369d2e9a57a97e98f4befa57318a0"
+    },
+    {
+      "source": "tools/hosted-sandbox/deploy/lib/supabase-schema-contract.mjs",
+      "exists": true,
+      "bytes": 7431,
+      "sha256": "ab371587b7dc4cf6d657d878fd2ad8c154b6b5a909829e6dc01316fbe5271dfa"
+    },
+    {
+      "source": "tools/hosted-sandbox/deploy/deploy-hosted-release.mjs",
+      "exists": true,
+      "bytes": 12854,
+      "sha256": "df718b96bf155d5ea3f942cc95ed8836593af2dc918a27cc94c2ac7aca035cba"
+    },
+    {
+      "source": "tools/system-audit/lib/environment.mjs",
+      "exists": true,
+      "bytes": 4480,
+      "sha256": "9c1c8196acba4ca08ef7e79203e33e069a0c8fd7ebf89affb760a9c6ef286ab3"
+    },
+    {
+      "source": "docs/PRODUCTION_READINESS_STAGE_1_FINAL_DECISION.json",
+      "exists": true,
+      "bytes": 1544,
+      "sha256": "78c6576855d954cd17042dd050403c7552dad435ed798391dcf5ddf6701e4daf"
+    }
+  ],
+  "blockers": [],
+  "matrixDigest": "5904c2e6cf78edd6eff833695eba38f4647effb4b72cf93a281ad50cd5123c36",
+  "testResults": [
+    {
+      "name": "phase-7-contract",
+      "command": "C:\\Program Files\\nodejs\\node.exe --test tools/system-audit/phase-7/phase-7.test.mjs",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "durationMs": 748,
+      "outputTail": null
+    }
+  ],
+  "operationResults": [
+    {
+      "order": 1,
+      "description": "Read and digest 7.1 evidence before accessing any target reconciliation source.",
+      "id": "ci_release_gate_verified",
+      "status": "PASS",
+      "details": {
+        "status": "PASS",
+        "matrixDigest": "aa1e48ecccba4da7b059d2fb4b4375b62261e08343075bc3376875fcb63751f9"
+      }
+    },
+    {
+      "order": 2,
+      "description": "Derive the current release identity and migration fingerprint from HEAD and the sorted SQL migration set.",
+      "id": "release_identity_derived",
+      "status": "PASS",
+      "details": {
+        "identity": {
+          "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+          "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+          "builtAt": "2026-09-07T16:50:37.000Z",
+          "environment": "hosted-sandbox",
+          "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25",
+          "compatibilityVersion": "0.0.0+1c97560"
+        },
+        "migrations": {
+          "directory": "app/supabase/migrations",
+          "count": 125,
+          "fingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25",
+          "files": [
+            "20260522000000_initial_manu_ai_schema.sql",
+            "20260523000000_app_state_schema_fixes.sql",
+            "20260524000000_restore_auxiliary_rls_policies.sql",
+            "20260525000000_risk_assessment_message_uniqueness.sql",
+            "20260525010000_add_opted_out_permission_state.sql",
+            "20260525020000_ai_provider_decision_metadata.sql",
+            "20260525030000_notifications.sql",
+            "20260525040000_client_assignments.sql",
+            "20260525050000_data_requests.sql",
+            "20260530000000_phase_23_context_send_safety.sql",
+            "20260530010000_phase_24_25_voice_forms.sql",
+            "20260530020000_phase_26_internal_copilot.sql",
+            "20260530030000_phase_27_client_context_updates.sql",
+            "20260530040000_ai_security_remediation.sql",
+            "20260531010000_phase_43_multilingual_language_support.sql",
+            "20260601000000_phase_44_red_risk_reactivation_lock.sql",
+            "20260601010000_phase_45_client_removal_lifecycle.sql",
+            "20260601020000_phase_46_inbound_quarantine.sql",
+            "20260602030000_phase_50_production_hardening_foundation.sql",
+            "20260603000000_phase_57_yellow_risk_hold.sql",
+            "20260604000000_phase_61_scope_corpus.sql",
+            "20260608000000_phase_76_dietitian_chat_form_update_proposals.sql",
+            "20260608120000_phase_76n_food_rule_lifecycle_rpc.sql",
+            "20260610120000_phase_77e_client_food_rule_profile.sql",
+            "20260610130000_phase_77f_client_menu_plan.sql",
+            "20260622130000_phase_77ae_channel_delivery_ledger.sql",
+            "20260701120000_phase_83b_commercial_entitlement_model.sql",
+            "20260701130000_phase_83c_commercial_checkout_session.sql",
+            "20260701140000_phase_83f_commercial_admin_audit.sql",
+            "20260702120000_phase_84c_commercial_leads.sql",
+            "20260702140000_phase_84e_commercial_onboarding_events.sql",
+            "20260703120000_phase_84g_commercial_admin_audit_extension.sql",
+            "20260710120000_phase_85_if_b_trust_root_provenance.sql",
+            "20260710140000_phase_85_if_d_external_human_control_reason.sql",
+            "20260710150000_phase_85_if_e_conversation_message_search.sql",
+            "20260710160000_phase_85_if_f_conversation_revision.sql",
+            "20260710170000_phase_85_if_g_context_intake.sql",
+            "20260710180000_phase_85_if_r1_persistence_tenant_integrity.sql",
+            "20260710190000_phase_85_if_r2_search_return_type.sql",
+            "20260710191000_phase_85_if_r2_structured_update_notifications.sql",
+            "20260710200000_phase_85_if_remediation_atomic_activation.sql",
+            "20260710210000_phase_85_if_remediation_client_safe_context_intake.sql",
+            "20260710220000_phase_85_if_remediation_operational_access_boundaries.sql",
+            "20260710230000_phase_85_if_remediation_lifecycle_reclosure.sql",
+            "20260711090000_phase_85_stage_4b_alerts_notifications.sql",
+            "20260711200000_phase_85_if_postclosure_r1_message_tenant_integrity.sql",
+            "20260711201000_phase_85_if_postclosure_r2_structured_resolution.sql",
+            "20260711202000_phase_85_if_postclosure_r3_lock_order.sql",
+            "20260712120000_phase_85_stage_4b_postclosure_remediation.sql",
+            "20260712140000_phase_85_stage_4b2_receipt_persistence_rls.sql",
+            "20260712150000_phase_85_stage_4b2_read_api_projection_rpcs.sql",
+            "20260712160000_phase_85_stage_4b2_mutation_idempotency.sql",
+            "20260712170000_phase_85_stage_4b2_r2_bounded_reads_rls.sql",
+            "20260712180000_phase_85_stage_4b2_r3_atomic_mutations.sql",
+            "20260713024000_phase_85_stage_4b2_rls_local_reclosure.sql",
+            "20260713030000_phase_85_stage_4b2_security_advisory_rls_hardening.sql",
+            "20260713120000_phase_85_stage_4b3_media_foundation.sql",
+            "20260713130000_phase_85_stage_4b3_atomic_bundle_decisions.sql",
+            "20260713140000_phase_85_stage_4b3_bounded_media_reads.sql",
+            "20260713150000_phase_85_stage_4b3_media_lifecycle.sql",
+            "20260714100000_phase_85_stage_4b3_remediation_contract_rls.sql",
+            "20260714110000_phase_85_stage_4b3_durable_media_queue.sql",
+            "20260714120000_phase_85_stage_4b3_canonical_ingress_v2.sql",
+            "20260714130000_phase_85_stage_4b3_bundle_correlation_v2.sql",
+            "20260714150000_phase_85_stage_4b3_atomic_decision_correction.sql",
+            "20260714160000_phase_85_stage_4b3_lifecycle_saga.sql",
+            "20260714170000_phase_85_stage_4b4_audio_foundation.sql",
+            "20260714180000_phase_85_stage_4b4_audio_queue.sql",
+            "20260714190000_phase_85_stage_4b4_canonical_ingress_v3.sql",
+            "20260714195000_phase_85_stage_4b4_audio_lifecycle_signature_transition.sql",
+            "20260714200000_phase_85_stage_4b4_audio_lifecycle_bounded_reads.sql",
+            "20260714210000_phase_85_stage_4b4_atomic_transcription_correction.sql",
+            "20260714220000_phase_85_stage_4b4_bounded_audio_reads.sql",
+            "20260715100000_phase_85_stage_4b4_remediation_contracts.sql",
+            "20260715110000_phase_85_stage_4b4_durable_pipeline.sql",
+            "20260715120000_phase_85_stage_4b4_fail_closed_quality_gate.sql",
+            "20260715130000_phase_85_stage_4b4_transcript_bridge_pipeline.sql",
+            "20260715140000_phase_85_stage_4b4_correction_lineage.sql",
+            "20260715150000_phase_85_stage_4b4_bounded_reads_v2.sql",
+            "20260715160000_phase_85_stage_4b4_lifecycle_workers.sql",
+            "20260722100000_phase_85_stage_4c_domain.sql",
+            "20260722110000_phase_85_stage_4c_rls.sql",
+            "20260722120000_phase_85_stage_4c_bounded_api_rpcs.sql",
+            "20260722130000_phase_85_stage_4c_run_queue_streaming.sql",
+            "20260722140000_phase_85_stage_4c_context_gateway.sql",
+            "20260722150000_phase_85_stage_4c_sources_answerability.sql",
+            "20260722160000_phase_85_stage_4c_multimodal.sql",
+            "20260722170000_phase_85_stage_4c_risk_draft_handoff.sql",
+            "20260722180000_phase_85_stage_4c_lifecycle.sql",
+            "20260725085000_phase_85_stage_4c_pgcrypto_search_path_compatibility.sql",
+            "20260725090000_phase_85_stage_4c_remediation_core_run_rpcs.sql",
+            "20260725100000_phase_85_stage_4c_remediation_context_safety.sql",
+            "20260725110000_phase_85_stage_4c_remediation_multimodal_runtime.sql",
+            "20260725120000_phase_85_stage_4c_remediation_risk_workflow.sql",
+            "20260725130000_phase_85_stage_4c_remediation_lifecycle_export.sql",
+            "20260725140000_phase_85_stage_4c_remediation_event_stream.sql",
+            "20260725150000_phase_85_stage_4c_remediation_scale_indexes.sql",
+            "20260725155000_phase_85_stage_4c_remediation_rls_helper_grants.sql",
+            "20260725160000_phase_85_stage_4c_remediation_db_lint_reclosure.sql",
+            "20260725161000_phase_85_stage_4c_remediation_scale_fixture_reclosure.sql",
+            "20260725162000_phase_85_stage_4c_remediation_scale_explain_reclosure.sql",
+            "20260725163000_phase_85_stage_4c_operational_tables_rls_reclosure.sql",
+            "20260728120000_phase_85_stage_4d_own_profile.sql",
+            "20260728130000_phase_85_stage_4d_account_security_audit.sql",
+            "20260728170000_phase_85_stage_4d_remediation_account_foundation.sql",
+            "20260728180000_phase_85_stage_4d_remediation_security_billing_pwa.sql",
+            "20260728190000_phase_85_stage_4d_pre_faz3_rls_reclosure.sql",
+            "20260802090000_phase_85_stage_5_shell_foundation.sql",
+            "20260802120000_phase_85_stage_5_shell_api_foundation.sql",
+            "20260803090000_phase_85_stage_5_foundation_remediation.sql",
+            "20260819120000_phase_85_stage_6_r1_mutation_idempotency.sql",
+            "20260825120000_hosted_sandbox_faz3_security_rls_backup.sql",
+            "20260826120000_hosted_sandbox_demo_cleanup_rpc.sql",
+            "20260826130000_rls_default_privileges_hardening.sql",
+            "20260830180000_production_readiness_stage_1_phase_2_manual_entitlements.sql",
+            "20260830190000_production_readiness_stage_1_phase_3_whatsapp_real_contracts.sql",
+            "20260830200000_production_readiness_stage_1_phase_4_ai_media_security.sql",
+            "20260831090000_zai_glm_provider_rebaseline.sql",
+            "20260903090000_public_surface_session_idle_timeout.sql",
+            "20260903100000_commercial_entitlement_reactivation.sql",
+            "20260904120000_aiya_workspace_tenant_fallback.sql",
+            "20260904180000_public_surface_faz8_session_service_role.sql",
+            "20260904181000_public_surface_faz8_admin_bulk_invite.sql",
+            "20260904182000_public_surface_faz8_onboarding_claim_pending.sql",
+            "20260907181000_hosted_shell_schema_reconciliation.sql"
+          ]
+        }
+      }
+    },
+    {
+      "order": 3,
+      "description": "Verify the release health route, service-worker identity contract and migration/schema probe definitions expose the same identity fields.",
+      "id": "identity_contracts_reconciled",
+      "status": "PASS",
+      "details": {
+        "pass": true,
+        "fields": [
+          "releaseId",
+          "commitSha",
+          "migrationFingerprint",
+          "compatibilityVersion"
+        ],
+        "sources": [
+          {
+            "source": "app/src/app/api/health/release/route.ts",
+            "exists": true,
+            "bytes": 802,
+            "sha256": "87cbd903436a45883211d0d3340191f4969369d2e9a57a97e98f4befa57318a0"
+          },
+          {
+            "source": "app/src/lib/release-identity.ts",
+            "exists": true,
+            "bytes": 3904,
+            "sha256": "7c3993b494d2f9a4757dd844b88fcd66c70cf89e71697caae5fb4c8179d458e4"
+          },
+          {
+            "source": "app/public/sw.js",
+            "exists": true,
+            "bytes": 4016,
+            "sha256": "c0850d9ec5f6fa20264c1f7e284df2829513a7abc0f4c88c85755e2a1c1237ea"
+          },
+          {
+            "source": "tools/hosted-sandbox/deploy/lib/supabase-schema-contract.mjs",
+            "exists": true,
+            "bytes": 7431,
+            "sha256": "ab371587b7dc4cf6d657d878fd2ad8c154b6b5a909829e6dc01316fbe5271dfa"
+          },
+          {
+            "source": "tools/hosted-sandbox/deploy/deploy-hosted-release.mjs",
+            "exists": true,
+            "bytes": 12854,
+            "sha256": "df718b96bf155d5ea3f942cc95ed8836593af2dc918a27cc94c2ac7aca035cba"
+          },
+          {
+            "source": "app/scripts/build-release-artifact.mjs",
+            "exists": true,
+            "bytes": 7518,
+            "sha256": "367c494e857ab56c545a716b52f05e05cd045e4fbdefbb8499559d9548e45520"
+          }
+        ]
+      }
+    },
+    {
+      "order": 4,
+      "description": "Verify the hosted migration and deploy workflows carry the fingerprint, commit and artifact gates required to bind a target to one release.",
+      "id": "workflow_release_binding",
+      "status": "PASS",
+      "details": {
+        "pass": true,
+        "migration": {
+          "commitInput": true,
+          "fingerprintArtifact": true
+        },
+        "deploy": {
+          "commitInput": true,
+          "fingerprintInput": true,
+          "artifactRequired": true
+        }
+      }
+    },
+    {
+      "order": 5,
+      "description": "Read the production readiness decision and record owner actions, liveActionsExecuted, productionDecision and mustNotClaim without modifying the decision.",
+      "id": "production_decision_preserved",
+      "status": "PASS",
+      "details": {
+        "exists": true,
+        "source": {
+          "source": "docs/PRODUCTION_READINESS_STAGE_1_FINAL_DECISION.json",
+          "exists": true,
+          "bytes": 1544,
+          "sha256": "78c6576855d954cd17042dd050403c7552dad435ed798391dcf5ddf6701e4daf"
+        },
+        "productionDecision": "NO-GO",
+        "ownerActionsRequired": [
+          "meta_whatsapp_business",
+          "zai_glm_ai_provider",
+          "production_secrets",
+          "production_supabase_and_migrations",
+          "manual_transfer_operations",
+          "incident_monitoring_and_rollback",
+          "explicit_production_release_approval"
+        ],
+        "liveActionsExecuted": [],
+        "mustNotClaim": [
+          "production GO",
+          "iPhone Safari/PWA PASS",
+          "live provider or channel execution",
+          "production schema rollout",
+          "real client health-data processing"
+        ],
+        "codexActionsAfterOwnerCompletion": [
+          "apply_remote_migrations",
+          "configure_production_env",
+          "deploy_verified_release",
+          "run_production_smoke_checks",
+          "enable_real_webhooks_and_workers",
+          "write_final_go_no_go_report"
+        ]
+      }
+    },
+    {
+      "order": 6,
+      "description": "Record target URLs and environment profile metadata without making HTTP, Supabase, SSH, provider or channel calls; set targetProbe to NOT_RUN_BY_POLICY.",
+      "id": "target_probe_not_run",
+      "status": "PASS",
+      "details": {
+        "status": "NOT_RUN_BY_POLICY",
+        "httpCalls": 0,
+        "supabaseCalls": 0,
+        "sshCalls": 0,
+        "providerCalls": 0,
+        "channelCalls": 0,
+        "reason": "local_phase_boundary"
+      }
+    },
+    {
+      "order": 7,
+      "description": "Record current source-tree cleanliness and enabled mutation flags; redact all values and classify unresolved release blockers.",
+      "id": "source_and_mutation_inventory",
+      "status": "PASS",
+      "details": {
+        "sourceControl": {
+          "clean": false,
+          "changedPathCount": 115,
+          "changedPaths": [
+            ".github/workflows/hosted-sandbox-deploy.yml",
+            ".github/workflows/hosted-sandbox-product-ci.yml",
+            "app/package.json",
+            "app/tests/request-id-error-propagation.test.ts",
+            "tools/hosted-sandbox/deploy/hosted-sandbox-deploy.test.mjs",
+            "tools/hosted-sandbox/deploy/lib/supabase-schema-contract.mjs",
+            "tools/hosted-sandbox/deploy/workflow-templates/hosted-sandbox-deploy.yml",
+            "tools/hosted-sandbox/deploy/workflow-templates/hosted-sandbox-product-ci.yml",
+            "docs/system-audit/phase-1/baseline.json",
+            "docs/system-audit/phase-1/coverage-matrix.json",
+            "docs/system-audit/phase-1/environment-map.json",
+            "docs/system-audit/phase-1/phase-1-closure.json",
+            "docs/system-audit/phase-1/phase-entry.json",
+            "docs/system-audit/phase-1/plan-manifest.json",
+            "docs/system-audit/phase-1/stages/stage-1.1.json",
+            "docs/system-audit/phase-1/stages/stage-1.2.json",
+            "docs/system-audit/phase-1/stages/stage-1.3.json",
+            "docs/system-audit/phase-1/stages/stage-1.4.json",
+            "docs/system-audit/phase-1/system-inventory.json",
+            "docs/system-audit/phase-2/catalog-reconciliation.json",
+            "docs/system-audit/phase-2/isolated-reconciliation.json",
+            "docs/system-audit/phase-2/phase-2-closure.json",
+            "docs/system-audit/phase-2/phase-entry.json",
+            "docs/system-audit/phase-2/plan-manifest.json",
+            "docs/system-audit/phase-2/schema-contract-matrix.json",
+            "docs/system-audit/phase-2/schema-diff-classification.json",
+            "docs/system-audit/phase-2/stages/stage-2.1.json",
+            "docs/system-audit/phase-2/stages/stage-2.2.json",
+            "docs/system-audit/phase-2/stages/stage-2.3.json",
+            "docs/system-audit/phase-2/stages/stage-2.4.json",
+            "docs/system-audit/phase-3/api-contract-matrix.json",
+            "docs/system-audit/phase-3/backend-security-closure.json",
+            "docs/system-audit/phase-3/identity-contract-matrix.json",
+            "docs/system-audit/phase-3/phase-3-closure.json",
+            "docs/system-audit/phase-3/plan-manifest.json",
+            "docs/system-audit/phase-3/stages/stage-3.1.json",
+            "docs/system-audit/phase-3/stages/stage-3.2.json",
+            "docs/system-audit/phase-3/stages/stage-3.3.json",
+            "docs/system-audit/phase-3/stages/stage-3.4.json",
+            "docs/system-audit/phase-3/tenant-security-matrix.json",
+            "docs/system-audit/phase-4/ai-contract-matrix.json",
+            "docs/system-audit/phase-4/media-contract-matrix.json",
+            "docs/system-audit/phase-4/messaging-contract-matrix.json",
+            "docs/system-audit/phase-4/phase-4-closure.json",
+            "docs/system-audit/phase-4/plan-manifest.json",
+            "docs/system-audit/phase-4/stages/stage-4.1.json",
+            "docs/system-audit/phase-4/stages/stage-4.2.json",
+            "docs/system-audit/phase-4/stages/stage-4.3.json",
+            "docs/system-audit/phase-4/stages/stage-4.4.json",
+            "docs/system-audit/phase-4/stages/stage-4.5.json",
+            "docs/system-audit/phase-4/worker-contract-matrix.json",
+            "docs/system-audit/phase-4/worker-messaging-ai-media-closure.json",
+            "docs/system-audit/phase-5/auth-user-flow-matrix.json",
+            "docs/system-audit/phase-5/authenticated-shell-matrix.json",
+            "docs/system-audit/phase-5/frontend-backend-contract-matrix.json",
+            "docs/system-audit/phase-5/frontend-backend-user-flow-closure.json",
+            "docs/system-audit/phase-5/phase-5-closure.json",
+            "docs/system-audit/phase-5/plan-manifest.json",
+            "docs/system-audit/phase-5/real-backend-browser-smoke.json",
+            "docs/system-audit/phase-5/stages/stage-5.1.json",
+            "docs/system-audit/phase-5/stages/stage-5.2.json",
+            "docs/system-audit/phase-5/stages/stage-5.3.json",
+            "docs/system-audit/phase-5/stages/stage-5.4.json",
+            "docs/system-audit/phase-5/stages/stage-5.5.json",
+            "docs/system-audit/phase-6/failure-injection-matrix.json",
+            "docs/system-audit/phase-6/load-capacity-matrix.json",
+            "docs/system-audit/phase-6/observability-contract-matrix.json",
+            "docs/system-audit/phase-6/phase-6-closure-evidence.json",
+            "docs/system-audit/phase-6/phase-6-closure.json",
+            "docs/system-audit/phase-6/plan-manifest.json",
+            "docs/system-audit/phase-6/recovery-operations-matrix.json",
+            "docs/system-audit/phase-6/stages/stage-6.1.json",
+            "docs/system-audit/phase-6/stages/stage-6.2.json",
+            "docs/system-audit/phase-6/stages/stage-6.3.json",
+            "docs/system-audit/phase-6/stages/stage-6.4.json",
+            "docs/system-audit/phase-6/stages/stage-6.5.json",
+            "docs/system-audit/phase-7/ci-release-gate-matrix.json",
+            "docs/system-audit/phase-7/plan-manifest.json",
+            "docs/system-audit/phase-7/release-gate-matrix.json",
+            "docs/system-audit/phase-7/stages/stage-7.1.json",
+            "docs/system-audit/phase-7/stages/stage-7.2.json",
+            "docs/system-audit/phase-7/stages/stage-7.3.json",
+            "docs/system-audit/phase-7/target-environment-reconciliation-matrix.json",
+            "tools/system-audit/cli.mjs",
+            "tools/system-audit/lib/audit-contract.mjs",
+            "tools/system-audit/lib/audit-plan.mjs",
+            "tools/system-audit/lib/environment.mjs",
+            "tools/system-audit/lib/git.mjs",
+            "tools/system-audit/lib/inventory.mjs",
+            "tools/system-audit/phase-2/cli.mjs",
+            "tools/system-audit/phase-2/phase-2-contract.mjs",
+            "tools/system-audit/phase-2/phase-2-plan.mjs",
+            "tools/system-audit/phase-2/phase-2.test.mjs",
+            "tools/system-audit/phase-3/cli.mjs",
+            "tools/system-audit/phase-3/phase-3-contract.mjs",
+            "tools/system-audit/phase-3/phase-3-plan.mjs",
+            "tools/system-audit/phase-3/phase-3.test.mjs",
+            "tools/system-audit/phase-4/cli.mjs",
+            "tools/system-audit/phase-4/phase-4-contract.mjs",
+            "tools/system-audit/phase-4/phase-4-plan.mjs",
+            "tools/system-audit/phase-4/phase-4.test.mjs",
+            "tools/system-audit/phase-5/cli.mjs",
+            "tools/system-audit/phase-5/phase-5-contract.mjs",
+            "tools/system-audit/phase-5/phase-5-plan.mjs",
+            "tools/system-audit/phase-5/phase-5.test.mjs",
+            "tools/system-audit/phase-5/real-backend-smoke.mjs",
+            "tools/system-audit/phase-6/cli.mjs",
+            "tools/system-audit/phase-6/phase-6-contract.mjs",
+            "tools/system-audit/phase-6/phase-6-plan.mjs",
+            "tools/system-audit/phase-6/phase-6.test.mjs",
+            "tools/system-audit/phase-7/cli.mjs",
+            "tools/system-audit/phase-7/phase-7-contract.mjs",
+            "tools/system-audit/phase-7/phase-7-plan.mjs",
+            "tools/system-audit/phase-7/phase-7.test.mjs",
+            "tools/system-audit/system-audit.test.mjs"
+          ]
+        },
+        "mutationPolicy": {
+          "MANU_PRODUCTION_PILOT_STARTED": {
+            "enabled": false
+          },
+          "MANU_ENABLE_PROVIDER_EGRESS": {
+            "enabled": false
+          },
+          "MANU_ENABLE_CHANNEL_EGRESS": {
+            "enabled": false
+          },
+          "MANU_ENABLE_LIVE_BILLING": {
+            "enabled": false
+          },
+          "MANU_ENABLE_PRODUCTION_SCHEMA": {
+            "enabled": false
+          },
+          "MANU_ALLOW_REAL_ZAI": {
+            "enabled": false
+          },
+          "MANU_WHATSAPP_REAL_WEBHOOK_ENABLED": {
+            "enabled": false
+          },
+          "MANU_MEDIA_REAL_PROVIDER_ENABLED": {
+            "enabled": false
+          },
+          "MANU_ALLOW_REMOTE_RLS_TESTS": {
+            "enabled": false
+          },
+          "MANU_HOSTED_SANDBOX_BACKUP_APPROVED": {
+            "enabled": false
+          },
+          "MANU_HOSTED_SANDBOX_RESTORE_APPROVED": {
+            "enabled": false
+          },
+          "MANU_HOSTED_ACTIVATION_APPROVED": {
+            "enabled": false
+          }
+        }
+      }
+    },
+    {
+      "order": 8,
+      "description": "Run the Phase 7 contract test, then write the reconciliation matrix and eight ordered operation results with identity and source digests.",
+      "id": "phase7_contract_verification",
+      "status": "PASS",
+      "details": {
+        "pass": true,
+        "tests": [
+          {
+            "name": "phase-7-contract",
+            "command": "C:\\Program Files\\nodejs\\node.exe --test tools/system-audit/phase-7/phase-7.test.mjs",
+            "status": "PASS",
+            "exitCode": 0,
+            "timedOut": false,
+            "durationMs": 748,
+            "outputTail": null
+          }
+        ]
+      }
+    }
+  ]
+}

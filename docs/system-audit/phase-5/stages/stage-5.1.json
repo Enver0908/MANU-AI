@@ -1,0 +1,113 @@
+{
+  "schemaVersion": "aiya-system-audit-stage-evidence-v1",
+  "runId": "phase-5-5.1-20260908082657896",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-5",
+  "stageId": "5.1",
+  "title": "Frontend, backend ve API veri sozlesmelerini birebir eslestir",
+  "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+  "verifiedAt": "2026-09-08T08:26:57.896Z",
+  "status": "VERIFIED",
+  "operations": [
+    {
+      "order": 1,
+      "description": "Tum page.tsx ve route.ts dosyalarini say, public/protected/admin/onboarding/dashboard kategorilerine ayir ve source digestlerini kaydet.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-5/frontend-backend-contract-matrix.json"
+      ]
+    },
+    {
+      "order": 2,
+      "description": "Client component ve hook kaynaklarindan literal/template /api path kullanimlarini cikar; her path'i canonical route handler ile eslestir.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-5/frontend-backend-contract-matrix.json"
+      ]
+    },
+    {
+      "order": 3,
+      "description": "Eslestirilemeyen endpoint, route olmayan frontend call veya route olmayan client fetch kalirsa blocker olarak yaz.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-5/frontend-backend-contract-matrix.json"
+      ]
+    },
+    {
+      "order": 4,
+      "description": "App state, shell bootstrap, auth, admin, onboarding, messaging ve AI Chat response tiplerinin frontend tuketimiyle uyumunu marker scan ile kontrol et.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-5/frontend-backend-contract-matrix.json"
+      ]
+    },
+    {
+      "order": 5,
+      "description": "Tum protected mutation noktalarinda requestId, expectedRevision veya authenticated mutation header sozlesmesini kontrol et; istisnalari auth/form endpointleri olarak acikca siniflandir.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-5/frontend-backend-contract-matrix.json"
+      ]
+    },
+    {
+      "order": 6,
+      "description": "Client bundle'a service-role, admin client, private provider key veya server-only import sizmasini source scan ile reddet.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-5/frontend-backend-contract-matrix.json"
+      ]
+    },
+    {
+      "order": 7,
+      "description": "no-store, structured JSON error ve redirect/stream istisnalarini route bazinda kaydet.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-5/frontend-backend-contract-matrix.json"
+      ]
+    },
+    {
+      "order": 8,
+      "description": "Matrix ve operation evidence dosyasini source commit ile immutable digest'le yaz.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-5/frontend-backend-contract-matrix.json"
+      ]
+    }
+  ],
+  "outputFiles": [
+    {
+      "path": "docs/system-audit/phase-5/frontend-backend-contract-matrix.json",
+      "sha256": "10d8e3d3cacd5ead855bf6b3b0f4d21939c138af665f9e09c125e14f6938f90b"
+    }
+  ],
+  "verification": {
+    "rules": [
+      "page and API inventories are complete",
+      "all extracted frontend API paths map to route handlers",
+      "boundary and response checks have zero blockers",
+      "targeted contract suites PASS"
+    ],
+    "result": "PASS",
+    "outputDigest": "10d8e3d3cacd5ead855bf6b3b0f4d21939c138af665f9e09c125e14f6938f90b",
+    "testResults": [
+      {
+        "name": "phase-5-contract-reconciliation",
+        "status": "PASS",
+        "exitCode": 0,
+        "timedOut": false,
+        "fileCount": 8,
+        "summary": {
+          "passedFiles": 8,
+          "failedFiles": 0,
+          "passedTests": 54,
+          "failedTests": 0,
+          "skippedTests": 0
+        },
+        "failure": null
+      }
+    ]
+  },
+  "blockers": [],
+  "evidenceDigest": "b6c3b77716ba00723625ce4d59d1e37895f6ac09e1344264dfb55f62a88e9555"
+}

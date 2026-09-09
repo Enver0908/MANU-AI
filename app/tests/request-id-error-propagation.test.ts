@@ -46,7 +46,7 @@ describe("request id error propagation", () => {
   });
 
   it("wires use-manu-state to parse requestId into AppRequestError and hydrateRequestId", () => {
-    const source = readFileSync(fileURLToPath(new URL("../src/lib/use-manu-state.ts", import.meta.url)), "utf8");
+    const source = readFileSync(fileURLToPath(new URL("../src/lib/use-aiya-state.ts", import.meta.url)), "utf8");
     expect(source).toContain("parseApiErrorPayload");
     expect(source).toContain("hydrateFromError");
     expect(source).toContain("setHydrateRequestId(error.requestId ?? null)");

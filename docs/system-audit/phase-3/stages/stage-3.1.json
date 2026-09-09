@@ -1,0 +1,83 @@
+{
+  "schemaVersion": "aiya-system-audit-stage-evidence-v1",
+  "runId": "phase-3-3.1-20260907232206480",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-3",
+  "stageId": "3.1",
+  "title": "Backend route ve API sozlesmelerini sabitle",
+  "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+  "verifiedAt": "2026-09-07T23:22:06.480Z",
+  "status": "VERIFIED",
+  "operations": [
+    {
+      "order": 1,
+      "description": "app/src/app/api altindaki tum route.ts dosyalarini ve export edilen HTTP metodlarini kaynak satiri ile cikar.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-3/api-contract-matrix.json"
+      ]
+    },
+    {
+      "order": 2,
+      "description": "Her route'u tenant uygulama, AI chat, shell, ticari admin, auth, public commercial, webhook, demo veya release health siniflarindan tam olarak birine ata.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-3/api-contract-matrix.json"
+      ]
+    },
+    {
+      "order": 3,
+      "description": "Her route icin auth gate, tenant context, admin allowlist, request body/query parser, response/error serializer ve service-role erisimini kaydet.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-3/api-contract-matrix.json"
+      ]
+    },
+    {
+      "order": 4,
+      "description": "Tenant veya admin sinirindaki route'larda istemciden gelen tenant_id, user_id, auth_user_id veya dietitian_id degerinin yetki kaynagi olarak kullanilmasini reddet.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-3/api-contract-matrix.json"
+      ]
+    },
+    {
+      "order": 5,
+      "description": "Bilinmeyen route sinifi, koruma kapisi olmayan protected route, tanimsiz response ailesi veya client-supplied identity bulgusunu blocker olarak siniflandir.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-3/api-contract-matrix.json"
+      ]
+    },
+    {
+      "order": 6,
+      "description": "Route matrix ve source file digestlerini docs/system-audit/phase-3/api-contract-matrix.json icine secret degerleri olmadan yaz.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-3/api-contract-matrix.json"
+      ]
+    }
+  ],
+  "outputFiles": [
+    {
+      "path": "docs/system-audit/phase-3/api-contract-matrix.json",
+      "sha256": "c7e07df13d52820944541fbb032488fb7baec8329b9a921c6fa092780a1c6243"
+    }
+  ],
+  "verification": {
+    "rules": [
+      "Phase 2 CLOSED ve tum 2.x stage evidence/output digestleri gecerli olmali.",
+      "Tarama 116 route varsayimina baglanmadan mevcut tum route.ts dosyalarini kapsayabilmeli.",
+      "Her route tam olarak bir contractClass, en az bir HTTP method ve bir verificationScenario tasimali.",
+      "Protected route'lar bilinen auth/tenant/admin wrapper ile eslesmeli; unknown veya unguarded kayit sayisi sifir olmali.",
+      "Client-supplied identity blocker sayisi sifir olmali.",
+      "Cikti token, cookie, password, service-role key veya kisi verisi icermemeli."
+    ],
+    "result": "PASS",
+    "outputDigest": "c7e07df13d52820944541fbb032488fb7baec8329b9a921c6fa092780a1c6243",
+    "testResults": []
+  },
+  "blockers": [],
+  "evidenceDigest": "e903778c6949b33ecb645b9932e792c075c3f7da6fa285337a37c30158150524"
+}

@@ -1,0 +1,125 @@
+{
+  "schemaVersion": "aiya-system-audit-stage-evidence-v1",
+  "runId": "phase-3-3.3-20260907233008542",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-3",
+  "stageId": "3.3",
+  "title": "Tenant veri erisimini ve cross-tenant izolasyonu dogrula",
+  "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+  "verifiedAt": "2026-09-07T23:30:08.542Z",
+  "status": "VERIFIED",
+  "operations": [
+    {
+      "order": 1,
+      "description": "Phase 2 integrity surface ve route contract matrix'ten tenant kapsamli tablo/RPC erisimlerini tabloya bagli olarak eslestir.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-3/tenant-security-matrix.json"
+      ]
+    },
+    {
+      "order": 2,
+      "description": "Local Supabase fixture'i temiz baslat; public schema migrationlarini uygula; remote veya production hedefinde yazma yapma.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-3/tenant-security-matrix.json"
+      ]
+    },
+    {
+      "order": 3,
+      "description": "Iki sentetik tenant, iki authenticated actor ve service-role actor ile cross-tenant read, update, delete, insert ve RPC privilege senaryolarini calistir.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-3/tenant-security-matrix.json"
+      ]
+    },
+    {
+      "order": 4,
+      "description": "Session activity, shell, AI chat, client, conversation, notification, commercial ve channel akislari icin mevcut RLS integration suite'i kos.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-3/tenant-security-matrix.json"
+      ]
+    },
+    {
+      "order": 5,
+      "description": "Tenant identity'nin URL/body/query'den degil verified auth membership ve server-side context'ten turetildigini static ve runtime kanitla.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-3/tenant-security-matrix.json"
+      ]
+    },
+    {
+      "order": 6,
+      "description": "Local fixture'i test sonunda durdur; ham database dump, JWT, cookie veya secret'i docs kanitina yazma.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-3/tenant-security-matrix.json"
+      ]
+    }
+  ],
+  "outputFiles": [
+    {
+      "path": "docs/system-audit/phase-3/tenant-security-matrix.json",
+      "sha256": "2c9b68d5000c89fbfbcc4282aa660db2fd84d4299184d6eb45d17c672078d2e3"
+    }
+  ],
+  "verification": {
+    "rules": [
+      "Local RLS preflight skip edilirse PASS sayilmaz.",
+      "Cross-tenant read/write/delete ve privilege bypass sayisi sifir olmali.",
+      "Service-role kullanimi yalnizca server-side trusted operation olarak gorunmeli; client route'ta raw key veya client-controlled role bulunmamali.",
+      "RLS suite, hosted-sandbox tenant isolation suite ve static identity scan birlikte PASS olmali.",
+      "Linked Supabase veya production mutasyon kaniti bulunmali; bulunursa faz BLOCKED olmali."
+    ],
+    "result": "PASS",
+    "outputDigest": "2c9b68d5000c89fbfbcc4282aa660db2fd84d4299184d6eb45d17c672078d2e3",
+    "testResults": [
+      {
+        "name": "local-schema-reset",
+        "status": "PASS",
+        "exitCode": 0,
+        "output": "kipping NOTICE (00000): constraint \"ai_chat_attachments_provider_egress_requires_scan_check\" of relation \"ai_chat_attachments\" does not exist, skipping Applying migration 20260831090000_zai_glm_provider_rebaseline.sql... Applying migration 20260903090000_public_surface_session_idle_timeout.sql... Applying migration 20260903100000_commercial_entitlement_reactivation.sql... Applying migration 20260904120000_aiya_workspace_tenant_fallback.sql... Applying migration 20260904180000_public_surface_faz8_session_service_role.sql... Applying migration 20260904181000_public_surface_faz8_admin_bulk_invite.sql... Applying migration 20260904182000_public_surface_faz8_onboarding_claim_pending.sql... Applying migration 20260907181000_hosted_shell_schema_reconciliation.sql... Restarting containers... Finished supabase db reset on branch main. A new version of Supabase CLI is available: v2.117.0 (currently installed v2.101.0) We recommend updating regularly for new features and bug fixes: [url-redacted]"
+      },
+      {
+        "name": "supabase-rls-integration",
+        "status": "PASS",
+        "exitCode": 0,
+        "timedOut": false,
+        "summary": {
+          "passed": 1,
+          "failed": 0,
+          "skipped": 0
+        },
+        "output": " direct reads on Stage 4B-4 audio tables 509ms ✓ isolates Stage 4C AI chat content by creator and tenant 481ms ✓ blocks assistant and auditor access to Stage 4C AI chat tables 413ms ✓ updates own profile through Stage 4D v2 RPC with idempotent minimized audit metadata and role boundaries 1110ms ✓ protects Stage 4D account workspace mutations with owner/admin RBAC and expected revision 546ms ✓ updates shell preferences with revision control and client access checks 495ms Test Files 1 passed (1) Tests 56 passed (56) Start at 02:28:49 Duration 50.52s (transform 3.65s, setup 0ms, import 7.78s, tests 42.46s, environment 0ms) (!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite: - ESM syntax in a file loaded as CommonJS (vitest.config.ts:1:1). Use a `.mjs` extension or set `\"type\": \"module\"` in the closest package.json Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning."
+      },
+      {
+        "name": "hosted-sandbox-tenant-isolation",
+        "status": "PASS",
+        "exitCode": 0,
+        "timedOut": false,
+        "summary": {
+          "passed": 1,
+          "failed": 0,
+          "skipped": 0
+        },
+        "output": "RUN v4.1.7 C:/Users/Dell/OneDrive/Masaüstü/MANU-AI/app ✓ src/lib/hosted-sandbox-tenant-isolation.test.ts (12 tests) 48ms Test Files 1 passed (1) Tests 12 passed (12) Start at 02:29:58 Duration 612ms (transform 117ms, setup 0ms, import 279ms, tests 48ms, environment 0ms) (!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite: - ESM syntax in a file loaded as CommonJS (vitest.config.ts:1:1). Use a `.mjs` extension or set `\"type\": \"module\"` in the closest package.json Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning."
+      },
+      {
+        "name": "shell-session-contract",
+        "status": "PASS",
+        "exitCode": 0,
+        "timedOut": false,
+        "summary": {
+          "passed": 1,
+          "failed": 0,
+          "skipped": 0
+        },
+        "output": "RUN v4.1.7 C:/Users/Dell/OneDrive/Masaüstü/MANU-AI/app ✓ src/lib/phase-85-stage-5-shell-session.test.ts (11 tests) 17ms Test Files 1 passed (1) Tests 11 passed (11) Start at 02:30:07 Duration 937ms (transform 249ms, setup 0ms, import 615ms, tests 17ms, environment 0ms) (!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite: - ESM syntax in a file loaded as CommonJS (vitest.config.ts:1:1). Use a `.mjs` extension or set `\"type\": \"module\"` in the closest package.json Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning."
+      }
+    ]
+  },
+  "blockers": [],
+  "evidenceDigest": "2ab6b9a6a26c790b45272571e46bc565f693eee4e63e8f08f578605cdee7a875"
+}

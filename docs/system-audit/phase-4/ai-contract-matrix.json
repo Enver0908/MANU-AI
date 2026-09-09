@@ -1,0 +1,279 @@
+{
+  "schemaVersion": "aiya-system-audit-phase-4-ai-contract-matrix-v1",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-4",
+  "status": "PASS",
+  "generatedAt": "2026-09-07T23:55:16.368Z",
+  "checks": [
+    {
+      "id": "bounded_provider_context",
+      "description": "bounded provider context allowlist",
+      "pass": true,
+      "evidence": [
+        "app/src/lib/ai-provider.ts",
+        "app/src/lib/phase-75-zai-provider-gate.ts",
+        "app/src/lib/phase-85-stage-4c-provider.ts",
+        "app/src/lib/phase-85-stage-4c-run-service.ts"
+      ]
+    },
+    {
+      "id": "raw_input_rejected",
+      "description": "raw prompt/capsule rejection or safe metadata",
+      "pass": true,
+      "evidence": [
+        "app/src/lib/ai-provider.ts",
+        "app/src/lib/phase-75-zai-provider-gate.ts"
+      ]
+    },
+    {
+      "id": "risk_routing",
+      "description": "red/yellow/green risk routing",
+      "pass": true,
+      "evidence": [
+        "app/src/lib/ai-provider.ts",
+        "app/src/lib/phase-75-zai-provider-gate.ts",
+        "app/src/lib/phase-85-stage-4c-provider.ts",
+        "app/src/lib/phase-85-stage-4c-run-service.ts",
+        "app/src/lib/phase-85-stage-4c-store.ts"
+      ]
+    },
+    {
+      "id": "provider_egress_gate",
+      "description": "explicit provider egress gate",
+      "pass": true,
+      "evidence": [
+        "app/src/lib/phase-75-zai-provider-gate.ts",
+        "app/src/lib/phase-85-stage-4c-provider.ts"
+      ]
+    },
+    {
+      "id": "timeout_retry_abort",
+      "description": "timeout, retry and abort/deadline",
+      "pass": true,
+      "evidence": [
+        "app/src/lib/ai-provider.ts",
+        "app/src/lib/phase-85-stage-4c-provider.ts",
+        "app/src/lib/phase-85-stage-4c-context-gateway.ts",
+        "app/src/lib/phase-85-stage-4c-run-service.ts",
+        "app/src/lib/phase-85-stage-4c-run-event-multiplexer.ts",
+        "app/src/lib/phase-85-stage-4c-run-worker-cli.ts"
+      ]
+    },
+    {
+      "id": "source_validation",
+      "description": "source-backed claim and answer validation",
+      "pass": true,
+      "evidence": [
+        "app/src/lib/phase-85-stage-4c-provider.ts",
+        "app/src/lib/phase-85-stage-4c-context-gateway.ts",
+        "app/src/lib/phase-85-stage-4c-run-service.ts"
+      ]
+    },
+    {
+      "id": "job_lease_lifecycle",
+      "description": "AI job claim lease completion/failure",
+      "pass": true,
+      "evidence": [
+        "app/src/lib/phase-85-stage-4c-run-service.ts",
+        "app/src/lib/phase-85-stage-4c-store.ts"
+      ]
+    },
+    {
+      "id": "run_event_ordering",
+      "description": "run event sequence and realtime catch-up",
+      "pass": true,
+      "evidence": [
+        "app/src/lib/phase-85-stage-4c-run-service.ts",
+        "app/src/lib/phase-85-stage-4c-run-event-multiplexer.ts"
+      ]
+    },
+    {
+      "id": "raw_retention_zero",
+      "description": "raw prompt/completion retention policy",
+      "pass": true,
+      "evidence": [
+        "app/src/lib/phase-75-zai-provider-gate.ts"
+      ]
+    },
+    {
+      "id": "no_ungated_ai_fetch",
+      "pass": true,
+      "externalCallCount": 0
+    },
+    {
+      "id": "real_zai_disabled_for_audit",
+      "pass": true
+    }
+  ],
+  "providerBoundary": {
+    "model": "glm-5.3-flash-gated",
+    "realEgressEnabledForAudit": false,
+    "rawPromptCompletionRetention": 0
+  },
+  "sourceFiles": [
+    {
+      "source": "app/src/lib/ai-provider.ts",
+      "exists": true,
+      "bytes": 9326,
+      "sha256": "d2cefe3688d38df9860ed00595d40f1c97876a5346e3de97e8eb8dbf98160dbf"
+    },
+    {
+      "source": "app/src/lib/phase-75-zai-provider-gate.ts",
+      "exists": true,
+      "bytes": 15246,
+      "sha256": "a1ce66e0f7f9b8e9c6e08c055be8c21d0e2492c0348fee89cd60512cb8cb3ead"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4c-provider.ts",
+      "exists": true,
+      "bytes": 9630,
+      "sha256": "05043473a7ff4025faea7bcc1c483f73edadbd2f0d2ddf2c5388f051a426791f"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4c-context-gateway.ts",
+      "exists": true,
+      "bytes": 22052,
+      "sha256": "e6a684eb1727dc603206529d4b986ea5cb06af3f5bc0146f98cd70394a470429"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4c-run-service.ts",
+      "exists": true,
+      "bytes": 46269,
+      "sha256": "c414ca915c39bc7e70183194b5d2680023a625e984168ed064583c4fb45734bd"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4c-store.ts",
+      "exists": true,
+      "bytes": 14083,
+      "sha256": "b879afdaf0e19c573ed12052449efcb55e512abe8a3a00e45eb2ec99a7b99c9d"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4c-run-event-multiplexer.ts",
+      "exists": true,
+      "bytes": 9972,
+      "sha256": "a863ec365988d11c1c4c59c4f29486fa224702e0a840691576d60f5bd7b517a0"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-4c-run-worker-cli.ts",
+      "exists": true,
+      "bytes": 820,
+      "sha256": "d3693453f0e3547986ad3f6638311c45b1238c2f4dbdd99083febc8b84891b28"
+    }
+  ],
+  "blockers": [],
+  "matrixDigest": "1d28fd4251893a065fd5e2d3793c62f7d58413db6bb7b177e5b0612549572fc5",
+  "testResults": [
+    {
+      "name": "phase-4-ai-contracts",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "fileCount": 10,
+      "summary": {
+        "passedFiles": 10,
+        "failedFiles": 0,
+        "passedTests": 70,
+        "failedTests": 0,
+        "skippedTests": 0
+      },
+      "failure": null
+    }
+  ],
+  "operationVerification": [
+    {
+      "order": 1,
+      "description": "Provider input segment allowlist, segment count/length limitleri ve raw prompt/capsule reddini dogrula.",
+      "status": "PASS",
+      "evidence": {
+        "id": "bounded_provider_context",
+        "description": "bounded provider context allowlist",
+        "pass": true,
+        "evidence": [
+          "app/src/lib/ai-provider.ts",
+          "app/src/lib/phase-75-zai-provider-gate.ts",
+          "app/src/lib/phase-85-stage-4c-provider.ts",
+          "app/src/lib/phase-85-stage-4c-run-service.ts"
+        ]
+      }
+    },
+    {
+      "order": 2,
+      "description": "Red/yellow/green risk kararlarini ve source-backed answerability kosullarini statik ve test kanitiyla dogrula.",
+      "status": "PASS",
+      "evidence": {
+        "id": "raw_input_rejected",
+        "description": "raw prompt/capsule rejection or safe metadata",
+        "pass": true,
+        "evidence": [
+          "app/src/lib/ai-provider.ts",
+          "app/src/lib/phase-75-zai-provider-gate.ts"
+        ]
+      }
+    },
+    {
+      "order": 3,
+      "description": "Z.ai GLM-5.3-Flash direct paid API gate'ini, real provider flag'ini ve forbidden surface listesini kontrol et.",
+      "status": "PASS",
+      "evidence": {
+        "id": "risk_routing",
+        "description": "red/yellow/green risk routing",
+        "pass": true,
+        "evidence": [
+          "app/src/lib/ai-provider.ts",
+          "app/src/lib/phase-75-zai-provider-gate.ts",
+          "app/src/lib/phase-85-stage-4c-provider.ts",
+          "app/src/lib/phase-85-stage-4c-run-service.ts",
+          "app/src/lib/phase-85-stage-4c-store.ts"
+        ]
+      }
+    },
+    {
+      "order": 4,
+      "description": "Provider timeout, retry/error normalization, abort/deadline ve lease heartbeat akislarini dogrula.",
+      "status": "PASS",
+      "evidence": {
+        "id": "provider_egress_gate",
+        "description": "explicit provider egress gate",
+        "pass": true,
+        "evidence": [
+          "app/src/lib/phase-75-zai-provider-gate.ts",
+          "app/src/lib/phase-85-stage-4c-provider.ts"
+        ]
+      }
+    },
+    {
+      "order": 5,
+      "description": "Source claim validation, insufficient/conflicting evidence ve medical safety terminal outcome'larini dogrula.",
+      "status": "PASS",
+      "evidence": {
+        "id": "timeout_retry_abort",
+        "description": "timeout, retry and abort/deadline",
+        "pass": true,
+        "evidence": [
+          "app/src/lib/ai-provider.ts",
+          "app/src/lib/phase-85-stage-4c-provider.ts",
+          "app/src/lib/phase-85-stage-4c-context-gateway.ts",
+          "app/src/lib/phase-85-stage-4c-run-service.ts",
+          "app/src/lib/phase-85-stage-4c-run-event-multiplexer.ts",
+          "app/src/lib/phase-85-stage-4c-run-worker-cli.ts"
+        ]
+      }
+    },
+    {
+      "order": 6,
+      "description": "AI job idempotency/lease completion-failure ve run event sequence/realtime catch-up davranisini dogrula.",
+      "status": "PASS",
+      "evidence": {
+        "id": "source_validation",
+        "description": "source-backed claim and answer validation",
+        "pass": true,
+        "evidence": [
+          "app/src/lib/phase-85-stage-4c-provider.ts",
+          "app/src/lib/phase-85-stage-4c-context-gateway.ts",
+          "app/src/lib/phase-85-stage-4c-run-service.ts"
+        ]
+      }
+    }
+  ]
+}

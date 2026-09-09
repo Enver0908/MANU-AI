@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "aiya-system-audit-stage-evidence-v1",
+  "runId": "phase-1-1.1-20260907211938923",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-1",
+  "stageId": "1.1",
+  "title": "Başlangıcı sabitle",
+  "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+  "verifiedAt": "2026-09-07T21:19:38.923Z",
+  "operations": [
+    {
+      "order": 1,
+      "description": "Kaydedilmiş faz giriş gözlemini doğrula.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-1/baseline.json"
+      ]
+    },
+    {
+      "order": 2,
+      "description": "Aktif dalı, HEAD commitini, çalışma ağacı durumunu ve upstream bilgisini kaydet.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-1/baseline.json"
+      ]
+    },
+    {
+      "order": 3,
+      "description": "Güncel karar ve kanıt belgelerinin varlığını ve SHA-256 özetlerini kaydet.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-1/baseline.json"
+      ]
+    },
+    {
+      "order": 4,
+      "description": "Tarihsel belge ile güncel otorite arasındaki çelişkileri ayrı listele.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-1/baseline.json"
+      ]
+    }
+  ],
+  "outputFiles": [
+    {
+      "path": "docs/system-audit/phase-1/baseline.json",
+      "sha256": "850448a0c742123b3d8367e4ebd2b85a1727704ff2c948c7f37c2c166da197f5"
+    }
+  ],
+  "verification": {
+    "rules": [
+      "phase-entry.json ile branch, HEAD ve temiz çalışma ağacı bilgisi eşleşmeli.",
+      "Otorite belgelerinin her biri mevcut olmalı ve contentSha256 taşımalı.",
+      "Çıktı, sır veya kişisel veri içermemeli."
+    ],
+    "result": "PASS",
+    "outputDigest": "89b0212bd34e722d4adfd1d69990e74f3b6453188411bfcc7be5af1c9cfe1537"
+  },
+  "status": "VERIFIED",
+  "evidenceDigest": "3716ba57498f46ade526a6172756315be9a7d912059a67a68e0119da94e3c409"
+}

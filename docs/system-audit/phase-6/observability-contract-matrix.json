@@ -1,0 +1,314 @@
+{
+  "schemaVersion": "aiya-system-audit-phase-6-observability-contract-matrix-v1",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-6",
+  "status": "PASS",
+  "generatedAt": "2026-09-08T12:34:49.995Z",
+  "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+  "checks": [
+    {
+      "id": "health_sources_and_contract",
+      "description": "health sources and no-store/dependency status contract",
+      "pass": true,
+      "evidence": [
+        "app/src/app/api/health/release/route.ts",
+        "app/src/app/api/commercial/admin/health/route.ts",
+        "app/src/lib/production-worker-release-contracts.ts",
+        "app/src/lib/app-errors.ts"
+      ],
+      "missing": []
+    },
+    {
+      "id": "aggregate_snapshot",
+      "description": "aggregate operational snapshot and launch blocker fields",
+      "pass": true,
+      "evidence": [
+        "app/src/lib/operational-health.ts",
+        "app/src/lib/operational-health.test.ts"
+      ]
+    },
+    {
+      "id": "metric_privacy_allowlist",
+      "description": "metric allowlist and raw identifier rejection",
+      "pass": true,
+      "evidence": [
+        "app/src/lib/operational-health.test.ts",
+        "app/src/lib/phase-85-stage-5-shell-metric-sink.ts",
+        "app/src/lib/phase-85-stage-5-shell-metric-sink.test.ts",
+        "app/src/lib/channel-adapter-rollback.ts"
+      ]
+    },
+    {
+      "id": "adapter_rollback_signal",
+      "description": "adapter health counters and scoped rollback",
+      "pass": true,
+      "evidence": [
+        "app/src/lib/operational-health.ts",
+        "app/src/lib/channel-adapter-health.ts",
+        "app/src/lib/channel-adapter-rollback.ts"
+      ]
+    },
+    {
+      "id": "worker_operator_blockers",
+      "description": "worker commands and production readiness blockers",
+      "pass": true,
+      "evidence": [
+        "app/src/lib/production-worker-release-contracts.ts"
+      ]
+    },
+    {
+      "id": "observability_boundary_closed",
+      "description": "remote/provider observability mutation boundary remains closed",
+      "pass": true
+    },
+    {
+      "id": "observability_tests",
+      "description": "targeted health, metric, rollback and worker test result",
+      "pass": true,
+      "deferred": true
+    }
+  ],
+  "operationChecks": [
+    {
+      "id": "phase_precondition",
+      "pass": true,
+      "details": "6.2 closure and digest were checked by the CLI"
+    },
+    {
+      "id": "health_sources_and_contract",
+      "pass": true,
+      "details": []
+    },
+    {
+      "id": "aggregate_snapshot",
+      "pass": true,
+      "details": [
+        "app/src/lib/operational-health.ts",
+        "app/src/lib/operational-health.test.ts"
+      ]
+    },
+    {
+      "id": "metric_privacy_allowlist",
+      "pass": true,
+      "details": [
+        "app/src/lib/operational-health.test.ts",
+        "app/src/lib/phase-85-stage-5-shell-metric-sink.ts",
+        "app/src/lib/phase-85-stage-5-shell-metric-sink.test.ts",
+        "app/src/lib/channel-adapter-rollback.ts"
+      ]
+    },
+    {
+      "id": "adapter_rollback_signal",
+      "pass": true,
+      "details": [
+        "app/src/lib/operational-health.ts",
+        "app/src/lib/channel-adapter-health.ts",
+        "app/src/lib/channel-adapter-rollback.ts"
+      ]
+    },
+    {
+      "id": "worker_operator_blockers",
+      "pass": true,
+      "details": [
+        "app/src/lib/production-worker-release-contracts.ts"
+      ]
+    },
+    {
+      "id": "observability_boundary_closed",
+      "pass": true,
+      "details": null
+    },
+    {
+      "id": "observability_tests",
+      "pass": true,
+      "details": [
+        {
+          "name": "phase-6-observability",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "fileCount": 4,
+          "summary": {
+            "passedFiles": 4,
+            "failedFiles": 0,
+            "passedTests": 16,
+            "failedTests": 0,
+            "skippedTests": 0
+          },
+          "failure": null
+        }
+      ]
+    }
+  ],
+  "blockers": [],
+  "sourceFiles": [
+    {
+      "source": "app/src/app/api/health/release/route.ts",
+      "exists": true,
+      "bytes": 802,
+      "sha256": "87cbd903436a45883211d0d3340191f4969369d2e9a57a97e98f4befa57318a0"
+    },
+    {
+      "source": "app/src/app/api/commercial/admin/health/route.ts",
+      "exists": true,
+      "bytes": 3183,
+      "sha256": "b30dd64e442710533d2158cfddfc1a4cfcf5d02bd68af1ac0ec0ddbdca6ee528"
+    },
+    {
+      "source": "app/src/lib/operational-health.ts",
+      "exists": true,
+      "bytes": 17487,
+      "sha256": "d16668e8c757e3ca29280c5807b2bdb2cb2d6535dddc9f05934f6e244ea401bd"
+    },
+    {
+      "source": "app/src/lib/operational-health.test.ts",
+      "exists": true,
+      "bytes": 7136,
+      "sha256": "bfd6cd13333976fefba1cdcd693fa704a452948e4b83c8bf3e55b24ced88d867"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-5-shell-metric-sink.ts",
+      "exists": true,
+      "bytes": 3154,
+      "sha256": "e2e2dd83cc4c19ceedd86983af92effe4b09dd51d60fd3074af1386456ea1306"
+    },
+    {
+      "source": "app/src/lib/phase-85-stage-5-shell-metric-sink.test.ts",
+      "exists": true,
+      "bytes": 1780,
+      "sha256": "96afca485513faca5f41e953a94607053799918a6f35fc10236a73f89950b657"
+    },
+    {
+      "source": "app/src/lib/channel-adapter-health.ts",
+      "exists": true,
+      "bytes": 1063,
+      "sha256": "c64e9c47dea1a7fcfa198c5f98f302abe90a1637403d2c2422764e0e104936f3"
+    },
+    {
+      "source": "app/src/lib/channel-adapter-rollback.ts",
+      "exists": true,
+      "bytes": 3774,
+      "sha256": "c6efe26e55ffddee18c075e7ed8fa446cae1b469a47776ec7a4605c1b3170268"
+    },
+    {
+      "source": "app/src/lib/production-worker-release-contracts.ts",
+      "exists": true,
+      "bytes": 4753,
+      "sha256": "d78dccfead657a9f3adb9543d436ec9b2adc152329f6b4cd2ca031be14effd74"
+    },
+    {
+      "source": "app/src/lib/app-errors.ts",
+      "exists": true,
+      "bytes": 1801,
+      "sha256": "a768be692b3c06ebcb69767834d1faeab43c540a06deb5e9fd4fcf1f5adc98bd"
+    }
+  ],
+  "matrixDigest": "b95404447a82c4cc3a89a04510b2725e5ecdd9c8978153b8d50a99f8a343b298",
+  "testResults": [
+    {
+      "name": "phase-6-observability",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "fileCount": 4,
+      "summary": {
+        "passedFiles": 4,
+        "failedFiles": 0,
+        "passedTests": 16,
+        "failedTests": 0,
+        "skippedTests": 0
+      },
+      "failure": null
+    }
+  ],
+  "testsWereAllowed": true,
+  "operationResults": [
+    {
+      "order": 1,
+      "description": "6.2 VERIFIED precondition'ini ve digest zincirini dogrula.",
+      "id": "phase_precondition",
+      "status": "PASS",
+      "details": "6.2 closure and digest were checked by the CLI"
+    },
+    {
+      "order": 2,
+      "description": "Release health ve commercial admin health route kaynaklarinin mevcut oldugunu; status, timeout, no-store ve dependency failure davranisini kontrol et.",
+      "id": "health_sources_and_contract",
+      "status": "PASS",
+      "details": []
+    },
+    {
+      "order": 3,
+      "description": "Operational health snapshot alanlarini aggregate-only ve launch-blocking sinyallerle eslestir.",
+      "id": "aggregate_snapshot",
+      "status": "PASS",
+      "details": [
+        "app/src/lib/operational-health.ts",
+        "app/src/lib/operational-health.test.ts"
+      ]
+    },
+    {
+      "order": 4,
+      "description": "Shell metric sink sanitize/allowlist ve raw URL/clientId reddini kontrol et.",
+      "id": "metric_privacy_allowlist",
+      "status": "PASS",
+      "details": [
+        "app/src/lib/operational-health.test.ts",
+        "app/src/lib/phase-85-stage-5-shell-metric-sink.ts",
+        "app/src/lib/phase-85-stage-5-shell-metric-sink.test.ts",
+        "app/src/lib/channel-adapter-rollback.ts"
+      ]
+    },
+    {
+      "order": 5,
+      "description": "Channel adapter health counters ve rollback scope'larinin audit/fail-closed davranisini kontrol et.",
+      "id": "adapter_rollback_signal",
+      "status": "PASS",
+      "details": [
+        "app/src/lib/operational-health.ts",
+        "app/src/lib/channel-adapter-health.ts",
+        "app/src/lib/channel-adapter-rollback.ts"
+      ]
+    },
+    {
+      "order": 6,
+      "description": "Worker release manifest, one-shot command ve production readiness blocker'larini kontrol et.",
+      "id": "worker_operator_blockers",
+      "status": "PASS",
+      "details": [
+        "app/src/lib/production-worker-release-contracts.ts"
+      ]
+    },
+    {
+      "order": 7,
+      "description": "Observability matrix inputlarini, remote/provider boundary'sini ve final blocker listesini kontrol et.",
+      "id": "observability_boundary_closed",
+      "status": "PASS",
+      "details": null
+    },
+    {
+      "order": 8,
+      "description": "Health, metric, rollback, worker ve privacy test grubunu calistir; PASS ise matrix ve operation evidence dosyasini source commit/digest ile yaz.",
+      "id": "observability_tests",
+      "status": "PASS",
+      "details": [
+        {
+          "name": "phase-6-observability",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "fileCount": 4,
+          "summary": {
+            "passedFiles": 4,
+            "failedFiles": 0,
+            "passedTests": 16,
+            "failedTests": 0,
+            "skippedTests": 0
+          },
+          "failure": null
+        }
+      ]
+    }
+  ]
+}

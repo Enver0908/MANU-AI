@@ -1,0 +1,97 @@
+{
+  "schemaVersion": "aiya-system-audit-stage-evidence-v1",
+  "runId": "phase-4-4.1-20260907235401625",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-4",
+  "stageId": "4.1",
+  "title": "Worker girisleri, lease, retry ve idempotency sozlesmelerini sabitle",
+  "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+  "verifiedAt": "2026-09-07T23:54:01.626Z",
+  "status": "VERIFIED",
+  "operations": [
+    {
+      "order": 1,
+      "description": "Release manifestindeki her worker id, normal command ve --once command'i app/package.json scriptlerine birebir eslestir.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-4/worker-contract-matrix.json"
+      ]
+    },
+    {
+      "order": 2,
+      "description": "Her worker wrapper'inda --once secenegi, kontrollu interval/forwarding ve child failure durumunda non-zero process exit oldugunu dogrula.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-4/worker-contract-matrix.json"
+      ]
+    },
+    {
+      "order": 3,
+      "description": "Media, audio transcription/bridge ve AI processing worker'larinda claim, lease token, lease renewal, completion/failure ve retry/terminal outcome marker'larini kaynak dosyadan cikar.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-4/worker-contract-matrix.json"
+      ]
+    },
+    {
+      "order": 4,
+      "description": "Lifecycle worker'larinda retention/purge/delete ve object operation claim/release yolunu kaynak dosyadan cikar.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-4/worker-contract-matrix.json"
+      ]
+    },
+    {
+      "order": 5,
+      "description": "Worker CLI'larinda NEXT_PUBLIC_SUPABASE_URL ve SUPABASE_SERVICE_ROLE_KEY zorunlu env kontrolu ile session persistence kapali istemci ayarini dogrula.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-4/worker-contract-matrix.json"
+      ]
+    },
+    {
+      "order": 6,
+      "description": "Worker girisleri, release manifesti ve source digestlerini secret-free matrix icinde kaydet.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-4/worker-contract-matrix.json"
+      ]
+    }
+  ],
+  "outputFiles": [
+    {
+      "path": "docs/system-audit/phase-4/worker-contract-matrix.json",
+      "sha256": "1c7203aaae0a970f9fa33e58270bde62771d4dc6c30f09a33a542cdbdb2f6a17"
+    }
+  ],
+  "verification": {
+    "rules": [
+      "release worker mapping blocker sayisi sifir",
+      "all wrapper checks PASS",
+      "all processing/lifecycle marker checks PASS",
+      "targeted worker suite PASS"
+    ],
+    "result": "PASS",
+    "outputDigest": "1c7203aaae0a970f9fa33e58270bde62771d4dc6c30f09a33a542cdbdb2f6a17",
+    "testResults": [
+      {
+        "name": "phase-4-worker-contracts",
+        "status": "PASS",
+        "exitCode": 0,
+        "timedOut": false,
+        "fileCount": 7,
+        "summary": {
+          "passedFiles": 7,
+          "failedFiles": 0,
+          "passedTests": 23,
+          "failedTests": 0,
+          "skippedTests": 0
+        },
+        "failure": null
+      }
+    ]
+  },
+  "blockers": [],
+  "evidenceDigest": "9c5c3deca1c7ae54e1be685d64ba5929566034e946cd62bf0655dcc44f621c84"
+}

@@ -1,0 +1,438 @@
+{
+  "schemaVersion": "aiya-system-audit-phase-6-load-capacity-matrix-v1",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-6",
+  "status": "PASS",
+  "generatedAt": "2026-09-08T12:34:33.137Z",
+  "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+  "interpretation": "PASS means local bounded capacity contracts and rehearsals are present. It is not production GO or field performance evidence.",
+  "reports": [
+    {
+      "path": "docs/PHASE_85_STAGE_5_LAB_PERF_REPORT.json",
+      "exists": true,
+      "status": "PASS",
+      "productionStatus": "NO-GO",
+      "kind": "local_lab_only",
+      "sourceRevision": "3d03112db649148b4acaadcd2eea4a2caf93f62d",
+      "freshness": "historical",
+      "runsPerRoute": 10,
+      "routeCount": 5,
+      "targets": {
+        "lcpMs": 2500,
+        "interactionProxyMs": 200,
+        "cls": 0.1,
+        "tbtMs": 200
+      },
+      "pass": true
+    },
+    {
+      "path": "docs/PHASE_85_STAGE_7_PHASE_4_LAB_PERF_REPORT.json",
+      "exists": true,
+      "status": "PASS",
+      "productionStatus": "NO-GO",
+      "kind": "local_lab_only",
+      "sourceRevision": "47ffa5af7bfe234b0721dac6e7992eefdff057ed",
+      "freshness": "historical",
+      "runsPerRoute": 10,
+      "routeCount": 12,
+      "targets": {
+        "lcpMs": 2500,
+        "cls": 0.1,
+        "tbtMs": 200,
+        "interactionProxyMs": 200
+      },
+      "pass": true
+    }
+  ],
+  "historicalReports": [
+    "docs/PHASE_85_STAGE_5_LAB_PERF_REPORT.json",
+    "docs/PHASE_85_STAGE_7_PHASE_4_LAB_PERF_REPORT.json"
+  ],
+  "checks": [
+    {
+      "id": "required_sources_exist",
+      "description": "load harness, rehearsal and evidence sources exist",
+      "pass": true,
+      "missing": []
+    },
+    {
+      "id": "local_loopback_harness",
+      "description": "local loopback server and local-only performance harness",
+      "pass": true,
+      "evidence": [
+        "app/scripts/measure-stage-5-lab-perf.mjs",
+        "app/scripts/measure-stage-7-lab-perf.mjs"
+      ]
+    },
+    {
+      "id": "explicit_p75_targets",
+      "description": "P75 targets and pass comparison",
+      "pass": true,
+      "evidence": [
+        "app/scripts/measure-stage-5-lab-perf.mjs",
+        "app/scripts/measure-stage-7-lab-perf.mjs"
+      ]
+    },
+    {
+      "id": "bounded_workload_and_hard_zero",
+      "description": "bounded workload, hard-zero safety metrics and release rehearsal",
+      "pass": true,
+      "evidence": [
+        "app/scripts/measure-stage-5-lab-perf.mjs",
+        "app/scripts/measure-stage-7-lab-perf.mjs",
+        "app/scripts/rehearse-production-scale-79g.mjs",
+        "app/src/lib/phase-79g-unified-production-scale-rehearsal.ts",
+        "app/src/lib/phase-79g-unified-production-scale-rehearsal.test.ts"
+      ]
+    },
+    {
+      "id": "existing_reports_valid",
+      "description": "existing local-lab reports are explicit PASS/NO-GO evidence",
+      "pass": true,
+      "reports": [
+        {
+          "path": "docs/PHASE_85_STAGE_5_LAB_PERF_REPORT.json",
+          "exists": true,
+          "status": "PASS",
+          "productionStatus": "NO-GO",
+          "kind": "local_lab_only",
+          "sourceRevision": "3d03112db649148b4acaadcd2eea4a2caf93f62d",
+          "freshness": "historical",
+          "runsPerRoute": 10,
+          "routeCount": 5,
+          "targets": {
+            "lcpMs": 2500,
+            "interactionProxyMs": 200,
+            "cls": 0.1,
+            "tbtMs": 200
+          },
+          "pass": true
+        },
+        {
+          "path": "docs/PHASE_85_STAGE_7_PHASE_4_LAB_PERF_REPORT.json",
+          "exists": true,
+          "status": "PASS",
+          "productionStatus": "NO-GO",
+          "kind": "local_lab_only",
+          "sourceRevision": "47ffa5af7bfe234b0721dac6e7992eefdff057ed",
+          "freshness": "historical",
+          "runsPerRoute": 10,
+          "routeCount": 12,
+          "targets": {
+            "lcpMs": 2500,
+            "cls": 0.1,
+            "tbtMs": 200,
+            "interactionProxyMs": 200
+          },
+          "pass": true
+        }
+      ]
+    },
+    {
+      "id": "remote_mutation_closed",
+      "description": "audit does not enable remote/provider mutation",
+      "pass": true
+    },
+    {
+      "id": "bounded_rehearsal_test",
+      "description": "current bounded rehearsal test result",
+      "pass": true,
+      "deferred": true
+    }
+  ],
+  "operationChecks": [
+    {
+      "id": "phase_precondition",
+      "pass": true,
+      "details": "Phase 5 closure and current HEAD were checked by the CLI"
+    },
+    {
+      "id": "required_sources_exist",
+      "pass": true,
+      "details": []
+    },
+    {
+      "id": "local_loopback_harness",
+      "pass": true,
+      "details": [
+        "app/scripts/measure-stage-5-lab-perf.mjs",
+        "app/scripts/measure-stage-7-lab-perf.mjs"
+      ]
+    },
+    {
+      "id": "explicit_p75_targets",
+      "pass": true,
+      "details": [
+        "app/scripts/measure-stage-5-lab-perf.mjs",
+        "app/scripts/measure-stage-7-lab-perf.mjs"
+      ]
+    },
+    {
+      "id": "bounded_workload_and_hard_zero",
+      "pass": true,
+      "details": [
+        "app/scripts/measure-stage-5-lab-perf.mjs",
+        "app/scripts/measure-stage-7-lab-perf.mjs",
+        "app/scripts/rehearse-production-scale-79g.mjs",
+        "app/src/lib/phase-79g-unified-production-scale-rehearsal.ts",
+        "app/src/lib/phase-79g-unified-production-scale-rehearsal.test.ts"
+      ]
+    },
+    {
+      "id": "existing_reports_valid",
+      "pass": true,
+      "details": [
+        {
+          "path": "docs/PHASE_85_STAGE_5_LAB_PERF_REPORT.json",
+          "exists": true,
+          "status": "PASS",
+          "productionStatus": "NO-GO",
+          "kind": "local_lab_only",
+          "sourceRevision": "3d03112db649148b4acaadcd2eea4a2caf93f62d",
+          "freshness": "historical",
+          "runsPerRoute": 10,
+          "routeCount": 5,
+          "targets": {
+            "lcpMs": 2500,
+            "interactionProxyMs": 200,
+            "cls": 0.1,
+            "tbtMs": 200
+          },
+          "pass": true
+        },
+        {
+          "path": "docs/PHASE_85_STAGE_7_PHASE_4_LAB_PERF_REPORT.json",
+          "exists": true,
+          "status": "PASS",
+          "productionStatus": "NO-GO",
+          "kind": "local_lab_only",
+          "sourceRevision": "47ffa5af7bfe234b0721dac6e7992eefdff057ed",
+          "freshness": "historical",
+          "runsPerRoute": 10,
+          "routeCount": 12,
+          "targets": {
+            "lcpMs": 2500,
+            "cls": 0.1,
+            "tbtMs": 200,
+            "interactionProxyMs": 200
+          },
+          "pass": true
+        }
+      ]
+    },
+    {
+      "id": "remote_mutation_closed",
+      "pass": true,
+      "details": null
+    },
+    {
+      "id": "bounded_rehearsal_test",
+      "pass": true,
+      "details": [
+        {
+          "name": "phase-6-load-rehearsal",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "fileCount": 1,
+          "summary": {
+            "passedFiles": 1,
+            "failedFiles": 0,
+            "passedTests": 5,
+            "failedTests": 0,
+            "skippedTests": 0
+          },
+          "failure": null
+        }
+      ]
+    }
+  ],
+  "blockers": [],
+  "sourceFiles": [
+    {
+      "source": "app/scripts/measure-stage-5-lab-perf.mjs",
+      "exists": true,
+      "bytes": 11304,
+      "sha256": "0e7c7ab3f68b84fff1e73aaba90757d5a9fd2f04a4de185608343706a359e717"
+    },
+    {
+      "source": "app/scripts/measure-stage-7-lab-perf.mjs",
+      "exists": true,
+      "bytes": 15681,
+      "sha256": "766c5fcdc8ae39416afcc200d1951d4090f7e71284ce771940ef6127a466971a"
+    },
+    {
+      "source": "app/scripts/rehearse-production-scale-79g.mjs",
+      "exists": true,
+      "bytes": 1173,
+      "sha256": "b83033e523358b3505b9e20d683bc1ea2ecaba0c599d034139c44a48e20fff4a"
+    },
+    {
+      "source": "app/src/lib/phase-79g-unified-production-scale-rehearsal.ts",
+      "exists": true,
+      "bytes": 14017,
+      "sha256": "05fe40defd37fc0f9f0dfbf92b0d273fc48d43e5cf77aa65237deecc706657c7"
+    },
+    {
+      "source": "app/src/lib/phase-79g-unified-production-scale-rehearsal.test.ts",
+      "exists": true,
+      "bytes": 5744,
+      "sha256": "2c81ac237d34ab206f1ec9c202211e34813cddca24adf8af080b3c85a3d5e3ba"
+    },
+    {
+      "source": "docs/PHASE_85_STAGE_5_LAB_PERF_REPORT.json",
+      "exists": true,
+      "bytes": 15731,
+      "sha256": "14f2d524326be7a6ba1148f027fce1599aa3b216e8c2800e32b9c05317590722"
+    },
+    {
+      "source": "docs/PHASE_85_STAGE_7_PHASE_4_LAB_PERF_REPORT.json",
+      "exists": true,
+      "bytes": 44022,
+      "sha256": "edeb28a95164148a2d6d41aeb43b4d1a179cc136135383873223d385214946e3"
+    }
+  ],
+  "matrixDigest": "d4c3b4a981517b0bbe5503cb9d6f3c34afd399ada04fe10c244bc85733087b4c",
+  "testResults": [
+    {
+      "name": "phase-6-load-rehearsal",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "fileCount": 1,
+      "summary": {
+        "passedFiles": 1,
+        "failedFiles": 0,
+        "passedTests": 5,
+        "failedTests": 0,
+        "skippedTests": 0
+      },
+      "failure": null
+    }
+  ],
+  "testsWereAllowed": true,
+  "operationResults": [
+    {
+      "order": 1,
+      "description": "Phase 5 closure precondition'ini ve current Git HEAD'i oku; source commit uyumsuzsa dur.",
+      "id": "phase_precondition",
+      "status": "PASS",
+      "details": "Phase 5 closure and current HEAD were checked by the CLI"
+    },
+    {
+      "order": 2,
+      "description": "Stage 5 ve Stage 7 harness kaynaklari ile gereken report dosyalarinin varligini kontrol et.",
+      "id": "required_sources_exist",
+      "status": "PASS",
+      "details": []
+    },
+    {
+      "order": 3,
+      "description": "Local loopback hedeflerini ve performance harness davranisini envantere al.",
+      "id": "local_loopback_harness",
+      "status": "PASS",
+      "details": [
+        "app/scripts/measure-stage-5-lab-perf.mjs",
+        "app/scripts/measure-stage-7-lab-perf.mjs"
+      ]
+    },
+    {
+      "order": 4,
+      "description": "P75 hedeflerini, route sayisini, sample count'i ve strict/non-strict davranisini kaynak koddan cikar.",
+      "id": "explicit_p75_targets",
+      "status": "PASS",
+      "details": [
+        "app/scripts/measure-stage-5-lab-perf.mjs",
+        "app/scripts/measure-stage-7-lab-perf.mjs"
+      ]
+    },
+    {
+      "order": 5,
+      "description": "Phase 79G aggregate workload, hard-zero metrikleri, sample/full ayrimini ve release rehearsal zincirini kontrol et.",
+      "id": "bounded_workload_and_hard_zero",
+      "status": "PASS",
+      "details": [
+        "app/scripts/measure-stage-5-lab-perf.mjs",
+        "app/scripts/measure-stage-7-lab-perf.mjs",
+        "app/scripts/rehearse-production-scale-79g.mjs",
+        "app/src/lib/phase-79g-unified-production-scale-rehearsal.ts",
+        "app/src/lib/phase-79g-unified-production-scale-rehearsal.test.ts"
+      ]
+    },
+    {
+      "order": 6,
+      "description": "Mevcut performance evidence dosyalarini status, productionStatus, target ve sourceRevision alanlariyla karsilastir.",
+      "id": "existing_reports_valid",
+      "status": "PASS",
+      "details": [
+        {
+          "path": "docs/PHASE_85_STAGE_5_LAB_PERF_REPORT.json",
+          "exists": true,
+          "status": "PASS",
+          "productionStatus": "NO-GO",
+          "kind": "local_lab_only",
+          "sourceRevision": "3d03112db649148b4acaadcd2eea4a2caf93f62d",
+          "freshness": "historical",
+          "runsPerRoute": 10,
+          "routeCount": 5,
+          "targets": {
+            "lcpMs": 2500,
+            "interactionProxyMs": 200,
+            "cls": 0.1,
+            "tbtMs": 200
+          },
+          "pass": true
+        },
+        {
+          "path": "docs/PHASE_85_STAGE_7_PHASE_4_LAB_PERF_REPORT.json",
+          "exists": true,
+          "status": "PASS",
+          "productionStatus": "NO-GO",
+          "kind": "local_lab_only",
+          "sourceRevision": "47ffa5af7bfe234b0721dac6e7992eefdff057ed",
+          "freshness": "historical",
+          "runsPerRoute": 10,
+          "routeCount": 12,
+          "targets": {
+            "lcpMs": 2500,
+            "cls": 0.1,
+            "tbtMs": 200,
+            "interactionProxyMs": 200
+          },
+          "pass": true
+        }
+      ]
+    },
+    {
+      "order": 7,
+      "description": "Current audit ortaminda remote Supabase/provider egress ve production mutation bayraklarinin kapali oldugunu; matrix inputlari ile local-only NO-GO final blocker listesini kontrol et.",
+      "id": "remote_mutation_closed",
+      "status": "PASS",
+      "details": null
+    },
+    {
+      "order": 8,
+      "description": "Phase 79G bounded rehearsal testini calistir; PASS ise matrix, operation evidence ve source digestlerini docs/system-audit/phase-6 altinda yaz.",
+      "id": "bounded_rehearsal_test",
+      "status": "PASS",
+      "details": [
+        {
+          "name": "phase-6-load-rehearsal",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "fileCount": 1,
+          "summary": {
+            "passedFiles": 1,
+            "failedFiles": 0,
+            "passedTests": 5,
+            "failedTests": 0,
+            "skippedTests": 0
+          },
+          "failure": null
+        }
+      ]
+    }
+  ]
+}

@@ -48,9 +48,6 @@ jobs:
         working-directory: app
         run: npm ci
 
-      - name: Install hosted sandbox workflows
-        run: node tools/hosted-sandbox/deploy/install-workflows.mjs
-
       - name: Verify workflow hardening
         run: node tools/hosted-sandbox/deploy/verify-workflow-hardening.mjs
 

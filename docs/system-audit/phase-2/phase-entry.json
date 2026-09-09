@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "aiya-system-audit-phase-entry-v1",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-2",
+  "capturedAt": "2026-09-07T22:50:13.750Z",
+  "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+  "branch": "codex/production-readiness-stage-1",
+  "workingTree": "dirty",
+  "phase1Precondition": {
+    "ok": true,
+    "stateDigest": "afd314a770e4a64403c4710a1a0383b07a4c7a85595661063a0e49964cb7831b",
+    "closureDigest": "ddcc8e16d16ec781889a519f169d923127885a06e0b01f08a17dd91e2fb211ae",
+    "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606"
+  },
+  "rule": "Phase 2 is independent of working-tree cleanliness but cannot proceed beyond a blocked stage."
+}

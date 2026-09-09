@@ -1,0 +1,504 @@
+{
+  "schemaVersion": "aiya-system-audit-phase-plan-manifest-v1",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-6",
+  "title": "Yuk, Ariza, Gozlemlenebilirlik ve Kurtarma",
+  "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+  "createdAt": "2026-09-08T12:34:33.126Z",
+  "precondition": {
+    "ok": true,
+    "reason": null,
+    "stateDigest": "344643db21ca983b2bb28d8beaf00d4acc15ea3f4d5cacc4d758c7ee66f77429",
+    "closureDigest": "4480c26abafec399b7fd1e7b75e7388e9dcfc0b636ee5eb5bd0075819cbf1d38",
+    "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+    "stageFailures": []
+  },
+  "stageOrder": [
+    "6.1",
+    "6.2",
+    "6.3",
+    "6.4",
+    "6.5"
+  ],
+  "stages": [
+    {
+      "id": "6.1",
+      "title": "Yuk profili, kapasite ve geri basinc kanitini kapat",
+      "prerequisiteStageIds": [
+        "phase-5-closed"
+      ],
+      "requiredOutputFiles": [
+        "load-capacity-matrix.json"
+      ],
+      "objective": "Mevcut yerel performans harness'lerinin hedef, orneklem, route, backpressure, idempotency ve hard-zero metriklerini olculebilir bir kapasite sozlesmesine baglamak; eski raporlarin tarihsel oldugunu acikca ayirmak.",
+      "scope": "Stage 5 ve Stage 7 local-lab performance harness'leri, Phase 79G bounded production-scale rehearsal, mevcut performance evidence JSON dosyalari ve bunlarin real-egress sinirlari.",
+      "prerequisites": [
+        "Phase 5 CLOSED olmali; closure ve bes stage digest'i gecerli olmali.",
+        "Git HEAD okunabilir olmali.",
+        "Performance harness kaynaklari ve Phase 79G sample testi mevcut olmali.",
+        "Audit kosusunda remote/provider egress flag'leri false olmali."
+      ],
+      "affectedComponents": [
+        "Next local-lab server",
+        "browser performance harness",
+        "Phase 79G aggregate rehearsal",
+        "release verification boundary"
+      ],
+      "affectedFiles": [
+        "app/scripts/measure-stage-5-lab-perf.mjs",
+        "app/scripts/measure-stage-7-lab-perf.mjs",
+        "app/scripts/rehearse-production-scale-79g.mjs",
+        "app/src/lib/phase-79g-unified-production-scale-rehearsal.ts",
+        "app/src/lib/phase-79g-unified-production-scale-rehearsal.test.ts",
+        "docs/PHASE_85_STAGE_5_LAB_PERF_REPORT.json",
+        "docs/PHASE_85_STAGE_7_PHASE_4_LAB_PERF_REPORT.json"
+      ],
+      "architectureDecisions": [
+        "Browser performance kaniti sadece loopback local-lab verisi olarak yorumlanir; field Core Web Vitals veya production GO olarak yorumlanmaz.",
+        "P75 LCP, CLS, TBT ve interaction proxy hedefleri harness icindeki TARGETS sabitlerinden okunur; yeni esik uydurulmaz.",
+        "Phase 79G hard-zero metrikleri aggregate-only ve sifir hata politikasi ile korunur.",
+        "Tarihi evidence sourceRevision mevcut HEAD ile ayni degilse stale olarak isaretlenir; stale rapor current-code PASS yerine gecmez.",
+        "Canli production traffic, linked Supabase ve uzak veritabanina baglanilmaz.",
+        "Gercek WhatsApp, Telegram, email, Stripe veya harici LLM/provider egress acilmaz.",
+        "Destructive chaos, remote restore, remote worker start ve production deploy calistirilmaz.",
+        "Kanita ait dosyalar docs/system-audit/phase-6 ve .manu-runtime/system-audit/phase-6 ile sinirlidir."
+      ],
+      "operations": [
+        "Phase 5 closure precondition'ini ve current Git HEAD'i oku; source commit uyumsuzsa dur.",
+        "Stage 5 ve Stage 7 harness kaynaklari ile gereken report dosyalarinin varligini kontrol et.",
+        "Local loopback hedeflerini ve performance harness davranisini envantere al.",
+        "P75 hedeflerini, route sayisini, sample count'i ve strict/non-strict davranisini kaynak koddan cikar.",
+        "Phase 79G aggregate workload, hard-zero metrikleri, sample/full ayrimini ve release rehearsal zincirini kontrol et.",
+        "Mevcut performance evidence dosyalarini status, productionStatus, target ve sourceRevision alanlariyla karsilastir.",
+        "Current audit ortaminda remote Supabase/provider egress ve production mutation bayraklarinin kapali oldugunu; matrix inputlari ile local-only NO-GO final blocker listesini kontrol et.",
+        "Phase 79G bounded rehearsal testini calistir; PASS ise matrix, operation evidence ve source digestlerini docs/system-audit/phase-6 altinda yaz."
+      ],
+      "technicalMethods": [
+        "local loopback performance harness inspection",
+        "P75 target extraction",
+        "aggregate-only rehearsal verification",
+        "sourceRevision freshness check",
+        "environment egress gate scan",
+        "SHA-256 evidence digest"
+      ],
+      "dataFlow": "local Next server/harness -> bounded browser samples -> P75 metrics -> Phase 79G aggregate rehearsal -> hard-zero decision -> secret-free capacity matrix.",
+      "dependencies": [
+        "Phase 5 closure",
+        "Playwright/local Next harness kaynaklari",
+        "Phase 79G rehearsal testleri",
+        "release identity ve env boundary"
+      ],
+      "errorAndBoundaryCases": [
+        "missing harness",
+        "missing report",
+        "stale sourceRevision",
+        "zero sample",
+        "target miss",
+        "hard-zero non-zero",
+        "remote URL/egress flag",
+        "full rehearsal istenmeden sample-only"
+      ],
+      "tests": [
+        "src/lib/phase-79g-unified-production-scale-rehearsal.test.ts",
+        "Phase 6 contract test"
+      ],
+      "verificationCriteria": [
+        "all harness sources exist",
+        "targets and workload are explicit",
+        "historical evidence is labelled",
+        "remote mutation boundary is closed",
+        "bounded rehearsal test passes"
+      ],
+      "completionCriteria": "load-capacity-matrix.json status PASS, eight operations PASS ve stage evidence VERIFIED olmadan 6.2 acilmaz."
+    },
+    {
+      "id": "6.2",
+      "title": "Ariza enjeksiyonu, retry ve fail-closed davranisini kapat",
+      "prerequisiteStageIds": [
+        "6.1"
+      ],
+      "requiredOutputFiles": [
+        "failure-injection-matrix.json"
+      ],
+      "objective": "Queue/worker, AI run, rate limit ve API error yollarinda dependency failure, timeout, lease, retry, terminal failure, duplicate ve request-id davranislarini destructive olmayan deterministic testlerle kanitlamak.",
+      "scope": "Durable media/audio/AI worker lifecycle'lari, rate limiter, API error contract'i, request-id propagation ve Phase 79G safety failure aggregation.",
+      "prerequisites": [
+        "6.1 VERIFIED",
+        "6.1 output/evidence digestleri gecerli",
+        "Test kosusunda real provider ve remote RLS flag'leri false"
+      ],
+      "affectedComponents": [
+        "durable queue workers",
+        "AI run service",
+        "rate-limit RPC/fallback",
+        "structured API errors",
+        "request-id propagation"
+      ],
+      "affectedFiles": [
+        "app/src/lib/phase-85-stage-4b3-durable-media-worker.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-audio-worker.ts",
+        "app/src/lib/phase-85-stage-4c-run-service.ts",
+        "app/src/lib/rate-limit.ts",
+        "app/src/lib/app-errors.ts",
+        "app/src/lib/phase-79g-unified-production-scale-rehearsal.ts",
+        "app/tests/request-id-error-propagation.test.ts"
+      ],
+      "architectureDecisions": [
+        "Dependency failure client'a ham exception olarak degil, bounded structured error veya durable terminal outcome olarak yansir.",
+        "Retry sadece retryable failure'larda ilerler; lease token/tenant scope/idempotency korunmadan tekrar isleme izin verilmez.",
+        "Rate limit backend RPC hata verirse request allow edilmez; local fallback sadece acik dev fallback kosulunda kullanilir.",
+        "AI run timeout/abort/failure event ile kapanir; provider egress kapali iken deterministic provider gate korunur.",
+        "Canli production traffic, linked Supabase ve uzak veritabanina baglanilmaz.",
+        "Gercek WhatsApp, Telegram, email, Stripe veya harici LLM/provider egress acilmaz.",
+        "Destructive chaos, remote restore, remote worker start ve production deploy calistirilmaz.",
+        "Kanita ait dosyalar docs/system-audit/phase-6 ve .manu-runtime/system-audit/phase-6 ile sinirlidir."
+      ],
+      "operations": [
+        "6.1 VERIFIED precondition'ini ve source/evidence digestlerini dogrula.",
+        "Media ve audio worker kaynaklarinin mevcut oldugunu ve claim, lease renewal, timeout, retry, release ve terminal failure yollarini cikart.",
+        "AI run service kaynaklarinda timeout, abort, run.failed, retryable ve stale-context kapanislarini kontrol et.",
+        "Rate-limit RPC, 429 response, Retry-After ve fail-closed hata yolunu kontrol et.",
+        "Duplicate/idempotency, revision veya lease token guard'larini tenant scope ile birlikte kontrol et.",
+        "Request-id ve structured error propagation testlerini calistir; PII/secret leakage olmamasini kontrol et.",
+        "Failure matrix inputlarini, remote/provider boundary'sini ve final blocker listesini kontrol et.",
+        "Deterministic worker, AI ve rate-limit test grubunu calistir; PASS ise matrix ve operation evidence dosyasini source commit/digest ile yaz."
+      ],
+      "technicalMethods": [
+        "failure-mode marker scan",
+        "deterministic unit tests",
+        "lease/retry lifecycle inspection",
+        "rate-limit fail-closed assertion",
+        "request-id error contract",
+        "aggregate blocker list"
+      ],
+      "dataFlow": "dependency/timeout -> worker or service failure classifier -> retry/terminal state -> bounded API/event error -> requestId/audit evidence -> operator-visible aggregate.",
+      "dependencies": [
+        "Phase 4 worker contracts",
+        "Phase 5 API contracts",
+        "app-errors",
+        "rate-limit RPC contract",
+        "Phase 79G safety metrics"
+      ],
+      "errorAndBoundaryCases": [
+        "claim RPC failure",
+        "lease expiry",
+        "provider timeout",
+        "malformed payload",
+        "duplicate delivery",
+        "retry exhaustion",
+        "rate-limit RPC failure",
+        "unknown exception"
+      ],
+      "tests": [
+        "phase-85-stage-4b3-local-worker-runner.test.ts",
+        "phase-85-stage-4b4-durable-transcript-bridge-worker.test.ts",
+        "phase-85-stage-4c-run-service.test.ts",
+        "rate-limit.test.ts",
+        "tests/request-id-error-propagation.test.ts"
+      ],
+      "verificationCriteria": [
+        "all failure paths have explicit outcome",
+        "retry/terminal/idempotency guards are present",
+        "rate limit is fail-closed",
+        "request-id errors are stable",
+        "targeted failure tests pass"
+      ],
+      "completionCriteria": "failure-injection-matrix.json status PASS, eight operations PASS ve stage evidence VERIFIED olmadan 6.3 acilmaz."
+    },
+    {
+      "id": "6.3",
+      "title": "Gozlemlenebilirlik, health ve alarm sinyali sozlesmesini kapat",
+      "prerequisiteStageIds": [
+        "6.2"
+      ],
+      "requiredOutputFiles": [
+        "observability-contract-matrix.json"
+      ],
+      "objective": "Release health, admin health, operational snapshot, shell metric sink, worker operations ve adapter rollback sinyallerinin cache, privacy, request-id, fail-closed ve operator kararlarini destekleyen sozlesmesini kanitlamak.",
+      "scope": "Health API route'lari, operational-health snapshot, metric sanitization, channel adapter health/rollback, worker release manifest ve structured error surface.",
+      "prerequisites": [
+        "6.2 VERIFIED",
+        "6.2 output/evidence digestleri gecerli",
+        "health ve metrics test kaynaklari mevcut"
+      ],
+      "affectedComponents": [
+        "release health endpoint",
+        "commercial admin health",
+        "operational health snapshot",
+        "shell Web Vitals sink",
+        "channel rollback",
+        "worker release manifest"
+      ],
+      "affectedFiles": [
+        "app/src/app/api/health/release/route.ts",
+        "app/src/app/api/commercial/admin/health/route.ts",
+        "app/src/lib/operational-health.ts",
+        "app/src/lib/phase-85-stage-5-shell-metric-sink.ts",
+        "app/src/lib/channel-adapter-health.ts",
+        "app/src/lib/channel-adapter-rollback.ts",
+        "app/src/lib/production-worker-release-contracts.ts",
+        "app/src/lib/app-errors.ts"
+      ],
+      "architectureDecisions": [
+        "Health endpointleri no-store olur; release identity ve dependency failure sonucu bounded status verir.",
+        "Operational snapshot aggregate-only'dir; client body, phone, raw prompt, secret veya raw URL tasimaz.",
+        "Metric sink route ve responsive class allowlist'i kullanir; clientId/raw URL alanlari reddedilir.",
+        "Adapter rollback global/tenant/dietitian/client scope'ta outbound automation'i fail-closed durdurur ve audit event uretir.",
+        "Worker operations manifest production GO, release verification, runbook ve rollback owner olmadan ready karari vermez.",
+        "Canli production traffic, linked Supabase ve uzak veritabanina baglanilmaz.",
+        "Gercek WhatsApp, Telegram, email, Stripe veya harici LLM/provider egress acilmaz.",
+        "Destructive chaos, remote restore, remote worker start ve production deploy calistirilmaz.",
+        "Kanita ait dosyalar docs/system-audit/phase-6 ve .manu-runtime/system-audit/phase-6 ile sinirlidir."
+      ],
+      "operations": [
+        "6.2 VERIFIED precondition'ini ve digest zincirini dogrula.",
+        "Release health ve commercial admin health route kaynaklarinin mevcut oldugunu; status, timeout, no-store ve dependency failure davranisini kontrol et.",
+        "Operational health snapshot alanlarini aggregate-only ve launch-blocking sinyallerle eslestir.",
+        "Shell metric sink sanitize/allowlist ve raw URL/clientId reddini kontrol et.",
+        "Channel adapter health counters ve rollback scope'larinin audit/fail-closed davranisini kontrol et.",
+        "Worker release manifest, one-shot command ve production readiness blocker'larini kontrol et.",
+        "Observability matrix inputlarini, remote/provider boundary'sini ve final blocker listesini kontrol et.",
+        "Health, metric, rollback, worker ve privacy test grubunu calistir; PASS ise matrix ve operation evidence dosyasini source commit/digest ile yaz."
+      ],
+      "technicalMethods": [
+        "health route contract scan",
+        "aggregate privacy scan",
+        "metric payload allowlist",
+        "rollback scope inspection",
+        "launch blocker manifest verification",
+        "targeted Vitest"
+      ],
+      "dataFlow": "dependency/worker/channel state -> bounded health counters -> no-store route or operator snapshot -> sanitized metric/alert signal -> rollback or incident decision.",
+      "dependencies": [
+        "request-id/error contract",
+        "release identity",
+        "Phase 77AF rollback controls",
+        "Phase 85 shell metrics",
+        "worker operations manifest"
+      ],
+      "errorAndBoundaryCases": [
+        "release identity missing",
+        "admin probe timeout",
+        "health dependency unavailable",
+        "raw PII metric",
+        "invalid route class",
+        "rollback target missing",
+        "worker GO missing",
+        "unknown launch gate"
+      ],
+      "tests": [
+        "operational-health.test.ts",
+        "phase-85-stage-5-shell-metric-sink.test.ts",
+        "phase-77af-adapter-operational-health-rollback.test.ts",
+        "production-worker-release-contracts.test.ts"
+      ],
+      "verificationCriteria": [
+        "health routes are no-store and bounded",
+        "aggregate snapshot has privacy guards",
+        "metric sanitizer rejects raw identifiers",
+        "rollback and worker blockers are explicit",
+        "targeted observability tests pass"
+      ],
+      "completionCriteria": "observability-contract-matrix.json status PASS, eight operations PASS ve stage evidence VERIFIED olmadan 6.4 acilmaz."
+    },
+    {
+      "id": "6.4",
+      "title": "Backup, restore, worker ve rollback kurtarma kanitini kapat",
+      "prerequisiteStageIds": [
+        "6.3"
+      ],
+      "requiredOutputFiles": [
+        "recovery-operations-matrix.json"
+      ],
+      "objective": "Backup/restore scriptlerinin dry-run, encryption, hash, isolated target, approval, cleanup ve secret handling kurallarini; worker one-shot ve rollback runbook'inin uygulanabilir operasyon sozlesmesini kanitlamak.",
+      "scope": "Hosted Supabase backup/restore helper'lari, manifest/approval validator, release worker manifesti, Phase 5 operations runbook, incident ve backup/restore runbook'lari.",
+      "prerequisites": [
+        "6.3 VERIFIED",
+        "6.3 output/evidence digestleri gecerli",
+        "Backup/restore testleri mevcut",
+        "Remote restore ve production apply kapali"
+      ],
+      "affectedComponents": [
+        "backup manifest",
+        "age encryption boundary",
+        "isolated restore approval",
+        "worker one-shot operations",
+        "release rollback runbook",
+        "incident response"
+      ],
+      "affectedFiles": [
+        "app/scripts/backup-hosted-supabase.mjs",
+        "app/scripts/restore-hosted-supabase.mjs",
+        "app/scripts/lib/hosted-sandbox-backup-manifest.mjs",
+        "app/scripts/hosted-sandbox-backup-restore.test.mjs",
+        "app/src/lib/production-worker-release-contracts.ts",
+        "docs/BACKUP_RESTORE_RUNBOOK.md",
+        "docs/INCIDENT_RESPONSE_RUNBOOK.md",
+        "docs/PRODUCTION_READINESS_STAGE_1_PHASE_5_OPERATIONS_RUNBOOK.md"
+      ],
+      "architectureDecisions": [
+        "Backup default dry-run'dir; remote backup explicit approval olmadan reddedilir.",
+        "Backup age ile sifrelenir, SHA-256 manifest'e yazilir ve dump/decrypted gecici dosya finally ile silinir.",
+        "Restore source-target ref esitligini, hash mismatch'i, expired/missing approval'i ve confirmation mismatch'i reddeder.",
+        "Worker production start'i service-role env, production GO, release verification, runbook approval ve rollback owner olmadan blocked'dir.",
+        "Rollback traffic release artifact'a geri doner, provider/channel flag'leri kapatilir ve one-shot worker kontrolu yapilir.",
+        "Canli production traffic, linked Supabase ve uzak veritabanina baglanilmaz.",
+        "Gercek WhatsApp, Telegram, email, Stripe veya harici LLM/provider egress acilmaz.",
+        "Destructive chaos, remote restore, remote worker start ve production deploy calistirilmaz.",
+        "Kanita ait dosyalar docs/system-audit/phase-6 ve .manu-runtime/system-audit/phase-6 ile sinirlidir."
+      ],
+      "operations": [
+        "6.3 VERIFIED precondition'ini ve digest zincirini dogrula.",
+        "Backup/restore kaynaklarinin mevcut oldugunu; backup scriptinin default dry-run ve remote approval gate'ini kontrol et.",
+        "Encryption, SHA-256 manifest, database URL secret redaction ve gecici dump cleanup'i kontrol et.",
+        "Restore hash, source-target isolation, approval schema, confirmation ve expiry kontrollerini kontrol et.",
+        "Worker long-running/one-shot komutlarini, required env ve production readiness blocker'larini runbook ile karsilastir.",
+        "Incident/backup restore/rollback runbook'larinin production NO-GO ve evidence kayit adimlarini kontrol et.",
+        "Recovery matrix inputlarini, remote restore boundary'sini ve runbook evidence final listesini kontrol et.",
+        "Backup/restore, manifest ve worker release test grubunu remote apply yapmadan calistir; PASS ise matrix ve operation evidence dosyasini source commit/digest ile yaz."
+      ],
+      "technicalMethods": [
+        "dry-run/apply gate inspection",
+        "hash and approval validation",
+        "secret redaction test",
+        "temporary-file cleanup inspection",
+        "runbook-command reconciliation",
+        "Node test"
+      ],
+      "dataFlow": "backup request -> project/ref gate -> pg_dump child env -> age encrypted artifact + manifest -> isolated target approval -> hash/restore validation -> cleanup -> rollback evidence.",
+      "dependencies": [
+        "backup/restore scripts",
+        "age/pg tools contract",
+        "worker release manifest",
+        "incident and operations runbooks",
+        "Phase 5 closure"
+      ],
+      "errorAndBoundaryCases": [
+        "database URL missing",
+        "remote approval missing",
+        "age key missing",
+        "hash mismatch",
+        "stale manifest",
+        "same source/target",
+        "expired approval",
+        "restore apply without operator confirmation"
+      ],
+      "tests": [
+        "app/scripts/hosted-sandbox-backup-restore.test.mjs",
+        "production-worker-release-contracts.test.ts",
+        "Phase 6 contract test"
+      ],
+      "verificationCriteria": [
+        "backup/restore gates are fail-closed",
+        "secrets stay out of process args/output",
+        "isolated restore approval is mandatory",
+        "worker rollback operations are explicit",
+        "remote apply is not executed",
+        "targeted recovery tests pass"
+      ],
+      "completionCriteria": "recovery-operations-matrix.json status PASS, eight operations PASS ve stage evidence VERIFIED olmadan 6.5 acilmaz."
+    },
+    {
+      "id": "6.5",
+      "title": "Faz 6 final kapanisini ve Faz 7 gecis kilidini ac",
+      "prerequisiteStageIds": [
+        "6.1",
+        "6.2",
+        "6.3",
+        "6.4"
+      ],
+      "requiredOutputFiles": [
+        "phase-6-closure-evidence.json"
+      ],
+      "objective": "Faz 6'nin dort teknik stage'ini, output/evidence digest zincirini, final contract/test/typecheck sonucunu ve mutation boundary'sini tekrar dogrulayarak fazi kapatmak.",
+      "scope": "Phase 6 state, stage output/evidence dosyalari, final targeted tests, typecheck sonucu ve next-phase gate.",
+      "prerequisites": [
+        "6.1-6.4 VERIFIED",
+        "tum Phase 6 output/evidence digestleri gecerli",
+        "final test/typecheck komutlari PASS",
+        "production/remote mutation boundary kapali"
+      ],
+      "affectedComponents": [
+        "audit state machine",
+        "phase closure evidence",
+        "next phase gate"
+      ],
+      "affectedFiles": [
+        "docs/system-audit/phase-6/*",
+        ".manu-runtime/system-audit/phase-6/*",
+        "tools/system-audit/phase-6/*"
+      ],
+      "architectureDecisions": [
+        "Faz sadece tum stage operasyonlari PASS, digestler gecerli, final testler PASS ve boundary kapali ise CLOSED olur.",
+        "Kapanis evidence'i production GO veya remote recovery approval anlamina gelmez; NO-GO sinirlari korunur.",
+        "Faz 7 sadece gate olarak acilir; Faz 7 uygulamasi bu fazin kapsaminda degildir.",
+        "Canli production traffic, linked Supabase ve uzak veritabanina baglanilmaz.",
+        "Gercek WhatsApp, Telegram, email, Stripe veya harici LLM/provider egress acilmaz.",
+        "Destructive chaos, remote restore, remote worker start ve production deploy calistirilmaz.",
+        "Kanita ait dosyalar docs/system-audit/phase-6 ve .manu-runtime/system-audit/phase-6 ile sinirlidir."
+      ],
+      "operations": [
+        "6.1-6.4 stage state'lerinin VERIFIED oldugunu sirayla dogrula.",
+        "Her stage output ve evidence SHA-256 digest'ini yeniden hesapla.",
+        "Phase 6 plan manifesti, source commit ve mutation policy tutarliligini kontrol et.",
+        "Phase 6 contract testini calistir.",
+        "Final targeted reliability/recovery test grubunu tekrar calistir.",
+        "Typecheck'i remote/provider egress kapali ortamda calistir.",
+        "Tum blocker listelerini ve operation status'lerini sifirla; herhangi bir hata varsa kapanisi BLOCKED yap.",
+        "Closure evidence, phase closure ve nextPhaseUnlocked kayitlarini digest'leyerek yaz."
+      ],
+      "technicalMethods": [
+        "digest revalidation",
+        "state-machine closure gate",
+        "final Node/Vitest test run",
+        "TypeScript production typecheck",
+        "mutation-policy assertion",
+        "immutable closure record"
+      ],
+      "dataFlow": "stage evidence -> digest revalidation -> final tests/typecheck -> blocker evaluation -> CLOSED state -> phase-6 closure -> phase-7 gate.",
+      "dependencies": [
+        "6.1-6.4 evidence",
+        "Phase 5 closure",
+        "Phase 6 contract test",
+        "app typecheck",
+        "local-only environment policy"
+      ],
+      "errorAndBoundaryCases": [
+        "stage not verified",
+        "stale output",
+        "stale evidence",
+        "source commit drift",
+        "test failure",
+        "typecheck failure",
+        "mutation flag enabled",
+        "closure write failure"
+      ],
+      "tests": [
+        "tools/system-audit/phase-6/phase-6.test.mjs",
+        "targeted failure/observability/recovery tests",
+        "npm run typecheck"
+      ],
+      "verificationCriteria": [
+        "all four technical stages VERIFIED",
+        "all digests match",
+        "final contract/tests/typecheck PASS",
+        "no remote mutation occurred",
+        "closure record is immutable for current source commit"
+      ],
+      "completionCriteria": "phase-6-closure-evidence.json status PASS, eight operations PASS, state CLOSED ve phase-6-closure.json nextPhaseUnlocked=true olmadan Faz 6 kapanmaz."
+    }
+  ],
+  "outputPolicy": "secret-free-docs-and-runtime-only-redacted-test-summaries",
+  "mutationPolicy": {
+    "production": false,
+    "linkedSupabase": false,
+    "remoteRestore": false,
+    "remoteWorkerStart": false,
+    "destructiveChaos": false,
+    "realWhatsAppEgress": false,
+    "realAiProviderEgress": false,
+    "stripeLive": false,
+    "rawMediaTransfer": false
+  }
+}

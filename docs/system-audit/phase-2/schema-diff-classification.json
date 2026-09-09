@@ -1,0 +1,5713 @@
+{
+  "schemaVersion": "aiya-system-audit-phase-2-schema-diff-classification-v1",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-2",
+  "stageId": "2.2",
+  "generatedAt": "2026-09-07T22:50:46.204Z",
+  "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+  "sourceStage": {
+    "stageId": "2.1",
+    "evidencePath": "docs/system-audit/phase-2/stages/stage-2.1.json",
+    "evidenceDigest": "eb22aa720ef87c53de5ea9c48aeb0a581e44381eabd8f6d90da8d04b4dc59275",
+    "outputDigest": "39188c3f2bc9fa6d921e4017cd2dbb784d82389b9ecae4b419461364122e684c"
+  },
+  "status": "PASS",
+  "records": [],
+  "counts": {
+    "MISSING": 0,
+    "DEFINITION_MISMATCH": 0,
+    "PRIVILEGE_MISMATCH": 0,
+    "HISTORY_MISMATCH": 0,
+    "INTENTIONALLY_DEFERRED": 0
+  },
+  "intentionallyDeferred": [],
+  "repairPlan": [],
+  "integritySurface": {
+    "schemaVersion": "aiya-system-audit-phase-2-integrity-surface-v1",
+    "criticalTables": [
+      "app_session_activity",
+      "billing_customers",
+      "channel_account_bindings",
+      "clients",
+      "commercial_invites",
+      "dietitians",
+      "manual_entitlement_operations",
+      "tenant_entitlements",
+      "tenant_memberships",
+      "tenants",
+      "whatsapp_channel_credentials",
+      "whatsapp_connection_attempts",
+      "whatsapp_ingress_jobs"
+    ],
+    "foreignKeys": [
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "personas",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "clients",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "clients",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "conversations",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "messages",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "clients",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "conversations",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "clients",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "conversations",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "messages",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "clients",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "conversations",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "messages",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "conversations",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "clients",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "personas",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "ai_decisions",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260525030000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260525040000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260525040000",
+        "targetTable": "clients",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260525040000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260525050000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260525050000",
+        "targetTable": "clients",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260525050000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260530000000",
+        "targetTable": "messages",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260530010000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260530010000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260530010000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260530010000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260530010000",
+        "targetTable": "clients",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260530010000",
+        "targetTable": "client_form_schemas",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260530020000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260530020000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260530020000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260530020000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260530030000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260530030000",
+        "targetTable": "clients",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260530030000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260530030000",
+        "targetTable": "client_context_updates",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260601020000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260602030000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260602030000",
+        "targetTable": "ai_decisions",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260604000000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260604000000",
+        "targetTable": "scope_rules",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260604000000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260604000000",
+        "targetTable": "conversations",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260604000000",
+        "targetTable": "messages",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260608000000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260608000000",
+        "targetTable": "clients",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260608000000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260610120000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260610120000",
+        "targetTable": "clients",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260610120000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260610130000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260610130000",
+        "targetTable": "clients",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260610130000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260622130000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260622130000",
+        "targetTable": "clients",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260622130000",
+        "targetTable": "conversations",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260622130000",
+        "targetTable": "messages",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260622130000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260701120000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260701120000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260701120000",
+        "targetTable": "commercial_invites",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260701120000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260701120000",
+        "targetTable": "commercial_invites",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260701120000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260701120000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260701120000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260701140000",
+        "targetTable": "commercial_invites",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260701140000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260702140000",
+        "targetTable": "commercial_invites",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260702140000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "channel_account_bindings",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "channel_account_bindings",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "inbound_quarantines",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "channel_events",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "channel_account_bindings",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "channel_actor_bindings",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "messages",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "channel_events",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "clients",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "conversations",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "handoff_cases",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "messages",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "messages",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "messages",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "clients",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "conversations",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "human_control_sessions",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "messages",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "handoff_cases",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "ai_decisions",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "clients",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "client_context_updates",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710180000",
+        "targetTable": "channel_account_bindings",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260710180000",
+        "targetTable": "inbound_quarantines",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260710180000",
+        "targetTable": "channel_events",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260710180000",
+        "targetTable": "messages",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260710180000",
+        "targetTable": "channel_events",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260710180000",
+        "targetTable": "clients",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260710180000",
+        "targetTable": "conversations",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260710180000",
+        "targetTable": "handoff_cases",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260710180000",
+        "targetTable": "messages",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260710180000",
+        "targetTable": "messages",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260710180000",
+        "targetTable": "dietitians",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260710180000",
+        "targetTable": "clients",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260710180000",
+        "targetTable": "conversations",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260710180000",
+        "targetTable": "human_control_sessions",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260710180000",
+        "targetTable": "messages",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260710180000",
+        "targetTable": "handoff_cases",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260710180000",
+        "targetTable": "ai_decisions",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260710180000",
+        "targetTable": "clients",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260710180000",
+        "targetTable": "dietitians",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260710180000",
+        "targetTable": "client_context_updates",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260710191000",
+        "targetTable": "messages",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260710191000",
+        "targetTable": "dietitians",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260711090000",
+        "targetTable": "clients",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260711090000",
+        "targetTable": "conversations",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260711090000",
+        "targetTable": "messages",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260711090000",
+        "targetTable": "handoff_cases",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260711090000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260711090000",
+        "targetTable": "notifications",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260711090000",
+        "targetTable": "dietitians",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260711200000",
+        "targetTable": "conversations",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260711200000",
+        "targetTable": "dietitians",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260711200000",
+        "targetTable": "ai_decisions",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260711200000",
+        "targetTable": "dietitians",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260711200000",
+        "targetTable": "messages",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260711200000",
+        "targetTable": "channel_account_bindings",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260711200000",
+        "targetTable": "channel_actor_bindings",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260711200000",
+        "targetTable": "channel_account_bindings",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260711200000",
+        "targetTable": "dietitians",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260712120000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260712120000",
+        "targetTable": "dietitians",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260712120000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260712120000",
+        "targetTable": "dietitian_form_schemas",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260712120000",
+        "targetTable": "dietitians",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260712140000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260712140000",
+        "targetTable": "conversations",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260712140000",
+        "targetTable": "dietitians",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260712160000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260713120000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260713120000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260713120000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260713120000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260713120000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260713120000",
+        "targetTable": "clients",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260713120000",
+        "targetTable": "conversations",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260713120000",
+        "targetTable": "messages",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260713120000",
+        "targetTable": "channel_events",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260713120000",
+        "targetTable": "clients",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260713120000",
+        "targetTable": "conversations",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260713120000",
+        "targetTable": "messages",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260713120000",
+        "targetTable": "media_assets",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260713120000",
+        "targetTable": "inbound_message_bundles",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260713120000",
+        "targetTable": "visual_analysis_records",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260713120000",
+        "targetTable": "clients",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260713120000",
+        "targetTable": "conversations",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260713120000",
+        "targetTable": "messages",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260713120000",
+        "targetTable": "ai_decisions",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260713120000",
+        "targetTable": "inbound_message_bundles",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260713120000",
+        "targetTable": "messages",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260713120000",
+        "targetTable": "channel_events",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260713120000",
+        "targetTable": "media_assets",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260713120000",
+        "targetTable": "clients",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260713120000",
+        "targetTable": "conversations",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260713120000",
+        "targetTable": "visual_analysis_records",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260713120000",
+        "targetTable": "dietitians",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260713130000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260714100000",
+        "targetTable": "messages",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260714110000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260714110000",
+        "targetTable": "media_assets",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260714150000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260714160000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260714160000",
+        "targetTable": "media_assets",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260714170000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260714170000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260714170000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260714170000",
+        "targetTable": "audio_transcription_records",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260714170000",
+        "targetTable": "clients",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260714170000",
+        "targetTable": "conversations",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260714170000",
+        "targetTable": "messages",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260714170000",
+        "targetTable": "media_assets",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260714170000",
+        "targetTable": "inbound_message_bundles",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260714170000",
+        "targetTable": "clients",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260714170000",
+        "targetTable": "conversations",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260714170000",
+        "targetTable": "audio_transcription_records",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260714170000",
+        "targetTable": "dietitians",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260715100000",
+        "targetTable": "audio_transcription_records",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260715100000",
+        "targetTable": "audio_transcription_records",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260715100000",
+        "targetTable": "audio_transcription_records",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260715100000",
+        "targetTable": "audio_transcription_records",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260715100000",
+        "targetTable": "messages",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260715100000",
+        "targetTable": "audio_transcription_records",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260715110000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260715110000",
+        "targetTable": "audio_transcription_records",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "dietitians",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "clients",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "ai_chat_conversations",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "ai_chat_conversations",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "ai_chat_conversations",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "ai_chat_messages",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "ai_chat_branches",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "ai_chat_conversations",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "ai_chat_message_versions",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "ai_chat_runs",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "ai_chat_runs",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "ai_chat_conversations",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "ai_chat_runs",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "ai_chat_conversations",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "ai_chat_runs",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "ai_chat_conversations",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "ai_chat_runs",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "ai_chat_conversations",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "ai_chat_message_versions",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "clients",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "ai_chat_conversations",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "ai_chat_branches",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "ai_chat_runs",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "ai_chat_conversations",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "ai_chat_conversations",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "ai_chat_branches",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "ai_chat_message_versions",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "ai_chat_message_versions",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "ai_chat_message_versions",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "ai_chat_message_versions",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "ai_chat_branches",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722130000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722130000",
+        "targetTable": "ai_chat_conversations",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722130000",
+        "targetTable": "ai_chat_runs",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722150000",
+        "targetTable": "ai_chat_approved_sources",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722150000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722150000",
+        "targetTable": "ai_chat_runs",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722160000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722160000",
+        "targetTable": "ai_chat_conversations",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722160000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722160000",
+        "targetTable": "ai_chat_attachments",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722160000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722160000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722160000",
+        "targetTable": "client_record_assets",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722160000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722170000",
+        "targetTable": "ai_chat_runs",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722170000",
+        "targetTable": "ai_chat_runs",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722170000",
+        "targetTable": "ai_chat_runs",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722180000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722180000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722180000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260725110000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260725110000",
+        "targetTable": "ai_chat_conversations",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260725110000",
+        "targetTable": "ai_chat_message_versions",
+        "targetColumns": "tenant_id, conversation_id, id"
+      },
+      {
+        "migrationId": "20260725110000",
+        "targetTable": "ai_chat_attachments",
+        "targetColumns": "tenant_id, conversation_id, id"
+      },
+      {
+        "migrationId": "20260728130000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260728130000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260802090000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260802090000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260802090000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260802090000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260802090000",
+        "targetTable": "clients",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260819120000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260819120000",
+        "targetTable": "clients",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260830180000",
+        "targetTable": "commercial_invites",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260830180000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260830190000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260830190000",
+        "targetTable": "channel_account_bindings",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260830190000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260830190000",
+        "targetTable": "channel_account_bindings",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260830190000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260830190000",
+        "targetTable": "channel_account_bindings",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260830190000",
+        "targetTable": "channel_events",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260830200000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      }
+    ],
+    "criticalForeignKeys": [
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "clients",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "clients",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "clients",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "clients",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "clients",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "clients",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260522000000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260525030000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260525040000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260525040000",
+        "targetTable": "clients",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260525040000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260525050000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260525050000",
+        "targetTable": "clients",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260525050000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260530010000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260530010000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260530010000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260530010000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260530010000",
+        "targetTable": "clients",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260530020000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260530020000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260530020000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260530020000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260530030000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260530030000",
+        "targetTable": "clients",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260530030000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260601020000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260602030000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260604000000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260604000000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260608000000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260608000000",
+        "targetTable": "clients",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260608000000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260610120000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260610120000",
+        "targetTable": "clients",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260610120000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260610130000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260610130000",
+        "targetTable": "clients",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260610130000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260622130000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260622130000",
+        "targetTable": "clients",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260622130000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260701120000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260701120000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260701120000",
+        "targetTable": "commercial_invites",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260701120000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260701120000",
+        "targetTable": "commercial_invites",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260701120000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260701120000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260701120000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260701140000",
+        "targetTable": "commercial_invites",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260701140000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260702140000",
+        "targetTable": "commercial_invites",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260702140000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "channel_account_bindings",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "channel_account_bindings",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "channel_account_bindings",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "clients",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "clients",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "clients",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710120000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260710180000",
+        "targetTable": "channel_account_bindings",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260710180000",
+        "targetTable": "clients",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260710180000",
+        "targetTable": "dietitians",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260710180000",
+        "targetTable": "clients",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260710180000",
+        "targetTable": "clients",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260710180000",
+        "targetTable": "dietitians",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260710191000",
+        "targetTable": "dietitians",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260711090000",
+        "targetTable": "clients",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260711090000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260711090000",
+        "targetTable": "dietitians",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260711200000",
+        "targetTable": "dietitians",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260711200000",
+        "targetTable": "dietitians",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260711200000",
+        "targetTable": "channel_account_bindings",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260711200000",
+        "targetTable": "channel_account_bindings",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260711200000",
+        "targetTable": "dietitians",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260712120000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260712120000",
+        "targetTable": "dietitians",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260712120000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260712120000",
+        "targetTable": "dietitians",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260712140000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260712140000",
+        "targetTable": "dietitians",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260712160000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260713120000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260713120000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260713120000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260713120000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260713120000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260713120000",
+        "targetTable": "clients",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260713120000",
+        "targetTable": "clients",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260713120000",
+        "targetTable": "clients",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260713120000",
+        "targetTable": "clients",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260713120000",
+        "targetTable": "dietitians",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260713130000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260714110000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260714150000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260714160000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260714170000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260714170000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260714170000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260714170000",
+        "targetTable": "clients",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260714170000",
+        "targetTable": "clients",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260714170000",
+        "targetTable": "dietitians",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260715110000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "dietitians",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "clients",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "clients",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722100000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722130000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722150000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722160000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722160000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722160000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722160000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722160000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722180000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722180000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260722180000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260725110000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260728130000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260728130000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260802090000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260802090000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260802090000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260802090000",
+        "targetTable": "dietitians",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260802090000",
+        "targetTable": "clients",
+        "targetColumns": "tenant_id, id"
+      },
+      {
+        "migrationId": "20260819120000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260819120000",
+        "targetTable": "clients",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260830180000",
+        "targetTable": "commercial_invites",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260830180000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260830190000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260830190000",
+        "targetTable": "channel_account_bindings",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260830190000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260830190000",
+        "targetTable": "channel_account_bindings",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260830190000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260830190000",
+        "targetTable": "channel_account_bindings",
+        "targetColumns": "id"
+      },
+      {
+        "migrationId": "20260830200000",
+        "targetTable": "tenants",
+        "targetColumns": "id"
+      }
+    ],
+    "constraints": [
+      {
+        "migrationId": "20260522000000",
+        "name": "messages_generated_by_ai_decision_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260525040000",
+        "name": "client_assignments_access_level_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260525050000",
+        "name": "data_requests_request_type_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260525050000",
+        "name": "data_requests_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260530000000",
+        "name": "ai_decisions_send_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260530040000",
+        "name": "ai_decisions_provider_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260601010000",
+        "name": "clients_lifecycle_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260601020000",
+        "name": "inbound_quarantines_channel_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260601020000",
+        "name": "inbound_quarantines_source_type_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260601020000",
+        "name": "inbound_quarantines_reason_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260602030000",
+        "name": "rate_limit_buckets_scope_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260602030000",
+        "name": "rate_limit_buckets_key_hash_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260602030000",
+        "name": "rate_limit_buckets_count_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260602030000",
+        "name": "messages_generated_by_ai_decision_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260604000000",
+        "name": "scope_rules_language_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260604000000",
+        "name": "scope_rules_escalation_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260604000000",
+        "name": "scope_rules_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260604000000",
+        "name": "scope_rule_chunks_escalation_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260604000000",
+        "name": "scope_guard_evaluations_level_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260604000000",
+        "name": "scope_guard_evaluations_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260622130000",
+        "name": "channel_deliveries_channel_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260622130000",
+        "name": "channel_deliveries_direction_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260622130000",
+        "name": "channel_deliveries_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260701120000",
+        "name": "commercial_invites_email_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260701120000",
+        "name": "commercial_invites_token_hash_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260701120000",
+        "name": "billing_customers_email_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260701120000",
+        "name": "billing_customers_stripe_customer_unique",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260701120000",
+        "name": "mobile_install_audit_event_type_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260701140000",
+        "name": "commercial_admin_audit_event_type_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260702120000",
+        "name": "commercial_lead_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260702140000",
+        "name": "commercial_onboarding_event_type_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260703120000",
+        "name": "commercial_admin_audit_event_type_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260710120000",
+        "name": "channel_account_bindings_provider_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260710120000",
+        "name": "channel_account_bindings_operating_mode_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260710120000",
+        "name": "channel_account_bindings_lifecycle_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260710120000",
+        "name": "channel_account_bindings_attribution_policy_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260710120000",
+        "name": "channel_account_bindings_revoke_timestamp_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260710120000",
+        "name": "channel_actor_bindings_actor_type_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260710120000",
+        "name": "channel_actor_bindings_attribution_basis_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260710120000",
+        "name": "channel_actor_bindings_exact_dietitian_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260710120000",
+        "name": "channel_actor_bindings_valid_window_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260710120000",
+        "name": "channel_events_event_kind_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260710120000",
+        "name": "channel_events_processing_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260710120000",
+        "name": "channel_events_retry_count_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260710120000",
+        "name": "messages_actor_type_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260710120000",
+        "name": "messages_author_interface_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260710120000",
+        "name": "messages_actor_resolution_basis_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260710120000",
+        "name": "messages_content_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260710120000",
+        "name": "messages_retrieval_eligibility_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260710120000",
+        "name": "messages_dietitian_manual_provenance_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260710120000",
+        "name": "messages_ai_generated_decision_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260710120000",
+        "name": "channel_message_revisions_action_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260710120000",
+        "name": "channel_message_revisions_prior_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260710120000",
+        "name": "channel_message_revisions_current_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260710120000",
+        "name": "channel_message_revisions_sequence_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260710120000",
+        "name": "human_control_sessions_reason_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260710120000",
+        "name": "human_control_sessions_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260710120000",
+        "name": "human_control_sessions_previous_ai_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260710120000",
+        "name": "human_control_sessions_previous_ai_mode_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260710120000",
+        "name": "human_control_sessions_restored_ai_mode_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260710120000",
+        "name": "human_control_sessions_count_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260710120000",
+        "name": "risk_activity_events_type_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260710120000",
+        "name": "context_intake_proposals_source_channel_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260710120000",
+        "name": "context_intake_proposals_importance_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260710120000",
+        "name": "context_intake_proposals_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260710120000",
+        "name": "context_intake_proposals_confirmation_count_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260710140000",
+        "name": "human_control_sessions_reason_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260710170000",
+        "name": "context_intake_proposals_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260710170000",
+        "name": "context_intake_proposals_intake_source_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260710180000",
+        "name": "p85_if_r1_clients_tenant_id_id_key",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260710180000",
+        "name": "p85_if_r1_conversations_tenant_id_id_key",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260710180000",
+        "name": "p85_if_r1_messages_tenant_id_id_key",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260710180000",
+        "name": "p85_if_r1_dietitians_tenant_id_id_key",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260710180000",
+        "name": "p85_if_r1_handoffs_tenant_id_id_key",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260710180000",
+        "name": "p85_if_r1_decisions_tenant_id_id_key",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260710180000",
+        "name": "p85_if_r1_context_updates_tenant_id_id_key",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260710180000",
+        "name": "p85_if_r1_quarantines_tenant_id_id_key",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260710180000",
+        "name": "p85_if_r1_accounts_tenant_id_id_key",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260710180000",
+        "name": "p85_if_r1_actors_tenant_id_id_key",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260710180000",
+        "name": "p85_if_r1_events_tenant_id_id_key",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260710180000",
+        "name": "p85_if_r1_sessions_tenant_id_id_key",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260710180000",
+        "name": "p85_if_r1_event_account_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260710180000",
+        "name": "p85_if_r1_event_quarantine_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260710180000",
+        "name": "p85_if_r1_event_replay_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260710180000",
+        "name": "p85_if_r1_revision_message_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260710180000",
+        "name": "p85_if_r1_revision_event_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260710180000",
+        "name": "p85_if_r1_session_client_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260710180000",
+        "name": "p85_if_r1_session_conversation_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260710180000",
+        "name": "p85_if_r1_session_handoff_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260710180000",
+        "name": "p85_if_r1_session_opened_message_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260710180000",
+        "name": "p85_if_r1_session_latest_message_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260710180000",
+        "name": "p85_if_r1_session_reactivator_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260710180000",
+        "name": "p85_if_r1_risk_client_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260710180000",
+        "name": "p85_if_r1_risk_conversation_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260710180000",
+        "name": "p85_if_r1_risk_session_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260710180000",
+        "name": "p85_if_r1_risk_message_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260710180000",
+        "name": "p85_if_r1_risk_handoff_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260710180000",
+        "name": "p85_if_r1_risk_decision_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260710180000",
+        "name": "p85_if_r1_intake_client_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260710180000",
+        "name": "p85_if_r1_intake_dietitian_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260710180000",
+        "name": "p85_if_r1_intake_update_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260710191000",
+        "name": "notifications_tenant_id_id_key",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260710191000",
+        "name": "notifications_tenant_source_message_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260710191000",
+        "name": "notifications_tenant_resolved_by_dietitian_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260711090000",
+        "name": "notifications_kind_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260711090000",
+        "name": "notifications_priority_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260711090000",
+        "name": "notifications_tenant_client_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260711090000",
+        "name": "notifications_tenant_conversation_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260711090000",
+        "name": "notifications_tenant_message_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260711090000",
+        "name": "notifications_tenant_handoff_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260711090000",
+        "name": "notification_receipts_tenant_notification_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260711090000",
+        "name": "notification_receipts_tenant_dietitian_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260711200000",
+        "name": "p85_if_post_message_conversation_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260711200000",
+        "name": "p85_if_post_message_author_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260711200000",
+        "name": "p85_if_post_message_decision_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260711200000",
+        "name": "p85_if_post_message_approver_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260711200000",
+        "name": "p85_if_post_message_source_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260711200000",
+        "name": "p85_if_post_message_account_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260711200000",
+        "name": "p85_if_post_message_actor_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260711200000",
+        "name": "p85_if_post_actor_account_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260711200000",
+        "name": "p85_if_post_actor_dietitian_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260712120000",
+        "name": "dietitian_form_schemas_tenant_dietitian_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260712120000",
+        "name": "dietitian_form_responses_tenant_schema_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260712120000",
+        "name": "dietitian_form_responses_tenant_dietitian_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260712140000",
+        "name": "conversation_read_receipts_last_read_sequence_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260712140000",
+        "name": "conversation_read_receipts_tenant_conversation_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260712140000",
+        "name": "conversation_read_receipts_tenant_dietitian_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "media_assets_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "media_assets_retry_count_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "media_assets_position_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "media_assets_dimensions_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "media_assets_tenant_id_id_key",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "visual_analysis_records_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "visual_analysis_records_revision_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "visual_analysis_records_tenant_id_id_key",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "inbound_message_bundles_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "inbound_message_bundles_retry_count_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "inbound_message_bundles_counts_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "inbound_message_bundles_revision_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "inbound_message_bundles_tenant_id_id_key",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "inbound_message_bundle_items_item_type_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "inbound_message_bundle_items_ordinal_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "visual_corrections_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "visual_corrections_result_action_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "media_assets_client_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "media_assets_conversation_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "media_assets_message_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "media_assets_channel_event_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "visual_analysis_records_client_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "visual_analysis_records_conversation_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "visual_analysis_records_message_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "visual_analysis_records_asset_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "visual_analysis_records_bundle_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "visual_analysis_records_supersede_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "inbound_message_bundles_client_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "inbound_message_bundles_conversation_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "inbound_message_bundles_anchor_message_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "inbound_message_bundles_decision_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "inbound_message_bundle_items_bundle_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "inbound_message_bundle_items_message_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "inbound_message_bundle_items_channel_event_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "inbound_message_bundle_items_media_asset_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "visual_corrections_client_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "visual_corrections_conversation_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "visual_corrections_analysis_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "visual_corrections_dietitian_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "channel_events_event_kind_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260713130000",
+        "name": "bundle_decision_idempotency_revision_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260714100000",
+        "name": "inbound_message_bundles_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260714100000",
+        "name": "inbound_message_bundle_items_actor_type_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260714100000",
+        "name": "inbound_message_bundle_items_reply_message_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260714110000",
+        "name": "media_object_operations_kind_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260714110000",
+        "name": "media_object_operations_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260714110000",
+        "name": "media_object_operations_retry_count_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260714110000",
+        "name": "media_object_operations_asset_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260714120000",
+        "name": "notifications_kind_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260714130000",
+        "name": "inbound_message_bundles_decided_requires_decision_id",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260714150000",
+        "name": "visual_correction_idempotency_revision_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260714160000",
+        "name": "media_assets_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260714160000",
+        "name": "media_assets_deletion_terminal_intent_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260714160000",
+        "name": "media_pending_object_keys_kind_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260714160000",
+        "name": "media_pending_object_keys_intent_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260714160000",
+        "name": "media_pending_object_keys_asset_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260714170000",
+        "name": "media_assets_media_kind_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260714170000",
+        "name": "media_assets_audio_duration_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260714170000",
+        "name": "media_assets_audio_channels_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260714170000",
+        "name": "media_assets_sample_rate_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260714170000",
+        "name": "inbound_message_bundles_counts_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260714170000",
+        "name": "inbound_message_bundle_items_item_type_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260714170000",
+        "name": "audio_transcription_records_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260714170000",
+        "name": "audio_transcription_records_locale_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260714170000",
+        "name": "audio_transcription_records_revision_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260714170000",
+        "name": "audio_transcription_records_retry_count_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260714170000",
+        "name": "audio_transcription_records_source_modality_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260714170000",
+        "name": "audio_transcription_records_provider_mode_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260714170000",
+        "name": "audio_transcription_records_tenant_id_id_key",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260714170000",
+        "name": "audio_transcript_corrections_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260714170000",
+        "name": "audio_transcript_corrections_reason_code_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260714170000",
+        "name": "audio_transcript_corrections_result_action_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260714170000",
+        "name": "audio_transcript_correction_idempotency_revision_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260714170000",
+        "name": "inbound_message_bundle_items_transcription_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260714170000",
+        "name": "audio_transcription_records_client_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260714170000",
+        "name": "audio_transcription_records_conversation_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260714170000",
+        "name": "audio_transcription_records_message_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260714170000",
+        "name": "audio_transcription_records_asset_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260714170000",
+        "name": "audio_transcription_records_bundle_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260714170000",
+        "name": "audio_transcript_corrections_client_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260714170000",
+        "name": "audio_transcript_corrections_conversation_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260714170000",
+        "name": "audio_transcript_corrections_transcription_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260714170000",
+        "name": "audio_transcript_corrections_dietitian_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260714170000",
+        "name": "channel_events_event_kind_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260714200000",
+        "name": "media_pending_object_keys_kind_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260715100000",
+        "name": "audio_transcription_records_origin_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260715100000",
+        "name": "audio_transcription_records_speaker_state_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260715100000",
+        "name": "audio_transcription_records_confidence_range_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260715100000",
+        "name": "audio_transcription_records_segment_count_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260715100000",
+        "name": "audio_transcription_records_uncertain_span_count_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260715100000",
+        "name": "audio_transcription_records_detected_locale_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260715100000",
+        "name": "audio_transcription_records_supersession_self_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260715100000",
+        "name": "audio_transcription_records_superseded_by_self_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260715100000",
+        "name": "audio_transcription_records_dietitian_correction_confidence_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260715100000",
+        "name": "audio_transcription_records_terminal_metrics_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260715100000",
+        "name": "audio_transcription_records_supersedes_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260715100000",
+        "name": "audio_transcription_records_superseded_by_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260715100000",
+        "name": "audio_transcript_corrections_source_transcription_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260715100000",
+        "name": "audio_transcript_corrections_corrected_transcription_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260715100000",
+        "name": "audio_transcript_corrections_target_message_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260715100000",
+        "name": "media_assets_transcription_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260715110000",
+        "name": "audio_transcript_bridge_jobs_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260715110000",
+        "name": "audio_transcript_bridge_jobs_revision_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260715110000",
+        "name": "audio_transcript_bridge_jobs_transcription_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260715130000",
+        "name": "audio_transcript_bridge_jobs_retry_count_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260715140000",
+        "name": "audio_transcription_records_dietitian_correction_confidence_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_conversations_scope_type_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_conversations_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_conversations_scope_client_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_conversations_title_length_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_conversations_revision_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_conversations_tenant_id_id_key",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_conversations_dietitian_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_conversations_client_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_branches_revision_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_branches_tenant_id_id_key",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_branches_conversation_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_messages_role_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_messages_tenant_id_id_key",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_messages_conversation_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_message_versions_body_length_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_message_versions_content_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_message_versions_tenant_id_id_key",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_message_versions_conversation_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_message_versions_message_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_message_versions_branch_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_runs_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_runs_answerability_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_runs_risk_level_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_runs_tenant_id_id_key",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_runs_conversation_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_runs_trigger_version_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_message_versions_run_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_run_events_sequence_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_run_events_tenant_id_id_key",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_run_events_run_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_run_events_conversation_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_tool_calls_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_tool_calls_tenant_id_id_key",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_tool_calls_run_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_tool_calls_conversation_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_context_snapshots_tenant_id_id_key",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_context_snapshots_run_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_context_snapshots_conversation_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_source_refs_source_type_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_source_refs_tenant_id_id_key",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_source_refs_run_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_source_refs_conversation_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_source_refs_message_version_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_source_refs_client_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_memory_summaries_tenant_id_id_key",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_memory_summaries_conversation_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_memory_summaries_branch_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_provider_egress_manifests_tenant_id_id_key",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_provider_egress_manifests_run_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_provider_egress_manifests_conversation_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_events_tenant_id_id_key",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_events_conversation_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_branches_parent_branch_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_branches_fork_version_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_branches_active_leaf_version_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_message_versions_parent_version_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_message_versions_supersedes_version_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_conversations_active_branch_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260722120000",
+        "name": "ai_chat_conversations_title_source_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260722130000",
+        "name": "ai_chat_jobs_job_type_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260722130000",
+        "name": "ai_chat_jobs_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260722130000",
+        "name": "ai_chat_jobs_tenant_id_id_key",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260722130000",
+        "name": "ai_chat_jobs_conversation_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260722130000",
+        "name": "ai_chat_jobs_run_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260722150000",
+        "name": "ai_chat_approved_sources_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260722150000",
+        "name": "ai_chat_answer_envelopes_answerability_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260722150000",
+        "name": "ai_chat_answer_envelopes_tenant_id_id_key",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260722150000",
+        "name": "ai_chat_answer_envelopes_run_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260722160000",
+        "name": "ai_chat_jobs_job_type_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260722160000",
+        "name": "ai_chat_attachments_scope_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260722160000",
+        "name": "ai_chat_attachments_kind_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260722160000",
+        "name": "ai_chat_attachments_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260722160000",
+        "name": "ai_chat_attachments_tenant_id_id_key",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260722160000",
+        "name": "ai_chat_attachments_conversation_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260722160000",
+        "name": "ai_chat_attachment_derivatives_kind_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260722160000",
+        "name": "ai_chat_attachment_derivatives_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260722160000",
+        "name": "ai_chat_attachment_derivatives_tenant_id_id_key",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260722160000",
+        "name": "ai_chat_attachment_derivatives_attachment_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260722160000",
+        "name": "client_record_assets_category_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260722160000",
+        "name": "client_record_assets_tenant_id_id_key",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260722160000",
+        "name": "client_record_asset_derivatives_tenant_id_id_key",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260722160000",
+        "name": "client_record_asset_derivatives_asset_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260722160000",
+        "name": "ai_chat_attachment_record_transfers_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260722170000",
+        "name": "ai_chat_run_risk_assessments_risk_level_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260722170000",
+        "name": "ai_chat_run_risk_assessments_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260722170000",
+        "name": "ai_chat_run_risk_assessments_tenant_id_id_key",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260722170000",
+        "name": "ai_chat_run_risk_assessments_run_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260722170000",
+        "name": "ai_chat_draft_transfers_risk_level_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260722170000",
+        "name": "ai_chat_draft_transfers_transfer_mode_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260722170000",
+        "name": "ai_chat_draft_transfers_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260722170000",
+        "name": "ai_chat_draft_transfers_tenant_id_id_key",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260722170000",
+        "name": "ai_chat_draft_transfers_run_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260722170000",
+        "name": "ai_chat_handoff_links_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260722170000",
+        "name": "ai_chat_handoff_links_tenant_id_id_key",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260722170000",
+        "name": "ai_chat_handoff_links_run_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260722170000",
+        "name": "handoff_cases_trigger_xor_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260722180000",
+        "name": "ai_chat_branches_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260722180000",
+        "name": "ai_chat_legal_holds_scope_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260722180000",
+        "name": "ai_chat_legal_holds_tenant_id_id_key",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260722180000",
+        "name": "ai_chat_deletion_jobs_job_kind_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260722180000",
+        "name": "ai_chat_deletion_jobs_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260722180000",
+        "name": "ai_chat_deletion_jobs_tenant_id_id_key",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260722180000",
+        "name": "ai_chat_deletion_ledger_replay_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260722180000",
+        "name": "ai_chat_deletion_ledger_tenant_id_id_key",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260722180000",
+        "name": "ai_chat_jobs_job_type_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260722180000",
+        "name": "ai_chat_message_versions_content_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260725110000",
+        "name": "ai_chat_message_attachments_ordinal_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260725110000",
+        "name": "ai_chat_message_attachments_tenant_id_id_key",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260725110000",
+        "name": "ai_chat_message_attachments_conversation_tenant_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260725110000",
+        "name": "ai_chat_message_attachments_version_conversation_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260725110000",
+        "name": "ai_chat_message_attachments_attachment_conversation_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260725120000",
+        "name": "notifications_kind_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260725130000",
+        "name": "notifications_kind_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260728130000",
+        "name": "account_security_event_type_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260728130000",
+        "name": "account_security_outcome_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260728130000",
+        "name": "account_security_idempotency_key_unique",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260728180000",
+        "name": "rate_limit_buckets_scope_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260728180000",
+        "name": "global_rate_limit_buckets_scope_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260728180000",
+        "name": "global_rate_limit_buckets_key_hash_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260728180000",
+        "name": "global_rate_limit_buckets_count_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260802090000",
+        "name": "app_user_shell_preferences_destination_state_object",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260802090000",
+        "name": "app_user_shell_preferences_last_destination_len",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260802090000",
+        "name": "app_user_shell_preferences_active_client_fk",
+        "kind": "foreign key"
+      },
+      {
+        "migrationId": "20260802090000",
+        "name": "account_security_event_type_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260802120000",
+        "name": "rate_limit_buckets_scope_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260819120000",
+        "name": "stage_6_mutation_idempotency_request_id_length",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260819120000",
+        "name": "stage_6_mutation_idempotency_response_shape",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260830180000",
+        "name": "tenant_entitlements_revision_nonnegative_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260830180000",
+        "name": "tenant_entitlements_manual_paid_through_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260830180000",
+        "name": "manual_entitlement_action_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260830180000",
+        "name": "manual_entitlement_request_hash_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260830180000",
+        "name": "manual_entitlement_payment_reference_length_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260830180000",
+        "name": "manual_entitlement_revision_nonnegative_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260830180000",
+        "name": "commercial_admin_audit_event_type_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260830190000",
+        "name": "channel_account_bindings_operating_mode_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260830190000",
+        "name": "whatsapp_connection_attempts_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260830190000",
+        "name": "whatsapp_connection_attempts_terminal_timestamp_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260830190000",
+        "name": "whatsapp_channel_credentials_lifecycle_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260830190000",
+        "name": "whatsapp_channel_credentials_revoke_timestamp_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260830190000",
+        "name": "whatsapp_channel_credentials_tenant_binding_unique",
+        "kind": "unique"
+      },
+      {
+        "migrationId": "20260830190000",
+        "name": "whatsapp_ingress_jobs_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260830190000",
+        "name": "whatsapp_ingress_jobs_attempts_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260830190000",
+        "name": "channel_deliveries_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260830190000",
+        "name": "channel_deliveries_execution_state_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260830190000",
+        "name": "channel_deliveries_provider_error_category_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260830190000",
+        "name": "channel_deliveries_retry_count_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260830200000",
+        "name": "ai_provider_egress_audit_operation_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260830200000",
+        "name": "ai_provider_egress_audit_provider_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260830200000",
+        "name": "ai_provider_egress_audit_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260830200000",
+        "name": "ai_provider_egress_audit_risk_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260830200000",
+        "name": "ai_provider_egress_audit_token_count_method_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260830200000",
+        "name": "ai_provider_egress_audit_retention_policy_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260830200000",
+        "name": "ai_chat_attachments_malware_scan_status_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260830200000",
+        "name": "ai_chat_attachments_provider_egress_requires_scan_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260831090000",
+        "name": "ai_provider_egress_audit_provider_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260903100000",
+        "name": "manual_entitlement_action_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260903100000",
+        "name": "commercial_admin_audit_event_type_check",
+        "kind": "check"
+      },
+      {
+        "migrationId": "20260904182000",
+        "name": "commercial_onboarding_event_type_check",
+        "kind": "check"
+      }
+    ],
+    "uniqueIndexes": [
+      {
+        "migrationId": "20260523000000",
+        "name": "dietitians_auth_user_id_unique"
+      },
+      {
+        "migrationId": "20260525000000",
+        "name": "risk_assessments_message_id_unique"
+      },
+      {
+        "migrationId": "20260530040000",
+        "name": "client_channels_tenant_channel_user_id_unique"
+      },
+      {
+        "migrationId": "20260530040000",
+        "name": "processed_inbound_events_tenant_channel_provider_event_unique"
+      },
+      {
+        "migrationId": "20260531010000",
+        "name": "clients_tenant_primary_phone_e164_unique"
+      },
+      {
+        "migrationId": "20260610120000",
+        "name": "client_food_rule_profiles_tenant_client_idx"
+      },
+      {
+        "migrationId": "20260701120000",
+        "name": "commercial_invites_active_email_idx"
+      },
+      {
+        "migrationId": "20260710120000",
+        "name": "channel_account_bindings_provider_account_active_idx"
+      },
+      {
+        "migrationId": "20260710120000",
+        "name": "channel_account_bindings_business_phone_active_idx"
+      },
+      {
+        "migrationId": "20260710120000",
+        "name": "channel_account_bindings_display_number_active_idx"
+      },
+      {
+        "migrationId": "20260710120000",
+        "name": "channel_actor_bindings_active_exact_dietitian_idx"
+      },
+      {
+        "migrationId": "20260710120000",
+        "name": "channel_events_tenant_provider_event_idx"
+      },
+      {
+        "migrationId": "20260710120000",
+        "name": "messages_tenant_provider_account_message_idx"
+      },
+      {
+        "migrationId": "20260710120000",
+        "name": "channel_message_revisions_tenant_message_sequence_idx"
+      },
+      {
+        "migrationId": "20260710191000",
+        "name": "notifications_tenant_open_dedupe_key_idx"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "media_assets_tenant_message_idx"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "media_assets_tenant_provider_media_hash_idx"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "visual_analysis_records_tenant_asset_revision_idx"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "inbound_message_bundles_one_active_per_conversation_idx"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "inbound_message_bundle_items_bundle_ordinal_idx"
+      },
+      {
+        "migrationId": "20260713120000",
+        "name": "inbound_message_bundle_items_bundle_message_idx"
+      },
+      {
+        "migrationId": "20260713130000",
+        "name": "bundle_decision_idempotency_bundle_revision_idx"
+      },
+      {
+        "migrationId": "20260714100000",
+        "name": "inbound_message_bundles_one_active_per_conversation_idx"
+      },
+      {
+        "migrationId": "20260714160000",
+        "name": "media_pending_object_keys_asset_key_idx"
+      },
+      {
+        "migrationId": "20260714160000",
+        "name": "media_object_operations_active_dedupe_idx"
+      },
+      {
+        "migrationId": "20260714170000",
+        "name": "audio_transcription_records_tenant_asset_revision_idx"
+      },
+      {
+        "migrationId": "20260715100000",
+        "name": "audio_transcription_records_tenant_message_revision_idx"
+      },
+      {
+        "migrationId": "20260715110000",
+        "name": "audio_transcript_bridge_jobs_tenant_idempotency_idx"
+      },
+      {
+        "migrationId": "20260715110000",
+        "name": "audio_transcript_bridge_jobs_tenant_transcription_revision_idx"
+      },
+      {
+        "migrationId": "20260722100000",
+        "name": "ai_chat_run_events_run_sequence_idx"
+      },
+      {
+        "migrationId": "20260722150000",
+        "name": "ai_chat_approved_sources_external_hash_uidx"
+      },
+      {
+        "migrationId": "20260722170000",
+        "name": "ai_chat_draft_transfers_pending_destination_idx"
+      },
+      {
+        "migrationId": "20260722170000",
+        "name": "ai_chat_handoff_links_active_fingerprint_idx"
+      },
+      {
+        "migrationId": "20260722180000",
+        "name": "ai_chat_deletion_jobs_active_conversation_idx"
+      },
+      {
+        "migrationId": "20260725090000",
+        "name": "ai_chat_runs_active_conversation_uidx"
+      },
+      {
+        "migrationId": "20260725110000",
+        "name": "ai_chat_attachments_upload_token_uidx"
+      },
+      {
+        "migrationId": "20260725110000",
+        "name": "ai_chat_message_versions_tenant_conversation_id_uidx"
+      },
+      {
+        "migrationId": "20260725110000",
+        "name": "ai_chat_attachments_tenant_conversation_id_uidx"
+      },
+      {
+        "migrationId": "20260725110000",
+        "name": "ai_chat_message_attachments_version_attachment_uidx"
+      },
+      {
+        "migrationId": "20260725110000",
+        "name": "ai_chat_message_attachments_version_ordinal_uidx"
+      },
+      {
+        "migrationId": "20260725120000",
+        "name": "ai_chat_run_risk_assessments_active_fingerprint_uidx"
+      },
+      {
+        "migrationId": "20260725130000",
+        "name": "ai_chat_deletion_ledger_entity_uidx"
+      },
+      {
+        "migrationId": "20260728180000",
+        "name": "mobile_install_audit_events_daily_unique_idx"
+      },
+      {
+        "migrationId": "20260830180000",
+        "name": "manual_entitlement_operations_payment_reference_idx"
+      },
+      {
+        "migrationId": "20260830190000",
+        "name": "channel_account_bindings_tenant_single_active_real_whatsapp_idx"
+      },
+      {
+        "migrationId": "20260830190000",
+        "name": "whatsapp_channel_credentials_phone_active_idx"
+      },
+      {
+        "migrationId": "20260830190000",
+        "name": "whatsapp_ingress_jobs_event_once_idx"
+      }
+    ],
+    "activeCodeReferences": [
+      {
+        "source": "app/scripts/hosted-sandbox-demo-cleanup.mjs",
+        "line": 132,
+        "operation": "table_or_storage",
+        "target": "tenant_memberships",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/scripts/hosted-sandbox-demo-cleanup.mjs",
+        "line": 152,
+        "operation": "table_or_storage",
+        "target": "tenant_memberships",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/scripts/hosted-sandbox-demo-cleanup.mjs",
+        "line": 159,
+        "operation": "table_or_storage",
+        "target": "tenant_memberships",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/scripts/hosted-sandbox-demo-cleanup.mjs",
+        "line": 175,
+        "operation": "table_or_storage",
+        "target": "tenant_memberships",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/app/api/account/profile/route.ts",
+        "line": 25,
+        "operation": "table_or_storage",
+        "target": "dietitians",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/app/api/account/workspace/route.ts",
+        "line": 25,
+        "operation": "table_or_storage",
+        "target": "tenants",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/app/api/auth-state/route.ts",
+        "line": 54,
+        "operation": "table_or_storage",
+        "target": "tenant_memberships",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/app/api/auth-state/route.ts",
+        "line": 66,
+        "operation": "table_or_storage",
+        "target": "dietitians",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/auth-context.ts",
+        "line": 104,
+        "operation": "table_or_storage",
+        "target": "dietitians",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/auth-context.ts",
+        "line": 92,
+        "operation": "table_or_storage",
+        "target": "tenant_memberships",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/commercial-admin-store.ts",
+        "line": 111,
+        "operation": "table_or_storage",
+        "target": "manual_entitlement_operations",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/commercial-admin-store.ts",
+        "line": 225,
+        "operation": "table_or_storage",
+        "target": "commercial_invites",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/commercial-admin-store.ts",
+        "line": 230,
+        "operation": "table_or_storage",
+        "target": "billing_customers",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/commercial-admin-store.ts",
+        "line": 252,
+        "operation": "table_or_storage",
+        "target": "tenant_entitlements",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/commercial-admin-store.ts",
+        "line": 265,
+        "operation": "table_or_storage",
+        "target": "tenant_memberships",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/commercial-admin-store.ts",
+        "line": 555,
+        "operation": "table_or_storage",
+        "target": "commercial_invites",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/commercial-admin-store.ts",
+        "line": 620,
+        "operation": "table_or_storage",
+        "target": "commercial_invites",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/commercial-admin-store.ts",
+        "line": 864,
+        "operation": "table_or_storage",
+        "target": "commercial_invites",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/commercial-admin-store.ts",
+        "line": 914,
+        "operation": "table_or_storage",
+        "target": "tenant_entitlements",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/commercial-admin-store.ts",
+        "line": 937,
+        "operation": "table_or_storage",
+        "target": "billing_customers",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/commercial-admin-store.ts",
+        "line": 939,
+        "operation": "table_or_storage",
+        "target": "commercial_invites",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/commercial-billing-store.ts",
+        "line": 109,
+        "operation": "table_or_storage",
+        "target": "commercial_invites",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/commercial-billing-store.ts",
+        "line": 122,
+        "operation": "table_or_storage",
+        "target": "tenant_entitlements",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/commercial-billing-store.ts",
+        "line": 135,
+        "operation": "table_or_storage",
+        "target": "billing_customers",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/commercial-billing-store.ts",
+        "line": 198,
+        "operation": "table_or_storage",
+        "target": "commercial_invites",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/commercial-billing-store.ts",
+        "line": 225,
+        "operation": "table_or_storage",
+        "target": "tenant_entitlements",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/commercial-billing-store.ts",
+        "line": 248,
+        "operation": "table_or_storage",
+        "target": "tenant_entitlements",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/commercial-billing-store.ts",
+        "line": 283,
+        "operation": "table_or_storage",
+        "target": "tenants",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/commercial-billing-store.ts",
+        "line": 292,
+        "operation": "table_or_storage",
+        "target": "commercial_invites",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/commercial-billing-store.ts",
+        "line": 347,
+        "operation": "table_or_storage",
+        "target": "tenant_entitlements",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/commercial-billing-store.ts",
+        "line": 370,
+        "operation": "table_or_storage",
+        "target": "tenant_entitlements",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/commercial-billing-store.ts",
+        "line": 402,
+        "operation": "table_or_storage",
+        "target": "billing_customers",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/commercial-billing-store.ts",
+        "line": 448,
+        "operation": "table_or_storage",
+        "target": "commercial_invites",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/commercial-billing-store.ts",
+        "line": 503,
+        "operation": "table_or_storage",
+        "target": "billing_customers",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/commercial-billing-store.ts",
+        "line": 95,
+        "operation": "table_or_storage",
+        "target": "commercial_invites",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/commercial-install-access.ts",
+        "line": 46,
+        "operation": "table_or_storage",
+        "target": "tenant_memberships",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/commercial-install-access.ts",
+        "line": 55,
+        "operation": "table_or_storage",
+        "target": "dietitians",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/commercial-onboarding-store.ts",
+        "line": 120,
+        "operation": "table_or_storage",
+        "target": "commercial_invites",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/commercial-onboarding-store.ts",
+        "line": 133,
+        "operation": "table_or_storage",
+        "target": "tenant_entitlements",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/commercial-onboarding-store.ts",
+        "line": 183,
+        "operation": "table_or_storage",
+        "target": "tenant_memberships",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/commercial-onboarding-store.ts",
+        "line": 204,
+        "operation": "table_or_storage",
+        "target": "tenant_memberships",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/commercial-onboarding-store.ts",
+        "line": 210,
+        "operation": "table_or_storage",
+        "target": "dietitians",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/commercial-onboarding-store.ts",
+        "line": 312,
+        "operation": "table_or_storage",
+        "target": "tenant_memberships",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/commercial-onboarding-store.ts",
+        "line": 328,
+        "operation": "table_or_storage",
+        "target": "dietitians",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/commercial-onboarding-store.ts",
+        "line": 91,
+        "operation": "table_or_storage",
+        "target": "commercial_invites",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/customer-auth-session.ts",
+        "line": 27,
+        "operation": "table_or_storage",
+        "target": "tenant_memberships",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/customer-auth-session.ts",
+        "line": 36,
+        "operation": "table_or_storage",
+        "target": "dietitians",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/customer-auth-store.ts",
+        "line": 10,
+        "operation": "table_or_storage",
+        "target": "commercial_invites",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/customer-auth-store.ts",
+        "line": 32,
+        "operation": "table_or_storage",
+        "target": "billing_customers",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/customer-auth-store.ts",
+        "line": 64,
+        "operation": "table_or_storage",
+        "target": "tenant_memberships",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/dashboard-server-auth.ts",
+        "line": 52,
+        "operation": "table_or_storage",
+        "target": "tenant_memberships",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/dashboard-server-auth.ts",
+        "line": 81,
+        "operation": "table_or_storage",
+        "target": "dietitians",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/phase-85-stage-4b4-durable-admission-worker.ts",
+        "line": 88,
+        "operation": "table_or_storage",
+        "target": "clients",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/phase-85-stage-4c-supabase-store.ts",
+        "line": 612,
+        "operation": "table_or_storage",
+        "target": "tenant_memberships",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/phase-85-stage-4c-supabase-store.ts",
+        "line": 621,
+        "operation": "table_or_storage",
+        "target": "dietitians",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/settings-server-read.ts",
+        "line": 101,
+        "operation": "table_or_storage",
+        "target": "dietitians",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/settings-server-read.ts",
+        "line": 124,
+        "operation": "table_or_storage",
+        "target": "tenants",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/settings-server-read.ts",
+        "line": 64,
+        "operation": "table_or_storage",
+        "target": "tenant_memberships",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 1007,
+        "operation": "table_or_storage",
+        "target": "clients",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 1026,
+        "operation": "table_or_storage",
+        "target": "clients",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 1287,
+        "operation": "table_or_storage",
+        "target": "channel_account_bindings",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 1351,
+        "operation": "table_or_storage",
+        "target": "clients",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 199,
+        "operation": "table_or_storage",
+        "target": "clients",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 204,
+        "operation": "table_or_storage",
+        "target": "clients",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 236,
+        "operation": "table_or_storage",
+        "target": "tenant_entitlements",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 240,
+        "operation": "table_or_storage",
+        "target": "billing_customers",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 2669,
+        "operation": "table_or_storage",
+        "target": "dietitians",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 2712,
+        "operation": "table_or_storage",
+        "target": "dietitians",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 272,
+        "operation": "table_or_storage",
+        "target": "clients",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 2734,
+        "operation": "table_or_storage",
+        "target": "dietitians",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 2751,
+        "operation": "table_or_storage",
+        "target": "dietitians",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 2762,
+        "operation": "table_or_storage",
+        "target": "tenants",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 2795,
+        "operation": "table_or_storage",
+        "target": "tenants",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 2830,
+        "operation": "table_or_storage",
+        "target": "app_session_activity",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 2836,
+        "operation": "table_or_storage",
+        "target": "app_session_activity",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 2879,
+        "operation": "table_or_storage",
+        "target": "app_session_activity",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 2893,
+        "operation": "table_or_storage",
+        "target": "app_session_activity",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 2922,
+        "operation": "table_or_storage",
+        "target": "app_session_activity",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 3114,
+        "operation": "table_or_storage",
+        "target": "tenants",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 3115,
+        "operation": "table_or_storage",
+        "target": "tenants",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 3117,
+        "operation": "table_or_storage",
+        "target": "tenant_memberships",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 3151,
+        "operation": "table_or_storage",
+        "target": "dietitians",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 3191,
+        "operation": "table_or_storage",
+        "target": "clients",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 320,
+        "operation": "table_or_storage",
+        "target": "tenant_entitlements",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 324,
+        "operation": "table_or_storage",
+        "target": "billing_customers",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 328,
+        "operation": "table_or_storage",
+        "target": "commercial_invites",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 344,
+        "operation": "table_or_storage",
+        "target": "clients",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 352,
+        "operation": "table_or_storage",
+        "target": "clients",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 3604,
+        "operation": "table_or_storage",
+        "target": "channel_account_bindings",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 370,
+        "operation": "table_or_storage",
+        "target": "clients",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 3997,
+        "operation": "table_or_storage",
+        "target": "commercial_invites",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 4017,
+        "operation": "table_or_storage",
+        "target": "tenant_entitlements",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 4033,
+        "operation": "table_or_storage",
+        "target": "billing_customers",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 4217,
+        "operation": "table_or_storage",
+        "target": "app_session_activity",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 4242,
+        "operation": "table_or_storage",
+        "target": "billing_customers",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 4243,
+        "operation": "table_or_storage",
+        "target": "tenant_entitlements",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 4244,
+        "operation": "table_or_storage",
+        "target": "commercial_invites",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 4251,
+        "operation": "table_or_storage",
+        "target": "channel_account_bindings",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 4270,
+        "operation": "table_or_storage",
+        "target": "clients",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 4271,
+        "operation": "table_or_storage",
+        "target": "dietitians",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 4272,
+        "operation": "table_or_storage",
+        "target": "tenant_memberships",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 4273,
+        "operation": "table_or_storage",
+        "target": "tenants",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 471,
+        "operation": "table_or_storage",
+        "target": "clients",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 475,
+        "operation": "table_or_storage",
+        "target": "clients",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 487,
+        "operation": "table_or_storage",
+        "target": "clients",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 509,
+        "operation": "table_or_storage",
+        "target": "clients",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 513,
+        "operation": "table_or_storage",
+        "target": "clients",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 521,
+        "operation": "table_or_storage",
+        "target": "clients",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 529,
+        "operation": "table_or_storage",
+        "target": "clients",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 537,
+        "operation": "table_or_storage",
+        "target": "clients",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 646,
+        "operation": "table_or_storage",
+        "target": "tenant_entitlements",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 653,
+        "operation": "table_or_storage",
+        "target": "commercial_invites",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 661,
+        "operation": "table_or_storage",
+        "target": "tenant_entitlements",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-rls.integration.test.ts",
+        "line": 667,
+        "operation": "table_or_storage",
+        "target": "billing_customers",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-store.ts",
+        "line": 1181,
+        "operation": "table_or_storage",
+        "target": "channel_account_bindings",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-store.ts",
+        "line": 1221,
+        "operation": "table_or_storage",
+        "target": "tenants",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-store.ts",
+        "line": 1222,
+        "operation": "table_or_storage",
+        "target": "dietitians",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-store.ts",
+        "line": 1224,
+        "operation": "table_or_storage",
+        "target": "clients",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-store.ts",
+        "line": 1257,
+        "operation": "table_or_storage",
+        "target": "clients",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-store.ts",
+        "line": 1414,
+        "operation": "table_or_storage",
+        "target": "tenants",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-store.ts",
+        "line": 1415,
+        "operation": "table_or_storage",
+        "target": "dietitians",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-store.ts",
+        "line": 1416,
+        "operation": "table_or_storage",
+        "target": "clients",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-store.ts",
+        "line": 1966,
+        "operation": "table_or_storage",
+        "target": "tenants",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-store.ts",
+        "line": 1967,
+        "operation": "table_or_storage",
+        "target": "dietitians",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-store.ts",
+        "line": 1968,
+        "operation": "table_or_storage",
+        "target": "clients",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-store.ts",
+        "line": 3204,
+        "operation": "table_or_storage",
+        "target": "dietitians",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-store.ts",
+        "line": 3216,
+        "operation": "table_or_storage",
+        "target": "dietitians",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-store.ts",
+        "line": 3919,
+        "operation": "table_or_storage",
+        "target": "tenants",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-store.ts",
+        "line": 3934,
+        "operation": "table_or_storage",
+        "target": "tenants",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-store.ts",
+        "line": 3936,
+        "operation": "table_or_storage",
+        "target": "tenant_memberships",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-store.ts",
+        "line": 3946,
+        "operation": "table_or_storage",
+        "target": "dietitians",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-store.ts",
+        "line": 4006,
+        "operation": "table_or_storage",
+        "target": "tenant_entitlements",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-store.ts",
+        "line": 4020,
+        "operation": "table_or_storage",
+        "target": "tenant_memberships",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-store.ts",
+        "line": 4030,
+        "operation": "table_or_storage",
+        "target": "dietitians",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-store.ts",
+        "line": 4155,
+        "operation": "table_or_storage",
+        "target": "clients",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-store.ts",
+        "line": 4172,
+        "operation": "table_or_storage",
+        "target": "clients",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-store.ts",
+        "line": 910,
+        "operation": "table_or_storage",
+        "target": "tenants",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-store.ts",
+        "line": 911,
+        "operation": "table_or_storage",
+        "target": "dietitians",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-store.ts",
+        "line": 912,
+        "operation": "table_or_storage",
+        "target": "clients",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-store.ts",
+        "line": 924,
+        "operation": "table_or_storage",
+        "target": "dietitians",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-store.ts",
+        "line": 925,
+        "operation": "table_or_storage",
+        "target": "tenant_memberships",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/supabase-store.ts",
+        "line": 950,
+        "operation": "table_or_storage",
+        "target": "channel_account_bindings",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      },
+      {
+        "source": "app/src/lib/whatsapp-real-store.ts",
+        "line": 98,
+        "operation": "table_or_storage",
+        "target": "channel_account_bindings",
+        "verificationScenario": "phase-3.3.tenant-data-contract"
+      }
+    ],
+    "counts": {
+      "foreignKeys": 319,
+      "criticalForeignKeys": 182,
+      "constraints": 391,
+      "uniqueIndexes": 47,
+      "activeCriticalCodeReferences": 143
+    },
+    "digest": "9dc031712b3016face4421a25578de0b2565a1bd8114d71242c6c409899c04db"
+  },
+  "dataIntegrityStatus": "NOT_YET_EXECUTED_STAGE_2_3",
+  "rule": "No difference is silently assigned INTENTIONALLY_DEFERRED; that class requires an explicit feature-scope and active-code proof."
+}

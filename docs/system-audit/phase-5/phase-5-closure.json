@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "aiya-system-audit-phase-closure-v1",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-5",
+  "status": "CLOSED",
+  "closedAt": "2026-09-08T08:34:19.541Z",
+  "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+  "stageEvidence": [
+    {
+      "stageId": "5.1",
+      "evidencePath": "docs/system-audit/phase-5/stages/stage-5.1.json",
+      "evidenceDigest": "52b10532d454fe39e01b49132d7c0e7210fb6709c7eda9ec9d39d4a9ac77954f"
+    },
+    {
+      "stageId": "5.2",
+      "evidencePath": "docs/system-audit/phase-5/stages/stage-5.2.json",
+      "evidenceDigest": "f115b3e2479dec0d4142010c18809c20bd07da94c43f9849257f1a8a72002fbf"
+    },
+    {
+      "stageId": "5.3",
+      "evidencePath": "docs/system-audit/phase-5/stages/stage-5.3.json",
+      "evidenceDigest": "457dd86f05011b61d06773a2a217e8a8891df6a0f3ab2e4aab8982816c0a6570"
+    },
+    {
+      "stageId": "5.4",
+      "evidencePath": "docs/system-audit/phase-5/stages/stage-5.4.json",
+      "evidenceDigest": "8fbae32e22c010ef4a4306f22d12670bace8776d1dd7f6e8ac4d2f6c44aa9a48"
+    },
+    {
+      "stageId": "5.5",
+      "evidencePath": "docs/system-audit/phase-5/stages/stage-5.5.json",
+      "evidenceDigest": "957a3a65face85006538e7c192b1d6084d41aba642e8a32d60fe38adf07cb66c"
+    }
+  ],
+  "finalOutput": {
+    "path": "docs/system-audit/phase-5/frontend-backend-user-flow-closure.json",
+    "sha256": "472067a93cbac96aeac6d7ec3cb79dbecccc49a3859fb307db07a8f9ab29543f"
+  },
+  "closureRule": "all five stages VERIFIED, all required output/evidence digests valid, final typecheck/contract/browser tests PASS and mutation boundary closed",
+  "nextPhase": "phase-6",
+  "nextPhaseUnlocked": true
+}

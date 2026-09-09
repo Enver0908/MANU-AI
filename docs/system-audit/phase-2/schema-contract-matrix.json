@@ -1,0 +1,624 @@
+{
+  "schemaVersion": "aiya-system-audit-phase-2-schema-contract-matrix-v1",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-2",
+  "stageId": "2.4",
+  "generatedAt": "2026-09-07T22:57:21.010Z",
+  "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+  "status": "PASS",
+  "localFixture": {
+    "target": "manu-ai-local",
+    "start": {
+      "status": "PASS",
+      "exitCode": 0
+    },
+    "status": {
+      "status": "PASS",
+      "exitCode": 0,
+      "projectId": "manu-ai-local",
+      "apiUrlPresent": true
+    },
+    "contract": {
+      "status": "PASS",
+      "checked": 12,
+      "matrix": [
+        {
+          "name": "p85_stage_5_record_session_activity_v3",
+          "signature": "p85_stage_5_record_session_activity_v3(text, uuid, uuid, uuid, uuid)",
+          "service": {
+            "expectedStatus": null,
+            "expectedError": "session_claim_missing",
+            "expectedArray": null,
+            "observedStatus": 400,
+            "observedCode": "P0001",
+            "observedArray": false,
+            "status": "PASS"
+          },
+          "anonymous": {
+            "expectedStatus": 401,
+            "expectedError": "permission denied",
+            "expectedArray": null,
+            "observedStatus": 401,
+            "observedCode": "42501",
+            "observedArray": false,
+            "status": "PASS"
+          }
+        },
+        {
+          "name": "p85_stage_5_record_session_activity_v2",
+          "signature": "p85_stage_5_record_session_activity_v2(text)",
+          "service": {
+            "expectedStatus": null,
+            "expectedError": "session_claim_missing",
+            "expectedArray": null,
+            "observedStatus": 400,
+            "observedCode": "P0001",
+            "observedArray": false,
+            "status": "PASS"
+          },
+          "anonymous": {
+            "expectedStatus": 401,
+            "expectedError": "permission denied",
+            "expectedArray": null,
+            "observedStatus": 401,
+            "observedCode": "42501",
+            "observedArray": false,
+            "status": "PASS"
+          }
+        },
+        {
+          "name": "p85_stage_5_assert_session_activity_v1",
+          "signature": "p85_stage_5_assert_session_activity_v1()",
+          "service": {
+            "expectedStatus": null,
+            "expectedError": "session_claim_missing",
+            "expectedArray": null,
+            "observedStatus": 400,
+            "observedCode": "P0001",
+            "observedArray": false,
+            "status": "PASS"
+          },
+          "anonymous": {
+            "expectedStatus": 401,
+            "expectedError": "permission denied",
+            "expectedArray": null,
+            "observedStatus": 401,
+            "observedCode": "42501",
+            "observedArray": false,
+            "status": "PASS"
+          }
+        },
+        {
+          "name": "p85_stage_5_touch_session_activity_v1",
+          "signature": "p85_stage_5_touch_session_activity_v1()",
+          "service": {
+            "expectedStatus": null,
+            "expectedError": "session_claim_missing",
+            "expectedArray": null,
+            "observedStatus": 400,
+            "observedCode": "P0001",
+            "observedArray": false,
+            "status": "PASS"
+          },
+          "anonymous": {
+            "expectedStatus": 401,
+            "expectedError": "permission denied",
+            "expectedArray": null,
+            "observedStatus": 401,
+            "observedCode": "42501",
+            "observedArray": false,
+            "status": "PASS"
+          }
+        },
+        {
+          "name": "p85_stage_5_require_active_session_v2",
+          "signature": "p85_stage_5_require_active_session_v2()",
+          "service": {
+            "expectedStatus": null,
+            "expectedError": "session_claim_missing",
+            "expectedArray": null,
+            "observedStatus": 400,
+            "observedCode": "P0001",
+            "observedArray": false,
+            "status": "PASS"
+          },
+          "anonymous": {
+            "expectedStatus": 401,
+            "expectedError": "permission denied",
+            "expectedArray": null,
+            "observedStatus": 401,
+            "observedCode": "42501",
+            "observedArray": false,
+            "status": "PASS"
+          }
+        },
+        {
+          "name": "p85_stage_5_session_inactivity_window",
+          "signature": "p85_stage_5_session_inactivity_window()",
+          "service": {
+            "expectedStatus": 200,
+            "expectedError": null,
+            "expectedArray": null,
+            "observedStatus": 200,
+            "observedCode": null,
+            "observedArray": false,
+            "status": "PASS"
+          },
+          "anonymous": {
+            "expectedStatus": 401,
+            "expectedError": "permission denied",
+            "expectedArray": null,
+            "observedStatus": 401,
+            "observedCode": "42501",
+            "observedArray": false,
+            "status": "PASS"
+          }
+        },
+        {
+          "name": "p85_stage_5_load_shell_bootstrap_v1",
+          "signature": "p85_stage_5_load_shell_bootstrap_v1(uuid)",
+          "service": {
+            "expectedStatus": null,
+            "expectedError": "session_claim_missing",
+            "expectedArray": null,
+            "observedStatus": 400,
+            "observedCode": "P0001",
+            "observedArray": false,
+            "status": "PASS"
+          },
+          "anonymous": {
+            "expectedStatus": 401,
+            "expectedError": "permission denied",
+            "expectedArray": null,
+            "observedStatus": 401,
+            "observedCode": "42501",
+            "observedArray": false,
+            "status": "PASS"
+          }
+        },
+        {
+          "name": "p85_stage_5_search_shell_clients_v1",
+          "signature": "p85_stage_5_search_shell_clients_v1(text, uuid, integer)",
+          "service": {
+            "expectedStatus": null,
+            "expectedError": "session_claim_missing",
+            "expectedArray": null,
+            "observedStatus": 400,
+            "observedCode": "P0001",
+            "observedArray": false,
+            "status": "PASS"
+          },
+          "anonymous": {
+            "expectedStatus": 401,
+            "expectedError": "permission denied",
+            "expectedArray": null,
+            "observedStatus": 401,
+            "observedCode": "42501",
+            "observedArray": false,
+            "status": "PASS"
+          }
+        },
+        {
+          "name": "apply_manual_entitlement_operation",
+          "signature": "apply_manual_entitlement_operation(text, uuid, text, timestamptz, text, text, integer, text)",
+          "service": {
+            "expectedStatus": null,
+            "expectedError": "payment_reference_invalid",
+            "expectedArray": null,
+            "observedStatus": 400,
+            "observedCode": "P0001",
+            "observedArray": false,
+            "status": "PASS"
+          },
+          "anonymous": {
+            "expectedStatus": 401,
+            "expectedError": "permission denied",
+            "expectedArray": null,
+            "observedStatus": 401,
+            "observedCode": "42501",
+            "observedArray": false,
+            "status": "PASS"
+          }
+        },
+        {
+          "name": "commercial_admin_list_customers_v1",
+          "signature": "commercial_admin_list_customers_v1(text, integer)",
+          "service": {
+            "expectedStatus": 200,
+            "expectedError": null,
+            "expectedArray": true,
+            "observedStatus": 200,
+            "observedCode": null,
+            "observedArray": true,
+            "status": "PASS"
+          },
+          "anonymous": {
+            "expectedStatus": 401,
+            "expectedError": "permission denied",
+            "expectedArray": null,
+            "observedStatus": 401,
+            "observedCode": "42501",
+            "observedArray": false,
+            "status": "PASS"
+          }
+        },
+        {
+          "name": "commercial_admin_invite_customer_v1",
+          "signature": "commercial_admin_invite_customer_v1(text, text, timestamptz, timestamptz, text, uuid)",
+          "service": {
+            "expectedStatus": null,
+            "expectedError": "email_invalid",
+            "expectedArray": null,
+            "observedStatus": 400,
+            "observedCode": "P0001",
+            "observedArray": false,
+            "status": "PASS"
+          },
+          "anonymous": {
+            "expectedStatus": 401,
+            "expectedError": "permission denied",
+            "expectedArray": null,
+            "observedStatus": 401,
+            "observedCode": "42501",
+            "observedArray": false,
+            "status": "PASS"
+          }
+        },
+        {
+          "name": "enqueue_whatsapp_real_ingress_job",
+          "signature": "enqueue_whatsapp_real_ingress_job(uuid, uuid, text, text, text, text, text, text, text, text, text, text, text, text, text, text, timestamptz, timestamptz)",
+          "service": {
+            "expectedStatus": 200,
+            "expectedError": null,
+            "expectedArray": null,
+            "observedStatus": 200,
+            "observedCode": null,
+            "observedArray": false,
+            "status": "PASS"
+          },
+          "anonymous": {
+            "expectedStatus": 401,
+            "expectedError": "permission denied",
+            "expectedArray": null,
+            "observedStatus": 401,
+            "observedCode": "42501",
+            "observedArray": false,
+            "status": "PASS"
+          }
+        }
+      ]
+    },
+    "stop": {
+      "status": "PASS",
+      "exitCode": 0
+    }
+  },
+  "remoteReadOnlyFixture": {
+    "target": "linked_supabase_read_only",
+    "contract": {
+      "status": "PASS",
+      "checked": 12,
+      "matrix": [
+        {
+          "name": "p85_stage_5_record_session_activity_v3",
+          "signature": "p85_stage_5_record_session_activity_v3(text, uuid, uuid, uuid, uuid)",
+          "service": {
+            "expectedStatus": null,
+            "expectedError": "session_claim_missing",
+            "expectedArray": null,
+            "observedStatus": 400,
+            "observedCode": "P0001",
+            "observedArray": false,
+            "status": "PASS"
+          },
+          "anonymous": {
+            "expectedStatus": 401,
+            "expectedError": "permission denied",
+            "expectedArray": null,
+            "observedStatus": 401,
+            "observedCode": "42501",
+            "observedArray": false,
+            "status": "PASS"
+          }
+        },
+        {
+          "name": "p85_stage_5_record_session_activity_v2",
+          "signature": "p85_stage_5_record_session_activity_v2(text)",
+          "service": {
+            "expectedStatus": null,
+            "expectedError": "session_claim_missing",
+            "expectedArray": null,
+            "observedStatus": 400,
+            "observedCode": "P0001",
+            "observedArray": false,
+            "status": "PASS"
+          },
+          "anonymous": {
+            "expectedStatus": 401,
+            "expectedError": "permission denied",
+            "expectedArray": null,
+            "observedStatus": 401,
+            "observedCode": "42501",
+            "observedArray": false,
+            "status": "PASS"
+          }
+        },
+        {
+          "name": "p85_stage_5_assert_session_activity_v1",
+          "signature": "p85_stage_5_assert_session_activity_v1()",
+          "service": {
+            "expectedStatus": null,
+            "expectedError": "session_claim_missing",
+            "expectedArray": null,
+            "observedStatus": 400,
+            "observedCode": "P0001",
+            "observedArray": false,
+            "status": "PASS"
+          },
+          "anonymous": {
+            "expectedStatus": 401,
+            "expectedError": "permission denied",
+            "expectedArray": null,
+            "observedStatus": 401,
+            "observedCode": "42501",
+            "observedArray": false,
+            "status": "PASS"
+          }
+        },
+        {
+          "name": "p85_stage_5_touch_session_activity_v1",
+          "signature": "p85_stage_5_touch_session_activity_v1()",
+          "service": {
+            "expectedStatus": null,
+            "expectedError": "session_claim_missing",
+            "expectedArray": null,
+            "observedStatus": 400,
+            "observedCode": "P0001",
+            "observedArray": false,
+            "status": "PASS"
+          },
+          "anonymous": {
+            "expectedStatus": 401,
+            "expectedError": "permission denied",
+            "expectedArray": null,
+            "observedStatus": 401,
+            "observedCode": "42501",
+            "observedArray": false,
+            "status": "PASS"
+          }
+        },
+        {
+          "name": "p85_stage_5_require_active_session_v2",
+          "signature": "p85_stage_5_require_active_session_v2()",
+          "service": {
+            "expectedStatus": null,
+            "expectedError": "session_claim_missing",
+            "expectedArray": null,
+            "observedStatus": 400,
+            "observedCode": "P0001",
+            "observedArray": false,
+            "status": "PASS"
+          },
+          "anonymous": {
+            "expectedStatus": 401,
+            "expectedError": "permission denied",
+            "expectedArray": null,
+            "observedStatus": 401,
+            "observedCode": "42501",
+            "observedArray": false,
+            "status": "PASS"
+          }
+        },
+        {
+          "name": "p85_stage_5_session_inactivity_window",
+          "signature": "p85_stage_5_session_inactivity_window()",
+          "service": {
+            "expectedStatus": 200,
+            "expectedError": null,
+            "expectedArray": null,
+            "observedStatus": 200,
+            "observedCode": null,
+            "observedArray": false,
+            "status": "PASS"
+          },
+          "anonymous": {
+            "expectedStatus": 401,
+            "expectedError": "permission denied",
+            "expectedArray": null,
+            "observedStatus": 401,
+            "observedCode": "42501",
+            "observedArray": false,
+            "status": "PASS"
+          }
+        },
+        {
+          "name": "p85_stage_5_load_shell_bootstrap_v1",
+          "signature": "p85_stage_5_load_shell_bootstrap_v1(uuid)",
+          "service": {
+            "expectedStatus": null,
+            "expectedError": "session_claim_missing",
+            "expectedArray": null,
+            "observedStatus": 400,
+            "observedCode": "P0001",
+            "observedArray": false,
+            "status": "PASS"
+          },
+          "anonymous": {
+            "expectedStatus": 401,
+            "expectedError": "permission denied",
+            "expectedArray": null,
+            "observedStatus": 401,
+            "observedCode": "42501",
+            "observedArray": false,
+            "status": "PASS"
+          }
+        },
+        {
+          "name": "p85_stage_5_search_shell_clients_v1",
+          "signature": "p85_stage_5_search_shell_clients_v1(text, uuid, integer)",
+          "service": {
+            "expectedStatus": null,
+            "expectedError": "session_claim_missing",
+            "expectedArray": null,
+            "observedStatus": 400,
+            "observedCode": "P0001",
+            "observedArray": false,
+            "status": "PASS"
+          },
+          "anonymous": {
+            "expectedStatus": 401,
+            "expectedError": "permission denied",
+            "expectedArray": null,
+            "observedStatus": 401,
+            "observedCode": "42501",
+            "observedArray": false,
+            "status": "PASS"
+          }
+        },
+        {
+          "name": "apply_manual_entitlement_operation",
+          "signature": "apply_manual_entitlement_operation(text, uuid, text, timestamptz, text, text, integer, text)",
+          "service": {
+            "expectedStatus": null,
+            "expectedError": "payment_reference_invalid",
+            "expectedArray": null,
+            "observedStatus": 400,
+            "observedCode": "P0001",
+            "observedArray": false,
+            "status": "PASS"
+          },
+          "anonymous": {
+            "expectedStatus": 401,
+            "expectedError": "permission denied",
+            "expectedArray": null,
+            "observedStatus": 401,
+            "observedCode": "42501",
+            "observedArray": false,
+            "status": "PASS"
+          }
+        },
+        {
+          "name": "commercial_admin_list_customers_v1",
+          "signature": "commercial_admin_list_customers_v1(text, integer)",
+          "service": {
+            "expectedStatus": 200,
+            "expectedError": null,
+            "expectedArray": true,
+            "observedStatus": 200,
+            "observedCode": null,
+            "observedArray": true,
+            "status": "PASS"
+          },
+          "anonymous": {
+            "expectedStatus": 401,
+            "expectedError": "permission denied",
+            "expectedArray": null,
+            "observedStatus": 401,
+            "observedCode": "42501",
+            "observedArray": false,
+            "status": "PASS"
+          }
+        },
+        {
+          "name": "commercial_admin_invite_customer_v1",
+          "signature": "commercial_admin_invite_customer_v1(text, text, timestamptz, timestamptz, text, uuid)",
+          "service": {
+            "expectedStatus": null,
+            "expectedError": "email_invalid",
+            "expectedArray": null,
+            "observedStatus": 400,
+            "observedCode": "P0001",
+            "observedArray": false,
+            "status": "PASS"
+          },
+          "anonymous": {
+            "expectedStatus": 401,
+            "expectedError": "permission denied",
+            "expectedArray": null,
+            "observedStatus": 401,
+            "observedCode": "42501",
+            "observedArray": false,
+            "status": "PASS"
+          }
+        },
+        {
+          "name": "enqueue_whatsapp_real_ingress_job",
+          "signature": "enqueue_whatsapp_real_ingress_job(uuid, uuid, text, text, text, text, text, text, text, text, text, text, text, text, text, text, timestamptz, timestamptz)",
+          "service": {
+            "expectedStatus": 200,
+            "expectedError": null,
+            "expectedArray": null,
+            "observedStatus": 200,
+            "observedCode": null,
+            "observedArray": false,
+            "status": "PASS"
+          },
+          "anonymous": {
+            "expectedStatus": 401,
+            "expectedError": "permission denied",
+            "expectedArray": null,
+            "observedStatus": 401,
+            "observedCode": "42501",
+            "observedArray": false,
+            "status": "PASS"
+          }
+        }
+      ]
+    }
+  },
+  "signatureMatrix": {
+    "status": "PASS",
+    "requiredCount": 12,
+    "requiredSignatures": [
+      "p85_stage_5_record_session_activity_v3(text, uuid, uuid, uuid, uuid)",
+      "p85_stage_5_record_session_activity_v2(text)",
+      "p85_stage_5_assert_session_activity_v1()",
+      "p85_stage_5_touch_session_activity_v1()",
+      "p85_stage_5_require_active_session_v2()",
+      "p85_stage_5_session_inactivity_window()",
+      "p85_stage_5_load_shell_bootstrap_v1(uuid)",
+      "p85_stage_5_search_shell_clients_v1(text, uuid, integer)",
+      "apply_manual_entitlement_operation(text, uuid, text, timestamptz, text, text, integer, text)",
+      "commercial_admin_list_customers_v1(text, integer)",
+      "commercial_admin_invite_customer_v1(text, text, timestamptz, timestamptz, text, uuid)",
+      "enqueue_whatsapp_real_ingress_job(uuid, uuid, text, text, text, text, text, text, text, text, text, text, text, text, text, text, timestamptz, timestamptz)"
+    ],
+    "local": {
+      "status": "PASS",
+      "missing": [],
+      "actualCount": 266
+    },
+    "remote": {
+      "status": "PASS",
+      "missing": [],
+      "actualCount": 266
+    }
+  },
+  "rollbackCompatibility": {
+    "status": "PASS",
+    "previousRelease": {
+      "commit": "cc80b8a3b81164350c6345dafa07e6d035de9212",
+      "migrationCount": 125,
+      "migrationFingerprint": "965494bcd51d5299a74aea43ee7c421106ef88da6bfc7c3cfa769c8305c51dc2"
+    },
+    "currentRelease": {
+      "commit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+      "migrationCount": 125,
+      "migrationFingerprint": "965494bcd51d5299a74aea43ee7c421106ef88da6bfc7c3cfa769c8305c51dc2"
+    },
+    "migrationDelta": {
+      "changes": [],
+      "unsafeChanges": []
+    },
+    "decision": "rollback_compatible_no_migration_delta",
+    "incompatibilities": []
+  },
+  "mutationBoundary": {
+    "production": false,
+    "linkedWrites": false,
+    "localWrites": false,
+    "localRpcCallsAreContractProbes": true
+  },
+  "blockers": []
+}

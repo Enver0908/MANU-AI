@@ -1,0 +1,320 @@
+{
+  "schemaVersion": "aiya-system-audit-phase-5-authenticated-shell-matrix-v1",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-5",
+  "status": "PASS",
+  "generatedAt": "2026-09-08T08:27:19.592Z",
+  "checks": [
+    {
+      "id": "bootstrap_route",
+      "description": "authenticated shell bootstrap route",
+      "pass": true,
+      "evidence": [
+        "app/src/components/dashboard/shell-provider.tsx",
+        "app/src/app/api/shell/bootstrap/route.ts",
+        "app/src/app/api/shell/preferences/route.ts",
+        "app/src/app/api/shell/clients/route.ts"
+      ]
+    },
+    {
+      "id": "session_activity",
+      "description": "server session activity guard",
+      "pass": true,
+      "evidence": [
+        "app/src/components/dashboard/shell-provider.tsx"
+      ]
+    },
+    {
+      "id": "active_client_precedence",
+      "description": "URL preference active client precedence",
+      "pass": true,
+      "evidence": [
+        "app/src/components/dashboard/shell-provider.tsx",
+        "app/src/components/dashboard-app.tsx",
+        "app/src/app/api/shell/bootstrap/route.ts"
+      ]
+    },
+    {
+      "id": "mutation_contract",
+      "description": "authenticated mutation and request headers",
+      "pass": true,
+      "evidence": [
+        "app/src/components/dashboard-app.tsx",
+        "app/src/lib/use-aiya-state.ts"
+      ]
+    },
+    {
+      "id": "dirty_navigation",
+      "description": "dirty registry and navigation confirmation",
+      "pass": true,
+      "evidence": [
+        "app/src/components/dashboard/shell-provider.tsx",
+        "app/src/components/dashboard-app.tsx"
+      ]
+    },
+    {
+      "id": "no_store_bounded",
+      "description": "no-store and bounded shell response",
+      "pass": true,
+      "evidence": [
+        "app/src/components/dashboard/shell-provider.tsx",
+        "app/src/lib/use-aiya-state.ts",
+        "app/src/app/api/shell/bootstrap/route.ts"
+      ]
+    },
+    {
+      "id": "settings_more_surfaces",
+      "description": "settings and more canonical routes",
+      "pass": true,
+      "evidence": [
+        "app/src/components/dashboard-app.tsx",
+        "app/src/app/dashboard/settings/page.tsx",
+        "app/src/app/dashboard/more/page.tsx"
+      ]
+    },
+    {
+      "id": "windowed_state",
+      "description": "windowed app-state hydration",
+      "pass": true,
+      "evidence": [
+        "app/src/lib/use-aiya-state.ts",
+        "app/src/app/api/app-state/route.ts"
+      ]
+    },
+    {
+      "id": "stage5_shell_test_inventory",
+      "pass": true,
+      "count": 16,
+      "minimum": 10
+    },
+    {
+      "id": "required_shell_sources_exist",
+      "pass": true,
+      "missingSources": []
+    }
+  ],
+  "phase5ShellTests": [
+    "app/src/lib/phase-85-stage-5-shell-active-client.test.ts",
+    "app/src/lib/phase-85-stage-5-shell-api.test.ts",
+    "app/src/lib/phase-85-stage-5-shell-authenticated-mutation.test.ts",
+    "app/src/lib/phase-85-stage-5-shell-branding.test.ts",
+    "app/src/lib/phase-85-stage-5-shell-bundle-budget.test.ts",
+    "app/src/lib/phase-85-stage-5-shell-contracts.test.ts",
+    "app/src/lib/phase-85-stage-5-shell-dirty-registry.test.ts",
+    "app/src/lib/phase-85-stage-5-shell-i18n.test.ts",
+    "app/src/lib/phase-85-stage-5-shell-metric-sink.test.ts",
+    "app/src/lib/phase-85-stage-5-shell-migration-contract.test.ts",
+    "app/src/lib/phase-85-stage-5-shell-navigation.test.ts",
+    "app/src/lib/phase-85-stage-5-shell-preference-coordinator.test.ts",
+    "app/src/lib/phase-85-stage-5-shell-privacy-scan.test.ts",
+    "app/src/lib/phase-85-stage-5-shell-provider-state.test.ts",
+    "app/src/lib/phase-85-stage-5-shell-pwa.test.ts",
+    "app/src/lib/phase-85-stage-5-shell-session.test.ts"
+  ],
+  "sourceFiles": [
+    {
+      "source": "app/src/components/dashboard/shell-provider.tsx",
+      "exists": true,
+      "bytes": 39621,
+      "sha256": "3f4ef7289aee1a05c9a0ac211ca6201277642e376dce159ea1577ab4750c8335"
+    },
+    {
+      "source": "app/src/components/dashboard/authenticated-shell-boundary.tsx",
+      "exists": true,
+      "bytes": 1585,
+      "sha256": "007d887d982316ccb1af4c907e56e5d3d2c66538f253a766b5a8eccf77f87792"
+    },
+    {
+      "source": "app/src/components/dashboard-app.tsx",
+      "exists": true,
+      "bytes": 43935,
+      "sha256": "6f92261a053b0ac410fae546a858cf56208b6c37d26e20b77725761407676aa5"
+    },
+    {
+      "source": "app/src/lib/use-aiya-state.ts",
+      "exists": true,
+      "bytes": 25910,
+      "sha256": "e403a1be9134ec3231ce467290761c58f751b4b27aa03572a7c025f5946acbfd"
+    },
+    {
+      "source": "app/src/app/api/shell/bootstrap/route.ts",
+      "exists": true,
+      "bytes": 873,
+      "sha256": "8d820b5fd8ff619f6a2da29e6bfe68f9c9ed8ecfe8b15acf5c1981705dea680b"
+    },
+    {
+      "source": "app/src/app/api/shell/preferences/route.ts",
+      "exists": true,
+      "bytes": 1123,
+      "sha256": "a228e8b340e79e47c0818005839d1d7517d3b35e2d015d81fd9c972654165c8f"
+    },
+    {
+      "source": "app/src/app/api/shell/clients/route.ts",
+      "exists": true,
+      "bytes": 961,
+      "sha256": "ef6c8cef8e7c735c38b7c10d51a1ac4d3a953e2bbf5e5b8557e17ea67aadc375"
+    },
+    {
+      "source": "app/src/app/api/session/activity/route.ts",
+      "exists": true,
+      "bytes": 1341,
+      "sha256": "da21b20671e97b53cb611e7f250e9a46718c97ca2f029e76d4109b98e0610c4b"
+    },
+    {
+      "source": "app/src/app/api/app-state/route.ts",
+      "exists": true,
+      "bytes": 2705,
+      "sha256": "97210231221702eb964ec160b32f39ee9eb9a36e491a5aed5d202fb1c0889e10"
+    },
+    {
+      "source": "app/src/app/dashboard/settings/page.tsx",
+      "exists": true,
+      "bytes": 1097,
+      "sha256": "73a864fff2b17539b0dc9868c1b9c77a3a36b50a9047e4207970402ecf11e4a1"
+    },
+    {
+      "source": "app/src/app/dashboard/more/page.tsx",
+      "exists": true,
+      "bytes": 1799,
+      "sha256": "d3a3455405a96905215cd13d9dd36f115859bd2aac9f3ab879f1d1a47e63a8b1"
+    }
+  ],
+  "blockers": [],
+  "matrixDigest": "50889bddf1fe2280defc19838623ab414e57755749da638dab5459efc621db59",
+  "testResults": [
+    {
+      "name": "phase-5-authenticated-shell",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "fileCount": 19,
+      "summary": {
+        "passedFiles": 19,
+        "failedFiles": 0,
+        "passedTests": 114,
+        "failedTests": 0,
+        "skippedTests": 0
+      },
+      "failure": null
+    }
+  ],
+  "operationVerification": [
+    {
+      "order": 1,
+      "description": "ShellProvider bootstrap request, retry, no-store headers, session state ve error runtime mapping'ini route contract ile eslestir.",
+      "status": "PASS",
+      "evidence": {
+        "id": "bootstrap_route",
+        "description": "authenticated shell bootstrap route",
+        "pass": true,
+        "evidence": [
+          "app/src/components/dashboard/shell-provider.tsx",
+          "app/src/app/api/shell/bootstrap/route.ts",
+          "app/src/app/api/shell/preferences/route.ts",
+          "app/src/app/api/shell/clients/route.ts"
+        ]
+      }
+    },
+    {
+      "order": 2,
+      "description": "Dashboard navigation hedeflerini overview/clients/messages/alerts/notifications/AI Chat/settings/more icin canonical path/query ve legacy redirect ile kontrol et.",
+      "status": "PASS",
+      "evidence": {
+        "id": "session_activity",
+        "description": "server session activity guard",
+        "pass": true,
+        "evidence": [
+          "app/src/components/dashboard/shell-provider.tsx"
+        ]
+      }
+    },
+    {
+      "order": 3,
+      "description": "Active client URL/preference precedence, invalid client fail-closed state ve high-impact confirmation mesajlarini kontrol et.",
+      "status": "PASS",
+      "evidence": {
+        "id": "active_client_precedence",
+        "description": "URL preference active client precedence",
+        "pass": true,
+        "evidence": [
+          "app/src/components/dashboard/shell-provider.tsx",
+          "app/src/components/dashboard-app.tsx",
+          "app/src/app/api/shell/bootstrap/route.ts"
+        ]
+      }
+    },
+    {
+      "order": 4,
+      "description": "useAiyaState hydration ve mutation endpointlerini response merge, auth error, revision conflict ve retry davranisiyla kontrol et.",
+      "status": "PASS",
+      "evidence": {
+        "id": "mutation_contract",
+        "description": "authenticated mutation and request headers",
+        "pass": true,
+        "evidence": [
+          "app/src/components/dashboard-app.tsx",
+          "app/src/lib/use-aiya-state.ts"
+        ]
+      }
+    },
+    {
+      "order": 5,
+      "description": "Settings, more, messaging ve AI Chat route'larinin ayni authenticated shell/session gate'ine baglandigini kontrol et.",
+      "status": "PASS",
+      "evidence": {
+        "id": "dirty_navigation",
+        "description": "dirty registry and navigation confirmation",
+        "pass": true,
+        "evidence": [
+          "app/src/components/dashboard/shell-provider.tsx",
+          "app/src/components/dashboard-app.tsx"
+        ]
+      }
+    },
+    {
+      "order": 6,
+      "description": "Dirty navigation, logout, offline mutation rejection, service-worker update ve session inactivity guardlarini hedef testlerle kontrol et.",
+      "status": "PASS",
+      "evidence": {
+        "id": "no_store_bounded",
+        "description": "no-store and bounded shell response",
+        "pass": true,
+        "evidence": [
+          "app/src/components/dashboard/shell-provider.tsx",
+          "app/src/lib/use-aiya-state.ts",
+          "app/src/app/api/shell/bootstrap/route.ts"
+        ]
+      }
+    },
+    {
+      "order": 7,
+      "description": "Shell API rate limit, no-store, bounded payload ve forbidden response key kontrollerini yeniden calistir.",
+      "status": "PASS",
+      "evidence": {
+        "id": "settings_more_surfaces",
+        "description": "settings and more canonical routes",
+        "pass": true,
+        "evidence": [
+          "app/src/components/dashboard-app.tsx",
+          "app/src/app/dashboard/settings/page.tsx",
+          "app/src/app/dashboard/more/page.tsx"
+        ]
+      }
+    },
+    {
+      "order": 8,
+      "description": "Responsive/accessibility shell testlerinin Phase 5 yuzeyleriyle sinirli oldugunu ve Stage 6 testlerinin bu faza alinmadigini kaydet.",
+      "status": "PASS",
+      "evidence": {
+        "id": "windowed_state",
+        "description": "windowed app-state hydration",
+        "pass": true,
+        "evidence": [
+          "app/src/lib/use-aiya-state.ts",
+          "app/src/app/api/app-state/route.ts"
+        ]
+      }
+    }
+  ]
+}

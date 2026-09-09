@@ -1,0 +1,387 @@
+{
+  "schemaVersion": "aiya-system-audit-environment-map-v1",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "capturedAt": "2026-09-07T21:19:44.770Z",
+  "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+  "profiles": {
+    "local": {
+      "status": "configured_key_inventory_only",
+      "envSources": {
+        "local": {
+          "exists": true,
+          "keys": [
+            "MANU_ADMIN_EMAIL_ALLOWLIST",
+            "MANU_ALLOW_COMMERCIAL_ADMIN",
+            "MANU_ALLOW_STRIPE_SANDBOX",
+            "MANU_COMMERCIAL_ADMIN_TOKEN",
+            "MANU_COMMERCIAL_INVITE_PEPPER",
+            "MANU_DEV_FALLBACK_STORE",
+            "NEXT_PUBLIC_APP_URL",
+            "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+            "NEXT_PUBLIC_SUPABASE_URL",
+            "STRIPE_PRICE_ID",
+            "STRIPE_SECRET_KEY",
+            "STRIPE_WEBHOOK_SECRET",
+            "SUPABASE_SERVICE_ROLE_KEY"
+          ]
+        },
+        "example": {
+          "exists": true,
+          "keys": [
+            "AI_CHAT_DELETION_HMAC_SECRET",
+            "AI_CHAT_REAL_PROVIDER_ENABLED",
+            "MANU_ADMIN_APP_URL",
+            "MANU_ADMIN_EMAIL_ALLOWLIST",
+            "MANU_ADMIN_HOST",
+            "MANU_ALLOW_COMMERCIAL_ADMIN",
+            "MANU_ALLOW_PUBLIC_DEMO_LOGIN",
+            "MANU_ALLOW_REAL_ZAI",
+            "MANU_ALLOW_STRIPE_SANDBOX",
+            "MANU_COMMERCIAL_ADMIN_TOKEN",
+            "MANU_COMMERCIAL_INVITE_PEPPER",
+            "MANU_DEMO_PASSWORD",
+            "MANU_DEV_FALLBACK_STORE",
+            "NEXT_PUBLIC_APP_URL",
+            "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+            "NEXT_PUBLIC_SUPABASE_URL",
+            "STRIPE_PRICE_ID",
+            "STRIPE_SECRET_KEY",
+            "STRIPE_WEBHOOK_SECRET",
+            "SUPABASE_SERVICE_ROLE_KEY",
+            "ZAI_API_KEY"
+          ]
+        }
+      },
+      "supabase": {
+        "protocol": "https:",
+        "host": "pxyjocahjutcojltcalj.supabase.co",
+        "projectRef": "pxyjocahjutcojltcalj"
+      },
+      "verificationScenario": "phase-1.4.local-environment-contract"
+    },
+    "hosted_sandbox": {
+      "status": "reachable_read_only",
+      "publicAdminHealth": [
+        {
+          "url": "https://aiyaworkspace.com/api/health/release",
+          "httpStatus": 200,
+          "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+          "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+          "environment": null
+        },
+        {
+          "url": "https://admin.aiyaworkspace.com/api/health/release",
+          "httpStatus": 200,
+          "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+          "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+          "environment": null
+        }
+      ],
+      "verificationScenario": "phase-1.4.hosted-release-contract"
+    },
+    "production": {
+      "status": "NO-GO",
+      "configured": false,
+      "ownerActionRequired": true,
+      "reason": "Current production readiness decision explicitly blocks production launch.",
+      "verificationScenario": "phase-7.4.production-release-decision"
+    }
+  },
+  "environmentKeys": [
+    {
+      "key": "AI_CHAT_DELETION_HMAC_SECRET",
+      "valueRecorded": false,
+      "sensitivityClass": "secret_name_only"
+    },
+    {
+      "key": "AI_CHAT_REAL_PROVIDER_ENABLED",
+      "valueRecorded": false,
+      "sensitivityClass": "configuration_name_only"
+    },
+    {
+      "key": "MANU_ADMIN_APP_URL",
+      "valueRecorded": false,
+      "sensitivityClass": "configuration_name_only"
+    },
+    {
+      "key": "MANU_ADMIN_EMAIL_ALLOWLIST",
+      "valueRecorded": false,
+      "sensitivityClass": "configuration_name_only"
+    },
+    {
+      "key": "MANU_ADMIN_HOST",
+      "valueRecorded": false,
+      "sensitivityClass": "configuration_name_only"
+    },
+    {
+      "key": "MANU_ALLOW_COMMERCIAL_ADMIN",
+      "valueRecorded": false,
+      "sensitivityClass": "configuration_name_only"
+    },
+    {
+      "key": "MANU_ALLOW_PUBLIC_DEMO_LOGIN",
+      "valueRecorded": false,
+      "sensitivityClass": "configuration_name_only"
+    },
+    {
+      "key": "MANU_ALLOW_REAL_ZAI",
+      "valueRecorded": false,
+      "sensitivityClass": "configuration_name_only"
+    },
+    {
+      "key": "MANU_ALLOW_STRIPE_SANDBOX",
+      "valueRecorded": false,
+      "sensitivityClass": "configuration_name_only"
+    },
+    {
+      "key": "MANU_COMMERCIAL_ADMIN_TOKEN",
+      "valueRecorded": false,
+      "sensitivityClass": "secret_name_only"
+    },
+    {
+      "key": "MANU_COMMERCIAL_INVITE_PEPPER",
+      "valueRecorded": false,
+      "sensitivityClass": "configuration_name_only"
+    },
+    {
+      "key": "MANU_DEMO_PASSWORD",
+      "valueRecorded": false,
+      "sensitivityClass": "secret_name_only"
+    },
+    {
+      "key": "MANU_DEV_FALLBACK_STORE",
+      "valueRecorded": false,
+      "sensitivityClass": "configuration_name_only"
+    },
+    {
+      "key": "NEXT_PUBLIC_APP_URL",
+      "valueRecorded": false,
+      "sensitivityClass": "configuration_name_only"
+    },
+    {
+      "key": "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+      "valueRecorded": false,
+      "sensitivityClass": "secret_name_only"
+    },
+    {
+      "key": "NEXT_PUBLIC_SUPABASE_URL",
+      "valueRecorded": false,
+      "sensitivityClass": "configuration_name_only"
+    },
+    {
+      "key": "STRIPE_PRICE_ID",
+      "valueRecorded": false,
+      "sensitivityClass": "configuration_name_only"
+    },
+    {
+      "key": "STRIPE_SECRET_KEY",
+      "valueRecorded": false,
+      "sensitivityClass": "secret_name_only"
+    },
+    {
+      "key": "STRIPE_WEBHOOK_SECRET",
+      "valueRecorded": false,
+      "sensitivityClass": "secret_name_only"
+    },
+    {
+      "key": "SUPABASE_SERVICE_ROLE_KEY",
+      "valueRecorded": false,
+      "sensitivityClass": "secret_name_only"
+    },
+    {
+      "key": "ZAI_API_KEY",
+      "valueRecorded": false,
+      "sensitivityClass": "secret_name_only"
+    }
+  ],
+  "services": {
+    "nodeVersion": "v22.16.0",
+    "packageName": "app",
+    "packageVersion": "0.1.0",
+    "scripts": [
+      "analyze:frontend-import-graph",
+      "audit:stage-7",
+      "audit:system",
+      "build",
+      "dev",
+      "generate:stage-7-matrix",
+      "lint",
+      "prepare:stage-5-real-device",
+      "rehearse:ai",
+      "rehearse:ai:expanded",
+      "rehearse:channel:replay",
+      "rehearse:production-scale:79g",
+      "rehearse:stage-4b2-r5",
+      "rehearse:stage-4b2-r6",
+      "rehearse:stage-4b2:verification",
+      "rehearse:stage-4b3:media",
+      "rehearse:stage-4b4:audio",
+      "rehearse:stage-4b4:closure",
+      "rehearse:stage-4b:integration",
+      "rehearse:stage-4c",
+      "release:artifact",
+      "release:verify",
+      "serve:stage-5-real-device",
+      "start",
+      "test",
+      "test:audit-system",
+      "test:release-artifact",
+      "test:rls",
+      "test:rls:raw",
+      "test:stage-5-closure",
+      "test:stage-5-dependencies",
+      "test:stage-5-lab-perf",
+      "test:stage-5-real-device",
+      "test:stage-5-rls",
+      "test:stage-5-shell",
+      "test:stage-6-real-device",
+      "test:stage-7",
+      "test:stage-7-lab-perf",
+      "test:stage-7-real-device",
+      "test:visual",
+      "typecheck",
+      "verify:stage-7",
+      "verify:stage-7:7.2",
+      "verify:stage-7:7.3",
+      "verify:stage-7:7.4",
+      "verify:stage-7:closure",
+      "worker:ai-chat:lifecycle:stage4c",
+      "worker:ai-chat:lifecycle:stage4c:once",
+      "worker:ai-chat:stage4c",
+      "worker:ai-chat:stage4c:once",
+      "worker:audio:lifecycle:stage4b4",
+      "worker:audio:lifecycle:stage4b4:once",
+      "worker:audio:stage4b4",
+      "worker:audio:stage4b4:admission",
+      "worker:audio:stage4b4:admission:once",
+      "worker:audio:stage4b4:bridge",
+      "worker:audio:stage4b4:bridge:once",
+      "worker:audio:stage4b4:once",
+      "worker:audio:stage4b4:transcription",
+      "worker:audio:stage4b4:transcription:once",
+      "worker:media:lifecycle",
+      "worker:media:lifecycle:once",
+      "worker:media:stage4b3",
+      "worker:media:stage4b3:once"
+    ],
+    "workers": [
+      {
+        "id": "worker:media:stage4b3",
+        "command": "node scripts/worker-media-stage4b3.mjs",
+        "verificationScenario": "phase-4.1.worker-contract"
+      },
+      {
+        "id": "worker:media:stage4b3:once",
+        "command": "node scripts/worker-media-stage4b3.mjs --once",
+        "verificationScenario": "phase-4.1.worker-contract"
+      },
+      {
+        "id": "worker:audio:stage4b4",
+        "command": "node scripts/worker-audio-stage4b4.mjs",
+        "verificationScenario": "phase-4.1.worker-contract"
+      },
+      {
+        "id": "worker:audio:stage4b4:once",
+        "command": "node scripts/worker-audio-stage4b4.mjs --once",
+        "verificationScenario": "phase-4.1.worker-contract"
+      },
+      {
+        "id": "worker:audio:stage4b4:admission",
+        "command": "node scripts/worker-audio-stage4b4-admission.mjs",
+        "verificationScenario": "phase-4.1.worker-contract"
+      },
+      {
+        "id": "worker:audio:stage4b4:admission:once",
+        "command": "node scripts/worker-audio-stage4b4-admission.mjs --once",
+        "verificationScenario": "phase-4.1.worker-contract"
+      },
+      {
+        "id": "worker:audio:stage4b4:transcription",
+        "command": "node scripts/worker-audio-stage4b4-transcription.mjs",
+        "verificationScenario": "phase-4.1.worker-contract"
+      },
+      {
+        "id": "worker:audio:stage4b4:transcription:once",
+        "command": "node scripts/worker-audio-stage4b4-transcription.mjs --once",
+        "verificationScenario": "phase-4.1.worker-contract"
+      },
+      {
+        "id": "worker:audio:stage4b4:bridge",
+        "command": "node scripts/worker-audio-stage4b4-bridge.mjs",
+        "verificationScenario": "phase-4.1.worker-contract"
+      },
+      {
+        "id": "worker:audio:stage4b4:bridge:once",
+        "command": "node scripts/worker-audio-stage4b4-bridge.mjs --once",
+        "verificationScenario": "phase-4.1.worker-contract"
+      },
+      {
+        "id": "worker:audio:lifecycle:stage4b4",
+        "command": "node scripts/worker-audio-stage4b4-lifecycle.mjs",
+        "verificationScenario": "phase-4.1.worker-contract"
+      },
+      {
+        "id": "worker:audio:lifecycle:stage4b4:once",
+        "command": "node scripts/worker-audio-stage4b4-lifecycle.mjs --once",
+        "verificationScenario": "phase-4.1.worker-contract"
+      },
+      {
+        "id": "worker:media:lifecycle",
+        "command": "node scripts/worker-media-lifecycle-stage4b3.mjs",
+        "verificationScenario": "phase-4.1.worker-contract"
+      },
+      {
+        "id": "worker:media:lifecycle:once",
+        "command": "node scripts/worker-media-lifecycle-stage4b3.mjs --once",
+        "verificationScenario": "phase-4.1.worker-contract"
+      },
+      {
+        "id": "worker:ai-chat:stage4c",
+        "command": "node scripts/worker-ai-chat-stage4c.mjs",
+        "verificationScenario": "phase-4.1.worker-contract"
+      },
+      {
+        "id": "worker:ai-chat:stage4c:once",
+        "command": "node scripts/worker-ai-chat-stage4c.mjs --once",
+        "verificationScenario": "phase-4.1.worker-contract"
+      },
+      {
+        "id": "worker:ai-chat:lifecycle:stage4c",
+        "command": "node scripts/worker-ai-chat-lifecycle-stage4c.mjs",
+        "verificationScenario": "phase-4.1.worker-contract"
+      },
+      {
+        "id": "worker:ai-chat:lifecycle:stage4c:once",
+        "command": "node scripts/worker-ai-chat-lifecycle-stage4c.mjs --once",
+        "verificationScenario": "phase-4.1.worker-contract"
+      }
+    ],
+    "workflows": [
+      {
+        "source": ".github/workflows/hosted-sandbox-deploy.yml",
+        "verificationScenario": "phase-7.2.ci-deploy-gate"
+      },
+      {
+        "source": ".github/workflows/hosted-sandbox-migration.yml",
+        "verificationScenario": "phase-7.2.ci-deploy-gate"
+      },
+      {
+        "source": ".github/workflows/hosted-sandbox-product-ci.yml",
+        "verificationScenario": "phase-7.2.ci-deploy-gate"
+      }
+    ]
+  },
+  "sourceControl": {
+    "branch": "codex/production-readiness-stage-1",
+    "head": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+    "headCommitAt": "2026-09-07T19:50:37+03:00",
+    "workingTreeStatus": "M app/package.json\n?? docs/system-audit/\n?? tools/system-audit/",
+    "upstream": "origin/codex/production-readiness-stage-1",
+    "remotes": [
+      "origin\t[remote-redacted] (fetch)",
+      "origin\t[remote-redacted] (push)"
+    ]
+  },
+  "environmentDigest": "102611e1e2cd351b2344b55e2399135a4366f7ccb1c6e4d0619601895e162605"
+}

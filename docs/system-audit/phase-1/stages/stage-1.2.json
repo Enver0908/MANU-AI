@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "aiya-system-audit-stage-evidence-v1",
+  "runId": "phase-1-1.2-20260907211939953",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-1",
+  "stageId": "1.2",
+  "title": "Aşama kontrolünü kur",
+  "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+  "verifiedAt": "2026-09-07T21:19:39.953Z",
+  "operations": [
+    {
+      "order": 1,
+      "description": "Audit planı, fazı ve dört aşamanın sıralı sözleşmesini yaz.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-1/plan-manifest.json"
+      ]
+    },
+    {
+      "order": 2,
+      "description": "Aşama durum geçişlerini ve öncül aşama kilidini tanımla.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-1/plan-manifest.json"
+      ]
+    },
+    {
+      "order": 3,
+      "description": "EvidenceDigest, stage evidence ve phase closure alanlarını tanımla.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-1/plan-manifest.json"
+      ]
+    },
+    {
+      "order": 4,
+      "description": "Eksik kanıt, eski özet, yanlış sıra ve atlama durumlarını reddeden kontrolü doğrula.",
+      "status": "PASS",
+      "outputReferences": [
+        "docs/system-audit/phase-1/plan-manifest.json"
+      ]
+    }
+  ],
+  "outputFiles": [
+    {
+      "path": "docs/system-audit/phase-1/plan-manifest.json",
+      "sha256": "7adfdb8c06674eaeaf5bf981988c8af20a93e59905cd26bcc6dfc68e2dff4be5"
+    }
+  ],
+  "verification": {
+    "rules": [
+      "Plan manifesti bu plan kimliği/sürümüyle eşleşmeli.",
+      "Aşamalar tam olarak 1.1, 1.2, 1.3, 1.4 sırasında bulunmalı.",
+      "Her aşamanın operasyon, ön koşul, çıktı ve doğrulama kuralı bulunmalı."
+    ],
+    "result": "PASS",
+    "outputDigest": "27084718dabceee7269589a7a82668fcf1c88e26ec1e36da6def9b19bb042f6a"
+  },
+  "status": "VERIFIED",
+  "evidenceDigest": "719d701ab578200d4e3dc7c8e9b0d819cd134f606adb2483fa89c167441f89a3"
+}

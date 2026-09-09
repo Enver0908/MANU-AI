@@ -1,0 +1,142 @@
+{
+  "schemaVersion": "aiya-system-audit-stage-evidence-v1",
+  "runId": "phase-6-6.2-20260908123449983",
+  "planId": "aiya-system-compatibility-reliability-release-readiness-v1",
+  "planVersion": "1.0.0",
+  "phaseId": "phase-6",
+  "stageId": "6.2",
+  "title": "Ariza enjeksiyonu, retry ve fail-closed davranisini kapat",
+  "sourceCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+  "verifiedAt": "2026-09-08T12:34:49.983Z",
+  "status": "VERIFIED",
+  "operations": [
+    {
+      "order": 1,
+      "description": "6.1 VERIFIED precondition'ini ve source/evidence digestlerini dogrula.",
+      "id": "phase_precondition",
+      "status": "PASS",
+      "details": "6.1 closure and digest were checked by the CLI"
+    },
+    {
+      "order": 2,
+      "description": "Media ve audio worker kaynaklarinin mevcut oldugunu ve claim, lease renewal, timeout, retry, release ve terminal failure yollarini cikart.",
+      "id": "worker_sources_and_lifecycle",
+      "status": "PASS",
+      "details": []
+    },
+    {
+      "order": 3,
+      "description": "AI run service kaynaklarinda timeout, abort, run.failed, retryable ve stale-context kapanislarini kontrol et.",
+      "id": "ai_failure_outcome",
+      "status": "PASS",
+      "details": [
+        "app/src/lib/phase-85-stage-4b4-durable-audio-worker.ts",
+        "app/src/lib/phase-85-stage-4c-run-service.ts"
+      ]
+    },
+    {
+      "order": 4,
+      "description": "Rate-limit RPC, 429 response, Retry-After ve fail-closed hata yolunu kontrol et.",
+      "id": "rate_limit_fail_closed",
+      "status": "PASS",
+      "details": [
+        "app/src/lib/phase-85-stage-4b3-durable-media-worker.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-audio-worker.ts",
+        "app/src/lib/rate-limit.ts",
+        "app/src/lib/app-errors.ts"
+      ]
+    },
+    {
+      "order": 5,
+      "description": "Duplicate/idempotency, revision veya lease token guard'larini tenant scope ile birlikte kontrol et.",
+      "id": "idempotency_duplicate_guard",
+      "status": "PASS",
+      "details": [
+        "app/src/lib/phase-85-stage-4b3-durable-media-worker.ts",
+        "app/src/lib/phase-85-stage-4b4-durable-audio-worker.ts",
+        "app/src/lib/phase-85-stage-4c-run-service.ts",
+        "app/src/lib/app-errors.ts",
+        "app/src/lib/phase-79g-unified-production-scale-rehearsal.ts",
+        "app/tests/request-id-error-propagation.test.ts"
+      ]
+    },
+    {
+      "order": 6,
+      "description": "Request-id ve structured error propagation testlerini calistir; PII/secret leakage olmamasini kontrol et.",
+      "id": "request_id_structured_error",
+      "status": "PASS",
+      "details": [
+        "app/src/lib/phase-85-stage-4b4-durable-audio-worker.ts",
+        "app/src/lib/phase-85-stage-4c-run-service.ts",
+        "app/src/lib/app-errors.ts",
+        "app/tests/request-id-error-propagation.test.ts"
+      ]
+    },
+    {
+      "order": 7,
+      "description": "Failure matrix inputlarini, remote/provider boundary'sini ve final blocker listesini kontrol et.",
+      "id": "failure_boundary_closed",
+      "status": "PASS",
+      "details": null
+    },
+    {
+      "order": 8,
+      "description": "Deterministic worker, AI ve rate-limit test grubunu calistir; PASS ise matrix ve operation evidence dosyasini source commit/digest ile yaz.",
+      "id": "deterministic_failure_tests",
+      "status": "PASS",
+      "details": [
+        {
+          "name": "phase-6-failure-injection",
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "fileCount": 5,
+          "summary": {
+            "passedFiles": 5,
+            "failedFiles": 0,
+            "passedTests": 21,
+            "failedTests": 0,
+            "skippedTests": 0
+          },
+          "failure": null
+        }
+      ]
+    }
+  ],
+  "outputFiles": [
+    {
+      "path": "docs/system-audit/phase-6/failure-injection-matrix.json",
+      "sha256": "0bf413326ec53764904132630adb6ddfff36fce60c490051d39ab787463f77c6"
+    }
+  ],
+  "verification": {
+    "rules": [
+      "all failure paths have explicit outcome",
+      "retry/terminal/idempotency guards are present",
+      "rate limit is fail-closed",
+      "request-id errors are stable",
+      "targeted failure tests pass"
+    ],
+    "result": "PASS",
+    "outputDigest": "0bf413326ec53764904132630adb6ddfff36fce60c490051d39ab787463f77c6",
+    "testResults": [
+      {
+        "name": "phase-6-failure-injection",
+        "status": "PASS",
+        "exitCode": 0,
+        "timedOut": false,
+        "fileCount": 5,
+        "summary": {
+          "passedFiles": 5,
+          "failedFiles": 0,
+          "passedTests": 21,
+          "failedTests": 0,
+          "skippedTests": 0
+        },
+        "failure": null
+      }
+    ]
+  },
+  "blockers": [],
+  "evidenceDigest": "f7e6fa069ae1c63a97080204761dc84de572a1f7da4ed25b9dfc09b18f378485"
+}
