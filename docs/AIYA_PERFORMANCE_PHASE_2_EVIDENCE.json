@@ -1,0 +1,974 @@
+{
+  "phase": "AIya Performance Phase 2 - Valid Measurement, Root Cause, and Local Remediation",
+  "generatedAt": "2026-09-10T09:36:54.502Z",
+  "startedAt": "2026-09-10T09:36:51.120Z",
+  "sourceHead": "0c023921584d5a238a317d57100e94963ab603b5",
+  "productionDecision": "NO-GO",
+  "outcome": "PERFORMANCE_BLOCKED",
+  "status": "BLOCKED",
+  "constraints": {
+    "externalSystemMutation": "NOT_EXECUTED",
+    "liveSeedOrReset": "NOT_EXECUTED",
+    "remoteMigration": "NOT_EXECUTED",
+    "productionDeploy": "NOT_EXECUTED",
+    "pushPrMerge": "NOT_EXECUTED",
+    "providerOrChannelEgress": "NOT_EXECUTED",
+    "runtimeUiApiChange": "NOT_EXECUTED",
+    "rawPayloadTraceHarCookieTokenPromptClinicalCapture": "<redacted>"
+  },
+  "phase2Scenarios": [
+    {
+      "scenarioId": "post_login_dashboard",
+      "startRoute": "/login",
+      "expectedRoute": "/dashboard",
+      "userAction": "submit_password_login",
+      "requiredReadySelector": "[data-testid=\"authenticated-shell\"]",
+      "requiredReads": [
+        "/api/shell/bootstrap",
+        "/api/app-state"
+      ],
+      "allowedMutations": [
+        "/api/auth/password-login",
+        "/api/session/activity"
+      ],
+      "forbiddenMutations": [],
+      "budget": "loginToDashboardReadyP75Ms",
+      "sampleCount": 20
+    },
+    {
+      "scenarioId": "client_roster",
+      "startRoute": "/dashboard",
+      "expectedRoute": "/dashboard",
+      "userAction": "click_shell_clients",
+      "requiredReadySelector": "[data-testid=\"client-roster\"]",
+      "requiredReads": [
+        "/api/shell/bootstrap",
+        "/api/app-state",
+        "/api/clients"
+      ],
+      "allowedMutations": [
+        "/api/session/activity"
+      ],
+      "forbiddenMutations": [],
+      "budget": "warmNavigationReadyP75Ms",
+      "sampleCount": 20
+    },
+    {
+      "scenarioId": "client_forms_workspace",
+      "startRoute": "/dashboard",
+      "expectedRoute": "/dashboard",
+      "userAction": "click_client_forms_task",
+      "requiredReadySelector": "[data-testid=\"client-form-panel\"]",
+      "requiredReads": [
+        "/api/clients/:clientId",
+        "/api/clients/:clientId/forms"
+      ],
+      "allowedMutations": [
+        "/api/session/activity"
+      ],
+      "forbiddenMutations": [
+        "/api/clients/:clientId/forms:POST"
+      ],
+      "budget": "warmNavigationReadyP75Ms",
+      "sampleCount": 20
+    },
+    {
+      "scenarioId": "nutrition_workspace",
+      "startRoute": "/dashboard",
+      "expectedRoute": "/dashboard",
+      "userAction": "click_client_nutrition_task",
+      "requiredReadySelector": "[data-testid=\"active-nutrition-plan-panel\"]",
+      "requiredReads": [
+        "/api/clients/:clientId",
+        "/api/clients/:clientId/food-rule-profile"
+      ],
+      "allowedMutations": [
+        "/api/session/activity"
+      ],
+      "forbiddenMutations": [
+        "/api/clients/:clientId/food-rule-profile:POST"
+      ],
+      "budget": "warmNavigationReadyP75Ms",
+      "sampleCount": 20
+    },
+    {
+      "scenarioId": "menu_workspace",
+      "startRoute": "/dashboard",
+      "expectedRoute": "/dashboard",
+      "userAction": "click_client_menu_task",
+      "requiredReadySelector": "[data-testid=\"menu-workflow-panel\"]",
+      "requiredReads": [
+        "/api/clients/:clientId",
+        "/api/clients/:clientId/menu-plans"
+      ],
+      "allowedMutations": [
+        "/api/session/activity"
+      ],
+      "forbiddenMutations": [
+        "/api/clients/:clientId/menu-plans:POST"
+      ],
+      "budget": "warmNavigationReadyP75Ms",
+      "sampleCount": 20
+    },
+    {
+      "scenarioId": "messages",
+      "startRoute": "/dashboard",
+      "expectedRoute": "/dashboard",
+      "userAction": "click_shell_messages",
+      "requiredReadySelector": "[data-testid=\"messaging-panel\"]",
+      "requiredReads": [
+        "/api/conversations"
+      ],
+      "allowedMutations": [
+        "/api/session/activity"
+      ],
+      "forbiddenMutations": [
+        "/api/messages/manual"
+      ],
+      "budget": "warmNavigationReadyP75Ms",
+      "sampleCount": 20
+    },
+    {
+      "scenarioId": "alerts",
+      "startRoute": "/dashboard",
+      "expectedRoute": "/dashboard",
+      "userAction": "click_shell_alerts",
+      "requiredReadySelector": "[data-testid=\"alerts-panel\"]",
+      "requiredReads": [
+        "/api/alerts"
+      ],
+      "allowedMutations": [
+        "/api/session/activity"
+      ],
+      "forbiddenMutations": [
+        "/api/notifications/:id/acknowledge"
+      ],
+      "budget": "warmNavigationReadyP75Ms",
+      "sampleCount": 20
+    },
+    {
+      "scenarioId": "notifications",
+      "startRoute": "/dashboard",
+      "expectedRoute": "/dashboard",
+      "userAction": "click_shell_notifications",
+      "requiredReadySelector": "[data-testid=\"notifications-panel\"]",
+      "requiredReads": [
+        "/api/notifications"
+      ],
+      "allowedMutations": [
+        "/api/session/activity"
+      ],
+      "forbiddenMutations": [
+        "/api/notifications/:id/complete-review"
+      ],
+      "budget": "warmNavigationReadyP75Ms",
+      "sampleCount": 20
+    },
+    {
+      "scenarioId": "ai_chat",
+      "startRoute": "/dashboard",
+      "expectedRoute": "/dashboard/ai-chat",
+      "userAction": "click_ai_chat_entry",
+      "requiredReadySelector": "[data-testid=\"ai-chat-workspace\"]",
+      "requiredReads": [
+        "/api/ai-chat/conversations"
+      ],
+      "allowedMutations": [
+        "/api/session/activity"
+      ],
+      "forbiddenMutations": [
+        "/api/ai-chat/conversations:POST"
+      ],
+      "budget": "warmNavigationReadyP75Ms",
+      "sampleCount": 20
+    }
+  ],
+  "budgets": {
+    "loginToDashboardReadyP75Ms": 3000,
+    "warmNavigationReadyP75Ms": 1000,
+    "warmNavigationReadyP95Ms": 2000,
+    "eventToNextPaintP75Ms": 200,
+    "eventToNextPaintP95Ms": 500,
+    "requiredReadBodyFinishedP75Ms": 900,
+    "initialDashboardLcpP75Ms": 2500,
+    "clsMax": 0.1,
+    "maxForegroundLongTaskMs": 500,
+    "slowNetworkTaskReadyP75Ms": 4000
+  },
+  "git": {
+    "branch": "codex/production-readiness-stage-1",
+    "statusShortBranch": "## codex/production-readiness-stage-1...origin/codex/production-readiness-stage-1 [ahead 3]\n M HANDOFF_FOR_NEXT_CODEX.md\n M app/package.json\n M docs/AIYA_PERFORMANCE_ACTION_PLAN.md\n M docs/AIYA_PERFORMANCE_COMBINED_FINDING_MANIFEST.json\n M docs/NEXT_PHASE_EXECUTION_PLAN.md\n M docs/RISK_REGISTER.md\n?? app/scripts/measure-aiya-performance-phase-2.mjs\n?? app/scripts/performance-phase-2.test.mjs\n?? docs/AIYA_PERFORMANCE_PHASE_2_EVIDENCE.json",
+    "head": "0c023921584d5a238a317d57100e94963ab603b5",
+    "upstreamHead": "42771d053825474059d95a0a61470082a08bfacc",
+    "log": "0c023921 (HEAD -> codex/production-readiness-stage-1) docs: lock AIya performance plan revision 2\nb1747af9 perf: add phase 1.2 performance diagnosis\n38efb97b perf: add AIya phase 1 audit evidence\n42771d05 (origin/codex/production-readiness-stage-1) test: cover dashboard work area access flows\n8751c903 feat: expose dashboard work areas safely\n09520914 Record exact HEAD hosted release preflight\ndb32fe91 Record live HEAD reconciliation and owner gates\n20f6995a Add system audit closure and refresh project README",
+    "remotes": "origin\thttps://github.com/Enver0908/MANU-AI.git (fetch)\norigin\thttps://github.com/Enver0908/MANU-AI.git (push)",
+    "branchVv": "+ codex/aiya-brand-transition               609f3108 (C:/Users/Dell/.codex/worktrees/aiya-brand-transition) [origin/codex/aiya-brand-transition] Rebrand active surfaces to AIya\n+ codex/aiyaworkspace-domain-cutover        26579dc4 (C:/Users/Dell/.codex/worktrees/aiyaworkspace-domain-cutover) [origin/codex/aiyaworkspace-domain-cutover] Record aiyaworkspace cutover completion\n  codex/phase-29-baseline-checkpoint        97d7073a [origin/codex/phase-29-baseline-checkpoint: ahead 1, behind 13] Sync default branch with hosted shell repair\n  codex/phase-85-interstage-clinical-memory dd6ce217 Complete Stage 4B-3 R9 measured closure\n* codex/production-readiness-stage-1        0c023921 [origin/codex/production-readiness-stage-1: ahead 3] docs: lock AIya performance plan revision 2\n  codex/stage-4b4-voice-transcription       39107f5b Complete Stage 4C Faz 11 security/clinical closure and local PASS_LOCAL_STAGE_4C rehearsal.\n  codex/stage-4c-remediation                57f22e50 [origin/codex/stage-4c-remediation] docs: record permanent iOS waiver and refresh readme\n  master                                    2f3ae5fb Add Phase 21-26 pilot foundation work",
+    "diffCheck": {
+      "status": 0,
+      "output": "warning: in the working copy of 'HANDOFF_FOR_NEXT_CODEX.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'app/package.json', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/AIYA_PERFORMANCE_ACTION_PLAN.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/AIYA_PERFORMANCE_COMBINED_FINDING_MANIFEST.json', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/NEXT_PHASE_EXECUTION_PLAN.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/RISK_REGISTER.md', LF will be replaced by CRLF the next time Git touches it"
+    },
+    "remoteSymref": "ref: refs/heads/codex/phase-29-baseline-checkpoint\tHEAD\n00729e53cf6c8617e9655c03eb519e16214e8727\tHEAD\n42771d053825474059d95a0a61470082a08bfacc\trefs/heads/codex/production-readiness-stage-1"
+  },
+  "liveRelease": [
+    {
+      "endpoint": "https://aiyaworkspace.com/api/health/release",
+      "status": 200,
+      "durationMs": 224,
+      "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+      "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+      "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25",
+      "compatibilityVersion": "0.0.0+1c97560"
+    },
+    {
+      "endpoint": "https://admin.aiyaworkspace.com/api/health/release",
+      "status": 200,
+      "durationMs": 142,
+      "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+      "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+      "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25",
+      "compatibilityVersion": "0.0.0+1c97560"
+    }
+  ],
+  "historicalEvidence": {
+    "files": [
+      {
+        "path": "docs/AIYA_PERFORMANCE_PHASE_1_EVIDENCE.json",
+        "sha256": "a8644c491f5b4bda8f8670b17bd02552a5d9e2febf02be44cbcb51c77cb651d6"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PHASE_1_2_EVIDENCE.json",
+        "sha256": "735892f3c31b9107b6fed1083b4fbd050bfe745eeef0c861264f15e083f622bc"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PHASE_1_FINDING_MANIFEST.json",
+        "sha256": "318ff5e9d6e755afb04910850b780b443b1849652b91e9a88f8d4cf34d45b2f2"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_COMBINED_FINDING_MANIFEST.json",
+        "sha256": "ee557bcbda3bf5bcb8cdab6880ab165076a887c381e298e8398c7af2533f3088"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PHASE_2_EXECUTION_SCOPE.md",
+        "sha256": "92b77e175b912e276c9956edf83de6f23561b26c175d83e500882e3d6838af75"
+      }
+    ],
+    "phase1": {
+      "status": "COMPLETE_WITH_FINDINGS",
+      "sourceHead": "42771d053825474059d95a0a61470082a08bfacc",
+      "findingCount": 3
+    },
+    "phase12": {
+      "status": "COMPLETE_WITH_FINDINGS",
+      "sourceHead": "38efb97bf3bd3c3ac1eaa93d968c9d762b537c4e",
+      "physicalAndroidStatus": "READY_FOR_CDP_CAPTURE"
+    },
+    "combined": {
+      "status": "PHASE_2_BLOCKED_WITH_PRIOR_FINDINGS",
+      "productionDecision": "NO-GO",
+      "findingIds": [
+        "PERF-F2-001",
+        "PERF-F2-002",
+        "PERF-F2-003",
+        "PERF-F12-001",
+        "PERF-F12-002"
+      ]
+    }
+  },
+  "harnessContract": {
+    "status": "PASS",
+    "failures": []
+  },
+  "localPrerequisites": {
+    "docker": {
+      "status": 0,
+      "stdout": "Docker version 29.1.2, build 890dcca",
+      "stderr": ""
+    },
+    "supabaseCli": {
+      "status": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    "supabaseStatus": {
+      "status": 1,
+      "stdout": "",
+      "stderr": "",
+      "interpretedStatus": "LOCAL_SUPABASE_NOT_RUNNING_OR_DOCKER_UNAVAILABLE"
+    },
+    "envFiles": {
+      "appEnvLocalPresent": true,
+      "appEnvPresent": false,
+      "supabaseConfigPresent": true
+    }
+  },
+  "android": {
+    "status": "READY_FOR_CDP_CAPTURE",
+    "adbDevices": "List of devices attached\r\n<device-id-redacted>            device product:r12sxtur model:SM_S721B device:r12s transport_id:3",
+    "model": "SM-S721B",
+    "androidVersion": "16",
+    "chromeVersionName": "151.0.7922.173",
+    "devtoolsRemotePresent": true,
+    "note": "Device readiness is not a physical Android Chrome/PWA performance PASS without authenticated scenario capture."
+  },
+  "stageLedger": [
+    {
+      "stageId": "2.1",
+      "status": "COMPLETE",
+      "startedAt": "2026-09-10T09:36:51.120Z",
+      "finishedAt": "2026-09-10T09:36:54.502Z",
+      "sourceIdentity": {
+        "branch": "codex/production-readiness-stage-1",
+        "head": "0c023921584d5a238a317d57100e94963ab603b5",
+        "upstreamHead": "42771d053825474059d95a0a61470082a08bfacc",
+        "liveRelease": [
+          {
+            "endpoint": "https://aiyaworkspace.com/api/health/release",
+            "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+            "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+            "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25"
+          },
+          {
+            "endpoint": "https://admin.aiyaworkspace.com/api/health/release",
+            "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+            "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+            "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25"
+          }
+        ]
+      },
+      "prerequisiteEvidence": [
+        "Phase 1 evidence",
+        "Phase 1.2 evidence",
+        "combined finding manifest"
+      ],
+      "performedActions": [
+        "Collected current git identity and live release identity",
+        "Computed hashes for historical performance evidence files",
+        "Confirmed Phase 1 and Phase 1.2 remain historical inputs"
+      ],
+      "verificationResults": {
+        "gitHead": "0c023921584d5a238a317d57100e94963ab603b5",
+        "worktree": "## codex/production-readiness-stage-1...origin/codex/production-readiness-stage-1 [ahead 3]\n M HANDOFF_FOR_NEXT_CODEX.md\n M app/package.json\n M docs/AIYA_PERFORMANCE_ACTION_PLAN.md\n M docs/AIYA_PERFORMANCE_COMBINED_FINDING_MANIFEST.json\n M docs/NEXT_PHASE_EXECUTION_PLAN.md\n M docs/RISK_REGISTER.md\n?? app/scripts/measure-aiya-performance-phase-2.mjs\n?? app/scripts/performance-phase-2.test.mjs\n?? docs/AIYA_PERFORMANCE_PHASE_2_EVIDENCE.json",
+        "liveEndpointsOk": true,
+        "historicalHashesPresent": true
+      },
+      "outputEvidence": [
+        "historicalEvidence.files",
+        "git",
+        "liveRelease"
+      ],
+      "blockingReason": null
+    },
+    {
+      "stageId": "2.2",
+      "status": "COMPLETE",
+      "startedAt": "2026-09-10T09:36:51.120Z",
+      "finishedAt": "2026-09-10T09:36:54.502Z",
+      "sourceIdentity": {
+        "branch": "codex/production-readiness-stage-1",
+        "head": "0c023921584d5a238a317d57100e94963ab603b5",
+        "upstreamHead": "42771d053825474059d95a0a61470082a08bfacc",
+        "liveRelease": [
+          {
+            "endpoint": "https://aiyaworkspace.com/api/health/release",
+            "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+            "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+            "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25"
+          },
+          {
+            "endpoint": "https://admin.aiyaworkspace.com/api/health/release",
+            "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+            "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+            "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25"
+          }
+        ]
+      },
+      "prerequisiteEvidence": [
+        "2.1"
+      ],
+      "performedActions": [
+        "Validated strong scenario selectors",
+        "Required 2xx authenticated reads for ready state",
+        "Ran in-process negative controls for AI Chat 401 and fallback-store samples"
+      ],
+      "verificationResults": {
+        "status": "PASS",
+        "failures": []
+      },
+      "outputEvidence": [
+        "phase2Scenarios",
+        "harnessContract"
+      ],
+      "blockingReason": null
+    },
+    {
+      "stageId": "2.3",
+      "status": "BLOCKED",
+      "startedAt": "2026-09-10T09:36:51.120Z",
+      "finishedAt": "2026-09-10T09:36:54.502Z",
+      "sourceIdentity": {
+        "branch": "codex/production-readiness-stage-1",
+        "head": "0c023921584d5a238a317d57100e94963ab603b5",
+        "upstreamHead": "42771d053825474059d95a0a61470082a08bfacc",
+        "liveRelease": [
+          {
+            "endpoint": "https://aiyaworkspace.com/api/health/release",
+            "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+            "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+            "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25"
+          },
+          {
+            "endpoint": "https://admin.aiyaworkspace.com/api/health/release",
+            "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+            "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+            "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25"
+          }
+        ]
+      },
+      "prerequisiteEvidence": [
+        "2.2"
+      ],
+      "performedActions": [
+        "Checked Docker, Supabase CLI, local config, and local Supabase status",
+        "Did not reset, seed, migrate, or mutate any database"
+      ],
+      "verificationResults": {
+        "docker": {
+          "status": 0,
+          "stdout": "Docker version 29.1.2, build 890dcca",
+          "stderr": ""
+        },
+        "supabaseCli": {
+          "status": 1,
+          "stdout": "",
+          "stderr": ""
+        },
+        "supabaseStatus": {
+          "status": 1,
+          "stdout": "",
+          "stderr": "",
+          "interpretedStatus": "LOCAL_SUPABASE_NOT_RUNNING_OR_DOCKER_UNAVAILABLE"
+        },
+        "envFiles": {
+          "appEnvLocalPresent": true,
+          "appEnvPresent": false,
+          "supabaseConfigPresent": true
+        }
+      },
+      "outputEvidence": [
+        "localPrerequisites"
+      ],
+      "blockingReason": "local_supabase_not_running_or_docker_daemon_unavailable"
+    },
+    {
+      "stageId": "2.4",
+      "status": "BLOCKED",
+      "startedAt": "2026-09-10T09:36:51.120Z",
+      "finishedAt": "2026-09-10T09:36:54.502Z",
+      "sourceIdentity": {
+        "branch": "codex/production-readiness-stage-1",
+        "head": "0c023921584d5a238a317d57100e94963ab603b5",
+        "upstreamHead": "42771d053825474059d95a0a61470082a08bfacc",
+        "liveRelease": [
+          {
+            "endpoint": "https://aiyaworkspace.com/api/health/release",
+            "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+            "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+            "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25"
+          },
+          {
+            "endpoint": "https://admin.aiyaworkspace.com/api/health/release",
+            "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+            "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+            "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25"
+          }
+        ]
+      },
+      "prerequisiteEvidence": [
+        "2.3"
+      ],
+      "performedActions": [
+        "Recorded that hosted synthetic account preparation requires separate external-system approval"
+      ],
+      "verificationResults": {
+        "externalApprovalPresent": false
+      },
+      "outputEvidence": [],
+      "blockingReason": "hosted_synthetic_account_requires_separate_external_system_approval"
+    },
+    {
+      "stageId": "2.5",
+      "status": "BLOCKED",
+      "startedAt": "2026-09-10T09:36:51.120Z",
+      "finishedAt": "2026-09-10T09:36:54.502Z",
+      "sourceIdentity": {
+        "branch": "codex/production-readiness-stage-1",
+        "head": "0c023921584d5a238a317d57100e94963ab603b5",
+        "upstreamHead": "42771d053825474059d95a0a61470082a08bfacc",
+        "liveRelease": [
+          {
+            "endpoint": "https://aiyaworkspace.com/api/health/release",
+            "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+            "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+            "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25"
+          },
+          {
+            "endpoint": "https://admin.aiyaworkspace.com/api/health/release",
+            "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+            "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+            "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25"
+          }
+        ]
+      },
+      "prerequisiteEvidence": [
+        "2.3",
+        "2.4"
+      ],
+      "performedActions": [
+        "Checked physical Android ADB and Chrome DevTools readiness"
+      ],
+      "verificationResults": {
+        "status": "READY_FOR_CDP_CAPTURE",
+        "adbDevices": "List of devices attached\r\n<device-id-redacted>            device product:r12sxtur model:SM_S721B device:r12s transport_id:3",
+        "model": "SM-S721B",
+        "androidVersion": "16",
+        "chromeVersionName": "151.0.7922.173",
+        "devtoolsRemotePresent": true,
+        "note": "Device readiness is not a physical Android Chrome/PWA performance PASS without authenticated scenario capture."
+      },
+      "outputEvidence": [
+        "android"
+      ],
+      "blockingReason": "android_ready_but_authenticated_hosted_or_local_capture_not_available_without_prior_stage_completion"
+    },
+    {
+      "stageId": "2.6",
+      "status": "BLOCKED",
+      "startedAt": "2026-09-10T09:36:51.120Z",
+      "finishedAt": "2026-09-10T09:36:54.502Z",
+      "sourceIdentity": {
+        "branch": "codex/production-readiness-stage-1",
+        "head": "0c023921584d5a238a317d57100e94963ab603b5",
+        "upstreamHead": "42771d053825474059d95a0a61470082a08bfacc",
+        "liveRelease": [
+          {
+            "endpoint": "https://aiyaworkspace.com/api/health/release",
+            "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+            "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+            "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25"
+          },
+          {
+            "endpoint": "https://admin.aiyaworkspace.com/api/health/release",
+            "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+            "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+            "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25"
+          }
+        ]
+      },
+      "prerequisiteEvidence": [
+        "2.5"
+      ],
+      "performedActions": [
+        "No causal attribution run executed because valid authenticated baseline is unavailable"
+      ],
+      "verificationResults": {
+        "validAuthenticatedBaselinePresent": false
+      },
+      "outputEvidence": [],
+      "blockingReason": "valid_authenticated_baseline_required_before_causal_attribution"
+    },
+    {
+      "stageId": "2.7",
+      "status": "BLOCKED",
+      "startedAt": "2026-09-10T09:36:51.120Z",
+      "finishedAt": "2026-09-10T09:36:54.502Z",
+      "sourceIdentity": {
+        "branch": "codex/production-readiness-stage-1",
+        "head": "0c023921584d5a238a317d57100e94963ab603b5",
+        "upstreamHead": "42771d053825474059d95a0a61470082a08bfacc",
+        "liveRelease": [
+          {
+            "endpoint": "https://aiyaworkspace.com/api/health/release",
+            "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+            "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+            "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25"
+          },
+          {
+            "endpoint": "https://admin.aiyaworkspace.com/api/health/release",
+            "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+            "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+            "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25"
+          }
+        ]
+      },
+      "prerequisiteEvidence": [
+        "2.6"
+      ],
+      "performedActions": [
+        "No runtime remediation applied"
+      ],
+      "verificationResults": {
+        "runtimeChangesApplied": false
+      },
+      "outputEvidence": [],
+      "blockingReason": "root_cause_not_proven"
+    },
+    {
+      "stageId": "2.8",
+      "status": "BLOCKED",
+      "startedAt": "2026-09-10T09:36:51.120Z",
+      "finishedAt": "2026-09-10T09:36:54.502Z",
+      "sourceIdentity": {
+        "branch": "codex/production-readiness-stage-1",
+        "head": "0c023921584d5a238a317d57100e94963ab603b5",
+        "upstreamHead": "42771d053825474059d95a0a61470082a08bfacc",
+        "liveRelease": [
+          {
+            "endpoint": "https://aiyaworkspace.com/api/health/release",
+            "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+            "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+            "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25"
+          },
+          {
+            "endpoint": "https://admin.aiyaworkspace.com/api/health/release",
+            "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+            "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+            "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25"
+          }
+        ]
+      },
+      "prerequisiteEvidence": [
+        "2.7"
+      ],
+      "performedActions": [
+        "No before/after comparison executed because no remediation candidate exists"
+      ],
+      "verificationResults": {
+        "beforeAfterAvailable": false
+      },
+      "outputEvidence": [],
+      "blockingReason": "local_remediation_not_available"
+    },
+    {
+      "stageId": "2.9",
+      "status": "BLOCKED",
+      "startedAt": "2026-09-10T09:36:51.120Z",
+      "finishedAt": "2026-09-10T09:36:54.502Z",
+      "sourceIdentity": {
+        "branch": "codex/production-readiness-stage-1",
+        "head": "0c023921584d5a238a317d57100e94963ab603b5",
+        "upstreamHead": "42771d053825474059d95a0a61470082a08bfacc",
+        "liveRelease": [
+          {
+            "endpoint": "https://aiyaworkspace.com/api/health/release",
+            "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+            "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+            "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25"
+          },
+          {
+            "endpoint": "https://admin.aiyaworkspace.com/api/health/release",
+            "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+            "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+            "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25"
+          }
+        ]
+      },
+      "prerequisiteEvidence": [
+        "2.1",
+        "2.2",
+        "2.3",
+        "2.4",
+        "2.5",
+        "2.6",
+        "2.7",
+        "2.8"
+      ],
+      "performedActions": [
+        "Final closure marked blocked because mandatory Phase 2 stages are blocked"
+      ],
+      "verificationResults": {
+        "closureOutcome": "PERFORMANCE_BLOCKED"
+      },
+      "outputEvidence": [
+        "docs/AIYA_PERFORMANCE_PHASE_2_EVIDENCE.json"
+      ],
+      "blockingReason": "mandatory_phase_2_evidence_chain_incomplete"
+    }
+  ],
+  "blockers": [
+    {
+      "stageId": "2.3",
+      "blockingReason": "local_supabase_not_running_or_docker_daemon_unavailable"
+    },
+    {
+      "stageId": "2.4",
+      "blockingReason": "hosted_synthetic_account_requires_separate_external_system_approval"
+    },
+    {
+      "stageId": "2.5",
+      "blockingReason": "android_ready_but_authenticated_hosted_or_local_capture_not_available_without_prior_stage_completion"
+    },
+    {
+      "stageId": "2.6",
+      "blockingReason": "valid_authenticated_baseline_required_before_causal_attribution"
+    },
+    {
+      "stageId": "2.7",
+      "blockingReason": "root_cause_not_proven"
+    },
+    {
+      "stageId": "2.8",
+      "blockingReason": "local_remediation_not_available"
+    },
+    {
+      "stageId": "2.9",
+      "blockingReason": "mandatory_phase_2_evidence_chain_incomplete"
+    }
+  ],
+  "finalVerification": {
+    "executedAt": "2026-09-10T12:49:00+03:00",
+    "passed": [
+      {
+        "command": "npm run test:performance-phase2",
+        "result": "7 passed, 0 failed, 0 skipped"
+      },
+      {
+        "command": "npm run test:performance-phase1.2",
+        "result": "5 passed, 0 failed, 0 skipped"
+      },
+      {
+        "command": "npm run test:performance-audit",
+        "result": "5 passed, 0 failed, 0 skipped"
+      },
+      {
+        "command": "npm run lint",
+        "result": "0 errors, 74 existing warnings"
+      },
+      {
+        "command": "npm run build",
+        "result": "passed"
+      },
+      {
+        "command": "npm run typecheck",
+        "result": "passed after production build generated .next/types"
+      },
+      {
+        "command": "npm test",
+        "result": "288 files passed; 1717 passed, 9 skipped"
+      },
+      {
+        "command": "git diff --check",
+        "result": "passed with CRLF warnings only"
+      },
+      {
+        "command": "scoped secret scan over changed files",
+        "result": "no matches"
+      }
+    ],
+    "failed": [
+      {
+        "command": "npm run audit:performance:phase2",
+        "result": "exited non-zero because the phase outcome is PERFORMANCE_BLOCKED"
+      },
+      {
+        "command": "initial npm run typecheck",
+        "result": "failed before build because .next/types files were missing"
+      }
+    ],
+    "blocked": [
+      "local real-Supabase authenticated baseline",
+      "hosted synthetic account setup",
+      "authenticated physical Android Chrome/PWA capture",
+      "causal attribution",
+      "local runtime remediation",
+      "matched before/after performance comparison"
+    ],
+    "skipped": [
+      "remote migration",
+      "deploy",
+      "push/PR/merge",
+      "provider/channel egress",
+      "live billing",
+      "production worker",
+      "real health-data path"
+    ]
+  },
+  "findingManifestUpdate": {
+    "generatedAt": "2026-09-10T09:36:54.504Z",
+    "status": "PHASE_2_BLOCKED_WITH_PRIOR_FINDINGS",
+    "productionDecision": "NO-GO",
+    "phase2Outcome": "PERFORMANCE_BLOCKED",
+    "phase2BlockingReasons": [
+      "local_real_supabase_authenticated_baseline_unavailable",
+      "hosted_synthetic_account_requires_separate_approval",
+      "physical_android_ready_but_no_authenticated_capture",
+      "root_cause_not_proven"
+    ],
+    "findings": [
+      {
+        "id": "PERF-F2-001",
+        "severity": "high",
+        "title": "Dashboard mount still performs broad /api/app-state hydration before measured task readiness is proven safe.",
+        "evidenceRefs": [
+          "staticArchitecture.observations.app_state_initial_full_hydration"
+        ],
+        "affectedFiles": [
+          "app/src/lib/use-aiya-state.ts",
+          "app/src/app/api/app-state/route.ts",
+          "app/src/lib/supabase-store.ts",
+          "app/src/components/dashboard-app.tsx"
+        ],
+        "phase2RequiredChange": "Replace default dashboard bootstrap dependence on full ManuAppState only after consumer compatibility is mapped; use bounded/windowed DTOs without casting incomplete data to full state.",
+        "requiredTests": [
+          "workspace task navigation does not request broad /api/app-state",
+          "bounded active-client data stays tenant/account authorized",
+          "legacy mutation paths still return expected revisions and conflict codes"
+        ],
+        "phase12Classification": "SUPPORTED_UNDER_REVIEW",
+        "sourcePhases": [
+          "phase_1"
+        ],
+        "phase2Status": "PENDING_VALID_AUTHENTICATED_REPRODUCTION"
+      },
+      {
+        "id": "PERF-F2-002",
+        "severity": "medium",
+        "title": "Timer-driven inbox, messaging, and AI chat refreshes can compete with initial navigation.",
+        "evidenceRefs": [
+          "staticArchitecture.observations.background_polling_surfaces"
+        ],
+        "affectedFiles": [
+          "app/src/lib/use-stage-4b-inbox.ts",
+          "app/src/lib/use-stage-4b2-messaging.ts",
+          "app/src/lib/use-ai-chat.ts"
+        ],
+        "phase2RequiredChange": "Gate background refresh by visible route, stable resource owner key, in-flight dedupe, and post-readiness scheduling while preserving abort/sequence invalidation.",
+        "requiredTests": [
+          "initial dashboard task readiness has no duplicate background fetch burst",
+          "hidden tab does not extend session",
+          "route change aborts stale resource refresh"
+        ],
+        "phase12Classification": "SUPPORTED_UNDER_REVIEW",
+        "sourcePhases": [
+          "phase_1"
+        ],
+        "phase2Status": "PENDING_VALID_AUTHENTICATED_REPRODUCTION"
+      },
+      {
+        "id": "PERF-F2-003",
+        "severity": "medium",
+        "title": "Dashboard client entry statically imports a broad interaction surface.",
+        "evidenceRefs": [
+          "staticArchitecture.observations.dashboard_static_import_surface",
+          "localLab.bundle.largestStaticJs"
+        ],
+        "affectedFiles": [
+          "app/src/components/dashboard-app.tsx",
+          "app/src/components/dashboard/**",
+          "app/src/app/dashboard/**"
+        ],
+        "phase2RequiredChange": "Split only measured heavy panels using Next.js dynamic import after reading local Next docs; keep first visible dashboard and active workspace controls eager.",
+        "requiredTests": [
+          "dashboard first screen visual and accessibility pass",
+          "forms/nutrition/menu/ai-chat deep links render after chunk load",
+          "bundle gzip and long-task metrics improve against Phase 1 baseline"
+        ],
+        "phase12Classification": "SUPPORTED_UNDER_REVIEW",
+        "sourcePhases": [
+          "phase_1"
+        ],
+        "phase2Status": "PENDING_VALID_AUTHENTICATED_REPRODUCTION"
+      },
+      {
+        "id": "PERF-F12-001",
+        "severity": "high",
+        "title": "AI Chat must not be considered performance-ready when authenticated data requests fail.",
+        "evidenceRefs": [
+          "phase12.localDiagnostic.ai_chat.failedRequests"
+        ],
+        "affectedFiles": [
+          "app/scripts/measure-aiya-performance.mjs",
+          "app/scripts/measure-aiya-performance-phase-1-2.mjs",
+          "app/src/app/dashboard/ai-chat/page.tsx",
+          "app/src/lib/phase-85-stage-4c-route.ts"
+        ],
+        "phase2RequiredChange": "Before optimizing AI Chat speed, separate authorization/session failures from render latency and require 2xx authenticated conversation-list reads in the measurement gate.",
+        "requiredTests": [
+          "AI Chat diagnostic marks 401/403/500 API responses as FAIL",
+          "AI Chat ready state requires ai-chat-workspace, not only main"
+        ],
+        "phase12Classification": "CONFIRMED_MEASUREMENT_GAP",
+        "sourcePhases": [
+          "phase_1_2"
+        ],
+        "phase2Status": "MEASUREMENT_GATE_ENFORCED_PENDING_AUTHENTICATED_2XX"
+      },
+      {
+        "id": "PERF-F12-002",
+        "severity": "high",
+        "title": "Warm authenticated journeys have failing or over-budget samples under the corrected harness.",
+        "evidenceRefs": [
+          "phase12.localDiagnostic.desktop_chrome_persistent_warm_session.ai_chat",
+          "phase12.localDiagnostic.android_chrome_emulation_warm_session.ai_chat"
+        ],
+        "affectedFiles": [
+          "locked_by_phase_1_2_measurement"
+        ],
+        "phase2RequiredChange": "Phase 2 may touch runtime code only for scenarios that failed or missed a budget under the corrected Phase 1.2 harness.",
+        "requiredTests": [
+          "repeat corrected warm-session diagnostic after every Phase 2 change",
+          "compare against Phase 1.2 p75 values and failed request counts"
+        ],
+        "phase12Classification": "CAUSE_CANDIDATE_MEASURED",
+        "sourcePhases": [
+          "phase_1_2"
+        ],
+        "phase2Status": "PENDING_VALID_AUTHENTICATED_REPRODUCTION"
+      }
+    ],
+    "historicalEvidence": {
+      "files": [
+        {
+          "path": "docs/AIYA_PERFORMANCE_PHASE_1_EVIDENCE.json",
+          "sha256": "a8644c491f5b4bda8f8670b17bd02552a5d9e2febf02be44cbcb51c77cb651d6"
+        },
+        {
+          "path": "docs/AIYA_PERFORMANCE_PHASE_1_2_EVIDENCE.json",
+          "sha256": "735892f3c31b9107b6fed1083b4fbd050bfe745eeef0c861264f15e083f622bc"
+        },
+        {
+          "path": "docs/AIYA_PERFORMANCE_PHASE_1_FINDING_MANIFEST.json",
+          "sha256": "318ff5e9d6e755afb04910850b780b443b1849652b91e9a88f8d4cf34d45b2f2"
+        },
+        {
+          "path": "docs/AIYA_PERFORMANCE_COMBINED_FINDING_MANIFEST.json",
+          "sha256": "ee557bcbda3bf5bcb8cdab6880ab165076a887c381e298e8398c7af2533f3088"
+        },
+        {
+          "path": "docs/AIYA_PERFORMANCE_PHASE_2_EXECUTION_SCOPE.md",
+          "sha256": "92b77e175b912e276c9956edf83de6f23561b26c175d83e500882e3d6838af75"
+        }
+      ],
+      "phase1": {
+        "status": "COMPLETE_WITH_FINDINGS",
+        "sourceHead": "42771d053825474059d95a0a61470082a08bfacc",
+        "findingCount": 3
+      },
+      "phase12": {
+        "status": "COMPLETE_WITH_FINDINGS",
+        "sourceHead": "38efb97bf3bd3c3ac1eaa93d968c9d762b537c4e",
+        "physicalAndroidStatus": "READY_FOR_CDP_CAPTURE"
+      },
+      "combined": {
+        "status": "PHASE_2_BLOCKED_WITH_PRIOR_FINDINGS",
+        "productionDecision": "NO-GO",
+        "findingIds": [
+          "PERF-F2-001",
+          "PERF-F2-002",
+          "PERF-F2-003",
+          "PERF-F12-001",
+          "PERF-F12-002"
+        ]
+      }
+    }
+  }
+}

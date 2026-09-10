@@ -1,9 +1,14 @@
 {
-  "generatedAt": "2026-09-10T08:05:36.077Z",
-  "status": "LOCKED_WITH_PHASE_1_AND_1_2_FINDINGS",
+  "generatedAt": "2026-09-10T09:36:54.504Z",
+  "status": "PHASE_2_BLOCKED_WITH_PRIOR_FINDINGS",
   "productionDecision": "NO-GO",
-  "physicalAndroidStatus": "READY_FOR_CDP_CAPTURE",
-  "phase2ScopeRule": "Phase 2 can start only from findings in this combined manifest. Runtime fixes must target a confirmed failed request, over-budget scenario, or a Phase 1 finding still supported after Phase 1.2.",
+  "phase2Outcome": "PERFORMANCE_BLOCKED",
+  "phase2BlockingReasons": [
+    "local_real_supabase_authenticated_baseline_unavailable",
+    "hosted_synthetic_account_requires_separate_approval",
+    "physical_android_ready_but_no_authenticated_capture",
+    "root_cause_not_proven"
+  ],
   "findings": [
     {
       "id": "PERF-F2-001",
@@ -27,7 +32,8 @@
       "phase12Classification": "SUPPORTED_UNDER_REVIEW",
       "sourcePhases": [
         "phase_1"
-      ]
+      ],
+      "phase2Status": "PENDING_VALID_AUTHENTICATED_REPRODUCTION"
     },
     {
       "id": "PERF-F2-002",
@@ -50,7 +56,8 @@
       "phase12Classification": "SUPPORTED_UNDER_REVIEW",
       "sourcePhases": [
         "phase_1"
-      ]
+      ],
+      "phase2Status": "PENDING_VALID_AUTHENTICATED_REPRODUCTION"
     },
     {
       "id": "PERF-F2-003",
@@ -74,7 +81,8 @@
       "phase12Classification": "SUPPORTED_UNDER_REVIEW",
       "sourcePhases": [
         "phase_1"
-      ]
+      ],
+      "phase2Status": "PENDING_VALID_AUTHENTICATED_REPRODUCTION"
     },
     {
       "id": "PERF-F12-001",
@@ -97,7 +105,8 @@
       "phase12Classification": "CONFIRMED_MEASUREMENT_GAP",
       "sourcePhases": [
         "phase_1_2"
-      ]
+      ],
+      "phase2Status": "MEASUREMENT_GATE_ENFORCED_PENDING_AUTHENTICATED_2XX"
     },
     {
       "id": "PERF-F12-002",
@@ -118,7 +127,53 @@
       "phase12Classification": "CAUSE_CANDIDATE_MEASURED",
       "sourcePhases": [
         "phase_1_2"
+      ],
+      "phase2Status": "PENDING_VALID_AUTHENTICATED_REPRODUCTION"
+    }
+  ],
+  "historicalEvidence": {
+    "files": [
+      {
+        "path": "docs/AIYA_PERFORMANCE_PHASE_1_EVIDENCE.json",
+        "sha256": "a8644c491f5b4bda8f8670b17bd02552a5d9e2febf02be44cbcb51c77cb651d6"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PHASE_1_2_EVIDENCE.json",
+        "sha256": "735892f3c31b9107b6fed1083b4fbd050bfe745eeef0c861264f15e083f622bc"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PHASE_1_FINDING_MANIFEST.json",
+        "sha256": "318ff5e9d6e755afb04910850b780b443b1849652b91e9a88f8d4cf34d45b2f2"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_COMBINED_FINDING_MANIFEST.json",
+        "sha256": "ee557bcbda3bf5bcb8cdab6880ab165076a887c381e298e8398c7af2533f3088"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PHASE_2_EXECUTION_SCOPE.md",
+        "sha256": "92b77e175b912e276c9956edf83de6f23561b26c175d83e500882e3d6838af75"
+      }
+    ],
+    "phase1": {
+      "status": "COMPLETE_WITH_FINDINGS",
+      "sourceHead": "42771d053825474059d95a0a61470082a08bfacc",
+      "findingCount": 3
+    },
+    "phase12": {
+      "status": "COMPLETE_WITH_FINDINGS",
+      "sourceHead": "38efb97bf3bd3c3ac1eaa93d968c9d762b537c4e",
+      "physicalAndroidStatus": "READY_FOR_CDP_CAPTURE"
+    },
+    "combined": {
+      "status": "PHASE_2_BLOCKED_WITH_PRIOR_FINDINGS",
+      "productionDecision": "NO-GO",
+      "findingIds": [
+        "PERF-F2-001",
+        "PERF-F2-002",
+        "PERF-F2-003",
+        "PERF-F12-001",
+        "PERF-F12-002"
       ]
     }
-  ]
+  }
 }
