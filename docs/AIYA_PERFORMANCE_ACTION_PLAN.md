@@ -6,6 +6,12 @@ Bu plan, kullanicinin desktop web, mobile web ve kurulu PWA icinde bildirdigi ci
 
 Production karari bu planla degismez: `NO-GO`.
 
+## Faz 3 Uygulama Sonucu - 2026-09-10
+
+Revizyon 2 Faz 3 baslatildi ve Asama 3.1 aday dondurma kapisinda `PERFORMANCE_BLOCKED` olarak durduruldu. Kanit: `docs/AIYA_PERFORMANCE_PHASE_3_EVIDENCE.json`. Mevcut aday HEAD `887865c8b24c546d128d16f4e284cb8b542dd366` olarak kaydedildi; aday release identity hesaplandi, ancak aday artifact'i uretilmedi.
+
+Faz 2 evidence'i `PERFORMANCE_BLOCKED` oldugu icin Faz 3 yerel kapanis on kosulu saglanmadi. Hosted synthetic hesap/fixture, hosted apply ve rollback icin gereken ayri onaylar yoktur. ADB su an cihaz gostermedigi icin fiziksel Android Chrome/PWA kabul kaydi da yoktur. Asama 3.2-3.8 plan geregi baslatilmadi; runtime, CI, schema, deploy ve dis sistem degisikligi yapilmadi. Production karari `NO-GO` kalir.
+
 ## Faz 2 Uygulama Sonucu - 2026-09-10
 
 Faz 2 uygulamasi `docs/AIYA_PERFORMANCE_PHASE_2_EVIDENCE.json` icinde `PERFORMANCE_BLOCKED` olarak kaydedildi. Yeni harness `app/scripts/measure-aiya-performance-phase-2.mjs` ve testi `app/scripts/performance-phase-2.test.mjs` eklendi; `npm run test:performance-phase2` 7/7 PASS verdi. `npm run audit:performance:phase2` kaniti uretip beklenen sekilde non-zero kapandi, cunku lokal real-Supabase authenticated baseline, hosted synthetic account onayi ve authenticated Android/PWA capture on kosullari saglanmadi.
@@ -17,7 +23,7 @@ Bu sonuc runtime optimizasyon izni vermez. Fiziksel Android cihaz `READY_FOR_CDP
 - Aktif branch: `codex/production-readiness-stage-1`.
 - Revizyon 2 planlama baslangic HEAD'i: `b1747af9b2b470d32a242e4207733c1b2c579f0e`.
 - Baslangic commit ozeti: `perf: add phase 1.2 performance diagnosis`.
-- Branch `origin/codex/production-readiness-stage-1` uzerinden iki commit ileridedir; push ayrica onay gerektirir.
+- Aday HEAD `887865c8b24c546d128d16f4e284cb8b542dd366` olarak commitlidir; branch `origin/codex/production-readiness-stage-1` uzerinden dort commit ileridedir. Push ayrica onay gerektirir.
 - Faz 1 kaniti: `docs/AIYA_PERFORMANCE_PHASE_1_EVIDENCE.json`.
 - Faz 1.2 kaniti: `docs/AIYA_PERFORMANCE_PHASE_1_2_EVIDENCE.json`.
 - Faz 1 + Faz 1.2 bulgu birlesimi: `docs/AIYA_PERFORMANCE_COMBINED_FINDING_MANIFEST.json`.

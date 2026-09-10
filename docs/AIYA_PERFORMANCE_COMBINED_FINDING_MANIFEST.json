@@ -1,5 +1,12 @@
 {
   "generatedAt": "2026-09-10T09:36:54.504Z",
+  "phase3Attempt": {
+    "status": "BLOCKED_AT_STAGE_3_1",
+    "outcome": "PERFORMANCE_BLOCKED",
+    "sourceHead": "887865c8b24c546d128d16f4e284cb8b542dd366",
+    "evidence": "docs/AIYA_PERFORMANCE_PHASE_3_EVIDENCE.json",
+    "reason": "Phase 2 local closure is incomplete; no CI, artifact, hosted apply, device acceptance, endurance, rollback, or Phase 3 closure stage was started."
+  },
   "status": "PHASE_2_BLOCKED_WITH_PRIOR_FINDINGS",
   "productionDecision": "NO-GO",
   "phase2Outcome": "PERFORMANCE_BLOCKED",

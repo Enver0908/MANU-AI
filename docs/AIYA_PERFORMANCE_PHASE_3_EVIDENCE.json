@@ -1,0 +1,343 @@
+{
+  "phase": "AIya Performance Phase 3 - Live Candidate Acceptance, Continuity, and Regression Controls",
+  "planAuthority": "C:/Users/Dell/Downloads/PLAN (8).md",
+  "generatedAt": "2026-09-10T10:06:46.513Z",
+  "startedAt": "2026-09-10T10:06:46.513Z",
+  "finishedAt": "2026-09-10T10:06:46.513Z",
+  "productionDecision": "NO-GO",
+  "outcome": "PERFORMANCE_BLOCKED",
+  "status": "BLOCKED",
+  "firstBlockedStage": "3.1",
+  "scopeExecution": {
+    "executedStages": [
+      "3.1 - Candidate and acceptance input freeze gate"
+    ],
+    "notStartedStages": [
+      "3.2 - CI and regression protection",
+      "3.3 - Release artifact and local smoke",
+      "3.4 - Approved hosted apply",
+      "3.5 - Hosted acceptance measurement",
+      "3.6 - Endurance and stability",
+      "3.7 - Failure and rollback decision",
+      "3.8 - Phase 3 closure"
+    ],
+    "reason": "Phase 2 local closure is not complete. The plan forbids advancing to CI, artifact, hosted, device, endurance, rollback, or closure stages until the first gate is complete."
+  },
+  "sourceIdentity": {
+    "branch": "codex/production-readiness-stage-1",
+    "candidateHead": "887865c8b24c546d128d16f4e284cb8b542dd366",
+    "candidateTreeHash": "eafc2a5bf4f92395c65f16290e201c3c16401314",
+    "candidateCommitMessage": "perf: record AIya phase 2 blocked evidence",
+    "candidateWorktreeAtFreeze": "CLEAN",
+    "upstreamBranch": "origin/codex/production-readiness-stage-1",
+    "upstreamHead": "42771d053825474059d95a0a61470082a08bfacc",
+    "remoteDefaultHead": "00729e53cf6c8617e9655c03eb519e16214e8727",
+    "candidateAheadOfUpstream": 4,
+    "runtimeSourceHash": "git-tree:eafc2a5bf4f92395c65f16290e201c3c16401314",
+    "measurementHarness": {
+      "path": "app/scripts/measure-aiya-performance-phase-2.mjs",
+      "sha256": "5d359d38a2d9161ff04e405ccf88699f951aab0c232bd778656c6970d1a99859",
+      "testPath": "app/scripts/performance-phase-2.test.mjs",
+      "testSha256": "4f03b65a6b0174257b64201365ba87abac57af03f337649d5484f9336bf91f0f"
+    },
+    "candidateReleaseIdentity": {
+      "releaseId": "hs-887865c8b24c-b55ed4ff550f",
+      "commitSha": "887865c8b24c546d128d16f4e284cb8b542dd366",
+      "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25",
+      "compatibilityVersion": "0.0.0+887865c"
+    },
+    "candidateArtifact": {
+      "status": "NOT_GENERATED",
+      "plannedTarget": "app/.manu-runtime/release-artifacts/hs-887865c8b24c-b55ed4ff550f.tar.gz",
+      "sha256": null,
+      "rollbackTarget": null,
+      "note": "The existing artifact directory contains prior candidate artifacts. No prior artifact was reused and no candidate artifact was generated because Stage 3.1 was blocked."
+    },
+    "fixture": {
+      "localRealSupabase": "NOT_AVAILABLE_PHASE_2_BLOCKED",
+      "hostedSyntheticAccount": "NOT_AVAILABLE_REQUIRES_SEPARATE_EXTERNAL_APPROVAL",
+      "fixtureHash": null
+    }
+  },
+  "liveRelease": [
+    {
+      "endpoint": "https://aiyaworkspace.com/api/health/release",
+      "status": 200,
+      "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+      "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+      "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25",
+      "compatibilityVersion": "0.0.0+1c97560"
+    },
+    {
+      "endpoint": "https://admin.aiyaworkspace.com/api/health/release",
+      "status": 200,
+      "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+      "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+      "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25",
+      "compatibilityVersion": "0.0.0+1c97560"
+    }
+  ],
+  "phase2Gate": {
+    "evidence": "docs/AIYA_PERFORMANCE_PHASE_2_EVIDENCE.json",
+    "sourceHead": "0c023921584d5a238a317d57100e94963ab603b5",
+    "outcome": "PERFORMANCE_BLOCKED",
+    "stageLedger": [
+      {
+        "stageId": "2.1",
+        "status": "COMPLETE"
+      },
+      {
+        "stageId": "2.2",
+        "status": "COMPLETE"
+      },
+      {
+        "stageId": "2.3",
+        "status": "BLOCKED",
+        "blockingReason": "local_supabase_not_running_or_docker_daemon_unavailable"
+      },
+      {
+        "stageId": "2.4",
+        "status": "BLOCKED",
+        "blockingReason": "hosted_synthetic_account_requires_separate_external_system_approval"
+      },
+      {
+        "stageId": "2.5",
+        "status": "BLOCKED",
+        "blockingReason": "authenticated_hosted_or_local_capture_not_available_without_prior_stage_completion"
+      },
+      {
+        "stageId": "2.6",
+        "status": "BLOCKED",
+        "blockingReason": "valid_authenticated_baseline_required_before_causal_attribution"
+      },
+      {
+        "stageId": "2.7",
+        "status": "BLOCKED",
+        "blockingReason": "root_cause_not_proven"
+      },
+      {
+        "stageId": "2.8",
+        "status": "BLOCKED",
+        "blockingReason": "local_remediation_not_available"
+      },
+      {
+        "stageId": "2.9",
+        "status": "BLOCKED",
+        "blockingReason": "mandatory_phase_2_evidence_chain_incomplete"
+      }
+    ]
+  },
+  "prerequisites": [
+    {
+      "id": "phase_2_local_closure",
+      "status": "BLOCKED",
+      "evidence": "docs/AIYA_PERFORMANCE_PHASE_2_EVIDENCE.json",
+      "detail": "Phase 2 is PERFORMANCE_BLOCKED; LOCAL_REMEDIATION_VERIFIED was not established."
+    },
+    {
+      "id": "candidate_commit",
+      "status": "SATISFIED",
+      "detail": "Candidate is committed at the recorded HEAD; no push was performed."
+    },
+    {
+      "id": "hosted_synthetic_account_and_fixture",
+      "status": "BLOCKED",
+      "detail": "No hosted account or fixture was created; separate external-system approval is required."
+    },
+    {
+      "id": "hosted_deploy_and_rollback_approval",
+      "status": "REQUIRES_SEPARATE_APPROVAL",
+      "detail": "The Phase 3 request does not authorize hosted apply, deploy, migration, or rollback execution."
+    },
+    {
+      "id": "physical_android_and_installed_pwa",
+      "status": "BLOCKED",
+      "detail": "Current ADB check found no device and no authenticated Android Chrome/PWA capture exists."
+    }
+  ],
+  "stageLedger": [
+    {
+      "stageId": "3.1",
+      "status": "BLOCKED",
+      "startedAt": "2026-09-10T10:06:46.513Z",
+      "finishedAt": "2026-09-10T10:06:46.513Z",
+      "sourceIdentity": "sourceIdentity",
+      "prerequisiteEvidence": [
+        "docs/AIYA_PERFORMANCE_PHASE_2_EVIDENCE.json",
+        "docs/AIYA_PERFORMANCE_COMBINED_FINDING_MANIFEST.json",
+        "candidate git identity",
+        "read-only live release-health identity"
+      ],
+      "performedActions": [
+        "Verified candidate branch, HEAD, tree hash, upstream SHA, remote default HEAD, and clean worktree at freeze.",
+        "Resolved candidate release identity and migration fingerprint from the current source without applying a release.",
+        "Read the Phase 2 evidence stage ledger and verified that all Phase 2 stages were not complete.",
+        "Read both live release-health endpoints and compared their sanitized release identities.",
+        "Checked candidate artifact presence without deleting or reusing prior artifacts.",
+        "Checked Docker daemon availability and ADB device presence without starting, resetting, or mutating an environment."
+      ],
+      "verificationResults": {
+        "candidateIdentityResolved": true,
+        "candidateCommitExists": true,
+        "candidateWorktreeAtFreeze": "CLEAN",
+        "candidateArtifactGenerated": false,
+        "phase2AllStagesComplete": false,
+        "phase2Outcome": "PERFORMANCE_BLOCKED",
+        "liveCustomerAndAdminReleaseHealthOk": true,
+        "liveReleaseMatchesAcrossDomains": true,
+        "liveHeadDriftExpected": true,
+        "dockerDaemonAvailable": false,
+        "adbDeviceDetected": false,
+        "authenticatedAndroidChromeCapture": false,
+        "installedPwaCapture": false,
+        "transitionCriterion": "BLOCKED"
+      },
+      "outputEvidence": [
+        "docs/AIYA_PERFORMANCE_PHASE_3_EVIDENCE.json",
+        "sourceIdentity",
+        "phase2Gate",
+        "prerequisites",
+        "liveRelease"
+      ],
+      "blockingReason": "Phase 2 local closure is incomplete; local Supabase/Docker is unavailable; hosted synthetic account and hosted deploy/rollback approval are not available; current ADB check has no device. Plan-required Phase 3 acceptance inputs cannot be frozen as a valid executable acceptance set."
+    },
+    {
+      "stageId": "3.2",
+      "status": "PENDING",
+      "prerequisiteEvidence": [
+        "3.1"
+      ],
+      "performedActions": [],
+      "verificationResults": {},
+      "outputEvidence": []
+    },
+    {
+      "stageId": "3.3",
+      "status": "PENDING",
+      "prerequisiteEvidence": [
+        "3.2"
+      ],
+      "performedActions": [],
+      "verificationResults": {},
+      "outputEvidence": []
+    },
+    {
+      "stageId": "3.4",
+      "status": "PENDING",
+      "prerequisiteEvidence": [
+        "3.3",
+        "separate hosted deploy approval"
+      ],
+      "performedActions": [],
+      "verificationResults": {},
+      "outputEvidence": []
+    },
+    {
+      "stageId": "3.5",
+      "status": "PENDING",
+      "prerequisiteEvidence": [
+        "3.4",
+        "hosted synthetic account and fixture",
+        "physical Android and installed PWA"
+      ],
+      "performedActions": [],
+      "verificationResults": {},
+      "outputEvidence": []
+    },
+    {
+      "stageId": "3.6",
+      "status": "PENDING",
+      "prerequisiteEvidence": [
+        "3.5"
+      ],
+      "performedActions": [],
+      "verificationResults": {},
+      "outputEvidence": []
+    },
+    {
+      "stageId": "3.7",
+      "status": "PENDING",
+      "prerequisiteEvidence": [
+        "3.6"
+      ],
+      "performedActions": [],
+      "verificationResults": {},
+      "outputEvidence": []
+    },
+    {
+      "stageId": "3.8",
+      "status": "PENDING",
+      "prerequisiteEvidence": [
+        "3.7"
+      ],
+      "performedActions": [],
+      "verificationResults": {},
+      "outputEvidence": []
+    }
+  ],
+  "findingDisposition": [
+    {
+      "findingId": "PERF-F2-001",
+      "status": "OPEN_BLOCKED",
+      "detail": "No valid Phase 2 authenticated reproduction or causal evidence exists."
+    },
+    {
+      "findingId": "PERF-F2-002",
+      "status": "OPEN_BLOCKED",
+      "detail": "No valid Phase 2 authenticated reproduction or causal evidence exists."
+    },
+    {
+      "findingId": "PERF-F2-003",
+      "status": "OPEN_BLOCKED",
+      "detail": "No valid Phase 2 authenticated reproduction or causal evidence exists."
+    },
+    {
+      "findingId": "PERF-F12-001",
+      "status": "OPEN_BLOCKED",
+      "detail": "The Phase 2 harness gate exists, but the real authenticated conversation-list path remains unverified; Phase 3 acceptance cannot close it."
+    },
+    {
+      "findingId": "PERF-F12-002",
+      "status": "OPEN_BLOCKED",
+      "detail": "The Phase 2 corrected-harness failure has not been revalidated on a real authenticated path."
+    }
+  ],
+  "historicalEvidenceHashes": [
+    {
+      "path": "docs/AIYA_PERFORMANCE_PHASE_1_EVIDENCE.json",
+      "sha256": "a8644c491f5b4bda8f8670b17bd02552a5d9e2febf02be44cbcb51c77cb651d6"
+    },
+    {
+      "path": "docs/AIYA_PERFORMANCE_PHASE_1_2_EVIDENCE.json",
+      "sha256": "735892f3c31b9107b6fed1083b4fbd050bfe745eeef0c861264f15e083f622bc"
+    },
+    {
+      "path": "docs/AIYA_PERFORMANCE_PHASE_1_FINDING_MANIFEST.json",
+      "sha256": "318ff5e9d6e755afb04910850b780b443b1849652b91e9a88f8d4cf34d45b2f2"
+    },
+    {
+      "path": "docs/AIYA_PERFORMANCE_PHASE_2_EXECUTION_SCOPE.md",
+      "sha256": "92b77e175b912e276c9956edf83de6f23561b26c175d83e500882e3d6838af75"
+    },
+    {
+      "path": "docs/AIYA_PERFORMANCE_PHASE_2_EVIDENCE.json",
+      "sha256": "2bb68aed418e92afc9acb443be46a5bc460d66a2219ca3a41d6ab4ee788d5205"
+    }
+  ],
+  "constraints": {
+    "runtimeUiApiChange": "NOT_EXECUTED",
+    "ciWorkflowChange": "NOT_EXECUTED_STAGE_3_2_NOT_REACHED",
+    "releaseArtifactGeneration": "NOT_EXECUTED_STAGE_3_3_NOT_REACHED",
+    "hostedApply": "NOT_EXECUTED_SEPARATE_APPROVAL_REQUIRED",
+    "remoteMigration": "NOT_EXECUTED",
+    "productionDeploy": "NOT_EXECUTED",
+    "rollback": "NOT_EXECUTED",
+    "pushPrMerge": "NOT_EXECUTED",
+    "providerOrChannelEgress": "NOT_EXECUTED",
+    "liveBilling": "NOT_EXECUTED",
+    "productionWorker": "NOT_EXECUTED",
+    "realHealthData": "NOT_USED",
+    "secretCookieTokenPromptClinicalCapture": "NOT_CAPTURED"
+  },
+  "requiredNextAction": "Repair or start the isolated local Docker/Supabase environment, complete the blocked Phase 2 stages with synthetic real-auth data, and then reopen Phase 3. Hosted account creation and hosted apply remain separately approval-gated."
+}
